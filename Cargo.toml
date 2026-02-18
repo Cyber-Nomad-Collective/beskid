@@ -1,0 +1,6 @@
+[workspace]
+resolver = "3"
+members = ["src/pecan_analysis", "src/pecan_cli", "src/pecan_tests"]
+[workspace.dependencies]
+pest = "2.8"
+pest_derive = "2.8"
