@@ -11,3 +11,28 @@ fn parses_struct_literal_expression() {
 fn rejects_struct_literal_without_fields() {
     assert_parse_fail(Rule::StructLiteralExpression, "User { name \"Ada\" }" );
 }
+
+#[test]
+fn rejects_struct_literal_without_comma_between_fields() {
+    assert_parse_fail(Rule::StructLiteralExpression, "User { name: \"Ada\" age: 37 }");
+}
+
+#[test]
+fn parses_field_value_list() {
+    assert_parse(Rule::FieldValueList, "name: \"Ada\", age: 37");
+}
+
+#[test]
+fn rejects_field_value_list_without_colon() {
+    assert_parse_fail(Rule::FieldValueList, "name \"Ada\"");
+}
+
+#[test]
+fn parses_field_value() {
+    assert_parse(Rule::FieldValue, "name: 1");
+}
+
+#[test]
+fn rejects_field_value_without_colon() {
+    assert_parse_fail(Rule::FieldValue, "name 1");
+}

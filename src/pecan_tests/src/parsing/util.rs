@@ -1,4 +1,6 @@
 use pecan_analysis::{PecanParser, Rule};
+use pecan_analysis::parsing::parsable::Parsable;
+use pecan_analysis::syntax::{Expression, Spanned};
 use pest::iterators::Pair;
 use pest::Parser;
 
@@ -12,7 +14,12 @@ pub fn assert_parse_fail(rule: Rule, input: &str) {
     assert!(result.is_err(), "expected parse failure for rule {rule:?} on input: {input}");
 }
 
-pub fn parse_pair(rule: Rule, input: &str) -> Pair<Rule> {
+pub fn parse_expression_ast(input: &str) -> Spanned<Expression> {
+    let pair = parse_pair(Rule::Expression, input);
+    Expression::parse(pair).expect("expected expression AST")
+}
+
+pub fn parse_pair(rule: Rule, input: &str) -> Pair<'_, Rule> {
     let mut pairs = PecanParser::parse(rule, input)
         .unwrap_or_else(|error| panic!("expected parse success for rule {rule:?} on input: {input}\n{error}"));
     let pair = pairs.next().expect("expected a parse pair");
@@ -21,7 +28,11 @@ pub fn parse_pair(rule: Rule, input: &str) -> Pair<Rule> {
 }
 
 pub fn assert_inner_rules(pair: &Pair<Rule>, expected: &[Rule]) {
-    let rules: Vec<Rule> = pair.clone().into_inner().map(|inner| inner.as_rule()).collect();
+    let rules: Vec<Rule> = pair
+        .clone()
+        .into_inner()
+        .map(|inner: Pair<Rule>| inner.as_rule())
+        .collect();
     assert_eq!(rules, expected, "unexpected inner rules for {rule:?}", rule = pair.as_rule());
 }
 
@@ -60,7 +71,7 @@ pub fn assert_expression_is_integer(expr: &Pair<Rule>, expected: &str) {
     assert_eq!(integer.as_str(), expected);
 }
 
-fn expect_single_inner(pair: &Pair<Rule>, expected_rule: Rule) -> Pair<Rule> {
+fn expect_single_inner<'a>(pair: &'a Pair<Rule>, expected_rule: Rule) -> Pair<'a, Rule> {
     let mut inner = pair.clone().into_inner();
     let child = inner.next().unwrap_or_else(|| panic!("expected inner rule {expected_rule:?} in {rule:?}", rule = pair.as_rule()));
     assert_eq!(child.as_rule(), expected_rule, "unexpected inner rule for {rule:?}", rule = pair.as_rule());

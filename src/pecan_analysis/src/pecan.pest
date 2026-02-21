@@ -102,7 +102,8 @@ PecanType = { TypeReference | ArrayType | TypeName }
 // 4) DEFINITIONS
 ////////////////////////////////////////////////////////////
 FunctionDefinition = { Visibility? ~ "fn" ~ Identifier ~ GenericParameters? ~ "(" ~ ParameterList? ~ ")" ~ ReturnType? ~ Block }
-MethodDefinition = { Visibility? ~ "fn" ~ TypeName ~ "." ~ Identifier ~ "(" ~ ParameterList? ~ ")" ~ ReturnType? ~ Block }
+ReceiverType = { PrimitiveType | Identifier ~ GenericArguments? }
+MethodDefinition = { Visibility? ~ "fn" ~ ReceiverType ~ "." ~ Identifier ~ "(" ~ ParameterList? ~ ")" ~ ReturnType? ~ Block }
 ParameterList = { Parameter ~ ("," ~ Parameter)* }
 Parameter = { ParameterModifier? ~ Identifier ~ ":" ~ PecanType }
 ParameterModifier = { "ref" | "out" }

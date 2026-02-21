@@ -1,5 +1,9 @@
-use pest_derive::Parser;
+pub mod parser;
+pub mod parsing;
+pub mod query;
+pub mod syntax;
+pub mod analysis;
 
-#[derive(Parser)]
-#[grammar = "pecan.pest"]
-pub struct PecanParser;
+pub use parser::{PecanParser, Rule};
+pub use query::{AstNode, Descendants, DynNodeRef, NodeKind, Query};
+pub use analysis::{AnalysisOptions, AnalysisResult, Rule as AnalysisRule, RuleContext, SemanticDiagnostic, Severity, run_rules};

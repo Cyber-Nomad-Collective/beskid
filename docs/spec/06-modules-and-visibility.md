@@ -9,10 +9,10 @@ Modules are resolved by file path. A dotted path refers to nested modules.
 
 Example:
 ```
-// file: net/http.pecan
+// file: net/http.pn
 pub type Client { ... }
 
-// file: app.pecan
+// file: app.pn
 mod net;
 use net.http.Client;
 ```

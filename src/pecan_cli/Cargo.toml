@@ -4,3 +4,14 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+pecan_analysis = { path = "../pecan_analysis" }
+anyhow = "1.0"
+clap = { version = "4.4", features = ["derive"] }
+env_logger = "0.11"
+log = "0.4"
+miette = { version = "7.1", features = ["fancy"] }
+pest = { workspace = true }
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8"
+argfile = "0.2"

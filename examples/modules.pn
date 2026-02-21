@@ -1,0 +1,10 @@
+pub mod net.http;
+use net.http.Client;
+
+type ClientConfig {
+    endpoint: string,
+}
+
+fn make_client(config: ClientConfig) -> Client {
+    return Client { config: config };
+}

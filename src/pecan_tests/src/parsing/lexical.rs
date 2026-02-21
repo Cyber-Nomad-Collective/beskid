@@ -12,6 +12,11 @@ fn rejects_keyword_as_identifier() {
 }
 
 #[test]
+fn rejects_identifier_starting_with_digit() {
+    assert_parse_fail(Rule::Identifier, "1abc");
+}
+
+#[test]
 fn parses_line_comment_as_whitespace() {
     assert_parse(Rule::Program, "// comment\nfn main() -> unit { return; }");
 }
@@ -19,4 +24,9 @@ fn parses_line_comment_as_whitespace() {
 #[test]
 fn parses_block_comment_as_whitespace() {
     assert_parse(Rule::Program, "/* comment */ fn main() -> unit { return; }");
+}
+
+#[test]
+fn rejects_program_with_trailing_tokens() {
+    assert_parse_fail(Rule::Program, "fn main() -> unit { return; } extra");
 }

@@ -30,3 +30,13 @@ fn parses_char_literal() {
 fn rejects_unterminated_string() {
     assert_parse_fail(Rule::StringLiteral, "\"unterminated");
 }
+
+#[test]
+fn rejects_empty_char_literal() {
+    assert_parse_fail(Rule::CharLiteral, "''");
+}
+
+#[test]
+fn rejects_malformed_float_literal() {
+    assert_parse_fail(Rule::FloatLiteral, "3.");
+}

@@ -1,0 +1,10 @@
+[package]
+name = "pecan_codegen"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+cranelift-codegen = "0.128.3"
+cranelift-frontend = "0.128.3"
+cranelift-module = "0.128.3"
+pecan_runtime = { path = "../pecan_runtime" }

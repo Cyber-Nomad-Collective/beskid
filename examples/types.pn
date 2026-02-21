@@ -1,0 +1,18 @@
+type User {
+    id: i32,
+    name: string,
+}
+
+type Point {
+    x: i32,
+    y: i32,
+}
+
+enum Option<T> {
+    Some(value: T),
+    None,
+}
+
+fn make_user(id: i32, name: string) -> User {
+    return User { id: id, name: name };
+}
