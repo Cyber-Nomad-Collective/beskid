@@ -99,14 +99,50 @@ description: Pecan execution implementation plan
 
 **Current progress (handoff status)**
 - `pecan_analysis::resolve` split into submodules: `ids`, `errors`, `items`, `resolver`.
-- Minimal top-level item collection implemented (`Resolver::resolve_program`) with duplicate detection.
-- No module graph yet, no local scopes, no resolved paths table.
+- Top-level item collection implemented (`Resolver::resolve_program`) with duplicate detection.
+- `ModuleGraph` added with per-module item scopes and module path tracking.
+- Local scope stack + `LocalId` tracking implemented.
+- `ResolutionTables` added for resolved values/types + locals.
+- Path/type resolution and basic diagnostics (unknown value/type, duplicate local) implemented.
 
 **Remaining work**
-1. Add `ModuleGraph` and per-module scopes (file/module path mapping).
-2. Implement local scope stack and resolve `PathExpression` + `Type::Complex`.
-3. Add resolution outputs (side tables keyed by node/span or node id).
-4. Extend diagnostics: unknown symbol, duplicate local, shadowing warning.
+1. Extend diagnostics: shadowing warning + module-aware resolution.
+2. Add resolver tests (duplicate top-level, locals, unknown path/type).
+
+### Codebase evaluation (resolver + typing)
+
+**Resolver status**
+- Implemented: top-level item collection, module graph, local scopes, resolution tables, and path/type resolution.
+- Missing: module-aware resolution (per-module symbol visibility), shadowing warnings, tests.
+
+**Type system status**
+- Implemented: `TypeId` + `TypeTable` with primitives and named types (`ItemId`-backed) only.
+- Missing: type context wiring, expression typing pass, statement typing, diagnostics, and cast handling.
+
+### Continuation plan (resolver → type checking)
+
+1. **Resolver: module graph + scope layout**
+   - ✅ `ModuleGraph` maps module paths/files → `ModuleId`, per-module item lists.
+   - ✅ Per-module scope table wired to item insertion.
+2. **Resolver: local scope pass**
+   - ✅ Scope stack (block + function) interns locals (`LocalId`).
+   - ✅ Resolve `PathExpression` and `Type::Complex` into side tables keyed by span.
+3. **Resolver: outputs + diagnostics**
+   - ✅ `ResolutionTables` holds resolved values/types + locals.
+   - ✅ Unknown symbol/type + duplicate local diagnostics.
+   - ⏳ Shadowing warnings (still needed).
+4. **Type system: typing context setup**
+   - Add a `TypeContext` that references `ResolutionTables` + `TypeTable`.
+   - Seed `TypeTable` with primitives + all named types from resolution.
+5. **Type system: expression typing pass**
+   - Walk expressions/statement bodies and assign `TypeId` via a side table.
+   - Provide literal defaults and enforce `let` annotations when inference is not allowed.
+6. **Type system: validation + diagnostics**
+   - Validate operators, calls, returns, and control-flow joins.
+   - Record cast intents (or insert explicit cast nodes) for safe coercions.
+7. **Testing + diagnostics**
+   - Add resolver tests (duplicate top-level, locals, unknown path).
+   - Add typing tests (literals, mismatches, call arity/type errors, returns).
 
 ---
 

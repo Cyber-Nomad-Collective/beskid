@@ -1,6 +1,6 @@
 use pest::Span;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SpanInfo {
     pub start: usize,
     pub end: usize,
