@@ -97,6 +97,17 @@ description: Pecan execution implementation plan
 - `PathExpression` resolves to correct `ItemId`/`LocalId`.
 - `use`/`mod` hooks exist (even if minimal behavior at first).
 
+**Current progress (handoff status)**
+- `pecan_analysis::resolve` split into submodules: `ids`, `errors`, `items`, `resolver`.
+- Minimal top-level item collection implemented (`Resolver::resolve_program`) with duplicate detection.
+- No module graph yet, no local scopes, no resolved paths table.
+
+**Remaining work**
+1. Add `ModuleGraph` and per-module scopes (file/module path mapping).
+2. Implement local scope stack and resolve `PathExpression` + `Type::Complex`.
+3. Add resolution outputs (side tables keyed by node/span or node id).
+4. Extend diagnostics: unknown symbol, duplicate local, shadowing warning.
+
 ---
 
 ## Phase 2 — Type system
@@ -119,8 +130,17 @@ description: Pecan execution implementation plan
    - Emit span-based errors for mismatch/missing type.
 
 **Acceptance criteria**
-
 - Unit tests: literal typing, casts, mismatch errors.
+
+**Current progress (handoff status)**
+- `pecan_analysis::types` module split; `TypeId`, `TypeInfo`, `TypeTable` live in `types/table.rs`.
+- Only primitive and named types (via `ItemId`) are modeled.
+
+**Remaining work**
+1. Add type assignment pass (walk expressions/statements; fill `TypeId` table).
+2. Enforce type annotations for `let` when required; add literal defaults.
+3. Type check operators, calls, returns; emit diagnostics.
+4. Add cast insertion or cast intent table.
 
 ---
 
