@@ -7,6 +7,9 @@ description: HIR specification and analysis integration
 ## Purpose
 HIR is the semantic IR used to bridge the parsed AST with execution. It is the **source of truth** for semantic analysis and for CLIF lowering.
 
+Execution contract: `AST -> HIR -> CLIF`.
+The structure should use a phase-indexed shared-core model so AST and HIR share canonical node families while HIR adds semantic metadata and normalization.
+
 ## Connection to the current analysis stack
 Current state:
 - `pecan_analysis::analysis` provides diagnostics and a rule engine skeleton.
@@ -14,7 +17,7 @@ Current state:
 
 Integration plan:
 1. AST -> HIR lowering lives in `pecan_analysis::hir`.
-2. `pecan_analysis::analysis` rules accept `&HIRProgram` (or `&HIRModule`).
+2. `pecan_analysis::analysis` rules accept `&Spanned<HIRProgram>` (or `&Spanned<HIRModule>`).
 3. Diagnostics emitted from analysis reference HIR spans mapped from AST source locations.
 
 ## HIR responsibilities
@@ -22,6 +25,7 @@ Integration plan:
 - **Type checking**: expressions have concrete types or resolved inference vars.
 - **Desugaring**: remove surface constructs (e.g., `for` -> `while`).
 - **Scope normalization**: explicit locals per block.
+- **Phase-indexed reuse**: shared structural definitions between AST and HIR with HIR-specific semantic fields.
 
 ## Symbol and module model
 - **SymbolTable**: per-module table mapping names to `SymbolId` with kind + visibility.
@@ -34,6 +38,7 @@ Integration plan:
 - Implicit numeric widening -> explicit `Cast` nodes.
 
 ## HIR invariants
+- Every HIR node is wrapped in `Spanned<T>`.
 - Every identifier is resolved (no raw strings for symbols).
 - Every expression has a type.
 - All implicit conversions are explicit nodes.
@@ -46,18 +51,21 @@ Integration plan:
 4. **Insert casts** (explicit conversions).
 
 ## Suggested data model (outline)
-- `HIRProgram { modules: Vec<HIRModule> }`
-- `HIRModule { items: Vec<HIRItem> }`
-- `HIRItem = Fn | Type | Const | Trait | Impl`
-- `HIRFn { sig, body: HIRBlock }`
-- `HIRStmt = Let | Expr | Return | While | Break | Continue`
-- `HIRExpr = Literal | Var | Call | Binary | Unary | If | Match | Block | Cast`
+- `Spanned<HIRProgram> { modules: Vec<Spanned<HIRModule>> }`
+- `HIRModule { items: Vec<Spanned<HIRItem>> }`
+- `HIRItem = FunctionDefinition | TypeDefinition | ConstantDefinition | TraitDefinition | ImplementationDefinition`
+- `HIRFunctionDefinition { signature, body: Spanned<HIRBlock> }`
+- `HIRStatement = LetStatement | ExpressionStatement | ReturnStatement | WhileStatement | BreakStatement | ContinueStatement`
+- `HIRExpression = LiteralExpression | VariableExpression | CallExpression | BinaryExpression | UnaryExpression | IfExpression | MatchExpression | BlockExpression | CastExpression`
 
 ## Spans & diagnostics
-- HIR nodes retain `SpanId` referencing original source spans.
+- HIR nodes retain source spans by construction through `Spanned<T>`.
 - Diagnostics should be emitted against HIR spans for stable mapping.
 
 ## Required interfaces
-- `lower_ast_to_hir(ast: &AstProgram) -> HIRProgram`
-- `type_check(hir: &mut HIRProgram) -> Result<(), Diagnostics>`
-- `analyze(hir: &HIRProgram, rules: &[Rule]) -> AnalysisResult`
+- `lower_ast_to_hir(ast: &AstProgram) -> Spanned<HIRProgram>`
+- `type_check(hir: &mut Spanned<HIRProgram>) -> Result<(), Diagnostics>`
+- `analyze(hir: &Spanned<HIRProgram>, rules: &[Rule]) -> AnalysisResult`
+
+## Authoring references
+- Practical HIR writing template: `docs/execution/HIR/README.md`

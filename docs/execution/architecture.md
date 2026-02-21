@@ -35,11 +35,12 @@ This document describes the intended execution stack and how it maps to the **cu
 - Lives in `pecan_analysis::hir` (new module).
 - Responsibilities:
   - name resolution, type checking, desugaring.
+  - phase-indexed shared-core structure so AST and HIR reuse canonical node families.
   - stable semantic structure for codegen.
 - Output used directly by CLIF lowering.
 
 ### 3) CLIF lowering (to add)
-- Lives in `pecan_codegen` (new crate) or `pecan_analysis::codegen` (new module).
+- Lives in `pecan_codegen` (new crate).
 - Uses `cranelift_frontend::FunctionBuilder` to emit CLIF from HIR.
 - CLIF becomes the **only** executable IR (no custom MIR).
 
@@ -59,18 +60,19 @@ This document describes the intended execution stack and how it maps to the **cu
 - `pecan_analysis` — parsing, syntax, query, HIR.
 - `pecan_codegen` — CLIF lowering + module abstraction.
 - `pecan_runtime` — host functions and value ABI.
-- `pecan_exec` — JIT/AOT drivers (CLI entrypoints call this).
+- `pecan_engine` — JIT/AOT drivers (CLI entrypoints call this).
 
 ## Incremental path from current state
 1. Add HIR module and minimal lowering from AST.
 2. Add CLIF lowering for functions + literals.
 3. Add module layer using `cranelift_module`.
-4. Add JIT execution to `pecan_cli` (new command `run`/`exec`).
+4. Add JIT execution and AOT build integration to `pecan_cli` (new commands `run` and `build`).
 5. Add runtime builtins for strings/arrays.
 
 ## Related docs
 - `docs/execution/00-overview.md`
 - `docs/execution/01-hir.md`
+- `docs/execution/HIR/README.md`
 - `docs/execution/02-clif-lowering.md`
 - `docs/execution/03-module-layer.md`
 - `docs/execution/04-jit-execution.md`

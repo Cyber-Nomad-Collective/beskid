@@ -33,6 +33,137 @@ pub fn derive_ast_node(input: TokenStream) -> TokenStream {
     TokenStream::from(expanded)
 }
 
+#[proc_macro_derive(PhaseFromAst, attributes(phase))]
+pub fn derive_phase_from_ast(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as DeriveInput);
+    let name = input.ident;
+    let phase_attr = match parse_phase_attr(&input.attrs) {
+        Ok(Some(value)) => value,
+        Ok(None) => {
+            return syn::Error::new_spanned(
+                name,
+                "PhaseFromAst requires #[phase(source = \"...\", phase = \"...\")]",
+            )
+            .to_compile_error()
+            .into();
+        }
+        Err(err) => return err.to_compile_error().into(),
+    };
+
+    let target_type = match input.generics.params.len() {
+        0 => quote! { #name },
+        1 => {
+            let phase = &phase_attr.phase;
+            quote! { #name < #phase > }
+        }
+        _ => {
+            return syn::Error::new_spanned(
+                name,
+                "PhaseFromAst supports enums with at most one type parameter",
+            )
+            .to_compile_error()
+            .into();
+        }
+    };
+
+    let source_path = &phase_attr.source;
+    let expanded = match &input.data {
+        Data::Enum(enum_data) => {
+            let mut arms = Vec::new();
+            for variant in &enum_data.variants {
+                let target_ident = &variant.ident;
+                let source_ident =
+                    parse_variant_from_attr(&variant.attrs).unwrap_or_else(|| target_ident.clone());
+                let arm = match &variant.fields {
+                    Fields::Unnamed(fields) if fields.unnamed.len() == 1 => quote! {
+                        #source_path::#source_ident(value) => #name::#target_ident(value),
+                    },
+                    Fields::Unit => quote! {
+                        #source_path::#source_ident => #name::#target_ident,
+                    },
+                    _ => {
+                        return syn::Error::new_spanned(
+                            &variant.fields,
+                            "PhaseFromAst only supports unit or single-field tuple variants",
+                        )
+                        .to_compile_error()
+                        .into();
+                    }
+                };
+                arms.push(arm);
+            }
+
+            quote! {
+                impl ::core::convert::From<crate::syntax::Spanned<#source_path>>
+                    for crate::syntax::Spanned<#target_type>
+                {
+                    fn from(value: crate::syntax::Spanned<#source_path>) -> Self {
+                        let span = value.span;
+                        let node = match value.node {
+                            #( #arms )*
+                        };
+                        crate::syntax::Spanned::new(node, span)
+                    }
+                }
+            }
+        }
+        Data::Struct(struct_data) => {
+            let fields = match &struct_data.fields {
+                Fields::Named(fields) => fields.named.iter().collect::<Vec<_>>(),
+                Fields::Unnamed(fields) if fields.unnamed.len() == 1 => fields.unnamed.iter().collect(),
+                _ => {
+                    return syn::Error::new_spanned(
+                        &struct_data.fields,
+                        "PhaseFromAst only supports named structs or single-field tuple structs",
+                    )
+                    .to_compile_error()
+                    .into();
+                }
+            };
+
+            let field_builds = fields.iter().enumerate().map(|(idx, field)| {
+                let access = if let Some(ident) = &field.ident {
+                    quote! { value.node.#ident }
+                } else {
+                    let index = syn::Index::from(idx);
+                    quote! { value.node.#index }
+                };
+                let conversion = gen_phase_field_conversion(&field.ty, access);
+                if let Some(ident) = &field.ident {
+                    quote! { #ident: #conversion }
+                } else {
+                    quote! { #conversion }
+                }
+            });
+
+            let construct = match &struct_data.fields {
+                Fields::Named(_) => quote! { #name { #( #field_builds ),* } },
+                Fields::Unnamed(_) => quote! { #name ( #( #field_builds ),* ) },
+                Fields::Unit => quote! { #name },
+            };
+
+            quote! {
+                impl ::core::convert::From<crate::syntax::Spanned<#source_path>>
+                    for crate::syntax::Spanned<#target_type>
+                {
+                    fn from(value: crate::syntax::Spanned<#source_path>) -> Self {
+                        let span = value.span;
+                        let node = #construct;
+                        crate::syntax::Spanned::new(node, span)
+                    }
+                }
+            }
+        }
+        _ => {
+            return syn::Error::new_spanned(name, "PhaseFromAst can only be derived for enums or structs")
+                .to_compile_error()
+                .into();
+        }
+    };
+
+    TokenStream::from(expanded)
+}
+
 fn parse_kind_attr(attrs: &[Attribute]) -> Option<syn::Ident> {
     for attr in attrs {
         if !attr.path().is_ident("ast") {
@@ -41,6 +172,59 @@ fn parse_kind_attr(attrs: &[Attribute]) -> Option<syn::Ident> {
         let mut found = None;
         let _ = attr.parse_nested_meta(|meta| {
             if meta.path.is_ident("kind") {
+                let lit: LitStr = meta.value()?.parse()?;
+                found = Some(format_ident!("{}", lit.value()));
+            }
+            Ok(())
+        });
+        if found.is_some() {
+            return found;
+        }
+    }
+    None
+}
+
+struct PhaseAttr {
+    source: syn::Path,
+    phase: syn::Path,
+}
+
+fn parse_phase_attr(attrs: &[Attribute]) -> Result<Option<PhaseAttr>, syn::Error> {
+    for attr in attrs {
+        if !attr.path().is_ident("phase") {
+            continue;
+        }
+        let mut source = None;
+        let mut phase = None;
+        attr.parse_nested_meta(|meta| {
+            if meta.path.is_ident("source") {
+                let lit: LitStr = meta.value()?.parse()?;
+                source = Some(lit.parse()?);
+            } else if meta.path.is_ident("phase") {
+                let lit: LitStr = meta.value()?.parse()?;
+                phase = Some(lit.parse()?);
+            }
+            Ok(())
+        })?;
+        if let (Some(source), Some(phase)) = (source, phase) {
+            return Ok(Some(PhaseAttr { source, phase }));
+        }
+        return Err(syn::Error::new_spanned(
+            attr,
+            "phase attribute requires source and phase",
+        ));
+    }
+    Ok(None)
+}
+
+fn parse_variant_from_attr(attrs: &[Attribute]) -> Option<syn::Ident> {
+    for attr in attrs {
+        if !attr.path().is_ident("phase") {
+            continue;
+        }
+        let mut found = None;
+        let _ = attr.parse_nested_meta(|meta| {
+            if meta.path.is_ident("from") {
                 let lit: LitStr = meta.value()?.parse()?;
                 found = Some(format_ident!("{}", lit.value()));
             }
@@ -208,6 +392,45 @@ fn gen_push_for_type(ty: &Type, access: proc_macro2::TokenStream) -> proc_macro2
             }
         }
         _ => quote! {},
+    }
+}
+
+fn gen_phase_field_conversion(ty: &Type, access: proc_macro2::TokenStream) -> proc_macro2::TokenStream {
+    match ty {
+        Type::Path(tp) => {
+            if let Some(seg) = tp.path.segments.last() {
+                let ident = &seg.ident;
+                let args = &seg.arguments;
+                let ident_str = ident.to_string();
+                match (ident_str.as_str(), args) {
+                    ("Option", PathArguments::AngleBracketed(ab)) => {
+                        if let Some(GenericArgument::Type(inner_ty)) = ab.args.first() {
+                            let inner = gen_phase_field_conversion(inner_ty, quote! { __v });
+                            return quote! {
+                                (#access).map(|__v| #inner)
+                            };
+                        }
+                    }
+                    ("Vec", PathArguments::AngleBracketed(ab)) => {
+                        if let Some(GenericArgument::Type(inner_ty)) = ab.args.first() {
+                            let inner = gen_phase_field_conversion(inner_ty, quote! { __v });
+                            return quote! {
+                                (#access).into_iter().map(|__v| #inner).collect()
+                            };
+                        }
+                    }
+                    ("Box", PathArguments::AngleBracketed(ab)) => {
+                        if let Some(GenericArgument::Type(inner_ty)) = ab.args.first() {
+                            let inner = gen_phase_field_conversion(inner_ty, quote! { *#access });
+                            return quote! { ::core::boxed::Box::new(#inner) };
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            quote! { (#access).into() }
+        }
+        _ => quote! { (#access).into() },
     }
 }
 

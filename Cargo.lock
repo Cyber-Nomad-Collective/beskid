@@ -750,6 +750,7 @@ dependencies = [
  "cranelift-codegen",
  "cranelift-frontend",
  "cranelift-module",
+ "pecan_analysis",
  "pecan_runtime",
 ]
 

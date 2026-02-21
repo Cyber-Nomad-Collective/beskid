@@ -6,6 +6,7 @@ description: Execution docs index
 
 - [00-overview.md](00-overview.md)
 - [01-hir.md](01-hir.md)
+- [HIR/README.md](HIR/README.md)
 - [02-clif-lowering.md](02-clif-lowering.md)
 - [03-module-layer.md](03-module-layer.md)
 - [04-jit-execution.md](04-jit-execution.md)

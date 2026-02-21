@@ -28,7 +28,7 @@ description: Execution stack responsibilities
 - String/array primitives
 - Panic/error handling
 
-### `pecan_exec` (new)
+### `pecan_engine` (new)
 - JIT driver / execution API
 - AOT driver (object emission)
 

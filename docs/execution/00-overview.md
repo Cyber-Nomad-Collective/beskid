@@ -11,12 +11,14 @@ This execution stack uses Cranelift from the start. The compiler produces Cranel
 - CLIF is the execution IR and codegen IR.
 - Reuse Cranelift infrastructure for CFG, register allocation, and code emission.
 - Keep runtime minimal and explicit.
+- Keep HIR and AST aligned through a phase-indexed shared-core model, while still allowing HIR-only semantic normalization.
 
 ## Pipeline stages
 1. **Parser/AST**
    - Already implemented.
 2. **HIR (semantic IR)**
    - Name resolution, typing, and desugaring.
+   - Built from shared phase-indexed node families so common syntax structure is not duplicated between AST and HIR.
 3. **CLIF lowering**
    - Emit Cranelift IR using `FunctionBuilder`.
 4. **Module layer**

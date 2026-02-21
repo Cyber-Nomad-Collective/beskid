@@ -6,6 +6,7 @@ description: Lowering HIR to Cranelift IR (CLIF)
 
 ## Goal
 Translate HIR directly into Cranelift IR using the `cranelift_frontend` builder. CLIF is the execution IR used by both JIT and AOT paths.
+Lowering input is `Spanned<HIRProgram>` produced by the phase-indexed shared-core AST/HIR model.
 
 ## Primary tool
 - `FunctionBuilder` + `FunctionBuilderContext` for building CLIF blocks and values.

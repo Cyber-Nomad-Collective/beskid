@@ -7,9 +7,10 @@ description: HIR to CLIF lowering rules
 ## Goals
 - CLIF is the only executable IR.
 - One lowering path for JIT and AOT.
+- Lowering input is `Spanned<HIRProgram>` produced by the phase-indexed shared-core AST/HIR model.
 
 ## Function lowering
-- Each `HIRFn` becomes one Cranelift `Function` with a signature from the HIR type.
+- Each `HIRFunctionDefinition` becomes one Cranelift `Function` with a signature from the HIR type.
 - Parameters become CLIF block params in the entry block.
 
 ## Control flow
