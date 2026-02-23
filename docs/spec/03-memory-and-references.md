@@ -7,7 +7,7 @@
 
 Example:
 ```
-fn make() -> string {
+string make() {
     let s = "hello";
     return s; // allocation strategy is compiler/runtime choice
 }
@@ -25,9 +25,9 @@ fn make() -> string {
 
 ## Ref/Out parameters
 ```
-fn len(ref s: string) -> i32 { return s.len(); }
+i32 len(ref s: string) { return s.len(); }
 
-fn parse_port(out port: i32) -> Result<(), string> {
+Result<(), string> parse_port(out port: i32) {
     port = 8080;
     return Ok(());
 }
@@ -41,7 +41,7 @@ parse_port(out port)?;
 
 ## Example
 ```
-fn len(s: ref string) -> i32 {
+i32 len(s: ref string) {
     return s.len();
 }
 ```

@@ -5,7 +5,7 @@ use crate::syntax::util::parse_program_ast;
 #[test]
 fn test_query_descendants_count() {
     let input = "
-        fn main() {
+        unit main() {
             let x = 1;
             let y = 2;
             return x + y;
@@ -22,11 +22,11 @@ fn test_query_descendants_count() {
 #[test]
 fn test_query_of_type() {
     let input = "
-        fn main() {
+        unit main() {
             let x = 1;
             let y = 2;
         }
-        fn other() {}
+        unit other() {}
     ";
     let program = parse_program_ast(input);
     let query = Query::from(&program.node);
@@ -40,7 +40,7 @@ fn test_query_of_type() {
 #[test]
 fn test_query_filter_typed() {
     let input = "
-        fn main() {
+        unit main() {
             let x = 1;
             let mut y = 2;
         }
@@ -56,7 +56,7 @@ fn test_query_filter_typed() {
 #[test]
 fn test_query_find_first() {
     let input = "
-        fn main() {
+        unit main() {
             let x = 42;
         }
     ";
@@ -70,7 +70,7 @@ fn test_query_find_first() {
 #[test]
 fn test_query_binary_expressions() {
     let input = "
-        fn test() {
+        unit test() {
             let x = 1 + 2 * 3;
         }
     ";
@@ -84,7 +84,7 @@ fn test_query_binary_expressions() {
 
 #[test]
 fn test_node_kind() {
-    let input = "fn main() {}";
+    let input = "unit main() {}";
     let program = parse_program_ast(input);
     let query = Query::from(&program.node);
     
@@ -99,9 +99,9 @@ fn test_node_kind() {
 fn test_complex_traversal() {
     let input = "
         contract MyContract {
-            method(x: i32) -> i32;
+            i32 method(x: i32);
         }
-        fn main() {
+        unit main() {
             let x: i32 = 1;
         }
     ";
@@ -117,7 +117,7 @@ fn test_complex_traversal() {
 #[test]
 fn test_ast_walker() {
     let input = "
-        fn main() {
+        unit main() {
             let x = 1;
             if x > 0 {
                 return 42;

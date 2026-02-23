@@ -25,13 +25,13 @@ Items without `pub` are visible only inside their defining module.
 
 Example:
 ```
-pub type User { name: string }
+pub type User { string name }
 pub mod net;
 pub use net.http.Client;
 ```
 
 Example (private item):
 ```
-type Secret { value: i32 }
+type Secret { i32 value }
 // Secret is not visible outside this module
 ```

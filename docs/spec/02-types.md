@@ -28,8 +28,8 @@ let none: unit = ();
 Use `type` to define structures:
 ```
 type User {
-    name: string,
-    age: i32,
+    string name,
+    i32 age,
 }
 ```
 
@@ -42,7 +42,7 @@ let n = u.name;
 ## Generics (v0.1)
 Allowed for functions and types:
 ```
-fn id<T>(x: T) -> T { return x; }
+T id<T>(x: T) { return x; }
 ```
 
 Generic type usage:
@@ -53,19 +53,19 @@ let x: Option<i32> = ...;
 
 Example:
 ```
-fn first<T>(a: T, b: T) -> T { return a; }
+T first<T>(a: T, b: T) { return a; }
 let v = first<i32>(1, 2);
 ```
 
 ## References
 `ref T` is an explicit read-only reference type:
 ```
-fn len(s: ref string) -> i32 { return s.len(); }
+i32 len(s: ref string) { return s.len(); }
 ```
 
 Example:
 ```
-fn show(ref s: string) -> unit {
+unit show(ref s: string) {
     println(s);
 }
 ```
@@ -75,7 +75,7 @@ fn show(ref s: string) -> unit {
 
 Example:
 ```
-fn sum(values: i32[]) -> i32 {
+i32 sum(values: i32[]) {
     let mut total = 0;
     for i in range(0, values.len()) { total = total + values[i]; }
     return total;
@@ -104,7 +104,7 @@ enum Option<T> {
 
 Example:
 ```
-fn maybe_len(s: string) -> Option<i32> {
+Option<i32> maybe_len(s: string) {
     if s.len() > 0 { return Some(s.len()); }
     return None;
 }

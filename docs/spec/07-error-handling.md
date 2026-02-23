@@ -26,7 +26,7 @@ This is equivalent to early return on `Err`.
 
 Example:
 ```
-fn index(values: i32[], i: i32) -> i32 {
+i32 index(values: i32[], i: i32) {
     if i < 0 || i >= values.len() { panic("index out of range"); }
     return values[i];
 }
@@ -34,7 +34,7 @@ fn index(values: i32[], i: i32) -> i32 {
 
 Example:
 ```
-fn parse_port(s: string) -> Result<i32, string> {
+Result<i32, string> parse_port(s: string) {
     let p = int.parse(s)?;
     if p < 1 || p > 65535 {
         return Err("port out of range");
@@ -45,7 +45,7 @@ fn parse_port(s: string) -> Result<i32, string> {
 
 ## Example
 ```
-fn maybe_port(s: string) -> Option<i32> {
+Option<i32> maybe_port(s: string) {
     // explicit matching; `?` is only for Result in v0.1
     match int.parse(s) {
         Ok(v) => Some(v),

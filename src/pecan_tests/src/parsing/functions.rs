@@ -3,13 +3,13 @@ use pecan_analysis::Rule;
 
 #[test]
 fn parses_function_definition() {
-    let input = "fn add(a: i32, b: i32) -> i32 { return a + b; }";
+    let input = "i32 add(a: i32, b: i32) { return a + b; }";
     assert_parse(Rule::FunctionDefinition, input);
 }
 
 #[test]
 fn parses_generic_function_definition() {
-    let input = "fn id<T>(x: T) -> T { return x; }";
+    let input = "T id<T>(x: T) { return x; }";
     assert_parse(Rule::FunctionDefinition, input);
 }
 
@@ -35,22 +35,12 @@ fn rejects_parameter_list_without_colon() {
 
 #[test]
 fn rejects_function_without_body() {
-    assert_parse_fail(Rule::FunctionDefinition, "fn bad() -> i32;");
+    assert_parse_fail(Rule::FunctionDefinition, "i32 bad();");
 }
 
 #[test]
 fn rejects_parameter_without_type() {
-    assert_parse_fail(Rule::FunctionDefinition, "fn bad(x) { return x; }");
-}
-
-#[test]
-fn parses_return_type() {
-    assert_parse(Rule::ReturnType, "-> i32");
-}
-
-#[test]
-fn rejects_return_type_without_arrow() {
-    assert_parse_fail(Rule::ReturnType, "i32");
+    assert_parse_fail(Rule::FunctionDefinition, "i32 bad(x) { return x; }");
 }
 
 #[test]

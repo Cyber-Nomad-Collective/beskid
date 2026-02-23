@@ -7,7 +7,7 @@ use crate::syntax::util::{
 
 #[test]
 fn parses_function_definition_ast() {
-    let program = parse_program_ast("fn add(a: i32, b: i32) -> i32 { return a + b; }");
+    let program = parse_program_ast("i32 add(a: i32, b: i32) { return a + b; }");
     assert_eq!(program.node.items.len(), 1);
     let node = &program.node.items[0];
 
@@ -45,7 +45,7 @@ fn parses_function_definition_ast() {
 
 #[test]
 fn parses_function_with_out_parameter_modifier_ast() {
-    let node = parse_node_ast("fn write(out value: i32) { return value; }");
+    let node = parse_node_ast("i32 write(out value: i32) { return value; }");
     match &node.node {
         Node::Function(function) => {
             assert_eq!(function.node.parameters.len(), 1);
@@ -63,7 +63,7 @@ fn parses_function_with_out_parameter_modifier_ast() {
 
 #[test]
 fn parses_function_with_parameter_modifier_ast() {
-    let node = parse_node_ast("fn update(ref value: i32) { return value; }");
+    let node = parse_node_ast("i32 update(ref value: i32) { return value; }");
     match &node.node {
         Node::Function(function) => {
             assert_eq!(function.node.parameters.len(), 1);
@@ -81,7 +81,7 @@ fn parses_function_with_parameter_modifier_ast() {
 
 #[test]
 fn parses_method_definition_ast() {
-    let node = parse_node_ast("fn Point.len(self: Point) -> i32 { return 0; }");
+    let node = parse_node_ast("i32 Point.len(self: Point) { return 0; }");
 
     match &node.node {
         Node::Method(method) => {
@@ -101,7 +101,7 @@ fn parses_method_definition_ast() {
 
 #[test]
 fn parses_method_with_primitive_receiver_ast() {
-    let node = parse_node_ast("fn i32.zero() -> i32 { return 0; }");
+    let node = parse_node_ast("i32 i32.zero() { return 0; }");
     match &node.node {
         Node::Method(method) => {
             assert_type_primitive(&method.node.receiver_type, pecan_analysis::syntax::PrimitiveType::I32);
@@ -113,7 +113,7 @@ fn parses_method_with_primitive_receiver_ast() {
 
 #[test]
 fn parses_type_definition_ast() {
-    let node = parse_node_ast("pub type User { name: string, age: i32 }");
+    let node = parse_node_ast("pub type User { string name, i32 age }");
 
     match &node.node {
         Node::TypeDefinition(ty) => {
@@ -131,7 +131,7 @@ fn parses_type_definition_ast() {
 
 #[test]
 fn parses_enum_definition_ast() {
-    let node = parse_node_ast("enum Option<T> { Some(value: T), None }");
+    let node = parse_node_ast("enum Option<T> { Some(T value), None }");
 
     match &node.node {
         Node::EnumDefinition(enum_def) => {
@@ -148,7 +148,7 @@ fn parses_enum_definition_ast() {
 
 #[test]
 fn parses_contract_definition_ast() {
-    let node = parse_node_ast("contract Reader { read(p: u8[]) -> i32; Writer; }");
+    let node = parse_node_ast("contract Reader { i32 read(p: u8[]); Writer; }");
 
     match &node.node {
         Node::ContractDefinition(contract) => {

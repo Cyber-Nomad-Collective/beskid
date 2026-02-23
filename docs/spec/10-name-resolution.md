@@ -19,7 +19,7 @@ Example:
 ```
 use net.http.Client;
 
-fn main() -> unit {
+unit main() {
     let Client = 1; // local shadows import
     println(Client);
 }

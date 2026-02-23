@@ -9,16 +9,16 @@ Inference never crosses module boundaries. Public signatures are always explicit
 ## Inference rules (v0.1)
 - `let x = 1;` infers `i32`.
 - Function parameters require explicit types.
-- Public function return types must be explicit.
-- Local/private functions may infer return type if all `return` paths are consistent.
+- Function return types must be explicit.
+- Use `unit` for functions that do not return a value.
 
 Examples:
 ```
 let count = 1; // i32
 
-fn add(a: i32, b: i32) -> i32 { return a + b; }
+i32 add(a: i32, b: i32) { return a + b; }
 
-fn local_sum(a: i32, b: i32) { // private; return type inferred
+i32 local_sum(a: i32, b: i32) { // private; return type explicit
     return a + b;
 }
 ```
@@ -28,7 +28,7 @@ fn local_sum(a: i32, b: i32) { // private; return type inferred
 
 ## Example
 ```
-fn id<T>(x: T) -> T { return x; }
+T id<T>(x: T) { return x; }
 
 let a = id<i32>(5); // required in v0.1
 ```

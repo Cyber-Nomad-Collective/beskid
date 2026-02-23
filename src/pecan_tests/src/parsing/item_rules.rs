@@ -3,10 +3,10 @@ use pecan_analysis::Rule;
 
 #[test]
 fn parses_item_rule() {
-    assert_parse(Rule::Item, "fn main() -> unit { return; }");
+    assert_parse(Rule::Item, "unit main() { return; }");
 }
 
 #[test]
 fn rejects_item_rule() {
-    assert_parse_fail(Rule::Item, "fn");
+    assert_parse_fail(Rule::Item, "main");
 }

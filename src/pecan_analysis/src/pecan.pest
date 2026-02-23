@@ -13,7 +13,6 @@ BlockComment = { "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
 ASCII_ALPHA_UNDERSCORE = _{ ASCII_ALPHA | "_" }
 Identifier = @{ !Keyword ~ ASCII_ALPHA_UNDERSCORE ~ (ASCII_ALPHANUMERIC | "_")* }
 
-FunctionDeclarationKeyword = { "fn" }
 TypeDeclarationKeyword = { "type" }
 EnumDeclarationKeyword = { "enum" }
 ContractDeclarationKeyword = { "contract" }
@@ -37,8 +36,7 @@ OutKeyword = { "out" }
 
 Keyword = {
     (
-        FunctionDeclarationKeyword
-      | TypeDeclarationKeyword
+        TypeDeclarationKeyword
       | EnumDeclarationKeyword
       | ContractDeclarationKeyword
       | MatchKeyword
@@ -101,16 +99,15 @@ PecanType = { TypeReference | ArrayType | TypeName }
 ////////////////////////////////////////////////////////////
 // 4) DEFINITIONS
 ////////////////////////////////////////////////////////////
-FunctionDefinition = { Visibility? ~ "fn" ~ Identifier ~ GenericParameters? ~ "(" ~ ParameterList? ~ ")" ~ ReturnType? ~ Block }
+FunctionDefinition = { Visibility? ~ PecanType ~ Identifier ~ GenericParameters? ~ "(" ~ ParameterList? ~ ")" ~ Block }
 ReceiverType = { PrimitiveType | Identifier ~ GenericArguments? }
-MethodDefinition = { Visibility? ~ "fn" ~ ReceiverType ~ "." ~ Identifier ~ "(" ~ ParameterList? ~ ")" ~ ReturnType? ~ Block }
+MethodDefinition = { Visibility? ~ PecanType ~ ReceiverType ~ "." ~ Identifier ~ "(" ~ ParameterList? ~ ")" ~ Block }
 ParameterList = { Parameter ~ ("," ~ Parameter)* }
 Parameter = { ParameterModifier? ~ Identifier ~ ":" ~ PecanType }
 ParameterModifier = { "ref" | "out" }
-ReturnType = { "->" ~ PecanType }
 
 FieldList = { Field ~ ("," ~ Field)* ~ ","? }
-Field = { Identifier ~ ":" ~ PecanType }
+Field = { PecanType ~ Identifier }
 
 TypeDefinition = { Visibility? ~ "type" ~ Identifier ~ GenericParameters? ~ "{" ~ FieldList? ~ "}" }
 
@@ -120,7 +117,7 @@ EnumVariant = { Identifier ~ ("(" ~ FieldList? ~ ")")? }
 
 ContractDefinition = { Visibility? ~ "contract" ~ Identifier ~ "{" ~ ContractItem* ~ "}" }
 ContractItem = _{ ContractMethodSignature | ContractEmbedding }
-ContractMethodSignature = { Identifier ~ "(" ~ ParameterList? ~ ")" ~ ReturnType? ~ ";" }
+ContractMethodSignature = { PecanType ~ Identifier ~ "(" ~ ParameterList? ~ ")" ~ ";" }
 ContractEmbedding = { Identifier ~ ";"? }
 
 ////////////////////////////////////////////////////////////

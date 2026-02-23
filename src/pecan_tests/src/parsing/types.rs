@@ -3,18 +3,18 @@ use pecan_analysis::Rule;
 
 #[test]
 fn parses_type_definition() {
-    let input = "type User { name: string, age: i32 }";
+    let input = "type User { string name, i32 age }";
     assert_parse(Rule::TypeDefinition, input);
 }
 
 #[test]
 fn parses_field_list() {
-    assert_parse(Rule::FieldList, "name: string, age: i32");
+    assert_parse(Rule::FieldList, "string name, i32 age");
 }
 
 #[test]
 fn rejects_field_list_without_colon() {
-    assert_parse_fail(Rule::FieldList, "name string");
+    assert_parse_fail(Rule::FieldList, "name: string");
 }
 
 #[test]
@@ -79,10 +79,10 @@ fn rejects_field_without_type() {
 
 #[test]
 fn parses_field() {
-    assert_parse(Rule::Field, "name: string");
+    assert_parse(Rule::Field, "string name");
 }
 
 #[test]
 fn rejects_field_without_colon() {
-    assert_parse_fail(Rule::Field, "name string");
+    assert_parse_fail(Rule::Field, "name: string");
 }

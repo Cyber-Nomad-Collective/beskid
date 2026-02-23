@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use pecan_analysis::parsing::parsable::Parsable;
 use pecan_analysis::parser::{PecanParser, Rule};
 use pecan_analysis::syntax::Program;
-use pecan_analysis::{AnalysisOptions, run_rules};
+use pecan_analysis::{builtin_rules, AnalysisOptions, run_rules};
 use miette::Report;
 use pest::Parser;
 use crate::errors::{print_pretty_parse_error, print_pretty_pest_error};
@@ -48,7 +48,7 @@ pub fn execute(args: AnalyzeArgs) -> Result<()> {
         &program.node,
         args.input.display().to_string(),
         &source,
-        &[],
+        &builtin_rules(),
         AnalysisOptions::default(),
     )
     .diagnostics;

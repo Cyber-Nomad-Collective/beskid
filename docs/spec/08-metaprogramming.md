@@ -42,7 +42,7 @@ macro wrap {
 
 macro make_fn {
     (name: Identifier, body: Block) => {
-        fn name() -> unit body
+        unit name() body
     }
 }
 ```
@@ -69,7 +69,7 @@ macro[Ast.FuncDecl] log_wrap {
 ### Invocation (attribute)
 ```
 [log_wrap]
-fn do_work() {
+unit do_work() {
     work();
 }
 ```
@@ -78,8 +78,8 @@ fn do_work() {
 The compiler exposes a typed AST API under `Ast`:
 ```
 namespace Ast {
-    type FunctionDeclaration { name: string, params: Param[], body: Block }
-    type TypeDeclaration { name: string, fields: Field[] }
+    type FunctionDeclaration { string name, Param[] params, Block body }
+    type TypeDeclaration { string name, Field[] fields }
     type Block { statements: Statement[] }
     enum Statement { Let(...), Expression(...), Return(...) }
     enum Expression { Call(...), Binary(...), Identifier(...), Literal(...) }

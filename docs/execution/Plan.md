@@ -104,6 +104,7 @@ description: Pecan execution implementation plan
 - Local scope stack + `LocalId` tracking implemented.
 - `ResolutionTables` added for resolved values/types + locals.
 - Path/type resolution and basic diagnostics (unknown value/type, duplicate local) implemented.
+- Resolver/type diagnostics now emitted through analysis `builtin_rules` and CLI.
 
 **Remaining work**
 1. Extend diagnostics: shadowing warning + module-aware resolution.
@@ -153,30 +154,52 @@ description: Pecan execution implementation plan
 **Tasks**
 
 1. **Type identity layer**
-   - `TypeId` table for primitive + path types.
-   - Use resolved `ItemId` for named types.
-2. **Minimal typing (no inference)**
-   - Require explicit type annotations for `let` where needed.
-   - Literal defaults (`i64`, `f64`).
-3. **Expression typing pass**
-   - Assign `TypeId` to HIR expressions via side table.
-   - Validate operators, calls, and returns.
-4. **Casts and diagnostics**
+   - `TypeId` table for primitive + named types.
+   - Map resolved `ItemId` to named type IDs.
+2. **Typing context + structure**
+   - `TypeContext` stores `TypeTable`, expression type map, local type map, and signatures.
+   - Split typing logic into focused modules:
+     - `context.rs` for shared state and entrypoints.
+     - `helpers.rs` for seed/utility helpers.
+     - `items.rs` for item-level typing and signature capture.
+     - `statements.rs` for statement typing.
+     - `expressions.rs` for expression typing.
+     - `types.rs` for type lookup/mapping.
+3. **Minimal typing (no inference)**
+   - Require explicit type annotations for `let`.
+   - Literal defaults (`i64`, `f64`, `bool`, etc.).
+4. **Expression + statement typing pass**
+   - Assign `TypeId` to expressions via side tables.
+   - Validate operators, returns, conditions (`if`, `while`, `for`).
+5. **Call typing + signatures**
+   - Record `FunctionSignature` for functions/methods.
+   - Validate call arity and argument types; yield return type.
+6. **Structured types**
+   - Validate struct/enum literals (field presence and types).
+   - Validate member access once field info is modeled.
+7. **Match typing**
+   - Enforce consistent arm types and return type propagation.
+8. **Casts and diagnostics**
    - Insert explicit cast nodes (or record cast intents) when safe.
    - Emit span-based errors for mismatch/missing type.
 
 **Acceptance criteria**
-- Unit tests: literal typing, casts, mismatch errors.
+- Unit tests: literal typing, call arity/type errors, mismatch errors, return typing.
+- Typing pass produces expression type table for simple programs.
 
 **Current progress (handoff status)**
-- `pecan_analysis::types` module split; `TypeId`, `TypeInfo`, `TypeTable` live in `types/table.rs`.
-- Only primitive and named types (via `ItemId`) are modeled.
+- `pecan_analysis::types` module split; `TypeId`, `TypeInfo`, `TypeTable` in `types/table.rs`.
+- Typing context split into `context`, `helpers`, `items`, `statements`, `expressions`, `types` modules.
+- `TypeContext` seeds primitive/named types and produces expression/local type tables.
+- Function signatures recorded and used for call typing (arity + argument types).
+- Tests added: literal typing, mismatch, non-bool condition, return mismatch, call arity.
+- Type/resolution errors now surfaced via analysis diagnostics and CLI.
 
 **Remaining work**
-1. Add type assignment pass (walk expressions/statements; fill `TypeId` table).
-2. Enforce type annotations for `let` when required; add literal defaults.
-3. Type check operators, calls, returns; emit diagnostics.
-4. Add cast insertion or cast intent table.
+1. Extend typing for member access, struct/enum literals, and match expressions.
+2. Add cast insertion or cast intent table for safe coercions.
+3. Add diagnostics for signature lookup failures and missing fields when struct typing lands.
+4. Expand tests for match typing, struct literals, and member access.
 
 ---
 

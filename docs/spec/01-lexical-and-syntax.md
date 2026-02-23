@@ -13,10 +13,9 @@ let user_id = 1;
 ```
 
 ## Keywords (v0.1)
-`fn`, `type`, `enum`, `contract`, `match`, `when`, `if`, `else`, `while`, `for`, `in`, `return`, `break`, `continue`, `let`, `mut`, `mod`, `use`, `pub`, `ref`, `out`
+`type`, `enum`, `contract`, `match`, `when`, `if`, `else`, `while`, `for`, `in`, `return`, `break`, `continue`, `let`, `mut`, `mod`, `use`, `pub`, `ref`, `out`
 
 ### Keyword meanings
-- `fn`: function declaration.
 - `type`: product type (struct) declaration.
 - `enum`: sum type (variant) declaration.
 - `contract`: structural interface declaration.
@@ -69,7 +68,7 @@ let msg = "items: ${count + 1}";
 
 ## Example
 ```
-fn main() -> i32 {
+i32 main() {
     let name = "Pecan";
     let mut count: i32 = 0;
 
@@ -88,7 +87,7 @@ fn main() -> i32 {
 
 Example:
 ```
-fn greet() -> unit {
+unit greet() {
     let msg = "hi";
     println(msg);
 }

@@ -64,7 +64,7 @@ for i in range(0, 10) {
     if i == 7 { break; }
 }
 
-fn zero() -> i32 {
+i32 zero() {
     return 0;
 }
 ```

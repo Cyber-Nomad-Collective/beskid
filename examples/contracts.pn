@@ -1,12 +1,12 @@
 contract Storage {
-    get(key: string) -> string;
-    put(key: string, value: string);
+    string get(key: string);
+    unit put(key: string, value: string);
 }
 
-fn Storage.get(key: string) -> string {
+string Storage.get(key: string) {
     return "";
 }
 
-fn Storage.put(key: string, value: string) {
+unit Storage.put(key: string, value: string) {
     return;
 }

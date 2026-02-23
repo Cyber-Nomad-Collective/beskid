@@ -8,7 +8,7 @@ Contracts are structural: compatibility depends on method shape, not explicit de
 ## Declaration
 ```
 contract Reader {
-    read(p: u8[]) -> Result<i32, Error>;
+    Result<i32, Error> read(p: u8[]);
 }
 ```
 
@@ -16,28 +16,28 @@ contract Reader {
 ```
 type File { /* ... */ }
 
-fn File.read(p: u8[]) -> Result<i32, Error> { ... }
+Result<i32, Error> File.read(p: u8[]) { ... }
 ```
 
 `File` now satisfies `Reader`.
 
 Example call:
 ```
-fn read_all(r: Reader) -> Result<i32, Error> {
+Result<i32, Error> read_all(r: Reader) {
     return r.read([]);
 }
 ```
 
 ## Usage
 ```
-fn copy(r: Reader, w: Writer) -> Result<i32, Error> { ... }
+Result<i32, Error> copy(r: Reader, w: Writer) { ... }
 ```
 
 ## Composition
 Contracts can embed other contracts:
 ```
-contract Reader { read(p: u8[]) -> Result<i32, Error>; }
-contract Writer { write(p: u8[]) -> Result<i32, Error>; }
+contract Reader { Result<i32, Error> read(p: u8[]); }
+contract Writer { Result<i32, Error> write(p: u8[]); }
 
 contract ReadWriter {
     Reader
@@ -47,21 +47,21 @@ contract ReadWriter {
 
 Example:
 ```
-fn copy_all(rw: ReadWriter) -> Result<i32, Error> { ... }
+Result<i32, Error> copy_all(rw: ReadWriter) { ... }
 ```
 
 ## Method sets
-- Value methods: `fn T.method(...)`
-- Reference methods: `fn ref T.method(...)` (when `ref mut` is introduced)
+- Value methods: `ReturnType T.method(...)`
+- Reference methods: `ReturnType ref T.method(...)` (when `ref mut` is introduced)
 
 A type satisfies a contract if its available method set covers all required methods.
 
 Example:
 ```
-contract Size { fn size(self) -> i32; }
+contract Size { i32 size(self); }
 
-type Buf { len: i32 }
-fn Buf.size(self: Buf) -> i32 { return self.len; }
+type Buf { i32 len }
+i32 Buf.size(self: Buf) { return self.len; }
 ```
 
 ## Design guidelines
@@ -76,8 +76,8 @@ fn Buf.size(self: Buf) -> i32 { return self.len; }
 
 ## Conflict example
 ```
-contract A { fn id() -> i32; }
-contract B { fn id() -> string; }
+contract A { i32 id(); }
+contract B { string id(); }
 
 contract AB {
     A

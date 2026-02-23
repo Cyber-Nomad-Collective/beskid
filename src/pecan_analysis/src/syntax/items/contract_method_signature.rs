@@ -4,9 +4,7 @@ use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
 use crate::parser::Rule;
 use crate::syntax::{Identifier, Parameter, SpanInfo, Spanned, Type};
-use crate::syntax::items::parse_helpers::{
-    parse_parameter_list, parse_return_type,
-};
+use crate::syntax::items::parse_helpers::parse_parameter_list;
 
 use pecan_ast_derive::AstNode;
 
@@ -24,18 +22,21 @@ impl Parsable for ContractMethodSignature {
     fn parse(pair: Pair<Rule>) -> Result<Spanned<Self>, ParseError> {
         let span = SpanInfo::from_span(&pair.as_span());
         let mut inner = pair.into_inner();
+        let return_type = Some(Type::parse(
+            inner
+                .next()
+                .ok_or(ParseError::missing(Rule::PecanType))?,
+        )?);
         let name = Identifier::parse(
             inner
                 .next()
                 .ok_or(ParseError::missing(Rule::Identifier))?,
         )?;
         let mut parameters = Vec::new();
-        let mut return_type = None;
 
         for item in inner {
             match item.as_rule() {
                 Rule::ParameterList => parameters = parse_parameter_list(item)?,
-                Rule::ReturnType => return_type = Some(parse_return_type(item)?),
                 _ => return Err(ParseError::unexpected_rule(item, None)),
             }
         }

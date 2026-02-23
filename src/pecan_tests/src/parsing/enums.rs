@@ -3,7 +3,7 @@ use pecan_analysis::Rule;
 
 #[test]
 fn parses_enum_definition() {
-    let input = "enum Shape { Circle(radius: f64), Rect(width: f64, height: f64), Point }";
+    let input = "enum Shape { Circle(f64 radius), Rect(f64 width, f64 height), Point }";
     assert_parse(Rule::EnumDefinition, input);
 }
 
@@ -19,7 +19,7 @@ fn rejects_unqualified_enum_constructor() {
 
 #[test]
 fn rejects_enum_definition_without_comma() {
-    let input = "enum Shape { Circle(radius: f64) Rect(width: f64) }";
+    let input = "enum Shape { Circle(f64 radius) Rect(f64 width) }";
     assert_parse_fail(Rule::EnumDefinition, input);
 }
 
@@ -30,7 +30,7 @@ fn rejects_enum_constructor_without_closing_paren() {
 
 #[test]
 fn parses_enum_variant_list() {
-    assert_parse(Rule::EnumVariantList, "Circle(radius: f64), Point");
+    assert_parse(Rule::EnumVariantList, "Circle(f64 radius), Point");
 }
 
 #[test]
@@ -40,10 +40,10 @@ fn rejects_enum_variant_list_starting_with_comma() {
 
 #[test]
 fn parses_enum_variant() {
-    assert_parse(Rule::EnumVariant, "Circle(radius: f64)");
+    assert_parse(Rule::EnumVariant, "Circle(f64 radius)");
 }
 
 #[test]
 fn rejects_enum_variant_without_name() {
-    assert_parse_fail(Rule::EnumVariant, "(radius: f64)");
+    assert_parse_fail(Rule::EnumVariant, "(f64)");
 }

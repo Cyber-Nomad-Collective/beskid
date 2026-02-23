@@ -11,13 +11,13 @@ description: Name mangling specification
 
 ## Format
 ```
-pn::<module_path>::<item_name>$<kind>(<param_types>)-><return_type>
+pn::<module_path>::<item_name>$<kind>(<param_types>,<return_type>)
 ```
 
 ### Examples
-- Function: `pn::net.http::connect$fn(i64,str)->Result[str]`
-- Method: `pn::net.http::Client::connect$method(self,Url)->Result[str]`
-- Generic: `pn::collections::Map::insert$method(self,K,V)->Option[V]`
+- Function: `pn::net.http::connect$function(i64,str,Result[str])`
+- Method: `pn::net.http::Client::connect$method(self,Url,Result[str])`
+- Generic: `pn::collections::Map::insert$method(self,K,V,Option[V])`
 
 ## Module path rules
 - `src/net/http.pn` -> `net.http`

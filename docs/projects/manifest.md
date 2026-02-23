@@ -12,10 +12,10 @@ description: Pecan Project Manifest
 - The script is parsed with the standard Pecan grammar.
 
 ## Minimal example (pure Pecan)
-The script defines exactly one entrypoint: `fn project(b: Build) -> void`.
+The script defines exactly one entrypoint: `unit project(b: Build)`.
 
 ```pecan
-fn project(b: Build) -> void {
+unit project(b: Build) {
     b.project("MyApp", "0.1.0");
     b.set_root("src");
 
@@ -29,7 +29,7 @@ fn project(b: Build) -> void {
 
 ## Script validation (no special grammar)
 `project.pn` is parsed as a normal Pecan program. The compiler then *validates usage*:
-- There is exactly one `fn project(b: Build) -> void`.
+- There is exactly one `unit project(b: Build)`.
 - Only the `Build` API is used to declare targets/deps.
 - IO is allowed but must go through explicit build APIs.
 

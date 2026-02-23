@@ -25,7 +25,7 @@ This document proposes a Pecan-native project definition format inspired by Zigâ
 Each project root contains a `project.pn` file written in Pecan. It is executed by the toolchain to declare targets and dependencies via a build API.
 
 ```pecan
-fn project(b: Build) -> void {
+unit project(b: Build) {
     b.project("MyApp", "0.1.0");
     b.set_root("src");
 

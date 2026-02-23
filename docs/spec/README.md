@@ -25,6 +25,6 @@ Note: v0.1 intentionally avoids complex features (async, macros, runtime reflect
 - [x] Type definitions (`type`) and struct literals (`Type { ... }`)
 - [x] Enums and enum constructors (`Enum::Variant(...)`)
 - [x] Contracts (`contract`) with embedded contracts and method signatures
-- [x] Functions and methods (`fn Type.method(...)`)
+- [x] Functions and methods (`ReturnType Type.method(...)`)
 - [x] Statements: let/mut, if/else, while, for-in range, return/break/continue
 - [x] Expressions: precedence, calls, member access, match with `when` guard

@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::hir::{AstProgram, Item as HirItem};
 use crate::syntax::{self, Spanned};
 
-use super::errors::{ResolveError, ResolveResult};
+use super::errors::{ResolveError, ResolveResult, ResolveWarning};
 use super::ids::{ItemId, LocalId, ModuleId};
 use super::items::{ItemInfo, ItemKind};
 use super::module_graph::ModuleGraph;
@@ -12,12 +12,12 @@ use super::tables::{ResolutionTables, ResolvedValue};
 #[derive(Debug, Default)]
 pub struct Resolver {
     items: Vec<ItemInfo>,
-    symbols: HashMap<String, ItemId>,
     module_graph: ModuleGraph,
     current_module: ModuleId,
     tables: ResolutionTables,
     local_scopes: Vec<HashMap<String, LocalId>>,
     errors: Vec<ResolveError>,
+    warnings: Vec<ResolveWarning>,
 }
 
 impl Resolver {
@@ -41,6 +41,7 @@ impl Resolver {
                 items: std::mem::take(&mut self.items),
                 module_graph: std::mem::take(&mut self.module_graph),
                 tables: std::mem::take(&mut self.tables),
+                warnings: std::mem::take(&mut self.warnings),
             })
         } else {
             Err(std::mem::take(&mut self.errors))
@@ -60,17 +61,6 @@ impl Resolver {
 
         let id = ItemId(self.items.len());
         let module_id = self.current_module;
-        if let Some(prev) = self.symbols.get(&name).copied() {
-            let prev_span = self.items[prev.0].span;
-            self.errors.push(ResolveError::DuplicateItem {
-                name,
-                span: item.span,
-                previous: prev_span,
-            });
-            return;
-        }
-
-        self.symbols.insert(name.clone(), id);
         if let Some(prev) = self
             .module_graph
             .insert_item(module_id, name.clone(), id)
@@ -307,36 +297,78 @@ impl Resolver {
     }
 
     fn resolve_value_path(&mut self, path: &Spanned<syntax::Path>) {
-        let name = path_tail(path);
-        if let Some(local) = self.resolve_local(&name) {
+        let segments = path_segments(path);
+        if segments.is_empty() {
+            self.errors.push(ResolveError::UnknownValue {
+                name: "<unnamed>".to_string(),
+                span: path.span,
+            });
+            return;
+        }
+        if segments.len() == 1 {
+            let name = &segments[0];
+            if let Some(local) = self.resolve_local(name) {
+                self.tables.insert_value(path.span, ResolvedValue::Local(local));
+                return;
+            }
+            if let Some(item) = self.resolve_item_in_scope(name) {
+                self.tables.insert_value(path.span, ResolvedValue::Item(item));
+                return;
+            }
+            self.errors.push(ResolveError::UnknownValue {
+                name: (*name).clone(),
+                span: path.span,
+            });
+            return;
+        }
+        if let Some(local) = self.resolve_local(&segments[0]) {
             self.tables.insert_value(path.span, ResolvedValue::Local(local));
             return;
         }
-        if let Some(item) = self.symbols.get(&name).copied() {
+        if let Some(item) = self.resolve_item_in_module_path(&segments) {
             self.tables.insert_value(path.span, ResolvedValue::Item(item));
             return;
         }
         self.errors.push(ResolveError::UnknownValue {
-            name,
+            name: segments.join("::"),
             span: path.span,
         });
     }
 
     fn resolve_type_path(&mut self, path: &Spanned<syntax::Path>) {
-        let name = path_tail(path);
-        if let Some(item) = self.symbols.get(&name).copied() {
+        let segments = path_segments(path);
+        if segments.is_empty() {
+            self.errors.push(ResolveError::UnknownType {
+                name: "<unnamed>".to_string(),
+                span: path.span,
+            });
+            return;
+        }
+        if segments.len() == 1 {
+            let name = &segments[0];
+            if let Some(item) = self.resolve_item_in_scope(name) {
+                self.tables.insert_type(path.span, item);
+                return;
+            }
+            self.errors.push(ResolveError::UnknownType {
+                name: (*name).clone(),
+                span: path.span,
+            });
+            return;
+        }
+        if let Some(item) = self.resolve_item_in_module_path(&segments) {
             self.tables.insert_type(path.span, item);
             return;
         }
         self.errors.push(ResolveError::UnknownType {
-            name,
+            name: segments.join("::"),
             span: path.span,
         });
     }
 
     fn resolve_enum_path(&mut self, path: &Spanned<syntax::EnumPath>) {
         let type_name = path.node.type_name.node.name.clone();
-        if let Some(item) = self.symbols.get(&type_name).copied() {
+        if let Some(item) = self.resolve_item_in_scope(&type_name) {
             self.tables.insert_type(path.span, item);
             return;
         }
@@ -355,7 +387,36 @@ impl Resolver {
         None
     }
 
+    fn resolve_item_in_scope(&self, name: &str) -> Option<ItemId> {
+        let mut current = Some(self.current_module);
+        while let Some(module_id) = current {
+            let module = self.module_graph.module(module_id)?;
+            if let Some(item) = module.scope.get(name).copied() {
+                return Some(item);
+            }
+            current = module.parent;
+        }
+        None
+    }
+
+    fn resolve_item_in_module_path(&self, segments: &[String]) -> Option<ItemId> {
+        if segments.len() < 2 {
+            return None;
+        }
+        let (module_path, tail) = segments.split_at(segments.len() - 1);
+        let module_id = self.module_graph.module_id(module_path)?;
+        let module = self.module_graph.module(module_id)?;
+        module.scope.get(&tail[0]).copied()
+    }
+
     fn insert_local(&mut self, name: &str, span: syntax::SpanInfo) {
+        if let Some((_, previous_span)) = self.find_shadowed_local(name) {
+            self.warnings.push(ResolveWarning::ShadowedLocal {
+                name: name.to_string(),
+                span,
+                previous: previous_span,
+            });
+        }
         let scope = match self.local_scopes.last_mut() {
             Some(scope) => scope,
             None => return,
@@ -377,6 +438,25 @@ impl Resolver {
         scope.insert(name.to_string(), id);
     }
 
+    fn find_shadowed_local(&self, name: &str) -> Option<(LocalId, syntax::SpanInfo)> {
+        for scope in self.local_scopes.iter().rev().skip(1) {
+            if let Some(local) = scope.get(name).copied() {
+                let span = self
+                    .tables
+                    .local_info(local)
+                    .map(|info| info.span)
+                    .unwrap_or_else(|| syntax::SpanInfo {
+                        start: 0,
+                        end: 0,
+                        line_col_start: (1, 1),
+                        line_col_end: (1, 1),
+                    });
+                return Some((local, span));
+            }
+        }
+        None
+    }
+
     fn push_scope(&mut self) {
         self.local_scopes.push(HashMap::new());
     }
@@ -391,6 +471,7 @@ pub struct Resolution {
     pub items: Vec<ItemInfo>,
     pub module_graph: ModuleGraph,
     pub tables: ResolutionTables,
+    pub warnings: Vec<ResolveWarning>,
 }
 
 fn path_tail(path: &Spanned<crate::syntax::Path>) -> String {
@@ -399,4 +480,12 @@ fn path_tail(path: &Spanned<crate::syntax::Path>) -> String {
         .last()
         .map(|segment| segment.node.name.clone())
         .unwrap_or_else(|| "<unnamed>".to_string())
+}
+
+fn path_segments(path: &Spanned<crate::syntax::Path>) -> Vec<String> {
+    path.node
+        .segments
+        .iter()
+        .map(|segment| segment.node.name.clone())
+        .collect()
 }

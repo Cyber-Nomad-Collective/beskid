@@ -1,8 +1,12 @@
 use pecan_analysis::analysis::{AnalysisOptions, Rule, RuleContext, run_rules};
+use pecan_analysis::builtin_rules;
 use pecan_analysis::syntax::SpanInfo;
 use pecan_analysis::{diag, Severity};
 
 use crate::syntax::util::parse_program_ast;
+
+mod resolve;
+mod types;
 
 struct EmitOne;
 
@@ -10,7 +14,6 @@ impl Rule for EmitOne {
     fn name(&self) -> &'static str {
         "emit_one"
     }
-
     fn run(&self, ctx: &mut RuleContext, program: &pecan_analysis::syntax::Program) {
         let span = program
             .items
@@ -27,12 +30,496 @@ impl Rule for EmitOne {
 }
 
 #[test]
-fn runs_rules_and_collects_diagnostics() {
-    let program = parse_program_ast("fn main() { return; }");
+fn analysis_emits_resolve_errors() {
+    let program = parse_program_ast("unit main() { let x = y; }");
     let result = run_rules(
         &program.node,
         "test.pn",
-        "fn main() { return; }",
+        "unit main() { let x = y; }",
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1101")));
+}
+
+#[test]
+fn analysis_emits_type_errors() {
+    let program = parse_program_ast("unit main() { let x: bool = 1; }");
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        "unit main() { let x: bool = 1; }",
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1206")));
+}
+
+#[test]
+fn analysis_emits_duplicate_enum_variant_errors() {
+    let source = "enum Option { Some, Some }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1002")));
+}
+
+#[test]
+fn analysis_emits_duplicate_contract_method_errors() {
+    let source = "contract Storage { unit put(key: string); unit put(value: string); }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1003")));
+}
+
+#[test]
+fn analysis_emits_duplicate_definition_name_errors() {
+    let source = "type User { i64 id } enum User { One }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1001")));
+}
+
+#[test]
+fn analysis_emits_break_outside_loop_errors() {
+    let source = "unit main() { break; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1401")));
+}
+
+#[test]
+fn analysis_emits_continue_outside_loop_errors() {
+    let source = "unit main() { continue; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1402")));
+}
+
+#[test]
+fn analysis_emits_unreachable_code_warnings() {
+    let source = "unit main() { return; let x: i64 = 1; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("W1403")));
+}
+
+#[test]
+fn analysis_emits_duplicate_pattern_binding_errors() {
+    let source = "enum Choice { Pair(i64 a, i64 b) } unit main() { let c: Choice = Choice::Pair(1, 2); let x: i64 = match c { Choice::Pair(v, v) => v, }; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1306")));
+}
+
+#[test]
+fn analysis_emits_unknown_type_in_definition_errors() {
+    let source = "type User { Missing id }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1005")));
+}
+
+#[test]
+fn analysis_emits_duplicate_non_type_item_name_errors() {
+    let source = "unit foo() { return; } mod foo;";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1006")));
+}
+
+#[test]
+fn analysis_emits_conflicting_embedded_contract_errors() {
+    let source = "contract A { unit put(key: string); } contract B { unit put(key: i64); } contract C { A; B; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1004")));
+}
+
+#[test]
+fn analysis_emits_unknown_enum_path_errors() {
+    let source = "unit main() { let x: i64 = Missing::None(); }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1301")));
+}
+
+#[test]
+fn analysis_emits_enum_constructor_arity_mismatch_errors() {
+    let source = "enum Option { Some(i64 value) } unit main() { let x: Option = Option::Some(); }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1302")));
+}
+
+#[test]
+fn analysis_emits_pattern_arity_mismatch_errors() {
+    let source = "enum Option { Some(i64 value) } unit main() { let x: Option = Option::Some(1); let y: i64 = match x { Option::Some() => 1, }; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1307")));
+}
+
+#[test]
+fn analysis_emits_ambiguous_import_errors() {
+    let source = "mod dep.foo; mod other.foo; use dep.foo; use other.foo;";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1104")));
+}
+
+#[test]
+fn analysis_emits_unknown_import_path_errors() {
+    let source = "use missing.path;";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1105")));
+}
+
+#[test]
+fn analysis_emits_use_before_declaration_errors() {
+    let source = "unit main() { let x: i64 = y; let y: i64 = 1; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1106")));
+}
+
+#[test]
+fn analysis_emits_immutable_assignment_errors() {
+    let source = "unit main() { let x: i64 = 1; x = 2; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1214")));
+}
+
+#[test]
+fn analysis_emits_unqualified_enum_constructor_errors() {
+    let source = "enum Option { Some(i64 value) } unit main() { let x: Option = Some(1); }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1303")));
+}
+
+#[test]
+fn analysis_emits_non_exhaustive_match_errors() {
+    let source = "enum Option { Some(i64 value), None } unit main() { let x: Option = Option::Some(1); let y: i64 = match x { Option::Some(v) => v, }; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1304")));
+}
+
+#[test]
+fn analysis_emits_match_arm_type_mismatch_errors() {
+    let source = "enum Option { Some(i64 value), None } unit main() { let x: Option = Option::Some(1); let y = match x { Option::Some(_) => 1, Option::None => true, }; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1305")));
+}
+
+#[test]
+fn analysis_emits_guard_type_mismatch_errors() {
+    let source = "enum Option { Some(i64 value) } unit main() { let x: Option = Option::Some(1); let y = match x { Option::Some(v) when 1 => v, }; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1308")));
+}
+
+#[test]
+fn analysis_emits_module_not_found_errors() {
+    let source = "mod missing.module;";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1502")));
+}
+
+#[test]
+fn analysis_emits_unused_import_warnings() {
+    let source = "mod dep.core; use dep.foo; unit main() { return; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("W1503")));
+}
+
+#[test]
+fn analysis_emits_unused_private_item_warnings() {
+    let source = "unit helper() { return; } unit main() { return; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("W1504")));
+}
+
+#[test]
+fn analysis_emits_contract_method_missing_impl_errors() {
+    let source = "contract Service { unit run(); }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1601")));
+}
+
+#[test]
+fn runs_rules_and_collects_diagnostics() {
+    let program = parse_program_ast("unit main() { return; }");
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        "unit main() { return; }",
         &[Box::new(EmitOne)],
         AnalysisOptions::default(),
     );

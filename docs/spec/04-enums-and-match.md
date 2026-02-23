@@ -3,8 +3,8 @@
 ## Algebraic Enums (Rust-like)
 ```
 enum Shape {
-    Circle(radius: f64),
-    Rect(width: f64, height: f64),
+    Circle(f64 radius),
+    Rect(f64 width, f64 height),
     Point,
 }
 ```
@@ -13,7 +13,7 @@ Enums group related variants under a single type. Variants may carry data or be 
 
 ## Match
 ```
-fn area(s: Shape) -> f64 {
+f64 area(s: Shape) {
     match s {
         Shape::Circle(r) => 3.14159 * r * r,
         Shape::Rect(w, h) => w * h,
@@ -41,7 +41,7 @@ let p = Shape::Point;
 
 ## Snippet
 ```
-fn demo() -> f64 {
+f64 demo() {
     let s = Shape::Rect(2.0, 4.0);
     match s {
         Shape::Rect(w, h) => w * h,

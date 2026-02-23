@@ -14,7 +14,7 @@ description: Pecan Semantic Analysis Specification
 Use miette-based diagnostics for consistent, Rust-like errors.
 
 **Core fields**
-- `code`: stable error code string (e.g., `E0101`).
+- `code`: stable error code string (e.g., `R0001`, `T0009`).
 - `message`: primary error text.
 - `span`: source span (byte range) for label.
 - `help`: optional guidance.
@@ -34,7 +34,7 @@ pub struct SemanticDiagnostic {
     pub label: String,
     #[help]
     pub help: Option<String>,
-    pub code: String,
+    pub code: Option<String>,
     pub severity: Severity,
 }
 ```
@@ -50,11 +50,9 @@ Macro should:
 - attach code and severity.
 
 ### Diagnostic Categories
-- **Name Resolution** (E1xxx)
-- **Type Checking** (E2xxx)
-- **Control Flow** (E3xxx)
-- **Contracts/Interfaces** (E4xxx)
-- **Pattern Matching** (E5xxx)
+- **Name Resolution** (`R0xxx`)
+- **Name Resolution Warnings** (`R1xxx`)
+- **Type Checking** (`T0xxx`)
 
 ## Rule Engine
 ### Rule Trait
@@ -67,14 +65,13 @@ pub trait Rule {
 
 ### RuleContext
 Holds shared analysis state:
-- `source: NamedSource<String>`
+- `source_name: String`
+- `source: String`
 - `diagnostics: Vec<SemanticDiagnostic>`
-- `symbol_table: SymbolTable` (scopes)
-- `type_db: TypeDb` (type definitions)
 - `options: AnalysisOptions`
 
 ### Rule Execution
-Rules run in stages to allow dependencies:
+Rules run in a single pass today, with staged passes still planned:
 - **Stage 0**: prelude building (collect type/enum/contract signatures)
 - **Stage 1**: name resolution + scoping
 - **Stage 2**: type checking (expressions, calls, returns)
@@ -84,6 +81,11 @@ Rules run in stages to allow dependencies:
 Rules should use `Query` API:
 - `Query::from(program).descendants()`
 - `of::<Type>()`, `filter_typed()` helpers
+
+## Current Integration Status
+- Resolver/type diagnostics are emitted via `builtin_rules()`.
+- CLI `analyze` runs builtin rules and prints miette diagnostics.
+- Resolver and type errors are mapped to codes `R0001..` and `T0001..`.
 
 ## Semantic Data Structures
 ### Symbol Table

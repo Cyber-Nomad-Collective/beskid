@@ -1,4 +1,4 @@
-fn sum_to(n: i32) -> i32 {
+i32 sum_to(n: i32) {
     let mut acc: i32 = 0;
     for i in range(0, n) {
         acc = acc + i;
@@ -6,7 +6,7 @@ fn sum_to(n: i32) -> i32 {
     return acc;
 }
 
-fn max(a: i32, b: i32) -> i32 {
+i32 max(a: i32, b: i32) {
     if a > b {
         return a;
     }

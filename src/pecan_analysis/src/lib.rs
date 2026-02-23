@@ -9,4 +9,7 @@ pub mod types;
 
 pub use parser::{PecanParser, Rule};
 pub use query::{AstNode, Descendants, DynNodeRef, NodeKind, Query};
-pub use analysis::{AnalysisOptions, AnalysisResult, Rule as AnalysisRule, RuleContext, SemanticDiagnostic, Severity, run_rules};
+pub use analysis::{
+    builtin_rules, AnalysisOptions, AnalysisResult, Rule as AnalysisRule, RuleContext,
+    SemanticDiagnostic, Severity, run_rules,
+};

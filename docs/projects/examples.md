@@ -14,7 +14,7 @@ my_app/
 
 **project.pn**
 ```pecan
-fn project(b: Build) -> void {
+unit project(b: Build) {
     b.project("MyApp", "0.1.0");
     b.set_root("src");
     let app = b.target("app", "main.pn");
@@ -37,7 +37,7 @@ workspace/
 
 **app/project.pn**
 ```pecan
-fn project(b: Build) -> void {
+unit project(b: Build) {
     b.project("App", "0.1.0");
     b.set_root("src");
     let std = b.dep("pecan.std", "../std");
@@ -49,7 +49,7 @@ fn project(b: Build) -> void {
 
 **std/project.pn**
 ```pecan
-fn project(b: Build) -> void {
+unit project(b: Build) {
     b.project("PecanStd", "0.1.0");
     b.set_root("src");
     let lib = b.target("lib", "io.pn");
@@ -87,7 +87,7 @@ project/
 ```
 
 ```pecan
-fn project(b: Build) -> void {
+unit project(b: Build) {
     b.project("Project", "0.2.0");
     b.set_root("src");
     let app = b.target("app", "main.pn");

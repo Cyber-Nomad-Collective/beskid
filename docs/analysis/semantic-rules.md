@@ -27,6 +27,10 @@ This document enumerates semantic rules derived from the language spec. Rules ar
 - Trigger: field/parameter types reference unknown type names.
 - Source: 02-types, 10-name-resolution.
 
+### E1006 DuplicateItemName (Error)
+- Trigger: duplicate function/module/use item name in the same module scope.
+- Source: 10-name-resolution.
+
 ## Stage 1: Name Resolution & Scopes
 ### E1101 UndefinedVariable (Error)
 - Trigger: identifier used in expression has no binding in scope.
@@ -113,6 +117,22 @@ This document enumerates semantic rules derived from the language spec. Rules ar
 - Trigger: value used after move (non-copy type).
 - Source: 02-types (move semantics).
 
+### E1216 EqualityTypeMismatch (Error)
+- Trigger: `==` operands are not comparable or have incompatible types.
+- Source: 02-types (equality semantics).
+
+### E1217 IdentityOnNonReference (Error)
+- Trigger: `===` used on non-reference operands.
+- Source: 02-types (reference identity).
+
+### E1218 OutArgumentNotMutable (Error)
+- Trigger: `out` argument is not a mutable binding.
+- Source: 03-memory-and-references.
+
+### E1219 RefOutArgumentNotLValue (Error)
+- Trigger: `ref`/`out` arguments are not assignable lvalues.
+- Source: 03-memory-and-references.
+
 ## Stage 3: Enums, Match, Patterns
 ### E1301 UnknownEnumPath (Error)
 - Trigger: enum constructor references unknown enum/variant.
@@ -122,23 +142,27 @@ This document enumerates semantic rules derived from the language spec. Rules ar
 - Trigger: enum constructor called with wrong number of arguments.
 - Source: 04-enums-and-match.
 
-### E1303 MatchNonExhaustive (Error)
+### E1303 UnqualifiedEnumConstructor (Error)
+- Trigger: enum constructor invoked without `Enum::` qualifier.
+- Source: 04-enums-and-match.
+
+### E1304 MatchNonExhaustive (Error)
 - Trigger: match does not cover all variants (and no `_`).
 - Source: 04-enums-and-match.
 
-### E1304 MatchArmTypeMismatch (Error)
+### E1305 MatchArmTypeMismatch (Error)
 - Trigger: match arm expression types differ.
 - Source: 04-enums-and-match.
 
-### E1305 DuplicatePatternBinding (Error)
+### E1306 DuplicatePatternBinding (Error)
 - Trigger: pattern binds same name multiple times.
 - Source: 04-enums-and-match.
 
-### E1306 PatternArityMismatch (Error)
+### E1307 PatternArityMismatch (Error)
 - Trigger: enum pattern has wrong number of subpatterns.
 - Source: 04-enums-and-match.
 
-### E1307 GuardTypeMismatch (Error)
+### E1308 GuardTypeMismatch (Error)
 - Trigger: `when` guard is not `bool`.
 - Source: 04-enums-and-match.
 
@@ -160,11 +184,15 @@ This document enumerates semantic rules derived from the language spec. Rules ar
 - Trigger: access to non-`pub` item from another module.
 - Source: 06-modules-and-visibility.
 
-### W1502 UnusedImport (Warning)
+### E1502 ModuleNotFound (Error)
+- Trigger: `mod` declaration refers to a missing module file.
+- Source: 06-modules-and-visibility.
+
+### W1503 UnusedImport (Warning)
 - Trigger: `use` path never referenced.
 - Source: 06-modules-and-visibility.
 
-### W1503 UnusedPrivateItem (Warning)
+### W1504 UnusedPrivateItem (Warning)
 - Trigger: private item declared but never used in module.
 - Source: 06-modules-and-visibility.
 
@@ -189,6 +217,14 @@ This document enumerates semantic rules derived from the language spec. Rules ar
 - Trigger: method resolution fails due to alias target mismatch.
 - Source: 12-method-dispatch, 10-name-resolution.
 
+### E1606 MethodNotFound (Error)
+- Trigger: method call cannot be resolved for receiver type.
+- Source: 12-method-dispatch.
+
+### E1607 ContractNotSatisfied (Error)
+- Trigger: value typed as contract does not satisfy the required method set.
+- Source: 09-contracts, 12-method-dispatch.
+
 ## Stage 7: Error Handling
 ### E1701 QuestionOnNonResult (Error)
 - Trigger: `?` used on non-`Result` type.
@@ -196,6 +232,10 @@ This document enumerates semantic rules derived from the language spec. Rules ar
 
 ### E1702 QuestionTypeMismatch (Error)
 - Trigger: `?` used where error type is incompatible with function return type.
+- Source: 07-error-handling.
+
+### E1703 QuestionOutsideFunction (Error)
+- Trigger: `?` used outside a function body.
 - Source: 07-error-handling.
 
 ## Stage 8: Metaprogramming (Macro Expansion)

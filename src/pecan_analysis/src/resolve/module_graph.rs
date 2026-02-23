@@ -39,6 +39,10 @@ impl ModuleGraph {
         self.modules.get(id.0)
     }
 
+    pub fn module_id(&self, path: &[String]) -> Option<ModuleId> {
+        self.path_map.get(path).copied()
+    }
+
     pub fn module_mut(&mut self, id: ModuleId) -> Option<&mut ModuleInfo> {
         self.modules.get_mut(id.0)
     }

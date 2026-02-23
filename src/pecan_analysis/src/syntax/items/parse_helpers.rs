@@ -4,7 +4,7 @@ use std::iter::Peekable;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
 use crate::parser::Rule;
-use crate::syntax::{Field, Identifier, Parameter, SpanInfo, Spanned, Type, Visibility};
+use crate::syntax::{Field, Identifier, Parameter, SpanInfo, Spanned, Visibility};
 
 pub(crate) fn parse_visibility_or_default(
     pair: &Pair<Rule>,
@@ -28,14 +28,6 @@ pub(crate) fn parse_identifier_list(pair: Pair<Rule>) -> Result<Vec<Spanned<Iden
 
 pub(crate) fn parse_parameter_list(pair: Pair<Rule>) -> Result<Vec<Spanned<Parameter>>, ParseError> {
     pair.into_inner().map(Parameter::parse).collect()
-}
-
-pub(crate) fn parse_return_type(pair: Pair<Rule>) -> Result<Spanned<Type>, ParseError> {
-    let type_pair = pair
-        .into_inner()
-        .next()
-        .ok_or(ParseError::missing(Rule::PecanType))?;
-    Type::parse(type_pair)
 }
 
 pub(crate) fn parse_field_list(pair: Pair<Rule>) -> Result<Vec<Spanned<Field>>, ParseError> {

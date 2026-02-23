@@ -5,7 +5,7 @@ use crate::parsing::parsable::Parsable;
 use crate::parser::Rule;
 use crate::syntax::{Block, Identifier, Parameter, Path, PrimitiveType, SpanInfo, Spanned, Type, Visibility};
 use crate::syntax::items::parse_helpers::{
-    parse_parameter_list, parse_return_type, parse_visibility_or_default,
+    parse_parameter_list, parse_visibility_or_default,
 };
 
 use pecan_ast_derive::AstNode;
@@ -31,6 +31,11 @@ impl Parsable for MethodDefinition {
         let span = SpanInfo::from_span(&pair.as_span());
         let mut inner = pair.clone().into_inner().peekable();
         let visibility = parse_visibility_or_default(&pair, &mut inner)?;
+        let return_type = Some(Type::parse(
+            inner
+                .next()
+                .ok_or(ParseError::missing(Rule::PecanType))?,
+        )?);
         let receiver_type = parse_receiver_type(
             inner
                 .next()
@@ -43,13 +48,11 @@ impl Parsable for MethodDefinition {
         )?;
 
         let mut parameters = Vec::new();
-        let mut return_type = None;
         let mut body = None;
 
         for item in inner {
             match item.as_rule() {
                 Rule::ParameterList => parameters = parse_parameter_list(item)?,
-                Rule::ReturnType => return_type = Some(parse_return_type(item)?),
                 Rule::Block => body = Some(Block::parse(item)?),
                 _ => return Err(ParseError::unexpected_rule(item, None)),
             }

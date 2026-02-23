@@ -1,5 +1,5 @@
+use super::super::diagnostics::{make_diagnostic, SemanticDiagnostic, Severity};
 use crate::syntax::Program;
-use super::diagnostics::{make_diagnostic, SemanticDiagnostic, Severity};
 
 #[derive(Debug, Clone)]
 pub struct AnalysisOptions {
@@ -8,7 +8,9 @@ pub struct AnalysisOptions {
 
 impl Default for AnalysisOptions {
     fn default() -> Self {
-        Self { emit_warnings: true }
+        Self {
+            emit_warnings: true,
+        }
     }
 }
 
@@ -30,7 +32,11 @@ pub struct RuleContext {
 }
 
 impl RuleContext {
-    pub fn new(source_name: impl Into<String>, source: impl Into<String>, options: AnalysisOptions) -> Self {
+    pub fn new(
+        source_name: impl Into<String>,
+        source: impl Into<String>,
+        options: AnalysisOptions,
+    ) -> Self {
         Self {
             source_name: source_name.into(),
             source: source.into(),
@@ -51,6 +57,7 @@ impl RuleContext {
         if matches!(diagnostic.severity, Severity::Warning) && !self.options.emit_warnings {
             return;
         }
+
         self.diagnostics.push(diagnostic);
     }
 
@@ -85,9 +92,11 @@ pub fn run_rules(
     options: AnalysisOptions,
 ) -> AnalysisResult {
     let mut ctx = RuleContext::new(source_name, source, options);
+
     for rule in rules {
         rule.run(&mut ctx, program);
     }
+
     AnalysisResult {
         diagnostics: ctx.diagnostics,
     }
