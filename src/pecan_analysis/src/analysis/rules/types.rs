@@ -1,6 +1,6 @@
 use crate::analysis::diagnostics::Severity;
 use crate::analysis::rules::RuleContext;
-use crate::types::TypeError;
+use crate::types::{TypeError, TypeInfo, TypeResult};
 
 pub(crate) fn emit_type_error(ctx: &mut RuleContext, error: TypeError) {
     match error {
@@ -30,6 +30,16 @@ pub(crate) fn emit_type_error(ctx: &mut RuleContext, error: TypeError) {
                 "E1201",
                 "unknown struct type",
                 "unknown struct type",
+                None,
+                Severity::Error,
+            );
+        }
+        TypeError::InvalidMemberTarget { span } => {
+            ctx.emit_simple(
+                span,
+                "E1213",
+                "member access target is not a struct-like type",
+                "invalid member access target",
                 None,
                 Severity::Error,
             );
@@ -218,5 +228,44 @@ pub(crate) fn emit_type_error(ctx: &mut RuleContext, error: TypeError) {
                 Severity::Error,
             );
         }
+    }
+}
+
+pub(crate) fn emit_cast_intent_warnings(ctx: &mut RuleContext, result: &TypeResult) {
+    for intent in &result.cast_intents {
+        let from = result
+            .types
+            .get(intent.from)
+            .map(type_name)
+            .unwrap_or_else(|| format!("{:?}", intent.from));
+        let to = result
+            .types
+            .get(intent.to)
+            .map(type_name)
+            .unwrap_or_else(|| format!("{:?}", intent.to));
+        ctx.emit_simple(
+            intent.span,
+            "W1203",
+            format!("implicit numeric cast from {from} to {to}"),
+            "implicit numeric cast",
+            Some("add an explicit cast to make conversion intent clear".to_string()),
+            Severity::Warning,
+        );
+    }
+}
+
+fn type_name(info: &TypeInfo) -> String {
+    match info {
+        TypeInfo::Primitive(primitive) => match primitive {
+            crate::hir::HirPrimitiveType::Bool => "bool".to_string(),
+            crate::hir::HirPrimitiveType::I32 => "i32".to_string(),
+            crate::hir::HirPrimitiveType::I64 => "i64".to_string(),
+            crate::hir::HirPrimitiveType::U8 => "u8".to_string(),
+            crate::hir::HirPrimitiveType::F64 => "f64".to_string(),
+            crate::hir::HirPrimitiveType::Char => "char".to_string(),
+            crate::hir::HirPrimitiveType::String => "string".to_string(),
+            crate::hir::HirPrimitiveType::Unit => "unit".to_string(),
+        },
+        TypeInfo::Named(item_id) => format!("Named({})", item_id.0),
     }
 }

@@ -1,19 +1,25 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::RuleContext;
-use crate::hir::{AstItem, AstProgram};
-use crate::syntax::{ContractNode, Spanned, Type};
+use crate::hir::{
+    HirContractNode, HirItem, HirProgram, HirType,
+};
+use crate::syntax::Spanned;
 use std::collections::HashMap;
 
 impl SemanticPipelineRule {
-    pub(super) fn stage6_contracts_and_methods(&self, ctx: &mut RuleContext, hir: &Spanned<AstProgram>) {
+    pub(super) fn stage6_contracts_and_methods(
+        &self,
+        ctx: &mut RuleContext,
+        hir: &Spanned<HirProgram>,
+    ) {
         let contracts = self.collect_contract_signatures(hir);
 
         for item in &hir.node.items {
-            let AstItem::MethodDefinition(method) = &item.node else {
+            let HirItem::MethodDefinition(method) = &item.node else {
                 continue;
             };
-            let Type::Complex(receiver_path) = &method.node.receiver_type.node else {
+            let HirType::Complex(receiver_path) = &method.node.receiver_type.node else {
                 continue;
             };
             let Some(receiver_name) = receiver_path.node.segments.last().map(|segment| segment.node.name.clone()) else {
@@ -69,17 +75,17 @@ impl SemanticPipelineRule {
 
     fn collect_contract_signatures(
         &self,
-        hir: &Spanned<AstProgram>,
+        hir: &Spanned<HirProgram>,
     ) -> HashMap<String, HashMap<String, String>> {
         let mut contracts = HashMap::new();
         for item in &hir.node.items {
-            let AstItem::ContractDefinition(definition) = &item.node else {
+            let HirItem::ContractDefinition(definition) = &item.node else {
                 continue;
             };
 
             let mut methods = HashMap::new();
             for node in &definition.node.items {
-                let ContractNode::MethodSignature(signature) = &node.node else {
+                let HirContractNode::MethodSignature(signature) = &node.node else {
                     continue;
                 };
                 methods.insert(
@@ -92,12 +98,17 @@ impl SemanticPipelineRule {
         contracts
     }
 
-    fn has_contract_method_impl(&self, hir: &Spanned<AstProgram>, contract_name: &str, method_name: &str) -> bool {
+    fn has_contract_method_impl(
+        &self,
+        hir: &Spanned<HirProgram>,
+        contract_name: &str,
+        method_name: &str,
+    ) -> bool {
         for item in &hir.node.items {
-            let AstItem::MethodDefinition(method) = &item.node else {
+            let HirItem::MethodDefinition(method) = &item.node else {
                 continue;
             };
-            let Type::Complex(receiver_path) = &method.node.receiver_type.node else {
+            let HirType::Complex(receiver_path) = &method.node.receiver_type.node else {
                 continue;
             };
             let Some(receiver_name) = receiver_path.node.segments.last().map(|segment| segment.node.name.as_str()) else {
@@ -110,16 +121,21 @@ impl SemanticPipelineRule {
         false
     }
 
-    fn contract_method_span(&self, hir: &Spanned<AstProgram>, contract_name: &str, method_name: &str) -> Option<crate::syntax::SpanInfo> {
+    fn contract_method_span(
+        &self,
+        hir: &Spanned<HirProgram>,
+        contract_name: &str,
+        method_name: &str,
+    ) -> Option<crate::syntax::SpanInfo> {
         for item in &hir.node.items {
-            let AstItem::ContractDefinition(definition) = &item.node else {
+            let HirItem::ContractDefinition(definition) = &item.node else {
                 continue;
             };
             if definition.node.name.node.name != contract_name {
                 continue;
             }
             for node in &definition.node.items {
-                let ContractNode::MethodSignature(signature) = &node.node else {
+                let HirContractNode::MethodSignature(signature) = &node.node else {
                     continue;
                 };
                 if signature.node.name.node.name == method_name {

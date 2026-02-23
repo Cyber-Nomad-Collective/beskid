@@ -60,6 +60,58 @@ pub(crate) fn emit_resolve_error(ctx: &mut RuleContext, error: ResolveError) {
                 Severity::Error,
             );
         }
+        ResolveError::UnknownModulePath { path, span } => {
+            ctx.emit_simple(
+                span,
+                "E1105",
+                format!("unknown module path `{path}`"),
+                "unknown module path",
+                None,
+                Severity::Error,
+            );
+        }
+        ResolveError::UnknownValueInModule {
+            module_path,
+            name,
+            span,
+        } => {
+            ctx.emit_simple(
+                span,
+                "E1101",
+                format!("unknown value `{name}` in module `{module_path}`"),
+                "unknown value in module",
+                None,
+                Severity::Error,
+            );
+        }
+        ResolveError::UnknownTypeInModule {
+            module_path,
+            name,
+            span,
+        } => {
+            ctx.emit_simple(
+                span,
+                "E1201",
+                format!("unknown type `{name}` in module `{module_path}`"),
+                "unknown type in module",
+                None,
+                Severity::Error,
+            );
+        }
+        ResolveError::PrivateItemInModule {
+            module_path,
+            name,
+            span,
+        } => {
+            ctx.emit_simple(
+                span,
+                "E1107",
+                format!("private item `{name}` cannot be accessed from module `{module_path}`"),
+                "private item access",
+                Some("mark the item `pub` or avoid cross-module access".to_string()),
+                Severity::Error,
+            );
+        }
     }
 }
 

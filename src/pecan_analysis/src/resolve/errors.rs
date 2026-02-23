@@ -6,6 +6,22 @@ pub enum ResolveError {
     DuplicateLocal { name: String, span: SpanInfo, previous: SpanInfo },
     UnknownValue { name: String, span: SpanInfo },
     UnknownType { name: String, span: SpanInfo },
+    UnknownModulePath { path: String, span: SpanInfo },
+    UnknownValueInModule {
+        module_path: String,
+        name: String,
+        span: SpanInfo,
+    },
+    UnknownTypeInModule {
+        module_path: String,
+        name: String,
+        span: SpanInfo,
+    },
+    PrivateItemInModule {
+        module_path: String,
+        name: String,
+        span: SpanInfo,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

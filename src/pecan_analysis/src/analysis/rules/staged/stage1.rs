@@ -1,16 +1,19 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::{resolve, RuleContext};
-use crate::hir::{AstItem, AstProgram};
+use crate::hir::{
+    validate_hir_program, HirBlock, HirExpressionNode, HirItem, HirLegalityError, HirPath,
+    HirProgram, HirStatementNode,
+};
 use crate::resolve::{Resolution, Resolver};
-use crate::syntax::{Block, Expression, Path, SpanInfo, Spanned, Statement};
+use crate::syntax::{SpanInfo, Spanned};
 use std::collections::{HashMap, HashSet};
 
 impl SemanticPipelineRule {
     pub(super) fn stage1_name_resolution(
         &self,
         ctx: &mut RuleContext,
-        hir: &Spanned<AstProgram>,
+        hir: &Spanned<HirProgram>,
     ) -> Option<Resolution> {
         self.check_ambiguous_imports(ctx, hir);
         self.check_unknown_import_paths(ctx, hir);
@@ -31,14 +34,67 @@ impl SemanticPipelineRule {
             resolve::emit_resolve_warning(ctx, warning);
         }
 
+        let legality_errors = validate_hir_program(hir, &resolution);
+        if !legality_errors.is_empty() {
+            for error in legality_errors {
+                self.emit_legality_error(ctx, error);
+            }
+            return None;
+        }
+
         Some(resolution)
     }
 
-    fn check_ambiguous_imports(&self, ctx: &mut RuleContext, hir: &Spanned<AstProgram>) {
+    fn emit_legality_error(&self, ctx: &mut RuleContext, error: HirLegalityError) {
+        match error {
+            HirLegalityError::InvalidSpan { span, context } => {
+                ctx.emit_simple(
+                    span,
+                    "E1151",
+                    format!("invalid span invariant in `{context}`"),
+                    "invalid HIR span",
+                    None,
+                    Severity::Error,
+                );
+            }
+            HirLegalityError::UnresolvedValuePath { span } => {
+                ctx.emit_simple(
+                    span,
+                    "E1152",
+                    "unresolved value path in HIR legality validation".to_string(),
+                    "unresolved HIR value path",
+                    None,
+                    Severity::Error,
+                );
+            }
+            HirLegalityError::UnresolvedTypePath { span } => {
+                ctx.emit_simple(
+                    span,
+                    "E1153",
+                    "unresolved type path in HIR legality validation".to_string(),
+                    "unresolved HIR type path",
+                    None,
+                    Severity::Error,
+                );
+            }
+            HirLegalityError::NonNormalizedControlFlow { span, message } => {
+                ctx.emit_simple(
+                    span,
+                    "E1154",
+                    format!("non-normalized control-flow in HIR: {message}"),
+                    "non-normalized HIR control-flow",
+                    None,
+                    Severity::Error,
+                );
+            }
+        }
+    }
+
+    fn check_ambiguous_imports(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
         let mut seen: HashMap<String, SpanInfo> = HashMap::new();
 
         for item in &hir.node.items {
-            let AstItem::UseDeclaration(use_decl) = &item.node else {
+            let HirItem::UseDeclaration(use_decl) = &item.node else {
                 continue;
             };
             let imported_name = self.path_tail_local(&use_decl.node.path);
@@ -61,25 +117,25 @@ impl SemanticPipelineRule {
         }
     }
 
-    fn check_unknown_import_paths(&self, ctx: &mut RuleContext, hir: &Spanned<AstProgram>) {
+    fn check_unknown_import_paths(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
         let mut known_roots = HashSet::new();
         for item in &hir.node.items {
             match &item.node {
-                AstItem::ModuleDeclaration(module_decl) => {
+                HirItem::ModuleDeclaration(module_decl) => {
                     if let Some(segment) = module_decl.node.path.node.segments.first() {
                         known_roots.insert(segment.node.name.clone());
                     }
                 }
-                AstItem::FunctionDefinition(def) => {
+                HirItem::FunctionDefinition(def) => {
                     known_roots.insert(def.node.name.node.name.clone());
                 }
-                AstItem::TypeDefinition(def) => {
+                HirItem::TypeDefinition(def) => {
                     known_roots.insert(def.node.name.node.name.clone());
                 }
-                AstItem::EnumDefinition(def) => {
+                HirItem::EnumDefinition(def) => {
                     known_roots.insert(def.node.name.node.name.clone());
                 }
-                AstItem::ContractDefinition(def) => {
+                HirItem::ContractDefinition(def) => {
                     known_roots.insert(def.node.name.node.name.clone());
                 }
                 _ => {}
@@ -87,7 +143,7 @@ impl SemanticPipelineRule {
         }
 
         for item in &hir.node.items {
-            let AstItem::UseDeclaration(use_decl) = &item.node else {
+            let HirItem::UseDeclaration(use_decl) = &item.node else {
                 continue;
             };
             let Some(root) = use_decl.node.path.node.segments.first() else {
@@ -108,13 +164,13 @@ impl SemanticPipelineRule {
         }
     }
 
-    fn check_use_before_declaration(&self, ctx: &mut RuleContext, hir: &Spanned<AstProgram>) {
+    fn check_use_before_declaration(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
         for item in &hir.node.items {
             match &item.node {
-                AstItem::FunctionDefinition(definition) => {
+                HirItem::FunctionDefinition(definition) => {
                     self.check_block_use_before_decl(ctx, &definition.node.body, &mut Vec::new());
                 }
-                AstItem::MethodDefinition(definition) => {
+                HirItem::MethodDefinition(definition) => {
                     self.check_block_use_before_decl(ctx, &definition.node.body, &mut Vec::new());
                 }
                 _ => {}
@@ -125,44 +181,44 @@ impl SemanticPipelineRule {
     fn check_block_use_before_decl(
         &self,
         ctx: &mut RuleContext,
-        block: &Spanned<Block>,
+        block: &Spanned<HirBlock>,
         declared_stack: &mut Vec<String>,
     ) {
         let start_len = declared_stack.len();
 
         for statement in &block.node.statements {
             match &statement.node {
-                Statement::Let(let_statement) => {
+                HirStatementNode::LetStatement(let_statement) => {
                     self.check_expr_use_before_decl(ctx, &let_statement.node.value, declared_stack);
                     declared_stack.push(let_statement.node.name.node.name.clone());
                 }
-                Statement::Return(return_statement) => {
+                HirStatementNode::ReturnStatement(return_statement) => {
                     if let Some(value) = &return_statement.node.value {
                         self.check_expr_use_before_decl(ctx, value, declared_stack);
                     }
                 }
-                Statement::While(while_statement) => {
+                HirStatementNode::WhileStatement(while_statement) => {
                     self.check_expr_use_before_decl(ctx, &while_statement.node.condition, declared_stack);
                     self.check_block_use_before_decl(ctx, &while_statement.node.body, declared_stack);
                 }
-                Statement::For(for_statement) => {
+                HirStatementNode::ForStatement(for_statement) => {
                     self.check_expr_use_before_decl(ctx, &for_statement.node.range.node.start, declared_stack);
                     self.check_expr_use_before_decl(ctx, &for_statement.node.range.node.end, declared_stack);
                     declared_stack.push(for_statement.node.iterator.node.name.clone());
                     self.check_block_use_before_decl(ctx, &for_statement.node.body, declared_stack);
                     declared_stack.pop();
                 }
-                Statement::If(if_statement) => {
+                HirStatementNode::IfStatement(if_statement) => {
                     self.check_expr_use_before_decl(ctx, &if_statement.node.condition, declared_stack);
                     self.check_block_use_before_decl(ctx, &if_statement.node.then_block, declared_stack);
                     if let Some(else_block) = &if_statement.node.else_block {
                         self.check_block_use_before_decl(ctx, else_block, declared_stack);
                     }
                 }
-                Statement::Expression(expression_statement) => {
+                HirStatementNode::ExpressionStatement(expression_statement) => {
                     self.check_expr_use_before_decl(ctx, &expression_statement.node.expression, declared_stack);
                 }
-                Statement::Break(_) | Statement::Continue(_) => {}
+                HirStatementNode::BreakStatement(_) | HirStatementNode::ContinueStatement(_) => {}
             }
         }
 
@@ -172,11 +228,11 @@ impl SemanticPipelineRule {
     fn check_expr_use_before_decl(
         &self,
         ctx: &mut RuleContext,
-        expression: &Spanned<Expression>,
+        expression: &Spanned<HirExpressionNode>,
         declared_stack: &[String],
     ) {
         match &expression.node {
-            Expression::Path(path_expr) => {
+            HirExpressionNode::PathExpression(path_expr) => {
                 if path_expr.node.path.node.segments.len() != 1 {
                     return;
                 }
@@ -195,37 +251,37 @@ impl SemanticPipelineRule {
                     Severity::Error,
                 );
             }
-            Expression::Assign(assign_expression) => {
+            HirExpressionNode::AssignExpression(assign_expression) => {
                 self.check_expr_use_before_decl(ctx, &assign_expression.node.target, declared_stack);
                 self.check_expr_use_before_decl(ctx, &assign_expression.node.value, declared_stack);
             }
-            Expression::Binary(binary_expression) => {
+            HirExpressionNode::BinaryExpression(binary_expression) => {
                 self.check_expr_use_before_decl(ctx, &binary_expression.node.left, declared_stack);
                 self.check_expr_use_before_decl(ctx, &binary_expression.node.right, declared_stack);
             }
-            Expression::Unary(unary_expression) => {
+            HirExpressionNode::UnaryExpression(unary_expression) => {
                 self.check_expr_use_before_decl(ctx, &unary_expression.node.expr, declared_stack);
             }
-            Expression::Call(call_expression) => {
+            HirExpressionNode::CallExpression(call_expression) => {
                 self.check_expr_use_before_decl(ctx, &call_expression.node.callee, declared_stack);
                 for arg in &call_expression.node.args {
                     self.check_expr_use_before_decl(ctx, arg, declared_stack);
                 }
             }
-            Expression::Member(member_expression) => {
+            HirExpressionNode::MemberExpression(member_expression) => {
                 self.check_expr_use_before_decl(ctx, &member_expression.node.target, declared_stack);
             }
-            Expression::StructLiteral(struct_literal) => {
+            HirExpressionNode::StructLiteralExpression(struct_literal) => {
                 for field in &struct_literal.node.fields {
                     self.check_expr_use_before_decl(ctx, &field.node.value, declared_stack);
                 }
             }
-            Expression::EnumConstructor(constructor_expression) => {
+            HirExpressionNode::EnumConstructorExpression(constructor_expression) => {
                 for arg in &constructor_expression.node.args {
                     self.check_expr_use_before_decl(ctx, arg, declared_stack);
                 }
             }
-            Expression::Match(match_expression) => {
+            HirExpressionNode::MatchExpression(match_expression) => {
                 self.check_expr_use_before_decl(ctx, &match_expression.node.scrutinee, declared_stack);
                 for arm in &match_expression.node.arms {
                     if let Some(guard) = &arm.node.guard {
@@ -234,17 +290,17 @@ impl SemanticPipelineRule {
                     self.check_expr_use_before_decl(ctx, &arm.node.value, declared_stack);
                 }
             }
-            Expression::Block(block_expression) => {
+            HirExpressionNode::BlockExpression(block_expression) => {
                 self.check_block_use_before_decl(ctx, &block_expression.node.block, &mut declared_stack.to_vec());
             }
-            Expression::Grouped(grouped_expression) => {
+            HirExpressionNode::GroupedExpression(grouped_expression) => {
                 self.check_expr_use_before_decl(ctx, &grouped_expression.node.expr, declared_stack);
             }
-            Expression::Literal(_) => {}
+            HirExpressionNode::LiteralExpression(_) => {}
         }
     }
 
-    fn path_tail_local(&self, path: &Spanned<Path>) -> String {
+    fn path_tail_local(&self, path: &Spanned<HirPath>) -> String {
         path.node
             .segments
             .last()
@@ -252,7 +308,7 @@ impl SemanticPipelineRule {
             .unwrap_or_default()
     }
 
-    fn path_to_string_local(&self, path: &Spanned<Path>) -> String {
+    fn path_to_string_local(&self, path: &Spanned<HirPath>) -> String {
         path.node
             .segments
             .iter()

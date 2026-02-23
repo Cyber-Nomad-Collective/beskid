@@ -1,26 +1,34 @@
-use crate::hir::HirPrimitiveType;
-use crate::resolve::{ItemKind, ResolvedValue};
-use crate::syntax::{
-    BinaryExpression, CallExpression, EnumConstructorExpression, EnumPath, Expression, Literal,
-    MatchArm, MatchExpression, MemberExpression, Path, Pattern, Spanned, StructLiteralExpression,
-    UnaryExpression,
+use crate::hir::{
+    HirBinaryExpression, HirBinaryOp, HirCallExpression, HirEnumConstructorExpression,
+    HirExpressionNode, HirLiteral, HirMatchArm, HirMatchExpression, HirMemberExpression,
+    HirPath, HirPattern, HirPrimitiveType, HirStructLiteralExpression, HirUnaryExpression,
+    HirUnaryOp,
 };
+use crate::resolve::{ItemKind, ResolvedValue};
+use crate::syntax::Spanned;
 use crate::types::TypeId;
 
 use super::context::{TypeContext, TypeError};
 
 impl<'a> TypeContext<'a> {
-    pub(super) fn type_expression(&mut self, expression: &Spanned<Expression>) -> Option<TypeId> {
+    pub(super) fn type_expression(
+        &mut self,
+        expression: &Spanned<HirExpressionNode>,
+    ) -> Option<TypeId> {
         let type_id = match &expression.node {
-            Expression::Literal(literal) => self.type_id_for_literal(&literal.node.literal),
-            Expression::Path(path_expr) => {
+            HirExpressionNode::LiteralExpression(literal) => {
+                self.type_id_for_literal(&literal.node.literal)
+            }
+            HirExpressionNode::PathExpression(path_expr) => {
                 self.type_id_for_path(path_expr.node.path.span, &path_expr.node.path)
             }
-            Expression::StructLiteral(literal) => self.type_struct_literal_expression(literal),
-            Expression::EnumConstructor(constructor) => {
+            HirExpressionNode::StructLiteralExpression(literal) => {
+                self.type_struct_literal_expression(literal)
+            }
+            HirExpressionNode::EnumConstructorExpression(constructor) => {
                 self.type_enum_constructor_expression(constructor)
             }
-            Expression::Assign(assign) => {
+            HirExpressionNode::AssignExpression(assign) => {
                 let target = self.type_expression(&assign.node.target);
                 let value = self.type_expression(&assign.node.value);
                 if let (Some(target), Some(value)) = (target, value) {
@@ -30,16 +38,16 @@ impl<'a> TypeContext<'a> {
                     None
                 }
             }
-            Expression::Binary(binary) => self.type_binary_expression(binary),
-            Expression::Unary(unary) => self.type_unary_expression(unary),
-            Expression::Grouped(grouped) => self.type_expression(&grouped.node.expr),
-            Expression::Block(block_expr) => {
+            HirExpressionNode::BinaryExpression(binary) => self.type_binary_expression(binary),
+            HirExpressionNode::UnaryExpression(unary) => self.type_unary_expression(unary),
+            HirExpressionNode::GroupedExpression(grouped) => self.type_expression(&grouped.node.expr),
+            HirExpressionNode::BlockExpression(block_expr) => {
                 self.type_block(&block_expr.node.block);
                 self.primitive_type_id(HirPrimitiveType::Unit)
             }
-            Expression::Call(call) => self.type_call_expression(call),
-            Expression::Member(member) => self.type_member_expression(member),
-            Expression::Match(match_expr) => self.type_match_expression(match_expr),
+            HirExpressionNode::CallExpression(call) => self.type_call_expression(call),
+            HirExpressionNode::MemberExpression(member) => self.type_member_expression(member),
+            HirExpressionNode::MatchExpression(match_expr) => self.type_match_expression(match_expr),
         };
 
         if let Some(type_id) = type_id {
@@ -48,9 +56,9 @@ impl<'a> TypeContext<'a> {
         type_id
     }
 
-    fn type_call_expression(&mut self, call: &Spanned<CallExpression>) -> Option<TypeId> {
+    fn type_call_expression(&mut self, call: &Spanned<HirCallExpression>) -> Option<TypeId> {
         let signature = match &call.node.callee.node {
-            Expression::Path(path_expr) => {
+            HirExpressionNode::PathExpression(path_expr) => {
                 let span = path_expr.node.path.span;
                 match self.resolution.tables.resolved_values.get(&span) {
                     Some(ResolvedValue::Item(item_id)) => {
@@ -79,13 +87,7 @@ impl<'a> TypeContext<'a> {
 
         for (arg, expected) in call.node.args.iter().zip(signature.params.iter()) {
             if let Some(actual) = self.type_expression(arg) {
-                if actual != *expected {
-                    self.errors.push(TypeError::CallArgumentMismatch {
-                        span: arg.span,
-                        expected: *expected,
-                        actual,
-                    });
-                }
+                self.require_same_type(arg.span, *expected, actual);
             }
         }
 
@@ -94,7 +96,7 @@ impl<'a> TypeContext<'a> {
 
     fn type_struct_literal_expression(
         &mut self,
-        literal: &Spanned<StructLiteralExpression>,
+        literal: &Spanned<HirStructLiteralExpression>,
     ) -> Option<TypeId> {
         let mut type_id = self.type_id_for_type_path(literal.node.path.span);
         if type_id.is_none() {
@@ -156,7 +158,7 @@ impl<'a> TypeContext<'a> {
 
     fn type_enum_constructor_expression(
         &mut self,
-        constructor: &Spanned<EnumConstructorExpression>,
+        constructor: &Spanned<HirEnumConstructorExpression>,
     ) -> Option<TypeId> {
         let mut type_id =
             self.type_id_for_enum_path(constructor.node.path.span, &constructor.node.path);
@@ -215,11 +217,11 @@ impl<'a> TypeContext<'a> {
         Some(type_id)
     }
 
-    fn type_member_expression(&mut self, member: &Spanned<MemberExpression>) -> Option<TypeId> {
+    fn type_member_expression(&mut self, member: &Spanned<HirMemberExpression>) -> Option<TypeId> {
         let target_type = self.type_expression(&member.node.target)?;
         let Some(item_id) = self.named_item_id(target_type) else {
             self.errors
-                .push(TypeError::UnknownStructType { span: member.span });
+                .push(TypeError::InvalidMemberTarget { span: member.span });
             return None;
         };
         let fields = self.struct_fields.get(&item_id).cloned().or_else(|| {
@@ -246,7 +248,7 @@ impl<'a> TypeContext<'a> {
         Some(*field_type)
     }
 
-    fn type_match_expression(&mut self, match_expr: &Spanned<MatchExpression>) -> Option<TypeId> {
+    fn type_match_expression(&mut self, match_expr: &Spanned<HirMatchExpression>) -> Option<TypeId> {
         let scrutinee_type = self.type_expression(&match_expr.node.scrutinee);
         let mut expected: Option<TypeId> = None;
         for arm in &match_expr.node.arms {
@@ -258,7 +260,7 @@ impl<'a> TypeContext<'a> {
     fn type_match_arm(
         &mut self,
         scrutinee_type: Option<TypeId>,
-        arm: &Spanned<MatchArm>,
+        arm: &Spanned<HirMatchArm>,
         expected: &mut Option<TypeId>,
     ) {
         if let Some(guard) = &arm.node.guard {
@@ -281,12 +283,12 @@ impl<'a> TypeContext<'a> {
         }
     }
 
-    fn type_pattern(&mut self, scrutinee_type: Option<TypeId>, pattern: &Spanned<Pattern>) {
+    fn type_pattern(&mut self, scrutinee_type: Option<TypeId>, pattern: &Spanned<HirPattern>) {
         let Some(scrutinee_type) = scrutinee_type else {
             return;
         };
         match &pattern.node {
-            Pattern::Enum(enum_pattern) => {
+            HirPattern::Enum(enum_pattern) => {
                 let enum_type = self
                     .type_id_for_enum_path(enum_pattern.node.path.span, &enum_pattern.node.path);
                 if let Some(enum_type) = enum_type {
@@ -331,7 +333,7 @@ impl<'a> TypeContext<'a> {
                     }
                 }
             }
-            Pattern::Identifier(_) | Pattern::Wildcard | Pattern::Literal(_) => {
+            HirPattern::Identifier(_) | HirPattern::Wildcard | HirPattern::Literal(_) => {
                 self.type_pattern_with_expected(scrutinee_type, pattern);
             }
         }
@@ -340,19 +342,19 @@ impl<'a> TypeContext<'a> {
     fn type_pattern_with_expected(
         &mut self,
         expected_type: TypeId,
-        pattern: &Spanned<Pattern>,
+        pattern: &Spanned<HirPattern>,
     ) {
         match &pattern.node {
-            Pattern::Identifier(identifier) => {
+            HirPattern::Identifier(identifier) => {
                 self.insert_local_type(identifier.span, expected_type);
             }
-            Pattern::Literal(literal) => {
+            HirPattern::Literal(literal) => {
                 if let Some(actual) = self.type_id_for_literal(literal) {
                     self.require_same_type(pattern.span, expected_type, actual);
                 }
             }
-            Pattern::Wildcard => {}
-            Pattern::Enum(enum_pattern) => {
+            HirPattern::Wildcard => {}
+            HirPattern::Enum(enum_pattern) => {
                 let enum_type = self
                     .type_id_for_enum_path(enum_pattern.node.path.span, &enum_pattern.node.path);
                 if let Some(enum_type) = enum_type {
@@ -367,7 +369,7 @@ impl<'a> TypeContext<'a> {
 
     pub(super) fn type_binary_expression(
         &mut self,
-        binary: &Spanned<BinaryExpression>,
+        binary: &Spanned<HirBinaryExpression>,
     ) -> Option<TypeId> {
         let left = self.type_expression(&binary.node.left);
         let right = self.type_expression(&binary.node.right);
@@ -384,7 +386,7 @@ impl<'a> TypeContext<'a> {
             return None;
         }
         match binary.node.op.node {
-            crate::syntax::BinaryOp::Or | crate::syntax::BinaryOp::And => {
+            HirBinaryOp::Or | HirBinaryOp::And => {
                 if self.is_bool(left) {
                     Some(left)
                 } else {
@@ -393,12 +395,12 @@ impl<'a> TypeContext<'a> {
                     None
                 }
             }
-            crate::syntax::BinaryOp::Eq
-            | crate::syntax::BinaryOp::NotEq
-            | crate::syntax::BinaryOp::Lt
-            | crate::syntax::BinaryOp::Lte
-            | crate::syntax::BinaryOp::Gt
-            | crate::syntax::BinaryOp::Gte => {
+            HirBinaryOp::Eq
+            | HirBinaryOp::NotEq
+            | HirBinaryOp::Lt
+            | HirBinaryOp::Lte
+            | HirBinaryOp::Gt
+            | HirBinaryOp::Gte => {
                 if self.is_comparable(left) {
                     self.primitive_type_id(HirPrimitiveType::Bool)
                 } else {
@@ -407,10 +409,10 @@ impl<'a> TypeContext<'a> {
                     None
                 }
             }
-            crate::syntax::BinaryOp::Add
-            | crate::syntax::BinaryOp::Sub
-            | crate::syntax::BinaryOp::Mul
-            | crate::syntax::BinaryOp::Div => {
+            HirBinaryOp::Add
+            | HirBinaryOp::Sub
+            | HirBinaryOp::Mul
+            | HirBinaryOp::Div => {
                 if self.is_numeric(left) {
                     Some(left)
                 } else {
@@ -424,11 +426,11 @@ impl<'a> TypeContext<'a> {
 
     pub(super) fn type_unary_expression(
         &mut self,
-        unary: &Spanned<UnaryExpression>,
+        unary: &Spanned<HirUnaryExpression>,
     ) -> Option<TypeId> {
         let expr = self.type_expression(&unary.node.expr)?;
         match unary.node.op.node {
-            crate::syntax::UnaryOp::Neg => {
+            HirUnaryOp::Neg => {
                 if self.is_numeric(expr) {
                     Some(expr)
                 } else {
@@ -437,7 +439,7 @@ impl<'a> TypeContext<'a> {
                     None
                 }
             }
-            crate::syntax::UnaryOp::Not => {
+            HirUnaryOp::Not => {
                 if self.is_bool(expr) {
                     Some(expr)
                 } else {
@@ -449,20 +451,20 @@ impl<'a> TypeContext<'a> {
         }
     }
 
-    pub(super) fn type_id_for_literal(&mut self, literal: &Spanned<Literal>) -> Option<TypeId> {
+    pub(super) fn type_id_for_literal(&mut self, literal: &Spanned<HirLiteral>) -> Option<TypeId> {
         match &literal.node {
-            Literal::Integer(_) => self.primitive_type_id(HirPrimitiveType::I64),
-            Literal::Float(_) => self.primitive_type_id(HirPrimitiveType::F64),
-            Literal::String(_) => self.primitive_type_id(HirPrimitiveType::String),
-            Literal::Char(_) => self.primitive_type_id(HirPrimitiveType::Char),
-            Literal::Bool(_) => self.primitive_type_id(HirPrimitiveType::Bool),
+            HirLiteral::Integer(_) => self.primitive_type_id(HirPrimitiveType::I64),
+            HirLiteral::Float(_) => self.primitive_type_id(HirPrimitiveType::F64),
+            HirLiteral::String(_) => self.primitive_type_id(HirPrimitiveType::String),
+            HirLiteral::Char(_) => self.primitive_type_id(HirPrimitiveType::Char),
+            HirLiteral::Bool(_) => self.primitive_type_id(HirPrimitiveType::Bool),
         }
     }
 
     pub(super) fn type_id_for_path(
         &mut self,
         span: crate::syntax::SpanInfo,
-        path: &Spanned<Path>,
+        path: &Spanned<HirPath>,
     ) -> Option<TypeId> {
         if path.node.segments.len() > 1 {
             return self.type_struct_field_path(span, path);
@@ -485,7 +487,11 @@ impl<'a> TypeContext<'a> {
         }
     }
 
-    fn type_struct_field_path(&mut self, span: crate::syntax::SpanInfo, path: &Spanned<Path>) -> Option<TypeId> {
+    fn type_struct_field_path(
+        &mut self,
+        span: crate::syntax::SpanInfo,
+        path: &Spanned<HirPath>,
+    ) -> Option<TypeId> {
         let segments = &path.node.segments;
         let base_name = segments.first()?.node.name.clone();
         let field_name = segments.get(1)?.node.name.clone();
@@ -506,7 +512,7 @@ impl<'a> TypeContext<'a> {
             return None;
         };
         let Some(item_id) = self.named_item_id(base_type) else {
-            self.errors.push(TypeError::UnknownStructType { span });
+            self.errors.push(TypeError::InvalidMemberTarget { span });
             return None;
         };
         let fields = self.struct_fields.get(&item_id).cloned().or_else(|| {
@@ -534,7 +540,7 @@ impl<'a> TypeContext<'a> {
     pub(super) fn type_id_for_enum_path(
         &mut self,
         span: crate::syntax::SpanInfo,
-        _path: &Spanned<EnumPath>,
+        _path: &Spanned<crate::hir::HirEnumPath>,
     ) -> Option<TypeId> {
         self.type_id_for_type_path(span)
     }

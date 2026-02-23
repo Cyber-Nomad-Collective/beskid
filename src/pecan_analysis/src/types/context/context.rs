@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::hir::{AstProgram, HirPrimitiveType};
+use crate::hir::{HirPrimitiveType, HirProgram};
 use crate::resolve::{ItemId, LocalId, Resolution};
 use crate::syntax::{SpanInfo, Spanned};
 use crate::types::{TypeId, TypeTable};
@@ -10,6 +10,7 @@ pub enum TypeError {
     UnknownType { span: SpanInfo },
     UnknownValueType { span: SpanInfo },
     UnknownStructType { span: SpanInfo },
+    InvalidMemberTarget { span: SpanInfo },
     UnknownEnumType { span: SpanInfo },
     UnknownStructField { span: SpanInfo, name: String },
     UnknownEnumVariant { span: SpanInfo, name: String },
@@ -33,7 +34,25 @@ pub struct TypeResult {
     pub types: TypeTable,
     pub expr_types: HashMap<SpanInfo, TypeId>,
     pub local_types: HashMap<LocalId, TypeId>,
+    // Canonical output contract for safe implicit numeric conversions.
+    // Invariants (normalized in `TypeContext::type_program`):
+    // - sorted by (span.start, span.end, from, to)
+    // - exact duplicates removed
+    // - conflicting reverse intents for the same span are rejected upstream
     pub cast_intents: Vec<CastIntent>,
+}
+
+impl TypeResult {
+    pub fn cast_intent_for_span(&self, span: SpanInfo) -> Option<&CastIntent> {
+        self.cast_intents.iter().find(|intent| intent.span == span)
+    }
+
+    pub fn cast_intents_for_span(
+        &self,
+        span: SpanInfo,
+    ) -> impl Iterator<Item = &CastIntent> {
+        self.cast_intents.iter().filter(move |intent| intent.span == span)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -84,11 +103,24 @@ impl<'a> TypeContext<'a> {
         context
     }
 
-    pub fn type_program(mut self, program: &Spanned<AstProgram>) -> Result<TypeResult, Vec<TypeError>> {
+    pub fn type_program(
+        mut self,
+        program: &Spanned<HirProgram>,
+    ) -> Result<TypeResult, Vec<TypeError>> {
         for item in &program.node.items {
             self.type_item(item);
         }
         if self.errors.is_empty() {
+            self.cast_intents.sort_by_key(|intent| {
+                (
+                    intent.span.start,
+                    intent.span.end,
+                    intent.from.0,
+                    intent.to.0,
+                )
+            });
+            self.cast_intents
+                .dedup_by(|left, right| left.span == right.span && left.from == right.from && left.to == right.to);
             Ok(TypeResult {
                 types: self.type_table,
                 expr_types: self.expr_types,
@@ -102,7 +134,7 @@ impl<'a> TypeContext<'a> {
 }
 
 pub fn type_program(
-    program: &Spanned<AstProgram>,
+    program: &Spanned<HirProgram>,
     resolution: &Resolution,
 ) -> Result<TypeResult, Vec<TypeError>> {
     TypeContext::new(resolution).type_program(program)

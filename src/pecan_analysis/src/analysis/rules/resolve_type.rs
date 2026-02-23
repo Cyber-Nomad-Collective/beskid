@@ -1,5 +1,5 @@
 use crate::analysis::rules::{resolve, types, Rule, RuleContext};
-use crate::hir::AstProgram;
+use crate::hir::{lower_program, AstProgram, HirProgram};
 use crate::resolve::Resolver;
 use crate::syntax::{Program, SpanInfo, Spanned};
 use crate::types::type_program;
@@ -23,7 +23,8 @@ impl Rule for ResolveAndTypeRule {
                 line_col_end: (1, 1),
             });
         let spanned_program = Spanned::new(program.clone(), span);
-        let hir: Spanned<AstProgram> = spanned_program.into();
+        let ast: Spanned<AstProgram> = spanned_program.into();
+        let hir: Spanned<HirProgram> = lower_program(&ast);
         let mut resolver = Resolver::new();
         let resolution = match resolver.resolve_program(&hir) {
             Ok(resolution) => resolution,
@@ -37,9 +38,14 @@ impl Rule for ResolveAndTypeRule {
         for warning in &resolution.warnings {
             resolve::emit_resolve_warning(ctx, warning);
         }
-        if let Err(errors) = type_program(&hir, &resolution) {
-            for error in errors {
-                types::emit_type_error(ctx, error);
+        match type_program(&hir, &resolution) {
+            Ok(result) => {
+                types::emit_cast_intent_warnings(ctx, &result);
+            }
+            Err(errors) => {
+                for error in errors {
+                    types::emit_type_error(ctx, error);
+                }
             }
         }
     }

@@ -20,6 +20,6 @@ pub use statements::{
 pub use expressions::{
     AssignExpression, BinaryExpression, BinaryOp, BlockExpression, CallExpression,
     EnumConstructorExpression, Expression, GroupedExpression, Literal, LiteralExpression,
-    MatchArm, MatchExpression, MemberExpression, PathExpression, Pattern,
+    MatchArm, MatchExpression, MemberExpression, PathExpression, Pattern, EnumPattern,
     StructLiteralExpression, StructLiteralField, UnaryExpression, UnaryOp,
 };

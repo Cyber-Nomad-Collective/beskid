@@ -9,3 +9,6 @@ cranelift-frontend = "0.128.3"
 cranelift-module = "0.128.3"
 pecan_analysis = { path = "../pecan_analysis" }
 pecan_runtime = { path = "../pecan_runtime" }
+
+[dev-dependencies]
+pest = { workspace = true }

@@ -1,12 +1,15 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::RuleContext;
-use crate::hir::{AstItem, AstProgram};
-use crate::syntax::{ContractDefinition, ContractNode, Path, SpanInfo, Spanned, Type};
+use crate::hir::{
+    HirContractDefinition, HirContractNode, HirItem, HirPath, HirPrimitiveType, HirProgram,
+    HirType,
+};
+use crate::syntax::{SpanInfo, Spanned};
 use std::collections::{HashMap, HashSet};
 
 impl SemanticPipelineRule {
-    pub(super) fn stage0_collect_definitions(&self, ctx: &mut RuleContext, hir: &Spanned<AstProgram>) {
+    pub(super) fn stage0_collect_definitions(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
         self.check_duplicate_definition_names(ctx, hir);
         self.check_duplicate_non_type_item_names(ctx, hir);
         self.check_unknown_types_in_definitions(ctx, hir);
@@ -14,10 +17,10 @@ impl SemanticPipelineRule {
 
         for item in &hir.node.items {
             match &item.node {
-                AstItem::EnumDefinition(definition) => {
+                HirItem::EnumDefinition(definition) => {
                     self.check_duplicate_enum_variants(ctx, definition);
                 }
-                AstItem::ContractDefinition(definition) => {
+                HirItem::ContractDefinition(definition) => {
                     self.check_duplicate_contract_methods(ctx, definition);
                 }
                 _ => {}
@@ -28,21 +31,21 @@ impl SemanticPipelineRule {
     fn check_duplicate_non_type_item_names(
         &self,
         ctx: &mut RuleContext,
-        hir: &Spanned<AstProgram>,
+        hir: &Spanned<HirProgram>,
     ) {
         let mut seen: HashMap<String, SpanInfo> = HashMap::new();
 
         for item in &hir.node.items {
             let (name, span) = match &item.node {
-                AstItem::FunctionDefinition(definition) => (
+                HirItem::FunctionDefinition(definition) => (
                     definition.node.name.node.name.clone(),
                     definition.node.name.span,
                 ),
-                AstItem::ModuleDeclaration(definition) => (
+                HirItem::ModuleDeclaration(definition) => (
                     self.path_tail(&definition.node.path),
                     definition.node.path.span,
                 ),
-                AstItem::UseDeclaration(definition) => (
+                HirItem::UseDeclaration(definition) => (
                     self.path_tail(&definition.node.path),
                     definition.node.path.span,
                 ),
@@ -68,12 +71,12 @@ impl SemanticPipelineRule {
         }
     }
 
-    fn check_unknown_types_in_definitions(&self, ctx: &mut RuleContext, hir: &Spanned<AstProgram>) {
+    fn check_unknown_types_in_definitions(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
         let known_types = self.collect_known_type_names(hir);
 
         for item in &hir.node.items {
             match &item.node {
-                AstItem::TypeDefinition(definition) => {
+                HirItem::TypeDefinition(definition) => {
                     let generic_names = self.collect_generic_names(&definition.node.generics);
                     for field in &definition.node.fields {
                         self.validate_type_reference(
@@ -84,7 +87,7 @@ impl SemanticPipelineRule {
                         );
                     }
                 }
-                AstItem::EnumDefinition(definition) => {
+                HirItem::EnumDefinition(definition) => {
                     let generic_names = self.collect_generic_names(&definition.node.generics);
                     for variant in &definition.node.variants {
                         for field in &variant.node.fields {
@@ -97,7 +100,7 @@ impl SemanticPipelineRule {
                         }
                     }
                 }
-                AstItem::FunctionDefinition(definition) => {
+                HirItem::FunctionDefinition(definition) => {
                     let generic_names = self.collect_generic_names(&definition.node.generics);
                     for parameter in &definition.node.parameters {
                         self.validate_type_reference(
@@ -111,7 +114,7 @@ impl SemanticPipelineRule {
                         self.validate_type_reference(ctx, return_type, &known_types, &generic_names);
                     }
                 }
-                AstItem::MethodDefinition(definition) => {
+                HirItem::MethodDefinition(definition) => {
                     let generic_names = HashSet::new();
                     self.validate_type_reference(
                         ctx,
@@ -131,10 +134,10 @@ impl SemanticPipelineRule {
                         self.validate_type_reference(ctx, return_type, &known_types, &generic_names);
                     }
                 }
-                AstItem::ContractDefinition(definition) => {
+                HirItem::ContractDefinition(definition) => {
                     let generic_names = HashSet::new();
                     for node in &definition.node.items {
-                        let ContractNode::MethodSignature(signature) = &node.node else {
+                        let HirContractNode::MethodSignature(signature) = &node.node else {
                             continue;
                         };
                         for parameter in &signature.node.parameters {
@@ -160,14 +163,14 @@ impl SemanticPipelineRule {
         }
     }
 
-    fn check_conflicting_embedded_contracts(&self, ctx: &mut RuleContext, hir: &Spanned<AstProgram>) {
+    fn check_conflicting_embedded_contracts(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
         let contracts = self.collect_contract_definitions(hir);
 
         for definition in contracts.values() {
             let mut known_signatures = self.contract_methods(definition);
 
             for item in &definition.node.items {
-                let ContractNode::Embedding(embedding) = &item.node else {
+                let HirContractNode::Embedding(embedding) = &item.node else {
                     continue;
                 };
                 let embedded_name = embedding.node.name.node.name.clone();
@@ -200,11 +203,11 @@ impl SemanticPipelineRule {
 
     fn collect_contract_definitions<'a>(
         &self,
-        hir: &'a Spanned<AstProgram>,
-    ) -> HashMap<String, &'a Spanned<ContractDefinition>> {
+        hir: &'a Spanned<HirProgram>,
+    ) -> HashMap<String, &'a Spanned<HirContractDefinition>> {
         let mut contracts = HashMap::new();
         for item in &hir.node.items {
-            let AstItem::ContractDefinition(definition) = &item.node else {
+            let HirItem::ContractDefinition(definition) = &item.node else {
                 continue;
             };
             contracts.insert(definition.node.name.node.name.clone(), definition);
@@ -212,10 +215,13 @@ impl SemanticPipelineRule {
         contracts
     }
 
-    fn contract_methods(&self, definition: &Spanned<ContractDefinition>) -> HashMap<String, String> {
+    fn contract_methods(
+        &self,
+        definition: &Spanned<HirContractDefinition>,
+    ) -> HashMap<String, String> {
         let mut methods = HashMap::new();
         for item in &definition.node.items {
-            let ContractNode::MethodSignature(signature) = &item.node else {
+            let HirContractNode::MethodSignature(signature) = &item.node else {
                 continue;
             };
             let name = signature.node.name.node.name.clone();
@@ -227,7 +233,7 @@ impl SemanticPipelineRule {
 
     fn contract_signature_string(
         &self,
-        signature: &Spanned<crate::syntax::ContractMethodSignature>,
+        signature: &Spanned<crate::hir::HirContractMethodSignature>,
     ) -> String {
         let params = signature
             .node
@@ -245,31 +251,31 @@ impl SemanticPipelineRule {
         format!("{return_type}({params})")
     }
 
-    fn type_to_string(&self, ty: &Spanned<Type>) -> String {
+    fn type_to_string(&self, ty: &Spanned<HirType>) -> String {
         match &ty.node {
-            Type::Primitive(primitive) => match primitive.node {
-                crate::syntax::PrimitiveType::Bool => "bool".to_string(),
-                crate::syntax::PrimitiveType::I32 => "i32".to_string(),
-                crate::syntax::PrimitiveType::I64 => "i64".to_string(),
-                crate::syntax::PrimitiveType::U8 => "u8".to_string(),
-                crate::syntax::PrimitiveType::F64 => "f64".to_string(),
-                crate::syntax::PrimitiveType::Char => "char".to_string(),
-                crate::syntax::PrimitiveType::String => "string".to_string(),
-                crate::syntax::PrimitiveType::Unit => "unit".to_string(),
+            HirType::Primitive(primitive) => match primitive.node {
+                HirPrimitiveType::Bool => "bool".to_string(),
+                HirPrimitiveType::I32 => "i32".to_string(),
+                HirPrimitiveType::I64 => "i64".to_string(),
+                HirPrimitiveType::U8 => "u8".to_string(),
+                HirPrimitiveType::F64 => "f64".to_string(),
+                HirPrimitiveType::Char => "char".to_string(),
+                HirPrimitiveType::String => "string".to_string(),
+                HirPrimitiveType::Unit => "unit".to_string(),
             },
-            Type::Complex(path) => path
+            HirType::Complex(path) => path
                 .node
                 .segments
                 .iter()
                 .map(|segment| segment.node.name.clone())
                 .collect::<Vec<_>>()
                 .join("."),
-            Type::Array(inner) => format!("{}[]", self.type_to_string(inner)),
-            Type::Ref(inner) => format!("ref {}", self.type_to_string(inner)),
+            HirType::Array(inner) => format!("{}[]", self.type_to_string(inner)),
+            HirType::Ref(inner) => format!("ref {}", self.type_to_string(inner)),
         }
     }
 
-    fn collect_known_type_names(&self, hir: &Spanned<AstProgram>) -> HashSet<String> {
+    fn collect_known_type_names(&self, hir: &Spanned<HirProgram>) -> HashSet<String> {
         let mut known = HashSet::new();
 
         for primitive in ["bool", "i32", "i64", "u8", "f64", "char", "string", "unit"] {
@@ -278,13 +284,13 @@ impl SemanticPipelineRule {
 
         for item in &hir.node.items {
             match &item.node {
-                AstItem::TypeDefinition(definition) => {
+                HirItem::TypeDefinition(definition) => {
                     known.insert(definition.node.name.node.name.clone());
                 }
-                AstItem::EnumDefinition(definition) => {
+                HirItem::EnumDefinition(definition) => {
                     known.insert(definition.node.name.node.name.clone());
                 }
-                AstItem::ContractDefinition(definition) => {
+                HirItem::ContractDefinition(definition) => {
                     known.insert(definition.node.name.node.name.clone());
                 }
                 _ => {}
@@ -296,7 +302,7 @@ impl SemanticPipelineRule {
 
     fn collect_generic_names(
         &self,
-        generics: &[Spanned<crate::syntax::Identifier>],
+        generics: &[Spanned<crate::hir::HirIdentifier>],
     ) -> HashSet<String> {
         generics
             .iter()
@@ -307,13 +313,13 @@ impl SemanticPipelineRule {
     fn validate_type_reference(
         &self,
         ctx: &mut RuleContext,
-        ty: &Spanned<Type>,
+        ty: &Spanned<HirType>,
         known_types: &HashSet<String>,
         generic_names: &HashSet<String>,
     ) {
         match &ty.node {
-            Type::Primitive(_) => {}
-            Type::Complex(path) => {
+            HirType::Primitive(_) => {}
+            HirType::Complex(path) => {
                 let Some(last_segment) = path.node.segments.last() else {
                     return;
                 };
@@ -331,13 +337,13 @@ impl SemanticPipelineRule {
                     Severity::Error,
                 );
             }
-            Type::Array(inner) | Type::Ref(inner) => {
+            HirType::Array(inner) | HirType::Ref(inner) => {
                 self.validate_type_reference(ctx, inner, known_types, generic_names);
             }
         }
     }
 
-    fn path_tail(&self, path: &Spanned<Path>) -> String {
+    fn path_tail(&self, path: &Spanned<HirPath>) -> String {
         path.node
             .segments
             .last()
@@ -345,18 +351,18 @@ impl SemanticPipelineRule {
             .unwrap_or_default()
     }
 
-    fn check_duplicate_definition_names(&self, ctx: &mut RuleContext, hir: &Spanned<AstProgram>) {
+    fn check_duplicate_definition_names(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
         let mut seen: HashMap<&str, SpanInfo> = HashMap::new();
 
         for item in &hir.node.items {
             let (name, span) = match &item.node {
-                AstItem::TypeDefinition(definition) => {
+                HirItem::TypeDefinition(definition) => {
                     (definition.node.name.node.name.as_str(), definition.node.name.span)
                 }
-                AstItem::EnumDefinition(definition) => {
+                HirItem::EnumDefinition(definition) => {
                     (definition.node.name.node.name.as_str(), definition.node.name.span)
                 }
-                AstItem::ContractDefinition(definition) => {
+                HirItem::ContractDefinition(definition) => {
                     (definition.node.name.node.name.as_str(), definition.node.name.span)
                 }
                 _ => continue,
@@ -384,7 +390,7 @@ impl SemanticPipelineRule {
     fn check_duplicate_enum_variants(
         &self,
         ctx: &mut RuleContext,
-        definition: &Spanned<crate::syntax::EnumDefinition>,
+        definition: &Spanned<crate::hir::HirEnumDefinition>,
     ) {
         let mut seen: HashMap<&str, SpanInfo> = HashMap::new();
         for variant in &definition.node.variants {
@@ -411,11 +417,11 @@ impl SemanticPipelineRule {
     fn check_duplicate_contract_methods(
         &self,
         ctx: &mut RuleContext,
-        definition: &Spanned<crate::syntax::ContractDefinition>,
+        definition: &Spanned<crate::hir::HirContractDefinition>,
     ) {
         let mut seen: HashMap<&str, SpanInfo> = HashMap::new();
         for item in &definition.node.items {
-            let ContractNode::MethodSignature(signature) = &item.node else {
+            let HirContractNode::MethodSignature(signature) = &item.node else {
                 continue;
             };
 

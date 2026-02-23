@@ -1,5 +1,5 @@
 use crate::analysis::rules::{Rule, RuleContext};
-use crate::hir::AstProgram;
+use crate::hir::{lower_program, AstProgram, HirProgram};
 use crate::syntax::{Program, SpanInfo, Spanned};
 
 mod stage0;
@@ -30,7 +30,8 @@ impl Rule for SemanticPipelineRule {
                 line_col_end: (1, 1),
             });
         let spanned_program = Spanned::new(program.clone(), span);
-        let hir: Spanned<AstProgram> = spanned_program.into();
+        let ast: Spanned<AstProgram> = spanned_program.into();
+        let hir: Spanned<HirProgram> = lower_program(&ast);
 
         self.stage0_collect_definitions(ctx, &hir);
         self.stage3_control_flow_and_patterns(ctx, &hir);

@@ -103,22 +103,34 @@ description: Pecan execution implementation plan
 - `ModuleGraph` added with per-module item scopes and module path tracking.
 - Local scope stack + `LocalId` tracking implemented.
 - `ResolutionTables` added for resolved values/types + locals.
-- Path/type resolution and basic diagnostics (unknown value/type, duplicate local) implemented.
+- Path/type resolution and diagnostics (unknown value/type, duplicate local, shadowed local warnings) implemented.
+- Module-qualified resolution now distinguishes:
+  - unknown module path,
+  - missing symbol in known module,
+  - private item access across module paths.
+- Resolver now tracks item visibility and enforces visibility gate for module-qualified lookups.
+- Private cross-module access emits dedicated analysis diagnostic (`E1107`).
 - Resolver/type diagnostics now emitted through analysis `builtin_rules` and CLI.
+- Resolver tests added/expanded in `pecan_tests` for duplicate top-level item, duplicate local, unknown value/type, shadowing behavior, qualified path classification, and private/public module visibility behavior.
+- AST→HIR lowering is now trait-driven and split by node family (`items`, `statements`, `expressions`, `types`) with tests validating span preservation and node-kind mapping.
+- HIR legality validation module is integrated into analysis pipeline after resolution with dedicated diagnostics and test coverage.
 
 **Remaining work**
-1. Extend diagnostics: shadowing warning + module-aware resolution.
-2. Add resolver tests (duplicate top-level, locals, unknown path/type).
+1. Finalize `use`/`mod` semantics in resolver lookup paths:
+   - lock import precedence and alias/re-export behavior,
+   - add targeted resolver tests for import-driven shadow/ambiguity paths.
+2. Optional Phase 1 cleanup:
+   - widen legality structural checks if additional normalized forms are introduced during codegen prep.
 
 ### Codebase evaluation (resolver + typing)
 
 **Resolver status**
-- Implemented: top-level item collection, module graph, local scopes, resolution tables, and path/type resolution.
-- Missing: module-aware resolution (per-module symbol visibility), shadowing warnings, tests.
+- Implemented: top-level item collection, module graph, local scopes, resolution tables, path/type resolution, shadowing warnings, module visibility gating, and private cross-module diagnostics.
+- Missing: deeper import (`use`) semantics hardening (aliases/re-exports and precedence edge-cases).
 
 **Type system status**
-- Implemented: `TypeId` + `TypeTable` with primitives and named types (`ItemId`-backed) only.
-- Missing: type context wiring, expression typing pass, statement typing, diagnostics, and cast handling.
+- Implemented: `TypeId` + `TypeTable`, `TypeContext` wiring, expression/statement typing, function signatures, struct/enum/member/match typing, cast intents, cast-intent normalization/accessors, cast warnings, and member-target diagnostics hardening.
+- Missing: codegen consumption boundary for cast intents and final diagnostic naming polish for named types in messages.
 
 ### Continuation plan (resolver → type checking)
 
@@ -192,14 +204,20 @@ description: Pecan execution implementation plan
 - Typing context split into `context`, `helpers`, `items`, `statements`, `expressions`, `types` modules.
 - `TypeContext` seeds primitive/named types and produces expression/local type tables.
 - Function signatures recorded and used for call typing (arity + argument types).
-- Tests added: literal typing, mismatch, non-bool condition, return mismatch, call arity.
+- Typing covers struct literals, member access, match expressions, enum constructors, and cast intents.
+- `cast_intents` now have explicit output invariants (sorted, deduplicated) and typed span-keyed accessors.
+- Numeric compatibility is routed through `require_same_type` for assignments/calls/returns with conflict checks.
+- Cast-intent warnings are emitted in both staged and resolve+type analysis paths (`W1203`) and respect warning suppression settings.
+- Member-access-on-non-aggregate now emits a dedicated type error (`InvalidMemberTarget` / `E1213`).
+- Tests expanded to cover: nested match joins, enum pattern arity/type mismatch variants, grouped/block propagation, call/return cast-intent emission, cast-intent span accessors, and invalid member targets.
 - Type/resolution errors now surfaced via analysis diagnostics and CLI.
 
 **Remaining work**
-1. Extend typing for member access, struct/enum literals, and match expressions.
-2. Add cast insertion or cast intent table for safe coercions.
-3. Add diagnostics for signature lookup failures and missing fields when struct typing lands.
-4. Expand tests for match typing, struct literals, and member access.
+1. Finalize cast strategy consumer boundary:
+   - define exact `cast_intents` consumption contract in `pecan_codegen` lowering,
+   - lock widening/narrowing semantics as codegen assertions.
+2. Final diagnostics polish:
+   - improve named-type rendering in warnings/errors (avoid raw internal IDs in user-facing text).
 
 ---
 
@@ -207,16 +225,42 @@ description: Pecan execution implementation plan
 
 **Goal:** HIR → CLIF lowering.
 
+**Kickoff scope lock (agreed)**
+- Include only a minimal vertical slice in this chunk:
+  - function prologue/epilogue,
+  - literals,
+  - locals,
+  - return.
+- Defer arithmetic, branching, calls, and broader control-flow to follow-up chunks.
+- Treat missing required cast-intent at codegen boundary as a hard error.
+- Route codegen diagnostics through the existing analysis/diagnostic pipeline.
+- Start with a narrow bootstrap ABI and widen later.
+- Test strategy: IR-shape/golden tests first, smoke execution tests second.
+
 **Tasks**
 
-1. Implement CLIF builder in `pecan_codegen` using `FunctionBuilder`.
-2. Lower: literals, vars, calls, `if`, `while`, `return`.
-3. Runtime calls for strings/arrays.
+1. Implement/verify CLIF builder scaffolding in `pecan_codegen` using `FunctionBuilder`.
+2. Add typed codegen handoff entrypoint consuming:
+   - `Spanned<HirProgram>`
+   - `Resolution`
+   - `TypeResult` (including `cast_intents`).
+3. Add cast-intent boundary validator in codegen:
+   - validate intent shape and numeric-only semantics,
+   - error on missing required cast-intent.
+4. Lower minimal kickoff slice only:
+   - literals,
+   - local values,
+   - returns,
+   - basic function skeleton generation.
+5. Add span-aware codegen error contract and map to diagnostics.
+6. Add IR-shape/golden tests and initial smoke coverage for kickoff slice.
 
 **Acceptance criteria**
 
-- Generated CLIF validates for a simple program.
-- CLIF diagnostics map to spans.
+- Generated CLIF validates for the kickoff subset (function/literal/local/return).
+- Codegen errors for unsupported nodes are span-correct and deterministic.
+- Cast-intent handoff contract is explicit and validated by tests.
+- Existing analysis tests remain green after integration.
 
 ---
 
@@ -275,3 +319,54 @@ description: Pecan execution implementation plan
 - **CLI**: add `run` and `build` commands.
 - **Tests**: add HIR + CLIF lowering tests under `pecan_tests`.
 - **Docs**: update execution docs as needed.
+
+---
+
+## Detailed implementation plan — next chunk (Phase 3 kickoff)
+
+### Phase 3 kickoff: HIR-to-CLIF scaffolding and handoff contracts
+
+1. **Create execution crate scaffolding and typed handoff entrypoint**
+   - Add/verify `pecan_codegen` crate structure for CLIF lowering entrypoint.
+   - Define a minimal lowering API that accepts:
+     - `Spanned<HirProgram>`,
+     - `Resolution`,
+     - `TypeResult` (including `cast_intents`).
+   - Keep API narrow and deterministic for initial bring-up.
+
+2. **Define codegen-side consumption contract for cast intents**
+   - Document matching strategy from expression span → cast intent(s).
+   - Add validation helper in codegen boundary:
+     - reject unexpected duplicate/conflicting intents,
+     - assert numeric-only conversion intents.
+   - Keep failures diagnostic-friendly with span-linked messages.
+
+3. **Implement first CLIF lowering vertical slice**
+   - Lower one minimal executable path end-to-end:
+     - function prologue/epilogue,
+     - literals,
+     - local variables,
+     - return statement.
+   - Exclude complex control-flow in this chunk; focus on correctness and plumbing.
+
+4. **Span-aware diagnostic bridge for codegen errors**
+   - Add error type for codegen lowering with explicit source spans.
+   - Map codegen failures into analysis/CLI diagnostics consistently.
+   - Ensure errors are stable for tests.
+
+5. **Targeted tests for the Phase 3 kickoff slice**
+   - Add tests for:
+     - basic function/literal/return lowering success,
+     - cast-intent boundary validation behavior,
+     - span-preserving codegen diagnostics on unsupported nodes.
+
+6. **Acceptance criteria for this chunk**
+   - CLIF lowering entrypoint compiles and handles the minimal vertical slice.
+   - HIR/resolution/type handoff contract is explicit and tested.
+   - All existing analysis tests remain green.
+
+### Immediate follow-up (after kickoff slice)
+
+1. Expand lowering to arithmetic + conditional branching.
+2. Integrate function calls and signature-based ABI mapping.
+3. Start module-level symbol linkage through Cranelift `Module` interface.

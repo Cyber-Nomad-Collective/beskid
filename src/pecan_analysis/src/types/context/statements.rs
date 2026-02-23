@@ -1,18 +1,20 @@
-use crate::hir::HirPrimitiveType;
-use crate::syntax::{Block, RangeExpression, Spanned, Statement};
+use crate::hir::{
+    HirPrimitiveType, HirRangeExpression, HirStatementNode, HirBlock,
+};
+use crate::syntax::Spanned;
 
 use super::context::{TypeContext, TypeError};
 
 impl<'a> TypeContext<'a> {
-    pub(super) fn type_block(&mut self, block: &Spanned<Block>) {
+    pub(super) fn type_block(&mut self, block: &Spanned<HirBlock>) {
         for statement in &block.node.statements {
             self.type_statement(statement);
         }
     }
 
-    pub(super) fn type_statement(&mut self, statement: &Spanned<Statement>) {
+    pub(super) fn type_statement(&mut self, statement: &Spanned<HirStatementNode>) {
         match &statement.node {
-            Statement::Let(let_stmt) => {
+            HirStatementNode::LetStatement(let_stmt) => {
                 let expected = match &let_stmt.node.type_annotation {
                     Some(ty) => self.type_id_for_type(ty),
                     None => {
@@ -29,7 +31,7 @@ impl<'a> TypeContext<'a> {
                     self.insert_local_type(let_stmt.node.name.span, expected);
                 }
             }
-            Statement::Return(return_stmt) => {
+            HirStatementNode::ReturnStatement(return_stmt) => {
                 let actual = return_stmt
                     .node
                     .value
@@ -50,34 +52,34 @@ impl<'a> TypeContext<'a> {
                     }
                 }
             }
-            Statement::While(while_stmt) => {
+            HirStatementNode::WhileStatement(while_stmt) => {
                 self.require_bool(while_stmt.node.condition.span, &while_stmt.node.condition);
                 self.type_block(&while_stmt.node.body);
             }
-            Statement::For(for_stmt) => {
+            HirStatementNode::ForStatement(for_stmt) => {
                 let range_type = self.type_range_expression(&for_stmt.node.range);
                 if let Some(type_id) = range_type {
                     self.insert_local_type(for_stmt.node.iterator.span, type_id);
                 }
                 self.type_block(&for_stmt.node.body);
             }
-            Statement::If(if_stmt) => {
+            HirStatementNode::IfStatement(if_stmt) => {
                 self.require_bool(if_stmt.node.condition.span, &if_stmt.node.condition);
                 self.type_block(&if_stmt.node.then_block);
                 if let Some(else_block) = &if_stmt.node.else_block {
                     self.type_block(else_block);
                 }
             }
-            Statement::Expression(expr_stmt) => {
+            HirStatementNode::ExpressionStatement(expr_stmt) => {
                 self.type_expression(&expr_stmt.node.expression);
             }
-            Statement::Break(_) | Statement::Continue(_) => {}
+            HirStatementNode::BreakStatement(_) | HirStatementNode::ContinueStatement(_) => {}
         }
     }
 
     pub(super) fn type_range_expression(
         &mut self,
-        range: &Spanned<RangeExpression>,
+        range: &Spanned<HirRangeExpression>,
     ) -> Option<crate::types::TypeId> {
         let start = self.type_expression(&range.node.start);
         let end = self.type_expression(&range.node.end);

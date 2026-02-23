@@ -1,11 +1,11 @@
-use crate::hir::{AstPhase, HirPrimitiveType, Item as HirItem};
+use crate::hir::{HirItem, HirPrimitiveType};
 use crate::syntax::Spanned;
 use crate::types::TypeId;
 
 use super::context::{FunctionSignature, TypeContext};
 
 impl<'a> TypeContext<'a> {
-    pub(super) fn type_item(&mut self, item: &Spanned<HirItem<AstPhase>>) {
+    pub(super) fn type_item(&mut self, item: &Spanned<HirItem>) {
         match &item.node {
             HirItem::FunctionDefinition(def) => {
                 let return_type = def

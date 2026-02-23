@@ -31,6 +31,6 @@ pub use grouped_expression::GroupedExpression;
 pub use match_expression::MatchExpression;
 pub use expression::Expression;
 pub use match_arm::MatchArm;
-pub use pattern::Pattern;
+pub use pattern::{EnumPattern, Pattern};
 pub use literal::Literal;
 pub use struct_literal_field::StructLiteralField;

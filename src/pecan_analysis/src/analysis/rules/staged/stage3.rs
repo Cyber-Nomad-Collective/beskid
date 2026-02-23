@@ -1,21 +1,27 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::RuleContext;
-use crate::hir::{AstItem, AstProgram};
-use crate::syntax::{Block, Expression, MatchArm, Pattern, Spanned, Statement};
+use crate::hir::{
+    HirBlock, HirExpressionNode, HirItem, HirMatchArm, HirPattern, HirProgram, HirStatementNode,
+};
+use crate::syntax::Spanned;
 use std::collections::{HashMap, HashSet};
 
 impl SemanticPipelineRule {
-    pub(super) fn stage3_control_flow_and_patterns(&self, ctx: &mut RuleContext, hir: &Spanned<AstProgram>) {
+    pub(super) fn stage3_control_flow_and_patterns(
+        &self,
+        ctx: &mut RuleContext,
+        hir: &Spanned<HirProgram>,
+    ) {
         let enum_variants = self.collect_enum_variants(hir);
         let variant_to_enum = self.collect_variant_to_enum(hir);
 
         for item in &hir.node.items {
             match &item.node {
-                AstItem::FunctionDefinition(definition) => {
+                HirItem::FunctionDefinition(definition) => {
                     self.check_block(ctx, &definition.node.body, 0, &enum_variants, &variant_to_enum);
                 }
-                AstItem::MethodDefinition(definition) => {
+                HirItem::MethodDefinition(definition) => {
                     self.check_block(ctx, &definition.node.body, 0, &enum_variants, &variant_to_enum);
                 }
                 _ => {}
@@ -23,10 +29,10 @@ impl SemanticPipelineRule {
         }
     }
 
-    fn collect_variant_to_enum(&self, hir: &Spanned<AstProgram>) -> HashMap<String, String> {
+    fn collect_variant_to_enum(&self, hir: &Spanned<HirProgram>) -> HashMap<String, String> {
         let mut result = HashMap::new();
         for item in &hir.node.items {
-            let AstItem::EnumDefinition(definition) = &item.node else {
+            let HirItem::EnumDefinition(definition) = &item.node else {
                 continue;
             };
             let enum_name = definition.node.name.node.name.clone();
@@ -39,12 +45,12 @@ impl SemanticPipelineRule {
 
     fn collect_enum_variants(
         &self,
-        hir: &Spanned<AstProgram>,
+        hir: &Spanned<HirProgram>,
     ) -> HashMap<String, HashMap<String, usize>> {
         let mut result = HashMap::new();
 
         for item in &hir.node.items {
-            let AstItem::EnumDefinition(definition) = &item.node else {
+            let HirItem::EnumDefinition(definition) = &item.node else {
                 continue;
             };
 
@@ -61,7 +67,7 @@ impl SemanticPipelineRule {
     fn check_block(
         &self,
         ctx: &mut RuleContext,
-        block: &Spanned<Block>,
+        block: &Spanned<HirBlock>,
         loop_depth: usize,
         enum_variants: &HashMap<String, HashMap<String, usize>>,
         variant_to_enum: &HashMap<String, String>,
@@ -90,23 +96,23 @@ impl SemanticPipelineRule {
     fn is_terminating_statement(
         &self,
         ctx: &mut RuleContext,
-        statement: &Spanned<Statement>,
+        statement: &Spanned<HirStatementNode>,
         loop_depth: usize,
         enum_variants: &HashMap<String, HashMap<String, usize>>,
         variant_to_enum: &HashMap<String, String>,
     ) -> bool {
         match &statement.node {
-            Statement::Let(let_statement) => {
+            HirStatementNode::LetStatement(let_statement) => {
                 self.check_expression(ctx, &let_statement.node.value, loop_depth, enum_variants, variant_to_enum);
                 false
             }
-            Statement::Return(return_statement) => {
+            HirStatementNode::ReturnStatement(return_statement) => {
                 if let Some(value) = &return_statement.node.value {
                     self.check_expression(ctx, value, loop_depth, enum_variants, variant_to_enum);
                 }
                 true
             }
-            Statement::Break(_) => {
+            HirStatementNode::BreakStatement(_) => {
                 if loop_depth == 0 {
                     ctx.emit_simple(
                         statement.span,
@@ -120,7 +126,7 @@ impl SemanticPipelineRule {
                 }
                 true
             }
-            Statement::Continue(_) => {
+            HirStatementNode::ContinueStatement(_) => {
                 if loop_depth == 0 {
                     ctx.emit_simple(
                         statement.span,
@@ -134,7 +140,7 @@ impl SemanticPipelineRule {
                 }
                 true
             }
-            Statement::While(while_statement) => {
+            HirStatementNode::WhileStatement(while_statement) => {
                 self.check_expression(
                     ctx,
                     &while_statement.node.condition,
@@ -145,7 +151,7 @@ impl SemanticPipelineRule {
                 self.check_block(ctx, &while_statement.node.body, loop_depth + 1, enum_variants, variant_to_enum);
                 false
             }
-            Statement::For(for_statement) => {
+            HirStatementNode::ForStatement(for_statement) => {
                 self.check_expression(
                     ctx,
                     &for_statement.node.range.node.start,
@@ -163,7 +169,7 @@ impl SemanticPipelineRule {
                 self.check_block(ctx, &for_statement.node.body, loop_depth + 1, enum_variants, variant_to_enum);
                 false
             }
-            Statement::If(if_statement) => {
+            HirStatementNode::IfStatement(if_statement) => {
                 self.check_expression(
                     ctx,
                     &if_statement.node.condition,
@@ -177,7 +183,7 @@ impl SemanticPipelineRule {
                 }
                 false
             }
-            Statement::Expression(expression_statement) => {
+            HirStatementNode::ExpressionStatement(expression_statement) => {
                 self.check_expression(
                     ctx,
                     &expression_statement.node.expression,
@@ -193,13 +199,13 @@ impl SemanticPipelineRule {
     fn check_expression(
         &self,
         ctx: &mut RuleContext,
-        expression: &Spanned<Expression>,
+        expression: &Spanned<HirExpressionNode>,
         loop_depth: usize,
         enum_variants: &HashMap<String, HashMap<String, usize>>,
         variant_to_enum: &HashMap<String, String>,
     ) {
         match &expression.node {
-            Expression::Match(match_expression) => {
+            HirExpressionNode::MatchExpression(match_expression) => {
                 self.check_expression(
                     ctx,
                     &match_expression.node.scrutinee,
@@ -212,7 +218,7 @@ impl SemanticPipelineRule {
                 }
                 self.check_match_semantics(ctx, match_expression, enum_variants);
             }
-            Expression::Assign(assign_expression) => {
+            HirExpressionNode::AssignExpression(assign_expression) => {
                 self.check_expression(
                     ctx,
                     &assign_expression.node.target,
@@ -228,7 +234,7 @@ impl SemanticPipelineRule {
                     variant_to_enum,
                 );
             }
-            Expression::Binary(binary_expression) => {
+            HirExpressionNode::BinaryExpression(binary_expression) => {
                 self.check_expression(
                     ctx,
                     &binary_expression.node.left,
@@ -244,11 +250,11 @@ impl SemanticPipelineRule {
                     variant_to_enum,
                 );
             }
-            Expression::Unary(unary_expression) => {
+            HirExpressionNode::UnaryExpression(unary_expression) => {
                 self.check_expression(ctx, &unary_expression.node.expr, loop_depth, enum_variants, variant_to_enum);
             }
-            Expression::Call(call_expression) => {
-                if let Expression::Path(path_expression) = &call_expression.node.callee.node {
+            HirExpressionNode::CallExpression(call_expression) => {
+                if let HirExpressionNode::PathExpression(path_expression) = &call_expression.node.callee.node {
                     if path_expression.node.path.node.segments.len() == 1 {
                         if let Some(name) = path_expression.node.path.node.segments.first() {
                             if let Some(enum_name) = variant_to_enum.get(&name.node.name) {
@@ -272,7 +278,7 @@ impl SemanticPipelineRule {
                     self.check_expression(ctx, arg, loop_depth, enum_variants, variant_to_enum);
                 }
             }
-            Expression::Member(member_expression) => {
+            HirExpressionNode::MemberExpression(member_expression) => {
                 self.check_expression(
                     ctx,
                     &member_expression.node.target,
@@ -281,12 +287,12 @@ impl SemanticPipelineRule {
                     variant_to_enum,
                 );
             }
-            Expression::StructLiteral(struct_literal) => {
+            HirExpressionNode::StructLiteralExpression(struct_literal) => {
                 for field in &struct_literal.node.fields {
                     self.check_expression(ctx, &field.node.value, loop_depth, enum_variants, variant_to_enum);
                 }
             }
-            Expression::EnumConstructor(constructor_expression) => {
+            HirExpressionNode::EnumConstructorExpression(constructor_expression) => {
                 let enum_name = constructor_expression.node.path.node.type_name.node.name.clone();
                 let variant_name = constructor_expression.node.path.node.variant.node.name.clone();
                 let Some(variants) = enum_variants.get(&enum_name) else {
@@ -332,20 +338,20 @@ impl SemanticPipelineRule {
                     self.check_expression(ctx, arg, loop_depth, enum_variants, variant_to_enum);
                 }
             }
-            Expression::Block(block_expression) => {
+            HirExpressionNode::BlockExpression(block_expression) => {
                 self.check_block(ctx, &block_expression.node.block, loop_depth, enum_variants, variant_to_enum);
             }
-            Expression::Grouped(grouped_expression) => {
+            HirExpressionNode::GroupedExpression(grouped_expression) => {
                 self.check_expression(ctx, &grouped_expression.node.expr, loop_depth, enum_variants, variant_to_enum);
             }
-            Expression::Literal(_) | Expression::Path(_) => {}
+            HirExpressionNode::LiteralExpression(_) | HirExpressionNode::PathExpression(_) => {}
         }
     }
 
     fn check_match_arm(
         &self,
         ctx: &mut RuleContext,
-        arm: &Spanned<MatchArm>,
+        arm: &Spanned<HirMatchArm>,
         loop_depth: usize,
         enum_variants: &HashMap<String, HashMap<String, usize>>,
         variant_to_enum: &HashMap<String, String>,
@@ -362,7 +368,7 @@ impl SemanticPipelineRule {
     fn check_match_semantics(
         &self,
         ctx: &mut RuleContext,
-        match_expression: &Spanned<crate::syntax::MatchExpression>,
+        match_expression: &Spanned<crate::hir::HirMatchExpression>,
         enum_variants: &HashMap<String, HashMap<String, usize>>,
     ) {
         let mut arm_kind: Option<&'static str> = None;
@@ -402,8 +408,8 @@ impl SemanticPipelineRule {
             }
 
             match &arm.node.pattern.node {
-                Pattern::Wildcard => wildcard_seen = true,
-                Pattern::Enum(enum_pattern) => {
+                HirPattern::Wildcard => wildcard_seen = true,
+                HirPattern::Enum(enum_pattern) => {
                     let current_enum = enum_pattern.node.path.node.type_name.node.name.clone();
                     let current_variant = enum_pattern.node.path.node.variant.node.name.clone();
                     covered_variants.insert(current_variant);
@@ -444,31 +450,37 @@ impl SemanticPipelineRule {
         );
     }
 
-    fn is_boolean_like_guard(&self, expression: &Spanned<Expression>) -> bool {
+    fn is_boolean_like_guard(&self, expression: &Spanned<HirExpressionNode>) -> bool {
         match &expression.node {
-            Expression::Literal(literal) => {
-                matches!(literal.node.literal.node, crate::syntax::Literal::Bool(_))
+            HirExpressionNode::LiteralExpression(literal) => {
+                matches!(literal.node.literal.node, crate::hir::HirLiteral::Bool(_))
             }
-            Expression::Unary(unary_expression) => self.is_boolean_like_guard(&unary_expression.node.expr),
-            Expression::Binary(binary_expression) => {
+            HirExpressionNode::UnaryExpression(unary_expression) => {
+                self.is_boolean_like_guard(&unary_expression.node.expr)
+            }
+            HirExpressionNode::BinaryExpression(binary_expression) => {
                 self.is_boolean_like_guard(&binary_expression.node.left)
                     || self.is_boolean_like_guard(&binary_expression.node.right)
             }
-            Expression::Grouped(grouped_expression) => self.is_boolean_like_guard(&grouped_expression.node.expr),
+            HirExpressionNode::GroupedExpression(grouped_expression) => {
+                self.is_boolean_like_guard(&grouped_expression.node.expr)
+            }
             _ => true,
         }
     }
 
-    fn literal_kind(&self, expression: &Spanned<Expression>) -> Option<&'static str> {
+    fn literal_kind(&self, expression: &Spanned<HirExpressionNode>) -> Option<&'static str> {
         match &expression.node {
-            Expression::Literal(literal) => match &literal.node.literal.node {
-                crate::syntax::Literal::Integer(_) => Some("int"),
-                crate::syntax::Literal::Float(_) => Some("float"),
-                crate::syntax::Literal::String(_) => Some("string"),
-                crate::syntax::Literal::Char(_) => Some("char"),
-                crate::syntax::Literal::Bool(_) => Some("bool"),
+            HirExpressionNode::LiteralExpression(literal) => match &literal.node.literal.node {
+                crate::hir::HirLiteral::Integer(_) => Some("int"),
+                crate::hir::HirLiteral::Float(_) => Some("float"),
+                crate::hir::HirLiteral::String(_) => Some("string"),
+                crate::hir::HirLiteral::Char(_) => Some("char"),
+                crate::hir::HirLiteral::Bool(_) => Some("bool"),
             },
-            Expression::Grouped(grouped_expression) => self.literal_kind(&grouped_expression.node.expr),
+            HirExpressionNode::GroupedExpression(grouped_expression) => {
+                self.literal_kind(&grouped_expression.node.expr)
+            }
             _ => None,
         }
     }
@@ -476,12 +488,12 @@ impl SemanticPipelineRule {
     fn collect_pattern_bindings(
         &self,
         ctx: &mut RuleContext,
-        pattern: &Spanned<Pattern>,
+        pattern: &Spanned<HirPattern>,
         names: &mut HashSet<String>,
         enum_variants: &HashMap<String, HashMap<String, usize>>,
     ) {
         match &pattern.node {
-            Pattern::Identifier(identifier) => {
+            HirPattern::Identifier(identifier) => {
                 let name = identifier.node.name.clone();
                 if names.insert(name.clone()) {
                     return;
@@ -496,7 +508,7 @@ impl SemanticPipelineRule {
                     Severity::Error,
                 );
             }
-            Pattern::Enum(enum_pattern) => {
+            HirPattern::Enum(enum_pattern) => {
                 let enum_name = enum_pattern.node.path.node.type_name.node.name.clone();
                 let variant_name = enum_pattern.node.path.node.variant.node.name.clone();
                 let Some(variants) = enum_variants.get(&enum_name) else {
@@ -542,7 +554,7 @@ impl SemanticPipelineRule {
                     self.collect_pattern_bindings(ctx, item, names, enum_variants);
                 }
             }
-            Pattern::Wildcard | Pattern::Literal(_) => {}
+            HirPattern::Wildcard | HirPattern::Literal(_) => {}
         }
     }
 }

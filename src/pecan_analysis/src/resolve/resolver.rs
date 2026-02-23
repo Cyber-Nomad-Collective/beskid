@@ -1,6 +1,10 @@
 use std::collections::HashMap;
 
-use crate::hir::{AstProgram, Item as HirItem};
+use crate::hir::{
+    HirBlock, HirContractNode, HirEnumPath, HirExpressionNode, HirItem, HirPath, HirPattern,
+    HirProgram, HirRangeExpression, HirStatementNode, HirStructLiteralField, HirType,
+    HirVisibility,
+};
 use crate::syntax::{self, Spanned};
 
 use super::errors::{ResolveError, ResolveResult, ResolveWarning};
@@ -25,7 +29,7 @@ impl Resolver {
         Self::default()
     }
 
-    pub fn resolve_program(&mut self, program: &Spanned<AstProgram>) -> ResolveResult<Resolution> {
+    pub fn resolve_program(&mut self, program: &Spanned<HirProgram>) -> ResolveResult<Resolution> {
         self.current_module = self.module_graph.root();
         self.tables = ResolutionTables::new();
         self.local_scopes.clear();
@@ -48,19 +52,61 @@ impl Resolver {
         }
     }
 
-    fn collect_item(&mut self, item: &Spanned<HirItem<crate::hir::AstPhase>>) {
-        let (name, kind) = match &item.node {
-            HirItem::FunctionDefinition(def) => (def.node.name.node.name.clone(), ItemKind::Function),
-            HirItem::MethodDefinition(def) => (def.node.name.node.name.clone(), ItemKind::Method),
-            HirItem::TypeDefinition(def) => (def.node.name.node.name.clone(), ItemKind::Type),
-            HirItem::EnumDefinition(def) => (def.node.name.node.name.clone(), ItemKind::Enum),
-            HirItem::ContractDefinition(def) => (def.node.name.node.name.clone(), ItemKind::Contract),
-            HirItem::ModuleDeclaration(def) => (path_tail(&def.node.path), ItemKind::Module),
-            HirItem::UseDeclaration(def) => (path_tail(&def.node.path), ItemKind::Use),
+    fn collect_item(&mut self, item: &Spanned<HirItem>) {
+        let (name, kind, visibility) = match &item.node {
+            HirItem::FunctionDefinition(def) => (
+                def.node.name.node.name.clone(),
+                ItemKind::Function,
+                def.node.visibility.node,
+            ),
+            HirItem::MethodDefinition(def) => (
+                def.node.name.node.name.clone(),
+                ItemKind::Method,
+                def.node.visibility.node,
+            ),
+            HirItem::TypeDefinition(def) => (
+                def.node.name.node.name.clone(),
+                ItemKind::Type,
+                def.node.visibility.node,
+            ),
+            HirItem::EnumDefinition(def) => (
+                def.node.name.node.name.clone(),
+                ItemKind::Enum,
+                def.node.visibility.node,
+            ),
+            HirItem::ContractDefinition(def) => (
+                def.node.name.node.name.clone(),
+                ItemKind::Contract,
+                def.node.visibility.node,
+            ),
+            HirItem::ModuleDeclaration(def) => (
+                path_tail(&def.node.path),
+                ItemKind::Module,
+                def.node.visibility.node,
+            ),
+            HirItem::UseDeclaration(def) => (
+                path_tail(&def.node.path),
+                ItemKind::Use,
+                def.node.visibility.node,
+            ),
         };
 
         let id = ItemId(self.items.len());
-        let module_id = self.current_module;
+        let module_id = match &item.node {
+            HirItem::ModuleDeclaration(def) => {
+                let segments: Vec<String> = def
+                    .node
+                    .path
+                    .node
+                    .segments
+                    .iter()
+                    .map(|segment| segment.node.name.clone())
+                    .collect();
+                let parent_path = &segments[..segments.len().saturating_sub(1)];
+                self.module_graph.ensure_module_path(parent_path)
+            }
+            _ => self.current_module,
+        };
         if let Some(prev) = self
             .module_graph
             .insert_item(module_id, name.clone(), id)
@@ -77,6 +123,7 @@ impl Resolver {
             id,
             name,
             kind,
+            visibility,
             span: item.span,
         });
 
@@ -93,7 +140,7 @@ impl Resolver {
         }
     }
 
-    fn resolve_item(&mut self, item: &Spanned<HirItem<crate::hir::AstPhase>>) {
+    fn resolve_item(&mut self, item: &Spanned<HirItem>) {
         match &item.node {
             HirItem::FunctionDefinition(def) => {
                 self.push_scope();
@@ -135,7 +182,7 @@ impl Resolver {
             HirItem::ContractDefinition(def) => {
                 for node in &def.node.items {
                     match &node.node {
-                        syntax::ContractNode::MethodSignature(signature) => {
+                        HirContractNode::MethodSignature(signature) => {
                             for param in &signature.node.parameters {
                                 self.resolve_type(&param.node.ty);
                             }
@@ -143,7 +190,7 @@ impl Resolver {
                                 self.resolve_type(return_type);
                             }
                         }
-                        syntax::ContractNode::Embedding(_) => {}
+                        HirContractNode::Embedding(_) => {}
                     }
                 }
             }
@@ -151,7 +198,7 @@ impl Resolver {
         }
     }
 
-    fn resolve_block(&mut self, block: &Spanned<syntax::Block>) {
+    fn resolve_block(&mut self, block: &Spanned<HirBlock>) {
         self.push_scope();
         for statement in &block.node.statements {
             self.resolve_statement(statement);
@@ -159,26 +206,26 @@ impl Resolver {
         self.pop_scope();
     }
 
-    fn resolve_statement(&mut self, statement: &Spanned<syntax::Statement>) {
+    fn resolve_statement(&mut self, statement: &Spanned<HirStatementNode>) {
         match &statement.node {
-            syntax::Statement::Let(let_stmt) => {
+            HirStatementNode::LetStatement(let_stmt) => {
                 if let Some(type_annotation) = &let_stmt.node.type_annotation {
                     self.resolve_type(type_annotation);
                 }
                 self.resolve_expression(&let_stmt.node.value);
                 self.insert_local(&let_stmt.node.name.node.name, let_stmt.node.name.span);
             }
-            syntax::Statement::Return(return_stmt) => {
+            HirStatementNode::ReturnStatement(return_stmt) => {
                 if let Some(value) = &return_stmt.node.value {
                     self.resolve_expression(value);
                 }
             }
-            syntax::Statement::Break(_) | syntax::Statement::Continue(_) => {}
-            syntax::Statement::While(while_stmt) => {
+            HirStatementNode::BreakStatement(_) | HirStatementNode::ContinueStatement(_) => {}
+            HirStatementNode::WhileStatement(while_stmt) => {
                 self.resolve_expression(&while_stmt.node.condition);
                 self.resolve_block(&while_stmt.node.body);
             }
-            syntax::Statement::For(for_stmt) => {
+            HirStatementNode::ForStatement(for_stmt) => {
                 self.resolve_range_expression(&for_stmt.node.range);
                 self.push_scope();
                 self.insert_local(&for_stmt.node.iterator.node.name, for_stmt.node.iterator.span);
@@ -187,78 +234,78 @@ impl Resolver {
                 }
                 self.pop_scope();
             }
-            syntax::Statement::If(if_stmt) => {
+            HirStatementNode::IfStatement(if_stmt) => {
                 self.resolve_expression(&if_stmt.node.condition);
                 self.resolve_block(&if_stmt.node.then_block);
                 if let Some(else_block) = &if_stmt.node.else_block {
                     self.resolve_block(else_block);
                 }
             }
-            syntax::Statement::Expression(expr_stmt) => {
+            HirStatementNode::ExpressionStatement(expr_stmt) => {
                 self.resolve_expression(&expr_stmt.node.expression);
             }
         }
     }
 
-    fn resolve_range_expression(&mut self, range: &Spanned<syntax::RangeExpression>) {
+    fn resolve_range_expression(&mut self, range: &Spanned<HirRangeExpression>) {
         self.resolve_expression(&range.node.start);
         self.resolve_expression(&range.node.end);
     }
 
-    fn resolve_expression(&mut self, expression: &Spanned<syntax::Expression>) {
+    fn resolve_expression(&mut self, expression: &Spanned<HirExpressionNode>) {
         match &expression.node {
-            syntax::Expression::Match(match_expr) => {
+            HirExpressionNode::MatchExpression(match_expr) => {
                 self.resolve_expression(&match_expr.node.scrutinee);
                 for arm in &match_expr.node.arms {
                     self.resolve_match_arm(arm);
                 }
             }
-            syntax::Expression::Assign(assign_expr) => {
+            HirExpressionNode::AssignExpression(assign_expr) => {
                 self.resolve_expression(&assign_expr.node.target);
                 self.resolve_expression(&assign_expr.node.value);
             }
-            syntax::Expression::Binary(binary_expr) => {
+            HirExpressionNode::BinaryExpression(binary_expr) => {
                 self.resolve_expression(&binary_expr.node.left);
                 self.resolve_expression(&binary_expr.node.right);
             }
-            syntax::Expression::Unary(unary_expr) => {
+            HirExpressionNode::UnaryExpression(unary_expr) => {
                 self.resolve_expression(&unary_expr.node.expr);
             }
-            syntax::Expression::Call(call_expr) => {
+            HirExpressionNode::CallExpression(call_expr) => {
                 self.resolve_expression(&call_expr.node.callee);
                 for arg in &call_expr.node.args {
                     self.resolve_expression(arg);
                 }
             }
-            syntax::Expression::Member(member_expr) => {
+            HirExpressionNode::MemberExpression(member_expr) => {
                 self.resolve_expression(&member_expr.node.target);
             }
-            syntax::Expression::Literal(_) => {}
-            syntax::Expression::Path(path_expr) => {
+            HirExpressionNode::LiteralExpression(_) => {}
+            HirExpressionNode::PathExpression(path_expr) => {
                 self.resolve_value_path(&path_expr.node.path);
             }
-            syntax::Expression::StructLiteral(literal) => {
+            HirExpressionNode::StructLiteralExpression(literal) => {
                 self.resolve_type_path(&literal.node.path);
                 for field in &literal.node.fields {
                     self.resolve_struct_literal_field(field);
                 }
             }
-            syntax::Expression::EnumConstructor(constructor) => {
+            HirExpressionNode::EnumConstructorExpression(constructor) => {
                 self.resolve_enum_path(&constructor.node.path);
                 for arg in &constructor.node.args {
                     self.resolve_expression(arg);
                 }
             }
-            syntax::Expression::Block(block_expr) => {
+            HirExpressionNode::BlockExpression(block_expr) => {
                 self.resolve_block(&block_expr.node.block);
             }
-            syntax::Expression::Grouped(grouped_expr) => {
+            HirExpressionNode::GroupedExpression(grouped_expr) => {
                 self.resolve_expression(&grouped_expr.node.expr);
             }
         }
     }
 
-    fn resolve_match_arm(&mut self, arm: &Spanned<syntax::MatchArm>) {
+    fn resolve_match_arm(&mut self, arm: &Spanned<crate::hir::HirMatchArm>) {
         self.push_scope();
         self.resolve_pattern(&arm.node.pattern);
         if let Some(guard) = &arm.node.guard {
@@ -268,14 +315,14 @@ impl Resolver {
         self.pop_scope();
     }
 
-    fn resolve_pattern(&mut self, pattern: &Spanned<syntax::Pattern>) {
+    fn resolve_pattern(&mut self, pattern: &Spanned<HirPattern>) {
         match &pattern.node {
-            syntax::Pattern::Wildcard => {}
-            syntax::Pattern::Identifier(identifier) => {
+            HirPattern::Wildcard => {}
+            HirPattern::Identifier(identifier) => {
                 self.insert_local(&identifier.node.name, identifier.span);
             }
-            syntax::Pattern::Literal(_) => {}
-            syntax::Pattern::Enum(enum_pattern) => {
+            HirPattern::Literal(_) => {}
+            HirPattern::Enum(enum_pattern) => {
                 self.resolve_enum_path(&enum_pattern.node.path);
                 for item in &enum_pattern.node.items {
                     self.resolve_pattern(item);
@@ -284,19 +331,19 @@ impl Resolver {
         }
     }
 
-    fn resolve_struct_literal_field(&mut self, field: &Spanned<syntax::StructLiteralField>) {
+    fn resolve_struct_literal_field(&mut self, field: &Spanned<HirStructLiteralField>) {
         self.resolve_expression(&field.node.value);
     }
 
-    fn resolve_type(&mut self, ty: &Spanned<syntax::Type>) {
+    fn resolve_type(&mut self, ty: &Spanned<HirType>) {
         match &ty.node {
-            syntax::Type::Primitive(_) => {}
-            syntax::Type::Complex(path) => self.resolve_type_path(path),
-            syntax::Type::Array(inner) | syntax::Type::Ref(inner) => self.resolve_type(inner),
+            HirType::Primitive(_) => {}
+            HirType::Complex(path) => self.resolve_type_path(path),
+            HirType::Array(inner) | HirType::Ref(inner) => self.resolve_type(inner),
         }
     }
 
-    fn resolve_value_path(&mut self, path: &Spanned<syntax::Path>) {
+    fn resolve_value_path(&mut self, path: &Spanned<HirPath>) {
         let segments = path_segments(path);
         if segments.is_empty() {
             self.errors.push(ResolveError::UnknownValue {
@@ -325,17 +372,34 @@ impl Resolver {
             self.tables.insert_value(path.span, ResolvedValue::Local(local));
             return;
         }
-        if let Some(item) = self.resolve_item_in_module_path(&segments) {
-            self.tables.insert_value(path.span, ResolvedValue::Item(item));
-            return;
+        match self.resolve_item_in_module_path(&segments) {
+            ModulePathLookup::Found(item) => {
+                self.tables.insert_value(path.span, ResolvedValue::Item(item));
+            }
+            ModulePathLookup::ModuleMissing => {
+                self.errors.push(ResolveError::UnknownModulePath {
+                    path: segments[..segments.len() - 1].join("::"),
+                    span: path.span,
+                });
+            }
+            ModulePathLookup::NameMissing { module_path, name } => {
+                self.errors.push(ResolveError::UnknownValueInModule {
+                    module_path,
+                    name,
+                    span: path.span,
+                });
+            }
+            ModulePathLookup::NotVisible { module_path, name } => {
+                self.errors.push(ResolveError::PrivateItemInModule {
+                    module_path,
+                    name,
+                    span: path.span,
+                });
+            }
         }
-        self.errors.push(ResolveError::UnknownValue {
-            name: segments.join("::"),
-            span: path.span,
-        });
     }
 
-    fn resolve_type_path(&mut self, path: &Spanned<syntax::Path>) {
+    fn resolve_type_path(&mut self, path: &Spanned<HirPath>) {
         let segments = path_segments(path);
         if segments.is_empty() {
             self.errors.push(ResolveError::UnknownType {
@@ -356,17 +420,34 @@ impl Resolver {
             });
             return;
         }
-        if let Some(item) = self.resolve_item_in_module_path(&segments) {
-            self.tables.insert_type(path.span, item);
-            return;
+        match self.resolve_item_in_module_path(&segments) {
+            ModulePathLookup::Found(item) => {
+                self.tables.insert_type(path.span, item);
+            }
+            ModulePathLookup::ModuleMissing => {
+                self.errors.push(ResolveError::UnknownModulePath {
+                    path: segments[..segments.len() - 1].join("::"),
+                    span: path.span,
+                });
+            }
+            ModulePathLookup::NameMissing { module_path, name } => {
+                self.errors.push(ResolveError::UnknownTypeInModule {
+                    module_path,
+                    name,
+                    span: path.span,
+                });
+            }
+            ModulePathLookup::NotVisible { module_path, name } => {
+                self.errors.push(ResolveError::PrivateItemInModule {
+                    module_path,
+                    name,
+                    span: path.span,
+                });
+            }
         }
-        self.errors.push(ResolveError::UnknownType {
-            name: segments.join("::"),
-            span: path.span,
-        });
     }
 
-    fn resolve_enum_path(&mut self, path: &Spanned<syntax::EnumPath>) {
+    fn resolve_enum_path(&mut self, path: &Spanned<HirEnumPath>) {
         let type_name = path.node.type_name.node.name.clone();
         if let Some(item) = self.resolve_item_in_scope(&type_name) {
             self.tables.insert_type(path.span, item);
@@ -399,18 +480,50 @@ impl Resolver {
         None
     }
 
-    fn resolve_item_in_module_path(&self, segments: &[String]) -> Option<ItemId> {
+    fn resolve_item_in_module_path(&self, segments: &[String]) -> ModulePathLookup {
         if segments.len() < 2 {
-            return None;
+            return ModulePathLookup::ModuleMissing;
         }
         let (module_path, tail) = segments.split_at(segments.len() - 1);
-        let module_id = self.module_graph.module_id(module_path)?;
-        let module = self.module_graph.module(module_id)?;
-        module.scope.get(&tail[0]).copied()
+        let Some(module_id) = self.module_graph.module_id(module_path) else {
+            return ModulePathLookup::ModuleMissing;
+        };
+        let Some(module) = self.module_graph.module(module_id) else {
+            return ModulePathLookup::ModuleMissing;
+        };
+
+        let module_path_string = module_path.join("::");
+        if let Some(item) = module.scope.get(&tail[0]).copied() {
+            if !module_path.is_empty()
+                && self
+                    .items
+                    .get(item.0)
+                    .is_some_and(|info| info.visibility == HirVisibility::Private)
+            {
+                ModulePathLookup::NotVisible {
+                    module_path: module_path_string,
+                    name: tail[0].clone(),
+                }
+            } else {
+                ModulePathLookup::Found(item)
+            }
+        } else {
+            ModulePathLookup::NameMissing {
+                module_path: module_path_string,
+                name: tail[0].clone(),
+            }
+        }
     }
 
     fn insert_local(&mut self, name: &str, span: syntax::SpanInfo) {
         if let Some((_, previous_span)) = self.find_shadowed_local(name) {
+            self.warnings.push(ResolveWarning::ShadowedLocal {
+                name: name.to_string(),
+                span,
+                previous: previous_span,
+            });
+        } else if let Some(previous_item) = self.resolve_item_in_scope(name) {
+            let previous_span = self.items.get(previous_item.0).map(|item| item.span).unwrap_or(span);
             self.warnings.push(ResolveWarning::ShadowedLocal {
                 name: name.to_string(),
                 span,
@@ -474,7 +587,7 @@ pub struct Resolution {
     pub warnings: Vec<ResolveWarning>,
 }
 
-fn path_tail(path: &Spanned<crate::syntax::Path>) -> String {
+fn path_tail(path: &Spanned<HirPath>) -> String {
     path.node
         .segments
         .last()
@@ -482,10 +595,17 @@ fn path_tail(path: &Spanned<crate::syntax::Path>) -> String {
         .unwrap_or_else(|| "<unnamed>".to_string())
 }
 
-fn path_segments(path: &Spanned<crate::syntax::Path>) -> Vec<String> {
+fn path_segments(path: &Spanned<HirPath>) -> Vec<String> {
     path.node
         .segments
         .iter()
         .map(|segment| segment.node.name.clone())
         .collect()
+}
+
+enum ModulePathLookup {
+    Found(ItemId),
+    ModuleMissing,
+    NameMissing { module_path: String, name: String },
+    NotVisible { module_path: String, name: String },
 }

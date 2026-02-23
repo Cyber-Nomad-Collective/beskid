@@ -1,27 +1,29 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::RuleContext;
-use crate::hir::{AstItem, AstProgram};
-use crate::syntax::{Block, Expression, Path, Spanned, Statement, Visibility};
+use crate::hir::{
+    HirBlock, HirExpressionNode, HirItem, HirPath, HirProgram, HirStatementNode, HirVisibility,
+};
+use crate::syntax::Spanned;
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 
 impl SemanticPipelineRule {
-    pub(super) fn stage5_modules_and_visibility(&self, ctx: &mut RuleContext, hir: &Spanned<AstProgram>) {
+    pub(super) fn stage5_modules_and_visibility(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
         self.check_module_not_found(ctx, hir);
         self.check_visibility_violations(ctx, hir);
         self.check_unused_imports(ctx, hir);
         self.check_unused_private_items(ctx, hir);
     }
 
-    fn check_module_not_found(&self, ctx: &mut RuleContext, hir: &Spanned<AstProgram>) {
+    fn check_module_not_found(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
         let source = PathBuf::from(ctx.source_name());
         let Some(parent) = source.parent() else {
             return;
         };
 
         for item in &hir.node.items {
-            let AstItem::ModuleDeclaration(module) = &item.node else {
+            let HirItem::ModuleDeclaration(module) = &item.node else {
                 continue;
             };
             let module_path = self.path_to_string_stage5(&module.node.path).replace('.', "/");
@@ -46,11 +48,11 @@ impl SemanticPipelineRule {
         }
     }
 
-    fn check_visibility_violations(&self, ctx: &mut RuleContext, hir: &Spanned<AstProgram>) {
+    fn check_visibility_violations(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
         let private_items = self.collect_private_item_spans(hir);
 
         for item in &hir.node.items {
-            let AstItem::UseDeclaration(use_decl) = &item.node else {
+            let HirItem::UseDeclaration(use_decl) = &item.node else {
                 continue;
             };
             if use_decl.node.path.node.segments.len() < 2 {
@@ -79,11 +81,11 @@ impl SemanticPipelineRule {
         }
     }
 
-    fn check_unused_imports(&self, ctx: &mut RuleContext, hir: &Spanned<AstProgram>) {
+    fn check_unused_imports(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
         let used_names = self.collect_used_value_names(hir);
 
         for item in &hir.node.items {
-            let AstItem::UseDeclaration(use_decl) = &item.node else {
+            let HirItem::UseDeclaration(use_decl) = &item.node else {
                 continue;
             };
             let imported_name = self.path_tail_stage5(&use_decl.node.path);
@@ -101,32 +103,32 @@ impl SemanticPipelineRule {
         }
     }
 
-    fn check_unused_private_items(&self, ctx: &mut RuleContext, hir: &Spanned<AstProgram>) {
+    fn check_unused_private_items(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
         let used_names = self.collect_used_value_names(hir);
 
         for item in &hir.node.items {
             let (name, visibility, span) = match &item.node {
-                AstItem::FunctionDefinition(definition) => (
+                HirItem::FunctionDefinition(definition) => (
                     definition.node.name.node.name.clone(),
                     definition.node.visibility.node,
                     definition.node.name.span,
                 ),
-                AstItem::TypeDefinition(definition) => (
+                HirItem::TypeDefinition(definition) => (
                     definition.node.name.node.name.clone(),
                     definition.node.visibility.node,
                     definition.node.name.span,
                 ),
-                AstItem::EnumDefinition(definition) => (
+                HirItem::EnumDefinition(definition) => (
                     definition.node.name.node.name.clone(),
                     definition.node.visibility.node,
                     definition.node.name.span,
                 ),
-                AstItem::ContractDefinition(definition) => (
+                HirItem::ContractDefinition(definition) => (
                     definition.node.name.node.name.clone(),
                     definition.node.visibility.node,
                     definition.node.name.span,
                 ),
-                AstItem::ModuleDeclaration(definition) => (
+                HirItem::ModuleDeclaration(definition) => (
                     self.path_tail_stage5(&definition.node.path),
                     definition.node.visibility.node,
                     definition.node.path.span,
@@ -134,7 +136,7 @@ impl SemanticPipelineRule {
                 _ => continue,
             };
 
-            if visibility == Visibility::Public || name == "main" || used_names.contains(&name) {
+            if visibility == HirVisibility::Public || name == "main" || used_names.contains(&name) {
                 continue;
             }
 
@@ -149,21 +151,21 @@ impl SemanticPipelineRule {
         }
     }
 
-    fn collect_private_item_spans(&self, hir: &Spanned<AstProgram>) -> HashMap<String, crate::syntax::SpanInfo> {
+    fn collect_private_item_spans(&self, hir: &Spanned<HirProgram>) -> HashMap<String, crate::syntax::SpanInfo> {
         let mut items = HashMap::new();
         for item in &hir.node.items {
             match &item.node {
-                AstItem::FunctionDefinition(definition) if definition.node.visibility.node == Visibility::Private => {
+                HirItem::FunctionDefinition(definition) if definition.node.visibility.node == HirVisibility::Private => {
                     items.insert(definition.node.name.node.name.clone(), definition.node.name.span);
                 }
-                AstItem::TypeDefinition(definition) if definition.node.visibility.node == Visibility::Private => {
+                HirItem::TypeDefinition(definition) if definition.node.visibility.node == HirVisibility::Private => {
                     items.insert(definition.node.name.node.name.clone(), definition.node.name.span);
                 }
-                AstItem::EnumDefinition(definition) if definition.node.visibility.node == Visibility::Private => {
+                HirItem::EnumDefinition(definition) if definition.node.visibility.node == HirVisibility::Private => {
                     items.insert(definition.node.name.node.name.clone(), definition.node.name.span);
                 }
-                AstItem::ContractDefinition(definition)
-                    if definition.node.visibility.node == Visibility::Private =>
+                HirItem::ContractDefinition(definition)
+                    if definition.node.visibility.node == HirVisibility::Private =>
                 {
                     items.insert(definition.node.name.node.name.clone(), definition.node.name.span);
                 }
@@ -173,14 +175,14 @@ impl SemanticPipelineRule {
         items
     }
 
-    fn collect_used_value_names(&self, hir: &Spanned<AstProgram>) -> HashSet<String> {
+    fn collect_used_value_names(&self, hir: &Spanned<HirProgram>) -> HashSet<String> {
         let mut used = HashSet::new();
         for item in &hir.node.items {
             match &item.node {
-                AstItem::FunctionDefinition(definition) => {
+                HirItem::FunctionDefinition(definition) => {
                     self.collect_used_in_block(&definition.node.body, &mut used);
                 }
-                AstItem::MethodDefinition(definition) => {
+                HirItem::MethodDefinition(definition) => {
                     self.collect_used_in_block(&definition.node.body, &mut used);
                 }
                 _ => {}
@@ -189,82 +191,86 @@ impl SemanticPipelineRule {
         used
     }
 
-    fn collect_used_in_block(&self, block: &Spanned<Block>, used: &mut HashSet<String>) {
+    fn collect_used_in_block(&self, block: &Spanned<HirBlock>, used: &mut HashSet<String>) {
         for statement in &block.node.statements {
             match &statement.node {
-                Statement::Let(let_statement) => {
+                HirStatementNode::LetStatement(let_statement) => {
                     self.collect_used_in_expression(&let_statement.node.value, used);
                 }
-                Statement::Return(return_statement) => {
+                HirStatementNode::ReturnStatement(return_statement) => {
                     if let Some(value) = &return_statement.node.value {
                         self.collect_used_in_expression(value, used);
                     }
                 }
-                Statement::While(while_statement) => {
+                HirStatementNode::WhileStatement(while_statement) => {
                     self.collect_used_in_expression(&while_statement.node.condition, used);
                     self.collect_used_in_block(&while_statement.node.body, used);
                 }
-                Statement::For(for_statement) => {
+                HirStatementNode::ForStatement(for_statement) => {
                     self.collect_used_in_expression(&for_statement.node.range.node.start, used);
                     self.collect_used_in_expression(&for_statement.node.range.node.end, used);
                     self.collect_used_in_block(&for_statement.node.body, used);
                 }
-                Statement::If(if_statement) => {
+                HirStatementNode::IfStatement(if_statement) => {
                     self.collect_used_in_expression(&if_statement.node.condition, used);
                     self.collect_used_in_block(&if_statement.node.then_block, used);
                     if let Some(else_block) = &if_statement.node.else_block {
                         self.collect_used_in_block(else_block, used);
                     }
                 }
-                Statement::Expression(expression_statement) => {
+                HirStatementNode::ExpressionStatement(expression_statement) => {
                     self.collect_used_in_expression(&expression_statement.node.expression, used);
                 }
-                Statement::Break(_) | Statement::Continue(_) => {}
+                HirStatementNode::BreakStatement(_) | HirStatementNode::ContinueStatement(_) => {}
             }
         }
     }
 
-    fn collect_used_in_expression(&self, expression: &Spanned<Expression>, used: &mut HashSet<String>) {
+    fn collect_used_in_expression(
+        &self,
+        expression: &Spanned<HirExpressionNode>,
+        used: &mut HashSet<String>,
+    ) {
         match &expression.node {
-            Expression::Path(path_expression) => {
+            HirExpressionNode::PathExpression(path_expression) => {
                 if let Some(last) = path_expression.node.path.node.segments.last() {
                     used.insert(last.node.name.clone());
                 }
             }
-            Expression::Assign(assign_expression) => {
+            HirExpressionNode::AssignExpression(assign_expression) => {
                 self.collect_used_in_expression(&assign_expression.node.target, used);
                 self.collect_used_in_expression(&assign_expression.node.value, used);
             }
-            Expression::Binary(binary_expression) => {
+            HirExpressionNode::BinaryExpression(binary_expression) => {
                 self.collect_used_in_expression(&binary_expression.node.left, used);
                 self.collect_used_in_expression(&binary_expression.node.right, used);
             }
-            Expression::Unary(unary_expression) => {
+            HirExpressionNode::UnaryExpression(unary_expression) => {
                 self.collect_used_in_expression(&unary_expression.node.expr, used);
             }
-            Expression::Call(call_expression) => {
+            HirExpressionNode::CallExpression(call_expression) => {
                 self.collect_used_in_expression(&call_expression.node.callee, used);
                 for arg in &call_expression.node.args {
                     self.collect_used_in_expression(arg, used);
                 }
             }
-            Expression::Member(member_expression) => {
+            HirExpressionNode::MemberExpression(member_expression) => {
                 self.collect_used_in_expression(&member_expression.node.target, used);
                 used.insert(member_expression.node.member.node.name.clone());
             }
-            Expression::StructLiteral(struct_literal) => {
+            HirExpressionNode::StructLiteralExpression(struct_literal) => {
                 for field in &struct_literal.node.fields {
                     self.collect_used_in_expression(&field.node.value, used);
                 }
             }
-            Expression::EnumConstructor(constructor_expression) => {
+            HirExpressionNode::EnumConstructorExpression(constructor_expression) => {
                 used.insert(constructor_expression.node.path.node.type_name.node.name.clone());
                 used.insert(constructor_expression.node.path.node.variant.node.name.clone());
                 for arg in &constructor_expression.node.args {
                     self.collect_used_in_expression(arg, used);
                 }
             }
-            Expression::Match(match_expression) => {
+            HirExpressionNode::MatchExpression(match_expression) => {
                 self.collect_used_in_expression(&match_expression.node.scrutinee, used);
                 for arm in &match_expression.node.arms {
                     if let Some(guard) = &arm.node.guard {
@@ -273,15 +279,17 @@ impl SemanticPipelineRule {
                     self.collect_used_in_expression(&arm.node.value, used);
                 }
             }
-            Expression::Block(block_expression) => self.collect_used_in_block(&block_expression.node.block, used),
-            Expression::Grouped(grouped_expression) => {
+            HirExpressionNode::BlockExpression(block_expression) => {
+                self.collect_used_in_block(&block_expression.node.block, used)
+            }
+            HirExpressionNode::GroupedExpression(grouped_expression) => {
                 self.collect_used_in_expression(&grouped_expression.node.expr, used)
             }
-            Expression::Literal(_) => {}
+            HirExpressionNode::LiteralExpression(_) => {}
         }
     }
 
-    fn path_tail_stage5(&self, path: &Spanned<Path>) -> String {
+    fn path_tail_stage5(&self, path: &Spanned<HirPath>) -> String {
         path.node
             .segments
             .last()
@@ -289,7 +297,7 @@ impl SemanticPipelineRule {
             .unwrap_or_default()
     }
 
-    fn path_to_string_stage5(&self, path: &Spanned<Path>) -> String {
+    fn path_to_string_stage5(&self, path: &Spanned<HirPath>) -> String {
         path.node
             .segments
             .iter()

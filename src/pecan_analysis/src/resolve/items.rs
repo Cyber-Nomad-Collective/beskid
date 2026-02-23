@@ -1,4 +1,5 @@
 use crate::syntax::SpanInfo;
+use crate::hir::HirVisibility;
 
 use super::ids::ItemId;
 
@@ -22,5 +23,6 @@ pub struct ItemInfo {
     pub id: ItemId,
     pub name: String,
     pub kind: ItemKind,
+    pub visibility: HirVisibility,
     pub span: SpanInfo,
 }

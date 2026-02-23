@@ -4,4 +4,7 @@ pub mod errors;
 pub mod lowering;
 
 pub use errors::CodegenError;
-pub use lowering::{CodegenContext, CodegenResult, Lowerable, lower_node};
+pub use lowering::{
+    CodegenArtifact, CodegenContext, CodegenResult, Lowerable, LoweredFunction,
+    lower_node, lower_program,
+};

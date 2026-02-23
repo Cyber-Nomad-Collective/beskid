@@ -3,6 +3,8 @@ pub mod common;
 pub mod expression;
 pub mod item;
 pub mod literal;
+pub mod legality;
+pub mod lowering;
 pub mod match_arm;
 pub mod module;
 pub mod pattern;
@@ -28,6 +30,8 @@ pub use item::{
     Item,
 };
 pub use literal::HirLiteral;
+pub use legality::{validate_hir_program, HirLegalityError};
+pub use lowering::lower_program;
 pub use match_arm::HirMatchArm;
 pub use module::Module;
 pub use pattern::{HirEnumPattern, HirPattern};

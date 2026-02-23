@@ -7,6 +7,8 @@ use crate::syntax::util::parse_program_ast;
 
 mod resolve;
 mod types;
+mod lowering;
+mod legality;
 
 struct EmitOne;
 
@@ -61,6 +63,71 @@ fn analysis_emits_type_errors() {
         .diagnostics
         .iter()
         .any(|diag| diag.code.as_deref() == Some("E1206")));
+}
+
+#[test]
+fn analysis_emits_cast_intent_warnings() {
+    let source = "unit main() { let x: i64 = 1; let y: i32 = x; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    let cast_diag = result
+        .diagnostics
+        .iter()
+        .find(|diag| diag.code.as_deref() == Some("W1203"))
+        .expect("expected cast-intent warning");
+    assert!(
+        cast_diag.message.contains("i64") && cast_diag.message.contains("i32"),
+        "expected readable cast types in warning message, got: {}",
+        cast_diag.message
+    );
+}
+
+#[test]
+fn analysis_suppresses_cast_intent_warnings_when_warnings_disabled() {
+    let source = "unit main() { let x: i64 = 1; let y: i32 = x; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions {
+            emit_warnings: false,
+        },
+    );
+
+    assert!(!result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("W1203")));
+}
+
+#[test]
+fn analysis_pipeline_succeeds_after_lowering() {
+    let source = "type User { i64 id } unit main() { let u: User = User { id: 1 }; let x: i64 = u.id; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .all(|diag| diag.severity != Severity::Error),
+        "expected no error diagnostics"
+    );
 }
 
 #[test]
@@ -334,6 +401,24 @@ fn analysis_emits_unknown_import_path_errors() {
 }
 
 #[test]
+fn analysis_emits_private_item_in_module_access_errors() {
+    let source = "mod dep.secret; unit main() { let x = dep.secret; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1107")));
+}
+
+#[test]
 fn analysis_emits_use_before_declaration_errors() {
     let source = "unit main() { let x: i64 = y; let y: i64 = 1; }";
     let program = parse_program_ast(source);
@@ -367,6 +452,24 @@ fn analysis_emits_immutable_assignment_errors() {
         .diagnostics
         .iter()
         .any(|diag| diag.code.as_deref() == Some("E1214")));
+}
+
+#[test]
+fn analysis_emits_invalid_member_target_errors() {
+    let source = "unit main() { let x: i64 = 1; let y: i64 = x.foo; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(result
+        .diagnostics
+        .iter()
+        .any(|diag| diag.code.as_deref() == Some("E1213")));
 }
 
 #[test]

@@ -1,5 +1,5 @@
-use crate::hir::HirPrimitiveType;
-use crate::syntax::{Expression, PrimitiveType, SpanInfo};
+use crate::hir::{HirExpressionNode, HirPrimitiveType};
+use crate::syntax::SpanInfo;
 use crate::resolve::{ItemId, ItemKind};
 use crate::types::{TypeId, TypeInfo};
 
@@ -77,6 +77,25 @@ impl<'a> TypeContext<'a> {
             return;
         }
         if self.is_numeric(expected) && self.is_numeric(actual) {
+            if self
+                .cast_intents
+                .iter()
+                .any(|intent| intent.span == span && intent.from == actual && intent.to == expected)
+            {
+                return;
+            }
+            if self
+                .cast_intents
+                .iter()
+                .any(|intent| intent.span == span && intent.from == expected && intent.to == actual)
+            {
+                self.errors.push(TypeError::TypeMismatch {
+                    span,
+                    expected,
+                    actual,
+                });
+                return;
+            }
             self.cast_intents.push(CastIntent {
                 span,
                 from: actual,
@@ -91,7 +110,11 @@ impl<'a> TypeContext<'a> {
         });
     }
 
-    pub(super) fn require_bool(&mut self, span: SpanInfo, expression: &crate::syntax::Spanned<Expression>) {
+    pub(super) fn require_bool(
+        &mut self,
+        span: SpanInfo,
+        expression: &crate::syntax::Spanned<HirExpressionNode>,
+    ) {
         let type_id = self.type_expression(expression);
         let bool_id = self.primitive_type_id(HirPrimitiveType::Bool);
         if let (Some(type_id), Some(bool_id)) = (type_id, bool_id) {
@@ -128,16 +151,7 @@ impl<'a> TypeContext<'a> {
         self.is_numeric(type_id) || self.is_bool(type_id)
     }
 
-    pub(super) fn map_primitive(&self, primitive: PrimitiveType) -> HirPrimitiveType {
-        match primitive {
-            PrimitiveType::Bool => HirPrimitiveType::Bool,
-            PrimitiveType::I32 => HirPrimitiveType::I32,
-            PrimitiveType::I64 => HirPrimitiveType::I64,
-            PrimitiveType::U8 => HirPrimitiveType::U8,
-            PrimitiveType::F64 => HirPrimitiveType::F64,
-            PrimitiveType::Char => HirPrimitiveType::Char,
-            PrimitiveType::String => HirPrimitiveType::String,
-            PrimitiveType::Unit => HirPrimitiveType::Unit,
-        }
+    pub(super) fn map_primitive(&self, primitive: HirPrimitiveType) -> HirPrimitiveType {
+        primitive
     }
 }
