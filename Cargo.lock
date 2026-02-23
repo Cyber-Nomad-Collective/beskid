@@ -782,6 +782,7 @@ dependencies = [
  "log",
  "miette",
  "pecan_analysis",
+ "pecan_codegen",
  "pest",
  "serde",
  "serde_json",

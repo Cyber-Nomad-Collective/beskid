@@ -34,6 +34,7 @@ pub struct TypeResult {
     pub types: TypeTable,
     pub expr_types: HashMap<SpanInfo, TypeId>,
     pub local_types: HashMap<LocalId, TypeId>,
+    pub function_signatures: HashMap<ItemId, FunctionSignature>,
     // Canonical output contract for safe implicit numeric conversions.
     // Invariants (normalized in `TypeContext::type_program`):
     // - sorted by (span.start, span.end, from, to)
@@ -125,6 +126,7 @@ impl<'a> TypeContext<'a> {
                 types: self.type_table,
                 expr_types: self.expr_types,
                 local_types: self.local_types,
+                function_signatures: self.function_signatures,
                 cast_intents: self.cast_intents,
             })
         } else {

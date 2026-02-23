@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 pecan_analysis = { path = "../pecan_analysis" }
+pecan_codegen = { path = "../pecan_codegen" }
 anyhow = "1.0"
 clap = { version = "4.4", features = ["derive"] }
 env_logger = "0.11"

@@ -364,46 +364,98 @@ description: Pecan execution implementation plan
 
 ### Session objective
 
-Move from kickoff-only lowering to first practical execution subset by adding arithmetic/branching lowering and consistent diagnostics integration while keeping tests green.
+Complete trait-based CLIF lowering architecture and incrementally replace stubs with real lowering for all HIR expression/statement nodes while preserving diagnostic quality and test stability.
+
+### Current state snapshot
+
+- Lowering architecture is trait-driven via `Lowerable<Ctx>` in `lowering/lowerable.rs`.
+- `mod.rs` files contain module declarations only; logic is split into node files.
+- Function body lowering uses `lower_node(...)` with `NodeLoweringContext`.
+- Codegen diagnostic bridge exists (`pecan_codegen::diagnostics`) and CLIF CLI command exists.
+- `cargo test -p pecan_codegen` is green.
+
+### Active module layout (current)
+
+- `lowering/lowerable.rs` — generic `Lowerable<Ctx>`, `lower_node`, `lower_program`
+- `lowering/node_context.rs` — per-function lowering context
+- `lowering/function.rs` — function frame/signature lifecycle and verification
+- `lowering/expressions/` — one file per HIR expression node category
+- `lowering/statements/` — one file per HIR statement node category
+- `lowering/cast_intent.rs`, `lowering/types.rs`, `lowering/context.rs`, `lowering/tests.rs`
+
+### Node coverage status
+
+#### Expressions
+
+- Implemented (non-stub):
+  - `literal_expression`, `literal`
+  - `path_expression`
+  - `grouped_expression`
+  - `block_expression` (unit/none path)
+  - `binary_expression` (numeric arithmetic subset)
+- Stub-only (returns unsupported):
+  - `assign_expression`
+  - `call_expression`
+  - `match_expression`
+  - `member_expression`
+  - `struct_literal_expression`
+  - `enum_constructor_expression`
+  - `unary_expression`
+
+#### Statements
+
+- Implemented (non-stub):
+  - `let_statement`
+  - `return_statement`
+  - `expression_statement`
+- Stub-only (returns unsupported):
+  - `if_statement`
+  - `for_statement`
+  - `while_statement`
+  - `break_statement`
+  - `continue_statement`
 
 ### Ordered plan
 
-1. **Codegen diagnostic bridge integration**
-   - Add mapping from `CodegenError` variants to analysis diagnostics with stable codes.
-   - Ensure span fidelity and clear help messages.
-   - Add regression tests asserting code + message shape for key codegen failures.
+1. **Finish expression core semantics**
+   - Implement `unary_expression` (`Neg`, `Not`) with numeric/bool typing rules.
+   - Expand `binary_expression` to comparisons and logical operators (`Eq`, `NotEq`, `Lt`, `Lte`, `Gt`, `Gte`, `And`, `Or`).
+   - Keep strict fail-fast diagnostics for unsupported type/operator combinations.
 
-2. **Expression lowering expansion: arithmetic**
-   - Lower numeric binary ops for supported primitive pairs (`i32`, `i64`, `u8`, `f64` as available).
-   - Reuse cast-intent contract where coercion is required.
-   - Emit explicit unsupported diagnostics for combinations still out-of-scope.
+2. **Implement call and member/value access path**
+   - Implement `call_expression` for direct internal calls (initial ABI subset).
+   - Define unsupported behavior for method/member calls until object model lowering exists.
+   - Add signature validation and argument count/type checks.
 
-3. **Control-flow lowering expansion: conditional branching**
-   - Lower `if` (with and without `else`) to CLIF blocks/branches.
-   - Keep loop/match lowering deferred unless trivially reachable.
-   - Add verifier-backed tests for generated CLIF control-flow shape.
+3. **Implement control flow statements**
+   - Implement `if_statement` with CLIF block graph (`then`, optional `else`, merge).
+   - Implement `while_statement` with loop header/body/exit blocks.
+   - Keep `for_statement` as explicit unsupported until range lowering policy is finalized, or lower through canonical while desugaring if type info is sufficient.
+   - Keep `break`/`continue` blocked until loop control stack is introduced.
 
-4. **Function-call lowering (initial ABI subset)**
-   - Lower direct calls for already-lowered internal functions.
-   - Lock initial ABI subset and fail fast with diagnostics outside that subset.
-   - Add tests for call success and signature mismatch behavior.
+4. **Implement assignment and aggregate nodes**
+   - Implement `assign_expression` for local l-values only (phase 1).
+   - Keep struct/enum constructor and match nodes as unsupported until data layout + pattern lowering design is finalized.
 
-5. **Engine smoke path prep**
-   - Create minimal integration seam from codegen artifact into `pecan_engine` for one function execution path.
-   - Keep this as a smoke-only route to validate architecture (not full runtime feature parity).
+5. **Diagnostics hardening and integration polish**
+   - Ensure each newly implemented node has stable diagnostic codes/messages for invalid combinations.
+   - Keep CLI `clif` output and diagnostics consistent across parse/resolve/type/codegen stages.
+
+6. **Engine smoke integration checkpoint**
+   - Add one end-to-end smoke path from typed HIR -> CLIF artifact -> engine execution harness.
 
 ### Test gates for next session
 
 1. `cargo test -p pecan_codegen` (must stay green).
-2. New targeted tests for arithmetic/if/call lowering and codegen diagnostic mapping.
+2. New targeted tests for unary/binary/call/if/while lowering and codegen diagnostic mapping.
 3. `cargo test -p pekan_tests analysis:: -- --nocapture` (must remain green).
 
 ### Acceptance criteria for next session
 
-- Codegen failures surface through shared diagnostics with stable codes and spans.
-- Arithmetic + `if` lowering work for the agreed primitive subset.
-- Basic internal function calls lower correctly for the initial ABI subset.
-- Existing analysis/type/resolution regression suite remains green.
+- No missing HIR expression/statement node files; dispatch remains trait-based through `Lowerable<Ctx>`.
+- At least `unary`, `comparisons/logical binary`, `if`, and direct internal `call` are implemented (non-stub).
+- Remaining unsupported nodes fail with explicit stable diagnostics (no hidden control flow).
+- Existing analysis/type/resolution/codegen tests remain green.
 
 ### Immediate follow-up (after kickoff slice)
 
