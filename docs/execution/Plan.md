@@ -255,6 +255,44 @@ description: Pecan execution implementation plan
 5. Add span-aware codegen error contract and map to diagnostics.
 6. Add IR-shape/golden tests and initial smoke coverage for kickoff slice.
 
+**Current progress (end-of-session status)**
+- ✅ `pecan_codegen` now exposes a typed kickoff entrypoint:
+  - `lower_program(&Spanned<HirProgram>, &Resolution, &TypeResult)`
+  - returns `CodegenArtifact` or `Vec<CodegenError>`.
+- ✅ Codegen artifact/model added for kickoff:
+  - `CodegenArtifact` + `LoweredFunction` with CLIF text for inspection.
+- ✅ Span-aware codegen error contract implemented with structured variants:
+  - unsupported node/feature,
+  - missing resolution/local/expression-type,
+  - cast-intent contract failures,
+  - type mismatch,
+  - CLIF verification failures.
+- ✅ Cast-intent boundary validator implemented:
+  - numeric-only cast intents,
+  - duplicate/conflicting intent checks,
+  - hard error on missing required cast-intent for numeric mismatch.
+- ✅ Minimal CLIF lowering vertical slice implemented:
+  - function skeleton (entry block + finalize),
+  - literal lowering (integer/bool subset),
+  - local `let` binding for supported types,
+  - return statement lowering,
+  - CLIF verification gate.
+- ✅ Kickoff codegen tests added and passing in `pecan_codegen`:
+  - successful basic lowering,
+  - unsupported expression failure with span-aware error,
+  - missing-cast-intent hard-failure regression.
+- ✅ Verification status:
+  - `cargo check -p pecan_analysis -p pecan_codegen` passes,
+  - `cargo test -p pecan_codegen` passes,
+  - `cargo test -p pekan_tests analysis:: -- --nocapture` passes.
+
+**Remaining work (after kickoff)**
+1. Wire codegen errors into the shared analysis diagnostic pipeline with stable code ranges.
+2. Extend lowering coverage to arithmetic and conditional branching.
+3. Add function-call lowering and initial signature/ABI mapping.
+4. Start module-level symbol declaration/definition path via Cranelift `Module`.
+5. Add smoke execution path for a minimal `main` through `pecan_engine`.
+
 **Acceptance criteria**
 
 - Generated CLIF validates for the kickoff subset (function/literal/local/return).
@@ -322,48 +360,50 @@ description: Pecan execution implementation plan
 
 ---
 
-## Detailed implementation plan — next chunk (Phase 3 kickoff)
+## Detailed implementation plan — next session (Phase 3 continuation)
 
-### Phase 3 kickoff: HIR-to-CLIF scaffolding and handoff contracts
+### Session objective
 
-1. **Create execution crate scaffolding and typed handoff entrypoint**
-   - Add/verify `pecan_codegen` crate structure for CLIF lowering entrypoint.
-   - Define a minimal lowering API that accepts:
-     - `Spanned<HirProgram>`,
-     - `Resolution`,
-     - `TypeResult` (including `cast_intents`).
-   - Keep API narrow and deterministic for initial bring-up.
+Move from kickoff-only lowering to first practical execution subset by adding arithmetic/branching lowering and consistent diagnostics integration while keeping tests green.
 
-2. **Define codegen-side consumption contract for cast intents**
-   - Document matching strategy from expression span → cast intent(s).
-   - Add validation helper in codegen boundary:
-     - reject unexpected duplicate/conflicting intents,
-     - assert numeric-only conversion intents.
-   - Keep failures diagnostic-friendly with span-linked messages.
+### Ordered plan
 
-3. **Implement first CLIF lowering vertical slice**
-   - Lower one minimal executable path end-to-end:
-     - function prologue/epilogue,
-     - literals,
-     - local variables,
-     - return statement.
-   - Exclude complex control-flow in this chunk; focus on correctness and plumbing.
+1. **Codegen diagnostic bridge integration**
+   - Add mapping from `CodegenError` variants to analysis diagnostics with stable codes.
+   - Ensure span fidelity and clear help messages.
+   - Add regression tests asserting code + message shape for key codegen failures.
 
-4. **Span-aware diagnostic bridge for codegen errors**
-   - Add error type for codegen lowering with explicit source spans.
-   - Map codegen failures into analysis/CLI diagnostics consistently.
-   - Ensure errors are stable for tests.
+2. **Expression lowering expansion: arithmetic**
+   - Lower numeric binary ops for supported primitive pairs (`i32`, `i64`, `u8`, `f64` as available).
+   - Reuse cast-intent contract where coercion is required.
+   - Emit explicit unsupported diagnostics for combinations still out-of-scope.
 
-5. **Targeted tests for the Phase 3 kickoff slice**
-   - Add tests for:
-     - basic function/literal/return lowering success,
-     - cast-intent boundary validation behavior,
-     - span-preserving codegen diagnostics on unsupported nodes.
+3. **Control-flow lowering expansion: conditional branching**
+   - Lower `if` (with and without `else`) to CLIF blocks/branches.
+   - Keep loop/match lowering deferred unless trivially reachable.
+   - Add verifier-backed tests for generated CLIF control-flow shape.
 
-6. **Acceptance criteria for this chunk**
-   - CLIF lowering entrypoint compiles and handles the minimal vertical slice.
-   - HIR/resolution/type handoff contract is explicit and tested.
-   - All existing analysis tests remain green.
+4. **Function-call lowering (initial ABI subset)**
+   - Lower direct calls for already-lowered internal functions.
+   - Lock initial ABI subset and fail fast with diagnostics outside that subset.
+   - Add tests for call success and signature mismatch behavior.
+
+5. **Engine smoke path prep**
+   - Create minimal integration seam from codegen artifact into `pecan_engine` for one function execution path.
+   - Keep this as a smoke-only route to validate architecture (not full runtime feature parity).
+
+### Test gates for next session
+
+1. `cargo test -p pecan_codegen` (must stay green).
+2. New targeted tests for arithmetic/if/call lowering and codegen diagnostic mapping.
+3. `cargo test -p pekan_tests analysis:: -- --nocapture` (must remain green).
+
+### Acceptance criteria for next session
+
+- Codegen failures surface through shared diagnostics with stable codes and spans.
+- Arithmetic + `if` lowering work for the agreed primitive subset.
+- Basic internal function calls lower correctly for the initial ABI subset.
+- Existing analysis/type/resolution regression suite remains green.
 
 ### Immediate follow-up (after kickoff slice)
 
