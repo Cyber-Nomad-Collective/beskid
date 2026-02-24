@@ -1,4 +1,4 @@
-use pecan_analysis::hir::{lower_program, AstProgram, HirProgram};
+use pecan_analysis::hir::{lower_program, normalize_program, AstProgram, HirProgram};
 use pecan_analysis::resolve::{ResolveError, ResolveWarning, Resolver};
 use pecan_analysis::syntax::Spanned;
 
@@ -7,7 +7,8 @@ use crate::syntax::util::parse_program_ast;
 fn resolve_program(source: &str) -> Result<pecan_analysis::resolve::Resolution, Vec<ResolveError>> {
     let program = parse_program_ast(source);
     let ast: Spanned<AstProgram> = program.into();
-    let hir: Spanned<HirProgram> = lower_program(&ast);
+    let mut hir: Spanned<HirProgram> = lower_program(&ast);
+    normalize_program(&mut hir).expect("normalization failed");
     Resolver::new().resolve_program(&hir)
 }
 

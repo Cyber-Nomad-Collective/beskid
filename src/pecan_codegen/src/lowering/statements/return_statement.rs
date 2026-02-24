@@ -38,6 +38,7 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirReturnStatement {
         }
 
         ctx.state.return_emitted = true;
+        ctx.state.block_terminated = true;
         Ok(())
     }
 }

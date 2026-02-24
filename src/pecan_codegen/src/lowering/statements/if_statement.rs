@@ -47,33 +47,40 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirIfStatement {
         }
 
         ctx.builder.switch_to_block(then_block);
+        ctx.state.block_terminated = false;
+        ctx.state.return_emitted = false;
         for statement in &node.node.then_block.node.statements {
             lower_node(statement, ctx)?;
-            if ctx.state.return_emitted {
+            if ctx.state.block_terminated {
                 break;
             }
         }
         let then_returned = ctx.state.return_emitted;
-        if !then_returned {
+        let then_terminated = ctx.state.block_terminated;
+        if !then_terminated {
             ctx.builder.ins().jump(merge_block, &[]);
         }
 
         if let Some(else_block) = else_block {
+            ctx.state.block_terminated = false;
             ctx.state.return_emitted = false;
             ctx.builder.switch_to_block(else_block);
             for statement in &node.node.else_block.as_ref().unwrap().node.statements {
                 lower_node(statement, ctx)?;
-                if ctx.state.return_emitted {
+                if ctx.state.block_terminated {
                     break;
                 }
             }
             let else_returned = ctx.state.return_emitted;
-            if !else_returned {
+            let else_terminated = ctx.state.block_terminated;
+            if !else_terminated {
                 ctx.builder.ins().jump(merge_block, &[]);
             }
             ctx.state.return_emitted = then_returned && else_returned;
+            ctx.state.block_terminated = then_terminated && else_terminated;
         } else {
             ctx.state.return_emitted = false;
+            ctx.state.block_terminated = false;
         }
 
         ctx.builder.switch_to_block(merge_block);

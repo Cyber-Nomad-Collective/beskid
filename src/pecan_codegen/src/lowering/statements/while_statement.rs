@@ -47,6 +47,7 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirWhileStatement {
         ctx.builder.ins().brif(condition, body_block, &[], exit_block, &[]);
 
         ctx.builder.switch_to_block(body_block);
+        ctx.builder.seal_block(body_block);
         ctx.state
             .loop_stack
             .push(LoopControl {
@@ -65,8 +66,10 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirWhileStatement {
             ctx.builder.ins().jump(header_block, &[]);
         }
 
+        ctx.builder.seal_block(header_block);
         ctx.state.block_terminated = false;
         ctx.builder.switch_to_block(exit_block);
+        ctx.builder.seal_block(exit_block);
         Ok(())
     }
 }

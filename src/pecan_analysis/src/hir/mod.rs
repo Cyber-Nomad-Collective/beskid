@@ -15,6 +15,8 @@ pub mod statement;
 pub mod struct_literal_field;
 pub mod types;
 
+pub mod normalize;
+
 pub use block::HirBlock;
 pub use common::{HirEnumPath, HirIdentifier, HirPath, HirVisibility};
 pub use expression::{
@@ -34,6 +36,7 @@ pub use legality::{validate_hir_program, HirLegalityError};
 pub use lowering::lower_program;
 pub use match_arm::HirMatchArm;
 pub use module::Module;
+pub use normalize::{normalize_program, HirNormalizeError};
 pub use pattern::{HirEnumPattern, HirPattern};
 pub use phase::{AstPhase, HirPhase, Phase};
 pub use program::Program;

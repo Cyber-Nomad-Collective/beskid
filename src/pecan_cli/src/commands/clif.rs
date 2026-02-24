@@ -1,7 +1,9 @@
 use anyhow::{Context, Result};
 use clap::Args;
 use miette::Report;
-use pecan_analysis::hir::{lower_program as lower_hir_program, AstProgram, HirProgram};
+use pecan_analysis::hir::{
+    lower_program as lower_hir_program, normalize_program, AstProgram, HirProgram,
+};
 use pecan_analysis::parsing::parsable::Parsable;
 use pecan_analysis::parser::{PecanParser, Rule};
 use pecan_analysis::resolve::Resolver;
@@ -49,7 +51,12 @@ pub fn execute(args: ClifArgs) -> Result<()> {
     };
 
     let ast: Spanned<AstProgram> = program.into();
-    let hir: Spanned<HirProgram> = lower_hir_program(&ast);
+    let mut hir: Spanned<HirProgram> = lower_hir_program(&ast);
+
+    if let Err(errors) = normalize_program(&mut hir) {
+        eprintln!("Normalization failed: {errors:?}");
+        std::process::exit(1);
+    }
 
     let resolution = match Resolver::new().resolve_program(&hir) {
         Ok(resolution) => resolution,

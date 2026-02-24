@@ -69,3 +69,25 @@ fn codegen_requires_cast_intent_for_numeric_mismatch() {
         "expected MissingCastIntent error, got: {errors:?}"
     );
 }
+
+#[test]
+fn codegen_lowers_for_loop_with_assignment() {
+    let source = "i64 main() { let mut sum: i64 = 0; for i in range(0, 4) { sum = sum + i; } return sum; }";
+    let (hir, resolution, typed) = lower_resolve_type(source);
+    let artifact = lower_program(&hir, &resolution, &typed)
+        .expect("expected for loop lowering to succeed");
+    let clif = &artifact.functions[0].clif;
+    assert!(clif.contains("brif"), "expected loop branching in CLIF: {clif}");
+    assert!(clif.contains("iadd"), "expected loop increment in CLIF: {clif}");
+}
+
+#[test]
+fn codegen_lowers_while_with_break_and_continue() {
+    let source = "i64 main() { let mut i: i64 = 0; let mut sum: i64 = 0; while i < 5 { i = i + 1; if i == 2 { continue; } if i == 4 { break; } sum = sum + i; } return sum; }";
+    let (hir, resolution, typed) = lower_resolve_type(source);
+    let artifact = lower_program(&hir, &resolution, &typed)
+        .expect("expected while/break/continue lowering to succeed");
+    let clif = &artifact.functions[0].clif;
+    assert!(clif.contains("brif"), "expected branching in CLIF: {clif}");
+    assert!(clif.contains("jump"), "expected jumps for loop control in CLIF: {clif}");
+}

@@ -1,5 +1,5 @@
 use pecan_analysis::hir::{
-    lower_program, AstItem, AstProgram, HirExpressionNode, HirItem, HirPattern, HirStatementNode,
+    lower_program, normalize_program, AstItem, AstProgram, HirExpressionNode, HirItem, HirPattern, HirStatementNode,
     HirProgram,
 };
 use pecan_analysis::syntax::Spanned;
@@ -21,7 +21,8 @@ fn sample_source() -> &'static str {
 fn lower_sample_program() -> (Spanned<AstProgram>, Spanned<HirProgram>) {
     let program = parse_program_ast(sample_source());
     let ast: Spanned<AstProgram> = program.into();
-    let hir: Spanned<HirProgram> = lower_program(&ast);
+    let mut hir: Spanned<HirProgram> = lower_program(&ast);
+    normalize_program(&mut hir).expect("normalization failed");
     (ast, hir)
 }
 
