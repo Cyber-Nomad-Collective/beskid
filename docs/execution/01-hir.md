@@ -23,6 +23,7 @@ HIR and AST should be implemented through a phase-indexed shared-core model so s
 - Every expression has a known type (or a resolved inference variable).
 - All implicit conversions are explicit nodes.
 - No syntax-only constructs remain (e.g., `for` is transformed).
+- Aggregate definitions preserve field/variant ordering used for layout and GC pointer maps.
 
 ## Output shape (example)
 - `Spanned<HIRProgram> { modules: [Spanned<HIRModule>] }`

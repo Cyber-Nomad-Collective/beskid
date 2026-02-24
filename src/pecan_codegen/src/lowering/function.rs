@@ -2,7 +2,7 @@ use crate::errors::CodegenError;
 use crate::lowering::context::{CodegenContext, CodegenResult, LoweredFunction};
 use crate::lowering::lowerable::lower_node;
 use crate::lowering::node_context::NodeLoweringContext;
-use crate::lowering::types::{map_hir_type_to_clif, map_hir_type_to_type_id};
+use crate::lowering::types::{map_hir_type_to_clif, map_type_id_to_clif, type_id_for_type};
 use cranelift_codegen::ir::{AbiParam, Block, Function, InstBuilder, Signature};
 use cranelift_codegen::isa::CallConv;
 use cranelift_codegen::settings;
@@ -20,14 +20,20 @@ pub(crate) fn lower_function(
     type_result: &TypeResult,
     ctx: &mut CodegenContext,
 ) -> CodegenResult<()> {
-    if !def.node.parameters.is_empty() {
-        return Err(CodegenError::UnsupportedNode {
-            span: def.span,
-            node: "function parameters",
-        });
-    }
-
     let mut signature = Signature::new(CallConv::SystemV);
+    for param in &def.node.parameters {
+        if param.node.modifier.is_some() {
+            return Err(CodegenError::UnsupportedNode {
+                span: param.span,
+                node: "function parameter modifier",
+            });
+        }
+        let clif_ty = map_hir_type_to_clif(&param.node.ty.node).ok_or(CodegenError::UnsupportedNode {
+            span: param.span,
+            node: "function parameter type",
+        })?;
+        signature.params.push(AbiParam::new(clif_ty));
+    }
     if let Some(return_type) = &def.node.return_type {
         if let Some(clif_ty) = map_hir_type_to_clif(&return_type.node) {
             signature.returns.push(AbiParam::new(clif_ty));
@@ -38,7 +44,7 @@ pub(crate) fn lower_function(
         .node
         .return_type
         .as_ref()
-        .and_then(|ty| map_hir_type_to_type_id(type_result, &ty.node));
+        .and_then(|ty| type_id_for_type(resolution, type_result, ty));
 
     let mut function = Function::new();
     function.signature = signature;
@@ -46,13 +52,43 @@ pub(crate) fn lower_function(
     let mut fb_ctx = FunctionBuilderContext::new();
     let mut builder = FunctionBuilder::new(&mut function, &mut fb_ctx);
     let entry = builder.create_block();
+    builder.append_block_params_for_function_params(entry);
     builder.switch_to_block(entry);
     builder.seal_block(entry);
 
     let mut state = FunctionLoweringState::default();
+    let param_values = builder.block_params(entry).to_vec();
+    for (param, value) in def.node.parameters.iter().zip(param_values.into_iter()) {
+        let local_id = resolution
+            .tables
+            .locals
+            .iter()
+            .find(|info| info.span == param.node.name.span)
+            .map(|info| info.id)
+            .ok_or(CodegenError::InvalidLocalBinding {
+                span: param.node.name.span,
+            })?;
+        let type_id = type_result
+            .local_types
+            .get(&local_id)
+            .copied()
+            .or_else(|| type_id_for_type(resolution, type_result, &param.node.ty))
+            .ok_or(CodegenError::MissingLocalType {
+                span: param.node.name.span,
+            })?;
+        let clif_ty = map_type_id_to_clif(type_result, type_id).ok_or(CodegenError::UnsupportedNode {
+            span: param.node.name.span,
+            node: "function parameter type",
+        })?;
+        let var = builder.declare_var(clif_ty);
+        builder.def_var(var, value);
+        state.locals.insert(local_id, var);
+    }
+
     let mut node_ctx = NodeLoweringContext {
         resolution,
         type_result,
+        codegen: ctx,
         builder: &mut builder,
         state: &mut state,
         expected_return_type,
@@ -90,7 +126,7 @@ pub(crate) fn lower_function(
     ctx.functions_emitted += 1;
     ctx.lowered_functions.push(LoweredFunction {
         name: def.node.name.node.name.clone(),
-        clif: function.to_string(),
+        function,
     });
 
     Ok(())

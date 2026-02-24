@@ -28,6 +28,12 @@ This execution stack uses Cranelift from the start. The compiler produces Cranel
 6. **AOT output (optional)**
    - `cranelift_object` for object files.
 
+## Runtime dependency
+- Heap-backed aggregates (struct/enum) depend on runtime allocation + GC hooks.
+- JIT execution registers runtime builtins (alloc, panic, string/array ops) as symbols.
+- With gc-arena, all allocation and GC pointer access must happen inside `Arena::mutate`.
+- Host-visible values must be rooted in the arena root object.
+
 ## Key Cranelift crates
 - Frontend IR builder: https://docs.rs/cranelift-frontend/latest/cranelift_frontend/
 - Module abstraction: https://docs.rs/cranelift-module/latest/cranelift_module/

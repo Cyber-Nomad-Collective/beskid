@@ -19,9 +19,19 @@ Reference: https://docs.rs/cranelift-frontend/latest/cranelift_frontend/struct.F
 - **Functions** -> `Function` with signature.
 - **Locals** -> `Variable` definitions via `def_var` and `use_var`.
 - **If/While/Match** -> explicit blocks + `br`/`cond_br`.
-- **Structs/records** -> `alloc` + field writes (or runtime calls).
+- **Structs/records** -> runtime `alloc` (gc-arena backed) + field writes.
 - **Calls** -> `call` with signature registered in module.
 - **Return** -> `return` terminator with values.
+- **Aggregate params/results** -> pointers in CLIF signatures.
+
+### Aggregate and match layout
+- Enums are lowered with a tag at payload offset 0 and variant payload after.
+- Member access uses codegen offsets derived from type descriptors.
+- Storing heap pointers into heap objects must emit a `gc_write_barrier` call.
+
+### Literal lowering
+- `string` literals -> data object + `str_new(ptr, len)` builtin.
+- `char` literals -> `iconst` Unicode scalar (`u32`/`i32`).
 
 ## Source locations
 - Use `set_srcloc` to attach source locations for diagnostics.

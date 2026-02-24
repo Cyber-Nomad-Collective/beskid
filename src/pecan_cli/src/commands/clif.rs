@@ -78,7 +78,7 @@ pub fn execute(args: ClifArgs) -> Result<()> {
         Ok(artifact) => {
             for function in artifact.functions {
                 println!(";; Function: {}", function.name);
-                println!("{}", function.clif);
+                println!("{}", function.function.to_string());
             }
         }
         Err(errors) => {

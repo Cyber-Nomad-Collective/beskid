@@ -47,6 +47,7 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirIfStatement {
         }
 
         ctx.builder.switch_to_block(then_block);
+        ctx.builder.seal_block(then_block);
         ctx.state.block_terminated = false;
         ctx.state.return_emitted = false;
         for statement in &node.node.then_block.node.statements {
@@ -65,6 +66,7 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirIfStatement {
             ctx.state.block_terminated = false;
             ctx.state.return_emitted = false;
             ctx.builder.switch_to_block(else_block);
+            ctx.builder.seal_block(else_block);
             for statement in &node.node.else_block.as_ref().unwrap().node.statements {
                 lower_node(statement, ctx)?;
                 if ctx.state.block_terminated {
@@ -83,6 +85,7 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirIfStatement {
             ctx.state.block_terminated = false;
         }
 
+        ctx.builder.seal_block(merge_block);
         ctx.builder.switch_to_block(merge_block);
         Ok(())
     }

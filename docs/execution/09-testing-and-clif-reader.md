@@ -17,3 +17,4 @@ Reference: https://docs.rs/cranelift-reader/latest/cranelift_reader/fn.parse_fun
 - Serialize generated CLIF and compare to golden files.
 - Use small unit tests per HIR lowering rule.
 - Include runtime builtins in module so signatures match.
+- Add JIT smoke tests for arena mutation scoping and dynamic root survival.

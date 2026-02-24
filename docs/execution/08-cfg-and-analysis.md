@@ -22,3 +22,4 @@ Use `petgraph` if you need graph algorithms at the HIR stage.
 ## Notes
 - Prefer CLIF CFG for backend validation.
 - Prefer HIR CFG if you need source-level diagnostics.
+- Add CFG-based checks for missing write-barrier calls on heap pointer stores.

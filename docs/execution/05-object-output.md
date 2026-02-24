@@ -17,3 +17,4 @@ Reference: https://docs.rs/cranelift-object/latest/cranelift_object/struct.Objec
 ## Notes
 - Shares the same `Module` trait with JIT.
 - Keep frontend code identical between JIT and AOT.
+- AOT output must link the runtime (including gc-arena) and include type descriptor data objects.

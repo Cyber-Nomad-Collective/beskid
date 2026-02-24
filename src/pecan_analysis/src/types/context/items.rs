@@ -45,9 +45,11 @@ impl<'a> TypeContext<'a> {
             }
             HirItem::TypeDefinition(def) => {
                 let mut fields = std::collections::HashMap::new();
+                let mut ordered = Vec::new();
                 for field in &def.node.fields {
                     if let Some(type_id) = self.type_id_for_type(&field.node.ty) {
                         fields.insert(field.node.name.node.name.clone(), type_id);
+                        ordered.push((field.node.name.node.name.clone(), type_id));
                     }
                 }
                 let type_name = def.node.name.node.name.as_str();
@@ -56,10 +58,12 @@ impl<'a> TypeContext<'a> {
                     .or_else(|| self.item_id_for_span(item.span));
                 if let Some(item_id) = item_id {
                     self.struct_fields.insert(item_id, fields);
+                    self.struct_fields_ordered.insert(item_id, ordered);
                 }
             }
             HirItem::EnumDefinition(def) => {
                 let mut variants = std::collections::HashMap::new();
+                let mut ordered = Vec::new();
                 for variant in &def.node.variants {
                     let mut fields = Vec::new();
                     for field in &variant.node.fields {
@@ -67,7 +71,8 @@ impl<'a> TypeContext<'a> {
                             fields.push(type_id);
                         }
                     }
-                    variants.insert(variant.node.name.node.name.clone(), fields);
+                    variants.insert(variant.node.name.node.name.clone(), fields.clone());
+                    ordered.push((variant.node.name.node.name.clone(), fields));
                 }
                 let enum_name = def.node.name.node.name.as_str();
                 let item_id = self
@@ -75,6 +80,7 @@ impl<'a> TypeContext<'a> {
                     .or_else(|| self.item_id_for_span(item.span));
                 if let Some(item_id) = item_id {
                     self.enum_variants.insert(item_id, variants);
+                    self.enum_variants_ordered.insert(item_id, ordered);
                 }
             }
             HirItem::ContractDefinition(_) => {}

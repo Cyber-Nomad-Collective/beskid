@@ -53,14 +53,15 @@ This document describes the intended execution stack and how it maps to the **cu
 ### 5) Runtime (to add)
 - Implement minimal runtime functions used by CLIF.
 - Expose runtime builtins through the module layer.
+- Provide allocator + GC hook scaffolding to enable heap-backed aggregates.
 
 ## Mapping to planned crates/modules
 
 **Final structure** (clean separation of concerns):
 - `pecan_analysis` — parsing, syntax, query, HIR.
 - `pecan_codegen` — CLIF lowering + module abstraction.
-- `pecan_runtime` — host functions and value ABI.
-- `pecan_engine` — JIT/AOT drivers (CLI entrypoints call this).
+- `pecan_runtime` — host functions, allocator, and GC hook surface.
+- `pecan_engine` — JIT/AOT drivers (CLI entrypoints call this), runtime symbol registration.
 
 ## Incremental path from current state
 1. Add HIR module and minimal lowering from AST.

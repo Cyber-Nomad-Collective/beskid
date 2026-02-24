@@ -1,8 +1,22 @@
 [workspace]
 resolver = "3"
-members = ["src/pecan_analysis", "src/pecan_cli", "src/pecan_tests", "src/pecan_ast_derive", "src/pecan_codegen", "src/pecan_runtime", "src/pecan_engine"]
+members = ["src/pecan_analysis", "src/pecan_cli", "src/pecan_tests", "src/pecan_ast_derive", "src/pecan_codegen", "src/pecan_runtime", "src/pecan_engine", "src/gc-arena", "src/gc-arena/derive"]
 [workspace.dependencies]
+allocator-api2 = { version = "0.2", default-features = false, features = ["alloc"] }
+enum-map = { version = "2.7", default-features = false }
+gc-arena-derive = { path = "src/gc-arena/derive", version = "0.5.3" }
+hashbrown = { version = "0.16", default-features = false }
+indexmap = { version = "2.13", default-features = false }
 pest = "2.8"
 pest_derive = "2.8"
 pest-ast = "0.3.3"
 from-pest = "0.3.3"
+proc-macro2 = "1.0.56"
+quote = "1.0.26"
+rand = "0.8"
+slotmap = { version = "1.1", default-features = false }
+smallvec = { version = "1.15", default-features = false }
+syn = { version = "2.0.17", features = ["default", "visit-mut"] }
+synstructure = "0.13"
+tracing = { version = "0.1.37", default-features = false }
+trybuild = "1.0"

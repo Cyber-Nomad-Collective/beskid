@@ -19,8 +19,27 @@ Reference: https://docs.rs/cranelift-jit/latest/cranelift_jit/struct.JITModule.h
   https://docs.rs/cranelift-native/latest/cranelift_native/fn.builder.html
 
 ## Runtime integration
-- Register host runtime functions (alloc, string ops) as imports and call from CLIF.
-- Keep function pointer retrieval behind a safe wrapper.
+### Builder setup
+- Use `cranelift_module::default_libcall_names()` when creating `JITBuilder`.
+- Select a memory provider (system allocator by default; arena provider optional).
 
-## Safety
-- `free_memory()` invalidates function pointers; only use when safe.
+### Symbol registration
+- Register runtime builtins with `JITBuilder::symbol` before compiling.
+- Declare builtins inside the module with `declare_function` so CLIF can import them.
+
+### Lifecycle
+- Declare all functions and data.
+- Define functions (and data), then call `finalize_definitions()`.
+- Retrieve function pointers with `get_finalized_function`.
+
+### gc-arena integration
+- JIT entrypoints must run inside `Arena::mutate`.
+- Runtime builtins access the current `Mutation` via a thread-local handle set by the engine.
+- Values passed across the host boundary must be rooted in the arena root object.
+- See `docs/execution/10-runtime-gc.md` for arena lifecycle and host boundary rules.
+- JIT calls must always go through the engine wrapper to guarantee mutation scope.
+
+### Safety
+- Keep function pointer retrieval behind a safe wrapper.
+- `free_memory()` invalidates pointers; call only when it is safe.
+- Engine wrapper must catch runtime `panic` and convert it into an error result.

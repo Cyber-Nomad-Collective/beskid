@@ -15,5 +15,6 @@ description: Execution docs index
 - [07-runtime-builtins.md](07-runtime-builtins.md)
 - [08-cfg-and-analysis.md](08-cfg-and-analysis.md)
 - [09-testing-and-clif-reader.md](09-testing-and-clif-reader.md)
+- [10-runtime-gc.md](10-runtime-gc.md)
 
 Cranelift reference notes live under `docs/execution/cranelift/`.

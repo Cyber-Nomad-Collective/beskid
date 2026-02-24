@@ -3,7 +3,7 @@ use crate::lowering::lowerable::{lower_node, Lowerable};
 use crate::lowering::node_context::NodeLoweringContext;
 use crate::lowering::types::map_type_id_to_clif;
 use cranelift_codegen::ir::condcodes::{FloatCC, IntCC};
-use cranelift_codegen::ir::{types, InstBuilder, Value};
+use cranelift_codegen::ir::{InstBuilder, Value};
 use pecan_analysis::hir::{HirBinaryExpression, HirBinaryOp, HirPrimitiveType};
 use pecan_analysis::syntax::Spanned;
 use pecan_analysis::types::TypeInfo;
@@ -156,7 +156,7 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirBinaryExpression {
                         node: "binary comparison type",
                     });
                 };
-                ctx.builder.ins().uextend(types::I8, cmp)
+                cmp
             }
         };
 

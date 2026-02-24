@@ -1,12 +1,11 @@
 mod cast_intent;
 mod context;
+pub(crate) mod descriptor;
 mod node_context;
 mod function;
 pub mod lowerable;
 mod expressions;
 mod statements;
-#[cfg(test)]
-mod tests;
 mod types;
 
 pub use context::{CodegenArtifact, CodegenContext, CodegenResult, LoweredFunction};

@@ -6,3 +6,9 @@ pub mod syntax;
 
 #[cfg(test)]
 pub mod analysis;
+
+#[cfg(test)]
+pub mod runtime;
+
+#[cfg(test)]
+pub mod codegen;

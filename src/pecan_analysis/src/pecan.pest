@@ -173,8 +173,8 @@ FieldValue = { Identifier ~ ":" ~ Expression }
 CallExpression = { Identifier ~ "(" ~ ArgumentList? ~ ")" }
 ArgumentList = { Expression ~ ("," ~ Expression)* }
 
-MatchExpression = { "match" ~ Expression ~ "{" ~ MatchArm* ~ "}" }
-MatchArm = { Pattern ~ MatchGuard? ~ "=>" ~ Expression ~ "," }
+MatchExpression = { "match" ~ Expression ~ "{" ~ (MatchArm ~ ("," ~ MatchArm)* ~ ","?)? ~ "}" }
+MatchArm = { Pattern ~ MatchGuard? ~ "=>" ~ Expression }
 MatchGuard = { "when" ~ Expression }
 
 Pattern = { "_" | EnumPattern | Identifier | Literal }

@@ -35,6 +35,8 @@ pub struct TypeResult {
     pub expr_types: HashMap<SpanInfo, TypeId>,
     pub local_types: HashMap<LocalId, TypeId>,
     pub function_signatures: HashMap<ItemId, FunctionSignature>,
+    pub struct_fields_ordered: HashMap<ItemId, Vec<(String, TypeId)>>,
+    pub enum_variants_ordered: HashMap<ItemId, Vec<(String, Vec<TypeId>)>>,
     // Canonical output contract for safe implicit numeric conversions.
     // Invariants (normalized in `TypeContext::type_program`):
     // - sorted by (span.start, span.end, from, to)
@@ -75,7 +77,9 @@ pub struct TypeContext<'a> {
     pub(super) primitive_types: HashMap<HirPrimitiveType, TypeId>,
     pub(super) named_types: HashMap<ItemId, TypeId>,
     pub(super) struct_fields: HashMap<ItemId, HashMap<String, TypeId>>,
+    pub(super) struct_fields_ordered: HashMap<ItemId, Vec<(String, TypeId)>>,
     pub(super) enum_variants: HashMap<ItemId, HashMap<String, Vec<TypeId>>>,
+    pub(super) enum_variants_ordered: HashMap<ItemId, Vec<(String, Vec<TypeId>)>>,
     pub(super) expr_types: HashMap<SpanInfo, TypeId>,
     pub(super) local_types: HashMap<LocalId, TypeId>,
     pub(super) function_signatures: HashMap<ItemId, FunctionSignature>,
@@ -92,7 +96,9 @@ impl<'a> TypeContext<'a> {
             primitive_types: HashMap::new(),
             named_types: HashMap::new(),
             struct_fields: HashMap::new(),
+            struct_fields_ordered: HashMap::new(),
             enum_variants: HashMap::new(),
+            enum_variants_ordered: HashMap::new(),
             expr_types: HashMap::new(),
             local_types: HashMap::new(),
             function_signatures: HashMap::new(),
@@ -127,6 +133,8 @@ impl<'a> TypeContext<'a> {
                 expr_types: self.expr_types,
                 local_types: self.local_types,
                 function_signatures: self.function_signatures,
+                struct_fields_ordered: self.struct_fields_ordered,
+                enum_variants_ordered: self.enum_variants_ordered,
                 cast_intents: self.cast_intents,
             })
         } else {

@@ -5,4 +5,11 @@ edition = "2024"
 
 [dependencies]
 pecan_analysis = { path = "../pecan_analysis" }
+pecan_codegen = { path = "../pecan_codegen" }
+pecan_engine = { path = "../pecan_engine" }
+pecan_runtime = { path = "../pecan_runtime" }
+cranelift-codegen = "0.128.3"
+cranelift-jit = "0.128.3"
+cranelift-module = "0.128.3"
+cranelift-native = "0.128.3"
 pest = { workspace = true }
