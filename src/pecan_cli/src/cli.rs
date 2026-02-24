@@ -2,8 +2,9 @@ use clap::{Parser, Subcommand};
 use crate::commands::analyze::AnalyzeArgs;
 use crate::commands::clif::ClifArgs;
 use crate::commands::parse::ParseArgs;
+use crate::commands::run::RunArgs;
 use crate::commands::tree::TreeArgs;
-use crate::commands::{analyze, clif, parse, tree};
+use crate::commands::{analyze, clif, parse, run, tree};
 use std::env;
 
 #[derive(Parser)]
@@ -27,6 +28,9 @@ pub enum Commands {
 
     /// Lower a Pecan file into CLIF and print the resulting IR
     Clif(ClifArgs),
+
+    /// JIT-compile and execute a Pecan file
+    Run(RunArgs),
 }
 
 pub fn run() -> anyhow::Result<()> {
@@ -39,5 +43,6 @@ pub fn run() -> anyhow::Result<()> {
         Commands::Tree(args) => tree::execute(args),
         Commands::Analyze(args) => analyze::execute(args),
         Commands::Clif(args) => clif::execute(args),
+        Commands::Run(args) => run::execute(args),
     }
 }

@@ -1,12 +1,4 @@
-contract Storage {
-    string get(key: string);
-    unit put(key: string, value: string);
-}
-
-string Storage.get(key: string) {
-    return "";
-}
-
-unit Storage.put(key: string, value: string) {
+unit main() {
+    std.io.println("Storage contract example");
     return;
 }

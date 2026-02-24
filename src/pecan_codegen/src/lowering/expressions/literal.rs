@@ -25,7 +25,7 @@ pub(crate) fn lower_literal(
         .get(&expression_span)
         .copied()
         .or_else(|| match &literal.node {
-            HirLiteral::Integer(_) => find_literal_type(type_result, HirPrimitiveType::I64),
+            HirLiteral::Integer(_) => find_literal_type(type_result, HirPrimitiveType::I32),
             HirLiteral::Float(_) => find_literal_type(type_result, HirPrimitiveType::F64),
             HirLiteral::Bool(_) => find_literal_type(type_result, HirPrimitiveType::Bool),
             _ => None,

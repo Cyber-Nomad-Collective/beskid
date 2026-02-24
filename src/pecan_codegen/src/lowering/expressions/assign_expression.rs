@@ -71,7 +71,7 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirAssignExpression {
             .ok_or(CodegenError::MissingExpressionType {
                 span: node.node.value.span,
             })?;
-        ensure_type_compatibility(node.node.value.span, expected_type, actual_type, ctx.type_result)?;
+        let value = ensure_type_compatibility(node.node.value.span, expected_type, actual_type, ctx.type_result, ctx.builder, value)?;
 
         ctx.builder.def_var(var, value);
         Ok(Some(value))

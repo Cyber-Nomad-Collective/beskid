@@ -1,5 +1,5 @@
 use pecan_engine::Engine;
-use pecan_runtime::{gc_register_root, gc_unregister_root, gc_write_barrier};
+use pecan_runtime::{alloc, gc_register_root, gc_root_handle, gc_unregister_root, gc_write_barrier};
 
 #[test]
 fn runtime_write_barrier_is_noop() {
@@ -20,4 +20,23 @@ fn runtime_register_unregister_root_are_noops() {
         gc_unregister_root(value_ptr);
         assert!(root.runtime_state.registered_roots.is_empty());
     });
+}
+
+#[test]
+fn runtime_alloc_panics_without_arena_scope() {
+    let result = std::panic::catch_unwind(|| {
+        let _ = alloc(8, std::ptr::null());
+    });
+    assert!(result.is_err(), "expected alloc to panic without arena scope");
+}
+
+#[test]
+fn runtime_root_handle_panics_without_arena_scope() {
+    let result = std::panic::catch_unwind(|| {
+        let _ = gc_root_handle(std::ptr::null_mut());
+    });
+    assert!(
+        result.is_err(),
+        "expected gc_root_handle to panic without arena scope"
+    );
 }

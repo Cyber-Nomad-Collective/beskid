@@ -64,7 +64,7 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirCallExpression {
                 .get(&arg.span)
                 .copied()
                 .ok_or(CodegenError::MissingExpressionType { span: arg.span })?;
-            ensure_type_compatibility(arg.span, *expected, actual, ctx.type_result)?;
+            let value = ensure_type_compatibility(arg.span, *expected, actual, ctx.type_result, ctx.builder, value)?;
             args.push(value);
         }
 

@@ -2,7 +2,7 @@ use crate::analysis::rules::{resolve, types, Rule, RuleContext};
 use crate::hir::{lower_program, AstProgram, HirProgram};
 use crate::resolve::Resolver;
 use crate::syntax::{Program, SpanInfo, Spanned};
-use crate::types::type_program;
+use crate::types::type_program_with_errors;
 
 pub struct ResolveAndTypeRule;
 
@@ -38,15 +38,13 @@ impl Rule for ResolveAndTypeRule {
         for warning in &resolution.warnings {
             resolve::emit_resolve_warning(ctx, warning);
         }
-        match type_program(&hir, &resolution) {
-            Ok(result) => {
-                types::emit_cast_intent_warnings(ctx, &result);
-            }
-            Err(errors) => {
-                for error in errors {
-                    types::emit_type_error(ctx, error, None);
-                }
-            }
+        let (typed, errors) = type_program_with_errors(&hir, &resolution);
+        if errors.is_empty() {
+            types::emit_cast_intent_warnings(ctx, &typed);
+            return;
+        }
+        for error in errors {
+            types::emit_type_error(ctx, error, Some(&typed));
         }
     }
 }

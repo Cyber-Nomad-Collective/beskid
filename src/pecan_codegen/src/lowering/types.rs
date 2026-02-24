@@ -55,7 +55,7 @@ fn find_primitive_type_id(type_result: &TypeResult, primitive: HirPrimitiveType)
     }
 }
 
-fn map_primitive_to_clif(primitive: HirPrimitiveType) -> Option<cranelift_codegen::ir::Type> {
+pub(crate) fn map_primitive_to_clif(primitive: HirPrimitiveType) -> Option<cranelift_codegen::ir::Type> {
     match primitive {
         HirPrimitiveType::Bool => Some(types::I8),
         HirPrimitiveType::I32 => Some(types::I32),

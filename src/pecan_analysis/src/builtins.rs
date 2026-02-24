@@ -100,6 +100,12 @@ define_builtins! {
         returns: Usize,
         injected: false,
     },
+    &["std", "array", "new"] => {
+        symbol: "array_new",
+        params: [Usize, Usize],
+        returns: Usize,
+        injected: false,
+    },
     &["__alloc"] => {
         symbol: "alloc",
         params: [Usize, Ptr],

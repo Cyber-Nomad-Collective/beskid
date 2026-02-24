@@ -29,23 +29,21 @@ fn codegen_rejects_unsupported_expression_nodes_with_span() {
 }
 
 #[test]
-fn codegen_requires_cast_intent_for_numeric_mismatch() {
-    let (hir, resolution, mut typed) =
+fn codegen_lowers_numeric_cast_intent_via_sextend_or_ireduce() {
+    let (hir, resolution, typed) =
         lower_resolve_type("i32 main() { let x: i64 = 1; return x; }");
-    typed.cast_intents.clear();
-    let errors = lower_program(&hir, &resolution, &typed)
-        .expect_err("expected missing cast intent to fail codegen");
+    let artifact = lower_program(&hir, &resolution, &typed)
+        .expect("expected numeric cast intent to be supported without error");
+    let clif = artifact.functions[0].function.to_string();
     assert!(
-        errors
-            .iter()
-            .any(|error| matches!(error, CodegenError::MissingCastIntent { .. })),
-        "expected MissingCastIntent error, got: {errors:?}"
+        clif.contains("ireduce.i32"),
+        "expected i64->i32 reduction in CLIF: {clif}"
     );
 }
 
 #[test]
 fn codegen_lowers_for_loop_with_assignment() {
-    let source = "i64 main() { let mut sum: i64 = 0; for i in range(0, 4) { sum = sum + i; } return sum; }";
+    let source = "i32 main() { let mut sum: i32 = 0; let start: i32 = 0; let end: i32 = 4; for i in range(start, end) { sum = sum + i; } return sum; }";
     let (hir, resolution, typed) = lower_resolve_type(source);
     let artifact =
         lower_program(&hir, &resolution, &typed).expect("expected for loop lowering to succeed");
@@ -56,7 +54,7 @@ fn codegen_lowers_for_loop_with_assignment() {
 
 #[test]
 fn codegen_lowers_while_with_break_and_continue() {
-    let source = "i64 main() { let mut i: i64 = 0; let mut sum: i64 = 0; while i < 5 { i = i + 1; if i == 2 { continue; } if i == 4 { break; } sum = sum + i; } return sum; }";
+    let source = "i32 main() { let mut i: i32 = 0; let mut sum: i32 = 0; while i < 5 { i = i + 1; if i == 2 { continue; } if i == 4 { break; } sum = sum + i; } return sum; }";
     let (hir, resolution, typed) = lower_resolve_type(source);
     let artifact = lower_program(&hir, &resolution, &typed)
         .expect("expected while/break/continue lowering to succeed");

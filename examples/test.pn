@@ -1,6 +1,7 @@
 i32 main() {
-    let x = 1;
-    let mut y = 2;
+    let x:i32 = 1;
+    let mut y:i32 = 2;
+    
     if x < y {
         return x + y;
     }

@@ -29,11 +29,7 @@ impl Normalize for Spanned<HirForStatement> {
         let end_expr = self.node.range.node.end;
         let mut while_body = self.node.body;
 
-        // Try to infer type from start_expr, default to i64
-        let type_annotation = Some(Spanned::new(
-            crate::hir::HirType::Primitive(Spanned::new(crate::hir::HirPrimitiveType::I64, span)),
-            span,
-        ));
+        let type_annotation = None;
 
         let init_stmt_node = HirLetStatement {
             mutable: true,

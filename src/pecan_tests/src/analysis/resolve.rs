@@ -120,3 +120,39 @@ fn stdio_println_resolves() {
         .expect("expected std.io.println to resolve");
     assert!(result.warnings.is_empty());
 }
+
+#[test]
+fn stdstring_len_resolves() {
+    let result = resolve_program("i64 main() { return std.string.len(\"hello\"); }")
+        .expect("expected std.string.len to resolve");
+    assert!(result.warnings.is_empty());
+}
+
+#[test]
+fn std_panic_resolves() {
+    let result = resolve_program("unit main() { std.panic(\"boom\"); }")
+        .expect("expected std.panic to resolve");
+    assert!(result.warnings.is_empty());
+}
+
+#[test]
+fn stdarray_new_resolves() {
+    let result = resolve_program("i64 main() { return std.array.new(8, 2); }")
+        .expect("expected std.array.new to resolve");
+    assert!(result.warnings.is_empty());
+}
+
+#[test]
+fn qualified_nested_public_module_path_is_allowed() {
+    let result = resolve_program("pub mod dep.api.v1; unit main() { let x = dep.api.v1; }");
+    assert!(result.is_ok(), "expected qualified access to nested public module item to resolve");
+}
+
+#[test]
+fn qualified_nested_private_module_path_is_error() {
+    let result = resolve_program("mod dep.api.secret; unit main() { let x = dep.api.secret; }");
+    let errors = result.expect_err("expected private nested module item error");
+    assert!(errors
+        .iter()
+        .any(|error| matches!(error, ResolveError::PrivateItemInModule { .. })));
+}

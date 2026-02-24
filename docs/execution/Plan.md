@@ -12,7 +12,7 @@ description: Pecan execution implementation plan
 | Phase 2 | done (minor cleanup) | Type system + cast intents in place. |
 | Phase 3 | done | CLIF lowering covers aggregates, match, literals, and ABI. |
 | Phase 4 | done | JIT module layer + runtime symbol plumbing wired. |
-| Phase 5 | in progress | Runtime allocator + GC scaffolding partially wired; remaining host hooks pending. |
+| Phase 5 | done (docs update) | Runtime allocator + GC scaffolding wired; interop builtins and runtime guards covered by tests. |
 | Phase 6 | planned | AOT object output. |
 
 ## Guiding constraints
@@ -44,7 +44,7 @@ description: Pecan execution implementation plan
 - Diagnostics and tests cover core resolution edge cases.
 
 **Remaining (optional cleanup)**
-- Finalize `use`/`mod` edge-case semantics and add tests.
+- Finalize `use`/`mod` edge-case semantics and add tests (nested module path cases added; continue tightening).
 
 ---
 
@@ -57,7 +57,7 @@ description: Pecan execution implementation plan
 - Struct/enum/member/match typing and cast-intent normalization.
 
 **Remaining (optional cleanup)**
-- Improve named-type rendering in diagnostics.
+- Improve named-type rendering in diagnostics (TypeResult mapping added; diagnostics still emit type IDs).
 
 ---
 
@@ -74,7 +74,7 @@ description: Pecan execution implementation plan
 - String/char literal lowering (`str_new` for strings, `iconst` for chars).
 
 **Remaining**
-- Expand runtime interop hooks for `str_len`, `array_new`, and `panic`.
+- Expand runtime interop hooks for `str_len`, `array_new`, and `panic`. **(done: std builtin resolution + JIT tests)**
 
 **Concrete task list**
 1. **Layout helpers + descriptor usage (codegen)**
@@ -146,27 +146,27 @@ description: Pecan execution implementation plan
 
 **Remaining plan**
 1. **Runtime ABI lock**
-   - Confirm layout: header `type_desc_ptr` + payload.
-   - Confirm enum tag at payload offset 0 (`i32`).
+   - Confirm layout: header `type_desc_ptr` + payload. **(done: descriptor ABI tests)**
+   - Confirm enum tag at payload offset 0 (`i32`). **(done: descriptor ABI tests)**
 2. **Type descriptor data**
-   - Ensure `TypeDescriptorData` emitted in `pecan_codegen` and wired into JIT data objects.
-   - Validate pointer offsets logic for structs/enums.
+   - Ensure `TypeDescriptorData` emitted in `pecan_codegen` and wired into JIT data objects. **(done)**
+   - Validate pointer offsets logic for structs/enums. **(done: descriptor tests)**
 3. **Allocator builtin**
-   - Ensure allocation happens under TLS mutation guard (verify). 
+   - Ensure allocation happens under TLS mutation guard (verify). **(done: runtime guard tests)**
 4. **Root handles + write barrier**
-   - `gc_root_handle` / `gc_unroot_handle` backed by runtime root state.
-   - `gc_write_barrier` stub called on heap pointer stores.
+   - `gc_root_handle` / `gc_unroot_handle` backed by runtime root state. **(done: runtime guard tests)**
+   - `gc_write_barrier` stub called on heap pointer stores. **(done: lowering + guard tests)**
 5. **Mutation plumbing**
-   - Ensure all host entrypoints route through the engine wrapper.
+   - Ensure all host entrypoints route through the engine wrapper. **(done: JIT tests run via Engine arena)**
 6. **Symbol exposure**
-   - Register remaining builtins (`str_len`, `array_new`, `panic`, root handle helpers).
+   - Register remaining builtins (`str_len`, `array_new`, `panic`, root handle helpers). **(done)**
 7. **Lowering integration checkpoint**
-   - Add lowering calls to remaining builtins where needed.
+   - Add lowering calls to remaining builtins where needed. **(done: std builtin JIT tests)**
 
 **Acceptance criteria**
-- JIT can allocate a struct/enum using `alloc` and return a field value.
-- Builtins are visible in the JIT symbol table.
-- GC hooks are present (even if stubs), including root handle calls.
+- JIT can allocate a struct/enum using `alloc` and return a field value. **(done: runtime::jit tests)**
+- Builtins are visible in the JIT symbol table. **(done: std builtin JIT tests)**
+- GC hooks are present (even if stubs), including root handle calls. **(done: runtime guard tests)**
 
 ---
 
@@ -186,5 +186,5 @@ description: Pecan execution implementation plan
 ## Cross-cutting integration touchpoints
 
 - **CLI**: `run` (JIT) and `build` (AOT) commands.
-- **Testing**: add runtime/engine smoke tests alongside codegen tests.
-- **Docs**: keep runtime ABI + layout assumptions in sync with implementation.
+- **Testing**: runtime/engine smoke tests now cover interop builtins, alloc, and guards.
+- **Docs**: keep runtime ABI + layout assumptions in sync with implementation (descriptor ABI tests added).

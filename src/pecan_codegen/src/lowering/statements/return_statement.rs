@@ -15,7 +15,7 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirReturnStatement {
     ) -> Result<Self::Output, CodegenError> {
         match &node.node.value {
             Some(value_expr) => {
-                let value = lower_node(value_expr, ctx)?.ok_or(CodegenError::UnsupportedNode {
+                let mut value = lower_node(value_expr, ctx)?.ok_or(CodegenError::UnsupportedNode {
                     span: value_expr.span,
                     node: "unit return value",
                 })?;
@@ -28,7 +28,7 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirReturnStatement {
                         .ok_or(CodegenError::MissingExpressionType {
                             span: value_expr.span,
                         })?;
-                    ensure_type_compatibility(value_expr.span, expected, actual, ctx.type_result)?;
+                    value = ensure_type_compatibility(value_expr.span, expected, actual, ctx.type_result, ctx.builder, value)?;
                 }
                 ctx.builder.ins().return_(&[value]);
             }

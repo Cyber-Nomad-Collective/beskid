@@ -33,6 +33,7 @@ pub enum TypeError {
 #[derive(Debug)]
 pub struct TypeResult {
     pub types: TypeTable,
+    pub named_type_names: HashMap<ItemId, String>,
     pub expr_types: HashMap<SpanInfo, TypeId>,
     pub local_types: HashMap<LocalId, TypeId>,
     pub function_signatures: HashMap<ItemId, FunctionSignature>,
@@ -153,35 +154,51 @@ impl<'a> TypeContext<'a> {
     }
 
     pub fn type_program(
-        mut self,
+        self,
         program: &Spanned<HirProgram>,
     ) -> Result<TypeResult, Vec<TypeError>> {
+        let (result, errors) = self.type_program_with_errors(program);
+        if errors.is_empty() {
+            Ok(result)
+        } else {
+            Err(errors)
+        }
+    }
+
+    pub fn type_program_with_errors(
+        mut self,
+        program: &Spanned<HirProgram>,
+    ) -> (TypeResult, Vec<TypeError>) {
         for item in &program.node.items {
             self.type_item(item);
         }
-        if self.errors.is_empty() {
-            self.cast_intents.sort_by_key(|intent| {
-                (
-                    intent.span.start,
-                    intent.span.end,
-                    intent.from.0,
-                    intent.to.0,
-                )
-            });
-            self.cast_intents
-                .dedup_by(|left, right| left.span == right.span && left.from == right.from && left.to == right.to);
-            Ok(TypeResult {
-                types: self.type_table,
-                expr_types: self.expr_types,
-                local_types: self.local_types,
-                function_signatures: self.function_signatures,
-                struct_fields_ordered: self.struct_fields_ordered,
-                enum_variants_ordered: self.enum_variants_ordered,
-                cast_intents: self.cast_intents,
-            })
-        } else {
-            Err(self.errors)
-        }
+        self.cast_intents.sort_by_key(|intent| {
+            (
+                intent.span.start,
+                intent.span.end,
+                intent.from.0,
+                intent.to.0,
+            )
+        });
+        self.cast_intents
+            .dedup_by(|left, right| left.span == right.span && left.from == right.from && left.to == right.to);
+        let result = TypeResult {
+            types: self.type_table,
+            named_type_names: self
+                .resolution
+                .items
+                .iter()
+                .map(|item| (item.id, item.name.clone()))
+                .collect(),
+            expr_types: self.expr_types,
+            local_types: self.local_types,
+            function_signatures: self.function_signatures,
+            struct_fields_ordered: self.struct_fields_ordered,
+            enum_variants_ordered: self.enum_variants_ordered,
+            cast_intents: self.cast_intents,
+        };
+        let errors = std::mem::take(&mut self.errors);
+        (result, errors)
     }
 }
 
@@ -190,4 +207,11 @@ pub fn type_program(
     resolution: &Resolution,
 ) -> Result<TypeResult, Vec<TypeError>> {
     TypeContext::new(resolution).type_program(program)
+}
+
+pub fn type_program_with_errors(
+    program: &Spanned<HirProgram>,
+    resolution: &Resolution,
+) -> (TypeResult, Vec<TypeError>) {
+    TypeContext::new(resolution).type_program_with_errors(program)
 }

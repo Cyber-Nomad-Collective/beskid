@@ -276,7 +276,7 @@ fn type_name(info: &TypeInfo) -> String {
             crate::hir::HirPrimitiveType::String => "string".to_string(),
             crate::hir::HirPrimitiveType::Unit => "unit".to_string(),
         },
-        TypeInfo::Named(item_id) => format!("Named({})", item_id.0),
+        TypeInfo::Named(item_id) => format!("type#{}", item_id.0),
     }
 }
 
@@ -287,5 +287,12 @@ fn render_type(result: Option<&TypeResult>, type_id: crate::types::TypeId) -> St
     let Some(info) = result.types.get(type_id) else {
         return format!("type#{}", type_id.0);
     };
-    type_name(info)
+    match info {
+        TypeInfo::Named(item_id) => result
+            .named_type_names
+            .get(item_id)
+            .cloned()
+            .unwrap_or_else(|| format!("type#{}", item_id.0)),
+        _ => type_name(info),
+    }
 }

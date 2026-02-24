@@ -16,6 +16,7 @@ impl Rule for EmitOne {
     fn name(&self) -> &'static str {
         "emit_one"
     }
+
     fn run(&self, ctx: &mut RuleContext, program: &pecan_analysis::syntax::Program) {
         let span = program
             .items
@@ -29,6 +30,30 @@ impl Rule for EmitOne {
             });
         diag!(ctx, span, "E0001", "example diagnostic", label = "example", severity = Severity::Error);
     }
+}
+
+#[test]
+fn analysis_type_mismatch_renders_named_type_names() {
+    let source = "type User { i64 id } type Order { i64 id } unit main() { let u: User = Order { id: 1 }; }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.pn",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    let mismatch = result
+        .diagnostics
+        .iter()
+        .find(|diag| diag.code.as_deref() == Some("E1206"))
+        .expect("expected type mismatch diagnostic");
+    assert!(
+        mismatch.message.contains("User") && mismatch.message.contains("Order"),
+        "expected named type names in mismatch message, got: {}",
+        mismatch.message
+    );
 }
 
 #[test]

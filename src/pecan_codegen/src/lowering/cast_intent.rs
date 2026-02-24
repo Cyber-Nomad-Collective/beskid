@@ -1,5 +1,7 @@
 use crate::errors::CodegenError;
 use crate::lowering::context::CodegenResult;
+use cranelift_codegen::ir::{InstBuilder, Value};
+use cranelift_frontend::FunctionBuilder;
 use pecan_analysis::hir::HirPrimitiveType;
 use pecan_analysis::syntax::SpanInfo;
 use pecan_analysis::types::{TypeId, TypeInfo, TypeResult};
@@ -10,25 +12,34 @@ pub(crate) fn ensure_type_compatibility(
     expected: TypeId,
     actual: TypeId,
     type_result: &TypeResult,
-) -> CodegenResult<()> {
+    builder: &mut FunctionBuilder,
+    mut value: Value,
+) -> CodegenResult<Value> {
     if expected == actual {
-        return Ok(());
+        return Ok(value);
     }
 
     let expected_info = type_result.types.get(expected);
     let actual_info = type_result.types.get(actual);
+    
     if is_numeric_type(expected_info) && is_numeric_type(actual_info) {
-        let has_intent = type_result
-            .cast_intents_for_span(span)
-            .any(|intent| intent.from == actual && intent.to == expected);
-        if has_intent {
-            return Ok(());
+        if let (
+            Some(TypeInfo::Primitive(expected_prim)),
+            Some(TypeInfo::Primitive(actual_prim)),
+        ) = (expected_info, actual_info)
+        {
+            let expected_width = expected_prim.bit_width();
+            let actual_width = actual_prim.bit_width();
+            let target_ty = crate::lowering::types::map_primitive_to_clif(*expected_prim)
+                .expect("expected clif type for numeric cast");
+                
+            if expected_width > actual_width {
+                value = builder.ins().sextend(target_ty, value);
+            } else if expected_width < actual_width {
+                value = builder.ins().ireduce(target_ty, value);
+            }
+            return Ok(value);
         }
-        return Err(CodegenError::MissingCastIntent {
-            span,
-            expected,
-            actual,
-        });
     }
 
     Err(CodegenError::TypeMismatch {
@@ -60,12 +71,6 @@ pub(crate) fn validate_cast_intents(type_result: &TypeResult) -> Vec<CodegenErro
             errors.push(CodegenError::InvalidCastIntent {
                 span: intent.span,
                 message: "duplicate cast intent for span".to_string(),
-            });
-        }
-        if reverse_seen.contains(&key) || seen.contains(&reverse_key) {
-            errors.push(CodegenError::InvalidCastIntent {
-                span: intent.span,
-                message: "conflicting reverse cast intents for same span".to_string(),
             });
         }
         reverse_seen.insert(reverse_key);

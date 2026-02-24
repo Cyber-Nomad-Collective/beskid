@@ -13,7 +13,7 @@ description: Type system and inference rules
 - Generics resolved during type checking using declared bounds.
 
 ## Literal typing (decision)
-- Integer literals default to `i64`.
+- Integer literals default to `i32`.
 - Float literals default to `f64`.
 - Boolean literals map to `bool`.
 - String literals map to `{ptr, len}` at runtime, `string` in HIR.

@@ -55,13 +55,12 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirMatchExpression {
         let result_var = result_clif.map(|clif_ty| ctx.builder.declare_var(clif_ty));
         let merge_block = ctx.builder.create_block();
 
-        let mut current_block = ctx
-            .builder
-            .current_block()
-            .ok_or(CodegenError::UnsupportedNode {
+        if ctx.builder.current_block().is_none() {
+            return Err(CodegenError::UnsupportedNode {
                 span: node.span,
                 node: "missing current block",
-            })?;
+            });
+        }
 
         for (index, arm) in node.node.arms.iter().enumerate() {
             let is_last = index + 1 == node.node.arms.len();
@@ -101,14 +100,12 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirMatchExpression {
                     })
                 }
             }
-            ctx.builder.seal_block(current_block);
-
             ctx.builder.switch_to_block(arm_block);
             ctx.builder.seal_block(arm_block);
             let saved_locals = ctx.state.locals.clone();
             bind_match_pattern(ctx, scrutinee, item_id, variants, arm)?;
 
-            let arm_body_block = if arm.node.guard.is_some() {
+            if arm.node.guard.is_some() {
                 let guard_block = ctx.builder.create_block();
                 let guard_val = lower_node(arm.node.guard.as_ref().unwrap(), ctx)?.ok_or(
                     CodegenError::UnsupportedNode {
@@ -119,12 +116,8 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirMatchExpression {
                 ctx.builder.ins().brif(guard_val, guard_block, &[], next_block, &[]);
                 ctx.builder.switch_to_block(guard_block);
                 ctx.builder.seal_block(guard_block);
-                guard_block
-            } else {
-                arm_block
-            };
+            }
 
-            ctx.builder.switch_to_block(arm_body_block);
             let arm_value = lower_node(&arm.node.value, ctx)?;
             if let Some(var) = result_var {
                 let value = arm_value.ok_or(CodegenError::UnsupportedNode {
@@ -136,8 +129,10 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirMatchExpression {
             ctx.builder.ins().jump(merge_block, &[]);
             ctx.state.locals = saved_locals;
 
-            current_block = next_block;
-            ctx.builder.switch_to_block(next_block);
+            if !is_last {
+                ctx.builder.seal_block(next_block);
+                ctx.builder.switch_to_block(next_block);
+            }
         }
 
         ctx.builder.seal_block(merge_block);

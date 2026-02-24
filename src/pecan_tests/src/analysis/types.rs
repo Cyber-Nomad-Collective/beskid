@@ -109,21 +109,21 @@ fn typing_match_expression_unifies_types() {
 
 #[test]
 fn typing_records_cast_intent_for_numeric_mismatch() {
-    let result = resolve_and_type("unit main() { let x: i64 = 1; let y: i32 = x; }")
+    let result = resolve_and_type("unit main() { let x: i32 = 1; let y: i64 = x; }")
         .expect("expected typing to succeed with cast intent");
     assert_eq!(result.cast_intents.len(), 1, "expected exactly one cast intent");
 
     let intent = &result.cast_intents[0];
     let from = result.types.get(intent.from);
     let to = result.types.get(intent.to);
-    assert_eq!(from, Some(&TypeInfo::Primitive(HirPrimitiveType::I64)));
-    assert_eq!(to, Some(&TypeInfo::Primitive(HirPrimitiveType::I32)));
+    assert_eq!(from, Some(&TypeInfo::Primitive(HirPrimitiveType::I32)));
+    assert_eq!(to, Some(&TypeInfo::Primitive(HirPrimitiveType::I64)));
 }
 
 #[test]
 fn typing_cast_intents_are_sorted_by_source_span() {
     let result = resolve_and_type(
-        "unit main() { let a: i64 = 1; let b: i32 = a; let c: i64 = 2; let d: i32 = c; }",
+        "unit main() { let a: i32 = 1; let b: i64 = a; let c: i32 = 2; let d: i64 = c; }",
     )
     .expect("expected typing to succeed with cast intents");
 
@@ -140,7 +140,7 @@ fn typing_cast_intents_are_sorted_by_source_span() {
 #[test]
 fn typing_cast_intents_preserve_source_line_spans() {
     let result = resolve_and_type(
-        "unit main() {\n  let x: i64 = 1;\n  let y: i32 = x;\n  let z: i64 = 2;\n  let w: i32 = z;\n}",
+        "unit main() {\n  let x: i32 = 1;\n  let y: i64 = x;\n  let z: i32 = 2;\n  let w: i64 = z;\n}",
     )
     .expect("expected typing to succeed with cast intents");
 
@@ -155,7 +155,7 @@ fn typing_cast_intents_preserve_source_line_spans() {
 #[test]
 fn typing_records_cast_intent_for_numeric_call_argument_mismatch() {
     let result = resolve_and_type(
-        "i32 take(v: i32) { return v; } unit main() { let x: i64 = 1; let y: i32 = take(x); }",
+        "i64 take(v: i64) { return v; } unit main() { let x: i32 = 1; let y: i64 = take(x); }",
     )
     .expect("expected typing to succeed with cast intent in call argument");
 
@@ -167,7 +167,7 @@ fn typing_records_cast_intent_for_numeric_call_argument_mismatch() {
 
 #[test]
 fn typing_records_cast_intent_for_numeric_return_mismatch() {
-    let result = resolve_and_type("i32 main() { let x: i64 = 1; return x; }")
+    let result = resolve_and_type("i64 main() { let x: i32 = 1; return x; }")
         .expect("expected typing to succeed with cast intent in return");
 
     assert!(
@@ -178,7 +178,7 @@ fn typing_records_cast_intent_for_numeric_return_mismatch() {
 
 #[test]
 fn typing_cast_intent_accessor_finds_intent_by_span() {
-    let result = resolve_and_type("unit main() { let x: i64 = 1; let y: i32 = x; }")
+    let result = resolve_and_type("unit main() { let x: i32 = 1; let y: i64 = x; }")
         .expect("expected typing to succeed with cast intent");
     let span = result.cast_intents[0].span;
     let found = result.cast_intent_for_span(span);
@@ -188,7 +188,7 @@ fn typing_cast_intent_accessor_finds_intent_by_span() {
 #[test]
 fn typing_nested_match_expression_unifies_types() {
     let result = resolve_and_type(
-        "enum Choice { Some(i64 value), None } unit main() { let x: Choice = Choice::Some(1); let y: i64 = match x { Choice::Some(v) => match x { Choice::Some(_) => v, Choice::None => 0, }, Choice::None => 0, }; }",
+        "enum Choice { Some(i32 value), None } unit main() { let x: Choice = Choice::Some(1); let y: i32 = match x { Choice::Some(v) => match x { Choice::Some(_) => v, Choice::None => 0, }, Choice::None => 0, }; }",
     );
     if let Err(errors) = &result {
         panic!("expected nested match typing to succeed, got errors: {errors:?}");

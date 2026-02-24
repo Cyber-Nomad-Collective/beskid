@@ -4,7 +4,7 @@ use crate::analysis::rules::{types, RuleContext};
 use crate::hir::{HirBlock, HirExpressionNode, HirItem, HirProgram, HirStatementNode};
 use crate::resolve::Resolution;
 use crate::syntax::Spanned;
-use crate::types::type_program;
+use crate::types::type_program_with_errors;
 use std::collections::HashMap;
 
 impl SemanticPipelineRule {
@@ -16,15 +16,13 @@ impl SemanticPipelineRule {
     ) {
         self.check_immutable_assignments(ctx, hir);
 
-        match type_program(hir, resolution) {
-            Ok(result) => {
-                types::emit_cast_intent_warnings(ctx, &result);
-            }
-            Err(errors) => {
-                for error in errors {
-                    types::emit_type_error(ctx, error, None);
-                }
-            }
+        let (typed, errors) = type_program_with_errors(hir, resolution);
+        if errors.is_empty() {
+            types::emit_cast_intent_warnings(ctx, &typed);
+            return;
+        }
+        for error in errors {
+            types::emit_type_error(ctx, error, Some(&typed));
         }
     }
 

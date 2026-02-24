@@ -453,7 +453,7 @@ impl<'a> TypeContext<'a> {
 
     pub(super) fn type_id_for_literal(&mut self, literal: &Spanned<HirLiteral>) -> Option<TypeId> {
         match &literal.node {
-            HirLiteral::Integer(_) => self.primitive_type_id(HirPrimitiveType::I64),
+            HirLiteral::Integer(_) => self.primitive_type_id(HirPrimitiveType::I32),
             HirLiteral::Float(_) => self.primitive_type_id(HirPrimitiveType::F64),
             HirLiteral::String(_) => self.primitive_type_id(HirPrimitiveType::String),
             HirLiteral::Char(_) => self.primitive_type_id(HirPrimitiveType::Char),

@@ -17,13 +17,7 @@ impl<'a> TypeContext<'a> {
             HirStatementNode::LetStatement(let_stmt) => {
                 let expected = match &let_stmt.node.type_annotation {
                     Some(ty) => self.type_id_for_type(ty),
-                    None => {
-                        self.errors.push(TypeError::MissingTypeAnnotation {
-                            span: let_stmt.node.name.span,
-                            name: let_stmt.node.name.node.name.clone(),
-                        });
-                        None
-                    }
+                    None => self.type_expression(&let_stmt.node.value),
                 };
                 let actual = self.type_expression(&let_stmt.node.value);
                 if let (Some(expected), Some(actual)) = (expected, actual) {

@@ -52,7 +52,7 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirLetStatement {
             .ok_or(CodegenError::MissingExpressionType {
                 span: node.node.value.span,
             })?;
-        ensure_type_compatibility(node.node.value.span, type_id, actual_type, ctx.type_result)?;
+        let value = ensure_type_compatibility(node.node.value.span, type_id, actual_type, ctx.type_result, ctx.builder, value)?;
 
         let var = ctx.builder.declare_var(clif_ty);
         ctx.builder.def_var(var, value);
