@@ -1,7 +1,10 @@
 use crate::errors::CodegenError;
+use crate::lowering::context::CodegenContext;
 use crate::lowering::context::CodegenResult;
 use crate::lowering::types::{map_type_id_to_clif, pointer_type};
-use cranelift_codegen::ir::{AbiParam, ExternalName, InstBuilder, Signature, Value};
+use cranelift_codegen::ir::{
+    AbiParam, ExternalName, GlobalValueData, InstBuilder, Signature, Value,
+};
 use cranelift_codegen::isa::CallConv;
 use cranelift_frontend::FunctionBuilder;
 use pecan_analysis::hir::{HirLiteral, HirPrimitiveType};
@@ -14,6 +17,7 @@ pub(crate) fn lower_literal(
     literal: &Spanned<HirLiteral>,
     expression_span: SpanInfo,
     type_result: &TypeResult,
+    codegen: &mut CodegenContext,
     builder: &mut FunctionBuilder,
 ) -> CodegenResult<Value> {
     let type_id = type_result
@@ -58,8 +62,16 @@ pub(crate) fn lower_literal(
         }
         HirLiteral::String(value) => {
             let trimmed = value.trim_matches('"');
-            let len = trimmed.len();
-            let str_ptr = builder.ins().iconst(pointer_type(), 0);
+            let bytes = trimmed.as_bytes();
+            let len = bytes.len();
+            let symbol = codegen.intern_string_literal(bytes);
+            let string_gv = builder.func.create_global_value(GlobalValueData::Symbol {
+                name: ExternalName::testcase(symbol),
+                offset: 0.into(),
+                colocated: true,
+                tls: false,
+            });
+            let str_ptr = builder.ins().global_value(pointer_type(), string_gv);
             let len_val = builder.ins().iconst(pointer_type(), len as i64);
             let mut signature = Signature::new(CallConv::SystemV);
             signature.params.push(AbiParam::new(pointer_type()));

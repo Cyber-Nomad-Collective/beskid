@@ -4,6 +4,7 @@ use crate::hir::{HirPrimitiveType, HirProgram};
 use crate::resolve::{ItemId, LocalId, Resolution};
 use crate::syntax::{SpanInfo, Spanned};
 use crate::types::{TypeId, TypeTable};
+use crate::builtins::{builtin_specs, BuiltinType};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TypeError {
@@ -107,7 +108,48 @@ impl<'a> TypeContext<'a> {
             current_return_type: None,
         };
         context.seed_types();
+        context.seed_builtin_signatures();
         context
+    }
+
+    fn seed_builtin_signatures(&mut self) {
+        for (item_id, index) in &self.resolution.builtin_items {
+            let Some(spec) = builtin_specs().get(*index) else {
+                continue;
+            };
+            if spec.injected {
+                continue;
+            }
+            let mut params = Vec::with_capacity(spec.params.len());
+            for param in spec.params {
+                if let Some(type_id) = self.builtin_type_id(*param) {
+                    params.push(type_id);
+                }
+            }
+            let return_type = self.builtin_type_id(spec.returns);
+            let Some(return_type) = return_type else {
+                continue;
+            };
+            self.function_signatures.insert(
+                *item_id,
+                FunctionSignature {
+                    params,
+                    return_type,
+                },
+            );
+        }
+    }
+
+    fn builtin_type_id(&self, builtin: BuiltinType) -> Option<TypeId> {
+        match builtin {
+            BuiltinType::String => self.primitive_type_id(HirPrimitiveType::String),
+            BuiltinType::Unit => self.primitive_type_id(HirPrimitiveType::Unit),
+            BuiltinType::Never => self.primitive_type_id(HirPrimitiveType::Unit),
+            BuiltinType::Usize | BuiltinType::U64 => {
+                self.primitive_type_id(HirPrimitiveType::I64)
+            }
+            BuiltinType::Ptr => None,
+        }
     }
 
     pub fn type_program(

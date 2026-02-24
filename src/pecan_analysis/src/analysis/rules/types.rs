@@ -2,7 +2,7 @@ use crate::analysis::diagnostics::Severity;
 use crate::analysis::rules::RuleContext;
 use crate::types::{TypeError, TypeInfo, TypeResult};
 
-pub(crate) fn emit_type_error(ctx: &mut RuleContext, error: TypeError) {
+pub(crate) fn emit_type_error(ctx: &mut RuleContext, error: TypeError, result: Option<&TypeResult>) {
     match error {
         TypeError::UnknownType { span } => {
             ctx.emit_simple(
@@ -99,10 +99,12 @@ pub(crate) fn emit_type_error(ctx: &mut RuleContext, error: TypeError) {
             expected,
             actual,
         } => {
+            let expected_name = render_type(result, expected);
+            let actual_name = render_type(result, actual);
             ctx.emit_simple(
                 span,
                 "E1206",
-                format!("type mismatch: expected {expected:?}, got {actual:?}"),
+                format!("type mismatch: expected {expected_name}, got {actual_name}"),
                 "type mismatch",
                 None,
                 Severity::Error,
@@ -113,10 +115,12 @@ pub(crate) fn emit_type_error(ctx: &mut RuleContext, error: TypeError) {
             expected,
             actual,
         } => {
+            let expected_name = render_type(result, expected);
+            let actual_name = render_type(result, actual);
             ctx.emit_simple(
                 span,
                 "E1305",
-                format!("match arm type mismatch: expected {expected:?}, got {actual:?}"),
+                format!("match arm type mismatch: expected {expected_name}, got {actual_name}"),
                 "match arm type mismatch",
                 None,
                 Severity::Error,
@@ -141,10 +145,12 @@ pub(crate) fn emit_type_error(ctx: &mut RuleContext, error: TypeError) {
             expected,
             actual,
         } => {
+            let expected_name = render_type(result, expected);
+            let actual_name = render_type(result, actual);
             ctx.emit_simple(
                 span,
                 "E1205",
-                format!("call argument mismatch: expected {expected:?}, got {actual:?}"),
+                format!("call argument mismatch: expected {expected_name}, got {actual_name}"),
                 "call argument mismatch",
                 None,
                 Severity::Error,
@@ -219,10 +225,14 @@ pub(crate) fn emit_type_error(ctx: &mut RuleContext, error: TypeError) {
             expected,
             actual,
         } => {
+            let expected_name = render_type(result, expected);
+            let actual_name = actual
+                .map(|type_id| render_type(result, type_id))
+                .unwrap_or_else(|| "unit".to_string());
             ctx.emit_simple(
                 span,
                 "E1207",
-                format!("return type mismatch: expected {expected:?}, got {actual:?}"),
+                format!("return type mismatch: expected {expected_name}, got {actual_name}"),
                 "return type mismatch",
                 None,
                 Severity::Error,
@@ -268,4 +278,14 @@ fn type_name(info: &TypeInfo) -> String {
         },
         TypeInfo::Named(item_id) => format!("Named({})", item_id.0),
     }
+}
+
+fn render_type(result: Option<&TypeResult>, type_id: crate::types::TypeId) -> String {
+    let Some(result) = result else {
+        return format!("type#{}", type_id.0);
+    };
+    let Some(info) = result.types.get(type_id) else {
+        return format!("type#{}", type_id.0);
+    };
+    type_name(info)
 }

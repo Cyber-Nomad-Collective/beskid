@@ -51,6 +51,7 @@ pub fn lower_program(
         Ok(CodegenArtifact {
             functions: ctx.lowered_functions,
             type_descriptors: ctx.type_descriptors,
+            string_literals: ctx.string_literals,
         })
     } else {
         Err(errors)

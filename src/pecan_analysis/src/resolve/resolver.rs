@@ -12,6 +12,7 @@ use super::ids::{ItemId, LocalId, ModuleId};
 use super::items::{ItemInfo, ItemKind};
 use super::module_graph::ModuleGraph;
 use super::tables::{ResolutionTables, ResolvedValue};
+use crate::builtins::builtin_specs;
 
 #[derive(Debug, Default)]
 pub struct Resolver {
@@ -22,6 +23,7 @@ pub struct Resolver {
     local_scopes: Vec<HashMap<String, LocalId>>,
     errors: Vec<ResolveError>,
     warnings: Vec<ResolveWarning>,
+    builtin_items: HashMap<ItemId, usize>,
 }
 
 impl Resolver {
@@ -33,6 +35,8 @@ impl Resolver {
         self.current_module = self.module_graph.root();
         self.tables = ResolutionTables::new();
         self.local_scopes.clear();
+        self.builtin_items.clear();
+        self.collect_builtins();
         for item in &program.node.items {
             self.collect_item(item);
         }
@@ -46,9 +50,48 @@ impl Resolver {
                 module_graph: std::mem::take(&mut self.module_graph),
                 tables: std::mem::take(&mut self.tables),
                 warnings: std::mem::take(&mut self.warnings),
+                builtin_items: std::mem::take(&mut self.builtin_items),
             })
         } else {
             Err(std::mem::take(&mut self.errors))
+        }
+    }
+
+    fn collect_builtins(&mut self) {
+        for (index, spec) in builtin_specs().iter().enumerate() {
+            let module_path: Vec<String> = spec
+                .pecan_path
+                .iter()
+                .take(spec.pecan_path.len().saturating_sub(1))
+                .map(|segment| (*segment).to_string())
+                .collect();
+            let module_id = self.module_graph.ensure_module_path(&module_path);
+            let name = spec
+                .pecan_path
+                .last()
+                .map(|segment| (*segment).to_string())
+                .unwrap_or_else(|| "<builtin>".to_string());
+            let id = ItemId(self.items.len());
+            if let Some(prev) = self
+                .module_graph
+                .insert_item(module_id, name.clone(), id)
+            {
+                let prev_span = self.items[prev.0].span;
+                self.errors.push(ResolveError::DuplicateItem {
+                    name,
+                    span: builtin_span(),
+                    previous: prev_span,
+                });
+                continue;
+            }
+            self.items.push(ItemInfo {
+                id,
+                name,
+                kind: ItemKind::Function,
+                visibility: HirVisibility::Public,
+                span: builtin_span(),
+            });
+            self.builtin_items.insert(id, index);
         }
     }
 
@@ -585,6 +628,7 @@ pub struct Resolution {
     pub module_graph: ModuleGraph,
     pub tables: ResolutionTables,
     pub warnings: Vec<ResolveWarning>,
+    pub builtin_items: HashMap<ItemId, usize>,
 }
 
 fn path_tail(path: &Spanned<HirPath>) -> String {
@@ -601,6 +645,15 @@ fn path_segments(path: &Spanned<HirPath>) -> Vec<String> {
         .iter()
         .map(|segment| segment.node.name.clone())
         .collect()
+}
+
+fn builtin_span() -> syntax::SpanInfo {
+    syntax::SpanInfo {
+        start: 0,
+        end: 0,
+        line_col_start: (1, 1),
+        line_col_end: (1, 1),
+    }
 }
 
 enum ModulePathLookup {

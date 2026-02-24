@@ -119,6 +119,7 @@ impl SemanticPipelineRule {
 
     fn check_unknown_import_paths(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
         let mut known_roots = HashSet::new();
+        known_roots.insert("std".to_string());
         for item in &hir.node.items {
             match &item.node {
                 HirItem::ModuleDeclaration(module_decl) => {
@@ -185,38 +186,80 @@ impl SemanticPipelineRule {
         declared_stack: &mut Vec<String>,
     ) {
         let start_len = declared_stack.len();
+        let mut pending: HashSet<String> = block
+            .node
+            .statements
+            .iter()
+            .filter_map(|statement| match &statement.node {
+                HirStatementNode::LetStatement(let_statement) => {
+                    Some(let_statement.node.name.node.name.clone())
+                }
+                _ => None,
+            })
+            .collect();
 
         for statement in &block.node.statements {
             match &statement.node {
                 HirStatementNode::LetStatement(let_statement) => {
-                    self.check_expr_use_before_decl(ctx, &let_statement.node.value, declared_stack);
+                    self.check_expr_use_before_decl(
+                        ctx,
+                        &let_statement.node.value,
+                        declared_stack,
+                        &pending,
+                    );
+                    pending.remove(&let_statement.node.name.node.name);
                     declared_stack.push(let_statement.node.name.node.name.clone());
                 }
                 HirStatementNode::ReturnStatement(return_statement) => {
                     if let Some(value) = &return_statement.node.value {
-                        self.check_expr_use_before_decl(ctx, value, declared_stack);
+                        self.check_expr_use_before_decl(ctx, value, declared_stack, &pending);
                     }
                 }
                 HirStatementNode::WhileStatement(while_statement) => {
-                    self.check_expr_use_before_decl(ctx, &while_statement.node.condition, declared_stack);
+                    self.check_expr_use_before_decl(
+                        ctx,
+                        &while_statement.node.condition,
+                        declared_stack,
+                        &pending,
+                    );
                     self.check_block_use_before_decl(ctx, &while_statement.node.body, declared_stack);
                 }
                 HirStatementNode::ForStatement(for_statement) => {
-                    self.check_expr_use_before_decl(ctx, &for_statement.node.range.node.start, declared_stack);
-                    self.check_expr_use_before_decl(ctx, &for_statement.node.range.node.end, declared_stack);
+                    self.check_expr_use_before_decl(
+                        ctx,
+                        &for_statement.node.range.node.start,
+                        declared_stack,
+                        &pending,
+                    );
+                    self.check_expr_use_before_decl(
+                        ctx,
+                        &for_statement.node.range.node.end,
+                        declared_stack,
+                        &pending,
+                    );
                     declared_stack.push(for_statement.node.iterator.node.name.clone());
                     self.check_block_use_before_decl(ctx, &for_statement.node.body, declared_stack);
                     declared_stack.pop();
                 }
                 HirStatementNode::IfStatement(if_statement) => {
-                    self.check_expr_use_before_decl(ctx, &if_statement.node.condition, declared_stack);
+                    self.check_expr_use_before_decl(
+                        ctx,
+                        &if_statement.node.condition,
+                        declared_stack,
+                        &pending,
+                    );
                     self.check_block_use_before_decl(ctx, &if_statement.node.then_block, declared_stack);
                     if let Some(else_block) = &if_statement.node.else_block {
                         self.check_block_use_before_decl(ctx, else_block, declared_stack);
                     }
                 }
                 HirStatementNode::ExpressionStatement(expression_statement) => {
-                    self.check_expr_use_before_decl(ctx, &expression_statement.node.expression, declared_stack);
+                    self.check_expr_use_before_decl(
+                        ctx,
+                        &expression_statement.node.expression,
+                        declared_stack,
+                        &pending,
+                    );
                 }
                 HirStatementNode::BreakStatement(_) | HirStatementNode::ContinueStatement(_) => {}
             }
@@ -230,6 +273,7 @@ impl SemanticPipelineRule {
         ctx: &mut RuleContext,
         expression: &Spanned<HirExpressionNode>,
         declared_stack: &[String],
+        pending: &HashSet<String>,
     ) {
         match &expression.node {
             HirExpressionNode::PathExpression(path_expr) => {
@@ -242,6 +286,9 @@ impl SemanticPipelineRule {
                 if declared_stack.iter().any(|declared| declared == &name.node.name) {
                     return;
                 }
+                if !pending.contains(&name.node.name) {
+                    return;
+                }
                 ctx.emit_simple(
                     path_expr.node.path.span,
                     "E1106",
@@ -252,49 +299,64 @@ impl SemanticPipelineRule {
                 );
             }
             HirExpressionNode::AssignExpression(assign_expression) => {
-                self.check_expr_use_before_decl(ctx, &assign_expression.node.target, declared_stack);
-                self.check_expr_use_before_decl(ctx, &assign_expression.node.value, declared_stack);
+                self.check_expr_use_before_decl(
+                    ctx,
+                    &assign_expression.node.target,
+                    declared_stack,
+                    pending,
+                );
+                self.check_expr_use_before_decl(
+                    ctx,
+                    &assign_expression.node.value,
+                    declared_stack,
+                    pending,
+                );
             }
             HirExpressionNode::BinaryExpression(binary_expression) => {
-                self.check_expr_use_before_decl(ctx, &binary_expression.node.left, declared_stack);
-                self.check_expr_use_before_decl(ctx, &binary_expression.node.right, declared_stack);
+                self.check_expr_use_before_decl(ctx, &binary_expression.node.left, declared_stack, pending);
+                self.check_expr_use_before_decl(ctx, &binary_expression.node.right, declared_stack, pending);
             }
             HirExpressionNode::UnaryExpression(unary_expression) => {
-                self.check_expr_use_before_decl(ctx, &unary_expression.node.expr, declared_stack);
+                self.check_expr_use_before_decl(ctx, &unary_expression.node.expr, declared_stack, pending);
             }
             HirExpressionNode::CallExpression(call_expression) => {
-                self.check_expr_use_before_decl(ctx, &call_expression.node.callee, declared_stack);
+                self.check_expr_use_before_decl(ctx, &call_expression.node.callee, declared_stack, pending);
                 for arg in &call_expression.node.args {
-                    self.check_expr_use_before_decl(ctx, arg, declared_stack);
+                    self.check_expr_use_before_decl(ctx, arg, declared_stack, pending);
                 }
             }
             HirExpressionNode::MemberExpression(member_expression) => {
-                self.check_expr_use_before_decl(ctx, &member_expression.node.target, declared_stack);
+                self.check_expr_use_before_decl(ctx, &member_expression.node.target, declared_stack, pending);
             }
             HirExpressionNode::StructLiteralExpression(struct_literal) => {
                 for field in &struct_literal.node.fields {
-                    self.check_expr_use_before_decl(ctx, &field.node.value, declared_stack);
+                    self.check_expr_use_before_decl(ctx, &field.node.value, declared_stack, pending);
                 }
             }
             HirExpressionNode::EnumConstructorExpression(constructor_expression) => {
                 for arg in &constructor_expression.node.args {
-                    self.check_expr_use_before_decl(ctx, arg, declared_stack);
+                    self.check_expr_use_before_decl(ctx, arg, declared_stack, pending);
                 }
             }
             HirExpressionNode::MatchExpression(match_expression) => {
-                self.check_expr_use_before_decl(ctx, &match_expression.node.scrutinee, declared_stack);
+                self.check_expr_use_before_decl(
+                    ctx,
+                    &match_expression.node.scrutinee,
+                    declared_stack,
+                    pending,
+                );
                 for arm in &match_expression.node.arms {
                     if let Some(guard) = &arm.node.guard {
-                        self.check_expr_use_before_decl(ctx, guard, declared_stack);
+                        self.check_expr_use_before_decl(ctx, guard, declared_stack, pending);
                     }
-                    self.check_expr_use_before_decl(ctx, &arm.node.value, declared_stack);
+                    self.check_expr_use_before_decl(ctx, &arm.node.value, declared_stack, pending);
                 }
             }
             HirExpressionNode::BlockExpression(block_expression) => {
                 self.check_block_use_before_decl(ctx, &block_expression.node.block, &mut declared_stack.to_vec());
             }
             HirExpressionNode::GroupedExpression(grouped_expression) => {
-                self.check_expr_use_before_decl(ctx, &grouped_expression.node.expr, declared_stack);
+                self.check_expr_use_before_decl(ctx, &grouped_expression.node.expr, declared_stack, pending);
             }
             HirExpressionNode::LiteralExpression(_) => {}
         }

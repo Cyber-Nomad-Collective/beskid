@@ -11,4 +11,4 @@ pub use lowering::{
     CodegenArtifact, CodegenContext, CodegenResult, Lowerable, LoweredFunction,
     lower_node, lower_program,
 };
-pub use module_emission::{emit_type_descriptors, DescriptorHandles};
+pub use module_emission::{emit_string_literals, emit_type_descriptors, DescriptorHandles};

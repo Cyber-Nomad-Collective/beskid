@@ -113,3 +113,10 @@ fn qualified_module_path_to_public_item_is_allowed() {
     let result = resolve_program("pub mod dep.secret; unit foo() { let x = dep.secret; }");
     assert!(result.is_ok(), "expected qualified access to public module item to resolve");
 }
+
+#[test]
+fn stdio_println_resolves() {
+    let result = resolve_program("unit main() { std.io.println(\"hi\"); }")
+        .expect("expected std.io.println to resolve");
+    assert!(result.warnings.is_empty());
+}

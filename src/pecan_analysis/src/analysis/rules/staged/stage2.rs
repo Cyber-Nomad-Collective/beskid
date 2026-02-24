@@ -22,7 +22,7 @@ impl SemanticPipelineRule {
             }
             Err(errors) => {
                 for error in errors {
-                    types::emit_type_error(ctx, error);
+                    types::emit_type_error(ctx, error, None);
                 }
             }
         }

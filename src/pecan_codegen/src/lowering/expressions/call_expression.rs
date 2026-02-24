@@ -9,6 +9,7 @@ use pecan_analysis::hir::{HirCallExpression, HirExpressionNode, HirPrimitiveType
 use pecan_analysis::resolve::ResolvedValue;
 use pecan_analysis::syntax::Spanned;
 use pecan_analysis::types::TypeInfo;
+use pecan_analysis::builtins::builtin_specs;
 
 impl Lowerable<NodeLoweringContext<'_, '_>> for HirCallExpression {
     type Output = Option<Value>;
@@ -23,13 +24,6 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirCallExpression {
                 node: "non-path call callee",
             });
         };
-        if path_expr.node.path.node.segments.len() != 1 {
-            return Err(CodegenError::UnsupportedNode {
-                span: node.node.callee.span,
-                node: "multi-segment call path",
-            });
-        }
-
         let resolved = ctx
             .resolution
             .tables
@@ -97,13 +91,19 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirCallExpression {
             signature_ir.returns.push(AbiParam::new(clif_ty));
         }
 
-        let name = ctx
-            .resolution
-            .items
-            .get(item_id.0)
-            .ok_or(CodegenError::MissingSymbol("function item"))?
-            .name
-            .clone();
+        let name = if let Some(index) = ctx.resolution.builtin_items.get(item_id) {
+            builtin_specs()
+                .get(*index)
+                .map(|spec| spec.runtime_symbol.to_string())
+                .ok_or(CodegenError::MissingSymbol("builtin symbol"))?
+        } else {
+            ctx.resolution
+                .items
+                .get(item_id.0)
+                .ok_or(CodegenError::MissingSymbol("function item"))?
+                .name
+                .clone()
+        };
         let sig_ref = ctx.builder.func.import_signature(signature_ir);
         let func_ref = ctx.builder.func.import_function(ExtFuncData {
             name: ExternalName::testcase(name),

@@ -13,6 +13,21 @@ pub struct DescriptorHandles {
     pub offsets: DataId,
 }
 
+pub fn emit_string_literals<M: Module>(
+    module: &mut M,
+    artifact: &CodegenArtifact,
+) -> ModuleResult<HashMap<String, DataId>> {
+    let mut handles = HashMap::new();
+    for (symbol, data) in &artifact.string_literals {
+        let data_id = module.declare_data(symbol, Linkage::Local, false, false)?;
+        let mut ctx = DataDescription::new();
+        ctx.define(data.clone().into_boxed_slice());
+        module.define_data(data_id, &ctx)?;
+        handles.insert(symbol.clone(), data_id);
+    }
+    Ok(handles)
+}
+
 pub fn emit_type_descriptors<M: Module>(
     module: &mut M,
     artifact: &CodegenArtifact,

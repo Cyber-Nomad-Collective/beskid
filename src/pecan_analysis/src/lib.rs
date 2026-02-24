@@ -4,6 +4,7 @@ pub mod query;
 pub mod syntax;
 pub mod hir;
 pub mod analysis;
+pub mod builtins;
 pub mod resolve;
 pub mod types;
 

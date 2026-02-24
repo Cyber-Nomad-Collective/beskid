@@ -529,7 +529,7 @@ dependencies = [
 
 [[package]]
 name = "gc-arena"
-version = "0.5.3"
+version = "0.1.0"
 dependencies = [
  "allocator-api2",
  "enum-map",
@@ -545,7 +545,7 @@ dependencies = [
 
 [[package]]
 name = "gc-arena-derive"
-version = "0.5.3"
+version = "0.0.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -831,6 +831,7 @@ dependencies = [
  "cranelift-native",
  "cranelift-object",
  "gc-arena",
+ "pecan_analysis",
  "pecan_codegen",
  "pecan_runtime",
 ]

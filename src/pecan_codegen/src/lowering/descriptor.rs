@@ -3,6 +3,11 @@ use std::collections::HashMap;
 use pecan_analysis::resolve::ItemId;
 use pecan_analysis::types::{TypeId, TypeInfo, TypeResult};
 
+const HEADER_SIZE: usize = std::mem::size_of::<usize>();
+const HEADER_ALIGN: usize = std::mem::align_of::<usize>();
+const ENUM_TAG_SIZE: usize = 4;
+const ENUM_TAG_ALIGN: usize = 4;
+
 #[derive(Debug, Clone)]
 pub struct TypeLayout {
     pub size: usize,
@@ -74,10 +79,8 @@ fn primitive_layout(primitive: pecan_analysis::hir::HirPrimitiveType) -> TypeLay
 }
 
 fn struct_layout(type_result: &TypeResult, fields: &[(String, TypeId)]) -> TypeLayout {
-    let header_size = std::mem::size_of::<usize>();
-    let header_align = std::mem::align_of::<usize>();
-    let mut offset = header_size;
-    let mut align = header_align;
+    let mut offset = HEADER_SIZE;
+    let mut align = HEADER_ALIGN;
     let mut pointer_offsets = Vec::new();
 
     for (_, field_type) in fields {
@@ -99,10 +102,8 @@ fn struct_layout(type_result: &TypeResult, fields: &[(String, TypeId)]) -> TypeL
 }
 
 fn enum_layout(type_result: &TypeResult, variants: &[(String, Vec<TypeId>)]) -> TypeLayout {
-    let header_size = std::mem::size_of::<usize>();
-    let header_align = std::mem::align_of::<usize>();
-    let tag_size = 4usize;
-    let tag_align = 4usize;
+    let tag_size = ENUM_TAG_SIZE;
+    let tag_align = ENUM_TAG_ALIGN;
 
     let mut payload_size = 0usize;
     let mut payload_align = tag_align;
@@ -125,14 +126,14 @@ fn enum_layout(type_result: &TypeResult, variants: &[(String, Vec<TypeId>)]) -> 
         payload_align = payload_align.max(align);
     }
 
-    let payload_start = align_to(header_size, payload_align.max(tag_align));
+    let payload_start = align_to(HEADER_SIZE, payload_align.max(tag_align));
     pointer_offsets.iter_mut().for_each(|off| *off += payload_start);
 
-    let total_size = align_to(payload_start + payload_size, header_align.max(payload_align));
+    let total_size = align_to(payload_start + payload_size, HEADER_ALIGN.max(payload_align));
 
     TypeLayout {
         size: total_size,
-        align: header_align.max(payload_align),
+        align: HEADER_ALIGN.max(payload_align),
         pointer_offsets,
     }
 }
@@ -157,8 +158,7 @@ pub(crate) fn struct_field_offsets(
     item_id: ItemId,
 ) -> Option<HashMap<String, usize>> {
     let fields = type_result.struct_fields_ordered.get(&item_id)?;
-    let header_size = std::mem::size_of::<usize>();
-    let mut offset = header_size;
+    let mut offset = HEADER_SIZE;
     let mut offsets = HashMap::new();
 
     for (name, field_type) in fields {
@@ -172,8 +172,7 @@ pub(crate) fn struct_field_offsets(
 
 pub(crate) fn enum_payload_start(type_result: &TypeResult, item_id: ItemId) -> Option<usize> {
     let variants = type_result.enum_variants_ordered.get(&item_id)?;
-    let header_size = std::mem::size_of::<usize>();
-    let tag_align = 4usize;
+    let tag_align = ENUM_TAG_ALIGN;
     let mut payload_align = tag_align;
     for (_, fields) in variants {
         let mut align = tag_align;
@@ -183,7 +182,7 @@ pub(crate) fn enum_payload_start(type_result: &TypeResult, item_id: ItemId) -> O
         }
         payload_align = payload_align.max(align);
     }
-    Some(align_to(header_size, payload_align.max(tag_align)))
+    Some(align_to(HEADER_SIZE, payload_align.max(tag_align)))
 }
 
 pub(crate) fn enum_variant_field_offsets(
@@ -197,10 +196,8 @@ pub(crate) fn enum_variant_field_offsets(
         .find(|(name, _)| name == variant_name)
         .map(|(_, fields)| fields)?;
     let payload_start = enum_payload_start(type_result, item_id)?;
-    let tag_size = 4usize;
-    let tag_align = 4usize;
-    let mut offset = tag_size;
-    let mut align = tag_align;
+    let mut offset = ENUM_TAG_SIZE;
+    let mut align = ENUM_TAG_ALIGN;
     let mut offsets = Vec::with_capacity(fields.len());
     for field_type in fields {
         let field_layout = compute_layout(type_result, *field_type)?;

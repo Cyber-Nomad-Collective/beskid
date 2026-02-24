@@ -6,6 +6,7 @@ use gc_arena::{Collect, DynamicRootSet, Gc, Mutation};
 pub struct RuntimeState {
     pub allocation_counter: usize,
     pub handles: Vec<*mut u8>,
+    pub registered_roots: Vec<*mut *mut u8>,
 }
 
 unsafe impl<'gc> Collect<'gc> for RuntimeState {
