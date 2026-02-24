@@ -1,0 +1,7 @@
+error: lifetime may not live long enough
+  --> tests/ui/require_static_not_static.rs:13:13
+   |
+12 | fn assert_my_struct_collect<'a>() {
+   |                             -- lifetime `'a` defined here
+13 |     let _ = MyStruct::<'a>::NEEDS_TRACE;
+   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^ requires that `'a` must outlive `'static`

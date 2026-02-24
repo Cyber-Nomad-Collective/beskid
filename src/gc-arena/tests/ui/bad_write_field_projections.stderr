@@ -1,0 +1,72 @@
+error[E0308]: mismatched types
+  --> tests/ui/bad_write_field_projections.rs:18:5
+   |
+18 |     field!(v, Foo, foo)
+   |     ^^^^^^^-^^^^^^^^^^^
+   |     |      |
+   |     |      this expression has type `&'a gc_arena::barrier::Write<Gc<'gc, Foo<'gc>>>`
+   |     expected `Gc<'_, Foo<'_>>`, found `Foo<'_>`
+   |
+   = note: expected struct `Gc<'gc, Foo<'gc>>`
+              found struct `Foo<'_>`
+   = note: this error originates in the macro `field` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider dereferencing to access the inner value using the Deref trait
+   |
+18 |     field!(&***v, Foo, foo)
+   |            ++++
+
+error[E0606]: casting `&&'static u32` as `*const u32` is invalid
+  --> tests/ui/bad_write_field_projections.rs:22:5
+   |
+22 |     field!(v, Foo, baz)
+   |     ^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this error originates in the macro `field` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0606]: casting `&Gc<'_, u32>` as `*const u32` is invalid
+  --> tests/ui/bad_write_field_projections.rs:26:5
+   |
+26 |     field!(v, Foo, quux)
+   |     ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this error originates in the macro `field` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0308]: mismatched types
+  --> tests/ui/bad_write_field_projections.rs:30:5
+   |
+30 |     field!(v, Foo, bar)
+   |     ^^^^^^^^^^^^^^^^^^^
+   |     |
+   |     expected `&i64`, found `&f64`
+   |     arguments to this function are incorrect
+   |
+   = note: expected reference `&i64`
+              found reference `&f64`
+note: associated function defined here
+  --> src/barrier.rs
+   |
+   |     pub unsafe fn __from_ref_and_ptr(v: &T, _: *const T) -> &Self {
+   |                   ^^^^^^^^^^^^^^^^^^
+   = note: this error originates in the macro `field` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0606]: casting `&f64` as `*const i64` is invalid
+  --> tests/ui/bad_write_field_projections.rs:30:5
+   |
+30 |     field!(v, Foo, bar)
+   |     ^^^^^^^^^^^^^^^^^^^
+   |
+   = note: this error originates in the macro `field` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: binding modifiers may only be written when the default binding mode is `move`
+  --> tests/ui/bad_write_field_projections.rs:14:5
+   |
+14 |     field!(v, Foo, foo)
+   |     ^^^^^^^^^^^^^^^^^^^ occurs within macro expansion
+   |
+   = note: for more information, see <https://doc.rust-lang.org/nightly/edition-guide/rust-2024/match-ergonomics.html>
+   = note: this error originates in the macro `field` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: make the implied reference pattern explicit
+  --> src/barrier.rs
+   |
+   |                 __inner: &$type { ref $field, .. },
+   |                          +
