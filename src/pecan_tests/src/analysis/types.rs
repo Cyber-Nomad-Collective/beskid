@@ -21,13 +21,13 @@ fn resolve_and_type(source: &str) -> Result<pecan_analysis::types::TypeResult, V
 
 #[test]
 fn typing_literals_succeeds() {
-    let result = resolve_and_type("unit main() { let x: i64 = 1; let y: bool = true; }");
+    let result = resolve_and_type("unit main() { i64 x = 1; bool y = true; }");
     assert!(result.is_ok());
 }
 
 #[test]
 fn typing_reports_mismatch() {
-    let result = resolve_and_type("unit main() { let x: bool = 1; }");
+    let result = resolve_and_type("unit main() { bool x = 1; }");
     let errors = result.expect_err("expected type mismatch error");
     assert!(errors
         .iter()
@@ -36,7 +36,7 @@ fn typing_reports_mismatch() {
 
 #[test]
 fn typing_reports_non_bool_condition() {
-    let result = resolve_and_type("unit main() { if 1 { let x: i64 = 1; } }");
+    let result = resolve_and_type("unit main() { if 1 { i64 x = 1; } }");
     let errors = result.expect_err("expected non-bool condition error");
     assert!(errors
         .iter()
@@ -55,15 +55,70 @@ fn typing_reports_return_mismatch() {
 #[test]
 fn typing_function_calls_succeeds() {
     let result = resolve_and_type(
-        "i64 add(a: i64, b: i64) { return a + b; } unit main() { let x: i64 = add(1, 2); }",
+        "i64 add(a: i64, b: i64) { return a + b; } unit main() { i64 x = add(1, 2); }",
     );
     assert!(result.is_ok());
 }
 
 #[test]
+fn typing_generic_function_call_succeeds() {
+    let result = resolve_and_type(
+        "T id<T>(x: T) { return x; } unit main() { i64 x = id<i64>(1); }",
+    );
+    if let Err(errors) = &result {
+        panic!("expected generic call typing to succeed, got errors: {errors:?}");
+    }
+    assert!(result.is_ok());
+}
+
+#[test]
+fn typing_reports_missing_generic_args_for_call() {
+    let result = resolve_and_type(
+        "T id<T>(x: T) { return x; } unit main() { i64 x = id(1); }",
+    );
+    let errors = result.expect_err("expected missing generic args error");
+    assert!(errors
+        .iter()
+        .any(|error| matches!(error, TypeError::MissingTypeArguments { .. })));
+}
+
+#[test]
+fn typing_reports_generic_arg_mismatch_for_call() {
+    let result = resolve_and_type(
+        "T id<T>(x: T) { return x; } unit main() { i64 x = id<i64, string>(1); }",
+    );
+    let errors = result.expect_err("expected generic arg mismatch error");
+    assert!(errors
+        .iter()
+        .any(|error| matches!(error, TypeError::GenericArgumentMismatch { .. })));
+}
+
+#[test]
+fn typing_reports_missing_generic_args_for_type() {
+    let result = resolve_and_type(
+        "type Box<T> { T value } unit main() { Box x = Box { value: 1 }; }",
+    );
+    let errors = result.expect_err("expected missing generic args for type");
+    assert!(errors
+        .iter()
+        .any(|error| matches!(error, TypeError::MissingTypeArguments { .. })));
+}
+
+#[test]
+fn typing_reports_generic_arg_mismatch_for_type() {
+    let result = resolve_and_type(
+        "type Box<T> { T value } unit main() { Box<i64, string> x = Box<i64> { value: 1 }; }",
+    );
+    let errors = result.expect_err("expected generic arg mismatch for type");
+    assert!(errors
+        .iter()
+        .any(|error| matches!(error, TypeError::GenericArgumentMismatch { .. })));
+}
+
+#[test]
 fn typing_reports_call_arity_mismatch() {
     let result = resolve_and_type(
-        "i64 add(a: i64, b: i64) { return a + b; } unit main() { let x: i64 = add(1); }",
+        "i64 add(a: i64, b: i64) { return a + b; } unit main() { i64 x = add(1); }",
     );
     let errors = result.expect_err("expected call arity mismatch");
     assert!(errors
@@ -74,7 +129,7 @@ fn typing_reports_call_arity_mismatch() {
 #[test]
 fn typing_struct_literal_and_member_access() {
     let result = resolve_and_type(
-        "type User { i64 id, string name } unit main() { let u: User = User { id: 1, name: \"a\" }; let x: i64 = u.id; }",
+        "type User { i64 id, string name } unit main() { User u = User { id: 1, name: \"a\" }; i64 x = u.id; }",
     );
     if let Err(errors) = &result {
         panic!("expected struct literal/member typing to succeed, got errors: {errors:?}");
@@ -85,7 +140,7 @@ fn typing_struct_literal_and_member_access() {
 #[test]
 fn typing_reports_missing_struct_field() {
     let result = resolve_and_type(
-        "type User { i64 id, string name } unit main() { let u: User = User { id: 1 }; }",
+        "type User { i64 id, string name } unit main() { User u = User { id: 1 }; }",
     );
     let errors = result.expect_err("expected missing struct field");
     assert!(
@@ -99,7 +154,7 @@ fn typing_reports_missing_struct_field() {
 #[test]
 fn typing_match_expression_unifies_types() {
     let result = resolve_and_type(
-        "enum Choice { Some(string value), None } unit main() { let opt: Choice = Choice::None(); let x: string = match opt { Choice::Some(value) => value, Choice::None => \"none\", }; }",
+        "enum Choice { Some(string value), None } unit main() { Choice opt = Choice::None(); string x = match opt { Choice::Some(value) => value, Choice::None => \"none\", }; }",
     );
     if let Err(errors) = &result {
         panic!("expected match typing to succeed, got errors: {errors:?}");
@@ -109,7 +164,7 @@ fn typing_match_expression_unifies_types() {
 
 #[test]
 fn typing_records_cast_intent_for_numeric_mismatch() {
-    let result = resolve_and_type("unit main() { let x: i32 = 1; let y: i64 = x; }")
+    let result = resolve_and_type("unit main() { i32 x = 1; i64 y = x; }")
         .expect("expected typing to succeed with cast intent");
     assert_eq!(result.cast_intents.len(), 1, "expected exactly one cast intent");
 
@@ -123,7 +178,7 @@ fn typing_records_cast_intent_for_numeric_mismatch() {
 #[test]
 fn typing_cast_intents_are_sorted_by_source_span() {
     let result = resolve_and_type(
-        "unit main() { let a: i32 = 1; let b: i64 = a; let c: i32 = 2; let d: i64 = c; }",
+        "unit main() { i32 a = 1; i64 b = a; i32 c = 2; i64 d = c; }",
     )
     .expect("expected typing to succeed with cast intents");
 
@@ -140,7 +195,7 @@ fn typing_cast_intents_are_sorted_by_source_span() {
 #[test]
 fn typing_cast_intents_preserve_source_line_spans() {
     let result = resolve_and_type(
-        "unit main() {\n  let x: i32 = 1;\n  let y: i64 = x;\n  let z: i32 = 2;\n  let w: i64 = z;\n}",
+        "unit main() {\n  i32 x = 1;\n  i64 y = x;\n  i32 z = 2;\n  i64 w = z;\n}",
     )
     .expect("expected typing to succeed with cast intents");
 
@@ -155,7 +210,7 @@ fn typing_cast_intents_preserve_source_line_spans() {
 #[test]
 fn typing_records_cast_intent_for_numeric_call_argument_mismatch() {
     let result = resolve_and_type(
-        "i64 take(v: i64) { return v; } unit main() { let x: i32 = 1; let y: i64 = take(x); }",
+        "i64 take(v: i64) { return v; } unit main() { i32 x = 1; i64 y = take(x); }",
     )
     .expect("expected typing to succeed with cast intent in call argument");
 
@@ -167,7 +222,7 @@ fn typing_records_cast_intent_for_numeric_call_argument_mismatch() {
 
 #[test]
 fn typing_records_cast_intent_for_numeric_return_mismatch() {
-    let result = resolve_and_type("i64 main() { let x: i32 = 1; return x; }")
+    let result = resolve_and_type("i64 main() { i32 x = 1; return x; }")
         .expect("expected typing to succeed with cast intent in return");
 
     assert!(
@@ -178,7 +233,7 @@ fn typing_records_cast_intent_for_numeric_return_mismatch() {
 
 #[test]
 fn typing_cast_intent_accessor_finds_intent_by_span() {
-    let result = resolve_and_type("unit main() { let x: i32 = 1; let y: i64 = x; }")
+    let result = resolve_and_type("unit main() { i32 x = 1; i64 y = x; }")
         .expect("expected typing to succeed with cast intent");
     let span = result.cast_intents[0].span;
     let found = result.cast_intent_for_span(span);
@@ -188,7 +243,7 @@ fn typing_cast_intent_accessor_finds_intent_by_span() {
 #[test]
 fn typing_nested_match_expression_unifies_types() {
     let result = resolve_and_type(
-        "enum Choice { Some(i32 value), None } unit main() { let x: Choice = Choice::Some(1); let y: i32 = match x { Choice::Some(v) => match x { Choice::Some(_) => v, Choice::None => 0, }, Choice::None => 0, }; }",
+        "enum Choice { Some(i32 value), None } unit main() { Choice x = Choice::Some(1); i32 y = match x { Choice::Some(v) => match x { Choice::Some(_) => v, Choice::None => 0, }, Choice::None => 0, }; }",
     );
     if let Err(errors) = &result {
         panic!("expected nested match typing to succeed, got errors: {errors:?}");
@@ -199,7 +254,7 @@ fn typing_nested_match_expression_unifies_types() {
 #[test]
 fn typing_reports_enum_pattern_arity_mismatch() {
     let result = resolve_and_type(
-        "enum Choice { Some(i64 value), None } unit main() { let x: Choice = Choice::Some(1); let y: i64 = match x { Choice::Some() => 0, Choice::None => 1, }; }",
+        "enum Choice { Some(i64 value), None } unit main() { Choice x = Choice::Some(1); i64 y = match x { Choice::Some() => 0, Choice::None => 1, }; }",
     );
     let errors = result.expect_err("expected enum pattern arity mismatch");
     assert!(
@@ -213,7 +268,7 @@ fn typing_reports_enum_pattern_arity_mismatch() {
 #[test]
 fn typing_reports_enum_pattern_field_type_mismatch() {
     let result = resolve_and_type(
-        "enum Choice { Some(i64 value), None } unit main() { let x: Choice = Choice::Some(1); let y: i64 = match x { Choice::Some(\"text\") => 0, Choice::None => 1, }; }",
+        "enum Choice { Some(i64 value), None } unit main() { Choice x = Choice::Some(1); i64 y = match x { Choice::Some(\"text\") => 0, Choice::None => 1, }; }",
     );
     let errors = result.expect_err("expected enum pattern field type mismatch");
     assert!(
@@ -226,19 +281,19 @@ fn typing_reports_enum_pattern_field_type_mismatch() {
 
 #[test]
 fn typing_grouped_expression_propagates_type() {
-    let result = resolve_and_type("unit main() { let x: i64 = (1); }");
+    let result = resolve_and_type("unit main() { i64 x = (1); }");
     assert!(result.is_ok(), "expected grouped expression typing to succeed");
 }
 
 #[test]
 fn typing_block_expression_propagates_unit_type() {
-    let result = resolve_and_type("unit main() { let x: unit = { let y: i64 = 1; }; }");
+    let result = resolve_and_type("unit main() { unit x = { i64 y = 1; }; }");
     assert!(result.is_ok(), "expected block expression typing to succeed");
 }
 
 #[test]
 fn typing_reports_invalid_member_target_for_non_struct() {
-    let result = resolve_and_type("unit main() { let x: i64 = 1; let y: i64 = x.foo; }");
+    let result = resolve_and_type("unit main() { i64 x = 1; i64 y = x.foo; }");
     let errors = result.expect_err("expected invalid member target error");
     assert!(
         errors
@@ -251,7 +306,7 @@ fn typing_reports_invalid_member_target_for_non_struct() {
 #[test]
 fn typing_reports_enum_constructor_arity_mismatch() {
     let result = resolve_and_type(
-        "enum Choice { Some(i64 value), None } unit main() { let x: Choice = Choice::Some(); }",
+        "enum Choice { Some(i64 value), None } unit main() { Choice x = Choice::Some(); }",
     );
     let errors = result.expect_err("expected enum constructor mismatch");
     assert!(
@@ -265,7 +320,7 @@ fn typing_reports_enum_constructor_arity_mismatch() {
 #[test]
 fn typing_reports_unknown_struct_field() {
     let result = resolve_and_type(
-        "type User { i64 id, string name } unit main() { let u: User = User { id: 1, name: \"a\" }; let x: i64 = u.age; }",
+        "type User { i64 id, string name } unit main() { User u = User { id: 1, name: \"a\" }; i64 x = u.age; }",
     );
     let errors = result.expect_err("expected unknown struct field");
     assert!(

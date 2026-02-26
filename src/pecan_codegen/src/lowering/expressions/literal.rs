@@ -81,7 +81,7 @@ pub(crate) fn lower_literal(
             let func_ref = builder.func.import_function(cranelift_codegen::ir::ExtFuncData {
                 name: ExternalName::testcase("str_new".to_string()),
                 signature: sig_ref,
-                colocated: true,
+                colocated: false,
                 patchable: false,
             });
             let call = builder.ins().call(func_ref, &[str_ptr, len_val]);

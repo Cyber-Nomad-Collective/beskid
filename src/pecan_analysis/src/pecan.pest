@@ -74,13 +74,15 @@ Literal = { FloatLiteral | IntegerLiteral | StringLiteral | CharLiteral | "true"
 // 2) PROGRAM
 ////////////////////////////////////////////////////////////
 Program = { SOI ~ Item* ~ EOI }
-Item = _{ FunctionDefinition | MethodDefinition | TypeDefinition | EnumDefinition | ContractDefinition | ModuleDeclaration | UseDeclaration }
+Item = _{ FunctionDefinition | MethodDefinition | TypeDefinition | EnumDefinition | ContractDefinition | InlineModule | ModuleDeclaration | UseDeclaration }
 
 Visibility = { "pub" }
 
 ModuleDeclaration = { Visibility? ~ "mod" ~ Path ~ ";" }
+InlineModule = { Visibility? ~ "mod" ~ Identifier ~ "{" ~ Item* ~ "}" }
 UseDeclaration = { Visibility? ~ "use" ~ Path ~ ";" }
-Path = { Identifier ~ ("." ~ Identifier)* }
+PathSegment = { Identifier ~ GenericArguments? }
+Path = { PathSegment ~ ("." ~ PathSegment)* }
 EnumPath = { Identifier ~ "::" ~ Identifier }
 
 ////////////////////////////////////////////////////////////
@@ -91,7 +93,7 @@ PrimitiveType = { "bool" | "i32" | "i64" | "u8" | "f64" | "char" | "string" | "u
 GenericParameters = { "<" ~ Identifier ~ ("," ~ Identifier)* ~ ">" }
 GenericArguments = { "<" ~ PecanType ~ ("," ~ PecanType)* ~ ">" }
 
-TypeName = { PrimitiveType | Path ~ GenericArguments? }
+TypeName = { PrimitiveType | Path }
 ArrayType = { TypeName ~ "[" ~ "]" }
 TypeReference = { "ref" ~ TypeName }
 PecanType = { TypeReference | ArrayType | TypeName }
@@ -100,7 +102,7 @@ PecanType = { TypeReference | ArrayType | TypeName }
 // 4) DEFINITIONS
 ////////////////////////////////////////////////////////////
 FunctionDefinition = { Visibility? ~ PecanType ~ Identifier ~ GenericParameters? ~ "(" ~ ParameterList? ~ ")" ~ Block }
-ReceiverType = { PrimitiveType | Identifier ~ GenericArguments? }
+ReceiverType = { PrimitiveType | PathSegment }
 MethodDefinition = { Visibility? ~ PecanType ~ ReceiverType ~ "." ~ Identifier ~ "(" ~ ParameterList? ~ ")" ~ Block }
 ParameterList = { Parameter ~ ("," ~ Parameter)* }
 Parameter = { ParameterModifier? ~ Identifier ~ ":" ~ PecanType }
@@ -127,7 +129,9 @@ Block = { "{" ~ Statement* ~ "}" }
 
 Statement = _{ LetStatement | ReturnStatement | BreakStatement | ContinueStatement | WhileStatement | ForStatement | IfStatement | ExpressionStatement }
 
-LetStatement = { "let" ~ "mut"? ~ Identifier ~ TypeAnnotation? ~ "=" ~ Expression ~ ";" }
+LetStatement = { TypedLetStatement | InferredLetStatement }
+TypedLetStatement = { PecanType ~ MutKeyword? ~ Identifier ~ "=" ~ Expression ~ ";" }
+InferredLetStatement = { LetKeyword ~ Identifier ~ "=" ~ Expression ~ ";" }
 TypeAnnotation = { ":" ~ PecanType }
 
 ReturnStatement = { "return" ~ Expression? ~ ";" }

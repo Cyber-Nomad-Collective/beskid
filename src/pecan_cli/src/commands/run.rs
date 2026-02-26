@@ -57,8 +57,16 @@ pub fn execute(args: RunArgs) -> Result<()> {
         }
     };
 
+    let std_pairs = PecanParser::parse(Rule::Program, pecan_analysis::stdlib::STDLIB_PRELUDE).expect("valid prelude");
+    let std_program = Program::parse(std_pairs.into_iter().next().unwrap()).expect("valid prelude");
+
+    let mut combined_program = program.clone();
+    let mut combined_items = std_program.node.items;
+    combined_items.extend(combined_program.node.items);
+    combined_program.node.items = combined_items;
+
     let diagnostics = run_rules(
-        &program.node,
+        &combined_program.node,
         args.input.display().to_string(),
         &source,
         &builtin_rules(),
@@ -157,7 +165,10 @@ pub fn execute(args: RunArgs) -> Result<()> {
             main_fn();
             println!("ok");
         }
-        TypeInfo::Primitive(HirPrimitiveType::String) | TypeInfo::Named(_) => {
+        TypeInfo::Primitive(HirPrimitiveType::String)
+        | TypeInfo::Named(_)
+        | TypeInfo::GenericParam(_)
+        | TypeInfo::Applied { .. } => {
             let main_fn: extern "C" fn() -> u64 = unsafe { std::mem::transmute(ptr) };
             let value = main_fn();
             println!("0x{value:016x}");

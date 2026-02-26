@@ -62,7 +62,7 @@ impl SemanticPipelineRule {
             let Some(private_span) = private_items.get(&tail) else {
                 continue;
             };
-            let root = &use_decl.node.path.node.segments[0].node.name;
+            let root = &use_decl.node.path.node.segments[0].node.name.node.name;
             if root == &tail {
                 continue;
             }
@@ -234,7 +234,7 @@ impl SemanticPipelineRule {
         match &expression.node {
             HirExpressionNode::PathExpression(path_expression) => {
                 if let Some(last) = path_expression.node.path.node.segments.last() {
-                    used.insert(last.node.name.clone());
+                    used.insert(last.node.name.node.name.clone());
                 }
             }
             HirExpressionNode::AssignExpression(assign_expression) => {
@@ -293,7 +293,7 @@ impl SemanticPipelineRule {
         path.node
             .segments
             .last()
-            .map(|segment| segment.node.name.clone())
+            .map(|segment| segment.node.name.node.name.clone())
             .unwrap_or_default()
     }
 
@@ -301,7 +301,7 @@ impl SemanticPipelineRule {
         path.node
             .segments
             .iter()
-            .map(|segment| segment.node.name.clone())
+            .map(|segment| segment.node.name.node.name.clone())
             .collect::<Vec<_>>()
             .join(".")
     }

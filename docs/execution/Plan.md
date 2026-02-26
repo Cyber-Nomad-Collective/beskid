@@ -61,6 +61,38 @@ description: Pecan execution implementation plan
 
 ---
 
+## Phase 2.5 - Generics (planned)
+
+**Goal:** add single-level generics with explicit type arguments and monomorphized codegen.
+
+**Spec (v0.1)**
+- Generics allowed on **functions**, **types**, and **enums** (methods later).
+- Usage requires **explicit type arguments** (no inference yet).
+- **Single-level** only (`Option<i32>` ok, `Option<Result<i32, string>>` not yet).
+- Design keeps room for future **contract bounds** (`T: Contract`).
+- Codegen uses **monomorphization**: specialize per concrete type-arg list.
+
+**Plan**
+1. **Type representation**
+   - Extend `TypeInfo` with `GenericParam` and `Applied` forms.
+   - Add a substitution helper for generic -> concrete mapping.
+2. **Resolver generic scope**
+   - Maintain a generic parameter scope stack (similar to locals).
+   - Resolve `T` in type paths to generic params when in scope.
+3. **Type paths with type arguments**
+   - Add type-arg lists on path segments in AST/HIR.
+4. **Type checking**
+   - Build explicit substitutions for generic items; no inference.
+   - Type arguments produce `Applied` types in the type table.
+5. **Monomorphized codegen**
+   - Emit unique symbol keys per instantiation (e.g. `Foo#i32`).
+   - Cache specialized functions/types to avoid duplicate compilation.
+6. **Tests**
+   - `id<T>(x: T)` and `Option<T>` basic use.
+   - Explicit instantiation `id<i32>(1)`.
+
+---
+
 ## Phase 3 - CLIF lowering (done)
 
 **Goal:** HIR -> CLIF lowering for the execution pipeline.
@@ -123,6 +155,16 @@ description: Pecan execution implementation plan
    - Defines each `Function` and finalizes definitions.
 5. **Execution harness**
    - `Engine` exposes `compile_artifact` and `entrypoint_ptr` (wrapped in arena scope).
+
+**Remaining (MVP Improvements)**
+- Add IR verification (`cranelift_codegen::verify_function`) before module finalization to prevent opaque panics on invalid lowering.
+- Add dynamic signature validation before unsafely transmuting the entrypoint pointer.
+- Replace `CallConv::SystemV` with `isa.default_call_conv()` for cross-platform compatibility.
+
+**Deferred (Post-MVP)**
+- Configurable JIT optimization flags (e.g., `opt_level="speed"`).
+- Thread-safe JIT instances (concurrent execution via multi-threaded GC mutation state).
+- Incremental compilation and REPL support.
 
 **Acceptance criteria**
 - `pecan_engine` can compile functions and resolve an entrypoint pointer.

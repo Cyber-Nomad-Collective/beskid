@@ -43,3 +43,10 @@ Reference: https://docs.rs/cranelift-jit/latest/cranelift_jit/struct.JITModule.h
 - Keep function pointer retrieval behind a safe wrapper.
 - `free_memory()` invalidates pointers; call only when it is safe.
 - Engine wrapper must catch runtime `panic` and convert it into an error result.
+- **IR Verification:** Always run `cranelift_codegen::verify_function` before defining a function in the module. This prevents opaque Cranelift panics caused by invalid generated IR.
+- **Dynamic Signature Validation:** Before unsafely transmuting and invoking the entrypoint pointer, validate its signature against the expected ABI to prevent undefined behavior and hard crashes.
+
+## Future Enhancements (Post-MVP)
+- **Optimization:** The JIT module currently uses default settings. Future versions should support toggling optimization levels (e.g., `opt_level="speed"`).
+- **Concurrency:** The GC mutation state relies on global/thread-local setters (`set_current_mutation`), making the JIT engine strictly single-threaded per process.
+- **Incremental Compilation:** The JIT currently compiles the entire `CodegenArtifact` in a batch. Supporting a REPL will require incremental symbol definition and lookup capabilities.

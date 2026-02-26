@@ -10,4 +10,4 @@ pub use ids::{ItemId, LocalId, ModuleId};
 pub use items::{ItemInfo, ItemKind};
 pub use module_graph::{ModuleGraph, ModuleInfo};
 pub use resolver::{Resolution, Resolver};
-pub use tables::{LocalInfo, ResolutionTables, ResolvedValue};
+pub use tables::{LocalInfo, ResolutionTables, ResolvedType, ResolvedValue};

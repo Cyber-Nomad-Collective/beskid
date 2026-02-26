@@ -15,13 +15,13 @@
 
 Example:
 ```
-let ok: bool = true;
-let count: i32 = 42;
-let big: i64 = 1_000_000;
-let ratio: f64 = 3.14;
-let letter: char = 'A';
-let name: string = "Pecan";
-let none: unit = ();
+bool ok = true;
+i32 count = 42;
+i64 big = 1_000_000;
+f64 ratio = 3.14;
+char letter = 'A';
+string name = "Pecan";
+unit none = ();
 ```
 
 ## Type Definitions (product types)
@@ -48,7 +48,7 @@ T id<T>(x: T) { return x; }
 Generic type usage:
 ```
 type Option<T> { ... }
-let x: Option<i32> = ...;
+Option<i32> x = ...;
 ```
 
 Example:
@@ -76,7 +76,7 @@ unit show(ref s: string) {
 Example:
 ```
 i32 sum(values: i32[]) {
-    let mut total = 0;
+    i32 mut total = 0;
     for i in range(0, values.len()) { total = total + values[i]; }
     return total;
 }
@@ -90,7 +90,7 @@ net.http.Client
 
 Example:
 ```
-let client: net.http.Client = net.http.Client::new();
+net.http.Client client = net.http.Client::new();
 ```
 
 ## Option
@@ -112,14 +112,14 @@ Option<i32> maybe_len(s: string) {
 
 ## Mutability
 - Mutability is explicit. Bindings are immutable by default.
-- `let x = 1;` immutable
-- `let mut x = 1;` mutable
+- `let x = 1;` immutable (inferred)
+- `i32 mut x = 1;` mutable (typed)
 - `mut` applies to the binding (reassignment). Interior mutability is not modeled in v0.1; references are explicit via `ref`/`out`.
 
 Example:
 ```
 let x = 1;
-let mut y = 1;
+i32 mut y = 1;
 // x = 2; // error
 y = 2;
 ```

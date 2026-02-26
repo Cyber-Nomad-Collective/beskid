@@ -26,6 +26,26 @@ pub struct MethodDefinition {
     pub body: Spanned<Block>,
 }
 
+fn parse_path_segment(pair: Pair<Rule>) -> Result<Spanned<crate::syntax::PathSegment>, ParseError> {
+    let span = SpanInfo::from_span(&pair.as_span());
+    let mut inner = pair.into_inner();
+    let name = Identifier::parse(
+        inner
+            .next()
+            .ok_or(ParseError::missing(Rule::Identifier))?,
+    )?;
+    let mut type_args = Vec::new();
+    if let Some(args) = inner.next() {
+        for arg in args.into_inner() {
+            type_args.push(Type::parse(arg)?);
+        }
+    }
+    Ok(Spanned::new(
+        crate::syntax::PathSegment { name, type_args },
+        span,
+    ))
+}
+
 impl Parsable for MethodDefinition {
     fn parse(pair: Pair<Rule>) -> Result<Spanned<Self>, ParseError> {
         let span = SpanInfo::from_span(&pair.as_span());
@@ -74,18 +94,27 @@ impl Parsable for MethodDefinition {
 
 fn parse_receiver_type(pair: Pair<Rule>) -> Result<Spanned<Type>, ParseError> {
     let span = SpanInfo::from_span(&pair.as_span());
-    let mut inner = pair.into_inner();
-    let first = inner
-        .next()
-        .ok_or(ParseError::missing(Rule::Identifier))?;
+    let first = if pair.as_rule() == Rule::ReceiverType {
+        let mut inner = pair.into_inner();
+        inner
+            .next()
+            .ok_or(ParseError::missing(Rule::Identifier))?
+    } else {
+        pair
+    };
 
     let node = match first.as_rule() {
         Rule::PrimitiveType => Type::Primitive(PrimitiveType::parse(first)?),
-        Rule::Identifier => {
-            let identifier = Identifier::parse(first)?;
-            let path = Spanned::new(Path { segments: vec![identifier] }, span);
-            Type::Complex(path)
+        Rule::PathSegment => {
+            let segment = parse_path_segment(first)?;
+            Type::Complex(Spanned::new(
+                Path {
+                    segments: vec![segment],
+                },
+                span,
+            ))
         }
+        Rule::Path => Type::Complex(Path::parse(first)?),
         _ => return Err(ParseError::unexpected_rule(first, Some(Rule::ReceiverType))),
     };
 

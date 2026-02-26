@@ -3,6 +3,7 @@ use pest::iterators::Pair;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
 use crate::parser::Rule;
+use crate::syntax::items::InlineModule;
 use crate::syntax::{
     ContractDefinition, EnumDefinition, FunctionDefinition, MethodDefinition, ModuleDeclaration,
     SpanInfo, Spanned, TypeDefinition, UseDeclaration,
@@ -24,6 +25,8 @@ pub enum Node {
     ContractDefinition(Spanned<ContractDefinition>),
     #[ast(child)]
     ModuleDeclaration(Spanned<ModuleDeclaration>),
+    #[ast(child)]
+    InlineModule(Spanned<InlineModule>),
     #[ast(child)]
     UseDeclaration(Spanned<UseDeclaration>),
 }
@@ -68,6 +71,10 @@ fn parse_node(pair: Pair<Rule>) -> Result<Spanned<Node>, ParseError> {
         Rule::ModuleDeclaration => {
             let node = ModuleDeclaration::parse(pair)?;
             Ok(Spanned::new(Node::ModuleDeclaration(node), span))
+        }
+        Rule::InlineModule => {
+            let node = InlineModule::parse(pair)?;
+            Ok(Spanned::new(Node::InlineModule(node), span))
         }
         Rule::UseDeclaration => {
             let node = UseDeclaration::parse(pair)?;

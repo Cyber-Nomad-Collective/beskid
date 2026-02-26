@@ -1,6 +1,6 @@
 use crate::hir::{
     AstItem, AstProgram, HirContractDefinition, HirContractEmbedding, HirContractMethodSignature,
-    HirContractNode, HirEnumDefinition, HirEnumVariant, HirFunctionDefinition, HirItem,
+    HirContractNode, HirEnumDefinition, HirEnumVariant, HirFunctionDefinition, HirInlineModule, HirItem,
     HirMethodDefinition, HirModuleDeclaration, HirProgram, HirTypeDefinition, HirUseDeclaration,
 };
 use crate::syntax::{self, Spanned};
@@ -27,6 +27,7 @@ impl Lowerable for Spanned<AstItem> {
             AstItem::EnumDefinition(def) => HirItem::EnumDefinition(def.lower()),
             AstItem::ContractDefinition(def) => HirItem::ContractDefinition(def.lower()),
             AstItem::ModuleDeclaration(def) => HirItem::ModuleDeclaration(def.lower()),
+            AstItem::InlineModule(def) => HirItem::InlineModule(def.lower()),
             AstItem::UseDeclaration(def) => HirItem::UseDeclaration(def.lower()),
         };
         Spanned::new(node, self.span)
@@ -180,6 +181,40 @@ impl Lowerable for Spanned<syntax::ModuleDeclaration> {
             HirModuleDeclaration {
                 visibility: self.node.visibility.lower(),
                 path: self.node.path.lower(),
+            },
+            self.span,
+        )
+    }
+}
+
+impl Lowerable for Spanned<syntax::InlineModule> {
+    type Output = Spanned<HirInlineModule>;
+
+    fn lower(&self) -> Self::Output {
+        let items = self
+            .node
+            .items
+            .iter()
+            .map(|item| {
+                let node = match &item.node {
+                    syntax::Node::Function(def) => HirItem::FunctionDefinition(def.lower()),
+                    syntax::Node::Method(def) => HirItem::MethodDefinition(def.lower()),
+                    syntax::Node::TypeDefinition(def) => HirItem::TypeDefinition(def.lower()),
+                    syntax::Node::EnumDefinition(def) => HirItem::EnumDefinition(def.lower()),
+                    syntax::Node::ContractDefinition(def) => HirItem::ContractDefinition(def.lower()),
+                    syntax::Node::ModuleDeclaration(def) => HirItem::ModuleDeclaration(def.lower()),
+                    syntax::Node::InlineModule(def) => HirItem::InlineModule(def.lower()),
+                    syntax::Node::UseDeclaration(def) => HirItem::UseDeclaration(def.lower()),
+                };
+                Spanned::new(node, item.span)
+            })
+            .collect();
+
+        Spanned::new(
+            HirInlineModule {
+                visibility: self.node.visibility.lower(),
+                name: self.node.name.lower(),
+                items,
             },
             self.span,
         )

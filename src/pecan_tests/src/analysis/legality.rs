@@ -20,7 +20,7 @@ fn lower_and_resolve(source: &str) -> (Spanned<HirProgram>, pecan_analysis::reso
 #[test]
 fn legality_passes_for_valid_program() {
     let (hir, resolution) =
-        lower_and_resolve("unit main() { let x: i64 = 1; let y: i64 = x; return; }");
+        lower_and_resolve("unit main() { i64 x = 1; i64 y = x; return; }");
 
     let errors = validate_hir_program(&hir, &resolution);
     assert!(errors.is_empty(), "expected no legality errors, got: {errors:?}");
@@ -29,7 +29,7 @@ fn legality_passes_for_valid_program() {
 #[test]
 fn legality_reports_unresolved_value_path_when_resolution_entry_missing() {
     let (hir, mut resolution) =
-        lower_and_resolve("unit main() { let x: i64 = 1; let y: i64 = x; }");
+        lower_and_resolve("unit main() { i64 x = 1; i64 y = x; }");
 
     let main_fn = hir
         .node

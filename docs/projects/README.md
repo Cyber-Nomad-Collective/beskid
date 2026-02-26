@@ -1,84 +1,97 @@
-description: Pecan Project Proposal
------------------------------------
+# Pecan Projects (HCL-based)
 
-# Pecan Projects Proposal
+Pecan project definition is moving to **HCL** syntax with a `.proj` file extension.
 
-This document proposes a Pecan-native project definition format inspired by Zig’s `build.zig` (code-driven build configuration). The goal is a **human-readable, code-based** project definition without XML/JSON, using regular Pecan syntax.
+We are dropping `project.pn` as the project definition mechanism and replacing it with a declarative manifest (`Project.proj`) to keep project loading deterministic, tool-friendly, and IDE-friendly.
 
-## Research Notes (short)
+## Why HCL
 
-- **Zig** uses a Zig script (`build.zig`) to define build steps and module imports, offering code-driven configuration (no XML/JSON). Source: Zig build system modules guide. https://zig.guide/0.11/build-system/modules/
-- **Go** uses a single `go.mod` file at the module root to declare module identity and dependencies in a minimal text format (contrast to our code-driven approach). Source: Go Modules guide. https://go.dev/wiki/Modules
-- **Gleam** maps modules to directory/file structure and uses an external project file (gleam.toml) for project metadata; module name derives from path. https://tour.gleam.run/basics/modules/
+1. Human-readable, concise syntax.
+2. Good nested-structure ergonomics for targets and dependencies.
+3. Strong Rust ecosystem support.
+4. Better fit for static project graph construction than executable build scripts.
 
-## Goals
+## Recommended Rust libraries
 
-- Pure Pecan syntax for project definition (no XML/JSON/TOML).
-- Stable project identity and deterministic project graph.
-- Allow project metadata, dependencies, and build targets.
-- Keep project structure **path-driven** by default (simple by convention).
+### Primary choice: `hcl-rs`
+- Crate: `hcl-rs`
+- Strengths:
+  - serde-based decode into typed Rust structs
+  - parse + encode support
+  - mature and actively maintained
 
-## Proposed Structure
+### Secondary choice: `hcl-edit`
+- Crate: `hcl-edit`
+- Strengths:
+  - preserves comments/formatting for round-trip edits
+  - useful for `pecan fmt` / auto-migrations and editor tooling
 
-### 1) Project Script: `project.pn`
+### Decision
 
-Each project root contains a `project.pn` file written in Pecan. It is executed by the toolchain to declare targets and dependencies via a build API.
+Use a two-layer approach:
+1. **Loader/validator**: `hcl-rs` (source of truth)
+2. **Formatting / in-place updates**: `hcl-edit` (tooling path)
 
-```pecan
-unit project(b: Build) {
-    b.project("MyApp", "0.1.0");
-    b.set_root("src");
+This keeps the runtime path simple and fast while still enabling high-quality developer tooling.
 
-    let std = b.dep("pecan.std", "../std");
-    b.use_dep(std);
+## Project file
 
-    let app = b.target("app", "main.pn");
-    app.set_kind("app");
-}
-```
+- File name: `Project.proj`
+- Location: project root
 
-### 2) Project Layout
+See:
+- `docs/projects/manifest.md` for schema
+- `docs/projects/examples.md` for examples
+- `docs/projects/resolution.md` for graph/resolution rules
 
-- `project.pn` sits at project root.
-- `b.set_root("src")` defines source root (default: `src`).
-- Project name and version are declared via `b.project(name, version)`.
-- Files define module paths by folder structure:
-  - `src/net/http.pn` → module path `net.http`
+## Phase 2 migration plan (interop + projects)
 
-### 3) Module Path Rules
+This plan connects stdlib interop migration with the new HCL project system so `Std` can be built and consumed as a normal Pecan project.
 
-- `mod net;` loads subdirectory module.
-- `use net.http.Client;` imports exported symbols.
-- Paths are resolved relative to the **project root** (not CWD).
+### Stage 2.1: Project model introduction
+1. Add `pecan_project` crate/module with typed manifest model (`ProjectManifest`, `Target`, `Dependency`).
+2. Parse `Project.proj` (HCL content) with `hcl-rs` into typed structs.
+3. Add validation pass:
+   - required fields
+   - duplicate target names
+   - unknown dependency source types
 
-### 4) Dependency Resolution
+### Stage 2.2: CLI and workspace integration
+1. Update CLI commands (`run`, `check`, `test`) to discover `Project.proj` from cwd upward.
+2. Add explicit override flag (example: `--project <path>`).
+3. Build dependency DAG from `dependencies` blocks and detect cycles.
 
-- Dependencies are declared via `b.dep(...)` and enabled via `b.use_dep(...)`.
-- Sources can be `path`, `git`, or `registry` (future).
-- Dependency project roots contain their own `project.pn`.
+### Stage 2.3: Standard library as a project
+1. Create `Std/Project.proj` with `kind = "Lib"` target.
+2. Move std prelude/public wrappers into `Std` project sources.
+3. Keep runtime `__interop_dispatch_*` internal to compiler/runtime.
+4. Resolve `Std.*` imports through normal dependency graph rather than hardcoded injected modules.
 
-### 5) Build Targets
+### Stage 2.4: Interop phase-2 consolidation
+1. Keep `StdInterop` enum generation path (macro/manual) behind std project API.
+2. Remove legacy direct std builtin registrations (`sys_print*`, `str_len`) once parity is proven.
+3. Add compatibility fallback only for one release window, then remove.
 
-Targets are explicit in the script:
+### Stage 2.5: Tooling and migration UX
+1. Add migration command: convert `project.pn` -> `Project.proj` where possible.
+2. Add diagnostics with actionable fixes.
+3. Add `pecan fmt` support for `.proj` files using `hcl-edit`.
 
-- `entry` is a source file under `root`.
-- Multiple targets allowed (app, tests, tools).
+### Stage 2.6: LSP `.proj` implementation (`src/pecan_lsp`)
+1. Extend file detection to recognize `*.proj` as HCL-backed project manifests.
+2. Add diagnostics pipeline for manifest schema and dependency errors.
+3. Add semantic completion for top-level blocks (`project`, `target`, `dependency`) and known keys.
+4. Add hover and go-to-definition for dependency `path` targets where applicable.
+5. Ensure formatter integration routes `.proj` buffers through `hcl-edit` based formatting.
 
-## Diagnostics Needed
+### Stage 2.7: Hardening and release gates
+1. Golden tests for manifest parsing and resolution.
+2. End-to-end tests for `Std` as dependency (not injected by default).
+3. Lock down naming conventions and public std API contracts.
 
-- Missing `project.pn` when building.
-- Duplicate project names in dependency graph.
-- Project cycles (detect + report chain).
-- Invalid target entry path.
+## Success criteria
 
-## Incremental Adoption
-
-- v0.1 can support `project`, `set_root`, `dep`, `use_dep`, `target`.
-- Later: `features`, `profiles`, `build` hooks.
-- Workspaces will group multiple projects (future feature).
-
-## Canonical Next Doc
-
-- `docs/projects/manifest.md`: formal grammar + fields.
-- `docs/projects/resolution.md`: project graph + resolution order.
-- `docs/projects/examples.md`: real layouts + sample manifests.
+- `Std` is consumed as a normal dependency project.
+- CLI resolves builds from `Project.proj` deterministically.
+- Interop dispatch remains internal and stable.
+- No user-facing reliance on legacy std builtin symbols.

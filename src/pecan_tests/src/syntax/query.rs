@@ -42,7 +42,7 @@ fn test_query_filter_typed() {
     let input = "
         unit main() {
             let x = 1;
-            let mut y = 2;
+            i32 mut y = 2;
         }
     ";
     let program = parse_program_ast(input);
@@ -102,7 +102,7 @@ fn test_complex_traversal() {
             i32 method(x: i32);
         }
         unit main() {
-            let x: i32 = 1;
+            i32 x = 1;
         }
     ";
     let program = parse_program_ast(input);

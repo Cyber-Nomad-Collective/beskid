@@ -35,7 +35,7 @@ Result<(), string> parse_port(out port: i32) {
 
 Example usage:
 ```
-let mut port: i32 = 0;
+i32 mut port = 0;
 parse_port(out port)?;
 ```
 

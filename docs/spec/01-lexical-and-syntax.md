@@ -29,8 +29,8 @@ let user_id = 1;
 - `return`: returns from a function.
 - `break`: exits a loop.
 - `continue`: skips to next loop iteration.
-- `let`: variable binding.
-- `mut`: mutable binding marker.
+- `let`: inferred variable binding.
+- `mut`: mutable binding marker for typed bindings.
 - `mod`: module declaration.
 - `use`: import declaration.
 - `pub`: public visibility marker.
@@ -70,7 +70,7 @@ let msg = "items: ${count + 1}";
 ```
 i32 main() {
     let name = "Pecan";
-    let mut count: i32 = 0;
+    i32 mut count = 0;
 
     if name.len() > 0 {
         count = count + 1;

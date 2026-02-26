@@ -8,7 +8,7 @@ pub mod parameter_modifier;
 
 pub use primitive_type::PrimitiveType;
 pub use r#type::Type;
-pub use path::Path;
+pub use path::{Path, PathSegment};
 pub use enum_path::EnumPath;
 pub use field::Field;
 pub use parameter::Parameter;

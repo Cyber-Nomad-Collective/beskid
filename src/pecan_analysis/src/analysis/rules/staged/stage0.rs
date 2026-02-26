@@ -267,7 +267,7 @@ impl SemanticPipelineRule {
                 .node
                 .segments
                 .iter()
-                .map(|segment| segment.node.name.clone())
+                .map(|segment| segment.node.name.node.name.clone())
                 .collect::<Vec<_>>()
                 .join("."),
             HirType::Array(inner) => format!("{}[]", self.type_to_string(inner)),
@@ -323,7 +323,7 @@ impl SemanticPipelineRule {
                 let Some(last_segment) = path.node.segments.last() else {
                     return;
                 };
-                let type_name = &last_segment.node.name;
+                let type_name = &last_segment.node.name.node.name;
                 if known_types.contains(type_name) || generic_names.contains(type_name) {
                     return;
                 }
@@ -347,7 +347,7 @@ impl SemanticPipelineRule {
         path.node
             .segments
             .last()
-            .map(|segment| segment.node.name.clone())
+            .map(|segment| segment.node.name.node.name.clone())
             .unwrap_or_default()
     }
 

@@ -11,7 +11,7 @@ use super::errors::{ResolveError, ResolveResult, ResolveWarning};
 use super::ids::{ItemId, LocalId, ModuleId};
 use super::items::{ItemInfo, ItemKind};
 use super::module_graph::ModuleGraph;
-use super::tables::{ResolutionTables, ResolvedValue};
+use super::tables::{ResolutionTables, ResolvedType, ResolvedValue};
 use crate::builtins::builtin_specs;
 
 #[derive(Debug, Default)]
@@ -21,6 +21,7 @@ pub struct Resolver {
     current_module: ModuleId,
     tables: ResolutionTables,
     local_scopes: Vec<HashMap<String, LocalId>>,
+    generic_scopes: Vec<HashMap<String, ()>>,
     errors: Vec<ResolveError>,
     warnings: Vec<ResolveWarning>,
     builtin_items: HashMap<ItemId, usize>,
@@ -35,6 +36,7 @@ impl Resolver {
         self.current_module = self.module_graph.root();
         self.tables = ResolutionTables::new();
         self.local_scopes.clear();
+        self.generic_scopes.clear();
         self.builtin_items.clear();
         self.collect_builtins();
         for item in &program.node.items {
@@ -127,6 +129,11 @@ impl Resolver {
                 ItemKind::Module,
                 def.node.visibility.node,
             ),
+            HirItem::InlineModule(def) => (
+                def.node.name.node.name.clone(),
+                ItemKind::Module,
+                def.node.visibility.node,
+            ),
             HirItem::UseDeclaration(def) => (
                 path_tail(&def.node.path),
                 ItemKind::Use,
@@ -143,7 +150,7 @@ impl Resolver {
                     .node
                     .segments
                     .iter()
-                    .map(|segment| segment.node.name.clone())
+                    .map(|segment| segment.node.name.node.name.clone())
                     .collect();
                 let parent_path = &segments[..segments.len().saturating_sub(1)];
                 self.module_graph.ensure_module_path(parent_path)
@@ -177,15 +184,34 @@ impl Resolver {
                 .node
                 .segments
                 .iter()
-                .map(|segment| segment.node.name.clone())
+                .map(|segment| segment.node.name.node.name.clone())
                 .collect::<Vec<_>>();
             self.module_graph.ensure_module_path(&module_path);
+        }
+        if let HirItem::InlineModule(def) = &item.node {
+            let previous_module = self.current_module;
+            let mut module_path = self
+                .module_graph
+                .module(self.current_module)
+                .map(|module| module.path.clone())
+                .unwrap_or_default();
+            module_path.push(def.node.name.node.name.clone());
+            let child_module = self.module_graph.ensure_module_path(&module_path);
+            self.current_module = child_module;
+            for nested in &def.node.items {
+                self.collect_item(nested);
+            }
+            self.current_module = previous_module;
         }
     }
 
     fn resolve_item(&mut self, item: &Spanned<HirItem>) {
         match &item.node {
             HirItem::FunctionDefinition(def) => {
+                self.push_generic_scope();
+                for generic in &def.node.generics {
+                    self.insert_generic(&generic.node.name);
+                }
                 self.push_scope();
                 for param in &def.node.parameters {
                     self.resolve_type(&param.node.ty);
@@ -196,6 +222,7 @@ impl Resolver {
                 }
                 self.resolve_block(&def.node.body);
                 self.pop_scope();
+                self.pop_generic_scope();
             }
             HirItem::MethodDefinition(def) => {
                 self.push_scope();
@@ -210,17 +237,44 @@ impl Resolver {
                 self.resolve_block(&def.node.body);
                 self.pop_scope();
             }
+            HirItem::InlineModule(def) => {
+                self.push_scope();
+                let previous_module = self.current_module;
+                let mut module_path = self
+                    .module_graph
+                    .module(self.current_module)
+                    .map(|module| module.path.clone())
+                    .unwrap_or_default();
+                module_path.push(def.node.name.node.name.clone());
+                let child_id = self.module_graph.ensure_module_path(&module_path);
+                self.current_module = child_id;
+                for item in &def.node.items {
+                    self.resolve_item(item);
+                }
+                self.current_module = previous_module;
+                self.pop_scope();
+            }
             HirItem::TypeDefinition(def) => {
+                self.push_generic_scope();
+                for generic in &def.node.generics {
+                    self.insert_generic(&generic.node.name);
+                }
                 for field in &def.node.fields {
                     self.resolve_type(&field.node.ty);
                 }
+                self.pop_generic_scope();
             }
             HirItem::EnumDefinition(def) => {
+                self.push_generic_scope();
+                for generic in &def.node.generics {
+                    self.insert_generic(&generic.node.name);
+                }
                 for variant in &def.node.variants {
                     for field in &variant.node.fields {
                         self.resolve_type(&field.node.ty);
                     }
                 }
+                self.pop_generic_scope();
             }
             HirItem::ContractDefinition(def) => {
                 for node in &def.node.items {
@@ -453,8 +507,13 @@ impl Resolver {
         }
         if segments.len() == 1 {
             let name = &segments[0];
+            if self.is_generic(name) {
+                self.tables
+                    .insert_type(path.span, ResolvedType::Generic(name.clone()));
+                return;
+            }
             if let Some(item) = self.resolve_item_in_scope(name) {
-                self.tables.insert_type(path.span, item);
+                self.tables.insert_type(path.span, ResolvedType::Item(item));
                 return;
             }
             self.errors.push(ResolveError::UnknownType {
@@ -465,7 +524,7 @@ impl Resolver {
         }
         match self.resolve_item_in_module_path(&segments) {
             ModulePathLookup::Found(item) => {
-                self.tables.insert_type(path.span, item);
+                self.tables.insert_type(path.span, ResolvedType::Item(item));
             }
             ModulePathLookup::ModuleMissing => {
                 self.errors.push(ResolveError::UnknownModulePath {
@@ -493,13 +552,28 @@ impl Resolver {
     fn resolve_enum_path(&mut self, path: &Spanned<HirEnumPath>) {
         let type_name = path.node.type_name.node.name.clone();
         if let Some(item) = self.resolve_item_in_scope(&type_name) {
-            self.tables.insert_type(path.span, item);
+            self.tables.insert_type(path.span, ResolvedType::Item(item));
             return;
         }
         self.errors.push(ResolveError::UnknownType {
             name: type_name,
             span: path.span,
         });
+    }
+
+    fn insert_generic(&mut self, name: &str) {
+        let scope = match self.generic_scopes.last_mut() {
+            Some(scope) => scope,
+            None => return,
+        };
+        scope.insert(name.to_string(), ());
+    }
+
+    fn is_generic(&self, name: &str) -> bool {
+        self.generic_scopes
+            .iter()
+            .rev()
+            .any(|scope| scope.contains_key(name))
     }
 
     fn resolve_local(&self, name: &str) -> Option<LocalId> {
@@ -620,6 +694,14 @@ impl Resolver {
     fn pop_scope(&mut self) {
         self.local_scopes.pop();
     }
+
+    fn push_generic_scope(&mut self) {
+        self.generic_scopes.push(HashMap::new());
+    }
+
+    fn pop_generic_scope(&mut self) {
+        self.generic_scopes.pop();
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -635,7 +717,7 @@ fn path_tail(path: &Spanned<HirPath>) -> String {
     path.node
         .segments
         .last()
-        .map(|segment| segment.node.name.clone())
+        .map(|segment| segment.node.name.node.name.clone())
         .unwrap_or_else(|| "<unnamed>".to_string())
 }
 
@@ -643,7 +725,7 @@ fn path_segments(path: &Spanned<HirPath>) -> Vec<String> {
     path.node
         .segments
         .iter()
-        .map(|segment| segment.node.name.clone())
+        .map(|segment| segment.node.name.node.name.clone())
         .collect()
 }
 

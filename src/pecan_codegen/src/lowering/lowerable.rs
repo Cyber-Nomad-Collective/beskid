@@ -2,9 +2,10 @@ use crate::lowering::cast_intent::validate_cast_intents;
 use crate::lowering::context::{CodegenArtifact, CodegenContext, CodegenResult};
 use crate::lowering::function::lower_function;
 use pecan_analysis::hir::HirProgram;
-use pecan_analysis::resolve::Resolution;
+use pecan_analysis::resolve::{ItemId, Resolution};
 use pecan_analysis::syntax::Spanned;
 use pecan_analysis::types::{TypeId, TypeInfo, TypeResult};
+use std::collections::HashMap;
 
 pub trait Lowerable<Ctx>: Sized {
     type Output;
@@ -27,13 +28,23 @@ pub fn lower_program(
     let mut errors = validate_cast_intents(type_result);
     let mut ctx = CodegenContext::new();
 
+    let mut function_defs: HashMap<ItemId, &Spanned<pecan_analysis::hir::HirFunctionDefinition>> =
+        HashMap::new();
+    for item in &program.node.items {
+        if let pecan_analysis::hir::HirItem::FunctionDefinition(def) = &item.node {
+            if let Some(info) = resolution.items.iter().find(|info| info.span == item.span) {
+                function_defs.insert(info.id, def);
+            }
+        }
+    }
+
     let mut index = 0usize;
     loop {
         let type_id = TypeId(index);
         let Some(info) = type_result.types.get(type_id) else {
             break;
         };
-        if matches!(info, TypeInfo::Named(_)) {
+        if matches!(info, TypeInfo::Named(_) | TypeInfo::Applied { .. }) {
             let _ = ctx.type_descriptor(type_result, type_id);
         }
         index += 1;
@@ -41,8 +52,12 @@ pub fn lower_program(
 
     for item in &program.node.items {
         if let pecan_analysis::hir::HirItem::FunctionDefinition(def) = &item.node {
-            if let Err(error) = lower_function(def, resolution, type_result, &mut ctx) {
-                errors.push(error);
+            if def.node.generics.is_empty() {
+                if let Err(error) =
+                    lower_function(def, resolution, type_result, &function_defs, &mut ctx)
+                {
+                    errors.push(error);
+                }
             }
         }
     }

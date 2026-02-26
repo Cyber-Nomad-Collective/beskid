@@ -104,7 +104,7 @@ fn emit_alloc(
     let func_ref = ctx.builder.func.import_function(cranelift_codegen::ir::ExtFuncData {
         name: ExternalName::testcase("alloc".to_string()),
         signature: sig_ref,
-        colocated: true,
+        colocated: false,
         patchable: false,
     });
     let size_val = ctx.builder.ins().iconst(pointer_type(), size as i64);
@@ -112,7 +112,7 @@ fn emit_alloc(
     let desc_gv = ctx.builder.func.create_global_value(GlobalValueData::Symbol {
         name: ExternalName::testcase(desc_name),
         offset: 0.into(),
-        colocated: true,
+        colocated: false,
         tls: false,
     });
     let desc_val = ctx.builder.ins().global_value(pointer_type(), desc_gv);
@@ -138,7 +138,7 @@ fn emit_write_barrier(
     let func_ref = ctx.builder.func.import_function(cranelift_codegen::ir::ExtFuncData {
         name: ExternalName::testcase("gc_write_barrier".to_string()),
         signature: sig_ref,
-        colocated: true,
+        colocated: false,
         patchable: false,
     });
     ctx.builder.ins().call(func_ref, &[dst_obj, value_ptr]);

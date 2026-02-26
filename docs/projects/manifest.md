@@ -1,65 +1,73 @@
 ---
-description: Pecan Project Manifest
+description: Pecan Project Manifest (HCL)
 ---
 
-# Pecan Project Script (`project.pn`)
+# Pecan Project Manifest (`Project.proj`)
 
-`project.pn` is a Pecan build script executed by the toolchain. It declares project identity, dependencies, and build targets using the `Build` API.
+`Project.proj` is the canonical project manifest format, using HCL syntax.
 
 ## File name and location
-- Name: `project.pn`
+- Name: `Project.proj`
 - Location: project root directory
-- The script is parsed with the standard Pecan grammar.
 
-## Minimal example (pure Pecan)
-The script defines exactly one entrypoint: `unit project(b: Build)`.
+## Minimal example
 
-```pecan
-unit project(b: Build) {
-    b.project("MyApp", "0.1.0");
-    b.set_root("src");
+```hcl
+project {
+  name    = "MyApp"
+  version = "0.1.0"
+  root    = "Src"
+}
 
-    let std = b.dep("pecan.std", "../std");
-    b.use_dep(std);
+target "App" {
+  kind  = "App"
+  entry = "Main.pn"
+}
 
-    let app = b.target("app", "main.pn");
-    app.set_kind("app");
+dependency "Std" {
+  source = "path"
+  path   = "../Std"
 }
 ```
 
-## Script validation (no special grammar)
-`project.pn` is parsed as a normal Pecan program. The compiler then *validates usage*:
-- There is exactly one `unit project(b: Build)`.
-- Only the `Build` API is used to declare targets/deps.
-- IO is allowed but must go through explicit build APIs.
+## Manifest schema (v0.1)
 
-## Build API (v0.1)
-### `b.project(name: string, version: string)`
-- Sets project identity used in dependency resolution and diagnostics.
+### `project` block (required, exactly one)
+- `name` (string, required)
+- `version` (string, required)
+- `root` (string, optional, default: `"Src"`)
 
-### `b.set_root(path: string)`
-- Sets the source root (default: `"src"`).
+### `target` block (required, one or more)
+- Label = target name (unique)
+- `kind` (required): `"App" | "Lib" | "Test"`
+- `entry` (required): path relative to `project.root`
 
-### `b.dep(name: string, path: string)`
-- Declares a local-path dependency.
+### `dependency` block (optional, zero or more)
+- Label = dependency alias used by tooling
+- `source` (required): `"path" | "git" | "registry"`
 
-### `b.dep_git(name: string, git: string, rev: string)`
-- Declares a git dependency (rev can be tag/sha).
+For `source = "path"`:
+- `path` (required)
 
-### `b.use_dep(dep: Dep)`
-- Enables a dependency for this project.
+For `source = "git"`:
+- `url` (required)
+- `rev` (required)
 
-### `b.target(name: string, entry: string)`
-- Declares a build target with entry file under `root`.
-
-### `Target.set_kind(kind: string)`
-- `kind` is `"app" | "lib" | "test"`.
+For `source = "registry"` (future):
+- `name` (required)
+- `version` (required)
 
 ## Validation rules
-- Project name must be unique within the dependency graph.
-- `entry` must exist and be within `root`.
-- Dependency sources must resolve.
 
-## Notes
-- Script uses Pecan syntax and is validated by toolchain rules.
-- Future: `features`, `profiles`, `build` hooks.
+1. Exactly one `project` block.
+2. At least one `target` block.
+3. Target labels must be unique.
+4. Dependency labels must be unique.
+5. `target.entry` must resolve under `project.root`.
+6. `project.name` must be unique in final dependency graph.
+7. Unknown fields should produce warnings in v0.1 and become errors later.
+
+## Rust implementation guidance
+
+- Parse and validate manifest with `hcl-rs` + serde structs.
+- Use `hcl-edit` for formatting and migration tooling.

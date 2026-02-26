@@ -16,6 +16,7 @@ pub enum Item<P: Phase> {
     EnumDefinition(Spanned<P::EnumDefinition>),
     ContractDefinition(Spanned<P::ContractDefinition>),
     ModuleDeclaration(Spanned<P::ModuleDeclaration>),
+    InlineModule(Spanned<P::InlineModule>),
     UseDeclaration(Spanned<P::UseDeclaration>),
 }
 
@@ -80,6 +81,12 @@ pub struct HirContractEmbedding {
 pub struct HirModuleDeclaration {
     pub visibility: Spanned<HirVisibility>,
     pub path: Spanned<HirPath>,
+}
+
+pub struct HirInlineModule {
+    pub visibility: Spanned<HirVisibility>,
+    pub name: Spanned<HirIdentifier>,
+    pub items: Vec<Spanned<Item<crate::hir::HirPhase>>>,
 }
 
 pub struct HirUseDeclaration {

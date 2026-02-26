@@ -13,6 +13,8 @@ Document index:
 - 10-name-resolution.md
 - 11-type-inference.md
 - 12-method-dispatch.md
+- 13-code-style-and-naming.md
+- 14-standard-library-api-shape.md
 
 Note: v0.1 intentionally avoids complex features (async, macros, runtime reflection, etc.).
 

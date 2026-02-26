@@ -1,24 +1,24 @@
 ---
-description: Pecan Project Resolution
+description: Pecan Project Resolution (HCL)
 ---
 
 # Project Resolution
 
-This document defines how module paths are resolved, how the project graph is built from `project.pn`, and how imports are validated.
+This document defines how module paths are resolved, how the project graph is built from `Project.proj`, and how imports are validated.
 
 ## Terminology
-- **Project root**: directory containing `project.pn`.
-- **Source root**: `root` field inside `project.pn` (default `src`).
-- **Module path**: dotted path like `net.http`.
+- **Project root**: directory containing `Project.proj`.
+- **Source root**: `project.root` field inside `Project.proj` (default `Src`).
+- **Module path**: dotted path like `Net.Http`.
 
 ## Project Graph Construction
-1. Start at the root project `project.pn`.
-2. Execute `project.pn` to register targets and dependencies via the Build API.
-3. Recursively load dependency project roots and execute their `project.pn` scripts.
+1. Start at the root project `Project.proj`.
+2. Parse manifest to collect project identity, targets, and dependencies.
+3. Recursively load dependency project manifests.
 4. Build a DAG of projects; detect cycles and report the chain.
 
 ## File-to-Module Mapping
-- File `src/net/http.pn` maps to module path `net.http`.
+- File `Src/Net/Http.pn` maps to module path `Net.Http`.
 - The file path relative to `root` determines the module path.
 - The last segment is the module name (file stem).
 
@@ -32,15 +32,15 @@ For identifiers and paths inside a module:
 This order is consistent with `docs/spec/10-name-resolution.md`.
 
 ## Module Graph (Inferred)
-The module graph is inferred from `mod` declarations and file layout. The build script does not list modules explicitly.
+The module graph is inferred from `mod` declarations and file layout. The manifest does not list modules explicitly.
 
 ## `mod` Declarations
-- `mod net;` declares a submodule.
-- The compiler searches for `root/net.pn` or `root/net/mod.pn` (configurable).
+- `mod Net;` declares a submodule.
+- The compiler searches for `root/Net.pn` or `root/Net/Mod.pn` (configurable).
 - Error if not found.
 
 ## `use` Imports
-- `use net.http.Client;` resolves against the module graph.
+- `use Net.Http.Client;` resolves against the module graph.
 - If multiple imports provide the same name without aliasing, emit `AmbiguousImport`.
 
 ## Visibility
@@ -49,13 +49,20 @@ The module graph is inferred from `mod` declarations and file layout. The build 
 - Access to non-`pub` symbols from another module is an error.
 
 ## Error Conditions
-- Missing `project.pn`.
+- Missing `Project.proj`.
 - Duplicate project names in dependency graph.
 - Project cycles.
 - Import path not found.
 - Visibility violations.
 - Ambiguous imports.
 
+## Manifest-specific error conditions
+- Unknown `source` kind in `dependency` block.
+- Missing `entry` in `target` block.
+- Target entry path outside source root.
+- Duplicate target names.
+
 ## Future Extensions
 - Virtual modules for generated code.
-- Path remapping / aliasing in `project.pn`.
+- Workspace manifests (`Workspace.proj`) for monorepo builds.
+- Registry lockfile integration.

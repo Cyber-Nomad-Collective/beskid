@@ -7,7 +7,7 @@ use crate::syntax::util::{assert_expression_integer, assert_expression_path_segm
 
 #[test]
 fn parses_let_statement_ast() {
-    let statement = parse_statement_ast(Rule::LetStatement, "let mut age: i32 = 42;");
+    let statement = parse_statement_ast(Rule::LetStatement, "i32 mut age = 42;");
     match &statement.node {
         Statement::Let(let_stmt) => {
             assert!(let_stmt.node.mutable);

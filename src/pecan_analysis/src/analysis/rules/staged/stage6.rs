@@ -22,7 +22,12 @@ impl SemanticPipelineRule {
             let HirType::Complex(receiver_path) = &method.node.receiver_type.node else {
                 continue;
             };
-            let Some(receiver_name) = receiver_path.node.segments.last().map(|segment| segment.node.name.clone()) else {
+            let Some(receiver_name) = receiver_path
+                .node
+                .segments
+                .last()
+                .map(|segment| segment.node.name.node.name.clone())
+            else {
                 continue;
             };
             let Some(expected_methods) = contracts.get(&receiver_name) else {
@@ -111,7 +116,12 @@ impl SemanticPipelineRule {
             let HirType::Complex(receiver_path) = &method.node.receiver_type.node else {
                 continue;
             };
-            let Some(receiver_name) = receiver_path.node.segments.last().map(|segment| segment.node.name.as_str()) else {
+            let Some(receiver_name) = receiver_path
+                .node
+                .segments
+                .last()
+                .map(|segment| segment.node.name.node.name.as_str())
+            else {
                 continue;
             };
             if receiver_name == contract_name && method.node.name.node.name == method_name {

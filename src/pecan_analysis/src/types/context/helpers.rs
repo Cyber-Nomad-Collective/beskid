@@ -4,6 +4,7 @@ use crate::resolve::{ItemId, ItemKind};
 use crate::types::{TypeId, TypeInfo};
 
 use super::context::{CastIntent, TypeContext, TypeError};
+use std::collections::HashMap;
 
 impl<'a> TypeContext<'a> {
     pub(super) fn seed_types(&mut self) {
@@ -68,7 +69,55 @@ impl<'a> TypeContext<'a> {
     pub(super) fn named_item_id(&self, type_id: TypeId) -> Option<ItemId> {
         match self.type_table.get(type_id) {
             Some(TypeInfo::Named(item_id)) => Some(*item_id),
+            Some(TypeInfo::Applied { base, .. }) => Some(*base),
             _ => None,
+        }
+    }
+
+    pub(super) fn generic_mapping_for_type_id(&self, type_id: TypeId) -> HashMap<String, TypeId> {
+        let Some(TypeInfo::Applied { base, args }) = self.type_table.get(type_id) else {
+            return HashMap::new();
+        };
+        let Some(names) = self.generic_items.get(base) else {
+            return HashMap::new();
+        };
+        if names.len() != args.len() {
+            return HashMap::new();
+        }
+        names
+            .iter()
+            .cloned()
+            .zip(args.iter().copied())
+            .collect()
+    }
+
+    pub(super) fn substitute_type_id(
+        &mut self,
+        type_id: TypeId,
+        mapping: &HashMap<String, TypeId>,
+    ) -> TypeId {
+        let info = self.type_table.get(type_id).cloned();
+        match info {
+            Some(TypeInfo::GenericParam(name)) => mapping.get(&name).copied().unwrap_or(type_id),
+            Some(TypeInfo::Applied { base, args }) => {
+                let mut changed = false;
+                let new_args: Vec<TypeId> = args
+                    .iter()
+                    .map(|arg| {
+                        let substituted = self.substitute_type_id(*arg, mapping);
+                        if substituted != *arg {
+                            changed = true;
+                        }
+                        substituted
+                    })
+                    .collect();
+                if changed {
+                    self.type_table.intern(TypeInfo::Applied { base, args: new_args })
+                } else {
+                    type_id
+                }
+            }
+            _ => type_id,
         }
     }
 

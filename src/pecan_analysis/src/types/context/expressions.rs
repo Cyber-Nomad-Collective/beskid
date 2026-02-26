@@ -57,11 +57,27 @@ impl<'a> TypeContext<'a> {
     }
 
     fn type_call_expression(&mut self, call: &Spanned<HirCallExpression>) -> Option<TypeId> {
+        let mut generic_args: Option<Vec<TypeId>> = None;
+        let mut generic_expected: Option<usize> = None;
+        let mut callee_item_id = None;
         let signature = match &call.node.callee.node {
             HirExpressionNode::PathExpression(path_expr) => {
                 let span = path_expr.node.path.span;
+                if let Some(last_segment) = path_expr.node.path.node.segments.last() {
+                    if !last_segment.node.type_args.is_empty() {
+                        let mut args = Vec::with_capacity(last_segment.node.type_args.len());
+                        for arg in &last_segment.node.type_args {
+                            args.push(self.type_id_for_type(arg)?);
+                        }
+                        generic_args = Some(args);
+                    }
+                }
                 match self.resolution.tables.resolved_values.get(&span) {
                     Some(ResolvedValue::Item(item_id)) => {
+                        callee_item_id = Some(*item_id);
+                        if let Some(expected) = self.generic_items.get(item_id) {
+                            generic_expected = Some(expected.len());
+                        }
                         self.function_signatures.get(item_id).cloned()
                     }
                     _ => None,
@@ -76,33 +92,105 @@ impl<'a> TypeContext<'a> {
             return None;
         };
 
-        if call.node.args.len() != signature.params.len() {
-            self.errors.push(TypeError::CallArityMismatch {
-                span: call.span,
-                expected: signature.params.len(),
-                actual: call.node.args.len(),
-            });
-            return Some(signature.return_type);
+        if let Some(expected) = generic_expected {
+            match &generic_args {
+                Some(args) => {
+                    if args.len() != expected {
+                        self.errors.push(TypeError::GenericArgumentMismatch {
+                            span: call.span,
+                            expected,
+                            actual: args.len(),
+                        });
+                        return Some(signature.return_type);
+                    }
+                }
+                None => {
+                    if expected != 0 {
+                        self.errors.push(TypeError::MissingTypeArguments { span: call.span });
+                        return Some(signature.return_type);
+                    }
+                }
+            }
+        } else if let Some(args) = &generic_args {
+            if !args.is_empty() {
+                self.errors.push(TypeError::GenericArgumentMismatch {
+                    span: call.span,
+                    expected: 0,
+                    actual: args.len(),
+                });
+                return Some(signature.return_type);
+            }
         }
 
-        for (arg, expected) in call.node.args.iter().zip(signature.params.iter()) {
+        let substitution = if let (Some(args), Some(expected)) = (&generic_args, generic_expected) {
+            if expected == args.len() {
+                args.clone()
+            } else {
+                Vec::new()
+            }
+        } else {
+            Vec::new()
+        };
+
+        let mapping = if let (Some(item_id), Some(expected), false) =
+            (callee_item_id, generic_expected, substitution.is_empty())
+        {
+            let mut mapping = std::collections::HashMap::new();
+            if expected == substitution.len() {
+                if let Some(names) = self.generic_items.get(&item_id) {
+                    for (name, arg) in names.iter().zip(substitution.iter()) {
+                        mapping.insert(name.clone(), *arg);
+                    }
+                }
+            }
+            mapping
+        } else {
+            std::collections::HashMap::new()
+        };
+
+        let substituted_params = if mapping.is_empty() {
+            signature.params.clone()
+        } else {
+            signature
+                .params
+                .iter()
+                .map(|param| self.substitute_type_id(*param, &mapping))
+                .collect()
+        };
+
+        let substituted_return = if mapping.is_empty() {
+            signature.return_type
+        } else {
+            self.substitute_type_id(signature.return_type, &mapping)
+        };
+
+        if call.node.args.len() != substituted_params.len() {
+            self.errors.push(TypeError::CallArityMismatch {
+                span: call.span,
+                expected: substituted_params.len(),
+                actual: call.node.args.len(),
+            });
+            return Some(substituted_return);
+        }
+
+        for (arg, expected) in call.node.args.iter().zip(substituted_params.iter()) {
             if let Some(actual) = self.type_expression(arg) {
                 self.require_same_type(arg.span, *expected, actual);
             }
         }
 
-        Some(signature.return_type)
+        Some(substituted_return)
     }
 
     fn type_struct_literal_expression(
         &mut self,
         literal: &Spanned<HirStructLiteralExpression>,
     ) -> Option<TypeId> {
-        let mut type_id = self.type_id_for_type_path(literal.node.path.span);
+        let mut type_id = self.type_id_for_path_with_args(&literal.node.path);
         if type_id.is_none() {
             if let Some(segment) = literal.node.path.node.segments.last() {
                 let fallback = self
-                    .item_id_for_name(&segment.node.name, ItemKind::Type)
+                    .item_id_for_name(&segment.node.name.node.name, ItemKind::Type)
                     .and_then(|item_id| self.named_types.get(&item_id).copied());
                 type_id = fallback;
             }
@@ -113,6 +201,7 @@ impl<'a> TypeContext<'a> {
                 .push(TypeError::UnknownStructType { span: literal.span });
             return None;
         };
+        let mapping = self.generic_mapping_for_type_id(type_id);
         let fields = self.struct_fields.get(&item_id).cloned().or_else(|| {
             self.resolution
                 .items
@@ -138,8 +227,13 @@ impl<'a> TypeContext<'a> {
                 });
                 continue;
             };
+            let expected = if mapping.is_empty() {
+                *expected
+            } else {
+                self.substitute_type_id(*expected, &mapping)
+            };
             if let Some(actual) = self.type_expression(&field.node.value) {
-                self.require_same_type(field.node.value.span, *expected, actual);
+                self.require_same_type(field.node.value.span, expected, actual);
             }
         }
 
@@ -176,6 +270,7 @@ impl<'a> TypeContext<'a> {
             });
             return None;
         };
+        let mapping = self.generic_mapping_for_type_id(type_id);
         let variants = self.enum_variants.get(&item_id).cloned().or_else(|| {
             self.resolution
                 .items
@@ -197,6 +292,15 @@ impl<'a> TypeContext<'a> {
                 name: variant_name,
             });
             return Some(type_id);
+        };
+
+        let fields: Vec<TypeId> = if mapping.is_empty() {
+            fields.clone()
+        } else {
+            fields
+                .iter()
+                .map(|field| self.substitute_type_id(*field, &mapping))
+                .collect()
         };
 
         if constructor.node.args.len() != fields.len() {
@@ -237,6 +341,7 @@ impl<'a> TypeContext<'a> {
                 .push(TypeError::UnknownStructType { span: member.span });
             return None;
         };
+        let mapping = self.generic_mapping_for_type_id(target_type);
         let name = member.node.member.node.name.clone();
         let Some(field_type) = fields.get(&name) else {
             self.errors.push(TypeError::UnknownStructField {
@@ -245,7 +350,12 @@ impl<'a> TypeContext<'a> {
             });
             return None;
         };
-        Some(*field_type)
+        let field_type = if mapping.is_empty() {
+            *field_type
+        } else {
+            self.substitute_type_id(*field_type, &mapping)
+        };
+        Some(field_type)
     }
 
     fn type_match_expression(&mut self, match_expr: &Spanned<HirMatchExpression>) -> Option<TypeId> {
@@ -304,6 +414,15 @@ impl<'a> TypeContext<'a> {
                             let variant_name =
                                 enum_pattern.node.path.node.variant.node.name.as_str();
                             if let Some(fields) = variants.get(variant_name).cloned() {
+                                let mapping = self.generic_mapping_for_type_id(enum_type);
+                                let fields = if mapping.is_empty() {
+                                    fields
+                                } else {
+                                    fields
+                                        .iter()
+                                        .map(|field| self.substitute_type_id(*field, &mapping))
+                                        .collect::<Vec<_>>()
+                                };
                                 if fields.len() != enum_pattern.node.items.len() {
                                     self.errors.push(TypeError::EnumConstructorMismatch {
                                         span: pattern.span,
@@ -493,8 +612,8 @@ impl<'a> TypeContext<'a> {
         path: &Spanned<HirPath>,
     ) -> Option<TypeId> {
         let segments = &path.node.segments;
-        let base_name = segments.first()?.node.name.clone();
-        let field_name = segments.get(1)?.node.name.clone();
+        let base_name = segments.first()?.node.name.node.name.clone();
+        let field_name = segments.get(1)?.node.name.node.name.clone();
         let local_id = self
             .resolution
             .tables
@@ -534,7 +653,13 @@ impl<'a> TypeContext<'a> {
             });
             return None;
         };
-        Some(*field_type)
+        let mapping = self.generic_mapping_for_type_id(base_type);
+        let field_type = if mapping.is_empty() {
+            *field_type
+        } else {
+            self.substitute_type_id(*field_type, &mapping)
+        };
+        Some(field_type)
     }
 
     pub(super) fn type_id_for_enum_path(

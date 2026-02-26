@@ -20,7 +20,12 @@ pub fn lower_resolve_type(source: &str) -> (
     pecan_analysis::resolve::Resolution,
     pecan_analysis::types::TypeResult,
 ) {
-    let program = parse_program_ast(source);
+    let mut program = parse_program_ast(source);
+    let std_program = parse_program_ast(pecan_analysis::stdlib::STDLIB_PRELUDE);
+    let mut combined_items = std_program.node.items;
+    combined_items.extend(program.node.items);
+    program.node.items = combined_items;
+
     let ast: Spanned<AstProgram> = program.into();
     let mut hir = lower_hir_program(&ast);
     normalize_program(&mut hir).expect("normalization failed");

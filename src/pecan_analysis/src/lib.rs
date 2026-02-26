@@ -6,6 +6,7 @@ pub mod hir;
 pub mod analysis;
 pub mod builtins;
 pub mod resolve;
+pub mod stdlib;
 pub mod types;
 
 pub use parser::{PecanParser, Rule};

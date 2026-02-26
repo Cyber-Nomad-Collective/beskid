@@ -9,6 +9,7 @@ use pecan_codegen::{emit_string_literals, emit_type_descriptors, CodegenArtifact
 use pecan_runtime::{
     alloc, array_new, gc_register_root, gc_root_handle, gc_unregister_root, gc_unroot_handle,
     gc_write_barrier, panic, panic_str, str_len, str_new, sys_print, sys_println,
+    interop_dispatch_unit, interop_dispatch_ptr, interop_dispatch_usize,
 };
 
 #[derive(Debug)]
@@ -45,11 +46,15 @@ impl PecanJitModule {
         builder.symbol("panic_str", panic_str as *const u8);
         builder.symbol("sys_print", sys_print as *const u8);
         builder.symbol("sys_println", sys_println as *const u8);
+        builder.symbol("interop_dispatch_unit", interop_dispatch_unit as *const u8);
+        builder.symbol("interop_dispatch_ptr", interop_dispatch_ptr as *const u8);
+        builder.symbol("interop_dispatch_usize", interop_dispatch_usize as *const u8);
         builder.symbol("gc_write_barrier", gc_write_barrier as *const u8);
         builder.symbol("gc_root_handle", gc_root_handle as *const u8);
         builder.symbol("gc_unroot_handle", gc_unroot_handle as *const u8);
         builder.symbol("gc_register_root", gc_register_root as *const u8);
         builder.symbol("gc_unregister_root", gc_unregister_root as *const u8);
+
         let module = JITModule::new(builder);
         Ok(Self {
             module,
@@ -117,6 +122,9 @@ impl PecanJitModule {
         let root_handle_sig = builtin_signature(pointer, &[pointer], Some(types::I64));
         let unroot_handle_sig = builtin_signature(pointer, &[types::I64], None);
         let register_root_sig = builtin_signature(pointer, &[pointer], None);
+        let dispatch_unit_sig = builtin_signature(pointer, &[pointer], None);
+        let dispatch_ptr_sig = builtin_signature(pointer, &[pointer], Some(pointer));
+        let dispatch_usize_sig = builtin_signature(pointer, &[pointer], Some(pointer)); // usize is pointer sized
 
         self.func_ids.insert(
             "alloc".to_string(),
@@ -196,6 +204,30 @@ impl PecanJitModule {
                 "gc_unregister_root",
                 Linkage::Import,
                 &register_root_sig,
+            )?,
+        );
+        self.func_ids.insert(
+            "interop_dispatch_unit".to_string(),
+            self.module.declare_function(
+                "interop_dispatch_unit",
+                Linkage::Import,
+                &dispatch_unit_sig,
+            )?,
+        );
+        self.func_ids.insert(
+            "interop_dispatch_ptr".to_string(),
+            self.module.declare_function(
+                "interop_dispatch_ptr",
+                Linkage::Import,
+                &dispatch_ptr_sig,
+            )?,
+        );
+        self.func_ids.insert(
+            "interop_dispatch_usize".to_string(),
+            self.module.declare_function(
+                "interop_dispatch_usize",
+                Linkage::Import,
+                &dispatch_usize_sig,
             )?,
         );
 

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["src/pecan_analysis", "src/pecan_cli", "src/pecan_tests", "src/pecan_ast_derive", "src/pecan_codegen", "src/pecan_runtime", "src/pecan_engine", "src/gc-arena", "src/gc-arena/derive"]
+members = ["src/pecan_analysis", "src/pecan_cli", "src/pecan_tests", "src/pecan_ast_derive", "src/pecan_codegen", "src/pecan_runtime", "src/pecan_engine", "src/gc-arena", "src/gc-arena/derive", "src/pecan_lsp"]
 [workspace.dependencies]
 allocator-api2 = { version = "0.2", default-features = false, features = ["alloc"] }
 enum-map = { version = "2.7", default-features = false }

@@ -124,7 +124,7 @@ impl SemanticPipelineRule {
             match &item.node {
                 HirItem::ModuleDeclaration(module_decl) => {
                     if let Some(segment) = module_decl.node.path.node.segments.first() {
-                        known_roots.insert(segment.node.name.clone());
+                        known_roots.insert(segment.node.name.node.name.clone());
                     }
                 }
                 HirItem::FunctionDefinition(def) => {
@@ -150,7 +150,7 @@ impl SemanticPipelineRule {
             let Some(root) = use_decl.node.path.node.segments.first() else {
                 continue;
             };
-            if known_roots.contains(&root.node.name) {
+            if known_roots.contains(&root.node.name.node.name) {
                 continue;
             }
 
@@ -283,16 +283,17 @@ impl SemanticPipelineRule {
                 let Some(name) = path_expr.node.path.node.segments.first() else {
                     return;
                 };
-                if declared_stack.iter().any(|declared| declared == &name.node.name) {
+                let name_value = &name.node.name.node.name;
+                if declared_stack.iter().any(|declared| declared == name_value) {
                     return;
                 }
-                if !pending.contains(&name.node.name) {
+                if !pending.contains(name_value) {
                     return;
                 }
                 ctx.emit_simple(
                     path_expr.node.path.span,
                     "E1106",
-                    format!("use of `{}` before declaration", name.node.name),
+                    format!("use of `{}` before declaration", name_value),
                     "use before declaration",
                     None,
                     Severity::Error,
@@ -366,7 +367,7 @@ impl SemanticPipelineRule {
         path.node
             .segments
             .last()
-            .map(|segment| segment.node.name.clone())
+            .map(|segment| segment.node.name.node.name.clone())
             .unwrap_or_default()
     }
 
@@ -374,7 +375,7 @@ impl SemanticPipelineRule {
         path.node
             .segments
             .iter()
-            .map(|segment| segment.node.name.clone())
+            .map(|segment| segment.node.name.node.name.clone())
             .collect::<Vec<_>>()
             .join(".")
     }

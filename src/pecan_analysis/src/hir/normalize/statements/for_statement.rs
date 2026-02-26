@@ -1,7 +1,7 @@
 use crate::hir::{
     ExpressionNode, HirAssignExpression, HirBinaryExpression, HirBinaryOp, HirExpressionStatement,
     HirForStatement, HirLetStatement, HirLiteral, HirLiteralExpression, HirPath, HirPathExpression,
-    HirStatementNode, HirWhileStatement, StatementNode,
+    HirPathSegment, HirStatementNode, HirWhileStatement, StatementNode,
 };
 use crate::syntax::Spanned;
 
@@ -39,12 +39,20 @@ impl Normalize for Spanned<HirForStatement> {
         };
         let init_stmt = Spanned::new(StatementNode::LetStatement(Spanned::new(init_stmt_node, span)), span);
 
+        let iterator_segment = Spanned::new(
+            HirPathSegment {
+                name: iterator_name.clone(),
+                type_args: Vec::new(),
+            },
+            iterator_name.span,
+        );
+
         let iterator_path = Spanned::new(
             ExpressionNode::PathExpression(Spanned::new(
                 HirPathExpression {
                     path: Spanned::new(
                         HirPath {
-                            segments: vec![iterator_name.clone()],
+                            segments: vec![iterator_segment.clone()],
                         },
                         iterator_name.span,
                     ),
@@ -59,7 +67,7 @@ impl Normalize for Spanned<HirForStatement> {
                 HirPathExpression {
                     path: Spanned::new(
                         HirPath {
-                            segments: vec![iterator_name.clone()],
+                            segments: vec![iterator_segment.clone()],
                         },
                         iterator_name.span,
                     ),
@@ -74,7 +82,7 @@ impl Normalize for Spanned<HirForStatement> {
                 HirPathExpression {
                     path: Spanned::new(
                         HirPath {
-                            segments: vec![iterator_name.clone()],
+                            segments: vec![iterator_segment],
                         },
                         iterator_name.span,
                     ),

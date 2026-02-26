@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::hir::{HirPrimitiveType, HirProgram};
+use crate::hir::{HirItem, HirPrimitiveType, HirProgram};
 use crate::resolve::{ItemId, LocalId, Resolution};
 use crate::syntax::{SpanInfo, Spanned};
 use crate::types::{TypeId, TypeTable};
@@ -28,6 +28,8 @@ pub enum TypeError {
     NonBoolCondition { span: SpanInfo },
     UnsupportedExpression { span: SpanInfo },
     ReturnTypeMismatch { span: SpanInfo, expected: TypeId, actual: Option<TypeId> },
+    MissingTypeArguments { span: SpanInfo },
+    GenericArgumentMismatch { span: SpanInfo, expected: usize, actual: usize },
 }
 
 #[derive(Debug)]
@@ -39,6 +41,7 @@ pub struct TypeResult {
     pub function_signatures: HashMap<ItemId, FunctionSignature>,
     pub struct_fields_ordered: HashMap<ItemId, Vec<(String, TypeId)>>,
     pub enum_variants_ordered: HashMap<ItemId, Vec<(String, Vec<TypeId>)>>,
+    pub generic_items: HashMap<ItemId, Vec<String>>,
     // Canonical output contract for safe implicit numeric conversions.
     // Invariants (normalized in `TypeContext::type_program`):
     // - sorted by (span.start, span.end, from, to)
@@ -88,6 +91,8 @@ pub struct TypeContext<'a> {
     pub(super) cast_intents: Vec<CastIntent>,
     pub(super) errors: Vec<TypeError>,
     pub(super) current_return_type: Option<TypeId>,
+    pub(super) generic_params: HashMap<String, TypeId>,
+    pub(super) generic_items: HashMap<ItemId, Vec<String>>,
 }
 
 impl<'a> TypeContext<'a> {
@@ -107,6 +112,8 @@ impl<'a> TypeContext<'a> {
             cast_intents: Vec::new(),
             errors: Vec::new(),
             current_return_type: None,
+            generic_params: HashMap::new(),
+            generic_items: HashMap::new(),
         };
         context.seed_types();
         context.seed_builtin_signatures();
@@ -118,9 +125,6 @@ impl<'a> TypeContext<'a> {
             let Some(spec) = builtin_specs().get(*index) else {
                 continue;
             };
-            if spec.injected {
-                continue;
-            }
             let mut params = Vec::with_capacity(spec.params.len());
             for param in spec.params {
                 if let Some(type_id) = self.builtin_type_id(*param) {
@@ -170,6 +174,21 @@ impl<'a> TypeContext<'a> {
         program: &Spanned<HirProgram>,
     ) -> (TypeResult, Vec<TypeError>) {
         for item in &program.node.items {
+            let (span, generics) = match &item.node {
+                HirItem::FunctionDefinition(def) => (item.span, &def.node.generics),
+                HirItem::TypeDefinition(def) => (item.span, &def.node.generics),
+                HirItem::EnumDefinition(def) => (item.span, &def.node.generics),
+                _ => continue,
+            };
+            if let Some(item_id) = self.item_id_for_span(span) {
+                let names = generics
+                    .iter()
+                    .map(|generic| generic.node.name.clone())
+                    .collect::<Vec<_>>();
+                self.generic_items.insert(item_id, names);
+            }
+        }
+        for item in &program.node.items {
             self.type_item(item);
         }
         self.cast_intents.sort_by_key(|intent| {
@@ -195,6 +214,7 @@ impl<'a> TypeContext<'a> {
             function_signatures: self.function_signatures,
             struct_fields_ordered: self.struct_fields_ordered,
             enum_variants_ordered: self.enum_variants_ordered,
+            generic_items: self.generic_items,
             cast_intents: self.cast_intents,
         };
         let errors = std::mem::take(&mut self.errors);

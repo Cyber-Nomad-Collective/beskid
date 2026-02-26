@@ -3,7 +3,9 @@ use pecan_analysis::Rule;
 
 #[test]
 fn parses_let_statement() {
-    assert_parse(Rule::LetStatement, "let mut age: i32 = 42;");
+    assert_parse(Rule::LetStatement, "i32 mut age = 42;");
+    assert_parse(Rule::LetStatement, "i32 age = 42;");
+    assert_parse(Rule::LetStatement, "let age = 42;");
 }
 
 #[test]
@@ -14,6 +16,16 @@ fn rejects_let_without_semicolon() {
 #[test]
 fn rejects_let_without_equals() {
     assert_parse_fail(Rule::LetStatement, "let age 42;");
+}
+
+#[test]
+fn rejects_let_with_mut_keyword() {
+    assert_parse_fail(Rule::LetStatement, "let mut age = 42;");
+}
+
+#[test]
+fn rejects_let_with_type_annotation() {
+    assert_parse_fail(Rule::LetStatement, "let age: i32 = 42;");
 }
 
 #[test]

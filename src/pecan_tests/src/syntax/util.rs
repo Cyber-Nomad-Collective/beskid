@@ -39,7 +39,7 @@ pub fn parse_path_ast(input: &str) -> Spanned<Path> {
 pub fn assert_path_segments(path: &Spanned<Path>, expected: &[&str]) {
     assert_eq!(path.node.segments.len(), expected.len());
     for (segment, expected_name) in path.node.segments.iter().zip(expected.iter()) {
-        assert_eq!(segment.node.name.as_str(), *expected_name);
+        assert_eq!(segment.node.name.node.name.as_str(), *expected_name);
     }
 }
 

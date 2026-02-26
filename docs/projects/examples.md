@@ -1,98 +1,134 @@
 ---
-description: Pecan Project Examples
+description: Pecan Project Examples (HCL)
 ---
 
 # Project Examples
 
 ## Example 1: Single-project app
 ```
-my_app/
-├── project.pn
-└── src/
-    └── main.pn
+MyApp/
+├── Project.proj
+└── Src/
+    └── Main.pn
 ```
 
-**project.pn**
-```pecan
-unit project(b: Build) {
-    b.project("MyApp", "0.1.0");
-    b.set_root("src");
-    let app = b.target("app", "main.pn");
-    app.set_kind("app");
+**Project.proj**
+```hcl
+project {
+  name    = "MyApp"
+  version = "0.1.0"
+  root    = "Src"
+}
+
+target "App" {
+  kind  = "App"
+  entry = "Main.pn"
 }
 ```
 
 ## Example 2: App with local dependency
 ```
-workspace/
-├── app/
-│   ├── project.pn
-│   └── src/
-│       └── main.pn
-└── std/
-    ├── project.pn
-    └── src/
-        └── io.pn
+Workspace/
+├── App/
+│   ├── Project.proj
+│   └── Src/
+│       └── Main.pn
+└── Std/
+    ├── Project.proj
+    └── Src/
+        └── IO.pn
 ```
 
-**app/project.pn**
-```pecan
-unit project(b: Build) {
-    b.project("App", "0.1.0");
-    b.set_root("src");
-    let std = b.dep("pecan.std", "../std");
-    b.use_dep(std);
-    let app = b.target("app", "main.pn");
-    app.set_kind("app");
+**App/Project.proj**
+```hcl
+project {
+  name    = "App"
+  version = "0.1.0"
+  root    = "Src"
+}
+
+target "App" {
+  kind  = "App"
+  entry = "Main.pn"
+}
+
+dependency "Std" {
+  source = "path"
+  path   = "../Std"
 }
 ```
 
-**std/project.pn**
-```pecan
-unit project(b: Build) {
-    b.project("PecanStd", "0.1.0");
-    b.set_root("src");
-    let lib = b.target("lib", "io.pn");
-    lib.set_kind("lib");
+**Std/Project.proj**
+```hcl
+project {
+  name    = "Std"
+  version = "0.1.0"
+  root    = "Src"
+}
+
+target "Library" {
+  kind  = "Lib"
+  entry = "IO.pn"
 }
 ```
 
 ## Example 3: Nested module layout
 ```
-netlib/
-├── project.pn
-└── src/
-    ├── net.pn
-    └── net/
-        └── http.pn
+NetLib/
+├── Project.proj
+└── Src/
+    ├── Net.pn
+    └── Net/
+        └── Http.pn
 ```
 
-**src/net.pn**
+**Project.proj**
+```hcl
+project {
+  name    = "NetLib"
+  version = "0.1.0"
+  root    = "Src"
+}
+
+target "Library" {
+  kind  = "Lib"
+  entry = "Net.pn"
+}
+```
+
+**Src/Net.pn**
 ```pecan
-pub mod http;
+pub mod Http;
 ```
 
-**src/net/http.pn**
+**Src/Net/Http.pn**
 ```pecan
 pub type Client { ... }
 ```
 
 ## Example 4: Multiple targets
 ```
-project/
-├── project.pn
-└── src/
-    ├── main.pn
-    └── tests.pn
+Project/
+├── Project.proj
+└── Src/
+    ├── Main.pn
+    └── Tests.pn
 ```
 
-```pecan
-unit project(b: Build) {
-    b.project("Project", "0.2.0");
-    b.set_root("src");
-    let app = b.target("app", "main.pn");
-    app.set_kind("app");
-    let tests = b.target("tests", "tests.pn");
-    tests.set_kind("test");
+```hcl
+project {
+  name    = "Project"
+  version = "0.2.0"
+  root    = "Src"
+}
+
+target "App" {
+  kind  = "App"
+  entry = "Main.pn"
+}
+
+target "Tests" {
+  kind  = "Test"
+  entry = "Tests.pn"
 }
 ```

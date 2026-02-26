@@ -22,31 +22,55 @@ pub struct LetStatement {
 impl Parsable for LetStatement {
     fn parse(pair: Pair<Rule>) -> Result<Spanned<Self>, ParseError> {
         let span = SpanInfo::from_span(&pair.as_span());
-        let mut inner = pair.clone().into_inner();
-        let mutable = pair.as_str().starts_with("let mut");
-        let name = Identifier::parse(
-            inner
+        if pair.as_rule() == Rule::LetStatement {
+            let inner = pair
+                .into_inner()
                 .next()
-                .ok_or(ParseError::missing(Rule::Identifier))?,
-        )?;
+                .ok_or(ParseError::missing(Rule::LetStatement))?;
+            let parsed = Self::parse(inner)?;
+            return Ok(Spanned::new(parsed.node, span));
+        }
 
-        let mut type_annotation = None;
-        let mut value_pair = None;
+        let rule = pair.as_rule();
+        let error_pair = pair.clone();
+        let mut inner = pair.into_inner();
+        let (mut mutable, mut name_pair, mut value_pair, mut type_annotation) =
+            (false, None, None, None);
+
+        match rule {
+            Rule::TypedLetStatement => {
+                let type_pair = inner
+                    .next()
+                    .ok_or(ParseError::missing(Rule::PecanType))?;
+                type_annotation = Some(Type::parse(type_pair)?);
+            }
+            Rule::InferredLetStatement => {
+                inner
+                    .next()
+                    .filter(|item| item.as_rule() == Rule::LetKeyword)
+                    .ok_or(ParseError::missing(Rule::LetKeyword))?;
+            }
+            _ => return Err(ParseError::unexpected_rule(error_pair, Some(Rule::LetStatement))),
+        }
 
         for item in inner {
             match item.as_rule() {
-                Rule::TypeAnnotation => {
-                    let type_pair = item
-                        .into_inner()
-                        .next()
-                        .ok_or(ParseError::missing(Rule::PecanType))?;
-                    type_annotation = Some(Type::parse(type_pair)?);
+                Rule::LetKeyword => {}
+                Rule::MutKeyword => {
+                    if name_pair.is_some() {
+                        return Err(ParseError::unexpected_rule(item, None));
+                    }
+                    mutable = true;
                 }
+                Rule::Identifier => name_pair = Some(item),
                 Rule::Expression => value_pair = Some(item),
                 _ => return Err(ParseError::unexpected_rule(item, None)),
             }
         }
 
+        let name = Identifier::parse(
+            name_pair.ok_or(ParseError::missing(Rule::Identifier))?,
+        )?;
         let value = Expression::parse(
             value_pair.ok_or(ParseError::missing(Rule::Expression))?,
         )?;

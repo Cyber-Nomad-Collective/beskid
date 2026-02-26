@@ -12,8 +12,14 @@ pub enum HirVisibility {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct HirPathSegment {
+    pub name: Spanned<HirIdentifier>,
+    pub type_args: Vec<Spanned<crate::hir::HirType>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct HirPath {
-    pub segments: Vec<Spanned<HirIdentifier>>,
+    pub segments: Vec<Spanned<HirPathSegment>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

@@ -2,7 +2,7 @@ use crate::syntax::{
     AssignExpression, BinaryExpression, BlockExpression, CallExpression, ContractDefinition,
     EnumConstructorExpression, EnumDefinition, ExpressionStatement, ForStatement,
     FunctionDefinition, GroupedExpression, IfStatement, LetStatement, LiteralExpression,
-    MatchExpression, MemberExpression, MethodDefinition, ModuleDeclaration, PathExpression,
+    InlineModule, MatchExpression, MemberExpression, MethodDefinition, ModuleDeclaration, PathExpression,
     ReturnStatement, StructLiteralExpression, TypeDefinition, UnaryExpression, UseDeclaration,
     WhileStatement, BreakStatement, ContinueStatement,
 };
@@ -10,9 +10,9 @@ use crate::syntax::{
 use super::{
     HirAssignExpression, HirBinaryExpression, HirBlockExpression, HirCallExpression,
     HirContractDefinition, HirEnumConstructorExpression, HirEnumDefinition,
-    HirExpressionStatement, HirForStatement, HirFunctionDefinition, HirGroupedExpression,
-    HirIfStatement, HirLetStatement, HirLiteralExpression, HirMatchExpression,
-    HirMemberExpression, HirMethodDefinition, HirModuleDeclaration, HirPathExpression,
+    HirExpressionStatement, HirForStatement, HirFunctionDefinition,
+    HirGroupedExpression, HirIfStatement, HirInlineModule, HirLetStatement, HirLiteralExpression,
+    HirMatchExpression, HirMemberExpression, HirMethodDefinition, HirModuleDeclaration, HirPathExpression,
     HirReturnStatement, HirStructLiteralExpression, HirTypeDefinition, HirUnaryExpression,
     HirUseDeclaration, HirWhileStatement, HirBreakStatement, HirContinueStatement,
 };
@@ -24,6 +24,7 @@ pub trait Phase {
     type EnumDefinition;
     type ContractDefinition;
     type ModuleDeclaration;
+    type InlineModule;
     type UseDeclaration;
 
     type LetStatement;
@@ -62,6 +63,7 @@ impl Phase for AstPhase {
     type EnumDefinition = EnumDefinition;
     type ContractDefinition = ContractDefinition;
     type ModuleDeclaration = ModuleDeclaration;
+    type InlineModule = InlineModule;
     type UseDeclaration = UseDeclaration;
 
     type LetStatement = LetStatement;
@@ -94,6 +96,7 @@ impl Phase for HirPhase {
     type EnumDefinition = HirEnumDefinition;
     type ContractDefinition = HirContractDefinition;
     type ModuleDeclaration = HirModuleDeclaration;
+    type InlineModule = HirInlineModule;
     type UseDeclaration = HirUseDeclaration;
 
     type LetStatement = HirLetStatement;

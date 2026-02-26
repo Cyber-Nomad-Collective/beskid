@@ -29,7 +29,7 @@ while cond {
 
 Example:
 ```
-let mut i = 0;
+i32 mut i = 0;
 while i < 3 {
     println(i);
     i = i + 1;
@@ -48,7 +48,7 @@ for i in range(0, 10) {
 
 Example:
 ```
-let mut sum = 0;
+i32 mut sum = 0;
 for i in range(0, 4) {
     sum = sum + i;
 }

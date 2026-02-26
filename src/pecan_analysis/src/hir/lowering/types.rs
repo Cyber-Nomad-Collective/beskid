@@ -1,6 +1,7 @@
 use crate::hir::{
     HirBinaryOp, HirEnumPath, HirField, HirIdentifier, HirParameter, HirParameterModifier,
-    HirPath, HirPrimitiveType, HirRangeExpression, HirType, HirUnaryOp, HirVisibility,
+    HirPath, HirPathSegment, HirPrimitiveType, HirRangeExpression, HirType, HirUnaryOp,
+    HirVisibility,
 };
 use crate::syntax::{self, Spanned};
 
@@ -111,6 +112,20 @@ impl Lowerable for Spanned<syntax::Path> {
         Spanned::new(
             HirPath {
                 segments: self.node.segments.iter().map(Lowerable::lower).collect(),
+            },
+            self.span,
+        )
+    }
+}
+
+impl Lowerable for Spanned<syntax::PathSegment> {
+    type Output = Spanned<HirPathSegment>;
+
+    fn lower(&self) -> Self::Output {
+        Spanned::new(
+            HirPathSegment {
+                name: self.node.name.lower(),
+                type_args: self.node.type_args.iter().map(Lowerable::lower).collect(),
             },
             self.span,
         )

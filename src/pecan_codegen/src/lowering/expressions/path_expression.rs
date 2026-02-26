@@ -64,7 +64,7 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirPathExpression {
                         span: segment.span,
                         node: "member offsets",
                     })?;
-                    let field_name = segment.node.name.as_str();
+                    let field_name = segment.node.name.node.name.as_str();
                     let offset = offsets.get(field_name).copied().ok_or(CodegenError::UnsupportedNode {
                         span: segment.span,
                         node: "member offset",

@@ -7,11 +7,11 @@ pub mod expressions;
 pub use common::{HasSpan, Identifier, SpanInfo, Spanned, Visibility};
 pub use items::{
     ContractDefinition, ContractEmbedding, ContractMethodSignature, ContractNode,
-    EnumDefinition, EnumVariant, FunctionDefinition, MethodDefinition, ModuleDeclaration, Node,
+    EnumDefinition, EnumVariant, FunctionDefinition, InlineModule, MethodDefinition, ModuleDeclaration, Node,
     Program, TypeDefinition, UseDeclaration,
 };
 pub use types::{
-    EnumPath, Field, Parameter, ParameterModifier, Path, PrimitiveType, Type,
+    EnumPath, Field, Parameter, ParameterModifier, Path, PathSegment, PrimitiveType, Type,
 };
 pub use statements::{
     Block, BreakStatement, ContinueStatement, ExpressionStatement, ForStatement, IfStatement,

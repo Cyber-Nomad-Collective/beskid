@@ -18,7 +18,7 @@ pub mod types;
 pub mod normalize;
 
 pub use block::HirBlock;
-pub use common::{HirEnumPath, HirIdentifier, HirPath, HirVisibility};
+pub use common::{HirEnumPath, HirIdentifier, HirPath, HirPathSegment, HirVisibility};
 pub use expression::{
     ExpressionNode, HirAssignExpression, HirBinaryExpression, HirBinaryOp,
     HirBlockExpression, HirCallExpression, HirEnumConstructorExpression,
@@ -28,7 +28,7 @@ pub use expression::{
 pub use item::{
     HirContractDefinition, HirContractEmbedding, HirContractMethodSignature,
     HirContractNode, HirEnumDefinition, HirEnumVariant, HirFunctionDefinition,
-    HirMethodDefinition, HirModuleDeclaration, HirTypeDefinition, HirUseDeclaration,
+    HirInlineModule, HirMethodDefinition, HirModuleDeclaration, HirTypeDefinition, HirUseDeclaration,
     Item,
 };
 pub use literal::HirLiteral;

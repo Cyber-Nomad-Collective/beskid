@@ -257,13 +257,14 @@ impl SemanticPipelineRule {
                 if let HirExpressionNode::PathExpression(path_expression) = &call_expression.node.callee.node {
                     if path_expression.node.path.node.segments.len() == 1 {
                         if let Some(name) = path_expression.node.path.node.segments.first() {
-                            if let Some(enum_name) = variant_to_enum.get(&name.node.name) {
+                            let name_value = &name.node.name.node.name;
+                            if let Some(enum_name) = variant_to_enum.get(name_value) {
                                 ctx.emit_simple(
                                     path_expression.node.path.span,
                                     "E1303",
                                     format!(
                                         "unqualified enum constructor `{}`; use `{}::{}`",
-                                        name.node.name, enum_name, name.node.name
+                                        name_value, enum_name, name_value
                                     ),
                                     "unqualified enum constructor",
                                     None,

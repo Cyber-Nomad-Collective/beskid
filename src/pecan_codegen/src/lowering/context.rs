@@ -1,6 +1,7 @@
 use crate::errors::CodegenError;
 use crate::lowering::descriptor::{TypeDescriptorData, TypeLayout};
 use cranelift_codegen::ir::Function;
+use pecan_analysis::resolve::ItemId;
 use pecan_analysis::types::TypeId;
 use std::collections::HashMap;
 
@@ -19,13 +20,20 @@ pub struct CodegenArtifact {
     pub string_literals: HashMap<String, Vec<u8>>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MonomorphKey {
+    pub item: ItemId,
+    pub args: Vec<TypeId>,
+}
+
+#[derive(Default)]
 pub struct CodegenContext {
     pub functions_emitted: usize,
     pub lowered_functions: Vec<LoweredFunction>,
     pub type_layouts: HashMap<TypeId, TypeLayout>,
     pub type_descriptors: HashMap<TypeId, TypeDescriptorData>,
     pub string_literals: HashMap<String, Vec<u8>>,
+    pub monomorphized_functions: HashMap<MonomorphKey, String>,
     next_string_literal_id: usize,
 }
 

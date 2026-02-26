@@ -154,4 +154,22 @@ define_builtins! {
         returns: Unit,
         injected: true,
     },
+    &["__interop_dispatch_unit"] => {
+        symbol: "interop_dispatch_unit",
+        params: [Ptr],
+        returns: Unit,
+        injected: true,
+    },
+    &["__interop_dispatch_ptr"] => {
+        symbol: "interop_dispatch_ptr",
+        params: [Ptr],
+        returns: Ptr,
+        injected: true,
+    },
+    &["__interop_dispatch_usize"] => {
+        symbol: "interop_dispatch_usize",
+        params: [Ptr],
+        returns: Usize,
+        injected: true,
+    },
 }

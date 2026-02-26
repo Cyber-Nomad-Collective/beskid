@@ -10,10 +10,10 @@ fn sample_source() -> &'static str {
     "enum Option { Some(i64 value), None }\n\
      type User { i64 id, string name }\n\
      unit main() {\n\
-       let u: User = User { id: 1, name: \"a\" };\n\
-       let x: i64 = u.id;\n\
-       let y: Option = Option::Some(1);\n\
-       let z: i64 = match y { Option::Some(v) => v, Option::None => 0, };\n\
+       User u = User { id: 1, name: \"a\" };\n\
+       i64 x = u.id;\n\
+       Option y = Option::Some(1);\n\
+       i64 z = match y { Option::Some(v) => v, Option::None => 0, };\n\
        if true { return; }\n\
      }"
 }

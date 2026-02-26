@@ -94,6 +94,30 @@ pub(crate) fn emit_type_error(ctx: &mut RuleContext, error: TypeError, result: O
                 Severity::Error,
             );
         }
+        TypeError::MissingTypeArguments { span } => {
+            ctx.emit_simple(
+                span,
+                "E1203",
+                "missing type arguments for generic type",
+                "missing type arguments",
+                Some("provide explicit type arguments, e.g. `Type<i32>`".to_string()),
+                Severity::Error,
+            );
+        }
+        TypeError::GenericArgumentMismatch {
+            span,
+            expected,
+            actual,
+        } => {
+            ctx.emit_simple(
+                span,
+                "E1204",
+                format!("generic argument mismatch: expected {expected}, got {actual}"),
+                "generic argument mismatch",
+                None,
+                Severity::Error,
+            );
+        }
         TypeError::TypeMismatch {
             span,
             expected,
@@ -277,6 +301,8 @@ fn type_name(info: &TypeInfo) -> String {
             crate::hir::HirPrimitiveType::Unit => "unit".to_string(),
         },
         TypeInfo::Named(item_id) => format!("type#{}", item_id.0),
+        TypeInfo::GenericParam(name) => name.clone(),
+        TypeInfo::Applied { base, .. } => format!("type#{}", base.0),
     }
 }
 

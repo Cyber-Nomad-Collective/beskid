@@ -99,12 +99,13 @@ impl SemanticPipelineRule {
                 {
                     if path_expr.node.path.node.segments.len() == 1 {
                         if let Some(name) = path_expr.node.path.node.segments.first() {
-                            if let Some(is_mutable) = bindings.get(&name.node.name) {
+                            let name_value = &name.node.name.node.name;
+                            if let Some(is_mutable) = bindings.get(name_value) {
                                 if !is_mutable {
                                     ctx.emit_simple(
                                         assign_expression.node.target.span,
                                         "E1214",
-                                        format!("cannot assign to immutable binding `{}`", name.node.name),
+                                        format!("cannot assign to immutable binding `{}`", name_value),
                                         "immutable assignment",
                                         Some("declare it as `let mut` to allow assignment".to_string()),
                                         Severity::Error,

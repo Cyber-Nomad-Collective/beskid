@@ -109,6 +109,12 @@ impl<'a> HirLegalityValidator<'a> {
             HirItem::ModuleDeclaration(def) => {
                 self.check_span(def.span, "module_declaration");
             }
+            HirItem::InlineModule(def) => {
+                self.check_span(def.span, "inline_module");
+                for nested in &def.node.items {
+                    self.validate_item(nested);
+                }
+            }
             HirItem::UseDeclaration(def) => {
                 self.check_span(def.span, "use_declaration");
             }

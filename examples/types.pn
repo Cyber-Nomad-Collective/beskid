@@ -16,3 +16,9 @@ enum Option<T> {
 User make_user(id: i32, name: string) {
     return User { id: id, name: name };
 }
+
+unit main(){
+    User user = make_user(1, "John");
+    std.io.println("User:");
+    std.io.println(user.name);
+}

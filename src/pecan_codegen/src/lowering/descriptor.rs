@@ -47,6 +47,16 @@ fn compute_layout(type_result: &TypeResult, type_id: TypeId) -> Option<TypeLayou
     match type_result.types.get(type_id)? {
         TypeInfo::Primitive(primitive) => Some(primitive_layout(*primitive)),
         TypeInfo::Named(item_id) => compute_named_layout(type_result, *item_id),
+        TypeInfo::GenericParam(_) => Some(pointer_layout()),
+        TypeInfo::Applied { base, .. } => compute_named_layout(type_result, *base),
+    }
+}
+
+fn pointer_layout() -> TypeLayout {
+    TypeLayout {
+        size: std::mem::size_of::<usize>(),
+        align: std::mem::align_of::<usize>(),
+        pointer_offsets: Vec::new(),
     }
 }
 
@@ -141,6 +151,8 @@ fn enum_layout(type_result: &TypeResult, variants: &[(String, Vec<TypeId>)]) -> 
 pub(crate) fn is_pointer_like_type(type_result: &TypeResult, type_id: TypeId) -> bool {
     match type_result.types.get(type_id) {
         Some(TypeInfo::Named(_)) => true,
+        Some(TypeInfo::Applied { .. }) => true,
+        Some(TypeInfo::GenericParam(_)) => true,
         Some(TypeInfo::Primitive(_)) => false,
         None => false,
     }

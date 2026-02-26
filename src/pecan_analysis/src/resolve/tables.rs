@@ -11,6 +11,12 @@ pub enum ResolvedValue {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ResolvedType {
+    Item(ItemId),
+    Generic(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LocalInfo {
     pub id: LocalId,
     pub name: String,
@@ -20,7 +26,7 @@ pub struct LocalInfo {
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct ResolutionTables {
     pub resolved_values: HashMap<SpanInfo, ResolvedValue>,
-    pub resolved_types: HashMap<SpanInfo, ItemId>,
+    pub resolved_types: HashMap<SpanInfo, ResolvedType>,
     pub locals: Vec<LocalInfo>,
 }
 
@@ -33,8 +39,8 @@ impl ResolutionTables {
         self.resolved_values.insert(span, value);
     }
 
-    pub fn insert_type(&mut self, span: SpanInfo, item: ItemId) {
-        self.resolved_types.insert(span, item);
+    pub fn insert_type(&mut self, span: SpanInfo, resolved_type: ResolvedType) {
+        self.resolved_types.insert(span, resolved_type);
     }
 
     pub fn intern_local(&mut self, name: String, span: SpanInfo) -> LocalId {

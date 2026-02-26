@@ -128,7 +128,7 @@ fn expect_call<'a>(expr: &'a Expression, args_len: usize) -> (&'a Spanned<Expres
 fn expect_identifier_path(expr: &Expression, expected: &str) {
     if let Expression::Path(path) = expr {
         assert_eq!(path.node.path.node.segments.len(), 1);
-        assert_eq!(path.node.path.node.segments[0].node.name.as_str(), expected);
+        assert_eq!(path.node.path.node.segments[0].node.name.node.name.as_str(), expected);
         return;
     }
 
@@ -146,7 +146,7 @@ fn expect_path_segments(expr: &Expression, expected: &[&str]) {
             .iter()
             .zip(expected.iter())
         {
-            assert_eq!(segment.node.name.as_str(), *expected_name);
+            assert_eq!(segment.node.name.node.name.as_str(), *expected_name);
         }
         return;
     }

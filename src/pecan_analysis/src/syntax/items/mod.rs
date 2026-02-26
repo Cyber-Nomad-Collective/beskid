@@ -11,6 +11,7 @@ pub mod contract_node;
 pub mod contract_method_signature;
 pub mod contract_embedding;
 pub mod module_declaration;
+pub mod inline_module;
 pub mod use_declaration;
 
 pub use program::Program;
@@ -25,4 +26,5 @@ pub use contract_node::ContractNode;
 pub use contract_method_signature::ContractMethodSignature;
 pub use contract_embedding::ContractEmbedding;
 pub use module_declaration::ModuleDeclaration;
+pub use inline_module::InlineModule;
 pub use use_declaration::UseDeclaration;

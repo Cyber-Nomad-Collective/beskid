@@ -1,15 +1,8 @@
 use cranelift_codegen::ir::types;
 use pecan_analysis::hir::{HirPrimitiveType, HirType};
-use pecan_analysis::resolve::Resolution;
+use pecan_analysis::resolve::{ResolvedType, Resolution};
 use pecan_analysis::syntax::Spanned;
 use pecan_analysis::types::{TypeId, TypeInfo, TypeResult};
-
-pub(crate) fn map_hir_type_to_clif(ty: &HirType) -> Option<cranelift_codegen::ir::Type> {
-    match ty {
-        HirType::Primitive(primitive) => map_primitive_to_clif(primitive.node),
-        HirType::Complex(_) | HirType::Array(_) | HirType::Ref(_) => Some(pointer_type()),
-    }
-}
 
 pub(crate) fn map_type_id_to_clif(
     type_result: &TypeResult,
@@ -17,7 +10,9 @@ pub(crate) fn map_type_id_to_clif(
 ) -> Option<cranelift_codegen::ir::Type> {
     match type_result.types.get(type_id) {
         Some(TypeInfo::Primitive(primitive)) => map_primitive_to_clif(*primitive),
-        Some(TypeInfo::Named(_)) => Some(pointer_type()),
+        Some(TypeInfo::Named(_)) | Some(TypeInfo::GenericParam(_)) | Some(TypeInfo::Applied { .. }) => {
+            Some(pointer_type())
+        }
         _ => None,
     }
 }
@@ -30,8 +25,10 @@ pub(crate) fn type_id_for_type(
     match &ty.node {
         HirType::Primitive(primitive) => find_primitive_type_id(type_result, primitive.node),
         HirType::Complex(_) => {
-            let item_id = resolution.tables.resolved_types.get(&ty.span).copied()?;
-            find_named_type_id(type_result, item_id)
+            match resolution.tables.resolved_types.get(&ty.span)? {
+                ResolvedType::Item(item_id) => find_named_type_id(type_result, *item_id),
+                ResolvedType::Generic(_) => None,
+            }
         }
         HirType::Array(inner) | HirType::Ref(inner) => type_id_for_type(resolution, type_result, inner),
     }
