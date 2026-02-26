@@ -20,7 +20,7 @@ i32 count = 42;
 i64 big = 1_000_000;
 f64 ratio = 3.14;
 char letter = 'A';
-string name = "Pecan";
+string name = "Beskid";
 unit none = ();
 ```
 

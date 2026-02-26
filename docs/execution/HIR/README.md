@@ -53,8 +53,8 @@ Document only stable node forms used downstream:
 Avoid speculative node kinds that are not part of current implementation/spec.
 
 ## 6) Integration contracts
-- `pecan_analysis::analysis` consumes HIR, not AST.
-- `pecan_codegen` lowers HIR to CLIF and relies on HIR invariants.
+- `beskid_analysis::analysis` consumes HIR, not AST.
+- `beskid_codegen` lowers HIR to CLIF and relies on HIR invariants.
 - Runtime/codegen assumptions must be listed as explicit contracts, not prose hints.
 
 ## 7) Diagnostics and spans

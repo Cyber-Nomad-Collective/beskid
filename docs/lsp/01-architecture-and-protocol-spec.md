@@ -1,26 +1,26 @@
 ---
-description: Pecan LSP architecture and protocol specification
+description: Beskid LSP architecture and protocol specification
 ---
 
-# 01. Pecan LSP Architecture and Protocol Specification
+# 01. Beskid LSP Architecture and Protocol Specification
 
 ## 1. Objective
 
-Build a production-grade Language Server Protocol implementation for Pecan with `tower-lsp-server`, reusing the existing parsing/analysis pipeline and diagnostics model.
+Build a production-grade Language Server Protocol implementation for Beskid with `tower-lsp-server`, reusing the existing parsing/analysis pipeline and diagnostics model.
 
 Primary outcome: editor feedback that is semantically consistent with CLI analysis and stable enough for everyday use.
 
 ## 2. Context from existing codebase
 
-Pecan already provides key building blocks required for an LSP:
+Beskid already provides key building blocks required for an LSP:
 
-- Parser entrypoint (`PecanParser`) and syntax model (`Program`).
+- Parser entrypoint (`BeskidParser`) and syntax model (`Program`).
 - Rich source spans via `SpanInfo` (byte + line/column data).
 - Structured diagnostics with code/severity/help fields.
 - A staged semantic pipeline (`builtin_rules()`) producing deterministic diagnostics.
 - Resolver + type-checking flows used in runtime compilation paths.
 
-This enables an LSP architecture where `pecan_lsp` is a thin protocol/service layer and semantic logic stays in `pecan_analysis`.
+This enables an LSP architecture where `beskid_lsp` is a thin protocol/service layer and semantic logic stays in `beskid_analysis`.
 
 ## 3. Product vision
 
@@ -79,7 +79,7 @@ This enables an LSP architecture where `pecan_lsp` is a thin protocol/service la
 
 ## 5. Target crate/module architecture
 
-Proposed `src/pecan_lsp/src` layout:
+Proposed `src/beskid_lsp/src` layout:
 
 - `lib.rs`
   - public entrypoint(s), module exports.
@@ -182,7 +182,7 @@ Map semantic diagnostics into `lsp_types::Diagnostic`:
   - Warning -> Warning
   - Note -> Information
 - `range` <- converted from source span
-- `source` <- `pecan`
+- `source` <- `beskid`
 - `related_information` <- attach where previous span/source is available (future)
 
 Publication policy:
@@ -197,7 +197,7 @@ Publication policy:
 
 Navigation features must use a hybrid model:
 
-- **Query API (`pecan_analysis::query`)** for structural traversal/discovery in syntax trees.
+- **Query API (`beskid_analysis::query`)** for structural traversal/discovery in syntax trees.
   - Primary use: document symbol extraction, AST node discovery at cursor, structural filtering.
 - **Resolver/type artifacts** for semantic identity and correctness.
   - Primary use: go-to-definition target resolution, semantic hover payloads, and future references/rename.
@@ -246,7 +246,7 @@ Initial actions should be deterministic and safe:
 
 ## 11. Configuration contract
 
-Namespace: `pecan.lsp`
+Namespace: `beskid.lsp`
 
 - `diagnostics.enable: bool` (default `true`)
 - `diagnostics.emitWarnings: bool` (default `true`)

@@ -5,7 +5,7 @@ description: Runtime & standard library specification
 # Runtime & standard library specification
 
 ## Purpose
-Define the runtime services and ABI needed to execute CLIF generated from Pecan. This includes allocation, core types, and standard library hooks.
+Define the runtime services and ABI needed to execute CLIF generated from Beskid. This includes allocation, core types, and standard library hooks.
 
 ## Runtime components
 ### 1) Memory management (decision)
@@ -37,14 +37,14 @@ Required builtins (v0.1):
 All builtins are declared via `cranelift_module::Module::declare_function` and called from CLIF.
 
 ## 4) Standard library boundary
-- **Stdlib** is Pecan code + runtime builtins.
+- **Stdlib** is Beskid code + runtime builtins.
 - Low-level operations are implemented as host functions.
 - Stdlib should not depend on compiler internals.
 
 ## ABI rules
 - Use Cranelift default calling convention for the host ISA.
 - Complex types passed by pointer.
-- Runtime builtins exposed to host use C ABI; internal runtime calls may use Pecan ABI with stack maps.
+- Runtime builtins exposed to host use C ABI; internal runtime calls may use Beskid ABI with stack maps.
 
 ## Notes
 - JIT and AOT share the same runtime ABI.

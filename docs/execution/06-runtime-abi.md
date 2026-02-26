@@ -5,7 +5,7 @@ description: Runtime and ABI design
 # Runtime and ABI design
 
 ## Purpose
-Define how values are represented and how functions exchange values between Pecan and Cranelift.
+Define how values are represented and how functions exchange values between Beskid and Cranelift.
 
 ## Core decisions
 - **Calling convention**: use Cranelift default for target ISA.

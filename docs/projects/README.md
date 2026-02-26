@@ -1,8 +1,8 @@
-# Pecan Projects (HCL-based)
+# Beskid Projects (HCL-based)
 
-Pecan project definition is moving to **HCL** syntax with a `.proj` file extension.
+Beskid project definition is moving to **HCL** syntax with a `.proj` file extension.
 
-We are dropping `project.pn` as the project definition mechanism and replacing it with a declarative manifest (`Project.proj`) to keep project loading deterministic, tool-friendly, and IDE-friendly.
+We are dropping `project.bd` as the project definition mechanism and replacing it with a declarative manifest (`Project.proj`) to keep project loading deterministic, tool-friendly, and IDE-friendly.
 
 ## Why HCL
 
@@ -24,7 +24,7 @@ We are dropping `project.pn` as the project definition mechanism and replacing i
 - Crate: `hcl-edit`
 - Strengths:
   - preserves comments/formatting for round-trip edits
-  - useful for `pecan fmt` / auto-migrations and editor tooling
+  - useful for `beskid fmt` / auto-migrations and editor tooling
 
 ### Decision
 
@@ -46,10 +46,10 @@ See:
 
 ## Phase 2 migration plan (interop + projects)
 
-This plan connects stdlib interop migration with the new HCL project system so `Std` can be built and consumed as a normal Pecan project.
+This plan connects stdlib interop migration with the new HCL project system so `Std` can be built and consumed as a normal Beskid project.
 
 ### Stage 2.1: Project model introduction
-1. Add `pecan_project` crate/module with typed manifest model (`ProjectManifest`, `Target`, `Dependency`).
+1. Add `beskid_project` crate/module with typed manifest model (`ProjectManifest`, `Target`, `Dependency`).
 2. Parse `Project.proj` (HCL content) with `hcl-rs` into typed structs.
 3. Add validation pass:
    - required fields
@@ -73,11 +73,11 @@ This plan connects stdlib interop migration with the new HCL project system so `
 3. Add compatibility fallback only for one release window, then remove.
 
 ### Stage 2.5: Tooling and migration UX
-1. Add migration command: convert `project.pn` -> `Project.proj` where possible.
+1. Add migration command: convert `project.bd` -> `Project.proj` where possible.
 2. Add diagnostics with actionable fixes.
-3. Add `pecan fmt` support for `.proj` files using `hcl-edit`.
+3. Add `beskid fmt` support for `.proj` files using `hcl-edit`.
 
-### Stage 2.6: LSP `.proj` implementation (`src/pecan_lsp`)
+### Stage 2.6: LSP `.proj` implementation (`src/beskid_lsp`)
 1. Extend file detection to recognize `*.proj` as HCL-backed project manifests.
 2. Add diagnostics pipeline for manifest schema and dependency errors.
 3. Add semantic completion for top-level blocks (`project`, `target`, `dependency`) and known keys.

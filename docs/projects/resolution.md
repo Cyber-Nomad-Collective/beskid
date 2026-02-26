@@ -1,5 +1,5 @@
 ---
-description: Pecan Project Resolution (HCL)
+description: Beskid Project Resolution (HCL)
 ---
 
 # Project Resolution
@@ -18,7 +18,7 @@ This document defines how module paths are resolved, how the project graph is bu
 4. Build a DAG of projects; detect cycles and report the chain.
 
 ## File-to-Module Mapping
-- File `Src/Net/Http.pn` maps to module path `Net.Http`.
+- File `Src/Net/Http.bd` maps to module path `Net.Http`.
 - The file path relative to `root` determines the module path.
 - The last segment is the module name (file stem).
 
@@ -36,7 +36,7 @@ The module graph is inferred from `mod` declarations and file layout. The manife
 
 ## `mod` Declarations
 - `mod Net;` declares a submodule.
-- The compiler searches for `root/Net.pn` or `root/Net/Mod.pn` (configurable).
+- The compiler searches for `root/Net.bd` or `root/Net/Mod.bd` (configurable).
 - Error if not found.
 
 ## `use` Imports

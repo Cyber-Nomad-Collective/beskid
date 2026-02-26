@@ -1,5 +1,5 @@
 ---
-description: Pecan Semantic Rules Catalog
+description: Beskid Semantic Rules Catalog
 ---
 
 # Semantic Rules Catalog

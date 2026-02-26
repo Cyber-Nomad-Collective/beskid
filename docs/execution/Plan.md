@@ -1,7 +1,7 @@
 ---
-description: Pecan execution implementation plan
+description: Beskid execution implementation plan
 ---
-# Pecan execution implementation plan
+# Beskid execution implementation plan
 
 ## Status snapshot
 
@@ -29,7 +29,7 @@ description: Pecan execution implementation plan
 **Goal:** prepare crate structure and dependencies.
 
 **Completed**
-- `pecan_codegen`, `pecan_runtime`, `pecan_engine` crates exist.
+- `beskid_codegen`, `beskid_runtime`, `beskid_engine` crates exist.
 - Cranelift frontend/module/jit/object/native dependencies wired.
 
 ---
@@ -110,7 +110,7 @@ description: Pecan execution implementation plan
 
 **Concrete task list**
 1. **Layout helpers + descriptor usage (codegen)**
-   - Add helper in `pecan_codegen/src/lowering/descriptor.rs` to expose header size, field offsets,
+   - Add helper in `beskid_codegen/src/lowering/descriptor.rs` to expose header size, field offsets,
      enum tag offset, payload alignment, and pointer offsets.
    - Extend `CodegenContext` with cached layout accessors where needed.
 2. **Struct literal lowering** (`lowering/expressions/struct_literal_expression.rs`)
@@ -142,14 +142,14 @@ description: Pecan execution implementation plan
 **Goal:** execute code in-process with a proper module and runtime symbol table.
 
 **Completed**
-1. **JIT module bootstrap** (`pecan_engine/src/jit_module.rs`)
+1. **JIT module bootstrap** (`beskid_engine/src/jit_module.rs`)
    - Owns `JITBuilder`, `JITModule`, and compilation context.
    - Uses `cranelift_module::default_libcall_names()`.
 2. **Runtime symbol registration**
    - Registers `alloc`, `str_new`, `gc_write_barrier` with `JITBuilder::symbol`.
    - Maintains a symbol map for imported functions.
 3. **Data object emission**
-   - Calls `pecan_codegen::emit_type_descriptors` to create descriptor data objects.
+   - Calls `beskid_codegen::emit_type_descriptors` to create descriptor data objects.
 4. **Module declarations + definitions**
    - Declares user functions + runtime builtins via `Module::declare_function`.
    - Defines each `Function` and finalizes definitions.
@@ -167,7 +167,7 @@ description: Pecan execution implementation plan
 - Incremental compilation and REPL support.
 
 **Acceptance criteria**
-- `pecan_engine` can compile functions and resolve an entrypoint pointer.
+- `beskid_engine` can compile functions and resolve an entrypoint pointer.
 - Runtime builtins are registered and visible to the JIT module.
 
 ---
@@ -191,7 +191,7 @@ description: Pecan execution implementation plan
    - Confirm layout: header `type_desc_ptr` + payload. **(done: descriptor ABI tests)**
    - Confirm enum tag at payload offset 0 (`i32`). **(done: descriptor ABI tests)**
 2. **Type descriptor data**
-   - Ensure `TypeDescriptorData` emitted in `pecan_codegen` and wired into JIT data objects. **(done)**
+   - Ensure `TypeDescriptorData` emitted in `beskid_codegen` and wired into JIT data objects. **(done)**
    - Validate pointer offsets logic for structs/enums. **(done: descriptor tests)**
 3. **Allocator builtin**
    - Ensure allocation happens under TLS mutation guard (verify). **(done: runtime guard tests)**
@@ -217,7 +217,7 @@ description: Pecan execution implementation plan
 **Goal:** emit object files.
 
 **Plan**
-- Add `ObjectModule` to `pecan_engine` and a `build` CLI path.
+- Add `ObjectModule` to `beskid_engine` and a `build` CLI path.
 - Emit exported `pub` functions and link runtime builtins.
 
 **Acceptance criteria**

@@ -1,11 +1,11 @@
 ---
-description: Pecan GC specification (Go-style)
+description: Beskid GC specification (Go-style)
 ---
 
-# Pecan GC specification (Go-style)
+# Beskid GC specification (Go-style)
 
 ## Decision summary
-Pecan adopts a Go-style garbage collector:
+Beskid adopts a Go-style garbage collector:
 - **Concurrent, precise, tri-color mark-and-sweep**
 - **Write barriers** on pointer writes
 - **Short STW pauses** only for root scanning and phase transitions

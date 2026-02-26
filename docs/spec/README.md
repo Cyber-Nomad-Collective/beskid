@@ -1,4 +1,4 @@
-# Pecan Specification (v0.1)
+# Beskid Specification (v0.1)
 
 Document index:
 - 01-lexical-and-syntax.md

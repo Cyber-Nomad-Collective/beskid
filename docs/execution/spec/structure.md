@@ -13,22 +13,22 @@ description: Execution stack responsibilities
 6. **Runtime/stdlib**
 
 ## Suggested responsibilities
-### `pecan_analysis`
+### `beskid_analysis`
 - Parser + AST + source spans
 - HIR lowering + type checking
 - Semantic analysis rules + diagnostics
 
-### `pecan_codegen` (new)
+### `beskid_codegen` (new)
 - HIR -> CLIF lowering
 - FunctionBuilder integration
 - Module abstraction (common for JIT/AOT)
 
-### `pecan_runtime` (new)
+### `beskid_runtime` (new)
 - Builtins + allocation
 - String/array primitives
 - Panic/error handling
 
-### `pecan_engine` (new)
+### `beskid_engine` (new)
 - JIT driver / execution API
 - AOT driver (object emission)
 

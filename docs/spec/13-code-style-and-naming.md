@@ -1,6 +1,6 @@
 # 13. Code Style and Naming
 
-This document defines the default naming and style rules for Pecan source code.
+This document defines the default naming and style rules for Beskid source code.
 
 Primary goal: **C#-style readability** with consistent naming across language, stdlib, and tooling.
 
@@ -15,7 +15,7 @@ Use `PascalCase` for:
 - generic type parameters (single or short names like `T`, `TItem`, `TResult`)
 
 Examples:
-```pecan
+```beskid
 pub type HttpClient {
     string BaseUrl,
 }
@@ -37,7 +37,7 @@ Use C# conventions:
 - `PascalCase` for module-level public value-like constants
 
 Examples:
-```pecan
+```beskid
 pub string FormatError(string errorCode) {
     let message = "Unexpected error";
     return message;
@@ -75,8 +75,8 @@ Use C#-style names on disk as well (no `snake_case`):
 - `PascalCase` for directories representing namespaces
 
 Examples:
-- `HttpClient.pn`
-- `StringBuilder.pn`
+- `HttpClient.bd`
+- `StringBuilder.bd`
 - `Std/Collections/`
 
 ## 13.4 Visibility and API hygiene

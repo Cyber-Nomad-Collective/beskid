@@ -1,0 +1,189 @@
+////////////////////////////////////////////////////////////
+// Beskid Grammar (v0.1)
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+// 1) LEXICAL
+////////////////////////////////////////////////////////////
+WHITESPACE = _{ " " | "\t" | "\n" | "\r" | COMMENT }
+COMMENT    = _{ LineComment | BlockComment }
+LineComment = { "//" ~ (!"\n" ~ ANY)* }
+BlockComment = { "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
+ASCII_ALPHA_UNDERSCORE = _{ ASCII_ALPHA | "_" }
+Identifier = @{ !Keyword ~ ASCII_ALPHA_UNDERSCORE ~ (ASCII_ALPHANUMERIC | "_")* }
+
+TypeDeclarationKeyword = { "type" }
+EnumDeclarationKeyword = { "enum" }
+ContractDeclarationKeyword = { "contract" }
+MatchKeyword = { "match" }
+WhenKeyword = { "when" }
+IfKeyword = { "if" }
+ElseKeyword = { "else" }
+WhileKeyword = { "while" }
+ForKeyword = { "for" }
+InKeyword = { "in" }
+ReturnKeyword = { "return" }
+BreakKeyword = { "break" }
+ContinueKeyword = { "continue" }
+LetKeyword = { "let" }
+MutKeyword = { "mut" }
+ModKeyword = { "mod" }
+UseKeyword = { "use" }
+PubKeyword = { "pub" }
+RefKeyword = { "ref" }
+OutKeyword = { "out" }
+
+Keyword = {
+    (
+        TypeDeclarationKeyword
+      | EnumDeclarationKeyword
+      | ContractDeclarationKeyword
+      | MatchKeyword
+      | WhenKeyword
+      | IfKeyword
+      | ElseKeyword
+      | WhileKeyword
+      | ForKeyword
+      | InKeyword
+      | ReturnKeyword
+      | BreakKeyword
+      | ContinueKeyword
+      | LetKeyword
+      | MutKeyword
+      | ModKeyword
+      | UseKeyword
+      | PubKeyword
+      | RefKeyword
+      | OutKeyword
+    ) ~ !ASCII_ALPHANUMERIC
+}
+
+IntegerLiteral = @{ "-"? ~ ASCII_DIGIT+ }
+FloatLiteral = @{ "-"? ~ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
+StringLiteral = @{ "\"" ~ StringContent* ~ "\"" }
+StringContent = { StringInterpolation | StringEscape | StringText }
+StringInterpolation = { "${" ~ Expression ~ "}" }
+StringEscape = { "\\\"" | "\\\\" | "\\${" }
+StringText = { (!("\"" | "\\" | "$") ~ ANY)+ | ("$" ~ !("{")) }
+CharLiteral = @{ "'" ~ ("\\'" | !("'") ~ ANY) ~ "'" }
+
+Literal = { FloatLiteral | IntegerLiteral | StringLiteral | CharLiteral | "true" | "false" }
+
+////////////////////////////////////////////////////////////
+// 2) PROGRAM
+////////////////////////////////////////////////////////////
+Program = { SOI ~ Item* ~ EOI }
+Item = _{ FunctionDefinition | MethodDefinition | TypeDefinition | EnumDefinition | ContractDefinition | InlineModule | ModuleDeclaration | UseDeclaration }
+
+Visibility = { "pub" }
+
+ModuleDeclaration = { Visibility? ~ "mod" ~ Path ~ ";" }
+InlineModule = { Visibility? ~ "mod" ~ Identifier ~ "{" ~ Item* ~ "}" }
+UseDeclaration = { Visibility? ~ "use" ~ Path ~ ";" }
+PathSegment = { Identifier ~ GenericArguments? }
+Path = { PathSegment ~ ("." ~ PathSegment)* }
+EnumPath = { Identifier ~ "::" ~ Identifier }
+
+////////////////////////////////////////////////////////////
+// 3) TYPES
+////////////////////////////////////////////////////////////
+PrimitiveType = { "bool" | "i32" | "i64" | "u8" | "f64" | "char" | "string" | "unit" }
+
+GenericParameters = { "<" ~ Identifier ~ ("," ~ Identifier)* ~ ">" }
+GenericArguments = { "<" ~ BeskidType ~ ("," ~ BeskidType)* ~ ">" }
+
+TypeName = { PrimitiveType | Path }
+ArrayType = { TypeName ~ "[" ~ "]" }
+TypeReference = { "ref" ~ TypeName }
+BeskidType = { TypeReference | ArrayType | TypeName }
+
+////////////////////////////////////////////////////////////
+// 4) DEFINITIONS
+////////////////////////////////////////////////////////////
+FunctionDefinition = { Visibility? ~ BeskidType ~ Identifier ~ GenericParameters? ~ "(" ~ ParameterList? ~ ")" ~ Block }
+ReceiverType = { PrimitiveType | PathSegment }
+MethodDefinition = { Visibility? ~ BeskidType ~ ReceiverType ~ "." ~ Identifier ~ "(" ~ ParameterList? ~ ")" ~ Block }
+ParameterList = { Parameter ~ ("," ~ Parameter)* }
+Parameter = { ParameterModifier? ~ Identifier ~ ":" ~ BeskidType }
+ParameterModifier = { "ref" | "out" }
+
+FieldList = { Field ~ ("," ~ Field)* ~ ","? }
+Field = { BeskidType ~ Identifier }
+
+TypeDefinition = { Visibility? ~ "type" ~ Identifier ~ GenericParameters? ~ "{" ~ FieldList? ~ "}" }
+
+EnumDefinition = { Visibility? ~ "enum" ~ Identifier ~ GenericParameters? ~ "{" ~ EnumVariantList? ~ "}" }
+EnumVariantList = { EnumVariant ~ ("," ~ EnumVariant)* ~ ","? }
+EnumVariant = { Identifier ~ ("(" ~ FieldList? ~ ")")? }
+
+ContractDefinition = { Visibility? ~ "contract" ~ Identifier ~ "{" ~ ContractItem* ~ "}" }
+ContractItem = _{ ContractMethodSignature | ContractEmbedding }
+ContractMethodSignature = { BeskidType ~ Identifier ~ "(" ~ ParameterList? ~ ")" ~ ";" }
+ContractEmbedding = { Identifier ~ ";"? }
+
+////////////////////////////////////////////////////////////
+// 5) STATEMENTS AND BLOCKS
+////////////////////////////////////////////////////////////
+Block = { "{" ~ Statement* ~ "}" }
+
+Statement = _{ LetStatement | ReturnStatement | BreakStatement | ContinueStatement | WhileStatement | ForStatement | IfStatement | ExpressionStatement }
+
+LetStatement = { TypedLetStatement | InferredLetStatement }
+TypedLetStatement = { BeskidType ~ MutKeyword? ~ Identifier ~ "=" ~ Expression ~ ";" }
+InferredLetStatement = { LetKeyword ~ Identifier ~ "=" ~ Expression ~ ";" }
+TypeAnnotation = { ":" ~ BeskidType }
+
+ReturnStatement = { "return" ~ Expression? ~ ";" }
+BreakStatement = { "break" ~ ";" }
+ContinueStatement = { "continue" ~ ";" }
+
+IfStatement = { "if" ~ Expression ~ Block ~ ("else" ~ Block)? }
+WhileStatement = { "while" ~ Expression ~ Block }
+ForStatement = { "for" ~ Identifier ~ "in" ~ RangeExpression ~ Block }
+RangeExpression = { "range" ~ "(" ~ Expression ~ "," ~ Expression ~ ")" }
+
+ExpressionStatement = { Expression ~ ";" }
+
+////////////////////////////////////////////////////////////
+// 6) EXPRESSIONS
+////////////////////////////////////////////////////////////
+Expression = { MatchExpression | AssignmentExpression }
+
+AssignmentExpression = { LogicalOrExpression ~ ("=" ~ AssignmentExpression)? }
+LogicalOrExpression = { LogicalAndExpression ~ ("||" ~ LogicalAndExpression)* }
+LogicalAndExpression = { EqualityExpression ~ ("&&" ~ EqualityExpression)* }
+
+EqualityExpression = { ComparisonExpression ~ (("==" | "!=") ~ ComparisonExpression)* }
+ComparisonExpression = { AdditionExpression ~ (("<" | "<=" | ">" | ">=") ~ AdditionExpression)* }
+AdditionExpression = { MultiplicationExpression ~ (("+" | "-") ~ MultiplicationExpression)* }
+MultiplicationExpression = { UnaryExpression ~ (("*" | "/") ~ UnaryExpression)* }
+
+UnaryExpression = { ("-" | "!")* ~ PostfixExpression }
+PostfixExpression = { PrimaryExpression ~ PostfixOperator* }
+PostfixOperator = { CallOperator | MemberAccess }
+
+CallOperator = { "(" ~ ArgumentList? ~ ")" }
+MemberAccess = { "." ~ Identifier }
+
+PrimaryExpression = { Literal | GroupedExpression | BlockExpression | EnumConstructorExpression | StructLiteralExpression | Path }
+
+EnumConstructorExpression = { EnumPath ~ "(" ~ ArgumentList? ~ ")" }
+
+StructLiteralExpression = { Path ~ "{" ~ FieldValueList? ~ "}" }
+FieldValueList = { FieldValue ~ ("," ~ FieldValue)* ~ ","? }
+FieldValue = { Identifier ~ ":" ~ Expression }
+
+CallExpression = { Identifier ~ "(" ~ ArgumentList? ~ ")" }
+ArgumentList = { Expression ~ ("," ~ Expression)* }
+
+MatchExpression = { "match" ~ Expression ~ "{" ~ (MatchArm ~ ("," ~ MatchArm)* ~ ","?)? ~ "}" }
+MatchArm = { Pattern ~ MatchGuard? ~ "=>" ~ Expression }
+MatchGuard = { "when" ~ Expression }
+
+Pattern = { "_" | EnumPattern | Identifier | Literal }
+EnumPattern = { EnumPath ~ ("(" ~ PatternList? ~ ")")? }
+PatternList = { Pattern ~ ("," ~ Pattern)* }
+
+GroupedExpression = { "(" ~ Expression ~ ")" }
+BlockExpression = { Block }

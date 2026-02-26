@@ -33,9 +33,9 @@ HIR and AST should be implemented through a phase-indexed shared-core model so s
 - `HIRExpression = LiteralExpression | VariableExpression | CallExpression | BinaryExpression | UnaryExpression | IfExpression | MatchExpression | BlockExpression | CastExpression`
 
 ## Integration points
-- `pecan_analysis::hir`: AST lowering, resolution, typing, cast insertion.
-- `pecan_analysis::analysis`: semantic rules run on HIR, not raw AST.
-- `pecan_codegen`: lowers HIR to CLIF using span-attached nodes.
+- `beskid_analysis::hir`: AST lowering, resolution, typing, cast insertion.
+- `beskid_analysis::analysis`: semantic rules run on HIR, not raw AST.
+- `beskid_codegen`: lowers HIR to CLIF using span-attached nodes.
 
 ## Detailed authoring guide
 - HIR writing template and section checklist: `docs/execution/HIR/README.md`

@@ -1,0 +1,15 @@
+[package]
+name = "beskid_engine"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+cranelift-codegen = "0.128.3"
+cranelift-jit = "0.128.3"
+cranelift-module = "0.128.3"
+cranelift-native = "0.128.3"
+cranelift-object = "0.128.3"
+gc-arena = { path = "../gc-arena" }
+beskid_analysis = { path = "../beskid_analysis" }
+beskid_codegen = { path = "../beskid_codegen" }
+beskid_runtime = { path = "../beskid_runtime" }

@@ -1,8 +1,8 @@
 ---
-description: Pecan Project Manifest (HCL)
+description: Beskid Project Manifest (HCL)
 ---
 
-# Pecan Project Manifest (`Project.proj`)
+# Beskid Project Manifest (`Project.proj`)
 
 `Project.proj` is the canonical project manifest format, using HCL syntax.
 
@@ -21,7 +21,7 @@ project {
 
 target "App" {
   kind  = "App"
-  entry = "Main.pn"
+  entry = "Main.bd"
 }
 
 dependency "Std" {

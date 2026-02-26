@@ -1,8 +1,8 @@
 ---
-description: Pecan LSP testing, performance, and observability specification
+description: Beskid LSP testing, performance, and observability specification
 ---
 
-# 03. Pecan LSP Testing and Observability
+# 03. Beskid LSP Testing and Observability
 
 ## 1. Testing strategy
 
@@ -11,7 +11,7 @@ The LSP should be validated at four layers:
 1. Unit tests (pure helpers and adapters)
 2. Component tests (document state, scheduling, cancellation)
 3. Protocol integration tests (`tower-lsp-server` request/response behavior)
-4. Regression fixture tests (real `.pn` samples and known diagnostics)
+4. Regression fixture tests (real `.bd` samples and known diagnostics)
 
 ## 2. Unit test matrix
 
@@ -70,7 +70,7 @@ Scenarios:
 
 ## 5. Regression fixture suite
 
-Create fixtures under `src/pecan_tests` or dedicated LSP fixtures:
+Create fixtures under `src/beskid_tests` or dedicated LSP fixtures:
 
 - `diagnostics/`
   - duplicate names

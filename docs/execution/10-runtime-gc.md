@@ -68,7 +68,7 @@ struct RuntimeRoot {
 
 ## Runtime integration
 ### Arena lifecycle
-- `pecan_engine` owns a single `Arena<Root>` per engine instance.
+- `beskid_engine` owns a single `Arena<Root>` per engine instance.
 - Each JIT entrypoint executes inside `arena.mutate(|mc, root| { ... })`.
 - The arena root persists across runs to hold globals and dynamic roots.
 - JIT entrypoints must always be invoked through the engine wrapper to guarantee `mutate`.

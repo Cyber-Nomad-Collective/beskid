@@ -1,10 +1,10 @@
 ---
-description: Pecan LSP documentation index and scope map
+description: Beskid LSP documentation index and scope map
 ---
 
-# Pecan LSP Docs
+# Beskid LSP Docs
 
-This directory defines the architecture, protocol contract, and delivery plan for the Pecan language server using `tower-lsp-server`.
+This directory defines the architecture, protocol contract, and delivery plan for the Beskid language server using `tower-lsp-server`.
 
 ## Document layout
 
@@ -30,7 +30,7 @@ This directory defines the architecture, protocol contract, and delivery plan fo
 
 ## Design principles
 
-- **Single source of truth:** semantic behavior must come from `pecan_analysis`, not duplicated in `pecan_lsp`.
+- **Single source of truth:** semantic behavior must come from `beskid_analysis`, not duplicated in `beskid_lsp`.
 - **Correctness over breadth:** capabilities are enabled only when behavior is production-safe.
 - **Low-latency feedback:** incremental and cancelable document analysis loops.
 - **Stable diagnostics:** deterministic outputs with stable codes and consistent ranges.

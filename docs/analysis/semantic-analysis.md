@@ -1,11 +1,11 @@
 ---
-description: Pecan Semantic Analysis Specification
+description: Beskid Semantic Analysis Specification
 ---
 
-# Pecan Semantic Analysis Specification
+# Beskid Semantic Analysis Specification
 
 ## Goals
-- Provide a structured, staged semantic analysis pipeline for Pecan.
+- Provide a structured, staged semantic analysis pipeline for Beskid.
 - Enable ergonomic diagnostics creation (macro-based) with rich source spans.
 - Build on existing AST query API for traversal and rule execution.
 
@@ -141,7 +141,7 @@ Rules should use `Query` API:
 # Implementation Plan (Derived)
 
 ## Phase 1: Diagnostics Foundation
-1. Add `pecan_analysis::diagnostics` module.
+1. Add `beskid_analysis::diagnostics` module.
 2. Define `Severity`, `SemanticDiagnostic`, `DiagnosticBuilder`.
 3. Implement `diag!` macro.
 4. Add `SpanInfo -> SourceSpan` conversion utilities.

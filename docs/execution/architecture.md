@@ -1,38 +1,38 @@
 ---
-description: Pecan execution architecture (current codebase)
+description: Beskid execution architecture (current codebase)
 ---
 
-# Pecan execution architecture (current codebase)
+# Beskid execution architecture (current codebase)
 
 This document describes the intended execution stack and how it maps to the **current** codebase structure under `src/`. It is aligned with the Cranelift-first execution docs in `docs/execution/`.
 
 ## Current modules (source tree)
 
-### `src/pecan_analysis`
-- **Parser & grammar**: `src/pecan_analysis/src/pecan.pest` and `parser.rs`
-- **Parsing helpers**: `src/pecan_analysis/src/parsing/`
-- **Syntax AST**: `src/pecan_analysis/src/syntax/`
-- **Query API**: `src/pecan_analysis/src/query/`
-- **Semantic analysis scaffolding**: `src/pecan_analysis/src/analysis/`
+### `src/beskid_analysis`
+- **Parser & grammar**: `src/beskid_analysis/src/beskid.pest` and `parser.rs`
+- **Parsing helpers**: `src/beskid_analysis/src/parsing/`
+- **Syntax AST**: `src/beskid_analysis/src/syntax/`
+- **Query API**: `src/beskid_analysis/src/query/`
+- **Semantic analysis scaffolding**: `src/beskid_analysis/src/analysis/`
 
-### `src/pecan_cli`
+### `src/beskid_cli`
 - CLI entrypoint and commands (`parse`, `tree`, `analyze`).
 - Current execution is limited to parsing and analysis stubs.
 
-### `src/pecan_tests`
+### `src/beskid_tests`
 - Tests for analysis scaffolding and parsing.
 
-### `src/pecan_ast_derive`
+### `src/beskid_ast_derive`
 - Derive macros for AST utilities.
 
 ## Target execution pipeline (Cranelift-first)
 
 ### 1) AST (existing)
-- Source is parsed into AST nodes under `pecan_analysis::syntax`.
+- Source is parsed into AST nodes under `beskid_analysis::syntax`.
 - This provides structured syntax nodes but not a semantic model.
 
 ### 2) HIR (to add)
-- Lives in `pecan_analysis::hir` (new module).
+- Lives in `beskid_analysis::hir` (new module).
 - Responsibilities:
   - name resolution, type checking, desugaring.
   - phase-indexed shared-core structure so AST and HIR reuse canonical node families.
@@ -40,7 +40,7 @@ This document describes the intended execution stack and how it maps to the **cu
 - Output used directly by CLIF lowering.
 
 ### 3) CLIF lowering (to add)
-- Lives in `pecan_codegen` (new crate).
+- Lives in `beskid_codegen` (new crate).
 - Uses `cranelift_frontend::FunctionBuilder` to emit CLIF from HIR.
 - CLIF becomes the **only** executable IR (no custom MIR).
 
@@ -58,16 +58,16 @@ This document describes the intended execution stack and how it maps to the **cu
 ## Mapping to planned crates/modules
 
 **Final structure** (clean separation of concerns):
-- `pecan_analysis` — parsing, syntax, query, HIR.
-- `pecan_codegen` — CLIF lowering + module abstraction.
-- `pecan_runtime` — host functions, allocator, and GC hook surface.
-- `pecan_engine` — JIT/AOT drivers (CLI entrypoints call this), runtime symbol registration.
+- `beskid_analysis` — parsing, syntax, query, HIR.
+- `beskid_codegen` — CLIF lowering + module abstraction.
+- `beskid_runtime` — host functions, allocator, and GC hook surface.
+- `beskid_engine` — JIT/AOT drivers (CLI entrypoints call this), runtime symbol registration.
 
 ## Incremental path from current state
 1. Add HIR module and minimal lowering from AST.
 2. Add CLIF lowering for functions + literals.
 3. Add module layer using `cranelift_module`.
-4. Add JIT execution and AOT build integration to `pecan_cli` (new commands `run` and `build`).
+4. Add JIT execution and AOT build integration to `beskid_cli` (new commands `run` and `build`).
 5. Add runtime builtins for strings/arrays.
 
 ## Related docs

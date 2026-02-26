@@ -12,12 +12,12 @@ The structure should use a phase-indexed shared-core model so AST and HIR share 
 
 ## Connection to the current analysis stack
 Current state:
-- `pecan_analysis::analysis` provides diagnostics and a rule engine skeleton.
+- `beskid_analysis::analysis` provides diagnostics and a rule engine skeleton.
 - The rule engine should operate on **HIR**, not raw AST, to guarantee resolved names and typed nodes.
 
 Integration plan:
-1. AST -> HIR lowering lives in `pecan_analysis::hir`.
-2. `pecan_analysis::analysis` rules accept `&Spanned<HIRProgram>` (or `&Spanned<HIRModule>`).
+1. AST -> HIR lowering lives in `beskid_analysis::hir`.
+2. `beskid_analysis::analysis` rules accept `&Spanned<HIRProgram>` (or `&Spanned<HIRModule>`).
 3. Diagnostics emitted from analysis reference HIR spans mapped from AST source locations.
 
 ## HIR responsibilities

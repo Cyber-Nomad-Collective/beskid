@@ -960,12 +960,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "pecan_analysis"
+name = "beskid_analysis"
 version = "0.1.0"
 dependencies = [
  "from-pest",
  "miette",
- "pecan_ast_derive",
+ "beskid_ast_derive",
  "pest",
  "pest-ast",
  "pest_derive",
@@ -973,7 +973,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "pecan_ast_derive"
+name = "beskid_ast_derive"
 version = "0.1.0"
 dependencies = [
  "proc-macro2",
@@ -982,19 +982,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "pecan_codegen"
+name = "beskid_codegen"
 version = "0.1.0"
 dependencies = [
  "cranelift-codegen",
  "cranelift-frontend",
  "cranelift-module",
- "pecan_analysis",
- "pecan_runtime",
+ "beskid_analysis",
+ "beskid_runtime",
  "pest",
 ]
 
 [[package]]
-name = "pecan_engine"
+name = "beskid_engine"
 version = "0.1.0"
 dependencies = [
  "cranelift-codegen",
@@ -1003,16 +1003,16 @@ dependencies = [
  "cranelift-native",
  "cranelift-object",
  "gc-arena",
- "pecan_analysis",
- "pecan_codegen",
- "pecan_runtime",
+ "beskid_analysis",
+ "beskid_codegen",
+ "beskid_runtime",
 ]
 
 [[package]]
-name = "pecan_lsp"
+name = "beskid_lsp"
 version = "0.1.0"
 dependencies = [
- "pecan_analysis",
+ "beskid_analysis",
  "pest",
  "serde_json",
  "tokio",
@@ -1021,7 +1021,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "pecan_runtime"
+name = "beskid_runtime"
 version = "0.1.0"
 dependencies = [
  "gc-arena",
@@ -1038,9 +1038,9 @@ dependencies = [
  "env_logger",
  "log",
  "miette",
- "pecan_analysis",
- "pecan_codegen",
- "pecan_engine",
+ "beskid_analysis",
+ "beskid_codegen",
+ "beskid_engine",
  "pest",
  "serde",
  "serde_json",
@@ -1055,10 +1055,10 @@ dependencies = [
  "cranelift-jit",
  "cranelift-module",
  "cranelift-native",
- "pecan_analysis",
- "pecan_codegen",
- "pecan_engine",
- "pecan_runtime",
+ "beskid_analysis",
+ "beskid_codegen",
+ "beskid_engine",
+ "beskid_runtime",
  "pest",
 ]
 

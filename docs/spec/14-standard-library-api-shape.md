@@ -1,6 +1,6 @@
 # 14. Standard Library API Shape
 
-This document defines the recommended API design shape for Pecan's standard library.
+This document defines the recommended API design shape for Beskid's standard library.
 
 ## 14.1 Design goals
 
@@ -49,7 +49,7 @@ Two-tier model:
 2. **Result-based APIs** where errors are expected.
 
 Example shape:
-```pecan
+```beskid
 pub enum IoError {
     NotFound,
     PermissionDenied,
@@ -65,7 +65,7 @@ pub enum Result<TValue, TError> {
 
 ## 14.5 Interop boundary policy
 
-Public std APIs should be pure Pecan-facing wrappers.
+Public std APIs should be pure Beskid-facing wrappers.
 Interop hooks remain internal and unstable:
 - `__interop_dispatch_unit`
 - `__interop_dispatch_ptr`
@@ -84,7 +84,7 @@ Guideline:
 
 ## 14.7 Suggested MVP module signatures
 
-```pecan
+```beskid
 pub mod std {
     pub mod IO {
         pub unit Print(string text);

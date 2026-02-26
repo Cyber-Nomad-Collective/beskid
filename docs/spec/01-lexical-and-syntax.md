@@ -52,7 +52,7 @@ Notes:
 ### String interpolation
 Use `${Expression}` inside a string literal:
 ```
-let name = "Pecan";
+let name = "Beskid";
 let msg = "hello ${name}";
 ```
 The `${...}` segment accepts a full expression.
@@ -69,7 +69,7 @@ let msg = "items: ${count + 1}";
 ## Example
 ```
 i32 main() {
-    let name = "Pecan";
+    let name = "Beskid";
     i32 mut count = 0;
 
     if name.len() > 0 {

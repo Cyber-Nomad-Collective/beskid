@@ -5,7 +5,7 @@ description: JIT execution with Cranelift
 # JIT execution with Cranelift
 
 ## Purpose
-Execute Pecan code in-process by compiling CLIF to native machine code using `JITModule`.
+Execute Beskid code in-process by compiling CLIF to native machine code using `JITModule`.
 
 ## Key APIs
 - `JITModule::new(builder)`

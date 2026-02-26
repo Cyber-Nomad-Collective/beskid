@@ -20,8 +20,8 @@ pn::<module_path>::<item_name>$<kind>(<param_types>,<return_type>)
 - Generic: `pn::collections::Map::insert$method(self,K,V,Option[V])`
 
 ## Module path rules
-- `src/net/http.pn` -> `net.http`
-- `src/net/http/client.pn` -> `net.http.client`
+- `src/net/http.bd` -> `net.http`
+- `src/net/http/client.bd` -> `net.http.client`
 
 ## Type encoding
 - `i64`, `f64`, `bool`, `str`, `ptr`, `unit` are literal tokens.

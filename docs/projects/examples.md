@@ -1,5 +1,5 @@
 ---
-description: Pecan Project Examples (HCL)
+description: Beskid Project Examples (HCL)
 ---
 
 # Project Examples
@@ -9,7 +9,7 @@ description: Pecan Project Examples (HCL)
 MyApp/
 ├── Project.proj
 └── Src/
-    └── Main.pn
+    └── Main.bd
 ```
 
 **Project.proj**
@@ -22,7 +22,7 @@ project {
 
 target "App" {
   kind  = "App"
-  entry = "Main.pn"
+  entry = "Main.bd"
 }
 ```
 
@@ -32,11 +32,11 @@ Workspace/
 ├── App/
 │   ├── Project.proj
 │   └── Src/
-│       └── Main.pn
+│       └── Main.bd
 └── Std/
     ├── Project.proj
     └── Src/
-        └── IO.pn
+        └── IO.bd
 ```
 
 **App/Project.proj**
@@ -49,7 +49,7 @@ project {
 
 target "App" {
   kind  = "App"
-  entry = "Main.pn"
+  entry = "Main.bd"
 }
 
 dependency "Std" {
@@ -68,7 +68,7 @@ project {
 
 target "Library" {
   kind  = "Lib"
-  entry = "IO.pn"
+  entry = "IO.bd"
 }
 ```
 
@@ -77,9 +77,9 @@ target "Library" {
 NetLib/
 ├── Project.proj
 └── Src/
-    ├── Net.pn
+    ├── Net.bd
     └── Net/
-        └── Http.pn
+        └── Http.bd
 ```
 
 **Project.proj**
@@ -92,17 +92,17 @@ project {
 
 target "Library" {
   kind  = "Lib"
-  entry = "Net.pn"
+  entry = "Net.bd"
 }
 ```
 
-**Src/Net.pn**
-```pecan
+**Src/Net.bd**
+```beskid
 pub mod Http;
 ```
 
-**Src/Net/Http.pn**
-```pecan
+**Src/Net/Http.bd**
+```beskid
 pub type Client { ... }
 ```
 
@@ -111,8 +111,8 @@ pub type Client { ... }
 Project/
 ├── Project.proj
 └── Src/
-    ├── Main.pn
-    └── Tests.pn
+    ├── Main.bd
+    └── Tests.bd
 ```
 
 ```hcl
@@ -124,11 +124,11 @@ project {
 
 target "App" {
   kind  = "App"
-  entry = "Main.pn"
+  entry = "Main.bd"
 }
 
 target "Tests" {
   kind  = "Test"
-  entry = "Tests.pn"
+  entry = "Tests.bd"
 }
 ```

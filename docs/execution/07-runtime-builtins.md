@@ -5,7 +5,7 @@ description: Runtime builtins, interop, and host functions
 # Runtime builtins and host functions
 
 ## Purpose
-Provide foundational operations (alloc, GC hooks) and a scalable Interop Dispatcher for the Pecan Standard Library to call host (Rust) functions.
+Provide foundational operations (alloc, GC hooks) and a scalable Interop Dispatcher for the Beskid Standard Library to call host (Rust) functions.
 
 ## Internal Builtins
 These are low-level runtime hooks called directly by the codegen during lowering. They are not exposed to user code.
@@ -26,17 +26,17 @@ These are low-level runtime hooks called directly by the codegen during lowering
 - Host code must call `gc_unroot_handle` when the value is no longer needed.
 
 ## Standard Library Interop (Command Pattern)
-Instead of declaring hundreds of individual standard library methods as external Cranelift functions, Pecan uses an **Interop Dispatcher** model.
+Instead of declaring hundreds of individual standard library methods as external Cranelift functions, Beskid uses an **Interop Dispatcher** model.
 
 ### Architecture
 1. **Rust Macro Definition:** A `define_stdlib!` macro in Rust defines the standard library API surface.
-2. **Pecan Enum Generation:** The macro auto-generates a Pecan `enum` (e.g., `StdInterop`) where variants represent method calls and their arguments.
-3. **Pecan Wrapper Generation:** The macro auto-generates Pecan wrapper functions (e.g., `std::io::println`) that construct the enum and pass it to an internal dispatcher builtin.
+2. **Beskid Enum Generation:** The macro auto-generates a Beskid `enum` (e.g., `StdInterop`) where variants represent method calls and their arguments.
+3. **Beskid Wrapper Generation:** The macro auto-generates Beskid wrapper functions (e.g., `std::io::println`) that construct the enum and pass it to an internal dispatcher builtin.
 4. **Rust Dispatcher:** The JIT module registers a single `__interop_dispatch` symbol. This Rust function receives the enum pointer, decodes the tag and payload, and executes the requested host logic.
 
 ### Benefits
 - **Scalability:** Adding a new standard library method requires zero changes to the Cranelift codegen or JIT module registration.
-- **Type Safety:** The generated Pecan wrappers ensure type safety on the user side, while the Rust dispatcher unpacks the memory layout safely using generated offsets.
+- **Type Safety:** The generated Beskid wrappers ensure type safety on the user side, while the Rust dispatcher unpacks the memory layout safely using generated offsets.
 
 ## Integration strategy
 - Internal builtins and the Dispatcher are declared via `Module::declare_function`.

@@ -15,7 +15,7 @@ Cranelift modules collect and link functions and data objects. This is the bound
 
 Reference: https://docs.rs/cranelift-module/latest/cranelift_module/trait.Module.html
 
-## Responsibilities in Pecan
+## Responsibilities in Beskid
 - Declare all user functions (and runtime helpers) with signatures.
 - Emit CLIF into a `Context` and call `define_function`.
 - Resolve function references via `declare_func_in_func`.

@@ -1,8 +1,8 @@
 ---
-description: Pecan LSP phased implementation and delivery plan
+description: Beskid LSP phased implementation and delivery plan
 ---
 
-# 02. Pecan LSP Implementation Plan
+# 02. Beskid LSP Implementation Plan
 
 ## 1. Delivery strategy
 
@@ -20,13 +20,13 @@ Principles:
 
 ### Goals
 
-- Create runnable server skeleton in `pecan_lsp`.
+- Create runnable server skeleton in `beskid_lsp`.
 - Wire basic lifecycle handlers.
 - Establish shared state and document snapshot management.
 
 ### Work items
 
-1. Add dependencies in `src/pecan_lsp/Cargo.toml`:
+1. Add dependencies in `src/beskid_lsp/Cargo.toml`:
    - `tower-lsp-server`
    - `tokio`
    - `ls-types` (if needed directly)
