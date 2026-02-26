@@ -7,13 +7,14 @@ Project manifests referenced in this plan use `Project.proj` (HCL syntax).
 ## 1. Architectural Overview
 
 ### Current State
-Standard library functions (like `Std.IO.Println`) and internal codegen hooks (like `__alloc`) are both treated as Cranelift external functions. Adding a new standard library method requires changes across `beskid_analysis`, `beskid_codegen`, and `beskid_engine`.
+Language/runtime execution paths are now ABI-oriented: internal hooks and interop dispatch builtins are the only compiler/runtime-level contract. Public `std` wrappers live in the standalone `standard_library` Beskid project.
 
 ### Target State
 - **Internal Builtins**: Kept directly in Cranelift. Limited strictly to memory/codegen hooks (`__alloc`, `__gc_write_barrier`, etc.).
 - **Interop Builtins**: A handful of `__interop_dispatch_<return_type>` functions registered in Cranelift.
-- **Beskid Prelude**: Transitional compatibility shim only; primary wrappers come from `Std` project sources.
-- **Project System Alignment**: The long-term source of standard library wrappers is the `Std` project (`Std/Project.proj`) resolved through normal dependency edges in the Daggy project DAG.
+- **Stdlib Source of Truth**: Public wrappers come from `standard_library` project sources (`Project.proj` + `Src/*.bd`).
+- **Interop Source Generation**: `pekan_cli interop` generates dispatch wrapper source (`Interop.generated.bd`) consumed by stdlib sources.
+- **Project System Alignment**: `Std` project is resolved through normal dependency edges in the Daggy project DAG.
 - **Build Workflow Alignment**: Build/run resolve and materialize dependency source trees into `obj/beskid` before compile phases.
 - **Lockfile Alignment**: `Project.lock` is created/updated automatically during resolve/build/run lifecycle.
 - **Rust Dispatcher**: A generated Rust FFI function that decodes the `StdInterop` enum pointer, reads the payload based on the `tag`, and calls the respective Rust function.
@@ -31,10 +32,10 @@ Standard library functions (like `Std.IO.Println`) and internal codegen hooks (l
    - Example: `__interop_dispatch_unit(ptr) -> unit`, `__interop_dispatch_ptr(ptr) -> ptr`, `__interop_dispatch_usize(ptr) -> usize`.
 
 ### Phase 2: Define the Interop Data Structures (Manual MVP)
-Before building a complex proc-macro, we will implement the first interop manually to establish the memory layout and validation.
-1. **Create `beskid_analysis/src/stdlib.rs`**:
-   - Define a constant `pub const STDLIB_PRELUDE: &str = r#" ... "#;`
-   - Include the `enum StdInterop` definition. Example:
+Before introducing advanced generation, implement interop schema manually to validate layout and runtime decoding.
+1. **Define `StdInterop` in stdlib source**:
+   - Author enum and wrappers in `standard_library/Src/*.bd`.
+   - Example:
      ```beskid
      enum StdInterop {
          IoPrint(String text),
@@ -42,7 +43,7 @@ Before building a complex proc-macro, we will implement the first interop manual
          StringLen(String text),
      }
      ```
-   - Include the wrapper modules. Example:
+   - Wrapper modules call `__interop_dispatch_*`. Example:
      ```beskid
      mod Std {
         mod IO {
@@ -53,19 +54,14 @@ Before building a complex proc-macro, we will implement the first interop manual
      }
      ```
 
-### Phase 3: Compiler Injection (The Prelude)
-1. **Modify the Resolver / AST Parser**:
-   - Update `beskid_lsp`, `beskid_cli`, and test harnesses to parse `STDLIB_PRELUDE` alongside user code.
-   - Inject the prelude's AST into the `ModuleGraph` before name resolution.
-   - *Challenge*: The prelude uses internal builtins (`__interop_dispatch_unit`), so the resolver must ensure the prelude is allowed to access them (perhaps by disabling visibility checks or registering them directly).
-2. **Bridge to Project-based Stdlib**:
-   - Add `Std` as a regular dependency in root `Project.proj` manifests during migration.
-   - Resolve `Std` through the Daggy dependency graph (`consumer -> dependency` edge semantics).
-   - Move stable `Std.*` wrappers from injected prelude text into `Std` project sources.
-   - Keep prelude injection only for transitional/runtime-internal shims that are not yet emitted from `Std/Project.proj`.
-   - Disable prelude fallback whenever a resolvable `Std` dependency node exists in the graph.
-   - Require dependency materialization to `obj/beskid/deps/src` before loading `Std` compile units.
-   - Require lock sync (`Project.lock`) before project compilation continues.
+### Phase 3: Project-based Stdlib Integration (No Prelude Injection)
+1. **Resolver / AST Input Scope**:
+   - Compiler consumes user/project-resolved source only.
+   - No embedded stdlib prelude is injected into runtime pipeline.
+2. **Std Dependency Resolution**:
+   - Add `Std` as a regular dependency in `Project.proj`.
+   - Resolve `Std` through Daggy graph and materialize to `obj/beskid/deps/src`.
+   - Keep lock sync (`Project.lock`) as part of resolve/build/run lifecycle.
 
 ### Phase 4: The Rust Dispatcher Implementation
 1. **Create `beskid_runtime/src/interop.rs`**:
@@ -86,22 +82,21 @@ Before building a complex proc-macro, we will implement the first interop manual
    - Delete `sys_print`, `sys_println`, `str_len`, etc., from the internal builtins list in `beskid_analysis`.
    - Remove their direct `JITBuilder::symbol` registrations.
 3. **Verify Tests**:
-   - Ensure `examples/*.bd` and runtime JIT tests continue to work correctly by calling `Std.IO.Println` via the new injected prelude/project wrappers and dispatcher.
+   - Ensure `examples/*.bd` and runtime JIT tests continue to work correctly via `standard_library` wrappers and typed dispatchers.
 
 ### Phase 6: Macroification (The Developer Experience)
-Once the manual MVP is proven to work and memory offsets are validated:
-1. **Create `define_stdlib!` macro**:
-   - Create a macro that accepts a list of Rust functions and their Beskid signatures.
-   - The macro generates the `STDLIB_PRELUDE` string at compile time.
-   - The macro generates the `match tag { ... }` block for the dispatcher automatically, calculating offsets based on the argument types.
+Now represented by source-generation workflow:
+1. **Interop Generator Command**:
+   - `pekan_cli interop` emits Beskid interop wrapper source.
+   - Stdlib seeding remains explicit/manual in `standard_library` sources.
 
 ---
 
 ## 3. Key Technical Challenges & Risks
 - **Enum Payload Layout**: The Rust dispatcher must manually unpack the enum payload from a raw pointer. Beskid's `TypeLayout` rules dictate alignment and padding. Hardcoding these in the MVP is risky; we must ensure the manual offsets match `TypeLayout::from_enum`.
 - **Return Types**: C-ABI and Cranelift require fixed return types. We cannot have a generic `dispatch(enum) -> Any`. We must group interop methods by their return type and have a specific dispatcher for each (e.g., `_unit`, `_ptr`, `_i64`).
-- **Prelude Name Clashes**: Injecting the prelude into every user file might cause name clashes if a user defines `mod Std`. The resolver will need a mechanism to merge `mod Std` or reserve the `Std` namespace.
-- **Graph/Interop Transition Cohesion**: During migration, keep dependency-graph-based `Std` resolution as the primary path and ensure fallback behavior is explicit, feature-gated, and disabled when `Std` is resolvable.
+- **Interop Enum Cohesion**: Runtime dispatch tag expectations and Beskid `StdInterop` variant ordering must stay synchronized.
+- **Graph/Interop Cohesion**: Keep dependency-graph-based `Std` resolution as the only std source path in execution flows.
 
 ---
 
@@ -144,9 +139,9 @@ Reserve `E30xx` for projects/build workflow diagnostics referenced by interop mi
 
 Interop migration is complete when all of the following are true:
 
-1. `Std` wrappers are provided by project-resolved source code (not primary prelude injection).
+1. `Std` wrappers are provided by project-resolved `standard_library` source code.
 2. Build/run always materialize dependency sources into `obj/beskid` before compilation.
 3. Lockfile lifecycle is active and automatic by default.
 4. Legacy direct std builtin registrations (`sys_print*`, `str_len`) are removed from primary path.
-5. Compatibility prelude fallback is feature-gated and disabled when `Std` is resolvable.
+5. Embedded stdlib prelude fallback is removed from execution flows and compile-plan APIs.
 6. Diagnostic output for migration and project failures uses shared analysis diagnostics conventions and stable error codes.

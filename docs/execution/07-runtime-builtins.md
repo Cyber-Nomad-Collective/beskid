@@ -29,14 +29,14 @@ These are low-level runtime hooks called directly by the codegen during lowering
 Instead of declaring hundreds of individual standard library methods as external Cranelift functions, Beskid uses an **Interop Dispatcher** model.
 
 ### Architecture
-1. **Rust Macro Definition:** A `define_stdlib!` macro in Rust defines the standard library API surface.
-2. **Beskid Enum Generation:** The macro auto-generates a Beskid `enum` (e.g., `StdInterop`) where variants represent method calls and their arguments.
-3. **Beskid Wrapper Generation:** The macro auto-generates Beskid wrapper functions (e.g., `std::io::println`) that construct the enum and pass it to an internal dispatcher builtin.
-4. **Rust Dispatcher:** The JIT module registers a single `__interop_dispatch` symbol. This Rust function receives the enum pointer, decodes the tag and payload, and executes the requested host logic.
+1. **Stdlib Source Project:** Public std wrappers are authored in `standard_library` as normal Beskid code.
+2. **Interop Source Generation:** `pekan_cli interop` generates interop wrappers/enum source used by stdlib (`Interop.generated.bd`).
+3. **Typed Dispatcher Builtins:** Codegen calls typed dispatch builtins (`__interop_dispatch_unit`, `__interop_dispatch_usize`, `__interop_dispatch_ptr`) that accept an interop enum pointer.
+4. **Rust Dispatchers:** Runtime exports typed dispatcher functions that decode the enum tag/payload and execute host logic.
 
 ### Benefits
 - **Scalability:** Adding a new standard library method requires zero changes to the Cranelift codegen or JIT module registration.
-- **Type Safety:** The generated Beskid wrappers ensure type safety on the user side, while the Rust dispatcher unpacks the memory layout safely using generated offsets.
+- **Boundary Clarity:** Language/runtime pipeline depends on ABI/internal builtins, while `std` remains an external project dependency.
 
 ## Integration strategy
 - Internal builtins and the Dispatcher are declared via `Module::declare_function`.

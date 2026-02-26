@@ -1,0 +1,16 @@
+[package]
+name = "beskid_aot"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+beskid_abi = { path = "../beskid_abi" }
+beskid_codegen = { path = "../beskid_codegen" }
+cranelift-codegen = "0.128.3"
+cranelift-module = "0.128.3"
+cranelift-native = "0.128.3"
+cranelift-object = "0.128.3"
+thiserror = "2"
+tempfile = "3"
+cc = "1"
+ar = "0.9"

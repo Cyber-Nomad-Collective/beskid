@@ -214,14 +214,29 @@ description: Beskid execution implementation plan
 
 ## Phase 6 - AOT support (planned)
 
-**Goal:** emit object files.
+**Goal:** emit native standalone executables and shared/static libraries via a dedicated AOT pipeline.
 
 **Plan**
-- Add `ObjectModule` to `beskid_engine` and a `build` CLI path.
-- Emit exported `pub` functions and link runtime builtins.
+1. **`beskid_aot` scaffolding**
+   - Create a new `beskid_aot` crate to handle the AOT build pipeline.
+   - Implement `BeskidObjectModule` (similar to `BeskidJitModule` but wrapping `cranelift_object::ObjectModule`).
+2. **Object Emission**
+   - Consume `CodegenArtifact` and emit an unlinked `.o` / `.obj` file.
+   - Ensure type descriptors and string literals are correctly emitted as data sections.
+3. **Runtime Builtin Preparation**
+   - Refactor `beskid_runtime` builtins (like `alloc`, `gc_write_barrier`) to use `#[no_mangle] pub extern "C"` so the linker can find them.
+   - Implement an AOT `main` shim in `beskid_runtime` that initializes the GC `Arena` and calls the compiled Beskid entrypoint (for executables).
+4. **On-the-fly Runtime Compilation (MVP)**
+   - Have `beskid_aot` generate a temporary `Cargo.toml` to compile `beskid_runtime` into a static library (`libbeskid_runtime.a`) using the host's Rust toolchain.
+5. **System Linking**
+   - Add the `cc` crate as a dependency to `beskid_aot`.
+   - Use `cc::Build::new().get_compiler()` to orchestrate the system C compiler (`gcc`, `clang`, `cl.exe`).
+   - Link `output.o` and `libbeskid_runtime.a` into the final target (Executable, `.a`, or `.so`/`.dylib`).
 
 **Acceptance criteria**
-- Object file produced with exported symbols.
+- `beskid build --lib` produces a `.a` or `.so`/`.dylib` exposing explicitly exported functions.
+- `beskid build --exe` produces a standalone executable that runs successfully and calls the runtime `main` shim.
+- Runtime builtins resolve correctly at link time without undefined symbol errors.
 
 ---
 

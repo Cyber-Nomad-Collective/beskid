@@ -1,0 +1,125 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Beskid",
+  "scopeName": "source.beskid",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#types"
+    },
+    {
+      "include": "#constants"
+    },
+    {
+      "include": "#function-def"
+    },
+    {
+      "include": "#calls"
+    },
+    {
+      "include": "#operators"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.beskid",
+          "begin": "//",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.beskid"
+            }
+          },
+          "end": "$"
+        },
+        {
+          "name": "comment.block.beskid",
+          "begin": "/\\*",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.begin.beskid"
+            }
+          },
+          "end": "\\*/",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.end.beskid"
+            }
+          }
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.beskid",
+      "begin": "\"",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.beskid"
+        }
+      },
+      "end": "\"",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.beskid"
+        }
+      },
+      "patterns": [
+        {
+          "name": "constant.character.escape.beskid",
+          "match": "\\\\(?:[nrt\\\"0]|x[0-9A-Fa-f]{2}|u\\{[0-9A-Fa-f_]+\\})"
+        }
+      ]
+    },
+    "numbers": {
+      "name": "constant.numeric.beskid",
+      "match": "\\b(?:0[xX][0-9A-Fa-f_]+|0[bB][01_]+|0[oO][0-7_]+|[0-9][0-9_]*)\\b"
+    },
+    "keywords": {
+      "name": "keyword.control.beskid",
+      "match": "\\b(?:type|enum|contract|match|when|if|else|while|for|in|return|break|continue|let|mut|mod|use|pub|ref|out)\\b"
+    },
+    "types": {
+      "name": "storage.type.beskid",
+      "match": "\\b(?:i8|i16|i32|i64|isize|u8|u16|u32|u64|usize|f32|f64|bool|str|unit)\\b"
+    },
+    "constants": {
+      "name": "constant.language.beskid",
+      "match": "\\b(?:true|false)\\b"
+    },
+    "function-def": {
+      "patterns": [
+        {
+          "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\()",
+          "captures": {
+            "1": {
+              "name": "storage.type.beskid"
+            },
+            "2": {
+              "name": "entity.name.function.beskid"
+            }
+          }
+        }
+      ]
+    },
+    "calls": {
+      "name": "support.function.beskid",
+      "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\()"
+    },
+    "operators": {
+      "name": "keyword.operator.beskid",
+      "match": "==|!=|<=|>=|&&|\\|\\||[+\\-*/%<>=!&|^]"
+    }
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "name": "beskind-vscode",
+  "displayName": "Beskid",
+  "description": "VS Code support for Beskid (.bd, .proj) via the Beskid LSP",
+  "version": "0.1.0",
+  "publisher": "beskid",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.88.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "main": "./out/extension.js",
+  "packageManager": "bun@1.2.20",
+  "contributes": {
+    "languages": [
+      {
+        "id": "beskid",
+        "aliases": [
+          "Beskid",
+          "beskid"
+        ],
+        "extensions": [
+          ".bd",
+          ".proj"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "beskid",
+        "scopeName": "source.beskid",
+        "path": "./syntaxes/beskid.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "Beskid LSP",
+      "properties": {
+        "beskid.lsp.server.command": {
+          "type": "string",
+          "default": "cargo",
+          "description": "Fallback command used when no bundled server binary is available."
+        },
+        "beskid.lsp.server.args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "run",
+            "-p",
+            "beskid_lsp"
+          ],
+          "description": "Fallback arguments used when no bundled server binary is available."
+        },
+        "beskid.lsp.server.preferBundled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Prefer bundled platform server binary under extension `server/<platform>-<arch>/`."
+        },
+        "beskid.lsp.server.path": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to a Beskid LSP binary. Overrides bundled and fallback command settings."
+        },
+        "beskid.lsp.server.cwd": {
+          "type": "string",
+          "default": "",
+          "description": "Optional working directory for the language server process. Empty means current workspace root."
+        },
+        "beskid.lsp.server.debugArgs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "run",
+            "-p",
+            "beskid_lsp"
+          ],
+          "description": "Arguments used when VS Code launches the extension in debug mode."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "sync:keywords": "bun scripts/sync-keywords.mjs",
+    "build": "bunx tsc -p .",
+    "watch": "bunx tsc -w -p .",
+    "lint": "bunx tsc -p . --noEmit",
+    "package": "bunx @vscode/vsce package",
+    "vscode:prepublish": "bun run build"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.6.2",
+    "@types/node": "^25.3.1",
+    "@types/vscode": "^1.88.0",
+    "typescript": "^5.8.2"
+  },
+  "trustedDependencies": [
+    "@vscode/vsce-sign"
+  ]
+}

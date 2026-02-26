@@ -23,10 +23,11 @@ This execution stack uses Cranelift from the start. The compiler produces Cranel
    - Emit Cranelift IR using `FunctionBuilder`.
 4. **Module layer**
    - Declare/define functions and data using `cranelift_module`.
-5. **Execution**
-   - `cranelift_jit` for in-process execution.
-6. **AOT output (optional)**
-   - `cranelift_object` for object files.
+5. **Execution (JIT)**
+   - `beskid_engine` uses `cranelift_jit` for in-process execution.
+6. **AOT Output (Libraries and Executables)**
+   - `beskid_aot` uses `cranelift_object` to emit `.o` files.
+   - `beskid_aot` orchestrates the system C compiler (via the `cc` crate) to link the `.o` file with a statically compiled `beskid_runtime` into a final native executable or shared library.
 
 ## Runtime dependency
 - Heap-backed aggregates (struct/enum) depend on runtime allocation + GC hooks.

@@ -48,10 +48,16 @@ struct TypeDescriptor {
 - Allocation and pointer access happen inside `Arena::mutate` with a `Mutation` handle.
 - GC pointers must not escape the mutation callback; values crossing the host boundary must be rooted in the arena root object.
 
+## GC scaffolding hooks
+
 ## Root object schema (v0)
 - Root stores globals, dynamic roots, and runtime state needed across calls.
 - Host-facing values are stored as handles into a `DynamicRootSet`.
 - See `docs/execution/10-runtime-gc.md` for runtime integration lifecycle and host boundary rules.
+
+## AOT Integration & Host Boundary
+- **Builtins:** All runtime functions (`alloc`, `gc_write_barrier`, etc.) must be exported with `#[no_mangle] pub extern "C"` in `beskid_runtime` to ensure predictable symbol names for the system linker.
+- **Entrypoint:** For standalone executables, `beskid_runtime` provides an AOT main shim (`#[no_mangle] pub extern "C" fn main()`). This shim initializes the GC `Arena` (replicating the JIT `Engine` setup) and safely invokes the compiled Beskid entrypoint symbol (e.g., `__beskid_main`).
 
 ## Write barriers
 - Any store of a heap pointer into another heap object must call a write-barrier stub.

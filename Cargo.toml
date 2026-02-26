@@ -1,10 +1,10 @@
 [workspace]
 resolver = "3"
-members = ["src/beskid_analysis", "src/beskid_cli", "src/beskid_tests", "src/beskid_ast_derive", "src/beskid_codegen", "src/beskid_runtime", "src/beskid_engine", "src/gc-arena", "src/gc-arena/derive", "src/beskid_lsp"]
+members = ["crates/beskid_analysis", "crates/beskid_cli", "crates/beskid_tests", "crates/beskid_ast_derive", "crates/beskid_codegen", "crates/beskid_abi", "crates/beskid_runtime", "crates/beskid_engine", "crates/gc-arena", "crates/gc-arena/derive", "crates/beskid_lsp", "crates/beskid_aot"]
 [workspace.dependencies]
 allocator-api2 = { version = "0.2", default-features = false, features = ["alloc"] }
 enum-map = { version = "2.7", default-features = false }
-gc-arena-derive = { path = "src/gc-arena/derive", version = "0.5.3" }
+gc-arena-derive = { path = "crates/gc-arena/derive", version = "0.5.3" }
 hashbrown = { version = "0.16", default-features = false }
 indexmap = { version = "2.13", default-features = false }
 pest = "2.8"
