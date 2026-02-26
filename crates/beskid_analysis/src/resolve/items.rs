@@ -1,5 +1,5 @@
-use crate::syntax::SpanInfo;
 use crate::hir::HirVisibility;
+use crate::syntax::SpanInfo;
 
 use super::ids::ItemId;
 

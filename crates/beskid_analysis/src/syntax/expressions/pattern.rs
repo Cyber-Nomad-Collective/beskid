@@ -1,8 +1,8 @@
 use pest::iterators::Pair;
 
+use crate::parser::Rule;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
-use crate::parser::Rule;
 use crate::syntax::{EnumPath, Identifier, Literal, SpanInfo, Spanned};
 
 use beskid_ast_derive::AstNode;
@@ -60,13 +60,11 @@ impl Parsable for EnumPattern {
     fn parse(pair: Pair<Rule>) -> Result<Spanned<Self>, ParseError> {
         let span = SpanInfo::from_span(&pair.as_span());
         let mut inner = pair.into_inner();
-        let path = EnumPath::parse(
-            inner
-                .next()
-                .ok_or(ParseError::missing(Rule::EnumPath))?,
-        )?;
+        let path = EnumPath::parse(inner.next().ok_or(ParseError::missing(Rule::EnumPath))?)?;
         let items = if let Some(list) = inner.next() {
-            list.into_inner().map(Pattern::parse).collect::<Result<Vec<_>, _>>()?
+            list.into_inner()
+                .map(Pattern::parse)
+                .collect::<Result<Vec<_>, _>>()?
         } else {
             Vec::new()
         };

@@ -1,6 +1,4 @@
-use crate::hir::{
-    HirPrimitiveType, HirRangeExpression, HirStatementNode, HirBlock,
-};
+use crate::hir::{HirBlock, HirPrimitiveType, HirRangeExpression, HirStatementNode};
 use crate::syntax::Spanned;
 
 use super::context::{TypeContext, TypeError};

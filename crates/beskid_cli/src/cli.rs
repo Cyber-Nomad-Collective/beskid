@@ -1,4 +1,3 @@
-use clap::{Parser, Subcommand};
 use crate::commands::analyze::AnalyzeArgs;
 use crate::commands::build::BuildArgs;
 use crate::commands::clif::ClifArgs;
@@ -10,6 +9,7 @@ use crate::commands::run::RunArgs;
 use crate::commands::tree::TreeArgs;
 use crate::commands::update::UpdateArgs;
 use crate::commands::{analyze, build, clif, fetch, interop, lock, parse, run, tree, update};
+use clap::{Parser, Subcommand};
 use std::env;
 
 #[derive(Parser)]
@@ -55,7 +55,8 @@ pub enum Commands {
 
 pub fn run() -> anyhow::Result<()> {
     let os_args = env::args_os();
-    let all_args = argfile::expand_args_from(os_args, argfile::parse_fromfile, argfile::PREFIX).unwrap();
+    let all_args =
+        argfile::expand_args_from(os_args, argfile::parse_fromfile, argfile::PREFIX).unwrap();
     let cli = Cli::parse_from(all_args);
 
     match cli.command {

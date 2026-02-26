@@ -92,7 +92,8 @@ fn build_runtime_on_the_fly(req: &RuntimeBuildRequest) -> AotResult<RuntimeArtif
     } else {
         "debug"
     };
-    let cache_key = format!("runtime_bridge_{target_key}_{profile_key}_abi{BESKID_RUNTIME_ABI_VERSION}");
+    let cache_key =
+        format!("runtime_bridge_{target_key}_{profile_key}_abi{BESKID_RUNTIME_ABI_VERSION}");
     let package_root = req.work_dir.join(cache_key);
     let src_dir = package_root.join("src");
     std::fs::create_dir_all(&src_dir).map_err(|err| AotError::Io {
@@ -165,16 +166,22 @@ pub extern \"C\" fn beskid_runtime_link_anchor() {
                 "libbeskid_runtime_bridge.a".to_string()
             })
     } else {
-        package_root.join("target").join(profile_dir).join(if target.static_lib_ext == "lib" {
-            "beskid_runtime_bridge.lib".to_string()
-        } else {
-            "libbeskid_runtime_bridge.a".to_string()
-        })
+        package_root
+            .join("target")
+            .join(profile_dir)
+            .join(if target.static_lib_ext == "lib" {
+                "beskid_runtime_bridge.lib".to_string()
+            } else {
+                "libbeskid_runtime_bridge.a".to_string()
+            })
     };
 
     if !artifact_path.exists() {
         let mut command = Command::new("cargo");
-        command.arg("build").arg("--manifest-path").arg(&manifest_path);
+        command
+            .arg("build")
+            .arg("--manifest-path")
+            .arg(&manifest_path);
         if matches!(req.profile, BuildProfile::Release) {
             command.arg("--release");
         }

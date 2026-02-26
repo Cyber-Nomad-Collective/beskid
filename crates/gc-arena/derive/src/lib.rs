@@ -1,11 +1,11 @@
 use proc_macro2::{Span, TokenStream};
-use quote::{ToTokens, quote, quote_spanned};
+use quote::{quote, quote_spanned, ToTokens};
 use syn::{
     parse::{Parse, ParseStream},
     spanned::Spanned,
     visit_mut::VisitMut,
 };
-use synstructure::{AddBounds, decl_derive};
+use synstructure::{decl_derive, AddBounds};
 
 fn collect_derive(s: synstructure::Structure) -> TokenStream {
     fn find_collect_meta(attrs: &[syn::Attribute]) -> syn::Result<Option<&syn::Attribute>> {

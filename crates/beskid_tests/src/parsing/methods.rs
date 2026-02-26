@@ -14,5 +14,8 @@ fn rejects_method_without_receiver_type() {
 
 #[test]
 fn rejects_method_without_dot() {
-    assert_parse_fail(Rule::MethodDefinition, "i32 Point len(self: Point) { return 0; }");
+    assert_parse_fail(
+        Rule::MethodDefinition,
+        "i32 Point len(self: Point) { return 0; }",
+    );
 }

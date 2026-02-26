@@ -9,10 +9,7 @@ pub enum TypeInfo {
     Primitive(HirPrimitiveType),
     Named(ItemId),
     GenericParam(String),
-    Applied {
-        base: ItemId,
-        args: Vec<TypeId>,
-    },
+    Applied { base: ItemId, args: Vec<TypeId> },
 }
 
 #[derive(Debug, Default)]

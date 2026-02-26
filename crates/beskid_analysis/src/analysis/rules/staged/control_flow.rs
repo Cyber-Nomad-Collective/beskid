@@ -19,10 +19,22 @@ impl SemanticPipelineRule {
         for item in &hir.node.items {
             match &item.node {
                 HirItem::FunctionDefinition(definition) => {
-                    self.check_block(ctx, &definition.node.body, 0, &enum_variants, &variant_to_enum);
+                    self.check_block(
+                        ctx,
+                        &definition.node.body,
+                        0,
+                        &enum_variants,
+                        &variant_to_enum,
+                    );
                 }
                 HirItem::MethodDefinition(definition) => {
-                    self.check_block(ctx, &definition.node.body, 0, &enum_variants, &variant_to_enum);
+                    self.check_block(
+                        ctx,
+                        &definition.node.body,
+                        0,
+                        &enum_variants,
+                        &variant_to_enum,
+                    );
                 }
                 _ => {}
             }
@@ -56,7 +68,10 @@ impl SemanticPipelineRule {
 
             let mut variants = HashMap::new();
             for variant in &definition.node.variants {
-                variants.insert(variant.node.name.node.name.clone(), variant.node.fields.len());
+                variants.insert(
+                    variant.node.name.node.name.clone(),
+                    variant.node.fields.len(),
+                );
             }
             result.insert(definition.node.name.node.name.clone(), variants);
         }
@@ -81,13 +96,22 @@ impl SemanticPipelineRule {
                     "W1403",
                     "unreachable code",
                     "unreachable statement",
-                    Some("remove this statement or move it before the terminating statement".to_string()),
+                    Some(
+                        "remove this statement or move it before the terminating statement"
+                            .to_string(),
+                    ),
                     Severity::Warning,
                 );
                 continue;
             }
 
-            if self.is_terminating_statement(ctx, statement, loop_depth, enum_variants, variant_to_enum) {
+            if self.is_terminating_statement(
+                ctx,
+                statement,
+                loop_depth,
+                enum_variants,
+                variant_to_enum,
+            ) {
                 terminated = true;
             }
         }
@@ -103,7 +127,13 @@ impl SemanticPipelineRule {
     ) -> bool {
         match &statement.node {
             HirStatementNode::LetStatement(let_statement) => {
-                self.check_expression(ctx, &let_statement.node.value, loop_depth, enum_variants, variant_to_enum);
+                self.check_expression(
+                    ctx,
+                    &let_statement.node.value,
+                    loop_depth,
+                    enum_variants,
+                    variant_to_enum,
+                );
                 false
             }
             HirStatementNode::ReturnStatement(return_statement) => {
@@ -148,7 +178,13 @@ impl SemanticPipelineRule {
                     enum_variants,
                     variant_to_enum,
                 );
-                self.check_block(ctx, &while_statement.node.body, loop_depth + 1, enum_variants, variant_to_enum);
+                self.check_block(
+                    ctx,
+                    &while_statement.node.body,
+                    loop_depth + 1,
+                    enum_variants,
+                    variant_to_enum,
+                );
                 false
             }
             HirStatementNode::ForStatement(for_statement) => {
@@ -166,7 +202,13 @@ impl SemanticPipelineRule {
                     enum_variants,
                     variant_to_enum,
                 );
-                self.check_block(ctx, &for_statement.node.body, loop_depth + 1, enum_variants, variant_to_enum);
+                self.check_block(
+                    ctx,
+                    &for_statement.node.body,
+                    loop_depth + 1,
+                    enum_variants,
+                    variant_to_enum,
+                );
                 false
             }
             HirStatementNode::IfStatement(if_statement) => {
@@ -177,7 +219,13 @@ impl SemanticPipelineRule {
                     enum_variants,
                     variant_to_enum,
                 );
-                self.check_block(ctx, &if_statement.node.then_block, loop_depth, enum_variants, variant_to_enum);
+                self.check_block(
+                    ctx,
+                    &if_statement.node.then_block,
+                    loop_depth,
+                    enum_variants,
+                    variant_to_enum,
+                );
                 if let Some(else_block) = &if_statement.node.else_block {
                     self.check_block(ctx, else_block, loop_depth, enum_variants, variant_to_enum);
                 }
@@ -251,10 +299,18 @@ impl SemanticPipelineRule {
                 );
             }
             HirExpressionNode::UnaryExpression(unary_expression) => {
-                self.check_expression(ctx, &unary_expression.node.expr, loop_depth, enum_variants, variant_to_enum);
+                self.check_expression(
+                    ctx,
+                    &unary_expression.node.expr,
+                    loop_depth,
+                    enum_variants,
+                    variant_to_enum,
+                );
             }
             HirExpressionNode::CallExpression(call_expression) => {
-                if let HirExpressionNode::PathExpression(path_expression) = &call_expression.node.callee.node {
+                if let HirExpressionNode::PathExpression(path_expression) =
+                    &call_expression.node.callee.node
+                {
                     if path_expression.node.path.node.segments.len() == 1 {
                         if let Some(name) = path_expression.node.path.node.segments.first() {
                             let name_value = &name.node.name.node.name;
@@ -274,7 +330,13 @@ impl SemanticPipelineRule {
                         }
                     }
                 }
-                self.check_expression(ctx, &call_expression.node.callee, loop_depth, enum_variants, variant_to_enum);
+                self.check_expression(
+                    ctx,
+                    &call_expression.node.callee,
+                    loop_depth,
+                    enum_variants,
+                    variant_to_enum,
+                );
                 for arg in &call_expression.node.args {
                     self.check_expression(ctx, arg, loop_depth, enum_variants, variant_to_enum);
                 }
@@ -290,12 +352,32 @@ impl SemanticPipelineRule {
             }
             HirExpressionNode::StructLiteralExpression(struct_literal) => {
                 for field in &struct_literal.node.fields {
-                    self.check_expression(ctx, &field.node.value, loop_depth, enum_variants, variant_to_enum);
+                    self.check_expression(
+                        ctx,
+                        &field.node.value,
+                        loop_depth,
+                        enum_variants,
+                        variant_to_enum,
+                    );
                 }
             }
             HirExpressionNode::EnumConstructorExpression(constructor_expression) => {
-                let enum_name = constructor_expression.node.path.node.type_name.node.name.clone();
-                let variant_name = constructor_expression.node.path.node.variant.node.name.clone();
+                let enum_name = constructor_expression
+                    .node
+                    .path
+                    .node
+                    .type_name
+                    .node
+                    .name
+                    .clone();
+                let variant_name = constructor_expression
+                    .node
+                    .path
+                    .node
+                    .variant
+                    .node
+                    .name
+                    .clone();
                 let Some(variants) = enum_variants.get(&enum_name) else {
                     ctx.emit_simple(
                         constructor_expression.node.path.span,
@@ -340,10 +422,22 @@ impl SemanticPipelineRule {
                 }
             }
             HirExpressionNode::BlockExpression(block_expression) => {
-                self.check_block(ctx, &block_expression.node.block, loop_depth, enum_variants, variant_to_enum);
+                self.check_block(
+                    ctx,
+                    &block_expression.node.block,
+                    loop_depth,
+                    enum_variants,
+                    variant_to_enum,
+                );
             }
             HirExpressionNode::GroupedExpression(grouped_expression) => {
-                self.check_expression(ctx, &grouped_expression.node.expr, loop_depth, enum_variants, variant_to_enum);
+                self.check_expression(
+                    ctx,
+                    &grouped_expression.node.expr,
+                    loop_depth,
+                    enum_variants,
+                    variant_to_enum,
+                );
             }
             HirExpressionNode::LiteralExpression(_) | HirExpressionNode::PathExpression(_) => {}
         }
@@ -363,7 +457,13 @@ impl SemanticPipelineRule {
         if let Some(guard) = &arm.node.guard {
             self.check_expression(ctx, guard, loop_depth, enum_variants, variant_to_enum);
         }
-        self.check_expression(ctx, &arm.node.value, loop_depth, enum_variants, variant_to_enum);
+        self.check_expression(
+            ctx,
+            &arm.node.value,
+            loop_depth,
+            enum_variants,
+            variant_to_enum,
+        );
     }
 
     fn check_match_semantics(
@@ -437,7 +537,10 @@ impl SemanticPipelineRule {
         let Some(variants) = enum_variants.get(&enum_name) else {
             return;
         };
-        if variants.keys().all(|variant| covered_variants.contains(variant)) {
+        if variants
+            .keys()
+            .all(|variant| covered_variants.contains(variant))
+        {
             return;
         }
 

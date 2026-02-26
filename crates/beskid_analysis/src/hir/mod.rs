@@ -2,8 +2,8 @@ pub mod block;
 pub mod common;
 pub mod expression;
 pub mod item;
-pub mod literal;
 pub mod legality;
+pub mod literal;
 pub mod lowering;
 pub mod match_arm;
 pub mod module;
@@ -20,36 +20,32 @@ pub mod normalize;
 pub use block::HirBlock;
 pub use common::{HirEnumPath, HirIdentifier, HirPath, HirPathSegment, HirVisibility};
 pub use expression::{
-    ExpressionNode, HirAssignExpression, HirBinaryExpression, HirBinaryOp,
-    HirBlockExpression, HirCallExpression, HirEnumConstructorExpression,
-    HirGroupedExpression, HirLiteralExpression, HirMatchExpression, HirMemberExpression,
-    HirPathExpression, HirStructLiteralExpression, HirUnaryExpression, HirUnaryOp,
+    ExpressionNode, HirAssignExpression, HirBinaryExpression, HirBinaryOp, HirBlockExpression,
+    HirCallExpression, HirEnumConstructorExpression, HirGroupedExpression, HirLiteralExpression,
+    HirMatchExpression, HirMemberExpression, HirPathExpression, HirStructLiteralExpression,
+    HirUnaryExpression, HirUnaryOp,
 };
 pub use item::{
-    HirContractDefinition, HirContractEmbedding, HirContractMethodSignature,
-    HirContractNode, HirEnumDefinition, HirEnumVariant, HirFunctionDefinition,
-    HirInlineModule, HirMethodDefinition, HirModuleDeclaration, HirTypeDefinition, HirUseDeclaration,
-    Item,
+    HirContractDefinition, HirContractEmbedding, HirContractMethodSignature, HirContractNode,
+    HirEnumDefinition, HirEnumVariant, HirFunctionDefinition, HirInlineModule, HirMethodDefinition,
+    HirModuleDeclaration, HirTypeDefinition, HirUseDeclaration, Item,
 };
+pub use legality::{HirLegalityError, validate_hir_program};
 pub use literal::HirLiteral;
-pub use legality::{validate_hir_program, HirLegalityError};
 pub use lowering::lower_program;
 pub use match_arm::HirMatchArm;
 pub use module::Module;
-pub use normalize::{normalize_program, HirNormalizeError};
+pub use normalize::{HirNormalizeError, normalize_program};
 pub use pattern::{HirEnumPattern, HirPattern};
 pub use phase::{AstPhase, HirPhase, Phase};
 pub use program::Program;
 pub use range_expression::HirRangeExpression;
 pub use statement::{
     HirBreakStatement, HirContinueStatement, HirExpressionStatement, HirForStatement,
-    HirIfStatement, HirLetStatement, HirReturnStatement, HirWhileStatement,
-    StatementNode,
+    HirIfStatement, HirLetStatement, HirReturnStatement, HirWhileStatement, StatementNode,
 };
 pub use struct_literal_field::HirStructLiteralField;
-pub use types::{
-    HirField, HirParameter, HirParameterModifier, HirPrimitiveType, HirType,
-};
+pub use types::{HirField, HirParameter, HirParameterModifier, HirPrimitiveType, HirType};
 
 pub type AstProgram = Program<AstPhase>;
 pub type AstModule = Module<AstPhase>;

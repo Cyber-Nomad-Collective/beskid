@@ -34,12 +34,14 @@ fn codegen_lowers_member_expression() {
 
 #[test]
 fn codegen_rejects_function_parameter_modifiers() {
-    let (hir, resolution, typed) =
-        lower_resolve_type("i64 main(ref x: i64) { return x; }");
+    let (hir, resolution, typed) = lower_resolve_type("i64 main(ref x: i64) { return x; }");
     let errors = lower_program(&hir, &resolution, &typed)
         .expect_err("expected function parameter modifier lowering to fail");
     assert!(errors.iter().any(|error| matches!(
         error,
-        CodegenError::UnsupportedNode { node: "function parameter modifier", .. }
+        CodegenError::UnsupportedNode {
+            node: "function parameter modifier",
+            ..
+        }
     )));
 }

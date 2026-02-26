@@ -1,9 +1,9 @@
 use crate::errors::CodegenError;
-use crate::lowering::lowerable::{lower_node, Lowerable};
+use crate::lowering::lowerable::{Lowerable, lower_node};
 use crate::lowering::node_context::NodeLoweringContext;
-use cranelift_codegen::ir::Value;
 use beskid_analysis::hir::HirExpressionNode;
 use beskid_analysis::syntax::Spanned;
+use cranelift_codegen::ir::Value;
 
 impl Lowerable<NodeLoweringContext<'_, '_>> for HirExpressionNode {
     type Output = Option<Value>;

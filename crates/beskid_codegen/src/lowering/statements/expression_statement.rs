@@ -1,4 +1,4 @@
-use crate::lowering::lowerable::{lower_node, Lowerable};
+use crate::lowering::lowerable::{Lowerable, lower_node};
 use crate::lowering::node_context::NodeLoweringContext;
 use beskid_analysis::hir::HirExpressionStatement;
 use beskid_analysis::syntax::Spanned;

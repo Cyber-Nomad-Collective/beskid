@@ -23,20 +23,12 @@ impl crate::parsing::parsable::Parsable for Field {
 
         let span = crate::syntax::SpanInfo::from_span(&pair.as_span());
         let mut inner = pair.into_inner();
-        let ty = crate::syntax::Type::parse(
-            inner
-                .next()
-                .ok_or(crate::parsing::error::ParseError::missing(
-                    crate::parser::Rule::BeskidType,
-                ))?,
-        )?;
-        let name = crate::syntax::Identifier::parse(
-            inner
-                .next()
-                .ok_or(crate::parsing::error::ParseError::missing(
-                    crate::parser::Rule::Identifier,
-                ))?,
-        )?;
+        let ty = crate::syntax::Type::parse(inner.next().ok_or(
+            crate::parsing::error::ParseError::missing(crate::parser::Rule::BeskidType),
+        )?)?;
+        let name = crate::syntax::Identifier::parse(inner.next().ok_or(
+            crate::parsing::error::ParseError::missing(crate::parser::Rule::Identifier),
+        )?)?;
 
         Ok(crate::syntax::Spanned::new(Self { name, ty }, span))
     }

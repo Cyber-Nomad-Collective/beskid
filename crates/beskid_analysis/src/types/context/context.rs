@@ -1,35 +1,97 @@
 use std::collections::HashMap;
 
+use crate::builtins::{BuiltinType, builtin_specs};
 use crate::hir::{HirItem, HirPrimitiveType, HirProgram};
 use crate::resolve::{ItemId, LocalId, Resolution};
 use crate::syntax::{SpanInfo, Spanned};
 use crate::types::{TypeId, TypeTable};
-use crate::builtins::{builtin_specs, BuiltinType};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TypeError {
-    UnknownType { span: SpanInfo },
-    UnknownValueType { span: SpanInfo },
-    UnknownStructType { span: SpanInfo },
-    InvalidMemberTarget { span: SpanInfo },
-    UnknownEnumType { span: SpanInfo },
-    UnknownStructField { span: SpanInfo, name: String },
-    UnknownEnumVariant { span: SpanInfo, name: String },
-    MissingStructField { span: SpanInfo, name: String },
-    MissingTypeAnnotation { span: SpanInfo, name: String },
-    TypeMismatch { span: SpanInfo, expected: TypeId, actual: TypeId },
-    MatchArmTypeMismatch { span: SpanInfo, expected: TypeId, actual: TypeId },
-    CallArityMismatch { span: SpanInfo, expected: usize, actual: usize },
-    CallArgumentMismatch { span: SpanInfo, expected: TypeId, actual: TypeId },
-    EnumConstructorMismatch { span: SpanInfo, expected: usize, actual: usize },
-    UnknownCallTarget { span: SpanInfo },
-    InvalidBinaryOp { span: SpanInfo },
-    InvalidUnaryOp { span: SpanInfo },
-    NonBoolCondition { span: SpanInfo },
-    UnsupportedExpression { span: SpanInfo },
-    ReturnTypeMismatch { span: SpanInfo, expected: TypeId, actual: Option<TypeId> },
-    MissingTypeArguments { span: SpanInfo },
-    GenericArgumentMismatch { span: SpanInfo, expected: usize, actual: usize },
+    UnknownType {
+        span: SpanInfo,
+    },
+    UnknownValueType {
+        span: SpanInfo,
+    },
+    UnknownStructType {
+        span: SpanInfo,
+    },
+    InvalidMemberTarget {
+        span: SpanInfo,
+    },
+    UnknownEnumType {
+        span: SpanInfo,
+    },
+    UnknownStructField {
+        span: SpanInfo,
+        name: String,
+    },
+    UnknownEnumVariant {
+        span: SpanInfo,
+        name: String,
+    },
+    MissingStructField {
+        span: SpanInfo,
+        name: String,
+    },
+    MissingTypeAnnotation {
+        span: SpanInfo,
+        name: String,
+    },
+    TypeMismatch {
+        span: SpanInfo,
+        expected: TypeId,
+        actual: TypeId,
+    },
+    MatchArmTypeMismatch {
+        span: SpanInfo,
+        expected: TypeId,
+        actual: TypeId,
+    },
+    CallArityMismatch {
+        span: SpanInfo,
+        expected: usize,
+        actual: usize,
+    },
+    CallArgumentMismatch {
+        span: SpanInfo,
+        expected: TypeId,
+        actual: TypeId,
+    },
+    EnumConstructorMismatch {
+        span: SpanInfo,
+        expected: usize,
+        actual: usize,
+    },
+    UnknownCallTarget {
+        span: SpanInfo,
+    },
+    InvalidBinaryOp {
+        span: SpanInfo,
+    },
+    InvalidUnaryOp {
+        span: SpanInfo,
+    },
+    NonBoolCondition {
+        span: SpanInfo,
+    },
+    UnsupportedExpression {
+        span: SpanInfo,
+    },
+    ReturnTypeMismatch {
+        span: SpanInfo,
+        expected: TypeId,
+        actual: Option<TypeId>,
+    },
+    MissingTypeArguments {
+        span: SpanInfo,
+    },
+    GenericArgumentMismatch {
+        span: SpanInfo,
+        expected: usize,
+        actual: usize,
+    },
 }
 
 #[derive(Debug)]
@@ -55,11 +117,10 @@ impl TypeResult {
         self.cast_intents.iter().find(|intent| intent.span == span)
     }
 
-    pub fn cast_intents_for_span(
-        &self,
-        span: SpanInfo,
-    ) -> impl Iterator<Item = &CastIntent> {
-        self.cast_intents.iter().filter(move |intent| intent.span == span)
+    pub fn cast_intents_for_span(&self, span: SpanInfo) -> impl Iterator<Item = &CastIntent> {
+        self.cast_intents
+            .iter()
+            .filter(move |intent| intent.span == span)
     }
 }
 
@@ -150,17 +211,12 @@ impl<'a> TypeContext<'a> {
             BuiltinType::String => self.primitive_type_id(HirPrimitiveType::String),
             BuiltinType::Unit => self.primitive_type_id(HirPrimitiveType::Unit),
             BuiltinType::Never => self.primitive_type_id(HirPrimitiveType::Unit),
-            BuiltinType::Usize | BuiltinType::U64 => {
-                self.primitive_type_id(HirPrimitiveType::I64)
-            }
+            BuiltinType::Usize | BuiltinType::U64 => self.primitive_type_id(HirPrimitiveType::I64),
             BuiltinType::Ptr => None,
         }
     }
 
-    pub fn type_program(
-        self,
-        program: &Spanned<HirProgram>,
-    ) -> Result<TypeResult, Vec<TypeError>> {
+    pub fn type_program(self, program: &Spanned<HirProgram>) -> Result<TypeResult, Vec<TypeError>> {
         let (result, errors) = self.type_program_with_errors(program);
         if errors.is_empty() {
             Ok(result)
@@ -199,8 +255,9 @@ impl<'a> TypeContext<'a> {
                 intent.to.0,
             )
         });
-        self.cast_intents
-            .dedup_by(|left, right| left.span == right.span && left.from == right.from && left.to == right.to);
+        self.cast_intents.dedup_by(|left, right| {
+            left.span == right.span && left.from == right.from && left.to == right.to
+        });
         let result = TypeResult {
             types: self.type_table,
             named_type_names: self

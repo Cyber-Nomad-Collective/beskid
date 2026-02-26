@@ -1,12 +1,12 @@
+use crate::errors::{print_pretty_parse_error, print_pretty_pest_error};
 use anyhow::{Context, Result};
-use clap::Args;
-use std::fs;
-use std::path::PathBuf;
+use beskid_analysis::parser::{BeskidParser, Rule};
 use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::syntax::Program;
-use beskid_analysis::parser::{BeskidParser, Rule};
+use clap::Args;
 use pest::Parser;
-use crate::errors::{print_pretty_parse_error, print_pretty_pest_error};
+use std::fs;
+use std::path::PathBuf;
 
 #[derive(Args, Debug)]
 pub struct ParseArgs {

@@ -1,5 +1,5 @@
 use crate::analysis::rules::{Rule, RuleContext};
-use crate::hir::{lower_program, AstProgram, HirProgram};
+use crate::hir::{AstProgram, HirProgram, lower_program};
 use crate::syntax::{Program, SpanInfo, Spanned};
 
 mod contracts;

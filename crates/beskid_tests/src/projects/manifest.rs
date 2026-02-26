@@ -1,4 +1,4 @@
-use beskid_analysis::projects::{parse_manifest, ProjectError};
+use beskid_analysis::projects::{ProjectError, parse_manifest};
 
 fn base_manifest() -> &'static str {
     r#"

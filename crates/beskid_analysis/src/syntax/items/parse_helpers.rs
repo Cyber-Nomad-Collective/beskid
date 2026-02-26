@@ -1,9 +1,9 @@
 use pest::iterators::{Pair, Pairs};
 use std::iter::Peekable;
 
+use crate::parser::Rule;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
-use crate::parser::Rule;
 use crate::syntax::{Field, Identifier, Parameter, SpanInfo, Spanned, Visibility};
 
 pub(crate) fn parse_visibility_or_default(
@@ -22,11 +22,15 @@ pub(crate) fn parse_visibility_or_default(
     ))
 }
 
-pub(crate) fn parse_identifier_list(pair: Pair<Rule>) -> Result<Vec<Spanned<Identifier>>, ParseError> {
+pub(crate) fn parse_identifier_list(
+    pair: Pair<Rule>,
+) -> Result<Vec<Spanned<Identifier>>, ParseError> {
     pair.into_inner().map(Identifier::parse).collect()
 }
 
-pub(crate) fn parse_parameter_list(pair: Pair<Rule>) -> Result<Vec<Spanned<Parameter>>, ParseError> {
+pub(crate) fn parse_parameter_list(
+    pair: Pair<Rule>,
+) -> Result<Vec<Spanned<Parameter>>, ParseError> {
     pair.into_inner().map(Parameter::parse).collect()
 }
 

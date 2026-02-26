@@ -1,8 +1,8 @@
 use pest::iterators::Pair;
 
+use crate::parser::Rule;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
-use crate::parser::Rule;
 use crate::syntax::{Expression, SpanInfo, Spanned};
 
 use beskid_ast_derive::AstNode;
@@ -19,16 +19,8 @@ impl Parsable for RangeExpression {
     fn parse(pair: Pair<Rule>) -> Result<Spanned<Self>, ParseError> {
         let span = SpanInfo::from_span(&pair.as_span());
         let mut inner = pair.into_inner();
-        let start = Expression::parse(
-            inner
-                .next()
-                .ok_or(ParseError::missing(Rule::Expression))?,
-        )?;
-        let end = Expression::parse(
-            inner
-                .next()
-                .ok_or(ParseError::missing(Rule::Expression))?,
-        )?;
+        let start = Expression::parse(inner.next().ok_or(ParseError::missing(Rule::Expression))?)?;
+        let end = Expression::parse(inner.next().ok_or(ParseError::missing(Rule::Expression))?)?;
 
         Ok(Spanned::new(Self { start, end }, span))
     }

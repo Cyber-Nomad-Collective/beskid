@@ -32,13 +32,9 @@ impl crate::parsing::parsable::Parsable for Path {
             .into_inner()
             .map(|segment| {
                 let mut inner = segment.into_inner();
-                let name = crate::syntax::Identifier::parse(
-                    inner
-                        .next()
-                        .ok_or(crate::parsing::error::ParseError::missing(
-                            crate::parser::Rule::Identifier,
-                        ))?,
-                )?;
+                let name = crate::syntax::Identifier::parse(inner.next().ok_or(
+                    crate::parsing::error::ParseError::missing(crate::parser::Rule::Identifier),
+                )?)?;
                 let mut type_args = Vec::new();
                 if let Some(args) = inner.next() {
                     for arg in args.into_inner() {

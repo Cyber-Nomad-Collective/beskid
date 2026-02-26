@@ -1,11 +1,11 @@
 use pest::iterators::Pair;
 
+use crate::parser::Rule;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
-use crate::parser::Rule;
-use crate::syntax::{Block, Identifier, Parameter, Path, PrimitiveType, SpanInfo, Spanned, Type, Visibility};
-use crate::syntax::items::parse_helpers::{
-    parse_parameter_list, parse_visibility_or_default,
+use crate::syntax::items::parse_helpers::{parse_parameter_list, parse_visibility_or_default};
+use crate::syntax::{
+    Block, Identifier, Parameter, Path, PrimitiveType, SpanInfo, Spanned, Type, Visibility,
 };
 
 use beskid_ast_derive::AstNode;
@@ -29,11 +29,7 @@ pub struct MethodDefinition {
 fn parse_path_segment(pair: Pair<Rule>) -> Result<Spanned<crate::syntax::PathSegment>, ParseError> {
     let span = SpanInfo::from_span(&pair.as_span());
     let mut inner = pair.into_inner();
-    let name = Identifier::parse(
-        inner
-            .next()
-            .ok_or(ParseError::missing(Rule::Identifier))?,
-    )?;
+    let name = Identifier::parse(inner.next().ok_or(ParseError::missing(Rule::Identifier))?)?;
     let mut type_args = Vec::new();
     if let Some(args) = inner.next() {
         for arg in args.into_inner() {
@@ -52,20 +48,14 @@ impl Parsable for MethodDefinition {
         let mut inner = pair.clone().into_inner().peekable();
         let visibility = parse_visibility_or_default(&pair, &mut inner)?;
         let return_type = Some(Type::parse(
-            inner
-                .next()
-                .ok_or(ParseError::missing(Rule::BeskidType))?,
+            inner.next().ok_or(ParseError::missing(Rule::BeskidType))?,
         )?);
         let receiver_type = parse_receiver_type(
             inner
                 .next()
                 .ok_or(ParseError::missing(Rule::ReceiverType))?,
         )?;
-        let name = Identifier::parse(
-            inner
-                .next()
-                .ok_or(ParseError::missing(Rule::Identifier))?,
-        )?;
+        let name = Identifier::parse(inner.next().ok_or(ParseError::missing(Rule::Identifier))?)?;
 
         let mut parameters = Vec::new();
         let mut body = None;
@@ -96,9 +86,7 @@ fn parse_receiver_type(pair: Pair<Rule>) -> Result<Spanned<Type>, ParseError> {
     let span = SpanInfo::from_span(&pair.as_span());
     let first = if pair.as_rule() == Rule::ReceiverType {
         let mut inner = pair.into_inner();
-        inner
-            .next()
-            .ok_or(ParseError::missing(Rule::Identifier))?
+        inner.next().ok_or(ParseError::missing(Rule::Identifier))?
     } else {
         pair
     };

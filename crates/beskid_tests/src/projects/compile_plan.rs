@@ -3,8 +3,9 @@ use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use beskid_analysis::projects::{
-    build_compile_plan, build_compile_plan_with_policy, prepare_project_workspace, ProjectError,
-    UnresolvedDependencyPolicy, PROJECT_FILE_NAME, PROJECT_LOCK_FILE_NAME, TargetKind,
+    PROJECT_FILE_NAME, PROJECT_LOCK_FILE_NAME, ProjectError, TargetKind,
+    UnresolvedDependencyPolicy, build_compile_plan, build_compile_plan_with_policy,
+    prepare_project_workspace,
 };
 
 fn temp_case_dir(name: &str) -> PathBuf {
@@ -198,8 +199,7 @@ target "CoreLib" {
 "#,
     );
     fs::create_dir_all(core_dir.join("Src")).expect("create core src dir");
-    fs::write(core_dir.join("Src").join("Core.bd"), "Fn Main() { }")
-        .expect("write core source");
+    fs::write(core_dir.join("Src").join("Core.bd"), "Fn Main() { }").expect("write core source");
 
     let app_manifest_path = write_manifest(
         &app_dir,
@@ -221,8 +221,7 @@ dependency "Core" {
 "#,
     );
     fs::create_dir_all(app_dir.join("Src")).expect("create app src dir");
-    fs::write(app_dir.join("Src").join("Main.bd"), "Fn Main() { }")
-        .expect("write app source");
+    fs::write(app_dir.join("Src").join("Main.bd"), "Fn Main() { }").expect("write app source");
 
     let plan = build_compile_plan(&app_manifest_path, None).expect("plan should build");
     let workspace = prepare_project_workspace(&plan).expect("workspace should prepare");
@@ -231,8 +230,15 @@ dependency "Core" {
     assert!(lockfile_path.is_file());
     assert_eq!(workspace.lockfile_path, lockfile_path);
     assert_eq!(workspace.materialized_dependencies.len(), 1);
-    assert_eq!(workspace.materialized_dependencies[0].dependency_name, "Core");
-    assert!(workspace.materialized_dependencies[0].materialized_source_root.is_dir());
+    assert_eq!(
+        workspace.materialized_dependencies[0].dependency_name,
+        "Core"
+    );
+    assert!(
+        workspace.materialized_dependencies[0]
+            .materialized_source_root
+            .is_dir()
+    );
     let lock_content = fs::read_to_string(&lockfile_path).expect("read lockfile");
     assert!(lock_content.contains("# Project.lock v1"));
     assert!(lock_content.contains("project_name=App"));
@@ -279,7 +285,10 @@ dependency "Core" {
     let app_manifest_path = write_manifest(&app_dir, app_manifest);
 
     let error = build_compile_plan(&app_manifest_path, None).expect_err("must fail");
-    assert!(matches!(error, ProjectError::DependencyManifestNotFound { .. }));
+    assert!(matches!(
+        error,
+        ProjectError::DependencyManifestNotFound { .. }
+    ));
 
     let _ = fs::remove_dir_all(root);
 }
@@ -401,12 +410,9 @@ dependency "RemoteStd" {
 "#;
     let manifest_path = write_manifest(&dir, source);
 
-    let error = build_compile_plan_with_policy(
-        &manifest_path,
-        None,
-        UnresolvedDependencyPolicy::Warn,
-    )
-    .expect_err("provider-disabled dependency should fail in v1");
+    let error =
+        build_compile_plan_with_policy(&manifest_path, None, UnresolvedDependencyPolicy::Warn)
+            .expect_err("provider-disabled dependency should fail in v1");
     assert!(matches!(
         error,
         ProjectError::UnsupportedDependencySourceV1 { .. }
@@ -436,12 +442,9 @@ dependency "PkgCore" {
 "#;
     let manifest_path = write_manifest(&dir, source);
 
-    let error = build_compile_plan_with_policy(
-        &manifest_path,
-        None,
-        UnresolvedDependencyPolicy::Error,
-    )
-    .expect_err("strict mode must fail");
+    let error =
+        build_compile_plan_with_policy(&manifest_path, None, UnresolvedDependencyPolicy::Error)
+            .expect_err("strict mode must fail");
     assert!(matches!(
         error,
         ProjectError::UnsupportedDependencySourceV1 { .. }

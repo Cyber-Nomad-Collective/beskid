@@ -1,8 +1,8 @@
 use pest::iterators::Pair;
 
+use crate::parser::Rule;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
-use crate::parser::Rule;
 use crate::syntax::{
     BreakStatement, ContinueStatement, ExpressionStatement, ForStatement, IfStatement,
     LetStatement, ReturnStatement, SpanInfo, Spanned, WhileStatement,

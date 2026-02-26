@@ -1,8 +1,8 @@
-use miette::{LabeledSpan, NamedSource, Report, SourceSpan};
-use pest::error::{Error as PestError, InputLocation};
 use beskid_analysis::parser::Rule;
 use beskid_analysis::parsing::error::ParseError;
 use beskid_analysis::syntax::SpanInfo;
+use miette::{LabeledSpan, NamedSource, Report, SourceSpan};
+use pest::error::{Error as PestError, InputLocation};
 
 fn pest_offset(err: &PestError<Rule>) -> usize {
     match err.location {
@@ -36,12 +36,12 @@ fn pest_to_report(file: &str, source: &str, err: &PestError<Rule>) -> Report {
 
 fn parse_to_report(file: &str, source: &str, err: &ParseError) -> Report {
     let message = match err {
-        ParseError::UnexpectedRule { expected, found, .. } => {
-            match expected {
-                Some(rule) => format!("expected {:?}, found {:?}", rule, found),
-                None => format!("unexpected {:?}", found),
-            }
-        }
+        ParseError::UnexpectedRule {
+            expected, found, ..
+        } => match expected {
+            Some(rule) => format!("expected {:?}, found {:?}", rule, found),
+            None => format!("unexpected {:?}", found),
+        },
         ParseError::MissingPair { expected } => format!("missing {:?}", expected),
     };
 
@@ -51,9 +51,7 @@ fn parse_to_report(file: &str, source: &str, err: &ParseError) -> Report {
             miette::miette!(labels = vec![label], "parse error: {}", message)
                 .with_source_code(NamedSource::new(file, source.to_string()))
         }
-        ParseError::MissingPair { .. } => {
-            miette::miette!("parse error: {}", message)
-                .with_source_code(NamedSource::new(file, source.to_string()))
-        }
+        ParseError::MissingPair { .. } => miette::miette!("parse error: {}", message)
+            .with_source_code(NamedSource::new(file, source.to_string())),
     }
 }

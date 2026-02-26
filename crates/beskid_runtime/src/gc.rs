@@ -85,7 +85,12 @@ pub fn with_current_mutation_and_root<R>(
     if root_ptr.is_null() {
         panic!("no active gc-arena root");
     }
-    unsafe { f(&*(mutation_ptr as *const Mutation<'_>), &mut *(root_ptr as *mut RuntimeRoot<'_>)) }
+    unsafe {
+        f(
+            &*(mutation_ptr as *const Mutation<'_>),
+            &mut *(root_ptr as *mut RuntimeRoot<'_>),
+        )
+    }
 }
 
 pub fn store_handle(root: &mut RuntimeRoot<'_>, ptr: *mut u8) -> u64 {

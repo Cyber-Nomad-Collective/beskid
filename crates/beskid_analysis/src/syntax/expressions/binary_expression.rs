@@ -1,9 +1,9 @@
-use pest::iterators::Pair;
+use crate::parser::Rule;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
-use crate::parser::Rule;
-use crate::syntax::{Expression, SpanInfo, Spanned};
 use crate::syntax::expressions::span::{span_from_bounds, span_from_range};
+use crate::syntax::{Expression, SpanInfo, Spanned};
+use pest::iterators::Pair;
 
 use beskid_ast_derive::AstNode;
 
@@ -107,4 +107,3 @@ fn extract_operator<'a>(
     let between = input.get(left.end..right.start)?.trim();
     operators.iter().find(|op| between.contains(**op)).copied()
 }
-

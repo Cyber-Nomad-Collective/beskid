@@ -1,6 +1,6 @@
 use crate::errors::CodegenError;
 use crate::lowering::cast_intent::ensure_type_compatibility;
-use crate::lowering::lowerable::{lower_node, Lowerable};
+use crate::lowering::lowerable::{Lowerable, lower_node};
 use crate::lowering::node_context::NodeLoweringContext;
 use crate::lowering::types::map_type_id_to_clif;
 use beskid_analysis::hir::HirLetStatement;
@@ -24,20 +24,16 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirLetStatement {
                 span: node.node.name.span,
             })?;
 
-        let type_id = ctx
-            .type_result
-            .local_types
-            .get(&local_id)
-            .copied()
-            .ok_or(CodegenError::MissingLocalType {
+        let type_id = ctx.type_result.local_types.get(&local_id).copied().ok_or(
+            CodegenError::MissingLocalType {
                 span: node.node.name.span,
-            })?;
-        let clif_ty = map_type_id_to_clif(ctx.type_result, type_id).ok_or(
-            CodegenError::UnsupportedNode {
-                span: node.node.name.span,
-                node: "unsupported local type",
             },
         )?;
+        let clif_ty =
+            map_type_id_to_clif(ctx.type_result, type_id).ok_or(CodegenError::UnsupportedNode {
+                span: node.node.name.span,
+                node: "unsupported local type",
+            })?;
 
         let value = lower_node(&node.node.value, ctx)?.ok_or(CodegenError::UnsupportedNode {
             span: node.node.value.span,
@@ -52,7 +48,14 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirLetStatement {
             .ok_or(CodegenError::MissingExpressionType {
                 span: node.node.value.span,
             })?;
-        let value = ensure_type_compatibility(node.node.value.span, type_id, actual_type, ctx.type_result, ctx.builder, value)?;
+        let value = ensure_type_compatibility(
+            node.node.value.span,
+            type_id,
+            actual_type,
+            ctx.type_result,
+            ctx.builder,
+            value,
+        )?;
 
         let var = ctx.builder.declare_var(clif_ty);
         ctx.builder.def_var(var, value);

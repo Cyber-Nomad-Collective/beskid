@@ -9,12 +9,15 @@ fn parses_struct_literal_expression() {
 
 #[test]
 fn rejects_struct_literal_without_fields() {
-    assert_parse_fail(Rule::StructLiteralExpression, "User { name \"Ada\" }" );
+    assert_parse_fail(Rule::StructLiteralExpression, "User { name \"Ada\" }");
 }
 
 #[test]
 fn rejects_struct_literal_without_comma_between_fields() {
-    assert_parse_fail(Rule::StructLiteralExpression, "User { name: \"Ada\" age: 37 }");
+    assert_parse_fail(
+        Rule::StructLiteralExpression,
+        "User { name: \"Ada\" age: 37 }",
+    );
 }
 
 #[test]

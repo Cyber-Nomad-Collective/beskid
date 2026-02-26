@@ -65,12 +65,7 @@ impl ModuleGraph {
         current
     }
 
-    pub fn insert_item(
-        &mut self,
-        module: ModuleId,
-        name: String,
-        item: ItemId,
-    ) -> Option<ItemId> {
+    pub fn insert_item(&mut self, module: ModuleId, name: String, item: ItemId) -> Option<ItemId> {
         let module = self.modules.get_mut(module.0)?;
         if let Some(prev) = module.scope.get(&name).copied() {
             Some(prev)

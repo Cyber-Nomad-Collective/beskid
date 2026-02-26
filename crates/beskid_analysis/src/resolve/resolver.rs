@@ -74,10 +74,7 @@ impl Resolver {
                 .map(|segment| (*segment).to_string())
                 .unwrap_or_else(|| "<builtin>".to_string());
             let id = ItemId(self.items.len());
-            if let Some(prev) = self
-                .module_graph
-                .insert_item(module_id, name.clone(), id)
-            {
+            if let Some(prev) = self.module_graph.insert_item(module_id, name.clone(), id) {
                 let prev_span = self.items[prev.0].span;
                 self.errors.push(ResolveError::DuplicateItem {
                     name,
@@ -157,10 +154,7 @@ impl Resolver {
             }
             _ => self.current_module,
         };
-        if let Some(prev) = self
-            .module_graph
-            .insert_item(module_id, name.clone(), id)
-        {
+        if let Some(prev) = self.module_graph.insert_item(module_id, name.clone(), id) {
             let prev_span = self.items[prev.0].span;
             self.errors.push(ResolveError::DuplicateItem {
                 name,
@@ -325,7 +319,10 @@ impl Resolver {
             HirStatementNode::ForStatement(for_stmt) => {
                 self.resolve_range_expression(&for_stmt.node.range);
                 self.push_scope();
-                self.insert_local(&for_stmt.node.iterator.node.name, for_stmt.node.iterator.span);
+                self.insert_local(
+                    &for_stmt.node.iterator.node.name,
+                    for_stmt.node.iterator.span,
+                );
                 for stmt in &for_stmt.node.body.node.statements {
                     self.resolve_statement(stmt);
                 }
@@ -452,11 +449,13 @@ impl Resolver {
         if segments.len() == 1 {
             let name = &segments[0];
             if let Some(local) = self.resolve_local(name) {
-                self.tables.insert_value(path.span, ResolvedValue::Local(local));
+                self.tables
+                    .insert_value(path.span, ResolvedValue::Local(local));
                 return;
             }
             if let Some(item) = self.resolve_item_in_scope(name) {
-                self.tables.insert_value(path.span, ResolvedValue::Item(item));
+                self.tables
+                    .insert_value(path.span, ResolvedValue::Item(item));
                 return;
             }
             self.errors.push(ResolveError::UnknownValue {
@@ -466,12 +465,14 @@ impl Resolver {
             return;
         }
         if let Some(local) = self.resolve_local(&segments[0]) {
-            self.tables.insert_value(path.span, ResolvedValue::Local(local));
+            self.tables
+                .insert_value(path.span, ResolvedValue::Local(local));
             return;
         }
         match self.resolve_item_in_module_path(&segments) {
             ModulePathLookup::Found(item) => {
-                self.tables.insert_value(path.span, ResolvedValue::Item(item));
+                self.tables
+                    .insert_value(path.span, ResolvedValue::Item(item));
             }
             ModulePathLookup::ModuleMissing => {
                 self.errors.push(ResolveError::UnknownModulePath {
@@ -640,7 +641,11 @@ impl Resolver {
                 previous: previous_span,
             });
         } else if let Some(previous_item) = self.resolve_item_in_scope(name) {
-            let previous_span = self.items.get(previous_item.0).map(|item| item.span).unwrap_or(span);
+            let previous_span = self
+                .items
+                .get(previous_item.0)
+                .map(|item| item.span)
+                .unwrap_or(span);
             self.warnings.push(ResolveWarning::ShadowedLocal {
                 name: name.to_string(),
                 span,

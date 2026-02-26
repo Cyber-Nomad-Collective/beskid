@@ -7,7 +7,9 @@ pub struct Query<'a> {
 
 impl<'a> Query<'a> {
     pub fn from<T: Into<NodeRef<'a>>>(start: T) -> Self {
-        Self { start: start.into() }
+        Self {
+            start: start.into(),
+        }
     }
 
     pub fn descendants(self) -> Descendants<'a> {
@@ -18,7 +20,10 @@ impl<'a> Query<'a> {
         self.descendants().filter_map(|node| node.of::<T>())
     }
 
-    pub fn filter(self, predicate: impl Fn(&NodeRef<'a>) -> bool + 'a) -> impl Iterator<Item = NodeRef<'a>> + 'a {
+    pub fn filter(
+        self,
+        predicate: impl Fn(&NodeRef<'a>) -> bool + 'a,
+    ) -> impl Iterator<Item = NodeRef<'a>> + 'a {
         self.descendants().filter(predicate)
     }
 

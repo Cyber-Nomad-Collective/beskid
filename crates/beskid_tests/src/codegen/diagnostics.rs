@@ -1,6 +1,6 @@
 use beskid_analysis::syntax::SpanInfo;
-use beskid_codegen::errors::CodegenError;
 use beskid_codegen::diagnostics::codegen_error_to_diagnostic;
+use beskid_codegen::errors::CodegenError;
 
 #[test]
 fn maps_missing_cast_intent_to_stable_code() {

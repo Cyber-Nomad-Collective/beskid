@@ -1,10 +1,10 @@
 mod cast_intent;
 mod context;
 pub(crate) mod descriptor;
-mod node_context;
+mod expressions;
 mod function;
 pub mod lowerable;
-mod expressions;
+mod node_context;
 mod statements;
 mod types;
 

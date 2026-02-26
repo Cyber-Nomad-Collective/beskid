@@ -37,7 +37,10 @@ impl Normalize for Spanned<HirForStatement> {
             type_annotation,
             value: start_expr,
         };
-        let init_stmt = Spanned::new(StatementNode::LetStatement(Spanned::new(init_stmt_node, span)), span);
+        let init_stmt = Spanned::new(
+            StatementNode::LetStatement(Spanned::new(init_stmt_node, span)),
+            span,
+        );
 
         let iterator_segment = Spanned::new(
             HirPathSegment {

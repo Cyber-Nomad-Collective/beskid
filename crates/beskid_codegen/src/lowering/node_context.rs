@@ -1,11 +1,11 @@
 use crate::lowering::context::CodegenContext;
 use crate::lowering::function::FunctionLoweringState;
-use cranelift_frontend::FunctionBuilder;
-use beskid_analysis::resolve::Resolution;
-use beskid_analysis::resolve::ItemId;
-use beskid_analysis::syntax::Spanned;
 use beskid_analysis::hir::HirFunctionDefinition;
+use beskid_analysis::resolve::ItemId;
+use beskid_analysis::resolve::Resolution;
+use beskid_analysis::syntax::Spanned;
 use beskid_analysis::types::{TypeId, TypeResult};
+use cranelift_frontend::FunctionBuilder;
 use std::collections::HashMap;
 
 pub(crate) struct NodeLoweringContext<'a, 'b> {

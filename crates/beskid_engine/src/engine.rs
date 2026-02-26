@@ -1,11 +1,11 @@
-use gc_arena::{Arena, DynamicRootSet, Mutation, Rootable};
 use beskid_codegen::CodegenArtifact;
 use beskid_runtime::{
-    clear_current_mutation, clear_current_root, set_current_mutation, set_current_root,
-    RuntimeRoot, RuntimeState,
+    RuntimeRoot, RuntimeState, clear_current_mutation, clear_current_root, set_current_mutation,
+    set_current_root,
 };
+use gc_arena::{Arena, DynamicRootSet, Mutation, Rootable};
 
-use crate::jit_module::{JitError, BeskidJitModule};
+use crate::jit_module::{BeskidJitModule, JitError};
 
 type BeskidArena = Arena<Rootable![RuntimeRoot<'_>]>;
 

@@ -2,16 +2,14 @@ use crate::errors::CodegenError;
 use crate::lowering::context::CodegenContext;
 use crate::lowering::context::CodegenResult;
 use crate::lowering::types::{map_type_id_to_clif, pointer_type};
+use beskid_analysis::hir::{HirLiteral, HirPrimitiveType};
+use beskid_analysis::syntax::{SpanInfo, Spanned};
+use beskid_analysis::types::{TypeId, TypeInfo, TypeResult};
 use cranelift_codegen::ir::{
     AbiParam, ExternalName, GlobalValueData, InstBuilder, Signature, Value,
 };
 use cranelift_codegen::isa::CallConv;
 use cranelift_frontend::FunctionBuilder;
-use beskid_analysis::hir::{HirLiteral, HirPrimitiveType};
-use beskid_analysis::syntax::{SpanInfo, Spanned};
-use beskid_analysis::types::{TypeId, TypeInfo, TypeResult};
-
-
 
 pub(crate) fn lower_literal(
     literal: &Spanned<HirLiteral>,
@@ -34,17 +32,20 @@ pub(crate) fn lower_literal(
             span: expression_span,
             node: "literal type",
         })?;
-    let clif_ty = map_type_id_to_clif(type_result, type_id).ok_or(CodegenError::UnsupportedNode {
-        span: expression_span,
-        node: "literal type",
-    })?;
+    let clif_ty =
+        map_type_id_to_clif(type_result, type_id).ok_or(CodegenError::UnsupportedNode {
+            span: expression_span,
+            node: "literal type",
+        })?;
 
     match &literal.node {
         HirLiteral::Integer(value) => {
-            let parsed = value.parse::<i64>().map_err(|_| CodegenError::UnsupportedNode {
-                span: literal.span,
-                node: "non-integer literal for kickoff",
-            })?;
+            let parsed = value
+                .parse::<i64>()
+                .map_err(|_| CodegenError::UnsupportedNode {
+                    span: literal.span,
+                    node: "non-integer literal for kickoff",
+                })?;
             Ok(builder.ins().iconst(clif_ty, parsed))
         }
         HirLiteral::Bool(value) => {
@@ -78,17 +79,21 @@ pub(crate) fn lower_literal(
             signature.params.push(AbiParam::new(pointer_type()));
             signature.returns.push(AbiParam::new(pointer_type()));
             let sig_ref = builder.func.import_signature(signature);
-            let func_ref = builder.func.import_function(cranelift_codegen::ir::ExtFuncData {
-                name: ExternalName::testcase("str_new".to_string()),
-                signature: sig_ref,
-                colocated: false,
-                patchable: false,
-            });
+            let func_ref = builder
+                .func
+                .import_function(cranelift_codegen::ir::ExtFuncData {
+                    name: ExternalName::testcase("str_new".to_string()),
+                    signature: sig_ref,
+                    colocated: false,
+                    patchable: false,
+                });
             let call = builder.ins().call(func_ref, &[str_ptr, len_val]);
-            let result = builder.inst_results(call).get(0).copied().ok_or(CodegenError::UnsupportedNode {
-                span: literal.span,
-                node: "string literal result",
-            })?;
+            let result = builder.inst_results(call).get(0).copied().ok_or(
+                CodegenError::UnsupportedNode {
+                    span: literal.span,
+                    node: "string literal result",
+                },
+            )?;
             Ok(result)
         }
         _ => Err(CodegenError::UnsupportedNode {

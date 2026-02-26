@@ -3,7 +3,10 @@ use beskid_analysis::Rule;
 
 #[test]
 fn parses_if_else_statement() {
-    assert_parse(Rule::IfStatement, "if cond { return 1; } else { return 2; }");
+    assert_parse(
+        Rule::IfStatement,
+        "if cond { return 1; } else { return 2; }",
+    );
 }
 
 #[test]

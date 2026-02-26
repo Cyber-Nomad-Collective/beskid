@@ -1,8 +1,8 @@
 use pest::iterators::Pair;
 
+use crate::parser::Rule;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
-use crate::parser::Rule;
 use crate::syntax::{Expression, Identifier, SpanInfo, Spanned, Type};
 
 use beskid_ast_derive::AstNode;
@@ -39,9 +39,7 @@ impl Parsable for LetStatement {
 
         match rule {
             Rule::TypedLetStatement => {
-                let type_pair = inner
-                    .next()
-                    .ok_or(ParseError::missing(Rule::BeskidType))?;
+                let type_pair = inner.next().ok_or(ParseError::missing(Rule::BeskidType))?;
                 type_annotation = Some(Type::parse(type_pair)?);
             }
             Rule::InferredLetStatement => {
@@ -50,7 +48,12 @@ impl Parsable for LetStatement {
                     .filter(|item| item.as_rule() == Rule::LetKeyword)
                     .ok_or(ParseError::missing(Rule::LetKeyword))?;
             }
-            _ => return Err(ParseError::unexpected_rule(error_pair, Some(Rule::LetStatement))),
+            _ => {
+                return Err(ParseError::unexpected_rule(
+                    error_pair,
+                    Some(Rule::LetStatement),
+                ));
+            }
         }
 
         for item in inner {
@@ -68,12 +71,8 @@ impl Parsable for LetStatement {
             }
         }
 
-        let name = Identifier::parse(
-            name_pair.ok_or(ParseError::missing(Rule::Identifier))?,
-        )?;
-        let value = Expression::parse(
-            value_pair.ok_or(ParseError::missing(Rule::Expression))?,
-        )?;
+        let name = Identifier::parse(name_pair.ok_or(ParseError::missing(Rule::Identifier))?)?;
+        let value = Expression::parse(value_pair.ok_or(ParseError::missing(Rule::Expression))?)?;
 
         Ok(Spanned::new(
             Self {

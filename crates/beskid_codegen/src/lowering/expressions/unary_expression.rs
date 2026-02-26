@@ -1,11 +1,11 @@
 use crate::errors::CodegenError;
-use crate::lowering::lowerable::{lower_node, Lowerable};
+use crate::lowering::lowerable::{Lowerable, lower_node};
 use crate::lowering::node_context::NodeLoweringContext;
 use crate::lowering::types::map_type_id_to_clif;
-use cranelift_codegen::ir::{types, InstBuilder, Value};
 use beskid_analysis::hir::{HirPrimitiveType, HirUnaryExpression, HirUnaryOp};
 use beskid_analysis::syntax::Spanned;
 use beskid_analysis::types::TypeInfo;
+use cranelift_codegen::ir::{InstBuilder, Value, types};
 
 impl Lowerable<NodeLoweringContext<'_, '_>> for HirUnaryExpression {
     type Output = Option<Value>;
@@ -27,12 +27,11 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirUnaryExpression {
                 span: node.node.expr.span,
             })?;
         let type_info = ctx.type_result.types.get(type_id);
-        let clif_ty = map_type_id_to_clif(ctx.type_result, type_id).ok_or(
-            CodegenError::UnsupportedNode {
+        let clif_ty =
+            map_type_id_to_clif(ctx.type_result, type_id).ok_or(CodegenError::UnsupportedNode {
                 span: node.span,
                 node: "unary operand type",
-            },
-        )?;
+            })?;
 
         let lowered = match node.node.op.node {
             HirUnaryOp::Neg => {

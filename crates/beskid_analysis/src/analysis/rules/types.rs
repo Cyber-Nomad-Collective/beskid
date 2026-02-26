@@ -2,7 +2,11 @@ use crate::analysis::diagnostics::Severity;
 use crate::analysis::rules::RuleContext;
 use crate::types::{TypeError, TypeInfo, TypeResult};
 
-pub(crate) fn emit_type_error(ctx: &mut RuleContext, error: TypeError, result: Option<&TypeResult>) {
+pub(crate) fn emit_type_error(
+    ctx: &mut RuleContext,
+    error: TypeError,
+    result: Option<&TypeResult>,
+) {
     match error {
         TypeError::UnknownType { span } => {
             ctx.emit_simple(

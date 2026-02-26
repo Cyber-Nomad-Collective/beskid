@@ -22,12 +22,12 @@ impl crate::parsing::parsable::Parsable for Type {
 
         let node = match pair.as_rule() {
             crate::parser::Rule::BeskidType => {
-                let inner = pair
-                    .into_inner()
-                    .next()
-                    .ok_or(crate::parsing::error::ParseError::missing(
-                        crate::parser::Rule::TypeName,
-                    ))?;
+                let inner =
+                    pair.into_inner()
+                        .next()
+                        .ok_or(crate::parsing::error::ParseError::missing(
+                            crate::parser::Rule::TypeName,
+                        ))?;
                 let inner_type = Self::parse(inner)?;
                 return Ok(crate::syntax::Spanned::new(inner_type.node, span));
             }
@@ -52,7 +52,7 @@ impl crate::parsing::parsable::Parsable for Type {
                         return Err(crate::parsing::error::ParseError::unexpected_rule(
                             first,
                             Some(crate::parser::Rule::TypeName),
-                        ))
+                        ));
                     }
                 }
             }
@@ -88,7 +88,7 @@ impl crate::parsing::parsable::Parsable for Type {
                 return Err(crate::parsing::error::ParseError::unexpected_rule(
                     pair,
                     Some(crate::parser::Rule::BeskidType),
-                ))
+                ));
             }
         };
 

@@ -3,15 +3,15 @@ use crate::lowering::context::{CodegenContext, CodegenResult, LoweredFunction};
 use crate::lowering::lowerable::lower_node;
 use crate::lowering::node_context::NodeLoweringContext;
 use crate::lowering::types::{map_type_id_to_clif, type_id_for_type};
+use beskid_analysis::hir::HirFunctionDefinition;
+use beskid_analysis::resolve::{ItemId, LocalId, Resolution};
+use beskid_analysis::syntax::Spanned;
+use beskid_analysis::types::{TypeInfo, TypeResult};
 use cranelift_codegen::ir::{AbiParam, Block, Function, InstBuilder, Signature};
 use cranelift_codegen::isa::CallConv;
 use cranelift_codegen::settings;
 use cranelift_codegen::verify_function;
 use cranelift_frontend::{FunctionBuilder, FunctionBuilderContext, Variable};
-use beskid_analysis::hir::HirFunctionDefinition;
-use beskid_analysis::resolve::{ItemId, LocalId, Resolution};
-use beskid_analysis::syntax::Spanned;
-use beskid_analysis::types::{TypeInfo, TypeResult};
 use std::collections::HashMap;
 
 pub(crate) fn lower_function(
@@ -84,15 +84,21 @@ pub(crate) fn lower_function_with_name(
                 span: param.span,
                 node: "function parameter type",
             })?;
-        let clif_ty = map_type_id_to_clif(type_result, type_id).ok_or(CodegenError::UnsupportedNode {
-            span: param.span,
-            node: "function parameter type",
-        })?;
+        let clif_ty =
+            map_type_id_to_clif(type_result, type_id).ok_or(CodegenError::UnsupportedNode {
+                span: param.span,
+                node: "function parameter type",
+            })?;
         signature.params.push(AbiParam::new(clif_ty));
     }
     let return_type_id = signature_types
         .map(|sig| sig.return_type)
-        .or_else(|| def.node.return_type.as_ref().and_then(|ty| type_id_for_type(resolution, type_result, ty)))
+        .or_else(|| {
+            def.node
+                .return_type
+                .as_ref()
+                .and_then(|ty| type_id_for_type(resolution, type_result, ty))
+        })
         .map(substitute);
     if let Some(type_id) = return_type_id {
         if let Some(clif_ty) = map_type_id_to_clif(type_result, type_id) {
@@ -140,10 +146,11 @@ pub(crate) fn lower_function_with_name(
             .ok_or(CodegenError::MissingLocalType {
                 span: param.node.name.span,
             })?;
-        let clif_ty = map_type_id_to_clif(type_result, type_id).ok_or(CodegenError::UnsupportedNode {
-            span: param.node.name.span,
-            node: "function parameter type",
-        })?;
+        let clif_ty =
+            map_type_id_to_clif(type_result, type_id).ok_or(CodegenError::UnsupportedNode {
+                span: param.node.name.span,
+                node: "function parameter type",
+            })?;
         let var = builder.declare_var(clif_ty);
         builder.def_var(var, value);
         state.locals.insert(local_id, var);

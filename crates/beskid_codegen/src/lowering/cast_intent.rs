@@ -1,10 +1,10 @@
 use crate::errors::CodegenError;
 use crate::lowering::context::CodegenResult;
-use cranelift_codegen::ir::{InstBuilder, Value};
-use cranelift_frontend::FunctionBuilder;
 use beskid_analysis::hir::HirPrimitiveType;
 use beskid_analysis::syntax::SpanInfo;
 use beskid_analysis::types::{TypeId, TypeInfo, TypeResult};
+use cranelift_codegen::ir::{InstBuilder, Value};
+use cranelift_frontend::FunctionBuilder;
 use std::collections::HashSet;
 
 pub(crate) fn ensure_type_compatibility(
@@ -21,18 +21,16 @@ pub(crate) fn ensure_type_compatibility(
 
     let expected_info = type_result.types.get(expected);
     let actual_info = type_result.types.get(actual);
-    
+
     if is_numeric_type(expected_info) && is_numeric_type(actual_info) {
-        if let (
-            Some(TypeInfo::Primitive(expected_prim)),
-            Some(TypeInfo::Primitive(actual_prim)),
-        ) = (expected_info, actual_info)
+        if let (Some(TypeInfo::Primitive(expected_prim)), Some(TypeInfo::Primitive(actual_prim))) =
+            (expected_info, actual_info)
         {
             let expected_width = expected_prim.bit_width();
             let actual_width = actual_prim.bit_width();
             let target_ty = crate::lowering::types::map_primitive_to_clif(*expected_prim)
                 .expect("expected clif type for numeric cast");
-                
+
             if expected_width > actual_width {
                 value = builder.ins().sextend(target_ty, value);
             } else if expected_width < actual_width {
@@ -65,8 +63,18 @@ pub(crate) fn validate_cast_intents(type_result: &TypeResult) -> Vec<CodegenErro
             });
         }
 
-        let key = (intent.span.start, intent.span.end, intent.from.0, intent.to.0);
-        let reverse_key = (intent.span.start, intent.span.end, intent.to.0, intent.from.0);
+        let key = (
+            intent.span.start,
+            intent.span.end,
+            intent.from.0,
+            intent.to.0,
+        );
+        let reverse_key = (
+            intent.span.start,
+            intent.span.end,
+            intent.to.0,
+            intent.from.0,
+        );
         if !seen.insert(key) {
             errors.push(CodegenError::InvalidCastIntent {
                 span: intent.span,

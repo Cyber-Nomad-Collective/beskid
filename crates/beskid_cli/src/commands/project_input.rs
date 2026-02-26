@@ -4,8 +4,8 @@ use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
 use beskid_analysis::projects::{
-    build_compile_plan, discover_project_file, prepare_project_workspace_with_options, CompilePlan,
-    PreparedProjectWorkspace, WorkspacePrepareOptions, PROJECT_FILE_NAME,
+    CompilePlan, PROJECT_FILE_NAME, PreparedProjectWorkspace, WorkspacePrepareOptions,
+    build_compile_plan, discover_project_file, prepare_project_workspace_with_options,
 };
 
 pub struct ResolvedInput {
@@ -37,11 +37,8 @@ pub fn resolve_project(
     let manifest_path = explicit_manifest.or(discovered_manifest);
     let (compile_plan, prepared_workspace) = match manifest_path {
         Some(ref manifest) => {
-            let plan = build_compile_plan(
-                manifest,
-                target,
-            )
-            .map_err(|err| anyhow::anyhow!("{}: {err}", err.code()))?;
+            let plan = build_compile_plan(manifest, target)
+                .map_err(|err| anyhow::anyhow!("{}: {err}", err.code()))?;
             let workspace = prepare_project_workspace_with_options(
                 &plan,
                 WorkspacePrepareOptions { frozen, locked },
@@ -65,13 +62,7 @@ pub fn resolve_input(
     frozen: bool,
     locked: bool,
 ) -> Result<ResolvedInput> {
-    let resolved_project = resolve_project(
-        input,
-        project,
-        target,
-        frozen,
-        locked,
-    )?;
+    let resolved_project = resolve_project(input, project, target, frozen, locked)?;
     let compile_plan = resolved_project.compile_plan;
     let prepared_workspace = resolved_project.prepared_workspace;
 

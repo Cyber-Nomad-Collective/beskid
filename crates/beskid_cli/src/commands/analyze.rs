@@ -1,14 +1,14 @@
-use anyhow::Result;
-use clap::Args;
-use std::path::PathBuf;
-use beskid_analysis::parsing::parsable::Parsable;
-use beskid_analysis::parser::{BeskidParser, Rule};
-use beskid_analysis::syntax::Program;
-use beskid_analysis::{builtin_rules, AnalysisOptions, run_rules};
-use miette::Report;
-use pest::Parser;
 use crate::commands::project_input::resolve_input;
 use crate::errors::{print_pretty_parse_error, print_pretty_pest_error};
+use anyhow::Result;
+use beskid_analysis::parser::{BeskidParser, Rule};
+use beskid_analysis::parsing::parsable::Parsable;
+use beskid_analysis::syntax::Program;
+use beskid_analysis::{AnalysisOptions, builtin_rules, run_rules};
+use clap::Args;
+use miette::Report;
+use pest::Parser;
+use std::path::PathBuf;
 
 #[derive(Args, Debug)]
 pub struct AnalyzeArgs {
@@ -83,6 +83,6 @@ pub fn execute(args: AnalyzeArgs) -> Result<()> {
             eprintln!("{:?}", Report::new(diagnostic));
         }
     }
-    
+
     Ok(())
 }

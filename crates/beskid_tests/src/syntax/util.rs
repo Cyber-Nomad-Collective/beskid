@@ -1,8 +1,8 @@
+use beskid_analysis::Rule;
 use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::syntax::{
     Expression, Literal, Node, Path, PrimitiveType, Program, Spanned, Statement, Type,
 };
-use beskid_analysis::Rule;
 
 use crate::parsing::util::parse_pair;
 
@@ -80,7 +80,9 @@ pub fn assert_literal_bool(literal: &Literal, expected: bool) {
 
 pub fn assert_expression_integer(expr: &Spanned<Expression>, expected: &str) {
     match &expr.node {
-        Expression::Literal(literal) => assert_literal_integer(&literal.node.literal.node, expected),
+        Expression::Literal(literal) => {
+            assert_literal_integer(&literal.node.literal.node, expected)
+        }
         _ => panic!("expected literal expression"),
     }
 }

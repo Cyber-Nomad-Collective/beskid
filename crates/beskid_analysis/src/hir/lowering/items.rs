@@ -1,7 +1,8 @@
 use crate::hir::{
     AstItem, AstProgram, HirContractDefinition, HirContractEmbedding, HirContractMethodSignature,
-    HirContractNode, HirEnumDefinition, HirEnumVariant, HirFunctionDefinition, HirInlineModule, HirItem,
-    HirMethodDefinition, HirModuleDeclaration, HirProgram, HirTypeDefinition, HirUseDeclaration,
+    HirContractNode, HirEnumDefinition, HirEnumVariant, HirFunctionDefinition, HirInlineModule,
+    HirItem, HirMethodDefinition, HirModuleDeclaration, HirProgram, HirTypeDefinition,
+    HirUseDeclaration,
 };
 use crate::syntax::{self, Spanned};
 
@@ -139,7 +140,9 @@ impl Lowerable for Spanned<syntax::ContractNode> {
             syntax::ContractNode::MethodSignature(signature) => {
                 HirContractNode::MethodSignature(signature.lower())
             }
-            syntax::ContractNode::Embedding(embedding) => HirContractNode::Embedding(embedding.lower()),
+            syntax::ContractNode::Embedding(embedding) => {
+                HirContractNode::Embedding(embedding.lower())
+            }
         };
         Spanned::new(lowered, self.span)
     }
@@ -201,7 +204,9 @@ impl Lowerable for Spanned<syntax::InlineModule> {
                     syntax::Node::Method(def) => HirItem::MethodDefinition(def.lower()),
                     syntax::Node::TypeDefinition(def) => HirItem::TypeDefinition(def.lower()),
                     syntax::Node::EnumDefinition(def) => HirItem::EnumDefinition(def.lower()),
-                    syntax::Node::ContractDefinition(def) => HirItem::ContractDefinition(def.lower()),
+                    syntax::Node::ContractDefinition(def) => {
+                        HirItem::ContractDefinition(def.lower())
+                    }
                     syntax::Node::ModuleDeclaration(def) => HirItem::ModuleDeclaration(def.lower()),
                     syntax::Node::InlineModule(def) => HirItem::InlineModule(def.lower()),
                     syntax::Node::UseDeclaration(def) => HirItem::UseDeclaration(def.lower()),

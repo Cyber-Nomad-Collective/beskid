@@ -3,8 +3,8 @@ use std::path::Path;
 
 use crate::projects::error::ProjectError;
 use crate::projects::graph::{
-    build_project_graph, collect_dependency_projects, collect_unresolved_dependencies,
-    UnresolvedDependencyKind,
+    UnresolvedDependencyKind, build_project_graph, collect_dependency_projects,
+    collect_unresolved_dependencies,
 };
 use crate::projects::model::{
     CompilePlan, DependencySource, ProjectManifest, Target, TargetKind, UnresolvedDependencyNote,
@@ -80,7 +80,9 @@ pub fn build_compile_plan_with_policy(
             .ok_or_else(|| ProjectError::TargetNotFound(name.to_string()))?,
         None => pick_default_target(&manifest.targets)
             .cloned()
-            .ok_or_else(|| ProjectError::Validation("manifest must declare at least one target".to_string()))?,
+            .ok_or_else(|| {
+                ProjectError::Validation("manifest must declare at least one target".to_string())
+            })?,
     };
 
     Ok(CompilePlan {

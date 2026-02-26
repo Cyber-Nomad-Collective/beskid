@@ -52,40 +52,41 @@ pub fn resolve_dependencies(
                     )));
                 }
 
-                let dependency_index =
-                    if let Some(existing_index) = node_by_manifest.get(&dependency_manifest_path) {
-                        *existing_index
-                    } else {
-                        let dependency_manifest = load_manifest_from_path(&dependency_manifest_path)?;
-                        let dependency_project_root =
-                            project_root_from_manifest_path(&dependency_manifest_path)?;
-                        let dependency_source_root =
-                            dependency_project_root.join(&dependency_manifest.project.root);
+                let dependency_index = if let Some(existing_index) =
+                    node_by_manifest.get(&dependency_manifest_path)
+                {
+                    *existing_index
+                } else {
+                    let dependency_manifest = load_manifest_from_path(&dependency_manifest_path)?;
+                    let dependency_project_root =
+                        project_root_from_manifest_path(&dependency_manifest_path)?;
+                    let dependency_source_root =
+                        dependency_project_root.join(&dependency_manifest.project.root);
 
-                        let dependency_index = dag.add_node(ProjectGraphNode::ResolvedPathDependency {
-                            dependency_name: dependency.name.clone(),
-                            manifest_path: dependency_manifest_path.clone(),
-                            project_root: dependency_project_root,
-                            project_name: dependency_manifest.project.name.clone(),
-                            source_root: dependency_source_root,
-                        });
+                    let dependency_index = dag.add_node(ProjectGraphNode::ResolvedPathDependency {
+                        dependency_name: dependency.name.clone(),
+                        manifest_path: dependency_manifest_path.clone(),
+                        project_root: dependency_project_root,
+                        project_name: dependency_manifest.project.name.clone(),
+                        source_root: dependency_source_root,
+                    });
 
-                        node_by_manifest.insert(dependency_manifest_path.clone(), dependency_index);
+                    node_by_manifest.insert(dependency_manifest_path.clone(), dependency_index);
 
-                        visiting.push(dependency_manifest_path.clone());
-                        resolve_dependencies(
-                            dag,
-                            dependency_index,
-                            &dependency_manifest_path,
-                            &dependency_manifest,
-                            node_by_manifest,
-                            visiting,
-                            has_std_dependency,
-                        )?;
-                        visiting.pop();
+                    visiting.push(dependency_manifest_path.clone());
+                    resolve_dependencies(
+                        dag,
+                        dependency_index,
+                        &dependency_manifest_path,
+                        &dependency_manifest,
+                        node_by_manifest,
+                        visiting,
+                        has_std_dependency,
+                    )?;
+                    visiting.pop();
 
-                        dependency_index
-                    };
+                    dependency_index
+                };
 
                 if dag
                     .add_edge(

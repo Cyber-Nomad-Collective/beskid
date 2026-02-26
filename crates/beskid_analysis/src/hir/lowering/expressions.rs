@@ -14,7 +14,9 @@ impl Lowerable for Spanned<syntax::Expression> {
 
     fn lower(&self) -> Self::Output {
         let node = match &self.node {
-            syntax::Expression::Match(match_expr) => HirExpressionNode::MatchExpression(match_expr.lower()),
+            syntax::Expression::Match(match_expr) => {
+                HirExpressionNode::MatchExpression(match_expr.lower())
+            }
             syntax::Expression::Assign(assign_expr) => {
                 HirExpressionNode::AssignExpression(assign_expr.lower())
             }
@@ -24,21 +26,27 @@ impl Lowerable for Spanned<syntax::Expression> {
             syntax::Expression::Unary(unary_expr) => {
                 HirExpressionNode::UnaryExpression(unary_expr.lower())
             }
-            syntax::Expression::Call(call_expr) => HirExpressionNode::CallExpression(call_expr.lower()),
+            syntax::Expression::Call(call_expr) => {
+                HirExpressionNode::CallExpression(call_expr.lower())
+            }
             syntax::Expression::Member(member_expr) => {
                 HirExpressionNode::MemberExpression(member_expr.lower())
             }
             syntax::Expression::Literal(literal_expr) => {
                 HirExpressionNode::LiteralExpression(literal_expr.lower())
             }
-            syntax::Expression::Path(path_expr) => HirExpressionNode::PathExpression(path_expr.lower()),
+            syntax::Expression::Path(path_expr) => {
+                HirExpressionNode::PathExpression(path_expr.lower())
+            }
             syntax::Expression::StructLiteral(struct_expr) => {
                 HirExpressionNode::StructLiteralExpression(struct_expr.lower())
             }
             syntax::Expression::EnumConstructor(enum_expr) => {
                 HirExpressionNode::EnumConstructorExpression(enum_expr.lower())
             }
-            syntax::Expression::Block(block_expr) => HirExpressionNode::BlockExpression(block_expr.lower()),
+            syntax::Expression::Block(block_expr) => {
+                HirExpressionNode::BlockExpression(block_expr.lower())
+            }
             syntax::Expression::Grouped(grouped_expr) => {
                 HirExpressionNode::GroupedExpression(grouped_expr.lower())
             }

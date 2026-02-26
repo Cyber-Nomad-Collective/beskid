@@ -1,10 +1,9 @@
+use crate::builtins::{BuiltinType, builtin_specs};
 use crate::hir::{
     HirBinaryExpression, HirBinaryOp, HirCallExpression, HirEnumConstructorExpression,
-    HirExpressionNode, HirLiteral, HirMatchArm, HirMatchExpression, HirMemberExpression,
-    HirPath, HirPattern, HirPrimitiveType, HirStructLiteralExpression, HirUnaryExpression,
-    HirUnaryOp,
+    HirExpressionNode, HirLiteral, HirMatchArm, HirMatchExpression, HirMemberExpression, HirPath,
+    HirPattern, HirPrimitiveType, HirStructLiteralExpression, HirUnaryExpression, HirUnaryOp,
 };
-use crate::builtins::{builtin_specs, BuiltinType};
 use crate::resolve::{ItemKind, ResolvedValue};
 use crate::syntax::Spanned;
 use crate::types::TypeId;
@@ -41,14 +40,18 @@ impl<'a> TypeContext<'a> {
             }
             HirExpressionNode::BinaryExpression(binary) => self.type_binary_expression(binary),
             HirExpressionNode::UnaryExpression(unary) => self.type_unary_expression(unary),
-            HirExpressionNode::GroupedExpression(grouped) => self.type_expression(&grouped.node.expr),
+            HirExpressionNode::GroupedExpression(grouped) => {
+                self.type_expression(&grouped.node.expr)
+            }
             HirExpressionNode::BlockExpression(block_expr) => {
                 self.type_block(&block_expr.node.block);
                 self.primitive_type_id(HirPrimitiveType::Unit)
             }
             HirExpressionNode::CallExpression(call) => self.type_call_expression(call),
             HirExpressionNode::MemberExpression(member) => self.type_member_expression(member),
-            HirExpressionNode::MatchExpression(match_expr) => self.type_match_expression(match_expr),
+            HirExpressionNode::MatchExpression(match_expr) => {
+                self.type_match_expression(match_expr)
+            }
         };
 
         if let Some(type_id) = type_id {
@@ -113,7 +116,8 @@ impl<'a> TypeContext<'a> {
                 }
                 None => {
                     if expected != 0 {
-                        self.errors.push(TypeError::MissingTypeArguments { span: call.span });
+                        self.errors
+                            .push(TypeError::MissingTypeArguments { span: call.span });
                         return Some(signature.return_type);
                     }
                 }
@@ -386,7 +390,10 @@ impl<'a> TypeContext<'a> {
         Some(field_type)
     }
 
-    fn type_match_expression(&mut self, match_expr: &Spanned<HirMatchExpression>) -> Option<TypeId> {
+    fn type_match_expression(
+        &mut self,
+        match_expr: &Spanned<HirMatchExpression>,
+    ) -> Option<TypeId> {
         let scrutinee_type = self.type_expression(&match_expr.node.scrutinee);
         let mut expected: Option<TypeId> = None;
         for arm in &match_expr.node.arms {
@@ -466,14 +473,7 @@ impl<'a> TypeContext<'a> {
                             } else {
                                 self.errors.push(TypeError::UnknownEnumVariant {
                                     span: enum_pattern.node.path.node.variant.span,
-                                    name: enum_pattern
-                                        .node
-                                        .path
-                                        .node
-                                        .variant
-                                        .node
-                                        .name
-                                        .clone(),
+                                    name: enum_pattern.node.path.node.variant.node.name.clone(),
                                 });
                             }
                         }
@@ -486,11 +486,7 @@ impl<'a> TypeContext<'a> {
         }
     }
 
-    fn type_pattern_with_expected(
-        &mut self,
-        expected_type: TypeId,
-        pattern: &Spanned<HirPattern>,
-    ) {
+    fn type_pattern_with_expected(&mut self, expected_type: TypeId, pattern: &Spanned<HirPattern>) {
         match &pattern.node {
             HirPattern::Identifier(identifier) => {
                 self.insert_local_type(identifier.span, expected_type);
@@ -556,10 +552,7 @@ impl<'a> TypeContext<'a> {
                     None
                 }
             }
-            HirBinaryOp::Add
-            | HirBinaryOp::Sub
-            | HirBinaryOp::Mul
-            | HirBinaryOp::Div => {
+            HirBinaryOp::Add | HirBinaryOp::Sub | HirBinaryOp::Mul | HirBinaryOp::Div => {
                 if self.is_numeric(left) {
                     Some(left)
                 } else {

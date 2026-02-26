@@ -23,20 +23,12 @@ impl crate::parsing::parsable::Parsable for EnumPath {
 
         let span = crate::syntax::SpanInfo::from_span(&pair.as_span());
         let mut inner = pair.into_inner();
-        let type_name = crate::syntax::Identifier::parse(
-            inner
-                .next()
-                .ok_or(crate::parsing::error::ParseError::missing(
-                    crate::parser::Rule::Identifier,
-                ))?,
-        )?;
-        let variant = crate::syntax::Identifier::parse(
-            inner
-                .next()
-                .ok_or(crate::parsing::error::ParseError::missing(
-                    crate::parser::Rule::Identifier,
-                ))?,
-        )?;
+        let type_name = crate::syntax::Identifier::parse(inner.next().ok_or(
+            crate::parsing::error::ParseError::missing(crate::parser::Rule::Identifier),
+        )?)?;
+        let variant = crate::syntax::Identifier::parse(inner.next().ok_or(
+            crate::parsing::error::ParseError::missing(crate::parser::Rule::Identifier),
+        )?)?;
 
         Ok(crate::syntax::Spanned::new(
             Self { type_name, variant },

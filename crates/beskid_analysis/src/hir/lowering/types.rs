@@ -1,7 +1,6 @@
 use crate::hir::{
-    HirBinaryOp, HirEnumPath, HirField, HirIdentifier, HirParameter, HirParameterModifier,
-    HirPath, HirPathSegment, HirPrimitiveType, HirRangeExpression, HirType, HirUnaryOp,
-    HirVisibility,
+    HirBinaryOp, HirEnumPath, HirField, HirIdentifier, HirParameter, HirParameterModifier, HirPath,
+    HirPathSegment, HirPrimitiveType, HirRangeExpression, HirType, HirUnaryOp, HirVisibility,
 };
 use crate::syntax::{self, Spanned};
 

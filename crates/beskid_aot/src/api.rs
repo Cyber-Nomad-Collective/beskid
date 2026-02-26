@@ -3,9 +3,9 @@ use std::path::PathBuf;
 use beskid_codegen::CodegenArtifact;
 
 use crate::error::{AotError, AotResult};
-use crate::linker::{link, LinkRequest};
+use crate::linker::{LinkRequest, link};
 use crate::object_module::BeskidObjectModule;
-use crate::runtime::{prepare_runtime, RuntimeBuildRequest};
+use crate::runtime::{RuntimeBuildRequest, prepare_runtime};
 use crate::target::detect_target;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -32,7 +32,10 @@ pub enum LinkMode {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum RuntimeStrategy {
     BuildOnTheFly,
-    UsePrebuilt { path: PathBuf, abi_version: Option<u32> },
+    UsePrebuilt {
+        path: PathBuf,
+        abi_version: Option<u32>,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

@@ -1,9 +1,9 @@
-use pest::iterators::Pair;
+use crate::parser::Rule;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
-use crate::parser::Rule;
-use crate::syntax::{SpanInfo, Spanned};
 use crate::syntax::expressions::span::span_from_bounds;
+use crate::syntax::{SpanInfo, Spanned};
+use pest::iterators::Pair;
 
 use super::assign_expression::AssignExpression;
 use super::binary_expression::{BinaryExpression, parse_binary_expression};
@@ -133,4 +133,3 @@ pub(crate) fn parse_primary_expression(
         .ok_or(ParseError::missing(Rule::Expression))?;
     parse_expression(inner)
 }
-

@@ -1,10 +1,10 @@
-use pest::iterators::Pair;
 use pest::Span;
+use pest::iterators::Pair;
 
-use crate::parsing::error::ParseError;
 use crate::parser::Rule;
-use crate::syntax::{Expression, SpanInfo, Spanned};
+use crate::parsing::error::ParseError;
 use crate::syntax::expressions::span::span_from_bounds;
+use crate::syntax::{Expression, SpanInfo, Spanned};
 
 use beskid_ast_derive::AstNode;
 
@@ -66,10 +66,10 @@ fn parse_unary_ops(
         };
         let start = base_start + offset;
         let end = start + ch.len_utf8();
-        let span = Span::new(input, start, end).ok_or(ParseError::missing(Rule::UnaryExpression))?;
+        let span =
+            Span::new(input, start, end).ok_or(ParseError::missing(Rule::UnaryExpression))?;
         ops.push(Spanned::new(op, SpanInfo::from_span(&span)));
     }
 
     Ok(ops)
 }
-

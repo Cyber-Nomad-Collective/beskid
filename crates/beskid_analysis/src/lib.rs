@@ -1,17 +1,17 @@
+pub mod analysis;
+pub mod builtins;
+pub mod hir;
 pub mod parser;
 pub mod parsing;
 pub mod projects;
 pub mod query;
-pub mod syntax;
-pub mod hir;
-pub mod analysis;
-pub mod builtins;
 pub mod resolve;
+pub mod syntax;
 pub mod types;
 
+pub use analysis::{
+    AnalysisOptions, AnalysisResult, Rule as AnalysisRule, RuleContext, SemanticDiagnostic,
+    Severity, builtin_rules, run_rules,
+};
 pub use parser::{BeskidParser, Rule};
 pub use query::{AstNode, Descendants, DynNodeRef, NodeKind, Query};
-pub use analysis::{
-    builtin_rules, AnalysisOptions, AnalysisResult, Rule as AnalysisRule, RuleContext,
-    SemanticDiagnostic, Severity, run_rules,
-};

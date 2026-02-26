@@ -36,8 +36,8 @@ fn align_to(value: usize, align: usize) -> usize {
 fn descriptor_emits_entries_for_named_types() {
     let source = "type Foo { i64 x } enum Choice { Some(Foo value), None } unit main() { }";
     let (hir, resolution, typed) = lower_resolve_type(source);
-    let artifact = lower_program(&hir, &resolution, &typed)
-        .expect("expected codegen lowering to succeed");
+    let artifact =
+        lower_program(&hir, &resolution, &typed).expect("expected codegen lowering to succeed");
 
     let foo_id = find_named_type_id(&typed, &resolution, "Foo");
     let choice_id = find_named_type_id(&typed, &resolution, "Choice");
@@ -49,8 +49,8 @@ fn descriptor_emits_entries_for_named_types() {
 fn descriptor_struct_pointer_offsets_for_named_fields() {
     let source = "type Foo { i64 x } type Bar { Foo f, i64 y } unit main() { }";
     let (hir, resolution, typed) = lower_resolve_type(source);
-    let artifact = lower_program(&hir, &resolution, &typed)
-        .expect("expected codegen lowering to succeed");
+    let artifact =
+        lower_program(&hir, &resolution, &typed).expect("expected codegen lowering to succeed");
 
     let foo_id = find_named_type_id(&typed, &resolution, "Foo");
     let bar_id = find_named_type_id(&typed, &resolution, "Bar");
@@ -73,8 +73,8 @@ fn descriptor_struct_pointer_offsets_for_named_fields() {
 fn descriptor_enum_pointer_offsets_include_payload_start() {
     let source = "type Foo { i64 x } enum Choice { Some(Foo value), None } unit main() { }";
     let (hir, resolution, typed) = lower_resolve_type(source);
-    let artifact = lower_program(&hir, &resolution, &typed)
-        .expect("expected codegen lowering to succeed");
+    let artifact =
+        lower_program(&hir, &resolution, &typed).expect("expected codegen lowering to succeed");
 
     let foo_id = find_named_type_id(&typed, &resolution, "Foo");
     let choice_id = find_named_type_id(&typed, &resolution, "Choice");
@@ -99,8 +99,8 @@ fn descriptor_enum_pointer_offsets_include_payload_start() {
 fn descriptor_enum_layout_respects_header_and_tag_contract() {
     let source = "enum Choice { Some(i64 value), None } unit main() { }";
     let (hir, resolution, typed) = lower_resolve_type(source);
-    let artifact = lower_program(&hir, &resolution, &typed)
-        .expect("expected codegen lowering to succeed");
+    let artifact =
+        lower_program(&hir, &resolution, &typed).expect("expected codegen lowering to succeed");
 
     let choice_id = find_named_type_id(&typed, &resolution, "Choice");
     let choice_desc = artifact
@@ -111,7 +111,10 @@ fn descriptor_enum_layout_respects_header_and_tag_contract() {
     let header_size = std::mem::size_of::<usize>();
     let payload_start = align_to(header_size, std::mem::align_of::<i64>().max(4));
     let payload_size = align_to(4, std::mem::align_of::<i64>()) + std::mem::size_of::<i64>();
-    let expected_size = align_to(payload_start + payload_size, std::mem::align_of::<usize>().max(std::mem::align_of::<i64>()));
+    let expected_size = align_to(
+        payload_start + payload_size,
+        std::mem::align_of::<usize>().max(std::mem::align_of::<i64>()),
+    );
 
     assert_eq!(
         choice_desc.size, expected_size,

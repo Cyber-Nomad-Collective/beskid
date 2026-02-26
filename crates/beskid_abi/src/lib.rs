@@ -3,7 +3,7 @@ pub mod symbols;
 pub mod types;
 pub mod version;
 
-pub use builtins::{AbiParamKind, AbiReturnKind, BuiltinFnSpec, BUILTIN_SPECS};
+pub use builtins::{AbiParamKind, AbiReturnKind, BUILTIN_SPECS, BuiltinFnSpec};
 pub use symbols::{
     RUNTIME_EXPORT_SYMBOLS, SYM_ABI_VERSION, SYM_ALLOC, SYM_ARRAY_NEW, SYM_GC_REGISTER_ROOT,
     SYM_GC_ROOT_HANDLE, SYM_GC_UNREGISTER_ROOT, SYM_GC_UNROOT_HANDLE, SYM_GC_WRITE_BARRIER,

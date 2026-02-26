@@ -1,12 +1,12 @@
 use pest::iterators::Pair;
 
+use crate::parser::Rule;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
-use crate::parser::Rule;
-use crate::syntax::{Block, Identifier, Parameter, SpanInfo, Spanned, Type, Visibility};
 use crate::syntax::items::parse_helpers::{
     parse_identifier_list, parse_parameter_list, parse_visibility_or_default,
 };
+use crate::syntax::{Block, Identifier, Parameter, SpanInfo, Spanned, Type, Visibility};
 
 use beskid_ast_derive::AstNode;
 
@@ -32,15 +32,9 @@ impl Parsable for FunctionDefinition {
         let mut inner = pair.clone().into_inner().peekable();
         let visibility = parse_visibility_or_default(&pair, &mut inner)?;
         let return_type = Some(Type::parse(
-            inner
-                .next()
-                .ok_or(ParseError::missing(Rule::BeskidType))?,
+            inner.next().ok_or(ParseError::missing(Rule::BeskidType))?,
         )?);
-        let name = Identifier::parse(
-            inner
-                .next()
-                .ok_or(ParseError::missing(Rule::Identifier))?,
-        )?;
+        let name = Identifier::parse(inner.next().ok_or(ParseError::missing(Rule::Identifier))?)?;
 
         let mut generics = Vec::new();
         let mut parameters = Vec::new();

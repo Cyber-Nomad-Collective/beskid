@@ -1,8 +1,8 @@
-use cranelift_codegen::ir::types;
 use beskid_analysis::hir::{HirPrimitiveType, HirType};
-use beskid_analysis::resolve::{ResolvedType, Resolution};
+use beskid_analysis::resolve::{Resolution, ResolvedType};
 use beskid_analysis::syntax::Spanned;
 use beskid_analysis::types::{TypeId, TypeInfo, TypeResult};
+use cranelift_codegen::ir::types;
 
 pub(crate) fn map_type_id_to_clif(
     type_result: &TypeResult,
@@ -10,9 +10,9 @@ pub(crate) fn map_type_id_to_clif(
 ) -> Option<cranelift_codegen::ir::Type> {
     match type_result.types.get(type_id) {
         Some(TypeInfo::Primitive(primitive)) => map_primitive_to_clif(*primitive),
-        Some(TypeInfo::Named(_)) | Some(TypeInfo::GenericParam(_)) | Some(TypeInfo::Applied { .. }) => {
-            Some(pointer_type())
-        }
+        Some(TypeInfo::Named(_))
+        | Some(TypeInfo::GenericParam(_))
+        | Some(TypeInfo::Applied { .. }) => Some(pointer_type()),
         _ => None,
     }
 }
@@ -24,13 +24,13 @@ pub(crate) fn type_id_for_type(
 ) -> Option<TypeId> {
     match &ty.node {
         HirType::Primitive(primitive) => find_primitive_type_id(type_result, primitive.node),
-        HirType::Complex(_) => {
-            match resolution.tables.resolved_types.get(&ty.span)? {
-                ResolvedType::Item(item_id) => find_named_type_id(type_result, *item_id),
-                ResolvedType::Generic(_) => None,
-            }
+        HirType::Complex(_) => match resolution.tables.resolved_types.get(&ty.span)? {
+            ResolvedType::Item(item_id) => find_named_type_id(type_result, *item_id),
+            ResolvedType::Generic(_) => None,
+        },
+        HirType::Array(inner) | HirType::Ref(inner) => {
+            type_id_for_type(resolution, type_result, inner)
         }
-        HirType::Array(inner) | HirType::Ref(inner) => type_id_for_type(resolution, type_result, inner),
     }
 }
 
@@ -52,7 +52,9 @@ fn find_primitive_type_id(type_result: &TypeResult, primitive: HirPrimitiveType)
     }
 }
 
-pub(crate) fn map_primitive_to_clif(primitive: HirPrimitiveType) -> Option<cranelift_codegen::ir::Type> {
+pub(crate) fn map_primitive_to_clif(
+    primitive: HirPrimitiveType,
+) -> Option<cranelift_codegen::ir::Type> {
     match primitive {
         HirPrimitiveType::Bool => Some(types::I8),
         HirPrimitiveType::I32 => Some(types::I32),
@@ -65,7 +67,10 @@ pub(crate) fn map_primitive_to_clif(primitive: HirPrimitiveType) -> Option<crane
     }
 }
 
-fn find_named_type_id(type_result: &TypeResult, item_id: beskid_analysis::resolve::ItemId) -> Option<TypeId> {
+fn find_named_type_id(
+    type_result: &TypeResult,
+    item_id: beskid_analysis::resolve::ItemId,
+) -> Option<TypeId> {
     let mut index = 0usize;
     loop {
         let type_id = TypeId(index);

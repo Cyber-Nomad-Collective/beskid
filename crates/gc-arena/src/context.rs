@@ -7,10 +7,10 @@ use core::{
 };
 
 use crate::{
-    Gc, GcWeak,
     collect::{Collect, Trace},
     metrics::Metrics,
     types::{GcBox, GcBoxHeader, GcBoxInner, GcColor, Invariant},
+    Gc, GcWeak,
 };
 
 /// Handle value given by arena callbacks during construction and mutation. Allows allocating new

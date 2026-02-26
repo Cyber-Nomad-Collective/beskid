@@ -137,9 +137,14 @@ fn enum_layout(type_result: &TypeResult, variants: &[(String, Vec<TypeId>)]) -> 
     }
 
     let payload_start = align_to(HEADER_SIZE, payload_align.max(tag_align));
-    pointer_offsets.iter_mut().for_each(|off| *off += payload_start);
+    pointer_offsets
+        .iter_mut()
+        .for_each(|off| *off += payload_start);
 
-    let total_size = align_to(payload_start + payload_size, HEADER_ALIGN.max(payload_align));
+    let total_size = align_to(
+        payload_start + payload_size,
+        HEADER_ALIGN.max(payload_align),
+    );
 
     TypeLayout {
         size: total_size,

@@ -1,13 +1,13 @@
 use crate::errors::CodegenError;
 use crate::lowering::descriptor::{enum_payload_start, enum_variant_field_offsets};
-use crate::lowering::lowerable::{lower_node, Lowerable};
+use crate::lowering::lowerable::{Lowerable, lower_node};
 use crate::lowering::node_context::NodeLoweringContext;
 use crate::lowering::types::{map_type_id_to_clif, pointer_type};
-use cranelift_codegen::ir::condcodes::IntCC;
-use cranelift_codegen::ir::{InstBuilder, MemFlags, Value};
 use beskid_analysis::hir::{HirMatchExpression, HirPattern};
 use beskid_analysis::syntax::Spanned;
 use beskid_analysis::types::TypeInfo;
+use cranelift_codegen::ir::condcodes::IntCC;
+use cranelift_codegen::ir::{InstBuilder, MemFlags, Value};
 
 impl Lowerable<NodeLoweringContext<'_, '_>> for HirMatchExpression {
     type Output = Option<Value>;
@@ -16,10 +16,11 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirMatchExpression {
         node: &Spanned<Self>,
         ctx: &mut NodeLoweringContext<'_, '_>,
     ) -> Result<Self::Output, CodegenError> {
-        let scrutinee = lower_node(&node.node.scrutinee, ctx)?.ok_or(CodegenError::UnsupportedNode {
-            span: node.node.scrutinee.span,
-            node: "unit-valued match scrutinee",
-        })?;
+        let scrutinee =
+            lower_node(&node.node.scrutinee, ctx)?.ok_or(CodegenError::UnsupportedNode {
+                span: node.node.scrutinee.span,
+                node: "unit-valued match scrutinee",
+            })?;
         let scrutinee_type = ctx
             .type_result
             .expr_types
@@ -34,21 +35,20 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirMatchExpression {
                 return Err(CodegenError::UnsupportedNode {
                     span: node.node.scrutinee.span,
                     node: "match scrutinee type",
-                })
+                });
             }
         };
-        let variants = ctx
-            .type_result
-            .enum_variants_ordered
-            .get(&item_id)
-            .ok_or(CodegenError::UnsupportedNode {
+        let variants = ctx.type_result.enum_variants_ordered.get(&item_id).ok_or(
+            CodegenError::UnsupportedNode {
                 span: node.span,
                 node: "match enum variants",
+            },
+        )?;
+        let payload_start =
+            enum_payload_start(ctx.type_result, item_id).ok_or(CodegenError::UnsupportedNode {
+                span: node.span,
+                node: "match payload start",
             })?;
-        let payload_start = enum_payload_start(ctx.type_result, item_id).ok_or(CodegenError::UnsupportedNode {
-            span: node.span,
-            node: "match payload start",
-        })?;
 
         let result_type = ctx.type_result.expr_types.get(&node.span).copied();
         let result_clif = result_type.and_then(|ty| map_type_id_to_clif(ctx.type_result, ty));
@@ -86,18 +86,31 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirMatchExpression {
                             span: enum_pattern.span,
                             node: "match variant tag",
                         })?;
-                    let tag_offset = ctx.builder.ins().iconst(pointer_type(), payload_start as i64);
+                    let tag_offset = ctx
+                        .builder
+                        .ins()
+                        .iconst(pointer_type(), payload_start as i64);
                     let tag_addr = ctx.builder.ins().iadd(scrutinee, tag_offset);
-                    let tag_val = ctx.builder.ins().load(cranelift_codegen::ir::types::I32, MemFlags::new(), tag_addr, 0);
-                    let tag_const = ctx.builder.ins().iconst(cranelift_codegen::ir::types::I32, tag);
+                    let tag_val = ctx.builder.ins().load(
+                        cranelift_codegen::ir::types::I32,
+                        MemFlags::new(),
+                        tag_addr,
+                        0,
+                    );
+                    let tag_const = ctx
+                        .builder
+                        .ins()
+                        .iconst(cranelift_codegen::ir::types::I32, tag);
                     let cond = ctx.builder.ins().icmp(IntCC::Equal, tag_val, tag_const);
-                    ctx.builder.ins().brif(cond, arm_block, &[], next_block, &[]);
+                    ctx.builder
+                        .ins()
+                        .brif(cond, arm_block, &[], next_block, &[]);
                 }
                 _ => {
                     return Err(CodegenError::UnsupportedNode {
                         span: arm.node.pattern.span,
                         node: "match pattern",
-                    })
+                    });
                 }
             }
             ctx.builder.switch_to_block(arm_block);
@@ -113,7 +126,9 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirMatchExpression {
                         node: "unit-valued match guard",
                     },
                 )?;
-                ctx.builder.ins().brif(guard_val, guard_block, &[], next_block, &[]);
+                ctx.builder
+                    .ins()
+                    .brif(guard_val, guard_block, &[], next_block, &[]);
                 ctx.builder.switch_to_block(guard_block);
                 ctx.builder.seal_block(guard_block);
             }
@@ -153,9 +168,7 @@ fn bind_match_pattern(
     arm: &Spanned<beskid_analysis::hir::HirMatchArm>,
 ) -> Result<(), CodegenError> {
     match &arm.node.pattern.node {
-        HirPattern::Identifier(identifier) => {
-            bind_local(ctx, identifier.span, scrutinee)
-        }
+        HirPattern::Identifier(identifier) => bind_local(ctx, identifier.span, scrutinee),
         HirPattern::Enum(enum_pattern) => {
             let variant_name = enum_pattern.node.path.node.variant.node.name.as_str();
             let field_types = variants
@@ -196,7 +209,7 @@ fn bind_match_pattern(
                         return Err(CodegenError::UnsupportedNode {
                             span: item.span,
                             node: "match pattern item",
-                        })
+                        });
                     }
                 }
             }
@@ -225,10 +238,11 @@ fn bind_local(
         .get(&local_id)
         .copied()
         .ok_or(CodegenError::MissingLocalType { span })?;
-    let clif_ty = map_type_id_to_clif(ctx.type_result, type_id).ok_or(CodegenError::UnsupportedNode {
-        span,
-        node: "match binding clif type",
-    })?;
+    let clif_ty =
+        map_type_id_to_clif(ctx.type_result, type_id).ok_or(CodegenError::UnsupportedNode {
+            span,
+            node: "match binding clif type",
+        })?;
     let var = ctx.builder.declare_var(clif_ty);
     ctx.builder.def_var(var, value);
     ctx.state.locals.insert(local_id, var);

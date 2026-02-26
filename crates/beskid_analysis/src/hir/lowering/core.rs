@@ -11,12 +11,11 @@ pub(crate) trait Lowerable {
     fn lower(&self) -> Self::Output;
 }
 
+#[path = "expressions.rs"]
+mod expressions;
 #[path = "items.rs"]
 mod items;
 #[path = "statements.rs"]
 mod statements;
-#[path = "expressions.rs"]
-mod expressions;
 #[path = "types.rs"]
 mod types;
-

@@ -1,8 +1,8 @@
 use pest::iterators::Pair;
 
+use crate::parser::Rule;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
-use crate::parser::Rule;
 use crate::syntax::{EnumPath, Expression, SpanInfo, Spanned};
 
 use beskid_ast_derive::AstNode;
@@ -20,11 +20,7 @@ pub(crate) fn parse_enum_constructor_expression(
 ) -> Result<Spanned<Expression>, ParseError> {
     let span = SpanInfo::from_span(&pair.as_span());
     let mut inner = pair.into_inner();
-    let path = EnumPath::parse(
-        inner
-            .next()
-            .ok_or(ParseError::missing(Rule::EnumPath))?,
-    )?;
+    let path = EnumPath::parse(inner.next().ok_or(ParseError::missing(Rule::EnumPath))?)?;
     let args = if let Some(arg_list) = inner.next() {
         arg_list
             .into_inner()
@@ -34,10 +30,7 @@ pub(crate) fn parse_enum_constructor_expression(
         Vec::new()
     };
 
-    let constructor = Spanned::new(
-        EnumConstructorExpression { path, args },
-        span,
-    );
+    let constructor = Spanned::new(EnumConstructorExpression { path, args }, span);
 
     Ok(Spanned::new(Expression::EnumConstructor(constructor), span))
 }

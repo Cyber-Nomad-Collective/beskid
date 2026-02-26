@@ -1,5 +1,7 @@
 use beskid_engine::Engine;
-use beskid_runtime::{alloc, gc_register_root, gc_root_handle, gc_unregister_root, gc_write_barrier};
+use beskid_runtime::{
+    alloc, gc_register_root, gc_root_handle, gc_unregister_root, gc_write_barrier,
+};
 
 #[test]
 fn runtime_write_barrier_is_noop() {
@@ -27,7 +29,10 @@ fn runtime_alloc_panics_without_arena_scope() {
     let result = std::panic::catch_unwind(|| {
         let _ = alloc(8, std::ptr::null());
     });
-    assert!(result.is_err(), "expected alloc to panic without arena scope");
+    assert!(
+        result.is_err(),
+        "expected alloc to panic without arena scope"
+    );
 }
 
 #[test]

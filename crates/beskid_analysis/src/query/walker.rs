@@ -24,7 +24,7 @@ impl<'a> AstWalker<'a> {
 
     pub fn walk(&mut self, node: NodeRef<'a>) {
         self.notify_enter(node);
-        
+
         node.children(|child| {
             self.walk(child);
         });

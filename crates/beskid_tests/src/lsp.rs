@@ -1,9 +1,9 @@
 use std::str::FromStr;
 
 use beskid_lsp::backend::Backend;
-use tower_lsp_server::ls_types::*;
 use tower_lsp_server::LanguageServer;
 use tower_lsp_server::LspService;
+use tower_lsp_server::ls_types::*;
 
 fn uri(path: &str) -> Uri {
     Uri::from_str(path).expect("valid URI")

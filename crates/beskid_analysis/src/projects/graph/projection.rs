@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 
-use daggy::petgraph::visit::EdgeRef;
-use daggy::petgraph::Direction;
 use daggy::NodeIndex;
+use daggy::petgraph::Direction;
+use daggy::petgraph::visit::EdgeRef;
 
 use crate::projects::graph::project_graph::{
     ProjectGraph, ProjectGraphNode, UnresolvedDependency, UnresolvedDependencyKind,
@@ -57,10 +57,9 @@ fn collect_dependency_projects_from_node(
         .filter_map(|edge| {
             let child = edge.target();
             match graph.dag.graph().node_weight(child) {
-                Some(ProjectGraphNode::ResolvedPathDependency {
-                    manifest_path,
-                    ..
-                }) => Some((manifest_path.display().to_string(), child)),
+                Some(ProjectGraphNode::ResolvedPathDependency { manifest_path, .. }) => {
+                    Some((manifest_path.display().to_string(), child))
+                }
                 _ => None,
             }
         })

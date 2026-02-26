@@ -9,7 +9,11 @@ use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 
 impl SemanticPipelineRule {
-    pub(super) fn stage5_modules_and_visibility(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
+    pub(super) fn stage5_modules_and_visibility(
+        &self,
+        ctx: &mut RuleContext,
+        hir: &Spanned<HirProgram>,
+    ) {
         self.check_module_not_found(ctx, hir);
         self.check_visibility_violations(ctx, hir);
         self.check_unused_imports(ctx, hir);
@@ -26,7 +30,9 @@ impl SemanticPipelineRule {
             let HirItem::ModuleDeclaration(module) = &item.node else {
                 continue;
             };
-            let module_path = self.path_to_string_stage5(&module.node.path).replace('.', "/");
+            let module_path = self
+                .path_to_string_stage5(&module.node.path)
+                .replace('.', "/");
             let file_candidate = parent.join(format!("{module_path}.bd"));
             let mod_candidate = parent.join(module_path).join("mod.bd");
             if file_candidate.exists() || mod_candidate.exists() {
@@ -36,7 +42,10 @@ impl SemanticPipelineRule {
             ctx.emit_simple(
                 module.node.path.span,
                 "E1502",
-                format!("module `{}` not found", self.path_to_string_stage5(&module.node.path)),
+                format!(
+                    "module `{}` not found",
+                    self.path_to_string_stage5(&module.node.path)
+                ),
                 "module not found",
                 Some(format!(
                     "expected `{}` or `{}`",
@@ -95,7 +104,10 @@ impl SemanticPipelineRule {
             ctx.emit_simple(
                 use_decl.node.path.span,
                 "W1503",
-                format!("unused import `{}`", self.path_to_string_stage5(&use_decl.node.path)),
+                format!(
+                    "unused import `{}`",
+                    self.path_to_string_stage5(&use_decl.node.path)
+                ),
                 "unused import",
                 None,
                 Severity::Warning,
@@ -151,23 +163,44 @@ impl SemanticPipelineRule {
         }
     }
 
-    fn collect_private_item_spans(&self, hir: &Spanned<HirProgram>) -> HashMap<String, crate::syntax::SpanInfo> {
+    fn collect_private_item_spans(
+        &self,
+        hir: &Spanned<HirProgram>,
+    ) -> HashMap<String, crate::syntax::SpanInfo> {
         let mut items = HashMap::new();
         for item in &hir.node.items {
             match &item.node {
-                HirItem::FunctionDefinition(definition) if definition.node.visibility.node == HirVisibility::Private => {
-                    items.insert(definition.node.name.node.name.clone(), definition.node.name.span);
+                HirItem::FunctionDefinition(definition)
+                    if definition.node.visibility.node == HirVisibility::Private =>
+                {
+                    items.insert(
+                        definition.node.name.node.name.clone(),
+                        definition.node.name.span,
+                    );
                 }
-                HirItem::TypeDefinition(definition) if definition.node.visibility.node == HirVisibility::Private => {
-                    items.insert(definition.node.name.node.name.clone(), definition.node.name.span);
+                HirItem::TypeDefinition(definition)
+                    if definition.node.visibility.node == HirVisibility::Private =>
+                {
+                    items.insert(
+                        definition.node.name.node.name.clone(),
+                        definition.node.name.span,
+                    );
                 }
-                HirItem::EnumDefinition(definition) if definition.node.visibility.node == HirVisibility::Private => {
-                    items.insert(definition.node.name.node.name.clone(), definition.node.name.span);
+                HirItem::EnumDefinition(definition)
+                    if definition.node.visibility.node == HirVisibility::Private =>
+                {
+                    items.insert(
+                        definition.node.name.node.name.clone(),
+                        definition.node.name.span,
+                    );
                 }
                 HirItem::ContractDefinition(definition)
                     if definition.node.visibility.node == HirVisibility::Private =>
                 {
-                    items.insert(definition.node.name.node.name.clone(), definition.node.name.span);
+                    items.insert(
+                        definition.node.name.node.name.clone(),
+                        definition.node.name.span,
+                    );
                 }
                 _ => {}
             }
@@ -264,8 +297,26 @@ impl SemanticPipelineRule {
                 }
             }
             HirExpressionNode::EnumConstructorExpression(constructor_expression) => {
-                used.insert(constructor_expression.node.path.node.type_name.node.name.clone());
-                used.insert(constructor_expression.node.path.node.variant.node.name.clone());
+                used.insert(
+                    constructor_expression
+                        .node
+                        .path
+                        .node
+                        .type_name
+                        .node
+                        .name
+                        .clone(),
+                );
+                used.insert(
+                    constructor_expression
+                        .node
+                        .path
+                        .node
+                        .variant
+                        .node
+                        .name
+                        .clone(),
+                );
                 for arg in &constructor_expression.node.args {
                     self.collect_used_in_expression(arg, used);
                 }

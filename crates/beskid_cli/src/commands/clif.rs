@@ -1,15 +1,15 @@
 use anyhow::Result;
-use clap::Args;
-use miette::Report;
 use beskid_analysis::hir::{
-    lower_program as lower_hir_program, normalize_program, AstProgram, HirProgram,
+    AstProgram, HirProgram, lower_program as lower_hir_program, normalize_program,
 };
-use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::parser::{BeskidParser, Rule};
+use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::resolve::Resolver;
 use beskid_analysis::syntax::{Program, Spanned};
 use beskid_analysis::types::type_program;
 use beskid_codegen::{codegen_errors_to_diagnostics, lower_program};
+use clap::Args;
+use miette::Report;
 use pest::Parser;
 use std::path::PathBuf;
 
@@ -105,11 +105,8 @@ pub fn execute(args: ClifArgs) -> Result<()> {
             }
         }
         Err(errors) => {
-            let diagnostics = codegen_errors_to_diagnostics(
-                &input_path.display().to_string(),
-                &source,
-                &errors,
-            );
+            let diagnostics =
+                codegen_errors_to_diagnostics(&input_path.display().to_string(), &source, &errors);
             for diagnostic in diagnostics {
                 eprintln!("{:?}", Report::new(diagnostic));
             }

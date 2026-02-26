@@ -1,8 +1,8 @@
 use pest::iterators::Pair;
 
+use crate::parser::Rule;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
-use crate::parser::Rule;
 use crate::syntax::{Expression, MatchArm, SpanInfo, Spanned};
 
 use beskid_ast_derive::AstNode;
@@ -18,14 +18,8 @@ pub struct MatchExpression {
 pub(crate) fn parse_match_expression(pair: Pair<Rule>) -> Result<Spanned<Expression>, ParseError> {
     let span = SpanInfo::from_span(&pair.as_span());
     let mut inner = pair.into_inner();
-    let scrutinee = Expression::parse(
-        inner
-            .next()
-            .ok_or(ParseError::missing(Rule::Expression))?,
-    )?;
-    let arms = inner
-        .map(MatchArm::parse)
-        .collect::<Result<Vec<_>, _>>()?;
+    let scrutinee = Expression::parse(inner.next().ok_or(ParseError::missing(Rule::Expression))?)?;
+    let arms = inner.map(MatchArm::parse).collect::<Result<Vec<_>, _>>()?;
 
     let match_expr = Spanned::new(
         MatchExpression {

@@ -18,8 +18,14 @@ fn parses_function_definition_ast() {
             assert_eq!(function.node.parameters.len(), 2);
             assert_eq!(function.node.parameters[0].node.name.node.name, "a");
             assert_eq!(function.node.parameters[1].node.name.node.name, "b");
-            assert!(matches!(function.node.parameters[0].node.ty.node, Type::Primitive(_)));
-            assert!(matches!(function.node.parameters[1].node.ty.node, Type::Primitive(_)));
+            assert!(matches!(
+                function.node.parameters[0].node.ty.node,
+                Type::Primitive(_)
+            ));
+            assert!(matches!(
+                function.node.parameters[1].node.ty.node,
+                Type::Primitive(_)
+            ));
             assert!(matches!(
                 function.node.return_type.as_ref().map(|ty| &ty.node),
                 Some(Type::Primitive(_))
@@ -104,7 +110,10 @@ fn parses_method_with_primitive_receiver_ast() {
     let node = parse_node_ast("i32 i32.zero() { return 0; }");
     match &node.node {
         Node::Method(method) => {
-            assert_type_primitive(&method.node.receiver_type, beskid_analysis::syntax::PrimitiveType::I32);
+            assert_type_primitive(
+                &method.node.receiver_type,
+                beskid_analysis::syntax::PrimitiveType::I32,
+            );
             assert_eq!(method.node.name.node.name, "zero");
         }
         _ => panic!("expected method definition"),
@@ -122,8 +131,14 @@ fn parses_type_definition_ast() {
             assert_eq!(ty.node.fields.len(), 2);
             assert_eq!(ty.node.fields[0].node.name.node.name, "name");
             assert_eq!(ty.node.fields[1].node.name.node.name, "age");
-            assert_type_primitive(&ty.node.fields[0].node.ty, beskid_analysis::syntax::PrimitiveType::String);
-            assert_type_primitive(&ty.node.fields[1].node.ty, beskid_analysis::syntax::PrimitiveType::I32);
+            assert_type_primitive(
+                &ty.node.fields[0].node.ty,
+                beskid_analysis::syntax::PrimitiveType::String,
+            );
+            assert_type_primitive(
+                &ty.node.fields[1].node.ty,
+                beskid_analysis::syntax::PrimitiveType::I32,
+            );
         }
         _ => panic!("expected type definition"),
     }
@@ -162,7 +177,10 @@ fn parses_contract_definition_ast() {
                     assert_eq!(signature.node.parameters[0].node.name.node.name, "p");
                     match &signature.node.parameters[0].node.ty.node {
                         Type::Array(inner) => {
-                            assert_type_primitive(inner, beskid_analysis::syntax::PrimitiveType::U8);
+                            assert_type_primitive(
+                                inner,
+                                beskid_analysis::syntax::PrimitiveType::U8,
+                            );
                         }
                         _ => panic!("expected array type"),
                     }
@@ -200,7 +218,11 @@ fn parses_module_and_use_declarations() {
     }
 }
 
-fn assert_enum_variant(variant: &beskid_analysis::syntax::Spanned<EnumVariant>, name: &str, fields_len: usize) {
+fn assert_enum_variant(
+    variant: &beskid_analysis::syntax::Spanned<EnumVariant>,
+    name: &str,
+    fields_len: usize,
+) {
     assert_eq!(variant.node.name.node.name, name);
     assert_eq!(variant.node.fields.len(), fields_len);
     if fields_len > 0 {

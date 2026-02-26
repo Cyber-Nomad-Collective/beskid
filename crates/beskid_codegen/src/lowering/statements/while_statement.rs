@@ -1,11 +1,11 @@
 use crate::errors::CodegenError;
 use crate::lowering::function::LoopControl;
-use crate::lowering::lowerable::{lower_node, Lowerable};
+use crate::lowering::lowerable::{Lowerable, lower_node};
 use crate::lowering::node_context::NodeLoweringContext;
-use cranelift_codegen::ir::InstBuilder;
 use beskid_analysis::hir::{HirPrimitiveType, HirWhileStatement};
 use beskid_analysis::syntax::Spanned;
 use beskid_analysis::types::TypeInfo;
+use cranelift_codegen::ir::InstBuilder;
 
 impl Lowerable<NodeLoweringContext<'_, '_>> for HirWhileStatement {
     type Output = ();
@@ -21,10 +21,11 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirWhileStatement {
         ctx.builder.ins().jump(header_block, &[]);
         ctx.builder.switch_to_block(header_block);
 
-        let condition = lower_node(&node.node.condition, ctx)?.ok_or(CodegenError::UnsupportedNode {
-            span: node.node.condition.span,
-            node: "unit-valued while condition",
-        })?;
+        let condition =
+            lower_node(&node.node.condition, ctx)?.ok_or(CodegenError::UnsupportedNode {
+                span: node.node.condition.span,
+                node: "unit-valued while condition",
+            })?;
         let condition_type = ctx
             .type_result
             .expr_types
@@ -44,16 +45,16 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirWhileStatement {
             });
         }
 
-        ctx.builder.ins().brif(condition, body_block, &[], exit_block, &[]);
+        ctx.builder
+            .ins()
+            .brif(condition, body_block, &[], exit_block, &[]);
 
         ctx.builder.switch_to_block(body_block);
         ctx.builder.seal_block(body_block);
-        ctx.state
-            .loop_stack
-            .push(LoopControl {
-                continue_block: header_block,
-                break_block: exit_block,
-            });
+        ctx.state.loop_stack.push(LoopControl {
+            continue_block: header_block,
+            break_block: exit_block,
+        });
         ctx.state.block_terminated = false;
         for statement in &node.node.body.node.statements {
             lower_node(statement, ctx)?;

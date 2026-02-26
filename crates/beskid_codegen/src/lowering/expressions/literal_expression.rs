@@ -1,9 +1,9 @@
 use crate::lowering::expressions::literal::lower_literal;
 use crate::lowering::lowerable::Lowerable;
 use crate::lowering::node_context::NodeLoweringContext;
-use cranelift_codegen::ir::Value;
 use beskid_analysis::hir::HirLiteralExpression;
 use beskid_analysis::syntax::Spanned;
+use cranelift_codegen::ir::Value;
 
 impl Lowerable<NodeLoweringContext<'_, '_>> for HirLiteralExpression {
     type Output = Option<Value>;

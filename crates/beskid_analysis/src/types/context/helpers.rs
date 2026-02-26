@@ -1,6 +1,6 @@
 use crate::hir::{HirExpressionNode, HirPrimitiveType};
-use crate::syntax::SpanInfo;
 use crate::resolve::{ItemId, ItemKind};
+use crate::syntax::SpanInfo;
 use crate::types::{TypeId, TypeInfo};
 
 use super::context::{CastIntent, TypeContext, TypeError};
@@ -84,11 +84,7 @@ impl<'a> TypeContext<'a> {
         if names.len() != args.len() {
             return HashMap::new();
         }
-        names
-            .iter()
-            .cloned()
-            .zip(args.iter().copied())
-            .collect()
+        names.iter().cloned().zip(args.iter().copied()).collect()
     }
 
     pub(super) fn substitute_type_id(
@@ -112,7 +108,10 @@ impl<'a> TypeContext<'a> {
                     })
                     .collect();
                 if changed {
-                    self.type_table.intern(TypeInfo::Applied { base, args: new_args })
+                    self.type_table.intern(TypeInfo::Applied {
+                        base,
+                        args: new_args,
+                    })
                 } else {
                     type_id
                 }

@@ -1,5 +1,5 @@
 use beskid_analysis::hir::{
-    lower_program as lower_hir_program, normalize_program, AstProgram, HirProgram,
+    AstProgram, HirProgram, lower_program as lower_hir_program, normalize_program,
 };
 use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::resolve::Resolver;
@@ -15,7 +15,9 @@ pub fn parse_program_ast(input: &str) -> Spanned<Program> {
     Program::parse(pair).expect("expected AST program")
 }
 
-pub fn lower_resolve_type(source: &str) -> (
+pub fn lower_resolve_type(
+    source: &str,
+) -> (
     Spanned<HirProgram>,
     beskid_analysis::resolve::Resolution,
     beskid_analysis::types::TypeResult,

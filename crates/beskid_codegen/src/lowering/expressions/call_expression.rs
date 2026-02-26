@@ -1,16 +1,18 @@
 use crate::errors::CodegenError;
 use crate::lowering::cast_intent::ensure_type_compatibility;
 use crate::lowering::function::{lower_function_with_name, mangle_function_name};
-use crate::lowering::lowerable::{lower_node, Lowerable};
+use crate::lowering::lowerable::{Lowerable, lower_node};
 use crate::lowering::node_context::NodeLoweringContext;
 use crate::lowering::types::{map_type_id_to_clif, pointer_type};
-use cranelift_codegen::ir::{types, AbiParam, ExternalName, ExtFuncData, InstBuilder, Signature, Value};
-use cranelift_codegen::isa::CallConv;
-use beskid_analysis::builtins::{builtin_specs, BuiltinType};
+use beskid_analysis::builtins::{BuiltinType, builtin_specs};
 use beskid_analysis::hir::{HirCallExpression, HirExpressionNode, HirPrimitiveType};
 use beskid_analysis::resolve::ResolvedValue;
 use beskid_analysis::syntax::Spanned;
 use beskid_analysis::types::{TypeId, TypeInfo};
+use cranelift_codegen::ir::{
+    AbiParam, ExtFuncData, ExternalName, InstBuilder, Signature, Value, types,
+};
+use cranelift_codegen::isa::CallConv;
 use std::collections::HashMap;
 
 impl Lowerable<NodeLoweringContext<'_, '_>> for HirCallExpression {
@@ -44,15 +46,12 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirCallExpression {
         let mut generic_args: Vec<TypeId> = Vec::new();
         if let Some(last_segment) = path_expr.node.path.node.segments.last() {
             for arg in &last_segment.node.type_args {
-                let type_id = crate::lowering::types::type_id_for_type(
-                    ctx.resolution,
-                    ctx.type_result,
-                    arg,
-                )
-                .ok_or(CodegenError::UnsupportedNode {
-                    span: arg.span,
-                    node: "generic type argument",
-                })?;
+                let type_id =
+                    crate::lowering::types::type_id_for_type(ctx.resolution, ctx.type_result, arg)
+                        .ok_or(CodegenError::UnsupportedNode {
+                            span: arg.span,
+                            node: "generic type argument",
+                        })?;
                 generic_args.push(type_id);
             }
         }
@@ -128,10 +127,12 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirCallExpression {
                     node: "unit-valued call argument",
                 })?;
                 if !matches!(kind, BuiltinType::Ptr) {
-                    let expected = substituted_params.get(typed_index).ok_or(CodegenError::UnsupportedNode {
-                        span: arg.span,
-                        node: "typed builtin parameter mismatch",
-                    })?;
+                    let expected = substituted_params.get(typed_index).ok_or(
+                        CodegenError::UnsupportedNode {
+                            span: arg.span,
+                            node: "typed builtin parameter mismatch",
+                        },
+                    )?;
                     let actual = ctx
                         .type_result
                         .expr_types
@@ -190,10 +191,12 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirCallExpression {
                     }
                 };
                 if !matches!(kind, BuiltinType::Ptr) {
-                    let _ = substituted_params.get(typed_index).ok_or(CodegenError::UnsupportedNode {
-                        span: node.span,
-                        node: "typed builtin parameter mismatch",
-                    })?;
+                    let _ = substituted_params.get(typed_index).ok_or(
+                        CodegenError::UnsupportedNode {
+                            span: node.span,
+                            node: "typed builtin parameter mismatch",
+                        },
+                    )?;
                     typed_index += 1;
                 }
                 signature_ir.params.push(AbiParam::new(clif_ty));
@@ -211,7 +214,10 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirCallExpression {
         }
 
         let return_info = ctx.type_result.types.get(substituted_return);
-        let returns_value = !matches!(return_info, Some(TypeInfo::Primitive(HirPrimitiveType::Unit)));
+        let returns_value = !matches!(
+            return_info,
+            Some(TypeInfo::Primitive(HirPrimitiveType::Unit))
+        );
         if returns_value {
             let clif_ty = map_type_id_to_clif(ctx.type_result, substituted_return).ok_or(
                 CodegenError::UnsupportedNode {
@@ -280,12 +286,10 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirCallExpression {
             return Ok(None);
         }
         let results = ctx.builder.inst_results(call);
-        let value = *results
-            .get(0)
-            .ok_or(CodegenError::UnsupportedNode {
-                span: node.span,
-                node: "call result",
-            })?;
+        let value = *results.get(0).ok_or(CodegenError::UnsupportedNode {
+            span: node.span,
+            node: "call result",
+        })?;
         Ok(Some(value))
     }
 }

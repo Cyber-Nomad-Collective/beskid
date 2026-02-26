@@ -1,7 +1,7 @@
-use beskid_abi::{BeskidArray, BeskidStr, BESKID_RUNTIME_ABI_VERSION};
+use beskid_abi::{BESKID_RUNTIME_ABI_VERSION, BeskidArray, BeskidStr};
 
 use crate::gc::{
-    drop_handle, store_handle, with_current_mutation_and_root, with_current_root, RawAllocation,
+    RawAllocation, drop_handle, store_handle, with_current_mutation_and_root, with_current_root,
 };
 
 #[unsafe(no_mangle)]

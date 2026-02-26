@@ -1,4 +1,4 @@
-use beskid_analysis::analysis::diagnostics::{make_diagnostic, SemanticDiagnostic, Severity};
+use beskid_analysis::analysis::diagnostics::{SemanticDiagnostic, Severity, make_diagnostic};
 use beskid_analysis::syntax::SpanInfo;
 
 use crate::errors::CodegenError;

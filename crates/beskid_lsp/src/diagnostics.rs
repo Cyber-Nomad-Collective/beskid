@@ -1,7 +1,7 @@
+use beskid_analysis::parser::{BeskidParser, Rule};
 use beskid_analysis::parsing::error::ParseError;
 use beskid_analysis::parsing::parsable::Parsable;
-use beskid_analysis::parser::{BeskidParser, Rule};
-use beskid_analysis::projects::{parse_manifest, ProjectError};
+use beskid_analysis::projects::{ProjectError, parse_manifest};
 use beskid_analysis::syntax::Program;
 use beskid_analysis::{AnalysisOptions, Severity, builtin_rules, run_rules};
 use pest::Parser;

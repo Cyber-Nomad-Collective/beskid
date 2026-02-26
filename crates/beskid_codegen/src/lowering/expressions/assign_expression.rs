@@ -1,11 +1,11 @@
 use crate::errors::CodegenError;
 use crate::lowering::cast_intent::ensure_type_compatibility;
-use crate::lowering::lowerable::{lower_node, Lowerable};
+use crate::lowering::lowerable::{Lowerable, lower_node};
 use crate::lowering::node_context::NodeLoweringContext;
-use cranelift_codegen::ir::Value;
 use beskid_analysis::hir::{HirAssignExpression, HirExpressionNode};
 use beskid_analysis::resolve::ResolvedValue;
 use beskid_analysis::syntax::Spanned;
+use cranelift_codegen::ir::Value;
 
 impl Lowerable<NodeLoweringContext<'_, '_>> for HirAssignExpression {
     type Output = Option<Value>;
@@ -41,28 +41,25 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirAssignExpression {
                 node: "non-local assignment target",
             });
         };
-        let var = ctx
-            .state
-            .locals
-            .get(local_id)
-            .copied()
-            .ok_or(CodegenError::InvalidLocalBinding {
-                span: path_expr.node.path.span,
-            })?;
+        let var =
+            ctx.state
+                .locals
+                .get(local_id)
+                .copied()
+                .ok_or(CodegenError::InvalidLocalBinding {
+                    span: path_expr.node.path.span,
+                })?;
 
         let value = lower_node(&node.node.value, ctx)?.ok_or(CodegenError::UnsupportedNode {
             span: node.node.value.span,
             node: "unit-valued assignment",
         })?;
 
-        let expected_type = ctx
-            .type_result
-            .local_types
-            .get(local_id)
-            .copied()
-            .ok_or(CodegenError::MissingLocalType {
+        let expected_type = ctx.type_result.local_types.get(local_id).copied().ok_or(
+            CodegenError::MissingLocalType {
                 span: path_expr.node.path.span,
-            })?;
+            },
+        )?;
         let actual_type = ctx
             .type_result
             .expr_types
@@ -71,7 +68,14 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirAssignExpression {
             .ok_or(CodegenError::MissingExpressionType {
                 span: node.node.value.span,
             })?;
-        let value = ensure_type_compatibility(node.node.value.span, expected_type, actual_type, ctx.type_result, ctx.builder, value)?;
+        let value = ensure_type_compatibility(
+            node.node.value.span,
+            expected_type,
+            actual_type,
+            ctx.type_result,
+            ctx.builder,
+            value,
+        )?;
 
         ctx.builder.def_var(var, value);
         Ok(Some(value))

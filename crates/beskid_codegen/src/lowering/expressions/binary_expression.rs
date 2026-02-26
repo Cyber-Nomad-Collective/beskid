@@ -1,12 +1,12 @@
 use crate::errors::CodegenError;
-use crate::lowering::lowerable::{lower_node, Lowerable};
+use crate::lowering::lowerable::{Lowerable, lower_node};
 use crate::lowering::node_context::NodeLoweringContext;
 use crate::lowering::types::map_type_id_to_clif;
-use cranelift_codegen::ir::condcodes::{FloatCC, IntCC};
-use cranelift_codegen::ir::{InstBuilder, Value};
 use beskid_analysis::hir::{HirBinaryExpression, HirBinaryOp, HirPrimitiveType};
 use beskid_analysis::syntax::Spanned;
 use beskid_analysis::types::TypeInfo;
+use cranelift_codegen::ir::condcodes::{FloatCC, IntCC};
+use cranelift_codegen::ir::{InstBuilder, Value};
 
 impl Lowerable<NodeLoweringContext<'_, '_>> for HirBinaryExpression {
     type Output = Option<Value>;
@@ -106,7 +106,10 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirBinaryExpression {
                 }
             }
             HirBinaryOp::And | HirBinaryOp::Or => {
-                let is_bool = matches!(operand_info, Some(TypeInfo::Primitive(HirPrimitiveType::Bool)));
+                let is_bool = matches!(
+                    operand_info,
+                    Some(TypeInfo::Primitive(HirPrimitiveType::Bool))
+                );
                 if !is_bool {
                     return Err(CodegenError::UnsupportedNode {
                         span: node.span,
@@ -119,8 +122,16 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirBinaryExpression {
                     _ => unreachable!("checked operator"),
                 }
             }
-            HirBinaryOp::Eq | HirBinaryOp::NotEq | HirBinaryOp::Lt | HirBinaryOp::Lte | HirBinaryOp::Gt | HirBinaryOp::Gte => {
-                let is_bool = matches!(operand_info, Some(TypeInfo::Primitive(HirPrimitiveType::Bool)));
+            HirBinaryOp::Eq
+            | HirBinaryOp::NotEq
+            | HirBinaryOp::Lt
+            | HirBinaryOp::Lte
+            | HirBinaryOp::Gt
+            | HirBinaryOp::Gte => {
+                let is_bool = matches!(
+                    operand_info,
+                    Some(TypeInfo::Primitive(HirPrimitiveType::Bool))
+                );
                 if is_bool && !matches!(node.node.op.node, HirBinaryOp::Eq | HirBinaryOp::NotEq) {
                     return Err(CodegenError::UnsupportedNode {
                         span: node.span,

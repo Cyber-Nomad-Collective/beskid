@@ -1,16 +1,26 @@
 use crate::hir::{
-    HirBlock, HirContractNode, HirExpressionNode, HirItem, HirPattern, HirProgram, HirStatementNode,
-    HirType,
+    HirBlock, HirContractNode, HirExpressionNode, HirItem, HirPattern, HirProgram,
+    HirStatementNode, HirType,
 };
 use crate::resolve::Resolution;
 use crate::syntax::{SpanInfo, Spanned};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HirLegalityError {
-    InvalidSpan { span: SpanInfo, context: &'static str },
-    UnresolvedValuePath { span: SpanInfo },
-    UnresolvedTypePath { span: SpanInfo },
-    NonNormalizedControlFlow { span: SpanInfo, message: &'static str },
+    InvalidSpan {
+        span: SpanInfo,
+        context: &'static str,
+    },
+    UnresolvedValuePath {
+        span: SpanInfo,
+    },
+    UnresolvedTypePath {
+        span: SpanInfo,
+    },
+    NonNormalizedControlFlow {
+        span: SpanInfo,
+        message: &'static str,
+    },
 }
 
 pub fn validate_hir_program(
@@ -183,10 +193,11 @@ impl<'a> HirLegalityValidator<'a> {
             HirExpressionNode::MatchExpression(match_expr) => {
                 self.check_span(match_expr.span, "match_expression");
                 if match_expr.node.arms.is_empty() {
-                    self.errors.push(HirLegalityError::NonNormalizedControlFlow {
-                        span: match_expr.span,
-                        message: "match expression must contain at least one arm",
-                    });
+                    self.errors
+                        .push(HirLegalityError::NonNormalizedControlFlow {
+                            span: match_expr.span,
+                            message: "match expression must contain at least one arm",
+                        });
                 }
                 self.validate_expression(&match_expr.node.scrutinee);
                 for arm in &match_expr.node.arms {
@@ -325,8 +336,14 @@ impl<'a> HirLegalityValidator<'a> {
             HirType::Primitive(primitive) => self.check_span(primitive.span, "primitive_type"),
             HirType::Complex(path) => {
                 self.check_span(path.span, "complex_type_path");
-                if !self.resolution.tables.resolved_types.contains_key(&path.span) {
-                    self.errors.push(HirLegalityError::UnresolvedTypePath { span: path.span });
+                if !self
+                    .resolution
+                    .tables
+                    .resolved_types
+                    .contains_key(&path.span)
+                {
+                    self.errors
+                        .push(HirLegalityError::UnresolvedTypePath { span: path.span });
                 }
             }
             HirType::Array(inner) | HirType::Ref(inner) => self.validate_type(inner),

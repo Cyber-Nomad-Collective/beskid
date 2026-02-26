@@ -1,12 +1,10 @@
 use pest::iterators::Pair;
 
+use crate::parser::Rule;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
-use crate::parser::Rule;
+use crate::syntax::items::parse_helpers::{parse_identifier_list, parse_visibility_or_default};
 use crate::syntax::{EnumVariant, Identifier, SpanInfo, Spanned, Visibility};
-use crate::syntax::items::parse_helpers::{
-    parse_identifier_list, parse_visibility_or_default,
-};
 
 use beskid_ast_derive::AstNode;
 
@@ -27,11 +25,7 @@ impl Parsable for EnumDefinition {
         let span = SpanInfo::from_span(&pair.as_span());
         let mut inner = pair.clone().into_inner().peekable();
         let visibility = parse_visibility_or_default(&pair, &mut inner)?;
-        let name = Identifier::parse(
-            inner
-                .next()
-                .ok_or(ParseError::missing(Rule::Identifier))?,
-        )?;
+        let name = Identifier::parse(inner.next().ok_or(ParseError::missing(Rule::Identifier))?)?;
 
         let mut generics = Vec::new();
         let mut variants = Vec::new();

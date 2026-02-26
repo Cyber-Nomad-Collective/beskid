@@ -1,14 +1,14 @@
 use beskid_analysis::analysis::{AnalysisOptions, Rule, RuleContext, run_rules};
 use beskid_analysis::builtin_rules;
 use beskid_analysis::syntax::SpanInfo;
-use beskid_analysis::{diag, Severity};
+use beskid_analysis::{Severity, diag};
 
 use crate::syntax::util::parse_program_ast;
 
+mod legality;
+mod lowering;
 mod resolve;
 mod types;
-mod lowering;
-mod legality;
 
 struct EmitOne;
 
@@ -28,13 +28,21 @@ impl Rule for EmitOne {
                 line_col_start: (1, 1),
                 line_col_end: (1, 1),
             });
-        diag!(ctx, span, "E0001", "example diagnostic", label = "example", severity = Severity::Error);
+        diag!(
+            ctx,
+            span,
+            "E0001",
+            "example diagnostic",
+            label = "example",
+            severity = Severity::Error
+        );
     }
 }
 
 #[test]
 fn analysis_type_mismatch_renders_named_type_names() {
-    let source = "type User { i64 id } type Order { i64 id } unit main() { User u = Order { id: 1 }; }";
+    let source =
+        "type User { i64 id } type Order { i64 id } unit main() { User u = Order { id: 1 }; }";
     let program = parse_program_ast(source);
     let result = run_rules(
         &program.node,
@@ -67,10 +75,12 @@ fn analysis_emits_resolve_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1101")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1101"))
+    );
 }
 
 #[test]
@@ -84,10 +94,12 @@ fn analysis_emits_type_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1206")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1206"))
+    );
 }
 
 #[test]
@@ -128,10 +140,12 @@ fn analysis_suppresses_cast_intent_warnings_when_warnings_disabled() {
         },
     );
 
-    assert!(!result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("W1203")));
+    assert!(
+        !result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("W1203"))
+    );
 }
 
 #[test]
@@ -167,10 +181,12 @@ fn analysis_emits_duplicate_enum_variant_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1002")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1002"))
+    );
 }
 
 #[test]
@@ -185,10 +201,12 @@ fn analysis_emits_duplicate_contract_method_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1003")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1003"))
+    );
 }
 
 #[test]
@@ -203,10 +221,12 @@ fn analysis_emits_duplicate_definition_name_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1001")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1001"))
+    );
 }
 
 #[test]
@@ -221,10 +241,12 @@ fn analysis_emits_break_outside_loop_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1401")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1401"))
+    );
 }
 
 #[test]
@@ -239,10 +261,12 @@ fn analysis_emits_continue_outside_loop_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1402")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1402"))
+    );
 }
 
 #[test]
@@ -257,10 +281,12 @@ fn analysis_emits_unreachable_code_warnings() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("W1403")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("W1403"))
+    );
 }
 
 #[test]
@@ -275,10 +301,12 @@ fn analysis_emits_duplicate_pattern_binding_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1306")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1306"))
+    );
 }
 
 #[test]
@@ -293,10 +321,12 @@ fn analysis_emits_unknown_type_in_definition_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1005")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1005"))
+    );
 }
 
 #[test]
@@ -311,10 +341,12 @@ fn analysis_emits_duplicate_non_type_item_name_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1006")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1006"))
+    );
 }
 
 #[test]
@@ -329,10 +361,12 @@ fn analysis_emits_conflicting_embedded_contract_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1004")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1004"))
+    );
 }
 
 #[test]
@@ -347,10 +381,12 @@ fn analysis_emits_unknown_enum_path_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1301")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1301"))
+    );
 }
 
 #[test]
@@ -365,10 +401,12 @@ fn analysis_emits_enum_constructor_arity_mismatch_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1302")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1302"))
+    );
 }
 
 #[test]
@@ -383,10 +421,12 @@ fn analysis_emits_pattern_arity_mismatch_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1307")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1307"))
+    );
 }
 
 #[test]
@@ -401,10 +441,12 @@ fn analysis_emits_ambiguous_import_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1104")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1104"))
+    );
 }
 
 #[test]
@@ -419,10 +461,12 @@ fn analysis_emits_unknown_import_path_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1105")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1105"))
+    );
 }
 
 #[test]
@@ -437,10 +481,12 @@ fn analysis_emits_private_item_in_module_access_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1107")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1107"))
+    );
 }
 
 #[test]
@@ -455,10 +501,12 @@ fn analysis_emits_use_before_declaration_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1106")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1106"))
+    );
 }
 
 #[test]
@@ -473,10 +521,12 @@ fn analysis_emits_immutable_assignment_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1214")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1214"))
+    );
 }
 
 #[test]
@@ -491,10 +541,12 @@ fn analysis_emits_invalid_member_target_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1213")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1213"))
+    );
 }
 
 #[test]
@@ -509,10 +561,12 @@ fn analysis_emits_unqualified_enum_constructor_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1303")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1303"))
+    );
 }
 
 #[test]
@@ -527,10 +581,12 @@ fn analysis_emits_non_exhaustive_match_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1304")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1304"))
+    );
 }
 
 #[test]
@@ -545,10 +601,12 @@ fn analysis_emits_match_arm_type_mismatch_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1305")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1305"))
+    );
 }
 
 #[test]
@@ -563,10 +621,12 @@ fn analysis_emits_guard_type_mismatch_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1308")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1308"))
+    );
 }
 
 #[test]
@@ -581,10 +641,12 @@ fn analysis_emits_module_not_found_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1502")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1502"))
+    );
 }
 
 #[test]
@@ -599,10 +661,12 @@ fn analysis_emits_unused_import_warnings() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("W1503")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("W1503"))
+    );
 }
 
 #[test]
@@ -617,10 +681,12 @@ fn analysis_emits_unused_private_item_warnings() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("W1504")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("W1504"))
+    );
 }
 
 #[test]
@@ -635,10 +701,12 @@ fn analysis_emits_contract_method_missing_impl_errors() {
         AnalysisOptions::default(),
     );
 
-    assert!(result
-        .diagnostics
-        .iter()
-        .any(|diag| diag.code.as_deref() == Some("E1601")));
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1601"))
+    );
 }
 
 #[test]

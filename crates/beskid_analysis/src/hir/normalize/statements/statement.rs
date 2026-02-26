@@ -18,16 +18,20 @@ impl Normalize for Spanned<HirStatementNode> {
                 if let Some(value) = &mut return_stmt.node.value {
                     normalizer.visit_expression(value);
                 }
-                vec![Spanned::new(HirStatementNode::ReturnStatement(return_stmt), span)]
+                vec![Spanned::new(
+                    HirStatementNode::ReturnStatement(return_stmt),
+                    span,
+                )]
             }
             HirStatementNode::WhileStatement(mut while_stmt) => {
                 normalizer.visit_expression(&mut while_stmt.node.condition);
                 normalizer.visit_block(&mut while_stmt.node.body);
-                vec![Spanned::new(HirStatementNode::WhileStatement(while_stmt), span)]
+                vec![Spanned::new(
+                    HirStatementNode::WhileStatement(while_stmt),
+                    span,
+                )]
             }
-            HirStatementNode::ForStatement(for_stmt) => {
-                for_stmt.normalize(normalizer)
-            }
+            HirStatementNode::ForStatement(for_stmt) => for_stmt.normalize(normalizer),
             HirStatementNode::IfStatement(mut if_stmt) => {
                 normalizer.visit_expression(&mut if_stmt.node.condition);
                 normalizer.visit_block(&mut if_stmt.node.then_block);
@@ -38,13 +42,22 @@ impl Normalize for Spanned<HirStatementNode> {
             }
             HirStatementNode::ExpressionStatement(mut expr_stmt) => {
                 normalizer.visit_expression(&mut expr_stmt.node.expression);
-                vec![Spanned::new(HirStatementNode::ExpressionStatement(expr_stmt), span)]
+                vec![Spanned::new(
+                    HirStatementNode::ExpressionStatement(expr_stmt),
+                    span,
+                )]
             }
             HirStatementNode::BreakStatement(break_stmt) => {
-                vec![Spanned::new(HirStatementNode::BreakStatement(break_stmt), span)]
+                vec![Spanned::new(
+                    HirStatementNode::BreakStatement(break_stmt),
+                    span,
+                )]
             }
             HirStatementNode::ContinueStatement(continue_stmt) => {
-                vec![Spanned::new(HirStatementNode::ContinueStatement(continue_stmt), span)]
+                vec![Spanned::new(
+                    HirStatementNode::ContinueStatement(continue_stmt),
+                    span,
+                )]
             }
         }
     }

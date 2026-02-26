@@ -1,147 +1,174 @@
 # Standard Library Interop Migration Plan
 
-This document outlines the step-by-step technical plan to replace the current direct builtin mappings with an Enum Dispatcher interop architecture.
+This document defines the final migration shape and execution plan for Beskid stdlib interop.
 
-Project manifests referenced in this plan use `Project.proj` (HCL syntax).
+## 1. Final Shape (Target Architecture)
 
-## 1. Architectural Overview
+### 1.1 Source of truth
+Interop contracts are authored in Rust using attributes:
 
-### Current State
-Language/runtime execution paths are now ABI-oriented: internal hooks and interop dispatch builtins are the only compiler/runtime-level contract. Public `std` wrappers live in the standalone `standard_library` Beskid project.
+```rust
+#[InteropCall("std.io")]
+fn println(text: BeskidStrRef);
+```
 
-### Target State
-- **Internal Builtins**: Kept directly in Cranelift. Limited strictly to memory/codegen hooks (`__alloc`, `__gc_write_barrier`, etc.).
-- **Interop Builtins**: A handful of `__interop_dispatch_<return_type>` functions registered in Cranelift.
-- **Stdlib Source of Truth**: Public wrappers come from `standard_library` project sources (`Project.proj` + `Src/*.bd`).
-- **Interop Source Generation**: `pekan_cli interop` generates dispatch wrapper source (`Interop.generated.bd`) consumed by stdlib sources.
-- **Project System Alignment**: `Std` project is resolved through normal dependency edges in the Daggy project DAG.
-- **Build Workflow Alignment**: Build/run resolve and materialize dependency source trees into `obj/beskid` before compile phases.
-- **Lockfile Alignment**: `Project.lock` is created/updated automatically during resolve/build/run lifecycle.
-- **Rust Dispatcher**: A generated Rust FFI function that decodes the `StdInterop` enum pointer, reads the payload based on the `tag`, and calls the respective Rust function.
+The Rust declaration is the canonical source of:
+- module path (`std.io`)
+- callable name (`println`)
+- parameter list and types
+- return dispatch group (`unit`, `usize`, `ptr`)
 
----
+### 1.2 Generated Beskid artifacts
+`pekan_cli interop` generates Beskid source files under `standard_library`:
+- `Src/Interop/StdInterop.generated.bd` (enum variants)
+- `Src/Interop/Calls.generated.bd` (typed dispatcher-call wrappers)
+- `Src/Prelude.bd` (project entry file containing generated enum + wrappers)
 
-## 2. Step-by-Step Implementation Plan
+It also generates runtime tag constants used by dispatcher matching:
+- `crates/beskid_runtime/src/interop_generated.rs`
 
-### Phase 1: Separation of Internal Builtins
-1. **Refactor `builtins.rs`**: 
-   - Separate `BUILTINS` into strictly internal hooks (`__alloc`, `__str_new`, `__array_new`, `__gc_write_barrier`, `__gc_root_handle`, etc.).
-   - Temporarily leave the existing `Std` wrappers until Phase 5 to keep tests passing during the transition.
-2. **Define Dispatcher Signatures**:
-   - Add new builtin specs for the dispatchers, grouped by return type.
-   - Example: `__interop_dispatch_unit(ptr) -> unit`, `__interop_dispatch_ptr(ptr) -> ptr`, `__interop_dispatch_usize(ptr) -> usize`.
+Generated files are deterministic and idempotent. Manual stdlib files are never overwritten.
 
-### Phase 2: Define the Interop Data Structures (Manual MVP)
-Before introducing advanced generation, implement interop schema manually to validate layout and runtime decoding.
-1. **Define `StdInterop` in stdlib source**:
-   - Author enum and wrappers in `standard_library/Src/*.bd`.
-   - Example:
-     ```beskid
-     enum StdInterop {
-         IoPrint(String text),
-         IoPrintln(String text),
-         StringLen(String text),
-     }
-     ```
-   - Wrapper modules call `__interop_dispatch_*`. Example:
-     ```beskid
-     mod Std {
-        mod IO {
-            Unit Println(text: String) {
-                __interop_dispatch_unit(StdInterop::IoPrintln(text));
-            }
-        }
-     }
-     ```
+### 1.3 Manual stdlib facade remains
+We do **not** generate full stdlib APIs.
 
-### Phase 3: Project-based Stdlib Integration (No Prelude Injection)
-1. **Resolver / AST Input Scope**:
-   - Compiler consumes user/project-resolved source only.
-   - No embedded stdlib prelude is injected into runtime pipeline.
-2. **Std Dependency Resolution**:
-   - Add `Std` as a regular dependency in `Project.proj`.
-   - Resolve `Std` through Daggy graph and materialize to `obj/beskid/deps/src`.
-   - Keep lock sync (`Project.lock`) as part of resolve/build/run lifecycle.
+Manual `standard_library/Src/*.bd` files remain the public facade and call generated interop wrappers.
 
-### Phase 4: The Rust Dispatcher Implementation
-1. **Create `beskid_runtime/src/interop.rs`**:
-   - Implement `pub extern "C" fn __interop_dispatch_unit(enum_ptr: *const u8)`.
-   - **Memory Layout Decoding**:
-     - `enum_ptr` points to the heap allocation for the enum.
-     - `offset 0`: `type_desc_ptr` (8 bytes).
-     - `offset 8`: `tag` (4 bytes, `i32`).
-     - `offset 12`: padding (if necessary for 8-byte alignment of pointers).
-     - `offset 16`: payload (e.g., `*mut BeskidStr`).
-   - Write a `match tag` block that extracts the payload and calls `sys_println`, `sys_print`, etc.
-   - Implement `__interop_dispatch_usize` for `str_len`, etc.
+### 1.4 Runtime boundary contract
+Compiler/runtime boundary remains ABI-only:
+- internal hooks: `__alloc`, `__str_new`, `__array_new`, GC hooks, etc.
+- typed dispatch builtins: `__interop_dispatch_unit`, `__interop_dispatch_usize`, `__interop_dispatch_ptr`
 
-### Phase 5: JIT Wiring and Cleanup
-1. **Update `jit_module.rs`**:
-   - Register the new `__interop_dispatch_*` symbols in the `JITBuilder`.
-2. **Remove Old Builtins**:
-   - Delete `sys_print`, `sys_println`, `str_len`, etc., from the internal builtins list in `beskid_analysis`.
-   - Remove their direct `JITBuilder::symbol` registrations.
-3. **Verify Tests**:
-   - Ensure `examples/*.bd` and runtime JIT tests continue to work correctly via `standard_library` wrappers and typed dispatchers.
-
-### Phase 6: Macroification (The Developer Experience)
-Now represented by source-generation workflow:
-1. **Interop Generator Command**:
-   - `pekan_cli interop` emits Beskid interop wrapper source.
-   - Stdlib seeding remains explicit/manual in `standard_library` sources.
+No embedded stdlib prelude fallback is used in execution flows.
 
 ---
 
-## 3. Key Technical Challenges & Risks
-- **Enum Payload Layout**: The Rust dispatcher must manually unpack the enum payload from a raw pointer. Beskid's `TypeLayout` rules dictate alignment and padding. Hardcoding these in the MVP is risky; we must ensure the manual offsets match `TypeLayout::from_enum`.
-- **Return Types**: C-ABI and Cranelift require fixed return types. We cannot have a generic `dispatch(enum) -> Any`. We must group interop methods by their return type and have a specific dispatcher for each (e.g., `_unit`, `_ptr`, `_i64`).
-- **Interop Enum Cohesion**: Runtime dispatch tag expectations and Beskid `StdInterop` variant ordering must stay synchronized.
-- **Graph/Interop Cohesion**: Keep dependency-graph-based `Std` resolution as the only std source path in execution flows.
+## 2. Detailed Implementation Plan
+
+### Phase A — Rust annotation contract
+1. Define attribute schema for `InteropCall`:
+   - required: module path (e.g. `"std.io"`)
+   - optional: explicit Beskid function name override
+   - optional: explicit dispatch group override (if inference is ambiguous)
+2. Define supported Rust parameter/return type mapping into Beskid interop types.
+3. Reject unsupported signatures with source-located diagnostics.
+
+### Phase B — Extraction pipeline (`pekan_cli interop`)
+1. Add Rust source discovery for configured roots.
+2. Parse/collect annotated declarations into a canonical in-memory model.
+3. Normalize names and module paths.
+4. Validate uniqueness and disallow collisions.
+
+### Phase C — Canonical interop model
+Canonical model per operation includes:
+- module path
+- function name
+- ordered parameters
+- return group
+- source location metadata
+
+Model ordering is fully deterministic (module path -> function name -> full signature).
+
+### Phase D — Beskid code generation
+1. Generate `StdInterop` enum variants from canonical model.
+2. Generate wrapper functions calling typed dispatch builtins.
+3. Write only `*.generated.bd` files.
+4. Use atomic write and content-based no-op rewrites.
+
+### Phase E — Validation and safety checks
+Validate before writing:
+- duplicate function signatures
+- invalid module path segments
+- unsupported mapped types
+- reserved identifiers
+- dispatch return-type mismatches
+
+### Phase F — Runtime contract synchronization
+Ensure runtime dispatcher tag mapping and generated enum ordering cannot drift:
+1. derive tag ordering from a shared canonical list
+2. assert runtime dispatch tables match generated Beskid variant order
+3. fail tests on mismatch
+
+### Phase G — Workflow integration
+`pekan_cli interop` adds modes:
+- default: generate/update files
+- `--check`: no writes, fail when generated output is stale
+- `--dry-run`: print planned updates
+
+Integrate `--check` into CI.
+
+Recommended operator commands:
+- `cargo run -p pekan_cli -- interop`
+- `cargo run -p pekan_cli -- interop --check`
+
+### Phase H — stdlib project structure conventions
+Enforce separation:
+- manual files: public std facade
+- generated files: interop enum + wrappers only
+
+Manual facade imports generated wrappers; generator never edits manual files.
+
+### Phase I — End-to-end tests
+Add coverage for:
+1. annotation parsing and schema validation
+2. deterministic generation snapshots
+3. stale-output detection in `--check` mode
+4. JIT/AOT execution through generated wrappers
+5. negative mismatch cases (invalid tags/signatures/types)
 
 ---
 
-## 4. Build/Interop Lifecycle Contract (Final)
+## 3. Rollout Sequence
 
-All project-aware CLI flows (`run`, `clif`, `analyze`) follow:
+1. Introduce annotation schema + parser + model (no behavior change).
+2. Switch `pekan_cli interop` from hardcoded tables to annotation extraction.
+3. Generate split Beskid artifacts (`StdInterop.generated.bd`, `Calls.generated.bd`).
+4. Wire manual std facade to generated wrappers.
+5. Add runtime/enum-order contract tests.
+6. Enable `pekan_cli interop --check` in CI.
+7. Remove superseded hardcoded interop definitions.
 
-1. Discover `Project.proj`.
-2. Resolve dependency graph.
-3. Validate provider scope (`path` enabled in v1).
-4. Sync `Project.lock`.
-5. Materialize dependency sources to `obj/beskid/deps/src`.
-6. Build dependency-first compile units.
-7. Execute target.
+---
 
-Interop migration stages must not bypass this lifecycle.
+## 4. Risks and Mitigations
 
-## 5. Diagnostics Contract (Shared Infrastructure)
+- **Tag drift between runtime and generated enum**
+  - Mitigation: shared canonical ordering + contract tests.
 
-Project and interop migration diagnostics use the same infrastructure as analysis diagnostics (`make_diagnostic`, `Severity`, and error codes).
+- **Nondeterministic generation causing noisy diffs**
+  - Mitigation: stable sorting + deterministic formatting + idempotent writes.
 
-- Analysis diagnostics base: `src/beskid_analysis/src/analysis/diagnostics.rs`
-- Error-code convention: subsystem-prefixed numeric codes (for example, codegen uses `E20xx`).
+- **Manual/generated ownership confusion in standard_library**
+  - Mitigation: strict `*.generated.bd` boundaries and documented conventions.
 
-### Interop/Project migration error code range
+- **Unsupported signature growth over time**
+  - Mitigation: explicit type-mapping table and precise diagnostics.
 
-Reserve `E30xx` for projects/build workflow diagnostics referenced by interop migration steps:
+---
 
-- `E3001`: missing `Project.proj` at '{path}'
-- `E3006`: dependency '{dependency}' manifest not found at {path}
-- `E3007`: dependency cycle detected: {chain}
-- `E3008`: unresolved external dependencies: {details}
-- `E3011`: unsupported dependency source '{source}' in v1
-- `E3022`: lockfile is out of date for project '{project}'
-- `E3023`: lockfile update forbidden in frozen mode
-- `E3031`: failed to copy dependency source '{from}' -> '{to}': {source}
-- `E3033`: build cannot start because dependencies were not materialized
+## 5. Diagnostics Contract
 
-## 6. Final migration completion criteria
+Interop generation and project lifecycle diagnostics must be actionable and stable.
 
-Interop migration is complete when all of the following are true:
+Minimum error classes:
+- invalid/malformed `InteropCall` attribute
+- unsupported interop type mapping
+- duplicate interop function signature
+- stale generated files (`--check` failure)
+- runtime/enum contract mismatch
 
-1. `Std` wrappers are provided by project-resolved `standard_library` source code.
-2. Build/run always materialize dependency sources into `obj/beskid` before compilation.
-3. Lockfile lifecycle is active and automatic by default.
-4. Legacy direct std builtin registrations (`sys_print*`, `str_len`) are removed from primary path.
-5. Embedded stdlib prelude fallback is removed from execution flows and compile-plan APIs.
-6. Diagnostic output for migration and project failures uses shared analysis diagnostics conventions and stable error codes.
+Diagnostics must include source file, symbol, and remediation command.
+
+---
+
+## 6. Definition of Done
+
+Migration is complete when all of the following are true:
+
+1. Interop declarations are authored in Rust attributes and are the only source of truth.
+2. `pekan_cli interop` generates deterministic Beskid interop files from those attributes.
+3. `standard_library` keeps manual public facade; only interop internals are generated.
+4. Runtime dispatch contract and generated enum ordering are verified by tests.
+5. CI enforces generation freshness via `pekan_cli interop --check`.
+6. Execution pipeline has no embedded stdlib prelude fallback paths.
+7. Docs reflect as-built architecture and operator workflow.

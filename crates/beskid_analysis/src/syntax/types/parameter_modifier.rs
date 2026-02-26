@@ -25,7 +25,7 @@ impl crate::parsing::parsable::Parsable for ParameterModifier {
                 return Err(crate::parsing::error::ParseError::unexpected_rule(
                     pair,
                     Some(crate::parser::Rule::ParameterModifier),
-                ))
+                ));
             }
         };
 

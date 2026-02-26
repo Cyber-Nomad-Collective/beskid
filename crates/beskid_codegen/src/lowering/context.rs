@@ -1,8 +1,8 @@
 use crate::errors::CodegenError;
 use crate::lowering::descriptor::{TypeDescriptorData, TypeLayout};
-use cranelift_codegen::ir::Function;
 use beskid_analysis::resolve::ItemId;
 use beskid_analysis::types::TypeId;
+use cranelift_codegen::ir::Function;
 use std::collections::HashMap;
 
 pub type CodegenResult<T> = Result<T, CodegenError>;

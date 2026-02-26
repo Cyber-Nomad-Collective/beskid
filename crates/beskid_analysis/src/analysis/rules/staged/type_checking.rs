@@ -1,6 +1,6 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
-use crate::analysis::rules::{types, RuleContext};
+use crate::analysis::rules::{RuleContext, types};
 use crate::hir::{HirBlock, HirExpressionNode, HirItem, HirProgram, HirStatementNode};
 use crate::resolve::Resolution;
 use crate::syntax::Spanned;
@@ -52,7 +52,10 @@ impl SemanticPipelineRule {
             match &statement.node {
                 HirStatementNode::LetStatement(let_statement) => {
                     self.walk_expr_for_mutability(ctx, &let_statement.node.value, bindings);
-                    bindings.insert(let_statement.node.name.node.name.clone(), let_statement.node.mutable);
+                    bindings.insert(
+                        let_statement.node.name.node.name.clone(),
+                        let_statement.node.mutable,
+                    );
                 }
                 HirStatementNode::ReturnStatement(return_statement) => {
                     if let Some(value) = &return_statement.node.value {
@@ -64,8 +67,16 @@ impl SemanticPipelineRule {
                     self.walk_block_for_mutability(ctx, &while_statement.node.body, bindings);
                 }
                 HirStatementNode::ForStatement(for_statement) => {
-                    self.walk_expr_for_mutability(ctx, &for_statement.node.range.node.start, bindings);
-                    self.walk_expr_for_mutability(ctx, &for_statement.node.range.node.end, bindings);
+                    self.walk_expr_for_mutability(
+                        ctx,
+                        &for_statement.node.range.node.start,
+                        bindings,
+                    );
+                    self.walk_expr_for_mutability(
+                        ctx,
+                        &for_statement.node.range.node.end,
+                        bindings,
+                    );
                     bindings.insert(for_statement.node.iterator.node.name.clone(), false);
                     self.walk_block_for_mutability(ctx, &for_statement.node.body, bindings);
                 }
@@ -77,7 +88,11 @@ impl SemanticPipelineRule {
                     }
                 }
                 HirStatementNode::ExpressionStatement(expression_statement) => {
-                    self.walk_expr_for_mutability(ctx, &expression_statement.node.expression, bindings);
+                    self.walk_expr_for_mutability(
+                        ctx,
+                        &expression_statement.node.expression,
+                        bindings,
+                    );
                 }
                 HirStatementNode::BreakStatement(_) | HirStatementNode::ContinueStatement(_) => {}
             }
@@ -105,9 +120,15 @@ impl SemanticPipelineRule {
                                     ctx.emit_simple(
                                         assign_expression.node.target.span,
                                         "E1214",
-                                        format!("cannot assign to immutable binding `{}`", name_value),
+                                        format!(
+                                            "cannot assign to immutable binding `{}`",
+                                            name_value
+                                        ),
                                         "immutable assignment",
-                                        Some("declare it as `let mut` to allow assignment".to_string()),
+                                        Some(
+                                            "declare it as `let mut` to allow assignment"
+                                                .to_string(),
+                                        ),
                                         Severity::Error,
                                     );
                                 }
@@ -154,7 +175,11 @@ impl SemanticPipelineRule {
                 }
             }
             HirExpressionNode::BlockExpression(block_expression) => {
-                self.walk_block_for_mutability(ctx, &block_expression.node.block, &mut bindings.clone());
+                self.walk_block_for_mutability(
+                    ctx,
+                    &block_expression.node.block,
+                    &mut bindings.clone(),
+                );
             }
             HirExpressionNode::GroupedExpression(grouped_expression) => {
                 self.walk_expr_for_mutability(ctx, &grouped_expression.node.expr, bindings);

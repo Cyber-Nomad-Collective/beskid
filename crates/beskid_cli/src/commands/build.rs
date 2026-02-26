@@ -3,17 +3,16 @@ use std::path::PathBuf;
 use anyhow::Result;
 use beskid_analysis::analysis::diagnostics::Severity;
 use beskid_analysis::hir::{
-    lower_program as lower_hir_program, normalize_program, AstProgram, HirProgram,
+    AstProgram, HirProgram, lower_program as lower_hir_program, normalize_program,
 };
-use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::parser::{BeskidParser, Rule};
+use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::resolve::Resolver;
 use beskid_analysis::syntax::{Program, Spanned};
 use beskid_analysis::types::type_program;
-use beskid_analysis::{builtin_rules, run_rules, AnalysisOptions};
+use beskid_analysis::{AnalysisOptions, builtin_rules, run_rules};
 use beskid_aot::{
-    build, AotBuildRequest, BuildOutputKind, BuildProfile, ExportPolicy, LinkMode,
-    RuntimeStrategy,
+    AotBuildRequest, BuildOutputKind, BuildProfile, ExportPolicy, LinkMode, RuntimeStrategy, build,
 };
 use beskid_codegen::{codegen_errors_to_diagnostics, lower_program};
 use clap::{Args, ValueEnum};

@@ -1,18 +1,18 @@
 use anyhow::Result;
-use clap::Args;
-use miette::Report;
+use beskid_analysis::analysis::diagnostics::Severity;
 use beskid_analysis::hir::{
-    lower_program as lower_hir_program, normalize_program, AstProgram, HirProgram, HirPrimitiveType,
+    AstProgram, HirPrimitiveType, HirProgram, lower_program as lower_hir_program, normalize_program,
 };
-use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::parser::{BeskidParser, Rule};
+use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::resolve::{ItemKind, Resolver};
 use beskid_analysis::syntax::{Program, Spanned};
-use beskid_analysis::types::{type_program, TypeInfo};
-use beskid_analysis::{builtin_rules, AnalysisOptions, run_rules};
-use beskid_analysis::analysis::diagnostics::Severity;
+use beskid_analysis::types::{TypeInfo, type_program};
+use beskid_analysis::{AnalysisOptions, builtin_rules, run_rules};
 use beskid_codegen::{codegen_errors_to_diagnostics, lower_program};
 use beskid_engine::Engine;
+use clap::Args;
+use miette::Report;
 use pest::Parser;
 use std::path::PathBuf;
 
@@ -112,9 +112,10 @@ pub fn execute(args: RunArgs) -> Result<()> {
     let resolution = match Resolver::new().resolve_program(&hir) {
         Ok(resolution) => resolution,
         Err(errors) => {
-            eprintln!("{:?}", miette::miette!(
-                "resolution failed after diagnostics: {errors:?}"
-            ));
+            eprintln!(
+                "{:?}",
+                miette::miette!("resolution failed after diagnostics: {errors:?}")
+            );
             std::process::exit(1);
         }
     };
@@ -122,9 +123,10 @@ pub fn execute(args: RunArgs) -> Result<()> {
     let typed = match type_program(&hir, &resolution) {
         Ok(typed) => typed,
         Err(errors) => {
-            eprintln!("{:?}", miette::miette!(
-                "type checking failed after diagnostics: {errors:?}"
-            ));
+            eprintln!(
+                "{:?}",
+                miette::miette!("type checking failed after diagnostics: {errors:?}")
+            );
             std::process::exit(1);
         }
     };
@@ -132,11 +134,8 @@ pub fn execute(args: RunArgs) -> Result<()> {
     let artifact = match lower_program(&hir, &resolution, &typed) {
         Ok(artifact) => artifact,
         Err(errors) => {
-            let diagnostics = codegen_errors_to_diagnostics(
-                &input_path.display().to_string(),
-                &source,
-                &errors,
-            );
+            let diagnostics =
+                codegen_errors_to_diagnostics(&input_path.display().to_string(), &source, &errors);
             for diagnostic in diagnostics {
                 eprintln!("{:?}", Report::new(diagnostic));
             }
@@ -165,14 +164,18 @@ pub fn execute(args: RunArgs) -> Result<()> {
         ));
     }
 
-    let return_info = typed.types.get(signature.return_type).ok_or_else(|| {
-        anyhow::anyhow!("Missing return type for `{}`", args.entrypoint)
-    })?;
+    let return_info = typed
+        .types
+        .get(signature.return_type)
+        .ok_or_else(|| anyhow::anyhow!("Missing return type for `{}`", args.entrypoint))?;
 
     let ptr = unsafe { engine.entrypoint_ptr(&args.entrypoint) }
         .map_err(|err| anyhow::anyhow!("Entrypoint lookup failed: {err:?}"))?;
     if ptr.is_null() {
-        return Err(anyhow::anyhow!("Entrypoint `{}` returned null pointer", args.entrypoint));
+        return Err(anyhow::anyhow!(
+            "Entrypoint `{}` returned null pointer",
+            args.entrypoint
+        ));
     }
 
     engine.with_arena(|_, _| match return_info {

@@ -40,7 +40,7 @@ impl crate::parsing::parsable::Parsable for Literal {
                         return Err(crate::parsing::error::ParseError::unexpected_rule(
                             pair,
                             Some(crate::parser::Rule::Literal),
-                        ))
+                        ));
                     }
                 }
             }
@@ -48,7 +48,7 @@ impl crate::parsing::parsable::Parsable for Literal {
                 return Err(crate::parsing::error::ParseError::unexpected_rule(
                     pair,
                     Some(crate::parser::Rule::Literal),
-                ))
+                ));
             }
         };
 

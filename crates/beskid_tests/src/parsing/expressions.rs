@@ -1,6 +1,6 @@
 use crate::parsing::util::{assert_parse, assert_parse_fail, parse_expression_ast};
-use beskid_analysis::syntax::{BinaryOp, Expression, Literal, Spanned};
 use beskid_analysis::Rule;
+use beskid_analysis::syntax::{BinaryOp, Expression, Literal, Spanned};
 
 #[test]
 fn parses_arithmetic_precedence() {
@@ -91,14 +91,17 @@ fn rejects_argument_list_starting_with_comma() {
     assert_parse_fail(Rule::ArgumentList, ", 1");
 }
 
-fn expect_binary<'a>(expr: &'a Expression, op: BinaryOp) -> (&'a Spanned<Expression>, &'a Spanned<BinaryOp>, &'a Spanned<Expression>) {
+fn expect_binary<'a>(
+    expr: &'a Expression,
+    op: BinaryOp,
+) -> (
+    &'a Spanned<Expression>,
+    &'a Spanned<BinaryOp>,
+    &'a Spanned<Expression>,
+) {
     if let Expression::Binary(binary) = expr {
         assert_eq!(binary.node.op.node, op);
-        return (
-            &binary.node.left,
-            &binary.node.op,
-            &binary.node.right,
-        );
+        return (&binary.node.left, &binary.node.op, &binary.node.right);
     }
 
     panic!("expected binary expression");
@@ -116,7 +119,10 @@ fn expect_assign(expr: &Expression) -> (&Spanned<Expression>, &Spanned<Expressio
     panic!("expected assign expression");
 }
 
-fn expect_call<'a>(expr: &'a Expression, args_len: usize) -> (&'a Spanned<Expression>, &'a [Spanned<Expression>]) {
+fn expect_call<'a>(
+    expr: &'a Expression,
+    args_len: usize,
+) -> (&'a Spanned<Expression>, &'a [Spanned<Expression>]) {
     if let Expression::Call(call) = expr {
         assert_eq!(call.node.args.len(), args_len);
         return (&call.node.callee, &call.node.args);
@@ -128,7 +134,10 @@ fn expect_call<'a>(expr: &'a Expression, args_len: usize) -> (&'a Spanned<Expres
 fn expect_identifier_path(expr: &Expression, expected: &str) {
     if let Expression::Path(path) = expr {
         assert_eq!(path.node.path.node.segments.len(), 1);
-        assert_eq!(path.node.path.node.segments[0].node.name.node.name.as_str(), expected);
+        assert_eq!(
+            path.node.path.node.segments[0].node.name.node.name.as_str(),
+            expected
+        );
         return;
     }
 
@@ -138,14 +147,7 @@ fn expect_identifier_path(expr: &Expression, expected: &str) {
 fn expect_path_segments(expr: &Expression, expected: &[&str]) {
     if let Expression::Path(path) = expr {
         assert_eq!(path.node.path.node.segments.len(), expected.len());
-        for (segment, expected_name) in path
-            .node
-            .path
-            .node
-            .segments
-            .iter()
-            .zip(expected.iter())
-        {
+        for (segment, expected_name) in path.node.path.node.segments.iter().zip(expected.iter()) {
             assert_eq!(segment.node.name.node.name.as_str(), *expected_name);
         }
         return;

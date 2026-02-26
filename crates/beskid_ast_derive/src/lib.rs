@@ -1,8 +1,8 @@
 use proc_macro::TokenStream;
 use quote::{format_ident, quote};
 use syn::{
-    parse_macro_input, Attribute, Data, DeriveInput, Fields, GenericArgument, LitStr, PathArguments,
-    Type,
+    Attribute, Data, DeriveInput, Fields, GenericArgument, LitStr, PathArguments, Type,
+    parse_macro_input,
 };
 
 #[proc_macro_derive(AstNode, attributes(ast))]
@@ -110,7 +110,9 @@ pub fn derive_phase_from_ast(input: TokenStream) -> TokenStream {
         Data::Struct(struct_data) => {
             let fields = match &struct_data.fields {
                 Fields::Named(fields) => fields.named.iter().collect::<Vec<_>>(),
-                Fields::Unnamed(fields) if fields.unnamed.len() == 1 => fields.unnamed.iter().collect(),
+                Fields::Unnamed(fields) if fields.unnamed.len() == 1 => {
+                    fields.unnamed.iter().collect()
+                }
                 _ => {
                     return syn::Error::new_spanned(
                         &struct_data.fields,
@@ -155,9 +157,12 @@ pub fn derive_phase_from_ast(input: TokenStream) -> TokenStream {
             }
         }
         _ => {
-            return syn::Error::new_spanned(name, "PhaseFromAst can only be derived for enums or structs")
-                .to_compile_error()
-                .into();
+            return syn::Error::new_spanned(
+                name,
+                "PhaseFromAst can only be derived for enums or structs",
+            )
+            .to_compile_error()
+            .into();
         }
     };
 
@@ -395,7 +400,10 @@ fn gen_push_for_type(ty: &Type, access: proc_macro2::TokenStream) -> proc_macro2
     }
 }
 
-fn gen_phase_field_conversion(ty: &Type, access: proc_macro2::TokenStream) -> proc_macro2::TokenStream {
+fn gen_phase_field_conversion(
+    ty: &Type,
+    access: proc_macro2::TokenStream,
+) -> proc_macro2::TokenStream {
     match ty {
         Type::Path(tp) => {
             if let Some(seg) = tp.path.segments.last() {

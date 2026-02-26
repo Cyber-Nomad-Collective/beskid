@@ -2,14 +2,17 @@ use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::RuleContext;
 use crate::hir::{
-    HirContractDefinition, HirContractNode, HirItem, HirPath, HirPrimitiveType, HirProgram,
-    HirType,
+    HirContractDefinition, HirContractNode, HirItem, HirPath, HirPrimitiveType, HirProgram, HirType,
 };
 use crate::syntax::{SpanInfo, Spanned};
 use std::collections::{HashMap, HashSet};
 
 impl SemanticPipelineRule {
-    pub(super) fn stage0_collect_definitions(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
+    pub(super) fn stage0_collect_definitions(
+        &self,
+        ctx: &mut RuleContext,
+        hir: &Spanned<HirProgram>,
+    ) {
         self.check_duplicate_definition_names(ctx, hir);
         self.check_duplicate_non_type_item_names(ctx, hir);
         self.check_unknown_types_in_definitions(ctx, hir);
@@ -111,7 +114,12 @@ impl SemanticPipelineRule {
                         );
                     }
                     if let Some(return_type) = &definition.node.return_type {
-                        self.validate_type_reference(ctx, return_type, &known_types, &generic_names);
+                        self.validate_type_reference(
+                            ctx,
+                            return_type,
+                            &known_types,
+                            &generic_names,
+                        );
                     }
                 }
                 HirItem::MethodDefinition(definition) => {
@@ -131,7 +139,12 @@ impl SemanticPipelineRule {
                         );
                     }
                     if let Some(return_type) = &definition.node.return_type {
-                        self.validate_type_reference(ctx, return_type, &known_types, &generic_names);
+                        self.validate_type_reference(
+                            ctx,
+                            return_type,
+                            &known_types,
+                            &generic_names,
+                        );
                     }
                 }
                 HirItem::ContractDefinition(definition) => {
@@ -163,7 +176,11 @@ impl SemanticPipelineRule {
         }
     }
 
-    fn check_conflicting_embedded_contracts(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
+    fn check_conflicting_embedded_contracts(
+        &self,
+        ctx: &mut RuleContext,
+        hir: &Spanned<HirProgram>,
+    ) {
         let contracts = self.collect_contract_definitions(hir);
 
         for definition in contracts.values() {
@@ -179,7 +196,9 @@ impl SemanticPipelineRule {
                 };
 
                 for (method_name, signature) in self.contract_methods(embedded_contract) {
-                    let Some(previous) = known_signatures.insert(method_name.clone(), signature.clone()) else {
+                    let Some(previous) =
+                        known_signatures.insert(method_name.clone(), signature.clone())
+                    else {
                         continue;
                     };
                     if previous == signature {
@@ -356,15 +375,18 @@ impl SemanticPipelineRule {
 
         for item in &hir.node.items {
             let (name, span) = match &item.node {
-                HirItem::TypeDefinition(definition) => {
-                    (definition.node.name.node.name.as_str(), definition.node.name.span)
-                }
-                HirItem::EnumDefinition(definition) => {
-                    (definition.node.name.node.name.as_str(), definition.node.name.span)
-                }
-                HirItem::ContractDefinition(definition) => {
-                    (definition.node.name.node.name.as_str(), definition.node.name.span)
-                }
+                HirItem::TypeDefinition(definition) => (
+                    definition.node.name.node.name.as_str(),
+                    definition.node.name.span,
+                ),
+                HirItem::EnumDefinition(definition) => (
+                    definition.node.name.node.name.as_str(),
+                    definition.node.name.span,
+                ),
+                HirItem::ContractDefinition(definition) => (
+                    definition.node.name.node.name.as_str(),
+                    definition.node.name.span,
+                ),
                 _ => continue,
             };
 

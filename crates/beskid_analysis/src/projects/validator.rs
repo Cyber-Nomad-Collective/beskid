@@ -6,13 +6,19 @@ use crate::projects::model::{DependencySource, ProjectManifest};
 
 pub fn validate_manifest(manifest: &ProjectManifest) -> Result<(), ProjectError> {
     if manifest.project.name.trim().is_empty() {
-        return Err(ProjectError::Validation("`project.name` is required".to_string()));
+        return Err(ProjectError::Validation(
+            "`project.name` is required".to_string(),
+        ));
     }
     if manifest.project.version.trim().is_empty() {
-        return Err(ProjectError::Validation("`project.version` is required".to_string()));
+        return Err(ProjectError::Validation(
+            "`project.version` is required".to_string(),
+        ));
     }
     if manifest.project.root.trim().is_empty() {
-        return Err(ProjectError::Validation("`project.root` cannot be empty".to_string()));
+        return Err(ProjectError::Validation(
+            "`project.root` cannot be empty".to_string(),
+        ));
     }
     if manifest.targets.is_empty() {
         return Err(ProjectError::Validation(
@@ -42,7 +48,13 @@ pub fn validate_manifest(manifest: &ProjectManifest) -> Result<(), ProjectError>
 
         match dependency.source {
             DependencySource::Path => {
-                if dependency.path.as_deref().map(str::trim).unwrap_or("").is_empty() {
+                if dependency
+                    .path
+                    .as_deref()
+                    .map(str::trim)
+                    .unwrap_or("")
+                    .is_empty()
+                {
                     return Err(ProjectError::Validation(format!(
                         "dependency `{}` with source=\"path\" requires `path`",
                         dependency.name
@@ -50,13 +62,25 @@ pub fn validate_manifest(manifest: &ProjectManifest) -> Result<(), ProjectError>
                 }
             }
             DependencySource::Git => {
-                if dependency.url.as_deref().map(str::trim).unwrap_or("").is_empty() {
+                if dependency
+                    .url
+                    .as_deref()
+                    .map(str::trim)
+                    .unwrap_or("")
+                    .is_empty()
+                {
                     return Err(ProjectError::Validation(format!(
                         "dependency `{}` with source=\"git\" requires `url`",
                         dependency.name
                     )));
                 }
-                if dependency.rev.as_deref().map(str::trim).unwrap_or("").is_empty() {
+                if dependency
+                    .rev
+                    .as_deref()
+                    .map(str::trim)
+                    .unwrap_or("")
+                    .is_empty()
+                {
                     return Err(ProjectError::Validation(format!(
                         "dependency `{}` with source=\"git\" requires `rev`",
                         dependency.name
@@ -64,7 +88,13 @@ pub fn validate_manifest(manifest: &ProjectManifest) -> Result<(), ProjectError>
                 }
             }
             DependencySource::Registry => {
-                if dependency.version.as_deref().map(str::trim).unwrap_or("").is_empty() {
+                if dependency
+                    .version
+                    .as_deref()
+                    .map(str::trim)
+                    .unwrap_or("")
+                    .is_empty()
+                {
                     return Err(ProjectError::Validation(format!(
                         "dependency `{}` with source=\"registry\" requires `version`",
                         dependency.name

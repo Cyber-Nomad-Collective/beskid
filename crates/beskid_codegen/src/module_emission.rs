@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
+use beskid_analysis::types::TypeId;
 use cranelift_codegen::ir::Endianness;
 use cranelift_module::{DataDescription, DataId, Linkage, Module, ModuleResult};
-use beskid_analysis::types::TypeId;
 
 use crate::lowering::CodegenArtifact;
 use crate::lowering::descriptor::TypeDescriptorData;
@@ -97,10 +97,20 @@ fn build_descriptor_data<M: Module>(
     let mut ctx = DataDescription::new();
     let mut bytes = Vec::new();
 
-    let _size_offset =
-        push_usize(&mut bytes, descriptor.size, ptr_size, little_endian, usize_align);
-    let _align_offset =
-        push_usize(&mut bytes, descriptor.align, ptr_size, little_endian, usize_align);
+    let _size_offset = push_usize(
+        &mut bytes,
+        descriptor.size,
+        ptr_size,
+        little_endian,
+        usize_align,
+    );
+    let _align_offset = push_usize(
+        &mut bytes,
+        descriptor.align,
+        ptr_size,
+        little_endian,
+        usize_align,
+    );
     let _ptr_count_offset = push_u32(
         &mut bytes,
         descriptor.pointer_offsets.len() as u32,

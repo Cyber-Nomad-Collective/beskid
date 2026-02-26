@@ -1,8 +1,8 @@
 use beskid_analysis::syntax::{Expression, Literal, Pattern};
 
 use crate::syntax::util::{
-    assert_expression_integer, assert_expression_path_segments, assert_literal_integer,
-    assert_literal_bool, assert_literal_char, assert_literal_float, assert_literal_string,
+    assert_expression_integer, assert_expression_path_segments, assert_literal_bool,
+    assert_literal_char, assert_literal_float, assert_literal_integer, assert_literal_string,
     assert_path_segments, parse_expression_ast,
 };
 
@@ -11,7 +11,10 @@ fn parses_binary_expression_ast() {
     let expr = parse_expression_ast("1 + 2 * 3");
     match &expr.node {
         Expression::Binary(binary) => {
-            assert!(matches!(binary.node.op.node, beskid_analysis::syntax::BinaryOp::Add));
+            assert!(matches!(
+                binary.node.op.node,
+                beskid_analysis::syntax::BinaryOp::Add
+            ));
             assert_expression_integer(&binary.node.left, "1");
             match &binary.node.right.node {
                 Expression::Binary(right_binary) => {
@@ -147,7 +150,10 @@ fn parses_match_expression_ast() {
     match &expr.node {
         Expression::Match(match_expr) => {
             assert_eq!(match_expr.node.arms.len(), 2);
-            assert!(matches!(match_expr.node.scrutinee.node, Expression::Path(_)));
+            assert!(matches!(
+                match_expr.node.scrutinee.node,
+                Expression::Path(_)
+            ));
             let first = &match_expr.node.arms[0];
             match &first.node.pattern.node {
                 Pattern::Enum(pattern) => {
@@ -159,7 +165,10 @@ fn parses_match_expression_ast() {
             match first.node.guard.as_ref() {
                 Some(guard) => match &guard.node {
                     Expression::Binary(binary) => {
-                        assert!(matches!(binary.node.op.node, beskid_analysis::syntax::BinaryOp::Gt));
+                        assert!(matches!(
+                            binary.node.op.node,
+                            beskid_analysis::syntax::BinaryOp::Gt
+                        ));
                         assert_expression_path_segments(&binary.node.left, &["x"]);
                         assert_expression_integer(&binary.node.right, "0");
                     }
@@ -244,7 +253,10 @@ fn parses_unary_expression_ast() {
     let expr = parse_expression_ast("-1");
     match &expr.node {
         Expression::Unary(unary) => {
-            assert!(matches!(unary.node.op.node, beskid_analysis::syntax::UnaryOp::Neg));
+            assert!(matches!(
+                unary.node.op.node,
+                beskid_analysis::syntax::UnaryOp::Neg
+            ));
             assert_expression_integer(&unary.node.expr, "1");
         }
         _ => panic!("expected unary expression"),

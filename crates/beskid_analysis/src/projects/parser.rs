@@ -52,8 +52,9 @@ fn parse_blocks(source: &str) -> Result<ParsedBlocks, ProjectError> {
                 break;
             }
 
-            let (key, value) = parse_assignment(body)
-                .map_err(|message| ProjectError::Parse(format!("line {}: {message}", line_no + 1)))?;
+            let (key, value) = parse_assignment(body).map_err(|message| {
+                ProjectError::Parse(format!("line {}: {message}", line_no + 1))
+            })?;
             fields.insert(key, value);
         }
 
@@ -116,11 +117,9 @@ fn build_manifest(parsed: ParsedBlocks) -> Result<ProjectManifest, ProjectError>
         };
 
         targets.push(Target {
-            name: target
-                .label
-                .ok_or_else(|| {
-                    ProjectError::Validation("target block must include a label".to_string())
-                })?,
+            name: target.label.ok_or_else(|| {
+                ProjectError::Validation("target block must include a label".to_string())
+            })?,
             kind,
             entry: required_field(&target.fields, "entry")?,
         });
@@ -177,7 +176,9 @@ fn parse_block_header(line: &str) -> Result<(&str, Option<String>), String> {
     }
 
     let mut parts = without_brace.split_whitespace();
-    let kind = parts.next().ok_or_else(|| "missing block kind".to_string())?;
+    let kind = parts
+        .next()
+        .ok_or_else(|| "missing block kind".to_string())?;
     let rest = without_brace[kind.len()..].trim();
 
     if rest.is_empty() {

@@ -5,11 +5,10 @@ use rand::distributions::Distribution;
 use std::{collections::HashMap, rc::Rc};
 
 use gc_arena::{
-    Arena, Collect, DynamicRootSet, Gc, GcWeak, Lock, RefLock, Rootable,
     arena::CollectionPhase,
-    collect::{DynCollect, dyn_collect},
+    collect::{dyn_collect, DynCollect},
     metrics::Pacing,
-    static_collect, unsize,
+    static_collect, unsize, Arena, Collect, DynamicRootSet, Gc, GcWeak, Lock, RefLock, Rootable,
 };
 
 #[test]
@@ -49,12 +48,11 @@ fn weak_allocation() {
     });
     arena.finish_cycle();
     arena.mutate(|mc, root| {
-        assert!(
-            root.weak
-                .upgrade(mc)
-                .map(|gc| Gc::ptr_eq(gc, root.test.borrow().unwrap()))
-                .unwrap_or(false)
-        );
+        assert!(root
+            .weak
+            .upgrade(mc)
+            .map(|gc| Gc::ptr_eq(gc, root.test.borrow().unwrap()))
+            .unwrap_or(false));
 
         *root.test.unlock(mc).borrow_mut() = None;
     });
@@ -238,7 +236,7 @@ fn test_layouts() {
 
             let ptr = gc_arena::arena::rootless_mutate(|mc| {
                 let gc = Gc::new(mc, Wrapper(Aligned(array)));
-                assert_eq!(array, gc.0.0);
+                assert_eq!(array, gc.0 .0);
                 Gc::as_ptr(gc) as *mut ()
             });
 
@@ -609,7 +607,7 @@ fn ptr_magic() {
 #[cfg(feature = "std")]
 #[test]
 fn okay_panic() {
-    use std::panic::{AssertUnwindSafe, catch_unwind};
+    use std::panic::{catch_unwind, AssertUnwindSafe};
 
     use gc_arena::collect::Trace;
 

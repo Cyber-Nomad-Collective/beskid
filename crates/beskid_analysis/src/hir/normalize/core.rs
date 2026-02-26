@@ -8,9 +8,7 @@ pub enum HirNormalizeError {
     // Placeholder for future normalization errors
 }
 
-pub fn normalize_program(
-    program: &mut Spanned<HirProgram>,
-) -> Result<(), Vec<HirNormalizeError>> {
+pub fn normalize_program(program: &mut Spanned<HirProgram>) -> Result<(), Vec<HirNormalizeError>> {
     let mut normalizer = Normalizer::new();
     normalizer.visit_program(program);
     if normalizer.errors.is_empty() {

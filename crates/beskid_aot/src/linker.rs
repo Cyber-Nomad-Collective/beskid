@@ -145,10 +145,9 @@ fn archive_static(req: &LinkRequest) -> AotResult<LinkResult> {
     })?;
 
     let mut shell_command = Command::new("sh");
-    shell_command.arg("-c").arg(format!(
-        "ar -M < {}",
-        script_path.to_string_lossy()
-    ));
+    shell_command
+        .arg("-c")
+        .arg(format!("ar -M < {}", script_path.to_string_lossy()));
 
     if req.verbose {
         eprintln!("[aot] archive command: {:?}", shell_command);
@@ -160,10 +159,7 @@ fn archive_static(req: &LinkRequest) -> AotResult<LinkResult> {
     if !output.status.success() {
         return Err(AotError::LinkFailed {
             status: output.status.code().unwrap_or(-1),
-            command: format!(
-                "ar -M < {}",
-                script_path.display()
-            ),
+            command: format!("ar -M < {}", script_path.display()),
         });
     }
 
@@ -180,7 +176,11 @@ fn archive_static(req: &LinkRequest) -> AotResult<LinkResult> {
 
     Ok(LinkResult {
         output_path: req.output_path.clone(),
-        command_line: format!("ar -M < {} && ranlib {}", script_path.display(), req.output_path.display()),
+        command_line: format!(
+            "ar -M < {} && ranlib {}",
+            script_path.display(),
+            req.output_path.display()
+        ),
         exported_symbols: req.exported_symbols.clone(),
     })
 }

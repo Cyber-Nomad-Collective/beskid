@@ -1,17 +1,23 @@
-use beskid_analysis::{BeskidParser, Rule};
 use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::syntax::{Expression, Spanned};
-use pest::iterators::Pair;
+use beskid_analysis::{BeskidParser, Rule};
 use pest::Parser;
+use pest::iterators::Pair;
 
 pub fn assert_parse(rule: Rule, input: &str) {
     let result = BeskidParser::parse(rule, input);
-    assert!(result.is_ok(), "expected parse success for rule {rule:?} on input: {input}\n{result:?}");
+    assert!(
+        result.is_ok(),
+        "expected parse success for rule {rule:?} on input: {input}\n{result:?}"
+    );
 }
 
 pub fn assert_parse_fail(rule: Rule, input: &str) {
     let result = BeskidParser::parse(rule, input);
-    assert!(result.is_err(), "expected parse failure for rule {rule:?} on input: {input}");
+    assert!(
+        result.is_err(),
+        "expected parse failure for rule {rule:?} on input: {input}"
+    );
 }
 
 pub fn parse_expression_ast(input: &str) -> Spanned<Expression> {
@@ -20,10 +26,14 @@ pub fn parse_expression_ast(input: &str) -> Spanned<Expression> {
 }
 
 pub fn parse_pair(rule: Rule, input: &str) -> Pair<'_, Rule> {
-    let mut pairs = BeskidParser::parse(rule, input)
-        .unwrap_or_else(|error| panic!("expected parse success for rule {rule:?} on input: {input}\n{error}"));
+    let mut pairs = BeskidParser::parse(rule, input).unwrap_or_else(|error| {
+        panic!("expected parse success for rule {rule:?} on input: {input}\n{error}")
+    });
     let pair = pairs.next().expect("expected a parse pair");
-    assert!(pairs.next().is_none(), "expected a single top-level pair for rule {rule:?}");
+    assert!(
+        pairs.next().is_none(),
+        "expected a single top-level pair for rule {rule:?}"
+    );
     pair
 }
 
@@ -33,7 +43,12 @@ pub fn assert_inner_rules(pair: &Pair<Rule>, expected: &[Rule]) {
         .into_inner()
         .map(|inner: Pair<Rule>| inner.as_rule())
         .collect();
-    assert_eq!(rules, expected, "unexpected inner rules for {rule:?}", rule = pair.as_rule());
+    assert_eq!(
+        rules,
+        expected,
+        "unexpected inner rules for {rule:?}",
+        rule = pair.as_rule()
+    );
 }
 
 pub fn assert_expression_is_identifier(expr: &Pair<Rule>, expected: &str) {
@@ -51,7 +66,10 @@ pub fn assert_expression_is_identifier(expr: &Pair<Rule>, expected: &str) {
     let mut identifiers = path.into_inner();
     let identifier = identifiers.next().expect("expected identifier in path");
     assert_eq!(identifier.as_rule(), Rule::Identifier);
-    assert!(identifiers.next().is_none(), "expected single identifier path");
+    assert!(
+        identifiers.next().is_none(),
+        "expected single identifier path"
+    );
     assert_eq!(identifier.as_str(), expected);
 }
 
@@ -73,8 +91,22 @@ pub fn assert_expression_is_integer(expr: &Pair<Rule>, expected: &str) {
 
 fn expect_single_inner<'a>(pair: &'a Pair<Rule>, expected_rule: Rule) -> Pair<'a, Rule> {
     let mut inner = pair.clone().into_inner();
-    let child = inner.next().unwrap_or_else(|| panic!("expected inner rule {expected_rule:?} in {rule:?}", rule = pair.as_rule()));
-    assert_eq!(child.as_rule(), expected_rule, "unexpected inner rule for {rule:?}", rule = pair.as_rule());
-    assert!(inner.next().is_none(), "expected single inner rule {expected_rule:?} in {rule:?}", rule = pair.as_rule());
+    let child = inner.next().unwrap_or_else(|| {
+        panic!(
+            "expected inner rule {expected_rule:?} in {rule:?}",
+            rule = pair.as_rule()
+        )
+    });
+    assert_eq!(
+        child.as_rule(),
+        expected_rule,
+        "unexpected inner rule for {rule:?}",
+        rule = pair.as_rule()
+    );
+    assert!(
+        inner.next().is_none(),
+        "expected single inner rule {expected_rule:?} in {rule:?}",
+        rule = pair.as_rule()
+    );
     child
 }

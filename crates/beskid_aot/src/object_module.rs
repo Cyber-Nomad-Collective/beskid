@@ -2,14 +2,12 @@ use std::collections::HashMap;
 use std::path::Path;
 
 use beskid_abi::{AbiParamKind, AbiReturnKind, BUILTIN_SPECS};
-use beskid_codegen::{emit_string_literals, emit_type_descriptors, CodegenArtifact};
-use cranelift_codegen::ir::{types, AbiParam, ExternalName, Signature, UserExternalName};
+use beskid_codegen::{CodegenArtifact, emit_string_literals, emit_type_descriptors};
+use cranelift_codegen::ir::{AbiParam, ExternalName, Signature, UserExternalName, types};
 use cranelift_codegen::isa::CallConv;
 use cranelift_codegen::settings;
 use cranelift_codegen::settings::Configurable;
-use cranelift_module::{
-    default_libcall_names, DataId, FuncId, FuncOrDataId, Linkage, Module,
-};
+use cranelift_module::{DataId, FuncId, FuncOrDataId, Linkage, Module, default_libcall_names};
 use cranelift_object::{ObjectBuilder, ObjectModule};
 
 use crate::error::{AotError, AotResult};
@@ -25,9 +23,11 @@ pub struct BeskidObjectModule {
 impl BeskidObjectModule {
     pub fn new(target_triple: Option<&str>) -> AotResult<Self> {
         let mut flag_builder = settings::builder();
-        flag_builder.set("is_pic", "true").map_err(|err| AotError::IsaInit {
-            message: err.to_string(),
-        })?;
+        flag_builder
+            .set("is_pic", "true")
+            .map_err(|err| AotError::IsaInit {
+                message: err.to_string(),
+            })?;
         let flags = settings::Flags::new(flag_builder);
 
         let isa_builder = if let Some(triple) = target_triple {
@@ -44,11 +44,12 @@ impl BeskidObjectModule {
             message: err.to_string(),
         })?;
 
-        let builder = ObjectBuilder::new(isa, "beskid", default_libcall_names()).map_err(
-            |err| AotError::ObjectModule {
-                message: err.to_string(),
-            },
-        )?;
+        let builder =
+            ObjectBuilder::new(isa, "beskid", default_libcall_names()).map_err(|err| {
+                AotError::ObjectModule {
+                    message: err.to_string(),
+                }
+            })?;
 
         Ok(Self {
             module: Some(ObjectModule::new(builder)),
@@ -95,13 +96,11 @@ impl BeskidObjectModule {
 
         let mut ctx = module.make_context();
         for function in &artifact.functions {
-            let func_id = self
-                .func_ids
-                .get(&function.name)
-                .copied()
-                .ok_or_else(|| AotError::MissingFunction {
+            let func_id = self.func_ids.get(&function.name).copied().ok_or_else(|| {
+                AotError::MissingFunction {
                     name: function.name.clone(),
-                })?;
+                }
+            })?;
             ctx.func = function.function.clone();
             remap_external_names(module, &mut ctx, &self.func_ids)?;
             module.define_function(func_id, &mut ctx)?;
@@ -120,12 +119,9 @@ impl BeskidObjectModule {
     }
 
     pub fn finalize_to_path(mut self, output_object: &Path) -> AotResult<()> {
-        let module = self
-            .module
-            .take()
-            .ok_or_else(|| AotError::InvalidRequest {
-                message: "object module already finalized".to_owned(),
-            })?;
+        let module = self.module.take().ok_or_else(|| AotError::InvalidRequest {
+            message: "object module already finalized".to_owned(),
+        })?;
         let product = module.finish();
         let bytes = product.emit().map_err(|err| AotError::ObjectModule {
             message: err.to_string(),

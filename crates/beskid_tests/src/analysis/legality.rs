@@ -1,6 +1,6 @@
 use beskid_analysis::hir::{
-    lower_program, validate_hir_program, AstProgram, HirExpressionNode, HirItem, HirLegalityError,
-    HirProgram, HirStatementNode,
+    AstProgram, HirExpressionNode, HirItem, HirLegalityError, HirProgram, HirStatementNode,
+    lower_program, validate_hir_program,
 };
 use beskid_analysis::resolve::Resolver;
 use beskid_analysis::syntax::Spanned;
@@ -19,17 +19,18 @@ fn lower_and_resolve(source: &str) -> (Spanned<HirProgram>, beskid_analysis::res
 
 #[test]
 fn legality_passes_for_valid_program() {
-    let (hir, resolution) =
-        lower_and_resolve("unit main() { i64 x = 1; i64 y = x; return; }");
+    let (hir, resolution) = lower_and_resolve("unit main() { i64 x = 1; i64 y = x; return; }");
 
     let errors = validate_hir_program(&hir, &resolution);
-    assert!(errors.is_empty(), "expected no legality errors, got: {errors:?}");
+    assert!(
+        errors.is_empty(),
+        "expected no legality errors, got: {errors:?}"
+    );
 }
 
 #[test]
 fn legality_reports_unresolved_value_path_when_resolution_entry_missing() {
-    let (hir, mut resolution) =
-        lower_and_resolve("unit main() { i64 x = 1; i64 y = x; }");
+    let (hir, mut resolution) = lower_and_resolve("unit main() { i64 x = 1; i64 y = x; }");
 
     let main_fn = hir
         .node
@@ -41,7 +42,8 @@ fn legality_reports_unresolved_value_path_when_resolution_entry_missing() {
         })
         .expect("expected main function");
 
-    let HirStatementNode::LetStatement(second_let) = &main_fn.node.body.node.statements[1].node else {
+    let HirStatementNode::LetStatement(second_let) = &main_fn.node.body.node.statements[1].node
+    else {
         panic!("expected second let statement");
     };
     let HirExpressionNode::PathExpression(path_expr) = &second_let.node.value.node else {

@@ -1,5 +1,5 @@
-use crate::analysis::rules::{resolve, types, Rule, RuleContext};
-use crate::hir::{lower_program, AstProgram, HirProgram};
+use crate::analysis::rules::{Rule, RuleContext, resolve, types};
+use crate::hir::{AstProgram, HirProgram, lower_program};
 use crate::resolve::Resolver;
 use crate::syntax::{Program, SpanInfo, Spanned};
 use crate::types::type_program_with_errors;

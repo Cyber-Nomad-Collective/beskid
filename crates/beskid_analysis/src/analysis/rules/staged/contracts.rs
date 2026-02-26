@@ -1,9 +1,7 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::RuleContext;
-use crate::hir::{
-    HirContractNode, HirItem, HirProgram, HirType,
-};
+use crate::hir::{HirContractNode, HirItem, HirProgram, HirType};
 use crate::syntax::Spanned;
 use std::collections::HashMap;
 
@@ -47,7 +45,10 @@ impl SemanticPipelineRule {
                 continue;
             };
 
-            let actual = self.method_signature_string(method.node.parameters.len(), method.node.return_type.is_some());
+            let actual = self.method_signature_string(
+                method.node.parameters.len(),
+                method.node.return_type.is_some(),
+            );
             if &actual != expected {
                 ctx.emit_simple(
                     method.node.name.span,
@@ -65,11 +66,15 @@ impl SemanticPipelineRule {
                 if self.has_contract_method_impl(hir, contract_name, method_name) {
                     continue;
                 }
-                let span = self.contract_method_span(hir, contract_name, method_name).unwrap_or(hir.span);
+                let span = self
+                    .contract_method_span(hir, contract_name, method_name)
+                    .unwrap_or(hir.span);
                 ctx.emit_simple(
                     span,
                     "E1601",
-                    format!("contract method `{contract_name}.{method_name}` is missing implementation"),
+                    format!(
+                        "contract method `{contract_name}.{method_name}` is missing implementation"
+                    ),
                     "contract method missing implementation",
                     Some(format!("expected signature `{expected}`")),
                     Severity::Error,
@@ -95,7 +100,10 @@ impl SemanticPipelineRule {
                 };
                 methods.insert(
                     signature.node.name.node.name.clone(),
-                    self.method_signature_string(signature.node.parameters.len(), signature.node.return_type.is_some()),
+                    self.method_signature_string(
+                        signature.node.parameters.len(),
+                        signature.node.return_type.is_some(),
+                    ),
                 );
             }
             contracts.insert(definition.node.name.node.name.clone(), methods);

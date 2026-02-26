@@ -1,10 +1,10 @@
 use crate::errors::CodegenError;
-use crate::lowering::lowerable::{lower_node, Lowerable};
+use crate::lowering::lowerable::{Lowerable, lower_node};
 use crate::lowering::node_context::NodeLoweringContext;
-use cranelift_codegen::ir::InstBuilder;
 use beskid_analysis::hir::{HirIfStatement, HirPrimitiveType};
 use beskid_analysis::syntax::Spanned;
 use beskid_analysis::types::TypeInfo;
+use cranelift_codegen::ir::InstBuilder;
 
 impl Lowerable<NodeLoweringContext<'_, '_>> for HirIfStatement {
     type Output = ();
@@ -13,10 +13,11 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirIfStatement {
         node: &Spanned<Self>,
         ctx: &mut NodeLoweringContext<'_, '_>,
     ) -> Result<Self::Output, CodegenError> {
-        let condition = lower_node(&node.node.condition, ctx)?.ok_or(CodegenError::UnsupportedNode {
-            span: node.node.condition.span,
-            node: "unit-valued if condition",
-        })?;
+        let condition =
+            lower_node(&node.node.condition, ctx)?.ok_or(CodegenError::UnsupportedNode {
+                span: node.node.condition.span,
+                node: "unit-valued if condition",
+            })?;
         let condition_type = ctx
             .type_result
             .expr_types
@@ -38,12 +39,20 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirIfStatement {
 
         let then_block = ctx.builder.create_block();
         let merge_block = ctx.builder.create_block();
-        let else_block = node.node.else_block.as_ref().map(|_| ctx.builder.create_block());
+        let else_block = node
+            .node
+            .else_block
+            .as_ref()
+            .map(|_| ctx.builder.create_block());
 
         if let Some(else_block) = else_block {
-            ctx.builder.ins().brif(condition, then_block, &[], else_block, &[]);
+            ctx.builder
+                .ins()
+                .brif(condition, then_block, &[], else_block, &[]);
         } else {
-            ctx.builder.ins().brif(condition, then_block, &[], merge_block, &[]);
+            ctx.builder
+                .ins()
+                .brif(condition, then_block, &[], merge_block, &[]);
         }
 
         ctx.builder.switch_to_block(then_block);

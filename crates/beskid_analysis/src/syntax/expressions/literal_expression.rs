@@ -1,8 +1,8 @@
 use pest::iterators::Pair;
 
+use crate::parser::Rule;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
-use crate::parser::Rule;
 use crate::syntax::{Expression, Literal, SpanInfo, Spanned};
 
 use beskid_ast_derive::AstNode;
@@ -13,7 +13,9 @@ pub struct LiteralExpression {
     pub literal: Spanned<Literal>,
 }
 
-pub(crate) fn parse_literal_expression(pair: Pair<Rule>) -> Result<Spanned<Expression>, ParseError> {
+pub(crate) fn parse_literal_expression(
+    pair: Pair<Rule>,
+) -> Result<Spanned<Expression>, ParseError> {
     let span = SpanInfo::from_span(&pair.as_span());
     let literal = Literal::parse(pair)?;
     let literal_expr = Spanned::new(LiteralExpression { literal }, span);

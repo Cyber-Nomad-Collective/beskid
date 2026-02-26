@@ -28,10 +28,10 @@ mod modules;
 #[cfg(test)]
 mod patterns;
 #[cfg(test)]
-mod struct_literals;
-#[cfg(test)]
 mod statements;
 #[cfg(test)]
 mod string_rules;
+#[cfg(test)]
+mod struct_literals;
 #[cfg(test)]
 mod types;

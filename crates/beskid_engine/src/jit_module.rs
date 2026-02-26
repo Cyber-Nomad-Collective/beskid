@@ -1,22 +1,22 @@
 use std::collections::HashMap;
 
-use cranelift_codegen::ir::{types, AbiParam, ExternalName, Signature, UserExternalName};
-use cranelift_codegen::isa::CallConv;
-use cranelift_codegen::settings;
-use cranelift_jit::{JITBuilder, JITModule};
-use cranelift_module::{default_libcall_names, FuncId, FuncOrDataId, Linkage, Module, ModuleError};
 use beskid_abi::{
     AbiParamKind, AbiReturnKind, BUILTIN_SPECS, SYM_ALLOC, SYM_ARRAY_NEW, SYM_GC_REGISTER_ROOT,
     SYM_GC_ROOT_HANDLE, SYM_GC_UNREGISTER_ROOT, SYM_GC_UNROOT_HANDLE, SYM_GC_WRITE_BARRIER,
-    SYM_INTEROP_DISPATCH_PTR, SYM_INTEROP_DISPATCH_UNIT, SYM_INTEROP_DISPATCH_USIZE,
-    SYM_PANIC, SYM_PANIC_STR, SYM_STR_NEW,
+    SYM_INTEROP_DISPATCH_PTR, SYM_INTEROP_DISPATCH_UNIT, SYM_INTEROP_DISPATCH_USIZE, SYM_PANIC,
+    SYM_PANIC_STR, SYM_STR_NEW,
 };
-use beskid_codegen::{emit_string_literals, emit_type_descriptors, CodegenArtifact};
+use beskid_codegen::{CodegenArtifact, emit_string_literals, emit_type_descriptors};
 use beskid_runtime::{
     alloc, array_new, gc_register_root, gc_root_handle, gc_unregister_root, gc_unroot_handle,
-    gc_write_barrier, panic, panic_str, str_new,
-    interop_dispatch_unit, interop_dispatch_ptr, interop_dispatch_usize,
+    gc_write_barrier, interop_dispatch_ptr, interop_dispatch_unit, interop_dispatch_usize, panic,
+    panic_str, str_new,
 };
+use cranelift_codegen::ir::{AbiParam, ExternalName, Signature, UserExternalName, types};
+use cranelift_codegen::isa::CallConv;
+use cranelift_codegen::settings;
+use cranelift_jit::{JITBuilder, JITModule};
+use cranelift_module::{FuncId, FuncOrDataId, Linkage, Module, ModuleError, default_libcall_names};
 
 #[derive(Debug)]
 pub enum JitError {
@@ -39,7 +39,8 @@ pub struct BeskidJitModule {
 
 impl BeskidJitModule {
     pub fn new() -> Result<Self, JitError> {
-        let isa_builder = cranelift_native::builder().map_err(|err| JitError::Isa(err.to_string()))?;
+        let isa_builder =
+            cranelift_native::builder().map_err(|err| JitError::Isa(err.to_string()))?;
         let isa = isa_builder
             .finish(settings::Flags::new(settings::builder()))
             .map_err(|err| JitError::Isa(err.to_string()))?;
@@ -49,9 +50,15 @@ impl BeskidJitModule {
         builder.symbol(SYM_ARRAY_NEW, array_new as *const u8);
         builder.symbol(SYM_PANIC, panic as *const u8);
         builder.symbol(SYM_PANIC_STR, panic_str as *const u8);
-        builder.symbol(SYM_INTEROP_DISPATCH_UNIT, interop_dispatch_unit as *const u8);
+        builder.symbol(
+            SYM_INTEROP_DISPATCH_UNIT,
+            interop_dispatch_unit as *const u8,
+        );
         builder.symbol(SYM_INTEROP_DISPATCH_PTR, interop_dispatch_ptr as *const u8);
-        builder.symbol(SYM_INTEROP_DISPATCH_USIZE, interop_dispatch_usize as *const u8);
+        builder.symbol(
+            SYM_INTEROP_DISPATCH_USIZE,
+            interop_dispatch_usize as *const u8,
+        );
         builder.symbol(SYM_GC_WRITE_BARRIER, gc_write_barrier as *const u8);
         builder.symbol(SYM_GC_ROOT_HANDLE, gc_root_handle as *const u8);
         builder.symbol(SYM_GC_UNROOT_HANDLE, gc_unroot_handle as *const u8);
@@ -73,9 +80,11 @@ impl BeskidJitModule {
         }
 
         for function in &artifact.functions {
-            let func_id = self
-                .module
-                .declare_function(&function.name, Linkage::Local, &function.function.signature)?;
+            let func_id = self.module.declare_function(
+                &function.name,
+                Linkage::Local,
+                &function.function.signature,
+            )?;
             self.func_ids.insert(function.name.clone(), func_id);
         }
 
@@ -197,7 +206,9 @@ fn remap_external_testcase_names(
             namespace: 1,
             index: data_id.as_u32(),
         });
-        let cranelift_codegen::ir::GlobalValueData::Symbol { name, .. } = &mut ctx.func.global_values[gv] else {
+        let cranelift_codegen::ir::GlobalValueData::Symbol { name, .. } =
+            &mut ctx.func.global_values[gv]
+        else {
             return Err(JitError::MissingFunction(symbol));
         };
         *name = ExternalName::user(user_ref);

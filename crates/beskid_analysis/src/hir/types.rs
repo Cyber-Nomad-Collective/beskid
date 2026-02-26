@@ -27,9 +27,12 @@ impl HirPrimitiveType {
             HirPrimitiveType::Unit => 0,
         }
     }
-    
+
     pub fn is_integer(&self) -> bool {
-        matches!(self, HirPrimitiveType::I32 | HirPrimitiveType::I64 | HirPrimitiveType::U8)
+        matches!(
+            self,
+            HirPrimitiveType::I32 | HirPrimitiveType::I64 | HirPrimitiveType::U8
+        )
     }
 }
 

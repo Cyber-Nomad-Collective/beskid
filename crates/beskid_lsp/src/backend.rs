@@ -1,8 +1,8 @@
-use tokio::sync::RwLock;
+use beskid_analysis::projects::parse_manifest;
 use serde_json::json;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
-use beskid_analysis::projects::parse_manifest;
+use tokio::sync::RwLock;
 use tower_lsp_server::jsonrpc::Result;
 use tower_lsp_server::ls_types::*;
 use tower_lsp_server::{Client, LanguageServer};
@@ -13,7 +13,9 @@ use crate::navigation::{
     collect_top_level_symbols, semantic_completion_candidates, semantic_definition_span_at_offset,
     semantic_references_at_offset, semantic_target_at_offset, symbol_kind_name,
 };
-use crate::position::{offset_in_range, offset_range_to_lsp, offset_to_position, position_to_offset};
+use crate::position::{
+    offset_in_range, offset_range_to_lsp, offset_to_position, position_to_offset,
+};
 use crate::state::{Document, State};
 
 pub struct Backend {
@@ -278,20 +280,52 @@ fn token_at_offset(text: &str, offset: usize) -> Option<&str> {
 
 fn project_completion_candidates() -> [(&'static str, CompletionItemKind, &'static str); 14] {
     [
-        ("project", CompletionItemKind::MODULE, "Top-level project block"),
-        ("target", CompletionItemKind::MODULE, "Top-level target block"),
-        ("dependency", CompletionItemKind::MODULE, "Top-level dependency block"),
-        ("name", CompletionItemKind::FIELD, "Project or dependency name"),
+        (
+            "project",
+            CompletionItemKind::MODULE,
+            "Top-level project block",
+        ),
+        (
+            "target",
+            CompletionItemKind::MODULE,
+            "Top-level target block",
+        ),
+        (
+            "dependency",
+            CompletionItemKind::MODULE,
+            "Top-level dependency block",
+        ),
+        (
+            "name",
+            CompletionItemKind::FIELD,
+            "Project or dependency name",
+        ),
         ("version", CompletionItemKind::FIELD, "Version string"),
         ("root", CompletionItemKind::FIELD, "Source root folder"),
-        ("kind", CompletionItemKind::FIELD, "Target kind: App | Lib | Test"),
+        (
+            "kind",
+            CompletionItemKind::FIELD,
+            "Target kind: App | Lib | Test",
+        ),
         ("entry", CompletionItemKind::FIELD, "Target entry file path"),
-        ("source", CompletionItemKind::FIELD, "Dependency source kind"),
+        (
+            "source",
+            CompletionItemKind::FIELD,
+            "Dependency source kind",
+        ),
         ("path", CompletionItemKind::FIELD, "Local dependency path"),
         ("url", CompletionItemKind::FIELD, "Git dependency URL"),
         ("rev", CompletionItemKind::FIELD, "Git dependency revision"),
-        ("App", CompletionItemKind::ENUM_MEMBER, "Application target kind"),
-        ("Lib", CompletionItemKind::ENUM_MEMBER, "Library target kind"),
+        (
+            "App",
+            CompletionItemKind::ENUM_MEMBER,
+            "Application target kind",
+        ),
+        (
+            "Lib",
+            CompletionItemKind::ENUM_MEMBER,
+            "Library target kind",
+        ),
     ]
 }
 
@@ -424,7 +458,11 @@ impl LanguageServer for Backend {
                 definition_provider: Some(OneOf::Left(true)),
                 references_provider: Some(OneOf::Left(true)),
                 completion_provider: Some(CompletionOptions {
-                    trigger_characters: Some(vec![".".to_string(), ":".to_string(), "_".to_string()]),
+                    trigger_characters: Some(vec![
+                        ".".to_string(),
+                        ":".to_string(),
+                        "_".to_string(),
+                    ]),
                     ..CompletionOptions::default()
                 }),
                 semantic_tokens_provider: Some(
@@ -456,7 +494,8 @@ impl LanguageServer for Backend {
 
     async fn did_open(&self, params: DidOpenTextDocumentParams) {
         let doc = params.text_document;
-        self.set_document(doc.uri.clone(), doc.version, doc.text).await;
+        self.set_document(doc.uri.clone(), doc.version, doc.text)
+            .await;
         self.publish_diagnostics_for_uri(&doc.uri).await;
     }
 
@@ -468,12 +507,14 @@ impl LanguageServer for Backend {
                 change.text,
             )
             .await;
-            self.publish_diagnostics_for_uri(&params.text_document.uri).await;
+            self.publish_diagnostics_for_uri(&params.text_document.uri)
+                .await;
         }
     }
 
     async fn did_save(&self, params: DidSaveTextDocumentParams) {
-        self.publish_diagnostics_for_uri(&params.text_document.uri).await;
+        self.publish_diagnostics_for_uri(&params.text_document.uri)
+            .await;
     }
 
     async fn did_close(&self, params: DidCloseTextDocumentParams) {
@@ -617,13 +658,14 @@ impl LanguageServer for Backend {
             return Ok(Some(Vec::new()));
         };
 
-        let references = semantic_references_at_offset(&program, offset, params.context.include_declaration)
-            .into_iter()
-            .map(|(start, end)| Location {
-                uri: uri.clone(),
-                range: offset_range_to_lsp(&doc.text, start, end),
-            })
-            .collect();
+        let references =
+            semantic_references_at_offset(&program, offset, params.context.include_declaration)
+                .into_iter()
+                .map(|(start, end)| Location {
+                    uri: uri.clone(),
+                    range: offset_range_to_lsp(&doc.text, start, end),
+                })
+                .collect();
 
         Ok(Some(references))
     }
@@ -644,7 +686,9 @@ impl LanguageServer for Backend {
         if is_project_manifest_uri(&uri) {
             let mut items: Vec<CompletionItem> = project_completion_candidates()
                 .into_iter()
-                .filter(|(label, _, _)| prefix.is_empty() || label.to_lowercase().starts_with(prefix.as_str()))
+                .filter(|(label, _, _)| {
+                    prefix.is_empty() || label.to_lowercase().starts_with(prefix.as_str())
+                })
                 .map(|(label, kind, detail)| CompletionItem {
                     label: label.to_string(),
                     kind: Some(kind),
@@ -693,9 +737,9 @@ impl LanguageServer for Backend {
         };
 
         if is_project_manifest_uri(&uri) {
-            return Ok(Some(DocumentSymbolResponse::Nested(project_document_symbols(
-                &doc.text,
-            ))));
+            return Ok(Some(DocumentSymbolResponse::Nested(
+                project_document_symbols(&doc.text),
+            )));
         }
 
         let Some(program) = parse_program(&doc.text) else {
@@ -706,7 +750,8 @@ impl LanguageServer for Backend {
         let document_symbols = symbols
             .into_iter()
             .map(|symbol| {
-                let range = offset_range_to_lsp(&doc.text, symbol.selection_start, symbol.selection_end);
+                let range =
+                    offset_range_to_lsp(&doc.text, symbol.selection_start, symbol.selection_end);
                 build_document_symbol(
                     symbol.name,
                     Some(symbol_kind_name(symbol.kind).to_string()),

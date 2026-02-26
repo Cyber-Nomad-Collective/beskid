@@ -16,7 +16,9 @@ pub struct WorkspacePrepareOptions {
     pub locked: bool,
 }
 
-pub fn prepare_project_workspace(plan: &CompilePlan) -> Result<PreparedProjectWorkspace, ProjectError> {
+pub fn prepare_project_workspace(
+    plan: &CompilePlan,
+) -> Result<PreparedProjectWorkspace, ProjectError> {
     prepare_project_workspace_with_options(plan, WorkspacePrepareOptions::default())
 }
 
@@ -30,11 +32,7 @@ pub fn prepare_project_workspace_with_options(
         .join("beskid")
         .join("deps")
         .join("src");
-    let root_materialized_project = plan
-        .project_root
-        .join("obj")
-        .join("beskid")
-        .join("root");
+    let root_materialized_project = plan.project_root.join("obj").join("beskid").join("root");
     fs::create_dir_all(&deps_root).map_err(|source| ProjectError::MaterializationCreateDir {
         path: deps_root.clone(),
         source,
@@ -114,10 +112,11 @@ fn sync_project_lockfile(
     }
 
     if lock_path.is_file() {
-        let existing = fs::read_to_string(&lock_path).map_err(|source| ProjectError::LockfileRead {
-            path: lock_path.clone(),
-            source,
-        })?;
+        let existing =
+            fs::read_to_string(&lock_path).map_err(|source| ProjectError::LockfileRead {
+                path: lock_path.clone(),
+                source,
+            })?;
         if existing == content {
             return Ok(lock_path);
         }
@@ -159,12 +158,13 @@ fn copy_directory_when_newer(source: &Path, destination: &Path) -> Result<(), Pr
         })?;
         let entry_path = entry.path();
         let destination_path = destination.join(entry.file_name());
-        let file_type = entry
-            .file_type()
-            .map_err(|source| ProjectError::MaterializationMetadata {
-                path: entry_path.clone(),
-                source,
-            })?;
+        let file_type =
+            entry
+                .file_type()
+                .map_err(|source| ProjectError::MaterializationMetadata {
+                    path: entry_path.clone(),
+                    source,
+                })?;
 
         if file_type.is_dir() {
             copy_directory_when_newer(&entry_path, &destination_path)?;
@@ -200,9 +200,11 @@ fn copy_file_when_newer(source: &Path, destination: &Path) -> Result<(), Project
 
     if should_copy {
         if let Some(parent) = destination.parent() {
-            fs::create_dir_all(parent).map_err(|source| ProjectError::MaterializationCreateDir {
-                path: parent.to_path_buf(),
-                source,
+            fs::create_dir_all(parent).map_err(|source| {
+                ProjectError::MaterializationCreateDir {
+                    path: parent.to_path_buf(),
+                    source,
+                }
             })?;
         }
         fs::copy(source, destination).map_err(|err| ProjectError::MaterializationCopy {

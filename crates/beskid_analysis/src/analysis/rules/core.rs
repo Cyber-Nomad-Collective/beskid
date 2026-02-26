@@ -1,4 +1,4 @@
-use super::super::diagnostics::{make_diagnostic, SemanticDiagnostic, Severity};
+use super::super::diagnostics::{SemanticDiagnostic, Severity, make_diagnostic};
 use crate::syntax::Program;
 
 #[derive(Debug, Clone)]

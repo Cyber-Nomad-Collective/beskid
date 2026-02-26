@@ -3,17 +3,16 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use beskid_analysis::analysis::diagnostics::Severity;
 use beskid_analysis::hir::{
-    lower_program as lower_hir_program, normalize_program, AstProgram, HirProgram,
+    AstProgram, HirProgram, lower_program as lower_hir_program, normalize_program,
 };
-use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::parser::{BeskidParser, Rule};
+use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::resolve::Resolver;
 use beskid_analysis::syntax::{Program, Spanned};
 use beskid_analysis::types::type_program;
-use beskid_analysis::{builtin_rules, run_rules, AnalysisOptions};
+use beskid_analysis::{AnalysisOptions, builtin_rules, run_rules};
 use beskid_aot::{
-    build, AotBuildRequest, BuildOutputKind, BuildProfile, ExportPolicy, LinkMode,
-    RuntimeStrategy,
+    AotBuildRequest, BuildOutputKind, BuildProfile, ExportPolicy, LinkMode, RuntimeStrategy, build,
 };
 use beskid_codegen::lower_program;
 use pest::Parser;
@@ -60,7 +59,9 @@ fn lower_sample_artifact() -> beskid_codegen::CodegenArtifact {
     let ast: Spanned<AstProgram> = program.into();
     let mut hir: Spanned<HirProgram> = lower_hir_program(&ast);
     normalize_program(&mut hir).expect("normalize hir");
-    let resolution = Resolver::new().resolve_program(&hir).expect("resolve program");
+    let resolution = Resolver::new()
+        .resolve_program(&hir)
+        .expect("resolve program");
     let typed = type_program(&hir, &resolution).expect("type program");
     lower_program(&hir, &resolution, &typed).expect("lower program")
 }
@@ -87,7 +88,10 @@ fn object_only_build_emits_object_file() {
     .expect("aot object build");
 
     assert!(result.object_path.exists(), "expected object file to exist");
-    assert!(result.final_path.is_none(), "object-only build must not link");
+    assert!(
+        result.final_path.is_none(),
+        "object-only build must not link"
+    );
 
     let _ = std::fs::remove_dir_all(dir);
 }

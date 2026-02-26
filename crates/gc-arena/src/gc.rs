@@ -9,13 +9,13 @@ use core::{
 };
 
 use crate::{
-    Finalization,
     barrier::{Unlock, Write},
     collect::{Collect, Trace},
     context::Mutation,
     gc_weak::GcWeak,
     static_collect::Static,
     types::{GcBox, GcBoxHeader, GcBoxInner, GcColor, Invariant},
+    Finalization,
 };
 
 /// A garbage collected pointer to a type T. Implements Copy, and is implemented as a plain machine

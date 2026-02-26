@@ -1,6 +1,6 @@
 use beskid_analysis::hir::{
-    lower_program, normalize_program, AstItem, AstProgram, HirExpressionNode, HirItem, HirPattern, HirStatementNode,
-    HirProgram,
+    AstItem, AstProgram, HirExpressionNode, HirItem, HirPattern, HirProgram, HirStatementNode,
+    lower_program, normalize_program,
 };
 use beskid_analysis::syntax::Spanned;
 
@@ -63,9 +63,11 @@ fn lowering_maps_statement_and_expression_kinds() {
         .expect("expected main function");
 
     let statements = &main_fn.node.body.node.statements;
-    assert!(statements.iter().any(|statement| {
-        matches!(statement.node, HirStatementNode::IfStatement(_))
-    }));
+    assert!(
+        statements
+            .iter()
+            .any(|statement| { matches!(statement.node, HirStatementNode::IfStatement(_)) })
+    );
 
     let mut saw_struct_literal = false;
     let mut saw_member = false;
@@ -89,7 +91,10 @@ fn lowering_maps_statement_and_expression_kinds() {
 
     assert!(saw_struct_literal, "expected struct literal let binding");
     assert!(saw_member, "expected member access let binding");
-    assert!(saw_enum_constructor, "expected enum constructor let binding");
+    assert!(
+        saw_enum_constructor,
+        "expected enum constructor let binding"
+    );
     assert!(saw_match, "expected match let binding");
 }
 
@@ -106,7 +111,8 @@ fn lowering_preserves_match_patterns() {
         })
         .expect("expected main function");
 
-    let HirStatementNode::LetStatement(match_let) = &main_fn.node.body.node.statements[3].node else {
+    let HirStatementNode::LetStatement(match_let) = &main_fn.node.body.node.statements[3].node
+    else {
         panic!("expected match let statement");
     };
     let HirExpressionNode::MatchExpression(match_expr) = &match_let.node.value.node else {

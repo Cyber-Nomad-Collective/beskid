@@ -1,6 +1,6 @@
 use crate::hir::{HirPath, HirType};
-use crate::syntax::Spanned;
 use crate::resolve::ResolvedType;
+use crate::syntax::Spanned;
 use crate::types::{TypeId, TypeInfo};
 
 use super::context::{TypeContext, TypeError};
@@ -17,10 +17,7 @@ impl<'a> TypeContext<'a> {
         }
     }
 
-    pub(super) fn type_id_for_path_with_args(
-        &mut self,
-        path: &Spanned<HirPath>,
-    ) -> Option<TypeId> {
+    pub(super) fn type_id_for_path_with_args(&mut self, path: &Spanned<HirPath>) -> Option<TypeId> {
         if let Some(last_segment) = path.node.segments.last() {
             if !last_segment.node.type_args.is_empty() {
                 let resolved = self.resolution.tables.resolved_types.get(&path.span);

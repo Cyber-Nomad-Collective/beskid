@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use beskid_abi::{BeskidArray, BeskidStr, BUILTIN_SPECS};
+use beskid_abi::{BUILTIN_SPECS, BeskidArray, BeskidStr};
 
 #[test]
 fn builtin_symbols_are_unique() {
@@ -10,6 +10,12 @@ fn builtin_symbols_are_unique() {
 
 #[test]
 fn ffi_types_have_stable_sizes() {
-    assert_eq!(std::mem::size_of::<BeskidStr>(), std::mem::size_of::<usize>() * 2);
-    assert_eq!(std::mem::size_of::<BeskidArray>(), std::mem::size_of::<usize>() * 3);
+    assert_eq!(
+        std::mem::size_of::<BeskidStr>(),
+        std::mem::size_of::<usize>() * 2
+    );
+    assert_eq!(
+        std::mem::size_of::<BeskidArray>(),
+        std::mem::size_of::<usize>() * 3
+    );
 }

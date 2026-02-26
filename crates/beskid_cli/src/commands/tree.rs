@@ -1,13 +1,13 @@
+use crate::errors::{print_pretty_parse_error, print_pretty_pest_error};
 use anyhow::{Context, Result};
+use beskid_analysis::parser::{BeskidParser, Rule};
+use beskid_analysis::parsing::parsable::Parsable;
+use beskid_analysis::query::NodeRef;
+use beskid_analysis::syntax::Program;
 use clap::Args;
+use pest::Parser;
 use std::fs;
 use std::path::PathBuf;
-use beskid_analysis::parsing::parsable::Parsable;
-use beskid_analysis::syntax::Program;
-use beskid_analysis::parser::{BeskidParser, Rule};
-use beskid_analysis::query::NodeRef;
-use pest::Parser;
-use crate::errors::{print_pretty_parse_error, print_pretty_pest_error};
 
 #[derive(Args, Debug)]
 pub struct TreeArgs {
@@ -51,7 +51,7 @@ pub fn execute(args: TreeArgs) -> Result<()> {
 fn print_tree(node: NodeRef, indent: usize) {
     let prefix = "  ".repeat(indent);
     let kind = node.node_kind();
-    
+
     // Some nodes might have interesting values to show in the tree
     let extra = if let Some(ident) = node.of::<beskid_analysis::syntax::Identifier>() {
         format!(" ({})", ident.name)

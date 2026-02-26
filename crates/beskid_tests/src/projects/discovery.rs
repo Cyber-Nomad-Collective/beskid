@@ -2,7 +2,7 @@ use std::fs;
 use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use beskid_analysis::projects::{discover_project_file, PROJECT_FILE_NAME};
+use beskid_analysis::projects::{PROJECT_FILE_NAME, discover_project_file};
 
 fn temp_case_dir(name: &str) -> PathBuf {
     let nanos = SystemTime::now()

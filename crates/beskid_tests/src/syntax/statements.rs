@@ -1,9 +1,11 @@
+use beskid_analysis::Rule;
 use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::syntax::{Block, Statement};
-use beskid_analysis::Rule;
 
 use crate::parsing::util::parse_pair;
-use crate::syntax::util::{assert_expression_integer, assert_expression_path_segments, parse_statement_ast};
+use crate::syntax::util::{
+    assert_expression_integer, assert_expression_path_segments, parse_statement_ast,
+};
 
 #[test]
 fn parses_let_statement_ast() {
@@ -13,8 +15,15 @@ fn parses_let_statement_ast() {
             assert!(let_stmt.node.mutable);
             assert_eq!(let_stmt.node.name.node.name, "age");
             assert!(let_stmt.node.type_annotation.is_some());
-            let type_annotation = let_stmt.node.type_annotation.as_ref().expect("type annotation");
-            assert!(matches!(type_annotation.node, beskid_analysis::syntax::Type::Primitive(_)));
+            let type_annotation = let_stmt
+                .node
+                .type_annotation
+                .as_ref()
+                .expect("type annotation");
+            assert!(matches!(
+                type_annotation.node,
+                beskid_analysis::syntax::Type::Primitive(_)
+            ));
             assert_expression_integer(&let_stmt.node.value, "42");
         }
         _ => panic!("expected let statement"),
@@ -45,7 +54,10 @@ fn parses_break_and_continue_statements() {
 
 #[test]
 fn parses_if_statement_ast() {
-    let statement = parse_statement_ast(Rule::IfStatement, "if cond { return 1; } else { return 2; }");
+    let statement = parse_statement_ast(
+        Rule::IfStatement,
+        "if cond { return 1; } else { return 2; }",
+    );
     match &statement.node {
         Statement::If(if_stmt) => {
             assert_expression_path_segments(&if_stmt.node.condition, &["cond"]);
@@ -93,14 +105,15 @@ fn parses_for_statement_ast() {
 fn parses_expression_statement_ast() {
     let statement = parse_statement_ast(Rule::ExpressionStatement, "foo();");
     match &statement.node {
-        Statement::Expression(expr_stmt) => {
-            match &expr_stmt.node.expression.node {
-                beskid_analysis::syntax::Expression::Call(call) => {
-                    assert!(matches!(call.node.callee.node, beskid_analysis::syntax::Expression::Path(_)));
-                }
-                _ => panic!("expected call expression"),
+        Statement::Expression(expr_stmt) => match &expr_stmt.node.expression.node {
+            beskid_analysis::syntax::Expression::Call(call) => {
+                assert!(matches!(
+                    call.node.callee.node,
+                    beskid_analysis::syntax::Expression::Path(_)
+                ));
             }
-        }
+            _ => panic!("expected call expression"),
+        },
         _ => panic!("expected expression statement"),
     }
 }
@@ -110,6 +123,9 @@ fn parses_block_ast() {
     let pair = parse_pair(Rule::Block, "{ return 1; break; }");
     let block = Block::parse(pair).expect("expected block");
     assert_eq!(block.node.statements.len(), 2);
-    assert!(matches!(block.node.statements[0].node, Statement::Return(_)));
+    assert!(matches!(
+        block.node.statements[0].node,
+        Statement::Return(_)
+    ));
     assert!(matches!(block.node.statements[1].node, Statement::Break(_)));
 }

@@ -1,6 +1,6 @@
-use beskid_analysis::syntax::*;
-use beskid_analysis::query::*;
 use crate::syntax::util::parse_program_ast;
+use beskid_analysis::query::*;
+use beskid_analysis::syntax::*;
 
 #[test]
 fn test_query_descendants_count() {
@@ -13,10 +13,14 @@ fn test_query_descendants_count() {
     ";
     let program = parse_program_ast(input);
     let query = Query::from(&program.node);
-    
+
     // Program -> Node -> FunctionDefinition -> Visibility, Identifier, Block -> Statement (Let) -> ...
     let count = query.descendants().count();
-    assert!(count > 10, "Expected many nodes in descendants, got {}", count);
+    assert!(
+        count > 10,
+        "Expected many nodes in descendants, got {}",
+        count
+    );
 }
 
 #[test]
@@ -30,7 +34,7 @@ fn test_query_of_type() {
     ";
     let program = parse_program_ast(input);
     let query = Query::from(&program.node);
-    
+
     let functions: Vec<&FunctionDefinition> = query.of::<FunctionDefinition>().collect();
     assert_eq!(functions.len(), 2);
     assert_eq!(functions[0].name.node.name, "main");
@@ -47,8 +51,9 @@ fn test_query_filter_typed() {
     ";
     let program = parse_program_ast(input);
     let query = Query::from(&program.node);
-    
-    let mutable_lets: Vec<&LetStatement> = query.filter_typed::<LetStatement>(|l| l.mutable).collect();
+
+    let mutable_lets: Vec<&LetStatement> =
+        query.filter_typed::<LetStatement>(|l| l.mutable).collect();
     assert_eq!(mutable_lets.len(), 1);
     assert_eq!(mutable_lets[0].name.node.name, "y");
 }
@@ -62,8 +67,10 @@ fn test_query_find_first() {
     ";
     let program = parse_program_ast(input);
     let query = Query::from(&program.node);
-    
-    let first_ident = query.find_first::<Identifier>().expect("Expected at least one identifier");
+
+    let first_ident = query
+        .find_first::<Identifier>()
+        .expect("Expected at least one identifier");
     assert_eq!(first_ident.name, "main");
 }
 
@@ -76,7 +83,7 @@ fn test_query_binary_expressions() {
     ";
     let program = parse_program_ast(input);
     let query = Query::from(&program.node);
-    
+
     let bin_exprs: Vec<&BinaryExpression> = query.of::<BinaryExpression>().collect();
     // 1 + (2 * 3) -> 2 binary expressions
     assert_eq!(bin_exprs.len(), 2);
@@ -87,10 +94,10 @@ fn test_node_kind() {
     let input = "unit main() {}";
     let program = parse_program_ast(input);
     let query = Query::from(&program.node);
-    
+
     let func = query.find_first::<FunctionDefinition>().unwrap();
     assert_eq!(func.node_kind(), NodeKind::FunctionDefinition);
-    
+
     let ident = query.find_first::<Identifier>().unwrap();
     assert_eq!(ident.node_kind(), NodeKind::Identifier);
 }
@@ -107,9 +114,11 @@ fn test_complex_traversal() {
     ";
     let program = parse_program_ast(input);
     let query = Query::from(&program.node);
-    
+
     // Find all i32 types
-    let i32_types: Vec<&PrimitiveType> = query.filter_typed::<PrimitiveType>(|t| matches!(t, PrimitiveType::I32)).collect();
+    let i32_types: Vec<&PrimitiveType> = query
+        .filter_typed::<PrimitiveType>(|t| matches!(t, PrimitiveType::I32))
+        .collect();
     // 1 in method param, 1 in method return, 1 in main let annotation
     assert_eq!(i32_types.len(), 3);
 }
@@ -125,7 +134,7 @@ fn test_ast_walker() {
         }
     ";
     let program = parse_program_ast(input);
-    
+
     use std::cell::RefCell;
     use std::rc::Rc;
 
@@ -139,12 +148,14 @@ fn test_ast_walker() {
             }
         }
     }
-    
+
     let names = Rc::new(RefCell::new(Vec::new()));
-    let collector = IdentCollector { names: names.clone() };
+    let collector = IdentCollector {
+        names: names.clone(),
+    };
     let mut walker = AstWalker::new().with_visitor(Box::new(collector));
     walker.walk(NodeRef::from(&program.node));
-    
+
     let names = names.borrow();
     assert!(names.contains(&"main".to_string()));
     assert!(names.contains(&"x".to_string()));

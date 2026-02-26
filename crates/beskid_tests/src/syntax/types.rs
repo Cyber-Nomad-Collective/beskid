@@ -1,6 +1,6 @@
+use beskid_analysis::Rule;
 use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::syntax::{EnumPath, PrimitiveType, Type};
-use beskid_analysis::Rule;
 
 use crate::parsing::util::parse_pair;
 use crate::syntax::util::{

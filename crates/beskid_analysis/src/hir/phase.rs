@@ -1,20 +1,20 @@
 use crate::syntax::{
-    AssignExpression, BinaryExpression, BlockExpression, CallExpression, ContractDefinition,
-    EnumConstructorExpression, EnumDefinition, ExpressionStatement, ForStatement,
-    FunctionDefinition, GroupedExpression, IfStatement, LetStatement, LiteralExpression,
-    InlineModule, MatchExpression, MemberExpression, MethodDefinition, ModuleDeclaration, PathExpression,
-    ReturnStatement, StructLiteralExpression, TypeDefinition, UnaryExpression, UseDeclaration,
-    WhileStatement, BreakStatement, ContinueStatement,
+    AssignExpression, BinaryExpression, BlockExpression, BreakStatement, CallExpression,
+    ContinueStatement, ContractDefinition, EnumConstructorExpression, EnumDefinition,
+    ExpressionStatement, ForStatement, FunctionDefinition, GroupedExpression, IfStatement,
+    InlineModule, LetStatement, LiteralExpression, MatchExpression, MemberExpression,
+    MethodDefinition, ModuleDeclaration, PathExpression, ReturnStatement, StructLiteralExpression,
+    TypeDefinition, UnaryExpression, UseDeclaration, WhileStatement,
 };
 
 use super::{
-    HirAssignExpression, HirBinaryExpression, HirBlockExpression, HirCallExpression,
-    HirContractDefinition, HirEnumConstructorExpression, HirEnumDefinition,
-    HirExpressionStatement, HirForStatement, HirFunctionDefinition,
+    HirAssignExpression, HirBinaryExpression, HirBlockExpression, HirBreakStatement,
+    HirCallExpression, HirContinueStatement, HirContractDefinition, HirEnumConstructorExpression,
+    HirEnumDefinition, HirExpressionStatement, HirForStatement, HirFunctionDefinition,
     HirGroupedExpression, HirIfStatement, HirInlineModule, HirLetStatement, HirLiteralExpression,
-    HirMatchExpression, HirMemberExpression, HirMethodDefinition, HirModuleDeclaration, HirPathExpression,
-    HirReturnStatement, HirStructLiteralExpression, HirTypeDefinition, HirUnaryExpression,
-    HirUseDeclaration, HirWhileStatement, HirBreakStatement, HirContinueStatement,
+    HirMatchExpression, HirMemberExpression, HirMethodDefinition, HirModuleDeclaration,
+    HirPathExpression, HirReturnStatement, HirStructLiteralExpression, HirTypeDefinition,
+    HirUnaryExpression, HirUseDeclaration, HirWhileStatement,
 };
 
 pub trait Phase {

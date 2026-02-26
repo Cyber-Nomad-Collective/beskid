@@ -45,23 +45,15 @@ impl crate::parsing::parsable::Parsable for Parameter {
 
         let (name, ty) = if name_pair.as_rule() == crate::parser::Rule::Identifier {
             let name = crate::syntax::Identifier::parse(name_pair)?;
-            let ty = crate::syntax::Type::parse(
-                inner
-                    .next()
-                    .ok_or(crate::parsing::error::ParseError::missing(
-                        crate::parser::Rule::BeskidType,
-                    ))?,
-            )?;
+            let ty = crate::syntax::Type::parse(inner.next().ok_or(
+                crate::parsing::error::ParseError::missing(crate::parser::Rule::BeskidType),
+            )?)?;
             (name, ty)
         } else {
             let ty = crate::syntax::Type::parse(name_pair)?;
-            let name = crate::syntax::Identifier::parse(
-                inner
-                    .next()
-                    .ok_or(crate::parsing::error::ParseError::missing(
-                        crate::parser::Rule::Identifier,
-                    ))?,
-            )?;
+            let name = crate::syntax::Identifier::parse(inner.next().ok_or(
+                crate::parsing::error::ParseError::missing(crate::parser::Rule::Identifier),
+            )?)?;
             (name, ty)
         };
 
