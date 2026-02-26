@@ -1,6 +1,7 @@
 use beskid_analysis::parsing::error::ParseError;
 use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::parser::{BeskidParser, Rule};
+use beskid_analysis::projects::{parse_manifest, ProjectError};
 use beskid_analysis::syntax::Program;
 use beskid_analysis::{AnalysisOptions, Severity, builtin_rules, run_rules};
 use pest::Parser;
@@ -10,6 +11,10 @@ use tower_lsp_server::ls_types::*;
 use crate::position::offset_range_to_lsp;
 
 pub fn analyze_document(uri: &Uri, source: &str) -> Vec<Diagnostic> {
+    if is_project_manifest_uri(uri) {
+        return analyze_project_manifest(source);
+    }
+
     let mut pairs = match BeskidParser::parse(Rule::Program, source) {
         Ok(pairs) => pairs,
         Err(err) => return vec![pest_error_to_lsp_diagnostic(source, &err)],
@@ -55,6 +60,28 @@ pub fn analyze_document(uri: &Uri, source: &str) -> Vec<Diagnostic> {
         }
     })
     .collect()
+}
+
+fn analyze_project_manifest(source: &str) -> Vec<Diagnostic> {
+    match parse_manifest(source) {
+        Ok(_) => Vec::new(),
+        Err(error) => vec![project_error_to_lsp_diagnostic(error)],
+    }
+}
+
+fn project_error_to_lsp_diagnostic(error: ProjectError) -> Diagnostic {
+    Diagnostic {
+        range: Range::new(Position::new(0, 0), Position::new(0, 1)),
+        severity: Some(DiagnosticSeverity::ERROR),
+        code: Some(NumberOrString::String("project".to_string())),
+        source: Some("beskid".to_string()),
+        message: error.to_string(),
+        ..Diagnostic::default()
+    }
+}
+
+fn is_project_manifest_uri(uri: &Uri) -> bool {
+    uri.to_string().to_lowercase().ends_with(".proj")
 }
 
 fn pest_error_to_lsp_diagnostic(source: &str, err: &PestError<Rule>) -> Diagnostic {

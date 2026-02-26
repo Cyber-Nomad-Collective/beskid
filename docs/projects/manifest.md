@@ -49,13 +49,19 @@ dependency "Std" {
 For `source = "path"`:
 - `path` (required)
 
-For `source = "git"`:
+For `source = "git"` (provider reserved, not enabled in v1):
 - `url` (required)
 - `rev` (required)
 
-For `source = "registry"` (future):
+For `source = "registry"` (provider reserved, not enabled in v1):
 - `name` (required)
 - `version` (required)
+
+## Active provider scope (v1)
+
+1. Enabled dependency provider: `path`.
+2. `git` and `registry` are schema-valid for forward compatibility but provider-disabled in runtime scope.
+3. Build/run fails when a disabled provider dependency is present in an active graph.
 
 ## Validation rules
 
@@ -64,10 +70,17 @@ For `source = "registry"` (future):
 3. Target labels must be unique.
 4. Dependency labels must be unique.
 5. `target.entry` must resolve under `project.root`.
-6. `project.name` must be unique in final dependency graph.
-7. Unknown fields should produce warnings in v0.1 and become errors later.
+6. Dependency node identity is canonicalized by resolved manifest path.
+7. Duplicate canonical manifest identities in graph construction must be interned to one node.
+8. `project.name` duplicates across different manifest identities should be diagnostics in graph-resolution stage (warning in v0.1, error in strict mode).
+9. Unknown fields should produce warnings in v0.1 and become errors later.
+10. Dependency sources are source-code only; binary dependency artifacts are unsupported.
+11. `Project.lock` is created automatically during resolve/build/run if missing.
+12. `Project.lock` is updated automatically when dependency graph identity changes.
 
 ## Rust implementation guidance
 
 - Parse and validate manifest with `hcl-rs` + serde structs.
 - Use `hcl-edit` for formatting and migration tooling.
+- Build dependency DAG with `daggy` and preserve unresolved non-path dependency nodes for policy diagnostics.
+- Materialize resolved dependencies into `obj/beskid/deps/src` before compile stages.

@@ -1,5 +1,7 @@
 use tokio::sync::RwLock;
 use serde_json::json;
+use std::path::{Path, PathBuf};
+use std::str::FromStr;
 use tower_lsp_server::jsonrpc::Result;
 use tower_lsp_server::ls_types::*;
 use tower_lsp_server::{Client, LanguageServer};
@@ -41,17 +43,21 @@ mod tests {
         .join("\n")
     }
 
-    async fn open_sample_document(server: &Backend, uri: Uri) {
+    async fn open_document(server: &Backend, uri: Uri, language_id: &str, text: String) {
         server
             .did_open(DidOpenTextDocumentParams {
                 text_document: TextDocumentItem {
                     uri,
-                    language_id: "beskid".to_string(),
+                    language_id: language_id.to_string(),
                     version: 1,
-                    text: sample_source(),
+                    text,
                 },
             })
             .await;
+    }
+
+    async fn open_sample_document(server: &Backend, uri: Uri) {
+        open_document(server, uri, "beskid", sample_source()).await;
     }
 
     #[tokio::test]
@@ -113,6 +119,60 @@ mod tests {
         assert!(items.iter().any(|item| item.label == "value"));
         assert!(items.iter().all(|item| !item.label.is_empty()));
     }
+
+    #[tokio::test]
+    async fn completion_returns_project_candidates_for_proj_document() {
+        let (service, _socket) = LspService::new(Backend::new);
+        let server = service.inner();
+        let doc_uri = uri("file:///Project.proj");
+        open_document(server, doc_uri.clone(), "hcl", "pro".to_string()).await;
+
+        let response = server
+            .completion(CompletionParams {
+                text_document_position: TextDocumentPositionParams {
+                    text_document: TextDocumentIdentifier { uri: doc_uri },
+                    position: Position::new(0, 3),
+                },
+                work_done_progress_params: WorkDoneProgressParams::default(),
+                partial_result_params: PartialResultParams::default(),
+                context: None,
+            })
+            .await
+            .expect("completion request should succeed")
+            .expect("completion should return result");
+
+        let CompletionResponse::Array(items) = response else {
+            panic!("expected array completion response");
+        };
+
+        assert!(items.iter().any(|item| item.label == "project"));
+    }
+
+    #[tokio::test]
+    async fn hover_returns_project_schema_hint_for_proj_document() {
+        let (service, _socket) = LspService::new(Backend::new);
+        let server = service.inner();
+        let doc_uri = uri("file:///Project.proj");
+        open_document(server, doc_uri.clone(), "hcl", "project {\n}".to_string()).await;
+
+        let response = server
+            .hover(HoverParams {
+                text_document_position_params: TextDocumentPositionParams {
+                    text_document: TextDocumentIdentifier { uri: doc_uri },
+                    position: Position::new(0, 1),
+                },
+                work_done_progress_params: WorkDoneProgressParams::default(),
+            })
+            .await
+            .expect("hover request should succeed")
+            .expect("hover should return result");
+
+        let HoverContents::Markup(content) = response.contents else {
+            panic!("expected markdown hover content");
+        };
+
+        assert!(content.value.contains("project"));
+    }
 }
 
 fn completion_prefix_at_offset(text: &str, offset: usize) -> &str {
@@ -129,6 +189,119 @@ fn completion_prefix_at_offset(text: &str, offset: usize) -> &str {
         break;
     }
     &text[start..safe_offset]
+}
+
+fn is_project_manifest_uri(uri: &Uri) -> bool {
+    uri.to_string().to_lowercase().ends_with(".proj")
+}
+
+fn token_at_offset(text: &str, offset: usize) -> Option<&str> {
+    let safe_offset = offset.min(text.len());
+    let mut start = safe_offset;
+    while start > 0 {
+        let ch = text[..start].chars().next_back()?;
+        if ch.is_alphanumeric() || ch == '_' {
+            start -= ch.len_utf8();
+            continue;
+        }
+        break;
+    }
+
+    let mut end = safe_offset;
+    while end < text.len() {
+        let ch = text[end..].chars().next()?;
+        if ch.is_alphanumeric() || ch == '_' {
+            end += ch.len_utf8();
+            continue;
+        }
+        break;
+    }
+
+    if start == end {
+        None
+    } else {
+        Some(&text[start..end])
+    }
+}
+
+fn project_completion_candidates() -> [(&'static str, CompletionItemKind, &'static str); 14] {
+    [
+        ("project", CompletionItemKind::MODULE, "Top-level project block"),
+        ("target", CompletionItemKind::MODULE, "Top-level target block"),
+        ("dependency", CompletionItemKind::MODULE, "Top-level dependency block"),
+        ("name", CompletionItemKind::FIELD, "Project or dependency name"),
+        ("version", CompletionItemKind::FIELD, "Version string"),
+        ("root", CompletionItemKind::FIELD, "Source root folder"),
+        ("kind", CompletionItemKind::FIELD, "Target kind: App | Lib | Test"),
+        ("entry", CompletionItemKind::FIELD, "Target entry file path"),
+        ("source", CompletionItemKind::FIELD, "Dependency source kind"),
+        ("path", CompletionItemKind::FIELD, "Local dependency path"),
+        ("url", CompletionItemKind::FIELD, "Git dependency URL"),
+        ("rev", CompletionItemKind::FIELD, "Git dependency revision"),
+        ("App", CompletionItemKind::ENUM_MEMBER, "Application target kind"),
+        ("Lib", CompletionItemKind::ENUM_MEMBER, "Library target kind"),
+    ]
+}
+
+fn project_hover_markdown(token: &str) -> Option<&'static str> {
+    match token {
+        "project" => Some("`project { ... }` defines project metadata."),
+        "target" => Some("`target \"Name\" { ... }` defines a build target."),
+        "dependency" => Some("`dependency \"Alias\" { ... }` defines a dependency."),
+        "name" => Some("`name` is required in the `project` block."),
+        "version" => Some("`version` is required in the `project` block."),
+        "root" => Some("`root` is optional and defaults to `Src`."),
+        "kind" => Some("`kind` must be one of `App`, `Lib`, or `Test`."),
+        "entry" => Some("`entry` is required and relative to `project.root`."),
+        "source" => Some("`source` must be `path`, `git`, or `registry`."),
+        "path" => Some("`path` is required when `source = \"path\"`."),
+        "url" => Some("`url` is required when `source = \"git\"`."),
+        "rev" => Some("`rev` is required when `source = \"git\"`."),
+        _ => None,
+    }
+}
+
+fn file_path_from_uri(uri: &Uri) -> Option<PathBuf> {
+    let raw = uri.to_string();
+    raw.strip_prefix("file://").map(PathBuf::from)
+}
+
+fn file_uri_from_path(path: &Path) -> Option<Uri> {
+    let raw = format!("file://{}", path.display());
+    Uri::from_str(&raw).ok()
+}
+
+fn project_dependency_path_location(uri: &Uri, text: &str, offset: usize) -> Option<Location> {
+    let mut consumed = 0usize;
+    for line in text.lines() {
+        let line_start = consumed;
+        let line_end = consumed + line.len();
+        consumed = line_end.saturating_add(1);
+
+        let trimmed = line.trim();
+        if !trimmed.starts_with("path") || !trimmed.contains('=') {
+            continue;
+        }
+
+        let quote_start = line.find('"')?;
+        let quote_end = line[quote_start + 1..].find('"')? + quote_start + 1;
+        let value_start = line_start + quote_start + 1;
+        let value_end = line_start + quote_end;
+        if !(value_start <= offset && offset <= value_end) {
+            continue;
+        }
+
+        let dep_rel = &line[quote_start + 1..quote_end];
+        let current = file_path_from_uri(uri)?;
+        let parent = current.parent()?;
+        let target = parent.join(dep_rel).join("Project.proj");
+        let dep_uri = file_uri_from_path(&target)?;
+        return Some(Location {
+            uri: dep_uri,
+            range: Range::new(Position::new(0, 0), Position::new(0, 0)),
+        });
+    }
+    None
 }
 
 fn build_document_symbol(
@@ -258,11 +431,27 @@ impl LanguageServer for Backend {
             return Ok(None);
         };
 
+        let offset = position_to_offset(&doc.text, text_document_position.position);
+
+        if is_project_manifest_uri(&uri) {
+            if let Some(token) = token_at_offset(&doc.text, offset) {
+                if let Some(message) = project_hover_markdown(token) {
+                    return Ok(Some(Hover {
+                        contents: HoverContents::Markup(MarkupContent {
+                            kind: MarkupKind::Markdown,
+                            value: message.to_string(),
+                        }),
+                        range: None,
+                    }));
+                }
+            }
+            return Ok(None);
+        }
+
         let Some(program) = parse_program(&doc.text) else {
             return Ok(None);
         };
         let symbols = collect_top_level_symbols(&program);
-        let offset = position_to_offset(&doc.text, text_document_position.position);
 
         if let Some(symbol) = symbols
             .iter()
@@ -307,11 +496,18 @@ impl LanguageServer for Backend {
             return Ok(None);
         };
 
+        let offset = position_to_offset(&doc.text, text_document_position.position);
+        if is_project_manifest_uri(&uri) {
+            if let Some(location) = project_dependency_path_location(&uri, &doc.text, offset) {
+                return Ok(Some(GotoDefinitionResponse::Scalar(location)));
+            }
+            return Ok(None);
+        }
+
         let Some(program) = parse_program(&doc.text) else {
             return Ok(None);
         };
         let symbols = collect_top_level_symbols(&program);
-        let offset = position_to_offset(&doc.text, text_document_position.position);
 
         if let Some((start, end)) = semantic_definition_span_at_offset(&program, offset) {
             return Ok(Some(GotoDefinitionResponse::Scalar(Location {
@@ -369,12 +565,27 @@ impl LanguageServer for Backend {
             return Ok(Some(CompletionResponse::Array(Vec::new())));
         };
 
+        let offset = position_to_offset(&doc.text, text_document_position.position);
+        let prefix = completion_prefix_at_offset(&doc.text, offset).to_lowercase();
+
+        if is_project_manifest_uri(&uri) {
+            let mut items: Vec<CompletionItem> = project_completion_candidates()
+                .into_iter()
+                .filter(|(label, _, _)| prefix.is_empty() || label.to_lowercase().starts_with(prefix.as_str()))
+                .map(|(label, kind, detail)| CompletionItem {
+                    label: label.to_string(),
+                    kind: Some(kind),
+                    detail: Some(detail.to_string()),
+                    ..CompletionItem::default()
+                })
+                .collect();
+            items.sort_by(|a, b| a.label.cmp(&b.label));
+            return Ok(Some(CompletionResponse::Array(items)));
+        }
+
         let Some(program) = parse_program(&doc.text) else {
             return Ok(Some(CompletionResponse::Array(Vec::new())));
         };
-
-        let offset = position_to_offset(&doc.text, text_document_position.position);
-        let prefix = completion_prefix_at_offset(&doc.text, offset).to_lowercase();
 
         let mut items: Vec<CompletionItem> = semantic_completion_candidates(&program)
             .into_iter()

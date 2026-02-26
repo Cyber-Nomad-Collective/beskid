@@ -12,8 +12,10 @@ Standard library functions (like `Std.IO.Println`) and internal codegen hooks (l
 ### Target State
 - **Internal Builtins**: Kept directly in Cranelift. Limited strictly to memory/codegen hooks (`__alloc`, `__gc_write_barrier`, etc.).
 - **Interop Builtins**: A handful of `__interop_dispatch_<return_type>` functions registered in Cranelift.
-- **Beskid Prelude**: The compiler automatically parses and injects an auto-generated Beskid source string containing an `enum StdInterop` and `mod Std { ... }` wrappers.
-- **Project System Alignment**: The long-term source of standard library wrappers is the `Std` project (`Std/Project.proj`) resolved through normal dependency edges.
+- **Beskid Prelude**: Transitional compatibility shim only; primary wrappers come from `Std` project sources.
+- **Project System Alignment**: The long-term source of standard library wrappers is the `Std` project (`Std/Project.proj`) resolved through normal dependency edges in the Daggy project DAG.
+- **Build Workflow Alignment**: Build/run resolve and materialize dependency source trees into `obj/beskid` before compile phases.
+- **Lockfile Alignment**: `Project.lock` is created/updated automatically during resolve/build/run lifecycle.
 - **Rust Dispatcher**: A generated Rust FFI function that decodes the `StdInterop` enum pointer, reads the payload based on the `tag`, and calls the respective Rust function.
 
 ---
@@ -58,8 +60,12 @@ Before building a complex proc-macro, we will implement the first interop manual
    - *Challenge*: The prelude uses internal builtins (`__interop_dispatch_unit`), so the resolver must ensure the prelude is allowed to access them (perhaps by disabling visibility checks or registering them directly).
 2. **Bridge to Project-based Stdlib**:
    - Add `Std` as a regular dependency in root `Project.proj` manifests during migration.
+   - Resolve `Std` through the Daggy dependency graph (`consumer -> dependency` edge semantics).
    - Move stable `Std.*` wrappers from injected prelude text into `Std` project sources.
    - Keep prelude injection only for transitional/runtime-internal shims that are not yet emitted from `Std/Project.proj`.
+   - Disable prelude fallback whenever a resolvable `Std` dependency node exists in the graph.
+   - Require dependency materialization to `obj/beskid/deps/src` before loading `Std` compile units.
+   - Require lock sync (`Project.lock`) before project compilation continues.
 
 ### Phase 4: The Rust Dispatcher Implementation
 1. **Create `beskid_runtime/src/interop.rs`**:
@@ -95,3 +101,52 @@ Once the manual MVP is proven to work and memory offsets are validated:
 - **Enum Payload Layout**: The Rust dispatcher must manually unpack the enum payload from a raw pointer. Beskid's `TypeLayout` rules dictate alignment and padding. Hardcoding these in the MVP is risky; we must ensure the manual offsets match `TypeLayout::from_enum`.
 - **Return Types**: C-ABI and Cranelift require fixed return types. We cannot have a generic `dispatch(enum) -> Any`. We must group interop methods by their return type and have a specific dispatcher for each (e.g., `_unit`, `_ptr`, `_i64`).
 - **Prelude Name Clashes**: Injecting the prelude into every user file might cause name clashes if a user defines `mod Std`. The resolver will need a mechanism to merge `mod Std` or reserve the `Std` namespace.
+- **Graph/Interop Transition Cohesion**: During migration, keep dependency-graph-based `Std` resolution as the primary path and ensure fallback behavior is explicit, feature-gated, and disabled when `Std` is resolvable.
+
+---
+
+## 4. Build/Interop Lifecycle Contract (Final)
+
+All project-aware CLI flows (`run`, `clif`, `analyze`) follow:
+
+1. Discover `Project.proj`.
+2. Resolve dependency graph.
+3. Validate provider scope (`path` enabled in v1).
+4. Sync `Project.lock`.
+5. Materialize dependency sources to `obj/beskid/deps/src`.
+6. Build dependency-first compile units.
+7. Execute target.
+
+Interop migration stages must not bypass this lifecycle.
+
+## 5. Diagnostics Contract (Shared Infrastructure)
+
+Project and interop migration diagnostics use the same infrastructure as analysis diagnostics (`make_diagnostic`, `Severity`, and error codes).
+
+- Analysis diagnostics base: `src/beskid_analysis/src/analysis/diagnostics.rs`
+- Error-code convention: subsystem-prefixed numeric codes (for example, codegen uses `E20xx`).
+
+### Interop/Project migration error code range
+
+Reserve `E30xx` for projects/build workflow diagnostics referenced by interop migration steps:
+
+- `E3001`: missing `Project.proj` at '{path}'
+- `E3006`: dependency '{dependency}' manifest not found at {path}
+- `E3007`: dependency cycle detected: {chain}
+- `E3008`: unresolved external dependencies: {details}
+- `E3011`: unsupported dependency source '{source}' in v1
+- `E3022`: lockfile is out of date for project '{project}'
+- `E3023`: lockfile update forbidden in frozen mode
+- `E3031`: failed to copy dependency source '{from}' -> '{to}': {source}
+- `E3033`: build cannot start because dependencies were not materialized
+
+## 6. Final migration completion criteria
+
+Interop migration is complete when all of the following are true:
+
+1. `Std` wrappers are provided by project-resolved source code (not primary prelude injection).
+2. Build/run always materialize dependency sources into `obj/beskid` before compilation.
+3. Lockfile lifecycle is active and automatic by default.
+4. Legacy direct std builtin registrations (`sys_print*`, `str_len`) are removed from primary path.
+5. Compatibility prelude fallback is feature-gated and disabled when `Std` is resolvable.
+6. Diagnostic output for migration and project failures uses shared analysis diagnostics conventions and stable error codes.

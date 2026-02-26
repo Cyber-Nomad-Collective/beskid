@@ -11,3 +11,4 @@ from-pest = { workspace = true }
 beskid_ast_derive = { path = "../beskid_ast_derive" }
 miette = { version = "7.1", features = ["fancy"] }
 thiserror = "2.0"
+daggy = "0.9.0"

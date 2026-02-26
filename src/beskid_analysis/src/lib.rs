@@ -1,5 +1,6 @@
 pub mod parser;
 pub mod parsing;
+pub mod projects;
 pub mod query;
 pub mod syntax;
 pub mod hir;

@@ -3,6 +3,10 @@ name = "pekan_cli"
 version = "0.1.0"
 edition = "2024"
 
+[features]
+default = []
+stdlib-prelude-fallback = []
+
 [dependencies]
 beskid_analysis = { path = "../beskid_analysis" }
 beskid_codegen = { path = "../beskid_codegen" }

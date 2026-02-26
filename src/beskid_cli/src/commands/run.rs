@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use clap::Args;
 use miette::Report;
 use beskid_analysis::hir::{
@@ -14,16 +14,31 @@ use beskid_analysis::analysis::diagnostics::Severity;
 use beskid_codegen::{codegen_errors_to_diagnostics, lower_program};
 use beskid_engine::Engine;
 use pest::Parser;
-use std::fs;
 use std::path::PathBuf;
 
+use crate::commands::project_input::resolve_input;
 use crate::errors::{print_pretty_parse_error, print_pretty_pest_error};
 
 #[derive(Args, Debug)]
 pub struct RunArgs {
     /// The input Beskid file to JIT-compile and execute
-    #[arg(required = true)]
-    pub input: PathBuf,
+    pub input: Option<PathBuf>,
+
+    /// Path to a project directory or Project.proj file
+    #[arg(long)]
+    pub project: Option<PathBuf>,
+
+    /// Target name from Project.proj
+    #[arg(long)]
+    pub target: Option<String>,
+
+    /// Require lockfile to be up to date and forbid lockfile updates
+    #[arg(long)]
+    pub frozen: bool,
+
+    /// Require lockfile to exist and match resolution
+    #[arg(long)]
+    pub locked: bool,
 
     /// Entrypoint function name
     #[arg(long, default_value = "main")]
@@ -31,13 +46,22 @@ pub struct RunArgs {
 }
 
 pub fn execute(args: RunArgs) -> Result<()> {
-    let source = fs::read_to_string(&args.input)
-        .with_context(|| format!("Failed to read file: {}", args.input.display()))?;
+    let resolved = resolve_input(
+        args.input.as_ref(),
+        args.project.as_ref(),
+        args.target.as_deref(),
+        cfg!(feature = "stdlib-prelude-fallback"),
+        args.frozen,
+        args.locked,
+    )?;
+    let source = resolved.source;
+    let input_path = resolved.source_path;
+    let compile_plan = resolved.compile_plan;
 
     let mut pairs = match BeskidParser::parse(Rule::Program, &source) {
         Ok(pairs) => pairs,
         Err(err) => {
-            print_pretty_pest_error(&args.input.display().to_string(), &source, &err);
+            print_pretty_pest_error(&input_path.display().to_string(), &source, &err);
             std::process::exit(1);
         }
     };
@@ -52,22 +76,31 @@ pub fn execute(args: RunArgs) -> Result<()> {
     let program = match Program::parse(pair) {
         Ok(program) => program,
         Err(err) => {
-            print_pretty_parse_error(&args.input.display().to_string(), &source, &err);
+            print_pretty_parse_error(&input_path.display().to_string(), &source, &err);
             std::process::exit(1);
         }
     };
 
-    let std_pairs = BeskidParser::parse(Rule::Program, beskid_analysis::stdlib::STDLIB_PRELUDE).expect("valid prelude");
-    let std_program = Program::parse(std_pairs.into_iter().next().unwrap()).expect("valid prelude");
+    let use_prelude_fallback = compile_plan
+        .as_ref()
+        .map(|plan| plan.allow_stdlib_prelude_fallback && !plan.has_std_dependency)
+        .unwrap_or(cfg!(feature = "stdlib-prelude-fallback"));
 
     let mut combined_program = program.clone();
-    let mut combined_items = std_program.node.items;
-    combined_items.extend(combined_program.node.items);
-    combined_program.node.items = combined_items;
+    if use_prelude_fallback {
+        let std_pairs =
+            BeskidParser::parse(Rule::Program, beskid_analysis::stdlib::STDLIB_PRELUDE)
+                .expect("valid prelude");
+        let std_program = Program::parse(std_pairs.into_iter().next().expect("program pair"))
+            .expect("valid prelude");
+        let mut combined_items = std_program.node.items;
+        combined_items.extend(combined_program.node.items);
+        combined_program.node.items = combined_items;
+    }
 
     let diagnostics = run_rules(
         &combined_program.node,
-        args.input.display().to_string(),
+        input_path.display().to_string(),
         &source,
         &builtin_rules(),
         AnalysisOptions::default(),
@@ -117,7 +150,7 @@ pub fn execute(args: RunArgs) -> Result<()> {
         Ok(artifact) => artifact,
         Err(errors) => {
             let diagnostics = codegen_errors_to_diagnostics(
-                &args.input.display().to_string(),
+                &input_path.display().to_string(),
                 &source,
                 &errors,
             );

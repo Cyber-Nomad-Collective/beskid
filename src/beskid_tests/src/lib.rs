@@ -12,3 +12,6 @@ pub mod runtime;
 
 #[cfg(test)]
 pub mod codegen;
+
+#[cfg(test)]
+pub mod projects;

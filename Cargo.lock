@@ -135,6 +135,91 @@ dependencies = [
 ]
 
 [[package]]
+name = "beskid_analysis"
+version = "0.1.0"
+dependencies = [
+ "beskid_ast_derive",
+ "daggy",
+ "from-pest",
+ "miette",
+ "pest",
+ "pest-ast",
+ "pest_derive",
+ "thiserror",
+]
+
+[[package]]
+name = "beskid_ast_derive"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "beskid_codegen"
+version = "0.1.0"
+dependencies = [
+ "beskid_analysis",
+ "beskid_runtime",
+ "cranelift-codegen",
+ "cranelift-frontend",
+ "cranelift-module",
+ "pest",
+]
+
+[[package]]
+name = "beskid_engine"
+version = "0.1.0"
+dependencies = [
+ "beskid_analysis",
+ "beskid_codegen",
+ "beskid_runtime",
+ "cranelift-codegen",
+ "cranelift-jit",
+ "cranelift-module",
+ "cranelift-native",
+ "cranelift-object",
+ "gc-arena",
+]
+
+[[package]]
+name = "beskid_lsp"
+version = "0.1.0"
+dependencies = [
+ "beskid_analysis",
+ "pest",
+ "serde_json",
+ "tokio",
+ "tower-lsp-server",
+ "tracing",
+]
+
+[[package]]
+name = "beskid_runtime"
+version = "0.1.0"
+dependencies = [
+ "gc-arena",
+ "gc-arena-derive",
+]
+
+[[package]]
+name = "beskid_tests"
+version = "0.1.0"
+dependencies = [
+ "beskid_analysis",
+ "beskid_codegen",
+ "beskid_engine",
+ "beskid_runtime",
+ "cranelift-codegen",
+ "cranelift-jit",
+ "cranelift-module",
+ "cranelift-native",
+ "pest",
+]
+
+[[package]]
 name = "bitflags"
 version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -439,6 +524,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "daggy"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "804169db156b21258a2545757336922d93dfa229892c75911a0ad141aa0ff241"
+dependencies = [
+ "petgraph",
+]
+
+[[package]]
 name = "dashmap"
 version = "6.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -532,6 +626,12 @@ name = "fallible-iterator"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2acce4a10f12dc2fb14a218589d4f1f62ef011b2d0cc4b3cb1bba8e94da14649"
+
+[[package]]
+name = "fixedbitset"
+version = "0.5.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1d674e81391d1e1ab681a28d99df07927c6d4aa5b027d7da16ba32d1d21ecd99"
 
 [[package]]
 name = "fluent-uri"
@@ -960,106 +1060,22 @@ dependencies = [
 ]
 
 [[package]]
-name = "beskid_analysis"
-version = "0.1.0"
-dependencies = [
- "from-pest",
- "miette",
- "beskid_ast_derive",
- "pest",
- "pest-ast",
- "pest_derive",
- "thiserror",
-]
-
-[[package]]
-name = "beskid_ast_derive"
-version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "beskid_codegen"
-version = "0.1.0"
-dependencies = [
- "cranelift-codegen",
- "cranelift-frontend",
- "cranelift-module",
- "beskid_analysis",
- "beskid_runtime",
- "pest",
-]
-
-[[package]]
-name = "beskid_engine"
-version = "0.1.0"
-dependencies = [
- "cranelift-codegen",
- "cranelift-jit",
- "cranelift-module",
- "cranelift-native",
- "cranelift-object",
- "gc-arena",
- "beskid_analysis",
- "beskid_codegen",
- "beskid_runtime",
-]
-
-[[package]]
-name = "beskid_lsp"
-version = "0.1.0"
-dependencies = [
- "beskid_analysis",
- "pest",
- "serde_json",
- "tokio",
- "tower-lsp-server",
- "tracing",
-]
-
-[[package]]
-name = "beskid_runtime"
-version = "0.1.0"
-dependencies = [
- "gc-arena",
- "gc-arena-derive",
-]
-
-[[package]]
 name = "pekan_cli"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "argfile",
+ "beskid_analysis",
+ "beskid_codegen",
+ "beskid_engine",
  "clap",
  "env_logger",
  "log",
  "miette",
- "beskid_analysis",
- "beskid_codegen",
- "beskid_engine",
  "pest",
  "serde",
  "serde_json",
  "toml 0.8.23",
-]
-
-[[package]]
-name = "pekan_tests"
-version = "0.1.0"
-dependencies = [
- "cranelift-codegen",
- "cranelift-jit",
- "cranelift-module",
- "cranelift-native",
- "beskid_analysis",
- "beskid_codegen",
- "beskid_engine",
- "beskid_runtime",
- "pest",
 ]
 
 [[package]]
@@ -1121,6 +1137,17 @@ checksum = "89815c69d36021a140146f26659a81d6c2afa33d216d736dd4be5381a7362220"
 dependencies = [
  "pest",
  "sha2",
+]
+
+[[package]]
+name = "petgraph"
+version = "0.8.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8701b58ea97060d5e5b155d383a69952a60943f0e6dfe30b04c287beb0b27455"
+dependencies = [
+ "fixedbitset",
+ "hashbrown 0.15.5",
+ "indexmap",
 ]
 
 [[package]]

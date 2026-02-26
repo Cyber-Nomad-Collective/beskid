@@ -1,14 +1,17 @@
 use clap::{Parser, Subcommand};
 use crate::commands::analyze::AnalyzeArgs;
 use crate::commands::clif::ClifArgs;
+use crate::commands::fetch::FetchArgs;
+use crate::commands::lock::LockArgs;
 use crate::commands::parse::ParseArgs;
 use crate::commands::run::RunArgs;
 use crate::commands::tree::TreeArgs;
-use crate::commands::{analyze, clif, parse, run, tree};
+use crate::commands::update::UpdateArgs;
+use crate::commands::{analyze, clif, fetch, lock, parse, run, tree, update};
 use std::env;
 
 #[derive(Parser)]
-#[command(name = "pekan")]
+#[command(name = "beskid")]
 #[command(about = "Beskid CLI tool", version, author)]
 pub struct Cli {
     #[command(subcommand)]
@@ -31,6 +34,15 @@ pub enum Commands {
 
     /// JIT-compile and execute a Beskid file
     Run(RunArgs),
+
+    /// Resolve and materialize project dependencies
+    Fetch(FetchArgs),
+
+    /// Synchronize Project.lock for a project
+    Lock(LockArgs),
+
+    /// Update dependency resolution and materialized workspace
+    Update(UpdateArgs),
 }
 
 pub fn run() -> anyhow::Result<()> {
@@ -44,5 +56,8 @@ pub fn run() -> anyhow::Result<()> {
         Commands::Analyze(args) => analyze::execute(args),
         Commands::Clif(args) => clif::execute(args),
         Commands::Run(args) => run::execute(args),
+        Commands::Fetch(args) => fetch::execute(args),
+        Commands::Lock(args) => lock::execute(args),
+        Commands::Update(args) => update::execute(args),
     }
 }
