@@ -1,10 +1,12 @@
 use beskid_abi::BeskidStr;
 
-#[InteropCall("std.io")]
-fn print(text: *const BeskidStr);
+#[InteropCall(std::io, name = "print")]
+fn sys_print(_text: *const BeskidStr) {}
 
-#[InteropCall("std.io")]
-fn println(text: *const BeskidStr);
+#[InteropCall(std::io, name = "println")]
+fn sys_println(_text: *const BeskidStr) {}
 
-#[InteropCall("std.string")]
-fn len(text: *const BeskidStr) -> usize;
+#[InteropCall(std::string, name = "len")]
+fn str_len(_text: *const BeskidStr) -> usize {
+    0
+}

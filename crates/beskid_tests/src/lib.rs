@@ -24,3 +24,6 @@ pub mod aot;
 
 #[cfg(test)]
 pub mod lsp;
+
+#[cfg(test)]
+pub mod interop;

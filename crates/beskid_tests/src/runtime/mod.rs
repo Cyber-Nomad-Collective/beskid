@@ -6,3 +6,6 @@ mod guard;
 
 #[cfg(test)]
 mod jit;
+
+#[cfg(test)]
+mod parity;

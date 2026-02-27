@@ -3,19 +3,19 @@
 
 pub mod std {
     pub mod io {
-        pub unit print(string text) {
-            __interop_dispatch_unit(StdInterop::IoPrint(text));
+        pub unit print(string _text) {
+            __interop_dispatch_unit(StdInterop::IoPrint(_text));
         }
 
-        pub unit println(string text) {
-            __interop_dispatch_unit(StdInterop::IoPrintln(text));
+        pub unit println(string _text) {
+            __interop_dispatch_unit(StdInterop::IoPrintln(_text));
         }
 
     }
 
     pub mod string {
-        pub i64 len(string text) {
-            return __interop_dispatch_usize(StdInterop::StringLen(text));
+        pub i64 len(string _text) {
+            return __interop_dispatch_usize(StdInterop::StringLen(_text));
         }
 
     }

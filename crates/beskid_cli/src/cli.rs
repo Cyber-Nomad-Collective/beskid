@@ -8,7 +8,9 @@ use crate::commands::parse::ParseArgs;
 use crate::commands::run::RunArgs;
 use crate::commands::tree::TreeArgs;
 use crate::commands::update::UpdateArgs;
-use crate::commands::{analyze, build, clif, fetch, interop, lock, parse, run, tree, update};
+use crate::commands::{
+    analyze, build, clif, fetch, interop, lock, parse, run, tree, update,
+};
 use clap::{Parser, Subcommand};
 use std::env;
 

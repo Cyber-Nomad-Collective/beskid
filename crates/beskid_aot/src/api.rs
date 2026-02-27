@@ -68,6 +68,12 @@ pub struct AotBuildResult {
     pub linker_invocation: Option<String>,
 }
 
+#[derive(Debug, Clone)]
+struct ObjectStageResult {
+    object_path: PathBuf,
+    exported_symbols: Vec<String>,
+}
+
 pub fn emit_object_only(req: AotBuildRequest) -> AotResult<AotBuildResult> {
     if req.output_kind != BuildOutputKind::ObjectOnly {
         return Err(AotError::InvalidRequest {
@@ -80,6 +86,30 @@ pub fn emit_object_only(req: AotBuildRequest) -> AotResult<AotBuildResult> {
 pub fn build(req: AotBuildRequest) -> AotResult<AotBuildResult> {
     validate_request(&req)?;
 
+    let object_stage = emit_object_stage(&req)?;
+
+    if req.output_kind == BuildOutputKind::ObjectOnly {
+        return Ok(AotBuildResult {
+            object_path: object_stage.object_path,
+            final_path: None,
+            exported_symbols: object_stage.exported_symbols,
+            linker_invocation: None,
+        });
+    }
+
+    ensure_entrypoint_exported(&req, &object_stage.exported_symbols)?;
+    let runtime = prepare_runtime_stage(&req)?;
+    let link_result = link_stage(&req, &object_stage, runtime.staticlib_path)?;
+
+    Ok(AotBuildResult {
+        object_path: object_stage.object_path,
+        final_path: Some(link_result.output_path),
+        exported_symbols: link_result.exported_symbols,
+        linker_invocation: Some(link_result.command_line),
+    })
+}
+
+fn emit_object_stage(req: &AotBuildRequest) -> AotResult<ObjectStageResult> {
     let target = detect_target(req.target_triple.as_deref())?;
     let object_path = req
         .object_path
@@ -92,48 +122,48 @@ pub fn build(req: AotBuildRequest) -> AotResult<AotBuildResult> {
     let all_symbols = object_module.declared_symbols();
     let exported_symbols = apply_export_policy(all_symbols, &req.export_policy);
 
-    if req.output_kind == BuildOutputKind::ObjectOnly {
-        object_module.finalize_to_path(&object_path)?;
-        return Ok(AotBuildResult {
-            object_path,
-            final_path: None,
-            exported_symbols,
-            linker_invocation: None,
-        });
-    }
-
-    if !exported_symbols.iter().any(|sym| sym == &req.entrypoint) {
-        return Err(AotError::MissingEntrypoint {
-            symbol: req.entrypoint.clone(),
-        });
-    }
-
     object_module.finalize_to_path(&object_path)?;
 
-    let runtime = prepare_runtime(&RuntimeBuildRequest {
+    Ok(ObjectStageResult {
+        object_path,
+        exported_symbols,
+    })
+}
+
+fn ensure_entrypoint_exported(req: &AotBuildRequest, exported_symbols: &[String]) -> AotResult<()> {
+    if exported_symbols.iter().any(|sym| sym == &req.entrypoint) {
+        return Ok(());
+    }
+
+    Err(AotError::MissingEntrypoint {
+        symbol: req.entrypoint.clone(),
+    })
+}
+
+fn prepare_runtime_stage(req: &AotBuildRequest) -> AotResult<crate::runtime::RuntimeArtifact> {
+    prepare_runtime(&RuntimeBuildRequest {
         strategy: req.runtime.clone(),
         target_triple: req.target_triple.clone(),
         profile: req.profile,
         work_dir: std::env::temp_dir().join("beskid_aot_runtime"),
-    })?;
+    })
+}
 
-    let link_result = link(&LinkRequest {
+fn link_stage(
+    req: &AotBuildRequest,
+    object_stage: &ObjectStageResult,
+    runtime_staticlib: PathBuf,
+) -> AotResult<crate::linker::LinkResult> {
+    link(&LinkRequest {
         target_triple: req.target_triple.clone(),
         output_kind: req.output_kind,
         output_path: req.output_path.clone(),
-        object_path: object_path.clone(),
-        runtime_staticlib: runtime.staticlib_path,
-        entrypoint_symbol: req.entrypoint,
-        exported_symbols,
+        object_path: object_stage.object_path.clone(),
+        runtime_staticlib,
+        entrypoint_symbol: req.entrypoint.clone(),
+        exported_symbols: object_stage.exported_symbols.clone(),
         link_mode: req.link_mode,
         verbose: req.verbose_link,
-    })?;
-
-    Ok(AotBuildResult {
-        object_path,
-        final_path: Some(link_result.output_path),
-        exported_symbols: link_result.exported_symbols,
-        linker_invocation: Some(link_result.command_line),
     })
 }
 

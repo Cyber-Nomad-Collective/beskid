@@ -2,14 +2,17 @@
 
 This document defines the final migration shape and execution plan for Beskid stdlib interop.
 
+Architecture freeze reference: `docs/execution/aot-jit-architecture-contract.md`.
+All runtime/ABI/dispatch changes described here must satisfy the immutable invariants in that contract.
+
 ## 1. Final Shape (Target Architecture)
 
 ### 1.1 Source of truth
 Interop contracts are authored in Rust using attributes:
 
 ```rust
-#[InteropCall("std.io")]
-fn println(text: BeskidStrRef);
+#[InteropCall(std::io, name = "println")]
+fn sys_println(text: *const BeskidStr) {}
 ```
 
 The Rust declaration is the canonical source of:
@@ -39,7 +42,19 @@ Compiler/runtime boundary remains ABI-only:
 - internal hooks: `__alloc`, `__str_new`, `__array_new`, GC hooks, etc.
 - typed dispatch builtins: `__interop_dispatch_unit`, `__interop_dispatch_usize`, `__interop_dispatch_ptr`
 
+Boundary rule:
+- Internal runtime hooks (`alloc`, GC/root management, arena mutation helpers, core memory/string primitives) stay runtime-internal implementation details shared by both JIT and AOT.
+- Interop is reserved for std/syscall-facing operations (`std.io`, future `std.fs`, `std.net`, `std.process`, etc.) and is always expressed through generated Beskid wrappers calling typed interop dispatch builtins.
+
 No embedded stdlib prelude fallback is used in execution flows.
+
+### 1.5 JIT/AOT parity rule
+JIT and AOT must both consume the same interop contract:
+- same generated Beskid interop files
+- same runtime exported dispatch symbols
+- same generated tag ordering contract
+
+No backend-specific interop surface is allowed.
 
 ---
 
@@ -55,9 +70,13 @@ No embedded stdlib prelude fallback is used in execution flows.
 
 ### Phase B — Extraction pipeline (`pekan_cli interop`)
 1. Add Rust source discovery for configured roots.
-2. Parse/collect annotated declarations into a canonical in-memory model.
+2. Parse/collect annotated declarations into a canonical in-memory model using typed Rust AST parsing (`syn`) in `beskid_interop_tooling`.
 3. Normalize names and module paths.
 4. Validate uniqueness and disallow collisions.
+
+Implementation note:
+- `pekan_cli interop` is a thin wrapper that delegates to `beskid_interop_tooling::execute`.
+- Generation/extraction/validation logic does not live in CLI command code.
 
 ### Phase C — Canonical interop model
 Canonical model per operation includes:
@@ -88,6 +107,7 @@ Ensure runtime dispatcher tag mapping and generated enum ordering cannot drift:
 1. derive tag ordering from a shared canonical list
 2. assert runtime dispatch tables match generated Beskid variant order
 3. fail tests on mismatch
+4. ensure JIT and AOT both resolve the same runtime dispatcher symbols
 
 ### Phase G — Workflow integration
 `pekan_cli interop` adds modes:
@@ -107,6 +127,10 @@ Enforce separation:
 - generated files: interop enum + wrappers only
 
 Manual facade imports generated wrappers; generator never edits manual files.
+
+Clarification:
+- Generated interop wrappers are for std/syscall-facing APIs only.
+- Internal runtime ABI hooks (`__alloc`, GC hooks, etc.) are not modeled as `std.*` interop declarations.
 
 ### Phase I — End-to-end tests
 Add coverage for:
@@ -172,3 +196,5 @@ Migration is complete when all of the following are true:
 5. CI enforces generation freshness via `pekan_cli interop --check`.
 6. Execution pipeline has no embedded stdlib prelude fallback paths.
 7. Docs reflect as-built architecture and operator workflow.
+8. Internal runtime hooks (alloc/gc/core runtime ABI) remain shared JIT/AOT internals and are not promoted to std interop declarations.
+9. Std/syscall-facing APIs are represented as interop declarations and are dispatched through generated wrappers + runtime interop dispatchers.

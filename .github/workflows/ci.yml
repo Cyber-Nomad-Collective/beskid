@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  workspace-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Cargo check workspace
+        run: cargo check --workspace
+
+  interop-freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Interop generated artifacts are fresh
+        run: cargo run -p pekan_cli -- interop --check
+
+  abi-dispatch-parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: ABI contract tests
+        run: "cargo test -p beskid_tests abi::contracts::"
+      - name: Interop dispatch contract tests
+        run: "cargo test -p beskid_tests interop::dispatch::"
+      - name: JIT/AOT parity tests
+        run: "cargo test -p beskid_tests runtime::parity::"
+
+  aot-artifact-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: AOT linked runtime symbol smoke test
+        run: cargo test -p beskid_tests static_build_contains_required_runtime_symbols

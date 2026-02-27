@@ -2,7 +2,7 @@ pub mod analyze;
 pub mod build;
 pub mod clif;
 pub mod fetch;
-pub mod interop;
+pub mod interop_command;
 pub mod lock;
 pub mod parse;
 pub mod project_input;

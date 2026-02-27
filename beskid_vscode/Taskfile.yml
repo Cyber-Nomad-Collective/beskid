@@ -4,7 +4,7 @@ silent: true
 
 vars:
   EXT_DIR: '{{.TASKFILE_DIR}}'
-  REPO_ROOT: '{{.TASKFILE_DIR}}/../..'
+  REPO_ROOT: '{{.TASKFILE_DIR}}/..'
 
 tasks:
   default:

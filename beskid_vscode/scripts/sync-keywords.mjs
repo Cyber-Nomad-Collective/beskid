@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const extensionRoot = resolve(import.meta.dir, "..");
-const repoRoot = resolve(extensionRoot, "../..");
+const repoRoot = resolve(extensionRoot, "..");
 const grammarPath = resolve(repoRoot, "crates/beskid_analysis/src/beskid.pest");
 const textmatePath = resolve(extensionRoot, "syntaxes/beskid.tmLanguage.json");
 

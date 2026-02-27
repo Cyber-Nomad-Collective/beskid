@@ -9,6 +9,7 @@ beskid_abi = { path = "../beskid_abi" }
 beskid_analysis = { path = "../beskid_analysis" }
 beskid_codegen = { path = "../beskid_codegen" }
 beskid_engine = { path = "../beskid_engine" }
+beskid_interop_tooling = { path = "../beskid_interop_tooling" }
 beskid_lsp = { path = "../beskid_lsp" }
 beskid_runtime = { path = "../beskid_runtime" }
 cranelift-codegen = "0.128.3"

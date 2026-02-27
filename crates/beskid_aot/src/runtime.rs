@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use beskid_abi::{BESKID_RUNTIME_ABI_VERSION, RUNTIME_EXPORT_SYMBOLS, SYM_ABI_VERSION};
+use beskid_abi::{BESKID_RUNTIME_ABI_VERSION, RUNTIME_EXPORT_SYMBOLS};
 
 use crate::api::{BuildProfile, RuntimeStrategy};
 use crate::error::{AotError, AotResult};
@@ -13,7 +13,23 @@ pub struct RuntimeArtifact {
     pub exported_symbols: Vec<String>,
 }
 
-fn ensure_runtime_symbol_present(archive_path: &Path, symbol: &str) -> AotResult<()> {
+fn parse_nm_symbols(symbol_table: &str) -> std::collections::BTreeSet<&str> {
+    symbol_table
+        .lines()
+        .filter_map(|line| line.split_whitespace().last())
+        .collect()
+}
+
+fn missing_required_symbols<'a>(symbol_table: &'a str, required: &[&'a str]) -> Vec<&'a str> {
+    let present = parse_nm_symbols(symbol_table);
+    required
+        .iter()
+        .copied()
+        .filter(|symbol| !present.contains(symbol))
+        .collect()
+}
+
+fn ensure_runtime_symbols_present(archive_path: &Path, required: &[&str]) -> AotResult<()> {
     let mut command = Command::new("nm");
     command.arg("-g").arg(archive_path);
     let output = command.output().map_err(|err| AotError::RuntimeBuild {
@@ -30,11 +46,13 @@ fn ensure_runtime_symbol_present(archive_path: &Path, symbol: &str) -> AotResult
     }
 
     let text = String::from_utf8_lossy(&output.stdout);
-    if !text.contains(symbol) {
+    let missing = missing_required_symbols(&text, required);
+    if !missing.is_empty() {
         return Err(AotError::RuntimeBuild {
             message: format!(
-                "runtime archive `{}` does not expose required symbol `{symbol}`",
-                archive_path.display()
+                "runtime archive `{}` is missing required symbols: {}",
+                archive_path.display(),
+                missing.join(", ")
             ),
         });
     }
@@ -53,9 +71,6 @@ pub struct RuntimeBuildRequest {
 pub fn prepare_runtime(req: &RuntimeBuildRequest) -> AotResult<RuntimeArtifact> {
     match &req.strategy {
         RuntimeStrategy::UsePrebuilt { path, abi_version } => {
-            if !path.exists() {
-                return Err(AotError::RuntimeArchiveMissing { path: path.clone() });
-            }
             let Some(version) = abi_version else {
                 return Err(AotError::RuntimeAbiVersionRequired);
             };
@@ -65,7 +80,10 @@ pub fn prepare_runtime(req: &RuntimeBuildRequest) -> AotResult<RuntimeArtifact> 
                     actual: *version,
                 });
             }
-            ensure_runtime_symbol_present(path, SYM_ABI_VERSION)?;
+            if !path.exists() {
+                return Err(AotError::RuntimeArchiveMissing { path: path.clone() });
+            }
+            ensure_runtime_symbols_present(path, RUNTIME_EXPORT_SYMBOLS)?;
             Ok(RuntimeArtifact {
                 staticlib_path: path.clone(),
                 exported_symbols: runtime_symbols(),
@@ -219,4 +237,24 @@ fn runtime_symbols() -> Vec<String> {
         .iter()
         .map(|symbol| (*symbol).to_owned())
         .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use beskid_abi::SYM_ABI_VERSION;
+
+    #[test]
+    fn missing_required_symbols_returns_empty_when_all_present() {
+        let table = "00000000 T alloc\n00000000 T beskid_runtime_abi_version\n";
+        let missing = missing_required_symbols(table, &[SYM_ABI_VERSION, "alloc"]);
+        assert!(missing.is_empty());
+    }
+
+    #[test]
+    fn missing_required_symbols_detects_absent_entries() {
+        let table = "00000000 T alloc\n";
+        let missing = missing_required_symbols(table, &[SYM_ABI_VERSION, "alloc", "str_new"]);
+        assert_eq!(missing, vec![SYM_ABI_VERSION, "str_new"]);
+    }
 }

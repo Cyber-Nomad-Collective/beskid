@@ -212,6 +212,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "beskid_interop_tooling"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "beskid_lsp"
 version = "0.1.0"
 dependencies = [
@@ -241,6 +251,7 @@ dependencies = [
  "beskid_aot",
  "beskid_codegen",
  "beskid_engine",
+ "beskid_interop_tooling",
  "beskid_lsp",
  "beskid_runtime",
  "cranelift-codegen",
@@ -1151,6 +1162,7 @@ dependencies = [
  "beskid_aot",
  "beskid_codegen",
  "beskid_engine",
+ "beskid_interop_tooling",
  "clap",
  "env_logger",
  "log",
