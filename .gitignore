@@ -11,3 +11,4 @@
 
 # Env files
 .env
+_refactor/*
