@@ -18,8 +18,8 @@ impl<'a> TypeContext<'a> {
     }
 
     pub(super) fn type_id_for_path_with_args(&mut self, path: &Spanned<HirPath>) -> Option<TypeId> {
-        if let Some(last_segment) = path.node.segments.last() {
-            if !last_segment.node.type_args.is_empty() {
+        if let Some(last_segment) = path.node.segments.last()
+            && !last_segment.node.type_args.is_empty() {
                 let resolved = self.resolution.tables.resolved_types.get(&path.span);
                 let base = match resolved {
                     Some(ResolvedType::Item(item_id)) => *item_id,
@@ -28,8 +28,8 @@ impl<'a> TypeContext<'a> {
                         return None;
                     }
                 };
-                if let Some(expected) = self.generic_items.get(&base) {
-                    if expected.len() != last_segment.node.type_args.len() {
+                if let Some(expected) = self.generic_items.get(&base)
+                    && expected.len() != last_segment.node.type_args.len() {
                         self.errors.push(TypeError::GenericArgumentMismatch {
                             span: path.span,
                             expected: expected.len(),
@@ -37,7 +37,6 @@ impl<'a> TypeContext<'a> {
                         });
                         return None;
                     }
-                }
                 let mut args = Vec::with_capacity(last_segment.node.type_args.len());
                 for arg in &last_segment.node.type_args {
                     let type_id = self.type_id_for_type(arg)?;
@@ -45,7 +44,6 @@ impl<'a> TypeContext<'a> {
                 }
                 return Some(self.type_table.intern(TypeInfo::Applied { base, args }));
             }
-        }
         self.type_id_for_type_path(path.span)
     }
 
@@ -55,12 +53,11 @@ impl<'a> TypeContext<'a> {
     ) -> Option<TypeId> {
         match self.resolution.tables.resolved_types.get(&span) {
             Some(ResolvedType::Item(item)) => {
-                if let Some(expected) = self.generic_items.get(item) {
-                    if !expected.is_empty() {
+                if let Some(expected) = self.generic_items.get(item)
+                    && !expected.is_empty() {
                         self.errors.push(TypeError::MissingTypeArguments { span });
                         return None;
                     }
-                }
                 self.named_types.get(item).copied()
             }
             Some(ResolvedType::Generic(name)) => self.generic_params.get(name).copied(),

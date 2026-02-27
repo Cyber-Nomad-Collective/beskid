@@ -87,11 +87,10 @@ impl ModuleGraph {
             scope: HashMap::new(),
         });
         self.path_map.insert(path, id);
-        if let Some(parent) = parent {
-            if let Some(parent_module) = self.modules.get_mut(parent.0) {
+        if let Some(parent) = parent
+            && let Some(parent_module) = self.modules.get_mut(parent.0) {
                 parent_module.children.push(id);
             }
-        }
         id
     }
 }

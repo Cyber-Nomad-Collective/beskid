@@ -17,6 +17,13 @@ pub enum BuildOutputKind {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ProjectTargetKind {
+    App,
+    Lib,
+    Test,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum BuildProfile {
     Debug,
     Release,
@@ -83,6 +90,26 @@ pub fn emit_object_only(req: AotBuildRequest) -> AotResult<AotBuildResult> {
     build(req)
 }
 
+pub fn default_output_kind(target_kind: Option<ProjectTargetKind>) -> BuildOutputKind {
+    match target_kind {
+        Some(ProjectTargetKind::Lib) => BuildOutputKind::SharedLib,
+        Some(ProjectTargetKind::App) | Some(ProjectTargetKind::Test) | None => BuildOutputKind::Exe,
+    }
+}
+
+pub fn resolve_entrypoint(entrypoint: Option<String>) -> AotResult<String> {
+    if let Some(entrypoint) = entrypoint {
+        if entrypoint.trim().is_empty() {
+            return Err(AotError::InvalidRequest {
+                message: "entrypoint must not be empty".to_owned(),
+            });
+        }
+        return Ok(entrypoint);
+    }
+
+    Ok("main".to_owned())
+}
+
 pub fn build(req: AotBuildRequest) -> AotResult<AotBuildResult> {
     validate_request(&req)?;
 
@@ -97,7 +124,9 @@ pub fn build(req: AotBuildRequest) -> AotResult<AotBuildResult> {
         });
     }
 
-    ensure_entrypoint_exported(&req, &object_stage.exported_symbols)?;
+    if requires_entrypoint(req.output_kind) {
+        ensure_entrypoint_exported(&req, &object_stage.exported_symbols)?;
+    }
     let runtime = prepare_runtime_stage(&req)?;
     let link_result = link_stage(&req, &object_stage, runtime.staticlib_path)?;
 
@@ -168,17 +197,25 @@ fn link_stage(
 }
 
 fn validate_request(req: &AotBuildRequest) -> AotResult<()> {
-    if req.artifact.functions.is_empty() {
+    if req.artifact.functions.is_empty() && requires_lowered_functions(req.output_kind) {
         return Err(AotError::InvalidRequest {
-            message: "codegen artifact has no lowered functions".to_owned(),
+            message: "codegen artifact has no lowered functions for executable build".to_owned(),
         });
     }
-    if req.entrypoint.trim().is_empty() {
+    if requires_entrypoint(req.output_kind) && req.entrypoint.trim().is_empty() {
         return Err(AotError::InvalidRequest {
             message: "entrypoint must not be empty".to_owned(),
         });
     }
     Ok(())
+}
+
+fn requires_lowered_functions(output_kind: BuildOutputKind) -> bool {
+    output_kind == BuildOutputKind::Exe
+}
+
+fn requires_entrypoint(output_kind: BuildOutputKind) -> bool {
+    output_kind == BuildOutputKind::Exe
 }
 
 fn apply_export_policy(symbols: Vec<String>, policy: &ExportPolicy) -> Vec<String> {
@@ -192,17 +229,5 @@ fn apply_export_policy(symbols: Vec<String>, policy: &ExportPolicy) -> Vec<Strin
             .into_iter()
             .filter(|name| expected.iter().any(|wanted| wanted == name))
             .collect(),
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn public_only_excludes_internal_symbols() {
-        let symbols = vec!["main".to_owned(), "__beskid_type_desc_0".to_owned()];
-        let filtered = apply_export_policy(symbols, &ExportPolicy::PublicOnly);
-        assert_eq!(filtered, vec!["main".to_owned()]);
     }
 }

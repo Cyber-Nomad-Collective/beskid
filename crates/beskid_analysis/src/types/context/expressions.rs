@@ -68,23 +68,21 @@ impl<'a> TypeContext<'a> {
         let signature = match &call.node.callee.node {
             HirExpressionNode::PathExpression(path_expr) => {
                 let span = path_expr.node.path.span;
-                if let Some(last_segment) = path_expr.node.path.node.segments.last() {
-                    if !last_segment.node.type_args.is_empty() {
+                if let Some(last_segment) = path_expr.node.path.node.segments.last()
+                    && !last_segment.node.type_args.is_empty() {
                         let mut args = Vec::with_capacity(last_segment.node.type_args.len());
                         for arg in &last_segment.node.type_args {
                             args.push(self.type_id_for_type(arg)?);
                         }
                         generic_args = Some(args);
                     }
-                }
                 match self.resolution.tables.resolved_values.get(&span) {
                     Some(ResolvedValue::Item(item_id)) => {
                         callee_item_id = Some(*item_id);
-                        if let Some(index) = self.resolution.builtin_items.get(item_id) {
-                            if let Some(spec) = builtin_specs().get(*index) {
+                        if let Some(index) = self.resolution.builtin_items.get(item_id)
+                            && let Some(spec) = builtin_specs().get(*index) {
                                 builtin_param_kinds = Some(spec.params.to_vec());
                             }
-                        }
                         if let Some(expected) = self.generic_items.get(item_id) {
                             generic_expected = Some(expected.len());
                         }
@@ -122,8 +120,8 @@ impl<'a> TypeContext<'a> {
                     }
                 }
             }
-        } else if let Some(args) = &generic_args {
-            if !args.is_empty() {
+        } else if let Some(args) = &generic_args
+            && !args.is_empty() {
                 self.errors.push(TypeError::GenericArgumentMismatch {
                     span: call.span,
                     expected: 0,
@@ -131,7 +129,6 @@ impl<'a> TypeContext<'a> {
                 });
                 return Some(signature.return_type);
             }
-        }
 
         let substitution = if let (Some(args), Some(expected)) = (&generic_args, generic_expected) {
             if expected == args.len() {
@@ -147,13 +144,12 @@ impl<'a> TypeContext<'a> {
             (callee_item_id, generic_expected, substitution.is_empty())
         {
             let mut mapping = std::collections::HashMap::new();
-            if expected == substitution.len() {
-                if let Some(names) = self.generic_items.get(&item_id) {
+            if expected == substitution.len()
+                && let Some(names) = self.generic_items.get(&item_id) {
                     for (name, arg) in names.iter().zip(substitution.iter()) {
                         mapping.insert(name.clone(), *arg);
                     }
                 }
-            }
             mapping
         } else {
             std::collections::HashMap::new()
@@ -219,14 +215,13 @@ impl<'a> TypeContext<'a> {
         literal: &Spanned<HirStructLiteralExpression>,
     ) -> Option<TypeId> {
         let mut type_id = self.type_id_for_path_with_args(&literal.node.path);
-        if type_id.is_none() {
-            if let Some(segment) = literal.node.path.node.segments.last() {
+        if type_id.is_none()
+            && let Some(segment) = literal.node.path.node.segments.last() {
                 let fallback = self
                     .item_id_for_name(&segment.node.name.node.name, ItemKind::Type)
                     .and_then(|item_id| self.named_types.get(&item_id).copied());
                 type_id = fallback;
             }
-        }
         let type_id = type_id?;
         let Some(item_id) = self.named_item_id(type_id) else {
             self.errors
@@ -444,8 +439,8 @@ impl<'a> TypeContext<'a> {
                             actual: enum_type,
                         });
                     }
-                    if let Some(item_id) = self.named_item_id(enum_type) {
-                        if let Some(variants) = self.enum_variants.get(&item_id) {
+                    if let Some(item_id) = self.named_item_id(enum_type)
+                        && let Some(variants) = self.enum_variants.get(&item_id) {
                             let variant_name =
                                 enum_pattern.node.path.node.variant.node.name.as_str();
                             if let Some(fields) = variants.get(variant_name).cloned() {
@@ -477,7 +472,6 @@ impl<'a> TypeContext<'a> {
                                 });
                             }
                         }
-                    }
                 }
             }
             HirPattern::Identifier(_) | HirPattern::Wildcard | HirPattern::Literal(_) => {

@@ -14,3 +14,4 @@ beskid_analysis = { path = "../beskid_analysis" }
 beskid_abi = { path = "../beskid_abi" }
 beskid_codegen = { path = "../beskid_codegen" }
 beskid_runtime = { path = "../beskid_runtime" }
+anyhow = "1"

@@ -310,9 +310,8 @@ impl SemanticPipelineRule {
             HirExpressionNode::CallExpression(call_expression) => {
                 if let HirExpressionNode::PathExpression(path_expression) =
                     &call_expression.node.callee.node
-                {
-                    if path_expression.node.path.node.segments.len() == 1 {
-                        if let Some(name) = path_expression.node.path.node.segments.first() {
+                    && path_expression.node.path.node.segments.len() == 1
+                        && let Some(name) = path_expression.node.path.node.segments.first() {
                             let name_value = &name.node.name.node.name;
                             if let Some(enum_name) = variant_to_enum.get(name_value) {
                                 ctx.emit_simple(
@@ -328,8 +327,6 @@ impl SemanticPipelineRule {
                                 );
                             }
                         }
-                    }
-                }
                 self.check_expression(
                     ctx,
                     &call_expression.node.callee,
@@ -478,8 +475,8 @@ impl SemanticPipelineRule {
         let mut covered_variants = HashSet::new();
 
         for arm in &match_expression.node.arms {
-            if let Some(guard) = &arm.node.guard {
-                if !self.is_boolean_like_guard(guard) {
+            if let Some(guard) = &arm.node.guard
+                && !self.is_boolean_like_guard(guard) {
                     ctx.emit_simple(
                         guard.span,
                         "E1308",
@@ -489,7 +486,6 @@ impl SemanticPipelineRule {
                         Severity::Error,
                     );
                 }
-            }
 
             if let Some(kind) = self.literal_kind(&arm.node.value) {
                 if let Some(previous_kind) = arm_kind {

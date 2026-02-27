@@ -6,6 +6,7 @@ pub mod parsing;
 pub mod projects;
 pub mod query;
 pub mod resolve;
+pub mod services;
 pub mod syntax;
 pub mod types;
 

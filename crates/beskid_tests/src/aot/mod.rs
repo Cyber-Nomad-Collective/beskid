@@ -1,6 +1,7 @@
 use std::path::PathBuf;
-use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
+
+pub(super) use std::process::Command;
 
 use beskid_analysis::analysis::diagnostics::Severity;
 use beskid_analysis::hir::{
@@ -12,12 +13,18 @@ use beskid_analysis::resolve::Resolver;
 use beskid_analysis::syntax::{Program, Spanned};
 use beskid_analysis::types::type_program;
 use beskid_analysis::{AnalysisOptions, builtin_rules, run_rules};
-use beskid_abi::{SYM_ABI_VERSION, SYM_INTEROP_DISPATCH_UNIT};
-use beskid_aot::{
-    AotBuildRequest, BuildOutputKind, BuildProfile, ExportPolicy, LinkMode, RuntimeStrategy, build,
+pub(super) use beskid_abi::{SYM_ABI_VERSION, SYM_INTEROP_DISPATCH_UNIT};
+pub(super) use beskid_aot::{
+    AotBuildRequest, AotError, BuildOutputKind, BuildProfile, ExportPolicy, LinkMode,
+    ProjectTargetKind, RuntimeStrategy, build, default_output_kind, resolve_entrypoint,
 };
 use beskid_codegen::lower_program;
 use pest::Parser;
+
+mod defaults;
+mod entrypoint;
+mod object_build;
+mod runtime_symbols;
 
 fn temp_case_dir(name: &str) -> PathBuf {
     let nanos = SystemTime::now()
@@ -66,79 +73,4 @@ fn lower_sample_artifact() -> beskid_codegen::CodegenArtifact {
         .expect("resolve program");
     let typed = type_program(&hir, &resolution).expect("type program");
     lower_program(&hir, &resolution, &typed).expect("lower program")
-}
-
-#[test]
-fn object_only_build_emits_object_file() {
-    let artifact = lower_sample_artifact();
-    let dir = temp_case_dir("object_only");
-    let output = dir.join("sample.o");
-
-    let result = build(AotBuildRequest {
-        artifact,
-        output_kind: BuildOutputKind::ObjectOnly,
-        output_path: output.clone(),
-        object_path: None,
-        target_triple: None,
-        profile: BuildProfile::Debug,
-        entrypoint: "main".to_owned(),
-        export_policy: ExportPolicy::PublicOnly,
-        link_mode: LinkMode::Auto,
-        runtime: RuntimeStrategy::BuildOnTheFly,
-        verbose_link: false,
-    })
-    .expect("aot object build");
-
-    assert!(result.object_path.exists(), "expected object file to exist");
-    assert!(
-        result.final_path.is_none(),
-        "object-only build must not link"
-    );
-
-    let _ = std::fs::remove_dir_all(dir);
-}
-
-#[test]
-fn static_build_contains_required_runtime_symbols() {
-    let artifact = lower_sample_artifact();
-    let dir = temp_case_dir("static_with_runtime_symbols");
-    let output = dir.join("libsample.a");
-
-    let result = build(AotBuildRequest {
-        artifact,
-        output_kind: BuildOutputKind::StaticLib,
-        output_path: output,
-        object_path: None,
-        target_triple: None,
-        profile: BuildProfile::Debug,
-        entrypoint: "main".to_owned(),
-        export_policy: ExportPolicy::PublicOnly,
-        link_mode: LinkMode::Auto,
-        runtime: RuntimeStrategy::BuildOnTheFly,
-        verbose_link: false,
-    })
-    .expect("aot static build");
-
-    let final_path = result
-        .final_path
-        .expect("static build should emit final archive");
-    assert!(final_path.exists(), "expected final static archive to exist");
-
-    let output = Command::new("nm")
-        .arg("-g")
-        .arg(&final_path)
-        .output()
-        .expect("nm should inspect linked archive");
-    assert!(output.status.success(), "expected nm to succeed");
-    let symbols = String::from_utf8_lossy(&output.stdout);
-    assert!(
-        symbols.contains(SYM_ABI_VERSION),
-        "expected final static artifact to expose ABI version symbol"
-    );
-    assert!(
-        symbols.contains(SYM_INTEROP_DISPATCH_UNIT),
-        "expected final static artifact to expose interop dispatch symbol"
-    );
-
-    let _ = std::fs::remove_dir_all(dir);
 }

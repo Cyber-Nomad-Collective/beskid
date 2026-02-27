@@ -111,12 +111,11 @@ impl SemanticPipelineRule {
             HirExpressionNode::AssignExpression(assign_expression) => {
                 if let HirExpressionNode::PathExpression(path_expr) =
                     &assign_expression.node.target.node
-                {
-                    if path_expr.node.path.node.segments.len() == 1 {
-                        if let Some(name) = path_expr.node.path.node.segments.first() {
+                    && path_expr.node.path.node.segments.len() == 1
+                        && let Some(name) = path_expr.node.path.node.segments.first() {
                             let name_value = &name.node.name.node.name;
-                            if let Some(is_mutable) = bindings.get(name_value) {
-                                if !is_mutable {
+                            if let Some(is_mutable) = bindings.get(name_value)
+                                && !is_mutable {
                                     ctx.emit_simple(
                                         assign_expression.node.target.span,
                                         "E1214",
@@ -132,10 +131,7 @@ impl SemanticPipelineRule {
                                         Severity::Error,
                                     );
                                 }
-                            }
                         }
-                    }
-                }
                 self.walk_expr_for_mutability(ctx, &assign_expression.node.target, bindings);
                 self.walk_expr_for_mutability(ctx, &assign_expression.node.value, bindings);
             }

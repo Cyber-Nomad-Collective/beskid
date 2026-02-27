@@ -1,8 +1,7 @@
 use anyhow::Result;
+use beskid_analysis::services;
 use clap::Args;
 use std::path::PathBuf;
-
-use crate::commands::project_input::resolve_project;
 
 #[derive(Args, Debug)]
 pub struct FetchArgs {
@@ -24,7 +23,7 @@ pub struct FetchArgs {
 }
 
 pub fn execute(args: FetchArgs) -> Result<()> {
-    let _ = resolve_project(
+    let _ = services::resolve_project(
         None,
         args.project.as_ref(),
         args.target.as_deref(),

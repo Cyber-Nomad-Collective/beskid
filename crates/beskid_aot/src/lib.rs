@@ -7,6 +7,7 @@ pub mod target;
 
 pub use api::{
     AotBuildRequest, AotBuildResult, BuildOutputKind, BuildProfile, ExportPolicy, LinkMode,
-    RuntimeStrategy, build, emit_object_only,
+    ProjectTargetKind, RuntimeStrategy, build, default_output_kind, emit_object_only,
+    resolve_entrypoint,
 };
 pub use error::{AotError, AotResult};

@@ -5,7 +5,6 @@ pub mod fetch;
 pub mod interop_command;
 pub mod lock;
 pub mod parse;
-pub mod project_input;
 pub mod run;
 pub mod tree;
 pub mod update;

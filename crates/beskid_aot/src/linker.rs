@@ -17,6 +17,21 @@ pub struct LinkRequest {
     pub verbose: bool,
 }
 
+fn detect_c_compiler() -> String {
+    if let Ok(value) = std::env::var("CC") {
+        let trimmed = value.trim();
+        if !trimmed.is_empty() {
+            return trimmed.to_owned();
+        }
+    }
+
+    if cfg!(target_os = "windows") {
+        "cl".to_owned()
+    } else {
+        "cc".to_owned()
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct LinkResult {
     pub output_path: PathBuf,
@@ -58,13 +73,13 @@ pub fn link(req: &LinkRequest) -> AotResult<LinkResult> {
         });
     }
 
-    let tool = cc::Build::new().get_compiler();
+    let compiler = detect_c_compiler();
     let target = req
         .target_triple
         .as_deref()
         .unwrap_or(std::env::consts::OS)
         .to_ascii_lowercase();
-    let mut cmd = Command::new(tool.path());
+    let mut cmd = Command::new(&compiler);
     cmd.arg(&req.object_path)
         .arg(&req.runtime_staticlib)
         .arg("-o")
@@ -90,7 +105,7 @@ pub fn link(req: &LinkRequest) -> AotResult<LinkResult> {
     if !output.status.success() {
         let mut command_line = format!(
             "{} {} {} -o {}",
-            tool.path().display(),
+            compiler,
             req.object_path.display(),
             req.runtime_staticlib.display(),
             req.output_path.display()
@@ -108,7 +123,7 @@ pub fn link(req: &LinkRequest) -> AotResult<LinkResult> {
         output_path: req.output_path.clone(),
         command_line: format!(
             "{} {} {} -o {}",
-            tool.path().display(),
+            compiler,
             req.object_path.display(),
             req.runtime_staticlib.display(),
             req.output_path.display()

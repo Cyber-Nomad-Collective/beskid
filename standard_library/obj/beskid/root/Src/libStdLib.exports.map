@@ -1,0 +1,7 @@
+{
+  global:
+    print;
+    println;
+    len;
+  local: *;
+};

@@ -165,11 +165,10 @@ impl<'a> TypeContext<'a> {
     ) {
         let type_id = self.type_expression(expression);
         let bool_id = self.primitive_type_id(HirPrimitiveType::Bool);
-        if let (Some(type_id), Some(bool_id)) = (type_id, bool_id) {
-            if type_id != bool_id {
+        if let (Some(type_id), Some(bool_id)) = (type_id, bool_id)
+            && type_id != bool_id {
                 self.errors.push(TypeError::NonBoolCondition { span });
             }
-        }
     }
 
     pub(super) fn primitive_type_id(&self, primitive: HirPrimitiveType) -> Option<TypeId> {

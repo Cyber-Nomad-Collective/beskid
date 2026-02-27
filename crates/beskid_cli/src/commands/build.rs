@@ -1,26 +1,14 @@
 use std::path::PathBuf;
 
 use anyhow::Result;
-use beskid_analysis::analysis::diagnostics::Severity;
-use beskid_analysis::hir::{
-    AstProgram, HirProgram, lower_program as lower_hir_program, normalize_program,
-};
-use beskid_analysis::parser::{BeskidParser, Rule};
-use beskid_analysis::parsing::parsable::Parsable;
-use beskid_analysis::resolve::Resolver;
-use beskid_analysis::syntax::{Program, Spanned};
-use beskid_analysis::types::type_program;
-use beskid_analysis::{AnalysisOptions, builtin_rules, run_rules};
+use beskid_analysis::projects::TargetKind;
+use beskid_analysis::services;
 use beskid_aot::{
-    AotBuildRequest, BuildOutputKind, BuildProfile, ExportPolicy, LinkMode, RuntimeStrategy, build,
+    AotBuildRequest, BuildOutputKind, BuildProfile, ExportPolicy, LinkMode, ProjectTargetKind,
+    RuntimeStrategy, build, default_output_kind, resolve_entrypoint,
 };
-use beskid_codegen::{codegen_errors_to_diagnostics, lower_program};
+use beskid_codegen::lower_source;
 use clap::{Args, ValueEnum};
-use miette::Report;
-use pest::Parser;
-
-use crate::commands::project_input::resolve_input;
-use crate::errors::{print_pretty_parse_error, print_pretty_pest_error};
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum BuildKind {
@@ -52,12 +40,12 @@ pub struct BuildArgs {
     pub locked: bool,
 
     /// Entrypoint function name
-    #[arg(long, default_value = "main")]
-    pub entrypoint: String,
+    #[arg(long)]
+    pub entrypoint: Option<String>,
 
-    /// Build output kind
-    #[arg(long, value_enum, default_value_t = BuildKind::Exe)]
-    pub kind: BuildKind,
+    /// Build output kind. Defaults to Exe for App/Test targets, Shared for Lib targets.
+    #[arg(long, value_enum)]
+    pub kind: Option<BuildKind>,
 
     /// Build profile
     #[arg(long)]
@@ -101,7 +89,7 @@ pub struct BuildArgs {
 }
 
 pub fn execute(args: BuildArgs) -> Result<()> {
-    let resolved = resolve_input(
+    let resolved = services::resolve_input(
         args.input.as_ref(),
         args.project.as_ref(),
         args.target.as_deref(),
@@ -110,88 +98,30 @@ pub fn execute(args: BuildArgs) -> Result<()> {
     )?;
     let source = resolved.source;
     let input_path = resolved.source_path;
+    let project_target_kind = resolved
+        .compile_plan
+        .as_ref()
+        .map(|plan| plan.target.kind);
+    let default_output_stem = resolved
+        .compile_plan
+        .as_ref()
+        .map(|plan| plan.target.name.clone());
 
-    let mut pairs = match BeskidParser::parse(Rule::Program, &source) {
-        Ok(pairs) => pairs,
-        Err(err) => {
-            print_pretty_pest_error(&input_path.display().to_string(), &source, &err);
-            std::process::exit(1);
-        }
-    };
+    let artifact = lower_source(&input_path, &source, true)?.artifact;
 
-    let pair = match pairs.next() {
-        Some(pair) => pair,
-        None => return Err(anyhow::anyhow!("No program found")),
-    };
-
-    let program = match Program::parse(pair) {
-        Ok(program) => program,
-        Err(err) => {
-            print_pretty_parse_error(&input_path.display().to_string(), &source, &err);
-            std::process::exit(1);
-        }
-    };
-
-    let diagnostics = run_rules(
-        &program.node,
-        input_path.display().to_string(),
-        &source,
-        &builtin_rules(),
-        AnalysisOptions::default(),
-    )
-    .diagnostics;
-
-    let has_errors = diagnostics
-        .iter()
-        .any(|diagnostic| matches!(diagnostic.severity, Severity::Error));
-    if !diagnostics.is_empty() {
-        for diagnostic in diagnostics {
-            eprintln!("{:?}", Report::new(diagnostic));
-        }
-    }
-    if has_errors {
-        std::process::exit(1);
-    }
-
-    let ast: Spanned<AstProgram> = program.into();
-    let mut hir: Spanned<HirProgram> = lower_hir_program(&ast);
-    if let Err(errors) = normalize_program(&mut hir) {
-        return Err(anyhow::anyhow!("Normalization failed: {errors:?}"));
-    }
-
-    let resolution = Resolver::new()
-        .resolve_program(&hir)
-        .map_err(|errors| anyhow::anyhow!("Resolution failed: {errors:?}"))?;
-    let typed = type_program(&hir, &resolution)
-        .map_err(|errors| anyhow::anyhow!("Type checking failed: {errors:?}"))?;
-
-    let artifact = match lower_program(&hir, &resolution, &typed) {
-        Ok(artifact) => artifact,
-        Err(errors) => {
-            let diagnostics =
-                codegen_errors_to_diagnostics(&input_path.display().to_string(), &source, &errors);
-            for diagnostic in diagnostics {
-                eprintln!("{:?}", Report::new(diagnostic));
-            }
-            std::process::exit(1);
-        }
-    };
-
-    let output_kind = match args.kind {
-        BuildKind::Exe => BuildOutputKind::Exe,
-        BuildKind::Shared => BuildOutputKind::SharedLib,
-        BuildKind::Static => BuildOutputKind::StaticLib,
-        BuildKind::Object => BuildOutputKind::ObjectOnly,
-    };
+    let output_kind = resolve_output_kind(args.kind, project_target_kind);
+    let entrypoint = resolve_entrypoint(args.entrypoint)?;
 
     let target = beskid_aot::target::detect_target(args.target_triple.as_deref())?;
     let output = if let Some(path) = args.output {
         path
     } else {
-        let stem = input_path
-            .file_stem()
-            .and_then(|part| part.to_str())
-            .unwrap_or("aot_out");
+        let stem = default_output_stem.as_deref().unwrap_or_else(|| {
+            input_path
+                .file_stem()
+                .and_then(|part| part.to_str())
+                .unwrap_or("aot_out")
+        });
         let file_name = beskid_aot::target::output_filename(stem, output_kind, &target);
         let parent = input_path
             .parent()
@@ -237,7 +167,7 @@ pub fn execute(args: BuildArgs) -> Result<()> {
         } else {
             BuildProfile::Debug
         },
-        entrypoint: args.entrypoint,
+        entrypoint,
         export_policy,
         link_mode,
         runtime,
@@ -253,4 +183,28 @@ pub fn execute(args: BuildArgs) -> Result<()> {
     }
 
     Ok(())
+}
+
+fn resolve_output_kind(kind: Option<BuildKind>, target_kind: Option<TargetKind>) -> BuildOutputKind {
+    match kind {
+        Some(kind) => map_build_kind(kind),
+        None => default_output_kind(target_kind.map(map_target_kind)),
+    }
+}
+
+fn map_target_kind(target_kind: TargetKind) -> ProjectTargetKind {
+    match target_kind {
+        TargetKind::App => ProjectTargetKind::App,
+        TargetKind::Lib => ProjectTargetKind::Lib,
+        TargetKind::Test => ProjectTargetKind::Test,
+    }
+}
+
+fn map_build_kind(kind: BuildKind) -> BuildOutputKind {
+    match kind {
+        BuildKind::Exe => BuildOutputKind::Exe,
+        BuildKind::Shared => BuildOutputKind::SharedLib,
+        BuildKind::Static => BuildOutputKind::StaticLib,
+        BuildKind::Object => BuildOutputKind::ObjectOnly,
+    }
 }

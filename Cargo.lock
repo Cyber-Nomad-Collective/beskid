@@ -148,6 +148,7 @@ version = "0.1.0"
 name = "beskid_analysis"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "beskid_ast_derive",
  "daggy",
  "from-pest",
@@ -184,9 +185,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "beskid_cli"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "argfile",
+ "beskid_analysis",
+ "beskid_aot",
+ "beskid_codegen",
+ "beskid_engine",
+ "beskid_interop_tooling",
+ "clap",
+ "env_logger",
+ "log",
+ "miette",
+ "pest",
+ "serde",
+ "serde_json",
+ "toml 0.8.23",
+]
+
+[[package]]
 name = "beskid_codegen"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "beskid_analysis",
  "beskid_runtime",
  "cranelift-codegen",
@@ -199,6 +222,7 @@ dependencies = [
 name = "beskid_engine"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "beskid_abi",
  "beskid_analysis",
  "beskid_codegen",
@@ -1150,27 +1174,6 @@ dependencies = [
  "redox_syscall",
  "smallvec",
  "windows-link",
-]
-
-[[package]]
-name = "pekan_cli"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "argfile",
- "beskid_analysis",
- "beskid_aot",
- "beskid_codegen",
- "beskid_engine",
- "beskid_interop_tooling",
- "clap",
- "env_logger",
- "log",
- "miette",
- "pest",
- "serde",
- "serde_json",
- "toml 0.8.23",
 ]
 
 [[package]]

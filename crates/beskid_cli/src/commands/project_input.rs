@@ -27,7 +27,9 @@ pub fn resolve_project(
     frozen: bool,
     locked: bool,
 ) -> Result<ResolvedProject> {
-    let explicit_manifest = project.map(|path| resolve_project_manifest_path(path));
+    let explicit_manifest = project
+        .map(|path| resolve_project_manifest_path(path))
+        .or_else(|| input.and_then(|path| infer_manifest_from_input(path)));
     let discovered_manifest = if explicit_manifest.is_none() {
         discover_from_input_or_cwd(input)
     } else {
@@ -65,14 +67,22 @@ pub fn resolve_input(
     let resolved_project = resolve_project(input, project, target, frozen, locked)?;
     let compile_plan = resolved_project.compile_plan;
     let prepared_workspace = resolved_project.prepared_workspace;
+    let input_is_manifest = input
+        .map(|path| infer_manifest_from_input(path).is_some())
+        .unwrap_or(false);
 
-    let source_path = match (input, compile_plan.as_ref(), prepared_workspace.as_ref()) {
-        (Some(input), _, _) => input.clone(),
-        (None, Some(plan), Some(workspace)) => {
+    let source_path = match (
+        input,
+        input_is_manifest,
+        compile_plan.as_ref(),
+        prepared_workspace.as_ref(),
+    ) {
+        (Some(input), false, _, _) => input.clone(),
+        (_, _, Some(plan), Some(workspace)) => {
             workspace.materialized_source_root.join(&plan.target.entry)
         }
-        (None, Some(plan), None) => plan.source_root.join(&plan.target.entry),
-        (None, None, _) => {
+        (_, _, Some(plan), None) => plan.source_root.join(&plan.target.entry),
+        (_, _, None, _) => {
             return Err(anyhow::anyhow!(
                 "no input file provided and no `{}` discovered",
                 PROJECT_FILE_NAME
@@ -106,4 +116,20 @@ fn resolve_project_manifest_path(project: &Path) -> PathBuf {
     } else {
         project.to_path_buf()
     }
+}
+
+fn infer_manifest_from_input(input: &Path) -> Option<PathBuf> {
+    if input
+        .file_name()
+        .and_then(|name| name.to_str())
+        .is_some_and(|name| name == PROJECT_FILE_NAME)
+    {
+        return Some(input.to_path_buf());
+    }
+
+    if input.extension().and_then(|ext| ext.to_str()) == Some("proj") {
+        return Some(input.to_path_buf());
+    }
+
+    None
 }

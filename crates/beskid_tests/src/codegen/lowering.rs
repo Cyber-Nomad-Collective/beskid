@@ -69,3 +69,14 @@ fn codegen_lowers_while_with_break_and_continue() {
         "expected jumps for loop control in CLIF: {clif}"
     );
 }
+
+#[test]
+fn codegen_lowers_functions_inside_inline_modules() {
+    let source = "pub mod std { pub mod math { pub i64 one() { return 1; } } }";
+    let (hir, resolution, typed) = lower_resolve_type(source);
+    let artifact =
+        lower_program(&hir, &resolution, &typed).expect("expected module function lowering");
+
+    assert_eq!(artifact.functions.len(), 1);
+    assert_eq!(artifact.functions[0].name, "one");
+}
