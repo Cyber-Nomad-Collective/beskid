@@ -1,6 +1,9 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::{RuleContext, resolve};
+use crate::analysis::rules::staged::traversal::{
+    HirChildNode, visit_expression_children, visit_statement_children,
+};
 use crate::hir::{
     HirBlock, HirExpressionNode, HirItem, HirLegalityError, HirPath, HirProgram, HirStatementNode,
     validate_hir_program,
@@ -219,19 +222,6 @@ impl SemanticPipelineRule {
                         self.check_expr_use_before_decl(ctx, value, declared_stack, &pending);
                     }
                 }
-                HirStatementNode::WhileStatement(while_statement) => {
-                    self.check_expr_use_before_decl(
-                        ctx,
-                        &while_statement.node.condition,
-                        declared_stack,
-                        &pending,
-                    );
-                    self.check_block_use_before_decl(
-                        ctx,
-                        &while_statement.node.body,
-                        declared_stack,
-                    );
-                }
                 HirStatementNode::ForStatement(for_statement) => {
                     self.check_expr_use_before_decl(
                         ctx,
@@ -249,31 +239,17 @@ impl SemanticPipelineRule {
                     self.check_block_use_before_decl(ctx, &for_statement.node.body, declared_stack);
                     declared_stack.pop();
                 }
-                HirStatementNode::IfStatement(if_statement) => {
-                    self.check_expr_use_before_decl(
-                        ctx,
-                        &if_statement.node.condition,
-                        declared_stack,
-                        &pending,
-                    );
-                    self.check_block_use_before_decl(
-                        ctx,
-                        &if_statement.node.then_block,
-                        declared_stack,
-                    );
-                    if let Some(else_block) = &if_statement.node.else_block {
-                        self.check_block_use_before_decl(ctx, else_block, declared_stack);
-                    }
+                _ => {
+                    let mut on_child = |child: HirChildNode<'_>| match child {
+                        HirChildNode::Block(child_block) => {
+                            self.check_block_use_before_decl(ctx, child_block, declared_stack);
+                        }
+                        HirChildNode::Expr(child_expr) => {
+                            self.check_expr_use_before_decl(ctx, child_expr, declared_stack, &pending);
+                        }
+                    };
+                    visit_statement_children(statement, &mut on_child);
                 }
-                HirStatementNode::ExpressionStatement(expression_statement) => {
-                    self.check_expr_use_before_decl(
-                        ctx,
-                        &expression_statement.node.expression,
-                        declared_stack,
-                        &pending,
-                    );
-                }
-                HirStatementNode::BreakStatement(_) | HirStatementNode::ContinueStatement(_) => {}
             }
         }
 
@@ -311,107 +287,19 @@ impl SemanticPipelineRule {
                     Severity::Error,
                 );
             }
-            HirExpressionNode::AssignExpression(assign_expression) => {
-                self.check_expr_use_before_decl(
-                    ctx,
-                    &assign_expression.node.target,
-                    declared_stack,
-                    pending,
-                );
-                self.check_expr_use_before_decl(
-                    ctx,
-                    &assign_expression.node.value,
-                    declared_stack,
-                    pending,
-                );
-            }
-            HirExpressionNode::BinaryExpression(binary_expression) => {
-                self.check_expr_use_before_decl(
-                    ctx,
-                    &binary_expression.node.left,
-                    declared_stack,
-                    pending,
-                );
-                self.check_expr_use_before_decl(
-                    ctx,
-                    &binary_expression.node.right,
-                    declared_stack,
-                    pending,
-                );
-            }
-            HirExpressionNode::UnaryExpression(unary_expression) => {
-                self.check_expr_use_before_decl(
-                    ctx,
-                    &unary_expression.node.expr,
-                    declared_stack,
-                    pending,
-                );
-            }
-            HirExpressionNode::CallExpression(call_expression) => {
-                self.check_expr_use_before_decl(
-                    ctx,
-                    &call_expression.node.callee,
-                    declared_stack,
-                    pending,
-                );
-                for arg in &call_expression.node.args {
-                    self.check_expr_use_before_decl(ctx, arg, declared_stack, pending);
-                }
-            }
-            HirExpressionNode::MemberExpression(member_expression) => {
-                self.check_expr_use_before_decl(
-                    ctx,
-                    &member_expression.node.target,
-                    declared_stack,
-                    pending,
-                );
-            }
-            HirExpressionNode::StructLiteralExpression(struct_literal) => {
-                for field in &struct_literal.node.fields {
-                    self.check_expr_use_before_decl(
-                        ctx,
-                        &field.node.value,
-                        declared_stack,
-                        pending,
-                    );
-                }
-            }
-            HirExpressionNode::EnumConstructorExpression(constructor_expression) => {
-                for arg in &constructor_expression.node.args {
-                    self.check_expr_use_before_decl(ctx, arg, declared_stack, pending);
-                }
-            }
-            HirExpressionNode::MatchExpression(match_expression) => {
-                self.check_expr_use_before_decl(
-                    ctx,
-                    &match_expression.node.scrutinee,
-                    declared_stack,
-                    pending,
-                );
-                for arm in &match_expression.node.arms {
-                    if let Some(guard) = &arm.node.guard {
-                        self.check_expr_use_before_decl(ctx, guard, declared_stack, pending);
-                    }
-                    self.check_expr_use_before_decl(ctx, &arm.node.value, declared_stack, pending);
-                }
-            }
-            HirExpressionNode::BlockExpression(block_expression) => {
-                self.check_block_use_before_decl(
-                    ctx,
-                    &block_expression.node.block,
-                    &mut declared_stack.to_vec(),
-                );
-            }
-            HirExpressionNode::GroupedExpression(grouped_expression) => {
-                self.check_expr_use_before_decl(
-                    ctx,
-                    &grouped_expression.node.expr,
-                    declared_stack,
-                    pending,
-                );
-            }
             HirExpressionNode::LiteralExpression(_) => {}
+            _ => {}
         }
+
+        let mut on_child = |child: HirChildNode<'_>| match child {
+            HirChildNode::Block(child_block) => {
+                self.check_block_use_before_decl(ctx, child_block, &mut declared_stack.to_vec());
+            }
+            HirChildNode::Expr(child_expr) => {
+                self.check_expr_use_before_decl(ctx, child_expr, declared_stack, pending);
+            }
+        };
+        visit_expression_children(expression, &mut on_child);
     }
 
     fn path_tail_local(&self, path: &Spanned<HirPath>) -> String {
