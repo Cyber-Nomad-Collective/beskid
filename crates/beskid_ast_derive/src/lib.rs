@@ -38,14 +38,14 @@ fn derive_node_impl(
     let kind_ident = parse_kind_attr(&input.attrs).unwrap_or_else(|| name.clone());
 
     let children_body = match &input.data {
-        Data::Struct(ds) => gen_struct_children(
-            ds.fields.iter().collect::<Vec<_>>(),
+        Data::Struct(ds) => {
+            gen_struct_children(ds.fields.iter().collect::<Vec<_>>(), &node_trait, &node_ref)
+        }
+        Data::Enum(en) => gen_enum_children(
+            en.variants.iter().collect::<Vec<_>>(),
             &node_trait,
             &node_ref,
         ),
-        Data::Enum(en) => {
-            gen_enum_children(en.variants.iter().collect::<Vec<_>>(), &node_trait, &node_ref)
-        }
         Data::Union(_) => quote! {},
     };
 

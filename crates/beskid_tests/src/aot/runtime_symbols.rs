@@ -24,7 +24,10 @@ fn static_build_contains_required_runtime_symbols() {
     let final_path = result
         .final_path
         .expect("static build should emit final archive");
-    assert!(final_path.exists(), "expected final static archive to exist");
+    assert!(
+        final_path.exists(),
+        "expected final static archive to exist"
+    );
 
     let output = Command::new("nm")
         .arg("-g")

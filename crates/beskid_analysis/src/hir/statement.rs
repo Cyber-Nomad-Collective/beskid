@@ -1,5 +1,5 @@
-use crate::syntax::Spanned;
 use crate::query::{HirNode, HirNodeKind, HirNodeRef};
+use crate::syntax::Spanned;
 
 use super::block::HirBlock;
 use super::common::HirIdentifier;

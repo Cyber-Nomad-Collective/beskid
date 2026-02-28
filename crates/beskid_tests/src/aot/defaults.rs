@@ -30,8 +30,7 @@ fn default_entrypoint_is_main_when_not_specified() {
 
 #[test]
 fn explicit_entrypoint_must_not_be_blank() {
-    let err = resolve_entrypoint(Some("   ".to_owned()))
-        .expect_err("blank entrypoint should fail");
+    let err = resolve_entrypoint(Some("   ".to_owned())).expect_err("blank entrypoint should fail");
     assert!(matches!(err, AotError::InvalidRequest { .. }));
     assert!(err.to_string().contains("entrypoint must not be empty"));
 }

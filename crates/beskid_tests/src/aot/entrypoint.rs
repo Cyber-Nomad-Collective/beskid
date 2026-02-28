@@ -48,6 +48,9 @@ fn object_only_build_allows_empty_entrypoint() {
     .expect("object-only build should not require entrypoint");
 
     assert!(result.object_path.exists(), "expected object file to exist");
-    assert!(result.final_path.is_none(), "object-only should not produce final output");
+    assert!(
+        result.final_path.is_none(),
+        "object-only should not produce final output"
+    );
     let _ = std::fs::remove_dir_all(dir);
 }

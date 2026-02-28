@@ -1,5 +1,5 @@
-use crate::syntax::Spanned;
 use crate::query::{HirNode, HirNodeKind, HirNodeRef};
+use crate::syntax::Spanned;
 
 use super::block::HirBlock;
 use super::common::{HirEnumPath, HirIdentifier, HirPath};
@@ -93,8 +93,7 @@ pub struct HirBinaryExpression {
     pub right: Box<Spanned<ExpressionNode<HirPhase>>>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[derive(beskid_ast_derive::HirNode)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, beskid_ast_derive::HirNode)]
 #[ast(kind = "BinaryOp")]
 pub enum HirBinaryOp {
     Or,
@@ -120,8 +119,7 @@ pub struct HirUnaryExpression {
     pub expr: Box<Spanned<ExpressionNode<HirPhase>>>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[derive(beskid_ast_derive::HirNode)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, beskid_ast_derive::HirNode)]
 #[ast(kind = "UnaryOp")]
 pub enum HirUnaryOp {
     Neg,

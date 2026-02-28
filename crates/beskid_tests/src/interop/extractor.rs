@@ -31,8 +31,8 @@ fn sys_println(_text: *const BeskidStr) {}
 
 #[test]
 fn generated_runtime_source_contains_dispatch_for_current_spec() {
-    let spec_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../beskid_runtime/interop_spec/std.rs");
+    let spec_path =
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../beskid_runtime/interop_spec/std.rs");
     let mut decls = parse_spec_file(&spec_path).expect("parse runtime interop spec");
     decls.sort();
 

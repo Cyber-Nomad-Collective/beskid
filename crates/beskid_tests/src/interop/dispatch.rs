@@ -1,11 +1,13 @@
+use beskid_abi::BeskidStr;
 use beskid_abi::{
     RUNTIME_EXPORT_SYMBOLS, SYM_INTEROP_DISPATCH_PTR, SYM_INTEROP_DISPATCH_UNIT,
     SYM_INTEROP_DISPATCH_USIZE,
 };
 use beskid_interop_tooling::extractor::parse_spec_file;
 use beskid_interop_tooling::generator::generate_runtime_source;
-use beskid_runtime::interop_generated::{TAG_STRING_LEN, dispatch_ptr, dispatch_unit, dispatch_usize};
-use beskid_abi::BeskidStr;
+use beskid_runtime::interop_generated::{
+    TAG_STRING_LEN, dispatch_ptr, dispatch_unit, dispatch_usize,
+};
 use std::fs;
 use std::path::PathBuf;
 
@@ -42,7 +44,8 @@ fn generated_runtime_source_matches_checked_in_runtime_file() {
     let mut decls = parse_spec_file(&spec_path).expect("parse runtime interop spec");
     decls.sort();
     let expected = generate_runtime_source(&decls);
-    let current = fs::read_to_string(&runtime_generated_path).expect("read runtime generated source");
+    let current =
+        fs::read_to_string(&runtime_generated_path).expect("read runtime generated source");
 
     assert_eq!(
         current, expected,
@@ -75,7 +78,10 @@ fn return_group_routing_uses_usize_dispatch_for_string_len_tag() {
         !unit_result,
         "usize tag must not route through unit dispatch"
     );
-    assert_eq!(ptr_result, None, "usize tag must not route through ptr dispatch");
+    assert_eq!(
+        ptr_result, None,
+        "usize tag must not route through ptr dispatch"
+    );
 }
 
 #[test]

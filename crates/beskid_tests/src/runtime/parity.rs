@@ -91,7 +91,10 @@ fn parity_interop_usize_dispatch_path_is_consistent() {
 fn parity_alloc_path_is_consistent() {
     let source = "i64 main() { return __array_new(8, 3); }";
     let jit_value = jit_run_main_i64(source);
-    assert_ne!(jit_value, 0, "expected JIT alloc path to produce non-null pointer value");
+    assert_ne!(
+        jit_value, 0,
+        "expected JIT alloc path to produce non-null pointer value"
+    );
 
     let dir = temp_case_dir("array_new");
     let object_path = build_aot_object(source, dir.join("parity.o"));
@@ -129,6 +132,9 @@ fn parity_panic_builtin_compiles_for_both_backends() {
     })
     .expect("expected AOT compile to succeed for panic builtin path");
 
-    assert!(result.object_path.exists(), "expected parity AOT object output");
+    assert!(
+        result.object_path.exists(),
+        "expected parity AOT object output"
+    );
     let _ = std::fs::remove_dir_all(dir);
 }

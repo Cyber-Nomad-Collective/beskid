@@ -1,4 +1,6 @@
-use beskid_analysis::hir::{AstProgram, HirContractMethodSignature, HirExpressionNode, HirProgram, lower_program};
+use beskid_analysis::hir::{
+    AstProgram, HirContractMethodSignature, HirExpressionNode, HirProgram, lower_program,
+};
 use beskid_analysis::query::{HirNodeKind, HirQuery};
 use beskid_analysis::syntax::Spanned;
 
@@ -20,8 +22,9 @@ fn hir_query_descendants_counts_nodes() {
 #[test]
 fn hir_query_of_type_finds_contract_signatures() {
     let hir = parse_hir("contract Storage { unit put(key: string); unit get(); }");
-    let signatures: Vec<&HirContractMethodSignature> =
-        HirQuery::from(&hir.node).of::<HirContractMethodSignature>().collect();
+    let signatures: Vec<&HirContractMethodSignature> = HirQuery::from(&hir.node)
+        .of::<HirContractMethodSignature>()
+        .collect();
 
     assert_eq!(signatures.len(), 2);
     assert_eq!(signatures[0].name.node.name, "put");
@@ -32,7 +35,9 @@ fn hir_query_of_type_finds_contract_signatures() {
 fn hir_query_filter_typed_finds_match_expressions() {
     let hir = parse_hir("i32 main() { return match 1 { 1 => 10, _ => 20, }; }");
     let match_exprs: Vec<&HirExpressionNode> = HirQuery::from(&hir.node)
-        .filter_typed::<HirExpressionNode>(|expr| matches!(expr, HirExpressionNode::MatchExpression(_)))
+        .filter_typed::<HirExpressionNode>(|expr| {
+            matches!(expr, HirExpressionNode::MatchExpression(_))
+        })
         .collect();
 
     assert_eq!(match_exprs.len(), 1);

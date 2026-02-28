@@ -1,119 +1,90 @@
 # 08. Metaprogramming
 
 ## Goals
-- Provide ergonomic compile-time code generation without reflection.
-- Support two macro families: simple pattern macros and AST macros.
+- Provide ergonomic compile-time code generation without the complexity of Rust's procedural macros or Zig's `comptime`.
+- Adopt an **Incremental Source Generator (ISG)** architecture (inspired by C# .NET 6/7) to ensure IDE performance and fast compilation.
+- Use a simple string-emission approach rather than manually constructing AST nodes.
 - Keep diagnostics precise (errors point to macro use sites).
 
-## 1) Simple macros (`macro {}`)
+## The Metaprogramming Model
 
-### Purpose
-Simple macros shorten repetitive code and operate on structured syntax fragments (not raw text). They are inspired by Rust-style declarative macros but restricted to typed fragments.
+Beskid uses declarative `generator` blocks coupled with attributes. Generators are evaluated at compile time. They observe attributed AST nodes and emit new source code strings which are then compiled alongside the rest of the project.
 
-### Definition
+### 1. Attributes
+Attributes are C#-style tags attached to declarations. They are used primarily as markers for generators to target.
+
+```beskid
+[Builder]
+[Serializable(format: "json")]
+type User {
+    string name,
+    i32 age,
+}
 ```
-macro log_if {
-    (cond: Expression, msg: Expression) => {
-        if cond { println(msg); }
+
+### 2. Generators (`generator {}`)
+A generator defines what it targets and how it emits new code. By using declarative targets, the compiler can heavily optimize execution, fulfilling the "incremental" part of ISG. The compiler only runs the generator when the specific target nodes are modified.
+
+```beskid
+generator BuilderGenerator {
+    // 1. Declarative Target (Filter)
+    // The compiler uses this to efficiently filter files without doing full
+    // semantic analysis, similar to C#'s `ForAttributeWithMetadataName`.
+    target: Ast.TypeDeclaration with [Builder];
+
+    // 2. Emission logic
+    emit(ctx: GeneratorContext, node: Ast.TypeDeclaration, attr: Ast.Attribute) {
+        let name = node.name;
+        let builder_name = name + "Builder";
+
+        // Generate the new code as a string. 
+        // This is vastly simpler than building ASTs manually.
+        let mut fields_code = "";
+        for f in node.fields {
+            fields_code = fields_code + f"    Option<{f.type_name}> {f.name},\n";
+        }
+
+        let code = f"
+            type {builder_name} {{
+{fields_code}
+            }}
+
+            impl {builder_name} {{
+                {builder_name} new() {{ ... }}
+            }}
+        ";
+
+        // Inject the generated string into the compilation
+        ctx.add_source(builder_name + ".g.bd", code);
     }
 }
 ```
 
-### Invocation
-```
-log_if!(x > 0, "positive");
-```
+## Generator Context API (`GeneratorContext`)
+The context allows generators to interact with the compiler during the `emit` phase:
+- `ctx.add_source(filename: string, code: string)`: Appends a new file to the compilation.
+- `ctx.report_error(span: Span, message: string)`: Reports a compile-time error at a specific location.
+- `ctx.report_warning(span: Span, message: string)`: Reports a compile-time warning.
 
-### Fragment kinds
-Allowed fragment kinds (v0.1):
-- `Expression`
-- `Statement`
-- `Block`
-- `Type`
-- `Identifier`
-- `Path`
-- `Item`
-
-Example fragments:
-```
-macro wrap {
-    (value: Expression) => { println(value); }
-}
-
-macro make_fn {
-    (name: Identifier, body: Block) => {
-        unit name() body
+Example of diagnostics:
+```beskid
+emit(ctx: GeneratorContext, node: Ast.TypeDeclaration, attr: Ast.Attribute) {
+    if node.fields.is_empty() {
+        ctx.report_error(node.span, "Builder requires at least one field.");
+        return;
     }
+    // ...
 }
-```
-
-### Repetition (v0.2)
-Repetition is planned but not required for v0.1.
-
----
-
-## 2) AST macros (`macro[Ast.Node] {}`)
-
-### Purpose
-AST macros transform compiler AST nodes directly. They are used via attributes and can generate or modify code at compile time.
-
-### Definition
-```
-macro[Ast.FuncDecl] log_wrap {
-    (fn_node) => {
-        return Ast.wrap_with_logging(fn_node);
-    }
-}
-```
-
-### Invocation (attribute)
-```
-[log_wrap]
-unit do_work() {
-    work();
-}
-```
-
-### AST types (minimal set)
-The compiler exposes a typed AST API under `Ast`:
-```
-namespace Ast {
-    type FunctionDeclaration { string name, Param[] params, Block body }
-    type TypeDeclaration { string name, Field[] fields }
-    type Block { statements: Statement[] }
-    enum Statement { Let(...), Expression(...), Return(...) }
-    enum Expression { Call(...), Binary(...), Identifier(...), Literal(...) }
-}
-```
-
----
-
-## Expansion phase
-1. Parse source into AST.
-2. Expand simple macros (`macro {}`) on syntax fragments.
-3. Apply AST macros (`macro[Ast.Node] {}`) on attributed nodes.
-4. Proceed to type checking.
-
-## Decisions
-- Macro expansion happens before name resolution.
-- Macros cannot introduce new `type` or `contract` declarations in v0.1.
-- Expansion is bounded by a compiler-defined step budget.
-
-Example (expansion before name resolution):
-```
-macro use_name { () => { let x = 1; } }
-use_name!();
 ```
 
 ## Restrictions (v0.1)
-- No reflection.
-- No I/O during macro expansion.
-- Deterministic expansion (no random/time-dependent behavior).
+- **No reflection in runtime code:** Metaprogramming is strictly isolated to compile-time `generator` blocks.
+- **Append-only:** Generators can only *add* new code. They cannot modify or delete the existing code they are observing (this preserves standard language semantics and avoids confusing mutations).
+- **No I/O:** No reading files or network calls during expansion to ensure deterministic, fast, and cacheable builds.
 
-Example (disallowed):
-```
-macro read_file { () => { /* file IO */ } }
-```
-
-## Diagnostics
-- Errors inside macro expansions should point to the macro invocation site where possible.
+## Expansion Phase
+1. Parse source into AST.
+2. Identify nodes matching `target` definitions in active generators.
+3. Execute the `emit` functions for matched nodes.
+4. Parse the newly emitted source code.
+5. Proceed to Name Resolution and Type Checking for the combined source.

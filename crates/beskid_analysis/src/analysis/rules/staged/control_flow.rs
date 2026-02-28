@@ -1,11 +1,8 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::RuleContext;
-use crate::analysis::rules::staged::expression_walk::{ExprChild, visit_expression_children};
-use crate::hir::{
-    HirBlock, HirExpressionNode, HirItem, HirMatchArm, HirPattern, HirProgram, HirStatementNode,
-};
-use crate::query::HirQuery;
+use crate::hir::{HirBlock, HirExpressionNode, HirItem, HirPattern, HirProgram, HirStatementNode};
+use crate::query::{HirNodeRef, HirQuery, HirVisit, HirWalker};
 use crate::syntax::Spanned;
 use std::collections::{HashMap, HashSet};
 
@@ -18,25 +15,20 @@ impl SemanticPipelineRule {
         let enum_variants = self.collect_enum_variants(hir);
         let variant_to_enum = self.collect_variant_to_enum(hir);
 
+        let mut walker = HirWalker::new().with_visitor(Box::new(ControlFlowVisitor::new(
+            self,
+            ctx,
+            &enum_variants,
+            &variant_to_enum,
+        )));
+
         for item in &hir.node.items {
             match &item.node {
                 HirItem::FunctionDefinition(definition) => {
-                    self.check_block(
-                        ctx,
-                        &definition.node.body,
-                        0,
-                        &enum_variants,
-                        &variant_to_enum,
-                    );
+                    walker.walk(HirNodeRef::from(&definition.node.body.node));
                 }
                 HirItem::MethodDefinition(definition) => {
-                    self.check_block(
-                        ctx,
-                        &definition.node.body,
-                        0,
-                        &enum_variants,
-                        &variant_to_enum,
-                    );
+                    walker.walk(HirNodeRef::from(&definition.node.body.node));
                 }
                 _ => {}
             }
@@ -78,309 +70,6 @@ impl SemanticPipelineRule {
         result
     }
 
-    fn check_block(
-        &self,
-        ctx: &mut RuleContext,
-        block: &Spanned<HirBlock>,
-        loop_depth: usize,
-        enum_variants: &HashMap<String, HashMap<String, usize>>,
-        variant_to_enum: &HashMap<String, String>,
-    ) {
-        let mut terminated = false;
-
-        for statement in &block.node.statements {
-            if terminated {
-                ctx.emit_simple(
-                    statement.span,
-                    "W1403",
-                    "unreachable code",
-                    "unreachable statement",
-                    Some(
-                        "remove this statement or move it before the terminating statement"
-                            .to_string(),
-                    ),
-                    Severity::Warning,
-                );
-                continue;
-            }
-
-            if self.is_terminating_statement(
-                ctx,
-                statement,
-                loop_depth,
-                enum_variants,
-                variant_to_enum,
-            ) {
-                terminated = true;
-            }
-        }
-    }
-
-    fn is_terminating_statement(
-        &self,
-        ctx: &mut RuleContext,
-        statement: &Spanned<HirStatementNode>,
-        loop_depth: usize,
-        enum_variants: &HashMap<String, HashMap<String, usize>>,
-        variant_to_enum: &HashMap<String, String>,
-    ) -> bool {
-        match &statement.node {
-            HirStatementNode::LetStatement(let_statement) => {
-                self.check_expression(
-                    ctx,
-                    &let_statement.node.value,
-                    loop_depth,
-                    enum_variants,
-                    variant_to_enum,
-                );
-                false
-            }
-            HirStatementNode::ReturnStatement(return_statement) => {
-                if let Some(value) = &return_statement.node.value {
-                    self.check_expression(ctx, value, loop_depth, enum_variants, variant_to_enum);
-                }
-                true
-            }
-            HirStatementNode::BreakStatement(_) => {
-                if loop_depth == 0 {
-                    ctx.emit_simple(
-                        statement.span,
-                        "E1401",
-                        "break used outside loop",
-                        "break outside loop",
-                        None,
-                        Severity::Error,
-                    );
-                    return false;
-                }
-                true
-            }
-            HirStatementNode::ContinueStatement(_) => {
-                if loop_depth == 0 {
-                    ctx.emit_simple(
-                        statement.span,
-                        "E1402",
-                        "continue used outside loop",
-                        "continue outside loop",
-                        None,
-                        Severity::Error,
-                    );
-                    return false;
-                }
-                true
-            }
-            HirStatementNode::WhileStatement(while_statement) => {
-                self.check_expression(
-                    ctx,
-                    &while_statement.node.condition,
-                    loop_depth,
-                    enum_variants,
-                    variant_to_enum,
-                );
-                self.check_block(
-                    ctx,
-                    &while_statement.node.body,
-                    loop_depth + 1,
-                    enum_variants,
-                    variant_to_enum,
-                );
-                false
-            }
-            HirStatementNode::ForStatement(for_statement) => {
-                self.check_expression(
-                    ctx,
-                    &for_statement.node.range.node.start,
-                    loop_depth,
-                    enum_variants,
-                    variant_to_enum,
-                );
-                self.check_expression(
-                    ctx,
-                    &for_statement.node.range.node.end,
-                    loop_depth,
-                    enum_variants,
-                    variant_to_enum,
-                );
-                self.check_block(
-                    ctx,
-                    &for_statement.node.body,
-                    loop_depth + 1,
-                    enum_variants,
-                    variant_to_enum,
-                );
-                false
-            }
-            HirStatementNode::IfStatement(if_statement) => {
-                self.check_expression(
-                    ctx,
-                    &if_statement.node.condition,
-                    loop_depth,
-                    enum_variants,
-                    variant_to_enum,
-                );
-                self.check_block(
-                    ctx,
-                    &if_statement.node.then_block,
-                    loop_depth,
-                    enum_variants,
-                    variant_to_enum,
-                );
-                if let Some(else_block) = &if_statement.node.else_block {
-                    self.check_block(ctx, else_block, loop_depth, enum_variants, variant_to_enum);
-                }
-                false
-            }
-            HirStatementNode::ExpressionStatement(expression_statement) => {
-                self.check_expression(
-                    ctx,
-                    &expression_statement.node.expression,
-                    loop_depth,
-                    enum_variants,
-                    variant_to_enum,
-                );
-                false
-            }
-        }
-    }
-
-    fn check_expression(
-        &self,
-        ctx: &mut RuleContext,
-        expression: &Spanned<HirExpressionNode>,
-        loop_depth: usize,
-        enum_variants: &HashMap<String, HashMap<String, usize>>,
-        variant_to_enum: &HashMap<String, String>,
-    ) {
-        match &expression.node {
-            HirExpressionNode::MatchExpression(match_expression) => {
-                self.check_expression(
-                    ctx,
-                    &match_expression.node.scrutinee,
-                    loop_depth,
-                    enum_variants,
-                    variant_to_enum,
-                );
-                for arm in &match_expression.node.arms {
-                    self.check_match_arm(ctx, arm, loop_depth, enum_variants, variant_to_enum);
-                }
-                self.check_match_semantics(ctx, match_expression, enum_variants);
-                return;
-            }
-            HirExpressionNode::CallExpression(call_expression) => {
-                if let HirExpressionNode::PathExpression(path_expression) =
-                    &call_expression.node.callee.node
-                    && path_expression.node.path.node.segments.len() == 1
-                        && let Some(name) = path_expression.node.path.node.segments.first() {
-                            let name_value = &name.node.name.node.name;
-                            if let Some(enum_name) = variant_to_enum.get(name_value) {
-                                ctx.emit_simple(
-                                    path_expression.node.path.span,
-                                    "E1303",
-                                    format!(
-                                        "unqualified enum constructor `{}`; use `{}::{}`",
-                                        name_value, enum_name, name_value
-                                    ),
-                                    "unqualified enum constructor",
-                                    None,
-                                    Severity::Error,
-                                );
-                            }
-                        }
-            }
-            HirExpressionNode::EnumConstructorExpression(constructor_expression) => {
-                let enum_name = constructor_expression
-                    .node
-                    .path
-                    .node
-                    .type_name
-                    .node
-                    .name
-                    .clone();
-                let variant_name = constructor_expression
-                    .node
-                    .path
-                    .node
-                    .variant
-                    .node
-                    .name
-                    .clone();
-                let Some(variants) = enum_variants.get(&enum_name) else {
-                    ctx.emit_simple(
-                        constructor_expression.node.path.span,
-                        "E1301",
-                        format!("unknown enum path `{enum_name}::{variant_name}`"),
-                        "unknown enum path",
-                        None,
-                        Severity::Error,
-                    );
-                    return;
-                };
-
-                let Some(expected_arity) = variants.get(&variant_name) else {
-                    ctx.emit_simple(
-                        constructor_expression.node.path.span,
-                        "E1301",
-                        format!("unknown enum path `{enum_name}::{variant_name}`"),
-                        "unknown enum path",
-                        None,
-                        Severity::Error,
-                    );
-                    return;
-                };
-
-                if constructor_expression.node.args.len() != *expected_arity {
-                    ctx.emit_simple(
-                        constructor_expression.span,
-                        "E1302",
-                        format!(
-                            "enum constructor arity mismatch: expected {}, got {}",
-                            expected_arity,
-                            constructor_expression.node.args.len()
-                        ),
-                        "enum constructor arity mismatch",
-                        None,
-                        Severity::Error,
-                    );
-                }
-            }
-            HirExpressionNode::LiteralExpression(_) | HirExpressionNode::PathExpression(_) => {}
-            _ => {}
-        }
-
-        let mut on_child = |child: ExprChild<'_>| match child {
-            ExprChild::Expr(child_expr) => {
-                self.check_expression(ctx, child_expr, loop_depth, enum_variants, variant_to_enum)
-            }
-            ExprChild::Block(child_block) => {
-                self.check_block(ctx, child_block, loop_depth, enum_variants, variant_to_enum)
-            }
-        };
-        visit_expression_children(expression, &mut on_child);
-    }
-
-    fn check_match_arm(
-        &self,
-        ctx: &mut RuleContext,
-        arm: &Spanned<HirMatchArm>,
-        loop_depth: usize,
-        enum_variants: &HashMap<String, HashMap<String, usize>>,
-        variant_to_enum: &HashMap<String, String>,
-    ) {
-        let mut names = HashSet::new();
-        self.collect_pattern_bindings(ctx, &arm.node.pattern, &mut names, enum_variants);
-
-        if let Some(guard) = &arm.node.guard {
-            self.check_expression(ctx, guard, loop_depth, enum_variants, variant_to_enum);
-        }
-        self.check_expression(
-            ctx,
-            &arm.node.value,
-            loop_depth,
-            enum_variants,
-            variant_to_enum,
-        );
-    }
-
     fn check_match_semantics(
         &self,
         ctx: &mut RuleContext,
@@ -394,16 +83,17 @@ impl SemanticPipelineRule {
 
         for arm in &match_expression.node.arms {
             if let Some(guard) = &arm.node.guard
-                && !self.is_boolean_like_guard(guard) {
-                    ctx.emit_simple(
-                        guard.span,
-                        "E1308",
-                        "match guard must be boolean",
-                        "guard type mismatch",
-                        None,
-                        Severity::Error,
-                    );
-                }
+                && !self.is_boolean_like_guard(guard)
+            {
+                ctx.emit_simple(
+                    guard.span,
+                    "E1308",
+                    "match guard must be boolean",
+                    "guard type mismatch",
+                    None,
+                    Severity::Error,
+                );
+            }
 
             if let Some(kind) = self.literal_kind(&arm.node.value) {
                 if let Some(previous_kind) = arm_kind {
@@ -573,6 +263,236 @@ impl SemanticPipelineRule {
                 }
             }
             HirPattern::Wildcard | HirPattern::Literal(_) => {}
+        }
+    }
+}
+
+struct ControlFlowVisitor<'a> {
+    rule: &'a SemanticPipelineRule,
+    ctx: &'a mut RuleContext,
+    loop_depth: usize,
+    enum_variants: &'a HashMap<String, HashMap<String, usize>>,
+    variant_to_enum: &'a HashMap<String, String>,
+}
+
+impl<'a> ControlFlowVisitor<'a> {
+    fn new(
+        rule: &'a SemanticPipelineRule,
+        ctx: &'a mut RuleContext,
+        enum_variants: &'a HashMap<String, HashMap<String, usize>>,
+        variant_to_enum: &'a HashMap<String, String>,
+    ) -> Self {
+        Self {
+            rule,
+            ctx,
+            loop_depth: 0,
+            enum_variants,
+            variant_to_enum,
+        }
+    }
+
+    fn scan_unreachable_in_block(&mut self, block: &HirBlock) {
+        let mut terminated = false;
+        for statement in &block.statements {
+            if terminated {
+                self.ctx.emit_simple(
+                    statement.span,
+                    "W1403",
+                    "unreachable code",
+                    "unreachable statement",
+                    Some(
+                        "remove this statement or move it before the terminating statement"
+                            .to_string(),
+                    ),
+                    Severity::Warning,
+                );
+                continue;
+            }
+            terminated = self.statement_terminates(statement);
+        }
+    }
+
+    fn statement_terminates(&mut self, statement: &Spanned<HirStatementNode>) -> bool {
+        match &statement.node {
+            HirStatementNode::ReturnStatement(_) => true,
+            HirStatementNode::BreakStatement(_) => {
+                if self.loop_depth == 0 {
+                    self.ctx.emit_simple(
+                        statement.span,
+                        "E1401",
+                        "break used outside loop",
+                        "break outside loop",
+                        None,
+                        Severity::Error,
+                    );
+                    false
+                } else {
+                    true
+                }
+            }
+            HirStatementNode::ContinueStatement(_) => {
+                if self.loop_depth == 0 {
+                    self.ctx.emit_simple(
+                        statement.span,
+                        "E1402",
+                        "continue used outside loop",
+                        "continue outside loop",
+                        None,
+                        Severity::Error,
+                    );
+                    false
+                } else {
+                    true
+                }
+            }
+            HirStatementNode::LetStatement(_)
+            | HirStatementNode::WhileStatement(_)
+            | HirStatementNode::ForStatement(_)
+            | HirStatementNode::IfStatement(_)
+            | HirStatementNode::ExpressionStatement(_) => false,
+        }
+    }
+
+    fn check_call_expression(&mut self, call_expression: &Spanned<crate::hir::HirCallExpression>) {
+        if let HirExpressionNode::PathExpression(path_expression) =
+            &call_expression.node.callee.node
+            && path_expression.node.path.node.segments.len() == 1
+            && let Some(name) = path_expression.node.path.node.segments.first()
+        {
+            let name_value = &name.node.name.node.name;
+            if let Some(enum_name) = self.variant_to_enum.get(name_value) {
+                self.ctx.emit_simple(
+                    path_expression.node.path.span,
+                    "E1303",
+                    format!(
+                        "unqualified enum constructor `{}`; use `{}::{}`",
+                        name_value, enum_name, name_value
+                    ),
+                    "unqualified enum constructor",
+                    None,
+                    Severity::Error,
+                );
+            }
+        }
+    }
+
+    fn check_enum_constructor_expression(
+        &mut self,
+        constructor_expression: &Spanned<crate::hir::HirEnumConstructorExpression>,
+    ) {
+        let enum_name = constructor_expression
+            .node
+            .path
+            .node
+            .type_name
+            .node
+            .name
+            .clone();
+        let variant_name = constructor_expression
+            .node
+            .path
+            .node
+            .variant
+            .node
+            .name
+            .clone();
+        let Some(variants) = self.enum_variants.get(&enum_name) else {
+            self.ctx.emit_simple(
+                constructor_expression.node.path.span,
+                "E1301",
+                format!("unknown enum path `{enum_name}::{variant_name}`"),
+                "unknown enum path",
+                None,
+                Severity::Error,
+            );
+            return;
+        };
+
+        let Some(expected_arity) = variants.get(&variant_name) else {
+            self.ctx.emit_simple(
+                constructor_expression.node.path.span,
+                "E1301",
+                format!("unknown enum path `{enum_name}::{variant_name}`"),
+                "unknown enum path",
+                None,
+                Severity::Error,
+            );
+            return;
+        };
+
+        if constructor_expression.node.args.len() != *expected_arity {
+            self.ctx.emit_simple(
+                constructor_expression.span,
+                "E1302",
+                format!(
+                    "enum constructor arity mismatch: expected {}, got {}",
+                    expected_arity,
+                    constructor_expression.node.args.len()
+                ),
+                "enum constructor arity mismatch",
+                None,
+                Severity::Error,
+            );
+        }
+    }
+
+    fn check_match_expression(
+        &mut self,
+        match_expression: &Spanned<crate::hir::HirMatchExpression>,
+    ) {
+        for arm in &match_expression.node.arms {
+            let mut names = HashSet::new();
+            self.rule.collect_pattern_bindings(
+                self.ctx,
+                &arm.node.pattern,
+                &mut names,
+                self.enum_variants,
+            );
+        }
+        self.rule
+            .check_match_semantics(self.ctx, match_expression, self.enum_variants);
+    }
+}
+
+impl HirVisit for ControlFlowVisitor<'_> {
+    fn enter(&mut self, node: HirNodeRef<'_>) {
+        if let Some(statement) = node.of::<HirStatementNode>() {
+            match statement {
+                HirStatementNode::WhileStatement(_) | HirStatementNode::ForStatement(_) => {
+                    self.loop_depth += 1;
+                }
+                _ => {}
+            }
+        }
+
+        if let Some(block) = node.of::<HirBlock>() {
+            self.scan_unreachable_in_block(block);
+        }
+
+        if let Some(expression) = node.of::<HirExpressionNode>() {
+            match expression {
+                HirExpressionNode::MatchExpression(match_expression) => {
+                    self.check_match_expression(match_expression)
+                }
+                HirExpressionNode::CallExpression(call_expression) => {
+                    self.check_call_expression(call_expression)
+                }
+                HirExpressionNode::EnumConstructorExpression(constructor_expression) => {
+                    self.check_enum_constructor_expression(constructor_expression)
+                }
+                _ => {}
+            }
+        }
+    }
+
+    fn exit(&mut self, node: HirNodeRef<'_>) {
+        if let Some(statement) = node.of::<HirStatementNode>() {
+            match statement {
+                HirStatementNode::WhileStatement(_) | HirStatementNode::ForStatement(_) => {
+                    self.loop_depth = self.loop_depth.saturating_sub(1);
+                }
+                _ => {}
+            }
         }
     }
 }

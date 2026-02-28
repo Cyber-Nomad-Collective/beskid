@@ -140,6 +140,7 @@ mod hir_query;
 mod hir_visit;
 mod hir_walker;
 mod query;
+mod traversal_core;
 mod visit;
 mod walker;
 

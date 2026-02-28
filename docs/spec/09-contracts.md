@@ -16,7 +16,9 @@ contract Reader {
 ```
 type File { /* ... */ }
 
-Result<i32, Error> File.read(p: u8[]) { ... }
+impl File {
+    Result<i32, Error> read(self: File, p: u8[]) { ... }
+}
 ```
 
 `File` now satisfies `Reader`.
@@ -51,8 +53,8 @@ Result<i32, Error> copy_all(rw: ReadWriter) { ... }
 ```
 
 ## Method sets
-- Value methods: `ReturnType T.method(...)`
-- Reference methods: `ReturnType ref T.method(...)` (when `ref mut` is introduced)
+- Value methods: `impl T { ReturnType method(self: T, ...) { ... } }`
+- Reference methods: `impl T { ReturnType method(self: ref T, ...) { ... } }` (when `ref mut` is introduced)
 
 A type satisfies a contract if its available method set covers all required methods.
 
@@ -61,7 +63,10 @@ Example:
 contract Size { i32 size(self); }
 
 type Buf { i32 len }
-i32 Buf.size(self: Buf) { return self.len; }
+
+impl Buf {
+    i32 size(self: Buf) { return self.len; }
+}
 ```
 
 ## Design guidelines

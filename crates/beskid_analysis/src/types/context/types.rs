@@ -19,31 +19,33 @@ impl<'a> TypeContext<'a> {
 
     pub(super) fn type_id_for_path_with_args(&mut self, path: &Spanned<HirPath>) -> Option<TypeId> {
         if let Some(last_segment) = path.node.segments.last()
-            && !last_segment.node.type_args.is_empty() {
-                let resolved = self.resolution.tables.resolved_types.get(&path.span);
-                let base = match resolved {
-                    Some(ResolvedType::Item(item_id)) => *item_id,
-                    _ => {
-                        self.errors.push(TypeError::UnknownType { span: path.span });
-                        return None;
-                    }
-                };
-                if let Some(expected) = self.generic_items.get(&base)
-                    && expected.len() != last_segment.node.type_args.len() {
-                        self.errors.push(TypeError::GenericArgumentMismatch {
-                            span: path.span,
-                            expected: expected.len(),
-                            actual: last_segment.node.type_args.len(),
-                        });
-                        return None;
-                    }
-                let mut args = Vec::with_capacity(last_segment.node.type_args.len());
-                for arg in &last_segment.node.type_args {
-                    let type_id = self.type_id_for_type(arg)?;
-                    args.push(type_id);
+            && !last_segment.node.type_args.is_empty()
+        {
+            let resolved = self.resolution.tables.resolved_types.get(&path.span);
+            let base = match resolved {
+                Some(ResolvedType::Item(item_id)) => *item_id,
+                _ => {
+                    self.errors.push(TypeError::UnknownType { span: path.span });
+                    return None;
                 }
-                return Some(self.type_table.intern(TypeInfo::Applied { base, args }));
+            };
+            if let Some(expected) = self.generic_items.get(&base)
+                && expected.len() != last_segment.node.type_args.len()
+            {
+                self.errors.push(TypeError::GenericArgumentMismatch {
+                    span: path.span,
+                    expected: expected.len(),
+                    actual: last_segment.node.type_args.len(),
+                });
+                return None;
             }
+            let mut args = Vec::with_capacity(last_segment.node.type_args.len());
+            for arg in &last_segment.node.type_args {
+                let type_id = self.type_id_for_type(arg)?;
+                args.push(type_id);
+            }
+            return Some(self.type_table.intern(TypeInfo::Applied { base, args }));
+        }
         self.type_id_for_type_path(path.span)
     }
 
@@ -54,10 +56,11 @@ impl<'a> TypeContext<'a> {
         match self.resolution.tables.resolved_types.get(&span) {
             Some(ResolvedType::Item(item)) => {
                 if let Some(expected) = self.generic_items.get(item)
-                    && !expected.is_empty() {
-                        self.errors.push(TypeError::MissingTypeArguments { span });
-                        return None;
-                    }
+                    && !expected.is_empty()
+                {
+                    self.errors.push(TypeError::MissingTypeArguments { span });
+                    return None;
+                }
                 self.named_types.get(item).copied()
             }
             Some(ResolvedType::Generic(name)) => self.generic_params.get(name).copied(),

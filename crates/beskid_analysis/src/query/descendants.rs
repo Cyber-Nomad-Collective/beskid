@@ -1,4 +1,5 @@
 use crate::query::NodeRef;
+use crate::query::traversal_core;
 
 pub struct Descendants<'a> {
     stack: Vec<NodeRef<'a>>,
@@ -14,10 +15,8 @@ impl<'a> Iterator for Descendants<'a> {
     type Item = NodeRef<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let node = self.stack.pop()?;
-        let mut children = Vec::new();
-        node.children(|child| children.push(child));
-        self.stack.extend(children.into_iter().rev());
-        Some(node)
+        traversal_core::next_descendant(&mut self.stack, |node, children| {
+            node.children(|child| children.push(child));
+        })
     }
 }

@@ -7,15 +7,20 @@
 Static dispatch resolves calls at compile time. Dynamic dispatch uses a vtable when a value is typed as a contract.
 
 ## Method form
-Methods are functions with a receiver:
+Methods are defined within an `impl` block for a specific type:
 ```
-ReturnType T.method(self: T, ...)
+impl T {
+    ReturnType method(self: T, ...) { ... }
+}
 ```
 
 Example:
 ```
 type Point { i32 x, i32 y }
-i32 Point.len(self: Point) { return self.x + self.y; }
+
+impl Point {
+    i32 len(self: Point) { return self.x + self.y; }
+}
 ```
 
 ## Contracts

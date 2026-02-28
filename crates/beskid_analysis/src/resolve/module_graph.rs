@@ -88,9 +88,10 @@ impl ModuleGraph {
         });
         self.path_map.insert(path, id);
         if let Some(parent) = parent
-            && let Some(parent_module) = self.modules.get_mut(parent.0) {
-                parent_module.children.push(id);
-            }
+            && let Some(parent_module) = self.modules.get_mut(parent.0)
+        {
+            parent_module.children.push(id);
+        }
         id
     }
 }

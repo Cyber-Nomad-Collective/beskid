@@ -15,7 +15,9 @@ pub fn collect_spec_files(root: &Path) -> Result<Vec<PathBuf>> {
 }
 
 fn collect_spec_files_recursive(root: &Path, files: &mut Vec<PathBuf>) -> Result<()> {
-    for entry in fs::read_dir(root).with_context(|| format!("read directory `{}`", root.display()))? {
+    for entry in
+        fs::read_dir(root).with_context(|| format!("read directory `{}`", root.display()))?
+    {
         let entry = entry.with_context(|| format!("read entry under `{}`", root.display()))?;
         let path = entry.path();
         if path.is_dir() {
@@ -41,8 +43,8 @@ pub fn parse_spec_file(path: &Path) -> Result<Vec<InteropDecl>> {
             continue;
         };
 
-        let Some((module_path, explicit_name)) = parse_interop_attr(&function.attrs)
-            .with_context(|| format!("{}:1", path.display()))?
+        let Some((module_path, explicit_name)) =
+            parse_interop_attr(&function.attrs).with_context(|| format!("{}:1", path.display()))?
         else {
             continue;
         };
@@ -69,7 +71,10 @@ pub fn parse_spec_file(path: &Path) -> Result<Vec<InteropDecl>> {
 }
 
 fn parse_interop_attr(attrs: &[syn::Attribute]) -> Result<Option<(String, Option<String>)>> {
-    let Some(attr) = attrs.iter().find(|attr| attr.path().is_ident("InteropCall")) else {
+    let Some(attr) = attrs
+        .iter()
+        .find(|attr| attr.path().is_ident("InteropCall"))
+    else {
         return Ok(None);
     };
 
@@ -107,7 +112,9 @@ fn path_to_module(path: &syn::Path) -> String {
         .join(".")
 }
 
-fn map_params(inputs: &syn::punctuated::Punctuated<FnArg, syn::token::Comma>) -> Result<Vec<InteropParam>> {
+fn map_params(
+    inputs: &syn::punctuated::Punctuated<FnArg, syn::token::Comma>,
+) -> Result<Vec<InteropParam>> {
     let mut params = Vec::new();
     for arg in inputs {
         let FnArg::Typed(pat_type) = arg else {

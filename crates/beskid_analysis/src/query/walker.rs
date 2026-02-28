@@ -1,3 +1,4 @@
+use crate::query::traversal_core;
 use crate::query::{NodeRef, Visit};
 
 pub struct AstWalker<'a> {
@@ -23,13 +24,13 @@ impl<'a> AstWalker<'a> {
     }
 
     pub fn walk(&mut self, node: NodeRef<'a>) {
-        self.notify_enter(node);
-
-        node.children(|child| {
-            self.walk(child);
-        });
-
-        self.notify_exit(node);
+        traversal_core::walk_depth_first(
+            node,
+            |parent, children| parent.children(|child| children.push(child)),
+            self,
+            |walker, current| walker.notify_enter(current),
+            |walker, current| walker.notify_exit(current),
+        );
     }
 
     fn notify_enter(&mut self, node: NodeRef<'a>) {

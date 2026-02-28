@@ -11,9 +11,10 @@ pub(crate) fn parse_visibility_or_default(
     inner: &mut Peekable<Pairs<Rule>>,
 ) -> Result<Spanned<Visibility>, ParseError> {
     if let Some(next) = inner.peek()
-        && next.as_rule() == Rule::Visibility {
-            return Visibility::parse(inner.next().expect("visibility pair"));
-        }
+        && next.as_rule() == Rule::Visibility
+    {
+        return Visibility::parse(inner.next().expect("visibility pair"));
+    }
 
     Ok(Spanned::new(
         Visibility::Private,

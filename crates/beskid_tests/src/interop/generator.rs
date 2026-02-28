@@ -67,7 +67,10 @@ fn check_generated_file_reports_stale_output() {
 
     let err = check_generated_file(&path, "new").expect_err("expected stale mismatch");
     let message = err.to_string();
-    assert!(message.contains("stale"), "expected stale file error message");
+    assert!(
+        message.contains("stale"),
+        "expected stale file error message"
+    );
     assert!(
         message.contains("pekan_cli interop"),
         "expected stale file error to include regeneration command"

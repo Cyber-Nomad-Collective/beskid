@@ -1,9 +1,7 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::RuleContext;
-use crate::hir::{
-    HirExpressionNode, HirItem, HirPath, HirProgram, HirVisibility,
-};
+use crate::hir::{HirExpressionNode, HirItem, HirPath, HirProgram, HirVisibility};
 use crate::query::HirQuery;
 use crate::syntax::Spanned;
 use std::collections::{HashMap, HashSet};
@@ -214,12 +212,16 @@ impl SemanticPipelineRule {
         for item in &hir.node.items {
             match &item.node {
                 HirItem::FunctionDefinition(definition) => {
-                    for expression in HirQuery::from(&definition.node.body.node).of::<HirExpressionNode>() {
+                    for expression in
+                        HirQuery::from(&definition.node.body.node).of::<HirExpressionNode>()
+                    {
                         self.collect_used_from_expression(expression, &mut used);
                     }
                 }
                 HirItem::MethodDefinition(definition) => {
-                    for expression in HirQuery::from(&definition.node.body.node).of::<HirExpressionNode>() {
+                    for expression in
+                        HirQuery::from(&definition.node.body.node).of::<HirExpressionNode>()
+                    {
                         self.collect_used_from_expression(expression, &mut used);
                     }
                 }

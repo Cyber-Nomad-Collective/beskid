@@ -5,7 +5,6 @@ use crate::syntax::{Program, SpanInfo, Spanned};
 mod contracts;
 mod control_flow;
 mod definitions;
-mod expression_walk;
 mod error_handling;
 mod meta_programming;
 mod name_resolution;

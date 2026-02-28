@@ -156,7 +156,9 @@ pub fn generate_runtime_source(decls: &[InteropDecl]) -> String {
     output.push_str("    }\n");
     output.push_str("}\n\n");
 
-    output.push_str("pub unsafe fn dispatch_usize(tag: i32, enum_ptr: *const u8) -> Option<usize> {\n");
+    output.push_str(
+        "pub unsafe fn dispatch_usize(tag: i32, enum_ptr: *const u8) -> Option<usize> {\n",
+    );
     output.push_str("    match tag {\n");
     for decl in decls
         .iter()
@@ -178,7 +180,9 @@ pub fn generate_runtime_source(decls: &[InteropDecl]) -> String {
     output.push_str("    }\n");
     output.push_str("}\n\n");
 
-    output.push_str("pub unsafe fn dispatch_ptr(tag: i32, enum_ptr: *const u8) -> Option<*mut u8> {\n");
+    output.push_str(
+        "pub unsafe fn dispatch_ptr(tag: i32, enum_ptr: *const u8) -> Option<*mut u8> {\n",
+    );
     output.push_str("    match tag {\n");
     for decl in decls
         .iter()

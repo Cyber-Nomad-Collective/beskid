@@ -36,16 +36,18 @@ pub fn lower_source(path: &Path, source: &str, with_diagnostics: bool) -> Result
 
     let ast: Spanned<AstProgram> = program.into();
     let mut hir: Spanned<HirProgram> = lower_hir_program(&ast);
-    normalize_program(&mut hir).map_err(|errors| anyhow::anyhow!("Normalization failed: {errors:?}"))?;
+    normalize_program(&mut hir)
+        .map_err(|errors| anyhow::anyhow!("Normalization failed: {errors:?}"))?;
 
     let resolution = Resolver::new()
         .resolve_program(&hir)
         .map_err(|errors| anyhow::anyhow!("Resolution failed: {errors:?}"))?;
-    let typed =
-        type_program(&hir, &resolution).map_err(|errors| anyhow::anyhow!("Type checking failed: {errors:?}"))?;
+    let typed = type_program(&hir, &resolution)
+        .map_err(|errors| anyhow::anyhow!("Type checking failed: {errors:?}"))?;
 
     let artifact = lower_program(&hir, &resolution, &typed).map_err(|errors| {
-        let diagnostics = codegen_errors_to_diagnostics(&path.display().to_string(), source, &errors);
+        let diagnostics =
+            codegen_errors_to_diagnostics(&path.display().to_string(), source, &errors);
         anyhow::anyhow!(
             diagnostics
                 .into_iter()

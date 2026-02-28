@@ -1,8 +1,8 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::{RuleContext, types};
-use crate::analysis::rules::staged::expression_walk::{ExprChild, visit_expression_children};
-use crate::hir::{HirBlock, HirExpressionNode, HirItem, HirProgram, HirStatementNode};
+use crate::hir::{HirBlock, HirExpressionNode, HirForStatement, HirLetStatement, HirProgram};
+use crate::query::{HirNodeKind, HirNodeRef, HirVisit, HirWalker};
 use crate::resolve::Resolution;
 use crate::syntax::Spanned;
 use crate::types::type_program_with_errors;
@@ -28,108 +28,108 @@ impl SemanticPipelineRule {
     }
 
     fn check_immutable_assignments(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
+        let mut walker = HirWalker::new().with_visitor(Box::new(MutabilityVisitor::new(ctx)));
+
         for item in &hir.node.items {
             match &item.node {
-                HirItem::FunctionDefinition(definition) => {
-                    self.walk_block_for_mutability(ctx, &definition.node.body, &mut HashMap::new());
+                crate::hir::HirItem::FunctionDefinition(definition) => {
+                    walker.walk(HirNodeRef::from(&definition.node.body.node));
                 }
-                HirItem::MethodDefinition(definition) => {
-                    self.walk_block_for_mutability(ctx, &definition.node.body, &mut HashMap::new());
+                crate::hir::HirItem::MethodDefinition(definition) => {
+                    walker.walk(HirNodeRef::from(&definition.node.body.node));
                 }
                 _ => {}
             }
         }
     }
+}
 
-    fn walk_block_for_mutability(
-        &self,
-        ctx: &mut RuleContext,
-        block: &Spanned<HirBlock>,
-        bindings: &mut HashMap<String, bool>,
-    ) {
-        let snapshot = bindings.clone();
+struct MutabilityVisitor<'a> {
+    ctx: &'a mut RuleContext,
+    scopes: Vec<HashMap<String, bool>>,
+    kind_stack: Vec<HirNodeKind>,
+    for_iterators: Vec<String>,
+}
 
-        for statement in &block.node.statements {
-            match &statement.node {
-                HirStatementNode::LetStatement(let_statement) => {
-                    self.walk_expr_for_mutability(ctx, &let_statement.node.value, bindings);
-                    bindings.insert(
-                        let_statement.node.name.node.name.clone(),
-                        let_statement.node.mutable,
-                    );
-                }
-                HirStatementNode::ReturnStatement(return_statement) => {
-                    if let Some(value) = &return_statement.node.value {
-                        self.walk_expr_for_mutability(ctx, value, bindings);
-                    }
-                }
-                HirStatementNode::WhileStatement(while_statement) => {
-                    self.walk_expr_for_mutability(ctx, &while_statement.node.condition, bindings);
-                    self.walk_block_for_mutability(ctx, &while_statement.node.body, bindings);
-                }
-                HirStatementNode::ForStatement(for_statement) => {
-                    self.walk_expr_for_mutability(
-                        ctx,
-                        &for_statement.node.range.node.start,
-                        bindings,
-                    );
-                    self.walk_expr_for_mutability(
-                        ctx,
-                        &for_statement.node.range.node.end,
-                        bindings,
-                    );
-                    bindings.insert(for_statement.node.iterator.node.name.clone(), false);
-                    self.walk_block_for_mutability(ctx, &for_statement.node.body, bindings);
-                }
-                HirStatementNode::IfStatement(if_statement) => {
-                    self.walk_expr_for_mutability(ctx, &if_statement.node.condition, bindings);
-                    self.walk_block_for_mutability(ctx, &if_statement.node.then_block, bindings);
-                    if let Some(else_block) = &if_statement.node.else_block {
-                        self.walk_block_for_mutability(ctx, else_block, bindings);
-                    }
-                }
-                HirStatementNode::ExpressionStatement(expression_statement) => {
-                    self.walk_expr_for_mutability(ctx, &expression_statement.node.expression, bindings);
-                }
-                HirStatementNode::BreakStatement(_) | HirStatementNode::ContinueStatement(_) => {}
-            }
+impl<'a> MutabilityVisitor<'a> {
+    fn new(ctx: &'a mut RuleContext) -> Self {
+        Self {
+            ctx,
+            scopes: Vec::new(),
+            kind_stack: Vec::new(),
+            for_iterators: Vec::new(),
         }
-
-        *bindings = snapshot;
     }
 
-    fn walk_expr_for_mutability(
-        &self,
-        ctx: &mut RuleContext,
-        expression: &Spanned<HirExpressionNode>,
-        bindings: &HashMap<String, bool>,
-    ) {
-        if let HirExpressionNode::AssignExpression(assign_expression) = &expression.node {
-            if let HirExpressionNode::PathExpression(path_expr) =
-                &assign_expression.node.target.node
-                && path_expr.node.path.node.segments.len() == 1
-                && let Some(name) = path_expr.node.path.node.segments.first()
+    fn lookup_mutability(&self, name: &str) -> Option<bool> {
+        for scope in self.scopes.iter().rev() {
+            if let Some(value) = scope.get(name) {
+                return Some(*value);
+            }
+        }
+        None
+    }
+}
+
+impl HirVisit for MutabilityVisitor<'_> {
+    fn enter(&mut self, node: HirNodeRef<'_>) {
+        let parent = self.kind_stack.last().copied();
+
+        if let Some(for_statement) = node.of::<HirForStatement>() {
+            self.for_iterators
+                .push(for_statement.iterator.node.name.clone());
+        }
+
+        if node.of::<HirBlock>().is_some() {
+            self.scopes.push(HashMap::new());
+            if parent == Some(HirNodeKind::ForStatement)
+                && let Some(iterator_name) = self.for_iterators.last().cloned()
+                && let Some(scope) = self.scopes.last_mut()
             {
-                let name_value = &name.node.name.node.name;
-                if let Some(is_mutable) = bindings.get(name_value) && !is_mutable {
-                    ctx.emit_simple(
-                        assign_expression.node.target.span,
-                        "E1214",
-                        format!("cannot assign to immutable binding `{}`", name_value),
-                        "immutable assignment",
-                        Some("declare it as `let mut` to allow assignment".to_string()),
-                        Severity::Error,
-                    );
-                }
+                scope.insert(iterator_name, false);
             }
         }
 
-        let mut on_child = |child: ExprChild<'_>| match child {
-            ExprChild::Expr(child_expr) => self.walk_expr_for_mutability(ctx, child_expr, bindings),
-            ExprChild::Block(child_block) => {
-                self.walk_block_for_mutability(ctx, child_block, &mut bindings.clone())
+        if let Some(expression) = node.of::<HirExpressionNode>()
+            && let HirExpressionNode::AssignExpression(assign_expression) = expression
+            && let HirExpressionNode::PathExpression(path_expr) =
+                &assign_expression.node.target.node
+            && path_expr.node.path.node.segments.len() == 1
+            && let Some(name) = path_expr.node.path.node.segments.first()
+        {
+            let name_value = &name.node.name.node.name;
+            if let Some(is_mutable) = self.lookup_mutability(name_value)
+                && !is_mutable
+            {
+                self.ctx.emit_simple(
+                    assign_expression.node.target.span,
+                    "E1214",
+                    format!("cannot assign to immutable binding `{}`", name_value),
+                    "immutable assignment",
+                    Some("declare it as `let mut` to allow assignment".to_string()),
+                    Severity::Error,
+                );
             }
-        };
-        visit_expression_children(expression, &mut on_child);
+        }
+
+        self.kind_stack.push(node.node_kind());
+    }
+
+    fn exit(&mut self, node: HirNodeRef<'_>) {
+        if let Some(let_statement) = node.of::<HirLetStatement>()
+            && let Some(scope) = self.scopes.last_mut()
+        {
+            scope.insert(let_statement.name.node.name.clone(), let_statement.mutable);
+        }
+
+        if node.of::<HirBlock>().is_some() {
+            self.scopes.pop();
+        }
+
+        if node.of::<HirForStatement>().is_some() {
+            self.for_iterators.pop();
+        }
+
+        self.kind_stack.pop();
     }
 }

@@ -3,6 +3,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 pub(super) use std::process::Command;
 
+pub(super) use beskid_abi::{SYM_ABI_VERSION, SYM_INTEROP_DISPATCH_UNIT};
 use beskid_analysis::analysis::diagnostics::Severity;
 use beskid_analysis::hir::{
     AstProgram, HirProgram, lower_program as lower_hir_program, normalize_program,
@@ -13,7 +14,6 @@ use beskid_analysis::resolve::Resolver;
 use beskid_analysis::syntax::{Program, Spanned};
 use beskid_analysis::types::type_program;
 use beskid_analysis::{AnalysisOptions, builtin_rules, run_rules};
-pub(super) use beskid_abi::{SYM_ABI_VERSION, SYM_INTEROP_DISPATCH_UNIT};
 pub(super) use beskid_aot::{
     AotBuildRequest, AotError, BuildOutputKind, BuildProfile, ExportPolicy, LinkMode,
     ProjectTargetKind, RuntimeStrategy, build, default_output_kind, resolve_entrypoint,

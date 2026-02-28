@@ -45,7 +45,8 @@ fn lower_function_items(
         match &item.node {
             HirItem::FunctionDefinition(def) => {
                 if def.node.generics.is_empty()
-                    && let Err(error) = lower_function(def, resolution, type_result, function_defs, ctx)
+                    && let Err(error) =
+                        lower_function(def, resolution, type_result, function_defs, ctx)
                 {
                     errors.push(error);
                 }

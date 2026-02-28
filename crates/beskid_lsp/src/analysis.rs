@@ -1,16 +1,12 @@
 use beskid_analysis::hir::{
     AstProgram, HirProgram, lower_program as lower_hir_program, normalize_program,
 };
-use beskid_analysis::parser::{BeskidParser, Rule};
-use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::resolve::{Resolution, Resolver};
+use beskid_analysis::services;
 use beskid_analysis::syntax::{Program, Spanned};
-use pest::Parser;
 
 pub fn parse_program(source: &str) -> Option<Spanned<Program>> {
-    let mut pairs = BeskidParser::parse(Rule::Program, source).ok()?;
-    let pair = pairs.next()?;
-    Program::parse(pair).ok()
+    services::parse_program(source).ok()
 }
 
 pub fn resolve_program(program: &Spanned<Program>) -> Option<Resolution> {

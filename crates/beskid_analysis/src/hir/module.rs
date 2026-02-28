@@ -1,7 +1,10 @@
-use crate::syntax::Spanned;
 use crate::query::{HirNode, HirNodeKind, HirNodeRef};
+use crate::syntax::Spanned;
 
-use super::{item::Item, phase::{HirPhase, Phase}};
+use super::{
+    item::Item,
+    phase::{HirPhase, Phase},
+};
 
 pub struct Module<P: Phase> {
     pub items: Vec<Spanned<Item<P>>>,

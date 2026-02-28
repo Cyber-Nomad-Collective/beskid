@@ -5,7 +5,11 @@ use beskid_analysis::types::TypeInfo;
 
 use crate::Engine;
 
-pub fn run_entrypoint(source_path: &std::path::Path, source: &str, entrypoint: &str) -> Result<String> {
+pub fn run_entrypoint(
+    source_path: &std::path::Path,
+    source: &str,
+    entrypoint: &str,
+) -> Result<String> {
     let lowered = beskid_codegen::lower_source(source_path, source, true)?;
 
     let mut engine = Engine::new();

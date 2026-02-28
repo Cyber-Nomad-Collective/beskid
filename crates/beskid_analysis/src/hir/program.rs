@@ -1,7 +1,10 @@
-use crate::syntax::Spanned;
 use crate::query::{HirNode, HirNodeKind, HirNodeRef};
+use crate::syntax::Spanned;
 
-use super::{item::Item, phase::{HirPhase, Phase}};
+use super::{
+    item::Item,
+    phase::{HirPhase, Phase},
+};
 
 #[derive(beskid_ast_derive::PhaseFromAst)]
 #[phase(source = "crate::syntax::Program", phase = "crate::hir::AstPhase")]

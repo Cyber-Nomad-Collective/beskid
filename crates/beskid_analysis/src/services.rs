@@ -86,7 +86,9 @@ pub fn resolve_input(
         prepared_workspace.as_ref(),
     ) {
         (Some(input), false, _, _) => input.clone(),
-        (_, _, Some(plan), Some(workspace)) => workspace.materialized_source_root.join(&plan.target.entry),
+        (_, _, Some(plan), Some(workspace)) => {
+            workspace.materialized_source_root.join(&plan.target.entry)
+        }
         (_, _, Some(plan), None) => plan.source_root.join(&plan.target.entry),
         (_, _, None, _) => {
             return Err(anyhow::anyhow!(

@@ -1,11 +1,11 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::{RuleContext, resolve};
-use crate::analysis::rules::staged::expression_walk::{ExprChild, visit_expression_children};
 use crate::hir::{
-    HirBlock, HirExpressionNode, HirItem, HirLegalityError, HirPath, HirProgram, HirStatementNode,
-    validate_hir_program,
+    HirBlock, HirExpressionNode, HirForStatement, HirItem, HirLegalityError, HirLetStatement,
+    HirPath, HirProgram, HirStatementNode, validate_hir_program,
 };
+use crate::query::{HirNodeKind, HirNodeRef, HirVisit, HirWalker};
 use crate::resolve::{Resolution, Resolver};
 use crate::syntax::{SpanInfo, Spanned};
 use std::collections::{HashMap, HashSet};
@@ -171,144 +171,19 @@ impl SemanticPipelineRule {
     }
 
     fn check_use_before_declaration(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
+        let mut walker = HirWalker::new().with_visitor(Box::new(UseBeforeDeclVisitor::new(ctx)));
+
         for item in &hir.node.items {
             match &item.node {
                 HirItem::FunctionDefinition(definition) => {
-                    self.check_block_use_before_decl(ctx, &definition.node.body, &mut Vec::new());
+                    walker.walk(HirNodeRef::from(&definition.node.body.node));
                 }
                 HirItem::MethodDefinition(definition) => {
-                    self.check_block_use_before_decl(ctx, &definition.node.body, &mut Vec::new());
+                    walker.walk(HirNodeRef::from(&definition.node.body.node));
                 }
                 _ => {}
             }
         }
-    }
-
-    fn check_block_use_before_decl(
-        &self,
-        ctx: &mut RuleContext,
-        block: &Spanned<HirBlock>,
-        declared_stack: &mut Vec<String>,
-    ) {
-        let start_len = declared_stack.len();
-        let mut pending: HashSet<String> = block
-            .node
-            .statements
-            .iter()
-            .filter_map(|statement| match &statement.node {
-                HirStatementNode::LetStatement(let_statement) => {
-                    Some(let_statement.node.name.node.name.clone())
-                }
-                _ => None,
-            })
-            .collect();
-
-        for statement in &block.node.statements {
-            match &statement.node {
-                HirStatementNode::LetStatement(let_statement) => {
-                    self.check_expr_use_before_decl(
-                        ctx,
-                        &let_statement.node.value,
-                        declared_stack,
-                        &pending,
-                    );
-                    pending.remove(&let_statement.node.name.node.name);
-                    declared_stack.push(let_statement.node.name.node.name.clone());
-                }
-                HirStatementNode::ReturnStatement(return_statement) => {
-                    if let Some(value) = &return_statement.node.value {
-                        self.check_expr_use_before_decl(ctx, value, declared_stack, &pending);
-                    }
-                }
-                HirStatementNode::ForStatement(for_statement) => {
-                    self.check_expr_use_before_decl(
-                        ctx,
-                        &for_statement.node.range.node.start,
-                        declared_stack,
-                        &pending,
-                    );
-                    self.check_expr_use_before_decl(
-                        ctx,
-                        &for_statement.node.range.node.end,
-                        declared_stack,
-                        &pending,
-                    );
-                    declared_stack.push(for_statement.node.iterator.node.name.clone());
-                    self.check_block_use_before_decl(ctx, &for_statement.node.body, declared_stack);
-                    declared_stack.pop();
-                }
-                HirStatementNode::WhileStatement(while_statement) => {
-                    self.check_expr_use_before_decl(
-                        ctx,
-                        &while_statement.node.condition,
-                        declared_stack,
-                        &pending,
-                    );
-                    self.check_block_use_before_decl(ctx, &while_statement.node.body, declared_stack);
-                }
-                HirStatementNode::IfStatement(if_statement) => {
-                    self.check_expr_use_before_decl(
-                        ctx,
-                        &if_statement.node.condition,
-                        declared_stack,
-                        &pending,
-                    );
-                    self.check_block_use_before_decl(ctx, &if_statement.node.then_block, declared_stack);
-                    if let Some(else_block) = &if_statement.node.else_block {
-                        self.check_block_use_before_decl(ctx, else_block, declared_stack);
-                    }
-                }
-                HirStatementNode::ExpressionStatement(expression_statement) => {
-                    self.check_expr_use_before_decl(
-                        ctx,
-                        &expression_statement.node.expression,
-                        declared_stack,
-                        &pending,
-                    );
-                }
-                HirStatementNode::BreakStatement(_) | HirStatementNode::ContinueStatement(_) => {}
-            }
-        }
-
-        declared_stack.truncate(start_len);
-    }
-
-    fn check_expr_use_before_decl(
-        &self,
-        ctx: &mut RuleContext,
-        expression: &Spanned<HirExpressionNode>,
-        declared_stack: &[String],
-        pending: &HashSet<String>,
-    ) {
-        if let HirExpressionNode::PathExpression(path_expr) = &expression.node {
-            if path_expr.node.path.node.segments.len() == 1
-                && let Some(name) = path_expr.node.path.node.segments.first()
-            {
-                let name_value = &name.node.name.node.name;
-                if !declared_stack.iter().any(|declared| declared == name_value)
-                    && pending.contains(name_value)
-                {
-                    ctx.emit_simple(
-                        path_expr.node.path.span,
-                        "E1106",
-                        format!("use of `{}` before declaration", name_value),
-                        "use before declaration",
-                        None,
-                        Severity::Error,
-                    );
-                }
-            }
-        }
-
-        let mut on_child = |child: ExprChild<'_>| match child {
-            ExprChild::Expr(child_expr) => {
-                self.check_expr_use_before_decl(ctx, child_expr, declared_stack, pending)
-            }
-            ExprChild::Block(child_block) => {
-                self.check_block_use_before_decl(ctx, child_block, &mut declared_stack.to_vec())
-            }
-        };
-        visit_expression_children(expression, &mut on_child);
     }
 
     fn path_tail_local(&self, path: &Spanned<HirPath>) -> String {
@@ -326,5 +201,114 @@ impl SemanticPipelineRule {
             .map(|segment| segment.node.name.node.name.clone())
             .collect::<Vec<_>>()
             .join(".")
+    }
+}
+
+struct DeclFrame {
+    pending: HashSet<String>,
+    start_declared_len: usize,
+}
+
+struct UseBeforeDeclVisitor<'a> {
+    ctx: &'a mut RuleContext,
+    declared_stack: Vec<String>,
+    block_frames: Vec<DeclFrame>,
+    kind_stack: Vec<HirNodeKind>,
+    for_iterators: Vec<String>,
+}
+
+impl<'a> UseBeforeDeclVisitor<'a> {
+    fn new(ctx: &'a mut RuleContext) -> Self {
+        Self {
+            ctx,
+            declared_stack: Vec::new(),
+            block_frames: Vec::new(),
+            kind_stack: Vec::new(),
+            for_iterators: Vec::new(),
+        }
+    }
+}
+
+impl HirVisit for UseBeforeDeclVisitor<'_> {
+    fn enter(&mut self, node: HirNodeRef<'_>) {
+        let parent = self.kind_stack.last().copied();
+
+        if let Some(for_statement) = node.of::<HirForStatement>() {
+            self.for_iterators
+                .push(for_statement.iterator.node.name.clone());
+        }
+
+        if let Some(block) = node.of::<HirBlock>() {
+            let pending = block
+                .statements
+                .iter()
+                .filter_map(|statement| match &statement.node {
+                    HirStatementNode::LetStatement(let_statement) => {
+                        Some(let_statement.node.name.node.name.clone())
+                    }
+                    _ => None,
+                })
+                .collect::<HashSet<_>>();
+
+            let start_declared_len = self.declared_stack.len();
+            self.block_frames.push(DeclFrame {
+                pending,
+                start_declared_len,
+            });
+
+            if parent == Some(HirNodeKind::ForStatement)
+                && let Some(iterator_name) = self.for_iterators.last().cloned()
+            {
+                self.declared_stack.push(iterator_name);
+            }
+        }
+
+        if let Some(expression) = node.of::<HirExpressionNode>()
+            && let HirExpressionNode::PathExpression(path_expr) = expression
+            && path_expr.node.path.node.segments.len() == 1
+            && let Some(name) = path_expr.node.path.node.segments.first()
+        {
+            let name_value = &name.node.name.node.name;
+            if let Some(frame) = self.block_frames.last()
+                && !self
+                    .declared_stack
+                    .iter()
+                    .any(|declared| declared == name_value)
+                && frame.pending.contains(name_value)
+            {
+                self.ctx.emit_simple(
+                    path_expr.node.path.span,
+                    "E1106",
+                    format!("use of `{}` before declaration", name_value),
+                    "use before declaration",
+                    None,
+                    Severity::Error,
+                );
+            }
+        }
+
+        self.kind_stack.push(node.node_kind());
+    }
+
+    fn exit(&mut self, node: HirNodeRef<'_>) {
+        if let Some(let_statement) = node.of::<HirLetStatement>() {
+            let name = let_statement.name.node.name.clone();
+            if let Some(frame) = self.block_frames.last_mut() {
+                frame.pending.remove(&name);
+            }
+            self.declared_stack.push(name);
+        }
+
+        if node.of::<HirBlock>().is_some()
+            && let Some(frame) = self.block_frames.pop()
+        {
+            self.declared_stack.truncate(frame.start_declared_len);
+        }
+
+        if node.of::<HirForStatement>().is_some() {
+            self.for_iterators.pop();
+        }
+
+        self.kind_stack.pop();
     }
 }

@@ -98,10 +98,7 @@ pub fn execute(args: BuildArgs) -> Result<()> {
     )?;
     let source = resolved.source;
     let input_path = resolved.source_path;
-    let project_target_kind = resolved
-        .compile_plan
-        .as_ref()
-        .map(|plan| plan.target.kind);
+    let project_target_kind = resolved.compile_plan.as_ref().map(|plan| plan.target.kind);
     let default_output_stem = resolved
         .compile_plan
         .as_ref()
@@ -185,7 +182,10 @@ pub fn execute(args: BuildArgs) -> Result<()> {
     Ok(())
 }
 
-fn resolve_output_kind(kind: Option<BuildKind>, target_kind: Option<TargetKind>) -> BuildOutputKind {
+fn resolve_output_kind(
+    kind: Option<BuildKind>,
+    target_kind: Option<TargetKind>,
+) -> BuildOutputKind {
     match kind {
         Some(kind) => map_build_kind(kind),
         None => default_output_kind(target_kind.map(map_target_kind)),
