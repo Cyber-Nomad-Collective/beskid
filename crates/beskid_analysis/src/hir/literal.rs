@@ -1,4 +1,6 @@
 #[derive(beskid_ast_derive::PhaseFromAst, Debug, Clone, PartialEq, Eq)]
+#[derive(beskid_ast_derive::HirNode)]
+#[ast(kind = "Literal")]
 #[phase(source = "crate::syntax::Literal", phase = "crate::hir::HirPhase")]
 pub enum HirLiteral {
     Integer(String),

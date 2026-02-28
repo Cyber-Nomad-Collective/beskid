@@ -1,10 +1,10 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::RuleContext;
-use crate::analysis::rules::staged::traversal::{HirChildNode, visit_expression_children};
 use crate::hir::{
     HirBlock, HirExpressionNode, HirItem, HirMatchArm, HirPattern, HirProgram, HirStatementNode,
 };
+use crate::query::HirQuery;
 use crate::syntax::Spanned;
 use std::collections::{HashMap, HashSet};
 
@@ -49,8 +49,8 @@ impl SemanticPipelineRule {
                 continue;
             };
             let enum_name = definition.node.name.node.name.clone();
-            for variant in &definition.node.variants {
-                result.insert(variant.node.name.node.name.clone(), enum_name.clone());
+            for variant in HirQuery::from(&definition.node).of::<crate::hir::HirEnumVariant>() {
+                result.insert(variant.name.node.name.clone(), enum_name.clone());
             }
         }
         result
@@ -68,11 +68,8 @@ impl SemanticPipelineRule {
             };
 
             let mut variants = HashMap::new();
-            for variant in &definition.node.variants {
-                variants.insert(
-                    variant.node.name.node.name.clone(),
-                    variant.node.fields.len(),
-                );
+            for variant in HirQuery::from(&definition.node).of::<crate::hir::HirEnumVariant>() {
+                variants.insert(variant.name.node.name.clone(), variant.fields.len());
             }
             result.insert(definition.node.name.node.name.clone(), variants);
         }
@@ -344,20 +341,92 @@ impl SemanticPipelineRule {
                         Severity::Error,
                     );
                 }
+
+                for arg in &constructor_expression.node.args {
+                    self.check_expression(ctx, arg, loop_depth, enum_variants, variant_to_enum);
+                }
+            }
+            HirExpressionNode::AssignExpression(assign_expression) => {
+                self.check_expression(
+                    ctx,
+                    &assign_expression.node.target,
+                    loop_depth,
+                    enum_variants,
+                    variant_to_enum,
+                );
+                self.check_expression(
+                    ctx,
+                    &assign_expression.node.value,
+                    loop_depth,
+                    enum_variants,
+                    variant_to_enum,
+                );
+            }
+            HirExpressionNode::BinaryExpression(binary_expression) => {
+                self.check_expression(
+                    ctx,
+                    &binary_expression.node.left,
+                    loop_depth,
+                    enum_variants,
+                    variant_to_enum,
+                );
+                self.check_expression(
+                    ctx,
+                    &binary_expression.node.right,
+                    loop_depth,
+                    enum_variants,
+                    variant_to_enum,
+                );
+            }
+            HirExpressionNode::UnaryExpression(unary_expression) => {
+                self.check_expression(
+                    ctx,
+                    &unary_expression.node.expr,
+                    loop_depth,
+                    enum_variants,
+                    variant_to_enum,
+                );
+            }
+            HirExpressionNode::MemberExpression(member_expression) => {
+                self.check_expression(
+                    ctx,
+                    &member_expression.node.target,
+                    loop_depth,
+                    enum_variants,
+                    variant_to_enum,
+                );
+            }
+            HirExpressionNode::StructLiteralExpression(struct_literal) => {
+                for field in &struct_literal.node.fields {
+                    self.check_expression(
+                        ctx,
+                        &field.node.value,
+                        loop_depth,
+                        enum_variants,
+                        variant_to_enum,
+                    );
+                }
+            }
+            HirExpressionNode::BlockExpression(block_expression) => {
+                self.check_block(
+                    ctx,
+                    &block_expression.node.block,
+                    loop_depth,
+                    enum_variants,
+                    variant_to_enum,
+                );
+            }
+            HirExpressionNode::GroupedExpression(grouped_expression) => {
+                self.check_expression(
+                    ctx,
+                    &grouped_expression.node.expr,
+                    loop_depth,
+                    enum_variants,
+                    variant_to_enum,
+                );
             }
             HirExpressionNode::LiteralExpression(_) | HirExpressionNode::PathExpression(_) => {}
-            _ => {}
         }
-
-        let mut on_child = |child: HirChildNode<'_>| match child {
-            HirChildNode::Block(child_block) => {
-                self.check_block(ctx, child_block, loop_depth, enum_variants, variant_to_enum)
-            }
-            HirChildNode::Expr(child_expr) => {
-                self.check_expression(ctx, child_expr, loop_depth, enum_variants, variant_to_enum)
-            }
-        };
-        visit_expression_children(expression, &mut on_child);
     }
 
     fn check_match_arm(

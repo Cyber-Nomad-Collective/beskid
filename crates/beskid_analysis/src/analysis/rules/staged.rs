@@ -9,7 +9,6 @@ mod error_handling;
 mod meta_programming;
 mod name_resolution;
 mod type_checking;
-mod traversal;
 mod visibility;
 
 pub struct SemanticPipelineRule;

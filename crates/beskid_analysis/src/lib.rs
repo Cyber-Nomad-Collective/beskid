@@ -15,4 +15,7 @@ pub use analysis::{
     Severity, builtin_rules, run_rules,
 };
 pub use parser::{BeskidParser, Rule};
-pub use query::{AstNode, Descendants, DynNodeRef, NodeKind, Query};
+pub use query::{
+    AstNode, Descendants, DynNodeRef, HirDescendants, HirNode, HirNodeKind, HirNodeRef, HirQuery,
+    HirVisit, HirWalker, NodeKind, Query,
+};

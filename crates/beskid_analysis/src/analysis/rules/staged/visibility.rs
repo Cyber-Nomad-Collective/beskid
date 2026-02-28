@@ -1,12 +1,10 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::RuleContext;
-use crate::analysis::rules::staged::traversal::{
-    HirChildNode, visit_expression_children, visit_statement_children,
-};
 use crate::hir::{
-    HirBlock, HirExpressionNode, HirItem, HirPath, HirProgram, HirVisibility,
+    HirExpressionNode, HirItem, HirPath, HirProgram, HirVisibility,
 };
+use crate::query::HirQuery;
 use crate::syntax::Spanned;
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
@@ -216,10 +214,14 @@ impl SemanticPipelineRule {
         for item in &hir.node.items {
             match &item.node {
                 HirItem::FunctionDefinition(definition) => {
-                    self.collect_used_in_block(&definition.node.body, &mut used);
+                    for expression in HirQuery::from(&definition.node.body.node).of::<HirExpressionNode>() {
+                        self.collect_used_from_expression(expression, &mut used);
+                    }
                 }
                 HirItem::MethodDefinition(definition) => {
-                    self.collect_used_in_block(&definition.node.body, &mut used);
+                    for expression in HirQuery::from(&definition.node.body.node).of::<HirExpressionNode>() {
+                        self.collect_used_from_expression(expression, &mut used);
+                    }
                 }
                 _ => {}
             }
@@ -227,22 +229,12 @@ impl SemanticPipelineRule {
         used
     }
 
-    fn collect_used_in_block(&self, block: &Spanned<HirBlock>, used: &mut HashSet<String>) {
-        for statement in &block.node.statements {
-            let mut on_child = |child: HirChildNode<'_>| match child {
-                HirChildNode::Block(child_block) => self.collect_used_in_block(child_block, used),
-                HirChildNode::Expr(child_expr) => self.collect_used_in_expression(child_expr, used),
-            };
-            visit_statement_children(statement, &mut on_child);
-        }
-    }
-
-    fn collect_used_in_expression(
+    fn collect_used_from_expression(
         &self,
-        expression: &Spanned<HirExpressionNode>,
+        expression: &HirExpressionNode,
         used: &mut HashSet<String>,
     ) {
-        match &expression.node {
+        match expression {
             HirExpressionNode::PathExpression(path_expression) => {
                 if let Some(last) = path_expression.node.path.node.segments.last() {
                     used.insert(last.node.name.node.name.clone());
@@ -275,12 +267,6 @@ impl SemanticPipelineRule {
             }
             _ => {}
         }
-
-        let mut on_child = |child: HirChildNode<'_>| match child {
-            HirChildNode::Block(child_block) => self.collect_used_in_block(child_block, used),
-            HirChildNode::Expr(child_expr) => self.collect_used_in_expression(child_expr, used),
-        };
-        visit_expression_children(expression, &mut on_child);
     }
 
     fn path_tail_stage5(&self, path: &Spanned<HirPath>) -> String {

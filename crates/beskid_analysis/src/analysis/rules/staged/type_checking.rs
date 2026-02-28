@@ -1,9 +1,6 @@
 use super::SemanticPipelineRule;
 use crate::analysis::Severity;
 use crate::analysis::rules::{RuleContext, types};
-use crate::analysis::rules::staged::traversal::{
-    HirChildNode, visit_expression_children, visit_statement_children,
-};
 use crate::hir::{HirBlock, HirExpressionNode, HirItem, HirProgram, HirStatementNode};
 use crate::resolve::Resolution;
 use crate::syntax::Spanned;
@@ -83,17 +80,17 @@ impl SemanticPipelineRule {
                     bindings.insert(for_statement.node.iterator.node.name.clone(), false);
                     self.walk_block_for_mutability(ctx, &for_statement.node.body, bindings);
                 }
-                _ => {
-                    let mut on_child = |child: HirChildNode<'_>| match child {
-                        HirChildNode::Block(child_block) => {
-                            self.walk_block_for_mutability(ctx, child_block, bindings);
-                        }
-                        HirChildNode::Expr(child_expr) => {
-                            self.walk_expr_for_mutability(ctx, child_expr, bindings);
-                        }
-                    };
-                    visit_statement_children(statement, &mut on_child);
+                HirStatementNode::IfStatement(if_statement) => {
+                    self.walk_expr_for_mutability(ctx, &if_statement.node.condition, bindings);
+                    self.walk_block_for_mutability(ctx, &if_statement.node.then_block, bindings);
+                    if let Some(else_block) = &if_statement.node.else_block {
+                        self.walk_block_for_mutability(ctx, else_block, bindings);
+                    }
                 }
+                HirStatementNode::ExpressionStatement(expression_statement) => {
+                    self.walk_expr_for_mutability(ctx, &expression_statement.node.expression, bindings);
+                }
+                HirStatementNode::BreakStatement(_) | HirStatementNode::ContinueStatement(_) => {}
             }
         }
 
@@ -126,14 +123,53 @@ impl SemanticPipelineRule {
             }
         }
 
-        let mut on_child = |child: HirChildNode<'_>| match child {
-            HirChildNode::Block(child_block) => {
-                self.walk_block_for_mutability(ctx, child_block, &mut bindings.clone());
+        match &expression.node {
+            HirExpressionNode::AssignExpression(assign_expression) => {
+                self.walk_expr_for_mutability(ctx, &assign_expression.node.target, bindings);
+                self.walk_expr_for_mutability(ctx, &assign_expression.node.value, bindings);
             }
-            HirChildNode::Expr(child_expr) => {
-                self.walk_expr_for_mutability(ctx, child_expr, bindings);
+            HirExpressionNode::BinaryExpression(binary_expression) => {
+                self.walk_expr_for_mutability(ctx, &binary_expression.node.left, bindings);
+                self.walk_expr_for_mutability(ctx, &binary_expression.node.right, bindings);
             }
-        };
-        visit_expression_children(expression, &mut on_child);
+            HirExpressionNode::UnaryExpression(unary_expression) => {
+                self.walk_expr_for_mutability(ctx, &unary_expression.node.expr, bindings);
+            }
+            HirExpressionNode::CallExpression(call_expression) => {
+                self.walk_expr_for_mutability(ctx, &call_expression.node.callee, bindings);
+                for arg in &call_expression.node.args {
+                    self.walk_expr_for_mutability(ctx, arg, bindings);
+                }
+            }
+            HirExpressionNode::MemberExpression(member_expression) => {
+                self.walk_expr_for_mutability(ctx, &member_expression.node.target, bindings);
+            }
+            HirExpressionNode::StructLiteralExpression(struct_literal) => {
+                for field in &struct_literal.node.fields {
+                    self.walk_expr_for_mutability(ctx, &field.node.value, bindings);
+                }
+            }
+            HirExpressionNode::EnumConstructorExpression(constructor_expression) => {
+                for arg in &constructor_expression.node.args {
+                    self.walk_expr_for_mutability(ctx, arg, bindings);
+                }
+            }
+            HirExpressionNode::MatchExpression(match_expression) => {
+                self.walk_expr_for_mutability(ctx, &match_expression.node.scrutinee, bindings);
+                for arm in &match_expression.node.arms {
+                    if let Some(guard) = &arm.node.guard {
+                        self.walk_expr_for_mutability(ctx, guard, bindings);
+                    }
+                    self.walk_expr_for_mutability(ctx, &arm.node.value, bindings);
+                }
+            }
+            HirExpressionNode::BlockExpression(block_expression) => {
+                self.walk_block_for_mutability(ctx, &block_expression.node.block, &mut bindings.clone());
+            }
+            HirExpressionNode::GroupedExpression(grouped_expression) => {
+                self.walk_expr_for_mutability(ctx, &grouped_expression.node.expr, bindings);
+            }
+            HirExpressionNode::LiteralExpression(_) | HirExpressionNode::PathExpression(_) => {}
+        }
     }
 }

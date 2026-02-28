@@ -7,25 +7,57 @@ use syn::{
 
 #[proc_macro_derive(AstNode, attributes(ast))]
 pub fn derive_ast_node(input: TokenStream) -> TokenStream {
+    derive_node_impl(
+        input,
+        quote! { crate::query::AstNode },
+        quote! { crate::query::DynNodeRef },
+        quote! { crate::query::NodeKind },
+    )
+}
+
+#[proc_macro_derive(HirNode, attributes(ast))]
+pub fn derive_hir_node(input: TokenStream) -> TokenStream {
+    derive_node_impl(
+        input,
+        quote! { crate::query::HirNode },
+        quote! { crate::query::HirNodeRef },
+        quote! { crate::query::HirNodeKind },
+    )
+}
+
+fn derive_node_impl(
+    input: TokenStream,
+    node_trait: proc_macro2::TokenStream,
+    node_ref: proc_macro2::TokenStream,
+    node_kind: proc_macro2::TokenStream,
+) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let name = input.ident;
+    let generics = input.generics;
+    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
     let kind_ident = parse_kind_attr(&input.attrs).unwrap_or_else(|| name.clone());
 
     let children_body = match &input.data {
-        Data::Struct(ds) => gen_struct_children(ds.fields.iter().collect::<Vec<_>>()),
-        Data::Enum(en) => gen_enum_children(en.variants.iter().collect::<Vec<_>>()),
+        Data::Struct(ds) => gen_struct_children(
+            ds.fields.iter().collect::<Vec<_>>(),
+            &node_trait,
+            &node_ref,
+        ),
+        Data::Enum(en) => {
+            gen_enum_children(en.variants.iter().collect::<Vec<_>>(), &node_trait, &node_ref)
+        }
         Data::Union(_) => quote! {},
     };
 
     let expanded = quote! {
         #[allow(unused_variables)]
-        impl crate::query::AstNode for #name {
+        impl #impl_generics #node_trait for #name #ty_generics #where_clause {
             fn as_any(&self) -> &dyn ::core::any::Any { self }
-            fn children<'a>(&'a self, push: &mut dyn FnMut(crate::query::DynNodeRef<'a>)) {
+            fn children<'a>(&'a self, push: &mut dyn FnMut(#node_ref<'a>)) {
                 #children_body
             }
-            fn node_kind(&self) -> crate::query::NodeKind {
-                crate::query::NodeKind::#kind_ident
+            fn node_kind(&self) -> #node_kind {
+                #node_kind::#kind_ident
             }
         }
     };
@@ -271,7 +303,11 @@ enum FieldAttr {
     Skip,
 }
 
-fn gen_struct_children(fields: Vec<&syn::Field>) -> proc_macro2::TokenStream {
+fn gen_struct_children(
+    fields: Vec<&syn::Field>,
+    node_trait: &proc_macro2::TokenStream,
+    node_ref: &proc_macro2::TokenStream,
+) -> proc_macro2::TokenStream {
     let mut stmts = Vec::new();
     for (idx, field) in fields.iter().enumerate() {
         let attr = parse_field_attr(&field.attrs);
@@ -284,12 +320,16 @@ fn gen_struct_children(fields: Vec<&syn::Field>) -> proc_macro2::TokenStream {
             let index = syn::Index::from(idx);
             quote! { &self.#index }
         };
-        stmts.push(gen_push_for_type(&field.ty, access));
+        stmts.push(gen_push_for_type(&field.ty, access, node_trait, node_ref));
     }
     quote! { #(#stmts)* }
 }
 
-fn gen_enum_children(variants: Vec<&syn::Variant>) -> proc_macro2::TokenStream {
+fn gen_enum_children(
+    variants: Vec<&syn::Variant>,
+    node_trait: &proc_macro2::TokenStream,
+    node_ref: &proc_macro2::TokenStream,
+) -> proc_macro2::TokenStream {
     let mut arms = Vec::new();
     for variant in variants {
         let vident = &variant.ident;
@@ -313,7 +353,12 @@ fn gen_enum_children(variants: Vec<&syn::Variant>) -> proc_macro2::TokenStream {
                     }
                     let binding = format_ident!("f{}", i);
                     binds.push(quote! { #binding });
-                    stmts.push(gen_push_for_type(&field.ty, quote! { #binding }));
+                    stmts.push(gen_push_for_type(
+                        &field.ty,
+                        quote! { #binding },
+                        node_trait,
+                        node_ref,
+                    ));
                 }
                 arms.push(quote! { Self::#vident( #(#binds),* ) => { #(#stmts)* } });
             }
@@ -334,7 +379,12 @@ fn gen_enum_children(variants: Vec<&syn::Variant>) -> proc_macro2::TokenStream {
                         continue;
                     }
                     binds.push(quote! { #fname });
-                    stmts.push(gen_push_for_type(&field.ty, quote! { #fname }));
+                    stmts.push(gen_push_for_type(
+                        &field.ty,
+                        quote! { #fname },
+                        node_trait,
+                        node_ref,
+                    ));
                 }
                 arms.push(quote! { Self::#vident { #(#binds),* } => { #(#stmts)* } });
             }
@@ -343,7 +393,12 @@ fn gen_enum_children(variants: Vec<&syn::Variant>) -> proc_macro2::TokenStream {
     quote! { match self { #( #arms ),* } }
 }
 
-fn gen_push_for_type(ty: &Type, access: proc_macro2::TokenStream) -> proc_macro2::TokenStream {
+fn gen_push_for_type(
+    ty: &Type,
+    access: proc_macro2::TokenStream,
+    node_trait: &proc_macro2::TokenStream,
+    node_ref: &proc_macro2::TokenStream,
+) -> proc_macro2::TokenStream {
     match ty {
         Type::Path(tp) => {
             if let Some(seg) = tp.path.segments.last() {
@@ -354,7 +409,8 @@ fn gen_push_for_type(ty: &Type, access: proc_macro2::TokenStream) -> proc_macro2
                     ("Option", PathArguments::AngleBracketed(ab)) => {
                         if let Some(GenericArgument::Type(inner_ty)) = ab.args.first() {
                             let v = format_ident!("__v");
-                            let inner = gen_push_for_type(inner_ty, quote! { #v });
+                            let inner =
+                                gen_push_for_type(inner_ty, quote! { #v }, node_trait, node_ref);
                             return quote! {
                                 if let ::core::option::Option::Some(#v) = (#access).as_ref() {
                                     #inner
@@ -365,7 +421,8 @@ fn gen_push_for_type(ty: &Type, access: proc_macro2::TokenStream) -> proc_macro2
                     ("Vec", PathArguments::AngleBracketed(ab)) => {
                         if let Some(GenericArgument::Type(inner_ty)) = ab.args.first() {
                             let v = format_ident!("__it");
-                            let inner = gen_push_for_type(inner_ty, quote! { #v });
+                            let inner =
+                                gen_push_for_type(inner_ty, quote! { #v }, node_trait, node_ref);
                             return quote! {
                                 for #v in (#access).iter() {
                                     #inner
@@ -375,14 +432,19 @@ fn gen_push_for_type(ty: &Type, access: proc_macro2::TokenStream) -> proc_macro2
                     }
                     ("Box", PathArguments::AngleBracketed(ab)) => {
                         if let Some(GenericArgument::Type(inner_ty)) = ab.args.first() {
-                            let inner = gen_push_for_type(inner_ty, quote! { (#access).as_ref() });
+                            let inner = gen_push_for_type(
+                                inner_ty,
+                                quote! { (#access).as_ref() },
+                                node_trait,
+                                node_ref,
+                            );
                             return quote! { #inner };
                         }
                     }
                     ("Spanned", PathArguments::AngleBracketed(ab)) => {
                         if let Some(GenericArgument::Type(inner_ty)) = ab.args.first() {
                             let inner_access = quote! { &((#access).node) };
-                            return gen_push_for_type(inner_ty, inner_access);
+                            return gen_push_for_type(inner_ty, inner_access, node_trait, node_ref);
                         }
                     }
                     _ => {}
@@ -392,8 +454,8 @@ fn gen_push_for_type(ty: &Type, access: proc_macro2::TokenStream) -> proc_macro2
                 }
             }
             quote! {
-                let __n: &'a dyn crate::query::AstNode = #access;
-                push(crate::query::DynNodeRef(__n));
+                let __n: &'a dyn #node_trait = #access;
+                push(#node_ref(__n));
             }
         }
         _ => quote! {},
