@@ -3,7 +3,7 @@ use beskid_analysis::parsing::error::ParseError;
 use beskid_analysis::parsing::parsable::Parsable;
 use beskid_analysis::projects::{ProjectError, parse_manifest};
 use beskid_analysis::syntax::Program;
-use beskid_analysis::{AnalysisOptions, Severity, builtin_rules, run_rules};
+use beskid_analysis::{AnalysisOptions, SemanticDiagnostic, Severity, builtin_rules, run_rules};
 use pest::Parser;
 use pest::error::{Error as PestError, InputLocation};
 use tower_lsp_server::ls_types::*;
@@ -42,24 +42,26 @@ pub fn analyze_document(uri: &Uri, source: &str) -> Vec<Diagnostic> {
     )
     .diagnostics
     .into_iter()
-    .map(|diag| {
-        let start = diag.span.offset();
-        let len = diag.span.len();
-        let end = start.saturating_add(len.max(1));
-        Diagnostic {
-            range: offset_range_to_lsp(source, start, end),
-            severity: Some(match diag.severity {
-                Severity::Error => DiagnosticSeverity::ERROR,
-                Severity::Warning => DiagnosticSeverity::WARNING,
-                Severity::Note => DiagnosticSeverity::INFORMATION,
-            }),
-            code: diag.code.map(NumberOrString::String),
-            source: Some("beskid".to_string()),
-            message: diag.message,
-            ..Diagnostic::default()
-        }
-    })
+    .map(|diag| semantic_to_lsp_diagnostic(source, diag))
     .collect()
+}
+
+fn semantic_to_lsp_diagnostic(source: &str, diag: SemanticDiagnostic) -> Diagnostic {
+    let start = diag.span.offset();
+    let len = diag.span.len();
+    let end = start.saturating_add(len.max(1));
+    Diagnostic {
+        range: offset_range_to_lsp(source, start, end),
+        severity: Some(match diag.severity {
+            Severity::Error => DiagnosticSeverity::ERROR,
+            Severity::Warning => DiagnosticSeverity::WARNING,
+            Severity::Note => DiagnosticSeverity::INFORMATION,
+        }),
+        code: diag.code.map(NumberOrString::String),
+        source: Some("beskid".to_string()),
+        message: diag.message,
+        ..Diagnostic::default()
+    }
 }
 
 fn analyze_project_manifest(source: &str) -> Vec<Diagnostic> {

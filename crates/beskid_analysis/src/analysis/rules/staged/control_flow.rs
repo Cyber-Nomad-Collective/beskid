@@ -1,5 +1,5 @@
 use super::SemanticPipelineRule;
-use crate::analysis::Severity;
+use crate::analysis::diagnostic_kinds::SemanticIssueKind;
 use crate::analysis::rules::RuleContext;
 use crate::hir::{HirBlock, HirExpressionNode, HirItem, HirPattern, HirProgram, HirStatementNode};
 use crate::query::{HirNodeRef, HirQuery, HirVisit, HirWalker};
@@ -85,26 +85,18 @@ impl SemanticPipelineRule {
             if let Some(guard) = &arm.node.guard
                 && !self.is_boolean_like_guard(guard)
             {
-                ctx.emit_simple(
-                    guard.span,
-                    "E1308",
-                    "match guard must be boolean",
-                    "guard type mismatch",
-                    None,
-                    Severity::Error,
-                );
+                ctx.emit_issue(guard.span, SemanticIssueKind::MatchGuardMustBeBoolean);
             }
 
             if let Some(kind) = self.literal_kind(&arm.node.value) {
                 if let Some(previous_kind) = arm_kind {
                     if previous_kind != kind {
-                        ctx.emit_simple(
+                        ctx.emit_issue(
                             arm.node.value.span,
-                            "E1305",
-                            "match arm type mismatch",
-                            "match arm type mismatch",
-                            Some(format!("expected `{previous_kind}`, got `{kind}`")),
-                            Severity::Error,
+                            SemanticIssueKind::MatchArmTypeMismatch {
+                                expected: previous_kind.to_string(),
+                                actual: kind.to_string(),
+                            },
                         );
                     }
                 } else {
@@ -148,13 +140,9 @@ impl SemanticPipelineRule {
             return;
         }
 
-        ctx.emit_simple(
+        ctx.emit_issue(
             match_expression.span,
-            "E1304",
-            format!("non-exhaustive match on enum `{enum_name}`"),
-            "match non-exhaustive",
-            None,
-            Severity::Error,
+            SemanticIssueKind::MatchNonExhaustive { enum_name },
         );
     }
 
@@ -207,54 +195,43 @@ impl SemanticPipelineRule {
                     return;
                 }
 
-                ctx.emit_simple(
+                ctx.emit_issue(
                     identifier.span,
-                    "E1306",
-                    format!("duplicate pattern binding `{name}`"),
-                    "duplicate pattern binding",
-                    None,
-                    Severity::Error,
+                    SemanticIssueKind::DuplicatePatternBinding { name },
                 );
             }
             HirPattern::Enum(enum_pattern) => {
                 let enum_name = enum_pattern.node.path.node.type_name.node.name.clone();
                 let variant_name = enum_pattern.node.path.node.variant.node.name.clone();
                 let Some(variants) = enum_variants.get(&enum_name) else {
-                    ctx.emit_simple(
+                    ctx.emit_issue(
                         enum_pattern.node.path.span,
-                        "E1301",
-                        format!("unknown enum path `{enum_name}::{variant_name}`"),
-                        "unknown enum path",
-                        None,
-                        Severity::Error,
+                        SemanticIssueKind::UnknownEnumPath {
+                            enum_name,
+                            variant_name,
+                        },
                     );
                     return;
                 };
 
                 let Some(expected_arity) = variants.get(&variant_name) else {
-                    ctx.emit_simple(
+                    ctx.emit_issue(
                         enum_pattern.node.path.span,
-                        "E1301",
-                        format!("unknown enum path `{enum_name}::{variant_name}`"),
-                        "unknown enum path",
-                        None,
-                        Severity::Error,
+                        SemanticIssueKind::UnknownEnumPath {
+                            enum_name,
+                            variant_name,
+                        },
                     );
                     return;
                 };
 
                 if enum_pattern.node.items.len() != *expected_arity {
-                    ctx.emit_simple(
+                    ctx.emit_issue(
                         enum_pattern.span,
-                        "E1307",
-                        format!(
-                            "pattern arity mismatch: expected {}, got {}",
-                            expected_arity,
-                            enum_pattern.node.items.len()
-                        ),
-                        "pattern arity mismatch",
-                        None,
-                        Severity::Error,
+                        SemanticIssueKind::PatternArityMismatch {
+                            expected: *expected_arity,
+                            actual: enum_pattern.node.items.len(),
+                        },
                     );
                 }
 
@@ -295,17 +272,8 @@ impl<'a> ControlFlowVisitor<'a> {
         let mut terminated = false;
         for statement in &block.statements {
             if terminated {
-                self.ctx.emit_simple(
-                    statement.span,
-                    "W1403",
-                    "unreachable code",
-                    "unreachable statement",
-                    Some(
-                        "remove this statement or move it before the terminating statement"
-                            .to_string(),
-                    ),
-                    Severity::Warning,
-                );
+                self.ctx
+                    .emit_issue(statement.span, SemanticIssueKind::UnreachableCode);
                 continue;
             }
             terminated = self.statement_terminates(statement);
@@ -317,14 +285,8 @@ impl<'a> ControlFlowVisitor<'a> {
             HirStatementNode::ReturnStatement(_) => true,
             HirStatementNode::BreakStatement(_) => {
                 if self.loop_depth == 0 {
-                    self.ctx.emit_simple(
-                        statement.span,
-                        "E1401",
-                        "break used outside loop",
-                        "break outside loop",
-                        None,
-                        Severity::Error,
-                    );
+                    self.ctx
+                        .emit_issue(statement.span, SemanticIssueKind::BreakOutsideLoop);
                     false
                 } else {
                     true
@@ -332,14 +294,8 @@ impl<'a> ControlFlowVisitor<'a> {
             }
             HirStatementNode::ContinueStatement(_) => {
                 if self.loop_depth == 0 {
-                    self.ctx.emit_simple(
-                        statement.span,
-                        "E1402",
-                        "continue used outside loop",
-                        "continue outside loop",
-                        None,
-                        Severity::Error,
-                    );
+                    self.ctx
+                        .emit_issue(statement.span, SemanticIssueKind::ContinueOutsideLoop);
                     false
                 } else {
                     true
@@ -361,16 +317,12 @@ impl<'a> ControlFlowVisitor<'a> {
         {
             let name_value = &name.node.name.node.name;
             if let Some(enum_name) = self.variant_to_enum.get(name_value) {
-                self.ctx.emit_simple(
+                self.ctx.emit_issue(
                     path_expression.node.path.span,
-                    "E1303",
-                    format!(
-                        "unqualified enum constructor `{}`; use `{}::{}`",
-                        name_value, enum_name, name_value
-                    ),
-                    "unqualified enum constructor",
-                    None,
-                    Severity::Error,
+                    SemanticIssueKind::UnqualifiedEnumConstructor {
+                        variant_name: name_value.clone(),
+                        enum_name: enum_name.clone(),
+                    },
                 );
             }
         }
@@ -397,41 +349,34 @@ impl<'a> ControlFlowVisitor<'a> {
             .name
             .clone();
         let Some(variants) = self.enum_variants.get(&enum_name) else {
-            self.ctx.emit_simple(
+            self.ctx.emit_issue(
                 constructor_expression.node.path.span,
-                "E1301",
-                format!("unknown enum path `{enum_name}::{variant_name}`"),
-                "unknown enum path",
-                None,
-                Severity::Error,
+                SemanticIssueKind::UnknownEnumPath {
+                    enum_name,
+                    variant_name,
+                },
             );
             return;
         };
 
         let Some(expected_arity) = variants.get(&variant_name) else {
-            self.ctx.emit_simple(
+            self.ctx.emit_issue(
                 constructor_expression.node.path.span,
-                "E1301",
-                format!("unknown enum path `{enum_name}::{variant_name}`"),
-                "unknown enum path",
-                None,
-                Severity::Error,
+                SemanticIssueKind::UnknownEnumPath {
+                    enum_name,
+                    variant_name,
+                },
             );
             return;
         };
 
         if constructor_expression.node.args.len() != *expected_arity {
-            self.ctx.emit_simple(
+            self.ctx.emit_issue(
                 constructor_expression.span,
-                "E1302",
-                format!(
-                    "enum constructor arity mismatch: expected {}, got {}",
-                    expected_arity,
-                    constructor_expression.node.args.len()
-                ),
-                "enum constructor arity mismatch",
-                None,
-                Severity::Error,
+                SemanticIssueKind::EnumConstructorArityMismatch {
+                    expected: *expected_arity,
+                    actual: constructor_expression.node.args.len(),
+                },
             );
         }
     }

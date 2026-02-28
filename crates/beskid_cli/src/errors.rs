@@ -1,3 +1,4 @@
+use beskid_analysis::SemanticDiagnostic;
 use beskid_analysis::parser::Rule;
 use beskid_analysis::parsing::error::ParseError;
 use beskid_analysis::syntax::SpanInfo;
@@ -24,6 +25,12 @@ pub fn print_pretty_pest_error(file: &str, source: &str, err: &PestError<Rule>) 
 pub fn print_pretty_parse_error(file: &str, source: &str, err: &ParseError) {
     let report = parse_to_report(file, source, err);
     eprintln!("{:?}", report);
+}
+
+pub fn print_semantic_diagnostics(diagnostics: impl IntoIterator<Item = SemanticDiagnostic>) {
+    for diagnostic in diagnostics {
+        eprintln!("{:?}", Report::new(diagnostic));
+    }
 }
 
 fn pest_to_report(file: &str, source: &str, err: &PestError<Rule>) -> Report {

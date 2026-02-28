@@ -1,5 +1,5 @@
 use super::SemanticPipelineRule;
-use crate::analysis::Severity;
+use crate::analysis::diagnostic_kinds::SemanticIssueKind;
 use crate::analysis::rules::RuleContext;
 use crate::hir::{HirContractDefinition, HirItem, HirPath, HirPrimitiveType, HirProgram, HirType};
 use crate::query::{HirNode, HirQuery};
@@ -37,24 +37,21 @@ impl SemanticPipelineRule {
             ctx,
             hir,
             &mut seen,
-            "E1006",
-            "item name",
+            DuplicateKind::ItemName,
             |definition| (definition.name.node.name.clone(), definition.name.span),
         );
         self.check_duplicate_query_entries::<crate::hir::HirModuleDeclaration>(
             ctx,
             hir,
             &mut seen,
-            "E1006",
-            "item name",
+            DuplicateKind::ItemName,
             |definition| (self.path_tail(&definition.path), definition.path.span),
         );
         self.check_duplicate_query_entries::<crate::hir::HirUseDeclaration>(
             ctx,
             hir,
             &mut seen,
-            "E1006",
-            "item name",
+            DuplicateKind::ItemName,
             |definition| (self.path_tail(&definition.path), definition.path.span),
         );
     }
@@ -152,15 +149,12 @@ impl SemanticPipelineRule {
                         continue;
                     }
 
-                    ctx.emit_simple(
+                    ctx.emit_issue(
                         embedding.name.span,
-                        "E1004",
-                        format!(
-                            "embedded contract `{embedded_name}` introduces conflicting method `{method_name}`"
-                        ),
-                        "conflicting embedded contract method",
-                        Some("embedded contract method signature conflicts with an existing method".to_string()),
-                        Severity::Error,
+                        SemanticIssueKind::ConflictingEmbeddedContractMethod {
+                            contract_name: embedded_name.clone(),
+                            method_name,
+                        },
                     );
                 }
             }
@@ -287,13 +281,11 @@ impl SemanticPipelineRule {
                     return;
                 }
 
-                ctx.emit_simple(
+                ctx.emit_issue(
                     path.span,
-                    "E1005",
-                    format!("unknown type `{type_name}` in definition"),
-                    "unknown type in definition",
-                    None,
-                    Severity::Error,
+                    SemanticIssueKind::UnknownTypeInDefinition {
+                        type_name: type_name.clone(),
+                    },
                 );
             }
             HirType::Array(inner) | HirType::Ref(inner) => {
@@ -317,24 +309,21 @@ impl SemanticPipelineRule {
             ctx,
             hir,
             &mut seen,
-            "E1001",
-            "definition name",
+            DuplicateKind::DefinitionName,
             |definition| (definition.name.node.name.clone(), definition.name.span),
         );
         self.check_duplicate_query_entries::<crate::hir::HirEnumDefinition>(
             ctx,
             hir,
             &mut seen,
-            "E1001",
-            "definition name",
+            DuplicateKind::DefinitionName,
             |definition| (definition.name.node.name.clone(), definition.name.span),
         );
         self.check_duplicate_query_entries::<crate::hir::HirContractDefinition>(
             ctx,
             hir,
             &mut seen,
-            "E1001",
-            "definition name",
+            DuplicateKind::DefinitionName,
             |definition| (definition.name.node.name.clone(), definition.name.span),
         );
     }
@@ -351,8 +340,7 @@ impl SemanticPipelineRule {
                 &mut seen,
                 variant.name.node.name.clone(),
                 variant.name.span,
-                "E1002",
-                "enum variant",
+                DuplicateKind::EnumVariant,
             );
         }
     }
@@ -369,8 +357,7 @@ impl SemanticPipelineRule {
                 &mut seen,
                 signature.name.node.name.clone(),
                 signature.name.span,
-                "E1003",
-                "contract method",
+                DuplicateKind::ContractMethod,
             );
         }
     }
@@ -380,13 +367,12 @@ impl SemanticPipelineRule {
         ctx: &mut RuleContext,
         hir: &Spanned<HirProgram>,
         seen: &mut HashMap<String, SpanInfo>,
-        code: &str,
-        subject: &str,
+        kind: DuplicateKind,
         name_and_span: impl Fn(&T) -> (String, SpanInfo),
     ) {
         for node in HirQuery::from(&hir.node).of::<T>() {
             let (name, span) = name_and_span(node);
-            self.emit_duplicate_if_any(ctx, seen, name, span, code, subject);
+            self.emit_duplicate_if_any(ctx, seen, name, span, kind);
         }
     }
 
@@ -396,25 +382,31 @@ impl SemanticPipelineRule {
         seen: &mut HashMap<String, SpanInfo>,
         name: String,
         span: SpanInfo,
-        code: &str,
-        subject: &str,
+        kind: DuplicateKind,
     ) {
         let Some(previous_span) = seen.insert(name.clone(), span) else {
             return;
         };
 
-        let help = Some(format!(
-            "previously defined at line {}, column {}",
-            previous_span.line_col_start.0, previous_span.line_col_start.1
-        ));
-        ctx.emit_simple(
-            span,
-            code,
-            format!("duplicate {subject} `{name}`"),
-            format!("duplicate {subject}"),
-            help,
-            Severity::Error,
-        );
+        let issue = match kind {
+            DuplicateKind::DefinitionName => SemanticIssueKind::DuplicateDefinitionName {
+                name,
+                previous: previous_span,
+            },
+            DuplicateKind::EnumVariant => SemanticIssueKind::DuplicateEnumVariant {
+                name,
+                previous: previous_span,
+            },
+            DuplicateKind::ContractMethod => SemanticIssueKind::DuplicateContractMethod {
+                name,
+                previous: previous_span,
+            },
+            DuplicateKind::ItemName => SemanticIssueKind::DuplicateItemName {
+                name,
+                previous: previous_span,
+            },
+        };
+        ctx.emit_issue(span, issue);
     }
 
     fn extend_known_type_names<T: HirNode + 'static>(
@@ -427,4 +419,12 @@ impl SemanticPipelineRule {
             known.insert(name_of(node));
         }
     }
+}
+
+#[derive(Clone, Copy)]
+enum DuplicateKind {
+    DefinitionName,
+    EnumVariant,
+    ContractMethod,
+    ItemName,
 }

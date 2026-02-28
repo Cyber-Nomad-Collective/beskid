@@ -1,5 +1,5 @@
 use super::SemanticPipelineRule;
-use crate::analysis::Severity;
+use crate::analysis::diagnostic_kinds::SemanticIssueKind;
 use crate::analysis::rules::{RuleContext, types};
 use crate::hir::{HirBlock, HirExpressionNode, HirForStatement, HirLetStatement, HirProgram};
 use crate::query::{HirNodeKind, HirNodeRef, HirVisit, HirWalker};
@@ -101,13 +101,11 @@ impl HirVisit for MutabilityVisitor<'_> {
             if let Some(is_mutable) = self.lookup_mutability(name_value)
                 && !is_mutable
             {
-                self.ctx.emit_simple(
+                self.ctx.emit_issue(
                     assign_expression.node.target.span,
-                    "E1214",
-                    format!("cannot assign to immutable binding `{}`", name_value),
-                    "immutable assignment",
-                    Some("declare it as `let mut` to allow assignment".to_string()),
-                    Severity::Error,
+                    SemanticIssueKind::ImmutableAssignment {
+                        name: name_value.clone(),
+                    },
                 );
             }
         }

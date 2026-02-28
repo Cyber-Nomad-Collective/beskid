@@ -1,5 +1,5 @@
 use super::SemanticPipelineRule;
-use crate::analysis::Severity;
+use crate::analysis::diagnostic_kinds::SemanticIssueKind;
 use crate::analysis::rules::{RuleContext, resolve};
 use crate::hir::{
     HirBlock, HirExpressionNode, HirForStatement, HirItem, HirLegalityError, HirLetStatement,
@@ -49,43 +49,25 @@ impl SemanticPipelineRule {
     fn emit_legality_error(&self, ctx: &mut RuleContext, error: HirLegalityError) {
         match error {
             HirLegalityError::InvalidSpan { span, context } => {
-                ctx.emit_simple(
+                ctx.emit_issue(
                     span,
-                    "E1151",
-                    format!("invalid span invariant in `{context}`"),
-                    "invalid HIR span",
-                    None,
-                    Severity::Error,
+                    SemanticIssueKind::InvalidHirSpan {
+                        context: context.to_string(),
+                    },
                 );
             }
             HirLegalityError::UnresolvedValuePath { span } => {
-                ctx.emit_simple(
-                    span,
-                    "E1152",
-                    "unresolved value path in HIR legality validation".to_string(),
-                    "unresolved HIR value path",
-                    None,
-                    Severity::Error,
-                );
+                ctx.emit_issue(span, SemanticIssueKind::UnresolvedHirValuePath);
             }
             HirLegalityError::UnresolvedTypePath { span } => {
-                ctx.emit_simple(
-                    span,
-                    "E1153",
-                    "unresolved type path in HIR legality validation".to_string(),
-                    "unresolved HIR type path",
-                    None,
-                    Severity::Error,
-                );
+                ctx.emit_issue(span, SemanticIssueKind::UnresolvedHirTypePath);
             }
             HirLegalityError::NonNormalizedControlFlow { span, message } => {
-                ctx.emit_simple(
+                ctx.emit_issue(
                     span,
-                    "E1154",
-                    format!("non-normalized control-flow in HIR: {message}"),
-                    "non-normalized HIR control-flow",
-                    None,
-                    Severity::Error,
+                    SemanticIssueKind::NonNormalizedHirControlFlow {
+                        message: message.to_string(),
+                    },
                 );
             }
         }
@@ -104,17 +86,12 @@ impl SemanticPipelineRule {
                 continue;
             };
 
-            let help = Some(format!(
-                "previously imported at line {}, column {}",
-                previous_span.line_col_start.0, previous_span.line_col_start.1
-            ));
-            ctx.emit_simple(
+            ctx.emit_issue(
                 use_decl.node.path.span,
-                "E1104",
-                format!("ambiguous import for `{imported_name}`"),
-                "ambiguous import",
-                help,
-                Severity::Error,
+                SemanticIssueKind::AmbiguousImport {
+                    name: imported_name,
+                    previous: previous_span,
+                },
             );
         }
     }
@@ -156,16 +133,11 @@ impl SemanticPipelineRule {
                 continue;
             }
 
-            ctx.emit_simple(
+            ctx.emit_issue(
                 use_decl.node.path.span,
-                "E1105",
-                format!(
-                    "unknown import path `{}`",
-                    self.path_to_string_local(&use_decl.node.path)
-                ),
-                "unknown import path",
-                None,
-                Severity::Error,
+                SemanticIssueKind::UnknownImportPath {
+                    path: self.path_to_string_local(&use_decl.node.path),
+                },
             );
         }
     }
@@ -276,13 +248,11 @@ impl HirVisit for UseBeforeDeclVisitor<'_> {
                     .any(|declared| declared == name_value)
                 && frame.pending.contains(name_value)
             {
-                self.ctx.emit_simple(
+                self.ctx.emit_issue(
                     path_expr.node.path.span,
-                    "E1106",
-                    format!("use of `{}` before declaration", name_value),
-                    "use before declaration",
-                    None,
-                    Severity::Error,
+                    SemanticIssueKind::UseBeforeDeclaration {
+                        name: name_value.clone(),
+                    },
                 );
             }
         }

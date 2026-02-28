@@ -1,4 +1,5 @@
 use super::super::diagnostics::{SemanticDiagnostic, Severity, make_diagnostic};
+use crate::analysis::diagnostic_kinds::SemanticIssueKind;
 use crate::syntax::Program;
 
 #[derive(Debug, Clone)]
@@ -79,6 +80,20 @@ impl RuleContext {
             help,
             Some(code.into()),
             severity,
+        );
+        self.emit(diagnostic);
+    }
+
+    pub fn emit_issue(&mut self, span: crate::syntax::SpanInfo, issue: SemanticIssueKind) {
+        let diagnostic = make_diagnostic(
+            &self.source_name,
+            &self.source,
+            span,
+            issue.message(),
+            issue.label(),
+            issue.help(),
+            Some(issue.code().to_string()),
+            issue.severity(),
         );
         self.emit(diagnostic);
     }

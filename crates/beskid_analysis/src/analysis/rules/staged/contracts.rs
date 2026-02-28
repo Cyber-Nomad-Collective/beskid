@@ -1,5 +1,5 @@
 use super::SemanticPipelineRule;
-use crate::analysis::Severity;
+use crate::analysis::diagnostic_kinds::SemanticIssueKind;
 use crate::analysis::rules::RuleContext;
 use crate::hir::{HirContractNode, HirItem, HirProgram, HirType};
 use crate::syntax::Spanned;
@@ -34,13 +34,12 @@ impl SemanticPipelineRule {
 
             let method_name = method.node.name.node.name.clone();
             let Some(expected) = expected_methods.get(&method_name) else {
-                ctx.emit_simple(
+                ctx.emit_issue(
                     method.node.name.span,
-                    "E1606",
-                    format!("method `{method_name}` not found in contract `{receiver_name}`"),
-                    "method not found",
-                    None,
-                    Severity::Error,
+                    SemanticIssueKind::ContractMethodNotFound {
+                        method_name,
+                        receiver_name,
+                    },
                 );
                 continue;
             };
@@ -50,13 +49,13 @@ impl SemanticPipelineRule {
                 method.node.return_type.is_some(),
             );
             if &actual != expected {
-                ctx.emit_simple(
+                ctx.emit_issue(
                     method.node.name.span,
-                    "E1602",
-                    format!("contract implementation signature mismatch for `{method_name}`"),
-                    "contract implementation signature mismatch",
-                    Some(format!("expected `{expected}`, got `{actual}`")),
-                    Severity::Error,
+                    SemanticIssueKind::ContractImplementationSignatureMismatch {
+                        method_name,
+                        expected: expected.clone(),
+                        actual,
+                    },
                 );
             }
         }
@@ -69,15 +68,13 @@ impl SemanticPipelineRule {
                 let span = self
                     .contract_method_span(hir, contract_name, method_name)
                     .unwrap_or(hir.span);
-                ctx.emit_simple(
+                ctx.emit_issue(
                     span,
-                    "E1601",
-                    format!(
-                        "contract method `{contract_name}.{method_name}` is missing implementation"
-                    ),
-                    "contract method missing implementation",
-                    Some(format!("expected signature `{expected}`")),
-                    Severity::Error,
+                    SemanticIssueKind::ContractMethodMissingImplementation {
+                        contract_name: contract_name.clone(),
+                        method_name: method_name.clone(),
+                        expected: expected.clone(),
+                    },
                 );
             }
         }

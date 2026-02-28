@@ -1,8 +1,9 @@
 use anyhow::Result;
 use beskid_analysis::services;
 use clap::Args;
-use miette::Report;
 use std::path::PathBuf;
+
+use crate::errors;
 
 #[derive(Args, Debug)]
 pub struct AnalyzeArgs {
@@ -39,9 +40,7 @@ pub fn execute(args: AnalyzeArgs) -> Result<()> {
     if diagnostics.is_empty() {
         println!("No diagnostics.");
     } else {
-        for diagnostic in diagnostics {
-            eprintln!("{:?}", Report::new(diagnostic));
-        }
+        errors::print_semantic_diagnostics(diagnostics);
     }
 
     Ok(())

@@ -1,5 +1,5 @@
 use super::SemanticPipelineRule;
-use crate::analysis::Severity;
+use crate::analysis::diagnostic_kinds::SemanticIssueKind;
 use crate::analysis::rules::RuleContext;
 use crate::hir::{HirExpressionNode, HirItem, HirPath, HirProgram, HirVisibility};
 use crate::query::HirQuery;
@@ -38,20 +38,13 @@ impl SemanticPipelineRule {
                 continue;
             }
 
-            ctx.emit_simple(
+            ctx.emit_issue(
                 module.node.path.span,
-                "E1502",
-                format!(
-                    "module `{}` not found",
-                    self.path_to_string_stage5(&module.node.path)
-                ),
-                "module not found",
-                Some(format!(
-                    "expected `{}` or `{}`",
-                    file_candidate.display(),
-                    mod_candidate.display()
-                )),
-                Severity::Error,
+                SemanticIssueKind::VisibilityModuleNotFound {
+                    module_path: self.path_to_string_stage5(&module.node.path),
+                    file_candidate: file_candidate.display().to_string(),
+                    mod_candidate: mod_candidate.display().to_string(),
+                },
             );
         }
     }
@@ -75,16 +68,12 @@ impl SemanticPipelineRule {
                 continue;
             }
 
-            ctx.emit_simple(
+            ctx.emit_issue(
                 use_decl.node.path.span,
-                "E1501",
-                format!("visibility violation while importing private item `{tail}`"),
-                "visibility violation",
-                Some(format!(
-                    "item is private (declared at line {}, column {})",
-                    private_span.line_col_start.0, private_span.line_col_start.1
-                )),
-                Severity::Error,
+                SemanticIssueKind::VisibilityViolationImportPrivate {
+                    name: tail,
+                    private_span: *private_span,
+                },
             );
         }
     }
@@ -100,16 +89,11 @@ impl SemanticPipelineRule {
             if used_names.contains(&imported_name) {
                 continue;
             }
-            ctx.emit_simple(
+            ctx.emit_issue(
                 use_decl.node.path.span,
-                "W1503",
-                format!(
-                    "unused import `{}`",
-                    self.path_to_string_stage5(&use_decl.node.path)
-                ),
-                "unused import",
-                None,
-                Severity::Warning,
+                SemanticIssueKind::UnusedImport {
+                    path: self.path_to_string_stage5(&use_decl.node.path),
+                },
             );
         }
     }
@@ -151,14 +135,7 @@ impl SemanticPipelineRule {
                 continue;
             }
 
-            ctx.emit_simple(
-                span,
-                "W1504",
-                format!("unused private item `{name}`"),
-                "unused private item",
-                None,
-                Severity::Warning,
-            );
+            ctx.emit_issue(span, SemanticIssueKind::UnusedPrivateItem { name });
         }
     }
 
