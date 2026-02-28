@@ -4,6 +4,7 @@
 - Line comments: `// ...` (to end of line)
 - Block comments: `/* ... */` (do not nest in v0.1)
 - Identifiers: `[A-Za-z_][A-Za-z0-9_]*`, case-sensitive
+- Fat arrow: `=>` (used for lambda expressions)
 
 Example:
 ```
@@ -13,7 +14,7 @@ let user_id = 1;
 ```
 
 ## Keywords (v0.1)
-`type`, `enum`, `contract`, `match`, `when`, `if`, `else`, `while`, `for`, `in`, `return`, `break`, `continue`, `let`, `mut`, `mod`, `use`, `pub`, `ref`, `out`
+`type`, `enum`, `contract`, `match`, `when`, `if`, `else`, `while`, `for`, `in`, `return`, `break`, `continue`, `let`, `mut`, `mod`, `use`, `pub`, `ref`, `out`, `event`
 
 ### Keyword meanings
 - `type`: product type (struct) declaration.
@@ -36,6 +37,7 @@ let user_id = 1;
 - `pub`: public visibility marker.
 - `ref`: read-only reference type/parameter.
 - `out`: write-only output parameter.
+- `event`: native modifier for zero-cost multicast delegates.
 
 ## Literals
 - Integers: `0`, `42`, `-7`
@@ -91,4 +93,26 @@ unit greet() {
     let msg = "hi";
     println(msg);
 }
+```
+
+## Functions and Lambdas
+Beskid supports statically-typed first-class functions and lambda expressions.
+Function types are declared using the arrow syntax: `(T1, T2) -> TOut`.
+
+Lambdas use the fat arrow `=>`.
+```beskid
+// Type signature for a function that takes an i32 and returns a bool
+type Predicate = (i32) -> bool;
+
+// Lambda with inferred parameter types
+let isEven = x => x % 2 == 0;
+
+// Lambda with explicit parameter types
+let add = (x: i32, y: i32) => x + y;
+
+// Lambda with a block body
+let printAndReturn = x => {
+    println(x.to_string());
+    return x;
+};
 ```

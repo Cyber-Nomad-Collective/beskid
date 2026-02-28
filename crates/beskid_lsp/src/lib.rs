@@ -1,6 +1,7 @@
-pub mod analysis;
-pub mod backend;
-pub mod diagnostics;
-pub mod navigation;
-pub mod position;
-pub mod state;
+pub(crate) mod adapters;
+pub(crate) mod diagnostics;
+pub(crate) mod features;
+pub(crate) mod position;
+pub(crate) mod protocol;
+pub mod server;
+pub(crate) mod session;

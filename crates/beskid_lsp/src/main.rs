@@ -1,4 +1,4 @@
-use beskid_lsp::backend::Backend;
+use beskid_lsp::server::backend::Backend;
 use tower_lsp_server::{LspService, Server};
 
 #[tokio::main]

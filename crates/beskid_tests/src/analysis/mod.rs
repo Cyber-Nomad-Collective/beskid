@@ -1,3 +1,4 @@
+mod diagnostics;
 mod hir_query;
 mod legality;
 mod lowering;

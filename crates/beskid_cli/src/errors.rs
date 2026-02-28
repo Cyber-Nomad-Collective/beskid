@@ -1,64 +1,22 @@
 use beskid_analysis::SemanticDiagnostic;
 use beskid_analysis::parser::Rule;
 use beskid_analysis::parsing::error::ParseError;
-use beskid_analysis::syntax::SpanInfo;
-use miette::{LabeledSpan, NamedSource, Report, SourceSpan};
-use pest::error::{Error as PestError, InputLocation};
-
-fn pest_offset(err: &PestError<Rule>) -> usize {
-    match err.location {
-        InputLocation::Pos(pos) => pos,
-        InputLocation::Span((start, _)) => start,
-    }
-}
-
-fn span_to_sourcespan(span: SpanInfo) -> SourceSpan {
-    let len = span.end.saturating_sub(span.start).max(1);
-    SourceSpan::new(span.start.into(), len.into())
-}
+use beskid_analysis::services;
+use miette::Report;
+use pest::error::Error as PestError;
 
 pub fn print_pretty_pest_error(file: &str, source: &str, err: &PestError<Rule>) {
-    let report = pest_to_report(file, source, err);
-    eprintln!("{:?}", report);
+    let diagnostic = services::pest_error_diagnostic(file, source, err);
+    eprintln!("{:?}", Report::new(diagnostic));
 }
 
 pub fn print_pretty_parse_error(file: &str, source: &str, err: &ParseError) {
-    let report = parse_to_report(file, source, err);
-    eprintln!("{:?}", report);
+    let diagnostic = services::parse_error_diagnostic(file, source, err);
+    eprintln!("{:?}", Report::new(diagnostic));
 }
 
 pub fn print_semantic_diagnostics(diagnostics: impl IntoIterator<Item = SemanticDiagnostic>) {
     for diagnostic in diagnostics {
         eprintln!("{:?}", Report::new(diagnostic));
-    }
-}
-
-fn pest_to_report(file: &str, source: &str, err: &PestError<Rule>) -> Report {
-    let offset = pest_offset(err);
-    let span = SourceSpan::new(offset.into(), 1usize.into());
-    let label = LabeledSpan::at(span, "here");
-    miette::miette!(labels = vec![label], "parse error: {}", err)
-        .with_source_code(NamedSource::new(file, source.to_string()))
-}
-
-fn parse_to_report(file: &str, source: &str, err: &ParseError) -> Report {
-    let message = match err {
-        ParseError::UnexpectedRule {
-            expected, found, ..
-        } => match expected {
-            Some(rule) => format!("expected {:?}, found {:?}", rule, found),
-            None => format!("unexpected {:?}", found),
-        },
-        ParseError::MissingPair { expected } => format!("missing {:?}", expected),
-    };
-
-    match err {
-        ParseError::UnexpectedRule { span, .. } => {
-            let label = LabeledSpan::at(span_to_sourcespan(*span), "here");
-            miette::miette!(labels = vec![label], "parse error: {}", message)
-                .with_source_code(NamedSource::new(file, source.to_string()))
-        }
-        ParseError::MissingPair { .. } => miette::miette!("parse error: {}", message)
-            .with_source_code(NamedSource::new(file, source.to_string())),
     }
 }
