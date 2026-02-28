@@ -27,6 +27,11 @@ fn parses_string_interpolation_rule() {
 }
 
 #[test]
+fn parses_string_interpolation_rule_with_full_expression() {
+    assert_parse(Rule::StringInterpolation, "${1 + 2}");
+}
+
+#[test]
 fn rejects_string_interpolation_without_expr() {
     assert_parse_fail(Rule::StringInterpolation, "${}");
 }

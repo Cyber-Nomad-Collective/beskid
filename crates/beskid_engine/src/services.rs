@@ -1,9 +1,8 @@
 use anyhow::Result;
-use beskid_analysis::hir::HirPrimitiveType;
 use beskid_analysis::resolve::ItemKind;
-use beskid_analysis::types::TypeInfo;
 
 use crate::Engine;
+use crate::jit_callable::JitCallable;
 
 pub fn run_entrypoint(
     source_path: &std::path::Path,
@@ -50,51 +49,7 @@ pub fn run_entrypoint(
         ));
     }
 
-    let output = engine.with_arena(|_, _| match return_info {
-        TypeInfo::Primitive(HirPrimitiveType::Unit) => {
-            let main_fn: extern "C" fn() = unsafe { std::mem::transmute(ptr) };
-            main_fn();
-            "ok".to_owned()
-        }
-        TypeInfo::Primitive(HirPrimitiveType::String)
-        | TypeInfo::Named(_)
-        | TypeInfo::GenericParam(_)
-        | TypeInfo::Applied { .. } => {
-            let main_fn: extern "C" fn() -> u64 = unsafe { std::mem::transmute(ptr) };
-            let value = main_fn();
-            format!("0x{value:016x}")
-        }
-        TypeInfo::Primitive(HirPrimitiveType::I64) => {
-            let main_fn: extern "C" fn() -> i64 = unsafe { std::mem::transmute(ptr) };
-            let value = main_fn();
-            value.to_string()
-        }
-        TypeInfo::Primitive(HirPrimitiveType::I32) => {
-            let main_fn: extern "C" fn() -> i32 = unsafe { std::mem::transmute(ptr) };
-            let value = main_fn();
-            value.to_string()
-        }
-        TypeInfo::Primitive(HirPrimitiveType::U8) => {
-            let main_fn: extern "C" fn() -> u8 = unsafe { std::mem::transmute(ptr) };
-            let value = main_fn();
-            value.to_string()
-        }
-        TypeInfo::Primitive(HirPrimitiveType::Bool) => {
-            let main_fn: extern "C" fn() -> u8 = unsafe { std::mem::transmute(ptr) };
-            let value = main_fn() != 0;
-            value.to_string()
-        }
-        TypeInfo::Primitive(HirPrimitiveType::F64) => {
-            let main_fn: extern "C" fn() -> f64 = unsafe { std::mem::transmute(ptr) };
-            let value = main_fn();
-            value.to_string()
-        }
-        TypeInfo::Primitive(HirPrimitiveType::Char) => {
-            let main_fn: extern "C" fn() -> u32 = unsafe { std::mem::transmute(ptr) };
-            let value = main_fn();
-            std::char::from_u32(value).unwrap_or('\u{FFFD}').to_string()
-        }
-    });
+    let output = engine.with_arena(|_, _| JitCallable::execute_and_format(ptr, return_info));
 
     Ok(output)
 }

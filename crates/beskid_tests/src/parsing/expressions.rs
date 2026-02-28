@@ -72,6 +72,28 @@ fn parses_sub_and_div_binary_expression() {
 }
 
 #[test]
+fn parses_string_interpolation_as_concat_expression() {
+    let expr = parse_expression_ast("\"hi ${name}\"");
+    let (left, op, right) = expect_binary(&expr.node, BinaryOp::Add);
+    expect_binary_op(op, BinaryOp::Add);
+    expect_string_literal(&left.node, "\"hi \"");
+    expect_identifier_path(&right.node, "name");
+}
+
+#[test]
+fn parses_string_interpolation_with_full_expression() {
+    let expr = parse_expression_ast("\"sum ${1 + 2}\"");
+    let (left, op, right) = expect_binary(&expr.node, BinaryOp::Add);
+    expect_binary_op(op, BinaryOp::Add);
+    expect_string_literal(&left.node, "\"sum \"");
+
+    let (expr_left, expr_op, expr_right) = expect_binary(&right.node, BinaryOp::Add);
+    expect_binary_op(expr_op, BinaryOp::Add);
+    expect_integer_literal(&expr_left.node, "1");
+    expect_integer_literal(&expr_right.node, "2");
+}
+
+#[test]
 fn rejects_empty_expression() {
     assert_parse_fail(Rule::Expression, "");
 }
@@ -176,4 +198,15 @@ fn expect_bool_literal(expr: &Expression, expected: bool) {
     }
 
     panic!("expected bool literal");
+}
+
+fn expect_string_literal(expr: &Expression, expected: &str) {
+    if let Expression::Literal(literal) = expr {
+        if let Literal::String(value) = &literal.node.literal.node {
+            assert_eq!(value, expected);
+            return;
+        }
+    }
+
+    panic!("expected string literal");
 }

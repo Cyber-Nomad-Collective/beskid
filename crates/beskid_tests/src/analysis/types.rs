@@ -175,6 +175,33 @@ fn typing_match_expression_unifies_types() {
 }
 
 #[test]
+fn typing_string_interpolation_with_variable_succeeds() {
+    let result =
+        resolve_and_type("unit main() { string name = \"Ada\"; string msg = \"hi ${name}\"; }");
+    if let Err(errors) = &result {
+        panic!("expected interpolated string typing to succeed, got errors: {errors:?}");
+    }
+    assert!(
+        result.is_ok(),
+        "unexpected interpolated string typing failure"
+    );
+}
+
+#[test]
+fn typing_string_interpolation_with_full_expression_succeeds() {
+    let result = resolve_and_type(
+        "unit main() { string name = \"Ada\"; string suffix = \"!\"; string msg = \"hi ${name + suffix}\"; }",
+    );
+    if let Err(errors) = &result {
+        panic!("expected interpolated expression typing to succeed, got errors: {errors:?}");
+    }
+    assert!(
+        result.is_ok(),
+        "unexpected interpolated expression typing failure"
+    );
+}
+
+#[test]
 fn typing_records_cast_intent_for_numeric_mismatch() {
     let result = resolve_and_type("unit main() { i32 x = 1; i64 y = x; }")
         .expect("expected typing to succeed with cast intent");

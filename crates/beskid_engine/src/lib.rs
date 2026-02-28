@@ -1,4 +1,5 @@
 mod engine;
+mod jit_callable;
 mod jit_module;
 pub mod services;
 

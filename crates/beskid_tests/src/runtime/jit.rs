@@ -3,11 +3,29 @@ use beskid_codegen::lowering::lower_program;
 use beskid_engine::Engine;
 use std::panic::{self, AssertUnwindSafe};
 
-unsafe fn run_main_i64(engine: &mut Engine) -> i64 {
-    let ptr = unsafe { engine.entrypoint_ptr("main") }.expect("expected main entrypoint pointer");
+macro_rules! run_entrypoint0 {
+    ($engine:expr, $entrypoint:expr, $ret:ty) => {{
+        // SAFETY: helper is used only with known test signatures.
+        unsafe { execute_entrypoint0::<$ret>($engine, $entrypoint) }
+    }};
+}
+
+unsafe fn execute_entrypoint0<R>(engine: &mut Engine, entrypoint: &str) -> R {
+    let ptr = unsafe { engine.entrypoint_ptr(entrypoint) }.expect("expected entrypoint pointer");
     assert!(!ptr.is_null(), "expected non-null entrypoint pointer");
-    let main_fn: extern "C" fn() -> i64 = unsafe { std::mem::transmute(ptr) };
-    engine.with_arena(|_, _| main_fn())
+    engine.with_arena(|_, _| {
+        // SAFETY: tests provide the expected return type for the compiled entrypoint.
+        unsafe { invoke0::<R>(ptr) }
+    })
+}
+
+unsafe fn invoke0<R>(ptr: *const u8) -> R {
+    let callable: extern "C" fn() -> R = unsafe { std::mem::transmute(ptr) };
+    callable()
+}
+
+unsafe fn run_main_i64(engine: &mut Engine) -> i64 {
+    run_entrypoint0!(engine, "main", i64)
 }
 
 fn compile_jit(source: &str) -> Engine {
@@ -87,11 +105,7 @@ fn jit_executes_enum_allocation_and_returns_payload_field() {
     let source = "enum Choice { Some(i32 value), None } i32 main() { Choice c = Choice::Some(7); i32 result = match c { Choice::Some(v) => v, Choice::None => 0, }; return result; }";
     let mut engine = compile_jit(source);
 
-    let ptr = unsafe { engine.entrypoint_ptr("main") }.expect("ptr");
-    let value = engine.with_arena(|_, _| {
-        let main_fn: extern "C" fn() -> i32 = unsafe { std::mem::transmute(ptr) };
-        main_fn()
-    });
+    let value = run_entrypoint0!(&mut engine, "main", i32);
     assert_eq!(value, 7, "expected enum payload field to round-trip");
 }
 

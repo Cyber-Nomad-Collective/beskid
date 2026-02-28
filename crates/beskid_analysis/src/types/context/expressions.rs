@@ -551,7 +551,21 @@ impl<'a> TypeContext<'a> {
                     None
                 }
             }
-            HirBinaryOp::Add | HirBinaryOp::Sub | HirBinaryOp::Mul | HirBinaryOp::Div => {
+            HirBinaryOp::Add => {
+                if self.is_numeric(left)
+                    || matches!(
+                        self.type_table.get(left),
+                        Some(crate::types::TypeInfo::Primitive(HirPrimitiveType::String))
+                    )
+                {
+                    Some(left)
+                } else {
+                    self.errors
+                        .push(TypeError::InvalidBinaryOp { span: binary.span });
+                    None
+                }
+            }
+            HirBinaryOp::Sub | HirBinaryOp::Mul | HirBinaryOp::Div => {
                 if self.is_numeric(left) {
                     Some(left)
                 } else {

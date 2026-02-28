@@ -134,13 +134,14 @@ fn build_runtime_on_the_fly(req: &RuntimeBuildRequest) -> AotResult<RuntimeArtif
 use beskid_runtime::{
     alloc, array_new, gc_register_root, gc_root_handle, gc_unregister_root, gc_unroot_handle,
     gc_write_barrier, interop_dispatch_ptr, interop_dispatch_unit, interop_dispatch_usize,
-    panic, panic_str, str_len, str_new,
+    panic, panic_str, str_concat, str_len, str_new,
 };
 
 #[unsafe(no_mangle)]
 pub extern \"C\" fn beskid_runtime_link_anchor() {
     let _ = alloc as usize;
     let _ = str_new as usize;
+    let _ = str_concat as usize;
     let _ = array_new as usize;
     let _ = panic as usize;
     let _ = panic_str as usize;

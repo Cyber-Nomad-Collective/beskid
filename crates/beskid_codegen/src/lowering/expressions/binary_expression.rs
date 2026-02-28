@@ -1,12 +1,13 @@
 use crate::errors::CodegenError;
 use crate::lowering::lowerable::{Lowerable, lower_node};
 use crate::lowering::node_context::NodeLoweringContext;
-use crate::lowering::types::map_type_id_to_clif;
+use crate::lowering::types::{map_type_id_to_clif, pointer_type};
 use beskid_analysis::hir::{HirBinaryExpression, HirBinaryOp, HirPrimitiveType};
 use beskid_analysis::syntax::Spanned;
 use beskid_analysis::types::TypeInfo;
 use cranelift_codegen::ir::condcodes::{FloatCC, IntCC};
-use cranelift_codegen::ir::{InstBuilder, Value};
+use cranelift_codegen::ir::{AbiParam, ExternalName, InstBuilder, Signature, Value};
+use cranelift_codegen::isa::CallConv;
 
 impl Lowerable<NodeLoweringContext<'_, '_>> for HirBinaryExpression {
     type Output = Option<Value>;
@@ -58,6 +59,12 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirBinaryExpression {
 
         let value = match node.node.op.node {
             HirBinaryOp::Add => {
+                if matches!(
+                    operand_info,
+                    Some(TypeInfo::Primitive(HirPrimitiveType::String))
+                ) {
+                    return lower_string_concat(node, left, right, ctx);
+                }
                 if operand_clif_ty.is_float() {
                     ctx.builder.ins().fadd(left, right)
                 } else if operand_clif_ty.is_int() {
@@ -173,4 +180,37 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirBinaryExpression {
 
         Ok(Some(value))
     }
+}
+
+fn lower_string_concat(
+    node: &Spanned<HirBinaryExpression>,
+    left: Value,
+    right: Value,
+    ctx: &mut NodeLoweringContext<'_, '_>,
+) -> Result<Option<Value>, CodegenError> {
+    let mut signature = Signature::new(CallConv::SystemV);
+    signature.params.push(AbiParam::new(pointer_type()));
+    signature.params.push(AbiParam::new(pointer_type()));
+    signature.returns.push(AbiParam::new(pointer_type()));
+    let sig_ref = ctx.builder.func.import_signature(signature);
+    let func_ref = ctx
+        .builder
+        .func
+        .import_function(cranelift_codegen::ir::ExtFuncData {
+            name: ExternalName::testcase("str_concat".to_string()),
+            signature: sig_ref,
+            colocated: false,
+            patchable: false,
+        });
+
+    let call = ctx.builder.ins().call(func_ref, &[left, right]);
+    let result = *ctx
+        .builder
+        .inst_results(call)
+        .first()
+        .ok_or(CodegenError::UnsupportedNode {
+            span: node.span,
+            node: "string concat result",
+        })?;
+    Ok(Some(result))
 }

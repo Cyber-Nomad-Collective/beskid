@@ -1,6 +1,7 @@
 pub const SYM_ABI_VERSION: &str = "beskid_runtime_abi_version";
 pub const SYM_ALLOC: &str = "alloc";
 pub const SYM_STR_NEW: &str = "str_new";
+pub const SYM_STR_CONCAT: &str = "str_concat";
 pub const SYM_ARRAY_NEW: &str = "array_new";
 pub const SYM_PANIC: &str = "panic";
 pub const SYM_PANIC_STR: &str = "panic_str";
@@ -18,6 +19,7 @@ pub const RUNTIME_EXPORT_SYMBOLS: &[&str] = &[
     SYM_ABI_VERSION,
     SYM_ALLOC,
     SYM_STR_NEW,
+    SYM_STR_CONCAT,
     SYM_STR_LEN,
     SYM_ARRAY_NEW,
     SYM_PANIC,
