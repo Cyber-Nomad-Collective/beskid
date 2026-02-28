@@ -4,7 +4,7 @@ use crate::analysis::rules::RuleContext;
 use crate::hir::{
     HirContractDefinition, HirItem, HirPath, HirPrimitiveType, HirProgram, HirType,
 };
-use crate::query::HirQuery;
+use crate::query::{HirNode, HirQuery};
 use crate::syntax::{SpanInfo, Spanned};
 use std::collections::{HashMap, HashSet};
 
@@ -35,71 +35,30 @@ impl SemanticPipelineRule {
     ) {
         let mut seen: HashMap<String, SpanInfo> = HashMap::new();
 
-        for definition in HirQuery::from(&hir.node).of::<crate::hir::HirFunctionDefinition>() {
-            let name = definition.name.node.name.clone();
-            let span = definition.name.span;
-
-            let Some(previous_span) = seen.insert(name.clone(), span) else {
-                continue;
-            };
-
-            let help = Some(format!(
-                "previously defined at line {}, column {}",
-                previous_span.line_col_start.0, previous_span.line_col_start.1
-            ));
-            ctx.emit_simple(
-                span,
-                "E1006",
-                format!("duplicate item name `{name}`"),
-                "duplicate item name",
-                help,
-                Severity::Error,
-            );
-        }
-
-        for definition in HirQuery::from(&hir.node).of::<crate::hir::HirModuleDeclaration>() {
-            let name = self.path_tail(&definition.path);
-            let span = definition.path.span;
-
-            let Some(previous_span) = seen.insert(name.clone(), span) else {
-                continue;
-            };
-
-            let help = Some(format!(
-                "previously defined at line {}, column {}",
-                previous_span.line_col_start.0, previous_span.line_col_start.1
-            ));
-            ctx.emit_simple(
-                span,
-                "E1006",
-                format!("duplicate item name `{name}`"),
-                "duplicate item name",
-                help,
-                Severity::Error,
-            );
-        }
-
-        for definition in HirQuery::from(&hir.node).of::<crate::hir::HirUseDeclaration>() {
-            let name = self.path_tail(&definition.path);
-            let span = definition.path.span;
-
-            let Some(previous_span) = seen.insert(name.clone(), span) else {
-                continue;
-            };
-
-            let help = Some(format!(
-                "previously defined at line {}, column {}",
-                previous_span.line_col_start.0, previous_span.line_col_start.1
-            ));
-            ctx.emit_simple(
-                span,
-                "E1006",
-                format!("duplicate item name `{name}`"),
-                "duplicate item name",
-                help,
-                Severity::Error,
-            );
-        }
+        self.check_duplicate_query_entries::<crate::hir::HirFunctionDefinition>(
+            ctx,
+            hir,
+            &mut seen,
+            "E1006",
+            "item name",
+            |definition| (definition.name.node.name.clone(), definition.name.span),
+        );
+        self.check_duplicate_query_entries::<crate::hir::HirModuleDeclaration>(
+            ctx,
+            hir,
+            &mut seen,
+            "E1006",
+            "item name",
+            |definition| (self.path_tail(&definition.path), definition.path.span),
+        );
+        self.check_duplicate_query_entries::<crate::hir::HirUseDeclaration>(
+            ctx,
+            hir,
+            &mut seen,
+            "E1006",
+            "item name",
+            |definition| (self.path_tail(&definition.path), definition.path.span),
+        );
     }
 
     fn check_unknown_types_in_definitions(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
@@ -277,15 +236,17 @@ impl SemanticPipelineRule {
             known.insert(primitive.to_string());
         }
 
-        for definition in HirQuery::from(&hir.node).of::<crate::hir::HirTypeDefinition>() {
-            known.insert(definition.name.node.name.clone());
-        }
-        for definition in HirQuery::from(&hir.node).of::<crate::hir::HirEnumDefinition>() {
-            known.insert(definition.name.node.name.clone());
-        }
-        for definition in HirQuery::from(&hir.node).of::<crate::hir::HirContractDefinition>() {
-            known.insert(definition.name.node.name.clone());
-        }
+        self.extend_known_type_names::<crate::hir::HirTypeDefinition>(hir, &mut known, |definition| {
+            definition.name.node.name.clone()
+        });
+        self.extend_known_type_names::<crate::hir::HirEnumDefinition>(hir, &mut known, |definition| {
+            definition.name.node.name.clone()
+        });
+        self.extend_known_type_names::<crate::hir::HirContractDefinition>(
+            hir,
+            &mut known,
+            |definition| definition.name.node.name.clone(),
+        );
 
         known
     }
@@ -344,71 +305,30 @@ impl SemanticPipelineRule {
     fn check_duplicate_definition_names(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {
         let mut seen: HashMap<String, SpanInfo> = HashMap::new();
 
-        for definition in HirQuery::from(&hir.node).of::<crate::hir::HirTypeDefinition>() {
-            let name = definition.name.node.name.clone();
-            let span = definition.name.span;
-
-            let Some(previous_span) = seen.insert(name.clone(), span) else {
-                continue;
-            };
-
-            let help = Some(format!(
-                "previously defined at line {}, column {}",
-                previous_span.line_col_start.0, previous_span.line_col_start.1
-            ));
-            ctx.emit_simple(
-                span,
-                "E1001",
-                format!("duplicate definition name `{name}`"),
-                "duplicate definition name",
-                help,
-                Severity::Error,
-            );
-        }
-
-        for definition in HirQuery::from(&hir.node).of::<crate::hir::HirEnumDefinition>() {
-            let name = definition.name.node.name.clone();
-            let span = definition.name.span;
-
-            let Some(previous_span) = seen.insert(name.clone(), span) else {
-                continue;
-            };
-
-            let help = Some(format!(
-                "previously defined at line {}, column {}",
-                previous_span.line_col_start.0, previous_span.line_col_start.1
-            ));
-            ctx.emit_simple(
-                span,
-                "E1001",
-                format!("duplicate definition name `{name}`"),
-                "duplicate definition name",
-                help,
-                Severity::Error,
-            );
-        }
-
-        for definition in HirQuery::from(&hir.node).of::<crate::hir::HirContractDefinition>() {
-            let name = definition.name.node.name.clone();
-            let span = definition.name.span;
-
-            let Some(previous_span) = seen.insert(name.clone(), span) else {
-                continue;
-            };
-
-            let help = Some(format!(
-                "previously defined at line {}, column {}",
-                previous_span.line_col_start.0, previous_span.line_col_start.1
-            ));
-            ctx.emit_simple(
-                span,
-                "E1001",
-                format!("duplicate definition name `{name}`"),
-                "duplicate definition name",
-                help,
-                Severity::Error,
-            );
-        }
+        self.check_duplicate_query_entries::<crate::hir::HirTypeDefinition>(
+            ctx,
+            hir,
+            &mut seen,
+            "E1001",
+            "definition name",
+            |definition| (definition.name.node.name.clone(), definition.name.span),
+        );
+        self.check_duplicate_query_entries::<crate::hir::HirEnumDefinition>(
+            ctx,
+            hir,
+            &mut seen,
+            "E1001",
+            "definition name",
+            |definition| (definition.name.node.name.clone(), definition.name.span),
+        );
+        self.check_duplicate_query_entries::<crate::hir::HirContractDefinition>(
+            ctx,
+            hir,
+            &mut seen,
+            "E1001",
+            "definition name",
+            |definition| (definition.name.node.name.clone(), definition.name.span),
+        );
     }
 
     fn check_duplicate_enum_variants(
@@ -416,26 +336,17 @@ impl SemanticPipelineRule {
         ctx: &mut RuleContext,
         definition: &crate::hir::HirEnumDefinition,
     ) {
-        let mut seen: HashMap<&str, SpanInfo> = HashMap::new();
+        let mut seen: HashMap<String, SpanInfo> = HashMap::new();
         for variant in HirQuery::from(definition)
             .of::<crate::hir::HirEnumVariant>()
         {
-            let name = variant.name.node.name.as_str();
-            let Some(previous_span) = seen.insert(name, variant.name.span) else {
-                continue;
-            };
-
-            let help = Some(format!(
-                "previously defined at line {}, column {}",
-                previous_span.line_col_start.0, previous_span.line_col_start.1
-            ));
-            ctx.emit_simple(
+            self.emit_duplicate_if_any(
+                ctx,
+                &mut seen,
+                variant.name.node.name.clone(),
                 variant.name.span,
                 "E1002",
-                format!("duplicate enum variant `{name}`"),
-                "duplicate enum variant",
-                help,
-                Severity::Error,
+                "enum variant",
             );
         }
     }
@@ -445,28 +356,71 @@ impl SemanticPipelineRule {
         ctx: &mut RuleContext,
         definition: &crate::hir::HirContractDefinition,
     ) {
-        let mut seen: HashMap<&str, SpanInfo> = HashMap::new();
+        let mut seen: HashMap<String, SpanInfo> = HashMap::new();
         for signature in HirQuery::from(definition)
             .of::<crate::hir::HirContractMethodSignature>()
         {
-
-            let name = signature.name.node.name.as_str();
-            let Some(previous_span) = seen.insert(name, signature.name.span) else {
-                continue;
-            };
-
-            let help = Some(format!(
-                "previously defined at line {}, column {}",
-                previous_span.line_col_start.0, previous_span.line_col_start.1
-            ));
-            ctx.emit_simple(
+            self.emit_duplicate_if_any(
+                ctx,
+                &mut seen,
+                signature.name.node.name.clone(),
                 signature.name.span,
                 "E1003",
-                format!("duplicate contract method `{name}`"),
-                "duplicate contract method",
-                help,
-                Severity::Error,
+                "contract method",
             );
+        }
+    }
+
+    fn check_duplicate_query_entries<T: HirNode + 'static>(
+        &self,
+        ctx: &mut RuleContext,
+        hir: &Spanned<HirProgram>,
+        seen: &mut HashMap<String, SpanInfo>,
+        code: &str,
+        subject: &str,
+        name_and_span: impl Fn(&T) -> (String, SpanInfo),
+    ) {
+        for node in HirQuery::from(&hir.node).of::<T>() {
+            let (name, span) = name_and_span(node);
+            self.emit_duplicate_if_any(ctx, seen, name, span, code, subject);
+        }
+    }
+
+    fn emit_duplicate_if_any(
+        &self,
+        ctx: &mut RuleContext,
+        seen: &mut HashMap<String, SpanInfo>,
+        name: String,
+        span: SpanInfo,
+        code: &str,
+        subject: &str,
+    ) {
+        let Some(previous_span) = seen.insert(name.clone(), span) else {
+            return;
+        };
+
+        let help = Some(format!(
+            "previously defined at line {}, column {}",
+            previous_span.line_col_start.0, previous_span.line_col_start.1
+        ));
+        ctx.emit_simple(
+            span,
+            code,
+            format!("duplicate {subject} `{name}`"),
+            format!("duplicate {subject}"),
+            help,
+            Severity::Error,
+        );
+    }
+
+    fn extend_known_type_names<T: HirNode + 'static>(
+        &self,
+        hir: &Spanned<HirProgram>,
+        known: &mut HashSet<String>,
+        name_of: impl Fn(&T) -> String,
+    ) {
+        for node in HirQuery::from(&hir.node).of::<T>() {
+            known.insert(name_of(node));
         }
     }
 }

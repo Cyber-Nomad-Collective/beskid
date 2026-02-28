@@ -134,7 +134,6 @@ mod ast_node;
 mod descendants;
 mod dyn_node_ref;
 mod hir_descendants;
-mod hir_impls;
 mod hir_node;
 mod hir_node_ref;
 mod hir_query;

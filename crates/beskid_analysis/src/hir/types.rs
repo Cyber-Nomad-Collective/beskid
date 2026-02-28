@@ -3,6 +3,8 @@ use crate::syntax::Spanned;
 use super::common::{HirIdentifier, HirPath};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(beskid_ast_derive::HirNode)]
+#[ast(kind = "PrimitiveType")]
 pub enum HirPrimitiveType {
     Bool,
     I32,
@@ -37,28 +39,45 @@ impl HirPrimitiveType {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(beskid_ast_derive::HirNode)]
+#[ast(kind = "Type")]
 pub enum HirType {
+    #[ast(child)]
     Primitive(Spanned<HirPrimitiveType>),
+    #[ast(child)]
     Complex(Spanned<HirPath>),
+    #[ast(child)]
     Array(Box<Spanned<HirType>>),
+    #[ast(child)]
     Ref(Box<Spanned<HirType>>),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(beskid_ast_derive::HirNode)]
+#[ast(kind = "Field")]
 pub struct HirField {
+    #[ast(child)]
     pub name: Spanned<HirIdentifier>,
+    #[ast(child)]
     pub ty: Spanned<HirType>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(beskid_ast_derive::HirNode)]
+#[ast(kind = "ParameterModifier")]
 pub enum HirParameterModifier {
     Ref,
     Out,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(beskid_ast_derive::HirNode)]
+#[ast(kind = "Parameter")]
 pub struct HirParameter {
+    #[ast(child)]
     pub modifier: Option<Spanned<HirParameterModifier>>,
+    #[ast(child)]
     pub name: Spanned<HirIdentifier>,
+    #[ast(child)]
     pub ty: Spanned<HirType>,
 }
