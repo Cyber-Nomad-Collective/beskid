@@ -1,6 +1,7 @@
 pub mod block;
 pub mod common;
 pub mod expression;
+pub mod attribute_target_kind;
 pub mod item;
 pub mod legality;
 pub mod literal;
@@ -18,6 +19,7 @@ pub mod types;
 pub mod normalize;
 
 pub use block::HirBlock;
+pub use attribute_target_kind::AttributeTargetKind;
 pub use common::{HirEnumPath, HirIdentifier, HirPath, HirPathSegment, HirVisibility};
 pub use expression::{
     ExpressionNode, HirAssignExpression, HirBinaryExpression, HirBinaryOp, HirBlockExpression,

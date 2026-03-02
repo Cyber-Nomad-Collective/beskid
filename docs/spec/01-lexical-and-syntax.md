@@ -103,6 +103,7 @@ pub attribute Builder(TypeDeclaration, MethodDeclaration) {
 Notes:
 - The optional declaration target list constrains where the attribute may be applied.
 - If a target list is present, applying the attribute to any other structure is a semantic error.
+- Valid target-list entries are: `TypeDeclaration`, `EnumDeclaration`, `ContractDeclaration`, `ModuleDeclaration`, `FunctionDeclaration`, `MethodDeclaration`, `FieldDeclaration`, `ParameterDeclaration`.
 - Parameter defaults are used when an argument is omitted.
 
 ### Attribute application

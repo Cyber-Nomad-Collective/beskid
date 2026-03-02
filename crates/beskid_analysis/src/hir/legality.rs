@@ -1,6 +1,6 @@
 use crate::hir::{
-    HirAttribute, HirBlock, HirContractNode, HirExpressionNode, HirItem, HirPattern, HirProgram,
-    HirStatementNode, HirType,
+    AttributeTargetKind, HirAttribute, HirBlock, HirContractNode, HirExpressionNode, HirItem,
+    HirPattern, HirProgram, HirStatementNode, HirType,
 };
 use crate::resolve::Resolution;
 use crate::syntax::{SpanInfo, Spanned};
@@ -24,7 +24,7 @@ pub enum HirLegalityError {
     },
     DuplicateAttributeTarget {
         span: SpanInfo,
-        name: String,
+        kind: AttributeTargetKind,
         previous: SpanInfo,
     },
     UnknownAttributeTarget {
@@ -34,8 +34,8 @@ pub enum HirLegalityError {
     AttributeTargetNotAllowed {
         span: SpanInfo,
         name: String,
-        target: String,
-        allowed: Vec<String>,
+        target: AttributeTargetKind,
+        allowed: Vec<AttributeTargetKind>,
     },
 }
 
@@ -51,19 +51,8 @@ pub fn validate_hir_program(
 struct HirLegalityValidator<'a> {
     resolution: &'a Resolution,
     errors: Vec<HirLegalityError>,
-    attribute_targets: HashMap<String, Vec<String>>,
+    attribute_targets: HashMap<String, Vec<AttributeTargetKind>>,
 }
-
-const ATTRIBUTE_TARGET_KINDS: [&str; 8] = [
-    "TypeDeclaration",
-    "EnumDeclaration",
-    "ContractDeclaration",
-    "ModuleDeclaration",
-    "FunctionDeclaration",
-    "MethodDeclaration",
-    "FieldDeclaration",
-    "ParameterDeclaration",
-];
 
 impl<'a> HirLegalityValidator<'a> {
     fn new(resolution: &'a Resolution) -> Self {
@@ -90,7 +79,9 @@ impl<'a> HirLegalityValidator<'a> {
                         .node
                         .targets
                         .iter()
-                        .map(|target| target.node.name.node.name.clone())
+                        .filter_map(|target| {
+                            AttributeTargetKind::parse(target.node.name.node.name.as_str())
+                        })
                         .collect();
                     self.attribute_targets
                         .insert(def.node.name.node.name.clone(), targets);
@@ -109,14 +100,18 @@ impl<'a> HirLegalityValidator<'a> {
             let Some(allowed_targets) = self.attribute_targets.get(name) else {
                 continue;
             };
-            if allowed_targets.is_empty() || allowed_targets.iter().any(|value| value == target) {
+            let target_kind = AttributeTargetKind::parse(target)
+                .expect("attribute legality target kind must be canonical");
+            if allowed_targets.is_empty()
+                || allowed_targets.iter().any(|value| value == &target_kind)
+            {
                 continue;
             }
 
             self.errors.push(HirLegalityError::AttributeTargetNotAllowed {
                 span: attribute.span,
                 name: name.clone(),
-                target: target.to_string(),
+                target: target_kind,
                 allowed: allowed_targets.clone(),
             });
         }
@@ -189,21 +184,22 @@ impl<'a> HirLegalityValidator<'a> {
             }
             HirItem::AttributeDeclaration(def) => {
                 self.check_span(def.span, "attribute_declaration");
-                let mut seen_targets: HashMap<&str, SpanInfo> = HashMap::new();
+                let mut seen_targets: HashMap<AttributeTargetKind, SpanInfo> = HashMap::new();
                 for target in &def.node.targets {
                     self.check_span(target.span, "attribute_target");
                     let target_name = target.node.name.node.name.as_str();
-                    if let Some(previous) = seen_targets.insert(target_name, target.span) {
-                        self.errors.push(HirLegalityError::DuplicateAttributeTarget {
-                            span: target.span,
-                            name: target_name.to_string(),
-                            previous,
-                        });
-                    }
-                    if !ATTRIBUTE_TARGET_KINDS.contains(&target_name) {
+                    let Some(target_kind) = AttributeTargetKind::parse(target_name) else {
                         self.errors.push(HirLegalityError::UnknownAttributeTarget {
                             span: target.span,
                             name: target_name.to_string(),
+                        });
+                        continue;
+                    };
+                    if let Some(previous) = seen_targets.insert(target_kind, target.span) {
+                        self.errors.push(HirLegalityError::DuplicateAttributeTarget {
+                            span: target.span,
+                            kind: target_kind,
+                            previous,
                         });
                     }
                 }

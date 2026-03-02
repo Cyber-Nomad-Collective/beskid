@@ -24,6 +24,44 @@ fn resolve_private_item_issue_contract_is_stable() {
 }
 
 #[test]
+fn attribute_target_mismatch_issue_contract_is_stable() {
+    let issue = SemanticIssueKind::AttributeTargetNotAllowed {
+        attribute: "Extern".to_string(),
+        target: "ModuleDeclaration".to_string(),
+        allowed: vec!["ContractDeclaration".to_string()],
+    };
+
+    assert_eq!(issue.code(), "E1809");
+    assert_eq!(issue.severity(), Severity::Error);
+    assert_eq!(issue.label(), "attribute target not allowed");
+    assert!(
+        issue
+            .message()
+            .contains("attribute `Extern` cannot be applied to `ModuleDeclaration`")
+    );
+    assert_eq!(
+        issue.help().as_deref(),
+        Some("allowed targets: ContractDeclaration")
+    );
+}
+
+#[test]
+fn duplicate_attribute_target_issue_contract_is_stable() {
+    let issue = SemanticIssueKind::DuplicateAttributeDeclarationTarget {
+        target: "TypeDeclaration".to_string(),
+        previous: span(),
+    };
+
+    assert_eq!(issue.code(), "E1806");
+    assert_eq!(issue.severity(), Severity::Error);
+    assert!(issue.message().contains("duplicate target `TypeDeclaration`"));
+    assert_eq!(
+        issue.help().as_deref(),
+        Some("target already listed at line 3, column 4")
+    );
+}
+
+#[test]
 fn duplicate_definition_uses_previous_span_help() {
     let issue = SemanticIssueKind::DuplicateDefinitionName {
         name: "User".to_string(),

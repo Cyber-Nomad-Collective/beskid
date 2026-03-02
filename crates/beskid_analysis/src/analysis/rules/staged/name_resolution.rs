@@ -70,19 +70,28 @@ impl SemanticPipelineRule {
                     },
                 );
             }
-            HirLegalityError::DuplicateAttributeTarget { span, name, .. } => {
+            HirLegalityError::DuplicateAttributeTarget {
+                span,
+                kind,
+                previous,
+            } => {
                 ctx.emit_issue(
                     span,
-                    SemanticIssueKind::InvalidHirSpan {
-                        context: format!("duplicate attribute target `{name}`"),
+                    SemanticIssueKind::DuplicateAttributeDeclarationTarget {
+                        target: kind.as_str().to_string(),
+                        previous,
                     },
                 );
             }
             HirLegalityError::UnknownAttributeTarget { span, name } => {
                 ctx.emit_issue(
                     span,
-                    SemanticIssueKind::InvalidHirSpan {
-                        context: format!("unknown attribute target `{name}`"),
+                    SemanticIssueKind::UnknownAttributeDeclarationTarget {
+                        target: name,
+                        allowed: crate::hir::AttributeTargetKind::ALL
+                            .iter()
+                            .map(|kind| kind.as_str().to_string())
+                            .collect(),
                     },
                 );
             }
@@ -94,11 +103,13 @@ impl SemanticPipelineRule {
             } => {
                 ctx.emit_issue(
                     span,
-                    SemanticIssueKind::InvalidHirSpan {
-                        context: format!(
-                            "attribute `{name}` cannot target `{target}` (allowed: {})",
-                            allowed.join(", ")
-                        ),
+                    SemanticIssueKind::AttributeTargetNotAllowed {
+                        attribute: name,
+                        target: target.as_str().to_string(),
+                        allowed: allowed
+                            .into_iter()
+                            .map(|kind| kind.as_str().to_string())
+                            .collect(),
                     },
                 );
             }
