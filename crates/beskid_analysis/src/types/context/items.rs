@@ -120,6 +120,7 @@ impl<'a> TypeContext<'a> {
                 }
             }
             HirItem::ContractDefinition(_) => {}
+            HirItem::AttributeDeclaration(_) => {}
             HirItem::InlineModule(def) => {
                 for item in &def.node.items {
                     self.type_item(item);

@@ -14,6 +14,11 @@ Beskid is a statically typed language designed to teach compiler construction. I
 - Basic control flow (if/while/for).
 - Modules and visibility.
 - Option/Result as the primary error types.
+- First-class attributes (declarations + typed applications).
+
+## Out of scope (draft)
+- Generator model and broader metaprogramming scheduling remain in drafts.
+- Active draft: `docs/drafts/metaprogramming/08-metaprogramming.md`.
 
 ## Documentation
 - Specification lives in `docs/spec`.

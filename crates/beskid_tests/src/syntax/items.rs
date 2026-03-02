@@ -5,6 +5,23 @@ use crate::syntax::util::{
     assert_type_primitive, parse_node_ast, parse_program_ast,
 };
 
+fn assert_string_literal_expression(
+    expr: &beskid_analysis::syntax::Spanned<beskid_analysis::syntax::Expression>,
+    expected: &str,
+) {
+    let beskid_analysis::syntax::Expression::Literal(literal) = &expr.node else {
+        panic!("expected literal expression");
+    };
+    let beskid_analysis::syntax::Literal::String(raw) = &literal.node.literal.node else {
+        panic!("expected string literal");
+    };
+    let value = raw
+        .strip_prefix('"')
+        .and_then(|trimmed| trimmed.strip_suffix('"'))
+        .unwrap_or(raw);
+    assert_eq!(value, expected);
+}
+
 #[test]
 fn parses_function_definition_ast() {
     let program = parse_program_ast("i32 add(a: i32, b: i32) { return a + b; }");
@@ -215,6 +232,81 @@ fn parses_module_and_use_declarations() {
             assert_path_segments(&use_decl.node.path, &["net", "http", "Client"])
         }
         _ => panic!("expected use declaration"),
+    }
+}
+
+#[test]
+fn parses_contract_definition_extern_attribute_ast() {
+    let node = parse_node_ast(
+        "[Extern(Abi: \"C\", Library: \"libc\")] contract Reader { i32 read(p: u8[]); }",
+    );
+
+    match &node.node {
+        Node::ContractDefinition(contract) => {
+            assert_eq!(contract.node.attributes.len(), 1);
+            let attr = &contract.node.attributes[0].node;
+            assert_eq!(attr.name.node.name, "Extern");
+            assert_eq!(attr.arguments.len(), 2);
+            assert_eq!(attr.arguments[0].node.name.node.name, "Abi");
+            assert_string_literal_expression(&attr.arguments[0].node.value, "C");
+            assert_eq!(attr.arguments[1].node.name.node.name, "Library");
+            assert_string_literal_expression(&attr.arguments[1].node.value, "libc");
+        }
+        _ => panic!("expected contract definition"),
+    }
+}
+
+#[test]
+fn parses_module_declaration_extern_attribute_ast() {
+    let node = parse_node_ast("[Extern(Abi: \"C\", Library: \"libc\")] pub mod net.http;");
+    match &node.node {
+        Node::ModuleDeclaration(module) => {
+            assert_eq!(module.node.attributes.len(), 1);
+            let attr = &module.node.attributes[0].node;
+            assert_eq!(attr.name.node.name, "Extern");
+            assert_eq!(attr.arguments.len(), 2);
+            assert_eq!(attr.arguments[0].node.name.node.name, "Abi");
+            assert_string_literal_expression(&attr.arguments[0].node.value, "C");
+            assert_eq!(attr.arguments[1].node.name.node.name, "Library");
+            assert_string_literal_expression(&attr.arguments[1].node.value, "libc");
+            assert_eq!(module.node.visibility.node, Visibility::Public);
+            assert_path_segments(&module.node.path, &["net", "http"]);
+        }
+        _ => panic!("expected module declaration"),
+    }
+}
+
+#[test]
+fn parses_attribute_declaration_ast() {
+    let node = parse_node_ast(
+        "pub attribute Builder(TypeDeclaration, MethodDeclaration) { suffix: string = \"Factory\", enabled: bool = true }",
+    );
+
+    match &node.node {
+        Node::AttributeDeclaration(declaration) => {
+            assert_eq!(declaration.node.visibility.node, Visibility::Public);
+            assert_eq!(declaration.node.name.node.name, "Builder");
+            assert_eq!(declaration.node.targets.len(), 2);
+            assert_eq!(declaration.node.targets[0].node.name.node.name, "TypeDeclaration");
+            assert_eq!(declaration.node.targets[1].node.name.node.name, "MethodDeclaration");
+            assert_eq!(declaration.node.parameters.len(), 2);
+
+            let first = &declaration.node.parameters[0].node;
+            assert_eq!(first.name.node.name, "suffix");
+            assert!(first.default_value.is_some());
+            assert_string_literal_expression(first.default_value.as_ref().expect("default"), "Factory");
+
+            let second = &declaration.node.parameters[1].node;
+            assert_eq!(second.name.node.name, "enabled");
+            assert!(second.default_value.is_some());
+            let beskid_analysis::syntax::Expression::Literal(literal) =
+                &second.default_value.as_ref().expect("default").node
+            else {
+                panic!("expected literal expression");
+            };
+            assert!(matches!(literal.node.literal.node, beskid_analysis::syntax::Literal::Bool(true)));
+        }
+        _ => panic!("expected attribute declaration"),
     }
 }
 

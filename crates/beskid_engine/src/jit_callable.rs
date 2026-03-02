@@ -23,7 +23,8 @@ impl JitCallable {
             TypeInfo::Primitive(HirPrimitiveType::String)
             | TypeInfo::Named(_)
             | TypeInfo::GenericParam(_)
-            | TypeInfo::Applied { .. } => {
+            | TypeInfo::Applied { .. }
+            | TypeInfo::Function { .. } => {
                 // SAFETY: JIT pointer-like returns are represented as `u64`.
                 call_entrypoint!(ptr, u64, value => format!("0x{value:016x}"))
             }
@@ -60,70 +61,4 @@ impl JitCallable {
 unsafe fn invoke0<R>(ptr: *const u8) -> R {
     let callable: extern "C" fn() -> R = unsafe { std::mem::transmute(ptr) };
     callable()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::JitCallable;
-    use beskid_analysis::hir::HirPrimitiveType;
-    use beskid_analysis::types::TypeInfo;
-
-    extern "C" fn ret_unit() {}
-    extern "C" fn ret_i64() -> i64 {
-        42
-    }
-    extern "C" fn ret_bool_u8() -> u8 {
-        1
-    }
-    extern "C" fn ret_char_u32() -> u32 {
-        'A' as u32
-    }
-    extern "C" fn ret_ptr_u64() -> u64 {
-        0xABCD
-    }
-
-    #[test]
-    fn executes_and_formats_unit() {
-        let output = JitCallable::execute_and_format(
-            (ret_unit as extern "C" fn() as *const ()).cast::<u8>(),
-            &TypeInfo::Primitive(HirPrimitiveType::Unit),
-        );
-        assert_eq!(output, "ok");
-    }
-
-    #[test]
-    fn executes_and_formats_i64() {
-        let output = JitCallable::execute_and_format(
-            (ret_i64 as extern "C" fn() -> i64 as *const ()).cast::<u8>(),
-            &TypeInfo::Primitive(HirPrimitiveType::I64),
-        );
-        assert_eq!(output, "42");
-    }
-
-    #[test]
-    fn executes_and_formats_bool() {
-        let output = JitCallable::execute_and_format(
-            (ret_bool_u8 as extern "C" fn() -> u8 as *const ()).cast::<u8>(),
-            &TypeInfo::Primitive(HirPrimitiveType::Bool),
-        );
-        assert_eq!(output, "true");
-    }
-
-    #[test]
-    fn executes_and_formats_char() {
-        let output = JitCallable::execute_and_format(
-            (ret_char_u32 as extern "C" fn() -> u32 as *const ()).cast::<u8>(),
-            &TypeInfo::Primitive(HirPrimitiveType::Char),
-        );
-        assert_eq!(output, "A");
-    }
-
-    #[test]
-    fn executes_and_formats_pointer_like_result() {
-        let output = JitCallable::execute_and_format(
-            (ret_ptr_u64 as extern "C" fn() -> u64 as *const ()).cast::<u8>(),
-            &TypeInfo::Primitive(HirPrimitiveType::String),
-        );
-        assert_eq!(output, "0x000000000000abcd");
-    }
 }

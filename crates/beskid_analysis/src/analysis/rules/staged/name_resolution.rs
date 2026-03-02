@@ -70,6 +70,38 @@ impl SemanticPipelineRule {
                     },
                 );
             }
+            HirLegalityError::DuplicateAttributeTarget { span, name, .. } => {
+                ctx.emit_issue(
+                    span,
+                    SemanticIssueKind::InvalidHirSpan {
+                        context: format!("duplicate attribute target `{name}`"),
+                    },
+                );
+            }
+            HirLegalityError::UnknownAttributeTarget { span, name } => {
+                ctx.emit_issue(
+                    span,
+                    SemanticIssueKind::InvalidHirSpan {
+                        context: format!("unknown attribute target `{name}`"),
+                    },
+                );
+            }
+            HirLegalityError::AttributeTargetNotAllowed {
+                span,
+                name,
+                target,
+                allowed,
+            } => {
+                ctx.emit_issue(
+                    span,
+                    SemanticIssueKind::InvalidHirSpan {
+                        context: format!(
+                            "attribute `{name}` cannot target `{target}` (allowed: {})",
+                            allowed.join(", ")
+                        ),
+                    },
+                );
+            }
         }
     }
 

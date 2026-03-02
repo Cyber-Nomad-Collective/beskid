@@ -7,6 +7,14 @@ fn parses_module_declaration() {
 }
 
 #[test]
+fn parses_module_declaration_with_extern_attribute() {
+    assert_parse(
+        Rule::ModuleDeclaration,
+        "[Extern(Abi: \"C\", Library: \"libc\")] mod net.http;",
+    );
+}
+
+#[test]
 fn parses_use_declaration() {
     assert_parse(Rule::UseDeclaration, "use net.http.Client;");
 }

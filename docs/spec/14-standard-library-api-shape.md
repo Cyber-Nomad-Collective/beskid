@@ -126,6 +126,9 @@ pub mod std {
             Option<T> Next(self: ref mut Self);
         }
 
+        // Concrete iterators must explicitly declare conformance.
+        // Example: impl ArrayIter<T>: Iterator<T> { ... }
+
         // Concrete generic iterators returned by extension-like methods
         pub type SelectIter<TIn, TOut, TSource> { ... }
         pub type WhereIter<T, TSource> { ... }

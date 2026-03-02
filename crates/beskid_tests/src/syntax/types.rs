@@ -15,6 +15,23 @@ fn parses_primitive_type_ast() {
 }
 
 #[test]
+fn parses_function_type_ast() {
+    let ty = parse_type_ast("i64(i64, i64)");
+    match &ty.node {
+        Type::Function {
+            return_type,
+            parameters,
+        } => {
+            assert_type_primitive(return_type, PrimitiveType::I64);
+            assert_eq!(parameters.len(), 2);
+            assert_type_primitive(&parameters[0], PrimitiveType::I64);
+            assert_type_primitive(&parameters[1], PrimitiveType::I64);
+        }
+        _ => panic!("expected function type"),
+    }
+}
+
+#[test]
 fn parses_array_type_ast() {
     let ty = parse_type_ast("i32[]");
     match &ty.node {

@@ -136,6 +136,9 @@ impl Resolver {
                 ItemKind::Use,
                 def.node.visibility.node,
             ),
+            HirItem::AttributeDeclaration(_) => {
+                return;
+            }
         };
 
         let id = ItemId(self.items.len());
@@ -285,6 +288,7 @@ impl Resolver {
                     }
                 }
             }
+            HirItem::AttributeDeclaration(_) => {}
             HirItem::ModuleDeclaration(_) | HirItem::UseDeclaration(_) => {}
         }
     }
@@ -353,6 +357,17 @@ impl Resolver {
                 for arm in &match_expr.node.arms {
                     self.resolve_match_arm(arm);
                 }
+            }
+            HirExpressionNode::LambdaExpression(lambda_expr) => {
+                self.push_scope();
+                for parameter in &lambda_expr.node.parameters {
+                    if let Some(ty) = &parameter.node.ty {
+                        self.resolve_type(ty);
+                    }
+                    self.insert_local(&parameter.node.name.node.name, parameter.node.name.span);
+                }
+                self.resolve_expression(&lambda_expr.node.body);
+                self.pop_scope();
             }
             HirExpressionNode::AssignExpression(assign_expr) => {
                 self.resolve_expression(&assign_expr.node.target);
@@ -434,6 +449,15 @@ impl Resolver {
             HirType::Primitive(_) => {}
             HirType::Complex(path) => self.resolve_type_path(path),
             HirType::Array(inner) | HirType::Ref(inner) => self.resolve_type(inner),
+            HirType::Function {
+                return_type,
+                parameters,
+            } => {
+                self.resolve_type(return_type);
+                for parameter in parameters {
+                    self.resolve_type(parameter);
+                }
+            }
         }
     }
 

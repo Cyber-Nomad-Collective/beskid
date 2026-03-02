@@ -3,7 +3,7 @@ use crate::lowering::context::{CodegenContext, CodegenResult, LoweredFunction};
 use crate::lowering::lowerable::lower_node;
 use crate::lowering::node_context::NodeLoweringContext;
 use crate::lowering::types::{map_type_id_to_clif, type_id_for_type};
-use beskid_analysis::hir::HirFunctionDefinition;
+use beskid_analysis::hir::{HirFunctionDefinition, HirLambdaExpression};
 use beskid_analysis::resolve::{ItemId, LocalId, Resolution};
 use beskid_analysis::syntax::Spanned;
 use beskid_analysis::types::{TypeInfo, TypeResult};
@@ -208,6 +208,8 @@ pub(crate) fn lower_function_with_name(
 #[derive(Default)]
 pub(crate) struct FunctionLoweringState {
     pub(crate) locals: HashMap<LocalId, Variable>,
+    pub(crate) local_lambdas: HashMap<LocalId, *const Spanned<HirLambdaExpression>>,
+    pub(crate) emitted_lambda_symbols: HashMap<*const Spanned<HirLambdaExpression>, String>,
     pub(crate) return_emitted: bool,
     pub(crate) block_terminated: bool,
     pub(crate) loop_stack: Vec<LoopControl>,

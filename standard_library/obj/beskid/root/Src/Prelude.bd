@@ -12,19 +12,19 @@ enum StdInterop {
 
 pub mod std {
     pub mod io {
-        pub unit print(string _text) {
-            __interop_dispatch_unit(StdInterop::IoPrint(_text));
+        pub unit print(_text: string) {
+            __sys_print(_text);
         }
 
-        pub unit println(string _text) {
-            __interop_dispatch_unit(StdInterop::IoPrintln(_text));
+        pub unit println(_text: string) {
+            __sys_println(_text);
         }
 
     }
 
     pub mod string {
-        pub i64 len(string _text) {
-            return __interop_dispatch_usize(StdInterop::StringLen(_text));
+        pub i64 len(_text: string) {
+            return __str_len(_text);
         }
 
     }

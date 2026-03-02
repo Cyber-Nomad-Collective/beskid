@@ -4,13 +4,13 @@ use beskid_abi::{
     AbiParamKind, AbiReturnKind, BUILTIN_SPECS, SYM_ALLOC, SYM_ARRAY_NEW, SYM_GC_REGISTER_ROOT,
     SYM_GC_ROOT_HANDLE, SYM_GC_UNREGISTER_ROOT, SYM_GC_UNROOT_HANDLE, SYM_GC_WRITE_BARRIER,
     SYM_INTEROP_DISPATCH_PTR, SYM_INTEROP_DISPATCH_UNIT, SYM_INTEROP_DISPATCH_USIZE, SYM_PANIC,
-    SYM_PANIC_STR, SYM_STR_CONCAT, SYM_STR_NEW,
+    SYM_PANIC_STR, SYM_STR_CONCAT, SYM_STR_LEN, SYM_STR_NEW, SYM_SYS_PRINT, SYM_SYS_PRINTLN,
 };
 use beskid_codegen::{CodegenArtifact, emit_string_literals, emit_type_descriptors};
 use beskid_runtime::{
     alloc, array_new, gc_register_root, gc_root_handle, gc_unregister_root, gc_unroot_handle,
     gc_write_barrier, interop_dispatch_ptr, interop_dispatch_unit, interop_dispatch_usize, panic,
-    panic_str, str_concat, str_new,
+    panic_str, str_concat, str_len, str_new, sys_print, sys_println,
 };
 use cranelift_codegen::ir::{AbiParam, ExternalName, Signature, UserExternalName, types};
 use cranelift_codegen::isa::CallConv;
@@ -51,6 +51,9 @@ impl BeskidJitModule {
         builder.symbol(SYM_ARRAY_NEW, array_new as *const u8);
         builder.symbol(SYM_PANIC, panic as *const u8);
         builder.symbol(SYM_PANIC_STR, panic_str as *const u8);
+        builder.symbol(SYM_SYS_PRINT, sys_print as *const u8);
+        builder.symbol(SYM_SYS_PRINTLN, sys_println as *const u8);
+        builder.symbol(SYM_STR_LEN, str_len as *const u8);
         builder.symbol(
             SYM_INTEROP_DISPATCH_UNIT,
             interop_dispatch_unit as *const u8,

@@ -43,6 +43,7 @@ pub enum RuntimeStrategy {
         path: PathBuf,
         abi_version: Option<u32>,
     },
+    Standalone,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -181,7 +182,7 @@ fn prepare_runtime_stage(req: &AotBuildRequest) -> AotResult<crate::runtime::Run
 fn link_stage(
     req: &AotBuildRequest,
     object_stage: &ObjectStageResult,
-    runtime_staticlib: PathBuf,
+    runtime_staticlib: Option<PathBuf>,
 ) -> AotResult<crate::linker::LinkResult> {
     link(&LinkRequest {
         target_triple: req.target_triple.clone(),

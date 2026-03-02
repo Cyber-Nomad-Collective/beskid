@@ -14,6 +14,20 @@ impl<'a> TypeContext<'a> {
             }
             HirType::Complex(path) => self.type_id_for_path_with_args(path),
             HirType::Array(inner) | HirType::Ref(inner) => self.type_id_for_type(inner),
+            HirType::Function {
+                return_type,
+                parameters,
+            } => {
+                let return_type = self.type_id_for_type(return_type)?;
+                let mut params = Vec::with_capacity(parameters.len());
+                for parameter in parameters {
+                    params.push(self.type_id_for_type(parameter)?);
+                }
+                Some(
+                    self.type_table
+                        .intern(TypeInfo::Function { params, return_type }),
+                )
+            }
         }
     }
 

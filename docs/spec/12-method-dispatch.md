@@ -26,10 +26,18 @@ impl Point {
 
 ## Contracts
 If a value is typed as a `contract`, method calls use dynamic dispatch (vtable).
+In v0.1, this is valid only when the concrete type explicitly declares conformance via
+`impl Type: Contract { ... }`.
 
 Example:
 ```
 contract Draw { unit draw(self); }
+
+type Circle { i32 r }
+
+impl Circle: Draw {
+    unit draw(self: Circle) { ... }
+}
 
 unit render(d: Draw) {
     d.draw(); // dynamic dispatch
@@ -82,6 +90,7 @@ Because this is lowered directly into the HIR, the Cranelift backend receives pe
 - Method overloading is allowed.
 - Method lookup must respect `use` aliases during resolution.
 - Methods with `ref` receivers do not satisfy contract method sets in v0.1.
+- Contract satisfaction is nominal in v0.1 (explicit declaration required; no duck typing).
 - Dotted path lookup uses the resolved alias target, then normal resolution rules.
 
 ## Examples
@@ -89,7 +98,7 @@ Because this is lowered directly into the HIR, the Cranelift backend receives pe
 contract Len { i32 len(self); }
 
 type S { ... }
-impl S {
+impl S: Len {
     i32 len(self: ref S) { ... }
 }
 // S does not satisfy Len (ref receiver)

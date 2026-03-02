@@ -14,12 +14,13 @@ let user_id = 1;
 ```
 
 ## Keywords (v0.1)
-`type`, `enum`, `contract`, `match`, `when`, `if`, `else`, `while`, `for`, `in`, `return`, `break`, `continue`, `let`, `mut`, `mod`, `use`, `pub`, `ref`, `out`, `event`
+`type`, `enum`, `contract`, `attribute`, `match`, `when`, `if`, `else`, `while`, `for`, `in`, `return`, `break`, `continue`, `let`, `mut`, `mod`, `use`, `pub`, `ref`, `out`, `event`
 
 ### Keyword meanings
 - `type`: product type (struct) declaration.
 - `enum`: sum type (variant) declaration.
-- `contract`: structural interface declaration.
+- `contract`: explicit interface declaration (nominal conformance via `impl Type: Contract`).
+- `attribute`: attribute declaration.
 - `match`: pattern matching expression.
 - `when`: guard for a `match` arm.
 - `if`: conditional branch.
@@ -86,6 +87,48 @@ i32 main() {
 - Statements end with `;`.
 - Blocks use `{ ... }`.
 - Block expressions are not values in v0.1 (simpler semantics).
+
+## Attributes
+
+### Attribute declaration
+Attributes are first-class top-level declarations:
+
+```beskid
+pub attribute Builder(TypeDeclaration, MethodDeclaration) {
+    suffix: string = "Builder",
+    enabled: bool = true,
+}
+```
+
+Notes:
+- The optional declaration target list constrains where the attribute may be applied.
+- If a target list is present, applying the attribute to any other structure is a semantic error.
+- Parameter defaults are used when an argument is omitted.
+
+### Attribute application
+Attributes can be applied to supported declarations using named, typed expression arguments:
+
+```beskid
+[Builder(suffix: "Factory", enabled: false)]
+type User {
+    string name,
+}
+```
+
+Notes:
+- Argument names map to declared attribute parameters.
+- Argument values are expressions (not string-only payloads).
+
+### Supported attribute placements (v0.1)
+Attributes may be attached to:
+- top-level type declarations,
+- top-level enum declarations,
+- contract declarations,
+- module declarations,
+- function declarations,
+- methods,
+- fields,
+- parameters.
 
 Example:
 ```

@@ -77,3 +77,46 @@ fn legality_reports_invalid_span_invariants() {
         "expected invalid-span legality error, got: {errors:?}"
     );
 }
+
+#[test]
+fn legality_reports_unknown_attribute_target_kind() {
+    let source = "attribute Builder(UnknownDeclaration) { enabled: bool = true }";
+    let (hir, resolution) = lower_and_resolve(source);
+
+    let errors = validate_hir_program(&hir, &resolution);
+    assert!(
+        errors
+            .iter()
+            .any(|error| matches!(error, HirLegalityError::UnknownAttributeTarget { .. })),
+        "expected unknown attribute-target legality error, got: {errors:?}"
+    );
+}
+
+#[test]
+fn legality_reports_duplicate_attribute_targets() {
+    let source =
+        "attribute Builder(TypeDeclaration, TypeDeclaration) { enabled: bool = true }";
+    let (hir, resolution) = lower_and_resolve(source);
+
+    let errors = validate_hir_program(&hir, &resolution);
+    assert!(
+        errors
+            .iter()
+            .any(|error| matches!(error, HirLegalityError::DuplicateAttributeTarget { .. })),
+        "expected duplicate attribute-target legality error, got: {errors:?}"
+    );
+}
+
+#[test]
+fn legality_reports_attribute_target_not_allowed() {
+    let source = "attribute Extern(ContractDeclaration) { Abi: string = \"C\" } [Extern(Abi: \"C\")] mod sys.io;";
+    let (hir, resolution) = lower_and_resolve(source);
+
+    let errors = validate_hir_program(&hir, &resolution);
+    assert!(
+        errors
+            .iter()
+            .any(|error| matches!(error, HirLegalityError::AttributeTargetNotAllowed { .. })),
+        "expected attribute-target-not-allowed legality error, got: {errors:?}"
+    );
+}

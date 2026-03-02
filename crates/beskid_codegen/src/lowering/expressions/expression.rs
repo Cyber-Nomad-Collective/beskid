@@ -1,4 +1,5 @@
 use crate::errors::CodegenError;
+use crate::lowering::expressions::call_expression::lower_lambda_function_value;
 use crate::lowering::lowerable::{Lowerable, lower_node};
 use crate::lowering::node_context::NodeLoweringContext;
 use beskid_analysis::hir::HirExpressionNode;
@@ -14,6 +15,9 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirExpressionNode {
     ) -> Result<Self::Output, CodegenError> {
         match &node.node {
             HirExpressionNode::MatchExpression(inner) => lower_node(inner, ctx),
+            HirExpressionNode::LambdaExpression(lambda) => {
+                Ok(Some(lower_lambda_function_value(lambda, node.span, ctx)?))
+            }
             HirExpressionNode::AssignExpression(inner) => lower_node(inner, ctx),
             HirExpressionNode::BinaryExpression(inner) => lower_node(inner, ctx),
             HirExpressionNode::UnaryExpression(inner) => lower_node(inner, ctx),

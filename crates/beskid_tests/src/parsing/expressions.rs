@@ -14,6 +14,27 @@ fn parses_arithmetic_precedence() {
 }
 
 #[test]
+fn parses_lambda_single_param_without_parens() {
+    let expr = parse_expression_ast("x => x + 1");
+    let (params, body) = expect_lambda(&expr.node, 1);
+    assert_eq!(params[0].node.name.node.name, "x");
+    assert!(params[0].node.ty.is_none());
+    let (_left, op, right) = expect_binary(&body.node, BinaryOp::Add);
+    expect_binary_op(op, BinaryOp::Add);
+    expect_integer_literal(&right.node, "1");
+}
+
+#[test]
+fn parses_lambda_typed_params_with_parens() {
+    let expr = parse_expression_ast("(x: i64, y: i64) => x + y");
+    let (params, _body) = expect_lambda(&expr.node, 2);
+    assert_eq!(params[0].node.name.node.name, "x");
+    assert_eq!(params[1].node.name.node.name, "y");
+    assert!(params[0].node.ty.is_some());
+    assert!(params[1].node.ty.is_some());
+}
+
+#[test]
 fn parses_assignment_expression() {
     let expr = parse_expression_ast("x = y + 1");
     let (target, value) = expect_assign(&expr.node);
@@ -151,6 +172,21 @@ fn expect_call<'a>(
     }
 
     panic!("expected call expression");
+}
+
+fn expect_lambda<'a>(
+    expr: &'a Expression,
+    params_len: usize,
+) -> (
+    &'a [Spanned<beskid_analysis::syntax::LambdaParameter>],
+    &'a Spanned<Expression>,
+) {
+    if let Expression::Lambda(lambda) = expr {
+        assert_eq!(lambda.node.parameters.len(), params_len);
+        return (&lambda.node.parameters, &lambda.node.body);
+    }
+
+    panic!("expected lambda expression");
 }
 
 fn expect_identifier_path(expr: &Expression, expected: &str) {

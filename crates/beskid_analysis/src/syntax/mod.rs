@@ -7,11 +7,12 @@ pub mod types;
 pub use common::{HasSpan, Identifier, SpanInfo, Spanned, Visibility};
 pub use expressions::{
     AssignExpression, BinaryExpression, BinaryOp, BlockExpression, CallExpression,
-    EnumConstructorExpression, EnumPattern, Expression, GroupedExpression, Literal,
-    LiteralExpression, MatchArm, MatchExpression, MemberExpression, PathExpression, Pattern,
-    StructLiteralExpression, StructLiteralField, UnaryExpression, UnaryOp,
+    EnumConstructorExpression, EnumPattern, Expression, GroupedExpression, LambdaExpression,
+    LambdaParameter, Literal, LiteralExpression, MatchArm, MatchExpression, MemberExpression,
+    PathExpression, Pattern, StructLiteralExpression, StructLiteralField, UnaryExpression, UnaryOp,
 };
 pub use items::{
+    Attribute, AttributeArgument, AttributeDeclaration, AttributeParameter, AttributeTarget,
     ContractDefinition, ContractEmbedding, ContractMethodSignature, ContractNode, EnumDefinition,
     EnumVariant, FunctionDefinition, InlineModule, MethodDefinition, ModuleDeclaration, Node,
     Program, TypeDefinition, UseDeclaration,

@@ -12,8 +12,33 @@ pub(crate) fn map_type_id_to_clif(
         Some(TypeInfo::Primitive(primitive)) => map_primitive_to_clif(*primitive),
         Some(TypeInfo::Named(_))
         | Some(TypeInfo::GenericParam(_))
-        | Some(TypeInfo::Applied { .. }) => Some(pointer_type()),
+        | Some(TypeInfo::Applied { .. })
+        | Some(TypeInfo::Function { .. }) => Some(pointer_type()),
         _ => None,
+    }
+}
+
+fn find_function_type_id(
+    type_result: &TypeResult,
+    params: &[TypeId],
+    return_type: TypeId,
+) -> Option<TypeId> {
+    let mut index = 0usize;
+    loop {
+        let type_id = TypeId(index);
+        let Some(info) = type_result.types.get(type_id) else {
+            return None;
+        };
+        if let TypeInfo::Function {
+            params: candidate_params,
+            return_type: candidate_return,
+        } = info
+            && candidate_return == &return_type
+            && candidate_params.as_slice() == params
+        {
+            return Some(type_id);
+        }
+        index += 1;
     }
 }
 
@@ -30,6 +55,17 @@ pub(crate) fn type_id_for_type(
         },
         HirType::Array(inner) | HirType::Ref(inner) => {
             type_id_for_type(resolution, type_result, inner)
+        }
+        HirType::Function {
+            return_type,
+            parameters,
+        } => {
+            let return_type = type_id_for_type(resolution, type_result, return_type)?;
+            let mut params = Vec::with_capacity(parameters.len());
+            for parameter in parameters {
+                params.push(type_id_for_type(resolution, type_result, parameter)?);
+            }
+            find_function_type_id(type_result, &params, return_type)
         }
     }
 }

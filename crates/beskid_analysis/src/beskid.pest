@@ -16,6 +16,7 @@ Identifier = @{ !Keyword ~ ASCII_ALPHA_UNDERSCORE ~ (ASCII_ALPHANUMERIC | "_")* 
 TypeDeclarationKeyword = { "type" }
 EnumDeclarationKeyword = { "enum" }
 ContractDeclarationKeyword = { "contract" }
+AttributeDeclarationKeyword = { "attribute" }
 MatchKeyword = { "match" }
 WhenKeyword = { "when" }
 IfKeyword = { "if" }
@@ -39,6 +40,7 @@ Keyword = {
         TypeDeclarationKeyword
       | EnumDeclarationKeyword
       | ContractDeclarationKeyword
+      | AttributeDeclarationKeyword
       | MatchKeyword
       | WhenKeyword
       | IfKeyword
@@ -75,12 +77,22 @@ Literal = { FloatLiteral | IntegerLiteral | StringLiteral | CharLiteral | "true"
 // 2) PROGRAM
 ////////////////////////////////////////////////////////////
 Program = { SOI ~ Item* ~ EOI }
-Item = _{ FunctionDefinition | MethodDefinition | TypeDefinition | EnumDefinition | ContractDefinition | InlineModule | ModuleDeclaration | UseDeclaration }
+Item = _{ FunctionDefinition | MethodDefinition | TypeDefinition | EnumDefinition | ContractDefinition | AttributeDeclaration | InlineModule | ModuleDeclaration | UseDeclaration }
+
+AttributeList = { Attribute+ }
+Attribute = { "[" ~ Identifier ~ ("(" ~ AttributeArgumentList? ~ ")")? ~ "]" }
+AttributeArgumentList = { AttributeArgument ~ ("," ~ AttributeArgument)* }
+AttributeArgument = { Identifier ~ ":" ~ Expression }
+AttributeDeclaration = { Visibility? ~ "attribute" ~ Identifier ~ AttributeTargetList? ~ "{" ~ AttributeParameterList? ~ "}" }
+AttributeTargetList = { "(" ~ AttributeTarget ~ ("," ~ AttributeTarget)* ~ ","? ~ ")" }
+AttributeTarget = { Identifier }
+AttributeParameterList = { AttributeParameter ~ ("," ~ AttributeParameter)* ~ ","? }
+AttributeParameter = { Identifier ~ ":" ~ BeskidType ~ ("=" ~ Expression)? }
 
 Visibility = { "pub" }
 
-ModuleDeclaration = { Visibility? ~ "mod" ~ Path ~ ";" }
-InlineModule = { Visibility? ~ "mod" ~ Identifier ~ "{" ~ Item* ~ "}" }
+ModuleDeclaration = { AttributeList? ~ Visibility? ~ "mod" ~ Path ~ ";" }
+InlineModule = { AttributeList? ~ Visibility? ~ "mod" ~ Identifier ~ "{" ~ Item* ~ "}" }
 UseDeclaration = { Visibility? ~ "use" ~ Path ~ ";" }
 PathSegment = { Identifier ~ GenericArguments? }
 Path = { PathSegment ~ ("." ~ PathSegment)* }
@@ -97,7 +109,9 @@ GenericArguments = { "<" ~ BeskidType ~ ("," ~ BeskidType)* ~ ">" }
 TypeName = { PrimitiveType | Path }
 ArrayType = { TypeName ~ "[" ~ "]" }
 TypeReference = { "ref" ~ TypeName }
-BeskidType = { TypeReference | ArrayType | TypeName }
+FunctionType = { TypeName ~ "(" ~ BeskidTypeList? ~ ")" }
+BeskidTypeList = { BeskidType ~ ("," ~ BeskidType)* }
+BeskidType = { FunctionType | TypeReference | ArrayType | TypeName }
 
 ////////////////////////////////////////////////////////////
 // 4) DEFINITIONS
@@ -118,7 +132,7 @@ EnumDefinition = { Visibility? ~ "enum" ~ Identifier ~ GenericParameters? ~ "{" 
 EnumVariantList = { EnumVariant ~ ("," ~ EnumVariant)* ~ ","? }
 EnumVariant = { Identifier ~ ("(" ~ FieldList? ~ ")")? }
 
-ContractDefinition = { Visibility? ~ "contract" ~ Identifier ~ "{" ~ ContractItem* ~ "}" }
+ContractDefinition = { AttributeList? ~ Visibility? ~ "contract" ~ Identifier ~ "{" ~ ContractItem* ~ "}" }
 ContractItem = _{ ContractMethodSignature | ContractEmbedding }
 ContractMethodSignature = { BeskidType ~ Identifier ~ "(" ~ ParameterList? ~ ")" ~ ";" }
 ContractEmbedding = { Identifier ~ ";"? }
@@ -149,7 +163,13 @@ ExpressionStatement = { Expression ~ ";" }
 ////////////////////////////////////////////////////////////
 // 6) EXPRESSIONS
 ////////////////////////////////////////////////////////////
-Expression = { MatchExpression | AssignmentExpression }
+Expression = { LambdaExpression | MatchExpression | AssignmentExpression }
+
+LambdaExpression = { LambdaParameters ~ "=>" ~ LambdaBody }
+LambdaParameters = { Identifier | "(" ~ LambdaParameterList? ~ ")" }
+LambdaParameterList = { LambdaParameter ~ ("," ~ LambdaParameter)* }
+LambdaParameter = { Identifier ~ TypeAnnotation? }
+LambdaBody = { BlockExpression | Expression }
 
 AssignmentExpression = { LogicalOrExpression ~ ("=" ~ AssignmentExpression)? }
 LogicalOrExpression = { LogicalAndExpression ~ ("||" ~ LogicalAndExpression)* }

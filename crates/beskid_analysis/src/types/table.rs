@@ -9,7 +9,14 @@ pub enum TypeInfo {
     Primitive(HirPrimitiveType),
     Named(ItemId),
     GenericParam(String),
-    Applied { base: ItemId, args: Vec<TypeId> },
+    Applied {
+        base: ItemId,
+        args: Vec<TypeId>,
+    },
+    Function {
+        params: Vec<TypeId>,
+        return_type: TypeId,
+    },
 }
 
 #[derive(Debug, Default)]
@@ -23,6 +30,9 @@ impl TypeTable {
     }
 
     pub fn intern(&mut self, info: TypeInfo) -> TypeId {
+        if let Some(existing) = self.types.iter().position(|entry| *entry == info) {
+            return TypeId(existing);
+        }
         let id = TypeId(self.types.len());
         self.types.push(info);
         id

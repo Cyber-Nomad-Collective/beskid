@@ -68,6 +68,12 @@ fn parses_ref_type() {
 }
 
 #[test]
+fn parses_function_type() {
+    assert_parse(Rule::FunctionType, "i64(i64, i64)");
+    assert_parse(Rule::BeskidType, "i64(i64, i64)");
+}
+
+#[test]
 fn rejects_invalid_type() {
     assert_parse_fail(Rule::BeskidType, "ref");
 }

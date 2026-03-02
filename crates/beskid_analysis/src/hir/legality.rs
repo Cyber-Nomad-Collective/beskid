@@ -1,9 +1,10 @@
 use crate::hir::{
-    HirBlock, HirContractNode, HirExpressionNode, HirItem, HirPattern, HirProgram,
+    HirAttribute, HirBlock, HirContractNode, HirExpressionNode, HirItem, HirPattern, HirProgram,
     HirStatementNode, HirType,
 };
 use crate::resolve::Resolution;
 use crate::syntax::{SpanInfo, Spanned};
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum HirLegalityError {
@@ -21,6 +22,21 @@ pub enum HirLegalityError {
         span: SpanInfo,
         message: &'static str,
     },
+    DuplicateAttributeTarget {
+        span: SpanInfo,
+        name: String,
+        previous: SpanInfo,
+    },
+    UnknownAttributeTarget {
+        span: SpanInfo,
+        name: String,
+    },
+    AttributeTargetNotAllowed {
+        span: SpanInfo,
+        name: String,
+        target: String,
+        allowed: Vec<String>,
+    },
 }
 
 pub fn validate_hir_program(
@@ -35,20 +51,74 @@ pub fn validate_hir_program(
 struct HirLegalityValidator<'a> {
     resolution: &'a Resolution,
     errors: Vec<HirLegalityError>,
+    attribute_targets: HashMap<String, Vec<String>>,
 }
+
+const ATTRIBUTE_TARGET_KINDS: [&str; 8] = [
+    "TypeDeclaration",
+    "EnumDeclaration",
+    "ContractDeclaration",
+    "ModuleDeclaration",
+    "FunctionDeclaration",
+    "MethodDeclaration",
+    "FieldDeclaration",
+    "ParameterDeclaration",
+];
 
 impl<'a> HirLegalityValidator<'a> {
     fn new(resolution: &'a Resolution) -> Self {
         Self {
             resolution,
             errors: Vec::new(),
+            attribute_targets: HashMap::new(),
         }
     }
 
     fn validate_program(&mut self, program: &Spanned<HirProgram>) {
         self.check_span(program.span, "program");
+        self.collect_attribute_targets(&program.node.items);
         for item in &program.node.items {
             self.validate_item(item);
+        }
+    }
+
+    fn collect_attribute_targets(&mut self, items: &[Spanned<HirItem>]) {
+        for item in items {
+            match &item.node {
+                HirItem::AttributeDeclaration(def) => {
+                    let targets = def
+                        .node
+                        .targets
+                        .iter()
+                        .map(|target| target.node.name.node.name.clone())
+                        .collect();
+                    self.attribute_targets
+                        .insert(def.node.name.node.name.clone(), targets);
+                }
+                HirItem::InlineModule(def) => {
+                    self.collect_attribute_targets(&def.node.items);
+                }
+                _ => {}
+            }
+        }
+    }
+
+    fn validate_applied_attributes(&mut self, attributes: &[Spanned<HirAttribute>], target: &str) {
+        for attribute in attributes {
+            let name = &attribute.node.name.node.name;
+            let Some(allowed_targets) = self.attribute_targets.get(name) else {
+                continue;
+            };
+            if allowed_targets.is_empty() || allowed_targets.iter().any(|value| value == target) {
+                continue;
+            }
+
+            self.errors.push(HirLegalityError::AttributeTargetNotAllowed {
+                span: attribute.span,
+                name: name.clone(),
+                target: target.to_string(),
+                allowed: allowed_targets.clone(),
+            });
         }
     }
 
@@ -97,6 +167,7 @@ impl<'a> HirLegalityValidator<'a> {
             }
             HirItem::ContractDefinition(def) => {
                 self.check_span(def.span, "contract_definition");
+                self.validate_applied_attributes(&def.node.attributes, "ContractDeclaration");
                 for node in &def.node.items {
                     self.check_span(node.span, "contract_node");
                     match &node.node {
@@ -116,11 +187,38 @@ impl<'a> HirLegalityValidator<'a> {
                     }
                 }
             }
+            HirItem::AttributeDeclaration(def) => {
+                self.check_span(def.span, "attribute_declaration");
+                let mut seen_targets: HashMap<&str, SpanInfo> = HashMap::new();
+                for target in &def.node.targets {
+                    self.check_span(target.span, "attribute_target");
+                    let target_name = target.node.name.node.name.as_str();
+                    if let Some(previous) = seen_targets.insert(target_name, target.span) {
+                        self.errors.push(HirLegalityError::DuplicateAttributeTarget {
+                            span: target.span,
+                            name: target_name.to_string(),
+                            previous,
+                        });
+                    }
+                    if !ATTRIBUTE_TARGET_KINDS.contains(&target_name) {
+                        self.errors.push(HirLegalityError::UnknownAttributeTarget {
+                            span: target.span,
+                            name: target_name.to_string(),
+                        });
+                    }
+                }
+                for parameter in &def.node.parameters {
+                    self.check_span(parameter.span, "attribute_parameter");
+                    self.validate_type(&parameter.node.ty);
+                }
+            }
             HirItem::ModuleDeclaration(def) => {
                 self.check_span(def.span, "module_declaration");
+                self.validate_applied_attributes(&def.node.attributes, "ModuleDeclaration");
             }
             HirItem::InlineModule(def) => {
                 self.check_span(def.span, "inline_module");
+                self.validate_applied_attributes(&def.node.attributes, "ModuleDeclaration");
                 for nested in &def.node.items {
                     self.validate_item(nested);
                 }
@@ -208,6 +306,16 @@ impl<'a> HirLegalityValidator<'a> {
                     }
                     self.validate_expression(&arm.node.value);
                 }
+            }
+            HirExpressionNode::LambdaExpression(lambda_expr) => {
+                self.check_span(lambda_expr.span, "lambda_expression");
+                for parameter in &lambda_expr.node.parameters {
+                    self.check_span(parameter.span, "lambda_parameter");
+                    if let Some(ty) = &parameter.node.ty {
+                        self.validate_type(ty);
+                    }
+                }
+                self.validate_expression(&lambda_expr.node.body);
             }
             HirExpressionNode::AssignExpression(assign_expr) => {
                 self.check_span(assign_expr.span, "assign_expression");
@@ -347,6 +455,15 @@ impl<'a> HirLegalityValidator<'a> {
                 }
             }
             HirType::Array(inner) | HirType::Ref(inner) => self.validate_type(inner),
+            HirType::Function {
+                return_type,
+                parameters,
+            } => {
+                self.validate_type(return_type);
+                for parameter in parameters {
+                    self.validate_type(parameter);
+                }
+            }
         }
     }
 

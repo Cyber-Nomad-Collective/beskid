@@ -1,9 +1,9 @@
 use crate::hir::{
     HirAssignExpression, HirBinaryExpression, HirBlockExpression, HirCallExpression,
     HirEnumConstructorExpression, HirEnumPattern, HirExpressionNode, HirGroupedExpression,
-    HirLiteral, HirLiteralExpression, HirMatchArm, HirMatchExpression, HirMemberExpression,
-    HirPathExpression, HirPattern, HirStructLiteralExpression, HirStructLiteralField,
-    HirUnaryExpression,
+    HirLambdaExpression, HirLambdaParameter, HirLiteral, HirLiteralExpression, HirMatchArm,
+    HirMatchExpression, HirMemberExpression, HirPathExpression, HirPattern,
+    HirStructLiteralExpression, HirStructLiteralField, HirUnaryExpression,
 };
 use crate::syntax::{self, Spanned};
 
@@ -16,6 +16,9 @@ impl Lowerable for Spanned<syntax::Expression> {
         let node = match &self.node {
             syntax::Expression::Match(match_expr) => {
                 HirExpressionNode::MatchExpression(match_expr.lower())
+            }
+            syntax::Expression::Lambda(lambda_expr) => {
+                HirExpressionNode::LambdaExpression(lambda_expr.lower())
             }
             syntax::Expression::Assign(assign_expr) => {
                 HirExpressionNode::AssignExpression(assign_expr.lower())
@@ -52,6 +55,34 @@ impl Lowerable for Spanned<syntax::Expression> {
             }
         };
         Spanned::new(node, self.span)
+    }
+}
+
+impl Lowerable for Spanned<syntax::LambdaExpression> {
+    type Output = Spanned<HirLambdaExpression>;
+
+    fn lower(&self) -> Self::Output {
+        Spanned::new(
+            HirLambdaExpression {
+                parameters: self.node.parameters.iter().map(Lowerable::lower).collect(),
+                body: Box::new(self.node.body.lower()),
+            },
+            self.span,
+        )
+    }
+}
+
+impl Lowerable for Spanned<syntax::LambdaParameter> {
+    type Output = Spanned<HirLambdaParameter>;
+
+    fn lower(&self) -> Self::Output {
+        Spanned::new(
+            HirLambdaParameter {
+                name: self.node.name.lower(),
+                ty: self.node.ty.as_ref().map(Lowerable::lower),
+            },
+            self.span,
+        )
     }
 }
 

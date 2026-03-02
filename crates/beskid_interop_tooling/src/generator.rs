@@ -56,7 +56,7 @@ pub fn generate_calls_source(decls: &[InteropDecl]) -> String {
                 if index > 0 {
                     output.push_str(", ");
                 }
-                output.push_str(&format!("{} {}", param.beskid_type, param.name));
+                output.push_str(&format!("{}: {}", param.name, param.beskid_type));
             }
             output.push_str(") {\n");
 
@@ -67,20 +67,11 @@ pub fn generate_calls_source(decls: &[InteropDecl]) -> String {
                 .collect::<Vec<_>>()
                 .join(", ");
 
+            let ffi_builtin = format!("__{}", decl.runtime_symbol);
             if decl.return_group == ReturnGroup::Unit {
-                output.push_str(&format!(
-                    "            {}(StdInterop::{}({}));\n",
-                    decl.return_group.dispatch_builtin(),
-                    decl.variant_name,
-                    params
-                ));
+                output.push_str(&format!("            {}({});\n", ffi_builtin, params));
             } else {
-                output.push_str(&format!(
-                    "            return {}(StdInterop::{}({}));\n",
-                    decl.return_group.dispatch_builtin(),
-                    decl.variant_name,
-                    params
-                ));
+                output.push_str(&format!("            return {}({});\n", ffi_builtin, params));
             }
 
             output.push_str("        }\n\n");
@@ -180,9 +171,14 @@ pub fn generate_runtime_source(decls: &[InteropDecl]) -> String {
     output.push_str("    }\n");
     output.push_str("}\n\n");
 
-    output.push_str(
-        "pub unsafe fn dispatch_ptr(tag: i32, enum_ptr: *const u8) -> Option<*mut u8> {\n",
-    );
+    let ptr_param_name = if decls.iter().any(|decl| decl.return_group == ReturnGroup::Ptr) {
+        "enum_ptr"
+    } else {
+        "_enum_ptr"
+    };
+    output.push_str(&format!(
+        "pub unsafe fn dispatch_ptr(tag: i32, {ptr_param_name}: *const u8) -> Option<*mut u8> {{\n"
+    ));
     output.push_str("    match tag {\n");
     for decl in decls
         .iter()

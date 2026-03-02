@@ -5,6 +5,8 @@ pub const SYM_STR_CONCAT: &str = "str_concat";
 pub const SYM_ARRAY_NEW: &str = "array_new";
 pub const SYM_PANIC: &str = "panic";
 pub const SYM_PANIC_STR: &str = "panic_str";
+pub const SYM_SYS_PRINT: &str = "sys_print";
+pub const SYM_SYS_PRINTLN: &str = "sys_println";
 pub const SYM_STR_LEN: &str = "str_len";
 pub const SYM_GC_WRITE_BARRIER: &str = "gc_write_barrier";
 pub const SYM_GC_ROOT_HANDLE: &str = "gc_root_handle";
@@ -24,6 +26,8 @@ pub const RUNTIME_EXPORT_SYMBOLS: &[&str] = &[
     SYM_ARRAY_NEW,
     SYM_PANIC,
     SYM_PANIC_STR,
+    SYM_SYS_PRINT,
+    SYM_SYS_PRINTLN,
     SYM_GC_WRITE_BARRIER,
     SYM_GC_ROOT_HANDLE,
     SYM_GC_UNROOT_HANDLE,

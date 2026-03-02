@@ -1,3 +1,4 @@
+pub mod attribute;
 pub mod contract_definition;
 pub mod contract_embedding;
 pub mod contract_method_signature;
@@ -14,6 +15,9 @@ pub mod program;
 pub mod type_definition;
 pub mod use_declaration;
 
+pub use attribute::{
+    Attribute, AttributeArgument, AttributeDeclaration, AttributeParameter, AttributeTarget,
+};
 pub use contract_definition::ContractDefinition;
 pub use contract_embedding::ContractEmbedding;
 pub use contract_method_signature::ContractMethodSignature;

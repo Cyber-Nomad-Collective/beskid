@@ -2,7 +2,7 @@ use crate::symbols::{
     SYM_ALLOC, SYM_ARRAY_NEW, SYM_GC_REGISTER_ROOT, SYM_GC_ROOT_HANDLE, SYM_GC_UNREGISTER_ROOT,
     SYM_GC_UNROOT_HANDLE, SYM_GC_WRITE_BARRIER, SYM_INTEROP_DISPATCH_PTR,
     SYM_INTEROP_DISPATCH_UNIT, SYM_INTEROP_DISPATCH_USIZE, SYM_PANIC, SYM_PANIC_STR,
-    SYM_STR_CONCAT, SYM_STR_NEW,
+    SYM_STR_CONCAT, SYM_STR_LEN, SYM_STR_NEW, SYM_SYS_PRINT, SYM_SYS_PRINTLN,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -63,6 +63,21 @@ pub const BUILTIN_SPECS: &[BuiltinFnSpec] = &[
         returns: AbiReturnKind::Never,
     },
     BuiltinFnSpec {
+        symbol: SYM_SYS_PRINT,
+        params: &PTR_ONLY,
+        returns: AbiReturnKind::Void,
+    },
+    BuiltinFnSpec {
+        symbol: SYM_SYS_PRINTLN,
+        params: &PTR_ONLY,
+        returns: AbiReturnKind::Void,
+    },
+    BuiltinFnSpec {
+        symbol: SYM_STR_LEN,
+        params: &PTR_ONLY,
+        returns: AbiReturnKind::I64,
+    },
+    BuiltinFnSpec {
         symbol: SYM_GC_WRITE_BARRIER,
         params: &PTR_PTR,
         returns: AbiReturnKind::Void,
@@ -100,6 +115,6 @@ pub const BUILTIN_SPECS: &[BuiltinFnSpec] = &[
     BuiltinFnSpec {
         symbol: SYM_INTEROP_DISPATCH_USIZE,
         params: &PTR_ONLY,
-        returns: AbiReturnKind::Ptr,
+        returns: AbiReturnKind::I64,
     },
 ];

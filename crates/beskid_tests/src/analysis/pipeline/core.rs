@@ -705,6 +705,27 @@ fn analysis_emits_contract_method_missing_impl_errors() {
 }
 
 #[test]
+fn analysis_skips_contract_method_missing_impl_for_extern_contracts() {
+    let source =
+        "[Extern(Abi: \"C\", Library: \"libc\")] contract Service { unit run(); }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.bd",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(
+        !result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1601"))
+    );
+}
+
+#[test]
 fn runs_rules_and_collects_diagnostics() {
     let program = parse_program_ast("unit main() { return; }");
     let result = run_rules(

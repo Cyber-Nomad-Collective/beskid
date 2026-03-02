@@ -4,7 +4,23 @@ use std::iter::Peekable;
 use crate::parser::Rule;
 use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
-use crate::syntax::{Field, Identifier, Parameter, SpanInfo, Spanned, Visibility};
+use crate::syntax::{Attribute, Field, Identifier, Parameter, SpanInfo, Spanned, Visibility};
+
+pub(crate) fn parse_attributes(
+    inner: &mut Peekable<Pairs<Rule>>,
+) -> Result<Vec<Spanned<Attribute>>, ParseError> {
+    if let Some(next) = inner.peek()
+        && next.as_rule() == Rule::AttributeList
+    {
+        return inner
+            .next()
+            .expect("attribute list pair")
+            .into_inner()
+            .map(Attribute::parse)
+            .collect();
+    }
+    Ok(Vec::new())
+}
 
 pub(crate) fn parse_visibility_or_default(
     pair: &Pair<Rule>,

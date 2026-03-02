@@ -410,6 +410,7 @@ pub fn collect_document_symbols(snapshot: &DocumentAnalysisSnapshot) -> Vec<Docu
                 selection_start: definition.node.name.span.start,
                 selection_end: definition.node.name.span.end,
             }),
+            Node::AttributeDeclaration(_) => None,
             Node::ModuleDeclaration(definition) => {
                 let segment = definition.node.path.node.segments.last()?;
                 Some(DocumentSymbolInfo {

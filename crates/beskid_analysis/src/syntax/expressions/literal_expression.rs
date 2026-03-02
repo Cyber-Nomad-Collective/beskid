@@ -82,7 +82,7 @@ fn try_desugar_interpolated_string(
             let expr_text =
                 source.get(expr_start - literal_span.start..expr_end - literal_span.start)?;
             let trim_start = expr_text.len().saturating_sub(expr_text.trim_start().len());
-            let trim_end = expr_text.trim_end().len();
+            let trim_end = expr_text.len().saturating_sub(expr_text.trim_end().len());
             let expr_trimmed = expr_text.trim();
             if expr_trimmed.is_empty() {
                 return None;
