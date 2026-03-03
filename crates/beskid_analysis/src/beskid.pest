@@ -17,6 +17,7 @@ TypeDeclarationKeyword = { "type" }
 EnumDeclarationKeyword = { "enum" }
 ContractDeclarationKeyword = { "contract" }
 AttributeDeclarationKeyword = { "attribute" }
+ImplKeyword = { "impl" }
 MatchKeyword = { "match" }
 WhenKeyword = { "when" }
 IfKeyword = { "if" }
@@ -41,6 +42,7 @@ Keyword = {
       | EnumDeclarationKeyword
       | ContractDeclarationKeyword
       | AttributeDeclarationKeyword
+      | ImplKeyword
       | MatchKeyword
       | WhenKeyword
       | IfKeyword
@@ -77,7 +79,7 @@ Literal = { FloatLiteral | IntegerLiteral | StringLiteral | CharLiteral | "true"
 // 2) PROGRAM
 ////////////////////////////////////////////////////////////
 Program = { SOI ~ Item* ~ EOI }
-Item = _{ FunctionDefinition | MethodDefinition | TypeDefinition | EnumDefinition | ContractDefinition | AttributeDeclaration | InlineModule | ModuleDeclaration | UseDeclaration }
+Item = _{ FunctionDefinition | ImplBlock | TypeDefinition | EnumDefinition | ContractDefinition | AttributeDeclaration | InlineModule | ModuleDeclaration | UseDeclaration }
 
 AttributeList = { Attribute+ }
 Attribute = { "[" ~ Identifier ~ ("(" ~ AttributeArgumentList? ~ ")")? ~ "]" }
@@ -118,7 +120,8 @@ BeskidType = { FunctionType | TypeReference | ArrayType | TypeName }
 ////////////////////////////////////////////////////////////
 FunctionDefinition = { Visibility? ~ BeskidType ~ Identifier ~ GenericParameters? ~ "(" ~ ParameterList? ~ ")" ~ Block }
 ReceiverType = { PrimitiveType | PathSegment }
-MethodDefinition = { Visibility? ~ BeskidType ~ ReceiverType ~ "." ~ Identifier ~ "(" ~ ParameterList? ~ ")" ~ Block }
+ImplBlock = { "impl" ~ ReceiverType ~ "{" ~ ImplMethodDefinition* ~ "}" }
+ImplMethodDefinition = { Visibility? ~ BeskidType ~ Identifier ~ "(" ~ ParameterList? ~ ")" ~ Block }
 ParameterList = { Parameter ~ ("," ~ Parameter)* }
 Parameter = { ParameterModifier? ~ ((Identifier ~ ":" ~ BeskidType) | (BeskidType ~ Identifier)) }
 ParameterModifier = { "ref" | "out" }

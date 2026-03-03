@@ -94,6 +94,25 @@ pub enum TypeError {
     },
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum MethodReceiverSource {
+    Expression(SpanInfo),
+    Local(LocalId),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CallLoweringKind {
+    MethodDispatch {
+        method_item_id: ItemId,
+        receiver_source: MethodReceiverSource,
+        receiver_type: TypeId,
+    },
+    ItemCall {
+        item_id: ItemId,
+    },
+    CallableValueCall,
+}
+
 #[derive(Debug)]
 pub struct TypeResult {
     pub types: TypeTable,
@@ -104,6 +123,7 @@ pub struct TypeResult {
     pub struct_fields_ordered: HashMap<ItemId, Vec<(String, TypeId)>>,
     pub enum_variants_ordered: HashMap<ItemId, Vec<(String, Vec<TypeId>)>>,
     pub generic_items: HashMap<ItemId, Vec<String>>,
+    pub call_kinds: HashMap<SpanInfo, CallLoweringKind>,
     // Canonical output contract for safe implicit numeric conversions.
     // Invariants (normalized in `TypeContext::type_program`):
     // - sorted by (span.start, span.end, from, to)
@@ -154,6 +174,7 @@ pub struct TypeContext<'a> {
     pub(super) current_return_type: Option<TypeId>,
     pub(super) generic_params: HashMap<String, TypeId>,
     pub(super) generic_items: HashMap<ItemId, Vec<String>>,
+    pub(super) call_kinds: HashMap<SpanInfo, CallLoweringKind>,
     pub(super) methods_by_receiver: HashMap<(ItemId, String), ItemId>,
 }
 
@@ -176,6 +197,7 @@ impl<'a> TypeContext<'a> {
             current_return_type: None,
             generic_params: HashMap::new(),
             generic_items: HashMap::new(),
+            call_kinds: HashMap::new(),
             methods_by_receiver: HashMap::new(),
         };
         context.seed_types();
@@ -294,6 +316,7 @@ impl<'a> TypeContext<'a> {
             struct_fields_ordered: self.struct_fields_ordered,
             enum_variants_ordered: self.enum_variants_ordered,
             generic_items: self.generic_items,
+            call_kinds: self.call_kinds,
             cast_intents: self.cast_intents,
         };
         let errors = std::mem::take(&mut self.errors);

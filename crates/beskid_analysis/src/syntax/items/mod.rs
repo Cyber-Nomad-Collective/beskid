@@ -6,6 +6,7 @@ pub mod contract_node;
 pub mod enum_definition;
 pub mod enum_variant;
 pub mod function_definition;
+pub mod impl_block;
 pub mod inline_module;
 pub mod method_definition;
 pub mod module_declaration;

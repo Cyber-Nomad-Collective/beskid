@@ -44,17 +44,24 @@ fn parse_path_segment(pair: Pair<Rule>) -> Result<Spanned<crate::syntax::PathSeg
 
 impl Parsable for MethodDefinition {
     fn parse(pair: Pair<Rule>) -> Result<Spanned<Self>, ParseError> {
+        Err(ParseError::unexpected_rule(
+            pair,
+            Some(Rule::ImplMethodDefinition),
+        ))
+    }
+}
+
+impl MethodDefinition {
+    pub(crate) fn parse_with_receiver(
+        pair: Pair<Rule>,
+        receiver_type: Spanned<Type>,
+    ) -> Result<Spanned<Self>, ParseError> {
         let span = SpanInfo::from_span(&pair.as_span());
         let mut inner = pair.clone().into_inner().peekable();
         let visibility = parse_visibility_or_default(&pair, &mut inner)?;
         let return_type = Some(Type::parse(
             inner.next().ok_or(ParseError::missing(Rule::BeskidType))?,
         )?);
-        let receiver_type = parse_receiver_type(
-            inner
-                .next()
-                .ok_or(ParseError::missing(Rule::ReceiverType))?,
-        )?;
         let name = Identifier::parse(inner.next().ok_or(ParseError::missing(Rule::Identifier))?)?;
 
         let mut parameters = Vec::new();
@@ -66,6 +73,15 @@ impl Parsable for MethodDefinition {
                 Rule::Block => body = Some(Block::parse(item)?),
                 _ => return Err(ParseError::unexpected_rule(item, None)),
             }
+        }
+
+        if let Some(parameter) = parameters
+            .iter()
+            .find(|parameter| parameter.node.name.node.name == "self")
+        {
+            return Err(ParseError::forbidden_impl_self_parameter(
+                parameter.node.name.span,
+            ));
         }
 
         Ok(Spanned::new(
@@ -82,7 +98,7 @@ impl Parsable for MethodDefinition {
     }
 }
 
-fn parse_receiver_type(pair: Pair<Rule>) -> Result<Spanned<Type>, ParseError> {
+pub(crate) fn parse_receiver_type(pair: Pair<Rule>) -> Result<Spanned<Type>, ParseError> {
     let span = SpanInfo::from_span(&pair.as_span());
     let first = if pair.as_rule() == Rule::ReceiverType {
         let mut inner = pair.into_inner();

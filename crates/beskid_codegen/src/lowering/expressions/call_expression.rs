@@ -10,9 +10,9 @@ use beskid_analysis::builtins::{BuiltinType, builtin_specs};
 use beskid_analysis::hir::{
     HirCallExpression, HirExpressionNode, HirLambdaExpression, HirPrimitiveType,
 };
-use beskid_analysis::resolve::{ItemKind, ResolvedValue};
+use beskid_analysis::resolve::ResolvedValue;
 use beskid_analysis::syntax::Spanned;
-use beskid_analysis::types::{TypeId, TypeInfo};
+use beskid_analysis::types::{CallLoweringKind, MethodReceiverSource, TypeId, TypeInfo};
 use cranelift_codegen::ir::{
     AbiParam, ExtFuncData, ExternalName, Function, InstBuilder, Signature, Value, types,
 };
@@ -528,6 +528,155 @@ fn lower_local_lambda_call(
     result
 }
 
+fn receiver_and_method_name(
+    method_item_id: beskid_analysis::resolve::ItemId,
+    ctx: &NodeLoweringContext<'_, '_>,
+) -> Result<(String, String), CodegenError> {
+    let full_name = ctx
+        .resolution
+        .items
+        .iter()
+        .find(|info| info.id == method_item_id)
+        .map(|info| info.name.clone())
+        .ok_or(CodegenError::MissingSymbol("method item"))?;
+    let (receiver, method) = full_name
+        .split_once("::")
+        .ok_or(CodegenError::MissingSymbol("method item name"))?;
+    Ok((receiver.to_string(), method.to_string()))
+}
+
+fn lower_method_dispatch_call(
+    node: &Spanned<HirCallExpression>,
+    method_item_id: beskid_analysis::resolve::ItemId,
+    receiver_source: MethodReceiverSource,
+    receiver_type: TypeId,
+    ctx: &mut NodeLoweringContext<'_, '_>,
+) -> Result<Option<Value>, CodegenError> {
+    let signature = ctx
+        .type_result
+        .function_signatures
+        .get(&method_item_id)
+        .ok_or(CodegenError::MissingSymbol("method signature"))?;
+
+    if signature.params.len() != node.node.args.len() {
+        return Err(CodegenError::UnsupportedNode {
+            span: node.span,
+            node: "call arity mismatch",
+        });
+    }
+
+    let receiver_value = match receiver_source {
+        MethodReceiverSource::Local(local_id) => {
+            let receiver_var = ctx.state.locals.get(&local_id).copied().ok_or(
+                CodegenError::InvalidLocalBinding {
+                    span: node.node.callee.span,
+                },
+            )?;
+            ctx.builder.use_var(receiver_var)
+        }
+        MethodReceiverSource::Expression(span) => {
+            let HirExpressionNode::MemberExpression(member_expr) = &node.node.callee.node else {
+                return Err(CodegenError::UnsupportedNode {
+                    span: node.node.callee.span,
+                    node: "method receiver source",
+                });
+            };
+            if member_expr.node.target.span != span {
+                return Err(CodegenError::UnsupportedNode {
+                    span: node.node.callee.span,
+                    node: "method receiver span mismatch",
+                });
+            }
+            lower_node(&member_expr.node.target, ctx)?.ok_or(CodegenError::UnsupportedNode {
+                span: member_expr.node.target.span,
+                node: "unit-valued method receiver",
+            })?
+        }
+    };
+
+    let mut args = Vec::with_capacity(node.node.args.len() + 1);
+    args.push(receiver_value);
+    for (arg, expected) in node.node.args.iter().zip(signature.params.iter()) {
+        let value = if let Some(fn_value) = lower_function_typed_argument(arg, *expected, ctx)? {
+            fn_value
+        } else {
+            let lowered = lower_node(arg, ctx)?.ok_or(CodegenError::UnsupportedNode {
+                span: arg.span,
+                node: "unit-valued call argument",
+            })?;
+            let actual = ctx
+                .type_result
+                .expr_types
+                .get(&arg.span)
+                .copied()
+                .ok_or(CodegenError::MissingExpressionType { span: arg.span })?;
+            ensure_type_compatibility(
+                arg.span,
+                *expected,
+                actual,
+                ctx.type_result,
+                ctx.builder,
+                lowered,
+            )?
+        };
+        args.push(value);
+    }
+
+    let mut signature_ir = Signature::new(CallConv::SystemV);
+    let receiver_clif_ty = map_type_id_to_clif(ctx.type_result, receiver_type).ok_or(
+        CodegenError::UnsupportedNode {
+            span: node.node.callee.span,
+            node: "method receiver type",
+        },
+    )?;
+    signature_ir.params.push(AbiParam::new(receiver_clif_ty));
+    for param in &signature.params {
+        let clif_ty = map_type_id_to_clif(ctx.type_result, *param).ok_or(
+            CodegenError::UnsupportedNode {
+                span: node.span,
+                node: "call parameter type",
+            },
+        )?;
+        signature_ir.params.push(AbiParam::new(clif_ty));
+    }
+
+    let return_info = ctx.type_result.types.get(signature.return_type);
+    let returns_value = !matches!(return_info, Some(TypeInfo::Primitive(HirPrimitiveType::Unit)));
+    if returns_value {
+        let clif_ty = map_type_id_to_clif(ctx.type_result, signature.return_type).ok_or(
+            CodegenError::UnsupportedNode {
+                span: node.span,
+                node: "call return type",
+            },
+        )?;
+        signature_ir.returns.push(AbiParam::new(clif_ty));
+    }
+
+    let (receiver_name, method_name) = receiver_and_method_name(method_item_id, ctx)?;
+    let function_name = mangle_method_name(&receiver_name, &method_name);
+    let sig_ref = ctx.builder.func.import_signature(signature_ir);
+    let func_ref = ctx.builder.func.import_function(ExtFuncData {
+        name: ExternalName::testcase(function_name),
+        signature: sig_ref,
+        colocated: true,
+        patchable: false,
+    });
+
+    let call = ctx.builder.ins().call(func_ref, &args);
+    if !returns_value {
+        return Ok(None);
+    }
+    let value = *ctx
+        .builder
+        .inst_results(call)
+        .first()
+        .ok_or(CodegenError::UnsupportedNode {
+            span: node.span,
+            node: "call result",
+        })?;
+    Ok(Some(value))
+}
+
 impl Lowerable<NodeLoweringContext<'_, '_>> for HirCallExpression {
     type Output = Option<Value>;
 
@@ -535,322 +684,20 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirCallExpression {
         node: &Spanned<Self>,
         ctx: &mut NodeLoweringContext<'_, '_>,
     ) -> Result<Self::Output, CodegenError> {
-        if let HirExpressionNode::PathExpression(path_expr) = &node.node.callee.node
-            && path_expr.node.path.node.segments.len() >= 2
+        let call_kind = ctx.type_result.call_kinds.get(&node.span).copied();
+        if let Some(CallLoweringKind::MethodDispatch {
+            method_item_id,
+            receiver_source,
+            receiver_type,
+        }) = call_kind
         {
-            let method_name = path_expr
-                .node
-                .path
-                .node
-                .segments
-                .last()
-                .map(|segment| segment.node.name.node.name.clone())
-                .ok_or(CodegenError::UnsupportedNode {
-                    span: node.node.callee.span,
-                    node: "method path member",
-                })?;
-
-            let local_id = ctx
-                .resolution
-                .tables
-                .resolved_values
-                .get(&path_expr.node.path.span)
-                .and_then(|resolved| match resolved {
-                    ResolvedValue::Local(local_id) => Some(*local_id),
-                    _ => None,
-                });
-
-            if let Some(local_id) = local_id {
-                let target_type_id = ctx
-                    .type_result
-                    .local_types
-                    .get(&local_id)
-                    .copied()
-                    .ok_or(CodegenError::MissingLocalType {
-                        span: path_expr.node.path.span,
-                    })?;
-
-                let receiver_item = match ctx.type_result.types.get(target_type_id) {
-                    Some(TypeInfo::Named(item_id)) => Some(*item_id),
-                    Some(TypeInfo::Applied { base, .. }) => Some(*base),
-                    _ => None,
-                };
-
-                if let Some(receiver_item) = receiver_item {
-                    let receiver_name = ctx
-                        .resolution
-                        .items
-                        .iter()
-                        .find(|info| info.id == receiver_item)
-                        .map(|info| info.name.clone())
-                        .ok_or(CodegenError::MissingSymbol("method receiver item"))?;
-
-                    let method_lookup_name = format!("{}::{}", receiver_name, method_name);
-                    let method_item = ctx
-                        .resolution
-                        .items
-                        .iter()
-                        .find(|info| {
-                            info.kind == ItemKind::Method && info.name == method_lookup_name
-                        })
-                        .map(|info| info.id);
-
-                    if let Some(method_item) = method_item {
-                        let signature = ctx
-                            .type_result
-                            .function_signatures
-                            .get(&method_item)
-                            .ok_or(CodegenError::MissingSymbol("method signature"))?;
-
-                        if signature.params.len() != node.node.args.len() {
-                            return Err(CodegenError::UnsupportedNode {
-                                span: node.span,
-                                node: "call arity mismatch",
-                            });
-                        }
-
-                        let receiver_var = ctx.state.locals.get(&local_id).copied().ok_or(
-                            CodegenError::InvalidLocalBinding {
-                                span: path_expr.node.path.span,
-                            },
-                        )?;
-                        let receiver_value = ctx.builder.use_var(receiver_var);
-
-                        let mut args = Vec::with_capacity(node.node.args.len() + 1);
-                        args.push(receiver_value);
-                        for (arg, expected) in node.node.args.iter().zip(signature.params.iter()) {
-                            let value = if let Some(fn_value) =
-                                lower_function_typed_argument(arg, *expected, ctx)?
-                            {
-                                fn_value
-                            } else {
-                                let lowered =
-                                    lower_node(arg, ctx)?.ok_or(CodegenError::UnsupportedNode {
-                                        span: arg.span,
-                                        node: "unit-valued call argument",
-                                    })?;
-                                let actual = ctx
-                                    .type_result
-                                    .expr_types
-                                    .get(&arg.span)
-                                    .copied()
-                                    .ok_or(CodegenError::MissingExpressionType { span: arg.span })?;
-                                ensure_type_compatibility(
-                                    arg.span,
-                                    *expected,
-                                    actual,
-                                    ctx.type_result,
-                                    ctx.builder,
-                                    lowered,
-                                )?
-                            };
-                            args.push(value);
-                        }
-
-                        let mut signature_ir = Signature::new(CallConv::SystemV);
-                        let receiver_clif_ty = map_type_id_to_clif(ctx.type_result, target_type_id)
-                            .ok_or(CodegenError::UnsupportedNode {
-                                span: path_expr.node.path.span,
-                                node: "method receiver type",
-                            })?;
-                        signature_ir.params.push(AbiParam::new(receiver_clif_ty));
-                        for param in &signature.params {
-                            let clif_ty = map_type_id_to_clif(ctx.type_result, *param).ok_or(
-                                CodegenError::UnsupportedNode {
-                                    span: node.span,
-                                    node: "call parameter type",
-                                },
-                            )?;
-                            signature_ir.params.push(AbiParam::new(clif_ty));
-                        }
-
-                        let return_info = ctx.type_result.types.get(signature.return_type);
-                        let returns_value = !matches!(
-                            return_info,
-                            Some(TypeInfo::Primitive(HirPrimitiveType::Unit))
-                        );
-                        if returns_value {
-                            let clif_ty =
-                                map_type_id_to_clif(ctx.type_result, signature.return_type).ok_or(
-                                    CodegenError::UnsupportedNode {
-                                        span: node.span,
-                                        node: "call return type",
-                                    },
-                                )?;
-                            signature_ir.returns.push(AbiParam::new(clif_ty));
-                        }
-
-                        let function_name = mangle_method_name(&receiver_name, &method_name);
-                        let sig_ref = ctx.builder.func.import_signature(signature_ir);
-                        let func_ref = ctx.builder.func.import_function(ExtFuncData {
-                            name: ExternalName::testcase(function_name),
-                            signature: sig_ref,
-                            colocated: true,
-                            patchable: false,
-                        });
-
-                        let call = ctx.builder.ins().call(func_ref, &args);
-                        if !returns_value {
-                            return Ok(None);
-                        }
-                        let value = *ctx
-                            .builder
-                            .inst_results(call)
-                            .first()
-                            .ok_or(CodegenError::UnsupportedNode {
-                                span: node.span,
-                                node: "call result",
-                            })?;
-                        return Ok(Some(value));
-                    }
-                }
-            }
-        }
-
-        if let HirExpressionNode::MemberExpression(member_expr) = &node.node.callee.node {
-            let target_type_id = ctx
-                .type_result
-                .expr_types
-                .get(&member_expr.node.target.span)
-                .copied()
-                .ok_or(CodegenError::MissingExpressionType {
-                    span: member_expr.node.target.span,
-                })?;
-            let receiver_item = match ctx.type_result.types.get(target_type_id) {
-                Some(TypeInfo::Named(item_id)) => Some(*item_id),
-                Some(TypeInfo::Applied { base, .. }) => Some(*base),
-                _ => None,
-            };
-
-            if let Some(receiver_item) = receiver_item {
-                let receiver_name = ctx
-                    .resolution
-                    .items
-                    .iter()
-                    .find(|info| info.id == receiver_item)
-                    .map(|info| info.name.clone())
-                    .ok_or(CodegenError::MissingSymbol("method receiver item"))?;
-                let method_lookup_name =
-                    format!("{}::{}", receiver_name, member_expr.node.member.node.name);
-                let method_item = ctx
-                    .resolution
-                    .items
-                    .iter()
-                    .find(|info| {
-                        info.kind == ItemKind::Method && info.name == method_lookup_name
-                    })
-                    .map(|info| info.id);
-
-                if let Some(method_item) = method_item {
-                    let signature = ctx
-                        .type_result
-                        .function_signatures
-                        .get(&method_item)
-                        .ok_or(CodegenError::MissingSymbol("method signature"))?;
-
-                    if signature.params.len() != node.node.args.len() {
-                        return Err(CodegenError::UnsupportedNode {
-                            span: node.span,
-                            node: "call arity mismatch",
-                        });
-                    }
-
-                    let receiver_value =
-                        lower_node(&member_expr.node.target, ctx)?.ok_or(CodegenError::UnsupportedNode {
-                            span: member_expr.node.target.span,
-                            node: "unit-valued method receiver",
-                        })?;
-
-                    let mut args = Vec::with_capacity(node.node.args.len() + 1);
-                    args.push(receiver_value);
-                    for (arg, expected) in node.node.args.iter().zip(signature.params.iter()) {
-                        let value = if let Some(fn_value) =
-                            lower_function_typed_argument(arg, *expected, ctx)?
-                        {
-                            fn_value
-                        } else {
-                            let lowered = lower_node(arg, ctx)?.ok_or(CodegenError::UnsupportedNode {
-                                span: arg.span,
-                                node: "unit-valued call argument",
-                            })?;
-                            let actual = ctx
-                                .type_result
-                                .expr_types
-                                .get(&arg.span)
-                                .copied()
-                                .ok_or(CodegenError::MissingExpressionType { span: arg.span })?;
-                            ensure_type_compatibility(
-                                arg.span,
-                                *expected,
-                                actual,
-                                ctx.type_result,
-                                ctx.builder,
-                                lowered,
-                            )?
-                        };
-                        args.push(value);
-                    }
-
-                    let mut signature_ir = Signature::new(CallConv::SystemV);
-                    let receiver_clif_ty = map_type_id_to_clif(ctx.type_result, target_type_id)
-                        .ok_or(CodegenError::UnsupportedNode {
-                            span: member_expr.node.target.span,
-                            node: "method receiver type",
-                        })?;
-                    signature_ir.params.push(AbiParam::new(receiver_clif_ty));
-                    for param in &signature.params {
-                        let clif_ty = map_type_id_to_clif(ctx.type_result, *param).ok_or(
-                            CodegenError::UnsupportedNode {
-                                span: node.span,
-                                node: "call parameter type",
-                            },
-                        )?;
-                        signature_ir.params.push(AbiParam::new(clif_ty));
-                    }
-
-                    let return_info = ctx.type_result.types.get(signature.return_type);
-                    let returns_value = !matches!(
-                        return_info,
-                        Some(TypeInfo::Primitive(HirPrimitiveType::Unit))
-                    );
-                    if returns_value {
-                        let clif_ty =
-                            map_type_id_to_clif(ctx.type_result, signature.return_type).ok_or(
-                                CodegenError::UnsupportedNode {
-                                    span: node.span,
-                                    node: "call return type",
-                                },
-                            )?;
-                        signature_ir.returns.push(AbiParam::new(clif_ty));
-                    }
-
-                    let function_name = mangle_method_name(
-                        &receiver_name,
-                        &member_expr.node.member.node.name,
-                    );
-                    let sig_ref = ctx.builder.func.import_signature(signature_ir);
-                    let func_ref = ctx.builder.func.import_function(ExtFuncData {
-                        name: ExternalName::testcase(function_name),
-                        signature: sig_ref,
-                        colocated: true,
-                        patchable: false,
-                    });
-
-                    let call = ctx.builder.ins().call(func_ref, &args);
-                    if !returns_value {
-                        return Ok(None);
-                    }
-                    let value = *ctx
-                        .builder
-                        .inst_results(call)
-                        .first()
-                        .ok_or(CodegenError::UnsupportedNode {
-                            span: node.span,
-                            node: "call result",
-                        })?;
-                    return Ok(Some(value));
-                }
-            }
+            return lower_method_dispatch_call(
+                node,
+                method_item_id,
+                receiver_source,
+                receiver_type,
+                ctx,
+            );
         }
 
         fn lambda_from_callee<'a>(
@@ -898,9 +745,8 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirCallExpression {
                 return_type,
             }) = ctx.type_result.types.get(callee_type_id).cloned()
         {
-            let callee_is_item_path = if let HirExpressionNode::PathExpression(path_expr) =
-                &node.node.callee.node
-            {
+            let callee_is_item_path = matches!(call_kind, Some(CallLoweringKind::ItemCall { .. }))
+                || if let HirExpressionNode::PathExpression(path_expr) = &node.node.callee.node {
                 matches!(
                     ctx.resolution
                         .tables
@@ -935,29 +781,34 @@ impl Lowerable<NodeLoweringContext<'_, '_>> for HirCallExpression {
                 node: "non-path call callee",
             });
         };
-        let resolved = ctx
-            .resolution
-            .tables
-            .resolved_values
-            .get(&path_expr.node.path.span)
-            .ok_or(CodegenError::MissingResolvedValue {
-                span: path_expr.node.path.span,
-            })?;
-
-        let item_id = match resolved {
-            ResolvedValue::Item(item_id) => *item_id,
-            ResolvedValue::Local(local_id) => {
-                let local_type = ctx.type_result.local_types.get(local_id).copied();
-                let local_is_function = local_type
-                    .and_then(|type_id| ctx.type_result.types.get(type_id))
-                    .is_some_and(|info| matches!(info, TypeInfo::Function { .. }));
-                if local_is_function {
-                    return lower_indirect_function_call(node, *local_id, ctx);
-                }
-                return Err(CodegenError::UnsupportedNode {
+        let item_id = if let Some(CallLoweringKind::ItemCall { item_id }) = call_kind {
+            item_id
+        } else {
+            let resolved = ctx
+                .resolution
+                .tables
+                .resolved_values
+                .get(&path_expr.node.path.span)
+                .ok_or(CodegenError::MissingResolvedValue {
                     span: path_expr.node.path.span,
-                    node: "non-item call target",
-                });
+                })?;
+
+            match resolved {
+                ResolvedValue::Item(item_id) => *item_id,
+                ResolvedValue::Local(local_id) => {
+                    let local_type = ctx.type_result.local_types.get(local_id).copied();
+                    let local_is_function = local_type
+                        .and_then(|type_id| ctx.type_result.types.get(type_id))
+                        .is_some_and(|info| matches!(info, TypeInfo::Function { .. }));
+                    if local_is_function {
+                        return lower_indirect_function_call(node, *local_id, ctx);
+                    }
+
+                    return Err(CodegenError::UnsupportedNode {
+                        span: path_expr.node.path.span,
+                        node: "non-item call target",
+                    });
+                }
             }
         };
 

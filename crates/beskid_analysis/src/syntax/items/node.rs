@@ -54,10 +54,6 @@ fn parse_node(pair: Pair<Rule>) -> Result<Spanned<Node>, ParseError> {
             let node = FunctionDefinition::parse(pair)?;
             Ok(Spanned::new(Node::Function(node), span))
         }
-        Rule::MethodDefinition => {
-            let node = MethodDefinition::parse(pair)?;
-            Ok(Spanned::new(Node::Method(node), span))
-        }
         Rule::TypeDefinition => {
             let node = TypeDefinition::parse(pair)?;
             Ok(Spanned::new(Node::TypeDefinition(node), span))

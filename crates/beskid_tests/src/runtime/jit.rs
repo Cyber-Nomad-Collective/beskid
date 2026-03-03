@@ -229,7 +229,7 @@ fn jit_infers_lambda_parameter_type_from_named_function_argument() {
 #[test]
 fn jit_executes_method_call_with_this_field_access() {
     let source =
-        "type Counter { i64 value } i64 Counter.Get() { return this.value; } i64 main() { Counter c = Counter { value: 42 }; return c.Get(); }";
+        "type Counter { i64 value } impl Counter { i64 Get() { return this.value; } } i64 main() { Counter c = Counter { value: 42 }; return c.Get(); }";
     let mut engine = compile_jit(source);
 
     let value = unsafe { run_main_i64(&mut engine) };
@@ -241,7 +241,7 @@ fn jit_executes_method_call_with_this_field_access() {
 
 #[test]
 fn jit_dispatches_same_method_name_by_receiver_type() {
-    let source = "type A { i64 value } type B { i64 value } i64 A.Get() { return this.value; } i64 B.Get() { return this.value + 1; } i64 main() { A a = A { value: 20 }; B b = B { value: 21 }; return a.Get() + b.Get(); }";
+    let source = "type A { i64 value } type B { i64 value } impl A { i64 Get() { return this.value; } } impl B { i64 Get() { i64 delta = 1; return this.value + delta; } } i64 main() { A a = A { value: 20 }; B b = B { value: 21 }; return a.Get() + b.Get(); }";
     let mut engine = compile_jit(source);
 
     let value = unsafe { run_main_i64(&mut engine) };

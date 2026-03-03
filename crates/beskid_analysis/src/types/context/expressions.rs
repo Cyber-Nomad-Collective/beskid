@@ -9,7 +9,7 @@ use crate::resolve::{ItemKind, ResolvedValue};
 use crate::syntax::Spanned;
 use crate::types::{TypeId, TypeInfo};
 
-use super::context::{TypeContext, TypeError};
+use super::context::{CallLoweringKind, MethodReceiverSource, TypeContext, TypeError};
 
 impl<'a> TypeContext<'a> {
     pub(super) fn type_expression(
@@ -156,63 +156,57 @@ impl<'a> TypeContext<'a> {
     }
 
     fn type_call_expression(&mut self, call: &Spanned<HirCallExpression>) -> Option<TypeId> {
-        if let HirExpressionNode::MemberExpression(member) = &call.node.callee.node {
-            let target_type = self.type_expression(&member.node.target)?;
-            let method_name = member.node.member.node.name.as_str();
-            let Some(method_item_id) = self.method_item_for_receiver(target_type, method_name) else {
-                self.errors
-                    .push(TypeError::UnknownCallTarget { span: call.node.callee.span });
-                return None;
-            };
-            let Some(signature) = self.function_signatures.get(&method_item_id).cloned() else {
-                self.errors
-                    .push(TypeError::UnknownCallTarget { span: call.node.callee.span });
-                return None;
-            };
-
-            if call.node.args.len() != signature.params.len() {
-                self.errors.push(TypeError::CallArityMismatch {
-                    span: call.span,
-                    expected: signature.params.len(),
-                    actual: call.node.args.len(),
-                });
-                return Some(signature.return_type);
-            }
-
-            for (arg, expected) in call.node.args.iter().zip(signature.params.iter()) {
-                if let Some(actual) = self.type_argument_with_expected(arg, *expected) {
-                    self.require_same_type(arg.span, *expected, actual);
-                }
-            }
-            return Some(signature.return_type);
-        }
-
-        if let HirExpressionNode::PathExpression(path_expr) = &call.node.callee.node
-            && path_expr.node.path.node.segments.len() >= 2
-        {
-            let method_name = path_expr
-                .node
-                .path
-                .node
-                .segments
-                .last()
-                .map(|segment| segment.node.name.node.name.clone())?;
-
-            let local_id = self
+        if let HirExpressionNode::PathExpression(path_expr) = &call.node.callee.node {
+            let segments = &path_expr.node.path.node.segments;
+            let resolved = self
                 .resolution
                 .tables
                 .resolved_values
-                .get(&path_expr.node.path.span)
-                .and_then(|resolved| match resolved {
-                    ResolvedValue::Local(local_id) => Some(*local_id),
-                    _ => None,
-                });
-
-            if let Some(local_id) = local_id
-                && let Some(receiver_type) = self.local_types.get(&local_id).copied()
-                && let Some(method_item_id) =
-                    self.method_item_for_receiver(receiver_type, method_name.as_str())
+                .get(&path_expr.node.path.span);
+            if segments.len() >= 2
+                && let Some(ResolvedValue::Local(local_id)) = resolved
+                && let Some(receiver_type) = self.local_types.get(local_id).copied()
             {
+                let method_name = segments[1].node.name.node.name.as_str();
+                if let Some(method_item_id) = self.method_item_for_receiver(receiver_type, method_name)
+                {
+                    let Some(signature) = self.function_signatures.get(&method_item_id).cloned() else {
+                        self.errors
+                            .push(TypeError::UnknownCallTarget { span: call.node.callee.span });
+                        return None;
+                    };
+
+                    if call.node.args.len() != signature.params.len() {
+                        self.errors.push(TypeError::CallArityMismatch {
+                            span: call.span,
+                            expected: signature.params.len(),
+                            actual: call.node.args.len(),
+                        });
+                        return Some(signature.return_type);
+                    }
+
+                    for (arg, expected) in call.node.args.iter().zip(signature.params.iter()) {
+                        if let Some(actual) = self.type_argument_with_expected(arg, *expected) {
+                            self.require_same_type(arg.span, *expected, actual);
+                        }
+                    }
+                    self.call_kinds.insert(
+                        call.span,
+                        CallLoweringKind::MethodDispatch {
+                            method_item_id,
+                            receiver_source: MethodReceiverSource::Local(*local_id),
+                            receiver_type,
+                        },
+                    );
+                    return Some(signature.return_type);
+                }
+            }
+        }
+
+        if let HirExpressionNode::MemberExpression(member) = &call.node.callee.node {
+            let target_type = self.type_expression(&member.node.target)?;
+            let method_name = member.node.member.node.name.as_str();
+            if let Some(method_item_id) = self.method_item_for_receiver(target_type, method_name) {
                 let Some(signature) = self.function_signatures.get(&method_item_id).cloned() else {
                     self.errors
                         .push(TypeError::UnknownCallTarget { span: call.node.callee.span });
@@ -233,6 +227,14 @@ impl<'a> TypeContext<'a> {
                         self.require_same_type(arg.span, *expected, actual);
                     }
                 }
+                self.call_kinds.insert(
+                    call.span,
+                    CallLoweringKind::MethodDispatch {
+                        method_item_id,
+                        receiver_source: MethodReceiverSource::Expression(member.node.target.span),
+                        receiver_type: target_type,
+                    },
+                );
                 return Some(signature.return_type);
             }
         }
@@ -269,6 +271,8 @@ impl<'a> TypeContext<'a> {
                     self.require_same_type(arg.span, *expected, actual);
                 }
             }
+            self.call_kinds
+                .insert(call.span, CallLoweringKind::CallableValueCall);
             return Some(return_type);
         }
 
@@ -312,6 +316,11 @@ impl<'a> TypeContext<'a> {
                 .push(TypeError::UnknownCallTarget { span: call.span });
             return None;
         };
+
+        if let Some(item_id) = callee_item_id {
+            self.call_kinds
+                .insert(call.span, CallLoweringKind::ItemCall { item_id });
+        }
 
         if let Some(expected) = generic_expected {
             match &generic_args {

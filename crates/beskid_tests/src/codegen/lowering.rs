@@ -83,7 +83,7 @@ fn codegen_lowers_functions_inside_inline_modules() {
 
 #[test]
 fn codegen_lowers_method_and_member_call() {
-    let source = "type Counter { i64 value } i64 Counter.Get() { return this.value; } i64 main() { Counter c = Counter { value: 7 }; return c.Get(); }";
+    let source = "type Counter { i64 value } impl Counter { i64 Get() { return this.value; } } i64 main() { Counter c = Counter { value: 7 }; return c.Get(); }";
     let (hir, resolution, typed) = lower_resolve_type(source);
     let artifact =
         lower_program(&hir, &resolution, &typed).expect("expected method lowering to succeed");

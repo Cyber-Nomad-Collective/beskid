@@ -4,6 +4,7 @@ use crate::syntax::util::{
     assert_expression_path_segments, assert_path_segments, assert_type_complex_path,
     assert_type_primitive, parse_node_ast, parse_program_ast,
 };
+use crate::parsing::util::assert_parse_fail;
 
 fn assert_string_literal_expression(
     expr: &beskid_analysis::syntax::Spanned<beskid_analysis::syntax::Expression>,
@@ -104,17 +105,16 @@ fn parses_function_with_parameter_modifier_ast() {
 
 #[test]
 fn parses_method_definition_ast() {
-    let node = parse_node_ast("i32 Point.len(self: Point) { return 0; }");
+    let program = parse_program_ast("impl Point { i32 len() { return 0; } }");
+    assert_eq!(program.node.items.len(), 1);
+    let node = &program.node.items[0];
 
     match &node.node {
         Node::Method(method) => {
             assert_eq!(method.node.visibility.node, Visibility::Private);
             assert_eq!(method.node.name.node.name, "len");
-            assert_eq!(method.node.parameters.len(), 1);
-            assert_eq!(method.node.parameters[0].node.name.node.name, "self");
-            assert!(method.node.parameters[0].node.modifier.is_none());
+            assert!(method.node.parameters.is_empty());
             assert_type_complex_path(&method.node.receiver_type, &["Point"]);
-            assert_type_complex_path(&method.node.parameters[0].node.ty, &["Point"]);
             let return_type = method.node.return_type.as_ref().expect("return type");
             assert_type_primitive(return_type, beskid_analysis::syntax::PrimitiveType::I32);
         }
@@ -124,7 +124,9 @@ fn parses_method_definition_ast() {
 
 #[test]
 fn parses_method_with_primitive_receiver_ast() {
-    let node = parse_node_ast("i32 i32.zero() { return 0; }");
+    let program = parse_program_ast("impl i32 { i32 zero() { return 0; } }");
+    assert_eq!(program.node.items.len(), 1);
+    let node = &program.node.items[0];
     match &node.node {
         Node::Method(method) => {
             assert_type_primitive(
@@ -135,6 +137,14 @@ fn parses_method_with_primitive_receiver_ast() {
         }
         _ => panic!("expected method definition"),
     }
+}
+
+#[test]
+fn rejects_legacy_method_declaration_ast() {
+    assert_parse_fail(
+        beskid_analysis::Rule::Program,
+        "i32 Point.len(self: Point) { return 0; }",
+    );
 }
 
 #[test]
