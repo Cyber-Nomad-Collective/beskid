@@ -1,12 +1,60 @@
 use crate::hir::{
-    AstItem, AstProgram, HirContractDefinition, HirContractEmbedding, HirContractMethodSignature,
-    HirContractNode, HirEnumDefinition, HirEnumVariant, HirFunctionDefinition, HirInlineModule,
-    HirItem, HirMethodDefinition, HirModuleDeclaration, HirProgram, HirTypeDefinition,
-    HirUseDeclaration,
+    AstItem, AstProgram, HirAttribute, HirAttributeDeclaration, HirAttributeParameter,
+    HirAttributeTarget, HirContractDefinition, HirContractEmbedding, HirContractMethodSignature,
+    HirContractNode, HirEnumDefinition, HirEnumVariant, HirExternInterface,
+    HirFunctionDefinition, HirInlineModule, HirItem, HirMethodDefinition, HirModuleDeclaration,
+    HirProgram, HirTypeDefinition, HirUseDeclaration,
 };
 use crate::syntax::{self, Spanned};
 
 use super::Lowerable;
+
+fn lower_extern_interface(
+    attributes: &[Spanned<syntax::Attribute>],
+) -> Option<HirExternInterface> {
+    let extern_attr = attributes
+        .iter()
+        .find(|attr| attr.node.name.node.name == "Extern")?;
+    let mut abi = None;
+    let mut library = None;
+    for arg in &extern_attr.node.arguments {
+        match arg.node.name.node.name.as_str() {
+            "Abi" => abi = extract_string_literal(&arg.node.value),
+            "Library" => library = extract_string_literal(&arg.node.value),
+            _ => {}
+        }
+    }
+    Some(HirExternInterface { abi, library })
+}
+
+fn lower_attributes(attributes: &[Spanned<syntax::Attribute>]) -> Vec<Spanned<HirAttribute>> {
+    attributes
+        .iter()
+        .map(|attribute| {
+            Spanned::new(
+                HirAttribute {
+                    name: attribute.node.name.lower(),
+                },
+                attribute.span,
+            )
+        })
+        .collect()
+}
+
+fn extract_string_literal(expression: &Spanned<syntax::Expression>) -> Option<String> {
+    let syntax::Expression::Literal(literal_expr) = &expression.node else {
+        return None;
+    };
+    let syntax::Literal::String(raw) = &literal_expr.node.literal.node else {
+        return None;
+    };
+    let value = raw
+        .strip_prefix('"')
+        .and_then(|trimmed| trimmed.strip_suffix('"'))
+        .unwrap_or(raw)
+        .to_string();
+    Some(value)
+}
 
 impl Lowerable for Spanned<AstProgram> {
     type Output = Spanned<HirProgram>;
@@ -27,6 +75,7 @@ impl Lowerable for Spanned<AstItem> {
             AstItem::TypeDefinition(def) => HirItem::TypeDefinition(def.lower()),
             AstItem::EnumDefinition(def) => HirItem::EnumDefinition(def.lower()),
             AstItem::ContractDefinition(def) => HirItem::ContractDefinition(def.lower()),
+            AstItem::AttributeDeclaration(def) => HirItem::AttributeDeclaration(def.lower()),
             AstItem::ModuleDeclaration(def) => HirItem::ModuleDeclaration(def.lower()),
             AstItem::InlineModule(def) => HirItem::InlineModule(def.lower()),
             AstItem::UseDeclaration(def) => HirItem::UseDeclaration(def.lower()),
@@ -123,6 +172,8 @@ impl Lowerable for Spanned<syntax::ContractDefinition> {
     fn lower(&self) -> Self::Output {
         Spanned::new(
             HirContractDefinition {
+                extern_interface: lower_extern_interface(&self.node.attributes),
+                attributes: lower_attributes(&self.node.attributes),
                 visibility: self.node.visibility.lower(),
                 name: self.node.name.lower(),
                 items: self.node.items.iter().map(Lowerable::lower).collect(),
@@ -176,12 +227,57 @@ impl Lowerable for Spanned<syntax::ContractEmbedding> {
     }
 }
 
+impl Lowerable for Spanned<syntax::AttributeDeclaration> {
+    type Output = Spanned<HirAttributeDeclaration>;
+
+    fn lower(&self) -> Self::Output {
+        Spanned::new(
+            HirAttributeDeclaration {
+                visibility: self.node.visibility.lower(),
+                name: self.node.name.lower(),
+                targets: self.node.targets.iter().map(Lowerable::lower).collect(),
+                parameters: self.node.parameters.iter().map(Lowerable::lower).collect(),
+            },
+            self.span,
+        )
+    }
+}
+
+impl Lowerable for Spanned<syntax::AttributeTarget> {
+    type Output = Spanned<HirAttributeTarget>;
+
+    fn lower(&self) -> Self::Output {
+        Spanned::new(
+            HirAttributeTarget {
+                name: self.node.name.lower(),
+            },
+            self.span,
+        )
+    }
+}
+
+impl Lowerable for Spanned<syntax::AttributeParameter> {
+    type Output = Spanned<HirAttributeParameter>;
+
+    fn lower(&self) -> Self::Output {
+        Spanned::new(
+            HirAttributeParameter {
+                name: self.node.name.lower(),
+                ty: self.node.ty.lower(),
+            },
+            self.span,
+        )
+    }
+}
+
 impl Lowerable for Spanned<syntax::ModuleDeclaration> {
     type Output = Spanned<HirModuleDeclaration>;
 
     fn lower(&self) -> Self::Output {
         Spanned::new(
             HirModuleDeclaration {
+                extern_interface: lower_extern_interface(&self.node.attributes),
+                attributes: lower_attributes(&self.node.attributes),
                 visibility: self.node.visibility.lower(),
                 path: self.node.path.lower(),
             },
@@ -207,6 +303,9 @@ impl Lowerable for Spanned<syntax::InlineModule> {
                     syntax::Node::ContractDefinition(def) => {
                         HirItem::ContractDefinition(def.lower())
                     }
+                    syntax::Node::AttributeDeclaration(def) => {
+                        HirItem::AttributeDeclaration(def.lower())
+                    }
                     syntax::Node::ModuleDeclaration(def) => HirItem::ModuleDeclaration(def.lower()),
                     syntax::Node::InlineModule(def) => HirItem::InlineModule(def.lower()),
                     syntax::Node::UseDeclaration(def) => HirItem::UseDeclaration(def.lower()),
@@ -217,6 +316,8 @@ impl Lowerable for Spanned<syntax::InlineModule> {
 
         Spanned::new(
             HirInlineModule {
+                extern_interface: lower_extern_interface(&self.node.attributes),
+                attributes: lower_attributes(&self.node.attributes),
                 visibility: self.node.visibility.lower(),
                 name: self.node.name.lower(),
                 items,

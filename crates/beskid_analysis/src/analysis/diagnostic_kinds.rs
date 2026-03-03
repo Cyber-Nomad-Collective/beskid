@@ -45,6 +45,19 @@ pub enum SemanticIssueKind {
     NonNormalizedHirControlFlow {
         message: String,
     },
+    DuplicateAttributeDeclarationTarget {
+        target: String,
+        previous: SpanInfo,
+    },
+    UnknownAttributeDeclarationTarget {
+        target: String,
+        allowed: Vec<String>,
+    },
+    AttributeTargetNotAllowed {
+        attribute: String,
+        target: String,
+        allowed: Vec<String>,
+    },
 
     VisibilityModuleNotFound {
         module_path: String,
@@ -220,6 +233,9 @@ impl SemanticIssueKind {
             Self::UnresolvedHirValuePath => "E1152",
             Self::UnresolvedHirTypePath => "E1153",
             Self::NonNormalizedHirControlFlow { .. } => "E1154",
+            Self::DuplicateAttributeDeclarationTarget { .. } => "E1806",
+            Self::UnknownAttributeDeclarationTarget { .. } => "E1807",
+            Self::AttributeTargetNotAllowed { .. } => "E1809",
 
             Self::VisibilityViolationImportPrivate { .. } => "E1501",
             Self::VisibilityModuleNotFound { .. } => "E1502",
@@ -309,6 +325,15 @@ impl SemanticIssueKind {
             Self::UnresolvedHirTypePath => "unresolved HIR type path".to_string(),
             Self::NonNormalizedHirControlFlow { .. } => {
                 "non-normalized HIR control-flow".to_string()
+            }
+            Self::DuplicateAttributeDeclarationTarget { .. } => {
+                "duplicate attribute declaration target".to_string()
+            }
+            Self::UnknownAttributeDeclarationTarget { .. } => {
+                "unknown attribute declaration target".to_string()
+            }
+            Self::AttributeTargetNotAllowed { .. } => {
+                "attribute target not allowed".to_string()
             }
             Self::VisibilityModuleNotFound { .. } => "module not found".to_string(),
             Self::VisibilityViolationImportPrivate { .. } => "visibility violation".to_string(),
@@ -407,6 +432,19 @@ impl SemanticIssueKind {
             }
             Self::NonNormalizedHirControlFlow { message } => {
                 format!("non-normalized control-flow in HIR: {message}")
+            }
+            Self::DuplicateAttributeDeclarationTarget { target, .. } => {
+                format!("duplicate target `{target}` in attribute declaration target list")
+            }
+            Self::UnknownAttributeDeclarationTarget { target, .. } => {
+                format!("unknown attribute declaration target kind `{target}`")
+            }
+            Self::AttributeTargetNotAllowed {
+                attribute,
+                target,
+                ..
+            } => {
+                format!("attribute `{attribute}` cannot be applied to `{target}`")
             }
             Self::VisibilityModuleNotFound { module_path, .. } => {
                 format!("module `{module_path}` not found")
@@ -548,6 +586,14 @@ impl SemanticIssueKind {
                 "previously defined at line {}, column {}",
                 previous.line_col_start.0, previous.line_col_start.1
             )),
+            Self::DuplicateAttributeDeclarationTarget { previous, .. } => Some(format!(
+                "target already listed at line {}, column {}",
+                previous.line_col_start.0, previous.line_col_start.1
+            )),
+            Self::UnknownAttributeDeclarationTarget { allowed, .. }
+            | Self::AttributeTargetNotAllowed { allowed, .. } => {
+                Some(format!("allowed targets: {}", allowed.join(", ")))
+            }
             Self::VisibilityModuleNotFound {
                 file_candidate,
                 mod_candidate,

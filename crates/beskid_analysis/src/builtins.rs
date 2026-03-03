@@ -130,6 +130,24 @@ define_builtins! {
         returns: Unit,
         injected: true,
     },
+    &["__sys_print"] => {
+        symbol: "sys_print",
+        params: [String],
+        returns: Unit,
+        injected: true,
+    },
+    &["__sys_println"] => {
+        symbol: "sys_println",
+        params: [String],
+        returns: Unit,
+        injected: true,
+    },
+    &["__str_len"] => {
+        symbol: "str_len",
+        params: [String],
+        returns: Usize,
+        injected: true,
+    },
     &["__interop_dispatch_unit"] => {
         symbol: "interop_dispatch_unit",
         params: [Ptr],

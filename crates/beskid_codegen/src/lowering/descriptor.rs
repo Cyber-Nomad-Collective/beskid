@@ -49,6 +49,7 @@ fn compute_layout(type_result: &TypeResult, type_id: TypeId) -> Option<TypeLayou
         TypeInfo::Named(item_id) => compute_named_layout(type_result, *item_id),
         TypeInfo::GenericParam(_) => Some(pointer_layout()),
         TypeInfo::Applied { base, .. } => compute_named_layout(type_result, *base),
+        TypeInfo::Function { .. } => Some(pointer_layout()),
     }
 }
 
@@ -158,6 +159,7 @@ pub(crate) fn is_pointer_like_type(type_result: &TypeResult, type_id: TypeId) ->
         Some(TypeInfo::Named(_)) => true,
         Some(TypeInfo::Applied { .. }) => true,
         Some(TypeInfo::GenericParam(_)) => true,
+        Some(TypeInfo::Function { .. }) => true,
         Some(TypeInfo::Primitive(_)) => false,
         None => false,
     }

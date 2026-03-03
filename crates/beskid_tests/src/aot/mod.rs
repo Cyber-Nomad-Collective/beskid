@@ -25,6 +25,7 @@ mod defaults;
 mod entrypoint;
 mod object_build;
 mod runtime_symbols;
+mod standalone;
 
 fn temp_case_dir(name: &str) -> PathBuf {
     let nanos = SystemTime::now()

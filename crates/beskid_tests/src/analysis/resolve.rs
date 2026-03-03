@@ -133,19 +133,15 @@ fn qualified_module_path_to_public_item_is_allowed() {
 
 #[test]
 fn stdio_println_resolves() {
-    let result = resolve_program(
-        "enum StdInterop { IoPrintln(string text) } unit main() { __interop_dispatch_unit(StdInterop::IoPrintln(\"hi\")); }",
-    )
-    .expect("expected interop dispatch println path to resolve");
+    let result = resolve_program("unit main() { __sys_println(\"hi\"); }")
+        .expect("expected direct sys_println path to resolve");
     assert!(result.warnings.is_empty());
 }
 
 #[test]
 fn stdstring_len_resolves() {
-    let result = resolve_program(
-        "enum StdInterop { StringLen(string text) } i64 main() { return __interop_dispatch_usize(StdInterop::StringLen(\"hello\")); }",
-    )
-    .expect("expected interop dispatch string length path to resolve");
+    let result = resolve_program("i64 main() { return __str_len(\"hello\"); }")
+        .expect("expected direct str_len path to resolve");
     assert!(result.warnings.is_empty());
 }
 

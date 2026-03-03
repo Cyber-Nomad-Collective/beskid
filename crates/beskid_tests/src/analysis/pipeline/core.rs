@@ -705,6 +705,95 @@ fn analysis_emits_contract_method_missing_impl_errors() {
 }
 
 #[test]
+fn analysis_skips_contract_method_missing_impl_for_extern_contracts() {
+    let source =
+        "[Extern(Abi: \"C\", Library: \"libc\")] contract Service { unit run(); }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.bd",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(
+        !result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1601"))
+    );
+}
+
+#[test]
+fn analysis_emits_duplicate_attribute_declaration_target_errors() {
+    let source = "attribute Builder(TypeDeclaration, TypeDeclaration) { enabled: bool = true }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.bd",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1806"))
+    );
+}
+
+#[test]
+fn analysis_emits_unknown_attribute_declaration_target_errors() {
+    let source = "attribute Builder(UnknownDeclaration) { enabled: bool = true }";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.bd",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .any(|diag| diag.code.as_deref() == Some("E1807"))
+    );
+}
+
+#[test]
+fn analysis_emits_attribute_target_not_allowed_errors() {
+    let source =
+        "attribute Extern(ContractDeclaration) { Abi: string = \"C\" } [Extern(Abi: \"C\")] mod sys.io;";
+    let program = parse_program_ast(source);
+    let result = run_rules(
+        &program.node,
+        "test.bd",
+        source,
+        &builtin_rules(),
+        AnalysisOptions::default(),
+    );
+
+    let diagnostic = result
+        .diagnostics
+        .iter()
+        .find(|diag| diag.code.as_deref() == Some("E1809"))
+        .expect("expected E1809 diagnostic");
+    assert!(diagnostic.message.contains("cannot be applied"));
+    assert!(
+        diagnostic
+            .help
+            .as_deref()
+            .unwrap_or_default()
+            .contains("allowed targets")
+    );
+}
+
+#[test]
 fn runs_rules_and_collects_diagnostics() {
     let program = parse_program_ast("unit main() { return; }");
     let result = run_rules(

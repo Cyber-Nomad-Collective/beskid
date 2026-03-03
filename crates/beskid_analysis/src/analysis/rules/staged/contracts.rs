@@ -89,6 +89,9 @@ impl SemanticPipelineRule {
             let HirItem::ContractDefinition(definition) = &item.node else {
                 continue;
             };
+            if definition.node.extern_interface.is_some() {
+                continue;
+            }
 
             let mut methods = HashMap::new();
             for node in &definition.node.items {

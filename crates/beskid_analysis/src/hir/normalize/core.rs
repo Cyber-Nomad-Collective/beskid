@@ -66,6 +66,9 @@ impl Normalizer {
                     self.visit_expression(&mut arm.node.value);
                 }
             }
+            HirExpressionNode::LambdaExpression(lambda_expr) => {
+                self.visit_expression(&mut lambda_expr.node.body);
+            }
             HirExpressionNode::AssignExpression(assign_expr) => {
                 self.visit_expression(&mut assign_expr.node.target);
                 self.visit_expression(&mut assign_expr.node.value);

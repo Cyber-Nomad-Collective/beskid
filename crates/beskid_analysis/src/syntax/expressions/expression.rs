@@ -11,6 +11,7 @@ use super::block_expression::parse_block_expression;
 use super::call_expression::parse_call_expression;
 use super::enum_constructor_expression::parse_enum_constructor_expression;
 use super::grouped_expression::parse_grouped_expression;
+use super::lambda_expression::parse_lambda_expression;
 use super::literal_expression::parse_literal_expression;
 use super::match_expression::parse_match_expression;
 use super::member_expression::parse_member_expression;
@@ -24,6 +25,8 @@ use beskid_ast_derive::AstNode;
 pub enum Expression {
     #[ast(child)]
     Match(Spanned<super::match_expression::MatchExpression>),
+    #[ast(child)]
+    Lambda(Spanned<super::lambda_expression::LambdaExpression>),
     #[ast(child)]
     Assign(Spanned<AssignExpression>),
     #[ast(child)]
@@ -66,6 +69,7 @@ fn parse_expression(pair: Pair<Rule>) -> Result<Spanned<Expression>, ParseError>
             let inner_expr = parse_expression(inner)?;
             Ok(Spanned::new(inner_expr.node, span))
         }
+        Rule::LambdaExpression => parse_lambda_expression(pair),
         Rule::MatchExpression => parse_match_expression(pair),
         Rule::AssignmentExpression => super::assign_expression::parse_assignment_expression(pair),
         Rule::LogicalOrExpression

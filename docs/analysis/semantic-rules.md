@@ -198,11 +198,11 @@ This document enumerates semantic rules derived from the language spec. Rules ar
 
 ## Stage 6: Contracts & Methods
 ### E1601 ContractMethodMissingImpl (Error)
-- Trigger: contract method signature lacks implementation on a type used as the contract.
+- Trigger: an explicitly declared `type Type : Contract` conformance is missing one or more required contract methods in `impl Type` blocks.
 - Source: 09-contracts.
 
 ### E1602 ContractImplSignatureMismatch (Error)
-- Trigger: method implementation does not match contract signature.
+- Trigger: method implementation in `impl Type` for a declared `type Type : Contract` conformance does not match contract signature.
 - Source: 09-contracts.
 
 ### E1603 MethodDispatchAmbiguous (Error)
@@ -222,7 +222,7 @@ This document enumerates semantic rules derived from the language spec. Rules ar
 - Source: 12-method-dispatch.
 
 ### E1607 ContractNotSatisfied (Error)
-- Trigger: value typed as contract does not satisfy the required method set.
+- Trigger: value typed as contract has no explicit conformance declaration (`type Type : Contract`) for the required contract.
 - Source: 09-contracts, 12-method-dispatch.
 
 ## Stage 7: Error Handling
@@ -238,23 +238,43 @@ This document enumerates semantic rules derived from the language spec. Rules ar
 - Trigger: `?` used outside a function body.
 - Source: 07-error-handling.
 
-## Stage 8: Metaprogramming (Macro Expansion)
-### E1801 MacroExpansionFailure (Error)
-- Trigger: macro expansion fails or exceeds budget.
-- Source: 08-metaprogramming.
+## Stage 8: Attributes
+### E1801 UnknownAttribute (Error)
+- Trigger: attribute application references no declared attribute.
+- Source: 01-lexical-and-syntax.
 
-### E1802 MacroIntroducesForbiddenItem (Error)
-- Trigger: macro expansion introduces forbidden declarations (e.g., `type`/`contract` in v0.1).
-- Source: 08-metaprogramming.
+### E1802 AttributeUnknownArgument (Error)
+- Trigger: attribute application passes an argument not present in attribute declaration.
+- Source: 01-lexical-and-syntax.
 
-### E1803 MacroIOForbidden (Error)
-- Trigger: macro attempts I/O or non-determinism.
-- Source: 08-metaprogramming.
+### E1803 AttributeMissingRequiredArgument (Error)
+- Trigger: required attribute parameter (without default) is not provided.
+- Source: 01-lexical-and-syntax.
 
-### E1804 MacroInvocationTypeMismatch (Error)
-- Trigger: macro arguments do not match expected fragment kinds.
-- Source: 08-metaprogramming.
+### E1804 AttributeDuplicateArgument (Error)
+- Trigger: same named argument provided more than once in attribute application.
+- Source: 01-lexical-and-syntax.
+
+### E1805 AttributeArgumentTypeMismatch (Error)
+- Trigger: argument expression type does not match declared parameter type.
+- Source: 01-lexical-and-syntax.
+
+### E1806 DuplicateAttributeDeclarationTarget (Error)
+- Trigger: attribute declaration target list repeats the same target kind more than once.
+- Source: 01-lexical-and-syntax.
+
+### E1807 UnknownAttributeDeclarationTarget (Error)
+- Trigger: attribute declaration target list uses an unsupported target kind.
+- Source: 01-lexical-and-syntax.
+
+### E1809 AttributeTargetNotAllowed (Error)
+- Trigger: attribute application site node kind is not included in attribute declaration target list.
+- Source: 01-lexical-and-syntax.
+
+## Drafted stage (out of v0.1 scope)
+- Generator-specific metaprogramming diagnostics are tracked in:
+  `docs/drafts/metaprogramming/semantic-rules.md`.
 
 ## Notes
 - Rules marked Warning can be toggled via `AnalysisOptions`.
-- Some rules (macros, question operator) may be deferred if v0.1 parser/AST doesn’t yet support them.
+- Some rules (question operator) may be deferred if v0.1 parser/AST doesn’t yet support them.

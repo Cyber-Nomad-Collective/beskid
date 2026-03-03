@@ -7,12 +7,15 @@ use super::literal::HirLiteral;
 use super::match_arm::HirMatchArm;
 use super::phase::{HirPhase, Phase};
 use super::struct_literal_field::HirStructLiteralField;
+use super::types::HirType;
 
 #[derive(beskid_ast_derive::PhaseFromAst)]
 #[phase(source = "crate::syntax::Expression", phase = "crate::hir::AstPhase")]
 pub enum ExpressionNode<P: Phase> {
     #[phase(from = "Match")]
     MatchExpression(Spanned<P::MatchExpression>),
+    #[phase(from = "Lambda")]
+    LambdaExpression(Spanned<P::LambdaExpression>),
     #[phase(from = "Assign")]
     AssignExpression(Spanned<P::AssignExpression>),
     #[phase(from = "Binary")]
@@ -37,6 +40,24 @@ pub enum ExpressionNode<P: Phase> {
     GroupedExpression(Spanned<P::GroupedExpression>),
 }
 
+#[derive(beskid_ast_derive::HirNode)]
+#[ast(kind = "LambdaExpression")]
+pub struct HirLambdaExpression {
+    #[ast(children)]
+    pub parameters: Vec<Spanned<HirLambdaParameter>>,
+    #[ast(child)]
+    pub body: Box<Spanned<ExpressionNode<HirPhase>>>,
+}
+
+#[derive(beskid_ast_derive::HirNode)]
+#[ast(kind = "LambdaParameter")]
+pub struct HirLambdaParameter {
+    #[ast(child)]
+    pub name: Spanned<HirIdentifier>,
+    #[ast(child)]
+    pub ty: Option<Spanned<HirType>>,
+}
+
 impl HirNode for ExpressionNode<HirPhase> {
     fn as_any(&self) -> &dyn std::any::Any {
         self
@@ -45,6 +66,7 @@ impl HirNode for ExpressionNode<HirPhase> {
     fn children<'a>(&'a self, push: &mut dyn FnMut(HirNodeRef<'a>)) {
         match self {
             ExpressionNode::MatchExpression(expr) => push(HirNodeRef(&expr.node)),
+            ExpressionNode::LambdaExpression(expr) => push(HirNodeRef(&expr.node)),
             ExpressionNode::AssignExpression(expr) => push(HirNodeRef(&expr.node)),
             ExpressionNode::BinaryExpression(expr) => push(HirNodeRef(&expr.node)),
             ExpressionNode::UnaryExpression(expr) => push(HirNodeRef(&expr.node)),

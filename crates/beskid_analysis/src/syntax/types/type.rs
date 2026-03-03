@@ -12,6 +12,11 @@ pub enum Type {
     Array(Box<Spanned<Type>>),
     #[ast(child)]
     Ref(Box<Spanned<Type>>),
+    #[ast(children)]
+    Function {
+        return_type: Box<Spanned<Type>>,
+        parameters: Vec<Spanned<Type>>,
+    },
 }
 
 impl crate::parsing::parsable::Parsable for Type {
@@ -30,6 +35,28 @@ impl crate::parsing::parsable::Parsable for Type {
                         ))?;
                 let inner_type = Self::parse(inner)?;
                 return Ok(crate::syntax::Spanned::new(inner_type.node, span));
+            }
+            crate::parser::Rule::FunctionType => {
+                let mut inner = pair.into_inner();
+                let return_type = inner
+                    .next()
+                    .ok_or(crate::parsing::error::ParseError::missing(
+                        crate::parser::Rule::TypeName,
+                    ))?;
+                let return_type = Self::parse(return_type)?;
+
+                let parameters = inner
+                    .next()
+                    .map(|list| -> Result<Vec<Spanned<Type>>, crate::parsing::error::ParseError> {
+                        list.into_inner().map(Self::parse).collect()
+                    })
+                    .transpose()?
+                    .unwrap_or_default();
+
+                Self::Function {
+                    return_type: Box::new(return_type),
+                    parameters,
+                }
             }
             crate::parser::Rule::TypeName => {
                 let mut inner = pair.into_inner();

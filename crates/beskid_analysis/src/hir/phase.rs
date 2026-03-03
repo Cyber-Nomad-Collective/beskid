@@ -1,20 +1,21 @@
 use crate::syntax::{
-    AssignExpression, BinaryExpression, BlockExpression, BreakStatement, CallExpression,
-    ContinueStatement, ContractDefinition, EnumConstructorExpression, EnumDefinition,
-    ExpressionStatement, ForStatement, FunctionDefinition, GroupedExpression, IfStatement,
-    InlineModule, LetStatement, LiteralExpression, MatchExpression, MemberExpression,
-    MethodDefinition, ModuleDeclaration, PathExpression, ReturnStatement, StructLiteralExpression,
-    TypeDefinition, UnaryExpression, UseDeclaration, WhileStatement,
+    AssignExpression, AttributeDeclaration, BinaryExpression, BlockExpression, BreakStatement,
+    CallExpression, ContinueStatement, ContractDefinition, EnumConstructorExpression,
+    EnumDefinition, ExpressionStatement, ForStatement, FunctionDefinition, GroupedExpression,
+    IfStatement, InlineModule, LambdaExpression, LetStatement, LiteralExpression, MatchExpression,
+    MemberExpression, MethodDefinition, ModuleDeclaration, PathExpression, ReturnStatement,
+    StructLiteralExpression, TypeDefinition, UnaryExpression, UseDeclaration, WhileStatement,
 };
 
 use super::{
     HirAssignExpression, HirBinaryExpression, HirBlockExpression, HirBreakStatement,
     HirCallExpression, HirContinueStatement, HirContractDefinition, HirEnumConstructorExpression,
     HirEnumDefinition, HirExpressionStatement, HirForStatement, HirFunctionDefinition,
-    HirGroupedExpression, HirIfStatement, HirInlineModule, HirLetStatement, HirLiteralExpression,
-    HirMatchExpression, HirMemberExpression, HirMethodDefinition, HirModuleDeclaration,
-    HirPathExpression, HirReturnStatement, HirStructLiteralExpression, HirTypeDefinition,
-    HirUnaryExpression, HirUseDeclaration, HirWhileStatement,
+    HirGroupedExpression, HirIfStatement, HirInlineModule, HirLambdaExpression, HirLetStatement,
+    HirLiteralExpression, HirMatchExpression, HirMemberExpression, HirMethodDefinition,
+    HirModuleDeclaration, HirPathExpression, HirReturnStatement, HirStructLiteralExpression,
+    HirTypeDefinition, HirUnaryExpression, HirUseDeclaration, HirWhileStatement,
+    item::HirAttributeDeclaration,
 };
 
 pub trait Phase {
@@ -23,6 +24,7 @@ pub trait Phase {
     type TypeDefinition;
     type EnumDefinition;
     type ContractDefinition;
+    type AttributeDeclaration;
     type ModuleDeclaration;
     type InlineModule;
     type UseDeclaration;
@@ -48,6 +50,7 @@ pub trait Phase {
     type EnumConstructorExpression;
     type BlockExpression;
     type GroupedExpression;
+    type LambdaExpression;
 }
 
 #[derive(Debug, Clone, Copy, Default)]
@@ -62,6 +65,7 @@ impl Phase for AstPhase {
     type TypeDefinition = TypeDefinition;
     type EnumDefinition = EnumDefinition;
     type ContractDefinition = ContractDefinition;
+    type AttributeDeclaration = AttributeDeclaration;
     type ModuleDeclaration = ModuleDeclaration;
     type InlineModule = InlineModule;
     type UseDeclaration = UseDeclaration;
@@ -87,6 +91,7 @@ impl Phase for AstPhase {
     type EnumConstructorExpression = EnumConstructorExpression;
     type BlockExpression = BlockExpression;
     type GroupedExpression = GroupedExpression;
+    type LambdaExpression = LambdaExpression;
 }
 
 impl Phase for HirPhase {
@@ -95,6 +100,7 @@ impl Phase for HirPhase {
     type TypeDefinition = HirTypeDefinition;
     type EnumDefinition = HirEnumDefinition;
     type ContractDefinition = HirContractDefinition;
+    type AttributeDeclaration = HirAttributeDeclaration;
     type ModuleDeclaration = HirModuleDeclaration;
     type InlineModule = HirInlineModule;
     type UseDeclaration = HirUseDeclaration;
@@ -120,4 +126,5 @@ impl Phase for HirPhase {
     type EnumConstructorExpression = HirEnumConstructorExpression;
     type BlockExpression = HirBlockExpression;
     type GroupedExpression = HirGroupedExpression;
+    type LambdaExpression = HirLambdaExpression;
 }

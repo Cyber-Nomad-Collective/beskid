@@ -27,6 +27,22 @@ pub struct Resolver {
     builtin_items: HashMap<ItemId, usize>,
 }
 
+fn type_name_for_method_receiver(receiver_type: &Spanned<HirType>) -> String {
+    match &receiver_type.node {
+        HirType::Primitive(primitive) => format!("{:?}", primitive.node),
+        HirType::Complex(path) => path
+            .node
+            .segments
+            .iter()
+            .map(|segment| segment.node.name.node.name.clone())
+            .collect::<Vec<_>>()
+            .join("."),
+        HirType::Array(_) => "Array".to_string(),
+        HirType::Ref(_) => "Ref".to_string(),
+        HirType::Function { .. } => "Function".to_string(),
+    }
+}
+
 impl Resolver {
     pub fn new() -> Self {
         Self::default()
@@ -102,7 +118,11 @@ impl Resolver {
                 def.node.visibility.node,
             ),
             HirItem::MethodDefinition(def) => (
-                def.node.name.node.name.clone(),
+                format!(
+                    "{}::{}",
+                    type_name_for_method_receiver(&def.node.receiver_type),
+                    def.node.name.node.name
+                ),
                 ItemKind::Method,
                 def.node.visibility.node,
             ),
@@ -136,6 +156,9 @@ impl Resolver {
                 ItemKind::Use,
                 def.node.visibility.node,
             ),
+            HirItem::AttributeDeclaration(_) => {
+                return;
+            }
         };
 
         let id = ItemId(self.items.len());
@@ -221,6 +244,7 @@ impl Resolver {
             HirItem::MethodDefinition(def) => {
                 self.push_scope();
                 self.resolve_type(&def.node.receiver_type);
+                self.insert_local("this", def.node.receiver_type.span);
                 for param in &def.node.parameters {
                     self.resolve_type(&param.node.ty);
                     self.insert_local(&param.node.name.node.name, param.node.name.span);
@@ -285,6 +309,7 @@ impl Resolver {
                     }
                 }
             }
+            HirItem::AttributeDeclaration(_) => {}
             HirItem::ModuleDeclaration(_) | HirItem::UseDeclaration(_) => {}
         }
     }
@@ -353,6 +378,17 @@ impl Resolver {
                 for arm in &match_expr.node.arms {
                     self.resolve_match_arm(arm);
                 }
+            }
+            HirExpressionNode::LambdaExpression(lambda_expr) => {
+                self.push_scope();
+                for parameter in &lambda_expr.node.parameters {
+                    if let Some(ty) = &parameter.node.ty {
+                        self.resolve_type(ty);
+                    }
+                    self.insert_local(&parameter.node.name.node.name, parameter.node.name.span);
+                }
+                self.resolve_expression(&lambda_expr.node.body);
+                self.pop_scope();
             }
             HirExpressionNode::AssignExpression(assign_expr) => {
                 self.resolve_expression(&assign_expr.node.target);
@@ -434,6 +470,15 @@ impl Resolver {
             HirType::Primitive(_) => {}
             HirType::Complex(path) => self.resolve_type_path(path),
             HirType::Array(inner) | HirType::Ref(inner) => self.resolve_type(inner),
+            HirType::Function {
+                return_type,
+                parameters,
+            } => {
+                self.resolve_type(return_type);
+                for parameter in parameters {
+                    self.resolve_type(parameter);
+                }
+            }
         }
     }
 

@@ -2,7 +2,7 @@ use beskid_analysis::hir::HirPrimitiveType;
 use beskid_analysis::hir::{AstProgram, HirProgram, lower_program};
 use beskid_analysis::resolve::{ResolveError, Resolver};
 use beskid_analysis::syntax::Spanned;
-use beskid_analysis::types::TypeInfo;
+use beskid_analysis::types::{CallLoweringKind, TypeInfo};
 use beskid_analysis::types::{TypeError, type_program};
 
 use crate::syntax::util::parse_program_ast;
@@ -18,6 +18,92 @@ fn resolve_and_type(source: &str) -> Result<beskid_analysis::types::TypeResult, 
                 panic!("expected resolver to succeed, got errors: {errors:?}")
             });
     type_program(&hir, &resolution)
+}
+
+#[test]
+fn typing_records_method_dispatch_call_kind() {
+    let result = resolve_and_type(
+        "type Counter { i64 value } impl Counter { i64 Get() { return this.value; } } i64 main() { Counter c = Counter { value: 42 }; return c.Get(); }",
+    )
+    .expect("expected typing to succeed");
+
+    assert!(
+        result
+            .call_kinds
+            .values()
+            .any(|kind| matches!(kind, CallLoweringKind::MethodDispatch { .. })),
+        "expected at least one MethodDispatch call kind, got: {:?}",
+        result.call_kinds
+    );
+}
+
+#[test]
+fn typing_records_item_call_kind() {
+    let result = resolve_and_type("i64 add(a: i64, b: i64) { return a + b; } i64 main() { return add(1, 2); }")
+        .expect("expected typing to succeed");
+
+    assert!(
+        result
+            .call_kinds
+            .values()
+            .any(|kind| matches!(kind, CallLoweringKind::ItemCall { .. })),
+        "expected at least one ItemCall call kind, got: {:?}",
+        result.call_kinds
+    );
+}
+
+#[test]
+fn typing_records_callable_value_call_kind() {
+    let result = resolve_and_type("i64 main() { let add = (x: i64, y: i64) => x + y; return add(20, 22); }")
+        .expect("expected typing to succeed");
+
+    assert!(
+        result
+            .call_kinds
+            .values()
+            .any(|kind| matches!(kind, CallLoweringKind::CallableValueCall)),
+        "expected at least one CallableValueCall kind, got: {:?}",
+        result.call_kinds
+    );
+}
+
+#[test]
+fn typing_method_call_on_struct_succeeds() {
+    let result = resolve_and_type(
+        "type Counter { i64 value } impl Counter { i64 Get() { return this.value; } } i64 main() { Counter c = Counter { value: 42 }; return c.Get(); }",
+    );
+    if let Err(errors) = &result {
+        panic!("expected method call typing to succeed, got errors: {errors:?}");
+    }
+    assert!(result.is_ok(), "unexpected method call typing failure");
+}
+
+#[test]
+fn typing_method_dispatch_is_receiver_aware() {
+    let result = resolve_and_type(
+        "type A { i64 value } type B { i64 value } impl A { i64 Get() { return this.value; } } impl B { i64 Get() { i64 delta = 1; return this.value + delta; } } i64 main() { A a = A { value: 20 }; B b = B { value: 21 }; return a.Get() + b.Get(); }",
+    );
+    if let Err(errors) = &result {
+        panic!("expected receiver-aware method dispatch typing to succeed, got errors: {errors:?}");
+    }
+    assert!(
+        result.is_ok(),
+        "unexpected receiver-aware dispatch typing failure"
+    );
+}
+
+#[test]
+fn typing_reports_unknown_method_call_target() {
+    let result = resolve_and_type(
+        "type Counter { i64 value } i64 main() { Counter c = Counter { value: 1 }; return c.Missing(); }",
+    );
+    let errors = result.expect_err("expected unknown method call target");
+    assert!(
+        errors
+            .iter()
+            .any(|error| matches!(error, TypeError::UnknownCallTarget { .. })),
+        "expected UnknownCallTarget error, got: {errors:?}"
+    );
 }
 
 #[test]

@@ -5,8 +5,8 @@ use crate::parsing::error::ParseError;
 use crate::parsing::parsable::Parsable;
 use crate::syntax::items::InlineModule;
 use crate::syntax::{
-    ContractDefinition, EnumDefinition, FunctionDefinition, MethodDefinition, ModuleDeclaration,
-    SpanInfo, Spanned, TypeDefinition, UseDeclaration,
+    AttributeDeclaration, ContractDefinition, EnumDefinition, FunctionDefinition,
+    MethodDefinition, ModuleDeclaration, SpanInfo, Spanned, TypeDefinition, UseDeclaration,
 };
 
 use beskid_ast_derive::AstNode;
@@ -23,6 +23,8 @@ pub enum Node {
     EnumDefinition(Spanned<EnumDefinition>),
     #[ast(child)]
     ContractDefinition(Spanned<ContractDefinition>),
+    #[ast(child)]
+    AttributeDeclaration(Spanned<AttributeDeclaration>),
     #[ast(child)]
     ModuleDeclaration(Spanned<ModuleDeclaration>),
     #[ast(child)]
@@ -52,10 +54,6 @@ fn parse_node(pair: Pair<Rule>) -> Result<Spanned<Node>, ParseError> {
             let node = FunctionDefinition::parse(pair)?;
             Ok(Spanned::new(Node::Function(node), span))
         }
-        Rule::MethodDefinition => {
-            let node = MethodDefinition::parse(pair)?;
-            Ok(Spanned::new(Node::Method(node), span))
-        }
         Rule::TypeDefinition => {
             let node = TypeDefinition::parse(pair)?;
             Ok(Spanned::new(Node::TypeDefinition(node), span))
@@ -67,6 +65,10 @@ fn parse_node(pair: Pair<Rule>) -> Result<Spanned<Node>, ParseError> {
         Rule::ContractDefinition => {
             let node = ContractDefinition::parse(pair)?;
             Ok(Spanned::new(Node::ContractDefinition(node), span))
+        }
+        Rule::AttributeDeclaration => {
+            let node = AttributeDeclaration::parse(pair)?;
+            Ok(Spanned::new(Node::AttributeDeclaration(node), span))
         }
         Rule::ModuleDeclaration => {
             let node = ModuleDeclaration::parse(pair)?;

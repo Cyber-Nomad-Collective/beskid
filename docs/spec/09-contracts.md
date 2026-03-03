@@ -1,9 +1,9 @@
-# 09. Contracts (Structural Interfaces)
+# 09. Contracts (Explicit Interfaces)
 
 ## Purpose
-Contracts define behavior. Any type that provides the required method signatures automatically satisfies the contract (no `implements`).
+Contracts define behavior through explicit interface declarations.
 
-Contracts are structural: compatibility depends on method shape, not explicit declarations.
+Contract conformance is nominal in v0.1: a type satisfies a contract only when it explicitly declares that relationship.
 
 ## Declaration
 ```
@@ -12,16 +12,18 @@ contract Reader {
 }
 ```
 
-## Implicit satisfaction
+## Explicit conformance
 ```
-type File { /* ... */ }
+type File : Reader {
+    /* ... */
+}
 
 impl File {
-    Result<i32, Error> read(self: File, p: u8[]) { ... }
+    Result<i32, Error> read(p: u8[]) { ... }
 }
 ```
 
-`File` now satisfies `Reader`.
+`File` satisfies `Reader` because conformance is explicitly declared.
 
 Example call:
 ```
@@ -33,6 +35,18 @@ Result<i32, Error> read_all(r: Reader) {
 ## Usage
 ```
 Result<i32, Error> copy(r: Reader, w: Writer) { ... }
+```
+
+Passing a concrete type where a contract is expected requires an explicit declaration:
+```
+type Socket : Reader, Writer {
+    /* ... */
+}
+
+impl Socket {
+    Result<i32, Error> read(p: u8[]) { ... }
+    Result<i32, Error> write(p: u8[]) { ... }
+}
 ```
 
 ## Composition
@@ -53,19 +67,20 @@ Result<i32, Error> copy_all(rw: ReadWriter) { ... }
 ```
 
 ## Method sets
-- Value methods: `impl T { ReturnType method(self: T, ...) { ... } }`
-- Reference methods: `impl T { ReturnType method(self: ref T, ...) { ... } }` (when `ref mut` is introduced)
+- Value methods: `type T : ContractA, ContractB { ... }` + `impl T { ReturnType method(...) { ... } }`
+- `this` receiver is implicit inside methods and bound to the containing `impl T` type.
+- Reference receiver modifiers are not part of v0.1 contract satisfaction rules.
 
-A type satisfies a contract if its available method set covers all required methods.
+A declared conformance is valid only if the type's available method set covers all required methods.
 
 Example:
 ```
-contract Size { i32 size(self); }
+contract Size { i32 size(); }
 
-type Buf { i32 len }
+type Buf : Size { i32 len }
 
 impl Buf {
-    i32 size(self: Buf) { return self.len; }
+    i32 size() { return this.len; }
 }
 ```
 
@@ -77,6 +92,7 @@ impl Buf {
 ## Decisions
 - Associated types and generic constraints are not supported in v0.1.
 - There is no explicit contract cast syntax in v0.1.
+- There is no implicit (duck-typed) contract satisfaction in v0.1.
 - Method conflicts in composed contracts are compile-time errors.
 
 ## Conflict example

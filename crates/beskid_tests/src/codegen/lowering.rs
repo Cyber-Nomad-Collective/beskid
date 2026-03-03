@@ -80,3 +80,23 @@ fn codegen_lowers_functions_inside_inline_modules() {
     assert_eq!(artifact.functions.len(), 1);
     assert_eq!(artifact.functions[0].name, "one");
 }
+
+#[test]
+fn codegen_lowers_method_and_member_call() {
+    let source = "type Counter { i64 value } impl Counter { i64 Get() { return this.value; } } i64 main() { Counter c = Counter { value: 7 }; return c.Get(); }";
+    let (hir, resolution, typed) = lower_resolve_type(source);
+    let artifact =
+        lower_program(&hir, &resolution, &typed).expect("expected method lowering to succeed");
+
+    assert!(
+        artifact
+            .functions
+            .iter()
+            .any(|f| f.name == "__method__Counter__Get"),
+        "expected lowered method symbol"
+    );
+    assert!(
+        artifact.functions.iter().any(|f| f.name == "main"),
+        "expected main function to be lowered"
+    );
+}

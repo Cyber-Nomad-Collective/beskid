@@ -123,8 +123,11 @@ pub mod std {
     pub mod Iterators {
         // Base contract for bounding, not for dynamic dispatch
         pub contract Iterator<T> {
-            Option<T> Next(self: ref mut Self);
+            Option<T> Next();
         }
+
+        // Concrete iterators must explicitly declare conformance.
+        // Example: type ArrayIter<T> : Iterator<T> { ... } + impl ArrayIter<T> { ... }
 
         // Concrete generic iterators returned by extension-like methods
         pub type SelectIter<TIn, TOut, TSource> { ... }
@@ -133,16 +136,14 @@ pub mod std {
         // Example LINQ operations implemented on concrete types
         impl<TSource> TSource {
             pub SelectIter<T, TOut, TSource> Select<T, TOut>(
-                self: TSource, 
                 mapper: (T) -> TOut
             ) { ... }
 
             pub WhereIter<T, TSource> Where<T>(
-                self: TSource, 
                 predicate: (T) -> bool
             ) { ... }
 
-            pub T[] ToList<T>(self: TSource) { ... }
+            pub T[] ToList<T>() { ... }
         }
     }
 }

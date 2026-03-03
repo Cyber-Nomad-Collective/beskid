@@ -74,7 +74,7 @@ fn jit_executes_array_new_builtin_call() {
 
 #[test]
 fn jit_executes_string_len_builtin_call() {
-    let source = "enum StdInterop { IoPrint(string text), IoPrintln(string text), StringLen(string text) } i64 main() { return __interop_dispatch_usize(StdInterop::StringLen(\"hello\")); }";
+    let source = "i64 main() { return __str_len(\"hello\"); }";
     let mut engine = compile_jit(source);
 
     let value = unsafe { run_main_i64(&mut engine) };
@@ -120,6 +120,133 @@ fn jit_entrypoint_pointer_is_available() {
 
 #[test]
 fn jit_compiles_println_builtin_call() {
-    let source = "enum StdInterop { IoPrintln(string text) } unit main() { __interop_dispatch_unit(StdInterop::IoPrintln(\"hello\")); }";
+    let source = "unit main() { __sys_println(\"hello\"); }";
     compile_jit(source);
+}
+
+#[test]
+fn jit_executes_local_lambda_call() {
+    let source = "i64 main() { let add = (x: i64, y: i64) => x + y; return add(20, 22); }";
+    let mut engine = compile_jit(source);
+
+    let value = unsafe { run_main_i64(&mut engine) };
+    assert_eq!(value, 42, "expected local lambda to be callable");
+}
+
+#[test]
+fn jit_executes_closure_capture_call() {
+    let source = "i64 main() { i64 base = 41; let inc = (x: i64) => x + base; return inc(1); }";
+    let mut engine = compile_jit(source);
+
+    let value = unsafe { run_main_i64(&mut engine) };
+    assert_eq!(value, 42, "expected lambda closure to capture outer local");
+}
+
+#[test]
+fn jit_passes_lambda_as_argument_to_lambda() {
+    let source = "i64 main() { let apply = (f: i64(i64), x: i64) => f(x); let id = (n: i64) => n; return apply(id, 42); }";
+    let mut engine = compile_jit(source);
+
+    let value = unsafe { run_main_i64(&mut engine) };
+    assert_eq!(value, 42, "expected lambda argument passing to work");
+}
+
+#[test]
+fn jit_executes_grouped_immediate_lambda_call() {
+    let source = "i64 main() { return ((x: i64) => x)(42); }";
+    let mut engine = compile_jit(source);
+
+    let value = unsafe { run_main_i64(&mut engine) };
+    assert_eq!(value, 42, "expected grouped lambda immediate call to work");
+}
+
+#[test]
+fn jit_passes_inline_lambda_argument() {
+    let source = "i64 main() { let apply = (f: i64(i64), x: i64) => f(x); return apply((n: i64) => n, 42); }";
+    let mut engine = compile_jit(source);
+
+    let value = unsafe { run_main_i64(&mut engine) };
+    assert_eq!(value, 42, "expected inline lambda argument passing to work");
+}
+
+#[test]
+fn jit_passes_inline_lambda_to_named_function() {
+    let source = "i64 apply(f: i64(i64), x: i64) { return f(x); } i64 main() { return apply((n: i64) => n, 42); }";
+    let mut engine = compile_jit(source);
+
+    let value = unsafe { run_main_i64(&mut engine) };
+    assert_eq!(
+        value, 42,
+        "expected named function to call inline lambda argument"
+    );
+}
+
+#[test]
+fn jit_passes_local_lambda_to_named_function() {
+    let source = "i64 apply(f: i64(i64), x: i64) { return f(x); } i64 main() { let inc = (n: i64) => n; return apply(inc, 42); }";
+    let mut engine = compile_jit(source);
+
+    let value = unsafe { run_main_i64(&mut engine) };
+    assert_eq!(
+        value, 42,
+        "expected named function to call local lambda argument"
+    );
+}
+
+#[test]
+fn jit_calls_function_typed_member_value() {
+    let source = "type Holder { i64(i64) f } i64 main() { Holder h = Holder { f: (n: i64) => n }; return h.f(42); }";
+    let mut engine = compile_jit(source);
+
+    let value = unsafe { run_main_i64(&mut engine) };
+    assert_eq!(value, 42, "expected function-typed member call to work");
+}
+
+#[test]
+fn jit_infers_lambda_parameter_type_from_typed_let() {
+    let source = "i64 main() { i64(i64) id = (n) => n; return id(42); }";
+    let mut engine = compile_jit(source);
+
+    let value = unsafe { run_main_i64(&mut engine) };
+    assert_eq!(
+        value, 42,
+        "expected lambda parameter type inference from typed let"
+    );
+}
+
+#[test]
+fn jit_infers_lambda_parameter_type_from_named_function_argument() {
+    let source = "i64 apply(i64(i64) f, i64 x) { return f(x); } i64 main() { return apply((n) => n, 42); }";
+    let mut engine = compile_jit(source);
+
+    let value = unsafe { run_main_i64(&mut engine) };
+    assert_eq!(
+        value, 42,
+        "expected lambda parameter type inference from function argument"
+    );
+}
+
+#[test]
+fn jit_executes_method_call_with_this_field_access() {
+    let source =
+        "type Counter { i64 value } impl Counter { i64 Get() { return this.value; } } i64 main() { Counter c = Counter { value: 42 }; return c.Get(); }";
+    let mut engine = compile_jit(source);
+
+    let value = unsafe { run_main_i64(&mut engine) };
+    assert_eq!(
+        value, 42,
+        "expected method call to read receiver field via this"
+    );
+}
+
+#[test]
+fn jit_dispatches_same_method_name_by_receiver_type() {
+    let source = "type A { i64 value } type B { i64 value } impl A { i64 Get() { return this.value; } } impl B { i64 Get() { i64 delta = 1; return this.value + delta; } } i64 main() { A a = A { value: 20 }; B b = B { value: 21 }; return a.Get() + b.Get(); }";
+    let mut engine = compile_jit(source);
+
+    let value = unsafe { run_main_i64(&mut engine) };
+    assert_eq!(
+        value, 42,
+        "expected receiver-specific method dispatch to call matching method body"
+    );
 }

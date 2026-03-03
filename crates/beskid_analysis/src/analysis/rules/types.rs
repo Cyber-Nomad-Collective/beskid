@@ -150,16 +150,8 @@ pub(crate) fn emit_type_error(
 
 pub(crate) fn emit_cast_intent_warnings(ctx: &mut RuleContext, result: &TypeResult) {
     for intent in &result.cast_intents {
-        let from = result
-            .types
-            .get(intent.from)
-            .map(type_name)
-            .unwrap_or_else(|| format!("{:?}", intent.from));
-        let to = result
-            .types
-            .get(intent.to)
-            .map(type_name)
-            .unwrap_or_else(|| format!("{:?}", intent.to));
+        let from = render_type_from_result(result, intent.from);
+        let to = render_type_from_result(result, intent.to);
         ctx.emit_issue(
             intent.span,
             SemanticIssueKind::TypeImplicitNumericCast { from, to },
@@ -167,37 +159,65 @@ pub(crate) fn emit_cast_intent_warnings(ctx: &mut RuleContext, result: &TypeResu
     }
 }
 
-fn type_name(info: &TypeInfo) -> String {
-    match info {
-        TypeInfo::Primitive(primitive) => match primitive {
-            crate::hir::HirPrimitiveType::Bool => "bool".to_string(),
-            crate::hir::HirPrimitiveType::I32 => "i32".to_string(),
-            crate::hir::HirPrimitiveType::I64 => "i64".to_string(),
-            crate::hir::HirPrimitiveType::U8 => "u8".to_string(),
-            crate::hir::HirPrimitiveType::F64 => "f64".to_string(),
-            crate::hir::HirPrimitiveType::Char => "char".to_string(),
-            crate::hir::HirPrimitiveType::String => "string".to_string(),
-            crate::hir::HirPrimitiveType::Unit => "unit".to_string(),
-        },
-        TypeInfo::Named(item_id) => format!("type#{}", item_id.0),
-        TypeInfo::GenericParam(name) => name.clone(),
-        TypeInfo::Applied { base, .. } => format!("type#{}", base.0),
-    }
-}
-
 fn render_type(result: Option<&TypeResult>, type_id: crate::types::TypeId) -> String {
     let Some(result) = result else {
         return format!("type#{}", type_id.0);
     };
+    render_type_from_result(result, type_id)
+}
+
+fn primitive_type_name(primitive: crate::hir::HirPrimitiveType) -> &'static str {
+    match primitive {
+        crate::hir::HirPrimitiveType::Bool => "bool",
+        crate::hir::HirPrimitiveType::I32 => "i32",
+        crate::hir::HirPrimitiveType::I64 => "i64",
+        crate::hir::HirPrimitiveType::U8 => "u8",
+        crate::hir::HirPrimitiveType::F64 => "f64",
+        crate::hir::HirPrimitiveType::Char => "char",
+        crate::hir::HirPrimitiveType::String => "string",
+        crate::hir::HirPrimitiveType::Unit => "unit",
+    }
+}
+
+fn render_type_from_result(result: &TypeResult, type_id: crate::types::TypeId) -> String {
     let Some(info) = result.types.get(type_id) else {
         return format!("type#{}", type_id.0);
     };
     match info {
+        TypeInfo::Primitive(primitive) => primitive_type_name(*primitive).to_string(),
         TypeInfo::Named(item_id) => result
             .named_type_names
             .get(item_id)
             .cloned()
             .unwrap_or_else(|| format!("type#{}", item_id.0)),
-        _ => type_name(info),
+        TypeInfo::GenericParam(name) => name.clone(),
+        TypeInfo::Applied { base, args } => {
+            let base_name = result
+                .named_type_names
+                .get(base)
+                .cloned()
+                .unwrap_or_else(|| format!("type#{}", base.0));
+            if args.is_empty() {
+                return base_name;
+            }
+            let args = args
+                .iter()
+                .map(|arg| render_type_from_result(result, *arg))
+                .collect::<Vec<_>>()
+                .join(", ");
+            format!("{base_name}<{args}>")
+        }
+        TypeInfo::Function {
+            params,
+            return_type,
+        } => {
+            let params = params
+                .iter()
+                .map(|param| render_type_from_result(result, *param))
+                .collect::<Vec<_>>()
+                .join(", ");
+            let return_name = render_type_from_result(result, *return_type);
+            format!("{return_name}({params})")
+        }
     }
 }

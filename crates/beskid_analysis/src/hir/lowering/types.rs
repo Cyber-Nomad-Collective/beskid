@@ -15,6 +15,13 @@ impl Lowerable for Spanned<syntax::Type> {
             syntax::Type::Complex(path) => HirType::Complex(path.lower()),
             syntax::Type::Array(inner) => HirType::Array(Box::new(inner.lower())),
             syntax::Type::Ref(inner) => HirType::Ref(Box::new(inner.lower())),
+            syntax::Type::Function {
+                return_type,
+                parameters,
+            } => HirType::Function {
+                return_type: Box::new(return_type.lower()),
+                parameters: parameters.iter().map(Lowerable::lower).collect(),
+            },
         };
         Spanned::new(node, self.span)
     }

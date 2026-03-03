@@ -73,15 +73,15 @@ fn object_contains_symbol(path: &Path, symbol: &str) -> bool {
 
 #[test]
 fn parity_interop_usize_dispatch_path_is_consistent() {
-    let source = "enum StdInterop { IoPrint(string text), IoPrintln(string text), StringLen(string text) } i64 main() { return __interop_dispatch_usize(StdInterop::StringLen(\"hello\")); }";
+    let source = "i64 main() { return __str_len(\"hello\"); }";
     let jit_value = jit_run_main_i64(source);
-    assert_eq!(jit_value, 5, "expected JIT interop usize dispatch result");
+    assert_eq!(jit_value, 5, "expected JIT direct str_len result");
 
     let dir = temp_case_dir("interop_usize");
     let object_path = build_aot_object(source, dir.join("parity.o"));
     assert!(
-        object_contains_symbol(&object_path, "interop_dispatch_usize"),
-        "expected AOT object to reference usize interop dispatch symbol"
+        object_contains_symbol(&object_path, "str_len"),
+        "expected AOT object to reference direct str_len symbol"
     );
 
     let _ = std::fs::remove_dir_all(dir);

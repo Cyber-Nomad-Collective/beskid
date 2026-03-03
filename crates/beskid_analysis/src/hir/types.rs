@@ -48,6 +48,11 @@ pub enum HirType {
     Array(Box<Spanned<HirType>>),
     #[ast(child)]
     Ref(Box<Spanned<HirType>>),
+    #[ast(children)]
+    Function {
+        return_type: Box<Spanned<HirType>>,
+        parameters: Vec<Spanned<HirType>>,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, beskid_ast_derive::HirNode)]

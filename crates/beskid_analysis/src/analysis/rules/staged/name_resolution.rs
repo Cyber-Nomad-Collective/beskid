@@ -70,7 +70,58 @@ impl SemanticPipelineRule {
                     },
                 );
             }
+            HirLegalityError::DuplicateAttributeTarget {
+                span,
+                kind,
+                previous,
+            } => {
+                ctx.emit_issue(
+                    span,
+                    SemanticIssueKind::DuplicateAttributeDeclarationTarget {
+                        target: kind.as_str().to_string(),
+                        previous,
+                    },
+                );
+            }
+            HirLegalityError::UnknownAttributeTarget { span, name } => {
+                ctx.emit_issue(
+                    span,
+                    SemanticIssueKind::UnknownAttributeDeclarationTarget {
+                        target: name,
+                        allowed: self.all_attribute_target_names(),
+                    },
+                );
+            }
+            HirLegalityError::AttributeTargetNotAllowed {
+                span,
+                name,
+                target,
+                allowed,
+            } => {
+                ctx.emit_issue(
+                    span,
+                    SemanticIssueKind::AttributeTargetNotAllowed {
+                        attribute: name,
+                        target: target.as_str().to_string(),
+                        allowed: self.attribute_target_names(allowed),
+                    },
+                );
+            }
         }
+    }
+
+    fn all_attribute_target_names(&self) -> Vec<String> {
+        self.attribute_target_names(crate::hir::AttributeTargetKind::ALL)
+    }
+
+    fn attribute_target_names<I>(&self, kinds: I) -> Vec<String>
+    where
+        I: IntoIterator<Item = crate::hir::AttributeTargetKind>,
+    {
+        kinds
+            .into_iter()
+            .map(|kind| kind.as_str().to_string())
+            .collect()
     }
 
     fn check_ambiguous_imports(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {

@@ -8,6 +8,12 @@ fn parses_contract_definition() {
 }
 
 #[test]
+fn parses_contract_definition_with_extern_attribute() {
+    let input = "[Extern(Abi: \"C\", Library: \"libc\")] contract Reader { i32 read(p: u8[]); }";
+    assert_parse(Rule::ContractDefinition, input);
+}
+
+#[test]
 fn parses_contract_embedding() {
     let input = "contract ReadWriter { Reader; Writer; }";
     assert_parse(Rule::ContractDefinition, input);

@@ -10,7 +10,7 @@ pub struct LinkRequest {
     pub output_kind: BuildOutputKind,
     pub output_path: PathBuf,
     pub object_path: PathBuf,
-    pub runtime_staticlib: PathBuf,
+    pub runtime_staticlib: Option<PathBuf>,
     pub entrypoint_symbol: String,
     pub exported_symbols: Vec<String>,
     pub link_mode: LinkMode,
@@ -46,9 +46,11 @@ pub fn link(req: &LinkRequest) -> AotResult<LinkResult> {
             message: "object file does not exist".to_owned(),
         });
     }
-    if !req.runtime_staticlib.exists() {
+    if let Some(runtime_staticlib) = &req.runtime_staticlib
+        && !runtime_staticlib.exists()
+    {
         return Err(AotError::RuntimeArchiveMissing {
-            path: req.runtime_staticlib.clone(),
+            path: runtime_staticlib.clone(),
         });
     }
 
@@ -80,10 +82,11 @@ pub fn link(req: &LinkRequest) -> AotResult<LinkResult> {
         .unwrap_or(std::env::consts::OS)
         .to_ascii_lowercase();
     let mut cmd = Command::new(&compiler);
-    cmd.arg(&req.object_path)
-        .arg(&req.runtime_staticlib)
-        .arg("-o")
-        .arg(&req.output_path);
+    cmd.arg(&req.object_path);
+    if let Some(runtime_staticlib) = &req.runtime_staticlib {
+        cmd.arg(runtime_staticlib);
+    }
+    cmd.arg("-o").arg(&req.output_path);
 
     if matches!(req.output_kind, BuildOutputKind::SharedLib) {
         cmd.arg("-shared");
@@ -103,13 +106,13 @@ pub fn link(req: &LinkRequest) -> AotResult<LinkResult> {
     let output = cmd.output().map_err(|_| AotError::LinkerUnavailable)?;
 
     if !output.status.success() {
-        let mut command_line = format!(
-            "{} {} {} -o {}",
-            compiler,
-            req.object_path.display(),
-            req.runtime_staticlib.display(),
-            req.output_path.display()
-        );
+        let mut command_line = format!("{} {}", compiler, req.object_path.display());
+        if let Some(runtime_staticlib) = &req.runtime_staticlib {
+            command_line.push(' ');
+            command_line.push_str(&runtime_staticlib.display().to_string());
+        }
+        command_line.push_str(" -o ");
+        command_line.push_str(&req.output_path.display().to_string());
         if req.output_kind == BuildOutputKind::SharedLib {
             command_line.push_str(" -shared");
         }
@@ -121,13 +124,16 @@ pub fn link(req: &LinkRequest) -> AotResult<LinkResult> {
 
     Ok(LinkResult {
         output_path: req.output_path.clone(),
-        command_line: format!(
-            "{} {} {} -o {}",
-            compiler,
-            req.object_path.display(),
-            req.runtime_staticlib.display(),
-            req.output_path.display()
-        ),
+        command_line: {
+            let mut line = format!("{} {}", compiler, req.object_path.display());
+            if let Some(runtime_staticlib) = &req.runtime_staticlib {
+                line.push(' ');
+                line.push_str(&runtime_staticlib.display().to_string());
+            }
+            line.push_str(" -o ");
+            line.push_str(&req.output_path.display().to_string());
+            line
+        },
         exported_symbols: req.exported_symbols.clone(),
     })
 }
@@ -148,10 +154,17 @@ fn archive_static(req: &LinkRequest) -> AotResult<LinkResult> {
     }
 
     let script_path = req.output_path.with_extension("mri");
+    let runtime_lib = req
+        .runtime_staticlib
+        .as_ref()
+        .ok_or_else(|| AotError::InvalidRequest {
+            message: "static archive output requires runtime archive unless standalone object-only mode is used"
+                .to_owned(),
+        })?;
     let script = format!(
         "CREATE {}\nADDLIB {}\nADDMOD {}\nSAVE\nEND\n",
         req.output_path.display(),
-        req.runtime_staticlib.display(),
+        runtime_lib.display(),
         req.object_path.display()
     );
     std::fs::write(&script_path, script).map_err(|err| AotError::Io {

@@ -71,6 +71,10 @@ pub struct BuildArgs {
     #[arg(long)]
     pub runtime_abi_version: Option<u32>,
 
+    /// Build in standalone mode (no Beskid runtime archive linkage)
+    #[arg(long)]
+    pub standalone: bool,
+
     /// Explicit symbols to export in shared/static artifacts
     #[arg(long = "export")]
     pub export_symbols: Vec<String>,
@@ -127,7 +131,14 @@ pub fn execute(args: BuildArgs) -> Result<()> {
         parent.join(file_name)
     };
 
-    let runtime = if let Some(path) = args.runtime_archive {
+    let runtime = if args.standalone {
+        if args.runtime_archive.is_some() {
+            return Err(anyhow::anyhow!(
+                "`--standalone` cannot be combined with `--runtime-archive`"
+            ));
+        }
+        RuntimeStrategy::Standalone
+    } else if let Some(path) = args.runtime_archive {
         RuntimeStrategy::UsePrebuilt {
             path,
             abi_version: args.runtime_abi_version,

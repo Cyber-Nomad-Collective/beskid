@@ -9,7 +9,7 @@ use crate::target::detect_target;
 
 #[derive(Debug, Clone)]
 pub struct RuntimeArtifact {
-    pub staticlib_path: PathBuf,
+    pub staticlib_path: Option<PathBuf>,
     pub exported_symbols: Vec<String>,
 }
 
@@ -70,6 +70,10 @@ pub struct RuntimeBuildRequest {
 
 pub fn prepare_runtime(req: &RuntimeBuildRequest) -> AotResult<RuntimeArtifact> {
     match &req.strategy {
+        RuntimeStrategy::Standalone => Ok(RuntimeArtifact {
+            staticlib_path: None,
+            exported_symbols: Vec::new(),
+        }),
         RuntimeStrategy::UsePrebuilt { path, abi_version } => {
             let Some(version) = abi_version else {
                 return Err(AotError::RuntimeAbiVersionRequired);
@@ -85,7 +89,7 @@ pub fn prepare_runtime(req: &RuntimeBuildRequest) -> AotResult<RuntimeArtifact> 
             }
             ensure_runtime_symbols_present(path, RUNTIME_EXPORT_SYMBOLS)?;
             Ok(RuntimeArtifact {
-                staticlib_path: path.clone(),
+                staticlib_path: Some(path.clone()),
                 exported_symbols: runtime_symbols(),
             })
         }
@@ -228,7 +232,7 @@ pub extern \"C\" fn beskid_runtime_link_anchor() {
     }
 
     Ok(RuntimeArtifact {
-        staticlib_path: artifact_path,
+        staticlib_path: Some(artifact_path),
         exported_symbols: runtime_symbols(),
     })
 }

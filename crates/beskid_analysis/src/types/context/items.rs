@@ -38,6 +38,7 @@ impl<'a> TypeContext<'a> {
                 }
             }
             HirItem::MethodDefinition(def) => {
+                let receiver_type = self.type_id_for_type(&def.node.receiver_type);
                 let return_type = def
                     .node
                     .return_type
@@ -45,6 +46,9 @@ impl<'a> TypeContext<'a> {
                     .and_then(|ty| self.type_id_for_type(ty))
                     .or_else(|| self.primitive_type_id(HirPrimitiveType::Unit));
                 self.current_return_type = return_type;
+                if let Some(receiver_type) = receiver_type {
+                    self.insert_local_type(def.node.receiver_type.span, receiver_type);
+                }
                 let mut params = Vec::new();
                 for param in &def.node.parameters {
                     if let Some(type_id) = self.type_id_for_type(&param.node.ty) {
@@ -120,6 +124,7 @@ impl<'a> TypeContext<'a> {
                 }
             }
             HirItem::ContractDefinition(_) => {}
+            HirItem::AttributeDeclaration(_) => {}
             HirItem::InlineModule(def) => {
                 for item in &def.node.items {
                     self.type_item(item);

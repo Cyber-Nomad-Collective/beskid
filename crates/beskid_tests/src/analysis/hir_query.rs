@@ -1,5 +1,6 @@
 use beskid_analysis::hir::{
-    AstProgram, HirContractMethodSignature, HirExpressionNode, HirProgram, lower_program,
+    AstProgram, HirContractMethodSignature, HirExpressionNode, HirMethodDefinition, HirProgram,
+    HirType, lower_program,
 };
 use beskid_analysis::query::{HirNodeKind, HirQuery};
 use beskid_analysis::syntax::Spanned;
@@ -61,4 +62,24 @@ fn hir_query_find_first_identifier() {
         .expect("expected at least one HIR identifier");
 
     assert_eq!(ident.name, "main");
+}
+
+#[test]
+fn lowering_flattens_impl_methods_into_hir_method_definitions() {
+    let hir = parse_hir(
+        "type Counter { i64 value } impl Counter { i64 Get() { return this.value; } unit Set(i64 x) { this.value = x; } }",
+    );
+
+    let methods: Vec<&HirMethodDefinition> = HirQuery::from(&hir.node).of::<HirMethodDefinition>().collect();
+    assert_eq!(methods.len(), 2);
+    assert_eq!(methods[0].name.node.name, "Get");
+    assert_eq!(methods[1].name.node.name, "Set");
+
+    match &methods[0].receiver_type.node {
+        HirType::Complex(path) => {
+            assert_eq!(path.node.segments.len(), 1);
+            assert_eq!(path.node.segments[0].node.name.node.name, "Counter");
+        }
+        _ => panic!("expected complex receiver type for impl-lowered method"),
+    }
 }

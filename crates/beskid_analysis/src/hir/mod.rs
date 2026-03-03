@@ -1,6 +1,7 @@
 pub mod block;
 pub mod common;
 pub mod expression;
+pub mod attribute_target_kind;
 pub mod item;
 pub mod legality;
 pub mod literal;
@@ -18,17 +19,20 @@ pub mod types;
 pub mod normalize;
 
 pub use block::HirBlock;
+pub use attribute_target_kind::AttributeTargetKind;
 pub use common::{HirEnumPath, HirIdentifier, HirPath, HirPathSegment, HirVisibility};
 pub use expression::{
     ExpressionNode, HirAssignExpression, HirBinaryExpression, HirBinaryOp, HirBlockExpression,
-    HirCallExpression, HirEnumConstructorExpression, HirGroupedExpression, HirLiteralExpression,
-    HirMatchExpression, HirMemberExpression, HirPathExpression, HirStructLiteralExpression,
-    HirUnaryExpression, HirUnaryOp,
+    HirCallExpression, HirEnumConstructorExpression, HirGroupedExpression, HirLambdaExpression,
+    HirLambdaParameter, HirLiteralExpression, HirMatchExpression, HirMemberExpression,
+    HirPathExpression, HirStructLiteralExpression, HirUnaryExpression, HirUnaryOp,
 };
 pub use item::{
+    HirAttribute, HirAttributeDeclaration, HirAttributeParameter, HirAttributeTarget,
     HirContractDefinition, HirContractEmbedding, HirContractMethodSignature, HirContractNode,
-    HirEnumDefinition, HirEnumVariant, HirFunctionDefinition, HirInlineModule, HirMethodDefinition,
-    HirModuleDeclaration, HirTypeDefinition, HirUseDeclaration, Item,
+    HirEnumDefinition, HirEnumVariant, HirExternInterface, HirFunctionDefinition,
+    HirInlineModule, HirMethodDefinition, HirModuleDeclaration, HirTypeDefinition,
+    HirUseDeclaration, Item,
 };
 pub use legality::{HirLegalityError, validate_hir_program};
 pub use literal::HirLiteral;

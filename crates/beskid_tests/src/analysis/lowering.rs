@@ -123,3 +123,72 @@ fn lowering_preserves_match_patterns() {
     let first_pattern = &match_expr.node.arms[0].node.pattern;
     assert!(matches!(first_pattern.node, HirPattern::Enum(_)));
 }
+
+#[test]
+fn lowering_collects_extern_interface_metadata() {
+    let source = "[Extern(Abi: \"C\", Library: \"libc\")] contract Reader { i32 read(p: u8[]); } [Extern(Abi: \"C\", Library: \"libc\")] mod sys.io;";
+    let program = parse_program_ast(source);
+    let ast: Spanned<AstProgram> = program.into();
+    let hir: Spanned<HirProgram> = lower_program(&ast);
+
+    let contract = hir
+        .node
+        .items
+        .iter()
+        .find_map(|item| match &item.node {
+            HirItem::ContractDefinition(def) => Some(def),
+            _ => None,
+        })
+        .expect("expected contract definition");
+    let module = hir
+        .node
+        .items
+        .iter()
+        .find_map(|item| match &item.node {
+            HirItem::ModuleDeclaration(def) => Some(def),
+            _ => None,
+        })
+        .expect("expected module declaration");
+
+    let contract_extern = contract
+        .node
+        .extern_interface
+        .as_ref()
+        .expect("contract extern metadata");
+    assert_eq!(contract_extern.abi.as_deref(), Some("C"));
+    assert_eq!(contract_extern.library.as_deref(), Some("libc"));
+
+    let module_extern = module
+        .node
+        .extern_interface
+        .as_ref()
+        .expect("module extern metadata");
+    assert_eq!(module_extern.abi.as_deref(), Some("C"));
+    assert_eq!(module_extern.library.as_deref(), Some("libc"));
+}
+
+#[test]
+fn lowering_preserves_attribute_declaration_items() {
+    let source = "pub attribute Extern(ModuleDeclaration, ContractDeclaration) { Abi: string = \"C\", Library: string = \"libc\" }";
+    let program = parse_program_ast(source);
+    let ast: Spanned<AstProgram> = program.into();
+    let hir: Spanned<HirProgram> = lower_program(&ast);
+
+    let declaration = hir
+        .node
+        .items
+        .iter()
+        .find_map(|item| match &item.node {
+            HirItem::AttributeDeclaration(def) => Some(def),
+            _ => None,
+        })
+        .expect("expected attribute declaration");
+
+    assert_eq!(declaration.node.name.node.name, "Extern");
+    assert_eq!(declaration.node.targets.len(), 2);
+    assert_eq!(declaration.node.targets[0].node.name.node.name, "ModuleDeclaration");
+    assert_eq!(declaration.node.targets[1].node.name.node.name, "ContractDeclaration");
+    assert_eq!(declaration.node.parameters.len(), 2);
+    assert_eq!(declaration.node.parameters[0].node.name.node.name, "Abi");
+    assert_eq!(declaration.node.parameters[1].node.name.node.name, "Library");
+}

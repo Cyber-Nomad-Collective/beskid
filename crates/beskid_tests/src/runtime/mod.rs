@@ -8,4 +8,7 @@ mod guard;
 mod jit;
 
 #[cfg(test)]
+mod jit_callable;
+
+#[cfg(test)]
 mod parity;

@@ -13,6 +13,9 @@ pub enum ParseError {
     MissingPair {
         expected: Rule,
     },
+    ForbiddenImplSelfParameter {
+        span: SpanInfo,
+    },
 }
 
 impl ParseError {
@@ -26,5 +29,9 @@ impl ParseError {
 
     pub fn missing(expected: Rule) -> Self {
         Self::MissingPair { expected }
+    }
+
+    pub fn forbidden_impl_self_parameter(span: SpanInfo) -> Self {
+        Self::ForbiddenImplSelfParameter { span }
     }
 }
