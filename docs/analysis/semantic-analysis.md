@@ -119,10 +119,10 @@ Rules should use `Query` API:
 - Field access on non-struct
 - Struct literal unknown fields / missing fields
 - Enum constructor arity mismatch
-- Contract argument/assignment compatibility requires explicit conformance (`impl Type: Contract`)
+- Contract argument/assignment compatibility requires explicit conformance (`type Type : Contract`)
 
 ### Stage 6: Contracts & Methods
-- Declared conformance validation (`impl Type: Contract`)
+- Declared conformance validation (`type Type : Contract` + `impl Type { ... }`)
 - Missing required contract methods for declared conformance
 - Contract method signature mismatch for declared conformance
 - Contract not satisfied when explicit declaration is missing

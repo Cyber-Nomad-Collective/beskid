@@ -88,10 +88,7 @@ impl SemanticPipelineRule {
                     span,
                     SemanticIssueKind::UnknownAttributeDeclarationTarget {
                         target: name,
-                        allowed: crate::hir::AttributeTargetKind::ALL
-                            .iter()
-                            .map(|kind| kind.as_str().to_string())
-                            .collect(),
+                        allowed: self.all_attribute_target_names(),
                     },
                 );
             }
@@ -106,14 +103,25 @@ impl SemanticPipelineRule {
                     SemanticIssueKind::AttributeTargetNotAllowed {
                         attribute: name,
                         target: target.as_str().to_string(),
-                        allowed: allowed
-                            .into_iter()
-                            .map(|kind| kind.as_str().to_string())
-                            .collect(),
+                        allowed: self.attribute_target_names(allowed),
                     },
                 );
             }
         }
+    }
+
+    fn all_attribute_target_names(&self) -> Vec<String> {
+        self.attribute_target_names(crate::hir::AttributeTargetKind::ALL)
+    }
+
+    fn attribute_target_names<I>(&self, kinds: I) -> Vec<String>
+    where
+        I: IntoIterator<Item = crate::hir::AttributeTargetKind>,
+    {
+        kinds
+            .into_iter()
+            .map(|kind| kind.as_str().to_string())
+            .collect()
     }
 
     fn check_ambiguous_imports(&self, ctx: &mut RuleContext, hir: &Spanned<HirProgram>) {

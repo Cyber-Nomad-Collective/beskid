@@ -296,18 +296,18 @@ type Counter {
 }
 
 impl Counter {
-    pub i32 Increment(self: mut Counter) {
-        self._count = self._count + 1;
-        return self._count;
+    pub i32 Increment() {
+        this._count = this._count + 1;
+        return this._count;
     }
 }
 ```
 
 **Rules:**
-- Instance methods gain an explicit `self` parameter.
-- Methods that mutate `self` use `self: mut T`.
-- Read-only methods use `self: T` or `self: ref T`.
-- The transpiler performs a **self-mutation analysis** to determine which form to use.
+- Instance methods use an implicit `this` receiver inside `impl T` blocks.
+- Mutation is expressed through assignment to `this` fields.
+- Receiver reference modifiers are not part of v0.1 method syntax.
+- The transpiler still performs receiver-mutation analysis for optimization and diagnostics.
 
 ### Expression-bodied members
 
@@ -449,8 +449,8 @@ public int FullName => $"{First} {Last}";
 ```
 → Beskid method:
 ```beskid
-pub string FullName(self: Person) {
-    return "${self.First} ${self.Last}";
+pub string FullName() {
+    return "${this.First} ${this.Last}";
 }
 ```
 

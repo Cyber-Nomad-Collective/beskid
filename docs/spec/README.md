@@ -28,8 +28,8 @@ Generator model and broader metaprogramming scheduling are tracked as drafts out
 - [x] Types: primitives, generics, references, arrays `T[]`
 - [x] Type definitions (`type`) and struct literals (`Type { ... }`)
 - [x] Enums and enum constructors (`Enum::Variant(...)`)
-- [x] Contracts (`contract`) with embedded contracts, method signatures, and explicit conformance declarations (`impl Type: Contract`)
+- [x] Contracts (`contract`) with embedded contracts, method signatures, and explicit conformance declarations (`type Type : ContractA, ContractB`)
 - [x] Attributes: declaration (`attribute Name(...) { ... }`) and application (`[Name(arg: expr)]`)
-- [x] Functions and methods (`impl Type { ... }`, `impl Type: ContractA, ContractB { ... }`)
+- [x] Functions and methods (`impl Type { ... }`, implicit `this` receiver in methods)
 - [x] Statements: let/mut, if/else, while, for-in range, return/break/continue
 - [x] Expressions: precedence, calls, member access, match with `when` guard

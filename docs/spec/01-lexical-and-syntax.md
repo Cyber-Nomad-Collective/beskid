@@ -14,12 +14,13 @@ let user_id = 1;
 ```
 
 ## Keywords (v0.1)
-`type`, `enum`, `contract`, `attribute`, `match`, `when`, `if`, `else`, `while`, `for`, `in`, `return`, `break`, `continue`, `let`, `mut`, `mod`, `use`, `pub`, `ref`, `out`, `event`
+`type`, `enum`, `contract`, `impl`, `attribute`, `match`, `when`, `if`, `else`, `while`, `for`, `in`, `return`, `break`, `continue`, `let`, `mut`, `mod`, `use`, `pub`, `ref`, `out`, `event`
 
 ### Keyword meanings
 - `type`: product type (struct) declaration.
 - `enum`: sum type (variant) declaration.
-- `contract`: explicit interface declaration (nominal conformance via `impl Type: Contract`).
+- `contract`: explicit interface declaration (nominal conformance via `type Type : ContractA, ContractB`).
+- `impl`: implementation block that defines methods for a concrete type.
 - `attribute`: attribute declaration.
 - `match`: pattern matching expression.
 - `when`: guard for a `match` arm.

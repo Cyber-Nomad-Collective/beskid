@@ -198,11 +198,11 @@ This document enumerates semantic rules derived from the language spec. Rules ar
 
 ## Stage 6: Contracts & Methods
 ### E1601 ContractMethodMissingImpl (Error)
-- Trigger: an explicitly declared `impl Type: Contract` conformance is missing one or more required contract methods.
+- Trigger: an explicitly declared `type Type : Contract` conformance is missing one or more required contract methods in `impl Type` blocks.
 - Source: 09-contracts.
 
 ### E1602 ContractImplSignatureMismatch (Error)
-- Trigger: method implementation in an explicitly declared `impl Type: Contract` conformance does not match contract signature.
+- Trigger: method implementation in `impl Type` for a declared `type Type : Contract` conformance does not match contract signature.
 - Source: 09-contracts.
 
 ### E1603 MethodDispatchAmbiguous (Error)
@@ -222,7 +222,7 @@ This document enumerates semantic rules derived from the language spec. Rules ar
 - Source: 12-method-dispatch.
 
 ### E1607 ContractNotSatisfied (Error)
-- Trigger: value typed as contract has no explicit conformance declaration (`impl Type: Contract`) for the required contract.
+- Trigger: value typed as contract has no explicit conformance declaration (`type Type : Contract`) for the required contract.
 - Source: 09-contracts, 12-method-dispatch.
 
 ## Stage 7: Error Handling

@@ -27,6 +27,22 @@ pub struct Resolver {
     builtin_items: HashMap<ItemId, usize>,
 }
 
+fn type_name_for_method_receiver(receiver_type: &Spanned<HirType>) -> String {
+    match &receiver_type.node {
+        HirType::Primitive(primitive) => format!("{:?}", primitive.node),
+        HirType::Complex(path) => path
+            .node
+            .segments
+            .iter()
+            .map(|segment| segment.node.name.node.name.clone())
+            .collect::<Vec<_>>()
+            .join("."),
+        HirType::Array(_) => "Array".to_string(),
+        HirType::Ref(_) => "Ref".to_string(),
+        HirType::Function { .. } => "Function".to_string(),
+    }
+}
+
 impl Resolver {
     pub fn new() -> Self {
         Self::default()
@@ -102,7 +118,11 @@ impl Resolver {
                 def.node.visibility.node,
             ),
             HirItem::MethodDefinition(def) => (
-                def.node.name.node.name.clone(),
+                format!(
+                    "{}::{}",
+                    type_name_for_method_receiver(&def.node.receiver_type),
+                    def.node.name.node.name
+                ),
                 ItemKind::Method,
                 def.node.visibility.node,
             ),
@@ -224,6 +244,7 @@ impl Resolver {
             HirItem::MethodDefinition(def) => {
                 self.push_scope();
                 self.resolve_type(&def.node.receiver_type);
+                self.insert_local("this", def.node.receiver_type.span);
                 for param in &def.node.parameters {
                     self.resolve_type(&param.node.ty);
                     self.insert_local(&param.node.name.node.name, param.node.name.span);

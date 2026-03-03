@@ -14,10 +14,12 @@ contract Reader {
 
 ## Explicit conformance
 ```
-type File { /* ... */ }
+type File : Reader {
+    /* ... */
+}
 
-impl File: Reader {
-    Result<i32, Error> read(self: File, p: u8[]) { ... }
+impl File {
+    Result<i32, Error> read(p: u8[]) { ... }
 }
 ```
 
@@ -37,11 +39,13 @@ Result<i32, Error> copy(r: Reader, w: Writer) { ... }
 
 Passing a concrete type where a contract is expected requires an explicit declaration:
 ```
-type Socket { /* ... */ }
+type Socket : Reader, Writer {
+    /* ... */
+}
 
-impl Socket: Reader, Writer {
-    Result<i32, Error> read(self: Socket, p: u8[]) { ... }
-    Result<i32, Error> write(self: Socket, p: u8[]) { ... }
+impl Socket {
+    Result<i32, Error> read(p: u8[]) { ... }
+    Result<i32, Error> write(p: u8[]) { ... }
 }
 ```
 
@@ -63,19 +67,20 @@ Result<i32, Error> copy_all(rw: ReadWriter) { ... }
 ```
 
 ## Method sets
-- Value methods: `impl T: ContractA, ContractB { ReturnType method(self: T, ...) { ... } }`
-- Reference methods: `impl T: ContractA { ReturnType method(self: ref T, ...) { ... } }` (when `ref mut` is introduced)
+- Value methods: `type T : ContractA, ContractB { ... }` + `impl T { ReturnType method(...) { ... } }`
+- `this` receiver is implicit inside methods and bound to the containing `impl T` type.
+- Reference receiver modifiers are not part of v0.1 contract satisfaction rules.
 
 A declared conformance is valid only if the type's available method set covers all required methods.
 
 Example:
 ```
-contract Size { i32 size(self); }
+contract Size { i32 size(); }
 
-type Buf { i32 len }
+type Buf : Size { i32 len }
 
-impl Buf: Size {
-    i32 size(self: Buf) { return self.len; }
+impl Buf {
+    i32 size() { return this.len; }
 }
 ```
 

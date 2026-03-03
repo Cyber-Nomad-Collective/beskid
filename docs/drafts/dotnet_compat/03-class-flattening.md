@@ -28,8 +28,8 @@ pub type Point {
 }
 
 impl Point {
-    pub i32 Manhattan(self: Point) {
-        return Std.Math.Abs(self.X) + Std.Math.Abs(self.Y);
+    pub i32 Manhattan() {
+        return Std.Math.Abs(this.X) + Std.Math.Abs(this.Y);
     }
 }
 ```
@@ -58,8 +58,8 @@ pub type Animal {
 }
 
 impl Animal {
-    pub unit Speak(self: Animal) {
-        Std.IO.Println("${self.Name} speaks");
+    pub unit Speak() {
+        Std.IO.Println("${this.Name} speaks");
     }
 }
 
@@ -69,13 +69,13 @@ pub type Dog {
 }
 
 impl Dog {
-    pub unit Fetch(self: Dog) {
-        Std.IO.Println("${self.Base.Name} fetches");
+    pub unit Fetch() {
+        Std.IO.Println("${this.Base.Name} fetches");
     }
 
     // Forwarding method for inherited behavior
-    pub unit Speak(self: Dog) {
-        self.Base.Speak();
+    pub unit Speak() {
+        this.Base.Speak();
     }
 }
 ```
@@ -83,8 +83,8 @@ impl Dog {
 ### Flattening rules
 
 1. The base class is embedded as a field named `Base`. For deep hierarchies: `Base` contains its own `Base`, forming a chain.
-2. **Method forwarding**: For every public method on the base class, the transpiler generates a forwarding method on the derived type that delegates to `self.Base.Method(...)`.
-3. **Field access forwarding**: C# code that accesses inherited fields (e.g., `Name` on `Dog`) is rewritten to access through the base chain (e.g., `self.Base.Name`).
+2. **Method forwarding**: For every public method on the base class, the transpiler generates a forwarding method on the derived type that delegates to `this.Base.Method(...)`.
+3. **Field access forwarding**: C# code that accesses inherited fields (e.g., `Name` on `Dog`) is rewritten to access through the base chain (e.g., `this.Base.Name`).
 
 ### Deep hierarchies
 
@@ -100,7 +100,7 @@ type B { A Base, i32 Y }
 type C { B Base, i32 Z }
 ```
 
-Access to `C.X` becomes `self.Base.Base.X`. The transpiler resolves the chain statically.
+Access to `C.X` becomes `this.Base.Base.X`. The transpiler resolves the chain statically.
 
 ## 3.4 Field inlining (optional optimization)
 
@@ -231,31 +231,31 @@ public class Rect : Shape {
 
 ### Beskid output
 
-The abstract class becomes a **contract**. Each concrete subclass becomes a `type` that explicitly declares conformance via `impl Type: Contract { ... }`.
+The abstract class becomes a **contract**. Each concrete subclass becomes a `type` that explicitly declares conformance via `type Type : Contract { ... }`, with methods provided in `impl Type { ... }`.
 
 ```beskid
 contract Shape {
-    f64 Area(self);
+    f64 Area();
 }
 
-pub type Circle {
+pub type Circle : Shape {
     f64 Radius,
 }
 
-impl Circle: Shape {
-    pub f64 Area(self: Circle) {
-        return 3.14159265358979 * self.Radius * self.Radius;
+impl Circle {
+    pub f64 Area() {
+        return 3.14159265358979 * this.Radius * this.Radius;
     }
 }
 
-pub type Rect {
+pub type Rect : Shape {
     f64 Width,
     f64 Height,
 }
 
-impl Rect: Shape {
-    pub f64 Area(self: Rect) {
-        return self.Width * self.Height;
+impl Rect {
+    pub f64 Area() {
+        return this.Width * this.Height;
     }
 }
 ```
@@ -265,7 +265,7 @@ impl Rect: Shape {
 The transpiler identifies the abstract/virtual pattern and applies this translation when:
 1. A class has `abstract` methods → becomes a `contract`
 2. A class has `virtual` methods with a body → becomes a `contract` + default impl
-3. Subclasses with `override` → `impl Type: Contract { ... }` blocks that explicitly declare conformance
+3. Subclasses with `override` → `type Type : Contract { ... }` plus `impl Type { ... }` methods
 
 ### Virtual methods with default implementation
 
@@ -280,23 +280,23 @@ public class Derived : Base {
 
 ```beskid
 contract Describable {
-    string Describe(self);
+    string Describe();
 }
 
-type Base {}
+type Base : Describable {}
 
-impl Base: Describable {
-    pub string Describe(self: Base) {
+impl Base {
+    pub string Describe() {
         return "base";
     }
 }
 
-type Derived {
+type Derived : Describable {
     Base Base,
 }
 
-impl Derived: Describable {
-    pub string Describe(self: Derived) {
+impl Derived {
+    pub string Describe() {
         return "derived";
     }
 }
@@ -324,11 +324,11 @@ public interface IReadWriter : IReader, IWriter { }
 ### Beskid output
 ```beskid
 contract Reader {
-    i32 Read(self, buffer: u8[]);
+    i32 Read(buffer: u8[]);
 }
 
 contract Writer {
-    i32 Write(self, buffer: u8[]);
+    i32 Write(buffer: u8[]);
 }
 
 contract ReadWriter {
@@ -340,7 +340,7 @@ contract ReadWriter {
 **Rules:**
 - `I` prefix is stripped (C# convention `IReader` → Beskid `Reader`).
 - Interface composition maps to Beskid contract composition.
-- Implementing types must use explicit declarations: `impl Type: Contract { ... }`.
+- Implementing types must use explicit declarations: `type Type : Contract { ... }` and method bodies in `impl Type { ... }`.
 - Default interface methods (C# 8+) are emitted as standalone helper functions.
 
 ## 3.8 `sealed` classes
@@ -398,8 +398,8 @@ enum ShapeValue {
 }
 
 impl ShapeValue {
-    f64 Area(self: ShapeValue) {
-        return match self {
+    f64 Area() {
+        return match this {
             ShapeValue::CircleVal(c) => c.Area(),
             ShapeValue::RectVal(r) => r.Area(),
         };

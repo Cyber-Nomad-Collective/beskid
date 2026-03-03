@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::builtins::{BuiltinType, builtin_specs};
 use crate::hir::{HirItem, HirPrimitiveType, HirProgram};
-use crate::resolve::{ItemId, LocalId, Resolution};
+use crate::resolve::{ItemId, LocalId, Resolution, ResolvedType};
 use crate::syntax::{SpanInfo, Spanned};
 use crate::types::{TypeId, TypeTable};
 
@@ -154,6 +154,7 @@ pub struct TypeContext<'a> {
     pub(super) current_return_type: Option<TypeId>,
     pub(super) generic_params: HashMap<String, TypeId>,
     pub(super) generic_items: HashMap<ItemId, Vec<String>>,
+    pub(super) methods_by_receiver: HashMap<(ItemId, String), ItemId>,
 }
 
 impl<'a> TypeContext<'a> {
@@ -175,6 +176,7 @@ impl<'a> TypeContext<'a> {
             current_return_type: None,
             generic_params: HashMap::new(),
             generic_items: HashMap::new(),
+            methods_by_receiver: HashMap::new(),
         };
         context.seed_types();
         context.seed_builtin_signatures();
@@ -243,6 +245,26 @@ impl<'a> TypeContext<'a> {
                     .collect::<Vec<_>>();
                 self.generic_items.insert(item_id, names);
             }
+        }
+        for item in &program.node.items {
+            let HirItem::MethodDefinition(def) = &item.node else {
+                continue;
+            };
+            let Some(method_item_id) = self.item_id_for_span(item.span) else {
+                continue;
+            };
+            let Some(ResolvedType::Item(receiver_item_id)) = self
+                .resolution
+                .tables
+                .resolved_types
+                .get(&def.node.receiver_type.span)
+            else {
+                continue;
+            };
+            self.methods_by_receiver.insert(
+                (*receiver_item_id, def.node.name.node.name.clone()),
+                method_item_id,
+            );
         }
         for item in &program.node.items {
             self.type_item(item);

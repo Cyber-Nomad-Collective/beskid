@@ -3,7 +3,7 @@ use crate::lowering::context::{CodegenContext, CodegenResult, LoweredFunction};
 use crate::lowering::lowerable::lower_node;
 use crate::lowering::node_context::NodeLoweringContext;
 use crate::lowering::types::{map_type_id_to_clif, type_id_for_type};
-use beskid_analysis::hir::{HirFunctionDefinition, HirLambdaExpression};
+use beskid_analysis::hir::{HirFunctionDefinition, HirLambdaExpression, HirMethodDefinition};
 use beskid_analysis::resolve::{ItemId, LocalId, Resolution};
 use beskid_analysis::syntax::Spanned;
 use beskid_analysis::types::{TypeInfo, TypeResult};
@@ -22,6 +22,200 @@ pub(crate) fn lower_function(
     ctx: &mut CodegenContext,
 ) -> CodegenResult<()> {
     lower_function_with_name(def, resolution, type_result, function_defs, ctx, None, None)
+}
+
+pub(crate) fn lower_method(
+    def: &Spanned<HirMethodDefinition>,
+    resolution: &Resolution,
+    type_result: &TypeResult,
+    function_defs: &HashMap<ItemId, &Spanned<HirFunctionDefinition>>,
+    ctx: &mut CodegenContext,
+) -> CodegenResult<()> {
+    let item_id = resolution
+        .items
+        .iter()
+        .find(|info| info.span == def.span)
+        .map(|info| info.id)
+        .ok_or(CodegenError::MissingSymbol("method item"))?;
+    let signature_types = type_result.function_signatures.get(&item_id);
+
+    let receiver_type_id = type_id_for_type(resolution, type_result, &def.node.receiver_type)
+        .ok_or(CodegenError::UnsupportedNode {
+            span: def.node.receiver_type.span,
+            node: "method receiver type",
+        })?;
+    let receiver_clif_ty =
+        map_type_id_to_clif(type_result, receiver_type_id).ok_or(CodegenError::UnsupportedNode {
+            span: def.node.receiver_type.span,
+            node: "method receiver type",
+        })?;
+
+    let mut signature = Signature::new(CallConv::SystemV);
+    signature.params.push(AbiParam::new(receiver_clif_ty));
+    for (index, param) in def.node.parameters.iter().enumerate() {
+        if param.node.modifier.is_some() {
+            return Err(CodegenError::UnsupportedNode {
+                span: param.span,
+                node: "function parameter modifier",
+            });
+        }
+        let type_id = signature_types
+            .and_then(|sig| sig.params.get(index).copied())
+            .or_else(|| type_id_for_type(resolution, type_result, &param.node.ty))
+            .ok_or(CodegenError::UnsupportedNode {
+                span: param.span,
+                node: "function parameter type",
+            })?;
+        let clif_ty =
+            map_type_id_to_clif(type_result, type_id).ok_or(CodegenError::UnsupportedNode {
+                span: param.span,
+                node: "function parameter type",
+            })?;
+        signature.params.push(AbiParam::new(clif_ty));
+    }
+
+    let return_type_id = signature_types
+        .map(|sig| sig.return_type)
+        .or_else(|| {
+            def.node
+                .return_type
+                .as_ref()
+                .and_then(|ty| type_id_for_type(resolution, type_result, ty))
+        });
+    if let Some(type_id) = return_type_id
+        && let Some(clif_ty) = map_type_id_to_clif(type_result, type_id)
+    {
+        signature.returns.push(AbiParam::new(clif_ty));
+    }
+    let expects_return = signature_has_return(&signature);
+
+    let mut function = Function::new();
+    function.signature = signature;
+
+    let mut fb_ctx = FunctionBuilderContext::new();
+    let mut builder = FunctionBuilder::new(&mut function, &mut fb_ctx);
+    let entry = builder.create_block();
+    builder.append_block_params_for_function_params(entry);
+    builder.switch_to_block(entry);
+    builder.seal_block(entry);
+
+    let mut state = FunctionLoweringState::default();
+    let param_values = builder.block_params(entry).to_vec();
+
+    let this_local_id = resolution
+        .tables
+        .locals
+        .iter()
+        .find(|info| info.span == def.node.receiver_type.span)
+        .map(|info| info.id)
+        .ok_or(CodegenError::InvalidLocalBinding {
+            span: def.node.receiver_type.span,
+        })?;
+    let this_var = builder.declare_var(receiver_clif_ty);
+    builder.def_var(this_var, param_values[0]);
+    state.locals.insert(this_local_id, this_var);
+
+    for (index, (param, value)) in def
+        .node
+        .parameters
+        .iter()
+        .zip(param_values.into_iter().skip(1))
+        .enumerate()
+    {
+        let local_id = resolution
+            .tables
+            .locals
+            .iter()
+            .find(|info| info.span == param.node.name.span)
+            .map(|info| info.id)
+            .ok_or(CodegenError::InvalidLocalBinding {
+                span: param.node.name.span,
+            })?;
+        let type_id = type_result
+            .local_types
+            .get(&local_id)
+            .copied()
+            .or_else(|| signature_types.and_then(|sig| sig.params.get(index).copied()))
+            .or_else(|| type_id_for_type(resolution, type_result, &param.node.ty))
+            .ok_or(CodegenError::MissingLocalType {
+                span: param.node.name.span,
+            })?;
+        let clif_ty =
+            map_type_id_to_clif(type_result, type_id).ok_or(CodegenError::UnsupportedNode {
+                span: param.node.name.span,
+                node: "function parameter type",
+            })?;
+        let var = builder.declare_var(clif_ty);
+        builder.def_var(var, value);
+        state.locals.insert(local_id, var);
+    }
+
+    let mut node_ctx = NodeLoweringContext {
+        resolution,
+        type_result,
+        codegen: ctx,
+        function_defs,
+        builder: &mut builder,
+        state: &mut state,
+        expected_return_type: return_type_id,
+    };
+
+    for statement in &def.node.body.node.statements {
+        lower_node(statement, &mut node_ctx)?;
+        if node_ctx.state.block_terminated {
+            break;
+        }
+    }
+
+    if !node_ctx.state.return_emitted {
+        if expects_return {
+            return Err(CodegenError::UnsupportedNode {
+                span: def.span,
+                node: "implicit non-unit return",
+            });
+        }
+        node_ctx.builder.ins().return_(&[]);
+    }
+
+    drop(node_ctx);
+    builder.finalize();
+
+    let receiver_item = match type_result.types.get(receiver_type_id) {
+        Some(TypeInfo::Named(item_id)) => *item_id,
+        Some(TypeInfo::Applied { base, .. }) => *base,
+        _ => {
+            return Err(CodegenError::UnsupportedNode {
+                span: def.node.receiver_type.span,
+                node: "method receiver item",
+            });
+        }
+    };
+    let receiver_name = resolution
+        .items
+        .iter()
+        .find(|info| info.id == receiver_item)
+        .map(|info| info.name.clone())
+        .ok_or(CodegenError::MissingSymbol("method receiver item"))?;
+    let function_name = mangle_method_name(&receiver_name, &def.node.name.node.name);
+
+    let flags = settings::Flags::new(settings::builder());
+    if let Err(err) = verify_function(&function, &flags) {
+        return Err(CodegenError::VerificationFailed {
+            function: function_name.clone(),
+            message: err.to_string(),
+        });
+    }
+
+    ctx.functions_emitted += 1;
+    ctx.lowered_functions.push(LoweredFunction {
+        name: function_name,
+        function,
+    });
+    Ok(())
+}
+
+pub(crate) fn mangle_method_name(receiver: &str, method: &str) -> String {
+    format!("__method__{receiver}__{method}")
 }
 
 pub(crate) fn mangle_function_name(base: &str, args: &[beskid_analysis::types::TypeId]) -> String {

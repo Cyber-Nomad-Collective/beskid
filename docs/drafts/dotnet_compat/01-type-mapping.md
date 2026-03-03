@@ -119,8 +119,8 @@ pub enum HttpStatus {
 }
 
 impl HttpStatus {
-    pub i32 ToI32(self: HttpStatus) {
-        return match self {
+    pub i32 ToI32() {
+        return match this {
             HttpStatus::Ok => 200,
             HttpStatus::NotFound => 404,
         };

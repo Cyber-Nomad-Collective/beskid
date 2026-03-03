@@ -156,6 +156,87 @@ impl<'a> TypeContext<'a> {
     }
 
     fn type_call_expression(&mut self, call: &Spanned<HirCallExpression>) -> Option<TypeId> {
+        if let HirExpressionNode::MemberExpression(member) = &call.node.callee.node {
+            let target_type = self.type_expression(&member.node.target)?;
+            let method_name = member.node.member.node.name.as_str();
+            let Some(method_item_id) = self.method_item_for_receiver(target_type, method_name) else {
+                self.errors
+                    .push(TypeError::UnknownCallTarget { span: call.node.callee.span });
+                return None;
+            };
+            let Some(signature) = self.function_signatures.get(&method_item_id).cloned() else {
+                self.errors
+                    .push(TypeError::UnknownCallTarget { span: call.node.callee.span });
+                return None;
+            };
+
+            if call.node.args.len() != signature.params.len() {
+                self.errors.push(TypeError::CallArityMismatch {
+                    span: call.span,
+                    expected: signature.params.len(),
+                    actual: call.node.args.len(),
+                });
+                return Some(signature.return_type);
+            }
+
+            for (arg, expected) in call.node.args.iter().zip(signature.params.iter()) {
+                if let Some(actual) = self.type_argument_with_expected(arg, *expected) {
+                    self.require_same_type(arg.span, *expected, actual);
+                }
+            }
+            return Some(signature.return_type);
+        }
+
+        if let HirExpressionNode::PathExpression(path_expr) = &call.node.callee.node
+            && path_expr.node.path.node.segments.len() >= 2
+        {
+            let method_name = path_expr
+                .node
+                .path
+                .node
+                .segments
+                .last()
+                .map(|segment| segment.node.name.node.name.clone())?;
+
+            let local_id = self
+                .resolution
+                .tables
+                .resolved_values
+                .get(&path_expr.node.path.span)
+                .and_then(|resolved| match resolved {
+                    ResolvedValue::Local(local_id) => Some(*local_id),
+                    _ => None,
+                });
+
+            if let Some(local_id) = local_id
+                && let Some(receiver_type) = self.local_types.get(&local_id).copied()
+                && let Some(method_item_id) =
+                    self.method_item_for_receiver(receiver_type, method_name.as_str())
+            {
+                let Some(signature) = self.function_signatures.get(&method_item_id).cloned() else {
+                    self.errors
+                        .push(TypeError::UnknownCallTarget { span: call.node.callee.span });
+                    return None;
+                };
+
+                if call.node.args.len() != signature.params.len() {
+                    self.errors.push(TypeError::CallArityMismatch {
+                        span: call.span,
+                        expected: signature.params.len(),
+                        actual: call.node.args.len(),
+                    });
+                    return Some(signature.return_type);
+                }
+
+                for (arg, expected) in call.node.args.iter().zip(signature.params.iter()) {
+                    if let Some(actual) = self.type_argument_with_expected(arg, *expected) {
+                        self.require_same_type(arg.span, *expected, actual);
+                    }
+                }
+                return Some(signature.return_type);
+            }
+        }
+
         let is_item_callee = match &call.node.callee.node {
             HirExpressionNode::PathExpression(path_expr) => matches!(
                 self.resolution
@@ -485,6 +566,16 @@ impl<'a> TypeContext<'a> {
 
     fn type_member_expression(&mut self, member: &Spanned<HirMemberExpression>) -> Option<TypeId> {
         let target_type = self.type_expression(&member.node.target)?;
+
+        if self
+            .method_item_for_receiver(target_type, member.node.member.node.name.as_str())
+            .is_some()
+        {
+            self.errors
+                .push(TypeError::UnknownValueType { span: member.span });
+            return None;
+        }
+
         let Some(item_id) = self.named_item_id(target_type) else {
             self.errors
                 .push(TypeError::InvalidMemberTarget { span: member.span });
@@ -776,16 +867,16 @@ impl<'a> TypeContext<'a> {
         path: &Spanned<HirPath>,
     ) -> Option<TypeId> {
         let segments = &path.node.segments;
-        let base_name = segments.first()?.node.name.node.name.clone();
         let field_name = segments.get(1)?.node.name.node.name.clone();
         let local_id = self
             .resolution
             .tables
-            .locals
-            .iter()
-            .rev()
-            .find(|info| info.name == base_name)
-            .map(|info| info.id);
+            .resolved_values
+            .get(&span)
+            .and_then(|resolved| match resolved {
+                ResolvedValue::Local(local_id) => Some(*local_id),
+                _ => None,
+            });
         let Some(local_id) = local_id else {
             self.errors.push(TypeError::UnknownValueType { span });
             return None;

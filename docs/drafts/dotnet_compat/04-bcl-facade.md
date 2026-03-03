@@ -189,8 +189,8 @@ pub type Button {
 }
 
 impl Button {
-    pub unit Click(self: mut Button) {
-        self.OnClick("clicked");
+    pub unit Click() {
+        this.OnClick("clicked");
     }
 }
 ```

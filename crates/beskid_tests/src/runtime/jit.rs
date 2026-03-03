@@ -225,3 +225,28 @@ fn jit_infers_lambda_parameter_type_from_named_function_argument() {
         "expected lambda parameter type inference from function argument"
     );
 }
+
+#[test]
+fn jit_executes_method_call_with_this_field_access() {
+    let source =
+        "type Counter { i64 value } i64 Counter.Get() { return this.value; } i64 main() { Counter c = Counter { value: 42 }; return c.Get(); }";
+    let mut engine = compile_jit(source);
+
+    let value = unsafe { run_main_i64(&mut engine) };
+    assert_eq!(
+        value, 42,
+        "expected method call to read receiver field via this"
+    );
+}
+
+#[test]
+fn jit_dispatches_same_method_name_by_receiver_type() {
+    let source = "type A { i64 value } type B { i64 value } i64 A.Get() { return this.value; } i64 B.Get() { return this.value + 1; } i64 main() { A a = A { value: 20 }; B b = B { value: 21 }; return a.Get() + b.Get(); }";
+    let mut engine = compile_jit(source);
+
+    let value = unsafe { run_main_i64(&mut engine) };
+    assert_eq!(
+        value, 42,
+        "expected receiver-specific method dispatch to call matching method body"
+    );
+}

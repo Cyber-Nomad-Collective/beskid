@@ -74,6 +74,17 @@ impl<'a> TypeContext<'a> {
         }
     }
 
+    pub(super) fn method_item_for_receiver(
+        &self,
+        receiver_type: TypeId,
+        method_name: &str,
+    ) -> Option<ItemId> {
+        let receiver_item = self.named_item_id(receiver_type)?;
+        self.methods_by_receiver
+            .get(&(receiver_item, method_name.to_string()))
+            .copied()
+    }
+
     pub(super) fn generic_mapping_for_type_id(&self, type_id: TypeId) -> HashMap<String, TypeId> {
         let Some(TypeInfo::Applied { base, args }) = self.type_table.get(type_id) else {
             return HashMap::new();
