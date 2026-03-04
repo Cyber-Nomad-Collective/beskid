@@ -119,7 +119,7 @@ BeskidType = { FunctionType | TypeReference | ArrayType | TypeName }
 // 4) DEFINITIONS
 ////////////////////////////////////////////////////////////
 FunctionDefinition = { Visibility? ~ BeskidType ~ Identifier ~ GenericParameters? ~ "(" ~ ParameterList? ~ ")" ~ Block }
-ReceiverType = { PrimitiveType | PathSegment }
+ReceiverType = { PrimitiveType | Path }
 ImplBlock = { "impl" ~ ReceiverType ~ "{" ~ ImplMethodDefinition* ~ "}" }
 ImplMethodDefinition = { Visibility? ~ BeskidType ~ Identifier ~ "(" ~ ParameterList? ~ ")" ~ Block }
 ParameterList = { Parameter ~ ("," ~ Parameter)* }

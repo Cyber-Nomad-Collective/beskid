@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/beskid_analysis", "crates/beskid_cli", "crates/beskid_tests", "crates/beskid_ast_derive", "crates/beskid_codegen", "crates/beskid_abi", "crates/beskid_runtime", "crates/beskid_engine", "crates/gc-arena", "crates/gc-arena/derive", "crates/beskid_lsp", "crates/beskid_aot", "crates/beskid_interop_tooling"]
+members = ["crates/beskid_analysis", "crates/beskid_cli", "crates/beskid_tests", "crates/beskid_ast_derive", "crates/beskid_codegen", "crates/beskid_abi", "crates/beskid_runtime", "crates/beskid_engine", "crates/gc-arena", "crates/gc-arena/derive", "crates/beskid_lsp", "crates/beskid_aot"]
 [workspace.dependencies]
 allocator-api2 = { version = "0.2", default-features = false, features = ["alloc"] }
 enum-map = { version = "2.7", default-features = false }

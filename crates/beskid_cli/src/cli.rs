@@ -2,15 +2,12 @@ use crate::commands::analyze::AnalyzeArgs;
 use crate::commands::build::BuildArgs;
 use crate::commands::clif::ClifArgs;
 use crate::commands::fetch::FetchArgs;
-use crate::commands::interop_command::InteropArgs;
 use crate::commands::lock::LockArgs;
 use crate::commands::parse::ParseArgs;
 use crate::commands::run::RunArgs;
 use crate::commands::tree::TreeArgs;
 use crate::commands::update::UpdateArgs;
-use crate::commands::{
-    analyze, build, clif, fetch, interop_command, lock, parse, run, tree, update,
-};
+use crate::commands::{analyze, build, clif, fetch, lock, parse, run, tree, update};
 use clap::{Parser, Subcommand};
 use std::env;
 
@@ -50,9 +47,6 @@ pub enum Commands {
 
     /// Update dependency resolution and materialized workspace
     Update(UpdateArgs),
-
-    /// Generate interop dispatch wrappers for stdlib source integration
-    Interop(InteropArgs),
 }
 
 pub fn run() -> anyhow::Result<()> {
@@ -71,6 +65,5 @@ pub fn run() -> anyhow::Result<()> {
         Commands::Fetch(args) => fetch::execute(args),
         Commands::Lock(args) => lock::execute(args),
         Commands::Update(args) => update::execute(args),
-        Commands::Interop(args) => interop_command::execute(args),
     }
 }

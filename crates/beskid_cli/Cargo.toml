@@ -8,7 +8,6 @@ beskid_aot = { path = "../beskid_aot" }
 beskid_analysis = { path = "../beskid_analysis" }
 beskid_codegen = { path = "../beskid_codegen" }
 beskid_engine = { path = "../beskid_engine" }
-beskid_interop_tooling = { path = "../beskid_interop_tooling" }
 anyhow = "1.0"
 clap = { version = "4.4", features = ["derive"] }
 env_logger = "0.11"

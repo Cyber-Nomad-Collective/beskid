@@ -3,13 +3,9 @@ use beskid_abi::{
     RUNTIME_EXPORT_SYMBOLS, SYM_INTEROP_DISPATCH_PTR, SYM_INTEROP_DISPATCH_UNIT,
     SYM_INTEROP_DISPATCH_USIZE,
 };
-use beskid_interop_tooling::extractor::parse_spec_file;
-use beskid_interop_tooling::generator::generate_runtime_source;
 use beskid_runtime::interop_generated::{
     TAG_STRING_LEN, dispatch_ptr, dispatch_unit, dispatch_usize,
 };
-use std::fs;
-use std::path::PathBuf;
 
 #[repr(C)]
 struct RuntimeInteropEnvelope {
@@ -32,24 +28,6 @@ fn runtime_exports_include_all_interop_dispatch_symbols() {
     assert!(
         RUNTIME_EXPORT_SYMBOLS.contains(&SYM_INTEROP_DISPATCH_PTR),
         "missing ptr interop dispatch symbol export"
-    );
-}
-
-#[test]
-fn generated_runtime_source_matches_checked_in_runtime_file() {
-    let runtime_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../beskid_runtime");
-    let spec_path = runtime_root.join("interop_spec/std.rs");
-    let runtime_generated_path = runtime_root.join("src/interop_generated.rs");
-
-    let mut decls = parse_spec_file(&spec_path).expect("parse runtime interop spec");
-    decls.sort();
-    let expected = generate_runtime_source(&decls);
-    let current =
-        fs::read_to_string(&runtime_generated_path).expect("read runtime generated source");
-
-    assert_eq!(
-        current, expected,
-        "runtime interop generated source is stale; run `pekan_cli interop`"
     );
 }
 
