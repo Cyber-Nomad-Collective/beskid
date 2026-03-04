@@ -5,6 +5,12 @@
 - Each block introduces a new scope.
 - `use` imports names into the current scope.
 
+## Path vs member resolution contract
+- `PathExpression` is for qualified symbol lookup (`module.item`, `alias.item`).
+- `MemberExpression` is receiver-based access (`expr.member`).
+- Resolver must not globally rewrite one shape into the other.
+- Module/visibility diagnostics originate from path resolution only.
+
 Scopes are lexical. Inner scopes can access names from outer scopes unless shadowed.
 
 ## Resolution order
@@ -56,6 +62,8 @@ use b.Parser as BParser;
 - `pub use` is allowed for re-exporting.
 - Ambiguous imports are compile-time errors (require aliasing).
 - Shadowing is allowed but produces a warning in v0.1.
+- Call semantics are resolved in typing, not by parser shape heuristics.
+- Name resolution must provide stable symbol identity for later call classification (`MethodDispatch`, `ItemCall`, `CallableValueCall`).
 
 Example (ambiguous import error):
 ```

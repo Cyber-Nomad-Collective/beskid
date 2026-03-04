@@ -4,16 +4,16 @@
 ```
 enum Result<T, E> {
     Ok(T),
-    Err(E),
+    Error(E),
 }
 ```
 
 `Result` represents recoverable failures that callers must handle explicitly.
 
 ## `?` Operator
-`?` propagates an error to the caller if the value is `Err`.
+`?` propagates an error to the caller if the value is `Error`.
 
-This is equivalent to early return on `Err`.
+This is equivalent to early return on `Error`.
 
 ## Decisions
 - Recoverable errors use `Result<T, E>`.
@@ -37,7 +37,7 @@ Example:
 Result<i32, string> parse_port(s: string) {
     let p = int.parse(s)?;
     if p < 1 || p > 65535 {
-        return Err("port out of range");
+        return Error("port out of range");
     }
     return Ok(p);
 }
@@ -49,7 +49,9 @@ Option<i32> maybe_port(s: string) {
     // explicit matching; `?` is only for Result in v0.1
     match int.parse(s) {
         Ok(v) => Some(v),
-        Err(_) => None,
+        Error(_) => None,
     }
 }
 ```
+
+Canonical stdlib API contract for `Result` is documented in `docs/standard-library/Core/Results.md`.

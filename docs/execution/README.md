@@ -1,20 +1,21 @@
 ---
-description: Execution docs index
+description: Execution spec index
 ---
 
-# Execution docs index
+# Execution specification index
 
-- [00-overview.md](00-overview.md)
-- [01-hir.md](01-hir.md)
-- [HIR/README.md](HIR/README.md)
-- [02-clif-lowering.md](02-clif-lowering.md)
-- [03-module-layer.md](03-module-layer.md)
-- [04-jit-execution.md](04-jit-execution.md)
-- [05-object-output.md](05-object-output.md)
-- [06-runtime-abi.md](06-runtime-abi.md)
-- [07-runtime-builtins.md](07-runtime-builtins.md)
-- [08-cfg-and-analysis.md](08-cfg-and-analysis.md)
-- [09-testing-and-clif-reader.md](09-testing-and-clif-reader.md)
-- [10-runtime-gc.md](10-runtime-gc.md)
-
-Cranelift reference notes live under `docs/execution/cranelift/`.
+- [HIR specification](hir.md)
+- [Type system](type-system.md)
+- [Type system examples](type-system-examples.md)
+- [CLIF lowering rules](clif-lowering.md)
+- [Name mangling](name-mangling.md)
+- [Error model](error-model.md)
+- [FFI and C ABI](ffi.md)
+- [Runtime & standard library specification](runtime.md)
+- [Runtime syscall ownership and ABI boundary](runtime-syscalls-and-abi.md)
+- [GC specification](gc.md)
+- [Object layout](object-layout.md)
+- [Write barrier policy](write-barriers.md)
+- [Execution stack responsibilities](structure.md)
+- [JIT backbone specification](jit.md)
+- [JIT and AOT execution model](jit-aot.md)

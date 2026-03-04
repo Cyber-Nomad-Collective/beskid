@@ -57,6 +57,24 @@ T first<T>(a: T, b: T) { return a; }
 let v = first<i32>(1, 2);
 ```
 
+## Function types and lambdas
+Function types use arrow syntax:
+```
+(T1, T2) -> TOut
+```
+
+Examples:
+```
+type Predicate = (i32) -> bool;
+type Mapper<TIn, TOut> = (TIn) -> TOut;
+```
+
+Lambda expressions are first-class values assignable to compatible function types.
+
+### Closure constraints (v0.1)
+- Detailed closure/capture semantics are defined in `docs/spec/17-lambdas-and-closures.md`.
+- This chapter defines function type syntax only.
+
 ## References
 `ref T` is an explicit read-only reference type:
 ```

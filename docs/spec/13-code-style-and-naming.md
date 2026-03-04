@@ -44,7 +44,7 @@ pub string FormatError(string errorCode) {
 }
 
 unit WriteLine(string text) {
-    Std.IO.Println(text);
+    IO.Println(text);
 }
 ```
 
@@ -52,9 +52,9 @@ unit WriteLine(string text) {
 Use `PascalCase` for namespace/module path segments.
 
 Examples:
-- `Std.IO`
-- `Std.Collections`
-- `Std.Hashing`
+- `IO`
+- `Collections`
+- `Hashing`
 
 Avoid mixed casing styles within a namespace chain.
 
@@ -77,7 +77,7 @@ Use C#-style names on disk as well (no `snake_case`):
 Examples:
 - `HttpClient.bd`
 - `StringBuilder.bd`
-- `Std/Collections/`
+- `Collections/`
 
 ## 13.4 Visibility and API hygiene
 
@@ -87,6 +87,7 @@ Examples:
 
 ## 13.5 Standard library naming policy
 
+- Do not use a mandatory `Std` namespace prefix for public APIs.
 - Public type names: `PascalCase`.
 - Public function and method names: `PascalCase`.
 - Public module segments: `PascalCase`.

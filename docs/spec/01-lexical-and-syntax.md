@@ -144,6 +144,9 @@ unit greet() {
 Beskid supports statically-typed first-class functions and lambda expressions.
 Function types are declared using the arrow syntax: `(T1, T2) -> TOut`.
 
+Semantic typing, inference, and closure/capture rules are defined in:
+- `docs/spec/17-lambdas-and-closures.md`
+
 Lambdas use the fat arrow `=>`.
 ```beskid
 // Type signature for a function that takes an i32 and returns a bool

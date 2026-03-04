@@ -18,10 +18,12 @@ Beskid is a statically typed language designed to teach compiler construction. I
 
 ## Out of scope (draft)
 - Generator model and broader metaprogramming scheduling remain in drafts.
-- Active draft: `docs/drafts/metaprogramming/08-metaprogramming.md`.
+- Active draft: `docs/guides/drafts/metaprogramming/08-metaprogramming.md`.
 
 ## Documentation
-- Specification lives in `docs/spec`.
-- Each topic is documented in its own file.
+- `docs/spec` — language semantics and typing rules (normative).
+- `docs/execution` — runtime, ABI, lowering, and backend contracts (normative).
+- `docs/standard-library` — standard library contracts (normative).
+- `docs/guides` — drafts, tooling notes, and project workflow guides (informative).
 
-See: `docs/spec/README.md`.
+See: `docs/spec/README.md`, `docs/execution/README.md`, `docs/standard-library/README.md`.

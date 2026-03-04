@@ -37,7 +37,20 @@ while i < 3 {
 ```
 
 ## For (v0.1)
-Range-only:
+General form:
+```
+for item in expression {
+    ...
+}
+```
+
+### Iterator contract
+- `expression` must evaluate to an iterator-capable value.
+- Iterator-capable means a resolvable `Next()` method returning `Option<T>`.
+- Loop variable type is inferred from `Option<T>::Some(T)` item type.
+
+### Range compatibility fast-path
+`range(a, b)` remains supported and keeps its existing behavior:
 ```
 for i in range(0, 10) {
     ...
@@ -45,6 +58,10 @@ for i in range(0, 10) {
 ```
 
 `range(a, b)` iterates from `a` (inclusive) to `b` (exclusive).
+
+### Lowering model
+- Range expressions may lower through a dedicated numeric fast-path.
+- General iterator form lowers to repeated `Next()` calls and loop termination on `None`.
 
 Example:
 ```

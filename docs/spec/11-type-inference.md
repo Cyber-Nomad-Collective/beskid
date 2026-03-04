@@ -11,6 +11,8 @@ Inference never crosses module boundaries. Public signatures are always explicit
 - Function parameters require explicit types.
 - Function return types must be explicit.
 - Use `unit` for functions that do not return a value.
+- Lambda inference behavior is defined in `docs/spec/17-lambdas-and-closures.md`.
+- `for item in expr` infers `item` from iterator `Next() -> Option<T>` item type.
 
 Examples:
 ```

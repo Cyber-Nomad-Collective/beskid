@@ -16,20 +16,22 @@ This document freezes the execution contract between lowering, runtime, JIT, and
    - JIT symbol binding and AOT linker/runtime bridge resolve the same runtime symbol surface.
    - Runtime exports are defined by `beskid_abi::RUNTIME_EXPORT_SYMBOLS`.
 
-3. **Interop dispatch contract parity**
-   - Interop uses generated tag constants and generated dispatch routing only.
-   - Return-group routing is fixed to:
-     - `unit` -> `interop_dispatch_unit`
-     - `usize` -> `interop_dispatch_usize`
-     - `ptr` -> `interop_dispatch_ptr`
+3. **Runtime-mediated platform execution**
+   - Platform-specific execution policy (syscalls/OS APIs/blocking behavior) is owned by `beskid_runtime`.
+   - JIT and AOT must not implement backend-specific syscall policy.
+   - Compiler lowering may target runtime ABI entrypoints only for runtime/system functionality.
 
 4. **Single ABI boundary**
    - Runtime entrypoints are exposed through stable C ABI symbols.
    - AOT and JIT must not introduce backend-only ABI hooks.
 
-5. **Generated dispatch ownership**
-   - `crates/beskid_runtime/src/interop_generated.rs` is generated from `crates/beskid_runtime/interop_spec`.
-   - Manual edits to generated dispatch artifacts are forbidden.
+5. **Interop dispatch scope**
+   - Runtime interop dispatch symbols remain ABI-level runtime exports.
+   - Interop dispatch is for language/runtime interop boundaries, not a required stdlib generation workflow.
+   - Return-group routing remains fixed to:
+     - `unit` -> `interop_dispatch_unit`
+     - `usize` -> `interop_dispatch_usize`
+     - `ptr` -> `interop_dispatch_ptr`
 
 6. **Versioned ABI compatibility**
    - ABI compatibility is controlled by `BESKID_RUNTIME_ABI_VERSION`.
@@ -42,13 +44,14 @@ This document freezes the execution contract between lowering, runtime, JIT, and
 
 The following checks are mandatory and CI-gated:
 
-1. Interop freshness: `pekan_cli interop --check`
-2. ABI contracts: symbol allowlist + ABI version checks
-3. Dispatch contracts: generated runtime exact-match + return-group routing tests
-4. JIT/AOT parity suite
+1. ABI contracts: runtime symbol allowlist + ABI version checks
+2. JIT/AOT import parity: both backends resolve the same runtime symbol surface
+3. Runtime dispatch contracts: return-group routing and dispatch behavior tests
+4. JIT/AOT execution parity suite for runtime ABI calls
+5. Architecture policy checks: no backend-specific platform execution policy in JIT/AOT
 
 ## Operator workflow
 
-- Regenerate interop artifacts: `cargo run -p beskid_cli -- interop`
-- Verify contract freshness: `cargo run -p beskid_cli -- interop --check`
-- Run stabilization tests: `cargo test -p beskid_tests`
+- Validate architecture and ABI contracts: `cargo test -p beskid_tests`
+- Verify runtime ABI symbol and dispatch parity in CI
+- Keep runtime as the only platform policy owner during refactors

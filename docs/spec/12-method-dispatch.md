@@ -1,9 +1,9 @@
-# 12. Method Dispatch & Events
+# 12. Method Dispatch
 
 ## Model (v0.1)
 - Static dispatch for concrete types.
 - Dynamic dispatch only via `contract` values.
-- Zero-cost static unrolling for `event` multicasts.
+- Strict impl-only method declaration form (legacy receiver-qualified declarations are invalid).
 
 Static dispatch resolves calls at compile time. Dynamic dispatch uses a vtable when a value is typed as a contract.
 
@@ -16,6 +16,19 @@ impl T {
 ```
 
 Inside an `impl T` block, the receiver is implicit as `this`.
+
+### Strict impl-only rule
+- Method declarations must appear only inside `impl T { ... }`.
+- Explicit receiver parameters (`self`, `this: T`, etc.) are invalid in v0.1.
+- Legacy receiver-qualified method declaration syntax is rejected.
+
+### Typed call classification contract
+Every successful call expression must resolve to exactly one semantic call kind:
+1. `MethodDispatch` (receiver + resolved method item)
+2. `ItemCall` (resolved function/item/builtin)
+3. `CallableValueCall` (function-typed expression value)
+
+Lowering must dispatch from this semantic classification and must not infer method-vs-item behavior from parser shape.
 
 Example:
 ```
@@ -46,47 +59,10 @@ unit render(d: Draw) {
 }
 ```
 
-## Zero-Cost Events and Delegates
-Beskid provides C#-style `event` and `delegate` (lambda) semantics, but guarantees zero-cost execution (no heap allocations or vtable dispatches). This is achieved by lowering events directly into the HIR (High-level IR) as small inline arrays.
-
-### Syntax
-The `event` keyword is a field modifier. It allows a type to declare a multicast subscription point. To guarantee no heap allocations, the developer can explicitly declare the inline capacity using `event[N]`.
-
-```beskid
-type Window {
-    // Declares an event with an inline capacity of 4 subscribers.
-    pub event[4] OnResize: (i32, i32) -> unit,
-}
-
-impl Window {
-    pub unit Init() {
-        // Subscribers use the += operator
-        this.OnResize += (w, h) => println("Resized");
-    }
-
-    unit Trigger() {
-        // Only the owner can invoke the event
-        this.OnResize(1920, 1080);
-    }
-}
-```
-
-### HIR Lowering and Compilation Stack
-Events do not exist as standard library types (`Std.Event<T>`). Instead, the `beskid_analysis::hir` lowering phase completely expands them into raw structural primitives.
-
-1. **Fat Pointers:** A lambda `(T) -> U` is lowered into a 16-byte value type (Fat Pointer) containing `(*mut Environment, *const Function)`. Captures are stack-allocated.
-2. **Inline Arrays:** The AST node `event[4] OnResize: (i32) -> unit` is lowered into two HIR fields injected directly into the `Window` struct:
-   - `__OnResize_count: u8`
-   - `__OnResize_handlers: [FatPointer; 4]`
-3. **Loop Unrolling:** When the frontend lowers the invocation `this.OnResize(w, h)` into HIR, it does not emit a dynamic `foreach` loop. It emits an explicit block of sequential conditionals:
-   ```rust
-   // HIR representation of event invocation
-   if this.__OnResize_count > 0 { invoke(this.__OnResize_handlers[0], w, h); }
-   if this.__OnResize_count > 1 { invoke(this.__OnResize_handlers[1], w, h); }
-   // ... up to N
-   ```
-
-Because this is lowered directly into the HIR, the Cranelift backend receives perfectly flat, static branch code, resulting in execution times identical to raw C function pointers.
+## Related feature ownership
+- Event declaration/subscription/invocation semantics are defined in `docs/spec/16-events.md`.
+- Lambda and closure semantics are defined in `docs/spec/17-lambdas-and-closures.md`.
+- Lowering/runtime details belong to `docs/execution/`.
 
 ## Decisions
 - Method overloading is allowed.
@@ -94,6 +70,7 @@ Because this is lowered directly into the HIR, the Cranelift backend receives pe
 - Methods with `ref` receivers do not satisfy contract method sets in v0.1.
 - Contract satisfaction is nominal in v0.1 (explicit declaration required; no duck typing).
 - Dotted path lookup uses the resolved alias target, then normal resolution rules.
+- Codegen method dispatch must have a single lowering path per resolved method call kind.
 
 ## Examples
 ```
