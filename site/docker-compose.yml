@@ -1,7 +1,7 @@
 services:
   website:
     build:
-      context: ..
+      context: .
       dockerfile: website/Dockerfile
     restart: unless-stopped
     expose:

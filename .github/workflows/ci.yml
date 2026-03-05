@@ -2,7 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
+    tags:
+      - 'v*'
   pull_request:
 
 jobs:
@@ -15,33 +17,128 @@ jobs:
       - name: Cargo check workspace
         run: cargo check --workspace
 
-  interop-freshness:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - name: Interop generated artifacts are fresh
-        run: cargo run -p pekan_cli -- interop --check
+      - name: Tests
+        run: cargo test -p beskid_tests 
 
-  abi-dispatch-parity:
+  version:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-      - name: ABI contract tests
-        run: "cargo test -p beskid_tests abi::contracts::"
-      - name: Interop dispatch contract tests
-        run: "cargo test -p beskid_tests interop::dispatch::"
-      - name: JIT/AOT parity tests
-        run: "cargo test -p beskid_tests runtime::parity::"
 
-  aot-artifact-smoke:
-    runs-on: ubuntu-latest
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cargo-bump
+        run: cargo install cargo-bump
+
+      - name: Set version from tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          cd crates/beskid_cli
+          cargo bump "$VERSION"
+          cd ../..
+
+      - name: Bump patch version
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          cd crates/beskid_cli
+          cargo bump patch
+          cd ../..
+
+      - name: Read version
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(python - <<'PY'
+          import tomllib
+          with open('crates/beskid_cli/Cargo.toml', 'rb') as f:
+              data = tomllib.load(f)
+          print(data['package']['version'])
+          PY
+          )
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+  release-cli:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    needs: version
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            asset_name: beskid-linux-amd64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            asset_name: beskid-darwin-arm64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            asset_name: beskid-windows-amd64.exe
+    env:
+      SEAWEEDFS_ENDPOINT: https://cdn.beskid-lang.org
     steps:
       - uses: actions/checkout@v4
+
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
       - uses: Swatinem/rust-cache@v2
-      - name: AOT linked runtime symbol smoke test
-        run: cargo test -p beskid_tests static_build_contains_required_runtime_symbols
+
+      - name: Install cargo-bump
+        run: cargo install cargo-bump
+
+      - name: Apply version
+        shell: bash
+        run: |
+          cd crates/beskid_cli
+          cargo bump "${{ needs.version.outputs.version }}"
+          cd ../..
+
+      - name: Build CLI
+        run: cargo build -p beskid_cli --release --target ${{ matrix.target }}
+
+      - name: Rename binary
+        shell: bash
+        run: |
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            mv target/${{ matrix.target }}/release/beskid_cli.exe ${{ matrix.asset_name }}
+          else
+            mv target/${{ matrix.target }}/release/beskid_cli ${{ matrix.asset_name }}
+          fi
+
+      - name: Upload to SeaweedFS (versioned)
+        uses: Noelware/s3-action@2
+        with:
+          access-key-id: ${{ secrets.SEAWEEDFS_ACCESS_KEY }}
+          secret-key: ${{ secrets.SEAWEEDFS_SECRET_KEY }}
+          endpoint: ${{ env.SEAWEEDFS_ENDPOINT }}
+          region: us-east-1
+          bucket: releases
+          prefix: /releases/${{ needs.version.outputs.version }}
+          files: |
+            ${{ matrix.asset_name }}
+
+      - name: Upload to SeaweedFS (latest)
+        uses: Noelware/s3-action@2
+        with:
+          access-key-id: ${{ secrets.SEAWEEDFS_ACCESS_KEY }}
+          secret-key: ${{ secrets.SEAWEEDFS_SECRET_KEY }}
+          endpoint: ${{ env.SEAWEEDFS_ENDPOINT }}
+          region: us-east-1
+          bucket: releases
+          prefix: /releases/latest
+          files: |
+            ${{ matrix.asset_name }}
