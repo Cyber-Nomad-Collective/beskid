@@ -1,0 +1,46 @@
+---
+title: Beskid Documentation
+description: Language specification, execution model, and standard library contracts for Beskid.
+template: splash
+hero:
+  tagline: A statically typed language focused on readable semantics and compiler architecture.
+  image:
+    alt: Beskid logo
+    file: ../../assets/beskid_logo.svg
+  actions:
+    - text: Read the Language Spec
+      link: /spec/
+      icon: right-arrow
+      variant: primary
+    - text: Explore Execution Contracts
+      link: /execution/
+      icon: right-arrow
+      variant: secondary
+    - text: Standard Library
+      link: /standard-library/
+      icon: right-arrow
+      variant: secondary
+    - text: Guides
+      link: /guides/
+      icon: right-arrow
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Documentation map
+
+<CardGrid stagger>
+	<Card title="Language specification" icon="open-book">
+		Canonical language semantics, typing, control flow, modules, contracts, events, lambdas, and extern model.
+	</Card>
+	<Card title="Execution model" icon="setting">
+		HIR, CLIF lowering, ABI contracts, runtime/syscall ownership, and backend parity rules.
+	</Card>
+	<Card title="Standard library" icon="pencil">
+		Core, Collections, Query, and System API contracts with stable naming and boundary policy.
+	</Card>
+	<Card title="Guides and drafts" icon="add-document">
+		Implementation notes, analysis guides, and work-in-progress design docs.
+	</Card>
+</CardGrid>

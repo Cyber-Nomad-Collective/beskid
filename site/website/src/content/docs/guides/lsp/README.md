@@ -1,16 +1,16 @@
 ---
+title: "Beskid LSP Docs"
 description: Beskid LSP documentation index and scope map
 ---
 
-# Beskid LSP Docs
 
-This directory defines the architecture, protocol contract, and delivery plan for the Beskid language server using `tower-lsp-server`.
+This directory defines the architecture and protocol contract for the Beskid language server using `tower-lsp-server`.
 
 ## Document layout
 
 1. `architecture-and-protocol-spec.md`
    - Product vision and scope
-   - LSP capability matrix (MVP and follow-up)
+   - LSP capability matrix (baseline and extended)
    - Server architecture and crate/module boundaries
    - Compiler/analyzer integration contracts
    - Data model, concurrency, and cancellation strategy
@@ -30,7 +30,7 @@ This directory defines the architecture, protocol contract, and delivery plan fo
 - **Stable diagnostics:** deterministic outputs with stable codes and consistent ranges.
 - **DRY + SOLID boundaries:** protocol adapters in LSP crate, language intelligence in analysis crates.
 
-## Initial target feature set
+## Baseline feature set
 
 - Lifecycle: initialize/initialized/shutdown/exit
 - Text synchronization: open/change/save/close
@@ -39,7 +39,7 @@ This directory defines the architecture, protocol contract, and delivery plan fo
 - Hover
 - Go to definition
 
-## Follow-up feature set
+## Extended feature set
 
 - Completion
 - References
@@ -52,7 +52,7 @@ This directory defines the architecture, protocol contract, and delivery plan fo
 
 - Runtime mode: **stdio-only** LSP server (no extra CLI subcommands for now).
 - Baseline dependencies: `tokio`, `tower-lsp-server`, `tracing`.
-- MVP capability scope: diagnostics, hover, document symbols, go-to-definition.
+- Baseline capability scope: diagnostics, hover, document symbols, go-to-definition.
 - Text sync strategy: start with `TextDocumentSyncKind::FULL` and evolve to incremental later.
 
 ## Ownership and evolution
@@ -60,5 +60,5 @@ This directory defines the architecture, protocol contract, and delivery plan fo
 - This documentation is the contract for LSP implementation work.
 - Any capability addition should update:
   1. the architecture/spec file,
-  2. the implementation plan,
+  2. the capability matrix in this index,
   3. the testing/observability expectations.

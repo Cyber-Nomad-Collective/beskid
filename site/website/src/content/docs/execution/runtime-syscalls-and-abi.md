@@ -1,8 +1,8 @@
 ---
+title: "Runtime syscall ownership and ABI boundary contract"
 description: Runtime syscall ownership and ABI boundary contract
 ---
 
-# Runtime syscall ownership and ABI boundary contract
 
 ## Purpose
 Define execution-level ownership for runtime ABI entrypoints, platform syscalls, and backend neutrality.

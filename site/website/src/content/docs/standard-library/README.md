@@ -1,4 +1,7 @@
-# Standard Library Specification
+---
+title: "Standard Library Specification"
+---
+
 
 This directory is the canonical home for standard library design and API contracts.
 

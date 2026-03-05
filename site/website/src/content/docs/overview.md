@@ -1,4 +1,7 @@
-# Beskid Language
+---
+title: "Beskid Language"
+---
+
 
 Beskid is a statically typed language designed to teach compiler construction. It draws inspiration from Rust (safety and explicit aliasing) and C# (readability). In v0.1, the priority is semantic clarity and a compact specification.
 

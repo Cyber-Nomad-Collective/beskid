@@ -1,8 +1,8 @@
 ---
+title: "Project Resolution"
 description: Beskid Project Resolution (HCL)
 ---
 
-# Project Resolution
 
 This document defines how module paths are resolved, how the project graph is built from `Project.proj`, and how imports are validated.
 

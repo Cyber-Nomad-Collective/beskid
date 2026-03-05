@@ -1,0 +1,6 @@
+**/node_modules
+**/.astro
+**/dist
+**/.DS_Store
+**/.env
+cdn/

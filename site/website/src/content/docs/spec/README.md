@@ -1,4 +1,7 @@
-# Beskid Specification
+---
+title: "Beskid Specification"
+---
+
 
 Document index:
 - glossary-and-conformance.md
