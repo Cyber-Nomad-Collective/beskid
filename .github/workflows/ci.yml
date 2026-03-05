@@ -60,7 +60,7 @@ jobs:
         id: version
         shell: bash
         run: |
-          VERSION=$(python - <<'PY'
+          VERSION=$(python3 - <<'PY'
           import tomllib
           with open('crates/beskid_cli/Cargo.toml', 'rb') as f:
               data = tomllib.load(f)
