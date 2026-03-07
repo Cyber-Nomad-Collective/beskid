@@ -1,9 +1,0 @@
-project {
-  name = "Std"
-  version = "0.1.0"
-}
-
-target "StdLib" {
-  kind = "Lib"
-  entry = "Prelude.bd"
-}

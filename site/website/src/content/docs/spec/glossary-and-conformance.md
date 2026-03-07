@@ -18,7 +18,7 @@ Normative documents use these terms:
 - Lambda/closure semantics: `docs/spec/lambdas-and-closures.md`.
 - Event semantics: `docs/spec/events.md`.
 - FFI/Extern language contract: `docs/spec/ffi-and-extern.md`.
-- Runtime ABI/syscall ownership: `docs/execution/runtime-syscalls-and-abi.md`.
+- Runtime ABI/syscall ownership: `docs/execution/runtime/syscalls-and-abi-boundary.md`.
 - Standard library API contracts: `docs/standard-library/`.
 
 ## Distinct feature rule

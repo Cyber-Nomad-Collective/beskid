@@ -13,7 +13,7 @@ enum Option<T> {
     None,
 }
 
-User make_user(id: i32, name: string) {
+User make_user(i32 id, string name) {
     return User { id: id, name: name };
 }
 

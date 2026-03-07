@@ -11,7 +11,7 @@ Contract conformance is nominal in v0.1: a type satisfies a contract only when i
 ## Declaration
 ```
 contract Reader {
-    Result<i32, Error> read(p: u8[]);
+    Result<i32, Error> read(u8[] p);
 }
 ```
 
@@ -22,7 +22,7 @@ type File : Reader {
 }
 
 impl File {
-    Result<i32, Error> read(p: u8[]) { ... }
+    Result<i32, Error> read(u8[] p) { ... }
 }
 ```
 
@@ -30,14 +30,14 @@ impl File {
 
 Example call:
 ```
-Result<i32, Error> read_all(r: Reader) {
+Result<i32, Error> read_all(Reader r) {
     return r.read([]);
 }
 ```
 
 ## Usage
 ```
-Result<i32, Error> copy(r: Reader, w: Writer) { ... }
+Result<i32, Error> copy(Reader r, Writer w) { ... }
 ```
 
 Passing a concrete type where a contract is expected requires an explicit declaration:
@@ -47,16 +47,16 @@ type Socket : Reader, Writer {
 }
 
 impl Socket {
-    Result<i32, Error> read(p: u8[]) { ... }
-    Result<i32, Error> write(p: u8[]) { ... }
+    Result<i32, Error> read(u8[] p) { ... }
+    Result<i32, Error> write(u8[] p) { ... }
 }
 ```
 
 ## Composition
 Contracts can embed other contracts:
 ```
-contract Reader { Result<i32, Error> read(p: u8[]); }
-contract Writer { Result<i32, Error> write(p: u8[]); }
+contract Reader { Result<i32, Error> read(u8[] p); }
+contract Writer { Result<i32, Error> write(u8[] p); }
 
 contract ReadWriter {
     Reader
@@ -66,7 +66,7 @@ contract ReadWriter {
 
 Example:
 ```
-Result<i32, Error> copy_all(rw: ReadWriter) { ... }
+Result<i32, Error> copy_all(ReadWriter rw) { ... }
 ```
 
 ## Method sets

@@ -28,9 +28,9 @@ string make() {
 
 ## Ref/Out parameters
 ```
-i32 len(ref s: string) { return s.len(); }
+i32 len(ref string s) { return s.len(); }
 
-Result<(), string> parse_port(out port: i32) {
+Result<(), string> parse_port(out i32 port) {
     port = 8080;
     return Ok(());
 }
@@ -44,7 +44,7 @@ parse_port(out port)?;
 
 ## Example
 ```
-i32 len(s: ref string) {
+i32 len(ref string s) {
     return s.len();
 }
 ```

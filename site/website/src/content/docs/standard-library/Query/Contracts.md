@@ -1,18 +1,18 @@
 ---
-title: "Query.Contracts"
+title: "IteratorQuery.Contracts"
 ---
 
 
 ## Purpose
-Define core query contracts used by pipelines and `for in` lowering.
+Define core iterator contracts used by the `IteratorQuery` feature, including pipelines and `for in` lowering.
 
 ## Core contract
 ```beskid
-pub contract QuerySource<T> {
+pub contract Iterator<T> {
     Option<T> Next();
 }
 ```
 
 ## Notes
-- `for item in expr` consumes query-capable values through `Next()`.
+- `for item in expr` consumes iterator-capable values through `Next()`.
 - Contract remains backend-neutral and monomorphization-friendly.

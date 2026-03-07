@@ -58,7 +58,7 @@ For MVP, start with:
 ## 14.5 Runtime boundary policy
 
 - Public stdlib APIs remain stable while runtime internals evolve.
-- Runtime ABI/syscall ownership and backend parity are defined in `docs/execution/runtime-syscalls-and-abi.md`.
+- Runtime ABI/syscall ownership and backend parity are defined in `docs/execution/runtime/syscalls-and-abi-boundary.md`.
 - Language-level `Extern` syntax and typing are defined in `docs/spec/ffi-and-extern.md`.
 
 ## 14.6 Versioning and compatibility

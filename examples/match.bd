@@ -3,7 +3,7 @@ enum Option<T> {
     None,
 }
 
-string describe(opt: Option<string>) {
+string describe(Option<string> opt) {
     return match opt {
         Option::Some(value) => value,
         Option::None => "none",

@@ -57,7 +57,7 @@ impl Circle {
     unit draw() { ... }
 }
 
-unit render(d: Draw) {
+unit render(Draw d) {
     d.draw(); // dynamic dispatch
 }
 ```

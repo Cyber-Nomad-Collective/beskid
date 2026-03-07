@@ -45,7 +45,7 @@ let n = u.name;
 ## Generics (v0.1)
 Allowed for functions and types:
 ```
-T id<T>(x: T) { return x; }
+T id<T>(T x) { return x; }
 ```
 
 Generic type usage:
@@ -56,7 +56,7 @@ Option<i32> x = ...;
 
 Example:
 ```
-T first<T>(a: T, b: T) { return a; }
+T first<T>(T a, T b) { return a; }
 let v = first<i32>(1, 2);
 ```
 
@@ -81,12 +81,12 @@ Lambda expressions are first-class values assignable to compatible function type
 ## References
 `ref T` is an explicit read-only reference type:
 ```
-i32 len(s: ref string) { return s.len(); }
+i32 len(ref string s) { return s.len(); }
 ```
 
 Example:
 ```
-unit show(ref s: string) {
+unit show(ref string s) {
     println(s);
 }
 ```
@@ -96,7 +96,7 @@ unit show(ref s: string) {
 
 Example:
 ```
-i32 sum(values: i32[]) {
+i32 sum(i32[] values) {
     i32 mut total = 0;
     for i in range(0, values.len()) { total = total + values[i]; }
     return total;
@@ -125,7 +125,7 @@ enum Option<T> {
 
 Example:
 ```
-Option<i32> maybe_len(s: string) {
+Option<i32> maybe_len(string s) {
     if s.len() > 0 { return Some(s.len()); }
     return None;
 }

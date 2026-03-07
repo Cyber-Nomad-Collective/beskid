@@ -12,7 +12,7 @@ Lambdas use `=>` and are first-class callable values.
 Examples:
 ```beskid
 let isEven = x => x % 2 == 0;
-let add = (x: i32, y: i32) => x + y;
+let add = (i32 x, i32 y) => x + y;
 let f = x => {
     IO.Println(x.ToString());
     return x;

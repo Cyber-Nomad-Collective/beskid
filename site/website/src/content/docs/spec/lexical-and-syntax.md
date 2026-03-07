@@ -159,7 +159,7 @@ type Predicate = (i32) -> bool;
 let isEven = x => x % 2 == 0;
 
 // Lambda with explicit parameter types
-let add = (x: i32, y: i32) => x + y;
+let add = (i32 x, i32 y) => x + y;
 
 // Lambda with a block body
 let printAndReturn = x => {
@@ -167,3 +167,5 @@ let printAndReturn = x => {
     return x;
 };
 ```
+
+Parameter declarations use `Type name` ordering in all contexts.

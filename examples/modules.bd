@@ -5,6 +5,6 @@ type ClientConfig {
     string endpoint,
 }
 
-Client make_client(config: ClientConfig) {
+Client make_client(ClientConfig config) {
     return Client { config: config };
 }

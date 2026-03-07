@@ -21,9 +21,9 @@ Examples:
 ```
 let count = 1; // i32
 
-i32 add(a: i32, b: i32) { return a + b; }
+i32 add(i32 a, i32 b) { return a + b; }
 
-i32 local_sum(a: i32, b: i32) { // private; return type explicit
+i32 local_sum(i32 a, i32 b) { // private; return type explicit
     return a + b;
 }
 ```
@@ -33,7 +33,7 @@ i32 local_sum(a: i32, b: i32) { // private; return type explicit
 
 ## Example
 ```
-T id<T>(x: T) { return x; }
+T id<T>(T x) { return x; }
 
 let a = id<i32>(5); // required in v0.1
 ```

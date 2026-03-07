@@ -16,7 +16,7 @@ Enums group related variants under a single type. Variants may carry data or be 
 
 ## Match
 ```
-f64 area(s: Shape) {
+f64 area(Shape s) {
     match s {
         Shape::Circle(r) => 3.14159 * r * r,
         Shape::Rect(w, h) => w * h,

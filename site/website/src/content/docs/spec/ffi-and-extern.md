@@ -5,7 +5,7 @@ title: "FFI and Extern"
 
 ## Scope
 This document defines the language-level contract for external bindings.
-Runtime ownership and syscall policy are specified in `docs/execution/runtime-syscalls-and-abi.md`.
+Runtime ownership and syscall policy are specified in `docs/execution/runtime/syscalls-and-abi-boundary.md`.
 
 ## 18.1 Extern declaration model
 Extern bindings are expressed using the `Extern` attribute.
