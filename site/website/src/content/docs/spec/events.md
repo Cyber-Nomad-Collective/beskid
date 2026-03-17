@@ -7,17 +7,19 @@ title: "Events (Zero-Cost Multicast)"
 Events provide multicast subscription with static, allocation-aware lowering.
 
 ## 16.1 Declaration form
-Events are declared as type fields with explicit inline capacity.
+Events are declared as type fields with an optional inline capacity.
 
 ```beskid
 type Window {
-    pub event[4] OnResize: (i32, i32) -> unit,
+    event{4} OnResize(i32 width, i32 height)
+    event OnFocus()
 }
 ```
 
 Rules:
-- `event[N]` requires a compile-time positive capacity,
-- event signature is a function type,
+- `event{N}` uses explicit compile-time positive capacity,
+- `event` without `{N}` uses the default event capacity,
+- event signature is declared as parameter list after the event name,
 - event members are part of type layout via lowering expansion.
 
 ## 16.2 Subscription model

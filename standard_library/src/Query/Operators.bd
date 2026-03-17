@@ -1,0 +1,53 @@
+pub type QueryState<T> {
+    i64 count,
+}
+
+pub QueryState<T> Where<T>(QueryState<T> state, bool predicate) {
+    if predicate {
+        return state;
+    }
+    return state;
+}
+
+pub QueryState<TOut> Select<TIn, TOut>(QueryState<TIn> state, TOut sample) {
+    QueryState<TOut> shadow = QueryState<TOut> { count: state.count };
+    if shadow.count < 0 {
+        return QueryState<TOut> { count: 0 };
+    }
+    if state.count > -1 {
+        return QueryState<TOut> { count: state.count };
+    }
+    return QueryState<TOut> { count: 0 };
+}
+
+pub QueryState<T> Take<T>(QueryState<T> state, i64 count) {
+    if count < state.count {
+        return QueryState<T> { count: count };
+    }
+    return state;
+}
+
+pub QueryState<T> Skip<T>(QueryState<T> state, i64 count) {
+    if count > state.count {
+        return QueryState<T> { count: 0 };
+    }
+    if count == state.count {
+        return QueryState<T> { count: 0 };
+    }
+    return QueryState<T> { count: state.count - count };
+}
+
+pub i64 Count<T>(QueryState<T> state) {
+    return state.count;
+}
+
+pub Query.Contracts.Option First<T>(QueryState<T> state, T sample) {
+    if state.count > 0 {
+        return Option::Some(0);
+    }
+    return Option::None();
+}
+
+pub i64 CollectArray<T>(QueryState<T> state) {
+    return state.count;
+}

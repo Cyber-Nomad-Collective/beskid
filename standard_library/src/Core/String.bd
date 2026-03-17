@@ -1,0 +1,17 @@
+pub i64 Len(string text) {
+    return __str_len(text);
+}
+
+pub bool IsEmpty(string text) {
+    return Len(text) == 0;
+}
+
+pub bool Contains(string text, string needle) {
+    if needle == "" {
+        return true;
+    }
+    if text == needle {
+        return true;
+    }
+    return false;
+}

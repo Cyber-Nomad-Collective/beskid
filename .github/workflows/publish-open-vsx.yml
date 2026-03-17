@@ -1,0 +1,83 @@
+name: Publish VS Code Extension to Open VSX
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: open-vsx-publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish (${{ matrix.label }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            label: linux-x64
+            platform: linux-x64
+            bin_name: beskid_lsp
+          - os: macos-13
+            label: darwin-x64
+            platform: darwin-x64
+            bin_name: beskid_lsp
+          - os: windows-2022
+            label: win32-x64
+            platform: win32-x64
+            bin_name: beskid_lsp.exe
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build host LSP binary
+        working-directory: compiler
+        run: cargo build -p beskid_lsp --release
+
+      - name: Bundle host LSP binary into extension package
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "beskid_vscode/server/${{ matrix.platform }}"
+          cp "compiler/target/release/${{ matrix.bin_name }}" "beskid_vscode/server/${{ matrix.platform }}/${{ matrix.bin_name }}"
+          if [ "${{ matrix.platform }}" != "win32-x64" ]; then
+            chmod +x "beskid_vscode/server/${{ matrix.platform }}/${{ matrix.bin_name }}"
+          fi
+
+      - name: Install extension dependencies
+        working-directory: beskid_vscode
+        run: bun install --frozen-lockfile
+
+      - name: Build extension
+        working-directory: beskid_vscode
+        run: bun run build
+
+      - name: Package target-specific VSIX
+        working-directory: beskid_vscode
+        run: |
+          mkdir -p dist
+          bunx @vscode/vsce package --target "${{ matrix.platform }}" --out "dist/beskid-${{ matrix.platform }}.vsix"
+
+      - name: Publish to Open VSX
+        working-directory: beskid_vscode
+        env:
+          OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
+        run: |
+          if [ -z "${OVSX_TOKEN}" ]; then
+            echo "Missing required secret: OVSX_TOKEN"
+            exit 1
+          fi
+          bunx ovsx publish -p "${OVSX_TOKEN}" "dist/beskid-${{ matrix.platform }}.vsix"

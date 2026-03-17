@@ -1,0 +1,7 @@
+pub unit Print(string text) {
+    __sys_print(text);
+}
+
+pub unit Println(string text) {
+    __sys_println(text);
+}

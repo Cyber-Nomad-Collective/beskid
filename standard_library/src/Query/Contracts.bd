@@ -1,0 +1,15 @@
+pub enum Option {
+    Some(i64 value),
+    None,
+}
+
+pub contract Iterator {
+    Option Next();
+}
+
+pub bool HasValue(Option value) {
+    return match value {
+        Option::Some(_) => true,
+        Option::None => false,
+    };
+}

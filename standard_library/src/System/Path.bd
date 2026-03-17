@@ -1,0 +1,17 @@
+pub string Combine(string left, string right) {
+    if left == "" {
+        return right;
+    }
+    if right == "" {
+        return left;
+    }
+    return left + "/" + right;
+}
+
+pub string FileName(string path) {
+    return path;
+}
+
+pub string Extension(string path) {
+    return path;
+}

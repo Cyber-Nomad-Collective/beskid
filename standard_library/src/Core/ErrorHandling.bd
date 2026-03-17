@@ -1,0 +1,12 @@
+pub type ErrorInfo {
+    string code,
+    string message,
+}
+
+pub ErrorInfo NewErrorInfo(string code, string message) {
+    return ErrorInfo { code: code, message: message };
+}
+
+pub bool IsErrorInfoEmpty(ErrorInfo info) {
+    return info.code == "" && info.message == "";
+}

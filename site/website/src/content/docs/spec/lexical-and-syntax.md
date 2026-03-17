@@ -42,7 +42,7 @@ let user_id = 1;
 - `pub`: public visibility marker.
 - `ref`: read-only reference type/parameter.
 - `out`: write-only output parameter.
-- `event`: native modifier for zero-cost multicast delegates.
+- `event`: event-field declaration modifier; canonical forms are `event Name(...)` and `event{N} Name(...)`.
 
 ## Literals
 - Integers: `0`, `42`, `-7`

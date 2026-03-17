@@ -1,0 +1,16 @@
+pub type MapEntry<TKey, TValue> {
+    TKey key,
+    TValue value,
+}
+
+pub type Map<TKey, TValue> {
+    i64 count,
+}
+
+pub Map<TKey, TValue> New<TKey, TValue>() {
+    return Map<TKey, TValue> { count: 0 };
+}
+
+pub i64 Count<TKey, TValue>(Map<TKey, TValue> map) {
+    return map.count;
+}

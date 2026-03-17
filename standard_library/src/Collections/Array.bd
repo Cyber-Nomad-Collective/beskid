@@ -1,0 +1,16 @@
+pub type ArrayIter<T> {
+    i64 index,
+    i64 length,
+}
+
+pub i64 Len<T>(T[] values) {
+    return 0;
+}
+
+pub ArrayIter<T> Iterate<T>(T[] values) {
+    return ArrayIter<T> { index: 0, length: Len<T>(values) };
+}
+
+pub bool HasNext<T>(ArrayIter<T> it) {
+    return it.index < it.length;
+}

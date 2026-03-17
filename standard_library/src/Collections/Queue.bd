@@ -1,0 +1,11 @@
+pub type Queue<T> {
+    i64 count,
+}
+
+pub Queue<T> New<T>() {
+    return Queue<T> { count: 0 };
+}
+
+pub i64 Count<T>(Queue<T> queue) {
+    return queue.count;
+}

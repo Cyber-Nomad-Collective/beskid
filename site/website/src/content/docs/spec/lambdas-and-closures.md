@@ -39,7 +39,7 @@ Lambdas are assignable to compatible function types.
 
 ## 17.5 Interaction with query/event features
 - Query pipelines MAY accept lambda callables (`Where`, `Select` style operators).
-- Event handlers MAY be lambda values if signature-compatible.
+- Event handlers MAY be lambda values if signature-compatible (for `event Name(...)` / `event{N} Name(...)` fields subscribed via `+=`).
 - Query/event sections should reference this document for closure semantics.
 
 ## 17.6 Diagnostics (required)
