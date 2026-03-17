@@ -1,4 +1,0 @@
-pub enum Result<TValue, TError> {
-    Ok(TValue value),
-    Error(TError error),
-}

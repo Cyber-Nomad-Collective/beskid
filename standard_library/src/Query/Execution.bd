@@ -1,7 +1,0 @@
-pub bool IsDeferred<T>(Query.Operators.QueryState<T> state) {
-    return state.count > -1;
-}
-
-pub i64 MaterializeCount<T>(Query.Operators.QueryState<T> state) {
-    return Query.Operators.Count<T>(state);
-}
