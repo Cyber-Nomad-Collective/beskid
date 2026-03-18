@@ -15,9 +15,27 @@ Build a complete, production-ready Beskid standard library aligned with the cano
   - System: `.../standard-library/System/*`
 
 ### Repository state today
-- `standard_library/` currently contains only top-level group directories (`Core/`, `Collections/`, `Query/`, `System/`) and no implementation files.
-- No `Project.proj`, no `Src/Prelude.bd`, no `.bd` module sources.
+- `corelib/standard_library/src` contains concrete `.bd` module implementations and a populated `Prelude.bd`.
+- Phase skeleton is present (M0 complete), but many module APIs are still placeholder/stub implementations.
+- No explicit `use` declarations currently exist in stdlib sources; modules rely on qualified paths and prelude module declarations.
 - Compiler/runtime now has source-owned interop dispatch (generation feature removed), so stdlib must be implemented against stable runtime ABI/builtins, not generation workflows.
+
+### Implementation snapshot (2026-03-17)
+- **M0 Foundation:** ✅ complete (project structure + module tree + prelude)
+- **M1 Core:** 🟡 partial
+  - `Core.Results` baseline enum implemented
+  - `Core.String` partially implemented (`Contains` still placeholder semantics)
+  - `Core.ErrorHandling` does not yet enforce typed domain-enum guidance
+- **M2 Collections + Query contracts:** 🟡 partial
+  - Collections files exist but mostly scaffold-level behavior
+  - `Array.Len` and several collection operations return placeholder values
+  - Query contract shape not yet fully aligned with canonical generic `Iterator<T>` / `Option<T>` contract
+- **M3 Query operators/execution:** 🟡 partial
+  - Operators exist but are state-count placeholders rather than element-aware semantics
+- **M4 System APIs:** 🟡 partial
+  - `System.IO` builtins façade exists
+  - `FS/Path/Time/Environment/Process` are present but include stubs and doc/impl signature drift
+- **M5 Hardening/parity/release:** ⛔ not started
 
 ## Non-negotiable design constraints
 1. **No `Std` prefix** in public API paths. Use canonical names (`Core.String`, `Collections.Array`, `Query`, `System.IO`, ...).
@@ -75,6 +93,9 @@ standard_library/
 
 ## Phase plan
 
+## Execution directive
+From this point, this document is not only a design target but an execution tracker. Each phase below must be advanced with concrete code/doc/test changes and status updates in the same PR/iteration.
+
 ## Phase 0 — Foundation bootstrap (blocking)
 ### Objective
 Create a valid stdlib project skeleton consumable by CLI/workflows.
@@ -89,6 +110,9 @@ Create a valid stdlib project skeleton consumable by CLI/workflows.
 - `standard_library` contains a valid project manifest and source root.
 - CLI stdlib-related workflows can reference checked-in stdlib without template assumptions breaking.
 - Module paths resolve without `Std.*` aliases.
+
+### Status
+✅ Completed
 
 ## Phase 1 — Core MVP (`Core.Results`, `Core.String`, `Core.ErrorHandling`)
 ### Objective
@@ -109,6 +133,9 @@ Deliver foundational primitives required by all higher modules.
 - No panic-only recoverable error APIs in Core.
 - Unit/parity tests cover edge cases: empty strings, utf8 validity assumptions, contains boundaries.
 
+### Status
+🟡 In progress
+
 ## Phase 2 — Collections MVP (`Array` first, then dynamic collections)
 ### Objective
 Deliver ergonomic collection primitives with explicit complexity/capacity behavior.
@@ -127,6 +154,9 @@ Deliver ergonomic collection primitives with explicit complexity/capacity behavi
 - Each collection has explicit contract for growth/capacity/error semantics.
 - Query integration points exist (iterable contracts) without hidden per-element allocation.
 
+### Status
+🟡 In progress
+
 ## Phase 3 — Query module (`Contracts`, `Operators`, `Execution`)
 ### Objective
 Implement composable query pipelines aligned with current language semantics.
@@ -143,6 +173,9 @@ Implement composable query pipelines aligned with current language semantics.
 - No virtual-dispatch requirement in hot paths.
 - `for in` compatibility is covered by analysis/codegen tests.
 
+### Status
+🟡 In progress
+
 ## Phase 4 — System module group (`IO`, `FS`, `Path`, `Time`, `Environment`, `Process`)
 ### Objective
 Deliver stable platform-facing APIs with runtime-owned policy.
@@ -157,6 +190,9 @@ Deliver stable platform-facing APIs with runtime-owned policy.
 - Public System APIs remain stable while runtime internals can evolve.
 - Recoverable failures use `Result` contracts.
 - Cross-platform semantics documented and test-backed.
+
+### Status
+🟡 In progress
 
 ## Phase 5 — Hardening, parity, and rollout
 ### Objective
@@ -175,6 +211,55 @@ Make stdlib release-ready with compatibility and regression safety.
 - Full stdlib targeted test suites pass sequentially.
 - JIT/AOT parity holds for stdlib-backed language features.
 - Docs and implementation are synchronized for all module groups.
+
+### Status
+⛔ Not started
+
+## Immediate execution backlog (next 3 batches)
+
+### Batch E1 — Contract lock + doc/impl sync (active)
+1. Resolve canonical contract mismatches in Query and System docs vs code.
+2. Remove legacy Query naming remnants (`IteratorQuery.*`) from docs.
+3. Add module-by-module signature table and mark each signature as `Aligned` / `Drift`.
+
+**Status:** ✅ Completed (2026-03-17)
+
+### Batch E2 — Stub elimination (Core + Collections)
+1. Replace placeholder return values in `Core.String.Contains`, `Collections.Array.Len`, `Set.Contains`, `List.Get`.
+2. Introduce explicit error/return semantics where docs require `Result`.
+3. Ensure behavior is deterministic and complexity-transparent.
+
+**Status:** ✅ Completed (2026-03-17, baseline semantics)
+
+### Batch E3 — Query runtime semantics
+1. Align `Query.Contracts` to generic contract shape.
+2. Convert `Query.Operators` from count placeholders to value-aware behavior.
+3. Add baseline query execution tests for `Where/Select/Take/Skip/First/Count`.
+
+**Status:** ✅ Completed (2026-03-17, baseline contract tests added)
+
+### Signature alignment matrix (post-E1 snapshot)
+
+| Module | Signature alignment | Notes |
+| --- | --- | --- |
+| `Core.Results` | Aligned | Canonical `Result<TValue, TError>` shape in place. |
+| `Core.String` | Partial | `Len`/`IsEmpty` aligned; `Contains` remains conservative without substring builtin. |
+| `Core.ErrorHandling` | Partial | Baseline helpers exist; typed domain-enum policy not fully enforced across all modules. |
+| `Collections.Array` | Partial | API shape aligned; `Len` blocked on missing runtime array-length builtin. |
+| `Collections.List` | Partial | Bounds semantics explicit; storage-backed retrieval pending. |
+| `Collections.Map` | Drift | Candidate APIs (`Set`, `TryGet`, `ContainsKey`) not fully implemented. |
+| `Collections.Set` | Partial | `Contains` deterministic baseline only; real backing semantics pending. |
+| `Collections.Queue` | Drift | Candidate enqueue/dequeue surface pending. |
+| `Collections.Stack` | Drift | Candidate push/pop surface pending. |
+| `Query.Contracts` | Aligned | Generic `Option<T>` and `Iterator<T>` contract applied. |
+| `Query.Operators` | Partial | Value-aware first-value tracking added; full iterator-backed execution semantics pending. |
+| `Query.Execution` | Partial | Baseline wrappers in place; richer execution guarantees need dedicated tests. |
+| `System.IO` | Aligned | Builtin façade implemented (`Print`, `Println`). |
+| `System.FS` | Partial | Docs/code aligned to current `WriteAllText -> Result<bool, FsError>` baseline. |
+| `System.Path` | Partial | `Combine` baseline exists; `FileName`/`Extension` still placeholders. |
+| `System.Time` | Partial | API present; runtime-backed clocks pending. |
+| `System.Environment` | Partial | `Get`/`TryGet`/`Set` typed baseline added; runtime mutation support pending. |
+| `System.Process` | Partial | `Id`/`Exit` baseline added; args/subprocess expansions pending. |
 
 ## Cross-cutting work items
 

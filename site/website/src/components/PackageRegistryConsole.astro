@@ -1,0 +1,405 @@
+---
+const initialPackages = [
+  {
+    id: "beskid.core",
+    version: "1.3.0",
+    status: "published",
+    downloads30d: 128340,
+    owner: "core-team",
+    risk: "low",
+    updatedAt: "2026-03-08",
+    flags: ["verified", "signed"],
+  },
+  {
+    id: "beskid.query",
+    version: "0.9.4",
+    status: "published",
+    downloads30d: 58744,
+    owner: "query-lab",
+    risk: "medium",
+    updatedAt: "2026-03-15",
+    flags: ["verified"],
+  },
+  {
+    id: "beskid.runtime.experimental",
+    version: "0.2.1",
+    status: "pending",
+    downloads30d: 1338,
+    owner: "runtime-lab",
+    risk: "high",
+    updatedAt: "2026-03-16",
+    flags: ["new-owner"],
+  },
+  {
+    id: "beskid.tools.cli",
+    version: "2.0.0",
+    status: "needs-changes",
+    downloads30d: 22107,
+    owner: "tooling-team",
+    risk: "medium",
+    updatedAt: "2026-03-11",
+    flags: ["deprecated-dependency"],
+  },
+];
+
+const reviewQueue = [
+  {
+    id: "REQ-1904",
+    packageId: "beskid.runtime.experimental",
+    submitter: "runtime-lab",
+    outcome: "pending",
+    reason: "first publish + high privilege package",
+    submittedAt: "2026-03-16 11:32",
+  },
+  {
+    id: "REQ-1905",
+    packageId: "beskid.tools.cli",
+    submitter: "tooling-team",
+    outcome: "pending",
+    reason: "automated check flagged dependency CVE",
+    submittedAt: "2026-03-16 12:18",
+  },
+  {
+    id: "REQ-1907",
+    packageId: "beskid.query",
+    submitter: "query-lab",
+    outcome: "pending",
+    reason: "metadata update with owner transfer",
+    submittedAt: "2026-03-16 15:06",
+  },
+];
+---
+
+<section class="console-shell" data-console-root>
+  <header class="console-head">
+    <h2>Package Operations Console</h2>
+    <p>
+      Unified workspace for listing package health, triaging review queue, and managing owners/visibility.
+    </p>
+  </header>
+
+  <div class="panel-grid">
+    <article class="panel">
+      <h3>List packages</h3>
+      <div class="controls">
+        <label>
+          Search
+          <input type="search" placeholder="package id or owner" data-filter-query />
+        </label>
+        <label>
+          Status
+          <select data-filter-status>
+            <option value="all">All</option>
+            <option value="published">Published</option>
+            <option value="pending">Pending</option>
+            <option value="needs-changes">Needs changes</option>
+          </select>
+        </label>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Package</th>
+              <th>Version</th>
+              <th>Status</th>
+              <th>Downloads (30d)</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody data-package-rows>
+            {initialPackages.map((pkg) => (
+              <tr data-status={pkg.status} data-search={`${pkg.id} ${pkg.owner}`.toLowerCase()}>
+                <td>
+                  <strong>{pkg.id}</strong>
+                  <small>{pkg.owner}</small>
+                </td>
+                <td>{pkg.version}</td>
+                <td><span class={`status status-${pkg.status}`}>{pkg.status}</span></td>
+                <td>{pkg.downloads30d.toLocaleString()}</td>
+                <td>{pkg.risk}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="panel">
+      <h3>Review queue</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Request</th>
+              <th>Package</th>
+              <th>Reason</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reviewQueue.map((item) => (
+              <tr data-review-id={item.id}>
+                <td>
+                  <strong>{item.id}</strong>
+                  <small>{item.submittedAt}</small>
+                </td>
+                <td>{item.packageId}</td>
+                <td>{item.reason}</td>
+                <td>
+                  <div class="actions">
+                    <button data-review-action="approve">Approve</button>
+                    <button data-review-action="changes">Needs changes</button>
+                    <button data-review-action="reject">Reject</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="hint" data-review-log>Use actions to update workflow state.</p>
+    </article>
+
+    <article class="panel panel-wide">
+      <h3>Manage package</h3>
+      <form class="manage-form" data-manage-form>
+        <label>
+          Package
+          <select name="packageId" required>
+            <option value="">Select package</option>
+            {initialPackages.map((pkg) => (
+              <option value={pkg.id}>{pkg.id}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Visibility
+          <select name="visibility" required>
+            <option value="public">Public</option>
+            <option value="internal">Internal</option>
+            <option value="unlisted">Unlisted</option>
+          </select>
+        </label>
+        <label>
+          Add owner
+          <input type="text" name="owner" placeholder="team or username" />
+        </label>
+        <label class="full-row">
+          Security notes
+          <textarea name="notes" rows="3" placeholder="MFA required, key scope policy, provenance checks"></textarea>
+        </label>
+        <button type="submit">Save package policy</button>
+      </form>
+      <p class="hint" data-manage-log>
+        This page is wired for UI flow validation. Hook to API endpoints when backend moderation endpoints are ready.
+      </p>
+    </article>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector("[data-console-root]");
+  if (!root) {
+    return;
+  }
+
+  const queryInput = root.querySelector("[data-filter-query]");
+  const statusSelect = root.querySelector("[data-filter-status]");
+  const rows = Array.from(root.querySelectorAll("[data-package-rows] tr"));
+  const reviewLog = root.querySelector("[data-review-log]");
+  const manageForm = root.querySelector("[data-manage-form]");
+  const manageLog = root.querySelector("[data-manage-log]");
+
+  const filterRows = () => {
+    const query = (queryInput?.value || "").trim().toLowerCase();
+    const status = statusSelect?.value || "all";
+
+    for (const row of rows) {
+      const rowStatus = row.dataset.status || "";
+      const rowSearch = row.dataset.search || "";
+      const statusMatch = status === "all" || rowStatus === status;
+      const queryMatch = !query || rowSearch.includes(query);
+      row.hidden = !(statusMatch && queryMatch);
+    }
+  };
+
+  queryInput?.addEventListener("input", filterRows);
+  statusSelect?.addEventListener("change", filterRows);
+
+  root.querySelectorAll("[data-review-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const action = button.dataset.reviewAction;
+      const row = button.closest("tr");
+      const requestId = row?.dataset.reviewId || "unknown";
+      reviewLog.textContent = `Request ${requestId} marked as ${action}.`;
+      row?.classList.add("done");
+    });
+  });
+
+  manageForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(manageForm);
+    const packageId = formData.get("packageId");
+    const visibility = formData.get("visibility");
+    const owner = formData.get("owner");
+    manageLog.textContent = `Saved policy for ${packageId}: visibility=${visibility}${owner ? `, owner+=${owner}` : ""}.`;
+  });
+</script>
+
+<style>
+  .console-shell {
+    border: 1px solid color-mix(in oklab, var(--sl-color-gray-5) 65%, transparent);
+    border-radius: 18px;
+    padding: 1.25rem;
+    background: linear-gradient(145deg, var(--sl-color-bg-nav), color-mix(in oklab, var(--sl-color-bg) 80%, #d9f4ff));
+  }
+
+  .console-head p {
+    margin-top: 0.35rem;
+    color: var(--sl-color-text-accent);
+  }
+
+  .panel-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .panel {
+    border: 1px solid color-mix(in oklab, var(--sl-color-gray-5) 65%, transparent);
+    border-radius: 14px;
+    padding: 1rem;
+    background: color-mix(in oklab, var(--sl-color-bg) 88%, #ffffff);
+  }
+
+  .panel-wide {
+    grid-column: 1 / -1;
+  }
+
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 180px;
+    gap: 0.75rem;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.75rem;
+  }
+
+  th,
+  td {
+    border-bottom: 1px solid color-mix(in oklab, var(--sl-color-gray-5) 70%, transparent);
+    text-align: left;
+    padding: 0.55rem;
+    vertical-align: top;
+    font-size: 0.92rem;
+  }
+
+  td small {
+    display: block;
+    color: var(--sl-color-gray-2);
+  }
+
+  .status {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+    font-size: 0.75rem;
+    text-transform: capitalize;
+    border: 1px solid transparent;
+  }
+
+  .status-published {
+    background: #e8f7e8;
+    border-color: #66b966;
+    color: #1d5f1d;
+  }
+
+  .status-pending {
+    background: #fff8e8;
+    border-color: #f2b53e;
+    color: #835800;
+  }
+
+  .status-needs-changes {
+    background: #ffeceb;
+    border-color: #de736c;
+    color: #7b1f19;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  button {
+    border: 1px solid color-mix(in oklab, var(--sl-color-gray-4) 80%, transparent);
+    border-radius: 8px;
+    background: color-mix(in oklab, var(--sl-color-bg) 92%, #fff);
+    padding: 0.35rem 0.6rem;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  button:hover {
+    border-color: var(--sl-color-text-accent);
+  }
+
+  .manage-form {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .manage-form label {
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+  }
+
+  .manage-form .full-row {
+    grid-column: 1 / -1;
+  }
+
+  input,
+  select,
+  textarea {
+    border: 1px solid color-mix(in oklab, var(--sl-color-gray-4) 80%, transparent);
+    border-radius: 8px;
+    padding: 0.5rem 0.6rem;
+    font: inherit;
+    background: color-mix(in oklab, var(--sl-color-bg) 92%, #fff);
+  }
+
+  .hint {
+    margin-top: 0.6rem;
+    font-size: 0.88rem;
+    color: var(--sl-color-gray-2);
+  }
+
+  tr.done {
+    opacity: 0.55;
+  }
+
+  @media (max-width: 900px) {
+    .panel-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .manage-form {
+      grid-template-columns: 1fr;
+    }
+
+    .controls {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

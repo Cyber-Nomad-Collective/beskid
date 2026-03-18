@@ -12,10 +12,14 @@ hero:
       link: /spec/
       icon: right-arrow
       variant: primary
+    - text: Open Package Hub
+      link: /packages/
+      icon: setting
+      variant: secondary
     - text: Download CLI
       link: /downloads/
       icon: download
-      variant: secondary
+      variant: minimal
   
 ---
 
@@ -32,6 +36,9 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 	</Card>
 	<Card title="Standard library" icon="pencil">
 		Core, Collections, Query, and System API contracts with stable naming and boundary policy.
+	</Card>
+	<Card title="Package hub" icon="setting">
+		Listing, moderation queue, and maintainer management workflows for package operations.
 	</Card>
 	<Card title="Guides and drafts" icon="add-document">
 		Implementation notes, analysis guides, and work-in-progress design docs.

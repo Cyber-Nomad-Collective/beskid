@@ -32,6 +32,10 @@ export default defineConfig({
 					autogenerate: { directory: 'standard-library' },
 				},
 				{
+					label: 'Packages',
+					autogenerate: { directory: 'packages' },
+				},
+				{
 					label: 'Guides',
 					autogenerate: { directory: 'guides' },
 				},

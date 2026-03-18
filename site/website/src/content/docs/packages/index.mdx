@@ -1,0 +1,58 @@
+---
+title: Package Hub
+description: Manage, list, and review packages in one operator workflow.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import PackageRegistryConsole from '../../../components/PackageRegistryConsole.astro';
+
+## Package operations at a glance
+
+This hub ships a full UI workflow for package operators:
+
+- **Listing**: searchable package catalog with status and risk signal.
+- **Reviewing**: triage queue with moderation outcomes.
+- **Managing**: owner/visibility policy updates in one form.
+
+It also documents the compiler-integrated package workflow:
+
+- **CLI client** for auth, add/remove/install, publish, and yanking.
+- **Workspace orchestration** with `Workspace.proj`.
+- **Artifact format** (`.bpk`) and lockfile reproducibility model.
+- **Registry protocol** contracts and compatibility policy.
+
+<PackageRegistryConsole />
+
+## Operator playbooks
+
+<CardGrid stagger>
+  <Card title="Catalog listing" icon="magnifying-glass" href="/packages/listing/">
+    Discovery, trust signals, and package metadata expectations.
+  </Card>
+  <Card title="Review queue" icon="check-circle" href="/packages/review/">
+    Moderation statuses, escalation rules, and release gating.
+  </Card>
+  <Card title="Maintainer management" icon="setting" href="/packages/manage/">
+    Ownership, API key policy, and governance controls.
+  </Card>
+</CardGrid>
+
+## Compiler and packaging model
+
+<CardGrid stagger>
+  <Card title="CLI command model" icon="terminal-window" href="/packages/client-cli/">
+    `beskid pkg` command surface and expected execution semantics.
+  </Card>
+  <Card title="Workspace configuration" icon="seti:folder" href="/packages/workspaces/">
+    Multi-project manifests, overrides, and registry aliases.
+  </Card>
+  <Card title="Package format" icon="package" href="/packages/package-format/">
+    `.bpk` archive structure, integrity checks, and deterministic rules.
+  </Card>
+  <Card title="Registry protocol" icon="server" href="/packages/registry-protocol/">
+    API endpoints, auth model, error envelopes, and versioning.
+  </Card>
+  <Card title="Lockfile" icon="key" href="/packages/lockfile/">
+    Reproducible restore semantics with locked/frozen behaviors.
+  </Card>
+</CardGrid>
