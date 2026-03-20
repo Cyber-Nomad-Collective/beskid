@@ -1,0 +1,74 @@
+name: Runtime CI
+
+on:
+  push:
+    paths:
+      - "compiler/**"
+      - ".github/workflows/runtime-ci.yml"
+  pull_request:
+    paths:
+      - "compiler/**"
+      - ".github/workflows/runtime-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  runtime-linux:
+    name: Runtime Tests (Linux)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: compiler
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Runtime focused tests
+        run: "cargo test -p beskid_tests runtime::"
+      - name: ABI contracts
+        run: "cargo test -p beskid_tests abi::contracts::"
+      - name: Runtime benches compile
+        run: cargo bench -p beskid_runtime --no-run
+
+  runtime-linux-sanitized:
+    name: Runtime Sanitizers (Linux)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: compiler
+    env:
+      RUSTFLAGS: "-Zsanitizer=address"
+      RUSTDOCFLAGS: "-Zsanitizer=address"
+      RUSTC_BOOTSTRAP: "1"
+      ASAN_OPTIONS: "detect_leaks=0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+      - uses: Swatinem/rust-cache@v2
+      - name: Runtime tests under ASan
+        run: "cargo test -p beskid_tests runtime::"
+
+  runtime-macos-check:
+    name: Runtime Compile Check (macOS)
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: compiler
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Compile tests
+        run: "cargo test -p beskid_tests runtime:: --no-run"
+
+  runtime-windows-check:
+    name: Runtime Compile Check (Windows)
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: compiler
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Compile tests
+        run: "cargo test -p beskid_tests runtime:: --no-run"
