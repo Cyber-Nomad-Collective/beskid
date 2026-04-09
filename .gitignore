@@ -11,6 +11,7 @@ _refactor/
 
 # Env files
 .env
+.cursor/
 
 # build output
 dist/

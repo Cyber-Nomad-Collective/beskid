@@ -1,4 +1,10 @@
 project {
   name = "beskid.stdlib"
-  version = "1.0.0"
+  version = "1.0.1"
+  root = "src"
+}
+
+target "StdLib" {
+  kind = "Lib"
+  entry = "Prelude.bd"
 }

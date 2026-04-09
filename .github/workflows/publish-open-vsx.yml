@@ -1,3 +1,5 @@
+# Aggregate repo: primary Beskid compiler CI runs on the compiler submodule public remote.
+# This job expects `compiler/` and `beskid_vscode/` checked out (use submodules: recursive).
 name: Publish VS Code Extension to Open VSX
 
 on:

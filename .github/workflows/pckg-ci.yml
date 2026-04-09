@@ -1,0 +1,26 @@
+name: pckg CI
+
+on:
+  push:
+    paths:
+      - "pckg/**"
+      - ".github/workflows/pckg-ci.yml"
+  pull_request:
+    paths:
+      - "pckg/**"
+      - ".github/workflows/pckg-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pckg/src/Server.Tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Unit tests
+        run: dotnet test --filter "FullyQualifiedName~Server.Tests.Unit" --configuration Release
