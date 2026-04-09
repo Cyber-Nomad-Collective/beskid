@@ -38,8 +38,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - name: Checkout required submodules
+        shell: bash
+        run: |
+          set -euo pipefail
+          git submodule sync -- compiler corelib
+          git -c protocol.version=2 submodule update --init --depth 1 compiler corelib
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2

@@ -20,8 +20,12 @@ jobs:
         working-directory: compiler
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - name: Checkout required submodules
+        shell: bash
+        run: |
+          set -euo pipefail
+          git submodule sync -- compiler corelib
+          git -c protocol.version=2 submodule update --init --depth 1 compiler corelib
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Runtime focused tests
@@ -39,8 +43,12 @@ jobs:
         working-directory: compiler
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - name: Checkout required submodules
+        shell: bash
+        run: |
+          set -euo pipefail
+          git submodule sync -- compiler corelib
+          git -c protocol.version=2 submodule update --init --depth 1 compiler corelib
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Build Beskid CLI binary
@@ -61,8 +69,12 @@ jobs:
       ASAN_OPTIONS: "detect_leaks=0"
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - name: Checkout required submodules
+        shell: bash
+        run: |
+          set -euo pipefail
+          git submodule sync -- compiler corelib
+          git -c protocol.version=2 submodule update --init --depth 1 compiler corelib
       - uses: dtolnay/rust-toolchain@nightly
       - uses: Swatinem/rust-cache@v2
       - name: Runtime tests under ASan
@@ -76,8 +88,12 @@ jobs:
         working-directory: compiler
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - name: Checkout required submodules
+        shell: bash
+        run: |
+          set -euo pipefail
+          git submodule sync -- compiler corelib
+          git -c protocol.version=2 submodule update --init --depth 1 compiler corelib
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Compile tests
@@ -91,8 +107,12 @@ jobs:
         working-directory: compiler
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - name: Checkout required submodules
+        shell: bash
+        run: |
+          set -euo pipefail
+          git submodule sync -- compiler corelib
+          git -c protocol.version=2 submodule update --init --depth 1 compiler corelib
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Compile tests
