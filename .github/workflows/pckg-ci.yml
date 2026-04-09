@@ -19,8 +19,15 @@ jobs:
         working-directory: pckg/src/Server.Tests
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
+      - name: Verify pckg test directory exists
+        working-directory: .
+        run: |
+          test -d pckg/src/Server.Tests
+          ls -la pckg/src/Server.Tests
       - name: Unit tests
         run: dotnet test --filter "FullyQualifiedName~Server.Tests.Unit" --configuration Release

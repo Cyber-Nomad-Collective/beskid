@@ -4,7 +4,16 @@ This repo is an **aggregate** (submodules and local notes). **Compiler** CI, rel
 
 Workflows here:
 
-- `**publish-open-vsx.yml`** — builds `beskid_lsp` from `compiler/`, bundles it into `beskid_vscode/`, publishes VSIX (requires `submodules: recursive` checkout).
-- `**pckg-ci.yml`** — `dotnet test` for the pckg .NET service (unit tests only; integration tests are excluded until they run reliably in CI).
+- `publish-open-vsx.yml` — builds `beskid_lsp` from `compiler/`, bundles it into `beskid_vscode/`, publishes VSIX (requires `submodules: recursive` checkout).
+- `runtime-ci.yml` — aggregate runtime smoke checks against the pinned `compiler` submodule (requires `submodules: recursive` checkout).
+- `pckg-ci.yml` — `dotnet test` for the pckg .NET service (unit tests only; integration tests are excluded until they run reliably in CI).
 
-There is **no** duplicate Rust `runtime-ci` at this root; rely on the compiler remote for toolchain gates.
+The compiler remote remains the authoritative source for full compiler CI gates.
+
+## Local pre-push validation
+
+Run:
+
+`./validate-ci-local.sh`
+
+This script verifies submodule checkout, required workflow paths, pckg unit tests, and runtime/e2e commands used by aggregate workflows.
