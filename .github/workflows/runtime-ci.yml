@@ -29,6 +29,21 @@ jobs:
       - name: Runtime benches compile
         run: cargo bench -p beskid_runtime --no-run
 
+  runtime-e2e-linux:
+    name: Runtime AOT E2E (Linux)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: compiler
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build Beskid CLI binary
+        run: cargo build -p beskid_cli
+      - name: AOT E2E tests
+        run: cargo test -p beskid_e2e_tests
+
   runtime-linux-sanitized:
     name: Runtime Sanitizers (Linux)
     runs-on: ubuntu-latest
