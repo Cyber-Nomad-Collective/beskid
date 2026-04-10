@@ -8,7 +8,7 @@ description: Configure a multi-project Beskid repository with shared dependency 
 ```text
 Workspace.proj
 compiler/Project.proj
-corelib/Project.proj
+compiler/corelib/standard_library/Project.proj
 tools/Project.proj
 ```
 
@@ -21,7 +21,7 @@ workspace {
 }
 
 member "compiler" { path = "compiler" }
-member "corelib" { path = "corelib" }
+member "std" { path = "compiler/corelib/standard_library" }
 member "tools" { path = "tools" }
 
 registry "default" {

@@ -1,6 +1,6 @@
 # Workflows in this repository
 
-This repo is an **aggregate** (submodules and local notes). **Compiler** CI, releases, and the full Rust test matrix run on the **compiler submodule public GitHub remote** (see `compiler/.github/workflows/ci.yml` in that checkout).
+This repo is an **aggregate** (submodules and local notes). **Compiler** CI, releases, and the full Rust test matrix run on the **compiler submodule public GitHub remote** (see `compiler/.github/workflows/ci.yml` in that checkout). The standard library lives only as **`compiler/corelib`** (nested submodule); clone with `git submodule update --init --recursive` so it is checked out.
 
 Workflows here:
 

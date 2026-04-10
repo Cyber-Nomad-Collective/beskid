@@ -15,7 +15,7 @@ Build a complete, production-ready Beskid standard library aligned with the cano
   - System: `.../standard-library/System/*`
 
 ### Repository state today
-- `corelib/standard_library/src` contains concrete `.bd` module implementations and a populated `Prelude.bd`.
+- `compiler/corelib/standard_library/src` contains concrete `.bd` module implementations and a populated `Prelude.bd` (via the `corelib` submodule inside `compiler/`).
 - Phase skeleton is present (M0 complete), but many module APIs are still placeholder/stub implementations.
 - No explicit `use` declarations currently exist in stdlib sources; modules rely on qualified paths and prelude module declarations.
 - Compiler/runtime now has source-owned interop dispatch (generation feature removed), so stdlib must be implemented against stable runtime ABI/builtins, not generation workflows.

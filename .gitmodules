@@ -1,10 +1,7 @@
 [submodule "compiler"]
 	path = compiler
 	url = https://github.com/Cyber-Nomad-Collective/beskid_compiler.git
-
-[submodule "corelib"]
-	path = corelib
-	url = https://github.com/Cyber-Nomad-Collective/beskid_standard.git
+	fetchRecurseSubmodules = true
 [submodule "pckg"]
 	path = pckg
 	url = https://github.com/Cyber-Nomad-Collective/beskid_pckg.git

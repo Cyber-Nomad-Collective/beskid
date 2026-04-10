@@ -24,8 +24,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git submodule sync -- compiler corelib
-          git -c protocol.version=2 submodule update --init --depth 1 compiler corelib
+          git submodule sync -- compiler
+          git -c protocol.version=2 submodule update --init --recursive --depth 1 compiler
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Runtime focused tests
@@ -47,8 +47,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git submodule sync -- compiler corelib
-          git -c protocol.version=2 submodule update --init --depth 1 compiler corelib
+          git submodule sync -- compiler
+          git -c protocol.version=2 submodule update --init --recursive --depth 1 compiler
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Build Beskid CLI binary
@@ -73,8 +73,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git submodule sync -- compiler corelib
-          git -c protocol.version=2 submodule update --init --depth 1 compiler corelib
+          git submodule sync -- compiler
+          git -c protocol.version=2 submodule update --init --recursive --depth 1 compiler
       - uses: dtolnay/rust-toolchain@nightly
       - uses: Swatinem/rust-cache@v2
       - name: Runtime tests under ASan
@@ -92,8 +92,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git submodule sync -- compiler corelib
-          git -c protocol.version=2 submodule update --init --depth 1 compiler corelib
+          git submodule sync -- compiler
+          git -c protocol.version=2 submodule update --init --recursive --depth 1 compiler
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Compile tests
@@ -111,8 +111,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git submodule sync -- compiler corelib
-          git -c protocol.version=2 submodule update --init --depth 1 compiler corelib
+          git submodule sync -- compiler
+          git -c protocol.version=2 submodule update --init --recursive --depth 1 compiler
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Compile tests

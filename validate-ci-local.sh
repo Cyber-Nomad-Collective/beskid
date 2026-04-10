@@ -8,6 +8,7 @@ git -C "$ROOT_DIR" submodule update --init --recursive
 
 echo "[2/5] Validate required workflow paths"
 test -d "$ROOT_DIR/compiler"
+test -d "$ROOT_DIR/compiler/corelib/standard_library"
 test -d "$ROOT_DIR/pckg/src/Server.Tests"
 test -d "$ROOT_DIR/beskid_vscode"
 
