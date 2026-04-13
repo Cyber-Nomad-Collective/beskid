@@ -2,6 +2,9 @@
 /target/
 **/*.rs.bk
 obj/
+# Python venvs (local Nox / CI)
+.venv/
+
 # IDE/editor
 .vscode/
 .idea/

@@ -1,5 +1,0 @@
-# Project.lock v1
-root_manifest=/home/fp-pmikstacki/Private/pecan/standard_library/Project.proj
-project_name=beskid.stdlib
-dependencies:
-- name=Std;manifest=/home/fp-pmikstacki/.beskid/standard_library/Project.proj;project=/home/fp-pmikstacki/.beskid/standard_library;source_root=/home/fp-pmikstacki/.beskid/standard_library/src;materialized_root=/home/fp-pmikstacki/Private/pecan/standard_library/obj/beskid/deps/src/beskid_stdlib-c9a654236fd9f128

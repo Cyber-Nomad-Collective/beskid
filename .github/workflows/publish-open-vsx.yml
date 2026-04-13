@@ -38,12 +38,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Checkout required submodules
-        shell: bash
-        run: |
-          set -euo pipefail
-          git submodule sync -- compiler
-          git -c protocol.version=2 submodule update --init --recursive --depth 1 compiler
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -51,41 +45,16 @@ jobs:
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build host LSP binary
-        working-directory: compiler
-        run: cargo build -p beskid_lsp --release
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-      - name: Bundle host LSP binary into extension package
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p "beskid_vscode/server/${{ matrix.platform }}"
-          cp "compiler/target/release/${{ matrix.bin_name }}" "beskid_vscode/server/${{ matrix.platform }}/${{ matrix.bin_name }}"
-          if [ "${{ matrix.platform }}" != "win32-x64" ]; then
-            chmod +x "beskid_vscode/server/${{ matrix.platform }}/${{ matrix.bin_name }}"
-          fi
+      - name: Install Nox
+        run: pip install -r ci/requirements.txt
 
-      - name: Install extension dependencies
-        working-directory: beskid_vscode
-        run: bun install --frozen-lockfile
-
-      - name: Build extension
-        working-directory: beskid_vscode
-        run: bun run build
-
-      - name: Package target-specific VSIX
-        working-directory: beskid_vscode
-        run: |
-          mkdir -p dist
-          bunx @vscode/vsce package --target "${{ matrix.platform }}" --out "dist/beskid-${{ matrix.platform }}.vsix"
-
-      - name: Publish to Open VSX
-        working-directory: beskid_vscode
+      - name: Publish Open VSX
         env:
+          OPENVSX_PLATFORM: ${{ matrix.platform }}
+          OPENVSX_BIN_NAME: ${{ matrix.bin_name }}
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
-        run: |
-          if [ -z "${OVSX_TOKEN}" ]; then
-            echo "Missing required secret: OVSX_TOKEN"
-            exit 1
-          fi
-          bunx ovsx publish -p "${OVSX_TOKEN}" "dist/beskid-${{ matrix.platform }}.vsix"
+        run: python -m nox --non-interactive -s open_vsx_publish

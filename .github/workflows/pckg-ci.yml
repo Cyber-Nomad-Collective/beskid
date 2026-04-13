@@ -4,10 +4,18 @@ on:
   push:
     paths:
       - "pckg/**"
+      - "ci/**"
+      - "noxfile.py"
+      - "pckg/noxfile.py"
+      - "pckg/ci/**"
       - ".github/workflows/pckg-ci.yml"
   pull_request:
     paths:
       - "pckg/**"
+      - "ci/**"
+      - "noxfile.py"
+      - "pckg/noxfile.py"
+      - "pckg/ci/**"
       - ".github/workflows/pckg-ci.yml"
   workflow_dispatch:
 
@@ -16,9 +24,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PCKG_SUBMODULE_URL: https://github.com/Cyber-Nomad-Collective/beskid_pckg.git
-    defaults:
-      run:
-        working-directory: pckg/src/Server.Tests
     steps:
       - uses: actions/checkout@v4
       - name: Checkout pckg submodule only
@@ -31,10 +36,14 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Nox
+        run: pip install -r ci/requirements.txt
       - name: Verify pckg test directory exists
-        working-directory: .
         run: |
           test -d pckg/src/Server.Tests
           ls -la pckg/src/Server.Tests
       - name: Unit tests
-        run: dotnet test --filter "FullyQualifiedName~Server.Tests.Unit" --configuration Release
+        run: python -m nox --non-interactive -s pckg_unit_tests

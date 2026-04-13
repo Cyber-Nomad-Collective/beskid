@@ -4,10 +4,14 @@ on:
   push:
     paths:
       - "compiler/**"
+      - "ci/**"
+      - "noxfile.py"
       - ".github/workflows/runtime-ci.yml"
   pull_request:
     paths:
       - "compiler/**"
+      - "ci/**"
+      - "noxfile.py"
       - ".github/workflows/runtime-ci.yml"
   workflow_dispatch:
 
@@ -15,105 +19,74 @@ jobs:
   runtime-linux:
     name: Runtime Tests (Linux)
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: compiler
     steps:
       - uses: actions/checkout@v4
-      - name: Checkout required submodules
-        shell: bash
-        run: |
-          set -euo pipefail
-          git submodule sync -- compiler
-          git -c protocol.version=2 submodule update --init --recursive --depth 1 compiler
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - name: Runtime focused tests
-        run: "cargo test -p beskid_tests runtime::"
-      - name: ABI contracts
-        run: "cargo test -p beskid_tests abi::contracts::"
-      - name: Runtime benches compile
-        run: cargo bench -p beskid_runtime --no-run
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Nox
+        run: pip install -r ci/requirements.txt
+      - name: Runtime CI (Linux)
+        run: python -m nox --non-interactive -s runtime_linux
 
   runtime-e2e-linux:
     name: Runtime AOT E2E (Linux)
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: compiler
     steps:
       - uses: actions/checkout@v4
-      - name: Checkout required submodules
-        shell: bash
-        run: |
-          set -euo pipefail
-          git submodule sync -- compiler
-          git -c protocol.version=2 submodule update --init --recursive --depth 1 compiler
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - name: Build Beskid CLI binary
-        run: cargo build -p beskid_cli
-      - name: AOT E2E tests
-        run: cargo test -p beskid_e2e_tests
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Nox
+        run: pip install -r ci/requirements.txt
+      - name: Runtime E2E (Linux)
+        run: python -m nox --non-interactive -s runtime_e2e_linux
 
   runtime-linux-sanitized:
     name: Runtime Sanitizers (Linux)
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: compiler
-    env:
-      RUSTFLAGS: "-Zsanitizer=address"
-      RUSTDOCFLAGS: "-Zsanitizer=address"
-      RUSTC_BOOTSTRAP: "1"
-      ASAN_OPTIONS: "detect_leaks=0"
     steps:
       - uses: actions/checkout@v4
-      - name: Checkout required submodules
-        shell: bash
-        run: |
-          set -euo pipefail
-          git submodule sync -- compiler
-          git -c protocol.version=2 submodule update --init --recursive --depth 1 compiler
       - uses: dtolnay/rust-toolchain@nightly
       - uses: Swatinem/rust-cache@v2
-      - name: Runtime tests under ASan
-        run: "cargo test -p beskid_tests runtime::"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Nox
+        run: pip install -r ci/requirements.txt
+      - name: Runtime ASan (Linux)
+        run: python -m nox --non-interactive -s runtime_asan_linux
 
   runtime-macos-check:
     name: Runtime Compile Check (macOS)
     runs-on: macos-latest
-    defaults:
-      run:
-        working-directory: compiler
     steps:
       - uses: actions/checkout@v4
-      - name: Checkout required submodules
-        shell: bash
-        run: |
-          set -euo pipefail
-          git submodule sync -- compiler
-          git -c protocol.version=2 submodule update --init --recursive --depth 1 compiler
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - name: Compile tests
-        run: "cargo test -p beskid_tests runtime:: --no-run"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Nox
+        run: pip install -r ci/requirements.txt
+      - name: Runtime compile check (macOS)
+        run: python -m nox --non-interactive -s runtime_macos_check
 
   runtime-windows-check:
     name: Runtime Compile Check (Windows)
     runs-on: windows-latest
-    defaults:
-      run:
-        working-directory: compiler
     steps:
       - uses: actions/checkout@v4
-      - name: Checkout required submodules
-        shell: bash
-        run: |
-          set -euo pipefail
-          git submodule sync -- compiler
-          git -c protocol.version=2 submodule update --init --recursive --depth 1 compiler
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - name: Compile tests
-        run: "cargo test -p beskid_tests runtime:: --no-run"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Nox
+        run: pip install -r ci/requirements.txt
+      - name: Runtime compile check (Windows)
+        run: python -m nox --non-interactive -s runtime_windows_check
