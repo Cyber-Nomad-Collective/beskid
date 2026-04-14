@@ -22,8 +22,8 @@ def _compiler_dir() -> Path:
 
 def _asan_env() -> dict[str, str]:
     return {
-        "RUSTFLAGS": "-Zsanitizer=address",
-        "RUSTDOCFLAGS": "-Zsanitizer=address",
+        # Keep sanitizer flags target-scoped so host proc-macro deps remain loadable.
+        "CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS": "-Zsanitizer=address",
         "RUSTC_BOOTSTRAP": "1",
         "ASAN_OPTIONS": "detect_leaks=0",
     }
@@ -55,6 +55,8 @@ def runtime_asan_linux(session: nox.Session) -> None:
         "test",
         "-p",
         "beskid_tests",
+        "--target",
+        "x86_64-unknown-linux-gnu",
         "runtime::",
         cwd=cw,
         env=_asan_env(),
