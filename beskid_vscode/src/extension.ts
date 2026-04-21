@@ -63,9 +63,19 @@ function serverOptionsFromConfig(context: vscode.ExtensionContext): { run: Execu
     };
   }
 
+  const devMode = config.get<boolean>("server.devMode", false);
+  if (!devMode) {
+    const message =
+      "Beskid LSP bundled binary was not found for this platform. " +
+      "Enable 'beskid.lsp.server.devMode' to run from source (requires repo cloned), " +
+      "or set 'beskid.lsp.server.path' to a local binary.";
+    void vscode.window.showErrorMessage(message);
+    throw new Error(message);
+  }
+
   const command = config.get<string>("server.command", "cargo");
   const args = config.get<string[]>("server.args", ["run", "-p", "beskid_lsp"]);
-  const debugArgs = config.get<string[]>("server.debugArgs", args);
+  const debugArgs = config.get<string[]>("server.debugArgs", ["run", "-p", "beskid_lsp"]);
 
   return {
     run: { command, args, options },

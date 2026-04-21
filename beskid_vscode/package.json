@@ -41,7 +41,7 @@
         "beskid.lsp.server.command": {
           "type": "string",
           "default": "cargo",
-          "description": "Fallback command used when no bundled server binary is available."
+          "description": "LSP launch command used in dev mode (requires `beskid.lsp.server.devMode=true`)."
         },
         "beskid.lsp.server.args": {
           "type": "array",
@@ -53,12 +53,17 @@
             "-p",
             "beskid_lsp"
           ],
-          "description": "Fallback arguments used when no bundled server binary is available."
+          "description": "LSP launch args used in dev mode (requires `beskid.lsp.server.devMode=true`)."
         },
         "beskid.lsp.server.preferBundled": {
           "type": "boolean",
           "default": true,
-          "description": "Prefer bundled platform server binary under extension `server/<platform>-<arch>/`."
+          "description": "Use bundled platform server binary under extension `server/<platform>-<arch>/`."
+        },
+        "beskid.lsp.server.devMode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Launch LSP from source (requires repo cloned locally). When false, extension expects bundled binary or explicit `server.path`."
         },
         "beskid.lsp.server.path": {
           "type": "string",
@@ -80,7 +85,7 @@
             "-p",
             "beskid_lsp"
           ],
-          "description": "Arguments used when VS Code launches the extension in debug mode."
+          "description": "Arguments used when VS Code launches the extension in debug mode (dev mode)."
         }
       }
     }
