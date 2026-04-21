@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PCKG_SUBMODULE_URL: https://github.com/Cyber-Nomad-Collective/beskid_pckg.git
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - name: Checkout pckg submodule only
@@ -31,7 +32,7 @@ jobs:
         run: |
           set -euo pipefail
           git submodule sync -- pckg
-          git config submodule.pckg.url "${PCKG_SUBMODULE_URL}"
+          git config submodule.pckg.url "https://x-access-token:${GITHUB_TOKEN}@github.com/Cyber-Nomad-Collective/beskid_pckg.git"
           git -c protocol.version=2 submodule update --init --depth 1 pckg
       - uses: actions/setup-dotnet@v4
         with:
