@@ -200,51 +200,53 @@ const reviewQueue = [
 
 <script>
   const root = document.querySelector("[data-console-root]");
-  if (!root) {
-    return;
-  }
+  if (root) {
+    const queryInput = root.querySelector("[data-filter-query]");
+    const statusSelect = root.querySelector("[data-filter-status]");
+    const rows = Array.from(root.querySelectorAll("[data-package-rows] tr"));
+    const reviewLog = root.querySelector("[data-review-log]");
+    const manageForm = root.querySelector("[data-manage-form]");
+    const manageLog = root.querySelector("[data-manage-log]");
 
-  const queryInput = root.querySelector("[data-filter-query]");
-  const statusSelect = root.querySelector("[data-filter-status]");
-  const rows = Array.from(root.querySelectorAll("[data-package-rows] tr"));
-  const reviewLog = root.querySelector("[data-review-log]");
-  const manageForm = root.querySelector("[data-manage-form]");
-  const manageLog = root.querySelector("[data-manage-log]");
+    const filterRows = () => {
+      const query = (queryInput?.value || "").trim().toLowerCase();
+      const status = statusSelect?.value || "all";
 
-  const filterRows = () => {
-    const query = (queryInput?.value || "").trim().toLowerCase();
-    const status = statusSelect?.value || "all";
+      for (const row of rows) {
+        const rowStatus = row.dataset.status || "";
+        const rowSearch = row.dataset.search || "";
+        const statusMatch = status === "all" || rowStatus === status;
+        const queryMatch = !query || rowSearch.includes(query);
+        row.hidden = !(statusMatch && queryMatch);
+      }
+    };
 
-    for (const row of rows) {
-      const rowStatus = row.dataset.status || "";
-      const rowSearch = row.dataset.search || "";
-      const statusMatch = status === "all" || rowStatus === status;
-      const queryMatch = !query || rowSearch.includes(query);
-      row.hidden = !(statusMatch && queryMatch);
-    }
-  };
+    queryInput?.addEventListener("input", filterRows);
+    statusSelect?.addEventListener("change", filterRows);
 
-  queryInput?.addEventListener("input", filterRows);
-  statusSelect?.addEventListener("change", filterRows);
-
-  root.querySelectorAll("[data-review-action]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const action = button.dataset.reviewAction;
-      const row = button.closest("tr");
-      const requestId = row?.dataset.reviewId || "unknown";
-      reviewLog.textContent = `Request ${requestId} marked as ${action}.`;
-      row?.classList.add("done");
+    root.querySelectorAll("[data-review-action]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const action = button.dataset.reviewAction;
+        const row = button.closest("tr");
+        const requestId = row?.dataset.reviewId || "unknown";
+        if (reviewLog) {
+          reviewLog.textContent = `Request ${requestId} marked as ${action}.`;
+        }
+        row?.classList.add("done");
+      });
     });
-  });
 
-  manageForm?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const formData = new FormData(manageForm);
-    const packageId = formData.get("packageId");
-    const visibility = formData.get("visibility");
-    const owner = formData.get("owner");
-    manageLog.textContent = `Saved policy for ${packageId}: visibility=${visibility}${owner ? `, owner+=${owner}` : ""}.`;
-  });
+    manageForm?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const formData = new FormData(manageForm);
+      const packageId = formData.get("packageId");
+      const visibility = formData.get("visibility");
+      const owner = formData.get("owner");
+      if (manageLog) {
+        manageLog.textContent = `Saved policy for ${packageId}: visibility=${visibility}${owner ? `, owner+=${owner}` : ""}.`;
+      }
+    });
+  }
 </script>
 
 <style>

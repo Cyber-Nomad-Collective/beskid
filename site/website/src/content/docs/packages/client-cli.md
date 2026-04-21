@@ -1,6 +1,6 @@
 ---
-title: Package Client CLI
-description: `beskid pkg` command model for auth, dependency management, and publish workflows.
+title: "Package Client CLI"
+description: "beskid pkg command model for auth, dependency management, and publish workflows."
 ---
 
 ## Command groups

@@ -1,6 +1,6 @@
 ---
-title: Lockfile
-description: `Project.lock` semantics for deterministic package restore.
+title: "Lockfile"
+description: "Project.lock semantics for deterministic package restore."
 ---
 
 ## Role
