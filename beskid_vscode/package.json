@@ -1,16 +1,32 @@
 {
-  "name": "beskind-vscode",
+  "name": "beskid-vscode",
   "displayName": "Beskid",
-  "description": "VS Code support for Beskid (.bd, .proj) via the Beskid LSP",
+  "description": "Beskid language support for VS Code with bundled cross-platform LSP binaries and optional dev mode.",
   "version": "0.1.0",
   "publisher": "beskid",
   "license": "MIT",
   "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Cyber-Nomad-Collective/beskid.git"
+  },
+  "homepage": "https://github.com/Cyber-Nomad-Collective/beskid/tree/main/beskid_vscode",
+  "bugs": {
+    "url": "https://github.com/Cyber-Nomad-Collective/beskid/issues"
+  },
+  "keywords": [
+    "beskid",
+    "language-server",
+    "lsp",
+    "programming-language",
+    "compiler"
+  ],
   "engines": {
     "vscode": "^1.88.0"
   },
   "categories": [
-    "Programming Languages"
+    "Programming Languages",
+    "Linters"
   ],
   "main": "./out/extension.js",
   "packageManager": "bun@1.2.20",

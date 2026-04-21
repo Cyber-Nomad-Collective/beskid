@@ -2,5 +2,4 @@ src/**
 tsconfig.json
 .vscode/**
 .gitignore
-README.md
 bun.lockb
