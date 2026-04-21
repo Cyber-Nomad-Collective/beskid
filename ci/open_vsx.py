@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import stat
+import subprocess
 from pathlib import Path
 
 from ci import proc
@@ -13,6 +15,37 @@ from ci import secrets
 
 def _compiler_release_bin(compiler_root: Path, bin_name: str) -> Path:
     return compiler_root / "target" / "release" / bin_name
+
+
+def _extension_publisher(vscode_root: Path) -> str:
+    package_json = vscode_root / "package.json"
+    data = json.loads(package_json.read_text(encoding="utf-8"))
+    publisher = str(data.get("publisher", "")).strip()
+    if not publisher:
+        raise SystemExit(f"Missing `publisher` in {package_json}")
+    return publisher
+
+
+def _ensure_openvsx_namespace(vscode_root: Path, token: str) -> None:
+    publisher = _extension_publisher(vscode_root)
+    result = subprocess.run(
+        ["bunx", "ovsx", "create-namespace", publisher, "-p", token],
+        cwd=vscode_root,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode == 0:
+        return
+
+    output = f"{result.stdout}\n{result.stderr}".lower()
+    if "already exists" in output:
+        return
+
+    raise SystemExit(
+        "Open VSX namespace setup failed for publisher "
+        f"`{publisher}`. Ensure your token can manage that namespace.\n"
+        f"create-namespace output:\n{result.stdout}{result.stderr}"
+    )
 
 
 def bundle_and_publish(
@@ -38,6 +71,7 @@ def bundle_and_publish(
 
     proc.run("bun", "install", "--frozen-lockfile", cwd=vscode)
     proc.run("bun", "run", "build", cwd=vscode)
+    _ensure_openvsx_namespace(vscode, token)
     dist = vscode / "dist"
     dist.mkdir(parents=True, exist_ok=True)
     vsix = dist / f"beskid-{platform}.vsix"
