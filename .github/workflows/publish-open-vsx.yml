@@ -54,6 +54,7 @@ jobs:
 
       - name: Publish Open VSX
         env:
+          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
           OPENVSX_PLATFORM: ${{ matrix.platform }}
           OPENVSX_BIN_NAME: ${{ matrix.bin_name }}
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}

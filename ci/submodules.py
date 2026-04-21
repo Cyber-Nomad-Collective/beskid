@@ -14,6 +14,17 @@ def _run(cmd: list[str], *, cwd: Path | None = None) -> None:
 def init_compiler(repo_root: Path | None = None) -> None:
     root = repo_root or Path.cwd()
     _run(["git", "submodule", "sync", "--", "compiler"], cwd=root)
+    url = os.environ.get(
+        "COMPILER_SUBMODULE_URL",
+        "https://github.com/Cyber-Nomad-Collective/beskid_compiler.git",
+    )
+    token = os.environ.get("COMPILER_SUBMODULE_TOKEN", "").strip()
+    if token:
+        url = (
+            "https://x-access-token:"
+            f"{token}@github.com/Cyber-Nomad-Collective/beskid_compiler.git"
+        )
+    _run(["git", "config", "submodule.compiler.url", url], cwd=root)
     _run(
         [
             "git",
