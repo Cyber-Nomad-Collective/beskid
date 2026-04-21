@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "publisher": "beskid",
   "license": "MIT",
-  "icon": "favicon.svg",
+  "icon": "icon.png",
   "engines": {
     "vscode": "^1.88.0"
   },
