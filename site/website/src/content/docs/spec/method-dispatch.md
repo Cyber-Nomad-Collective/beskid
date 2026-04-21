@@ -12,7 +12,7 @@ Static dispatch resolves calls at compile time. Dynamic dispatch uses a vtable w
 
 ## Method form
 Methods are defined within an `impl` block for a specific type:
-```
+```beskid
 impl T {
     ReturnType method(...) { ... }
 }
@@ -34,7 +34,7 @@ Every successful call expression must resolve to exactly one semantic call kind:
 Lowering must dispatch from this semantic classification and must not infer method-vs-item behavior from parser shape.
 
 Example:
-```
+```beskid
 type Point { i32 x, i32 y }
 
 impl Point {
@@ -48,7 +48,7 @@ In v0.1, this is valid only when the concrete type explicitly declares conforman
 `type Type : ContractA, ContractB { ... }`.
 
 Example:
-```
+```beskid
 contract Draw { unit draw(); }
 
 type Circle : Draw { i32 r }
@@ -76,7 +76,7 @@ unit render(Draw d) {
 - Codegen method dispatch must have a single lowering path per resolved method call kind.
 
 ## Examples
-```
+```beskid
 contract Len { i32 len(); }
 
 type S : Len { ... }

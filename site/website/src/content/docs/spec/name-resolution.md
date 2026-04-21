@@ -25,7 +25,7 @@ Scopes are lexical. Inner scopes can access names from outer scopes unless shado
 This order ensures locals always win over imports and module-level items.
 
 Example:
-```
+```beskid
 use net.http.Client;
 
 unit main() {
@@ -39,7 +39,7 @@ unit main() {
 - Shadowing is allowed but should produce a warning.
 
 Example:
-```
+```beskid
 let value = 1;
 if cond {
     let value = 2; // warning
@@ -48,12 +48,12 @@ if cond {
 ```
 
 ## Imports
-```
+```beskid
 use net.http.Client;
 ```
 
 Aliasing resolves ambiguity:
-```
+```beskid
 use a.Parser as AParser;
 use b.Parser as BParser;
 ```
@@ -69,7 +69,7 @@ use b.Parser as BParser;
 - Name resolution must provide stable symbol identity for later call classification (`MethodDispatch`, `ItemCall`, `CallableValueCall`).
 
 Example (ambiguous import error):
-```
+```beskid
 use a.Parser;
 use b.Parser;
 // error: Parser is ambiguous; use an alias

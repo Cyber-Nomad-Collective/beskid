@@ -9,7 +9,7 @@ title: "Memory and References"
 - Users do not control allocation explicitly in v0.1.
 
 Example:
-```
+```beskid
 string make() {
     let s = "hello";
     return s; // allocation strategy is compiler/runtime choice
@@ -27,7 +27,7 @@ string make() {
 - `ref mut T` is not planned; `ref` and `out` are the explicit forms.
 
 ## Ref/Out parameters
-```
+```beskid
 i32 len(ref string s) { return s.len(); }
 
 Result<(), string> parse_port(out i32 port) {
@@ -37,13 +37,13 @@ Result<(), string> parse_port(out i32 port) {
 ```
 
 Example usage:
-```
+```beskid
 i32 mut port = 0;
 parse_port(out port)?;
 ```
 
 ## Example
-```
+```beskid
 i32 len(ref string s) {
     return s.len();
 }

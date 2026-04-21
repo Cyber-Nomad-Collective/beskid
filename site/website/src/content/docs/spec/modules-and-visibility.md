@@ -11,7 +11,7 @@ title: "Modules and Visibility"
 Modules are resolved by file path. A dotted path refers to nested modules.
 
 Example:
-```
+```beskid
 // file: net/http.bd
 pub type Client { ... }
 
@@ -27,14 +27,14 @@ use net.http.Client;
 Items without `pub` are visible only inside their defining module.
 
 Example:
-```
+```beskid
 pub type User { string name }
 pub mod net;
 pub use net.http.Client;
 ```
 
 Example (private item):
-```
+```beskid
 type Secret { i32 value }
 // Secret is not visible outside this module
 ```

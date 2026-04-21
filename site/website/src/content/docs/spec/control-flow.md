@@ -4,7 +4,7 @@ title: "Control Flow"
 
 
 ## If/Else
-```
+```beskid
 if cond {
     ...
 } else {
@@ -15,7 +15,7 @@ if cond {
 `if` requires a boolean condition and does not permit implicit truthiness.
 
 Example:
-```
+```beskid
 if count > 0 {
     println("positive");
 } else {
@@ -24,14 +24,14 @@ if count > 0 {
 ```
 
 ## While
-```
+```beskid
 while cond {
     ...
 }
 ```
 
 Example:
-```
+```beskid
 i32 mut i = 0;
 while i < 3 {
     println(i);
@@ -41,7 +41,7 @@ while i < 3 {
 
 ## For (v0.1)
 General form:
-```
+```beskid
 for item in expression {
     ...
 }
@@ -54,7 +54,7 @@ for item in expression {
 
 ### Range compatibility fast-path
 `range(a, b)` remains supported and keeps its existing behavior:
-```
+```beskid
 for i in range(0, 10) {
     ...
 }
@@ -67,7 +67,7 @@ for i in range(0, 10) {
 - General iterator form lowers to repeated `Next()` calls and loop termination on `None`.
 
 Example:
-```
+```beskid
 i32 mut sum = 0;
 for i in range(0, 4) {
     sum = sum + i;
@@ -78,7 +78,7 @@ for i in range(0, 4) {
 `break`, `continue`, `return` behave as expected.
 
 Example:
-```
+```beskid
 for i in range(0, 10) {
     if i == 3 { continue; }
     if i == 7 { break; }

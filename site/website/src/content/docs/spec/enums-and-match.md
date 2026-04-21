@@ -4,7 +4,7 @@ title: "Enums and Match"
 
 
 ## Algebraic Enums (Rust-like)
-```
+```beskid
 enum Shape {
     Circle(f64 radius),
     Rect(f64 width, f64 height),
@@ -15,7 +15,7 @@ enum Shape {
 Enums group related variants under a single type. Variants may carry data or be unit-like.
 
 ## Match
-```
+```beskid
 f64 area(Shape s) {
     match s {
         Shape::Circle(r) => 3.14159 * r * r,
@@ -29,7 +29,7 @@ f64 area(Shape s) {
 
 ## Enum values
 Enum variants are constructed using `::` and an argument list:
-```
+```beskid
 let s = Shape::Circle(2.0);
 ```
 
@@ -38,12 +38,12 @@ Unqualified constructor names (e.g. `Circle(2.0)`) are not allowed.
 The `::` separator is reserved for enum variants only; namespaces and member access use `.`.
 
 Example (unit variant):
-```
+```beskid
 let p = Shape::Point;
 ```
 
 ## Snippet
-```
+```beskid
 f64 demo() {
     let s = Shape::Rect(2.0, 4.0);
     match s {
@@ -60,7 +60,7 @@ f64 demo() {
 - No fallthrough.
 
 Example with `_`:
-```
+```beskid
 match s {
     Shape::Circle(r) => r,
     _ => 0.0,
@@ -74,7 +74,7 @@ match s {
 - Single-variant enums keep a tag (no newtype optimization in v0.1).
 
 ### Guard snippet
-```
+```beskid
 match s {
     Shape::Rect(w, h) when w > 0 => w * h,
     Shape::Rect(_, _) => 0.0,

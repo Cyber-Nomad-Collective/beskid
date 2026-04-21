@@ -17,7 +17,7 @@ title: "Types"
 - `unit` (`()`): empty value used for no-result returns.
 
 Example:
-```
+```beskid
 bool ok = true;
 i32 count = 42;
 i64 big = 1_000_000;
@@ -29,7 +29,7 @@ unit none = ();
 
 ## Type Definitions (product types)
 Use `type` to define structures:
-```
+```beskid
 type User {
     string name,
     i32 age,
@@ -37,37 +37,37 @@ type User {
 ```
 
 Example construction and field access:
-```
+```beskid
 let u = User { name: "Ada", age: 37 };
 let n = u.name;
 ```
 
 ## Generics (v0.1)
 Allowed for functions and types:
-```
+```beskid
 T id<T>(T x) { return x; }
 ```
 
 Generic type usage:
-```
+```beskid
 type Option<T> { ... }
 Option<i32> x = ...;
 ```
 
 Example:
-```
+```beskid
 T first<T>(T a, T b) { return a; }
 let v = first<i32>(1, 2);
 ```
 
 ## Function types and lambdas
 Function types use arrow syntax:
-```
+```beskid
 (T1, T2) -> TOut
 ```
 
 Examples:
-```
+```beskid
 type Predicate = (i32) -> bool;
 type Mapper<TIn, TOut> = (TIn) -> TOut;
 ```
@@ -80,12 +80,12 @@ Lambda expressions are first-class values assignable to compatible function type
 
 ## References
 `ref T` is an explicit read-only reference type:
-```
+```beskid
 i32 len(ref string s) { return s.len(); }
 ```
 
 Example:
-```
+```beskid
 unit show(ref string s) {
     println(s);
 }
@@ -95,7 +95,7 @@ unit show(ref string s) {
 `T[]` is a contiguous array of elements of type `T`.
 
 Example:
-```
+```beskid
 i32 sum(i32[] values) {
     i32 mut total = 0;
     for i in range(0, values.len()) { total = total + values[i]; }
@@ -105,17 +105,17 @@ i32 sum(i32[] values) {
 
 ## Namespaces in types
 Type paths use dots:
-```
+```beskid
 net.http.Client
 ```
 
 Example:
-```
+```beskid
 net.http.Client client = net.http.Client::new();
 ```
 
 ## Option
-```
+```beskid
 enum Option<T> {
     Some(T),
     None,
@@ -124,7 +124,7 @@ enum Option<T> {
 `null` does not exist in the language.
 
 Example:
-```
+```beskid
 Option<i32> maybe_len(string s) {
     if s.len() > 0 { return Some(s.len()); }
     return None;
@@ -138,7 +138,7 @@ Option<i32> maybe_len(string s) {
 - `mut` applies to the binding (reassignment). Interior mutability is not modeled in v0.1; references are explicit via `ref`/`out`.
 
 Example:
-```
+```beskid
 let x = 1;
 i32 mut y = 1;
 // x = 2; // error
@@ -150,7 +150,7 @@ y = 2;
 - `===` compares reference identity when references are involved.
 
 Example:
-```
+```beskid
 let a = User { name: "Ada", age: 37 };
 let b = User { name: "Ada", age: 37 };
 let same_value = a == b; // true
@@ -161,7 +161,7 @@ let same_value = a == b; // true
 - Simple value types are `Copy` (no move; value is duplicated).
 
 Example:
-```
+```beskid
 let a = User { name: "Ada", age: 37 };
 let b = a; // a moved
 // a.name; // error: use after move

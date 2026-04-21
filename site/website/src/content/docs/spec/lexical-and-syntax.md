@@ -10,7 +10,7 @@ title: "Lexical Structure and Syntax"
 - Fat arrow: `=>` (used for lambda expressions)
 
 Example:
-```
+```beskid
 // line comment
 /* block comment */
 let user_id = 1;
@@ -58,7 +58,7 @@ Notes:
 
 ### String interpolation
 Use `${Expression}` inside a string literal:
-```
+```beskid
 let name = "Beskid";
 let msg = "hello ${name}";
 ```
@@ -68,13 +68,13 @@ Escaping:
 - Standard escapes like `\"` still apply.
 
 Example with expression:
-```
+```beskid
 let count = 2;
 let msg = "items: ${count + 1}";
 ```
 
 ## Example
-```
+```beskid
 i32 main() {
     let name = "Beskid";
     i32 mut count = 0;
@@ -136,7 +136,7 @@ Attributes may be attached to:
 - parameters.
 
 Example:
-```
+```beskid
 unit greet() {
     let msg = "hi";
     println(msg);

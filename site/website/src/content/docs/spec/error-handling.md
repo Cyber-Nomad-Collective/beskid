@@ -4,7 +4,7 @@ title: "Error Handling"
 
 
 ## Result
-```
+```beskid
 enum Result<T, E> {
     Ok(T),
     Error(E),
@@ -28,7 +28,7 @@ This is equivalent to early return on `Error`.
 `panic` aborts execution when the program is in an invalid state.
 
 Example:
-```
+```beskid
 i32 index(i32[] values, i32 i) {
     if i < 0 || i >= values.len() { panic("index out of range"); }
     return values[i];
@@ -36,7 +36,7 @@ i32 index(i32[] values, i32 i) {
 ```
 
 Example:
-```
+```beskid
 Result<i32, string> parse_port(string s) {
     let p = int.parse(s)?;
     if p < 1 || p > 65535 {
@@ -47,7 +47,7 @@ Result<i32, string> parse_port(string s) {
 ```
 
 ## Example
-```
+```beskid
 Option<i32> maybe_port(string s) {
     // explicit matching; `?` is only for Result in v0.1
     match int.parse(s) {

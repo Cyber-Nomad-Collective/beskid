@@ -9,14 +9,14 @@ Contracts define behavior through explicit interface declarations.
 Contract conformance is nominal in v0.1: a type satisfies a contract only when it explicitly declares that relationship.
 
 ## Declaration
-```
+```beskid
 contract Reader {
     Result<i32, Error> read(u8[] p);
 }
 ```
 
 ## Explicit conformance
-```
+```beskid
 type File : Reader {
     /* ... */
 }
@@ -29,19 +29,19 @@ impl File {
 `File` satisfies `Reader` because conformance is explicitly declared.
 
 Example call:
-```
+```beskid
 Result<i32, Error> read_all(Reader r) {
     return r.read([]);
 }
 ```
 
 ## Usage
-```
+```beskid
 Result<i32, Error> copy(Reader r, Writer w) { ... }
 ```
 
 Passing a concrete type where a contract is expected requires an explicit declaration:
-```
+```beskid
 type Socket : Reader, Writer {
     /* ... */
 }
@@ -54,7 +54,7 @@ impl Socket {
 
 ## Composition
 Contracts can embed other contracts:
-```
+```beskid
 contract Reader { Result<i32, Error> read(u8[] p); }
 contract Writer { Result<i32, Error> write(u8[] p); }
 
@@ -65,7 +65,7 @@ contract ReadWriter {
 ```
 
 Example:
-```
+```beskid
 Result<i32, Error> copy_all(ReadWriter rw) { ... }
 ```
 
@@ -77,7 +77,7 @@ Result<i32, Error> copy_all(ReadWriter rw) { ... }
 A declared conformance is valid only if the type's available method set covers all required methods.
 
 Example:
-```
+```beskid
 contract Size { i32 size(); }
 
 type Buf : Size { i32 len }
@@ -99,7 +99,7 @@ impl Buf {
 - Method conflicts in composed contracts are compile-time errors.
 
 ## Conflict example
-```
+```beskid
 contract A { i32 id(); }
 contract B { string id(); }
 
