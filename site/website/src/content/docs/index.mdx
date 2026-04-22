@@ -1,54 +1,77 @@
 ---
-title: Beskid
-description: Readable semantics, strong types, and explicit compiler-driven language features.
+title: beskid
+description: A comprehensive reference and architecture overview for the Beskid language.
+template: splash
 ---
 
 import LandingTemplate from '../../components/LandingTemplate.astro';
 
 <LandingTemplate
-  title="Beskid"
-  tagline="A statically typed language focused on readable semantics and explicit structure."
-  subtagline="The examples stay close to real language constructs: modules, control flow, enums, and contracts."
+  title="beskid"
+  tagline="A statically typed language focused on readable semantics and compiler architecture."
+  subtagline="Where language features are language features, not ten layers of corelib and DI containers."
   codeFile="examples/modules.bd"
-  codeHtml={`<span class="token-keyword">pub</span> <span class="token-keyword">mod</span> net.http;
-<span class="token-keyword">use</span> net.http.Client;
-
-<span class="token-keyword">type</span> ClientConfig {
-    <span class="token-type">string</span> endpoint,
-}
-
-Client <span class="token-fn">make_client</span>(ClientConfig config) {
-    <span class="token-keyword">return</span> Client { config: config };
-}`}
+  codeLang="beskid"
+  codeLines={[
+    "pub mod net.http;",
+    "use net.http.Client;",
+    "",
+    "type ClientConfig {",
+    "    string endpoint,",
+    "}",
+    "",
+    "Client make_client(ClientConfig config) {",
+    "    return Client { config: config };",
+    "}",
+  ]}
   actions={[
     { text: "Read the Language Spec", href: "/spec/", variant: "primary" },
-    { text: "Browse the Book", href: "/book/", variant: "secondary" },
+    { text: "Read the Book", href: "/book/", variant: "secondary" },
     { text: "Download CLI", href: "/downloads/", variant: "ghost" },
   ]}
-  sectionTitle="Core examples"
+  sectionTitle="The Beskid Architecture"
   features={[
     {
-      title: "Control flow with explicit state",
-      body: "From examples/control_flow.bd: mutable accumulators and loops are direct and readable without helper framework layers.",
+      title: "Language Specification",
+      body: "A comprehensive reference covering Beskid's type system, grammar, control flow structures, and memory safety model. Includes detailed examples and a formal language definition.",
     },
     {
-      title: "Pattern matching stays concrete",
-      body: "From examples/match.bd: enum variants and match arms are shaped around data, not reflection metadata.",
+      title: "Corelib Abstraction Sprawl",
+      body: "Core library functionality is designed as native language features, not complex chains of nested interfaces, eliminating dependency on bloated external wrappers.",
     },
     {
-      title: "Types are first-class project structure",
-      body: "From examples/types.bd: records and generic enums keep domain models obvious from declaration to use.",
+      title: "Reflection as a Crutch",
+      body: "Replaces heavy runtime reflection with powerful, verifiable compile-time analysis and metaprogramming. Get static safety, not slow runtime inspection.",
     },
     {
-      title: "Modules are practical boundaries",
-      body: "From examples/modules.bd: imports and constructors express package intent in a minimal surface area.",
+      title: "CIL Stagnation",
+      body: "Beskid targets efficient, modern machine code directly, escaping the overhead and historical limitations of Common Intermediate Language (CIL) interpretations.",
+    },
+    {
+      title: "First-Class Enumeration",
+      body: "Native, optimized language support for collection iteration. Enumeration is a first-class citizen, not a library-level afterthought.",
+    },
+    {
+      title: "Metaprogramming over Reflection",
+      body: "Perform code generation, analysis, and optimization at build time with powerful metaprogramming, ensuring full type safety and performance.",
+    },
+    {
+      title: "Assembly Output without IL Cuffs",
+      body: "Directly outputs optimized, native assembly language or machine code. Your programs run directly on the hardware, with no intermediate runtime needed.",
     },
   ]}
-  calloutTitle="Build from source"
-  calloutText="Clone with submodules so compiler sources and embedded standard library inputs are both present."
+  calloutTitle="Building Beskid"
+  calloutText="Clone with submodules (required for the embedded standard library):"
   calloutCodeLabel="bash"
   calloutCode={`git clone --recurse-submodules https://github.com/Cyber-Nomad-Collective/beskid_compiler.git
 # or, after a clone without submodules:
 git submodule update --init --recursive`}
-  calloutNote="If this repository is vendored into a larger workspace, keep recursive submodule initialization enabled."
+  calloutNote="In an aggregate repo that vendors this tree as a submodule (e.g., pecan/), initialize recursively, so compiler/corelib is populated: git submodule update --init --recursive (or clone with --recurse-submodules). You can override the standard library source path with BESKID_STDLIB_SOURCE if needed. The standard library sources are pinned as a Git submodule at corelib/ (repository: beskid_standard), under corelib/standard_library/. The CLI embeds that tree at build time (crates/beskid_cli/build.rs)."
 />
+
+<style is:global>{`
+  .s1-container:has([id$="_top"]),
+  .sl-container:has([id$="_top"]) {
+    display: none;
+  }
+`}</style>

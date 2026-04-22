@@ -27,8 +27,8 @@ Minimum expected layout:
 ```text
 MyProject/
 ├── Project.proj
-├── src/
-│   └── main.bd   # or library entry source
+├── Src/
+│   └── main.bd   # default source root (set `project.root = "src"` if you prefer lowercase)
 ├── obj/
 │   └── beskid/   # tool-managed materialized artifacts
 └── Project.lock  # generated lockfile

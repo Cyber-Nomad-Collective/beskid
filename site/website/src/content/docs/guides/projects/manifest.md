@@ -17,6 +17,7 @@ project {
   name    = "MyApp"
   version = "0.1.0"
   root    = "Src"
+  root_namespace = "Company.Product"
 }
 
 target "App" {
@@ -36,6 +37,7 @@ dependency "Std" {
 - `name` (string, required)
 - `version` (string, required)
 - `root` (string, optional, default: `"Src"`)
+- `root_namespace` (string, optional, metadata for package namespace conventions; does not change file-to-module mapping)
 
 ### `target` block (required, one or more)
 - Label = target name (unique)

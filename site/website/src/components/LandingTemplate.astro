@@ -1,4 +1,6 @@
 ---
+import { Code } from "astro:components";
+
 interface ActionLink {
   text: string;
   href: string;
@@ -17,6 +19,7 @@ interface Props {
   codeFile?: string;
   codeLines?: string[];
   codeHtml?: string;
+  codeLang?: string;
   actions?: ActionLink[];
   sectionTitle?: string;
   features?: FeatureItem[];
@@ -24,6 +27,7 @@ interface Props {
   calloutText?: string;
   calloutCodeLabel?: string;
   calloutCode?: string;
+  calloutCodeLang?: string;
   calloutNote?: string;
 }
 
@@ -34,6 +38,7 @@ const {
   codeFile = "main.bd",
   codeLines = [],
   codeHtml = "",
+  codeLang = "beskid",
   actions = [],
   sectionTitle = "",
   features = [],
@@ -41,8 +46,11 @@ const {
   calloutText = "",
   calloutCodeLabel = "",
   calloutCode = "",
+  calloutCodeLang = "bash",
   calloutNote = "",
 } = Astro.props;
+
+const resolvedCodeLang = codeLang === "beskid" || codeLang === "Beskid" ? "rust" : codeLang;
 ---
 
 <section class="landing-root">
@@ -73,7 +81,9 @@ const {
       {codeHtml ? (
         <pre><code set:html={codeHtml}></code></pre>
       ) : (
-        <pre><code>{codeLines.join("\n")}</code></pre>
+        <div class="shiki-wrap">
+          <Code code={codeLines.join("\n")} lang={resolvedCodeLang} />
+        </div>
       )}
     </div>
   </div>
@@ -99,7 +109,9 @@ const {
       {calloutCode && (
         <div class="callout-code">
           {calloutCodeLabel && <span class="label">{calloutCodeLabel}</span>}
-          <pre><code>{calloutCode}</code></pre>
+          <div class="shiki-wrap">
+            <Code code={calloutCode} lang={calloutCodeLang} />
+          </div>
         </div>
       )}
       {calloutNote && <p class="callout-note">{calloutNote}</p>}
@@ -129,7 +141,7 @@ const {
     padding: 2rem 0 0.5rem;
   }
 
-  .hero-copy h1 {
+  .hero-copy h2 {
     font-size: clamp(2.5rem, 5vw, 4.5rem);
     line-height: 1.05;
     letter-spacing: -0.03em;
@@ -231,6 +243,16 @@ const {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     color: #e4e4e7;
     background: var(--landing-panel);
+  }
+
+  .shiki-wrap :global(pre) {
+    margin: 0;
+    padding: 1rem 1.2rem !important;
+    border-radius: 0;
+    background: var(--landing-panel) !important;
+    overflow-x: auto;
+    font-size: 0.83rem;
+    line-height: 1.65;
   }
 
   .token-type {

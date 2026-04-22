@@ -1,6 +1,7 @@
 ---
 title: Download Beskid CLI
 description: Install Beskid quickly or download platform binaries directly.
+template: splash
 ---
 
 import LandingTemplate from '../../components/LandingTemplate.astro';
@@ -10,13 +11,16 @@ import LandingTemplate from '../../components/LandingTemplate.astro';
   tagline="Install quickly, then run the same kind of code you see in the examples folder."
   subtagline="The CLI targets practical workflows: small typed programs, module-first structure, and direct builds."
   codeFile="examples/control_flow.bd"
-  codeHtml={`<span class="token-type">i32</span> <span class="token-fn">sum_to</span>(<span class="token-type">i32</span> n) {
-    <span class="token-type">i32</span> <span class="token-keyword">mut</span> acc = <span class="token-number">0</span>;
-    <span class="token-keyword">for</span> i <span class="token-keyword">in</span> range(<span class="token-number">0</span>, n) {
-        acc = acc + i;
-    }
-    <span class="token-keyword">return</span> acc;
-}`}
+  codeLang="beskid"
+  codeLines={[
+    "i32 sum_to(i32 n) {",
+    "    i32 mut acc = 0;",
+    "    for i in range(0, n) {",
+    "        acc = acc + i;",
+    "    }",
+    "    return acc;",
+    "}",
+  ]}
   actions={[
     { text: "Read the Language Spec", href: "/spec/", variant: "secondary" },
     { text: "Open the Book", href: "/book/", variant: "secondary" },
@@ -60,3 +64,10 @@ https://cdn.beskid-lang.org/releases/<version>/beskid-darwin-arm64
 https://cdn.beskid-lang.org/releases/<version>/beskid-windows-amd64.exe`}
   calloutNote="Default install locations: ~/.beskid/bin/beskid (macOS/Linux) and %USERPROFILE%\\.beskid\\bin\\beskid.exe (Windows)."
 />
+
+<style is:global>{`
+  .s1-container:has([id$="_top"]),
+  .sl-container:has([id$="_top"]) {
+    display: none;
+  }
+`}</style>

@@ -87,6 +87,7 @@ Build outputs and state directories:
 - File `Src/Net/Http.bd` maps to module path `Net.Http`.
 - The file path relative to `root` determines the module path.
 - The last segment is the module name (file stem).
+- If the file starts with file-scoped `mod A.B;`, that declared path overrides path-derived mapping for that file.
 
 ## Resolution Order (name lookup)
 For identifiers and paths inside a module:
@@ -101,9 +102,8 @@ This order is consistent with `docs/spec/name-resolution.md`.
 The module graph is inferred from `mod` declarations and file layout. The manifest does not list modules explicitly.
 
 ## `mod` Declarations
-- `mod Net;` declares a submodule.
-- The compiler searches for `root/Net.bd` or `root/Net/Mod.bd` (configurable).
-- Error if not found.
+- `mod Net.Http;` as the first top-level item declares the file-scoped module identity.
+- In file-scoped mode, any additional `mod` declarations in the same file are errors.
 
 ## `use` Imports
 - `use Net.Http.Client;` resolves against the module graph.
@@ -134,7 +134,7 @@ The module graph is inferred from `mod` declarations and file layout. The manife
 
 ## Future Extensions
 - Virtual modules for generated code.
-- Workspace manifests (`Workspace.proj`) for monorepo builds.
+- Extended workspace policy and lock integration for large monorepos (base workspace manifests are already available in `docs/spec/workspace-proj-v1.md` and `docs/guides/workspace-monorepo.md`).
 - Registry lockfile integration.
 
 ## Standard Library (`Std`) Graph Behavior
