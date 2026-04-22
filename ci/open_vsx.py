@@ -34,6 +34,21 @@ def _write_extension_manifest(package_json: Path, data: dict[str, object]) -> No
     package_json.write_text(f"{json.dumps(data, indent=2)}\n", encoding="utf-8")
 
 
+def _validate_extension_icon(vscode_root: Path) -> None:
+    package_json, data = _read_extension_manifest(vscode_root)
+    icon_rel = str(data.get("icon", "")).strip()
+    if not icon_rel:
+        raise SystemExit(f"Missing `icon` in {package_json}")
+
+    icon_path = vscode_root / icon_rel
+    if not icon_path.is_file():
+        raise SystemExit(f"Extension icon file not found: {icon_path}")
+    if icon_path.suffix.lower() == ".svg":
+        raise SystemExit(
+            f"Extension icon must be PNG/JPG for VSCE/Open VSX (found SVG): {icon_path}"
+        )
+
+
 def _extension_publisher(vscode_root: Path) -> str:
     package_json, data = _read_extension_manifest(vscode_root)
     publisher = str(data.get("publisher", "")).strip()
@@ -55,15 +70,14 @@ def _resolved_extension_version() -> str | None:
 
     tag_ref = os.environ.get("GITHUB_REF_NAME", "").strip()
     if os.environ.get("GITHUB_REF_TYPE", "").strip() == "tag" and TAG_RE.match(tag_ref):
-        tag = tag_ref.removeprefix("v")
-        short_sha = _git("rev-parse", "--short=8", "HEAD")
-        return f"{tag}+build.{short_sha}"
+        return tag_ref.removeprefix("v")
 
     latest_tag = _git("describe", "--tags", "--abbrev=0", "--match", "v[0-9]*.[0-9]*.[0-9]*")
     major, minor, patch = _split(latest_tag)
     commits_since = int(_git("rev-list", "--count", f"{latest_tag}..HEAD"))
-    short_sha = _git("rev-parse", "--short=8", "HEAD")
-    return f"{major}.{minor}.{patch + 1}+build.{commits_since}.{short_sha}"
+    if commits_since <= 0:
+        return f"{major}.{minor}.{patch}"
+    return f"{major}.{minor}.{patch + commits_since}"
 
 
 def _apply_extension_version(vscode_root: Path) -> str | None:
@@ -142,6 +156,7 @@ def bundle_and_publish(
 
     previous_version = _apply_extension_version(vscode)
     try:
+        _validate_extension_icon(vscode)
         proc.run("bun", "install", "--frozen-lockfile", cwd=vscode)
         proc.run("bun", "run", "build", cwd=vscode)
         _ensure_openvsx_namespace(vscode, token)
