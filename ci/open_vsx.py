@@ -32,19 +32,21 @@ def _ensure_openvsx_namespace(vscode_root: Path, token: str) -> None:
         ["bunx", "ovsx", "create-namespace", publisher, "-p", token],
         cwd=vscode_root,
         capture_output=True,
-        text=True,
     )
     if result.returncode == 0:
         return
 
-    output = f"{result.stdout}\n{result.stderr}".lower()
+    # Decode tool output explicitly to avoid Windows codepage decode crashes.
+    stdout = result.stdout.decode("utf-8", errors="replace")
+    stderr = result.stderr.decode("utf-8", errors="replace")
+    output = f"{stdout}\n{stderr}".lower()
     if "already exists" in output:
         return
 
     raise SystemExit(
         "Open VSX namespace setup failed for publisher "
         f"`{publisher}`. Ensure your token can manage that namespace.\n"
-        f"create-namespace output:\n{result.stdout}{result.stderr}"
+        f"create-namespace output:\n{stdout}{stderr}"
     )
 
 
