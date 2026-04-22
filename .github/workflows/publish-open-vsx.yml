@@ -3,6 +3,9 @@
 name: Publish VS Code Extension to Open VSX
 
 on:
+  push:
+    branches:
+      - main
   release:
     types: [published]
   workflow_dispatch:
