@@ -13,9 +13,9 @@ Beskid uses a file-backed module model: one file corresponds to one module, and 
 
 ## Module declarations
 
-- `mod net.http;` as the first top-level item declares a file-scoped module for the whole file.
+- Optional file-scoped form: `mod net.http;` as the first top-level item declares a file-scoped module for the whole file.
 - In a file-scoped module file, additional `mod` declarations are not allowed.
-- Inline modules remain available in files that do not use file-scoped `mod`.
+- Inline modules and regular `pub mod ...;` declarations remain available in files that do not use file-scoped `mod`.
 - Visibility defaults to private; `pub` exports a symbol to other modules.
 
 ## Module identity precedence

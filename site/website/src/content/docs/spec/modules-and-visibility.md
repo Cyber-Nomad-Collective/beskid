@@ -5,7 +5,7 @@ title: "Modules and Visibility"
 
 ## Modules
 - One file = one module.
-- File-scoped declaration: `mod net.http;` (must be first top-level item).
+- Optional file-scoped declaration: `mod net.http;` (private, first top-level item).
 - Import: `use net.http.Client;` or `use net.http.Client as HttpClient;` (optional `pub`).
 
 When file-scoped `mod` is present, the declared path becomes the module identity for the whole file and overrides path-derived module identity.
@@ -26,6 +26,7 @@ pub type Client { ... }
 - A file can declare at most one file-scoped `mod`.
 - The file-scoped declaration must be the first top-level item.
 - Additional `mod` declarations in that file are errors.
+- Files without a leading file-scoped declaration continue to use path-derived module identity and can use regular `pub mod ...;` declarations.
 
 ## Visibility
 - Private by default.

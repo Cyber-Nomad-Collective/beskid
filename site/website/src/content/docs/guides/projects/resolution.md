@@ -102,8 +102,9 @@ This order is consistent with `docs/spec/name-resolution.md`.
 The module graph is inferred from `mod` declarations and file layout. The manifest does not list modules explicitly.
 
 ## `mod` Declarations
-- `mod Net.Http;` as the first top-level item declares the file-scoped module identity.
+- Optional file-scoped form: `mod Net.Http;` as the first top-level item declares the file-scoped module identity.
 - In file-scoped mode, any additional `mod` declarations in the same file are errors.
+- Without file-scoped mode, regular `mod` declarations participate in module graph inference as before.
 
 ## `use` Imports
 - `use Net.Http.Client;` resolves against the module graph.

@@ -4,7 +4,7 @@ title: "Name Resolution"
 
 ## Scope model (v0.1)
 - Each file is a module.
-- A leading file-scoped declaration (`mod a.b;`) sets that file's module identity.
+- An optional leading file-scoped declaration (`mod a.b;`) sets that file's module identity.
 - Each block introduces a new scope.
 - `use` imports names into the current scope.
 
