@@ -8,6 +8,7 @@ import re
 import shutil
 import stat
 import subprocess
+import time
 from pathlib import Path
 
 from ci import proc
@@ -18,6 +19,10 @@ SEMVER_RE = re.compile(
     r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$"
 )
 TAG_RE = re.compile(r"^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
+RETRYABLE_PUBLISH_RE = re.compile(
+    r"(status\s+50\d|bad gateway|gateway timeout|timed out|econnreset|econnrefused|service unavailable)",
+    re.IGNORECASE,
+)
 
 
 def _compiler_release_bin(compiler_root: Path, bin_name: str) -> Path:
@@ -133,6 +138,39 @@ def _ensure_openvsx_namespace(vscode_root: Path, token: str) -> None:
     )
 
 
+def _publish_openvsx_with_retry(vscode_root: Path, token: str, vsix: Path) -> None:
+    max_attempts = 4
+    base_delay_s = 3
+    for attempt in range(1, max_attempts + 1):
+        result = subprocess.run(
+            ["bunx", "ovsx", "publish", "-p", token, str(vsix)],
+            cwd=vscode_root,
+            capture_output=True,
+            env={**os.environ, "OVSX_TOKEN": token},
+        )
+        if result.returncode == 0:
+            if attempt > 1:
+                print(f"[open-vsx] Publish succeeded on retry {attempt}/{max_attempts}")
+            return
+
+        stdout = result.stdout.decode("utf-8", errors="replace")
+        stderr = result.stderr.decode("utf-8", errors="replace")
+        combined = f"{stdout}\n{stderr}"
+        retryable = RETRYABLE_PUBLISH_RE.search(combined) is not None
+        if attempt < max_attempts and retryable:
+            delay = base_delay_s * (2 ** (attempt - 1))
+            print(
+                f"[open-vsx] Publish attempt {attempt}/{max_attempts} failed with transient "
+                f"error; retrying in {delay}s..."
+            )
+            time.sleep(delay)
+            continue
+        raise SystemExit(
+            f"Open VSX publish failed after {attempt} attempt(s).\n"
+            f"publish output:\n{combined}"
+        )
+
+
 def bundle_and_publish(
     repo_root: Path,
     *,
@@ -173,15 +211,6 @@ def bundle_and_publish(
             str(vsix),
             cwd=vscode,
         )
-        proc.run(
-            "bunx",
-            "ovsx",
-            "publish",
-            "-p",
-            token,
-            str(vsix),
-            cwd=vscode,
-            env={**os.environ, "OVSX_TOKEN": token},
-        )
+        _publish_openvsx_with_retry(vscode, token, vsix)
     finally:
         _restore_extension_version(vscode, previous_version)
