@@ -1,0 +1,339 @@
+---
+interface ActionLink {
+  text: string;
+  href: string;
+  variant?: "primary" | "secondary" | "ghost";
+}
+
+interface FeatureItem {
+  title: string;
+  body: string;
+}
+
+interface Props {
+  title: string;
+  tagline: string;
+  subtagline?: string;
+  codeFile?: string;
+  codeLines?: string[];
+  codeHtml?: string;
+  actions?: ActionLink[];
+  sectionTitle?: string;
+  features?: FeatureItem[];
+  calloutTitle?: string;
+  calloutText?: string;
+  calloutCodeLabel?: string;
+  calloutCode?: string;
+  calloutNote?: string;
+}
+
+const {
+  title,
+  tagline,
+  subtagline = "",
+  codeFile = "main.bd",
+  codeLines = [],
+  codeHtml = "",
+  actions = [],
+  sectionTitle = "",
+  features = [],
+  calloutTitle = "",
+  calloutText = "",
+  calloutCodeLabel = "",
+  calloutCode = "",
+  calloutNote = "",
+} = Astro.props;
+---
+
+<section class="landing-root">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <h1>{title}</h1>
+      <p>{tagline}</p>
+      {subtagline && <p class="hero-subline">{subtagline}</p>}
+      {actions.length > 0 && (
+        <div class="action-row">
+          {actions.map((action) => (
+            <a class={`action ${action.variant ?? "secondary"}`} href={action.href}>
+              {action.text}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+    <div class="code-shell" aria-label={`Example code from ${codeFile}`}>
+      <div class="code-head">
+        <div class="dots" aria-hidden="true">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </div>
+        <span>{codeFile}</span>
+      </div>
+      {codeHtml ? (
+        <pre><code set:html={codeHtml}></code></pre>
+      ) : (
+        <pre><code>{codeLines.join("\n")}</code></pre>
+      )}
+    </div>
+  </div>
+
+  {features.length > 0 && (
+    <section class="feature-wrap">
+      {sectionTitle && <h2>{sectionTitle}</h2>}
+      <div class="feature-grid">
+        {features.map((feature) => (
+          <article class="feature-card">
+            <h3>{feature.title}</h3>
+            <p>{feature.body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {(calloutTitle || calloutText || calloutCode) && (
+    <section class="callout">
+      {calloutTitle && <h2>{calloutTitle}</h2>}
+      {calloutText && <p>{calloutText}</p>}
+      {calloutCode && (
+        <div class="callout-code">
+          {calloutCodeLabel && <span class="label">{calloutCodeLabel}</span>}
+          <pre><code>{calloutCode}</code></pre>
+        </div>
+      )}
+      {calloutNote && <p class="callout-note">{calloutNote}</p>}
+    </section>
+  )}
+</section>
+
+<style>
+  .landing-root {
+    --landing-bg: #111113;
+    --landing-muted: #a1a1aa;
+    --landing-border: #27272a;
+    --landing-card: #18181b;
+    --landing-panel: #0d0d0f;
+    --landing-accent: #b5c4fa;
+    margin: 0;
+    width: 100%;
+    color: #ededef;
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+    padding: 2rem 0 0.5rem;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+
+  .hero-copy p {
+    margin: 1rem 0 0;
+    color: var(--landing-muted);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    line-height: 1.65;
+    max-width: 48rem;
+  }
+
+  .hero-subline {
+    margin-top: 0.4rem;
+  }
+
+  .action-row {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .action {
+    border-radius: 999px;
+    border: 1px solid var(--landing-border);
+    padding: 0.55rem 1rem;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .action.primary {
+    background: var(--landing-accent);
+    color: #111113;
+    border-color: transparent;
+  }
+
+  .action.secondary:hover,
+  .action.ghost:hover {
+    background: color-mix(in oklab, var(--landing-bg), #fff 8%);
+  }
+
+  .code-shell {
+    border: 1px solid var(--landing-border);
+    border-radius: 0.85rem;
+    overflow: hidden;
+    background: var(--landing-panel);
+    box-shadow: 0 24px 48px rgb(0 0 0 / 28%);
+  }
+
+  .code-head {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--landing-border);
+    background: var(--landing-card);
+    padding: 0.65rem 0.9rem;
+    position: relative;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.75rem;
+    color: var(--landing-muted);
+  }
+
+  .dots {
+    position: absolute;
+    left: 0.9rem;
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .dot {
+    width: 0.64rem;
+    height: 0.64rem;
+    border-radius: 999px;
+    display: inline-block;
+  }
+
+  .dot.red {
+    background: color-mix(in oklab, #ef4444, #111113 70%);
+  }
+
+  .dot.yellow {
+    background: color-mix(in oklab, #eab308, #111113 70%);
+  }
+
+  .dot.green {
+    background: color-mix(in oklab, #22c55e, #111113 70%);
+  }
+
+  pre {
+    margin: 0;
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    font-size: 0.83rem;
+    line-height: 1.65;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    color: #e4e4e7;
+    background: var(--landing-panel);
+  }
+
+  .token-type {
+    color: #e5c07b;
+  }
+
+  .token-keyword {
+    color: #c678dd;
+  }
+
+  .token-fn {
+    color: #61afef;
+  }
+
+  .token-number {
+    color: #d19a66;
+  }
+
+  .feature-wrap {
+    margin-top: 3.5rem;
+  }
+
+  .feature-wrap h2,
+  .callout h2 {
+    font-size: 1.75rem;
+    margin: 0 0 1.2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+
+  .feature-card {
+    border: 1px solid var(--landing-border);
+    background: color-mix(in oklab, var(--landing-bg), #fff 3%);
+    border-radius: 0.85rem;
+    padding: 1rem 1.05rem;
+  }
+
+  .feature-card h3 {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .feature-card p {
+    margin: 0.55rem 0 0;
+    color: var(--landing-muted);
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+
+  .callout {
+    margin-top: 2.5rem;
+    border: 1px solid var(--landing-border);
+    border-radius: 1rem;
+    background: color-mix(in oklab, var(--landing-bg), #fff 2%);
+    padding: 1.25rem;
+  }
+
+  .callout p {
+    margin: 0;
+    color: var(--landing-muted);
+    line-height: 1.6;
+  }
+
+  .callout-code {
+    margin-top: 0.95rem;
+    border: 1px solid var(--landing-border);
+    border-radius: 0.7rem;
+    overflow: hidden;
+  }
+
+  .callout-code .label {
+    display: block;
+    padding: 0.45rem 0.7rem;
+    border-bottom: 1px solid var(--landing-border);
+    background: color-mix(in oklab, var(--landing-card), #fff 5%);
+    color: var(--landing-muted);
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  .callout-note {
+    margin-top: 0.85rem !important;
+    border-left: 2px solid var(--landing-border);
+    padding-left: 0.75rem;
+    font-size: 0.88rem;
+  }
+
+  @media (min-width: 62rem) {
+    .hero-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(20rem, 33rem);
+      gap: 2.5rem;
+      padding-top: 3rem;
+    }
+
+    .feature-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

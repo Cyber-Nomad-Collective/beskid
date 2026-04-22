@@ -1,0 +1,62 @@
+---
+title: Download Beskid CLI
+description: Install Beskid quickly or download platform binaries directly.
+---
+
+import LandingTemplate from '../../components/LandingTemplate.astro';
+
+<LandingTemplate
+  title="Download Beskid CLI"
+  tagline="Install quickly, then run the same kind of code you see in the examples folder."
+  subtagline="The CLI targets practical workflows: small typed programs, module-first structure, and direct builds."
+  codeFile="examples/control_flow.bd"
+  codeHtml={`<span class="token-type">i32</span> <span class="token-fn">sum_to</span>(<span class="token-type">i32</span> n) {
+    <span class="token-type">i32</span> <span class="token-keyword">mut</span> acc = <span class="token-number">0</span>;
+    <span class="token-keyword">for</span> i <span class="token-keyword">in</span> range(<span class="token-number">0</span>, n) {
+        acc = acc + i;
+    }
+    <span class="token-keyword">return</span> acc;
+}`}
+  actions={[
+    { text: "Read the Language Spec", href: "/spec/", variant: "secondary" },
+    { text: "Open the Book", href: "/book/", variant: "secondary" },
+    { text: "Open VSX Extension", href: "https://open-vsx.org/extension/beskid/beskid-vscode", variant: "secondary" },
+    { text: "Go to GitHub", href: "https://github.com/Cyber-Nomad-Collective/beskid", variant: "ghost" },
+  ]}
+  sectionTitle="Install options"
+  features={[
+    {
+      title: "Quick install (macOS + Linux)",
+      body: "curl -fsSL https://beskid-lang.org/install.sh | bash",
+    },
+    {
+      title: "Quick install (Windows PowerShell)",
+      body: "iwr https://beskid-lang.org/install.ps1 -useb | iex",
+    },
+    {
+      title: "Direct latest binaries",
+      body: "Linux, macOS (Apple Silicon), and Windows binaries are published under /releases/latest/.",
+    },
+    {
+      title: "Pinned version downloads",
+      body: "For reproducible environments, replace <version> in release URLs with an explicit tag (for example 0.1.0).",
+    },
+    {
+      title: "Editor extensions",
+      body: "Install the Beskid VS Code-compatible extension from Open VSX: https://open-vsx.org/extension/beskid/beskid-vscode",
+    },
+  ]}
+  calloutTitle="Direct links"
+  calloutText="Use latest for convenience or versioned URLs for reproducible setup."
+  calloutCodeLabel="urls"
+  calloutCode={`latest:
+https://cdn.beskid-lang.org/releases/latest/beskid-linux-amd64
+https://cdn.beskid-lang.org/releases/latest/beskid-darwin-arm64
+https://cdn.beskid-lang.org/releases/latest/beskid-windows-amd64.exe
+
+versioned:
+https://cdn.beskid-lang.org/releases/<version>/beskid-linux-amd64
+https://cdn.beskid-lang.org/releases/<version>/beskid-darwin-arm64
+https://cdn.beskid-lang.org/releases/<version>/beskid-windows-amd64.exe`}
+  calloutNote="Default install locations: ~/.beskid/bin/beskid (macOS/Linux) and %USERPROFILE%\\.beskid\\bin\\beskid.exe (Windows)."
+/>

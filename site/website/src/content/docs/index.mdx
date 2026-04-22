@@ -1,46 +1,54 @@
 ---
-title: Beskid Documentation
-description: Language specification, execution model, and standard library contracts for Beskid.
-template: splash
-hero:
-  tagline: A statically typed language focused on readable semantics and compiler architecture.
-  image:
-    alt: Beskid logo
-    file: ../../assets/beskid_logo.svg
-  actions:
-    - text: Read the Language Spec
-      link: /spec/
-      icon: right-arrow
-      variant: primary
-    - text: Open Package Hub
-      link: /packages/
-      icon: setting
-      variant: secondary
-    - text: Download CLI
-      link: /downloads/
-      icon: download
-      variant: minimal
-  
+title: Beskid
+description: Readable semantics, strong types, and explicit compiler-driven language features.
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import LandingTemplate from '../../components/LandingTemplate.astro';
 
-## Documentation map
+<LandingTemplate
+  title="Beskid"
+  tagline="A statically typed language focused on readable semantics and explicit structure."
+  subtagline="The examples stay close to real language constructs: modules, control flow, enums, and contracts."
+  codeFile="examples/modules.bd"
+  codeHtml={`<span class="token-keyword">pub</span> <span class="token-keyword">mod</span> net.http;
+<span class="token-keyword">use</span> net.http.Client;
 
-<CardGrid stagger>
-	<Card title="Language specification" icon="open-book">
-		Canonical language semantics, typing, control flow, modules, contracts, events, lambdas, and extern model.
-	</Card>
-	<Card title="Execution model" icon="setting">
-		HIR, CLIF lowering, ABI contracts, runtime/syscall ownership, and backend parity rules.
-	</Card>
-	<Card title="Standard library" icon="pencil">
-		Core, Collections, Query, and System API contracts with stable naming and boundary policy.
-	</Card>
-	<Card title="Package hub" icon="setting">
-		Listing, moderation queue, and maintainer management workflows for package operations.
-	</Card>
-	<Card title="Guides and drafts" icon="add-document">
-		Implementation notes, analysis guides, and work-in-progress design docs.
-	</Card>
-</CardGrid>
+<span class="token-keyword">type</span> ClientConfig {
+    <span class="token-type">string</span> endpoint,
+}
+
+Client <span class="token-fn">make_client</span>(ClientConfig config) {
+    <span class="token-keyword">return</span> Client { config: config };
+}`}
+  actions={[
+    { text: "Read the Language Spec", href: "/spec/", variant: "primary" },
+    { text: "Browse the Book", href: "/book/", variant: "secondary" },
+    { text: "Download CLI", href: "/downloads/", variant: "ghost" },
+  ]}
+  sectionTitle="Core examples"
+  features={[
+    {
+      title: "Control flow with explicit state",
+      body: "From examples/control_flow.bd: mutable accumulators and loops are direct and readable without helper framework layers.",
+    },
+    {
+      title: "Pattern matching stays concrete",
+      body: "From examples/match.bd: enum variants and match arms are shaped around data, not reflection metadata.",
+    },
+    {
+      title: "Types are first-class project structure",
+      body: "From examples/types.bd: records and generic enums keep domain models obvious from declaration to use.",
+    },
+    {
+      title: "Modules are practical boundaries",
+      body: "From examples/modules.bd: imports and constructors express package intent in a minimal surface area.",
+    },
+  ]}
+  calloutTitle="Build from source"
+  calloutText="Clone with submodules so compiler sources and embedded standard library inputs are both present."
+  calloutCodeLabel="bash"
+  calloutCode={`git clone --recurse-submodules https://github.com/Cyber-Nomad-Collective/beskid_compiler.git
+# or, after a clone without submodules:
+git submodule update --init --recursive`}
+  calloutNote="If this repository is vendored into a larger workspace, keep recursive submodule initialization enabled."
+/>
