@@ -19,7 +19,7 @@ Normative documents use these terms:
 - Event semantics: `docs/spec/events.md`.
 - FFI/Extern language contract: `docs/spec/ffi-and-extern.md`.
 - Runtime ABI/syscall ownership: `docs/execution/runtime/syscalls-and-abi-boundary.md`.
-- Standard library API contracts: `docs/standard-library/`.
+- Corelib API contracts: `docs/corelib/`.
 
 ## Distinct feature rule
 Each language/runtime feature has exactly one canonical definition location.
@@ -29,5 +29,5 @@ Other documents should reference the canonical location instead of redefining be
 When behavior spans multiple areas:
 1. Define language semantics in `docs/spec`.
 2. Define lowering/runtime behavior in `docs/execution`.
-3. Define API surface in `docs/standard-library`.
+3. Define API surface in `docs/corelib`.
 4. Link across documents; do not duplicate definitions.

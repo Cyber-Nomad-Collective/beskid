@@ -10,7 +10,7 @@ description: Execution stack responsibilities
 3. **CLIF lowering**
 4. **Module layer**
 5. **Execution backend (JIT thin / AOT primary)**
-6. **Runtime/stdlib**
+6. **Runtime/corelib**
 
 ## Suggested responsibilities
 ### `beskid_analysis`

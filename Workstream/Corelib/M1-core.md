@@ -1,7 +1,7 @@
 # M1 — Core Module Group
 
 ## Goal
-Implement foundational APIs used by all higher stdlib modules.
+Implement foundational APIs used by all higher corelib modules.
 
 ## Scope
 - `Core.Results`

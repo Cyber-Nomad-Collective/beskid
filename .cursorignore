@@ -1,0 +1,4 @@
+# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
+# Re-include gitignored reference trees so @ mentions and indexing can see them.
+!references/
+

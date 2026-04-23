@@ -37,10 +37,10 @@ Required builtins (v0.1):
 
 All builtins are declared via `cranelift_module::Module::declare_function` and called from CLIF.
 
-## 4) Standard library boundary
-- **Stdlib** is Beskid code + runtime builtins.
+## 4) Corelib boundary
+- **Corelib** is Beskid code + runtime builtins.
 - Low-level operations are implemented as host functions.
-- Stdlib should not depend on compiler internals.
+- Corelib should not depend on compiler internals.
 - Std-facing runtime/system operations cross through stable runtime ABI entrypoints.
 - Platform-specific behavior (syscalls, OS API selection, blocking policy) is owned by runtime only.
 

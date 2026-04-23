@@ -1,9 +1,9 @@
 ---
-title: "Standard Library Specification"
+title: "Corelib Specification"
 ---
 
 
-This directory is the canonical home for standard library design and API contracts.
+This directory is the canonical home for **corelib** design and API contracts.
 
 ## Scope
 - Public module naming and surface contracts.
@@ -40,8 +40,13 @@ This directory is the canonical home for standard library design and API contrac
 - Follow C# naming conventions for public API surface (`PascalCase` module segments and callable names).
 
 ## Relationship to language spec
-- `docs/spec/standard-library-api-shape.md` defines cross-cutting naming and boundary policy.
+- `docs/spec/corelib-api-shape.md` defines cross-cutting naming and boundary policy.
 - This directory defines per-module contracts and examples.
+
+## Source and release policy
+- Canonical implementation is maintained in the compiler `corelib` submodule.
+- Package identity is `beskid_corelib` (avoid `std` / misleading `standard_*` package names).
+- Corelib release version tracks the shared language/compiler release version.
 
 ## Legacy notes
 - The previous numbered docs (`00-*` through `07-*`) are legacy scaffolding and should be treated as superseded by this directory structure.

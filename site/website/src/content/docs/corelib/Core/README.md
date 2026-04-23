@@ -3,7 +3,7 @@ title: "Core Module Group"
 ---
 
 
-Core defines foundational APIs shared across the standard library.
+Core defines foundational APIs shared across corelib.
 
 ## Files
 - `Error-Handling.md`

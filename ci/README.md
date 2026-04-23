@@ -28,4 +28,10 @@ If `PECAN_CI_DOCKER=1` and `docker` is available, some sessions can be extended 
 
 ## Nested corelib (beskid_standard)
 
-The `compiler/corelib` submodule was not present in the aggregate checkout used for this migration. After `git submodule update --init` for `corelib`, add a `noxfile.py` in that repository mirroring `pckg` (e.g. `unit_tests`, `lint`) and invoke it from compiler workflows if needed.
+Corelib quality validation runs in compiler CI, while publishing authority is in `beskid_standard` CI:
+
+- compiler CI runs `corelib-quality` (`python -m nox -s corelib_quality`) for integration safety;
+- `beskid_standard` CI publishes `beskid_corelib` on `main`/`v*` through its local workflow and `noxfile.py`;
+- `beskid_standard` publish uses `BESKID_PCKG_KEY` (mapped to `BESKID_PCKG_API_KEY`) and installs/downloads Beskid CLI for `pckg pack/upload`.
+
+See [CORELIB.md](CORELIB.md) for the detailed flow.

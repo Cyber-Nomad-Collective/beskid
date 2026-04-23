@@ -57,4 +57,4 @@ Option<i32> maybe_port(string s) {
 }
 ```
 
-Canonical stdlib API contract for `Result` is documented in `docs/standard-library/Core/Results.md`.
+Canonical corelib API contract for `Result` is documented in `docs/corelib/Core/Results.md`.

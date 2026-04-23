@@ -1,24 +1,24 @@
-# Beskid Standard Library — Full Implementation Plan
+# Beskid Corelib — Full Implementation Plan
 
 ## Goal
-Build a complete, production-ready Beskid standard library aligned with the canonical site specification, while preserving runtime ABI stability and backend parity (JIT/AOT).
+Build a complete, production-ready Beskid corelib aligned with the canonical site specification, while preserving runtime ABI stability and backend parity (JIT/AOT).
 
 ## Grounded current state
 
 ### Canonical spec sources
-- Standard library contracts: `site/website/src/content/docs/standard-library/README.md`
-- API shape policy: `site/website/src/content/docs/spec/standard-library-api-shape.md`
+- Corelib contracts: `site/website/src/content/docs/corelib/README.md`
+- API shape policy: `site/website/src/content/docs/spec/corelib-api-shape.md`
 - Module groups:
-  - Core: `.../standard-library/Core/*`
-  - Collections: `.../standard-library/Collections/*`
-  - Query: `.../standard-library/Query/*`
-  - System: `.../standard-library/System/*`
+  - Core: `.../corelib/Core/*`
+  - Collections: `.../corelib/Collections/*`
+  - Query: `.../corelib/Query/*`
+  - System: `.../corelib/System/*`
 
 ### Repository state today
-- `compiler/corelib/standard_library/src` contains concrete `.bd` module implementations and a populated `Prelude.bd` (via the `corelib` submodule inside `compiler/`).
+- `compiler/corelib/beskid_corelib/src` contains concrete `.bd` module implementations and a populated `Prelude.bd` (via the `corelib` submodule inside `compiler/`).
 - Phase skeleton is present (M0 complete), but many module APIs are still placeholder/stub implementations.
-- No explicit `use` declarations currently exist in stdlib sources; modules rely on qualified paths and prelude module declarations.
-- Compiler/runtime now has source-owned interop dispatch (generation feature removed), so stdlib must be implemented against stable runtime ABI/builtins, not generation workflows.
+- No explicit `use` declarations currently exist in corelib sources; modules rely on qualified paths and prelude module declarations.
+- Compiler/runtime now has source-owned interop dispatch (generation feature removed), so corelib must be implemented against stable runtime ABI/builtins, not generation workflows.
 
 ### Implementation snapshot (2026-03-17)
 - **M0 Foundation:** ✅ complete (project structure + module tree + prelude)
@@ -42,13 +42,13 @@ Build a complete, production-ready Beskid standard library aligned with the cano
 2. **C#-style naming** for public API (`PascalCase` modules and callables).
 3. **Runtime boundary discipline**: platform/syscall behavior remains runtime-owned.
 4. **Result-first recoverable errors**: avoid panic-only API contracts for expected failures.
-5. **Additive evolution policy** for public stdlib surface.
+5. **Additive evolution policy** for public corelib surface.
 6. **Backend parity**: language-level behavior must remain JIT/AOT equivalent.
 
 ## Target deliverable structure (proposed)
 
 ```text
-standard_library/
+beskid_corelib/
   Project.proj
   Src/
     Prelude.bd
@@ -78,7 +78,7 @@ standard_library/
 
 ## Architecture and ownership model
 
-### Layer A — Public stdlib API modules (`standard_library/Src/**`)
+### Layer A — Public corelib API modules (`beskid_corelib/Src/**`)
 - Owns module-level type signatures, contracts, and API composition.
 - Encodes user-facing docs/examples behavior.
 - Must not contain platform-specific policy.
@@ -88,7 +88,7 @@ standard_library/
 - Exposed through stable symbols/types already declared in runtime/abi crates.
 
 ### Layer C — Compiler integration
-- Resolver/typechecker/codegen must resolve stdlib modules and preserve contract semantics.
+- Resolver/typechecker/codegen must resolve corelib modules and preserve contract semantics.
 - Must enforce the naming/routing shape from docs (`Core.*`, `Collections.*`, `Query.*`, `System.*`).
 
 ## Phase plan
@@ -98,17 +98,17 @@ From this point, this document is not only a design target but an execution trac
 
 ## Phase 0 — Foundation bootstrap (blocking)
 ### Objective
-Create a valid stdlib project skeleton consumable by CLI/workflows.
+Create a valid corelib project skeleton consumable by CLI/workflows.
 
 ### Tasks
-1. Add `standard_library/Project.proj`.
-2. Add `standard_library/Src/Prelude.bd`.
+1. Add `beskid_corelib/Project.proj`.
+2. Add `beskid_corelib/Src/Prelude.bd`.
 3. Create empty module files for all target modules listed above.
 4. Wire `Prelude.bd` exports/imports with canonical module paths.
 
 ### Acceptance criteria
-- `standard_library` contains a valid project manifest and source root.
-- CLI stdlib-related workflows can reference checked-in stdlib without template assumptions breaking.
+- `beskid_corelib` contains a valid project manifest and source root.
+- CLI corelib-related workflows can reference checked-in corelib without template assumptions breaking.
 - Module paths resolve without `Std.*` aliases.
 
 ### Status
@@ -196,7 +196,7 @@ Deliver stable platform-facing APIs with runtime-owned policy.
 
 ## Phase 5 — Hardening, parity, and rollout
 ### Objective
-Make stdlib release-ready with compatibility and regression safety.
+Make corelib release-ready with compatibility and regression safety.
 
 ### Tasks
 1. Add comprehensive test matrix:
@@ -205,11 +205,11 @@ Make stdlib release-ready with compatibility and regression safety.
    - runtime parity tests (JIT/AOT)
 2. Add API compatibility policy checks (additive change guardrails).
 3. Add module-level examples and migration notes for any breaking proposal.
-4. Create release checklist for stdlib versioning and docs sync.
+4. Create release checklist for corelib versioning and docs sync.
 
 ### Acceptance criteria
-- Full stdlib targeted test suites pass sequentially.
-- JIT/AOT parity holds for stdlib-backed language features.
+- Full corelib targeted test suites pass sequentially.
+- JIT/AOT parity holds for corelib-backed language features.
 - Docs and implementation are synchronized for all module groups.
 
 ### Status
@@ -268,7 +268,7 @@ Make stdlib release-ready with compatibility and regression safety.
 - Any API mismatch requires either code change or docs change in same PR.
 
 ### C2 — Naming and visibility audit
-- Ensure no `Std.*` path remains in examples/tests/stdlib sources.
+- Ensure no `Std.*` path remains in examples/tests/corelib sources.
 - Ensure public APIs follow PascalCase naming policy.
 
 ### C3 — Error taxonomy consistency
@@ -280,12 +280,12 @@ Make stdlib release-ready with compatibility and regression safety.
 - Reject hidden allocations in cheap-looking operations.
 
 ### C5 — Runtime dependency manifest
-- Maintain a single map from stdlib operations to runtime symbols.
+- Maintain a single map from corelib operations to runtime symbols.
 - Validate that used runtime symbols are stable and parity-tested.
 
 ## Risk register and controls
 1. **Risk: docs drift from implementation**
-   - Control: mandatory contract checklist in every stdlib PR.
+   - Control: mandatory contract checklist in every corelib PR.
 2. **Risk: backend behavior divergence (JIT vs AOT)**
    - Control: parity gates for each module phase.
 3. **Risk: over-expansion before MVP stabilization**
@@ -308,7 +308,7 @@ Make stdlib release-ready with compatibility and regression safety.
 10. Hardening/parity/docs lock
 
 ## Suggested milestone artifacts
-- `M0-stdlib-foundation.md` (skeleton + loader assumptions)
+- `M0-corelib-foundation.md` (skeleton + loader assumptions)
 - `M1-core.md`
 - `M2-collections-array-query-contracts.md`
 - `M3-query-operators-and-execution.md`
@@ -316,8 +316,8 @@ Make stdlib release-ready with compatibility and regression safety.
 - `M5-parity-hardening-and-release.md`
 
 ## Done definition (program-level)
-- `standard_library` contains complete source tree and manifest.
+- `beskid_corelib` contains complete source tree and manifest.
 - All module groups from docs are implemented with test-backed contracts.
 - No legacy interop-generation assumptions remain.
 - Public API naming and paths align with canonical docs.
-- JIT/AOT parity validated for stdlib-backed features.
+- JIT/AOT parity validated for corelib-backed features.

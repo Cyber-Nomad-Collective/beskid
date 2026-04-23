@@ -138,7 +138,7 @@ The module graph is inferred from `mod` declarations and file layout. The manife
 - Extended workspace policy and lock integration for large monorepos (base workspace manifests are already available in `docs/spec/workspace-proj-v1.md` and `docs/guides/workspace-monorepo.md`).
 - Registry lockfile integration.
 
-## Standard Library (`Std`) Graph Behavior
+## Corelib (`Std`) graph behavior
 - `Std` is treated as a normal dependency node in the project DAG.
-- If a resolvable `Std` dependency node exists, stdlib prelude fallback injection must be disabled.
+- If a resolvable `Std` dependency node exists, corelib prelude fallback injection must be disabled.
 - Feature-gated fallback remains only as a compatibility path when no resolvable `Std` node is present.

@@ -61,12 +61,12 @@ import LandingTemplate from '../../components/LandingTemplate.astro';
     },
   ]}
   calloutTitle="Building Beskid"
-  calloutText="Clone with submodules (required for the embedded standard library):"
+  calloutText="Clone with submodules (required for the embedded corelib):"
   calloutCodeLabel="bash"
   calloutCode={`git clone --recurse-submodules https://github.com/Cyber-Nomad-Collective/beskid_compiler.git
 # or, after a clone without submodules:
 git submodule update --init --recursive`}
-  calloutNote="In an aggregate repo that vendors this tree as a submodule (e.g., pecan/), initialize recursively, so compiler/corelib is populated: git submodule update --init --recursive (or clone with --recurse-submodules). You can override the standard library source path with BESKID_STDLIB_SOURCE if needed. The standard library sources are pinned as a Git submodule at corelib/ (repository: beskid_standard), under corelib/standard_library/. The CLI embeds that tree at build time (crates/beskid_cli/build.rs)."
+  calloutNote="In an aggregate repo that vendors this tree as a submodule (e.g., pecan/), initialize recursively, so compiler/corelib is populated: git submodule update --init --recursive (or clone with --recurse-submodules). You can override the corelib source path with BESKID_CORELIB_SOURCE. Corelib sources are pinned as a Git submodule at corelib/ (repository: beskid_standard), under corelib/beskid_corelib/. The CLI embeds that tree at build time (crates/beskid_cli/build.rs)."
 />
 
 <style is:global>{`

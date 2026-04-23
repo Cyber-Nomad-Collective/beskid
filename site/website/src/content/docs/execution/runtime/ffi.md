@@ -28,10 +28,10 @@ description: FFI and C ABI specification
 ## Runtime boundary rules
 - JIT and AOT must bind extern calls through the same ABI-compatible signature surface.
 - FFI behavior must not bypass runtime ownership for syscall/platform policy.
-- FFI adaptation logic belongs in runtime and standard library layers, not semantic analysis.
+- FFI adaptation logic belongs in runtime and corelib layers, not semantic analysis.
 
 ## Notes
-- FFI is optional in v0.1; standard library can wrap FFI when needed.
+- FFI is optional in v0.1; corelib can wrap FFI when needed.
 
 ## Non-goals
 - Defining language-level `Extern` attribute syntax.

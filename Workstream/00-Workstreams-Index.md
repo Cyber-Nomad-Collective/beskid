@@ -6,8 +6,8 @@ This index defines the recommended execution order across workstreams and the en
    - Entry: Workstream/AOT_Refactor/M0-stabilization-baseline.md
    - Focus: Parser/HIR plumbing, semantics parity, events, diagnostics, backend parity.
 
-2) Standard Library
-   - Entry: Workstream/Standard Library/Standard-Library-Implementation-Plan.md
+2) Corelib
+   - Entry: Workstream/Corelib/Corelib-Implementation-Plan.md
    - Focus: Core modules, collections, query contracts/operators, system APIs, release hardening.
 
 3) Package Manager (server)
@@ -33,5 +33,5 @@ This index defines the recommended execution order across workstreams and the en
 Notes
 - Duplicate directory detected: "Workstream/Package Management client " (trailing space). Treat as deprecated; see the next file in that directory for details. Prefer the space-less directory above.
 - Coordination: Runtime has been reorganized into WS1–WS12 workstreams instead of M0–M4. Contributors should pick the next unblocked WS task and reference this index in PR descriptions.
-- Cross-stream dependencies: AOT_Refactor unlocks parts of Standard Library; Package Manager unblocks client and UI integrations.
+- Cross-stream dependencies: AOT_Refactor unlocks parts of Corelib; Package Manager unblocks client and UI integrations.
 

@@ -11,15 +11,15 @@ Define execution-level ownership for runtime ABI entrypoints, platform syscalls,
 1. Runtime owns platform behavior (`syscall`, OS API, blocking policy).
 2. JIT and AOT import the same runtime ABI surface.
 3. Frontend/lowering MUST NOT encode backend-specific syscall behavior.
-4. Stdlib-facing APIs remain stable while runtime internals evolve.
+4. Corelib-facing APIs remain stable while runtime internals evolve.
 
 ## ABI ownership split
 - Language-level `Extern` syntax and typing: `docs/spec/ffi-and-extern.md`.
 - Runtime symbol/link/loading behavior: this document.
-- Stdlib API-level contracts: `docs/standard-library/`.
+- Corelib API-level contracts: `docs/corelib/`.
 
 ## Runtime-mediated execution model
-- System-facing stdlib operations call stable runtime ABI entrypoints.
+- System-facing corelib operations call stable runtime ABI entrypoints.
 - Runtime implements Linux/OS-specific details internally.
 - Optional interop dispatcher symbols may exist for language/runtime interop boundaries.
 

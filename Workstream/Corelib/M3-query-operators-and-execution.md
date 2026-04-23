@@ -9,7 +9,7 @@ Implement composable query operators and execution semantics.
 ## Completed in this batch
 1. Aligned `Query.Contracts` and docs to parser-supported contract shape (`Option`, `Iterator`).
 2. Updated `Query.Operators` to carry tracked first-value state and deterministic `Where/Select/Take/Skip/First` behavior.
-3. Added baseline stdlib regression tests for query contracts/operator state shape in `compiler/crates/beskid_tests/src/projects/stdlib/compile.rs`.
+3. Added baseline corelib regression tests for query contracts/operator state shape in `compiler/crates/beskid_tests/src/projects/corelib/compile.rs`.
 
 ## Remaining for M3
 1. Replace placeholder/sample-driven result encoding with fully value-typed option semantics once generic contract syntax is supported by parser/type system.

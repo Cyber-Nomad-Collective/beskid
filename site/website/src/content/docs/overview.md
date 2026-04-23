@@ -27,7 +27,7 @@ Beskid is a statically typed language designed to teach compiler construction. I
 - `docs/book` — guided learning path for language and project organization.
 - `docs/spec` — language semantics and typing rules (normative).
 - `docs/execution` — runtime, ABI, lowering, and backend contracts (normative).
-- `docs/standard-library` — standard library contracts (normative).
+- `docs/corelib` — corelib contracts (normative).
 - `docs/guides` — drafts, tooling notes, and project workflow guides (informative).
 
-See: `docs/spec/README.md`, `docs/execution/README.md`, `docs/standard-library/README.md`.
+See: `docs/spec/README.md`, `docs/execution/README.md`, `docs/corelib/README.md`.

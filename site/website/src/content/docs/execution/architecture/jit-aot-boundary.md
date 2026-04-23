@@ -28,7 +28,7 @@ It specifies what MUST remain identical across backends and what MAY differ.
 
 5. **Interop dispatch scope**
    - Runtime interop dispatch symbols remain ABI-level runtime exports.
-   - Interop dispatch is for language/runtime interop boundaries, not a required stdlib generation workflow.
+   - Interop dispatch is for language/runtime interop boundaries, not a required corelib generation workflow.
    - Return-group routing remains fixed to:
      - `unit` -> `interop_dispatch_unit`
      - `usize` -> `interop_dispatch_usize`

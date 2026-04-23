@@ -12,7 +12,7 @@ This book is the practical introduction to Beskid. It is written as a tutorial t
 - Keep the spec open for details and edge cases:
   - [Language Spec](/spec/)
   - [Execution docs](/execution/)
-  - [Standard Library docs](/standard-library/)
+  - [Corelib docs](/corelib/)
 
 ## Learning tracks
 

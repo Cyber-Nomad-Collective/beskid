@@ -5,7 +5,7 @@ title: "Code Style and Naming"
 
 This document defines the default naming and style rules for Beskid source code.
 
-Primary goal: **C#-style readability** with consistent naming across language, stdlib, and tooling.
+Primary goal: **C#-style readability** with consistent naming across language, corelib, and tooling.
 
 ## 13.1 Naming conventions (required)
 
@@ -88,7 +88,7 @@ Examples:
 - Mark only stable, intended API surface as `pub`.
 - Keep implementation helpers private to reduce accidental coupling.
 
-## 13.5 Standard library naming policy
+## 13.5 Corelib naming policy
 
 - Do not use a mandatory `Std` namespace prefix for public APIs.
 - Public type names: `PascalCase`.

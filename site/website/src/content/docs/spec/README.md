@@ -17,7 +17,7 @@ Document index:
 - type-inference.md
 - method-dispatch.md
 - code-style-and-naming.md
-- standard-library-api-shape.md
+- corelib-api-shape.md
 - metaprogramming.md
 - events.md
 - lambdas-and-closures.md
@@ -28,7 +28,7 @@ Note: v0.1 intentionally avoids complex features (async, runtime reflection, etc
 Generator model and broader metaprogramming scheduling are tracked as drafts outside the v0.1 spec:
 - `docs/guides/drafts/metaprogramming/metaprogramming.md`
 
-Standard library module-level contracts are documented in `docs/standard-library/`.
+Corelib module-level contracts are documented in `docs/corelib/`.
 
 ## Grammar coverage checklist
 - [x] Comments: line `//` and block `/* ... */`

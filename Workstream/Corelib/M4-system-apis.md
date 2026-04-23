@@ -1,7 +1,7 @@
 # M4 — System APIs
 
 ## Goal
-Implement platform-facing stdlib modules with runtime-owned platform policy.
+Implement platform-facing corelib modules with runtime-owned platform policy.
 
 ## Scope
 - `System.IO`

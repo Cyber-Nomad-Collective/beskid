@@ -29,6 +29,7 @@ export default defineConfig({
 						{ label: '04. Imports and Names', link: 'book/04-imports-and-names' },
 						{ label: '05. Workspaces and Monorepos', link: 'book/05-workspaces-and-monorepos' },
 						{ label: '06. Public API Idioms', link: 'book/06-public-api-idioms' },
+						{ label: '07. Documentation comments', link: 'book/07-documentation-comments' },
 						{ label: 'Appendix: Spec Map', link: 'book/appendix-spec-map' },
 					],
 				},
@@ -41,8 +42,8 @@ export default defineConfig({
 					autogenerate: { directory: 'execution' },
 				},
 				{
-					label: 'Standard Library',
-					autogenerate: { directory: 'standard-library' },
+					label: 'Corelib',
+					autogenerate: { directory: 'corelib' },
 				},
 				{
 					label: 'Packages',

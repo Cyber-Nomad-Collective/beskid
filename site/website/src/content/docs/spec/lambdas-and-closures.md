@@ -52,5 +52,5 @@ Compilation MUST diagnose:
 - Syntax examples: `docs/spec/lexical-and-syntax.md`
 - Type grammar: `docs/spec/types.md`
 - Inference core: `docs/spec/type-inference.md`
-- Query contracts: `docs/standard-library/Query/Contracts.md`
+- Query contracts: `docs/corelib/Query/Contracts.md`
 - Event semantics: `docs/spec/events.md`
