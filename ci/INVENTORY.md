@@ -26,7 +26,8 @@ Compiler submodule ([compiler](/home/fp-pmikstacki/Private/pecan/compiler)) — 
 | e2e-macos-smoke | `e2e_macos_smoke` |
 | e2e-windows-smoke | `e2e_windows_smoke` |
 | version | `compute_version` | Env: `GITHUB_REF`, `GITHUB_REF_NAME`, `GITHUB_EVENT_NAME`, `GITHUB_OUTPUT` |
-| release-cli | `release_cli` | Env: `RELEASE_VERSION`, `MATRIX_TARGET`, `MATRIX_ASSET_NAME`, `RUNNER_OS`, SeaweedFS secrets |
+| release-cli-build | `release_cli` | Env: `RELEASE_VERSION`, `MATRIX_TARGET`, `MATRIX_ASSET_NAME`, `RUNNER_OS`; uploads artifact per matrix row |
+| release-cli-publish | `softprops/action-gh-release@v2.3.3` | `permissions: contents: write`; downloads matrix artifacts then creates/updates release for tag `cli-latest` with `target_commitish` `${{ github.sha }}` |
 
 pckg submodule — [pckg/noxfile.py](/home/fp-pmikstacki/Private/pecan/pckg/noxfile.py), standalone workflow [pckg/.github/workflows/ci.yml](/home/fp-pmikstacki/Private/pecan/pckg/.github/workflows/ci.yml).
 

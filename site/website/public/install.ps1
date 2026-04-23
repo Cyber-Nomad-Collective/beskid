@@ -1,9 +1,24 @@
 $ErrorActionPreference = "Stop"
 
-$baseUrl = "https://cdn.beskid-lang.org/releases/latest"
+$baseUrl = "https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-latest"
+$versionUrl = "$baseUrl/cli-version.txt"
 $installDir = Join-Path $env:USERPROFILE ".beskid\bin"
 $binaryName = "beskid-windows-amd64.exe"
 $url = "$baseUrl/$binaryName"
+
+Write-Output "Fetching version from $versionUrl"
+try {
+    $version = (Invoke-WebRequest -Uri $versionUrl -UseBasicParsing).Content.Trim()
+} catch {
+    Write-Output "Failed to download $versionUrl (rolling release metadata)."
+    Write-Output "If this persists, check that the cli-latest release includes cli-version.txt."
+    throw
+}
+if ([string]::IsNullOrWhiteSpace($version)) {
+    throw "cli-version.txt from $versionUrl was empty."
+}
+
+Write-Output "Installing Beskid CLI $version (rolling build)"
 
 if (-not (Test-Path $installDir)) {
     New-Item -ItemType Directory -Force -Path $installDir | Out-Null

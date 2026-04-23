@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE_URL="https://cdn.beskid-lang.org/releases/latest"
+BASE_URL="https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-latest"
+VERSION_URL="${BASE_URL}/cli-version.txt"
 INSTALL_DIR="${HOME}/.beskid/bin"
 
 os_name="$(uname -s)"
@@ -29,6 +30,18 @@ if [[ "${os}" == "darwin" && "${arch}" != "arm64" ]]; then
   echo "Only Apple Silicon (arm64) builds are currently published for macOS."
   exit 1
 fi
+
+if ! cli_version="$(curl -fsSL "${VERSION_URL}" | tr -d '[:space:]')"; then
+  echo "Failed to download ${VERSION_URL} (rolling release metadata)."
+  echo "If this persists, check that the cli-latest release includes cli-version.txt."
+  exit 1
+fi
+if [[ -z "${cli_version}" ]]; then
+  echo "cli-version.txt from ${VERSION_URL} was empty."
+  exit 1
+fi
+
+echo "Installing Beskid CLI ${cli_version} (rolling build)"
 
 binary_name="beskid-${os}-${arch}"
 url="${BASE_URL}/${binary_name}"

@@ -32,6 +32,8 @@ Run from `site/website`:
 | `bun build`   | Build static site into `dist/`          |
 | `bun preview` | Preview built site                      |
 
+`bun dev` / `bun build` run `scripts/sync-cli-version.mjs` first (via `predev` / `prebuild`), which writes gitignored `src/data/cli-version.json` from the rolling GitHub release when reachable, otherwise from `../../compiler/crates/beskid_cli/Cargo.toml` in a full superrepo checkout.
+
 ## Deployment
 
 Coolify deployment uses:

@@ -16,6 +16,8 @@ interface Props {
   title: string;
   tagline: string;
   subtagline?: string;
+  /** Short line shown under subtagline (e.g. rolling CLI semver). */
+  versionNote?: string;
   codeFile?: string;
   codeLines?: string[];
   codeHtml?: string;
@@ -35,6 +37,7 @@ const {
   title,
   tagline,
   subtagline = "",
+  versionNote = "",
   codeFile = "main.bd",
   codeLines = [],
   codeHtml = "",
@@ -59,6 +62,7 @@ const resolvedCodeLang = codeLang === "beskid" || codeLang === "Beskid" ? "rust"
       <h1>{title}</h1>
       <p>{tagline}</p>
       {subtagline && <p class="hero-subline">{subtagline}</p>}
+      {versionNote && <p class="hero-subline hero-version">{versionNote}</p>}
       {actions.length > 0 && (
         <div class="action-row">
           {actions.map((action) => (
@@ -158,6 +162,12 @@ const resolvedCodeLang = codeLang === "beskid" || codeLang === "Beskid" ? "rust"
 
   .hero-subline {
     margin-top: 0.4rem;
+  }
+
+  .hero-version {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.95rem;
+    color: color-mix(in oklab, var(--landing-muted), var(--landing-accent) 35%);
   }
 
   .action-row {

@@ -5,11 +5,13 @@ template: splash
 ---
 
 import LandingTemplate from '../../components/LandingTemplate.astro';
+import cliVersion from '../../data/cli-version.json';
 
 <LandingTemplate
   title="Download Beskid CLI"
   tagline="Install quickly, then run the same kind of code you see in the examples folder."
   subtagline="The CLI targets practical workflows: small typed programs, module-first structure, and direct builds."
+  versionNote={`Current rolling CLI: ${cliVersion.version} (semver like beskid-vscode package.json, e.g. 0.1.0 — run beskid --version to confirm).`}
   codeFile="examples/control_flow.bd"
   codeLang="beskid"
   codeLines={[
@@ -39,11 +41,11 @@ import LandingTemplate from '../../components/LandingTemplate.astro';
     },
     {
       title: "Direct latest binaries",
-      body: "Linux, macOS (Apple Silicon), and Windows binaries are published under /releases/latest/.",
+      body: "Linux, macOS (Apple Silicon), and Windows binaries are published on GitHub Releases under the rolling tag cli-latest. The same release includes cli-version.txt (plain semver for scripts and docs).",
     },
     {
       title: "Pinned version downloads",
-      body: "For reproducible environments, replace <version> in release URLs with an explicit tag (for example 0.1.0).",
+      body: "For reproducible environments, use a release URL with an explicit Git tag. Tags use a v prefix in the URL path (for example …/download/v0.1.0/…), while beskid --version and the VS Code extension use plain semver (0.1.0) without the v.",
     },
     {
       title: "Editor extensions",
@@ -51,17 +53,18 @@ import LandingTemplate from '../../components/LandingTemplate.astro';
     },
   ]}
   calloutTitle="Direct links"
-  calloutText="Use latest for convenience or versioned URLs for reproducible setup."
+  calloutText="Use cli-latest for convenience, or a v-prefixed tag in the URL for reproducible installs. Semver in beskid --version matches the extension package version style (0.1.0)."
   calloutCodeLabel="urls"
-  calloutCode={`latest:
-https://cdn.beskid-lang.org/releases/latest/beskid-linux-amd64
-https://cdn.beskid-lang.org/releases/latest/beskid-darwin-arm64
-https://cdn.beskid-lang.org/releases/latest/beskid-windows-amd64.exe
+  calloutCode={`rolling (cli-latest):
+https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-latest/cli-version.txt
+https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-latest/beskid-linux-amd64
+https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-latest/beskid-darwin-arm64
+https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-latest/beskid-windows-amd64.exe
 
-versioned:
-https://cdn.beskid-lang.org/releases/<version>/beskid-linux-amd64
-https://cdn.beskid-lang.org/releases/<version>/beskid-darwin-arm64
-https://cdn.beskid-lang.org/releases/<version>/beskid-windows-amd64.exe`}
+pinned (example Git tag v0.1.0 — CLI reports 0.1.0):
+https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/v0.1.0/beskid-linux-amd64
+https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/v0.1.0/beskid-darwin-arm64
+https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/v0.1.0/beskid-windows-amd64.exe`}
   calloutNote="Default install locations: ~/.beskid/bin/beskid (macOS/Linux) and %USERPROFILE%\\.beskid\\bin\\beskid.exe (Windows)."
 />
 
