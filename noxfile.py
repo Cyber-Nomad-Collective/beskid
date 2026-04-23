@@ -113,10 +113,21 @@ def pckg_unit_tests(session: nox.Session) -> None:
 def open_vsx_publish(session: nox.Session) -> None:
     platform = os.environ.get("OPENVSX_PLATFORM", "").strip()
     bin_name = os.environ.get("OPENVSX_BIN_NAME", "").strip()
+    rust_target = os.environ.get("OPENVSX_RUST_TARGET", "").strip()
     if not platform or not bin_name:
         raise SystemExit(
-            "Set OPENVSX_PLATFORM and OPENVSX_BIN_NAME (e.g. linux-x64, beskid_lsp)"
+            "Set OPENVSX_PLATFORM and OPENVSX_BIN_NAME (e.g. linux-x64, beskid_lsp). "
+            "Optional OPENVSX_RUST_TARGET for cross-compiles (e.g. x86_64-apple-darwin for darwin-x64)."
         )
     submodules.init_compiler(ROOT)
-    proc.run("cargo", "build", "-p", "beskid_lsp", "--release", cwd=_compiler_dir())
-    open_vsx.bundle_and_publish(ROOT, platform=platform, bin_name=bin_name)
+    cw = _compiler_dir()
+    cargo_cmd = ["cargo", "build", "-p", "beskid_lsp", "--release"]
+    if rust_target:
+        cargo_cmd.extend(["--target", rust_target])
+    proc.run(*cargo_cmd, cwd=cw)
+    open_vsx.bundle_and_publish(
+        ROOT,
+        platform=platform,
+        bin_name=bin_name,
+        rust_triple=rust_target or None,
+    )

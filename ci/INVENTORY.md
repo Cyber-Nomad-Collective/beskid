@@ -10,7 +10,7 @@ Superrepo ([pecan](/home/fp-pmikstacki/Private/pecan)) — workflows under [.git
 | runtime-ci.yml | runtime-macos-check | `runtime_macos_check` | |
 | runtime-ci.yml | runtime-windows-check | `runtime_windows_check` | |
 | pckg-ci.yml | test | `pckg_unit_tests` | Submodule `pckg`, .NET 10 |
-| publish-open-vsx.yml | publish (matrix) | `open_vsx_publish` | Env: `OPENVSX_PLATFORM`, `OPENVSX_BIN_NAME`, `OVSX_TOKEN` |
+| publish-open-vsx.yml | publish (matrix) | `open_vsx_publish` | Matrix: `linux-x64`, `darwin-arm64`, `darwin-x64`, `win32-x64`. Env: `OPENVSX_PLATFORM`, `OPENVSX_BIN_NAME`, optional `OPENVSX_RUST_TARGET` (e.g. `x86_64-apple-darwin` for Intel mac LSP on Apple runners), `OVSX_TOKEN` |
 
 Compiler submodule ([compiler](/home/fp-pmikstacki/Private/pecan/compiler)) — [.github/workflows/ci.yml](/home/fp-pmikstacki/Private/pecan/compiler/.github/workflows/ci.yml), sessions in [compiler/noxfile.py](/home/fp-pmikstacki/Private/pecan/compiler/noxfile.py).
 

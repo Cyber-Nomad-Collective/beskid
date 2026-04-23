@@ -25,7 +25,11 @@ RETRYABLE_PUBLISH_RE = re.compile(
 )
 
 
-def _compiler_release_bin(compiler_root: Path, bin_name: str) -> Path:
+def _compiler_release_bin(
+    compiler_root: Path, bin_name: str, *, rust_triple: str | None
+) -> Path:
+    if rust_triple:
+        return compiler_root / "target" / rust_triple / "release" / bin_name
     return compiler_root / "target" / "release" / bin_name
 
 
@@ -176,11 +180,12 @@ def bundle_and_publish(
     *,
     platform: str,
     bin_name: str,
+    rust_triple: str | None = None,
 ) -> None:
     token = secrets.require_env("OVSX_TOKEN")
     compiler = repo_root / "compiler"
     vscode = repo_root / "beskid_vscode"
-    bin_src = _compiler_release_bin(compiler, bin_name)
+    bin_src = _compiler_release_bin(compiler, bin_name, rust_triple=rust_triple)
     if not bin_src.is_file():
         raise SystemExit(f"Missing LSP binary: {bin_src}")
 

@@ -29,14 +29,22 @@ jobs:
             label: linux-x64
             platform: linux-x64
             bin_name: beskid_lsp
+            openvsx_rust_target: ""
+          - os: macos-latest
+            label: darwin-arm64
+            platform: darwin-arm64
+            bin_name: beskid_lsp
+            openvsx_rust_target: ""
           - os: macos-latest
             label: darwin-x64
             platform: darwin-x64
             bin_name: beskid_lsp
+            openvsx_rust_target: x86_64-apple-darwin
           - os: windows-latest
             label: win32-x64
             platform: win32-x64
             bin_name: beskid_lsp.exe
+            openvsx_rust_target: ""
 
     steps:
       - name: Checkout
@@ -48,7 +56,14 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
+      - name: Setup Rust toolchain (with Intel macOS LSP target)
+        if: matrix.platform == 'darwin-x64'
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin
+
       - name: Setup Rust toolchain
+        if: matrix.platform != 'darwin-x64'
         uses: dtolnay/rust-toolchain@stable
 
       - uses: actions/setup-python@v5
@@ -63,5 +78,6 @@ jobs:
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
           OPENVSX_PLATFORM: ${{ matrix.platform }}
           OPENVSX_BIN_NAME: ${{ matrix.bin_name }}
+          OPENVSX_RUST_TARGET: ${{ matrix.openvsx_rust_target }}
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
         run: python -m nox --non-interactive -s open_vsx_publish
