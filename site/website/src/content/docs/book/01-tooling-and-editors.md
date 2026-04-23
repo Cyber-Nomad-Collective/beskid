@@ -26,12 +26,13 @@ You only need a local clone and a terminal. If you have not built from source ye
 ## Editor workflow
 
 - VS Code-compatible support is provided by the Beskid extension.
-- The extension associates both `.bd` and `.proj` files with Beskid syntax.
+- The extension uses the `beskid` language id for `.bd` and `beskid-proj` for `.proj` (manifest highlighting and the same LSP).
 - You can run the bundled LSP binary or point to a local development binary.
 - Install from Open VSX: [beskid-vscode](https://open-vsx.org/extension/beskid/beskid-vscode)
 
 ## Deep dive in spec and guides
 
+- [Guides / CLI](/guides/cli/)
 - [Guides / LSP](/guides/lsp/)
 - [Projects guide](/guides/projects/)
 

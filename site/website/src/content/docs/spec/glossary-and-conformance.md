@@ -18,6 +18,7 @@ Normative documents use these terms:
 - Lambda/closure semantics: `docs/spec/lambdas-and-closures.md`.
 - Event semantics: `docs/spec/events.md`.
 - FFI/Extern language contract: `docs/spec/ffi-and-extern.md`.
+- Test harness syntax/semantics: `docs/spec/testing.md`.
 - Runtime ABI/syscall ownership: `docs/execution/runtime/syscalls-and-abi-boundary.md`.
 - Corelib API contracts: `docs/corelib/`.
 

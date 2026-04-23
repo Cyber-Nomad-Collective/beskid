@@ -4,7 +4,7 @@ description: Beskid Project Manifest (HCL)
 ---
 
 
-`Project.proj` is the canonical project manifest format, using HCL syntax.
+`Project.proj` is the canonical project manifest format, using a small HCL-like block syntax (parsed by the Beskid toolchain, not full HCL).
 
 ## File name and location
 - Name: `Project.proj`
@@ -21,15 +21,21 @@ project {
 }
 
 target "App" {
-  kind  = "App"
+  kind  = App
   entry = "Main.bd"
 }
 
 dependency "Std" {
-  source = "path"
+  source = path
   path   = "../Std"
 }
 ```
+
+### Enum-like fields (identifiers)
+
+For **`kind`** (on `target`) and **`source`** (on `dependency`), the value may be written as an **unquoted identifier** (`kind = Lib`, `source = path`) or as a **quoted string** (`kind = "Lib"`, `source = "path"`). Identifiers are preferred for consistency with static typing in tooling (LSP, diagnostics).
+
+All other scalar fields (`name`, `version`, `root`, `entry`, `path`, `url`, `rev`, semver fields, and block labels) remain **double-quoted strings** as shown above.
 
 ## Manifest schema (v0.1)
 
@@ -41,21 +47,21 @@ dependency "Std" {
 
 ### `target` block (required, one or more)
 - Label = target name (unique)
-- `kind` (required): `"App" | "Lib" | "Test"`
+- `kind` (required): `App`, `Lib`, or `Test` (identifier or quoted string)
 - `entry` (required): path relative to `project.root`
 
 ### `dependency` block (optional, zero or more)
 - Label = dependency alias used by tooling
-- `source` (required): `"path" | "git" | "registry"`
+- `source` (required): `path`, `git`, or `registry` (identifier or quoted string)
 
-For `source = "path"`:
+For `source = path`:
 - `path` (required)
 
-For `source = "git"` (provider reserved, not enabled in v1):
+For `source = git` (provider reserved, not enabled in v1):
 - `url` (required)
 - `rev` (required)
 
-For `source = "registry"` (provider reserved, not enabled in v1):
+For `source = registry` (provider reserved, not enabled in v1):
 - `name` (required)
 - `version` (required)
 
@@ -80,9 +86,8 @@ For `source = "registry"` (provider reserved, not enabled in v1):
 11. `Project.lock` is created automatically during resolve/build/run if missing.
 12. `Project.lock` is updated automatically when dependency graph identity changes.
 
-## Rust implementation guidance
+## Toolchain implementation
 
-- Parse and validate manifest with `hcl-rs` + serde structs.
-- Use `hcl-edit` for formatting and migration tooling.
-- Build dependency DAG with `daggy` and preserve unresolved non-path dependency nodes for policy diagnostics.
+- Parse and validate manifests in the `beskid_analysis` crate (`projects::parse_manifest` / `parse_workspace_manifest`), then build the dependency DAG with `daggy` and preserve unresolved non-path dependency nodes for policy diagnostics.
 - Materialize resolved dependencies into `obj/beskid/deps/src` before compile stages.
+- Editor support: VS Code uses the `beskid-proj` language id for `*.proj`; the Beskid LSP publishes diagnostics and context-aware completions on manifest files.

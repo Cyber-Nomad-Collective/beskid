@@ -53,16 +53,18 @@ This enables an LSP architecture where `beskid_lsp` is a thin protocol/service l
 - `textDocument/documentSymbol`
 - `textDocument/hover`
 - `textDocument/definition`
+- `textDocument/completion`
+- `textDocument/references`
+- `textDocument/semanticTokens/full`
+- `textDocument/formatting`
+- `textDocument/rangeFormatting` (full-document replacement strategy in current implementation)
 
 ## 4.2 Post-MVP capabilities (Phase 3+)
 
-- `textDocument/completion`
-- `textDocument/references`
 - `textDocument/prepareRename`
 - `textDocument/rename`
 - `textDocument/codeAction`
 - `workspace/symbol`
-- `textDocument/semanticTokens/full`
 
 ## 4.3 Out-of-scope (initial)
 
@@ -76,6 +78,7 @@ This enables an LSP architecture where `beskid_lsp` is a thin protocol/service l
 - Baseline dependency set includes `tokio`, `tower-lsp-server`, and `tracing`.
 - MVP capabilities are locked to diagnostics, hover, document symbols, and go-to-definition.
 - Text sync starts with `TextDocumentSyncKind::FULL`; incremental sync is a follow-up optimization.
+- Formatting is implemented via `beskid_analysis::format::format_program`; range formatting currently uses full-document edits.
 
 ## 5. Target crate/module architecture
 
@@ -99,8 +102,9 @@ Proposed `src/beskid_lsp/src` layout:
   - `hover.rs`
   - `definition.rs`
   - `symbols.rs`
-  - `completion.rs` (deferred)
-  - `references.rs` (deferred)
+  - `completion.rs`
+  - `references.rs`
+  - `formatting.rs`
   - `rename.rs` (deferred)
   - `code_action.rs` (deferred)
 
@@ -243,6 +247,18 @@ Initial actions should be deterministic and safe:
 - Add missing `mut` for immutable assignment diagnostics.
 - Qualify enum constructor paths.
 - Optional import insertion where module graph is reliable.
+
+## 10.7 Formatting
+
+- `textDocument/formatting` parses with `beskid_analysis::services::parse_program` and emits canonical source via `beskid_analysis::format::format_program`.
+- If formatted text equals current document text, return an empty edit set.
+- On parse/format failure, return `null`/no edits (server remains responsive and diagnostics continue separately).
+
+## 10.8 Range formatting (current behavior)
+
+- `textDocument/rangeFormatting` is implemented with a full-document replacement strategy.
+- Reason: formatter currently operates on complete `Program` AST emission rather than range-local rewrites.
+- Future optimization can introduce AST-aware range rewrite once stable and proven correct.
 
 ## 11. Configuration contract
 

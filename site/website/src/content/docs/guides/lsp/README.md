@@ -22,6 +22,8 @@ This directory defines the architecture and protocol contract for the Beskid lan
    - Telemetry/logging/metrics design
    - Release readiness checklist
 
+The CLI docs for [`beskid format`](/guides/cli/commands/format/) (and the [command reference index](/guides/cli/command-reference/)) describe `format_program`, the same entry point as document formatting.
+
 ## Design principles
 
 - **Single source of truth:** semantic behavior must come from `beskid_analysis`, not duplicated in `beskid_lsp`.
@@ -38,15 +40,17 @@ This directory defines the architecture and protocol contract for the Beskid lan
 - Document symbols
 - Hover
 - Go to definition
+- Completion
+- References
+- Semantic tokens (full)
+- Document formatting
+- Range formatting (currently full-document replacement strategy)
 
 ## Extended feature set
 
-- Completion
-- References
 - Rename (+ prepareRename)
 - Code actions (deterministic fixes first)
 - Workspace symbols
-- Semantic tokens
 
 ## Locked decisions (approved)
 
@@ -54,6 +58,7 @@ This directory defines the architecture and protocol contract for the Beskid lan
 - Baseline dependencies: `tokio`, `tower-lsp-server`, `tracing`.
 - Baseline capability scope: diagnostics, hover, document symbols, go-to-definition.
 - Text sync strategy: start with `TextDocumentSyncKind::FULL` and evolve to incremental later.
+- Formatting strategy: call analysis formatter (`format_program`); range formatting currently returns full-document edits.
 
 ## Ownership and evolution
 

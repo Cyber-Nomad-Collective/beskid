@@ -17,6 +17,8 @@ Every Beskid project is rooted at a `Project.proj` file.
 - `target "<name>" { ... }` defines buildable entries.
 - `dependency "<name>" { ... }` defines graph edges.
 
+In manifests, enum-like fields such as **`kind`** and **`source`** are usually written without quotes (for example `kind = App`, `source = path`); quoted forms remain valid.
+
 The default source root is `Src` when `project.root` is not set.
 `project.root_namespace` is optional metadata for package namespace conventions and does not alter file-to-module mapping.
 

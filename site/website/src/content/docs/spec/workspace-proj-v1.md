@@ -15,7 +15,7 @@ description: Grammar and validation rules for `Workspace.proj`.
 ### workspace
 
 - `name` (required)
-- `resolver` (optional, default `v1`)
+- `resolver` (optional, default `v1`) — may be written as an identifier (`resolver = v1`) or a quoted string (`resolver = "v1"`).
 
 ### member
 

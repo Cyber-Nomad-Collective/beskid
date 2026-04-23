@@ -10,3 +10,4 @@ This section is the canonical corelib documentation.
 - Collections module group: [Collections](./Collections/README.md)
 - Query module group: [Query](./Query/README.md)
 - System module group: [System](./System/README.md)
+- Testing module group: [Testing](./Testing/README.md)

@@ -22,6 +22,7 @@ Document index:
 - events.md
 - lambdas-and-closures.md
 - ffi-and-extern.md
+- testing.md
 
 Note: v0.1 intentionally avoids complex features (async, runtime reflection, etc.).
 
@@ -43,3 +44,4 @@ Corelib module-level contracts are documented in `docs/corelib/`.
 - [x] Functions and methods (`impl Type { ... }`, implicit `this` receiver in methods)
 - [x] Statements: let/mut, if/else, while, for-in expression (including range fast-path), return/break/continue
 - [x] Expressions: precedence, calls, member access, match with `when` guard
+- [x] Test harness: `test` items with `meta`/`skip` sections

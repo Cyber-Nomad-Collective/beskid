@@ -67,6 +67,8 @@ Scenarios:
 3. hover on symbol returns expected markdown
 4. definition request returns expected location
 5. unsupported requests return null/empty safely
+6. document formatting returns canonical full-document edit (or empty if already canonical)
+7. range formatting returns full-document replacement edit in current strategy
 
 ## 5. Regression fixture suite
 
@@ -144,6 +146,7 @@ At minimum, CI should run:
 2. Integration tests for diagnostics lifecycle
 3. Lint + format checks
 4. Regression fixtures for previously fixed bugs
+5. Formatter regression gate (`python -m nox --non-interactive -s format_regression`)
 
 Optional later:
 

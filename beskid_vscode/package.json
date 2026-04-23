@@ -39,7 +39,17 @@
           "beskid"
         ],
         "extensions": [
-          ".bd",
+          ".bd"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "beskid-proj",
+        "aliases": [
+          "Beskid Project",
+          "beskid-proj"
+        ],
+        "extensions": [
           ".proj"
         ],
         "configuration": "./language-configuration.json"
@@ -50,6 +60,11 @@
         "language": "beskid",
         "scopeName": "source.beskid",
         "path": "./syntaxes/beskid.tmLanguage.json"
+      },
+      {
+        "language": "beskid-proj",
+        "scopeName": "source.beskid.proj",
+        "path": "./syntaxes/beskid-proj.tmLanguage.json"
       }
     ],
     "configuration": {
@@ -105,6 +120,14 @@
           "description": "Arguments used when VS Code launches the extension in debug mode (dev mode)."
         }
       }
+    },
+    "configurationDefaults": {
+      "[beskid]": {
+        "editor.defaultFormatter": "beskid.beskid-vscode"
+      },
+      "[beskid-proj]": {
+        "editor.defaultFormatter": "beskid.beskid-vscode"
+      }
     }
   },
   "scripts": {
@@ -112,6 +135,7 @@
     "build": "bunx tsc -p .",
     "watch": "bunx tsc -w -p .",
     "lint": "bunx tsc -p . --noEmit",
+    "test:smoke:formatter": "node scripts/smoke-formatter.mjs",
     "package": "bunx @vscode/vsce package",
     "vscode:prepublish": "bun run build"
   },

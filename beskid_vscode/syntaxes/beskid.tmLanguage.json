@@ -35,6 +35,16 @@
     "comments": {
       "patterns": [
         {
+          "name": "comment.line.documentation.beskid",
+          "begin": "///",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.documentation.beskid"
+            }
+          },
+          "end": "$"
+        },
+        {
           "name": "comment.line.double-slash.beskid",
           "begin": "//",
           "beginCaptures": {

@@ -89,7 +89,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const clientOptions: LanguageClientOptions = {
     documentSelector: [
       { scheme: "file", language: "beskid", pattern: "**/*.bd" },
-      { scheme: "file", language: "beskid", pattern: "**/*.proj" },
+      { scheme: "file", language: "beskid-proj", pattern: "**/*.proj" },
     ],
     synchronize: {
       configurationSection: "beskid.lsp",

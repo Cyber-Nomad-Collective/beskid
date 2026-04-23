@@ -21,7 +21,7 @@ project {
 }
 
 target "App" {
-  kind  = "App"
+  kind  = App
   entry = "Main.bd"
 }
 ```
@@ -48,12 +48,12 @@ project {
 }
 
 target "App" {
-  kind  = "App"
+  kind  = App
   entry = "Main.bd"
 }
 
 dependency "Std" {
-  source = "path"
+  source = path
   path   = "../Std"
 }
 ```
@@ -67,7 +67,7 @@ project {
 }
 
 target "Library" {
-  kind  = "Lib"
+  kind  = Lib
   entry = "IO.bd"
 }
 ```
@@ -91,7 +91,7 @@ project {
 }
 
 target "Library" {
-  kind  = "Lib"
+  kind  = Lib
   entry = "Net.bd"
 }
 ```
@@ -123,12 +123,12 @@ project {
 }
 
 target "App" {
-  kind  = "App"
+  kind  = App
   entry = "Main.bd"
 }
 
 target "Tests" {
-  kind  = "Test"
+  kind  = Test
   entry = "Tests.bd"
 }
 ```

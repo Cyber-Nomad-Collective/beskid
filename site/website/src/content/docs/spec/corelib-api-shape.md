@@ -20,6 +20,7 @@ Recommended top-level modules:
 - `Collections` (array/list/map/set/queue/stack)
 - `Query` (query contracts, operators, execution)
 - `System` (IO, FS, Path, Time, Environment, Process)
+- `Testing` (assertion contracts and test primitives)
 
 For MVP, start with:
 - `Core.String`
@@ -74,6 +75,7 @@ Per-module API contracts are canonical in `docs/corelib/`:
 - `Collections/`
 - `Query/`
 - `System/`
+- `Testing/`
 
 ## 14.8 Coupled feature references
 

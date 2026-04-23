@@ -33,6 +33,9 @@ This directory is the canonical home for **corelib** design and API contracts.
   - `System/Time.md`
   - `System/Environment.md`
   - `System/Process.md`
+- `Testing/README.md`
+  - `Testing/Contracts.md`
+  - `Testing/Assertions.md`
 
 ## Naming direction
 - Do not use `Std` prefix in public API examples.
