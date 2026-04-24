@@ -1,11 +1,11 @@
 {
   "lockfileVersion": 1,
-  "configVersion": 1,
   "workspaces": {
     "": {
       "name": "beskind-vscode",
       "dependencies": {
         "vscode-languageclient": "^9.0.1",
+        "vscode-languageserver-protocol": "3.17.5",
       },
       "devDependencies": {
         "@types/node": "^25.3.1",

@@ -31,6 +31,101 @@
   "main": "./out/extension.js",
   "packageManager": "bun@1.2.20",
   "contributes": {
+    "commands": [
+      {
+        "command": "beskid.selectProject",
+        "title": "Beskid: Select Project"
+      },
+      {
+        "command": "beskid.lsp.quickActions",
+        "title": "Beskid: LSP Quick Actions"
+      },
+      {
+        "command": "beskid.lsp.start",
+        "title": "Beskid: Start Language Server"
+      },
+      {
+        "command": "beskid.lsp.stop",
+        "title": "Beskid: Stop Language Server"
+      },
+      {
+        "command": "beskid.lsp.restart",
+        "title": "Beskid: Restart Language Server"
+      },
+      {
+        "command": "beskid.packages.open",
+        "title": "Beskid: Open Package Manager"
+      },
+      {
+        "command": "beskid.packages.search",
+        "title": "Beskid: Search Packages"
+      },
+      {
+        "command": "beskid.lsp.openLogs",
+        "title": "Beskid: Open LSP Logs"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "beskid.selectProject"
+        },
+        {
+          "command": "beskid.lsp.quickActions"
+        },
+        {
+          "command": "beskid.lsp.start"
+        },
+        {
+          "command": "beskid.lsp.stop"
+        },
+        {
+          "command": "beskid.lsp.restart"
+        },
+        {
+          "command": "beskid.packages.open"
+        },
+        {
+          "command": "beskid.packages.search"
+        },
+        {
+          "command": "beskid.lsp.openLogs"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "beskid.packages.search",
+          "when": "view == beskidPackagesView",
+          "group": "navigation"
+        },
+        {
+          "command": "beskid.selectProject",
+          "when": "view == beskidProjectOutlineView",
+          "group": "navigation"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "beskidViews",
+          "title": "Beskid",
+          "icon": "media/beskid-logo.svg"
+        }
+      ]
+    },
+    "views": {
+      "beskidViews": [
+        {
+          "id": "beskidPackagesView",
+          "name": "Beskid Packages"
+        },
+        {
+          "id": "beskidProjectOutlineView",
+          "name": "Selected Project Outline"
+        }
+      ]
+    },
     "languages": [
       {
         "id": "beskid",
@@ -118,6 +213,28 @@
             "beskid_lsp"
           ],
           "description": "Arguments used when VS Code launches the extension in debug mode (dev mode)."
+        },
+        "beskid.lsp.log.level": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "info",
+            "log",
+            "debug"
+          ],
+          "default": "info",
+          "description": "Language server log level routed to VS Code output."
+        },
+        "beskid.lsp.log.serverOutput": {
+          "type": "boolean",
+          "default": true,
+          "description": "Mirror server output to the Beskid LSP output channel."
+        },
+        "beskid.pckg.baseUrl": {
+          "type": "string",
+          "default": "http://localhost:5000",
+          "description": "Base URL of the pckg server used by the package manager pane."
         }
       }
     },
@@ -140,7 +257,8 @@
     "vscode:prepublish": "bun run build"
   },
   "dependencies": {
-    "vscode-languageclient": "^9.0.1"
+    "vscode-languageclient": "^9.0.1",
+    "vscode-languageserver-protocol": "3.17.5"
   },
   "devDependencies": {
     "@vscode/vsce": "^3.6.2",
