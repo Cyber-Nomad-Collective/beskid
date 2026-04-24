@@ -5,7 +5,10 @@ import { SELECTED_PROJECT_KEY, WATCH_REFRESH_DEBOUNCE_MS } from "../constants.js
 import { readPckgBaseUrl } from "../config/workspaceSettings.js";
 import { registerBeskidCommands } from "../commands/registerBeskidCommands.js";
 import { createBeskidLanguageClient, requestWorkspaceRefresh } from "../lsp/beskidLanguageClient.js";
-import { PackageManagerProvider } from "../packages/PackageManagerProvider.js";
+import {
+  type PckgActivityPhase,
+  PackageManagerProvider,
+} from "../packages/PackageManagerProvider.js";
 import { SelectedProjectOutlineProvider } from "../outline/SelectedProjectOutlineProvider.js";
 import { BeskidStatusController } from "../status/beskidStatusController.js";
 import type { BeskidStatusParams } from "../status/beskidStatusTypes.js";
@@ -33,7 +36,7 @@ export class BeskidExtensionRuntime {
     this.selectedProjectUri = this.loadSelectedProject();
     this.packageProvider = new PackageManagerProvider(
       () => readPckgBaseUrl(),
-      (phase, active, detail) => {
+      (phase: PckgActivityPhase, active: boolean, detail?: string) => {
         if (phase === "search") {
           this.status.setPckgSearchActive(active, detail);
         } else {

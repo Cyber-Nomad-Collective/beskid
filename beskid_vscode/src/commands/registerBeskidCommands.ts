@@ -20,6 +20,12 @@ export function registerBeskidCommands(context: vscode.ExtensionContext, deps: B
     vscode.commands.registerCommand("beskid.lsp.restart", deps.restartLsp),
     vscode.commands.registerCommand("beskid.packages.open", deps.packagesOpen),
     vscode.commands.registerCommand("beskid.packages.search", deps.packagesSearch),
+    vscode.commands.registerCommand("beskid.packages.openRegistryUri", async (uri: unknown) => {
+      if (typeof uri !== "string" || (!uri.startsWith("http://") && !uri.startsWith("https://"))) {
+        return;
+      }
+      await vscode.env.openExternal(vscode.Uri.parse(uri));
+    }),
     vscode.commands.registerCommand("beskid.lsp.openLogs", deps.openLogs),
   );
 }

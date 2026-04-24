@@ -61,6 +61,10 @@
         "title": "Beskid: Search Packages"
       },
       {
+        "command": "beskid.packages.openRegistryUri",
+        "title": "Beskid: Open registry URL"
+      },
+      {
         "command": "beskid.lsp.openLogs",
         "title": "Beskid: Open LSP Logs"
       }
