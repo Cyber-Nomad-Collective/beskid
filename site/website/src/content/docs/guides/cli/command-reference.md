@@ -29,4 +29,4 @@ Unless noted, failures print a diagnostic report (miette) and exit non-zero.
 | [`lock`](/guides/cli/commands/lock/) | Synchronize `Project.lock` |
 | [`update`](/guides/cli/commands/update/) | Update resolution and materialized workspace |
 | [`corelib`](/guides/cli/commands/corelib/) | Materialize embedded corelib template |
-| [`pckg`](/guides/cli/commands/pckg/) | Registry and package-manager operations |
+| [`pckg`](/guides/cli/commands/pckg/) | **pckg** registry client: `pack` (`.bpk`), `upload` (registry-assigned version), search, download, yank, … |

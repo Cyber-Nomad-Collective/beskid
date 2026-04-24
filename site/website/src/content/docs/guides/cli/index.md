@@ -10,7 +10,8 @@ The `beskid` binary is the primary interface for local development, CI, and edit
 - [Command reference](/guides/cli/command-reference/) — index of all subcommands; each command has its own page under [`/guides/cli/commands/`](/guides/cli/commands/parse/).
 - [Formatter internals](/guides/cli/formatter-development/) — how `Emit` / `EmitCtx` work for contributors extending the pretty-printer.
 - [LSP guide](/guides/lsp/) — document formatting uses the same engine as `beskid format`.
-- [Package client CLI](/packages/client-cli/) — `beskid pckg …` subcommands.
+- [Package client CLI](/packages/client-cli/) — implemented `beskid pckg` vs planned `beskid pkg`.
+- [beskid pckg](/guides/cli/commands/pckg/) — pack, upload, and registry subcommands.
 
 ## Quick examples
 

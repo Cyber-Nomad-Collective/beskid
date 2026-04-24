@@ -8,6 +8,9 @@
 - User expects pckg dashboard, admin, and documentation UI work to lean on Fluent UI Blazor patterns and cohesive spacing (menus, nav, cards) rather than ad-hoc markup.
 - User sometimes asks to push Git commits to every configured remote, not only the default.
 - User expects the corelib implementation to remain Beskid source in the compiler `corelib` submodule; they push back on introducing separate Rust crates or otherwise moving library implementation out of Beskid.
+- User wants pckg data-grid row actions unified: icon-only square buttons with labels in tooltips, primary action first, with shared layout tokens or a small shared wrapper so styling stays consistent across grids.
+- User wants the Beskid VS Code extension split into a clear module hierarchy (smaller entry files, DRY) and a reusable bottom status-bar item that shows live LSP progress (for example rescan counts) and can later reflect pckg workflow states such as init or dependency resolution.
+- User expects pckg to use registry-assigned package versions rather than publisher-supplied manual versioning in normal flows.
 ## Learned Workspace Facts
 - This workspace is an aggregate superrepo where core code lives in submodules, especially `compiler` and `pckg`.
 - Corelib (standard library) is expected via the nested `compiler/corelib` submodule (not a top-level superrepo submodule); the canonical Beskid package sources live at `compiler/corelib/beskid_corelib` with **pckg package identity `corelib`** (legacy `standard_library` paths may still be accepted by tooling). Beskid CLI packing can place generated Markdown under `.beskid/docs/` in the artifact alongside `docs/` and root `README.md`; registry documentation listing and serving must include those paths when present.
@@ -17,3 +20,5 @@
 - Compiler CI can publish the **`corelib`** package to **pckg** using the `BESKID_PCKG_KEY` GitHub Actions secret (alongside CLI release automation).
 - The repo uses `.cursorignore` with a negated `!references/` pattern so gitignored reference trees stay available for Cursor indexing and `@` mentions.
 - Opinionated formatter work is often compared to the in-repo **bsharp** reference under `references/bsharp` (C#-style `Emit` patterns).
+- `pckg` **Server.Tests** disables xUnit assembly and collection parallelization via `xunit.runner.json` copied into the test output to reduce intermittent failures when the hosted test server starts under full-suite load.
+- Package upsert and summaries support an optional **iconUrl** (HTTP/HTTPS only, length-capped to match storage); dashboard metadata flows and package detail pages surface it with image fallback when loading fails.

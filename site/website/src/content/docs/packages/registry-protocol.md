@@ -1,6 +1,6 @@
 ---
 title: Registry Protocol
-description: HTTP protocol between `beskid pkg` client and pckg registry server.
+description: HTTP protocol between the pckg registry server and clients (for example `beskid pckg`).
 ---
 
 ## Transport
@@ -14,11 +14,14 @@ description: HTTP protocol between `beskid pkg` client and pckg registry server.
 - `POST /api/auth/login`
 - `GET /api/auth/me`
 - `GET /api/search?q=...`
-- `GET /api/packages/{id}`
-- `GET /api/packages/{id}/versions/{version}/download`
-- `POST /api/packages/publish`
-- `POST /api/packages/{id}/yank`
-- `POST /api/packages/{id}/unyank`
+- `GET /api/packages` (listing)
+- `POST /api/packages` (create / upsert package metadata)
+- `GET /api/packages/{packageNameOrId}`
+- `POST /api/packages/{packageName}/publish` — multipart: **`artifact`** (required, `.bpk` zip). **`version`** is optional; when omitted the server assigns the next semver (optional **`versionBump`**: `patch`, `minor`, or `major`; defaults to patch). Optional **`checksumSha256`**, **`manifestJson`**.
+- `GET /api/packages/{packageName}/versions`
+- `GET /api/packages/{packageName}/versions/{version}/download`
+- `POST /api/packages/{packageName}/versions/{version}/yank`
+- `POST /api/packages/{packageName}/versions/{version}/unyank`
 
 ## Auth model
 
