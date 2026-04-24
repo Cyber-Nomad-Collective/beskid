@@ -13,7 +13,7 @@ Symbols (selected)
 - Strings: str_new, str_len, str_concat
 - Arrays: array_new (header-only by default; optional backing behind runtime feature `arrays_backing`)
 - Events: event_subscribe, event_unsubscribe_first, event_len, event_get_handler
-- IO/panic: sys_print, sys_println, panic, panic_str
+- IO/panic: syscall_write, panic, panic_str
 - Interop: interop_dispatch_unit, interop_dispatch_ptr, interop_dispatch_usize
 - Version: beskid_runtime_abi_version
 

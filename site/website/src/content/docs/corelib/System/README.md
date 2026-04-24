@@ -6,6 +6,8 @@ title: "System Module Group"
 System covers platform-oriented APIs with runtime-mediated behavior.
 
 ## Files
+- `IO.md`
+- `Syscall.md`
 - `FS.md`
 - `Path.md`
 - `Time.md`

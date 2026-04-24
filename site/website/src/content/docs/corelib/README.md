@@ -48,7 +48,7 @@ This directory is the canonical home for **corelib** design and API contracts.
 
 ## Source and release policy
 - Canonical implementation is maintained in the compiler `corelib` submodule.
-- Package identity is `beskid_corelib` (avoid `std` / misleading `standard_*` package names).
+- pckg package identity is **`corelib`** (avoid `std` / misleading `standard_*` package names).
 - Corelib release version tracks the shared language/compiler release version.
 
 ## Legacy notes

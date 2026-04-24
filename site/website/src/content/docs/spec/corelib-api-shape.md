@@ -37,7 +37,7 @@ For MVP, start with:
 
 ### Prefer verbs for operations
 - `System.IO.Print`
-- `System.IO.Println`
+- `System.IO.PrintLine`
 - `Core.String.Contains`
 
 ### Prefer nouns for types

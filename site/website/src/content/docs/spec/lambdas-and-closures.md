@@ -14,7 +14,7 @@ Examples:
 let isEven = x => x % 2 == 0;
 let add = (i32 x, i32 y) => x + y;
 let f = x => {
-    IO.Println(x.ToString());
+    IO.PrintLine(x.ToString());
     return x;
 };
 ```

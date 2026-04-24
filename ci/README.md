@@ -31,7 +31,7 @@ If `PECAN_CI_DOCKER=1` and `docker` is available, some sessions can be extended 
 Corelib quality validation runs in compiler CI, while publishing authority is in `beskid_standard` CI:
 
 - compiler CI runs `corelib-quality` (`python -m nox -s corelib_quality`) for integration safety;
-- `beskid_standard` CI publishes `beskid_corelib` on `main`/`v*` through its local workflow and `noxfile.py`;
+- `beskid_standard` CI publishes **`corelib`** on `main`/`v*` through its local workflow and `noxfile.py`;
 - `beskid_standard` publish uses `BESKID_PCKG_KEY` (mapped to `BESKID_PCKG_API_KEY`) and installs/downloads Beskid CLI for `pckg pack/upload`.
 
 See [CORELIB.md](CORELIB.md) for the detailed flow.

@@ -3,13 +3,17 @@
 - User frequently wants git work carried through end-to-end: commit and push fixes, often to `main`, across relevant submodules and the superrepo.
 - User prioritizes CI reliability and repeatedly asks to diagnose failing GitHub Actions runs from logs and ensure pipelines are green.
 - User prefers robust root-cause fixes over quick or messy patches, and explicitly asks to avoid hacky stopgaps.
+- User prefers welcoming public-facing superrepo README and similar entry docs without emoji, including toolchain links and optional CI or version badges where they add clarity.
 - User prefers practical deployment-oriented fixes (especially for Coolify/container setups) over abstract guidance.
+- User expects pckg dashboard, admin, and documentation UI work to lean on Fluent UI Blazor patterns and cohesive spacing (menus, nav, cards) rather than ad-hoc markup.
 - User sometimes asks to push Git commits to every configured remote, not only the default.
 - User expects the corelib implementation to remain Beskid source in the compiler `corelib` submodule; they push back on introducing separate Rust crates or otherwise moving library implementation out of Beskid.
 ## Learned Workspace Facts
 - This workspace is an aggregate superrepo where core code lives in submodules, especially `compiler` and `pckg`.
-- Corelib (standard library) is expected via the nested `compiler/corelib` submodule (not a top-level superrepo submodule); the canonical Beskid package lives at `compiler/corelib/beskid_corelib` with project identity `beskid_corelib` (legacy `standard_library` paths may still be accepted by tooling).
+- Corelib (standard library) is expected via the nested `compiler/corelib` submodule (not a top-level superrepo submodule); the canonical Beskid package sources live at `compiler/corelib/beskid_corelib` with **pckg package identity `corelib`** (legacy `standard_library` paths may still be accepted by tooling). Beskid CLI packing can place generated Markdown under `.beskid/docs/` in the artifact alongside `docs/` and root `README.md`; registry documentation listing and serving must include those paths when present.
 - The `pckg` service is deployed in containers with compose-managed database connectivity, HTTP port binding, artifact storage paths, and optional captcha keys; when no users exist yet, the first administrator is created through the interactive in-app onboarding flow.
 - Prebuilt Beskid CLI binaries are published from the `compiler` repo CI to **GitHub Releases** on the rolling tag `cli-latest` (install scripts under `site/website/public/` point at those URLs; user-facing download docs may also reference `cdn.beskid-lang.org` under the `beskid-lang.org` domain).
-- Compiler CI can publish the `beskid_corelib` package to **pckg** using the `BESKID_PCKG_KEY` GitHub Actions secret (alongside CLI release automation).
+- Open VS X publishing for the VS Code extension uses a matrix that includes `darwin-arm64` and `darwin-x64`; the `darwin-x64` job sets `OPENVSX_RUST_TARGET` to `x86_64-apple-darwin` so the bundled Intel LSP matches the `darwin-x64` VSIX when CI runs on Apple Silicon hosts (`noxfile.py` / `ci/open_vsx.py` / `.github/workflows/publish-open-vsx.yml`).
+- Compiler CI can publish the **`corelib`** package to **pckg** using the `BESKID_PCKG_KEY` GitHub Actions secret (alongside CLI release automation).
 - The repo uses `.cursorignore` with a negated `!references/` pattern so gitignored reference trees stay available for Cursor indexing and `@` mentions.
+- Opinionated formatter work is often compared to the in-repo **bsharp** reference under `references/bsharp` (C#-style `Emit` patterns).

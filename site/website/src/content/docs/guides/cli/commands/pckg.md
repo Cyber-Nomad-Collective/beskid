@@ -7,10 +7,18 @@ Dispatches to the **pckg** client: authentication, dependency installation, sear
 
 ## Automatic docs on pack
 
-`beskid pckg pack` always generates API docs before creating the `.bpk` artifact:
+`beskid pckg pack` (via the **beskid** CLI) generates API docs before creating the `.bpk` artifact:
 
-- writes docs to `<source>/.beskid/docs/`
-- includes generated `api.json` and `index.md` in the packed artifact
+- writes Markdown and `api.json` to `<source>/.beskid/docs/` (for example `index.md`)
+- includes those files in the published artifact (paths under `.beskid/docs/` are allowed by the registry)
+
+On **pckg**, the in-browser documentation browser lists Markdown from:
+
+- `docs/**/*.md` in the artifact
+- optional root `README.md`
+- **`.beskid/docs/**/*.md`** (same layout as Beskid pack output)
+
+You can also ship hand-written docs under a top-level `docs/` directory in the package source; those paths are packed as usual and appear alongside generated files.
 
 Entrypoint resolution for generation:
 

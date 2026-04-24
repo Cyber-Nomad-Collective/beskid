@@ -47,7 +47,7 @@ pub string FormatError(string errorCode) {
 }
 
 unit WriteLine(string text) {
-    IO.Println(text);
+    IO.PrintLine(text);
 }
 ```
 
