@@ -4,8 +4,8 @@ This repo is an **aggregate** (submodules and local notes). **Compiler** CI, rel
 
 Workflows here:
 
-- `publish-open-vsx.yml` — builds `beskid_lsp` from `compiler/`, bundles it into `beskid_vscode/`, publishes VSIX (requires `submodules: recursive` checkout).
-- `runtime-ci.yml` — aggregate runtime smoke checks against the pinned `compiler` submodule (requires `submodules: recursive` checkout).
+- `publish-open-vsx.yml` — Nox session `open_vsx_publish` initializes the `compiler` and `beskid_vscode` submodules (`ci/submodules.py`), builds `beskid_lsp`, bundles into `beskid_vscode/server/<platform>/`, packages and publishes the VSIX (`COMPILER_SUBMODULE_TOKEN`, optional `BESKID_VSCODE_SUBMODULE_TOKEN` if the extension submodule is private).
+- `runtime-ci.yml` — aggregate runtime smoke checks against the pinned `compiler` submodule; Nox runs `init_compiler` after checkout (plain `actions/checkout` is enough).
 - `pckg-ci.yml` — `dotnet test` for the pckg .NET service (unit tests only; integration tests are excluded until they run reliably in CI).
 
 The compiler remote remains the authoritative source for full compiler CI gates.

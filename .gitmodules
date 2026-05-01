@@ -8,3 +8,6 @@
 [submodule "references/bsharp"]
 	path = references/bsharp
 	url = https://github.com/pmikstacki/bsharp.git
+[submodule "beskid_vscode"]
+	path = beskid_vscode
+	url = ../beskid_vscode.git

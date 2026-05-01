@@ -34,9 +34,9 @@ The **Beskid Language Server** implements the Language Server Protocol so editor
 
 It ships as the `beskid_lsp` binary from the compiler workspace. The VS Code extension runs this server by default (bundled per platform or configurable path).
 
-### VS Code extension (`beskid_vscode/`)
+### VS Code extension (`beskid_vscode/` submodule)
 
-**beskid_vscode** is the official Visual Studio Code extension: file associations for Beskid, integration with the language server, and settings for dev versus bundled server binaries.
+**beskid_vscode** is the official Visual Studio Code extension (its own repository, checked out under this path): file associations for Beskid, integration with the language server, and settings for dev versus bundled server binaries.
 
 See `beskid_vscode/README.md` for local development (`bun install`, `bun run build`, Extension Development Host).
 
@@ -65,11 +65,11 @@ Top-level continuous integration ties the submodules together (compiler, pckg, e
 | `compiler/` | Submodule: Rust compiler, CLI, LSP, package CLI client, nested corelib |
 | `pckg/` | Submodule: .NET registry application and infrastructure |
 | `site/website/` | Astro site: landing + Starlight docs |
-| `beskid_vscode/` | VS Code extension (Bun/TypeScript) |
+| `beskid_vscode/` | Submodule: VS Code extension (Bun/TypeScript) |
 | `ci/` | Superrepo CI documentation and helpers |
 | `AGENTS.md` | Notes for automation and recurring project conventions |
 
-Clone with submodules so `compiler/` and `pckg/` are populated:
+Clone with submodules so `compiler/`, `pckg/`, and `beskid_vscode/` are populated:
 
 ```bash
 git clone --recurse-submodules <repository-url>
@@ -78,8 +78,10 @@ git clone --recurse-submodules <repository-url>
 If you already cloned without submodules:
 
 ```bash
-git submodule update --init --recursive
+git submodule update --init --recursive compiler pckg beskid_vscode
 ```
+
+(`compiler` uses nested submodules for corelib; `--recursive` pulls those too.)
 
 ---
 

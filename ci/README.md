@@ -12,6 +12,8 @@ Build and test logic lives in **Python + Nox** so GitHub Actions stays a thin tr
 
 ## Superrepo usage
 
+Initialize top-level submodules as needed (`compiler`, `pckg`, `beskid_vscode`). CI uses `ci/submodules.py` helpers (`init_compiler`, `init_pckg`, `init_beskid_vscode`) so shallow clones match workflow pins without relying on `actions/checkout` submodule options alone.
+
 From repository root (after submodules and toolchains are on `PATH`):
 
 ```bash

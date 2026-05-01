@@ -42,6 +42,43 @@ def init_compiler(repo_root: Path | None = None) -> None:
     )
 
 
+def init_beskid_vscode(
+    repo_root: Path | None = None,
+    *,
+    submodule_url: str | None = None,
+) -> None:
+    root = repo_root or Path.cwd()
+    _run(["git", "submodule", "sync", "--", "beskid_vscode"], cwd=root)
+    url = submodule_url or os.environ.get(
+        "BESKID_VSCODE_SUBMODULE_URL",
+        "https://github.com/Cyber-Nomad-Collective/beskid_vscode.git",
+    )
+    token = os.environ.get("BESKID_VSCODE_SUBMODULE_TOKEN", "").strip()
+    if token:
+        url = (
+            "https://x-access-token:"
+            f"{token}@github.com/Cyber-Nomad-Collective/beskid_vscode.git"
+        )
+    _run(
+        ["git", "config", "submodule.beskid_vscode.url", url],
+        cwd=root,
+    )
+    _run(
+        [
+            "git",
+            "-c",
+            "protocol.version=2",
+            "submodule",
+            "update",
+            "--init",
+            "--depth",
+            "1",
+            "beskid_vscode",
+        ],
+        cwd=root,
+    )
+
+
 def init_pckg(
     repo_root: Path | None = None,
     *,

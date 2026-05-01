@@ -125,6 +125,7 @@ def open_vsx_publish(session: nox.Session) -> None:
     if rust_target:
         cargo_cmd.extend(["--target", rust_target])
     proc.run(*cargo_cmd, cwd=cw)
+    submodules.init_beskid_vscode(ROOT)
     open_vsx.bundle_and_publish(
         ROOT,
         platform=platform,
