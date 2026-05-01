@@ -7,6 +7,8 @@ Build and test logic lives in **Python + Nox** so GitHub Actions stays a thin tr
 - [requirements.txt](requirements.txt) — install with `pip install -r ci/requirements.txt` before running Nox at the superrepo root.
 - [INVENTORY.md](INVENTORY.md) — mapping from workflow jobs to Nox sessions.
 - [submodules.py](submodules.py) — `git submodule` helpers for aggregate CI.
+- [log.py](log.py) — shared stderr logging for Nox-driven CI (`[LEVEL] beskid.ci: …`).
+- [ensure_github_extension_repo.sh](ensure_github_extension_repo.sh) — create `Cyber-Nomad-Collective/beskid_vscode` and push `main` (requires `gh auth login` or `GH_TOKEN`).
 - [open_vsx.py](open_vsx.py) — Open VSX publish steps (LSP build, bundle, VSIX, `ovsx`).
 - [docker/](docker/) — optional local images (Rust / .NET) for reproducible runs; GitHub-hosted runners still use `actions/*` setup + host `cargo`/`dotnet` for cache compatibility.
 

@@ -11,6 +11,7 @@ import subprocess
 import time
 from pathlib import Path
 
+from ci import log
 from ci import proc
 from ci import secrets
 
@@ -47,14 +48,15 @@ def _validate_extension_icon(vscode_root: Path) -> None:
     package_json, data = _read_extension_manifest(vscode_root)
     icon_rel = str(data.get("icon", "")).strip()
     if not icon_rel:
-        raise SystemExit(f"Missing `icon` in {package_json}")
+        log.fatal("Missing `icon` in %s", package_json)
 
     icon_path = vscode_root / icon_rel
     if not icon_path.is_file():
-        raise SystemExit(f"Extension icon file not found: {icon_path}")
+        log.fatal("Extension icon file not found: %s", icon_path)
     if icon_path.suffix.lower() == ".svg":
-        raise SystemExit(
-            f"Extension icon must be PNG/JPG for VSCE/Open VSX (found SVG): {icon_path}"
+        log.fatal(
+            "Extension icon must be PNG/JPG for VSCE/Open VSX (found SVG): %s",
+            icon_path,
         )
 
 
@@ -62,18 +64,23 @@ def _extension_publisher(vscode_root: Path) -> str:
     package_json, data = _read_extension_manifest(vscode_root)
     publisher = str(data.get("publisher", "")).strip()
     if not publisher:
-        raise SystemExit(f"Missing `publisher` in {package_json}")
+        log.fatal("Missing `publisher` in %s", package_json)
     return publisher
 
 
-def _resolved_extension_version() -> str | None:
-    def _git(*args: str) -> str:
+def _git_out(*args: str) -> str:
+    try:
         return subprocess.check_output(["git", *args], text=True).strip()
+    except subprocess.CalledProcessError as exc:
+        log.error("git command failed (exit %s): git %s", exc.returncode, " ".join(args))
+        raise SystemExit(exc.returncode) from exc
 
+
+def _resolved_extension_version() -> str | None:
     def _split(tag: str) -> tuple[int, int, int]:
         match = TAG_RE.match(tag)
         if not match:
-            raise SystemExit(f"Tag `{tag}` is not semver (expected vMAJOR.MINOR.PATCH)")
+            log.fatal("Tag `%s` is not semver (expected vMAJOR.MINOR.PATCH)", tag)
         major, minor, patch = match.groups()
         return int(major), int(minor), int(patch)
 
@@ -81,9 +88,9 @@ def _resolved_extension_version() -> str | None:
     if os.environ.get("GITHUB_REF_TYPE", "").strip() == "tag" and TAG_RE.match(tag_ref):
         return tag_ref.removeprefix("v")
 
-    latest_tag = _git("describe", "--tags", "--abbrev=0", "--match", "v[0-9]*.[0-9]*.[0-9]*")
+    latest_tag = _git_out("describe", "--tags", "--abbrev=0", "--match", "v[0-9]*.[0-9]*.[0-9]*")
     major, minor, patch = _split(latest_tag)
-    commits_since = int(_git("rev-list", "--count", f"{latest_tag}..HEAD"))
+    commits_since = int(_git_out("rev-list", "--count", f"{latest_tag}..HEAD"))
     if commits_since <= 0:
         return f"{major}.{minor}.{patch}"
     return f"{major}.{minor}.{patch + commits_since}"
@@ -94,19 +101,20 @@ def _apply_extension_version(vscode_root: Path) -> str | None:
     if not target:
         return None
     if not SEMVER_RE.match(target):
-        raise SystemExit(
-            f"Derived extension version `{target}` is not valid semver. "
-            "Use tag format vMAJOR.MINOR.PATCH for release builds."
+        log.fatal(
+            "Derived extension version `%s` is not valid semver. "
+            "Use tag format vMAJOR.MINOR.PATCH for release builds.",
+            target,
         )
 
     package_json, data = _read_extension_manifest(vscode_root)
     current = str(data.get("version", "")).strip()
     if current == target:
-        print(f"[open-vsx] Using extension version {current}")
+        log.info("Open VSX: using extension version %s", current)
         return current
     data["version"] = target
     _write_extension_manifest(package_json, data)
-    print(f"[open-vsx] Overriding extension version {current} -> {target}")
+    log.info("Open VSX: overriding extension version %s -> %s", current, target)
     return current or None
 
 
@@ -128,18 +136,19 @@ def _ensure_openvsx_namespace(vscode_root: Path, token: str) -> None:
     if result.returncode == 0:
         return
 
-    # Decode tool output explicitly to avoid Windows codepage decode crashes.
     stdout = result.stdout.decode("utf-8", errors="replace")
     stderr = result.stderr.decode("utf-8", errors="replace")
     output = f"{stdout}\n{stderr}".lower()
     if "already exists" in output:
         return
 
-    raise SystemExit(
-        "Open VSX namespace setup failed for publisher "
-        f"`{publisher}`. Ensure your token can manage that namespace.\n"
-        f"create-namespace output:\n{stdout}{stderr}"
+    log.error(
+        "Open VS X namespace setup failed for publisher `%s`. "
+        "Ensure your token can manage that namespace.",
+        publisher,
     )
+    log.error("create-namespace output:\n%s\n%s", stdout, stderr)
+    raise SystemExit(1)
 
 
 def _publish_openvsx_with_retry(vscode_root: Path, token: str, vsix: Path) -> None:
@@ -154,7 +163,11 @@ def _publish_openvsx_with_retry(vscode_root: Path, token: str, vsix: Path) -> No
         )
         if result.returncode == 0:
             if attempt > 1:
-                print(f"[open-vsx] Publish succeeded on retry {attempt}/{max_attempts}")
+                log.info(
+                    "Open VS X: publish succeeded on retry %s/%s",
+                    attempt,
+                    max_attempts,
+                )
             return
 
         stdout = result.stdout.decode("utf-8", errors="replace")
@@ -163,16 +176,21 @@ def _publish_openvsx_with_retry(vscode_root: Path, token: str, vsix: Path) -> No
         retryable = RETRYABLE_PUBLISH_RE.search(combined) is not None
         if attempt < max_attempts and retryable:
             delay = base_delay_s * (2 ** (attempt - 1))
-            print(
-                f"[open-vsx] Publish attempt {attempt}/{max_attempts} failed with transient "
-                f"error; retrying in {delay}s..."
+            log.warning(
+                "Open VS X: publish attempt %s/%s failed with transient error; "
+                "retrying in %ss...",
+                attempt,
+                max_attempts,
+                delay,
             )
             time.sleep(delay)
             continue
-        raise SystemExit(
-            f"Open VSX publish failed after {attempt} attempt(s).\n"
-            f"publish output:\n{combined}"
+        log.error(
+            "Open VS X: publish failed after %s attempt(s). Output follows.",
+            attempt,
         )
+        log.error("%s", combined)
+        raise SystemExit(1)
 
 
 def bundle_and_publish(
@@ -187,7 +205,14 @@ def bundle_and_publish(
     vscode = repo_root / "beskid_vscode"
     bin_src = _compiler_release_bin(compiler, bin_name, rust_triple=rust_triple)
     if not bin_src.is_file():
-        raise SystemExit(f"Missing LSP binary: {bin_src}")
+        log.fatal("Missing LSP binary: %s", bin_src)
+
+    log.info(
+        "Open VS X: bundling %s for platform=%s (vscode root=%s)",
+        bin_name,
+        platform,
+        vscode,
+    )
 
     server_dir = vscode / "server" / platform
     server_dir.mkdir(parents=True, exist_ok=True)
@@ -200,8 +225,8 @@ def bundle_and_publish(
     previous_version = _apply_extension_version(vscode)
     try:
         _validate_extension_icon(vscode)
-        proc.run("bun", "install", "--frozen-lockfile", cwd=vscode)
-        proc.run("bun", "run", "build", cwd=vscode)
+        proc.run("bun", "install", "--frozen-lockfile", cwd=vscode, label="open-vsx")
+        proc.run("bun", "run", "build", cwd=vscode, label="open-vsx")
         _ensure_openvsx_namespace(vscode, token)
         dist = vscode / "dist"
         dist.mkdir(parents=True, exist_ok=True)
@@ -215,6 +240,7 @@ def bundle_and_publish(
             "--out",
             str(vsix),
             cwd=vscode,
+            label="open-vsx",
         )
         _publish_openvsx_with_retry(vscode, token, vsix)
     finally:

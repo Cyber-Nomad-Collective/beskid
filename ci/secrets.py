@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import os
 
+from ci import log
+
 
 def require_env(name: str) -> str:
     value = os.environ.get(name, "").strip()
     if not value:
-        raise SystemExit(f"Missing required environment variable: {name}")
+        log.fatal("Missing required environment variable: %s", name)
     return value

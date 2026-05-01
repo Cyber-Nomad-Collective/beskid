@@ -3,17 +3,16 @@
 from __future__ import annotations
 
 import os
-import subprocess
 from pathlib import Path
 
-
-def _run(cmd: list[str], *, cwd: Path | None = None) -> None:
-    subprocess.run(cmd, check=True, cwd=cwd)
+from ci import log
+from ci import proc
 
 
 def init_compiler(repo_root: Path | None = None) -> None:
     root = repo_root or Path.cwd()
-    _run(["git", "submodule", "sync", "--", "compiler"], cwd=root)
+    log.info("Submodule init: compiler (root=%s)", root)
+    proc.run("git", "submodule", "sync", "--", "compiler", cwd=root, label="submodule")
     url = os.environ.get(
         "COMPILER_SUBMODULE_URL",
         "https://github.com/Cyber-Nomad-Collective/beskid_compiler.git",
@@ -24,22 +23,22 @@ def init_compiler(repo_root: Path | None = None) -> None:
             "https://x-access-token:"
             f"{token}@github.com/Cyber-Nomad-Collective/beskid_compiler.git"
         )
-    _run(["git", "config", "submodule.compiler.url", url], cwd=root)
-    _run(
-        [
-            "git",
-            "-c",
-            "protocol.version=2",
-            "submodule",
-            "update",
-            "--init",
-            "--recursive",
-            "--depth",
-            "1",
-            "compiler",
-        ],
+    proc.run("git", "config", "submodule.compiler.url", url, cwd=root, label="submodule")
+    proc.run(
+        "git",
+        "-c",
+        "protocol.version=2",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive",
+        "--depth",
+        "1",
+        "compiler",
         cwd=root,
+        label="submodule",
     )
+    log.info("Submodule compiler ready: %s", root / "compiler")
 
 
 def init_beskid_vscode(
@@ -48,7 +47,8 @@ def init_beskid_vscode(
     submodule_url: str | None = None,
 ) -> None:
     root = repo_root or Path.cwd()
-    _run(["git", "submodule", "sync", "--", "beskid_vscode"], cwd=root)
+    log.info("Submodule init: beskid_vscode (root=%s)", root)
+    proc.run("git", "submodule", "sync", "--", "beskid_vscode", cwd=root, label="submodule")
     url = submodule_url or os.environ.get(
         "BESKID_VSCODE_SUBMODULE_URL",
         "https://github.com/Cyber-Nomad-Collective/beskid_vscode.git",
@@ -59,24 +59,28 @@ def init_beskid_vscode(
             "https://x-access-token:"
             f"{token}@github.com/Cyber-Nomad-Collective/beskid_vscode.git"
         )
-    _run(
-        ["git", "config", "submodule.beskid_vscode.url", url],
+    proc.run(
+        "git",
+        "config",
+        "submodule.beskid_vscode.url",
+        url,
         cwd=root,
+        label="submodule",
     )
-    _run(
-        [
-            "git",
-            "-c",
-            "protocol.version=2",
-            "submodule",
-            "update",
-            "--init",
-            "--depth",
-            "1",
-            "beskid_vscode",
-        ],
+    proc.run(
+        "git",
+        "-c",
+        "protocol.version=2",
+        "submodule",
+        "update",
+        "--init",
+        "--depth",
+        "1",
+        "beskid_vscode",
         cwd=root,
+        label="submodule",
     )
+    log.info("Submodule beskid_vscode ready: %s", root / "beskid_vscode")
 
 
 def init_pckg(
@@ -85,26 +89,30 @@ def init_pckg(
     submodule_url: str | None = None,
 ) -> None:
     root = repo_root or Path.cwd()
-    _run(["git", "submodule", "sync", "--", "pckg"], cwd=root)
+    log.info("Submodule init: pckg (root=%s)", root)
+    proc.run("git", "submodule", "sync", "--", "pckg", cwd=root, label="submodule")
     url = submodule_url or os.environ.get(
         "PCKG_SUBMODULE_URL",
         "https://github.com/Cyber-Nomad-Collective/beskid_pckg.git",
     )
-    _run(
-        ["git", "config", "submodule.pckg.url", url],
+    token = os.environ.get("PCKG_SUBMODULE_TOKEN", "").strip()
+    if token:
+        url = (
+            "https://x-access-token:"
+            f"{token}@github.com/Cyber-Nomad-Collective/beskid_pckg.git"
+        )
+    proc.run("git", "config", "submodule.pckg.url", url, cwd=root, label="submodule")
+    proc.run(
+        "git",
+        "-c",
+        "protocol.version=2",
+        "submodule",
+        "update",
+        "--init",
+        "--depth",
+        "1",
+        "pckg",
         cwd=root,
+        label="submodule",
     )
-    _run(
-        [
-            "git",
-            "-c",
-            "protocol.version=2",
-            "submodule",
-            "update",
-            "--init",
-            "--depth",
-            "1",
-            "pckg",
-        ],
-        cwd=root,
-    )
+    log.info("Submodule pckg ready: %s", root / "pckg")

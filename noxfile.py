@@ -11,6 +11,7 @@ import nox
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 
+from ci import log  # noqa: E402
 from ci import open_vsx  # noqa: E402
 from ci import submodules  # noqa: E402
 from ci import proc  # noqa: E402
@@ -115,9 +116,10 @@ def open_vsx_publish(session: nox.Session) -> None:
     bin_name = os.environ.get("OPENVSX_BIN_NAME", "").strip()
     rust_target = os.environ.get("OPENVSX_RUST_TARGET", "").strip()
     if not platform or not bin_name:
-        raise SystemExit(
+        log.fatal(
             "Set OPENVSX_PLATFORM and OPENVSX_BIN_NAME (e.g. linux-x64, beskid_lsp). "
-            "Optional OPENVSX_RUST_TARGET for cross-compiles (e.g. x86_64-apple-darwin for darwin-x64)."
+            "Optional OPENVSX_RUST_TARGET for cross-compiles "
+            "(e.g. x86_64-apple-darwin for darwin-x64)."
         )
     submodules.init_compiler(ROOT)
     cw = _compiler_dir()
