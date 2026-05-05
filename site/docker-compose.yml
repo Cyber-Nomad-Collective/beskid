@@ -1,8 +1,8 @@
 services:
   website:
     build:
-      context: .
-      dockerfile: website/Dockerfile
+      context: ..
+      dockerfile: site/website/Dockerfile
     restart: unless-stopped
     expose:
       - "80"

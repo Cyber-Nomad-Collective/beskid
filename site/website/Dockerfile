@@ -1,13 +1,16 @@
 FROM oven/bun:1 AS build
 
-WORKDIR /app/site/website
+WORKDIR /app
 
-COPY website/package.json website/bun.lock ./
+COPY package.json bun.lock ./
+COPY packages/beskid-docs-ui/package.json packages/beskid-docs-ui/package.json
+COPY packages/trudoc/package.json packages/trudoc/package.json
+COPY site/website/package.json site/website/package.json
 RUN bun install --frozen-lockfile
 
-COPY website /app/site/website
+COPY . .
 
-RUN bun run build
+RUN bun run --cwd site/website build
 
 FROM nginx:1.27-alpine AS runtime
 

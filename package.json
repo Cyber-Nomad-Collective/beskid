@@ -1,0 +1,12 @@
+{
+	"name": "beskid",
+	"private": true,
+	"workspaces": ["packages/*", "site/website"],
+	"overrides": {
+		"uuid": "^14.0.0"
+	},
+	"scripts": {
+		"install:all": "bun install",
+		"website": "bun --cwd site/website"
+	}
+}
