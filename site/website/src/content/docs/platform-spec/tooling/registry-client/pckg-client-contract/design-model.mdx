@@ -1,0 +1,42 @@
+---
+title: Design model
+description: Conceptual model for `pckg client contract` and its subsystem boundaries.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Registry client
+    href: /platform-spec/tooling/registry-client/
+    relation: Parent area
+  - type: Feature
+    title: pckg client contract
+    href: /platform-spec/tooling/registry-client/pckg-client-contract/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+## What this article covers
+This article explains the `design-model` view for `pckg client contract` in concrete, onboarding-first language.
+
+## Newcomer walk-through
+Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+
+## Code anchors
+- Public client API in `compiler/crates/beskid_pckg/src/lib.rs`
+- HTTP and auth flows in `compiler/crates/beskid_pckg/src/client`
+- CLI integration in `compiler/crates/beskid_pckg/src/cli`
+
+## Practical guidance
+When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

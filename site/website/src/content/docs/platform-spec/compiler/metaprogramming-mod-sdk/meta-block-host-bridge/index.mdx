@@ -1,0 +1,63 @@
+---
+title: Meta block host bridge
+description: Reference compiler-owned execution, capability policy, and communication with compile-time Beskid modules.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Parent area
+  - type: Domain
+    title: Compiler
+    href: /platform-spec/compiler/
+    relation: Parent domain hub
+  - type: Area
+    title: Metaprogramming (language meta)
+    href: /platform-spec/language-meta/metaprogramming/
+    relation: Language semantics for meta blocks
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Language-law capture, process, emit
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Meta project type and event piping
+  - type: Feature
+    title: Incremental scheduling and determinism
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/
+    relation: Invalidation contract for host-recorded work
+architectureGraph:
+  source: src/data/architecture-graphs/compiler-metaprogramming-meta-block-flow.json
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+This feature hub defines **`Beskid.Compiler.Process`** and host execution: **Meta** project registration, **compilation events**, **named process contexts**, capture/process/emit scheduling, and capability policy.
+
+## Language alignment
+Implements language-meta **capture → process → emit** for `meta` items and manifest-driven **`Meta`** orchestration.
+
+## Implementation anchors
+- `compiler/crates/beskid_engine/` — JIT host patterns reusable for compile-time execution.
+- `compiler/crates/beskid_runtime/` — sandboxed builtins surface for meta workloads.
+- `compiler/crates/beskid_analysis/src/services.rs` — compilation session orchestration hooks.
+
+- [Design model](./design-model/)
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Examples](./examples/)
+- [Verification and traceability](./verification-and-traceability/)
+- [FAQ and troubleshooting](./faq-and-troubleshooting/)

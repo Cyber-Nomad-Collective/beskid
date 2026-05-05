@@ -1,0 +1,86 @@
+{
+  "title": "Metaprogramming Mod SDK contracts",
+  "description": "Canonical relationships between the meta compilation block (language law), the Beskid.Compiler.* Mod SDK surface, the reference compiler host, and downstream semantic/codegen stages.",
+  "groups": [
+    { "id": "language", "label": "Language meta", "color": "#38bdf8" },
+    { "id": "host", "label": "Compiler host", "color": "#a78bfa" },
+    { "id": "sdk", "label": "Beskid.Compiler.*", "color": "#f472b6" },
+    { "id": "pipeline", "label": "Pipeline", "color": "#4ade80" }
+  ],
+  "nodes": [
+    {
+      "id": "meta_block",
+      "label": "meta block (language)",
+      "group": "language",
+      "description": "Declarative capture, process, emit orchestration; semantics under language-meta.",
+      "href": "/platform-spec/language-meta/metaprogramming/meta-block/",
+      "tags": ["language-meta", "meta"]
+    },
+    {
+      "id": "meta_project",
+      "label": "Meta Project.proj",
+      "group": "language",
+      "description": "project.type Meta wires manifest into meta host event piping and entry modules.",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+      "tags": ["manifest", "Meta"]
+    },
+    {
+      "id": "syntax_tree",
+      "label": "Syntax domain model",
+      "group": "pipeline",
+      "description": "Parsed program and syntax items produced before meta execution; feeds discovery and Mod SDK facades.",
+      "href": "/platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/",
+      "tags": ["beskid_analysis", "syntax"]
+    },
+    {
+      "id": "mod_sdk",
+      "label": "Beskid.Compiler.* facades",
+      "group": "sdk",
+      "description": "Typed syntax, queries, diagnostics, and emitter surfaces exposed to compile-time Beskid modules.",
+      "href": "/platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/",
+      "tags": ["corelib", "compiler-mod"]
+    },
+    {
+      "id": "host_bridge",
+      "label": "Host bridge",
+      "group": "host",
+      "description": "Reference compiler-owned execution, capability injection, and sandboxing for meta code.",
+      "href": "/platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/",
+      "tags": ["host", "jit"]
+    },
+    {
+      "id": "incremental",
+      "label": "Incremental graph",
+      "group": "host",
+      "description": "Invalidation, caching, and deterministic replay for meta outputs and synthesized members.",
+      "href": "/platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/",
+      "tags": ["incremental", "cache"]
+    },
+    {
+      "id": "semantic",
+      "label": "Semantic pipelines",
+      "group": "pipeline",
+      "description": "Resolution, typing, and staged rules reconciled after meta contributions are merged.",
+      "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/",
+      "tags": ["beskid_analysis", "semantic"]
+    },
+    {
+      "id": "lowering",
+      "label": "Lowering / codegen",
+      "group": "pipeline",
+      "description": "HIR and backend lowering consume the final merged program shape.",
+      "href": "/platform-spec/compiler/build-pipeline/",
+      "tags": ["beskid_codegen"]
+    }
+  ],
+  "edges": [
+    { "from": "meta_project", "to": "host_bridge", "label": "registers", "description": "Resolution passes Meta projects to the host for event subscriptions and budgets." },
+    { "from": "meta_project", "to": "meta_block", "label": "declares", "description": "Meta projects contain meta items that declare capture, process, and emit pipelines." },
+    { "from": "meta_block", "to": "syntax_tree", "label": "anchors in", "description": "meta blocks are discovered from the syntax model of the compilation under construction." },
+    { "from": "syntax_tree", "to": "mod_sdk", "label": "materializes", "description": "The host projects syntax into Beskid.Compiler.Syntax and related facades." },
+    { "from": "mod_sdk", "to": "host_bridge", "label": "invoked under", "description": "Mod SDK calls are serviced by the host bridge with explicit capability boundaries." },
+    { "from": "host_bridge", "to": "incremental", "label": "records", "description": "Contributions and reads are registered for incremental invalidation and replay." },
+    { "from": "incremental", "to": "semantic", "label": "feeds", "description": "After a consistent meta round, semantic pipelines consume the augmented program." },
+    { "from": "semantic", "to": "lowering", "label": "lowers", "description": "Typed, resolved output continues through lowering unchanged by this contract slice." }
+  ]
+}

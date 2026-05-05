@@ -1,0 +1,39 @@
+---
+title: Typed emitter and transforms - Verification and traceability
+description: Construction of syntax nodes and declarative transforms without raw text printing.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Typed emitter and transforms
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article documents **verification and traceability** for **Typed emitter and transforms**.
+
+## Traceability matrix
+- Anchor: `compiler/crates/beskid_analysis/src/syntax/items/` — patterns for well-formed item emission.
+- Anchor: `compiler/crates/beskid_codegen/` — downstream expectations after merge.
+
+## Verification expectations
+- Contract tests in `compiler/crates/beskid_tests` assert ordering, diagnostic codes, and merge behavior once implemented.
+- Golden incremental traces (optional) validate invalidation when syntax edits move spans tied to meta registrations.
+
+## Review cadence
+- Update this bundle whenever public `Beskid.Compiler.*` shapes or host policies change.

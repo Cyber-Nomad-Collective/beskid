@@ -1,0 +1,49 @@
+---
+title: Workspace resolution contract
+description: Project graph discovery, manifest loading (including Meta projects), and workspace inputs for compiler and tooling commands.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Resolution and projects
+    href: /platform-spec/compiler/resolution-and-projects/
+    relation: Parent area
+  - type: Feature
+    title: Dependency workspace and lockfile
+    href: /platform-spec/compiler/build-pipeline/dependency-workspace/
+    relation: Build-pipeline projection of this model
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Meta project type in manifests
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Meta orchestration semantics
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Host wiring after resolution
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+This feature hub explains how the compiler discovers `Project.proj`, builds a project graph, and hands resolved workspace inputs to compile and dependency commands. **`Meta`** projects are included in the graph like other project kinds; after resolution, the **meta host** registers them for **event-driven** orchestration per **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** and **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**.
+
+- [Design model](./design-model/)
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Examples](./examples/)
+- [Verification and traceability](./verification-and-traceability/)
+- [FAQ and troubleshooting](./faq-and-troubleshooting/)

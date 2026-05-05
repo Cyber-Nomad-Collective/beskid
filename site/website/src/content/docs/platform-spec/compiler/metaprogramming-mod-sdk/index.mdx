@@ -1,0 +1,88 @@
+---
+title: Metaprogramming Mod SDK
+description: Beskid.Compiler.Syntax, Query, Process, Emit, Diagnostics; host bridge for Meta projects and declarative meta capture-process-emit.
+template: splash
+tableOfContents: true
+specLevel: area
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Domain
+    title: Compiler
+    href: /platform-spec/compiler/
+    relation: Parent domain hub
+  - type: Area
+    title: Metaprogramming (language meta)
+    href: /platform-spec/language-meta/metaprogramming/
+    relation: Meta projects and meta block language law
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Declarative capture, process, emit semantics
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Meta project type and manifest wiring
+  - type: Area
+    title: Build pipeline
+    href: /platform-spec/compiler/build-pipeline/
+    relation: Lowering and backends after meta merge
+architectureGraph:
+  source: src/data/architecture-graphs/compiler-metaprogramming-mod-sdk.json
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+import DomainOrAreaHub from '@beskid/docs-ui/platform-spec/DomainOrAreaHub.astro';
+
+<SpecPageHeader
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="Canonical ownership" id="ownership">
+This **compiler** area implements **language-first** contracts: **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)** defines **capture → process → emit** for `meta` items; **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** defines the **`Meta` project type**. Here we specify **`Beskid.Compiler.*`**, the **host bridge**, **incremental graphs**, and **Rust-side** mapping from Beskid declarative pipelines to internal queries and diagnostics.
+</SpecSection>
+
+<SpecSection title="Scope" id="scope">
+Normative pages specify **interfaces, cache boundaries, and host policy**—not product backlogs. They drive `compiler/` and **`corelib`** surfaces exposed at compile time.
+</SpecSection>
+
+<SpecSection title="Mod API shape (modules)" id="mod-api-shape">
+The compile-time package groups the natural compilation shape into modules (exact naming may evolve; boundaries are normative):
+
+| Module | Role |
+| --- | --- |
+| **`Beskid.Compiler.Syntax`** | Immutable syntax nodes, trivia, stable identities for **capture** keys and **emit** construction. |
+| **`Beskid.Compiler.Query`** | Fluent query plans over syntax (and optional semantic snapshots) used in the **process** phase; must lower to bounded Rust walkers. |
+| **`Beskid.Compiler.Process`** | Named **process** contexts, lifecycle hooks, attachment to **current compilation**, and **Meta** project orchestration metadata from manifests. |
+| **`Beskid.Compiler.Diagnostics`** | Construction and reporting of compiler-native diagnostics from `meta` (same pipeline as analysis/LSP). |
+| **`Beskid.Compiler.Emit`** | Typed transforms and contributions; no raw-text contract. |
+
+**`Beskid.Compiler.Compilation`** (or equivalent) remains the handle for the **current compilation** instance referenced by language-meta.
+
+Feature hubs below map onto these boundaries with traceability into `beskid_analysis`, `beskid_lsp`, `beskid_codegen`, `beskid_engine`, and `beskid_runtime`.
+</SpecSection>
+
+<SpecSection title="Meta projects and events" id="meta-projects">
+For **`project.type = Meta`**, the host **registers** meta entrypoints and **pipes compilation events** (parse refresh, dependency graph changes, scheduling ticks—enumerated per implementation) into eligible **`meta`** pipelines. Event sets and budgets are specified in **[Meta block host bridge](/platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/)** and **[Incremental scheduling and determinism](/platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/)**.
+</SpecSection>
+
+<DomainOrAreaHub pathPrefix="platform-spec/compiler/metaprogramming-mod-sdk" summaryTitle="Subtree summary" />
+
+<SpecSection title="Relationship diagram" id="architecture">
+The embedded architecture graph summarizes how **`Meta`** manifests, **`meta`** law, Mod SDK facades, the host bridge, and downstream pipelines connect.
+</SpecSection>
+
+<SpecSection title="Feature index" id="feature-index">
+Use the tiles for normative **feature** contracts (`status` + owner metadata on each hub).
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/compiler/metaprogramming-mod-sdk" heading="Features" />

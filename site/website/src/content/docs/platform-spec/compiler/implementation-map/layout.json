@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "level": "area",
+  "extends": "area-sparse",
+  "pathPrefix": "platform-spec/compiler/implementation-map",
+  "minSpecSections": 0,
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/compiler/implementation-map",
+        "heading": "Features"
+      }
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+---
+title: Tooling
+description: CLI, formatter, LSP, manifests, lockfiles, and developer-facing contracts.
+template: splash
+tableOfContents: false
+specLevel: domain
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="Rationale" id="rationale">
+Tooling must be **specified** so different editor plugins, CI images, and third-party drivers agree on flags,
+file formats, and protocol extensions without reverse-engineering the reference implementation.
+</SpecSection>
+
+<SpecSection title="Background" id="background">
+Narrative guides remain under [Guides](/guides/). This domain will absorb normative `spec/` chapters such as
+project lockfile and workspace manifest formats as they are promoted from legacy paths.
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/tooling" heading="Areas" />

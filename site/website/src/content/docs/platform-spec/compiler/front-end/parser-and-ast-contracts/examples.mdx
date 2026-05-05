@@ -1,0 +1,40 @@
+---
+title: Examples
+description: Concrete examples that show parser contracts in daily compiler work.
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Parser and AST contracts
+    href: /platform-spec/compiler/front-end/parser-and-ast-contracts/
+    relation: Parent feature
+  - type: Area
+    title: Front-end
+    href: /platform-spec/compiler/front-end/
+    relation: Area context and neighboring features
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+Example A: adding a new declaration form
+
+1. Extend `beskid.pest` with the production.
+2. Add/adjust syntax item parser in `src/syntax/items`.
+3. Validate formatter behavior if the new node is printable.
+4. Confirm resolver can discover names from the new declaration.
+
+Example B: fixing a parser diagnostic
+
+1. Reproduce failure in parser/analysis tests.
+2. Adjust parse error mapping in `src/parsing`.
+3. Ensure diagnostic code identity remains stable when routed through later phases.

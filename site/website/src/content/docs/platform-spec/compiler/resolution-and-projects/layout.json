@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "level": "area",
+  "extends": "area-sparse",
+  "pathPrefix": "platform-spec/compiler/resolution-and-projects",
+  "minSpecSections": 0,
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/compiler/resolution-and-projects",
+        "heading": "Features"
+      }
+    }
+  ]
+}

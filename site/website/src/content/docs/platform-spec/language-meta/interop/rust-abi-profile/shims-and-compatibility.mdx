@@ -1,0 +1,43 @@
+---
+title: Rust ABI profile — Shims and compatibility strategy
+description: How future Rust-native interop would layer on top of C ABI exports without breaking the stable runtime contract.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Proposed
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Rust ABI profile
+    href: /platform-spec/language-meta/interop/rust-abi-profile/
+    relation: Parent feature hub
+  - type: Feature
+    title: C ABI profile
+    href: /platform-spec/language-meta/interop/c-abi-profile/
+    relation: Current user extern path
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+> **Status:** Proposed — forward-looking strategy; not required for current toolchain conformance.
+
+## Shim pattern
+
+Any future **Rust-native** user interop would introduce **thin shim symbols** with stable C names that delegate to Rust `extern "Rust"` or crate-specific metadata. **Interop.Contracts** normalization would run **before** shim emission so that profiles remain composable.
+
+## Compatibility bands
+
+The platform can evolve:
+
+1. **Band A** — only C-profile user `Extern` and stable runtime exports (today’s supported story).
+2. **Band B** — optional Rust-profile extensions gated by language version, manifest flags, or engine features, each documented with its own conformance tests.
+
+Upgrades **must** preserve Band A artifacts unless accompanied by a major ABI version policy change documented under **[conformance and versioning](/platform-spec/language-meta/interop/interop-contracts/conformance-and-versioning/)**.

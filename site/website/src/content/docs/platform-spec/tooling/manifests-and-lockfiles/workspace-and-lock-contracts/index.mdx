@@ -1,0 +1,46 @@
+---
+title: Workspace and lock contracts
+description: Workspace manifest and lockfile behavior for dependency resolution, reproducibility, and update flows.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Manifests and lockfiles
+    href: /platform-spec/tooling/manifests-and-lockfiles/
+    relation: Parent area
+  - type: Area
+    title: Build pipeline
+    href: /platform-spec/compiler/build-pipeline/
+    relation: Stage scheduling depends on stable dependency graph materialization
+  - type: Area
+    title: Registry client
+    href: /platform-spec/tooling/registry-client/
+    relation: Lock updates rely on registry metadata and fetch flows
+---
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+`Workspace and lock contracts` defines one operational contract that a newcomer can follow end-to-end: first the model, then execution flow, then strict guarantees, concrete examples, and verification guidance.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- Lock/update commands in `compiler/crates/beskid_cli/src/commands/`
+- Project and dependency resolution in `compiler/crates/beskid_analysis/src/resolve/mod.rs`
+- Workspace tests in `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs`
+- Corelib package tests in `compiler/crates/beskid_tests/src/projects/corelib/layout.rs`
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts" heading="Articles" />

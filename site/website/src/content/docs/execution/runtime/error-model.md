@@ -11,7 +11,7 @@ description: Error model specification
 
 ## Scope
 This chapter defines runtime-side failure behavior at execution boundaries.
-Language-level error typing remains canonical in `docs/spec/error-handling.md`.
+Language-level error typing remains canonical in `/platform-spec/language-meta/contracts-and-effects/error-handling/`.
 
 ## Error propagation
 - Functions return `Option[T]` when errors are expected.

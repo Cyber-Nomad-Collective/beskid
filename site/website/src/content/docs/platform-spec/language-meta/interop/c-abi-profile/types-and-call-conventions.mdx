@@ -1,0 +1,44 @@
+---
+title: C ABI profile — Types and call conventions
+description: Permitted C ABI representations for Beskid extern contract parameters and returns in the reference compiler.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: C ABI profile
+    href: /platform-spec/language-meta/interop/c-abi-profile/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Calling convention
+
+For user **`contract`** calls lowered through the reference compiler path, parameters and returns are prepared for **System V AMD64** when targeting that platform. This matches the explicit `CallConv::SystemV` selection in the contract call lowering implementation.
+
+Other targets must document their own mapping in a future revision of this article; until then, only the documented tier-1 mapping is normative for **Standard** conformance claims.
+
+## Permitted value shapes
+
+The C ABI profile instantiates **[Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/)** type-shape classes as follows for typical extern surfaces:
+
+- **Scalar** — maps to fixed-width integer CLIF types permitted by the engine’s extern signature validator.
+- **Opaque handle** — pointer-sized integer or raw pointer as validated against the lowered signature.
+- **Buffer** and **string-like** — require explicit contract design; many layouts are shared with the Beskid runtime’s stable `repr(C)` types where applicable (see `compiler/crates/beskid_abi/src/types.rs`).
+
+Types with **Rust-only** or **Beskid-only** layout that cannot be expressed as stable C must not appear on an extern boundary without an adapter type.
+
+## Cranelift note
+
+Beskid user code and bridge code are lowered with **Cranelift**; foreign libraries need only expose **C ABI** entrypoints compatible with the emitted calls. See also `/execution/runtime/ffi/` for additional lowering narrative.

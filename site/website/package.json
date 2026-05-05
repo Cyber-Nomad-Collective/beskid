@@ -3,9 +3,20 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "sync:cli-version": "bun run scripts/sync-cli-version.mjs",
-    "prebuild": "bun run scripts/sync-cli-version.mjs",
-    "predev": "bun run scripts/sync-cli-version.mjs",
+    "sync:cli-version": "node ../../packages/trudoc/scripts/sync-cli-version.mjs",
+    "verify:platform-spec": "node ../../packages/trudoc/scripts/verify-platform-spec-frontmatter.mjs",
+    "verify:graphs": "node ../../packages/trudoc/scripts/verify-graph-frontmatter.mjs",
+    "verify:diagnostics-spec-sync": "node ../../packages/trudoc/scripts/verify-diagnostics-spec-sync.mjs",
+    "verify:language-meta-related-links": "node ../../packages/trudoc/scripts/verify-language-meta-related-links.mjs",
+    "verify:last-reviewed": "node ../../packages/trudoc/scripts/verify-last-reviewed.mjs",
+    "generate:platform-spec-git-meta": "node ../../packages/trudoc/scripts/generate-platform-spec-git-meta.mjs",
+    "verify:platform-spec-git-meta": "node ../../packages/trudoc/scripts/verify-platform-spec-git-meta.mjs",
+    "verify:platform-spec-layout": "tsx ../../packages/trudoc/src/cli/layout-verify.ts",
+    "verify:platform-spec-ci": "node ../../packages/trudoc/scripts/verify-platform-spec-ci.mjs",
+    "verify:trudoc": "tsx ../../packages/trudoc/src/cli/verify.ts",
+    "bootstrap:platform-spec-layout": "tsx ../../packages/trudoc/scripts/bootstrap-platform-spec-layout.ts",
+    "prebuild": "bun run sync:cli-version && bun run generate:platform-spec-git-meta && bun run verify:trudoc --preset beskid-prebuild",
+    "predev": "bun run sync:cli-version && bun run generate:platform-spec-git-meta",
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
@@ -13,8 +24,15 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@beskid/docs-ui": "workspace:*",
     "@astrojs/starlight": "^0.37.6",
     "astro": "^5.6.1",
-    "sharp": "^0.34.2"
+    "sharp": "^0.34.2",
+    "trudoc": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.4",
+    "yaml": "^2.7.0",
+    "zod": "^3.24.2"
   }
 }

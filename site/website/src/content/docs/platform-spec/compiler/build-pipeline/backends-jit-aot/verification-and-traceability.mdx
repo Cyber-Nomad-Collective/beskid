@@ -1,0 +1,38 @@
+---
+title: Backends (JIT and AOT) - Verification and traceability
+description: Crate-level anchors and tests that verify backend divergence and shared lowering contract.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Backends (JIT and AOT)
+    href: /platform-spec/compiler/build-pipeline/backends-jit-aot/
+    relation: Parent feature hub
+  - type: Area
+    title: Conformance
+    href: /platform-spec/compiler/conformance/
+    relation: Test coverage strategy
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+Implementation anchors:
+
+- `compiler/crates/beskid_engine/src/services.rs`
+- `compiler/crates/beskid_engine/src/jit_module.rs`
+- `compiler/crates/beskid_aot/src/api.rs`
+- `compiler/crates/beskid_cli/src/commands/build.rs`
+
+Evidence should include JIT runtime tests and AOT output-kind matrix tests.

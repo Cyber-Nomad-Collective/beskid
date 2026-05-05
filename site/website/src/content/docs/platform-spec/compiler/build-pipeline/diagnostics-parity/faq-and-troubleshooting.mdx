@@ -1,0 +1,38 @@
+---
+title: Diagnostics parity (CLI and LSP) - FAQ and troubleshooting
+description: Troubleshooting mismatched diagnostics between command-line and editor surfaces.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Diagnostics parity (CLI and LSP)
+    href: /platform-spec/compiler/build-pipeline/diagnostics-parity/
+    relation: Parent feature hub
+  - type: Feature
+    title: Stage ordering and lowering
+    href: /platform-spec/compiler/build-pipeline/stage-ordering/
+    relation: Compiler-side diagnostic gates
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## Why do line labels differ between CLI and editor?
+Different surfaces intentionally use different source labels; compare rule code, severity, and span semantics.
+
+## Why does editor show fewer errors after edits?
+Snapshot reuse may be active; trigger a fresh analysis cycle to confirm parity.
+
+## Are parse and semantic diagnostics expected to be identical text?
+No. Contract requires semantic parity and stable classification, not byte-identical messages.

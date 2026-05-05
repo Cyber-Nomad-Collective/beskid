@@ -1,0 +1,52 @@
+---
+title: Examples
+description: Practical examples that demonstrate `Builtins and symbols` behavior.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: ABI and host boundary
+    href: /platform-spec/execution/abi-and-host/
+    relation: Parent area
+  - type: Area
+    title: Codegen and IR
+    href: /platform-spec/compiler/codegen-and-ir/
+    relation: Lowering and backend emission consume ABI symbol definitions
+  - type: Area
+    title: Runtime
+    href: /platform-spec/execution/runtime/
+    relation: Runtime builtins export and implement the ABI contract
+  - type: Feature
+    title: Builtins and symbols
+    href: /platform-spec/execution/abi-and-host/builtins-and-symbols/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## Example 1: Happy path
+
+A standard project exercises the expected producer -> consumer handoff with no contract violations. Trace this via:
+
+- ``BuiltinFnSpec` and `BUILTIN_SPECS` in `compiler/crates/beskid_abi/src/builtins.rs``
+- `Builtin runtime implementations in `compiler/crates/beskid_runtime/src/builtins/mod.rs``
+
+## Example 2: Contract mismatch
+
+Intentionally alter a boundary definition (for example, a symbol or structure shape), then run the related conformance suite. The expected result is a deterministic failure that identifies the mismatched boundary.
+
+## Example 3: Regression-proofing a fix
+
+After applying a fix, add or update a focused fixture in the nearest test crate and rerun wider suites so the behavior remains locked for future refactors.

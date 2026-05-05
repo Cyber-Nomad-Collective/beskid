@@ -1,0 +1,35 @@
+---
+title: Implementation map
+description: Crate-level map of the compiler workspace with normative ownership boundaries and feature anchors.
+template: splash
+tableOfContents: true
+specLevel: area
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Domain
+    title: Compiler
+    href: /platform-spec/compiler/
+    relation: Parent domain hub
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="Scope" id="scope">
+This area defines the stable map from compiler workspace crates to specification leaves so normative pages can be traced to active implementation modules.
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/compiler/implementation-map" heading="Features" />

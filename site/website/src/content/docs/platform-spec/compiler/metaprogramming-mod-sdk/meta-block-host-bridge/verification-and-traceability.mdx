@@ -1,0 +1,40 @@
+---
+title: meta block host bridge - Verification and traceability
+description: Reference compiler-owned execution, capability policy, and communication with compile-time Beskid modules.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: meta block host bridge
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article documents **verification and traceability** for **meta block host bridge**.
+
+## Traceability matrix
+- Anchor: `compiler/crates/beskid_engine/` — JIT host patterns reusable for compile-time execution.
+- Anchor: `compiler/crates/beskid_runtime/` — sandboxed builtins surface for meta workloads.
+- Anchor: `compiler/crates/beskid_analysis/src/services.rs` — compilation session orchestration hooks.
+
+## Verification expectations
+- Contract tests in `compiler/crates/beskid_tests` assert ordering, diagnostic codes, and merge behavior once implemented.
+- Golden incremental traces (optional) validate invalidation when syntax edits move spans tied to meta registrations.
+
+## Review cadence
+- Update this bundle whenever public `Beskid.Compiler.*` shapes or host policies change.

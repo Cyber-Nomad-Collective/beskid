@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "level": "feature",
+  "extends": "feature-hub-default",
+  "pathPrefix": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge",
+  "minSpecSections": 0,
+  "articleDefaults": {
+    "extends": "article-default"
+  }
+}

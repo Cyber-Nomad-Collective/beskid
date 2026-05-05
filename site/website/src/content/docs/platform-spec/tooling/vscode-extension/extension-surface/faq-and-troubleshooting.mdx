@@ -1,0 +1,42 @@
+---
+title: FAQ and troubleshooting
+description: Common operator and contributor questions about `Extension surface`.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: VS Code extension
+    href: /platform-spec/tooling/vscode-extension/
+    relation: Parent area
+  - type: Feature
+    title: Extension surface
+    href: /platform-spec/tooling/vscode-extension/extension-surface/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+## What this article covers
+This article explains the `faq-and-troubleshooting` view for `Extension surface` in concrete, onboarding-first language.
+
+## Newcomer walk-through
+Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+
+## Code anchors
+- Extension manifest in `beskid_vscode/package.json`
+- Extension command wiring in `beskid_vscode/src`
+- OpenVSX publishing matrix in `.github/workflows/publish-open-vsx.yml`
+
+## Practical guidance
+When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

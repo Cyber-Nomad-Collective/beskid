@@ -1,0 +1,37 @@
+---
+title: "Interop"
+description: "Foreign boundaries: Interop.Contracts, C and Rust ABI profiles, and the Beskid extern language surface."
+template: splash
+tableOfContents: false
+specLevel: area
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="Scope" id="scope">
+This area defines how Beskid programs interact with **foreign code** and with the **Rust-hosted runtime** that implements the language’s execution services.
+
+- **[Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/)** — language-agnostic primitives (symbols, call shapes, ownership classes, conformance).
+- **[C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/)** — user **`Extern`** contracts targeting C-compatible libraries; Cranelift lowering and engine linking policy.
+- **[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/)** — stable runtime export surface and Rust-internal implementation boundaries.
+- **[FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/)** — normative **language** chapter: where `Extern` may appear, what contracts mean to users, and how it ties to the profiles above.
+
+Execution chapters under **`/execution/runtime/`** document lowering, syscalls, and operator policy; they **pair** with this area but do not replace it.
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/language-meta/interop" heading="Features" />

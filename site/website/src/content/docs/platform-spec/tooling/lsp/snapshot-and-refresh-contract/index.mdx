@@ -1,0 +1,46 @@
+---
+title: Snapshot and refresh contract
+description: LSP workspace snapshot lifecycle and refresh guarantees for diagnostics and symbol services.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: LSP
+    href: /platform-spec/tooling/lsp/
+    relation: Parent area
+  - type: Area
+    title: Semantic pipeline
+    href: /platform-spec/compiler/semantic-pipeline/
+    relation: LSP diagnostics reuse semantic analysis rules
+  - type: Area
+    title: VS Code extension
+    href: /platform-spec/tooling/vscode-extension/
+    relation: Extension commands trigger and observe LSP refresh operations
+---
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+`Snapshot and refresh contract` defines one operational contract that a newcomer can follow end-to-end: first the model, then execution flow, then strict guarantees, concrete examples, and verification guidance.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- LSP diagnostics in `compiler/crates/beskid_lsp/src/diagnostics.rs`
+- Analysis services in `compiler/crates/beskid_analysis/src/services.rs`
+- Resolver implementation in `compiler/crates/beskid_analysis/src/resolve/resolver.rs`
+- LSP tests in `compiler/crates/beskid_tests/src/analysis/resolve.rs`
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/tooling/lsp/snapshot-and-refresh-contract" heading="Articles" />

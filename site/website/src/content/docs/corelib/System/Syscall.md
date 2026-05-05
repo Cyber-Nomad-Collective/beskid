@@ -7,11 +7,13 @@ description: "Cross-platform read/write primitives at the runtime boundary."
 
 ## API
 
-- **`Write(i64 fd, string data)`** — implemented; returns byte count or `-1` on error / unsupported `fd`.
-- **`Read(i64 fd)`** — not implemented yet (stub; calls `__panic_str` until a buffer contract exists).
-- **`StdoutFd` / `StdinFd` / `StderrFd`** — small integer handles (`1` / `0` / `2` on POSIX; runtime-defined elsewhere).
+- **`Write(i64 fd, string data)`** — implemented; returns `Result<i64, SyscallError>`.
+- **`Read(i64 fd, i64 maxBytes)`** — implemented for stdin-oriented reads; returns `Result<string, SyscallError>`.
+- **`WriteTo(StandardStream, string)`** and **`ReadFrom(StandardStream, i64)`** — ergonomic stream-first wrappers.
+- **`StdoutFd` / `StdinFd` / `StderrFd`** — normalized descriptor helpers.
 
 ## Contract
 
-- Prefer **`syscall_write`** (`__syscall_write` at the builtin boundary) over ad-hoc print symbols.
+- Prefer **`syscall_write` / `syscall_read`** (`__syscall_write` / `__syscall_read` at the builtin boundary) over ad-hoc print symbols.
 - ABI changes are versioned with `BESKID_RUNTIME_ABI_VERSION`.
+- Corelib convention is **one type per file**. `System/Syscall/` is the reference layout (`StandardStream`, `SyscallError`, request DTOs).

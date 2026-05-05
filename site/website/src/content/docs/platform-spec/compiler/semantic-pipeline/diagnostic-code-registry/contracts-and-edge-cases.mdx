@@ -1,0 +1,39 @@
+---
+title: Contracts and edge cases
+description: Stability requirements and risky changes in the diagnostic registry.
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Diagnostic code registry
+    href: /platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/
+    relation: Parent feature
+  - type: Feature
+    title: Glossary and conformance
+    href: /platform-spec/language-meta/conformance/glossary-and-conformance/
+    relation: Diagnostic categories map to conformance terminology
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+Registry contracts:
+
+- Codes must be unique and semantically stable once published.
+- Rules may evolve messages, but not silently repurpose existing codes.
+- Deprecated codes should remain documented until consumer migration is complete.
+
+Edge cases:
+
+- Splitting one broad issue into multiple specific codes can break external filters.
+- Merging codes can hide important distinctions used by editor workflows.
+- Reordering kinds without preserving explicit mappings may create accidental code churn.

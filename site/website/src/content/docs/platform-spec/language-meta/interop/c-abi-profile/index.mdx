@@ -1,0 +1,61 @@
+---
+title: C ABI profile
+description: System V-style C ABI binding for user extern contracts—types, calling conventions, libraries, and engine resolution policy.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Interop
+    href: /platform-spec/language-meta/interop/
+    relation: Parent area
+  - type: Feature
+    title: Interop.Contracts
+    href: /platform-spec/language-meta/interop/interop-contracts/
+    relation: Abstract primitives this profile instantiates
+  - type: Feature
+    title: FFI and extern
+    href: /platform-spec/language-meta/interop/ffi-and-extern/
+    relation: Beskid syntax for extern contracts
+  - type: Feature
+    title: Extern dispatch and policy
+    href: /platform-spec/execution/abi-and-host/extern-dispatch-and-policy/
+    relation: Engine and runtime dispatch details
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	status="Standard"
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+The **C ABI profile** is the normative mapping from **[Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/)** primitives to **C-compatible** foreign libraries on supported hosts. It covers **calling convention** (for example System V on Linux x86_64 for user extern calls in the reference compiler), **permitted value representations** at the boundary, **library and symbol metadata** on `Extern` contracts, and how the **JIT engine** resolves imports when the `extern_dlopen` feature is enabled.
+
+Lowering uses **Cranelift**; the profile does not imply that foreign libraries are compiled with Cranelift—only that Beskid-generated CLIF lowers to native code that interoperates with C ABI libraries.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- Extern import metadata on codegen artifacts: `compiler/crates/beskid_codegen/src/lowering/context.rs` (`ExternImport`, documented v0.1 `"C"` ABI string)
+- Collection of extern imports from contracts and inline modules: `compiler/crates/beskid_codegen/src/lowering/lowerable.rs`
+- Cranelift `SystemV` calls for contract calls: `compiler/crates/beskid_codegen/src/lowering/expressions/call_expression.rs`
+- JIT import declaration and signature validation: `compiler/crates/beskid_engine/src/jit_module.rs`
+- Optional dynamic resolution and policy: `compiler/crates/beskid_engine/src/engine.rs` (`extern_dlopen`, allow/deny lists)
+- Operator-facing policy narrative: `/execution/runtime/extern-policy-v0-1/`, `/execution/runtime/ffi/`
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/language-meta/interop/c-abi-profile" heading="Articles" />

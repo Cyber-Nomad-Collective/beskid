@@ -1,0 +1,63 @@
+---
+title: meta compilation block
+description: Declarative capture, process, and emit phases; placement, scope, and determinism for meta items in Meta and host compilations.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Metaprogramming
+    href: /platform-spec/language-meta/metaprogramming/
+    relation: Parent area
+  - type: Feature
+    title: Metaprogramming overview
+    href: /platform-spec/language-meta/metaprogramming/metaprogramming/
+    relation: Meta projects and overview
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Meta project type schema
+  - type: Domain
+    title: Language meta
+    href: /platform-spec/language-meta/
+    relation: Parent domain hub
+  - type: Feature
+    title: Meta block host bridge
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/
+    relation: Compiler host execution contract
+  - type: Feature
+    title: Incremental scheduling and determinism
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/
+    relation: Invalidation and replay guarantees
+  - type: Feature
+    title: Syntax domain model generation
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/
+    relation: Syntax model meta observes
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+This **language-meta** feature hub defines the **`meta` compilation block**: a **declarative declaration of the process** the compiler runs—**capture** (which nodes and contexts are targeted), **process** (fluent queries and transforms), and **emit** (typed contributions and compiler-native diagnostics). It is the primary orchestration surface for **`Meta` projects** and for `meta` items loaded in other project kinds where the platform allows compile-time hooks.
+
+Host execution, `Beskid.Compiler.*` facades, and incremental scheduling are under **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**. **`Meta` project type** manifest rules are under **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)**.
+
+## Normative split
+- **Here (language meta):** grammar, placement, lexical scope, visibility, capture/process/emit semantics, determinism, and non-destructive iteration.
+- **Compiler domain:** Rust-side pipeline, query translation, diagnostic codes, and cache boundaries.
+
+- [Design model](./design-model/)
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Examples](./examples/)
+- [Verification and traceability](./verification-and-traceability/)
+- [FAQ and troubleshooting](./faq-and-troubleshooting/)

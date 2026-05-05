@@ -1,0 +1,46 @@
+---
+title: Diagnostic code registry
+description: Registry contract for semantic diagnostic code ownership and synchronization with compiler sources.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+lastReviewed: "2026-04-29"
+relatedTopics:
+  - type: Area
+    title: Semantic pipeline
+    href: /platform-spec/compiler/semantic-pipeline/
+    relation: Parent area
+  - type: Feature
+    title: Rules and diagnostics catalog
+    href: /platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/
+    relation: Rule outputs depend on registry-owned code identity
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+## What this feature governs
+
+This feature defines ownership and evolution rules for semantic diagnostic codes in `SemanticIssueKind::code()` and neighboring catalog logic. It keeps diagnostics stable for tooling, docs, and conformance references.
+
+## Core guarantees
+
+1. Diagnostic code-to-meaning mapping is normative in compiler source, not in rendering layers.
+2. New semantic issues must use unique, documented codes before release.
+3. Registry updates must remain synchronized with platform-spec documentation and verification scripts.
+4. Renaming or reusing existing codes requires explicit migration handling for downstream consumers.
+
+## Implementation anchors
+
+- `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`
+- `compiler/crates/beskid_analysis/src/analysis`
+- `compiler/crates/beskid_analysis/src/services.rs`
+- `packages/trudoc/scripts/verify-diagnostics-spec-sync.mjs`

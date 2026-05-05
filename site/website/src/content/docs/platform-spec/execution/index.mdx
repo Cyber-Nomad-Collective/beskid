@@ -1,0 +1,39 @@
+---
+title: Execution
+description: Runtime ABI, host boundary, backend execution model, and operational contracts for running Beskid programs.
+template: splash
+tableOfContents: false
+specLevel: domain
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Domain
+    title: Compiler
+    href: /platform-spec/compiler/
+    relation: Lowering and backend contracts feed runtime execution
+  - type: Domain
+    title: Language meta
+    href: /platform-spec/language-meta/
+    relation: Language semantics implemented by runtime and backends
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="Rationale" id="rationale">
+This domain is the normative execution surface for runtime behavior, ABI boundaries, and host interactions. It is authored from implementation crates and test behavior rather than legacy narrative docs.
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/execution" heading="Areas" />

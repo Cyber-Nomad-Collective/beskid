@@ -1,0 +1,44 @@
+---
+title: Incremental scheduling and determinism - Design model
+description: Cache boundaries, invalidation keys, and replay guarantees for meta outputs and Mod SDK reads.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Incremental scheduling and determinism
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article documents the **design model** for **Incremental scheduling and determinism**.
+
+## Language alignment
+**Isolating** capture yields narrow dirty sets; **aggregating** capture widens invalidation by language intent—encoded as explicit graph edges here.
+
+## Persistent entities
+- **Compilation instance** — implicit handle to the compilation under construction (see language-meta meta block scope).
+- **Syntax snapshot** — immutable tree with stable node identities suitable for incremental keys.
+- **Capability tokens** — host-granted permissions for I/O, diagnostics, and emit operations inside meta.
+
+## Boundaries
+- Mod SDK facades never bypass the host bridge for effects.
+- Generation logic in the reference compiler remains Rust-internal; Beskid sees only the generated `Beskid.Compiler.*` projection.
+
+## Anchored code paths
+- `compiler/crates/beskid_analysis/src/analysis/rules/staged/` — precedent for staged invalidation.
+- `compiler/crates/beskid_lsp/` — incremental document models and rescan triggers.

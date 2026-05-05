@@ -1,0 +1,37 @@
+---
+title: Stage ordering and lowering
+description: Canonical ordering from resolved source through lowering into a backend-ready CodegenArtifact.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Build pipeline
+    href: /platform-spec/compiler/build-pipeline/
+    relation: Parent area
+  - type: Feature
+    title: Backends (JIT and AOT)
+    href: /platform-spec/compiler/build-pipeline/backends-jit-aot/
+    relation: Consumers of the lowered artifact
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+This feature hub defines the stage ordering contract for parse, semantic gates, HIR/resolution/typing, and Cranelift lowering into `CodegenArtifact`.
+
+- [Design model](./design-model/)
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Examples](./examples/)
+- [Verification and traceability](./verification-and-traceability/)
+- [FAQ and troubleshooting](./faq-and-troubleshooting/)

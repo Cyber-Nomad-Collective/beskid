@@ -5,7 +5,7 @@ description: "How the Beskid pretty-printer works: Emit, EmitCtx, modules, and e
 
 The formatter lives in the **`beskid_analysis`** crate under `src/format/`. It is an **opinionated pretty-printer**: it walks the **concrete syntax AST** after a successful parse and writes canonical text. It does **not** round-trip arbitrary whitespace or comments (except structured **`///`** leading documentation carried on the AST).
 
-For a concise rules summary and coverage matrix, see the compiler tree doc at `compiler/docs/formatter.md` in the repository.
+For normative formatter and front-end contracts, see [Parser and AST contracts](/platform-spec/compiler/front-end/parser-and-ast-contracts/) and [Command surface](/platform-spec/tooling/cli/command-surface/).
 
 ## Mental model
 
@@ -78,7 +78,7 @@ Policy bodies live in `format/policy.rs` so spacing rules stay centralized.
 2. **`Emit` impl** — add `fn emit` in the most natural module (`expressions_emit.rs` vs `statements_emit.rs` vs `items/…`).
 3. **Delegate** — prefer `child.emit(w, cx)?` over duplicating indent logic.
 4. **Policy** — if the node introduces new vertical spacing needs, extend `policy.rs` and thread through `EmitCtx` rather than hard-coding double newlines at call sites.
-5. **Tests** — add `*.input.bd` / `*.expected.bd` under `beskid_tests/fixtures/format/` (any subdirectory; the harness walks recursively), then run `python3 scripts/bless_format_fixtures.py` from the `compiler/` tree after `cargo build -p beskid_cli`. See the compiler repo’s `docs/formatter-test-matrix.md` for the coverage checklist.
+5. **Tests** — add `*.input.bd` / `*.expected.bd` under `beskid_tests/fixtures/format/` (any subdirectory; the harness walks recursively), then run `python3 scripts/bless_format_fixtures.py` from the `compiler/` tree after `cargo build -p beskid_cli`.
 
 ## Idempotence and grouped expressions
 
@@ -97,6 +97,6 @@ Both paths require a **successful parse**; there is no best-effort partial forma
 
 ## Regression testing (compiler repo)
 
-- **Matrix**: [`compiler/docs/formatter-test-matrix.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/docs/formatter-test-matrix.md) (paths refer to the `beskid_compiler` repository layout).
+- **Coverage policy**: [Test harnesses and fixtures](/platform-spec/compiler/conformance/test-harnesses-and-fixtures/).
 - **CI**: `nox -s format_regression` and `beskid format --check` on the fixture tree; LSP unit tests `include_str!` the `docs_and_control` fixture to assert the handler matches `format_program`.
 - **Corelib (optional)**: `BESKID_FORMAT_CORPUS=1` with `nox -s format_corpus_corelib` runs `scripts/format_corpus_check.py`.

@@ -1,0 +1,42 @@
+---
+title: Examples
+description: Concrete examples for `Build, analyze, and run contract` decisions and usage patterns.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: CLI
+    href: /platform-spec/tooling/cli/
+    relation: Parent area
+  - type: Feature
+    title: Build, analyze, and run contract
+    href: /platform-spec/tooling/cli/build-analyze-run-contract/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+## What this article covers
+This article explains the `examples` view for `Build, analyze, and run contract` in concrete, onboarding-first language.
+
+## Newcomer walk-through
+Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+
+## Code anchors
+- CLI command implementations in `compiler/crates/beskid_cli/src/commands/`
+- Analysis pipeline in `compiler/crates/beskid_analysis/src/services.rs`
+- Runtime launch via engine in `compiler/crates/beskid_engine/src/jit_module.rs`
+
+## Practical guidance
+When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

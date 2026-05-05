@@ -1,0 +1,95 @@
+{
+  "title": "Execution Architecture Overview",
+  "description": "Technical runtime topology for compiler output, runtime services, and host interfaces.",
+  "groups": [
+    { "id": "frontend", "label": "Frontend", "color": "#60a5fa" },
+    { "id": "compiler", "label": "Compiler Core", "color": "#a78bfa" },
+    { "id": "runtime", "label": "Runtime", "color": "#4ade80" },
+    { "id": "tooling", "label": "Tooling", "color": "#f59e0b" }
+  ],
+  "nodes": [
+    {
+      "id": "src",
+      "label": "Beskid Source",
+      "group": "frontend",
+      "description": "Project source files and manifests.",
+      "href": "/book/02-projects-and-targets/",
+      "tags": ["source", "project"],
+      "meta": { "Layer": "Input", "Owner": "Language users" }
+    },
+    {
+      "id": "analysis",
+      "label": "Semantic Analysis",
+      "group": "compiler",
+      "description": "Type checking and symbol resolution.",
+      "href": "/guides/analysis/semantic-analysis/",
+      "tags": ["analysis", "types"],
+      "meta": { "Layer": "Compiler", "Stability": "Implemented" }
+    },
+    {
+      "id": "lowering",
+      "label": "HIR/CLIF Lowering",
+      "group": "compiler",
+      "description": "Lowering from language semantics to backend IR.",
+      "href": "/execution/ir-and-lowering/",
+      "tags": ["hir", "clif"],
+      "meta": { "Layer": "Compiler", "Output": "Backend IR" }
+    },
+    {
+      "id": "platform-interop",
+      "label": "Language interop",
+      "group": "compiler",
+      "description": "Interop.Contracts, C and Rust ABI profiles, and Extern syntax under platform-spec.",
+      "href": "/platform-spec/language-meta/interop/",
+      "tags": ["interop", "abi", "extern"],
+      "meta": { "Layer": "Language spec", "Owner": "Platform spec" }
+    },
+    {
+      "id": "jit",
+      "label": "JIT Backend",
+      "group": "runtime",
+      "description": "Execution backend for local fast runs.",
+      "href": "/execution/backends/jit/",
+      "tags": ["backend", "jit"],
+      "meta": { "Layer": "Runtime", "Mode": "Dynamic" }
+    },
+    {
+      "id": "aot",
+      "label": "AOT Backend",
+      "group": "runtime",
+      "description": "Ahead-of-time code generation flow.",
+      "href": "/execution/backends/aot/",
+      "tags": ["backend", "aot"],
+      "meta": { "Layer": "Runtime", "Mode": "Static" }
+    },
+    {
+      "id": "runtime-api",
+      "label": "Runtime ABI",
+      "group": "runtime",
+      "description": "Shared ABI contracts and runtime services.",
+      "href": "/execution/runtime/runtime-abi-v0-1/",
+      "tags": ["abi", "runtime"],
+      "meta": { "Layer": "Boundary", "Contract": "runtime-abi-v0-1" }
+    },
+    {
+      "id": "lsp",
+      "label": "LSP Services",
+      "group": "tooling",
+      "description": "Language server features using analysis graph.",
+      "href": "/guides/lsp/",
+      "tags": ["editor", "lsp"],
+      "meta": { "Layer": "Tooling", "Consumer": "IDE" }
+    }
+  ],
+  "edges": [
+    { "from": "src", "to": "analysis", "label": "parse + resolve", "description": "Source drives analysis pipeline." },
+    { "from": "analysis", "to": "lowering", "label": "typed IR", "description": "Typed model feeds lowering." },
+    { "from": "analysis", "to": "platform-interop", "label": "Extern rules", "description": "Interop and Extern diagnostics attach to semantic analysis." },
+    { "from": "lowering", "to": "platform-interop", "label": "extern imports", "description": "Extern imports are extracted during lowering to Cranelift." },
+    { "from": "lowering", "to": "jit", "label": "exec plan", "description": "JIT consumes lowered representation." },
+    { "from": "lowering", "to": "aot", "label": "artifact plan", "description": "AOT consumes lowered representation." },
+    { "from": "jit", "to": "runtime-api", "label": "calls", "description": "JIT paths call runtime services." },
+    { "from": "aot", "to": "runtime-api", "label": "links", "description": "AOT artifacts link runtime ABI." },
+    { "from": "analysis", "to": "lsp", "label": "symbols + diagnostics", "description": "LSP reuses semantic pipeline." }
+  ]
+}

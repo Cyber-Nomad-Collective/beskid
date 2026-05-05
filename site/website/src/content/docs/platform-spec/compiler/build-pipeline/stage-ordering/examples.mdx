@@ -1,0 +1,33 @@
+---
+title: Stage ordering and lowering - Examples
+description: Newcomer-oriented examples of pipeline execution order and failure points.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Stage ordering and lowering
+    href: /platform-spec/compiler/build-pipeline/stage-ordering/
+    relation: Parent feature hub
+  - type: Feature
+    title: Backends (JIT and AOT)
+    href: /platform-spec/compiler/build-pipeline/backends-jit-aot/
+    relation: Next stage
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+- **Successful run:** parse + rules + typing succeed; artifact is sent to JIT and executed.
+- **Build with semantic error:** rules emit an error; lowering exits before object emission.
+- **Parse failure:** parse stage emits diagnostics and no HIR or backend stages run.

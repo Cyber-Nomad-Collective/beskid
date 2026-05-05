@@ -1,0 +1,47 @@
+---
+title: Rules and diagnostics catalog
+description: Semantic rule execution model and diagnostic-kind catalog contract for compiler analysis.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Semantic pipeline
+    href: /platform-spec/compiler/semantic-pipeline/
+    relation: Parent area
+  - type: Feature
+    title: Parser and AST contracts
+    href: /platform-spec/compiler/front-end/parser-and-ast-contracts/
+    relation: Semantic checks consume parsed syntax structures
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+## What this feature governs
+
+This feature defines how semantic rules are scheduled and how their findings map to stable diagnostic kinds. The primary implementation roots are `beskid_analysis/src/analysis`, staged rule modules under `analysis/rules/staged`, and services that expose diagnostics to CLI/LSP consumers.
+
+## Core guarantees
+
+1. Semantic checks run on resolved project state and must produce deterministic diagnostic ordering.
+2. Diagnostic kind identity is anchored in `analysis/diagnostic_kinds.rs`.
+3. Error-severity diagnostics are compilation blockers in diagnostics-enabled paths.
+4. CLI and LSP surfaces may differ in rendering but must preserve diagnostic kind and source span identity.
+
+## Implementation anchors
+
+- `compiler/crates/beskid_analysis/src/analysis`
+- `compiler/crates/beskid_analysis/src/analysis/rules/staged`
+- `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`
+- `compiler/crates/beskid_analysis/src/services.rs`
+- `compiler/crates/beskid_lsp/src/diagnostics.rs`

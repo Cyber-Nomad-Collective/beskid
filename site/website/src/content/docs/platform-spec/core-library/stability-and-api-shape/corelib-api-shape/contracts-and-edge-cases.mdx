@@ -1,0 +1,53 @@
+---
+title: Contracts and edge cases
+description: Normative guarantees and known edge cases for `Corelib API shape`.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Proposed
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Stability and API shape
+    href: /platform-spec/core-library/stability-and-api-shape/
+    relation: Parent area
+  - type: Area
+    title: Compiler integration
+    href: /platform-spec/core-library/compiler-integration/
+    relation: Discovery and packaging guarantee the API shape being consumed
+  - type: Feature
+    title: Types
+    href: /platform-spec/language-meta/type-system/types/
+    relation: Corelib signatures rely on language type contracts
+  - type: Feature
+    title: Corelib API shape
+    href: /platform-spec/core-library/stability-and-api-shape/corelib-api-shape/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## Normative contracts
+
+- Producer crates must emit data in a shape accepted by downstream consumers.
+- Consumer crates must not silently reinterpret the contract surface.
+- Contract regressions must be captured as compile-time or test-time failures, not hidden runtime drift.
+
+## Edge cases to monitor
+
+- Partial refactors that update only one side of a crate boundary.
+- Symbol/name changes that compile locally but break cross-crate integration.
+- Fixtures that pass in isolation but fail in end-to-end harnesses.
+
+## Failure handling expectations
+
+When contract checks fail, diagnostics should point contributors to the responsible boundary crate and to the corresponding conformance fixture.

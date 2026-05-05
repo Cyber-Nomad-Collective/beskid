@@ -1,0 +1,35 @@
+---
+title: Design model
+description: Mental model for how the front-end parser and syntax model are organized.
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Parser and AST contracts
+    href: /platform-spec/compiler/front-end/parser-and-ast-contracts/
+    relation: Parent feature
+  - type: Feature
+    title: Rules and diagnostics catalog
+    href: /platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/
+    relation: Semantic rules consume parser outputs
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+The front-end is split into three layers:
+
+1. **Grammar layer** (`beskid.pest`): token and production definitions.
+2. **Parsing layer** (`src/parsing`): traversal helpers that map parse trees into typed syntax nodes.
+3. **Syntax layer** (`src/syntax/items`, `src/syntax/types`): stable Rust structs/enums consumed by resolver, analysis, docs, and formatter paths.
+
+For newcomers, the practical rule is simple: if a language construct changes, update grammar and syntax together, then confirm semantic passes still read the resulting nodes as expected.

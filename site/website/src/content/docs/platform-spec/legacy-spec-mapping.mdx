@@ -1,0 +1,125 @@
+---
+title: Language Spec and compiler bridge
+description: How normative spec chapters and compiler work map onto the platform-spec tree (domain, area, feature), where functional components fit, and how relations sit beside the hierarchy.
+template: splash
+tableOfContents: false
+specLevel: domain
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="What this page is for" id="purpose">
+This document is **non-normative**. It is a **bridge**: it explains how the former flat `/spec/` chapter layout and large parts of the **`compiler/`** tree line up with the canonical **[platform specification](/platform-spec/)**—especially **[language-meta](/platform-spec/language-meta/)**.
+
+**Normative prose** now lives in platform-spec feature pages (including [Dependency injection](/platform-spec/language-meta/composition/dependency-injection/)). **Bridge pages** describe mapping and migration context: ownership, **status** on [feature](/platform-spec/language-meta/type-system/types/) leaves (how implementation lines up with the standard—not a task list), `relatedTopics`, and navigation.
+
+**Versioning** is **Git**: each merge to `main` advances the language and docs together (rolling release). There is **no** URL segment for a release line under language-meta—only **domain → area → feature** paths.
+</SpecSection>
+
+<SpecSection title="Hierarchy vs components vs relations" id="model">
+The **navigation tree** (sidebar and graph) is intentionally shallow and predictable:
+
+**Domain → area → feature**
+
+- **Domain** — Top slice of the platform ([language-meta](/platform-spec/language-meta/), [compiler](/platform-spec/compiler/), [tooling](/platform-spec/tooling/), …).
+- **Area** — A theme inside the domain ([Type system](/platform-spec/language-meta/type-system/), [Composition](/platform-spec/language-meta/composition/), …).
+- **Feature** — A **leaf** tied to a normative chapter (or a narrow slice). Carries **status**, owners, and a link to the canonical spec chapter.
+
+**Component** (in the architecture sense) means a **functional grouping of features**—several features that together serve one capability (e.g. “type shape & algebra”, “inference & dispatch”). Optional **`specLevel: component`** hub pages can appear later; until then, use prose, tables like the one below, or `relatedTopics`.
+
+| Illustrative component (Type system area) | Role | Example features |
+| --- | --- | --- |
+| Type shape & algebra | Definitions and data shapes users write | [types](/platform-spec/language-meta/type-system/types/), [enums-and-match](/platform-spec/language-meta/type-system/enums-and-match/) |
+| Inference & dispatch | How types are inferred and how calls resolve | [type-inference](/platform-spec/language-meta/type-system/type-inference/), [method-dispatch](/platform-spec/language-meta/type-system/method-dispatch/) |
+
+**Relations** (graph edges, `relatedTopics`, links to [Execution](/execution/)) sit **beside** the tree: use them for “see also / depends on / implemented by”, not as a second parent hierarchy.
+</SpecSection>
+
+<SpecSection title="Concrete paths: language-meta" id="language-meta-shape">
+| Layer | Example | What lives there |
+| --- | --- | --- |
+| Domain | [`/platform-spec/language-meta/`](/platform-spec/language-meta/) | Hub, rationale, links to areas |
+| Area | [`…/type-system/`](/platform-spec/language-meta/type-system/) | Area hub; lists **features** (chapter-facing leaves) |
+| Feature | [`…/type-system/types/`](/platform-spec/language-meta/type-system/types/) | One chapter-facing leaf + platform metadata |
+
+Other domains may grow the same depth over time; their hubs remain authoritative until then.
+</SpecSection>
+
+<SpecSection title="Language Spec chapters → language-meta features" id="spec-map">
+The table lists chapters that already have a **feature** page under the corresponding **area**.
+
+| Domain | Area | Language Spec source | Feature (platform) | Notes |
+| --- | --- | --- | --- | --- |
+| language-meta | conformance | `glossary-and-conformance.md` | [glossary-and-conformance](/platform-spec/language-meta/conformance/glossary-and-conformance/) | Conformance vocabulary |
+| language-meta | surface-syntax | `lexical-and-syntax.md` | [lexical-and-syntax](/platform-spec/language-meta/surface-syntax/lexical-and-syntax/) | |
+| language-meta | surface-syntax | `documentation-comments.md` | [documentation-comments](/platform-spec/language-meta/surface-syntax/documentation-comments/) | |
+| language-meta | type-system | `types.md` | [types](/platform-spec/language-meta/type-system/types/) | |
+| language-meta | type-system | `enums-and-match.md` | [enums-and-match](/platform-spec/language-meta/type-system/enums-and-match/) | |
+| language-meta | type-system | `type-inference.md` | [type-inference](/platform-spec/language-meta/type-system/type-inference/) | |
+| language-meta | type-system | `method-dispatch.md` | [method-dispatch](/platform-spec/language-meta/type-system/method-dispatch/) | |
+| language-meta | memory-model | `memory-and-references.md` | [memory-and-references](/platform-spec/language-meta/memory-model/memory-and-references/) | |
+| language-meta | program-structure | `modules-and-visibility.md` | [modules-and-visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/) | |
+| language-meta | program-structure | `name-resolution.md` | [name-resolution](/platform-spec/language-meta/program-structure/name-resolution/) | |
+| language-meta | contracts-and-effects | `error-handling.md` | [error-handling](/platform-spec/language-meta/contracts-and-effects/error-handling/) | |
+| language-meta | contracts-and-effects | `contracts.md` | [contracts](/platform-spec/language-meta/contracts-and-effects/contracts/) | |
+| language-meta | contracts-and-effects | `testing.md` | [testing](/platform-spec/language-meta/contracts-and-effects/testing/) | |
+| language-meta | evaluation | `control-flow.md` | [control-flow](/platform-spec/language-meta/evaluation/control-flow/) | |
+| language-meta | evaluation | `lambdas-and-closures.md` | [lambdas-and-closures](/platform-spec/language-meta/evaluation/lambdas-and-closures/) | |
+| language-meta | evaluation | `events.md` | [events](/platform-spec/language-meta/evaluation/events/) | |
+| language-meta | metaprogramming | `metaprogramming.md` | [metaprogramming overview](/platform-spec/language-meta/metaprogramming/metaprogramming/) | Hybrid split: compiler Mod SDK lives under `/platform-spec/compiler/metaprogramming-mod-sdk/` |
+| language-meta | metaprogramming | `meta` block (new) | [meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/) | Canonical grammar/scope/determinism for `meta` |
+| compiler | metaprogramming-mod-sdk | (new) | [Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/) | `Beskid.Compiler.*`, host bridge, incremental contracts |
+| tooling | manifests-and-lockfiles | `Project.type Meta` | [project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/) | Meta project wiring into compiler meta host |
+| language-meta | interop | `ffi-and-extern.md` | [ffi-and-extern](/platform-spec/language-meta/interop/ffi-and-extern/) | Language chapter; see also [Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/), [C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/), [Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/) |
+| language-meta | composition | `dependency-injection/*` | [dependency-injection](/platform-spec/language-meta/composition/dependency-injection/) | Canonical DI specification now lives on this feature page |
+
+**Chapters that required new placement during cutover** (now mapped under platform-spec):
+
+- `code-style-and-naming.md` → [code-style-and-naming](/platform-spec/language-meta/program-structure/code-style-and-naming/) under language-meta/program-structure.
+- `corelib-api-shape.md` → [corelib-api-shape](/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/) under core-library/stability-and-api-shape.
+- `project-lock-v1.md`, `workspace-proj-v1.md` → [workspace-and-lock-contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/) under tooling/manifests-and-lockfiles.
+- `package-json-v1.md` → [project-manifest-contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/) under tooling/manifests-and-lockfiles.
+
+Prefer **one feature per normative chapter** (or per clearly scoped subfolder, as with DI), then use **relations** for cross-cutting ties instead of duplicating parents.
+</SpecSection>
+
+<SpecSection title="Compiler crates → suggested platform placement" id="compiler-map">
+The same execution story may appear under [Execution](/execution/) and under **compiler** / **tooling** platform domains. The table is a **staging proposal** for `compiler/crates/*`: plausible **domain / area / feature** names once those pages exist.
+
+| Crate (group) | Domain | Area (proposed) | Feature (proposed) | Notes |
+| --- | --- | --- | --- | --- |
+| `beskid_analysis` | compiler | semantic-analysis | analysis | |
+| `beskid_codegen`, `beskid_aot` | compiler | codegen | codegen-aot | |
+| `beskid_engine`, `beskid_runtime` | compiler | execution-host | engine-runtime | Align with [Execution](/execution/) where useful |
+| `beskid_abi` | compiler | abi | abi-surface | |
+| `beskid_lsp` | tooling | language-server | lsp | |
+| `beskid_cli` | tooling | cli | cli-driver | |
+| `beskid_pckg` | tooling | packaging | pckg | |
+| `beskid_tests`, `beskid_e2e_tests` | compiler | quality | tests | |
+| `gc-arena` | compiler | runtime-support | gc-arena | |
+| `beskid_ast_derive` | compiler | parsing | ast-derive | |
+
+Reserve **`specLevel: component`** for **named functional hubs** once you introduce them.
+</SpecSection>
+
+<SpecSection title="How to use this bridge" id="how-to-use">
+- **Readers** — Open **feature** pages for status and owners, then the linked **Language Spec** chapter for rules.
+- **Authors** — Add or adjust **feature** leaves under the right **area**; use **`relatedTopics`** and the graph for cross-domain ties. When you introduce **component** hubs, name them by **function**.
+- **Tooling** — `packages/trudoc/scripts/verify-platform-spec-frontmatter.mjs` lists allowed `specLevel` values and enforces **status** on features.
+
+Older label *“Legacy spec mapping”* referred to a flat path table; this page keeps that inventory with **domain → area → feature** paths and **Git** as the only version line.
+</SpecSection>

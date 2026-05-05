@@ -1,0 +1,37 @@
+---
+title: Flow and algorithm
+description: End-to-end semantic rule flow from resolved items to user-facing diagnostics.
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Rules and diagnostics catalog
+    href: /platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/
+    relation: Parent feature
+  - type: Feature
+    title: Workspace resolution contract
+    href: /platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/
+    relation: Rule execution depends on resolved workspace state
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+High-level semantic algorithm:
+
+1. Collect resolved declarations and references from resolver outputs.
+2. Execute staged semantic rules over definitions, expressions, and contract items.
+3. Normalize findings into issue kinds from `diagnostic_kinds.rs`.
+4. Attach source location and contextual message payloads.
+5. Emit diagnostics through analysis services to CLI/LSP pipelines.
+
+The deterministic contract is important for test stability: the same input project must produce the same set and ordering of semantic diagnostics.

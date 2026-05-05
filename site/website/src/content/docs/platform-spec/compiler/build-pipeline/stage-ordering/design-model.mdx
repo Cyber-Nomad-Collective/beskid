@@ -1,0 +1,35 @@
+---
+title: Stage ordering and lowering - Design model
+description: Pipeline stage model and artifact boundaries for the reference compiler.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Stage ordering and lowering
+    href: /platform-spec/compiler/build-pipeline/stage-ordering/
+    relation: Parent feature hub
+  - type: Area
+    title: Codegen and IR
+    href: /platform-spec/compiler/codegen-and-ir/
+    relation: Lowering internals and IR shape
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+The compile model has a strict handoff chain:
+
+`resolve_input` -> parse -> semantic rules gate -> HIR normalization -> resolution -> typing -> `lower_program` -> `CodegenArtifact`.
+
+Backends (JIT and AOT) consume this artifact and must not reorder semantic phases.

@@ -1,0 +1,38 @@
+---
+title: Resolver contract
+description: Feature hub for the resolver contract in the reference compiler.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Semantic Pipeline
+    href: /platform-spec/compiler/semantic-pipeline/
+    relation: Parent area
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+This feature hub defines the normative contract for **resolver contract** and links newcomer-oriented reference articles.
+
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/resolve/resolver.rs` owns name resolution and scope lookup.
+- `compiler/crates/beskid_analysis/src/resolve/items.rs` resolves item-level references.
+- `compiler/crates/beskid_tests/src/analysis/resolve.rs` exercises resolver behavior in tests.
+
+- [Design model](./design-model/)
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Examples](./examples/)
+- [Verification and traceability](./verification-and-traceability/)
+- [FAQ and troubleshooting](./faq-and-troubleshooting/)

@@ -1,0 +1,37 @@
+---
+title: Code style and naming
+description: Language-level naming and style conventions that affect readability and tooling consistency.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Proposed
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Program structure
+    href: /platform-spec/language-meta/program-structure/
+    relation: Parent area
+  - type: Area
+    title: CLI
+    href: /platform-spec/tooling/cli/
+    relation: Formatter and linting workflows consume style assumptions
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Proposed" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+## Normative specification
+
+This chapter defines naming and style constraints intended to be enforceable by formatter and lint tooling once promoted to Standard (normative) standing.
+
+## Platform view
+
+- Naming conventions shall be stable enough for generated docs and symbols.
+- Formatting conventions shall align with `beskid_analysis` formatter output for code examples.
+- Diagnostic messaging should use canonical term names from this chapter.

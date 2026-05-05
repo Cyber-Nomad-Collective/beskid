@@ -1,0 +1,26 @@
+---
+title: Spec maintenance
+description: Maintenance policy for keeping platform-spec pages synchronized with code and release evolution.
+template: splash
+tableOfContents: true
+specLevel: area
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+## Feature policies
+
+- [Domain, Area and Feature template bundle](/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/) - Mandatory markdown-first structure and section contracts for all levels.
+- [Non-normative bridge docs policy](/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/) - Rules for migration mapping pages and canonical destination linking.
+- [Last reviewed policy](/platform-spec/community/spec-maintenance/last-reviewed-policy/) - Requirements for `lastReviewed` metadata on high-change pages.
+
+<DomainTiles pathPrefix="platform-spec/community/spec-maintenance" heading="Features" />

@@ -1,0 +1,47 @@
+---
+title: Builtins and symbols
+description: ABI builtin function signatures, return kinds, and runtime export symbol compatibility.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: ABI and host boundary
+    href: /platform-spec/execution/abi-and-host/
+    relation: Parent area
+  - type: Area
+    title: Codegen and IR
+    href: /platform-spec/compiler/codegen-and-ir/
+    relation: Lowering and backend emission consume ABI symbol definitions
+  - type: Area
+    title: Runtime
+    href: /platform-spec/execution/runtime/
+    relation: Runtime builtins export and implement the ABI contract
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+This feature explains the stable ABI contract between generated code, runtime exports, and host execution. It is organized into newcomer-friendly articles that move from model, to flow, to contracts, then practical verification and debugging guidance.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- `BuiltinFnSpec` and `BUILTIN_SPECS` in `compiler/crates/beskid_abi/src/builtins.rs`
+- `RUNTIME_EXPORT_SYMBOLS` in `compiler/crates/beskid_abi/src/symbols.rs`
+- Builtin runtime implementations in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
+- Panic and syscall behavior in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/execution/abi-and-host/builtins-and-symbols" heading="Articles" />

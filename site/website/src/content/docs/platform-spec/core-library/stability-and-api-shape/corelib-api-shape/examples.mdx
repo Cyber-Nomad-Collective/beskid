@@ -1,0 +1,52 @@
+---
+title: Examples
+description: Practical examples that demonstrate `Corelib API shape` behavior.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Proposed
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Stability and API shape
+    href: /platform-spec/core-library/stability-and-api-shape/
+    relation: Parent area
+  - type: Area
+    title: Compiler integration
+    href: /platform-spec/core-library/compiler-integration/
+    relation: Discovery and packaging guarantee the API shape being consumed
+  - type: Feature
+    title: Types
+    href: /platform-spec/language-meta/type-system/types/
+    relation: Corelib signatures rely on language type contracts
+  - type: Feature
+    title: Corelib API shape
+    href: /platform-spec/core-library/stability-and-api-shape/corelib-api-shape/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## Example 1: Happy path
+
+A standard project exercises the expected producer -> consumer handoff with no contract violations. Trace this via:
+
+- `Public module and prelude sources under `compiler/corelib/beskid_corelib``
+- `Layout and compatibility checks in `compiler/crates/beskid_tests/src/projects/corelib/layout.rs``
+
+## Example 2: Contract mismatch
+
+Intentionally alter a boundary definition (for example, a symbol or structure shape), then run the related conformance suite. The expected result is a deterministic failure that identifies the mismatched boundary.
+
+## Example 3: Regression-proofing a fix
+
+After applying a fix, add or update a focused fixture in the nearest test crate and rerun wider suites so the behavior remains locked for future refactors.

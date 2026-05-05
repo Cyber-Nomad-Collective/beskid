@@ -1,0 +1,38 @@
+---
+title: Backends (JIT and AOT) - FAQ and troubleshooting
+description: Troubleshooting for backend-specific build or run failures.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Backends (JIT and AOT)
+    href: /platform-spec/compiler/build-pipeline/backends-jit-aot/
+    relation: Parent feature hub
+  - type: Feature
+    title: Stage ordering and lowering
+    href: /platform-spec/compiler/build-pipeline/stage-ordering/
+    relation: Shared preconditions
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## Why does `run` pass but `build --kind exe` fail?
+Linking and runtime packaging are AOT-only steps; inspect linker/runtime preparation diagnostics.
+
+## Why does object-only build skip runtime files?
+`ObjectOnly` intentionally omits runtime preparation and native linking.
+
+## Can JIT use a different lowering path?
+Not in the current contract; both backends share the same lowering entrypoint.

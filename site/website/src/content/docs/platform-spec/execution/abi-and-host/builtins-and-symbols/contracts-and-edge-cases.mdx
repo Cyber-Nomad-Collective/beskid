@@ -1,0 +1,53 @@
+---
+title: Contracts and edge cases
+description: Normative guarantees and known edge cases for `Builtins and symbols`.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: ABI and host boundary
+    href: /platform-spec/execution/abi-and-host/
+    relation: Parent area
+  - type: Area
+    title: Codegen and IR
+    href: /platform-spec/compiler/codegen-and-ir/
+    relation: Lowering and backend emission consume ABI symbol definitions
+  - type: Area
+    title: Runtime
+    href: /platform-spec/execution/runtime/
+    relation: Runtime builtins export and implement the ABI contract
+  - type: Feature
+    title: Builtins and symbols
+    href: /platform-spec/execution/abi-and-host/builtins-and-symbols/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## Normative contracts
+
+- Producer crates must emit data in a shape accepted by downstream consumers.
+- Consumer crates must not silently reinterpret the contract surface.
+- Contract regressions must be captured as compile-time or test-time failures, not hidden runtime drift.
+
+## Edge cases to monitor
+
+- Partial refactors that update only one side of a crate boundary.
+- Symbol/name changes that compile locally but break cross-crate integration.
+- Fixtures that pass in isolation but fail in end-to-end harnesses.
+
+## Failure handling expectations
+
+When contract checks fail, diagnostics should point contributors to the responsible boundary crate and to the corresponding conformance fixture.

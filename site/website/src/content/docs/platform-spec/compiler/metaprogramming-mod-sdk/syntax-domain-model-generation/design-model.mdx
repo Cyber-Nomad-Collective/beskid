@@ -1,0 +1,45 @@
+---
+title: Syntax domain model generation - Design model
+description: Contract for generating the immutable Beskid syntax domain model consumed by Mod SDK facades and meta discovery.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Syntax domain model generation
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article documents the **design model** for **Syntax domain model generation**.
+
+## Language alignment
+**Capture** predicates in `meta` compile to keys over syntax identities from this model. The host must regenerate or diff snapshots so **process**/**emit** never observe torn trees.
+
+## Persistent entities
+- **Compilation instance** — implicit handle to the compilation under construction (see language-meta meta block scope).
+- **Syntax snapshot** — immutable tree with stable node identities suitable for incremental keys.
+- **Capability tokens** — host-granted permissions for I/O, diagnostics, and emit operations inside meta.
+
+## Boundaries
+- Mod SDK facades never bypass the host bridge for effects.
+- Generation logic in the reference compiler remains Rust-internal; Beskid sees only the generated `Beskid.Compiler.*` projection.
+
+## Anchored code paths
+- `compiler/crates/beskid_analysis/src/syntax/` — syntax item builders and node shapes.
+- `compiler/crates/beskid_analysis/src/beskid.pest` — grammar surface feeding parse output.
+- `compiler/crates/beskid_analysis/src/syntax/items/` — item-level parsers and metadata.

@@ -31,11 +31,11 @@ It focuses on architecture boundaries, not toolchain automation policy.
 - Entrypoint requirements are backend policy and must align with architecture boundary docs.
 
 ## Non-goals
-- Defining language-level semantics (owned by `docs/spec`).
+- Defining language-level semantics (owned by **`/platform-spec/language-meta/`**).
 - Defining platform syscall policy (owned by runtime boundary docs).
-- Defining memory model internals (owned by `docs/execution/memory`).
+- Defining memory model internals (owned by **`/execution/memory/`**).
 
 ## See also
-- `docs/execution/architecture/jit-aot-boundary.md`
-- `docs/execution/runtime/syscalls-and-abi-boundary.md`
-- `docs/execution/ir-and-lowering/clif-lowering.md`
+- [/execution/architecture/jit-aot-boundary/](/execution/architecture/jit-aot-boundary/)
+- [/execution/runtime/syscalls-and-abi-boundary/](/execution/runtime/syscalls-and-abi-boundary/)
+- [/execution/ir-and-lowering/clif-lowering/](/execution/ir-and-lowering/clif-lowering/)

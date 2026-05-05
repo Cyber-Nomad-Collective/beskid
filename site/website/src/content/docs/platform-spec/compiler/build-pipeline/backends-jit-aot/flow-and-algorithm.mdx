@@ -1,0 +1,41 @@
+---
+title: Backends (JIT and AOT) - Flow and algorithm
+description: Ordered backend execution for run and build after lowering completes.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Backends (JIT and AOT)
+    href: /platform-spec/compiler/build-pipeline/backends-jit-aot/
+    relation: Parent feature hub
+  - type: Feature
+    title: Stage ordering and lowering
+    href: /platform-spec/compiler/build-pipeline/stage-ordering/
+    relation: Upstream artifact creation
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+JIT flow:
+1. Lower source with diagnostics.
+2. Compile artifact in JIT module.
+3. Resolve and validate entrypoint.
+4. Execute and return formatted result.
+
+AOT flow:
+1. Lower source with diagnostics.
+2. Build request from CLI flags.
+3. Emit object module.
+4. Prepare runtime and link when output kind requires it.

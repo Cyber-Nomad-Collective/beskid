@@ -1,0 +1,37 @@
+---
+title: Dependency workspace and lockfile - Flow and algorithm
+description: Workflow from compile-plan construction to workspace materialization and lockfile synchronization.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Dependency workspace and lockfile
+    href: /platform-spec/compiler/build-pipeline/dependency-workspace/
+    relation: Parent feature hub
+  - type: Feature
+    title: Stage ordering and lowering
+    href: /platform-spec/compiler/build-pipeline/stage-ordering/
+    relation: Uses prepared source roots
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+1. Build compile plan from manifest graph.
+2. Materialize dependency sources into workspace object directory.
+3. Read and reconcile `Project.lock` against resolved dependencies.
+4. Enforce `locked`/`frozen` policy.
+5. Expose final materialized source root to compile commands.
+
+This flow is implemented in project workflow services and reused by fetch/lock/tree command surfaces.

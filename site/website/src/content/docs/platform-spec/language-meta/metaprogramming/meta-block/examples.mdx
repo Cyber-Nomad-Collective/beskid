@@ -1,0 +1,72 @@
+---
+title: meta compilation block - Examples
+description: Informative sketches for Meta projects and capture, process, emit pipelines.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+This article provides **informative examples** (not normative syntax) for **`Meta` projects** and declarative **`meta`** pipelines.
+
+## Meta project manifest (illustrative)
+
+Illustrative `Project.proj` fragment:
+
+```text
+project:
+  type: Meta
+  # Host-defined: which compilation(s) this meta package attaches to
+  meta:
+    attachTo: [ "default" ]
+```
+
+Exact keys are defined under **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)**.
+
+## Declarative capture → process → emit
+
+Illustrative shape (keywords and braces may differ once grammar is frozen):
+
+```beskid
+meta MyProcess {
+  capture {
+    // Bind targets: e.g. all types implementing IFoo in current compilation
+  }
+  process {
+    // Fluent Beskid.Compiler.Query pipeline; diagnostics here
+  }
+  emit {
+    // Typed contributions only; host validates merge
+  }
+}
+```
+
+## Generator-style contributor
+
+Capture binds interface declarations; process builds adapter bodies; emit adds methods to partial types allowed by the language.
+
+## Analyzer-style inspector
+
+Capture binds named patterns; process runs naming checks; emit is empty except for **diagnostics** on the compiler channel.
+
+## Compilation inspection
+
+Capture binds package references; process records structured facts via compiler APIs; no emit.
+
+> Final syntax must match `beskid.pest` and item parsers when implemented; keep examples aligned with the normative phases in [design model](./design-model/) and [flow and algorithm](./flow-and-algorithm/).

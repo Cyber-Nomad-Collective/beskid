@@ -1,0 +1,61 @@
+---
+title: Rust ABI profile
+description: Rust-hosted runtime surface—exported symbols, unwind at the boundary, and stability rules distinct from user C extern libraries.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Interop
+    href: /platform-spec/language-meta/interop/
+    relation: Parent area
+  - type: Feature
+    title: Interop.Contracts
+    href: /platform-spec/language-meta/interop/interop-contracts/
+    relation: Abstract primitives this profile instantiates
+  - type: Feature
+    title: C ABI profile
+    href: /platform-spec/language-meta/interop/c-abi-profile/
+    relation: User libraries; distinct from Rust runtime exports
+  - type: Feature
+    title: Extern dispatch and policy
+    href: /platform-spec/execution/abi-and-host/extern-dispatch-and-policy/
+    relation: Dispatch tables and internal interop helpers
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	status="Standard"
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+The **Rust ABI profile** describes how the **Beskid runtime** (implemented in Rust) exposes **stable C-compatible entrypoints** to JIT and AOT loaders while allowing **Rust-specific** implementation choices **inside** the runtime crate boundary.
+
+This profile is **not** a promise that arbitrary Rust crates can be linked as user `Extern` targets without shims. User-authored foreign code on the supported path remains the **[C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/)** until a future specification promotes additional Rust-native interop.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- Exported symbol names: `compiler/crates/beskid_abi/src/symbols.rs`
+- Builtin ABI shapes for lowering: `compiler/crates/beskid_abi/src/builtins.rs`
+- Runtime exports and modules: `compiler/crates/beskid_runtime/src/lib.rs`, `compiler/crates/beskid_runtime/src/builtins/mod.rs`
+- Syscall and panic bridges (example of `extern "C-unwind"` usage): `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
+- JIT registration of runtime symbols: `compiler/crates/beskid_engine/src/jit_module.rs`
+- Symbol inventory documentation: `/execution/runtime/runtime-abi-v0-1/`
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/language-meta/interop/rust-abi-profile" heading="Articles" />

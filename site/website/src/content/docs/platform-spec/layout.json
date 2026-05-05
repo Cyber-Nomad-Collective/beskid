@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "level": "root",
+  "extends": "root-default",
+  "pathPrefix": "platform-spec",
+  "minSpecSections": 0,
+  "minMarkdownHeadings": 0
+}

@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "level": "area",
+  "extends": "area-sparse",
+  "pathPrefix": "platform-spec/tooling/registry-client",
+  "minSpecSections": 0,
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/tooling/registry-client",
+        "heading": "Features"
+      }
+    }
+  ]
+}

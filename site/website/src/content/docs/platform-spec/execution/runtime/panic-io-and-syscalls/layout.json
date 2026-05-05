@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "level": "feature",
+  "extends": "feature-contract-default",
+  "pathPrefix": "platform-spec/execution/runtime/panic-io-and-syscalls",
+  "minSpecSections": 2,
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/execution/runtime/panic-io-and-syscalls",
+        "heading": "Articles"
+      }
+    }
+  ],
+  "articleDefaults": {
+    "extends": "article-default"
+  }
+}

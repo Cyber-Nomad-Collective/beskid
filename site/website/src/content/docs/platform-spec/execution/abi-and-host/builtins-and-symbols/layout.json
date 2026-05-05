@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "level": "feature",
+  "extends": "feature-contract-default",
+  "pathPrefix": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+  "minSpecSections": 2,
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+        "heading": "Articles"
+      }
+    }
+  ],
+  "articleDefaults": {
+    "extends": "article-default"
+  }
+}

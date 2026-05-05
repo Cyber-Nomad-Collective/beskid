@@ -5,7 +5,7 @@ description: "How to author, tag, skip, filter, and run Beskid tests."
 
 This guide describes the practical workflow for Beskid test harness usage.
 
-Language-level syntax is normative in `docs/spec/testing.md`.
+Language-level syntax is normative in `/platform-spec/language-meta/contracts-and-effects/testing/`.
 
 ## Authoring tests
 

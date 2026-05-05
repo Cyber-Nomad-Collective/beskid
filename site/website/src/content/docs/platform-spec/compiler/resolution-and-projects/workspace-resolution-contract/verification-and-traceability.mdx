@@ -1,0 +1,38 @@
+---
+title: Workspace resolution contract - Verification and traceability
+description: Tests and source anchors used to validate project graph and workspace resolution behavior.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Workspace resolution contract
+    href: /platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/
+    relation: Parent feature hub
+  - type: Feature
+    title: Test harnesses and fixtures
+    href: /platform-spec/compiler/conformance/test-harnesses-and-fixtures/
+    relation: Validation strategy
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+Primary implementation anchors:
+
+- `compiler/crates/beskid_analysis/src/projects/compile_plan.rs`
+- `compiler/crates/beskid_analysis/src/projects/workflow.rs`
+- `compiler/crates/beskid_analysis/src/services.rs` (`resolve_input`)
+- `compiler/crates/beskid_cli/src/commands/fetch.rs`, `lock.rs`, `tree.rs`
+
+Regression coverage should include fixed-fixture project graphs and lockfile policy permutations.

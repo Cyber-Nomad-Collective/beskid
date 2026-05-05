@@ -1,0 +1,32 @@
+---
+title: Core library
+description: Standard library modules, stability tiers, and cross-cutting API contracts.
+template: splash
+tableOfContents: false
+specLevel: domain
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="Rationale" id="rationale">
+The [Corelib](/corelib/) docs remain the day-to-day reference. This domain will align **normative** promises—what
+`corelib` may depend on from the language, syscall boundaries, and versioning—with the same formal headers as
+other platform features.
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/core-library" heading="Areas" />

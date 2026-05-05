@@ -1,0 +1,35 @@
+---
+title: Workspace resolution contract - Design model
+description: Actors, data model, and boundaries for project/workspace discovery in compiler services.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Workspace resolution contract
+    href: /platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/
+    relation: Parent feature hub
+  - type: Area
+    title: Build pipeline
+    href: /platform-spec/compiler/build-pipeline/
+    relation: Resolution outputs feed pipeline stages
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+The resolution model has three core objects: `CompilePlan` (target + dependency plan), `PreparedProjectWorkspace` (materialized source roots and lockfile state), and resolved source input (`source_path`, `source`) used by compile commands.
+
+`beskid_analysis::projects` owns graph building and manifest semantics; CLI commands and LSP integrations consume this model and should not reimplement manifest traversal rules.
+
+**`Meta` projects** appear as ordinary graph nodes with **`type = Meta`** (see **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)**). Resolution must retain enough metadata for the **meta host** to register **event piping** into declared **`meta`** entry modules without conflating `Meta` roots with executable entrypoints unless the workspace explicitly composes them.

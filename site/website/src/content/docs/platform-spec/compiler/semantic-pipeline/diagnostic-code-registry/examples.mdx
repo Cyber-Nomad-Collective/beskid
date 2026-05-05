@@ -1,0 +1,40 @@
+---
+title: Examples
+description: Representative registry update scenarios and expected outcomes.
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Diagnostic code registry
+    href: /platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/
+    relation: Parent feature
+  - type: Feature
+    title: Rules and diagnostics catalog
+    href: /platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/
+    relation: Rule additions usually trigger registry updates
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+Example A: adding a new semantic issue
+
+1. Add a new issue kind and code in `diagnostic_kinds.rs`.
+2. Emit it from the relevant staged rule.
+3. Add/update docs and sync checks.
+4. Verify CLI and LSP both expose the new code.
+
+Example B: deprecating an old code
+
+1. Keep legacy code mapping documented.
+2. Route rule output to a replacement code behind an explicit migration step.
+3. Update troubleshooting notes for users with code-based alerting.

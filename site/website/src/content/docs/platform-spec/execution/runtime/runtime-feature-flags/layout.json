@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "level": "feature",
+  "extends": "feature-contract-default",
+  "pathPrefix": "platform-spec/execution/runtime/runtime-feature-flags",
+  "minSpecSections": 2,
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/execution/runtime/runtime-feature-flags",
+        "heading": "Articles"
+      }
+    }
+  ],
+  "articleDefaults": {
+    "extends": "article-default"
+  }
+}

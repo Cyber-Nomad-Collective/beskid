@@ -1,0 +1,26 @@
+---
+title: Architecture Graphs
+description: Interactive architecture topology graphs for technical implementation views.
+architectureGraph:
+  source: src/data/architecture-graphs/execution-stack.json
+  entryNode: analysis
+  layout: force
+  tags:
+    - architecture
+    - execution
+---
+
+Architecture graphs are technical topology views. They follow the same interaction model as the Platform Spec map, while remaining a separate graph domain.
+
+Use fenced code with language `arch` and Mermaid C4 syntax to render architecture graphs without importing Astro components:
+
+```arch
+C4Container
+System_Boundary(runtime, "Runtime stack") {
+  Container(analysis, "Analyzer", "Rust crate", "Builds AST, symbols and diagnostics")
+  Container(codegen, "Codegen", "Rust crate", "Lowers HIR into backend artifacts")
+  Container(engine, "Execution engine", "Rust crate", "Executes JIT entrypoints and runtime calls")
+}
+Rel(analysis, codegen, "typed IR")
+Rel(codegen, engine, "codegen artifact")
+```

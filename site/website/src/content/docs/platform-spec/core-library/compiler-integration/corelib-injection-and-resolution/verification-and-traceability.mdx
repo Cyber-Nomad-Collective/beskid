@@ -1,0 +1,42 @@
+---
+title: Verification and traceability
+description: How `Corelib injection and resolution` is validated and traced across crates, tests, and docs.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Compiler integration
+    href: /platform-spec/core-library/compiler-integration/
+    relation: Parent area
+  - type: Feature
+    title: Corelib injection and resolution
+    href: /platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+## What this article covers
+This article explains the `verification-and-traceability` view for `Corelib injection and resolution` in concrete, onboarding-first language.
+
+## Newcomer walk-through
+Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+
+## Code anchors
+- Corelib integration tests in `compiler/crates/beskid_tests/src/projects/corelib/compile.rs`
+- Corelib project helpers in `compiler/crates/beskid_tests/src/projects/corelib/mod.rs`
+- Analysis services in `compiler/crates/beskid_analysis/src/services.rs`
+
+## Practical guidance
+When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

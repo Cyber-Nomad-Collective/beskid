@@ -1,0 +1,34 @@
+---
+title: Stage ordering and lowering - Contracts and edge cases
+description: Required ordering guarantees and behavior under parse or semantic failures.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Stage ordering and lowering
+    href: /platform-spec/compiler/build-pipeline/stage-ordering/
+    relation: Parent feature hub
+  - type: Feature
+    title: Backends (JIT and AOT)
+    href: /platform-spec/compiler/build-pipeline/backends-jit-aot/
+    relation: Artifact consumers
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+- Build and run command paths must use the same lowering order for parity.
+- Semantic error diagnostics must stop lowering before backend code generation.
+- Parse diagnostics source naming differences must be documented (`path` vs `"<memory>"`).
+- Entrypoint lookup must use post-resolution typed metadata from the same lowering result.

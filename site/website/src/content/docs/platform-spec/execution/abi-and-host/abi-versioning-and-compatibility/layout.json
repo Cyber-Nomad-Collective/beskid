@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "level": "feature",
+  "extends": "feature-contract-default",
+  "pathPrefix": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility",
+  "minSpecSections": 2,
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility",
+        "heading": "Articles"
+      }
+    }
+  ],
+  "articleDefaults": {
+    "extends": "article-default"
+  }
+}

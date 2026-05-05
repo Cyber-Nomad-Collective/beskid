@@ -1,0 +1,58 @@
+---
+title: Extern dispatch and policy
+description: How extern calls are declared, resolved, and constrained by runtime and host policy.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: ABI and host boundary
+    href: /platform-spec/execution/abi-and-host/
+    relation: Parent area
+  - type: Area
+    title: Interop
+    href: /platform-spec/language-meta/interop/
+    relation: Extern syntax and semantics feed this runtime dispatch contract
+  - type: Feature
+    title: Interop.Contracts
+    href: /platform-spec/language-meta/interop/interop-contracts/
+    relation: Abstract symbol and call-shape vocabulary
+  - type: Feature
+    title: C ABI profile
+    href: /platform-spec/language-meta/interop/c-abi-profile/
+    relation: User extern libraries and linking policy
+  - type: Feature
+    title: FFI and extern
+    href: /platform-spec/language-meta/interop/ffi-and-extern/
+    relation: Language-level Extern placement
+  - type: Area
+    title: Runtime
+    href: /platform-spec/execution/runtime/
+    relation: Runtime builtins execute approved dispatch targets
+---
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+`Extern dispatch and policy` defines one operational contract that a newcomer can follow end-to-end: first the model, then execution flow, then strict guarantees, concrete examples, and verification guidance.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- Extern parsing and diagnostics in `compiler/crates/beskid_analysis/src/beskid.pest` and `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`
+- ABI builtins definitions in `compiler/crates/beskid_abi/src/builtins.rs`
+- Runtime builtin dispatch in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
+- Panic/syscall bridging in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/execution/abi-and-host/extern-dispatch-and-policy" heading="Articles" />

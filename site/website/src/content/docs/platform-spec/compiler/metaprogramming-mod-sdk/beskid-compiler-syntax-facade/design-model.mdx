@@ -1,0 +1,48 @@
+---
+title: Beskid.Compiler.Syntax facade - Design model
+description: Typed, allocation-bounded syntax node API exposed to compile-time Beskid modules.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Beskid.Compiler.Syntax facade
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/
+    relation: Parent feature hub
+  - type: Feature
+    title: Interop.Contracts
+    href: /platform-spec/language-meta/interop/interop-contracts/
+    relation: Formal boundary vocabulary vs capability tokens
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article documents the **design model** for **Beskid.Compiler.Syntax facade**.
+
+## Language alignment
+**`Beskid.Compiler.Query`** consumes **Syntax** nodes as read-only views during the **`process`** phase; **emit** uses the same node factory family for typed contributions.
+
+## Persistent entities
+- **Compilation instance** — implicit handle to the compilation under construction (see language-meta meta block scope).
+- **Syntax snapshot** — immutable tree with stable node identities suitable for incremental keys.
+- **Capability tokens** — host-granted permissions for I/O, diagnostics, and emit operations inside meta.
+
+## Boundaries
+- Mod SDK facades never bypass the host bridge for effects.
+- Generation logic in the reference compiler remains Rust-internal; Beskid sees only the generated `Beskid.Compiler.*` projection.
+
+## Anchored code paths
+- `corelib` package module `Beskid.Compiler.Syntax` (generated + hand-authored surface).
+- `compiler/crates/beskid_analysis/src/syntax/` — authoritative internal model to mirror.

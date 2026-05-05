@@ -1,0 +1,42 @@
+---
+title: Examples
+description: Concrete examples for `Panic, IO, and syscalls` decisions and usage patterns.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Runtime
+    href: /platform-spec/execution/runtime/
+    relation: Parent area
+  - type: Feature
+    title: Panic, IO, and syscalls
+    href: /platform-spec/execution/runtime/panic-io-and-syscalls/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+## What this article covers
+This article explains the `examples` view for `Panic, IO, and syscalls` in concrete, onboarding-first language.
+
+## Newcomer walk-through
+Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+
+## Code anchors
+- Builtin exports in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
+- Panic and syscall implementation in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
+- Runtime symbol registration in `compiler/crates/beskid_runtime/src/lib.rs`
+
+## Practical guidance
+When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

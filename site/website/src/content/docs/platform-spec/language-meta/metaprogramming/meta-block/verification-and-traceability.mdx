@@ -1,0 +1,44 @@
+---
+title: meta compilation block - Verification and traceability
+description: Traceability for Meta projects, meta grammar, capture-process-emit, and compiler anchors.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Parent feature hub
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Meta project schema tests
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+This article documents **verification and traceability** for **`meta`** and **`Meta` projects**.
+
+## Traceability
+
+- **Grammar** — `compiler/crates/beskid_analysis/src/beskid.pest` and `syntax/items/` parsers for `meta` and project manifests.
+- **Resolution** — `compiler/crates/beskid_analysis/src/resolve/` and workspace services for **`Meta`** project discovery.
+- **Host / scheduling** — `compiler/crates/beskid_analysis/src/services.rs` and Mod SDK host features under **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**.
+- **Diagnostics** — `compiler/crates/beskid_lsp/src/diagnostics.rs` and analysis diagnostic kinds for parity with meta-reported issues.
+
+## Checklist
+
+- [ ] `Meta` project type parsed and validated; stable diagnostics on invalid manifests.
+- [ ] `meta` item supports capture/process/emit (or documented lowering) without ambiguity.
+- [ ] Deterministic ordering tests shared with **[incremental scheduling](/platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/)** contract.
+- [ ] Scope rules align with **[name resolution](/platform-spec/language-meta/program-structure/name-resolution/)**.

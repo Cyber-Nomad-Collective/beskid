@@ -1,0 +1,34 @@
+---
+title: Dependency workspace and lockfile - Contracts and edge cases
+description: Normative behavior for lock mismatch, missing registry artifacts, and policy flags.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Dependency workspace and lockfile
+    href: /platform-spec/compiler/build-pipeline/dependency-workspace/
+    relation: Parent feature hub
+  - type: Feature
+    title: Diagnostics parity (CLI and LSP)
+    href: /platform-spec/compiler/build-pipeline/diagnostics-parity/
+    relation: Error reporting across surfaces
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+- `--locked` must reject missing or out-of-date lockfiles.
+- `--frozen` must reject changes that require writing lockfile updates.
+- Registry dependency materialization failures must report stable project errors.
+- Workspace prep must not silently change selected compile target.

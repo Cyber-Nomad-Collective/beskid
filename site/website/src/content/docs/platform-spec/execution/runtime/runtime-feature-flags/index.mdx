@@ -1,0 +1,46 @@
+---
+title: Runtime feature flags
+description: Feature-gate and capability signaling contract between runtime builds and compiler/tooling expectations.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Runtime
+    href: /platform-spec/execution/runtime/
+    relation: Parent area
+  - type: Area
+    title: CLI
+    href: /platform-spec/tooling/cli/
+    relation: CLI/runtime execution modes select runtime capabilities
+  - type: Area
+    title: Conformance
+    href: /platform-spec/compiler/conformance/
+    relation: Conformance suites pin feature-flag dependent behavior
+---
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+`Runtime feature flags` defines one operational contract that a newcomer can follow end-to-end: first the model, then execution flow, then strict guarantees, concrete examples, and verification guidance.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- Runtime compile-time flags and exports in `compiler/crates/beskid_runtime/src/lib.rs`
+- Runtime builtins feature gating in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
+- Execution setup in `compiler/crates/beskid_cli/src/commands/doc.rs`
+- Runtime tests in `compiler/crates/beskid_tests/src/runtime/jit.rs`
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/execution/runtime/runtime-feature-flags" heading="Articles" />

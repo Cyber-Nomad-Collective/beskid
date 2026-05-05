@@ -1,0 +1,42 @@
+---
+title: FAQ and troubleshooting
+description: Common operator and contributor questions about `Workspace and lock contracts`.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Manifests and lockfiles
+    href: /platform-spec/tooling/manifests-and-lockfiles/
+    relation: Parent area
+  - type: Feature
+    title: Workspace and lock contracts
+    href: /platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+## What this article covers
+This article explains the `faq-and-troubleshooting` view for `Workspace and lock contracts` in concrete, onboarding-first language.
+
+## Newcomer walk-through
+Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+
+## Code anchors
+- Lock/update commands in `compiler/crates/beskid_cli/src/commands/`
+- Project and dependency resolution in `compiler/crates/beskid_analysis/src/resolve/mod.rs`
+- Workspace tests in `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs`
+
+## Practical guidance
+When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

@@ -1,0 +1,38 @@
+---
+title: Incremental scheduling and determinism - Flow and algorithm
+description: Cache boundaries, invalidation keys, and replay guarantees for meta outputs and Mod SDK reads.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Incremental scheduling and determinism
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article documents **flow and algorithms** for **Incremental scheduling and determinism**.
+
+## Primary flow
+1. Materialize or refresh the syntax snapshot for the active compilation generation.
+2. Classify meta contributors vs read-only inspectors (language-meta classification carries through here).
+3. Execute host policy checks before surfacing Mod SDK calls.
+4. Commit outputs atomically per scheduling round (see incremental scheduling feature).
+
+## Ordering constraints
+- No meta body runs before a parseable syntax model exists for its lexical scope.
+- Semantic queries that depend on staged rules must declare the minimal snapshot version they require; the host may defer or rerun automatically.

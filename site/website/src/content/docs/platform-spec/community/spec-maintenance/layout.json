@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "level": "area",
+  "extends": "area-sparse",
+  "pathPrefix": "platform-spec/community/spec-maintenance",
+  "minSpecSections": 0,
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/community/spec-maintenance",
+        "heading": "Features"
+      }
+    }
+  ]
+}

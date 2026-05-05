@@ -37,9 +37,9 @@ Consumers import `net.Client`, while internal layout remains free to evolve.
 
 ## Deep dive in spec
 
-- [Modules and Visibility](/spec/modules-and-visibility/)
-- [Code Style and Naming](/spec/code-style-and-naming/)
-- [Name Resolution](/spec/name-resolution/)
+- [Modules and Visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/)
+- [Code Style and Naming](/platform-spec/language-meta/program-structure/code-style-and-naming/)
+- [Name Resolution](/platform-spec/language-meta/program-structure/name-resolution/)
 
 ## Next
 

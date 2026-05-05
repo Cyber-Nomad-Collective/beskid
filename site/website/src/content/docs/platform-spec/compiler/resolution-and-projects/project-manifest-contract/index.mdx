@@ -1,0 +1,38 @@
+---
+title: Project manifest contract
+description: Feature hub for the project manifest contract in the reference compiler.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Resolution and Projects
+    href: /platform-spec/compiler/resolution-and-projects/
+    relation: Parent area
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+This feature hub defines the normative contract for **project manifest contract** and links newcomer-oriented reference articles.
+
+## Implementation anchors
+- `compiler/crates/beskid_cli/src/commands/` reads manifest-driven compile inputs.
+- `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` uses manifest-aware project fixtures.
+- `compiler/crates/beskid_tests/src/projects/corelib/compile.rs` verifies manifest-based compile execution.
+
+- [Design model](./design-model/)
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Examples](./examples/)
+- [Verification and traceability](./verification-and-traceability/)
+- [FAQ and troubleshooting](./faq-and-troubleshooting/)

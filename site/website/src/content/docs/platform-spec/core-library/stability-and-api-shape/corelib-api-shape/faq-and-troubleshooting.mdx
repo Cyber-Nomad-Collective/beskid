@@ -1,0 +1,52 @@
+---
+title: FAQ and troubleshooting
+description: Common questions and debugging guidance for `Corelib API shape`.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Proposed
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Stability and API shape
+    href: /platform-spec/core-library/stability-and-api-shape/
+    relation: Parent area
+  - type: Area
+    title: Compiler integration
+    href: /platform-spec/core-library/compiler-integration/
+    relation: Discovery and packaging guarantee the API shape being consumed
+  - type: Feature
+    title: Types
+    href: /platform-spec/language-meta/type-system/types/
+    relation: Corelib signatures rely on language type contracts
+  - type: Feature
+    title: Corelib API shape
+    href: /platform-spec/core-library/stability-and-api-shape/corelib-api-shape/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## Why did a change pass locally but fail in CI?
+
+Most often, one crate boundary changed but the corresponding fixture or downstream consumer was not updated. Re-run the nearest conformance suite and inspect cross-crate handoff points.
+
+## Where should I start debugging?
+
+1. Confirm the target requirement in this feature hub.
+2. Step through `Public module and prelude sources under `compiler/corelib/beskid_corelib`` and `Shape-sensitive compile tests in `compiler/crates/beskid_tests/src/projects/corelib/compile.rs``.
+3. Validate consumer behavior at `Layout and compatibility checks in `compiler/crates/beskid_tests/src/projects/corelib/layout.rs``.
+4. Reproduce with `Runtime-facing call coverage in `compiler/crates/beskid_tests/src/abi/contracts.rs``.
+
+## How do I add a new rule safely?
+
+Document the new contract in the relevant article, update implementation in the owning crate, and add a fixture proving both happy-path and failure-path behavior.

@@ -1,0 +1,30 @@
+---
+title: Last reviewed policy
+description: Policy for `lastReviewed` metadata and drift detection in high-change feature pages.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+lastReviewed: "2026-04-29"
+relatedTopics:
+  - type: Area
+    title: Spec maintenance
+    href: /platform-spec/community/spec-maintenance/
+    relation: Parent area
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+## Normative platform contract
+
+1. High-churn feature pages should set `lastReviewed` in ISO date format.
+2. If implementation anchors change materially, `lastReviewed` should be updated in the same change set.
+3. Optional verification scripts may warn when pages with implementation anchors omit `lastReviewed`.

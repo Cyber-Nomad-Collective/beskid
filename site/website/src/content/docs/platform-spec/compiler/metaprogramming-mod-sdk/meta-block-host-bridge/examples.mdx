@@ -1,0 +1,36 @@
+---
+title: meta block host bridge - Examples
+description: Reference compiler-owned execution, capability policy, and communication with compile-time Beskid modules.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: meta block host bridge
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article collects **examples** for **meta block host bridge** (informative sketches aligned with contracts).
+
+## Example A — Minimal query
+A compile-time module reads a syntax attribute using the query API, then emits a diagnostic without mutating syntax.
+
+## Example B — Emitter sketch
+A contributor constructs a new method declaration through `Beskid.Compiler.Emit`, attaches trivia, and registers it with the incremental graph.
+
+> Executable snippets will track the reference implementation as `meta` lands in the compiler; until then, treat these as specification fixtures.

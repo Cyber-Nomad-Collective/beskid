@@ -1,0 +1,64 @@
+---
+title: meta compilation block - Design model
+description: Meta projects, declarative capture-process-emit pipeline, current compilation, and contributor vs inspector roles.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Parent feature hub
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Meta project type
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+This article documents the **design model** for the **`meta` compilation block** and its relationship to **`Meta` projects**.
+
+## Meta project type (`Meta`)
+
+A project whose manifest declares **`type` (or equivalent project kind) = `Meta`** exists so the toolchain **loads meta orchestration** for a workspace: compiler events and compilation snapshots are delivered to **`meta` items** in that project according to manifest and host policy. A `Meta` project does not replace ordinary executable/library packages; it **binds** meta pipelines to the **host compilation** (or compilations) defined by the manifest and workspace graph.
+
+Normative manifest fields, validation, and resolution order live in **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** and **[Workspace resolution contract](/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/)**.
+
+## `meta` item as a process declaration
+
+A **`meta` item** is a module-level declaration whose body is **not** an unconstrained imperative script. It is a **declarative specification** of:
+
+1. **Capture** — Which **targets** (syntax spans, declarations, symbols, dependency edges, or other stable handles defined by the platform) participate in this process, and under which **predicates** over the **entire current compilation** (all sources the compilation instance includes, plus declared options).
+2. **Process** — A **pipeline** of **queries** and **typed transformations** expressed with `Beskid.Compiler.*` APIs (see compiler Mod SDK). The pipeline is **dataflow-oriented**: each step consumes immutable snapshots and produces value-equatable intermediate models where required for incrementality.
+3. **Emit** — **Contributions** (new or updated members, syntax insertions) and **diagnostics** are emitted only through **host-mediated** surfaces so the compiler remains the authority on merge validity and diagnostic identity.
+
+Together, capture/process/emit define the **standard meta process** the reference compiler implements; naming `process` (or equivalent) blocks enables **observability** and **separate contexts** (scopes of capture keys, budgets, and trace labels) as specified in the compiler host contract.
+
+## Current compilation
+
+**Current compilation** is the implicit **compilation instance** in scope inside `meta`: roots, dependency closure, analyzer options, and the diagnostics sink. `meta` cannot refer to a different compilation unless the language exposes an explicit API and capability for that.
+
+## Contributor vs inspector
+
+- **Contributor** — May register **emit** operations that change the merged program shape subject to host validation.
+- **Inspector** — May run **process** queries and report **diagnostics**; emit of program shape may be forbidden unless explicitly permitted by declaration or capability.
+
+## Non-goals
+
+- Rust crate layout, incremental graph algorithms, and diagnostic code tables — see **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**.
+- Raw string-based codegen as the normative contract — emit is **typed** syntax construction.
+
+## Relationship to attributes
+
+Attributes attach metadata to declarations and may drive tooling. **`meta`** declares **compiler-orchestrated processes** tied to the **current compilation** and, for `Meta` projects, to **manifest-driven** event piping. They are complementary, not interchangeable.

@@ -1,0 +1,38 @@
+---
+title: Stage ordering and lowering - Verification and traceability
+description: Source and test anchors that verify lowering order and backend artifact handoff.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Stage ordering and lowering
+    href: /platform-spec/compiler/build-pipeline/stage-ordering/
+    relation: Parent feature hub
+  - type: Feature
+    title: Test harnesses and fixtures
+    href: /platform-spec/compiler/conformance/test-harnesses-and-fixtures/
+    relation: Conformance evidence
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+Implementation anchors:
+
+- `compiler/crates/beskid_codegen/src/services.rs`
+- `compiler/crates/beskid_analysis/src/services.rs`
+- `compiler/crates/beskid_cli/src/commands/build.rs`
+- `compiler/crates/beskid_engine/src/services.rs`
+
+Traceability should include tests that assert semantic failures stop before backend stages.

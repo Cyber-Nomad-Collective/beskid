@@ -1,0 +1,64 @@
+---
+title: Project manifest contract
+description: Project manifest schema including Meta project type, resolution inputs, and meta orchestration wiring.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Manifests and lockfiles
+    href: /platform-spec/tooling/manifests-and-lockfiles/
+    relation: Parent area
+  - type: Area
+    title: Resolution and projects
+    href: /platform-spec/compiler/resolution-and-projects/
+    relation: Compiler workspace loading consumes manifest contracts
+  - type: Area
+    title: Registry client
+    href: /platform-spec/tooling/registry-client/
+    relation: Dependency source metadata can route through registry client flows
+  - type: Feature
+    title: Metaprogramming overview
+    href: /platform-spec/language-meta/metaprogramming/metaprogramming/
+    relation: Meta projects and meta blocks (language law)
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Declarative meta orchestration
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Host execution of Meta and meta pipelines
+---
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+`Project manifest contract` defines one operational contract that a newcomer can follow end-to-end: first the model, then execution flow, then strict guarantees, concrete examples, and verification guidance.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- Manifest loading in `compiler/crates/beskid_analysis/src/services.rs`
+- CLI project graph setup in `compiler/crates/beskid_cli/src/commands/`
+- Workspace resolution in `compiler/crates/beskid_analysis/src/resolve/items.rs`
+- Contract tests in `compiler/crates/beskid_tests/src/projects/corelib/mod.rs`
+</SpecSection>
+
+<SpecSection title="Meta project type (`Meta`)" id="meta-project-type">
+A manifest may declare **`type: Meta`** (exact field path and spelling are normative in schema articles below). A **`Meta`** project **does not** replace ordinary executable or library targets; it declares that this project participates in **compile-time meta orchestration**: the toolchain loads it so **`meta`** items can subscribe to **compilation events** and run **capture → process → emit** pipelines against host compilations, per **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)** and **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**.
+
+Schema fields for **which compilations** a `Meta` project attaches to, **entry modules**, and **budget defaults** are specified in the articles under this feature hub (see **contracts** and **examples**).
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract" heading="Articles" />

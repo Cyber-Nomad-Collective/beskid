@@ -1,0 +1,85 @@
+{
+  "title": "Compile-time meta execution flow",
+  "description": "Reference ordering from parsed input through meta discovery, host execution of Beskid.Compiler-backed modules, incremental bookkeeping, and merge back into semantic work.",
+  "groups": [
+    { "id": "parse", "label": "Parse", "color": "#60a5fa" },
+    { "id": "meta", "label": "Meta", "color": "#fbbf24" },
+    { "id": "merge", "label": "Merge", "color": "#34d399" }
+  ],
+  "nodes": [
+    {
+      "id": "source",
+      "label": "Source + compilation instance",
+      "group": "parse",
+      "description": "Implicit current compilation (inputs, options, roots) available to meta scope.",
+      "href": "/platform-spec/language-meta/metaprogramming/meta-block/flow-and-algorithm/",
+      "tags": ["compilation-instance"]
+    },
+    {
+      "id": "parse_validate",
+      "label": "Parse / syntax model",
+      "group": "parse",
+      "description": "Produce syntax items and stable node identities for queries and invalidation keys.",
+      "href": "/platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/",
+      "tags": ["parse"]
+    },
+    {
+      "id": "meta_manifest",
+      "label": "Meta project manifest",
+      "group": "parse",
+      "description": "Project.type Meta from Project.proj; attachment and entry wiring for event piping.",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+      "tags": ["Meta", "manifest"]
+    },
+    {
+      "id": "discover",
+      "label": "Meta discovery",
+      "group": "meta",
+      "description": "Enumerate meta blocks, order deterministically, classify contributors vs inspectors.",
+      "href": "/platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/flow-and-algorithm/",
+      "tags": ["discovery"]
+    },
+    {
+      "id": "execute",
+      "label": "Host execute meta",
+      "group": "meta",
+      "description": "Run compile-time Beskid with injected Mod SDK; collect diagnostics and typed edits.",
+      "href": "/platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/",
+      "tags": ["host"]
+    },
+    {
+      "id": "schedule",
+      "label": "Incremental schedule",
+      "group": "meta",
+      "description": "Update dependency graph; schedule reruns when upstream syntax or options change.",
+      "href": "/platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/",
+      "tags": ["incremental"]
+    },
+    {
+      "id": "apply",
+      "label": "Apply contributions",
+      "group": "merge",
+      "description": "Merge syntax edits, generated members, and diagnostic attachments into the working compilation.",
+      "href": "/platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/",
+      "tags": ["emitter"]
+    },
+    {
+      "id": "semantic",
+      "label": "Semantic + typecheck",
+      "group": "merge",
+      "description": "Resume staged semantic pipeline on merged program shape.",
+      "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/",
+      "tags": ["semantic"]
+    }
+  ],
+  "edges": [
+    { "from": "source", "to": "parse_validate", "label": "feeds", "description": "Compilation instance supplies text, paths, and configuration to the parser front-end." },
+    { "from": "source", "to": "meta_manifest", "label": "classifies", "description": "Workspace resolution surfaces Meta projects for host registration alongside compile roots." },
+    { "from": "parse_validate", "to": "discover", "label": "yields", "description": "Stable syntax tree enables deterministic discovery of meta items." },
+    { "from": "meta_manifest", "to": "discover", "label": "schedules", "description": "Meta manifests determine which meta entrypoints receive compilation events." },
+    { "from": "discover", "to": "execute", "label": "invokes", "description": "Each meta block runs under host policy with explicit capability grants." },
+    { "from": "execute", "to": "schedule", "label": "registers", "description": "Reads/writes are recorded for invalidation and replay guarantees." },
+    { "from": "schedule", "to": "apply", "label": "when clean", "description": "After a quiescent round, contributions merge atomically into the syntax model." },
+    { "from": "apply", "to": "semantic", "label": "continues", "description": "Semantic pipelines operate on the post-meta program view." }
+  ]
+}

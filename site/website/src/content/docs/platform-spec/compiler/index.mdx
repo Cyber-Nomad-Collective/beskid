@@ -1,0 +1,42 @@
+---
+title: Compiler
+description: Compilation pipeline, semantic analysis, IR, and execution backends.
+template: splash
+tableOfContents: false
+specLevel: domain
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="Rationale" id="rationale">
+The compiler domain owns **implementation-facing contracts**: phases that must exist, ordering constraints,
+diagnostic classes, and how source maps tie back to user code. Language *semantics* that users rely on without
+caring about pipeline shape live primarily under [Language meta](/platform-spec/language-meta/).
+</SpecSection>
+
+<SpecSection title="Background" id="background">
+**Build pipeline** — Formal contracts for the reference compiler’s resolution, lowering, lockfile/workspace behaviour, diagnostics surfaces, and JIT versus AOT backends live under **[Build pipeline](/platform-spec/compiler/build-pipeline/)** (area with feature leaves and an architecture graph).
+
+**Execution** — Long-form runtime ABI, IR narrative, and host integration chapters remain under [Execution](/execution/) until mirrored here; the build-pipeline area links to those chapters from backend features where relevant.
+
+**Normative language law** — The [Language meta domain](/platform-spec/language-meta/) is the canonical language specification surface, and the [spec bridge](/platform-spec/legacy-spec-mapping/) explains mapping and ownership; compiler pages do not fork normative prose.
+
+**Metaprogramming Mod SDK** — Compile-time `meta` execution surfaces (`Beskid.Compiler.*`), host bridge policy, typed emitters, and incremental determinism are specified under **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**, linked bidirectionally from [language-meta metaprogramming](/platform-spec/language-meta/metaprogramming/).
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/compiler" heading="Areas" />

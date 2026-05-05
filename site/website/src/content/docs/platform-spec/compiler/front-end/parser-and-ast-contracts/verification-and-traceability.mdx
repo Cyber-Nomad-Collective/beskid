@@ -1,0 +1,39 @@
+---
+title: Verification and traceability
+description: How to verify parser behavior and trace docs back to source.
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Parser and AST contracts
+    href: /platform-spec/compiler/front-end/parser-and-ast-contracts/
+    relation: Parent feature
+  - type: Feature
+    title: Test harnesses and fixtures
+    href: /platform-spec/compiler/conformance/test-harnesses-and-fixtures/
+    relation: Compiler fixtures validate parser and syntax behavior
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+Traceability map for this feature:
+
+- **Grammar source:** `compiler/crates/beskid_analysis/src/beskid.pest`
+- **Syntax node construction:** `compiler/crates/beskid_analysis/src/syntax/items`, `.../src/syntax/types`
+- **Handoff consumers:** `.../src/resolve`, `.../src/analysis`
+
+Recommended verification routine:
+
+1. Run targeted parser and analysis tests after grammar or syntax edits.
+2. Confirm diagnostics include expected code/category and stable source location mapping.
+3. Run formatter checks when AST shape changes affect output ordering or spacing.

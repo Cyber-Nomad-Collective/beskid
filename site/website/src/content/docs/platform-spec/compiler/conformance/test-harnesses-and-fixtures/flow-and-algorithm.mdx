@@ -1,0 +1,57 @@
+---
+title: Flow and algorithm
+description: End-to-end control flow and major algorithmic steps for `Test harnesses and fixtures`.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Conformance
+    href: /platform-spec/compiler/conformance/
+    relation: Parent area
+  - type: Area
+    title: Semantic pipeline
+    href: /platform-spec/compiler/semantic-pipeline/
+    relation: Rule and diagnostics behavior is locked by fixtures
+  - type: Area
+    title: ABI and host boundary
+    href: /platform-spec/execution/abi-and-host/
+    relation: ABI guarantees are validated through regression suites
+  - type: Feature
+    title: Test harnesses and fixtures
+    href: /platform-spec/compiler/conformance/test-harnesses-and-fixtures/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## End-to-end flow
+
+1. Input enters compiler/runtime boundary at a stable entrypoint.
+2. The responsible crate enforces the expected shape and emits stable structures.
+3. Downstream crates consume those structures without redefining semantics.
+4. Conformance tests assert behavior at integration boundaries.
+
+## Algorithm notes for newcomers
+
+- Prefer tracing one fixture end-to-end before reading all modules.
+- Verify where shape conversion happens; avoid assuming all crates mutate data.
+- Keep an eye on handoff points where diagnostics or ABI constraints are locked.
+
+## Where to step through code
+
+- Start with ``compiler/crates/beskid_tests/src/analysis` fixture-driven semantic assertions`.
+- Then inspect ``compiler/crates/beskid_tests/src/runtime` runtime behavior checks`.
+- Follow consumption path at ``compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` source-to-runtime outcomes`.
+- Validate expectations using ``compiler/crates/beskid_tests/src/doc_tests.rs` docs-driven verification`.

@@ -46,8 +46,8 @@ Aliasing (`use a.Parser as AParser;`) gives explicit local names and avoids coll
 
 ## Deep dive in spec
 
-- [Name Resolution](/spec/name-resolution/)
-- [Modules and Visibility](/spec/modules-and-visibility/)
+- [Name Resolution](/platform-spec/language-meta/program-structure/name-resolution/)
+- [Modules and Visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/)
 
 ## Next
 

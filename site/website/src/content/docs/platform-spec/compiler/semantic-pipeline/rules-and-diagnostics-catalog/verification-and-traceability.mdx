@@ -1,0 +1,40 @@
+---
+title: Verification and traceability
+description: How semantic rule behavior is validated and traced to source modules.
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Rules and diagnostics catalog
+    href: /platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/
+    relation: Parent feature
+  - type: Feature
+    title: Test harnesses and fixtures
+    href: /platform-spec/compiler/conformance/test-harnesses-and-fixtures/
+    relation: Fixture suites verify semantic diagnostics remain stable
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+Traceability anchors:
+
+- Rule definitions: `compiler/crates/beskid_analysis/src/analysis/rules`
+- Staged definitions: `.../analysis/rules/staged/definitions.rs`
+- Diagnostic catalog: `.../analysis/diagnostic_kinds.rs`
+- Surface adapters: `.../beskid_analysis/src/services.rs`, `.../beskid_lsp/src/diagnostics.rs`
+
+Verification checklist:
+
+1. Run semantic diagnostics tests and fixture suites after rule edits.
+2. Confirm new issues are assigned stable diagnostic codes.
+3. Verify CLI and LSP report equivalent issue identities and spans.

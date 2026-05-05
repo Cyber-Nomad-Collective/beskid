@@ -1,0 +1,57 @@
+---
+title: Flow and algorithm
+description: End-to-end control flow and major algorithmic steps for `Builtins and symbols`.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: ABI and host boundary
+    href: /platform-spec/execution/abi-and-host/
+    relation: Parent area
+  - type: Area
+    title: Codegen and IR
+    href: /platform-spec/compiler/codegen-and-ir/
+    relation: Lowering and backend emission consume ABI symbol definitions
+  - type: Area
+    title: Runtime
+    href: /platform-spec/execution/runtime/
+    relation: Runtime builtins export and implement the ABI contract
+  - type: Feature
+    title: Builtins and symbols
+    href: /platform-spec/execution/abi-and-host/builtins-and-symbols/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## End-to-end flow
+
+1. Input enters compiler/runtime boundary at a stable entrypoint.
+2. The responsible crate enforces the expected shape and emits stable structures.
+3. Downstream crates consume those structures without redefining semantics.
+4. Conformance tests assert behavior at integration boundaries.
+
+## Algorithm notes for newcomers
+
+- Prefer tracing one fixture end-to-end before reading all modules.
+- Verify where shape conversion happens; avoid assuming all crates mutate data.
+- Keep an eye on handoff points where diagnostics or ABI constraints are locked.
+
+## Where to step through code
+
+- Start with ``BuiltinFnSpec` and `BUILTIN_SPECS` in `compiler/crates/beskid_abi/src/builtins.rs``.
+- Then inspect ``RUNTIME_EXPORT_SYMBOLS` in `compiler/crates/beskid_abi/src/symbols.rs``.
+- Follow consumption path at `Builtin runtime implementations in `compiler/crates/beskid_runtime/src/builtins/mod.rs``.
+- Validate expectations using `Panic and syscall behavior in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs``.

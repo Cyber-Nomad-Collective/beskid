@@ -1,0 +1,59 @@
+---
+title: Verification and traceability
+description: How `Corelib API shape` requirements map to tests and implementation anchors.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Proposed
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Stability and API shape
+    href: /platform-spec/core-library/stability-and-api-shape/
+    relation: Parent area
+  - type: Area
+    title: Compiler integration
+    href: /platform-spec/core-library/compiler-integration/
+    relation: Discovery and packaging guarantee the API shape being consumed
+  - type: Feature
+    title: Types
+    href: /platform-spec/language-meta/type-system/types/
+    relation: Corelib signatures rely on language type contracts
+  - type: Feature
+    title: Corelib API shape
+    href: /platform-spec/core-library/stability-and-api-shape/corelib-api-shape/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## Verification strategy
+
+- Unit-level checks validate local transformations.
+- Integration tests validate crate-to-crate contracts.
+- End-to-end fixtures validate user-visible behavior.
+
+## Traceability map
+
+- Spec requirement source: `/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/`.
+- Core implementation anchors:
+  - Public module and prelude sources under `compiler/corelib/beskid_corelib`
+  - Shape-sensitive compile tests in `compiler/crates/beskid_tests/src/projects/corelib/compile.rs`
+  - Layout and compatibility checks in `compiler/crates/beskid_tests/src/projects/corelib/layout.rs`
+- Conformance anchor:
+  - Runtime-facing call coverage in `compiler/crates/beskid_tests/src/abi/contracts.rs`
+
+## Review checklist
+
+- Requirement text and test expectation describe the same boundary.
+- Crate ownership updates are reflected in spec links.
+- Newly introduced edge cases include at least one reproducible fixture.

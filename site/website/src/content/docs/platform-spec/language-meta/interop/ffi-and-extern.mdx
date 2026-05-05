@@ -1,0 +1,82 @@
+---
+title: "FFI and extern"
+description: "Beskid language surface for foreign contracts—Extern on contracts, safety, and links to Interop.Contracts and ABI profiles."
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: "Interop"
+    href: /platform-spec/language-meta/interop/
+    relation: Parent area
+  - type: Feature
+    title: "Interop.Contracts"
+    href: /platform-spec/language-meta/interop/interop-contracts/
+    relation: Abstract boundary vocabulary
+  - type: Feature
+    title: "C ABI profile"
+    href: /platform-spec/language-meta/interop/c-abi-profile/
+    relation: User native libraries
+  - type: Feature
+    title: "Rust ABI profile"
+    href: /platform-spec/language-meta/interop/rust-abi-profile/
+    relation: Runtime export surface
+  - type: Domain
+    title: "Language meta"
+    href: /platform-spec/language-meta/
+    relation: Parent domain hub
+  - type: Domain
+    title: "Platform specification"
+    href: /platform-spec/
+    relation: Cross-cutting index
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader
+	status="Standard"
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+This page is the **canonical language-level** chapter for **foreign functions** in Beskid: how authors declare **`Extern`** metadata, where it may appear in the grammar, and how those declarations connect to **[Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/)** and the **[C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/)** for lowering.
+
+It does **not** duplicate runtime syscall policy or Cranelift lowering tables; those live under **`/execution/runtime/`** and **[Extern dispatch and policy](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/)**.
+</SpecSection>
+
+<SpecSection title="Placement of Extern" id="placement-of-extern">
+The **`Extern`** attribute is a **contract-level** interop marker. The reference compiler rejects **`Extern`** on non-contract declarations (diagnostic **E1809** in `compiler/crates/beskid_tests/src/analysis/diagnostics.rs`).
+
+`Extern` supplies ABI and library metadata consumed when building **`ExternImport`** records during codegen (`compiler/crates/beskid_codegen/src/lowering/lowerable.rs`).
+</SpecSection>
+
+<SpecSection title="Contract syntax" id="contract-syntax">
+Foreign surface area is declared with **`contract`** blocks carrying method signatures that end with **`;`** for imports, consistent with the grammar in `compiler/crates/beskid_analysis/src/beskid.pest` and the contract AST in `compiler/crates/beskid_analysis/src/syntax/items/contract_definition.rs`.
+
+Authors should treat each contract method as contributing one **logical foreign symbol** and one **abstract call shape** per **[language-agnostic mapping](/platform-spec/language-meta/interop/interop-contracts/language-agnostic-mapping/)**.
+</SpecSection>
+
+<SpecSection title="Safety and pointers" id="safety-and-pointers">
+Unmanaged pointers crossing the boundary inherit obligations from **[Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/core-primitives/)**: callers must respect **buffer** and **opaque handle** contracts. The **C ABI profile** lists permitted representations for tier-1 targets.
+
+Metaprogramming (**`meta`** blocks) does **not** gain ambient FFI unless explicitly granted by host capability policy—see **[meta block host bridge FAQ](/platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/faq-and-troubleshooting/)**.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- Grammar: `compiler/crates/beskid_analysis/src/beskid.pest` (`contract`, `ContractMethodSignature`)
+- AST: `compiler/crates/beskid_analysis/src/syntax/items/contract_definition.rs`
+- Semantic rule tests: `compiler/crates/beskid_tests/src/analysis/diagnostics.rs`, `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs`
+- Codegen extern collection: `compiler/crates/beskid_codegen/src/lowering/lowerable.rs`, `compiler/crates/beskid_codegen/src/lowering/context.rs`
+</SpecSection>

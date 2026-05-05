@@ -43,7 +43,7 @@ This directory is the canonical home for **corelib** design and API contracts.
 - Follow C# naming conventions for public API surface (`PascalCase` module segments and callable names).
 
 ## Relationship to language spec
-- `docs/spec/corelib-api-shape.md` defines cross-cutting naming and boundary policy.
+- `/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/` defines cross-cutting naming and boundary policy.
 - This directory defines per-module contracts and examples.
 
 ## Source and release policy

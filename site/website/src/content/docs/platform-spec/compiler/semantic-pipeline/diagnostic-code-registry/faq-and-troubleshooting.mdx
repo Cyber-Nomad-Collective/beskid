@@ -1,0 +1,39 @@
+---
+title: FAQ and troubleshooting
+description: Common registry maintenance questions and recovery guidance.
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Diagnostic code registry
+    href: /platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/
+    relation: Parent feature
+  - type: Feature
+    title: Rules and diagnostics catalog
+    href: /platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/
+    relation: Most registry changes originate from rule-set updates
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+### A new rule compiles, but docs sync fails. Why?
+
+The rule likely emits a kind not represented in the documented registry mapping. Update both source and docs references together.
+
+### Can I rename an existing diagnostic code?
+
+Treat code renames as migrations, not inline edits. Preserve compatibility notes and update downstream filters before removing old identifiers.
+
+### Where do I debug code mismatch between CLI and editor?
+
+Start with `diagnostic_kinds.rs`, then check conversion in analysis services and LSP diagnostics adapters to ensure code strings are passed through unchanged.

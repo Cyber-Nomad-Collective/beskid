@@ -1,0 +1,59 @@
+---
+title: Verification and traceability
+description: How `Corelib discovery and packaging` requirements map to tests and implementation anchors.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Compiler integration
+    href: /platform-spec/core-library/compiler-integration/
+    relation: Parent area
+  - type: Area
+    title: Resolution and projects
+    href: /platform-spec/compiler/resolution-and-projects/
+    relation: Project graph logic resolves and injects corelib
+  - type: Area
+    title: Stability and API shape
+    href: /platform-spec/core-library/stability-and-api-shape/
+    relation: API stability expectations depend on canonical packaging
+  - type: Feature
+    title: Corelib discovery and packaging
+    href: /platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## Verification strategy
+
+- Unit-level checks validate local transformations.
+- Integration tests validate crate-to-crate contracts.
+- End-to-end fixtures validate user-visible behavior.
+
+## Traceability map
+
+- Spec requirement source: `/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/`.
+- Core implementation anchors:
+  - Canonical package root `compiler/corelib/beskid_corelib`
+  - Corelib path discovery in `compiler/crates/beskid_analysis/src/projects/graph/resolver.rs`
+  - CLI embedding/install support in `compiler/crates/beskid_cli/build.rs` and `compiler/crates/beskid_cli/src/corelib_runtime.rs`
+- Conformance anchor:
+  - Integration checks in `compiler/crates/beskid_tests/src/projects/corelib`
+
+## Review checklist
+
+- Requirement text and test expectation describe the same boundary.
+- Crate ownership updates are reflected in spec links.
+- Newly introduced edge cases include at least one reproducible fixture.

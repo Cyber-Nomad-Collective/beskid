@@ -1,0 +1,51 @@
+---
+title: "Memory and references"
+description: "Stack vs heap, borrowing, and invalidation rules keep Beskid memory-safe without a GC for all patterns. Runtime write barriers and GC details are specified under Execution."
+template: splash
+tableOfContents: false
+specLevel: feature
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: "Memory model"
+    href: /platform-spec/language-meta/memory-model/
+    relation: Parent area
+  - type: Domain
+    title: "Language meta"
+    href: /platform-spec/language-meta/
+    relation: Parent domain hub
+  - type: Domain
+    title: "Platform specification"
+    href: /platform-spec/
+    relation: Cross-cutting index
+  - type: Domain
+    title: "Execution documentation"
+    href: /execution/
+    relation: Runtime and backend contracts
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader
+	status="Standard"
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+## Normative specification
+
+The canonical chapter is **[Memory and references](/platform-spec/language-meta/memory-model/memory-and-references/)** in the platform specification.
+
+## Platform view
+
+Stack vs heap, borrowing, and invalidation rules keep Beskid memory-safe without a GC for all patterns. Runtime write barriers and GC details are specified under Execution.

@@ -1,0 +1,35 @@
+---
+title: Diagnostics parity (CLI and LSP) - Design model
+description: Provenance model for parse and semantic diagnostics across compiler surfaces.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Diagnostics parity (CLI and LSP)
+    href: /platform-spec/compiler/build-pipeline/diagnostics-parity/
+    relation: Parent feature hub
+  - type: Area
+    title: Semantic pipeline
+    href: /platform-spec/compiler/semantic-pipeline/
+    relation: Shared semantic rules
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+Parity is defined at semantic meaning, not identical text formatting.
+
+- CLI parse diagnostics are path-anchored for user files.
+- Lowering parse diagnostics may use synthetic source names.
+- LSP has cold-parse and warm-snapshot paths but must align on rule outcomes.

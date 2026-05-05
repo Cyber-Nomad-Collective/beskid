@@ -1,0 +1,61 @@
+---
+title: Syntax domain model generation
+description: Contract for generating the immutable Beskid syntax domain model consumed by Mod SDK facades and meta discovery.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Parent area
+  - type: Domain
+    title: Compiler
+    href: /platform-spec/compiler/
+    relation: Parent domain hub
+  - type: Area
+    title: Metaprogramming (language meta)
+    href: /platform-spec/language-meta/metaprogramming/
+    relation: Language semantics for meta blocks
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Capture keys use stable syntax identities from this model
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Meta project type wiring
+  - type: Feature
+    title: Beskid.Compiler.Syntax facade
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/
+    relation: Consumer-facing projection of this model
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+This feature hub defines the normative contract for **syntax domain model generation** and links detailed articles.
+
+## Language alignment
+**Capture** in `meta` depends on immutable syntax snapshots and **stable node identities** produced here. **Process** query plans and **emit** constructions must not retain stale references across invalidation rounds.
+
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/syntax/` — syntax item builders and node shapes.
+- `compiler/crates/beskid_analysis/src/beskid.pest` — grammar surface feeding parse output.
+- `compiler/crates/beskid_analysis/src/syntax/items/` — item-level parsers and metadata.
+
+- [Design model](./design-model/)
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Examples](./examples/)
+- [Verification and traceability](./verification-and-traceability/)
+- [FAQ and troubleshooting](./faq-and-troubleshooting/)

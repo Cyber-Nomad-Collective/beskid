@@ -1,0 +1,57 @@
+---
+title: Flow and algorithm
+description: End-to-end control flow and major algorithmic steps for `Corelib API shape`.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Proposed
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Stability and API shape
+    href: /platform-spec/core-library/stability-and-api-shape/
+    relation: Parent area
+  - type: Area
+    title: Compiler integration
+    href: /platform-spec/core-library/compiler-integration/
+    relation: Discovery and packaging guarantee the API shape being consumed
+  - type: Feature
+    title: Types
+    href: /platform-spec/language-meta/type-system/types/
+    relation: Corelib signatures rely on language type contracts
+  - type: Feature
+    title: Corelib API shape
+    href: /platform-spec/core-library/stability-and-api-shape/corelib-api-shape/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## End-to-end flow
+
+1. Input enters compiler/runtime boundary at a stable entrypoint.
+2. The responsible crate enforces the expected shape and emits stable structures.
+3. Downstream crates consume those structures without redefining semantics.
+4. Conformance tests assert behavior at integration boundaries.
+
+## Algorithm notes for newcomers
+
+- Prefer tracing one fixture end-to-end before reading all modules.
+- Verify where shape conversion happens; avoid assuming all crates mutate data.
+- Keep an eye on handoff points where diagnostics or ABI constraints are locked.
+
+## Where to step through code
+
+- Start with `Public module and prelude sources under `compiler/corelib/beskid_corelib``.
+- Then inspect `Shape-sensitive compile tests in `compiler/crates/beskid_tests/src/projects/corelib/compile.rs``.
+- Follow consumption path at `Layout and compatibility checks in `compiler/crates/beskid_tests/src/projects/corelib/layout.rs``.
+- Validate expectations using `Runtime-facing call coverage in `compiler/crates/beskid_tests/src/abi/contracts.rs``.

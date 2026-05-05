@@ -1,0 +1,34 @@
+---
+title: Workspace resolution contract - Contracts and edge cases
+description: Normative guarantees and failure behavior for manifests, graph resolution, and root selection.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Workspace resolution contract
+    href: /platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/
+    relation: Parent feature hub
+  - type: Domain
+    title: Tooling
+    href: /platform-spec/tooling/
+    relation: CLI command UX consumes these errors
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+- Missing or malformed project manifests must produce stable project diagnostics, not parser panics.
+- Unresolved dependencies must follow the selected policy and remain observable in command output.
+- Explicit source-file input takes precedence over workspace target inference.
+- Resolution must preserve deterministic target selection for identical manifests and lockfiles.

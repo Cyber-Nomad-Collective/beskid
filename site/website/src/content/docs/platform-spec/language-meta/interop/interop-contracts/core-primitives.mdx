@@ -1,0 +1,54 @@
+---
+title: Interop.Contracts — Core primitives
+description: Symbol identity, type-shape classes, call-shape classes, and boundary invariants shared by all interop profiles.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Interop.Contracts
+    href: /platform-spec/language-meta/interop/interop-contracts/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Symbol identity
+
+A **foreign symbol** is identified for interop purposes by a logical name (the string used at link or load time) together with optional **library** or **module** metadata, depending on the profile. Profiles define whether names are decorated, mangled, or exported verbatim.
+
+## Type-shape classes
+
+Values that may cross a boundary are classified into **type-shape classes** so that each profile can map them to concrete machine types:
+
+- **Scalar** — fixed-width integers and enumerations mapped to a profile’s integer rules.
+- **Opaque handle** — an address-sized token with no Beskid-defined layout on the foreign side beyond “passed by value or by pointer per profile”.
+- **Buffer** — length-associated byte or element ranges; ownership (borrow vs transfer) is a separate contract field.
+- **String-like** — bounded UTF-8 or implementation-defined encoding; must align with runtime string ABI where shared with the Beskid runtime (`BeskidStr`-class layouts in implementation).
+- **Never** — no return across the boundary (divergence); profiles map this to platform unwind or trap semantics.
+
+Profiles may forbid certain shapes at the boundary even if they exist in Beskid source.
+
+## Call-shape classes
+
+A **call shape** describes parameters and return as a flat list of type-shapes plus calling convention metadata. **Interop.Contracts** requires that every lowering to a foreign call be expressible as a call shape; profiles attach concrete ABIs (for example System V on a tier-1 host).
+
+## Boundary invariants
+
+Regardless of profile, these invariants apply unless a profile explicitly documents a narrower guarantee:
+
+1. **No silent re-entrancy** — foreign code must not assume Beskid runtime locks unless the profile documents re-entrancy classes.
+2. **Panic isolation** — which side may catch or translate panics is profile-defined; the abstract contract requires the mapping to be explicit.
+3. **ABI version gate** — runtimes and artifacts declare a compatible **runtime ABI version**; mismatches are hard errors at load or link time (see implementation anchors on the parent hub).
+
+For C-oriented user libraries, see **[C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/)**. For the embedding Rust runtime surface, see **[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/)**.

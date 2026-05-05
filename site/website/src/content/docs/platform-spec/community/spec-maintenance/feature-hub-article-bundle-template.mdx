@@ -1,0 +1,104 @@
+---
+title: Domain, Area and Feature template bundle
+description: Mandatory markdown-first template set for Domain, Area and Feature pages, including required section contracts and optional article bundles.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+lastReviewed: "2026-04-30"
+relatedTopics:
+  - type: Area
+    title: Spec maintenance
+    href: /platform-spec/community/spec-maintenance/
+    relation: Parent area
+  - type: Feature
+    title: Last reviewed policy
+    href: /platform-spec/community/spec-maintenance/last-reviewed-policy/
+    relation: Review freshness requirements
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+## Normative platform contract
+
+1. Every new or materially reworked platform-spec topic **must** choose one canonical level: **Domain**, **Area**, or **Feature**.
+2. Regular sections **must** be authored in markdown headings/lists/admonitions first; Astro components are reserved for edge cases only.
+3. Architecture visuals **must** use fenced code blocks with language `arch` (Mermaid C4 syntax); inline graph components in docs are legacy-only.
+4. Feature pages may include article bundles, but article pages **must not** redefine canonical normative requirements that belong to the feature hub.
+
+## Required Domain sections
+
+A Domain page **must** include the following sections in this order:
+
+1. **Scope and boundaries** - what this domain defines and what is out of scope.
+2. **Terminology** - core nouns and exact meanings used by child pages.
+3. **Architectural principles** - durable design rules for this domain.
+4. **Area map** - navigable list of areas with one-sentence responsibilities.
+5. **Normative guarantees** - stable contract guarantees expected by users and tooling.
+6. **Conformance evidence** - how compliance is demonstrated.
+7. **Change policy** - compatibility and migration expectations.
+8. **Related domains** - cross-domain dependencies and links.
+
+## Required Area sections
+
+An Area page **must** include:
+
+1. **Area contract** - subsystem mission, boundary, and external obligations.
+2. **Responsibility boundaries** - explicit handoffs to sibling areas or domains.
+3. **Internal model** - high-level stages, data flow, or topology.
+4. **Feature index** - canonical feature pages under this area.
+5. **Failure and diagnostics model** - error classes and reporting expectations.
+6. **Verification matrix** - tests/checks that validate the area contract.
+7. **Operational guidance** - usage, rollout, or maintenance notes.
+8. **Related areas** - sibling and upstream/downstream links.
+
+## Required Feature Hub sections
+
+The Feature Hub page **must** include all of the following sections in this order:
+
+1. **Contract statement** - concise statement of the feature obligation.
+2. **Inputs and outputs** - data and API surfaces consumed and emitted.
+3. **State model** - persistent/transient state and lifecycle constraints.
+4. **Algorithms and flow** - normative sequence and key decisions.
+5. **Edge cases and errors** - known exceptional behavior and diagnostics.
+6. **Compatibility and versioning** - forward/backward compatibility policy.
+7. **Security and performance notes** - mandatory cautions and limits.
+8. **Examples** - representative examples linked to canonical behavior.
+9. **Verification and traceability** - test anchors and drift detection.
+10. **Related features** - direct dependencies and sibling contracts.
+
+## Required Article sections
+
+Each optional Article page in a bundle **must** include:
+
+1. **Purpose and scope** — what this article explains and where it does not apply.
+2. **Canonical references** — links back to the Feature Hub and any normative source pages it relies on.
+3. **Detailed behavior or procedure** — implementation-facing explanation, examples, or workflows.
+4. **Verification and maintenance notes** — how drift is detected, reviewed, or tested.
+5. **Related topics** — at minimum one parent or sibling link.
+
+## Newcomer reading order requirements
+
+Every Feature Hub **must** publish an explicit ordered list that supports first-time orientation:
+
+1. Start with the parent Area page for system context.
+2. Read the Feature Hub for canonical boundaries and invariants.
+3. Read bundle articles from conceptual overview to operational details.
+4. End with verification and maintenance policy pages (including `lastReviewed` governance when relevant).
+
+The order **must** be written to remain stable when new articles are added; append articles by preserving the conceptual-to-operational flow.
+
+## Markdown-first authoring policy
+
+- Use markdown heading structure for all regular sections.
+- Use `arch` fenced blocks for architecture diagrams.
+- Use tables sparingly; prefer short lists for readability.
+- Component usage is allowed only for non-standard interactive UI or migration edge cases, and must include a rationale note in the page.

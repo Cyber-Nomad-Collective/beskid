@@ -1,0 +1,38 @@
+---
+title: Workspace resolution contract - FAQ and troubleshooting
+description: Common newcomer questions for project graph resolution, manifests, and lock behavior.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Workspace resolution contract
+    href: /platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/
+    relation: Parent feature hub
+  - type: Feature
+    title: Dependency workspace and lockfile
+    href: /platform-spec/compiler/build-pipeline/dependency-workspace/
+    relation: Lock handling details
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## Why does the compiler ignore my workspace target?
+Explicit file input overrides target inference; remove the explicit path to use manifest target resolution.
+
+## Why did a dependency warning not fail the command?
+The command may be using a warning-oriented unresolved dependency policy. Use a strict mode command or policy where available.
+
+## Why does lockfile behavior differ between commands?
+`--frozen` and `--locked` are command-level options propagated into workspace preparation options.

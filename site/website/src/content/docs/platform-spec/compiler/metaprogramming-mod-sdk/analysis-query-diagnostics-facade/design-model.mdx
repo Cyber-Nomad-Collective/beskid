@@ -1,0 +1,45 @@
+---
+title: Analysis, query, and diagnostics facades - Design model
+description: Semantic queries, symbol handles, and diagnostic transport available inside meta execution.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Analysis, query, and diagnostics facades
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article documents the **design model** for **Analysis, query, and diagnostics facades**.
+
+## Language alignment
+**Process** pipelines express fluent queries that lower to bounded Rust walkers; **Diagnostics** raised here must use compiler-stable codes for parity with `beskid_analysis` / LSP.
+
+## Persistent entities
+- **Compilation instance** — implicit handle to the compilation under construction (see language-meta meta block scope).
+- **Syntax snapshot** — immutable tree with stable node identities suitable for incremental keys.
+- **Capability tokens** — host-granted permissions for I/O, diagnostics, and emit operations inside meta.
+
+## Boundaries
+- Mod SDK facades never bypass the host bridge for effects.
+- Generation logic in the reference compiler remains Rust-internal; Beskid sees only the generated `Beskid.Compiler.*` projection.
+
+## Anchored code paths
+- `compiler/crates/beskid_analysis/src/analysis/` — staged rules and semantic state.
+- `compiler/crates/beskid_analysis/src/resolve/` — resolution products queryable from facades.
+- `compiler/crates/beskid_lsp/src/diagnostics.rs` — diagnostic shaping for editor parity.

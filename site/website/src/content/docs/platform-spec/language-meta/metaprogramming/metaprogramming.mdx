@@ -1,0 +1,84 @@
+---
+title: Metaprogramming
+description: Meta projects, declarative meta blocks (capture, process, emit), and compiler Mod SDK alignment.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Metaprogramming
+    href: /platform-spec/language-meta/metaprogramming/
+    relation: Parent area
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Declarative meta process contract
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Meta project type in Project.proj schema
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Beskid.Compiler.* facades and host contracts
+  - type: Domain
+    title: Language meta
+    href: /platform-spec/language-meta/
+    relation: Parent domain hub
+  - type: Domain
+    title: Platform specification
+    href: /platform-spec/
+    relation: Cross-cutting index
+  - type: Area
+    title: Interop
+    href: /platform-spec/language-meta/interop/
+    relation: Foreign boundaries distinct from meta capabilities
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader
+	status="Standard"
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="Language-first model" id="language-first">
+Compile-time metaprogramming is anchored on two language-level ideas:
+
+1. **`Meta` project type** — A `Project.proj` whose **project type** is `Meta` participates directly in the compiler’s meta orchestration: the build loads that project so its `meta` declarations can subscribe to compilation events and drive declarative pipelines. Schema and wiring details are normative under **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)**; this page summarizes behavior users rely on.
+
+2. **`meta` compilation block** — Each `meta` item is a **declaration of the process** the compiler must run: a **non-destructive, iterative** pipeline of **queries and typed transforms** over the **current compilation**, not an unconstrained imperative plugin. Normative grammar, phases, and guarantees live under **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)**.
+</SpecSection>
+
+<SpecSection title="Declarative pipeline (capture, process, emit)" id="pipeline">
+A `meta` block standardizes compiler interaction as three conceptual phases (exact surface syntax is specified in the meta-block feature):
+
+- **Capture** — Declaratively bind **targets** (syntax nodes, symbols, or other stable handles) from the **entire compilation context** (sources, dependency graph, options), so the host knows what to watch for invalidation.
+- **Process** — A **fluent pipeline** of queries and transformations over captured targets using `Beskid.Compiler.*` APIs (compiler contract). Outputs are **plans** (diagnostics, typed edits, contributions), not raw text patches.
+- **Emit** — Apply contributions through the host so the merged program remains well-formed; diagnostics are reported through the **compiler-native** diagnostic channel so the Rust compiler and LSP can surface them consistently.
+
+This shape supports **iterative** behavior: the host may run additional rounds until a fixed point or a diagnostic is raised, per language and host policy.
+</SpecSection>
+
+<SpecSection title="Hybrid canonical ownership" id="ownership">
+- **[Language meta](/platform-spec/language-meta/)** — `Meta` projects, `meta` placement, scope, visibility, determinism, and the capture/process/emit user contract.
+- **[Compiler / Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)** — `Beskid.Compiler.Syntax`, `Query`, `Process`, `Emit`, `Diagnostics`, host bridge, merge semantics, and incremental scheduling.
+
+Neither domain duplicates the other: language pages do not specify Rust algorithms; compiler pages do not redefine `Meta` or `meta` grammar.
+</SpecSection>
+
+<SpecSection title="Superseded material" id="supersession">
+Informal drafts under `docs/guides/drafts/metaprogramming/` are **not canonical**. Use this platform-spec tree and **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** for `Meta` projects and **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)** for `meta` orchestration.
+</SpecSection>

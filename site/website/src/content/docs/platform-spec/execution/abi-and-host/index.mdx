@@ -1,0 +1,34 @@
+---
+title: ABI and host boundary
+description: Builtin symbols, ABI contracts, and host integration boundaries consumed by runtime and backends.
+template: splash
+tableOfContents: true
+specLevel: area
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Domain
+    title: Execution
+    href: /platform-spec/execution/
+    relation: Parent domain
+  - type: Area
+    title: Build pipeline
+    href: /platform-spec/compiler/build-pipeline/
+    relation: Lowering and backends depend on ABI surface
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<DomainTiles pathPrefix="platform-spec/execution/abi-and-host" heading="Features" />

@@ -1,0 +1,40 @@
+---
+title: Rust ABI profile — Boundary and stability
+description: What is stable at the Rust runtime ↔ generated code boundary versus implementation-private Rust types.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Rust ABI profile
+    href: /platform-spec/language-meta/interop/rust-abi-profile/
+    relation: Parent feature hub
+  - type: Feature
+    title: Interop.Contracts
+    href: /platform-spec/language-meta/interop/interop-contracts/
+    relation: Shared conformance vocabulary
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Stable surface
+
+The **normative stable surface** for loaders and generated code is the set of **exported symbols** and their **documented C-compatible signatures** published through `beskid_abi` and realized in `beskid_runtime`. Conformance tests lock this set for a given **runtime ABI version** (see `compiler/crates/beskid_tests/src/abi/contracts.rs`).
+
+## Implementation-private Rust
+
+Rust types, modules, and internal helpers inside `beskid_runtime` that are **not** part of the exported symbol contract may change across compiler releases without a major ABI version bump, provided tests and documented runtime behavior remain compatible.
+
+## Unwind and panics
+
+Runtime entrypoints may use **`extern "C-unwind"`** (or equivalent) where platform policy requires interoperable unwinding with generated code. The exact mapping is **profile-defined** and must stay consistent with panic and IO documentation under `/execution/runtime/`.

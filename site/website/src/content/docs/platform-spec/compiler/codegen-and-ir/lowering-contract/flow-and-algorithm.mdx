@@ -1,0 +1,57 @@
+---
+title: Flow and algorithm
+description: End-to-end control flow and major algorithmic steps for `Lowering contract`.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Codegen and IR
+    href: /platform-spec/compiler/codegen-and-ir/
+    relation: Parent area
+  - type: Feature
+    title: Stage ordering and artifacts
+    href: /platform-spec/compiler/build-pipeline/stage-ordering/
+    relation: Pipeline ordering that lowering must follow
+  - type: Domain
+    title: Execution
+    href: /platform-spec/execution/
+    relation: Lowered artifacts are consumed by execution backends
+  - type: Feature
+    title: Lowering contract
+    href: /platform-spec/compiler/codegen-and-ir/lowering-contract/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## End-to-end flow
+
+1. Input enters compiler/runtime boundary at a stable entrypoint.
+2. The responsible crate enforces the expected shape and emits stable structures.
+3. Downstream crates consume those structures without redefining semantics.
+4. Conformance tests assert behavior at integration boundaries.
+
+## Algorithm notes for newcomers
+
+- Prefer tracing one fixture end-to-end before reading all modules.
+- Verify where shape conversion happens; avoid assuming all crates mutate data.
+- Keep an eye on handoff points where diagnostics or ABI constraints are locked.
+
+## Where to step through code
+
+- Start with ``beskid_codegen::lower_source` in `compiler/crates/beskid_codegen``.
+- Then inspect ``CodegenArtifact` construction in `compiler/crates/beskid_codegen``.
+- Follow consumption path at ``JitModule` consumption in `compiler/crates/beskid_engine/src/jit_module.rs``.
+- Validate expectations using `Runtime execution coverage in `compiler/crates/beskid_tests/src/runtime/jit.rs``.

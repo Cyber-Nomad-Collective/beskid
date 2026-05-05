@@ -1,0 +1,57 @@
+---
+title: Flow and algorithm
+description: End-to-end control flow and major algorithmic steps for `Crate-to-spec anchors`.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Implementation map
+    href: /platform-spec/compiler/implementation-map/
+    relation: Parent area
+  - type: Domain
+    title: Compiler
+    href: /platform-spec/compiler/
+    relation: Crate ownership boundaries are maintained inside the compiler domain
+  - type: Area
+    title: Conformance
+    href: /platform-spec/compiler/conformance/
+    relation: The map is enforced by tests and review policy
+  - type: Feature
+    title: Crate-to-spec anchors
+    href: /platform-spec/compiler/implementation-map/crate-to-spec-anchors/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## End-to-end flow
+
+1. Input enters compiler/runtime boundary at a stable entrypoint.
+2. The responsible crate enforces the expected shape and emits stable structures.
+3. Downstream crates consume those structures without redefining semantics.
+4. Conformance tests assert behavior at integration boundaries.
+
+## Algorithm notes for newcomers
+
+- Prefer tracing one fixture end-to-end before reading all modules.
+- Verify where shape conversion happens; avoid assuming all crates mutate data.
+- Keep an eye on handoff points where diagnostics or ABI constraints are locked.
+
+## Where to step through code
+
+- Start with ``beskid_analysis` -> parser/resolution/semantic leaves`.
+- Then inspect ``beskid_codegen` -> lowering contract leaves`.
+- Follow consumption path at ``beskid_abi` and `beskid_runtime` -> execution ABI/runtime leaves`.
+- Validate expectations using ``beskid_tests` and `beskid_e2e_tests` -> conformance leaves`.

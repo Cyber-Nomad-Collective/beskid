@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "level": "area",
+  "extends": "area-default",
+  "pathPrefix": "platform-spec/language-meta/metaprogramming",
+  "minSpecSections": 1,
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/language-meta/metaprogramming",
+        "heading": "Features"
+      }
+    }
+  ]
+}

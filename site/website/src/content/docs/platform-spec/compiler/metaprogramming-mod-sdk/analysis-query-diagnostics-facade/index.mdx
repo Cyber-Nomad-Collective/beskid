@@ -1,0 +1,61 @@
+---
+title: Analysis, query, and diagnostics facades
+description: Semantic queries, symbol handles, and diagnostic transport available inside meta execution.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Parent area
+  - type: Domain
+    title: Compiler
+    href: /platform-spec/compiler/
+    relation: Parent domain hub
+  - type: Area
+    title: Metaprogramming (language meta)
+    href: /platform-spec/language-meta/metaprogramming/
+    relation: Language semantics for meta blocks
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Process diagnostics and emit-side reporting
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Meta project type
+  - type: Feature
+    title: Typed emitter and transforms
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/
+    relation: Complementary output surface for meta authors
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+This feature hub defines the normative contract for **`Beskid.Compiler.Query`** and **`Beskid.Compiler.Diagnostics`** (and related analysis facades) and links detailed articles.
+
+## Language alignment
+The **`process`** phase uses these modules for semantic questions and **compiler-native diagnostics**. Diagnostic shape and IDs must align with Rust analysis and LSP surfaces so **`Meta`** pipelines integrate with normal tooling.
+
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/analysis/` — staged rules and semantic state.
+- `compiler/crates/beskid_analysis/src/resolve/` — resolution products queryable from facades.
+- `compiler/crates/beskid_lsp/src/diagnostics.rs` — diagnostic shaping for editor parity.
+
+- [Design model](./design-model/)
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Examples](./examples/)
+- [Verification and traceability](./verification-and-traceability/)
+- [FAQ and troubleshooting](./faq-and-troubleshooting/)

@@ -1,0 +1,52 @@
+---
+title: Examples
+description: Practical examples that demonstrate `Crate-to-spec anchors` behavior.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Implementation map
+    href: /platform-spec/compiler/implementation-map/
+    relation: Parent area
+  - type: Domain
+    title: Compiler
+    href: /platform-spec/compiler/
+    relation: Crate ownership boundaries are maintained inside the compiler domain
+  - type: Area
+    title: Conformance
+    href: /platform-spec/compiler/conformance/
+    relation: The map is enforced by tests and review policy
+  - type: Feature
+    title: Crate-to-spec anchors
+    href: /platform-spec/compiler/implementation-map/crate-to-spec-anchors/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## Example 1: Happy path
+
+A standard project exercises the expected producer -> consumer handoff with no contract violations. Trace this via:
+
+- ``beskid_analysis` -> parser/resolution/semantic leaves`
+- ``beskid_abi` and `beskid_runtime` -> execution ABI/runtime leaves`
+
+## Example 2: Contract mismatch
+
+Intentionally alter a boundary definition (for example, a symbol or structure shape), then run the related conformance suite. The expected result is a deterministic failure that identifies the mismatched boundary.
+
+## Example 3: Regression-proofing a fix
+
+After applying a fix, add or update a focused fixture in the nearest test crate and rerun wider suites so the behavior remains locked for future refactors.

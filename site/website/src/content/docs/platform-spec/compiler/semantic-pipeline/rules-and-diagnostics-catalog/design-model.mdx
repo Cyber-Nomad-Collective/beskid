@@ -1,0 +1,36 @@
+---
+title: Design model
+description: Mental model for staged semantic rules and diagnostic production.
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Rules and diagnostics catalog
+    href: /platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/
+    relation: Parent feature
+  - type: Feature
+    title: Diagnostic code registry
+    href: /platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/
+    relation: Registry defines canonical code identity for rule outputs
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+Semantic analysis is modeled as a staged rule engine:
+
+- Resolver prepares symbol and type context.
+- Rule modules read that context and emit typed issues.
+- Issue kinds map to stable code/category metadata.
+- Service adapters project the same issue identity into CLI and LSP output models.
+
+For newcomers, the key idea is separation of concerns: rule logic decides **what is wrong**, while diagnostics infrastructure decides **how it is labeled and surfaced**.

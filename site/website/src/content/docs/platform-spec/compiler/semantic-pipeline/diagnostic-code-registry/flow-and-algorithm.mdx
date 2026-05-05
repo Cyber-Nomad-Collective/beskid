@@ -1,0 +1,37 @@
+---
+title: Flow and algorithm
+description: Lifecycle of a semantic diagnostic code from definition to surfaced output.
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Diagnostic code registry
+    href: /platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/
+    relation: Parent feature
+  - type: Feature
+    title: Diagnostics parity
+    href: /platform-spec/compiler/build-pipeline/diagnostics-parity/
+    relation: Registry consistency drives parity across build surfaces
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+Code lifecycle algorithm:
+
+1. Define or reuse an issue kind in `diagnostic_kinds.rs`.
+2. Emit that kind from a semantic rule in `analysis/rules`.
+3. Convert issue kind to stable code/category payload.
+4. Surface payload through services to CLI and LSP.
+5. Validate docs and source sync with diagnostics verification scripts.
+
+The code identity must survive every handoff unchanged, even when message templates differ between clients.

@@ -1,0 +1,45 @@
+---
+title: C ABI profile — Extern contracts and linking
+description: Library and symbol metadata, JIT dlopen resolution, and policy gates for user extern contracts.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: C ABI profile
+    href: /platform-spec/language-meta/interop/c-abi-profile/
+    relation: Parent feature hub
+  - type: Feature
+    title: FFI and extern
+    href: /platform-spec/language-meta/interop/ffi-and-extern/
+    relation: Syntax and semantic placement of Extern
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Extern metadata
+
+User foreign entrypoints are declared on **`contract`** types using the **`Extern`** attribute (see **[FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/)**). The C ABI profile interprets attribute fields as:
+
+- **`Abi`** — in current toolchains, **`"C"`** is the supported user-facing choice for this profile; other strings are reserved.
+- **`Library`** — shared object or loadable module path semantics as implemented by the engine when dynamic resolution is enabled.
+
+Implementation references: `ExternImport` in `compiler/crates/beskid_codegen/src/lowering/context.rs` and collection in `compiler/crates/beskid_codegen/src/lowering/lowerable.rs`.
+
+## JIT resolution
+
+When the **`extern_dlopen`** engine feature is **disabled**, artifacts that contain unresolved extern imports **must** fail compilation in the reference engine path. When enabled, the engine may **`dlopen` / `dlsym`** libraries and bind symbols subject to host policy (allow/deny environment variables as documented under `/execution/runtime/extern-policy-v0-1/`).
+
+## AOT and linking
+
+Object emission paths may differ from JIT in how unresolved imports are surfaced to the linker. Toolchains **must** document parity or intentional asymmetry in the **[Extern dispatch and policy](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/)** feature as implementation evolves.

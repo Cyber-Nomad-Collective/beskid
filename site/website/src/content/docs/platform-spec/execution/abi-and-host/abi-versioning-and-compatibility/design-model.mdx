@@ -1,0 +1,42 @@
+---
+title: Design model
+description: Conceptual model for `ABI versioning and compatibility` and its subsystem boundaries.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: ABI and host boundary
+    href: /platform-spec/execution/abi-and-host/
+    relation: Parent area
+  - type: Feature
+    title: ABI versioning and compatibility
+    href: /platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+## What this article covers
+This article explains the `design-model` view for `ABI versioning and compatibility` in concrete, onboarding-first language.
+
+## Newcomer walk-through
+Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+
+## Code anchors
+- `AbiVersion` and compatibility definitions in `compiler/crates/beskid_abi/src/lib.rs`
+- `RUNTIME_EXPORT_SYMBOLS` in `compiler/crates/beskid_abi/src/symbols.rs`
+- JIT/runtime symbol loading in `compiler/crates/beskid_engine/src/jit_module.rs`
+
+## Practical guidance
+When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

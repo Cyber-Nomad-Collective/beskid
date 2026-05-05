@@ -1,0 +1,47 @@
+---
+title: Test harnesses and fixtures
+description: Conformance and regression fixture contracts across compiler unit, integration, and end-to-end test crates.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Conformance
+    href: /platform-spec/compiler/conformance/
+    relation: Parent area
+  - type: Area
+    title: Semantic pipeline
+    href: /platform-spec/compiler/semantic-pipeline/
+    relation: Rule and diagnostics behavior is locked by fixtures
+  - type: Area
+    title: ABI and host boundary
+    href: /platform-spec/execution/abi-and-host/
+    relation: ABI guarantees are validated through regression suites
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+This feature explains how the project proves that implemented behavior remains stable release over release. It is organized into newcomer-friendly articles that move from model, to flow, to contracts, then practical verification and debugging guidance.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- `compiler/crates/beskid_tests/src/analysis` fixture-driven semantic assertions
+- `compiler/crates/beskid_tests/src/runtime` runtime behavior checks
+- `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` source-to-runtime outcomes
+- `compiler/crates/beskid_tests/src/doc_tests.rs` docs-driven verification
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/compiler/conformance/test-harnesses-and-fixtures" heading="Articles" />

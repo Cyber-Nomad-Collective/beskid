@@ -1,0 +1,55 @@
+---
+title: Metaprogramming
+description: Meta projects (Project.type Meta), declarative meta blocks, and Beskid.Compiler Mod SDK alignment.
+template: splash
+tableOfContents: true
+specLevel: area
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Compiler-side Mod SDK, host bridge, and incremental contracts
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Meta project type and manifest wiring
+  - type: Domain
+    title: Language meta
+    href: /platform-spec/language-meta/
+    relation: Parent domain hub
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="Scope" id="scope">
+This **language-meta area** defines:
+
+- The **`Meta` project type** — how a manifest declares a project that **pipes into the compilation process** for meta orchestration (see **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** for schema).
+- The **`meta` compilation block** — declarative **capture → process → emit** pipelines over the **current compilation**, with deterministic, non-destructive iteration semantics.
+
+**Implementation** — `Beskid.Compiler.*` module shape, host execution, merge, diagnostics transport, and incremental invalidation — is specified under **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**.
+</SpecSection>
+
+<SpecSection title="Feature index" id="features">
+- **[Metaprogramming overview](/platform-spec/language-meta/metaprogramming/metaprogramming/)** — `Meta` projects, declarative `meta` pipelines, and ownership split.
+- **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)** — normative language contract for `meta` (design, flow, contracts, examples, verification).
+
+Tiles below list discoverable feature hubs under this area.
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/language-meta/metaprogramming" heading="Features" />

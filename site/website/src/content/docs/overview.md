@@ -19,15 +19,14 @@ Beskid is a statically typed language designed to teach compiler construction. I
 - Option/Result as the primary error types.
 - First-class attributes (declarations + typed applications).
 
-## Out of scope (draft)
-- Generator model and broader metaprogramming scheduling remain in drafts.
-- Active draft: `docs/guides/drafts/metaprogramming/metaprogramming.md`.
+## Metaprogramming
+- The canonical **`meta` block** and compile-time **Mod SDK** contracts live in **platform-spec** (split across [Language meta / Metaprogramming](/platform-spec/language-meta/metaprogramming/) and [Compiler / Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)); older exploratory drafts are not authoritative.
 
 ## Documentation
 - `docs/book` — guided learning path for language and project organization.
-- `docs/spec` — language semantics and typing rules (normative).
+- `docs/platform-spec/language-meta` — language semantics and typing rules (normative).
 - `docs/execution` — runtime, ABI, lowering, and backend contracts (normative).
 - `docs/corelib` — corelib contracts (normative).
 - `docs/guides` — drafts, tooling notes, and project workflow guides (informative).
 
-See: `docs/spec/README.md`, `docs/execution/README.md`, `docs/corelib/README.md`.
+See: `docs/platform-spec/language-meta/index.mdx`, `docs/execution/README.md`, `docs/corelib/README.md`.

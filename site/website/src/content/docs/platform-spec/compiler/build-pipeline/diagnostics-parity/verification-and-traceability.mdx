@@ -1,0 +1,38 @@
+---
+title: Diagnostics parity (CLI and LSP) - Verification and traceability
+description: Source anchors and tests used to prevent diagnostic drift between compiler surfaces.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Diagnostics parity (CLI and LSP)
+    href: /platform-spec/compiler/build-pipeline/diagnostics-parity/
+    relation: Parent feature hub
+  - type: Area
+    title: Conformance
+    href: /platform-spec/compiler/conformance/
+    relation: Cross-surface regression testing
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+Implementation anchors:
+
+- `compiler/crates/beskid_cli/src/frontend.rs`
+- `compiler/crates/beskid_codegen/src/services.rs`
+- `compiler/crates/beskid_lsp/src/diagnostics.rs`
+- `compiler/crates/beskid_analysis/src/services.rs`
+
+Verification strategy should compare fixture diagnostics across CLI and LSP cold/warm paths.

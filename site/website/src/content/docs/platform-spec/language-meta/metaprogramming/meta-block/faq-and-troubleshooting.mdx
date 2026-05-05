@@ -1,0 +1,46 @@
+---
+title: meta compilation block - FAQ and troubleshooting
+description: Meta vs macros, Meta projects, capture-process-emit, and where to read Mod SDK APIs.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## FAQ — meta compilation block and Meta projects
+
+### Is `meta` a macro?
+
+No. It is a **declarative process declaration** executed by the host with **typed** `Beskid.Compiler.*` APIs, not token substitution.
+
+### What is a `Meta` project for?
+
+It declares that this **`Project.proj`** participates in **meta orchestration**: the compiler **pipes compilation events** into the project’s `meta` entrypoints per manifest rules. See **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)**.
+
+### Why capture / process / emit?
+
+They standardize **what is observed**, **how it is transformed**, and **what is applied**, which enables **non-destructive** iteration, **incremental** invalidation, and **observability** (named processes).
+
+### Can `meta` import arbitrary modules?
+
+Imports follow normal module rules; further restrictions may apply from **capability** policy (Mod SDK).
+
+### Where are the APIs specified?
+
+**[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)** — `Syntax`, `Query`, `Process`, `Emit`, `Diagnostics`, host bridge, and scheduling.

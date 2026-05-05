@@ -1,0 +1,36 @@
+---
+title: Dependency workspace and lockfile - Design model
+description: Data model for compile plans, prepared workspaces, lock records, and dependency source roots.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Dependency workspace and lockfile
+    href: /platform-spec/compiler/build-pipeline/dependency-workspace/
+    relation: Parent feature hub
+  - type: Domain
+    title: Tooling
+    href: /platform-spec/tooling/
+    relation: CLI flags drive workspace policy
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+The model separates planning from materialization:
+
+- `CompilePlan` describes target graph and dependency intent.
+- `PreparedProjectWorkspace` records concrete source roots under `obj/beskid/deps/src`.
+- `WorkspacePrepareOptions` carries lock policy (`frozen`, `locked`).
+- `Project.lock` is the persisted snapshot used for repeatable resolution.

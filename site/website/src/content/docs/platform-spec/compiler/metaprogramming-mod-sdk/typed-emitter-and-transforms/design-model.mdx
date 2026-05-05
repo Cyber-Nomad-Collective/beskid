@@ -1,0 +1,44 @@
+---
+title: Typed emitter and transforms - Design model
+description: Construction of syntax nodes and declarative transforms without raw text printing.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Typed emitter and transforms
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article documents the **design model** for **Typed emitter and transforms**.
+
+## Language alignment
+**Emit** applies only **typed** edits; language-meta forbids raw-text patching as the normative contract.
+
+## Persistent entities
+- **Compilation instance** — implicit handle to the compilation under construction (see language-meta meta block scope).
+- **Syntax snapshot** — immutable tree with stable node identities suitable for incremental keys.
+- **Capability tokens** — host-granted permissions for I/O, diagnostics, and emit operations inside meta.
+
+## Boundaries
+- Mod SDK facades never bypass the host bridge for effects.
+- Generation logic in the reference compiler remains Rust-internal; Beskid sees only the generated `Beskid.Compiler.*` projection.
+
+## Anchored code paths
+- `compiler/crates/beskid_analysis/src/syntax/items/` — patterns for well-formed item emission.
+- `compiler/crates/beskid_codegen/` — downstream expectations after merge.

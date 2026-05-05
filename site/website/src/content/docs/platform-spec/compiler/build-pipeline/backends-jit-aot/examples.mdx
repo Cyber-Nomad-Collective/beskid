@@ -1,0 +1,34 @@
+---
+title: Backends (JIT and AOT) - Examples
+description: Example command outcomes for JIT execution and AOT output kinds.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Backends (JIT and AOT)
+    href: /platform-spec/compiler/build-pipeline/backends-jit-aot/
+    relation: Parent feature hub
+  - type: Domain
+    title: Execution
+    href: /platform-spec/execution/
+    relation: Runtime-side behavior
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+- **`beskid run` success:** JIT compiles and runs `main`, returning a formatted value string.
+- **`beskid build --kind exe`:** AOT emits object, prepares runtime artifacts, then links executable.
+- **`beskid build --kind object`:** AOT stops after object emission and skips link stage.
+- **Bad entrypoint:** backend reports entrypoint resolution/signature diagnostic.

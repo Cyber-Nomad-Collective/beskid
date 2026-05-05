@@ -1,0 +1,48 @@
+---
+title: Flow and algorithm
+description: Lifecycle and execution flow for `Project manifest contract`.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Manifests and lockfiles
+    href: /platform-spec/tooling/manifests-and-lockfiles/
+    relation: Parent area
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+## What this article covers
+This article explains the `flow-and-algorithm` view for `Project manifest contract` in concrete, onboarding-first language.
+
+## Meta projects in the load flow
+1. Discover `Project.proj` and parse manifest.
+2. Classify **project type**; if **`Meta`**, validate required **meta** sections (attachment targets, entry modules—normative keys TBD in examples/contracts).
+3. Include the project in the workspace graph so **[Workspace resolution contract](/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/)** exposes it to CLI and compiler services.
+4. During compilation, the **meta host** consumes the classified **`Meta`** node list and registers **event subscriptions** per **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**.
+
+## Newcomer walk-through
+Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+
+## Code anchors
+- Manifest loading in `compiler/crates/beskid_analysis/src/services.rs`
+- CLI project graph setup in `compiler/crates/beskid_cli/src/commands/`
+- Workspace resolution in `compiler/crates/beskid_analysis/src/resolve/items.rs`
+
+## Practical guidance
+When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

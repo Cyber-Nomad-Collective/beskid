@@ -39,7 +39,7 @@ This keeps module identity explicit when desired, while preserving convention-ba
 
 ## Deep dive in spec
 
-- [Modules and Visibility](/spec/modules-and-visibility/)
+- [Modules and Visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/)
 
 ## Next
 

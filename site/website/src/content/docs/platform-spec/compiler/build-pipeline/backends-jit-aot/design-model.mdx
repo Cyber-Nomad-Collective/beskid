@@ -1,0 +1,36 @@
+---
+title: Backends (JIT and AOT) - Design model
+description: Backend responsibility split and shared artifact model for run and build commands.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Backends (JIT and AOT)
+    href: /platform-spec/compiler/build-pipeline/backends-jit-aot/
+    relation: Parent feature hub
+  - type: Domain
+    title: Execution
+    href: /platform-spec/execution/
+    relation: Runtime ABI and host behavior
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+Backend split:
+
+- **JIT path** (`beskid run`): compile artifact in-process and execute resolved entrypoint.
+- **AOT path** (`beskid build`): emit object, optionally prepare runtime, optionally link native output.
+
+Both paths must consume the same lowering artifact contract.

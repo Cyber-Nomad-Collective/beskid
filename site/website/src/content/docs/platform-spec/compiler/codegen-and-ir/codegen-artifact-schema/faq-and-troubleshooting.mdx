@@ -1,0 +1,40 @@
+---
+title: Codegen artifact schema - FAQ and troubleshooting
+description: Answers common operator and contributor questions with practical next checks.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Codegen artifact schema
+    href: /platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article documents **faq and troubleshooting** for **codegen artifact schema** in the reference compiler.
+
+## What this covers
+For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
+
+## Anchored code paths
+- `compiler/crates/beskid_engine/src/jit_module.rs` consumes generated artifact fields.
+- `compiler/crates/beskid_tests/src/runtime/jit.rs` validates runtime execution from codegen output.
+- `compiler/crates/beskid_tests/src/abi/contracts.rs` checks ABI-level schema compatibility.
+
+## Practical notes
+- Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
+- Treat diagnostics and tests as part of the contract, not optional implementation details.
+- If behavior changes, update this article and add/adjust tests in `compiler/crates/beskid_tests` or `compiler/crates/beskid_e2e_tests`.

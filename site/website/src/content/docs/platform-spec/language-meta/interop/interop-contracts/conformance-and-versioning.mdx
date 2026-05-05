@@ -1,0 +1,51 @@
+---
+title: Interop.Contracts — Conformance and versioning
+description: ABI version gates, forward compatibility, and how artifacts claim Interop.Contracts conformance.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Interop.Contracts
+    href: /platform-spec/language-meta/interop/interop-contracts/
+    relation: Parent feature hub
+  - type: Feature
+    title: Rust ABI profile
+    href: /platform-spec/language-meta/interop/rust-abi-profile/
+    relation: Runtime export stability
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Runtime ABI version
+
+The platform publishes a monotonic **runtime ABI version** constant consumed by the compiler and prebuilt runtime packages. An artifact **must not** load against a runtime that reports an incompatible version.
+
+Implementation reference: `BESKID_RUNTIME_ABI_VERSION` in `compiler/crates/beskid_abi/src/version.rs` and checks in `compiler/crates/beskid_tests/src/abi/contracts.rs`.
+
+## Forward compatibility
+
+**Interop.Contracts** distinguishes:
+
+- **Normative contracts** — behavior and layouts the platform commits to for a given ABI version band.
+- **Reserved extensions** — symbol names or dispatch slots documented as internal or experimental; user code **must not** depend on them unless a feature explicitly promotes them to normative status.
+
+When adding symbols or shapes, the platform **should** extend tables in `beskid_abi` with documentation in the **[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/)** before declaring user-visible stability.
+
+## Profile conformance
+
+A toolchain build **conforms** to **Interop.Contracts** if:
+
+1. Every emitted foreign call can be traced to an abstract call shape and symbol identity defined here or in a normative profile article.
+2. Runtime exports match the allowlisted symbol set for the declared ABI version.
+3. Diagnostics reject unsupported combinations (for example extern imports when the engine feature that resolves them is disabled).

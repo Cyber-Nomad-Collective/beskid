@@ -1,0 +1,37 @@
+---
+title: Analysis, query, and diagnostics facades - FAQ and troubleshooting
+description: Semantic queries, symbol handles, and diagnostic transport available inside meta execution.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Analysis, query, and diagnostics facades
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article collects **FAQ** entries for **Analysis, query, and diagnostics facades**.
+
+## Why separate language-meta and compiler pages?
+Language-meta defines what `meta` *means* to users; this compiler area defines how the host *implements* those meanings safely and incrementally.
+
+## Can meta call arbitrary FFI?
+No — unless explicitly granted by platform policy and declared in compilation capabilities. Default contracts deny ambient FFI.
+
+## Where do Roslyn/KSP parallels apply?
+Only as rationale for incremental caches and typed models; Beskid contracts are authoritative here, not foreign tool behavior.

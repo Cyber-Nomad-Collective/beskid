@@ -1,0 +1,52 @@
+---
+title: FAQ and troubleshooting
+description: Common questions and debugging guidance for `Test harnesses and fixtures`.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Conformance
+    href: /platform-spec/compiler/conformance/
+    relation: Parent area
+  - type: Area
+    title: Semantic pipeline
+    href: /platform-spec/compiler/semantic-pipeline/
+    relation: Rule and diagnostics behavior is locked by fixtures
+  - type: Area
+    title: ABI and host boundary
+    href: /platform-spec/execution/abi-and-host/
+    relation: ABI guarantees are validated through regression suites
+  - type: Feature
+    title: Test harnesses and fixtures
+    href: /platform-spec/compiler/conformance/test-harnesses-and-fixtures/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## Why did a change pass locally but fail in CI?
+
+Most often, one crate boundary changed but the corresponding fixture or downstream consumer was not updated. Re-run the nearest conformance suite and inspect cross-crate handoff points.
+
+## Where should I start debugging?
+
+1. Confirm the target requirement in this feature hub.
+2. Step through ``compiler/crates/beskid_tests/src/analysis` fixture-driven semantic assertions` and ``compiler/crates/beskid_tests/src/runtime` runtime behavior checks`.
+3. Validate consumer behavior at ``compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` source-to-runtime outcomes`.
+4. Reproduce with ``compiler/crates/beskid_tests/src/doc_tests.rs` docs-driven verification`.
+
+## How do I add a new rule safely?
+
+Document the new contract in the relevant article, update implementation in the owning crate, and add a fixture proving both happy-path and failure-path behavior.

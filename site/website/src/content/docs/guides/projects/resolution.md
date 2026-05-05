@@ -96,7 +96,7 @@ For identifiers and paths inside a module:
 3. Imports (`use` aliases).
 4. Module-level items.
 
-This order is consistent with `docs/spec/name-resolution.md`.
+This order is consistent with `/platform-spec/language-meta/program-structure/name-resolution/`.
 
 ## Module Graph (Inferred)
 The module graph is inferred from `mod` declarations and file layout. The manifest does not list modules explicitly.
@@ -135,7 +135,7 @@ The module graph is inferred from `mod` declarations and file layout. The manife
 
 ## Future Extensions
 - Virtual modules for generated code.
-- Extended workspace policy and lock integration for large monorepos (base workspace manifests are already available in `docs/spec/workspace-proj-v1.md` and `docs/guides/workspace-monorepo.md`).
+- Extended workspace policy and lock integration for large monorepos (base workspace manifests are already available in `/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/` and `docs/guides/workspace-monorepo.md`).
 - Registry lockfile integration.
 
 ## Corelib (`Std`) graph behavior

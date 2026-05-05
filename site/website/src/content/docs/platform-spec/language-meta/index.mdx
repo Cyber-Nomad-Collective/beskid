@@ -1,0 +1,37 @@
+---
+title: "Language meta"
+description: "User-visible semantics, conformance vocabulary, and how they map to compiler and tooling contracts."
+template: splash
+tableOfContents: false
+specLevel: domain
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="Rationale" id="rationale">
+Readers should find **one** authoritative description of what programs *mean*, independent of how the
+compiler is structured internally. This domain is the canonical language specification surface under **/platform-spec** and indexes the standard by **area** and **feature**—**ownership** and **how the platform realizes each chapter**—not a backlog or delivery tracker. **Versioning** is **Git** (`main` rolling release), not URL segments.
+</SpecSection>
+
+<SpecSection title="Background" id="background">
+Feature pages in [language-meta](/platform-spec/language-meta/) are canonical for language semantics. Example:
+[Dependency injection](/platform-spec/language-meta/composition/dependency-injection/) is maintained directly in this tree. This
+domain **lays out** **areas** and **feature** leaves with normative prose and platform metadata. **Components**—functional groupings in the wider platform—can be modeled later (URLs or `relatedTopics`); see the [spec bridge](/platform-spec/legacy-spec-mapping/).
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/language-meta" heading="Areas" />

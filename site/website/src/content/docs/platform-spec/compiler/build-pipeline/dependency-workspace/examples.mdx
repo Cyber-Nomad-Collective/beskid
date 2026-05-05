@@ -1,0 +1,34 @@
+---
+title: Dependency workspace and lockfile - Examples
+description: Concrete examples for frozen and locked workflows with project dependencies.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Dependency workspace and lockfile
+    href: /platform-spec/compiler/build-pipeline/dependency-workspace/
+    relation: Parent feature hub
+  - type: Feature
+    title: Workspace resolution contract
+    href: /platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/
+    relation: Upstream graph setup
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+- **Fresh install:** no lockfile, normal mode creates `Project.lock v1`.
+- **CI locked mode:** `--locked` fails if dependency versions differ from lockfile.
+- **Frozen release mode:** `--frozen` compiles only when current lockfile already matches graph.
+- **Registry outage:** optional dependency fetch failure is surfaced according to unresolved policy.

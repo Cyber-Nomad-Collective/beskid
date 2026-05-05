@@ -1,0 +1,38 @@
+---
+title: Stage ordering and lowering - Flow and algorithm
+description: Ordered lowering algorithm used by build and run command paths.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Stage ordering and lowering
+    href: /platform-spec/compiler/build-pipeline/stage-ordering/
+    relation: Parent feature hub
+  - type: Feature
+    title: Diagnostics parity (CLI and LSP)
+    href: /platform-spec/compiler/build-pipeline/diagnostics-parity/
+    relation: Diagnostic gates during lowering
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+1. Resolve source path/text through services.
+2. Parse program and produce syntax diagnostics.
+3. Run builtin staged semantic rules when diagnostics are enabled.
+4. Abort on error diagnostics.
+5. Transform to HIR, resolve symbols, and type-check.
+6. Lower typed program to backend artifact for JIT/AOT.
+
+The canonical implementation entrypoint is `beskid_codegen::services::lower_source`.

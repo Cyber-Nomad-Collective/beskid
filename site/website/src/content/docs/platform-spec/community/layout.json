@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "level": "domain",
+  "extends": "domain-default",
+  "pathPrefix": "platform-spec/community",
+  "minSpecSections": 1,
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/community",
+        "heading": "Areas"
+      }
+    }
+  ]
+}

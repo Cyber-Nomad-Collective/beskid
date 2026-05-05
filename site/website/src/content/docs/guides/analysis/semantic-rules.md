@@ -271,9 +271,8 @@ This document enumerates semantic rules derived from the language spec. Rules ar
 - Trigger: attribute application site node kind is not included in attribute declaration target list.
 - Source: 01-lexical-and-syntax.
 
-## Drafted stage (out of v0.1 scope)
-- Generator-specific metaprogramming diagnostics are tracked in:
-  `docs/guides/drafts/metaprogramming/semantic-rules.md`.
+## Metaprogramming diagnostics (platform spec)
+- Generator- and `meta`-related diagnostics will be specified with the canonical **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)** language contract and **[analysis, query, and diagnostics facades](/platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/)** Mod SDK feature once implemented; do not treat legacy draft paths as normative.
 
 ## Notes
 - Rules marked Warning can be toggled via `AnalysisOptions`.

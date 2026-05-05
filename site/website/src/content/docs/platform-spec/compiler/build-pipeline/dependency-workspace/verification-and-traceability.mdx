@@ -1,0 +1,38 @@
+---
+title: Dependency workspace and lockfile - Verification and traceability
+description: Source anchors and test evidence for compile-plan and lockfile behavior.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Dependency workspace and lockfile
+    href: /platform-spec/compiler/build-pipeline/dependency-workspace/
+    relation: Parent feature hub
+  - type: Area
+    title: Conformance
+    href: /platform-spec/compiler/conformance/
+    relation: Test policy and fixtures
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+Implementation anchors:
+
+- `compiler/crates/beskid_analysis/src/projects/compile_plan.rs`
+- `compiler/crates/beskid_analysis/src/projects/workflow.rs`
+- `compiler/crates/beskid_cli/src/commands/fetch.rs`
+- `compiler/crates/beskid_cli/src/commands/lock.rs`
+
+Traceability expectation: each lock policy branch is covered by fixture-based tests.

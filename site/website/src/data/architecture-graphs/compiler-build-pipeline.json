@@ -1,0 +1,73 @@
+{
+  "title": "Reference build pipeline",
+  "description": "Implementation-facing stages from project resolution through lowering to JIT or AOT backends, aligned with the Beskid compiler workspace layout.",
+  "groups": [
+    { "id": "inputs", "label": "Inputs", "color": "#60a5fa" },
+    { "id": "analysis", "label": "Analysis", "color": "#a78bfa" },
+    { "id": "codegen", "label": "Codegen", "color": "#f472b6" },
+    { "id": "backends", "label": "Backends", "color": "#4ade80" }
+  ],
+  "nodes": [
+    {
+      "id": "resolve",
+      "label": "Project resolution",
+      "group": "inputs",
+      "description": "Resolve Project.proj / Workspace.proj, build compile plan, materialize workspace and Project.lock when applicable.",
+      "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/",
+      "tags": ["beskid_analysis", "services"],
+      "meta": { "Crate": "beskid_analysis", "Entry": "resolve_input / resolve_project_with_policy" }
+    },
+    {
+      "id": "parse",
+      "label": "Parse and validate",
+      "group": "analysis",
+      "description": "Parse Beskid source to AST; CLI may validate before lowering.",
+      "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
+      "tags": ["parse", "pest"],
+      "meta": { "Crate": "beskid_analysis", "Entry": "parse_program_with_source_name" }
+    },
+    {
+      "id": "lower",
+      "label": "lower_source",
+      "group": "codegen",
+      "description": "HIR, resolution, typing, and Cranelift lowering to CodegenArtifact.",
+      "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+      "tags": ["beskid_codegen"],
+      "meta": { "Crate": "beskid_codegen", "Entry": "lower_source" }
+    },
+    {
+      "id": "jit",
+      "label": "JIT execution",
+      "group": "backends",
+      "description": "Compile artifact in-process and invoke entrypoint (e.g. beskid run).",
+      "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/",
+      "tags": ["beskid_engine"],
+      "meta": { "Crate": "beskid_engine", "Entry": "run_entrypoint" }
+    },
+    {
+      "id": "aot",
+      "label": "AOT build",
+      "group": "backends",
+      "description": "Emit object, prepare runtime archive strategy, native link (e.g. beskid build).",
+      "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/",
+      "tags": ["beskid_aot"],
+      "meta": { "Crate": "beskid_aot", "Entry": "build" }
+    },
+    {
+      "id": "lsp",
+      "label": "LSP diagnostics",
+      "group": "analysis",
+      "description": "Editor diagnostics path: parse or cached snapshot plus semantic rules.",
+      "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
+      "tags": ["beskid_lsp"],
+      "meta": { "Crate": "beskid_lsp", "Entry": "analyze_document" }
+    }
+  ],
+  "edges": [
+    { "from": "resolve", "to": "parse", "label": "source path", "description": "Resolved source_path and source text feed parse/validate." },
+    { "from": "parse", "to": "lower", "label": "program", "description": "lower_source parses again internally then runs full pipeline." },
+    { "from": "lower", "to": "jit", "label": "artifact", "description": "JIT consumes CodegenArtifact from lowering." },
+    { "from": "lower", "to": "aot", "label": "artifact", "description": "AOT consumes the same CodegenArtifact." },
+    { "from": "resolve", "to": "lsp", "label": "context", "description": "LSP uses workspace and manifest paths alongside buffer text." }
+  ]
+}

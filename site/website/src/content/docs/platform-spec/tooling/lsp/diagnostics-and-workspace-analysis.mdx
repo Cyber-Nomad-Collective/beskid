@@ -1,0 +1,41 @@
+---
+title: Diagnostics and workspace analysis
+description: LSP diagnostic and workspace analysis contracts for Beskid editor integrations.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: LSP
+    href: /platform-spec/tooling/lsp/
+    relation: Parent area
+  - type: Feature
+    title: Diagnostics parity (CLI and LSP)
+    href: /platform-spec/compiler/build-pipeline/diagnostics-parity/
+    relation: Common diagnostic provenance rules
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+## Normative platform contract
+
+1. LSP document analysis shall support cached and cold diagnostic paths with equivalent semantic rule outcomes.
+2. Workspace scanning and symbol features shall use project graph context rather than isolated file parsing when available.
+3. Manifest diagnostics for `.proj` files shall be surfaced through project-specific diagnostic adapters.
+4. LSP diagnostics shall preserve severity and code identity from compiler analysis diagnostics.
+
+## Implementation anchors
+
+- `compiler/crates/beskid_lsp/src/diagnostics.rs`
+- `compiler/crates/beskid_lsp/src/workspace_scan.rs`
+- `compiler/crates/beskid_lsp/src/features`

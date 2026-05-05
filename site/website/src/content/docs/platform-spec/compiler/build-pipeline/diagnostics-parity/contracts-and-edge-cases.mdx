@@ -1,0 +1,34 @@
+---
+title: Diagnostics parity (CLI and LSP) - Contracts and edge cases
+description: Required parity behavior and accepted differences between diagnostic surfaces.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Diagnostics parity (CLI and LSP)
+    href: /platform-spec/compiler/build-pipeline/diagnostics-parity/
+    relation: Parent feature hub
+  - type: Domain
+    title: Tooling
+    href: /platform-spec/tooling/
+    relation: User-facing diagnostic UX
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+- Semantic error presence/absence must match across CLI and LSP for equivalent source.
+- Source label differences are allowed when paths intentionally differ (`path`, `source.bd`, `"<memory>"`).
+- Manifest (`.proj`) diagnostics must use project-error mapping paths, not code-file parsers.
+- Snapshot reuse in LSP must not hide newly introduced semantic errors.

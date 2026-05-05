@@ -9,8 +9,10 @@ description: FFI and C ABI specification
 - FFI boundary types are restricted to primitives and explicit layout structs.
 
 ## Ownership split
-- Language-level extern syntax and type diagnostics are defined in `docs/spec/ffi-and-extern.md`.
-- This document defines runtime-side ABI mapping and call-boundary behavior.
+- **Language surface** (`Extern` on contracts): `/platform-spec/language-meta/interop/ffi-and-extern/`.
+- **Abstract interop vocabulary** (symbols, shapes, conformance): `/platform-spec/language-meta/interop/interop-contracts/`.
+- **C ABI profile** (user libraries, System V, linking): `/platform-spec/language-meta/interop/c-abi-profile/`.
+- This document defines **runtime-side** ABI mapping and Cranelift call-boundary behavior for lowered code.
 
 ## Allowed FFI types (v0.1)
 - `i64`, `f64`, `bool` (as `i8`), `ptr`, `unit`.

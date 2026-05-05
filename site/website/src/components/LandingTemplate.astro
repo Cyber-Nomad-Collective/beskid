@@ -125,16 +125,23 @@ const resolvedCodeLang = codeLang === "beskid" || codeLang === "Beskid" ? "rust"
 
 <style>
   .landing-root {
-    --landing-bg: #111113;
-    --landing-muted: #a1a1aa;
-    --landing-border: #27272a;
-    --landing-card: #18181b;
-    --landing-panel: #0d0d0f;
-    --landing-accent: #b5c4fa;
+    --landing-surface: var(--beskid-surface);
+    --landing-muted: color-mix(in srgb, var(--sl-color-text) 78%, var(--beskid-outline));
+    --landing-border: var(--platform-spec-divider);
+    --landing-card: var(--platform-spec-surface-strong);
+    --landing-panel: color-mix(in srgb, var(--platform-spec-surface) 88%, var(--beskid-surface));
+    --landing-accent: var(--beskid-primary);
+    --landing-on-accent: var(--beskid-on-primary);
     margin: 0;
     width: 100%;
-    color: #ededef;
-    font-family: Inter, system-ui, sans-serif;
+    color: var(--sl-color-text);
+    font-family: var(--__sl-font, Inter, system-ui, sans-serif);
+    background: transparent;
+  }
+
+  :global(html[data-theme='light']) .landing-root {
+    --landing-muted: color-mix(in srgb, var(--sl-color-text) 85%, var(--beskid-outline));
+    --landing-panel: color-mix(in srgb, var(--beskid-surface) 96%, var(--beskid-surface-variant));
   }
 
   .hero-grid {
@@ -145,7 +152,7 @@ const resolvedCodeLang = codeLang === "beskid" || codeLang === "Beskid" ? "rust"
     padding: 2rem 0 0.5rem;
   }
 
-  .hero-copy h2 {
+  .hero-copy h1 {
     font-size: clamp(2.5rem, 5vw, 4.5rem);
     line-height: 1.05;
     letter-spacing: -0.03em;
@@ -188,13 +195,13 @@ const resolvedCodeLang = codeLang === "beskid" || codeLang === "Beskid" ? "rust"
 
   .action.primary {
     background: var(--landing-accent);
-    color: #111113;
+    color: var(--landing-on-accent);
     border-color: transparent;
   }
 
   .action.secondary:hover,
   .action.ghost:hover {
-    background: color-mix(in oklab, var(--landing-bg), #fff 8%);
+    background: color-mix(in srgb, var(--landing-surface) 88%, var(--beskid-primary) 12%);
   }
 
   .code-shell {
@@ -202,7 +209,7 @@ const resolvedCodeLang = codeLang === "beskid" || codeLang === "Beskid" ? "rust"
     border-radius: 0.85rem;
     overflow: hidden;
     background: var(--landing-panel);
-    box-shadow: 0 24px 48px rgb(0 0 0 / 28%);
+    box-shadow: 0 24px 48px color-mix(in srgb, black 42%, var(--beskid-primary));
   }
 
   .code-head {
@@ -250,8 +257,8 @@ const resolvedCodeLang = codeLang === "beskid" || codeLang === "Beskid" ? "rust"
     overflow-x: auto;
     font-size: 0.83rem;
     line-height: 1.65;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    color: #e4e4e7;
+    font-family: var(--__sl-font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
+    color: var(--sl-color-gray-2);
     background: var(--landing-panel);
   }
 
@@ -300,7 +307,7 @@ const resolvedCodeLang = codeLang === "beskid" || codeLang === "Beskid" ? "rust"
 
   .feature-card {
     border: 1px solid var(--landing-border);
-    background: color-mix(in oklab, var(--landing-bg), #fff 3%);
+    background: color-mix(in srgb, var(--platform-spec-surface-muted) 55%, transparent);
     border-radius: 0.85rem;
     padding: 1rem 1.05rem;
   }
@@ -321,7 +328,7 @@ const resolvedCodeLang = codeLang === "beskid" || codeLang === "Beskid" ? "rust"
     margin-top: 2.5rem;
     border: 1px solid var(--landing-border);
     border-radius: 1rem;
-    background: color-mix(in oklab, var(--landing-bg), #fff 2%);
+    background: color-mix(in srgb, var(--platform-spec-surface) 72%, transparent);
     padding: 1.25rem;
   }
 
@@ -342,7 +349,7 @@ const resolvedCodeLang = codeLang === "beskid" || codeLang === "Beskid" ? "rust"
     display: block;
     padding: 0.45rem 0.7rem;
     border-bottom: 1px solid var(--landing-border);
-    background: color-mix(in oklab, var(--landing-card), #fff 5%);
+    background: var(--landing-card);
     color: var(--landing-muted);
     text-transform: uppercase;
     font-size: 0.72rem;

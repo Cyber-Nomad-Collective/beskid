@@ -14,9 +14,12 @@ Define execution-level ownership for runtime ABI entrypoints, platform syscalls,
 4. Corelib-facing APIs remain stable while runtime internals evolve.
 
 ## ABI ownership split
-- Language-level `Extern` syntax and typing: `docs/spec/ffi-and-extern.md`.
+- **Language-level** `Extern` syntax and typing: `/platform-spec/language-meta/interop/ffi-and-extern/`.
+- **Interop.Contracts** (language-agnostic primitives): `/platform-spec/language-meta/interop/interop-contracts/`.
+- **C ABI profile** (user `Extern` libraries): `/platform-spec/language-meta/interop/c-abi-profile/`.
+- **Rust ABI profile** (runtime export surface): `/platform-spec/language-meta/interop/rust-abi-profile/`.
 - Runtime symbol/link/loading behavior: this document.
-- Corelib API-level contracts: `docs/corelib/`.
+- Corelib API-level contracts: `/corelib/` (Starlight corelib docs).
 
 ## Runtime-mediated execution model
 - System-facing corelib operations call stable runtime ABI entrypoints.

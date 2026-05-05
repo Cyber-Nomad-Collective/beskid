@@ -1,0 +1,40 @@
+---
+title: Build and run orchestration - Examples
+description: Gives concrete newcomer-friendly scenarios mapped to real compiler paths.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Build and run orchestration
+    href: /platform-spec/compiler/build-pipeline/build-and-run-orchestration/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article documents **examples** for **build and run orchestration** in the reference compiler.
+
+## What this covers
+For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
+
+## Anchored code paths
+- `compiler/crates/beskid_cli/src/commands/` coordinates compile, run, and doc commands.
+- `compiler/crates/beskid_engine/src/jit_module.rs` executes JIT pipelines from compiled artifacts.
+- `compiler/crates/beskid_tests/src/runtime/jit.rs` and e2e fixtures verify orchestration behavior.
+
+## Practical notes
+- Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
+- Treat diagnostics and tests as part of the contract, not optional implementation details.
+- If behavior changes, update this article and add/adjust tests in `compiler/crates/beskid_tests` or `compiler/crates/beskid_e2e_tests`.

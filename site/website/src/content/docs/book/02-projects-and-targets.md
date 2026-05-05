@@ -50,8 +50,8 @@ Resolution and build flows follow a deterministic order:
 - [Project Resolution](/guides/projects/resolution/)
 - [Build Workflow](/guides/projects/build-workflow/)
 - [Lockfile](/guides/projects/lockfile/)
-- [Project JSON v1](/spec/package-json-v1/)
-- [Project Lock v1](/spec/project-lock-v1/)
+- [Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)
+- [Workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
 
 ## Next
 

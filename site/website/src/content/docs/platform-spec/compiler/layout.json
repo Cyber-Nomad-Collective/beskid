@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "level": "domain",
+  "extends": "domain-default",
+  "pathPrefix": "platform-spec/compiler",
+  "minSpecSections": 1,
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/compiler",
+        "heading": "Areas"
+      }
+    }
+  ]
+}

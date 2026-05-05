@@ -1,0 +1,60 @@
+---
+title: Beskid.Compiler.Syntax facade
+description: Typed, allocation-bounded syntax node API exposed to compile-time Beskid modules.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Parent area
+  - type: Domain
+    title: Compiler
+    href: /platform-spec/compiler/
+    relation: Parent domain hub
+  - type: Area
+    title: Metaprogramming (language meta)
+    href: /platform-spec/language-meta/metaprogramming/
+    relation: Language semantics for meta blocks
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Process phase operates over this facade
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Meta project orchestration
+  - type: Feature
+    title: Syntax domain model generation
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/
+    relation: Upstream generation contract
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+This feature hub defines the normative contract for **Beskid.Compiler.Syntax** and links detailed articles.
+
+## Language alignment
+Fluent **`Beskid.Compiler.Query`** plans (process phase) consume **Syntax** views. APIs must preserve immutability and identity stability required by **capture** keys in language-meta.
+
+## Implementation anchors
+- `corelib` package module `Beskid.Compiler.Syntax` (generated + hand-authored surface).
+- `compiler/crates/beskid_analysis/src/syntax/` — authoritative internal model to mirror.
+
+- [Design model](./design-model/)
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Examples](./examples/)
+- [Verification and traceability](./verification-and-traceability/)
+- [FAQ and troubleshooting](./faq-and-troubleshooting/)

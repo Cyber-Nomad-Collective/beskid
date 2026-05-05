@@ -1,0 +1,39 @@
+---
+title: Workspace resolution contract - Flow and algorithm
+description: End-to-end algorithm from manifest discovery to resolved compile input.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Workspace resolution contract
+    href: /platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/
+    relation: Parent feature hub
+  - type: Feature
+    title: Dependency workspace and lockfile
+    href: /platform-spec/compiler/build-pipeline/dependency-workspace/
+    relation: Workspace preparation step
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+1. Resolve project root and load `Project.proj` manifest.
+2. Build dependency graph with policy (`error`, `warn`, or permissive) for unresolved dependencies.
+3. Classify each node’s **project type** (including **`Meta`**) and retain manifest fragments needed for meta host registration.
+4. Select compilation target and create `CompilePlan`.
+5. Optionally materialize workspace and lockfile synchronization.
+6. Return final source root and entry path for parsing/lowering.
+7. If the workspace includes **`Meta`** projects, pass the resolved graph slice to the **meta host** for **event subscription** setup (see **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**).
+
+Implementations should use `build_compile_plan_with_policy` and `prepare_project_workspace_with_options` to keep command behavior aligned.

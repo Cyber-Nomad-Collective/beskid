@@ -1,0 +1,58 @@
+---
+title: Build pipeline
+description: Formal platform contracts for project resolution, lowering, diagnostics parity, and JIT versus AOT backends in the reference compiler.
+template: splash
+tableOfContents: true
+specLevel: area
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Domain
+    title: Compiler
+    href: /platform-spec/compiler/
+    relation: Parent domain hub
+  - type: Domain
+    title: Language meta
+    href: /platform-spec/language-meta/
+    relation: User-visible semantics live here; this area covers implementation phases
+  - type: Feature
+    title: Spec and compiler bridge
+    href: /platform-spec/legacy-spec-mapping/
+    relation: How normative spec chapters map onto platform-spec leaves
+architectureGraph:
+  source: src/data/architecture-graphs/compiler-build-pipeline.json
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+import DomainOrAreaHub from '@beskid/docs-ui/platform-spec/DomainOrAreaHub.astro';
+
+<SpecPageHeader
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="Scope" id="scope">
+This **area** specifies the **reference compiler workspace** (`compiler/` in the Beskid repository): which stages exist, their ordering, observable CLI behaviour, and where JIT and AOT diverge. It does **not** redefine language semantics; those remain in [Language meta](/platform-spec/language-meta/).
+
+Execution host details (runtime ABI chapters, long-form IR narrative) continue to live under [Execution](/execution/) where noted; this area links to them from backend features.
+</SpecSection>
+
+<SpecSection title="Pipeline overview" id="overview">
+The diagram below mirrors the primary data flow: **project resolution** (optional) supplies `source_path` and `source` text; **lowering** (`beskid_codegen::lower_source`) performs parse, semantic rules (when enabled), HIR, resolution, typing, and Cranelift lowering into a **`CodegenArtifact`**; **JIT** (`beskid_engine::run_entrypoint`) or **AOT** (`beskid_aot::build`) consumes that artifact.
+</SpecSection>
+
+<DomainOrAreaHub pathPrefix="platform-spec/compiler/build-pipeline" summaryTitle="Subtree summary" />
+
+<SpecSection title="Feature index" id="feature-index">
+Use the tiles below for normative **feature** contracts (each page declares `status` and owner metadata).
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/compiler/build-pipeline" heading="Features" />

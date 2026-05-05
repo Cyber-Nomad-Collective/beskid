@@ -1,0 +1,40 @@
+---
+title: Analysis, query, and diagnostics facades - Verification and traceability
+description: Semantic queries, symbol handles, and diagnostic transport available inside meta execution.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Analysis, query, and diagnostics facades
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article documents **verification and traceability** for **Analysis, query, and diagnostics facades**.
+
+## Traceability matrix
+- Anchor: `compiler/crates/beskid_analysis/src/analysis/` — staged rules and semantic state.
+- Anchor: `compiler/crates/beskid_analysis/src/resolve/` — resolution products queryable from facades.
+- Anchor: `compiler/crates/beskid_lsp/src/diagnostics.rs` — diagnostic shaping for editor parity.
+
+## Verification expectations
+- Contract tests in `compiler/crates/beskid_tests` assert ordering, diagnostic codes, and merge behavior once implemented.
+- Golden incremental traces (optional) validate invalidation when syntax edits move spans tied to meta registrations.
+
+## Review cadence
+- Update this bundle whenever public `Beskid.Compiler.*` shapes or host policies change.

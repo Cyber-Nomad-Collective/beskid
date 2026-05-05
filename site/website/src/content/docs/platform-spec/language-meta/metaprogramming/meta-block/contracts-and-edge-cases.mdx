@@ -1,0 +1,47 @@
+---
+title: meta compilation block - Contracts and edge cases
+description: Determinism, visibility, Meta-only constraints, isolating vs aggregating capture, and failure modes.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+This article lists **language-level contracts and edge cases** for **`meta`** blocks and **`Meta`** projects.
+
+## Contracts
+
+- **Single current compilation (default)** — Unless explicitly extended by platform API, `meta` observes and mutates only the **enclosing compilation instance** associated with the host scheduling point.
+- **Determinism** — For fixed sources, dependency closure, compiler version, and host options, **capture match order**, **process pipeline evaluation order**, **emit apply order**, and **diagnostic ordering** are stable (path-normalized, stable tie-breaks).
+- **Visibility** — `meta` obeys module **visibility** and **name resolution** rules for symbols it references; no elevation of private symbols without an explicit **capability** (compiler policy).
+- **Declarative emit** — Contributions must be expressible as **typed** syntax or symbol operations accepted by the host; the language does not guarantee a stable raw-text patch API.
+- **Diagnostics on compiler channel** — User-visible diagnostics from `meta` are reported through the **same diagnostic infrastructure** as the rest of the compiler so Rust-side and LSP surfaces stay consistent (shape and IDs: Mod SDK contract).
+- **Meta project wiring** — A **`Meta`** project must declare enough manifest metadata for the host to know **which compilations** it attaches to and **which entry modules** define `meta` processes; malformed manifests are errors with stable diagnostics (manifest contract).
+
+## Capture granularity (language intent)
+
+- **Isolating-style capture (default intent)** — Targets are bound so that **changes outside** those bindings do not require re-running that `meta` item’s full pipeline (host realizes this via incremental keys).
+- **Aggregating-style capture (opt-in)** — When capture must depend on **any** new or changed source (e.g. registry of all types matching a query), the declaration must be classifiable as **aggregating** so users and tools expect broader invalidation (compiler Mod SDK encodes this).
+
+## Edge cases
+
+- **Conditional compilation** — Regions elided by compile-time conditions are not observable in capture unless the grammar explicitly includes them in a skipped-inspection construct.
+- **Partial typing** — If capture or process requires semantic facts not yet available, the host must **defer** that `meta` item or emit a **diagnostic**, not guess types.
+- **Conflicting emits** — Two `meta` items contributing **incompatible** changes to the same **declaration identity** produce a **deterministic** merge failure surfaced as diagnostics; the program is not left partially applied in an ill-formed state.
+- **Non-Meta projects** — If `meta` appears in a non-`Meta` project, platform policy may **forbid** it, **ignore** it, or **treat** it as an error; the default policy must be documented in the manifest or language appendix (tooling contract).

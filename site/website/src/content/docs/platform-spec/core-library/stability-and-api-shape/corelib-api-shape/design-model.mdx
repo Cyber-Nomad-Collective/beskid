@@ -1,0 +1,54 @@
+---
+title: Design model
+description: Conceptual model for `Corelib API shape` and its subsystem boundaries.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Proposed
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Stability and API shape
+    href: /platform-spec/core-library/stability-and-api-shape/
+    relation: Parent area
+  - type: Area
+    title: Compiler integration
+    href: /platform-spec/core-library/compiler-integration/
+    relation: Discovery and packaging guarantee the API shape being consumed
+  - type: Feature
+    title: Types
+    href: /platform-spec/language-meta/type-system/types/
+    relation: Corelib signatures rely on language type contracts
+  - type: Feature
+    title: Corelib API shape
+    href: /platform-spec/core-library/stability-and-api-shape/corelib-api-shape/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## Model at a glance
+
+`Corelib API shape` is modeled as a contract surface between producer crates and consumer crates. New contributors should treat it as a boundary document first and an implementation detail map second.
+
+## Primary actors
+
+- Producer side: crates that define or emit the contract surface.
+- Consumer side: crates that read, execute, or validate that surface.
+- Conformance side: test crates that pin expected behavior.
+
+## Concrete crate anchors
+
+- Public module and prelude sources under `compiler/corelib/beskid_corelib`
+- Shape-sensitive compile tests in `compiler/crates/beskid_tests/src/projects/corelib/compile.rs`
+- Layout and compatibility checks in `compiler/crates/beskid_tests/src/projects/corelib/layout.rs`
+- Runtime-facing call coverage in `compiler/crates/beskid_tests/src/abi/contracts.rs`

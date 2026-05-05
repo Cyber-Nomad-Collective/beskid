@@ -1,0 +1,35 @@
+---
+title: Design model
+description: Conceptual model for owning and evolving semantic diagnostic codes.
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Diagnostic code registry
+    href: /platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/
+    relation: Parent feature
+  - type: Feature
+    title: Rules and diagnostics catalog
+    href: /platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/
+    relation: Rules emit registry-defined code identities
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+The registry model is intentionally centralized:
+
+- `diagnostic_kinds.rs` owns code identities and semantic categories.
+- Rule modules reference kinds, not hard-coded code strings.
+- Delivery adapters (CLI/LSP) preserve code identity while formatting messages.
+
+This avoids drift between compiler internals and platform documentation, and it makes diagnostics easier to consume in editors and CI tooling.

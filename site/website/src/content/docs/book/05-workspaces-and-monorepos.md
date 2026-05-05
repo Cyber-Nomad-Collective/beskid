@@ -26,7 +26,7 @@ Use `Workspace.proj` when a repository has multiple Beskid projects that should 
 
 ## Deep dive in spec and guides
 
-- [Workspace Proj v1](/spec/workspace-proj-v1/)
+- [Workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
 - [Workspace Monorepo Setup](/guides/workspace-monorepo/)
 - [Project Resolution](/guides/projects/resolution/)
 

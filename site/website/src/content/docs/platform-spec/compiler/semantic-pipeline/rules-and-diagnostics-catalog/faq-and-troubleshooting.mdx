@@ -1,0 +1,39 @@
+---
+title: FAQ and troubleshooting
+description: Common semantic-pipeline debugging questions and practical checks.
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Rules and diagnostics catalog
+    href: /platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/
+    relation: Parent feature
+  - type: Feature
+    title: Parser and AST contracts
+    href: /platform-spec/compiler/front-end/parser-and-ast-contracts/
+    relation: Many semantic failures are rooted in malformed or partial syntax nodes
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+### Why do semantic tests fail after parser changes?
+
+Rules often assume specific syntax node shapes. Re-check parser output and resolver binding before changing rule logic.
+
+### Where should a new diagnostic kind be added?
+
+Add it in `analysis/diagnostic_kinds.rs`, then wire rule emission to the new kind. Do not introduce one-off string codes inside rule modules.
+
+### Why do CLI and LSP messages look different?
+
+Presentation may differ, but code identity and source spans must match. Validate through shared diagnostics tests and adapter checks.

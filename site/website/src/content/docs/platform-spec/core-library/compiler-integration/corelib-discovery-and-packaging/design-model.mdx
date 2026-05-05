@@ -1,0 +1,54 @@
+---
+title: Design model
+description: Conceptual model for `Corelib discovery and packaging` and its subsystem boundaries.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Compiler integration
+    href: /platform-spec/core-library/compiler-integration/
+    relation: Parent area
+  - type: Area
+    title: Resolution and projects
+    href: /platform-spec/compiler/resolution-and-projects/
+    relation: Project graph logic resolves and injects corelib
+  - type: Area
+    title: Stability and API shape
+    href: /platform-spec/core-library/stability-and-api-shape/
+    relation: API stability expectations depend on canonical packaging
+  - type: Feature
+    title: Corelib discovery and packaging
+    href: /platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+## Model at a glance
+
+`Corelib discovery and packaging` is modeled as a contract surface between producer crates and consumer crates. New contributors should treat it as a boundary document first and an implementation detail map second.
+
+## Primary actors
+
+- Producer side: crates that define or emit the contract surface.
+- Consumer side: crates that read, execute, or validate that surface.
+- Conformance side: test crates that pin expected behavior.
+
+## Concrete crate anchors
+
+- Canonical package root `compiler/corelib/beskid_corelib`
+- Corelib path discovery in `compiler/crates/beskid_analysis/src/projects/graph/resolver.rs`
+- CLI embedding/install support in `compiler/crates/beskid_cli/build.rs` and `compiler/crates/beskid_cli/src/corelib_runtime.rs`
+- Integration checks in `compiler/crates/beskid_tests/src/projects/corelib`

@@ -1,0 +1,45 @@
+---
+title: Design model
+description: Conceptual model for `Project manifest contract` and its subsystem boundaries.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Manifests and lockfiles
+    href: /platform-spec/tooling/manifests-and-lockfiles/
+    relation: Parent area
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+## What this article covers
+This article explains the `design-model` view for `Project manifest contract` in concrete, onboarding-first language.
+
+## Meta project type (`Meta`)
+`Project.proj` carries a **project kind** / **type** field (exact spelling in schema tooling). When set to **`Meta`**, the manifest denotes a project whose primary role is **meta orchestration**: wiring **`meta`** entry modules to **host compilations** and declaring defaults for attachment, budgets, and allowed capabilities. User-visible semantics of **`meta`** blocks remain in **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)**; this contract defines **manifest shape** and **validation** so resolution and the Mod SDK host can agree on inputs.
+
+## Newcomer walk-through
+Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+
+## Code anchors
+- Manifest loading in `compiler/crates/beskid_analysis/src/services.rs`
+- CLI project graph setup in `compiler/crates/beskid_cli/src/commands/`
+- Workspace resolution in `compiler/crates/beskid_analysis/src/resolve/items.rs`
+
+## Practical guidance
+When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

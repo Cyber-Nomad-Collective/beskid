@@ -1,0 +1,57 @@
+---
+title: meta compilation block - Flow and algorithm
+description: Ordering of capture, process, and emit; discovery; iterative rounds; Meta project orchestration.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+This article documents **flow and algorithms** for **`meta`** blocks and **`Meta`** project orchestration from the language user’s perspective.
+
+## Workspace and Meta projects
+
+1. The toolchain resolves **`Project.proj` / `Workspace.proj`** and classifies each project’s **type**.
+2. For **`Meta`** projects, the host registers **meta entrypoints** (modules or items declared by manifest policy) and associates them with **one or more host compilations** (e.g. the workspace default compile, or explicit targets named in the manifest).
+3. When a host compilation runs, **compilation events** (parse refresh, graph change, phase boundaries—exact set is host-defined but must be documented under Mod SDK) may **schedule** `meta` work.
+
+## Parsing and discovery
+
+1. The compiler parses compilation units, retaining **`meta` items** in the syntax tree.
+2. **`meta` items** are discovered in a **deterministic total order** (stable module walk and tie-break rules; see incremental scheduling contract for implementation).
+3. Within each item, **capture** runs first to produce a **target set** (or sparse provider of targets), then **process**, then **emit**, unless the language defines a fused shorthand that lowers to this order.
+
+## Declarative phases (user-observable)
+
+- **Capture** — Evaluate capture predicates against the **current compilation** snapshot; record **stable keys** for each bound target for invalidation (compiler contract).
+- **Process** — Run the **fluent pipeline**: narrow with cheap predicates, then semantic queries, then transforms that produce **plans** (not applied syntax until emit).
+- **Emit** — The host **validates and applies** contributions and attaches **diagnostics** to spans; failed validation yields diagnostics and does not leave the program ill-formed.
+
+## Iterative and non-destructive behavior
+
+The host may run **multiple rounds**: e.g. emit introduces members that enable further capture matches, or a fixed-point policy caps rounds. Each round must:
+
+- Start from a **consistent snapshot** of the program after the previous apply step.
+- Preserve **determinism**: same inputs and compiler version imply the same observable order of applications and diagnostics (per host configuration).
+
+## User-observable lifecycle relative to the rest of the pipeline
+
+- **Before meta (for a given scheduling point)** — Syntax (and any snapshot phase the host promises) required by capture predicates is available.
+- **During meta** — Process and emit run under **budget and capability** policy; diagnostics use the **compiler diagnostic** channel.
+- **After meta** — The merged program continues **semantic analysis, typing, and lowering** as for programs without meta, unless the host defines an earlier partial semantic snapshot for process-only inspection (documented under Mod SDK).

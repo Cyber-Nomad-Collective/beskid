@@ -1,0 +1,39 @@
+---
+title: meta block host bridge - FAQ and troubleshooting
+description: Reference compiler-owned execution, capability policy, and communication with compile-time Beskid modules.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: meta block host bridge
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article collects **FAQ** entries for **meta block host bridge**.
+
+## Why separate language-meta and compiler pages?
+Language-meta defines what `meta` *means* to users; this compiler area defines how the host *implements* those meanings safely and incrementally.
+
+## Can meta call arbitrary FFI?
+No — unless explicitly granted by platform policy and declared in compilation capabilities. Default contracts deny ambient FFI.
+
+Authoritative split: **[FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/)** (language `Extern` contracts), **[Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/)** (abstract primitives), **[C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/)** / **[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/)** (concrete profiles). Meta does not implicitly satisfy any of these without host-granted capabilities.
+
+## Where do Roslyn/KSP parallels apply?
+Only as rationale for incremental caches and typed models; Beskid contracts are authoritative here, not foreign tool behavior.

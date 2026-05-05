@@ -1,0 +1,4543 @@
+{
+  "generatedAt": "2026-05-01T11:13:40.518Z",
+  "summary": {
+    "nodes": 381,
+    "errors": 0,
+    "warnings": 0
+  },
+  "nodes": [
+    {
+      "slug": "platform-spec",
+      "level": "root",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community",
+      "level": "domain",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "rationale",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "background",
+          "required": false,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler",
+      "level": "domain",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "rationale",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "background",
+          "required": false,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline",
+      "level": "area",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": false,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 3,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/dependency-workspace",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/stage-ordering",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/stage-ordering/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/stage-ordering/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/stage-ordering/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/stage-ordering/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/stage-ordering/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/stage-ordering/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/conformance-evidence-policy",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/implementation-map",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk",
+      "level": "area",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": false,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 6,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library",
+      "level": "domain",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "rationale",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "background",
+          "required": false,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution",
+      "level": "domain",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "rationale",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "background",
+          "required": false,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/panic-io-and-syscalls",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/runtime-feature-flags",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/runtime-feature-flags/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/runtime-feature-flags/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/runtime-feature-flags/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/runtime-feature-flags/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/runtime-feature-flags/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/runtime-feature-flags/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta",
+      "level": "domain",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "rationale",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "background",
+          "required": false,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/conformance",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/c-abi-profile",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/c-abi-profile/extern-contracts-and-linking",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/c-abi-profile/types-and-call-conventions",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/interop-contracts",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 3,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/interop-contracts/conformance-and-versioning",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/interop-contracts/core-primitives",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/interop-contracts/language-agnostic-mapping",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/rust-abi-profile",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/rust-abi-profile/boundary-and-stability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/rust-abi-profile/shims-and-compatibility",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/memory-model",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming",
+      "level": "area",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": false,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/meta-block",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/meta-block/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/meta-block/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/meta-block/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/meta-block/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/meta-block/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/meta-block/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/surface-syntax",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling",
+      "level": "domain",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "rationale",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "background",
+          "required": false,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/build-analyze-run-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/build-analyze-run-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/build-analyze-run-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/build-analyze-run-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/build-analyze-run-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/build-analyze-run-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/build-analyze-run-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/lsp",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 3,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client/pckg-client-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client/pckg-client-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client/pckg-client-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client/pckg-client-contract/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client/pckg-client-contract/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client/pckg-client-contract/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client/pckg-client-contract/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/extension-surface",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/extension-surface/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/extension-surface/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/extension-surface/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/extension-surface/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/extension-surface/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/extension-surface/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    }
+  ],
+  "diagnostics": []
+}

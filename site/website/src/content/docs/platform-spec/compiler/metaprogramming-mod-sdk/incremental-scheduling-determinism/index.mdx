@@ -1,0 +1,60 @@
+---
+title: Incremental scheduling and determinism
+description: Cache boundaries, invalidation keys, and replay guarantees for meta outputs and Mod SDK reads.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-01
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Parent area
+  - type: Domain
+    title: Compiler
+    href: /platform-spec/compiler/
+    relation: Parent domain hub
+  - type: Area
+    title: Metaprogramming (language meta)
+    href: /platform-spec/language-meta/metaprogramming/
+    relation: Language semantics for meta blocks
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Isolating vs aggregating capture intent
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Meta project graphs
+  - type: Feature
+    title: Meta block host bridge
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/
+    relation: Producer of incremental dependency edges
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+This feature hub defines invalidation keys, cache boundaries, and replay for **`meta`** pipelines and **`Meta`** projects.
+
+## Language alignment
+Maps language-meta **isolating** vs **aggregating** capture to concrete dependency graph width and dirty-set propagation.
+
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/analysis/rules/staged/` — precedent for staged invalidation.
+- `compiler/crates/beskid_lsp/` — incremental document models and rescan triggers.
+
+- [Design model](./design-model/)
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Examples](./examples/)
+- [Verification and traceability](./verification-and-traceability/)
+- [FAQ and troubleshooting](./faq-and-troubleshooting/)

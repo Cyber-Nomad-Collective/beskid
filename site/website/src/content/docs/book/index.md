@@ -10,7 +10,7 @@ This book is the practical introduction to Beskid. It is written as a tutorial t
 - Read chapters in order if you are new to Beskid.
 - Treat each chapter as "learn, apply, verify": read the concept, try it in a small file, then cross-check with linked spec pages.
 - Keep the spec open for details and edge cases:
-  - [Language Spec](/spec/)
+  - [Language Spec](/platform-spec/language-meta/)
   - [Execution docs](/execution/)
   - [Corelib docs](/corelib/)
 

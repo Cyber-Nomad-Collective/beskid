@@ -1,0 +1,39 @@
+---
+title: Incremental scheduling and determinism - Verification and traceability
+description: Cache boundaries, invalidation keys, and replay guarantees for meta outputs and Mod SDK reads.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Incremental scheduling and determinism
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article documents **verification and traceability** for **Incremental scheduling and determinism**.
+
+## Traceability matrix
+- Anchor: `compiler/crates/beskid_analysis/src/analysis/rules/staged/` — precedent for staged invalidation.
+- Anchor: `compiler/crates/beskid_lsp/` — incremental document models and rescan triggers.
+
+## Verification expectations
+- Contract tests in `compiler/crates/beskid_tests` assert ordering, diagnostic codes, and merge behavior once implemented.
+- Golden incremental traces (optional) validate invalidation when syntax edits move spans tied to meta registrations.
+
+## Review cadence
+- Update this bundle whenever public `Beskid.Compiler.*` shapes or host policies change.

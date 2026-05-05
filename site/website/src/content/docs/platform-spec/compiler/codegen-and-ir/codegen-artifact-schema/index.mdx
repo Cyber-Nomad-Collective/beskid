@@ -1,0 +1,38 @@
+---
+title: Codegen artifact schema
+description: Feature hub for the codegen artifact schema in the reference compiler.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Codegen and IR
+    href: /platform-spec/compiler/codegen-and-ir/
+    relation: Parent area
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+This feature hub defines the normative contract for **codegen artifact schema** and links newcomer-oriented reference articles.
+
+## Implementation anchors
+- `compiler/crates/beskid_engine/src/jit_module.rs` consumes generated artifact fields.
+- `compiler/crates/beskid_tests/src/runtime/jit.rs` validates runtime execution from codegen output.
+- `compiler/crates/beskid_tests/src/abi/contracts.rs` checks ABI-level schema compatibility.
+
+- [Design model](./design-model/)
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Examples](./examples/)
+- [Verification and traceability](./verification-and-traceability/)
+- [FAQ and troubleshooting](./faq-and-troubleshooting/)

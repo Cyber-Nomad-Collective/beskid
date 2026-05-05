@@ -1,0 +1,37 @@
+---
+title: Syntax domain model generation - Contracts and edge cases
+description: Contract for generating the immutable Beskid syntax domain model consumed by Mod SDK facades and meta discovery.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Syntax domain model generation
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article states **contracts and edge cases** for **Syntax domain model generation**.
+
+## Hard requirements
+- **Deterministic ordering** — discovery and execution order must be reproducible from equal inputs (path-normalized roots, sorted files, stable tie-breaks).
+- **Bounded work** — host enforces step limits, allocation caps, and recursion depth across nested meta calls.
+- **Versioned facades** — `Beskid.Compiler` surface is tied to compiler language version tokens exposed on the compilation instance.
+
+## Edge cases
+- **Partial programs** — facades must tolerate incomplete syntax where the language permits; diagnostics are preferred over host panics.
+- **Conflicting edits** — multiple meta contributors touching the same declaration identity produce a deterministic merge failure surfaced as structured diagnostics.
