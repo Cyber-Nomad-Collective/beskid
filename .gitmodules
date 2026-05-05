@@ -10,4 +10,4 @@
 	url = https://github.com/pmikstacki/bsharp.git
 [submodule "beskid_vscode"]
 	path = beskid_vscode
-	url = ../beskid_vscode.git
+	url = https://github.com/Cyber-Nomad-Collective/beskid_vscode.git
