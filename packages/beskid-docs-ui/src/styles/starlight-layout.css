@@ -1,0 +1,31 @@
+/**
+ * Site-wide Starlight layout: main doc column uses full width of the content pane.
+ * Sidebar width and mobile behavior remain Starlight defaults.
+ */
+.page .main-pane .content-panel,
+.page .main-pane .content-panel .sl-container,
+.page .main-pane .sl-markdown-content {
+	max-width: none !important;
+	width: 100%;
+}
+
+.page .main-pane .sl-container {
+	box-sizing: border-box;
+}
+
+/* Book / guides prose: align interactive text with platform-spec accent rhythm */
+.sl-markdown-content a:not([class]) {
+	color: var(--sl-color-text-accent);
+	text-decoration-color: color-mix(in srgb, var(--sl-color-accent) 50%, transparent);
+}
+
+.sl-markdown-content a:not([class]):hover {
+	color: var(--sl-color-accent-high);
+}
+
+@media (min-width: 50rem) {
+	nav.sidebar .sidebar-pane {
+		border-inline-end: 1px solid var(--platform-spec-divider);
+		box-sizing: border-box;
+	}
+}

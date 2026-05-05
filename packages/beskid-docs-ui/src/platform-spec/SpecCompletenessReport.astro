@@ -1,0 +1,79 @@
+---
+/**
+ * Renders one node’s layout completeness row from `src/generated/platform-spec-layout-report.json`
+ * (produced by `pnpm verify:platform-spec-layout`).
+ */
+import type { CompletenessReport } from 'trudoc/layout';
+
+interface ReportNode {
+	slug: string;
+	level: string;
+	status: 'ok' | 'warn' | 'fail';
+	sections: { id: string; required: boolean; found: boolean }[];
+	counts: { specSections: number; markdownH2: number };
+	messages: { code: string; severity: string; slug: string; message: string; detail?: string }[];
+}
+
+interface Props {
+	articleRootSlug: string;
+	report: CompletenessReport;
+}
+
+const { articleRootSlug, report } = Astro.props;
+
+const node = report.nodes.find((n) => n.slug === articleRootSlug) ?? null;
+---
+
+{
+	node ? (
+		<div class="platform-spec-completeness" aria-label="Layout contract completeness">
+			<div class:list={['platform-spec-completeness__banner', `is-${node.status}`]}>
+				<span class="platform-spec-completeness__status">{node.status.toUpperCase()}</span>
+				<span class="platform-spec-completeness__meta">
+					{node.level} · {node.counts.specSections} SpecSection(s) · {node.counts.markdownH2} H2 heading(s)
+				</span>
+			</div>
+			{node.sections.length > 0 && (
+				<table class="platform-spec-completeness__table">
+					<thead>
+						<tr>
+							<th scope="col">Section id</th>
+							<th scope="col">Required</th>
+							<th scope="col">Found</th>
+						</tr>
+					</thead>
+					<tbody>
+						{node.sections.map((s) => (
+							<tr>
+								<td>
+									<code>{s.id}</code>
+								</td>
+								<td>{s.required ? 'yes' : 'no'}</td>
+								<td class:list={[s.found ? 'is-ok' : 'is-miss']}>{s.found ? 'yes' : 'no'}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			)}
+			{node.messages.length > 0 && (
+				<ul class="platform-spec-completeness__messages">
+					{node.messages.map((m) => (
+						<li class:list={['platform-spec-completeness__msg', `is-${m.severity}`]}>
+							<strong>{m.code}</strong>: {m.message}
+							{m.detail && <span class="platform-spec-completeness__detail"> ({m.detail})</span>}
+						</li>
+					))}
+				</ul>
+			)}
+			<p class="platform-spec-completeness__foot">
+				Full tree: run <code>pnpm verify:platform-spec-layout</code> (writes{' '}
+				<code>src/generated/platform-spec-layout-report.json</code>).
+			</p>
+		</div>
+	) : (
+		<p class="platform-spec-completeness__empty">
+			No completeness row for <code>{articleRootSlug}</code>. Run <code>pnpm verify:platform-spec-layout</code> after
+			editing <code>layout.json</code> contracts.
+		</p>
+	)
+}

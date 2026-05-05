@@ -1,0 +1,15 @@
+---
+interface Props {
+	node: string;
+	label?: string;
+	iconOnly?: boolean;
+}
+
+const { node, label = 'Open in map', iconOnly = false } = Astro.props;
+const href = `/platform-spec/?node=${encodeURIComponent(node)}&expand=1&fit=1`;
+---
+
+<a class={`platform-spec-open-in-graph${iconOnly ? ' platform-spec-open-in-graph--icon' : ''}`} href={href} title={label}>
+	<span aria-hidden="true">◎</span>
+	{!iconOnly && <span>{label}</span>}
+</a>

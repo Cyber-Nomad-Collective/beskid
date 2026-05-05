@@ -1,0 +1,431 @@
+---
+import { getCollection } from 'astro:content';
+import type { RelatedTopicPayload } from 'trudoc/platform-spec';
+import { docEntrySlug } from './specSlug';
+
+type GraphNode = {
+	id: string;
+	label: string;
+	level: 'root' | 'domain' | 'area' | 'feature';
+	/** Stable key for palette (same as `domain` for all non-root nodes under a domain). */
+	domainKey?: string;
+	domain?: string;
+	areaPath?: string;
+	href?: string;
+	hidden?: boolean;
+	/** Panel heading (usually frontmatter title). */
+	displayTitle?: string;
+	description?: string;
+	specLevel?: string;
+	status?: string;
+	ownerName?: string;
+	relatedTopics?: RelatedTopicPayload[];
+};
+
+type GraphEdge = {
+	id: string;
+	from: string;
+	to: string;
+	hidden?: boolean;
+	/** Short edge caption (vis label). */
+	label?: string;
+	/** Tooltip / longer description. */
+	title?: string;
+};
+
+function docDescription(data: { description?: string }): string | undefined {
+	const d = data.description;
+	return typeof d === 'string' && d.trim() !== '' ? d.trim() : undefined;
+}
+
+function relatedFromDoc(data: { relatedTopics?: unknown[] }): RelatedTopicPayload[] | undefined {
+	const r = data.relatedTopics;
+	if (!Array.isArray(r) || r.length === 0) return undefined;
+	const out: RelatedTopicPayload[] = [];
+	for (const raw of r) {
+		if (!raw || typeof raw !== 'object') continue;
+		const x = raw as Record<string, unknown>;
+		const type = x.type;
+		const title = x.title;
+		const href = x.href;
+		if (type !== 'Domain' && type !== 'Area' && type !== 'Feature') continue;
+		if (typeof title !== 'string' || typeof href !== 'string') continue;
+		const topic: RelatedTopicPayload = { type, title, href };
+		if (typeof x.relation === 'string' && x.relation.trim() !== '') topic.relation = x.relation.trim();
+		if (x.blocker === true) topic.blocker = true;
+		const sev = x.severity;
+		if (
+			sev === 'informational' ||
+			sev === 'low' ||
+			sev === 'medium' ||
+			sev === 'high' ||
+			sev === 'critical'
+		) {
+			topic.severity = sev;
+		}
+		out.push(topic);
+	}
+	return out.length ? out : undefined;
+}
+
+const all = await getCollection('docs');
+const entries = all.filter((e) => {
+	const s = docEntrySlug(e);
+	return s === 'platform-spec' || s.startsWith('platform-spec/');
+});
+
+const centerId = 'beskid';
+const nodes: GraphNode[] = [
+	{
+		id: centerId,
+		label: 'beskid',
+		level: 'root',
+		hidden: false,
+		displayTitle: 'Platform specification',
+		href: '/platform-spec/',
+	},
+];
+const edges: GraphEdge[] = [];
+let edgeSeq = 0;
+
+const domainSet = new Set<string>();
+const areaSet = new Set<string>();
+const featSeen = new Set<string>();
+
+const sorted = [...entries].sort((a, b) => docEntrySlug(a).split('/').length - docEntrySlug(b).split('/').length);
+
+/** Shown in sidebar but not part of the hierarchy graph (meta / mapping pages). */
+const SKIP_GRAPH_DOMAINS = new Set(['legacy-spec-mapping']);
+
+function enrichFromEntry(n: GraphNode, data: Record<string, unknown>): GraphNode {
+	const owner = data.owner as { name?: string } | undefined;
+	return {
+		...n,
+		displayTitle: typeof data.title === 'string' ? data.title : n.displayTitle ?? n.label,
+		description: docDescription(data as { description?: string }),
+		specLevel: typeof data.specLevel === 'string' ? data.specLevel : undefined,
+		status: typeof data.status === 'string' ? data.status : undefined,
+		ownerName: typeof owner?.name === 'string' ? owner.name : undefined,
+		relatedTopics: relatedFromDoc(data as { relatedTopics?: RelatedTopicPayload[] }),
+	};
+}
+
+for (const e of sorted) {
+	const s = docEntrySlug(e);
+	const parts = s.split('/').filter(Boolean);
+	if (parts[0] !== 'platform-spec' || parts.length < 2) continue;
+
+	const domain = parts[1];
+	if (SKIP_GRAPH_DOMAINS.has(domain)) continue;
+	const domainId = `domain:${domain}`;
+	const title = String(e.data.title ?? domain);
+	const data = e.data as Record<string, unknown>;
+
+	if (!domainSet.has(domain)) {
+		domainSet.add(domain);
+		nodes.push(
+			enrichFromEntry(
+				{
+					id: domainId,
+					label: parts.length === 2 ? title : domain,
+					level: 'domain',
+					domain,
+					domainKey: domain,
+					href: `/platform-spec/${domain}/`,
+					hidden: false,
+				},
+				data,
+			),
+		);
+		edges.push({
+			id: `e:${edgeSeq++}`,
+			from: centerId,
+			to: domainId,
+			hidden: false,
+			label: 'domains',
+			title: 'Platform domains (compiler, tooling, language-meta, …)',
+		});
+	} else if (parts.length === 2) {
+		const idx = nodes.findIndex((n) => n.id === domainId);
+		if (idx !== -1) nodes[idx] = enrichFromEntry({ ...nodes[idx], label: title }, data);
+	}
+
+	if (parts.length === 2) continue;
+
+	const area = parts[2];
+	const areaKey = `${domain}/${area}`;
+	const areaId = `area:${areaKey}`;
+
+	if (!areaSet.has(areaKey)) {
+		areaSet.add(areaKey);
+		nodes.push(
+			enrichFromEntry(
+				{
+					id: areaId,
+					label: parts.length === 3 ? title : area,
+					level: 'area',
+					domain,
+					domainKey: domain,
+					areaPath: areaKey,
+					href: `/platform-spec/${domain}/${area}/`,
+					hidden: true,
+				},
+				data,
+			),
+		);
+		edges.push({
+			id: `e:${edgeSeq++}`,
+			from: domainId,
+			to: areaId,
+			hidden: true,
+			label: 'areas',
+			title: 'Click the domain node to show or hide its areas',
+		});
+	} else if (parts.length === 3) {
+		const idx = nodes.findIndex((n) => n.id === areaId);
+		if (idx !== -1) nodes[idx] = enrichFromEntry({ ...nodes[idx], label: title }, data);
+	}
+
+	if (parts.length === 3) continue;
+
+	// Feature leaf: platform-spec / {domain} / {area} / … (no URL version segment)
+	const featId = `feat:${s}`;
+	if (featSeen.has(featId)) continue;
+	featSeen.add(featId);
+	nodes.push(
+		enrichFromEntry(
+			{
+				id: featId,
+				label: title,
+				level: 'feature',
+				domain,
+				domainKey: domain,
+				areaPath: areaKey,
+				href: `/${s}/`,
+				hidden: true,
+			},
+			data,
+		),
+	);
+	edges.push({
+		id: `e:${edgeSeq++}`,
+		from: areaId,
+		to: featId,
+		hidden: true,
+		label: 'features',
+		title: 'Click an area node to show or hide feature pages under that area',
+	});
+}
+
+const rootDoc = entries.find((e) => docEntrySlug(e) === 'platform-spec');
+if (rootDoc) {
+	const d = rootDoc.data as Record<string, unknown>;
+	const idx = nodes.findIndex((n) => n.id === centerId);
+	if (idx !== -1) {
+		nodes[idx] = {
+			...nodes[idx],
+			displayTitle: typeof d.title === 'string' ? d.title : nodes[idx].displayTitle,
+			description: docDescription(d as { description?: string }) ?? nodes[idx].description,
+			ownerName:
+				typeof (d.owner as { name?: string } | undefined)?.name === 'string'
+					? (d.owner as { name: string }).name
+					: nodes[idx].ownerName,
+			relatedTopics: relatedFromDoc(d as { relatedTopics?: RelatedTopicPayload[] }) ?? nodes[idx].relatedTopics,
+		};
+	}
+}
+
+const graph = { nodes, edges };
+---
+
+<div class="platform-spec-graph-layout" data-platform-spec-graph-layout>
+	<div class="platform-spec-graph-main">
+		<div
+			id="platform-spec-graph"
+			class="platform-spec-graph"
+			data-map-tour="canvas"
+			aria-label="Platform specification hierarchy graph"
+		>
+		</div>
+		<div class="platform-spec-map-controls-stack" data-map-tour="controls">
+			<div class="platform-spec-map-options" id="platform-spec-map-options" hidden>
+				<h2 class="platform-spec-map-options__title">Graph options</h2>
+				<div class="platform-spec-map-options__actions">
+					<button type="button" class="platform-spec-map-options__btn" id="platform-spec-map-show-all">Show all nodes</button>
+					<button type="button" class="platform-spec-map-options__btn" id="platform-spec-map-hide-all">Hide all descendants</button>
+					<button type="button" class="platform-spec-map-options__btn" id="platform-spec-map-reset-view">Reset camera</button>
+				</div>
+			</div>
+			<div class="platform-spec-map-controls">
+				<div class="platform-spec-map-tools" aria-label="Graph tools">
+					<button type="button" class="platform-spec-map-tools__btn" id="platform-spec-map-fit" title="Fit visible nodes" aria-label="Fit visible nodes">
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5M9 4h6M9 20h6M4 9v6M20 9v6" />
+						</svg>
+					</button>
+					<button type="button" class="platform-spec-map-tools__btn" id="platform-spec-map-collapse" title="Collapse to domains" aria-label="Collapse to domains">
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<path d="M4 6h6v4H4V6Zm10 0h6v4h-6V6ZM9 14h6v4H9v-4Zm-1-2h8M7 18h10" />
+						</svg>
+					</button>
+					<button type="button" class="platform-spec-map-tools__btn" id="platform-spec-map-expand" title="Show all nodes" aria-label="Show all nodes">
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<path d="M4 6h6v4H4V6Zm10 0h6v4h-6V6ZM9 14h6v4H9v-4Zm-1-2h8M12 13v6M9 16h6" />
+						</svg>
+					</button>
+					<button type="button" class="platform-spec-map-tools__btn" id="platform-spec-map-options-open" title="Graph options" aria-label="Graph options">
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<path d="M12 8.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7Zm8 3.5l-1.7-.6a6.4 6.4 0 0 0-.5-1.3l.8-1.6l-1.8-1.8l-1.6.8c-.4-.2-.8-.4-1.3-.5L13 4h-2l-.6 1.7c-.4.1-.9.3-1.3.5l-1.6-.8L5.7 7.2l.8 1.6c-.2.4-.4.8-.5 1.3L5 12v2l1.7.6c.1.4.3.9.5 1.3l-.8 1.6l1.8 1.8l1.6-.8c.4.2.8.4 1.3.5L11 20h2l.6-1.7c.4-.1.9-.3 1.3-.5l1.6.8l1.8-1.8l-.8-1.6c.2-.4.4-.8.5-1.3L20 14v-2Z" />
+						</svg>
+					</button>
+				</div>
+				<button
+					type="button"
+					class="platform-spec-map-onboarding-toggle"
+					id="platform-spec-map-onboarding-toggle"
+					aria-label="Show onboarding guide"
+					title="Show onboarding guide"
+					aria-pressed="false"
+					data-state="closed"
+				>
+					<span class="platform-spec-map-onboarding-toggle__icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<path d="M12 3a9 9 0 1 0 9 9a9 9 0 0 0-9-9Zm0 12.25a1.05 1.05 0 1 1 0 2.1a1.05 1.05 0 0 1 0-2.1Zm1.35-3.9-.45.25v1.15h-1.8v-1.7l1.4-.8a1.45 1.45 0 1 0-2.15-1.27H8.6a3.25 3.25 0 1 1 4.75 2.87Z" />
+						</svg>
+					</span>
+					<span class="platform-spec-map-onboarding-toggle__text" id="platform-spec-map-onboarding-toggle-label">Show guide</span>
+				</button>
+				<button
+					type="button"
+					class="platform-spec-map-search-fab"
+					id="platform-spec-map-search-open"
+					aria-label="Search graph nodes"
+					title="Search graph nodes"
+					aria-expanded="false"
+					aria-controls="platform-spec-map-search"
+				><span class="platform-spec-map-search-fab__morph" aria-hidden="true"><svg
+							class="platform-spec-map-search-fab__glyph platform-spec-map-search-fab__glyph--search"
+							viewBox="0 0 24 24"
+							aria-hidden="true"
+						><path d="m20 20-4.2-4.2m1.7-4.3a6 6 0 1 1-12 0a6 6 0 0 1 12 0Z" /></svg><svg
+							class="platform-spec-map-search-fab__glyph platform-spec-map-search-fab__glyph--chevron"
+							viewBox="0 0 24 24"
+							aria-hidden="true"
+						><path d="M8 10.5l4 3.8 4-3.8" /></svg></span></button>
+			</div>
+			<div class="platform-spec-map-search" id="platform-spec-map-search" hidden>
+				<div class="platform-spec-map-search__input-wrap">
+					<svg class="platform-spec-map-search__input-icon" viewBox="0 0 24 24" aria-hidden="true">
+						<path d="m20 20-4.2-4.2m1.7-4.3a6 6 0 1 1-12 0a6 6 0 0 1 12 0Z" />
+					</svg>
+					<input
+						id="platform-spec-map-search-input"
+						class="platform-spec-map-search__input"
+						type="search"
+						placeholder="e.g. type-system, contracts, area"
+						autocomplete="off"
+					/>
+					<button
+						type="button"
+						class="platform-spec-map-search__clear"
+						id="platform-spec-map-search-close"
+						hidden
+						aria-label="Clear search"
+					>
+						×
+					</button>
+				</div>
+				<div
+					class="platform-spec-map-search__results"
+					id="platform-spec-map-search-results"
+					role="region"
+					aria-label="Search results"
+				></div>
+			</div>
+		</div>
+		<div class="platform-spec-map-legend" data-map-tour="legend" role="group" aria-label="Graph node kinds">
+			<span class="platform-spec-map-legend__heading">Legend</span>
+			<ul class="platform-spec-map-legend__list">
+				<li class="platform-spec-map-legend__item">
+					<span
+						class="platform-spec-map-legend__swatch"
+						data-platform-spec-legend-swatch="root"
+						aria-hidden="true"
+					></span>
+					<span class="platform-spec-map-legend__label">Hub</span>
+					<span class="platform-spec-map-legend__hint">map root</span>
+				</li>
+				<li class="platform-spec-map-legend__item">
+					<span
+						class="platform-spec-map-legend__swatch"
+						data-platform-spec-legend-swatch="domain"
+						aria-hidden="true"
+					></span>
+					<span class="platform-spec-map-legend__label">Domain</span>
+					<span class="platform-spec-map-legend__hint">major slice (compiler, tooling, …)</span>
+				</li>
+				<li class="platform-spec-map-legend__item">
+					<span
+						class="platform-spec-map-legend__swatch"
+						data-platform-spec-legend-swatch="area"
+						aria-hidden="true"
+					></span>
+					<span class="platform-spec-map-legend__label">Area</span>
+					<span class="platform-spec-map-legend__hint">topic group under a domain</span>
+				</li>
+				<li class="platform-spec-map-legend__item">
+					<span
+						class="platform-spec-map-legend__swatch"
+						data-platform-spec-legend-swatch="feature"
+						aria-hidden="true"
+					></span>
+					<span class="platform-spec-map-legend__label">Feature</span>
+					<span class="platform-spec-map-legend__hint">leaf doc in the graph</span>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<aside
+		class="platform-spec-graph-panel"
+		id="platform-spec-graph-panel"
+		data-map-tour="panel"
+		aria-hidden="true"
+		aria-labelledby="platform-spec-graph-panel-title"
+	>
+		<div class="platform-spec-graph-panel__inner">
+			<header class="platform-spec-graph-panel__header">
+				<h2 class="platform-spec-graph-panel__title" id="platform-spec-graph-panel-title"></h2>
+				<button
+					type="button"
+					class="platform-spec-graph-panel__close"
+					id="platform-spec-graph-panel-close"
+					aria-label="Close details panel"
+				>
+					×
+				</button>
+			</header>
+			<div class="platform-spec-graph-panel__scroll">
+				<p class="platform-spec-graph-panel__meta" id="platform-spec-graph-panel-meta"></p>
+				<p class="platform-spec-graph-panel__desc" id="platform-spec-graph-panel-desc"></p>
+				<dl class="platform-spec-graph-panel__dl" id="platform-spec-graph-panel-dl" hidden></dl>
+				<div id="platform-spec-graph-panel-related-root" class="platform-spec-graph-panel__related-host" hidden></div>
+				<section
+					class="platform-spec-graph-panel__section"
+					id="platform-spec-graph-panel-relations-content"
+					aria-labelledby="platform-spec-graph-panel-relations-label"
+				>
+					<h3 class="platform-spec-graph-panel__section-title" id="platform-spec-graph-panel-relations-label">
+						Node relations <span class="platform-spec-tabs__count" id="platform-spec-graph-panel-relations-count"></span>
+					</h3>
+					<ul class="platform-spec-graph-panel__rels" id="platform-spec-graph-panel-relations-rels"></ul>
+				</section>
+				<p class="platform-spec-graph-panel__hint" id="platform-spec-graph-panel-hint"></p>
+				<a class="platform-spec-graph-panel__link" id="platform-spec-graph-panel-link" href="#" hidden>Open doc page</a>
+			</div>
+		</div>
+	</aside>
+</div>
+<script type="application/json" id="platform-spec-graph-data" set:html={JSON.stringify(graph)} />
+<script>
+	import '../client/platform-spec-graph-client.ts';
+</script>

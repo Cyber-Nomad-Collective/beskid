@@ -1,0 +1,44 @@
+---
+type SpecStanding = 'Standard' | 'Proposed';
+
+interface Props {
+	status?: SpecStanding;
+	ownerName: string;
+	ownerEmail: string;
+	submitterName: string;
+	submitterEmail: string;
+}
+
+const { status, ownerName, ownerEmail, submitterName, submitterEmail } = Astro.props;
+const statusClass = status
+	? {
+			Standard: 'platform-spec-status--standard',
+			Proposed: 'platform-spec-status--proposed',
+		}[status]
+	: '';
+---
+
+{
+	status && (
+		<p class:list={['platform-spec-status', statusClass]}>
+			<span class="platform-spec-status__label">Spec standing</span>
+			<span class="platform-spec-status__value">{status}</span>
+		</p>
+	)
+}
+<dl class="platform-spec-meta">
+	<div>
+		<dt>Owner</dt>
+		<dd>
+			{ownerName}
+			<a href={`mailto:${ownerEmail}`} class="platform-spec-meta__email">{ownerEmail}</a>
+		</dd>
+	</div>
+	<div>
+		<dt>Submitter</dt>
+		<dd>
+			{submitterName}
+			<a href={`mailto:${submitterEmail}`} class="platform-spec-meta__email">{submitterEmail}</a>
+		</dd>
+	</div>
+</dl>

@@ -1,0 +1,28 @@
+name: Platform spec contracts
+
+# PR gate for platform-spec content and validators (merge-blocking when required in branch protection).
+on:
+  pull_request:
+    paths:
+      - 'site/website/src/content/docs/platform-spec/**'
+      - 'packages/trudoc/**'
+      - 'packages/beskid-docs-ui/**'
+      - 'package.json'
+      - 'bun.lock'
+      - 'site/website/package.json'
+      - 'site/website/astro.config.mjs'
+      - '.github/workflows/platform-spec-contracts.yml'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
+      - name: Platform spec CI validation
+        working-directory: site/website
+        run: bun run verify:platform-spec-ci

@@ -1,0 +1,4 @@
+/* Platform spec Starlight chrome — split for maintainability; import order matters. */
+@import "./platform-spec-core.css";
+@import "./platform-spec-graph-and-reader.css";
+@import "./platform-spec-map-and-shell.css";

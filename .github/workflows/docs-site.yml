@@ -1,0 +1,36 @@
+name: Docs site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/website/**'
+      - 'packages/beskid-docs-ui/**'
+      - 'packages/trudoc/**'
+      - 'package.json'
+      - 'bun.lock'
+      - '.github/workflows/docs-site.yml'
+  pull_request:
+    paths:
+      - 'site/website/**'
+      - 'packages/beskid-docs-ui/**'
+      - 'packages/trudoc/**'
+      - 'package.json'
+      - 'bun.lock'
+      - '.github/workflows/docs-site.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install workspace dependencies
+        run: bun install --frozen-lockfile
+      - name: Build site
+        working-directory: site/website
+        run: bun run build

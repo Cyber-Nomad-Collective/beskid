@@ -1,0 +1,520 @@
+/* Formal platform specification chrome (Starlight customCss) */
+
+/* Global header redesign */
+.page > .header {
+	position: sticky;
+	top: 0;
+	z-index: 35;
+	backdrop-filter: blur(10px);
+	background: color-mix(in srgb, var(--platform-spec-surface) 90%, transparent);
+	border-bottom: 1px solid var(--platform-spec-divider);
+}
+
+.page > .header .header {
+	max-width: 88rem;
+	margin: 0 auto;
+	padding: 0.25rem 0.9rem;
+	min-height: var(--beskid-topbar-height, 3.4rem);
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	align-items: center;
+	gap: 0.65rem;
+	line-height: 1;
+}
+
+/* Custom Beskid header: Starlight expects three direct grid children; we supply one shell — lay out inside .beskid-header__row instead. */
+.page > .header .header:has(.beskid-header__row) {
+	display: block;
+	width: 100%;
+	padding-block: 0;
+	min-height: var(--beskid-topbar-height, 3.4rem);
+}
+
+.page > .header .site-title {
+	font-weight: 800;
+	letter-spacing: 0.01em;
+	line-height: 1;
+}
+
+.platform-spec-topbar-actions {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45rem;
+	margin-inline: 0;
+	flex-shrink: 0;
+}
+
+.platform-spec-topbar-actions__list {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.platform-spec-topbar-actions__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: auto;
+	min-height: 2rem;
+	height: auto;
+	padding: 0.28rem 0.45rem;
+	gap: 0.35rem;
+	border-radius: 0;
+	text-decoration: none;
+	border: none;
+	background: transparent;
+	color: var(--platform-spec-tab-text);
+	font-size: var(--sl-text-xs);
+	font-weight: 600;
+	line-height: 1;
+	border-bottom: 2px solid transparent;
+	transition: color 0.12s ease, border-color 0.12s ease, opacity 0.12s ease;
+	opacity: 0.9;
+	white-space: nowrap;
+}
+
+html[data-platform-spec-map] .platform-spec-topbar-actions--labeled {
+	gap: 0.2rem;
+	flex-wrap: nowrap;
+	margin-inline: 0;
+}
+
+html[data-platform-spec-map] .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__btn {
+	width: auto;
+	min-height: 2rem;
+	height: auto;
+	padding: 0.28rem 0.45rem;
+	gap: 0.35rem;
+	border-radius: 0;
+	font-size: var(--sl-text-xs);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+html[data-platform-spec-map] .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__glyph {
+	flex-shrink: 0;
+	display: block;
+}
+
+html[data-platform-spec-map] .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__label {
+	white-space: nowrap;
+}
+
+html[data-platform-spec-map] .page > .header {
+	width: 100%;
+	max-width: none;
+	overflow-x: visible;
+	overflow: visible;
+	/* Starlight PageFrame pads the fixed bar — pull map chrome to the viewport edges */
+	padding-inline: max(0.25rem, env(safe-area-inset-left)) max(0.25rem, env(safe-area-inset-right)) !important;
+	box-sizing: border-box;
+}
+
+html[data-platform-spec-map] .page > .header .header {
+	max-width: none;
+	width: 100%;
+	box-sizing: border-box;
+	padding-inline: 0;
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.35rem 0.5rem;
+	min-height: var(--beskid-topbar-height, 3.4rem);
+}
+
+html[data-platform-spec-map] .page > .header .header .title-wrapper,
+html[data-platform-spec-map] .page > .header .header .site-title {
+	min-width: 0;
+	flex: 0 1 auto;
+}
+
+html[data-platform-spec-map] .page > .header .header .title-wrapper {
+	margin-inline: 0;
+	padding-inline-start: 0;
+}
+
+html[data-platform-spec-map] .page > .header .header > *:not(.right-group) {
+	min-width: 0;
+}
+
+html[data-platform-spec-map] .page > .header site-search,
+html[data-platform-spec-map] .page > .header .site-search {
+	display: none !important;
+}
+
+html[data-platform-spec-map] .page > .header .header .right-group {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.3rem;
+	flex: 0 0 auto;
+	min-width: 0;
+	max-width: 100%;
+	margin-inline-start: auto;
+	overflow: visible;
+	white-space: nowrap;
+}
+
+html[data-platform-spec-map] .page > .header .header .social-icons {
+	gap: 0.35rem;
+}
+
+html[data-platform-spec-map] .page > .header .header .social-icons::after {
+	height: 1.5rem;
+	margin-inline: 0.1rem;
+}
+
+html[data-platform-spec-map] .page > .header .header .right-group > * {
+	flex-shrink: 0;
+}
+
+body:has(.platform-spec-map-page) .beskid-header__row {
+	grid-template-columns: minmax(0, 1fr) max-content !important;
+	grid-template-rows: auto !important;
+}
+
+body:has(.platform-spec-map-page) .beskid-header__search {
+	display: none !important;
+}
+
+@media (max-width: 72rem) {
+	html[data-platform-spec-map] .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__label {
+		display: none;
+	}
+
+	html[data-platform-spec-map] .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__btn {
+		padding: 0.32rem;
+	}
+}
+
+/*
+ * Platform-spec reader: hide the global Starlight header at the same breakpoint the sidebar leaves the mobile sheet,
+ * so the hamburger / mobile nav in `.page > .header` stays available under 50rem.
+ */
+@media (min-width: 50.01rem) {
+	html[data-platform-spec]:not([data-platform-spec-map]) .page > .header {
+		display: none !important;
+	}
+}
+
+.platform-spec-topbar-actions__icon {
+	font-size: 0.92rem;
+	width: 1rem;
+	text-align: center;
+}
+
+.platform-spec-topbar-actions__btn:hover {
+	opacity: 1;
+	color: var(--platform-spec-tab-text-active);
+	border-bottom-color: color-mix(in srgb, var(--platform-spec-tab-indicator) 55%, transparent);
+}
+
+.platform-spec-topbar-actions__btn:focus-visible {
+	outline: none;
+	color: var(--platform-spec-tab-text-active);
+	border-bottom-color: var(--platform-spec-tab-indicator);
+}
+
+.platform-spec-topbar-actions__btn.is-active {
+	color: var(--platform-spec-tab-text-active);
+	border-bottom-color: color-mix(in srgb, var(--platform-spec-tab-indicator) 80%, transparent);
+	opacity: 1;
+}
+
+.platform-spec-graph-panel__single-tab {
+	margin: 0;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	min-height: 2.4rem;
+	padding: 0 0.45rem;
+	color: var(--platform-spec-tab-text-active);
+	border-bottom: 2px solid var(--platform-spec-tab-indicator);
+}
+
+.platform-spec-graph-panel__single-tab-label {
+	font-size: var(--sl-text-xs);
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.page:has(nav.sidebar) .header .title-wrapper::after {
+	content: 'Docs';
+	display: inline-flex;
+	align-items: center;
+	margin-left: 0.5rem;
+	padding: 0.15rem 0.5rem;
+	border-radius: 999px;
+	font-size: 0.68rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--sl-color-accent-high);
+	border: 1px solid color-mix(in srgb, var(--sl-color-accent-high) 42%, transparent);
+	background: color-mix(in srgb, var(--sl-color-accent-low) 62%, transparent);
+}
+
+.page:not(:has(nav.sidebar)) site-search {
+	display: none !important;
+}
+
+@media (max-width: 50rem) {
+	.page > .header .header {
+		grid-template-columns: 1fr auto;
+	}
+
+	.page > .header .sl-flex.print\:hidden:first-of-type {
+		order: 2;
+	}
+
+	.page > .header .right-group {
+		display: none !important;
+	}
+
+	.page:has(nav.sidebar) .sidebar {
+		position: fixed;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		width: min(85vw, 22rem);
+		max-width: 22rem;
+		transform: translateX(-104%);
+		transition: transform 0.2s ease;
+		z-index: 40;
+		background: var(--sl-color-black);
+		box-shadow: 0 12px 34px rgba(0, 0, 0, 0.45);
+	}
+
+	body[data-mobile-menu-expanded] .page:has(nav.sidebar) .sidebar {
+		transform: translateX(0);
+	}
+
+	body[data-mobile-menu-expanded]::before {
+		content: '';
+		position: fixed;
+		inset: 0;
+		z-index: 36;
+		background: rgba(2, 6, 23, 0.5);
+	}
+}
+
+.platform-spec-hero {
+	margin: 0 0 2.5rem;
+	padding: 0 0 clamp(1.35rem, 3vw, 2.15rem);
+	border-radius: 0;
+	border: none;
+	border-bottom: 1px solid var(--platform-spec-divider);
+	background: transparent;
+	box-shadow: none;
+	position: relative;
+}
+
+.platform-spec-hero::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0.85rem;
+	width: 3px;
+	border-radius: 0;
+	background: color-mix(in srgb, var(--sl-color-accent) 55%, transparent);
+	opacity: 0.85;
+}
+
+.platform-spec-hero .platform-spec-hero__inner {
+	max-width: min(56rem, 100%);
+	margin: 0;
+	padding-inline-start: clamp(0.85rem, 2vw, 1.15rem);
+	text-align: left;
+	display: grid;
+	gap: 1rem;
+}
+
+.platform-spec-hero__eyebrow {
+	margin: 0;
+	font-size: var(--sl-text-xs);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	font-weight: 700;
+	color: var(--sl-color-accent-high);
+}
+
+.platform-spec-hero__title {
+	margin: 0;
+	font-size: clamp(1.9rem, 3.8vw, 2.55rem);
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	line-height: 1.1;
+}
+
+.platform-spec-hero__tagline {
+	margin: 0;
+	max-width: 48rem;
+	font-size: clamp(var(--sl-text-base), 1.5vw, var(--sl-text-lg));
+	line-height: 1.6;
+	color: var(--sl-color-gray-2);
+}
+
+.platform-spec-hero__stats {
+	list-style: none;
+	margin: 0.2rem 0 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+	gap: 0.65rem;
+}
+
+.platform-spec-hero__stats li {
+	display: flex;
+	flex-direction: column;
+	padding: 0.45rem 0.55rem 0.45rem 0;
+	border: none;
+	border-radius: 0;
+	border-inline-start: 2px solid color-mix(in srgb, var(--platform-spec-divider) 90%, transparent);
+	padding-inline-start: 0.65rem;
+	background: transparent;
+}
+
+.platform-spec-hero__stats-value {
+	font-weight: 700;
+	font-size: var(--sl-text-base);
+}
+
+.platform-spec-hero__stats-label {
+	font-size: var(--sl-text-xs);
+	color: var(--sl-color-gray-3);
+}
+
+.platform-spec-hero__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	justify-content: flex-start;
+}
+
+.platform-spec-hero__button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.5rem 1rem;
+	border-radius: 0;
+	font-size: var(--sl-text-sm);
+	font-weight: 600;
+	text-decoration: none;
+	border: 1px solid var(--sl-color-accent);
+	background: var(--sl-color-text-accent);
+	color: var(--sl-color-black);
+}
+
+.platform-spec-hero__button:hover {
+	filter: brightness(1.05);
+}
+
+.platform-spec-hero__button--secondary {
+	background: transparent;
+	color: var(--sl-color-white);
+	border-color: var(--sl-color-gray-5);
+}
+
+@media (max-width: 42rem) {
+	.platform-spec-hero__inner {
+		text-align: center;
+	}
+
+	.platform-spec-hero__actions {
+		justify-content: center;
+	}
+}
+
+.platform-spec-tiles {
+	margin: 2rem 0 2.5rem;
+}
+
+.platform-spec-tiles__heading {
+	margin: 0 0 1rem;
+	font-size: var(--sl-text-h3);
+}
+
+.platform-spec-tiles__grid {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1rem;
+}
+
+@media (min-width: 40rem) {
+	.platform-spec-tiles__grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (min-width: 60rem) {
+	.platform-spec-tiles__grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.platform-spec-tile {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	height: 100%;
+	padding: 1rem 1.1rem;
+	border-radius: 0.5rem;
+	border: 1px solid var(--sl-color-gray-5);
+	background: var(--sl-color-black);
+	text-decoration: none;
+	color: inherit;
+	box-shadow: 0 1px 0 color-mix(in srgb, var(--sl-color-hairline) 80%, transparent);
+	transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.platform-spec-tile:hover {
+	border-color: var(--sl-color-accent-high);
+	transform: translateY(-1px);
+}
+
+.platform-spec-tile__title {
+	font-weight: 700;
+	font-size: var(--sl-text-base);
+}
+
+.platform-spec-tile__desc {
+	font-size: var(--sl-text-sm);
+	color: var(--sl-color-gray-3);
+	line-height: 1.45;
+}
+
+html[data-platform-spec] .content-panel {
+	font-family: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+}
+
+html[data-platform-spec] .sl-markdown-content h1,
+html[data-platform-spec] .sl-markdown-content h2 {
+	font-family: ui-sans-serif, system-ui, sans-serif;
+	letter-spacing: -0.02em;
+}
+
+/*
+ * Starlight `Page.astro` puts `PageTitle` (`h1#_top`) in the first `.content-panel` and MDX in the next.
+ * Platform-spec MDX uses `SpecPageHeader` / hub chrome for the visible title and metadata—hide this duplicate strip.
+ * (Hiding the panel avoids an empty padded band when the title alone is `display: none`.)
+ */
+html[data-platform-spec] h1#_top {
+	display: none !important;
+}
+
+html[data-platform-spec] main > .content-panel:first-of-type:has(.sl-container > h1#_top:only-child) {
+	display: none;
+}
+
+html[data-platform-spec] main > .content-panel + .content-panel {
+	border-top: none;
+}

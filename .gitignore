@@ -265,6 +265,9 @@ PublishScripts/
 *.snupkg
 # The packages folder can be ignored because of Package Restore
 **/[Pp]ackages/*
+# Keep this repo's JS workspaces under the root `packages/` tracked.
+!/packages/
+!/packages/**
 # VS Code extension: pckg client sources live under `src/packages/` (not NuGet).
 !beskid_vscode/src/packages/
 !beskid_vscode/src/packages/**
@@ -467,3 +470,4 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+.cursor/

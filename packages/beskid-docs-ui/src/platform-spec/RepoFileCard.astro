@@ -1,0 +1,56 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+import GithubResourceLink from './GithubResourceLink.astro';
+
+const ALLOWED_PREFIXES = ['compiler/', 'site/website/'];
+
+interface Props {
+	path: string;
+	title?: string;
+	description?: string;
+	snippetLines?: number;
+	ref?: string;
+	repo?: string;
+	class?: string;
+}
+
+const { path: repoPath, title, description, snippetLines, ref = 'main', repo, class: className } = Astro.props;
+
+const normalized = repoPath.replace(/^\/+/, '').replace(/\\/g, '/');
+const allowed = ALLOWED_PREFIXES.some((p) => normalized === p.slice(0, -1) || normalized.startsWith(p));
+
+let snippet = '';
+if (allowed && snippetLines != null && snippetLines > 0 && snippetLines <= 200) {
+	const websiteRoot = path.resolve(process.cwd());
+	const superRoot = path.resolve(websiteRoot, '..', '..');
+	const abs = path.join(superRoot, normalized);
+	const resolved = path.normalize(abs);
+	if (resolved.startsWith(superRoot + path.sep)) {
+		try {
+			const raw = fs.readFileSync(resolved, 'utf8');
+			const lines = raw.split(/\r?\n/);
+			snippet = lines.slice(0, snippetLines).join('\n');
+		} catch {
+			snippet = '';
+		}
+	}
+}
+
+const heading = title ?? normalized.split('/').pop() ?? normalized;
+---
+
+<section class:list={['platform-spec-repo-file-card', className]}>
+	<header class="platform-spec-repo-file-card__head">
+		<h3 class="platform-spec-repo-file-card__title">{heading}</h3>
+		<GithubResourceLink path={normalized} ref={ref} repo={repo} label="View on GitHub" />
+	</header>
+	{description && <p class="platform-spec-repo-file-card__desc">{description}</p>}
+	{
+		snippet && (
+			<pre class="platform-spec-repo-file-card__snippet">
+				<code>{snippet}</code>
+			</pre>
+		)
+	}
+</section>

@@ -1,0 +1,22 @@
+---
+import {
+	renderRelatedTopicsSection,
+	type RelatedTopicPayload,
+} from 'trudoc/platform-spec';
+
+interface Props {
+	topics: RelatedTopicPayload[];
+	heading?: string;
+	headingId?: string;
+	/** Appended to root `related-topics` section (e.g. compact / sidebar). */
+	rootClass?: string;
+	emptyMessage?: string;
+	/** Optional wrapper class for layout integration (e.g. doc split column). */
+	wrapClass?: string;
+}
+
+const { topics, heading, headingId, rootClass, emptyMessage, wrapClass } = Astro.props;
+const html = renderRelatedTopicsSection(topics, { heading, headingId, rootClass, emptyMessage });
+---
+
+<div class:list={['related-topics-host', wrapClass]} set:html={html} />

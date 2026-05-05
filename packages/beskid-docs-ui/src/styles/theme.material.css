@@ -1,0 +1,135 @@
+:root {
+	--beskid-material-seed: #0ea5a3;
+	--beskid-primary: #7cf3ef;
+	--beskid-on-primary: #003736;
+	--beskid-primary-container: #00504e;
+	--beskid-on-primary-container: #96fffb;
+	--beskid-secondary: #b4cccb;
+	--beskid-secondary-container: #354b4a;
+	--beskid-surface: #0f1414;
+	--beskid-surface-variant: #3f4948;
+	--beskid-outline: #899392;
+	--beskid-outline-variant: #3f4948;
+	--beskid-topbar-height: 3rem;
+	--platform-spec-surface: color-mix(in srgb, var(--beskid-surface) 92%, black);
+	--platform-spec-surface-muted: color-mix(in srgb, var(--beskid-surface-variant) 44%, transparent);
+	--platform-spec-surface-strong: color-mix(in srgb, var(--beskid-surface) 96%, black);
+	--platform-spec-outline: color-mix(in srgb, var(--beskid-outline) 58%, var(--beskid-outline-variant));
+	--platform-spec-divider: color-mix(in srgb, var(--platform-spec-outline) 54%, transparent);
+	--platform-spec-overlay-scrim: color-mix(in srgb, var(--beskid-surface) 72%, transparent);
+	--platform-spec-tab-indicator: var(--beskid-primary);
+	--platform-spec-tab-active-bg: color-mix(in srgb, var(--beskid-primary-container) 44%, transparent);
+	--platform-spec-tab-text: color-mix(in srgb, var(--beskid-primary) 84%, white);
+	--platform-spec-tab-text-active: color-mix(in srgb, var(--beskid-primary) 70%, white);
+	--platform-spec-edge-label-bg: color-mix(in srgb, var(--platform-spec-surface-strong) 90%, white);
+	--platform-spec-edge-label-stroke: color-mix(in srgb, var(--platform-spec-surface-strong) 98%, white);
+
+	/* Platform spec map (D3) — derived from brand teal, not a separate blue ramp */
+	--platform-spec-graph-node-root-fill: color-mix(in srgb, var(--beskid-primary-container) 42%, black);
+	--platform-spec-graph-node-root-stroke: color-mix(in srgb, var(--beskid-primary) 88%, white);
+	--platform-spec-graph-node-root-text: var(--beskid-on-primary-container);
+	--platform-spec-graph-node-domain-fill: color-mix(in srgb, var(--beskid-primary-container) 62%, var(--beskid-primary) 18%);
+	--platform-spec-graph-node-domain-stroke: color-mix(in srgb, var(--beskid-primary) 80%, white);
+	--platform-spec-graph-node-domain-text: var(--beskid-on-primary-container);
+	--platform-spec-graph-node-area-fill: color-mix(in srgb, var(--beskid-primary-container) 48%, var(--beskid-primary) 38%);
+	--platform-spec-graph-node-area-stroke: color-mix(in srgb, var(--beskid-primary) 72%, white);
+	--platform-spec-graph-node-area-text: var(--beskid-on-primary-container);
+	--platform-spec-graph-node-feature-fill: color-mix(in srgb, var(--beskid-primary-container) 28%, var(--beskid-primary) 58%);
+	--platform-spec-graph-node-feature-stroke: color-mix(in srgb, var(--beskid-primary) 62%, white);
+	--platform-spec-graph-node-feature-text: color-mix(in srgb, var(--beskid-on-primary-container) 90%, black);
+	--platform-spec-graph-edge-stroke: color-mix(in srgb, var(--beskid-primary) 52%, var(--beskid-primary-container) 48%);
+}
+
+html[data-theme='light'] {
+	--beskid-primary: #006a68;
+	--beskid-on-primary: #ffffff;
+	--beskid-primary-container: #96f1ee;
+	--beskid-on-primary-container: #00201f;
+	--beskid-secondary: #4a6361;
+	--beskid-secondary-container: #cde8e6;
+	--beskid-surface: #f4fbfa;
+	--beskid-surface-variant: #d9e5e4;
+	--beskid-outline: #6f7a79;
+	--beskid-outline-variant: #bec9c8;
+	--platform-spec-surface: color-mix(in srgb, var(--beskid-surface) 94%, white);
+	--platform-spec-surface-muted: color-mix(in srgb, var(--beskid-surface-variant) 68%, white);
+	--platform-spec-surface-strong: color-mix(in srgb, var(--beskid-surface) 86%, white);
+	--platform-spec-outline: color-mix(in srgb, var(--beskid-outline) 62%, var(--beskid-outline-variant));
+	--platform-spec-divider: color-mix(in srgb, var(--platform-spec-outline) 52%, transparent);
+	--platform-spec-overlay-scrim: color-mix(in srgb, var(--beskid-surface) 58%, transparent);
+	--platform-spec-tab-indicator: var(--beskid-primary);
+	--platform-spec-tab-active-bg: color-mix(in srgb, var(--beskid-primary-container) 42%, white);
+	--platform-spec-tab-text: color-mix(in srgb, var(--beskid-primary) 90%, #113433);
+	--platform-spec-tab-text-active: var(--beskid-primary);
+	--platform-spec-edge-label-bg: color-mix(in srgb, var(--platform-spec-surface-strong) 88%, white);
+	--platform-spec-edge-label-stroke: color-mix(in srgb, var(--platform-spec-surface-strong) 98%, white);
+
+	--platform-spec-graph-node-root-fill: color-mix(in srgb, var(--beskid-primary) 52%, var(--beskid-on-primary-container));
+	--platform-spec-graph-node-root-stroke: color-mix(in srgb, var(--beskid-primary) 68%, black);
+	--platform-spec-graph-node-root-text: var(--beskid-on-primary);
+	--platform-spec-graph-node-domain-fill: color-mix(in srgb, var(--beskid-primary) 38%, var(--beskid-primary-container));
+	--platform-spec-graph-node-domain-stroke: color-mix(in srgb, var(--beskid-primary) 55%, var(--beskid-on-primary-container));
+	--platform-spec-graph-node-domain-text: var(--beskid-on-primary-container);
+	--platform-spec-graph-node-area-fill: color-mix(in srgb, var(--beskid-primary) 28%, var(--beskid-primary-container));
+	--platform-spec-graph-node-area-stroke: color-mix(in srgb, var(--beskid-primary) 48%, var(--beskid-outline));
+	--platform-spec-graph-node-area-text: var(--beskid-on-primary-container);
+	--platform-spec-graph-node-feature-fill: color-mix(in srgb, var(--beskid-primary) 18%, var(--beskid-primary-container));
+	--platform-spec-graph-node-feature-stroke: color-mix(in srgb, var(--beskid-primary) 42%, var(--beskid-outline-variant));
+	--platform-spec-graph-node-feature-text: var(--beskid-on-primary-container);
+	--platform-spec-graph-edge-stroke: color-mix(
+		in srgb,
+		color-mix(in srgb, var(--beskid-primary) 40%, var(--beskid-primary-container)) 70%,
+		var(--beskid-outline)
+	);
+}
+
+:root {
+	--sl-color-accent: var(--beskid-primary);
+	--sl-color-accent-high: color-mix(in srgb, var(--beskid-primary) 74%, white);
+	--sl-color-accent-low: color-mix(in srgb, var(--beskid-primary-container) 75%, transparent);
+}
+
+/* Starlight semantic colors → shared Beskid / platform-spec tokens (loads with site customCss). */
+@layer starlight.theme {
+	:root,
+	::backdrop {
+		--sl-color-bg: var(--beskid-surface);
+		--sl-color-bg-nav: var(--platform-spec-surface);
+		--sl-color-bg-sidebar: var(--platform-spec-surface);
+		--sl-color-bg-inline-code: color-mix(in srgb, var(--beskid-surface-variant) 38%, var(--beskid-surface));
+		--sl-color-text: color-mix(in srgb, var(--beskid-secondary) 78%, white);
+		--sl-color-text-accent: var(--sl-color-accent-high);
+		--sl-color-hairline: color-mix(in srgb, var(--platform-spec-outline) 55%, var(--beskid-surface));
+		--sl-color-hairline-light: color-mix(in srgb, var(--platform-spec-outline) 42%, transparent);
+		--sl-color-hairline-shade: color-mix(in srgb, var(--beskid-surface) 55%, black);
+		--sl-color-gray-6: var(--platform-spec-surface);
+		--sl-color-gray-5: color-mix(in srgb, var(--beskid-surface-variant) 45%, var(--beskid-surface));
+		--sl-color-gray-4: color-mix(in srgb, var(--beskid-outline) 35%, var(--beskid-surface));
+		--sl-color-gray-3: color-mix(in srgb, var(--beskid-outline) 55%, var(--beskid-secondary));
+		--sl-color-gray-2: color-mix(in srgb, var(--beskid-secondary) 72%, white);
+		--sl-color-gray-1: color-mix(in srgb, var(--beskid-secondary) 38%, white);
+		--sl-color-black: color-mix(in srgb, var(--beskid-surface) 94%, black);
+	}
+
+	:root[data-theme='light'],
+	[data-theme='light'] ::backdrop {
+		--sl-color-bg: var(--beskid-surface);
+		--sl-color-bg-nav: var(--platform-spec-surface);
+		--sl-color-bg-sidebar: var(--platform-spec-surface);
+		--sl-color-bg-inline-code: color-mix(in srgb, var(--beskid-surface-variant) 72%, white);
+		--sl-color-text: color-mix(in srgb, var(--beskid-on-primary-container) 88%, var(--beskid-outline));
+		--sl-color-text-accent: var(--beskid-primary);
+		--sl-color-hairline: var(--platform-spec-divider);
+		--sl-color-hairline-light: color-mix(in srgb, var(--platform-spec-outline) 48%, transparent);
+		--sl-color-hairline-shade: color-mix(in srgb, var(--beskid-outline-variant) 65%, var(--beskid-surface));
+		--sl-color-gray-7: color-mix(in srgb, var(--beskid-surface) 92%, white);
+		--sl-color-gray-6: var(--beskid-surface-variant);
+		--sl-color-gray-5: color-mix(in srgb, var(--beskid-outline-variant) 55%, white);
+		--sl-color-gray-4: var(--beskid-outline);
+		--sl-color-gray-3: color-mix(in srgb, var(--beskid-on-primary-container) 35%, var(--beskid-outline));
+		--sl-color-gray-2: var(--beskid-on-primary-container);
+		--sl-color-gray-1: color-mix(in srgb, var(--beskid-on-primary-container) 92%, black);
+		--sl-color-white: color-mix(in srgb, var(--beskid-on-primary-container) 96%, black);
+		--sl-color-black: hsl(0, 0%, 100%);
+	}
+}

@@ -1,0 +1,38 @@
+---
+/**
+ * Renders declarative `layout.json` widget specs (Zod-validated) into platform-spec Astro components.
+ * Hub MDX may keep hand-authored widgets; this component is the DRY path for contract-driven UIs.
+ */
+import type { WidgetSpec } from 'trudoc/layout';
+import DomainTiles from './DomainTiles.astro';
+
+interface Props {
+	widgets: WidgetSpec[];
+}
+
+const { widgets } = Astro.props;
+
+function renderLeaf(w: WidgetSpec) {
+	if (w.type === 'domainTiles') {
+		return <DomainTiles pathPrefix={w.props.pathPrefix} heading={w.props.heading} />;
+	}
+	return null;
+}
+---
+
+{
+	widgets.map((w) => {
+		if (w.type === 'domainTiles') {
+			return renderLeaf(w);
+		}
+		if (w.type === 'twoColumn') {
+			return (
+				<div class:list={['platform-spec-two-col', `platform-spec-two-col--gap-${w.props.gap}`]}>
+					<div class="platform-spec-two-col__left">{w.props.left.map((x) => renderLeaf(x))}</div>
+					<div class="platform-spec-two-col__right">{w.props.right.map((x) => renderLeaf(x))}</div>
+				</div>
+			);
+		}
+		return null;
+	})
+}

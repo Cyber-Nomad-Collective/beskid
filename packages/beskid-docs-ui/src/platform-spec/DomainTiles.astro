@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+import { docEntryHref, docEntrySlug, normalizeDocSlug } from './specSlug';
+
+interface Props {
+	pathPrefix: string;
+	heading?: string;
+}
+
+const { pathPrefix, heading = 'Explore' } = Astro.props;
+const base = normalizeDocSlug(pathPrefix);
+
+const all = await getCollection('docs');
+
+const descendants = all.filter((e) => {
+	const s = docEntrySlug(e);
+	if (s === base) return false;
+	return s.startsWith(`${base}/`);
+});
+
+const childKeys = new Set<string>();
+for (const e of descendants) {
+	const s = docEntrySlug(e);
+	if (!s.startsWith(`${base}/`)) continue;
+	const rest = s.slice(base.length + 1);
+	const first = rest.split('/')[0];
+	if (first) childKeys.add(first);
+}
+
+const tiles = [...childKeys].sort().map((key) => {
+	const entry =
+		descendants.find((e) => docEntrySlug(e) === `${base}/${key}`) ??
+		descendants.find((e) => docEntrySlug(e).startsWith(`${base}/${key}/`));
+	const title = entry?.data.title ?? key;
+	const desc = entry && 'description' in entry.data ? String(entry.data.description ?? '') : '';
+	const slug = entry ? docEntrySlug(entry) : `${base}/${key}`;
+	return { key, title, desc, href: docEntryHref(slug) };
+});
+---
+
+{
+	tiles.length > 0 && (
+		<section class="platform-spec-tiles" aria-labelledby="platform-spec-tiles-heading">
+			<h2 id="platform-spec-tiles-heading" class="platform-spec-tiles__heading">
+				{heading}
+			</h2>
+			<ul class="platform-spec-tiles__grid">
+				{tiles.map((t) => (
+					<li>
+						<a class="platform-spec-tile" href={t.href}>
+							<span class="platform-spec-tile__title">{t.title}</span>
+							{t.desc && <span class="platform-spec-tile__desc">{t.desc}</span>}
+						</a>
+					</li>
+				))}
+			</ul>
+		</section>
+	)
+}

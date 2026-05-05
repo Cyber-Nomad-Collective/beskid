@@ -1,0 +1,66 @@
+---
+import OpenInGraphButton from './OpenInGraphButton.astro';
+import SpecReaderShell from './SpecReaderShell.astro';
+import SpecStandingMeta from './SpecStandingMeta.astro';
+import { getCollection } from 'astro:content';
+import { readPlatformSpecLayoutReportOrThrow } from 'trudoc/layout';
+import { docEntryHref, docEntrySlug } from './specSlug';
+import { computeSpecReaderState, loadArchitectureGraphForEntry } from './specReaderContext';
+
+const docs = await getCollection('docs');
+const cwd = process.cwd();
+const layoutReport = readPlatformSpecLayoutReportOrThrow(cwd);
+const state = await computeSpecReaderState(Astro.url.pathname, docs, cwd);
+
+const current = state.currentDoc;
+const owner = current?.data?.owner as { name?: string; email?: string } | undefined;
+const submitter = current?.data?.submitter as { name?: string; email?: string } | undefined;
+const standing = typeof current?.data?.status === 'string' ? (current.data.status as 'Standard' | 'Proposed') : undefined;
+
+const parentSlug = state.articleRootSlug;
+const parentEntry = docs.find((e) => docEntrySlug(e) === parentSlug);
+const hubTitle = typeof parentEntry?.data?.title === 'string' ? parentEntry.data.title : 'Feature hub';
+const hubHref = docEntryHref(parentSlug);
+
+let parentNodeKey = '';
+if (parentSlug.startsWith('platform-spec/')) {
+	const rest = parentSlug.slice('platform-spec/'.length);
+	parentNodeKey = `feat:platform-spec/${rest}`;
+}
+
+const parentArchitecture = await loadArchitectureGraphForEntry(parentEntry, cwd);
+const architectureGraph = parentArchitecture ?? state.architectureGraph;
+---
+
+<div class="platform-spec-header platform-spec-header--article">
+	<div class="platform-spec-header__top">
+		<p class="platform-spec-header__eyebrow">Platform spec article</p>
+		<div class="platform-spec-header__actions">
+			<a href={hubHref} class="platform-spec-header__back">{`Back to ${hubTitle}`}</a>
+			{parentNodeKey && <OpenInGraphButton node={parentNodeKey} iconOnly={false} label="Open feature in platform map" />}
+		</div>
+	</div>
+	{
+		owner?.name && owner?.email && submitter?.name && submitter?.email ? (
+			<SpecStandingMeta
+				status={standing}
+				ownerName={owner.name}
+				ownerEmail={owner.email}
+				submitterName={submitter.name}
+				submitterEmail={submitter.email}
+			/>
+		) : (
+			<p class="platform-spec-header__warn">Missing owner or submitter in frontmatter for this article.</p>
+		)
+	}
+</div>
+
+<SpecReaderShell
+	articleRootSlug={state.articleRootSlug}
+	articleEntries={state.articleEntries}
+	hasDescendantArticles={state.hasDescendantArticles}
+	relatedTopics={state.relatedTopics}
+	architectureGraph={architectureGraph}
+	historyWebsiteRelativePath={state.historyWebsiteRelativePath}
+	layoutReport={layoutReport}
+/>

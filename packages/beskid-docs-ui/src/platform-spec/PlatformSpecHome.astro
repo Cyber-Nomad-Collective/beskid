@@ -1,0 +1,63 @@
+---
+import DomainTiles from './DomainTiles.astro';
+import PlatformSpecGraphShell from './PlatformSpecGraphShell.astro';
+---
+
+<div class="platform-spec-home" data-platform-spec-home>
+	<div class="platform-spec-home__toolbar" role="tablist" aria-label="Platform specification views">
+		<button
+			type="button"
+			class="platform-spec-home__tab is-active"
+			role="tab"
+			id="platform-spec-home-tab-map"
+			aria-controls="platform-spec-home-panel-map"
+			data-tab="map"
+			aria-selected="true"
+		>
+			Map
+		</button>
+		<button
+			type="button"
+			class="platform-spec-home__tab"
+			role="tab"
+			id="platform-spec-home-tab-browse"
+			aria-controls="platform-spec-home-panel-browse"
+			data-tab="browse"
+			aria-selected="false"
+			tabindex="-1"
+		>
+			Browse
+		</button>
+	</div>
+	<div
+		id="platform-spec-home-panel-map"
+		class="platform-spec-home__panel"
+		role="tabpanel"
+		aria-labelledby="platform-spec-home-tab-map"
+		data-tab-panel="map"
+	>
+		<div class="platform-spec-map-page">
+			<PlatformSpecGraphShell />
+		</div>
+	</div>
+	<div
+		id="platform-spec-home-panel-browse"
+		class="platform-spec-home__panel platform-spec-home__panel--browse"
+		role="tabpanel"
+		aria-labelledby="platform-spec-home-tab-browse"
+		data-tab-panel="browse"
+		hidden
+	>
+		<div class="platform-spec-home__browse-inner sl-markdown-content">
+			<p class="platform-spec-home__lede">
+				Explore the platform by domain, or use the <strong>Map</strong> tab for the interactive graph of areas
+				and feature pages.
+			</p>
+			<DomainTiles pathPrefix="platform-spec" heading="Domains" />
+		</div>
+	</div>
+</div>
+
+<script>
+	import '../client/platform-spec-home-tabs.ts';
+</script>

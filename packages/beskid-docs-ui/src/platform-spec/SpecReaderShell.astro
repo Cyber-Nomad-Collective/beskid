@@ -1,0 +1,99 @@
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import ArchitectureGraphShell from './ArchitectureGraphShell.astro';
+import RelatedTopics from './RelatedTopics.astro';
+import SpecDocHistory from './SpecDocHistory.astro';
+import SpecCompletenessReport from './SpecCompletenessReport.astro';
+import type { RelatedTopicPayload } from 'trudoc/platform-spec';
+import type { SpecArticleListItem } from './specReaderContext';
+import type { CompletenessReport } from 'trudoc/layout';
+
+interface Props {
+	articleRootSlug: string;
+	articleEntries: SpecArticleListItem[];
+	hasDescendantArticles: boolean;
+	relatedTopics: RelatedTopicPayload[];
+	architectureGraph?: unknown;
+	historyWebsiteRelativePath: string | null;
+	layoutReport: CompletenessReport;
+}
+
+const {
+	articleRootSlug,
+	articleEntries,
+	hasDescendantArticles,
+	relatedTopics,
+	architectureGraph,
+	historyWebsiteRelativePath,
+	layoutReport,
+} = Astro.props;
+---
+
+<section class="platform-spec-doc-split" data-platform-spec-doc-split>
+	<div class="platform-spec-doc-split__main">
+		<div class="platform-spec-doc-tabs">
+			<Tabs syncKey="platform-spec-reader">
+			<TabItem label="Current document">
+				<div class="platform-spec-doc-split__content-target" data-platform-spec-doc-content-target />
+			</TabItem>
+			<TabItem label="Articles">
+				<ul class="platform-spec-doc-split__article-list">
+					{
+						articleEntries.length ? (
+							articleEntries.map((article) => (
+								<li class="platform-spec-doc-split__article-item">
+									<a href={article.href} class="platform-spec-doc-split__article-link">
+										<span class="platform-spec-doc-split__article-title">{article.title}</span>
+										{article.description && (
+											<span class="platform-spec-doc-split__article-desc">{article.description}</span>
+										)}
+										<span class="platform-spec-doc-split__article-meta">
+											<span class="platform-spec-doc-split__article-chip">{article.kind}</span>
+											{article.status && <span class="platform-spec-doc-split__article-chip">{article.status}</span>}
+											{article.lastReviewed && (
+												<span class="platform-spec-doc-split__article-chip">Reviewed {article.lastReviewed}</span>
+											)}
+										</span>
+									</a>
+								</li>
+							))
+						) : (
+							<li class="platform-spec-doc-split__empty">
+								{hasDescendantArticles
+									? 'No directly attached article pages for this node. Nested descendants exist deeper in this subtree.'
+									: 'No directly attached article pages for this node.'}
+							</li>
+						)
+					}
+				</ul>
+			</TabItem>
+			<TabItem label="History">
+				<SpecDocHistory websiteRelativePath={historyWebsiteRelativePath} />
+			</TabItem>
+			{
+				architectureGraph && (
+					<TabItem label="Architecture">
+						<ArchitectureGraphShell graph={architectureGraph} />
+					</TabItem>
+				)
+			}
+			<TabItem label="Completeness">
+				<SpecCompletenessReport articleRootSlug={articleRootSlug} report={layoutReport} />
+			</TabItem>
+			</Tabs>
+		</div>
+	</div>
+	<aside class="platform-spec-doc-split__related" aria-label="Related spec documents">
+		<RelatedTopics
+			topics={relatedTopics}
+			heading="Related spec docs"
+			headingId={`rt-${articleRootSlug.replace(/\//g, '-')}`}
+			rootClass="related-topics--embed"
+			emptyMessage="No related spec documents declared."
+		/>
+	</aside>
+</section>
+
+<script>
+	import '../client/platform-spec-doc-layout.ts';
+</script>

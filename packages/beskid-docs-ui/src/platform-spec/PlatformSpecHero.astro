@@ -1,0 +1,37 @@
+---
+interface Props {
+	title: string;
+	tagline: string;
+	stats?: { label: string; value: string }[];
+}
+const { title, tagline, stats = [] } = Astro.props;
+---
+
+<section class="platform-spec-hero" aria-labelledby="platform-spec-hero-title">
+	<div class="platform-spec-hero__inner">
+		<p class="platform-spec-hero__eyebrow">Beskid formal specification</p>
+		<h1 id="platform-spec-hero-title" class="platform-spec-hero__title">{title}</h1>
+		<p class="platform-spec-hero__tagline">{tagline}</p>
+		{
+			stats.length > 0 && (
+				<ul class="platform-spec-hero__stats" aria-label="Platform spec quick facts">
+					{stats.map((item) => (
+						<li>
+							<span class="platform-spec-hero__stats-value">{item.value}</span>
+							<span class="platform-spec-hero__stats-label">{item.label}</span>
+						</li>
+					))}
+				</ul>
+			)
+		}
+		<nav class="platform-spec-hero__actions" aria-label="Primary links">
+			<a class="platform-spec-hero__button" href="/platform-spec/language-meta/">Language specification</a>
+			<a class="platform-spec-hero__button platform-spec-hero__button--secondary" href="/platform-spec/compiler/">
+				Compiler specification
+			</a>
+			<a class="platform-spec-hero__button platform-spec-hero__button--secondary" href="/platform-spec/legacy-spec-mapping/">
+				Spec &amp; compiler bridge
+			</a>
+		</nav>
+	</div>
+</section>

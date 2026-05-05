@@ -1,0 +1,40 @@
+---
+import {
+	DEFAULT_GITHUB_REPO,
+	githubWebUrl,
+	lineHash,
+	type GithubResourceKind,
+} from 'trudoc/platform-spec';
+
+interface Props {
+	/** Repo-relative path (e.g. `compiler/crates/foo/lib.rs`). */
+	path: string;
+	kind?: GithubResourceKind;
+	/** Branch or tag (default `main`). */
+	ref?: string;
+	repo?: string;
+	line?: number;
+	endLine?: number;
+	label?: string;
+	class?: string;
+}
+
+const {
+	path: repoPath,
+	kind = 'blob',
+	ref = 'main',
+	repo = DEFAULT_GITHUB_REPO,
+	line,
+	endLine,
+	label,
+	class: className,
+} = Astro.props;
+
+const href =
+	githubWebUrl(repo, kind, ref, repoPath) + (kind !== 'raw' && kind !== 'tree' ? lineHash(line, endLine) : '');
+const text = label ?? repoPath;
+---
+
+<a href={href} class:list={['platform-spec-github-link', className]} rel="noopener noreferrer" target="_blank">
+	{text}
+</a>

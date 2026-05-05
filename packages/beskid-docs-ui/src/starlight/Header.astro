@@ -1,0 +1,470 @@
+---
+import { Astronav, MenuIcon, MenuItems, OpenIcon, CloseIcon } from 'astro-navbar';
+import config from 'virtual:starlight/user-config';
+
+import LanguageSelect from 'virtual:starlight/components/LanguageSelect';
+import Search from 'virtual:starlight/components/Search';
+import SocialIcons from 'virtual:starlight/components/SocialIcons';
+import ThemeSelect from 'virtual:starlight/components/ThemeSelect';
+
+const shouldRenderSearch =
+	config.pagefind || config.components.Search !== '@astrojs/starlight/components/Search.astro';
+
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+
+/** Shown next to the Beskid mark so the top bar matches the doc area (Starlight uses one global Header). */
+const scopeLabel = (() => {
+	if (path === '/' || path === '') return 'Home';
+	if (path.startsWith('/platform-spec')) return 'Platform specification';
+	if (path.startsWith('/book')) return 'The Beskid Book';
+	if (
+		path.startsWith('/overview') ||
+		path.startsWith('/guides') ||
+		path.startsWith('/execution') ||
+		path.startsWith('/corelib') ||
+		path.startsWith('/packages') ||
+		path.startsWith('/downloads')
+	) {
+		return 'Documentation';
+	}
+	return 'Documentation';
+})();
+
+const isActive = (href: string) => {
+	if (href === '/') return path === '/';
+	const normalized = href.replace(/\/+$/, '');
+	return path === normalized || path.startsWith(`${normalized}/`);
+};
+const isDocsMenuActive = isActive('/overview') || isActive('/platform-spec') || isActive('/book');
+---
+
+<div class="header beskid-header">
+	<Astronav closeOnClick>
+		<div class="beskid-header__row">
+			<div class="beskid-header__brand sl-flex">
+				<a class="beskid-header__brand-logo-link" href="/" aria-label="Beskid home">
+					<img class="beskid-header__brand-logo" src="/favicon.svg" alt="" width="26" height="26" />
+				</a>
+				<span class="beskid-header__brand-text" translate="no">
+					<span class="beskid-header__brand-name">Beskid</span>
+					<span class="beskid-header__brand-scope">{scopeLabel}</span>
+				</span>
+			</div>
+			<div class="sl-flex print:hidden beskid-header__search">
+				{shouldRenderSearch && <Search />}
+			</div>
+			<div class="sl-flex print:hidden beskid-header__desktop right-group">
+				<MenuItems class="sl-hidden md:sl-flex platform-spec-topbar-actions platform-spec-topbar-actions--labeled">
+					<ul class="platform-spec-topbar-actions__list" aria-label="Primary navigation">
+						<li>
+							<a href="/" class:list={['platform-spec-topbar-actions__btn', isActive('/') && 'is-active']}>Home</a>
+						</li>
+						<li>
+							<details class:list={['beskid-header__docs-menu', isDocsMenuActive && 'is-active']}>
+								<summary class="platform-spec-topbar-actions__btn">Docs</summary>
+								<ul class="beskid-header__docs-menu-list" aria-label="Docs sections">
+									<li>
+										<a href="/overview/" class:list={['beskid-header__docs-menu-link', isActive('/overview') && 'is-active']}>Docs</a>
+									</li>
+									<li>
+										<a
+											href="/platform-spec/"
+											class:list={['beskid-header__docs-menu-link', isActive('/platform-spec') && 'is-active']}
+										>
+											Platform Spec
+										</a>
+									</li>
+									<li>
+										<a href="/book/" class:list={['beskid-header__docs-menu-link', isActive('/book') && 'is-active']}>Book</a>
+									</li>
+								</ul>
+							</details>
+						</li>
+						<li>
+							<a
+								href="/downloads/"
+								class:list={['platform-spec-topbar-actions__btn', isActive('/downloads') && 'is-active']}
+							>
+								<svg class="platform-spec-topbar-actions__glyph" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M12 3v11m0 0l-4-4m4 4 4-4M4 17.5h16V21H4z"></path>
+								</svg>
+								<span class="platform-spec-topbar-actions__label">Download</span>
+							</a>
+						</li>
+					</ul>
+				</MenuItems>
+				<div class="sl-hidden md:sl-flex social-icons">
+					<SocialIcons />
+				</div>
+				<div class="sl-hidden md:sl-flex beskid-header__desktop-controls">
+					<ThemeSelect />
+					<LanguageSelect />
+				</div>
+			</div>
+			<div class="md:sl-hidden print:hidden beskid-header__mobile-toggle">
+				<MenuIcon class="beskid-header__menu-btn" aria-label="Toggle navigation menu">
+					<OpenIcon>
+						<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+							<path d="M4 7h16M4 12h16M4 17h16"></path>
+						</svg>
+					</OpenIcon>
+					<CloseIcon>
+						<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+							<path d="M6 6l12 12M18 6 6 18"></path>
+						</svg>
+					</CloseIcon>
+				</MenuIcon>
+			</div>
+		</div>
+		<MenuItems class="hidden md:sl-hidden beskid-header__mobile-menu">
+			<ul class="beskid-header__mobile-list" aria-label="Primary navigation mobile">
+				<li>
+					<a href="/" class:list={['beskid-header__mobile-link', isActive('/') && 'is-active']}>
+						<svg class="beskid-header__mobile-link-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M3 11.5 12 4l9 7.5"></path>
+							<path d="M5.5 10.5V20h13V10.5"></path>
+						</svg>
+						<span>Home</span>
+					</a>
+				</li>
+				<li>
+					<details class:list={['beskid-header__mobile-group', isDocsMenuActive && 'is-active']}>
+						<summary class="beskid-header__mobile-link">
+							<svg class="beskid-header__mobile-link-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v14.5A1.5 1.5 0 0 1 18.5 20H6.5A2.5 2.5 0 0 0 4 22V6.5z"></path>
+								<path d="M8 8h8M8 12h8"></path>
+							</svg>
+							<span>Docs</span>
+						</summary>
+						<ul class="beskid-header__mobile-sublist">
+							<li><a href="/overview/" class:list={['beskid-header__mobile-sublink', isActive('/overview') && 'is-active']}>Docs</a></li>
+							<li>
+								<a
+									href="/platform-spec/"
+									class:list={['beskid-header__mobile-sublink', isActive('/platform-spec') && 'is-active']}
+								>
+									Platform Spec
+								</a>
+							</li>
+							<li><a href="/book/" class:list={['beskid-header__mobile-sublink', isActive('/book') && 'is-active']}>Book</a></li>
+						</ul>
+					</details>
+				</li>
+				<li>
+					<a href="/downloads/" class:list={['beskid-header__mobile-link', isActive('/downloads') && 'is-active']}>
+						<svg class="beskid-header__mobile-link-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M12 3v11m0 0l-4-4m4 4 4-4M4 17.5h16V21H4z"></path>
+						</svg>
+						<span>Download</span>
+					</a>
+				</li>
+			</ul>
+		</MenuItems>
+	</Astronav>
+</div>
+
+<style>
+	@layer starlight.components {
+		:global(.hidden) {
+			display: none;
+		}
+
+		.beskid-header {
+			width: 100%;
+		}
+
+		/**
+		 * Starlight wraps this header in `.page > .header .header` with `display: grid` (3 columns).
+		 * Our markup is a single child, so we must lay out branding / search / nav ourselves with CSS grid.
+		 */
+		.beskid-header__row {
+			display: grid;
+			grid-template-columns: auto minmax(0, 1fr) max-content;
+			align-items: center;
+			column-gap: clamp(0.45rem, 1.2vw, 1rem);
+			row-gap: 0.35rem;
+			width: 100%;
+			min-height: var(--beskid-topbar-height, 3.4rem);
+		}
+
+		.beskid-header__brand {
+			align-items: center;
+			gap: 0.45rem;
+			min-width: 0;
+		}
+
+		.beskid-header__brand-logo-link {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+			line-height: 0;
+			border-radius: 0.35rem;
+		}
+
+		.beskid-header__brand-logo-link:focus-visible {
+			outline: 2px solid var(--beskid-primary, var(--sl-color-accent));
+			outline-offset: 2px;
+		}
+
+		.beskid-header__brand-logo {
+			display: block;
+			width: 1.625rem;
+			height: 1.625rem;
+		}
+
+		.beskid-header__brand-text {
+			display: inline-flex;
+			align-items: baseline;
+			gap: 0.35rem;
+			min-width: 0;
+			white-space: nowrap;
+		}
+
+		.beskid-header__brand-name {
+			color: var(--sl-color-white);
+			font-size: var(--sl-text-sm);
+			font-weight: 800;
+			letter-spacing: 0.01em;
+			flex-shrink: 0;
+		}
+
+		.beskid-header__brand-scope {
+			color: var(--sl-color-gray-3);
+			font-size: var(--sl-text-xs);
+			font-weight: 600;
+			letter-spacing: 0.02em;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.beskid-header__search {
+			justify-self: center;
+			width: 100%;
+			max-width: 32rem;
+			min-width: 0;
+			display: flex;
+			justify-content: center;
+		}
+
+		.beskid-header__desktop {
+			justify-self: end;
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+		}
+
+		.beskid-header__mobile-toggle {
+			grid-column: -1;
+			grid-row: 1;
+			justify-self: end;
+		}
+
+		@media (min-width: 50rem) {
+			.beskid-header__mobile-toggle {
+				display: none;
+			}
+		}
+
+		@media (max-width: 49.99rem) {
+			.beskid-header__row {
+				grid-template-columns: 1fr auto;
+				grid-template-rows: auto auto;
+			}
+
+			.beskid-header__brand {
+				grid-column: 1;
+				grid-row: 1;
+			}
+
+			.beskid-header__search {
+				grid-column: 1 / -1;
+				grid-row: 2;
+				justify-self: stretch;
+				max-width: none;
+			}
+
+			.beskid-header__desktop {
+				display: none !important;
+			}
+		}
+
+		.beskid-header__desktop-controls {
+			align-items: center;
+			gap: 0.2rem;
+		}
+
+		.beskid-header__docs-menu {
+			position: relative;
+		}
+
+		.beskid-header__docs-menu > summary {
+			list-style: none;
+			cursor: pointer;
+		}
+
+		.beskid-header__docs-menu > summary::-webkit-details-marker {
+			display: none;
+		}
+
+		.beskid-header__docs-menu-list {
+			position: absolute;
+			top: calc(100% + 0.35rem);
+			left: 0;
+			min-width: 12rem;
+			list-style: none;
+			margin: 0;
+			padding: 0.35rem;
+			border: 1px solid var(--platform-spec-divider);
+			border-radius: 0.4rem;
+			background: color-mix(in srgb, var(--platform-spec-surface) 92%, transparent);
+			box-shadow: 0 12px 22px rgba(0, 0, 0, 0.35);
+			display: grid;
+			gap: 0.15rem;
+			z-index: 40;
+		}
+
+		.beskid-header__docs-menu:not([open]) .beskid-header__docs-menu-list {
+			display: none;
+		}
+
+		.beskid-header__docs-menu-link {
+			display: block;
+			padding: 0.4rem 0.5rem;
+			border-radius: 0.3rem;
+			color: var(--sl-color-gray-2);
+			font-size: var(--sl-text-xs);
+			font-weight: 600;
+			text-decoration: none;
+		}
+
+		.beskid-header__docs-menu-link:hover,
+		.beskid-header__docs-menu-link.is-active {
+			background: color-mix(in srgb, var(--platform-spec-tab-indicator) 16%, transparent);
+			color: var(--platform-spec-tab-text-active);
+		}
+
+		.beskid-header__mobile-toggle :global(button) {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 2.3rem;
+			height: 2.3rem;
+			border: none;
+			border-radius: 0.45rem;
+			background: transparent;
+			color: var(--sl-color-gray-2);
+		}
+
+		.beskid-header__mobile-toggle :global(button:hover) {
+			color: var(--sl-color-white);
+			background: color-mix(in srgb, var(--sl-color-white) 8%, transparent);
+		}
+
+		.beskid-header__mobile-toggle svg {
+			width: 1.1rem;
+			height: 1.1rem;
+		}
+
+		.beskid-header__mobile-menu {
+			margin-top: 0.3rem;
+			border-top: 1px solid var(--sl-color-gray-5);
+			padding-top: 0.45rem;
+			background: var(--platform-spec-surface);
+		}
+
+		.beskid-header__mobile-list {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+			gap: 0.34rem;
+		}
+
+		.beskid-header__mobile-group > summary {
+			list-style: none;
+		}
+
+		.beskid-header__mobile-group > summary::-webkit-details-marker {
+			display: none;
+		}
+
+		.beskid-header__mobile-sublist {
+			list-style: none;
+			margin: 0.25rem 0 0.4rem 1.5rem;
+			padding: 0;
+			display: grid;
+			gap: 0.2rem;
+		}
+
+		.beskid-header__mobile-sublink {
+			display: block;
+			padding: 0.3rem 0.56rem;
+			color: var(--sl-color-gray-2);
+			font-size: var(--sl-text-xs);
+			font-weight: 600;
+			text-decoration: none;
+		}
+
+		.beskid-header__mobile-sublink:hover,
+		.beskid-header__mobile-sublink.is-active {
+			color: var(--platform-spec-tab-text-active);
+		}
+
+		.beskid-header__mobile-link {
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+			gap: 0.5rem;
+			min-height: 2.4rem;
+			padding: 0 0.56rem;
+			color: var(--sl-color-gray-2);
+			font-size: var(--sl-text-sm);
+			font-weight: 600;
+			line-height: 1.2;
+			text-decoration: none;
+			border: none;
+			border-bottom: 2px solid transparent;
+			border-radius: 0;
+			background: transparent;
+			transition: color 0.14s ease, border-color 0.14s ease;
+		}
+
+		.beskid-header__mobile-link.is-active {
+			color: var(--platform-spec-tab-text-active);
+			border-bottom-color: color-mix(in srgb, var(--platform-spec-tab-indicator) 80%, transparent);
+		}
+
+		.beskid-header__mobile-link:hover {
+			color: var(--platform-spec-tab-text-active);
+			border-bottom-color: color-mix(in srgb, var(--platform-spec-tab-indicator) 55%, transparent);
+		}
+
+		.beskid-header__mobile-link:focus-visible {
+			outline: none;
+			color: var(--platform-spec-tab-text-active);
+			border-bottom-color: var(--platform-spec-tab-indicator);
+			box-shadow: inset 0 -2px 0 var(--platform-spec-tab-indicator);
+		}
+
+		.beskid-header__mobile-link-icon {
+			width: 1rem;
+			height: 1rem;
+			flex-shrink: 0;
+			display: block;
+		}
+
+		@media (min-width: 50rem) {
+			.beskid-header__mobile-menu {
+				display: none !important;
+			}
+		}
+
+		@media (max-width: 62rem) {
+			.beskid-header__search {
+				max-width: 20rem;
+			}
+		}
+	}
+</style>

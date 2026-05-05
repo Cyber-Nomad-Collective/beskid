@@ -1,0 +1,16 @@
+---
+interface Props {
+	/** Absolute site path, e.g. /platform-spec/language-meta/dependency-injection/overview-and-goals/ */
+	replacement: string;
+}
+const { replacement } = Astro.props;
+const href = replacement;
+---
+
+<div class="legacy-spec-notice" role="status">
+	<p>
+		<strong>Superseded layout.</strong>
+		The formal platform specification for this topic lives at
+		<a href={href}>the new spec page</a>. This legacy page remains for stable URLs until migration finishes.
+	</p>
+</div>

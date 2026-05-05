@@ -1,0 +1,49 @@
+{
+	"name": "trudoc",
+	"version": "0.0.1",
+	"description": "Opinionated docs validation and Starlight helpers (layout trees, CI verify, optional Astro integration).",
+	"type": "module",
+	"main": "./src/index.ts",
+	"types": "./src/index.ts",
+	"bin": {
+		"trudoc": "bin/trudoc.mjs",
+		"trudoc-layout": "bin/trudoc-layout.mjs"
+	},
+	"exports": {
+		".": "./src/index.ts",
+		"./layout": "./src/layout/index.ts",
+		"./layout/*": "./src/layout/*.ts",
+		"./schema/content": "./src/schema/content.ts",
+		"./integration": "./src/integration.ts",
+		"./remark/trudoc-hub-fence": "./src/remark/trudoc-hub-fence.ts",
+		"./scripts/remark-arch-code-fence.mjs": "./scripts/remark-arch-code-fence.mjs",
+		"./scripts/remark-repo-link-fence.mjs": "./scripts/remark-repo-link-fence.mjs",
+		"./scripts/architecture-graph-c4.mjs": "./scripts/architecture-graph-c4.mjs",
+		"./platform-spec": "./src/platform-spec/index.ts",
+		"./platform-spec/*": "./src/platform-spec/*.ts"
+	},
+	"files": ["bin", "src", "scripts", "css", "README.md", "docs", "Dockerfile"],
+	"peerDependencies": {
+		"astro": ">=4.0.0"
+	},
+	"peerDependenciesMeta": {
+		"astro": {
+			"optional": true
+		}
+	},
+	"devDependencies": {
+		"@types/node": "^22.13.5",
+		"astro": "^6.2.2",
+		"tsx": "^4.19.4",
+		"typescript": "^5.8.2"
+	},
+	"scripts": {
+		"typecheck": "tsc -p tsconfig.json"
+	},
+	"dependencies": {
+		"zod": "^4.4.3",
+		"yaml": "^2.7.0"
+	},
+	"keywords": ["astro", "starlight", "documentation", "validation"],
+	"license": "MIT"
+}

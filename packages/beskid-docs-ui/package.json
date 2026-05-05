@@ -1,0 +1,23 @@
+{
+	"name": "@beskid/docs-ui",
+	"version": "0.0.1",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts",
+		"./shell-css": "./shell-css.mjs",
+		"./platform-spec/*": "./src/platform-spec/*",
+		"./starlight/*": "./src/starlight/*"
+	},
+	"peerDependencies": {
+		"@astrojs/starlight": ">=0.30.0",
+		"astro": ">=5.0.0"
+	},
+	"dependencies": {
+		"@material/material-color-utilities": "^0.4.0",
+		"astro-navbar": "^2.4.0",
+		"d3": "^7.9.0",
+		"intro.js": "^8.3.2",
+		"trudoc": "workspace:*"
+	}
+}

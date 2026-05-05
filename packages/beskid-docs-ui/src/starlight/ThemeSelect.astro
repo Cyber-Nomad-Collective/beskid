@@ -1,0 +1,195 @@
+---
+/**
+ * Replaces Starlight’s dropdown theme control with a single icon button that
+ * cycles: auto → dark → light → (repeat). Keeps `starlight-theme-select` and a
+ * hidden `<select>` so `StarlightThemeProvider.updatePickers()` stays compatible.
+ */
+import { Icon } from '@astrojs/starlight/components';
+
+const label = Astro.locals.t('themeSelect.accessibleLabel');
+const dark = Astro.locals.t('themeSelect.dark');
+const light = Astro.locals.t('themeSelect.light');
+const auto = Astro.locals.t('themeSelect.auto');
+---
+
+<starlight-theme-select
+	class="beskid-starlight-theme-select"
+	data-preference="auto"
+	data-label-dark={dark}
+	data-label-light={light}
+	data-label-auto={auto}
+>
+	<button type="button" class="beskid-theme-cycle-btn" aria-label={label} data-i18n-label={label}>
+		<span class="beskid-theme-cycle-icons" aria-hidden="true">
+			<span class="beskid-theme-cycle-icon beskid-theme-cycle-icon--auto">
+				<Icon name="laptop" />
+			</span>
+			<span class="beskid-theme-cycle-icon beskid-theme-cycle-icon--dark">
+				<Icon name="moon" />
+			</span>
+			<span class="beskid-theme-cycle-icon beskid-theme-cycle-icon--light">
+				<Icon name="sun" />
+			</span>
+		</span>
+	</button>
+	<select class="beskid-theme-cycle-sync" aria-hidden="true" tabindex="-1" autocomplete="off">
+		<option value="dark">{dark}</option>
+		<option value="light">{light}</option>
+		<option value="auto" selected>{auto}</option>
+	</select>
+</starlight-theme-select>
+
+<script is:inline>
+	StarlightThemeProvider.updatePickers();
+</script>
+
+<script>
+	type Theme = 'auto' | 'dark' | 'light';
+
+	const storageKey = 'starlight-theme';
+
+	const parseTheme = (theme: unknown): Theme =>
+		theme === 'auto' || theme === 'dark' || theme === 'light' ? theme : 'auto';
+
+	const loadTheme = (): Theme =>
+		parseTheme(typeof localStorage !== 'undefined' && localStorage.getItem(storageKey));
+
+	function storeTheme(theme: Theme): void {
+		if (typeof localStorage !== 'undefined') {
+			localStorage.setItem(storageKey, theme === 'light' || theme === 'dark' ? theme : '');
+		}
+	}
+
+	const getPreferredColorScheme = (): Theme =>
+		matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+
+	function onThemeChange(theme: Theme): void {
+		StarlightThemeProvider.updatePickers(theme);
+		document.documentElement.dataset.theme = theme === 'auto' ? getPreferredColorScheme() : theme;
+		storeTheme(theme);
+	}
+
+	const cycleOrder: Theme[] = ['auto', 'dark', 'light'];
+
+	function nextTheme(current: Theme): Theme {
+		const i = cycleOrder.indexOf(current);
+		return cycleOrder[(i === -1 ? 0 : i + 1) % cycleOrder.length];
+	}
+
+	function modeLabel(host: HTMLElement, t: Theme): string {
+		const d = host.dataset;
+		if (t === 'dark') return d.labelDark ?? t;
+		if (t === 'light') return d.labelLight ?? t;
+		return d.labelAuto ?? t;
+	}
+
+	function paintUi(host: HTMLElement, btn: HTMLButtonElement | null, sync: HTMLSelectElement | null, t: Theme) {
+		host.dataset.preference = t;
+		if (sync) sync.value = t;
+		const base = btn?.dataset.i18nLabel ?? '';
+		const name = modeLabel(host, t);
+		btn?.setAttribute('aria-label', `${base}: ${name}`);
+	}
+
+	matchMedia(`(prefers-color-scheme: light)`).addEventListener('change', () => {
+		if (loadTheme() === 'auto') onThemeChange('auto');
+	});
+
+	if (!customElements.get('starlight-theme-select')) {
+		class StarlightThemeSelect extends HTMLElement {
+			constructor() {
+				super();
+				const host = this;
+				const btn = host.querySelector<HTMLButtonElement>('.beskid-theme-cycle-btn');
+				const sync = host.querySelector<HTMLSelectElement>('.beskid-theme-cycle-sync');
+
+				const refresh = () => {
+					const t = loadTheme();
+					onThemeChange(t);
+					paintUi(host, btn, sync, t);
+				};
+
+				refresh();
+
+				btn?.addEventListener('click', () => {
+					const t = nextTheme(loadTheme());
+					onThemeChange(t);
+					paintUi(host, btn, sync, t);
+				});
+
+				window.addEventListener('storage', (e) => {
+					if (e.key !== storageKey) return;
+					refresh();
+				});
+			}
+		}
+		customElements.define('starlight-theme-select', StarlightThemeSelect);
+	}
+</script>
+
+<style>
+	@layer starlight.components {
+		.beskid-starlight-theme-select {
+			display: inline-flex;
+			align-items: center;
+			position: relative;
+		}
+
+		.beskid-theme-cycle-btn {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 2.35rem;
+			height: 2.35rem;
+			margin: 0;
+			padding: 0;
+			border: none;
+			border-radius: 0.45rem;
+			background: transparent;
+			color: var(--sl-color-gray-2);
+			cursor: pointer;
+			line-height: 0;
+		}
+
+		.beskid-theme-cycle-btn:hover {
+			color: var(--sl-color-white);
+			background: color-mix(in srgb, var(--sl-color-white) 8%, transparent);
+		}
+
+		.beskid-theme-cycle-icons {
+			display: grid;
+			place-items: center;
+			width: 1.15rem;
+			height: 1.15rem;
+		}
+
+		.beskid-theme-cycle-icon {
+			grid-area: 1 / 1;
+			display: none;
+			width: 1.1rem;
+			height: 1.1rem;
+		}
+
+		.beskid-theme-cycle-icon :global(svg) {
+			display: block;
+			width: 100%;
+			height: 100%;
+		}
+
+		.beskid-starlight-theme-select[data-preference='auto'] .beskid-theme-cycle-icon--auto,
+		.beskid-starlight-theme-select[data-preference='dark'] .beskid-theme-cycle-icon--dark,
+		.beskid-starlight-theme-select[data-preference='light'] .beskid-theme-cycle-icon--light {
+			display: block;
+		}
+
+		.beskid-theme-cycle-sync {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			opacity: 0;
+			pointer-events: none;
+			clip: rect(0 0 0 0);
+			clip-path: inset(50%);
+		}
+	}
+</style>

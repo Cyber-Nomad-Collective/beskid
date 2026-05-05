@@ -1,0 +1,55 @@
+---
+import OpenInGraphButton from './OpenInGraphButton.astro';
+import SpecReaderShell from './SpecReaderShell.astro';
+import SpecStandingMeta from './SpecStandingMeta.astro';
+import { getCollection } from 'astro:content';
+import { readPlatformSpecLayoutReportOrThrow } from 'trudoc/layout';
+import { computeSpecReaderState } from './specReaderContext';
+
+type SpecStanding = 'Standard' | 'Proposed';
+
+interface Props {
+	status?: SpecStanding;
+	ownerName: string;
+	ownerEmail: string;
+	submitterName: string;
+	submitterEmail: string;
+}
+
+const { status, ownerName, ownerEmail, submitterName, submitterEmail } = Astro.props;
+
+const docs = await getCollection('docs');
+const cwd = process.cwd();
+const layoutReport = readPlatformSpecLayoutReportOrThrow(cwd);
+const state = await computeSpecReaderState(Astro.url.pathname, docs, cwd);
+---
+
+<div class="platform-spec-header">
+	<div class="platform-spec-header__top">
+		<p class="platform-spec-header__eyebrow">Platform spec node</p>
+		{
+			state.nodeKey && (
+				<div class="platform-spec-header__actions">
+					<OpenInGraphButton node={state.nodeKey} iconOnly={false} label="Open in platform map" />
+				</div>
+			)
+		}
+	</div>
+	<SpecStandingMeta
+		status={status}
+		ownerName={ownerName}
+		ownerEmail={ownerEmail}
+		submitterName={submitterName}
+		submitterEmail={submitterEmail}
+	/>
+</div>
+
+<SpecReaderShell
+	articleRootSlug={state.articleRootSlug}
+	articleEntries={state.articleEntries}
+	hasDescendantArticles={state.hasDescendantArticles}
+	relatedTopics={state.relatedTopics}
+	architectureGraph={state.architectureGraph}
+	historyWebsiteRelativePath={state.historyWebsiteRelativePath}
+	layoutReport={layoutReport}
+/>

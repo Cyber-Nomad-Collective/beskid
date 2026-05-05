@@ -1,0 +1,18 @@
+---
+interface Props {
+	title: string;
+	/** Anchor id for in-page / TOC links */
+	id?: string;
+}
+const { title, id } = Astro.props;
+const slug = id ?? title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+---
+
+<section class="platform-spec-section" aria-labelledby={`heading-${slug}`}>
+	<h2 id={slug} class="platform-spec-section__title">
+		<span id={`heading-${slug}`}>{title}</span>
+	</h2>
+	<div class="platform-spec-section__body">
+		<slot />
+	</div>
+</section>

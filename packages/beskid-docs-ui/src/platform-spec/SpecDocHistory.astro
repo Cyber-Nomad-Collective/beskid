@@ -1,0 +1,91 @@
+---
+import {
+	DEFAULT_GITHUB_REPO,
+	githubCommitUrl,
+	githubCommitsHistoryUrl,
+	githubWebUrl,
+	loadPlatformSpecGitMeta,
+	type GitFileMeta,
+} from 'trudoc/platform-spec';
+
+interface Props {
+	websiteRelativePath: string | null;
+}
+
+const { websiteRelativePath } = Astro.props;
+
+const meta = loadPlatformSpecGitMeta(process.cwd());
+
+let entry: GitFileMeta | null = null;
+if (websiteRelativePath && meta.files?.[websiteRelativePath]) {
+	entry = meta.files[websiteRelativePath] as GitFileMeta;
+}
+
+const repo = meta.repo || DEFAULT_GITHUB_REPO;
+const ref = meta.defaultBranch || 'main';
+const fullHistoryHref =
+	entry?.repoRelativePath != null ? githubCommitsHistoryUrl(repo, ref, entry.repoRelativePath) : null;
+---
+
+<div class="platform-spec-doc-history">
+	{
+		!websiteRelativePath ? (
+			<p class="platform-spec-doc-history__empty">Could not resolve this page to a content file for history.</p>
+		) : !entry ? (
+			<p class="platform-spec-doc-history__empty">No git metadata for this file. Run generate:platform-spec-git-meta.</p>
+		) : (
+			<>
+				<p class="platform-spec-doc-history__summary">
+					<strong>{entry.revisionCount}</strong> revision{entry.revisionCount === 1 ? '' : 's'}
+					{meta.gitAvailable ? '' : ' (git unavailable at build; counts may be empty)'}
+				</p>
+				{fullHistoryHref && (
+					<p class="platform-spec-doc-history__actions">
+						<a href={fullHistoryHref} rel="noopener noreferrer" target="_blank" class="platform-spec-doc-history__link">
+							Open full history on GitHub
+						</a>
+					</p>
+				)}
+				{entry.commits.length ? (
+					<ul class="platform-spec-doc-history__list">
+						{entry.commits.map((c) => (
+							<li class="platform-spec-doc-history__item">
+								<div class="platform-spec-doc-history__row">
+									<time class="platform-spec-doc-history__date" datetime={c.date}>
+										{c.date.slice(0, 10)}
+									</time>
+									<a href={githubCommitUrl(repo, c.hash)} class="platform-spec-doc-history__hash" rel="noopener noreferrer" target="_blank">
+										{c.hash.slice(0, 7)}
+									</a>
+								</div>
+								<p class="platform-spec-doc-history__subject">{c.subject}</p>
+								<p class="platform-spec-doc-history__author">
+									{c.author}
+									{c.email ? (
+										<>
+											{' '}
+											&lt;<a href={`mailto:${c.email}`}>{c.email}</a>&gt;
+										</>
+									) : null}
+								</p>
+								{entry.repoRelativePath && (
+									<p class="platform-spec-doc-history__blob">
+										<a
+											href={githubWebUrl(repo, 'blob', c.hash, entry.repoRelativePath)}
+											rel="noopener noreferrer"
+											target="_blank"
+										>
+											View file at this commit
+										</a>
+									</p>
+								)}
+							</li>
+						))}
+					</ul>
+				) : (
+					<p class="platform-spec-doc-history__empty">No commits recorded for this path.</p>
+				)}
+			</>
+		)
+	}
+</div>
