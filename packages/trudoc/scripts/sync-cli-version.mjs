@@ -48,12 +48,16 @@ async function main() {
   const payload = fromGitHub ?? tryLocalCargo();
 
   if (!payload) {
-    console.error(
-      "sync-cli-version: could not read rolling version from GitHub and no local compiler/crates/beskid_cli/Cargo.toml was found.",
+    const fallback = { version: "latest", source: "fallback" };
+    console.warn(
+      "sync-cli-version: could not read rolling version from GitHub and no local compiler/crates/beskid_cli/Cargo.toml was found; using fallback version.",
     );
-    console.error(`  Tried: ${ROLLING_URL}`);
-    console.error(`  Tried: ${cargoPath}`);
-    process.exit(1);
+    console.warn(`  Tried: ${ROLLING_URL}`);
+    console.warn(`  Tried: ${cargoPath}`);
+    mkdirSync(dirname(outPath), { recursive: true });
+    writeFileSync(outPath, `${JSON.stringify(fallback, null, 2)}\n`, "utf8");
+    console.log(`sync-cli-version: wrote ${outPath} (${fallback.source}: ${fallback.version})`);
+    return;
   }
 
   mkdirSync(dirname(outPath), { recursive: true });

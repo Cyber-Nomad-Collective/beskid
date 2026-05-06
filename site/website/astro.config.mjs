@@ -39,54 +39,6 @@ function platformSpecV0Redirects() {
 	return out;
 }
 
-/** Full legacy `/spec/*` coverage redirected to canonical `/platform-spec/*` routes. */
-function specToPlatformRedirects() {
-	/** @type {Record<string, string>} */
-	return {
-		'/spec': '/platform-spec/',
-		'/spec/': '/platform-spec/',
-		'/spec/index': '/platform-spec/',
-		'/spec/readme': '/platform-spec/legacy-spec-mapping/',
-		'/spec/README': '/platform-spec/legacy-spec-mapping/',
-		'/spec/glossary-and-conformance': '/platform-spec/language-meta/conformance/glossary-and-conformance/',
-		'/spec/lexical-and-syntax': '/platform-spec/language-meta/surface-syntax/lexical-and-syntax/',
-		'/spec/documentation-comments': '/platform-spec/language-meta/surface-syntax/documentation-comments/',
-		'/spec/types': '/platform-spec/language-meta/type-system/types/',
-		'/spec/enums-and-match': '/platform-spec/language-meta/type-system/enums-and-match/',
-		'/spec/type-inference': '/platform-spec/language-meta/type-system/type-inference/',
-		'/spec/method-dispatch': '/platform-spec/language-meta/type-system/method-dispatch/',
-		'/spec/memory-and-references': '/platform-spec/language-meta/memory-model/memory-and-references/',
-		'/spec/modules-and-visibility': '/platform-spec/language-meta/program-structure/modules-and-visibility/',
-		'/spec/name-resolution': '/platform-spec/language-meta/program-structure/name-resolution/',
-		'/spec/error-handling': '/platform-spec/language-meta/contracts-and-effects/error-handling/',
-		'/spec/contracts': '/platform-spec/language-meta/contracts-and-effects/contracts/',
-		'/spec/testing': '/platform-spec/language-meta/contracts-and-effects/testing/',
-		'/spec/control-flow': '/platform-spec/language-meta/evaluation/control-flow/',
-		'/spec/lambdas-and-closures': '/platform-spec/language-meta/evaluation/lambdas-and-closures/',
-		'/spec/events': '/platform-spec/language-meta/evaluation/events/',
-		'/spec/metaprogramming': '/platform-spec/language-meta/metaprogramming/metaprogramming/',
-		'/spec/ffi-and-extern': '/platform-spec/language-meta/interop/ffi-and-extern/',
-		'/spec/dependency-injection': '/platform-spec/language-meta/composition/dependency-injection/',
-		'/spec/dependency-injection/index': '/platform-spec/language-meta/composition/dependency-injection/',
-		'/spec/dependency-injection/overview-and-goals': '/platform-spec/language-meta/composition/dependency-injection/',
-		'/spec/dependency-injection/syntax-and-declarations': '/platform-spec/language-meta/composition/dependency-injection/',
-		'/spec/dependency-injection/lifetimes-and-factory-blocks': '/platform-spec/language-meta/composition/dependency-injection/',
-		'/spec/dependency-injection/resolution-algorithm': '/platform-spec/language-meta/composition/dependency-injection/',
-		'/spec/dependency-injection/host-composition-and-launch': '/platform-spec/language-meta/composition/dependency-injection/',
-		'/spec/dependency-injection/examples-and-edge-cases': '/platform-spec/language-meta/composition/dependency-injection/',
-		'/spec/dependency-injection/diagnostics-and-conformance': '/platform-spec/language-meta/composition/dependency-injection/',
-		'/spec/dependency-injection/comparative-rationale': '/platform-spec/language-meta/composition/dependency-injection/',
-		'/spec/dependency-injection/articles': '/platform-spec/language-meta/composition/dependency-injection/',
-		'/spec/dependency-injection/articles/index': '/platform-spec/language-meta/composition/dependency-injection/',
-		'/spec/dependency-injection/articles/example-normative-note': '/platform-spec/language-meta/composition/dependency-injection/',
-		'/spec/package-json-v1': '/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/',
-		'/spec/project-lock-v1': '/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/',
-		'/spec/workspace-proj-v1': '/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/',
-		'/spec/corelib-api-shape': '/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/',
-		'/spec/code-style-and-naming': '/platform-spec/language-meta/program-structure/code-style-and-naming/',
-	};
-}
-
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://beskid-lang.org',
@@ -102,7 +54,6 @@ export default defineConfig({
 	},
 	redirects: {
 		...platformSpecV0Redirects(),
-		...specToPlatformRedirects(),
 	},
 	markdown: {
 		remarkPlugins: [createRemarkArchCodeFence(), remarkRepoLinkFence({ repo: 'Cyber-Nomad-Collective/beskid' })],

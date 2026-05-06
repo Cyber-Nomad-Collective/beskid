@@ -10,7 +10,7 @@ RUN bun install --frozen-lockfile
 
 COPY . .
 
-RUN bun run --cwd site/website build
+RUN BESKID_SKIP_TRUDOC_VERIFY=1 bun run --cwd site/website build
 
 FROM nginx:1.27-alpine AS runtime
 

@@ -10,6 +10,19 @@ owner:
 submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Domain
+    title: Compiler
+    href: /platform-spec/compiler/
+    relation: Compiler contracts implement and enforce language semantics from this domain
+  - type: Domain
+    title: Execution
+    href: /platform-spec/execution/
+    relation: Runtime and ABI behavior that realize language-level rules
+  - type: Domain
+    title: Tooling
+    href: /platform-spec/tooling/
+    relation: Project metadata and editor surfaces that expose language behavior
 ---
 
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
@@ -31,7 +44,23 @@ compiler is structured internally. This domain is the canonical language specifi
 <SpecSection title="Background" id="background">
 Feature pages in [language-meta](/platform-spec/language-meta/) are canonical for language semantics. Example:
 [Dependency injection](/platform-spec/language-meta/composition/dependency-injection/) is maintained directly in this tree. This
-domain **lays out** **areas** and **feature** leaves with normative prose and platform metadata. **Components**—functional groupings in the wider platform—can be modeled later (URLs or `relatedTopics`); see the [spec bridge](/platform-spec/legacy-spec-mapping/).
+domain **lays out** **areas** and **feature** leaves with normative prose and platform metadata. **Components** are
+represented through focused feature hubs and `relatedTopics` connections, not separate legacy bridge pages.
+</SpecSection>
+
+<SpecSection title="Canonical language chapter map" id="canonical-language-chapter-map">
+The former flat language chapter set is now fully incorporated under this domain hierarchy:
+
+- Conformance: [glossary-and-conformance](/platform-spec/language-meta/conformance/glossary-and-conformance/)
+- Surface syntax: [lexical-and-syntax](/platform-spec/language-meta/surface-syntax/lexical-and-syntax/), [documentation-comments](/platform-spec/language-meta/surface-syntax/documentation-comments/)
+- Type system: [types](/platform-spec/language-meta/type-system/types/), [enums-and-match](/platform-spec/language-meta/type-system/enums-and-match/), [type-inference](/platform-spec/language-meta/type-system/type-inference/), [method-dispatch](/platform-spec/language-meta/type-system/method-dispatch/)
+- Memory model: [memory-and-references](/platform-spec/language-meta/memory-model/memory-and-references/)
+- Program structure: [modules-and-visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/), [name-resolution](/platform-spec/language-meta/program-structure/name-resolution/), [code-style-and-naming](/platform-spec/language-meta/program-structure/code-style-and-naming/)
+- Contracts and effects: [contracts](/platform-spec/language-meta/contracts-and-effects/contracts/), [error-handling](/platform-spec/language-meta/contracts-and-effects/error-handling/), [testing](/platform-spec/language-meta/contracts-and-effects/testing/)
+- Evaluation: [control-flow](/platform-spec/language-meta/evaluation/control-flow/), [lambdas-and-closures](/platform-spec/language-meta/evaluation/lambdas-and-closures/), [events](/platform-spec/language-meta/evaluation/events/)
+- Metaprogramming: [metaprogramming](/platform-spec/language-meta/metaprogramming/metaprogramming/) and [meta-block](/platform-spec/language-meta/metaprogramming/meta-block/)
+- Interop: [ffi-and-extern](/platform-spec/language-meta/interop/ffi-and-extern/)
+- Composition: [dependency-injection](/platform-spec/language-meta/composition/dependency-injection/)
 </SpecSection>
 
 <DomainTiles pathPrefix="platform-spec/language-meta" heading="Areas" />

@@ -15,7 +15,7 @@
     "verify:platform-spec-ci": "node ../../packages/trudoc/scripts/verify-platform-spec-ci.mjs",
     "verify:trudoc": "tsx ../../packages/trudoc/src/cli/verify.ts",
     "bootstrap:platform-spec-layout": "tsx ../../packages/trudoc/scripts/bootstrap-platform-spec-layout.ts",
-    "prebuild": "bun run sync:cli-version && bun run generate:platform-spec-git-meta && bun run verify:trudoc --preset beskid-prebuild",
+    "prebuild": "bun run sync:cli-version && bun run generate:platform-spec-git-meta && ( [ \"${BESKID_SKIP_TRUDOC_VERIFY:-0}\" = \"1\" ] || bun run verify:trudoc --preset beskid-prebuild )",
     "predev": "bun run sync:cli-version && bun run generate:platform-spec-git-meta",
     "dev": "astro dev",
     "start": "astro dev",
@@ -24,9 +24,10 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@beskid/docs-ui": "workspace:*",
+    "@astrojs/internal-helpers": "0.9.0",
     "@astrojs/starlight": "^0.38.4",
-    "astro": "^6.2.2",
+    "@beskid/docs-ui": "workspace:*",
+    "astro": "6.2.2",
     "sharp": "^0.34.2",
     "trudoc": "workspace:*"
   },

@@ -1,0 +1,9 @@
+**/node_modules
+**/.astro
+**/dist
+**/.DS_Store
+**/.env
+**/.git
+**/.cache
+**/target
+references/

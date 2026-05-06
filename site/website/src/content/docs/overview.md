@@ -29,4 +29,4 @@ Beskid is a statically typed language designed to teach compiler construction. I
 - `docs/corelib` — corelib contracts (normative).
 - `docs/guides` — drafts, tooling notes, and project workflow guides (informative).
 
-See: `docs/platform-spec/language-meta/index.mdx`, `docs/execution/README.md`, `docs/corelib/README.md`.
+See: `docs/platform-spec/index.mdx`.

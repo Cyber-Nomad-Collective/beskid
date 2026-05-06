@@ -10,6 +10,19 @@ owner:
 submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Domain
+    title: Language meta
+    href: /platform-spec/language-meta/
+    relation: Canonical language contracts consumed by compiler phases
+  - type: Domain
+    title: Execution
+    href: /platform-spec/execution/
+    relation: Runtime and ABI contracts consumed by backend outputs
+  - type: Domain
+    title: Tooling
+    href: /platform-spec/tooling/
+    relation: CLI and ecosystem contracts that drive compiler orchestration
 ---
 
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
@@ -34,7 +47,7 @@ caring about pipeline shape live primarily under [Language meta](/platform-spec/
 
 **Execution** — Long-form runtime ABI, IR narrative, and host integration chapters remain under [Execution](/execution/) until mirrored here; the build-pipeline area links to those chapters from backend features where relevant.
 
-**Normative language law** — The [Language meta domain](/platform-spec/language-meta/) is the canonical language specification surface, and the [spec bridge](/platform-spec/legacy-spec-mapping/) explains mapping and ownership; compiler pages do not fork normative prose.
+**Normative language law** — The [Language meta domain](/platform-spec/language-meta/) is the canonical language specification surface; compiler pages do not fork normative prose.
 
 **Metaprogramming Mod SDK** — Compile-time `meta` execution surfaces (`Beskid.Compiler.*`), host bridge policy, typed emitters, and incremental determinism are specified under **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**, linked bidirectionally from [language-meta metaprogramming](/platform-spec/language-meta/metaprogramming/).
 </SpecSection>
