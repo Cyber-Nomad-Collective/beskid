@@ -29,8 +29,11 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.12"
       - name: Install workspace dependencies
         run: bun install --frozen-lockfile
       - name: Build site
         working-directory: site/website
-        run: bun run build
+        run: bun run prebuild && npx --no-install astro build
