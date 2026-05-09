@@ -24,5 +24,19 @@ jobs:
       - name: Install workspace dependencies
         run: bun install --frozen-lockfile
       - name: Platform spec CI validation
+        id: verify_platform_spec
+        continue-on-error: true
         working-directory: site/website
         run: bun run verify:platform-spec-ci
+      - name: Upload platform spec layout report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-spec-layout-report
+          path: site/website/src/generated/platform-spec-layout-report.json
+          if-no-files-found: ignore
+      - name: Fail job when contracts are violated
+        if: steps.verify_platform_spec.outcome != 'success'
+        run: |
+          echo "Platform spec contracts failed. See prior logs and artifact: platform-spec-layout-report."
+          exit 1

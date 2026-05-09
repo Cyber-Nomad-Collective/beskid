@@ -31,12 +31,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ -z "${PCKG_SUBMODULE_TOKEN}" ]; then
-            echo "Missing required secret: PCKG_SUBMODULE_TOKEN"
-            exit 1
-          fi
           git submodule sync -- pckg
-          git config submodule.pckg.url "https://x-access-token:${PCKG_SUBMODULE_TOKEN}@github.com/Cyber-Nomad-Collective/beskid_pckg.git"
+          if [ -n "${PCKG_SUBMODULE_TOKEN:-}" ]; then
+            git config submodule.pckg.url "https://x-access-token:${PCKG_SUBMODULE_TOKEN}@github.com/Cyber-Nomad-Collective/beskid_pckg.git"
+          fi
           git -c protocol.version=2 submodule update --init --depth 1 pckg
       - uses: actions/setup-dotnet@v4
         with:
