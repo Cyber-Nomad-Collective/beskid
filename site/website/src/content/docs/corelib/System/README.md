@@ -1,20 +1,10 @@
 ---
 title: "System Module Group"
+description: "Platform and runtime-facing APIs—syscall boundary, console I/O, staged FS and environment."
 ---
 
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-System covers platform-oriented APIs with runtime-mediated behavior.
+**Canonical document:** [`docs/System/README.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/System/README.md)
 
-## Files
-- `IO.md`
-- `Syscall.md`
-- `FS.md`
-- `Path.md`
-- `Time.md`
-- `Environment.md`
-- `Process.md`
-
-## Contract
-- Public APIs remain stable across runtime implementation changes.
-- Platform-specific policy stays in runtime, not in compiler backends.
-- Corelib source layout follows **one type per file** for public data types; `System/Syscall/` demonstrates the convention.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

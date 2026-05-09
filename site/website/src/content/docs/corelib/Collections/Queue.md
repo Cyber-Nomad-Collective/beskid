@@ -1,16 +1,10 @@
 ---
 title: "Collections.Queue"
+description: "FIFO queue shape with logical element count."
 ---
 
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## Purpose
-FIFO collection for producer/consumer style workflows.
+**Canonical document:** [`docs/Collections/Queue.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/Collections/Queue.md)
 
-## Candidate surface
-- `Queue<T>.Enqueue(T value) -> unit`
-- `Queue<T>.TryDequeue() -> Result<T, QueueError>`
-- `Queue<T>.Count() -> i64`
-
-## Notes
-- Capacity and growth strategy should be explicit.
-- Blocking behavior belongs to runtime/threading APIs, not base queue APIs.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

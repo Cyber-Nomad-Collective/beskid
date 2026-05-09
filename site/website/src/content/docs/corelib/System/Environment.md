@@ -1,18 +1,10 @@
 ---
 title: "System.Environment"
+description: "Environment variable and working-directory helpers (mostly staged)."
 ---
 
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## Purpose
-Access process environment values in a controlled, explicit API.
+**Canonical document:** [`docs/System/Environment.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/System/Environment.md)
 
-## Candidate surface
-- `Environment.Get(string name) -> Result<string, EnvironmentError>`
-- `Environment.TryGet(string name) -> Query.Contracts.Option`
-- `Environment.Set(string name, string value) -> Result<bool, EnvironmentError>`
-- Compatibility helpers: `Environment.GetVariable`, `Environment.CurrentDirectory`
-
-## Notes
-- Mutating environment should be clearly scoped and documented.
-- Runtime mediates platform differences.
-- Current baseline marks `Set` as unsupported until runtime-backed environment mutation is added.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

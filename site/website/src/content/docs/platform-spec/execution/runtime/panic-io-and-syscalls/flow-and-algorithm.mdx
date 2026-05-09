@@ -30,6 +30,13 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 ## What this article covers
 This article explains the `flow-and-algorithm` view for `Panic, IO, and syscalls` in concrete, onboarding-first language.
 
+## Syscall wrapper flow
+
+1. Caller chooses typed selectors (`Descriptor`, `ReadLimit`) and creates `WriteRequest` or `ReadRequest`.
+2. Corelib wrapper (`WriteWith` / `ReadWith`) resolves selectors via `match` into concrete fd and max-byte values.
+3. Wrapper forwards to compatibility functions (`Write` / `Read`) that guard error conditions and call runtime builtins.
+4. Runtime builtins (`__syscall_write`, `__syscall_read`) execute host interaction and return values mapped into `Core.Results.Result`.
+
 ## Newcomer walk-through
 Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
 
@@ -37,6 +44,7 @@ Start from the parent feature hub to learn the contract boundaries, then map the
 - Builtin exports in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
 - Panic and syscall implementation in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
 - Runtime symbol registration in `compiler/crates/beskid_runtime/src/lib.rs`
+- Corelib wrapper implementation in `compiler/corelib/beskid_corelib/src/System/Syscall.bd`
 
 ## Practical guidance
 When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

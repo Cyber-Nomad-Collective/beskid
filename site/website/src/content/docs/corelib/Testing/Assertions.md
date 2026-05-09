@@ -1,24 +1,10 @@
 ---
 title: "Testing.Assertions"
-description: "Shouldly-like assertion primitives for Beskid tests."
+description: "Assertion primitives for Beskid test bodies."
 ---
 
-`Testing.Assertions` contains the core assertion helpers used from test bodies.
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## Available primitives (v0.1)
+**Canonical document:** [`docs/Testing/Assertions.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/Testing/Assertions.md)
 
-- `Fail(message)`
-- `AssertTrue(condition, message)`
-- `AssertFalse(condition, message)`
-- `AssertEqualI64(expected, actual, message)`
-- `AssertEqualString(expected, actual, message)`
-- `AssertNotEqualI64(left, right, message)`
-- `AssertContains(text, needle, message)`
-
-## Failure shape
-
-The module centralizes failure behavior through `Fail(...)`, which:
-- emits a failure message
-- triggers runtime failure for the current test execution
-
-This keeps assertion behavior consistent across test suites while the runner reports pass/fail/skip/filter buckets.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

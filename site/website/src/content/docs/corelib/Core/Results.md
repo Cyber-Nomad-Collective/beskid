@@ -1,20 +1,10 @@
 ---
 title: "Core.Results"
+description: "Discriminated success or failure carrier used across corelib."
 ---
 
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## Purpose
-Define the canonical `Result<TValue, TError>` shape and usage policy.
+**Canonical document:** [`docs/Core/Results.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/Core/Results.md)
 
-## Baseline shape
-```beskid
-pub enum Result<TValue, TError> {
-    Ok(TValue value),
-    Error(TError error),
-}
-```
-
-## Usage policy
-- Use `Result<TValue, TError>` when failure is expected.
-- Do not hide recoverable failure via panic-only APIs.
-- Keep `TError` domain-specific.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

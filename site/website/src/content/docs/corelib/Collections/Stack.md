@@ -1,16 +1,10 @@
 ---
 title: "Collections.Stack"
+description: "LIFO stack shape with logical element count."
 ---
 
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## Purpose
-LIFO collection for scoped and algorithmic workflows.
+**Canonical document:** [`docs/Collections/Stack.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/Collections/Stack.md)
 
-## Candidate surface
-- `Stack<T>.Push(T value) -> unit`
-- `Stack<T>.TryPop() -> Result<T, StackError>`
-- `Stack<T>.Count() -> i64`
-
-## Notes
-- Error behavior for empty stack must be explicit.
-- Growth controls should be documented for deterministic performance.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

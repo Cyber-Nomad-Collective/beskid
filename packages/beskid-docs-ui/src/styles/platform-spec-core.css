@@ -192,16 +192,6 @@ body:has(.platform-spec-map-page) .beskid-header__search {
 	}
 }
 
-/*
- * Platform-spec reader: hide the global Starlight header at the same breakpoint the sidebar leaves the mobile sheet,
- * so the hamburger / mobile nav in `.page > .header` stays available under 50rem.
- */
-@media (min-width: 50.01rem) {
-	html[data-platform-spec]:not([data-platform-spec-map]) .page > .header {
-		display: none !important;
-	}
-}
-
 .platform-spec-topbar-actions__icon {
 	font-size: 0.92rem;
 	width: 1rem;
@@ -499,12 +489,11 @@ body:has(.platform-spec-map-page) .beskid-header__search {
 }
 
 html[data-platform-spec] .content-panel {
-	font-family: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+	font-family: ui-sans-serif, system-ui, sans-serif;
 }
 
 html[data-platform-spec] .sl-markdown-content h1,
 html[data-platform-spec] .sl-markdown-content h2 {
-	font-family: ui-sans-serif, system-ui, sans-serif;
 	letter-spacing: -0.02em;
 }
 

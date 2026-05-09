@@ -30,6 +30,14 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 ## What this article covers
 This article explains the `contracts-and-edge-cases` view for `Panic, IO, and syscalls` in concrete, onboarding-first language.
 
+## Corelib syscall wrapper contracts
+
+- `System.Syscall.Write(i64 fd, string data)` and `System.Syscall.Read(i64 fd, i64 maxBytes)` remain the compatibility layer over runtime builtins.
+- New typed wrappers (`WriteWith`, `ReadWith`) must lower to those raw wrappers by resolving discriminated unions (`Descriptor`, `ReadLimit`) in corelib, not in user code.
+- `Descriptor::Standard(StandardStream::Stdin|Stdout|Stderr)` must resolve to `0|1|2`; `Descriptor::Raw(fd)` must preserve the provided fd.
+- `ReadLimit::Default` must resolve to a deterministic corelib default (`DefaultReadLimit()`), while `ReadLimit::UpTo(n)` must preserve `n`.
+- Existing error guarantees remain unchanged: invalid fd yields `InvalidFd`, non-stdin read fd yields `UnsupportedReadFd`, and invalid read limit yields `InvalidReadLimit`.
+
 ## Newcomer walk-through
 Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
 
@@ -37,6 +45,8 @@ Start from the parent feature hub to learn the contract boundaries, then map the
 - Builtin exports in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
 - Panic and syscall implementation in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
 - Runtime symbol registration in `compiler/crates/beskid_runtime/src/lib.rs`
+- Corelib syscall wrappers in `compiler/corelib/beskid_corelib/src/System/Syscall.bd`
+- Syscall wrapper DTOs and selector enums in `compiler/corelib/beskid_corelib/src/System/Syscall/`
 
 ## Practical guidance
 When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

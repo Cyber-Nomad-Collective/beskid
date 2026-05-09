@@ -3,15 +3,8 @@ title: "Testing module group"
 description: "Assertion contracts and test primitives for Beskid test harness workflows."
 ---
 
-`Testing` provides corelib-level primitives used by Beskid tests.
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## Modules
+**Canonical document:** [`docs/Testing/README.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/Testing/README.md)
 
-- [`Testing.Contracts`](./Contracts.md): contracts for assertion predicates and message builders.
-- [`Testing.Assertions`](./Assertions.md): assertion functions (`AssertTrue`, `AssertEqualI64`, `Fail`, ...).
-
-## Design notes
-
-- APIs are verb-first (`AssertTrue`, `AssertContains`, `Fail`).
-- Assertion helpers are intentionally small and explicit for v0.1.
-- Runtime pass/fail accounting is owned by the test runner; assertion helpers provide reusable failure primitives.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

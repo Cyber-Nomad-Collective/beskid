@@ -1,0 +1,73 @@
+---
+title: IntelliSense capabilities and behavior
+description: Normative LSP IntelliSense feature contract for Beskid editors.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-09
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: LSP
+    href: /platform-spec/tooling/lsp/
+    relation: Parent area
+  - type: Feature
+    title: Snapshot and refresh contract
+    href: /platform-spec/tooling/lsp/snapshot-and-refresh-contract/
+    relation: IntelliSense requests read from the same document/workspace snapshot model
+  - type: Area
+    title: VS Code extension
+    href: /platform-spec/tooling/vscode-extension/
+    relation: Extension delegates language features to this LSP capability surface
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+## What this covers
+
+This page defines the concrete IntelliSense behavior exposed by Beskid LSP to editors for `.bd` and `.proj` files. The contract is implementation-grounded and describes current supported behavior, limits, and compatibility expectations.
+
+## Normative feature surface
+
+1. **Completion** shall be provided for `.bd` and `.proj` documents. `.bd` completion candidates come from `beskid_analysis::services::completion_candidates`; `.proj` completion includes manifest keywords and enum-like value suggestions.
+2. **Hover** shall return Markdown content for resolved `.bd` symbols and manifest tokens in `.proj`.
+3. **Go to definition** shall resolve to the declaration span for resolved symbols in `.bd`; in `.proj`, `path = "..."` dependency values shall navigate to the target `Project.proj`.
+4. **Go to declaration** shall be supported and shall follow the same target resolution contract as go-to-definition.
+5. **Find references** shall be supported for resolved `.bd` symbols and manifest tokens in `.proj`; declaration inclusion shall follow the `includeDeclaration` request flag.
+6. **Rename + prepare rename** shall be supported for resolved symbols and manifest tokens with identifier validation (`[A-Za-z_][A-Za-z0-9_]*`); invalid identifiers shall return no rename edit.
+7. **Signature help** shall be supported for `.bd` call sites and return one active signature derived from the callable hover payload.
+8. **Document symbols** shall be supported for `.bd` and `.proj` with stable symbol-kind mapping.
+9. **Workspace symbols** shall be supported for indexed `.bd` documents from open buffers plus closed-file workspace snapshots.
+10. **Code actions** shall include source formatting action for `.bd` and a quick-fix for unused imports (`W1503`) when diagnostic context is present.
+11. **Semantic tokens** shall be supported (full-document mode) with declaration tagging for symbol declarations.
+12. **Diagnostics** shall preserve compiler severity/code identity and apply equally to open buffers and workspace-indexed closed files.
+
+## Current scope limits
+
+- `rename` currently edits one document per request (the request document URI) even when additional workspace files may reference the same symbol.
+- Type definition and implementation navigation are not exposed as dedicated LSP methods yet.
+- Semantic tokens are full-refresh only; token range/delta updates are not advertised.
+
+## Compatibility guarantees
+
+- Server capabilities in `initialize` shall accurately advertise only implemented IntelliSense methods.
+- Extension integrations must rely on standard LSP capability negotiation and should not duplicate semantic analysis rules client-side.
+- New IntelliSense methods must add both request handlers and capability advertisement in the same change.
+
+## Implementation anchors
+
+- `compiler/crates/beskid_lsp/src/server/init.rs`
+- `compiler/crates/beskid_lsp/src/server/backend.rs`
+- `compiler/crates/beskid_lsp/src/features`
+- `compiler/crates/beskid_lsp/src/diagnostics.rs`
+- `compiler/crates/beskid_analysis/src/services.rs`
+- `beskid_vscode/src/lsp/beskidLanguageClient.ts`
+- `beskid_vscode/src/runtime/BeskidExtensionRuntime.ts`

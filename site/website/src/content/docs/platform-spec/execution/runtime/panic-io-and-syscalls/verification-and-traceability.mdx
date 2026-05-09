@@ -30,6 +30,14 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 ## What this article covers
 This article explains the `verification-and-traceability` view for `Panic, IO, and syscalls` in concrete, onboarding-first language.
 
+## Verification focus
+
+- Corelib compile-shape tests must include every syscall selector/type file under `src/System/Syscall/`.
+- Corelib parse tests must include syscall ergonomic test sources (`SyscallErgonomicsTests.bd`) in addition to raw builtin smoke tests.
+- Runtime-backed behavior must remain traceable through both layers:
+  - raw builtins (`__syscall_write`, `__syscall_read`) in runtime crates
+  - typed wrappers (`WriteWith`, `ReadWith`, selector resolution) in corelib sources
+
 ## Newcomer walk-through
 Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
 
@@ -37,6 +45,8 @@ Start from the parent feature hub to learn the contract boundaries, then map the
 - Builtin exports in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
 - Panic and syscall implementation in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
 - Runtime symbol registration in `compiler/crates/beskid_runtime/src/lib.rs`
+- Corelib syscall tests in `compiler/corelib/beskid_corelib/tests/corelib_tests/src/system/`
+- Corelib compile checks in `compiler/crates/beskid_tests/src/projects/corelib/`
 
 ## Practical guidance
 When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

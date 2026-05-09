@@ -1,16 +1,10 @@
 ---
 title: "System.Process"
+description: "Process identity, exit, and command execution (staged)."
 ---
 
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## Purpose
-Process-level APIs for args, exit, and process metadata.
+**Canonical document:** [`docs/System/Process.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/System/Process.md)
 
-## Candidate surface
-- `Process.Id() -> i32`
-- `Process.Exit(i32 code) -> unit`
-- Compatibility helpers: `Process.ExitCode() -> Result<i64, ProcessError>`, `Process.Run(string command) -> Result<bool, ProcessError>`
-
-## Notes
-- `Exit` semantics must be explicit for tests/tools.
-- Argument and subprocess APIs should be specified separately as additive expansion.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

@@ -1,22 +1,10 @@
 ---
 title: "Testing.Contracts"
-description: "Assertion-related contracts for reusable testing behavior."
+description: "Contracts for deferred assertion predicates and message builders."
 ---
 
-`Testing.Contracts` defines protocol-style contracts for assertion integrations.
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## Contracts
+**Canonical document:** [`docs/Testing/Contracts.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/Testing/Contracts.md)
 
-```beskid
-pub contract AssertionPredicate {
-    bool Check();
-}
-
-pub contract AssertionMessageBuilder {
-    string Build();
-}
-```
-
-These contracts provide a minimal declarative surface for future composition:
-- predicate-style checks (`Check`)
-- message construction (`Build`)
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

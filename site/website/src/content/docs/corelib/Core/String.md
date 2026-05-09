@@ -1,16 +1,10 @@
 ---
 title: "Core.String"
+description: "UTF-8 string helpers built on runtime string builtins."
 ---
 
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## Purpose
-Provide UTF-8 string APIs with predictable cost.
+**Canonical document:** [`docs/Core/String.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/Core/String.md)
 
-## MVP surface
-- `String.Len(string text) -> i64`
-- `String.IsEmpty(string text) -> bool`
-- `String.Contains(string text, string needle) -> bool`
-
-## Constraints
-- No hidden expensive behavior in cheap-looking calls.
-- Allocation behavior should be explicit in API docs.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

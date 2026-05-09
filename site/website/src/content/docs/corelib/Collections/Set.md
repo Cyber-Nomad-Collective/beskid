@@ -1,16 +1,10 @@
 ---
 title: "Collections.Set"
+description: "Unordered set shape with logical membership helper."
 ---
 
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## Purpose
-Uniqueness-preserving collection for membership operations.
+**Canonical document:** [`docs/Collections/Set.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/Collections/Set.md)
 
-## Candidate surface
-- `Set<T>.Add(T value) -> bool`
-- `Set<T>.Contains(T value) -> bool`
-- `Set<T>.Remove(T value) -> bool`
-
-## Notes
-- Equality semantics must match `Map` key semantics.
-- Capacity behavior should be explicit for performance-sensitive code.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

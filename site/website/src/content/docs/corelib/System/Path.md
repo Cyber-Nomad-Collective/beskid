@@ -1,16 +1,10 @@
 ---
 title: "System.Path"
+description: "Path segment composition (partial implementation)."
 ---
 
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## Purpose
-Cross-platform path operations with deterministic semantics.
+**Canonical document:** [`docs/System/Path.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/System/Path.md)
 
-## Candidate surface
-- `Path.Combine(string left, string right) -> string`
-- `Path.FileName(string path) -> string`
-- `Path.Extension(string path) -> string`
-
-## Notes
-- Path separator behavior must be defined by API contract.
-- Normalization/validation rules should be explicit.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

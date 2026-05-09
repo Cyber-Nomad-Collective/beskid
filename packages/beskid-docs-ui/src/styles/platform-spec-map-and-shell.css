@@ -858,6 +858,11 @@ body:has(.platform-spec-map-page) h1#_top {
 	flex-direction: column;
 }
 
+/* Author `display: flex` wins over `[hidden]` in the UA stylesheet; force inactive panels off-screen. */
+.platform-spec-home__panel[hidden] {
+	display: none !important;
+}
+
 .platform-spec-home__panel[data-tab-panel='map'] {
 	overflow: hidden;
 }

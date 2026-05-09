@@ -8,6 +8,9 @@ const strict = import.meta.env.PUBLIC_GISCUS_STRICT ?? '1';
 const reactionsEnabled = import.meta.env.PUBLIC_GISCUS_REACTIONS_ENABLED ?? '1';
 const inputPosition = import.meta.env.PUBLIC_GISCUS_INPUT_POSITION ?? 'top';
 const lang = import.meta.env.PUBLIC_GISCUS_LANG ?? 'en';
+const emitMetadata = import.meta.env.PUBLIC_GISCUS_EMIT_METADATA ?? '0';
+/** `sync` = follow Starlight light/dark; any other value is passed to giscus as `data-theme` (e.g. `preferred_color_scheme`). */
+const themeMode = import.meta.env.PUBLIC_GISCUS_THEME ?? 'sync';
 
 const configured = Boolean(repo && repoId && category && categoryId);
 ---
@@ -17,12 +20,24 @@ const configured = Boolean(repo && repoId && category && categoryId);
 		<section class="giscus-wrap" aria-label="Discuss this page">
 			<h2 class="giscus-title">Discuss this page</h2>
 			<p class="giscus-note">
-				Comments are managed in GitHub Discussions. Please follow the repository contribution and conduct policies.
+				Comments are managed in GitHub Discussions. Select text in the article, use <strong>Copy quote for discussion</strong>, then paste into the box below. Please follow the repository contribution and conduct policies.
 			</p>
 			<div class="giscus" />
 			<script
 				is:inline
-				define:vars={{ repo, repoId, category, categoryId, mapping, strict, reactionsEnabled, inputPosition, lang }}
+				define:vars={{
+					repo,
+					repoId,
+					category,
+					categoryId,
+					mapping,
+					strict,
+					reactionsEnabled,
+					inputPosition,
+					lang,
+					emitMetadata,
+					themeMode,
+				}}
 			>
 				const root = document.querySelector('.giscus');
 				if (root) {
@@ -37,31 +52,38 @@ const configured = Boolean(repo && repoId && category && categoryId);
 					script.setAttribute('data-mapping', mapping);
 					script.setAttribute('data-strict', strict);
 					script.setAttribute('data-reactions-enabled', reactionsEnabled);
-					script.setAttribute('data-emit-metadata', '0');
+					script.setAttribute('data-emit-metadata', emitMetadata);
 					script.setAttribute('data-input-position', inputPosition);
-					script.setAttribute('data-theme', document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
+					const syncTheme = themeMode === 'sync' || themeMode === '';
+					if (syncTheme) {
+						script.setAttribute('data-theme', document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
+					} else {
+						script.setAttribute('data-theme', themeMode);
+					}
 					script.setAttribute('data-lang', lang);
 					script.setAttribute('data-loading', 'lazy');
 					root.appendChild(script);
 
-					const applyTheme = () => {
-						const iframe = document.querySelector('iframe.giscus-frame');
-						if (!iframe) return;
-						const isLight = document.documentElement.dataset.theme === 'light';
-						iframe.contentWindow?.postMessage(
-							{
-								giscus: {
-									setConfig: {
-										theme: isLight ? 'light' : 'dark',
+					if (syncTheme) {
+						const applyTheme = () => {
+							const iframe = document.querySelector('iframe.giscus-frame');
+							if (!iframe) return;
+							const isLight = document.documentElement.dataset.theme === 'light';
+							iframe.contentWindow?.postMessage(
+								{
+									giscus: {
+										setConfig: {
+											theme: isLight ? 'light' : 'dark',
+										},
 									},
 								},
-							},
-							'https://giscus.app',
-						);
-					};
+								'https://giscus.app',
+							);
+						};
 
-					const observer = new MutationObserver(() => applyTheme());
-					observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+						const observer = new MutationObserver(() => applyTheme());
+						observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+					}
 				}
 			</script>
 		</section>

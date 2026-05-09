@@ -1,16 +1,10 @@
 ---
 title: "System.IO"
-description: "Console-oriented output built on System.Syscall."
+description: "Console-oriented output built on System.Syscall.Write."
 ---
 
-`System.IO` provides human-facing output helpers. All bytes go through **`System.Syscall.Write`**; there are no legacy `sys_print` / `sys_println` runtime entrypoints.
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## API
+**Canonical document:** [`docs/System/IO.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/System/IO.md)
 
-- **`Print(string text)`** — writes UTF-8 to standard output with no trailing newline.
-- **`PrintLine(string text)`** — writes `text` then `"\n"` (composition entirely in Beskid).
-
-## Contract
-
-- Encoding follows the language `string` representation (UTF-8 payload).
-- Line breaks are corelib policy, not a separate runtime builtin.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

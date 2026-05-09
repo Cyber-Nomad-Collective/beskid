@@ -1,15 +1,10 @@
 ---
 title: "Collections.Array"
+description: "Fixed-size array iteration helpers (length builtin pending)."
 ---
 
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## Purpose
-Define contiguous array primitives and contracts.
+**Canonical document:** [`docs/Collections/Array.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/Collections/Array.md)
 
-## MVP surface
-- `Array.Len<T>(T[] values) -> i64`
-- `Array.Iterate<T>(T[] values) -> ArrayIter<T>`
-
-## Notes
-- Array behavior should stay close to runtime representation.
-- Bounds and safety semantics are language-level guarantees.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

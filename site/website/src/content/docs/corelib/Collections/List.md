@@ -1,16 +1,10 @@
 ---
 title: "Collections.List"
+description: "Growable list type with staged element storage."
 ---
 
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## Purpose
-Dynamic sequence abstraction built on contiguous storage.
+**Canonical document:** [`docs/Collections/List.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/Collections/List.md)
 
-## Candidate surface
-- `List<T>.Add(T value) -> unit`
-- `List<T>.Count() -> i64`
-- `List<T>.Get(i64 index) -> T`
-
-## Notes
-- Reserve/capacity controls should be explicit.
-- Query integration should be allocation-aware.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).

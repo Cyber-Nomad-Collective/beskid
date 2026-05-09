@@ -59,3 +59,7 @@ Configure deployment env vars (see `.env.example`):
 - `PUBLIC_GISCUS_REACTIONS_ENABLED`
 - `PUBLIC_GISCUS_INPUT_POSITION`
 - `PUBLIC_GISCUS_LANG`
+- `PUBLIC_GISCUS_EMIT_METADATA`
+- `PUBLIC_GISCUS_THEME` (`sync` or e.g. `preferred_color_scheme`)
+
+On platform-spec pages, readers can **select text** and use **Copy quote for discussion** to paste a quoted passage plus link into giscus.

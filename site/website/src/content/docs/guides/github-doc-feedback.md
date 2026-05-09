@@ -30,13 +30,22 @@ Set the following public env vars in deployment (or local `.env`):
 - `PUBLIC_GISCUS_REACTIONS_ENABLED`
 - `PUBLIC_GISCUS_INPUT_POSITION`
 - `PUBLIC_GISCUS_LANG`
+- `PUBLIC_GISCUS_EMIT_METADATA` (usually `0`)
+- `PUBLIC_GISCUS_THEME` — `sync` follows the site theme toggle; or set e.g. `preferred_color_scheme` to match the snippet from giscus.app
 
 Reference defaults are in `site/website/.env.example`.
+
+## Commenting on a specific passage
+
+giscus maps **one discussion thread per page** (with `pathname` mapping). It does not support anchored comments inside the page like a PDF reviewer.
+
+On platform-spec pages, select text in the article: a **Copy quote for discussion** control appears. It copies a Markdown blockquote plus the page URL (with a `#heading-id` when possible). Paste that into the giscus comment box so thread readers see exactly what you mean.
 
 ## Verification checklist
 
 - Open any `/platform-spec/...` page:
   - confirm **Edit page** opens the expected file path in GitHub,
   - confirm **Discuss this page** loads giscus.
-- Toggle light/dark theme and verify giscus theme follows the site theme.
+- If `PUBLIC_GISCUS_THEME=sync`, toggle light/dark and verify giscus follows the site. If you use `preferred_color_scheme`, giscus follows the OS/browser scheme instead.
+- Select a sentence, use **Copy quote for discussion**, paste into the comment field, and confirm the quote and link look right.
 - Submit a test comment and confirm it appears in the chosen Discussions category.

@@ -1,16 +1,10 @@
 ---
 title: "System.Time"
+description: "Instant and duration types (clock reads currently stubbed)."
 ---
 
+The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.
 
-## Purpose
-Time and duration primitives with explicit monotonic/wall-clock contracts.
+**Canonical document:** [`docs/System/Time.md`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/main/compiler/corelib/beskid_corelib/docs/System/Time.md)
 
-## Candidate surface
-- `Time.NowUtc() -> Instant`
-- `Time.MonotonicNow() -> Instant`
-- `Duration.FromMilliseconds(i64 ms) -> Duration`
-
-## Notes
-- Distinguish monotonic and wall clock behavior.
-- Runtime provides platform clock integrations.
+It is included in **`corelib`** package artifacts under `docs/` (and in `.beskid/docs/` when API docs are generated during `beskid pckg pack`).
