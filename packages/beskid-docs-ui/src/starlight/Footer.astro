@@ -4,12 +4,14 @@ import LastUpdated from 'virtual:starlight/components/LastUpdated';
 import Pagination from 'virtual:starlight/components/Pagination';
 import config from 'virtual:starlight/user-config';
 import { Icon } from '@astrojs/starlight/components';
+import GiscusComments from './GiscusComments.astro';
 
 const slug = Astro.locals.starlightRoute.entry.slug ?? Astro.locals.starlightRoute.id ?? '';
 const isPlatformSpec = /(^|\/)platform-spec(\/|$)/.test(slug);
 ---
 
 <footer class="sl-flex">
+	{isPlatformSpec && <GiscusComments />}
 	<div class="meta sl-flex">
 		<EditLink />
 		<LastUpdated />

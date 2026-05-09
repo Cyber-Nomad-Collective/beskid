@@ -1,5 +1,8 @@
 :root {
 	--beskid-material-seed: #0ea5a3;
+	/* Pin site typography tokens so docs keep a stable sans stack across Starlight updates. */
+	--sl-font: Inter, 'Atkinson Hyperlegible', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+	--sl-font-mono: 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 	--beskid-primary: #7cf3ef;
 	--beskid-on-primary: #003736;
 	--beskid-primary-container: #00504e;

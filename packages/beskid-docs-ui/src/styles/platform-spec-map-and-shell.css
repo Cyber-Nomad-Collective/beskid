@@ -790,8 +790,9 @@ body:has(.platform-spec-map-page) h1#_top {
 	display: inline-flex;
 	align-items: stretch;
 	gap: 0;
-	margin: 0 0 0.75rem;
+	margin: 0 auto 0.75rem;
 	padding: 0;
+	width: fit-content;
 	border-bottom: 1px solid var(--platform-spec-divider);
 }
 

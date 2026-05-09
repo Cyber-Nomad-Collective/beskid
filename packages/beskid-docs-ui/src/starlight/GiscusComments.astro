@@ -1,0 +1,88 @@
+---
+const repo = import.meta.env.PUBLIC_GISCUS_REPO;
+const repoId = import.meta.env.PUBLIC_GISCUS_REPO_ID;
+const category = import.meta.env.PUBLIC_GISCUS_CATEGORY;
+const categoryId = import.meta.env.PUBLIC_GISCUS_CATEGORY_ID;
+const mapping = import.meta.env.PUBLIC_GISCUS_MAPPING ?? 'pathname';
+const strict = import.meta.env.PUBLIC_GISCUS_STRICT ?? '1';
+const reactionsEnabled = import.meta.env.PUBLIC_GISCUS_REACTIONS_ENABLED ?? '1';
+const inputPosition = import.meta.env.PUBLIC_GISCUS_INPUT_POSITION ?? 'top';
+const lang = import.meta.env.PUBLIC_GISCUS_LANG ?? 'en';
+
+const configured = Boolean(repo && repoId && category && categoryId);
+---
+
+{
+	configured && (
+		<section class="giscus-wrap" aria-label="Discuss this page">
+			<h2 class="giscus-title">Discuss this page</h2>
+			<p class="giscus-note">
+				Comments are managed in GitHub Discussions. Please follow the repository contribution and conduct policies.
+			</p>
+			<div class="giscus" />
+			<script
+				is:inline
+				define:vars={{ repo, repoId, category, categoryId, mapping, strict, reactionsEnabled, inputPosition, lang }}
+			>
+				const root = document.querySelector('.giscus');
+				if (root) {
+					const script = document.createElement('script');
+					script.src = 'https://giscus.app/client.js';
+					script.async = true;
+					script.crossOrigin = 'anonymous';
+					script.setAttribute('data-repo', repo);
+					script.setAttribute('data-repo-id', repoId);
+					script.setAttribute('data-category', category);
+					script.setAttribute('data-category-id', categoryId);
+					script.setAttribute('data-mapping', mapping);
+					script.setAttribute('data-strict', strict);
+					script.setAttribute('data-reactions-enabled', reactionsEnabled);
+					script.setAttribute('data-emit-metadata', '0');
+					script.setAttribute('data-input-position', inputPosition);
+					script.setAttribute('data-theme', document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
+					script.setAttribute('data-lang', lang);
+					script.setAttribute('data-loading', 'lazy');
+					root.appendChild(script);
+
+					const applyTheme = () => {
+						const iframe = document.querySelector('iframe.giscus-frame');
+						if (!iframe) return;
+						const isLight = document.documentElement.dataset.theme === 'light';
+						iframe.contentWindow?.postMessage(
+							{
+								giscus: {
+									setConfig: {
+										theme: isLight ? 'light' : 'dark',
+									},
+								},
+							},
+							'https://giscus.app',
+						);
+					};
+
+					const observer = new MutationObserver(() => applyTheme());
+					observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+				}
+			</script>
+		</section>
+	)
+}
+
+<style>
+	.giscus-wrap {
+		margin-top: 2rem;
+		padding-top: 1rem;
+		border-top: 1px solid var(--sl-color-hairline-light);
+	}
+
+	.giscus-title {
+		font-size: var(--sl-text-h4);
+		margin: 0 0 0.5rem;
+	}
+
+	.giscus-note {
+		margin: 0 0 1rem;
+		color: var(--sl-color-gray-3);
+		font-size: var(--sl-text-sm);
+	}
+</style>
