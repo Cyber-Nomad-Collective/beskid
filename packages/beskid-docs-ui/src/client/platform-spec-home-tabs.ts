@@ -1,7 +1,8 @@
 type SpecHomeTab = 'map' | 'browse';
 
 function selectTab(id: SpecHomeTab, opts?: { replaceHash?: boolean }) {
-	const root = document.querySelector<HTMLElement>('[data-platform-spec-home]');
+	const roots = document.querySelectorAll<HTMLElement>('[data-platform-spec-home]');
+	const root = roots[0];
 	if (!root) return;
 	const tabs = root.querySelectorAll<HTMLButtonElement>('.platform-spec-home__tab');
 	const panels = root.querySelectorAll<HTMLElement>('[data-tab-panel]');
@@ -25,7 +26,14 @@ function selectTab(id: SpecHomeTab, opts?: { replaceHash?: boolean }) {
 }
 
 function initPlatformSpecHomeTabs() {
-	const root = document.querySelector<HTMLElement>('[data-platform-spec-home]');
+	const roots = document.querySelectorAll<HTMLElement>('[data-platform-spec-home]');
+	if (roots.length > 1) {
+		console.warn(
+			'[platform-spec-home] Multiple hub roots in the DOM; ensure only one PlatformSpecHome per page or duplicate aria ids will confuse assistive tech.',
+			roots.length,
+		);
+	}
+	const root = roots[0];
 	if (!root) return;
 
 	const hash = location.hash.replace(/^#/, '');

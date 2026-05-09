@@ -183,6 +183,9 @@ function syncMapChromeInsets() {
 	const footer = document.querySelector<HTMLElement>('footer');
 	const viewH = window.innerHeight;
 	const topPx = topbar.getBoundingClientRect().bottom;
+	const mapTop = mapPage.getBoundingClientRect().top;
+	/* Use the map's position in the document, not only the header—avoids over-tall map on /platform-spec/ (tabs + copy above the canvas). */
+	const topBound = Math.max(topPx, mapTop);
 	const footerRect = footer?.getBoundingClientRect();
 	const footerVisible =
 		Boolean(footerRect) &&
@@ -190,8 +193,8 @@ function syncMapChromeInsets() {
 		window.getComputedStyle(footer as HTMLElement).display !== 'none' &&
 		window.getComputedStyle(footer as HTMLElement).visibility !== 'hidden';
 	const footerTop = footerVisible && footerRect ? footerRect.top : viewH;
-	const bottomBound = Math.max(topPx, Math.min(viewH, footerTop));
-	const available = Math.max(280, bottomBound - topPx);
+	const bottomBound = Math.max(topBound, Math.min(viewH, footerTop));
+	const available = Math.max(280, bottomBound - topBound);
 	const bottomPx = Math.max(0, viewH - bottomBound);
 	document.documentElement.style.setProperty('--platform-spec-panel-top', `${topPx}px`);
 	document.documentElement.style.setProperty('--platform-spec-panel-bottom', `${bottomPx}px`);
@@ -220,6 +223,12 @@ export function mountPlatformSpecGraph(): void {
 
 	syncMapChromeInsets();
 	window.addEventListener('resize', syncMapChromeInsets, { passive: true });
+	const mapPageEl = document.querySelector<HTMLElement>('.platform-spec-map-page');
+	if (typeof ResizeObserver !== 'undefined' && mapPageEl) {
+		const ro = new ResizeObserver(() => syncMapChromeInsets());
+		ro.observe(mapPageEl);
+	}
+
 	const applyMapLegendSwatches = () => {
 		const legend = document.querySelector('.platform-spec-map-legend');
 		if (!legend) return;
@@ -467,9 +476,9 @@ export function mountPlatformSpecGraph(): void {
 		const target = simNodes.find((n) => n.id === node.id);
 		if (target) {
 			const baseScale =
-				node.level === 'root' ? 1.08 : node.level === 'domain' ? 1.38 : node.level === 'area' ? 1.58 : 1.88;
+				node.level === 'root' ? 1.38 : node.level === 'domain' ? 1.82 : node.level === 'area' ? 2.12 : 2.52;
 			const r = effectiveNodeRadius(node);
-			const radiusBoost = Math.min(1.28, 52 / Math.max(26, r));
+			const radiusBoost = Math.min(1.42, 56 / Math.max(26, r));
 			const scale = Math.min(zoomMax, Math.max(zoomMin + 0.02, baseScale * radiusBoost));
 			svg
 				.transition()

@@ -1,6 +1,18 @@
 ---
 import DomainTiles from './DomainTiles.astro';
 import PlatformSpecGraphShell from './PlatformSpecGraphShell.astro';
+
+/** Stable, route-scoped ids (unique per page if multiple hubs are ever embedded). */
+const pathKey =
+	Astro.url.pathname
+		.replace(/\/+$/, '')
+		.replace(/^\/+/, '')
+		.replace(/\//g, '-') || 'root';
+const uid = `psh-${pathKey.replace(/[^a-zA-Z0-9-]/g, '')}`;
+const idTabMap = `${uid}-tab-map`;
+const idTabBrowse = `${uid}-tab-browse`;
+const idPanelMap = `${uid}-panel-map`;
+const idPanelBrowse = `${uid}-panel-browse`;
 ---
 
 <div class="platform-spec-home" data-platform-spec-home>
@@ -9,8 +21,8 @@ import PlatformSpecGraphShell from './PlatformSpecGraphShell.astro';
 			type="button"
 			class="platform-spec-home__tab is-active"
 			role="tab"
-			id="platform-spec-home-tab-map"
-			aria-controls="platform-spec-home-panel-map"
+			id={idTabMap}
+			aria-controls={idPanelMap}
 			data-tab="map"
 			aria-selected="true"
 		>
@@ -20,8 +32,8 @@ import PlatformSpecGraphShell from './PlatformSpecGraphShell.astro';
 			type="button"
 			class="platform-spec-home__tab"
 			role="tab"
-			id="platform-spec-home-tab-browse"
-			aria-controls="platform-spec-home-panel-browse"
+			id={idTabBrowse}
+			aria-controls={idPanelBrowse}
 			data-tab="browse"
 			aria-selected="false"
 			tabindex="-1"
@@ -30,10 +42,10 @@ import PlatformSpecGraphShell from './PlatformSpecGraphShell.astro';
 		</button>
 	</div>
 	<div
-		id="platform-spec-home-panel-map"
+		id={idPanelMap}
 		class="platform-spec-home__panel"
 		role="tabpanel"
-		aria-labelledby="platform-spec-home-tab-map"
+		aria-labelledby={idTabMap}
 		data-tab-panel="map"
 	>
 		<div class="platform-spec-map-page">
@@ -41,10 +53,10 @@ import PlatformSpecGraphShell from './PlatformSpecGraphShell.astro';
 		</div>
 	</div>
 	<div
-		id="platform-spec-home-panel-browse"
+		id={idPanelBrowse}
 		class="platform-spec-home__panel platform-spec-home__panel--browse"
 		role="tabpanel"
-		aria-labelledby="platform-spec-home-tab-browse"
+		aria-labelledby={idTabBrowse}
 		data-tab-panel="browse"
 		hidden
 	>

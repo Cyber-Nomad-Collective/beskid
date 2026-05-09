@@ -779,3 +779,129 @@ body:has(.platform-spec-map-page) h1#_top {
 		border-top: 1px solid var(--sl-color-hairline);
 	}
 }
+
+/* /platform-spec/ — map vs domain browser */
+.platform-spec-home {
+	--platform-spec-home-radius: 0.45rem;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	width: 100%;
+	min-height: 0;
+	margin: 0 0 1.25rem;
+	border: 1px solid var(--platform-spec-divider);
+	border-radius: var(--platform-spec-home-radius);
+	background: color-mix(in srgb, var(--platform-spec-surface-muted) 55%, transparent);
+	overflow: hidden;
+}
+
+.platform-spec-home__toolbar {
+	display: flex;
+	align-items: stretch;
+	flex-shrink: 0;
+	gap: 0;
+	margin: 0;
+	padding: 0 0.15rem;
+	width: 100%;
+	border: none;
+	border-bottom: 1px solid var(--platform-spec-divider);
+	border-radius: 0;
+	background: color-mix(in srgb, var(--platform-spec-surface-strong) 35%, transparent);
+}
+
+.platform-spec-home__tab {
+	appearance: none;
+	margin: 0;
+	padding: 0.38rem 0.95rem;
+	font-family: var(--sl-font);
+	font-size: var(--sl-text-sm);
+	font-weight: 600;
+	line-height: 1.25;
+	color: var(--platform-spec-tab-text);
+	background: transparent;
+	border: none;
+	border-bottom: 2px solid transparent;
+	border-radius: 0;
+	cursor: pointer;
+	transition:
+		color 0.12s ease,
+		border-color 0.12s ease,
+		opacity 0.12s ease,
+		background-color 0.12s ease;
+	opacity: 0.88;
+}
+
+.platform-spec-home__tab:hover {
+	opacity: 1;
+	color: var(--platform-spec-tab-text-active);
+	background: color-mix(in srgb, var(--platform-spec-surface) 40%, transparent);
+}
+
+.platform-spec-home__tab:focus-visible {
+	outline: none;
+	color: var(--platform-spec-tab-text-active);
+	border-bottom-color: var(--platform-spec-tab-indicator);
+}
+
+.platform-spec-home__tab.is-active {
+	opacity: 1;
+	color: var(--platform-spec-tab-text-active);
+	border-bottom-color: color-mix(in srgb, var(--platform-spec-tab-indicator) 82%, transparent);
+	background: color-mix(in srgb, var(--platform-spec-tab-active-bg) 55%, transparent);
+}
+
+.platform-spec-home__panel {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.platform-spec-home__panel[data-tab-panel='map'] {
+	overflow: hidden;
+}
+
+.platform-spec-home__panel--browse {
+	max-width: none;
+	padding: 0.85rem 1rem 1.75rem;
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.platform-spec-home__browse-inner {
+	margin: 0;
+	max-width: min(56rem, 100%);
+}
+
+.platform-spec-home__lede {
+	margin: 0 0 1.25rem;
+	font-family: var(--sl-font);
+	font-size: var(--sl-text-base);
+	line-height: 1.65;
+	color: var(--sl-color-text);
+}
+
+/* Map tab: fill remaining viewport below the hub — overrides graph shell min-height: 88vh */
+body:has(.platform-spec-home) .platform-spec-home .platform-spec-map-page {
+	box-sizing: border-box;
+	flex: 1 1 auto;
+	min-height: 0 !important;
+}
+
+body:has(.platform-spec-home) .platform-spec-home .platform-spec-graph-layout {
+	display: grid;
+	min-height: 0 !important;
+	height: 100% !important;
+	max-height: 100% !important;
+	margin: 0 !important;
+	border: none !important;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+body:has(.platform-spec-home) .platform-spec-home .platform-spec-graph-main {
+	min-height: 0 !important;
+	height: 100% !important;
+	max-height: 100% !important;
+}

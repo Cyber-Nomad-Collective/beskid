@@ -492,6 +492,12 @@ body:has(.platform-spec-map-page) .beskid-header__search {
 	line-height: 1.45;
 }
 
+.platform-spec-home__lede,
+.platform-spec-tile__title,
+.platform-spec-tile__desc {
+	font-family: var(--sl-font);
+}
+
 html[data-platform-spec] .content-panel {
 	font-family: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
 }
