@@ -76,6 +76,9 @@ export default defineConfig({
 		starlight({
 			title: 'Beskid',
 			description: 'Beskid language docs and specification.',
+			editLink: {
+				baseUrl: 'https://github.com/Cyber-Nomad-Collective/beskid/edit/main/site/website/',
+			},
 			components: {
 				Header: '@beskid/docs-ui/starlight/Header.astro',
 				Footer: '@beskid/docs-ui/starlight/Footer.astro',

@@ -13,3 +13,4 @@ Guides are informative documentation and drafts.
 - Testing: `/guides/testing/`
 - Architecture graphs: `/guides/architecture-graphs/`
 - Interop platform-spec map (maintainer): `/guides/interop-platform-spec-canonical-map/`
+- GitHub-managed docs feedback: `/guides/github-doc-feedback/`

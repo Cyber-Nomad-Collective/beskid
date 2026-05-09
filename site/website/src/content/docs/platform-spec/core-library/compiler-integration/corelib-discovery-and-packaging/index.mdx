@@ -39,6 +39,7 @@ This feature explains how compiler and tooling always load the same canonical co
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
 - Canonical package root `compiler/corelib/beskid_corelib`
+- Canonical package identity `corelib` (`Project.proj`), with `beskid_corelib` as the repository directory name
 - Corelib path discovery in `compiler/crates/beskid_analysis/src/projects/graph/resolver.rs`
 - CLI embedding/install support in `compiler/crates/beskid_cli/build.rs` and `compiler/crates/beskid_cli/src/corelib_runtime.rs`
 - Integration checks in `compiler/crates/beskid_tests/src/projects/corelib`

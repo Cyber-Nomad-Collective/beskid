@@ -35,8 +35,13 @@ Start from the parent feature hub to learn the contract boundaries, then map the
 
 ## Code anchors
 - Public client API in `compiler/crates/beskid_pckg/src/lib.rs`
-- HTTP and auth flows in `compiler/crates/beskid_pckg/src/client`
-- CLI integration in `compiler/crates/beskid_pckg/src/cli`
+- HTTP and auth flows in `compiler/crates/beskid_pckg/src/client.rs`
+- CLI integration in `compiler/crates/beskid_pckg/src/cli.rs`
 
 ## Practical guidance
 When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+
+## CI anchors
+- Compiler-side client checks in `compiler/crates/beskid_tests/src/pckg/`.
+- Superrepo registry integration gate in `.github/workflows/pckg-ci.yml`.
+- Registry service CI in `pckg/.github/workflows/ci.yml`.

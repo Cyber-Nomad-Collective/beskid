@@ -40,3 +40,22 @@ Coolify deployment uses:
 
 - Compose file: `site/infra/docker-compose.yml`
 - Website image build: `site/website/Dockerfile`
+
+## GitHub-managed comments and edit suggestions
+
+Docs pages can use GitHub-native feedback:
+
+- Starlight `Edit page` links open file edits directly in GitHub.
+- giscus embeds page comments using GitHub Discussions.
+
+Configure deployment env vars (see `.env.example`):
+
+- `PUBLIC_GISCUS_REPO`
+- `PUBLIC_GISCUS_REPO_ID`
+- `PUBLIC_GISCUS_CATEGORY`
+- `PUBLIC_GISCUS_CATEGORY_ID`
+- `PUBLIC_GISCUS_MAPPING`
+- `PUBLIC_GISCUS_STRICT`
+- `PUBLIC_GISCUS_REACTIONS_ENABLED`
+- `PUBLIC_GISCUS_INPUT_POSITION`
+- `PUBLIC_GISCUS_LANG`
