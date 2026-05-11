@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: feature
 status: Standard
-lastReviewed: 2026-04-30
+lastReviewed: 2026-05-11
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -21,6 +21,10 @@ relatedTopics:
     title: Diagnostics parity (CLI and LSP)
     href: /platform-spec/compiler/build-pipeline/diagnostics-parity/
     relation: Common diagnostic provenance rules
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Meta diagnostics and host policy
 ---
 
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
@@ -33,9 +37,13 @@ import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
 2. Workspace scanning and symbol features shall use project graph context rather than isolated file parsing when available.
 3. Manifest diagnostics for `.proj` files shall be surfaced through project-specific diagnostic adapters.
 4. LSP diagnostics shall preserve severity and code identity from compiler analysis diagnostics.
+5. **Documentation diagnostics** — For `.bd` buffers where `DocumentAnalysisSnapshot` is available, the server **shall** merge `doc_diagnostics` (documentation mini-language, codes **W161x** and **W162x**) with diagnostics from `analyze_source_with_compilation_context` / semantic rules so editors show a single unified list per URI.
+6. **Meta diagnostics** — Diagnostics emitted during **`meta`** process or emit phases **must** use the same transport, code strings, and severity mapping as semantic diagnostics from `beskid_analysis` so CLI and LSP remain interchangeable for CI diffing. The LSP **must** refresh these diagnostics whenever the meta host invalidates a document generation (see **[Snapshot and refresh contract](/platform-spec/tooling/lsp/snapshot-and-refresh-contract/)**).
+7. **Workspace analysis with `Meta` projects** — When the resolved graph includes `Meta` nodes, analysis **must** schedule meta after the same `CompilationContext` snapshot rules as CLI; the server **must not** analyze host sources in a mode that skips attached `Meta` unless a documented power-saving mode is enabled uniformly across commands.
 
 ## Implementation anchors
 
 - `compiler/crates/beskid_lsp/src/diagnostics.rs`
 - `compiler/crates/beskid_lsp/src/workspace_scan.rs`
 - `compiler/crates/beskid_lsp/src/features`
+- `compiler/crates/beskid_analysis/src/doc/validate.rs`

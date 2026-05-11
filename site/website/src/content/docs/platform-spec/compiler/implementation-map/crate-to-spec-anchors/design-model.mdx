@@ -52,3 +52,17 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 - `beskid_codegen` -> lowering contract leaves
 - `beskid_abi` and `beskid_runtime` -> execution ABI/runtime leaves
 - `beskid_tests` and `beskid_e2e_tests` -> conformance leaves
+
+## Meta / Mod SDK anchors (reference compiler)
+
+| Concern | Primary crates | Spec leaves |
+| --- | --- | --- |
+| Stable pipeline phase ids | `beskid_pipeline` | **[Stage ordering](/platform-spec/compiler/build-pipeline/stage-ordering/)** |
+| Manifest + graph + `CompilePlan` | `beskid_analysis::projects` (`parser`, `graph`, `compile_plan`, `workflow`, `manifest_resolve`) | **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)**, **[Workspace resolution contract](/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/)** |
+| Parse + syntax domain | `beskid_analysis::syntax`, `beskid_analysis::parser` | **[Syntax domain model generation](/platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/)**, **[Beskid.Compiler.Syntax facade](/platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/)** |
+| Meta host + diagnostics | `beskid_analysis::services`, future dedicated meta host module | **[Meta block host bridge](/platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/)**, **[Analysis, query, and diagnostics facades](/platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/)** |
+| Staged rules including meta stage | `beskid_analysis::analysis::rules::staged` | **[Rules pipeline contract](/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/)** |
+| Lowering after merge | `beskid_codegen::services` | **[Stage ordering](/platform-spec/compiler/build-pipeline/stage-ordering/)**, **[Typed emitter and transforms](/platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/)** |
+| Compile-time JIT | `beskid_engine`, `beskid_runtime` | **[Meta block host bridge](/platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/)** |
+| LSP parity | `beskid_lsp` (`diagnostics`, `workspace_scan`, session store) | **[Diagnostics and workspace analysis](/platform-spec/tooling/lsp/diagnostics-and-workspace-analysis/)**, **[Snapshot and refresh contract](/platform-spec/tooling/lsp/snapshot-and-refresh-contract/)** |
+| Incremental tests | `beskid_tests` (extend with meta fixtures) | **[Incremental scheduling and determinism](/platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/)** |

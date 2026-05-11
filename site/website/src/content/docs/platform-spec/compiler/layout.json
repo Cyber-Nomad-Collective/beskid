@@ -3,6 +3,18 @@
   "level": "domain",
   "extends": "domain-default",
   "pathPrefix": "platform-spec/compiler",
+  "sections": [
+    {
+      "id": "rationale",
+      "required": true,
+      "kind": "specSection"
+    },
+    {
+      "id": "background",
+      "required": false,
+      "kind": "specSection"
+    }
+  ],
   "minSpecSections": 1,
   "widgets": [
     {

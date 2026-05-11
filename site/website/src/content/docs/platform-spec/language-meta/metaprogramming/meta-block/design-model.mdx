@@ -21,6 +21,14 @@ relatedTopics:
     title: Project manifest contract
     href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
     relation: Meta project type
+  - type: Feature
+    title: Grammar and parser contract
+    href: /platform-spec/compiler/front-end/grammar-and-parser-contract/
+    relation: Surface syntax for `meta` items
+  - type: Feature
+    title: Parser and AST contracts
+    href: /platform-spec/compiler/front-end/parser-and-ast-contracts/
+    relation: AST binding for `meta`
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
@@ -58,7 +66,17 @@ Together, capture/process/emit define the **standard meta process** the referenc
 
 - Rust crate layout, incremental graph algorithms, and diagnostic code tables — see **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**.
 - Raw string-based codegen as the normative contract — emit is **typed** syntax construction.
+- **Implementing compiler-core composition (IoC) solely through `meta`** — compile-time composition graphs and similar **compiler-internal** modularity stay in **Rust**; `meta` may **consume** exposed snapshot views via **`Beskid.Compiler.Query`** but does not replace the owning implementation (**[meta block host bridge / design model](/platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/design-model/)**).
 
 ## Relationship to attributes
 
 Attributes attach metadata to declarations and may drive tooling. **`meta`** declares **compiler-orchestrated processes** tied to the **current compilation** and, for `Meta` projects, to **manifest-driven** event piping. They are complementary, not interchangeable.
+
+## Surface syntax binding (compiler authority)
+
+Normative **lexical and syntactic** rules for where a `meta` item may appear, which tokens delimit capture/process/emit sections, and how `meta` participates in module item ordering are **not** duplicated here. They are specified under:
+
+- **[Grammar and parser contract](/platform-spec/compiler/front-end/grammar-and-parser-contract/)** — pest production names and tokenization.
+- **[Parser and AST contracts](/platform-spec/compiler/front-end/parser-and-ast-contracts/)** — AST node kinds, item list ordering, and error recovery.
+
+Language-meta pages remain authoritative for **semantic meaning** of capture/process/emit; compiler front-end pages are authoritative for **recognizing** `meta` in source text.

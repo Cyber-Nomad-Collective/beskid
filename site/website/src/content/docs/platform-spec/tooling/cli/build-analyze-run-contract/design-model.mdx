@@ -20,6 +20,10 @@ relatedTopics:
     title: Build, analyze, and run contract
     href: /platform-spec/tooling/cli/build-analyze-run-contract/
     relation: Parent feature hub
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Meta host scheduling and diagnostics parity
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
@@ -29,6 +33,15 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 ## What this article covers
 This article explains the `design-model` view for `Build, analyze, and run contract` in concrete, onboarding-first language.
+
+## Meta / compiler mods and the CLI
+
+**Compiler mods** are delivered as **`Meta` projects** in the workspace graph; they use the same **`meta`** surface syntax as ordinary metaprogramming (language-meta). CLI commands **must** route meta work through the same **`beskid_analysis`** orchestration entrypoints as LSP so diagnostics, caps, and attachment behave identically.
+
+1. **Progress reporting** — `beskid_cli` implements `beskid_pipeline::PipelineObserver` (see `compiler/crates/beskid_cli/src/pipeline_ui.rs`). Any new meta phase ids **must** flow through this observer so `--plain` and spinner modes stay truthful.
+2. **Resolve vs run** — `beskid build`, `beskid run`, `beskid test`, and `beskid analyze` all resolve workspace inputs through shared helpers (`resolve_input_with_pipeline` and `CompilationContext` paths). Meta registration **must** occur after graph resolution and before semantic gates on the host compilation, per **[Stage ordering and lowering](/platform-spec/compiler/build-pipeline/stage-ordering/)**.
+3. **Diagnostics** — Meta diagnostics **must** use the same `SemanticDiagnostic` / miette shaping as semantic rules so stderr and JSON consumers cannot distinguish provenance except by diagnostic code. Codes **must** be registered in compiler diagnostic catalogs and mirrored under **[Diagnostics parity](/platform-spec/compiler/build-pipeline/diagnostics-parity/)**.
+4. **Flags (future)** — Host-level toggles such as disabling meta for CI **must** be CLI-visible, deterministic, and documented here when introduced; default remains **enabled** when `Meta` projects attach.
 
 ## Newcomer walk-through
 Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.

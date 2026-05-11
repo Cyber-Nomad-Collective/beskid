@@ -58,7 +58,7 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 <SpecSection title="Meta project type (`Meta`)" id="meta-project-type">
 A manifest may declare **`type: Meta`** (exact field path and spelling are normative in schema articles below). A **`Meta`** project **does not** replace ordinary executable or library targets; it declares that this project participates in **compile-time meta orchestration**: the toolchain loads it so **`meta`** items can subscribe to **compilation events** and run **capture → process → emit** pipelines against host compilations, per **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)** and **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**.
 
-Schema fields for **which compilations** a `Meta` project attaches to, **entry modules**, and **budget defaults** are specified in the articles under this feature hub (see **contracts** and **examples**).
+Normative **`project.meta`** keys (`attachTo`, `entryModules`, optional `maxMetaRounds`, optional `capabilities`) and default **`meta`-outside-`Meta` policy** are specified in **[design model](./design-model/)** and **[contracts and edge cases](./contracts-and-edge-cases/)**; **[examples](./examples/)** show a complete illustrative manifest.
 </SpecSection>
 
 <DomainTiles pathPrefix="platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract" heading="Articles" />

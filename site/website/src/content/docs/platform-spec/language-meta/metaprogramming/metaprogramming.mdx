@@ -74,7 +74,8 @@ This shape supports **iterative** behavior: the host may run additional rounds u
 
 <SpecSection title="Hybrid canonical ownership" id="ownership">
 - **[Language meta](/platform-spec/language-meta/)** — `Meta` projects, `meta` placement, scope, visibility, determinism, and the capture/process/emit user contract.
-- **[Compiler / Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)** — `Beskid.Compiler.Syntax`, `Query`, `Process`, `Emit`, `Diagnostics`, host bridge, merge semantics, and incremental scheduling.
+- **[Compiler / Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)** — `Beskid.Compiler.Syntax`, `Query`, `Process`, `Emit`, `Diagnostics`, host bridge, merge semantics, and incremental scheduling. **Compiler mods** are exactly `Meta` projects plus this Mod SDK surface; normative manifest keys and attachment live under **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** (design model), while **where meta runs in the compile pipeline** is pinned under **[Stage ordering and lowering](/platform-spec/compiler/build-pipeline/stage-ordering/)**.
+- **Compiler-core modularity (Rust)** — Features such as compile-time **composition / IoC** resolved inside the compiler are **not** implemented by `Meta` packs; they live in **compiler** and **semantic** specifications and the Rust implementation. **`Meta` / Mod SDK** may **observe** those results through **`Beskid.Compiler.Query`** once exposed as snapshot data (**[meta block host bridge / design model](/platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/design-model/)**).
 
 Neither domain duplicates the other: language pages do not specify Rust algorithms; compiler pages do not redefine `Meta` or `meta` grammar.
 </SpecSection>

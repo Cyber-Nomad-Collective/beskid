@@ -20,6 +20,10 @@ relatedTopics:
     title: Diagnostics parity (CLI and LSP)
     href: /platform-spec/compiler/build-pipeline/diagnostics-parity/
     relation: Diagnostic gates during lowering
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Meta host flow and atomic scheduling rounds
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
@@ -28,11 +32,12 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 
 
-1. Resolve source path/text through services.
+1. Resolve source path/text through services (manifest, workspace graph, `CompilePlan`, optional materialized workspace).
 2. Parse program and produce syntax diagnostics.
-3. Run builtin staged semantic rules when diagnostics are enabled.
-4. Abort on error diagnostics.
-5. Transform to HIR, resolve symbols, and type-check.
-6. Lower typed program to backend artifact for JIT/AOT.
+3. **Meta host (when `Meta` projects attach to this compilation)** — Discover `meta` items in deterministic order, run capture → process → emit under **[meta block host bridge](/platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/)** policy, merge contributions, then re-parse as required by the active round (see design model for bounded iteration). Skip entirely when no attached `Meta` projects or host disables meta for this command.
+4. Run builtin staged semantic rules when diagnostics are enabled (same diagnostic channel as meta diagnostics).
+5. Abort on error diagnostics.
+6. Transform to HIR, resolve symbols, and type-check.
+7. Lower typed program to backend artifact for JIT/AOT.
 
-The canonical implementation entrypoint is `beskid_codegen::services::lower_source`.
+The canonical lowering entrypoint remains `beskid_codegen::services::lower_source` (and `_with_pipeline`); meta orchestration **must** live in `beskid_analysis` services (or a dedicated host module re-exported there) so CLI, LSP, and codegen share one scheduling spine.

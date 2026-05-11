@@ -27,12 +27,18 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 This article documents **flow and algorithms** for **Incremental scheduling and determinism**.
 
-## Primary flow
-1. Materialize or refresh the syntax snapshot for the active compilation generation.
-2. Classify meta contributors vs read-only inspectors (language-meta classification carries through here).
-3. Execute host policy checks before surfacing Mod SDK calls.
-4. Commit outputs atomically per scheduling round (see incremental scheduling feature).
+## Primary flow (incremental-specific)
+
+1. **Ingest signals** — Collect file watcher events, manifest edits, lockfile changes, and explicit CLI/LSP invalidation hooks (`invalidate_compilation_cache` patterns in `compiler/crates/beskid_lsp`).
+2. **Classify scope** — Determine whether each dirty signal is **narrow** (single compilation unit / isolating capture) or **wide** (workspace member or aggregating capture). Wide signals **must** bump `syntax_generation_id` for all units in the attach target.
+3. **Recompute keys** — For each scheduled `meta` item, rebuild **`capture_fingerprint`**, `manifest_generation_id`, and `capability_set_id` per **[design model](./design-model/)**. Drop any cache entry whose tuple diverges.
+4. **Schedule rounds** — Enqueue `meta` items in deterministic discovery order (stable module walk, stable tie-break on equal keys). Respect `maxMetaRounds` from **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)**.
+5. **Run host bridge** — For each item, if cache hit for process-only work, reuse validated artifacts; otherwise run capture → process under capability policy.
+6. **Commit emit** — Apply typed contributions atomically, bump `syntax_generation_id`, re-parse affected roots, and record `meta.round_commit` for telemetry.
+7. **Replay verification** — On identical inputs and ids, hosts **must** reproduce the same ordered diagnostics and the same merge outcome (see contracts article for determinism tests).
 
 ## Ordering constraints
-- No meta body runs before a parseable syntax model exists for its lexical scope.
-- Semantic queries that depend on staged rules must declare the minimal snapshot version they require; the host may defer or rerun automatically.
+
+- Incremental caches **must not** survive cross-compiler-version bumps without clearing: include compiler semver or commit identity in `manifest_generation_id` or a sibling host key.
+- Soft invalidation (skip graph rebuild) is permitted only when design-model soft rules hold; otherwise fall back to full `CompilationContext` rebuild.
+- Semantic queries declared against `query_semantic_snapshot` **must** declare minimum snapshot version; the host **must** defer with an explicit diagnostic when the staged pipeline has not reached that version yet.

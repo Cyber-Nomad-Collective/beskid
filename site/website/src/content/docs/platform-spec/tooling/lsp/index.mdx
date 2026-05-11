@@ -19,10 +19,27 @@ relatedTopics:
     title: Diagnostics parity (CLI and LSP)
     href: /platform-spec/compiler/build-pipeline/diagnostics-parity/
     relation: Parse and semantic diagnostic parity contract
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Meta host scheduling and LSP invalidation alignment
 ---
 
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
 
 <SpecPageHeader ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+<SpecSection title="Scope" id="scope">
+Language Server Protocol contracts for IntelliSense, diagnostics behavior, and workspace analysis integration.
+</SpecSection>
+
+<SpecSection title="Feature index" id="feature-index">
+Use the tiles below for normative **feature** contracts in this area.
+</SpecSection>
+
+<SpecSection title="Meta / compiler mods" id="meta-lsp">
+When the workspace includes **`Meta` projects**, the language server **must** use the same `CompilationContext` and meta invalidation rules as the CLI (**[Diagnostics and workspace analysis](/platform-spec/tooling/lsp/diagnostics-and-workspace-analysis/)**, **[Snapshot and refresh contract](/platform-spec/tooling/lsp/snapshot-and-refresh-contract/)**). Status phases **should** reuse the `beskid_pipeline` vocabulary surfaced through CLI observers so extension UX can show meta progress consistently.
+</SpecSection>
+
 <DomainTiles pathPrefix="platform-spec/tooling/lsp" heading="Features" />

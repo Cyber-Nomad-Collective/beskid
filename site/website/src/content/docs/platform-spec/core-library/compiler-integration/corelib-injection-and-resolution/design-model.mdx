@@ -38,5 +38,11 @@ Start from the parent feature hub to learn the contract boundaries, then map the
 - Corelib project helpers in `compiler/crates/beskid_tests/src/projects/corelib/mod.rs`
 - Analysis services in `compiler/crates/beskid_analysis/src/services.rs`
 
+## Compile-time closure for `Meta` projects
+
+`Meta` projects that execute **`meta`** containing `Beskid.Compiler.*` calls **must** resolve **corelib** the same way host packages do: through **`dependency`** entries, workspace overrides, and lockfile materialization (`prepare_project_workspace` in `compiler/crates/beskid_analysis/src/projects/workflow.rs`). The compile-time JIT **must not** silently pin an unpublished corelib fork unless the manifest graph declares it.
+
+Generated or hand-authored **`Beskid.Compiler.*`** modules ship inside the **`corelib`** package subtree (`compiler/corelib/beskid_corelib`); compiler releases **must** document which language surface version those modules target so `Meta` projects can set compatible `version` ranges.
+
 ## Practical guidance
 When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

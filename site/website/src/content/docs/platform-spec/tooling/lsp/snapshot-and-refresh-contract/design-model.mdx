@@ -20,6 +20,10 @@ relatedTopics:
     title: Snapshot and refresh contract
     href: /platform-spec/tooling/lsp/snapshot-and-refresh-contract/
     relation: Parent feature hub
+  - type: Feature
+    title: Incremental scheduling and determinism
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/
+    relation: Meta invalidation keys and replay
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
@@ -37,6 +41,16 @@ Start from the parent feature hub to learn the contract boundaries, then map the
 - LSP diagnostics in `compiler/crates/beskid_lsp/src/diagnostics.rs`
 - Analysis services in `compiler/crates/beskid_analysis/src/services.rs`
 - Resolver implementation in `compiler/crates/beskid_analysis/src/resolve/resolver.rs`
+
+## Meta host invalidation
+
+The LSP **must** treat the following as **hard invalidation** signals for cached compilation context and any meta host schedule keyed to the prior generation:
+
+- Writes to **`Project.proj`**, **`Workspace.proj`**, or workspace **lockfiles** that can change dependency roots or `Meta` attachment.
+- Changes to **`project.meta`** on any resolved `Meta` project.
+- Successful application of **emit** contributions that alter on-disk sources when the host is configured to persist generated sources (if ever supported); when emit targets only in-memory merged syntax, invalidation follows the document generation counter instead.
+
+**Soft invalidation** (re-run meta process without full workspace graph rebuild) is allowed only when the host can prove the same capture keys remain valid; otherwise the server **must** fall back to hard invalidation. Exact soft rules live under **[Incremental scheduling and determinism](/platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/)**.
 
 ## Practical guidance
 When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

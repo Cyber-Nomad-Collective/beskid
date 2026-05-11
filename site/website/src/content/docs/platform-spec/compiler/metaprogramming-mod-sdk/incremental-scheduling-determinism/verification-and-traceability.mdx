@@ -32,8 +32,11 @@ This article documents **verification and traceability** for **Incremental sched
 - Anchor: `compiler/crates/beskid_lsp/` — incremental document models and rescan triggers.
 
 ## Verification expectations
-- Contract tests in `compiler/crates/beskid_tests` assert ordering, diagnostic codes, and merge behavior once implemented.
-- Golden incremental traces (optional) validate invalidation when syntax edits move spans tied to meta registrations.
+
+- **Key tuple replay** — Tests under `compiler/crates/beskid_tests/src/projects/` (or a dedicated `meta_incremental/` subdirectory) **must** assert that when `syntax_generation_id`, `capture_fingerprint`, `manifest_generation_id`, and `capability_set_id` match a prior run, the host skips re-execution of process-only work; when any id changes, caches miss deterministically.
+- **Isolating vs aggregating** — Pairwise fixtures demonstrate narrow vs wide dirty sets as described in **[design model](./design-model/)**.
+- **LSP alignment** — Mirror at least one replay scenario through `compiler/crates/beskid_lsp` session tests so soft vs hard invalidation matches **[Snapshot and refresh contract](/platform-spec/tooling/lsp/snapshot-and-refresh-contract/)**.
+- **Golden traces (optional)** — Record ordered phase ids + cache hits for regression when meta host complexity grows.
 
 ## Review cadence
 - Update this bundle whenever public `Beskid.Compiler.*` shapes or host policies change.

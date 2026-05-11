@@ -1,11 +1,11 @@
 ---
 title: "Documentation comments"
-description: "Structured comments attach human-readable contracts to declarations. Tooling must preserve them through formatting and refactors without changing semantics."
+description: "Triple-slash documentation bodies, inline @ directives (@ref, @arg, @returns, @variant, @par), and how tooling parses, validates, and emits machine-readable API docs."
 template: splash
-tableOfContents: false
+tableOfContents: true
 specLevel: feature
 status: Standard
-lastReviewed: 2026-04-30
+lastReviewed: 2026-05-12
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -25,10 +25,18 @@ relatedTopics:
     title: "Platform specification"
     href: /platform-spec/
     relation: Cross-cutting index
-  - type: Domain
-    title: "Execution documentation"
-    href: /execution/
-    relation: Runtime and backend contracts
+  - type: Feature
+    title: "Diagnostic code registry (design model)"
+    href: /platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/design-model/
+    relation: Documentation diagnostics use the W161x band
+  - type: Feature
+    title: "Diagnostics and workspace analysis (LSP)"
+    href: /platform-spec/tooling/lsp/diagnostics-and-workspace-analysis/
+    relation: Snapshot documentation diagnostics merge with semantic diagnostics
+  - type: Feature
+    title: "IntelliSense capabilities and behavior (LSP)"
+    href: /platform-spec/tooling/lsp/intellisense-capabilities-and-behavior/
+    relation: Documentation code actions and hover rendering
 ---
 
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
@@ -42,10 +50,98 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 	submitterEmail="pmikstacki@cybernomad.it"
 />
 
-## Normative specification
+<SpecSection title="What this covers" id="what-this-covers">
+Leading documentation is written as consecutive `///` lines immediately **before** a source item (or before individual parameters where the grammar allows per-parameter leading docs). The compiler joins those lines into a **normalized documentation body**: each line’s `///` prefix and a single leading space after the prefix are stripped; lines are joined with `\n`. Formatters must preserve directive text and ordering when re-emitting normalized bodies.
+</SpecSection>
 
-The canonical chapter is **[Documentation comments](/platform-spec/language-meta/surface-syntax/documentation-comments/)** in the platform specification.
+<SpecSection title="Inline directive grammar (v1)" id="directive-grammar">
+The body is parsed as a sequence of plain-text **runs** and **directives**. Unless noted, directive bodies are **single-line only** for v1: a directive’s descriptive text ends at the line break and must not rely on continuation lines.
 
-## Platform view
+### `@ref(path)`
 
-Structured comments attach human-readable contracts to declarations. Tooling must preserve them through formatting and refactors without changing semantics.
+- **Syntax:** `@ref(` then a path expression, then `)`.
+- **Semantics:** `path` follows the same resolution contract as other cross-reference tooling (qualified names, `::` suffixes, and last-segment matching as implemented in analysis). Unresolved references surface as warning **W1615** once name resolution for the compilation unit succeeds.
+
+### `@arg(name) description`
+
+- **Syntax:** `@arg(` then a Beskid identifier `name`, then `)`, then optional same-line description text (trimmed). The description segment **must not contain `@`** on the same line so another directive can follow on that line.
+- **Attachment:** Allowed on **callable** items only: top-level functions, methods, and contract method **signatures** (the items that declare a parameter list in the surface syntax). The name **must** match a parameter on that same item. Unknown names → **W1610**; duplicate `@arg` for the same name on one item → **W1611**; using `@arg` (or `@returns`) on a non-callable item → **W1612**.
+
+### `@variant(name) description`
+
+- **Syntax:** `@variant(` then a Beskid identifier `name`, then `)`, then optional same-line description (trimmed). The description portion **must not contain the `@` character** on the same line, so a following `@par(...)` or `@arg(...)` on the same line is parsed as a separate directive.
+- **Attachment:** Only on the **enum declaration’s** leading item documentation (`ItemKind::Enum`). `name` must match a variant of that enum. Unknown variant → **W1621**; duplicate `@variant(name)` → **W1622**; on any other item kind → **W1620**. Per-variant `///` lines remain **legal** and orthogonal (same pattern as per-parameter docs vs `@arg` on callables).
+
+### `@par(name) description`
+
+- **Syntax:** `@par(` then identifier `name`, then `)`, then optional same-line description; same `@` restriction in the description segment as `@variant`.
+- **Attachment:** On declarations that declare **non-empty** generic parameter lists: **record types**, **enums**, and **top-level functions** (see surface syntax for `GenericParameters`). `name` must match a generic type parameter. If the item has no generic parameters (including **methods**, which do not carry `GenericParameters` in the current grammar), `@par` → **W1623**. Unknown name → **W1624**; duplicate `@par(name)` → **W1625**.
+
+### `@returns description`
+
+- **Syntax:** `@returns` followed by optional same-line description.
+- **Attachment:** Same callable set as `@arg`. If the callable’s return type is **`unit`**, `@returns` is **redundant** and tooling emits **W1613**. Omitting `@returns` on a non-unit callable is allowed in v1 (no required diagnostic).
+
+### Unknown directives
+
+Any other `@identifier` sequence that is not one of the supported directives above is an **unknown directive** and emits warning **W1614**. Forward compatibility: new directives may be added under the same lexical rules; consumers should tolerate unknown directives with warnings until they learn specific semantics.
+
+### Registry of doc tags (v1)
+
+| Tag | Meaning |
+| --- | --- |
+| `@ref(...)` | Cross-reference, rendered to Markdown links when resolved. |
+| `@arg(name) ...` | Parameter documentation bound to `name`. |
+| `@variant(name) ...` | Enum variant documentation from the **enum** item’s leading doc. |
+| `@par(name) ...` | Generic type parameter documentation (`type` / `enum` / top-level `function`). |
+| `@returns ...` | Return value documentation. |
+| Other `@foo` | Unknown directive (**W1614**). |
+
+### Attachment matrix (v1)
+
+| Item kind (leading doc) | `@ref` | `@arg` / `@returns` | `@variant` | `@par` |
+| --- | --- | --- | --- | --- |
+| Function | yes | yes | no (W1620) | yes if generics |
+| Method | yes | yes | no (W1620) | no (W1623) |
+| Contract method signature | yes | yes | no (W1620) | no (W1623) |
+| Enum | yes | no (W1612) | yes | yes if generics |
+| Type (record) | yes | no (W1612) | no (W1620) | yes if generics |
+| Other resolved items | yes | no | no | no |
+
+### Other structures worth documenting (backlog)
+
+- **High (symmetric):** `@field(name)` on record **types** only, mirroring `@variant` on enums (per-field `///` remains orthogonal). Planned as a follow-up when the same validation/render pipeline is extended.
+- **Medium:** Contract clauses (`@requires` / `@ensures`) — language and proof obligations; not v1.
+- **Lower:** Cross-references (`@see`), deprecation (`@deprecated`) — tooling metadata; defer.
+</SpecSection>
+
+<SpecSection title="Diagnostics and analysis" id="diagnostics">
+Documentation diagnostics are emitted after successful name resolution as part of the **document analysis snapshot** (`DocumentAnalysisSnapshot::doc_diagnostics` in `beskid_analysis::services`). They use stable codes **W1610–W1615** and **W1620–W1625** (see **[Diagnostic code registry design model](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/design-model/)**). They are intentionally **not** duplicated on the hot semantic-rule-only path; LSP and other clients merge snapshot documentation diagnostics with staged semantic diagnostics for `.bd` files when a snapshot is available.
+</SpecSection>
+
+<SpecSection title="Packaging consumer contract" id="packaging">
+Library packages SHOULD ship machine-readable API documentation for registry ingestion:
+
+- **Primary artifact:** `<sourceRoot>/.beskid/docs/api.json` with top-level **`schemaVersion`** (current emission: **2**).
+- **Compatibility:** Consumers that only render Markdown may continue to read the optional per-item **`docMarkdown`** field (camelCase in JSON); structured consumers should prefer the nested **`doc`** object (`summaryMarkdown`, `returnsMarkdown`, `arguments`, `enumVariants`, `typeParameters`) which is derived from the same parse tree as Markdown emission.
+- **Manifest pointer:** Packaged `.bpk` archives embed a `package.json` fragment with `documentation.apiJson` (relative path into the archive, typically `.beskid/docs/api.json`) and `documentation.schemaVersion` so servers do not rely on path guessing alone.
+
+Missing documentation artifacts SHOULD NOT fail `pckg pack` by default; operators may adopt stricter CI policy (for example requiring `beskid doc` before pack) out of band until an explicit `--require-docs` flag exists.
+</SpecSection>
+
+<SpecSection title="Span accuracy (v1)" id="spans">
+Diagnostics for documentation issues use the span of the **leading documentation block** attached to the item when a finer-grained source range is not computed. Directive-level sub-spans may be refined in later versions without changing code identities.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- `compiler/crates/beskid_analysis/src/beskid_doc.pest` — Pest grammar for documentation bodies.
+- `compiler/crates/beskid_analysis/src/doc/mod.rs` — Normalization, Markdown render, structured extraction.
+- `compiler/crates/beskid_analysis/src/doc/validate.rs` — `collect_doc_diagnostics`.
+- `compiler/crates/beskid_analysis/src/doc/item_shape.rs` — enum variant and generic parameter name queries for validation and stubs.
+- `compiler/crates/beskid_analysis/src/doc/api_snapshot.rs` — `ApiDocRoot` / `schemaVersion` serde types.
+- `compiler/crates/beskid_analysis/src/doc/edit.rs` — deterministic doc stub / merge edits for LSP and tests.
+- `compiler/crates/beskid_cli/src/commands/doc.rs` — `beskid doc` emission.
+- `compiler/crates/beskid_pckg` — pack layout, `package.json` documentation pointer, optional `api.json` parse preflight.
+- `compiler/crates/beskid_lsp/src/diagnostics.rs` — merge of `doc_diagnostics` with semantic diagnostics.
+- `compiler/crates/beskid_lsp/src/features/code_actions/handler.rs` — documentation code actions and quick fixes for **W161x** / **W162x** documentation codes.
+</SpecSection>

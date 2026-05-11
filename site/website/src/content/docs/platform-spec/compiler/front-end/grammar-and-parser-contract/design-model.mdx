@@ -16,6 +16,14 @@ relatedTopics:
     title: Grammar and parser contract
     href: /platform-spec/compiler/front-end/grammar-and-parser-contract/
     relation: Parent feature hub
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Semantic meaning of `meta`
+  - type: Feature
+    title: Parser and AST contracts
+    href: /platform-spec/compiler/front-end/parser-and-ast-contracts/
+    relation: AST mapping for new productions
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
@@ -33,6 +41,15 @@ For newcomers, this page explains where the contract shows up in day-to-day comp
 - `compiler/crates/beskid_analysis/src/beskid.pest` defines the grammar tokens and precedence.
 - `compiler/crates/beskid_analysis/src/syntax/` builds syntax items from parser output.
 - `compiler/crates/beskid_analysis/src/syntax/items/parse_helpers.rs` contains shared parse helpers used by item parsers.
+
+## `meta` productions (v0.2 target)
+
+The grammar **must** introduce explicit productions for `meta` items (working name `meta_item`) in `compiler/crates/beskid_analysis/src/beskid.pest`, covering:
+
+- Keyword introducing the item and terminating headers for **capture**, **process**, and **emit** sections (exact spellings follow language-meta once frozen).
+- Nested blocks delimiting declarative pipelines; **must not** reuse unbraced expression grammar for pipeline bodies.
+
+Implementation **must** pair each new pest rule with an item parser under `compiler/crates/beskid_analysis/src/syntax/items/` and snapshot tests under `compiler/crates/beskid_tests` (see **[Grammar and parser contract / verification](/platform-spec/compiler/front-end/grammar-and-parser-contract/verification-and-traceability/)**).
 
 ## Practical notes
 - Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.

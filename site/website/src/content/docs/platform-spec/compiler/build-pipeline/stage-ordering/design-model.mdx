@@ -20,6 +20,14 @@ relatedTopics:
     title: Codegen and IR
     href: /platform-spec/compiler/codegen-and-ir/
     relation: Lowering internals and IR shape
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Meta host scheduling relative to parse and semantic gates
+  - type: Feature
+    title: Rules pipeline contract
+    href: /platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/
+    relation: Staged semantic rules after merged syntax
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
@@ -30,6 +38,31 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 The compile model has a strict handoff chain:
 
-`resolve_input` -> parse -> semantic rules gate -> HIR normalization -> resolution -> typing -> `lower_program` -> `CodegenArtifact`.
+`resolve_input` -> parse -> **meta rounds (when enabled)** -> semantic rules gate -> HIR normalization -> resolution -> typing -> `lower_program` -> `CodegenArtifact`.
 
 Backends (JIT and AOT) consume this artifact and must not reorder semantic phases.
+
+## Meta rounds and stable phase identifiers
+
+**Compiler mods** (see **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**) run as **explicit host-driven rounds** between a parseable **`Program`** snapshot and the semantic diagnostics gate that precedes lowering. Normative rules:
+
+1. **Phase vocabulary** — New work must register **stable string phase ids** in `compiler/crates/beskid_pipeline/src/phases.rs` (same crate that defines `FULL_BUILD_PHASE_ORDER` / `JIT_RUN_PHASE_ORDER`). Meta-related ids **must not** reuse existing ids with different meanings; extend the documented orders and `compiler/crates/beskid_pipeline/PIPELINE.md` in the same change.
+2. **Observer parity** — CLI (`beskid_cli` pipeline UI) and any codegen entrypoint that already accepts `PipelineObserver` **must** bracket meta work with `PhaseStart` / `PhaseEnd` (or fine-grained `WorkUnit` events) so UX and tests observe meta the same way as parse and lowering.
+3. **Bounded iteration** — When **emit** contributes new surface syntax, the host **must** run a **bounded** loop: merge contributions into the authoritative syntax model for the active compilation, **re-parse** affected compilation units (or the whole workspace slice the manifest attaches to), then re-run eligible meta and semantic gates until a fixed point, a diagnostic stops the round, or a **manifest-declared** round cap is hit. The cap, default, and diagnostic on exhaustion are specified under **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** and **[Incremental scheduling and determinism](/platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/)**.
+4. **No lowering on torn trees** — `lower_program` / typed lowering **must** run only on a **consistent** post-merge syntax snapshot for the generation; the host **must not** interleave lowering with partially applied meta edits.
+
+## Placement relative to `beskid_codegen` services
+
+The reference lowering path (`beskid_codegen::services::lower_source_with_pipeline`) today orders **parse**, **semantic diagnostics** (`builtin_rules` gate when enabled), **lower** (HIR normalize + resolve + type), then **codegen_clif**. Meta rounds are inserted **after parse** and **before** that semantic gate for the host compilation, so diagnostics and lowering always see **merged** user + meta syntax. Inspector-only meta (diagnostics without emit) still uses the same placement so snapshot versions stay comparable across CLI and LSP.
+
+## Normative meta phase id strings (`beskid_pipeline`)
+
+These literals **must** match **[Metaprogramming Mod SDK / Meta projects and pipeline phase ids](/platform-spec/compiler/metaprogramming-mod-sdk/#meta-projects)**. Implementations **must** register each in `phases.rs`, extend `FULL_BUILD_PHASE_ORDER` (and `JIT_RUN_PHASE_ORDER` where parse is present), and update `PIPELINE.md` in the **same** change that first emits them.
+
+**Full build (`FULL_BUILD_PHASE_ORDER`)** — After `workspace.materialize` and **`parse`**, insert **`meta.host_attached`**, then zero or more **`meta.round_start` → … → `meta.round_commit`** sequences (each round may emit additional **`syntax.generation`** phases when re-parsing), then proceed to **`semantic`**, **`lower`**, and codegen/link phases unchanged.
+
+**JIT run (`JIT_RUN_PHASE_ORDER`)** — After **`parse`**, insert the same **`meta.host_attached`** and **`meta.round_*`** / **`syntax.generation`** sequence before **`semantic`**, then continue with `lower` and JIT tail phases.
+
+**Auxiliary ids** — `workspace.graph_changed` and `semantic.snapshot` are emitted by workspace refresh and semantic pipeline orchestration respectively; they **must** use the same string literals when represented as phases (or as documented `WorkUnit` `id` prefixes if only work units are used—pick one representation per id and document it in `PIPELINE.md`).
+
+**`lower.ready`** — Emitted immediately before the existing **`lower`** phase entrypoint runs on a merged program; hosts **must** emit it even when no meta ran (no-op instant) so observers can assert ordering uniformly.

@@ -31,6 +31,10 @@ relatedTopics:
     title: Build pipeline
     href: /platform-spec/compiler/build-pipeline/
     relation: Lowering and backends after meta merge
+  - type: Feature
+    title: Stage ordering and lowering
+    href: /platform-spec/compiler/build-pipeline/stage-ordering/
+    relation: Where meta rounds sit in parse and semantic gates
 architectureGraph:
   source: src/data/architecture-graphs/compiler-metaprogramming-mod-sdk.json
 ---
@@ -53,6 +57,12 @@ This **compiler** area implements **language-first** contracts: **[meta compilat
 
 <SpecSection title="Scope" id="scope">
 Normative pages specify **interfaces, cache boundaries, and host policy**—not product backlogs. They drive `compiler/` and **`corelib`** surfaces exposed at compile time.
+
+**`Meta` projects in this area** are strictly for **Beskid-authored compile-time work**: extra **analysis**, **codegen** (typed emit), diagnostics, and **pipeline-observable** manipulation of the **user program under compilation**—not for reimplementing compiler internals in Beskid. Language features that belong in the **Rust compiler** (for example compile-time **inversion-of-control / composition graphs** resolved inside `beskid_analysis`) are specified under **language-meta**, **semantic pipeline**, and **execution** leaves as appropriate, then **surfaced read-only** (or narrowly capability-gated) through **`Beskid.Compiler.Query`** and related facades—see **[meta block host bridge / design model](/platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/design-model/)**.
+</SpecSection>
+
+<SpecSection title="Compiler mods (concept)" id="compiler-mods">
+**Compiler mods** are **`Meta` projects**: a dedicated `Project.proj` kind whose Beskid sources contain tooling-allowed targets plus **`meta`** items in the **same** surface syntax as language-meta **`meta`**. They **attach** to App/Lib/Test compilations via `project.meta.attachTo` and use **`Beskid.Compiler.*`** for **analysis, codegen, and host-mediated pipeline effects** on the attached compilation. They **do not** own language-level IoC or other compiler-core algorithms; those remain **Rust-implemented** and, when exposed, appear to `meta` only through **documented Mod SDK queries** over compiler-native snapshots.
 </SpecSection>
 
 <SpecSection title="Mod API shape (modules)" id="mod-api-shape">
@@ -71,8 +81,22 @@ The compile-time package groups the natural compilation shape into modules (exac
 Feature hubs below map onto these boundaries with traceability into `beskid_analysis`, `beskid_lsp`, `beskid_codegen`, `beskid_engine`, and `beskid_runtime`.
 </SpecSection>
 
-<SpecSection title="Meta projects and events" id="meta-projects">
-For **`project.type = Meta`**, the host **registers** meta entrypoints and **pipes compilation events** (parse refresh, dependency graph changes, scheduling ticks—enumerated per implementation) into eligible **`meta`** pipelines. Event sets and budgets are specified in **[Meta block host bridge](/platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/)** and **[Incremental scheduling and determinism](/platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/)**.
+<SpecSection title="Meta projects and pipeline phase ids" id="meta-projects">
+For **`project.type = Meta`**, the host **registers** meta entrypoints and **emits `beskid_pipeline` phase events** into eligible **`meta`** pipelines. The strings below are **normative phase ids**: they **are** the `&'static str` values added to `compiler/crates/beskid_pipeline/src/phases.rs`, surfaced through `PipelineEvent::PhaseStart` / `PhaseEnd`, documented in `compiler/crates/beskid_pipeline/PIPELINE.md`, and asserted by conformance tests. Rust constant names in parentheses are **recommended** aliases only; string equality in tests **must** use the literal column.
+
+| Phase id (literal) | Rust constant (recommended) | When emitted | Typical invalidation |
+| --- | --- | --- | --- |
+| `meta.host_attached` | `META_HOST_ATTACHED` | After workspace resolution binds `attachTo` and validates `entryModules` for the active host compilation | Full meta schedule rebuild |
+| `syntax.generation` | `SYNTAX_GENERATION` | After parse produces a new immutable `Program` snapshot for a compilation unit | Capture keys tied to syntax ids |
+| `workspace.graph_changed` | `WORKSPACE_GRAPH_CHANGED` | Dependency or lockfile mutation alters `CompilePlan` / module roots | Broad invalidation; aggregating capture |
+| `semantic.snapshot` | `SEMANTIC_SNAPSHOT` | After builtin semantic rules complete for a generation (diagnostics gate) | Process-only inspectors that read rule output |
+| `meta.round_start` | `META_ROUND_START` | Immediately before capture/process for one scheduling round | Round-scoped caches |
+| `meta.round_commit` | `META_ROUND_COMMIT` | After atomic merge of emit contributions for that round | Incremental replay boundaries |
+| `lower.ready` | `LOWER_READY` | Immediately before HIR lowering for codegen on a consistent merged program | Emit must finish before this for contributors |
+
+**Insertion order (host compilation with meta)** — After existing `parse` (`PARSE`), the reference `FULL_BUILD_PHASE_ORDER` (and JIT prefixes that include parse) **must** insert: `meta.host_attached` (once attach is known), then for each meta scheduling round: `meta.round_start`, inner `syntax.generation` events for any re-parse forced by emit, `meta.round_commit`, then continue to `semantic` (`SEMANTIC`) for the merged snapshot, then `lower` / lowering phases. Exact position relative to `workspace.materialize` for full builds is pinned in **[Stage ordering and lowering / design model](/platform-spec/compiler/build-pipeline/stage-ordering/design-model/)**.
+
+Budgets (`maxMetaRounds`, step caps) and capability checks are specified in **[Meta block host bridge](/platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/)**; cache keys in **[Incremental scheduling and determinism](/platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/)**.
 </SpecSection>
 
 <DomainOrAreaHub pathPrefix="platform-spec/compiler/metaprogramming-mod-sdk" summaryTitle="Subtree summary" />

@@ -34,6 +34,10 @@ For newcomers, this page explains where the contract shows up in day-to-day comp
 - `compiler/crates/beskid_analysis/src/resolve/items.rs` maps parsed items into resolved structures.
 - `compiler/crates/beskid_analysis/src/analysis/` consumes those shapes for semantic passes.
 
+## `meta` items and HIR
+
+Once `meta` exists in the syntax tree, lowering **must** either (a) map `meta` items to dedicated HIR metadata nodes consumed only by the meta host, or (b) strip them after host registration while preserving spans for diagnostics—pick one strategy, document it here, and keep it consistent with **[Rules pipeline contract](/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/)** and **[Typed emitter and transforms](/platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/)**. HIR **must not** partially encode unmerged emit contributions.
+
 ## Practical notes
 - Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
 - Treat diagnostics and tests as part of the contract, not optional implementation details.

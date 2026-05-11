@@ -57,7 +57,7 @@ It does **not** duplicate runtime syscall policy or Cranelift lowering tables; t
 </SpecSection>
 
 <SpecSection title="Placement of Extern" id="placement-of-extern">
-The **`Extern`** attribute is a **contract-level** interop marker. The reference compiler rejects **`Extern`** on non-contract declarations (diagnostic **E1809** in `compiler/crates/beskid_tests/src/analysis/diagnostics.rs`).
+The **`Extern`** attribute is a **contract-level** interop marker. The reference compiler rejects **`Extern`** on non-contract declarations (diagnostic **E1510** in `compiler/crates/beskid_tests/src/analysis/diagnostics.rs`).
 
 `Extern` supplies ABI and library metadata consumed when building **`ExternImport`** records during codegen (`compiler/crates/beskid_codegen/src/lowering/lowerable.rs`).
 </SpecSection>

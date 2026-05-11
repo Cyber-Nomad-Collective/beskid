@@ -31,8 +31,12 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 Primary implementation anchors:
 
 - `compiler/crates/beskid_analysis/src/projects/compile_plan.rs`
-- `compiler/crates/beskid_analysis/src/projects/workflow.rs`
-- `compiler/crates/beskid_analysis/src/services.rs` (`resolve_input`)
+- `compiler/crates/beskid_analysis/src/projects/manifest_resolve.rs` (workspace member selection aligned with CLI)
+- `compiler/crates/beskid_analysis/src/compilation_context.rs` (analysis / LSP compile slice)
+- `compiler/crates/beskid_analysis/src/projects/graph/builder.rs` (`discover_workspace_resolution_rules`, registry URLs)
+- `compiler/crates/beskid_analysis/src/projects/workflow.rs` (registry materialization base URL)
+- `compiler/crates/beskid_analysis/src/services.rs` (`resolve_input`, `analyze_source_with_compilation_context`)
+- `compiler/crates/beskid_lsp/src/session/project_context.rs` (cached `CompilationContext`)
 - `compiler/crates/beskid_cli/src/commands/fetch.rs`, `lock.rs`, `tree.rs`
 
-Regression coverage should include fixed-fixture project graphs and lockfile policy permutations.
+Regression coverage should include fixed-fixture project graphs and lockfile policy permutations. Workspace member selection and `CompilationContext` are covered in `compiler/crates/beskid_tests/src/projects/resolution.rs`.

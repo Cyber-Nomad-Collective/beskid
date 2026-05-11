@@ -30,6 +30,17 @@ This feature hub defines the normative contract for **conformance evidence polic
 - `compiler/crates/beskid_tests/src/doc_tests.rs` validates docs-facing conformance examples.
 - `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` provides executable behavior evidence.
 
+## Meta / compiler mods evidence (required when feature ships)
+
+Conformance for **`Meta` projects** and **`meta`** **must** include, at minimum:
+
+1. **Manifest goldens** — Valid and invalid `Project.proj` / `Workspace.proj` pairs with stable diagnostic codes for `attachTo`, `entryModules`, and capability violations (`compiler/crates/beskid_tests/src/projects/` family).
+2. **Pipeline ordering** — A test `PipelineObserver` that records `PhaseStart` / `PhaseEnd` for parse, meta rounds, semantic gate, and lowering, asserting the order documented in **[Stage ordering](/platform-spec/compiler/build-pipeline/stage-ordering/)**.
+3. **Incremental replay** — Fixtures that perform two edits with identical downstream keys and assert identical meta outputs (see **[Incremental scheduling and determinism](/platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/)** verification article for acceptance criteria).
+4. **LSP parity** — Snapshot tests ensuring meta diagnostics round-trip through `beskid_lsp` with the same codes as CLI analysis for the same workspace slice.
+
+Fixture layout for manifest/meta work **must** follow names documented in **[Project manifest contract / verification](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/verification-and-traceability/)** (for example `compiler/crates/beskid_tests/src/projects/meta_manifest/`).
+
 - [Design model](./design-model/)
 - [Flow and algorithm](./flow-and-algorithm/)
 - [Contracts and edge cases](./contracts-and-edge-cases/)

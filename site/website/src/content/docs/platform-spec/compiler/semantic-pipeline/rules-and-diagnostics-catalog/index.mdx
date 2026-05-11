@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: feature
 status: Standard
-lastReviewed: 2026-04-30
+lastReviewed: 2026-05-11
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -38,10 +38,15 @@ This feature defines how semantic rules are scheduled and how their findings map
 3. Error-severity diagnostics are compilation blockers in diagnostics-enabled paths.
 4. CLI and LSP surfaces may differ in rendering but must preserve diagnostic kind and source span identity.
 
+## Documentation diagnostics (snapshot)
+
+Documentation-only findings use stable warning codes **W1610–W1615** and **W1620–W1625** (see **[Diagnostic code registry design model](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/design-model/)**). They are computed in `beskid_analysis::doc::collect_doc_diagnostics` and attached to `DocumentAnalysisSnapshot::doc_diagnostics` so editors can merge them with staged semantic diagnostics without re-running HIR-heavy rules on the hot path.
+
 ## Implementation anchors
 
 - `compiler/crates/beskid_analysis/src/analysis`
 - `compiler/crates/beskid_analysis/src/analysis/rules/staged`
 - `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`
+- `compiler/crates/beskid_analysis/src/doc/validate.rs`
 - `compiler/crates/beskid_analysis/src/services.rs`
 - `compiler/crates/beskid_lsp/src/diagnostics.rs`

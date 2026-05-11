@@ -13,9 +13,14 @@ submitter:
 ---
 
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
 
 <SpecPageHeader ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+<SpecSection title="Scope" id="scope">
+Maintenance policy for keeping platform-spec pages synchronized with code and release evolution.
+</SpecSection>
+
 
 ## Feature policies
 
@@ -23,5 +28,9 @@ import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
 - [Domain, Area, Feature, and Article frontmatter templates](/platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template/) - Canonical YAML templates aligned with schema and CI validation.
 - [Non-normative bridge docs policy](/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/) - Rules for migration mapping pages and canonical destination linking.
 - [Last reviewed policy](/platform-spec/community/spec-maintenance/last-reviewed-policy/) - Requirements for `lastReviewed` metadata on high-change pages.
+
+<SpecSection title="Feature index" id="feature-index">
+Use the tiles below for normative **feature** contracts in this area.
+</SpecSection>
 
 <DomainTiles pathPrefix="platform-spec/community/spec-maintenance" heading="Features" />

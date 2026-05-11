@@ -34,6 +34,12 @@ For newcomers, this page explains where the contract shows up in day-to-day comp
 - `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` classifies emitted diagnostics.
 - `compiler/crates/beskid_analysis/src/services.rs` wires semantic services used by CLI/LSP.
 
+## Meta contributions and staged rules
+
+After the meta host merges **emit** contributions into the syntax model and bumps `syntax_generation_id`, the staged semantic pipeline (`SemanticPipelineRule` in `compiler/crates/beskid_analysis/src/analysis/rules/staged.rs`) **must** run on the **post-merge** program snapshot. **`stage8_metaprogramming`** is reserved for meta-specific semantic checks that still belong to ordinary diagnostics (for example validating attributes produced by meta); it **must not** replace the meta host’s capture/process/emit orchestration.
+
+**Inspector-only meta** that does not emit still runs **before** the semantic diagnostics gate on the same snapshot generation so diagnostics from meta and builtin rules share one ordering pass unless explicitly partitioned by diagnostic phase metadata.
+
 ## Practical notes
 - Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
 - Treat diagnostics and tests as part of the contract, not optional implementation details.

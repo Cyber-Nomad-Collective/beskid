@@ -1,9 +1,21 @@
 {
   "version": 1,
   "level": "area",
-  "extends": "area-sparse",
+  "extends": "area-default",
   "pathPrefix": "platform-spec/tooling/vscode-extension",
-  "minSpecSections": 0,
+  "sections": [
+    {
+      "id": "scope",
+      "required": true,
+      "kind": "specSection"
+    },
+    {
+      "id": "features",
+      "required": true,
+      "kind": "specSection"
+    }
+  ],
+  "minSpecSections": 2,
   "widgets": [
     {
       "type": "domainTiles",

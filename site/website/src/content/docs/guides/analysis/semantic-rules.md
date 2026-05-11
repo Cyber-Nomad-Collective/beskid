@@ -259,15 +259,15 @@ This document enumerates semantic rules derived from the language spec. Rules ar
 - Trigger: argument expression type does not match declared parameter type.
 - Source: 01-lexical-and-syntax.
 
-### E1806 DuplicateAttributeDeclarationTarget (Error)
+### E1508 DuplicateAttributeDeclarationTarget (Error)
 - Trigger: attribute declaration target list repeats the same target kind more than once.
 - Source: 01-lexical-and-syntax.
 
-### E1807 UnknownAttributeDeclarationTarget (Error)
+### E1509 UnknownAttributeDeclarationTarget (Error)
 - Trigger: attribute declaration target list uses an unsupported target kind.
 - Source: 01-lexical-and-syntax.
 
-### E1809 AttributeTargetNotAllowed (Error)
+### E1510 AttributeTargetNotAllowed (Error)
 - Trigger: attribute application site node kind is not included in attribute declaration target list.
 - Source: 01-lexical-and-syntax.
 

@@ -39,7 +39,36 @@ Runs **capture → process → emit** rounds for `meta` items; wires **`Meta`** 
 - Mod SDK facades never bypass the host bridge for effects.
 - Generation logic in the reference compiler remains Rust-internal; Beskid sees only the generated `Beskid.Compiler.*` projection.
 
+## Compiler-internal composition (IoC) vs `Meta` projects
+
+**Inversion-of-control / composition graphs** and similar **compiler-modularity mechanisms** are **implemented in the Rust compiler** (analysis, lowering, runtime contracts)—not authored as the primary responsibility of **`Meta`** packs. `Meta` projects remain **Beskid-side** tools for **analysis, codegen, and pipeline manipulation** of user programs.
+
+The meta host **must** expose **read-only** (or capability-gated read) views of whatever compiler-internal composition state is relevant to **`Beskid.Compiler.Query`** and diagnostics—for example resolved service graphs, plugin registration order, or phase wiring—under explicit snapshot versions tied to **`semantic.snapshot`** so incrementality stays sound. **Mutation** of that state from Beskid **must not** be the default path; any future narrow mutation surface requires its own capability class and language-meta approval.
+
 ## Anchored code paths
 - `compiler/crates/beskid_engine/` — JIT host patterns reusable for compile-time execution.
 - `compiler/crates/beskid_runtime/` — sandboxed builtins surface for meta workloads.
 - `compiler/crates/beskid_analysis/src/services.rs` — compilation session orchestration hooks.
+- `compiler/crates/beskid_pipeline/` — stable phase ids and `PipelineObserver` hooks for meta rounds.
+
+## Compile-time execution architecture
+
+Compile-time Beskid for **`meta`** **must** execute in a **host-owned** runtime separate from the end-user JIT session used for `beskid run` / tests: instantiate (or recycle) a **`beskid_engine::Engine`**-backed JIT only for meta, with **fresh** `BeskidJitModule` registration per meta artifact boundary, **no ambient `extern_dlopen`** unless a manifest capability explicitly enables it, and **tightened** `beskid_runtime` scope so compile-time code cannot inherit the host process’s ambient authority.
+
+## Capability matrix (normative vocabulary)
+
+Manifest `project.meta.capabilities` lists entries from this closed set (hosts **must** reject unknown names). Defaults when the list is omitted are **`diagnostics`** only.
+
+| Capability | Grants |
+| --- | --- |
+| `diagnostics` | Emit compiler-native diagnostics through the shared `SemanticDiagnostic` path. |
+| `read_project_sources` | Read UTF-8 text from paths under resolved module roots and materialized dependencies of the **attached host** compilation. |
+| `emit_syntax` | Apply typed syntax contributions through the emit merge contract. |
+| `query_semantic_snapshot` | Read staged semantic products after the diagnostics gate for the current generation (versioned; see **[Analysis, query, and diagnostics facades](/platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/)**). |
+| `extern_ffi` | Opt-in bridge to **[FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/)** profiles; denied by default per language-meta FAQ alignment. |
+
+Each Mod SDK call **must** check the merged capability set before performing an effect; denial **must** be a diagnostic with stable code, never a host panic.
+
+## Pipeline observation
+
+Meta host boundaries **must** emit `beskid_pipeline` events so CLI and tests observe meta work identically to parse and lowering (**[Stage ordering](/platform-spec/compiler/build-pipeline/stage-ordering/)**). Fine-grained per-`meta` item work **should** map to `WorkUnit` events once item discovery exists in the implementation.

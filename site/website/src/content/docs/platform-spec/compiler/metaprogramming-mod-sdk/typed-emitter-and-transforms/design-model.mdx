@@ -42,3 +42,11 @@ This article documents the **design model** for **Typed emitter and transforms**
 ## Anchored code paths
 - `compiler/crates/beskid_analysis/src/syntax/items/` — patterns for well-formed item emission.
 - `compiler/crates/beskid_codegen/` — downstream expectations after merge.
+
+## Merge model (surface syntax first)
+
+Typed emit **must** construct or mutate **`Program`**-level syntax nodes (or a documented multi-file aggregate feeding the same parser contract), not ad hoc HIR patches. Contributions **must** pass the same well-formedness checks as user-authored items before merge.
+
+**Ordering** — Multiple contributors touching the same **declaration identity** produce a deterministic merge failure surfaced as structured diagnostics; the host **must not** leave a partially merged tree.
+
+**Handoff to lowering** — After `meta.round_commit`, the merged syntax **must** be the sole input to `lower_normalize_resolve_type_spanned` / codegen lowering paths documented in **[Stage ordering and lowering](/platform-spec/compiler/build-pipeline/stage-ordering/)**; lowering **must not** begin until emit validation succeeds or emit is skipped for that round.

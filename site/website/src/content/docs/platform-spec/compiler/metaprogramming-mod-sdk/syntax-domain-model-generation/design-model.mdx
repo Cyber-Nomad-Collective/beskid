@@ -43,3 +43,11 @@ This article documents the **design model** for **Syntax domain model generation
 - `compiler/crates/beskid_analysis/src/syntax/` — syntax item builders and node shapes.
 - `compiler/crates/beskid_analysis/src/beskid.pest` — grammar surface feeding parse output.
 - `compiler/crates/beskid_analysis/src/syntax/items/` — item-level parsers and metadata.
+
+## Stable identities for capture and incremental keys
+
+The syntax domain model **must** assign each node a **stable identity** within a `syntax_generation_id` window: identities **must** survive trivia edits when language law marks them stable, and **must** change when structural shape changes in ways that affect capture predicates. Identities **must** be comparable in O(1) time for incremental hashing.
+
+**Torn tree prohibition** — Hosts **must not** expose partial syntax trees to `meta` process or emit: parsing failures for any required module in `entryModules` **must** abort meta registration for that round with diagnostics, leaving the previous committed generation untouched.
+
+**Multi-root workspaces** — When multiple module roots exist (`CompilationContext::module_roots`), identities **must** be qualified by absolute normalized root path + in-root span so different projects cannot collide in capture caches.

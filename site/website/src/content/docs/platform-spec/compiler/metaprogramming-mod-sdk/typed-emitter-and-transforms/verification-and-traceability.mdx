@@ -32,8 +32,10 @@ This article documents **verification and traceability** for **Typed emitter and
 - Anchor: `compiler/crates/beskid_codegen/` — downstream expectations after merge.
 
 ## Verification expectations
-- Contract tests in `compiler/crates/beskid_tests` assert ordering, diagnostic codes, and merge behavior once implemented.
-- Golden incremental traces (optional) validate invalidation when syntax edits move spans tied to meta registrations.
+
+- **Merge conflicts** — Tests assert two `meta` contributors targeting the same declaration identity emit deterministic **E1836–E1850** diagnostics and leave the syntax tree unchanged (see **[Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)**).
+- **Lowering guard** — Tests ensure `lower.ready` (or equivalent sequencing) never fires between partial emit and rollback.
+- **Golden traces (optional)** — Same as **[Incremental scheduling / verification](/platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/verification-and-traceability/)** when emit drives invalidation.
 
 ## Review cadence
 - Update this bundle whenever public `Beskid.Compiler.*` shapes or host policies change.

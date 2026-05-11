@@ -20,6 +20,10 @@ relatedTopics:
     title: Build pipeline
     href: /platform-spec/compiler/build-pipeline/
     relation: Resolution outputs feed pipeline stages
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Meta attachment and entry module metadata
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
@@ -32,4 +36,22 @@ The resolution model has three core objects: `CompilePlan` (target + dependency 
 
 `beskid_analysis::projects` owns graph building and manifest semantics; CLI commands and LSP integrations consume this model and should not reimplement manifest traversal rules.
 
-**`Meta` projects** appear as ordinary graph nodes with **`type = Meta`** (see **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)**). Resolution must retain enough metadata for the **meta host** to register **event piping** into declared **`meta`** entry modules without conflating `Meta` roots with executable entrypoints unless the workspace explicitly composes them.
+**`Meta` projects** appear as ordinary graph nodes with **`type = Meta`** (see **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)**). Resolution **must**:
+
+1. **Retain `project.meta`** on the resolved node so the meta host can evaluate `attachTo` against workspace member ids without re-parsing manifests ad hoc.
+2. **Never treat `Meta` as the default compile target** for `beskid build` unless the user or workspace explicitly selects a host member that composes with a `Meta` attachment policy; `CompilePlan` for a normal App/Lib/Test build **must** continue to resolve a real `target` entrypoint while still listing attached `Meta` projects for host registration.
+3. **Expose the same graph slice to LSP** as to CLI (`CompilationContext` builders in `compiler/crates/beskid_analysis/src/compilation_context.rs` and manifest resolve helpers) so editor analysis schedules meta against the same attachment decisions.
+
+Attachment resolution errors (unknown member id, cycle, duplicate attachment) are **workspace resolution** failures with deterministic ordering independent of filesystem walk order.
+
+## `attachTo: default` resolution algorithm
+
+When a `Meta` project lists **`default`** inside `project.meta.attachTo`, the host **must** resolve it to exactly one **host workspace member** using this deterministic algorithm:
+
+1. If the active CLI or LSP command specifies **`--workspace-member NAME`**, **`default`** resolves to that member when it exists; otherwise emit a manifest-resolution diagnostic (unknown member).
+2. Otherwise, if `Workspace.proj` declares a **single** member, **`default`** resolves to that member.
+3. Otherwise **`default` is ambiguous** — emit a deterministic error requiring every `Meta` project in that workspace to use explicit member ids in `attachTo`. (A future spec may introduce a normative `defaultMember` field on `Workspace.proj`; until then the name is **reserved**—see **[Workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/design-model/)**.)
+
+`Meta` projects **must not** attach to other `Meta` members; `attachTo` targets **must** reference App/Lib/Test members only.
+
+Cross-check: **[Project manifest contract / examples](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/examples/)** shows multi-member `attachTo` usage.

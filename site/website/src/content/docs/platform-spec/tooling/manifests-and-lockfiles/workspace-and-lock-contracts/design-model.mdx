@@ -20,6 +20,10 @@ relatedTopics:
     title: Workspace and lock contracts
     href: /platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/
     relation: Parent feature hub
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Meta reserved keys and host policy alignment
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
@@ -29,6 +33,16 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 ## What this article covers
 This article explains the `design-model` view for `Workspace and lock contracts` in concrete, onboarding-first language.
+
+## Reserved and forbidden workspace keys (v0.2)
+
+To avoid divergent experiments, **`Workspace.proj`** in v0.2 **must not** introduce ad-hoc keys that alter meta policy. Specifically:
+
+- **Forbidden / parse-error** — Any top-level workspace key whose name matches `allowMetaInHostProjects`, `enableHostMeta`, or similar undocumented toggles **must** be rejected with a stable diagnostic until a future spec version defines semantics. This prevents forks of the “`meta` only in `Meta` projects” rule.
+- **Reserved (no semantics yet)** — Keys documented here as reserved **must** either be rejected or ignored with a warning-only mode that is itself normatively specified; the default is **reject** for CI determinism.
+- **`defaultMember` (workspace)** — Reserved on `Workspace.proj` for a future release that would disambiguate `attachTo: default` in multi-member workspaces. v0.2 parsers **must** reject this key if present unless a spec bump explicitly defines it.
+
+Implementations **must** keep the reserved-name table in this article synchronized with `compiler/crates/beskid_analysis` manifest parsers when names are added.
 
 ## Newcomer walk-through
 Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.

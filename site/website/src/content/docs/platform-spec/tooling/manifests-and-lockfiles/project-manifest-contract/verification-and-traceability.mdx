@@ -38,5 +38,14 @@ Start from the parent feature hub to learn the contract boundaries, then map the
 - CLI project graph setup in `compiler/crates/beskid_cli/src/commands/`
 - Workspace resolution in `compiler/crates/beskid_analysis/src/resolve/items.rs`
 
+## Meta manifest fixtures (normative locations)
+
+Conformance **must** add focused tests alongside existing project fixtures:
+
+- **Directory** — `compiler/crates/beskid_tests/src/projects/meta_manifest/` (create when implementation lands) holding minimal valid/invalid `Project.proj` + optional `Workspace.proj` pairs.
+- **Coverage** — Unknown `meta` keys, missing `entryModules`, bad `attachTo` member, `default` ambiguity with two members, and capability typos; each case asserts a single diagnostic code from **[Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)** band **E1801–E1899**.
+
+Mirror any new fixture filenames in **[Conformance evidence policy](/platform-spec/compiler/conformance/conformance-evidence-policy/)** when the suite lands.
+
 ## Practical guidance
 When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

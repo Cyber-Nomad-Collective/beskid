@@ -18,7 +18,16 @@ relatedTopics:
 ---
 
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
 
 <SpecPageHeader ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+<SpecSection title="Scope" id="scope">
+Toolchain-facing package registry client contracts used by Beskid CLI and workflows.
+</SpecSection>
+
+<SpecSection title="Feature index" id="feature-index">
+Use the tiles below for normative **feature** contracts in this area.
+</SpecSection>
+
 <DomainTiles pathPrefix="platform-spec/tooling/registry-client" heading="Features" />

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-09T18:48:50.873Z",
+  "generatedAt": "2026-05-11T10:11:26.628Z",
   "summary": {
     "nodes": 381,
     "errors": 0,
@@ -43,9 +43,20 @@
       "slug": "platform-spec/community/spec-maintenance",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 2,
         "markdownH2": 1
       },
       "messages": []
@@ -84,7 +95,7 @@
         },
         {
           "id": "features",
-          "required": false,
+          "required": true,
           "found": true
         }
       ],
@@ -431,7 +442,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -475,7 +486,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 1
       },
       "messages": []
     },
@@ -483,9 +494,20 @@
       "slug": "platform-spec/compiler/codegen-and-ir",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -736,9 +758,20 @@
       "slug": "platform-spec/compiler/conformance",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -750,7 +783,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -912,9 +945,20 @@
       "slug": "platform-spec/compiler/front-end",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -948,7 +992,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1025,7 +1069,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1069,7 +1113,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1179,7 +1223,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 1
       },
       "messages": []
     },
@@ -1231,9 +1275,20 @@
       "slug": "platform-spec/compiler/implementation-map",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 1,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -1278,7 +1333,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1338,12 +1393,12 @@
         },
         {
           "id": "features",
-          "required": false,
+          "required": true,
           "found": true
         }
       ],
       "counts": {
-        "specSections": 6,
+        "specSections": 7,
         "markdownH2": 0
       },
       "messages": []
@@ -1377,7 +1432,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -1531,7 +1586,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -1608,7 +1663,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 8
       },
       "messages": []
     },
@@ -1685,7 +1740,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -1762,7 +1817,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -1814,9 +1869,20 @@
       "slug": "platform-spec/compiler/resolution-and-projects",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -2158,7 +2224,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 1
       },
       "messages": []
     },
@@ -2210,9 +2276,20 @@
       "slug": "platform-spec/compiler/semantic-pipeline",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -2246,7 +2323,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 1
       },
       "messages": []
     },
@@ -2400,7 +2477,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 1
       },
       "messages": []
     },
@@ -2477,7 +2554,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -2628,9 +2705,20 @@
       "slug": "platform-spec/core-library/compiler-integration",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -2763,7 +2851,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -2815,9 +2903,20 @@
       "slug": "platform-spec/core-library/stability-and-api-shape",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -3024,9 +3123,20 @@
       "slug": "platform-spec/execution/abi-and-host",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -3299,9 +3409,20 @@
       "slug": "platform-spec/execution/runtime",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -3596,9 +3717,20 @@
       "slug": "platform-spec/language-meta/composition",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 1,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -3607,9 +3739,20 @@
       "slug": "platform-spec/language-meta/conformance",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 1,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -3618,9 +3761,20 @@
       "slug": "platform-spec/language-meta/contracts-and-effects",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 1,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -3629,9 +3783,20 @@
       "slug": "platform-spec/language-meta/evaluation",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 1,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -3640,9 +3805,20 @@
       "slug": "platform-spec/language-meta/interop",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 1,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -3794,9 +3970,20 @@
       "slug": "platform-spec/language-meta/memory-model",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 1,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -3813,7 +4000,7 @@
         },
         {
           "id": "features",
-          "required": false,
+          "required": true,
           "found": true
         }
       ],
@@ -3852,7 +4039,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 6
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -3904,9 +4091,20 @@
       "slug": "platform-spec/language-meta/program-structure",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 1,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -3915,9 +4113,20 @@
       "slug": "platform-spec/language-meta/surface-syntax",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 1,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -3926,9 +4135,20 @@
       "slug": "platform-spec/language-meta/type-system",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 1,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -3959,9 +4179,20 @@
       "slug": "platform-spec/tooling/cli",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -4006,7 +4237,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -4058,9 +4289,20 @@
       "slug": "platform-spec/tooling/lsp",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 3,
         "markdownH2": 0
       },
       "messages": []
@@ -4105,7 +4347,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -4157,9 +4399,20 @@
       "slug": "platform-spec/tooling/manifests-and-lockfiles",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -4193,7 +4446,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -4215,7 +4468,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -4248,7 +4501,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -4292,7 +4545,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -4344,9 +4597,20 @@
       "slug": "platform-spec/tooling/registry-client",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -4443,9 +4707,20 @@
       "slug": "platform-spec/tooling/vscode-extension",
       "level": "area",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
-        "specSections": 0,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []

@@ -22,7 +22,8 @@ const specFile = path.join(
 	'platform-spec',
 	'compiler',
 	'semantic-pipeline',
-	'diagnostic-code-registry.mdx',
+	'diagnostic-code-registry',
+	'index.mdx',
 );
 
 function read(p) {

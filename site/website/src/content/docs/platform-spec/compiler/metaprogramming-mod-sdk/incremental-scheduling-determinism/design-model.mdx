@@ -42,3 +42,23 @@ This article documents the **design model** for **Incremental scheduling and det
 ## Anchored code paths
 - `compiler/crates/beskid_analysis/src/analysis/rules/staged/` — precedent for staged invalidation.
 - `compiler/crates/beskid_lsp/` — incremental document models and rescan triggers.
+
+## Invalidation keys (normative)
+
+Hosts **must** record, per `meta` item schedule, at minimum:
+
+1. **`syntax_generation_id`** — Monotonic per compilation unit (or workspace slice) counter bumped whenever a new parse snapshot replaces the previous `Program`.
+2. **`capture_fingerprint`** — Hash of stable syntax node identities and predicate parameters bound during capture (isolating capture narrows this hash to declared roots; aggregating capture mixes in workspace-wide generation ids).
+3. **`manifest_generation_id`** — Hash of relevant `Project.proj` / `Workspace.proj` / lockfile bytes affecting `attachTo`, `entryModules`, or dependencies.
+4. **`capability_set_id`** — Canonical encoding of granted capabilities for the active host attachment.
+
+Replay **must** reuse cached process outputs when and only when all four ids match prior committed work. Any mismatch **must** drop cached process/emit artifacts before running the next round.
+
+## Isolating vs aggregating (implementation mapping)
+
+- **Isolating** — Dirty set includes only items whose capture fingerprints reference changed syntax ids or directly imported modules touched on disk.
+- **Aggregating** — Declarations in language-meta force inclusion of **`syntax_generation_id`** for **every** compilation unit in the attach target when **any** file in the member changes; hosts **must** record an explicit graph edge so tools can explain broad invalidation.
+
+## Atomicity
+
+Within one **`meta.round_commit`** event, emit applications and diagnostic emissions **must** commit atomically: downstream semantic stages **must not** observe partially applied contributor edits (**[Typed emitter and transforms](/platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/)**).

@@ -31,10 +31,15 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 This article explains the `contracts-and-edge-cases` view for `Project manifest contract` in concrete, onboarding-first language.
 
 ## Meta project contracts
-- **`Meta` must be explicit** — Hosts reject ambiguous or missing type when `meta` sources are present in a project that participates in orchestration (exact policy in examples).
-- **Invalid `Meta` manifests are stable diagnostics** — Same inputs yield the same diagnostic codes and messages (align with compiler diagnostic tables).
-- **Circular attachment** — A `Meta` project must not declare attachment cycles; resolution reports deterministic errors.
-- **Non-`Meta` projects** — Whether `meta` items are allowed outside `Meta` projects is a **platform policy** field (default should be documented in examples once chosen).
+- **`Meta` must be explicit** — If any compilation unit in a project contains a **`meta`** item and that project participates in workspace orchestration, its `project.type` **must** be `Meta`. Otherwise the host **must** emit a deterministic error whose code is registered alongside other manifest diagnostics.
+- **Invalid `Meta` manifests are stable diagnostics** — Same inputs, same paths, same resolver version, and same host options yield the same diagnostic codes and primary messages (align with `compiler/crates/beskid_analysis` diagnostic tables and LSP parity rules).
+- **Circular attachment** — `attachTo` graphs **must** be acyclic when interpreted as edges from `Meta` projects to host members. Cycles are deterministic resolution errors.
+- **`entryModules` existence** — Each listed module path **must** resolve under the project `root`; missing files are errors at manifest validation time (not deferred to first compile).
+- **Non-`Meta` projects** — Unless a future workspace opt-in is standardized, **`meta` in App/Lib/Test projects is forbidden** (see design model). Tooling **must not** silently ignore `meta` in forbidden contexts.
+
+## Lockfile and registry interaction
+
+`Meta` projects declare **`dependency`** blocks like any project. Compile-time execution **must** honor the same **locked** versions as the host compilation they attach to when both share a workspace lockfile scope. Publishing or CI that snapshots manifests **must** include `Meta` projects so mod graphs are reproducible.
 
 ## Newcomer walk-through
 Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.

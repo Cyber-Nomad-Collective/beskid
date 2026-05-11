@@ -32,9 +32,9 @@ This article explains the `flow-and-algorithm` view for `Project manifest contra
 
 ## Meta projects in the load flow
 1. Discover `Project.proj` and parse manifest.
-2. Classify **project type**; if **`Meta`**, validate required **meta** sections (attachment targets, entry modules—normative keys TBD in examples/contracts).
-3. Include the project in the workspace graph so **[Workspace resolution contract](/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/)** exposes it to CLI and compiler services.
-4. During compilation, the **meta host** consumes the classified **`Meta`** node list and registers **event subscriptions** per **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**.
+2. Classify **project type**. If **`Meta`**, validate **`project.meta`** using the normative key table in **[design model](./design-model/)**: `attachTo`, `entryModules` (or accepted transitional `entryModule`), optional `maxMetaRounds`, optional `capabilities`. Reject unknown keys unless reserved by schema tooling.
+3. Include the project in the workspace graph so **[Workspace resolution contract](/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/)** exposes it to CLI and compiler services. Resolution **must** retain parsed `project.meta` on the graph node for the meta host.
+4. When a **host** compilation starts for an attached workspace member, the **meta host** loads each attached **`Meta`** project’s `entryModules`, enumerates **`meta`** items in deterministic module order, and registers **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)** schedules. Lockfile and materialized dependency roots for those modules **must** use the same `prepare_project_workspace` path as ordinary projects so compile-time Beskid shares one dependency closure story.
 
 ## Newcomer walk-through
 Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.

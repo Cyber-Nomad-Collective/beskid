@@ -36,3 +36,12 @@ Implementation anchors:
 - `compiler/crates/beskid_engine/src/services.rs`
 
 Traceability should include tests that assert semantic failures stop before backend stages.
+
+## Meta phase ordering tests
+
+When meta ships, add integration tests under `compiler/crates/beskid_tests/` that:
+
+1. Install a test `PipelineObserver` collecting `PhaseStart` / `PhaseEnd` ids.
+2. Assert the substring `parse` → `meta.host_attached` → `meta.round_start` → `meta.round_commit` → `semantic` → `lower` appears in order for a workspace fixture with an attached `Meta` project (see **[Project manifest contract / verification](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/verification-and-traceability/)** for manifest fixture layout).
+
+Any change to `FULL_BUILD_PHASE_ORDER` or meta insertion rules **must** update these expectations in the same commit.

@@ -18,6 +18,10 @@ relatedTopics:
     title: Diagnostic code registry
     href: /platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/
     relation: Registry defines canonical code identity for rule outputs
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Meta diagnostics bands and Mod SDK parity
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
@@ -34,3 +38,7 @@ Semantic analysis is modeled as a staged rule engine:
 - Service adapters project the same issue identity into CLI and LSP output models.
 
 For newcomers, the key idea is separation of concerns: rule logic decides **what is wrong**, while diagnostics infrastructure decides **how it is labeled and surfaced**.
+
+## Meta and meta-host diagnostics
+
+Codes **E1801–E1899** are owned by manifest, workspace, meta host, emit merge, and `meta` surface validation—not by ordinary semantic rules. When adding meta-related failures, update **[Diagnostic code registry / design model](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)** first, then reference the new code from rule modules or manifest validators so the catalog remains single-sourced.

@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: feature
 status: Standard
-lastReviewed: 2026-05-09
+lastReviewed: 2026-05-11
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -46,9 +46,9 @@ This page defines the concrete IntelliSense behavior exposed by Beskid LSP to ed
 7. **Signature help** shall be supported for `.bd` call sites and return one active signature derived from the callable hover payload.
 8. **Document symbols** shall be supported for `.bd` and `.proj` with stable symbol-kind mapping.
 9. **Workspace symbols** shall be supported for indexed `.bd` documents from open buffers plus closed-file workspace snapshots.
-10. **Code actions** shall include source formatting action for `.bd` and a quick-fix for unused imports (`W1503`) when diagnostic context is present.
+10. **Code actions** shall include source formatting for `.bd`, a quick-fix for unused imports (`W1503`) when diagnostic context is present, and documentation actions (generate / update `///` stubs with `@arg` / `@returns` / `@variant` / `@par` where applicable, plus quick fixes tied to documentation warnings **W1610–W1615** and **W1620–W1625**) implemented in `beskid_lsp::features::code_actions::handler` using `beskid_analysis::doc::doc_comment_edit_for_offset`.
 11. **Semantic tokens** shall be supported (full-document mode) with declaration tagging for symbol declarations.
-12. **Diagnostics** shall preserve compiler severity/code identity and apply equally to open buffers and workspace-indexed closed files.
+12. **Diagnostics** shall preserve compiler severity/code identity and apply equally to open buffers and workspace-indexed closed files; for `.bd` files with a document analysis snapshot, published diagnostics shall be the **union** of semantic diagnostics and `doc_diagnostics` from the snapshot (stable sort by span then code).
 
 ## Current scope limits
 
@@ -67,7 +67,9 @@ This page defines the concrete IntelliSense behavior exposed by Beskid LSP to ed
 - `compiler/crates/beskid_lsp/src/server/init.rs`
 - `compiler/crates/beskid_lsp/src/server/backend.rs`
 - `compiler/crates/beskid_lsp/src/features`
+- `compiler/crates/beskid_lsp/src/features/code_actions/handler.rs`
 - `compiler/crates/beskid_lsp/src/diagnostics.rs`
 - `compiler/crates/beskid_analysis/src/services.rs`
+- `compiler/crates/beskid_analysis/src/doc/edit.rs`
 - `beskid_vscode/src/lsp/beskidLanguageClient.ts`
 - `beskid_vscode/src/runtime/BeskidExtensionRuntime.ts`

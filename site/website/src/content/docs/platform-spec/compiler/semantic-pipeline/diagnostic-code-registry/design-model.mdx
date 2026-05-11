@@ -18,6 +18,10 @@ relatedTopics:
     title: Rules and diagnostics catalog
     href: /platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/
     relation: Rules emit registry-defined code identities
+  - type: Area
+    title: Metaprogramming Mod SDK
+    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    relation: Meta diagnostics parity and Mod SDK surfaces
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
@@ -33,3 +37,38 @@ The registry model is intentionally centralized:
 - Delivery adapters (CLI/LSP) preserve code identity while formatting messages.
 
 This avoids drift between compiler internals and platform documentation, and it makes diagnostics easier to consume in editors and CI tooling.
+
+## Meta, manifest, and meta-host band (**E1801–E1899**)
+
+The inclusive range **E1801–E1899** is owned by **meta compilation**, **`Meta` manifest validation**, and **meta host** failures (Mod SDK bridge). Ordinary semantic rules **must not** allocate inside this band. Register each allocated code in `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` and extend this table in the same change.
+
+| Code range | Owner | Intended failures (examples) |
+| --- | --- | --- |
+| **E1801–E1810** | `beskid_analysis::projects` manifest parse | Unknown `meta` key, missing `entryModules`, malformed `attachTo` list, `entryModules` path outside `root`. |
+| **E1811–E1820** | Workspace / graph resolution | Unknown `attachTo` member id, `Meta`→`Meta` attachment, `default` ambiguity, attachment cycle. |
+| **E1821–E1835** | Meta host / capabilities | Denied capability, exceeded `maxMetaRounds`, sandbox violation, compile-time JIT bootstrap failure. |
+| **E1836–E1850** | Emit merge | Conflicting contributor edits, illegal typed contribution, merge rollback. |
+| **E1851–E1870** | `meta` surface / discovery | Illegal `meta` placement in forbidden project kind, parse errors inside `meta` item body once grammar exists. |
+| **E1871–E1899** | **Reserved** | Buffer for staged rollout; allocate in order and extend this table when used. |
+
+## Documentation comment diagnostics (**W1610–W1619**, **W1620–W1625**)
+
+The inclusive ranges **W1610–W1619** and **W1620–W1625** are reserved for **leading documentation body** validation (triple-slash mini-language: `@ref`, `@arg`, `@returns`, `@variant`, `@par`, and unknown directives). These warnings are produced from the document-analysis snapshot after name resolution succeeds; they **must not** use ad hoc string codes outside `SemanticIssueKind`. Hard errors for documentation are **not** allocated in v1; if a future policy introduces blocking documentation failures, allocate **E1610–E1629** in this document and in `diagnostic_kinds.rs` before use.
+
+| Code | Meaning (summary) |
+| --- | --- |
+| **W1610** | `@arg` names a parameter that does not exist on the documented callable. |
+| **W1611** | Duplicate `@arg(name)` for the same item. |
+| **W1612** | `@arg` / `@returns` on an item that is not a supported callable. |
+| **W1613** | `@returns` on a `unit` return (redundant). |
+| **W1614** | Unknown documentation directive (`@foo` not in the supported registry). |
+| **W1615** | Unresolved `@ref(...)` path. |
+| **W1616–W1619** | **Reserved** for documentation-quality rules. |
+| **W1620** | `@variant(...)` used outside an enum declaration’s leading documentation. |
+| **W1621** | `@variant(name)` does not match any enum variant. |
+| **W1622** | Duplicate `@variant(name)` in the same block. |
+| **W1623** | `@par(...)` where the declaration has no generic type parameters. |
+| **W1624** | `@par(name)` does not match a generic type parameter on the item. |
+| **W1625** | Duplicate `@par(name)` in the same block. |
+
+Codes **must** be stable across patch releases once shipped; breaking message text is allowed only with a migration note in **[Rules and diagnostics catalog](/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/)**.

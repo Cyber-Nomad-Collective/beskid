@@ -18,6 +18,14 @@ relatedTopics:
     title: Rules and diagnostics catalog
     href: /platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/
     relation: Semantic rules consume parser outputs
+  - type: Feature
+    title: meta compilation block
+    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    relation: Semantic contract for `meta`
+  - type: Feature
+    title: Grammar and parser contract
+    href: /platform-spec/compiler/front-end/grammar-and-parser-contract/
+    relation: Pest productions feeding AST builders
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
@@ -33,3 +41,13 @@ The front-end is split into three layers:
 3. **Syntax layer** (`src/syntax/items`, `src/syntax/types`): stable Rust structs/enums consumed by resolver, analysis, docs, and formatter paths.
 
 For newcomers, the practical rule is simple: if a language construct changes, update grammar and syntax together, then confirm semantic passes still read the resulting nodes as expected.
+
+## `meta` items in the module AST
+
+A **`meta` item** is a **top-level module item** alongside functions, types, and tests (exact keyword and delimiter grammar: **[Grammar and parser contract](/platform-spec/compiler/front-end/grammar-and-parser-contract/)**). Parser responsibilities:
+
+1. **Discovery order** — `Program.items` preserves source order; meta host discovery **must** walk items in that order for determinism.
+2. **Isolation** — `meta` items parsed inside a `Meta` project module **must** be tagged with originating manifest path + module path so diagnostics can cite mod sources distinctly from host sources.
+3. **Forbidden contexts** — When the host project kind is App/Lib/Test and policy forbids `meta`, the parser **may** still parse the construct for error recovery but the host **must** emit **E1851–E1870** band diagnostics per **[Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)** rather than silently deleting nodes.
+
+AST shapes and HIR lowering edges for `meta` are documented alongside other items in **[AST and HIR shape contract](/platform-spec/compiler/front-end/ast-hir-shape-contract/)** when lowering rules land.

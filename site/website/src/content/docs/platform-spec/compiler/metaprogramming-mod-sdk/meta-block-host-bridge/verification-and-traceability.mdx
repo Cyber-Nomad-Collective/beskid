@@ -33,8 +33,11 @@ This article documents **verification and traceability** for **meta block host b
 - Anchor: `compiler/crates/beskid_analysis/src/services.rs` — compilation session orchestration hooks.
 
 ## Verification expectations
-- Contract tests in `compiler/crates/beskid_tests` assert ordering, diagnostic codes, and merge behavior once implemented.
-- Golden incremental traces (optional) validate invalidation when syntax edits move spans tied to meta registrations.
+
+- **Phase ids** — Unit or integration tests **must** assert the literal strings from **[Metaprogramming Mod SDK / Meta projects and pipeline phase ids](/platform-spec/compiler/metaprogramming-mod-sdk/#meta-projects)** appear in `beskid_pipeline` observations (see **[Stage ordering / verification](/platform-spec/compiler/build-pipeline/stage-ordering/verification-and-traceability/)**).
+- **Capabilities** — Table-driven tests in `compiler/crates/beskid_tests` verify each capability grants/denies the documented effect and emits **E1821–E1835** codes on denial.
+- **Merge** — Tests assert atomic `meta.round_commit` behavior: partial emit never reaches lowering (pair with **[Typed emitter / verification](/platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/verification-and-traceability/)** once populated).
+- **Incremental traces** — Optional goldens validate invalidation when syntax edits move spans tied to meta registrations (**[Incremental scheduling / verification](/platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/verification-and-traceability/)**).
 
 ## Review cadence
 - Update this bundle whenever public `Beskid.Compiler.*` shapes or host policies change.

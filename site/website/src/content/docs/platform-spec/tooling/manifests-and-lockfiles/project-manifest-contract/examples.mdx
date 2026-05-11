@@ -31,19 +31,62 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 This article explains the `examples` view for `Project manifest contract` in concrete, onboarding-first language.
 
 ## Illustrative `Meta` project manifest
-Informative fragment (keys subject to schema lock-in):
+
+Normative field names follow **[design model](./design-model/)**; this example is informative for shape only.
 
 ```text
 project:
   name: my-meta-pack
+  version: 0.1.0
+  root: Src
   type: Meta
   meta:
     attachTo:
       - default
-    entryModule: Meta/Main.bd
+    entryModules:
+      - Meta/Main.bd
+      - Meta/Extra.bd
+    maxMetaRounds: 6
+    capabilities:
+      - read_project_sources
+dependency:
+  name: corelib
+  source: registry
+  version: ...
 ```
 
-See **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)** for `meta` body shape and **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)** for host behavior.
+`Meta` projects may omit conventional **`target`** blocks when the workspace policy allows pure meta packs; if targets are present, they **must not** be interpreted as host binary outputs without an explicit workspace composition rule documented beside the example.
+
+See **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)** for `meta` body shape (same syntax as `meta` in host code) and **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)** for host execution, phase ids, and capability enforcement.
+
+## Multi-member workspace with explicit `attachTo`
+
+When `Workspace.proj` lists multiple members, **`default` is ambiguous** unless the user passes `--workspace-member`; production `Meta` packs **should** name members explicitly:
+
+```text
+# Workspace.proj (informative)
+workspace:
+  name: demo-ws
+  members:
+    - name: app
+      path: ./App
+    - name: tools
+      path: ./Tools
+
+# Tools/MetaPack/Project.proj (informative)
+project:
+  name: meta-pack
+  version: 0.1.0
+  root: Src
+  type: Meta
+  meta:
+    attachTo:
+      - app
+    entryModules:
+      - Meta/Main.bd
+```
+
+Resolution behavior for **`default`** vs named members is normative in **[Workspace resolution contract / design model](/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/design-model/)**.
 
 ## Newcomer walk-through
 Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.

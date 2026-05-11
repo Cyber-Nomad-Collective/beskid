@@ -43,3 +43,17 @@ This article documents the **design model** for **Analysis, query, and diagnosti
 - `compiler/crates/beskid_analysis/src/analysis/` — staged rules and semantic state.
 - `compiler/crates/beskid_analysis/src/resolve/` — resolution products queryable from facades.
 - `compiler/crates/beskid_lsp/src/diagnostics.rs` — diagnostic shaping for editor parity.
+
+## Diagnostic parity rules
+
+`Beskid.Compiler.Diagnostics` (and internal meta emitters) **must**:
+
+1. Emit `SemanticDiagnostic` values compatible with `run_rules` output (same severity enum, string diagnostic codes matching registered ids).
+2. Allocate meta and meta-host codes only inside **E1801–E1899** using the sub-ranges in **[Diagnostic code registry / design model](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)**; register each code in `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` when introduced.
+3. Never bypass `span_to_sourcespan` / miette adapters used elsewhere so LSP label offsets remain accurate.
+
+## Query lowering and bounded walkers
+
+Fluent **`Beskid.Compiler.Query`** plans **must** lower to explicit Rust walkers with **documented** upper bounds on work (max nodes visited, max depth). Hosts **must** abort with diagnostics (not panics) when bounds trip. Optional **`query_semantic_snapshot`** reads **must** declare the minimum staged snapshot version (ties to `semantic.snapshot` events in **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)** area hub).
+
+When the **Rust compiler** maintains compile-time **composition / IoC** state for user programs, that state **must** be materialized into the same **versioned semantic snapshot** family as other staged products so `meta` can query it without special casing: Mod SDK query types **project** compiler-native graphs into Beskid-visible handles; they **must not** recompute or replace Rust-owned resolution unless a dedicated, separately specified capability allows a narrow, audited code path.

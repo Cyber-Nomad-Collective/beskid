@@ -5,7 +5,7 @@ template: splash
 tableOfContents: false
 specLevel: feature
 status: Standard
-lastReviewed: 2026-04-30
+lastReviewed: 2026-05-11
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -49,3 +49,14 @@ The canonical chapter is **[Types](/platform-spec/language-meta/type-system/type
 ## Platform view
 
 The type grammar (nominal classes, interfaces, generics, nullability) is the backbone of static checking. All analysis phases share these definitions.
+
+<SpecSection title="Slice arrays `T[]` (v0.2)" id="slice-arrays">
+Slice-like **`T[]`** types denote a runtime **fat-pointer** value (`BeskidArray` in `beskid_abi::types`): `ptr`, logical **`len`**, and **`cap`**. **Length** is a field of that value; user code reads it through the **`__array_len`** compiler builtin (lowered to a direct call into the embedded runtime, not an OS syscall). **`__array_new`** allocates the header (and optional backing storage when the `arrays_backing` runtime feature is enabled). Fixed-size **`T[N]`** (if/when surfaced in grammar) will carry **`N`** as part of the type so length is a **compile-time constant**; until then, the reference compiler treats **`[]`** slice forms only.
+
+| Topic | Contract |
+| --- | --- |
+| Kind | `TypeInfo::Array(element)` in analysis; codegen uses a single machine pointer for values. |
+| Length | `__array_len(handle)` returns logical count; null handle yields `0`. |
+| Iteration | Corelib `Collections.Array` (`Len`, `Iterate`, `HasNext`) is built on the same length surface. |
+| Spec/code alignment | Platform-spec and `beskid_tests` parity tests pin behavior; corelib must not invent a second array model. |
+</SpecSection>
