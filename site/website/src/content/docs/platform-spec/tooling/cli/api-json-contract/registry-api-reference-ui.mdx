@@ -16,7 +16,7 @@ relatedTopics:
     title: api.json contract
     href: /platform-spec/tooling/cli/api-json-contract/
     relation: Parent feature hub
-  - type: Article
+  - type: Feature
     title: Design model
     href: /platform-spec/tooling/cli/api-json-contract/design-model/
     relation: Schema and library tree invariants
@@ -46,11 +46,11 @@ The main content column **must** stay aligned beside the left rail (not displace
 
 | Route | Purpose |
 | --- | --- |
-| `/docs/{package}@{version}` | Package docs landing; default tree selection |
-| `/docs/{package}@{version}/api/{qualifiedName}` | Deep link to one API row (`qualifiedName` percent-encoded) |
-| `/docs/{package}@{version}/search/{query}` | Initial symbol search filter |
+| `` `/docs/{package}@{version}` `` | Package docs landing; default tree selection |
+| `` `/docs/{package}@{version}/api/{qualifiedName}` `` | Deep link to one API row (`qualifiedName` percent-encoded) |
+| `` `/docs/{package}@{version}/search/{query}` `` | Initial symbol search filter |
 
-`{version}` may be `latest` or an exact registry version.
+The `version` segment may be `latest` or an exact registry version.
 
 ## Library tree algorithm
 
@@ -58,14 +58,14 @@ The main content column **must** stay aligned beside the left rail (not displace
 2. Build parent/child edges from **`parentId`** / **`memberIds`** only ([design model](/platform-spec/tooling/cli/api-json-contract/design-model/)).
 3. Include only **explorer** kinds in the tree (`module`, `type`, `enum`, `contract`, `function`).
 4. Under each `module` node, group explorer children into UI folders by `kind`.
-5. When **`declaringPackage`** is present and differs from the page package, group under **Dependencies → {declaringPackage}** before module nesting.
+5. When **`declaringPackage`** is present and differs from the page package, group under **Dependencies** → that package id before module nesting.
 
 Legacy artifacts without module parenting **may** synthesize module edges from `modulePath` until re-published; emitters should not rely on this path.
 
 ## Type and cross-package links
 
 - In-package types: navigate via **`refItemId`** when set; otherwise select by `qualifiedName`.
-- External types (`declaringPackage` ≠ current package): link to `/docs/{declaringPackage}@{version}/api/{qualifiedName}` (same version segment as the host page when possible).
+- External types (`declaringPackage` ≠ current package): link to `` `/docs/{declaringPackage}@{version}/api/{qualifiedName}` `` (same version segment as the host page when possible).
 - Markdown `@ref` links packed at publish time **must** use the same qualified-name rules as the design model.
 
 ## Implementation anchors
