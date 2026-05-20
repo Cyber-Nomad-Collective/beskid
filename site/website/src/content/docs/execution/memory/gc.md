@@ -3,6 +3,7 @@ title: "Beskid GC specification (Go-style)"
 description: Beskid GC specification (Go-style)
 ---
 
+> **Normative platform spec:** [Memory and GC runtime contract](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/). Fiber **Phase A** (single mutator) vs **Phase B** (parallel mutators) is defined there and in [Fiber scheduler and stacks](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/).
 
 ## Decision summary
 Beskid adopts a Go-style garbage collector:

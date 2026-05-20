@@ -1,11 +1,11 @@
 ---
 title: "Events"
-description: "Multicast events, subscription lifetime, and thread affinity assumptions. UI stacks build on these primitives."
+description: "Multicast events within a fiber; cross-fiber delivery uses Channel."
 template: splash
 tableOfContents: false
 specLevel: feature
 status: Standard
-lastReviewed: 2026-04-30
+lastReviewed: 2026-05-20
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -17,18 +17,18 @@ relatedTopics:
     title: "Evaluation"
     href: /platform-spec/language-meta/evaluation/
     relation: Parent area
-  - type: Domain
-    title: "Language meta"
-    href: /platform-spec/language-meta/
-    relation: Parent domain hub
-  - type: Domain
-    title: "Platform specification"
-    href: /platform-spec/
-    relation: Cross-cutting index
-  - type: Domain
-    title: "Execution documentation"
-    href: /execution/
-    relation: Runtime and backend contracts
+  - type: Feature
+    title: Fibers and spawn
+    href: /platform-spec/language-meta/evaluation/fibers-and-spawn/
+    relation: spawn and Fiber handles
+  - type: Feature
+    title: Concurrency package
+    href: /platform-spec/core-library/concurrency/concurrency-package/
+    relation: Channel Send and Receive for cross-fiber UI
+  - type: Feature
+    title: Console terminal events
+    href: /platform-spec/core-library/terminal-and-console/console-terminal-events/
+    relation: Resize and tick delivery via Channel
 ---
 
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
@@ -42,10 +42,12 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 	submitterEmail="pmikstacki@cybernomad.it"
 />
 
-## Normative specification
+<SpecSection title="Normative specification" id="normative-specification">
+**Events** provide multicast callbacks **within the fiber that owns the subscription** (fiber affinity). Handlers run on the subscribing fiber's scheduler context unless the program explicitly marshals work elsewhere.
 
-The canonical chapter is **[Events](/platform-spec/language-meta/evaluation/events/)** in the platform specification.
+**Cross-fiber** notification (UI loops, console resize, background workers) **must** use **`Channel<T>`** with **Send** / **Receive** from **[Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/)**, not cross-fiber `event` invocation. **`Console`** implements terminal signals via **Channel** (see **[Console terminal events](/platform-spec/core-library/terminal-and-console/console-terminal-events/)**).
+</SpecSection>
 
-## Platform view
-
-Multicast events, subscription lifetime, and thread affinity assumptions. UI stacks build on these primitives.
+<SpecSection title="Platform view" id="platform-view">
+Runtime helpers (`event_subscribe`, `event_get_handler`, …) remain v0.1 builtins for in-fiber dispatch. New UI and IO stacks should prefer **Channel** endpoints for composability with **Hub** and **spawn**.
+</SpecSection>

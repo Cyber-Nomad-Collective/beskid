@@ -1,0 +1,55 @@
+---
+title: Concurrency package - Design model
+description: Package layout, module map, and thin-wrapper rule for Fiber and Channel structs.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Concurrency package
+    href: /platform-spec/core-library/concurrency/concurrency-package/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Package layout
+
+Workspace package **`corelib_concurrency`** (directory `compiler/corelib/packages/concurrency/`) with one primary module file per public type (match existing corelib style: `System/Syscall/` split).
+
+| Module path | Responsibility |
+| --- | --- |
+| `Concurrency.Fiber` | `Fiber<T>` struct; **`event OnCancelled()`** on handle; **Join**, **Detach**, **Cancel** |
+| `Concurrency.Channel` | `Channel<T>`; **Send**, **Receive**, **TrySend**, **TryReceive**, **Close** |
+| `Concurrency.ChannelOptions` | `Bounded(capacity)`, `Unbounded`, optional **SingleReader** / **SingleWriter** flags |
+| `Concurrency.Hub` | `Hub<T>` homogeneous; **Register**, **WaitReceive** (round-robin) |
+| `Concurrency.HubReceiveResult` | `index` + `value: T` |
+| `Concurrency.Mutex` | **Lock**, **TryLock**, **Unlock** |
+| `Concurrency.WaitGroup` | **Add**, **Done**, **Wait** |
+| `Concurrency` | **Yield**, **NowMillis**, **ProcessorCount**, **SetProcessorCount** |
+
+Prelude re-exports (optional, versioned): only what most apps need—avoid dumping the whole package into `Prelude.bd` until stable.
+
+## Thin-wrapper rule
+
+Each public method maps **1:1** to a runtime builtin or a small inline sequence documented in **[Channels and synchronization](/platform-spec/execution/runtime/channels-and-synchronization/)**. No intermediate “scheduler interface” trait hierarchy in Beskid source.
+
+## Reference implementation note
+
+Runtime fiber switching may follow a **stack-switching coroutine** design (see [Building lightweight coroutines in Rust (fibers)](https://medium.com/@ksaritek/building-lightweight-coroutines-in-rust-introducing-rust-fibers-53b91625a9de) for engineering patterns). The **normative contract** remains this platform spec and ABI symbols, not the article.
+
+## Anti-patterns (forbidden)
+
+- Parallel .NET-style stacks (`Task`, `ValueTask`, `ChannelReader`/`ChannelWriter` split types in user API)
+- Hidden `async`/`await` lowering
+- Second channel abstraction in `System.*` outside this package

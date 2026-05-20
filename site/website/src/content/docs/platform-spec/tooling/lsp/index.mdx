@@ -20,8 +20,8 @@ relatedTopics:
     href: /platform-spec/compiler/build-pipeline/diagnostics-parity/
     relation: Parse and semantic diagnostic parity contract
   - type: Area
-    title: Metaprogramming Mod SDK
-    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    title: Compiler Mods
+    href: /platform-spec/compiler/compiler-mods/
     relation: Meta host scheduling and LSP invalidation alignment
 ---
 
@@ -39,7 +39,7 @@ Use the tiles below for normative **feature** contracts in this area.
 </SpecSection>
 
 <SpecSection title="Meta / compiler mods" id="meta-lsp">
-When the workspace includes **`Meta` projects**, the language server **must** use the same `CompilationContext` and meta invalidation rules as the CLI (**[Diagnostics and workspace analysis](/platform-spec/tooling/lsp/diagnostics-and-workspace-analysis/)**, **[Snapshot and refresh contract](/platform-spec/tooling/lsp/snapshot-and-refresh-contract/)**). Status phases **should** reuse the `beskid_pipeline` vocabulary surfaced through CLI observers so extension UX can show meta progress consistently.
+When the workspace includes **`Mod` projects**, the language server **must** use the same `CompilationContext` and meta invalidation rules as the CLI (**[Diagnostics and workspace analysis](/platform-spec/tooling/lsp/diagnostics-and-workspace-analysis/)**, **[Snapshot and refresh contract](/platform-spec/tooling/lsp/snapshot-and-refresh-contract/)**). Status phases **should** reuse the `beskid_pipeline` vocabulary surfaced through CLI observers so extension UX can show meta progress consistently.
 </SpecSection>
 
 <DomainTiles pathPrefix="platform-spec/tooling/lsp" heading="Features" />

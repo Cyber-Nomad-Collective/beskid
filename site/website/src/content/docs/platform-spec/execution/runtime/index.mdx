@@ -28,7 +28,9 @@ import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
 	submitterEmail="pmikstacki@cybernomad.it"
 />
 <SpecSection title="Scope" id="scope">
-Runtime-level contracts for panic behavior, syscalls, IO, and host-facing semantics.
+Runtime-level contracts for panic behavior, syscalls, IO, fiber scheduling, channels, and host-facing semantics.
+
+Cooperative **fibers** and **Channel** synchronization are normative under **[Fiber scheduler and stacks](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/)** and **[Channels and synchronization](/platform-spec/execution/runtime/channels-and-synchronization/)**. User APIs live in **[Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/)**; preemptive **OS threads** live in **[System.Threading](/platform-spec/core-library/concurrency/system-threading/)**.
 </SpecSection>
 
 

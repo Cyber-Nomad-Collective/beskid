@@ -272,7 +272,7 @@ This document enumerates semantic rules derived from the language spec. Rules ar
 - Source: 01-lexical-and-syntax.
 
 ## Metaprogramming diagnostics (platform spec)
-- Generator- and `meta`-related diagnostics will be specified with the canonical **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)** language contract and **[analysis, query, and diagnostics facades](/platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/)** Mod SDK feature once implemented; do not treat legacy draft paths as normative.
+- Generator- and `meta`-related diagnostics will be specified with the canonical **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)** language contract and **[analysis, query, and diagnostics facades](/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/)** Mod SDK feature once implemented; do not treat legacy draft paths as normative.
 
 ## Notes
 - Rules marked Warning can be toggled via `AnalysisOptions`.

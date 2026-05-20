@@ -38,6 +38,7 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 ## Normative contracts
 
+- The aggregate prelude exports **`System.Input`**, **`System.Output`**, **`System.Error`**, and **`Console`** (`corelib_console`). **`System.IO`** is removed.
 - Producer crates must emit data in a shape accepted by downstream consumers.
 - Consumer crates must not silently reinterpret the contract surface.
 - Contract regressions must be captured as compile-time or test-time failures, not hidden runtime drift.

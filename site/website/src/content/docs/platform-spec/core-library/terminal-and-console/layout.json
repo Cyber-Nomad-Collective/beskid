@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "level": "area",
+  "extends": "area-default",
+  "pathPrefix": "platform-spec/core-library/terminal-and-console",
+  "sections": [
+    { "id": "scope", "required": true, "kind": "specSection" },
+    { "id": "features", "required": true, "kind": "specSection" }
+  ],
+  "minSpecSections": 2,
+  "widgets": [{
+    "type": "domainTiles",
+    "props": {
+      "pathPrefix": "platform-spec/core-library/terminal-and-console",
+      "heading": "Features"
+    }
+  }]
+}

@@ -46,10 +46,24 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 - Consumer side: crates that read, execute, or validate that surface.
 - Conformance side: test crates that pin expected behavior.
 
+## Package readme
+
+Published `.bpk` artifacts **should** expose registry documentation through a root **`README.md`** zip entry. Producers declare the on-disk source in `Project.proj` or `Workspace.proj`:
+
+- Optional `readme = "relative/path.md"` (POSIX-style path relative to the package or workspace root).
+- When omitted, tooling uses **`readme.md`** at that root when the file exists.
+- `beskid pckg pack` copies the resolved file into the artifact as **`README.md`** when it is not already a root readme entry, so **pckg** can list it first in the documentation browser (alongside `docs/**/*.md` and `.beskid/docs/**`).
+
+## Workspace members
+
+`compiler/corelib/Workspace.proj` includes **`packages/console`** (`corelib_console`) alongside `foundation`, `runtime`, and `compiler-sdk`. The aggregate `beskid_corelib` project depends on `corelib_console` for console/ANSI surfaces.
+
 ## Concrete crate anchors
 
 - Canonical package root `compiler/corelib/beskid_corelib`
+- Console package `compiler/corelib/packages/console`
 - Canonical package identity `corelib` (declared in `Project.proj`)
 - Corelib path discovery in `compiler/crates/beskid_analysis/src/projects/graph/resolver.rs`
 - CLI embedding/install support in `compiler/crates/beskid_cli/build.rs` and `compiler/crates/beskid_cli/src/corelib_runtime.rs`
 - Integration checks in `compiler/crates/beskid_tests/src/projects/corelib`
+- Workspace members include `packages/foundation`, `packages/runtime`, `packages/console`, `packages/compiler-sdk`, and aggregating `beskid_corelib`

@@ -1,10 +1,11 @@
 ---
 title: Contracts and edge cases
-description: Normative guarantees, constraints, and edge-case handling for `Project manifest contract`.
+description: Strict guarantees and failure modes for Mod project manifests.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-20
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Manifests and lockfiles
-    href: /platform-spec/tooling/manifests-and-lockfiles/
-    relation: Parent area
   - type: Feature
     title: Project manifest contract
     href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
@@ -26,28 +23,17 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Contracts
 
-## What this article covers
-This article explains the `contracts-and-edge-cases` view for `Project manifest contract` in concrete, onboarding-first language.
+- **`Mod` must be explicit** — Compiler-mod contracts (`Collector`, `Generator`, `Analyzer`, `Rewriter`, `AttributeGenerator`) are valid only in `type: Mod` projects.
+- **No host targets on Mod projects** — `Mod` manifests must not declare App/Lib/Test `target` blocks.
+- **Transitive discovery** — Host compilations auto-load all transitive `Mod` dependencies from the resolved graph.
+- **Scope via Collector** — Target narrowing is declared by `Collector` contracts, not manifest attach metadata.
+- **AOT-only execution** — Mod packages compile to AOT artifacts; no compile-time JIT path is normative.
 
-## Meta project contracts
-- **`Meta` must be explicit** — If any compilation unit in a project contains a **`meta`** item and that project participates in workspace orchestration, its `project.type` **must** be `Meta`. Otherwise the host **must** emit a deterministic error whose code is registered alongside other manifest diagnostics.
-- **Invalid `Meta` manifests are stable diagnostics** — Same inputs, same paths, same resolver version, and same host options yield the same diagnostic codes and primary messages (align with `compiler/crates/beskid_analysis` diagnostic tables and LSP parity rules).
-- **Circular attachment** — `attachTo` graphs **must** be acyclic when interpreted as edges from `Meta` projects to host members. Cycles are deterministic resolution errors.
-- **`entryModules` existence** — Each listed module path **must** resolve under the project `root`; missing files are errors at manifest validation time (not deferred to first compile).
-- **Non-`Meta` projects** — Unless a future workspace opt-in is standardized, **`meta` in App/Lib/Test projects is forbidden** (see design model). Tooling **must not** silently ignore `meta` in forbidden contexts.
+## Edge cases
 
-## Lockfile and registry interaction
-
-`Meta` projects declare **`dependency`** blocks like any project. Compile-time execution **must** honor the same **locked** versions as the host compilation they attach to when both share a workspace lockfile scope. Publishing or CI that snapshots manifests **must** include `Meta` projects so mod graphs are reproducible.
-
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
-
-## Code anchors
-- Manifest loading in `compiler/crates/beskid_analysis/src/services.rs`
-- CLI project graph setup in `compiler/crates/beskid_cli/src/commands/`
-- Workspace resolution in `compiler/crates/beskid_analysis/src/resolve/items.rs`
-
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+- **Invalid `project.mod` keys** — Unknown keys error with stable codes (**E1801–E1810**).
+- **Capability denial** — Effects without granted capability fail with **E1821–E1835** diagnostics.
+- **Generator round exhaustion** — Exceeding `maxGeneratorRounds` is a hard error, not a silent partial program.
+- **Conflicting typed contributions** — Merge failures use **E1836–E1850** and leave syntax unchanged.

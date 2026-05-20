@@ -1,0 +1,89 @@
+---
+title: Compiler Mod SDK
+description: Beskid-side compiler-mod contracts, SyntaxMirror, declarative query, and typed AST operations.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Metaprogramming
+    href: /platform-spec/language-meta/metaprogramming/
+    relation: Parent area
+  - type: Area
+    title: Compiler Mods
+    href: /platform-spec/compiler/compiler-mods/
+    relation: Rust-side host and pipeline contract
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: `project.type = Mod`
+  - type: Feature
+    title: extend type
+    href: /platform-spec/language-meta/program-structure/extend-type/
+    relation: Generated member extension syntax
+  - type: Feature
+    title: Serialization packages
+    href: /platform-spec/language-meta/metaprogramming/serialization/
+    relation: Reference mod and attribute model
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="Package role" id="package-role">
+The **Compiler Mod SDK** (`compiler-sdk` package) is the Beskid-side surface for `type: Mod` projects. Mod behavior is declared through **contracts** and **SyntaxMirror** operations — not through dedicated metaprogramming grammar items in the host language.
+</SpecSection>
+
+<SpecSection title="Contract hierarchy" id="contracts">
+All mod entrypoints derive from **`Collector`**:
+
+| Contract | Role |
+| --- | --- |
+| **`Collector`** | Declarative target collection and scope narrowing (replaces project-level attach metadata). |
+| **`Generator`** | Incremental by default; emits typed AST contributions only. |
+| **`Analyzer`** | Runs on host + generated code; emits diagnostics and registers rewrites as fixes. |
+| **`Rewriter<TSourceNode, TTargetNode>`** | `Result<TTargetNode, FixError> Rewrite(TSourceNode sourceNode)` — replaces any AST node with any valid typed AST node. |
+| **`AttributeGenerator`** | Defines attributes exported by mod packages (SDK infrastructure; domain mods such as Serialization Mod define concrete attributes). |
+
+Hosts discover contract implementations from AOT-compiled `Mod` packages in the dependency graph (direct and transitive).
+</SpecSection>
+
+<SpecSection title="SyntaxMirror and declarative query" id="syntax-mirror">
+- **`SyntaxMirror`** is the typed mirror of compiler syntax nodes (formerly “reflection” naming is deprecated).
+- Every mirrored node implements contracts for **query** and **structural AST operations**.
+- Mod code builds and transforms trees through declarative fluent APIs — **no string formatting or source-text emission**.
+- **`Rewriter`** and **`Generator`** use the same typed node identities for merge and invalidation.
+</SpecSection>
+
+<SpecSection title="Pipeline interaction (Beskid view)" id="pipeline">
+From a mod author's perspective:
+
+1. **Collect** — `Collector` narrows targets for this mod instance.
+2. **Generate** — `Generator` contributes typed AST; host re-parses and merges (bounded by `maxGeneratorRounds`).
+3. **Analyze** — `Analyzer` runs after semantic snapshot on merged program (including generated code).
+4. **Rewrite** — `Rewriter` applies when an analyzer declares a fix; host validates typed replacement.
+
+Rust-side phase ids and artifact lifecycle are specified under **[Compiler Mods](/platform-spec/compiler/compiler-mods/)**.
+</SpecSection>
+
+<SpecSection title="Language features used by mods" id="language-features">
+- **[extend type](/platform-spec/language-meta/program-structure/extend-type/)** — primary extension syntax for generated members (replaces impl-block extension).
+- **[Serialization packages](/platform-spec/language-meta/metaprogramming/serialization/)** — reference domain mod defining `[Serialize]`.
+- **[Dynamic types and mapping (v0.3)](/platform-spec/compiler/codegen-and-ir/dynamic-types-and-mapping/)** — planned IR/runtime mapping for serializable types.
+</SpecSection>
+
+<SpecSection title="Non-goals" id="non-goals">
+- No language-level `meta` items or collect/generate/analyze/rewrite blocks.
+- No runtime reflection over arbitrary Beskid objects.
+- No mutation of Rust compiler composition graphs from Beskid mod code.
+</SpecSection>

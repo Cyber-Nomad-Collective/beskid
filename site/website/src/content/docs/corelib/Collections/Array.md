@@ -1,6 +1,6 @@
 ---
 title: "Collections.Array"
-description: "Fixed-size array iteration helpers (length builtin pending)."
+description: "Slice-like array iteration helpers backed by __array_len."
 ---
 
 The authoritative **corelib** copy for this topic is maintained with the standard library sources in the compiler repository.

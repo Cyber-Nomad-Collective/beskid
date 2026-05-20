@@ -1,0 +1,46 @@
+---
+title: Fiber scheduler and stacks - Design model
+description: Scheduler loops, parking, and stack switching implementation expectations.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Fiber scheduler and stacks
+    href: /platform-spec/execution/runtime/fiber-scheduler-and-stacks/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Scheduler model
+
+- **Run queue(s)** per worker OS thread; work-stealing permitted.
+- **Parked** fibers live off-run-queue until **wake** (channel ready, cancel, join completion).
+- **`fiber_yield`** — cooperative requeue of current fiber.
+- Blocking **syscall** paths park fiber; blocking work runs on thread pool threads that **do not** execute arbitrary Beskid mutator code without attaching GC scope (Phase A: mutator attachment rules stay strict).
+
+## Stack switching
+
+Implementation may use **manual stack swap** coroutines (see [lightweight coroutines in Rust (fibers)](https://medium.com/@ksaritek/building-lightweight-coroutines-in-rust-introducing-rust-fibers-53b91625a9de) for techniques). Requirements:
+
+1. Callee stack aligned to platform ABI.
+2. On switch, save callee-saved registers per ABI.
+3. GC can enumerate **all fiber stacks** at safepoint (stack maps required).
+
+## Reentrancy (Phase A — closed)
+
+Phase A uses **one process-wide GC arena** (existing `enter_runtime_scope` model). OS worker threads in the pool **must not** execute arbitrary Beskid mutator code concurrently; they run scheduler bookkeeping or blocking syscalls without a second mutator attachment.
+
+Only **one** thread at a time may hold the mutator role for GC allocation in Phase A. The scheduler transfers mutator execution between fibers on that contract. Phase B revisits parallel mutators under **[memory-and-gc-runtime-contract](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/)**.
+
+## Processor count
+
+`ProcessorCount` / `SetProcessorCount` map to worker pool size (Go **GOMAXPROCS** analogue); default logical CPUs.

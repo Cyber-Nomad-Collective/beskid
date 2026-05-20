@@ -1,0 +1,29 @@
+---
+title: Flow and algorithm
+description: Lifecycle and execution flow.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Console terminal events
+    href: /platform-spec/core-library/terminal-and-console/console-terminal-events/
+    relation: Parent feature hub
+---
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## What this article covers
+This article documents **flow-and-algorithm** for **Console terminal events**.
+
+## Normative notes
+See the parent feature hub and `ANSI.md` in the aggregate repository for escape-sequence tables. Stream I/O must use `System.Syscall` wrappers; stdout/stderr are write-only at the syscall layer.

@@ -21,7 +21,7 @@ Convention recap:
 | **conformance** | Tiles-only | `area-sparse`. |
 | **front-end** | Tiles-only | `area-sparse`. |
 | **implementation-map** | Scope + tiles | `area-default` (single `scope` satisfies min). |
-| **metaprogramming-mod-sdk** | Large multi-section + graph | `feature-area-hub-default` or `feature-hub-default`; use **`orderedSpecSectionIds`** if section order becomes normative. |
+| **compiler-mods** | Large multi-section + graph | `feature-area-hub-default` or `feature-hub-default`; use **`orderedSpecSectionIds`** if section order becomes normative. |
 | **resolution-and-projects** | Tiles-only | `area-sparse`. |
 | **semantic-pipeline** | Tiles-only | `area-sparse`. |
 

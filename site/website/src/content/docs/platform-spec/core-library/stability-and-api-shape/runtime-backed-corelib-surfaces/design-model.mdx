@@ -37,6 +37,8 @@ Start from the parent feature hub to learn the contract boundaries, then map the
 - Corelib docs in `site/website/src/content/docs/corelib/System/`
 - Runtime builtins in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
 - ABI builtin specs in `compiler/crates/beskid_abi/src/builtins.rs`
+- Split stream helpers in `compiler/corelib/packages/runtime/src/System/Input.bd`, `Output.bd`, `Error.bd`
+- Console package (`corelib_console`) in `compiler/corelib/packages/console/` — see [Terminal and console](/platform-spec/core-library/terminal-and-console/)
 
 ## Practical guidance
 When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

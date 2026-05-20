@@ -1,0 +1,31 @@
+---
+title: Channels and synchronization - Contracts and edge cases
+description: Runtime-level Send, Receive, Hub, and cancellation contracts.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Channels and synchronization
+    href: /platform-spec/execution/runtime/channels-and-synchronization/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+Runtime **must** mirror corelib **Result** semantics at the builtin boundary (no panic for closed/cancelled channel ops).
+
+Duplicate **Close** is safe. **Receive** on closed empty queue returns **Closed**. **Send** after **Close** returns **Closed**.
+
+**Hub.WaitReceive** with zero registrations returns **`HubError::Empty`**. **Hub** uses **round-robin** readiness scan (normative).
+
+Multiple fibers may **Receive** on the same channel; each message goes to one receiver (FIFO).
+
+Cancellation wakes parked fibers with **Cancelled** after **OnCancelled** on the child fiber.

@@ -38,5 +38,14 @@ Start from the parent feature hub to learn the contract boundaries, then map the
 - ABI contracts in `compiler/crates/beskid_abi/src/lib.rs`
 - JIT linking and call setup in `compiler/crates/beskid_engine/src/jit_module.rs`
 
+## Fiber phases (GC interaction)
+
+| Phase | Normative behavior |
+| --- | --- |
+| **A (first ship)** | Many fibers, **one GC mutator**; `gc_write_barrier` may remain no-op; all fiber stacks scanned at safepoints on that mutator |
+| **B (documented)** | Parallel mutators + real insertion barriers on pointer stores; see `/execution/memory/gc.md` |
+
+Scheduler and stack contracts: **[Fiber scheduler and stacks](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/)**.
+
 ## Practical guidance
 When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.

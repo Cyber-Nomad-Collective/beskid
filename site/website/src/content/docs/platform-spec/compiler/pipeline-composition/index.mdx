@@ -1,0 +1,53 @@
+---
+title: Pipeline composition
+description: Rust-native compiler composition, pass registration, and phase DAG (separate from Mod projects).
+template: splash
+tableOfContents: true
+specLevel: area
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Domain
+    title: Compiler
+    href: /platform-spec/compiler/
+    relation: Parent domain hub
+  - type: Area
+    title: Compiler Mods
+    href: /platform-spec/compiler/compiler-mods/
+    relation: Beskid-side mods; does not mutate composition graph
+  - type: Area
+    title: Build pipeline
+    href: /platform-spec/compiler/build-pipeline/
+    relation: Observable phase ordering
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="Scope" id="scope">
+Pipeline composition is **Rust-only** compiler infrastructure: pass registration, dependency injection between compiler services, phase DAG wiring, and feature-flagged stage enablement.
+
+`Mod` projects and Beskid Compiler Mod SDK contracts **must not** mutate this graph. Mods observe compiler snapshots through SDK surfaces only.
+</SpecSection>
+
+<SpecSection title="Boundary" id="boundary">
+| Plane | Owner |
+| --- | --- |
+| Compiler composition / IoC | Rust (`beskid_analysis`, `beskid_pipeline`, related crates) |
+| User DI (`host`, `launch`) | [Language meta / composition](/platform-spec/language-meta/composition/) |
+| Compiler mods (`type: Mod`) | [Compiler Mods](/platform-spec/compiler/compiler-mods/) + [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/) |
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="anchors">
+- `compiler/crates/beskid_pipeline/` — phase ids and observer hooks
+- `compiler/crates/beskid_analysis/src/services.rs` — session orchestration
+- `compiler/crates/beskid_analysis/src/analysis/rules/staged/` — staged semantic pass graph
+</SpecSection>

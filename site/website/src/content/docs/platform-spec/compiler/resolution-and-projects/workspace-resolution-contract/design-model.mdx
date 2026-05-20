@@ -5,6 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-20
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -16,42 +17,36 @@ relatedTopics:
     title: Workspace resolution contract
     href: /platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/
     relation: Parent feature hub
-  - type: Area
-    title: Build pipeline
-    href: /platform-spec/compiler/build-pipeline/
-    relation: Resolution outputs feed pipeline stages
   - type: Feature
     title: Project manifest contract
     href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
-    relation: Meta attachment and entry module metadata
+    relation: Mod project type in manifests
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
-
-
 The resolution model has three core objects: `CompilePlan` (target + dependency plan), `PreparedProjectWorkspace` (materialized source roots and lockfile state), and resolved source input (`source_path`, `source`) used by compile commands.
 
 `beskid_analysis::projects` owns graph building and manifest semantics; CLI commands and LSP integrations consume this model and should not reimplement manifest traversal rules.
 
-**`Meta` projects** appear as ordinary graph nodes with **`type = Meta`** (see **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)**). Resolution **must**:
+## `Mod` projects in the graph
 
-1. **Retain `project.meta`** on the resolved node so the meta host can evaluate `attachTo` against workspace member ids without re-parsing manifests ad hoc.
-2. **Never treat `Meta` as the default compile target** for `beskid build` unless the user or workspace explicitly selects a host member that composes with a `Meta` attachment policy; `CompilePlan` for a normal App/Lib/Test build **must** continue to resolve a real `target` entrypoint while still listing attached `Meta` projects for host registration.
-3. **Expose the same graph slice to LSP** as to CLI (`CompilationContext` builders in `compiler/crates/beskid_analysis/src/compilation_context.rs` and manifest resolve helpers) so editor analysis schedules meta against the same attachment decisions.
+**`Mod` projects** appear as graph nodes with **`type = Mod`**. Resolution **must**:
 
-Attachment resolution errors (unknown member id, cycle, duplicate attachment) are **workspace resolution** failures with deterministic ordering independent of filesystem walk order.
+1. **Include all transitive `Mod` dependencies** of the active host compilation in the resolved dependency graph.
+2. **Never treat `Mod` as the default compile target** for `beskid build` / `beskid run`; host builds resolve App/Lib/Test targets while still loading mod artifacts from dependencies.
+3. **Expose the same graph slice to LSP and CLI** so mod scheduling decisions match across surfaces.
 
-## `attachTo: default` resolution algorithm
+Scope narrowing for which host compilation units a mod affects is owned by **`Collector`** contracts at execution time, not by manifest attach metadata.
 
-When a `Meta` project lists **`default`** inside `project.meta.attachTo`, the host **must** resolve it to exactly one **host workspace member** using this deterministic algorithm:
+## Mod artifact resolution
 
-1. If the active CLI or LSP command specifies **`--workspace-member NAME`**, **`default`** resolves to that member when it exists; otherwise emit a manifest-resolution diagnostic (unknown member).
-2. Otherwise, if `Workspace.proj` declares a **single** member, **`default`** resolves to that member.
-3. Otherwise **`default` is ambiguous** — emit a deterministic error requiring every `Meta` project in that workspace to use explicit member ids in `attachTo`. (A future spec may introduce a normative `defaultMember` field on `Workspace.proj`; until then the name is **reserved**—see **[Workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/design-model/)**.)
+When a `Mod` node is discovered:
 
-`Meta` projects **must not** attach to other `Meta` members; `attachTo` targets **must** reference App/Lib/Test members only.
+1. Resolve package source (workspace path or registry materialization).
+2. Check artifact hash against cached AOT output.
+3. Rebuild when hash changes (eager incremental check) or when `beskid mod rebuild` is invoked.
 
-Cross-check: **[Project manifest contract / examples](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/examples/)** shows multi-member `attachTo` usage.
+Errors in mod artifact load/bootstrap use the **E1821–E1835** band (**[Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)**).

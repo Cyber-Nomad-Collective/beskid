@@ -1,6 +1,6 @@
 ---
 title: Project manifest contract
-description: Project manifest schema including Meta project type, resolution inputs, and meta orchestration wiring.
+description: Project manifest schema including Mod project type, resolution inputs, and mod orchestration wiring.
 template: splash
 tableOfContents: true
 specLevel: feature
@@ -28,15 +28,15 @@ relatedTopics:
   - type: Feature
     title: Metaprogramming overview
     href: /platform-spec/language-meta/metaprogramming/metaprogramming/
-    relation: Meta projects and meta blocks (language law)
+    relation: Mod projects and Compiler Mod SDK contracts
   - type: Feature
-    title: meta compilation block
-    href: /platform-spec/language-meta/metaprogramming/meta-block/
-    relation: Declarative meta orchestration
+    title: Compiler Mod SDK
+    href: /platform-spec/language-meta/metaprogramming/compiler-mod-sdk/
+    relation: Declarative mod orchestration
   - type: Area
-    title: Metaprogramming Mod SDK
-    href: /platform-spec/compiler/metaprogramming-mod-sdk/
-    relation: Host execution of Meta and meta pipelines
+    title: Compiler Mods
+    href: /platform-spec/compiler/compiler-mods/
+    relation: Host execution of mod pipelines
 ---
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
 import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
@@ -55,10 +55,10 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 - Contract tests in `compiler/crates/beskid_tests/src/projects/corelib/mod.rs`
 </SpecSection>
 
-<SpecSection title="Meta project type (`Meta`)" id="meta-project-type">
-A manifest may declare **`type: Meta`** (exact field path and spelling are normative in schema articles below). A **`Meta`** project **does not** replace ordinary executable or library targets; it declares that this project participates in **compile-time meta orchestration**: the toolchain loads it so **`meta`** items can subscribe to **compilation events** and run **capture → process → emit** pipelines against host compilations, per **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)** and **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**.
+<SpecSection title="Mod project type (`Mod`)" id="meta-project-type">
+A manifest may declare **`type: Mod`**. A **`Mod`** project is a compiler-mod package: discovered from the dependency graph, compiled AOT, and executed through SDK contracts during host compilation. See **[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** and **[Compiler Mods](/platform-spec/compiler/compiler-mods/)**.
 
-Normative **`project.meta`** keys (`attachTo`, `entryModules`, optional `maxMetaRounds`, optional `capabilities`) and default **`meta`-outside-`Meta` policy** are specified in **[design model](./design-model/)** and **[contracts and edge cases](./contracts-and-edge-cases/)**; **[examples](./examples/)** show a complete illustrative manifest.
+Normative **`project.mod`** keys (`maxGeneratorRounds`, `capabilities`, optional `artifactPolicy`) are specified in **[design model](./design-model/)**; **[examples](./examples/)** show illustrative manifests.
 </SpecSection>
 
 <DomainTiles pathPrefix="platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract" heading="Articles" />

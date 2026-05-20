@@ -1,0 +1,159 @@
+---
+title: Concurrency package - Decisions record
+description: Closed design decisions for fibers, channels, and Hub—normative before implementation.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Concurrency package
+    href: /platform-spec/core-library/concurrency/concurrency-package/
+    relation: Parent feature hub
+  - type: Feature
+    title: Channels and synchronization
+    href: /platform-spec/execution/runtime/channels-and-synchronization/
+    relation: Runtime counterparts
+  - type: Feature
+    title: Fibers and spawn
+    href: /platform-spec/language-meta/evaluation/fibers-and-spawn/
+    relation: spawn and Fiber contract
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+This article is **normative**. Implementation **must not** diverge without a spec revision.
+
+## Channel construction
+
+| Decision | Rule |
+| --- | --- |
+| Default capacity | **Unbounded** when `ChannelOptions` is omitted or no bounded capacity is set |
+| Explicit bounded | `ChannelOptions.Bounded(n)` with `n > 0` |
+| Explicit unbounded | `ChannelOptions.Unbounded` (equivalent to default) |
+| Factory | `Channel<T>.Create(options: ChannelOptions = default)` — default options mean unbounded |
+
+## Fiber cancellation
+
+| Decision | Rule |
+| --- | --- |
+| Signalling | **`Fiber.Cancel()`** sets runtime cancellation flag |
+| Observation | Each `Fiber<T>` declares **`event OnCancelled()`** (language `event` on the fiber contract); runtime raises it on the **child fiber** before unblocking parked ops |
+| Join | **`Join`** → `Result<T, FiberError::Cancelled>` after cancellation is observed |
+| Channel ops | Parked **Send** / **Receive** on that fiber → `ChannelError::Cancelled` |
+| Ordering | **OnCancelled** handlers run **before** **Join** / channel errors return on the child; handlers **must not** block on **Join** of self |
+
+## Hub fairness
+
+| Decision | Rule |
+| --- | --- |
+| Algorithm | **Round-robin** among channels that have a ready **Receive** |
+| Cursor | Per-`Hub` index advanced after each successful **WaitReceive** |
+| Rationale | Registration-order FIFO starves channels registered late when an early channel is always ready; round-robin matches common `select` fairness expectations |
+| v1 scope | **WaitReceive** only — no **WaitSend** |
+
+## Process and main fiber
+
+| Decision | Rule |
+| --- | --- |
+| Main | `main()` runs on fiber **0** |
+| Shutdown | When `main` returns, runtime **Join**s all spawned fibers that were **not** **Detach**ed; then tears down scheduler |
+| Detach | **Detach** waives parent **Join**; child panic still **aborts process** (after diagnostic) unless a future recovery policy is added |
+| Undetached leak | Spawning without **Join** or **Detach** before `main` ends is a **conformance warning** in v0.2 tests (diagnostic optional) |
+
+## Errors (no panics)
+
+| Surface | Rule |
+| --- | --- |
+| Channel | **Send** / **Receive** → `Result`; **TrySend** / **TryReceive** → `Option` |
+| Fiber | **Join** → `Result<T, FiberError>`; stack overflow → **`FiberError::StackOverflow`** at **Join**, not silent corruption |
+| Mutex | **Lock** → `Result<MutexGuard, MutexError>`; **TryLock** → `Option<MutexGuard>` (`None` = would block); v1: **`Cancelled`** on **Lock** when fiber cancelled — no .NET-style poison |
+
+## Language
+
+| Decision | Rule |
+| --- | --- |
+| Keywords | **`spawn`** required for new fibers; no `go` alias in v1 |
+| Reserved | **`async`** and **`await`** are **parse errors** (reserved, not implemented) |
+| Cross-fiber data | **Channel** only; **Mutex** / **WaitGroup** for coordination not data transfer |
+| Handles | `Fiber<T>` and `Channel<T>` are **move-only** (no copy) |
+
+## GC phases
+
+| Phase | Rule |
+| --- | --- |
+| A (ship) | Many fibers, **one GC mutator**; `gc_write_barrier` no-op |
+| B (documented) | Parallel mutators + real barriers; no corelib API break |
+
+## Scheduler defaults
+
+| Decision | Rule |
+| --- | --- |
+| `ProcessorCount` | Default = host logical CPU count at init |
+| Stacks | 64 KiB initial, 8 MiB max |
+| Arena | Phase A: **one process arena**; pool threads execute Beskid mutator code only under scheduler rules in **[fiber scheduler design model](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/design-model/)** |
+
+## Channel runtime semantics (closed)
+
+| Decision | Rule |
+| --- | --- |
+| Multiple receivers | **Allowed**; each queued message delivered to **exactly one** successful **Receive** (FIFO) |
+| Multiple senders | **Allowed** unless **SingleWriter** hint (hint only in v1) |
+| **Close** | Any fiber with the channel handle may **Close**; idempotent; idempotent writer shutdown |
+| `spawn` void | `Fiber<Unit>` (or language unit type) when entry returns no value |
+
+## Hub (closed)
+
+| Decision | Rule |
+| --- | --- |
+| Fairness | **Round-robin** (see above) |
+| Max registrations | **256** per hub (runtime may return `HubError::Limit`); console hubs should stay &lt; 16 |
+| Element type | **Homogeneous in v1** — one `Hub<T>` wraps only `Channel<T>` with the same `T` |
+| Heterogeneous multiplex | **Not in v1** — use multiple hubs, or a single `Channel<HubMessage>` / tagged union as the payload |
+| `HubReceiveResult` | `{ index: i64, value: T }` where `T` is the hub type parameter |
+
+## Fiber handle vs spawn entry (closed)
+
+| Decision | Rule |
+| --- | --- |
+| **OnCancelled** placement | On the **`Fiber<T>` handle** returned by **`spawn`** only — not on the user entry function type |
+| Spawn entry | Ordinary `fn(...) -> T` (or closure); must type-check as spawn target but **does not** declare **OnCancelled** |
+| Handle type | `Fiber<T>` is a corelib **struct** wrapping runtime builtins; **`event OnCancelled()`** is declared on that struct (contract surface) |
+
+## Cancellation and panic (closed)
+
+| Decision | Rule |
+| --- | --- |
+| Unhandled panic in **OnCancelled** | **Abort process** (same policy as other unhandled event / panic paths in v1) |
+| **OnCancelled** must not | **Join** self, **Join** parent, or block on channel ops that depend on the cancelling fiber |
+
+## Mutex (closed)
+
+| Decision | Rule |
+| --- | --- |
+| **TryLock** | **In v1** — returns `Option<MutexGuard>` |
+| **Lock** | Parks fiber until acquired or **Cancelled** |
+
+## Clock (closed)
+
+| Decision | Rule |
+| --- | --- |
+| Monotonic millis | **`Concurrency.NowMillis() -> i64`** in the concurrency package (replaces legacy `rt_now_millis`) |
+| Wall clock | Deferred to future **`System.Time`** — not part of v0.2 concurrency ship |
+
+## Join rules (closed)
+
+| Decision | Rule |
+| --- | --- |
+| Child **Join** parent | **Forbidden** — compile-time diagnostic **`JoinWouldDeadlock`** when a fiber joins an ancestor on its stack |
+| Parent **Join** child | Normal — `Result<T, FiberError>` |
+| Sibling **Join** | Allowed (no cycle by construction if handles are siblings) |

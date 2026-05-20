@@ -31,8 +31,8 @@ AOT-compiles a resolved Beskid program, links against the Beskid runtime (unless
 
 | Argument | Description |
 | --- | --- |
-| `--runtime-archive` | Use a prebuilt runtime archive instead of building on the fly |
-| `--runtime-abi-version` | ABI version for prebuilt runtime archive |
+| `--runtime-archive` | Override the toolchain-bundled prebuilt runtime static library |
+| `--runtime-abi-version` | ABI version for `--runtime-archive` (defaults to the toolchain ABI) |
 | `--standalone` | No Beskid runtime archive linkage (cannot combine with `--runtime-archive`) |
 | `--export` | Repeatable: explicit symbols to export in shared/static artifacts |
 | `--prefer-static` / `--prefer-dynamic` | Link mode preference (mutually exclusive with each other) |
@@ -42,7 +42,7 @@ AOT-compiles a resolved Beskid program, links against the Beskid runtime (unless
 | Argument | Description |
 | --- | --- |
 | `--verbose-link` | Print linker invocations |
-| `--plain` | Disable animated progress and graph output |
+| `--plain` | Plain line-based progress (no step bar or dependency graph panel) |
 
 ## Example
 

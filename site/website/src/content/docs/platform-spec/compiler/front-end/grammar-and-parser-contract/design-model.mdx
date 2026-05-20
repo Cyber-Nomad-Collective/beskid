@@ -5,6 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-20
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -17,41 +18,40 @@ relatedTopics:
     href: /platform-spec/compiler/front-end/grammar-and-parser-contract/
     relation: Parent feature hub
   - type: Feature
-    title: meta compilation block
-    href: /platform-spec/language-meta/metaprogramming/meta-block/
-    relation: Semantic meaning of `meta`
+    title: extend type
+    href: /platform-spec/language-meta/program-structure/extend-type/
+    relation: Type extension syntax for generated members
   - type: Feature
     title: Parser and AST contracts
     href: /platform-spec/compiler/front-end/parser-and-ast-contracts/
-    relation: AST mapping for new productions
+    relation: AST mapping for grammar productions
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
-
-
 This article documents **design model** for **grammar and parser contract** in the reference compiler.
 
-## What this covers
-For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
-
 ## Anchored code paths
-- `compiler/crates/beskid_analysis/src/beskid.pest` defines the grammar tokens and precedence.
+
+- `compiler/crates/beskid_analysis/src/beskid.pest` defines grammar tokens and precedence.
 - `compiler/crates/beskid_analysis/src/syntax/` builds syntax items from parser output.
-- `compiler/crates/beskid_analysis/src/syntax/items/parse_helpers.rs` contains shared parse helpers used by item parsers.
+- `compiler/crates/beskid_analysis/src/syntax/items/parse_helpers.rs` contains shared parse helpers.
 
-## `meta` productions (v0.2 target)
+## Metaprogramming grammar (removed)
 
-The grammar **must** introduce explicit productions for `meta` items (working name `meta_item`) in `compiler/crates/beskid_analysis/src/beskid.pest`, covering:
+The reference compiler **must not** define a language-level `meta` item grammar. Compiler mods use ordinary Beskid source plus SDK contracts (`Collector`, `Generator`, `Analyzer`, `Rewriter`).
 
-- Keyword introducing the item and terminating headers for **capture**, **process**, and **emit** sections (exact spellings follow language-meta once frozen).
-- Nested blocks delimiting declarative pipelines; **must not** reuse unbraced expression grammar for pipeline bodies.
+Legacy `MetaDefinition` productions **must be removed** from `beskid.pest` and AST/HIR surfaces.
 
-Implementation **must** pair each new pest rule with an item parser under `compiler/crates/beskid_analysis/src/syntax/items/` and snapshot tests under `compiler/crates/beskid_tests` (see **[Grammar and parser contract / verification](/platform-spec/compiler/front-end/grammar-and-parser-contract/verification-and-traceability/)**).
+## `extend type` production (v0.2 target)
+
+The grammar **must** define **`extend type`** as the normative type-extension syntax (see **[extend type](/platform-spec/language-meta/program-structure/extend-type/)**). Generators emit `extend type` blocks as typed AST contributions.
+
+Implementation **must** pair pest rules with item parsers under `compiler/crates/beskid_analysis/src/syntax/items/` and snapshot tests under `compiler/crates/beskid_tests`.
 
 ## Practical notes
-- Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
+
 - Treat diagnostics and tests as part of the contract, not optional implementation details.
-- If behavior changes, update this article and add/adjust tests in `compiler/crates/beskid_tests` or `compiler/crates/beskid_e2e_tests`.
+- When grammar changes, update this article and conformance tests in the same change.

@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-05-11T10:11:26.628Z",
+  "generatedAt": "2026-05-20T06:10:09.317Z",
   "summary": {
-    "nodes": 381,
-    "errors": 0,
+    "nodes": 425,
+    "errors": 22,
     "warnings": 0
   },
   "nodes": [
@@ -755,6 +755,490 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/compiler/compiler-mods",
+      "level": "area",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 7,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 7
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 7
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/compiler/conformance",
       "level": "area",
       "status": "ok",
@@ -1382,7 +1866,7 @@
       "messages": []
     },
     {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk",
+      "slug": "platform-spec/compiler/pipeline-composition",
       "level": "area",
       "status": "ok",
       "sections": [
@@ -1393,475 +1877,13 @@
         },
         {
           "id": "features",
-          "required": true,
-          "found": true
+          "required": false,
+          "found": false
         }
       ],
       "counts": {
-        "specSections": 7,
+        "specSections": 3,
         "markdownH2": 0
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade",
-      "level": "feature",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/contracts-and-edge-cases",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/design-model",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 6
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/examples",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/faq-and-troubleshooting",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 3
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/flow-and-algorithm",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/analysis-query-diagnostics-facade/verification-and-traceability",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 3
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade",
-      "level": "feature",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/contracts-and-edge-cases",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/design-model",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 4
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/examples",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/faq-and-troubleshooting",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 3
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/flow-and-algorithm",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/beskid-compiler-syntax-facade/verification-and-traceability",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 3
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism",
-      "level": "feature",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/contracts-and-edge-cases",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/design-model",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 7
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/examples",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/faq-and-troubleshooting",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 3
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/flow-and-algorithm",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/incremental-scheduling-determinism/verification-and-traceability",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 3
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge",
-      "level": "feature",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/contracts-and-edge-cases",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/design-model",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 8
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/examples",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/faq-and-troubleshooting",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 3
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/flow-and-algorithm",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/verification-and-traceability",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 3
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation",
-      "level": "feature",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/contracts-and-edge-cases",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/design-model",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 5
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/examples",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/faq-and-troubleshooting",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 3
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/flow-and-algorithm",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/syntax-domain-model-generation/verification-and-traceability",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 3
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms",
-      "level": "feature",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/contracts-and-edge-cases",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/design-model",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 5
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/examples",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/faq-and-troubleshooting",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 3
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/flow-and-algorithm",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/compiler/metaprogramming-mod-sdk/typed-emitter-and-transforms/verification-and-traceability",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 3
       },
       "messages": []
     },
@@ -2224,7 +2246,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -2323,7 +2345,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -2455,7 +2477,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -2763,7 +2785,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -2900,6 +2922,220 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/core-library/concurrency",
+      "level": "area",
+      "status": "fail",
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": [
+        {
+          "code": "MDX_UNKNOWN_COMPONENT",
+          "severity": "error",
+          "slug": "platform-spec/core-library/concurrency",
+          "message": "Unknown MDX component <T /> in platform-spec hub",
+          "detail": "platform-spec/core-library/concurrency/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+        },
+        {
+          "code": "MDX_UNKNOWN_COMPONENT",
+          "severity": "error",
+          "slug": "platform-spec/core-library/concurrency",
+          "message": "Unknown MDX component <T /> in platform-spec hub",
+          "detail": "platform-spec/core-library/concurrency/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package",
+      "level": "feature",
+      "status": "fail",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": false
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 10,
+        "markdownH2": 0
+      },
+      "messages": [
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/core-library/concurrency/concurrency-package",
+          "message": "Missing required specSection \"what-this-feature-specifies\"",
+          "detail": "platform-spec/core-library/concurrency/concurrency-package/index.mdx"
+        },
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/core-library/concurrency/concurrency-package",
+          "message": "Missing required specSection \"implementation-anchors\"",
+          "detail": "platform-spec/core-library/concurrency/concurrency-package/index.mdx"
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases",
+      "level": "article",
+      "status": "fail",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": [
+        {
+          "code": "MDX_UNKNOWN_COMPONENT",
+          "severity": "error",
+          "slug": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases",
+          "message": "Unknown MDX component <T /> in platform-spec hub",
+          "detail": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+        },
+        {
+          "code": "MDX_UNKNOWN_COMPONENT",
+          "severity": "error",
+          "slug": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases",
+          "message": "Unknown MDX component <T /> in platform-spec hub",
+          "detail": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/decisions-record",
+      "level": "article",
+      "status": "fail",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 15
+      },
+      "messages": [
+        {
+          "code": "MDX_UNKNOWN_COMPONENT",
+          "severity": "error",
+          "slug": "platform-spec/core-library/concurrency/concurrency-package/decisions-record",
+          "message": "Unknown MDX component <T /> in platform-spec hub",
+          "detail": "platform-spec/core-library/concurrency/concurrency-package/decisions-record.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+        },
+        {
+          "code": "MDX_UNKNOWN_COMPONENT",
+          "severity": "error",
+          "slug": "platform-spec/core-library/concurrency/concurrency-package/decisions-record",
+          "message": "Unknown MDX component <T /> in platform-spec hub",
+          "detail": "platform-spec/core-library/concurrency/concurrency-package/decisions-record.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
+      "level": "article",
+      "status": "fail",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": [
+        {
+          "code": "MDX_UNKNOWN_COMPONENT",
+          "severity": "error",
+          "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
+          "message": "Unknown MDX component <T /> in platform-spec hub",
+          "detail": "platform-spec/core-library/concurrency/concurrency-package/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+        },
+        {
+          "code": "MDX_UNKNOWN_COMPONENT",
+          "severity": "error",
+          "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
+          "message": "Unknown MDX component <T /> in platform-spec hub",
+          "detail": "platform-spec/core-library/concurrency/concurrency-package/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+        },
+        {
+          "code": "MDX_UNKNOWN_COMPONENT",
+          "severity": "error",
+          "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
+          "message": "Unknown MDX component <T /> in platform-spec hub",
+          "detail": "platform-spec/core-library/concurrency/concurrency-package/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/system-threading",
+      "level": "feature",
+      "status": "fail",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": false
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 4,
+        "markdownH2": 0
+      },
+      "messages": [
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/core-library/concurrency/system-threading",
+          "message": "Missing required specSection \"what-this-feature-specifies\"",
+          "detail": "platform-spec/core-library/concurrency/system-threading/index.mdx"
+        },
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/core-library/concurrency/system-threading",
+          "message": "Missing required specSection \"implementation-anchors\"",
+          "detail": "platform-spec/core-library/concurrency/system-threading/index.mdx"
+        },
+        {
+          "code": "MDX_UNKNOWN_COMPONENT",
+          "severity": "error",
+          "slug": "platform-spec/core-library/concurrency/system-threading",
+          "message": "Unknown MDX component <T /> in platform-spec hub",
+          "detail": "platform-spec/core-library/concurrency/system-threading/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+        }
+      ]
+    },
+    {
       "slug": "platform-spec/core-library/stability-and-api-shape",
       "level": "area",
       "status": "ok",
@@ -2961,7 +3197,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3094,6 +3330,498 @@
       "counts": {
         "specSections": 0,
         "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console",
+      "level": "area",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-capabilities",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-controls",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-controls/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-controls/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-controls/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-controls/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-controls/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-io-streams",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-io-streams/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-io-streams/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-io-streams/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-io-streams/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-io-streams/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-markup-format",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-markup-format/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-markup-format/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-markup-format/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-markup-format/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-markup-format/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/design-model",
+      "level": "article",
+      "status": "fail",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": [
+        {
+          "code": "MDX_UNKNOWN_COMPONENT",
+          "severity": "error",
+          "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/design-model",
+          "message": "Unknown MDX component <T /> in platform-spec hub",
+          "detail": "platform-spec/core-library/terminal-and-console/console-terminal-events/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -3428,6 +4156,113 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/execution/runtime/channels-and-synchronization",
+      "level": "feature",
+      "status": "fail",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": false
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 5,
+        "markdownH2": 1
+      },
+      "messages": [
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/execution/runtime/channels-and-synchronization",
+          "message": "Missing required specSection \"what-this-feature-specifies\"",
+          "detail": "platform-spec/execution/runtime/channels-and-synchronization/index.mdx"
+        },
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/execution/runtime/channels-and-synchronization",
+          "message": "Missing required specSection \"implementation-anchors\"",
+          "detail": "platform-spec/execution/runtime/channels-and-synchronization/index.mdx"
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/execution/runtime/channels-and-synchronization/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
+      "level": "feature",
+      "status": "fail",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": false
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 7,
+        "markdownH2": 0
+      },
+      "messages": [
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
+          "message": "Missing required specSection \"what-this-feature-specifies\"",
+          "detail": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/index.mdx"
+        },
+        {
+          "code": "MDX_UNKNOWN_COMPONENT",
+          "severity": "error",
+          "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
+          "message": "Unknown MDX component <T /> in platform-spec hub",
+          "detail": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract",
       "level": "feature",
       "status": "ok",
@@ -3467,7 +4302,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3802,6 +4637,50 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
+      "level": "feature",
+      "status": "fail",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": false
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 6,
+        "markdownH2": 0
+      },
+      "messages": [
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
+          "message": "Missing required specSection \"what-this-feature-specifies\"",
+          "detail": "platform-spec/language-meta/evaluation/fibers-and-spawn/index.mdx"
+        },
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
+          "message": "Missing required specSection \"implementation-anchors\"",
+          "detail": "platform-spec/language-meta/evaluation/fibers-and-spawn/index.mdx"
+        },
+        {
+          "code": "MDX_UNKNOWN_COMPONENT",
+          "severity": "error",
+          "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
+          "message": "Unknown MDX component <T /> in platform-spec hub",
+          "detail": "platform-spec/language-meta/evaluation/fibers-and-spawn/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+        }
+      ]
+    },
+    {
       "slug": "platform-spec/language-meta/interop",
       "level": "area",
       "status": "ok",
@@ -4007,83 +4886,6 @@
       "counts": {
         "specSections": 2,
         "markdownH2": 0
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/language-meta/metaprogramming/meta-block",
-      "level": "feature",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 1
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/language-meta/metaprogramming/meta-block/contracts-and-edge-cases",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 3
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/language-meta/metaprogramming/meta-block/design-model",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 7
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/language-meta/metaprogramming/meta-block/examples",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 5
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/language-meta/metaprogramming/meta-block/faq-and-troubleshooting",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 1
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/language-meta/metaprogramming/meta-block/flow-and-algorithm",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 5
-      },
-      "messages": []
-    },
-    {
-      "slug": "platform-spec/language-meta/metaprogramming/meta-block/verification-and-traceability",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 2
       },
       "messages": []
     },
@@ -4446,7 +5248,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 6
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -4457,7 +5259,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -4468,7 +5270,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 6
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -4490,7 +5292,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -4814,5 +5616,160 @@
       "messages": []
     }
   ],
-  "diagnostics": []
+  "diagnostics": [
+    {
+      "code": "MDX_UNKNOWN_COMPONENT",
+      "severity": "error",
+      "slug": "platform-spec/core-library/concurrency",
+      "message": "Unknown MDX component <T /> in platform-spec hub",
+      "detail": "platform-spec/core-library/concurrency/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+    },
+    {
+      "code": "MDX_UNKNOWN_COMPONENT",
+      "severity": "error",
+      "slug": "platform-spec/core-library/concurrency",
+      "message": "Unknown MDX component <T /> in platform-spec hub",
+      "detail": "platform-spec/core-library/concurrency/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/core-library/concurrency/concurrency-package",
+      "message": "Missing required specSection \"what-this-feature-specifies\"",
+      "detail": "platform-spec/core-library/concurrency/concurrency-package/index.mdx"
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/core-library/concurrency/concurrency-package",
+      "message": "Missing required specSection \"implementation-anchors\"",
+      "detail": "platform-spec/core-library/concurrency/concurrency-package/index.mdx"
+    },
+    {
+      "code": "MDX_UNKNOWN_COMPONENT",
+      "severity": "error",
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases",
+      "message": "Unknown MDX component <T /> in platform-spec hub",
+      "detail": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+    },
+    {
+      "code": "MDX_UNKNOWN_COMPONENT",
+      "severity": "error",
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases",
+      "message": "Unknown MDX component <T /> in platform-spec hub",
+      "detail": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+    },
+    {
+      "code": "MDX_UNKNOWN_COMPONENT",
+      "severity": "error",
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/decisions-record",
+      "message": "Unknown MDX component <T /> in platform-spec hub",
+      "detail": "platform-spec/core-library/concurrency/concurrency-package/decisions-record.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+    },
+    {
+      "code": "MDX_UNKNOWN_COMPONENT",
+      "severity": "error",
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/decisions-record",
+      "message": "Unknown MDX component <T /> in platform-spec hub",
+      "detail": "platform-spec/core-library/concurrency/concurrency-package/decisions-record.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+    },
+    {
+      "code": "MDX_UNKNOWN_COMPONENT",
+      "severity": "error",
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
+      "message": "Unknown MDX component <T /> in platform-spec hub",
+      "detail": "platform-spec/core-library/concurrency/concurrency-package/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+    },
+    {
+      "code": "MDX_UNKNOWN_COMPONENT",
+      "severity": "error",
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
+      "message": "Unknown MDX component <T /> in platform-spec hub",
+      "detail": "platform-spec/core-library/concurrency/concurrency-package/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+    },
+    {
+      "code": "MDX_UNKNOWN_COMPONENT",
+      "severity": "error",
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
+      "message": "Unknown MDX component <T /> in platform-spec hub",
+      "detail": "platform-spec/core-library/concurrency/concurrency-package/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/core-library/concurrency/system-threading",
+      "message": "Missing required specSection \"what-this-feature-specifies\"",
+      "detail": "platform-spec/core-library/concurrency/system-threading/index.mdx"
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/core-library/concurrency/system-threading",
+      "message": "Missing required specSection \"implementation-anchors\"",
+      "detail": "platform-spec/core-library/concurrency/system-threading/index.mdx"
+    },
+    {
+      "code": "MDX_UNKNOWN_COMPONENT",
+      "severity": "error",
+      "slug": "platform-spec/core-library/concurrency/system-threading",
+      "message": "Unknown MDX component <T /> in platform-spec hub",
+      "detail": "platform-spec/core-library/concurrency/system-threading/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+    },
+    {
+      "code": "MDX_UNKNOWN_COMPONENT",
+      "severity": "error",
+      "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/design-model",
+      "message": "Unknown MDX component <T /> in platform-spec hub",
+      "detail": "platform-spec/core-library/terminal-and-console/console-terminal-events/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/execution/runtime/channels-and-synchronization",
+      "message": "Missing required specSection \"what-this-feature-specifies\"",
+      "detail": "platform-spec/execution/runtime/channels-and-synchronization/index.mdx"
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/execution/runtime/channels-and-synchronization",
+      "message": "Missing required specSection \"implementation-anchors\"",
+      "detail": "platform-spec/execution/runtime/channels-and-synchronization/index.mdx"
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
+      "message": "Missing required specSection \"what-this-feature-specifies\"",
+      "detail": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/index.mdx"
+    },
+    {
+      "code": "MDX_UNKNOWN_COMPONENT",
+      "severity": "error",
+      "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
+      "message": "Unknown MDX component <T /> in platform-spec hub",
+      "detail": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
+      "message": "Missing required specSection \"what-this-feature-specifies\"",
+      "detail": "platform-spec/language-meta/evaluation/fibers-and-spawn/index.mdx"
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
+      "message": "Missing required specSection \"implementation-anchors\"",
+      "detail": "platform-spec/language-meta/evaluation/fibers-and-spawn/index.mdx"
+    },
+    {
+      "code": "MDX_UNKNOWN_COMPONENT",
+      "severity": "error",
+      "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
+      "message": "Unknown MDX component <T /> in platform-spec hub",
+      "detail": "platform-spec/language-meta/evaluation/fibers-and-spawn/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
+    }
+  ]
 }

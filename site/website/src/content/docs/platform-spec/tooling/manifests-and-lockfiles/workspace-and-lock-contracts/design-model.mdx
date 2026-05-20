@@ -38,9 +38,9 @@ This article explains the `design-model` view for `Workspace and lock contracts`
 
 To avoid divergent experiments, **`Workspace.proj`** in v0.2 **must not** introduce ad-hoc keys that alter meta policy. Specifically:
 
-- **Forbidden / parse-error** — Any top-level workspace key whose name matches `allowMetaInHostProjects`, `enableHostMeta`, or similar undocumented toggles **must** be rejected with a stable diagnostic until a future spec version defines semantics. This prevents forks of the “`meta` only in `Meta` projects” rule.
+- **Forbidden / parse-error** — Any top-level workspace key whose name matches `allowMetaInHostProjects`, `enableHostMeta`, or similar undocumented toggles **must** be rejected with a stable diagnostic until a future spec version defines semantics. This prevents undocumented workspace toggles for mod-only contract policy.
 - **Reserved (no semantics yet)** — Keys documented here as reserved **must** either be rejected or ignored with a warning-only mode that is itself normatively specified; the default is **reject** for CI determinism.
-- **`defaultMember` (workspace)** — Reserved on `Workspace.proj` for a future release that would disambiguate `attachTo: default` in multi-member workspaces. v0.2 parsers **must** reject this key if present unless a spec bump explicitly defines it.
+- **`defaultMember` (workspace)** — Reserved on `Workspace.proj` for a future release that would disambiguate default host member selection in multi-member workspaces. v0.2 parsers **must** reject this key if present unless a spec bump explicitly defines it.
 
 Implementations **must** keep the reserved-name table in this article synchronized with `compiler/crates/beskid_analysis` manifest parsers when names are added.
 

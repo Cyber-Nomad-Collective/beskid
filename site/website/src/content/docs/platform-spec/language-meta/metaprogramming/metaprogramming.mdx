@@ -1,6 +1,6 @@
 ---
 title: Metaprogramming
-description: Meta projects, declarative meta blocks (capture, process, emit), and compiler Mod SDK alignment.
+description: Mod projects, Compiler Mod SDK contracts, and ownership split with compiler-side orchestration.
 template: splash
 tableOfContents: true
 specLevel: feature
@@ -18,17 +18,17 @@ relatedTopics:
     href: /platform-spec/language-meta/metaprogramming/
     relation: Parent area
   - type: Feature
-    title: meta compilation block
-    href: /platform-spec/language-meta/metaprogramming/meta-block/
-    relation: Declarative meta process contract
+    title: Compiler Mod SDK
+    href: /platform-spec/language-meta/metaprogramming/compiler-mod-sdk/
+    relation: Beskid contracts for compiler mods
   - type: Feature
     title: Project manifest contract
     href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
-    relation: Meta project type in Project.proj schema
+    relation: Mod project type in Project.proj schema
   - type: Area
-    title: Metaprogramming Mod SDK
-    href: /platform-spec/compiler/metaprogramming-mod-sdk/
-    relation: Beskid.Compiler.* facades and host contracts
+    title: Compiler Mods
+    href: /platform-spec/compiler/compiler-mods/
+    relation: Rust-side mod host and pipeline contracts
   - type: Domain
     title: Language meta
     href: /platform-spec/language-meta/
@@ -57,29 +57,32 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 <SpecSection title="Language-first model" id="language-first">
 Compile-time metaprogramming is anchored on two language-level ideas:
 
-1. **`Meta` project type** — A `Project.proj` whose **project type** is `Meta` participates directly in the compiler’s meta orchestration: the build loads that project so its `meta` declarations can subscribe to compilation events and drive declarative pipelines. Schema and wiring details are normative under **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)**; this page summarizes behavior users rely on.
+1. **`Mod` project type** — A `Project.proj` whose **project type** is `Mod` participates directly in compiler-mod orchestration: the build discovers the package from the dependency graph, compiles it AOT, and loads mod contracts during host compilation. Schema and wiring details are normative under **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)**.
 
-2. **`meta` compilation block** — Each `meta` item is a **declaration of the process** the compiler must run: a **non-destructive, iterative** pipeline of **queries and typed transforms** over the **current compilation**, not an unconstrained imperative plugin. Normative grammar, phases, and guarantees live under **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)**.
+2. **Compiler Mod SDK contracts** — Mod behavior is declared by Beskid contracts (`Collector`, `Generator`, `Analyzer`, `Rewriter`, `AttributeGenerator`) over syntax/query facades and typed AST operations. Language-level metaprogramming does **not** include a dedicated `meta` grammar item.
 </SpecSection>
 
-<SpecSection title="Declarative pipeline (capture, process, emit)" id="pipeline">
-A `meta` block standardizes compiler interaction as three conceptual phases (exact surface syntax is specified in the meta-block feature):
+<SpecSection title="Contract model (Collector, Generator, Analyzer, Rewriter)" id="pipeline">
+Compiler-mod packages define behavior through contracts:
 
-- **Capture** — Declaratively bind **targets** (syntax nodes, symbols, or other stable handles) from the **entire compilation context** (sources, dependency graph, options), so the host knows what to watch for invalidation.
-- **Process** — A **fluent pipeline** of queries and transformations over captured targets using `Beskid.Compiler.*` APIs (compiler contract). Outputs are **plans** (diagnostics, typed edits, contributions), not raw text patches.
-- **Emit** — Apply contributions through the host so the merged program remains well-formed; diagnostics are reported through the **compiler-native** diagnostic channel so the Rust compiler and LSP can surface them consistently.
+- **Collector** — Declarative entrypoint for selecting target nodes/symbols and constraining scope.
+- **Generator** — Incremental by default; emits **typed AST** contributions only (no formatting/text generation contract).
+- **Analyzer** — Runs across host code and generated code; reports compiler-native diagnostics and declares rewrites as fixes.
+- **Rewriter&lt;TSourceNode, TTargetNode&gt;** — Applies typed replacements with `Result<TTargetNode, FixError> Rewrite(TSourceNode sourceNode)`.
+- **AttributeGenerator** — Defines attributes exposed by SDK and mod packages.
 
-This shape supports **iterative** behavior: the host may run additional rounds until a fixed point or a diagnostic is raised, per language and host policy.
+All mirrored syntax nodes are expected to implement query/AST-operation contracts surfaced by the SDK so contract code remains declarative.
 </SpecSection>
 
 <SpecSection title="Hybrid canonical ownership" id="ownership">
-- **[Language meta](/platform-spec/language-meta/)** — `Meta` projects, `meta` placement, scope, visibility, determinism, and the capture/process/emit user contract.
-- **[Compiler / Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)** — `Beskid.Compiler.Syntax`, `Query`, `Process`, `Emit`, `Diagnostics`, host bridge, merge semantics, and incremental scheduling. **Compiler mods** are exactly `Meta` projects plus this Mod SDK surface; normative manifest keys and attachment live under **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** (design model), while **where meta runs in the compile pipeline** is pinned under **[Stage ordering and lowering](/platform-spec/compiler/build-pipeline/stage-ordering/)**.
-- **Compiler-core modularity (Rust)** — Features such as compile-time **composition / IoC** resolved inside the compiler are **not** implemented by `Meta` packs; they live in **compiler** and **semantic** specifications and the Rust implementation. **`Meta` / Mod SDK** may **observe** those results through **`Beskid.Compiler.Query`** once exposed as snapshot data (**[meta block host bridge / design model](/platform-spec/compiler/metaprogramming-mod-sdk/meta-block-host-bridge/design-model/)**).
+- **[Language meta](/platform-spec/language-meta/)** — `Mod` package contract semantics and user-visible language constraints (for example `extend type` visibility rules).
+- **[Language meta / Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** — Beskid-side SDK contracts and typed syntax/query surfaces.
+- **[Compiler / Compiler Mods](/platform-spec/compiler/compiler-mods/)** — Rust-side mod host, AOT artifact lifecycle, phase ordering, typed merge, and incremental scheduling.
+- **Compiler-core modularity (Rust)** — Compiler composition / IoC remains Rust-owned and is specified separately under compiler features, not under mod packages.
 
-Neither domain duplicates the other: language pages do not specify Rust algorithms; compiler pages do not redefine `Meta` or `meta` grammar.
+Neither domain duplicates the other: language pages do not specify Rust algorithms; compiler pages do not redefine Beskid-side mod contract semantics.
 </SpecSection>
 
 <SpecSection title="Superseded material" id="supersession">
-Informal drafts under `docs/guides/drafts/metaprogramming/` are **not canonical**. Use this platform-spec tree and **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** for `Meta` projects and **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)** for `meta` orchestration.
+Informal drafts under `docs/guides/drafts/metaprogramming/` are **not canonical**. Use this platform-spec tree and **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** for `Mod` projects and **[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** for Beskid contract semantics.
 </SpecSection>

@@ -46,9 +46,14 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 - Consumer side: crates that read, execute, or validate that surface.
 - Conformance side: test crates that pin expected behavior.
 
+## Prelude exports (v0.2)
+
+The aggregate prelude re-exports **`System.Input`**, **`System.Output`**, **`System.Error`**, and **`Console`** (from `corelib_console`). **`System.IO`** is removed; use stream-specific modules instead.
+
 ## Concrete crate anchors
 
 - Public module and prelude sources under `compiler/corelib/beskid_corelib`
+- Workspace packages under `compiler/corelib/packages/` (`runtime`, `foundation`, `console`, `compiler-sdk`)
 - Shape-sensitive compile tests in `compiler/crates/beskid_tests/src/projects/corelib/compile.rs`
 - Layout and compatibility checks in `compiler/crates/beskid_tests/src/projects/corelib/layout.rs`
 - Runtime-facing call coverage in `compiler/crates/beskid_tests/src/abi/contracts.rs`

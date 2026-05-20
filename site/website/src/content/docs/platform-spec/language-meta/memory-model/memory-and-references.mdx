@@ -49,3 +49,9 @@ The canonical chapter is **[Memory and references](/platform-spec/language-meta/
 ## Platform view
 
 Stack vs heap, borrowing, and invalidation rules keep Beskid memory-safe without a GC for all patterns. Runtime write barriers and GC details are specified under Execution.
+
+### Cross-fiber sharing
+
+**Channels** are the **only** approved way to move data or synchronization intent between fibers. The compiler **must** reject captures in **`spawn`** that allow one fiber to hold references to another fiber's stack frames. **`Mutex`** and **`WaitGroup`** coordinate invariants but do not replace **Channel** for data transfer.
+
+Happens-before edges from **Send**/**Receive** are specified in **[Channels and synchronization](/platform-spec/execution/runtime/channels-and-synchronization/)**.

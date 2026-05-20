@@ -1,6 +1,6 @@
 ---
 title: Metaprogramming
-description: Meta projects (Project.type Meta), declarative meta blocks, and Beskid.Compiler Mod SDK alignment.
+description: Mod projects (Project.type Mod) and the Beskid-side Compiler Mod SDK contracts.
 template: splash
 tableOfContents: true
 specLevel: area
@@ -12,13 +12,13 @@ submitter:
   email: pmikstacki@cybernomad.it
 relatedTopics:
   - type: Area
-    title: Metaprogramming Mod SDK
-    href: /platform-spec/compiler/metaprogramming-mod-sdk/
-    relation: Compiler-side Mod SDK, host bridge, and incremental contracts
+    title: Compiler Mods
+    href: /platform-spec/compiler/compiler-mods/
+    relation: Compiler-side mod host, orchestration, and incremental contracts
   - type: Feature
     title: Project manifest contract
     href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
-    relation: Meta project type and manifest wiring
+    relation: Mod project type and manifest wiring
   - type: Domain
     title: Language meta
     href: /platform-spec/language-meta/
@@ -39,15 +39,16 @@ import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
 <SpecSection title="Scope" id="scope">
 This **language-meta area** defines:
 
-- The **`Meta` project type** — how a manifest declares a project that **pipes into the compilation process** for meta orchestration (see **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** for schema).
-- The **`meta` compilation block** — declarative **capture → process → emit** pipelines over the **current compilation**, with deterministic, non-destructive iteration semantics.
+- The **`Mod` project type** — how a manifest declares a compiler-mod package that is discovered from the dependency graph and participates in compilation orchestration (see **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** for schema).
+- The **Beskid Compiler Mod SDK** surface — declarative collection/query contracts and typed AST operations used by `Collector`, `Generator`, `Analyzer`, `Rewriter`, and `AttributeGenerator`.
 
-**Implementation** — `Beskid.Compiler.*` module shape, host execution, merge, diagnostics transport, and incremental invalidation — is specified under **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**.
+**Rust-side implementation** — mod host execution, AOT artifact lifecycle, merge, diagnostics transport, and incremental invalidation — is specified under **[Compiler Mods](/platform-spec/compiler/compiler-mods/)**.
 </SpecSection>
 
 <SpecSection title="Feature index" id="features">
-- **[Metaprogramming overview](/platform-spec/language-meta/metaprogramming/metaprogramming/)** — `Meta` projects, declarative `meta` pipelines, and ownership split.
-- **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)** — normative language contract for `meta` (design, flow, contracts, examples, verification).
+- **[Metaprogramming overview](/platform-spec/language-meta/metaprogramming/metaprogramming/)** — `Mod` projects, ownership split, and compile-time contract model.
+- **[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** — Beskid package contracts (`Collector`, `Generator`, `Analyzer`, `Rewriter`, `AttributeGenerator`) and typed syntax/query semantics.
+- **[Serialization packages](/platform-spec/language-meta/metaprogramming/serialization/)** — Serialization Mod, Serialization library, and format packages.
 
 Tiles below list discoverable feature hubs under this area.
 </SpecSection>

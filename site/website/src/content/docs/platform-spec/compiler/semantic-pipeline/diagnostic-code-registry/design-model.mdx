@@ -19,8 +19,8 @@ relatedTopics:
     href: /platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/
     relation: Rules emit registry-defined code identities
   - type: Area
-    title: Metaprogramming Mod SDK
-    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    title: Compiler Mods
+    href: /platform-spec/compiler/compiler-mods/
     relation: Meta diagnostics parity and Mod SDK surfaces
 ---
 
@@ -38,17 +38,17 @@ The registry model is intentionally centralized:
 
 This avoids drift between compiler internals and platform documentation, and it makes diagnostics easier to consume in editors and CI tooling.
 
-## Meta, manifest, and meta-host band (**E1801–E1899**)
+## Mod, manifest, and mod-host band (**E1801–E1899**)
 
-The inclusive range **E1801–E1899** is owned by **meta compilation**, **`Meta` manifest validation**, and **meta host** failures (Mod SDK bridge). Ordinary semantic rules **must not** allocate inside this band. Register each allocated code in `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` and extend this table in the same change.
+The inclusive range **E1801–E1899** is owned by compiler-mod manifest validation and mod-host failures. Ordinary semantic rules must not allocate inside this band. Register each allocated code in `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` and extend this table in the same change.
 
 | Code range | Owner | Intended failures (examples) |
 | --- | --- | --- |
-| **E1801–E1810** | `beskid_analysis::projects` manifest parse | Unknown `meta` key, missing `entryModules`, malformed `attachTo` list, `entryModules` path outside `root`. |
-| **E1811–E1820** | Workspace / graph resolution | Unknown `attachTo` member id, `Meta`→`Meta` attachment, `default` ambiguity, attachment cycle. |
-| **E1821–E1835** | Meta host / capabilities | Denied capability, exceeded `maxMetaRounds`, sandbox violation, compile-time JIT bootstrap failure. |
-| **E1836–E1850** | Emit merge | Conflicting contributor edits, illegal typed contribution, merge rollback. |
-| **E1851–E1870** | `meta` surface / discovery | Illegal `meta` placement in forbidden project kind, parse errors inside `meta` item body once grammar exists. |
+| **E1801–E1810** | `beskid_analysis::projects` manifest parse | Unknown `mod` key, invalid `maxGeneratorRounds`, malformed capabilities list. |
+| **E1811–E1820** | Workspace / graph resolution | Invalid Mod dependency topology, unresolved mod package, incompatible host/mod graph constraints. |
+| **E1821–E1835** | Mod host / capabilities | Denied capability, exceeded `maxGeneratorRounds`, sandbox violation, AOT artifact load/bootstrap failure. |
+| **E1836–E1850** | Typed merge / rewrite | Conflicting generator edits, illegal typed contribution, invalid typed rewrite, merge rollback. |
+| **E1851–E1870** | Contract discovery / execution | Missing required contracts, invalid contract signatures, collector scope violations, analyzer/rewriter registration errors. |
 | **E1871–E1899** | **Reserved** | Buffer for staged rollout; allocate in order and extend this table when used. |
 
 ## Documentation comment diagnostics (**W1610–W1619**, **W1620–W1625**)

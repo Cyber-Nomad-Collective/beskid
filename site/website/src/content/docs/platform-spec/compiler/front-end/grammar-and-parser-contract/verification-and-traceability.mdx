@@ -34,12 +34,13 @@ For newcomers, this page explains where the contract shows up in day-to-day comp
 - `compiler/crates/beskid_analysis/src/syntax/` builds syntax items from parser output.
 - `compiler/crates/beskid_analysis/src/syntax/items/parse_helpers.rs` contains shared parse helpers used by item parsers.
 
-## `meta` grammar evidence
+## Grammar evidence
 
-When the `meta_item` production lands in `beskid.pest`, verification **must** include:
+Verification **must** include:
 
-- Parser snapshot tests in `compiler/crates/beskid_tests` covering valid minimal `meta` items inside `Meta` project fixtures and illegal `meta` placements in forbidden host projects (diagnostic band **E1851–E1870** per **[Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)**).
-- Formatter and LSP smoke tests if `meta` blocks affect indentation or folding (coordinate with tooling specs).
+- Removal of legacy `MetaDefinition` from `beskid.pest` and AST/HIR surfaces.
+- Parser snapshot tests for **`extend type`** syntax.
+- Formatter and LSP smoke tests when `extend type` affects structure-sensitive tooling.
 
 ## Practical notes
 - Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.

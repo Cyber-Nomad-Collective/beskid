@@ -1,0 +1,49 @@
+---
+title: Syntax domain model generation - Design model
+description: Contract for generating the immutable SyntaxMirror domain model consumed by Compiler Mod SDK facades.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Syntax domain model generation
+    href: /platform-spec/compiler/compiler-mods/syntax-domain-model-generation/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+This article documents the **design model** for **SyntaxMirror domain model generation**.
+
+## Language alignment
+
+`Collector` predicates compile to keys over syntax identities from this model. The host regenerates or diffs snapshots so `Generator` and `Rewriter` never observe torn trees.
+
+## Persistent entities
+
+- **Compilation instance** — active host compilation under transformation.
+- **Syntax snapshot** — immutable tree with stable node identities for incremental keys.
+- **SyntaxMirror projection** — Beskid-facing typed mirror of syntax nodes with query/AST operation contracts.
+
+## Boundaries
+
+- Rust AST in `beskid_analysis` is authoritative; SyntaxMirror is generated/mirrored for mod packages.
+- Legacy `MetaDefinition` nodes are removed from the mirror inventory.
+
+## Stable identities
+
+Each node **must** have a stable identity within a `syntax_generation_id` window. Identities **must** survive trivia-only edits where language law marks them stable and **must** change on structural edits that affect collection predicates.
+
+**Torn tree prohibition** — Hosts **must not** expose partial syntax trees to mod contracts. Parse failures abort the current generation round with diagnostics, leaving the previous committed generation untouched.
+
+**Multi-root workspaces** — Identities **must** be qualified by normalized root path + in-root span so different projects cannot collide in caches.

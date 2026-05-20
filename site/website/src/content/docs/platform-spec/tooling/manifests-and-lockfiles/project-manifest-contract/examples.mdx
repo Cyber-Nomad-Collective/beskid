@@ -5,6 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-20
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -26,75 +27,52 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
-
-## What this article covers
-This article explains the `examples` view for `Project manifest contract` in concrete, onboarding-first language.
-
-## Illustrative `Meta` project manifest
-
-Normative field names follow **[design model](./design-model/)**; this example is informative for shape only.
+## Illustrative `Mod` project manifest
 
 ```text
-project:
-  name: my-meta-pack
-  version: 0.1.0
-  root: Src
-  type: Meta
-  meta:
-    attachTo:
-      - default
-    entryModules:
-      - Meta/Main.bd
-      - Meta/Extra.bd
-    maxMetaRounds: 6
-    capabilities:
-      - read_project_sources
-dependency:
-  name: corelib
-  source: registry
-  version: ...
+project {
+  name = "serialization-mod"
+  version = "0.1.0"
+  root = "Src"
+  type = Mod
+  mod {
+    maxGeneratorRounds = 6
+    capabilities = [read_project_sources, emit_syntax]
+  }
+}
+
+dependency "compiler-sdk" {
+  source = registry
+  version = "..."
+}
 ```
 
-`Meta` projects may omit conventional **`target`** blocks when the workspace policy allows pure meta packs; if targets are present, they **must not** be interpreted as host binary outputs without an explicit workspace composition rule documented beside the example.
+`Mod` projects **must not** declare host `target` blocks. Discovery is contract-based; scope narrowing is implemented in `Collector` contracts, not manifest attach fields.
 
-See **[meta compilation block](/platform-spec/language-meta/metaprogramming/meta-block/)** for `meta` body shape (same syntax as `meta` in host code) and **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)** for host execution, phase ids, and capability enforcement.
-
-## Multi-member workspace with explicit `attachTo`
-
-When `Workspace.proj` lists multiple members, **`default` is ambiguous** unless the user passes `--workspace-member`; production `Meta` packs **should** name members explicitly:
+## Host app depending on a mod package
 
 ```text
-# Workspace.proj (informative)
-workspace:
-  name: demo-ws
-  members:
-    - name: app
-      path: ./App
-    - name: tools
-      path: ./Tools
+project {
+  name = "demo-app"
+  version = "0.1.0"
+}
 
-# Tools/MetaPack/Project.proj (informative)
-project:
-  name: meta-pack
-  version: 0.1.0
-  root: Src
-  type: Meta
-  meta:
-    attachTo:
-      - app
-    entryModules:
-      - Meta/Main.bd
+target "main" {
+  kind = App
+  entry = "Main.bd"
+}
+
+dependency "serialization" {
+  source = registry
+  version = "..."
+}
 ```
 
-Resolution behavior for **`default`** vs named members is normative in **[Workspace resolution contract / design model](/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/design-model/)**.
+The compiler auto-loads transitive `Mod` dependencies (for example `serialization-mod` referenced by `serialization`) and runs their contracts during host compilation.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Mod artifact management commands
 
-## Code anchors
-- Manifest loading in `compiler/crates/beskid_analysis/src/services.rs`
-- CLI project graph setup in `compiler/crates/beskid_cli/src/commands/`
-- Workspace resolution in `compiler/crates/beskid_analysis/src/resolve/items.rs`
+- `beskid mod rebuild` — clean and rebuild mod artifacts for the active workspace slice.
+- `beskid mod clean` — remove cached mod artifacts under the object store.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+See **[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** and **[Compiler Mods](/platform-spec/compiler/compiler-mods/)** for contract and host execution details.

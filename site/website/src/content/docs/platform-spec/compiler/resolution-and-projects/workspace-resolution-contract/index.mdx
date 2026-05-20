@@ -1,6 +1,6 @@
 ---
 title: Workspace resolution contract
-description: Project graph discovery, manifest loading (including Meta projects), and workspace inputs for compiler and tooling commands.
+description: Project graph discovery, manifest loading (including Mod projects), and workspace inputs for compiler and tooling commands.
 template: splash
 tableOfContents: true
 specLevel: feature
@@ -24,14 +24,14 @@ relatedTopics:
   - type: Feature
     title: Project manifest contract
     href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
-    relation: Meta project type in manifests
+    relation: Mod project type in manifests
   - type: Feature
-    title: meta compilation block
-    href: /platform-spec/language-meta/metaprogramming/meta-block/
+    title: Compiler Mod SDK
+    href: /platform-spec/language-meta/metaprogramming/compiler-mod-sdk/
     relation: Meta orchestration semantics
   - type: Area
-    title: Metaprogramming Mod SDK
-    href: /platform-spec/compiler/metaprogramming-mod-sdk/
+    title: Compiler Mods
+    href: /platform-spec/compiler/compiler-mods/
     relation: Host wiring after resolution
 ---
 
@@ -39,7 +39,7 @@ import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
 
 <SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
 
-This feature hub explains how the compiler discovers `Project.proj`, builds a project graph, and hands resolved workspace inputs to compile and dependency commands. **`Meta`** projects are included in the graph like other project kinds; after resolution, the **meta host** registers them for **event-driven** orchestration per **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** and **[Metaprogramming Mod SDK](/platform-spec/compiler/metaprogramming-mod-sdk/)**.
+This feature hub explains how the compiler discovers `Project.proj`, builds a project graph, and hands resolved workspace inputs to compile and dependency commands. **`Mod`** projects are included in the graph like other project kinds; after resolution, the **mod host** registers them for **event-driven** orchestration per **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** and **[Compiler Mods](/platform-spec/compiler/compiler-mods/)**.
 
 - [Design model](./design-model/)
 - [Flow and algorithm](./flow-and-algorithm/)

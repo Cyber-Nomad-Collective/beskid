@@ -15,7 +15,7 @@ Dispatches to the **pckg** HTTP client: authentication, catalog search and detai
 On **pckg**, the in-browser documentation browser lists Markdown from:
 
 - `docs/**/*.md` in the artifact
-- optional root `README.md`
+- optional root `README.md` (from `readme.md` at package root, `readme = "path"` in `Project.proj`, or an explicit on-disk `README.md`)
 - **`.beskid/docs/**/*.md`** (same layout as Beskid pack output)
 
 You can also ship hand-written docs under a top-level `docs/` directory in the package source; those paths are packed as usual and appear alongside generated files.
@@ -41,6 +41,21 @@ Typical flags:
 - `--version-state-file <path>` (optional) — JSON map of package id → last packed version; default is `<source>/.beskid/pckg-version-state.json`
 
 On success the CLI prints a line of the form `Resolved package version: <semver>` (the version embedded in the packed `package.json`).
+
+## Workspace publish (registry API)
+
+For multi-package workspaces (for example **corelib** with `foundation`, `runtime`, `compiler_sdk`, and aggregate `corelib`), the registry exposes:
+
+`POST /api/workspaces/publish`
+
+Multipart fields:
+
+- `artifact` (required) — ZIP whose root contains `Workspace.proj` and each member’s source tree (`Project.proj`, `src/`, optional `package.json`)
+- `versionBump` (optional `patch` | `minor` | `major`, default `patch`) — registry-assigned semver bump applied to **every** member package
+
+The server publishes each member as a separate package version, rewrites workspace **path** dependencies to **registry** references using the versions assigned in that upload, and rejects published `package.json` dependencies that still use `path` or `workspace` sources. Optional root `workspace.package.json` (`schema: beskid.workspace.package.v1`) and per-member `package.json` `pckg.configuration` / `pckg.overrides` supply publish metadata; `Workspace.proj` `override` blocks pin external dependency versions.
+
+CLI support for bundling and calling this endpoint is planned; CI can call the HTTP API directly until then.
 
 ## Upload (`beskid pckg upload`)
 

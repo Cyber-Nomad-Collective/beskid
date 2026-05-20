@@ -1,0 +1,33 @@
+---
+title: Terminal and console
+description: Corelib console package, ANSI model, stream I/O split, and terminal events.
+template: splash
+tableOfContents: true
+specLevel: area
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Domain
+    title: Core library
+    href: /platform-spec/core-library/
+    relation: Parent domain
+---
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="Scope" id="scope">
+Terminal-facing corelib: split stdin/stdout/stderr helpers, `corelib_console` (ANSI, capabilities, markup, controls), and resize events via platform Extern (no new runtime builtins).
+</SpecSection>
+
+<SpecSection title="Features" id="features">
+Use the tiles below for normative feature contracts.
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/core-library/terminal-and-console" heading="Features" />

@@ -1,0 +1,56 @@
+---
+title: System.Threading
+description: OS-thread primitives via syscalls—preemptive parallelism separate from cooperative fibers.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Concurrency
+    href: /platform-spec/core-library/concurrency/
+    relation: Parent area
+  - type: Feature
+    title: Concurrency package
+    href: /platform-spec/core-library/concurrency/concurrency-package/
+    relation: Cooperative fibers and channels
+  - type: Feature
+    title: Panic, IO, and syscalls
+    href: /platform-spec/execution/runtime/panic-io-and-syscalls/
+    relation: Syscall surface for thread creation
+---
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="Contract statement" id="contract-statement">
+**`System.Threading`** lives in the **`corelib_concurrency`** package under module prefix **`System.Threading`**. It wraps **OS threads** (preemptive, kernel-scheduled) using **syscalls** and/or documented **extern** targets—not fiber stack switching.
+
+Cooperative concurrency **must** use **[Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/)** (`Fiber<T>`, **Channel**). Do not implement fibers on top of `System.Threading` in corelib.
+</SpecSection>
+
+<SpecSection title="Responsibilities" id="responsibilities">
+| API (illustrative) | Role |
+| --- | --- |
+| `Thread.Spawn` | Start OS thread with entry function; returns `Result<Thread, ThreadError>` |
+| `Thread.Join` | Wait for OS thread completion |
+| `Thread.Yield` | OS-level yield (distinct from `Concurrency.Yield`) |
+
+Fiber scheduler worker pool may **use** OS threads internally; user code should not confuse the two **Yield** entry points.
+</SpecSection>
+
+<SpecSection title="FFI and GC" id="ffi-and-gc">
+OS thread entry points **must** establish a runtime attachment (arena scope / GC roots) per thread before calling Beskid code. **extern "C"** from any fiber or thread **must** stay pinned to the calling OS thread for the call duration (see **[Extern dispatch and policy](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/)**).
+</SpecSection>
+
+<SpecSection title="Phase alignment" id="phase-alignment">
+Phase A: fiber scheduler may use a **fixed pool** of OS threads with **one GC mutator**; `System.Threading` documents raw thread creation for libraries that truly need preemptive threads. Phase B: parallel GC mutators—thread module and fiber pool coordination updated in scheduler spec without renaming public **Thread** APIs.
+</SpecSection>

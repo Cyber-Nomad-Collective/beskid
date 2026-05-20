@@ -1,0 +1,43 @@
+---
+title: mod host bridge - Verification and traceability
+description: Reference compiler-owned execution, capability policy, and communication with compile-time Beskid modules.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-04-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: mod host bridge
+    href: /platform-spec/compiler/compiler-mods/mod-host-bridge/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+
+This article documents **verification and traceability** for **mod host bridge**.
+
+## Traceability matrix
+- Anchor: `compiler/crates/beskid_engine/` — JIT host patterns reusable for compile-time execution.
+- Anchor: `compiler/crates/beskid_runtime/` — sandboxed builtins surface for mod workloads.
+- Anchor: `compiler/crates/beskid_analysis/src/services.rs` — compilation session orchestration hooks.
+
+## Verification expectations
+
+- **Phase ids** — Unit or integration tests **must** assert the literal strings from **[Compiler Mods / Mod projects and pipeline phase ids](/platform-spec/compiler/compiler-mods/#meta-projects)** appear in `beskid_pipeline` observations (see **[Stage ordering / verification](/platform-spec/compiler/build-pipeline/stage-ordering/verification-and-traceability/)**).
+- **Capabilities** — Table-driven tests in `compiler/crates/beskid_tests` verify each capability grants/denies the documented effect and emits **E1821–E1835** codes on denial.
+- **Merge** — Tests assert atomic `meta.round_commit` behavior: partial emit never reaches lowering (pair with **[Typed emitter / verification](/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/verification-and-traceability/)** once populated).
+- **Incremental traces** — Optional goldens validate invalidation when syntax edits move spans tied to meta registrations (**[Incremental scheduling / verification](/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/verification-and-traceability/)**).
+
+## Review cadence
+- Update this bundle whenever public `Beskid.Compiler.*` shapes or host policies change.

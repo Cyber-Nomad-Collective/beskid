@@ -1,0 +1,104 @@
+---
+title: Fiber scheduler and stacks
+description: M:N cooperative scheduler, per-fiber stacks, safepoints, and runtime fiber builtins.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Runtime
+    href: /platform-spec/execution/runtime/
+    relation: Parent area
+  - type: Feature
+    title: Memory and GC runtime contract
+    href: /platform-spec/execution/runtime/memory-and-gc-runtime-contract/
+    relation: Stack maps and Phase A/B mutator model
+  - type: Feature
+    title: Fibers and spawn
+    href: /platform-spec/language-meta/evaluation/fibers-and-spawn/
+    relation: `spawn` lowering
+  - type: Feature
+    title: Concurrency package
+    href: /platform-spec/core-library/concurrency/concurrency-package/
+    relation: User-facing Fiber struct
+---
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="Contract statement" id="contract-statement">
+The Beskid runtime provides a **cooperative M:N scheduler**: many **fibers** multiplexed on a pool of **OS worker threads**. Fiber code uses **growable stacks** and **compiler-emitted stack maps** at safepoints. The runtime exports **`fiber_*` builtins** consumed by **`Fiber<T>`** in corelib—no async/await lowering.
+
+**Preemptive** parallelism for user code uses **`System.Threading`** (OS threads), not preempted fibers in v1.
+</SpecSection>
+
+<SpecSection title="Architecture" id="architecture">
+
+```arch
+flowchart LR
+  subgraph runtime [beskid_runtime]
+    SCH[Scheduler]
+    POOL[OS thread pool]
+    FB[fiber stacks]
+    SCH --> POOL
+    SCH --> FB
+  end
+  subgraph corelib [corelib_concurrency]
+    FT[Fiber T struct]
+    FT -->|fiber_* builtins| SCH
+  end
+  subgraph compiler [beskid_codegen]
+    SP[spawn lowering]
+    SM[stack maps]
+    SP --> SM
+  end
+```
+
+</SpecSection>
+
+<SpecSection title="Phase A vs Phase B" id="phase-a-vs-phase-b">
+| Phase | Mutator threads | GC | Fiber scheduler |
+| --- | --- | --- | --- |
+| **A (v0.2 target)** | **One** GC mutator; fibers may run on multiple OS threads but GC obeys single-mutator rules | Existing arena; document barriers as no-op until Phase B | Cooperative; park at **Send**/**Receive**/**syscall** |
+| **B (documented)** | Multiple parallel mutators | Go-style concurrent mark/sweep + real **gc_write_barrier** | Optional function-entry preemption |
+
+Phase B **must** be specified in **[memory-and-gc-runtime-contract](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/)** before implementation; Phase A ships first.
+</SpecSection>
+
+<SpecSection title="Runtime builtins (normative names)" id="runtime-builtins">
+Illustrative ABI symbols (exact names in `beskid_abi/src/symbols.rs`):
+
+- `fiber_spawn`, `fiber_join`, `fiber_detach`, `fiber_cancel`, `fiber_yield`
+- `fiber_current_id` (diagnostics)
+- Monotonic clock builtin for **`Concurrency.NowMillis()`** (replaces `rt_now_millis`)
+
+Deprecated: `rt_yield` (`sched` feature) → `fiber_yield`.
+</SpecSection>
+
+<SpecSection title="Main fiber" id="main-fiber">
+`main()` runs on **fiber 0**. Runtime starts scheduler before `main`. When `main` returns, the runtime **Join**s every spawned fiber that was not **Detach**ed, then shuts down the thread pool. **Detach** fibers are not joined at shutdown; their panic still aborts the process.
+</SpecSection>
+
+<SpecSection title="Stacks" id="stacks">
+- Initial stack **64 KiB**, growable, cap **8 MiB**
+- Stack overflow → **`FiberError::StackOverflow`** surfaced at **Join** on the affected fiber (no undefined behavior)
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- `compiler/crates/beskid_runtime/` — scheduler module (to be added)
+- `compiler/crates/beskid_abi/` — symbols and `BUILTIN_SPECS`
+- `compiler/crates/beskid_analysis/src/builtins.rs` — `__fiber_*` injected paths
+- `compiler/crates/beskid_codegen/` — safepoints, stack maps
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/execution/runtime/fiber-scheduler-and-stacks" heading="Articles" />

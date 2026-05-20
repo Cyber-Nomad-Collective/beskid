@@ -1,0 +1,51 @@
+---
+title: Concurrency
+description: Corelib concurrency package and System.Threading OS-thread surface—thin runtime wrappers without layered .NET-style stacks.
+template: splash
+tableOfContents: true
+specLevel: area
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Domain
+    title: Core library
+    href: /platform-spec/core-library/
+    relation: Parent domain
+  - type: Area
+    title: Runtime
+    href: /platform-spec/execution/runtime/
+    relation: Scheduler and channel builtins
+  - type: Feature
+    title: Fibers and spawn
+    href: /platform-spec/language-meta/evaluation/fibers-and-spawn/
+    relation: Language `spawn` keyword and contracts
+---
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	status="Standard"
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="Scope" id="scope">
+Cooperative **fibers** (goroutine-style), **channels** for fiber-to-fiber communication, and optional **OS threads** for preemptive parallelism live in a dedicated **corelib workspace package** (`corelib_concurrency`), not as deep abstraction layers inside the main prelude.
+
+**`System.Threading`** exposes syscall-backed OS thread primitives. **`Concurrency`** (package root module) exposes `Fiber<T>`, `Channel<T>`, `Hub`, `Mutex`, and `WaitGroup` as **structs that wrap runtime builtins**—one thin layer, no parallel type hierarchies like .NET `Task` / `TaskCompletionSource` / `IAsyncEnumerable`.
+
+Terminal and console code **must** use channels for cross-fiber delivery (see **[Console terminal events](/platform-spec/core-library/terminal-and-console/console-terminal-events/)**).
+</SpecSection>
+
+<SpecSection title="Features" id="features">
+<DomainTiles pathPrefix="platform-spec/core-library/concurrency" heading="Features" />
+</SpecSection>

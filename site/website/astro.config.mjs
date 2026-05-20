@@ -39,6 +39,22 @@ function platformSpecV0Redirects() {
 	return out;
 }
 
+/** Compiler Mods area and Mod host bridge feature were renamed from metaprogramming-mod-sdk / meta-block-host-bridge. */
+function compilerModsRedirects() {
+	const oldArea = '/platform-spec/compiler/metaprogramming-mod-sdk';
+	const newArea = '/platform-spec/compiler/compiler-mods';
+	/** @type {Record<string, string>} */
+	const out = {
+		[oldArea]: `${newArea}/`,
+		[`${oldArea}/[...path]`]: `${newArea}/[...path]`,
+		[`${oldArea}/meta-block-host-bridge`]: `${newArea}/mod-host-bridge/`,
+		[`${oldArea}/meta-block-host-bridge/[...path]`]: `${newArea}/mod-host-bridge/[...path]`,
+		[`${newArea}/meta-block-host-bridge`]: `${newArea}/mod-host-bridge/`,
+		[`${newArea}/meta-block-host-bridge/[...path]`]: `${newArea}/mod-host-bridge/[...path]`,
+	};
+	return out;
+}
+
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://beskid-lang.org',
@@ -54,6 +70,7 @@ export default defineConfig({
 	},
 	redirects: {
 		...platformSpecV0Redirects(),
+		...compilerModsRedirects(),
 	},
 	markdown: {
 		remarkPlugins: [createRemarkArchCodeFence(), remarkRepoLinkFence({ repo: 'Cyber-Nomad-Collective/beskid' })],

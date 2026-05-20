@@ -37,7 +37,9 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 </SpecSection>
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
-- Corelib docs in `site/website/src/content/docs/corelib/System/`
+- Corelib docs in `compiler/corelib/beskid_corelib/docs/` and `site/website/src/content/docs/corelib/System/`
+- Console package: `compiler/corelib/packages/console/`
+- Stream split: `System.Input`, `System.Output`, `System.Error` in `compiler/corelib/packages/runtime/src/System/`
 - Runtime builtins in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
 - ABI builtin specs in `compiler/crates/beskid_abi/src/builtins.rs`
 - Corelib ABI tests in `compiler/crates/beskid_tests/src/abi/contracts.rs`
