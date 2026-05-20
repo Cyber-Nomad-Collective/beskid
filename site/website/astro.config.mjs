@@ -1,4 +1,5 @@
 // @ts-check
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
@@ -43,15 +44,49 @@ function platformSpecV0Redirects() {
 function compilerModsRedirects() {
 	const oldArea = '/platform-spec/compiler/metaprogramming-mod-sdk';
 	const newArea = '/platform-spec/compiler/compiler-mods';
+	const contentRoot = path.resolve(__dirname, 'src/content/docs/platform-spec/compiler/compiler-mods');
 	/** @type {Record<string, string>} */
 	const out = {
 		[oldArea]: `${newArea}/`,
-		[`${oldArea}/[...path]`]: `${newArea}/[...path]`,
 		[`${oldArea}/meta-block-host-bridge`]: `${newArea}/mod-host-bridge/`,
-		[`${oldArea}/meta-block-host-bridge/[...path]`]: `${newArea}/mod-host-bridge/[...path]`,
 		[`${newArea}/meta-block-host-bridge`]: `${newArea}/mod-host-bridge/`,
-		[`${newArea}/meta-block-host-bridge/[...path]`]: `${newArea}/mod-host-bridge/[...path]`,
 	};
+
+	/** @param {string} fromPrefix @param {string} toPrefix @param {string} dir */
+	function addPageRedirects(fromPrefix, toPrefix, dir) {
+		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+			const segment = `${fromPrefix}/${entry.name}`;
+			const targetSegment = `${toPrefix}/${entry.name}`;
+			if (entry.isDirectory()) {
+				out[segment] = `${targetSegment}/`;
+				addPageRedirects(segment, targetSegment, path.join(dir, entry.name));
+				continue;
+			}
+
+			if (!entry.name.endsWith('.mdx') || entry.name === 'index.mdx') {
+				continue;
+			}
+
+			const page = entry.name.replace(/\.mdx$/, '');
+			out[`${segment}/${page}`] = `${targetSegment}/${page}/`;
+		}
+	}
+
+	for (const entry of fs.readdirSync(contentRoot, { withFileTypes: true })) {
+		if (!entry.isDirectory()) {
+			continue;
+		}
+
+		const feature = entry.name;
+		const featureDir = path.join(contentRoot, feature);
+		out[`${oldArea}/${feature}`] = `${newArea}/${feature}/`;
+		addPageRedirects(`${oldArea}/${feature}`, `${newArea}/${feature}`, featureDir);
+		if (feature === 'mod-host-bridge') {
+			out[`${oldArea}/meta-block-host-bridge`] = `${newArea}/mod-host-bridge/`;
+			addPageRedirects(`${oldArea}/meta-block-host-bridge`, `${newArea}/mod-host-bridge`, featureDir);
+		}
+	}
+
 	return out;
 }
 

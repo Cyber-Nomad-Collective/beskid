@@ -17,5 +17,5 @@ Corelib verification in this aggregate workspace is driven by compiler CI, while
 - Nox session: `publish_corelib` (in `compiler/corelib/noxfile.py`)
 - Script: `compiler/corelib/ci/publish_corelib.py`
 - Auth secret: `BESKID_PCKG_KEY` (mapped to `BESKID_PCKG_API_KEY`)
-- Package identity: `corelib` (sources under `compiler/corelib/beskid_corelib/`)
-- Publish: CI builds `beskid_cli` from `beskid_compiler` and sets `BESKID_CLI_BIN` so `beskid pckg pack` / `upload` match the current registry protocol. `beskid pckg pack` writes semver into the artifact’s `package.json`; `upload` omits multipart `version` so **pckg** assigns the published semver (see `publish_corelib.py` output / `PCKG_PUBLISHED_VERSION=`). Optional helper: `compiler/corelib/ci/version.py` (`nox -s compute_version`).
+- Registry packages (workspace members): `corelib`, `corelib_foundation`, `corelib_runtime`, `corelib_compiler_sdk`, `corelib_console`, `corelib_concurrency` — metadata in `workspace.package.json` and upserted before publish
+- Publish: CI builds `beskid_cli`, runs `beskid pckg pack` per member to generate `.beskid/docs/`, zips the workspace (`Workspace.proj` + members), and calls `POST /api/workspaces/publish` so **pckg** assigns semver per package and rewrites path dependencies to registry references. Script prints `PCKG_PUBLISHED_VERSION=<package>@<version>` per member. Optional helper: `compiler/corelib/ci/version.py` (`nox -s compute_version`).
