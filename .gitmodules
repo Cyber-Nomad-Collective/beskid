@@ -8,6 +8,9 @@
 [submodule "references/bsharp"]
 	path = references/bsharp
 	url = https://github.com/pmikstacki/bsharp.git
+	# Inactive by default: nested roslyn_testing/roslyn_repo is huge and breaks shallow Coolify clones.
+	active = false
+	fetchRecurseSubmodules = false
 [submodule "beskid_vscode"]
 	path = beskid_vscode
 	url = https://github.com/Cyber-Nomad-Collective/beskid_vscode.git

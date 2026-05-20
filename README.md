@@ -83,6 +83,14 @@ git submodule update --init --recursive compiler pckg beskid_vscode
 
 (`compiler` uses nested submodules for corelib; `--recursive` pulls those too.)
 
+The optional `references/bsharp` formatter reference is **off by default** (it nests a large Roslyn checkout). Enable when needed:
+
+```bash
+git submodule update --init references/bsharp
+```
+
+---
+
 ---
 
 Questions about the language itself are best answered by the docs on **[beskid-lang.org](https://beskid-lang.org)**. For registry-specific behavior and URLs, use **[pckg.beskid-lang.org](https://pckg.beskid-lang.org)** together with the guides for the `pckg` CLI in the documentation sidebar.
