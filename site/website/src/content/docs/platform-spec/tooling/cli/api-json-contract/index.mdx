@@ -1,0 +1,54 @@
+---
+title: "api.json contract"
+description: "Normative schema for machine-readable package API documentation emitted by `beskid doc` and consumed by pckg."
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: CLI
+    href: /platform-spec/tooling/cli/
+    relation: Parent area
+  - type: Feature
+    title: Command surface
+    href: /platform-spec/tooling/cli/command-surface/
+    relation: Sibling CLI contract
+  - type: Feature
+    title: Documentation comments
+    href: /platform-spec/language-meta/surface-syntax/documentation-comments/
+    relation: Optional prose layered on compiler-derived API rows
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+
+`api.json` is the **primary structured contract** for registry API documentation. The Beskid CLI emits it under `.beskid/docs/` during `beskid doc` and `beskid pckg pack`. Consumers (pckg, IDE tooling, custom renderers) **must** treat the JSON graph as authoritative for navigation, member hierarchy, and type linking—not parallel ad-hoc grouping outside the schema.
+
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+
+- Schema emission: `compiler/crates/beskid_analysis/src/doc/` (`api.json` snapshot and signatures)
+- CLI: `compiler/crates/beskid_cli/src/commands/doc.rs`
+- Registry ingestion: `compiler/crates/beskid_pckg/src/api_doc.rs` and pckg `StructuredApiDocDtos`
+- UI: pckg `PackageDocs` components driven by deserialized `api.json`
+
+</SpecSection>
+
+<SpecSection title="Articles" id="articles">
+
+<DomainTiles pathPrefix="platform-spec/tooling/cli/api-json-contract" heading="Normative articles" />
+
+</SpecSection>

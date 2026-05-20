@@ -49,3 +49,7 @@ The canonical chapter is **[Documentation comments](/platform-spec/language-meta
 ## Platform view
 
 Structured comments attach human-readable contracts to declarations. Tooling must preserve them through formatting and refactors without changing semantics.
+
+### Relationship to `api.json`
+
+`beskid doc` emits **[api.json schema v4](/platform-spec/tooling/cli/api-json-contract/design-model/)** with **compiler-derived signatures and type links** for every resolved symbol. Authors do not duplicate type names in JSON: non-primitive types use **`typeAnnotation.refItemId`** for navigation; optional `///` prose uses **`@ref(Qualified.Name)`** for markdown cross-links in `docMarkdown` and structured `summaryMarkdown`.

@@ -83,10 +83,12 @@ Manifest `attachTo` / `entryModules` are **not** part of discovery; **`Collector
 <SpecSection title="Beskid.Syntax and declarative query" id="syntax-mirror">
 - **`Beskid.Syntax`** is the typed mirror of compiler syntax nodes (legacy `Beskid.Compiler.Syntax` / “SyntaxMirror” naming is deprecated).
 - **`Beskid.Syntax.Nodes.Node`** is a **contract** (not a variant enum): the sole navigation surface for mod traversal. Hosts materialize **`NodeRef`** handles `{ syntaxGenerationId, nodeId }` with stable identities per syntax generation.
+- **`Node`** exposes required identity and span metadata (`Ref`, `Kind`, `Span`) and child enumeration hooks. Query facade also exposes span helpers (`Span`, `TrySpan`) for `NodeRef`-first workflows.
 - Concrete mirrored types (`FunctionDefinition`, `Expression`, …) remain for **`Generator`** / **`Rewriter`** typed construction; mod **traversal** uses **`NodeRef`** + **`Beskid.Compiler.Query`**, then **`As*`** projections when a concrete shape is required.
 - **`Program.items`** is a **`NodeList`** of **`NodeRef`** values (cons-list encoding); there is **no** mirrored item-wrapper enum for module items.
 - Mod code builds and transforms trees through declarative fluent APIs — **no string formatting or source-text emission**.
 - **`Rewriter`** and **`Generator`** use concrete mirrored types; query and merge invalidation keys use **`NodeRef`** identities from the host snapshot.
+- AST manipulation ergonomics are standardized around a **query-pipeline DSL** (`Select` / `WhereKind` / `Replace` / `Remove` / `Insert*` / `Apply`), with deterministic host execution and conflict diagnostics.
 </SpecSection>
 
 <SpecSection title="Pipeline interaction (Beskid view)" id="pipeline">

@@ -35,11 +35,12 @@ import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
 
 1. LSP document analysis shall support cached and cold diagnostic paths with equivalent semantic rule outcomes.
 2. Workspace scanning and symbol features shall use project graph context rather than isolated file parsing when available.
-3. Manifest diagnostics for `.proj` files shall be surfaced through project-specific diagnostic adapters.
-4. LSP diagnostics shall preserve severity and code identity from compiler analysis diagnostics.
-5. **Documentation diagnostics** — For `.bd` buffers where `DocumentAnalysisSnapshot` is available, the server **shall** merge `doc_diagnostics` (documentation mini-language, codes **W161x** and **W162x**) with diagnostics from `analyze_source_with_compilation_context` / semantic rules so editors show a single unified list per URI.
-6. **Meta diagnostics** — Diagnostics emitted during mod analyze/rewrite phases **must** use the same transport, code strings, and severity mapping as semantic diagnostics from `beskid_analysis` so CLI and LSP remain interchangeable for CI diffing. The LSP **must** refresh these diagnostics whenever the mod host invalidates a document generation (see **[Snapshot and refresh contract](/platform-spec/tooling/lsp/snapshot-and-refresh-contract/)**).
-7. **Workspace analysis with `Mod` projects** — When the resolved graph includes `Mod` nodes, analysis **must** schedule meta after the same `CompilationContext` snapshot rules as CLI; the server **must not** analyze host sources in a mode that skips attached `Mod` unless a documented power-saving mode is enabled uniformly across commands.
+3. **Document analysis snapshots** for `.bd` IntelliSense **shall** be built with the same `CompilationContext` / `ProgramAssembly` path as project-aware diagnostics (`build_document_analysis_with_context` in `beskid_lsp::session::lifecycle`), not single-file `Resolver::resolve_program` alone.
+4. Manifest diagnostics for `.proj` files shall be surfaced through project-specific diagnostic adapters.
+5. LSP diagnostics shall preserve severity and code identity from compiler analysis diagnostics.
+6. **Documentation diagnostics** — For `.bd` buffers where `DocumentAnalysisSnapshot` is available, the server **shall** merge `doc_diagnostics` (documentation mini-language, codes **W161x** and **W162x**) with diagnostics from `analyze_source_with_compilation_context` / semantic rules so editors show a single unified list per URI.
+7. **Meta diagnostics** — Diagnostics emitted during mod analyze/rewrite phases **must** use the same transport, code strings, and severity mapping as semantic diagnostics from `beskid_analysis` so CLI and LSP remain interchangeable for CI diffing. The LSP **must** refresh these diagnostics whenever the mod host invalidates a document generation (see **[Snapshot and refresh contract](/platform-spec/tooling/lsp/snapshot-and-refresh-contract/)**).
+8. **Workspace analysis with `Mod` projects** — When the resolved graph includes `Mod` nodes, analysis **must** schedule meta after the same `CompilationContext` snapshot rules as CLI; the server **must not** analyze host sources in a mode that skips attached `Mod` unless a documented power-saving mode is enabled uniformly across commands.
 
 ## Implementation anchors
 

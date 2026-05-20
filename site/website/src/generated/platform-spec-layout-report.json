@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-20T08:30:36.648Z",
+  "generatedAt": "2026-05-20T17:07:18.838Z",
   "summary": {
-    "nodes": 444,
+    "nodes": 458,
     "errors": 0,
     "warnings": 0
   },
@@ -414,6 +414,61 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/compiler/build-pipeline/program-assembly",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/program-assembly/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/program-assembly/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/program-assembly/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/program-assembly/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/compiler/build-pipeline/stage-ordering",
       "level": "feature",
       "status": "ok",
@@ -442,7 +497,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -805,7 +860,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 6
+        "markdownH2": 8
       },
       "messages": []
     },
@@ -816,7 +871,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -1124,7 +1179,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -1564,7 +1619,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -1893,7 +1948,7 @@
         }
       ],
       "counts": {
-        "specSections": 3,
+        "specSections": 4,
         "markdownH2": 0
       },
       "messages": []
@@ -2356,7 +2411,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3005,7 +3060,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -4104,7 +4159,7 @@
         }
       ],
       "counts": {
-        "specSections": 8,
+        "specSections": 9,
         "markdownH2": 0
       },
       "messages": []
@@ -4436,6 +4491,83 @@
       "counts": {
         "specSections": 2,
         "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 13
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 7
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -5019,6 +5151,39 @@
       "counts": {
         "specSections": 2,
         "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/api-json-contract",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 3,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/api-json-contract/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 8
       },
       "messages": []
     },

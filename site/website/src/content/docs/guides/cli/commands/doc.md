@@ -1,9 +1,9 @@
 ---
 title: "beskid doc"
-description: "Emit API documentation (api.json v2 + index.md) for a resolved Beskid program."
+description: "Emit API documentation (api.json v4 + index.md) for a resolved Beskid program."
 ---
 
-Resolves a Beskid entrypoint (optional file path plus project flags), parses and resolves the program, and writes API documentation artifacts to disk.
+Resolves a Beskid entrypoint (optional file path plus project flags), parses and resolves the program (including multi-file assembly when `--project` is used), and writes API documentation artifacts to disk.
 
 ## Arguments
 
@@ -19,19 +19,22 @@ Resolves a Beskid entrypoint (optional file path plus project flags), parses and
 
 ## Output
 
-### `api.json` (schema version 2)
+### `api.json` (schema version 4)
 
 The root object includes:
 
-- **`schemaVersion`**: integer `2` (bump when adding breaking JSON shape changes; consumers must gate on this field).
-- **`generator`**, **`source`**, **`items`**: stable metadata and a flat list of documented symbols.
+- **`schemaVersion`**: integer `4` (consumers must gate on this field; `3` remains supported without v4-only fields).
+- **`navigationModel`**: `"graph-v1"` when resolution succeeded — build navigation from **`parentId`** / **`memberIds`** only, not from splitting `qualifiedName`.
+- **`generator`**, **`source`**, **`items`**: metadata and a flat list of **all resolved API symbols** (documented or not).
 
-Each item includes location, visibility, `kind`, names, and documentation in two shapes:
+Each item includes location, visibility, `kind`, names, graph ids, and compiler-derived **`signature`**, **`typeAnnotation`** fields (`fieldType`, `returnType`, `parameters`), plus optional documentation:
 
 - **`docMarkdown`** (optional): rendered Markdown for hovers and human-facing docs (same template the LSP uses for rich text).
-- **`doc`** (optional, object): structured fields for registry and tooling: `summaryMarkdown`, `returnsMarkdown`, `arguments` (callable parameters), `enumVariants` (from `@variant` on enums), and `typeParameters` (from `@par` on types, enums, or functions with generics). These are derived from the same doc parse tree as `docMarkdown`, so they do not drift.
+- **`doc`** (optional, object): structured fields: `summaryMarkdown`, `returnsMarkdown`, `arguments`, `enumVariants`, `typeParameters`. Derived from the same parse tree as `docMarkdown`.
 
-Older consumers that only understand schema version `1` should treat unknown `schemaVersion` values as unsupported and fall back to Markdown-only fields when present.
+See the [api.json contract](/platform-spec/tooling/cli/api-json-contract/design-model/) in the platform specification for normative field definitions.
+
+Older consumers that only understand schema version `2` should treat unknown `schemaVersion` values as unsupported and fall back to Markdown-only fields when present.
 
 ### `index.md`
 

@@ -50,8 +50,9 @@ This article documents the **design model** for **SyntaxMirror domain model gene
 | Per-type shape `.bd` | Struct/enum mirrors for typed emit and rewrite (`FunctionDefinition`, …) |
 | **`Node.bd`** | `pub contract Node` — kind, ref, child push |
 | **`NodeRef.bd`** | Opaque stable handle |
+| **`NodeSpan.bd`** | Span DTO for one node in one generation |
 | **`NodeKind.bd`** | Classification tokens (mirrors `query::NodeKind`) |
-| **`NodeList.bd`** | `Vec<Node>` as cons-list of **`NodeRef`** |
+| **`NodeList.bd`** | `Vec&lt;Node&gt;` as cons-list of **`NodeRef`** |
 | **`TraversalManifest.bd`** | Child-slot table derived from Rust `#[ast(child\|children\|skip)]` |
 
 Traversal metadata **must** stay aligned with `beskid_ast_derive::AstNode` wiring in `beskid_analysis`.
@@ -63,3 +64,12 @@ Each node **must** have a stable identity within a `syntax_generation_id` window
 **Torn tree prohibition** — Hosts **must not** expose partial syntax trees to mod contracts. Parse failures abort the current generation round with diagnostics, leaving the previous committed generation untouched.
 
 **Multi-root workspaces** — Identities **must** be qualified by normalized root path + in-root span so different projects cannot collide in caches.
+
+## Transformation model
+
+- Query-pipeline transforms run against one immutable `SyntaxSnapshot` generation and produce one new committed generation on success.
+- Pipeline application **must** be transactional: validation completes before any mutation becomes visible to mod code.
+- Span propagation is explicit:
+  - untouched nodes preserve original spans;
+  - replaced nodes receive source spans from replacement payloads when available;
+  - synthetic nodes may use host-synthetic spans but must remain diagnosable.
