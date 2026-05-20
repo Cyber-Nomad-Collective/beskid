@@ -91,6 +91,4 @@ git submodule update --init references/bsharp
 
 ---
 
----
-
 Questions about the language itself are best answered by the docs on **[beskid-lang.org](https://beskid-lang.org)**. For registry-specific behavior and URLs, use **[pckg.beskid-lang.org](https://pckg.beskid-lang.org)** together with the guides for the `pckg` CLI in the documentation sidebar.
