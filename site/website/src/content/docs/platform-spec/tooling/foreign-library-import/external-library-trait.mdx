@@ -1,0 +1,65 @@
+---
+title: ExternalLibrary provider trait
+description: Rust tooling trait for resolving Extern Library strings to linker flags (v0.3).
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Foreign library import
+    href: /platform-spec/tooling/foreign-library-import/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Purpose
+
+`Extern` contracts carry a logical **`Library`** name (for example `"libc"`, `"pthread"`). Linkers need concrete **flags** (`-lc`, `-lpthread`, framework paths). The **`ExternalLibrary`** trait abstracts that mapping so the CLI can support multiple providers over time.
+
+## Trait contract (normative Rust shape)
+
+```rust
+/// Resolves a logical library name from Beskid `Extern` metadata to linker inputs.
+pub trait ExternalLibrary: Send + Sync {
+    /// Stable provider id (for example `"c-posix"`, `"msvc"` Proposed).
+    fn id(&self) -> &'static str;
+
+    /// Target triple or host key this provider supports.
+    fn host_key(&self) -> &str;
+
+    /// Map logical name to linker arguments (for example `["-lc"]`).
+    fn resolve_link_args(&self, logical: &str) -> Result<Vec<String>, LibraryResolveError>;
+
+    /// Optional: search paths to pass the linker when the logical name is a path.
+    fn resolve_search_paths(&self, logical: &str) -> Vec<std::path::PathBuf>;
+}
+```
+
+## Provider registry (v0.3)
+
+The reference CLI **must** ship at least one provider:
+
+| Provider id | Host | Logical names |
+| --- | --- | --- |
+| **`c-posix`** | Linux / macOS tier-1 | `libc`, `libpthread`, `libm`, paths to `.so` / `.dylib` |
+
+**`msvc` / WinAPI** providers are **Proposed** and **out of scope** for stdlib Standard ([platform tier matrix](/platform-spec/language-meta/interop/c-abi-profile/platform-tier-matrix/)).
+
+## Extension
+
+Future providers (Rust `rlib`, Swift, etc.) **must** implement **`ExternalLibrary`** without changing Beskid source syntax—only manifest/link metadata and CLI selection.
+
+## Errors
+
+`LibraryResolveError` **must** surface as CLI diagnostics with the logical name, provider id, and host key so authors can fix `Project.proj` `link` entries.

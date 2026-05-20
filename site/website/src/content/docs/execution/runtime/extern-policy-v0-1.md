@@ -1,7 +1,9 @@
 ---
 title: "Extern policy (v0.1)"
-description: Engine-assisted dynamic linking policy for extern calls on Linux x86_64.
+description: Legacy engine-assisted dynamic linking; superseded for new work by v0.3 link-time FFI platform-spec.
 ---
+
+> **Legacy:** v0.3 **Standard** user FFI uses **link-time** binding ([link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/)). This page documents the optional **`extern_dlopen`** path; normative status is **Proposed** under [dynamic resolution profile](/platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile/).
 
 Scope
 - Platform: Linux x86_64 only for v0.1

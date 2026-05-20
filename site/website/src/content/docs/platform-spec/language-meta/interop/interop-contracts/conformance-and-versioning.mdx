@@ -27,11 +27,29 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
-## Runtime ABI version
+## Runtime ABI version (embedding)
 
-The platform publishes a monotonic **runtime ABI version** constant consumed by the compiler and prebuilt runtime packages. An artifact **must not** load against a runtime that reports an incompatible version.
+The platform publishes a monotonic **runtime ABI version** constant for the **Rust runtime export surface** (`BESKID_RUNTIME_ABI_VERSION`). An artifact **must not** load against a runtime that reports an incompatible version when linking builtins.
 
-Implementation reference: `BESKID_RUNTIME_ABI_VERSION` in `compiler/crates/beskid_abi/src/version.rs` and checks in `compiler/crates/beskid_tests/src/abi/contracts.rs`.
+Implementation reference: `compiler/crates/beskid_abi/src/version.rs` and `compiler/crates/beskid_tests/src/abi/contracts.rs`.
+
+**User FFI** (import layouts, interop views, export tables) is versioned separately — see **User FFI layout band** below. Bumping user FFI layouts **must not** require bumping `BESKID_RUNTIME_ABI_VERSION` unless a runtime export symbol or builtin signature changes.
+
+## User FFI layout band (v0.3)
+
+The platform maintains a **user FFI layout band** for:
+
+- Interop view record layouts (`CStringView`, `CBuffer`, `CArrayView`).
+- Export/callback registration table header layout.
+- Optional future `repr(C)` rules (v0.3.1).
+
+Toolchains **should** record the band in build metadata (for example manifest or artifact stamp) so linkers and hosts reject incompatible combinations. The reference constant name is reserved as **`BESKID_USER_FFI_LAYOUT_BAND`** (implementation may trail spec).
+
+| Band | Standard content |
+| --- | --- |
+| **v0.3.0** | Interop views, link-time import, export + callback registration |
+| **v0.3.1** | `CLayout` records with primitive fields only |
+| **v0.3.2+** | Proposed: nested FFI structs, foreign-thread entry |
 
 ## Forward compatibility
 

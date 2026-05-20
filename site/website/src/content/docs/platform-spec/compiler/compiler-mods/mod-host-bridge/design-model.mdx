@@ -56,6 +56,24 @@ Executes **`Collector` → `Generator` → semantic gate → `Analyzer` → `Rew
 
 CLI commands **`beskid mod rebuild`** (clean + build mod artifacts) and **`beskid mod clean`** manage object-store mod outputs.
 
+## Contract discovery
+
+Mod packages **must** export contract implementations as **public Beskid types** implementing SDK `contract` interfaces. The host **must not** rely on manifest attach lists or language-level meta items for registration.
+
+At **`mod.load`**, for each resolved `Mod` package the host:
+
+1. Opens the AOT artifact for the active target triple (**[AOT artifact contract](./aot-artifact-contract/)**).
+2. Parses `mod.descriptor.json` (authoritative when present) and validates the embedded **`registrations`** array.
+3. Schedules one host entry per **`(contractId, typeId, entrySymbol)`** tuple.
+
+| Field | Role |
+| --- | --- |
+| `contractId` | Stable SDK contract identity (`Beskid.Compiler.Collect.Collector`, etc.). |
+| `typeId` | Public type in the mod assembly implementing the contract. |
+| `entrySymbol` | Native export used to invoke the contract at the mod boundary. |
+
+Conflicting registrations or bootstrap failures **must** emit **E1821–E1835** / **E1851–E1870** and abort scheduling before `mod.collect`. Scope narrowing remains in **`Collector`** implementations, not manifest metadata.
+
 ## Capability matrix (normative vocabulary)
 
 Manifest `project.mod.capabilities` lists entries from this closed set. Defaults when omitted: **`diagnostics`** only.
@@ -71,7 +89,7 @@ Manifest `project.mod.capabilities` lists entries from this closed set. Defaults
 
 ## Pipeline observation
 
-Host boundaries **must** emit `beskid_pipeline` phase ids: `mod.load`, `mod.collect`, `mod.generate`, `syntax.generation`, `semantic.snapshot`, `mod.analyze`, `mod.rewrite`, `lower.ready`. See **[Compiler Mods / phase ids](/platform-spec/compiler/compiler-mods/#meta-projects)**.
+Host boundaries **must** emit `beskid_pipeline` phase ids: `mod.load`, `mod.collect`, `mod.generate`, `syntax.generation`, `semantic.snapshot`, `mod.analyze`, `mod.rewrite`, `lower.ready`. See **[Compiler Mods / phase ids](/platform-spec/compiler/compiler-mods/#mod-projects)**.
 
 ## Anchored code paths
 

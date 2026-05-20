@@ -36,10 +36,16 @@ User foreign entrypoints are declared on **`contract`** types using the **`Exter
 
 Implementation references: `ExternImport` in `compiler/crates/beskid_codegen/src/lowering/context.rs` and collection in `compiler/crates/beskid_codegen/src/lowering/lowerable.rs`.
 
-## JIT resolution
+## Link-time resolution (v0.3 Standard)
 
-When the **`extern_dlopen`** engine feature is **disabled**, artifacts that contain unresolved extern imports **must** fail compilation in the reference engine path. When enabled, the engine may **`dlopen` / `dlsym`** libraries and bind symbols subject to host policy (allow/deny environment variables as documented under `/execution/runtime/extern-policy-v0-1/`).
+User **`Extern`** symbols **must** be satisfied at **link time** via project **`link`** metadata and driver inputs. See **[link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/)** and **[foreign library import](/platform-spec/tooling/foreign-library-import/)**.
 
-## AOT and linking
+Artifacts with unresolved imports **must** fail before run with diagnostics listing `(library, symbol)` pairs.
 
-Object emission paths may differ from JIT in how unresolved imports are surfaced to the linker. Toolchains **must** document parity or intentional asymmetry in the **[Extern dispatch and policy](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/)** feature as implementation evolves.
+## Dynamic resolution (non-Standard)
+
+Runtime **`dlopen` / `dlsym`** is documented under **[dynamic resolution profile](/platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile/)** (Proposed). It **must not** be described as the default path in v0.3 platform-spec.
+
+## AOT and JIT parity
+
+Object emission paths **must** surface the same import set for a given artifact; unresolved symbols **must** fail at link time with parity between JIT link drivers and AOT link steps.

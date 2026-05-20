@@ -24,7 +24,7 @@ relatedTopics:
   - type: Feature
     title: Fibers and spawn
     href: /platform-spec/language-meta/evaluation/fibers-and-spawn/
-    relation: `spawn` lowering
+    relation: spawn lowering
   - type: Feature
     title: Concurrency package
     href: /platform-spec/core-library/concurrency/concurrency-package/
@@ -36,8 +36,19 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 
 <SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
 
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+Cooperative **M:N** scheduling: many **fibers** on an OS worker pool, **growable stacks** (64 KiB initial, 8 MiB cap), and **compiler stack maps** at safepoints. **`fiber_*` builtins** back corelib **`Fiber&lt;T&gt;`**; **`main`** runs on fiber 0 and shutdown **Join**s non-**Detach** children. Phase A documents a **single GC mutator**; Phase B adds parallel mutators without API break.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- `compiler/crates/beskid_runtime/` — scheduler module (to be added)
+- `compiler/crates/beskid_abi/` — symbols and `BUILTIN_SPECS`
+- `compiler/crates/beskid_analysis/src/builtins.rs` — `__fiber_*` injected paths
+- `compiler/crates/beskid_codegen/` — safepoints, stack maps
+</SpecSection>
+
 <SpecSection title="Contract statement" id="contract-statement">
-The Beskid runtime provides a **cooperative M:N scheduler**: many **fibers** multiplexed on a pool of **OS worker threads**. Fiber code uses **growable stacks** and **compiler-emitted stack maps** at safepoints. The runtime exports **`fiber_*` builtins** consumed by **`Fiber<T>`** in corelib—no async/await lowering.
+The Beskid runtime provides a **cooperative M:N scheduler**: many **fibers** multiplexed on a pool of **OS worker threads**. Fiber code uses **growable stacks** and **compiler-emitted stack maps** at safepoints. The runtime exports **`fiber_*` builtins** consumed by **`Fiber&lt;T&gt;`** in corelib—no async/await lowering.
 
 **Preemptive** parallelism for user code uses **`System.Threading`** (OS threads), not preempted fibers in v1.
 </SpecSection>
@@ -70,7 +81,7 @@ flowchart LR
 | Phase | Mutator threads | GC | Fiber scheduler |
 | --- | --- | --- | --- |
 | **A (v0.2 target)** | **One** GC mutator; fibers may run on multiple OS threads but GC obeys single-mutator rules | Existing arena; document barriers as no-op until Phase B | Cooperative; park at **Send**/**Receive**/**syscall** |
-| **B (documented)** | Multiple parallel mutators | Go-style concurrent mark/sweep + real **gc_write_barrier** | Optional function-entry preemption |
+| **B (documented)** | Multiple parallel mutators | Concurrent mark/sweep + real **gc_write_barrier** | Optional function-entry preemption |
 
 Phase B **must** be specified in **[memory-and-gc-runtime-contract](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/)** before implementation; Phase A ships first.
 </SpecSection>
@@ -92,13 +103,6 @@ Deprecated: `rt_yield` (`sched` feature) → `fiber_yield`.
 <SpecSection title="Stacks" id="stacks">
 - Initial stack **64 KiB**, growable, cap **8 MiB**
 - Stack overflow → **`FiberError::StackOverflow`** surfaced at **Join** on the affected fiber (no undefined behavior)
-</SpecSection>
-
-<SpecSection title="Implementation anchors" id="implementation-anchors">
-- `compiler/crates/beskid_runtime/` — scheduler module (to be added)
-- `compiler/crates/beskid_abi/` — symbols and `BUILTIN_SPECS`
-- `compiler/crates/beskid_analysis/src/builtins.rs` — `__fiber_*` injected paths
-- `compiler/crates/beskid_codegen/` — safepoints, stack maps
 </SpecSection>
 
 <DomainTiles pathPrefix="platform-spec/execution/runtime/fiber-scheduler-and-stacks" heading="Articles" />

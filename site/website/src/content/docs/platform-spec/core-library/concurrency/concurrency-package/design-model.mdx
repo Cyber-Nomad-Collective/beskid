@@ -29,10 +29,10 @@ Workspace package **`corelib_concurrency`** (directory `compiler/corelib/package
 
 | Module path | Responsibility |
 | --- | --- |
-| `Concurrency.Fiber` | `Fiber<T>` struct; **`event OnCancelled()`** on handle; **Join**, **Detach**, **Cancel** |
-| `Concurrency.Channel` | `Channel<T>`; **Send**, **Receive**, **TrySend**, **TryReceive**, **Close** |
+| `Concurrency.Fiber` | `Fiber&lt;T&gt;` struct; **`event OnCancelled()`** on handle; **Join**, **Detach**, **Cancel** |
+| `Concurrency.Channel` | `Channel&lt;T&gt;`; **Send**, **Receive**, **TrySend**, **TryReceive**, **Close** |
 | `Concurrency.ChannelOptions` | `Bounded(capacity)`, `Unbounded`, optional **SingleReader** / **SingleWriter** flags |
-| `Concurrency.Hub` | `Hub<T>` homogeneous; **Register**, **WaitReceive** (round-robin) |
+| `Concurrency.Hub` | `Hub&lt;T&gt;` homogeneous; **Register**, **WaitReceive** (round-robin) |
 | `Concurrency.HubReceiveResult` | `index` + `value: T` |
 | `Concurrency.Mutex` | **Lock**, **TryLock**, **Unlock** |
 | `Concurrency.WaitGroup` | **Add**, **Done**, **Wait** |

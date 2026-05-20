@@ -58,7 +58,7 @@ The reference lowering path orders parse, semantic diagnostics, lower, and codeg
 
 ## Normative mod phase id strings (`beskid_pipeline`)
 
-These literals must match **[Compiler Mods / Mod projects and pipeline phase ids](/platform-spec/compiler/compiler-mods/#meta-projects)**.
+These literals must match **[Compiler Mods / Mod projects and pipeline phase ids](/platform-spec/compiler/compiler-mods/#mod-projects)**.
 
 **Full build (`FULL_BUILD_PHASE_ORDER`)** — After parse, insert `mod.load`, `mod.collect`, `mod.generate` (plus `syntax.generation` on replay), then semantic phases, then `mod.analyze`, optional `mod.rewrite`, then lower/codegen/link.
 
@@ -66,4 +66,4 @@ These literals must match **[Compiler Mods / Mod projects and pipeline phase ids
 
 **Auxiliary ids** — `workspace.graph_changed` and `semantic.snapshot` are emitted by workspace refresh and semantic pipeline orchestration respectively; they **must** use the same string literals when represented as phases (or as documented `WorkUnit` `id` prefixes if only work units are used—pick one representation per id and document it in `PIPELINE.md`).
 
-**`lower.ready`** — Emitted immediately before the existing **`lower`** phase entrypoint runs on a merged program; hosts **must** emit it even when no meta ran (no-op instant) so observers can assert ordering uniformly.
+**`lower.ready`** — Emitted immediately before the existing **`lower`** phase entrypoint runs on a merged program; hosts **must** emit it even when no mods ran (no-op instant) so observers can assert ordering uniformly.

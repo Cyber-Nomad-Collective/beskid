@@ -27,7 +27,7 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 Beskid surfaces foreign entrypoints through **`contract`** declarations annotated for interop (see **[FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/)**). At the **Interop.Contracts** layer, each contract method contributes:
 
-- A **logical symbol** derived from the contract’s extern metadata and the method’s foreign name.
+- A **logical symbol** derived from the contract’s extern metadata, optional per-method **`Symbol`** override, or the method’s foreign name when no override is present.
 - A **call shape** derived from Beskid parameter and result types using the type-shape rules on the parent hub’s **[core primitives](/platform-spec/language-meta/interop/interop-contracts/core-primitives/)** article.
 
 The compiler **must** reject declarations that cannot be lowered to any supported profile’s call shape without undefined behavior.

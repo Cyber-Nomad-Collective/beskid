@@ -1,6 +1,6 @@
 ---
 title: Compiler Mod SDK
-description: Beskid-side compiler-mod contracts, SyntaxMirror, declarative query, and typed AST operations.
+description: Beskid-side compiler-mod contracts, Beskid.Syntax mirror, declarative query, and typed AST operations.
 template: splash
 tableOfContents: true
 specLevel: feature
@@ -24,7 +24,7 @@ relatedTopics:
   - type: Feature
     title: Project manifest contract
     href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
-    relation: `project.type = Mod`
+    relation: project.type = Mod
   - type: Feature
     title: extend type
     href: /platform-spec/language-meta/program-structure/extend-type/
@@ -41,7 +41,7 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 <SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
 
 <SpecSection title="Package role" id="package-role">
-The **Compiler Mod SDK** (`compiler-sdk` package) is the Beskid-side surface for `type: Mod` projects. Mod behavior is declared through **contracts** and **SyntaxMirror** operations — not through dedicated metaprogramming grammar items in the host language.
+The **Compiler Mod SDK** (`compiler-sdk` package) is the Beskid-side surface for `type: Mod` projects. Mod behavior is declared through **contracts** and **`Beskid.Syntax`** operations — not through dedicated metaprogramming grammar items in the host language.
 </SpecSection>
 
 <SpecSection title="Contract hierarchy" id="contracts">
@@ -58,8 +58,26 @@ All mod entrypoints derive from **`Collector`**:
 Hosts discover contract implementations from AOT-compiled `Mod` packages in the dependency graph (direct and transitive).
 </SpecSection>
 
-<SpecSection title="SyntaxMirror and declarative query" id="syntax-mirror">
-- **`SyntaxMirror`** is the typed mirror of compiler syntax nodes (formerly “reflection” naming is deprecated).
+<SpecSection title="Contract discovery (normative)" id="contract-discovery">
+Mod packages **export** contract implementations through **public Beskid types** that implement the SDK `contract` interfaces (`Collector`, `Generator`, `Analyzer`, `Rewriter`, `AttributeGenerator`). Authors do not register entrypoints in the manifest; discovery is entirely artifact-driven.
+
+During **`mod.load`**, the Rust mod host:
+
+1. Resolves every transitive `type: Mod` dependency from the host `CompilePlan`.
+2. Locates the AOT artifact for the active **target triple** and **cache key** (see **[AOT artifact contract](/platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/)**).
+3. Reads the export descriptor (`mod.descriptor.json`) and/or the native object export table.
+4. Builds a schedule of **`(contractId, typeId, entrySymbol)`** tuples, where:
+   - **`contractId`** — stable SDK contract name (e.g. `Beskid.Compiler.Collect.Collector`).
+   - **`typeId`** — public type name in the mod assembly implementing that contract.
+   - **`entrySymbol`** — AOT-linked symbol used to invoke the contract entrypoint.
+
+Duplicate or conflicting registrations **must** fail with **E1829** / **E1851–E1870** diagnostics before `mod.collect` runs. Missing required contracts for a scheduled mod **must** fail closed (no partial host merge).
+
+Manifest `attachTo` / `entryModules` are **not** part of discovery; **`Collector`** owns scope narrowing at execution time.
+</SpecSection>
+
+<SpecSection title="Beskid.Syntax and declarative query" id="syntax-mirror">
+- **`Beskid.Syntax`** is the typed mirror of compiler syntax nodes (legacy `Beskid.Compiler.Syntax` / “SyntaxMirror” naming is deprecated).
 - Every mirrored node implements contracts for **query** and **structural AST operations**.
 - Mod code builds and transforms trees through declarative fluent APIs — **no string formatting or source-text emission**.
 - **`Rewriter`** and **`Generator`** use the same typed node identities for merge and invalidation.

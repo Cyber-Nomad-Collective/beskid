@@ -1,0 +1,88 @@
+---
+title: Extern attribute schema
+description: Normative Extern and per-method interop attributes for contract imports (v0.3).
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: FFI and extern
+    href: /platform-spec/language-meta/interop/ffi-and-extern/
+    relation: Parent feature hub
+  - type: Feature
+    title: C ABI profile
+    href: /platform-spec/language-meta/interop/c-abi-profile/
+    relation: Linking and type lowering
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Contract-level `Extern`
+
+Applied only to **`contract`** declarations.
+
+| Field | Required | Meaning |
+| --- | --- | --- |
+| **`Abi`** | yes | In v0.3 Standard, **must** be **`"C"`** (case-insensitive). Other values are reserved. |
+| **`Library`** | yes | Logical library identity for link-time resolution (see **[link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/)** and **[foreign library import](/platform-spec/tooling/foreign-library-import/)**). Must be non-empty. |
+
+Example:
+
+```beskid
+[Extern(Abi:"C", Library:"libc")]
+pub contract Libc {
+    i64 getpid();
+}
+```
+
+## Per-method overrides (v0.3.0)
+
+Contract methods **may** carry method-level attributes:
+
+| Attribute | Required | Meaning |
+| --- | --- | --- |
+| **`Symbol`** | no | Linker / foreign symbol name when it differs from the Beskid method name (for example `Symbol:"pthread_create"`). When omitted, the **method identifier** is the logical symbol. |
+| **`Library`** | no | Overrides contract-level **`Library`** for this method only. |
+
+Example:
+
+```beskid
+[Extern(Abi:"C", Library:"libc.so.6")]
+pub contract Libc {
+    [Symbol("write")]
+    i64 write(i32 fd, CBuffer buf, i64 count);
+}
+```
+
+## Parameter modifiers (v0.3.0)
+
+| Modifier | Meaning |
+| --- | --- |
+| *(none)* | **Borrow** — caller retains ownership; foreign code must not retain pointers beyond the call unless documented otherwise. |
+| **`Transfer`** | **Transfer** — ownership of the view’s storage obligation moves per profile rules (see **[ownership at the boundary](/platform-spec/language-meta/interop/interop-contracts/ownership-at-boundary/)**). |
+| **`GcPin`** | **Proposed** — GC-managed handle pinned for the call duration via runtime root handle; not required for Standard conformance in v0.3.0. |
+
+`ref u8` remains valid as a **byte slice start** without length; authors **should** prefer **`CBuffer`** / **`CStringView`** interop views instead.
+
+## Diagnostics
+
+| Code | Condition |
+| --- | --- |
+| **E1510** | `Extern` applied to a disallowed declaration target |
+| **E1520** | Invalid **`Abi`** (not **`"C"`**) — transition: **T0901** |
+| **E1521** | Missing **`Library`** — transition: **T0902** |
+| **E1522** | Disallowed extern parameter type — transition: **T0903** |
+| **E1523** | Disallowed extern return type — transition: **T0904** |
+| **E1524–E1539** | Export, interop views, link manifest — see registry |
+
+Full band: **[Diagnostic code registry / design model](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/design-model/)**. Fixtures: `compiler/crates/beskid_tests/src/analysis/ffi_v03_spec.rs`.

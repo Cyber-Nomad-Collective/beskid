@@ -21,7 +21,7 @@ relatedTopics:
   - type: Area
     title: Compiler Mods
     href: /platform-spec/compiler/compiler-mods/
-    relation: Meta diagnostics parity and Mod SDK surfaces
+    relation: Mod diagnostics parity and Mod SDK surfaces
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
@@ -44,12 +44,55 @@ The inclusive range **E1801–E1899** is owned by compiler-mod manifest validati
 
 | Code range | Owner | Intended failures (examples) |
 | --- | --- | --- |
-| **E1801–E1810** | `beskid_analysis::projects` manifest parse | Unknown `mod` key, invalid `maxGeneratorRounds`, malformed capabilities list. |
+| **E1801–E1810** | `beskid_analysis::projects` manifest parse | Unknown `mod` key, invalid `maxGeneratorRounds`, malformed capabilities list, Meta→Mod migration (see table below). |
 | **E1811–E1820** | Workspace / graph resolution | Invalid Mod dependency topology, unresolved mod package, incompatible host/mod graph constraints. |
-| **E1821–E1835** | Mod host / capabilities | Denied capability, exceeded `maxGeneratorRounds`, sandbox violation, AOT artifact load/bootstrap failure. |
+| **E1821–E1835** | Mod host / capabilities | Denied capability, exceeded `maxGeneratorRounds`, sandbox violation, AOT artifact load/bootstrap failure (see **[AOT artifact contract](/platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/)**). |
 | **E1836–E1850** | Typed merge / rewrite | Conflicting generator edits, illegal typed contribution, invalid typed rewrite, merge rollback. |
 | **E1851–E1870** | Contract discovery / execution | Missing required contracts, invalid contract signatures, collector scope violations, analyzer/rewriter registration errors. |
 | **E1871–E1899** | **Reserved** | Buffer for staged rollout; allocate in order and extend this table when used. |
+
+### Meta→Mod migration and manifest parse (**E1801–E1810**, normative)
+
+| Code | When emitted |
+| --- | --- |
+| **E1801** | Unknown key inside `project.mod`. |
+| **E1802** | `maxGeneratorRounds` missing, non-positive, or not an integer. |
+| **E1803** | `capabilities` entry not in the closed vocabulary. |
+| **E1804** | `artifactPolicy` value not in `reuse` / `rebuild` / `clean_rebuild`. |
+| **E1805** | `type: Mod` project declares a `target` block (forbidden). |
+| **E1806** | Compiler-mod `contract` item declared outside a `type: Mod` project. |
+| **E1807** | Deprecated `type: Meta` or nested `meta { }` manifest section (use `Mod` / `mod { }`). |
+| **E1808** | Removed `attachTo` key on mod/manifest (use `Collector` scope). |
+| **E1809** | Removed `entryModules` key (use contract discovery). |
+| **E1810** | Legacy `max_meta_rounds` or other removed mod keys. |
+
+### Mod artifact load (**E1821–E1835**, normative)
+
+Individual codes are defined in **[Mod host bridge / AOT artifact contract](/platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/)** (**E1821** missing artifact through **E1835** bootstrap catch-all). Hosts **must** prefer the most specific code before **E1835**.
+
+### Typed merge (**E1836–E1850**, normative)
+
+| Code | When emitted |
+| --- | --- |
+| **E1836** | Two generators target the same declaration identity in one generation round. |
+| **E1837** | Typed contribution fails well-formedness / parser re-check after merge. |
+| **E1838** | `Rewriter` returned an illegal target node kind. |
+| **E1839** | Merge rolled back — syntax tree unchanged after failure. |
+| **E1840–E1850** | **Reserved** for additional merge/rewrite failures. |
+
+### Contract discovery (**E1851–E1870**, normative)
+
+| Code | When emitted |
+| --- | --- |
+| **E1851** | Module-level `meta` item or other forbidden grammar in a Mod/host compilation unit. |
+| **E1852** | Required `Collector` contract missing from artifact registrations. |
+| **E1853** | `contractId` in descriptor not recognized by host. |
+| **E1854** | Public type does not implement declared `contractId`. |
+| **E1855** | `entrySymbol` missing from native export table. |
+| **E1856** | Collector scope references unresolved compilation member. |
+| **E1857** | Analyzer registration conflicts with capability set. |
+| **E1858** | Rewriter generic instantiation does not match source node kind. |
+| **E1859–E1870** | **Reserved** for contract execution failures. |
 
 ## Documentation comment diagnostics (**W1610–W1619**, **W1620–W1625**)
 
@@ -72,3 +115,23 @@ The inclusive ranges **W1610–W1619** and **W1620–W1625** are reserved for **
 | **W1625** | Duplicate `@par(name)` in the same block. |
 
 Codes **must** be stable across patch releases once shipped; breaking message text is allowed only with a migration note in **[Rules and diagnostics catalog](/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/)**.
+
+## User FFI diagnostics (**E1520–E1539**, v0.3)
+
+The inclusive range **E1520–E1539** is owned by **[FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/)** and **[Export and callbacks](/platform-spec/language-meta/interop/export-and-callbacks/)** validation. These codes are **normative in platform-spec v0.3**; the reference compiler may still emit legacy **`T0901–T0904`** until migration completes—tests **must** accept either code during the transition, then **only E152x** once `diagnostic_kinds.rs` maps `TypeError::Extern*` to `SemanticIssueKind`.
+
+| Code | When emitted | Reference compiler (transition) |
+| --- | --- | --- |
+| **E1520** | `Extern` **`Abi`** is not **`"C"`** | **T0901** |
+| **E1521** | `Extern` contract missing non-empty **`Library`** | **T0902** |
+| **E1522** | Disallowed parameter type on extern method | **T0903** |
+| **E1523** | Disallowed return type on extern method | **T0904** |
+| **E1524** | **`Export`** on non-`pub` function or disallowed item | *(planned)* |
+| **E1525** | **`Export`** signature uses disallowed FFI type | *(planned)* |
+| **E1526** | Unknown **`Symbol`** override or duplicate export symbol | *(planned)* |
+| **E1527** | **`Transfer`** / interop view misuse at boundary | *(planned)* |
+| **E1528** | **`CLayout`** violation (v0.3.1) | *(planned)* |
+| **E1529** | Callback type is not a permitted function-pointer shape | *(planned)* |
+| **E1530–E1539** | **Reserved** | Buffer for link manifest and import CLI failures |
+
+Attribute placement errors remain in the **E1508–E1510** band (**E1510** = `Extern` on non-contract).

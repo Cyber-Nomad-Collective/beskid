@@ -28,16 +28,19 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 This article documents **verification and traceability** for **mod host bridge**.
 
 ## Traceability matrix
-- Anchor: `compiler/crates/beskid_engine/` — JIT host patterns reusable for compile-time execution.
-- Anchor: `compiler/crates/beskid_runtime/` — sandboxed builtins surface for mod workloads.
-- Anchor: `compiler/crates/beskid_analysis/src/services.rs` — compilation session orchestration hooks.
+- Anchor: `compiler/crates/beskid_aot/` — mod AOT artifact build, cache paths, and descriptor emission.
+- Anchor: `compiler/crates/beskid_analysis/src/mod_host/` — reference mod host orchestration, descriptor loading, capability checks, typed merge/reparse flow, and analyze/rewrite hooks.
+- Anchor: `compiler/crates/beskid_analysis/src/services/analyze.rs` — analysis service integration for `run_through_generate` before semantic diagnostics and `run_analyze_rewrite` after semantic work.
+- Anchor: `compiler/crates/beskid_codegen/src/services.rs` — lowering/codegen integration for mod host phases before `lower.ready`.
+- Anchor: `compiler/crates/beskid_pipeline/src/phases.rs` — literal `mod.load`, `mod.collect`, `mod.generate`, `mod.analyze`, and `mod.rewrite` phase ids.
 
 ## Verification expectations
 
-- **Phase ids** — Unit or integration tests **must** assert the literal strings from **[Compiler Mods / Mod projects and pipeline phase ids](/platform-spec/compiler/compiler-mods/#meta-projects)** appear in `beskid_pipeline` observations (see **[Stage ordering / verification](/platform-spec/compiler/build-pipeline/stage-ordering/verification-and-traceability/)**).
+- **Phase ids** — Unit or integration tests **must** assert the literal strings from **[Compiler Mods / Mod projects and pipeline phase ids](/platform-spec/compiler/compiler-mods/#mod-projects)** appear in `beskid_pipeline` observations (see **[Stage ordering / verification](/platform-spec/compiler/build-pipeline/stage-ordering/verification-and-traceability/)**).
 - **Capabilities** — Table-driven tests in `compiler/crates/beskid_tests` verify each capability grants/denies the documented effect and emits **E1821–E1835** codes on denial.
-- **Merge** — Tests assert atomic `meta.round_commit` behavior: partial emit never reaches lowering (pair with **[Typed emitter / verification](/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/verification-and-traceability/)** once populated).
-- **Incremental traces** — Optional goldens validate invalidation when syntax edits move spans tied to meta registrations (**[Incremental scheduling / verification](/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/verification-and-traceability/)**).
+- **AOT artifacts** — Tests assert descriptor schema, cache key invalidation, and **E1821–E1835** on deliberate load failures (**[AOT artifact contract](./aot-artifact-contract/)**).
+- **Merge** — Tests assert atomic typed-emit commit at `syntax.generation`: partial emit never reaches `lower.ready` (pair with **[Typed emitter / verification](/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/verification-and-traceability/)** once populated).
+- **Incremental traces** — Optional goldens validate invalidation when syntax edits move spans tied to mod contract registrations (**[Incremental scheduling / verification](/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/verification-and-traceability/)**).
 
 ## Review cadence
 - Update this bundle whenever public `Beskid.Compiler.*` shapes or host policies change.

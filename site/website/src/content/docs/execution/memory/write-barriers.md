@@ -5,7 +5,7 @@ description: Write barrier insertion policy
 
 
 ## Purpose
-Ensure Go-style concurrent GC remains correct during pointer writes.
+Ensure Concurrent GC remains correct during pointer writes.
 
 ## Ownership
 - Barrier semantics are owned by runtime memory model policy.

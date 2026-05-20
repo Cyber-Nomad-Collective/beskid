@@ -30,7 +30,7 @@ See the parent feature hub and `ANSI.md` in the aggregate repository for escape-
 
 ## Fiber and Channel delivery
 
-Terminal resize, tick, and other asynchronous terminal signals **must** be published to a **`Channel<T>`** (or consumed through a **`Hub`** registration) so the UI fiber can **Receive** them without cross-fiber **`event`** invocation.
+Terminal resize, tick, and other asynchronous terminal signals **must** be published to a **`Channel&lt;T&gt;`** (or consumed through a **`Hub`** registration) so the UI fiber can **Receive** them without cross-fiber **`event`** invocation.
 
 - Producer side (platform extern callback or reader fiber): **Send** into the channel.
 - Consumer side (main UI loop fiber): **Receive** / **Hub.WaitReceive**.

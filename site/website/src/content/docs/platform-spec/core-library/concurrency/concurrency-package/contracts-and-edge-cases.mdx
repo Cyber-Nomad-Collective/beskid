@@ -23,11 +23,11 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
-## Channel<T>
+## `Channel&lt;T&gt;`
 
 ### Construction
 
-- **`Channel<T>.Create(options: ChannelOptions = default)`** — **default is unbounded**.
+- **`Channel&lt;T&gt;.Create(options: ChannelOptions = default)`** — **default is unbounded**.
 - **`ChannelOptions.Bounded(n)`** — `n > 0`; **Send** parks when full (Wait mode).
 - **`ChannelOptions.Unbounded`** — equivalent to default; queue grows until OOM (documented risk).
 - Optional capacity field inside options **must not** contradict `Bounded` / `Unbounded` variant; bounded wins when `Bounded(n)` is chosen.
@@ -39,7 +39,7 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 | **Send** | `Result<(), ChannelError>`; blocks/parks fiber when full (bounded + Wait mode) |
 | **Receive** | `Result<T, ChannelError>`; parks when empty and open |
 | **TrySend** | `Option<()>` — `None` if would block |
-| **TryReceive** | `Option<T>` — `None` if would block |
+| **TryReceive** | `Option&lt;T&gt;` — `None` if would block |
 | **Close** | Idempotent writer close; no panic |
 
 ### ChannelError (closed set)
@@ -55,9 +55,9 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 - **BoundedChannelFullMode::Wait** — default; sender parks
 - No `AllowSynchronousContinuations` (async-only .NET concept)
 
-## Fiber<T>
+## `Fiber&lt;T&gt;`
 
-`Fiber<T>` is a corelib **struct** (runtime handle) that **must** declare:
+`Fiber&lt;T&gt;` is a corelib **struct** (runtime handle) that **must** declare:
 
 ```beskid
 event OnCancelled();
@@ -81,23 +81,23 @@ The **spawn entry** function does **not** declare **OnCancelled** — only the h
 - `StackOverflow`
 - `Panicked` — carries diagnostic handle / message policy per runtime
 
-## Hub<T>
+## `Hub&lt;T&gt;`
 
-- **Homogeneous only in v1** — `Hub<T>` registers only `Channel<T>` instances
+- **Homogeneous only in v1** — `Hub&lt;T&gt;` registers only `Channel&lt;T&gt;` instances
 - **Register(index, channel)** / **Unregister(index)** — `index` is user-chosen `i64` key in **WaitReceive** result
 - **WaitReceive** → `Result<HubReceiveResult, HubError>` where `HubReceiveResult` is `{ index: i64, value: T }`
 - **Round-robin** fairness among ready channels (see **[decisions record](./decisions-record/)**)
-- Multiplexing unlike types: use `Channel<HubMessage>` (enum/union) or multiple hubs — **not** mixed-type **Hub** in v1
+- Multiplexing unlike types: use `Channel&lt;HubMessage&gt;` (enum/union) or multiple hubs — **not** mixed-type **Hub** in v1
 - **WaitSend** — **not in v1**
 - Replaces language-level `select` for v1
 
 ## Mutex and WaitGroup
 
 - **Mutex.Lock** → `Result<MutexGuard, MutexError>`
-- **Mutex.TryLock** → `Option<MutexGuard>` (`None` if would block)
+- **Mutex.TryLock** → `Option&lt;MutexGuard&gt;` (`None` if would block)
 - **Mutex.Unlock** — explicit in v1 (no `defer` required for spec)
 - **WaitGroup.Wait** parks until counter zero; **Add**/**Done** follow Go semantics
 
 ## Console integration
 
-**`Console.OnResize`** and control **`onTick`** paths **must** publish into a **`Channel<T>`** (or **Hub** member) so UI fibers **Receive** events without multicast **event** invocation across fibers. Language **event** syntax may remain for single-fiber use; cross-fiber UI **must** use **Channel** (see console-terminal-events).
+**`Console.OnResize`** and control **`onTick`** paths **must** publish into a **`Channel&lt;T&gt;`** (or **Hub** member) so UI fibers **Receive** events without multicast **event** invocation across fibers. Language **event** syntax may remain for single-fiber use; cross-fiber UI **must** use **Channel** (see console-terminal-events).

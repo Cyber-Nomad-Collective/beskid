@@ -34,7 +34,7 @@ This article documents **flow and algorithms** for **Incremental scheduling and 
 3. **Recompute keys** — For each scheduled mod contract, rebuild **`capture_fingerprint`**, `manifest_generation_id`, and `capability_set_id` per **[design model](./design-model/)**. Drop any cache entry whose tuple diverges.
 4. **Schedule rounds** — Enqueue mod contracts in deterministic discovery order (stable module walk, stable tie-break on equal keys). Respect `maxGeneratorRounds` from **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)**.
 5. **Run host bridge** — For each item, if cache hit for process-only work, reuse validated artifacts; otherwise run capture → process under capability policy.
-6. **Commit emit** — Apply typed contributions atomically, bump `syntax_generation_id`, re-parse affected roots, and record `meta.round_commit` for telemetry.
+6. **Commit emit** — Apply typed contributions atomically, bump `syntax_generation_id`, re-parse affected roots, and emit `syntax.generation` for telemetry.
 7. **Replay verification** — On identical inputs and ids, hosts **must** reproduce the same ordered diagnostics and the same merge outcome (see contracts article for determinism tests).
 
 ## Ordering constraints

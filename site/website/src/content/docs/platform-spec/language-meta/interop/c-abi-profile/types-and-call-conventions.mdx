@@ -29,15 +29,20 @@ For user **`contract`** calls lowered through the reference compiler path, param
 
 Other targets must document their own mapping in a future revision of this article; until then, only the documented tier-1 mapping is normative for **Standard** conformance claims.
 
-## Permitted value shapes
+## Permitted value shapes (v0.3.0)
 
-The C ABI profile instantiates **[Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/)** type-shape classes as follows for typical extern surfaces:
+The C ABI profile instantiates **[Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/)** as follows:
 
-- **Scalar** — maps to fixed-width integer CLIF types permitted by the engine’s extern signature validator.
-- **Opaque handle** — pointer-sized integer or raw pointer as validated against the lowered signature.
-- **Buffer** and **string-like** — require explicit contract design; many layouts are shared with the Beskid runtime’s stable `repr(C)` types where applicable (see `compiler/crates/beskid_abi/src/types.rs`).
+- **Scalar** — `bool` as **`i8`**, `u8`, `i32`, `i64`, `f64`, `unit`.
+- **Interop views** — **`CStringView`**, **`CBuffer`**, **`CArrayView`** per **[interop view types](/platform-spec/language-meta/interop/c-abi-profile/interop-view-types/)**.
+- **Opaque handle** — pointer-sized slot or `i64` where documented.
+- **`ref u8`** — narrow legacy slice start; prefer **`CBuffer`**.
 
-Types with **Rust-only** or **Beskid-only** layout that cannot be expressed as stable C must not appear on an extern boundary without an adapter type.
+Beskid **`string`** and **`T[]`** GC values **must not** appear on user `Extern` signatures in v0.3.0 Standard.
+
+**`CLayout` structs** (primitive fields only) are **v0.3.1** — **[C layout types](/platform-spec/language-meta/interop/c-abi-profile/c-layout-types/)**. Nested complex types are **deferred** until basic FFI is implemented.
+
+Types with unstable Beskid-only layout **must not** cross the boundary without an adapter or shim.
 
 ## Cranelift note
 

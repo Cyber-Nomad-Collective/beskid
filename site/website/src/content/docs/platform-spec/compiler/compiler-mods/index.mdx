@@ -30,7 +30,7 @@ relatedTopics:
   - type: Area
     title: Build pipeline
     href: /platform-spec/compiler/build-pipeline/
-    relation: Lowering and backends after meta merge
+    relation: Lowering and backends after mod merge
   - type: Feature
     title: Stage ordering and lowering
     href: /platform-spec/compiler/build-pipeline/stage-ordering/
@@ -70,9 +70,9 @@ The compile-time package groups the natural compilation shape into modules (exac
 
 | Module | Role |
 | --- | --- |
-| **`Beskid.Compiler.SyntaxMirrorMirror`** | Typed syntax node mirror with stable identities and structural builders. |
+| **`Beskid.Syntax`** | Typed syntax node mirror with stable identities and structural builders. |
 | **`Beskid.Compiler.Query`** | Declarative query surfaces over syntax and semantic snapshots. |
-| **`Beskid.Compiler.Collect`** | Collector contracts and target-selection primitives. |
+| **`Beskid.Compiler.Collect`** | `Collector`, `Generator`, `Analyzer`, `Rewriter`, and `AttributeGenerator` contracts plus target-selection primitives. |
 | **`Beskid.Compiler.Diagnostics`** | Compiler-native diagnostics transport for analyzers and rewrite suggestions. |
 | **`Beskid.Compiler.TypedEmitter`** | Typed AST contributions and typed rewrites; no raw text/formatting contract. |
 
@@ -81,7 +81,7 @@ The compile-time package groups the natural compilation shape into modules (exac
 Feature hubs below map onto these boundaries with traceability into `beskid_analysis`, `beskid_lsp`, `beskid_codegen`, `beskid_engine`, and `beskid_runtime`.
 </SpecSection>
 
-<SpecSection title="Mod projects and pipeline phase ids" id="meta-projects">
+<SpecSection title="Mod projects and pipeline phase ids" id="mod-projects">
 For **`project.type = Mod`**, the host registers mod contracts and emits `beskid_pipeline` phase events for collection, generation, analyzer, and rewrite boundaries. Strings below are normative literals that must be defined in `compiler/crates/beskid_pipeline/src/phases.rs` and asserted by conformance tests.
 
 | Phase id (literal) | Rust constant (recommended) | When emitted | Typical invalidation |

@@ -35,15 +35,26 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 
 <SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
 
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+The **`spawn`** keyword starts cooperative fibers. Every **`spawn`** expression **must** type-check to **`Fiber&lt;T&gt;`** (`Concurrency.Fiber` in **`corelib_concurrency`**) where **`T`** is the entry return type. There is **no** `async` / `await`; cross-fiber payloads use **`Channel&lt;T&gt;`** only. Reserved **`async`** / **`await`** tokens are compile errors.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- Language surface and diagnostics in `compiler/crates/beskid_analysis/`
+- Lowering: `compiler/crates/beskid_codegen/` → `fiber_spawn` and stack maps
+- Runtime: **[Fiber scheduler and stacks](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/)**
+- Corelib contract: **[Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/)**
+</SpecSection>
+
 <SpecSection title="Contract statement" id="contract-statement">
-Beskid provides a **`spawn`** keyword for cooperative concurrency. Every **`spawn`** expression **must** type-check against the **`Fiber<T>`** contract defined in **`corelib_concurrency`** (`Concurrency.Fiber`), where **`T`** is the return type of the spawned callable.
+Beskid provides a **`spawn`** keyword for cooperative concurrency. Every **`spawn`** expression **must** type-check against the **`Fiber&lt;T&gt;`** contract defined in **`corelib_concurrency`** (`Concurrency.Fiber`), where **`T`** is the return type of the spawned callable.
 
 There is **no** `async` / `await` surface in the language. Structured concurrency uses **`Join`**, **Channel** **Send**/**Receive**, **WaitGroup**, and **Hub**.
 </SpecSection>
 
 <SpecSection title="Syntax" id="syntax">
 ```beskid
-Fiber<T> handle = spawn Callable(/* args */);
+Fiber&lt;T&gt; handle = spawn Callable(/* args */);
 ```
 
 - **`Callable`** — function or closure satisfying the spawn contract (see semantic rules).
@@ -52,7 +63,7 @@ Fiber<T> handle = spawn Callable(/* args */);
 </SpecSection>
 
 <SpecSection title="Fiber handle" id="fiber-handle">
-**`spawn`** returns **`Fiber<T>`** where `T` is the entry callable’s return type. The handle struct (corelib) **must** expose:
+**`spawn`** returns **`Fiber&lt;T&gt;`** where `T` is the entry callable’s return type. The handle struct (corelib) **must** expose:
 
 ```beskid
 event OnCancelled();
@@ -62,7 +73,7 @@ The **entry callable** is a normal function or closure — it **does not** decla
 </SpecSection>
 
 <SpecSection title="Semantic rules" id="semantic-rules">
-1. **Spawn target** — callable return type `T` determines `Fiber<T>`; entry signature must be compatible with spawn lowering.
+1. **Spawn target** — callable return type `T` determines `Fiber&lt;T&gt;`; entry signature must be compatible with spawn lowering.
 2. **Captures** — closure captures must not leak stack references across fibers; **`StackReferenceEscapesSpawn`** diagnostic.
 3. **Detach** — explicit **Detach** waives shutdown **Join**; otherwise runtime joins non-detached children when `main` returns.
 4. **Cancel** — **Cancel** + **OnCancelled** on handle + **Join** / channel **Cancelled** (normative ordering in decisions record).

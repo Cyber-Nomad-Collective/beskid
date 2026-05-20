@@ -1,0 +1,60 @@
+---
+title: Contract import syntax
+description: How extern contracts declare foreign imports and map to symbols and call shapes.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: FFI and extern
+    href: /platform-spec/language-meta/interop/ffi-and-extern/
+    relation: Parent feature hub
+  - type: Article
+    title: Language-agnostic mapping
+    href: /platform-spec/language-meta/interop/interop-contracts/language-agnostic-mapping/
+    relation: Symbol and call-shape normalization
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Import contracts
+
+Foreign surface area is declared with **`contract`** blocks. Importing methods use signatures that end with **`;`** (no Beskid body), consistent with `contract` grammar in `compiler/crates/beskid_analysis/src/beskid.pest`.
+
+Each import method contributes:
+
+1. One **logical foreign symbol** (method name or **`Symbol`** override).
+2. One **abstract call shape** after **[Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/)** normalization.
+3. One **`ExternImport`** row at codegen (`symbol`, `abi`, `library`).
+
+## Calling imported methods
+
+Beskid code calls foreign entrypoints through the contract type, for example `Libc.getpid()`. Type checking treats the call as **contract dispatch** lowered through the **C ABI profile**.
+
+## Implementing contracts in Beskid
+
+Beskid types may **implement** non-extern contracts in normal source. **`Extern`** contracts are **import-only** in v0.3: methods **must not** have Beskid bodies on the same contract.
+
+## Documentation
+
+`///` documentation on the contract and its methods **should** describe:
+
+- Threading and re-entrancy expectations at the foreign side.
+- Ownership of each parameter (**borrow** vs **transfer**).
+- Error representation (return codes vs out-parameters).
+
+Use **`@arg`** only on **callable parameters** (methods), not on contract-level metadata fields.
+
+## Relationship to corelib
+
+Platform packages (for example console and threading) **should** group foreign entrypoints into small **`Extern`** contracts per library (`libc`, `libpthread`) rather than scattering raw integer pointer parameters across unrelated APIs.

@@ -1,0 +1,82 @@
+---
+title: C ABI profile — Interop view types (v0.3.0)
+description: CStringView, CBuffer, and CArrayView layouts for user Extern boundaries.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: C ABI profile
+    href: /platform-spec/language-meta/interop/c-abi-profile/
+    relation: Parent feature hub
+  - type: Article
+    title: Core primitives
+    href: /platform-spec/language-meta/interop/interop-contracts/core-primitives/
+    relation: Type-shape classes
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Purpose
+
+v0.3.0 introduces **interop view types**: transparent records with **stable C layout** used only at FFI boundaries. They align with runtime `repr(C)` helpers in `compiler/crates/beskid_abi/src/types.rs` without exposing GC-managed Beskid `string` or `T[]` directly.
+
+Canonical definitions **should** live in corelib under an **`Interop`** package (exact package id is a corelib layout decision).
+
+## Normative layouts (tier-1, 64-bit)
+
+Layouts use pointer-sized fields in C ABI order.
+
+### `CStringView`
+
+UTF-8 byte range (does not imply null termination on the foreign side unless documented).
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `ptr` | pointer / `i64` | Start of bytes |
+| `len` | `i64` | Byte length |
+
+Maps to **`BeskidStr`** at the runtime embedding boundary.
+
+### `CBuffer`
+
+Read/write byte range.
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `ptr` | pointer / `i64` | Start of bytes |
+| `len` | `i64` | Logical length |
+
+### `CArrayView`
+
+Fat-pointer compatible with runtime arrays.
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `ptr` | pointer / `i64` | Element storage |
+| `len` | `i64` | Logical element count |
+| `cap` | `i64` | Capacity |
+
+Maps to **`BeskidArray`** where the profile documents element size separately.
+
+## Permitted primitives (v0.3.0)
+
+`bool` (as **`i8`** at boundary), `u8`, `i32`, `i64`, `f64`, `unit`, interop views above, and **`ref u8`** (legacy narrow slice start — prefer views).
+
+## Lowering
+
+The C ABI profile lowers views to a **flat list** of machine parameters per System V AMD64 (pointer and integer slots). The engine signature validator **must** accept only types expressible in that flat list.
+
+## After basic FFI
+
+**`CLayout` records** with primitive fields only arrive in **v0.3.1** ([C layout types](./c-layout-types/)). Nested structs, enums, and arrays inside FFI structs remain **deferred** until that band is stable.

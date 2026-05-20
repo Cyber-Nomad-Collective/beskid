@@ -33,6 +33,16 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 
 <SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
 
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+Runtime **channel** queues (**Send**, **Receive**, **TrySend**, **TryReceive**, **Close**), homogeneous **`Hub&lt;T&gt;`** multiplexing with round-robin **WaitReceive**, and **Mutex** / **WaitGroup** coordination. Cross-fiber data transfer is **channel-only**; successful **Send** *happens-before* observing **Receive**. Cancellation unblocks parked ops with **`Cancelled`** in **Result** after **`OnCancelled`** on the child fiber.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- Builtins: `channel_*`, `hub_*`, `mutex_*`, `wait_group_*` in `compiler/crates/beskid_runtime/`
+- ABI registry: `compiler/crates/beskid_abi/src/symbols.rs`, `define_builtins!`
+- Corelib mapping: **[Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/)**
+</SpecSection>
+
 <SpecSection title="Contract statement" id="contract-statement">
 **Channels** are the **only** approved mechanism for passing data between fibers. The runtime implements bounded/unbounded queues with **Send** and **Receive** (full method names in corelib). **Hub** multiplexes many channels without a language `select`. **Mutex** and **WaitGroup** builtins back corelib structs.
 
@@ -40,13 +50,13 @@ Errors use **Result** / **Option**—never panic for closed, full, or cancelled 
 </SpecSection>
 
 <SpecSection title="Happens-before" id="happens-before">
-A successful **Send** on `Channel<T>` *happens-before* a **Receive** that observes the value (Go/Java memory model style). Compiler **must not** allow passing stack pointers through **Channel**; values are copied or heap handles with GC tracing.
+A successful **Send** on `Channel&lt;T&gt;` *happens-before* a **Receive** that observes the value (Go/Java memory model style). Compiler **must not** allow passing stack pointers through **Channel**; values are copied or heap handles with GC tracing.
 
 Phase B parallel mutators rely on these edges plus **gc_write_barrier** on pointer stores.
 </SpecSection>
 
 <SpecSection title="Hub" id="hub">
-**Hub&lt;T&gt;** maintains registered `(index, channel: Channel<T>)` pairs — **homogeneous `T` only in v1**. **WaitReceive** blocks until at least one member has a message available, then completes a **Receive** on that member.
+**Hub&lt;T&gt;** maintains registered `(index, channel: Channel&lt;T&gt;)` pairs — **homogeneous `T` only in v1**. **WaitReceive** blocks until at least one member has a message available, then completes a **Receive** on that member.
 
 **Fairness (normative):** **round-robin** — per-hub cursor starts at 0, scans registered indices in ascending order wrapping modulo registration set, chooses the **first ready** channel in that rotation. After success, cursor advances past the chosen index. Prevents starvation when a high-traffic channel is registered before a low-traffic one.
 
@@ -62,7 +72,7 @@ Full decision log: **[Concurrency package / decisions record](/platform-spec/cor
 
 ## Cancellation
 
-**Fiber.Cancel** sets cancellation flag, dispatches **`OnCancelled`** on the child fiber (language **event** on **`Fiber<T>`**), then unblocks parked **Receive**/**Send**/**Wait** with **`Cancelled`** in **Result**. **Join** on the child returns **`FiberError::Cancelled`**.
+**Fiber.Cancel** sets cancellation flag, dispatches **`OnCancelled`** on the child fiber (language **event** on **`Fiber&lt;T&gt;`**), then unblocks parked **Receive**/**Send**/**Wait** with **`Cancelled`** in **Result**. **Join** on the child returns **`FiberError::Cancelled`**.
 </SpecSection>
 
 <SpecSection title="Blocking IO" id="blocking-io">

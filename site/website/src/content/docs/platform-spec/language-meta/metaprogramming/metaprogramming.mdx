@@ -1,11 +1,11 @@
 ---
-title: Metaprogramming
-description: Mod projects, Compiler Mod SDK contracts, and ownership split with compiler-side orchestration.
+title: "Metaprogramming"
+description: "Source generators, attributes that drive compiler plug-ins, and scheduling relative to other analyses. The broader generator roadmap may live in guides; v0.1 rules are normative here."
 template: splash
-tableOfContents: true
+tableOfContents: false
 specLevel: feature
 status: Standard
-lastReviewed: 2026-05-01
+lastReviewed: 2026-05-20
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -14,37 +14,25 @@ submitter:
   email: pmikstacki@cybernomad.it
 relatedTopics:
   - type: Area
-    title: Metaprogramming
+    title: "Metaprogramming"
     href: /platform-spec/language-meta/metaprogramming/
     relation: Parent area
-  - type: Feature
-    title: Compiler Mod SDK
-    href: /platform-spec/language-meta/metaprogramming/compiler-mod-sdk/
-    relation: Beskid contracts for compiler mods
-  - type: Feature
-    title: Project manifest contract
-    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
-    relation: Mod project type in Project.proj schema
-  - type: Area
-    title: Compiler Mods
-    href: /platform-spec/compiler/compiler-mods/
-    relation: Rust-side mod host and pipeline contracts
   - type: Domain
-    title: Language meta
+    title: "Language meta"
     href: /platform-spec/language-meta/
     relation: Parent domain hub
   - type: Domain
-    title: Platform specification
+    title: "Platform specification"
     href: /platform-spec/
     relation: Cross-cutting index
-  - type: Area
-    title: Interop
-    href: /platform-spec/language-meta/interop/
-    relation: Foreign boundaries distinct from meta capabilities
+  - type: Domain
+    title: "Execution documentation"
+    href: /execution/
+    relation: Runtime and backend contracts
 ---
 
-import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
-import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import SpecPageHeader from '../../../../../components/platform-spec/SpecPageHeader.astro';
+import SpecSection from '../../../../../components/platform-spec/SpecSection.astro';
 
 <SpecPageHeader
 	status="Standard"
@@ -54,35 +42,10 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 	submitterEmail="pmikstacki@cybernomad.it"
 />
 
-<SpecSection title="Language-first model" id="language-first">
-Compile-time metaprogramming is anchored on two language-level ideas:
+## Normative specification
 
-1. **`Mod` project type** — A `Project.proj` whose **project type** is `Mod` participates directly in compiler-mod orchestration: the build discovers the package from the dependency graph, compiles it AOT, and loads mod contracts during host compilation. Schema and wiring details are normative under **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)**.
+The canonical chapter is **[Metaprogramming](/platform-spec/language-meta/metaprogramming/metaprogramming/)** in the platform specification.
 
-2. **Compiler Mod SDK contracts** — Mod behavior is declared by Beskid contracts (`Collector`, `Generator`, `Analyzer`, `Rewriter`, `AttributeGenerator`) over syntax/query facades and typed AST operations. Language-level metaprogramming does **not** include a dedicated `meta` grammar item.
-</SpecSection>
+## Platform view
 
-<SpecSection title="Contract model (Collector, Generator, Analyzer, Rewriter)" id="pipeline">
-Compiler-mod packages define behavior through contracts:
-
-- **Collector** — Declarative entrypoint for selecting target nodes/symbols and constraining scope.
-- **Generator** — Incremental by default; emits **typed AST** contributions only (no formatting/text generation contract).
-- **Analyzer** — Runs across host code and generated code; reports compiler-native diagnostics and declares rewrites as fixes.
-- **Rewriter&lt;TSourceNode, TTargetNode&gt;** — Applies typed replacements with `Result<TTargetNode, FixError> Rewrite(TSourceNode sourceNode)`.
-- **AttributeGenerator** — Defines attributes exposed by SDK and mod packages.
-
-All mirrored syntax nodes are expected to implement query/AST-operation contracts surfaced by the SDK so contract code remains declarative.
-</SpecSection>
-
-<SpecSection title="Hybrid canonical ownership" id="ownership">
-- **[Language meta](/platform-spec/language-meta/)** — `Mod` package contract semantics and user-visible language constraints (for example `extend type` visibility rules).
-- **[Language meta / Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** — Beskid-side SDK contracts and typed syntax/query surfaces.
-- **[Compiler / Compiler Mods](/platform-spec/compiler/compiler-mods/)** — Rust-side mod host, AOT artifact lifecycle, phase ordering, typed merge, and incremental scheduling.
-- **Compiler-core modularity (Rust)** — Compiler composition / IoC remains Rust-owned and is specified separately under compiler features, not under mod packages.
-
-Neither domain duplicates the other: language pages do not specify Rust algorithms; compiler pages do not redefine Beskid-side mod contract semantics.
-</SpecSection>
-
-<SpecSection title="Superseded material" id="supersession">
-Informal drafts under `docs/guides/drafts/metaprogramming/` are **not canonical**. Use this platform-spec tree and **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** for `Mod` projects and **[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** for Beskid contract semantics.
-</SpecSection>
+Source generators, attributes that drive compiler plug-ins, and scheduling relative to other analyses. The broader generator roadmap may live in guides; v0.1 rules are normative here.

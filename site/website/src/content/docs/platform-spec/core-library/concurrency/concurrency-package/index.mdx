@@ -28,13 +28,24 @@ relatedTopics:
   - type: Feature
     title: Fibers and spawn
     href: /platform-spec/language-meta/evaluation/fibers-and-spawn/
-    relation: `spawn` keyword requires Fiber contract
+    relation: spawn keyword requires Fiber contract
 ---
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
 import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
 import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 
 <SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+Normative **corelib** shapes for cooperative concurrency: `Fiber&lt;T&gt;`, `Channel&lt;T&gt;`, homogeneous `Hub&lt;T&gt;`, `Mutex`, and `WaitGroup` as thin wrappers over stable runtime builtins. **`spawn`** lowering returns a move-only fiber handle with **`OnCancelled`** on the handle; channel and join failures use **`Result`** / **`Option`**, not panic.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- Workspace package `compiler/corelib/packages/concurrency/` (`corelib_concurrency`)
+- Runtime symbols: `compiler/crates/beskid_abi/src/symbols.rs`, `BUILTIN_SPECS`
+- Corelib tests: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/concurrency/`
+- Runtime integration: `compiler/crates/beskid_tests/src/runtime/fibers.rs` (planned)
+</SpecSection>
 
 <SpecSection title="Contract statement" id="contract-statement">
 The **`corelib_concurrency`** workspace package provides the only supported user-facing API for cooperative fibers and channel communication. Public types are **structs** whose methods call **stable runtime builtins** (`fiber_*`, `channel_*`, `hub_*`, `mutex_*`, `wait_group_*`). The package **must not** introduce secondary abstraction layers (no builder stacks, no implicit async state machines, no duplicated channel interfaces).
@@ -45,28 +56,28 @@ All fiber operations that can fail **must** return **`Core.Results.Result`** (or
 <SpecSection title="Inputs and outputs" id="inputs-and-outputs">
 | Surface | Role |
 | --- | --- |
-| `Fiber<T>` | Opaque handle wrapping `fiber_*` builtins; `T` is the spawn entry return type |
-| `Channel<T>` | **Unbounded by default**; `ChannelOptions.Bounded(n)` for bounded queues |
-| `Hub<T>` | Homogeneous multichannel **WaitReceive** (round-robin); unlike types use `Channel<HubMessage>` or multiple hubs |
+| `Fiber&lt;T&gt;` | Opaque handle wrapping `fiber_*` builtins; `T` is the spawn entry return type |
+| `Channel&lt;T&gt;` | **Unbounded by default**; `ChannelOptions.Bounded(n)` for bounded queues |
+| `Hub&lt;T&gt;` | Homogeneous multichannel **WaitReceive** (round-robin); unlike types use `Channel&lt;HubMessage&gt;` or multiple hubs |
 | `Mutex` | Mutual exclusion between fibers on shared state |
 | `WaitGroup` | Fork–join counter for batches of fibers |
 | `Concurrency.Yield()` | Cooperative reschedule (`fiber_yield`) |
 | `Concurrency.NowMillis()` | Monotonic milliseconds (`fiber_now_millis` / clock builtin) |
-| `Concurrency.Spawn` | Used by lowering of `spawn`; returns `Fiber<T>` with **OnCancelled** on handle |
+| `Concurrency.Spawn` | Used by lowering of `spawn`; returns `Fiber&lt;T&gt;` with **OnCancelled** on handle |
 | `Fiber.Join` | `Result<T, FiberError>` |
 | `Fiber.Detach` | Fire-and-forget; unjoined panic still aborts process unless recovered at runtime policy |
 | `Fiber.Cancel` | Sets cancel flag; runs child **`event OnCancelled()`**; **Join** → `FiberError::Cancelled` |
 </SpecSection>
 
 <SpecSection title="State model" id="state-model">
-- **`Fiber<T>`** — runtime handle + metadata (id, cancellation flag). Not copyable unless spec later allows handle duplication; **move-only** preferred.
-- **`Channel<T>`** — holds runtime queue id; **Close** marks writer end closed; **Receive** after drain returns **`ChannelError::Closed`** in **`Result`**.
+- **`Fiber&lt;T&gt;`** — runtime handle + metadata (id, cancellation flag). Not copyable unless spec later allows handle duplication; **move-only** preferred.
+- **`Channel&lt;T&gt;`** — holds runtime queue id; **Close** marks writer end closed; **Receive** after drain returns **`ChannelError::Closed`** in **`Result`**.
 - **`Hub`** — registered set of channel endpoints with cached readiness index updated by runtime on send/receive.
 - Phase A (see scheduler spec): many fibers, **single GC mutator thread** documented; Phase B adds parallel mutators without API break.
 </SpecSection>
 
 <SpecSection title="Algorithms and flow" id="algorithms-and-flow">
-1. **`spawn entry()`** lowers to runtime spawn with stack map for `entry`; parent gets `Fiber<T>`.
+1. **`spawn entry()`** lowers to runtime spawn with stack map for `entry`; parent gets `Fiber&lt;T&gt;`.
 2. **Send** — if queue full, **park current fiber** (not OS thread); on success establishes happens-before edge to receiver.
 3. **Receive** — if empty and open, park; if closed and empty, return **`Result::Err(Closed)`**.
 4. **TrySend** / **TryReceive** — non-blocking; **`Option`** for empty/full.
@@ -77,7 +88,7 @@ All fiber operations that can fail **must** return **`Core.Results.Result`** (or
 <SpecSection title="Edge cases and errors" id="edge-cases-and-errors">
 - **Send** after **Close** → `Result::Err(ChannelError::Closed)` (no panic).
 - **Cancel** on joined fiber → `FiberError::Cancelled` on **Join**.
-- **Detach** child panic → process abort after diagnostic (Go-like default) unless runtime policy adds domain recovery later.
+- **Detach** child panic → process abort after diagnostic unless runtime policy adds domain recovery later.
 - Fibers **must not** share pointers to another fiber's stack; **Channel** is the **only** approved cross-fiber communication (language + memory model).
 </SpecSection>
 

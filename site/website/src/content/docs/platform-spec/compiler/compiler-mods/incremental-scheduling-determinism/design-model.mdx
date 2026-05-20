@@ -31,9 +31,9 @@ This article documents the **design model** for **Incremental scheduling and det
 **Isolating** capture yields narrow dirty sets; **aggregating** capture widens invalidation by language intent—encoded as explicit graph edges here.
 
 ## Persistent entities
-- **Compilation instance** — implicit handle to the compilation under construction (see language-meta meta block scope).
+- **Compilation instance** — implicit handle to the compilation under construction (**[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** / `Beskid.Compiler.Compilation`).
 - **Syntax snapshot** — immutable tree with stable node identities suitable for incremental keys.
-- **Capability tokens** — host-granted permissions for I/O, diagnostics, and emit operations inside meta.
+- **Capability tokens** — host-granted permissions for I/O, diagnostics, and emit operations during mod execution.
 
 ## Boundaries
 - Mod SDK facades never bypass the host bridge for effects.
@@ -50,7 +50,7 @@ Hosts **must** record, per mod contract schedule, at minimum:
 1. **`syntax_generation_id`** — Monotonic per compilation unit (or workspace slice) counter bumped whenever a new parse snapshot replaces the previous `Program`.
 2. **`capture_fingerprint`** — Hash of stable syntax node identities and predicate parameters bound during capture (isolating capture narrows this hash to declared roots; aggregating capture mixes in workspace-wide generation ids).
 3. **`manifest_generation_id`** — Hash of relevant `Project.proj` / `Workspace.proj` / lockfile bytes affecting mod package identity, capabilities, or dependencies.
-4. **`capability_set_id`** — Canonical encoding of granted capabilities for the active host attachment.
+4. **`capability_set_id`** — Canonical encoding of granted capabilities for the active mod schedule.
 
 Replay **must** reuse cached process outputs when and only when all four ids match prior committed work. Any mismatch **must** drop cached process/emit artifacts before running the next round.
 
@@ -61,4 +61,4 @@ Replay **must** reuse cached process outputs when and only when all four ids mat
 
 ## Atomicity
 
-Within one **`meta.round_commit`** event, emit applications and diagnostic emissions **must** commit atomically: downstream semantic stages **must not** observe partially applied contributor edits (**[Typed emitter and transforms](/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/)**).
+Within one **`syntax.generation`** commit boundary, emit applications and diagnostic emissions **must** commit atomically: downstream semantic stages **must not** observe partially applied generator edits (**[Typed emitter and transforms](/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/)**).

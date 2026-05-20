@@ -37,6 +37,10 @@ relatedTopics:
     title: Compiler Mods
     href: /platform-spec/compiler/compiler-mods/
     relation: Host execution of mod pipelines
+  - type: Feature
+    title: Foreign library import
+    href: /platform-spec/tooling/foreign-library-import/
+    relation: Link metadata and CLI library mapping for FFI
 ---
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
 import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
@@ -59,6 +63,8 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 A manifest may declare **`type: Mod`**. A **`Mod`** project is a compiler-mod package: discovered from the dependency graph, compiled AOT, and executed through SDK contracts during host compilation. See **[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** and **[Compiler Mods](/platform-spec/compiler/compiler-mods/)**.
 
 Normative **`project.mod`** keys (`maxGeneratorRounds`, `capabilities`, optional `artifactPolicy`) are specified in **[design model](./design-model/)**; **[examples](./examples/)** show illustrative manifests.
+
+**v0.3 FFI:** optional **`project.link`** for foreign libraries is specified in **[project link libraries](./project-link-libraries/)** and populated via **[foreign library import](/platform-spec/tooling/foreign-library-import/)**.
 </SpecSection>
 
 <DomainTiles pathPrefix="platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract" heading="Articles" />

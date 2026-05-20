@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-05-20T06:10:09.317Z",
+  "generatedAt": "2026-05-20T08:30:36.648Z",
   "summary": {
-    "nodes": 425,
-    "errors": 22,
+    "nodes": 444,
+    "errors": 0,
     "warnings": 0
   },
   "nodes": [
@@ -1019,6 +1019,17 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
@@ -1036,7 +1047,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 7
+        "markdownH2": 8
       },
       "messages": []
     },
@@ -2345,7 +2356,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -2924,7 +2935,7 @@
     {
       "slug": "platform-spec/core-library/concurrency",
       "level": "area",
-      "status": "fail",
+      "status": "ok",
       "sections": [
         {
           "id": "scope",
@@ -2941,144 +2952,62 @@
         "specSections": 2,
         "markdownH2": 0
       },
-      "messages": [
-        {
-          "code": "MDX_UNKNOWN_COMPONENT",
-          "severity": "error",
-          "slug": "platform-spec/core-library/concurrency",
-          "message": "Unknown MDX component <T /> in platform-spec hub",
-          "detail": "platform-spec/core-library/concurrency/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-        },
-        {
-          "code": "MDX_UNKNOWN_COMPONENT",
-          "severity": "error",
-          "slug": "platform-spec/core-library/concurrency",
-          "message": "Unknown MDX component <T /> in platform-spec hub",
-          "detail": "platform-spec/core-library/concurrency/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-        }
-      ]
+      "messages": []
     },
     {
       "slug": "platform-spec/core-library/concurrency/concurrency-package",
       "level": "feature",
-      "status": "fail",
+      "status": "ok",
       "sections": [
         {
           "id": "what-this-feature-specifies",
           "required": true,
-          "found": false
+          "found": true
         },
         {
           "id": "implementation-anchors",
           "required": true,
-          "found": false
+          "found": true
         }
       ],
       "counts": {
-        "specSections": 10,
+        "specSections": 12,
         "markdownH2": 0
       },
-      "messages": [
-        {
-          "code": "MISSING_SECTION",
-          "severity": "error",
-          "slug": "platform-spec/core-library/concurrency/concurrency-package",
-          "message": "Missing required specSection \"what-this-feature-specifies\"",
-          "detail": "platform-spec/core-library/concurrency/concurrency-package/index.mdx"
-        },
-        {
-          "code": "MISSING_SECTION",
-          "severity": "error",
-          "slug": "platform-spec/core-library/concurrency/concurrency-package",
-          "message": "Missing required specSection \"implementation-anchors\"",
-          "detail": "platform-spec/core-library/concurrency/concurrency-package/index.mdx"
-        }
-      ]
+      "messages": []
     },
     {
       "slug": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases",
       "level": "article",
-      "status": "fail",
+      "status": "ok",
       "sections": [],
       "counts": {
         "specSections": 0,
         "markdownH2": 5
       },
-      "messages": [
-        {
-          "code": "MDX_UNKNOWN_COMPONENT",
-          "severity": "error",
-          "slug": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases",
-          "message": "Unknown MDX component <T /> in platform-spec hub",
-          "detail": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-        },
-        {
-          "code": "MDX_UNKNOWN_COMPONENT",
-          "severity": "error",
-          "slug": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases",
-          "message": "Unknown MDX component <T /> in platform-spec hub",
-          "detail": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-        }
-      ]
+      "messages": []
     },
     {
       "slug": "platform-spec/core-library/concurrency/concurrency-package/decisions-record",
       "level": "article",
-      "status": "fail",
+      "status": "ok",
       "sections": [],
       "counts": {
         "specSections": 0,
         "markdownH2": 15
       },
-      "messages": [
-        {
-          "code": "MDX_UNKNOWN_COMPONENT",
-          "severity": "error",
-          "slug": "platform-spec/core-library/concurrency/concurrency-package/decisions-record",
-          "message": "Unknown MDX component <T /> in platform-spec hub",
-          "detail": "platform-spec/core-library/concurrency/concurrency-package/decisions-record.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-        },
-        {
-          "code": "MDX_UNKNOWN_COMPONENT",
-          "severity": "error",
-          "slug": "platform-spec/core-library/concurrency/concurrency-package/decisions-record",
-          "message": "Unknown MDX component <T /> in platform-spec hub",
-          "detail": "platform-spec/core-library/concurrency/concurrency-package/decisions-record.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-        }
-      ]
+      "messages": []
     },
     {
       "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
       "level": "article",
-      "status": "fail",
+      "status": "ok",
       "sections": [],
       "counts": {
         "specSections": 0,
         "markdownH2": 4
       },
-      "messages": [
-        {
-          "code": "MDX_UNKNOWN_COMPONENT",
-          "severity": "error",
-          "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
-          "message": "Unknown MDX component <T /> in platform-spec hub",
-          "detail": "platform-spec/core-library/concurrency/concurrency-package/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-        },
-        {
-          "code": "MDX_UNKNOWN_COMPONENT",
-          "severity": "error",
-          "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
-          "message": "Unknown MDX component <T /> in platform-spec hub",
-          "detail": "platform-spec/core-library/concurrency/concurrency-package/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-        },
-        {
-          "code": "MDX_UNKNOWN_COMPONENT",
-          "severity": "error",
-          "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
-          "message": "Unknown MDX component <T /> in platform-spec hub",
-          "detail": "platform-spec/core-library/concurrency/concurrency-package/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-        }
-      ]
+      "messages": []
     },
     {
       "slug": "platform-spec/core-library/concurrency/concurrency-package/examples",
@@ -3094,46 +3023,24 @@
     {
       "slug": "platform-spec/core-library/concurrency/system-threading",
       "level": "feature",
-      "status": "fail",
+      "status": "ok",
       "sections": [
         {
           "id": "what-this-feature-specifies",
           "required": true,
-          "found": false
+          "found": true
         },
         {
           "id": "implementation-anchors",
           "required": true,
-          "found": false
+          "found": true
         }
       ],
       "counts": {
-        "specSections": 4,
+        "specSections": 6,
         "markdownH2": 0
       },
-      "messages": [
-        {
-          "code": "MISSING_SECTION",
-          "severity": "error",
-          "slug": "platform-spec/core-library/concurrency/system-threading",
-          "message": "Missing required specSection \"what-this-feature-specifies\"",
-          "detail": "platform-spec/core-library/concurrency/system-threading/index.mdx"
-        },
-        {
-          "code": "MISSING_SECTION",
-          "severity": "error",
-          "slug": "platform-spec/core-library/concurrency/system-threading",
-          "message": "Missing required specSection \"implementation-anchors\"",
-          "detail": "platform-spec/core-library/concurrency/system-threading/index.mdx"
-        },
-        {
-          "code": "MDX_UNKNOWN_COMPONENT",
-          "severity": "error",
-          "slug": "platform-spec/core-library/concurrency/system-threading",
-          "message": "Unknown MDX component <T /> in platform-spec hub",
-          "detail": "platform-spec/core-library/concurrency/system-threading/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-        }
-      ]
+      "messages": []
     },
     {
       "slug": "platform-spec/core-library/stability-and-api-shape",
@@ -3776,21 +3683,13 @@
     {
       "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/design-model",
       "level": "article",
-      "status": "fail",
+      "status": "ok",
       "sections": [],
       "counts": {
         "specSections": 0,
         "markdownH2": 3
       },
-      "messages": [
-        {
-          "code": "MDX_UNKNOWN_COMPONENT",
-          "severity": "error",
-          "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/design-model",
-          "message": "Unknown MDX component <T /> in platform-spec hub",
-          "detail": "platform-spec/core-library/terminal-and-console/console-terminal-events/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-        }
-      ]
+      "messages": []
     },
     {
       "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/examples",
@@ -4158,39 +4057,24 @@
     {
       "slug": "platform-spec/execution/runtime/channels-and-synchronization",
       "level": "feature",
-      "status": "fail",
+      "status": "ok",
       "sections": [
         {
           "id": "what-this-feature-specifies",
           "required": true,
-          "found": false
+          "found": true
         },
         {
           "id": "implementation-anchors",
           "required": true,
-          "found": false
+          "found": true
         }
       ],
       "counts": {
-        "specSections": 5,
+        "specSections": 7,
         "markdownH2": 1
       },
-      "messages": [
-        {
-          "code": "MISSING_SECTION",
-          "severity": "error",
-          "slug": "platform-spec/execution/runtime/channels-and-synchronization",
-          "message": "Missing required specSection \"what-this-feature-specifies\"",
-          "detail": "platform-spec/execution/runtime/channels-and-synchronization/index.mdx"
-        },
-        {
-          "code": "MISSING_SECTION",
-          "severity": "error",
-          "slug": "platform-spec/execution/runtime/channels-and-synchronization",
-          "message": "Missing required specSection \"implementation-anchors\"",
-          "detail": "platform-spec/execution/runtime/channels-and-synchronization/index.mdx"
-        }
-      ]
+      "messages": []
     },
     {
       "slug": "platform-spec/execution/runtime/channels-and-synchronization/contracts-and-edge-cases",
@@ -4206,12 +4090,12 @@
     {
       "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
       "level": "feature",
-      "status": "fail",
+      "status": "ok",
       "sections": [
         {
           "id": "what-this-feature-specifies",
           "required": true,
-          "found": false
+          "found": true
         },
         {
           "id": "implementation-anchors",
@@ -4220,25 +4104,10 @@
         }
       ],
       "counts": {
-        "specSections": 7,
+        "specSections": 8,
         "markdownH2": 0
       },
-      "messages": [
-        {
-          "code": "MISSING_SECTION",
-          "severity": "error",
-          "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
-          "message": "Missing required specSection \"what-this-feature-specifies\"",
-          "detail": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/index.mdx"
-        },
-        {
-          "code": "MDX_UNKNOWN_COMPONENT",
-          "severity": "error",
-          "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
-          "message": "Unknown MDX component <T /> in platform-spec hub",
-          "detail": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-        }
-      ]
+      "messages": []
     },
     {
       "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/design-model",
@@ -4302,7 +4171,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -4543,7 +4412,7 @@
         }
       ],
       "counts": {
-        "specSections": 3,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -4639,46 +4508,24 @@
     {
       "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
       "level": "feature",
-      "status": "fail",
+      "status": "ok",
       "sections": [
         {
           "id": "what-this-feature-specifies",
           "required": true,
-          "found": false
+          "found": true
         },
         {
           "id": "implementation-anchors",
           "required": true,
-          "found": false
+          "found": true
         }
       ],
       "counts": {
-        "specSections": 6,
+        "specSections": 8,
         "markdownH2": 0
       },
-      "messages": [
-        {
-          "code": "MISSING_SECTION",
-          "severity": "error",
-          "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
-          "message": "Missing required specSection \"what-this-feature-specifies\"",
-          "detail": "platform-spec/language-meta/evaluation/fibers-and-spawn/index.mdx"
-        },
-        {
-          "code": "MISSING_SECTION",
-          "severity": "error",
-          "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
-          "message": "Missing required specSection \"implementation-anchors\"",
-          "detail": "platform-spec/language-meta/evaluation/fibers-and-spawn/index.mdx"
-        },
-        {
-          "code": "MDX_UNKNOWN_COMPONENT",
-          "severity": "error",
-          "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
-          "message": "Unknown MDX component <T /> in platform-spec hub",
-          "detail": "platform-spec/language-meta/evaluation/fibers-and-spawn/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-        }
-      ]
+      "messages": []
     },
     {
       "slug": "platform-spec/language-meta/interop",
@@ -4719,13 +4566,68 @@
         }
       ],
       "counts": {
-        "specSections": 2,
+        "specSections": 3,
         "markdownH2": 0
       },
       "messages": []
     },
     {
+      "slug": "platform-spec/language-meta/interop/c-abi-profile/c-layout-types",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/language-meta/interop/c-abi-profile/extern-contracts-and-linking",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/c-abi-profile/interop-view-types",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/c-abi-profile/link-time-linking",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/c-abi-profile/platform-tier-matrix",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -4743,6 +4645,94 @@
       "counts": {
         "specSections": 0,
         "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/export-and-callbacks",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 3,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/export-and-callbacks/callback-registration",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/export-and-callbacks/export-attribute",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/export-and-callbacks/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/ffi-and-extern",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 6,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/ffi-and-extern/contract-import-syntax",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/ffi-and-extern/extern-attribute-schema",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/ffi-and-extern/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4769,18 +4759,40 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/language-meta/interop/interop-contracts/callback-call-shapes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/language-meta/interop/interop-contracts/conformance-and-versioning",
       "level": "article",
       "status": "ok",
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
     {
       "slug": "platform-spec/language-meta/interop/interop-contracts/core-primitives",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/interop-contracts/error-and-unwind-semantics",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -4798,6 +4810,17 @@
       "counts": {
         "specSections": 0,
         "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/interop-contracts/ownership-at-boundary",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4972,7 +4995,7 @@
         }
       ],
       "counts": {
-        "specSections": 2,
+        "specSections": 3,
         "markdownH2": 0
       },
       "messages": []
@@ -5084,6 +5107,17 @@
       "counts": {
         "specSections": 0,
         "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/foreign-library-import",
+      "level": "area",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 3,
+        "markdownH2": 0
       },
       "messages": []
     },
@@ -5293,6 +5327,17 @@
       "counts": {
         "specSections": 0,
         "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -5616,160 +5661,5 @@
       "messages": []
     }
   ],
-  "diagnostics": [
-    {
-      "code": "MDX_UNKNOWN_COMPONENT",
-      "severity": "error",
-      "slug": "platform-spec/core-library/concurrency",
-      "message": "Unknown MDX component <T /> in platform-spec hub",
-      "detail": "platform-spec/core-library/concurrency/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-    },
-    {
-      "code": "MDX_UNKNOWN_COMPONENT",
-      "severity": "error",
-      "slug": "platform-spec/core-library/concurrency",
-      "message": "Unknown MDX component <T /> in platform-spec hub",
-      "detail": "platform-spec/core-library/concurrency/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-    },
-    {
-      "code": "MISSING_SECTION",
-      "severity": "error",
-      "slug": "platform-spec/core-library/concurrency/concurrency-package",
-      "message": "Missing required specSection \"what-this-feature-specifies\"",
-      "detail": "platform-spec/core-library/concurrency/concurrency-package/index.mdx"
-    },
-    {
-      "code": "MISSING_SECTION",
-      "severity": "error",
-      "slug": "platform-spec/core-library/concurrency/concurrency-package",
-      "message": "Missing required specSection \"implementation-anchors\"",
-      "detail": "platform-spec/core-library/concurrency/concurrency-package/index.mdx"
-    },
-    {
-      "code": "MDX_UNKNOWN_COMPONENT",
-      "severity": "error",
-      "slug": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases",
-      "message": "Unknown MDX component <T /> in platform-spec hub",
-      "detail": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-    },
-    {
-      "code": "MDX_UNKNOWN_COMPONENT",
-      "severity": "error",
-      "slug": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases",
-      "message": "Unknown MDX component <T /> in platform-spec hub",
-      "detail": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-    },
-    {
-      "code": "MDX_UNKNOWN_COMPONENT",
-      "severity": "error",
-      "slug": "platform-spec/core-library/concurrency/concurrency-package/decisions-record",
-      "message": "Unknown MDX component <T /> in platform-spec hub",
-      "detail": "platform-spec/core-library/concurrency/concurrency-package/decisions-record.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-    },
-    {
-      "code": "MDX_UNKNOWN_COMPONENT",
-      "severity": "error",
-      "slug": "platform-spec/core-library/concurrency/concurrency-package/decisions-record",
-      "message": "Unknown MDX component <T /> in platform-spec hub",
-      "detail": "platform-spec/core-library/concurrency/concurrency-package/decisions-record.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-    },
-    {
-      "code": "MDX_UNKNOWN_COMPONENT",
-      "severity": "error",
-      "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
-      "message": "Unknown MDX component <T /> in platform-spec hub",
-      "detail": "platform-spec/core-library/concurrency/concurrency-package/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-    },
-    {
-      "code": "MDX_UNKNOWN_COMPONENT",
-      "severity": "error",
-      "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
-      "message": "Unknown MDX component <T /> in platform-spec hub",
-      "detail": "platform-spec/core-library/concurrency/concurrency-package/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-    },
-    {
-      "code": "MDX_UNKNOWN_COMPONENT",
-      "severity": "error",
-      "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
-      "message": "Unknown MDX component <T /> in platform-spec hub",
-      "detail": "platform-spec/core-library/concurrency/concurrency-package/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-    },
-    {
-      "code": "MISSING_SECTION",
-      "severity": "error",
-      "slug": "platform-spec/core-library/concurrency/system-threading",
-      "message": "Missing required specSection \"what-this-feature-specifies\"",
-      "detail": "platform-spec/core-library/concurrency/system-threading/index.mdx"
-    },
-    {
-      "code": "MISSING_SECTION",
-      "severity": "error",
-      "slug": "platform-spec/core-library/concurrency/system-threading",
-      "message": "Missing required specSection \"implementation-anchors\"",
-      "detail": "platform-spec/core-library/concurrency/system-threading/index.mdx"
-    },
-    {
-      "code": "MDX_UNKNOWN_COMPONENT",
-      "severity": "error",
-      "slug": "platform-spec/core-library/concurrency/system-threading",
-      "message": "Unknown MDX component <T /> in platform-spec hub",
-      "detail": "platform-spec/core-library/concurrency/system-threading/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-    },
-    {
-      "code": "MDX_UNKNOWN_COMPONENT",
-      "severity": "error",
-      "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/design-model",
-      "message": "Unknown MDX component <T /> in platform-spec hub",
-      "detail": "platform-spec/core-library/terminal-and-console/console-terminal-events/design-model.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-    },
-    {
-      "code": "MISSING_SECTION",
-      "severity": "error",
-      "slug": "platform-spec/execution/runtime/channels-and-synchronization",
-      "message": "Missing required specSection \"what-this-feature-specifies\"",
-      "detail": "platform-spec/execution/runtime/channels-and-synchronization/index.mdx"
-    },
-    {
-      "code": "MISSING_SECTION",
-      "severity": "error",
-      "slug": "platform-spec/execution/runtime/channels-and-synchronization",
-      "message": "Missing required specSection \"implementation-anchors\"",
-      "detail": "platform-spec/execution/runtime/channels-and-synchronization/index.mdx"
-    },
-    {
-      "code": "MISSING_SECTION",
-      "severity": "error",
-      "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
-      "message": "Missing required specSection \"what-this-feature-specifies\"",
-      "detail": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/index.mdx"
-    },
-    {
-      "code": "MDX_UNKNOWN_COMPONENT",
-      "severity": "error",
-      "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
-      "message": "Unknown MDX component <T /> in platform-spec hub",
-      "detail": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-    },
-    {
-      "code": "MISSING_SECTION",
-      "severity": "error",
-      "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
-      "message": "Missing required specSection \"what-this-feature-specifies\"",
-      "detail": "platform-spec/language-meta/evaluation/fibers-and-spawn/index.mdx"
-    },
-    {
-      "code": "MISSING_SECTION",
-      "severity": "error",
-      "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
-      "message": "Missing required specSection \"implementation-anchors\"",
-      "detail": "platform-spec/language-meta/evaluation/fibers-and-spawn/index.mdx"
-    },
-    {
-      "code": "MDX_UNKNOWN_COMPONENT",
-      "severity": "error",
-      "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
-      "message": "Unknown MDX component <T /> in platform-spec hub",
-      "detail": "platform-spec/language-meta/evaluation/fibers-and-spawn/index.mdx: add it to HUB_COMPONENT_PROP_SCHEMAS in trudoc (or use markdown-first fences per MARKDOWN-FIRST.md)."
-    }
-  ]
+  "diagnostics": []
 }

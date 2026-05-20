@@ -20,7 +20,7 @@ Beskid is a statically typed language designed to teach compiler construction. I
 - First-class attributes (declarations + typed applications).
 
 ## Metaprogramming
-- Compile-time **Mod SDK** contracts and the Rust **mod host** live in **platform-spec** (split across [Language meta / Metaprogramming](/platform-spec/language-meta/metaprogramming/) and [Compiler Mods](/platform-spec/compiler/compiler-mods/)); older exploratory drafts are not authoritative.
+- Compile-time **Mod SDK** contracts, `type: Mod` manifests, and the Rust **mod host** live in **platform-spec** (split across [Language meta / Metaprogramming](/platform-spec/language-meta/metaprogramming/), [Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/), and [Compiler Mods](/platform-spec/compiler/compiler-mods/)); older exploratory drafts are not authoritative.
 
 ## Documentation
 - `docs/book` — guided learning path for language and project organization.

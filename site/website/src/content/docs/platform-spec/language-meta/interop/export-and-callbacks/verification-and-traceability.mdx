@@ -1,0 +1,43 @@
+---
+title: Export and callbacks — Verification and traceability
+description: Conformance fixtures for Export and callback registration (v0.3 spec-first).
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Export and callbacks
+    href: /platform-spec/language-meta/interop/export-and-callbacks/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Spec-first
+
+v0.3 **Standard** text for export/callbacks precedes full codegen and linker support.
+
+## Required fixtures (when implemented)
+
+| Fixture | Asserts |
+| --- | --- |
+| Valid `[Export]` on `pub fn` | Parses; types check |
+| `Export` on contract/type | Diagnostic |
+| Callback table version mismatch | Host registration error path |
+| Link exports + runtime archive | Symbol present in final binary |
+
+Runtime tests **may** use `#[ignore = "v0.3 export impl"]` until link drivers emit export metadata.
+
+## Runtime ABI
+
+Adding **user export symbols** **must not** change `RUNTIME_EXPORT_SYMBOLS` unless a new **runtime-provided** registrar is promoted to the Rust ABI profile.

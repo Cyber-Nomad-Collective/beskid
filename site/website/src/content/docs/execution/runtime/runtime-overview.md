@@ -10,10 +10,10 @@ This document covers runtime ownership, mandatory services, and execution bounda
 
 ## Runtime components
 ### 1) Memory management
-- **Go-style GC**: concurrent, precise, tri-color mark-and-sweep with write barriers (Phase B; see platform spec).
+- **Concurrent GC**: precise, tri-color mark-and-sweep with write barriers (Phase B; see platform spec).
 - **Phase A**: many fibers on an M:N scheduler with a **single GC mutator** thread.
 - Short STW pauses only for root scanning and phase transitions (Phase B target).
-- GC pacing similar to Go's `GOGC` (heap growth vs CPU tradeoff).
+- Heap-growth pacing balances memory growth against CPU time.
 
 Normative detail: **[Memory and GC runtime contract](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/)** and `/execution/memory/gc.md`.
 
@@ -69,4 +69,4 @@ All builtins are declared via `cranelift_module::Module::declare_function` and c
 - JIT and AOT share the same runtime ABI.
 - AOT is the primary production execution path; JIT is a thin development-time runner.
 - Runtime should be minimal to keep CLIF lowering straightforward.
-- GC strategy is finalized to Go-style concurrent mark/sweep (no manual free); fiber Phase A runs before full parallel GC.
+- GC strategy is finalized as concurrent mark/sweep (no manual free); fiber Phase A runs before full parallel GC.

@@ -1,0 +1,47 @@
+---
+title: C ABI profile — Platform tier matrix
+description: Tier-1 Standard hosts vs Proposed platforms; WinAPI out of stdlib scope.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: C ABI profile
+    href: /platform-spec/language-meta/interop/c-abi-profile/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Tier-1 Standard (v0.3)
+
+| Host | Calling convention | Linking | Stdlib foreign libs |
+| --- | --- | --- | --- |
+| Linux x86_64 ELF | System V AMD64 | Link-time | `libc`, `libpthread` class |
+| macOS x86_64 / arm64 (POSIX) | Platform C ABI | Link-time | `libc`, `libSystem` class |
+
+Reference compiler conformance claims **must** be justified against this matrix for user **`Extern`**.
+
+## Proposed (not Standard in v0.3)
+
+| Host | Notes |
+| --- | --- |
+| Windows x86_64 | **WinAPI / stdcall** — **out of scope for stdlib**. Optional platform packages may declare `Extern` contracts against `ucrtbase` / `kernel32` under a **Proposed** profile; not required for corelib **Standard**. |
+| Dynamic-only resolution | **[Dynamic resolution profile](./dynamic-resolution-profile/)** |
+| Foreign-thread callback entry | v0.3.2+ planning |
+
+## Corelib policy
+
+Standard library packages **must not** require WinAPI linkage for **Standard** conformance. Console and threading on Windows may ship as **optional platform packages** until a Proposed Windows profile is promoted.
+
+Linux/macOS libc contracts in corelib remain the reference patterns for **`Extern`** documentation and tests.

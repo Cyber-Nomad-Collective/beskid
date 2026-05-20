@@ -31,9 +31,9 @@ This article documents the **design model** for **Analysis, query, and diagnosti
 **Process** pipelines express fluent queries that lower to bounded Rust walkers; **Diagnostics** raised here must use compiler-stable codes for parity with `beskid_analysis` / LSP.
 
 ## Persistent entities
-- **Compilation instance** — implicit handle to the compilation under construction (see language-meta meta block scope).
+- **Compilation instance** — implicit handle to the compilation under construction (**[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** / `Beskid.Compiler.Compilation`).
 - **Syntax snapshot** — immutable tree with stable node identities suitable for incremental keys.
-- **Capability tokens** — host-granted permissions for I/O, diagnostics, and emit operations inside meta.
+- **Capability tokens** — host-granted permissions for I/O, diagnostics, and emit operations during mod execution.
 
 ## Boundaries
 - Mod SDK facades never bypass the host bridge for effects.
@@ -49,7 +49,7 @@ This article documents the **design model** for **Analysis, query, and diagnosti
 `Beskid.Compiler.Diagnostics` (and internal meta emitters) **must**:
 
 1. Emit `SemanticDiagnostic` values compatible with `run_rules` output (same severity enum, string diagnostic codes matching registered ids).
-2. Allocate meta and meta-host codes only inside **E1801–E1899** using the sub-ranges in **[Diagnostic code registry / design model](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)**; register each code in `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` when introduced.
+2. Allocate mod and mod-host codes only inside **E1801–E1899** using the sub-ranges in **[Diagnostic code registry / design model](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)**; register each code in `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` when introduced.
 3. Never bypass `span_to_sourcespan` / miette adapters used elsewhere so LSP label offsets remain accurate.
 
 ## Query lowering and bounded walkers

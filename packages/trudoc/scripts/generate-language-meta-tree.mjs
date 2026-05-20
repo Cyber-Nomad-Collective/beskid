@@ -1,11 +1,18 @@
 /**
- * Generates platform-spec/language-meta/{area}/*.mdx feature stubs (no URL version segment; Git is the version line).
- * Run: node scripts/generate-language-meta-tree.mjs (from site/website)
+ * Generates missing platform-spec/language-meta stubs (no URL version segment; Git is the version line).
+ *
+ * By default this script **never overwrites** existing files. Hand-authored area hubs (for example
+ * interop v0.3 scope), feature hub directories, and expanded feature pages are preserved.
+ *
+ * Run: node scripts/generate-language-meta-tree.mjs
+ * Force overwrite (maintainers only): node scripts/generate-language-meta-tree.mjs --force
  */
 import fs from 'node:fs';
 import path from 'node:path';
 
 import { getWebsiteRoot } from './lib/website-root.mjs';
+
+const force = process.argv.includes('--force');
 
 const WEBSITE_ROOT = getWebsiteRoot(import.meta.url);
 const ROOT = path.join(WEBSITE_ROOT, 'src', 'content', 'docs', 'platform-spec', 'language-meta');
@@ -194,15 +201,47 @@ const areas = [
 	{
 		slug: 'interop',
 		title: 'Interop',
-		description: 'Foreign functions and native boundaries.',
+		description: 'Foreign functions, export, and native boundaries (v0.3 FFI).',
 		features: [
+			{
+				slug: 'interop-contracts',
+				title: 'Interop.Contracts',
+				spec: '/platform-spec/language-meta/interop/interop-contracts/',
+				status: 'Standard',
+				summary:
+					'Language-agnostic FFI vocabulary: symbols, ownership, callbacks, and user FFI layout bands separate from runtime ABI.',
+			},
 			{
 				slug: 'ffi-and-extern',
 				title: 'FFI and extern',
 				spec: '/platform-spec/language-meta/interop/ffi-and-extern/',
 				status: 'Standard',
 				summary:
-					'Calling native libraries, marshalling, and safety around unmanaged pointers. ABI details pair with Execution runtime chapters.',
+					'Extern on contracts, interop views, link-time import, and per-method Symbol overrides (v0.3.0).',
+			},
+			{
+				slug: 'export-and-callbacks',
+				title: 'Export and callbacks',
+				spec: '/platform-spec/language-meta/interop/export-and-callbacks/',
+				status: 'Standard',
+				summary:
+					'Export attribute for embedding and host callback registration tables.',
+			},
+			{
+				slug: 'c-abi-profile',
+				title: 'C ABI profile',
+				spec: '/platform-spec/language-meta/interop/c-abi-profile/',
+				status: 'Standard',
+				summary:
+					'Link-time linking, tier-1 platforms, interop views; WinAPI out of stdlib Standard.',
+			},
+			{
+				slug: 'rust-abi-profile',
+				title: 'Rust ABI profile',
+				spec: '/platform-spec/language-meta/interop/rust-abi-profile/',
+				status: 'Standard',
+				summary:
+					'Stable runtime builtin exports for JIT/AOT embedding (unchanged by user FFI).',
 			},
 		],
 	},
@@ -243,10 +282,15 @@ function yamlString(s) {
 	return JSON.stringify(s);
 }
 
-function writeFile(rel, body) {
+function writeFile(rel, body, { overwrite = force } = {}) {
 	const p = path.join(ROOT, rel);
+	if (!overwrite && fs.existsSync(p)) {
+		console.log(`skip (exists): ${rel}`);
+		return false;
+	}
 	fs.mkdirSync(path.dirname(p), { recursive: true });
 	fs.writeFileSync(p, body, 'utf8');
+	return true;
 }
 
 const hubFrontmatter = `---
@@ -320,11 +364,19 @@ import DomainTiles from '../../../../../components/platform-spec/DomainTiles.ast
 ${area.description}
 </SpecSection>
 
+<SpecSection title="Feature index" id="features">
+Use the tiles below for normative **feature** contracts in this area.
+</SpecSection>
+
 <DomainTiles pathPrefix="platform-spec/language-meta/${area.slug}" heading="Features" />
 `;
 	writeFile(`${area.slug}/index.mdx`, areaFm);
 
 	for (const f of area.features) {
+		const hubDir = path.join(ROOT, area.slug, f.slug);
+		if (fs.existsSync(hubDir) && fs.statSync(hubDir).isDirectory()) {
+			continue;
+		}
 		const featPath = `${area.slug}/${f.slug}.mdx`;
 		const descShort = `${f.summary.slice(0, 200)}${f.summary.length > 200 ? '…' : ''}`;
 		const featBody = `---
@@ -383,4 +435,8 @@ ${f.summary}
 	}
 }
 
-console.log(`Wrote language-meta tree under ${ROOT}`);
+console.log(
+	force
+		? `Wrote language-meta tree under ${ROOT} (--force: existing files were overwritten)`
+		: `Wrote missing language-meta stubs under ${ROOT} (existing files preserved; use --force to overwrite)`,
+);
