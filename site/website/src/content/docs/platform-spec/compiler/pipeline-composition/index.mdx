@@ -25,6 +25,10 @@ relatedTopics:
     title: Build pipeline
     href: /platform-spec/compiler/build-pipeline/
     relation: Observable phase ordering
+  - type: Feature
+    title: Native dependency injection
+    href: /platform-spec/language-meta/composition/dependency-injection/
+    relation: App host DI resolved at composition.resolve
 ---
 
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
@@ -46,8 +50,15 @@ Pipeline composition is **Rust-only** compiler infrastructure: pass registration
 | Compiler mods (`type: Mod`) | [Compiler Mods](/platform-spec/compiler/compiler-mods/) + [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/) |
 </SpecSection>
 
+<SpecSection title="User program composition (read-only)" id="user-composition">
+The reference compiler **resolves** Beskid app composition ([Native dependency injection](/platform-spec/language-meta/composition/dependency-injection/)) at compile time. Rust pipeline code **materializes** a frozen binding plan and **composition snapshot** for lowering and mod queries; it does **not** reinterpret `host` / `registry` / `scope` syntax.
+
+Planned phase id: **`composition.resolve`** (after `semantic.snapshot`, before `mod.analyze`). See [Native DI / Flow and algorithm](/platform-spec/language-meta/composition/dependency-injection/flow-and-algorithm/).
+</SpecSection>
+
 <SpecSection title="Implementation anchors" id="anchors">
 - `compiler/crates/beskid_pipeline/` — phase ids and observer hooks
 - `compiler/crates/beskid_analysis/src/services.rs` — session orchestration
 - `compiler/crates/beskid_analysis/src/analysis/rules/staged/` — staged semantic pass graph
+- `compiler/crates/beskid_analysis` — planned `composition` module for app DI graph (see native DI feature hub)
 </SpecSection>

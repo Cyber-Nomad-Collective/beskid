@@ -94,6 +94,25 @@ Individual codes are defined in **[Mod host bridge / AOT artifact contract](/pla
 | **E1858** | Rewriter generic instantiation does not match source node kind. |
 | **E1859–E1870** | **Reserved** for contract execution failures. |
 
+## Language macro expansion (**E1901–E1999**)
+
+The inclusive range **E1901–E1999** is owned by **`macro.expand`** and macro definition validation. Ordinary semantic rules must not allocate inside this band.
+
+| Code | When emitted |
+| --- | --- |
+| **E1901** | `name!` invocation with no resolving `macro` binding in scope. |
+| **E1902** | Argument count does not match macro parameter list. |
+| **E1903** | Actual argument shape does not match declared fragment kind. |
+| **E1904** | **`$param`** reference in a non-macro body or unknown parameter name. |
+| **E1905** | **`maxMacroExpansionDepth`** exceeded (default 32). |
+| **E1906** | Expanded tree fails well-formedness / structural validation. |
+| **E1907** | Ambiguous macro name (multiple `macro` bindings in scope). |
+| **E1908** | `macro` definition with duplicate parameter names. |
+| **E1909** | Invalid or unknown fragment kind keyword in macro parameter list. |
+| **E1910–E1999** | **Reserved** for macro hygiene and item-splice failures. |
+
+See **[Language macros](/platform-spec/language-meta/metaprogramming/macros/)**.
+
 ## Documentation comment diagnostics (**W1610–W1619**, **W1620–W1625**)
 
 The inclusive ranges **W1610–W1619** and **W1620–W1625** are reserved for **leading documentation body** validation (triple-slash mini-language: `@ref`, `@arg`, `@returns`, `@variant`, `@par`, and unknown directives). These warnings are produced from the document-analysis snapshot after name resolution succeeds; they **must not** use ad hoc string codes outside `SemanticIssueKind`. Hard errors for documentation are **not** allocated in v1; if a future policy introduces blocking documentation failures, allocate **E1610–E1629** in this document and in `diagnostic_kinds.rs` before use.

@@ -271,7 +271,7 @@ const areas = [
 				spec: '/platform-spec/language-meta/composition/dependency-injection/',
 				status: 'Standard',
 				summary:
-					'Native host-based DI: `host`, `launch`, registrations, and lifetimes. This feature page is the canonical specification entry in the platform-spec tree.',
+					'Native DI: `host`, `registry`, `scope`, `with`, `inject`, `startup`, `launch`. Compile-time resolution; see feature articles for normative contracts.',
 			},
 		],
 	},

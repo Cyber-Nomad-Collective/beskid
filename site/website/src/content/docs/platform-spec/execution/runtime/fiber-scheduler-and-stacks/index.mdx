@@ -41,7 +41,7 @@ Cooperative **M:N** scheduling: many **fibers** on an OS worker pool, **growable
 </SpecSection>
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
-- `compiler/crates/beskid_runtime/` — scheduler module (to be added)
+- `compiler/crates/beskid_runtime/src/scheduler/` — split scheduler state, TLS, spawn/cancel, run loop, and syscall parking modules
 - `compiler/crates/beskid_abi/` — symbols and `BUILTIN_SPECS`
 - `compiler/crates/beskid_analysis/src/builtins.rs` — `__fiber_*` injected paths
 - `compiler/crates/beskid_codegen/` — safepoints, stack maps
@@ -89,11 +89,15 @@ Phase B **must** be specified in **[memory-and-gc-runtime-contract](/platform-sp
 <SpecSection title="Runtime builtins (normative names)" id="runtime-builtins">
 Illustrative ABI symbols (exact names in `beskid_abi/src/symbols.rs`):
 
-- `fiber_spawn`, `fiber_join`, `fiber_detach`, `fiber_cancel`, `fiber_yield`
-- `fiber_current_id` (diagnostics)
+- `fiber_spawn`, `fiber_spawn_with_cancel_slot`, `fiber_join_status`, `fiber_join_value`, `fiber_detach`, `fiber_cancel`, `fiber_yield`
+- `fiber_current_id` (diagnostics), `fiber_processor_count` (scheduler sizing)
 - Monotonic clock builtin for **`Concurrency.NowMillis()`** (replaces `rt_now_millis`)
 
 Deprecated: `rt_yield` (`sched` feature) → `fiber_yield`.
+</SpecSection>
+
+<SpecSection title="Syscall Parking" id="syscall-parking">
+M6 completion requires blocking runtime syscalls to enqueue host blocking work on the syscall pool, park only the current fiber, and wake that fiber when the worker finishes. Worker threads must not execute generated Beskid code or perform generated-runtime allocation directly; any runtime object creation happens after the fiber resumes on the scheduler thread.
 </SpecSection>
 
 <SpecSection title="Main fiber" id="main-fiber">

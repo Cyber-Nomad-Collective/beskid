@@ -1,0 +1,59 @@
+---
+title: Native dependency injection - Verification and traceability
+description: Tests, snapshot versioning, and implementation checklist.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Native dependency injection
+    href: /platform-spec/language-meta/composition/dependency-injection/
+    relation: Parent feature hub
+  - type: Area
+    title: Conformance
+    href: /platform-spec/compiler/conformance/
+    relation: Evidence policy for compiler features
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Verification matrix (target)
+
+| Scenario | Expected evidence |
+| --- | --- |
+| `launch` + field inject | `beskid run` / `beskid build` succeed; JIT/AOT parity |
+| Host chain override | Launched `registry` wins over `: ParentHost` |
+| `inject IContract[]` with two registrations | Both instances wired; order stable |
+| Singular inject with two registrations | **E1705** |
+| `global::` inside named scope | Resolves global binding, not inner shadow |
+| `dispose` on `with` exit | Called after body; unwind cases per spec |
+| Child `with` without parent | **E1707** |
+| `launch` in `Lib` | **E1711** |
+| Constructor `inject` | **E1712** |
+| Two `launch` on entry path | **E1702** |
+| `Mod` project `host` | **E1710** |
+| Mod reads snapshot | No graph mutation |
+
+## Implementation checklist
+
+- [ ] Grammar: `host`, `registry`, `scope`, `init`, `dispose`, `startup`, `with`, `launch`, field `inject`, `global::`, `parent::`, `T[]` inject
+- [ ] Reject constructor `inject`
+- [ ] Host-chain merge + override diagnostics
+- [ ] Plural inject aggregation
+- [ ] `beskid_analysis::composition` + **E1701–E1799** in `diagnostic_kinds.rs`
+- [ ] `composition.resolve` in `beskid_pipeline` + `PIPELINE.md`
+- [ ] Composition snapshot export
+- [ ] `beskid_codegen` field init + `with` enter/leave
+- [ ] Manifest validation: **`app`** target + single launch
+- [ ] Corelib `ConsoleHost`
+- [ ] Fixtures: lib host + app launch, plural inject, dispose, override chain

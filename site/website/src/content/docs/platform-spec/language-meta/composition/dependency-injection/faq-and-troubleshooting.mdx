@@ -1,0 +1,87 @@
+---
+title: Native dependency injection - FAQ and troubleshooting
+description: Locked design decisions, troubleshooting, and v0.3 follow-ups.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Native dependency injection
+    href: /platform-spec/language-meta/composition/dependency-injection/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Locked decisions (v0.2)
+
+| Topic | Decision |
+| --- | --- |
+| **Multiple implementations** | Use **`inject IContract[]`** (or concrete `T[]`); singular inject **must** be unique at resolution level |
+| **Host override** | Launched host is topmost; **`registry`** overrides parent **`: Host`** chain and corelib bases |
+| **Scope model** | **Global** = merged host `registry`; **named `scope`** tree; **scope stack** for resolution |
+| **Scope navigation** | Unqualified walk inner → global; **`global::`**, **`parent::`** qualifiers |
+| **Library projects** | **May** declare **`host`**; **`launch`** **forbidden** on **`Lib`** |
+| **Disposal** | **`dispose(...)`** block per named **`scope`** |
+| **Injection site** | **Field `inject` only** — no constructor inject |
+| **Multiple hosts** | **Many** `host` names per project; **one** `launch` per run |
+| **App entry** | Single manifest **`app`** target; one application host per process |
+| **Spelling** | **`registry`** (locked) |
+| **Nested `with`** | Same scope name → **independent** activations |
+| **Pipeline** | **`composition.resolve`** after **`semantic.snapshot`**, before **`mod.analyze`** |
+| **Diagnostics** | **E1701–E1799** reserved |
+| **WebHost** | **v0.3** — v0.2 is **`ConsoleHost`** + manual **`with`** |
+
+## FAQ
+
+### Why field inject instead of constructors?
+
+Field injection keeps type headers uniform and gives the compiler a single slot-lowering story for **`inject`** without ctor signature churn across inheritance. Constructor **`inject`** is rejected (**E1712**).
+
+### How do I consume two `IStorage` implementations?
+
+Register both in **`registry`** and inject **`inject IStorage[] storages`**. Order follows deterministic registration merge order (see [Design model](./design-model/)).
+
+### Can I force a global service inside a named scope?
+
+Use **`inject global::ILogger logger`** on a field or in **`init`** / **`dispose`** parameters.
+
+### Can a library launch its host for testing?
+
+**No** — use an **`App`** / test **`Host`** project target that **`launch`**es the library host, or a test harness entry approved by the tooling spec. **`launch`** on **`Lib`** is **E1711**.
+
+### How do I define two apps in one repo?
+
+Declare two **`host`** types and two targets (for example **`app`** and **`api`**), each with its own entry and **one** **`launch`**. Only one target runs per process invocation.
+
+## v0.3 follow-ups
+
+- **`WebHost`** request pipeline entering a named scope without manual **`with`** on every handler.
+- **`IDisposable`**-style corelib contract as optional supplement to **`dispose`** blocks.
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+| --- | --- |
+| **E1705** | Two `for IContract` lines but singular `inject IContract` |
+| **E1706** | Field inject of scoped service outside `with` |
+| **E1711** | `launch` in a library target |
+| **E1712** | `inject` on constructor parameters |
+| Wrong implementation at inject site | Inner scope shadows global — use **`global::`** |
+| **E1702** | Two `launch` calls on one entry path |
+
+## Related planes
+
+- [Dependency graph and cycle policy](/platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/) — package graph, not service graph
+- [Mod host bridge](/platform-spec/compiler/compiler-mods/mod-host-bridge/) — mod `registrations[]`
+- [Pipeline composition](/platform-spec/compiler/pipeline-composition/) — Rust compiler services

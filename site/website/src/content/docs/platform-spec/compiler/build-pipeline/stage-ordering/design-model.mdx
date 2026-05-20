@@ -38,13 +38,23 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 The compile model has a strict handoff chain:
 
-`resolve_input` -> parse -> **mod collect/generate (when enabled)** -> semantic rules gate -> analyzer/rewriter passes -> HIR normalization -> resolution -> typing -> `lower_program` -> `CodegenArtifact`.
+`resolve_input` -> **`program.assemble`** -> parse (entry + indexed units) -> **`macro.expand`** -> **mod collect/generate (when enabled)** -> semantic rules gate -> **`composition.resolve`** (app host DI; see [Native dependency injection](/platform-spec/language-meta/composition/dependency-injection/)) -> analyzer/rewriter passes -> HIR normalization -> resolution (with **`ModuleIndex`**) -> typing -> `lower_program` -> `CodegenArtifact`.
 
 Backends (JIT and AOT) consume this artifact and must not reorder semantic phases.
 
+## Language macro expansion
+
+**[Language macros](/platform-spec/language-meta/metaprogramming/macros/)** expand in **`macro.expand`**, immediately after **`parse`** and **before `mod.load`**. The phase:
+
+1. Resolves `name!` invocations to in-scope **`macro`** definitions.
+2. Substitutes fragment arguments for **`$param`** in macro bodies (typed AST only).
+3. Repeats until no invocations remain or **`maxMacroExpansionDepth`** (default 32) is exceeded.
+
+When **`mod.generate`** re-parses merged syntax, hosts **must** run **`macro.expand`** again before the next **`mod.collect`** / semantic gate (same syntax generation). Emit **`syntax.generation`** when either macros or mods mutate the program snapshot.
+
 ## Mod phases and stable phase identifiers
 
-**Compiler mods** (see **[Compiler Mods](/platform-spec/compiler/compiler-mods/)**) run as explicit host-driven phases between parse and lowering.
+**Compiler mods** (see **[Compiler Mods](/platform-spec/compiler/compiler-mods/)**) run as explicit host-driven phases after **`macro.expand`** and before lowering.
 
 1. **Phase vocabulary** — Register stable string ids in `compiler/crates/beskid_pipeline/src/phases.rs` and update `PIPELINE.md` in the same change.
 2. **Observer parity** — CLI and codegen entrypoints must bracket mod phases with `PhaseStart`/`PhaseEnd` (or documented `WorkUnit` ids).
@@ -60,7 +70,7 @@ The reference lowering path orders parse, semantic diagnostics, lower, and codeg
 
 These literals must match **[Compiler Mods / Mod projects and pipeline phase ids](/platform-spec/compiler/compiler-mods/#mod-projects)**.
 
-**Full build (`FULL_BUILD_PHASE_ORDER`)** — After parse, insert `mod.load`, `mod.collect`, `mod.generate` (plus `syntax.generation` on replay), then semantic phases, then `mod.analyze`, optional `mod.rewrite`, then lower/codegen/link.
+**Full build (`FULL_BUILD_PHASE_ORDER`)** — After parse, insert `macro.expand`, then `mod.load`, `mod.collect`, `mod.generate` (plus `syntax.generation` on replay), then semantic phases, then `mod.analyze`, optional `mod.rewrite`, then lower/codegen/link.
 
 **JIT run (`JIT_RUN_PHASE_ORDER`)** — No JIT mod execution path is normative for compiler mods; mod execution is AOT-hosted only.
 

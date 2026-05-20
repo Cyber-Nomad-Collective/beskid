@@ -30,6 +30,7 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 - **`Channel&lt;T&gt;.Create(options: ChannelOptions = default)`** — **default is unbounded**.
 - **`ChannelOptions.Bounded(n)`** — `n > 0`; **Send** parks when full (Wait mode).
 - **`ChannelOptions.Unbounded`** — equivalent to default; queue grows until OOM (documented risk).
+- **`ChannelOptions.SingleReader()`** / **`SingleWriter()`** — unbounded factories that set optimization hints without changing queue semantics.
 - Optional capacity field inside options **must not** contradict `Bounded` / `Unbounded` variant; bounded wins when `Bounded(n)` is chosen.
 
 ### Send and Receive (full names required)
@@ -74,6 +75,8 @@ The **spawn entry** function does **not** declare **OnCancelled** — only the h
 **OnCancelled** runs on the child fiber. Unhandled failure in a handler **aborts the process**. Handlers **must not** **Join** self, **Join** an ancestor, or block indefinitely.
 
 **Join** from a child fiber to a parent (or ancestor) handle is a **compile error** (`JoinWouldDeadlock`).
+
+M3 completion requires generated code to import the ABI symbol **`fiber_spawn_with_cancel_slot`**, pass the handle's **OnCancelled** event slot, and treat the returned handle as an **`i64` fiber id** rather than a pointer.
 
 ### FiberError (closed set)
 

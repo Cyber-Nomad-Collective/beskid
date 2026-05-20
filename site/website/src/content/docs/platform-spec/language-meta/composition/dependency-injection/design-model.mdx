@@ -1,0 +1,300 @@
+---
+title: Native dependency injection - Design model
+description: host, registry, scope hierarchy, global scope, field inject, array inject, dispose, and launch.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Native dependency injection
+    href: /platform-spec/language-meta/composition/dependency-injection/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Vocabulary
+
+| Construct | Role |
+| --- | --- |
+| **`host`** | Named composition root; may extend another **`host`** or corelib base |
+| **`registry { }`** | Registrations at the **global** level for that host |
+| **`scope Name(params) { }`** | Named child container under global or parent scope |
+| **`startup(...)`** | Runs once per **`launch`** at **global** only |
+| **`init(...)`** | Runs once per **`with`** activation, before the block body |
+| **`dispose(...)`** | Runs once per activation leave, after the block body (or on unwind) |
+| **`with Name(args) { }`** | Activates a named scope |
+| **`launch Host(args)`** | Starts exactly one host instance for the process run |
+| **`inject`** | **Field** injection on ordinary types (not constructors) |
+
+**Declare** scopes on the **`host`**. **Activate** with **`with`**. v0.2 uses manual **`with`** and **`ConsoleHost`** only; **`WebHost`** is v0.3+.
+
+## Scope hierarchy (normative)
+
+Composition uses a fixed mental model with two layers:
+
+### Global scope (implicit)
+
+The **global scope** is the merged **`registry`** of the **launched** host after walking the **host inheritance chain** (`: ParentHost` … down to corelib bases such as **`ConsoleHost`**). It is not a separate syntax block.
+
+- Always present for the lifetime of a **`launch`**.
+- **`startup`** and unqualified **`inject`** resolve here when no active named scope provides a binding.
+- Treat global + its host parent chain as the **root** of the scope tree.
+
+### Named scopes
+
+**`scope`** blocks form a **tree** under the host:
+
+- Top-level **`scope`** children attach to **global**.
+- Nested **`scope`** children attach to their parent **`scope`**.
+- Registrations in a named scope default to **per-activation (scoped)** unless marked **`single`** or **`transient`**.
+
+### Active scope stack
+
+During execution the compiler maintains a **scope stack** (fiber-local; see [Execution](/platform-spec/execution/)):
+
+```text
+[ Global, … optional named scopes from outer with … innermost with ]
+```
+
+**Resolution (default):** walk from **innermost** named scope toward **global**; first matching binding wins for singular **`inject`**. **Plural** **`inject`** collects all matching registrations at the **lowest stack level that has at least one** registration for that contract (see below).
+
+### Navigating between scopes
+
+| Form | Meaning |
+| --- | --- |
+| Unqualified **`inject T field`** | Innermost → … → **global** |
+| **`inject global::T field`** | **Global** registry only (skip named scopes) |
+| **`inject parent::T field`** | Parent scope on the stack (one level up from innermost named scope; global if innermost is a top-level named scope) |
+
+**`init`**, **`dispose`**, and **`startup`** parameters may use the same qualifiers where injection applies.
+
+## Multiple hosts
+
+Projects **may** declare **many** named **`host`** types. **`host`** is named so libraries and apps can define reusable composition roots.
+
+| Rule | Detail |
+| --- | --- |
+| **Definitions** | Any number of **`host AppHost`**, **`host ApiHost`**, etc. in a compilation |
+| **Launch** | Exactly **one** host per process run via **`launch SomeHost(args)`** |
+| **Manifest** | The executable **`app`** target names the host entry (see [Contracts](./contracts-and-edge-cases/)); a workspace **must not** launch two apps in one run |
+| **`Lib` projects** | **May** declare **`host`** types for reuse; **`launch`** is **forbidden** on **`Lib`** targets |
+
+## Host inheritance and override
+
+```beskid
+host InfraHost : ConsoleHost {
+    registry {
+        single SharedConfig for IConfiguration;
+    }
+}
+
+host AppHost(string[] args) : InfraHost {
+    registry {
+        single AppConfig for IConfiguration;   // overrides InfraHost / ConsoleHost for IConfiguration
+        single SqlStorage for IStorage;
+        single FileStorage for IStorage;
+    }
+    // ...
+}
+```
+
+**Merge order:** start at the **root base** (for example **`ConsoleHost`**), apply each **`: ParentHost`** toward the **launched** host. The **launched host** is **topmost** — its **`registry`** entries **override** the same contract or self-bind type key from parents.
+
+**Override key:** contract type for `for IContract` lines; implementation type for self-bound lines.
+
+**Lifetime mismatch** on override (parent `single`, child `transient` for the same key) is a **compile error**.
+
+## Host declaration (normative shape)
+
+```beskid
+host AppHost(string[] args) : ConsoleHost {
+
+    registry {
+        single Configuration for IConfiguration;
+        single SqlStorage for IStorage;
+        single FileStorage for IStorage;
+        transient ILogger for ILogger;
+    }
+
+    scope HttpScope(RequestContext request) {
+        DbSession for IDbSession;
+        OIDCAuthService for AuthService;
+
+        init(
+            global::IConfiguration configuration,
+            AuthService auth,
+        ) {
+            // per activation
+        }
+
+        dispose(IDbSession db, AuthService auth) {
+            auth.SignOut();
+            db.Close();
+        }
+
+        scope UnitOfWork(bool readOnly) {
+            Transaction for ITransaction;
+
+            init(ITransaction tx) {
+                tx.Begin(readOnly);
+            }
+
+            dispose(ITransaction tx) {
+                tx.Commit();
+            }
+        }
+    }
+
+    startup(
+        IConfiguration configuration,
+        IStorage[] storages,
+    ) {
+        // global only; named scopes not active
+    }
+}
+```
+
+### Host parameters
+
+Parameters on **`host AppHost(...)`** are **launch inputs** only. **`launch AppHost(args)`** must match that list.
+
+## Registrations (`registry` spelling locked)
+
+### Root `registry` (global)
+
+| Keyword | Meaning |
+| --- | --- |
+| **`single`** | One instance per **`launch`** (process-wide for that host run) |
+| **`transient`** | New instance on each resolve at global |
+
+### Registration lines
+
+```beskid
+single Implementation for IContract;
+transient Implementation;
+single ConcreteType;
+```
+
+**Multiple implementations for one contract** at the same container level are **allowed**. Consumers use **array field injection** (below).
+
+### Inside `scope` blocks
+
+| Keyword | Meaning |
+| --- | --- |
+| *(omitted)* | **Scoped** — one instance per **`with`** activation |
+| **`single`** | One instance per **activation** of this named scope |
+| **`transient`** | New instance on each resolve while the scope is active |
+
+## Field injection (v0.2 Standard)
+
+**Constructor `inject` is forbidden.** Dependencies are **fields** only:
+
+```beskid
+type Aggregator {
+    inject IConfiguration configuration;
+    inject IStorage[] storages;              // all IStorage registrations in resolution container
+    inject global::ILogger logger;         // force global registry
+}
+```
+
+### Singular `inject`
+
+```beskid
+inject IDbSession session;
+```
+
+**Must** resolve to **exactly one** registration in the walked scope chain. If **zero** → error; if **many** at the same level → error directing the author to **array inject**.
+
+### Plural `inject` (multiple implementations)
+
+```beskid
+inject IStorage[] storages;
+inject StorageProvider[] providers;
+```
+
+**Must** resolve to **one or more** registrations for that contract (or self-bind type) at the resolution container for the inject site. Order is **registration order** in the merged container (deterministic): base hosts first, then parent hosts, then launched host; within a **`registry`**, source order.
+
+**`startup`**, **`init`**, and **`dispose`** may use plural parameters the same way.
+
+## Named scopes: `init` and `dispose`
+
+- **`init`** — after activation instances are created, **before** the **`with`** body.
+- **`dispose`** — after the **`with`** body on normal completion, and on activation unwind; parameters name services to tear down; order is **reverse** of **`init`** parameter order unless a future ordering attribute is added.
+- Failures in **`init`** prevent the body from running; **`dispose`** still runs for activations that completed **`init`** per unwind rules.
+
+## Activation: `with`
+
+```beskid
+with HttpScope(request) {
+    with UnitOfWork(readOnly: false) {
+        Save();
+    }
+}
+```
+
+- Nested **`with`** on the **same** scope name creates **independent** activations (separate scoped instance sets).
+- Child named scopes **must** have parent active on the stack.
+
+## Entry: `launch` and the `app` target
+
+```beskid
+fn main() {
+    launch AppHost(args);
+}
+```
+
+Lowering **must**:
+
+1. Merge host chain → **global** container for the launched host.
+2. Run **`startup`** (global only).
+3. Enter base host run loop (**`ConsoleHost`** in v0.2).
+
+The project manifest **`app`** executable target is the single application entry: it points at **`main`** (or equivalent) that performs exactly one **`launch`**. Running two **`launch`** calls in one process is **forbidden**.
+
+## Library hosts
+
+A **`Lib`** assembly **may** declare:
+
+```beskid
+host InfraHost : ConsoleHost {
+    registry { ... }
+}
+```
+
+An app host composes on top:
+
+```beskid
+host AppHost : InfraHost { registry { ... } }
+```
+
+**`launch`** in a **`Lib`** target is a **compile error**.
+
+## Persistent entities (compiler)
+
+| Entity | Role |
+| --- | --- |
+| **Host chain** | Ordered hosts from base → launched |
+| **Global container** | Merged `registry` after overrides |
+| **Scope tree** | Named scopes and parent links |
+| **Binding plan** | Field slots, array aggregates, `with` enter/leave |
+| **Composition snapshot** | Frozen graph for mods after **`composition.resolve`** |
+
+## Non-goals (v0.2)
+
+- Constructor injection.
+- Runtime service locator.
+- Attribute-driven scope activation.
+- **`launch`** on **`Lib`** or dual-app processes.
+- **`WebHost`** automatic request scope (v0.3).
+- **`host`** on **`Mod`** projects.

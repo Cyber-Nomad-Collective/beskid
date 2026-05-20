@@ -24,7 +24,9 @@ import DomainTiles from '../../../../../components/platform-spec/DomainTiles.ast
 />
 
 <SpecSection title="Scope" id="scope">
-Dependency injection and host composition for the language-meta composition area.
+Language-native **dependency injection** and **host composition**: named **`host`** types (multiple per project; one **`launch`** per run), **`registry`** global scope, nested **`scope`** with **`init`** / **`dispose`**, **`with`** activation, field **`inject`** (singular and **`T[]`** plural), **`global::`** / **`parent::`** navigation, and **`launch`**. Library projects may define **`host`** but **must not** **`launch`**. The reference compiler resolves the service graph at compile time; execution backends consume a frozen binding plan.
+
+Rust **pipeline composition** (compiler pass wiring) and **compiler mod** registration are specified separately under [Pipeline composition](/platform-spec/compiler/pipeline-composition/) and [Compiler Mods](/platform-spec/compiler/compiler-mods/).
 </SpecSection>
 
 <SpecSection title="Feature index" id="features">

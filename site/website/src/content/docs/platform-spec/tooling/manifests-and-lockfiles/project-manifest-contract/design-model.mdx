@@ -78,6 +78,10 @@ Hosts must validate the following keys when `type: Mod`. Unknown keys are reject
 
 Discovery is contract-based and does not require `attachTo`/`entryModules`; scope narrowing belongs to `Collector` implementations.
 
+### Application host projects and the `app` target
+
+Hosted applications use the **`app`** executable target as the single application entry per runnable process. The entry module **must** perform exactly one **`launch SomeHost(...)`** for that run (see [Native dependency injection](/platform-spec/language-meta/composition/dependency-injection/)). **`Lib`** projects **may** declare reusable **`host`** types but **must not** use **`launch`**.
+
 ### Non-`Mod` projects and compiler-mod contracts
 
 Default platform policy: compiler-mod contracts are valid only in `type: Mod` projects. Host projects (`App`/`Lib`/`Test`) consume mod artifacts through dependencies, not by defining contracts inline.

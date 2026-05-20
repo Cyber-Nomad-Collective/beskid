@@ -28,7 +28,7 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 
 
-Parity is defined at semantic meaning, not identical text formatting.
+Parity is defined at semantic meaning, not identical text formatting. CLI and LSP **must** use the same `ProgramAssembly` discovery mode policy (closure for build/run; workspace scan for IDE project diagnostics when a compile plan exists).
 
 - CLI parse diagnostics are path-anchored for user files.
 - Lowering parse diagnostics may use synthetic source names.

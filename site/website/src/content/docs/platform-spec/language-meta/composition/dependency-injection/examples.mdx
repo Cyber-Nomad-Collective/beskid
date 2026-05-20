@@ -1,0 +1,138 @@
+---
+title: Native dependency injection - Examples
+description: Reference fixtures for hosts, plural inject, scope dispose, and library hosts.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-20
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Native dependency injection
+    href: /platform-spec/language-meta/composition/dependency-injection/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Application host (`app` target)
+
+```beskid
+host AppHost(string[] args) : ConsoleHost {
+    registry {
+        single AppConfig for IConfiguration;
+        single SqlStorage for IStorage;
+        single FileStorage for IStorage;
+    }
+
+    startup(IConfiguration config, IStorage[] storages) {
+        for s in storages { s.Open(config); }
+    }
+}
+
+type StorageAggregator {
+    inject IConfiguration configuration;
+    inject IStorage[] storages;
+}
+
+fn main() {
+    launch AppHost(args);
+}
+```
+
+## Library host composed by app
+
+**`Lib` project** (no `launch`):
+
+```beskid
+host InfraHost : ConsoleHost {
+    registry {
+        single SharedLogger for ILogger;
+    }
+}
+```
+
+**`App` project:**
+
+```beskid
+host AppHost(string[] args) : InfraHost {
+    registry {
+        single AppLogger for ILogger;   // overrides InfraHost ILogger
+    }
+
+    startup(ILogger logger) { }
+}
+
+fn main() {
+    launch AppHost(args);
+}
+```
+
+## Named scope with `init`, `dispose`, and navigation
+
+```beskid
+host AppHost(string[] args) : ConsoleHost {
+    registry {
+        single Configuration for IConfiguration;
+    }
+
+    scope HttpScope(RequestContext request) {
+        DbSession for IDbSession;
+
+        init(global::IConfiguration config, IDbSession db) {
+            db.Connect(config, request);
+        }
+
+        dispose(IDbSession db) {
+            db.Close();
+        }
+    }
+
+    startup(IConfiguration config) { }
+}
+
+type RequestWorker {
+    inject global::IConfiguration configuration;
+
+    fn Run(RequestContext request) {
+        with HttpScope(request) {
+            Process();
+        }
+    }
+}
+```
+
+## Plural inject vs singular error
+
+```beskid
+registry {
+    single A for IProvider;
+    single B for IProvider;
+}
+
+type Consumer {
+    inject IProvider[] providers;   // OK — both A and B
+    // inject IProvider p;          // E1705 — use array form
+}
+```
+
+## Nested scopes and independent activations
+
+```beskid
+with HttpScope(request) {
+    with UnitOfWork(readOnly: false) { Save(); }
+}
+with HttpScope(request) {
+    with UnitOfWork(readOnly: true) { Query(); }   // second activation — new scoped set
+}
+```
+
+> Conformance fixtures under `compiler/crates/beskid_tests` and `compiler/crates/beskid_e2e_tests` will track the reference implementation as composition analysis lands.

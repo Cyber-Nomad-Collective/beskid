@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-01
+lastReviewed: 2026-05-20
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -56,4 +56,25 @@ This article documents the **design model** for **Analysis, query, and diagnosti
 
 Fluent **`Beskid.Compiler.Query`** plans **must** lower to explicit Rust walkers with **documented** upper bounds on work (max nodes visited, max depth). Hosts **must** abort with diagnostics (not panics) when bounds trip. Optional **`query_semantic_snapshot`** reads **must** declare the minimum staged snapshot version (ties to `semantic.snapshot` events in **[Compiler Mods](/platform-spec/compiler/compiler-mods/)** area hub).
 
-When the **Rust compiler** maintains compile-time **composition / IoC** state for user programs, that state **must** be materialized into the same **versioned semantic snapshot** family as other staged products so mod analyzers can query it without special casing: Mod SDK query types **project** compiler-native graphs into Beskid-visible handles; they **must not** recompute or replace Rust-owned resolution unless a dedicated, separately specified capability allows a narrow, audited code path.
+When the **Rust compiler** maintains compile-time **composition / IoC** state for user programs ([Native dependency injection](/platform-spec/language-meta/composition/dependency-injection/)), that state **must** be materialized into the same **versioned semantic snapshot** family as other staged products (exported after **`composition.resolve`**) so mod analyzers can query it without special casing: Mod SDK query types **project** compiler-native graphs into Beskid-visible handles; they **must not** recompute or replace Rust-owned resolution unless a dedicated, separately specified capability allows a narrow, audited code path.
+
+## `Beskid.Compiler.Query` surface (normative)
+
+Facade version **`0.3.0`** (see `QueryFacadeVersion()`). All functions lower to `beskid_analysis::query` walkers over a host-built **`SyntaxSnapshot`**.
+
+| Type / function | Semantics |
+| --- | --- |
+| **`NodeRef`** | `{ syntaxGenerationId, nodeId }` — opaque, host-allocated, stable within a generation window |
+| **`QueryBounds`** | `{ maxNodes, maxDepth }` — default host caps apply when zero |
+| **`SyntaxQuery`** | Cursor at `start` with bounds |
+| **`At` / `AtProgram`** | Entry from `NodeRef` or `Program` root |
+| **`Descendants`** | Pre-order traversal (same order as Rust `Descendants`) |
+| **`Children`** | Direct children only |
+| **`Parent` / `Ancestors`** | Immediate parent and root-to-parent chain via snapshot parent table |
+| **`OfKind` / `FindFirst`** | Filter by `Beskid.Syntax.Nodes.NodeKind` |
+| **`As*`** | Host downcast to concrete mirrored type (one helper per kind with a shape type) |
+| **`Walk` + `SyntaxVisitor`** | Depth-first enter/exit (maps to `AstWalker`) |
+
+**Bound trip** — When `maxNodes` or `maxDepth` is exceeded, the host **must** stop iteration, return no further nodes from that query, and emit diagnostic **E1880** (`QueryBoundsExceeded`). **Must not** panic.
+
+**Traversal vs rewrite** — Mod analyzers traverse with **`NodeRef`** only; **`Rewriter`** still receives concrete mirrored source/target types from the host after `As*` validation.

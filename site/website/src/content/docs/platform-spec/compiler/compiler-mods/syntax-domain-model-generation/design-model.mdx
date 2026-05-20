@@ -39,6 +39,22 @@ This article documents the **design model** for **SyntaxMirror domain model gene
 
 - Rust AST in `beskid_analysis` is authoritative; SyntaxMirror is generated/mirrored for mod packages.
 - Legacy `MetaDefinition` nodes are removed from the mirror inventory.
+- The Rust inner item enum (`syntax::Node`) is **host-only** and is **not** emitted into the Mod SDK. Mod packages see **`Node` contract** + **`NodeRef`** instead.
+
+## Generated artifacts
+
+`beskid_ast_reflect_gen` emits, under `Beskid.Syntax.Nodes`:
+
+| Artifact | Role |
+| --- | --- |
+| Per-type shape `.bd` | Struct/enum mirrors for typed emit and rewrite (`FunctionDefinition`, …) |
+| **`Node.bd`** | `pub contract Node` — kind, ref, child push |
+| **`NodeRef.bd`** | Opaque stable handle |
+| **`NodeKind.bd`** | Classification tokens (mirrors `query::NodeKind`) |
+| **`NodeList.bd`** | `Vec<Node>` as cons-list of **`NodeRef`** |
+| **`TraversalManifest.bd`** | Child-slot table derived from Rust `#[ast(child\|children\|skip)]` |
+
+Traversal metadata **must** stay aligned with `beskid_ast_derive::AstNode` wiring in `beskid_analysis`.
 
 ## Stable identities
 

@@ -33,6 +33,10 @@ relatedTopics:
     title: Serialization packages
     href: /platform-spec/language-meta/metaprogramming/serialization/
     relation: Reference mod and attribute model
+  - type: Feature
+    title: Language macros
+    href: /platform-spec/language-meta/metaprogramming/macros/
+    relation: Parallel language feature; not implemented via Mod contracts
 ---
 
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
@@ -78,9 +82,11 @@ Manifest `attachTo` / `entryModules` are **not** part of discovery; **`Collector
 
 <SpecSection title="Beskid.Syntax and declarative query" id="syntax-mirror">
 - **`Beskid.Syntax`** is the typed mirror of compiler syntax nodes (legacy `Beskid.Compiler.Syntax` / “SyntaxMirror” naming is deprecated).
-- Every mirrored node implements contracts for **query** and **structural AST operations**.
+- **`Beskid.Syntax.Nodes.Node`** is a **contract** (not a variant enum): the sole navigation surface for mod traversal. Hosts materialize **`NodeRef`** handles `{ syntaxGenerationId, nodeId }` with stable identities per syntax generation.
+- Concrete mirrored types (`FunctionDefinition`, `Expression`, …) remain for **`Generator`** / **`Rewriter`** typed construction; mod **traversal** uses **`NodeRef`** + **`Beskid.Compiler.Query`**, then **`As*`** projections when a concrete shape is required.
+- **`Program.items`** is a **`NodeList`** of **`NodeRef`** values (cons-list encoding); there is **no** mirrored item-wrapper enum for module items.
 - Mod code builds and transforms trees through declarative fluent APIs — **no string formatting or source-text emission**.
-- **`Rewriter`** and **`Generator`** use the same typed node identities for merge and invalidation.
+- **`Rewriter`** and **`Generator`** use concrete mirrored types; query and merge invalidation keys use **`NodeRef`** identities from the host snapshot.
 </SpecSection>
 
 <SpecSection title="Pipeline interaction (Beskid view)" id="pipeline">
@@ -94,7 +100,21 @@ From a mod author's perspective:
 Rust-side phase ids and artifact lifecycle are specified under **[Compiler Mods](/platform-spec/compiler/compiler-mods/)**.
 </SpecSection>
 
+<SpecSection title="Language macros vs Mod SDK" id="language-macros-vs-mod-sdk">
+**[Language macros](/platform-spec/language-meta/metaprogramming/macros/)** are **not** Mod contracts. They are ordinary **`macro`** module items expanded by the compiler **`macro.expand`** phase before **`mod.load`**.
+
+| | Language macros | Mod SDK |
+| --- | --- | --- |
+| Declaration | `macro name (kind param) { ... }` in any project | `contract` types in `type: Mod` packages |
+| Invocation | `name!(...)` / `name! { }` | N/A (mods run on host compilation events) |
+| Expansion host | Rust intrinsic in `beskid_analysis` | AOT mod artifacts + `Collector` / `Generator` |
+| Discovery | Name resolution / `use` | `mod.descriptor.json` contract registry |
+
+Mods may define and call language macros like any library; **`Generator`** output that contains `foo!` is expanded after re-parse per stage-ordering rules.
+</SpecSection>
+
 <SpecSection title="Language features used by mods" id="language-features">
+- **[Language macros](/platform-spec/language-meta/metaprogramming/macros/)** — optional in mod-authored sources; expanded before mod phases on each syntax generation.
 - **[extend type](/platform-spec/language-meta/program-structure/extend-type/)** — primary extension syntax for generated members (replaces impl-block extension).
 - **[Serialization packages](/platform-spec/language-meta/metaprogramming/serialization/)** — reference domain mod defining `[Serialize]`.
 - **[Dynamic types and mapping (v0.3)](/platform-spec/compiler/codegen-and-ir/dynamic-types-and-mapping/)** — planned IR/runtime mapping for serializable types.

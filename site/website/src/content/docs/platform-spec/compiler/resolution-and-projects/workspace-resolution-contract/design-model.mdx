@@ -27,7 +27,7 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
-The resolution model has three core objects: `CompilePlan` (target + dependency plan), `PreparedProjectWorkspace` (materialized source roots and lockfile state), and resolved source input (`source_path`, `source`) used by compile commands.
+The resolution model has four core objects: `CompilePlan` (target + dependency plan), `PreparedProjectWorkspace` (materialized source roots and lockfile state), resolved source input (`source_path`, `source`) used by compile commands, and **`ProgramAssembly`** (multi-module units + `ModuleIndex` built from effective roots — see **[Program assembly](/platform-spec/compiler/build-pipeline/program-assembly/)**).
 
 `beskid_analysis::projects` owns graph building and manifest semantics; CLI commands and LSP integrations consume this model and should not reimplement manifest traversal rules.
 

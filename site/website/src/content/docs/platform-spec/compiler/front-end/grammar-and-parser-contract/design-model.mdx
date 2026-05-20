@@ -22,6 +22,10 @@ relatedTopics:
     href: /platform-spec/language-meta/program-structure/extend-type/
     relation: Type extension syntax for generated members
   - type: Feature
+    title: Language macros
+    href: /platform-spec/language-meta/metaprogramming/macros/
+    relation: MacroDefinition, MacroInvocation, MacroMetavariableExpr
+  - type: Feature
     title: Parser and AST contracts
     href: /platform-spec/compiler/front-end/parser-and-ast-contracts/
     relation: AST mapping for grammar productions
@@ -50,6 +54,19 @@ Legacy `MetaDefinition` productions **must be removed** from `beskid.pest` and A
 The grammar **must** define **`extend type`** as the normative type-extension syntax (see **[extend type](/platform-spec/language-meta/program-structure/extend-type/)**). Generators emit `extend type` blocks as typed AST contributions.
 
 Implementation **must** pair pest rules with item parsers under `compiler/crates/beskid_analysis/src/syntax/items/` and snapshot tests under `compiler/crates/beskid_tests`.
+
+## Language macro productions (v0.2 target)
+
+The grammar **must** define:
+
+| Production | Role |
+| --- | --- |
+| **`MacroDefinition`** | `Visibility?` `macro` `Identifier` `(` `MacroParameterList` `)` `Block` — module **`InnerItem`**. |
+| **`MacroParameter`** | `MacroFragmentKind` `Identifier` (closed kind keywords). |
+| **`MacroInvocation`** | `Identifier` `!` optional `(` `MacroArgumentList` `)` optional braced `Block` — **expression** position. |
+| **`MacroMetavariableExpr`** | `$` `Identifier` — legal only inside **`MacroDefinition`** bodies. |
+
+See **[Language macros](/platform-spec/language-meta/metaprogramming/macros/)**. Expansion is host-driven in **`macro.expand`**; the parser only materializes definitions and invocation sites.
 
 ## Practical notes
 
