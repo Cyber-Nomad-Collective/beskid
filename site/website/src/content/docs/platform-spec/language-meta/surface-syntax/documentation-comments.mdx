@@ -53,3 +53,5 @@ Structured comments attach human-readable contracts to declarations. Tooling mus
 ### Relationship to `api.json`
 
 `beskid doc` emits **[api.json schema v4](/platform-spec/tooling/cli/api-json-contract/design-model/)** with **compiler-derived signatures and type links** for every resolved symbol. Authors do not duplicate type names in JSON: non-primitive types use **`typeAnnotation.refItemId`** for navigation; optional `///` prose uses **`@ref(Qualified.Name)`** for markdown cross-links in `docMarkdown` and structured `summaryMarkdown`.
+
+**`@ref` resolution** uses the same **`qualifiedName`** index as `api.json` rows (not raw declaration `name` alone). Packed docs emit registry links of the form `/docs/{package}@{version}/api/{qualifiedName}` when a publish context is available; cross-package targets use the target row’s **`declaringPackage`** when present. See **[Registry API reference UI](/platform-spec/tooling/cli/api-json-contract/registry-api-reference-ui/)**.

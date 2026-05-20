@@ -62,6 +62,29 @@ Normative shape of **`api.json` schema version 4** with **`navigationModel: "gra
 3. Every non-null **`parentId`** **must** reference an existing item **`id`**.
 4. **`memberIds`** is emission-order redundant with `parentId`; consumers may use either, but **must not** infer parenthood from name strings.
 
+### Library tree invariants (graph-v1 emitters)
+
+Emitters producing registry API reference UI (for example `beskid doc` on a `Project.proj`) **must** wire a **library tree**, not a flat symbol list:
+
+| Rule | Requirement |
+| --- | --- |
+| Module nesting | Every `module` row except the package root **must** have `parentId` pointing at its parent `module` item. Prefix modules **must** exist (synthetic rows allowed) so paths like `["Ansi","Contracts"]` are fully linked. |
+| Module ownership | Module-level declarations (`type`, `enum`, `contract`, `function`, nested `module`) **must** have `parentId` equal to the owning module item. |
+| Detail-only members | `field`, `method`, `contract_method`, `parameter`, `enum_variant`, and similar **must** appear only under their declaring type, enum, or contract — not as graph roots. |
+| `modulePath` | On `module` rows, `modulePath` **must** list every logical segment including the module’s own name (for example `["Ansi","Contracts"]` for `Ansi::Contracts`). |
+| Roots | After linking, graph roots **should** be top-level modules, optional dependency package groups, or a single package overview — not hundreds of unrelated symbols. |
+
+Consumers (pckg) **may** insert UI-only folder nodes (for example **Types**, **Enums**, **Contracts**, **Functions**) under each module; those folders are **not** serialized in `api.json`.
+
+### Nav kinds (registry UI)
+
+| Nav role | `kind` values shown in the left library tree |
+| --- | --- |
+| Explorer | `module`, `type`, `enum`, `contract`, `function` |
+| Detail only | `field`, `method`, `contract_method`, `parameter`, `enum_variant`, … |
+
+Nav role is **derived from `kind`** unless a future schema adds an explicit `navRole` field.
+
 ## Item row (schema v4)
 
 Core identity (unchanged from v3): `id`, `qualifiedName`, `name`, `displayName`, `kind`, `visibility`, `location`, `parentId`, `memberIds`, `docMarkdown`, `doc`, `controls`.
@@ -76,6 +99,7 @@ Core identity (unchanged from v3): `id`, `qualifiedName`, `name`, `displayName`,
 | `returnType` | `function`, `method`, `contract_method` | Return type annotation |
 | `parameters` | Callables | Ordered `{ name, type, modifier?, docMarkdown? }` |
 | `genericParameters` | Types, enums, callables with generics | `{ name }` list from HIR |
+| `declaringPackage` | Workspace scan / aggregate publish | Registry package id when `location.file` is outside the publishing project root (optional on v4; omit when same package) |
 
 ### typeAnnotation
 
