@@ -1,5 +1,5 @@
 ---
-title: "1.1 My story"
+title: "My story"
 description: Personal context for starting Beskid.
 tableOfContents: true
 ---
