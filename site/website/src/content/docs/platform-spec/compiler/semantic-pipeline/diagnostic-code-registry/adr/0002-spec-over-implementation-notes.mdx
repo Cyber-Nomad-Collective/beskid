@@ -1,0 +1,43 @@
+---
+title: Specification over implementation notes
+description: Platform-spec text supersedes informal crate comments for Diagnostic code registry.
+specLevel: adr
+status: Standard
+adrId: D-COMP-SEM-0002
+adrStatus: Accepted
+adrDate: 2026-05-11
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Diagnostic code registry
+    href: /platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Implementation crates accumulated informal notes that diverged from published contracts.
+
+## Decision
+
+Normative platform-spec prose and ADRs under this feature **supersede** informal comments in implementation crates until explicitly migrated into spec text.
+
+## Consequences
+
+Engineers file spec/ADR updates when behavior changes; crate comments are non-authoritative for conformance arguments.
+
+## Verification anchors
+
+- `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`
+- `compiler/crates/beskid_analysis/src/analysis`
+- `compiler/crates/beskid_analysis/src/doc/validate.rs`

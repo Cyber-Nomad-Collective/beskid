@@ -30,27 +30,62 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Purpose
 
-## What this article covers
-This article explains the `design-model` view for `Snapshot and refresh contract` in concrete, onboarding-first language.
+The Beskid LSP maintains two cooperating caches: **open document buffers** (`State.docs`) and **disk-backed workspace index entries** (`State.workspace_index`), both carrying optional **`DocumentAnalysisSnapshot`** values versioned by `ANALYSIS_CACHE_VERSION`. A separate **`CompilationContext`** cache keys off resolved `Project.proj` paths plus workspace member defaults.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Snapshot stores
 
-## Code anchors
-- LSP diagnostics in `compiler/crates/beskid_lsp/src/diagnostics.rs`
-- Analysis services in `compiler/crates/beskid_analysis/src/services.rs`
-- Resolver implementation in `compiler/crates/beskid_analysis/src/resolve/resolver.rs`
+```mermaid
+flowchart LR
+  subgraph open [Open buffers]
+    DidOpen[didOpen / didChange]
+    Doc[Document + text_hash]
+    Snap[DocumentAnalysisSnapshot]
+    DidOpen --> Doc --> Snap
+  end
+  subgraph disk [Disk index]
+    Scan[workspace_scan]
+    Idx[workspace_index]
+    Scan --> Idx
+  end
+  subgraph project [Project scope]
+    Ctx[compilation_context_cache]
+    Inv[invalidate_compilation_cache]
+  end
+  Snap --> Ctx
+  Inv --> Ctx
+  Inv --> Snap
+```
 
-## Meta host invalidation
+| Store | Key | Invalidation trigger |
+| --- | --- | --- |
+| Open `Document` | LSP `Uri` | Text change, version bump, cache version mismatch |
+| Disk snapshot | `Uri` (file not open) | Workspace scan, external file watcher refresh |
+| `CompilationContext` | `(Project.proj path, member default)` | Manifest/lock/graph changes, explicit invalidation |
 
-The LSP **must** treat the following as **hard invalidation** signals for cached compilation context and any mod host schedule keyed to the prior generation:
+## Analysis snapshot contents
 
-- Writes to **`Project.proj`**, **`Workspace.proj`**, or workspace **lockfiles** that can change dependency roots or `Mod` attachment.
-- Changes to **`project.mod`** on any resolved `Mod` project.
-- Successful application of **emit** contributions that alter on-disk sources when the host is configured to persist generated sources (if ever supported); when emit targets only in-memory merged syntax, invalidation follows the document generation counter instead.
+`build_document_analysis` calls `beskid_analysis::services::build_document_analysis_with_context` when a `CompilationContext` exists. Project manifest URIs (`.proj`) **must not** produce analysis snapshots—only Beskid sources.
 
-**Soft invalidation** (re-run meta process without full workspace graph rebuild) is allowed only when the host can prove the same capture keys remain valid; otherwise the server **must** fall back to hard invalidation. Exact soft rules live under **[Incremental scheduling and determinism](/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/)**.
+## Hard vs soft invalidation
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+**Hard invalidation** clears `compilation_context_cache` and bumps per-document `analysis_cache_version` so every open buffer re-analyzes:
+
+- `Project.proj`, `Workspace.proj`, or lockfile writes affecting dependency roots
+- `project.mod` changes on attached `Mod` projects
+- Full workspace rescan after `invalidate_compilation_cache` (`workspace_scan.rs`, `backend.rs`)
+
+**Soft invalidation** (re-run meta without full graph rebuild) is permitted only when capture keys remain valid; otherwise the server **must** hard-invalidate per **[Incremental scheduling and determinism](/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/)**.
+
+## Status reporting
+
+Workspace scans emit `BeskidStatusParams` with `phase: workspace_scan` and throttled progress (`STATUS_EMIT_INTERVAL` 200ms) so the VS Code extension can mirror CLI-style progress in the status bar.
+
+## Implementation anchors
+
+- Document lifecycle: `compiler/crates/beskid_lsp/src/session/lifecycle.rs`
+- Project context cache: `compiler/crates/beskid_lsp/src/session/project_context.rs`
+- Workspace scan: `compiler/crates/beskid_lsp/src/workspace_scan.rs`
+- Server wiring: `compiler/crates/beskid_lsp/src/server/backend.rs`
+- Diagnostics publish debounce: 120ms coalescing in `schedule_publish_diagnostics`

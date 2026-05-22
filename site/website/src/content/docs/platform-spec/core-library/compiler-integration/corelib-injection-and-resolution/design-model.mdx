@@ -1,6 +1,6 @@
 ---
 title: Design model
-description: Conceptual model for `Corelib injection and resolution` and its subsystem boundaries.
+description: How the compiler injects and resolves the corelib package into host compilations.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,37 +12,62 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Compiler integration
-    href: /platform-spec/core-library/compiler-integration/
-    relation: Parent area
   - type: Feature
     title: Corelib injection and resolution
     href: /platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/
     relation: Parent feature hub
+  - type: Feature
+    title: Corelib discovery and packaging
+    href: /platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/
+    relation: Canonical package identity and roots
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Purpose
 
-## What this article covers
-This article explains the `design-model` view for `Corelib injection and resolution` in concrete, onboarding-first language.
+Host projects (`Host`, including template output) **always** receive an implicit dependency on the canonical **corelib** aggregate (`beskid_corelib`, package identity **`corelib`**). Injection happens during DAG construction in `resolve_dependencies`, not via optional manifest flags.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Injection model
 
-## Code anchors
-- Corelib integration tests in `compiler/crates/beskid_tests/src/projects/corelib/compile.rs`
-- Corelib project helpers in `compiler/crates/beskid_tests/src/projects/corelib/mod.rs`
-- Analysis services in `compiler/crates/beskid_analysis/src/services.rs`
+```mermaid
+flowchart TB
+  Host[Host Project.proj]
+  Resolver[resolve_dependencies]
+  Std[Implicit Std / corelib path]
+  Graph[Project DAG]
+  Plan[CompilePlan]
+  Sem[Semantic + lowering]
+  Host --> Resolver
+  Resolver --> Std
+  Std --> Graph
+  Graph --> Plan --> Sem
+```
 
-## Compile-time closure for `Mod` projects
+| Input | Resolution |
+| --- | --- |
+| `BESKID_CORELIB_ROOT` | Points at workspace or install root containing `beskid_corelib/Project.proj` |
+| Repo discovery | Walk ancestors for `compiler/corelib/beskid_corelib` |
+| Explicit `Std` path dep | Honored when declared; path fallback uses `default_corelib_dependency_path()` |
+| Corelib workspace shards | `compiler/corelib/packages/*` **must not** get implicit back-edge (cycle guard) |
 
-`Mod` projects that implement Compiler Mod SDK contracts **must** resolve **corelib** the same way host packages do: through **`dependency`** entries, workspace overrides, and lockfile materialization (`prepare_project_workspace` in `compiler/crates/beskid_analysis/src/projects/workflow.rs`). The mod host **must not** silently pin an unpublished corelib fork unless the manifest graph declares it.
+## Manifest prohibitions
 
-Generated or hand-authored **`Beskid.Compiler.*`** modules ship inside the **`corelib`** package subtree (`compiler/corelib/beskid_corelib`); compiler releases **must** document which language surface version those modules target so `Mod` projects can set compatible `version` ranges.
+`beskid_analysis` `projects/parser.rs` rejects `noCorelib` and `useCorelib: false` at parse time. Templates and scaffolds **must not** emit opt-out keys.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Symbol resolution
+
+After the graph attaches corelib nodes, semantic resolution treats corelib types and builtins like any other dependency assembly: same `CompilationContext`, same diagnostic catalog. User-visible names defer to language-meta; this feature covers **graph attachment only**.
+
+## CLI and LSP parity
+
+`ensure_corelib_ready` in `beskid_cli` materializes bundled corelib before commands run. LSP uses the same resolver paths via `CompilationContext::try_for_analysis_path_with_graph_options`.
+
+## Implementation anchors
+
+- `compiler/crates/beskid_analysis/src/projects/graph/resolver.rs` — `default_corelib_dependency_path`, `is_corelib_workspace_shard_manifest`
+- `compiler/crates/beskid_analysis/src/projects/parser.rs` — opt-out rejection
+- `compiler/crates/beskid_cli/src/corelib_runtime.rs`, `build.rs`
+- Tests: `compiler/crates/beskid_tests/src/projects/corelib/compile.rs`

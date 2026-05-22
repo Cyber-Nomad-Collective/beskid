@@ -1,6 +1,6 @@
 ---
 title: FAQ and troubleshooting
-description: Common operator and contributor questions about `pckg client contract`.
+description: Common pckg client and registry issues.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,10 +12,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Registry client
-    href: /platform-spec/tooling/registry-client/
-    relation: Parent area
   - type: Feature
     title: pckg client contract
     href: /platform-spec/tooling/registry-client/pckg-client-contract/
@@ -26,17 +22,22 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## 401 / MissingAuthToken
 
-## What this article covers
-This article explains the `faq-and-troubleshooting` view for `pckg client contract` in concrete, onboarding-first language.
+Set `BESKID_PCKG_API_KEY` or bearer token. For multi-registry setups, ensure `.beskid/pckg/repositories.json` keys match `Workspace.proj` registry alias names.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Pack missing docs on pckg site
 
-## Code anchors
-- Public client API in `compiler/crates/beskid_pckg/src/lib.rs`
-- HTTP and auth flows in `compiler/crates/beskid_pckg/src/client.rs`
-- CLI integration in `compiler/crates/beskid_pckg/src/cli.rs`
+Run `beskid doc --project ...` before pack so `.beskid/docs/api.json` exists. Server ingestion (`PackagePublishDocumentation`) treats that tree as first-class.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Template pack rejected
+
+Verify `project.type = Template`, `.beskid/template.json` (`beskid.template.v1`), and `packageKind: template` in generated `package.json`.
+
+## Wrong package version after publish
+
+Registry assigns versions in normal flows—do not expect local `project.version` alone to drive the published label. Query the server for the assigned version summary.
+
+## Local dev server URL
+
+Default `http://127.0.0.1:8082` matches typical compose bindings; override with `BESKID_PCKG_URL` for remote hosts.

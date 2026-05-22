@@ -4,7 +4,7 @@ import { parse as parseYaml } from 'yaml';
 import { z } from 'zod';
 import { platformSpecNodeSchema } from '../schema/content';
 
-type PathLevel = 'domain-root' | 'domain' | 'area' | 'feature' | 'article' | 'legacy-or-bridge';
+type PathLevel = 'domain-root' | 'domain' | 'area' | 'feature' | 'article' | 'adr' | 'legacy-or-bridge';
 
 function walk(dir: string, out: string[] = []): string[] {
 	if (!fs.existsSync(dir)) return out;
@@ -38,7 +38,9 @@ function classifyPath(filePath: string): PathLevel | null {
 	if (segments.length === 2 && isIndex) return 'domain';
 	if (segments.length === 3 && isIndex) return 'area';
 	if (segments.length === 4 && isIndex) return 'feature';
-	if (segments.length >= 4 && !isIndex) return 'article';
+	if (segments.length >= 5 && segments.at(-2) === 'adr' && !isIndex) return 'adr';
+	if (segments.length === 3 && !isIndex) return 'article';
+	if (segments.length >= 4 && !isIndex && segments.at(-2) !== 'adr') return 'article';
 	return 'legacy-or-bridge';
 }
 
@@ -63,8 +65,8 @@ function validatePathLevel(pathLevel: PathLevel, frontmatter: Record<string, unk
 	const errs: string[] = [];
 	const level = frontmatter.specLevel;
 
-	if (!['domain', 'area', 'component', 'feature', 'article'].includes(String(level))) {
-		errs.push('PSF001 specLevel must be one of: domain | area | component | feature | article');
+	if (!['domain', 'area', 'component', 'feature', 'article', 'adr'].includes(String(level))) {
+		errs.push('PSF001 specLevel must be one of: domain | area | component | feature | article | adr');
 		return errs;
 	}
 
@@ -81,7 +83,12 @@ function validatePathLevel(pathLevel: PathLevel, frontmatter: Record<string, unk
 	}
 	if (pathLevel === 'article' && level !== 'article') {
 		errs.push(
-			'PSF005 specLevel/path mismatch: expected article for platform-spec/<domain>/<area>/<feature>/*.mdx (non-index)',
+			'PSF005 specLevel/path mismatch: expected article for platform-spec area or feature child *.mdx (non-index)',
+		);
+	}
+	if (pathLevel === 'adr' && level !== 'adr') {
+		errs.push(
+			'PSF006 specLevel/path mismatch: expected adr for platform-spec/<domain>/<area>/<feature>/adr/<name>.mdx',
 		);
 	}
 
@@ -90,7 +97,7 @@ function validatePathLevel(pathLevel: PathLevel, frontmatter: Record<string, unk
 
 function validateNodeSchema(frontmatter: Record<string, unknown>): string[] {
 	const level = frontmatter.specLevel;
-	if (level !== 'domain' && level !== 'area' && level !== 'feature' && level !== 'article') {
+	if (level !== 'domain' && level !== 'area' && level !== 'feature' && level !== 'article' && level !== 'adr') {
 		return [];
 	}
 	const parsed = platformSpecNodeSchema.safeParse(frontmatter);

@@ -25,7 +25,7 @@ Compiler submodule ([compiler](/home/fp-pmikstacki/Private/pecan/compiler)) — 
 | extern-engine-security | `extern_engine_security` |
 | e2e-macos-smoke | `e2e_macos_smoke` |
 | e2e-windows-smoke | `e2e_windows_smoke` |
-| version | `compute_version` | Env: `GITHUB_REF`, `GITHUB_REF_NAME`, `GITHUB_EVENT_NAME`, `GITHUB_OUTPUT` |
+| version | `compute_version` | Env: `GITHUB_REF`, `GITHUB_REF_NAME`, `GITHUB_EVENT_NAME`, `GITHUB_RUN_NUMBER`, `GITHUB_OUTPUT`; semver from `v*` tag + commits since tag on `main`, else `Cargo.toml` base + run number until first tag |
 | release-cli-build | `release_cli` | Env: `RELEASE_VERSION`, `MATRIX_TARGET`, `MATRIX_ASSET_NAME`, `RUNNER_OS`; uploads artifact per matrix row |
 | release-cli-publish | `softprops/action-gh-release@v2.3.3` | `permissions: contents: write`; downloads matrix artifacts then creates/updates release for tag `cli-latest` with `target_commitish` `${{ github.sha }}` |
 

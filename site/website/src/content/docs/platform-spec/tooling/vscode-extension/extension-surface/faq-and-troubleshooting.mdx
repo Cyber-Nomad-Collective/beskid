@@ -1,10 +1,11 @@
 ---
 title: FAQ and troubleshooting
-description: Common operator and contributor questions about `Extension surface`.
+description: Common questions about focus, private registries, offline mode, and LSP restarts.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-21
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: VS Code extension
-    href: /platform-spec/tooling/vscode-extension/
-    relation: Parent area
   - type: Feature
     title: Extension surface
     href: /platform-spec/tooling/vscode-extension/extension-surface/
@@ -26,17 +23,39 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Purpose and scope
 
-## What this article covers
-This article explains the `faq-and-troubleshooting` view for `Extension surface` in concrete, onboarding-first language.
+Operator and contributor FAQ for the extension surface and linked features.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Why do Workspaces and Project show different roots?
 
-## Code anchors
-- Extension manifest in `beskid_vscode/package.json`
-- Extension command wiring in `beskid_vscode/src`
-- OpenVSX publishing matrix in `.github/workflows/publish-open-vsx.yml`
+**Workspaces** lists every `Workspace.proj` under VS Code folders. **Project** shows only the **focused** `Project.proj` DAG. Standalone apps may leave Workspaces empty while Project still works after auto-select.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## The LSP restarted when I clicked a member — is that expected?
+
+**No.** Focus changes **must** use configuration notification only. If a full restart occurs, file a bug against extension runtime wiring.
+
+## Registry search returns 401
+
+Configure **Beskid: Set Package Registry API Key** (stores in VS Code secret storage). For human browsing, open the pckg web dashboard in a browser (login is out of band for the extension in v0.2).
+
+## Packages show declared but not locked versions
+
+Run **Lock** from the Packages view title or `beskid lock` in the terminal. Ensure `Project.lock` exists beside `Project.proj` per [workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/).
+
+## `beskid` command not found for Fetch/Lock
+
+Set **`beskid.cli.path`** to the absolute CLI binary (for example from [downloads](/docs/downloads/) or `cli-latest` release).
+
+## Offline development
+
+LSP and **This project** work offline. Registry search requires network; cached hits may appear until TTL expiry.
+
+## Where are executeCommand JSON schemas defined?
+
+Canonical schemas live in [workspace and project explorer — contracts](../workspace-project-explorer/contracts-and-edge-cases/). LSP tests should golden-match those shapes.
+
+## Related topics
+
+- [Contracts](./contracts-and-edge-cases/)
+- [Verification](./verification-and-traceability/)

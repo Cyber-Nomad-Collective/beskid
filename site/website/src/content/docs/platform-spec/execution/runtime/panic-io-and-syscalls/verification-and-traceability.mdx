@@ -1,10 +1,11 @@
 ---
 title: Verification and traceability
-description: How `Panic, IO, and syscalls` is validated and traced across crates, tests, and docs.
+description: panic_io implementation paths, e2e runtime cases, and IO contract cross-tests.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Runtime
-    href: /platform-spec/execution/runtime/
-    relation: Parent area
   - type: Feature
     title: Panic, IO, and syscalls
     href: /platform-spec/execution/runtime/panic-io-and-syscalls/
@@ -26,27 +23,30 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Implementation anchors
 
-## What this article covers
-This article explains the `verification-and-traceability` view for `Panic, IO, and syscalls` in concrete, onboarding-first language.
+| Path | Role |
+| --- | --- |
+| `compiler/crates/beskid_runtime/src/builtins/panic_io.rs` | `panic`, `panic_str`, `syscall_read`, `syscall_write` |
+| `compiler/crates/beskid_runtime/src/builtins/mod.rs` | Re-exports |
+| `compiler/crates/beskid_abi/src/builtins.rs` | Signatures for IO/panic |
+| `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` | End-to-end panic/IO |
+| `compiler/corelib/.../System/Syscall/` | Descriptor routing (corelib tests) |
 
-## Verification focus
+## Requirement traceability
 
-- Corelib compile-shape tests must include every syscall selector/type file under `src/System/Syscall/`.
-- Corelib parse tests must include syscall ergonomic test sources (`SyscallErgonomicsTests.bd`) in addition to raw builtin smoke tests.
-- Runtime-backed behavior must remain traceable through both layers:
-  - raw builtins (`__syscall_write`, `__syscall_read`) in runtime crates
-  - typed wrappers (`WriteWith`, `ReadWith`, selector resolution) in corelib sources
+| ID | Evidence |
+| --- | --- |
+| **IO-ABI-001** | Cranelift unreachable block after `panic` calls in codegen tests |
+| **IO-ABI-002** | Shared `BUILTIN_SPECS` across `beskid_engine` and AOT link |
+| **IO-ABI-005** | Code review: no CLIF syscall intrinsics in `beskid_codegen` for stdio |
+| Console **IO-004** | `corelib_tests` console paths |
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## CI
 
-## Code anchors
-- Builtin exports in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
-- Panic and syscall implementation in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
-- Runtime symbol registration in `compiler/crates/beskid_runtime/src/lib.rs`
-- Corelib syscall tests in `compiler/corelib/beskid_corelib/tests/corelib_tests/src/system/`
-- Corelib compile checks in `compiler/crates/beskid_tests/src/projects/corelib/`
+Compiler workspace runs `beskid_e2e_tests` runtime cases on Linux agents. Platform spec edits **should** trigger `bun run verify:trudoc` under `site/website` when frontmatter changes.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Related topics
+
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Builtins verification](/platform-spec/execution/abi-and-host/builtins-and-symbols/verification-and-traceability/)

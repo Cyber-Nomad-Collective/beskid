@@ -1,0 +1,68 @@
+---
+import type { SpecAdrListItem } from './specReaderContext';
+import type { AdrSectionKey } from './parseAdrSections';
+
+interface Props {
+	entries: SpecAdrListItem[];
+}
+
+const { entries } = Astro.props;
+
+const SECTION_LABELS: Record<AdrSectionKey, string> = {
+	context: 'Context',
+	decision: 'Decision',
+	consequences: 'Consequences',
+	verification: 'Verification anchors',
+};
+
+const SECTION_ORDER: AdrSectionKey[] = ['context', 'decision', 'consequences', 'verification'];
+---
+
+<div class="platform-spec-adr-panel">
+	{
+		entries.length ? (
+			<ol class="platform-spec-adr-panel__list">
+				{entries.map((adr) => (
+					<li class="platform-spec-adr-panel__item">
+						<details class="platform-spec-adr-panel__details">
+							<summary class="platform-spec-adr-panel__summary">
+								<span class="platform-spec-adr-panel__id">{adr.adrId}</span>
+								<span class="platform-spec-adr-panel__title">{adr.title}</span>
+								<span class="platform-spec-adr-panel__chips">
+									<span class="platform-spec-adr-panel__chip">{adr.adrStatus}</span>
+									{adr.adrDate && <span class="platform-spec-adr-panel__chip">{adr.adrDate}</span>}
+								</span>
+							</summary>
+							<div class="platform-spec-adr-panel__body">
+								{adr.description && <p class="platform-spec-adr-panel__lede">{adr.description}</p>}
+								{SECTION_ORDER.map((key) => {
+									const section = adr.sections[key];
+									if (!section?.html) return null;
+									return (
+										<section class="platform-spec-adr-panel__section">
+											<h3 class="platform-spec-adr-panel__section-title">{SECTION_LABELS[key]}</h3>
+											<div
+												class="platform-spec-adr-panel__section-content sl-markdown-content"
+												set:html={section.html}
+											/>
+										</section>
+									);
+								})}
+								<p class="platform-spec-adr-panel__full-link-wrap">
+									<a href={adr.href} class="platform-spec-adr-panel__full-link">
+										Open full ADR page
+									</a>
+								</p>
+							</div>
+						</details>
+					</li>
+				))}
+			</ol>
+		) : (
+			<p class="platform-spec-doc-split__empty">
+				No architecture decision records under <code>adr/</code> for this feature yet. Standard features must
+				publish at least one ADR or keep a <code>## Decisions</code> summary on the hub.
+			</p>
+		)
+	}
+</div>

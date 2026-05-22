@@ -24,17 +24,34 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 
 
-This article documents **design model** for **dependency graph and cycle policy** in the reference compiler.
+## Graph model
 
-## What this covers
-For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
+Each workspace node is a **`Project.proj`** with typed edges:
+
+| Edge kind | Meaning |
+| --- | --- |
+| Registry dependency | Resolved version pin from lockfile |
+| Path dependency | Relative project root inside workspace |
+| Transitive closure | Used for `CompilePlan` and doc workspace scan |
+
+```mermaid
+flowchart LR
+  app[App project]
+  lib[Lib dependency]
+  modp[Mod project]
+  core[corelib package]
+  app --> lib
+  app --> core
+  modp --> lib
+```
+
+## Cycle policy
+
+Directed cycles **must** be reported during graph build. Policy knobs (`error`, `warn`, permissive) select whether resolution aborts or continues with diagnostics. Cycles involving **`Mod`** projects **must** include the mod id in the diagnostic path.
 
 ## Anchored code paths
-- `compiler/crates/beskid_tests/src/projects/corelib/layout.rs` models multi-project dependency layouts.
-- `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` checks graph expectations.
-- `compiler/crates/beskid_cli/src/commands/doc.rs` consumes resolved dependency context for docs.
 
-## Practical notes
-- Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
-- Treat diagnostics and tests as part of the contract, not optional implementation details.
-- If behavior changes, update this article and add/adjust tests in `compiler/crates/beskid_tests` or `compiler/crates/beskid_e2e_tests`.
+- `beskid_analysis::projects::graph` resolver and validator
+- `compiler/crates/beskid_tests/src/projects/corelib/layout.rs` — multi-project layouts
+- `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` — graph expectations
+- `compiler/crates/beskid_cli/src/commands/doc.rs` — docs consume resolved graph

@@ -1,10 +1,11 @@
 ---
 title: Verification and traceability
-description: How `Runtime feature flags` is validated and traced across crates, tests, and docs.
+description: Cargo feature definitions, conditional compilation gates, and CI matrix expectations.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Runtime
-    href: /platform-spec/execution/runtime/
-    relation: Parent area
   - type: Feature
     title: Runtime feature flags
     href: /platform-spec/execution/runtime/runtime-feature-flags/
@@ -26,17 +23,33 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Source files
 
-## What this article covers
-This article explains the `verification-and-traceability` view for `Runtime feature flags` in concrete, onboarding-first language.
+| Path | Content |
+| --- | --- |
+| `compiler/crates/beskid_runtime/Cargo.toml` | `[features]` table |
+| `compiler/crates/beskid_runtime/src/builtins/arrays.rs` | `#[cfg(feature = "arrays_backing")]` |
+| `compiler/crates/beskid_runtime/src/builtins/mod.rs` | `metrics` module gate |
+| `compiler/crates/beskid_engine/Cargo.toml` | `extern_dlopen` feature |
+| `compiler/crates/beskid_cli/src/commands/doc.rs` | Execution modes referencing runtime |
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Tests
 
-## Code anchors
-- Runtime compile-time flags and exports in `compiler/crates/beskid_runtime/src/lib.rs`
-- Runtime builtins feature gating in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
-- Execution setup in `compiler/crates/beskid_cli/src/commands/doc.rs`
+| Suite | Notes |
+| --- | --- |
+| `beskid_tests/src/runtime/jit.rs` | Default runtime feature set |
+| Engine `extern_*` tests | Require `extern_dlopen` |
+| Future: explicit `arrays_backing` fixture | Assert `ptr != null` when enabled |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Traceability
+
+| ID | Check |
+| --- | --- |
+| **RFF-001** | ABI version constant unchanged in feature-only PRs |
+| **RFF-003** | CI job definitions list `arrays_backing` where needed |
+| **RFF-006** | Default engine feature set off in release workflow |
+
+## Related topics
+
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [CLI area](/platform-spec/tooling/cli/)

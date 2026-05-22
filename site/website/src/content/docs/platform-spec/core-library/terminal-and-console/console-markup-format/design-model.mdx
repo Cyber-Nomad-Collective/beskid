@@ -1,11 +1,11 @@
 ---
 title: Design model
-description: Conceptual model and boundaries.
+description: Markup syntax layers and render pipeline overview.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-20
+lastReviewed: 2026-05-21
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -22,8 +22,39 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
-## What this article covers
-This article documents **design-model** for **Console markup format**.
+## Purpose
 
-## Normative notes
-See the parent feature hub and `ANSI.md` in the aggregate repository for escape-sequence tables. Stream I/O must use `System.Syscall` wrappers; stdout/stderr are write-only at the syscall layer.
+Document **design model** for the **Console Markup Format** feature: role-specific normative detail beyond the feature hub.
+
+## Canonical references
+
+- Feature hub: [Console Markup Format](/platform-spec/core-library/terminal-and-console/console-markup-format/)
+- Sibling articles in this bundle (design model, contracts, flow, examples, verification)
+
+## Detailed behavior
+
+### Pipeline
+
+1. **Scan** — `Console.Format.Scan` provides length, prefix, slice, and index helpers (no allocation-heavy regex engine).
+2. **Parse** — `Markdown.RenderInner` walks the source recursively for `**`, `__`, `\` escapes, and bracket tags.
+3. **Style** — `Attributes` / `StyleChain` map names (`red`, `bold`) to `Ansi.Sgr` or chain steps.
+4. **Emit** — Concatenated gated escape prefixes wrap plain text segments.
+
+### Plain vs styled
+
+| Entry | `ansi` flag | Use |
+| --- | --- | --- |
+| `RenderPlain` | false | Logs and non-TTY snapshots |
+| `RenderStyled` / `Format` | true | Interactive terminal UI |
+
+### Escape authority
+
+Sequence bytes are defined in [ANSI escape model](/platform-spec/core-library/terminal-and-console/ansi-escape-model/); markup **must not** embed raw ESC except via the Ansi builders.
+
+## Verification
+
+See the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.
+
+## Related topics
+
+- Parent [feature hub](/platform-spec/core-library/terminal-and-console/console-markup-format/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)

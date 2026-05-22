@@ -29,3 +29,31 @@
 		box-sizing: border-box;
 	}
 }
+
+/*
+ * Splash home (`LandingTemplate`): Starlight still renders `h1#_top` in the first
+ * `.content-panel`. Hide the whole panel so no empty band appears above the hero.
+ */
+main:has(.landing-root) > .content-panel:first-of-type:has(.sl-container > h1#_top:only-child) {
+	display: none;
+}
+
+main:has(.landing-root) > .content-panel + .content-panel,
+main:has(.downloads-page) > .content-panel + .content-panel {
+	border-top: none;
+	padding-top: 0;
+}
+
+main:has(.downloads-page) > .content-panel:first-of-type:has(.sl-container > h1#_top:only-child) {
+	display: none;
+}
+
+/* Index marketing layout: full-width main (sidebar rules live in landing.css) */
+.page:has(.landing-page) .main-frame {
+	width: 100%;
+}
+
+.page:has(.landing-page) main > .content-panel + .content-panel {
+	border: none;
+	box-shadow: none;
+}

@@ -1,10 +1,11 @@
 ---
 title: Flow and algorithm
-description: Lifecycle and execution flow for `Extension surface`.
+description: Activation through LSP init, tree refresh, and package search.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-21
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: VS Code extension
-    href: /platform-spec/tooling/vscode-extension/
-    relation: Parent area
   - type: Feature
     title: Extension surface
     href: /platform-spec/tooling/vscode-extension/extension-surface/
@@ -26,17 +23,21 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Activation sequence
 
-## What this article covers
-This article explains the `flow-and-algorithm` view for `Extension surface` in concrete, onboarding-first language.
+1. `extension.ts` constructs `BeskidExtensionRuntime`.
+2. Register tree providers, commands, task providers, file watchers.
+3. Start `LanguageClient` with `focusedProjectUri` from workspace state.
+4. `initialized` → LSP workspace scan → `beskid/status` progress.
+5. `beskid.listWorkspaces` populates **Workspaces** view.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Package search flow
 
-## Code anchors
-- Extension manifest in `beskid_vscode/package.json`
-- Extension command wiring in `beskid_vscode/src`
-- OpenVSX publishing matrix in `.github/workflows/publish-open-vsx.yml`
+1. User runs **Search packages** or view welcome link → `InputBox`.
+2. Provider debounces 300ms, calls cached `GET /api/search`.
+3. Registry rows expand → `GET /api/packages/{name}` for versions/deps.
+4. **Fetch** / **Lock** view title → `beskidCliRunner` → refresh **This project** via `beskid.getProjectDependencies`.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Watchers
+
+Glob: `**/{*.bd,*.proj,Project.lock,workspace.package.json}` → debounced `beskid.refreshWorkspace` + tree refresh.

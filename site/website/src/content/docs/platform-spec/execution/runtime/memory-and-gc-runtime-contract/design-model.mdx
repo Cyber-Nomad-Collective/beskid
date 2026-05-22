@@ -1,10 +1,11 @@
 ---
 title: Design model
-description: Conceptual model for `Memory and GC runtime contract` and its subsystem boundaries.
+description: Heap ownership, tri-color GC, Phase A mutator rules, and compiler/runtime split.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,53 +13,65 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Runtime
-    href: /platform-spec/execution/runtime/
-    relation: Parent area
   - type: Feature
     title: Memory and GC runtime contract
     href: /platform-spec/execution/runtime/memory-and-gc-runtime-contract/
     relation: Parent feature hub
+  - type: Feature
+    title: Fiber scheduler and stacks
+    href: /platform-spec/execution/runtime/fiber-scheduler-and-stacks/
+    relation: Phase A single mutator
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Purpose
 
-## What this article covers
-This article explains the `design-model` view for `Memory and GC runtime contract` in concrete, onboarding-first language.
+Normative model for **how Beskid heap objects live**, how the **Abfall** tri-color collector interacts with generated code, and how **Phase A** scheduling constrains mutators before parallel GC (Phase B).
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Primary actors
 
-## Code anchors
-- Runtime memory exports in `compiler/crates/beskid_runtime/src/lib.rs`
-- Abfall heap/runtime integration in `compiler/crates/abfall/src/heap.rs` (`allocate_beskid`, external roots, write barrier)
-- ABI contracts in `compiler/crates/beskid_abi/src/lib.rs`
-- JIT linking and call setup in `compiler/crates/beskid_engine/src/jit_module.rs`
-
-## Fiber phases (GC interaction)
-
-| Phase | Normative behavior |
+| Actor | Responsibility |
 | --- | --- |
-| **A (first ship)** | Many fibers, **one GC mutator** over an active runtime heap session; `gc_write_barrier` is an abfall-backed insertion barrier for descriptor-traced payload pointers |
-| **B (documented)** | Parallel mutators + real insertion barriers on pointer stores; see `/execution/memory/gc.md` |
+| **Compiler lowering** | Emits `alloc`, write barriers, stack maps, type descriptors |
+| **`beskid_runtime::gc`** | `enter_runtime_scope`, heap attachment, `GcSnapshot` for hosts |
+| **Abfall heap** | Concurrent mark/sweep with STW segments |
+| **Fiber scheduler** | Ensures only one mutator runs Beskid allocations in Phase A |
 
-Scheduler and stack contracts: **[Fiber scheduler and stacks](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/)**.
+## Object model
 
-## Runtime surface
+- Heap objects begin with a **type descriptor pointer** used for precise scanning.
+- **`alloc(size, type_desc)`** creates descriptor-backed payloads via `abfall::Heap::allocate_beskid`.
+- **Strings** use `BeskidStr`; **arrays** use `BeskidArray` headers (backing optional per feature flag).
+- **Roots**: stacks (stack maps), globals (registered roots), external handles (`gc_root_handle`).
 
-The runtime memory surface is split between allocation/rooting builtins and diagnostic builtins:
+## GC architecture
 
-| Builtin family | Contract |
-| --- | --- |
-| `alloc`, `gc_register_root`, `gc_unregister_root`, `gc_root_handle`, `gc_unroot_handle`, `gc_write_barrier` | Allocate descriptor-backed payloads, manage embedder root slots and temporary handles, and shade newly stored child pointers during marking. |
-| `gc_bytes_allocated`, `gc_object_count`, `gc_phase`, `gc_collect`, `gc_collect_if_needed`, `gc_external_root_count` | Expose heap state and collection controls for generated code, tests, and host diagnostics. These are always available runtime exports, not metrics-feature counters. |
+```mermaid
+flowchart TB
+  mut[Mutator / generated code]
+  barrier[gc_write_barrier]
+  heap[Abfall tri-color heap]
+  stw[STW root scan]
+  mut -->|pointer stores| barrier --> heap
+  heap -->|mark/sweep| stw
+  stw --> heap
+```
 
-Host tooling uses `beskid_runtime::runtime::GcSnapshot` as the Rust snapshot wrapper around the active `abfall::Heap`. CLI, engine, and test code should read heap state through that module instead of reaching into heap internals.
+**Tri-color** marking runs concurrently with the mutator where Phase allows; **write barriers** prevent black→white edges during marking. **STW** episodes are limited to root scanning and phase transitions.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
-The runtime no longer relies on arena-wide permanent roots; allocations flow through `abfall::Heap::allocate_beskid` and are reclaimed by mark/sweep once they become unreachable from registered roots.
+## Phase A vs Phase B
+
+| Phase | Mutators | Notes |
+| --- | --- | --- |
+| **A (current)** | One Beskid mutator at a time | Fibers swap on scheduler threads; syscall pool workers **must not** allocate as mutators |
+| **B (target)** | Parallel mutators with barriers | Requires full stack-map coverage and scheduler coordination |
+
+See [Fiber scheduler and stacks](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/) for parking and safepoints.
+
+## Related topics
+
+- [Flow and algorithm](./flow-and-algorithm/)
+- Legacy: [Concurrent GC](../../../../execution/memory/gc.md)

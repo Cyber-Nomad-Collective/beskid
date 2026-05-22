@@ -1,0 +1,41 @@
+---
+title: Link-time binding Standard tier-1
+description: dlopen is not Standard conformance for tier-1.
+specLevel: adr
+status: Standard
+adrId: D-LMETA-CABI-0002
+adrStatus: Accepted
+adrDate: 2026-05-20
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: C ABI profile
+    href: /platform-spec/language-meta/interop/c-abi-profile/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Dynamic resolution complicates reproducible builds and CI conformance.
+
+## Decision
+
+v0.3 **Standard** tier-1 conformance **must** use **link-time** library binding ([link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/)).
+
+## Consequences
+
+Engine may retain Proposed `extern_dlopen` paths separately from Standard claims.
+
+## Verification anchors
+
+`compiler/crates/beskid_codegen`; [Foreign library import](/platform-spec/tooling/foreign-library-import/).

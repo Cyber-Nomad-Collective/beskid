@@ -1,0 +1,48 @@
+---
+title: "So you want to contribute, huh?"
+description: Superrepo layout, spec-first workflow, compiler and docs paths, CI, and how to reach the maintainer without spam.
+tableOfContents: true
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution">
+This chapter is **informative**. Governance and enforceable process live under [Community / spec maintenance](/platform-spec/community/spec-maintenance/).
+</Aside>
+
+You read twenty-one chapters. You have opinions. Good—Beskid is not built by people who nod through enterprise standups without screaming internally.
+
+This chapter is the **on-ramp for contributors**: where repos live, how spec-first workflow avoids "surprise, we changed language law in a drive-by PR," and how to run tests without declaring war on CI.
+
+## What you will find here
+
+| Section | Topic |
+| --- | --- |
+| [Repos and submodules](/book/22-so-you-want-to-contribute/repos-and-submodules/) | Superrepo, `compiler`, `pckg`, extension, corelib. |
+| [Spec-first workflow](/book/22-so-you-want-to-contribute/spec-first-workflow/) | Extend platform-spec before observable behavior. |
+| [Compiler contributor path](/book/22-so-you-want-to-contribute/compiler-contributor-path/) | Crates, tests, pipeline phases. |
+| [Docs and website](/book/22-so-you-want-to-contribute/docs-and-website/) | `site/website`, trudoc, book vs spec. |
+| [Conformance and tests](/book/22-so-you-want-to-contribute/conformance-and-tests/) | Evidence and e2e policy. |
+| [CI and green builds](/book/22-so-you-want-to-contribute/ci-and-green-builds/) | GitHub Actions, `gh run view`. |
+| [Contact](/book/22-so-you-want-to-contribute/contact/) | Maintainer reach-out. |
+
+<Aside type="tip">
+**Maintainer:** Piotr Mikstacki  
+- **Email:** [pmikstacki@cybernomad.it](mailto:pmikstacki@cybernomad.it)  
+- **GitHub:** [@pmikstacki](https://github.com/pmikstacki)  
+- **Site:** [pmikstacki.me](https://pmikstacki.me)  
+- **LinkedIn:** see [Contact](/book/22-so-you-want-to-contribute/contact/) — profile URL not pinned in repo yet.
+</Aside>
+
+```mermaid
+flowchart TD
+  idea[Behavior change idea] --> spec[Platform-spec delta]
+  spec --> code[Compiler / runtime / tooling]
+  code --> tests[beskid_tests / e2e]
+  tests --> ci[Green CI]
+  book[Book chapter] -.informative.-> spec
+```
+
+## Finish the book
+
+[Appendix: Spec map](/book/appendix-spec-map/) — chapter ↔ spec ↔ crates matrix.

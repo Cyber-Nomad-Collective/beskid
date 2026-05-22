@@ -1,0 +1,34 @@
+---
+import type { DotNetBullet } from '../data/landing-dotnet-bullets';
+import LandingDotNetBulletList from './LandingDotNetBulletList.astro';
+
+interface Props {
+	title: string;
+	intro?: string;
+	rightHeading: string;
+	rightBullets: DotNetBullet[];
+	wrongHeading: string;
+	wrongBullets: DotNetBullet[];
+}
+
+const { title, intro = '', rightHeading, rightBullets, wrongHeading, wrongBullets } = Astro.props;
+---
+
+<section class="landing-section landing-dotnet">
+	<div class="landing-section__inner">
+		<h2>{title}</h2>
+		{intro && <p class="landing-section__lead">{intro}</p>}
+
+		<div class="landing-dotnet__grid">
+			<h3 class="landing-dotnet__heading landing-dotnet__heading--right">{rightHeading}</h3>
+			<h3 class="landing-dotnet__heading landing-dotnet__heading--wrong">{wrongHeading}</h3>
+
+			<article class="landing-dotnet__panel landing-dotnet__panel--right">
+				<LandingDotNetBulletList bullets={rightBullets} />
+			</article>
+			<article class="landing-dotnet__panel landing-dotnet__panel--wrong">
+				<LandingDotNetBulletList bullets={wrongBullets} />
+			</article>
+		</div>
+	</div>
+</section>

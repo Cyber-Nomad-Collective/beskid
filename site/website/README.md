@@ -17,7 +17,8 @@ website/
 ├── src/content/docs/      # Beskid docs content (canonical)
 ├── src/assets/            # Images and static assets used by docs
 ├── public/                # Static files served as-is
-├── astro.config.mjs       # Starlight site config and sidebar
+├── astro.config.mjs       # Starlight config (platform-spec + book area nav)
+├── src/generated/         # Generated nav trees (platform-spec, book)
 └── package.json
 ```
 
@@ -29,10 +30,17 @@ Run from `site/website`:
 | :------------ | :-------------------------------------- |
 | `bun install` | Install dependencies                    |
 | `bun dev`     | Start local dev server (`localhost:4321`) |
+| `bun dev:clean` | Remove `.astro` / `dist` / Vite cache, then start dev (use after a bad local image path) |
 | `bun build`   | Build static site into `dist/`          |
 | `bun preview` | Preview built site                      |
 
-`bun dev` / `bun build` run `scripts/sync-cli-version.mjs` first (via `predev` / `prebuild`), which writes gitignored `src/data/cli-version.json` from the rolling GitHub release when reachable, otherwise from `../../compiler/crates/beskid_cli/Cargo.toml` in a full superrepo checkout.
+`bun dev` / `bun build` run `predev` / `prebuild`: CLI version sync, platform-spec git meta, `generate:platform-spec-nav-tree`, `generate:book-nav-tree`, `verify:book-images`, and trudoc CI verify (build only).
+
+**Agents:** do not edit book Markdown image tags (`![...](...)`) — especially `src/content/docs/book/00-why-beskid-exists/`. The author uses remote HTTPS URLs on purpose; never replace them with local paths or text. See root `AGENTS.md`. If `verify:book-images` or `ImageNotFound` fails, report to the author; do not rewrite image tags.
+
+Authoring note: co-located images beside `.md` files are allowed where the author placed them; a missing file can brick `astro dev` until you add the asset and run `bun run dev:clean`.
+
+Public documentation is split into **[Platform specification](/platform-spec/)** (normative) and **[The Beskid Book](/book/)** (informative tutorial + reference). Starlight’s default docs sidebar is disabled; each area uses its own navigation rail.
 
 ## Deployment
 

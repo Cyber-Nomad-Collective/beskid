@@ -10,10 +10,10 @@ From the **monorepo root** after `bun install`:
 bun --cwd site/website run verify:trudoc --preset ci
 ```
 
-Full prebuild doc gate (matches `prebuild` minus `sync:cli-version` and `generate:platform-spec-git-meta`):
+Prebuild structure gate (matches `prebuild` minus `sync:cli-version` and `generate:platform-spec-git-meta`):
 
 ```bash
-bun --cwd site/website run verify:trudoc --preset beskid-prebuild
+bun --cwd site/website run verify:trudoc --preset ci
 ```
 
 ## Site root without relying on cwd

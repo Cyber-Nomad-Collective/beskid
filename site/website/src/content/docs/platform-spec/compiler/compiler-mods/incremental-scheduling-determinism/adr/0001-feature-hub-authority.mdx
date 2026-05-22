@@ -1,0 +1,42 @@
+---
+title: Feature hub authority
+description: This feature hub owns normative MUST/SHOULD contract text for Incremental scheduling and determinism.
+specLevel: adr
+status: Standard
+adrId: D-COMP-MODS-0007
+adrStatus: Accepted
+adrDate: 2026-05-20
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Incremental scheduling and determinism
+    href: /platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Sibling articles under this feature previously restated requirements in inconsistent forms.
+
+## Decision
+
+This feature hub **owns** normative MUST/SHOULD contract text. Sibling articles **must not** redefine hub requirements and **should** link here for authority.
+
+## Consequences
+
+Contract changes start on the hub or in linked ADRs, then propagate to articles and implementation anchors.
+
+## Verification anchors
+
+- `site/website/src/content/docs/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/index.mdx`
+- `article bundle under the same feature directory.`

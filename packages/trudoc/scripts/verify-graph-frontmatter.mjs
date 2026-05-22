@@ -31,7 +31,12 @@ function readFrontmatter(filePath) {
 	try {
 		return YAML.parse(raw);
 	} catch (err) {
-		throw new Error(`Invalid YAML frontmatter: ${(err && err.message) || String(err)}`);
+		const rel = path.relative(DOCS_ROOT, filePath).replace(/\\/g, '/');
+		const msg = `Invalid YAML frontmatter: ${(err && err.message) || String(err)}`;
+		if (rel.startsWith('platform-spec/')) {
+			throw new Error(`${rel}: ${msg}`);
+		}
+		return null;
 	}
 }
 

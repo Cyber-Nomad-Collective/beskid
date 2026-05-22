@@ -1,11 +1,11 @@
 ---
 title: Project manifest contract
-description: Feature hub for the project manifest contract in the reference compiler.
+description: Compiler resolution and graph contracts for Project.proj (schema and author surfaces defer to tooling).
 template: splash
 tableOfContents: true
 specLevel: feature
 status: Standard
-lastReviewed: 2026-04-30
+lastReviewed: 2026-05-21
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -17,22 +17,40 @@ relatedTopics:
     title: Resolution and Projects
     href: /platform-spec/compiler/resolution-and-projects/
     relation: Parent area
+  - type: Feature
+    title: Project manifest contract (tooling)
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: defers-to — author-facing manifest keys, Mod shape, and examples
 ---
 
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 
 <SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
 
-This feature hub defines the normative contract for **project manifest contract** and links newcomer-oriented reference articles.
+<SpecSection title="Authority split" id="authority-split">
+**Tooling** owns the normative **`Project.proj` schema** (keys, types, Mod blocks, link metadata, and CLI/LSP examples). **This feature** owns how the reference compiler **loads**, **validates in the resolution graph**, and **diagnoses** manifest-driven project graphs—without duplicating key tables.
 
-## Implementation anchors
-- `compiler/crates/beskid_cli/src/commands/` reads manifest-driven compile inputs.
-- `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` uses manifest-aware project fixtures.
-- `compiler/crates/beskid_tests/src/projects/corelib/compile.rs` verifies manifest-based compile execution.
+When editing manifest keys, update [tooling / design model](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/design-model/) first; adjust compiler resolution text here only when graph behavior or diagnostic bands change.
+</SpecSection>
 
-- [Design model](./design-model/)
-- [Flow and algorithm](./flow-and-algorithm/)
-- [Contracts and edge cases](./contracts-and-edge-cases/)
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- `compiler/crates/beskid_analysis/src/projects/manifest_resolve.rs` — discovery and parse into workspace graph
+- `compiler/crates/beskid_analysis/src/projects/graph/` — DAG insertion, Mod topology
+- `compiler/crates/beskid_cli/src/commands/` — manifest-driven compile inputs
+- `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` and `compile.rs` — manifest fixtures
+</SpecSection>
+
+## Decisions
+
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-PROJ-0004` … `D-COMP-PROJ-0006`), including tooling/schema split (`D-COMP-PROJ-0006`); use the reader **ADRs** tab for expandable detail.
+
+
+## Articles
+
+- [Design model](./design-model/) — resolution entities (no duplicate key tables)
+- [Flow and algorithm](./flow-and-algorithm/) — graph build and host/mod load order
+- [Contracts and edge cases](./contracts-and-edge-cases/) — resolution diagnostics and cycle policy
 - [Examples](./examples/)
 - [Verification and traceability](./verification-and-traceability/)
 - [FAQ and troubleshooting](./faq-and-troubleshooting/)

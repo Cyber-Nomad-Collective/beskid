@@ -21,36 +21,25 @@ const idPanelBrowse = `${uid}-panel-browse`;
 			type="button"
 			class="platform-spec-home__tab is-active"
 			role="tab"
-			id={idTabMap}
-			aria-controls={idPanelMap}
-			data-tab="map"
+			id={idTabBrowse}
+			aria-controls={idPanelBrowse}
+			data-tab="browse"
 			aria-selected="true"
 		>
-			Map
+			Browse
 		</button>
 		<button
 			type="button"
 			class="platform-spec-home__tab"
 			role="tab"
-			id={idTabBrowse}
-			aria-controls={idPanelBrowse}
-			data-tab="browse"
+			id={idTabMap}
+			aria-controls={idPanelMap}
+			data-tab="map"
 			aria-selected="false"
 			tabindex="-1"
 		>
-			Browse
+			Map
 		</button>
-	</div>
-	<div
-		id={idPanelMap}
-		class="platform-spec-home__panel"
-		role="tabpanel"
-		aria-labelledby={idTabMap}
-		data-tab-panel="map"
-	>
-		<div class="platform-spec-map-page">
-			<PlatformSpecGraphShell />
-		</div>
 	</div>
 	<div
 		id={idPanelBrowse}
@@ -58,7 +47,6 @@ const idPanelBrowse = `${uid}-panel-browse`;
 		role="tabpanel"
 		aria-labelledby={idTabBrowse}
 		data-tab-panel="browse"
-		hidden
 	>
 		<div class="platform-spec-home__browse-inner sl-markdown-content">
 			<p class="platform-spec-home__lede">
@@ -66,6 +54,18 @@ const idPanelBrowse = `${uid}-panel-browse`;
 				and feature pages.
 			</p>
 			<DomainTiles pathPrefix="platform-spec" heading="Domains" />
+		</div>
+	</div>
+	<div
+		id={idPanelMap}
+		class="platform-spec-home__panel"
+		role="tabpanel"
+		aria-labelledby={idTabMap}
+		data-tab-panel="map"
+		hidden
+	>
+		<div class="platform-spec-map-page">
+			<PlatformSpecGraphShell />
 		</div>
 	</div>
 </div>

@@ -24,15 +24,26 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 
 
-This article documents **design model** for **rules pipeline contract** in the reference compiler.
+## Staged pipeline
 
-## What this covers
-For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
+Semantic rules run as ordered **`SemanticPipelineRule`** stages on the **post-merge** syntax snapshot (`syntax_generation_id`).
+
+```mermaid
+flowchart LR
+  merge[mod merge + reparse]
+  gate[syntax generation gate]
+  s1[early binding stages]
+  s8[stage8_metaprogramming]
+  late[type + effect checks]
+  hir[HIR normalization]
+  merge --> gate --> s1 --> s8 --> late --> hir
+```
 
 ## Anchored code paths
-- `compiler/crates/beskid_analysis/src/analysis/rules/` defines staged rule groups.
-- `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` classifies emitted diagnostics.
-- `compiler/crates/beskid_analysis/src/services.rs` wires semantic services used by CLI/LSP.
+
+- `compiler/crates/beskid_analysis/src/analysis/rules/staged.rs`
+- `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`
+- `compiler/crates/beskid_analysis/src/services.rs`
 
 ## Meta contributions and staged rules
 

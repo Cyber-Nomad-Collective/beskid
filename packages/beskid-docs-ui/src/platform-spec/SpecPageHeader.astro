@@ -47,6 +47,7 @@ const state = await computeSpecReaderState(Astro.url.pathname, docs, cwd);
 <SpecReaderShell
 	articleRootSlug={state.articleRootSlug}
 	articleEntries={state.articleEntries}
+	adrEntries={state.adrEntries}
 	hasDescendantArticles={state.hasDescendantArticles}
 	relatedTopics={state.relatedTopics}
 	architectureGraph={state.architectureGraph}

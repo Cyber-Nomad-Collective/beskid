@@ -1,6 +1,6 @@
 ---
 title: Examples
-description: Concrete examples for `pckg client contract` decisions and usage patterns.
+description: Example `beskid pckg` invocations and configuration.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,10 +12,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Registry client
-    href: /platform-spec/tooling/registry-client/
-    relation: Parent area
   - type: Feature
     title: pckg client contract
     href: /platform-spec/tooling/registry-client/pckg-client-contract/
@@ -26,17 +22,38 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Pack a library project
 
-## What this article covers
-This article explains the `examples` view for `pckg client contract` in concrete, onboarding-first language.
+```bash
+beskid pckg pack --project compiler/corelib/beskid_corelib/Project.proj
+```
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+Produces a `.bpk` with `README.md`, sources, and `.beskid/docs/` when present.
 
-## Code anchors
-- Public client API in `compiler/crates/beskid_pckg/src/lib.rs`
-- HTTP and auth flows in `compiler/crates/beskid_pckg/src/client.rs`
-- CLI integration in `compiler/crates/beskid_pckg/src/cli.rs`
+## Publish with API key
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+```bash
+export BESKID_PCKG_URL=https://pckg.example/
+export BESKID_PCKG_API_KEY=...
+beskid pckg upload path/to/package.bpk
+```
+
+Exact subcommand names follow `PckgCommand` in `cli.rs` (use `beskid pckg --help` in installed CLI).
+
+## Repository config file
+
+`.beskid/pckg/repositories.json`:
+
+```json
+{
+  "repositories": {
+    "default": { "api_key": "..." }
+  }
+}
+```
+
+Maps to registry aliases in `Workspace.proj`.
+
+## CI corelib publish
+
+Compiler CI uses `BESKID_PCKG_KEY` to publish the **`corelib`** package identity after build—same client stack as local `beskid pckg` with injected secrets.

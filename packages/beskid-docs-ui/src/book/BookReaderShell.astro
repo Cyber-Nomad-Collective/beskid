@@ -1,0 +1,56 @@
+---
+import type { BookPrevNext } from 'trudoc/book';
+import { readBookNavTreeOrThrow } from 'trudoc/book';
+
+interface Props {
+	entryId: string;
+	title: string;
+	description?: string;
+}
+
+const { entryId, title, description } = Astro.props;
+
+const slug = entryId.replace(/\/index$/, '').replace(/^\//, '') || 'book';
+let prevNext: BookPrevNext = {};
+
+try {
+	const { prevNextBySlug } = readBookNavTreeOrThrow(process.cwd());
+	prevNext = prevNextBySlug[slug] ?? {};
+} catch {
+	/* prebuild / missing generated file */
+}
+
+const showChapterNav = Boolean(prevNext.prev || prevNext.next);
+---
+
+<div class="book-reader" data-book-reader data-book-slug={slug}>
+	<header class="book-reader__header">
+		<h1 class="book-reader__title">{title}</h1>
+		{description && <p class="book-reader__description">{description}</p>}
+	</header>
+	<div class="book-reader__body" data-book-reader-body></div>
+	{
+		showChapterNav && (
+			<nav class="book-reader__chapter-nav" aria-label="Chapter">
+				{prevNext.prev ? (
+					<a class="book-reader__chapter-link book-reader__chapter-link--prev" href={prevNext.prev.href}>
+						<span class="book-reader__chapter-label">Previous</span>
+						<span>{prevNext.prev.title}</span>
+					</a>
+				) : (
+					<span />
+				)}
+				{prevNext.next ? (
+					<a class="book-reader__chapter-link book-reader__chapter-link--next" href={prevNext.next.href}>
+						<span class="book-reader__chapter-label">Next</span>
+						<span>{prevNext.next.title}</span>
+					</a>
+				) : null}
+			</nav>
+		)
+	}
+</div>
+
+<script>
+	import '../client/book-reader-layout.ts';
+</script>

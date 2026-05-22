@@ -1,6 +1,6 @@
 ---
 title: Examples
-description: Concrete examples for `Corelib injection and resolution` decisions and usage patterns.
+description: Observable corelib injection scenarios.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,10 +12,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Compiler integration
-    href: /platform-spec/core-library/compiler-integration/
-    relation: Parent area
   - type: Feature
     title: Corelib injection and resolution
     href: /platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/
@@ -26,17 +22,38 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Superrepo host app (implicit corelib)
 
-## What this article covers
-This article explains the `examples` view for `Corelib injection and resolution` in concrete, onboarding-first language.
+A minimal `Project.proj` with only app dependencies still resolves standard prelude types (including Option types), strings, and fibers because `resolve_dependencies` attaches `beskid_corelib` without an explicit `Std` block.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Explicit corelib path override
 
-## Code anchors
-- Corelib integration tests in `compiler/crates/beskid_tests/src/projects/corelib/compile.rs`
-- Corelib project helpers in `compiler/crates/beskid_tests/src/projects/corelib/mod.rs`
-- Analysis services in `compiler/crates/beskid_analysis/src/services.rs`
+```text
+dependency {
+  name = Std
+  source = path
+  path = "../../compiler/corelib/beskid_corelib"
+}
+```
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+Used in compiler dogfood projects; must point at aggregate `Project.proj`.
+
+## CI environment
+
+```bash
+export BESKID_CORELIB_ROOT=/path/to/compiler/corelib
+beskid build --project apps/demo/Project.proj
+```
+
+Ensures consistent corelib root when not using bundled install artifacts.
+
+## Rejected manifest (parse error)
+
+```text
+project {
+  name = bad
+  noCorelib = true
+}
+```
+
+Fails structural validation in `reject_corelib_opt_out_keys`.

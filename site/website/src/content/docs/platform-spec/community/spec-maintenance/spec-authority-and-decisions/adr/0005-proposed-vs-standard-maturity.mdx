@@ -1,0 +1,46 @@
+---
+title: Proposed vs Standard maturity gates
+description: Standard pages are enforceable contracts; Proposed pages must not be cited as language law.
+specLevel: adr
+status: Standard
+adrId: D-COMM-AUTH-0005
+adrStatus: Accepted
+adrDate: 2026-05-21
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Specification authority and embedded decisions
+    href: /platform-spec/community/spec-maintenance/spec-authority-and-decisions/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+**Standard** pages shipped with circular stubs or without decisions, while readers treated every platform-spec URL as enforceable law.
+
+## Decision
+
+| `status` | Meaning | Requirements |
+| --- | --- | --- |
+| **Proposed** | Incomplete or unstable | May omit full verification anchors; **must not** be cited as enforceable language law in conformance arguments |
+| **Standard** | Enforceable platform contract | **Must** include normative MUST/SHOULD/MAY prose, verification anchors, and hub **`## Decisions`** (or linked `decisions-record`) |
+
+Any **Standard** page failing content gates (circular canon stubs, placeholder-only bundles, missing decisions) **must** downgrade to **Proposed** until restored.
+
+## Consequences
+
+Maturity is explicit in frontmatter; CI strict mode can fail scaffold **Standard** pages.
+
+## Verification anchors
+
+`verify:platform-spec-content` with `--strict`; `LANGUAGE_META_CIRCULAR_CANON_ALLOWLIST` for tracked exceptions.

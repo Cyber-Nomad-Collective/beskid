@@ -1,0 +1,41 @@
+---
+title: Native codegen without IL as the primary IR
+description: Assembly-oriented output without CIL as the central execution contract.
+specLevel: adr
+status: Standard
+adrId: D-INC-0004
+adrStatus: Accepted
+adrDate: 2024-04-15
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Project inception decisions
+    href: /platform-spec/community/project-inception/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+CIL-centric VMs lag language features and impose workaround layers the project avoids.
+
+## Decision
+
+The reference platform **must** lower through Beskid-owned IR and native/JIT/AOT backends—not treat a portable IL stack as the primary execution contract.
+
+## Consequences
+
+ABI, builtins, and runtime syscalls are versioned in execution specs; JIT and AOT share `beskid_abi` revision.
+
+## Verification anchors
+
+[Backends JIT AOT](/platform-spec/compiler/build-pipeline/backends-jit-aot/); [ABI versioning](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/).

@@ -1,10 +1,11 @@
 ---
 title: Design model
-description: Conceptual model for `Builtins and symbols` and its subsystem boundaries.
+description: BuiltinFnSpec catalog, runtime export symbols, and codegen import boundaries.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,18 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: ABI and host boundary
-    href: /platform-spec/execution/abi-and-host/
-    relation: Parent area
-  - type: Area
-    title: Codegen and IR
-    href: /platform-spec/compiler/codegen-and-ir/
-    relation: Lowering and backend emission consume ABI symbol definitions
-  - type: Area
-    title: Runtime
-    href: /platform-spec/execution/runtime/
-    relation: Runtime builtins export and implement the ABI contract
   - type: Feature
     title: Builtins and symbols
     href: /platform-spec/execution/abi-and-host/builtins-and-symbols/
@@ -34,21 +23,53 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Purpose
 
-
-## Model at a glance
-
-`Builtins and symbols` is modeled as a contract surface between producer crates and consumer crates. New contributors should treat it as a boundary document first and an implementation detail map second.
+Document the **dual registry** that connects Beskid lowered code to the host runtime: symbolic names for the linker (`RUNTIME_EXPORT_SYMBOLS`) and machine signatures for Cranelift (`BUILTIN_SPECS`).
 
 ## Primary actors
 
-- Producer side: crates that define or emit the contract surface.
-- Consumer side: crates that read, execute, or validate that surface.
-- Conformance side: test crates that pin expected behavior.
+| Actor | Artifact |
+| --- | --- |
+| **`beskid_abi::builtins`** | `BuiltinFnSpec { symbol, params, returns }` entries |
+| **`beskid_abi::symbols`** | `SYM_*` constants + `RUNTIME_EXPORT_SYMBOLS` list |
+| **`beskid_codegen`** | `declare_builtin_imports` builds Cranelift `FuncId`s from specs |
+| **`beskid_runtime::builtins`** | `#[unsafe(no_mangle)] pub extern "C-unwind"` implementations |
 
-## Concrete crate anchors
+## Builtin families
 
-- `BuiltinFnSpec` and `BUILTIN_SPECS` in `compiler/crates/beskid_abi/src/builtins.rs`
-- `RUNTIME_EXPORT_SYMBOLS` in `compiler/crates/beskid_abi/src/symbols.rs`
-- Builtin runtime implementations in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
-- Panic and syscall behavior in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
+| Family | Examples | Consumer |
+| --- | --- | --- |
+| **Allocation / values** | `alloc`, `str_new`, `str_concat`, `array_new` | All backends |
+| **GC** | `gc_write_barrier`, `gc_collect`, `gc_root_handle` | Lowering + host snapshots |
+| **Fibers** | `fiber_spawn`, `fiber_yield`, `fiber_join_value` | `corelib_concurrency` |
+| **Channels / hubs** | `channel_send`, `hub_wait_receive_value` | Concurrency package |
+| **Sync** | `mutex_lock`, `wait_group_wait` | Runtime scheduler |
+| **Interop** | `interop_dispatch_unit`, `interop_dispatch_ptr` | Tagged interop lowering |
+| **IO / faults** | `syscall_write`, `panic`, `panic_str` | Corelib + traps |
+| **Diagnostics** | `test_bytes_ptr` (test-only) | Compiler tests |
+
+Return kinds include **`AbiReturnKind::Never`** for diverging `panic` calls so Cranelift marks unreachable correctly.
+
+## Data layout contracts
+
+- **`BeskidStr`**: `{ ptr, len }` UTF-8 bytes (immutable; length in bytes).
+- **`BeskidArray`**: `{ ptr, len, cap }`; element storage optional behind runtime `arrays_backing` feature ([Runtime feature flags](/platform-spec/execution/runtime/runtime-feature-flags/)).
+
+## Registry diagram
+
+```mermaid
+flowchart LR
+  specs[BUILTIN_SPECS signatures]
+  names[RUNTIME_EXPORT_SYMBOLS]
+  clif[Cranelift imports]
+  nm[no_mangle exports]
+  specs --> clif
+  names --> nm
+  clif -->|same symbol string| nm
+```
+
+## Related topics
+
+- [ABI versioning](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/) — when to bump version after symbol changes
+- [Flow and algorithm](./flow-and-algorithm/)

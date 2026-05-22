@@ -26,17 +26,61 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Startup
 
-## What this article covers
-This article explains the `flow-and-algorithm` view for `Build, analyze, and run contract` in concrete, onboarding-first language.
+1. Expand response files (`argfile`) and parse global flags.
+2. Initialize logging (`BESKID_LOG_CRANELIFT` / `--log-cranelift`).
+3. **`ensure_corelib_ready`** — materialize or locate bundled corelib before any project command runs.
+4. Dispatch the selected subcommand.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Project-scoped command flow
 
-## Code anchors
-- CLI command implementations in `compiler/crates/beskid_cli/src/commands/`
-- Analysis pipeline in `compiler/crates/beskid_analysis/src/services.rs`
-- Runtime launch via engine in `compiler/crates/beskid_engine/src/jit_module.rs`
+```mermaid
+sequenceDiagram
+  participant User
+  participant CLI as beskid_cli
+  participant Analysis as beskid_analysis
+  participant Backend as JIT or AOT
+  User->>CLI: subcommand + ProjectResolveArgs
+  CLI->>Analysis: resolve manifest + lock policy
+  Analysis-->>CLI: CompilationContext + CompilePlan
+  CLI->>Analysis: semantic pipeline (+ mods)
+  alt analyze / doc
+    Analysis-->>CLI: diagnostics / api.json
+  else build
+    CLI->>Backend: lower + AOT link
+  else run / test
+    CLI->>Backend: JIT entrypoint
+  end
+  CLI-->>User: exit code + artifacts
+```
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+### `analyze`
+
+1. Resolve input to a host target and `CompilationContext`.
+2. Run the semantic pipeline with builtin (+ mod) rules.
+3. Print diagnostics to stderr (miette rendering); non-zero exit when errors exist.
+
+### `build`
+
+1. Resolve `CompilePlan` and target kind (`App`, `Lib`, `Test`).
+2. Lower through `beskid_codegen` with pipeline observation.
+3. Invoke `beskid_aot::build` with profile, link mode, and runtime strategy flags.
+4. Write object/shared/static/executable per `--kind` and target defaults.
+
+### `run` / `test`
+
+1. Resolve entry module and optional `--entrypoint`.
+2. JIT-compile via `beskid_engine` and execute; `test` discovers `test` items and aggregates results.
+
+### Workspace maintenance (`fetch`, `lock`, `update`)
+
+These commands mutate or verify the materialized dependency tree and `Project.lock` **before** host compilation. They share graph resolution with build/run but do not themselves lower user code.
+
+## Lockfile interaction
+
+When `LockfilePolicyArgs` require a lock, the CLI **must** fail fast if `Project.lock` is missing or stale relative to manifests, rather than silently fetching in release-critical paths unless the command documents otherwise (`update` vs `build` defaults).
+
+## Verification hooks
+
+Integration coverage lives in `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs` and command-specific tests beside each `commands/*.rs` module.

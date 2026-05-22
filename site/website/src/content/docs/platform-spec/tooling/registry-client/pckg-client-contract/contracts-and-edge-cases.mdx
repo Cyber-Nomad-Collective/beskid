@@ -1,6 +1,6 @@
 ---
 title: Contracts and edge cases
-description: Normative guarantees, constraints, and edge-case handling for `pckg client contract`.
+description: Registry client guarantees and failure modes.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,31 +12,34 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Registry client
-    href: /platform-spec/tooling/registry-client/
-    relation: Parent area
   - type: Feature
-    title: pckg client contract
-    href: /platform-spec/tooling/registry-client/pckg-client-contract/
-    relation: Parent feature hub
+    title: Package kinds
+    href: /platform-spec/tooling/registry-client/package-kinds/
+    relation: packageKind discriminators
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Contracts
 
-## What this article covers
-This article explains the `contracts-and-edge-cases` view for `pckg client contract` in concrete, onboarding-first language.
+- **HTTPS in production** — Operators **should** configure `BESKID_PCKG_URL` with TLS endpoints; clients honor redirects per reqwest defaults.
+- **Auth mutual exclusion** — Bearer and API key flags **must not** be combined on one invocation.
+- **Structured `api.json`** — Library packs **should** include compiler-emitted `.beskid/docs/api.json` as the docs UI contract (see **[api.json contract](/platform-spec/tooling/cli/api-json-contract/)**).
+- **Readme artifact name** — Packed readmes **must** appear as root `README.md` in the zip for dashboard listing.
+- **Template discriminator** — Template packs **must** set `packageKind: template` and ship `.beskid/template.json`.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Edge cases
 
-## Code anchors
-- Public client API in `compiler/crates/beskid_pckg/src/lib.rs`
-- HTTP and auth flows in `compiler/crates/beskid_pckg/src/client.rs`
-- CLI integration in `compiler/crates/beskid_pckg/src/cli.rs`
+| Case | Behavior |
+| --- | --- |
+| Missing `Project.proj` at pack root | Defaults to library profile without template metadata |
+| Invalid manifest during pack | `PckgError::Api` with BAD_REQUEST semantics |
+| Missing auth on publish | `MissingAuthToken` before HTTP |
+| Large trees | Walkdir-based collection; operators exclude build outputs via manifest/layout conventions |
+| `iconUrl` on publish | Server validates HTTP(S) URLs and length caps (`PackageManifestMetadata`) |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Server rejection mirrors
+
+Client-side pack **should** prevalidate paths the server will reject (docs layout, workspace member consistency) to avoid wasted uploads; integration tests live in `pckg/src/Server.Tests/`.

@@ -1,10 +1,11 @@
 ---
 title: Examples
-description: Concrete examples for `Extern dispatch and policy` decisions and usage patterns.
+description: Declaring Extern contracts, dynamic getpid smoke, and interop dispatch usage patterns.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: ABI and host boundary
-    href: /platform-spec/execution/abi-and-host/
-    relation: Parent area
   - type: Feature
     title: Extern dispatch and policy
     href: /platform-spec/execution/abi-and-host/extern-dispatch-and-policy/
@@ -26,17 +23,46 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## C extern contract (dynamic profile)
 
-## What this article covers
-This article explains the `examples` view for `Extern dispatch and policy` in concrete, onboarding-first language.
+Legacy engine-assisted linking declares prototypes on a contract:
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+```beskid
+[Extern(Abi:"C", Library:"libc.so.6")]
+pub contract LibC {
+    i64 getpid();
+}
+```
 
-## Code anchors
-- Extern parsing and diagnostics in `compiler/crates/beskid_analysis/src/beskid.pest` and `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`
-- ABI builtins definitions in `compiler/crates/beskid_abi/src/builtins.rs`
-- Runtime builtin dispatch in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
+With `extern_dlopen` enabled on Linux x86_64, the engine resolves `getpid` once and registers the address for JIT imports. With the feature disabled, compilation fails unless the symbol is satisfied by link-time layout instead.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Link-time preferred shape
+
+New work **should** attach libraries through the platform [link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/) profile so AOT and production JIT bundles do not depend on `dlopen` at first run.
+
+## Failure scenario (feature off)
+
+A module references `LibC.getpid()` but the workspace builds `beskid_engine` without `extern_dlopen`. Expected outcome: diagnostic listing `getpid` / `libc.so.6` rather than a link to address `0`.
+
+## Interop dispatch (conceptual)
+
+Lowering for a typed interop return may emit:
+
+1. Load tag word at header **+8**.
+2. `call interop_dispatch_ptr(handle)` when the result is a pointer-width value.
+3. Branch on runtime-known variant; invalid tags trap or panic per interop policy.
+
+Exact variant tables live in [Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/); offsets are pinned by [ABI versioning](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/).
+
+## Test commands (maintainers)
+
+Legacy harness references:
+
+- `cargo test -p beskid_engine extern_resolution_only_compiles_with_feature --features extern_dlopen`
+- `cargo test -p beskid_engine extern_real_call_getpid --features extern_dlopen`
+- `cargo test -p beskid_engine extern_resolution_fails_without_feature`
+
+## Related topics
+
+- [Verification and traceability](./verification-and-traceability/)
+- Legacy: [Extern policy (v0.1)](../../../../execution/runtime/extern-policy-v0-1.md)

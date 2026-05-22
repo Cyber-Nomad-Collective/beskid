@@ -1,6 +1,6 @@
 ---
 title: FAQ and troubleshooting
-description: Common operator and contributor questions about `Project manifest contract`.
+description: Project manifest tooling FAQ.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,31 +12,40 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Manifests and lockfiles
-    href: /platform-spec/tooling/manifests-and-lockfiles/
-    relation: Parent area
   - type: Feature
     title: Project manifest contract
     href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
     relation: Parent feature hub
+  - type: Feature
+    title: Project link libraries
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries/
+    relation: FFI link metadata
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Unknown `project.type`
 
-## What this article covers
-This article explains the `faq-and-troubleshooting` view for `Project manifest contract` in concrete, onboarding-first language.
+Only `Host` (omitted), `Mod`, and `Template` are valid. Typos fail structural parse with stable diagnostics (**E1801–E1899** band — see compiler manifest feature).
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Mod contracts in a host project
 
-## Code anchors
-- Manifest loading in `compiler/crates/beskid_analysis/src/services.rs`
-- CLI project graph setup in `compiler/crates/beskid_cli/src/commands/`
-- Workspace resolution in `compiler/crates/beskid_analysis/src/resolve/items.rs`
+Move compiler-mod code to a `type: Mod` dependency package. Hosts consume mods through the graph, not inline contract definitions.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## `maxGeneratorRounds` ignored
+
+Ensure `mod { }` is nested under `project`, not a top-level block. Unknown `mod` keys error at parse time.
+
+## Readme missing on pckg after pack
+
+Set `readme = "docs/README.md"` or add root `readme.md`. `beskid pckg pack` maps the resolved file to zip root `README.md`.
+
+## Template `shortName` mismatch
+
+Align `project.template.shortName` with `.beskid/template.json` when both are present.
+
+## Full key reference
+
+See **[Project manifest contract (compiler)](/platform-spec/compiler/resolution-and-projects/project-manifest-contract/)** and the manifests area hub—avoid duplicating tables in tooling articles.

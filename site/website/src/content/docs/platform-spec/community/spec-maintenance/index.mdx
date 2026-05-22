@@ -10,6 +10,19 @@ owner:
 submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Specification authority and embedded decisions
+    href: /platform-spec/community/spec-maintenance/spec-authority-and-decisions/
+    relation: Language law, maturity, embedded decisions
+  - type: Feature
+    title: Release and versioning policy
+    href: /platform-spec/community/spec-maintenance/release-and-versioning-policy/
+    relation: Git version axis and v0.x bands
+  - type: Feature
+    title: Feature Hub + Article Bundle template
+    href: /platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/
+    relation: Hub and article structure
 ---
 
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
@@ -24,10 +37,15 @@ Maintenance policy for keeping platform-spec pages synchronized with code and re
 
 ## Feature policies
 
+- [Specification authority and embedded decisions](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/) - Language law vs implementation domains, Proposed/Standard maturity, and embedded decision records.
+- [Release and versioning policy](/platform-spec/community/spec-maintenance/release-and-versioning-policy/) - Git as version axis; v0.x bands as delivery scope, not URL segments.
 - [Domain, Area and Feature template bundle](/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/) - Mandatory markdown-first structure and section contracts for all levels.
 - [Domain, Area, Feature, and Article frontmatter templates](/platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template/) - Canonical YAML templates aligned with schema and CI validation.
 - [Non-normative bridge docs policy](/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/) - Rules for migration mapping pages and canonical destination linking.
 - [Last reviewed policy](/platform-spec/community/spec-maintenance/last-reviewed-policy/) - Requirements for `lastReviewed` metadata on high-change pages.
+- [Project inception decisions](/platform-spec/community/project-inception/) - Cross-cutting ADRs from project inception (`D-INC-0001`–`D-INC-0008`, reader **ADRs** tab).
+
+Maintenance policy features above publish closed choices under each feature’s **`adr/`** (`D-COMM-*` identifiers, reader **ADRs** tab).
 
 <SpecSection title="Feature index" id="feature-index">
 Use the tiles below for normative **feature** contracts in this area.

@@ -57,6 +57,20 @@ Normative shape of **`api.json` schema version 4** with **`navigationModel: "gra
 
 ## Navigation invariants
 
+### `parentId` tree (graph-v1)
+
+```mermaid
+flowchart TB
+  root[package root module id=1]
+  mAnsi[module Ansi id=2 parentId=1]
+  mCon[module Contracts id=3 parentId=2]
+  tBtn[type Button id=10 parentId=3]
+  meth[method Click id=11 parentId=10]
+  root --> mAnsi --> mCon --> tBtn --> meth
+```
+
+Consumers walk **`parentId`** links upward to build breadcrumbs; **`memberIds`** lists direct children in emission order. Never infer parenthood from `qualifiedName` string splits.
+
 1. Consumers **must** build trees from **`parentId`** and **`memberIds`** only — not by splitting `qualifiedName`.
 2. Every item in schema v3+ **must** have **`id`**.
 3. Every non-null **`parentId`** **must** reference an existing item **`id`**.

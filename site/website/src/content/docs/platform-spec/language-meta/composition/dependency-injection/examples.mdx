@@ -43,7 +43,7 @@ type StorageAggregator {
     inject IStorage[] storages;
 }
 
-fn main() {
+unit main(string[] args) {
     launch AppHost(args);
 }
 ```
@@ -71,7 +71,7 @@ host AppHost(string[] args) : InfraHost {
     startup(ILogger logger) { }
 }
 
-fn main() {
+unit main(string[] args) {
     launch AppHost(args);
 }
 ```
@@ -102,7 +102,7 @@ host AppHost(string[] args) : ConsoleHost {
 type RequestWorker {
     inject global::IConfiguration configuration;
 
-    fn Run(RequestContext request) {
+    unit Run(RequestContext request) {
         with HttpScope(request) {
             Process();
         }

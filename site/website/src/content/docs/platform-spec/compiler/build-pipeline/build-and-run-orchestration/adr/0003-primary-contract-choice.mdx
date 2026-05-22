@@ -1,0 +1,43 @@
+---
+title: Primary contract for Build and run orchestration
+description: This feature hub defines the normative contract for **build and run orchestration** and links newcomer-oriented referenc
+specLevel: adr
+status: Standard
+adrId: D-COMP-BUILD-0006
+adrStatus: Accepted
+adrDate: 2026-05-05
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Build and run orchestration
+    href: /platform-spec/compiler/build-pipeline/build-and-run-orchestration/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+This feature hub defines the normative contract for **build and run orchestration** and links newcomer-oriented reference articles.
+
+## Decision
+
+The reference compiler **must** implement Build and run orchestration as documented in this feature hub and its article bundle.
+
+## Consequences
+
+Changes require hub/ADR updates and verification anchor extensions.
+
+## Verification anchors
+
+- `compiler/crates/beskid_cli/src/commands/`
+- `compiler/crates/beskid_engine/src/jit_module.rs`
+- `compiler/crates/beskid_tests/src/runtime/jit.rs`

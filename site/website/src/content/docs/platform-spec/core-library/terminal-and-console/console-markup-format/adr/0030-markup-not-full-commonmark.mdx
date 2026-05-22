@@ -1,0 +1,44 @@
+---
+title: Markup is not full CommonMark
+description: Only the tested markup subset is normative.
+specLevel: adr
+status: Standard
+adrId: D-CORE-TERM-0030
+adrStatus: Accepted
+adrDate: 2026-05-20
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Console markup format
+    href: /platform-spec/core-library/terminal-and-console/console-markup-format/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Console.Format targets terminal styling, not a document renderer.
+
+## Decision
+
+| Rule | Detail |
+| --- | --- |
+| Scope | Tested sigils and markdown subset only |
+| Non-goal | Full CommonMark compliance |
+
+## Consequences
+
+New syntax requires tests before Standard promotion.
+
+## Verification anchors
+
+`FormatMarkdownTests.bd`; `Format/Scan.bd`.

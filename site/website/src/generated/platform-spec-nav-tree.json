@@ -1,0 +1,3380 @@
+{
+  "generatedAt": "2026-05-22T10:06:44.577Z",
+  "tree": {
+    "slug": "platform-spec",
+    "href": "/platform-spec/",
+    "title": "Platform specification",
+    "level": "root",
+    "children": [
+      {
+        "slug": "platform-spec/community",
+        "href": "/platform-spec/community/",
+        "title": "Community",
+        "level": "domain",
+        "children": [
+          {
+            "slug": "platform-spec/community/project-inception",
+            "href": "/platform-spec/community/project-inception/",
+            "title": "Project inception decisions",
+            "level": "area",
+            "children": []
+          },
+          {
+            "slug": "platform-spec/community/spec-maintenance",
+            "href": "/platform-spec/community/spec-maintenance/",
+            "title": "Spec maintenance",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template",
+                "href": "/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/",
+                "title": "Domain, Area and Feature template bundle",
+                "level": "feature",
+                "children": []
+              },
+              {
+                "slug": "platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template",
+                "href": "/platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template/",
+                "title": "Domain, Area, Feature, and Article frontmatter templates",
+                "level": "feature",
+                "children": []
+              },
+              {
+                "slug": "platform-spec/community/spec-maintenance/last-reviewed-policy",
+                "href": "/platform-spec/community/spec-maintenance/last-reviewed-policy/",
+                "title": "Last reviewed policy",
+                "level": "feature",
+                "children": []
+              },
+              {
+                "slug": "platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy",
+                "href": "/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/",
+                "title": "Non-normative bridge docs policy",
+                "level": "feature",
+                "children": []
+              },
+              {
+                "slug": "platform-spec/community/spec-maintenance/release-and-versioning-policy",
+                "href": "/platform-spec/community/spec-maintenance/release-and-versioning-policy/",
+                "title": "Release and versioning policy",
+                "level": "feature",
+                "children": []
+              },
+              {
+                "slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions",
+                "href": "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
+                "title": "Specification authority and embedded decisions",
+                "level": "feature",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "platform-spec/compiler",
+        "href": "/platform-spec/compiler/",
+        "title": "Compiler",
+        "level": "domain",
+        "children": [
+          {
+            "slug": "platform-spec/compiler/build-pipeline",
+            "href": "/platform-spec/compiler/build-pipeline/",
+            "title": "Build pipeline",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot",
+                "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/",
+                "title": "Backends (JIT and AOT)",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/contracts-and-edge-cases/",
+                    "title": "Backends (JIT and AOT) - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/design-model",
+                    "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/design-model/",
+                    "title": "Backends (JIT and AOT) - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/examples",
+                    "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/examples/",
+                    "title": "Backends (JIT and AOT) - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/faq-and-troubleshooting/",
+                    "title": "Backends (JIT and AOT) - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/flow-and-algorithm/",
+                    "title": "Backends (JIT and AOT) - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/verification-and-traceability",
+                    "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/verification-and-traceability/",
+                    "title": "Backends (JIT and AOT) - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration",
+                "href": "/platform-spec/compiler/build-pipeline/build-and-run-orchestration/",
+                "title": "Build and run orchestration",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/build-pipeline/build-and-run-orchestration/contracts-and-edge-cases/",
+                    "title": "Build and run orchestration - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/design-model",
+                    "href": "/platform-spec/compiler/build-pipeline/build-and-run-orchestration/design-model/",
+                    "title": "Build and run orchestration - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/examples",
+                    "href": "/platform-spec/compiler/build-pipeline/build-and-run-orchestration/examples/",
+                    "title": "Build and run orchestration - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/build-pipeline/build-and-run-orchestration/faq-and-troubleshooting/",
+                    "title": "Build and run orchestration - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/build-pipeline/build-and-run-orchestration/flow-and-algorithm/",
+                    "title": "Build and run orchestration - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/verification-and-traceability",
+                    "href": "/platform-spec/compiler/build-pipeline/build-and-run-orchestration/verification-and-traceability/",
+                    "title": "Build and run orchestration - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/build-pipeline/dependency-workspace",
+                "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/",
+                "title": "Dependency workspace and lockfile",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/contracts-and-edge-cases/",
+                    "title": "Dependency workspace and lockfile - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/design-model",
+                    "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/design-model/",
+                    "title": "Dependency workspace and lockfile - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/examples",
+                    "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/examples/",
+                    "title": "Dependency workspace and lockfile - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/faq-and-troubleshooting/",
+                    "title": "Dependency workspace and lockfile - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/flow-and-algorithm/",
+                    "title": "Dependency workspace and lockfile - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/verification-and-traceability",
+                    "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/verification-and-traceability/",
+                    "title": "Dependency workspace and lockfile - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity",
+                "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
+                "title": "Diagnostics parity (CLI and LSP)",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/contracts-and-edge-cases/",
+                    "title": "Diagnostics parity (CLI and LSP) - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/design-model",
+                    "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/design-model/",
+                    "title": "Diagnostics parity (CLI and LSP) - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/examples",
+                    "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/examples/",
+                    "title": "Diagnostics parity (CLI and LSP) - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/faq-and-troubleshooting/",
+                    "title": "Diagnostics parity (CLI and LSP) - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/flow-and-algorithm/",
+                    "title": "Diagnostics parity (CLI and LSP) - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/verification-and-traceability",
+                    "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/verification-and-traceability/",
+                    "title": "Diagnostics parity (CLI and LSP) - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/build-pipeline/program-assembly",
+                "href": "/platform-spec/compiler/build-pipeline/program-assembly/",
+                "title": "Program assembly",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/program-assembly/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/build-pipeline/program-assembly/contracts-and-edge-cases/",
+                    "title": "Program assembly - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/program-assembly/design-model",
+                    "href": "/platform-spec/compiler/build-pipeline/program-assembly/design-model/",
+                    "title": "Program assembly - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/program-assembly/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/build-pipeline/program-assembly/flow-and-algorithm/",
+                    "title": "Program assembly - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/program-assembly/verification-and-traceability",
+                    "href": "/platform-spec/compiler/build-pipeline/program-assembly/verification-and-traceability/",
+                    "title": "Program assembly - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/build-pipeline/stage-ordering",
+                "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+                "title": "Stage ordering and lowering",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/stage-ordering/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/build-pipeline/stage-ordering/contracts-and-edge-cases/",
+                    "title": "Stage ordering and lowering - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/stage-ordering/design-model",
+                    "href": "/platform-spec/compiler/build-pipeline/stage-ordering/design-model/",
+                    "title": "Stage ordering and lowering - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/stage-ordering/examples",
+                    "href": "/platform-spec/compiler/build-pipeline/stage-ordering/examples/",
+                    "title": "Stage ordering and lowering - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/stage-ordering/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/build-pipeline/stage-ordering/faq-and-troubleshooting/",
+                    "title": "Stage ordering and lowering - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/stage-ordering/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/build-pipeline/stage-ordering/flow-and-algorithm/",
+                    "title": "Stage ordering and lowering - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/stage-ordering/verification-and-traceability",
+                    "href": "/platform-spec/compiler/build-pipeline/stage-ordering/verification-and-traceability/",
+                    "title": "Stage ordering and lowering - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/compiler/codegen-and-ir",
+            "href": "/platform-spec/compiler/codegen-and-ir/",
+            "title": "Codegen and IR",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema",
+                "href": "/platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/",
+                "title": "Codegen artifact schema",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/contracts-and-edge-cases/",
+                    "title": "Codegen artifact schema - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/design-model",
+                    "href": "/platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/design-model/",
+                    "title": "Codegen artifact schema - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/examples",
+                    "href": "/platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/examples/",
+                    "title": "Codegen artifact schema - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/faq-and-troubleshooting/",
+                    "title": "Codegen artifact schema - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/flow-and-algorithm/",
+                    "title": "Codegen artifact schema - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/verification-and-traceability",
+                    "href": "/platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/verification-and-traceability/",
+                    "title": "Codegen artifact schema - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/codegen-and-ir/dynamic-types-and-mapping",
+                "href": "/platform-spec/compiler/codegen-and-ir/dynamic-types-and-mapping/",
+                "title": "Dynamic types and mapping (v0.3 scope)",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract",
+                "href": "/platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/",
+                "title": "Extern import extraction contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/contracts-and-edge-cases/",
+                    "title": "Extern import extraction contract - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/design-model",
+                    "href": "/platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/design-model/",
+                    "title": "Extern import extraction contract - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/examples",
+                    "href": "/platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/examples/",
+                    "title": "Extern import extraction contract - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/faq-and-troubleshooting/",
+                    "title": "Extern import extraction contract - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/flow-and-algorithm/",
+                    "title": "Extern import extraction contract - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/verification-and-traceability",
+                    "href": "/platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/verification-and-traceability/",
+                    "title": "Extern import extraction contract - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract",
+                "href": "/platform-spec/compiler/codegen-and-ir/lowering-contract/",
+                "title": "Lowering contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/codegen-and-ir/lowering-contract/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/design-model",
+                    "href": "/platform-spec/compiler/codegen-and-ir/lowering-contract/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/examples",
+                    "href": "/platform-spec/compiler/codegen-and-ir/lowering-contract/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/codegen-and-ir/lowering-contract/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/codegen-and-ir/lowering-contract/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/verification-and-traceability",
+                    "href": "/platform-spec/compiler/codegen-and-ir/lowering-contract/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/compiler/compiler-mods",
+            "href": "/platform-spec/compiler/compiler-mods/",
+            "title": "Compiler Mods",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade",
+                "href": "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/",
+                "title": "Analysis, query, and diagnostics facades",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/contracts-and-edge-cases/",
+                    "title": "Analysis, query, and diagnostics facades - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/design-model",
+                    "href": "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/design-model/",
+                    "title": "Analysis, query, and diagnostics facades - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/examples",
+                    "href": "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/examples/",
+                    "title": "Analysis, query, and diagnostics facades - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/faq-and-troubleshooting/",
+                    "title": "Analysis, query, and diagnostics facades - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/flow-and-algorithm/",
+                    "title": "Analysis, query, and diagnostics facades - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/verification-and-traceability",
+                    "href": "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/verification-and-traceability/",
+                    "title": "Analysis, query, and diagnostics facades - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade",
+                "href": "/platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/",
+                "title": "Beskid.Compiler.SyntaxMirror facade",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/contracts-and-edge-cases/",
+                    "title": "Beskid.Compiler.SyntaxMirror facade - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/design-model",
+                    "href": "/platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/design-model/",
+                    "title": "Beskid.Compiler.SyntaxMirror facade - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/examples",
+                    "href": "/platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/examples/",
+                    "title": "Beskid.Compiler.SyntaxMirror facade - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/faq-and-troubleshooting/",
+                    "title": "Beskid.Compiler.SyntaxMirror facade - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/flow-and-algorithm/",
+                    "title": "Beskid.Compiler.SyntaxMirror facade - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/verification-and-traceability",
+                    "href": "/platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/verification-and-traceability/",
+                    "title": "Beskid.Compiler.SyntaxMirror facade - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism",
+                "href": "/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/",
+                "title": "Incremental scheduling and determinism",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/contracts-and-edge-cases/",
+                    "title": "Incremental scheduling and determinism - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/design-model",
+                    "href": "/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/design-model/",
+                    "title": "Incremental scheduling and determinism - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/examples",
+                    "href": "/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/examples/",
+                    "title": "Incremental scheduling and determinism - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/faq-and-troubleshooting/",
+                    "title": "Incremental scheduling and determinism - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/flow-and-algorithm/",
+                    "title": "Incremental scheduling and determinism - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/verification-and-traceability",
+                    "href": "/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/verification-and-traceability/",
+                    "title": "Incremental scheduling and determinism - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge",
+                "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
+                "title": "Mod host bridge",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract",
+                    "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/",
+                    "title": "Mod host bridge - AOT artifact contract",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/contracts-and-edge-cases/",
+                    "title": "mod host bridge - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/design-model",
+                    "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/design-model/",
+                    "title": "mod host bridge - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/examples",
+                    "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/examples/",
+                    "title": "mod host bridge - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/faq-and-troubleshooting/",
+                    "title": "mod host bridge - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/flow-and-algorithm/",
+                    "title": "mod host bridge - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/verification-and-traceability",
+                    "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/verification-and-traceability/",
+                    "title": "mod host bridge - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation",
+                "href": "/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/",
+                "title": "Syntax domain model generation",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/contracts-and-edge-cases/",
+                    "title": "Syntax domain model generation - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/design-model",
+                    "href": "/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/design-model/",
+                    "title": "Syntax domain model generation - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/examples",
+                    "href": "/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/examples/",
+                    "title": "Syntax domain model generation - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/faq-and-troubleshooting/",
+                    "title": "Syntax domain model generation - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/flow-and-algorithm/",
+                    "title": "Syntax domain model generation - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/verification-and-traceability",
+                    "href": "/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/verification-and-traceability/",
+                    "title": "Syntax domain model generation - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms",
+                "href": "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/",
+                "title": "Typed emitter and transforms",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/contracts-and-edge-cases/",
+                    "title": "Typed emitter and transforms - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/design-model",
+                    "href": "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/design-model/",
+                    "title": "Typed emitter and transforms - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/examples",
+                    "href": "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/examples/",
+                    "title": "Typed emitter and transforms - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/faq-and-troubleshooting/",
+                    "title": "Typed emitter and transforms - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/flow-and-algorithm/",
+                    "title": "Typed emitter and transforms - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/verification-and-traceability",
+                    "href": "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/verification-and-traceability/",
+                    "title": "Typed emitter and transforms - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/compiler/conformance",
+            "href": "/platform-spec/compiler/conformance/",
+            "title": "Conformance",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/compiler/conformance/conformance-evidence-policy",
+                "href": "/platform-spec/compiler/conformance/conformance-evidence-policy/",
+                "title": "Conformance evidence policy",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/conformance/conformance-evidence-policy/contracts-and-edge-cases/",
+                    "title": "Conformance evidence policy - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/design-model",
+                    "href": "/platform-spec/compiler/conformance/conformance-evidence-policy/design-model/",
+                    "title": "Conformance evidence policy - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/examples",
+                    "href": "/platform-spec/compiler/conformance/conformance-evidence-policy/examples/",
+                    "title": "Conformance evidence policy - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/conformance/conformance-evidence-policy/faq-and-troubleshooting/",
+                    "title": "Conformance evidence policy - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/conformance/conformance-evidence-policy/flow-and-algorithm/",
+                    "title": "Conformance evidence policy - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/verification-and-traceability",
+                    "href": "/platform-spec/compiler/conformance/conformance-evidence-policy/verification-and-traceability/",
+                    "title": "Conformance evidence policy - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures",
+                "href": "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/",
+                "title": "Test harnesses and fixtures",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/design-model",
+                    "href": "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/examples",
+                    "href": "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/verification-and-traceability",
+                    "href": "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/compiler/front-end",
+            "href": "/platform-spec/compiler/front-end/",
+            "title": "Front-end",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract",
+                "href": "/platform-spec/compiler/front-end/ast-hir-shape-contract/",
+                "title": "AST and HIR shape contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/front-end/ast-hir-shape-contract/contracts-and-edge-cases/",
+                    "title": "AST and HIR shape contract - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/design-model",
+                    "href": "/platform-spec/compiler/front-end/ast-hir-shape-contract/design-model/",
+                    "title": "AST and HIR shape contract - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/examples",
+                    "href": "/platform-spec/compiler/front-end/ast-hir-shape-contract/examples/",
+                    "title": "AST and HIR shape contract - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/front-end/ast-hir-shape-contract/faq-and-troubleshooting/",
+                    "title": "AST and HIR shape contract - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/front-end/ast-hir-shape-contract/flow-and-algorithm/",
+                    "title": "AST and HIR shape contract - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/verification-and-traceability",
+                    "href": "/platform-spec/compiler/front-end/ast-hir-shape-contract/verification-and-traceability/",
+                    "title": "AST and HIR shape contract - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract",
+                "href": "/platform-spec/compiler/front-end/grammar-and-parser-contract/",
+                "title": "Grammar and parser contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/front-end/grammar-and-parser-contract/contracts-and-edge-cases/",
+                    "title": "Grammar and parser contract - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/design-model",
+                    "href": "/platform-spec/compiler/front-end/grammar-and-parser-contract/design-model/",
+                    "title": "Grammar and parser contract - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/examples",
+                    "href": "/platform-spec/compiler/front-end/grammar-and-parser-contract/examples/",
+                    "title": "Grammar and parser contract - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/front-end/grammar-and-parser-contract/faq-and-troubleshooting/",
+                    "title": "Grammar and parser contract - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/front-end/grammar-and-parser-contract/flow-and-algorithm/",
+                    "title": "Grammar and parser contract - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/verification-and-traceability",
+                    "href": "/platform-spec/compiler/front-end/grammar-and-parser-contract/verification-and-traceability/",
+                    "title": "Grammar and parser contract - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality",
+                "href": "/platform-spec/compiler/front-end/hir-normalization-and-legality/",
+                "title": "HIR normalization and legality",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/front-end/hir-normalization-and-legality/contracts-and-edge-cases/",
+                    "title": "HIR normalization and legality - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/design-model",
+                    "href": "/platform-spec/compiler/front-end/hir-normalization-and-legality/design-model/",
+                    "title": "HIR normalization and legality - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/examples",
+                    "href": "/platform-spec/compiler/front-end/hir-normalization-and-legality/examples/",
+                    "title": "HIR normalization and legality - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/front-end/hir-normalization-and-legality/faq-and-troubleshooting/",
+                    "title": "HIR normalization and legality - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/front-end/hir-normalization-and-legality/flow-and-algorithm/",
+                    "title": "HIR normalization and legality - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/verification-and-traceability",
+                    "href": "/platform-spec/compiler/front-end/hir-normalization-and-legality/verification-and-traceability/",
+                    "title": "HIR normalization and legality - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts",
+                "href": "/platform-spec/compiler/front-end/parser-and-ast-contracts/",
+                "title": "Parser and AST contracts",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/front-end/parser-and-ast-contracts/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/design-model",
+                    "href": "/platform-spec/compiler/front-end/parser-and-ast-contracts/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/examples",
+                    "href": "/platform-spec/compiler/front-end/parser-and-ast-contracts/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/front-end/parser-and-ast-contracts/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/front-end/parser-and-ast-contracts/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/verification-and-traceability",
+                    "href": "/platform-spec/compiler/front-end/parser-and-ast-contracts/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/compiler/implementation-map",
+            "href": "/platform-spec/compiler/implementation-map/",
+            "title": "Implementation map",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors",
+                "href": "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/",
+                "title": "Crate-to-spec anchors",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/design-model",
+                    "href": "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/examples",
+                    "href": "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/verification-and-traceability",
+                    "href": "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/compiler/pipeline-composition",
+            "href": "/platform-spec/compiler/pipeline-composition/",
+            "title": "Pipeline composition",
+            "level": "area",
+            "children": []
+          },
+          {
+            "slug": "platform-spec/compiler/resolution-and-projects",
+            "href": "/platform-spec/compiler/resolution-and-projects/",
+            "title": "Resolution and projects",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy",
+                "href": "/platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/",
+                "title": "Dependency graph and cycle policy",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/contracts-and-edge-cases/",
+                    "title": "Dependency graph and cycle policy - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/design-model",
+                    "href": "/platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/design-model/",
+                    "title": "Dependency graph and cycle policy - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/examples",
+                    "href": "/platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/examples/",
+                    "title": "Dependency graph and cycle policy - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/faq-and-troubleshooting/",
+                    "title": "Dependency graph and cycle policy - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/flow-and-algorithm/",
+                    "title": "Dependency graph and cycle policy - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/verification-and-traceability",
+                    "href": "/platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/verification-and-traceability/",
+                    "title": "Dependency graph and cycle policy - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract",
+                "href": "/platform-spec/compiler/resolution-and-projects/project-manifest-contract/",
+                "title": "Project manifest contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/resolution-and-projects/project-manifest-contract/contracts-and-edge-cases/",
+                    "title": "Project manifest contract - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/design-model",
+                    "href": "/platform-spec/compiler/resolution-and-projects/project-manifest-contract/design-model/",
+                    "title": "Project manifest contract - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/examples",
+                    "href": "/platform-spec/compiler/resolution-and-projects/project-manifest-contract/examples/",
+                    "title": "Project manifest contract - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/resolution-and-projects/project-manifest-contract/faq-and-troubleshooting/",
+                    "title": "Project manifest contract - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/resolution-and-projects/project-manifest-contract/flow-and-algorithm/",
+                    "title": "Project manifest contract - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/verification-and-traceability",
+                    "href": "/platform-spec/compiler/resolution-and-projects/project-manifest-contract/verification-and-traceability/",
+                    "title": "Project manifest contract - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract",
+                "href": "/platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/",
+                "title": "Registry and overrides contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/contracts-and-edge-cases/",
+                    "title": "Registry and overrides contract - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/design-model",
+                    "href": "/platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/design-model/",
+                    "title": "Registry and overrides contract - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/examples",
+                    "href": "/platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/examples/",
+                    "title": "Registry and overrides contract - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/faq-and-troubleshooting/",
+                    "title": "Registry and overrides contract - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/flow-and-algorithm/",
+                    "title": "Registry and overrides contract - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/verification-and-traceability",
+                    "href": "/platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/verification-and-traceability/",
+                    "title": "Registry and overrides contract - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts",
+                "href": "/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/",
+                "title": "Workspace and lock contracts",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/contracts-and-edge-cases/",
+                    "title": "Workspace and lock contracts - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/design-model",
+                    "href": "/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/design-model/",
+                    "title": "Workspace and lock contracts - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/examples",
+                    "href": "/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/examples/",
+                    "title": "Workspace and lock contracts - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/faq-and-troubleshooting/",
+                    "title": "Workspace and lock contracts - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/flow-and-algorithm/",
+                    "title": "Workspace and lock contracts - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/verification-and-traceability",
+                    "href": "/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/verification-and-traceability/",
+                    "title": "Workspace and lock contracts - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract",
+                "href": "/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/",
+                "title": "Workspace resolution contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/contracts-and-edge-cases/",
+                    "title": "Workspace resolution contract - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/design-model",
+                    "href": "/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/design-model/",
+                    "title": "Workspace resolution contract - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/examples",
+                    "href": "/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/examples/",
+                    "title": "Workspace resolution contract - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/faq-and-troubleshooting/",
+                    "title": "Workspace resolution contract - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/flow-and-algorithm/",
+                    "title": "Workspace resolution contract - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/verification-and-traceability",
+                    "href": "/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/verification-and-traceability/",
+                    "title": "Workspace resolution contract - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/compiler/semantic-pipeline",
+            "href": "/platform-spec/compiler/semantic-pipeline/",
+            "title": "Semantic pipeline",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry",
+                "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
+                "title": "Diagnostic code registry",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/design-model",
+                    "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/examples",
+                    "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/verification-and-traceability",
+                    "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract",
+                "href": "/platform-spec/compiler/semantic-pipeline/resolver-contract/",
+                "title": "Resolver contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/semantic-pipeline/resolver-contract/contracts-and-edge-cases/",
+                    "title": "Resolver contract - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/design-model",
+                    "href": "/platform-spec/compiler/semantic-pipeline/resolver-contract/design-model/",
+                    "title": "Resolver contract - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/examples",
+                    "href": "/platform-spec/compiler/semantic-pipeline/resolver-contract/examples/",
+                    "title": "Resolver contract - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/semantic-pipeline/resolver-contract/faq-and-troubleshooting/",
+                    "title": "Resolver contract - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/semantic-pipeline/resolver-contract/flow-and-algorithm/",
+                    "title": "Resolver contract - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/verification-and-traceability",
+                    "href": "/platform-spec/compiler/semantic-pipeline/resolver-contract/verification-and-traceability/",
+                    "title": "Resolver contract - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog",
+                "href": "/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/",
+                "title": "Rules and diagnostics catalog",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/design-model",
+                    "href": "/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/examples",
+                    "href": "/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/verification-and-traceability",
+                    "href": "/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract",
+                "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/",
+                "title": "Rules pipeline contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/contracts-and-edge-cases/",
+                    "title": "Rules pipeline contract - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/design-model",
+                    "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/design-model/",
+                    "title": "Rules pipeline contract - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/examples",
+                    "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/examples/",
+                    "title": "Rules pipeline contract - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/faq-and-troubleshooting/",
+                    "title": "Rules pipeline contract - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/flow-and-algorithm/",
+                    "title": "Rules pipeline contract - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/verification-and-traceability",
+                    "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/verification-and-traceability/",
+                    "title": "Rules pipeline contract - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract",
+                "href": "/platform-spec/compiler/semantic-pipeline/type-system-pass-contract/",
+                "title": "Type-system pass contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/semantic-pipeline/type-system-pass-contract/contracts-and-edge-cases/",
+                    "title": "Type-system pass contract - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/design-model",
+                    "href": "/platform-spec/compiler/semantic-pipeline/type-system-pass-contract/design-model/",
+                    "title": "Type-system pass contract - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/examples",
+                    "href": "/platform-spec/compiler/semantic-pipeline/type-system-pass-contract/examples/",
+                    "title": "Type-system pass contract - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/semantic-pipeline/type-system-pass-contract/faq-and-troubleshooting/",
+                    "title": "Type-system pass contract - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/semantic-pipeline/type-system-pass-contract/flow-and-algorithm/",
+                    "title": "Type-system pass contract - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/verification-and-traceability",
+                    "href": "/platform-spec/compiler/semantic-pipeline/type-system-pass-contract/verification-and-traceability/",
+                    "title": "Type-system pass contract - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "platform-spec/core-library",
+        "href": "/platform-spec/core-library/",
+        "title": "Core library",
+        "level": "domain",
+        "children": [
+          {
+            "slug": "platform-spec/core-library/compiler-integration",
+            "href": "/platform-spec/core-library/compiler-integration/",
+            "title": "Compiler integration",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging",
+                "href": "/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/",
+                "title": "Corelib discovery and packaging",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/design-model",
+                    "href": "/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/examples",
+                    "href": "/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/faq-and-troubleshooting",
+                    "href": "/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/flow-and-algorithm",
+                    "href": "/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/verification-and-traceability",
+                    "href": "/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution",
+                "href": "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/",
+                "title": "Corelib injection and resolution",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/design-model",
+                    "href": "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/examples",
+                    "href": "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/faq-and-troubleshooting",
+                    "href": "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/flow-and-algorithm",
+                    "href": "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/verification-and-traceability",
+                    "href": "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/core-library/concurrency",
+            "href": "/platform-spec/core-library/concurrency/",
+            "title": "Concurrency",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/core-library/concurrency/concurrency-package",
+                "href": "/platform-spec/core-library/concurrency/concurrency-package/",
+                "title": "Concurrency package",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases/",
+                    "title": "Concurrency package - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/concurrency/concurrency-package/decisions-record",
+                    "href": "/platform-spec/core-library/concurrency/concurrency-package/decisions-record/",
+                    "title": "Concurrency package - Decisions record (legacy index)",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
+                    "href": "/platform-spec/core-library/concurrency/concurrency-package/design-model/",
+                    "title": "Concurrency package - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/concurrency/concurrency-package/examples",
+                    "href": "/platform-spec/core-library/concurrency/concurrency-package/examples/",
+                    "title": "Concurrency package - Examples",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/core-library/concurrency/system-threading",
+                "href": "/platform-spec/core-library/concurrency/system-threading/",
+                "title": "System.Threading",
+                "level": "feature",
+                "children": []
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/core-library/stability-and-api-shape",
+            "href": "/platform-spec/core-library/stability-and-api-shape/",
+            "title": "Stability and API shape",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape",
+                "href": "/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/",
+                "title": "Corelib API shape",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/design-model",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/examples",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/faq-and-troubleshooting",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/flow-and-algorithm",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/verification-and-traceability",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces",
+                "href": "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/",
+                "title": "Runtime-backed corelib surfaces",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/design-model",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/examples",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/faq-and-troubleshooting",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/flow-and-algorithm",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/verification-and-traceability",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/core-library/terminal-and-console",
+            "href": "/platform-spec/core-library/terminal-and-console/",
+            "title": "Terminal and console",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model",
+                "href": "/platform-spec/core-library/terminal-and-console/ansi-escape-model/",
+                "title": "ANSI escape model",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/terminal-and-console/ansi-escape-model/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/design-model",
+                    "href": "/platform-spec/core-library/terminal-and-console/ansi-escape-model/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/examples",
+                    "href": "/platform-spec/core-library/terminal-and-console/ansi-escape-model/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/flow-and-algorithm",
+                    "href": "/platform-spec/core-library/terminal-and-console/ansi-escape-model/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/verification-and-traceability",
+                    "href": "/platform-spec/core-library/terminal-and-console/ansi-escape-model/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/core-library/terminal-and-console/console-capabilities",
+                "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/",
+                "title": "Console capabilities",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/design-model",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/examples",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/flow-and-algorithm",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/verification-and-traceability",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/core-library/terminal-and-console/console-controls",
+                "href": "/platform-spec/core-library/terminal-and-console/console-controls/",
+                "title": "Console controls",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-controls/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-controls/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-controls/design-model",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-controls/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-controls/examples",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-controls/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-controls/flow-and-algorithm",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-controls/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-controls/verification-and-traceability",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-controls/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/core-library/terminal-and-console/console-io-streams",
+                "href": "/platform-spec/core-library/terminal-and-console/console-io-streams/",
+                "title": "Console I/O streams",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-io-streams/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-io-streams/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-io-streams/design-model",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-io-streams/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-io-streams/examples",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-io-streams/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-io-streams/flow-and-algorithm",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-io-streams/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-io-streams/verification-and-traceability",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-io-streams/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/core-library/terminal-and-console/console-markup-format",
+                "href": "/platform-spec/core-library/terminal-and-console/console-markup-format/",
+                "title": "Console markup format",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-markup-format/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-markup-format/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-markup-format/design-model",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-markup-format/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-markup-format/examples",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-markup-format/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-markup-format/flow-and-algorithm",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-markup-format/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-markup-format/verification-and-traceability",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-markup-format/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events",
+                "href": "/platform-spec/core-library/terminal-and-console/console-terminal-events/",
+                "title": "Console terminal events",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-terminal-events/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/design-model",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-terminal-events/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/examples",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-terminal-events/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/flow-and-algorithm",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-terminal-events/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/verification-and-traceability",
+                    "href": "/platform-spec/core-library/terminal-and-console/console-terminal-events/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "platform-spec/execution",
+        "href": "/platform-spec/execution/",
+        "title": "Execution",
+        "level": "domain",
+        "children": [
+          {
+            "slug": "platform-spec/execution/abi-and-host",
+            "href": "/platform-spec/execution/abi-and-host/",
+            "title": "ABI and host boundary",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility",
+                "href": "/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/",
+                "title": "ABI versioning and compatibility",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/contracts-and-edge-cases",
+                    "href": "/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/design-model",
+                    "href": "/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/examples",
+                    "href": "/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/faq-and-troubleshooting",
+                    "href": "/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/flow-and-algorithm",
+                    "href": "/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/verification-and-traceability",
+                    "href": "/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+                "href": "/platform-spec/execution/abi-and-host/builtins-and-symbols/",
+                "title": "Builtins and symbols",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/contracts-and-edge-cases",
+                    "href": "/platform-spec/execution/abi-and-host/builtins-and-symbols/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/design-model",
+                    "href": "/platform-spec/execution/abi-and-host/builtins-and-symbols/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/examples",
+                    "href": "/platform-spec/execution/abi-and-host/builtins-and-symbols/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/faq-and-troubleshooting",
+                    "href": "/platform-spec/execution/abi-and-host/builtins-and-symbols/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/flow-and-algorithm",
+                    "href": "/platform-spec/execution/abi-and-host/builtins-and-symbols/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/verification-and-traceability",
+                    "href": "/platform-spec/execution/abi-and-host/builtins-and-symbols/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy",
+                "href": "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/",
+                "title": "Extern dispatch and policy",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/contracts-and-edge-cases",
+                    "href": "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/design-model",
+                    "href": "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/examples",
+                    "href": "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/faq-and-troubleshooting",
+                    "href": "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/flow-and-algorithm",
+                    "href": "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/verification-and-traceability",
+                    "href": "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/execution/runtime",
+            "href": "/platform-spec/execution/runtime/",
+            "title": "Runtime",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/execution/runtime/channels-and-synchronization",
+                "href": "/platform-spec/execution/runtime/channels-and-synchronization/",
+                "title": "Channels and synchronization",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/execution/runtime/channels-and-synchronization/contracts-and-edge-cases",
+                    "href": "/platform-spec/execution/runtime/channels-and-synchronization/contracts-and-edge-cases/",
+                    "title": "Channels and synchronization - Contracts and edge cases",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks",
+                "href": "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
+                "title": "Fiber scheduler and stacks",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/design-model",
+                    "href": "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/design-model/",
+                    "title": "Fiber scheduler and stacks - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/verification-and-traceability",
+                    "href": "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/verification-and-traceability/",
+                    "title": "Fiber scheduler and stacks - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract",
+                "href": "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/",
+                "title": "Memory and GC runtime contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/design-model",
+                    "href": "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/examples",
+                    "href": "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/flow-and-algorithm",
+                    "href": "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/verification-and-traceability",
+                    "href": "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/execution/runtime/panic-io-and-syscalls",
+                "href": "/platform-spec/execution/runtime/panic-io-and-syscalls/",
+                "title": "Panic, IO, and syscalls",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/contracts-and-edge-cases",
+                    "href": "/platform-spec/execution/runtime/panic-io-and-syscalls/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/design-model",
+                    "href": "/platform-spec/execution/runtime/panic-io-and-syscalls/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/examples",
+                    "href": "/platform-spec/execution/runtime/panic-io-and-syscalls/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/faq-and-troubleshooting",
+                    "href": "/platform-spec/execution/runtime/panic-io-and-syscalls/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/flow-and-algorithm",
+                    "href": "/platform-spec/execution/runtime/panic-io-and-syscalls/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/verification-and-traceability",
+                    "href": "/platform-spec/execution/runtime/panic-io-and-syscalls/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/execution/runtime/runtime-feature-flags",
+                "href": "/platform-spec/execution/runtime/runtime-feature-flags/",
+                "title": "Runtime feature flags",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/execution/runtime/runtime-feature-flags/contracts-and-edge-cases",
+                    "href": "/platform-spec/execution/runtime/runtime-feature-flags/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/runtime-feature-flags/design-model",
+                    "href": "/platform-spec/execution/runtime/runtime-feature-flags/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/runtime-feature-flags/examples",
+                    "href": "/platform-spec/execution/runtime/runtime-feature-flags/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/runtime-feature-flags/faq-and-troubleshooting",
+                    "href": "/platform-spec/execution/runtime/runtime-feature-flags/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/runtime-feature-flags/flow-and-algorithm",
+                    "href": "/platform-spec/execution/runtime/runtime-feature-flags/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/execution/runtime/runtime-feature-flags/verification-and-traceability",
+                    "href": "/platform-spec/execution/runtime/runtime-feature-flags/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "platform-spec/language-meta",
+        "href": "/platform-spec/language-meta/",
+        "title": "Language meta",
+        "level": "domain",
+        "children": [
+          {
+            "slug": "platform-spec/language-meta/composition",
+            "href": "/platform-spec/language-meta/composition/",
+            "title": "Composition",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/language-meta/composition/dependency-injection",
+                "href": "/platform-spec/language-meta/composition/dependency-injection/",
+                "title": "Native dependency injection",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/language-meta/composition/dependency-injection/contracts-and-edge-cases",
+                    "href": "/platform-spec/language-meta/composition/dependency-injection/contracts-and-edge-cases/",
+                    "title": "Native dependency injection - Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/composition/dependency-injection/design-model",
+                    "href": "/platform-spec/language-meta/composition/dependency-injection/design-model/",
+                    "title": "Native dependency injection - Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/composition/dependency-injection/examples",
+                    "href": "/platform-spec/language-meta/composition/dependency-injection/examples/",
+                    "title": "Native dependency injection - Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/composition/dependency-injection/faq-and-troubleshooting",
+                    "href": "/platform-spec/language-meta/composition/dependency-injection/faq-and-troubleshooting/",
+                    "title": "Native dependency injection - FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/composition/dependency-injection/flow-and-algorithm",
+                    "href": "/platform-spec/language-meta/composition/dependency-injection/flow-and-algorithm/",
+                    "title": "Native dependency injection - Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/composition/dependency-injection/verification-and-traceability",
+                    "href": "/platform-spec/language-meta/composition/dependency-injection/verification-and-traceability/",
+                    "title": "Native dependency injection - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/language-meta/conformance",
+            "href": "/platform-spec/language-meta/conformance/",
+            "title": "Conformance",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/language-meta/conformance/glossary-and-conformance",
+                "href": "/platform-spec/language-meta/conformance/glossary-and-conformance/",
+                "title": "Glossary and conformance",
+                "level": "article"
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/language-meta/contracts-and-effects",
+            "href": "/platform-spec/language-meta/contracts-and-effects/",
+            "title": "Contracts and effects",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/language-meta/contracts-and-effects/contracts",
+                "href": "/platform-spec/language-meta/contracts-and-effects/contracts/",
+                "title": "Contracts",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/language-meta/contracts-and-effects/error-handling",
+                "href": "/platform-spec/language-meta/contracts-and-effects/error-handling/",
+                "title": "Error handling",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/language-meta/contracts-and-effects/testing",
+                "href": "/platform-spec/language-meta/contracts-and-effects/testing/",
+                "title": "Testing",
+                "level": "article"
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/language-meta/evaluation",
+            "href": "/platform-spec/language-meta/evaluation/",
+            "title": "Evaluation",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/language-meta/evaluation/control-flow",
+                "href": "/platform-spec/language-meta/evaluation/control-flow/",
+                "title": "Control flow",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/language-meta/evaluation/events",
+                "href": "/platform-spec/language-meta/evaluation/events/",
+                "title": "Events",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
+                "href": "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
+                "title": "Fibers and spawn",
+                "level": "feature",
+                "children": []
+              },
+              {
+                "slug": "platform-spec/language-meta/evaluation/lambdas-and-closures",
+                "href": "/platform-spec/language-meta/evaluation/lambdas-and-closures/",
+                "title": "Lambdas and closures",
+                "level": "article"
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/language-meta/interop",
+            "href": "/platform-spec/language-meta/interop/",
+            "title": "Interop",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/language-meta/interop/c-abi-profile",
+                "href": "/platform-spec/language-meta/interop/c-abi-profile/",
+                "title": "C ABI profile",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/language-meta/interop/c-abi-profile/c-layout-types",
+                    "href": "/platform-spec/language-meta/interop/c-abi-profile/c-layout-types/",
+                    "title": "C ABI profile — C layout types (v0.3.1)",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile",
+                    "href": "/platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile/",
+                    "title": "C ABI profile — Dynamic resolution profile",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/c-abi-profile/extern-contracts-and-linking",
+                    "href": "/platform-spec/language-meta/interop/c-abi-profile/extern-contracts-and-linking/",
+                    "title": "C ABI profile — Extern contracts and linking",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/c-abi-profile/interop-view-types",
+                    "href": "/platform-spec/language-meta/interop/c-abi-profile/interop-view-types/",
+                    "title": "C ABI profile — Interop view types (v0.3.0)",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/c-abi-profile/link-time-linking",
+                    "href": "/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/",
+                    "title": "C ABI profile — Link-time linking",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/c-abi-profile/platform-tier-matrix",
+                    "href": "/platform-spec/language-meta/interop/c-abi-profile/platform-tier-matrix/",
+                    "title": "C ABI profile — Platform tier matrix",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/c-abi-profile/types-and-call-conventions",
+                    "href": "/platform-spec/language-meta/interop/c-abi-profile/types-and-call-conventions/",
+                    "title": "C ABI profile — Types and call conventions",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/language-meta/interop/export-and-callbacks",
+                "href": "/platform-spec/language-meta/interop/export-and-callbacks/",
+                "title": "Export and callbacks",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/language-meta/interop/export-and-callbacks/callback-registration",
+                    "href": "/platform-spec/language-meta/interop/export-and-callbacks/callback-registration/",
+                    "title": "Callback registration",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/export-and-callbacks/verification-and-traceability",
+                    "href": "/platform-spec/language-meta/interop/export-and-callbacks/verification-and-traceability/",
+                    "title": "Export and callbacks — Verification and traceability",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/export-and-callbacks/export-attribute",
+                    "href": "/platform-spec/language-meta/interop/export-and-callbacks/export-attribute/",
+                    "title": "Export attribute",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/language-meta/interop/ffi-and-extern",
+                "href": "/platform-spec/language-meta/interop/ffi-and-extern/",
+                "title": "FFI and extern",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/language-meta/interop/ffi-and-extern/contract-import-syntax",
+                    "href": "/platform-spec/language-meta/interop/ffi-and-extern/contract-import-syntax/",
+                    "title": "Contract import syntax",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/ffi-and-extern/extern-attribute-schema",
+                    "href": "/platform-spec/language-meta/interop/ffi-and-extern/extern-attribute-schema/",
+                    "title": "Extern attribute schema",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/ffi-and-extern/verification-and-traceability",
+                    "href": "/platform-spec/language-meta/interop/ffi-and-extern/verification-and-traceability/",
+                    "title": "FFI and extern — Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/language-meta/interop/interop-contracts",
+                "href": "/platform-spec/language-meta/interop/interop-contracts/",
+                "title": "Interop.Contracts",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/language-meta/interop/interop-contracts/callback-call-shapes",
+                    "href": "/platform-spec/language-meta/interop/interop-contracts/callback-call-shapes/",
+                    "title": "Interop.Contracts — Callback call shapes",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/interop-contracts/conformance-and-versioning",
+                    "href": "/platform-spec/language-meta/interop/interop-contracts/conformance-and-versioning/",
+                    "title": "Interop.Contracts — Conformance and versioning",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/interop-contracts/core-primitives",
+                    "href": "/platform-spec/language-meta/interop/interop-contracts/core-primitives/",
+                    "title": "Interop.Contracts — Core primitives",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/interop-contracts/error-and-unwind-semantics",
+                    "href": "/platform-spec/language-meta/interop/interop-contracts/error-and-unwind-semantics/",
+                    "title": "Interop.Contracts — Error and unwind semantics",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/interop-contracts/language-agnostic-mapping",
+                    "href": "/platform-spec/language-meta/interop/interop-contracts/language-agnostic-mapping/",
+                    "title": "Interop.Contracts — Language-agnostic mapping rules",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/interop-contracts/ownership-at-boundary",
+                    "href": "/platform-spec/language-meta/interop/interop-contracts/ownership-at-boundary/",
+                    "title": "Interop.Contracts — Ownership at the boundary",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/language-meta/interop/rust-abi-profile",
+                "href": "/platform-spec/language-meta/interop/rust-abi-profile/",
+                "title": "Rust ABI profile",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/language-meta/interop/rust-abi-profile/boundary-and-stability",
+                    "href": "/platform-spec/language-meta/interop/rust-abi-profile/boundary-and-stability/",
+                    "title": "Rust ABI profile — Boundary and stability",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/rust-abi-profile/shims-and-compatibility",
+                    "href": "/platform-spec/language-meta/interop/rust-abi-profile/shims-and-compatibility/",
+                    "title": "Rust ABI profile — Shims and compatibility strategy",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/language-meta/memory-model",
+            "href": "/platform-spec/language-meta/memory-model/",
+            "title": "Memory model",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/language-meta/memory-model/memory-and-references",
+                "href": "/platform-spec/language-meta/memory-model/memory-and-references/",
+                "title": "Memory and references",
+                "level": "article"
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/language-meta/metaprogramming",
+            "href": "/platform-spec/language-meta/metaprogramming/",
+            "title": "Metaprogramming",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk",
+                "href": "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
+                "title": "Compiler Mod SDK",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/language-meta/metaprogramming/macros",
+                "href": "/platform-spec/language-meta/metaprogramming/macros/",
+                "title": "Language macros",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/language-meta/metaprogramming/metaprogramming",
+                "href": "/platform-spec/language-meta/metaprogramming/metaprogramming/",
+                "title": "Metaprogramming",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/language-meta/metaprogramming/serialization",
+                "href": "/platform-spec/language-meta/metaprogramming/serialization/",
+                "title": "Serialization packages",
+                "level": "article"
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/language-meta/program-structure",
+            "href": "/platform-spec/language-meta/program-structure/",
+            "title": "Program structure",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/language-meta/program-structure/code-style-and-naming",
+                "href": "/platform-spec/language-meta/program-structure/code-style-and-naming/",
+                "title": "Code style and naming",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/language-meta/program-structure/extend-type",
+                "href": "/platform-spec/language-meta/program-structure/extend-type/",
+                "title": "extend type",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/language-meta/program-structure/modules-and-visibility",
+                "href": "/platform-spec/language-meta/program-structure/modules-and-visibility/",
+                "title": "Modules and visibility",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/language-meta/program-structure/name-resolution",
+                "href": "/platform-spec/language-meta/program-structure/name-resolution/",
+                "title": "Name resolution",
+                "level": "article"
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/language-meta/surface-syntax",
+            "href": "/platform-spec/language-meta/surface-syntax/",
+            "title": "Surface syntax",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/language-meta/surface-syntax/documentation-comments",
+                "href": "/platform-spec/language-meta/surface-syntax/documentation-comments/",
+                "title": "Documentation comments",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/language-meta/surface-syntax/lexical-and-syntax",
+                "href": "/platform-spec/language-meta/surface-syntax/lexical-and-syntax/",
+                "title": "Lexical and syntax",
+                "level": "article"
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/language-meta/type-system",
+            "href": "/platform-spec/language-meta/type-system/",
+            "title": "Type system",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/language-meta/type-system/enums-and-match",
+                "href": "/platform-spec/language-meta/type-system/enums-and-match/",
+                "title": "Enums and match",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/language-meta/type-system/method-dispatch",
+                "href": "/platform-spec/language-meta/type-system/method-dispatch/",
+                "title": "Method dispatch",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/language-meta/type-system/type-inference",
+                "href": "/platform-spec/language-meta/type-system/type-inference/",
+                "title": "Type inference",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/language-meta/type-system/types",
+                "href": "/platform-spec/language-meta/type-system/types/",
+                "title": "Types",
+                "level": "article"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "platform-spec/tooling",
+        "href": "/platform-spec/tooling/",
+        "title": "Tooling",
+        "level": "domain",
+        "children": [
+          {
+            "slug": "platform-spec/tooling/cli",
+            "href": "/platform-spec/tooling/cli/",
+            "title": "CLI",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/tooling/cli/api-json-contract",
+                "href": "/platform-spec/tooling/cli/api-json-contract/",
+                "title": "api.json contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/tooling/cli/api-json-contract/design-model",
+                    "href": "/platform-spec/tooling/cli/api-json-contract/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/cli/api-json-contract/registry-api-reference-ui",
+                    "href": "/platform-spec/tooling/cli/api-json-contract/registry-api-reference-ui/",
+                    "title": "Registry API reference UI",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/tooling/cli/build-analyze-run-contract",
+                "href": "/platform-spec/tooling/cli/build-analyze-run-contract/",
+                "title": "Build, analyze, and run contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/tooling/cli/build-analyze-run-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/tooling/cli/build-analyze-run-contract/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/cli/build-analyze-run-contract/design-model",
+                    "href": "/platform-spec/tooling/cli/build-analyze-run-contract/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/cli/build-analyze-run-contract/examples",
+                    "href": "/platform-spec/tooling/cli/build-analyze-run-contract/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/cli/build-analyze-run-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/tooling/cli/build-analyze-run-contract/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/cli/build-analyze-run-contract/flow-and-algorithm",
+                    "href": "/platform-spec/tooling/cli/build-analyze-run-contract/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/cli/build-analyze-run-contract/verification-and-traceability",
+                    "href": "/platform-spec/tooling/cli/build-analyze-run-contract/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/tooling/cli/command-surface",
+                "href": "/platform-spec/tooling/cli/command-surface/",
+                "title": "Command surface",
+                "level": "article"
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/tooling/foreign-library-import",
+            "href": "/platform-spec/tooling/foreign-library-import/",
+            "title": "Foreign library import",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/tooling/foreign-library-import/cli-import-lib-command",
+                "href": "/platform-spec/tooling/foreign-library-import/cli-import-lib-command/",
+                "title": "beskid import lib command",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/tooling/foreign-library-import/external-library-trait",
+                "href": "/platform-spec/tooling/foreign-library-import/external-library-trait/",
+                "title": "ExternalLibrary provider trait",
+                "level": "article"
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/tooling/lsp",
+            "href": "/platform-spec/tooling/lsp/",
+            "title": "LSP",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/tooling/lsp/diagnostics-and-workspace-analysis",
+                "href": "/platform-spec/tooling/lsp/diagnostics-and-workspace-analysis/",
+                "title": "Diagnostics and workspace analysis",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/tooling/lsp/intellisense-capabilities-and-behavior",
+                "href": "/platform-spec/tooling/lsp/intellisense-capabilities-and-behavior/",
+                "title": "IntelliSense capabilities and behavior",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract",
+                "href": "/platform-spec/tooling/lsp/snapshot-and-refresh-contract/",
+                "title": "Snapshot and refresh contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/tooling/lsp/snapshot-and-refresh-contract/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/design-model",
+                    "href": "/platform-spec/tooling/lsp/snapshot-and-refresh-contract/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/examples",
+                    "href": "/platform-spec/tooling/lsp/snapshot-and-refresh-contract/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/tooling/lsp/snapshot-and-refresh-contract/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/flow-and-algorithm",
+                    "href": "/platform-spec/tooling/lsp/snapshot-and-refresh-contract/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/verification-and-traceability",
+                    "href": "/platform-spec/tooling/lsp/snapshot-and-refresh-contract/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/tooling/manifests-and-lockfiles",
+            "href": "/platform-spec/tooling/manifests-and-lockfiles/",
+            "title": "Manifests and lockfiles",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract",
+                "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+                "title": "Project manifest contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/design-model",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/examples",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/flow-and-algorithm",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries/",
+                    "title": "Project link libraries",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/verification-and-traceability",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts",
+                "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/",
+                "title": "Workspace and lock contracts",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/contracts-and-edge-cases",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/design-model",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/examples",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/faq-and-troubleshooting",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/flow-and-algorithm",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/verification-and-traceability",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/tooling/project-scaffolding",
+            "href": "/platform-spec/tooling/project-scaffolding/",
+            "title": "Project scaffolding",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/tooling/project-scaffolding/beskid-new",
+                "href": "/platform-spec/tooling/project-scaffolding/beskid-new/",
+                "title": "beskid new command",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/tooling/project-scaffolding/beskid-new/contracts-and-edge-cases",
+                    "href": "/platform-spec/tooling/project-scaffolding/beskid-new/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/project-scaffolding/beskid-new/design-model",
+                    "href": "/platform-spec/tooling/project-scaffolding/beskid-new/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/tooling/project-scaffolding/decisions-record",
+                "href": "/platform-spec/tooling/project-scaffolding/decisions-record/",
+                "title": "Project scaffolding - Decisions record (legacy index)",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/tooling/project-scaffolding/project-templates",
+                "href": "/platform-spec/tooling/project-scaffolding/project-templates/",
+                "title": "Project templates",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/tooling/project-scaffolding/project-templates/contracts-and-edge-cases",
+                    "href": "/platform-spec/tooling/project-scaffolding/project-templates/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/project-scaffolding/project-templates/decisions-record",
+                    "href": "/platform-spec/tooling/project-scaffolding/project-templates/decisions-record/",
+                    "title": "Decisions record (legacy index)",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/project-scaffolding/project-templates/design-model",
+                    "href": "/platform-spec/tooling/project-scaffolding/project-templates/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/project-scaffolding/project-templates/examples",
+                    "href": "/platform-spec/tooling/project-scaffolding/project-templates/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/project-scaffolding/project-templates/faq-and-troubleshooting",
+                    "href": "/platform-spec/tooling/project-scaffolding/project-templates/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/project-scaffolding/project-templates/flow-and-algorithm",
+                    "href": "/platform-spec/tooling/project-scaffolding/project-templates/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/project-scaffolding/project-templates/verification-and-traceability",
+                    "href": "/platform-spec/tooling/project-scaffolding/project-templates/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/tooling/project-scaffolding/template-packages",
+                "href": "/platform-spec/tooling/project-scaffolding/template-packages/",
+                "title": "Template packages",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/tooling/project-scaffolding/template-packages/contracts-and-edge-cases",
+                    "href": "/platform-spec/tooling/project-scaffolding/template-packages/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/project-scaffolding/template-packages/design-model",
+                    "href": "/platform-spec/tooling/project-scaffolding/template-packages/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/project-scaffolding/template-packages/verification-and-traceability",
+                    "href": "/platform-spec/tooling/project-scaffolding/template-packages/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/tooling/registry-client",
+            "href": "/platform-spec/tooling/registry-client/",
+            "title": "Registry client",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/tooling/registry-client/package-kinds",
+                "href": "/platform-spec/tooling/registry-client/package-kinds/",
+                "title": "Package kinds",
+                "level": "feature",
+                "children": []
+              },
+              {
+                "slug": "platform-spec/tooling/registry-client/pckg-client-contract",
+                "href": "/platform-spec/tooling/registry-client/pckg-client-contract/",
+                "title": "pckg client contract",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/tooling/registry-client/pckg-client-contract/contracts-and-edge-cases",
+                    "href": "/platform-spec/tooling/registry-client/pckg-client-contract/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/registry-client/pckg-client-contract/design-model",
+                    "href": "/platform-spec/tooling/registry-client/pckg-client-contract/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/registry-client/pckg-client-contract/examples",
+                    "href": "/platform-spec/tooling/registry-client/pckg-client-contract/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/registry-client/pckg-client-contract/faq-and-troubleshooting",
+                    "href": "/platform-spec/tooling/registry-client/pckg-client-contract/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/registry-client/pckg-client-contract/flow-and-algorithm",
+                    "href": "/platform-spec/tooling/registry-client/pckg-client-contract/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/registry-client/pckg-client-contract/verification-and-traceability",
+                    "href": "/platform-spec/tooling/registry-client/pckg-client-contract/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/tooling/vscode-extension",
+            "href": "/platform-spec/tooling/vscode-extension/",
+            "title": "VS Code extension",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/tooling/vscode-extension/extension-surface",
+                "href": "/platform-spec/tooling/vscode-extension/extension-surface/",
+                "title": "Extension surface",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/extension-surface/contracts-and-edge-cases",
+                    "href": "/platform-spec/tooling/vscode-extension/extension-surface/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/extension-surface/design-model",
+                    "href": "/platform-spec/tooling/vscode-extension/extension-surface/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/extension-surface/examples",
+                    "href": "/platform-spec/tooling/vscode-extension/extension-surface/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/extension-surface/faq-and-troubleshooting",
+                    "href": "/platform-spec/tooling/vscode-extension/extension-surface/faq-and-troubleshooting/",
+                    "title": "FAQ and troubleshooting",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/extension-surface/flow-and-algorithm",
+                    "href": "/platform-spec/tooling/vscode-extension/extension-surface/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/extension-surface/verification-and-traceability",
+                    "href": "/platform-spec/tooling/vscode-extension/extension-surface/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/tooling/vscode-extension/package-manager-panel",
+                "href": "/platform-spec/tooling/vscode-extension/package-manager-panel/",
+                "title": "Package manager panel",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/contracts-and-edge-cases",
+                    "href": "/platform-spec/tooling/vscode-extension/package-manager-panel/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/decisions-record",
+                    "href": "/platform-spec/tooling/vscode-extension/package-manager-panel/decisions-record/",
+                    "title": "Decisions record (legacy index)",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/design-model",
+                    "href": "/platform-spec/tooling/vscode-extension/package-manager-panel/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/examples",
+                    "href": "/platform-spec/tooling/vscode-extension/package-manager-panel/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/flow-and-algorithm",
+                    "href": "/platform-spec/tooling/vscode-extension/package-manager-panel/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/tooling/vscode-extension/decisions-record",
+                "href": "/platform-spec/tooling/vscode-extension/decisions-record/",
+                "title": "VS Code extension - Decisions record (legacy index)",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer",
+                "href": "/platform-spec/tooling/vscode-extension/workspace-project-explorer/",
+                "title": "Workspace and project explorer",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer/contracts-and-edge-cases",
+                    "href": "/platform-spec/tooling/vscode-extension/workspace-project-explorer/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer/decisions-record",
+                    "href": "/platform-spec/tooling/vscode-extension/workspace-project-explorer/decisions-record/",
+                    "title": "Decisions record (legacy index)",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer/design-model",
+                    "href": "/platform-spec/tooling/vscode-extension/workspace-project-explorer/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer/examples",
+                    "href": "/platform-spec/tooling/vscode-extension/workspace-project-explorer/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer/flow-and-algorithm",
+                    "href": "/platform-spec/tooling/vscode-extension/workspace-project-explorer/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

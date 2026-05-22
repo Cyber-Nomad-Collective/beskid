@@ -1,6 +1,6 @@
 ---
 title: Verification and traceability
-description: How `pckg client contract` is validated and traced across crates, tests, and docs.
+description: Tests and traceability for the pckg client contract.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,10 +12,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Registry client
-    href: /platform-spec/tooling/registry-client/
-    relation: Parent area
   - type: Feature
     title: pckg client contract
     href: /platform-spec/tooling/registry-client/pckg-client-contract/
@@ -26,22 +22,30 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Client / compiler
 
-## What this article covers
-This article explains the `verification-and-traceability` view for `pckg client contract` in concrete, onboarding-first language.
+| Area | Location |
+| --- | --- |
+| Pack profile detection | `beskid_pckg/src/pack.rs` unit tests |
+| CLI wiring | `beskid_pckg/src/cli.rs` |
+| Workspace fetch integration | `beskid_tests` pipeline + fetch scenarios |
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## pckg server
 
-## Code anchors
-- Public client API in `compiler/crates/beskid_pckg/src/lib.rs`
-- HTTP and auth flows in `compiler/crates/beskid_pckg/src/client.rs`
-- CLI integration in `compiler/crates/beskid_pckg/src/cli.rs`
+| Area | Location |
+| --- | --- |
+| Artifact validation | `pckg/src/Server.Tests/Unit/PackageArtifactValidatorTests.cs` |
+| Publish documentation | `pckg/src/Server.Tests/Unit/PackagePublishDocumentationTests.cs` |
+| Workspace publish | `pckg/src/Server.Tests/Integration/WorkspacePublishIntegrationTests.cs` |
+| Manifest metadata | `pckg/src/Server.Tests/Unit/PackageManifestMetadataReaderTests.cs` |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Traceability
 
-## CI anchors
-- Compiler-side client checks in `compiler/crates/beskid_tests/src/pckg/`.
-- Superrepo registry integration gate in `.github/workflows/pckg-ci.yml`.
-- Registry service CI in `pckg/.github/workflows/ci.yml`.
+| Contract | Verification |
+| --- | --- |
+| `README.md` zip entry | Pack tests + server doc browser smoke |
+| `api.json` primary docs model | Publish documentation tests |
+| Template `packageKind` | `detect_pack_profile` + server template validators |
+| Registry-assigned versions | Server API integration (no client-side version override in CI publish) |
+
+Spec edits **must** stay aligned with `PackageManifestMetadata` and workspace provisioning changes in `pckg/src/Server/Services/Workspace/`.

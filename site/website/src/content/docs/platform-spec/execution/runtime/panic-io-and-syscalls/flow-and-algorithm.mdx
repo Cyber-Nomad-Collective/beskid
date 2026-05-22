@@ -1,10 +1,11 @@
 ---
 title: Flow and algorithm
-description: Lifecycle and execution flow for `Panic, IO, and syscalls`.
+description: Panic emission, syscall_write chunking, and blocking IO on fibers.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Runtime
-    href: /platform-spec/execution/runtime/
-    relation: Parent area
   - type: Feature
     title: Panic, IO, and syscalls
     href: /platform-spec/execution/runtime/panic-io-and-syscalls/
@@ -26,25 +23,41 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Purpose
 
-## What this article covers
-This article explains the `flow-and-algorithm` view for `Panic, IO, and syscalls` in concrete, onboarding-first language.
+Step-by-step algorithms for panic and syscall builtins. Layering diagram: [design model](./design-model/).
 
-## Syscall wrapper flow
+## Panic path
 
-1. Caller chooses typed selectors (`Descriptor`, `ReadLimit`) and creates `WriteRequest` or `ReadRequest`.
-2. Corelib wrapper (`WriteWith` / `ReadWith`) resolves selectors via `match` into concrete fd and max-byte values.
-3. Wrapper forwards to compatibility functions (`Write` / `Read`) that guard error conditions and call runtime builtins.
-4. Runtime builtins (`__syscall_write`, `__syscall_read`) execute host interaction and return values mapped into `Core.Results.Result`.
+1. Lowering or runtime detects unrecoverable condition (bounds check, failed alloc message).
+2. Build `BeskidStr` message pointer or call `panic_str` with empty/default handle.
+3. `panic` / `panic_str` formats diagnostic output when possible, then traps.
+4. No return to generated Beskid code (`AbiReturnKind::Never`).
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## `syscall_write` algorithm
 
-## Code anchors
-- Builtin exports in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
-- Panic and syscall implementation in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
-- Runtime symbol registration in `compiler/crates/beskid_runtime/src/lib.rs`
-- Corelib wrapper implementation in `compiler/corelib/beskid_corelib/src/System/Syscall.bd`
+1. Validate fd range (non-negative, fits platform `i32` where required).
+2. Read `{ ptr, len }` from `BeskidStr`; null handle returns `-1`.
+3. On Linux x86_64, loop `write` syscall until buffer drained or error.
+4. Return total bytes written as `i64`, or `-1` on hard failure.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## `syscall_read` algorithm
+
+1. Accept fd and max byte count (`i64` parameters per `BUILTIN_SPECS`).
+2. Allocate or fill buffer via runtime string helpers; return `BeskidStr` pointer.
+3. Map EOF to empty string handle per corelib contract (**IO-005** in console streams).
+
+## Blocking and fibers
+
+1. When a fiber triggers blocking syscall work, runtime **may** use `scheduler::run_blocking` to avoid blocking the scheduler thread's mutator role incorrectly.
+2. Pool threads **must not** run arbitrary Beskid mutator allocations ([memory contract](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/) **GC-003**).
+
+## Corelib write failure
+
+1. `System.Output.Write` calls `WriteWith`.
+2. On syscall error, corelib **must** panic with stable message — not `Option` — per console IO spec.
+
+## Related topics
+
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Builtins and symbols](/platform-spec/execution/abi-and-host/builtins-and-symbols/)

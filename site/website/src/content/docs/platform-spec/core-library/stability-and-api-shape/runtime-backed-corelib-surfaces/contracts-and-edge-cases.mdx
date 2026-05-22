@@ -1,6 +1,6 @@
 ---
 title: Contracts and edge cases
-description: Normative guarantees, constraints, and edge-case handling for `Runtime-backed corelib surfaces`.
+description: Stability guarantees for runtime-backed corelib APIs.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -13,30 +13,31 @@ submitter:
   email: pmikstacki@cybernomad.it
 relatedTopics:
   - type: Area
-    title: Stability and API shape
-    href: /platform-spec/core-library/stability-and-api-shape/
-    relation: Parent area
-  - type: Feature
-    title: Runtime-backed corelib surfaces
-    href: /platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/
-    relation: Parent feature hub
+    title: ABI and host boundary
+    href: /platform-spec/execution/abi-and-host/
+    relation: Normative ABI versioning
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Contracts
 
-## What this article covers
-This article explains the `contracts-and-edge-cases` view for `Runtime-backed corelib surfaces` in concrete, onboarding-first language.
+- **ABI version lockstep** — Host, runtime, and AOT artifacts **must** agree on `beskid_runtime_abi_version` for a given toolchain release.
+- **No duplicate syscall paths** — Console/ANSI **must not** bypass `System.*` stream contracts for primitive read/write.
+- **Panic across unwind** — Builtin entry points use `extern "C-unwind"`; Beskid panics map through `panic_io` without corrupting GC state.
+- **Documented nullability** — Beskid wrappers **must** mirror ABI nullability for handles passed into GC-aware builtins.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Edge cases
 
-## Code anchors
-- Corelib docs in `site/website/src/content/docs/corelib/System/`
-- Runtime builtins in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
-- ABI builtin specs in `compiler/crates/beskid_abi/src/builtins.rs`
+| Case | Behavior |
+| --- | --- |
+| Missing runtime on link | AOT/JIT link fails at build time, not lazy runtime dlopen |
+| Platform without ANSI | Console package degrades per terminal capability probes |
+| Embedded hosts without stderr | `System.Error` may alias output; documented per execution profile |
+| Metrics feature gate | `beskid_runtime` metrics builtins compile only with `metrics` feature |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Non-runtime corelib
+
+Pure Beskid modules in `foundation` and similar packages are out of scope here—they follow standard IL lowering without builtin tables.

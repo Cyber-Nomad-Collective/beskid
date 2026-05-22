@@ -1,0 +1,59 @@
+---
+export interface CompareRow {
+	label: string;
+	dotnet: string;
+	java: string;
+	beskid: string;
+}
+
+interface Props {
+	rows: CompareRow[];
+}
+
+const { rows } = Astro.props;
+---
+
+<div class="landing-compare__table-wrap">
+	<table class="landing-compare__table">
+		<thead>
+			<tr>
+				<th scope="col"></th>
+				<th scope="col">C# / .NET</th>
+				<th scope="col">Java</th>
+				<th scope="col" class="landing-compare__col-beskid">Beskid</th>
+			</tr>
+		</thead>
+		<tbody>
+			{rows.map((row) => (
+				<tr>
+					<th scope="row">{row.label}</th>
+					<td>{row.dotnet}</td>
+					<td>{row.java}</td>
+					<td class="landing-compare__col-beskid">{row.beskid}</td>
+				</tr>
+			))}
+		</tbody>
+	</table>
+</div>
+
+<div class="landing-compare__cards" aria-label="Language comparison">
+	{rows.map((row) => (
+		<article class="landing-compare__card">
+			<h3>{row.label}</h3>
+			<dl>
+				<div>
+					<dt>C# / .NET</dt>
+					<dd>{row.dotnet}</dd>
+				</div>
+				<div>
+					<dt>Java</dt>
+					<dd>{row.java}</dd>
+				</div>
+				<div>
+					<dt>Beskid</dt>
+					<dd class="landing-compare__beskid">{row.beskid}</dd>
+				</div>
+			</dl>
+		</article>
+	))}
+</div>

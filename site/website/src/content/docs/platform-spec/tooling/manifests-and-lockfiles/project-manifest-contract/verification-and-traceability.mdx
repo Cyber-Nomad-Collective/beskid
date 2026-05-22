@@ -1,6 +1,6 @@
 ---
 title: Verification and traceability
-description: How `Project manifest contract` is validated and traced across crates, tests, and docs.
+description: Verification for tooling-side project manifest contracts.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,40 +12,37 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Manifests and lockfiles
-    href: /platform-spec/tooling/manifests-and-lockfiles/
-    relation: Parent area
   - type: Feature
-    title: Project manifest contract
-    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
-    relation: Parent feature hub
+    title: Project manifest contract (compiler)
+    href: /platform-spec/compiler/resolution-and-projects/project-manifest-contract/
+    relation: implements — diagnostic and graph tests
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Compiler tests
 
-## What this article covers
-This article explains the `verification-and-traceability` view for `Project manifest contract` in concrete, onboarding-first language.
+| Topic | Path |
+| --- | --- |
+| Corelib + manifest helpers | `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` |
+| Mod manifest validation | Compiler-mod test suites + parser unit tests |
+| Pack profile from manifest | `beskid_pckg/src/pack.rs` tests |
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Tooling traceability
 
-## Code anchors
-- Manifest loading in `compiler/crates/beskid_analysis/src/services.rs`
-- CLI project graph setup in `compiler/crates/beskid_cli/src/commands/`
-- Workspace resolution in `compiler/crates/beskid_analysis/src/resolve/items.rs`
+| Tooling rule | Verification |
+| --- | --- |
+| `Mod` type routing | `detect_pack_profile` + graph `ProjectKind::Mod` |
+| Template `packageKind` | pckg server template integration tests |
+| Readme injection | Pack tests + `PackagePublishDocumentationTests` |
+| Corelib opt-out forbidden | `reject_corelib_opt_out_keys` parser tests |
 
-## Mod manifest fixtures (normative locations)
+## Spec maintenance
 
-Conformance **must** add focused tests:
+Manifest vocabulary changes **must** update: tooling **[design model](./design-model/)**, compiler project-manifest feature, **[Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)**, and any template scaffolds under `beskid_templates/`.
 
-- **Directory** — `compiler/crates/beskid_tests/src/projects/mod_manifest/`
-- **Coverage** — Invalid `type: Mod` shapes, unknown `project.mod` keys, bad `maxGeneratorRounds`, capability typos, and mod artifact load failures; each case asserts a diagnostic from band **E1801–E1899**.
+## CI
 
-Mirror any new fixture filenames in **[Conformance evidence policy](/platform-spec/compiler/conformance/conformance-evidence-policy/)** when the suite lands.
-
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+Run `cd site/website && bun run verify:trudoc -- --preset ci` after MDX edits; compiler `cargo test` for touched parser/graph modules.

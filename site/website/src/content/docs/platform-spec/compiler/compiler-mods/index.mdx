@@ -82,6 +82,21 @@ Feature hubs below map onto these boundaries with traceability into `beskid_anal
 </SpecSection>
 
 <SpecSection title="Mod projects and pipeline phase ids" id="mod-projects">
+
+```mermaid
+flowchart LR
+  parse[parse]
+  modload[mod.load]
+  collect[mod.collect]
+  generate[mod.generate]
+  reparse[reparse if needed]
+  semantic[semantic.snapshot]
+  analyze[mod.analyze]
+  rewrite[mod.rewrite]
+  lowerready[lower.ready]
+  parse --> modload --> collect --> generate --> reparse --> semantic --> analyze --> rewrite --> lowerready
+```
+
 For **`project.type = Mod`**, the host registers mod contracts and emits `beskid_pipeline` phase events for collection, generation, analyzer, and rewrite boundaries. Strings below are normative literals that must be defined in `compiler/crates/beskid_pipeline/src/phases.rs` and asserted by conformance tests.
 
 | Phase id (literal) | Rust constant (recommended) | When emitted | Typical invalidation |

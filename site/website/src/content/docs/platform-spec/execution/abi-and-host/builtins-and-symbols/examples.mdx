@@ -1,10 +1,11 @@
 ---
 title: Examples
-description: Practical examples that demonstrate `Builtins and symbols` behavior.
+description: Reading BUILTIN_SPECS, mapping symbols to runtime modules, and typical call patterns.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,18 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: ABI and host boundary
-    href: /platform-spec/execution/abi-and-host/
-    relation: Parent area
-  - type: Area
-    title: Codegen and IR
-    href: /platform-spec/compiler/codegen-and-ir/
-    relation: Lowering and backend emission consume ABI symbol definitions
-  - type: Area
-    title: Runtime
-    href: /platform-spec/execution/runtime/
-    relation: Runtime builtins export and implement the ABI contract
   - type: Feature
     title: Builtins and symbols
     href: /platform-spec/execution/abi-and-host/builtins-and-symbols/
@@ -34,19 +23,43 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Locating a builtin implementation
 
+Given CLIF calling `fiber_yield`:
 
-## Example 1: Happy path
+1. Find `SYM_FIBER_YIELD` → `"fiber_yield"` in `symbols.rs`.
+2. Locate `BuiltinFnSpec` with `symbol: SYM_FIBER_YIELD` in `builtins.rs`.
+3. Open `compiler/crates/beskid_runtime/src/builtins/fiber.rs` for behavior (park current fiber, requeue).
 
-A standard project exercises the expected producer -> consumer handoff with no contract violations. Trace this via:
+## Corelib indirection
 
-- ``BuiltinFnSpec` and `BUILTIN_SPECS` in `compiler/crates/beskid_abi/src/builtins.rs``
-- `Builtin runtime implementations in `compiler/crates/beskid_runtime/src/builtins/mod.rs``
+User code calls `Fiber.Yield()` in `corelib_concurrency`; lowering **must not** embed scheduler details. The package emits a call to `fiber_yield` only—see [Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/).
 
-## Example 2: Contract mismatch
+## Allocation + GC root scenario
 
-Intentionally alter a boundary definition (for example, a symbol or structure shape), then run the related conformance suite. The expected result is a deterministic failure that identifies the mismatched boundary.
+A global `string` cached from native code:
 
-## Example 3: Regression-proofing a fix
+1. Lowering calls `alloc` with type descriptor pointer.
+2. Host registers root via `gc_register_root` when exposing to foreign API.
+3. On teardown, `gc_unregister_root` pairs with registration.
 
-After applying a fix, add or update a focused fixture in the nearest test crate and rerun wider suites so the behavior remains locked for future refactors.
+Missing unroot leaks until next collection; handles from `gc_root_handle` document temporary pinning.
+
+## Panic from bounds check
+
+Lowering may emit:
+
+```
+call panic(message_ptr, message_len) -> never
+```
+
+Runtime formats output and terminates the process—no stack unwind through Beskid frames ([error model legacy](../../../../execution/runtime/error-model.md)).
+
+## Inspecting JIT registration
+
+In `jit_module.rs`, the `declare_builtin_imports` block maps each `beskid_runtime` function pointer to the symbol name Cranelift imports. A drift between Rust function export name and `SYM_*` constant breaks finalize with `MissingFunction`.
+
+## Related topics
+
+- [Verification and traceability](./verification-and-traceability/)
+- Legacy symbol list: [Runtime ABI (v0.1)](../../../../execution/runtime/runtime-abi-v0-1.md)

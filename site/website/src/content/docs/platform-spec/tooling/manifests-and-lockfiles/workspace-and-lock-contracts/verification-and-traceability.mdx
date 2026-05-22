@@ -1,6 +1,6 @@
 ---
 title: Verification and traceability
-description: How `Workspace and lock contracts` is validated and traced across crates, tests, and docs.
+description: Tests and traceability for workspace and lock tooling contracts.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,31 +12,36 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Manifests and lockfiles
-    href: /platform-spec/tooling/manifests-and-lockfiles/
-    relation: Parent area
   - type: Feature
-    title: Workspace and lock contracts
-    href: /platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/
-    relation: Parent feature hub
+    title: Workspace and lock contracts (compiler)
+    href: /platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/
+    relation: Compiler-side verification matrix
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Compiler tests
 
-## What this article covers
-This article explains the `verification-and-traceability` view for `Workspace and lock contracts` in concrete, onboarding-first language.
+| Topic | Path |
+| --- | --- |
+| Pipeline + lock sync | `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs` |
+| Corelib workspace layout | `compiler/crates/beskid_tests/src/projects/corelib/layout.rs` |
+| Lock parse errors | `projects/workflow.rs` unit tests |
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## pckg server tests
 
-## Code anchors
-- Lock/update commands in `compiler/crates/beskid_cli/src/commands/`
-- Project and dependency resolution in `compiler/crates/beskid_analysis/src/resolve/mod.rs`
-- Workspace tests in `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs`
+| Topic | Path |
+| --- | --- |
+| Workspace publish | `pckg/src/Server.Tests/Integration/WorkspacePublishIntegrationTests.cs` |
+| Manifest metadata | `pckg/src/Server.Tests/Unit/PackageManifestMetadataReaderTests.cs` |
+| Artifact validation | `pckg/src/Server.Tests/Unit/PackageArtifactValidatorTests.cs` |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Traceability
+
+Tooling articles describe operator-visible contracts; compiler feature pages own diagnostic code bands for lock parse failures. Changes to `Project.lock` v1 **must** update both sides and bump any fixture locks in tests.
+
+## CI
+
+Superrepo and `compiler` CI run workspace tests on every graph change. Website spec verify: `cd site/website && bun run verify:trudoc -- --preset ci` after MDX edits.

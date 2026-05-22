@@ -1,17 +1,19 @@
 ---
 title: beskid
-description: A comprehensive reference and architecture overview for the Beskid language.
+description: A statically typed language and platform for everyday software—services, CLIs, and teams that outgrew .NET’s abstraction stack.
 template: splash
 ---
 
 import LandingTemplate from '../../components/LandingTemplate.astro';
+import { dotnetRightBullets, dotnetWrongBullets } from '../../data/landing-dotnet-bullets';
+import { alreadyBetterSection } from '../../data/landing-tile-sections';
 
 <LandingTemplate
+  landingPage={true}
   title="beskid"
-  tagline="A statically typed language focused on readable semantics and compiler architecture."
-  subtagline="Where language features are language features, not ten layers of corelib and DI containers."
+  tagline="A language and platform built for the code you ship every day—not only for kernels and firmware."
+  subtagline="Readable semantics, compile-time power, and native output—without reflection, IL, and core-library features pretending to be the language."
   codeFile="examples/modules.bd"
-  codeLang="beskid"
   codeLines={[
     "pub mod net.http;",
     "use net.http.Client;",
@@ -25,54 +27,78 @@ import LandingTemplate from '../../components/LandingTemplate.astro';
     "}",
   ]}
   actions={[
-    { text: "Read the Language Spec", href: "/platform-spec/language-meta/", variant: "primary" },
-    { text: "Platform specification", href: "/platform-spec/", variant: "secondary" },
+    { text: "Platform specification", href: "/platform-spec/", variant: "primary" },
+    { text: "Language semantics", href: "/platform-spec/language-meta/", variant: "secondary" },
     { text: "Read the Book", href: "/book/", variant: "secondary" },
     { text: "Download CLI", href: "/downloads/", variant: "ghost" },
   ]}
-  sectionTitle="The Beskid Architecture"
-  features={[
+  compareTitle="Why another language?"
+  compareLead="Corporations still default to Java and C# / .NET for enterprise software. Beskid exists to break that duopoly—to be a language you reach for when you need to ship services, CLIs, and platforms quickly, without inheriting a VM-shaped abstraction stack."
+  compareRows={[
     {
-      title: "Language Specification",
-      body: "A comprehensive reference covering Beskid's type system, grammar, control flow structures, and memory safety model. Includes detailed examples and a formal language definition.",
+      label: "Why corps pick it",
+      dotnet: "The default enterprise stack—familiar hiring, tooling, and vendor gravity.",
+      java: "The other default—JVM ecosystems, long-lived services, massive libraries.",
+      beskid: "An alternative for teams that want to ship without automatically defaulting here.",
     },
     {
-      title: "Corelib Abstraction Sprawl",
-      body: "Core library functionality is designed as native language features, not complex chains of nested interfaces, eliminating dependency on bloated external wrappers.",
+      label: "Runtime model",
+      dotnet: "VM plus layers—the abstraction stack is a smoking gun waiting to fire.",
+      java: "JVM weight and bytecode indirection; strong ecosystem, heavy runtime story.",
+      beskid: "Native and AOT-first direction—machine code as a clear path, not a late bolt-on.",
     },
     {
-      title: "Reflection as a Crutch",
-      body: "Replaces heavy runtime reflection with powerful, verifiable compile-time analysis and metaprogramming. Get static safety, not slow runtime inspection.",
+      label: "Reflection & codegen",
+      dotnet: "Heavy reflection; incremental source generators with weak, frustrating APIs.",
+      java: "Annotations, bytecode patterns, ceremony around metaprogramming.",
+      beskid: "Compile-time analysis, compiler mods, and codegen when the compiler should answer.",
     },
     {
-      title: "CIL Stagnation",
-      body: "Beskid targets efficient, modern machine code directly, escaping the overhead and historical limitations of Common Intermediate Language (CIL) interpretations.",
+      label: "Platform shape",
+      dotnet: "Visual Studio–centric; platform pace tied to Microsoft’s roadmap.",
+      java: "Maven/Gradle ceremony; Oracle/Open ecosystem politics at scale.",
+      beskid: "CLI, pckg registry and UI, LSP, VS Code extension, and a normative platform spec as ADR.",
     },
     {
-      title: "First-Class Enumeration",
-      body: "Native, optimized language support for collection iteration. Enumeration is a first-class citizen, not a library-level afterthought.",
-    },
-    {
-      title: "Metaprogramming over Reflection",
-      body: "Perform code generation, analysis, and optimization at build time with powerful metaprogramming, ensuring full type safety and performance.",
-    },
-    {
-      title: "Assembly Output without IL Cuffs",
-      body: "Directly outputs optimized, native assembly language or machine code. Your programs run directly on the hardware, with no intermediate runtime needed.",
+      label: "Daily-driving fit",
+      dotnet: "Strong inside enterprise walls; friction when the runtime works against you.",
+      java: "Strong in big orgs; ceremony and JVM overhead for small, fast-moving work.",
+      beskid: "Microservices, terminals, and internal tools—patterns for code you ship every week.",
     },
   ]}
-  calloutTitle="Building Beskid"
-  calloutText="Clone with submodules (required for the embedded corelib):"
-  calloutCodeLabel="bash"
-  calloutCode={`git clone --recurse-submodules https://github.com/Cyber-Nomad-Collective/beskid_compiler.git
-# or, after a clone without submodules:
-git submodule update --init --recursive`}
-  calloutNote="In an aggregate repo that vendors this tree as a submodule (e.g., pecan/), initialize recursively, so compiler/corelib is populated: git submodule update --init --recursive (or clone with --recurse-submodules). You can override the corelib source path with BESKID_CORELIB_SOURCE. Corelib sources are pinned as a Git submodule at corelib/ (repository: beskid_standard), under corelib/beskid_corelib/; the **pckg** package id is **corelib**. The CLI embeds that tree at build time (crates/beskid_cli/build.rs)."
+  dotnetTitle="Let's talk about .NET"
+  dotnetIntro="Beskid did not start as a language war—it started as an audit. .NET taught the industry a lot about developer experience. It also accumulated performance and platform debt that shows up the moment you leave the happy path."
+  dotnetRightHeading="What .NET did right"
+  dotnetRightBullets={dotnetRightBullets}
+  dotnetWrongHeading="What .NET got wrong — performance and tech debt"
+  dotnetWrongBullets={dotnetWrongBullets}
+  alreadyBetterSection={alreadyBetterSection}
+  sectionTitle="The Beskid Principle"
+  principlesIntro="Six commitments that follow from that audit—not marketing pillars, but how Beskid is supposed to behave as a language and platform."
+  features={[
+    {
+      title: "Language features stay in the language",
+      body: "Dependency injection, metaprogramming, and other cross-cutting concerns belong in semantics and the compiler—not as opaque layers in a runtime-shaped core library.",
+    },
+    {
+      title: "Compile-time over reflection",
+      body: "Prefer verifiable build-time analysis and codegen over runtime inspection and fragile incremental generator APIs that slow you down when you need answers from the compiler.",
+    },
+    {
+      title: "Native direction, not a CIL detour",
+      body: "Target efficient machine code with AOT as a clear path from the start—escape the overhead and late-stage surprises of a virtual machine and intermediate language stack.",
+    },
+    {
+      title: "Built for daily driving",
+      body: "Microservices, terminal tools, and internal platforms deserve simple patterns and structure—without choosing between “systems-only” languages and ecosystems that cap out at medium scale.",
+    },
+    {
+      title: "A whole platform experience",
+      body: "CLI, package registry and UI, LSP, and a VS Code extension are part of the product—not afterthoughts—so teams can adopt Beskid as a community, not a lone compiler binary.",
+    },
+    {
+      title: "Spec as source of truth",
+      body: "The platform specification is the living ADR for the language: normative decisions, vision, and implementation alignment in one tree on main—so contributors and maintainers share the same map.",
+    },
+  ]}
 />
-
-<style is:global>{`
-  .s1-container:has([id$="_top"]),
-  .sl-container:has([id$="_top"]) {
-    display: none;
-  }
-`}</style>

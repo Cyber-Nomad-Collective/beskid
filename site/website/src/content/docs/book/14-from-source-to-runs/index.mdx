@@ -1,0 +1,29 @@
+---
+title: "From source to something that runs"
+description: Resolution, parse, semantic rules, IR, JIT, and AOT—mapped to beskid_pipeline phases and compiler crates.
+tableOfContents: true
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution">
+Informative tour. Stage ordering and contracts are normative under [Build pipeline](/platform-spec/compiler/build-pipeline/).
+</Aside>
+
+Compilation is a pipeline, not a séance. This chapter walks the reference platform from manifest discovery to something you can `run` or `build`.
+
+## What you will find here
+
+| Section | Topic |
+| --- | --- |
+| [Pipeline overview](/book/14-from-source-to-runs/pipeline-overview/) | End-to-end phases. |
+| [Front-end](/book/14-from-source-to-runs/front-end/) | Parse and AST/HIR shape. |
+| [Semantic pipeline](/book/14-from-source-to-runs/semantic-pipeline/) | Analysis and diagnostics. |
+| [Codegen and IR](/book/14-from-source-to-runs/codegen-and-ir/) | Lowering and CLIF. |
+| [JIT run](/book/14-from-source-to-runs/jit-run/) | `beskid run` / engine. |
+| [AOT build](/book/14-from-source-to-runs/aot-build/) | `beskid build` / AOT. |
+| [clif and debug](/book/14-from-source-to-runs/clif-and-debug/) | Introspection commands. |
+
+## Next
+
+[15. Mods](/book/15-mods-plugins-with-consequences/)

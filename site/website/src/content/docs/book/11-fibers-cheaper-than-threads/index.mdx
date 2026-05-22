@@ -1,0 +1,34 @@
+---
+title: "11. Fibers: cheaper than threads, still scary"
+description: Cooperative spawn, Fiber handles, channels, and corelib concurrency without async/await cosplay.
+tableOfContents: true
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Threads are expensive. **async/await** is threads with extra syntax and conference talks. Beskid uses **`spawn`** and **`Fiber<T>`**—cooperative fibers, channel-only cross-fiber data, and no `async` keyword because we have seen your previous codebase.
+
+Normative: [Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/). Runtime: [Fiber scheduler and stacks](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/). API: [Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/).
+
+## What you will find here
+
+| Section | Topic |
+| --- | --- |
+| [Evaluation model](/book/11-fibers-cheaper-than-threads/evaluation-model/) | Callables, closures, no async surface. |
+| [Fibers and spawn](/book/11-fibers-cheaper-than-threads/fibers-and-spawn/) | `spawn`, handles, join, cancel. |
+| [Channels preview](/book/11-fibers-cheaper-than-threads/channels-preview/) | Send/receive across fibers. |
+| [Corelib concurrency](/book/11-fibers-cheaper-than-threads/corelib-concurrency/) | `corelib_concurrency` contracts. |
+
+<Aside type="caution">
+
+Reserved `async` / `await` tokens are **compile errors**. Do not `#define` around the language; use `spawn`.
+
+</Aside>
+
+## Start here
+
+[Evaluation model](/book/11-fibers-cheaper-than-threads/evaluation-model/)
+
+## Next chapter
+
+[12. The normative bible (and why we bothered)](/book/12-the-normative-bible/)

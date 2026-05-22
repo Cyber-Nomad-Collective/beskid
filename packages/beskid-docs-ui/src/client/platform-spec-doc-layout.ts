@@ -8,6 +8,11 @@ function mountPlatformSpecDocSplit() {
 		let cursor = layout.nextSibling;
 		while (cursor) {
 			const next = cursor.nextSibling;
+			// Leave scripts in place so tab panel moves do not reorder executed modules.
+			if (cursor instanceof HTMLScriptElement) {
+				cursor = next;
+				continue;
+			}
 			target.appendChild(cursor);
 			cursor = next;
 		}
@@ -15,4 +20,11 @@ function mountPlatformSpecDocSplit() {
 	}
 }
 
-mountPlatformSpecDocSplit();
+function initPlatformSpecDocSplit() {
+	mountPlatformSpecDocSplit();
+	// Content must be in the first panel before we force Current document on article pages.
+	import('./platform-spec-doc-tabs.ts').then((m) => m.selectCurrentDocumentTab());
+}
+
+initPlatformSpecDocSplit();
+document.addEventListener('astro:after-swap', initPlatformSpecDocSplit);

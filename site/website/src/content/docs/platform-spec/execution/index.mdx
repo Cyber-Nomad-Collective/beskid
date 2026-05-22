@@ -36,4 +36,39 @@ import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
 This domain is the normative execution surface for runtime behavior, ABI boundaries, fiber scheduling, channel synchronization, and host interactions. It is authored from implementation crates and test behavior; legacy `/execution/` pages redirect here for concurrency topics formerly described only as v0.1 stubs.
 </SpecSection>
 
+<SpecSection title="Domain map" id="domain-map">
+
+```mermaid
+flowchart TB
+  subgraph execution [Execution domain]
+    abi[ABI and host boundary]
+    rt[Runtime]
+  end
+  subgraph abi_features [ABI area]
+    ver[ABI versioning]
+    ext[Extern dispatch]
+    sym[Builtins and symbols]
+  end
+  subgraph rt_features [Runtime area]
+    fib[Fiber scheduler]
+    ch[Channels and sync]
+    mem[Memory and GC]
+    pan[Panic IO syscalls]
+    flags[Runtime feature flags]
+  end
+  compiler[Compiler lowering] --> abi
+  langmeta[language-meta interop] --> ext
+  abi --> ver
+  abi --> ext
+  abi --> sym
+  rt --> fib
+  rt --> ch
+  rt --> mem
+  rt --> pan
+  rt --> flags
+  corelib[corelib concurrency] --> ch
+```
+
+</SpecSection>
+
 <DomainTiles pathPrefix="platform-spec/execution" heading="Areas" />

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Published CLI entry: runs `src/cli/verify.ts` via local `tsx`.
- * Pass `--site-root <path>` and `--preset ci|beskid-prebuild` like direct `tsx` invocation.
+ * Pass `--site-root <path>` and `--preset ci` (or deprecated `beskid-prebuild`) like direct `tsx` invocation.
  */
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';

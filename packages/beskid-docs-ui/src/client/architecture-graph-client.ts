@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import dagre from '@dagrejs/dagre';
 
 type GraphNode = {
 	id: string;
@@ -35,7 +35,28 @@ type GraphPayload = {
 	groups?: GraphGroup[];
 };
 
-const GROUP_COLORS = ['#60a5fa', '#4ade80', '#f59e0b', '#a78bfa', '#22d3ee', '#fb7185'];
+type Point = { x: number; y: number };
+
+type LayoutResult = {
+	width: number;
+	height: number;
+	nodes: Map<string, { x: number; y: number; width: number; height: number }>;
+	edges: { from: string; to: string; points: Point[]; label?: string }[];
+};
+
+const GROUP_COLORS = ['#60a5fa', '#a78bfa', '#f472b6', '#4ade80', '#22d3ee', '#fb7185'];
+const NODE_WIDTH = 220;
+const NODE_HEIGHT = 88;
+
+function readCssColor(name: string, fallback: string): string {
+	const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+	return v || fallback;
+}
+
+function truncate(text: string, max: number): string {
+	if (text.length <= max) return text;
+	return `${text.slice(0, max - 1)}…`;
+}
 
 function parseGraphPayload(graphId: string): GraphPayload | null {
 	const el = document.getElementById(`${graphId}-data`);
@@ -47,321 +68,283 @@ function parseGraphPayload(graphId: string): GraphPayload | null {
 	}
 }
 
-function normalizeEdges(edges: GraphEdge[]): GraphEdge[] {
-	return edges.map((edge, index) => ({ ...edge, id: edge.id ?? `edge:${index}` }));
-}
+function layoutArchitectureGraph(
+	nodes: GraphNode[],
+	edges: GraphEdge[],
+): LayoutResult | null {
+	const visibleNodes = nodes.filter((n) => !n.hidden);
+	if (!visibleNodes.length) return null;
 
-function renderGroupFilters(
-	groupsWrap: HTMLElement,
-	groups: GraphGroup[],
-	toggleGroup: (groupId: string, checked: boolean) => void,
-) {
-	groupsWrap.innerHTML = '';
-	for (const group of groups) {
-		const id = `group-${group.id}`;
-		const label = document.createElement('label');
-		label.className = 'architecture-graph-shell__group-item';
-		label.setAttribute('for', id);
-		label.innerHTML = `<input id="${id}" type="checkbox" checked /><span>${group.label}</span>`;
-		const input = label.querySelector('input');
-		if (input) {
-			input.addEventListener('change', () => toggleGroup(group.id, input.checked));
+	const g = new dagre.graphlib.Graph();
+	g.setGraph({
+		rankdir: 'TB',
+		nodesep: 52,
+		ranksep: 80,
+		edgesep: 24,
+		marginx: 32,
+		marginy: 32,
+	});
+	g.setDefaultEdgeLabel(() => ({}));
+
+	for (const node of visibleNodes) {
+		g.setNode(node.id, { width: NODE_WIDTH, height: NODE_HEIGHT });
+	}
+
+	for (const edge of edges) {
+		if (edge.hidden) continue;
+		if (g.hasNode(edge.from) && g.hasNode(edge.to)) {
+			g.setEdge(edge.from, edge.to, { label: edge.label });
 		}
-		groupsWrap.appendChild(label);
 	}
+
+	dagre.layout(g);
+
+	const layoutNodes = new Map<string, { x: number; y: number; width: number; height: number }>();
+	let maxX = 0;
+	let maxY = 0;
+
+	for (const id of g.nodes()) {
+		const n = g.node(id);
+		if (!n) continue;
+		const x = n.x - n.width / 2;
+		const y = n.y - n.height / 2;
+		layoutNodes.set(id, { x, y, width: n.width, height: n.height });
+		maxX = Math.max(maxX, x + n.width);
+		maxY = Math.max(maxY, y + n.height);
+	}
+
+	const layoutEdges: LayoutResult['edges'] = [];
+	for (const edge of g.edges()) {
+		const data = g.edge(edge);
+		const points = (data?.points ?? []) as Point[];
+		if (points.length < 2) continue;
+		layoutEdges.push({
+			from: edge.v,
+			to: edge.w,
+			points,
+			label: typeof data?.label === 'string' ? data.label : undefined,
+		});
+	}
+
+	return {
+		width: Math.ceil(maxX + 32),
+		height: Math.ceil(maxY + 32),
+		nodes: layoutNodes,
+		edges: layoutEdges,
+	};
 }
 
-function renderLegend(legendWrap: HTMLElement, groups: GraphGroup[]) {
-	if (!groups.length) {
-		legendWrap.hidden = true;
-		return;
-	}
-	legendWrap.hidden = false;
-	legendWrap.innerHTML = groups
-		.map((group) => {
-			const color = group.color ?? '#94a3b8';
-			return `<span class="architecture-graph-shell__legend-item"><i style="background:${color};border-color:${color}"></i>${group.label}</span>`;
-		})
-		.join('');
+function pointsToPath(points: Point[]): string {
+	return points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
 }
+
+function edgeMidpoint(points: Point[]): Point {
+	const mid = Math.floor(points.length / 2);
+	return points[mid] ?? points[points.length - 1];
+}
+
+function renderArchitectureGraph(
+	canvas: HTMLElement,
+	graphId: string,
+	graph: GraphPayload,
+	groupById: Map<string, GraphGroup & { color: string }>,
+): void {
+	const layout = layoutArchitectureGraph(graph.nodes, graph.edges);
+	if (!layout) return;
+
+	const lineColor = readCssColor('--architecture-graph-line', '#7ed6ff');
+	const nodeById = new Map(graph.nodes.map((n) => [n.id, n]));
+
+	canvas.innerHTML = '';
+	canvas.classList.add('architecture-graph-shell__diagram-host');
+
+	const diagram = document.createElement('div');
+	diagram.className = 'architecture-graph-shell__diagram';
+	diagram.style.width = `${layout.width}px`;
+	diagram.style.height = `${layout.height}px`;
+
+	const svgNs = 'http://www.w3.org/2000/svg';
+	const svg = document.createElementNS(svgNs, 'svg');
+	svg.setAttribute('class', 'architecture-graph-shell__edges');
+	svg.setAttribute('width', String(layout.width));
+	svg.setAttribute('height', String(layout.height));
+	svg.setAttribute('viewBox', `0 0 ${layout.width} ${layout.height}`);
+	svg.setAttribute('aria-hidden', 'true');
+
+	const defs = document.createElementNS(svgNs, 'defs');
+	const marker = document.createElementNS(svgNs, 'marker');
+	marker.setAttribute('id', `arch-arrow-${graphId}`);
+	marker.setAttribute('viewBox', '0 0 10 10');
+	marker.setAttribute('refX', '9');
+	marker.setAttribute('refY', '5');
+	marker.setAttribute('markerWidth', '7');
+	marker.setAttribute('markerHeight', '7');
+	marker.setAttribute('orient', 'auto-start-reverse');
+	const arrowPath = document.createElementNS(svgNs, 'path');
+	arrowPath.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z');
+	arrowPath.setAttribute('fill', lineColor);
+	marker.appendChild(arrowPath);
+	defs.appendChild(marker);
+	svg.appendChild(defs);
+
+	const edgeGroup = document.createElementNS(svgNs, 'g');
+	edgeGroup.setAttribute('class', 'architecture-graph-shell__edge-lines');
+
+	for (const edge of layout.edges) {
+		const path = document.createElementNS(svgNs, 'path');
+		path.setAttribute('d', pointsToPath(edge.points));
+		path.setAttribute('fill', 'none');
+		path.setAttribute('stroke', lineColor);
+		path.setAttribute('stroke-width', '2.5');
+		path.setAttribute('marker-end', `url(#arch-arrow-${graphId})`);
+		if (edge.label) {
+			path.setAttribute('data-edge-label', edge.label);
+		}
+		edgeGroup.appendChild(path);
+
+		if (edge.label) {
+			const mid = edgeMidpoint(edge.points);
+			const label = document.createElementNS(svgNs, 'text');
+			label.setAttribute('x', String(mid.x));
+			label.setAttribute('y', String(mid.y - 6));
+			label.setAttribute('text-anchor', 'middle');
+			label.setAttribute('class', 'architecture-graph-shell__edge-label');
+			label.textContent = edge.label;
+			edgeGroup.appendChild(label);
+		}
+	}
+	svg.appendChild(edgeGroup);
+
+	const nodesLayer = document.createElement('div');
+	nodesLayer.className = 'architecture-graph-shell__nodes';
+
+	for (const [id, pos] of layout.nodes) {
+		const node = nodeById.get(id);
+		if (!node) continue;
+
+		const group = node.group ? groupById.get(node.group) : undefined;
+		const groupLabel = group?.label ?? '';
+		const body = node.description?.trim() ?? '';
+		const subtitle =
+			groupLabel && body ? `${groupLabel} · ${truncate(body, 72)}` : groupLabel || truncate(body, 80);
+		const accent = group?.color ?? '#64748b';
+
+		const card = document.createElement(node.href ? 'a' : 'div');
+		card.className = 'architecture-graph-node';
+		if (node.href) {
+			(card as HTMLAnchorElement).href = node.href;
+		}
+		card.style.left = `${pos.x}px`;
+		card.style.top = `${pos.y}px`;
+		card.style.width = `${pos.width}px`;
+		card.style.height = `${pos.height}px`;
+		card.style.setProperty('--arch-node-accent', accent);
+
+		const header = document.createElement('div');
+		header.className = 'architecture-graph-node__bar';
+
+		const title = document.createElement('div');
+		title.className = 'architecture-graph-node__title';
+		title.textContent = node.label;
+
+		const desc = document.createElement('div');
+		desc.className = 'architecture-graph-node__desc';
+		desc.textContent = subtitle;
+
+		card.append(header, title, desc);
+		nodesLayer.appendChild(card);
+	}
+
+	diagram.append(svg, nodesLayer);
+	canvas.appendChild(diagram);
+	canvas.style.minHeight = `${Math.max(layout.height + 16, 448)}px`;
+}
+
+function isArchitectureGraphVisible(root: HTMLElement): boolean {
+	const panel = root.closest<HTMLElement>('[role="tabpanel"]');
+	if (!panel) return true;
+	return !panel.hidden;
+}
+
+const activeMounts = new WeakSet<HTMLElement>();
 
 function mountArchitectureGraph(root: HTMLElement): void {
+	if (activeMounts.has(root)) return;
+
 	const graphId = root.dataset.graphId;
 	if (!graphId) return;
 	const graph = parseGraphPayload(graphId);
-	if (!graph) return;
+	if (!graph?.nodes?.length) return;
 
 	const canvas = root.querySelector<HTMLElement>('[data-architecture-graph-canvas]');
-	const groupsWrap = root.querySelector<HTMLElement>('[data-architecture-graph-groups]');
-	const legendWrap = root.querySelector<HTMLElement>('[data-architecture-graph-legend]');
-	const fitBtn = root.querySelector<HTMLButtonElement>('[data-architecture-graph-fit]');
-	const collapseBtn = root.querySelector<HTMLButtonElement>('[data-architecture-graph-collapse]');
-	const expandBtn = root.querySelector<HTMLButtonElement>('[data-architecture-graph-expand]');
-	const searchInput = root.querySelector<HTMLInputElement>('[data-architecture-graph-search]');
-	const panelTitle = root.querySelector<HTMLElement>('[data-architecture-graph-panel-title]');
-	const panelMeta = root.querySelector<HTMLElement>('[data-architecture-graph-panel-meta]');
-	const panelDesc = root.querySelector<HTMLElement>('[data-architecture-graph-panel-desc]');
-	const panelKv = root.querySelector<HTMLElement>('[data-architecture-graph-panel-kv]');
-	const panelRels = root.querySelector<HTMLElement>('[data-architecture-graph-panel-rels]');
-	const panelLink = root.querySelector<HTMLAnchorElement>('[data-architecture-graph-panel-link]');
-	if (!canvas || !groupsWrap || !legendWrap || !searchInput || !panelTitle || !panelMeta || !panelDesc || !panelKv || !panelRels || !panelLink) {
-		return;
+	if (!canvas) return;
+	const groups = graph.groups ?? [];
+	const groupById = new Map(
+		groups.map((group, index) => [group.id, { ...group, color: group.color ?? GROUP_COLORS[index % GROUP_COLORS.length] }]),
+	);
+
+	let mounted = false;
+
+	const render = () => {
+		if (!isArchitectureGraphVisible(root)) return;
+		renderArchitectureGraph(canvas, graphId, graph, groupById);
+		mounted = true;
+	};
+
+	const scheduleRender = () => requestAnimationFrame(render);
+
+	const panel = root.closest<HTMLElement>('[role="tabpanel"]');
+	const cleanups: (() => void)[] = [];
+
+	if (panel) {
+		const panelObserver = new MutationObserver(scheduleRender);
+		panelObserver.observe(panel, { attributes: true, attributeFilter: ['hidden'] });
+		cleanups.push(() => panelObserver.disconnect());
+
+		const tabs = panel.closest('starlight-tabs');
+		if (tabs) {
+			tabs.addEventListener('click', scheduleRender);
+			cleanups.push(() => tabs.removeEventListener('click', scheduleRender));
+		}
 	}
 
-	const groups = graph.groups ?? [];
-	const groupById = new Map(groups.map((group, index) => [group.id, { ...group, color: group.color ?? GROUP_COLORS[index % GROUP_COLORS.length] }]));
-	const nodeById = new Map(graph.nodes.map((node) => [node.id, node]));
-	const edges = normalizeEdges(graph.edges);
-	const nodeVisibility = new Map(graph.nodes.map((node) => [node.id, !Boolean(node.hidden)]));
+	const intersectionObserver = new IntersectionObserver(
+		(entries) => {
+			if (entries.some((e) => e.isIntersecting)) scheduleRender();
+		},
+		{ threshold: 0.05 },
+	);
+	intersectionObserver.observe(canvas);
+	cleanups.push(() => intersectionObserver.disconnect());
 
-	canvas.innerHTML = '';
-	const width = Math.max(620, canvas.clientWidth || 620);
-	const height = Math.max(420, canvas.clientHeight || 420);
-
-	const svg = d3
-		.select(canvas)
-		.append('svg')
-		.attr('viewBox', `0 0 ${width} ${height}`)
-		.attr('class', 'architecture-graph-shell__svg')
-		.attr('role', 'img');
-
-	const zoomLayer = svg.append('g').attr('class', 'architecture-graph-shell__zoom-layer');
-	const edgesLayer = zoomLayer.append('g').attr('class', 'architecture-graph-shell__edges');
-	const nodesLayer = zoomLayer.append('g').attr('class', 'architecture-graph-shell__nodes');
-	const labelsLayer = zoomLayer.append('g').attr('class', 'architecture-graph-shell__edge-labels');
-
-	const arrowId = `arch-arrow-${Math.random().toString(36).slice(2, 10)}`;
-	svg
-		.append('defs')
-		.append('marker')
-		.attr('id', arrowId)
-		.attr('viewBox', '0 -5 10 10')
-		.attr('refX', 18)
-		.attr('refY', 0)
-		.attr('markerWidth', 7)
-		.attr('markerHeight', 7)
-		.attr('orient', 'auto')
-		.append('path')
-		.attr('d', 'M0,-5L10,0L0,5')
-		.attr('fill', '#64748b');
-
-	type SimNode = GraphNode & { x: number; y: number; vx: number; vy: number; fx?: number | null; fy?: number | null };
-	type SimEdge = GraphEdge & { source: string | SimNode; target: string | SimNode };
-
-	const simNodes: SimNode[] = graph.nodes.map((node, idx) => ({
-		...node,
-		x: width / 2 + (idx % 7) * 24,
-		y: height / 2 + Math.floor(idx / 7) * 18,
-		vx: 0,
-		vy: 0,
-	}));
-	const simEdges: SimEdge[] = edges.map((edge) => ({ ...edge, source: edge.from, target: edge.to }));
-
-	const simulation = d3
-		.forceSimulation<SimNode>(simNodes)
-		.force('link', d3.forceLink<SimNode, SimEdge>(simEdges).id((d) => d.id).distance(170).strength(0.24))
-		.force('charge', d3.forceManyBody().strength(-360))
-		.force('center', d3.forceCenter(width / 2, height / 2))
-		.force('collide', d3.forceCollide(34));
-
-	const edgeSelection = edgesLayer
-		.selectAll<SVGLineElement, SimEdge>('line')
-		.data(simEdges, (d: any) => d.id)
-		.join('line')
-		.attr('class', 'architecture-graph-shell__edge')
-		.attr('marker-end', `url(#${arrowId})`);
-
-	const edgeLabelSelection = labelsLayer
-		.selectAll<SVGTextElement, SimEdge>('text')
-		.data(simEdges.filter((edge) => edge.label), (d: any) => d.id)
-		.join('text')
-		.attr('class', 'architecture-graph-shell__edge-label')
-		.text((d) => d.label ?? '');
-
-	const nodeSelection = nodesLayer
-		.selectAll<SVGGElement, SimNode>('g')
-		.data(simNodes, (d: any) => d.id)
-		.join('g')
-		.attr('class', 'architecture-graph-shell__node');
-
-	nodeSelection
-		.append('circle')
-		.attr('r', 16)
-		.attr('fill', (d) => (d.group ? groupById.get(d.group)?.color ?? '#94a3b8' : '#cbd5e1'))
-		.attr('stroke', (d) => (d.group ? groupById.get(d.group)?.color ?? '#64748b' : '#64748b'))
-		.attr('stroke-width', 1.8);
-
-	nodeSelection
-		.append('text')
-		.attr('class', 'architecture-graph-shell__node-label')
-		.attr('x', 21)
-		.attr('y', 4)
-		.text((d) => d.label);
-
-	const drag = d3
-		.drag<SVGGElement, SimNode>()
-		.on('start', (event, d) => {
-			if (!event.active) simulation.alphaTarget(0.24).restart();
-			d.fx = d.x;
-			d.fy = d.y;
-		})
-		.on('drag', (event, d) => {
-			d.fx = event.x;
-			d.fy = event.y;
-		})
-		.on('end', (event, d) => {
-			if (!event.active) simulation.alphaTarget(0);
-			d.fx = null;
-			d.fy = null;
-		});
-	nodeSelection.call(drag as any);
-
-	const zoom = d3
-		.zoom<SVGSVGElement, unknown>()
-		.scaleExtent([0.3, 2.8])
-		.on('zoom', (event) => {
-			zoomLayer.attr('transform', event.transform.toString());
-		});
-	svg.call(zoom as any);
-
-	const edgeVisible = (edge: SimEdge): boolean => {
-		const sourceId = typeof edge.source === 'string' ? edge.source : edge.source.id;
-		const targetId = typeof edge.target === 'string' ? edge.target : edge.target.id;
-		return Boolean(nodeVisibility.get(sourceId) && nodeVisibility.get(targetId));
-	};
-
-	const applyVisibility = () => {
-		nodeSelection.attr('display', (d) => (nodeVisibility.get(d.id) ? null : 'none'));
-		edgeSelection.attr('display', (d) => (edgeVisible(d) ? null : 'none'));
-		edgeLabelSelection.attr('display', (d) => (edgeVisible(d) ? null : 'none'));
-	};
-
-	const fitVisible = () => {
-		const visible = simNodes.filter((node) => nodeVisibility.get(node.id));
-		if (!visible.length) return;
-		const minX = d3.min(visible, (n) => n.x) ?? 0;
-		const maxX = d3.max(visible, (n) => n.x) ?? width;
-		const minY = d3.min(visible, (n) => n.y) ?? 0;
-		const maxY = d3.max(visible, (n) => n.y) ?? height;
-		const pad = 52;
-		const boxW = Math.max(1, maxX - minX + pad * 2);
-		const boxH = Math.max(1, maxY - minY + pad * 2);
-		const scale = Math.max(0.3, Math.min(2.2, Math.min(width / boxW, height / boxH)));
-		const tx = width / 2 - ((minX + maxX) / 2) * scale;
-		const ty = height / 2 - ((minY + maxY) / 2) * scale;
-		svg.transition().duration(280).call(zoom.transform as any, d3.zoomIdentity.translate(tx, ty).scale(scale));
-	};
-
-	const applySearchFilter = (term: string) => {
-		const q = term.trim().toLowerCase();
-		for (const node of graph.nodes) {
-			const hay = `${node.label} ${node.id} ${node.tags?.join(' ') ?? ''} ${node.group ?? ''}`.toLowerCase();
-			nodeVisibility.set(node.id, !q || hay.includes(q));
-		}
-		applyVisibility();
-	};
-
-	const groupVisibility = new Map<string, boolean>();
-	for (const group of groups) groupVisibility.set(group.id, true);
-
-	const toggleGroup = (groupId: string, checked: boolean) => {
-		groupVisibility.set(groupId, checked);
-		graph.nodes
-			.filter((node) => node.group === groupId)
-			.forEach((node) => nodeVisibility.set(node.id, checked));
-		applyVisibility();
-	};
-
-	const collapseAll = () => {
-		for (const group of groups) groupVisibility.set(group.id, false);
-		graph.nodes.forEach((node) => nodeVisibility.set(node.id, !node.group));
-		applyVisibility();
-		root.querySelectorAll<HTMLInputElement>('.architecture-graph-shell__group-item input').forEach((input) => {
-			input.checked = false;
-		});
-	};
-
-	const expandAll = () => {
-		for (const group of groups) groupVisibility.set(group.id, true);
-		graph.nodes.forEach((node) => nodeVisibility.set(node.id, true));
-		applyVisibility();
-		root.querySelectorAll<HTMLInputElement>('.architecture-graph-shell__group-item input').forEach((input) => {
-			input.checked = true;
-		});
-	};
-
-	renderGroupFilters(groupsWrap, groups, toggleGroup);
-	renderLegend(legendWrap, [...groupById.values()]);
-
-	searchInput.addEventListener('input', () => applySearchFilter(searchInput.value));
-	fitBtn?.addEventListener('click', () => fitVisible());
-	collapseBtn?.addEventListener('click', () => collapseAll());
-	expandBtn?.addEventListener('click', () => expandAll());
-
-	const setPanelNode = (node: GraphNode) => {
-		panelTitle.textContent = node.label;
-		panelMeta.textContent = `${node.group ? `${node.group} · ` : ''}${node.id}`;
-		panelDesc.textContent = node.description ?? '';
-		panelKv.innerHTML = '';
-		const metaRows = node.meta ?? {};
-		Object.entries(metaRows).forEach(([k, v]) => {
-			const dt = document.createElement('dt');
-			dt.textContent = k;
-			const dd = document.createElement('dd');
-			dd.textContent = v;
-			panelKv.append(dt, dd);
-		});
-
-		const rels = edges.filter((edge) => edge.from === node.id || edge.to === node.id);
-		panelRels.innerHTML = rels.length
-			? rels
-					.map((edge) => {
-						const isOut = edge.from === node.id;
-						const peer = nodeById.get(isOut ? edge.to : edge.from);
-						if (!peer) return '';
-						const direction = isOut ? '->' : '<-';
-						const label = edge.label ? ` (${edge.label})` : '';
-						const detail = edge.description ? ` - ${edge.description}` : '';
-						return `<li><strong>${direction} ${peer.label}</strong>${label}${detail}</li>`;
-					})
-					.join('')
-			: '<li>No direct relations.</li>';
-
-		if (node.href) {
-			panelLink.href = node.href;
-			panelLink.hidden = false;
-		} else {
-			panelLink.hidden = true;
-		}
-	};
-
-	nodeSelection.on('click', (_, datum) => {
-		const node = nodeById.get(datum.id);
-		if (!node) return;
-		setPanelNode(node);
+	const resizeObserver = new ResizeObserver(() => {
+		if (mounted && isArchitectureGraphVisible(root)) scheduleRender();
+		else if (!mounted) scheduleRender();
 	});
+	resizeObserver.observe(canvas);
+	cleanups.push(() => resizeObserver.disconnect());
 
-	nodeSelection.on('dblclick', (_, datum) => {
-		const node = nodeById.get(datum.id);
-		if (node?.href) window.location.href = node.href;
-	});
+	const unwatch = () => {
+		for (const fn of cleanups) fn();
+	};
+	activeMounts.set(root, unwatch);
 
-	simulation.on('tick', () => {
-		edgeSelection
-			.attr('x1', (d: any) => d.source.x)
-			.attr('y1', (d: any) => d.source.y)
-			.attr('x2', (d: any) => d.target.x)
-			.attr('y2', (d: any) => d.target.y);
+	scheduleRender();
 
-		edgeLabelSelection
-			.attr('x', (d: any) => (d.source.x + d.target.x) / 2)
-			.attr('y', (d: any) => (d.source.y + d.target.y) / 2 - 6);
-
-		nodeSelection.attr('transform', (d) => `translate(${d.x},${d.y})`);
-	});
-
-	applyVisibility();
-	window.setTimeout(() => fitVisible(), 280);
+	root.addEventListener(
+		'astro:before-swap',
+		() => {
+			unwatch();
+			activeMounts.delete(root);
+			canvas.innerHTML = '';
+		},
+		{ once: true },
+	);
 }
 
-document.querySelectorAll<HTMLElement>('[data-architecture-graph-root]').forEach((root) => mountArchitectureGraph(root));
+function initArchitectureGraphs(root: ParentNode = document): void {
+	root.querySelectorAll<HTMLElement>('[data-architecture-graph-root]').forEach((el) => mountArchitectureGraph(el));
+}
+
+initArchitectureGraphs();
+document.addEventListener('astro:after-swap', () => initArchitectureGraphs());

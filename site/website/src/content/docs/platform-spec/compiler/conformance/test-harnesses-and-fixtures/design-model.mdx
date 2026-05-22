@@ -36,19 +36,40 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 
 
-## Model at a glance
+## Harness layers
 
-`Test harnesses and fixtures` is modeled as a contract surface between producer crates and consumer crates. New contributors should treat it as a boundary document first and an implementation detail map second.
+Conformance is split so failures localize quickly:
 
-## Primary actors
+| Layer | Crate path | Pins |
+| --- | --- | --- |
+| **Analysis fixtures** | `beskid_tests/src/analysis` | Diagnostic codes, resolver graphs, staged rules |
+| **Runtime JIT** | `beskid_tests/src/runtime` | Builtin dispatch, GC, fibers |
+| **E2E sources** | `beskid_e2e_tests` | Full `.bd` programs through CLI backends |
+| **Doc tests** | `beskid_tests/src/doc_tests.rs` | Spec snippets compile and match asserted output |
 
-- Producer side: crates that define or emit the contract surface.
-- Consumer side: crates that read, execute, or validate that surface.
-- Conformance side: test crates that pin expected behavior.
+```mermaid
+flowchart LR
+  fixture[.bd / .json fixtures]
+  analysis[analysis harness]
+  runtime[runtime harness]
+  e2e[e2e harness]
+  fixture --> analysis
+  fixture --> runtime
+  fixture --> e2e
+  analysis --> diag[Diagnostic snapshot]
+  runtime --> jit[JIT smoke]
+  e2e --> exit[Process exit + IO]
+```
 
-## Concrete crate anchors
+## Fixture conventions
 
-- `compiler/crates/beskid_tests/src/analysis` fixture-driven semantic assertions
-- `compiler/crates/beskid_tests/src/runtime` runtime behavior checks
-- `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` source-to-runtime outcomes
-- `compiler/crates/beskid_tests/src/doc_tests.rs` docs-driven verification
+- Prefer **minimal** `.bd` files per diagnostic or rule; share `Project.proj` layouts via `beskid_tests/src/projects` builders.
+- Golden diagnostics **must** cite stable codes from [diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/).
+- Runtime tests **must** negotiate the same ABI version as production `beskid run`.
+
+## Code anchors
+
+- `compiler/crates/beskid_tests/src/analysis`
+- `compiler/crates/beskid_tests/src/runtime`
+- `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs`
+- `compiler/crates/beskid_tests/src/doc_tests.rs`

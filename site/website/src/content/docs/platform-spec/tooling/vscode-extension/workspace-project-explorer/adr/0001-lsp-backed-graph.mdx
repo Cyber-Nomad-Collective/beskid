@@ -1,0 +1,41 @@
+---
+title: LSP graph
+description: LSP graph
+specLevel: adr
+status: Standard
+adrId: D-TOOL-VSC-0001
+adrStatus: Accepted
+adrDate: 2026-05-21
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Workspace and project explorer
+    href: /platform-spec/tooling/vscode-extension/workspace-project-explorer/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Parser drift.
+
+## Decision
+
+Graph via LSP executeCommand.
+
+## Consequences
+
+Thin wrappers.
+
+## Verification anchors
+
+beskid_lsp handlers.

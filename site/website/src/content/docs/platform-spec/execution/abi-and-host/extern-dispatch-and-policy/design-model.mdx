@@ -1,10 +1,11 @@
 ---
 title: Design model
-description: Conceptual model for `Extern dispatch and policy` and its subsystem boundaries.
+description: Extern resolution layers, runtime dispatch builtins, and host policy boundaries.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,31 +13,61 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: ABI and host boundary
-    href: /platform-spec/execution/abi-and-host/
-    relation: Parent area
   - type: Feature
     title: Extern dispatch and policy
     href: /platform-spec/execution/abi-and-host/extern-dispatch-and-policy/
     relation: Parent feature hub
+  - type: Feature
+    title: C ABI profile
+    href: /platform-spec/language-meta/interop/c-abi-profile/
+    relation: Link-time user libraries
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Purpose
 
-## What this article covers
-This article explains the `design-model` view for `Extern dispatch and policy` in concrete, onboarding-first language.
+Separate **who declares** foreign calls, **who validates** signatures, and **who resolves** addresses at link or run time. User `Extern` libraries and runtime builtins follow different policy tracks.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Primary actors
 
-## Code anchors
-- Extern parsing and diagnostics in `compiler/crates/beskid_analysis/src/beskid.pest` and `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`
-- ABI builtins definitions in `compiler/crates/beskid_abi/src/builtins.rs`
-- Runtime builtin dispatch in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
+| Actor | Role |
+| --- | --- |
+| **Front-end / analysis** | Parses `Extern` contracts, emits diagnostics for disallowed types (`compiler/crates/beskid_analysis`). |
+| **Codegen** | Lowers approved calls to Cranelift `call` targets—either runtime builtins or imported extern symbols. |
+| **Engine (`beskid_engine`)** | Optional `extern_dlopen` path: `dlopen` / `dlsym` with caches (legacy v0.1; **Proposed** for new work—prefer link-time [C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/)). |
+| **Runtime builtins** | `interop_dispatch_unit`, `interop_dispatch_ptr`, `interop_dispatch_usize` bridge language/runtime interop layouts (`beskid_runtime::interop`). |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Dispatch layers
+
+```mermaid
+flowchart TB
+  src[Beskid Extern contract]
+  ty[Type + ABI validation]
+  link[Link-time symbol]
+  dyn[Optional dlopen path]
+  rt[Runtime interop_dispatch_*]
+  src --> ty
+  ty --> link
+  ty --> dyn
+  ty --> rt
+```
+
+**Link-time (Standard v0.3):** User libraries resolve when producing AOT/JIT artifacts; addresses are fixed before execution.
+
+**Dynamic (legacy):** Engine loads `Library` + `Symbol` strings from `Extern(Abi:"C", Library:"…")` metadata when `extern_dlopen` is enabled.
+
+**Runtime dispatch:** Compiler-generated thunks call `interop_dispatch_*` for tagged interop values; layout offsets are stable per ABI version ([ABI versioning](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/)).
+
+## Policy boundaries
+
+- Lowering **must not** embed OS-specific syscall behavior for user externs; syscalls remain in [Panic, IO, and syscalls](/platform-spec/execution/runtime/panic-io-and-syscalls/).
+- Allowed Cranelift scalar kinds for engine-validated externs: pointer-width integer, `i64`, `i32`, `i8`, `f64` (legacy [Extern policy v0.1](../../../../execution/runtime/extern-policy-v0-1.md)).
+- High-level Beskid types in extern signatures **must** be rejected before codegen.
+
+## Related topics
+
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/)

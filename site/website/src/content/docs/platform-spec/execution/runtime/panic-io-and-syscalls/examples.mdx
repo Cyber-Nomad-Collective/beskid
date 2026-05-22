@@ -1,10 +1,11 @@
 ---
 title: Examples
-description: Concrete examples for `Panic, IO, and syscalls` decisions and usage patterns.
+description: Panic from lowering, syscall_write status codes, and corelib IO scenarios.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Runtime
-    href: /platform-spec/execution/runtime/
-    relation: Parent area
   - type: Feature
     title: Panic, IO, and syscalls
     href: /platform-spec/execution/runtime/panic-io-and-syscalls/
@@ -26,17 +23,37 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Prose: bounds check failure
 
-## What this article covers
-This article explains the `examples` view for `Panic, IO, and syscalls` in concrete, onboarding-first language.
+An enabled bounds check on array access fails at run time. Lowering emits a call to `panic` with a static message pointer. The process exits; callers do not receive `Option` because the failure is classified as a programmer/contract fault, not a recoverable IO error.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Prose: broken pipe on stderr
 
-## Code anchors
-- Builtin exports in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
-- Panic and syscall implementation in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
-- Runtime symbol registration in `compiler/crates/beskid_runtime/src/lib.rs`
+A server logs to stderr after the reader closes the pipe. `syscall_write` returns `-1` or partial failure; `System.Error.Write` panics with the stable stderr message defined in console IO spec. Operators treat this as fatal logging failure in v1.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Beskid-shaped usage (conceptual)
+
+Corelib (not user panic) wraps builtins:
+
+```beskid
+// System.Output — simplified narrative
+unit Write(string text) {
+    // builds WriteRequest → Syscall.WriteWith(Stdout, bytes)
+    // panics when syscall returns error
+}
+```
+
+User application code should prefer `Option` for expected failures; reserve runtime panic for violations and v1 stream policy.
+
+## Host testing syscall_write
+
+E2E tests in `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` exercise panic and IO paths without requiring full corelib—they call lowered programs that hit builtins directly.
+
+## Read line scenario
+
+`Input.ReadLine` loops `syscall_read` on stdin until newline or EOF. EOF returns `Result` success with partial/empty string; it **does not** call `panic` (**IO-005** sibling spec).
+
+## Related topics
+
+- [Verification and traceability](./verification-and-traceability/)
+- [Panic, IO hub](./)

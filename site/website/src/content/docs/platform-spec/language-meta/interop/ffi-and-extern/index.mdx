@@ -70,6 +70,41 @@ import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
 - **Runtime `dlopen` resolution** — demoted to **[dynamic resolution profile](/platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile/)** (non-Standard appendix).
 </SpecSection>
 
+<SpecSection title="Profile boundary map" id="profile-boundary-map">
+
+```mermaid
+flowchart TB
+  subgraph author [Author Beskid code]
+    contract[contract + Extern attribute]
+    views[interop view types]
+  end
+  subgraph lang [language-meta]
+    ic[Interop.Contracts]
+    cabi[C ABI profile]
+    export[Export and callbacks]
+    rustabi[Rust ABI profile]
+  end
+  subgraph tool [tooling]
+    link[Project.proj link metadata]
+    fli[foreign library import]
+  end
+  subgraph exec [execution]
+    dispatch[Extern dispatch and policy]
+    builtins[Runtime builtins table]
+  end
+  contract --> ic
+  contract --> cabi
+  views --> ic
+  link --> fli --> dispatch
+  cabi --> dispatch
+  export --> rustabi --> builtins
+  dispatch -.->|must not mutate| builtins
+```
+
+**Tier-1 rule:** user **`Extern`** libraries use **C ABI profile** + link-time binding. Runtime embedding and compiler builtins stay on **Rust ABI profile** / frozen `BESKID_RUNTIME_ABI_VERSION` — never mixed in the same symbol namespace.
+
+</SpecSection>
+
 <SpecSection title="What this feature specifies" id="what-this-feature-specifies">
 This feature is the **canonical language-level** chapter for **foreign import** in Beskid: **`Extern`** metadata, **contract** import syntax, optional per-method **symbol** overrides, and how declarations connect to **[Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/)** and the **[C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/)**.
 
@@ -110,5 +145,9 @@ Compiler mods do **not** gain ambient FFI unless the manifest grants **`extern_f
 - Diagnostics: `compiler/crates/beskid_tests/src/analysis/diagnostics.rs` (**E1510**, extern type band)
 - Codegen extern collection: `compiler/crates/beskid_codegen/src/lowering/lowerable.rs`, `compiler/crates/beskid_codegen/src/lowering/context.rs`
 </SpecSection>
+
+## Decisions
+
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-FFI-0001` … `D-LMETA-FFI-0005`); use the reader **ADRs** tab for detail.
 
 <DomainTiles pathPrefix="platform-spec/language-meta/interop/ffi-and-extern" heading="Articles" />

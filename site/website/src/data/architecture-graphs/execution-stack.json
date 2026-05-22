@@ -22,7 +22,7 @@
       "label": "Semantic Analysis",
       "group": "compiler",
       "description": "Type checking and symbol resolution.",
-      "href": "/guides/analysis/semantic-analysis/",
+      "href": "/book/reference/analysis/semantic-analysis/",
       "tags": ["analysis", "types"],
       "meta": { "Layer": "Compiler", "Stability": "Implemented" }
     },
@@ -76,7 +76,7 @@
       "label": "LSP Services",
       "group": "tooling",
       "description": "Language server features using analysis graph.",
-      "href": "/guides/lsp/",
+      "href": "/book/reference/lsp/",
       "tags": ["editor", "lsp"],
       "meta": { "Layer": "Tooling", "Consumer": "IDE" }
     }

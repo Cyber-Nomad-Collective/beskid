@@ -2,8 +2,11 @@ import type { CollectionEntry } from 'astro:content';
 import fs from 'node:fs/promises';
 import pathModule from 'node:path';
 import type { RelatedTopicPayload } from 'trudoc/platform-spec';
+import { parseAdrSections, type AdrSectionKey } from './parseAdrSections';
+import { renderAdrSectionMarkdown } from './renderAdrMarkdown';
 import { docEntryHref, docEntrySlug, normalizedPathname } from './specSlug';
 import { websiteRelativeDocPath } from './specDocPath';
+
 export type SpecArticleListItem = {
 	title: string;
 	description?: string;
@@ -13,7 +16,48 @@ export type SpecArticleListItem = {
 	href: string;
 };
 
+export type SpecAdrSectionContent = {
+	html: string;
+};
+
+export type SpecAdrListItem = {
+	title: string;
+	description?: string;
+	adrId: string;
+	adrStatus: string;
+	adrDate?: string;
+	status?: string;
+	href: string;
+	sections: Partial<Record<AdrSectionKey, SpecAdrSectionContent>>;
+};
+
 type DocsEntry = CollectionEntry<'docs'>;
+
+/** Feature hub slug for reader tabs (articles, ADRs, history) on hub, article, and ADR pages. */
+function resolveArticleRootSlug(currentSlug: string, specLevel: string | undefined): string {
+	if (specLevel === 'article') {
+		return currentSlug.split('/').slice(0, -1).join('/');
+	}
+	if (specLevel === 'adr') {
+		const parts = currentSlug.split('/');
+		const adrIndex = parts.lastIndexOf('adr');
+		if (adrIndex > 0) return parts.slice(0, adrIndex).join('/');
+	}
+	return currentSlug;
+}
+
+async function readDocSource(cwd: string, slug: string): Promise<string | null> {
+	const base = pathModule.join(cwd, 'src', 'content', 'docs', slug);
+	for (const ext of ['.mdx', '.md']) {
+		const filePath = `${base}${ext}`;
+		try {
+			return await fs.readFile(filePath, 'utf8');
+		} catch {
+			/* try next extension */
+		}
+	}
+	return null;
+}
 
 export type SpecReaderComputed = {
 	path: string;
@@ -24,6 +68,7 @@ export type SpecReaderComputed = {
 	articleRootSlug: string;
 	currentDepth: number;
 	articleEntries: SpecArticleListItem[];
+	adrEntries: SpecAdrListItem[];
 	hasDescendantArticles: boolean;
 	architectureGraph: unknown;
 	historyWebsiteRelativePath: string | null;
@@ -38,8 +83,7 @@ export async function computeSpecReaderState(pathname: string, docs: DocsEntry[]
 		: [];
 	const currentSpecLevel = typeof currentDoc?.data?.specLevel === 'string' ? currentDoc.data.specLevel : undefined;
 	const currentSlug = currentDoc ? docEntrySlug(currentDoc) : path;
-	const articleRootSlug =
-		currentSpecLevel === 'article' ? currentSlug.split('/').slice(0, -1).join('/') : currentSlug;
+	const articleRootSlug = resolveArticleRootSlug(currentSlug, currentSpecLevel);
 	const currentDepth = articleRootSlug.split('/').filter(Boolean).length;
 	const articleEntries =
 		currentDoc && articleRootSlug
@@ -68,6 +112,57 @@ export async function computeSpecReaderState(pathname: string, docs: DocsEntry[]
 						href: docEntryHref(docEntrySlug(entry)),
 					}))
 			: [];
+
+	const adrCandidates =
+		currentDoc && articleRootSlug
+			? docs
+					.filter((entry) => {
+						const slug = docEntrySlug(entry);
+						if ((entry.data as { specLevel?: string }).specLevel !== 'adr') return false;
+						return slug.startsWith(`${articleRootSlug}/adr/`);
+					})
+					.sort((a, b) => {
+						const aId = String((a.data as { adrId?: string }).adrId ?? docEntrySlug(a));
+						const bId = String((b.data as { adrId?: string }).adrId ?? docEntrySlug(b));
+						return aId.localeCompare(bId);
+					})
+			: [];
+
+	const adrEntries: SpecAdrListItem[] = [];
+	for (const entry of adrCandidates) {
+		const slug = docEntrySlug(entry);
+		const data = entry.data as {
+			title?: string;
+			description?: string;
+			status?: string;
+			adrId?: string;
+			adrStatus?: string;
+			adrDate?: string | Date;
+		};
+		const raw = await readDocSource(cwd, slug);
+		const parsedSections = raw ? parseAdrSections(raw) : {};
+		const sections: Partial<Record<AdrSectionKey, SpecAdrSectionContent>> = {};
+		for (const [key, markdown] of Object.entries(parsedSections) as [AdrSectionKey, string][]) {
+			if (!markdown?.trim()) continue;
+			sections[key] = { html: await renderAdrSectionMarkdown(markdown) };
+		}
+		adrEntries.push({
+			title: String(data.title ?? slug.split('/').at(-1) ?? 'Untitled'),
+			description:
+				typeof data.description === 'string' && data.description.trim().length
+					? data.description.trim()
+					: undefined,
+			adrId: String(data.adrId ?? slug.split('/').at(-1) ?? 'ADR'),
+			adrStatus: String(data.adrStatus ?? 'Accepted'),
+			adrDate:
+				typeof data.adrDate === 'string' || data.adrDate instanceof Date
+					? String(data.adrDate).slice(0, 10)
+					: undefined,
+			status: typeof data.status === 'string' ? data.status : undefined,
+			href: docEntryHref(slug),
+			sections,
+		});
+	}
 	const hasDescendantArticles =
 		currentDoc && articleRootSlug
 			? docs.some((entry) => {
@@ -115,6 +210,7 @@ export async function computeSpecReaderState(pathname: string, docs: DocsEntry[]
 		articleRootSlug,
 		currentDepth,
 		articleEntries,
+		adrEntries,
 		hasDescendantArticles,
 		architectureGraph,
 		historyWebsiteRelativePath,

@@ -24,32 +24,78 @@ relatedTopics:
     title: Compiler Mods
     href: /platform-spec/compiler/compiler-mods/
     relation: Meta host scheduling and diagnostics parity
+  - type: Feature
+    title: Stage ordering and lowering
+    href: /platform-spec/compiler/build-pipeline/stage-ordering/
+    relation: Host pipeline ordering after graph resolve
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Purpose
 
-## What this article covers
-This article explains the `design-model` view for `Build, analyze, and run contract` in concrete, onboarding-first language.
+The `beskid` executable is a thin orchestration layer over **`beskid_analysis`** (project graph, semantic pipeline, document snapshots) and backend-specific drivers (**JIT** for `run`/`test`, **AOT** for `build`, **CLIF** introspection). Every project-scoped command shares the same resolution inputs (`ProjectResolveArgs`, `LockfilePolicyArgs`) and **must** provision bundled corelib before dispatch (`ensure_corelib_ready` in `compiler/crates/beskid_cli/src/cli.rs`).
 
-## Meta / compiler mods and the CLI
+## Layered model
 
-**Compiler mods** are delivered as **`Mod` projects** in the workspace graph; they use Compiler Mod SDK contracts (language-meta). CLI commands **must** route mod work through the same **`beskid_analysis`** orchestration entrypoints as LSP so diagnostics, caps, and attachment behave identically.
+```mermaid
+flowchart TB
+  subgraph cli [beskid_cli]
+    Parse[parse / tree / format]
+    Analyze[analyze / doc]
+    Run[run / test]
+    Build[build / mod]
+    Pkg[fetch / lock / update / pckg]
+  end
+  subgraph analysis [beskid_analysis]
+    Ctx[CompilationContext]
+    Graph[Project graph + CompilePlan]
+    Sem[Semantic pipeline + diagnostics]
+  end
+  subgraph backends [Execution backends]
+    JIT[beskid_engine JIT]
+    AOT[beskid_aot link]
+  end
+  Parse --> Ctx
+  Analyze --> Ctx
+  Run --> Ctx
+  Build --> Ctx
+  Ctx --> Graph
+  Graph --> Sem
+  Sem --> JIT
+  Sem --> AOT
+  Pkg --> Graph
+```
 
-1. **Progress reporting** — `beskid_cli` implements `beskid_pipeline::PipelineObserver` (see `compiler/crates/beskid_cli/src/pipeline_ui.rs`). Any new meta phase ids **must** flow through this observer so `--plain` and spinner modes stay truthful.
-2. **Resolve vs run** — `beskid build`, `beskid run`, `beskid test`, and `beskid analyze` all resolve workspace inputs through shared helpers (`resolve_input_with_pipeline` and `CompilationContext` paths). Meta registration **must** occur after graph resolution and before semantic gates on the host compilation, per **[Stage ordering and lowering](/platform-spec/compiler/build-pipeline/stage-ordering/)**.
-3. **Diagnostics** — Meta diagnostics **must** use the same `SemanticDiagnostic` / miette shaping as semantic rules so stderr and JSON consumers cannot distinguish provenance except by diagnostic code. Codes **must** be registered in compiler diagnostic catalogs and mirrored under **[Diagnostics parity](/platform-spec/compiler/build-pipeline/diagnostics-parity/)**.
-4. **Flags (future)** — Host-level toggles such as disabling meta for CI **must** be CLI-visible, deterministic, and documented here when introduced; default remains **enabled** when `Mod` projects attach.
+| Layer | Responsibility |
+| --- | --- |
+| **Argv + global flags** | `@file` expansion, `--log-cranelift`, subcommand dispatch |
+| **Project resolution** | Discover `Project.proj` / `Workspace.proj`, honor lockfile policy, build `CompilationContext` |
+| **Pipeline observation** | Map `beskid_pipeline` phase IDs to stderr spinners or `--plain` lines |
+| **Command backend** | `analyze` emits diagnostics only; `build` lowers + AOT; `run`/`test` JIT entrypoints |
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Shared resolution contract
 
-## Code anchors
-- CLI command implementations in `compiler/crates/beskid_cli/src/commands/`
-- Analysis pipeline in `compiler/crates/beskid_analysis/src/services.rs`
-- Runtime launch via engine in `compiler/crates/beskid_engine/src/jit_module.rs`
+`build`, `run`, `test`, `analyze`, `doc`, `clif`, and `format` (when given a project input) **must** enter analysis through the same helpers that construct a **`CompilationContext`** for the resolved manifest path. Mod registration on the host compilation **must** occur after the dependency graph is materialized and before semantic gates, per **[Stage ordering and lowering](/platform-spec/compiler/build-pipeline/stage-ordering/)**.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+File-only commands (`parse`, `tree` with a single `.bd` path) may bypass the project graph but still use the parser and formatter crates directly.
+
+## Compiler mods on the CLI
+
+**`Mod`** projects are graph-discovered packages compiled AOT and loaded during host builds. CLI **`beskid mod`** manages artifact cache lifecycle; **`beskid build` / `run` / `test` / `analyze`** route mod work through **`beskid_analysis`** orchestration—the same entrypoints the LSP uses—so diagnostic codes, capability denial, and generator round caps match IDE behavior.
+
+| Concern | Normative rule |
+| --- | --- |
+| Progress | New pipeline phase IDs **must** surface through the CLI `PipelineObserver` implementation |
+| Diagnostics | Meta and semantic diagnostics share `SemanticDiagnostic` / miette shaping |
+| Parity | Changing mod scheduling **must** update CLI, LSP, and **[Diagnostics parity](/platform-spec/compiler/build-pipeline/diagnostics-parity/)** together |
+
+## Implementation anchors
+
+- Subcommand wiring: `compiler/crates/beskid_cli/src/cli.rs`, `compiler/crates/beskid_cli/src/commands/`
+- Resolution + pipeline UI: `compiler/crates/beskid_cli/src/frontend.rs`, `compiler/crates/beskid_cli/src/project_args.rs`
+- Analysis services: `compiler/crates/beskid_analysis/src/services.rs`, `compilation_context.rs`
+- JIT launch: `compiler/crates/beskid_engine/`
+- AOT link: `compiler/crates/beskid_aot/`

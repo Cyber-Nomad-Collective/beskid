@@ -1,0 +1,41 @@
+---
+title: Concurrency.NowMillis monotonic clock
+description: Monotonic time API owned by concurrency package in v0.2.
+specLevel: adr
+status: Standard
+adrId: D-CORE-CONC-0013
+adrStatus: Accepted
+adrDate: 2025-08-01
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Concurrency package
+    href: /platform-spec/core-library/concurrency/concurrency-package/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Legacy `rt_now_millis` and scattered clock builtins confuse package boundaries.
+
+## Decision
+
+`` `Concurrency.NowMillis() -> i64` `` in concurrency package replaces legacy `rt_now_millis`. Wall clock deferred to future `System.Time`.
+
+## Consequences
+
+Wall-clock ADR required before exposing civil time in corelib.
+
+## Verification anchors
+
+Builtin spec table; corelib clock smoke tests.

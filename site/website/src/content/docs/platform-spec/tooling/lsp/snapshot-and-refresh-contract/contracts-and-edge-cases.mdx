@@ -1,6 +1,6 @@
 ---
 title: Contracts and edge cases
-description: Normative guarantees, constraints, and edge-case handling for `Snapshot and refresh contract`.
+description: Strict guarantees for LSP snapshot lifecycle and refresh behavior.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,31 +12,39 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: LSP
-    href: /platform-spec/tooling/lsp/
-    relation: Parent area
   - type: Feature
     title: Snapshot and refresh contract
     href: /platform-spec/tooling/lsp/snapshot-and-refresh-contract/
     relation: Parent feature hub
+  - type: Feature
+    title: Diagnostics parity
+    href: /platform-spec/compiler/build-pipeline/diagnostics-parity/
+    relation: CLI and LSP share diagnostic codes
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Contracts
 
-## What this article covers
-This article explains the `contracts-and-edge-cases` view for `Snapshot and refresh contract` in concrete, onboarding-first language.
+- **Open buffer wins** — Disk index **must not** overwrite an open `Document` for the same `Uri`.
+- **Monotonic versions** — Stale `didChange` versions **must** be ignored per LSP rules.
+- **Cache generation** — When `ANALYSIS_CACHE_VERSION` increments, all snapshots **must** rebuild even if text is unchanged.
+- **Diagnostic debounce** — Only the latest scheduled revision per URI may publish; superseded tasks **must** no-op.
+- **Manifest URIs** — `.proj` files **must not** run Beskid semantic analysis snapshots.
+- **Parity** — Diagnostic codes and severities **must** match `beskid analyze` for the same `CompilationContext`.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Edge cases
 
-## Code anchors
-- LSP diagnostics in `compiler/crates/beskid_lsp/src/diagnostics.rs`
-- Analysis services in `compiler/crates/beskid_analysis/src/services.rs`
-- Resolver implementation in `compiler/crates/beskid_analysis/src/resolve/resolver.rs`
+| Case | Behavior |
+| --- | --- |
+| Source outside focused project tree | Fall back to focused `Project.proj` when path is under focus root (`project_context.rs`) |
+| No resolvable manifest | Analysis snapshot is `None`; features degrade gracefully without fabricated graphs |
+| Large workspace scan | Progress events **must** remain cancellable by subsequent invalidation |
+| Rapid typing | Text-hash fast path avoids parse until pause; debounced diagnostics may lag one generation |
+| Lockfile change during edit | Hard invalidation; user may see transient empty diagnostics until rescan completes |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Meta invalidation
+
+Changes to `project.mod` or mod AOT outputs **must** hard-invalidate compilation cache before re-running generators. Soft paths are opt-in and require proven stable capture keys.

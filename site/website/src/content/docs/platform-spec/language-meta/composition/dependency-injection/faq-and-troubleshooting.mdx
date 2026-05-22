@@ -25,22 +25,15 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 ## Locked decisions (v0.2)
 
-| Topic | Decision |
+Normative text for locked v0.2 choices lives in feature hub ADRs (**`D-LMETA-DI-0001` … `D-LMETA-DI-0010`** under [Native dependency injection](/platform-spec/language-meta/composition/dependency-injection/) **`adr/`**). This section retains troubleshooting only.
+
+| Topic | adrId |
 | --- | --- |
-| **Multiple implementations** | Use **`inject IContract[]`** (or concrete `T[]`); singular inject **must** be unique at resolution level |
-| **Host override** | Launched host is topmost; **`registry`** overrides parent **`: Host`** chain and corelib bases |
-| **Scope model** | **Global** = merged host `registry`; **named `scope`** tree; **scope stack** for resolution |
-| **Scope navigation** | Unqualified walk inner → global; **`global::`**, **`parent::`** qualifiers |
-| **Library projects** | **May** declare **`host`**; **`launch`** **forbidden** on **`Lib`** |
-| **Disposal** | **`dispose(...)`** block per named **`scope`** |
-| **Injection site** | **Field `inject` only** — no constructor inject |
-| **Multiple hosts** | **Many** `host` names per project; **one** `launch` per run |
-| **App entry** | Single manifest **`app`** target; one application host per process |
-| **Spelling** | **`registry`** (locked) |
-| **Nested `with`** | Same scope name → **independent** activations |
-| **Pipeline** | **`composition.resolve`** after **`semantic.snapshot`**, before **`mod.analyze`** |
-| **Diagnostics** | **E1701–E1799** reserved |
-| **WebHost** | **v0.3** — v0.2 is **`ConsoleHost`** + manual **`with`** |
+| Multiple implementations, host override, scope model | `D-LMETA-DI-0005`, `D-LMETA-DI-0006`, `D-LMETA-DI-0007` |
+| Library `launch`, field inject, `registry` spelling | `D-LMETA-DI-0008`, `D-LMETA-DI-0003`, `D-LMETA-DI-0004` |
+| Pipeline placement, mod vs app host | `D-LMETA-DI-0009`, `D-LMETA-DI-0010` |
+| Diagnostics band **E1701–E1799** | Reserved on hub; codes in tables below |
+| **WebHost** | **v0.3** — v0.2 is **`ConsoleHost`** + manual **`with`** (follow-up, not yet an ADR) |
 
 ## FAQ
 

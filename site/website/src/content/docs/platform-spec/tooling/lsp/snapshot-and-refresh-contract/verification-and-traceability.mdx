@@ -1,6 +1,6 @@
 ---
 title: Verification and traceability
-description: How `Snapshot and refresh contract` is validated and traced across crates, tests, and docs.
+description: Tests and traceability for the LSP snapshot and refresh contract.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,10 +12,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: LSP
-    href: /platform-spec/tooling/lsp/
-    relation: Parent area
   - type: Feature
     title: Snapshot and refresh contract
     href: /platform-spec/tooling/lsp/snapshot-and-refresh-contract/
@@ -26,17 +22,29 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Test anchors
 
-## What this article covers
-This article explains the `verification-and-traceability` view for `Snapshot and refresh contract` in concrete, onboarding-first language.
+| Concern | Location |
+| --- | --- |
+| Resolver + graph | `compiler/crates/beskid_tests/src/analysis/resolve.rs` |
+| Analysis services | `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs` |
+| Document analysis build | `beskid_analysis::services` unit/integration tests |
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Traceability
 
-## Code anchors
-- LSP diagnostics in `compiler/crates/beskid_lsp/src/diagnostics.rs`
-- Analysis services in `compiler/crates/beskid_analysis/src/services.rs`
-- Resolver implementation in `compiler/crates/beskid_analysis/src/resolve/resolver.rs`
+| Requirement | Evidence |
+| --- | --- |
+| `ANALYSIS_CACHE_VERSION` bump forces rebuild | Lifecycle tests or manual protocol check when version changes |
+| Skip directories during scan | `should_skip_dir_for_scan` unit coverage in `workspace_scan.rs` |
+| Invalidation on manifest change | `backend.rs` configuration handler paths |
+| Diagnostic debounce | Revision counter logic in `schedule_publish_diagnostics` |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Manual verification
+
+1. Open multi-file project; edit one file; confirm diagnostics update after pause.
+2. Change `Project.proj`; confirm all open files refresh.
+3. Compare `beskid analyze` output to LSP Problems for same snapshot generation.
+
+## Spec updates
+
+Changes to cache keys, skip lists, or debounce intervals **must** update this article and the VS Code extension status contract when user-visible phases change.

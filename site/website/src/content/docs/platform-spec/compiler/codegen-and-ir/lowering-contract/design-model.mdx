@@ -36,19 +36,48 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 
 
-## Model at a glance
+## Lowering boundary
 
-`Lowering contract` is modeled as a contract surface between producer crates and consumer crates. New contributors should treat it as a boundary document first and an implementation detail map second.
+Lowering is the **last semantic gate** before any backend runs. Inputs are a post-merge program snapshot (HIR + `ModuleIndex` + resolved types); output is an immutable **`CodegenArtifact`** containing Cranelift modules, data descriptors, extern imports, and debug metadata.
 
-## Primary actors
+Backends **must not** re-run parse, mod host, or semantic rules on the artifact.
 
-- Producer side: crates that define or emit the contract surface.
-- Consumer side: crates that read, execute, or validate that surface.
-- Conformance side: test crates that pin expected behavior.
+```mermaid
+flowchart TB
+  subgraph analysis [beskid_analysis]
+    hir[HIR + ModuleIndex]
+  end
+  subgraph codegen [beskid_codegen]
+    lower[lower_program / lower_source]
+    art[CodegenArtifact]
+  end
+  subgraph backends [beskid_engine]
+    jit[JitModule]
+    aot[AOT object emit]
+  end
+  hir --> lower --> art
+  art --> jit
+  art --> aot
+```
 
-## Concrete crate anchors
+## Artifact contents
+
+| Slice | Role |
+| --- | --- |
+| CLIF modules | Per-compilation-unit functions and globals |
+| Builtin imports | `declare_builtin_imports` from `BUILTIN_SPECS` |
+| `ExternImport` rows | User contract symbols for link step |
+| Type descriptors | GC layout + array/string shapes for `alloc` |
+
+## Invariants
+
+- Lowering runs only when `syntax_generation_id` matches the merged tree used by semantic rules ([stage ordering](/platform-spec/compiler/build-pipeline/stage-ordering/)).
+- Panic/abort paths use `AbiReturnKind::Never` imports so unreachable blocks are correct.
+- JIT and AOT consume the **same** artifact type; divergence happens only after `CodegenArtifact` is sealed.
+
+## Code anchors
 
 - `beskid_codegen::lower_source` in `compiler/crates/beskid_codegen`
 - `CodegenArtifact` construction in `compiler/crates/beskid_codegen`
-- `JitModule` consumption in `compiler/crates/beskid_engine/src/jit_module.rs`
-- Runtime execution coverage in `compiler/crates/beskid_tests/src/runtime/jit.rs`
+- `JitModule` in `compiler/crates/beskid_engine/src/jit_module.rs`
+- Runtime smoke: `compiler/crates/beskid_tests/src/runtime/jit.rs`

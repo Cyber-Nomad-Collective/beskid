@@ -1,10 +1,11 @@
 ---
 title: Verification and traceability
-description: How `Extern dispatch and policy` is validated and traced across crates, tests, and docs.
+description: Engine extern tests, analysis diagnostics, and interop layout traceability.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: ABI and host boundary
-    href: /platform-spec/execution/abi-and-host/
-    relation: Parent area
   - type: Feature
     title: Extern dispatch and policy
     href: /platform-spec/execution/abi-and-host/extern-dispatch-and-policy/
@@ -26,17 +23,38 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Implementation anchors
 
-## What this article covers
-This article explains the `verification-and-traceability` view for `Extern dispatch and policy` in concrete, onboarding-first language.
+| Path | Role |
+| --- | --- |
+| `compiler/crates/beskid_analysis/src/beskid.pest` | `Extern` syntax |
+| `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` | Extern-related diagnostics |
+| `compiler/crates/beskid_abi/src/builtins.rs` | `interop_dispatch_*` in `BUILTIN_SPECS` |
+| `compiler/crates/beskid_codegen` | `declare_validated_extern_imports`, signature validation |
+| `compiler/crates/beskid_engine` | `extern_dlopen` tests, `new_with_symbols` |
+| `compiler/crates/beskid_runtime/src/interop.rs` | Dispatch implementations |
+| `compiler/crates/beskid_runtime/src/interop_layout.rs` | Tag/payload offsets |
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Test matrix
 
-## Code anchors
-- Extern parsing and diagnostics in `compiler/crates/beskid_analysis/src/beskid.pest` and `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`
-- ABI builtins definitions in `compiler/crates/beskid_abi/src/builtins.rs`
-- Runtime builtin dispatch in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
+| Test (engine) | Asserts |
+| --- | --- |
+| `extern_resolution_only_compiles_with_feature` | Resolution succeeds when feature on |
+| `extern_real_call_getpid` | Live call returns plausible PID |
+| `extern_resolution_fails_without_feature` | **EXT-001** style failure |
+| `extern_missing_symbol_errors` | `dlsym` diagnostic quality |
+| `extern_missing_library_errors` | `dlopen` diagnostic quality |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Requirement traceability
+
+| ID | Evidence |
+| --- | --- |
+| **EXT-001** | `extern_resolution_fails_without_feature` |
+| **EXT-002** | `ExternDeclarationError::InvalidSignature` unit paths in codegen |
+| **EXT-003–004** | Engine cache tests + code review of `dlopen` flags |
+| **EXT-005** | `interop_layout.rs` + runtime dispatch tests |
+
+## Related topics
+
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Builtins and symbols](/platform-spec/execution/abi-and-host/builtins-and-symbols/verification-and-traceability/)

@@ -34,7 +34,23 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Phase handoff model
 
+```mermaid
+flowchart LR
+  resolve_input[resolve_input]
+  assemble[program.assemble]
+  parse[parse]
+  macro[macro.expand]
+  modload[mod.load collect generate]
+  semantic[semantic rules]
+  comp[composition.resolve]
+  modar[mod.analyze rewrite]
+  hir[HIR and ModuleIndex]
+  lower[lower_program]
+  artifact[CodegenArtifact]
+  resolve_input --> assemble --> parse --> macro --> modload --> semantic --> comp --> modar --> hir --> lower --> artifact
+```
 
 The compile model has a strict handoff chain:
 

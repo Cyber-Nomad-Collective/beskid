@@ -1,0 +1,27 @@
+---
+title: "/// comments that are not lies"
+description: Documentation comments, @arg on callables only, generated SDK docs, and CI verification.
+tableOfContents: true
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution">
+This chapter is **informative**. Enforceable rules live under the [Platform specification](/platform-spec/).
+</Aside>
+
+
+Documentation lives next to declarations in **`///` line comments** only—no XML novel, no separate doc assembly that drifts from the code every sprint. If the comment disagrees with the compiler, the compiler wins.
+
+## What you will find here
+
+| Section | Topic |
+| --- | --- |
+| [Doc comment syntax](/book/20-doc-comments-that-are-not-lies/doc-comment-syntax/) | Doc runs and attachment rules. |
+| [@arg and cross-links](/book/20-doc-comments-that-are-not-lies/arg-and-cross-links/) | Callable params only; `@ref` validation. |
+| [Generated SDK docs](/book/20-doc-comments-that-are-not-lies/generated-sdk-docs/) | Mirrored compiler SDK sources. |
+| [Verify docs](/book/20-doc-comments-that-are-not-lies/verify-docs/) | trudoc and CI presets. |
+
+## Next
+
+[21. FFI and forbidden friendships](/book/21-ffi-and-forbidden-friendships/)

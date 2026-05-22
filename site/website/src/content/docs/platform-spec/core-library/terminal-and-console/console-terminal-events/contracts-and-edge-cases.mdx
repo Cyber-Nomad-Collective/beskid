@@ -1,11 +1,11 @@
 ---
 title: Contracts and edge cases
-description: Normative guarantees and edge cases.
+description: Resize polling and delivery requirements.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-20
+lastReviewed: 2026-05-21
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -22,8 +22,36 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
-## What this article covers
-This article documents **contracts-and-edge-cases** for **Console terminal events**.
+## Purpose
 
-## Normative notes
-See the parent feature hub and `ANSI.md` in the aggregate repository for escape-sequence tables. Stream I/O must use `System.Syscall` wrappers; stdout/stderr are write-only at the syscall layer.
+Document **contracts and edge cases** for the **Console Terminal Events** feature: role-specific normative detail beyond the feature hub.
+
+## Canonical references
+
+- Feature hub: [Console Terminal Events](/platform-spec/core-library/terminal-and-console/console-terminal-events/)
+- Sibling articles in this bundle (design model, contracts, flow, examples, verification)
+
+## Detailed behavior
+
+### Normative requirements
+
+| ID | Requirement |
+| --- | --- |
+| **EVT-001** | `PollResize` **must** compare against `lastSize` and only send on change. |
+| **EVT-002** | Failed `Channel.Send` **must** be ignored silently in v1 poll loop (no panic). |
+| **EVT-003** | `SubscribeOnResize` **must** set `hub.lastSize` and raise `OnResize` immediately with `QuerySize()`. |
+| **EVT-004** | Default size when all probes fail **should** be 80×24 via env fallback. |
+
+### Edge cases
+
+- **Non-TTY stdout**: `QuerySize` may return env defaults; resize events may never fire.
+- **Rapid resize**: Coalescing is caller responsibility; each poll may emit at most one message.
+- **Closed channel**: `Send` errors are dropped per EVT-002.
+
+## Verification
+
+See the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.
+
+## Related topics
+
+- Parent [feature hub](/platform-spec/core-library/terminal-and-console/console-terminal-events/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)

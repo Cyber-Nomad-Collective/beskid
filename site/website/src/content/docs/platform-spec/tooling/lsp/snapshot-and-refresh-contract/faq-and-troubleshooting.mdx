@@ -1,6 +1,6 @@
 ---
 title: FAQ and troubleshooting
-description: Common operator and contributor questions about `Snapshot and refresh contract`.
+description: Common LSP snapshot and refresh issues.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,10 +12,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: LSP
-    href: /platform-spec/tooling/lsp/
-    relation: Parent area
   - type: Feature
     title: Snapshot and refresh contract
     href: /platform-spec/tooling/lsp/snapshot-and-refresh-contract/
@@ -26,17 +22,22 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Diagnostics stuck after `Project.lock` update
 
-## What this article covers
-This article explains the `faq-and-troubleshooting` view for `Snapshot and refresh contract` in concrete, onboarding-first language.
+Trigger a manifest save or run **Beskid: Rescan workspace** (extension command) so the server calls `invalidate_compilation_cache` and rescans. Verify lock materialization succeeded with `beskid lock` in a terminal.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Wrong project context for a file
 
-## Code anchors
-- LSP diagnostics in `compiler/crates/beskid_lsp/src/diagnostics.rs`
-- Analysis services in `compiler/crates/beskid_analysis/src/services.rs`
-- Resolver implementation in `compiler/crates/beskid_analysis/src/resolve/resolver.rs`
+Confirm **focused project** in the Project view matches the `Project.proj` owning the file. Multi-root workspaces need the member containing the source path.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Slow initial open
+
+Full workspace scan is O(files); excluded directories are skipped but large trees still cost IO. Narrow workspace roots or exclude generated folders from the VS Code workspace.
+
+## Stale hover after mod emit
+
+Hard-invalidate paths apply when generated sources touch disk. If emit stays in-memory only, invalidation follows document generation counters—bump `ANALYSIS_CACHE_VERSION` when changing that contract.
+
+## `BESKID_WORKSPACE_MEMBER_FOR_META_DEFAULT`
+
+Sets default workspace member for meta scheduling when the environment variable is present; must align with extension focus for consistent mod attachment.

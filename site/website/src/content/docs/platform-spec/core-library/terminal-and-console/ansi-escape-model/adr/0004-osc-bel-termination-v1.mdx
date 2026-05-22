@@ -1,0 +1,44 @@
+---
+title: OSC BEL termination in v1
+description: OSC payloads terminate with BEL, not ST.
+specLevel: adr
+status: Standard
+adrId: D-CORE-TERM-0004
+adrStatus: Accepted
+adrDate: 2026-05-20
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: ANSI escape model
+    href: /platform-spec/core-library/terminal-and-console/ansi-escape-model/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+OSC framing varies across terminals; v1 picks one terminator for golden tests.
+
+## Decision
+
+| Rule | Detail |
+| --- | --- |
+| Terminator | **BEL** (`0x07`) in v1 |
+| ST | `ESC ` termination is **not** required |
+
+## Consequences
+
+OSC helpers emit BEL-terminated sequences only until a future ADR extends ST.
+
+## Verification anchors
+
+`AnsiEscapeTests.bd`; `Ansi.Osc` sources.

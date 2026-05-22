@@ -1,6 +1,6 @@
 ---
 title: Workspace and lock contracts - Flow and algorithm
-description: Walks through runtime/order-of-operations behavior in the implementation.
+description: Compiler order of operations for workspace discovery, lock apply, and graph materialization.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -16,25 +16,28 @@ relatedTopics:
     title: Workspace and lock contracts
     href: /platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/
     relation: Parent feature hub
+  - type: Feature
+    title: Workspace and lock contracts (tooling)
+    href: /platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/flow-and-algorithm/
+    relation: defers-to — author lock update lifecycle
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Resolution flow
 
+1. **Locate** workspace root and member projects.
+2. **Load** lock snapshot (or fail if policy requires a lock and none is present).
+3. **Materialize** dependency roots from lock pins into the resolver cache layout.
+4. **Build** the combined workspace/project graph (see [project manifest contract / flow](/platform-spec/compiler/resolution-and-projects/project-manifest-contract/flow-and-algorithm/)).
+5. Proceed to analysis only when graph and layout invariants pass.
 
-This article documents **flow and algorithm** for **workspace and lock contracts** in the reference compiler.
+CLI lock **update** and author workflows are described under **[tooling / flow and algorithm](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/flow-and-algorithm/)**.
 
-## What this covers
-For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
+## Code anchors
 
-## Anchored code paths
-- `compiler/crates/beskid_tests/src/projects/corelib/compile.rs` covers lock-sensitive workspace builds.
-- `compiler/crates/beskid_tests/src/projects/corelib/layout.rs` validates workspace folder invariants.
-- `compiler/crates/beskid_cli/src/commands/` is the public entrypoint for lock policy flags.
-
-## Practical notes
-- Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
-- Treat diagnostics and tests as part of the contract, not optional implementation details.
-- If behavior changes, update this article and add/adjust tests in `compiler/crates/beskid_tests` or `compiler/crates/beskid_e2e_tests`.
+- `compiler/crates/beskid_analysis/src/resolve/mod.rs`
+- `compiler/crates/beskid_cli/src/commands/`
+- `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs`

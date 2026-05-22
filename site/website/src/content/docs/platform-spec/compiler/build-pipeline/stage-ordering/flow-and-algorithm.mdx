@@ -30,7 +30,29 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## End-to-end lowering spine
 
+```mermaid
+flowchart TB
+  r[1 Resolve CompilePlan]
+  a[2 program.assemble]
+  p[3 Parse units]
+  m{Mods in graph?}
+  mh[4 Mod collect generate reparse]
+  s[5 Semantic rules]
+  e{Error diagnostics?}
+  stop[Abort]
+  h[7 HIR resolve type-check]
+  l[8 lower to CodegenArtifact]
+  r --> a --> p --> m
+  m -->|yes| mh --> s
+  m -->|no| s
+  s --> e
+  e -->|yes| stop
+  e -->|no| h --> l
+```
+
+## Ordered steps
 
 1. Resolve source path/text through services (manifest, workspace graph, `CompilePlan`, optional materialized workspace).
 2. **Assemble program** — Build `ProgramAssembly` from effective roots (`program.assemble`); discover and parse compilation units per **[Program assembly](/platform-spec/compiler/build-pipeline/program-assembly/)**.

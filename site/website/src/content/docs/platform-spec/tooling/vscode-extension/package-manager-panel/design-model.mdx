@@ -1,0 +1,113 @@
+---
+title: Design model
+description: PackageTreeItem sections, pckgClient surface, cache keys, and Packages view chrome.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-21
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Package manager panel
+    href: /platform-spec/tooling/vscode-extension/package-manager-panel/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Purpose and scope
+
+Tree structure for **`beskidPackagesView`**, the **`pckgClient`** TypeScript contract, and status-bar activity phases shared with LSP and CLI.
+
+## View layout
+
+The Packages view lives in container **`beskidViews`** alongside Workspaces, Project, and Outline (see [extension surface design model](../extension-surface/design-model/#view-containers)).
+
+```arch
+flowchart TB
+  subgraph packagesView [beskidPackagesView]
+    TP[ThisProject section]
+    RS[RegistrySearch section]
+    TP --> D1[Declared/Locked dependency rows]
+    RS --> Q[Search results]
+    Q --> V[Version nodes]
+    V --> Dep[Dependency leaves]
+  end
+```
+
+Root sections **must** always be visible (not hidden behind empty search).
+
+## PackageTreeItem kinds
+
+| `section` | `kind` | Children |
+| --- | --- | --- |
+| `ThisProject` | `section` | Dependency rows from LSP |
+| `ThisProject` | `dependency` | Optional context actions only |
+| `RegistrySearch` | `section` | Search prompt or results |
+| `RegistrySearch` | `searchResult` | Package summary node |
+| `RegistrySearch` | `version` | Collapsible version metadata |
+| `RegistrySearch` | `registryDependency` | Dependency of selected version |
+
+Icons: dependency **`package`**; unresolved **`warning`**; registry package **`cloud-download`**.
+
+## pckgClient functions (normative)
+
+| Function | HTTP | Cache key |
+| --- | --- | --- |
+| `searchPackages({ q, limit, registryBaseUrl })` | `GET {base}/api/search?q=…&limit=…` | `search:{base}:{q}:{limit}` ~30s TTL |
+| `getPackageDetails({ name, registryBaseUrl })` | `GET {base}/api/packages/{name}` | `details:{base}:{name}` |
+| `buildRegistryPackageUrl({ name, version, registryBaseUrl })` | — | N/A (string builder) |
+| `createPckgFetch(context)` | — | Injects auth from `SecretStorage` |
+
+All functions **must** use `createPckgFetch` for transport.
+
+## Response typing (camelCase)
+
+Align TypeScript types with pckg records:
+
+- **`PackageSearchResponse`**: `{ package, reviewCount, health }`
+- **`PackageDetailsResponse`**: `{ package, versions, dependencies, dependentsCount, readme, health, … }`
+- **`PackageDependencyResponse`**: `{ name, version, source, registry }`
+
+## Registry base URL resolution
+
+1. If focused project belongs to a workspace, use `registries` entry with `alias: "default"` from `beskid.getWorkspaceSummary`.
+2. Else `vscode.workspace.getConfiguration('beskid.pckg').get('baseUrl')`.
+3. Else `http://localhost:5000`.
+
+## Status-bar phases
+
+Extend shared `PckgActivityPhase` (and CLI phases) with:
+
+| Phase | When |
+| --- | --- |
+| `search` | Registry search in flight |
+| `details` | Package details fetch |
+| `fetch` | `beskid fetch` running |
+| `lock` | `beskid lock` running |
+
+LSP scan phases remain separate on the same status controller.
+
+## View title and welcome actions
+
+| Action | Command |
+| --- | --- |
+| Search | `beskid.packages.search` |
+| Refresh | `beskid.packages.refresh` |
+| Fetch | `beskid.packages.fetch` |
+| Lock | `beskid.packages.lock` |
+
+View welcome content **should** offer “Search registry…” when `RegistrySearch` is empty.
+
+## Related topics
+
+- [Contracts](./contracts-and-edge-cases/) — auth and endpoint tables
+- [pckg client contract](/platform-spec/tooling/registry-client/pckg-client-contract/)

@@ -1,10 +1,11 @@
 ---
 title: FAQ and troubleshooting
-description: Common operator and contributor questions about `ABI versioning and compatibility`.
+description: Common ABI mismatch failures and maintainer guidance for version bumps.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: ABI and host boundary
-    href: /platform-spec/execution/abi-and-host/
-    relation: Parent area
   - type: Feature
     title: ABI versioning and compatibility
     href: /platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/
@@ -26,17 +23,34 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## FAQ
 
-## What this article covers
-This article explains the `faq-and-troubleshooting` view for `ABI versioning and compatibility` in concrete, onboarding-first language.
+### When must we bump `BESKID_RUNTIME_ABI_VERSION`?
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+When an **existing** generated call pattern would observe different layout, symbol names, or Cranelift signatures at link time. Purely additive exports that no shipped compiler emits may stay on the same version (**ABI-005**).
 
-## Code anchors
-- `AbiVersion` and compatibility definitions in `compiler/crates/beskid_abi/src/lib.rs`
-- `RUNTIME_EXPORT_SYMBOLS` in `compiler/crates/beskid_abi/src/symbols.rs`
-- JIT/runtime symbol loading in `compiler/crates/beskid_engine/src/jit_module.rs`
+### Does the VSIX bundle its own runtime?
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+The extension ships a platform-matched `beskid` CLI/LSP stack; that stack **must** be built against the same `beskid_abi` revision as the embedded compiler. Mismatch manifests as JIT `MissingFunction` or version gate failures—reinstall matching artifacts rather than mixing arbitrary release channels.
+
+### Are `interop_dispatch_*` symbols part of the versioned surface?
+
+Yes. They appear in `RUNTIME_EXPORT_SYMBOLS` and `BUILTIN_SPECS`. Tag/payload layout changes require an ABI bump and coordinated engine/runtime updates ([Builtins and symbols](/platform-spec/execution/abi-and-host/builtins-and-symbols/)).
+
+### Can JIT use a newer runtime than the compiler?
+
+Only when `beskid_runtime_abi_version()` is still equal to the compiler's expected constant **and** no removed symbols are referenced. Otherwise rebuild the compiler; unsupported mixing is intentional (**ABI-004**).
+
+## Troubleshooting
+
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| `missing function 'alloc'` at JIT finalize | Runtime library not linked or stripped exports | Ensure `beskid_runtime` built with default features; verify `RUNTIME_EXPORT_SYMBOLS` |
+| Segfault on first builtin call | Wrong function pointer type registered | Check `BUILTIN_SPECS` vs runtime `extern "C-unwind"` signature |
+| Works in debug CLI, fails in VSIX | Stale extension runtime | Rebuild Open VSX matrix with matching `beskid_abi` |
+| AOT binary crashes, JIT OK | Old runtime .so bundled in deploy | Re-link AOT with current `beskid_runtime` |
+
+## Related topics
+
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Runtime feature flags](/platform-spec/execution/runtime/runtime-feature-flags/) — optional `arrays_backing` without ABI version bumps

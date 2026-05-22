@@ -1,0 +1,54 @@
+---
+import type { LandingCodeLang } from '../data/landing-tile-sections';
+
+interface Props {
+	label: string;
+	lang: LandingCodeLang;
+	file: string;
+	lines: string[];
+}
+
+const { label, lang, file, lines } = Astro.props;
+
+const BESKID_KW = new Set(['pub', 'mod', 'use', 'type', 'return', 'string', 'mut', 'for', 'in', 'fn', 'host', 'registry', 'single', 'launch', 'startup', 'spawn', 'Fiber', 'Channel', 'Create', 'Join']);
+const CSHARP_KW = new Set(['var', 'using', 'await', 'async', 'public', 'class', 'static', 'void', 'new', 'return', 'sealed', 'interface', 'get', 'set', 'add', 'AddSingleton', 'AddSource', 'Build', 'RunAsync', 'Task', 'ConfigureAwait']);
+
+function escapeHtml(value: string): string {
+	return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function highlightLine(line: string, codeLang: LandingCodeLang): string {
+	const escaped = escapeHtml(line);
+	if (codeLang === 'il' || codeLang === 'asm') {
+		return escaped
+			.split(/(\.[a-z]+|[A-Za-z_][A-Za-z0-9_]*:)/g)
+			.map((part) => {
+				if (part.startsWith('.')) return `<span class="landing-code-dir">${part}</span>`;
+				if (part.endsWith(':')) return `<span class="landing-code-label">${part}</span>`;
+				return part;
+			})
+			.join('');
+	}
+	return escaped.split(/\b([A-Za-z_][A-Za-z0-9_]*)\b/g).map((part) => {
+		if (codeLang === 'beskid' && BESKID_KW.has(part)) return `<span class="landing-code-kw">${part}</span>`;
+		if (codeLang === 'csharp' && CSHARP_KW.has(part)) return `<span class="landing-code-kw">${part}</span>`;
+		if (codeLang === 'csharp' && /^I[A-Z]/.test(part)) return `<span class="landing-code-type">${part}</span>`;
+		if (codeLang === 'beskid' && /^[A-Z]/.test(part)) return `<span class="landing-code-type">${part}</span>`;
+		return part;
+	}).join('');
+}
+
+const rendered = lines.map((line) => (line.length === 0 ? '\n' : `${highlightLine(line, lang)}\n`)).join('');
+---
+
+<figure class="landing-code-pane">
+	<figcaption class="landing-code-pane__label">{label}</figcaption>
+	<div class="landing-terminal landing-terminal--compact" aria-label={label}>
+		<div class="landing-terminal__head">
+			<span>{file}</span>
+		</div>
+		<div class="landing-terminal__body">
+			<pre class="landing-terminal__pre"><code class:list={[`landing-terminal__code--${lang}`]} set:html={rendered}></code></pre>
+		</div>
+	</div>
+</figure>

@@ -1,6 +1,6 @@
 ---
 title: Design model
-description: Conceptual model for `Workspace and lock contracts` and its subsystem boundaries.
+description: Conceptual model for workspace manifests, lockfiles, and materialized dependency roots.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -21,36 +21,68 @@ relatedTopics:
     href: /platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/
     relation: Parent feature hub
   - type: Feature
+    title: Workspace and lock contracts (compiler)
+    href: /platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/
+    relation: implements — lock parsing, layout invariants, resolution diagnostics
+  - type: Feature
     title: Project manifest contract
     href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
-    relation: Meta reserved keys and host policy alignment
+    relation: Per-project `Project.proj` shape
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Purpose
 
-## What this article covers
-This article explains the `design-model` view for `Workspace and lock contracts` in concrete, onboarding-first language.
+Tooling-facing contract for **`Workspace.proj`**, per-member **`Project.proj`** graphs, and **`Project.lock`** v1 files that pin materialized dependency roots. The compiler realizes graph resolution and lock sync in `beskid_analysis::projects`; this article defines what operators and CLI commands may assume without restating full manifest key tables.
 
-## Reserved and forbidden workspace keys (v0.2)
+## Artifacts
 
-To avoid divergent experiments, **`Workspace.proj`** in v0.2 **must not** introduce ad-hoc keys that alter meta policy. Specifically:
+```mermaid
+flowchart TB
+  WS[Workspace.proj]
+  PM[Member Project.proj]
+  Lock[Project.lock v1]
+  Mat[Materialized package roots]
+  WS --> PM
+  PM --> Lock
+  Lock --> Mat
+  Mat --> Graph[Project DAG + CompilePlan]
+```
 
-- **Forbidden / parse-error** — Any top-level workspace key whose name matches `allowMetaInHostProjects`, `enableHostMeta`, or similar undocumented toggles **must** be rejected with a stable diagnostic until a future spec version defines semantics. This prevents undocumented workspace toggles for mod-only contract policy.
-- **Reserved (no semantics yet)** — Keys documented here as reserved **must** either be rejected or ignored with a warning-only mode that is itself normatively specified; the default is **reject** for CI determinism.
-- **`defaultMember` (workspace)** — Reserved on `Workspace.proj` for a future release that would disambiguate default host member selection in multi-member workspaces. v0.2 parsers **must** reject this key if present unless a spec bump explicitly defines it.
+| Artifact | Role |
+| --- | --- |
+| **`Workspace.proj`** | Declares `member` projects, registry URL aliases, optional dependency overrides |
+| **`Project.proj`** | Declares dependencies, targets, project kind (`Host`, `Mod`, `Template`) — see **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** |
+| **`Project.lock`** | Records `root_manifest`, resolved dependency names, `manifest` paths, `source_root`, `materialized_root` |
+| **`workspace.package.json`** | Optional npm-style metadata for editor hints; not a compiler graph input |
 
-Implementations **must** keep the reserved-name table in this article synchronized with `compiler/crates/beskid_analysis` manifest parsers when names are added.
+## Resolution rules surface
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+`WorkspaceResolutionRules` (in `resolver.rs`) carries:
 
-## Code anchors
-- Lock/update commands in `compiler/crates/beskid_cli/src/commands/`
-- Project and dependency resolution in `compiler/crates/beskid_analysis/src/resolve/mod.rs`
-- Workspace tests in `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs`
+- `workspace_root` and `workspace_members`
+- `overrides_by_dependency` (version pins)
+- `registry_aliases` and `registry_urls` for `beskid fetch` / registry client
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+Registry dependencies resolve through **`beskid_pckg`** HTTP flows; path dependencies normalize under the consumer project root.
+
+## Lockfile semantics (tooling view)
+
+- Header **must** be `# Project.lock v1`.
+- Each dependency line **must** include `name`, `manifest`, `project`, `source_root`, `materialized_root`.
+- `beskid lock` synchronizes lock content from the current `CompilePlan` (`sync_project_lockfile` in `workflow.rs`).
+- LSP may replay `effective_roots_from_lockfile` when a prepared workspace cache is absent.
+
+## Workspace readme
+
+The `workspace` block **may** include `readme = "relative/path.md"` with the same publishing behavior as project readmes (pack → root `README.md` in `.bpk`). Details live under **[Project manifest contract — design model](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/design-model/#package-readme-readme)**.
+
+## Implementation anchors
+
+- Lock format + sync: `compiler/crates/beskid_analysis/src/projects/workflow.rs`
+- Graph resolver: `compiler/crates/beskid_analysis/src/projects/graph/resolver.rs`
+- CLI: `compiler/crates/beskid_cli/src/commands/lock.rs`, `fetch.rs`, `update.rs`
+- Lock replay: `compiler/crates/beskid_analysis/src/projects/assembly/roots.rs`

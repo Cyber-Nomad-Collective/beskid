@@ -166,6 +166,79 @@ function effectiveNodeRadius(node: GraphPayloadNode): number {
 	return base + Math.min(overflow * 0.75, 26);
 }
 
+function linkPadding(source: GraphPayloadNode, target: GraphPayloadNode): number {
+	if (source.level === 'root' || target.level === 'root') return 36;
+	if (source.level === 'domain' || target.level === 'domain') return 28;
+	if (source.level === 'area' || target.level === 'area') return 22;
+	return 18;
+}
+
+function linkDistanceBetween(source: GraphPayloadNode, target: GraphPayloadNode): number {
+	return effectiveNodeRadius(source) + effectiveNodeRadius(target) + linkPadding(source, target);
+}
+
+/** Place visible nodes on concentric rings so the force sim does not start stacked on one point. */
+function seedVisibleLayout(active: SimNode[], cx: number, cy: number, parents: Map<string, string>) {
+	const root = active.find((n) => n.level === 'root');
+	if (root) {
+		root.x = cx;
+		root.y = cy;
+		root.vx = 0;
+		root.vy = 0;
+	}
+
+	const domains = active.filter((n) => n.level === 'domain');
+	if (domains.length) {
+		const rootR = root ? effectiveNodeRadius(root) : 58;
+		const maxDomR = d3.max(domains, (d) => effectiveNodeRadius(d)) ?? 46;
+		const orbit = rootR + maxDomR + 56;
+		domains.forEach((d, i) => {
+			const angle = (2 * Math.PI * i) / domains.length - Math.PI / 2;
+			d.x = cx + orbit * Math.cos(angle);
+			d.y = cy + orbit * Math.sin(angle);
+			d.vx = 0;
+			d.vy = 0;
+		});
+	}
+
+	const areas = active.filter((n) => n.level === 'area');
+	for (const [parentId, group] of d3.group(areas, (n) => parents.get(n.id) ?? '')) {
+		const parent = active.find((n) => n.id === parentId);
+		const px = parent?.x ?? cx;
+		const py = parent?.y ?? cy;
+		const parentR = parent ? effectiveNodeRadius(parent) : 46;
+		const maxAreaR = d3.max(group, (d) => effectiveNodeRadius(d)) ?? 38;
+		const orbit = parentR + maxAreaR + 38;
+		group.forEach((d, i) => {
+			const angle = (2 * Math.PI * i) / Math.max(1, group.length) - Math.PI / 4;
+			d.x = px + orbit * Math.cos(angle);
+			d.y = py + orbit * Math.sin(angle);
+			d.vx = 0;
+			d.vy = 0;
+		});
+	}
+
+	const features = active.filter((n) => n.level === 'feature');
+	for (const [parentId, group] of d3.group(features, (n) => parents.get(n.id) ?? '')) {
+		const parent = active.find((n) => n.id === parentId);
+		const px = parent?.x ?? cx;
+		const py = parent?.y ?? cy;
+		const parentR = parent ? effectiveNodeRadius(parent) : 38;
+		const maxFeatR = d3.max(group, (d) => effectiveNodeRadius(d)) ?? 30;
+		const orbit = parentR + maxFeatR + 30;
+		const spread = Math.min(Math.PI * 1.35, Math.max(Math.PI / 3, (2 * Math.PI) / Math.max(6, group.length)));
+		const start = -spread / 2;
+		group.forEach((d, i) => {
+			const t = group.length <= 1 ? 0.5 : i / (group.length - 1);
+			const angle = start + spread * t;
+			d.x = px + orbit * Math.cos(angle);
+			d.y = py + orbit * Math.sin(angle);
+			d.vx = 0;
+			d.vy = 0;
+		});
+	}
+}
+
 function readGraphPayload(): GraphPayload | null {
 	const el = document.getElementById('platform-spec-graph-data');
 	if (!el?.textContent?.trim()) return null;
@@ -263,8 +336,8 @@ export function mountPlatformSpecGraph(): void {
 	const parentMap = new Map<string, string>();
 	for (const edge of graph.edges) parentMap.set(edge.to, edge.from);
 
-	const width = Math.max(900, mountEl.clientWidth || 900);
-	const height = Math.max(620, mountEl.clientHeight || 620);
+	let width = Math.max(900, mountEl.clientWidth || 900);
+	let height = Math.max(620, mountEl.clientHeight || 620);
 	const svg = d3
 		.select(mountEl)
 		.html('')
@@ -279,31 +352,78 @@ export function mountPlatformSpecGraph(): void {
 	const edgeLabelLayer = graphLayer.append('g');
 	const nodeLayer = graphLayer.append('g');
 
-	const simNodes: SimNode[] = graph.nodes.map((node, i) => ({
+	const simNodes: SimNode[] = graph.nodes.map((node) => ({
 		...node,
-		x: width / 2 + (i % 9) * 32 - 120,
-		y: height / 2 + Math.floor(i / 9) * 28 - 90,
+		x: width / 2,
+		y: height / 2,
 		vx: 0,
 		vy: 0,
 	}));
-	const simEdges: SimEdge[] = graph.edges.map((edge) => ({ ...edge, source: edge.from, target: edge.to }));
+	const simNodeById = new Map(simNodes.map((n) => [n.id, n]));
+	const simEdges: SimEdge[] = graph.edges.map((edge) => ({
+		...edge,
+		source: edge.from,
+		target: edge.to,
+	}));
+
+	function edgeEndpointId(end: string | SimNode): string {
+		return typeof end === 'string' ? end : end.id;
+	}
+
+	function edgeVisible(edge: SimEdge): boolean {
+		return Boolean(visibility.get(edgeEndpointId(edge.source)) && visibility.get(edgeEndpointId(edge.target)));
+	}
+
+	const linkForce = d3
+		.forceLink<SimNode, SimEdge>()
+		.id((d) => d.id)
+		.distance((e) => {
+			const source = simNodeById.get(edgeEndpointId(e.source));
+			const target = simNodeById.get(edgeEndpointId(e.target));
+			if (!source || !target) return 120;
+			return linkDistanceBetween(source, target);
+		})
+		.strength(0.42);
 
 	const simulation = d3
-		.forceSimulation<SimNode>(simNodes)
-		.force('charge', d3.forceManyBody().strength(-360))
-		.force(
-			'link',
-			d3
-				.forceLink<SimNode, SimEdge>(simEdges)
-				.id((d) => d.id)
-				.distance((e) => {
-					const targetId = typeof e.target === 'string' ? e.target : e.target.id;
-					const target = nodeById.get(targetId);
-					return target?.level === 'domain' ? 150 : target?.level === 'area' ? 120 : 95;
-				}),
-		)
-		.force('center', d3.forceCenter(width / 2, height / 2))
-		.force('collide', d3.forceCollide((n) => effectiveNodeRadius(n) + 14));
+		.forceSimulation<SimNode>([])
+		.force('charge', d3.forceManyBody<SimNode>().strength(-300))
+		.force('link', linkForce)
+		.force('center', d3.forceCenter(width / 2, height / 2).strength(0.04))
+		.force('collide', d3.forceCollide<SimNode>((n) => effectiveNodeRadius(n) + 14).iterations(2));
+
+	let initialFitDone = false;
+	let refitOnEnd = false;
+
+	function refreshCanvasSize(): boolean {
+		const nextW = Math.max(320, mountEl.clientWidth || 900);
+		const nextH = Math.max(280, mountEl.clientHeight || 620);
+		if (nextW === width && nextH === height) return false;
+		width = nextW;
+		height = nextH;
+		svg.attr('viewBox', `0 0 ${width} ${height}`);
+		(simulation.force('center') as d3.ForceCenter<SimNode>).x(width / 2).y(height / 2);
+		return true;
+	}
+
+	function isHubAndDomainsOnly(active: SimNode[]): boolean {
+		return active.length > 0 && active.every((n) => n.level === 'root' || n.level === 'domain');
+	}
+
+	function buildActiveLinks(active: SimNode[]): SimEdge[] {
+		const visibleIds = new Set(active.map((n) => n.id));
+		const links: SimEdge[] = [];
+		for (const edge of simEdges) {
+			const from = edge.from;
+			const to = edge.to;
+			if (!visibleIds.has(from) || !visibleIds.has(to)) continue;
+			const source = simNodeById.get(from);
+			const target = simNodeById.get(to);
+			if (!source || !target) continue;
+			links.push({ ...edge, source, target });
+		}
+		return links;
+	}
 
 	const zoomMin = 0.25;
 	const zoomMax = 3.4;
@@ -317,13 +437,17 @@ export function mountPlatformSpecGraph(): void {
 
 	const edgeSel = edgeLayer
 		.selectAll<SVGLineElement, SimEdge>('line')
-		.data(simEdges, (d: any) => d.id)
+		.data(simEdges, (d) => d.id)
 		.join('line')
-		.attr('class', 'platform-spec-map-svg__edge');
+		.attr('class', 'platform-spec-map-svg__edge')
+		.attr('fill', 'none');
 
 	const edgeLabelSel = edgeLabelLayer
 		.selectAll<SVGTextElement, SimEdge>('text')
-		.data(simEdges.filter((e) => e.label), (d: any) => d.id)
+		.data(
+			simEdges.filter((e) => e.label),
+			(d) => d.id,
+		)
 		.join('text')
 		.attr('class', 'platform-spec-map-svg__edge-label')
 		.text((d) => d.label ?? '');
@@ -373,29 +497,95 @@ export function mountPlatformSpecGraph(): void {
 			}) as any,
 	);
 
-	function edgeVisible(edge: SimEdge): boolean {
-		const sourceId = typeof edge.source === 'string' ? edge.source : edge.source.id;
-		const targetId = typeof edge.target === 'string' ? edge.target : edge.target.id;
-		return Boolean(visibility.get(sourceId) && visibility.get(targetId));
+	function renderGraphPositions() {
+		nodeSel.attr('transform', (d) => `translate(${d.x},${d.y})`);
+		edgeSel
+			.attr('display', (d) => (edgeVisible(d) ? null : 'none'))
+			.attr('x1', (d) => simNodeById.get(edgeEndpointId(d.source))?.x ?? 0)
+			.attr('y1', (d) => simNodeById.get(edgeEndpointId(d.source))?.y ?? 0)
+			.attr('x2', (d) => simNodeById.get(edgeEndpointId(d.target))?.x ?? 0)
+			.attr('y2', (d) => simNodeById.get(edgeEndpointId(d.target))?.y ?? 0);
+		edgeLabelSel
+			.attr('display', (d) => (edgeVisible(d) ? null : 'none'))
+			.attr('x', (d) => {
+				const s = simNodeById.get(edgeEndpointId(d.source));
+				const t = simNodeById.get(edgeEndpointId(d.target));
+				return s && t ? (s.x + t.x) / 2 : 0;
+			})
+			.attr('y', (d) => {
+				const s = simNodeById.get(edgeEndpointId(d.source));
+				const t = simNodeById.get(edgeEndpointId(d.target));
+				return s && t ? (s.y + t.y) / 2 - 6 : 0;
+			});
 	}
 
-	function applyVisibility() {
+	function queueFitAfterLayout() {
+		requestAnimationFrame(() => {
+			if (refitOnEnd) {
+				refitOnEnd = false;
+				fitVisible();
+				return;
+			}
+			if (!initialFitDone) {
+				initialFitDone = true;
+				fitVisible();
+			}
+		});
+	}
+
+	function syncSimulationToVisibility(seedLayout = true) {
+		refreshCanvasSize();
+		const activeNodes = simNodes.filter((n) => visibility.get(n.id));
+		if (!activeNodes.length) return;
+
+		for (const n of simNodes) {
+			n.fx = null;
+			n.fy = null;
+		}
+
+		if (seedLayout) {
+			seedVisibleLayout(activeNodes, width / 2, height / 2, parentMap);
+		}
+
+		const links = buildActiveLinks(activeNodes);
+		renderGraphPositions();
+
+		if (isHubAndDomainsOnly(activeNodes)) {
+			simulation.stop();
+			queueFitAfterLayout();
+			return;
+		}
+
+		linkForce.links(links);
+		simulation.nodes(activeNodes);
+		simulation.alpha(0.65).restart();
+	}
+
+	function applyVisibility(requestRefit = false, seedLayout = true) {
 		nodeSel.attr('display', (d) => (visibility.get(d.id) ? null : 'none'));
-		edgeSel.attr('display', (d) => (edgeVisible(d) ? null : 'none'));
-		edgeLabelSel.attr('display', (d) => (edgeVisible(d) ? null : 'none'));
+		syncSimulationToVisibility(seedLayout);
+		if (requestRefit) refitOnEnd = true;
 	}
 
 	function fitVisible(duration = 320) {
 		const visibleNodes = simNodes.filter((n) => visibility.get(n.id));
 		if (!visibleNodes.length) return;
-		const minX = d3.min(visibleNodes, (n) => n.x) ?? 0;
-		const maxX = d3.max(visibleNodes, (n) => n.x) ?? width;
-		const minY = d3.min(visibleNodes, (n) => n.y) ?? 0;
-		const maxY = d3.max(visibleNodes, (n) => n.y) ?? height;
-		const pad = 80;
+		let minX = Infinity;
+		let maxX = -Infinity;
+		let minY = Infinity;
+		let maxY = -Infinity;
+		for (const n of visibleNodes) {
+			const padR = effectiveNodeRadius(n) + 12;
+			minX = Math.min(minX, n.x - padR);
+			maxX = Math.max(maxX, n.x + padR);
+			minY = Math.min(minY, n.y - padR);
+			maxY = Math.max(maxY, n.y + padR);
+		}
+		if (!Number.isFinite(minX) || !Number.isFinite(maxX)) return;
+		const pad = 56;
 		const boxW = Math.max(10, maxX - minX + pad * 2);
 		const boxH = Math.max(10, maxY - minY + pad * 2);
-		const scale = Math.max(0.28, Math.min(2.85, Math.min(width / boxW, height / boxH)));
+		const scale = Math.max(0.35, Math.min(2.85, Math.min(width / boxW, height / boxH)));
 		const tx = width / 2 - ((minX + maxX) / 2) * scale;
 		const ty = height / 2 - ((minY + maxY) / 2) * scale;
 		svg.transition().duration(duration).call(zoom.transform as any, d3.zoomIdentity.translate(tx, ty).scale(scale));
@@ -405,14 +595,12 @@ export function mountPlatformSpecGraph(): void {
 		for (const node of graph.nodes) {
 			if (node.level === 'area' || node.level === 'feature') visibility.set(node.id, false);
 		}
-		applyVisibility();
-		fitVisible();
+		applyVisibility(true);
 	}
 
 	function showAllNodes() {
 		for (const node of graph.nodes) visibility.set(node.id, true);
-		applyVisibility();
-		fitVisible();
+		applyVisibility(true);
 	}
 
 	function toggleAreasForDomain(domain: string) {
@@ -427,8 +615,7 @@ export function mountPlatformSpecGraph(): void {
 				}
 			}
 		}
-		applyVisibility();
-		fitVisible();
+		applyVisibility(true);
 	}
 
 	function toggleFeaturesForArea(areaPath: string) {
@@ -436,8 +623,7 @@ export function mountPlatformSpecGraph(): void {
 		if (!features.length) return;
 		const nextState = !visibility.get(features[0].id);
 		for (const feat of features) visibility.set(feat.id, nextState);
-		applyVisibility();
-		fitVisible();
+		applyVisibility(true);
 	}
 
 	const titleEl = document.getElementById('platform-spec-graph-panel-title');
@@ -472,7 +658,7 @@ export function mountPlatformSpecGraph(): void {
 
 	function focusNode(node: GraphPayloadNode) {
 		revealNodePath(node);
-		applyVisibility();
+		applyVisibility(false, true);
 		const target = simNodes.find((n) => n.id === node.id);
 		if (target) {
 			const baseScale =
@@ -676,20 +862,47 @@ export function mountPlatformSpecGraph(): void {
 		if (direct) setTimeout(() => focusNode(direct), 220);
 	}
 
-	simulation.on('tick', () => {
-		edgeSel
-			.attr('x1', (d: any) => d.source.x)
-			.attr('y1', (d: any) => d.source.y)
-			.attr('x2', (d: any) => d.target.x)
-			.attr('y2', (d: any) => d.target.y);
-		edgeLabelSel
-			.attr('x', (d: any) => (d.source.x + d.target.x) / 2)
-			.attr('y', (d: any) => (d.source.y + d.target.y) / 2 - 6);
-		nodeSel.attr('transform', (d) => `translate(${d.x},${d.y})`);
+	simulation.on('tick', renderGraphPositions);
+	simulation.on('end', () => {
+		if (refitOnEnd) {
+			refitOnEnd = false;
+			fitVisible();
+			return;
+		}
+		if (!initialFitDone) {
+			initialFitDone = true;
+			fitVisible();
+		}
 	});
 
-	applyVisibility();
-	setTimeout(() => fitVisible(), 280);
+	function activateMapLayout() {
+		requestAnimationFrame(() => {
+			refreshCanvasSize();
+			syncMapChromeInsets();
+			initialFitDone = false;
+			refitOnEnd = true;
+			applyVisibility(true, true);
+		});
+	}
+
+	const mapPanel = mountEl.closest<HTMLElement>('[data-tab-panel="map"]');
+	const mapInitiallyVisible = !mapPanel?.hidden;
+
+	if (mapInitiallyVisible) {
+		activateMapLayout();
+	} else {
+		window.addEventListener('platform-spec-map-activate', activateMapLayout);
+	}
+
+	if (typeof ResizeObserver !== 'undefined') {
+		const graphRo = new ResizeObserver(() => {
+			if (mapPanel?.hidden) return;
+			if (!refreshCanvasSize()) return;
+			refitOnEnd = true;
+			syncSimulationToVisibility(false);
+		});
+		graphRo.observe(mountEl);
+	}
 }
 
 mountPlatformSpecGraph();

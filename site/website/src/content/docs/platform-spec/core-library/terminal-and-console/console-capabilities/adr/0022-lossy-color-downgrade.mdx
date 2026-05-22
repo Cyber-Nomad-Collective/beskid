@@ -1,0 +1,44 @@
+---
+title: Lossy color downgrade
+description: RGB downgrades through palette ladders automatically.
+specLevel: adr
+status: Standard
+adrId: D-CORE-TERM-0022
+adrStatus: Accepted
+adrDate: 2026-05-20
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Console capabilities
+    href: /platform-spec/core-library/terminal-and-console/console-capabilities/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Callers should not manually pick CSI color modes per terminal.
+
+## Decision
+
+| Rule | Detail |
+| --- | --- |
+| Downgrade | RGB → indexed → basic is **lossy** |
+| API | No per-sequence model selector on public helpers |
+
+## Consequences
+
+Styled output remains readable on Basic16 hosts without author branches.
+
+## Verification anchors
+
+`AnsiSgrGoldenTests.bd`; capability + SGR integration.

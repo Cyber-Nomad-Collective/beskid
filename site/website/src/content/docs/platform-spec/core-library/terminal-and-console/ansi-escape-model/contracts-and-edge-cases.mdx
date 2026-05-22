@@ -1,11 +1,11 @@
 ---
 title: Contracts and edge cases
-description: Normative guarantees and edge cases.
+description: MUST/SHOULD rules for escape emission and supported sequence subsets.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-20
+lastReviewed: 2026-05-21
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -17,13 +17,70 @@ relatedTopics:
     title: ANSI escape model
     href: /platform-spec/core-library/terminal-and-console/ansi-escape-model/
     relation: Parent feature hub
+  - type: Feature
+    title: Console capabilities
+    href: /platform-spec/core-library/terminal-and-console/console-capabilities/
+    relation: Emission gating contract
 ---
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
-## What this article covers
-This article documents **contracts-and-edge-cases** for **ANSI escape model**.
+## Purpose
 
-## Normative notes
-See the parent feature hub and `ANSI.md` in the aggregate repository for escape-sequence tables. Stream I/O must use `System.Syscall` wrappers; stdout/stderr are write-only at the syscall layer.
+State **MUST/SHOULD** rules for escape framing, capability gating, and the v1 conformance-tested CSI subset.
+
+## Canonical references
+
+- Feature hub: [ANSI escape model](/platform-spec/core-library/terminal-and-console/ansi-escape-model/)
+- Sequence tables: [design model](./design-model/) and repository `ANSI.md`
+- Color downgrade: [Console capabilities](/platform-spec/core-library/terminal-and-console/console-capabilities/)
+
+## Detailed behavior
+
+### Normative requirements
+
+| ID | Requirement |
+| --- | --- |
+| **ANSI-001** | `Ansi.Escape.Esc()` **must** return exactly one U+001B code unit. |
+| **ANSI-002** | `Csi(body, finalByte)` **must** produce `ESC[` + *body* + *finalByte* with no capability filtering (test and composition primitive). |
+| **ANSI-003** | `EmitCsi`, `EmitOsc`, `EmitDec`, and builders whose `IntoSequence` calls `WhenEnabled` **must** return `""` when `Console.Capabilities.ShouldEmitAnsi()` is false. |
+| **ANSI-004** | `PrivateMode(mode, enable)` **must** encode `ESC[?{mode}h` or `ESC[?{mode}l`. |
+| **ANSI-005** | `DecSaveCursor` / `DecRestoreCursor` **must** emit `ESC 7` and `ESC 8` respectively (single-byte suffix, no bracket). |
+| **ANSI-006** | `OscSequence(payload)` **must** terminate with BEL (`0x07`). |
+| **ANSI-007** | `SgrBuilder` RGB helpers **must** downgrade per `EffectiveColorModel` before calling `EmitCsi` (see [Console capabilities](/platform-spec/core-library/terminal-and-console/console-capabilities/)). |
+| **ANSI-008** | Golden tests listed in [verification and traceability](./verification-and-traceability/) **must** match byte-for-byte output when emission is enabled. |
+
+### Conformance-tested CSI final bytes (v1)
+
+| Final | Builder surface | Example |
+| --- | --- | --- |
+| `m` | `Ansi.Sgr`, `Ansi.StyleChain` | `ESC[1;31m` |
+| `A`–`G`, `H`, `f` | `Ansi.Cursor` | `ESC[2J` via `Ansi.Erase` uses `J`/`K` |
+| `J`, `K` | `Ansi.Erase` | `ESC[2J`, `ESC[2K` |
+| `h`, `l` | `Ansi.Escape.PrivateMode`, `Ansi.Screen` | `ESC[?1049h` |
+
+Sequences present in `ANSI.md` but **without** a corelib builder or golden test are **informative** until added to this table.
+
+### Edge cases
+
+- **Piped stdout**: When stdout is not a TTY and `FORCE_COLOR` is unset, styled helpers **must** emit no escapes (**ANSI-003**); plain `System.Output.Write` still writes bytes.
+- **Partial terminal support**: Terminals **may** ignore italic, blink, or truecolor; downgrade reduces garbled output but cannot guarantee visual fidelity.
+- **Multiplexers** (`tmux`, `screen`): Alternate-buffer and private-mode sequences **may** behave differently; corelib does not special-case multiplexers in v1.
+- **Keyboard redefinition (`ESC[{code};{string}p`)**: Not implemented; documented in `ANSI.md` for historical completeness only.
+- **Erase without cursor move**: After `ESC[2K`, callers **should** emit `\r` if the cursor must sit at column 1 (see design model).
+
+### Non-goals (v1)
+
+## Verification
+
+Each **ANSI-*** row maps to `AnsiEscapeTests.bd` / `AnsiSgrGoldenTests.bd` or capability tests — [verification and traceability](./verification-and-traceability/).
+
+## Related topics
+
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Console markup format](/platform-spec/core-library/terminal-and-console/console-markup-format/) — must use builders, not raw ESC in markup
+
+- DCS string handling
+- Full xterm private-mode catalog
+- Host-specific WIN32 console APIs beyond `Platform.*` extern stubs

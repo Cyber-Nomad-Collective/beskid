@@ -1,0 +1,24 @@
+workspace {
+  name = "beskid_templates"
+  resolver = v1
+}
+
+member "console" {
+  path = "packages/console"
+}
+
+member "lib" {
+  path = "packages/lib"
+}
+
+member "project" {
+  path = "packages/project"
+}
+
+member "workspace_demo" {
+  path = "packages/workspace-demo"
+}
+
+member "contract_item" {
+  path = "packages/contract-item"
+}

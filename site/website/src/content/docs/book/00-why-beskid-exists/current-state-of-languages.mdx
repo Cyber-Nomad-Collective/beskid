@@ -1,0 +1,89 @@
+---
+title: "Current state of languages"
+description: How C#, Java, and Go became the default—and why Rust and Zig are not the answer for everyday software.
+tableOfContents: true
+---
+
+import { LinkPreview } from 'astro-embed';
+
+The "serious" industry runs on three boring horses: **C#**, **Java**, and **Go**. Everything else is either a hobby, a systems niche, or a conference talk that became a migration project.
+
+Shrug — three boring horses
+
+## C# — productivity with a subscription to confusion
+
+C# started as "Java but Microsoft actually ships tooling." That was a win. Then the platform grew **layers** until the language stopped being the product.
+
+- **Corelib abstraction sprawl.** When core functionality is a maze of wrappers, you are not writing software—you are negotiating with an API designed by a committee that has never shipped a bugfix on Friday afternoon.
+- **Reflection as a crutch.** Slow, opaque, runtime-only power instead of compile-time truth. Framework authors love it because it lets you invent DSLs inside strings. You pay for that at startup and in every stack trace.
+- **CIL stagnation.** Language features outpace the VM, so everything devolves into workarounds, source generators, and performance tax. You wanted iterators? Here are five incompatible patterns and a NuGet package called [BigShit](https://www.nuget.org/packages/BigShit).
+
+<LinkPreview id="https://www.nuget.org/packages/BigShit" />
+
+C# is excellent for **business throughput** when your org already standardized on .NET. It is miserable when you want **one obvious way** to do something without importing half of `Microsoft.Extensions.`*.
+
+## Java — stability cosplaying as innovation
+
+Java is the enterprise's comfort blanket: verbose, predictable, and held together by **decades of JVM lore**.
+
+- The ecosystem optimizes for **large teams and long timelines**, not for deleting code.
+- "Simple" often means **more classes**, not fewer concepts.
+- Modern Java has improved surface syntax, but the **mental model** is still: interfaces everywhere, frameworks that own your lifecycle, and build tools that treat minutes as acceptable.
+
+That would be great — Office Space
+
+Java wins on **hiring pool** and **vendor neutrality**. It loses when you want compile-time guarantees without annotation processors pretending to be a second compiler.
+
+## Go — the honest compromise (with receipts)
+
+Go is what happens when adults admit most software is **CRUD, glue, and cron jobs**.
+
+- Small language, small runtime, **GC you do not have to romance**.
+- Fast enough builds that CI does not become a lifestyle.
+- Conventions enforced by **social pressure** rather than fancy types—which is both a feature and a trap (see [1.6 segfault or not to segfault](/book/00-why-beskid-exists/segfault-or-not-to-segfault/) and [1.8 Conclusion](/book/00-why-beskid-exists/conclusion/)).
+
+Go is the closest thing to a **daily driver** for teams that ship services. It is not a research language. That is the point.
+
+## Rust and Zig — respect, but not for your Tuesday standup
+
+Low-level languages solved problems most application developers **do not have** on most days.
+
+### Rust
+
+- **Ownership** is a moral philosophy disguised as a type system. The borrow checker does not care that your domain model is ugly—it cares that you tried to mutate the same invoice twice.
+- Compile times and error messages are improving; **cognitive load** is not. Every team has that one person who enjoys fighting the compiler. The rest want to close Jira tickets.
+- Rust shines for **infra, safety-critical, and performance cliffs**. It does not shine for "we need another internal admin portal by Q3."
+
+*Angry typing — fighting the borrow checker*
+
+### Zig
+
+- Refreshingly direct about **manual memory** and **no hidden control flow**.
+- Excellent for people who want C without the resume lie that they enjoy C.
+- Not a platform for **millions of lines of business rules** with rotating interns.
+
+Be aware, that though Zig may be perceived as the successor to C, the battle for this title holds many competitors like [C3](https://github.com/c3lang/c3c), [C2](http://c2lang.org/), [V](https://vlang.io/) and other unoriginally named C substitutes, 
+Have some [D](https://dlang.org/)
+
+Rust and Zig are **tools for when the machine is the product**. Beskid is for when the **business rule** is the product—but you refuse to pay the JIT tax to express it.
+
+
+
+## The gap Beskid aims at
+
+
+| Need                    | C# / Java            | Go            | Rust / Zig | Beskid direction                        |
+| ----------------------- | -------------------- | ------------- | ---------- | --------------------------------------- |
+| Daily feature work      | Strong, heavy        | Strong, loose | Weak fit   | Strong, explicit                        |
+| Compile-time truth      | Reflection / codegen | Limited       | Strong     | Metaprogramming, not reflection theatre |
+| Runtime identity crisis | Common (.NET)        | Rare          | Rare       | AOT, no IL handcuffs                    |
+| "One obvious way"       | No                   | Mostly        | N/A        | Opinionated language features           |
+
+#### Disclaimer
+
+Be mindfull of the fact that I am a literal fetus in language design, and before beskid I've only lighly dipped my toes in some custom DSLs. 
+I jumped into it without second thought and all beskid quirks and features were designed out of **PURE RAGE AND DISSAPOINTMENT IN C#** 
+If you need a liabilty note or some reassurance - there's none. I am truly a low level virgin and this project is the pop of my cherry. 
+![lets go](https://media1.tenor.com/m/ujRWGbUY3iMAAAAC/yes-lets-go.gif)
+
+Next: [1.3 SOLID, DRY, and the failure of DDD](/book/00-why-beskid-exists/solid-dry-and-ddd/).

@@ -26,7 +26,24 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Resolution pipeline
 
+```mermaid
+flowchart TD
+  root[Discover project root]
+  manifest[Load Project.proj]
+  graph[Build dependency graph]
+  policy[Apply cycle / missing dep policy]
+  plan[Create CompilePlan]
+  lock[Optional lockfile sync]
+  entry[Source root + entry path]
+  mods[Mod host event setup]
+  root --> manifest --> graph --> policy --> plan
+  plan --> lock --> entry
+  plan --> mods
+```
+
+## Steps
 
 1. Resolve project root and load `Project.proj` manifest.
 2. Build dependency graph with policy (`error`, `warn`, or permissive) for unresolved dependencies.

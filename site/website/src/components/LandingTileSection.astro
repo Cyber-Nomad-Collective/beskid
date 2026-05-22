@@ -1,0 +1,115 @@
+---
+import type { LandingTileSectionData } from '../data/landing-tile-sections';
+import LandingCodePane from './LandingCodePane.astro';
+
+interface Props {
+	section: LandingTileSectionData;
+}
+
+const { section } = Astro.props;
+---
+
+<section class="landing-section landing-tiles" id={section.id} data-landing-tile-section>
+	<div class="landing-section__inner">
+		<h2>{section.title}</h2>
+		<p class="landing-section__lead">{section.lead}</p>
+
+		<div class="landing-tiles__grid" role="list">
+			{section.tiles.map((tile) => (
+				<button
+					type="button"
+					class="landing-tile"
+					role="listitem"
+					data-landing-tile
+					data-dialog={`landing-dialog-${tile.id}`}
+					aria-haspopup="dialog"
+				>
+					<span class="landing-tile__title">{tile.title}</span>
+					<span class="landing-tile__teaser">{tile.teaser}</span>
+					<span class="landing-tile__action">Read full comparison</span>
+				</button>
+			))}
+		</div>
+	</div>
+</section>
+
+<div class="landing-dialogs" hidden aria-hidden="true">
+	{section.tiles.map((tile) => (
+		<dialog class="landing-dialog" id={`landing-dialog-${tile.id}`} aria-labelledby={`${tile.id}-title`}>
+			<form method="dialog" class="landing-dialog__chrome">
+				<header class="landing-dialog__header">
+					<h3 id={`${tile.id}-title`}>{tile.title}</h3>
+					<button type="submit" class="landing-dialog__close" aria-label="Close">
+						Close
+					</button>
+				</header>
+				<div class="landing-dialog__body">
+					{tile.paragraphs.map((p) => (
+						<p>{p}</p>
+					))}
+					{(tile.specHref || (tile.links && tile.links.length > 0)) && (
+						<div class="landing-dialog__refs">
+							<p class="landing-dialog__refs-title">Further reading</p>
+							<ul class="landing-dialog__refs-list">
+								{tile.specHref && (
+									<li>
+										<a href={tile.specHref}>Platform specification</a>
+									</li>
+								)}
+								{tile.links?.map((link) => (
+									<li>
+										<a
+											href={link.href}
+											target={link.external ? '_blank' : undefined}
+											rel={link.external ? 'noopener noreferrer' : undefined}
+										>
+											{link.label}
+										</a>
+									</li>
+								))}
+							</ul>
+						</div>
+					)}
+					{tile.codeBlocks && tile.codeBlocks.length > 0 && (
+						<div class="landing-dialog__code-grid">
+							{tile.codeBlocks.map((block) => (
+								<LandingCodePane label={block.label} lang={block.lang} file={block.file} lines={block.lines} />
+							))}
+						</div>
+					)}
+				</div>
+			</form>
+		</dialog>
+	))}
+</div>
+
+<script>
+	function initLandingDialogs() {
+		document.querySelectorAll('.landing-dialogs').forEach((host) => {
+			host.querySelectorAll('.landing-dialog').forEach((node) => {
+				if (!(node instanceof HTMLDialogElement)) return;
+				if (node.dataset.portalBound === '1') return;
+				node.dataset.portalBound = '1';
+				document.body.appendChild(node);
+			});
+			host.remove();
+		});
+
+		document.querySelectorAll('[data-landing-tile]').forEach((btn) => {
+			if (btn.dataset.landingBound === '1') return;
+			btn.dataset.landingBound = '1';
+			const id = btn.getAttribute('data-dialog');
+			if (!id) return;
+			const dialog = document.getElementById(id);
+			if (!(dialog instanceof HTMLDialogElement)) return;
+			btn.addEventListener('click', () => {
+				if (typeof dialog.showModal === 'function') {
+					dialog.showModal();
+				}
+			});
+		});
+	}
+
+	initLandingDialogs();
+	document.addEventListener('astro:page-load', initLandingDialogs);
+</script>

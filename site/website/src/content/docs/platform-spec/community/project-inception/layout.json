@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "level": "feature",
+  "extends": "feature-contract-default",
+  "pathPrefix": "platform-spec/community/project-inception",
+  "minSpecSections": 2,
+  "widgets": []
+}

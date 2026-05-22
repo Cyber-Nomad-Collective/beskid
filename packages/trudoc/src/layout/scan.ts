@@ -14,6 +14,7 @@ export type PathClass =
 	| 'area'
 	| 'feature'
 	| 'article'
+	| 'adr'
 	| 'component'
 	| 'legacy-or-bridge';
 
@@ -26,8 +27,12 @@ export function classifyPlatformSpecRel(relPosix: string): PathClass {
 	if (segments.length === 2 && isIndex) return 'domain';
 	if (segments.length === 3 && isIndex) return 'area';
 	if (segments.length === 4 && isIndex) return 'feature';
-	/** Article leaves: any non-`index` page at feature depth (e.g. …/feature/article.mdx). */
-	if (segments.length >= 4 && !isIndex) return 'article';
+	/** Area-level articles: non-`index` leaf directly under an area hub. */
+	if (segments.length === 3 && !isIndex) return 'article';
+	/** Feature ADRs: leaf under `<feature>/adr/`. */
+	if (segments.length >= 5 && segments.at(-2) === 'adr' && !isIndex) return 'adr';
+	/** Feature-bundle articles: non-`index` leaf under a feature folder (not under `adr/`). */
+	if (segments.length >= 4 && !isIndex && segments.at(-2) !== 'adr') return 'article';
 	return 'legacy-or-bridge';
 }
 
@@ -55,6 +60,7 @@ function levelForClass(c: PathClass): LayoutLevel {
 		case 'feature':
 			return 'feature';
 		case 'article':
+		case 'adr':
 			return 'article';
 		case 'component':
 			return 'component';
@@ -67,7 +73,7 @@ export function inferDefaultPreset(c: PathClass, rawBody: string): LayoutPresetK
 	if (c === 'domain-root') return 'root-default';
 	if (c === 'domain') return 'domain-default';
 	if (c === 'area') return 'area-default';
-	if (c === 'article') return 'article-default';
+	if (c === 'article' || c === 'adr') return 'article-default';
 	if (c === 'feature') {
 		if (rawBody.includes('id="what-this-feature-specifies"') || rawBody.includes("id='what-this-feature-specifies'")) {
 			return 'feature-contract-default';
@@ -137,23 +143,24 @@ export function buildLayoutTree(siteRoot: string): LayoutTreeNode[] {
 		const body = safeReadFile(abs);
 		const level = levelForClass(cls);
 
-		if (cls === 'article') {
+		if (cls === 'article' || cls === 'adr') {
 			const dir = path.dirname(abs);
+			const featureDir = cls === 'adr' ? path.dirname(dir) : dir;
 			const stem = path.basename(abs).replace(/\.(md|mdx)$/i, '');
-			const featureLayoutPath = path.join(dir, 'layout.json');
+			const featureLayoutPath = path.join(featureDir, 'layout.json');
 			const sidecar = path.join(dir, `${stem}.layout.json`);
 
 			let featureMerged: LayoutContractFile;
 			let fpreset: LayoutPresetKey;
-			const cached = featureLayoutCache.get(dir);
+			const cached = featureLayoutCache.get(featureDir);
 			if (cached) {
 				featureMerged = cached.merged;
 				fpreset = cached.preset;
 			} else {
 				const fl = loadLayoutOrThrow(featureLayoutPath);
-				fpreset = fl.extends ?? inferDefaultPreset('feature', safeReadFile(path.join(dir, 'index.mdx')));
+				fpreset = fl.extends ?? inferDefaultPreset('feature', safeReadFile(path.join(featureDir, 'index.mdx')));
 				featureMerged = mergeLayoutContract(fl, { presetFromExtends: fpreset });
-				featureLayoutCache.set(dir, { merged: featureMerged, preset: fpreset });
+				featureLayoutCache.set(featureDir, { merged: featureMerged, preset: fpreset });
 			}
 
 			const ad = mergeArticleDefaults(
@@ -189,7 +196,7 @@ export function buildLayoutTree(siteRoot: string): LayoutTreeNode[] {
 			nodes.push({
 				slug,
 				contentPath: relFromDocs,
-				level: 'article',
+				level: cls === 'adr' ? 'article' : 'article',
 				layoutPath,
 				rawLayout: fs.existsSync(sidecar)
 					? parseLayoutContractJson(JSON.parse(fs.readFileSync(sidecar, 'utf8')), sidecar)

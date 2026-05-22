@@ -1,0 +1,35 @@
+{
+  "schema": "beskid.workspace.package.v1",
+  "members": {
+    "console": {
+      "package": "beskid.templates.console",
+      "description": "Executable console application with App target and Main.bd entry.",
+      "category": "Template",
+      "tags": ["template", "beskid", "console", "app", "project"]
+    },
+    "lib": {
+      "package": "beskid.templates.lib",
+      "description": "Class library project with Lib target.",
+      "category": "Template",
+      "tags": ["template", "beskid", "library", "project"]
+    },
+    "project": {
+      "package": "beskid.templates.project",
+      "description": "Template authoring package (type Template) with stub template.json.",
+      "category": "Template",
+      "tags": ["template", "beskid", "authoring", "project"]
+    },
+    "workspace_demo": {
+      "package": "beskid.templates.workspace-demo",
+      "description": "Two-member workspace scaffold (app + lib).",
+      "category": "Template",
+      "tags": ["template", "beskid", "workspace"]
+    },
+    "contract_item": {
+      "package": "beskid.templates.contract-item",
+      "description": "Contract file item template for existing projects.",
+      "category": "Template",
+      "tags": ["template", "beskid", "contract", "item"]
+    }
+  }
+}

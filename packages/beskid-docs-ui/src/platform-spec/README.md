@@ -15,7 +15,8 @@
 
 - **`SpecPageHeader`** — Use on feature hub and similar `specLevel` pages (with explicit owner/submitter props).
 - **`SpecArticleChrome`** — Use on `specLevel: article` pages: one line after frontmatter imports the component and renders `<SpecArticleChrome />` (no props; owner/submitter come from frontmatter).
-- **`SpecReaderShell`** — Starlight `<Tabs>` for Current document / Articles / History / Architecture (optional) / **Completeness**; still relocates MDX siblings into the first tab via `platform-spec-doc-layout.ts`.
+- **`SpecReaderShell`** — Starlight `<Tabs>` for Current document / **ADRs** / Articles / History / Architecture (optional) / **Completeness**; still relocates MDX siblings into the first tab via `platform-spec-doc-layout.ts`.
+- **`SpecAdrPanel`** — Expandable ADR list on feature hubs and article/ADR reader shells; section bodies (Context, Decision, …) are parsed from source and rendered as GFM HTML (tables, lists, inline code) via `parseAdrSections.ts` + `renderAdrMarkdown.ts`, not plain `<pre>` text.
 - **`SpecCompletenessReport`** — Renders the current node’s row from the generated layout report.
 - **`SpecWidgetRenderer`** — Maps validated `layout.json` widget specs (e.g. `domainTiles`, `twoColumn`) to Astro components for DRY hub rendering.
 

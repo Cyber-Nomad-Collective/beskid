@@ -17,6 +17,10 @@ relatedTopics:
     title: Manifests and lockfiles
     href: /platform-spec/tooling/manifests-and-lockfiles/
     relation: Parent area
+  - type: Feature
+    title: Workspace and lock contracts (compiler)
+    href: /platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/
+    relation: implements — lock materialization, layout invariants, resolution diagnostics
   - type: Area
     title: Build pipeline
     href: /platform-spec/compiler/build-pipeline/
@@ -41,6 +45,10 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 - Project and dependency resolution in `compiler/crates/beskid_analysis/src/resolve/mod.rs`
 - Workspace tests in `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs`
 - Corelib package tests in `compiler/crates/beskid_tests/src/projects/corelib/layout.rs`
+</SpecSection>
+
+<SpecSection title="Decisions" id="decisions">
+No open decisions. **`D-TOOL-MAN-0001`** (hub authority), **`0002`** (lock mutations via CLI)—see **`adr/`** and the **ADRs** tab.
 </SpecSection>
 
 <DomainTiles pathPrefix="platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts" heading="Articles" />

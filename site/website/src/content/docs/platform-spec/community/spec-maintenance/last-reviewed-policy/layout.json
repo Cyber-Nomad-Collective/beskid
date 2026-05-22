@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "level": "feature",
+  "extends": "feature-contract-default",
+  "pathPrefix": "platform-spec/community/spec-maintenance/last-reviewed-policy",
+  "sections": [
+    { "id": "what-this-feature-specifies", "required": false, "kind": "specSection" },
+    { "id": "implementation-anchors", "required": false, "kind": "specSection" }
+  ],
+  "minSpecSections": 0,
+  "widgets": []
+}

@@ -76,3 +76,36 @@ The compiler auto-loads transitive `Mod` dependencies (for example `serializatio
 - `beskid mod clean` — remove cached mod artifacts under the object store.
 
 See **[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** and **[Compiler Mods](/platform-spec/compiler/compiler-mods/)** for contract and host execution details.
+
+## Template authoring project
+
+```text
+project {
+  name    = "beskid-templates-console"
+  version = "0.0.0"
+  type    = Template
+  template {
+    shortName = "console"
+    identity  = "beskid.templates.console"
+  }
+}
+```
+
+Pack publishes **`packageKind: template`** and **`.beskid/template.json`**. See **[Project templates](/platform-spec/tooling/project-scaffolding/project-templates/examples/)**.
+
+## Instantiated console app (template output)
+
+Template-generated host project (no corelib opt-out; corelib resolved on `beskid lock`):
+
+```text
+project {
+  name    = "MyApp"
+  version = "0.1.0"
+  root    = "Src"
+}
+
+target "app" {
+  kind  = App
+  entry = "Main.bd"
+}
+```

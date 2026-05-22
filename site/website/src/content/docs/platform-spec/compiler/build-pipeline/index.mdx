@@ -43,6 +43,22 @@ Execution host details (runtime ABI chapters, long-form IR narrative) continue t
 
 <SpecSection title="Pipeline overview" id="overview">
 The diagram below mirrors the primary data flow: **project resolution** (optional) supplies `source_path` and `source` text; **lowering** (`beskid_codegen::lower_source`) performs parse, semantic rules (when enabled), HIR, resolution, typing, and Cranelift lowering into a **`CodegenArtifact`**; **JIT** (`beskid_engine::run_entrypoint`) or **AOT** (`beskid_aot::build`) consumes that artifact.
+
+```mermaid
+flowchart TB
+  resolve[Project resolution]
+  assemble[program.assemble]
+  parse[Parse and syntax diagnostics]
+  mods[Mod host optional]
+  semantic[Semantic rules and composition.resolve]
+  hir[HIR resolve and type-check]
+  lower[lower_program to CodegenArtifact]
+  jit[JIT run_entrypoint]
+  aot[AOT build and link]
+  resolve --> assemble --> parse --> mods --> semantic --> hir --> lower
+  lower --> jit
+  lower --> aot
+```
 </SpecSection>
 
 <DomainOrAreaHub pathPrefix="platform-spec/compiler/build-pipeline" summaryTitle="Subtree summary" />

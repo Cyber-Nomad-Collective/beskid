@@ -29,10 +29,15 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 ## Compile pipeline placement
 
-```text
-parse → mod.* (when enabled) → semantic → semantic.snapshot
-  → composition.resolve → mod.analyze → mod.rewrite
-  → lower.ready → lower → codegen → (JIT | AOT)
+```mermaid
+flowchart LR
+  parse[parse]
+  mods[mod phases optional]
+  semantic[semantic.snapshot]
+  comp[composition.resolve]
+  modar[mod.analyze rewrite]
+  lower[lower.ready lower codegen]
+  parse --> mods --> semantic --> comp --> modar --> lower
 ```
 
 | Id | Constant (planned) | Emitter |
@@ -71,6 +76,14 @@ For each inject site the compiler chooses a **resolution container**:
 JIT and AOT share one plan.
 
 ## Runtime scope stack
+
+```mermaid
+flowchart TB
+  global[Global registry merged host chain]
+  scopeA[Named scope A]
+  scopeB[Named scope B nested]
+  global --> scopeA --> scopeB
+```
 
 Fiber-local stack: **`[ Global, … named scopes ]`**. No runtime lookup by name; frame indices from the binding plan.
 

@@ -21,6 +21,10 @@ relatedTopics:
     title: Resolution and projects
     href: /platform-spec/compiler/resolution-and-projects/
     relation: Compiler workspace loading consumes manifest contracts
+  - type: Feature
+    title: Project manifest contract (compiler)
+    href: /platform-spec/compiler/resolution-and-projects/project-manifest-contract/
+    relation: implements — resolution graph, cycles, and manifest-band diagnostics
   - type: Area
     title: Registry client
     href: /platform-spec/tooling/registry-client/
@@ -41,6 +45,14 @@ relatedTopics:
     title: Foreign library import
     href: /platform-spec/tooling/foreign-library-import/
     relation: Link metadata and CLI library mapping for FFI
+  - type: Feature
+    title: Project templates
+    href: /platform-spec/tooling/project-scaffolding/project-templates/
+    relation: "project.type = Template and scaffolding output manifests"
+  - type: Feature
+    title: Package kinds
+    href: /platform-spec/tooling/registry-client/package-kinds/
+    relation: "packageKind on published artifacts"
 ---
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
 import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
@@ -65,6 +77,14 @@ A manifest may declare **`type: Mod`**. A **`Mod`** project is a compiler-mod pa
 Normative **`project.mod`** keys (`maxGeneratorRounds`, `capabilities`, optional `artifactPolicy`) are specified in **[design model](./design-model/)**; **[examples](./examples/)** show illustrative manifests.
 
 **v0.3 FFI:** optional **`project.link`** for foreign libraries is specified in **[project link libraries](./project-link-libraries/)** and populated via **[foreign library import](/platform-spec/tooling/foreign-library-import/)**.
+</SpecSection>
+
+<SpecSection title="Template project type (`Template`)" id="template-project-type">
+A manifest may declare **`type: Template`** for template authoring packages. Consumer-facing scaffold contracts live under **[Project scaffolding](/platform-spec/tooling/project-scaffolding/)**. Instantiated **host** projects from templates follow normal `Host` rules; **corelib** is always implicit (no opt-out manifest flag).
+</SpecSection>
+
+<SpecSection title="Decisions" id="decisions">
+No open decisions. **`D-TOOL-MAN-0001`** (hub authority), **`0002`** (Mod and Template project types)—see **`adr/`** and the **ADRs** tab.
 </SpecSection>
 
 <DomainTiles pathPrefix="platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract" heading="Articles" />

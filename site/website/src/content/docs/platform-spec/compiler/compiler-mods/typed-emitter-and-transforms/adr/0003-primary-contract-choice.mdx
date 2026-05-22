@@ -1,0 +1,42 @@
+---
+title: Primary contract for Typed emitter and transforms
+description: This feature hub defines the normative contract for **`Beskid.Compiler.Emit`** (typed emitter and transforms) and links 
+specLevel: adr
+status: Standard
+adrId: D-COMP-MODS-0018
+adrStatus: Accepted
+adrDate: 2026-05-20
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Typed emitter and transforms
+    href: /platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+This feature hub defines the normative contract for **`Beskid.Compiler.Emit`** (typed emitter and transforms) and links detailed articles.
+
+## Decision
+
+The reference compiler **must** implement Typed emitter and transforms as documented in this feature hub and its article bundle.
+
+## Consequences
+
+Changes require hub/ADR updates and verification anchor extensions.
+
+## Verification anchors
+
+- `compiler/crates/beskid_analysis/src/syntax/items/`
+- `compiler/crates/beskid_codegen/`

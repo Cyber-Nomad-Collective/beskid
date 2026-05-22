@@ -1,0 +1,35 @@
+---
+title: "15. Mods: plugins with consequences"
+description: Compiler mods—Collector, Generator, Analyzer, Rewriter—and the AOT-only host pipeline.
+tableOfContents: true
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Mods are **plugins with consequences**: they mutate the compile graph, re-parse generated AST, and can fail closed with **E18xx** diagnostics before your app code runs. The compiler itself stays Rust; your extension is Beskid **`type: Mod`** plus AOT artifacts.
+
+Normative Beskid surface: [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/). Host law: [Compiler mods](/platform-spec/compiler/compiler-mods/) and [Mod host bridge](/platform-spec/compiler/compiler-mods/mod-host-bridge/).
+
+## What you will find here
+
+| Section | Topic |
+| --- | --- |
+| [What is a mod](/book/15-mods-plugins-with-consequences/what-is-a-mod/) | Project kind, discovery, boundaries. |
+| [Mod SDK](/book/15-mods-plugins-with-consequences/mod-sdk/) | Contracts, Syntax mirror, query DSL. |
+| [Generator, Analyzer, Rewriter](/book/15-mods-plugins-with-consequences/generator-analyzer-rewriter/) | Roles and ordering. |
+| [beskid mod CLI](/book/15-mods-plugins-with-consequences/beskid-mod-cli/) | Build and wire mod packages. |
+| [Pipeline phases](/book/15-mods-plugins-with-consequences/pipeline-phases/) | collect → generate → analyze → rewrite. |
+
+<Aside type="danger">
+
+Mods are **AOT-only**. If you expected `eval` at compile time, you brought the wrong language.
+
+</Aside>
+
+## Start here
+
+[What is a mod](/book/15-mods-plugins-with-consequences/what-is-a-mod/)
+
+## After this chapter
+
+Return to [book reference](/book/reference/) for CLI details, or read [Implementation map](/book/13-reading-the-law/implementation-map/) when filing spec+crate changes.

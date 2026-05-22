@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-20T17:07:18.838Z",
+  "generatedAt": "2026-05-22T10:06:46.762Z",
   "summary": {
-    "nodes": 458,
+    "nodes": 784,
     "errors": 0,
     "warnings": 0
   },
@@ -12,7 +12,7 @@
       "status": "ok",
       "sections": [],
       "counts": {
-        "specSections": 0,
+        "specSections": 1,
         "markdownH2": 0
       },
       "messages": []
@@ -40,6 +40,28 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/community/project-inception",
+      "level": "area",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 4,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/community/spec-maintenance",
       "level": "area",
       "status": "ok",
@@ -58,6 +80,347 @@
       "counts": {
         "specSections": 2,
         "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": false,
+          "found": false
+        },
+        {
+          "id": "implementation-anchors",
+          "required": false,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template/adr/0001-canonical-frontmatter-templates",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": false,
+          "found": false
+        },
+        {
+          "id": "implementation-anchors",
+          "required": false,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 11
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/adr/0001-markdown-first-authoring",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/adr/0002-domain-area-feature-section-contracts",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/adr/0003-standard-feature-adr-directory",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/adr/0004-anti-stub-and-circular-canon",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/adr/0005-article-minimum-payload",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/last-reviewed-policy",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": false,
+          "found": false
+        },
+        {
+          "id": "implementation-anchors",
+          "required": false,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/last-reviewed-policy/adr/0001-last-reviewed-metadata",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": false,
+          "found": false
+        },
+        {
+          "id": "implementation-anchors",
+          "required": false,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/adr/0001-bridge-docs-non-normative",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/adr/0002-canonical-destination-links",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/adr/0003-migration-mapping-page-shape",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/release-and-versioning-policy",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": false,
+          "found": false
+        },
+        {
+          "id": "implementation-anchors",
+          "required": false,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/release-and-versioning-policy/adr/0001-git-version-axis",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/release-and-versioning-policy/adr/0002-stable-urls",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/release-and-versioning-policy/adr/0003-v0x-delivery-bands",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/release-and-versioning-policy/adr/0004-single-normative-tree",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": false,
+          "found": false
+        },
+        {
+          "id": "implementation-anchors",
+          "required": false,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 7
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions/adr/0001-language-law-in-language-meta",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions/adr/0002-implementation-domains-defer",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions/adr/0003-spec-leads-code",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions/adr/0004-adr-per-decision-files",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions/adr/0005-proposed-vs-standard-maturity",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -112,7 +475,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/adr/0003-shared-codegen-artifact-backends",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -134,7 +530,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 1
       },
       "messages": []
     },
@@ -167,7 +563,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -189,7 +585,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -266,7 +695,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -343,7 +805,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -420,7 +915,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/program-assembly/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/program-assembly/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/program-assembly/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -475,7 +1003,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/stage-ordering/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/stage-ordering/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/stage-ordering/adr/0003-canonical-phase-dag",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -497,7 +1058,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -530,7 +1091,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -574,7 +1135,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -645,13 +1239,57 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/compiler/codegen-and-ir/dynamic-types-and-mapping",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract",
       "level": "feature",
       "status": "ok",
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/adr/0003-extern-import-metadata-lowering",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -739,7 +1377,40 @@
       ],
       "counts": {
         "specSections": 2,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/adr/0003-cranelift-lowering-single-entry",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -761,7 +1432,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -838,7 +1509,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -915,7 +1619,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -992,7 +1729,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/adr/0003-mod-invalidation-deterministic-replay",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1069,7 +1839,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/adr/0003-mod-aot-only-registration",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1135,7 +1938,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -1157,7 +1960,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/adr/0003-rust-ast-reflect-sdk",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1234,7 +2070,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1333,7 +2202,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/adr/0003-three-tier-conformance-evidence",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1421,7 +2323,40 @@
       ],
       "counts": {
         "specSections": 2,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1520,7 +2455,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/ast-hir-shape-contract/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1597,7 +2565,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1674,7 +2675,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/hir-normalization-and-legality/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1751,7 +2785,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/adr/0003-pest-grammar-single-surface",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1861,7 +2928,40 @@
       ],
       "counts": {
         "specSections": 2,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/implementation-map/crate-to-spec-anchors/adr/0003-crate-map-single-index",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1982,7 +3082,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/adr/0003-cycles-reported-at-graph-build",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -2037,7 +3170,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -2058,8 +3191,41 @@
       "status": "ok",
       "sections": [],
       "counts": {
+        "specSections": 2,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/adr/0003-tooling-schema-compiler-graph",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -2114,7 +3280,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -2136,7 +3302,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -2212,8 +3411,41 @@
       "status": "ok",
       "sections": [],
       "counts": {
+        "specSections": 2,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/adr/0003-lockfile-pins-resolution",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -2268,7 +3500,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -2290,7 +3522,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -2345,7 +3610,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -2389,7 +3654,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/adr/0003-codes-owned-in-analysis",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -2466,7 +3764,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -2539,6 +3870,39 @@
     {
       "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog",
       "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/adr/0003-primary-contract-choice",
+      "level": "article",
       "status": "ok",
       "sections": [],
       "counts": {
@@ -2620,7 +3984,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/adr/0003-staged-semantic-rules",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -2675,7 +4072,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -2697,7 +4094,40 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/adr/0001-feature-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/adr/0002-spec-over-implementation-notes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -2829,7 +4259,51 @@
       ],
       "counts": {
         "specSections": 2,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/adr/0001-canonical-corelib-identity",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/adr/0002-multi-path-discovery",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/adr/0003-readme-packaging-for-pckg",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/adr/0004-workspace-includes-console-shard",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -2851,7 +4325,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -2884,7 +4358,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -2917,12 +4391,12 @@
       ],
       "counts": {
         "specSections": 2,
-        "markdownH2": 0
+        "markdownH2": 1
       },
       "messages": []
     },
     {
-      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/contracts-and-edge-cases",
+      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/adr/0005-host-corelib-no-opt-out",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -2933,13 +4407,57 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/adr/0006-workspace-shard-cycle-guard",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/adr/0007-mod-projects-exempt",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/adr/0008-cli-lsp-resolver-parity",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/design-model",
       "level": "article",
       "status": "ok",
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -2961,7 +4479,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -2983,7 +4501,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -3026,8 +4544,162 @@
         }
       ],
       "counts": {
-        "specSections": 12,
+        "specSections": 14,
         "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0001-channel-default-unbounded",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0002-fiber-cancellation",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0003-hub-round-robin-fairness",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0004-main-fiber-shutdown",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0005-result-not-panic-errors",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0006-spawn-keyword-reserved-async",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0007-gc-phase-a-single-mutator",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0008-scheduler-defaults",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0009-channel-runtime-semantics",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0010-hub-homogeneous-v1",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0011-fiber-handle-oncancelled",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0012-mutex-trylock-v1",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0013-monotonic-clock",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0014-join-ancestor-forbidden",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3049,7 +4721,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 15
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -3093,7 +4765,51 @@
       ],
       "counts": {
         "specSections": 6,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/system-threading/adr/0001-os-thread-surface-only",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/system-threading/adr/0002-no-fibers-on-threading",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/system-threading/adr/0003-distinct-yield-entry-points",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/concurrency/system-threading/adr/0004-per-thread-gc-session",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3225,7 +4941,51 @@
       ],
       "counts": {
         "specSections": 2,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/adr/0001-split-system-io-modules",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/adr/0002-console-package-separate-shard",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/adr/0003-abi-version-lockstep",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/adr/0004-pure-beskid-out-of-scope",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3236,7 +4996,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -3247,7 +5007,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3269,7 +5029,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3280,7 +5040,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3291,7 +5051,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -3312,7 +5072,7 @@
         }
       ],
       "counts": {
-        "specSections": 2,
+        "specSections": 3,
         "markdownH2": 0
       },
       "messages": []
@@ -3334,8 +5094,52 @@
         }
       ],
       "counts": {
-        "specSections": 2,
-        "markdownH2": 0
+        "specSections": 3,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/adr/0001-dec-save-restore-cursor",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/adr/0002-capability-gating-strips-ansi",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/adr/0003-sgr-color-downgrade-ladder",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/adr/0004-osc-bel-termination-v1",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3346,7 +5150,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3357,7 +5161,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3368,7 +5172,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3379,7 +5183,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3390,7 +5194,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3411,8 +5215,41 @@
         }
       ],
       "counts": {
-        "specSections": 2,
-        "markdownH2": 0
+        "specSections": 3,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/adr/0020-no-color-semantics",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/adr/0021-colorterm-truecolor-upgrade",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/adr/0022-lossy-color-downgrade",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3423,7 +5260,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3434,7 +5271,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3445,7 +5282,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3456,7 +5293,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3467,7 +5304,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3488,8 +5325,30 @@
         }
       ],
       "counts": {
-        "specSections": 2,
-        "markdownH2": 0
+        "specSections": 3,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-controls/adr/0040-character-cell-layout",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-controls/adr/0041-livetick-caller-owned-loop",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3500,7 +5359,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3511,7 +5370,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3522,7 +5381,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3533,7 +5392,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3544,7 +5403,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3565,8 +5424,41 @@
         }
       ],
       "counts": {
-        "specSections": 2,
-        "markdownH2": 0
+        "specSections": 3,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-io-streams/adr/0010-split-stream-modules",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-io-streams/adr/0011-write-panic-read-result",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-io-streams/adr/0012-writeline-unix-lf",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3577,7 +5469,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3588,7 +5480,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3599,7 +5491,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3610,7 +5502,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3621,7 +5513,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3642,8 +5534,30 @@
         }
       ],
       "counts": {
-        "specSections": 2,
-        "markdownH2": 0
+        "specSections": 3,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-markup-format/adr/0030-markup-not-full-commonmark",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-markup-format/adr/0031-bracket-palette-tags-v1",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3654,7 +5568,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3665,7 +5579,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3676,7 +5590,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3687,7 +5601,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3698,7 +5612,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3719,8 +5633,41 @@
         }
       ],
       "counts": {
-        "specSections": 2,
-        "markdownH2": 0
+        "specSections": 3,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/adr/0050-channel-vs-onresize-delivery",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/adr/0051-columns-lines-env-fallback",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/adr/0052-silent-resize-send-failure",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3731,7 +5678,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3742,7 +5689,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3753,7 +5700,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3764,7 +5711,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3775,7 +5722,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3796,7 +5743,7 @@
         }
       ],
       "counts": {
-        "specSections": 1,
+        "specSections": 2,
         "markdownH2": 0
       },
       "messages": []
@@ -3841,7 +5788,29 @@
       ],
       "counts": {
         "specSections": 2,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/adr/0001-hard-abi-version-check",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/adr/0002-breaking-changes-bump-version",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3863,7 +5832,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -3874,7 +5843,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3885,7 +5854,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -3896,7 +5865,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -3907,7 +5876,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3929,7 +5898,29 @@
       ],
       "counts": {
         "specSections": 2,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/adr/0003-builtin-specs-sole-clif-source",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/adr/0004-runtime-c-unwind-exports",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3940,7 +5931,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3951,7 +5942,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -3962,7 +5953,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -3984,7 +5975,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -3995,7 +5986,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -4017,7 +6008,29 @@
       ],
       "counts": {
         "specSections": 2,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/adr/0005-link-time-extern-standard",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/adr/0006-interop-dispatch-builtins",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4039,7 +6052,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -4050,7 +6063,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -4061,7 +6074,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -4072,7 +6085,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -4127,7 +6140,40 @@
       ],
       "counts": {
         "specSections": 7,
-        "markdownH2": 1
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/channels-and-synchronization/adr/0011-channel-only-cross-fiber-sharing",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/channels-and-synchronization/adr/0012-hub-round-robin-fairness",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/channels-and-synchronization/adr/0013-result-at-builtin-boundary",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4160,7 +6206,51 @@
       ],
       "counts": {
         "specSections": 9,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/adr/0001-mn-cooperative-scheduler",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/adr/0002-fiber-stack-sizes",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/adr/0003-phase-a-single-mutator",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/adr/0004-main-fiber-shutdown-join",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4203,8 +6293,41 @@
         }
       ],
       "counts": {
-        "specSections": 2,
-        "markdownH2": 0
+        "specSections": 3,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/adr/0005-phase-a-before-phase-b",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/adr/0006-abfall-tri-color-heap",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/adr/0007-heap-type-descriptors",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4215,7 +6338,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -4237,7 +6360,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -4248,7 +6371,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -4259,7 +6382,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -4292,7 +6415,40 @@
       ],
       "counts": {
         "specSections": 2,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/adr/0008-panic-terminates-process",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/adr/0009-runtime-owned-syscalls",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/adr/0010-blocking-syscalls-park-fiber",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4303,7 +6459,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4314,7 +6470,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -4325,7 +6481,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -4336,7 +6492,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -4347,7 +6503,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -4358,7 +6514,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4380,7 +6536,29 @@
       ],
       "counts": {
         "specSections": 2,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/runtime-feature-flags/adr/0014-cargo-features-not-abi-version",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/runtime-feature-flags/adr/0015-arrays-backing-feature",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4402,7 +6580,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -4413,7 +6591,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -4424,7 +6602,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -4435,7 +6613,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -4467,7 +6645,7 @@
         }
       ],
       "counts": {
-        "specSections": 2,
+        "specSections": 3,
         "markdownH2": 0
       },
       "messages": []
@@ -4497,6 +6675,116 @@
     {
       "slug": "platform-spec/language-meta/composition/dependency-injection",
       "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0001-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0002-compile-time-resolution",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0003-field-inject-only",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0004-registry-spelling",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0005-global-and-scope-stack",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0006-plural-inject-array",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0007-many-hosts-one-launch",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0008-lib-forbids-launch",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0009-composition-resolve-phase",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0010-mod-projects-no-app-host",
+      "level": "article",
       "status": "ok",
       "sections": [],
       "counts": {
@@ -4594,6 +6882,17 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/language-meta/conformance/glossary-and-conformance",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/language-meta/contracts-and-effects",
       "level": "area",
       "status": "ok",
@@ -4612,6 +6911,39 @@
       "counts": {
         "specSections": 2,
         "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/contracts",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/error-handling",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/testing",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -4638,6 +6970,28 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/language-meta/evaluation/control-flow",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/events",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn",
       "level": "feature",
       "status": "ok",
@@ -4655,7 +7009,73 @@
       ],
       "counts": {
         "specSections": 8,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn/adr/0001-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn/adr/0002-spawn-returns-fiber-handle",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn/adr/0003-stack-capture-escapes-spawn",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn/adr/0004-cross-fiber-events-use-channels",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn/adr/0005-join-ancestor-compile-error",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/lambdas-and-closures",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -4699,7 +7119,62 @@
       ],
       "counts": {
         "specSections": 3,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/c-abi-profile/adr/0001-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/c-abi-profile/adr/0002-link-time-standard-tier1",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/c-abi-profile/adr/0003-dynamic-resolution-proposed",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/c-abi-profile/adr/0004-winapi-out-of-stdlib-standard",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/c-abi-profile/adr/0005-v03-delivery-bands",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4787,7 +7262,51 @@
       "sections": [],
       "counts": {
         "specSections": 3,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/export-and-callbacks/adr/0001-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/export-and-callbacks/adr/0002-distinct-from-runtime-builtins",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/export-and-callbacks/adr/0003-export-pub-functions-v03",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/export-and-callbacks/adr/0004-spec-standard-impl-may-trail",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4830,8 +7349,63 @@
       "status": "ok",
       "sections": [],
       "counts": {
-        "specSections": 6,
-        "markdownH2": 0
+        "specSections": 7,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/ffi-and-extern/adr/0001-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/ffi-and-extern/adr/0002-extern-contract-level-only",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/ffi-and-extern/adr/0003-mod-level-extern-deferred",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/ffi-and-extern/adr/0004-user-cabi-vs-runtime-rustabi",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/ffi-and-extern/adr/0005-repr-c-deferred-v031",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4886,7 +7460,40 @@
       ],
       "counts": {
         "specSections": 3,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/interop-contracts/adr/0001-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/interop-contracts/adr/0002-profiles-bind-primitives",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/interop-contracts/adr/0003-conformance-envelope",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4974,7 +7581,40 @@
       ],
       "counts": {
         "specSections": 2,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/rust-abi-profile/adr/0001-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/rust-abi-profile/adr/0002-runtime-c-exports-rust-internal",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/rust-abi-profile/adr/0003-user-extern-not-rust-crates",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -5023,6 +7663,17 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/language-meta/memory-model/memory-and-references",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/language-meta/metaprogramming",
       "level": "area",
       "status": "ok",
@@ -5040,6 +7691,50 @@
       ],
       "counts": {
         "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 8,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/macros",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 8,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/metaprogramming",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/serialization",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 3,
         "markdownH2": 0
       },
       "messages": []
@@ -5067,6 +7762,50 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/language-meta/program-structure/code-style-and-naming",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/extend-type",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 4,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/modules-and-visibility",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/name-resolution",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/language-meta/surface-syntax",
       "level": "area",
       "status": "ok",
@@ -5089,6 +7828,28 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/language-meta/surface-syntax/documentation-comments",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/surface-syntax/lexical-and-syntax",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/language-meta/type-system",
       "level": "area",
       "status": "ok",
@@ -5106,6 +7867,102 @@
       ],
       "counts": {
         "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/enums-and-match",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/method-dispatch",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/type-inference",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/types",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/legacy-spec-mapping",
+      "level": "domain",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "rationale",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "background",
+          "required": false,
+          "found": false
+        },
+        {
+          "id": "notice",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "canonical",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "execution-mapping",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "corelib-mapping",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "maintenance",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 7,
         "markdownH2": 0
       },
       "messages": []
@@ -5171,8 +8028,30 @@
         }
       ],
       "counts": {
-        "specSections": 3,
+        "specSections": 4,
         "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/api-json-contract/adr/0001-api-json-primary-contract",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/api-json-contract/adr/0002-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -5184,6 +8063,17 @@
       "counts": {
         "specSections": 0,
         "markdownH2": 8
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/api-json-contract/registry-api-reference-ui",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -5204,8 +8094,30 @@
         }
       ],
       "counts": {
-        "specSections": 2,
+        "specSections": 3,
         "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/build-analyze-run-contract/adr/0001-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/build-analyze-run-contract/adr/0002-shared-analysis-pipeline",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -5216,7 +8128,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -5238,7 +8150,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -5249,7 +8161,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -5276,13 +8188,46 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/tooling/cli/command-surface",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/tooling/foreign-library-import",
       "level": "area",
       "status": "ok",
       "sections": [],
       "counts": {
-        "specSections": 3,
+        "specSections": 4,
         "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/foreign-library-import/cli-import-lib-command",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/foreign-library-import/external-library-trait",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -5309,6 +8254,28 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/tooling/lsp/diagnostics-and-workspace-analysis",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/lsp/intellisense-capabilities-and-behavior",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract",
       "level": "feature",
       "status": "ok",
@@ -5325,13 +8292,13 @@
         }
       ],
       "counts": {
-        "specSections": 2,
+        "specSections": 3,
         "markdownH2": 0
       },
       "messages": []
     },
     {
-      "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/contracts-and-edge-cases",
+      "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/adr/0001-hub-authority",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -5342,13 +8309,35 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/adr/0002-invalidation-on-focus-and-manifest",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/tooling/lsp/snapshot-and-refresh-contract/design-model",
       "level": "article",
       "status": "ok",
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -5370,7 +8359,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -5381,7 +8370,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -5435,8 +8424,30 @@
         }
       ],
       "counts": {
-        "specSections": 3,
+        "specSections": 5,
         "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/adr/0001-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/adr/0002-mod-and-template-project-types",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -5458,7 +8469,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 6
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -5469,7 +8480,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -5480,7 +8491,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -5513,7 +8524,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -5534,8 +8545,30 @@
         }
       ],
       "counts": {
-        "specSections": 2,
+        "specSections": 3,
         "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/adr/0001-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/adr/0002-lock-mutations-via-cli",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -5546,7 +8579,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -5557,7 +8590,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -5568,7 +8601,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -5579,7 +8612,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -5590,7 +8623,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -5602,6 +8635,413 @@
       "counts": {
         "specSections": 0,
         "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding",
+      "level": "area",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "features",
+          "required": false,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 10,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/beskid-new",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 6,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/beskid-new/adr/0001-beskid-new-command-name",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/beskid-new/adr/0002-interactive-and-noninteractive",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/beskid-new/adr/0003-update-check-on-instantiate",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/beskid-new/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/beskid-new/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 7
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/decisions-record",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 13,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/adr/0001-beskid-template-v1-engine",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/adr/0002-placeholder-delimiters",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/adr/0003-no-runnable-template-root",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/adr/0004-corelib-always-on",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/adr/0005-template-kinds-v1",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/adr/0006-path-and-git-sources",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/adr/0007-no-constraint-blocks",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/adr/0008-unrestricted-post-actions",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/adr/0009-update-check-on-use",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/adr/0010-yanked-template-warning",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 8
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/decisions-record",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 13
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 7
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 10
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 8
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/project-templates/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/template-packages",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 10,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/template-packages/adr/0001-explicit-package-kind",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/template-packages/adr/0002-template-registry-ui-mode",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/template-packages/adr/0003-no-api-json-for-templates",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/template-packages/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/template-packages/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 8
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/project-scaffolding/template-packages/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -5628,6 +9068,61 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/tooling/registry-client/package-kinds",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 8,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client/package-kinds/adr/0001-explicit-package-kind-field",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client/package-kinds/adr/0002-tool-kind-reserved",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client/package-kinds/adr/0003-beskid-templates-prefix",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/tooling/registry-client/pckg-client-contract",
       "level": "feature",
       "status": "ok",
@@ -5644,8 +9139,30 @@
         }
       ],
       "counts": {
-        "specSections": 2,
+        "specSections": 3,
         "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client/pckg-client-contract/adr/0001-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client/pckg-client-contract/adr/0002-registry-assigned-versions",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -5656,7 +9173,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -5667,7 +9184,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -5689,7 +9206,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -5700,7 +9217,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -5711,7 +9228,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -5732,8 +9249,19 @@
         }
       ],
       "counts": {
-        "specSections": 2,
+        "specSections": 3,
         "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/decisions-record",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -5754,8 +9282,63 @@
         }
       ],
       "counts": {
-        "specSections": 2,
+        "specSections": 14,
         "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/extension-surface/adr/0001-four-activity-bar-views",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/extension-surface/adr/0002-focused-project-uri",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/extension-surface/adr/0003-pckg-client-only-http",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/extension-surface/adr/0004-lsp-graph-data-only",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/extension-surface/adr/0005-shared-status-controller",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -5777,7 +9360,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -5788,7 +9371,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -5799,7 +9382,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 9
       },
       "messages": []
     },
@@ -5810,7 +9393,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -5821,7 +9404,205 @@
       "sections": [],
       "counts": {
         "specSections": 0,
+        "markdownH2": 7
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/package-manager-panel",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 5,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/adr/0001-single-pckg-client-boundary",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
         "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/adr/0002-cli-for-lock-mutations",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 9
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/decisions-record",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 9
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 7
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 7,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer/adr/0001-lsp-backed-graph",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer/adr/0002-focus-without-lsp-restart",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 10
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer/decisions-record",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 8
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/workspace-project-explorer/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 8
       },
       "messages": []
     }

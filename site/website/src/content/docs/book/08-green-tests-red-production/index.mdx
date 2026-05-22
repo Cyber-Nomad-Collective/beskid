@@ -1,0 +1,41 @@
+---
+title: "08. Green tests, red production"
+description: Beskid tests in source, the test CLI, and why CI still distrusts your optimism.
+tableOfContents: true
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Green tests are a mood. Production is where the runtime remembers every optimistic `return;` you left in a harness.
+
+This chapter is **informative**: how to write `test` items, run them with `beskid test`, and understand the difference between "my file passed" and "the platform still conforms." Normative grammar and discovery rules live under [Testing](/platform-spec/language-meta/contracts-and-effects/testing/).
+
+## What you will find here
+
+| Section | Topic |
+| --- | --- |
+| [Test items in source](/book/08-green-tests-red-production/test-items-in-source/) | `test Name { }`, `meta`, and `skip`. |
+| [The `beskid test` CLI](/book/08-green-tests-red-production/beskid-test-cli/) | Discovery, filters, JSON output. |
+| [Arrange, act, assert](/book/08-green-tests-red-production/arrange-act-assert/) | Structure without a framework cult. |
+| [Conformance vs unit](/book/08-green-tests-red-production/conformance-vs-unit/) | `beskid_tests` vs your project's tests. |
+| [CI and testing](/book/08-green-tests-red-production/ci-testing/) | What the compiler repo actually runs. |
+
+<Aside type="caution">
+
+A passing `beskid test` on one file does **not** prove your package belongs in production. It proves the harness executed what you asked—sometimes barely.
+
+</Aside>
+
+## By the end of this chapter
+
+- Declare and tag tests beside the code they exercise.
+- Filter runs by tag and group for fast local loops.
+- Know when to read [book/reference/testing/](/book/reference/testing/) vs [compiler conformance](/platform-spec/compiler/conformance/).
+
+## Start here
+
+[Test items in source](/book/08-green-tests-red-production/test-items-in-source/) — or jump to [The `beskid test` CLI](/book/08-green-tests-red-production/beskid-test-cli/) if you already copied a harness from a colleague.
+
+## Next chapter
+
+[09. Contracts, effects, and other polite threats](/book/09-contracts-effects-and-polite-threats/) — structural contracts, `Result`, and why panic is not a design pattern.

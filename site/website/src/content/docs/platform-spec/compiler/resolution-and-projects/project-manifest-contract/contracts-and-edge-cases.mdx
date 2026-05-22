@@ -1,6 +1,6 @@
 ---
 title: Project manifest contract - Contracts and edge cases
-description: States the normative guarantees and what happens at boundaries or failure edges.
+description: Compiler resolution guarantees, graph cycles, and manifest-band diagnostics.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -16,25 +16,33 @@ relatedTopics:
     title: Project manifest contract
     href: /platform-spec/compiler/resolution-and-projects/project-manifest-contract/
     relation: Parent feature hub
+  - type: Feature
+    title: Project manifest contract (tooling)
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/contracts-and-edge-cases/
+    relation: defers-to — Mod capability and manifest-shape contracts for authors
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Compiler resolution contracts
 
+- **Graph before compile** — No host `CompilePlan` runs until workspace/project DAG validation succeeds.
+- **Mod carriers only in graph** — Compiler-mod contracts are reachable only through resolved `type: Mod` nodes (see tooling for manifest-level rules).
+- **Stable diagnostics** — Graph and resolution failures use assigned codes in **E1801–E1899**; changing codes requires registry and test updates.
+- **Transitive Mod closure** — Host builds must resolve the full transitive Mod set before `mod.load`; partial graphs are errors.
 
-This article documents **contracts and edge cases** for **project manifest contract** in the reference compiler.
+## Edge cases (resolution)
 
-## What this covers
-For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
+- **Dependency cycles** — Any cycle in the workspace/project graph is a hard error at graph build time.
+- **Missing materialized package** — Unresolved registry or lock roots fail before analysis, with distinct codes from parse errors.
+- **Lock/workspace drift** — Mismatches between lockfile pins and on-disk layout are diagnosed in the workspace feature; see [workspace and lock contracts](/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/).
 
-## Anchored code paths
-- `compiler/crates/beskid_cli/src/commands/` reads manifest-driven compile inputs.
-- `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` uses manifest-aware project fixtures.
-- `compiler/crates/beskid_tests/src/projects/corelib/compile.rs` verifies manifest-based compile execution.
+Mod-specific manifest shape rules (`capabilities`, `maxGeneratorRounds`, host targets on Mod projects) are **not** duplicated here; see **[tooling / contracts and edge cases](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/contracts-and-edge-cases/)**.
 
-## Practical notes
-- Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
-- Treat diagnostics and tests as part of the contract, not optional implementation details.
-- If behavior changes, update this article and add/adjust tests in `compiler/crates/beskid_tests` or `compiler/crates/beskid_e2e_tests`.
+## Code anchors
+
+- `compiler/crates/beskid_analysis/src/projects/graph/`
+- `compiler/crates/beskid_tests/src/projects/corelib/mod.rs`
+- `compiler/crates/beskid_tests/src/projects/corelib/compile.rs`

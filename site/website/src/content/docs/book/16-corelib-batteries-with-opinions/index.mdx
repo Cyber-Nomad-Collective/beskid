@@ -1,0 +1,39 @@
+---
+title: "Corelib: batteries with opinions"
+description: The standard library is injected, opinionated, and documented through api.json—not a grab bag of copy-pasted helpers.
+tableOfContents: true
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution">
+This chapter is **informative**. Enforceable rules live under the [Platform specification](/platform-spec/).
+</Aside>
+
+
+The **corelib** package is not "stdlib.zip you found on a forum." The compiler **injects** it, the runtime backs part of it, and **pckg** serves the rest as a normal package—with registry-assigned versions so nobody plays semver theatre in `Project.proj`.
+
+If you expected a monolithic `System.IO` graveyard, adjust expectations now.
+
+## What you will find here
+
+| Section | Topic |
+| --- | --- |
+| [corelib command](/book/16-corelib-batteries-with-opinions/corelib-command/) | Materialize the embedded template with `beskid corelib`. |
+| [Injection and resolution](/book/16-corelib-batteries-with-opinions/injection-and-resolution/) | How every project gets the same canonical package. |
+| [Terminal and console](/book/16-corelib-batteries-with-opinions/terminal-and-console/) | ANSI, streams, and why console is not syscall soup. |
+| [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/) | `beskid doc`, structured API, and pckg docs UI. |
+| [Runtime-backed surfaces](/book/16-corelib-batteries-with-opinions/runtime-backed-surfaces/) | What must call through the runtime vs pure Beskid. |
+
+```mermaid
+flowchart LR
+  CLI[beskid CLI] --> inj[Corelib injection]
+  inj --> src[beskid_corelib sources]
+  src --> doc[beskid doc / api.json]
+  doc --> pckg[pckg registry docs]
+  runtime[beskid_runtime] --> src
+```
+
+## Next
+
+[17. Execution: ABI, host, and runtime](/book/17-execution-abi-host-runtime/)

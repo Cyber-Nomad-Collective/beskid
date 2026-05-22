@@ -1,0 +1,54 @@
+---
+import { readBookNavTreeOrThrow } from 'trudoc/book';
+import BookNavBranch from './BookNavBranch.astro';
+
+interface Props {
+	currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+const pathNorm = currentPath.replace(/\/+$/, '') || '/';
+const { tree } = readBookNavTreeOrThrow(process.cwd());
+const branchNodes = tree.children ?? [];
+---
+
+<div class="book-nav-chrome doc-area-nav-chrome" data-book-nav-chrome data-rail-collapsed="false">
+	<div class="doc-area-nav-chrome__backdrop" data-book-nav-backdrop hidden />
+
+	<aside
+		id="book-nav-rail"
+		class="doc-area-nav-chrome__rail"
+		aria-label="Book contents"
+		data-book-nav-rail
+	>
+		<div class="doc-area-nav-chrome__rail-head">
+			<a href="/book/" class="doc-area-nav-chrome__map-link"> Book home </a>
+			<button
+				type="button"
+				class="doc-area-nav-chrome__rail-close md:sl-hidden"
+				aria-label="Close book contents"
+				data-book-nav-close
+			>
+				×
+			</button>
+		</div>
+		<label class="doc-area-nav-chrome__filter">
+			<span class="doc-area-nav-chrome__filter-label">Filter</span>
+			<input
+				type="search"
+				class="doc-area-nav-chrome__filter-input"
+				placeholder="Filter pages…"
+				autocomplete="off"
+				spellcheck="false"
+				data-book-nav-filter
+			/>
+		</label>
+		<nav class="doc-area-nav-chrome__tree">
+			<BookNavBranch nodes={branchNodes} currentPath={pathNorm} />
+		</nav>
+	</aside>
+</div>
+
+<script>
+	import '../client/book-nav.ts';
+</script>

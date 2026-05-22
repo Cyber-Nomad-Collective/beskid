@@ -36,15 +36,26 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 
 
-## Model at a glance
+## Package and module layout
 
-`Corelib API shape` is modeled as a contract surface between producer crates and consumer crates. New contributors should treat it as a boundary document first and an implementation detail map second.
+```mermaid
+flowchart TB
+  prelude[beskid_corelib prelude]
+  foundation[packages foundation]
+  runtimePkg[packages runtime System IO]
+  consolePkg[packages corelib_console]
+  concurrencyPkg[packages corelib_concurrency]
+  prelude --> foundation
+  prelude --> runtimePkg
+  prelude --> consolePkg
+  prelude --> concurrencyPkg
+```
 
 ## Primary actors
 
-- Producer side: crates that define or emit the contract surface.
-- Consumer side: crates that read, execute, or validate that surface.
-- Conformance side: test crates that pin expected behavior.
+- **Authors** — import via `use` and prelude; depend on stable module paths documented here.
+- **Compiler** — resolves `corelib` package identity and injects the workspace package (see [Corelib injection](/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/)).
+- **Conformance** — `beskid_tests` corelib layout/compile/ABI fixtures pin surface shape across releases.
 
 ## Prelude exports (v0.2)
 

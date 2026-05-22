@@ -28,7 +28,7 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 | Object | Role |
 |--------|------|
 | `EffectiveCompilationRoots` | Host + dependency **source roots**; materialized paths from `PreparedProjectWorkspace` or `Project.lock` take precedence over plan `source_root` paths |
-| `SourceUnit` | One parsed `.bd` file: logical name, path, text, `Spanned&lt;Program&gt;` |
+| `SourceUnit` | One parsed `.bd` file: logical name, path, text, `Spanned<Program>` |
 | `ModuleIndex` | Cross-unit module graph and item table used to **prefetch** resolution for the entry unit |
 | `ProgramAssembly` | Roots, units, entry index, discovery mode, and `ModuleIndex` |
 | `AssemblyOptions` | `discovery` (`ImportClosure` vs `WorkspaceScan`), `include_std_prelude`, `max_units` |

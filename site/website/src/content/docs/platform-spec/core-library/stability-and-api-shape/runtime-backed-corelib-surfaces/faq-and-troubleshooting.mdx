@@ -1,6 +1,6 @@
 ---
 title: FAQ and troubleshooting
-description: Common operator and contributor questions about `Runtime-backed corelib surfaces`.
+description: FAQ for runtime-backed corelib surfaces.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,10 +12,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Stability and API shape
-    href: /platform-spec/core-library/stability-and-api-shape/
-    relation: Parent area
   - type: Feature
     title: Runtime-backed corelib surfaces
     href: /platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/
@@ -26,17 +22,22 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Link error for missing builtin symbol
 
-## What this article covers
-This article explains the `faq-and-troubleshooting` view for `Runtime-backed corelib surfaces` in concrete, onboarding-first language.
+Rebuild with matching `beskid` and runtime objects; verify `BESKID_RUNTIME_ABI_VERSION` alignment between CLI and cached AOT artifacts.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## I/O works in JIT but not AOT
 
-## Code anchors
-- Corelib docs in `site/website/src/content/docs/corelib/System/`
-- Runtime builtins in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
-- ABI builtin specs in `compiler/crates/beskid_abi/src/builtins.rs`
+Confirm AOT link includes `beskid_runtime` with the same feature set (e.g., platform I/O stubs).
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Should I add syscalls to `IO.bd`?
+
+No—split across `System.Input` / `System.Output` / `System.Error` and keep ANSI in `corelib_console`.
+
+## Where is the authoritative builtin list?
+
+`compiler/crates/beskid_abi/src/builtins.rs` plus re-exports in `beskid_runtime/src/builtins/mod.rs`.
+
+## Doc drift vs implementation
+
+Update Beskid sources and `compiler/corelib/beskid_corelib/docs/` together; run `beskid doc` before publishing packages with API browser content.

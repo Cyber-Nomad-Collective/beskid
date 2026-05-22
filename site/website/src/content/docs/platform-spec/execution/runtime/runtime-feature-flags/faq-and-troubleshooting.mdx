@@ -1,10 +1,11 @@
 ---
 title: FAQ and troubleshooting
-description: Common operator and contributor questions about `Runtime feature flags`.
+description: Optional runtime features vs ABI version, array backing surprises, and CI alignment.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Runtime
-    href: /platform-spec/execution/runtime/
-    relation: Parent area
   - type: Feature
     title: Runtime feature flags
     href: /platform-spec/execution/runtime/runtime-feature-flags/
@@ -26,17 +23,34 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## FAQ
 
-## What this article covers
-This article explains the `faq-and-troubleshooting` view for `Runtime feature flags` in concrete, onboarding-first language.
+### Do feature flags change `beskid_runtime_abi_version`?
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+No when behavior is backward compatible (**RFF-001**). Adding new optional symbols without old compilers calling them does not require a bump.
 
-## Code anchors
-- Runtime compile-time flags and exports in `compiler/crates/beskid_runtime/src/lib.rs`
-- Runtime builtins feature gating in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
-- Execution setup in `compiler/crates/beskid_cli/src/commands/doc.rs`
+### Why is `array_new` pointer null in the debugger?
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+Default builds omit `arrays_backing`. Enable the feature for tests that touch elements.
+
+### Where is `extern_dlopen` documented?
+
+Under [Extern dispatch and policy](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/) — it is an **engine** feature, not a runtime Cargo feature.
+
+### Can users toggle features at run time?
+
+No. Selection is compile-time for the linked `beskid_runtime` artifact. CLI flags choose execution **mode**, not `arrays_backing`.
+
+## Troubleshooting
+
+| Symptom | Fix |
+| --- | --- |
+| Array element segfault | Build runtime with `arrays_backing` or stop dereferencing `ptr` |
+| Missing `rt_metrics_*` at link | Enable `metrics` on runtime **and** ensure codegen emits calls |
+| Extern works locally, fails in CI | CI engine lacks `extern_dlopen` — use link-time externs |
+| VSIX vs local CLI array difference | Compare release matrices for runtime features |
+
+## Related topics
+
+- [Examples](./examples/)
+- [FAQ ABI versioning](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/faq-and-troubleshooting/)

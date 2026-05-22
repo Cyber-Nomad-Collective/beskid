@@ -1,0 +1,100 @@
+---
+title: Contracts and edge cases
+description: pckgClient HTTP rules, authentication, caching, and package command contracts.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-21
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Package manager panel
+    href: /platform-spec/tooling/vscode-extension/package-manager-panel/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Purpose and scope
+
+Testable rules for **`pckgClient`**, registry auth, CLI mutations, and Packages view commands.
+
+## Settings
+
+| Setting | Type | Default | Rule |
+| --- | --- | --- | --- |
+| `beskid.pckg.baseUrl` | string | `http://localhost:5000` | **Must** be absolute HTTP(S) URL without trailing slash normalization issues |
+| `beskid.pckg.apiKey` | string (secret) | empty | Stored via `SecretStorage`; **must not** sync to global settings |
+
+## Authentication
+
+| ID | Rule |
+| --- | --- |
+| A-01 | When `beskid.pckg.apiKey` is set, `createPckgFetch` **must** send `Authorization: Bearer <token>` on every registry request. |
+| A-02 | Auth scheme **must** match pckg `ApiKeyAuthentication` (Bearer). |
+| A-03 | On HTTP 401/403, panel **must** show actionable error (“Configure API key in Beskid: Package Registry API Key”). |
+| A-04 | Missing API key on private registry **must not** throw unhandled exceptions; tree shows error node. |
+| A-05 | Command `beskid.packages.configureApiKey` **must** prompt for a key and persist it via `SecretStorage` (`beskid.pckg.apiKey` secret id). |
+
+## searchPackages
+
+| ID | Rule |
+| --- | --- |
+| S-01 | **Must** call `GET /api/search` with query params `q` (required) and `limit` (default 20, max 50). |
+| S-02 | **Must** return typed `PackageSearchResponse[]` (array of hits). |
+| S-03 | **Must** cache responses ~30 seconds per `(registryBaseUrl, q, limit)`. |
+| S-04 | **Must** debounce user input ≥300ms before network. |
+
+## getPackageDetails
+
+| ID | Rule |
+| --- | --- |
+| D-01 | **Must** call `GET /api/packages/{name}` where `{name}` is URL-encoded package id. |
+| D-02 | **Must** map `versions[]`, `dependencies[]`, `readme`, `health`, `latestVersion` from response. |
+| D-03 | Yanked versions (`isYanked: true`) **must** render with warning in tree. |
+
+## Local project section
+
+| ID | Rule |
+| --- | --- |
+| L-01 | **ThisProject** children **must** come only from `beskid.getProjectDependencies` for `focusedProjectUri`. |
+| L-02 | Each row **must** show `name`, effective version (`locked.resolvedVersion` or declared descriptor), `source`, `registry`. |
+| L-03 | Tooltip **should** include `materializedRoot` when present in locked entries. |
+| L-04 | Context menu: Open manifest, Open materialized folder, Copy `name@version`. |
+
+## Mutation commands
+
+| Command | Rule |
+| --- | --- |
+| `beskid.packages.fetch` | **Must** run `beskid fetch` with `cwd` = focused project directory via shared CLI runner |
+| `beskid.packages.lock` | **Must** run `beskid lock` likewise |
+| `beskid.packages.addDependency` | **Must** prompt for name and version; apply via CLI subcommand when available, else structured `Project.proj` dependency entry + `refreshWorkspace` |
+| `beskid.packages.refresh` | **Must** clear `pckgClient` caches and refresh tree |
+| `beskid.packages.configureApiKey` | **Must** prompt and store registry API key; subsequent search/details **must** use Bearer auth |
+| `beskid.packages.openRegistryUri` | **Must** open browser URL from `buildRegistryPackageUrl` |
+| `beskid.packages.openManifest` | **Must** open focused `Project.proj` for a local dependency row |
+| `beskid.packages.openMaterializedFolder` | **Must** reveal materialized package path when `materializedPath` is present |
+| `beskid.packages.copyDependencyLabel` | **Must** copy `name@version` label for local dependency rows |
+
+## Edge cases
+
+| Scenario | Expected behavior |
+| --- | --- |
+| Offline / DNS failure | Registry section error node; retry action |
+| Empty search query | No network; show inline “Enter a search term” |
+| No `Project.lock` | **ThisProject** shows declared only; badge “not locked” on rows |
+| Focus cleared | **ThisProject** shows select-project message |
+| Concurrent fetch + search | Status bar shows dominant phase; both complete independently |
+
+## Related topics
+
+- [Workspace explorer contracts](../workspace-project-explorer/contracts-and-edge-cases/#beskidgetprojectdependencies)
+- Server contracts: `pckg/src/Server/Features/Packages/Contracts.cs`

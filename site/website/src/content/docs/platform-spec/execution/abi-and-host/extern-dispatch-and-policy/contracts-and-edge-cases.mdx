@@ -1,10 +1,11 @@
 ---
 title: Contracts and edge cases
-description: Normative guarantees, constraints, and edge-case handling for `Extern dispatch and policy`.
+description: MUST rules for extern validation, dynamic linking policy, and interop dispatch layout.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: ABI and host boundary
-    href: /platform-spec/execution/abi-and-host/
-    relation: Parent area
   - type: Feature
     title: Extern dispatch and policy
     href: /platform-spec/execution/abi-and-host/extern-dispatch-and-policy/
@@ -26,17 +23,33 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Normative requirements
 
-## What this article covers
-This article explains the `contracts-and-edge-cases` view for `Extern dispatch and policy` in concrete, onboarding-first language.
+| ID | Requirement |
+| --- | --- |
+| **EXT-001** | If dynamic extern resolution is disabled, compilation **must** fail when the artifact references extern symbols, listing each unresolved import. |
+| **EXT-002** | Engine-validated extern signatures **must** use only approved scalar Cranelift kinds; all other types **must** be rejected. |
+| **EXT-003** | Dynamic loading on Linux **must** use `RTLD_LOCAL \| RTLD_NOW`; error paths **must** surface `dlerror()` text. |
+| **EXT-004** | `(library, symbol)` resolution **must** be cached for process lifetime without double `dlopen` of the same library path. |
+| **EXT-005** | `interop_dispatch_*` builtins **must** follow layouts documented in `beskid_runtime` `interop_layout.rs` for the active ABI version. |
+| **EXT-006** | User-facing docs **must not** expose internal `__interop_*` mangling; stable names are `interop_dispatch_*` only. |
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Edge cases
 
-## Code anchors
-- Extern parsing and diagnostics in `compiler/crates/beskid_analysis/src/beskid.pest` and `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`
-- ABI builtins definitions in `compiler/crates/beskid_abi/src/builtins.rs`
-- Runtime builtin dispatch in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
+| Case | Behavior |
+| --- | --- |
+| Missing shared library | Compile/link failure with library path in diagnostic when dynamic path enabled |
+| Missing symbol | `dlsym` failure with symbol + library name |
+| Extern in artifact, feature off | Fail fast (**EXT-001**); no silent stub addresses |
+| Mixed link-time + dynamic in one workspace | Each artifact follows its manifest/link profile; engine caches are per-process |
+| Non-Linux host with `extern_dlopen` | Unsupported; compilation or tests **should** skip with explicit platform guard |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## SHOULD guidance
+
+- New packages **should** use link-time [C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/) rather than `extern_dlopen`.
+- Panic from foreign code **should** be treated as process-fatal; Beskid does not translate C aborts into `Option`.
+
+## Related topics
+
+- [FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/)
+- [Panic, IO, and syscalls](/platform-spec/execution/runtime/panic-io-and-syscalls/)

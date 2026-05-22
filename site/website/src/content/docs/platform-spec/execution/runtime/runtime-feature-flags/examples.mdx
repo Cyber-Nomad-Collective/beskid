@@ -1,10 +1,11 @@
 ---
 title: Examples
-description: Concrete examples for `Runtime feature flags` decisions and usage patterns.
+description: Building runtime with features, array backing expectations, and engine extern_dlopen.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Runtime
-    href: /platform-spec/execution/runtime/
-    relation: Parent area
   - type: Feature
     title: Runtime feature flags
     href: /platform-spec/execution/runtime/runtime-feature-flags/
@@ -26,17 +23,41 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Enable array backing for tests
 
-## What this article covers
-This article explains the `examples` view for `Runtime feature flags` in concrete, onboarding-first language.
+```bash
+cargo test -p beskid_tests --features beskid_runtime/arrays_backing
+```
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+(Exact feature propagation follows workspace `Cargo.toml` dependency declarations—maintainers mirror the pattern used in compiler CI.)
 
-## Code anchors
-- Runtime compile-time flags and exports in `compiler/crates/beskid_runtime/src/lib.rs`
-- Runtime builtins feature gating in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
-- Execution setup in `compiler/crates/beskid_cli/src/commands/doc.rs`
+## Header-only array scenario (default)
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+A lowered test creates `array_new(8, 100)` without `arrays_backing`. Inspection shows non-zero `len` but `ptr == null`. Tests that dereference elements **must** enable backing or avoid element access.
+
+## Metrics-enabled profiling build
+
+Maintainers build:
+
+```bash
+cargo build -p beskid_runtime --features metrics
+```
+
+Generated code that does not call `rt_metrics_*` still links because baseline JIT does not import optional symbols.
+
+## Engine dynamic extern (related)
+
+```bash
+cargo test -p beskid_engine extern_real_call_getpid --features extern_dlopen
+```
+
+This does not change runtime features; it documents cross-crate flag vocabulary for execution maintainers.
+
+## Release matrix documentation (prose)
+
+Open VSX jobs should record in CI logs whether `arrays_backing` is enabled for the bundled runtime. Operators comparing local `cargo build` vs extension behavior should check that matrix before reporting array bugs.
+
+## Related topics
+
+- [Verification and traceability](./verification-and-traceability/)
+- [Memory and GC](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/)

@@ -1,10 +1,11 @@
 ---
 title: FAQ and troubleshooting
-description: Common operator and contributor questions about `Panic, IO, and syscalls`.
+description: Panic vs Option, syscall return codes, and fiber/blocking IO issues.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Runtime
-    href: /platform-spec/execution/runtime/
-    relation: Parent area
   - type: Feature
     title: Panic, IO, and syscalls
     href: /platform-spec/execution/runtime/panic-io-and-syscalls/
@@ -26,17 +23,34 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## FAQ
 
-## What this article covers
-This article explains the `faq-and-troubleshooting` view for `Panic, IO, and syscalls` in concrete, onboarding-first language.
+### Why panic instead of exceptions?
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+Beskid explicitly rejects hidden control flow. `Option` covers expected errors; `panic` is the runtime trap for faults ([error model legacy](../../../../execution/runtime/error-model.md)).
 
-## Code anchors
-- Builtin exports in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
-- Panic and syscall implementation in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
-- Runtime symbol registration in `compiler/crates/beskid_runtime/src/lib.rs`
+### Can I catch panic in Beskid?
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+No. There is no `try/catch` for runtime panics in v0.2. Hosts may only intercept before returning to generated code.
+
+### Why do writes panic but reads return `Result`?
+
+v1 CLI policy treats broken stdout as fatal while stdin EOF is normal control flow—see [Console I/O streams](/platform-spec/core-library/terminal-and-console/console-io-streams/).
+
+### Do syscalls run on fiber scheduler threads?
+
+Blocking operations should use scheduler blocking helpers so mutator rules stay intact; see [Flow and algorithm](./flow-and-algorithm/).
+
+## Troubleshooting
+
+| Symptom | Check |
+| --- | --- |
+| Immediate exit, no message | `panic_str` null handle path; enable stderr logging in host |
+| `syscall_write` always `-1` | Invalid fd or null `BeskidStr` |
+| Garbled UTF-8 on console | Caller passed non-UTF-8 bytes in `string` |
+| Hang on stdin read | Fiber parked correctly; deadlock if mutator blocked on same thread |
+
+## Related topics
+
+- [Examples](./examples/)
+- [Extern dispatch](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/) — foreign code panics are not translated

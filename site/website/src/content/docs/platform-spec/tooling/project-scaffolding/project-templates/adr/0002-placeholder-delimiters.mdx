@@ -1,0 +1,41 @@
+---
+title: Human-readable {{ }} placeholders
+description: Use {{symbolId}} delimiters in template text
+specLevel: adr
+status: Standard
+adrId: D-TOOL-SCAFF-0002
+adrStatus: Accepted
+adrDate: 2026-05-21
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Project templates
+    href: /platform-spec/tooling/project-scaffolding/project-templates/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Template authors need delimiter syntax distinct from Beskid source.
+
+## Decision
+
+Text files **must** use **`{{symbolName}}`** placeholders; optional **`sourceName`** rewriting applies to paths and identifiers.
+
+## Consequences
+
+Editors can highlight unmatched braces; substitution tests stay deterministic.
+
+## Verification anchors
+
+Golden substitution tests under planned `beskid_tests` template fixtures.

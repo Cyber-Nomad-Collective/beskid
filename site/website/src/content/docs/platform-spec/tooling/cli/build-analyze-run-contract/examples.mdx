@@ -1,6 +1,6 @@
 ---
 title: Examples
-description: Concrete examples for `Build, analyze, and run contract` decisions and usage patterns.
+description: Concrete CLI invocations for build, analyze, and run workflows.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,10 +12,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: CLI
-    href: /platform-spec/tooling/cli/
-    relation: Parent area
   - type: Feature
     title: Build, analyze, and run contract
     href: /platform-spec/tooling/cli/build-analyze-run-contract/
@@ -26,17 +22,43 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Analyze a project target
 
-## What this article covers
-This article explains the `examples` view for `Build, analyze, and run contract` in concrete, onboarding-first language.
+```bash
+beskid analyze --project path/to/Project.proj
+```
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+Emits semantic (+ mod) diagnostics for the resolved host target using the same pipeline as the IDE.
 
-## Code anchors
-- CLI command implementations in `compiler/crates/beskid_cli/src/commands/`
-- Analysis pipeline in `compiler/crates/beskid_analysis/src/services.rs`
-- Runtime launch via engine in `compiler/crates/beskid_engine/src/jit_module.rs`
+## Release build of an app
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+```bash
+beskid build --project apps/demo/Project.proj --release --kind exe
+```
+
+Produces an AOT executable with release profile defaults; link mode and runtime strategy follow `beskid_aot` defaults unless overridden.
+
+## Run with explicit entrypoint
+
+```bash
+beskid run --project apps/demo/Project.proj --entrypoint DemoHost.Run
+```
+
+JIT-compiles the resolved `app` target and invokes the named entry function.
+
+## Workspace lock before CI build
+
+```bash
+beskid lock --project apps/demo/Project.proj
+beskid build --project apps/demo/Project.proj
+```
+
+`lock` materializes `Project.lock`; `build` consumes the pinned graph.
+
+## Plain progress for logs
+
+```bash
+beskid build --project apps/demo/Project.proj --plain
+```
+
+Maps pipeline phases to line-oriented stderr suitable for CI log parsers.

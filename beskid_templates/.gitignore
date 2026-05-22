@@ -1,0 +1,7 @@
+.ci-tools/
+.ci-publish-workspace.bundle.zip
+__pycache__/
+.pytest_cache/
+.nox/
+*.pyc
+.DS_Store

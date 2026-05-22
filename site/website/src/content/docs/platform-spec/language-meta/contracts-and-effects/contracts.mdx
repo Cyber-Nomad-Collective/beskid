@@ -1,11 +1,13 @@
 ---
-title: "Contracts"
-description: "Pre/post/invariant contracts and how they interact with optimization. Tooling may strip or enforce contracts per build mode as specified."
+title: Contracts
+description: Structural contract declarations, conformance lists, and
+  embedding. Distinct from compiler Mod SDK contracts and from runtime
+  requires/ensures (not in v0.1 grammar).
 template: splash
 tableOfContents: false
-specLevel: feature
+specLevel: article
 status: Standard
-lastReviewed: 2026-05-20
+lastReviewed: 2026-05-21
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -14,21 +16,21 @@ submitter:
   email: pmikstacki@cybernomad.it
 relatedTopics:
   - type: Area
-    title: "Contracts and effects"
+    title: Contracts and effects
     href: /platform-spec/language-meta/contracts-and-effects/
     relation: Parent area
   - type: Domain
-    title: "Language meta"
+    title: Language meta
     href: /platform-spec/language-meta/
     relation: Parent domain hub
   - type: Domain
-    title: "Platform specification"
+    title: Platform specification
     href: /platform-spec/
     relation: Cross-cutting index
   - type: Domain
-    title: "Execution documentation"
+    title: Execution documentation
     href: /execution/
-    relation: Runtime and backend contracts
+    relation: Non-normative legacy execution bridge
 ---
 
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
@@ -44,8 +46,50 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 
 ## Normative specification
 
-The canonical chapter is **[Contracts](/platform-spec/language-meta/contracts-and-effects/contracts/)** in the platform specification.
+### Scope
+
+Defines **`contract` declarations** — structural interfaces that types **implement** via conformance lists. This is distinct from **compiler Mod contracts** ([Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)).
+
+### Syntax
+
+```beskid
+contract IDisposable
+{
+    unit Dispose();
+}
+```
+
+- **`contract Name { items }`** declares required members.
+- Items **may** be method signatures (`T name(params);`) or **embeddings** (`OtherContract;`) that flatten member requirements.
+- Types declare implementation with **`type T : I, J { … }`**.
+
+### Static rules
+
+- Implementing types **must** supply every required member with compatible signature (**E1601**, **E1602**, **E1606**).
+- Conflicting embedded contract methods **must** error (**E1004**).
+- Duplicate contract method names in one contract **must** error (**E1003**).
+- Invalid conformance targets **must** error (**E1607**).
+
+### Dynamic semantics
+
+- Contract calls use static dispatch on the receiver’s type after conformance is proven.
+- Contracts **may** be used as namespaces for static-style calls when the resolver provides contract-as-namespace fallback.
+
+### Diagnostics
+
+Contract band **E1601–E1607**. Registry: [Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/).
+
+### Conformance
+
+All `Standard` types advertising conformance **must** pass contract satisfaction in the reference compiler.
+
+## Decisions
+
+- **D-LM-CON-001 — Structural contracts:** Beskid contracts are nominal surfaces checked structurally, not runtime interface tables in v0.1.
+- **D-LM-CON-002 — Embedding:** Contract embedding composes requirements without inheritance syntax.
+- **D-LM-CON-003 — No `requires`/`ensures` in v0.1:** Design-by-contract assertions are deferred; `contract` items are interface shapes only.
+- **D-LM-CON-004 — Distinct from Mod SDK:** Compiler mod `contract` placements follow [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/), not this user-language surface.
 
 ## Platform view
 
-Pre/post/invariant contracts and how they interact with optimization. Tooling may strip or enforce contracts per build mode as specified.
+Structural `contract` declarations and type conformance lists. Compiler mods and optional future runtime contract checks are specified elsewhere.

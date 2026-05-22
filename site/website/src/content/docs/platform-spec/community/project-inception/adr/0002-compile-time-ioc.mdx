@@ -1,0 +1,41 @@
+---
+title: Compile-time IoC in the compiler host
+description: Dependency composition is explicit, verifiable, and compiled—not a runtime DI container.
+specLevel: adr
+status: Standard
+adrId: D-INC-0002
+adrStatus: Accepted
+adrDate: 2024-03-15
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Project inception decisions
+    href: /platform-spec/community/project-inception/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+C#-style framework IoC stacks hide wiring behind reflection and service locator patterns the project rejects (see compiler README).
+
+## Decision
+
+IoC **may** exist only inside the **Rust compiler host** as compile-time composition. Beskid programs **must not** depend on a runtime DI framework or service locator for language features.
+
+## Consequences
+
+Compiler mods and SDK surface read-only host composition; language-level `meta` DI blocks are removed.
+
+## Verification anchors
+
+`compiler/README.md`; [Dependency injection](/platform-spec/language-meta/composition/dependency-injection/).

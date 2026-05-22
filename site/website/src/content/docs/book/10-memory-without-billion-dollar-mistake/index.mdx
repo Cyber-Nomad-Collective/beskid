@@ -1,0 +1,34 @@
+---
+title: "10. Memory without another billion-dollar mistake"
+description: Locals, GC heap, ref/out, and an honest preview of FFI—without pretending we are Rust.
+tableOfContents: true
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Another billion-dollar mistake is treating **one** memory strategy as moral law. Beskid picks: stack activations, **GC-managed heap**, `ref`/`out`, and rules for fibers—documented in [Language meta memory model](/platform-spec/language-meta/memory-model/) and realized in [Execution runtime memory](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/).
+
+We are not shipping "just use Rust" as the user tutorial. We are shipping **predictable language law** and a collector you can reason about.
+
+## What you will find here
+
+| Section | Topic |
+| --- | --- |
+| [Memory model overview](/book/10-memory-without-billion-dollar-mistake/memory-model-overview/) | Locals, heap, GC, fibers. |
+| [Stack, heap, and spans](/book/10-memory-without-billion-dollar-mistake/stack-heap-and-spans/) | Activation records vs objects. |
+| [Ownership preview](/book/10-memory-without-billion-dollar-mistake/ownership-preview/) | What we borrowed from Rust without cargo cult. |
+| [Unsafe and extern preview](/book/10-memory-without-billion-dollar-mistake/unsafe-and-extern-preview/) | Boundaries, not daily syntax. |
+
+<Aside type="tip">
+
+If you want borrow-checker cosplay, use Rust for the compiler host. Write Beskid for the product code the spec actually describes.
+
+</Aside>
+
+## Start here
+
+[Memory model overview](/book/10-memory-without-billion-dollar-mistake/memory-model-overview/)
+
+## Next chapter
+
+[11. Fibers: cheaper than threads, still scary](/book/11-fibers-cheaper-than-threads/)

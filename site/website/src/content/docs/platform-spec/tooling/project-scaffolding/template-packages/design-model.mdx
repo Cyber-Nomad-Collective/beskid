@@ -1,0 +1,96 @@
+---
+title: Design model
+description: "`packageKind`, `.bpk` layout, and pckg registry presentation for template packages."
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-21
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Template packages
+    href: /platform-spec/tooling/project-scaffolding/template-packages/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Purpose and scope
+
+Normative **`beskid.package.v1`** extensions and artifact layout for template packages.
+
+## `package.json` fields
+
+| Key | Required | Meaning |
+| --- | --- | --- |
+| `schema` | yes | `beskid.package.v1` |
+| `id` | yes | Registry package name |
+| `version` | yes | Artifact version string |
+| `packageKind` | yes for template profile | **`template`** |
+| `template` | recommended | Summary: `shortName`, `identity`, `tags.type` copied from `.beskid/template.json` at pack time |
+| `documentation` | — | **Must not** include `apiJson` pointer for `packageKind: template` |
+
+Default **`packageKind`** when omitted remains **`library`** for backward compatibility.
+
+## Reserved kinds
+
+| `packageKind` | Status |
+| --- | --- |
+| `library` | Current default; requires `api.json` when server policy `RequireStructuredApiDoc` is true |
+| `template` | This feature |
+| `tool` | Reserved; normative contract deferred to [Package kinds](/platform-spec/tooling/registry-client/package-kinds/) |
+
+## `.bpk` required entries (template profile)
+
+| Entry | Required |
+| --- | --- |
+| `package.json` with `packageKind: template` | yes |
+| `Project.proj` | yes (authoring manifest; may be `type: Template`) |
+| `checksums.sha256` | yes |
+| `.beskid/template.json` | yes |
+| `src/**` or template content roots | yes — at least one scaffold file |
+| `.beskid/docs/api.json` | **no** |
+
+## pckg package page (template mode)
+
+When `packageKind === template`, the server and dashboard **must**:
+
+1. **Hide** API documentation tabs, symbol browser, and `api.json` download.
+2. **Show** template metadata card: `shortName`, `tags.type`, `classifications`, `description`.
+3. **Show** install snippet: `beskid new install <id>` and `beskid new <shortName>`.
+4. **Show** readme / root markdown when present.
+5. **Show** version list with yank badges (same as libraries).
+
+Category field on `PackageEntity` **may** mirror `tags.type` for filtering (`Template`, `Console`, etc.) but **`packageKind`** is authoritative for routing.
+
+## Workspace publish
+
+Workspace bundles **may** include template member packages. Each member `.bpk` **must** declare its own `packageKind`. Mixed workspaces (libraries + templates) are allowed.
+
+## Diagram
+
+```arch
+flowchart LR
+  PACK[beskid pckg pack]
+  BPK[.bpk artifact]
+  VAL[PackageArtifactValidator]
+  REG[pckg registry]
+  UI[Template package page]
+  NEW[beskid new install]
+  PACK --> BPK --> VAL --> REG --> UI
+  REG --> NEW
+```
+
+## Code anchors
+
+- `pckg/src/Server/Services/PackageArtifactValidator.cs`
+- `pckg/src/Server/Components/Pages/` package detail views
+- `compiler/crates/beskid_pckg` pack command (planned `packageKind` emission)

@@ -1,10 +1,11 @@
 ---
 title: FAQ and troubleshooting
-description: Common operator and contributor questions about `Memory and GC runtime contract`.
+description: GC pauses, mutator violations, barrier omissions, and heap growth debugging.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Runtime
-    href: /platform-spec/execution/runtime/
-    relation: Parent area
   - type: Feature
     title: Memory and GC runtime contract
     href: /platform-spec/execution/runtime/memory-and-gc-runtime-contract/
@@ -26,17 +23,34 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## FAQ
 
-## What this article covers
-This article explains the `faq-and-troubleshooting` view for `Memory and GC runtime contract` in concrete, onboarding-first language.
+### Is `gc_write_barrier` a no-op today?
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+Barriers **must** remain in the ABI. Phase A may simplify runtime work when marking is off, but lowering still emits calls so Phase B does not require compiler flag days.
 
-## Code anchors
-- Runtime memory exports in `compiler/crates/beskid_runtime/src/lib.rs`
-- ABI contracts in `compiler/crates/beskid_abi/src/lib.rs`
-- JIT linking and call setup in `compiler/crates/beskid_engine/src/jit_module.rs`
+### Can I call `gc_collect` from Beskid user code?
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+Only through intentional runtime/corelib surfaces; arbitrary user calls bypass pacing policy and may STW unexpectedly. Host tooling and tests are the primary callers.
+
+### How does this relate to the language memory model?
+
+Language rules define ownership and references; this feature defines **runtime enforcement** (allocation, tracing, barriers). See [/platform-spec/language-meta/memory-model/](/platform-spec/language-meta/memory-model/).
+
+### When does Phase B land?
+
+When stack maps, scheduler coordination, and conformance suites prove safe parallel mutators. Until then **GC-003** remains in force.
+
+## Troubleshooting
+
+| Symptom | Check |
+| --- | --- |
+| Random segfaults after field assign | Barrier missing in lowering for reference store |
+| Heap never shrinks | Pacing not triggered; call `gc_collect` in test to validate sweep |
+| Leak across FFI | Unmatched `gc_register_root` / `gc_unregister_root` |
+| Fibers see stale objects | Violated single-mutator rule—audit scheduler attachment |
+
+## Related topics
+
+- [Fiber scheduler FAQ](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/faq-and-troubleshooting/) (if present) or hub
+- [Flow and algorithm](./flow-and-algorithm/)

@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "level": "feature",
+  "extends": "feature-contract-default",
+  "pathPrefix": "platform-spec/tooling/vscode-extension/workspace-project-explorer",
+  "minSpecSections": 2,
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/tooling/vscode-extension/workspace-project-explorer",
+        "heading": "Articles"
+      }
+    }
+  ],
+  "articleDefaults": {
+    "extends": "article-default"
+  }
+}

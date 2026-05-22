@@ -1,10 +1,17 @@
 ---
-import { Code } from "astro:components";
+import { Code } from 'astro:components';
+import '../../../../packages/beskid-docs-ui/src/styles/landing.css';
+import type { LandingTileSectionData } from '../data/landing-tile-sections';
+import LandingCodeWindow from './LandingCodeWindow.astro';
+import LandingCompareTable, { type CompareRow } from './LandingCompareTable.astro';
+import LandingDotNetSection from './LandingDotNetSection.astro';
+import type { DotNetBullet } from '../data/landing-dotnet-bullets';
+import LandingTileSection from './LandingTileSection.astro';
 
 interface ActionLink {
   text: string;
   href: string;
-  variant?: "primary" | "secondary" | "ghost";
+  variant?: 'primary' | 'secondary' | 'ghost';
 }
 
 interface FeatureItem {
@@ -16,14 +23,25 @@ interface Props {
   title: string;
   tagline: string;
   subtagline?: string;
-  /** Short line shown under subtagline (e.g. rolling CLI semver). */
   versionNote?: string;
   codeFile?: string;
   codeLines?: string[];
   codeHtml?: string;
-  codeLang?: string;
   actions?: ActionLink[];
+  landingPage?: boolean;
+  compareTitle?: string;
+  compareLead?: string;
+  compareRows?: CompareRow[];
+  dotnetTitle?: string;
+  dotnetIntro?: string;
+  dotnetRightHeading?: string;
+  dotnetRightBullets?: DotNetBullet[];
+  dotnetWrongHeading?: string;
+  dotnetWrongBullets?: DotNetBullet[];
+  alreadyBetterSection?: LandingTileSectionData;
   sectionTitle?: string;
+  sectionLead?: string;
+  principlesIntro?: string;
   features?: FeatureItem[];
   calloutTitle?: string;
   calloutText?: string;
@@ -36,343 +54,139 @@ interface Props {
 const {
   title,
   tagline,
-  subtagline = "",
-  versionNote = "",
-  codeFile = "main.bd",
+  subtagline = '',
+  versionNote = '',
+  codeFile = 'main.bd',
   codeLines = [],
-  codeHtml = "",
-  codeLang = "beskid",
+  codeHtml = '',
   actions = [],
-  sectionTitle = "",
+  landingPage = false,
+  compareTitle = '',
+  compareLead = '',
+  compareRows = [],
+  dotnetTitle = '',
+  dotnetIntro = '',
+  dotnetRightHeading = '',
+  dotnetRightBullets = [],
+  dotnetWrongHeading = '',
+  dotnetWrongBullets = [],
+  alreadyBetterSection,
+  sectionTitle = '',
+  sectionLead = '',
+  principlesIntro = '',
   features = [],
-  calloutTitle = "",
-  calloutText = "",
-  calloutCodeLabel = "",
-  calloutCode = "",
-  calloutCodeLang = "bash",
-  calloutNote = "",
+  calloutTitle = '',
+  calloutText = '',
+  calloutCodeLabel = '',
+  calloutCode = '',
+  calloutCodeLang = 'bash',
+  calloutNote = '',
 } = Astro.props;
 
-const resolvedCodeLang = codeLang === "beskid" || codeLang === "Beskid" ? "rust" : codeLang;
+const showCompare = compareRows.length > 0;
+const showDotnet =
+  Boolean(dotnetTitle) &&
+  dotnetRightBullets.length > 0 &&
+  dotnetWrongBullets.length > 0;
+const showAlreadyBetter = Boolean(alreadyBetterSection?.tiles.length);
+const showPrinciples = features.length > 0;
+const showCta = landingPage && actions.length > 0;
+const actionVariantClass = (variant?: string) =>
+  variant === 'primary' ? 'landing-action--primary' : variant === 'ghost' ? 'landing-action--ghost' : 'landing-action--secondary';
 ---
 
-<section class="landing-root">
-  <div class="hero-grid">
-    <div class="hero-copy">
-      <h1>{title}</h1>
-      <p>{tagline}</p>
-      {subtagline && <p class="hero-subline">{subtagline}</p>}
-      {versionNote && <p class="hero-subline hero-version">{versionNote}</p>}
-      {actions.length > 0 && (
-        <div class="action-row">
-          {actions.map((action) => (
-            <a class={`action ${action.variant ?? "secondary"}`} href={action.href}>
-              {action.text}
-            </a>
-          ))}
-        </div>
-      )}
-    </div>
-    <div class="code-shell" aria-label={`Example code from ${codeFile}`}>
-      <div class="code-head">
-        <div class="dots" aria-hidden="true">
-          <span class="dot red"></span>
-          <span class="dot yellow"></span>
-          <span class="dot green"></span>
-        </div>
-        <span>{codeFile}</span>
+<section class:list={['landing-root', 'not-content', landingPage && 'landing-page']}>
+  <header class="landing-hero">
+    <div class="landing-hero__inner">
+      <div class="landing-hero__copy">
+        <h1>{title}</h1>
+        <p>{tagline}</p>
+        {subtagline && <p class="landing-hero__subline">{subtagline}</p>}
+        {versionNote && <p class="landing-hero__subline landing-hero__version">{versionNote}</p>}
+        {actions.length > 0 && (
+          <div class="landing-hero__actions">
+            {actions.map((action) => (
+              <a class:list={['landing-action', actionVariantClass(action.variant)]} href={action.href}>
+                {action.text}
+              </a>
+            ))}
+          </div>
+        )}
       </div>
-      {codeHtml ? (
-        <pre><code set:html={codeHtml}></code></pre>
-      ) : (
-        <div class="shiki-wrap">
-          <Code code={codeLines.join("\n")} lang={resolvedCodeLang} />
-        </div>
-      )}
+      <div class="landing-hero__code">
+        <LandingCodeWindow file={codeFile} lines={codeLines} html={codeHtml} />
+      </div>
     </div>
-  </div>
+  </header>
 
-  {features.length > 0 && (
-    <section class="feature-wrap">
-      {sectionTitle && <h2>{sectionTitle}</h2>}
-      <div class="feature-grid">
-        {features.map((feature) => (
-          <article class="feature-card">
-            <h3>{feature.title}</h3>
-            <p>{feature.body}</p>
-          </article>
-        ))}
+  {showCompare && (
+    <section class="landing-section landing-compare">
+      <div class="landing-section__inner">
+        {compareTitle && <h2>{compareTitle}</h2>}
+        {compareLead && <p class="landing-section__lead">{compareLead}</p>}
+        <LandingCompareTable rows={compareRows} />
       </div>
     </section>
   )}
 
+  {showPrinciples && (
+    <section
+      class:list={['landing-section', landingPage ? 'landing-principles' : 'landing-section--features']}
+    >
+      <div class="landing-section__inner">
+        {sectionTitle && <h2>{sectionTitle}</h2>}
+        {principlesIntro && <p class="landing-principles__intro">{principlesIntro}</p>}
+        {!landingPage && sectionLead && <p class="landing-section__lead">{sectionLead}</p>}
+        <div class:list={[landingPage ? 'landing-principles__grid' : 'feature-grid']}>
+          {features.map((feature) => (
+            <article class:list={[landingPage ? 'landing-principle-card' : 'feature-card']}>
+              <h3>{feature.title}</h3>
+              <p>{feature.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {showDotnet && (
+    <LandingDotNetSection
+      title={dotnetTitle}
+      intro={dotnetIntro}
+      rightHeading={dotnetRightHeading}
+      rightBullets={dotnetRightBullets}
+      wrongHeading={dotnetWrongHeading}
+      wrongBullets={dotnetWrongBullets}
+    />
+  )}
+
+  {showAlreadyBetter && alreadyBetterSection && <LandingTileSection section={alreadyBetterSection} />}
+
+  {showCta && (
+    <nav class="landing-cta" aria-label="Get started">
+      <div class="landing-cta__inner">
+        {actions.map((action) => (
+          <a class:list={['landing-action', actionVariantClass(action.variant)]} href={action.href}>
+            {action.text}
+          </a>
+        ))}
+      </div>
+    </nav>
+  )}
+
   {(calloutTitle || calloutText || calloutCode) && (
-    <section class="callout">
+    <section class="landing-callout landing-section__inner">
       {calloutTitle && <h2>{calloutTitle}</h2>}
       {calloutText && <p>{calloutText}</p>}
       {calloutCode && (
-        <div class="callout-code">
-          {calloutCodeLabel && <span class="label">{calloutCodeLabel}</span>}
-          <div class="shiki-wrap">
+        <div class="landing-callout__code">
+          {calloutCodeLabel && <span class="landing-callout__label">{calloutCodeLabel}</span>}
+          <div class="landing-terminal__body">
             <Code code={calloutCode} lang={calloutCodeLang} />
           </div>
         </div>
       )}
-      {calloutNote && <p class="callout-note">{calloutNote}</p>}
+      {calloutNote && <p class="landing-callout__note">{calloutNote}</p>}
     </section>
   )}
 </section>
-
-<style>
-  .landing-root {
-    --landing-surface: var(--beskid-surface);
-    --landing-muted: color-mix(in srgb, var(--sl-color-text) 78%, var(--beskid-outline));
-    --landing-border: var(--platform-spec-divider);
-    --landing-card: var(--platform-spec-surface-strong);
-    --landing-panel: color-mix(in srgb, var(--platform-spec-surface) 88%, var(--beskid-surface));
-    --landing-accent: var(--beskid-primary);
-    --landing-on-accent: var(--beskid-on-primary);
-    margin: 0;
-    width: 100%;
-    color: var(--sl-color-text);
-    font-family: var(--__sl-font, ui-sans-serif, system-ui, sans-serif);
-    background: transparent;
-  }
-
-  :global(html[data-theme='light']) .landing-root {
-    --landing-muted: color-mix(in srgb, var(--sl-color-text) 85%, var(--beskid-outline));
-    --landing-panel: color-mix(in srgb, var(--beskid-surface) 96%, var(--beskid-surface-variant));
-  }
-
-  .hero-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    align-items: center;
-    padding: 2rem 0 0.5rem;
-  }
-
-  .hero-copy h1 {
-    font-size: clamp(2.5rem, 5vw, 4.5rem);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    margin: 0;
-  }
-
-  .hero-copy p {
-    margin: 1rem 0 0;
-    color: var(--landing-muted);
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    line-height: 1.65;
-    max-width: 48rem;
-  }
-
-  .hero-subline {
-    margin-top: 0.4rem;
-  }
-
-  .hero-version {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.95rem;
-    color: color-mix(in oklab, var(--landing-muted), var(--landing-accent) 35%);
-  }
-
-  .action-row {
-    margin-top: 1.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  .action {
-    border-radius: 999px;
-    border: 1px solid var(--landing-border);
-    padding: 0.55rem 1rem;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: background-color 0.2s ease;
-  }
-
-  .action.primary {
-    background: var(--landing-accent);
-    color: var(--landing-on-accent);
-    border-color: transparent;
-  }
-
-  .action.secondary:hover,
-  .action.ghost:hover {
-    background: color-mix(in srgb, var(--landing-surface) 88%, var(--beskid-primary) 12%);
-  }
-
-  .code-shell {
-    border: 1px solid var(--landing-border);
-    border-radius: 0.85rem;
-    overflow: hidden;
-    background: var(--landing-panel);
-    box-shadow: 0 24px 48px color-mix(in srgb, black 42%, var(--beskid-primary));
-  }
-
-  .code-head {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 1px solid var(--landing-border);
-    background: var(--landing-card);
-    padding: 0.65rem 0.9rem;
-    position: relative;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.75rem;
-    color: var(--landing-muted);
-  }
-
-  .dots {
-    position: absolute;
-    left: 0.9rem;
-    display: flex;
-    gap: 0.35rem;
-  }
-
-  .dot {
-    width: 0.64rem;
-    height: 0.64rem;
-    border-radius: 999px;
-    display: inline-block;
-  }
-
-  .dot.red {
-    background: color-mix(in oklab, #ef4444, #111113 70%);
-  }
-
-  .dot.yellow {
-    background: color-mix(in oklab, #eab308, #111113 70%);
-  }
-
-  .dot.green {
-    background: color-mix(in oklab, #22c55e, #111113 70%);
-  }
-
-  pre {
-    margin: 0;
-    padding: 1rem 1.2rem;
-    overflow-x: auto;
-    font-size: 0.83rem;
-    line-height: 1.65;
-    font-family: var(--__sl-font-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
-    color: var(--sl-color-gray-2);
-    background: var(--landing-panel);
-  }
-
-  .shiki-wrap :global(pre) {
-    margin: 0;
-    padding: 1rem 1.2rem !important;
-    border-radius: 0;
-    background: var(--landing-panel) !important;
-    overflow-x: auto;
-    font-size: 0.83rem;
-    line-height: 1.65;
-  }
-
-  .token-type {
-    color: #e5c07b;
-  }
-
-  .token-keyword {
-    color: #c678dd;
-  }
-
-  .token-fn {
-    color: #61afef;
-  }
-
-  .token-number {
-    color: #d19a66;
-  }
-
-  .feature-wrap {
-    margin-top: 3.5rem;
-  }
-
-  .feature-wrap h2,
-  .callout h2 {
-    font-size: 1.75rem;
-    margin: 0 0 1.2rem;
-    letter-spacing: -0.02em;
-  }
-
-  .feature-grid {
-    display: grid;
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-    gap: 0.9rem;
-  }
-
-  .feature-card {
-    border: 1px solid var(--landing-border);
-    background: color-mix(in srgb, var(--platform-spec-surface-muted) 55%, transparent);
-    border-radius: 0.85rem;
-    padding: 1rem 1.05rem;
-  }
-
-  .feature-card h3 {
-    margin: 0;
-    font-size: 1rem;
-  }
-
-  .feature-card p {
-    margin: 0.55rem 0 0;
-    color: var(--landing-muted);
-    font-size: 0.92rem;
-    line-height: 1.6;
-  }
-
-  .callout {
-    margin-top: 2.5rem;
-    border: 1px solid var(--landing-border);
-    border-radius: 1rem;
-    background: color-mix(in srgb, var(--platform-spec-surface) 72%, transparent);
-    padding: 1.25rem;
-  }
-
-  .callout p {
-    margin: 0;
-    color: var(--landing-muted);
-    line-height: 1.6;
-  }
-
-  .callout-code {
-    margin-top: 0.95rem;
-    border: 1px solid var(--landing-border);
-    border-radius: 0.7rem;
-    overflow: hidden;
-  }
-
-  .callout-code .label {
-    display: block;
-    padding: 0.45rem 0.7rem;
-    border-bottom: 1px solid var(--landing-border);
-    background: var(--landing-card);
-    color: var(--landing-muted);
-    text-transform: uppercase;
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  }
-
-  .callout-note {
-    margin-top: 0.85rem !important;
-    border-left: 2px solid var(--landing-border);
-    padding-left: 0.75rem;
-    font-size: 0.88rem;
-  }
-
-  @media (min-width: 62rem) {
-    .hero-grid {
-      grid-template-columns: minmax(0, 1fr) minmax(20rem, 33rem);
-      gap: 2.5rem;
-      padding-top: 3rem;
-    }
-
-    .feature-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-</style>

@@ -1,10 +1,11 @@
 ---
 title: Contracts and edge cases
-description: Normative guarantees, constraints, and edge-case handling for `Extension surface`.
+description: focusedProjectUri, LSP executeCommand JSON, auth, and offline registry behavior.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-21
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: VS Code extension
-    href: /platform-spec/tooling/vscode-extension/
-    relation: Parent area
   - type: Feature
     title: Extension surface
     href: /platform-spec/tooling/vscode-extension/extension-surface/
@@ -26,17 +23,56 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## focusedProjectUri
 
-## What this article covers
-This article explains the `contracts-and-edge-cases` view for `Extension surface` in concrete, onboarding-first language.
+| Surface | Key |
+| --- | --- |
+| LSP initialize | `initializationOptions.focusedProjectUri` |
+| Deprecated alias | `initializationOptions.selectedProjectUri` (one release) |
+| Configuration | `beskid.project.focusedProjectUri` in `workspace/didChangeConfiguration` |
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+When unset, LSP scans all workspace roots without prioritizing a single manifest.
 
-## Code anchors
-- Extension manifest in `beskid_vscode/package.json`
-- Extension command wiring in `beskid_vscode/src`
-- OpenVSX publishing matrix in `.github/workflows/publish-open-vsx.yml`
+## LSP executeCommand payloads
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+### `beskid.listWorkspaces`
+
+**Arguments:** `[]`  
+**Returns:**
+
+```json
+{
+  "workspaces": [
+    {
+      "uri": "file:///…/Workspace.proj",
+      "name": "corelib",
+      "members": [{ "name": "app", "path": "beskid_corelib", "uri": "file:///…/Project.proj" }]
+    }
+  ]
+}
+```
+
+### `beskid.getWorkspaceSummary`
+
+**Arguments:** `[workspaceUri: string]`  
+**Returns:** `{ workspaceUri, name, resolver, members[], registries: [{ name, url }] }`
+
+### `beskid.getProjectGraph`
+
+**Arguments:** `[projectUri: string]`  
+**Returns:** `{ projectUri, nodes[], edges[], unresolved[] }`
+
+### `beskid.getProjectDependencies`
+
+**Arguments:** `[projectUri: string]`  
+**Returns:** `{ projectUri, declared[], locked[], unresolved[] }` — `locked` entries include `resolvedVersion`, `materializedRoot`, `registry` when present in `Project.lock`.
+
+## Registry auth
+
+- `beskid.pckg.apiKey` setting or SecretStorage `beskid.pckg.apiKey` → `Authorization: Bearer …` on pckg fetch (matches pckg `ApiKeyAuthentication`).
+- Private packages: search/details fail without key; UI shows HTTP error nodes, not silent empty lists.
+
+## Offline / unreachable registry
+
+- Cached search TTL ~30s; details ~60s.
+- Non-OK HTTP → tree info node; no unbounded refetch on every `getChildren`.

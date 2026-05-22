@@ -28,42 +28,72 @@ relatedTopics:
     title: Corelib discovery and packaging
     href: /platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/
     relation: Parent feature hub
+  - type: Feature
+    title: Corelib injection and resolution
+    href: /platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/
+    relation: Graph attachment after roots are found
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Purpose
 
+One canonical **corelib** package identity (`corelib`, sources under `compiler/corelib/beskid_corelib`) must be discoverable by CLI, LSP, CI publish, and local superrepo layouts. This feature covers **where** that tree lives on disk and **how** it is packed for pckg—not symbol injection (see **[Corelib injection and resolution](/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/)**).
 
-## Model at a glance
+## Discovery and packaging topology
 
-`Corelib discovery and packaging` is modeled as a contract surface between producer crates and consumer crates. New contributors should treat it as a boundary document first and an implementation detail map second.
+```mermaid
+flowchart TB
+  subgraph sources [Source tree]
+    WS[compiler/corelib/Workspace.proj]
+    Agg[beskid_corelib Project.proj]
+    Pkgs[packages: foundation, runtime, console, compiler-sdk]
+    WS --> Agg --> Pkgs
+  end
+  subgraph discovery [Discovery]
+    Env[BESKID_CORELIB_ROOT]
+    Walk[Repo ancestor walk]
+    Bundle[CLI bundled corelib]
+  end
+  subgraph publish [Publish]
+    Doc[beskid doc → .beskid/docs]
+    Pack[beskid pckg pack → .bpk]
+    Reg[pckg registry corelib identity]
+  end
+  Env --> Agg
+  Walk --> Agg
+  Bundle --> Agg
+  Agg --> Doc --> Pack --> Reg
+```
 
 ## Primary actors
 
-- Producer side: crates that define or emit the contract surface.
-- Consumer side: crates that read, execute, or validate that surface.
-- Conformance side: test crates that pin expected behavior.
+| Actor | Role |
+| --- | --- |
+| **Aggregate package** | `beskid_corelib` — declares dependencies on workspace member packages |
+| **Workspace** | `compiler/corelib/Workspace.proj` lists shards including `corelib_console` |
+| **Toolchain** | `resolver.rs` + `beskid_cli` `corelib_runtime` locate roots |
+| **Registry** | CI publishes **`corelib`** via `beskid pckg` + `BESKID_PCKG_KEY` |
 
 ## Package readme
 
-Published `.bpk` artifacts **should** expose registry documentation through a root **`README.md`** zip entry. Producers declare the on-disk source in `Project.proj` or `Workspace.proj`:
+Published `.bpk` artifacts **should** expose registry documentation through root **`README.md`**. Producers declare the on-disk source in `Project.proj` or `Workspace.proj`:
 
 - Optional `readme = "relative/path.md"` (POSIX-style path relative to the package or workspace root).
 - When omitted, tooling uses **`readme.md`** at that root when the file exists.
-- `beskid pckg pack` copies the resolved file into the artifact as **`README.md`** when it is not already a root readme entry, so **pckg** can list it first in the documentation browser (alongside `docs/**/*.md` and `.beskid/docs/**`).
+- `beskid pckg pack` copies the resolved file into the artifact as **`README.md`** when it is not already a root readme entry.
 
 ## Workspace members
 
 `compiler/corelib/Workspace.proj` includes **`packages/console`** (`corelib_console`) alongside `foundation`, `runtime`, and `compiler-sdk`. The aggregate `beskid_corelib` project depends on `corelib_console` for console/ANSI surfaces.
 
-## Concrete crate anchors
+## Implementation anchors
 
-- Canonical package root `compiler/corelib/beskid_corelib`
-- Console package `compiler/corelib/packages/console`
-- Canonical package identity `corelib` (declared in `Project.proj`)
-- Corelib path discovery in `compiler/crates/beskid_analysis/src/projects/graph/resolver.rs`
-- CLI embedding/install support in `compiler/crates/beskid_cli/build.rs` and `compiler/crates/beskid_cli/src/corelib_runtime.rs`
-- Integration checks in `compiler/crates/beskid_tests/src/projects/corelib`
-- Workspace members include `packages/foundation`, `packages/runtime`, `packages/console`, `packages/compiler-sdk`, and aggregating `beskid_corelib`
+- Canonical package root: `compiler/corelib/beskid_corelib`
+- Console package: `compiler/corelib/packages/console`
+- Discovery: `compiler/crates/beskid_analysis/src/projects/graph/resolver.rs`
+- CLI embedding: `compiler/crates/beskid_cli/build.rs`, `corelib_runtime.rs`
+- Tests: `compiler/crates/beskid_tests/src/projects/corelib`
+- Server ingest: `pckg/src/Server/Services/PackagePublishDocumentation.cs`

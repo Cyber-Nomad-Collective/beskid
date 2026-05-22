@@ -1,6 +1,6 @@
 ---
 title: Contracts and edge cases
-description: Normative guarantees, constraints, and edge-case handling for `Workspace and lock contracts`.
+description: Workspace and lockfile guarantees for tooling operators.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,31 +12,34 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Manifests and lockfiles
-    href: /platform-spec/tooling/manifests-and-lockfiles/
-    relation: Parent area
   - type: Feature
-    title: Workspace and lock contracts
-    href: /platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/
-    relation: Parent feature hub
+    title: Workspace and lock contracts (compiler)
+    href: /platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/
+    relation: implements — normative lock band diagnostics
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Contracts
 
-## What this article covers
-This article explains the `contracts-and-edge-cases` view for `Workspace and lock contracts` in concrete, onboarding-first language.
+- **Lock header version** — Only `# Project.lock v1` is accepted; unknown headers **must** error.
+- **Required lock fields** — Each dependency entry **must** include materialized and source roots for replay.
+- **Registry alias resolution** — Unknown aliases **must** fail at fetch time with actionable messages.
+- **Workspace member integrity** — Every `member` path **must** resolve to a `Project.proj` under the workspace root.
+- **Reproducible materialization** — `materialized_root` paths **must** be stable for a given lock file on the same machine class (OS-specific subtrees allowed when documented in compiler feature).
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Edge cases
 
-## Code anchors
-- Lock/update commands in `compiler/crates/beskid_cli/src/commands/`
-- Project and dependency resolution in `compiler/crates/beskid_analysis/src/resolve/mod.rs`
-- Workspace tests in `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs`
+| Case | Behavior |
+| --- | --- |
+| Missing lock under strict CLI policy | `build`/`run` fail before compile |
+| Stale lock after manifest edit | `lock`/`update` rewrite; LSP invalidates compilation cache |
+| Partial fetch failure | Unresolved dependency policy (`Warn` vs `Error`) controls whether graph proceeds |
+| Duplicate dependency names | Validation error during graph build |
+| Corelib-only path fallback | Implicit `Std` edge omitted for corelib workspace shards to avoid cycles |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## pckg integration
+
+Published workspace bundles on the registry use server-side validation in `pckg/src/Server/Services/Workspace/` (`WorkspacePublishService`, `WorkspacePackageManifest`). Client-side `beskid pckg` commands **must** emit manifests compatible with those validators before upload.

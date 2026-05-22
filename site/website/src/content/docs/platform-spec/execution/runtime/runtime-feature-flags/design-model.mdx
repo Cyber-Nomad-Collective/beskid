@@ -1,10 +1,11 @@
 ---
 title: Design model
-description: Conceptual model for `Runtime feature flags` and its subsystem boundaries.
+description: Cargo feature gates, runtime build capabilities, and compiler alignment expectations.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,31 +13,58 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Runtime
-    href: /platform-spec/execution/runtime/
-    relation: Parent area
   - type: Feature
     title: Runtime feature flags
     href: /platform-spec/execution/runtime/runtime-feature-flags/
     relation: Parent feature hub
+  - type: Feature
+    title: ABI versioning and compatibility
+    href: /platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/
+    relation: ABI version separate from optional features
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Purpose
 
-## What this article covers
-This article explains the `design-model` view for `Runtime feature flags` in concrete, onboarding-first language.
+Document **optional runtime capabilities** selected at **build time** via Cargo features. These differ from **`BESKID_RUNTIME_ABI_VERSION`**: features toggle code paths without changing the baseline symbol list unless a feature adds new exports.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Primary actors
 
-## Code anchors
-- Runtime compile-time flags and exports in `compiler/crates/beskid_runtime/src/lib.rs`
-- Runtime builtins feature gating in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
-- Execution setup in `compiler/crates/beskid_cli/src/commands/doc.rs`
+| Actor | Role |
+| --- | --- |
+| **`beskid_runtime` Cargo.toml** | Declares `metrics`, `arrays_backing`, `sched` features |
+| **Maintainers / CI** | Builds runtime with agreed feature set for CLI, VSIX, releases |
+| **Compiler tests** | Enable features when validating optional behavior |
+| **Tooling** | Documents which flags are on in prebuilt binaries |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Feature catalog (reference tree)
+
+| Feature | Effect |
+| --- | --- |
+| **`arrays_backing`** | `array_new` allocates element storage; without it, header-only arrays (`ptr = null`) |
+| **`metrics`** | Extra `rt_metrics_*` exports for heap/alloc/event counters |
+| **`sched`** | Scheduler internals/experimental hooks (build-time; not user-facing) |
+| **`extern_dlopen`** (engine, not runtime) | Dynamic extern resolution — see [Extern dispatch](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/) |
+
+## Alignment model
+
+```mermaid
+flowchart LR
+  manifest[Workspace / CI profile]
+  rt[beskid_runtime features]
+  tests[Compiler tests]
+  cli[Shipped CLI / VSIX]
+  manifest --> rt
+  rt --> cli
+  rt --> tests
+```
+
+Shipped artifacts **must** document enabled features. Mixing a compiler test build that expects `arrays_backing` against a default runtime produces logical failures without ABI version mismatch.
+
+## Related topics
+
+- [Flow and algorithm](./flow-and-algorithm/)
+- [Builtins and symbols](/platform-spec/execution/abi-and-host/builtins-and-symbols/)

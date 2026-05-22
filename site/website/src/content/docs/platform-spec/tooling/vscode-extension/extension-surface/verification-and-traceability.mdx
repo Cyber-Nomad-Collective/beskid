@@ -1,10 +1,11 @@
 ---
 title: Verification and traceability
-description: How `Extension surface` is validated and traced across crates, tests, and docs.
+description: Tests, CI, and smoke checks for the VS Code extension surface.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-21
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: VS Code extension
-    href: /platform-spec/tooling/vscode-extension/
-    relation: Parent area
   - type: Feature
     title: Extension surface
     href: /platform-spec/tooling/vscode-extension/extension-surface/
@@ -26,17 +23,51 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Purpose and scope
 
-## What this article covers
-This article explains the `verification-and-traceability` view for `Extension surface` in concrete, onboarding-first language.
+How implementers prove the extension surface matches this spec.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## LSP (compiler)
 
-## Code anchors
-- Extension manifest in `beskid_vscode/package.json`
-- Extension command wiring in `beskid_vscode/src`
-- OpenVSX publishing matrix in `.github/workflows/publish-open-vsx.yml`
+| Check | Location |
+| --- | --- |
+| executeCommand JSON golden tests | `compiler/crates/beskid_lsp` (fixtures with `Workspace.proj` + `Project.lock`) |
+| `beskid.refreshWorkspace` regression | Existing `backend.rs` handler + snapshot contract tests |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Extension (beskid_vscode)
+
+| Check | Location |
+| --- | --- |
+| `pckgClient` cache + auth header | Unit tests with mock `fetch` |
+| `autoSelect` path → project URI | Unit tests under `src/workspace/` |
+| E2E smoke | `@vscode/test-electron`: activate, mock executeCommand, assert tree labels |
+| Lint in CI | `beskid_vscode` `bun run lint` in extension workflow |
+
+## Platform spec
+
+| Check | Command |
+| --- | --- |
+| trudoc + platform-spec content | `cd site/website && bun run verify:trudoc -- --preset ci` |
+
+## Manual smoke (corelib)
+
+1. Open `compiler/corelib`.
+2. Workspaces: all members visible.
+3. Packages: locked deps for selected member.
+4. Search registry for `corelib`.
+5. Fetch/Lock from view title without LSP restart on focus change.
+
+## Traceability matrix
+
+| Spec section | Implementation | Test |
+| --- | --- | --- |
+| Four views | `package.json` `contributes.views` | E2E view registration |
+| `focusedProjectUri` | `focusState.ts`, LSP init | Unit + LSP golden |
+| executeCommands | `beskid_lsp` handlers | Rust JSON golden |
+| `pckgClient` | `pckgClient.ts` | Unit mock fetch |
+| CLI runner | `beskidCliRunner.ts` | Unit argv builder |
+
+## Related topics
+
+- [Workspace explorer hub](../workspace-project-explorer/)
+- [Package panel hub](../package-manager-panel/)

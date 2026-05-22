@@ -1,0 +1,41 @@
+---
+title: Anti-stub and circular canon rules
+description: Standard pages forbid circular canon, placeholder-only bundles, and hub-only authority articles.
+specLevel: adr
+status: Standard
+adrId: D-COMM-HUB-0004
+adrStatus: Accepted
+adrDate: 2026-05-05
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Domain, Area and Feature template bundle
+    href: /platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+**Standard** pages passed review with self-referential stubs or article bundles that only pointed at the parent hub.
+
+## Decision
+
+On **Standard** pages the following are **forbidden**: (1) **circular canon** — body that cites the same URL as sole authority without substantive MUST/SHOULD/MAY prose; (2) **placeholder-only articles** — siblings that are scaffold-only; (3) **hub-only authority** — articles that repeat the hub contract without role-specific detail.
+
+## Consequences
+
+`PSC001`/`PSC002`/`PSC007` fail or warn in CI; pages that cannot meet minimums **must** use `status: Proposed`.
+
+## Verification anchors
+
+`verify:platform-spec-content --strict`; `LANGUAGE_META_CIRCULAR_CANON_ALLOWLIST`.

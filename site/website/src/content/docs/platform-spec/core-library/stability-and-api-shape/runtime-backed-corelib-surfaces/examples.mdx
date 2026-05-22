@@ -1,6 +1,6 @@
 ---
 title: Examples
-description: Concrete examples for `Runtime-backed corelib surfaces` decisions and usage patterns.
+description: Examples of runtime-backed corelib surfaces.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,31 +12,28 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Stability and API shape
-    href: /platform-spec/core-library/stability-and-api-shape/
-    relation: Parent area
   - type: Feature
-    title: Runtime-backed corelib surfaces
-    href: /platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/
-    relation: Parent feature hub
+    title: Console I/O streams
+    href: /platform-spec/core-library/terminal-and-console/console-io-streams/
+    relation: Stream-facing ergonomics
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Stdout write path
 
-## What this article covers
-This article explains the `examples` view for `Runtime-backed corelib surfaces` in concrete, onboarding-first language.
+Application code calls `System.Output` helpers → codegen targets `syscall_write` builtin → host writes fd 1. Errors surface as Beskid exceptions per runtime mapping.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Fiber spawn
 
-## Code anchors
-- Corelib docs in `site/website/src/content/docs/corelib/System/`
-- Runtime builtins in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
-- ABI builtin specs in `compiler/crates/beskid_abi/src/builtins.rs`
+`fiber_spawn` builtin allocates fiber control block in runtime, registers GC roots, and schedules on runtime thread pool—corelib exposes typed wrappers only.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## ABI contract test snippet
+
+Tests in `abi/contracts.rs` assert each exported builtin symbol referenced by codegen exists in the linked runtime library for the target triple.
+
+## Separating console concerns
+
+ANSI coloring and terminal size queries belong in **`corelib_console`** package dependencies on `System.*`, keeping syscall surface minimal.

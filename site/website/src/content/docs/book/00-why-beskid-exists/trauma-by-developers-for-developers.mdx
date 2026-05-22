@@ -1,0 +1,68 @@
+---
+title: "Trauma — by developers, for developers"
+description: Ecosystem fracture, language monoculture, and the gap between designer vision and field reality.
+tableOfContents: true
+---
+
+import { YouTube } from 'astro-embed';
+
+Languages are not designed in a vacuum. They are designed **by developers, for developers**, which sounds wholesome until you remember developers also built npm and called it a success.
+
+![Celebrating npm — ironic success](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV-yIVUIY9JyVirtLQujiVnKa1xh-ufF2OWA&s)
+
+## JavaScript — ecosystem fracture as a lifestyle
+
+JavaScript won by being **everywhere**, not by being **good**.
+
+- One language for browser, server, tooling, config, and that one script someone left in `package.json` "temporarily" in 2019.
+- **Package managers as personality tests.** npm, yarn, pnpm, bun—pick your trauma.
+- Framework churn sold as innovation: every year a new meta-framework that explains why the last meta-framework was actually the problem.
+- TypeScript improved honesty, then the community used it to build **even larger abstraction pyramids** with better autocomplete.
+
+![Spinning — framework churn](https://devhumor.com/content/uploads/images/August2018/js.jpg)
+
+The fracture is not "too many choices." It is **no stable floor**: you cannot assume the next hire knows the same stack, the same bundler, or the same definition of "component."
+
+## The philosophical monopoly of "higher level"
+
+For two decades the industry preached: **raise the level of abstraction** and problems vanish.
+
+- Frameworks promise you never touch the DOM / HTTP / SQL again.
+- Cloud vendors promise you never touch a server again.
+- Low-code promises you never touch code again (you will; it will be worse).
+
+<YouTube id="https://www.youtube.com/watch?v=xTnK6f_ZL1E" />
+
+What actually happens:
+
+- Abstraction **hides** costs until production.
+- Debugging becomes archaeology through layers you did not write.
+- Performance work becomes "find who allocated this" across boundaries nobody documented.
+
+Higher-level languages are not evil. **Treating elevation as a moral virtue** is. Sometimes the correct move is **lower**, clearer, and compile-time verified—not another wrapper.
+
+## Language designers vs people who ship
+
+| Designer fantasy | Field reality |
+| --- | --- |
+| Elegant minimal cores | Teams need logging, auth, metrics, feature flags, and a PDF export by Friday |
+| Perfect orthogonality | Product wants three exceptions that violate the model |
+| "Just learn the model" | Intern starts Monday; senior quit last month |
+| Pure functions everywhere | Stateful business rules funded the company |
+| Avoid breaking changes | Enterprise has a seven-year support contract |
+
+![That would be great — ship by Friday](https://media1.tenor.com/m/gf4IbKs2cQMAAAAd/this-is-fine-dumpster-fire.gif)
+
+**Engineering vision** wants coherent semantics and long horizons. **Business** wants **quick realization times**—which is corporate for "ship the spreadsheet with a login page."
+
+Neither side is wrong. The trauma is pretending one side does not exist while writing a language spec that only makes sense in a greenfield utopia.
+
+## Beskid's stance (short)
+
+- Opinionated where it reduces **negotiation tax**.
+- Not competing to be **enterprise-friendly** in the "hide everything behind containers" sense.
+- Spec leads code so we document tradeoffs instead of inventing mythology in READMEs.
+
+![Taking notes — spec leads code](https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcG5oZnVqZ3cybmYwNGR1bHpudjVnbjh6Y2N1bGthMHMzZjVwODR1cyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/15BuyagtKucHm/giphy.gif)
+
+Next: [1.5 Are we really standing on the shoulders of giants?](/book/00-why-beskid-exists/shoulders-of-giants/).

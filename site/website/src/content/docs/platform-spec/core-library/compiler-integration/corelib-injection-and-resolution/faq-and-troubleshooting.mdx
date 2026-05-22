@@ -1,6 +1,6 @@
 ---
 title: FAQ and troubleshooting
-description: Common operator and contributor questions about `Corelib injection and resolution`.
+description: Corelib injection and resolution FAQ.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,10 +12,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Compiler integration
-    href: /platform-spec/core-library/compiler-integration/
-    relation: Parent area
   - type: Feature
     title: Corelib injection and resolution
     href: /platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/
@@ -26,17 +22,22 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## Can I disable corelib for a micro-benchmark?
 
-## What this article covers
-This article explains the `faq-and-troubleshooting` view for `Corelib injection and resolution` in concrete, onboarding-first language.
+No. Host projects always load corelib. Isolate benchmarks in `Mod` or non-host tooling paths that do not claim to be full language hosts.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## `Std` not found despite submodule checkout
 
-## Code anchors
-- Corelib integration tests in `compiler/crates/beskid_tests/src/projects/corelib/compile.rs`
-- Corelib project helpers in `compiler/crates/beskid_tests/src/projects/corelib/mod.rs`
-- Analysis services in `compiler/crates/beskid_analysis/src/services.rs`
+Initialize `compiler/corelib` submodule and set `BESKID_CORELIB_ROOT` to the directory containing `beskid_corelib/Project.proj`.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Duplicate corelib in graph
+
+Usually caused by both implicit injection and an explicit `Std` path to a different tree. Align paths to one aggregate root.
+
+## LSP missing prelude types
+
+Focused project must be a host under the same corelib root the CLI uses. Rescan workspace after changing `BESKID_CORELIB_ROOT`.
+
+## Mod project pulls corelib twice
+
+Mods depend on host graphs; they should not redeclare aggregate corelib unless packaging tests require it—follow **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** `Mod` rules.

@@ -1,11 +1,11 @@
 ---
 title: Design model
-description: Conceptual model and boundaries.
+description: Capability record, color models, and environment-driven probing.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-20
+lastReviewed: 2026-05-21
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -22,8 +22,47 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
-## What this article covers
-This article documents **design-model** for **Console capabilities**.
+## Purpose
 
-## Normative notes
-See the parent feature hub and `ANSI.md` in the aggregate repository for escape-sequence tables. Stream I/O must use `System.Syscall` wrappers; stdout/stderr are write-only at the syscall layer.
+Document **design model** for the **Console Capabilities** feature: role-specific normative detail beyond the feature hub.
+
+## Canonical references
+
+- Feature hub: [Console Capabilities](/platform-spec/core-library/terminal-and-console/console-capabilities/)
+- Sibling articles in this bundle (design model, contracts, flow, examples, verification)
+
+## Detailed behavior
+
+### `Capabilities` record
+
+| Field | Meaning |
+| --- | --- |
+| `isTty` | stdout (fd 1) is a terminal |
+| `colorDisabled` | `NO_COLOR` set |
+| `colorForced` | `FORCE_COLOR` set |
+| `model` | Probed `ColorModel` before strip |
+
+`ProbeStdout()` composes the record from `Platform.Terminal.IsAtty(1)` and environment helpers.
+
+### `ColorModel` ladder
+
+| Variant | Typical trigger |
+| --- | --- |
+| `Basic8` | Reserved for minimal terminals |
+| `Basic16` | Default when stripped or `TERM=xterm-color` |
+| `Indexed256` | `TERM=xterm-256color` or generic `TERM` set |
+| `TrueColor` | `COLORTERM` set (e.g. `truecolor`) |
+
+`Ansi.Sgr` maps requested RGB to the **effective** model after `ShouldStripColor`.
+
+### Interaction with ANSI emission
+
+`ShouldEmitAnsi()` is equivalent to `!ShouldStripColor(ProbeStdout())`. All gated escape helpers consult this predicate; see [ANSI escape model / flow and algorithm](/platform-spec/core-library/terminal-and-console/ansi-escape-model/flow-and-algorithm/).
+
+## Verification
+
+See the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.
+
+## Related topics
+
+- Parent [feature hub](/platform-spec/core-library/terminal-and-console/console-capabilities/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)

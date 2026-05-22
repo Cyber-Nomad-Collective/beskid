@@ -16,6 +16,9 @@ function selectTab(id: SpecHomeTab, opts?: { replaceHash?: boolean }) {
 	panels.forEach((panel) => {
 		panel.hidden = panel.dataset.tabPanel !== id;
 	});
+	if (id === 'map') {
+		window.dispatchEvent(new CustomEvent('platform-spec-map-activate'));
+	}
 	if (replaceHash && history.replaceState) {
 		const h = id === 'browse' ? '#browse' : '#map';
 		const nextUrl = `${location.pathname}${location.search}${h}`;
@@ -37,10 +40,10 @@ function initPlatformSpecHomeTabs() {
 	if (!root) return;
 
 	const hash = location.hash.replace(/^#/, '');
-	const initial: SpecHomeTab = hash === 'browse' ? 'browse' : 'map';
+	const initial: SpecHomeTab = hash === 'map' ? 'map' : 'browse';
 	selectTab(initial, { replaceHash: false });
 	if (!location.hash && history.replaceState) {
-		history.replaceState(null, '', `${location.pathname}${location.search}#map`);
+		history.replaceState(null, '', `${location.pathname}${location.search}#browse`);
 	}
 
 	root.querySelectorAll<HTMLButtonElement>('.platform-spec-home__tab').forEach((btn) => {
@@ -49,20 +52,20 @@ function initPlatformSpecHomeTabs() {
 
 	window.addEventListener('hashchange', () => {
 		const h = location.hash.replace(/^#/, '');
-		selectTab(h === 'browse' ? 'browse' : 'map', { replaceHash: false });
+		selectTab(h === 'map' ? 'map' : 'browse', { replaceHash: false });
 	});
 
 	root.addEventListener('keydown', (e) => {
 		if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
 		const active = root.querySelector<HTMLButtonElement>('.platform-spec-home__tab[aria-selected="true"]');
 		if (!active) return;
-		if (e.key === 'ArrowRight' && active.dataset.tab === 'map') {
-			e.preventDefault();
-			selectTab('browse');
-		}
-		if (e.key === 'ArrowLeft' && active.dataset.tab === 'browse') {
+		if (e.key === 'ArrowRight' && active.dataset.tab === 'browse') {
 			e.preventDefault();
 			selectTab('map');
+		}
+		if (e.key === 'ArrowLeft' && active.dataset.tab === 'map') {
+			e.preventDefault();
+			selectTab('browse');
 		}
 	});
 }

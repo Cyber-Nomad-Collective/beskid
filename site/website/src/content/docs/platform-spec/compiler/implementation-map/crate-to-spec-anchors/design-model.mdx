@@ -36,22 +36,51 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 
 
-## Model at a glance
+## Map role
 
-`Crate-to-spec anchors` is modeled as a contract surface between producer crates and consumer crates. New contributors should treat it as a boundary document first and an implementation detail map second.
+This feature is the **maintenance index** between Rust crates and normative spec leaves. When you change behavior in a crate, update the linked spec article in the same change set; when you add a spec contract, anchor it to the owning crate here.
+
+```mermaid
+flowchart TB
+  subgraph cli_tooling [CLI / LSP / pckg]
+    cli[beskid_cli]
+    lsp[beskid_lsp]
+    pckg[beskid_pckg]
+  end
+  subgraph analysis [beskid_analysis]
+    proj[projects graph]
+    fe[front_end + mod_host]
+    sem[analysis rules]
+  end
+  subgraph codegen [beskid_codegen]
+    lower[lowering services]
+  end
+  subgraph exec [beskid_abi + beskid_runtime + beskid_engine]
+    abi[ABI tables]
+    rt[runtime builtins]
+    eng[JIT / AOT]
+  end
+  cli --> proj
+  lsp --> proj
+  proj --> fe --> sem --> lower --> eng
+  lower --> abi
+  eng --> rt
+```
 
 ## Primary actors
 
-- Producer side: crates that define or emit the contract surface.
-- Consumer side: crates that read, execute, or validate that surface.
-- Conformance side: test crates that pin expected behavior.
+| Actor | Responsibility |
+| --- | --- |
+| **Producer crates** | Emit diagnostics, artifacts, and ABI metadata (`beskid_analysis`, `beskid_codegen`) |
+| **Consumer crates** | Execute or validate artifacts (`beskid_engine`, `beskid_runtime`, tooling) |
+| **Conformance crates** | Pin observable behavior (`beskid_tests`, `beskid_e2e_tests`) |
 
-## Concrete crate anchors
+## Crate quick anchors
 
-- `beskid_analysis` -> parser/resolution/semantic leaves
-- `beskid_codegen` -> lowering contract leaves
-- `beskid_abi` and `beskid_runtime` -> execution ABI/runtime leaves
-- `beskid_tests` and `beskid_e2e_tests` -> conformance leaves
+- `beskid_analysis` — parser, resolution, semantic pipeline, mod host
+- `beskid_codegen` — lowering contract
+- `beskid_abi` + `beskid_runtime` — execution ABI/runtime leaves
+- `beskid_tests` + `beskid_e2e_tests` — conformance leaves
 
 ## Compiler mod anchors (reference compiler)
 

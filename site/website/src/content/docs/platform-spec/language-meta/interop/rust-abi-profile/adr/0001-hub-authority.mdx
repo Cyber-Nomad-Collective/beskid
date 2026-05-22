@@ -1,0 +1,41 @@
+---
+title: Feature hub owns normative contract
+description: Runtime embedding exports defer to this hub.
+specLevel: adr
+status: Standard
+adrId: D-LMETA-RUSTABI-0001
+adrStatus: Accepted
+adrDate: 2026-05-09
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Rust ABI profile
+    href: /platform-spec/language-meta/interop/rust-abi-profile/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Rust runtime exports were documented beside user C extern rules.
+
+## Decision
+
+This feature hub **must** own normative MUST/SHOULD for **Rust-hosted runtime** interop distinct from user **C ABI profile** libraries.
+
+## Consequences
+
+Builtin table and ABI version policy stay here; user `Extern` stays on C profile.
+
+## Verification anchors
+
+/platform-spec/language-meta/interop/rust-abi-profile/

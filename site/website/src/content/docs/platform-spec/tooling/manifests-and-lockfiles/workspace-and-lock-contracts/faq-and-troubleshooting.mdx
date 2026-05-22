@@ -1,6 +1,6 @@
 ---
 title: FAQ and troubleshooting
-description: Common operator and contributor questions about `Workspace and lock contracts`.
+description: Workspace and lockfile troubleshooting for tooling users.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,31 +12,32 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Manifests and lockfiles
-    href: /platform-spec/tooling/manifests-and-lockfiles/
-    relation: Parent area
   - type: Feature
-    title: Workspace and lock contracts
-    href: /platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/
-    relation: Parent feature hub
+    title: pckg client contract
+    href: /platform-spec/tooling/registry-client/pckg-client-contract/
+    relation: Registry auth and fetch errors
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## `Project.lock` out of date
 
-## What this article covers
-This article explains the `faq-and-troubleshooting` view for `Workspace and lock contracts` in concrete, onboarding-first language.
+Run `beskid lock` or `beskid update` from the project root. If manifests changed on another branch, merge lock conflicts explicitly—do not hand-edit `materialized_root` without understanding fetch layout.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Registry alias not found
 
-## Code anchors
-- Lock/update commands in `compiler/crates/beskid_cli/src/commands/`
-- Project and dependency resolution in `compiler/crates/beskid_analysis/src/resolve/mod.rs`
-- Workspace tests in `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs`
+Add the alias to `Workspace.proj` `registry { }` blocks or use the `default` URL. Verify `beskid pckg` config points at the same host (`PckgClientConfig`).
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Member project not in graph
+
+Check `member.path` is relative to the workspace root and ends with `Project.proj`. Typos in `member.id` break `--workspace-member` CLI flags.
+
+## LSP uses wrong dependency roots
+
+Delete `.beskid` cache only when documentation recommends it; otherwise refresh lock and rescan workspace. Ensure focused project matches the lock’s `root_manifest`.
+
+## Workspace publish rejected by pckg
+
+Server validators (`WorkspacePackageManifest`, `PackageArtifactValidator`) enforce readme, docs, and member consistency—align local `beskid pckg pack` output with **[pckg client contract](/platform-spec/tooling/registry-client/pckg-client-contract/)** before retrying upload.

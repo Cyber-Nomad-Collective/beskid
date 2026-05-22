@@ -39,13 +39,13 @@ Result<string, ChannelError> line = log.Receive();
 **Hub** (homogeneous multichannel wait):
 
 ```beskid
-Hub&lt;ConsoleMessage&gt; hub = Hub&lt;ConsoleMessage&gt;.Create();
+`Hub<ConsoleMessage>` hub = `Hub<ConsoleMessage>`.Create();
 hub.Register(0, resizeChannel);
 hub.Register(1, inputChannel);
 Result<HubReceiveResult, HubError> ready = hub.WaitReceive();
 // ready.value.index + ready.value.value
 ```
 
-Unlike payload types: use `enum ConsoleMessage { Resize(ConsoleSize), Key(KeyEvent) }` and `Channel&lt;ConsoleMessage&gt;`, or separate hubs per type.
+Unlike payload types: use `enum ConsoleMessage { Resize(ConsoleSize), Key(KeyEvent) }` and `Channel<ConsoleMessage>`, or separate hubs per type.
 
 Console resize path should **Send** into a channel consumed by the UI fiber rather than invoking **event** handlers on arbitrary fibers.

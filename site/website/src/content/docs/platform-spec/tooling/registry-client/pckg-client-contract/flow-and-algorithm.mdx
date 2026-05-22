@@ -1,6 +1,6 @@
 ---
 title: Flow and algorithm
-description: Lifecycle and execution flow for `pckg client contract`.
+description: Pack, upload, and query flows for the pckg registry client.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,10 +12,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Registry client
-    href: /platform-spec/tooling/registry-client/
-    relation: Parent area
   - type: Feature
     title: pckg client contract
     href: /platform-spec/tooling/registry-client/pckg-client-contract/
@@ -26,17 +22,38 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## `beskid pckg pack` algorithm
 
-## What this article covers
-This article explains the `flow-and-algorithm` view for `pckg client contract` in concrete, onboarding-first language.
+```mermaid
+flowchart TD
+  A[Resolve source root] --> B[detect_pack_profile]
+  B --> C[collect_pack_entries walk]
+  C --> D[apply_pack_readme]
+  D --> E[build_package_json]
+  E --> F[ZipWriter + SHA256]
+  F --> G[.bpk artifact]
+```
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+1. Read `Project.proj` when present; choose `PackProfile::Library` or `Template`.
+2. Walk files (respect template exclude strips via `strip_template_pack_excludes`).
+3. Include `.beskid/docs/**` and package docs for library profiles.
+4. Copy resolved readme to zip root `README.md` when not already present.
+5. Emit `package.json` metadata (registry assigns version on publish—clients do not invent release versions in normal flows).
 
-## Code anchors
-- Public client API in `compiler/crates/beskid_pckg/src/lib.rs`
-- HTTP and auth flows in `compiler/crates/beskid_pckg/src/client.rs`
-- CLI integration in `compiler/crates/beskid_pckg/src/cli.rs`
+## Publish / upload
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+1. Build or locate `.bpk` bytes.
+2. `PckgClient::send_multipart` to registry upload endpoint with publisher auth.
+3. Server runs `PackageArtifactValidator` + documentation ingestion; failures return structured API errors mapped to `PckgError::Api`.
+
+## Fetch into workspace
+
+`beskid fetch` (CLI command in `beskid_cli`) uses registry URLs from `Workspace.proj` and downloads through `PckgClient`, writing materialized roots recorded later in `Project.lock`. Version resolution follows registry-assigned versions, not ad-hoc client version strings.
+
+## Version state file
+
+Pack may persist local version hints in `.beskid/pckg` state (`PackVersionState`) for iterative dev publishes; production CI should rely on server-assigned versions after upload.
+
+## Error handling
+
+All HTTP failures surface as `PckgError` with status, message, and optional body text suitable for `--verbose` CLI output.

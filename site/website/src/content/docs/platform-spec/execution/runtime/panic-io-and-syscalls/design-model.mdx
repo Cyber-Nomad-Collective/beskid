@@ -1,10 +1,11 @@
 ---
 title: Design model
-description: Conceptual model for `Panic, IO, and syscalls` and its subsystem boundaries.
+description: Panic termination, syscall ownership, and runtime-mediated IO boundaries.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,31 +13,61 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Runtime
-    href: /platform-spec/execution/runtime/
-    relation: Parent area
   - type: Feature
     title: Panic, IO, and syscalls
     href: /platform-spec/execution/runtime/panic-io-and-syscalls/
     relation: Parent feature hub
+  - type: Feature
+    title: Console I/O streams
+    href: /platform-spec/core-library/terminal-and-console/console-io-streams/
+    relation: Corelib facades over syscall builtins
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Purpose
 
-## What this article covers
-This article explains the `design-model` view for `Panic, IO, and syscalls` in concrete, onboarding-first language.
+Define runtime ownership of **unrecoverable faults** (`panic`) and **platform IO** (`syscall_read`, `syscall_write`). Front-end and corelib **must not** embed OS-specific syscall sequences in lowering.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Primary actors
 
-## Code anchors
-- Builtin exports in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
-- Panic and syscall implementation in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
-- Runtime symbol registration in `compiler/crates/beskid_runtime/src/lib.rs`
+| Actor | Role |
+| --- | --- |
+| **Lowering** | Emits `panic` for unrecoverable checks; routes corelib IO to builtins |
+| `beskid_runtime::builtins::panic_io` | Linux x86_64 syscall asm; stdio fallback elsewhere |
+| **Scheduler** | `run_blocking` for syscall work without violating GC mutator rules |
+| **Corelib `System.Syscall`** | Wraps builtins with descriptors ([Console I/O streams](/platform-spec/core-library/terminal-and-console/console-io-streams/)) |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Failure model split
+
+| Mechanism | Use |
+| --- | --- |
+| `Option<T>` (language) | Expected errors — canonical in language-meta |
+| **`panic` / `panic_str`** | Unrecoverable faults, failed writes in v1 streams, allocation failures |
+
+Runtime panics **terminate** the process (trap). There is no Beskid stack unwinding across panics.
+
+## IO boundary
+
+```mermaid
+flowchart TB
+  core[System.Input / Output / Error]
+  wrap[Syscall ReadWith / WriteWith]
+  builtin[syscall_read / syscall_write]
+  os[OS read/write]
+  core --> wrap --> builtin --> os
+  trap[panic on hard fault] --> builtin
+```
+
+Syscall builtins accept **file descriptor + buffer** (`syscall_write` uses `BeskidStr`). They return integer status codes; corelib maps EOF/errors to `Result`.
+
+## Platform scope
+
+Reference implementation: **Linux x86_64** direct syscalls for performance. Other targets may delegate to `std::io` for fds 1/2 while preserving signatures (**IO-ABI-003**).
+
+## Related topics
+
+- [Flow and algorithm](./flow-and-algorithm/)
+- Legacy: [Error model](../../../../execution/runtime/error-model.md), [Syscalls and ABI boundary](../../../../execution/runtime/syscalls-and-abi-boundary.md)

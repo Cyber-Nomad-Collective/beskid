@@ -1,11 +1,13 @@
 ---
-title: "Error handling"
-description: "Representing and propagating failures (`Result`, `try`, unwinding policy). Runtime lowering shares the ABI error envelope described in Execution."
+title: Error handling
+description: Representing and propagating failures (`Result`, `try`, unwinding
+  policy). Runtime lowering shares the ABI error envelope described in
+  Execution.
 template: splash
 tableOfContents: false
-specLevel: feature
+specLevel: article
 status: Standard
-lastReviewed: 2026-05-20
+lastReviewed: 2026-05-21
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -14,21 +16,21 @@ submitter:
   email: pmikstacki@cybernomad.it
 relatedTopics:
   - type: Area
-    title: "Contracts and effects"
+    title: Contracts and effects
     href: /platform-spec/language-meta/contracts-and-effects/
     relation: Parent area
   - type: Domain
-    title: "Language meta"
+    title: Language meta
     href: /platform-spec/language-meta/
     relation: Parent domain hub
   - type: Domain
-    title: "Platform specification"
+    title: Platform specification
     href: /platform-spec/
     relation: Cross-cutting index
   - type: Domain
-    title: "Execution documentation"
+    title: Execution documentation
     href: /execution/
-    relation: Runtime and backend contracts
+    relation: Non-normative legacy execution bridge
 ---
 
 import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
@@ -42,9 +44,63 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 	submitterEmail="pmikstacki@cybernomad.it"
 />
 
+## Error propagation flow
+
+```mermaid
+flowchart LR
+  expr[expr with Result enum]
+  tryOp[postfix ? operator]
+  ok[unwrap success value]
+  err[return / translate Err]
+  expr --> tryOp
+  tryOp -->|Ok variant| ok
+  tryOp -->|Err variant| err
+  ffi[FFI boundary] --> envelope[interop error envelope]
+  err -.->|no silent throw| ffi
+```
+
 ## Normative specification
 
-The canonical chapter is **[Error handling](/platform-spec/language-meta/contracts-and-effects/error-handling/)** in the platform specification.
+### Scope
+
+Defines how **recoverable failures** are represented and propagated in user code. ABI envelopes and unwind across FFI are in interop and execution chapters.
+
+### `Result`, `Option<T>`, and enums
+
+- Recoverable errors **should** be modeled as `enum` types (for example `Ok` / `Err` variants) or host-provided result types in corelib.
+- There is **no** built-in `Result<T,E>` type alias in v0.1 grammar; projects define explicit enums.
+- **Absence of value** (not failure) **must** use `Option<T>`, not `null` or sentinel pointers (**must** align with [Types](/platform-spec/language-meta/type-system/types/)).
+
+### `try` postfix operator
+
+- Postfix `expr?` (`TryOperator`) **must** apply only where the surrounding function or lambda declares a compatible error propagation target.
+- Operand type **must** be an enum or type with defined error channel per project convention; otherwise **invalid try target** (**E12xx** family in reference compiler).
+- Successful path **must** unwrap the success value into the expression context; failure path **must** return or translate to the enclosing error type.
+
+### Static rules
+
+- `try` **must not** appear on non-enum/non-result expressions.
+- Panic or abort semantics **are not** language keywords in v0.1; unrecoverable failures use host/runtime policies.
+
+### Dynamic semantics
+
+- Error propagation **must not** implicitly allocate; lowering rewrites `?` to branch sequences.
+- FFI boundaries **must** map errors per [Interop contracts](/platform-spec/language-meta/interop/interop-contracts/) — no silent cross-language exceptions unless documented.
+
+### Diagnostics
+
+**InvalidTryTarget** and type mismatch on unwrap paths. Registry: [Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/).
+
+### Conformance
+
+Programs using `?` **must** compile only when propagation types align; reference tests cover try lowering.
+
+## Decisions
+
+- **D-LM-ERR-001 — Enum-first errors:** Language law prefers explicit sum types over magic result types.
+- **D-LM-ERR-002 — No exceptions keyword:** Cross-language unwinding is interop-scoped, not a Beskid `throw` statement in v0.1.
+- **D-LM-ERR-003 — `Option` vs `Result`:** `Option<T>` models missing data; `Result`-shaped enums model failures—do not conflate them.
+- **D-LM-ERR-004 — Postfix `?` only:** Error propagation uses `expr?`; there is no `try` statement form in v0.1.
 
 ## Platform view
 

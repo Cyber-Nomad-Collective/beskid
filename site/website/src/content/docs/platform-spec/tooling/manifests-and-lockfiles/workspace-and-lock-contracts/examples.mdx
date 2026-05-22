@@ -1,6 +1,6 @@
 ---
 title: Examples
-description: Concrete examples for `Workspace and lock contracts` decisions and usage patterns.
+description: Workspace and lockfile examples for tooling workflows.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,31 +12,57 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Manifests and lockfiles
-    href: /platform-spec/tooling/manifests-and-lockfiles/
-    relation: Parent area
   - type: Feature
-    title: Workspace and lock contracts
-    href: /platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/
-    relation: Parent feature hub
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Member `Project.proj` examples
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Minimal workspace manifest
 
-## What this article covers
-This article explains the `examples` view for `Workspace and lock contracts` in concrete, onboarding-first language.
+```text
+workspace {
+  name = "demo-workspace"
+}
+member {
+  id = "app"
+  path = "apps/demo/Project.proj"
+}
+registry {
+  default = "https://pckg.example/api/"
+}
+```
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+Run `beskid lock --project apps/demo/Project.proj --workspace-member app` when multiple members exist.
 
-## Code anchors
-- Lock/update commands in `compiler/crates/beskid_cli/src/commands/`
-- Project and dependency resolution in `compiler/crates/beskid_analysis/src/resolve/mod.rs`
-- Workspace tests in `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs`
+## Lock file excerpt
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+```text
+# Project.lock v1
+root_manifest = apps/demo/Project.proj
+project_name = demo-app
+dependency {
+  name = corelib_foundation
+  manifest = .beskid/packages/corelib_foundation/Project.proj
+  project = corelib_foundation
+  source_root = .beskid/packages/corelib_foundation
+  materialized_root = .beskid/packages/corelib_foundation
+}
+```
+
+Exact paths depend on fetch layout; treat materialized roots as opaque but stable for a given lock revision.
+
+## CI sequence
+
+```bash
+beskid fetch --project apps/demo/Project.proj
+beskid lock --project apps/demo/Project.proj
+git add apps/demo/Project.lock
+beskid build --project apps/demo/Project.proj
+```
+
+Commit the lock when reproducibility is required; use `update` locally when bumping dependency ranges in manifests.

@@ -1,0 +1,41 @@
+---
+title: Forbidden child Join of ancestor
+description: Compile-time rule preventing join cycles on fiber stacks.
+specLevel: adr
+status: Standard
+adrId: D-CORE-CONC-0014
+adrStatus: Accepted
+adrDate: 2025-08-01
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Concurrency package
+    href: /platform-spec/core-library/concurrency/concurrency-package/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Parent/child Join cycles deadlock the scheduler.
+
+## Decision
+
+Child **Join** parent → compile-time diagnostic **JoinWouldDeadlock**. Parent **Join** child and sibling **Join** remain allowed.
+
+## Consequences
+
+Diagnostic registry documents **JoinWouldDeadlock**.
+
+## Verification anchors
+
+Semantic analyzer tests for join graph.

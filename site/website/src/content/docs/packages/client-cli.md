@@ -7,7 +7,7 @@ description: "Registry tooling: implemented `beskid pckg` client and the planned
 
 The compiler ships a **pckg** HTTP client as `beskid pckg …`. It covers packing (`.bpk`), publishing to the registry, API-key configuration, catalog search, downloads, and yank/unyank.
 
-Authoritative flag and workflow documentation lives on the CLI site page: **[beskid pckg](/guides/cli/commands/pckg/)**.
+Authoritative flag and workflow documentation lives on the CLI site page: **[beskid pckg](/book/reference/cli/commands/pckg/)**.
 
 Publish flow in practice:
 

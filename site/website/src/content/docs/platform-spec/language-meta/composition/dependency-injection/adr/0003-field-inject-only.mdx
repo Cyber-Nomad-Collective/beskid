@@ -1,0 +1,41 @@
+---
+title: Field inject only
+description: Constructor parameter inject is rejected (E1712).
+specLevel: adr
+status: Standard
+adrId: D-LMETA-DI-0003
+adrStatus: Accepted
+adrDate: 2026-05-20
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Native dependency injection
+    href: /platform-spec/language-meta/composition/dependency-injection/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Constructor injection churns signatures across inheritance and complicates lowering.
+
+## Decision
+
+**`inject`** **must** apply to **fields** on ordinary types only. Constructor-parameter **`inject`** **must** be rejected (**E1712**).
+
+## Consequences
+
+Uniform type headers and a single slot-lowering story for injected fields.
+
+## Verification anchors
+
+[Design model](/platform-spec/language-meta/composition/dependency-injection/design-model/); [FAQ](/platform-spec/language-meta/composition/dependency-injection/faq-and-troubleshooting/).

@@ -1,0 +1,57 @@
+---
+title: Project inception decisions
+description: Cross-cutting architecture decisions from Beskid project inception—platform
+  authority, compiler shape, and language direction that span multiple domains.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Spec maintenance
+    href: /platform-spec/community/spec-maintenance/
+    relation: Parent area
+  - type: Feature
+    title: Specification authority and embedded decisions
+    href: /platform-spec/community/spec-maintenance/spec-authority-and-decisions/
+    relation: ADR governance
+  - type: Domain
+    title: Platform specification
+    href: /platform-spec/
+    relation: Root index
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+Cross-cutting **architecture decision records** from Beskid project inception—platform authority, compiler host shape, corelib packaging, and language direction that span multiple domains.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- Governance: [Specification authority and embedded decisions](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/)
+- Historical intent: `compiler/README.md`, informative [Why Beskid Exists](/book/00-why-beskid-exists/) (non-normative; ADRs here are normative)
+- ADR files: `platform-spec/community/project-inception/adr/*.mdx`
+</SpecSection>
+
+<SpecSection title="Contract statement" id="contract-statement">
+This feature records **cross-cutting** decisions made at or before public Beskid inception. Domain-specific features **must** defer here for platform-wide direction instead of restating the same rationale.
+</SpecSection>
+
+<SpecSection title="Verification and traceability" id="verification-and-traceability">
+- Each row in **`adr/`** is normative at `status: Standard` unless marked `Proposed` or `Superseded`.
+- Implementation domains **must** link inception `adrId` values from feature hubs when realizing these choices.
+</SpecSection>
+
+## Decisions
+
+No open decisions. Closed inception ADRs are listed under **`adr/`** (reader **ADRs** tab)—`D-INC-0001` through `D-INC-0008`.

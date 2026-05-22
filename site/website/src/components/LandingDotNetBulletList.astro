@@ -1,0 +1,31 @@
+---
+import type { DotNetBullet } from '../data/landing-dotnet-bullets';
+
+interface Props {
+	bullets: DotNetBullet[];
+}
+
+const { bullets } = Astro.props;
+---
+
+<ul class="landing-dotnet__list">
+	{
+		bullets.map((item) => (
+			<li>
+				<span class="landing-dotnet__bullet-text">{item.text}</span>
+				{item.example && <p class="landing-dotnet__example">{item.example}</p>}
+				{item.sources && item.sources.length > 0 && (
+					<ul class="landing-dotnet__sources">
+						{item.sources.map((source) => (
+							<li>
+								<a href={source.href} target="_blank" rel="noopener noreferrer">
+									{source.label}
+								</a>
+							</li>
+						))}
+					</ul>
+				)}
+			</li>
+		))
+	}
+</ul>

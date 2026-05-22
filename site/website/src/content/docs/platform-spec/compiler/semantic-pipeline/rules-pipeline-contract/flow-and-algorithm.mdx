@@ -24,17 +24,30 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 
 
-This article documents **flow and algorithm** for **rules pipeline contract** in the reference compiler.
+## Execution order
 
-## What this covers
-For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
+1. Host finishes **mod collect/generate/merge** and bumps `syntax_generation_id`.
+2. **Inspector-only meta** runs (if any) without mutating the merged tree.
+3. `SemanticPipelineRule` stages execute in registration order within `staged.rs`.
+4. **`stage8_metaprogramming`** validates meta-produced attributes; it does **not** replace mod host orchestration.
+5. Diagnostics publish to CLI/LSP snapshot; pipeline continues only if policy allows after error count.
+6. HIR normalization and resolution consume the same generation id before lowering.
+
+```mermaid
+sequenceDiagram
+  participant Host
+  participant ModHost
+  participant Rules as SemanticPipelineRule
+  participant Lower
+  Host->>ModHost: collect generate merge
+  ModHost-->>Host: syntax_generation_id++
+  Host->>Rules: run staged rules
+  Rules-->>Host: diagnostics
+  Host->>Lower: lower_program on stable snapshot
+```
 
 ## Anchored code paths
-- `compiler/crates/beskid_analysis/src/analysis/rules/` defines staged rule groups.
-- `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` classifies emitted diagnostics.
-- `compiler/crates/beskid_analysis/src/services.rs` wires semantic services used by CLI/LSP.
 
-## Practical notes
-- Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
-- Treat diagnostics and tests as part of the contract, not optional implementation details.
-- If behavior changes, update this article and add/adjust tests in `compiler/crates/beskid_tests` or `compiler/crates/beskid_e2e_tests`.
+- `compiler/crates/beskid_analysis/src/analysis/rules/`
+- `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`
+- `compiler/crates/beskid_analysis/src/services.rs`

@@ -1,0 +1,41 @@
+---
+title: Rust compiler host and canonical AST
+description: The compiler is implemented in Rust; Beskid does not self-host the compiler implementation.
+specLevel: adr
+status: Standard
+adrId: D-INC-0006
+adrStatus: Accepted
+adrDate: 2024-06-01
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Project inception decisions
+    href: /platform-spec/community/project-inception/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Self-hosting before semantic stability would couple bootstrap pain to language churn.
+
+## Decision
+
+The reference compiler **must** remain a Rust workspace. The canonical syntax model is generated into `Beskid.Compiler.*` SDK sources from Rust AST reflection—not hand-maintained parallel syntax trees.
+
+## Consequences
+
+Mods extend analysis/codegen via SDK contracts; the host pipeline stays Rust-only.
+
+## Verification anchors
+
+`beskid_ast_reflect_gen`; [Syntax domain model generation](/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/).

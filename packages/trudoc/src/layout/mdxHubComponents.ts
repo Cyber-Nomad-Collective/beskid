@@ -37,6 +37,7 @@ export const HUB_COMPONENT_PROP_SCHEMAS: Record<string, z.ZodType<Record<string,
 	SpecPageHeader: specPageHeaderPropsSchema as z.ZodType<Record<string, unknown>>,
 	SpecSection: specSectionPropsSchema as z.ZodType<Record<string, unknown>>,
 	SpecArticleChrome: emptyPropsSchema as z.ZodType<Record<string, unknown>>,
+	SpecAdrChrome: emptyPropsSchema as z.ZodType<Record<string, unknown>>,
 	PlatformSpecHome: emptyPropsSchema as z.ZodType<Record<string, unknown>>,
 };
 
@@ -95,9 +96,27 @@ function diag(
 	return { code, severity, slug, message, detail };
 }
 
+/** Remove fenced code blocks so placeholder syntax like `<Domain title>` in YAML samples is not parsed as JSX. */
+function bodyWithoutFencedCode(body: string): string {
+	return body.replace(/```[^\n]*\r?\n[\s\S]*?```/g, '');
+}
+
+/** Remove inline code spans so generics like `` `Option<T>` `` are not parsed as JSX components. */
+function bodyWithoutInlineCode(body: string): string {
+	let out = body;
+	// MDX-safe literals: `` `Type<T>` `` (inner single backticks)
+	out = out.replace(/``\s*`[^`]+`\s*``/g, (match) => ' '.repeat(match.length));
+	// Double-backtick spans without inner backticks: ``Type<T>``
+	out = out.replace(/``[^`\n]+``/g, (match) => ' '.repeat(match.length));
+	// Single-backtick inline code
+	out = out.replace(/`[^`\n]+`/g, (match) => ' '.repeat(match.length));
+	return out;
+}
+
 export function validateHubMdxComponents(slug: string, contentPath: string, body: string): LayoutDiagnostic[] {
 	const out: LayoutDiagnostic[] = [];
-	for (const tag of iterPascalCaseOpeningTags(body)) {
+	const stripped = bodyWithoutInlineCode(bodyWithoutFencedCode(body));
+	for (const tag of iterPascalCaseOpeningTags(stripped)) {
 		const schema = HUB_COMPONENT_PROP_SCHEMAS[tag.name];
 		if (!schema) {
 			out.push(

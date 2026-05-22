@@ -6,28 +6,22 @@ import LanguageSelect from 'virtual:starlight/components/LanguageSelect';
 import Search from 'virtual:starlight/components/Search';
 import SocialIcons from 'virtual:starlight/components/SocialIcons';
 import ThemeSelect from 'virtual:starlight/components/ThemeSelect';
+import BookNavChrome from '../book/BookNavChrome.astro';
+import BookNavToggle from '../book/BookNavToggle.astro';
+import PlatformSpecNavChrome from '../platform-spec/PlatformSpecNavChrome.astro';
+import PlatformSpecNavToggle from '../platform-spec/PlatformSpecNavToggle.astro';
 
 const shouldRenderSearch =
 	config.pagefind || config.components.Search !== '@astrojs/starlight/components/Search.astro';
 
 const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
 
-/** Shown next to the Beskid mark so the top bar matches the doc area (Starlight uses one global Header). */
 const scopeLabel = (() => {
 	if (path === '/' || path === '') return 'Home';
 	if (path.startsWith('/platform-spec')) return 'Platform specification';
 	if (path.startsWith('/book')) return 'The Beskid Book';
-	if (
-		path.startsWith('/overview') ||
-		path.startsWith('/guides') ||
-		path.startsWith('/execution') ||
-		path.startsWith('/corelib') ||
-		path.startsWith('/packages') ||
-		path.startsWith('/downloads')
-	) {
-		return 'Documentation';
-	}
-	return 'Documentation';
+	if (path.startsWith('/downloads')) return 'Download';
+	return 'Beskid';
 })();
 
 const isActive = (href: string) => {
@@ -35,13 +29,18 @@ const isActive = (href: string) => {
 	const normalized = href.replace(/\/+$/, '');
 	return path === normalized || path.startsWith(`${normalized}/`);
 };
-const isDocsMenuActive = isActive('/overview') || isActive('/platform-spec') || isActive('/book');
+
+const isPlatformSpec = path === '/platform-spec' || path.startsWith('/platform-spec/');
+const isPlatformSpecMap = path === '/platform-spec';
+const isBook = path === '/book' || path.startsWith('/book/');
 ---
 
 <div class="header beskid-header">
 	<Astronav closeOnClick>
 		<div class="beskid-header__row">
 			<div class="beskid-header__brand sl-flex">
+				{isPlatformSpec && <PlatformSpecNavToggle showInTopBar={isPlatformSpecMap} />}
+				{isBook && <BookNavToggle />}
 				<a class="beskid-header__brand-logo-link" href="/" aria-label="Beskid home">
 					<img class="beskid-header__brand-logo" src="/favicon.svg" alt="" width="26" height="26" />
 				</a>
@@ -60,25 +59,17 @@ const isDocsMenuActive = isActive('/overview') || isActive('/platform-spec') || 
 							<a href="/" class:list={['platform-spec-topbar-actions__btn', isActive('/') && 'is-active']}>Home</a>
 						</li>
 						<li>
-							<details class:list={['beskid-header__docs-menu', isDocsMenuActive && 'is-active']}>
-								<summary class="platform-spec-topbar-actions__btn">Docs</summary>
-								<ul class="beskid-header__docs-menu-list" aria-label="Docs sections">
-									<li>
-										<a href="/overview/" class:list={['beskid-header__docs-menu-link', isActive('/overview') && 'is-active']}>Docs</a>
-									</li>
-									<li>
-										<a
-											href="/platform-spec/"
-											class:list={['beskid-header__docs-menu-link', isActive('/platform-spec') && 'is-active']}
-										>
-											Platform Spec
-										</a>
-									</li>
-									<li>
-										<a href="/book/" class:list={['beskid-header__docs-menu-link', isActive('/book') && 'is-active']}>Book</a>
-									</li>
-								</ul>
-							</details>
+							<a
+								href="/platform-spec/"
+								class:list={['platform-spec-topbar-actions__btn', isActive('/platform-spec') && 'is-active']}
+							>
+								Platform specification
+							</a>
+						</li>
+						<li>
+							<a href="/book/" class:list={['platform-spec-topbar-actions__btn', isActive('/book') && 'is-active']}>
+								Book
+							</a>
 						</li>
 						<li>
 							<a
@@ -128,27 +119,25 @@ const isDocsMenuActive = isActive('/overview') || isActive('/platform-spec') || 
 					</a>
 				</li>
 				<li>
-					<details class:list={['beskid-header__mobile-group', isDocsMenuActive && 'is-active']}>
-						<summary class="beskid-header__mobile-link">
-							<svg class="beskid-header__mobile-link-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v14.5A1.5 1.5 0 0 1 18.5 20H6.5A2.5 2.5 0 0 0 4 22V6.5z"></path>
-								<path d="M8 8h8M8 12h8"></path>
-							</svg>
-							<span>Docs</span>
-						</summary>
-						<ul class="beskid-header__mobile-sublist">
-							<li><a href="/overview/" class:list={['beskid-header__mobile-sublink', isActive('/overview') && 'is-active']}>Docs</a></li>
-							<li>
-								<a
-									href="/platform-spec/"
-									class:list={['beskid-header__mobile-sublink', isActive('/platform-spec') && 'is-active']}
-								>
-									Platform Spec
-								</a>
-							</li>
-							<li><a href="/book/" class:list={['beskid-header__mobile-sublink', isActive('/book') && 'is-active']}>Book</a></li>
-						</ul>
-					</details>
+					<a
+						href="/platform-spec/"
+						class:list={['beskid-header__mobile-link', isActive('/platform-spec') && 'is-active']}
+					>
+						<svg class="beskid-header__mobile-link-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v14.5A1.5 1.5 0 0 1 18.5 20H6.5A2.5 2.5 0 0 0 4 22V6.5z"></path>
+							<path d="M8 8h8M8 12h8"></path>
+						</svg>
+						<span>Platform specification</span>
+					</a>
+				</li>
+				<li>
+					<a href="/book/" class:list={['beskid-header__mobile-link', isActive('/book') && 'is-active']}>
+						<svg class="beskid-header__mobile-link-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v14.5A1.5 1.5 0 0 1 18.5 20H6.5A2.5 2.5 0 0 0 4 22V6.5z"></path>
+							<path d="M8 8h8M8 12h8"></path>
+						</svg>
+						<span>Book</span>
+					</a>
 				</li>
 				<li>
 					<a href="/downloads/" class:list={['beskid-header__mobile-link', isActive('/downloads') && 'is-active']}>
@@ -162,6 +151,8 @@ const isDocsMenuActive = isActive('/overview') || isActive('/platform-spec') || 
 		</MenuItems>
 	</Astronav>
 </div>
+{isPlatformSpec && <PlatformSpecNavChrome currentPath={path} isMapPage={isPlatformSpecMap} />}
+{isBook && <BookNavChrome currentPath={path} />}
 
 <style>
 	@layer starlight.components {
@@ -173,10 +164,6 @@ const isDocsMenuActive = isActive('/overview') || isActive('/platform-spec') || 
 			width: 100%;
 		}
 
-		/**
-		 * Starlight wraps this header in `.page > .header .header` with `display: grid` (3 columns).
-		 * Our markup is a single child, so we must lay out branding / search / nav ourselves with CSS grid.
-		 */
 		.beskid-header__row {
 			display: grid;
 			grid-template-columns: auto minmax(0, 1fr) max-content;
@@ -189,6 +176,7 @@ const isDocsMenuActive = isActive('/overview') || isActive('/platform-spec') || 
 
 		.beskid-header__brand {
 			align-items: center;
+			justify-self: start;
 			gap: 0.45rem;
 			min-width: 0;
 		}
@@ -294,56 +282,6 @@ const isDocsMenuActive = isActive('/overview') || isActive('/platform-spec') || 
 			gap: 0.2rem;
 		}
 
-		.beskid-header__docs-menu {
-			position: relative;
-		}
-
-		.beskid-header__docs-menu > summary {
-			list-style: none;
-			cursor: pointer;
-		}
-
-		.beskid-header__docs-menu > summary::-webkit-details-marker {
-			display: none;
-		}
-
-		.beskid-header__docs-menu-list {
-			position: absolute;
-			top: calc(100% + 0.35rem);
-			left: 0;
-			min-width: 12rem;
-			list-style: none;
-			margin: 0;
-			padding: 0.35rem;
-			border: 1px solid var(--platform-spec-divider);
-			border-radius: 0.4rem;
-			background: color-mix(in srgb, var(--platform-spec-surface) 92%, transparent);
-			box-shadow: 0 12px 22px rgba(0, 0, 0, 0.35);
-			display: grid;
-			gap: 0.15rem;
-			z-index: 40;
-		}
-
-		.beskid-header__docs-menu:not([open]) .beskid-header__docs-menu-list {
-			display: none;
-		}
-
-		.beskid-header__docs-menu-link {
-			display: block;
-			padding: 0.4rem 0.5rem;
-			border-radius: 0.3rem;
-			color: var(--sl-color-gray-2);
-			font-size: var(--sl-text-xs);
-			font-weight: 600;
-			text-decoration: none;
-		}
-
-		.beskid-header__docs-menu-link:hover,
-		.beskid-header__docs-menu-link.is-active {
-			background: color-mix(in srgb, var(--platform-spec-tab-indicator) 16%, transparent);
-			color: var(--platform-spec-tab-text-active);
-		}
-
 		.beskid-header__mobile-toggle :global(button) {
 			display: inline-flex;
 			align-items: center;
@@ -380,36 +318,6 @@ const isDocsMenuActive = isActive('/overview') || isActive('/platform-spec') || 
 			display: flex;
 			flex-direction: column;
 			gap: 0.34rem;
-		}
-
-		.beskid-header__mobile-group > summary {
-			list-style: none;
-		}
-
-		.beskid-header__mobile-group > summary::-webkit-details-marker {
-			display: none;
-		}
-
-		.beskid-header__mobile-sublist {
-			list-style: none;
-			margin: 0.25rem 0 0.4rem 1.5rem;
-			padding: 0;
-			display: grid;
-			gap: 0.2rem;
-		}
-
-		.beskid-header__mobile-sublink {
-			display: block;
-			padding: 0.3rem 0.56rem;
-			color: var(--sl-color-gray-2);
-			font-size: var(--sl-text-xs);
-			font-weight: 600;
-			text-decoration: none;
-		}
-
-		.beskid-header__mobile-sublink:hover,
-		.beskid-header__mobile-sublink.is-active {
-			color: var(--platform-spec-tab-text-active);
 		}
 
 		.beskid-header__mobile-link {

@@ -1,0 +1,41 @@
+---
+title: Git main as the specification version axis
+description: No URL version segments; normative truth tracks Git `main` and `lastReviewed`.
+specLevel: adr
+status: Standard
+adrId: D-INC-0007
+adrStatus: Accepted
+adrDate: 2024-06-15
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Project inception decisions
+    href: /platform-spec/community/project-inception/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+URL-versioned spec sites drift from the implementation contributors actually ship.
+
+## Decision
+
+Published platform-spec URLs **must not** embed version path segments. Maturity uses frontmatter `status` and `lastReviewed`; delivery bands (v0.x) describe scope, not alternate spec trees.
+
+## Consequences
+
+Release policy and site deploy track `main`.
+
+## Verification anchors
+
+[Release and versioning policy](/platform-spec/community/spec-maintenance/release-and-versioning-policy/).

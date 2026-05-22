@@ -37,6 +37,11 @@ import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
 
 This feature hub defines how the reference compiler turns a resolved **`CompilePlan`** plus **effective (materialized-first) source roots** into a **`ProgramAssembly`**: discovered `.bd` units, a shared **`ModuleIndex`** for cross-module resolution, and a single front-end spine consumed by CLI, LSP, analyze, and codegen. JIT and AOT backends consume **`CodegenArtifact`** only and do not re-run assembly.
 
+## Decisions
+
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-BUILD-0013` … `D-COMP-BUILD-0015`); use the reader **ADRs** tab for expandable detail.
+
+
 - [Design model](./design-model/)
 - [Flow and algorithm](./flow-and-algorithm/)
 - [Contracts and edge cases](./contracts-and-edge-cases/)

@@ -1,0 +1,44 @@
+---
+title: Capability gating strips ANSI
+description: Styled emission must respect ShouldEmitAnsi and non-TTY hosts.
+specLevel: adr
+status: Standard
+adrId: D-CORE-TERM-0002
+adrStatus: Accepted
+adrDate: 2026-05-20
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: ANSI escape model
+    href: /platform-spec/core-library/terminal-and-console/ansi-escape-model/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Programs must not leak escapes to pipes, log files, or NO_COLOR environments.
+
+## Decision
+
+| Rule | Detail |
+| --- | --- |
+| Gating | User-visible styled output **must** pass `Ansi.Escape.WhenEnabled` |
+| Tests | Ungated `Csi` remains for golden tests |
+
+## Consequences
+
+When `ShouldEmitAnsi()` is false, gated builders return empty strings.
+
+## Verification anchors
+
+`AnsiEscapeTests.bd`; console capability integration.

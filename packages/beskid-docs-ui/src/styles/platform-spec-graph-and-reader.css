@@ -387,6 +387,28 @@
 	padding-top: 0.65rem;
 }
 
+/* Flex/grid on descendants can keep `[hidden]` panels painted and blocking link clicks (see platform-spec-home__panel). */
+.platform-spec-doc-tabs starlight-tabs > [role='tabpanel'][hidden] {
+	display: none !important;
+	visibility: hidden !important;
+	pointer-events: none !important;
+}
+
+.platform-spec-doc-tabs starlight-tabs > [role='tabpanel'][hidden] * {
+	pointer-events: none !important;
+}
+
+.platform-spec-doc-tabs starlight-tabs > [role='tabpanel']:not([hidden]) {
+	position: relative;
+	z-index: 1;
+}
+
+.platform-spec-doc-split__article-link {
+	position: relative;
+	z-index: 0;
+	cursor: pointer;
+}
+
 .platform-spec-two-col {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
@@ -885,6 +907,13 @@
 .related-topics__title {
 	font-weight: 600;
 	font-size: var(--sl-text-base);
+	color: var(--sl-color-text-accent);
+	text-decoration: none;
+}
+
+.related-topics__title:hover {
+	color: var(--sl-color-accent-high);
+	text-decoration: underline;
 }
 
 .related-topics__relation {

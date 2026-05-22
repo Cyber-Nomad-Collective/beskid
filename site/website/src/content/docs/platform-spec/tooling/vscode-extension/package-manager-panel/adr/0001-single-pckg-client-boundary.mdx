@@ -1,0 +1,41 @@
+---
+title: pckgClient boundary
+description: pckgClient boundary
+specLevel: adr
+status: Standard
+adrId: D-TOOL-VSC-0001
+adrStatus: Accepted
+adrDate: 2026-05-20
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Package manager panel
+    href: /platform-spec/tooling/vscode-extension/package-manager-panel/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+HTTP scatter.
+
+## Decision
+
+HTTP via pckgClient.ts only.
+
+## Consequences
+
+Shared auth.
+
+## Verification anchors
+
+Grep fetch in packages/.

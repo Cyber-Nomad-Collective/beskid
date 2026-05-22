@@ -2,20 +2,26 @@
  * Build-time git history for platform-spec docs. Writes JSON consumed by SpecDocHistory.
  * Keys are paths relative to site/website (e.g. src/content/docs/platform-spec/...).
  */
-import { execFileSync } from 'node:child_process';
+import { execFile, execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { getWebsiteRoot } from './lib/website-root.mjs';
+import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
+import { getWebsiteRoot } from './lib/website-root.mjs';
+
+const execFileAsync = promisify(execFile);
 
 const WEBSITE_ROOT = getWebsiteRoot(import.meta.url);
 const SPEC_ROOT = path.join(WEBSITE_ROOT, 'src', 'content', 'docs', 'platform-spec');
 const OUT_DIR = path.join(WEBSITE_ROOT, 'src', 'generated');
 const OUT_FILE = path.join(OUT_DIR, 'platform-spec-git-meta.json');
 const MAX_COMMITS = 50;
+const GIT_CONCURRENCY = Math.max(1, Number.parseInt(process.env.PLATFORM_SPEC_GIT_META_CONCURRENCY ?? '24', 10) || 24);
 const defaultRepoJsonPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'src', 'platform-spec', 'beskid-default-repo.json');
 const DEFAULT_REPO = JSON.parse(fs.readFileSync(defaultRepoJsonPath, 'utf8')).repo;
 const DEFAULT_BRANCH = process.env.GITHUB_DEFAULT_BRANCH?.trim() || 'main';
+const GIT_LOG_ARGS = ['-c', 'core.quotepath=false', 'log', '--follow', '--date=iso-strict', '--pretty=format:%H%x09%an%x09%ae%x09%ad%x09%s'];
+const GIT_MAX_BUFFER = 10 * 1024 * 1024;
 
 function walk(dir, out = []) {
 	if (!fs.existsSync(dir)) return out;
@@ -35,48 +41,45 @@ function gitTopLevel(cwd) {
 	}
 }
 
-function gitLogFollow(repoRoot, relPathFromRepo) {
-	const args = [
-		'-c',
-		'core.quotepath=false',
-		'log',
-		'--follow',
-		'-n',
-		String(MAX_COMMITS),
-		'--date=iso-strict',
-		'--pretty=format:%H%x09%an%x09%ae%x09%ad%x09%s',
-		'--',
-		relPathFromRepo,
-	];
+function parseGitLog(stdout) {
+	const lines = stdout.split(/\r?\n/).filter(Boolean);
+	const commits = [];
+	for (const line of lines) {
+		const [hash, author, email, date, ...subj] = line.split('\t');
+		if (!hash) continue;
+		commits.push({
+			hash,
+			author: author ?? '',
+			email: email ?? '',
+			date: date ?? '',
+			subject: subj.join('\t') || '',
+		});
+	}
+	return commits;
+}
+
+async function gitLogFollow(repoRoot, relPathFromRepo, limit) {
+	const args = [...GIT_LOG_ARGS, '-n', String(limit), '--', relPathFromRepo];
 	try {
-		const out = execFileSync('git', args, { encoding: 'utf8', cwd: repoRoot, maxBuffer: 10 * 1024 * 1024 });
-		const lines = out.split(/\r?\n/).filter(Boolean);
-		const commits = [];
-		for (const line of lines) {
-			const [hash, author, email, date, ...subj] = line.split('\t');
-			if (!hash) continue;
-			commits.push({
-				hash,
-				author: author ?? '',
-				email: email ?? '',
-				date: date ?? '',
-				subject: subj.join('\t') || '',
-			});
-		}
-		return commits;
+		const { stdout } = await execFileAsync('git', args, {
+			encoding: 'utf8',
+			cwd: repoRoot,
+			maxBuffer: GIT_MAX_BUFFER,
+		});
+		return parseGitLog(stdout);
 	} catch {
 		return [];
 	}
 }
 
-function gitRevisionCountFollow(repoRoot, relPathFromRepo) {
+async function gitRevisionCountFollow(repoRoot, relPathFromRepo) {
 	try {
-		const out = execFileSync(
+		const { stdout } = await execFileAsync(
 			'git',
 			['-c', 'core.quotepath=false', 'log', '--follow', '--pretty=format:%H', '--', relPathFromRepo],
-			{ encoding: 'utf8', cwd: repoRoot, maxBuffer: 10 * 1024 * 1024 },
+			{ encoding: 'utf8', cwd: repoRoot, maxBuffer: GIT_MAX_BUFFER },
 		);
-		return out.split(/\r?\n/).filter(Boolean).length;
+		return stdout.split(/\r?\n/).filter(Boolean).length;
 	} catch {
 		return 0;
 	}
@@ -94,44 +97,90 @@ function uniqueAuthorsFromCommits(commits) {
 	return list;
 }
 
-function main() {
+async function mapPool(items, concurrency, fn) {
+	const results = new Array(items.length);
+	let next = 0;
+	async function worker() {
+		for (;;) {
+			const i = next++;
+			if (i >= items.length) return;
+			results[i] = await fn(items[i], i);
+		}
+	}
+	await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, () => worker()));
+	return results;
+}
+
+async function buildFileEntry(abs, repoRoot) {
+	const websiteRelativePath = path.relative(WEBSITE_ROOT, abs).split(path.sep).join('/');
+	if (!repoRoot) {
+		return [
+			websiteRelativePath,
+			{
+				repoRelativePath: websiteRelativePath,
+				revisionCount: 0,
+				commits: [],
+				uniqueAuthors: [],
+			},
+		];
+	}
+	const repoRelativePath = path.relative(repoRoot, abs).split(path.sep).join('/');
+	const commits = await gitLogFollow(repoRoot, repoRelativePath, MAX_COMMITS);
+	let revisionCount = commits.length;
+	if (commits.length >= MAX_COMMITS) {
+		revisionCount = await gitRevisionCountFollow(repoRoot, repoRelativePath);
+	}
+	return [
+		websiteRelativePath,
+		{
+			repoRelativePath,
+			revisionCount,
+			commits,
+			uniqueAuthors: uniqueAuthorsFromCommits(commits),
+		},
+	];
+}
+
+async function main() {
+	const started = performance.now();
 	fs.mkdirSync(OUT_DIR, { recursive: true });
 	const repoRoot = gitTopLevel(WEBSITE_ROOT);
 	const files = walk(SPEC_ROOT);
+	const entries = repoRoot
+		? await mapPool(files, GIT_CONCURRENCY, (abs) => buildFileEntry(abs, repoRoot))
+		: files.map((abs) => {
+				const websiteRelativePath = path.relative(WEBSITE_ROOT, abs).split(path.sep).join('/');
+				return [
+					websiteRelativePath,
+					{
+						repoRelativePath: websiteRelativePath,
+						revisionCount: 0,
+						commits: [],
+						uniqueAuthors: [],
+					},
+				];
+			});
+
 	const payload = {
 		generatedAt: new Date().toISOString(),
 		gitAvailable: Boolean(repoRoot),
 		defaultBranch: DEFAULT_BRANCH,
 		repo: DEFAULT_REPO,
-		files: {},
+		files: Object.fromEntries(entries),
 	};
-
-	for (const abs of files) {
-		const websiteRelativePath = path.relative(WEBSITE_ROOT, abs).split(path.sep).join('/');
-		let repoRelativePath = websiteRelativePath;
-		let commits = [];
-		let revisionCount = 0;
-		if (repoRoot) {
-			repoRelativePath = path.relative(repoRoot, abs).split(path.sep).join('/');
-			commits = gitLogFollow(repoRoot, repoRelativePath);
-			revisionCount = gitRevisionCountFollow(repoRoot, repoRelativePath);
-		}
-		payload.files[websiteRelativePath] = {
-			repoRelativePath,
-			revisionCount,
-			commits,
-			uniqueAuthors: uniqueAuthorsFromCommits(commits),
-		};
-	}
 
 	if (!repoRoot) {
 		console.warn('generate-platform-spec-git-meta: no git repo; revision data will be empty.');
 	}
 
 	fs.writeFileSync(OUT_FILE, JSON.stringify(payload, null, 2), 'utf8');
+	const elapsed = ((performance.now() - started) / 1000).toFixed(1);
 	console.log(
-		`generate-platform-spec-git-meta: wrote ${Object.keys(payload.files).length} file(s) -> ${path.relative(WEBSITE_ROOT, OUT_FILE)}`,
+		`generate-platform-spec-git-meta: wrote ${Object.keys(payload.files).length} file(s) -> ${path.relative(WEBSITE_ROOT, OUT_FILE)} (${elapsed}s)`,
 	);
 }
 
-main();
+main().catch((err) => {
+	console.error('generate-platform-spec-git-meta:', err);
+	process.exit(1);
+});

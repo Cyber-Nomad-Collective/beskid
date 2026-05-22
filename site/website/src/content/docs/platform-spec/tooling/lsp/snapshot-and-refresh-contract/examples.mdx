@@ -1,6 +1,6 @@
 ---
 title: Examples
-description: Concrete examples for `Snapshot and refresh contract` decisions and usage patterns.
+description: Observable LSP refresh scenarios for snapshots and diagnostics.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,31 +12,39 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: LSP
-    href: /platform-spec/tooling/lsp/
-    relation: Parent area
   - type: Feature
     title: Snapshot and refresh contract
     href: /platform-spec/tooling/lsp/snapshot-and-refresh-contract/
     relation: Parent feature hub
+  - type: Feature
+    title: Workspace and project explorer
+    href: /platform-spec/tooling/vscode-extension/workspace-project-explorer/
+    relation: Focused project drives context cache
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Focused project switch
 
-## What this article covers
-This article explains the `examples` view for `Snapshot and refresh contract` in concrete, onboarding-first language.
+1. User selects a workspace member in **Project** view.
+2. Extension sends focused `Project.proj` URI to the LSP.
+3. Server invalidates `compilation_context_cache` and schedules `refresh_workspace_scan`.
+4. Diagnostics on open `.bd` files refresh against the new graph.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Edit loop
 
-## Code anchors
-- LSP diagnostics in `compiler/crates/beskid_lsp/src/diagnostics.rs`
-- Analysis services in `compiler/crates/beskid_analysis/src/services.rs`
-- Resolver implementation in `compiler/crates/beskid_analysis/src/resolve/resolver.rs`
+1. `didChange` updates buffer text and hash.
+2. Analysis rebuilds snapshot with current `CompilationContext`.
+3. After ~120ms quiet period, `textDocument/publishDiagnostics` fires.
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Close and reopen
+
+1. `didClose` removes open buffer entry.
+2. `hydrate_disk_after_close` reads file from disk into `workspace_index`.
+3. Reopen uses `didOpen` → fresh open snapshot (disk index entry removed).
+
+## CI parity check
+
+Run `beskid analyze --project <same Project.proj>` and compare diagnostic codes to the Problems panel for the same file generation—discrepancies indicate cache or focus mismatch, not intentional divergence.

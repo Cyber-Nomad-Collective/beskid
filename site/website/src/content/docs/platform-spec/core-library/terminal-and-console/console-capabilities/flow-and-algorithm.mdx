@@ -1,11 +1,11 @@
 ---
 title: Flow and algorithm
-description: Lifecycle and execution flow.
+description: Probe and strip algorithms for terminal capabilities.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-20
+lastReviewed: 2026-05-21
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -22,8 +22,45 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
-## What this article covers
-This article documents **flow-and-algorithm** for **Console capabilities**.
+## Purpose
 
-## Normative notes
-See the parent feature hub and `ANSI.md` in the aggregate repository for escape-sequence tables. Stream I/O must use `System.Syscall` wrappers; stdout/stderr are write-only at the syscall layer.
+Document **flow and algorithm** for the **Console Capabilities** feature: role-specific normative detail beyond the feature hub.
+
+## Canonical references
+
+- Feature hub: [Console Capabilities](/platform-spec/core-library/terminal-and-console/console-capabilities/)
+- Sibling articles in this bundle (design model, contracts, flow, examples, verification)
+
+## Detailed behavior
+
+### `ProbeStdout` algorithm
+
+1. `isTty ← Terminal.IsAtty(1) != 0`
+2. `colorDisabled ← EnvFlagSet("NO_COLOR")`
+3. `colorForced ← EnvFlagSet("FORCE_COLOR")`
+4. `model ← Terminal.ProbeColorModel()` (honors `ForcePlainText` internally)
+5. Return `Capabilities { ... }`
+
+### `ShouldStripColor` decision tree
+
+1. If `colorDisabled` → **strip**
+2. Else if `colorForced` → **do not strip**
+3. Else if `!isTty` → **strip**
+4. Else → **do not strip**
+
+### `ProbeColorModel` (platform)
+
+1. If `ForcePlainText()` → `Basic16`
+2. Else if `COLORTERM` set → `TrueColor`
+3. Else match `TERM` (`xterm-256color`, `xterm-color`, …)
+4. Default → `Indexed256`
+
+Downstream `Ansi.Sgr` reads the model once per `IntoPrefix` / RGB call path.
+
+## Verification
+
+See the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.
+
+## Related topics
+
+- Parent [feature hub](/platform-spec/core-library/terminal-and-console/console-capabilities/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)

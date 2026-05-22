@@ -1,11 +1,11 @@
 ---
 title: Design model
-description: Conceptual model and boundaries.
+description: ConsoleMessage variants and resize notification surfaces.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-20
+lastReviewed: 2026-05-21
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -22,18 +22,47 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
-## What this article covers
-This article documents **design-model** for **Console terminal events**.
+## Purpose
 
-## Normative notes
-See the parent feature hub and `ANSI.md` in the aggregate repository for escape-sequence tables. Stream I/O must use `System.Syscall` wrappers; stdout/stderr are write-only at the syscall layer.
+Document **design model** for the **Console Terminal Events** feature: role-specific normative detail beyond the feature hub.
 
-## Fiber and Channel delivery
+## Canonical references
 
-Terminal resize, tick, and other asynchronous terminal signals **must** be published to a **`Channel&lt;T&gt;`** (or consumed through a **`Hub`** registration) so the UI fiber can **Receive** them without cross-fiber **`event`** invocation.
+- Feature hub: [Console Terminal Events](/platform-spec/core-library/terminal-and-console/console-terminal-events/)
+- Sibling articles in this bundle (design model, contracts, flow, examples, verification)
 
-- Producer side (platform extern callback or reader fiber): **Send** into the channel.
-- Consumer side (main UI loop fiber): **Receive** / **Hub.WaitReceive**.
-- **`Console.OnResize`** may remain a typed surface that documents which **Channel** carries `ConsoleSize` payloads.
+## Detailed behavior
 
-This aligns with **[Events](/platform-spec/language-meta/evaluation/events/)** fiber-affinity rules and **[Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/)**.
+### `ConsoleMessage`
+
+| Variant | Payload | Use |
+| --- | --- | --- |
+| `Resize(ConsoleSize)` | columns/rows | Terminal geometry changed |
+| (tick-related) | — | Integrated with `Console.RunTick` polling |
+
+Messages flow on an **unbounded** `Channel<ConsoleMessage>` created by `Console.MessagesChannel()` unless callers supply their own channel.
+
+### `OnResize` hub
+
+Same-fiber `event OnResize(ConsoleSize)` with cached `lastSize`. Distinct from `Concurrency.Hub` (channel multiplexing). Use when resize handlers must run on the UI fiber without cross-fiber `Send`.
+
+### Size probing stack
+
+```mermaid
+flowchart TD
+  winsize[Platform Winsize ioctl]
+  env[COLUMNS / LINES env]
+  query[Terminal.QuerySize]
+  winsize --> query
+  env --> query
+```
+
+ANSI screen modes are unrelated to size events; see [ANSI escape model](/platform-spec/core-library/terminal-and-console/ansi-escape-model/).
+
+## Verification
+
+See the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.
+
+## Related topics
+
+- Parent [feature hub](/platform-spec/core-library/terminal-and-console/console-terminal-events/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)

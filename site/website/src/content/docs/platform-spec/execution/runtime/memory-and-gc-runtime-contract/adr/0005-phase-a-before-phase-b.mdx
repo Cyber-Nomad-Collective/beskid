@@ -1,0 +1,50 @@
+---
+title: Ship Phase A GC before parallel mutators
+description: v0.2 targets single mutator; Phase B requires spec and barrier completion first.
+specLevel: adr
+status: Standard
+adrId: D-EXEC-RT-0005
+adrStatus: Accepted
+adrDate: 2026-01-15
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Memory and GC runtime contract
+    href: /platform-spec/execution/runtime/memory-and-gc-runtime-contract/
+    relation: Parent feature hub
+  - type: Feature
+    title: Fiber scheduler and stacks
+    href: /platform-spec/execution/runtime/fiber-scheduler-and-stacks/
+    relation: Phase A scheduling rules
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Parallel GC mutators need write barriers, stack-map coverage, and scheduler coordination. Shipping partial parallel GC risks data races on the Abfall heap.
+
+## Decision
+
+| Phase | Mutators | Ship order |
+| --- | --- | --- |
+| **A (v0.2)** | One Beskid mutator; many cooperative fibers | **Default ship** |
+| **B** | Parallel mutators + real `gc_write_barrier` | **After** normative Phase B text and scheduler updates |
+
+Phase B **must not** land without updating this feature hub and fiber scheduler contracts.
+
+## Consequences
+
+Barriers may be no-ops or simplified while Phase A invariants hold. Fiber/feature docs cross-link Phase tables.
+
+## Verification anchors
+
+GC integration tests; platform-spec Phase diagrams in hub and [design model](../design-model/).

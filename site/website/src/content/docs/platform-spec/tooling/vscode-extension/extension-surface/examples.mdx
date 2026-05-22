@@ -1,10 +1,11 @@
 ---
 title: Examples
-description: Concrete examples for `Extension surface` decisions and usage patterns.
+description: corelib workspace and single-app project scenarios.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-21
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,31 +13,30 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: VS Code extension
-    href: /platform-spec/tooling/vscode-extension/
-    relation: Parent area
   - type: Feature
     title: Extension surface
     href: /platform-spec/tooling/vscode-extension/extension-surface/
     relation: Parent feature hub
+  - type: Feature
+    title: Workspace and lock contracts
+    href: /platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/
+    relation: corelib Workspace.proj
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## corelib workspace
 
-## What this article covers
-This article explains the `examples` view for `Extension surface` in concrete, onboarding-first language.
+1. Open `compiler/corelib` (or superrepo with corelib submodule) in VS Code.
+2. **Workspaces** lists `Workspace.proj` with member packages (for example `beskid_corelib`, console packages).
+3. Click a member → focus updates; **Packages → This project** shows locked `corelib` and siblings from `Project.lock`.
+4. **Registry search** for `corelib` hits the configured default registry; **Fetch** runs `beskid fetch --project` on the focused root.
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Single-app project
 
-## Code anchors
-- Extension manifest in `beskid_vscode/package.json`
-- Extension command wiring in `beskid_vscode/src`
-- OpenVSX publishing matrix in `.github/workflows/publish-open-vsx.yml`
-
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+1. Open a folder with only `Project.proj` (no workspace).
+2. Auto-select focuses that manifest when editing `.bd` files.
+3. **Project** view lists declared path/git/registry deps; unresolved registry deps show warning icons.
+4. `beskid lock` from the Packages view title updates `Project.lock` via CLI.

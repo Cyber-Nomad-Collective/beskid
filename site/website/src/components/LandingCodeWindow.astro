@@ -1,0 +1,53 @@
+---
+/** Plain pre/code for the hero terminal — avoids Shiki per-line gaps inside Starlight. */
+export interface Props {
+	file: string;
+	lines?: string[];
+	html?: string;
+}
+
+const { file, lines = [], html = '' } = Astro.props;
+
+const KEYWORDS = new Set(['pub', 'mod', 'use', 'type', 'return', 'string', 'mut', 'for', 'in', 'fn', 'host', 'registry', 'single', 'launch']);
+
+function escapeHtml(value: string): string {
+	return value
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;');
+}
+
+function highlightLine(line: string): string {
+	const escaped = escapeHtml(line);
+	return escaped
+		.split(/\b([A-Za-z_][A-Za-z0-9_]*)\b/g)
+		.map((part) => {
+			if (KEYWORDS.has(part)) {
+				return `<span class="landing-code-kw">${part}</span>`;
+			}
+			if (/^Client(Config)?$/.test(part) || part === 'endpoint') {
+				return `<span class="landing-code-type">${part}</span>`;
+			}
+			return part;
+		})
+		.join('');
+}
+
+const renderedHtml =
+	html ||
+	lines.map((line) => (line.length === 0 ? '\n' : `${highlightLine(line)}\n`)).join('');
+---
+
+<div class="landing-terminal" aria-label={`Example code from ${file}`}>
+	<div class="landing-terminal__head">
+		<div class="landing-terminal__dots" aria-hidden="true">
+			<span class="landing-terminal__dot landing-terminal__dot--red"></span>
+			<span class="landing-terminal__dot landing-terminal__dot--yellow"></span>
+			<span class="landing-terminal__dot landing-terminal__dot--green"></span>
+		</div>
+		<span>{file}</span>
+	</div>
+	<div class="landing-terminal__body">
+		<pre class="landing-terminal__pre"><code set:html={renderedHtml}></code></pre>
+	</div>
+</div>

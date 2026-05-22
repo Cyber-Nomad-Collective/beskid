@@ -1,0 +1,50 @@
+---
+title: "VS Code and LSP"
+description: Beskid VS Code extension, language ids, Open VSX install, and LSP binary selection.
+tableOfContents: true
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The fastest way to hate a new language is an editor that treats your files as plain text with extra steps.
+
+## Install the extension
+
+Published on Open VSX: [beskid-vscode](https://open-vsx.org/extension/beskid/beskid-vscode).
+
+The extension registers:
+
+- `beskid` for `*.bd` sources
+- `beskid-proj` for `*.proj` manifests (highlighting + the same LSP project model)
+
+<Aside type="tip">
+
+Install the CLI from [chapter 01](/book/01-it-works-on-my-machine/) **before** expecting diagnostics to match CI. The extension can bundle an LSP, but your team should agree on one version story.
+
+</Aside>
+
+## Bundled vs local LSP
+
+You can run the **bundled** language server (matches the extension release) or point settings at a **local development** binary built from `compiler/`. Use local when you are hacking the compiler; use bundled when you are writing Beskid apps.
+
+Mismatch symptoms:
+
+- Parse OK in terminal, squiggles nonsense in editor
+- Fixes apply in CLI but not after save in IDE
+
+Fix: align `beskid --version` with the LSP binary the extension launches.
+
+## What LSP gives you (week one)
+
+- Diagnostics on save / open
+- Basic navigation hooks (exact feature set grows with the server—see [LSP architecture](/book/reference/lsp/architecture-and-protocol-spec/))
+- Project-aware analysis rooted at `Project.proj`
+
+## Deep reference
+
+- [Guides / LSP](/book/reference/lsp/)
+- [Platform spec — tooling / editor integration](/platform-spec/tooling/) (as indexed in platform-spec)
+
+## Next
+
+[CLI tour](/book/02-path-not-found-tooling-anyway/cli-tour/)

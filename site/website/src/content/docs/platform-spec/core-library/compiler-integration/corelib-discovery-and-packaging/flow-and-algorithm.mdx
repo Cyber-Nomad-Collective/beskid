@@ -1,6 +1,6 @@
 ---
 title: Flow and algorithm
-description: End-to-end control flow and major algorithmic steps for `Corelib discovery and packaging`.
+description: End-to-end control flow for corelib discovery, materialization, and packaging.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,46 +12,55 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Compiler integration
-    href: /platform-spec/core-library/compiler-integration/
-    relation: Parent area
-  - type: Area
-    title: Resolution and projects
-    href: /platform-spec/compiler/resolution-and-projects/
-    relation: Project graph logic resolves and injects corelib
-  - type: Area
-    title: Stability and API shape
-    href: /platform-spec/core-library/stability-and-api-shape/
-    relation: API stability expectations depend on canonical packaging
   - type: Feature
     title: Corelib discovery and packaging
     href: /platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/
     relation: Parent feature hub
+  - type: Feature
+    title: pckg client contract
+    href: /platform-spec/tooling/registry-client/pckg-client-contract/
+    relation: Pack and publish HTTP flow
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Local discovery flow
 
+```mermaid
+sequenceDiagram
+  participant Tool as CLI or LSP
+  participant Res as default_corelib_dependency_path
+  participant Root as beskid_corelib
+  Tool->>Res: env BESKID_CORELIB_ROOT or repo walk
+  Res->>Root: normalize Project.proj path
+  Root-->>Tool: graph node for Std / corelib
+```
 
-## End-to-end flow
+1. Tool starts project resolution.
+2. `default_corelib_dependency_path` checks `BESKID_CORELIB_ROOT`, then `discover_repo_corelib_root` walking ancestors for `compiler/corelib/beskid_corelib`.
+3. If CLI startup runs `ensure_corelib_ready`, bundled template materialization may populate install dir before step 2.
+4. Aggregate manifest pulls workspace members into the compile plan.
 
-1. Input enters compiler/runtime boundary at a stable entrypoint.
-2. The responsible crate enforces the expected shape and emits stable structures.
-3. Downstream crates consume those structures without redefining semantics.
-4. Conformance tests assert behavior at integration boundaries.
+## CI publish flow
 
-## Algorithm notes for newcomers
+1. Build / verify corelib workspace in `compiler` CI.
+2. `beskid doc` (when enabled) writes `.beskid/docs/api.json` + markdown.
+3. `beskid pckg pack` on `beskid_corelib/Project.proj` with publisher credentials.
+4. pckg server validates artifact (`PackageArtifactValidator`) and ingests docs for the package browser.
+5. Consumers `beskid fetch` pinned versions into `.beskid/packages/` recorded in `Project.lock`.
 
-- Prefer tracing one fixture end-to-end before reading all modules.
-- Verify where shape conversion happens; avoid assuming all crates mutate data.
-- Keep an eye on handoff points where diagnostics or ABI constraints are locked.
+## Shard cycle avoidance
 
-## Where to step through code
+When resolving manifests under `compiler/corelib/packages/*`, `is_corelib_workspace_shard_manifest` suppresses implicit `Std` back-edges to the aggregate package to prevent `beskid_corelib → shard → beskid_corelib` cycles.
 
-- Start with `Canonical package root `compiler/corelib/beskid_corelib``.
-- Then inspect `Corelib path discovery in `compiler/crates/beskid_analysis/src/projects/graph/resolver.rs``.
-- Follow consumption path at `CLI embedding/install support in `compiler/crates/beskid_cli/build.rs` and `compiler/crates/beskid_cli/src/corelib_runtime.rs``.
-- Validate expectations using `Integration checks in `compiler/crates/beskid_tests/src/projects/corelib``.
+## Algorithm notes
+
+- Trace one `beskid_corelib` compile in tests before editing resolver edge cases.
+- Pack and discovery share `parse_manifest` — manifest errors surface identically in CLI and pack.
+- Registry listing uses structured **`api.json`** as the docs UI contract when published.
+
+## Tests
+
+`compiler/crates/beskid_tests/src/projects/corelib/` (compile, layout, mod helpers).

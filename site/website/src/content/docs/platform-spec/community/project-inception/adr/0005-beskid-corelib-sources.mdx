@@ -1,0 +1,41 @@
+---
+title: Core library in Beskid source
+description: Standard library implementation stays Beskid packages in the corelib submodule—not a parallel Rust std port.
+specLevel: adr
+status: Standard
+adrId: D-INC-0005
+adrStatus: Accepted
+adrDate: 2024-05-01
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Project inception decisions
+    href: /platform-spec/community/project-inception/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Splitting corelib into ad-hoc Rust crates would fork API truth from author-facing packages and pckg docs.
+
+## Decision
+
+Canonical corelib sources **must** live under the `beskid_standard` / `corelib` workspace with pckg identity **corelib**. Tooling treats `.beskid/docs/` and `api.json` as first-class.
+
+## Consequences
+
+Registry publish authority stays in corelib CI; compiler consumes and validates.
+
+## Verification anchors
+
+[Corelib discovery and packaging](/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/).

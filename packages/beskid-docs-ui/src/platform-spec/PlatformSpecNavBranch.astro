@@ -1,0 +1,67 @@
+---
+import type { NavTreeNode } from 'trudoc/platform-spec';
+import PlatformSpecNavBranch from './PlatformSpecNavBranch.astro';
+
+interface Props {
+	nodes: NavTreeNode[];
+	currentPath: string;
+	depth?: number;
+}
+
+const { nodes, currentPath, depth = 0 } = Astro.props;
+
+function normalizePath(p: string): string {
+	const t = p.replace(/\/+$/, '');
+	return t === '' ? '/' : t;
+}
+
+function isActiveHref(href: string): boolean {
+	const h = normalizePath(href);
+	const p = normalizePath(currentPath);
+	return p === h;
+}
+
+function isOpenBranch(href: string): boolean {
+	const h = normalizePath(href);
+	const p = normalizePath(currentPath);
+	return p === h || (h !== '/' && p.startsWith(`${h}/`));
+}
+
+const pathNorm = normalizePath(currentPath);
+---
+
+<ul class="platform-spec-nav-tree__list" data-depth={depth}>
+	{
+		nodes.map((node) => {
+			const hasChildren = Boolean(node.children?.length);
+			const open = hasChildren && isOpenBranch(node.href);
+			const active = isActiveHref(node.href);
+			return (
+				<li class="platform-spec-nav-tree__item" data-level={node.level}>
+					{hasChildren ? (
+						<details class="platform-spec-nav-tree__branch" open={open}>
+							<summary class="platform-spec-nav-tree__summary">
+								<a
+									href={node.href}
+									class:list={['platform-spec-nav-tree__link', active && 'is-active']}
+									aria-current={active ? 'page' : undefined}
+								>
+									{node.title}
+								</a>
+							</summary>
+							<PlatformSpecNavBranch nodes={node.children!} currentPath={pathNorm} depth={depth + 1} />
+						</details>
+					) : (
+						<a
+							href={node.href}
+							class:list={['platform-spec-nav-tree__link', active && 'is-active']}
+							aria-current={active ? 'page' : undefined}
+						>
+							{node.title}
+						</a>
+					)}
+				</li>
+			);
+		})
+	}
+</ul>

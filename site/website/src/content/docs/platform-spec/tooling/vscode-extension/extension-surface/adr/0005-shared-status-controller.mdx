@@ -1,0 +1,41 @@
+---
+title: Status controller
+description: Status controller
+specLevel: adr
+status: Standard
+adrId: D-TOOL-VSC-0005
+adrStatus: Accepted
+adrDate: 2026-05-05
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Extension surface
+    href: /platform-spec/tooling/vscode-extension/extension-surface/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Extension UX.
+
+## Decision
+
+One status bar for LSP, pckg, CLI.
+
+## Consequences
+
+beskid_vscode runtime.
+
+## Verification anchors
+
+package.json; runtime tests.

@@ -6,8 +6,8 @@
  * (sets `BESKID_WEBSITE_ROOT` for spawned `.mjs` validators). Env `BESKID_WEBSITE_ROOT` alone also works if cwd is wrong.
  *
  * Presets:
- * - `ci` — PR gate (frontmatter + layout), matches former `verify:platform-spec-ci`.
- * - `beskid-prebuild` — full prebuild doc gates (no `sync:cli-version` / no git-meta generate).
+ * - `ci` — platform-spec structure + content checks (content step is warn-only until corpus cleanup).
+ * - `beskid-prebuild` — deprecated alias for `ci` (git-meta and CLI sync are not part of trudoc).
  */
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';

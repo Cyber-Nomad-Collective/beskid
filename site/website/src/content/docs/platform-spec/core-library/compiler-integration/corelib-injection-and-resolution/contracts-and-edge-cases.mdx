@@ -1,6 +1,6 @@
 ---
 title: Contracts and edge cases
-description: Normative guarantees, constraints, and edge-case handling for `Corelib injection and resolution`.
+description: Corelib injection guarantees and edge cases.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -12,31 +12,34 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: Compiler integration
-    href: /platform-spec/core-library/compiler-integration/
-    relation: Parent area
   - type: Feature
-    title: Corelib injection and resolution
-    href: /platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/
-    relation: Parent feature hub
+    title: Corelib discovery and packaging
+    href: /platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/
+    relation: Canonical roots and publishing
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Contracts
 
-## What this article covers
-This article explains the `contracts-and-edge-cases` view for `Corelib injection and resolution` in concrete, onboarding-first language.
+- **No opt-out** — Host manifests **must not** disable corelib; parser rejects forbidden keys.
+- **Single aggregate identity** — Implicit attachment targets `beskid_corelib` / package name **`corelib`**, not arbitrary forks, unless explicitly overridden by a declared `Std` path dependency in advanced layouts.
+- **Transitive closure** — Host compilations **must** see the full corelib workspace member packages required by the aggregate manifest.
+- **Mod projects** — `Mod` packages do not receive implicit host injection rules; they compile as mod carriers, not application hosts.
+- **Template output** — Instantiated host projects from templates follow host rules (implicit corelib).
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+## Edge cases
 
-## Code anchors
-- Corelib integration tests in `compiler/crates/beskid_tests/src/projects/corelib/compile.rs`
-- Corelib project helpers in `compiler/crates/beskid_tests/src/projects/corelib/mod.rs`
-- Analysis services in `compiler/crates/beskid_analysis/src/services.rs`
+| Case | Behavior |
+| --- | --- |
+| Explicit `Std` dependency | Used instead of fallback path when `path` provided |
+| `beskid_corelib` building itself | `is_std_project` / manifest path checks avoid self-cycle |
+| Shard under `packages/runtime` | No implicit back-link to aggregate |
+| Missing `BESKID_CORELIB_ROOT` in CI | Repo discovery or bundled CLI corelib materialization |
+| Legacy `standard_library` paths | Tooling may accept aliases; canonical identity remains **`corelib`** |
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+## Relationship to discovery feature
+
+Packaging, readme, and pckg publish rules live under **[Corelib discovery and packaging](/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/)**; injection assumes those roots exist on disk or in cache.

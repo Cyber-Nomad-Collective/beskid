@@ -1,0 +1,41 @@
+---
+title: Platform specification leads implementation
+description: Normative spec text is the authority axis for observable language and platform behavior.
+specLevel: adr
+status: Standard
+adrId: D-INC-0001
+adrStatus: Accepted
+adrDate: 2024-03-01
+lastReviewed: 2026-05-22
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Project inception decisions
+    href: /platform-spec/community/project-inception/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Early Beskid work mixed README intent, compiler experiments, and informal design chat without a single enforceable contract surface.
+
+## Decision
+
+The **platform specification** on Git `main` **must** precede or accompany implementation that changes user-visible semantics. Tests and crates verify drift; they do not replace missing spec text.
+
+## Consequences
+
+Contributors file spec updates in the same change set as behavioral changes. CI content gates block Standard stubs.
+
+## Verification anchors
+
+`site/website/src/content/docs/platform-spec/`; `verify:trudoc --preset ci`.

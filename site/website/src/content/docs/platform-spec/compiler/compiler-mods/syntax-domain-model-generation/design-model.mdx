@@ -52,7 +52,7 @@ This article documents the **design model** for **SyntaxMirror domain model gene
 | **`NodeRef.bd`** | Opaque stable handle |
 | **`NodeSpan.bd`** | Span DTO for one node in one generation |
 | **`NodeKind.bd`** | Classification tokens (mirrors `query::NodeKind`) |
-| **`NodeList.bd`** | `Vec&lt;Node&gt;` as cons-list of **`NodeRef`** |
+| **`NodeList.bd`** | `Vec<Node>` as cons-list of **`NodeRef`** |
 | **`TraversalManifest.bd`** | Child-slot table derived from Rust `#[ast(child\|children\|skip)]` |
 
 Traversal metadata **must** stay aligned with `beskid_ast_derive::AstNode` wiring in `beskid_analysis`.

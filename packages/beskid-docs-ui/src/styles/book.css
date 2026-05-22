@@ -1,0 +1,230 @@
+/* Beskid Book — reading layout (area nav in doc-areas.css). */
+@import './doc-areas.css';
+
+:root {
+	--book-measure: 42rem;
+	--book-toc-width: 11.5rem;
+	--book-text-base: 1.0625rem;
+	--book-line-height: 1.68;
+}
+
+html[data-book] {
+	--sl-content-width: min(52rem, 100%);
+}
+
+/* --- Reader shell --- */
+html[data-book] h1#_top {
+	display: none !important;
+}
+
+html[data-book] main > .content-panel:first-of-type:has(.sl-container > h1#_top:only-child) {
+	display: none;
+}
+
+html[data-book] main > .content-panel + .content-panel,
+html[data-book] .book-reader__body > .content-panel {
+	border-top: none;
+}
+
+html[data-book] .book-reader__body > .content-panel:first-of-type {
+	padding-top: 0;
+}
+
+.book-reader {
+	box-sizing: border-box;
+	width: 100%;
+	margin-inline: auto;
+	padding-block: clamp(1.25rem, 3vw, 2.25rem);
+	padding-inline: clamp(1rem, 3vw, 1.75rem);
+}
+
+html[data-book] .book-reader__body,
+html[data-book] .book-reader__body .content-panel,
+html[data-book] .book-reader__body .sl-container {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+html[data-book] .book-reader .sl-container {
+	margin-inline: 0 !important;
+}
+
+.book-reader__header {
+	margin-bottom: 1.75rem;
+	padding-bottom: 1.25rem;
+	border-bottom: 1px solid var(--platform-spec-divider);
+}
+
+.book-reader__title {
+	margin: 0;
+	font-size: clamp(1.55rem, 3vw, 2rem);
+	font-weight: 750;
+	letter-spacing: -0.02em;
+	line-height: 1.2;
+	color: var(--sl-color-white);
+}
+
+.book-reader__description {
+	margin: 0.65rem 0 0;
+	font-size: var(--sl-text-base);
+	line-height: 1.5;
+	color: var(--sl-color-gray-3);
+	max-width: 38rem;
+}
+
+html[data-book] .book-reader .sl-markdown-content {
+	font-size: var(--book-text-base);
+	line-height: var(--book-line-height);
+}
+
+html[data-book] .book-reader .sl-markdown-content > h2 {
+	margin-top: 2rem;
+	font-size: 1.35rem;
+}
+
+html[data-book] .book-reader .sl-markdown-content > h3 {
+	margin-top: 1.5rem;
+}
+
+/*
+ * Media in book prose — target main markdown directly so Astro-optimized images
+ * (width/height attrs) are constrained before/after the reader shell moves panels.
+ */
+html[data-book] main .sl-markdown-content img:not([src$='.gif']):not([src*='.gif?']):not(
+		[src*='giphy.com']
+	):not([src*='tenor.com']) {
+	display: block;
+	max-width: min(100%, 32rem);
+	width: auto;
+	height: auto;
+	margin: 1.1rem auto 1.35rem;
+	border-radius: 0.4rem;
+	border: 1px solid var(--platform-spec-divider);
+}
+
+html[data-book] main .sl-markdown-content img[src$='.gif'],
+html[data-book] main .sl-markdown-content img[src*='.gif?'],
+html[data-book] main .sl-markdown-content img[src*='/book/reactions/'] {
+	display: block;
+	max-width: min(100%, 20rem);
+	width: auto;
+	height: auto;
+	margin: 1rem auto 1.25rem;
+	border: none;
+	border-radius: 0.35rem;
+}
+
+html[data-book] main .sl-markdown-content lite-youtube {
+	display: block;
+	max-width: min(100%, 40rem);
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	margin: 1.25rem auto 1.5rem;
+	border-radius: 0.4rem;
+	overflow: hidden;
+}
+
+html[data-book] main .sl-markdown-content .link-preview {
+	--link-preview-width: min(100%, 40rem);
+	--link-preview-corners: 0.4rem;
+	display: block;
+	max-width: min(100%, 40rem);
+	margin: 1.25rem auto 1.5rem;
+	border: 1px solid var(--platform-spec-divider);
+	border-radius: 0.4rem;
+	overflow: hidden;
+}
+
+html[data-book] .book-reader .sl-markdown-content pre {
+	padding: 0.85rem 1rem;
+	border-radius: 0.4rem;
+}
+
+.book-reader__chapter-nav {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 0.75rem 1.25rem;
+	margin-top: 2.5rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--platform-spec-divider);
+}
+
+.book-reader__chapter-link {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+	max-width: min(18rem, 46%);
+	font-size: var(--sl-text-sm);
+	font-weight: 600;
+	color: var(--sl-color-text-accent);
+	text-decoration: none;
+}
+
+.book-reader__chapter-link:hover {
+	color: var(--sl-color-accent-high);
+}
+
+.book-reader__chapter-link--next {
+	margin-inline-start: auto;
+	text-align: end;
+}
+
+.book-reader__chapter-label {
+	font-size: var(--sl-text-xs);
+	font-weight: 600;
+	color: var(--sl-color-gray-3);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+/*
+ * In-page TOC: narrow column on the inline end. Main pane must flex-grow into the
+ * space Starlight used to split 50/50 with the old wide TOC gutter (otherwise prose
+ * sits in a narrow band on the left with a large empty gap before the TOC).
+ */
+@media (min-width: 72rem) {
+	/* Starlight sets margin-inline: auto 0 for sidebar+toc pages; book prose stays centered */
+	html[data-book] .main-pane {
+		--sl-content-margin-inline: auto;
+	}
+
+	html[data-book][data-has-toc] .lg\:sl-flex {
+		width: 100%;
+	}
+
+	html[data-book][data-has-toc] .main-pane {
+		flex: 1 1 auto;
+		width: auto !important;
+		min-width: 0;
+		max-width: none;
+	}
+
+	html[data-book][data-has-toc] .right-sidebar-container {
+		flex: 0 0 var(--book-toc-width);
+		width: var(--book-toc-width) !important;
+		max-width: var(--book-toc-width);
+	}
+
+	html[data-book][data-has-toc] .right-sidebar {
+		width: var(--book-toc-width) !important;
+	}
+
+	html[data-book][data-has-toc] .right-sidebar-panel {
+		max-width: 100%;
+	}
+
+	html[data-book][data-has-toc] .right-sidebar-panel .sl-container {
+		width: 100% !important;
+		max-width: 100% !important;
+	}
+}
+
+@media (max-width: 71.99rem) {
+	html[data-book] .right-sidebar-panel {
+		border-top: 1px solid var(--platform-spec-divider);
+		margin-top: 1.5rem;
+		padding-top: 1rem;
+	}
+}

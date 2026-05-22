@@ -1,0 +1,83 @@
+---
+import type { BookNavTreeNode } from 'trudoc/book';
+import BookNavBranch from './BookNavBranch.astro';
+
+interface Props {
+	nodes: BookNavTreeNode[];
+	currentPath: string;
+	depth?: number;
+}
+
+const { nodes, currentPath, depth = 0 } = Astro.props;
+
+function normalizePath(p: string | undefined): string {
+	if (!p) return '/';
+	const t = p.replace(/\/+$/, '');
+	return t === '' ? '/' : t;
+}
+
+function isActiveHref(href: string | undefined): boolean {
+	if (!href) return false;
+	const h = normalizePath(href);
+	const p = normalizePath(currentPath);
+	return p === h;
+}
+
+function isOpenBranch(href: string | undefined): boolean {
+	if (!href) return false;
+	const h = normalizePath(href);
+	const p = normalizePath(currentPath);
+	return p === h || (h !== '/' && p.startsWith(`${h}/`));
+}
+
+function isOpenNode(node: { href?: string; slug: string; children?: BookNavTreeNode[] }): boolean {
+	if (node.href && isOpenBranch(node.href)) return true;
+	const slugHref = `/${node.slug.replace(/\/+$/, '')}/`;
+	if (isOpenBranch(slugHref)) return true;
+	return (node.children ?? []).some((child) => isOpenNode(child));
+}
+
+const pathNorm = normalizePath(currentPath);
+---
+
+<ul class="doc-area-nav-tree__list" data-depth={depth}>
+	{
+		nodes.map((node) => {
+			const hasChildren = Boolean(node.children?.length);
+			const open = hasChildren && isOpenNode(node);
+			const active = isActiveHref(node.href);
+			return (
+				<li class="doc-area-nav-tree__item" data-part={node.part}>
+					{hasChildren ? (
+						<details class="doc-area-nav-tree__branch" open={open}>
+							<summary class="doc-area-nav-tree__summary">
+								{node.href ? (
+									<a
+										href={node.href}
+										class:list={['doc-area-nav-tree__link', active && 'is-active']}
+										aria-current={active ? 'page' : undefined}
+									>
+										{node.title}
+									</a>
+								) : (
+									<span class="doc-area-nav-tree__link doc-area-nav-tree__folder-label">{node.title}</span>
+								)}
+							</summary>
+							<BookNavBranch nodes={node.children!} currentPath={pathNorm} depth={depth + 1} />
+						</details>
+					) : node.href ? (
+						<a
+							href={node.href}
+							class:list={['doc-area-nav-tree__link', active && 'is-active']}
+							aria-current={active ? 'page' : undefined}
+						>
+							{node.title}
+						</a>
+					) : (
+						<span class="doc-area-nav-tree__link doc-area-nav-tree__folder-label">{node.title}</span>
+					)}
+				</li>
+			);
+		})
+	}
+</ul>

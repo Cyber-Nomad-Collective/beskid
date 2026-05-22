@@ -24,17 +24,29 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 
 
-This article documents **flow and algorithm** for **dependency graph and cycle policy** in the reference compiler.
+## Build algorithm
 
-## What this covers
-For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
+```mermaid
+flowchart TD
+  nodes[Collect manifest nodes]
+  edges[Expand dependency edges]
+  topo[Topological sort attempt]
+  cycle{Cycle detected?}
+  diag[Emit cycle diagnostic]
+  ok[Freeze ResolvedGraph]
+  nodes --> edges --> topo --> cycle
+  cycle -->|yes| diag
+  cycle -->|no| ok
+```
+
+1. Parse each member `Project.proj` and register a graph node (package id + project type).
+2. Add edges for registry and path dependencies; normalize path roots against workspace policy.
+3. Run cycle detection on the directed graph; apply configured severity.
+4. Expose `ResolvedGraph` to `build_compile_plan_with_policy` and doc workspace scan.
+5. **`Mod`** nodes trigger additional capability validation before the graph is considered sound.
 
 ## Anchored code paths
-- `compiler/crates/beskid_tests/src/projects/corelib/layout.rs` models multi-project dependency layouts.
-- `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` checks graph expectations.
-- `compiler/crates/beskid_cli/src/commands/doc.rs` consumes resolved dependency context for docs.
 
-## Practical notes
-- Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
-- Treat diagnostics and tests as part of the contract, not optional implementation details.
-- If behavior changes, update this article and add/adjust tests in `compiler/crates/beskid_tests` or `compiler/crates/beskid_e2e_tests`.
+- `beskid_analysis::projects::graph::resolver`
+- `compiler/crates/beskid_tests/src/projects/corelib/`
+- `compiler/crates/beskid_cli/src/commands/doc.rs`

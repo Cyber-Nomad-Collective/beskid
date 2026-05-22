@@ -1,10 +1,11 @@
 ---
 title: FAQ and troubleshooting
-description: Common operator and contributor questions about `Extern dispatch and policy`.
+description: Extern linking failures, dlopen policy, and interop dispatch debugging.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-05-22
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -12,10 +13,6 @@ submitter:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
 relatedTopics:
-  - type: Area
-    title: ABI and host boundary
-    href: /platform-spec/execution/abi-and-host/
-    relation: Parent area
   - type: Feature
     title: Extern dispatch and policy
     href: /platform-spec/execution/abi-and-host/extern-dispatch-and-policy/
@@ -26,17 +23,34 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 <SpecArticleChrome />
 
+## FAQ
 
-## What this article covers
-This article explains the `faq-and-troubleshooting` view for `Extern dispatch and policy` in concrete, onboarding-first language.
+### Should new packages use `extern_dlopen`?
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+No for production **Standard** flows—use [link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/). `extern_dlopen` remains documented for legacy engine tests and **Proposed** dynamic profiles.
 
-## Code anchors
-- Extern parsing and diagnostics in `compiler/crates/beskid_analysis/src/beskid.pest` and `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`
-- ABI builtins definitions in `compiler/crates/beskid_abi/src/builtins.rs`
-- Runtime builtin dispatch in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
+### Why do externs fail on macOS CI?
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+Dynamic resolution tests target Linux x86_64. macOS agents should skip or use link-time externs; `dlopen` policy is not portable in the legacy feature.
+
+### What is the difference between `interop_dispatch_*` and user `Extern`?
+
+User `Extern` calls native library functions directly (C ABI). `interop_dispatch_*` interprets Beskid-owned tagged values at the language/runtime boundary; both are declared via `BUILTIN_SPECS` but serve different layers.
+
+### Can externs call Beskid builtins?
+
+No. Extern targets must be foreign symbols; calling `alloc` or `panic` through `dlsym` would bypass type descriptors and GC scope rules.
+
+## Troubleshooting
+
+| Symptom | Check |
+| --- | --- |
+| "extern present but feature disabled" | Enable `extern_dlopen` on engine **or** switch to link-time profile |
+| Invalid signature at JIT | Parameter uses Beskid struct/string type—fix contract to scalars/pointers |
+| `dlsym` undefined symbol | Typo in symbol string; verify with `nm -D` on the `.so` |
+| Dispatch returns garbage | ABI/layout drift—compare `interop_layout.rs` with [ABI versioning](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/) |
+
+## Related topics
+
+- [Examples](./examples/)
+- [Syscalls and ABI boundary (legacy)](../../../../execution/runtime/syscalls-and-abi-boundary.md)

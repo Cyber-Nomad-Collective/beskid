@@ -1,0 +1,40 @@
+---
+title: "09. Contracts, effects, and other polite threats"
+description: Structural contracts, Result-based errors, compile-time effects, and when panic is someone else's problem.
+tableOfContents: true
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+A **contract** in Beskid is not a PDF your manager signs. It is a structural interface your type implements—or a compile-time mod SDK surface the host discovers from AOT artifacts. Mixing those up is how you get polite threats that compile.
+
+Normative law: [Contracts and effects](/platform-spec/language-meta/contracts-and-effects/). This chapter translates it without watering down the MUSTs.
+
+## What you will find here
+
+| Section | Topic |
+| --- | --- |
+| [Errors and `Result`](/book/09-contracts-effects-and-polite-threats/errors-and-results/) | Recoverable failures and `?`. |
+| [Contracts in source](/book/09-contracts-effects-and-polite-threats/contracts-in-source/) | `contract`, conformance lists, embeddings. |
+| [Effects and purity](/book/09-contracts-effects-and-polite-threats/effects-and-purity/) | Compile-time vs runtime, metaprogramming boundaries. |
+| [Panic vs contract](/book/09-contracts-effects-and-polite-threats/panic-vs-contract/) | Traps, FFI, and why `throw` stayed dead. |
+
+<Aside type="danger">
+
+**Compiler Mod contracts** (`Collector`, `Generator`, …) are not the same as **`contract IDisposable`** in user code. Same word, different lawsuit.
+
+</Aside>
+
+## By the end of this chapter
+
+- Model failures with `Result` and enums, not exceptions cosplaying as control flow.
+- Declare structural contracts and implement them on types.
+- Know where panic is defined (runtime/FFI) vs where contracts are checked (static).
+
+## Start here
+
+[Errors and `Result`](/book/09-contracts-effects-and-polite-threats/errors-and-results/)
+
+## Next chapter
+
+[10. Memory without another billion-dollar mistake](/book/10-memory-without-billion-dollar-mistake/)

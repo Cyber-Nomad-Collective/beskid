@@ -1,0 +1,27 @@
+---
+title: "Packages without npm trauma"
+description: Registry-assigned versions, beskid pckg, lockfiles, and foreign libs—ecosystem without manual semver theatre.
+tableOfContents: true
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution">
+This chapter is **informative**. Enforceable rules live under the [Platform specification](/platform-spec/).
+</Aside>
+
+
+Beskid packages are not "upload a folder, pick a version number that feels lucky, pray." The registry assigns versions; manifests declare **dependencies**; lockfiles make CI reproducible. If that sounds boring, good—we have enough trauma from ecosystems that treat breaking changes as personality.
+
+## What you will find here
+
+| Section | Topic |
+| --- | --- |
+| [pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/) | `beskid pckg` and the `beskid_pckg` crate. |
+| [Registry versions](/book/18-packages-without-npm-trauma/registry-versions/) | Who assigns the version (hint: not your ego). |
+| [Publish first package](/book/18-packages-without-npm-trauma/publish-first-package/) | End-to-end publish walkthrough. |
+| [Foreign libraries](/book/18-packages-without-npm-trauma/foreign-libraries/) | Linking native deps without npm cosplay. |
+
+## Next
+
+[19. Public API that survives code review](/book/19-public-api-that-survives-review/)

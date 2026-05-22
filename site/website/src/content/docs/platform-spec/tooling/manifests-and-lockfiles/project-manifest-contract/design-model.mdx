@@ -24,29 +24,53 @@ relatedTopics:
     title: Workspace and lock contracts
     href: /platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/
     relation: Reserved workspace keys and lockfile interaction
+  - type: Feature
+    title: Project manifest contract (compiler)
+    href: /platform-spec/compiler/resolution-and-projects/project-manifest-contract/
+    relation: defers-to — manifest-band diagnostics and graph validation
 ---
 
 import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';
 
 <SpecArticleChrome />
 
+## Purpose
 
-## What this article covers
-This article explains the `design-model` view for `Project manifest contract` in concrete, onboarding-first language.
+Tooling-facing shape of **`Project.proj`**: project kind, mod orchestration block, template metadata, readme publishing, and host `app` launch rules. Resolution-graph behavior and diagnostic bands live in **[Project manifest contract (compiler)](/platform-spec/compiler/resolution-and-projects/project-manifest-contract/)**—this article does not duplicate full manifest key tables from the manifests area hub.
+
+## Project kinds
+
+```mermaid
+flowchart LR
+  Host[Host default]
+  Mod[Mod]
+  Tpl[Template]
+  Host -->|implicit corelib| Tooling[CLI / LSP / pack]
+  Mod -->|AOT + SDK| Tooling
+  Tpl -->|packageKind template| Pack[beskid pckg pack]
+```
+
+| `project.type` | Role |
+| --- | --- |
+| *(omitted)* | **`Host`** — default application or library project |
+| **`Mod`** | Compiler-mod package (see below) |
+| **`Template`** | Template authoring; published as **`packageKind: template`** |
+
+Unknown `project.type` values **must** be rejected at structural parse time.
+
+### Implicit corelib (host projects)
+
+Every host project **must** resolve **corelib** through toolchain defaults. Manifests **must not** define `noCorelib`, `useCorelib: false`, or equivalent opt-out keys.
 
 ## Package readme (`readme`)
 
-The `project` block **may** include `readme = "relative/path.md"` (quoted POSIX-style path relative to the project root). When omitted, tooling treats **`readme.md`** at the project root as the default readme when that file exists. `beskid pckg pack` publishes the resolved file for registry documentation (typically as root **`README.md`** in the `.bpk` artifact). The same optional field is available on the `workspace` block in **`Workspace.proj`**.
+The `project` block **may** include `readme = "relative/path.md"`. When omitted, tooling treats **`readme.md`** at the project root as the default when present. `beskid pckg pack` publishes the resolved file as root **`README.md`** in the `.bpk` artifact.
 
 ## Mod project type (`Mod`)
 
-`Project.proj` carries a **project kind** / **type** field on the `project` block. When set to **`Mod`**, the manifest denotes a compiler-mod package. The compiler discovers these packages through dependency resolution, compiles them AOT, caches artifacts in the package/object cache, and loads their contracts during host compilation.
+When set to **`Mod`**, the manifest denotes a compiler-mod package discovered through dependency resolution, compiled AOT, and loaded via SDK contracts during host compilation. User-visible contract semantics: **[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)**.
 
-User-visible semantics of Beskid-side contracts remain in **[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)**; this contract defines manifest shape and validation so resolution, lockfiles, and the Rust mod host agree on inputs.
-
-### On-disk nesting under `project`
-
-In `Project.proj`, mod configuration lives in a nested block under `project`:
+### On-disk nesting
 
 ```text
 project:
@@ -57,46 +81,39 @@ project:
     capabilities: [emit_syntax]
 ```
 
-Hosts must parse this as part of the `project` aggregate, not as a free-floating top-level block kind. Unknown keys inside `mod` must error unless explicitly reserved.
-
-### Validation phases
-
-1. **Structural parse** — While building `ProjectManifest`, reject duplicate keys, illegal types, and unknown `mod` keys.
-2. **Graph validation** — While building workspace/project DAGs, detect invalid compiler-mod dependency topology and incompatible capability/dependency requirements.
-
-Each phase must use distinct stable diagnostic codes from the **E1801–E1899** mod/manifest band documented in **[Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)**.
-
-### Normative `project.mod` shape (v0.2 target)
-
-Hosts must validate the following keys when `type: Mod`. Unknown keys are rejected with stable diagnostics unless explicitly reserved.
+### Normative `project.mod` keys (v0.2 target)
 
 | Key | Required | Meaning |
 | --- | --- | --- |
-| `maxGeneratorRounds` | no | Positive integer cap on generator replay loops per host compilation generation; default `4` when omitted. |
-| `capabilities` | no | Closed vocabulary list granting compile-time powers (`emit_syntax`, `read_project_sources`, `query_semantic_snapshot`, `extern_ffi`, `rewrite_syntax`). |
-| `artifactPolicy` | no | Artifact-cache policy for fetched mods (`reuse`, `rebuild`, `clean_rebuild`); workspace mods use eager hash-based incremental checks. |
+| `maxGeneratorRounds` | no | Positive cap on generator replay; default `4` |
+| `capabilities` | no | Closed vocabulary (`emit_syntax`, `read_project_sources`, `query_semantic_snapshot`, `extern_ffi`, `rewrite_syntax`) |
+| `artifactPolicy` | no | Cache policy for fetched mods (`reuse`, `rebuild`, `clean_rebuild`) |
 
-Discovery is contract-based and does not require `attachTo`/`entryModules`; scope narrowing belongs to `Collector` implementations.
+Validation phases: structural parse in `ProjectManifest` build, then graph validation for mod topology (**E1801–E1899** band).
 
-### Application host projects and the `app` target
+## Application host and `app` target
 
-Hosted applications use the **`app`** executable target as the single application entry per runnable process. The entry module **must** perform exactly one **`launch SomeHost(...)`** for that run (see [Native dependency injection](/platform-spec/language-meta/composition/dependency-injection/)). **`Lib`** projects **may** declare reusable **`host`** types but **must not** use **`launch`**.
+Hosted applications use the **`app`** executable target. The entry module **must** perform exactly one **`launch SomeHost(...)`** per run. **`Lib`** projects **may** declare reusable **`host`** types but **must not** use **`launch`**.
 
-### Non-`Mod` projects and compiler-mod contracts
+## Template project type (`Template`)
 
-Default platform policy: compiler-mod contracts are valid only in `type: Mod` projects. Host projects (`App`/`Lib`/`Test`) consume mod artifacts through dependencies, not by defining contracts inline.
+Optional nested block:
 
-`Mod` projects are the supported carrier for compiler mods.
+```text
+project {
+  type = Template
+  template {
+    shortName = "console"
+    identity  = "beskid.templates.console"
+  }
+}
+```
 
-## Newcomer walk-through
-Start from the parent feature hub to learn the contract boundaries, then map the behavior to the listed implementation anchors before reading test coverage.
+Authoritative engine manifest: **`.beskid/template.json`** (`beskid.template.v1`). See **[Template packages](/platform-spec/tooling/project-scaffolding/template-packages/)**.
 
-## Code anchors
-- Manifest loading and CLI-style `resolve_input` in `compiler/crates/beskid_analysis/src/services.rs`
-- Workspace-aware `Project.proj` discovery in `compiler/crates/beskid_analysis/src/projects/manifest_resolve.rs`
-- `CompilationContext` for analysis and LSP in `compiler/crates/beskid_analysis/src/compilation_context.rs`
-- Project graph and `CompilePlan` in `compiler/crates/beskid_analysis/src/projects/compile_plan.rs` and `compiler/crates/beskid_analysis/src/projects/graph/`
-- CLI project graph setup in `compiler/crates/beskid_cli/src/commands/`
+## Implementation anchors
 
-## Practical guidance
-When changing behavior in this area, update both the contract text and the corresponding compiler/runtime or tooling tests in the same change so the specification remains executable.
+- Parse + validation: `compiler/crates/beskid_analysis/src/projects/parser.rs`, `validator.rs`
+- Manifest resolve: `compiler/crates/beskid_analysis/src/projects/manifest_resolve.rs`
+- Graph + plan: `compiler/crates/beskid_analysis/src/projects/graph/`, `compile_plan.rs`
+- Pack profile: `compiler/crates/beskid_pckg/src/pack.rs`

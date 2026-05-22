@@ -5,36 +5,61 @@ import RelatedTopics from './RelatedTopics.astro';
 import SpecDocHistory from './SpecDocHistory.astro';
 import SpecCompletenessReport from './SpecCompletenessReport.astro';
 import type { RelatedTopicPayload } from 'trudoc/platform-spec';
-import type { SpecArticleListItem } from './specReaderContext';
+import SpecAdrPanel from './SpecAdrPanel.astro';
+import type { SpecAdrListItem, SpecArticleListItem } from './specReaderContext';
 import type { CompletenessReport } from 'trudoc/layout';
 
 interface Props {
 	articleRootSlug: string;
 	articleEntries: SpecArticleListItem[];
+	adrEntries: SpecAdrListItem[];
 	hasDescendantArticles: boolean;
 	relatedTopics: RelatedTopicPayload[];
 	architectureGraph?: unknown;
 	historyWebsiteRelativePath: string | null;
 	layoutReport: CompletenessReport;
+	/** On article pages, open the Current document tab (article body), not a persisted Articles tab. */
+	defaultTab?: 'current-document';
 }
 
 const {
 	articleRootSlug,
 	articleEntries,
+	adrEntries,
 	hasDescendantArticles,
 	relatedTopics,
 	architectureGraph,
 	historyWebsiteRelativePath,
 	layoutReport,
+	defaultTab,
 } = Astro.props;
+
+const openCurrentDocumentTab = defaultTab === 'current-document';
 ---
 
-<section class="platform-spec-doc-split" data-platform-spec-doc-split>
+<section
+	class="platform-spec-doc-split"
+	data-platform-spec-doc-split
+	data-default-tab={openCurrentDocumentTab ? 'current-document' : undefined}
+>
 	<div class="platform-spec-doc-split__main">
 		<div class="platform-spec-doc-tabs">
+			{
+				openCurrentDocumentTab && (
+					<script is:inline>
+						{`localStorage.setItem('starlight-synced-tabs__platform-spec-reader', 'Current document');`}
+					</script>
+				)
+			}
 			<Tabs syncKey="platform-spec-reader">
 			<TabItem label="Current document">
-				<div class="platform-spec-doc-split__content-target" data-platform-spec-doc-content-target />
+				<div
+					class="platform-spec-doc-split__content-target sl-markdown-content"
+					data-platform-spec-doc-content-target
+				/>
+			</TabItem>
+			<TabItem label={`ADRs${adrEntries.length ? ` (${adrEntries.length})` : ''}`}>
+				<SpecAdrPanel entries={adrEntries} />
 			</TabItem>
 			<TabItem label="Articles">
 				<ul class="platform-spec-doc-split__article-list">
@@ -73,7 +98,10 @@ const {
 			{
 				architectureGraph && (
 					<TabItem label="Architecture">
-						<ArchitectureGraphShell graph={architectureGraph} />
+						<ArchitectureGraphShell
+							id={`architecture-graph-${articleRootSlug.replace(/\//g, '-')}`}
+							graph={architectureGraph}
+						/>
 					</TabItem>
 				)
 			}
@@ -96,4 +124,5 @@ const {
 
 <script>
 	import '../client/platform-spec-doc-layout.ts';
+	import '../client/platform-spec-doc-tabs.ts';
 </script>
