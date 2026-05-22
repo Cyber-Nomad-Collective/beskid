@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-22T10:06:44.854Z",
+  "generatedAt": "2026-05-22T10:57:59.248Z",
   "tree": {
     "slug": "book",
     "href": "/book/",
@@ -27,7 +27,7 @@
               {
                 "slug": "book/00-why-beskid-exists/my-story",
                 "href": "/book/00-why-beskid-exists/my-story/",
-                "title": "1.1 My story",
+                "title": "My story",
                 "part": "Tutorial"
               },
               {
@@ -1201,7 +1201,7 @@
     {
       "slug": "book/00-why-beskid-exists/my-story",
       "href": "/book/00-why-beskid-exists/my-story/",
-      "title": "1.1 My story"
+      "title": "My story"
     },
     {
       "slug": "book/00-why-beskid-exists/current-state-of-languages",
@@ -1904,7 +1904,7 @@
       "next": {
         "slug": "book/00-why-beskid-exists/my-story",
         "href": "/book/00-why-beskid-exists/my-story/",
-        "title": "1.1 My story"
+        "title": "My story"
       }
     },
     "book/00-why-beskid-exists/my-story": {
@@ -1923,7 +1923,7 @@
       "prev": {
         "slug": "book/00-why-beskid-exists/my-story",
         "href": "/book/00-why-beskid-exists/my-story/",
-        "title": "1.1 My story"
+        "title": "My story"
       },
       "next": {
         "slug": "book/00-why-beskid-exists/solid-dry-and-ddd",

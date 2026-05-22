@@ -34,6 +34,7 @@ def _asan_env() -> dict[str, str]:
 def runtime_linux(session: nox.Session) -> None:
     submodules.init_compiler(ROOT)
     cw = _compiler_dir()
+    proc.run("cargo", "build", "-p", "beskid_runtime_bridge", "-q", cwd=cw)
     proc.run("cargo", "test", "-p", "beskid_tests", "runtime::", cwd=cw)
     proc.run("cargo", "test", "-p", "beskid_tests", "abi::contracts::", cwd=cw)
     proc.run("cargo", "bench", "-p", "beskid_runtime", "--no-run", cwd=cw)
@@ -51,6 +52,7 @@ def runtime_e2e_linux(session: nox.Session) -> None:
 def runtime_asan_linux(session: nox.Session) -> None:
     submodules.init_compiler(ROOT)
     cw = _compiler_dir()
+    proc.run("cargo", "build", "-p", "beskid_runtime_bridge", "-q", cwd=cw)
     proc.run(
         "cargo",
         "test",

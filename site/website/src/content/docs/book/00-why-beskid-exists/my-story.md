@@ -55,7 +55,7 @@ This was a lost fight from the start, because:
 
 Do you know Blazor WASM downloads the **entire .NET virtual machine**? Who thought that was a good idea?
 
-![Mind blown](https://media.giphy.com/media/8c9j3F8a7l2e9d3Y0e/giphy.gif)
+![Mind blown](https://preview.redd.it/no-need-to-use-javascript-anymore-v0-qcwds0h28nea1.jpg?auto=webp&s=f406921502323209c353f155143c4591e39e56c5)
 
 Some browsers blocked Blazor early on because `.dll` downloads were a hard no. Microsoft had to practically refactor Roslyn/RyuJIT to accommodate gzip-for-wasm. Pure comedy.
 

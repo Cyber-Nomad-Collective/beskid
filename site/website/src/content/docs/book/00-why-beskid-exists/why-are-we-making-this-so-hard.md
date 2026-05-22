@@ -58,6 +58,6 @@ Beskid is not anti-structure. It is anti-**structure you cannot see in the build
 
 If your problem is genuinely novel—finite element solvers, game engines, codecs—use Rust, C++, or Zig and be happy. Beskid is not auditioning for that job.
 
-![Noted — use the right tool](https://media.giphy.com/media/3o7TKSjRrfIP9iB8e/giphy.gif)
+![Noted — use the right tool](https://i.imgflip.com/7vcab7.jpg)
 
 Next: [1.8 Conclusion](/book/00-why-beskid-exists/conclusion/).
