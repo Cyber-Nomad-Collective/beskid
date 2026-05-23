@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
-  "generatedAt": "2026-05-23T18:28:27.410Z",
-=======
   "generatedAt": "2026-05-23T18:29:56.907Z",
->>>>>>> origin/orch/beskid-v0-3/corelib-tiering-collections-fs-api-shape
   "summary": {
     "nodes": 787,
     "errors": 0,
