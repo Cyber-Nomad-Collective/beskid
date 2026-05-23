@@ -3,6 +3,7 @@ name: Runtime CI
 on:
   push:
     paths:
+      - "compiler"
       - "compiler/**"
       - "ci/**"
       - "noxfile.py"
