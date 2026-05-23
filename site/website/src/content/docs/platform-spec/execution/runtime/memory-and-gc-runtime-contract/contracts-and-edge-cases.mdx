@@ -33,6 +33,10 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 | **GC-004** | `gc_collect` / `gc_collect_if_needed` **must** be safe to call from host tooling when runtime scope is entered. |
 | **GC-005** | External roots **must** pair `gc_register_root` with `gc_unregister_root` (or handle APIs) to avoid leaks. |
 | **GC-006** | Stack maps **must** be emitted for functions that hold GC pointers across safepoints. |
+| **GC-007** | Phase B mutators **must** attach to a shared heap through `attach_phase_b_mutator` (or an equivalent runtime scope) before allocating or reading GC-managed pointers. |
+| **GC-008** | Syscall-pool worker threads **must not** allocate on the Beskid heap; the runtime **must** trap the violation when assertions are enabled. |
+| **GC-009** | Pointer-payload channel transfers **must** apply the insertion write barrier on both send and receive paths, and **must** keep the in-flight pointer reachable via an external GC handle while it sits in the queue. |
+| **GC-010** | Optional preemption (`runtime_preempt_check`) **must** be a no-op when preemption is disabled and **must** never block a syscall-pool worker thread. |
 
 ## GC export contracts
 
@@ -43,15 +47,20 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 | `gc_phase` | `i64` | Phase enum 0/1/2 |
 | `gc_write_barrier` | void | Barrier hook |
 | `gc_root_handle` | `i64` | Temporary external pin |
+| `channel_send_ptr` / `channel_receive_ptr` | `i64` status | Pointer-payload channel ops with barrier and external-handle handoff |
+| `runtime_preempt_check` | void | Optional safe-point hook; yields when preemption is enabled |
 
 ## Edge cases
 
 | Case | Behavior |
 | --- | --- |
 | Null pointer store | Lowering should avoid barrier; runtime barrier on null **should** no-op |
-| Fiber migration mid-mark | Scheduler holds mutator lock; no second mutator attaches |
+| Fiber migration mid-mark | Scheduler holds mutator lock; no second mutator attaches (Phase A only) |
+| Multiple Phase B mutators on one heap | Each thread holds a `MutatorAttachGuard`; shared heap + per-thread GC context |
 | Full heap during `str_concat` | Panic/trap — matches allocation failure policy |
 | Conservative fallback | **Forbidden** — Beskid uses precise descriptors only |
+| Syscall-pool worker accidentally allocates | `assert_mutator_allowed` panics; the worker is **not** a mutator |
+| Pointer-payload channel sender from a non-fiber OS thread | Backpressure resolved by `try_send` + `thread::yield_now`, never `park_current` |
 
 ## Rejected alternatives (decision record)
 

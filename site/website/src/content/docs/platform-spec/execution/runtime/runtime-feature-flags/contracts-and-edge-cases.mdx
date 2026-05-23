@@ -33,6 +33,8 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 | **RFF-004** | `metrics` exports **must** be absent from baseline `RUNTIME_EXPORT_SYMBOLS` when built without `metrics`. |
 | **RFF-005** | Compiler lowering **must not** assume element backing exists unless workspace policy enables `arrays_backing`. |
 | **RFF-006** | `extern_dlopen` **must** remain off by default on `beskid_engine` for production toolchains. |
+| **RFF-007** | Phase B GC **must** be opt-in for v0.3; the runtime **must** boot in Phase A unless `BESKID_RUNTIME_PHASE_B=1` or `set_runtime_phase(RuntimePhase::PhaseB)` flips it. |
+| **RFF-008** | Optional preemption **must** stay disabled by default; enabling it via `BESKID_RUNTIME_PREEMPT=1` or `set_preemption_enabled(true)` **must not** change observable semantics of fiber-only programs beyond inserting yield points. |
 
 ## Feature behavior table
 
@@ -41,6 +43,8 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 | `arrays_backing` | `array_new.ptr == null` | Backing store allocated |
 | `metrics` | No `rt_metrics_*` | Counters exposed |
 | `sched` | Default scheduler only | Experimental sched hooks |
+| Phase B GC (`BESKID_RUNTIME_PHASE_B`) | Single-mutator Phase A; channel pointer payloads still routed through external roots but barriers no-op outside marking | Multiple mutators may attach via `attach_phase_b_mutator`; `gc_write_barrier` active on pointer-payload channel ops |
+| Preemption (`BESKID_RUNTIME_PREEMPT`) | `runtime_preempt_check` is a no-op | `runtime_preempt_check` yields the current fiber (or OS thread if off-scheduler) |
 
 ## Edge cases
 
