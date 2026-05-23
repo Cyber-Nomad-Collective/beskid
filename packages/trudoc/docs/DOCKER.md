@@ -10,7 +10,11 @@ From the **monorepo root** after `bun install`:
 bun --cwd site/website run verify:trudoc --preset ci
 ```
 
-Prebuild structure gate (matches `prebuild` minus `sync:cli-version` and `generate:platform-spec-git-meta`):
+Website `prebuild` / `predev` run `packages/trudoc/scripts/website-prebuild.mjs` (generators, `verify:book-images`, layout guards, then `verify:trudoc --preset ci` unless skipped).
+
+Container image builds set `BESKID_SKIP_TRUDOC_VERIFY=1` in [`site/website/Dockerfile`](../../site/website/Dockerfile) because `.dockerignore` excludes `.git`; run trudoc CI on GitHub instead.
+
+Prebuild structure gate (manual, matches container skip):
 
 ```bash
 bun --cwd site/website run verify:trudoc --preset ci

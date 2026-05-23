@@ -9,6 +9,7 @@ import mermaid from 'astro-mermaid';
 import { docsShellCustomCss } from '@beskid/docs-ui/shell-css';
 import trudoc from 'trudoc/integration';
 import { createRemarkArchCodeFence } from 'trudoc/scripts/remark-arch-code-fence.mjs';
+import { remarkInlineRepoPaths } from 'trudoc/scripts/remark-inline-repo-paths.mjs';
 import { remarkRepoLinkFence } from 'trudoc/scripts/remark-repo-link-fence.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -166,7 +167,11 @@ export default defineConfig({
 		...siteRedirects(),
 	},
 	markdown: {
-		remarkPlugins: [createRemarkArchCodeFence(), remarkRepoLinkFence({ repo: 'Cyber-Nomad-Collective/beskid' })],
+		remarkPlugins: [
+			createRemarkArchCodeFence(),
+			remarkRepoLinkFence({ repo: 'Cyber-Nomad-Collective/beskid' }),
+			remarkInlineRepoPaths({ repo: 'Cyber-Nomad-Collective/beskid' }),
+		],
 		shikiConfig: {
 			langAlias: {
 				beskid: 'rust',
@@ -188,8 +193,6 @@ export default defineConfig({
 				{
 					htmlSubdir: 'platform-spec',
 					docAttr: 'data-platform-spec',
-					mapIndexHtmlRel: 'platform-spec/index.html',
-					mapAttr: 'data-platform-spec-map',
 				},
 				{
 					htmlSubdir: 'book',
@@ -204,6 +207,7 @@ export default defineConfig({
 				baseUrl: 'https://github.com/Cyber-Nomad-Collective/beskid/edit/main/site/website/',
 			},
 			components: {
+				Head: '@beskid/docs-ui/starlight/Head.astro',
 				Header: '@beskid/docs-ui/starlight/Header.astro',
 				Footer: '@beskid/docs-ui/starlight/Footer.astro',
 				ThemeSelect: '@beskid/docs-ui/starlight/ThemeSelect.astro',

@@ -6,4 +6,7 @@
 **/.git
 **/.cache
 **/target
+compiler/
+pckg/
+beskid_vscode/
 references/

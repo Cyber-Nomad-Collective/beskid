@@ -7,6 +7,8 @@ export type BookNavTreeFile = {
 	tree: BookNavTreeNode;
 	tutorialSequence: BookNavLink[];
 	prevNextBySlug: Record<string, BookPrevNext>;
+	/** Tutorial slugs → titles with auto chapter/section numbering. */
+	displayTitleBySlug: Record<string, string>;
 };
 
 export function readBookNavTreeOrThrow(cwd: string): BookNavTreeFile {

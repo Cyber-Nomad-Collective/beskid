@@ -6,6 +6,10 @@ import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { getWebsiteRoot } from './lib/website-root.mjs';
 import {
+	buildTutorialDisplayTitleBySlug,
+	displayTitleForSlug,
+} from '../src/book/book-numbering.ts';
+import {
 	buildTutorialPrevNext,
 	docFilePathToSlug,
 	nestTutorialNavNodes,
@@ -41,19 +45,20 @@ function filePathToSlug(absFile) {
 	return docFilePathToSlug(absFile, DOCS_ROOT);
 }
 
-function nodeFromFile(absFile, part, extra = {}) {
+function nodeFromFile(absFile, part, displayTitleBySlug, extra = {}) {
 	const slug = filePathToSlug(absFile);
+	const rawTitle = titleForFile(absFile);
 	return {
 		slug,
 		href: slugToHref(slug),
-		title: titleForFile(absFile),
+		title: displayTitleForSlug(displayTitleBySlug, slug, rawTitle),
 		part,
 		...extra,
 	};
 }
 
 /** @param {string} dirAbs @param {string} slugPrefix e.g. book/reference */
-function buildDirTree(dirAbs, slugPrefix, part) {
+function buildDirTree(dirAbs, slugPrefix, part, displayTitleBySlug) {
 	if (!fs.existsSync(dirAbs)) return [];
 
 	const entries = fs.readdirSync(dirAbs, { withFileTypes: true }).filter((e) => !e.name.startsWith('.'));
@@ -72,12 +77,12 @@ function buildDirTree(dirAbs, slugPrefix, part) {
 	for (const sub of subdirs.sort((a, b) => a.name.localeCompare(b.name))) {
 		const childAbs = path.join(dirAbs, sub.name);
 		const childSlug = `${slugPrefix}/${sub.name}`;
-		const children = buildDirTree(childAbs, childSlug, part);
+		const children = buildDirTree(childAbs, childSlug, part, displayTitleBySlug);
 
 		const indexAbs = ['index.md', 'index.mdx', 'README.md', 'readme.md'].map((n) => path.join(childAbs, n)).find((p) => fs.existsSync(p));
 		if (indexAbs) {
 			nodes.push({
-				...nodeFromFile(indexAbs, part),
+				...nodeFromFile(indexAbs, part, displayTitleBySlug),
 				children: children.length ? children : undefined,
 			});
 		} else if (children.length) {
@@ -93,17 +98,17 @@ function buildDirTree(dirAbs, slugPrefix, part) {
 	}
 
 	for (const f of pageFiles.sort((a, b) => a.name.localeCompare(b.name))) {
-		nodes.push(nodeFromFile(path.join(dirAbs, f.name), part));
+		nodes.push(nodeFromFile(path.join(dirAbs, f.name), part, displayTitleBySlug));
 	}
 
 	if (indexFiles.length && !subdirs.length && !pageFiles.length) {
-		nodes.push(nodeFromFile(path.join(dirAbs, indexFiles[0].name), part));
+		nodes.push(nodeFromFile(path.join(dirAbs, indexFiles[0].name), part, displayTitleBySlug));
 	}
 
 	return nodes;
 }
 
-function nodeForSlug(slug, part) {
+function nodeForSlug(slug, part, displayTitleBySlug) {
 	const candidates = [
 		path.join(DOCS_ROOT, `${slug}.md`),
 		path.join(DOCS_ROOT, `${slug}.mdx`),
@@ -112,13 +117,14 @@ function nodeForSlug(slug, part) {
 	];
 	for (const c of candidates) {
 		if (fs.existsSync(c)) {
-			return nodeFromFile(c, part);
+			return nodeFromFile(c, part, displayTitleBySlug);
 		}
 	}
 	const fallbackSlug = slug;
+	const fallbackTitle = fallbackSlug.split('/').at(-1) ?? fallbackSlug;
 	return {
 		slug: fallbackSlug,
-		title: fallbackSlug.split('/').at(-1) ?? fallbackSlug,
+		title: displayTitleForSlug(displayTitleBySlug, fallbackSlug, fallbackTitle),
 		part,
 	};
 }
@@ -126,15 +132,33 @@ function nodeForSlug(slug, part) {
 const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
 
 const tutorialPart = manifest.tutorial.label;
+
+const displayTitleBySlug = buildTutorialDisplayTitleBySlug(
+	manifest.tutorial.entries,
+	(entry) => {
+		const slug = entry === 'index' ? 'book' : `book/${entry}`;
+		const candidates = [
+			path.join(DOCS_ROOT, `${slug}.md`),
+			path.join(DOCS_ROOT, `${slug}.mdx`),
+			path.join(DOCS_ROOT, slug, 'index.md'),
+			path.join(DOCS_ROOT, slug, 'index.mdx'),
+		];
+		for (const c of candidates) {
+			if (fs.existsSync(c)) return titleForFile(c);
+		}
+		return slug.split('/').at(-1) ?? slug;
+	},
+);
+
 const tutorialNodes = nestTutorialNavNodes(manifest.tutorial.entries, (entry) =>
-	nodeForSlug(entry === 'index' ? 'book' : `book/${entry}`, tutorialPart),
+	nodeForSlug(entry === 'index' ? 'book' : `book/${entry}`, tutorialPart, displayTitleBySlug),
 );
 
 const tutorialSequence = manifest.tutorial.entries
 	.filter((e) => e !== 'index')
 	.map((entry) => {
 		const slug = `book/${entry}`;
-		const n = nodeForSlug(slug, manifest.tutorial.label);
+		const n = nodeForSlug(slug, manifest.tutorial.label, displayTitleBySlug);
 		if (!n.href) {
 			throw new Error(`Book nav: no page for tutorial entry "${entry}" (slug ${n.slug})`);
 		}
@@ -145,16 +169,17 @@ const referenceNodes = buildDirTree(
 	path.join(BOOK_ROOT, manifest.reference.directory),
 	`book/${manifest.reference.directory}`,
 	manifest.reference.label,
+	{},
 );
 
 const appendixNodes = manifest.appendix.entries.map((entry) =>
-	nodeForSlug(`book/${entry}`, manifest.appendix.label),
+	nodeForSlug(`book/${entry}`, manifest.appendix.label, {}),
 );
 
 const tree = {
 	slug: 'book',
 	href: '/book/',
-	title: nodeForSlug('book', '').title,
+	title: nodeForSlug('book', '', displayTitleBySlug).title,
 	children: [
 		{
 			slug: 'book-part-tutorial',
@@ -188,6 +213,7 @@ const payload = {
 	tree,
 	tutorialSequence,
 	prevNextBySlug: buildTutorialPrevNext(tutorialSequence),
+	displayTitleBySlug,
 };
 
 fs.mkdirSync(OUT_DIR, { recursive: true });

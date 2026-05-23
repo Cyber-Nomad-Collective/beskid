@@ -1,5 +1,7 @@
 /** Move Starlight markdown panels into the book reader shell and keep chapter nav at the bottom. */
 
+import { onPageNavigation } from './view-transition-lifecycle';
+
 function mountBookReader() {
 	const shell = document.querySelector<HTMLElement>('[data-book-reader]');
 	if (!shell || shell.dataset.bookReaderMounted === 'true') return;
@@ -27,10 +29,4 @@ function mountBookReader() {
 	shell.dataset.bookReaderMounted = 'true';
 }
 
-if (document.readyState === 'loading') {
-	document.addEventListener('DOMContentLoaded', mountBookReader, { once: true });
-} else {
-	mountBookReader();
-}
-document.addEventListener('astro:page-load', mountBookReader);
-document.addEventListener('astro:after-swap', mountBookReader);
+onPageNavigation(mountBookReader);

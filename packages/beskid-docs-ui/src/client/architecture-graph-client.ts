@@ -1,4 +1,5 @@
 import dagre from '@dagrejs/dagre';
+import { onPageNavigation } from './view-transition-lifecycle';
 
 type GraphNode = {
 	id: string;
@@ -346,5 +347,4 @@ function initArchitectureGraphs(root: ParentNode = document): void {
 	root.querySelectorAll<HTMLElement>('[data-architecture-graph-root]').forEach((el) => mountArchitectureGraph(el));
 }
 
-initArchitectureGraphs();
-document.addEventListener('astro:after-swap', () => initArchitectureGraphs());
+onPageNavigation(() => initArchitectureGraphs());

@@ -1,3 +1,6 @@
+import { onPageNavigation } from './view-transition-lifecycle';
+import { collapsePlatformSpecNavRail } from './platform-spec-nav';
+
 type SpecHomeTab = 'map' | 'browse';
 
 function selectTab(id: SpecHomeTab, opts?: { replaceHash?: boolean }) {
@@ -16,8 +19,13 @@ function selectTab(id: SpecHomeTab, opts?: { replaceHash?: boolean }) {
 	panels.forEach((panel) => {
 		panel.hidden = panel.dataset.tabPanel !== id;
 	});
+	root.dataset.activeTab = id;
+	collapsePlatformSpecNavRail();
 	if (id === 'map') {
 		window.dispatchEvent(new CustomEvent('platform-spec-map-activate'));
+		requestAnimationFrame(() => {
+			window.dispatchEvent(new Event('resize'));
+		});
 	}
 	if (replaceHash && history.replaceState) {
 		const h = id === 'browse' ? '#browse' : '#map';
@@ -70,4 +78,4 @@ function initPlatformSpecHomeTabs() {
 	});
 }
 
-initPlatformSpecHomeTabs();
+onPageNavigation(() => initPlatformSpecHomeTabs());

@@ -1,6 +1,17 @@
 ---
 import DomainTiles from './DomainTiles.astro';
 import PlatformSpecGraphShell from './PlatformSpecGraphShell.astro';
+import PlatformSpecHomeGuide from './PlatformSpecHomeGuide.astro';
+import PlatformSpecHomeTabs from './PlatformSpecHomeTabs.astro';
+import PlatformSpecLatestChanges from './PlatformSpecLatestChanges.astro';
+import { websiteRelativeDocPath } from './specDocPath';
+import { docEntrySlug } from './specSlug';
+import {
+	collectLatestSpecChanges,
+	docTitlesByWebsitePath,
+} from './platformSpecHomeData';
+import { getCollection } from 'astro:content';
+import { loadPlatformSpecGitMeta } from 'trudoc/platform-spec';
 
 /** Stable, route-scoped ids (unique per page if multiple hubs are ever embedded). */
 const pathKey =
@@ -13,34 +24,25 @@ const idTabMap = `${uid}-tab-map`;
 const idTabBrowse = `${uid}-tab-browse`;
 const idPanelMap = `${uid}-panel-map`;
 const idPanelBrowse = `${uid}-panel-browse`;
+
+const cwd = process.cwd();
+const allDocs = await getCollection('docs');
+const gitMeta = loadPlatformSpecGitMeta(cwd);
+const latestChanges = collectLatestSpecChanges(
+	gitMeta,
+	docTitlesByWebsitePath(allDocs, (slug) => websiteRelativeDocPath(cwd, slug) ?? '', docEntrySlug),
+);
 ---
 
-<div class="platform-spec-home" data-platform-spec-home>
-	<div class="platform-spec-home__toolbar" role="tablist" aria-label="Platform specification views">
-		<button
-			type="button"
-			class="platform-spec-home__tab is-active"
-			role="tab"
-			id={idTabBrowse}
-			aria-controls={idPanelBrowse}
-			data-tab="browse"
-			aria-selected="true"
-		>
-			Browse
-		</button>
-		<button
-			type="button"
-			class="platform-spec-home__tab"
-			role="tab"
-			id={idTabMap}
-			aria-controls={idPanelMap}
-			data-tab="map"
-			aria-selected="false"
-			tabindex="-1"
-		>
-			Map
-		</button>
-	</div>
+<div class="platform-spec-home" data-platform-spec-home data-active-tab="browse">
+	<header class="platform-spec-home__header">
+		<PlatformSpecHomeTabs
+			idTabBrowse={idTabBrowse}
+			idTabMap={idTabMap}
+			idPanelBrowse={idPanelBrowse}
+			idPanelMap={idPanelMap}
+		/>
+	</header>
 	<div
 		id={idPanelBrowse}
 		class="platform-spec-home__panel platform-spec-home__panel--browse"
@@ -48,12 +50,16 @@ const idPanelBrowse = `${uid}-panel-browse`;
 		aria-labelledby={idTabBrowse}
 		data-tab-panel="browse"
 	>
-		<div class="platform-spec-home__browse-inner sl-markdown-content">
-			<p class="platform-spec-home__lede">
-				Explore the platform by domain, or use the <strong>Map</strong> tab for the interactive graph of areas
-				and feature pages.
-			</p>
-			<DomainTiles pathPrefix="platform-spec" heading="Domains" />
+		<div class="platform-spec-home__browse-inner">
+			<DomainTiles pathPrefix="platform-spec" showBadges hideHeading />
+			<div class="platform-spec-home__footer">
+				<PlatformSpecLatestChanges
+					changes={latestChanges}
+					repo={gitMeta.repo}
+					gitAvailable={gitMeta.gitAvailable}
+				/>
+				<PlatformSpecHomeGuide />
+			</div>
 		</div>
 	</div>
 	<div

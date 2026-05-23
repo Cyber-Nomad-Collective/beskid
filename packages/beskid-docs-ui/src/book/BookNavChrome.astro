@@ -12,38 +12,38 @@ const { tree } = readBookNavTreeOrThrow(process.cwd());
 const branchNodes = tree.children ?? [];
 ---
 
-<div class="book-nav-chrome doc-area-nav-chrome" data-book-nav-chrome data-rail-collapsed="false">
-	<div class="doc-area-nav-chrome__backdrop" data-book-nav-backdrop hidden />
+<div class="platform-spec-nav-chrome" data-book-nav-chrome data-rail-collapsed="false">
+	<div class="platform-spec-nav-chrome__backdrop" data-book-nav-backdrop hidden />
 
 	<aside
 		id="book-nav-rail"
-		class="doc-area-nav-chrome__rail"
+		class="platform-spec-nav-chrome__rail"
 		aria-label="Book contents"
 		data-book-nav-rail
 	>
-		<div class="doc-area-nav-chrome__rail-head">
-			<a href="/book/" class="doc-area-nav-chrome__map-link"> Book home </a>
+		<div class="platform-spec-nav-chrome__rail-head">
+			<a href="/book/" class="platform-spec-nav-chrome__map-link"> Book home </a>
 			<button
 				type="button"
-				class="doc-area-nav-chrome__rail-close md:sl-hidden"
+				class="platform-spec-nav-chrome__rail-close md:sl-hidden"
 				aria-label="Close book contents"
 				data-book-nav-close
 			>
 				×
 			</button>
 		</div>
-		<label class="doc-area-nav-chrome__filter">
-			<span class="doc-area-nav-chrome__filter-label">Filter</span>
+		<label class="platform-spec-nav-chrome__filter">
+			<span class="platform-spec-nav-chrome__filter-label">Filter</span>
 			<input
 				type="search"
-				class="doc-area-nav-chrome__filter-input"
+				class="platform-spec-nav-chrome__filter-input"
 				placeholder="Filter pages…"
 				autocomplete="off"
 				spellcheck="false"
 				data-book-nav-filter
 			/>
 		</label>
-		<nav class="doc-area-nav-chrome__tree">
+		<nav class="platform-spec-nav-chrome__tree">
 			<BookNavBranch nodes={branchNodes} currentPath={pathNorm} />
 		</nav>
 	</aside>

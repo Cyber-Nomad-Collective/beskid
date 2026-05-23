@@ -48,6 +48,23 @@ main:has(.downloads-page) > .content-panel:first-of-type:has(.sl-container > h1#
 	display: none;
 }
 
+/* Platform-spec index: hide empty PageTitle panel; hub is flat in the content panel. */
+main:has(.platform-spec-home) > .content-panel:first-of-type:has(.sl-container > h1#_top:only-child) {
+	display: none !important;
+}
+
+main:has(.platform-spec-home) > .content-panel + .content-panel {
+	border-top: none;
+	padding: 0 !important;
+}
+
+main:has(.platform-spec-home) > .content-panel + .content-panel .sl-container,
+main:has(.platform-spec-home) > .content-panel + .content-panel .sl-markdown-content {
+	padding: 0;
+	margin: 0;
+	max-width: none;
+}
+
 /* Index marketing layout: full-width main (sidebar rules live in landing.css) */
 .page:has(.landing-page) .main-frame {
 	width: 100%;

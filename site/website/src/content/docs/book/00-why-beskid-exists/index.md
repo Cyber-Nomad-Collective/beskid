@@ -4,7 +4,10 @@ description: Opinionated context for the language—why the industry stack is br
 tableOfContents: true
 ---
 
-Beskid exists because I'm done with C#/.NET's abstraction hell and runtime identity crisis. This chapter is the rant with receipts. It is **informative**, not normative—if you want enforceable rules, open the [Platform specification](/platform-spec/).
+TLDR: Why not? It's not hard to overthrow the tech stack in identity crisis... 
+
+
+Beskid exists because I'm done with C#/.NET's abstraction sprawl and runtime identity crisis. This chapter is an opinionated essay with receipts. It is **informative**, not normative—if you want enforceable rules, open the [Platform specification](/platform-spec/).
 
 I tried to build a form generator with Blazor, ended up with rewriting C# in Rust, because that's a logical next step when you doubt sense of existence. 
 
@@ -23,7 +26,7 @@ I tried to build a form generator with Blazor, ended up with rewriting C# in Rus
 | [1.7 Why are we making this so hard?](/book/00-why-beskid-exists/why-are-we-making-this-so-hard/) | Business reality vs engineering theatre. |
 | [1.8 Conclusion](/book/00-why-beskid-exists/conclusion/) | What Beskid is actually trying to be. |
 
-## Not into the philosophical shit?
+## Not into the philosophy?
 
 ![Shrug — fine, skip it](https://66.media.tumblr.com/tumblr_m0c88gZ2yd1rqfhi2o1_500.gif)
 

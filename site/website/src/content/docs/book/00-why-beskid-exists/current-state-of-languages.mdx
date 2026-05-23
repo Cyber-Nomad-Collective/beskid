@@ -4,25 +4,36 @@ description: How C#, Java, and Go became the default—and why Rust and Zig are 
 tableOfContents: true
 ---
 
-import { LinkPreview } from 'astro-embed';
-
 The "serious" industry runs on three boring horses: **C#**, **Java**, and **Go**. Everything else is either a hobby, a systems niche, or a conference talk that became a migration project.
 
-![horsy](https://media1.giphy.com/media/v1.Y2lkPTZjMDliOTUyNThmYWYyNmd4em1ham04eHRqYXpkdGEyeGw2ZjlraWVuam80OWJxbiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l9mASFqtemeKk/source.gif)
+![horsy](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1yQNwnlScmBAVPcM4z-2sIyn0tMTHP69Haw&s)
 
-## C# — productivity with a subscription to confusion
+## C# — productivity with a platform tax
 
-C# started as "Java but Microsoft actually ships tooling." That was a win. Then the platform grew **layers** until the language stopped being the product.
+C# started as a managed language where **Microsoft actually ships the tooling**. That was a genuine win. Then the stack accumulated **layers** until the runtime, workloads, and extension packages competed with the language for your attention.
 
-- **Corelib abstraction sprawl.** When core functionality is a maze of wrappers, you are not writing software—you are negotiating with an API designed by a committee that has never shipped a bugfix on Friday afternoon.
-- **Reflection as a crutch.** Slow, opaque, runtime-only power instead of compile-time truth. Framework authors love it because it lets you invent DSLs inside strings. You pay for that at startup and in every stack trace.
-- **CIL stagnation.** Language features outpace the VM, so everything devolves into workarounds, source generators, and performance tax. You wanted iterators? Here are five incompatible patterns and a NuGet package called [BigShit](https://www.nuget.org/packages/BigShit).
+- **Corelib abstraction sprawl.** When core functionality is a maze of wrappers, you are not writing software—you are negotiating with APIs shaped for decade-long compatibility, not for a single obvious path through the problem.
+- **Reflection as a crutch.** Slow, opaque, runtime-only power instead of compile-time truth. Framework authors love it because it enables convention-heavy DSLs resolved at runtime. You pay for that at startup and in every stack trace.
+- **CIL stagnation.** Language features outpace the VM contract, so workarounds pile up: source generators, analyzers, and performance tax. You wanted iterators? Here are five incompatible patterns and a shelf of overlapping NuGet abstractions.
 
-<LinkPreview id="https://www.nuget.org/packages/BigShit" />
+![what happened](https://i.redd.it/syhgfb2f33k71.png)
 
-C# is excellent for **business throughput** when your org already standardized on .NET. It is miserable when you want **one obvious way** to do something without importing half of `Microsoft.Extensions.`*.
+C# remains excellent for **business throughput** when your org already standardized on .NET. The friction shows when you want **one obvious way** without importing half of `Microsoft.Extensions.*` and hoping the versions agree.
+The platform is showing its age. When enterprise timelines press the standards process, **the shipping SDK usually wins over the tidy ECMA story**—especially under Microsoft's release cadence.
 
-## Java — stability cosplaying as innovation
+The **IL gap** is structural, not cosmetic. CIL is still the nominal contract while the language ships features that only make sense as **compiler-lowered behavior**: ref structs, scoped types, interceptors, much of modern async. The old teaching loop—open ILSpy and read what the compiler did—breaks when the interesting logic lives in **Roslyn rewrite passes** and **source-generated partials** that never become a readable instruction stream. Stale IL is why performance work, trimming, and Native AOT often mean tracing **four different toolchains** instead of learning one machine model.
+
+**Parallel roadmaps** are the other tension. **Native AOT** vs **JIT + tiered compilation** vs “ship another container with the runtime baked in.” **Discriminated unions** beside decades of **inheritance-shaped** BCL types, while **composition** is preached in docs that are hard to apply consistently across `System.*`. **Java-enterprise patterns** (interfaces for everything, provider factories, options objects) stacked on **records**, **primary constructors**, and **minimal APIs** aimed at smaller ceremony. Microsoft wants the ergonomics of Go without retiring the enterprise surface area. Pick a lane? Not in this release train.
+
+Metaprogramming is now **assembly-heavy and SDK-sensitive**: Roslyn **source generators**, **analyzers**, **interceptors**, and package-delivered compiler components that must match the SDK on every machine and in CI. Debugging that stack is a specialty—you step through application code, hit invisible generated glue, lose symbols, and hunt through a forest of `*.g.cs` files. Corelib carries **several incompatible theories of tech debt** at once: freeze the public surface, ship behavioral fixes in servicing, add another `Microsoft.Extensions.*` package. Language features delivered by **bolting assemblies together** and hoping patch levels align is not a teaching model—it is operations.
+
+Runtimes that compile **only at runtime**—or emulate hardware in software—can live for years on legacy deployments. They keep billing. They also **stagnate**: language churn outpaces the VM, **compiler pipelines disagree** (Roslyn vs JIT vs IL linker vs trimmer), public APIs drift from runtime behavior, and teams accept **inconsistency because migration is expensive**. Mismatched warnings, different behavior between `dotnet run` and published output, and “stable” features that require a specific analyzer pack are symptoms, not accidents.
+
+.NET **was** the reference stack for **learning and enforcing internals**: ECMA specs you could cite, a CLR you could inspect, a BCL that felt like one product. The open-source ECMA-aligned implementation then **split into a federation**—runtime repo, SDK repo, ASP.NET repo, workload packs, preview channels—where “the platform” is effectively **whatever Visual Studio and the latest SDK manifest shipped together**. The standard still exists on paper. What you ship is **whatever Roslyn and the workload graph agreed to for that sprint**.
+
+That is why Beskid should not hide the compiler behind reflection indirection. Teach how compilation works through something **simple and declarative**—a **Fluent** surface you can read without excavating generated C#—so metaprogramming is **compile-time truth**, not a NuGet package that rewrites your tree when the SDK patch level drifts.
+
+## Java — stability marketed as steady progress
 
 Java is the enterprise's comfort blanket: verbose, predictable, and held together by **decades of JVM lore**.
 
@@ -30,7 +41,6 @@ Java is the enterprise's comfort blanket: verbose, predictable, and held togethe
 - "Simple" often means **more classes**, not fewer concepts.
 - Modern Java has improved surface syntax, but the **mental model** is still: interfaces everywhere, frameworks that own your lifecycle, and build tools that treat minutes as acceptable.
 
-That would be great — Office Space
 
 Java wins on **hiring pool** and **vendor neutrality**. It loses when you want compile-time guarantees without annotation processors pretending to be a second compiler.
 
@@ -38,7 +48,7 @@ Java wins on **hiring pool** and **vendor neutrality**. It loses when you want c
 
 Go is what happens when adults admit most software is **CRUD, glue, and cron jobs**.
 
-- Small language, small runtime, **GC you do not have to romance**.
+- Small language, small runtime, **GC you do not have to babysit**.
 - Fast enough builds that CI does not become a lifestyle.
 - Conventions enforced by **social pressure** rather than fancy types—which is both a feature and a trap (see [1.6 segfault or not to segfault](/book/00-why-beskid-exists/segfault-or-not-to-segfault/) and [1.8 Conclusion](/book/00-why-beskid-exists/conclusion/)).
 
@@ -59,8 +69,8 @@ Low-level languages solved problems most application developers **do not have** 
 ### Zig
 
 - Refreshingly direct about **manual memory** and **no hidden control flow**.
-- Excellent for people who want C without the resume lie that they enjoy C.
-- Not a platform for **millions of lines of business rules** with rotating interns.
+- Excellent for people who want C without the résumé fiction that they enjoy manual memory day to day.
+- Not a platform for **millions of lines of business rules** on teams with high turnover.
 
 Be aware, that though Zig may be perceived as the successor to C, the battle for this title holds many competitors like [C3](https://github.com/c3lang/c3c), [C2](http://c2lang.org/), [V](https://vlang.io/) and other unoriginally named C substitutes, 
 Have some [D](https://dlang.org/)
@@ -75,15 +85,15 @@ Rust and Zig are **tools for when the machine is the product**. Beskid is for wh
 | Need                    | C# / Java            | Go            | Rust / Zig | Beskid direction                        |
 | ----------------------- | -------------------- | ------------- | ---------- | --------------------------------------- |
 | Daily feature work      | Strong, heavy        | Strong, loose | Weak fit   | Strong, explicit                        |
-| Compile-time truth      | Reflection / codegen | Limited       | Strong     | Metaprogramming, not reflection theatre |
+| Compile-time truth      | Reflection / codegen | Limited       | Strong     | Metaprogramming, not reflection indirection |
 | Runtime identity crisis | Common (.NET)        | Rare          | Rare       | AOT, no IL handcuffs                    |
 | "One obvious way"       | No                   | Mostly        | N/A        | Opinionated language features           |
 
 #### Disclaimer
 
-Be mindfull of the fact that I am a literal fetus in language design, and before beskid I've only lighly dipped my toes in some custom DSLs. 
-I jumped into it without second thought and all beskid quirks and features were designed out of **PURE RAGE AND DISSAPOINTMENT IN C#** 
-If you need a liabilty note or some reassurance - there's none. I am truly a low level virgin and this project is the pop of my cherry. 
+Just a quick caveat: I’m still early in my journey with language design, and before Beskid I’d only experimented lightly with custom DSLs.
+I dove into this project following a deep sense of frustration (especially with C#), and many of Beskid’s quirks and features emerged from trying to solve the problems I kept facing in practice. 
+There’s no grand background in systems programming here—just a willingness to learn out loud and share what worked (and didn’t) along the way.
 ![lets go](https://media1.tenor.com/m/ujRWGbUY3iMAAAAC/yes-lets-go.gif)
 
 Next: [1.3 SOLID, DRY, and the failure of DDD](/book/00-why-beskid-exists/solid-dry-and-ddd/).

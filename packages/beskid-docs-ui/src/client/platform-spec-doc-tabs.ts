@@ -1,5 +1,7 @@
 /** Reliable navigation for spec reader article/tile links; article pages default to Current document tab. */
 
+import { onPageNavigation } from './view-transition-lifecycle';
+
 const ARTICLE_LINK_SELECTOR = 'a.platform-spec-doc-split__article-link';
 const TILE_LINK_SELECTOR = 'a.platform-spec-tile';
 const CURRENT_DOCUMENT_TAB = 'Current document';
@@ -96,4 +98,4 @@ if (!document.documentElement.dataset.platformSpecDocTabsClickBound) {
 	document.addEventListener('click', handleSpecReaderLinkClick, true);
 }
 
-document.addEventListener('astro:after-swap', initSpecReaderTabs);
+onPageNavigation(initSpecReaderTabs);

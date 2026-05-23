@@ -31,6 +31,13 @@ export type DocAreaNavOptions = {
 	treeLinkSelector: string;
 	collapsedAttr?: string;
 	openAttr?: string;
+	/** Desktop rail starts collapsed (narrow strip). */
+	defaultCollapsed?: boolean;
+	/**
+	 * On viewport ≥50rem: `collapse` toggles rail width; `drawer` toggles mobile overlay;
+	 * `auto` uses drawer on platform-spec map tab, else collapse.
+	 */
+	desktopToggle?: 'collapse' | 'drawer' | 'auto';
 };
 
 function treeListSelectorFromItemSelector(itemSelector: string): string {
@@ -127,6 +134,7 @@ export function initDocAreaNav(opts: DocAreaNavOptions) {
 		mobileToggle?.setAttribute('aria-expanded', open ? 'true' : 'false');
 		if (backdrop) backdrop.hidden = !open;
 		if (open) {
+			setRailCollapsed(false);
 			requestAnimationFrame(() => {
 				(
 					filterInput && !filterInput.hidden
@@ -135,6 +143,7 @@ export function initDocAreaNav(opts: DocAreaNavOptions) {
 				)?.focus();
 			});
 		} else {
+			setRailCollapsed(opts.defaultCollapsed ?? false);
 			mobileToggle?.focus();
 		}
 	}
@@ -148,6 +157,19 @@ export function initDocAreaNav(opts: DocAreaNavOptions) {
 	if (mobileToggle && mobileToggle.dataset.docAreaNavToggleBound !== 'true') {
 		mobileToggle.dataset.docAreaNavToggleBound = 'true';
 		mobileToggle.addEventListener('click', () => {
+			const desktop = window.matchMedia('(min-width: 50rem)').matches;
+			const mode = opts.desktopToggle;
+			if (desktop && mode) {
+				const useDrawer =
+					mode === 'drawer' ||
+					(mode === 'auto' && Boolean(document.querySelector('[data-platform-spec-home]')));
+				if (useDrawer) {
+					setMobileOpen(!document.body.hasAttribute(openAttr));
+					return;
+				}
+				setRailCollapsed(navChrome.getAttribute(collapsedAttr) !== 'true');
+				return;
+			}
 			setMobileOpen(!document.body.hasAttribute(openAttr));
 		});
 	}
@@ -181,7 +203,7 @@ export function initDocAreaNav(opts: DocAreaNavOptions) {
 	const active = navRail.querySelector<HTMLAnchorElement>(`${opts.treeLinkSelector}.is-active`);
 	active?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 
-	setRailCollapsed(false);
+	setRailCollapsed(opts.defaultCollapsed ?? false);
 	setMobileOpen(false);
 }
 

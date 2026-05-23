@@ -2,6 +2,9 @@
  * Lets readers select prose in the main column and copy a Markdown quote + page URL
  * for pasting into the giscus box (one thread per page; giscus has no native range comments).
  */
+
+import { onPageNavigation } from './view-transition-lifecycle';
+
 function isInsideMainContent(node: Node | null): boolean {
 	if (!node) return false;
 	const root =
@@ -71,7 +74,9 @@ function showPopover(pop: HTMLElement, range: Range, text: string): void {
 }
 
 function init(): void {
+	if (document.documentElement.dataset.giscusQuoteBound === 'true') return;
 	if (!document.querySelector('.giscus-wrap')) return;
+	document.documentElement.dataset.giscusQuoteBound = 'true';
 
 	const pop = document.createElement('div');
 	pop.className = 'giscus-quote-popover';
@@ -140,9 +145,5 @@ function init(): void {
 }
 
 if (typeof document !== 'undefined') {
-	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', init);
-	} else {
-		init();
-	}
+	onPageNavigation(init);
 }

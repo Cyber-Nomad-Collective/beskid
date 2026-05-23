@@ -3,13 +3,21 @@
 
 :root {
 	--book-measure: 42rem;
-	--book-toc-width: 11.5rem;
+	--book-toc-min: 12rem;
+	--book-toc-max: 20rem;
+	--book-figure-max: 28rem;
+	--book-figure-gif-max: 22rem;
+	--book-nav-content-gap: 1.35rem;
 	--book-text-base: 1.0625rem;
 	--book-line-height: 1.68;
 }
 
+html[data-book] .page .main-pane {
+	padding-inline-start: calc(var(--platform-spec-nav-width) + var(--book-nav-content-gap));
+}
+
 html[data-book] {
-	--sl-content-width: min(52rem, 100%);
+	--sl-content-width: var(--book-measure);
 }
 
 /* --- Reader shell --- */
@@ -30,12 +38,23 @@ html[data-book] .book-reader__body > .content-panel:first-of-type {
 	padding-top: 0;
 }
 
+html[data-book] .book-reader__body > .content-panel {
+	padding-inline: 0 !important;
+	padding-block: 0;
+}
+
+html[data-book] .book-reader__body > .content-panel .sl-container {
+	padding-inline: 0 !important;
+	margin-inline: 0 !important;
+}
+
 .book-reader {
 	box-sizing: border-box;
 	width: 100%;
-	margin-inline: auto;
+	max-width: 100%;
+	margin-inline: 0;
 	padding-block: clamp(1.25rem, 3vw, 2.25rem);
-	padding-inline: clamp(1rem, 3vw, 1.75rem);
+	padding-inline: 0;
 }
 
 html[data-book] .book-reader__body,
@@ -87,32 +106,48 @@ html[data-book] .book-reader .sl-markdown-content > h3 {
 	margin-top: 1.5rem;
 }
 
+/* Prose line length inside the wide main column */
+html[data-book] .book-reader .sl-markdown-content {
+	max-width: var(--book-measure);
+}
+
 /*
- * Media in book prose — target main markdown directly so Astro-optimized images
- * (width/height attrs) are constrained before/after the reader shell moves panels.
+ * Figures: block + margin auto centers; max-width + height auto keeps aspect ratio (MDN / responsive images).
  */
+html[data-book] .book-reader .sl-markdown-content img,
+html[data-book] main .sl-markdown-content img {
+	box-sizing: border-box;
+	display: block;
+	width: auto;
+	max-width: min(100%, var(--book-figure-max));
+	height: auto;
+	margin-block: 1.1rem 1.35rem;
+	margin-inline: auto;
+	object-fit: contain;
+	object-position: center;
+	border-radius: 0.4rem;
+}
+
+html[data-book] .book-reader .sl-markdown-content img[src$='.gif'],
+html[data-book] .book-reader .sl-markdown-content img[src*='.gif?'],
+html[data-book] .book-reader .sl-markdown-content img[src*='giphy.com'],
+html[data-book] .book-reader .sl-markdown-content img[src*='tenor.com'],
+html[data-book] main .sl-markdown-content img[src$='.gif'],
+html[data-book] main .sl-markdown-content img[src*='.gif?'],
+html[data-book] main .sl-markdown-content img[src*='giphy.com'],
+html[data-book] main .sl-markdown-content img[src*='tenor.com'] {
+	max-width: min(100%, var(--book-figure-gif-max));
+	margin-block: 1rem 1.25rem;
+	border: none;
+}
+
+html[data-book] .book-reader .sl-markdown-content img:not([src$='.gif']):not([src*='.gif?']):not(
+		[src*='giphy.com']
+	):not([src*='tenor.com']),
 html[data-book] main .sl-markdown-content img:not([src$='.gif']):not([src*='.gif?']):not(
 		[src*='giphy.com']
 	):not([src*='tenor.com']) {
-	display: block;
-	max-width: min(100%, 32rem);
-	width: auto;
-	height: auto;
-	margin: 1.1rem auto 1.35rem;
-	border-radius: 0.4rem;
 	border: 1px solid var(--platform-spec-divider);
-}
-
-html[data-book] main .sl-markdown-content img[src$='.gif'],
-html[data-book] main .sl-markdown-content img[src*='.gif?'],
-html[data-book] main .sl-markdown-content img[src*='/book/reactions/'] {
-	display: block;
-	max-width: min(100%, 20rem);
-	width: auto;
-	height: auto;
-	margin: 1rem auto 1.25rem;
-	border: none;
-	border-radius: 0.35rem;
 }
 
 html[data-book] main .sl-markdown-content lite-youtube {
@@ -142,82 +177,214 @@ html[data-book] .book-reader .sl-markdown-content pre {
 }
 
 .book-reader__chapter-nav {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	gap: 0.75rem 1.25rem;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.85rem;
 	margin-top: 2.5rem;
 	padding-top: 1.5rem;
 	border-top: 1px solid var(--platform-spec-divider);
+	max-width: var(--book-measure);
 }
 
-.book-reader__chapter-link {
+.book-reader__chapter-nav:has(.book-reader__chapter-btn--prev):has(.book-reader__chapter-btn--next) {
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.book-reader__chapter-nav:has(.book-reader__chapter-btn--prev):not(:has(.book-reader__chapter-btn--next)) {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.book-reader__chapter-nav:has(.book-reader__chapter-btn--next):not(:has(.book-reader__chapter-btn--prev)) {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.book-reader__chapter-btn {
 	display: flex;
 	flex-direction: column;
-	gap: 0.2rem;
-	max-width: min(18rem, 46%);
+	align-items: flex-start;
+	gap: 0.35rem;
+	min-width: 0;
+	padding: 0.75rem 1rem;
+	border: 1px solid var(--platform-spec-divider);
+	border-radius: 0.45rem;
+	background: color-mix(in srgb, var(--platform-spec-surface-muted) 55%, transparent);
 	font-size: var(--sl-text-sm);
 	font-weight: 600;
+	line-height: 1.35;
 	color: var(--sl-color-text-accent);
 	text-decoration: none;
+	transition:
+		border-color 0.15s ease,
+		background 0.15s ease,
+		color 0.15s ease;
 }
 
-.book-reader__chapter-link:hover {
+.book-reader__chapter-btn:hover {
+	border-color: color-mix(in srgb, var(--sl-color-accent) 45%, var(--platform-spec-divider));
+	background: color-mix(in srgb, var(--sl-color-accent-low) 35%, transparent);
 	color: var(--sl-color-accent-high);
 }
 
-.book-reader__chapter-link--next {
-	margin-inline-start: auto;
+.book-reader__chapter-btn--next {
+	grid-column: -1;
+	align-items: flex-end;
 	text-align: end;
+	margin-inline-start: auto;
+}
+
+.book-reader__chapter-btn--next:only-child {
+	grid-column: 1;
+	width: 100%;
+}
+
+.book-reader__chapter-btn--prev:only-child {
+	width: 100%;
 }
 
 .book-reader__chapter-label {
 	font-size: var(--sl-text-xs);
-	font-weight: 600;
+	font-weight: 700;
 	color: var(--sl-color-gray-3);
 	text-transform: uppercase;
-	letter-spacing: 0.04em;
+	letter-spacing: 0.05em;
+}
+
+.book-reader__chapter-title {
+	display: block;
+	overflow-wrap: anywhere;
 }
 
 /*
- * In-page TOC: narrow column on the inline end. Main pane must flex-grow into the
- * space Starlight used to split 50/50 with the old wide TOC gutter (otherwise prose
- * sits in a narrow band on the left with a large empty gap before the TOC).
+ * STARLIGHT_BOOK_LAYOUT_GUARD
+ * Starlight TwoColumnContent (72rem+) assigns the right “On this page” gutter roughly
+ * (100% - --sl-content-width) / 2 when --sl-sidebar-width is 0 — half the viewport beside prose.
+ * Book uses grid: main 1fr (prose uses full column width; line-length capped on .sl-markdown-content).
+ * TOC column is minmax(min, min(max, max-content)) so headings are not ellipsized.
+ * Starlight PageSidebar sets .sl-container width from --sl-sidebar-width (0 for book) — override below.
  */
 @media (min-width: 72rem) {
-	/* Starlight sets margin-inline: auto 0 for sidebar+toc pages; book prose stays centered */
-	html[data-book] .main-pane {
-		--sl-content-margin-inline: auto;
+	html[data-book]:has([data-book-nav-chrome][data-rail-collapsed='true']) .page .main-pane {
+		padding-inline-start: calc(var(--platform-spec-nav-rail-collapsed) + var(--book-nav-content-gap));
 	}
 
 	html[data-book][data-has-toc] .lg\:sl-flex {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(var(--book-toc-min), min(var(--book-toc-max), max-content));
+		column-gap: clamp(1.25rem, 2vw, 2rem);
+		align-items: start;
 		width: 100%;
+		box-sizing: border-box;
 	}
 
-	html[data-book][data-has-toc] .main-pane {
-		flex: 1 1 auto;
-		width: auto !important;
+	/* Kill Starlight calc widths on [data-has-sidebar][data-has-toc] .main-pane */
+	html[data-book][data-has-toc] .main-pane,
+	html[data-book][data-has-sidebar][data-has-toc] .main-pane {
+		grid-column: 1;
+		order: 1;
+		--sl-content-margin-inline: 0;
+		width: 100% !important;
+		max-width: none !important;
 		min-width: 0;
+		display: block;
+	}
+
+	html[data-book][data-has-toc] .main-pane > main {
+		width: 100%;
 		max-width: none;
+		min-width: 0;
+		box-sizing: border-box;
+	}
+
+	html[data-book][data-has-toc] .book-reader {
+		width: 100%;
+		max-width: 100%;
+		margin-inline: 0;
+		padding-inline: clamp(0.75rem, 2vw, 1.5rem);
+		box-sizing: border-box;
 	}
 
 	html[data-book][data-has-toc] .right-sidebar-container {
-		flex: 0 0 var(--book-toc-width);
-		width: var(--book-toc-width) !important;
-		max-width: var(--book-toc-width);
+		grid-column: 2;
+		order: 2;
+		position: relative;
+		flex: none;
+		width: auto !important;
+		min-width: var(--book-toc-min);
+		max-width: var(--book-toc-max) !important;
 	}
 
 	html[data-book][data-has-toc] .right-sidebar {
-		width: var(--book-toc-width) !important;
+		position: sticky;
+		top: var(--sl-nav-height);
+		width: 100% !important;
+		max-width: var(--book-toc-max);
+		height: auto;
+		max-height: calc(100vh - var(--sl-nav-height));
+		overflow-y: auto;
+		overflow-x: visible;
+		border-inline-start: 1px solid var(--platform-spec-divider);
 	}
 
 	html[data-book][data-has-toc] .right-sidebar-panel {
-		max-width: 100%;
+		width: 100%;
+		max-width: none;
+		padding-inline: 0.65rem;
 	}
 
+	/* Starlight: width from --sl-sidebar-width (0) and max-width 25vw — breaks book outline */
 	html[data-book][data-has-toc] .right-sidebar-panel .sl-container {
 		width: 100% !important;
-		max-width: 100% !important;
+		max-width: none !important;
+	}
+
+	html[data-book][data-has-toc] .right-sidebar-panel :is(h2, a) {
+		overflow: visible;
+		text-overflow: clip;
+		white-space: normal;
+	}
+
+	html[data-book][data-has-toc] starlight-toc a {
+		display: block;
+		padding: 0.28rem 0.38rem;
+		margin-block: 0.06rem;
+		border-radius: 0.3rem;
+		overflow-wrap: anywhere;
+		word-break: normal;
+		font-size: var(--sl-text-xs);
+		font-weight: 500;
+		line-height: 1.35;
+		color: var(--sl-color-gray-3);
+		text-decoration: none;
+	}
+
+	html[data-book][data-has-toc] starlight-toc a:hover,
+	html[data-book][data-has-toc] starlight-toc a[aria-current='true'] {
+		color: var(--platform-spec-tab-text-active);
+		background: color-mix(in srgb, var(--platform-spec-tab-indicator) 14%, transparent);
+	}
+
+	html[data-book][data-has-toc] starlight-toc a[aria-current='true'] {
+		font-weight: 650;
+	}
+}
+
+/* Book pages without in-page TOC: prose still capped, main pane uses full width */
+@media (min-width: 72rem) {
+	html[data-book]:not([data-has-toc]) .main-pane {
+		width: 100% !important;
+		max-width: none !important;
+	}
+
+	html[data-book]:not([data-has-toc]) .book-reader {
+		max-width: min(var(--book-measure), 100%);
+		margin-inline: 0;
+		padding-inline: clamp(0.75rem, 2vw, 1.5rem);
+	}
+}
+
+@media (max-width: 49.99rem) {
+	html[data-book] .page .main-pane {
+		padding-inline-start: 0;
 	}
 }
 

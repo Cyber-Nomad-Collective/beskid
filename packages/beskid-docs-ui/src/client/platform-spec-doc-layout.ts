@@ -1,3 +1,5 @@
+import { onPageNavigation } from './view-transition-lifecycle';
+
 function mountPlatformSpecDocSplit() {
 	const layouts = document.querySelectorAll<HTMLElement>('[data-platform-spec-doc-split]');
 	for (const layout of layouts) {
@@ -26,5 +28,4 @@ function initPlatformSpecDocSplit() {
 	import('./platform-spec-doc-tabs.ts').then((m) => m.selectCurrentDocumentTab());
 }
 
-initPlatformSpecDocSplit();
-document.addEventListener('astro:after-swap', initPlatformSpecDocSplit);
+onPageNavigation(initPlatformSpecDocSplit);

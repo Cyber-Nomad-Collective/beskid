@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-22T10:58:01.276Z",
+  "generatedAt": "2026-05-22T16:05:11.679Z",
   "summary": {
     "nodes": 784,
     "errors": 0,
@@ -12,7 +12,7 @@
       "status": "ok",
       "sections": [],
       "counts": {
-        "specSections": 1,
+        "specSections": 0,
         "markdownH2": 0
       },
       "messages": []

@@ -2,6 +2,8 @@
  * Platform-aware install command, direct download link, and platform tabs.
  */
 
+import { onPageNavigation } from './view-transition-lifecycle';
+
 const RELEASE_BASE =
 	'https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-latest';
 
@@ -69,6 +71,9 @@ function directUrl(asset: string): string {
 }
 
 function initDownloadsPage(root: HTMLElement): void {
+	if (root.dataset.downloadsPageBound === 'true') return;
+	root.dataset.downloadsPageBound = 'true';
+
 	const commandEl = root.querySelector<HTMLElement>('[data-install-command]');
 	const commandLabel = root.querySelector<HTMLElement>('[data-command-label]');
 	const directBtn = root.querySelector<HTMLAnchorElement>('[data-direct-download]');
@@ -169,8 +174,4 @@ function init(): void {
 	document.querySelectorAll<HTMLElement>('[data-downloads-page]').forEach(initDownloadsPage);
 }
 
-if (document.readyState === 'loading') {
-	document.addEventListener('DOMContentLoaded', init);
-} else {
-	init();
-}
+onPageNavigation(init);

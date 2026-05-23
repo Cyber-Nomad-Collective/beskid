@@ -34,7 +34,9 @@ Run from `site/website`:
 | `bun build`   | Build static site into `dist/`          |
 | `bun preview` | Preview built site                      |
 
-`bun dev` / `bun build` run `predev` / `prebuild`: CLI version sync, platform-spec git meta, `generate:platform-spec-nav-tree`, `generate:book-nav-tree`, `verify:book-images`, and trudoc CI verify (build only).
+`bun dev` / `bun build` run `predev` / `prebuild`: CLI version sync, platform-spec git meta, `generate:platform-spec-nav-tree`, `generate:book-nav-tree`, `verify:book-images`, `verify:book-layout` (Starlight two-column width guards), and trudoc CI verify (build only).
+
+In-site navigation uses Astro `ClientRouter` with `fallback="animate"` (View Transitions polyfill on browsers without native support). Directional slide is applied on the Starlight `<main>` pane via a vendored [`Page.astro`](../../packages/beskid-docs-ui/src/starlight/Page.astro) (re-diff when upgrading `@astrojs/starlight`).
 
 **Agents:** do not edit book Markdown image tags (`![...](...)`) — especially `src/content/docs/book/00-why-beskid-exists/`. The author uses remote HTTPS URLs on purpose; never replace them with local paths or text. See root `AGENTS.md`. If `verify:book-images` or `ImageNotFound` fails, report to the author; do not rewrite image tags.
 

@@ -10,7 +10,7 @@ It had the best docs, nice support, and great tooling. That got me so hooked it 
 
 ## The .NET years
 
-I started my career as a desktop developer. From **2019** onward there was a sudden shift that shook enterprise software like really shitty, heavy ammunition.
+I started my career as a desktop developer. From **2019** onward there was a sudden shift that hit enterprise software like blunt, misaligned change—lots of motion, little alignment.
 
 I caught a few desktop jobs, then some backend—but I really liked working in UI. When **Blazor** came along I was hooked immediately. The problem was a lack of projects in that stack. I still managed to find one in my area.
 
@@ -41,7 +41,7 @@ It quickly became a real battle between teams. We lost.
 
 ![This is fine](https://media1.tenor.com/m/SjObhZ7tBOYAAAAC/fine-this-is-fine.gif)
 
-How do you win against a shitty-but-works desktop app backed by **five times** more developers? It turned into a weird, twisted tribal dick-measuring contest. Our side was not winning.
+How do you win against a brittle-but-works desktop app backed by **five times** more developers? It turned into a tribal turf war with no technical scoreboard. Our side was not winning.
 
 This was a lost fight from the start, because:
 
@@ -57,11 +57,11 @@ Do you know Blazor WASM downloads the **entire .NET virtual machine**? Who thoug
 
 ![Mind blown](https://preview.redd.it/no-need-to-use-javascript-anymore-v0-qcwds0h28nea1.jpg?auto=webp&s=f406921502323209c353f155143c4591e39e56c5)
 
-Some browsers blocked Blazor early on because `.dll` downloads were a hard no. Microsoft had to practically refactor Roslyn/RyuJIT to accommodate gzip-for-wasm. Pure comedy.
+Some browsers blocked Blazor early on because `.dll` downloads were a hard no. Microsoft had to rework Roslyn/RyuJIT paths to accommodate gzip-for-wasm—a telling compromise for a web stack.
 
 ### The form renderer that broke me
 
-I wanted a **simple automatic form renderer** in Blazor. Every similar solution was messy, unfinished, or a straight-up clusterfuck.
+I wanted a **simple automatic form renderer** in Blazor. Every similar solution was messy, unfinished, or a dead end.
 
 That should not be that hard. Right? **Right?**
 
@@ -73,7 +73,7 @@ While building my own solution—jumping from reflection through existential cri
 
 I worked nights, days, and weekends. I am genuinely traumatized by that experience.
 
-But what was the alternative? Hand-write every form in a rewrite of a shitty WinForms app with **over 300 views**?
+But what was the alternative? Hand-write every form in a rewrite of a tangled WinForms app with **over 300 views**?
 
 ![Red flag — nope](https://media.giphy.com/media/lncnb6oadKnZQoE9a6/giphy.gif)
 
@@ -87,7 +87,7 @@ Management asked why changing a field took **a week**. We were a two-person team
 
 ![Computer rage](https://media.giphy.com/media/ZKZiW6GSx8eSA/giphy.gif)
 
-Adding a feature in the legacy app was: add another button to a shitty view, implement `onclick`, ship. We had to dive into septic tanks, fight tribal politics, and prove our worth to developers approaching retirement—why we cared about DRY while implementing an entire WMS.
+Adding a feature in the legacy app was: add another button to a one-off view, implement `onclick`, ship. We had to wade through legacy layers, fight tribal politics, and prove our worth to developers approaching retirement—why we cared about DRY while implementing an entire WMS.
 
 Our projects got cancelled one after another, because the management was spending money they didn't have on project which had no sense. The WinForms team won. Not because of better code, or smarter architecture. Because the management doesn't care about the same parameters as devs, but that's the knowledge you gain on your day one as a developer. 
 

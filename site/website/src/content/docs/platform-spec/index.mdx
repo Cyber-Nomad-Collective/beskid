@@ -13,14 +13,5 @@ submitter:
 ---
 
 import PlatformSpecHome from '@beskid/docs-ui/platform-spec/PlatformSpecHome.astro';
-import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
-
-<SpecSection title="How to read this specification" id="how-to-read">
-**Language law** lives under [Language meta](/platform-spec/language-meta/): what programs mean (types, control flow, contracts, memory, interop). **Implementation law** lives under [Compiler](/platform-spec/compiler/), [Execution](/platform-spec/execution/), [Core library](/platform-spec/core-library/), and [Tooling](/platform-spec/tooling/): how the reference platform realizes those semantics.
-
-Each feature page declares **Proposed** (draft, incomplete) or **Standard** (enforceable MUST/SHOULD text with verification anchors). **Architecture decision records** live in each feature's **`adr/`** directory (one normative file per decision, expandable in the reader **ADRs** tab). Cross-cutting choices from project inception are under [Project inception](/platform-spec/community/project-inception/).
-
-Governance: [Specification authority and embedded decisions](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/) and [Release and versioning policy](/platform-spec/community/spec-maintenance/release-and-versioning-policy/). Legacy doc paths: [Legacy specification mapping](/platform-spec/legacy-spec-mapping/) (non-normative).
-</SpecSection>
 
 <PlatformSpecHome />

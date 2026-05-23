@@ -7,6 +7,7 @@ const root = path.dirname(fileURLToPath(import.meta.url));
 export const docsShellCustomCss = [
 	path.join(root, 'src/styles/theme.material.css'),
 	path.join(root, 'src/styles/starlight-layout.css'),
+	path.join(root, 'src/styles/view-transitions.css'),
 	path.join(root, 'src/styles/landing.css'),
 	path.join(root, 'src/styles/downloads.css'),
 	path.join(root, 'src/styles/platform-spec.css'),

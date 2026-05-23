@@ -40,27 +40,34 @@ function isOpenNode(node: { href?: string; slug: string; children?: BookNavTreeN
 const pathNorm = normalizePath(currentPath);
 ---
 
-<ul class="doc-area-nav-tree__list" data-depth={depth}>
+<ul class="platform-spec-nav-tree__list" data-depth={depth}>
 	{
 		nodes.map((node) => {
 			const hasChildren = Boolean(node.children?.length);
 			const open = hasChildren && isOpenNode(node);
 			const active = isActiveHref(node.href);
+			const level = hasChildren ? undefined : 'page';
 			return (
-				<li class="doc-area-nav-tree__item" data-part={node.part}>
+				<li
+					class="platform-spec-nav-tree__item"
+					data-part={node.part}
+					data-level={level}
+				>
 					{hasChildren ? (
-						<details class="doc-area-nav-tree__branch" open={open}>
-							<summary class="doc-area-nav-tree__summary">
+						<details class="platform-spec-nav-tree__branch" open={open}>
+							<summary class="platform-spec-nav-tree__summary">
 								{node.href ? (
 									<a
 										href={node.href}
-										class:list={['doc-area-nav-tree__link', active && 'is-active']}
+										class:list={['platform-spec-nav-tree__link', active && 'is-active']}
 										aria-current={active ? 'page' : undefined}
 									>
 										{node.title}
 									</a>
 								) : (
-									<span class="doc-area-nav-tree__link doc-area-nav-tree__folder-label">{node.title}</span>
+									<span class="platform-spec-nav-tree__link platform-spec-nav-tree__folder-label">
+										{node.title}
+									</span>
 								)}
 							</summary>
 							<BookNavBranch nodes={node.children!} currentPath={pathNorm} depth={depth + 1} />
@@ -68,13 +75,15 @@ const pathNorm = normalizePath(currentPath);
 					) : node.href ? (
 						<a
 							href={node.href}
-							class:list={['doc-area-nav-tree__link', active && 'is-active']}
+							class:list={['platform-spec-nav-tree__link', active && 'is-active']}
 							aria-current={active ? 'page' : undefined}
 						>
 							{node.title}
 						</a>
 					) : (
-						<span class="doc-area-nav-tree__link doc-area-nav-tree__folder-label">{node.title}</span>
+						<span class="platform-spec-nav-tree__link platform-spec-nav-tree__folder-label">
+							{node.title}
+						</span>
 					)}
 				</li>
 			);

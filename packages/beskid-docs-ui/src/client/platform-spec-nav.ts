@@ -1,6 +1,16 @@
 /** Platform-spec hierarchy rail (desktop) and drawer (mobile). */
 
 import { bindDocAreaNavTopSync, initDocAreaNav } from './doc-area-nav';
+import { onPageNavigation } from './view-transition-lifecycle';
+
+function collapsePlatformSpecNavRail() {
+	const chrome = document.querySelector<HTMLElement>('[data-platform-spec-nav-chrome]');
+	const rail = document.querySelector<HTMLElement>('[data-platform-spec-nav-rail]');
+	if (!chrome || !rail) return;
+	chrome.setAttribute('data-rail-collapsed', 'true');
+	rail.setAttribute('data-rail-collapsed', 'true');
+	document.body.removeAttribute('data-spec-nav-open');
+}
 
 function initPlatformSpecNav() {
 	initDocAreaNav({
@@ -12,9 +22,12 @@ function initPlatformSpecNav() {
 		filterSelector: '[data-platform-spec-nav-filter]',
 		treeItemSelector: '.platform-spec-nav-tree__item',
 		treeLinkSelector: '.platform-spec-nav-tree__link',
+		defaultCollapsed: true,
+		desktopToggle: 'auto',
 	});
 }
 
-initPlatformSpecNav();
-document.addEventListener('astro:after-swap', initPlatformSpecNav);
+export { collapsePlatformSpecNavRail };
+
+onPageNavigation(initPlatformSpecNav);
 bindDocAreaNavTopSync();

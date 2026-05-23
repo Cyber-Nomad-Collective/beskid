@@ -17,7 +17,7 @@ const branchNodes = tree.children ?? [];
 	class="platform-spec-nav-chrome"
 	data-platform-spec-nav-chrome
 	data-map-page={isMapPage ? 'true' : 'false'}
-	data-rail-collapsed="false"
+	data-rail-collapsed="true"
 >
 	<div class="platform-spec-nav-chrome__backdrop" data-platform-spec-nav-backdrop hidden />
 
@@ -27,19 +27,37 @@ const branchNodes = tree.children ?? [];
 		aria-label="Platform specification hierarchy"
 		data-platform-spec-nav-rail
 	>
-		<div class="platform-spec-nav-chrome__rail-head">
-			<a href="/platform-spec/" class="platform-spec-nav-chrome__map-link">
-				Platform map
-			</a>
-			<button
-				type="button"
-				class:list={['platform-spec-nav-chrome__rail-close', !isMapPage && 'md:sl-hidden']}
-				aria-label="Close specification tree"
-				data-platform-spec-nav-close
-			>
-				×
-			</button>
-		</div>
+		{
+			!isMapPage && (
+				<div class="platform-spec-nav-chrome__rail-head">
+					<a href="/platform-spec/" class="platform-spec-nav-chrome__map-link">
+						Platform map
+					</a>
+					<button
+						type="button"
+						class="platform-spec-nav-chrome__rail-close md:sl-hidden"
+						aria-label="Close specification tree"
+						data-platform-spec-nav-close
+					>
+						×
+					</button>
+				</div>
+			)
+		}
+		{
+			isMapPage && (
+				<div class="platform-spec-nav-chrome__rail-head platform-spec-nav-chrome__rail-head--index">
+					<button
+						type="button"
+						class:list={['platform-spec-nav-chrome__rail-close', 'md:sl-hidden']}
+						aria-label="Close specification tree"
+						data-platform-spec-nav-close
+					>
+						×
+					</button>
+				</div>
+			)
+		}
 		<label class="platform-spec-nav-chrome__filter">
 			<span class="platform-spec-nav-chrome__filter-label">Filter</span>
 			<input

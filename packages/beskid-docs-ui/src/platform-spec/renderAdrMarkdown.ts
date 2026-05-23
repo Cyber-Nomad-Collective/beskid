@@ -1,5 +1,6 @@
 import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
+import { remarkInlineRepoPaths } from 'trudoc/scripts/remark-inline-repo-paths.mjs';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
@@ -16,7 +17,12 @@ let processor: ReturnType<typeof unified> | null = null;
 
 function getProcessor() {
 	if (!processor) {
-		processor = unified().use(remarkParse).use(remarkGfm).use(remarkRehype).use(rehypeStringify);
+		processor = unified()
+			.use(remarkParse)
+			.use(remarkGfm)
+			.use(remarkInlineRepoPaths())
+			.use(remarkRehype)
+			.use(rehypeStringify);
 	}
 	return processor;
 }

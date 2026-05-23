@@ -20,6 +20,8 @@ interface Props {
 	layoutReport: CompletenessReport;
 	/** On article pages, open the Current document tab (article body), not a persisted Articles tab. */
 	defaultTab?: 'current-document';
+	/** ADR reader pages: hide the ADRs tab (body is the ADR) and suppress Starlight “On this page”. */
+	readerMode?: 'adr' | 'default';
 }
 
 const {
@@ -32,14 +34,17 @@ const {
 	historyWebsiteRelativePath,
 	layoutReport,
 	defaultTab,
+	readerMode = 'default',
 } = Astro.props;
 
 const openCurrentDocumentTab = defaultTab === 'current-document';
+const isAdrReader = readerMode === 'adr';
 ---
 
 <section
-	class="platform-spec-doc-split"
+	class:list={['platform-spec-doc-split', isAdrReader && 'platform-spec-doc-split--adr']}
 	data-platform-spec-doc-split
+	data-platform-spec-adr={isAdrReader ? '' : undefined}
 	data-default-tab={openCurrentDocumentTab ? 'current-document' : undefined}
 >
 	<div class="platform-spec-doc-split__main">
@@ -58,9 +63,13 @@ const openCurrentDocumentTab = defaultTab === 'current-document';
 					data-platform-spec-doc-content-target
 				/>
 			</TabItem>
-			<TabItem label={`ADRs${adrEntries.length ? ` (${adrEntries.length})` : ''}`}>
-				<SpecAdrPanel entries={adrEntries} />
-			</TabItem>
+			{
+				!isAdrReader && (
+					<TabItem label={`ADRs${adrEntries.length ? ` (${adrEntries.length})` : ''}`}>
+						<SpecAdrPanel entries={adrEntries} />
+					</TabItem>
+				)
+			}
 			<TabItem label="Articles">
 				<ul class="platform-spec-doc-split__article-list">
 					{

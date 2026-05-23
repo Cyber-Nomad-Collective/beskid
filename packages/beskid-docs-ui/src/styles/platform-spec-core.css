@@ -80,13 +80,13 @@
 	white-space: nowrap;
 }
 
-html[data-platform-spec-map] .platform-spec-topbar-actions--labeled {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .platform-spec-topbar-actions--labeled {
 	gap: 0.2rem;
 	flex-wrap: nowrap;
 	margin-inline: 0;
 }
 
-html[data-platform-spec-map] .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__btn {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__btn {
 	width: auto;
 	min-height: 2rem;
 	height: auto;
@@ -98,12 +98,12 @@ html[data-platform-spec-map] .platform-spec-topbar-actions--labeled .platform-sp
 	white-space: nowrap;
 }
 
-html[data-platform-spec-map] .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__glyph {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__glyph {
 	flex-shrink: 0;
 	display: block;
 }
 
-html[data-platform-spec-map] .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__label {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__label {
 	white-space: nowrap;
 }
 
@@ -123,12 +123,12 @@ html[data-platform-spec] .page > .header .header {
 	padding-inline: max(0.65rem, env(safe-area-inset-left)) max(0.65rem, env(safe-area-inset-right));
 }
 
-html[data-platform-spec-map] .page > .header {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page > .header {
 	/* Starlight PageFrame pads the fixed bar — pull map chrome to the viewport edges */
 	padding-inline: max(0.25rem, env(safe-area-inset-left)) max(0.25rem, env(safe-area-inset-right)) !important;
 }
 
-html[data-platform-spec-map] .page > .header .header {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page > .header .header {
 	padding-inline: 0;
 	display: flex;
 	flex-wrap: nowrap;
@@ -138,27 +138,27 @@ html[data-platform-spec-map] .page > .header .header {
 	min-height: var(--beskid-topbar-height, 3.4rem);
 }
 
-html[data-platform-spec-map] .page > .header .header .title-wrapper,
-html[data-platform-spec-map] .page > .header .header .site-title {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page > .header .header .title-wrapper,
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page > .header .header .site-title {
 	min-width: 0;
 	flex: 0 1 auto;
 }
 
-html[data-platform-spec-map] .page > .header .header .title-wrapper {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page > .header .header .title-wrapper {
 	margin-inline: 0;
 	padding-inline-start: 0;
 }
 
-html[data-platform-spec-map] .page > .header .header > *:not(.right-group) {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page > .header .header > *:not(.right-group) {
 	min-width: 0;
 }
 
-html[data-platform-spec-map] .page > .header site-search,
-html[data-platform-spec-map] .page > .header .site-search {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page > .header site-search,
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page > .header .site-search {
 	display: none !important;
 }
 
-html[data-platform-spec-map] .page > .header .header .right-group {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page > .header .header .right-group {
 	display: flex;
 	flex-wrap: nowrap;
 	align-items: center;
@@ -172,50 +172,50 @@ html[data-platform-spec-map] .page > .header .header .right-group {
 	white-space: nowrap;
 }
 
-html[data-platform-spec-map] .page > .header .header .social-icons {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page > .header .header .social-icons {
 	gap: 0.35rem;
 }
 
-html[data-platform-spec-map] .page > .header .header .social-icons::after {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page > .header .header .social-icons::after {
 	height: 1.5rem;
 	margin-inline: 0.1rem;
 }
 
-html[data-platform-spec-map] .page > .header .header .right-group > * {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page > .header .header .right-group > * {
 	flex-shrink: 0;
 }
 
-body:has(.platform-spec-map-page) .beskid-header__row {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .beskid-header__row {
 	grid-template-columns: minmax(0, 1fr) max-content !important;
 	grid-template-rows: auto !important;
 	align-items: center;
 }
 
-body:has(.platform-spec-map-page) .beskid-header__brand {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .beskid-header__brand {
 	flex-wrap: nowrap;
 	min-width: 0;
 }
 
-body:has(.platform-spec-map-page) .beskid-header__desktop {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .beskid-header__desktop {
 	grid-column: 2;
 	grid-row: 1;
 }
 
-body:has(.platform-spec-map-page) .beskid-header__mobile-toggle {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .beskid-header__mobile-toggle {
 	grid-column: 2;
 	grid-row: 1;
 }
 
-body:has(.platform-spec-map-page) .beskid-header__search {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .beskid-header__search {
 	display: none !important;
 }
 
 @media (max-width: 72rem) {
-	html[data-platform-spec-map] .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__label {
+	html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__label {
 		display: none;
 	}
 
-	html[data-platform-spec-map] .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__btn {
+	html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .platform-spec-topbar-actions--labeled .platform-spec-topbar-actions__btn {
 		padding: 0.32rem;
 	}
 }
@@ -449,13 +449,20 @@ body:has(.platform-spec-map-page) .beskid-header__search {
 	}
 }
 
+.platform-spec-home .platform-spec-tiles {
+	margin: 0;
+}
+
 .platform-spec-tiles {
-	margin: 2rem 0 2.5rem;
+	margin: 1.5rem 0 2rem;
 }
 
 .platform-spec-tiles__heading {
-	margin: 0 0 1rem;
-	font-size: var(--sl-text-h3);
+	margin: 0 0 0.85rem;
+	font-size: var(--sl-text-h4);
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	color: var(--sl-color-white);
 }
 
 .platform-spec-tiles__grid {
@@ -464,7 +471,7 @@ body:has(.platform-spec-map-page) .beskid-header__search {
 	padding: 0;
 	display: grid;
 	grid-template-columns: 1fr;
-	gap: 1rem;
+	gap: 0.85rem;
 }
 
 @media (min-width: 40rem) {
@@ -482,37 +489,81 @@ body:has(.platform-spec-map-page) .beskid-header__search {
 .platform-spec-tile {
 	display: flex;
 	flex-direction: column;
-	gap: 0.35rem;
+	gap: 0.5rem;
 	height: 100%;
-	padding: 1rem 1.1rem;
-	border-radius: 0.5rem;
-	border: 1px solid var(--sl-color-gray-5);
-	background: var(--sl-color-black);
+	padding: 1rem 1.1rem 1.05rem;
+	border-radius: 0.55rem;
+	border: 1px solid var(--platform-spec-card-border);
+	background: var(--platform-spec-card-bg);
 	text-decoration: none;
 	color: inherit;
-	box-shadow: 0 1px 0 color-mix(in srgb, var(--sl-color-hairline) 80%, transparent);
-	transition: border-color 0.15s ease, transform 0.15s ease;
+	box-shadow: 0 10px 28px color-mix(in srgb, var(--beskid-primary) 8%, transparent);
+	transition:
+		border-color 0.15s ease,
+		transform 0.15s ease,
+		box-shadow 0.15s ease;
 }
 
 .platform-spec-tile:hover {
-	border-color: var(--sl-color-accent-high);
+	border-color: color-mix(in srgb, var(--platform-spec-tab-indicator) 55%, var(--platform-spec-card-border));
 	transform: translateY(-1px);
+	box-shadow: 0 12px 32px color-mix(in srgb, var(--beskid-primary) 14%, transparent);
+}
+
+.platform-spec-tile__head {
+	display: flex;
+	flex-direction: column;
+	gap: 0.55rem;
 }
 
 .platform-spec-tile__title {
 	font-weight: 700;
 	font-size: var(--sl-text-base);
+	color: var(--sl-color-white);
+	line-height: 1.25;
+}
+
+.platform-spec-tile__badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+}
+
+.platform-spec-tile__badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 0.12rem 0.45rem;
+	border-radius: 999px;
+	font-size: 0.68rem;
+	font-weight: 600;
+	line-height: 1.35;
+	letter-spacing: 0.02em;
+	border: 1px solid color-mix(in srgb, var(--platform-spec-card-border) 90%, transparent);
+	background: color-mix(in srgb, var(--platform-spec-surface-muted) 70%, transparent);
+	color: var(--sl-color-gray-2);
+}
+
+.platform-spec-tile__badge--accent {
+	border-color: color-mix(in srgb, var(--platform-spec-tab-indicator) 42%, transparent);
+	background: var(--platform-spec-badge-bg);
+	color: var(--platform-spec-badge-text);
+}
+
+.platform-spec-tile__badge--muted {
+	opacity: 0.92;
+	color: var(--sl-color-gray-3);
 }
 
 .platform-spec-tile__desc {
 	font-size: var(--sl-text-sm);
 	color: var(--sl-color-gray-3);
-	line-height: 1.45;
+	line-height: 1.5;
 }
 
 .platform-spec-home__lede,
 .platform-spec-tile__title,
-.platform-spec-tile__desc {
+.platform-spec-tile__desc,
+.platform-spec-tile__badge {
 	font-family: var(--sl-font);
 }
 
@@ -534,43 +585,61 @@ html[data-platform-spec] h1#_top {
 	display: none !important;
 }
 
+html[data-platform-spec] main {
+	padding: 0 !important;
+}
+
 html[data-platform-spec] main > .content-panel:first-of-type:has(.sl-container > h1#_top:only-child) {
-	display: none;
+	display: none !important;
 }
 
 html[data-platform-spec] main > .content-panel + .content-panel {
 	border-top: none;
+	padding-block-start: 0 !important;
+}
+
+/* Starlight ContentPanel ships `padding: 1.5rem` — tighten reader chrome, flush index hub */
+html[data-platform-spec]:not(:has(.platform-spec-home)) main > .content-panel + .content-panel {
+	padding: clamp(0.65rem, 1.5vw, 1rem) var(--sl-content-pad-x, 1rem) 1.5rem !important;
+}
+
+html[data-platform-spec]:not(:has(.platform-spec-home))
+	main
+	> .content-panel
+	+ .content-panel:has(.platform-spec-header, .platform-spec-doc-split) {
+	padding-block-start: clamp(0.5rem, 1.2vw, 0.85rem) !important;
 }
 
 /* --- Platform-spec nav: map index + collapsed rail (shared rail in doc-areas.css) --- */
 html[data-platform-spec]:has(.platform-spec-nav-chrome__rail[data-rail-collapsed='true']) .page .main-pane {
-	padding-inline-start: var(--doc-area-nav-rail-collapsed);
+	padding-inline-start: var(--platform-spec-nav-rail-collapsed);
 }
 
-html[data-platform-spec-map] .page .main-pane {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page .main-pane,
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='browse']) .page .main-pane {
 	padding-inline-start: 0 !important;
 }
 
-html[data-platform-spec-map] .platform-spec-nav-chrome__rail,
-html[data-platform-spec-map] .doc-area-nav-chrome__rail {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .platform-spec-nav-chrome__rail,
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='browse']) .platform-spec-nav-chrome__rail {
 	transform: translateX(-104%);
 	pointer-events: none;
 }
 
-html[data-platform-spec-map] body[data-spec-nav-open] .platform-spec-nav-chrome__backdrop,
-html[data-platform-spec-map] body[data-spec-nav-open] .doc-area-nav-chrome__backdrop {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) body[data-spec-nav-open] .platform-spec-nav-chrome__backdrop,
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='browse']) body[data-spec-nav-open] .platform-spec-nav-chrome__backdrop {
 	display: block !important;
 	z-index: 45;
 }
 
-html[data-platform-spec-map] body[data-spec-nav-open] .platform-spec-nav-chrome__rail,
-html[data-platform-spec-map] body[data-spec-nav-open] .doc-area-nav-chrome__rail {
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) body[data-spec-nav-open] .platform-spec-nav-chrome__rail,
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='browse']) body[data-spec-nav-open] .platform-spec-nav-chrome__rail {
 	transform: translateX(0);
 	pointer-events: auto;
 	z-index: 46;
 }
 
-html[data-platform-spec-map] .beskid-header__brand .platform-spec-nav-toggle {
+html[data-platform-spec]:has([data-platform-spec-home]) .beskid-header__brand .platform-spec-nav-toggle {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -584,13 +653,13 @@ html[data-platform-spec-map] .beskid-header__brand .platform-spec-nav-toggle {
 	cursor: pointer;
 }
 
-html[data-platform-spec-map] .beskid-header__brand .platform-spec-nav-toggle:hover,
-html[data-platform-spec-map] .beskid-header__brand .platform-spec-nav-toggle:focus-visible {
+html[data-platform-spec]:has([data-platform-spec-home]) .beskid-header__brand .platform-spec-nav-toggle:hover,
+html[data-platform-spec]:has([data-platform-spec-home]) .beskid-header__brand .platform-spec-nav-toggle:focus-visible {
 	color: var(--sl-color-white);
 	background: color-mix(in srgb, var(--sl-color-white) 8%, transparent);
 }
 
-html[data-platform-spec-map] .beskid-header__brand .platform-spec-nav-toggle[aria-expanded='true'] {
+html[data-platform-spec]:has([data-platform-spec-home]) .beskid-header__brand .platform-spec-nav-toggle[aria-expanded='true'] {
 	color: var(--platform-spec-tab-text-active);
 	background: color-mix(in srgb, var(--platform-spec-tab-indicator) 18%, transparent);
 }

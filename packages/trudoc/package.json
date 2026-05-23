@@ -18,6 +18,7 @@
 		"./remark/trudoc-hub-fence": "./src/remark/trudoc-hub-fence.ts",
 		"./scripts/remark-arch-code-fence.mjs": "./scripts/remark-arch-code-fence.mjs",
 		"./scripts/remark-repo-link-fence.mjs": "./scripts/remark-repo-link-fence.mjs",
+		"./scripts/remark-inline-repo-paths.mjs": "./scripts/remark-inline-repo-paths.mjs",
 		"./scripts/architecture-graph-c4.mjs": "./scripts/architecture-graph-c4.mjs",
 		"./platform-spec": "./src/platform-spec/index.ts",
 		"./platform-spec/*": "./src/platform-spec/*.ts",

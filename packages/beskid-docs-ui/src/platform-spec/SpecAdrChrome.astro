@@ -18,6 +18,7 @@ const submitter = current?.data?.submitter as { name?: string; email?: string } 
 const standing = typeof current?.data?.status === 'string' ? (current.data.status as 'Standard' | 'Proposed') : undefined;
 const adrId = typeof current?.data?.adrId === 'string' ? current.data.adrId : undefined;
 const adrStatus = typeof current?.data?.adrStatus === 'string' ? current.data.adrStatus : undefined;
+const pageTitle = typeof current?.data?.title === 'string' ? current.data.title : undefined;
 
 const parentSlug = state.articleRootSlug;
 const parentEntry = docs.find((e) => docEntrySlug(e) === parentSlug);
@@ -36,7 +37,10 @@ const architectureGraph = parentArchitecture ?? state.architectureGraph;
 
 <div class="platform-spec-header platform-spec-header--article">
 	<div class="platform-spec-header__top">
-		<p class="platform-spec-header__eyebrow">Platform spec ADR{adrId ? ` · ${adrId}` : ''}</p>
+		<div class="platform-spec-header__lead">
+			<p class="platform-spec-header__eyebrow">Platform spec ADR{adrId ? ` · ${adrId}` : ''}</p>
+			{pageTitle && <h1 class="platform-spec-header__title">{pageTitle}</h1>}
+		</div>
 		<div class="platform-spec-header__actions">
 			<a href={hubHref} class="platform-spec-header__back">{`Back to ${hubTitle}`}</a>
 			{parentNodeKey && <OpenInGraphButton node={parentNodeKey} iconOnly={false} label="Open feature in platform map" />}
@@ -68,4 +72,5 @@ const architectureGraph = parentArchitecture ?? state.architectureGraph;
 	historyWebsiteRelativePath={state.historyWebsiteRelativePath}
 	layoutReport={layoutReport}
 	defaultTab="current-document"
+	readerMode="adr"
 />

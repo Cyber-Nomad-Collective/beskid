@@ -1,4 +1,5 @@
 import { bindDocAreaNavTopSync, initDocAreaNav } from './doc-area-nav';
+import { onPageNavigation } from './view-transition-lifecycle';
 
 function initBookNav() {
 	initDocAreaNav({
@@ -8,11 +9,10 @@ function initBookNav() {
 		mobileToggleSelector: '[data-book-nav-mobile-toggle]',
 		closeSelector: '[data-book-nav-close]',
 		filterSelector: '[data-book-nav-filter]',
-		treeItemSelector: '.doc-area-nav-tree__item',
-		treeLinkSelector: '.doc-area-nav-tree__link',
+		treeItemSelector: '.platform-spec-nav-tree__item',
+		treeLinkSelector: '.platform-spec-nav-tree__link',
 	});
 }
 
-initBookNav();
-document.addEventListener('astro:after-swap', initBookNav);
+onPageNavigation(initBookNav);
 bindDocAreaNavTopSync();

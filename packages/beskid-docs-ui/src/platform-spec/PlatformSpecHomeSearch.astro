@@ -1,0 +1,38 @@
+---
+interface Props {
+	uid: string;
+	searchJson: string;
+}
+
+const { uid, searchJson } = Astro.props;
+const inputId = `${uid}-search`;
+---
+
+<section class="platform-spec-home-search" data-platform-spec-home-search aria-label="Search specification">
+	<label class="platform-spec-home-search__label" for={inputId}>
+		<span class="platform-spec-home-search__label-text">Search specification</span>
+		<span class="platform-spec-home-search__field">
+			<svg class="platform-spec-home-search__icon" viewBox="0 0 24 24" aria-hidden="true">
+				<path
+					d="M10.5 3a7.5 7.5 0 015.92 12.09l4.28 4.29-1.42 1.42-4.29-4.28A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"
+				></path>
+			</svg>
+			<input
+				id={inputId}
+				class="platform-spec-home-search__input"
+				type="search"
+				name="platform-spec-home-search"
+				placeholder="Domains, areas, features…"
+				autocomplete="off"
+				spellcheck="false"
+			/>
+			<button type="button" class="platform-spec-home-search__clear" hidden aria-label="Clear search">
+				×
+			</button>
+		</span>
+	</label>
+	<div class="platform-spec-home-search__panel" hidden>
+		<div class="platform-spec-home-search__results"></div>
+	</div>
+	<script id="platform-spec-home-search-data" type="application/json" set:html={searchJson} />
+</section>

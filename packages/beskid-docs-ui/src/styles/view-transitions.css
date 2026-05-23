@@ -1,0 +1,15 @@
+/**
+ * View transition tuning for Astro ClientRouter (native + fallback="animate" polyfill).
+ */
+
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-group(*),
+	::view-transition-old(*),
+	::view-transition-new(*) {
+		animation: none !important;
+	}
+
+	[data-astro-transition-fallback] [data-astro-transition-scope] {
+		animation: none !important;
+	}
+}

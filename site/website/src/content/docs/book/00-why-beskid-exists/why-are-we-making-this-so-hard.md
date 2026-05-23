@@ -1,5 +1,5 @@
 ---
-title: "1.7 Why are we making this so hard?"
+title: "Why are we making this so hard?"
 description: Most software is business records with lipstick—and the industry sells cathedrals to serve them.
 tableOfContents: true
 ---

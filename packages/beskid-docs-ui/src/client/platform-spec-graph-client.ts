@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { escapeHtml, renderRelatedTopicsSection, type RelatedTopicPayload } from 'trudoc/platform-spec';
+import { onPageNavigation } from './view-transition-lifecycle';
 
 type GraphPayloadNode = {
 	id: string;
@@ -287,6 +288,13 @@ function nodeIdFromHref(href: string): string | null {
 	return null;
 }
 
+let graphUnmount: (() => void) | null = null;
+
+export function teardownPlatformSpecGraph(): void {
+	graphUnmount?.();
+	graphUnmount = null;
+}
+
 export function mountPlatformSpecGraph(): void {
 	const graph = readGraphPayload();
 	const mountEl = document.getElementById('platform-spec-graph');
@@ -294,12 +302,19 @@ export function mountPlatformSpecGraph(): void {
 	const panelEl = document.getElementById('platform-spec-graph-panel');
 	if (!graph || !mountEl || !layoutEl || !panelEl) return;
 
+	teardownPlatformSpecGraph();
+
+	const cleanups: (() => void)[] = [];
+	const onResizeInsets = () => syncMapChromeInsets();
 	syncMapChromeInsets();
-	window.addEventListener('resize', syncMapChromeInsets, { passive: true });
+	window.addEventListener('resize', onResizeInsets, { passive: true });
+	cleanups.push(() => window.removeEventListener('resize', onResizeInsets));
+
 	const mapPageEl = document.querySelector<HTMLElement>('.platform-spec-map-page');
 	if (typeof ResizeObserver !== 'undefined' && mapPageEl) {
-		const ro = new ResizeObserver(() => syncMapChromeInsets());
-		ro.observe(mapPageEl);
+		const mapPageRo = new ResizeObserver(() => syncMapChromeInsets());
+		mapPageRo.observe(mapPageEl);
+		cleanups.push(() => mapPageRo.disconnect());
 	}
 
 	const applyMapLegendSwatches = () => {
@@ -851,9 +866,11 @@ export function mountPlatformSpecGraph(): void {
 		focusNode(node);
 		closeSearch();
 	});
-	document.addEventListener('keydown', (event) => {
+	const onKeydown = (event: KeyboardEvent) => {
 		if (event.key === 'Escape') closeSearch();
-	});
+	};
+	document.addEventListener('keydown', onKeydown);
+	cleanups.push(() => document.removeEventListener('keydown', onKeydown));
 	renderSearchResults('');
 
 	const urlNode = new URL(window.location.href).searchParams.get('node');
@@ -892,6 +909,7 @@ export function mountPlatformSpecGraph(): void {
 		activateMapLayout();
 	} else {
 		window.addEventListener('platform-spec-map-activate', activateMapLayout);
+		cleanups.push(() => window.removeEventListener('platform-spec-map-activate', activateMapLayout));
 	}
 
 	if (typeof ResizeObserver !== 'undefined') {
@@ -902,7 +920,18 @@ export function mountPlatformSpecGraph(): void {
 			syncSimulationToVisibility(false);
 		});
 		graphRo.observe(mountEl);
+		cleanups.push(() => graphRo.disconnect());
 	}
+
+	cleanups.push(() => simulation.stop());
+	cleanups.push(() => {
+		mountEl.innerHTML = '';
+	});
+
+	graphUnmount = () => {
+		for (const fn of cleanups) fn();
+	};
+	mountEl.addEventListener('astro:before-swap', () => teardownPlatformSpecGraph(), { once: true });
 }
 
-mountPlatformSpecGraph();
+onPageNavigation(() => mountPlatformSpecGraph());

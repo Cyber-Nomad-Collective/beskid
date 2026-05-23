@@ -1,6 +1,6 @@
 /**
  * Fail fast when book markdown references a missing local image path.
- * Prevents Astro dev from entering an unrecoverable ImageNotFound / empty docs collection state.
+ * Prevents Astro dev/build from entering an unrecoverable ImageNotFound state.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -8,15 +8,22 @@ import path from 'node:path';
 import { getWebsiteRoot } from './lib/website-root.mjs';
 
 const IMAGE_RE = /!\[[^\]]*]\(([^)]+)\)/g;
+const SKIP_BASENAMES = new Set(['AGENTS.md', 'CLAUDE.md', 'GEMINI.md']);
 
 function walk(dir, out = []) {
 	if (!fs.existsSync(dir)) return out;
 	for (const name of fs.readdirSync(dir, { withFileTypes: true })) {
 		const full = path.join(dir, name.name);
 		if (name.isDirectory()) walk(full, out);
-		else if (/\.(md|mdx)$/i.test(name.name)) out.push(full);
+		else if (/\.(md|mdx)$/i.test(name.name) && !SKIP_BASENAMES.has(name.name)) out.push(full);
 	}
 	return out;
+}
+
+function stripNonProse(text) {
+	return text
+		.replace(/```[\s\S]*?```/g, '')
+		.replace(/`[^`\n]+`/g, '');
 }
 
 function isExternalOrPublic(src) {
@@ -40,8 +47,9 @@ function main() {
 	const errors = [];
 
 	for (const file of files) {
-		const text = fs.readFileSync(file, 'utf8');
+		const text = stripNonProse(fs.readFileSync(file, 'utf8'));
 		let match;
+		IMAGE_RE.lastIndex = 0;
 		while ((match = IMAGE_RE.exec(text)) !== null) {
 			const src = match[1];
 			if (!src || isExternalOrPublic(src)) continue;
@@ -58,8 +66,9 @@ function main() {
 		console.error(
 			'\nCo-located images in content/docs can brick `astro dev` until you rm -rf .astro dist.',
 		);
+		console.error('Run: cd site/website && bun run dev:clean');
 		console.error(
-			'Do not rewrite book image tags to fix this — add the missing asset or ask the author (see AGENTS.md).',
+			'Do not rewrite book ![...](...) refs to fix this — add the missing asset or ask the author (see AGENTS.md).',
 		);
 		process.exit(1);
 	}

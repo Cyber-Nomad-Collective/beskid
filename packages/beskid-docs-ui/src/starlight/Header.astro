@@ -39,7 +39,7 @@ const isBook = path === '/book' || path.startsWith('/book/');
 	<Astronav closeOnClick>
 		<div class="beskid-header__row">
 			<div class="beskid-header__brand sl-flex">
-				{isPlatformSpec && <PlatformSpecNavToggle showInTopBar={isPlatformSpecMap} />}
+				{isPlatformSpec && <PlatformSpecNavToggle showInTopBar />}
 				{isBook && <BookNavToggle />}
 				<a class="beskid-header__brand-logo-link" href="/" aria-label="Beskid home">
 					<img class="beskid-header__brand-logo" src="/favicon.svg" alt="" width="26" height="26" />
