@@ -1,0 +1,502 @@
+{
+  "$schema": "../../../../home/ubuntu/.cursor/plugins/cache/cursor-public/9333/3347cbab5b54136f6fba0994c3a01a56f7fb7fca/skills/orchestrate/schemas/plan.schema.json",
+  "goal": "beskid-v0.3: Complete all v0.3 implementation to platform spec (highest impact first). Finish every gap from the May 2026 progress baseline: compiler mod contract execution (Collector/Generator/Analyzer/Rewriter), native DI end-to-end verification, export/FFI callbacks, foreign library import CLI, runtime Phase B GC and syscall parking, corelib collections/FS/api-shape tiering, codegen coverage and v0.3 dynamic types, tooling package-kind tool support and formatter spec hub as needed. Deliver phased plan.json with spec anchors and acceptance criteria; publish worker tasks to implement and verify; planners do not code.",
+  "summary": "deliver v0.3 platform-spec implementation across compiler, runtime, corelib, tooling in 8 parallel subplanner tracks",
+  "rootSlug": "beskid-v0-3",
+  "baseBranch": "main",
+  "repoUrl": "https://github.com/Cyber-Nomad-Collective/beskid",
+  "selfAgentId": "bc-eb459230-fd4e-41fc-9b0f-329c9ac8b557",
+  "syncStateToGit": true,
+  "acceptanceCriteria": [
+    "Every v0.3 platform-spec gap from May 2026 baseline has either landed implementation, normative spec text, or both",
+    "Compiler crates build green with `cargo check --workspace` from the `compiler/` submodule and existing CI scripts unchanged",
+    "Corelib packages build and pack via `beskid pckg pack` for every workspace member",
+    "Platform-spec passes `cd site/website && bun run verify:trudoc -- --preset ci` after edits",
+    "Every previously `#[ignore = \"v0.3 FFI impl...\"]` engine test is either un-ignored and passing, or replaced by a stronger end-to-end test",
+    "Native DI lowering toggle (`RUNTIME_CONTAINER_LOWERING_ENABLED`) is enabled and exercised by at least one end-to-end host launch test",
+    "Each subplanner track lands its work on its own branch and the aggregator merge worker produces a single integrated branch with all 8 tracks merged and CI green"
+  ],
+  "tasks": [
+    {
+      "name": "compiler-mod-execution",
+      "type": "subplanner",
+      "scopedGoal": "Complete the compiler-mod contract execution pipeline (Collector / Generator / Analyzer / Rewriter / AttributeGenerator) end-to-end against the Compiler Mod SDK platform-spec. Today `compiler/crates/beskid_analysis/src/mod_host/` has load, discovery, capabilities, query_bridge, and types modules but contract dispatch through `beskid_pipeline` phases (`mod.collect`, `mod.generate`, `mod.analyze`, `mod.rewrite`) is incomplete. Make `mod.load` -> `mod.collect` -> `mod.generate` -> `mod.analyze` -> `mod.rewrite` actually invoke the Beskid-side SDK contract instances on AOT-built mod artifacts and merge their outputs into the host CompilePlan, with diagnostics E1829 / E1851-E1870 surfacing on duplicate/conflicting registrations per spec. Provide at least one reference mod (smallest viable Serialization-Mod-shaped fixture or test-only mod) that exercises all four contract kinds and proves the full pipeline. Spec anchors: site/website/src/content/docs/platform-spec/language-meta/metaprogramming/compiler-mod-sdk.mdx, site/website/src/content/docs/platform-spec/compiler/compiler-mods/index.mdx, site/website/src/content/docs/platform-spec/compiler/compiler-mods/mod-host-bridge/*, site/website/src/content/docs/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/*, site/website/src/content/docs/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/*. Coordinate with mod_host already established in compiler/crates/beskid_analysis/src/mod_host and the AOT artifact contract under compiler/crates/beskid_aot/src/mod_artifact.rs. If pipeline scheduling needs new phase ids, add them in beskid_pipeline and update PIPELINE.md. Drive integration tests in beskid_engine or beskid_tests to assert the contract roundtrip. Decompose into your own workers + verifier; keep at least one verifier on the deliverable.",
+      "pathsAllowed": [
+        "compiler/crates/beskid_analysis/src/mod_host/**",
+        "compiler/crates/beskid_analysis/src/composition_query.rs",
+        "compiler/crates/beskid_analysis/src/compiler_sdk_reflect.rs",
+        "compiler/crates/beskid_pipeline/**",
+        "compiler/crates/beskid_codegen/src/lowering/composition_policy.rs",
+        "compiler/crates/beskid_aot/src/mod_artifact.rs",
+        "compiler/crates/beskid_aot/src/lib.rs",
+        "compiler/crates/beskid_aot/src/api.rs",
+        "compiler/crates/beskid_engine/**",
+        "compiler/crates/beskid_tests/src/mods/**",
+        "compiler/crates/beskid_tests/src/runtime/**",
+        "compiler/corelib/packages/compiler-sdk/**",
+        "compiler/corelib/beskid_corelib/tests/corelib_tests/src/compiler_sdk/**",
+        "site/website/src/content/docs/platform-spec/language-meta/metaprogramming/compiler-mod-sdk.mdx",
+        "site/website/src/content/docs/platform-spec/compiler/compiler-mods/**",
+        ".orchestrate/beskid-v0-3/orch/**"
+      ],
+      "pathsForbidden": [
+        "compiler/crates/beskid_codegen/src/lowering/expressions/**",
+        "compiler/crates/beskid_codegen/src/lowering/statements/**",
+        "compiler/crates/beskid_codegen/src/lowering/types.rs",
+        "compiler/crates/beskid_runtime/src/scheduler/**",
+        "compiler/crates/abfall/**",
+        "compiler/crates/beskid_cli/src/commands/**",
+        "compiler/corelib/packages/foundation/src/Collections/**",
+        "compiler/corelib/packages/runtime/src/System/**"
+      ],
+      "acceptance": [
+        "`mod.collect` / `mod.generate` / `mod.analyze` / `mod.rewrite` phases actually invoke the Beskid-side Collector/Generator/Analyzer/Rewriter contract methods on AOT-built mod artifacts",
+        "Reference / test-only Mod project exercises all four contract kinds end-to-end and is checked in as a fixture",
+        "Duplicate or conflicting contract registrations fail with E1829 / E1851-E1870 before mod.collect, per platform-spec",
+        "`cargo test -p beskid_engine -p beskid_tests` from compiler/ passes with at least one new mod-contract integration test that fails on `main`",
+        "Compiler Mod SDK spec page lists the now-implemented phases as Standard with verification anchors; cd site/website && bun run verify:trudoc -- --preset ci stays green"
+      ],
+      "verify": "## Setup\n- From repo root: `git submodule update --init --recursive`.\n- `cd compiler && cargo build -p beskid_cli -q`.\n\n## Automated\n- `cd compiler && cargo test -p beskid_engine mod_host -- --test-threads=1`\n- `cd compiler && cargo test -p beskid_tests mods:: -- --test-threads=1`\n- `cd site/website && bun run verify:trudoc -- --preset ci`\n\n## Manual\n- Run the reference Mod fixture through `beskid build` and inspect the AOT artifact for the four contract entrypoints.\n\n## Gotchas\n- Pipeline phase IDs must stay aligned between `beskid_pipeline/src/phases.rs` and `PIPELINE.md`.\n- Diagnostic codes must use E1829 / E1851-E1870 ranges, not new T-codes.",
+      "model": "claude-opus-4-7-thinking-xhigh",
+      "maxAttempts": 2
+    },
+    {
+      "name": "verify-compiler-mod-execution",
+      "type": "verifier",
+      "verifies": "compiler-mod-execution",
+      "scopedGoal": "Verify the compiler-mod execution pipeline end-to-end on the compiler-mod-execution branch by running every acceptance criterion (mod_host pipeline tests, integration tests, platform-spec verify) and reporting `live-ui-verified` only when the reference Mod fixture actually drives all four contract kinds through a real `beskid build`.",
+      "acceptance": [
+        "Verification section includes execution evidence for every compiler-mod-execution acceptance criterion",
+        "Engine and beskid_tests mod-related test runs are captured with pass/fail counts"
+      ],
+      "model": "claude-opus-4-7",
+      "maxAttempts": 2
+    },
+    {
+      "name": "native-di-codegen-runtime",
+      "type": "subplanner",
+      "scopedGoal": "Make native dependency injection work end-to-end per the language-meta composition / dependency-injection feature. Today `compiler/crates/beskid_analysis/src/composition/` resolves host chains, scopes, and bindings and emits a CompositionSnapshot, but `compiler/crates/beskid_codegen/src/lowering/composition_policy.rs` hard-gates lowering with `RUNTIME_CONTAINER_LOWERING_ENABLED: false`, so `launch` and `with` are no-ops. Implement the codegen lowering: ctor wiring from `Registration`/`BindingPlan`, scope enter/leave around `with` bodies, `inject` field initialization (including `T[]` plural), and `launch` host bootstrap that wires `startup`/`dispose`. Add the runtime hooks needed for scope enter/leave and `init`/`dispose` lifecycle, including any new `beskid_runtime` builtins required (kept in the existing scheduler / TLS surface; do not introduce new crates). Provide at least one end-to-end test: a Host project with two scopes, one plural inject, and a registered service that gets disposed in reverse order. Spec anchors: site/website/src/content/docs/platform-spec/language-meta/composition/dependency-injection/**, site/website/src/content/docs/platform-spec/compiler/build-pipeline/stage-ordering/*. Keep the rust pipeline composition (compiler/pipeline-composition) plane untouched. Update the spec's `Implementation anchors` to point at real lowering modules once they exist. Decompose into your own workers; finish with a verifier that runs the end-to-end host launch test.",
+      "pathsAllowed": [
+        "compiler/crates/beskid_codegen/src/lowering/composition_policy.rs",
+        "compiler/crates/beskid_codegen/src/lowering/composition/**",
+        "compiler/crates/beskid_codegen/src/lowering/function.rs",
+        "compiler/crates/beskid_codegen/src/lowering/statements/**",
+        "compiler/crates/beskid_codegen/src/lowering/expressions/composition/**",
+        "compiler/crates/beskid_codegen/src/services.rs",
+        "compiler/crates/beskid_runtime/src/composition/**",
+        "compiler/crates/beskid_runtime/src/builtins/composition.rs",
+        "compiler/crates/beskid_runtime/src/builtins/mod.rs",
+        "compiler/crates/beskid_runtime/src/lib.rs",
+        "compiler/crates/beskid_abi/src/builtins.rs",
+        "compiler/crates/beskid_abi/src/symbols.rs",
+        "compiler/crates/beskid_analysis/src/composition/**",
+        "compiler/crates/beskid_engine/**",
+        "compiler/crates/beskid_tests/src/composition/**",
+        "compiler/crates/beskid_tests/src/runtime/**",
+        "compiler/corelib/packages/foundation/src/Core/**",
+        "site/website/src/content/docs/platform-spec/language-meta/composition/**",
+        ".orchestrate/beskid-v0-3/orch/**"
+      ],
+      "pathsForbidden": [
+        "compiler/crates/beskid_analysis/src/mod_host/**",
+        "compiler/crates/beskid_cli/src/commands/**",
+        "compiler/crates/abfall/**",
+        "compiler/crates/beskid_runtime/src/scheduler/syscall_pool.rs",
+        "compiler/corelib/packages/foundation/src/Collections/**",
+        "compiler/corelib/packages/runtime/src/System/**"
+      ],
+      "acceptance": [
+        "`RUNTIME_CONTAINER_LOWERING_ENABLED` is true (or replaced with always-on codepath) and `launch` / `with` emit real container setup",
+        "Field `inject` (single + `T[]` plural) is wired by the lowering and initialized before any user code runs in the activated scope",
+        "Scope `init` runs on enter and `dispose` runs on exit in reverse registration order, exercised by an end-to-end host test",
+        "`cargo test -p beskid_tests composition:: -- --test-threads=1` passes with at least one new end-to-end host launch test that fails on `main`",
+        "Spec page Implementation anchors point at real composition lowering modules; cd site/website && bun run verify:trudoc -- --preset ci stays green"
+      ],
+      "verify": "## Setup\n- `cd compiler && cargo build -p beskid_cli -q`.\n\n## Automated\n- `cd compiler && cargo test -p beskid_tests composition:: -- --test-threads=1`\n- `cd compiler && cargo test -p beskid_codegen -- --test-threads=1`\n- `cd site/website && bun run verify:trudoc -- --preset ci`\n\n## Manual\n- Compile and run the end-to-end host fixture; confirm `init` and `dispose` log lines fire in the spec-defined order.\n\n## Gotchas\n- Single-mutator constraint still holds in Phase A; do not introduce parallel allocators.\n- ABI symbol table additions must land in `beskid_abi::BUILTIN_SPECS` and be re-exported through `beskid_runtime::lib`.",
+      "model": "claude-opus-4-7-thinking-xhigh",
+      "maxAttempts": 2
+    },
+    {
+      "name": "verify-native-di-codegen-runtime",
+      "type": "verifier",
+      "verifies": "native-di-codegen-runtime",
+      "scopedGoal": "Verify native DI end-to-end on the native-di-codegen-runtime branch by running the new composition integration tests and a real host launch fixture, then reporting evidence per acceptance criterion. Use `unit-test-verified` if the end-to-end is exercised via tests only; use `live-ui-verified` if you actually launch the host binary.",
+      "acceptance": [
+        "Verification section captures pass/fail counts for composition tests and at least one launch fixture run",
+        "Findings explicitly confirm the lowering gate is flipped and `init` / `dispose` ordering is observable"
+      ],
+      "model": "claude-opus-4-7",
+      "maxAttempts": 2
+    },
+    {
+      "name": "export-ffi-link-time",
+      "type": "subplanner",
+      "scopedGoal": "Land the v0.3 Export and link-time FFI implementation per platform-spec. Today `compiler/crates/beskid_engine/tests/ffi_v03_link_time.rs` has three `#[ignore = \"v0.3 FFI impl: ...\"]` tests for link-time extern resolution, export symbol emission, and callback registration table; and the spec at site/website/src/content/docs/platform-spec/language-meta/interop/export-and-callbacks/** and .../c-abi-profile/link-time-linking.mdx is Standard but reference compiler trails. Implement: (a) `[Export]` attribute lowering on `pub` functions with FFI-permitted types (codegen + AOT object module symbol export); (b) callback registration table protocol with GC-safe trampolines (runtime + ABI); (c) link-time extern resolution through project `link` block so `[Extern(Abi: \"C\", Library: \"libc\")]` contracts resolve at link rather than dynamic lookup on tier-1 hosts. Un-ignore the three engine tests and ensure they pass with real assertions; replace the placeholder bodies with real link/AOT assertions. Also extend the analysis test surface in compiler/crates/beskid_tests/src/analysis/ffi_v03_spec.rs as needed. Spec anchors: site/website/src/content/docs/platform-spec/language-meta/interop/export-and-callbacks/**, site/website/src/content/docs/platform-spec/language-meta/interop/c-abi-profile/link-time-linking.mdx, site/website/src/content/docs/platform-spec/language-meta/interop/ffi-and-extern/**. Decompose into your own workers + verifier.",
+      "pathsAllowed": [
+        "compiler/crates/beskid_analysis/src/analysis/**",
+        "compiler/crates/beskid_codegen/src/lowering/function.rs",
+        "compiler/crates/beskid_codegen/src/lowering/expressions/extern_call.rs",
+        "compiler/crates/beskid_codegen/src/lowering/expressions/export.rs",
+        "compiler/crates/beskid_codegen/src/module_emission.rs",
+        "compiler/crates/beskid_aot/src/object_module.rs",
+        "compiler/crates/beskid_aot/src/api.rs",
+        "compiler/crates/beskid_aot/src/lib.rs",
+        "compiler/crates/beskid_aot/src/linker.rs",
+        "compiler/crates/beskid_aot/src/export_table.rs",
+        "compiler/crates/beskid_runtime/src/builtins/callback.rs",
+        "compiler/crates/beskid_runtime/src/builtins/mod.rs",
+        "compiler/crates/beskid_runtime/src/lib.rs",
+        "compiler/crates/beskid_runtime/src/interop/**",
+        "compiler/crates/beskid_abi/src/builtins.rs",
+        "compiler/crates/beskid_abi/src/symbols.rs",
+        "compiler/crates/beskid_engine/tests/ffi_v03_link_time.rs",
+        "compiler/crates/beskid_engine/src/**",
+        "compiler/crates/beskid_tests/src/analysis/ffi_v03_spec.rs",
+        "compiler/crates/beskid_tests/src/interop/**",
+        "site/website/src/content/docs/platform-spec/language-meta/interop/export-and-callbacks/**",
+        "site/website/src/content/docs/platform-spec/language-meta/interop/c-abi-profile/link-time-linking.mdx",
+        "site/website/src/content/docs/platform-spec/language-meta/interop/ffi-and-extern/**",
+        ".orchestrate/beskid-v0-3/orch/**"
+      ],
+      "pathsForbidden": [
+        "compiler/crates/beskid_codegen/src/lowering/composition_policy.rs",
+        "compiler/crates/beskid_codegen/src/lowering/composition/**",
+        "compiler/crates/beskid_analysis/src/composition/**",
+        "compiler/crates/beskid_analysis/src/mod_host/**",
+        "compiler/crates/beskid_cli/src/commands/**",
+        "compiler/corelib/packages/foundation/src/Collections/**",
+        "compiler/corelib/packages/runtime/src/System/**"
+      ],
+      "acceptance": [
+        "`[Export]` on `pub` functions emits a public symbol in the AOT artifact and is callable from a C host fixture",
+        "Callback registration table is exposed through `beskid_abi` and a runtime test registers + invokes a Beskid callback from a foreign thread (or single-thread for v0.3) with GC-safe trampoline",
+        "Link-time extern resolution: `[Extern(Abi: \"C\", Library: \"libc\")] getpid()` links via project link block and runs without dynamic resolution on Linux tier-1",
+        "All three previously `#[ignore = \"v0.3 FFI impl\"]` tests in compiler/crates/beskid_engine/tests/ffi_v03_link_time.rs are un-ignored and pass with real assertions on Linux",
+        "Spec verification-and-traceability checklists for export-and-callbacks and link-time-linking are updated to reflect now-implemented Standard items"
+      ],
+      "verify": "## Setup\n- `cd compiler && cargo build -p beskid_cli -q`.\n\n## Automated\n- `cd compiler && cargo test -p beskid_engine ffi_v03 -- --test-threads=1`\n- `cd compiler && cargo test -p beskid_tests interop:: -- --test-threads=1`\n- `cd site/website && bun run verify:trudoc -- --preset ci`\n\n## Manual\n- Build the export fixture, link a C host, dlopen / link and invoke the exported entrypoint; record stdout in the handoff.\n\n## Gotchas\n- v0.3 FFI is Linux tier-1; do not block landing on macOS/Windows where the spec defers.\n- Callback trampolines must enter the GC scope before running Beskid code (Phase A mutator rules).",
+      "model": "claude-opus-4-7-thinking-xhigh",
+      "maxAttempts": 2
+    },
+    {
+      "name": "verify-export-ffi-link-time",
+      "type": "verifier",
+      "verifies": "export-ffi-link-time",
+      "scopedGoal": "Verify export and link-time FFI on the export-ffi-link-time branch by un-ignoring and running the three ffi_v03_link_time engine tests on Linux, linking a C host against an exported Beskid symbol, and confirming the callback registration trampoline path. Report `unit-test-verified` if engine tests cover all three acceptance lines; `live-ui-verified` if you also drive the C host binary.",
+      "acceptance": [
+        "Verification section includes commands and outputs for each of the three previously ignored tests",
+        "At least one callback round-trip is captured with byte-level output"
+      ],
+      "model": "claude-opus-4-7",
+      "maxAttempts": 2
+    },
+    {
+      "name": "foreign-lib-import-cli",
+      "type": "subplanner",
+      "scopedGoal": "Implement `beskid import lib` per the Foreign library import platform-spec feature, with the closed `ExternalLibrary` provider registry covering C / POSIX on tier-1 hosts. Today `compiler/crates/beskid_cli/src/commands/` has no `import` subcommand, and the spec at site/website/src/content/docs/platform-spec/tooling/foreign-library-import/** plus site/website/src/content/docs/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries.mdx defines both the trait and the manifest `link` block. Deliver: (a) Rust `ExternalLibrary` provider trait with C and POSIX implementations; (b) `beskid import lib <logical-name>` CLI command that selects the right provider, resolves linker inputs, and writes / merges into the project manifest `link` block in `Project.proj`; (c) end-to-end CLI test that imports `libc` and verifies the manifest mutation matches platform-spec. Spec anchors: site/website/src/content/docs/platform-spec/tooling/foreign-library-import/index.mdx, site/website/src/content/docs/platform-spec/tooling/foreign-library-import/cli-import-lib-command.mdx, site/website/src/content/docs/platform-spec/tooling/foreign-library-import/external-library-trait.mdx, site/website/src/content/docs/platform-spec/tooling/foreign-library-import/adr/0002-closed-provider-registry.mdx. Coordinate with manifest parse in compiler/crates/beskid_analysis/src/projects/. Decompose into your own workers + verifier.",
+      "pathsAllowed": [
+        "compiler/crates/beskid_cli/src/commands/import.rs",
+        "compiler/crates/beskid_cli/src/commands/mod.rs",
+        "compiler/crates/beskid_cli/src/cli.rs",
+        "compiler/crates/beskid_cli/src/lib.rs",
+        "compiler/crates/beskid_cli/tests/**",
+        "compiler/crates/beskid_analysis/src/projects/**",
+        "compiler/crates/beskid_analysis/src/external_library/**",
+        "compiler/crates/beskid_tests/src/cli/**",
+        "site/website/src/content/docs/platform-spec/tooling/foreign-library-import/**",
+        "site/website/src/content/docs/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries.mdx",
+        ".orchestrate/beskid-v0-3/orch/**"
+      ],
+      "pathsForbidden": [
+        "compiler/crates/beskid_codegen/**",
+        "compiler/crates/beskid_runtime/**",
+        "compiler/crates/abfall/**",
+        "compiler/crates/beskid_analysis/src/mod_host/**",
+        "compiler/crates/beskid_analysis/src/composition/**",
+        "compiler/corelib/**"
+      ],
+      "acceptance": [
+        "`beskid import lib <name>` is a real subcommand listed in `beskid --help`",
+        "`ExternalLibrary` provider trait exists in Rust with at least one C provider and one POSIX provider; closed registry rejects unknown providers",
+        "`beskid import lib libc` mutates `Project.proj` `link` block to match the platform-spec schema and is round-tripped by the existing manifest parser",
+        "End-to-end CLI test asserts the imported manifest survives `beskid build` / `beskid lock` without diagnostics",
+        "Spec verification-and-traceability lists the now-implemented CLI command and provider trait surface"
+      ],
+      "verify": "## Setup\n- `cd compiler && cargo build -p beskid_cli -q`.\n\n## Automated\n- `cd compiler && cargo test -p beskid_cli -- --test-threads=1`\n- `cd compiler && cargo test -p beskid_tests cli:: -- --test-threads=1`\n- `cd site/website && bun run verify:trudoc -- --preset ci`\n\n## Manual\n- Create a temporary project, run `beskid import lib libc`, inspect `Project.proj`, then `beskid build`.\n\n## Gotchas\n- Closed registry must reject unknown library names with a structured diagnostic, not a panic.\n- Manifest writes must preserve ordering and comments per existing parser invariants.",
+      "model": "claude-opus-4-7-thinking-xhigh",
+      "maxAttempts": 2
+    },
+    {
+      "name": "verify-foreign-lib-import-cli",
+      "type": "verifier",
+      "verifies": "foreign-lib-import-cli",
+      "scopedGoal": "Verify foreign-lib-import-cli on its branch by running the new CLI subcommand against a temp project, confirming the link block mutation, and exercising rejection of unknown libraries. Report `live-ui-verified` only if you actually invoke the binary against a real Project.proj on disk.",
+      "acceptance": [
+        "Verification section captures the `beskid import lib libc` invocation, before/after manifest diff, and at least one rejection path",
+        "Findings include the test counts from beskid_cli and beskid_tests cli runs"
+      ],
+      "model": "claude-opus-4-7",
+      "maxAttempts": 2
+    },
+    {
+      "name": "runtime-phase-b-gc-syscall",
+      "type": "subplanner",
+      "scopedGoal": "Ship the v0.3 runtime Phase B GC scaffolding and syscall parking polish per platform-spec. Today `compiler/crates/beskid_runtime/CONCURRENCY_STATUS.md` records Phase A is landed (M0-M8), but Phase B (multiple mutators, real `gc_write_barrier` on channel edges, optional preemption at function entry) is documented as Known Gap. The single-mutator constraint also blocks generic channel payloads. Deliver: (a) abfall + beskid_runtime support for multiple Beskid mutator threads with the documented `gc_write_barrier` actually doing work (no longer a no-op on pointer stores in codegen-emitted code); (b) function-entry preemption hooks (optional flag, off by default but compiled in); (c) cross-fiber pointer-payload channel send with copy/GC tracing on receive (per spec); (d) tighten syscall parking so the syscall pool can never re-enter as a second mutator without `enter_runtime_scope`. Provide a runtime stress test that drives at least two mutators concurrently through allocation + channel send/receive with the new write barrier and confirms no data races (run with --test-threads=1 plus internal concurrency). Spec anchors: site/website/src/content/docs/platform-spec/execution/runtime/fiber-scheduler-and-stacks/**, site/website/src/content/docs/platform-spec/execution/runtime/memory-and-gc-runtime-contract/**, site/website/src/content/docs/platform-spec/execution/runtime/panic-io-and-syscalls/**, site/website/src/content/docs/platform-spec/execution/runtime/channels-and-synchronization/**. Decompose into your own workers + verifier; update CONCURRENCY_STATUS.md after work lands.",
+      "pathsAllowed": [
+        "compiler/crates/abfall/**",
+        "compiler/crates/beskid_runtime/src/scheduler/**",
+        "compiler/crates/beskid_runtime/src/builtins/gc_roots.rs",
+        "compiler/crates/beskid_runtime/src/builtins/channel.rs",
+        "compiler/crates/beskid_runtime/src/builtins/fiber.rs",
+        "compiler/crates/beskid_runtime/src/channel.rs",
+        "compiler/crates/beskid_runtime/src/gc.rs",
+        "compiler/crates/beskid_runtime/src/lib.rs",
+        "compiler/crates/beskid_runtime/CONCURRENCY_STATUS.md",
+        "compiler/crates/beskid_runtime/tests/**",
+        "compiler/crates/beskid_codegen/src/lowering/expressions/channel.rs",
+        "compiler/crates/beskid_codegen/src/lowering/expressions/store.rs",
+        "compiler/crates/beskid_codegen/src/lowering/expressions/gc_barrier.rs",
+        "compiler/crates/beskid_abi/src/**",
+        "compiler/crates/beskid_tests/src/runtime/**",
+        "site/website/src/content/docs/platform-spec/execution/runtime/**",
+        ".orchestrate/beskid-v0-3/orch/**"
+      ],
+      "pathsForbidden": [
+        "compiler/crates/beskid_codegen/src/lowering/composition_policy.rs",
+        "compiler/crates/beskid_codegen/src/lowering/composition/**",
+        "compiler/crates/beskid_analysis/src/composition/**",
+        "compiler/crates/beskid_analysis/src/mod_host/**",
+        "compiler/crates/beskid_cli/src/commands/**",
+        "compiler/corelib/packages/foundation/src/Collections/**"
+      ],
+      "acceptance": [
+        "abfall + beskid_runtime support more than one concurrent mutator with documented write barriers active on pointer stores",
+        "`gc_write_barrier` is no longer a no-op for channel cross-fiber pointer sends and is exercised by a stress test",
+        "Syscall pool worker threads cannot allocate Beskid objects without `enter_runtime_scope`; an assertion or diagnostic enforces this",
+        "`cd compiler && cargo test -p beskid_runtime concurrency -- --test-threads=1` and `cd compiler && cargo test -p beskid_tests runtime:: -- --test-threads=1` are green with at least one new Phase B test that fails on `main`",
+        "CONCURRENCY_STATUS.md and spec memory-and-gc-runtime-contract pages mark Phase B items Landed and link to the new tests"
+      ],
+      "verify": "## Setup\n- `cd compiler && cargo build -p beskid_runtime -q`.\n\n## Automated\n- `cd compiler && cargo test -p beskid_runtime concurrency -- --test-threads=1`\n- `cd compiler && cargo test -p beskid_tests runtime::sched -- --test-threads=1`\n- `cd site/website && bun run verify:trudoc -- --preset ci`\n\n## Manual\n- Drive the new Phase B stress test under `RUST_BACKTRACE=1` to confirm no panics or data races.\n\n## Gotchas\n- Keep `RUST_MIN_STACK` at 16 MiB for runtime tests; full nox sessions can OOM low-memory hosts.\n- Do not break Phase A single-mutator paths; Phase B must be opt-in or gated behind a runtime config.",
+      "model": "claude-opus-4-7-thinking-xhigh",
+      "maxAttempts": 2
+    },
+    {
+      "name": "verify-runtime-phase-b-gc-syscall",
+      "type": "verifier",
+      "verifies": "runtime-phase-b-gc-syscall",
+      "scopedGoal": "Verify Phase B GC + syscall parking on the runtime-phase-b-gc-syscall branch by running the new stress test, beskid_runtime concurrency tests, and beskid_tests runtime sched suite. Capture before/after on the write barrier (must not be a no-op) and confirm the syscall pool guard fires under intentional misuse.",
+      "acceptance": [
+        "Verification section reports concurrency stress test outputs and at least one syscall-pool guard trip",
+        "Findings confirm CONCURRENCY_STATUS.md and spec page updates match observed behavior"
+      ],
+      "model": "claude-opus-4-7",
+      "maxAttempts": 2
+    },
+    {
+      "name": "corelib-tiering-collections-fs-api-shape",
+      "type": "subplanner",
+      "scopedGoal": "Promote the corelib api-shape platform-spec feature from Proposed to Standard and land the v0.3 corelib coverage it requires. The seven Proposed pages under site/website/src/content/docs/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/** (index, design-model, flow-and-algorithm, contracts-and-edge-cases, examples, verification-and-traceability, faq-and-troubleshooting) define the api-shape tiering and need normative content that matches the actual corelib. Today compiler/corelib/packages/foundation/src/Collections/ has Array.bd, List.bd, Map.bd, Queue.bd, Set.bd, Stack.bd thin surfaces, and compiler/corelib/packages/runtime/src/System/ has split Input / Output / Error / FS / Path / Process / Time / Environment surfaces, but the api-shape tiers (tier-1 standard, tier-2 supported, tier-3 unstable per spec design) are not enforced and the collections coverage is uneven. Deliver: (a) finished normative spec text across all seven api-shape pages, removing the Proposed status and replacing with Standard with embedded Decisions / ADRs; (b) corelib-side tiering attributes or a tier registry consumed by `beskid pckg pack` / api.json; (c) round out Collections (notably real Array slice helpers, Map insert/remove parity, Set, Queue, Stack behavior; the rest of List); (d) FS / Path coverage gaps to match the spec. Spec anchors: site/website/src/content/docs/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/**, site/website/src/content/docs/platform-spec/core-library/**, site/website/src/content/docs/platform-spec/tooling/cli/api-json-contract/**. Decompose into your own workers + verifier.",
+      "pathsAllowed": [
+        "compiler/corelib/packages/foundation/src/Collections/**",
+        "compiler/corelib/packages/foundation/src/Core/**",
+        "compiler/corelib/packages/runtime/src/System/**",
+        "compiler/corelib/beskid_corelib/tests/corelib_tests/src/collections/**",
+        "compiler/corelib/beskid_corelib/tests/corelib_tests/src/system/**",
+        "compiler/crates/beskid_analysis/src/doc/api_snapshot.rs",
+        "compiler/crates/beskid_analysis/src/doc/api_tier.rs",
+        "compiler/crates/beskid_cli/src/commands/doc.rs",
+        "site/website/src/content/docs/platform-spec/core-library/stability-and-api-shape/**",
+        "site/website/src/content/docs/platform-spec/core-library/collections/**",
+        "site/website/src/content/docs/platform-spec/core-library/io-and-filesystem/**",
+        "site/website/src/content/docs/platform-spec/tooling/cli/api-json-contract/**",
+        ".orchestrate/beskid-v0-3/orch/**"
+      ],
+      "pathsForbidden": [
+        "compiler/corelib/packages/compiler-sdk/**",
+        "compiler/corelib/packages/concurrency/**",
+        "compiler/crates/beskid_runtime/**",
+        "compiler/crates/beskid_codegen/**",
+        "compiler/crates/abfall/**",
+        "compiler/crates/beskid_cli/src/commands/import.rs"
+      ],
+      "acceptance": [
+        "All seven `corelib-api-shape/**` pages move from `status: Proposed` to `status: Standard` with normative content and embedded Decisions (or linked ADRs) per feature hub template",
+        "Tiering metadata is present on corelib types/members and surfaces through `beskid pckg pack` api.json output",
+        "Collections (Array, List, Map, Queue, Set, Stack) and System.FS / System.Path coverage matches the now-Standard spec; new Beskid tests under corelib_tests exercise the gaps",
+        "`cd compiler && cargo run -p beskid_cli --quiet -- test --project compiler/corelib/beskid_corelib/tests/corelib_tests --target CollectionsTier1Tests` passes",
+        "`cd site/website && bun run verify:trudoc -- --preset ci` stays green and no api-shape page remains `status: Proposed`"
+      ],
+      "verify": "## Setup\n- `cd compiler && cargo build -p beskid_cli -q`.\n\n## Automated\n- Run the CLI corelib test targets for collections and system surfaces.\n- `cd compiler && cargo test -p beskid_tests projects::corelib -- --test-threads=1`\n- `cd site/website && bun run verify:trudoc -- --preset ci`\n\n## Manual\n- Pack corelib with `beskid pckg pack` and confirm api.json contains tier metadata on top-level public symbols.\n\n## Gotchas\n- Keep CLI test invocations one target at a time per CONCURRENCY_STATUS guidance to avoid OOM.\n- Tier metadata must travel through the existing api.json schema; do not invent a parallel JSON file.",
+      "model": "claude-opus-4-7-thinking-xhigh",
+      "maxAttempts": 2
+    },
+    {
+      "name": "verify-corelib-tiering-collections-fs-api-shape",
+      "type": "verifier",
+      "verifies": "corelib-tiering-collections-fs-api-shape",
+      "scopedGoal": "Verify the corelib api-shape promotion + collections / FS coverage on its branch. Confirm no api-shape page is still Proposed, run the new corelib_tests targets, and inspect a `beskid pckg pack` api.json to see tier metadata on real symbols.",
+      "acceptance": [
+        "Verification section grep-confirms `status: Proposed` is gone under stability-and-api-shape/corelib-api-shape/",
+        "Findings include pck pack api.json excerpt showing tier metadata"
+      ],
+      "model": "claude-opus-4-7",
+      "maxAttempts": 2
+    },
+    {
+      "name": "codegen-coverage-dynamic-types",
+      "type": "subplanner",
+      "scopedGoal": "Close the v0.3 codegen coverage gap and promote `dynamic-types-and-mapping` from Proposed to Standard. Today site/website/src/content/docs/platform-spec/compiler/codegen-and-ir/dynamic-types-and-mapping.mdx is `status: Proposed`, and the codegen lowering for dynamic types and AOT object-to-object mapping is unfinished. Deliver: (a) HIR/CLIF representation for `dynamic` typed values that complement static `[Serialize]` generated paths from compiler-mod-execution; (b) AOT object-to-object mapping for known serializable types at compile time, gated by Serialization Mod analyzer eligibility (coordinate logically with compiler-mod-execution but stay on your branch); (c) runtime fallback mapping for `dynamic` values when static shape is unavailable; (d) promote the spec page to `status: Standard` with embedded Decisions; (e) close any remaining v0.3-band codegen gap surfaced by `compiler/crates/beskid_codegen` (audit `unimplemented!` / TODO sites and either resolve or file follow-ups under the spec). Spec anchors: site/website/src/content/docs/platform-spec/compiler/codegen-and-ir/dynamic-types-and-mapping.mdx, site/website/src/content/docs/platform-spec/compiler/codegen-and-ir/lowering-contract.mdx, site/website/src/content/docs/platform-spec/language-meta/metaprogramming/serialization/**. Decompose into your own workers + verifier.",
+      "pathsAllowed": [
+        "compiler/crates/beskid_codegen/src/lowering/types.rs",
+        "compiler/crates/beskid_codegen/src/lowering/expressions/dynamic.rs",
+        "compiler/crates/beskid_codegen/src/lowering/expressions/mapping.rs",
+        "compiler/crates/beskid_codegen/src/lowering/expressions/serialize.rs",
+        "compiler/crates/beskid_codegen/src/services.rs",
+        "compiler/crates/beskid_codegen/src/diagnostics.rs",
+        "compiler/crates/beskid_runtime/src/dynamic/**",
+        "compiler/crates/beskid_runtime/src/builtins/dynamic.rs",
+        "compiler/crates/beskid_runtime/src/builtins/mod.rs",
+        "compiler/crates/beskid_runtime/src/lib.rs",
+        "compiler/crates/beskid_abi/src/builtins.rs",
+        "compiler/crates/beskid_abi/src/symbols.rs",
+        "compiler/crates/beskid_tests/src/codegen/**",
+        "compiler/crates/beskid_tests/src/runtime/dynamic/**",
+        "site/website/src/content/docs/platform-spec/compiler/codegen-and-ir/dynamic-types-and-mapping.mdx",
+        "site/website/src/content/docs/platform-spec/compiler/codegen-and-ir/lowering-contract.mdx",
+        "site/website/src/content/docs/platform-spec/language-meta/metaprogramming/serialization/**",
+        ".orchestrate/beskid-v0-3/orch/**"
+      ],
+      "pathsForbidden": [
+        "compiler/crates/beskid_codegen/src/lowering/composition_policy.rs",
+        "compiler/crates/beskid_codegen/src/lowering/composition/**",
+        "compiler/crates/beskid_codegen/src/lowering/expressions/extern_call.rs",
+        "compiler/crates/beskid_codegen/src/lowering/expressions/export.rs",
+        "compiler/crates/beskid_analysis/src/composition/**",
+        "compiler/crates/beskid_analysis/src/mod_host/**",
+        "compiler/crates/abfall/**",
+        "compiler/corelib/packages/foundation/src/Collections/**",
+        "compiler/corelib/packages/runtime/src/System/**"
+      ],
+      "acceptance": [
+        "`dynamic` type values lower to a defined HIR/CLIF representation and round-trip through a runtime test",
+        "AOT object-to-object mapping is implemented for at least two distinct `[Serialize]` types and exercised by a codegen integration test",
+        "Runtime fallback mapping handles a `dynamic` value with unknown static shape, with a deterministic error path on incompatibility",
+        "Spec page `dynamic-types-and-mapping.mdx` moves from `status: Proposed` to `status: Standard` with embedded Decisions (or linked ADRs) and the eligibility rule references Serialization Mod analyzers",
+        "`cd site/website && bun run verify:trudoc -- --preset ci` stays green and `cd compiler && cargo test -p beskid_tests codegen::dynamic_types -- --test-threads=1` passes"
+      ],
+      "verify": "## Setup\n- `cd compiler && cargo build -p beskid_cli -q`.\n\n## Automated\n- `cd compiler && cargo test -p beskid_codegen dynamic -- --test-threads=1`\n- `cd compiler && cargo test -p beskid_tests codegen::dynamic_types -- --test-threads=1`\n- `cd site/website && bun run verify:trudoc -- --preset ci`\n\n## Manual\n- Compile a tiny program using one `dynamic` value, run it, and confirm the runtime mapping path engages.\n\n## Gotchas\n- Eligibility is enforced by Serialization Mod analyzers; do not bypass that check in codegen.\n- Keep `dynamic` lowering compatible with Phase A single-mutator; allocations must go through the runtime arena.",
+      "model": "claude-opus-4-7-thinking-xhigh",
+      "maxAttempts": 2
+    },
+    {
+      "name": "verify-codegen-coverage-dynamic-types",
+      "type": "verifier",
+      "verifies": "codegen-coverage-dynamic-types",
+      "scopedGoal": "Verify the dynamic types + codegen coverage delivery on its branch by running the new codegen and runtime tests, confirming the spec page is now Standard with embedded Decisions, and exercising a `dynamic` value round-trip.",
+      "acceptance": [
+        "Verification section captures the new dynamic test outputs and an excerpt of the now-Standard spec page",
+        "Findings note any remaining codegen `unimplemented!` sites and link them to follow-ups"
+      ],
+      "model": "claude-opus-4-7",
+      "maxAttempts": 2
+    },
+    {
+      "name": "tooling-package-kind-tool-and-formatter-spec",
+      "type": "subplanner",
+      "scopedGoal": "Land the v0.3 tooling deliverables that don't fit the other tracks: (1) lift `packageKind: tool` from Reserved to Standard with the validator and pckg routing it requires, and (2) author a formatter spec hub under platform-spec/tooling/ that aligns with the existing `beskid_analysis::format::format_program` implementation and `beskid format` CLI. Today site/website/src/content/docs/platform-spec/tooling/registry-client/package-kinds/index.mdx marks `tool` as Reserved with `TBD` API docs and CLI behavior; and there is no normative formatter feature page even though `compiler/crates/beskid_cli/src/commands/format.rs` already wires the `beskid format` command. Deliver: (a) normative `tool` packageKind: spec rules, validator profile in `pckg/src/Server/Services/PackageArtifactValidator.cs` (or peer service), CLI routing for `tool` packages, and pckg dashboard surface (route + minimal UI per existing Fluent patterns); (b) new formatter feature hub at site/website/src/content/docs/platform-spec/tooling/formatter/ following the feature-hub template, with normative status Standard, embedded Decisions, and verification anchors that point at `beskid_analysis::format`; (c) close the loop in tooling/index.mdx so the description's reference to `formatter` resolves to the new feature. Spec anchors: site/website/src/content/docs/platform-spec/tooling/registry-client/package-kinds/index.mdx, site/website/src/content/docs/platform-spec/tooling/index.mdx, site/website/src/content/docs/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/index.mdx. Decompose into your own workers + verifier.",
+      "pathsAllowed": [
+        "site/website/src/content/docs/platform-spec/tooling/registry-client/package-kinds/**",
+        "site/website/src/content/docs/platform-spec/tooling/registry-client/pckg-client-contract/**",
+        "site/website/src/content/docs/platform-spec/tooling/formatter/**",
+        "site/website/src/content/docs/platform-spec/tooling/index.mdx",
+        "site/website/src/content/docs/platform-spec/tooling/layout.json",
+        "pckg/src/Server/Services/PackageArtifactValidator.cs",
+        "pckg/src/Server/Services/**",
+        "pckg/src/Server/Controllers/**",
+        "pckg/src/Shared/**",
+        "pckg/tests/**",
+        "compiler/crates/beskid_pckg/**",
+        "compiler/crates/beskid_cli/src/commands/format.rs",
+        "compiler/crates/beskid_analysis/src/format/**",
+        "compiler/crates/beskid_analysis/docs/formatter.md",
+        ".orchestrate/beskid-v0-3/orch/**"
+      ],
+      "pathsForbidden": [
+        "compiler/crates/beskid_cli/src/commands/import.rs",
+        "compiler/crates/beskid_codegen/**",
+        "compiler/crates/beskid_runtime/**",
+        "compiler/crates/abfall/**",
+        "compiler/crates/beskid_analysis/src/composition/**",
+        "compiler/crates/beskid_analysis/src/mod_host/**",
+        "compiler/corelib/**"
+      ],
+      "acceptance": [
+        "`packageKind: tool` is Standard in the spec with validator profile, CLI behavior, and pckg routing all defined and pointing at real implementation",
+        "Pckg `PackageArtifactValidator` (or peer service) accepts `tool` kind with documented validation rules and a Server test fixture",
+        "Beskid CLI publishing path for tool packages exists (even if it reuses existing pack flow with a flag) and is covered by an integration test",
+        "New formatter feature hub exists under site/website/src/content/docs/platform-spec/tooling/formatter/ with index + design-model + verification-and-traceability + Decisions section, status Standard, no scaffold-only content",
+        "tooling/index.mdx links to the new formatter hub; `cd site/website && bun run verify:trudoc -- --preset ci --strict` passes"
+      ],
+      "verify": "## Setup\n- `cd compiler && cargo build -p beskid_cli -q`.\n- `cd pckg && dotnet restore` (if needed).\n\n## Automated\n- `cd compiler && cargo test -p beskid_cli format -- --test-threads=1`\n- `cd pckg && dotnet test src/Server.Tests` (run quietly per existing xunit guardrails)\n- `cd site/website && bun run verify:trudoc -- --preset ci --strict`\n\n## Manual\n- Publish a tiny tool-kind fixture to a local pckg dev server and confirm it routes through the new validator profile.\n\n## Gotchas\n- Use Fluent UI Blazor patterns and cohesive spacing for any new pckg UI surfaces per workspace conventions.\n- Formatter spec hub must not be a stub: include normative rules, embedded Decisions, and verification anchors.",
+      "model": "claude-opus-4-7-thinking-xhigh",
+      "maxAttempts": 2
+    },
+    {
+      "name": "verify-tooling-package-kind-tool-and-formatter-spec",
+      "type": "verifier",
+      "verifies": "tooling-package-kind-tool-and-formatter-spec",
+      "scopedGoal": "Verify the tool packageKind + formatter spec hub delivery on its branch by running pckg Server.Tests, the beskid format CLI tests, and the strict trudoc verifier. Confirm the formatter hub is not a scaffold (Decisions section is real, verification anchors point at code).",
+      "acceptance": [
+        "Verification section reports pckg Server.Tests results and the strict trudoc run output",
+        "Findings include excerpts confirming the formatter hub has normative content and embedded Decisions"
+      ],
+      "model": "claude-opus-4-7",
+      "maxAttempts": 2
+    },
+    {
+      "name": "aggregate-merge-all",
+      "type": "worker",
+      "scopedGoal": "Aggregate every v0.3 implementation branch into a single integrated branch and prove the superrepo builds end-to-end. Merge in this order (each merge step commits immediately, no rebase): compiler-mod-execution -> native-di-codegen-runtime -> export-ffi-link-time -> foreign-lib-import-cli -> runtime-phase-b-gc-syscall -> codegen-coverage-dynamic-types -> corelib-tiering-collections-fs-api-shape -> tooling-package-kind-tool-and-formatter-spec. For conflicts in `compiler/crates/beskid_codegen` between native-di, export-ffi, runtime-phase-b, and codegen-dynamic-types, prefer the version with the most-complete acceptance criteria coverage (cross-check with each task's handoff body that the orchestrate script relays through your prompt). For conflicts in `compiler/crates/beskid_runtime`, prefer the union of new builtins and the runtime-phase-b version of shared scheduler files. Submodule pointer updates in the superrepo (compiler/, pckg/) are part of the merge: after merging submodule branches in their own subtrees, update the superrepo gitlink to the merged submodule commit. After every merge: run `cd compiler && cargo check --workspace` and `cd site/website && bun run verify:trudoc -- --preset ci` and only proceed if both pass. End with a final full pass: `cd compiler && cargo test --workspace --no-fail-fast` capturing pass/fail counts in the handoff, and `cd site/website && bun run verify:trudoc -- --preset ci --strict`. Open the integrated branch as a draft PR against `main`.",
+      "pathsAllowed": [
+        "**"
+      ],
+      "pathsForbidden": [
+        ".github/secrets/**",
+        ".cursor/**"
+      ],
+      "dependsOn": [
+        "compiler-mod-execution",
+        "native-di-codegen-runtime",
+        "export-ffi-link-time",
+        "foreign-lib-import-cli",
+        "runtime-phase-b-gc-syscall",
+        "corelib-tiering-collections-fs-api-shape",
+        "codegen-coverage-dynamic-types",
+        "tooling-package-kind-tool-and-formatter-spec"
+      ],
+      "acceptance": [
+        "All eight upstream branches are merged into the aggregate branch with both parents in history for each merge",
+        "After each intermediate merge `cd compiler && cargo check --workspace` succeeds (record exit code in handoff)",
+        "After all merges complete, `cd compiler && cargo test --workspace --no-fail-fast -- --test-threads=1` runs to completion; aggregate pass/fail counts are reported in handoff",
+        "`cd site/website && bun run verify:trudoc -- --preset ci --strict` passes on the aggregate branch",
+        "Superrepo gitlink for `compiler/` and `pckg/` (if pckg subbranch exists) is updated to the merged submodule commit and the superrepo commits cleanly",
+        "Draft PR is opened against `main` with a body that lists every merged branch, summary of merge conflicts resolved, and links to each subplanner handoff"
+      ],
+      "openPR": true,
+      "model": "gpt-5.5-high",
+      "maxAttempts": 2
+    },
+    {
+      "name": "verify-aggregate-merge-all",
+      "type": "verifier",
+      "verifies": "aggregate-merge-all",
+      "scopedGoal": "Verify the aggregate-merge-all branch builds, tests, and spec-verifies cleanly: re-run `cd compiler && cargo check --workspace`, `cd compiler && cargo test --workspace --no-fail-fast -- --test-threads=1`, and `cd site/website && bun run verify:trudoc -- --preset ci --strict`. Confirm all eight subplanner branches are present in history (`git log --oneline --merges` shows eight merges) and report the final draft PR URL.",
+      "acceptance": [
+        "Verification section captures exit codes for cargo check, cargo test (with pass/fail), and the strict trudoc verifier",
+        "Findings confirm `git log --merges` shows the eight expected merges and reference the draft PR URL"
+      ],
+      "model": "claude-opus-4-7",
+      "maxAttempts": 2
+    }
+  ]
+}
