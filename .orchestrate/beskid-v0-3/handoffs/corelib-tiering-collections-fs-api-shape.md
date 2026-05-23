@@ -12,7 +12,7 @@
 
 | Repo | Branch | HEAD SHA |
 | --- | --- | --- |
-| superrepo (`/Users/mikserek/Projects/beskid`) | `orch/beskid-v0-3/corelib-tiering-collections-fs-api-shape` | _written below after final commit_ |
+| superrepo (`/Users/mikserek/Projects/beskid`) | `orch/beskid-v0-3/corelib-tiering-collections-fs-api-shape` | `d137f11` |
 | compiler (`compiler/`) | `orch/beskid-v0-3/corelib-tiering-collections-fs-api-shape` | `53487b3a0c8dc93dd09465716eaa617370d70725` |
 | corelib (`compiler/corelib/`) | `orch/beskid-v0-3/corelib-tiering-collections-fs-api-shape` | `5bc4e9a` (latest fix on top of `c1011b1` and `d706067`) |
 
