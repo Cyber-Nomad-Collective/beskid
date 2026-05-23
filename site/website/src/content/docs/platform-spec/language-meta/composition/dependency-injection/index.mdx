@@ -62,12 +62,18 @@ Built-in host bases (for example **`ConsoleHost`**, future **`WebHost`**) live i
 
 ## Implementation anchors (reference compiler)
 
-Implementation is **in progress**; anchors name intended owners:
+Anchors name the modules that own each plane of native DI in the reference compiler. The codegen lowering gate (`RUNTIME_CONTAINER_LOWERING_ENABLED`) is **on** as of v0.3; `launch` and `with` emit real runtime container ABI calls.
 
-- `compiler/crates/beskid_analysis` — composition graph build, diagnostics, semantic snapshot export (planned `composition` module)
-- `compiler/crates/beskid_codegen` — lowered ctor wiring and scope enter/leave in `with` bodies
+- `compiler/crates/beskid_analysis/src/composition/` — host-chain merge, scope tree, `BindingPlan`, `CompositionSnapshot` export
+- `compiler/crates/beskid_codegen/src/lowering/composition_policy.rs` — `RUNTIME_CONTAINER_LOWERING_ENABLED` feature gate
+- `compiler/crates/beskid_codegen/src/lowering/composition/` — `launch` / `with` lowering to runtime container ABI calls (`launch_statement.rs`, `with_statement.rs`)
+- `compiler/crates/beskid_runtime/src/composition/` — `RuntimeContainer` (registration ordering, plural inject, LIFO dispose) and scope-stack management
+- `compiler/crates/beskid_runtime/src/builtins/composition.rs` — `extern "C-unwind"` ABI surface (`composition_container_create`, `composition_register`, `composition_bind_plural`, `composition_launch`, `composition_scope_enter`, `composition_scope_leave`, `composition_resolve`, `composition_resolve_plural`, `composition_shutdown`, `composition_container_drop`, `composition_scope_depth`)
+- `compiler/crates/beskid_abi/src/symbols.rs` / `compiler/crates/beskid_abi/src/builtins.rs` — stable linker symbols and `BuiltinFnSpec` entries for every `composition_*` builtin
 - `compiler/crates/beskid_pipeline` — `composition.resolve` phase id (see [Flow and algorithm](./flow-and-algorithm/))
 - `compiler/corelib` — `ConsoleHost`, `WebHost`, shared configuration types
+
+End-to-end verification lives at `compiler/crates/beskid_tests/src/composition/` (`container.rs`, `host_e2e.rs`, `lowering.rs`).
 
 ## Articles
 
