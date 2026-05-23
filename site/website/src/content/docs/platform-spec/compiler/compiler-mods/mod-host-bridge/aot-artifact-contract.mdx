@@ -148,6 +148,21 @@ Any failure **must** emit a diagnostic from **E1821–E1835** and **must not** p
 
 Register each code in `diagnostic_kinds.rs` when implementation lands; extend this table if new load paths need distinct identities.
 
+## Scheduling-conflict diagnostics (**E1851–E1870**)
+
+After **`mod.load`** but **before** **`mod.collect`**, the host **must** validate cross-artifact and cross-registration consistency. Failures in this band short-circuit scheduling and are reported as **`ModHostDiagnostics`** in `compiler/crates/beskid_analysis/src/mod_host/diagnostics.rs`.
+
+| Code | When emitted |
+| --- | --- |
+| **E1851** | Same `(contractId, typeId)` is provided by multiple mod artifacts. |
+| **E1852** | Two distinct artifacts export the same `entrySymbol` for different `(contractId, typeId)` tuples. |
+| **E1853** | Unknown `contractId` value in a registration (not a recognized SDK contract suffix: `Collector`, `Generator`, `AttributeGenerator`, `Analyzer`, `Rewriter`). |
+| **E1854** | `Rewriter` registration without an attached `Analyzer` registration in the same artifact. |
+| **E1855** | Catch-all scheduling-stage failure when no narrower **E1851–E1870** code applies. |
+| **E1856–E1870** | Reserved for future scheduling-stage failures. |
+
+These diagnostics carry artifact-level locations (descriptor sidecar path or manifest path) rather than Beskid source spans because the conflict is detected on the loaded registration table, not on user source. Implementations **must** report **all** issues found in a single load pass deterministically before aborting.
+
 ## Related contracts
 
 - **[Contract discovery](./design-model/#contract-discovery)** — how registrations map to host scheduling.
