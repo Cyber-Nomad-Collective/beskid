@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-23T16:52:37.267Z",
+  "generatedAt": "2026-05-23T21:08:39.600Z",
   "tree": {
     "slug": "platform-spec",
     "href": "/platform-spec/",
@@ -2900,6 +2900,26 @@
                 "slug": "platform-spec/tooling/foreign-library-import/external-library-trait",
                 "href": "/platform-spec/tooling/foreign-library-import/external-library-trait/",
                 "title": "ExternalLibrary provider trait",
+                "level": "article"
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/tooling/formatter",
+            "href": "/platform-spec/tooling/formatter/",
+            "title": "Formatter",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/tooling/formatter/design-model",
+                "href": "/platform-spec/tooling/formatter/design-model/",
+                "title": "Formatter design model",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/tooling/formatter/verification-and-traceability",
+                "href": "/platform-spec/tooling/formatter/verification-and-traceability/",
+                "title": "Formatter verification and traceability",
                 "level": "article"
               }
             ]

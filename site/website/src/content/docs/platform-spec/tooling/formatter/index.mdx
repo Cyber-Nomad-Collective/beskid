@@ -125,7 +125,7 @@ The CLI surface in `beskid_cli::commands::format` adds the file-scanning and `--
 | Directory passed without `--write` or `--check` | The CLI **must** refuse with a structured error pointing the publisher at the correct flag. |
 | `--output` with multiple input files | The CLI **must** refuse: `--output` is only valid for a single `.bd` input. |
 | Non-UTF-8 source | The CLI **must** refuse with a clear I/O / encoding diagnostic; the formatter **must not** silently lossy-decode. |
-| `--check` finds a non-formatted file | Exit non-zero with the message `not formatted: <path> (run \`beskid format --write <path>\`)`. |
+| `` `--check` `` finds a non-formatted file | Exit non-zero with message: not formatted, then path, then hint to run `` beskid format --write `` on that path (see CLI implementation). |
 </SpecSection>
 
 <SpecSection title="Compatibility and versioning" id="compatibility-and-versioning">
