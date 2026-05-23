@@ -45,6 +45,7 @@ def runtime_e2e_linux(session: nox.Session) -> None:
     submodules.init_compiler(ROOT)
     cw = _compiler_dir()
     proc.run("cargo", "build", "-p", "beskid_runtime_bridge", "-q", cwd=cw)
+    proc.run("cargo", "build", "-p", "beskid_runtime_bridge", "-q", "--release", cwd=cw)
     proc.run("cargo", "build", "-p", "beskid_cli", cwd=cw)
     proc.run("cargo", "test", "-p", "beskid_e2e_tests", cwd=cw)
 
