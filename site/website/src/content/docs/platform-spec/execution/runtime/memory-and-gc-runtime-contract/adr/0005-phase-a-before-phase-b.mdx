@@ -37,14 +37,25 @@ Parallel GC mutators need write barriers, stack-map coverage, and scheduler coor
 | Phase | Mutators | Ship order |
 | --- | --- | --- |
 | **A (v0.2)** | One Beskid mutator; many cooperative fibers | **Default ship** |
-| **B** | Parallel mutators + real `gc_write_barrier` | **After** normative Phase B text and scheduler updates |
+| **B (v0.3, opt-in)** | Parallel mutators + real `gc_write_barrier` on pointer-payload channels + syscall-pool guard | Wired behind `BESKID_RUNTIME_PHASE_B` / `set_runtime_phase(RuntimePhase::PhaseB)`; stays opt-in until preemption emission and concurrent-mark stress land |
+| **B (later)** | Phase B becomes the default | Requires AOT/JIT to insert `runtime_preempt_check` prologues and full concurrent-mark stress coverage |
 
-Phase B **must not** land without updating this feature hub and fiber scheduler contracts.
+Phase B **must not** become the default without updating this feature hub and fiber
+scheduler contracts.
 
 ## Consequences
 
-Barriers may be no-ops or simplified while Phase A invariants hold. Fiber/feature docs cross-link Phase tables.
+Phase A barriers stay correct because Phase B reuses the same Dijkstra insertion
+barrier; the difference is that Phase B exercises it on multi-mutator workloads and
+on pointer-payload channel ops. Fiber/feature docs cross-link Phase tables.
 
 ## Verification anchors
 
-GC integration tests; platform-spec Phase diagrams in hub and [design model](../design-model/).
+GC integration tests under `crates/beskid_runtime/tests/`:
+
+- `tests/concurrency.rs` — channel/scheduler core
+- `tests/gc.rs`, `tests/gc_concurrency.rs` — Phase A heap and root handles
+- `tests/phase_b_concurrency.rs` — Phase B multi-mutator stress, pointer-payload
+  channels with write barriers, syscall-pool guard, optional preemption hook
+
+Platform-spec Phase diagrams in hub and [design model](../design-model/).
