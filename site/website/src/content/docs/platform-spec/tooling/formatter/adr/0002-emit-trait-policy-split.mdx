@@ -1,0 +1,70 @@
+---
+title: Emit trait and policy module split
+description: Layout policy lives in `policy.rs`; per-construct `Emit` impls use `EmitCtx` helpers only.
+specLevel: adr
+status: Standard
+adrId: D-TOOL-FMT-0002
+adrStatus: Accepted
+adrDate: 2026-05-23
+lastReviewed: 2026-05-23
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Formatter
+    href: /platform-spec/tooling/formatter/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+The reference formatter under `compiler/crates/beskid_analysis/src/format/` currently splits responsibilities across several files:
+
+- `emit.rs` — `Emit` trait, `EmitCtx` (context), `Emitter` (driver), `EmitError`, and the `format_program` entry point.
+- `policy.rs` — three small free functions that encode blank-line / between-member / between-block-items policy.
+- `items/`, `expressions_emit.rs`, `statements_emit.rs`, `types_emit.rs` — per-construct `Emit` implementations.
+
+Two anti-patterns would make this hard to evolve safely:
+
+1. **Scattered layout policy** — per-construct emitters writing raw `\n` or four-space runs make a policy change (for example, "double blank between top-level items") a multi-file refactor.
+2. **God-trait `Emit`** — putting blank-line policy inside `Emit::emit` parameters would force the AST-side modules to know about higher-level layout intent.
+
+This ADR records the chosen split.
+
+## Decision
+
+The formatter **must** preserve the following module decomposition:
+
+1. **`Emit` trait** in `format/emit.rs` defines a single method `emit(&self, w, cx)`. Per-construct modules **must** implement `Emit` for the AST node they own.
+2. **`EmitCtx`** in `format/emit.rs` is the **only** sanctioned place to mutate indent depth, write newlines, write indents, or open/close braces. AST-side modules **must** call its helpers (`write_indent`, `nl`, `ln`, `space`, `token`, `open_brace`, `close_brace`) rather than writing raw layout characters.
+3. **`policy.rs`** is the **only** place that owns inter-declaration, inter-member, and inter-statement blank-line decisions. AST-side modules call `cx.between_top_level_declarations(...)`, `cx.between_members(...)`, and `cx.between_block_items(...)`; they do not duplicate the policy.
+4. **`mod.rs`** stays as exports-only. New construct emitters are added as siblings under `items/` (or as new files when the construct does not fit an existing role).
+
+A change that violates rule (2) or (3) **must** be revised before merging; the parent **Verification and traceability** article enumerates the file anchors.
+
+## Consequences
+
+**Pros:**
+
+- A new layout rule lands as one edit in `policy.rs` and an optional method on `EmitCtx`; downstream emitters don't need to know.
+- The formatter is easier to audit: anyone reviewing layout output knows to read `policy.rs` first.
+- The per-construct emitters stay readable — each function reads as "what does this node look like in source", not "how do I implement blank-line policy".
+
+**Cons / accepted trade-offs:**
+
+- AST-side modules cannot work around policy by writing raw characters; this is intentional and is enforced by code review.
+- `EmitCtx` accrues helpers over time. We accept this as the lesser evil compared to scattered policy.
+
+## Verification anchors
+
+- **`compiler/crates/beskid_analysis/src/format/emit.rs`** — single owner of `Emit`, `EmitCtx`, `Emitter`, `EmitError`, and `format_program`.
+- **`compiler/crates/beskid_analysis/src/format/policy.rs`** — single owner of the three policy helpers.
+- **`compiler/crates/beskid_analysis/src/format/mod.rs`** — `mod` declarations and `pub use` re-exports only; no business logic.

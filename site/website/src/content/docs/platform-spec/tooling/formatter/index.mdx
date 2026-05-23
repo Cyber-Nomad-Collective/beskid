@@ -1,0 +1,205 @@
+---
+title: Formatter
+description: Canonical pretty-printer for Beskid source — opinionated, deterministic, single-source-of-truth via `beskid format` and `beskid_analysis::format`.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-23
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Tooling
+    href: /platform-spec/tooling/
+    relation: Parent domain
+  - type: Feature
+    title: Beskid CLI
+    href: /platform-spec/tooling/cli/
+    relation: "`beskid format` subcommand"
+  - type: Feature
+    title: Package kinds
+    href: /platform-spec/tooling/registry-client/package-kinds/
+    relation: tool kind for future formatter rule packs
+  - type: Feature
+    title: Lexical and syntax
+    href: /platform-spec/language-meta/surface-syntax/lexical-and-syntax/
+    relation: Canonical token model that the formatter projects
+---
+
+import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	status="Standard"
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+The **formatter** — the canonical, opinionated pretty-printer for **`.bd`** source. It defines the **public command surface** (`beskid format` / `beskid fmt`), the **`Emit` contract** that drives layout, and the **invariants** the formatter must hold across releases.
+
+This feature governs the **shape** of formatted Beskid code so that editor plugins, CI checks, and code-review pipelines all converge on byte-identical output for byte-identical input.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- **`compiler/crates/beskid_analysis/src/format/`** — `Emit`/`EmitCtx`/`Emitter` traits and the layout policy (`policy.rs`), per-construct emitters under `items/`, `expressions_emit.rs`, `statements_emit.rs`, `types_emit.rs`.
+- **`compiler/crates/beskid_analysis/src/format/mod.rs`** — re-exports `format_program`, `emit_error_semantic_diagnostic`, the public surface.
+- **`compiler/crates/beskid_cli/src/commands/format.rs`** — the `beskid format` (alias `beskid fmt`) subcommand: file/dir scan, `--write`, `--check`, `--output`, stdout fallback.
+- **`compiler/crates/beskid_analysis/docs/formatter.md`** — implementation-side overview, layout rules, and reference table that mirrors this hub.
+</SpecSection>
+
+<SpecSection title="Contract statement" id="contract-statement">
+The Beskid platform **must** ship exactly one canonical formatter that maps a parsed program back to source text. The formatter:
+
+1. **MUST** be a pure function of the parsed AST — the same `Spanned<Program>` **must** always produce byte-identical output regardless of host platform, locale, or terminal width.
+2. **MUST** preserve program semantics — running the parser on `format_program(parser(s))` **must** yield an AST equivalent to `parser(s)` modulo trivia that the formatter is allowed to normalize (whitespace, optional separators, member ordering inside a block where the AST is order-independent).
+3. **MUST** be idempotent — `format_program(parser(format_program(parser(s))))` **must** produce the same string as `format_program(parser(s))`.
+4. **MUST** preserve every token that carries program meaning (identifiers, literals, attributes, doc comments).
+5. **MUST NOT** offer user-tunable style knobs (no width-N, no tabs-vs-spaces flag, no brace-style flag). Style is fixed by this contract; configurability is explicitly out of scope.
+6. **MUST** report layout failures as diagnostics through the existing `emit_error_semantic_diagnostic` path, not via panics or silent fallbacks.
+</SpecSection>
+
+<SpecSection title="Inputs and outputs" id="inputs-and-outputs">
+| Surface | Input | Output |
+| --- | --- | --- |
+| `format_program(&Spanned<Program>)` | Parsed Beskid program (output of `services::parse_program_with_source_name`) | `Result<String, EmitError>` — formatted source on success; `EmitError` on a layout failure |
+| `beskid format <file.bd>` (single file, no flags) | One `.bd` file | Formatted source on stdout |
+| `beskid format -o <out> <file.bd>` | One `.bd` file | Formatted source written to `<out>` |
+| `beskid format --write <dir-or-file>` | Tree or file | In-place rewrite of every `.bd` file under the input |
+| `beskid format --check <dir-or-file>` | Tree or file | Exit code `0` if every file is already formatted, non-zero with diff hint otherwise — used by CI |
+
+The CLI **must not** recurse into the conventional ignore set (`.git`, `.svn`, `.hg`, `target`, `node_modules`, `dist`, `.venv`, `vendor`, `__pycache__`).
+</SpecSection>
+
+<SpecSection title="Layout policy" id="layout-policy">
+The reference policy is encoded in `beskid_analysis::format::policy` and `EmitCtx`. The normative rules below **must** hold:
+
+1. **Indent unit MUST be four spaces.** Tabs **must not** appear in formatted output.
+2. **Blank lines:**
+   - Between top-level declarations: exactly one blank line.
+   - Between members of a container (when `policy_blank_line_between_members` is enabled, the default): exactly one blank line.
+   - Inside a block, after a control-flow statement (`if`, `while`, `for`) immediately followed by a `let`: exactly one blank line; otherwise zero.
+3. **Braces:** open-brace stays on the line that introduces the block; close-brace is on its own line aligned with the opening construct. An empty block **must** be emitted as `{ }` on the same line.
+4. **Trailing whitespace:** every emitted line **must not** end in horizontal whitespace.
+5. **Final newline:** every formatted file **must** end with exactly one `\n`.
+6. **Attributes:** each attribute (`[Export]`, `[Extern(...)]`, doc-comment-derived markers) **must** appear on its own line above the construct it decorates.
+7. **Type names with generics** (`Option<T>`, `Channel<T>`) **must** be emitted without spaces inside the angle brackets and without HTML-entity escaping.
+
+Editors **must** treat any deviation from these rules in formatter output as a defect to be filed against `beskid_analysis::format`, not as an opportunity to layer post-processing.
+</SpecSection>
+
+<SpecSection title="State model" id="state-model">
+The formatter has **no persistent state**. `EmitCtx` holds transient layout state (current indent depth, whether to insert blank lines between members) and is constructed afresh for each top-level emit:
+
+- **`EmitCtx::indent`** — non-negative integer (`usize`). `push_indent`/`pop_indent` are total: `pop_indent` saturates at `0`.
+- **`EmitCtx::policy_blank_line_between_members`** — boolean, true by default. Constructs that intentionally suppress inter-member blanks (for example, contiguous import lists) **may** mutate it locally; they **must** restore the previous value before returning.
+
+No caching, no I/O, no concurrency. The formatter is safe to call concurrently across independent inputs.
+</SpecSection>
+
+<SpecSection title="Algorithms and flow" id="algorithms-and-flow">
+1. **Parse** the source with `services::parse_program_with_source_name` to obtain a `Spanned<Program>`.
+2. **Construct** a fresh `EmitCtx` via `EmitCtx::new()`.
+3. **Emit** the program through the root `Emit` impl (`items/root_emit.rs`), which dispatches each top-level declaration via the per-construct emitters (`declarations_emit`, `functions_emit`, `attributes_emit`, `macro_emit`, `tests_emit`).
+4. **Each declaration** emits attributes first (one per line), then the body, then a trailing newline; `between_top_level_declarations` injects the inter-declaration blank.
+5. **Inside a block**, each statement is preceded by `cx.write_indent(...)`, followed by `cx.nl(...)`. `between_block_items` runs between adjacent statements and **may** inject an extra blank when policy requires it.
+6. **On layout failure** (any underlying `std::fmt::Error`), the emitter returns `EmitError`; the CLI converts that into a Miette-rendered diagnostic via `emit_error_semantic_diagnostic` and exits non-zero.
+
+The CLI surface in `beskid_cli::commands::format` adds the file-scanning and `--check`/`--write` machinery around this pure pipeline. The CLI **must not** call any non-formatter analysis (no name resolution, no type checking) so that an unbuildable file with valid syntax is still formattable.
+</SpecSection>
+
+<SpecSection title="Edge cases and errors" id="edge-cases-and-errors">
+| Case | Required behavior |
+| --- | --- |
+| Empty input file | Format successfully to a single trailing `\n` (or empty, when the AST has zero top-level items). |
+| Parse error | The CLI **must** surface the parse diagnostic verbatim and exit non-zero **without** writing any output. |
+| Empty block `{ }` | Emit on the same line as the opening construct. |
+| Directory passed without `--write` or `--check` | The CLI **must** refuse with a structured error pointing the publisher at the correct flag. |
+| `--output` with multiple input files | The CLI **must** refuse: `--output` is only valid for a single `.bd` input. |
+| Non-UTF-8 source | The CLI **must** refuse with a clear I/O / encoding diagnostic; the formatter **must not** silently lossy-decode. |
+| `--check` finds a non-formatted file | Exit non-zero with the message `not formatted: <path> (run \`beskid format --write <path>\`)`. |
+</SpecSection>
+
+<SpecSection title="Compatibility and versioning" id="compatibility-and-versioning">
+The formatter is **part of the toolchain contract**. A new compiler / CLI release **may** change formatter output if and only if:
+
+1. The change is documented in the release notes under a **`formatter`** section.
+2. The change preserves idempotency: running the new formatter twice on existing repository content **must** produce the same result as running it once.
+3. The change either (a) tightens the layout policy in a way that affects only previously unspecified trivia, or (b) is accompanied by a follow-up ADR under **`adr/`**.
+
+Editor extensions **must** treat the bundled CLI as the source of truth and **must not** ship their own divergent layout engine.
+</SpecSection>
+
+<SpecSection title="Security and performance notes" id="security-and-performance-notes">
+- The formatter performs **no network I/O** and **no shell execution**; it reads source files and writes formatted output (when `--write`) only.
+- File system writes **must** be atomic per file (the CLI **may** write to a sibling temp file and rename) so that crashes during `--write` cannot leave a half-formatted file.
+- Memory cost is proportional to the size of the largest formatted file; the formatter holds the parsed AST plus an output `String` in memory simultaneously.
+- The formatter is **CPU-bound and deterministic** — `--check` in CI **should** complete in well under a second for typical packages and **must not** consume disproportionate memory for source files within usual size envelopes (single file under a few MiB).
+</SpecSection>
+
+<SpecSection title="Examples" id="examples">
+**Reformat one file in place:**
+
+```bash
+beskid format --write src/Main.bd
+```
+
+**CI check (fail PR on drift):**
+
+```bash
+beskid format --check src/
+```
+
+**Preview format for a single file without writing:**
+
+```bash
+beskid format src/Main.bd
+```
+
+**Programmatic use from a host that depends on `beskid_analysis`:**
+
+```rust
+use beskid_analysis::format::format_program;
+use beskid_analysis::services::parse_program_with_source_name;
+
+let program = parse_program_with_source_name("src/Main.bd", source)?;
+let formatted = format_program(&program)?;
+```
+
+The output of the programmatic call is byte-identical to `beskid format --write src/Main.bd`.
+</SpecSection>
+
+<SpecSection title="Decisions" id="decisions">
+No open decisions. **`D-TOOL-FMT-0001`** (canonical pretty-printer, no user knobs) and **`D-TOOL-FMT-0002`** (`Emit` trait and `EmitCtx` policy split) under **`adr/`**; use the **ADRs** tab.
+</SpecSection>
+
+<SpecSection title="Verification and traceability" id="verification-and-traceability">
+- **CLI surface tests** — `cargo test -p beskid_cli format` (currently no tests are filtered by the name `format`; the filter ensures the crate compiles and any future format-named tests run). The CLI behavior is covered by manual `--check`/`--write` invocations in the release pipeline.
+- **Format module tests** — `cargo test -p beskid_analysis format::` exercises the `Emit` impls under `compiler/crates/beskid_analysis/src/format/items/*` (idempotency tests, layout policy tests).
+- **Implementation overview** — `compiler/crates/beskid_analysis/docs/formatter.md` (kept in sync with this hub; updates to the layout policy section **must** touch both files in the same change set).
+- **Spec policies** — Indent unit, blank-line policy, and brace style are encoded in `beskid_analysis::format::policy` and `beskid_analysis::format::emit::EmitCtx`.
+</SpecSection>
+
+<SpecSection title="Newcomer reading order" id="newcomer-reading-order">
+1. **[Tooling](/platform-spec/tooling/)** — domain context, why tooling is specified rather than reverse-engineered.
+2. **This hub** — canonical formatter contract and invariants.
+3. **[Design model](./design-model/)** — `Emit`/`EmitCtx`/`Emitter` architecture and policy split.
+4. **[Verification and traceability](./verification-and-traceability/)** — concrete test paths and CI hooks.
+5. **[Decisions ADRs](./adr/0001-canonical-pretty-printer/)** — the rationale for the "no knobs" stance.
+</SpecSection>
+
+<SpecSection title="Related features" id="related-features">
+- **[Beskid CLI](/platform-spec/tooling/cli/)** — host for the `format` / `fmt` subcommand.
+- **[Package kinds](/platform-spec/tooling/registry-client/package-kinds/)** — future external formatter rule packs ship as **`packageKind: tool`** packages.
+- **[Lexical and syntax](/platform-spec/language-meta/surface-syntax/lexical-and-syntax/)** — the token grammar that the formatter projects back to source.
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/tooling/formatter" heading="Articles" />

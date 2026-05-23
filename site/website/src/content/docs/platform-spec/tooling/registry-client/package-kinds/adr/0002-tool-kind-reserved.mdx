@@ -1,12 +1,13 @@
 ---
-title: tool reserved
-description: tool reserved
+title: tool reserved (superseded)
+description: "Historical reservation of `packageKind: tool` without a normative profile; superseded by D-TOOL-PCKG-0004."
 specLevel: adr
 status: Standard
 adrId: D-TOOL-PCKG-0002
-adrStatus: Accepted
+adrStatus: Superseded
 adrDate: 2026-05-20
-lastReviewed: 2026-05-22
+supersededBy: D-TOOL-PCKG-0004
+lastReviewed: 2026-05-23
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -24,18 +25,26 @@ import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
 
 <SpecAdrChrome />
 
-## Context
+## Status
 
-Registry taxonomy.
+**Superseded by [D-TOOL-PCKG-0004 — `tool` kind Standard](./0004-tool-kind-standard.mdx)** on 2026-05-23.
 
-## Decision
+This decision documented the original intent to *reserve* `packageKind: tool` in the registry taxonomy without committing to a validator profile, dashboard surface, or CLI routing. That reservation has now been replaced with a fully normative profile. Implementations **must** follow D-TOOL-PCKG-0004; this ADR is preserved for history.
 
-Reserve tool kind without v1 body.
+## Context (historical)
 
-## Consequences
+When the `packageKind` field was introduced on `beskid.package.v1`, two kinds (`library`, `template`) had concrete validator profiles and dashboard routing; `tool` was anticipated but not yet specified. The team did not want the absence of `tool` rules to be interpreted as silent acceptance.
 
-Validators and UI.
+## Decision (historical)
 
-## Verification anchors
+Reserve `tool` as a known-but-not-Standard `packageKind` value. The pckg server **accepted** the literal string but did not commit to validator behavior, dashboard routing, or CLI flags. Publishers were warned that the contract would land in a follow-up decision.
 
-Server tests.
+## Consequences (historical)
+
+- Validators recognised the kind without expanding the supported set: any deviation from the `library` profile would be a future, opt-in change.
+- The dashboard fell back to the `library` rendering for `tool` artifacts, which made the kind effectively invisible to users.
+- CLI tooling (`beskid pckg pack`) had no `--package-kind` flag, so publishers could not deliberately mark an artifact as `tool`.
+
+## Verification anchors (historical)
+
+Verification responsibility transferred to D-TOOL-PCKG-0004; see `0004-tool-kind-standard.mdx` for the current test surface.
