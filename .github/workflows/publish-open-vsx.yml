@@ -53,6 +53,8 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
