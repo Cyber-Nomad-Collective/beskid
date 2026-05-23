@@ -1,11 +1,11 @@
 ---
 title: Package kinds
-description: Registry taxonomy for `packageKind` on `beskid.package.v1` — library, template, and reserved tool.
+description: Registry taxonomy for `packageKind` on `beskid.package.v1` — Standard surfaces for library, template, and tool packages.
 template: splash
 tableOfContents: true
 specLevel: feature
 status: Standard
-lastReviewed: 2026-05-21
+lastReviewed: 2026-05-23
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -26,6 +26,10 @@ relatedTopics:
     href: /platform-spec/tooling/cli/api-json-contract/
     relation: library kind
   - type: Feature
+    title: Formatter
+    href: /platform-spec/tooling/formatter/
+    relation: a representative tool package consumer
+  - type: Feature
     title: Project manifest contract
     href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
     relation: project.type parallels packageKind
@@ -43,37 +47,62 @@ import SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';
 />
 
 <SpecSection title="What this feature specifies" id="what-this-feature-specifies">
-The **`packageKind`** field on **`beskid.package.v1`** — discriminates **library**, **template**, and reserved **tool** packages for validation and registry UI.
+The **`packageKind`** field on **`beskid.package.v1`** — discriminates **library**, **template**, and **tool** packages, each with a normative validator profile, dashboard surface, and CLI routing. `tool` is **Standard** as of D-TOOL-PCKG-0004 (this feature) — the previous **Reserved** status (D-TOOL-PCKG-0002) is **superseded**.
 </SpecSection>
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
-- `pckg/src/Server/Services/PackageArtifactValidator.cs` — per-kind validation
-- `pckg` package routing and dashboard
-- Pack/upload in `compiler/crates/beskid_pckg` and workspace publish services
+- **`pckg/src/Server/Services/PackageKinds.cs`** — kind constants and `IsSupported` / `IsTemplate` / `IsTool` predicates
+- **`pckg/src/Server/Services/PackageArtifactValidator.cs`** — per-kind validator profiles (library / template / tool)
+- **`pckg/src/Server/Services/PackagePublishDocumentation.cs`** — exempts `template` and `tool` from structured `api.json` requirements
+- **`pckg/src/Server/Components/Pages/PackageDetails.razor`(`.cs`)** — Fluent UI dashboard routing (badge, install-instructions card, hidden Documentation / Source tabs for `template` and `tool`)
+- **`compiler/crates/beskid_pckg/src/pack.rs`** and **`cli.rs`** — Rust `PackProfile` (`Library` / `Template` / `Tool`), `detect_pack_profile_with_override`, `strip_tool_pack_excludes`, and `beskid pckg pack --package-kind {auto,tool}`
 </SpecSection>
 
 <SpecSection title="Contract statement" id="contract-statement">
-Every published **`beskid.package.v1`** artifact **must** declare its role through **`packageKind`**. Kinds drive validator profiles, registry UI routing, and CLI behavior. **`project.type`** on `Project.proj` is the **project-tree** analogue (`Host`, `Mod`, `Template`, …); **`packageKind`** is the **registry artifact** analogue—they are related but not interchangeable.
+Every published **`beskid.package.v1`** artifact **must** declare its role through **`packageKind`**. Kinds drive validator profiles, registry UI routing, and CLI behavior. Unknown `packageKind` values **must** be rejected at publish time with a structured **`BadRequest`** diagnostic, never a 500.
+
+**`project.type`** on `Project.proj` is the **project-tree** analogue (`Host`, `Mod`, `Template`, …); **`packageKind`** is the **registry artifact** analogue—they are related but not interchangeable.
 </SpecSection>
 
 <SpecSection title="Normative kinds" id="normative-kinds">
-| `packageKind` | Purpose | API docs on pckg | Primary CLI |
-| --- | --- | --- | --- |
-| **`library`** (default) | Beskid source package consumed as dependency | **Required** when server policy mandates `api.json` | `beskid pckg pack`, consumer `beskid fetch` |
-| **`template`** | Scaffold package for `beskid new` | **Hidden** — template page only | `beskid new install`, `beskid new <shortName>` |
-| **`tool`** | Reserved — CLI/tool binaries distributed via pckg (future) | TBD in future feature | TBD |
+| `packageKind` | Purpose | `api.json` requirement | `.beskid/template.json` | Primary CLI |
+| --- | --- | --- | --- | --- |
+| **`library`** (default) | Beskid source package consumed as dependency | **Required** when server policy mandates `api.json` | **Forbidden** | `beskid pckg pack`, consumer `beskid fetch` |
+| **`template`** | Scaffold package for `beskid new` | **Forbidden** in artifact body; structured docs hidden in UI | **Required** | `beskid new install`, `beskid new <shortName>` |
+| **`tool`** | CLI / developer-tool binaries and CLI-only packages distributed via pckg | **Optional** — server does not require it, validator does not reject its absence | **Forbidden** (`tool` and `template` are mutually exclusive) | `beskid pckg pack --package-kind tool`, consumer `beskid pckg download <name> --version <v> --output <path>` |
 
-Unknown `packageKind` values **must** be rejected at publish time.
+Unknown `packageKind` values **must** be rejected at publish time. The server **must** reject a `tool` artifact that contains `.beskid/template.json` (and vice versa) with a deterministic message naming the conflicting file.
+</SpecSection>
+
+<SpecSection title="Validator profile per kind" id="validator-profile">
+The pckg server applies the kind-specific validator profile during publish:
+
+- **`library`** — when the server enforces structured docs, the artifact **must** carry `.beskid/docs/api.json`; the artifact **must not** carry `.beskid/template.json`.
+- **`template`** — the artifact **must** carry `.beskid/template.json` and **must not** carry `.beskid/docs/api.json` (server treats template-kind artifacts as scaffold-only; the dashboard hides the **Documentation** and **Source** tabs).
+- **`tool`** — the artifact **may** omit `.beskid/docs/api.json` entirely (no docs-required diagnostic fires); it **must not** carry `.beskid/template.json`. The dashboard renders a **Tool package** Fluent badge and an install-instructions card with the registry download command (`beskid pckg download …`).
+
+All kinds remain subject to the shared safeguards: zip-bomb / path-traversal guards, package-id authorization, and per-package owner gating.
+</SpecSection>
+
+<SpecSection title="CLI routing" id="cli-routing">
+The Beskid CLI surfaces `packageKind` through **`beskid pckg pack --package-kind {auto, tool}`**:
+
+- **`auto`** (default) — reproduces the historical manifest-driven detection. `Project.proj` with `type = Template` packs a `template` artifact (template summary copied from `.beskid/template.json`); any other manifest or a missing manifest packs a `library` artifact.
+- **`tool`** — packs a `tool` artifact even when `Project.proj` is absent, which is the expected layout for CLI-only tool packages. `--package-kind tool` **must** reject template projects (manifest with `type = Template`) so a template payload is never silently lost; the error message **must** name `--package-kind tool` so users can correct it.
+
+`tool` pack runs strip generated `.beskid/docs/**` entries from the artifact (`strip_tool_pack_excludes`); `tool` `package.json` omits `documentation.apiJson` and the schema version pointer.
+
+Consumers download tool artifacts with **`beskid pckg download <name> --version <v> --output <path>`**; the dashboard install card surfaces the exact command (e.g. `beskid pckg download beskid-fmt-extra --version 0.1.0 --output ./beskid-fmt-extra.bpk`).
 </SpecSection>
 
 <SpecSection title="Project.type alignment" id="project-type-alignment">
 | `project.type` | Typical `packageKind` when published |
 | --- | --- |
-| *(absent)* / `Host` | `library` |
+| *(absent)* / `Host` | `library` (or `tool` via `--package-kind tool` for CLI-only packages with no `Project.proj`) |
 | `Mod` | `library` |
 | `Template` | `template` |
 
-A **`library`** package **must not** publish with `type: Template` on `Project.proj`. A **`template`** package **must** include `.beskid/template.json`.
+A **`library`** package **must not** publish with `type: Template` on `Project.proj`. A **`template`** package **must** include `.beskid/template.json`. A **`tool`** package **must not** include `.beskid/template.json`; it does not require `Project.proj` at all.
 </SpecSection>
 
 <SpecSection title="Versioning" id="versioning">
@@ -81,11 +110,26 @@ All kinds share: registry-assigned publish semver, immutability per version, yan
 </SpecSection>
 
 <SpecSection title="Decisions" id="decisions">
-No open decisions. **`D-TOOL-PCKG-0001`** … **`0003`** under **`adr/`**; use the **ADRs** tab.
+- **D-TOOL-PCKG-0001** — Explicit `packageKind` field on `beskid.package.v1` (see `adr/0001-explicit-package-kind-field.mdx`).
+- **D-TOOL-PCKG-0002** — *Superseded.* `tool` packageKind no longer reserved; see `adr/0002-tool-kind-reserved.mdx` for the historical record and `adr/0004-tool-kind-standard.mdx` for the active decision.
+- **D-TOOL-PCKG-0003** — `beskid.templates.*` identity prefix for template packages (see `adr/0003-beskid-templates-prefix.mdx`).
+- **D-TOOL-PCKG-0004** — `tool` packageKind is Standard with a normative validator profile, CLI override, and dashboard routing (`adr/0004-tool-kind-standard.mdx`).
+
+Use the **ADRs** tab to expand each decision.
+</SpecSection>
+
+<SpecSection title="Verification and traceability" id="verification-and-traceability">
+- `pckg/src/Server.Tests/Unit/PackageArtifactValidatorTests.cs` — `ValidateAsync_Accepts_Tool_Artifact_Without_Api_Json`, `ValidateAsync_Accepts_Tool_Artifact_With_Optional_Api_Json`, `ValidateAsync_Rejects_Tool_With_Template_Json`, `ValidateAsync_Rejects_Unknown_Package_Kind`.
+- `pckg/src/Server.Tests/Unit/PackagePublishDocumentationTests.cs` — `EnsureStructuredApiDoc_skips_tool_packages`.
+- `pckg/src/Server.Tests/Integration/ToolPackagePublishIntegrationTests.cs` — end-to-end tool publish with structured docs absent, kind persisted on the version summary.
+- `compiler/crates/beskid_pckg/src/pack.rs` tests — `pack_profile_helpers_track_variant`, `build_package_json_tool_profile_omits_api_doc_pointer`, `strip_tool_pack_excludes_removes_generated_docs`, `detect_pack_profile_with_override_forces_tool_when_no_manifest`, `detect_pack_profile_with_override_rejects_template_project`, `detect_pack_profile_auto_matches_legacy_behavior`.
+- `compiler/crates/beskid_pckg/src/cli.rs` tests — `pack_args_default_package_kind_is_auto`, `pack_args_package_kind_tool_flag_parses`, `pack_args_package_kind_rejects_unknown_value`.
 </SpecSection>
 
 <SpecSection title="Related features" id="related-features">
-- **[Template packages](/platform-spec/tooling/project-scaffolding/template-packages/)**
-- **[pckg client contract](/platform-spec/tooling/registry-client/pckg-client-contract/)**
+- **[Template packages](/platform-spec/tooling/project-scaffolding/template-packages/)** — the `template` packageKind.
+- **[pckg client contract](/platform-spec/tooling/registry-client/pckg-client-contract/)** — publish / download surface used by `tool` packages.
+- **[Formatter](/platform-spec/tooling/formatter/)** — representative tool delivered via `beskid format` (a possible future `packageKind: tool` distribution candidate).
+- **[api.json contract](/platform-spec/tooling/cli/api-json-contract/)** — applies to `library` packages; **does not** apply to `tool` artifacts.
 </SpecSection>
 
