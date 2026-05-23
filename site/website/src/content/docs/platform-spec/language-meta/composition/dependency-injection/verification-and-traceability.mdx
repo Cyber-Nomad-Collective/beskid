@@ -46,14 +46,24 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 
 ## Implementation checklist
 
-- [ ] Grammar: `host`, `registry`, `scope`, `init`, `dispose`, `startup`, `with`, `launch`, field `inject`, `global::`, `parent::`, `T[]` inject
-- [ ] Reject constructor `inject`
-- [ ] Host-chain merge + override diagnostics
-- [ ] Plural inject aggregation
-- [ ] `beskid_analysis::composition` + **E1701–E1799** in `diagnostic_kinds.rs`
-- [ ] `composition.resolve` in `beskid_pipeline` + `PIPELINE.md`
-- [ ] Composition snapshot export
-- [ ] `beskid_codegen` field init + `with` enter/leave
+- [x] Grammar: `host`, `registry`, `scope`, `init`, `dispose`, `startup`, `with`, `launch`, field `inject`, `global::`, `parent::`, `T[]` inject
+- [x] Reject constructor `inject`
+- [x] Host-chain merge + override diagnostics
+- [x] Plural inject aggregation
+- [x] `beskid_analysis::composition` + **E1701–E1799** in `diagnostic_kinds.rs`
+- [x] `composition.resolve` in `beskid_pipeline` + `PIPELINE.md`
+- [x] Composition snapshot export (`CompositionSnapshot` / `BindingPlan`)
+- [x] **Runtime container** in `beskid_runtime::composition` (registration ordering, plural inject, scope stack, reverse-order dispose)
+- [x] **Runtime ABI** `composition_container_create` / `register` / `bind_plural` / `launch` / `scope_enter` / `scope_leave` / `resolve` / `resolve_plural` / `shutdown` / `container_drop` / `scope_depth` in `beskid_abi`
+- [x] `beskid_codegen` `launch` / `with` lowering to runtime container ABI (`RUNTIME_CONTAINER_LOWERING_ENABLED = true`)
+- [ ] `beskid_codegen` field init for `[Inject]` (single + plural) — runtime container ABI is ready (`composition_resolve` / `composition_resolve_plural`), HIR-pass wiring lands with the next codegen iteration
 - [ ] Manifest validation: **`app`** target + single launch
 - [ ] Corelib `ConsoleHost`
 - [ ] Fixtures: lib host + app launch, plural inject, dispose, override chain
+
+## v0.3 evidence
+
+- `compiler/crates/beskid_tests/src/composition/container.rs::two_scopes_plural_inject_reverse_dispose` — two scopes, plural inject, reverse-order dispose
+- `compiler/crates/beskid_tests/src/composition/host_e2e.rs::host_with_two_scopes_plural_inject_reverse_dispose` — nested request + session scopes, plural Middleware, global Logger singleton disposes at shutdown
+- `compiler/crates/beskid_tests/src/composition/container.rs::extern_c_abi_roundtrip_through_builtins` — `extern "C-unwind"` round trip via `composition_*` builtins
+- `compiler/crates/beskid_tests/src/composition/lowering.rs` — gate flag is on, all `composition_*` symbols registered with `BuiltinFnSpec` and `RUNTIME_EXPORT_SYMBOLS`
