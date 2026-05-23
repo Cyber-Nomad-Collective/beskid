@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-22T16:05:11.679Z",
+  "generatedAt": "2026-05-23T18:29:56.907Z",
   "summary": {
-    "nodes": 784,
+    "nodes": 787,
     "errors": 0,
     "warnings": 0
   },
@@ -4852,8 +4852,41 @@
         }
       ],
       "counts": {
-        "specSections": 2,
+        "specSections": 11,
         "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0001-three-tier-classification",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0002-prelude-tier1-only",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0003-tier-via-api-json-not-parallel-manifest",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4875,7 +4908,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -4886,7 +4919,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -4897,7 +4930,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -4908,7 +4941,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -4919,7 +4952,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
