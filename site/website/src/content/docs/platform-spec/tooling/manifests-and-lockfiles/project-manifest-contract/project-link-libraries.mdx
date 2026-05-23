@@ -70,3 +70,10 @@ Until host tables are implemented, platform packages (console, threading) carry 
 ## WinAPI
 
 **WinAPI** / MSVC link metadata is **not** required for stdlib **Standard** manifests ([platform tier matrix](/platform-spec/language-meta/interop/c-abi-profile/platform-tier-matrix/)).
+
+## Verification anchors
+
+- **Model:** `compiler/crates/beskid_analysis/src/projects/model.rs::ProjectLinkSection`.
+- **Parser:** `compiler/crates/beskid_analysis/src/projects/parser.rs::parse_link_block_contents` (top-level `link { ... }` block; accepts `libraries`, `searchPaths`, `extraArgs` list fields only).
+- **Validator:** `compiler/crates/beskid_analysis/src/projects/validator.rs::validate_link_section` (diagnostic band **E1890** duplicate block / **E1891** unknown field / **E1892** empty entry / **E1893** duplicate library).
+- **Round-trip tests:** parser unit tests in `projects::parser::tests::parse_link_block_*` and CLI integration tests in `compiler/crates/beskid_tests/src/cli/import_lib.rs`.

@@ -60,9 +60,17 @@ Implementation in `beskid_cli` may trail spec; conformance is documented in arti
 </SpecSection>
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
-- Planned: `compiler/crates/beskid_cli/src/commands/` (import lib subcommand)
-- Manifest parse/validate: `compiler/crates/beskid_analysis/src/projects/`
-- Link driver integration: AOT / JIT link pipelines (see **[link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/)**)
+- **CLI subcommand:** `compiler/crates/beskid_cli/src/commands/import.rs` (`beskid import lib <name>`).
+- **Provider trait + closed registry:** `compiler/crates/beskid_analysis/src/external_library/` (`ExternalLibrary` trait, `CPosixProvider`, `PosixProvider`, `ExternalLibraryRegistry`).
+- **Manifest `link` block parse/validate:** `compiler/crates/beskid_analysis/src/projects/{model,parser,validator}.rs` (`ProjectLinkSection`, diagnostic codes **E1890-E1893**).
+- **Non-destructive manifest merge:** `compiler/crates/beskid_analysis/src/external_library/manifest_merge.rs` (idempotent in-place update of `link { ... }`).
+- **Link driver integration:** AOT / JIT link pipelines (see **[link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/)**).
+</SpecSection>
+
+<SpecSection title="Verification" id="verification">
+- **Unit tests:** `compiler/crates/beskid_analysis/src/external_library/` modules (provider mapping, registry rejection, manifest merge) and `beskid_cli::commands::import::tests` (clap surface).
+- **Integration tests:** `compiler/crates/beskid_tests/src/cli/import_lib.rs` (end-to-end Project.proj mutation, idempotency, merging into existing `link` block, unknown provider / library rejection, path-input search paths, closed-registry assertion).
+- **Smoke:** `beskid import lib libc` against a fresh `Project.proj` populates `link { libraries = [libc] }` and is idempotent on repeat invocations.
 </SpecSection>
 
 <SpecSection title="Decisions" id="decisions">
