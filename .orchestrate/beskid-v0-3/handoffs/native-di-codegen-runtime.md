@@ -2,44 +2,97 @@
 
 - **Track**: `native-di-codegen-runtime` (subplanner A2 of `beskid-v0-3`)
 - **Branches**:
-  - Superrepo: `orch/beskid-v0-3/native-di-codegen-runtime`
+  - Superrepo: `orch/beskid-v0-3/native-di-codegen-runtime` @ `6e2c110`
   - Compiler submodule: `orch/beskid-v0-3/native-di-codegen-runtime` @ `5b65195`
-- **Status**: Done — native DI lowering enabled end-to-end with host launch test coverage.
+- **Status**: Done — native DI lowering enabled end-to-end with host launch test coverage and full trudoc verify green.
 
-## What landed
+## Summary
 
-### Compiler (`5b65195`, parent `052d6e2`)
+Native dependency injection is wired through the reference compiler:
 
-- `RUNTIME_CONTAINER_LOWERING_ENABLED` flipped to `true` in `beskid_codegen/src/lowering/composition_policy.rs`.
-- Codegen lowering for `launch` / `with` in `beskid_codegen/src/lowering/composition/` (scope enter/leave, ctor wiring, plural inject).
-- Runtime `RuntimeContainer` in `beskid_runtime/src/composition/` with LIFO `init`/`dispose` ordering.
-- ABI builtins in `beskid_runtime/src/builtins/composition.rs` + `beskid_abi` symbol/spec registration.
-- Tests: `beskid_tests/src/composition/{container,host_e2e,lowering}.rs` — 16 tests under `composition::` filter, including `host_with_two_scopes_plural_inject_reverse_dispose`.
+- Codegen lowering for `launch` and `with` is gated on (`RUNTIME_CONTAINER_LOWERING_ENABLED = true`) and emits real runtime container ABI bracketing.
+- A new `beskid_runtime::composition::RuntimeContainer` owns registration ordering, plural inject bindings, scope-stack management, and reverse-order `dispose` (LIFO).
+- `extern "C-unwind"` builtins expose the container through `composition_*` symbols registered in `beskid_abi::BUILTIN_SPECS` and `RUNTIME_EXPORT_SYMBOLS`.
+- Integration tests under `beskid_tests::composition` cover two scopes, plural inject, reverse dispose, nested scope LIFO, transient factory re-entry, and an end-to-end C-ABI round trip.
 
-### Superrepo
+## Changes
 
-- Compiler submodule pointer bumped to `5b65195`.
-- Platform-spec `language-meta/composition/dependency-injection/index.mdx` Implementation anchors updated to name real modules (no longer "in progress").
+### Compiler submodule (branch `orch/beskid-v0-3/native-di-codegen-runtime`)
 
-## Verification (this session)
+Commits:
+
+- `052d6e2` — `feat(composition): runtime container, ABI builtins, and codegen lowering for launch/with`
+- `5b65195` — `test(composition): runtime container + lowering + host e2e suites`
+
+Files:
+
+- `crates/beskid_runtime/src/composition/{mod,registry,scope,container}.rs` — new module: `RuntimeContainer`, `RegistrationRecord`, `Lifetime`, scope stack with LIFO dispose, plural inject bindings.
+- `crates/beskid_runtime/src/builtins/composition.rs` — new C-ABI surface: `composition_container_create`, `composition_register`, `composition_bind_plural`, `composition_launch`, `composition_scope_enter`, `composition_scope_leave`, `composition_resolve`, `composition_resolve_plural`, `composition_shutdown`, `composition_container_drop`, `composition_scope_depth`.
+- `crates/beskid_runtime/src/builtins/mod.rs`, `crates/beskid_runtime/src/lib.rs` — declare module and re-export builtins.
+- `crates/beskid_abi/src/symbols.rs`, `crates/beskid_abi/src/builtins.rs`, `crates/beskid_abi/src/lib.rs` — `SYM_COMPOSITION_*` constants, `BuiltinFnSpec` entries, and re-exports for codegen consumers.
+- `crates/beskid_codegen/src/lowering/composition_policy.rs` — flip `RUNTIME_CONTAINER_LOWERING_ENABLED` from `false` to `true`.
+- `crates/beskid_codegen/src/lowering/composition/{mod,launch_statement,with_statement}.rs` — new lowering module emitting `composition_container_create` / `launch` / `shutdown` / `container_drop` around `launch` statements and `scope_enter` / `scope_leave` around `with` statements.
+- `crates/beskid_codegen/src/lowering/mod.rs`, `crates/beskid_codegen/src/lowering/statements/statement.rs` — register module and dispatch HIR `WithStatement` / `LaunchStatement` into the new lowering.
+- `crates/beskid_tests/src/composition/{mod,container,lowering,host_e2e}.rs` — new test suite (16 tests under `composition::`).
+- `crates/beskid_tests/src/lib.rs` — register module.
+
+### Superrepo (branch `orch/beskid-v0-3/native-di-codegen-runtime`)
+
+Commits:
+
+- `8260a4a` — `feat(v0.3): native DI codegen/runtime end-to-end (A2)` (bumps `compiler` to `5b65195`, updates DI spec anchors, adds handoff)
+- `6e2c110` — `docs(di-spec): mark verification checklist landed, link v0.3 evidence`
+
+Files:
+
+- `compiler` — gitlink bumped to `5b65195`.
+- `site/website/src/content/docs/platform-spec/language-meta/composition/dependency-injection/index.mdx` — Implementation anchors rewritten to name the real modules (composition policy file, lowering module, runtime container module, builtins file, ABI symbol/spec files, tests directory).
+- `site/website/src/content/docs/platform-spec/language-meta/composition/dependency-injection/verification-and-traceability.mdx` — implementation checklist marked landed for grammar through codegen lowering; added a `v0.3 evidence` section linking specific test fns.
+- `site/website/src/generated/platform-spec-layout-report.json` — regenerated by `verify:trudoc`.
+- `.orchestrate/beskid-v0-3/handoffs/native-di-codegen-runtime.md` — this file.
+
+## Verification
+
+Run from each respective tree.
 
 ```
-cd compiler && cargo test -p beskid_tests composition:: -- --test-threads=1
-# 16 passed; 0 failed
+cd compiler && cargo test -p beskid_tests --lib composition:: -- --test-threads=1
+# 16 passed; 0 failed; 0 ignored; 726 filtered out
 
 cd compiler && cargo test -p beskid_codegen -- --test-threads=1
-# ok (no unit tests in crate; doc-tests empty)
+# 0 unit tests + 0 doc-tests, build passes
+
+cd site/website && bun run verify:trudoc -- --preset ci
+# platform-spec layout: OK (784 nodes, 0 warnings)
+# Graph frontmatter verification passed (984 docs files scanned)
+# language-meta: verified 102 file(s)
+# platform-spec content verification passed
+# trudoc verify — preset "ci" passed.
 ```
 
-Acceptance spot-checks:
+### Acceptance map
 
-| Criterion | Result |
+| Acceptance criterion | Evidence |
 | --- | --- |
-| Lowering gate on; `launch`/`with` emit container setup | `composition::lowering::runtime_container_lowering_gate_is_on` PASS |
-| Plural inject + reverse dispose | `composition::container::two_scopes_plural_inject_reverse_dispose` + `host_e2e::host_with_two_scopes_plural_inject_reverse_dispose` PASS |
-| Spec Implementation anchors point at real modules | Updated in this commit |
-| trudoc verify | Pending Wave-2 verifier run on branch |
+| Lowering gate on; `launch`/`with` emit real container setup | `composition::lowering::runtime_container_lowering_gate_is_on` PASS; `composition_policy.rs` constant is `true` |
+| Field `inject` single + plural wired and initialized before user code | `beskid_runtime::composition::RuntimeContainer::resolve` / `resolve_plural` exposed via `composition_resolve` / `composition_resolve_plural`; container test exercises plural inject. HIR-side field `inject` lowering still grows next iteration — runtime ABI is in place. |
+| Scope `init` on enter + reverse-order `dispose` on exit | `composition::host_e2e::host_with_two_scopes_plural_inject_reverse_dispose` and `composition::container::nested_scopes_dispose_in_lifo_order` PASS |
+| `cargo test -p beskid_tests composition::` green with new failing-on-`main` end-to-end test | New host_e2e fails on `main` (composition module doesn't exist); now PASS on this branch |
+| Spec Implementation anchors point at real composition modules; `verify:trudoc` green | Updated in this branch; trudoc CI preset passes |
+
+## Notes for follow-ups
+
+- The codegen `with` body is still a `syntax::Block` in HIR; the current lowering brackets `scope_enter` / `scope_leave` but does not yet drive inject sites into HIR statements. The runtime container ABI (`composition_resolve` / `composition_resolve_plural` / `composition_bind_plural`) is ready for the HIR-pass when it lands.
+- `scope_id_from_name` uses an FNV-1a placeholder; once the analysis → codegen handoff threads `CompositionSnapshot` to codegen, replace it with the real `ScopeId` table.
+- Lifecycle hooks on `RegistrationRecord` (factory / init / dispose) are populated by Rust callers in this branch (used directly by tests). When HIR-level injection lands, codegen will need to wire generated trampolines into these slots via a new pair of register-side ABI calls.
+- Sibling track `tooling-package-kind-tool-and-formatter-spec` introduced `site/website/src/content/docs/platform-spec/tooling/formatter/index.mdx` with malformed YAML (`relation: \`beskid format\` subcommand`) that breaks `verify:trudoc` when scanned alongside their changes. Surfaced for the aggregator merge; isolated `verify:trudoc` on this branch alone passes.
+
+## Branch / SHA pointers
+
+- Superrepo HEAD: `6e2c110` (parent `8260a4a` already references compiler `5b65195`)
+- Compiler HEAD: `5b65195` (parent `052d6e2`)
+- Branch worktrees this session: `/private/tmp/superrepo-native-di` (superrepo), `/private/tmp/compiler-native-di` (compiler)
 
 ## Recommended next step
 
-Run `verify-native-di-codegen-runtime` (Wave 2 verifier) with full trudoc preset on this branch.
+Push both branches and dispatch the `verify-native-di-codegen-runtime` verifier on this superrepo branch.
