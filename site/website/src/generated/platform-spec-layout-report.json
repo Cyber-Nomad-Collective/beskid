@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-23T18:29:56.907Z",
+  "generatedAt": "2026-05-23T20:29:17.434Z",
   "summary": {
-    "nodes": 787,
+    "nodes": 791,
     "errors": 0,
     "warnings": 0
   },
@@ -1883,7 +1883,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 6
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -1949,7 +1949,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -6217,7 +6217,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 0
+        "markdownH2": 1
       },
       "messages": []
     },
@@ -8237,7 +8237,7 @@
       "status": "ok",
       "sections": [],
       "counts": {
-        "specSections": 4,
+        "specSections": 5,
         "markdownH2": 0
       },
       "messages": []
@@ -8249,7 +8249,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -8260,7 +8260,51 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/formatter",
+      "level": "area",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 15,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/formatter/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 11
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/formatter/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 8
       },
       "messages": []
     },
@@ -8546,7 +8590,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -9117,7 +9161,7 @@
         }
       ],
       "counts": {
-        "specSections": 8,
+        "specSections": 11,
         "markdownH2": 0
       },
       "messages": []
@@ -9140,12 +9184,23 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
     {
       "slug": "platform-spec/tooling/registry-client/package-kinds/adr/0003-beskid-templates-prefix",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client/package-kinds/adr/0004-tool-kind-standard",
       "level": "article",
       "status": "ok",
       "sections": [],
