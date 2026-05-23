@@ -93,7 +93,10 @@ Host boundaries **must** emit `beskid_pipeline` phase ids: `mod.load`, `mod.coll
 
 ## Anchored code paths
 
-- `compiler/crates/beskid_analysis/` — collection, typed merge, analyzer/rewrite orchestration.
-- `compiler/crates/beskid_analysis/src/services.rs` — session hooks.
+- `compiler/crates/beskid_analysis/src/mod_host/` — collection, typed merge, contract dispatch, analyzer / rewrite orchestration.
+- `compiler/crates/beskid_analysis/src/mod_host/invoker.rs` — **`ContractInvoker`** trait + Stub / Scripted invokers used by host pipeline and tests.
+- `compiler/crates/beskid_analysis/src/mod_host/validate.rs` — pre-`mod.collect` registration validation pass that emits **E1828**, **E1829**, **E1851**, **E1852**, **E1853**, **E1854**, **E1855**.
+- `compiler/crates/beskid_analysis/src/mod_host/diagnostics.rs` — structured **`ModHostIssue`** / **`ModHostDiagnostics`** carriers.
+- `compiler/crates/beskid_analysis/src/services/front_end.rs` — front-end session hook for `run_through_generate` / `run_analyze_rewrite`.
 - `compiler/crates/beskid_pipeline/` — phase ids and observers.
-- `compiler/crates/beskid_codegen/` — lowering after consistent merged program.
+- `compiler/crates/beskid_codegen/src/services.rs` — lowering after consistent merged program.
