@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-20
+lastReviewed: 2026-05-23
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -51,6 +51,10 @@ beskid_register_callbacks(version: u32, table: *const CallbackTable, count: usiz
 | Return | `0` success; non-zero stable error codes |
 
 Hosts **must** reject unknown `version` values.
+
+## Reference symbol
+
+The reference runtime exposes `beskid_register_callbacks` from `compiler/crates/beskid_runtime/src/builtins/callback.rs`, registered in `RUNTIME_EXPORT_SYMBOLS` and `BUILTIN_SPECS` via `compiler/crates/beskid_abi/src/symbols.rs`. Hosts **must** pass `version == BESKID_USER_FFI_LAYOUT_BAND` (initial Standard value `1`).
 
 ## Beskid-side callback exports
 

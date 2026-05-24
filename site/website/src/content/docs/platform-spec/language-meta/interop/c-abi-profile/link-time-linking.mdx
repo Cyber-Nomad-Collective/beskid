@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-20
+lastReviewed: 2026-05-23
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -56,3 +56,7 @@ Reference JIT paths that relied on runtime **`dlopen`** are **not** the Standard
 ## AOT parity
 
 AOT object emission **must** surface the same import set as JIT for a given artifact. Unresolved imports **must** fail at link time with actionable diagnostics listing missing symbols/libraries.
+
+## Reference compiler status
+
+On Linux tier-1, the AOT driver passes project `link.libraries` and discovered `ExternImport.library` values through `AotBuildRequest::external_libraries` (`compiler/crates/beskid_aot/src/api.rs`) and appends `-l<library>` / `-L<path>` in `compiler/crates/beskid_aot/src/linker.rs`. The engine consumer merges manifest link metadata in `compiler/crates/beskid_engine/src/link_libraries.rs`. Verification: `compiler/crates/beskid_engine/tests/ffi_v03_link_time.rs::link_time_extern_getpid_matches_platform_spec`.

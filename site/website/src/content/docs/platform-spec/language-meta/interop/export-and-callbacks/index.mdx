@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: feature
 status: Standard
-lastReviewed: 2026-05-20
+lastReviewed: 2026-05-23
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -60,12 +60,13 @@ This is **user interop**, not the frozen **runtime builtin** table on the **[Rus
 | **Callback registration** table protocol | Foreign-thread entry without host contract (Proposed v0.3.2+) |
 | **Trampolines** for GC-safe re-entry | Changing `BESKID_RUNTIME_ABI_VERSION` for export-only features |
 
-Spec is **Standard** in v0.3; reference compiler support may trail (see **[verification](./verification-and-traceability/)**).
+Spec is **Standard** in v0.3; reference compiler support for export lowering, callback registration, and link-time extern resolution is landed on Linux tier-1 (see **[verification](./verification-and-traceability/)**).
 </SpecSection>
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
-- Planned export metadata alongside `ExternImport` in codegen artifacts
-- Runtime scope entry for callback trampolines: `compiler/crates/beskid_runtime` scheduler / TLS hooks
+- Export metadata in `compiler/crates/beskid_codegen/src/lowering/expressions/export.rs` and `compiler/crates/beskid_codegen/src/lowering/context.rs` (`CodegenArtifact::exports`)
+- AOT export table and linker export policy: `compiler/crates/beskid_aot/src/export_table.rs`
+- Callback registration and GC-safe trampolines: `compiler/crates/beskid_runtime/src/builtins/callback.rs` (`beskid_register_callbacks`, `BESKID_USER_FFI_LAYOUT_BAND` in `compiler/crates/beskid_abi/src/symbols.rs`)
 - Optional extension of `interop_dispatch_*` for typed host callbacks (reserved; not user `Extern`)
 </SpecSection>
 

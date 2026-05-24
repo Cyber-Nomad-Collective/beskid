@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-23T21:20:43.073Z",
+  "generatedAt": "2026-05-23T21:44:00.705Z",
   "summary": {
     "nodes": 791,
     "errors": 0,
@@ -1244,8 +1244,8 @@
       "status": "ok",
       "sections": [],
       "counts": {
-        "specSections": 2,
-        "markdownH2": 0
+        "specSections": 6,
+        "markdownH2": 1
       },
       "messages": []
     },
@@ -7262,7 +7262,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -7350,7 +7350,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },

@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: feature
 status: Standard
-lastReviewed: 2026-05-20
+lastReviewed: 2026-05-23
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -102,6 +102,8 @@ flowchart TB
 ```
 
 **Tier-1 rule:** user **`Extern`** libraries use **C ABI profile** + link-time binding. Runtime embedding and compiler builtins stay on **Rust ABI profile** / frozen `BESKID_RUNTIME_ABI_VERSION` — never mixed in the same symbol namespace.
+
+**Link-time resolution (reference compiler):** AOT builds resolve `ExternImport` symbols through the project `link` block and `AotBuildRequest::external_libraries` (`compiler/crates/beskid_aot/src/api.rs`, `compiler/crates/beskid_aot/src/linker.rs`). See **[C ABI profile — Link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/)** for normative rules; normative text is not duplicated here.
 
 </SpecSection>
 
