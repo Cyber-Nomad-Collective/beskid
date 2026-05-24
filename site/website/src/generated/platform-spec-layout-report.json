@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-22T16:05:11.679Z",
+  "generatedAt": "2026-05-23T18:29:32.083Z",
   "summary": {
-    "nodes": 784,
+    "nodes": 791,
     "errors": 0,
     "warnings": 0
   },
@@ -4858,6 +4858,39 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0001-three-tier-classification",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0002-prelude-tier1-only",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0003-tier-via-api-json-not-parallel-manifest",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
@@ -8232,6 +8265,50 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/tooling/formatter",
+      "level": "area",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 15,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/formatter/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 11
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/formatter/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 8
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/tooling/lsp",
       "level": "area",
       "status": "ok",
@@ -9084,7 +9161,7 @@
         }
       ],
       "counts": {
-        "specSections": 8,
+        "specSections": 11,
         "markdownH2": 0
       },
       "messages": []
@@ -9107,12 +9184,23 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
     {
       "slug": "platform-spec/tooling/registry-client/package-kinds/adr/0003-beskid-templates-prefix",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/registry-client/package-kinds/adr/0004-tool-kind-standard",
       "level": "article",
       "status": "ok",
       "sections": [],
