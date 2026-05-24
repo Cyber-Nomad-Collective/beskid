@@ -12,12 +12,8 @@
 	max-width: none;
 	overflow: visible;
 	box-sizing: border-box;
-	margin:0 0.1rem 0 0.1rem !important;
+	margin: 0 0.1rem 0 0.1rem !important;
 }
-/*
-.page > .header .header:has(.beskid-header__row) {
-	padding-inline: 0 !important;
-}U*/
 
 .page > .header .beskid-header {
 	overflow: visible;

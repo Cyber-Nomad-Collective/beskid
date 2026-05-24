@@ -368,6 +368,7 @@ html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .
 	line-height: 1.25;
 	letter-spacing: -0.02em;
 	color: var(--sl-color-white);
+	overflow-wrap: anywhere;
 }
 
 .platform-spec-header__adr-status {
@@ -377,10 +378,7 @@ html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .
 }
 
 .platform-spec-header--article .platform-spec-header__actions {
-	display: inline-flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 0.65rem;
+	display: flex;
 }
 
 .platform-spec-header__back {

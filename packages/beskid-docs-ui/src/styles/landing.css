@@ -45,6 +45,10 @@ html:not([data-platform-spec]):not([data-book]) .page:has(.landing-page) main > 
 	box-shadow: none;
 }
 
+html:not([data-platform-spec]):not([data-book]) .page:has(.landing-page) {
+	overflow-x: clip;
+}
+
 /* --- Landing tokens --- */
 .landing-root {
 	--landing-surface: var(--beskid-surface);
@@ -57,7 +61,11 @@ html:not([data-platform-spec]):not([data-book]) .page:has(.landing-page) main > 
 	--landing-accent: var(--beskid-primary);
 	--landing-on-accent: var(--beskid-on-primary);
 	--landing-code-bg: color-mix(in srgb, var(--beskid-surface) 94%, black);
-	--landing-container: min(72rem, 100% - 2rem);
+	--landing-code-fg: color-mix(in srgb, var(--sl-color-text) 88%, var(--landing-muted));
+	--landing-code-kw: #c678dd;
+	--landing-code-type: #e5c07b;
+	--landing-gutter: clamp(1rem, 4vw, 1.5rem);
+	--landing-container: min(72rem, calc(100% - 2rem));
 	margin: 0;
 	width: 100%;
 	color: var(--sl-color-text);
@@ -66,13 +74,17 @@ html:not([data-platform-spec]):not([data-book]) .page:has(.landing-page) main > 
 }
 
 html[data-theme='light'] .landing-root {
-	--landing-muted: color-mix(in srgb, var(--sl-color-text) 85%, var(--beskid-outline));
+	--landing-muted: color-mix(in srgb, var(--sl-color-text) 88%, var(--beskid-outline));
 	--landing-panel: color-mix(in srgb, var(--beskid-surface) 96%, var(--beskid-surface-variant));
-	--landing-code-bg: color-mix(in srgb, var(--beskid-surface) 98%, white);
+	--landing-code-bg: color-mix(in srgb, var(--beskid-surface-variant) 48%, var(--beskid-surface));
+	--landing-code-fg: var(--beskid-on-primary-container);
+	--landing-code-kw: #6b0280;
+	--landing-code-type: #7a5200;
 }
 
 .landing-section {
-	padding: 3rem 1rem;
+	padding-block: 3rem;
+	padding-inline: max(var(--landing-gutter), env(safe-area-inset-left)) max(var(--landing-gutter), env(safe-area-inset-right));
 	background: transparent;
 }
 
@@ -104,7 +116,8 @@ html[data-theme='light'] .landing-root {
 /* --- Hero --- */
 .landing-hero {
 	position: relative;
-	padding: 2.5rem 1rem 2.5rem;
+	padding-block: 2.5rem;
+	padding-inline: max(var(--landing-gutter), env(safe-area-inset-left)) max(var(--landing-gutter), env(safe-area-inset-right));
 	overflow: visible;
 }
 
@@ -116,6 +129,11 @@ html[data-theme='light'] .landing-root {
 	grid-template-columns: 1fr;
 	gap: 2rem;
 	align-items: center;
+}
+
+.landing-hero__inner > * {
+	min-width: 0;
+	max-width: 100%;
 }
 
 .landing-hero__copy h1 {
@@ -176,14 +194,39 @@ html[data-theme='light'] .landing-root {
 	background: color-mix(in srgb, var(--landing-surface) 88%, var(--beskid-primary) 12%);
 }
 
+html[data-theme='light'] .sl-markdown-content a.landing-action--secondary,
+html[data-theme='light'] .sl-markdown-content a.landing-action--ghost {
+	color: var(--beskid-on-primary-container);
+	border-color: color-mix(in srgb, var(--beskid-outline) 70%, var(--beskid-primary) 30%);
+	background: color-mix(in srgb, var(--beskid-surface) 88%, var(--beskid-surface-variant));
+}
+
+html[data-theme='light'] .sl-markdown-content a.landing-action--ghost {
+	background: transparent;
+}
+
+html[data-theme='light'] .sl-markdown-content a.landing-action--secondary:hover,
+html[data-theme='light'] .sl-markdown-content a.landing-action--ghost:hover {
+	background: color-mix(in srgb, var(--beskid-primary-container) 42%, var(--beskid-surface));
+	color: var(--beskid-on-primary-container);
+}
+
 .landing-hero__code {
 	position: relative;
 	z-index: 1;
+	min-width: 0;
+	max-width: 100%;
 }
 
 .landing-hero__code .landing-terminal {
 	position: relative;
-	filter: drop-shadow(0 12px 32px color-mix(in srgb, var(--beskid-primary) 28%, black));
+	box-shadow: 0 12px 32px color-mix(in srgb, var(--beskid-primary) 28%, black);
+}
+
+html[data-theme='light'] .landing-hero__code .landing-terminal {
+	box-shadow:
+		0 1px 0 color-mix(in srgb, var(--beskid-outline) 35%, white),
+		0 12px 28px color-mix(in srgb, var(--beskid-primary) 14%, transparent);
 }
 
 @media (min-width: 62rem) {
@@ -533,7 +576,8 @@ html[data-theme='light'] .landing-root {
 
 /* --- Platform CTA band --- */
 .landing-cta {
-	padding: 2rem 1rem 3.5rem;
+	padding-block: 2rem 3.5rem;
+	padding-inline: max(var(--landing-gutter), env(safe-area-inset-left)) max(var(--landing-gutter), env(safe-area-inset-right));
 	border-top: 1px solid var(--landing-border);
 }
 
@@ -555,6 +599,12 @@ html[data-theme='light'] .landing-root {
 	border-radius: 0.9rem;
 	overflow: hidden;
 	background: var(--landing-code-bg);
+	min-width: 0;
+	max-width: 100%;
+}
+
+html[data-theme='light'] .landing-terminal {
+	border-color: color-mix(in srgb, var(--beskid-outline) 62%, var(--beskid-outline-variant));
 }
 
 .landing-terminal__head {
@@ -567,6 +617,11 @@ html[data-theme='light'] .landing-root {
 	font-size: 0.75rem;
 	color: var(--landing-muted);
 	background: var(--landing-terminal-chrome);
+}
+
+html[data-theme='light'] .landing-terminal__head {
+	color: color-mix(in srgb, var(--beskid-on-primary-container) 78%, var(--beskid-outline));
+	background: color-mix(in srgb, var(--landing-code-bg) 82%, var(--beskid-surface-variant));
 }
 
 .landing-terminal__head > span {
@@ -602,6 +657,18 @@ html[data-theme='light'] .landing-root {
 	background: color-mix(in oklab, #22c55e, #111113 70%);
 }
 
+html[data-theme='light'] .landing-terminal__dot--red {
+	background: #e34d4d;
+}
+
+html[data-theme='light'] .landing-terminal__dot--yellow {
+	background: #d4a017;
+}
+
+html[data-theme='light'] .landing-terminal__dot--green {
+	background: #2fae56;
+}
+
 .landing-terminal__body {
 	background: var(--landing-code-bg);
 }
@@ -610,6 +677,7 @@ html[data-theme='light'] .landing-root {
 	margin: 0;
 	padding: 1rem 1.2rem;
 	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
 	font-size: 0.84rem;
 	line-height: 1.6;
 	white-space: pre;
@@ -617,7 +685,7 @@ html[data-theme='light'] .landing-root {
 	word-break: normal;
 	overflow-wrap: normal;
 	font-family: var(--sl-font-mono, ui-monospace, monospace);
-	color: color-mix(in srgb, var(--sl-color-text) 88%, var(--landing-muted));
+	color: var(--landing-code-fg);
 	background: var(--landing-code-bg);
 }
 
@@ -631,19 +699,11 @@ html[data-theme='light'] .landing-root {
 }
 
 .landing-code-kw {
-	color: #c678dd;
+	color: var(--landing-code-kw);
 }
 
 .landing-code-type {
-	color: #e5c07b;
-}
-
-html[data-theme='light'] .landing-code-kw {
-	color: #a626a4;
-}
-
-html[data-theme='light'] .landing-code-type {
-	color: #986801;
+	color: var(--landing-code-type);
 }
 
 /* Callout blocks may still use Shiki */

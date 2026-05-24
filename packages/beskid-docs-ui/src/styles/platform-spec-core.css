@@ -10,15 +10,17 @@
 	border-bottom: 1px solid var(--platform-spec-divider);
 }
 
-/* 
+/* Custom Beskid header: Starlight expects three direct grid children; we supply one shell — lay out inside .beskid-header__row instead. */
 .page > .header .header:has(.beskid-header__row) {
 	display: block;
 	width: 100%;
 	max-width: none;
+	margin: 0;
+	padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right)) !important;
 	box-sizing: border-box;
 	min-height: var(--beskid-topbar-height, 3.4rem);
 }
-Custom Beskid header: Starlight expects three direct grid children; we supply one shell — lay out inside .beskid-header__row instead. */
+
 .page > .header .site-title {
 	font-weight: 800;
 	letter-spacing: 0.01em;

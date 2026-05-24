@@ -141,10 +141,28 @@ async function buildFileEntry(abs, repoRoot) {
 	];
 }
 
+function readExistingMeta() {
+	if (!fs.existsSync(OUT_FILE)) return null;
+	try {
+		return JSON.parse(fs.readFileSync(OUT_FILE, 'utf8'));
+	} catch {
+		return null;
+	}
+}
+
 async function main() {
 	const started = performance.now();
 	fs.mkdirSync(OUT_DIR, { recursive: true });
 	const repoRoot = gitTopLevel(WEBSITE_ROOT);
+	if (!repoRoot) {
+		const existing = readExistingMeta();
+		if (existing?.gitAvailable === true) {
+			console.warn(
+				'generate-platform-spec-git-meta: no git repo; preserving existing git meta with gitAvailable: true.',
+			);
+			return;
+		}
+	}
 	const files = walk(SPEC_ROOT);
 	const entries = repoRoot
 		? await mapPool(files, GIT_CONCURRENCY, (abs) => buildFileEntry(abs, repoRoot))

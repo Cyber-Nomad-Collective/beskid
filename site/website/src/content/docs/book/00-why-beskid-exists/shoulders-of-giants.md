@@ -20,7 +20,7 @@ flowchart TB
   jit["JIT — optimize what you actually ran, eventually"]
   highlevel["High-level — express intent, pray the runtime agrees"]
   frameworks["Frameworks — express intent in the framework's dialect"]
-  lowcode["Low-code — express intent in a screenshot of Excel"]
+  lowcode["Low-code — express intent with buggy, react-flow bootstrapped nodes"]
 
   assembly --> macros --> c --> cpp --> vms --> jit --> highlevel --> frameworks --> lowcode
 ```

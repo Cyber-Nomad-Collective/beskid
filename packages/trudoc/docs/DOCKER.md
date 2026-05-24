@@ -12,7 +12,7 @@ bun --cwd site/website run verify:trudoc --preset ci
 
 Website `prebuild` / `predev` run `packages/trudoc/scripts/website-prebuild.mjs` (generators, `verify:book-images`, layout guards, then `verify:trudoc --preset ci` unless skipped).
 
-Container image builds set `BESKID_SKIP_TRUDOC_VERIFY=1` in [`site/website/Dockerfile`](../../site/website/Dockerfile) because `.dockerignore` excludes `.git`; run trudoc CI on GitHub instead.
+Container image builds include `.git` in the build context and install the `git` CLI so `generate:platform-spec-git-meta` can populate revision history during prebuild. Container builds set `BESKID_SKIP_TRUDOC_VERIFY=1` in [`site/website/Dockerfile`](../../site/website/Dockerfile); run trudoc CI on GitHub instead. Prefer a non-shallow clone on Coolify when possible so `git log --follow` revision counts stay accurate across renames.
 
 Prebuild structure gate (manual, matches container skip):
 

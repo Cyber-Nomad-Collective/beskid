@@ -17,11 +17,16 @@ function walk(dir, out = []) {
 }
 
 function main() {
+	const requireGit = process.argv.includes('--require-git');
 	if (!fs.existsSync(META_FILE)) {
 		console.error('verify-platform-spec-git-meta: missing', path.relative(WEBSITE_ROOT, META_FILE));
 		process.exit(1);
 	}
 	const meta = JSON.parse(fs.readFileSync(META_FILE, 'utf8'));
+	if (requireGit && !meta.gitAvailable) {
+		console.error('verify-platform-spec-git-meta: git was unavailable at generation time (--require-git).');
+		process.exit(1);
+	}
 	const specFiles = walk(SPEC_ROOT);
 	const missing = [];
 	for (const abs of specFiles) {

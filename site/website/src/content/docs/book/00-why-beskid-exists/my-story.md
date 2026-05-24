@@ -19,7 +19,7 @@ The interview was full of red flags. I did not care. This was my only chance to 
 
 ![Red flags reaction](https://media1.tenor.com/m/uScmyrBrE2YAAAAC/empresa-company.gif)
 
-I was not asked any coding questions. There was no technical interview. The "software house" was truly an IT department, with all the usual flaws: tribalism, harassment-as-process, and zero accountability. The only somewhat factual, 
+I was not asked any coding questions. There was no technical interview. The "software house" was truly an IT department, with all the usual flaws: tribalism, harassment-as-process, and zero accountability.  
 
 ![Suspicious side-eye](https://media.giphy.com/media/K0nfRxt3s9SZDB3tmN/giphy.gif)
 

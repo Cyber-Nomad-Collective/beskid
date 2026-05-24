@@ -51,6 +51,8 @@ Coolify deployment uses:
 - Compose file: [`site/infra/docker-compose.yml`](../infra/docker-compose.yml) (build context: superrepo root)
 - Website image build: `site/website/Dockerfile`
 
+The Docker build context includes `.git` (and the image installs `git`) so prebuild can generate platform-spec revision history. Prefer a non-shallow clone on Coolify when possible for accurate `git log --follow` counts across renames.
+
 The site image only needs root workspace packages (`packages/trudoc`, `packages/beskid-docs-ui`, `site/website`). The `references/bsharp` submodule is **inactive** in [`.gitmodules`](../../.gitmodules) so Coolify’s shallow recursive clone does not pull the nested Roslyn tree. To work on formatter comparisons locally: `git submodule update --init references/bsharp`.
 
 If Coolify still runs `git submodule update --recursive`, disable recursive submodules in the application settings or limit init to `compiler` / `pckg` only—the docs site workflow does not require them (CLI version sync falls back to the public `cli-latest` release).

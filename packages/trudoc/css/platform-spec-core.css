@@ -16,7 +16,7 @@
 	width: 100%;
 	max-width: none;
 	margin: 0;
-	padding-inline: max(0.25rem, env(safe-area-inset-left)) max(0.25rem, env(safe-area-inset-right)) !important;
+	padding-inline: max(1rem, env(safe-area-inset-left)) max(1rem, env(safe-area-inset-right)) !important;
 	box-sizing: border-box;
 	min-height: var(--beskid-topbar-height, 3.4rem);
 }

@@ -748,10 +748,19 @@ html[data-book] .sl-markdown-content a > code {
 
 .platform-spec-header__top {
 	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 0.75rem;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0.85rem;
 	margin-bottom: 0.85rem;
+}
+
+@media (min-width: 48rem) {
+	.platform-spec-header__top {
+		flex-direction: row;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 0.75rem;
+	}
 }
 
 .platform-spec-header__eyebrow {
@@ -1014,7 +1023,19 @@ html[data-book] .sl-markdown-content a > code {
 
 .platform-spec-header__actions {
 	display: flex;
-	justify-content: flex-end;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 0.65rem;
+	width: 100%;
+}
+
+@media (min-width: 48rem) {
+	.platform-spec-header__actions {
+		justify-content: flex-end;
+		width: auto;
+		flex-shrink: 0;
+	}
 }
 
 .platform-spec-open-in-graph {
