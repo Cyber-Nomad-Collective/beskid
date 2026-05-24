@@ -30,12 +30,37 @@ def _asan_env() -> dict[str, str]:
     }
 
 
+def _runtime_bridge_archive(
+    compiler_dir: Path,
+    profile: str = "debug",
+    target_triple: str | None = None,
+) -> Path:
+    base = compiler_dir / "target"
+    if target_triple:
+        base = base / target_triple
+    name = (
+        "beskid_runtime_bridge.lib"
+        if sys.platform.startswith("win")
+        else "libbeskid_runtime_bridge.a"
+    )
+    return base / profile / name
+
+
 @nox.session(python=False, name="runtime_linux")
 def runtime_linux(session: nox.Session) -> None:
     submodules.init_compiler(ROOT)
     cw = _compiler_dir()
     proc.run("cargo", "build", "-p", "beskid_runtime_bridge", "-q", cwd=cw)
-    proc.run("cargo", "test", "-p", "beskid_tests", "runtime::", cwd=cw)
+    proc.run(
+        "cargo",
+        "test",
+        "-p",
+        "beskid_tests",
+        "runtime::",
+        "--",
+        "--test-threads=1",
+        cwd=cw,
+    )
     proc.run("cargo", "test", "-p", "beskid_tests", "abi::contracts::", cwd=cw)
     proc.run("cargo", "bench", "-p", "beskid_runtime", "--no-run", cwd=cw)
 
@@ -54,17 +79,30 @@ def runtime_e2e_linux(session: nox.Session) -> None:
 def runtime_asan_linux(session: nox.Session) -> None:
     submodules.init_compiler(ROOT)
     cw = _compiler_dir()
-    proc.run("cargo", "build", "-p", "beskid_runtime_bridge", "-q", cwd=cw)
+    triple = "x86_64-unknown-linux-gnu"
+    proc.run(
+        "cargo",
+        "build",
+        "-p",
+        "beskid_runtime_bridge",
+        "-q",
+        "--target",
+        triple,
+        cwd=cw,
+    )
+    bridge = _runtime_bridge_archive(cw, "debug", triple)
     proc.run(
         "cargo",
         "test",
         "-p",
         "beskid_tests",
         "--target",
-        "x86_64-unknown-linux-gnu",
+        triple,
         "runtime::",
+        "--",
+        "--test-threads=1",
         cwd=cw,
-        env=_asan_env(),
+        env={**_asan_env(), "BESKID_RUNTIME_ARCHIVE": str(bridge)},
     )
 
 
