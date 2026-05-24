@@ -9,12 +9,12 @@ A Beskid **`contract`** is a **structural interface**: required members, optiona
 ## Declaration
 
 ```beskid
-contract IDisposable
+contract Disposable
 {
     unit Dispose();
 }
 
-type Logger : IDisposable
+type Logger : Disposable
 {
     unit Dispose() { /* ... */ }
 }

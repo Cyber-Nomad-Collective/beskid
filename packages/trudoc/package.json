@@ -23,9 +23,11 @@
 		"./platform-spec": "./src/platform-spec/index.ts",
 		"./platform-spec/*": "./src/platform-spec/*.ts",
 		"./book": "./src/book/index.ts",
-		"./book/*": "./src/book/*.ts"
+		"./book/*": "./src/book/*.ts",
+		"./grammars/beskid.tmLanguage.json": "./grammars/beskid.tmLanguage.json",
+		"./grammars/load-beskid-grammar.mjs": "./grammars/load-beskid-grammar.mjs"
 	},
-	"files": ["bin", "src", "scripts", "css", "README.md", "docs", "Dockerfile"],
+	"files": ["bin", "src", "scripts", "grammars", "css", "README.md", "docs", "Dockerfile"],
 	"peerDependencies": {
 		"astro": ">=4.0.0"
 	},

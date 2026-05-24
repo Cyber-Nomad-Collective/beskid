@@ -33,7 +33,7 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 | --- | --- |
 | `launch` + field inject | `beskid run` / `beskid build` succeed; JIT/AOT parity |
 | Host chain override | Launched `registry` wins over `: ParentHost` |
-| `inject IContract[]` with two registrations | Both instances wired; order stable |
+| `inject Contract[]` with two registrations | Both instances wired; order stable |
 | Singular inject with two registrations | **E1705** |
 | `global::` inside named scope | Resolves global binding, not inner shadow |
 | `dispose` on `with` exit | Called after body; unwind cases per spec |

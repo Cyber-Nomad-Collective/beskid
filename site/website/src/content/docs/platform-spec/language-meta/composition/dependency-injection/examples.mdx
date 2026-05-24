@@ -28,19 +28,19 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 ```beskid
 host AppHost(string[] args) : ConsoleHost {
     registry {
-        single AppConfig for IConfiguration;
-        single SqlStorage for IStorage;
-        single FileStorage for IStorage;
+        single AppConfig for Configuration;
+        single SqlStorage for Storage;
+        single FileStorage for Storage;
     }
 
-    startup(IConfiguration config, IStorage[] storages) {
+    startup(Configuration config, Storage[] storages) {
         for s in storages { s.Open(config); }
     }
 }
 
 type StorageAggregator {
-    inject IConfiguration configuration;
-    inject IStorage[] storages;
+    inject Configuration configuration;
+    inject Storage[] storages;
 }
 
 unit main(string[] args) {
@@ -55,7 +55,7 @@ unit main(string[] args) {
 ```beskid
 host InfraHost : ConsoleHost {
     registry {
-        single SharedLogger for ILogger;
+        single SharedLogger for Logger;
     }
 }
 ```
@@ -65,10 +65,10 @@ host InfraHost : ConsoleHost {
 ```beskid
 host AppHost(string[] args) : InfraHost {
     registry {
-        single AppLogger for ILogger;   // overrides InfraHost ILogger
+        single AppLogger for Logger;   // overrides InfraHost Logger
     }
 
-    startup(ILogger logger) { }
+    startup(Logger logger) { }
 }
 
 unit main(string[] args) {
@@ -81,26 +81,26 @@ unit main(string[] args) {
 ```beskid
 host AppHost(string[] args) : ConsoleHost {
     registry {
-        single Configuration for IConfiguration;
+        single AppConfiguration for Configuration;
     }
 
     scope HttpScope(RequestContext request) {
-        DbSession for IDbSession;
+        ScopedDbSession for DbSession;
 
-        init(global::IConfiguration config, IDbSession db) {
+        init(global::Configuration config, DbSession db) {
             db.Connect(config, request);
         }
 
-        dispose(IDbSession db) {
+        dispose(DbSession db) {
             db.Close();
         }
     }
 
-    startup(IConfiguration config) { }
+    startup(Configuration config) { }
 }
 
 type RequestWorker {
-    inject global::IConfiguration configuration;
+    inject global::Configuration configuration;
 
     unit Run(RequestContext request) {
         with HttpScope(request) {
@@ -114,13 +114,13 @@ type RequestWorker {
 
 ```beskid
 registry {
-    single A for IProvider;
-    single B for IProvider;
+    single A for Provider;
+    single B for Provider;
 }
 
 type Consumer {
-    inject IProvider[] providers;   // OK — both A and B
-    // inject IProvider p;          // E1705 — use array form
+    inject Provider[] providers;   // OK — both A and B
+    // inject Provider p;          // E1705 — use array form
 }
 ```
 

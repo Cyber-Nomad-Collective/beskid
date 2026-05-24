@@ -102,5 +102,5 @@ Reserved for composition in [Diagnostic code registry](/platform-spec/compiler/s
 - **`init` / dispose on unwind** — If **`init`** completed, **`dispose`** runs for that activation when the **`with`** block exits abnormally; activations that never finished **`init`** do not run **`dispose`**.
 - **Repeated `with HttpScope`** — Independent activations; separate scoped instance sets.
 - **Same contract in parent and child scope** — Unqualified singular inject resolves in **innermost** scope first; use **`global::`** to pull parent/global registration explicitly.
-- **Multiple `IStorage` at global** — `inject IStorage[]` in **`startup`** receives all; singular `inject IStorage` → **E1705**.
+- **Multiple `Storage` at global** — `inject Storage[]` in **`startup`** receives all; singular `inject Storage` → **E1705**.
 - **Library `host` only** — App **`host : LibHost`** merges registries; only app project **`launch`**es.

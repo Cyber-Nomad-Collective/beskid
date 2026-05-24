@@ -12,7 +12,7 @@ A **compiler mod** is a **`type: Mod`** package in the dependency graph whose co
 | --- | --- |
 | Rust proc-macro inside `beskid_analysis` | Host implementation detail |
 | Language `macro` items | [Language macros](/platform-spec/language-meta/metaprogramming/macros/) — parallel feature |
-| User `contract IDisposable` | Structural type contract—different namespace |
+| User `contract Disposable` | Structural type contract—different namespace |
 | `meta { }` blocks in old designs | Removed—`Collector` owns scope |
 
 ## Discovery

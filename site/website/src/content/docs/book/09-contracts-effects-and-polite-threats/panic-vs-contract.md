@@ -10,7 +10,7 @@ tableOfContents: true
 
 ## Compile-time: contracts win early
 
-Missing `Dispose()` on `IDisposable`? **E1601**, not a stack trace in prod. That is the point of structural contracts ([Contracts](/platform-spec/language-meta/contracts-and-effects/contracts/)).
+Missing `Dispose()` on `Disposable`? **E1601**, not a stack trace in prod. That is the point of structural contracts ([Contracts](/platform-spec/language-meta/contracts-and-effects/contracts/)).
 
 ## Runtime: panic policy
 

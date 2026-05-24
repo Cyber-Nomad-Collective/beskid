@@ -11,6 +11,9 @@ import trudoc from 'trudoc/integration';
 import { createRemarkArchCodeFence } from 'trudoc/scripts/remark-arch-code-fence.mjs';
 import { remarkInlineRepoPaths } from 'trudoc/scripts/remark-inline-repo-paths.mjs';
 import { remarkRepoLinkFence } from 'trudoc/scripts/remark-repo-link-fence.mjs';
+import { loadBeskidGrammar } from 'trudoc/grammars/load-beskid-grammar.mjs';
+
+const beskidGrammar = loadBeskidGrammar();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '../..');
@@ -173,9 +176,11 @@ export default defineConfig({
 			remarkInlineRepoPaths({ repo: 'Cyber-Nomad-Collective/beskid' }),
 		],
 		shikiConfig: {
+			langs: [beskidGrammar],
 			langAlias: {
-				beskid: 'rust',
-				Beskid: 'rust',
+				beskid: 'beskid',
+				Beskid: 'beskid',
+				bd: 'beskid',
 			},
 		},
 	},
@@ -201,6 +206,14 @@ export default defineConfig({
 			],
 		}),
 		starlight({
+			expressiveCode: {
+				shiki: {
+					langs: [beskidGrammar],
+					langAlias: {
+						bd: 'beskid',
+					},
+				},
+			},
 			title: 'Beskid',
 			description: 'Beskid language docs and specification.',
 			editLink: {

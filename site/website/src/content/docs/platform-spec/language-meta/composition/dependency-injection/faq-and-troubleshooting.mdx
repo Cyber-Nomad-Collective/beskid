@@ -41,13 +41,13 @@ Normative text for locked v0.2 choices lives in feature hub ADRs (**`D-LMETA-DI-
 
 Field injection keeps type headers uniform and gives the compiler a single slot-lowering story for **`inject`** without ctor signature churn across inheritance. Constructor **`inject`** is rejected (**E1712**).
 
-### How do I consume two `IStorage` implementations?
+### How do I consume two `Storage` implementations?
 
-Register both in **`registry`** and inject **`inject IStorage[] storages`**. Order follows deterministic registration merge order (see [Design model](./design-model/)).
+Register both in **`registry`** and inject **`inject Storage[] storages`**. Order follows deterministic registration merge order (see [Design model](./design-model/)).
 
 ### Can I force a global service inside a named scope?
 
-Use **`inject global::ILogger logger`** on a field or in **`init`** / **`dispose`** parameters.
+Use **`inject global::Logger logger`** on a field or in **`init`** / **`dispose`** parameters.
 
 ### Can a library launch its host for testing?
 
@@ -60,13 +60,13 @@ Declare two **`host`** types and two targets (for example **`app`** and **`api`*
 ## v0.3 follow-ups
 
 - **`WebHost`** request pipeline entering a named scope without manual **`with`** on every handler.
-- **`IDisposable`**-style corelib contract as optional supplement to **`dispose`** blocks.
+- **`Disposable`**-style corelib contract as optional supplement to **`dispose`** blocks.
 
 ## Troubleshooting
 
 | Symptom | Likely cause |
 | --- | --- |
-| **E1705** | Two `for IContract` lines but singular `inject IContract` |
+| **E1705** | Two `for Contract` lines but singular `inject Contract` |
 | **E1706** | Field inject of scoped service outside `with` |
 | **E1711** | `launch` in a library target |
 | **E1712** | `inject` on constructor parameters |

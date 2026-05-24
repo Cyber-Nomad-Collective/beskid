@@ -1,0 +1,152 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "beskid",
+	"scopeName": "source.beskid",
+	"patterns": [
+		{ "include": "#comments" },
+		{ "include": "#attributes" },
+		{ "include": "#strings" },
+		{ "include": "#chars" },
+		{ "include": "#numbers" },
+		{ "include": "#keywords" },
+		{ "include": "#types" },
+		{ "include": "#enum-paths" },
+		{ "include": "#identifiers" }
+	],
+	"repository": {
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.line.double-slash.beskid",
+					"match": "//.*$"
+				},
+				{
+					"name": "comment.block.beskid",
+					"begin": "/\\*",
+					"end": "\\*/"
+				}
+			]
+		},
+		"attributes": {
+			"patterns": [
+				{
+					"name": "meta.attribute.beskid",
+					"begin": "\\[",
+					"end": "\\]",
+					"patterns": [
+						{ "include": "#strings" },
+						{
+							"name": "entity.other.attribute-name.beskid",
+							"match": "[A-Za-z_][A-Za-z0-9_]*"
+						},
+						{
+							"name": "variable.parameter.beskid",
+							"match": "[A-Za-z_][A-Za-z0-9_]*(?=\\s*:)"
+						}
+					]
+				}
+			]
+		},
+		"strings": {
+			"patterns": [
+				{
+					"name": "string.quoted.double.beskid",
+					"begin": "\"",
+					"end": "\"",
+					"patterns": [
+						{
+							"name": "constant.character.escape.beskid",
+							"match": "\\\\."
+						},
+						{
+							"name": "meta.embedded.expression.beskid",
+							"begin": "\\$\\{",
+							"end": "\\}",
+							"patterns": [{ "include": "$self" }]
+						}
+					]
+				}
+			]
+		},
+		"chars": {
+			"patterns": [
+				{
+					"name": "string.quoted.single.beskid",
+					"match": "'(?:\\\\'|[^'])*'"
+				}
+			]
+		},
+		"numbers": {
+			"patterns": [
+				{
+					"name": "constant.numeric.float.beskid",
+					"match": "-?\\d+\\.\\d+"
+				},
+				{
+					"name": "constant.numeric.integer.beskid",
+					"match": "-?\\d+"
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.beskid",
+					"match": "\\b(if|else|while|for|in|match|when|return|break|continue|with|spawn)\\b"
+				},
+				{
+					"name": "keyword.declaration.beskid",
+					"match": "\\b(pub|mod|use|type|enum|contract|attribute|extend|impl|host|macro|test|event|let|mut|ref|out|async|await|as|meta|skip)\\b"
+				},
+				{
+					"name": "keyword.other.beskid",
+					"match": "\\b(registry|scope|startup|init|dispose|launch|inject|single|transient|global|parent|block|expression)\\b"
+				},
+				{
+					"name": "constant.language.beskid",
+					"match": "\\b(true|false)\\b"
+				}
+			]
+		},
+		"types": {
+			"patterns": [
+				{
+					"name": "storage.type.beskid",
+					"match": "\\b(bool|i32|i64|u8|f64|char|string|unit)\\b"
+				},
+				{
+					"name": "entity.name.type.beskid",
+					"match": "\\b[A-Z][A-Za-z0-9_]*\\b"
+				}
+			]
+		},
+		"enum-paths": {
+			"patterns": [
+				{
+					"name": "constant.other.enum.beskid",
+					"match": "\\b[A-Z][A-Za-z0-9_]*::[A-Z][A-Za-z0-9_]*\\b"
+				}
+			]
+		},
+		"identifiers": {
+			"patterns": [
+				{
+					"name": "variable.language.beskid",
+					"match": "\\$[A-Za-z_][A-Za-z0-9_]*"
+				},
+				{
+					"name": "entity.name.function.macro.beskid",
+					"match": "[A-Za-z_][A-Za-z0-9_]*!(?=\\s*[\\({])"
+				},
+				{
+					"name": "entity.name.function.beskid",
+					"match": "[A-Za-z_][A-Za-z0-9_]*(?=\\s*\\()"
+				},
+				{
+					"name": "variable.other.beskid",
+					"match": "[A-Za-z_][A-Za-z0-9_]*"
+				}
+			]
+		}
+	}
+}

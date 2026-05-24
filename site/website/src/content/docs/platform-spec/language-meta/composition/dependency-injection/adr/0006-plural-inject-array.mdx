@@ -26,11 +26,11 @@ import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
 
 ## Context
 
-Apps register multiple implementations of one contract (for example two `IStorage`).
+Apps register multiple implementations of one contract (for example two `Storage`).
 
 ## Decision
 
-Multiple implementations **must** use **`inject IContract[]`** (or concrete **`T[]`**). Singular **`inject IContract`** **must** be unique at the resolution level (**E1705** when ambiguous).
+Multiple implementations **must** use **`inject Contract[]`** (or concrete **`T[]`**). Singular **`inject Contract`** **must** be unique at the resolution level (**E1705** when ambiguous).
 
 ## Consequences
 

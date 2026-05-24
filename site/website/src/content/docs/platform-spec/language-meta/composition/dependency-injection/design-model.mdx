@@ -95,15 +95,15 @@ Projects **may** declare **many** named **`host`** types. **`host`** is named so
 ```beskid
 host InfraHost : ConsoleHost {
     registry {
-        single SharedConfig for IConfiguration;
+        single SharedConfig for Configuration;
     }
 }
 
 host AppHost(string[] args) : InfraHost {
     registry {
-        single AppConfig for IConfiguration;   // overrides InfraHost / ConsoleHost for IConfiguration
-        single SqlStorage for IStorage;
-        single FileStorage for IStorage;
+        single AppConfig for Configuration;   // overrides InfraHost / ConsoleHost for Configuration
+        single SqlStorage for Storage;
+        single FileStorage for Storage;
     }
     // ...
 }
@@ -111,7 +111,7 @@ host AppHost(string[] args) : InfraHost {
 
 **Merge order:** start at the **root base** (for example **`ConsoleHost`**), apply each **`: ParentHost`** toward the **launched** host. The **launched host** is **topmost** — its **`registry`** entries **override** the same contract or self-bind type key from parents.
 
-**Override key:** contract type for `for IContract` lines; implementation type for self-bound lines.
+**Override key:** contract type for `for Contract` lines; implementation type for self-bound lines.
 
 **Lifetime mismatch** on override (parent `single`, child `transient` for the same key) is a **compile error**.
 
@@ -121,44 +121,44 @@ host AppHost(string[] args) : InfraHost {
 host AppHost(string[] args) : ConsoleHost {
 
     registry {
-        single Configuration for IConfiguration;
-        single SqlStorage for IStorage;
-        single FileStorage for IStorage;
-        transient ILogger for ILogger;
+        single AppConfiguration for Configuration;
+        single SqlStorage for Storage;
+        single FileStorage for Storage;
+        transient DefaultLogger for Logger;
     }
 
     scope HttpScope(RequestContext request) {
-        DbSession for IDbSession;
+        ScopedDbSession for DbSession;
         OIDCAuthService for AuthService;
 
         init(
-            global::IConfiguration configuration,
+            global::Configuration configuration,
             AuthService auth,
         ) {
             // per activation
         }
 
-        dispose(IDbSession db, AuthService auth) {
+        dispose(DbSession db, AuthService auth) {
             auth.SignOut();
             db.Close();
         }
 
         scope UnitOfWork(bool readOnly) {
-            Transaction for ITransaction;
+            ScopedTransaction for Transaction;
 
-            init(ITransaction tx) {
+            init(Transaction tx) {
                 tx.Begin(readOnly);
             }
 
-            dispose(ITransaction tx) {
+            dispose(Transaction tx) {
                 tx.Commit();
             }
         }
     }
 
     startup(
-        IConfiguration configuration,
-        IStorage[] storages,
+        Configuration configuration,
+        Storage[] storages,
     ) {
         // global only; named scopes not active
     }
@@ -181,7 +181,7 @@ Parameters on **`host AppHost(...)`** are **launch inputs** only. **`launch AppH
 ### Registration lines
 
 ```beskid
-single Implementation for IContract;
+single Implementation for Contract;
 transient Implementation;
 single ConcreteType;
 ```
@@ -202,16 +202,16 @@ single ConcreteType;
 
 ```beskid
 type Aggregator {
-    inject IConfiguration configuration;
-    inject IStorage[] storages;              // all IStorage registrations in resolution container
-    inject global::ILogger logger;         // force global registry
+    inject Configuration configuration;
+    inject Storage[] storages;              // all Storage registrations in resolution container
+    inject global::Logger logger;         // force global registry
 }
 ```
 
 ### Singular `inject`
 
 ```beskid
-inject IDbSession session;
+inject DbSession session;
 ```
 
 **Must** resolve to **exactly one** registration in the walked scope chain. If **zero** → error; if **many** at the same level → error directing the author to **array inject**.
@@ -219,7 +219,7 @@ inject IDbSession session;
 ### Plural `inject` (multiple implementations)
 
 ```beskid
-inject IStorage[] storages;
+inject Storage[] storages;
 inject StorageProvider[] providers;
 ```
 
