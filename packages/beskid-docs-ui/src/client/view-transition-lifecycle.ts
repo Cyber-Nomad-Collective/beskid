@@ -2,7 +2,12 @@
  * Shared init/cleanup for Astro ClientRouter navigations.
  */
 
+import { applyDocAreaHtmlAttrs } from '../doc-area';
 import { teardownPlatformSpecGraph } from './platform-spec-graph-client';
+
+function syncDocAreaHtmlAttrs(): void {
+	applyDocAreaHtmlAttrs(window.location.pathname);
+}
 
 function cleanupBeforeSwap(): void {
 	document.querySelectorAll('[data-doc-area-nav-portaled]').forEach((el) => el.remove());
@@ -39,4 +44,11 @@ export function onPageNavigation(init: () => void, cleanup?: () => void): void {
 if (!document.documentElement.dataset.viewTransitionLifecycleBound) {
 	document.documentElement.dataset.viewTransitionLifecycleBound = 'true';
 	document.addEventListener('astro:before-swap', cleanupBeforeSwap);
+	document.addEventListener('astro:after-swap', syncDocAreaHtmlAttrs);
+	document.addEventListener('astro:page-load', syncDocAreaHtmlAttrs);
+	if (document.readyState !== 'loading') {
+		syncDocAreaHtmlAttrs();
+	} else {
+		document.addEventListener('DOMContentLoaded', syncDocAreaHtmlAttrs, { once: true });
+	}
 }

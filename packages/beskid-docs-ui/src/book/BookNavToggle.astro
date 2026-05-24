@@ -1,10 +1,15 @@
 ---
-/** Opens book hierarchy rail on mobile (desktop: persistent rail, no toggle). */
+/** Opens book hierarchy drawer (index-style overlay on desktop). */
+interface Props {
+	showInTopBar?: boolean;
+}
+
+const { showInTopBar = false } = Astro.props;
 ---
 
 <button
 	type="button"
-	class="platform-spec-nav-toggle print:hidden md:sl-hidden"
+	class:list={['platform-spec-nav-toggle', 'print:hidden', !showInTopBar && 'md:sl-hidden']}
 	aria-expanded="false"
 	aria-controls="book-nav-rail"
 	aria-label="Open book contents"

@@ -953,7 +953,6 @@ html[data-platform-spec]:has(.platform-spec-home) .sl-container > * + * {
 	gap: 0.5rem;
 	flex-shrink: 0;
 	margin: 0;
-	padding: 0.35rem var(--sl-content-pad-x, 1rem) 0;
 	border-bottom: none;
 }
 

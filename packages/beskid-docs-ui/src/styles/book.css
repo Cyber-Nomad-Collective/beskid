@@ -12,10 +12,6 @@
 	--book-line-height: 1.68;
 }
 
-html[data-book] .page .main-pane {
-	padding-inline-start: calc(var(--platform-spec-nav-width) + var(--book-nav-content-gap));
-}
-
 html[data-book] {
 	--sl-content-width: var(--book-measure);
 }
@@ -263,7 +259,11 @@ html[data-book] .book-reader .sl-markdown-content pre {
  * Starlight PageSidebar sets .sl-container width from --sl-sidebar-width (0 for book) — override below.
  */
 @media (min-width: 72rem) {
-	html[data-book]:has([data-book-nav-chrome][data-rail-collapsed='true']) .page .main-pane {
+	html[data-book]:has(.platform-spec-nav-chrome[data-nav-mode='collapse']):has(
+			[data-book-nav-chrome][data-rail-collapsed='true']
+		)
+		.page
+		.main-pane {
 		padding-inline-start: calc(var(--platform-spec-nav-rail-collapsed) + var(--book-nav-content-gap));
 	}
 

@@ -32,6 +32,8 @@ import TwoColumnContent from 'virtual:starlight/components/TwoColumnContent';
 
 import printHref from '@astrojs/starlight/style/print.css?url&no-inline';
 
+import { docAreaFromPathname } from '../doc-area';
+
 const { starlightRoute } = Astro.locals;
 
 const pagefindEnabled =
@@ -43,6 +45,10 @@ const htmlDataAttributes: DOMStringMap = { 'data-theme': 'dark' };
 if (Boolean(starlightRoute.toc)) htmlDataAttributes['data-has-toc'] = '';
 if (starlightRoute.hasSidebar) htmlDataAttributes['data-has-sidebar'] = '';
 if (Boolean(starlightRoute.entry.data.hero)) htmlDataAttributes['data-has-hero'] = '';
+
+const docArea = docAreaFromPathname(Astro.url.pathname);
+if (docArea.platformSpec) htmlDataAttributes['data-platform-spec'] = '';
+if (docArea.book) htmlDataAttributes['data-book'] = '';
 
 const mainDataAttributes: DOMStringMap = {};
 if (pagefindEnabled) mainDataAttributes['data-pagefind-body'] = '';

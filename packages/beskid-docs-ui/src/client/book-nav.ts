@@ -11,6 +11,7 @@ function initBookNav() {
 		filterSelector: '[data-book-nav-filter]',
 		treeItemSelector: '.platform-spec-nav-tree__item',
 		treeLinkSelector: '.platform-spec-nav-tree__link',
+		defaultCollapsed: true,
 	});
 }
 

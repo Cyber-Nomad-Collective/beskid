@@ -10,26 +10,13 @@
 	border-bottom: 1px solid var(--platform-spec-divider);
 }
 
-.page > .header .header {
-	max-width: 88rem;
-	margin: 0 auto;
-	padding: 0.25rem 0.9rem;
-	min-height: var(--beskid-topbar-height, 3.4rem);
-	display: grid;
-	grid-template-columns: auto 1fr auto;
-	align-items: center;
-	gap: 0.65rem;
-	line-height: 1;
-}
-
 /* Custom Beskid header: Starlight expects three direct grid children; we supply one shell — lay out inside .beskid-header__row instead. */
 .page > .header .header:has(.beskid-header__row) {
 	display: block;
 	width: 100%;
 	max-width: none;
 	margin: 0;
-	padding-block: 0;
-	padding-inline: max(0.65rem, env(safe-area-inset-left)) max(0.65rem, env(safe-area-inset-right));
+	padding-inline: max(0.25rem, env(safe-area-inset-left)) max(0.25rem, env(safe-area-inset-right)) !important;
 	box-sizing: border-box;
 	min-height: var(--beskid-topbar-height, 3.4rem);
 }
@@ -107,29 +94,8 @@ html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .
 	white-space: nowrap;
 }
 
-/* Platform-spec pages: full-width top bar with brand flush left (map index uses tighter edge padding). */
-html[data-platform-spec] .page > .header {
-	width: 100%;
-	max-width: none;
-	overflow-x: visible;
-	overflow: visible;
-	box-sizing: border-box;
-}
-
-html[data-platform-spec] .page > .header .header {
-	max-width: none;
-	width: 100%;
-	box-sizing: border-box;
-	padding-inline: max(0.65rem, env(safe-area-inset-left)) max(0.65rem, env(safe-area-inset-right));
-}
-
-html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page > .header {
-	/* Starlight PageFrame pads the fixed bar — pull map chrome to the viewport edges */
-	padding-inline: max(0.25rem, env(safe-area-inset-left)) max(0.25rem, env(safe-area-inset-right)) !important;
-}
-
+/* Platform-spec index map tab: compact top bar (search hidden, actions flush right). */
 html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .page > .header .header {
-	padding-inline: 0;
 	display: flex;
 	flex-wrap: nowrap;
 	align-items: center;

@@ -31,7 +31,7 @@ const isActive = (href: string) => {
 };
 
 const isPlatformSpec = path === '/platform-spec' || path.startsWith('/platform-spec/');
-const isPlatformSpecMap = path === '/platform-spec';
+const isPlatformSpecIndex = path === '/platform-spec';
 const isBook = path === '/book' || path.startsWith('/book/');
 ---
 
@@ -39,8 +39,8 @@ const isBook = path === '/book' || path.startsWith('/book/');
 	<Astronav closeOnClick>
 		<div class="beskid-header__row">
 			<div class="beskid-header__brand sl-flex">
-				{isPlatformSpec && <PlatformSpecNavToggle showInTopBar />}
-				{isBook && <BookNavToggle />}
+				{isPlatformSpec && <PlatformSpecNavToggle showInTopBar={isPlatformSpecIndex} />}
+				{isBook && <BookNavToggle showInTopBar />}
 				<a class="beskid-header__brand-logo-link" href="/" aria-label="Beskid home">
 					<img class="beskid-header__brand-logo" src="/favicon.svg" alt="" width="26" height="26" />
 				</a>
@@ -151,7 +151,7 @@ const isBook = path === '/book' || path.startsWith('/book/');
 		</MenuItems>
 	</Astronav>
 </div>
-{isPlatformSpec && <PlatformSpecNavChrome currentPath={path} isMapPage={isPlatformSpecMap} />}
+{isPlatformSpec && <PlatformSpecNavChrome currentPath={path} isMapPage={isPlatformSpecIndex} />}
 {isBook && <BookNavChrome currentPath={path} />}
 
 <style>

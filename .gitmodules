@@ -14,3 +14,6 @@
 [submodule "beskid_vscode"]
 	path = beskid_vscode
 	url = https://github.com/Cyber-Nomad-Collective/beskid_vscode.git
+[submodule "beskid_templates"]
+	path = beskid_templates
+	url = https://github.com/Cyber-Nomad-Collective/beskid_templates.git

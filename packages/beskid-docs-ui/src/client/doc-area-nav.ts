@@ -33,9 +33,11 @@ export type DocAreaNavOptions = {
 	openAttr?: string;
 	/** Desktop rail starts collapsed (narrow strip). */
 	defaultCollapsed?: boolean;
+	/** Rail strip button that toggles collapsed width (collapse mode, desktop). */
+	collapseSelector?: string;
 	/**
-	 * On viewport ≥50rem: `collapse` toggles rail width; `drawer` toggles mobile overlay;
-	 * `auto` uses drawer on platform-spec map tab, else collapse.
+	 * @deprecated Prefer `data-nav-mode` on the chrome root (`drawer` | `collapse`).
+	 * On viewport ≥50rem: `collapse` toggles rail width; `drawer` toggles overlay drawer.
 	 */
 	desktopToggle?: 'collapse' | 'drawer' | 'auto';
 };
@@ -127,7 +129,21 @@ export function initDocAreaNav(opts: DocAreaNavOptions) {
 
 	const mobileToggle = document.querySelector<HTMLButtonElement>(opts.mobileToggleSelector);
 	const closeBtn = navRail.querySelector<HTMLButtonElement>(opts.closeSelector);
+	const collapseBtn = opts.collapseSelector
+		? navRail.querySelector<HTMLButtonElement>(opts.collapseSelector)
+		: null;
 	const filterInput = navRail.querySelector<HTMLInputElement>(opts.filterSelector);
+
+	const navMode =
+		navChrome.dataset.navMode === 'drawer' || navChrome.dataset.navMode === 'collapse'
+			? navChrome.dataset.navMode
+			: opts.desktopToggle === 'drawer'
+				? 'drawer'
+				: opts.desktopToggle === 'collapse'
+					? 'collapse'
+					: document.querySelector('[data-platform-spec-home]')
+						? 'drawer'
+						: 'collapse';
 
 	function setMobileOpen(open: boolean) {
 		document.body.toggleAttribute(openAttr, open);
@@ -158,19 +174,23 @@ export function initDocAreaNav(opts: DocAreaNavOptions) {
 		mobileToggle.dataset.docAreaNavToggleBound = 'true';
 		mobileToggle.addEventListener('click', () => {
 			const desktop = window.matchMedia('(min-width: 50rem)').matches;
-			const mode = opts.desktopToggle;
-			if (desktop && mode) {
-				const useDrawer =
-					mode === 'drawer' ||
-					(mode === 'auto' && Boolean(document.querySelector('[data-platform-spec-home]')));
-				if (useDrawer) {
-					setMobileOpen(!document.body.hasAttribute(openAttr));
-					return;
-				}
+			if (desktop && navMode === 'drawer') {
+				setMobileOpen(!document.body.hasAttribute(openAttr));
+				return;
+			}
+			if (desktop && navMode === 'collapse') {
 				setRailCollapsed(navChrome.getAttribute(collapsedAttr) !== 'true');
 				return;
 			}
 			setMobileOpen(!document.body.hasAttribute(openAttr));
+		});
+	}
+
+	if (collapseBtn && collapseBtn.dataset.docAreaNavCollapseBound !== 'true') {
+		collapseBtn.dataset.docAreaNavCollapseBound = 'true';
+		collapseBtn.addEventListener('click', () => {
+			if (!window.matchMedia('(min-width: 50rem)').matches) return;
+			setRailCollapsed(navChrome.getAttribute(collapsedAttr) !== 'true');
 		});
 	}
 

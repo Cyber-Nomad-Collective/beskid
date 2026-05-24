@@ -3,24 +3,46 @@
  * section rhythm and components also apply under `.landing-root`.
  */
 
-/* --- Index-only Starlight chrome --- */
-.page:has(.landing-page) nav.sidebar {
+/* --- Index-only Starlight chrome (never bleed into doc areas after client nav) --- */
+html:not([data-platform-spec]):not([data-book]) .page:has(.landing-page) nav.sidebar {
 	display: none;
 }
 
-.page:has(.landing-page) .main-pane {
+html:not([data-platform-spec]):not([data-book]) .page:has(.landing-page) .main-pane {
 	padding-inline: 0 !important;
 	max-width: none !important;
 	width: 100%;
 }
 
-.page:has(.landing-page) .content-panel .sl-container {
+html:not([data-platform-spec]):not([data-book]) .page:has(.landing-page) .content-panel .sl-container {
 	padding-inline: 0;
 	max-width: none;
 }
 
-.page:has(.landing-page) .sl-markdown-content {
+html:not([data-platform-spec]):not([data-book]) .page:has(.landing-page) .sl-markdown-content {
 	padding: 0;
+}
+
+/*
+ * Starlight still renders `h1#_top` in the first `.content-panel`. Hide that panel and
+ * drop only the top seam on the hero panel — not all ContentPanel padding.
+ */
+main:has(.landing-root) > .content-panel:first-of-type:has(.sl-container > h1#_top:only-child) {
+	display: none;
+}
+
+main:has(.landing-root) > .content-panel + .content-panel {
+	border-top: none;
+	padding-top: 0;
+}
+
+html:not([data-platform-spec]):not([data-book]) .page:has(.landing-page) .main-frame {
+	width: 100%;
+}
+
+html:not([data-platform-spec]):not([data-book]) .page:has(.landing-page) main > .content-panel + .content-panel {
+	border: none;
+	box-shadow: none;
 }
 
 /* --- Landing tokens --- */

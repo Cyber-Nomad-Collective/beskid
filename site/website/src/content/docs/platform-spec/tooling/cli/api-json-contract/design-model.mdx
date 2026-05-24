@@ -41,7 +41,7 @@ Normative shape of **`api.json` schema version 4** with **`navigationModel: "gra
 | XML doc optional; metadata from symbols | `doc` / `docMarkdown` optional on every item row |
 | Signature from reflection | `signature`, `parameters`, `returnType`, `fieldType` from HIR + resolution |
 | `cref` links | `typeAnnotation.refItemId` for type positions; `@ref` in `///` for prose cross-links |
-| Multi-file projects | `beskid doc --project` uses **workspace scan** assembly (all `*.bd` under host + path dependency roots), merges resolution per unit, and sets `location.file` per declaring unit |
+| Multi-file projects | `beskid doc --project` uses **workspace scan** assembly (all `*.bd` under host + path dependency roots), merges resolution per unit, and sets `location.file` per declaring unit (paths **package-relative** to the declaring package source root, forward slashes) |
 
 `ImportClosure` assembly (entry `use` graph only) is **not** used for `api.json` emission when a `Project.proj` is resolved; prelude-style re-export entrypoints otherwise document only the entry file.
 
@@ -52,7 +52,7 @@ Normative shape of **`api.json` schema version 4** with **`navigationModel: "gra
 | `schemaVersion` | yes | `4` for this revision (`3` remains readable; new fields optional on v3) |
 | `navigationModel` | yes when `schemaVersion >= 3` | Must be `"graph-v1"` |
 | `generator` | yes | Tool id (for example `beskid doc`) |
-| `source` | yes | Entry source path used for the doc run |
+| `source` | yes | Entry source path for the doc run, **artifact-relative** (forward slashes; same path as inside the published `.bpk`, never a host absolute or `obj/beskid/...` path) |
 | `items` | yes | Flat list of API rows sharing one `id` space |
 
 ## Navigation invariants
@@ -113,7 +113,7 @@ Core identity (unchanged from v3): `id`, `qualifiedName`, `name`, `displayName`,
 | `returnType` | `function`, `method`, `contract_method` | Return type annotation |
 | `parameters` | Callables | Ordered `{ name, type, modifier?, docMarkdown? }` |
 | `genericParameters` | Types, enums, callables with generics | `{ name }` list from HIR |
-| `declaringPackage` | Workspace scan / aggregate publish | Registry package id when `location.file` is outside the publishing project root (optional on v4; omit when same package) |
+| `declaringPackage` | Workspace scan / aggregate publish | Registry package id when the symbol is defined in another workspace package (optional on v4; omit when same package). With `location.file`, paths are relative to **that** package's artifact root, not the publishing package |
 
 ### typeAnnotation
 

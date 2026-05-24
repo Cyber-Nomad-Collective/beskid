@@ -23,7 +23,7 @@ function initPlatformSpecNav() {
 		treeItemSelector: '.platform-spec-nav-tree__item',
 		treeLinkSelector: '.platform-spec-nav-tree__link',
 		defaultCollapsed: true,
-		desktopToggle: 'auto',
+		collapseSelector: '[data-platform-spec-nav-collapse]',
 	});
 }
 

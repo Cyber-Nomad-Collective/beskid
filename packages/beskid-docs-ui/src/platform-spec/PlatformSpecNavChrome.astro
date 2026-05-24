@@ -17,6 +17,7 @@ const branchNodes = tree.children ?? [];
 	class="platform-spec-nav-chrome"
 	data-platform-spec-nav-chrome
 	data-map-page={isMapPage ? 'true' : 'false'}
+	data-nav-mode={isMapPage ? 'drawer' : 'collapse'}
 	data-rail-collapsed="true"
 >
 	<div class="platform-spec-nav-chrome__backdrop" data-platform-spec-nav-backdrop hidden />
@@ -33,6 +34,16 @@ const branchNodes = tree.children ?? [];
 					<a href="/platform-spec/" class="platform-spec-nav-chrome__map-link">
 						Platform map
 					</a>
+					<button
+						type="button"
+						class="platform-spec-nav-chrome__rail-collapse sl-hidden md:sl-inline-flex"
+						aria-label="Toggle specification tree width"
+						data-platform-spec-nav-collapse
+					>
+						<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M15 6l-6 6 6 6"></path>
+						</svg>
+					</button>
 					<button
 						type="button"
 						class="platform-spec-nav-chrome__rail-close md:sl-hidden"
