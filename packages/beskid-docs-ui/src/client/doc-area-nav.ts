@@ -2,6 +2,27 @@
 
 export const OPEN_ATTR = 'data-spec-nav-open';
 export const COLLAPSED_ATTR = 'data-rail-collapsed';
+const RAIL_COLLAPSED_STORAGE_KEY = 'beskid:doc-nav-rail-collapsed';
+
+export function readPersistedRailCollapsed(defaultCollapsed = true): boolean {
+	try {
+		const stored = sessionStorage.getItem(RAIL_COLLAPSED_STORAGE_KEY);
+		if (stored === 'true' || stored === 'false') {
+			return stored === 'true';
+		}
+	} catch {
+		// sessionStorage unavailable (private mode, blocked storage, etc.)
+	}
+	return defaultCollapsed;
+}
+
+export function persistRailCollapsed(collapsed: boolean): void {
+	try {
+		sessionStorage.setItem(RAIL_COLLAPSED_STORAGE_KEY, collapsed ? 'true' : 'false');
+	} catch {
+		// ignore
+	}
+}
 
 export function syncNavRailTopOffset() {
 	const topbar = document.querySelector<HTMLElement>('.page > .header');
@@ -31,15 +52,8 @@ export type DocAreaNavOptions = {
 	treeLinkSelector: string;
 	collapsedAttr?: string;
 	openAttr?: string;
-	/** Desktop rail starts collapsed (narrow strip). */
+	/** Desktop rail starts hidden (navbar toggle expands and shifts layout). */
 	defaultCollapsed?: boolean;
-	/** Rail strip button that toggles collapsed width (collapse mode, desktop). */
-	collapseSelector?: string;
-	/**
-	 * @deprecated Prefer `data-nav-mode` on the chrome root (`drawer` | `collapse`).
-	 * On viewport ≥50rem: `collapse` toggles rail width; `drawer` toggles overlay drawer.
-	 */
-	desktopToggle?: 'collapse' | 'drawer' | 'auto';
 };
 
 function treeListSelectorFromItemSelector(itemSelector: string): string {
@@ -129,25 +143,15 @@ export function initDocAreaNav(opts: DocAreaNavOptions) {
 
 	const mobileToggle = document.querySelector<HTMLButtonElement>(opts.mobileToggleSelector);
 	const closeBtn = navRail.querySelector<HTMLButtonElement>(opts.closeSelector);
-	const collapseBtn = opts.collapseSelector
-		? navRail.querySelector<HTMLButtonElement>(opts.collapseSelector)
-		: null;
 	const filterInput = navRail.querySelector<HTMLInputElement>(opts.filterSelector);
 
-	const navMode =
-		navChrome.dataset.navMode === 'drawer' || navChrome.dataset.navMode === 'collapse'
-			? navChrome.dataset.navMode
-			: opts.desktopToggle === 'drawer'
-				? 'drawer'
-				: opts.desktopToggle === 'collapse'
-					? 'collapse'
-					: document.querySelector('[data-platform-spec-home]')
-						? 'drawer'
-						: 'collapse';
+	function syncToggleExpanded(collapsed: boolean) {
+		mobileToggle?.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+	}
 
 	function setMobileOpen(open: boolean) {
 		document.body.toggleAttribute(openAttr, open);
-		mobileToggle?.setAttribute('aria-expanded', open ? 'true' : 'false');
+		syncToggleExpanded(open);
 		if (backdrop) backdrop.hidden = !open;
 		if (open) {
 			setRailCollapsed(false);
@@ -159,7 +163,9 @@ export function initDocAreaNav(opts: DocAreaNavOptions) {
 				)?.focus();
 			});
 		} else {
-			setRailCollapsed(opts.defaultCollapsed ?? false);
+			if (!window.matchMedia('(min-width: 50rem)').matches) {
+				setRailCollapsed(true);
+			}
 			mobileToggle?.focus();
 		}
 	}
@@ -168,29 +174,21 @@ export function initDocAreaNav(opts: DocAreaNavOptions) {
 		const value = collapsed ? 'true' : 'false';
 		navChrome.setAttribute(collapsedAttr, value);
 		navRail.setAttribute(collapsedAttr, value);
+		persistRailCollapsed(collapsed);
+		if (window.matchMedia('(min-width: 50rem)').matches) {
+			syncToggleExpanded(!collapsed);
+		}
 	}
 
 	if (mobileToggle && mobileToggle.dataset.docAreaNavToggleBound !== 'true') {
 		mobileToggle.dataset.docAreaNavToggleBound = 'true';
 		mobileToggle.addEventListener('click', () => {
 			const desktop = window.matchMedia('(min-width: 50rem)').matches;
-			if (desktop && navMode === 'drawer') {
-				setMobileOpen(!document.body.hasAttribute(openAttr));
-				return;
-			}
-			if (desktop && navMode === 'collapse') {
+			if (desktop) {
 				setRailCollapsed(navChrome.getAttribute(collapsedAttr) !== 'true');
 				return;
 			}
 			setMobileOpen(!document.body.hasAttribute(openAttr));
-		});
-	}
-
-	if (collapseBtn && collapseBtn.dataset.docAreaNavCollapseBound !== 'true') {
-		collapseBtn.dataset.docAreaNavCollapseBound = 'true';
-		collapseBtn.addEventListener('click', () => {
-			if (!window.matchMedia('(min-width: 50rem)').matches) return;
-			setRailCollapsed(navChrome.getAttribute(collapsedAttr) !== 'true');
 		});
 	}
 
@@ -214,8 +212,17 @@ export function initDocAreaNav(opts: DocAreaNavOptions) {
 	if (!document.documentElement.dataset.docAreaNavEscapeBound) {
 		document.documentElement.dataset.docAreaNavEscapeBound = 'true';
 		document.addEventListener('keydown', (e) => {
-			if (e.key === 'Escape' && document.body.hasAttribute(openAttr)) {
-				setMobileOpen(false);
+			if (e.key === 'Escape') {
+				if (document.body.hasAttribute(openAttr)) {
+					setMobileOpen(false);
+					return;
+				}
+				if (
+					window.matchMedia('(min-width: 50rem)').matches &&
+					navChrome.getAttribute(collapsedAttr) !== 'true'
+				) {
+					setRailCollapsed(true);
+				}
 			}
 		});
 	}
@@ -223,8 +230,13 @@ export function initDocAreaNav(opts: DocAreaNavOptions) {
 	const active = navRail.querySelector<HTMLAnchorElement>(`${opts.treeLinkSelector}.is-active`);
 	active?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 
-	setRailCollapsed(opts.defaultCollapsed ?? false);
-	setMobileOpen(false);
+	const collapsed = readPersistedRailCollapsed(opts.defaultCollapsed ?? true);
+	setRailCollapsed(collapsed);
+	document.body.removeAttribute(openAttr);
+	if (backdrop) backdrop.hidden = true;
+	if (!window.matchMedia('(min-width: 50rem)').matches) {
+		syncToggleExpanded(false);
+	}
 }
 
 export function bindDocAreaNavTopSync() {

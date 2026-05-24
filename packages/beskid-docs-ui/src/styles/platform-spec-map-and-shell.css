@@ -732,10 +732,18 @@ html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .
 html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .sl-markdown-content:has(.platform-spec-home) {
 	width: 100% !important;
 	max-width: none !important;
-	padding: 0 !important;
 	margin: 0 !important;
 	border: 0 !important;
 	box-sizing: border-box;
+}
+
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .main-pane,
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) main,
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) main > .content-panel:has(.platform-spec-home),
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .content-panel:has(.platform-spec-home) .sl-container,
+html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .sl-markdown-content:has(.platform-spec-home) {
+	padding-block: 0 !important;
+	padding-inline-end: 0 !important;
 }
 
 html[data-platform-spec]:has([data-platform-spec-home][data-active-tab='map']) .main-pane,
@@ -913,7 +921,8 @@ html[data-platform-spec]:has(.platform-spec-home) .platform-spec-home {
 	flex-direction: column;
 	flex: 1 1 auto;
 	min-height: 0;
-	padding: 0 !important;
+	padding-block: 0 !important;
+	padding-inline-end: 0 !important;
 	margin: 0 !important;
 }
 

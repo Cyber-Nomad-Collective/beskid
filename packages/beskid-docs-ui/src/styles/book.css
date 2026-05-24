@@ -259,14 +259,6 @@ html[data-book] .book-reader .sl-markdown-content pre {
  * Starlight PageSidebar sets .sl-container width from --sl-sidebar-width (0 for book) — override below.
  */
 @media (min-width: 72rem) {
-	html[data-book]:has(.platform-spec-nav-chrome[data-nav-mode='collapse']):has(
-			[data-book-nav-chrome][data-rail-collapsed='true']
-		)
-		.page
-		.main-pane {
-		padding-inline-start: calc(var(--platform-spec-nav-rail-collapsed) + var(--book-nav-content-gap));
-	}
-
 	html[data-book][data-has-toc] .lg\:sl-flex {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) minmax(var(--book-toc-min), min(var(--book-toc-max), max-content));
@@ -317,6 +309,7 @@ html[data-book] .book-reader .sl-markdown-content pre {
 		position: sticky;
 		top: var(--sl-nav-height);
 		width: 100% !important;
+		padding-top: 0.25rem !important;
 		max-width: var(--book-toc-max);
 		height: auto;
 		max-height: calc(100vh - var(--sl-nav-height));

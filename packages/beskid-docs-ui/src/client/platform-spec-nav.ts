@@ -1,6 +1,10 @@
 /** Platform-spec hierarchy rail (desktop) and drawer (mobile). */
 
-import { bindDocAreaNavTopSync, initDocAreaNav } from './doc-area-nav';
+import {
+	bindDocAreaNavTopSync,
+	initDocAreaNav,
+	persistRailCollapsed,
+} from './doc-area-nav';
 import { onPageNavigation } from './view-transition-lifecycle';
 
 function collapsePlatformSpecNavRail() {
@@ -9,6 +13,7 @@ function collapsePlatformSpecNavRail() {
 	if (!chrome || !rail) return;
 	chrome.setAttribute('data-rail-collapsed', 'true');
 	rail.setAttribute('data-rail-collapsed', 'true');
+	persistRailCollapsed(true);
 	document.body.removeAttribute('data-spec-nav-open');
 }
 
@@ -23,7 +28,6 @@ function initPlatformSpecNav() {
 		treeItemSelector: '.platform-spec-nav-tree__item',
 		treeLinkSelector: '.platform-spec-nav-tree__link',
 		defaultCollapsed: true,
-		collapseSelector: '[data-platform-spec-nav-collapse]',
 	});
 }
 
