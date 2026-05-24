@@ -42,7 +42,12 @@ const pagefindEnabled =
 	starlightRoute.entry.data.pagefind !== false;
 
 const htmlDataAttributes: DOMStringMap = { 'data-theme': 'dark' };
-if (Boolean(starlightRoute.toc)) htmlDataAttributes['data-has-toc'] = '';
+const specLevel = (starlightRoute.entry.data as { specLevel?: string }).specLevel;
+const isAdrDoc =
+	specLevel === 'adr' || /\/adr\/[^/]+\/?$/.test(Astro.url.pathname);
+// ADR pages use SpecAdrChrome tabs for navigation; Starlight TOC reserves a narrow main column.
+const enableStarlightToc = Boolean(starlightRoute.toc) && !isAdrDoc;
+if (enableStarlightToc) htmlDataAttributes['data-has-toc'] = '';
 if (starlightRoute.hasSidebar) htmlDataAttributes['data-has-sidebar'] = '';
 if (Boolean(starlightRoute.entry.data.hero)) htmlDataAttributes['data-has-hero'] = '';
 

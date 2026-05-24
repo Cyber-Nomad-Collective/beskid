@@ -408,12 +408,43 @@ html[data-platform-spec]:has(.platform-spec-doc-split--adr) .right-sidebar-conta
 	display: none !important;
 }
 
-html[data-platform-spec]:has(.platform-spec-doc-split--adr) .main-pane {
-	max-width: none;
-}
-
 html[data-platform-spec]:has(.platform-spec-doc-split--adr) .content-panel {
 	padding-inline-end: var(--sl-content-pad-x, 1rem);
+}
+
+/*
+ * STARLIGHT_PLATFORM_SPEC_ADR_LAYOUT_GUARD
+ * With data-has-toc, Starlight lg:sl-flex centers a narrow main column even when the TOC rail is hidden.
+ */
+@media (min-width: 72rem) {
+	html[data-platform-spec]:has(.platform-spec-doc-split--adr) .lg\:sl-flex {
+		display: block;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	html[data-platform-spec]:has(.platform-spec-doc-split--adr) .main-pane {
+		width: 100% !important;
+		max-width: none !important;
+		min-width: 0;
+		--sl-content-margin-inline: 0;
+		display: block;
+	}
+
+	html[data-platform-spec]:has(.platform-spec-doc-split--adr) .main-pane > main {
+		width: 100%;
+		max-width: none;
+		min-width: 0;
+		box-sizing: border-box;
+	}
+
+	html[data-platform-spec]:has(.platform-spec-doc-split--adr) .content-panel,
+	html[data-platform-spec]:has(.platform-spec-doc-split--adr) .sl-container,
+	html[data-platform-spec]:has(.platform-spec-doc-split--adr) .sl-markdown-content {
+		width: 100% !important;
+		max-width: none !important;
+		box-sizing: border-box;
+	}
 }
 
 /* Inline repo paths linked via remark-inline-repo-paths */

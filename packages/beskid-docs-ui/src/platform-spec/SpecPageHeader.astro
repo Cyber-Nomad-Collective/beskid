@@ -4,6 +4,7 @@ import SpecReaderShell from './SpecReaderShell.astro';
 import SpecStandingMeta from './SpecStandingMeta.astro';
 import { getCollection } from 'astro:content';
 import { readPlatformSpecLayoutReportOrThrow } from 'trudoc/layout';
+import { docEntryHref, docEntrySlug } from './specSlug';
 import { computeSpecReaderState } from './specReaderContext';
 
 type SpecStanding = 'Standard' | 'Proposed';
@@ -22,18 +23,48 @@ const docs = await getCollection('docs');
 const cwd = process.cwd();
 const layoutReport = readPlatformSpecLayoutReportOrThrow(cwd);
 const state = await computeSpecReaderState(Astro.url.pathname, docs, cwd);
+
+const current = state.currentDoc;
+const pageTitle = typeof current?.data?.title === 'string' ? current.data.title : undefined;
+const specLevel = state.currentSpecLevel;
+
+const EYEBROW: Record<string, string> = {
+	domain: 'Platform spec domain',
+	area: 'Platform spec area',
+	feature: 'Platform spec feature',
+	component: 'Platform spec component',
+};
+
+const eyebrow = (specLevel && EYEBROW[specLevel]) ?? 'Platform spec node';
+
+const slugParts = state.currentSlug.split('/').filter(Boolean);
+let parentHref: string | undefined;
+let parentTitle: string | undefined;
+if (slugParts.length > 1) {
+	const parentSlug = slugParts.slice(0, -1).join('/');
+	const parentEntry = docs.find((e) => docEntrySlug(e) === parentSlug);
+	parentHref = docEntryHref(parentSlug);
+	parentTitle =
+		typeof parentEntry?.data?.title === 'string'
+			? parentEntry.data.title
+			: parentSlug === 'platform-spec'
+				? 'Platform specification'
+				: 'Parent';
+}
 ---
 
-<div class="platform-spec-header">
+<div class="platform-spec-header platform-spec-header--article">
 	<div class="platform-spec-header__top">
-		<p class="platform-spec-header__eyebrow">Platform spec node</p>
-		{
-			state.nodeKey && (
-				<div class="platform-spec-header__actions">
-					<OpenInGraphButton node={state.nodeKey} iconOnly={false} label="Open in platform map" />
-				</div>
-			)
-		}
+		<div class="platform-spec-header__lead">
+			<p class="platform-spec-header__eyebrow">{eyebrow}</p>
+			{pageTitle && <h1 class="platform-spec-header__title">{pageTitle}</h1>}
+		</div>
+		<div class="platform-spec-header__actions">
+			{parentHref && parentTitle && (
+				<a href={parentHref} class="platform-spec-header__back">{`Back to ${parentTitle}`}</a>
+			)}
+			{state.nodeKey && <OpenInGraphButton node={state.nodeKey} iconOnly={false} label="Open in platform map" />}
+		</div>
 	</div>
 	<SpecStandingMeta
 		status={status}

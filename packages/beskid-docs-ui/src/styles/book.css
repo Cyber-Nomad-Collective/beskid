@@ -124,6 +124,9 @@ html[data-book] main .sl-markdown-content img {
 	border-radius: 0.4rem;
 }
 
+html[data-book] .book-reader__chapter-nav {
+	max-width: 100% !important;
+}
 html[data-book] .book-reader .sl-markdown-content img[src$='.gif'],
 html[data-book] .book-reader .sl-markdown-content img[src*='.gif?'],
 html[data-book] .book-reader .sl-markdown-content img[src*='giphy.com'],
