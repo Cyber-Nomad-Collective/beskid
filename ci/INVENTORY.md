@@ -28,6 +28,8 @@ Compiler submodule ([compiler](/home/fp-pmikstacki/Private/pecan/compiler)) — 
 | version | `compute_version` | Env: `GITHUB_REF`, `GITHUB_REF_NAME`, `GITHUB_EVENT_NAME`, `GITHUB_RUN_NUMBER`, `GITHUB_OUTPUT`; semver from `v*` tag + commits since tag on `main`, else `Cargo.toml` base + run number until first tag |
 | release-cli-build | `release_cli` | Env: `RELEASE_VERSION`, `MATRIX_TARGET`, `MATRIX_ASSET_NAME`, `RUNNER_OS`; uploads artifact per matrix row |
 | release-cli-publish | `softprops/action-gh-release@v2.3.3` | `permissions: contents: write`; downloads matrix artifacts then creates/updates release for tag `cli-latest` with `target_commitish` `${{ github.sha }}` |
+| release-lsp-build | `release_lsp` | Same matrix targets as CLI; assets `beskid_lsp-linux-amd64`, `beskid_lsp-darwin-arm64`, `beskid_lsp-windows-amd64.exe` |
+| release-lsp-publish | `softprops/action-gh-release@v2.3.3` | Rolling `lsp-latest` + immutable `lsp-v*` with `lsp-version.txt` |
 
 pckg submodule — [pckg/noxfile.py](/home/fp-pmikstacki/Private/pecan/pckg/noxfile.py), standalone workflow [pckg/.github/workflows/ci.yml](/home/fp-pmikstacki/Private/pecan/pckg/.github/workflows/ci.yml).
 

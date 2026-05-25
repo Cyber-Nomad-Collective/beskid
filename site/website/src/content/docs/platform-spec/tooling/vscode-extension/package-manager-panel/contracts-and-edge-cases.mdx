@@ -43,6 +43,18 @@ Testable rules for **`pckgClient`**, registry auth, CLI mutations, and Packages 
 | A-03 | On HTTP 401/403, panel **must** show actionable error (“Configure API key in Beskid: Package Registry API Key”). |
 | A-04 | Missing API key on private registry **must not** throw unhandled exceptions; tree shows error node. |
 | A-05 | Command `beskid.packages.configureApiKey` **must** prompt for a key and persist it via `SecretStorage` (`beskid.pckg.apiKey` secret id). |
+| A-06 | Registry connection state **must** be read from LSP `beskid.pckg.getConnectionStatus` first; the client passes `authConfigured` (boolean only). API keys **must not** be stored or logged by the language server. |
+| A-07 | After storing an API key, `beskid.packages.configureApiKey` **must** call LSP `beskid.pckg.validateConnection` with the key in command args (one-shot); secrets remain in VS Code `SecretStorage`. |
+
+## LSP registry commands
+
+| Command | Arguments (JSON object) | Response |
+| --- | --- | --- |
+| `beskid.pckg.getConnectionStatus` | `{ workspaceUri?: string, authConfigured: boolean }` | `{ baseUrl, registryName?, workspaceDefaultRegistryUrl?, workspaceDefaultRegistryName?, authConfigured, validation: { status, message? }, connected }` |
+| `beskid.pckg.setRegistry` | `{ baseUrl: string, registryName?: string }` | none |
+| `beskid.pckg.validateConnection` | `{ baseUrl?: string, workspaceUri?: string, apiKey?: string }` | `{ ok, error?, validation: { status, message? } }` — `apiKey` is never echoed or logged |
+
+`status` is `unknown`, `ok`, or `error`. `connected` is `true` when validation is `ok` and auth requirements are satisfied (`authConfigured` when the registry returns 401/403 without a key).
 
 ## searchPackages
 
@@ -78,7 +90,7 @@ Testable rules for **`pckgClient`**, registry auth, CLI mutations, and Packages 
 | `beskid.packages.lock` | **Must** run `beskid lock` likewise |
 | `beskid.packages.addDependency` | **Must** prompt for name and version; apply via CLI subcommand when available, else structured `Project.proj` dependency entry + `refreshWorkspace` |
 | `beskid.packages.refresh` | **Must** clear `pckgClient` caches and refresh tree |
-| `beskid.packages.configureApiKey` | **Must** prompt and store registry API key; subsequent search/details **must** use Bearer auth |
+| `beskid.packages.configureApiKey` | **Must** prompt, store registry API key in `SecretStorage`, validate via `beskid.pckg.validateConnection`, then refresh; subsequent search/details **must** use Bearer auth |
 | `beskid.packages.openRegistryUri` | **Must** open browser URL from `buildRegistryPackageUrl` |
 | `beskid.packages.openManifest` | **Must** open focused `Project.proj` for a local dependency row |
 | `beskid.packages.openMaterializedFolder` | **Must** reveal materialized package path when `materializedPath` is present |
