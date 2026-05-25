@@ -1,4 +1,4 @@
 unit main() {
-    std.io.println("Storage contract example");
+    Console.Out.WriteLine("Storage contract example");
     return;
 }

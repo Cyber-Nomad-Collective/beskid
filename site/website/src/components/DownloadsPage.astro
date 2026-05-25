@@ -1,6 +1,11 @@
 ---
 import '../../../../packages/beskid-docs-ui/src/styles/downloads.css';
-import { loadCliVersion, loadVscodeExtensionVersion } from '../lib/load-download-versions';
+import {
+	cliDownloadBase,
+	loadCliVersion,
+	loadVscodeExtensionVersion,
+	vscodeInstallCommand,
+} from '../lib/load-download-versions';
 
 export interface Props {
 	version?: string;
@@ -17,14 +22,19 @@ const versionSource = Astro.props.versionSource ?? cli.source;
 const vscodeVersion = Astro.props.vscodeVersion ?? vscode.version;
 const vscodeVersionSource = Astro.props.vscodeVersionSource ?? vscode.source;
 
-const releaseBase =
-	'https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-latest';
-const channelLabel = versionSource === 'github' ? 'cli-latest' : versionSource;
+const releaseBase = cliDownloadBase(cli);
+const releasePageUrl = cli.releasePageUrl ?? `https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-latest`;
+const latestReleasePageUrl =
+	cli.latestReleasePageUrl ?? `https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-latest`;
+const channelLabel =
+	versionSource === 'github'
+		? (cli.downloadTag ?? 'cli-latest')
+		: versionSource;
 const vscodeChannelLabel = vscodeVersionSource === 'open-vsx' ? 'Open VSX' : vscodeVersionSource;
 const installSh = 'curl -fsSL https://beskid-lang.org/install.sh | bash';
 const installPs = 'iwr https://beskid-lang.org/install.ps1 -useb | iex';
 const openVsxUrl = 'https://open-vsx.org/extension/beskid/beskid-vscode';
-const vscodeInstallCmd = 'code --install-extension beskid.beskid-vscode';
+const vscodeInstallCmd = vscodeInstallCommand(vscode);
 
 const platforms = [
 	{ id: 'linux-amd64', short: 'Linux', label: 'Linux (x86_64)', asset: 'beskid-linux-amd64', command: installSh, script: 'install.sh' },
@@ -107,10 +117,17 @@ const platforms = [
 				</a>
 				<a
 					class="downloads-btn downloads-btn--secondary"
-					href="https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-latest"
+					href={releasePageUrl}
 					rel="noopener noreferrer"
 				>
-					GitHub releases
+					GitHub release
+				</a>
+				<a
+					class="downloads-btn downloads-btn--secondary"
+					href={latestReleasePageUrl}
+					rel="noopener noreferrer"
+				>
+					Rolling cli-latest
 				</a>
 			</div>
 

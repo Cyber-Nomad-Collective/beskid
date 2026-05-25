@@ -7,24 +7,32 @@ export interface VersionPayload {
 	source: string;
 }
 
+export interface CliVersionPayload extends VersionPayload {
+	downloadTag?: string;
+	latestTag?: string;
+	releasePageUrl?: string;
+	latestReleasePageUrl?: string;
+}
+
+export interface VscodeExtensionVersionPayload extends VersionPayload {
+	installTarget?: string;
+}
+
 const websiteRoot = join(fileURLToPath(new URL('.', import.meta.url)), '../..');
 const dataDir = join(websiteRoot, 'src', 'data');
 const vscodePkgPath = join(websiteRoot, '..', '..', 'beskid_vscode', 'package.json');
 const cliCargoPath = join(websiteRoot, '..', '..', 'compiler', 'crates', 'beskid_cli', 'Cargo.toml');
 
-function readJsonVersion(fileName: string): VersionPayload | null {
+const GITHUB_REPO = 'Cyber-Nomad-Collective/beskid_compiler';
+const DEFAULT_LATEST_TAG = 'cli-latest';
+
+function readJsonVersion<T extends VersionPayload>(fileName: string): T | null {
 	const path = join(dataDir, fileName);
 	if (!existsSync(path)) {
 		return null;
 	}
 	try {
-		const data = JSON.parse(readFileSync(path, 'utf8')) as { version?: unknown; source?: unknown };
-		const version = typeof data.version === 'string' ? data.version.trim() : '';
-		if (!version) {
-			return null;
-		}
-		const source = typeof data.source === 'string' ? data.source.trim() : 'unknown';
-		return { version, source };
+		return JSON.parse(readFileSync(path, 'utf8')) as T;
 	} catch {
 		return null;
 	}
@@ -46,7 +54,7 @@ function readVscodePackageVersion(): VersionPayload | null {
 	}
 }
 
-function readCliCargoVersion(): VersionPayload | null {
+function readCliCargoVersion(): CliVersionPayload | null {
 	if (!existsSync(cliCargoPath)) {
 		return null;
 	}
@@ -56,22 +64,50 @@ function readCliCargoVersion(): VersionPayload | null {
 		if (!match?.[1]) {
 			return null;
 		}
-		return { version: match[1].trim(), source: 'local' };
+		const version = match[1].trim();
+		return {
+			version,
+			source: 'local',
+			downloadTag: `cli-v${version}`,
+			latestTag: DEFAULT_LATEST_TAG,
+			releasePageUrl: `https://github.com/${GITHUB_REPO}/releases/tag/cli-v${version}`,
+			latestReleasePageUrl: `https://github.com/${GITHUB_REPO}/releases/tag/${DEFAULT_LATEST_TAG}`,
+		};
 	} catch {
 		return null;
 	}
 }
 
-export function loadCliVersion(): VersionPayload {
+export function loadCliVersion(): CliVersionPayload {
 	return (
-		readJsonVersion('cli-version.json') ??
-		readCliCargoVersion() ?? { version: 'latest', source: 'fallback' }
+		readJsonVersion<CliVersionPayload>('cli-version.json') ??
+		readCliCargoVersion() ?? {
+			version: 'latest',
+			source: 'fallback',
+			downloadTag: DEFAULT_LATEST_TAG,
+			latestTag: DEFAULT_LATEST_TAG,
+			releasePageUrl: `https://github.com/${GITHUB_REPO}/releases/tag/${DEFAULT_LATEST_TAG}`,
+			latestReleasePageUrl: `https://github.com/${GITHUB_REPO}/releases/tag/${DEFAULT_LATEST_TAG}`,
+		}
 	);
 }
 
-export function loadVscodeExtensionVersion(): VersionPayload {
+export function cliDownloadBase(cli: CliVersionPayload): string {
+	const tag = cli.downloadTag?.trim() || cli.latestTag?.trim() || DEFAULT_LATEST_TAG;
+	return `https://github.com/${GITHUB_REPO}/releases/download/${tag}`;
+}
+
+export function loadVscodeExtensionVersion(): VscodeExtensionVersionPayload {
 	return (
-		readJsonVersion('vscode-extension.json') ??
+		readJsonVersion<VscodeExtensionVersionPayload>('vscode-extension.json') ??
 		readVscodePackageVersion() ?? { version: 'latest', source: 'fallback' }
 	);
+}
+
+export function vscodeInstallCommand(vscode: VscodeExtensionVersionPayload): string {
+	const target = vscode.installTarget?.trim() || vscode.version.trim();
+	if (!target || target === 'latest') {
+		return 'code --install-extension beskid.beskid-vscode';
+	}
+	return `code --install-extension beskid.beskid-vscode@${target}`;
 }

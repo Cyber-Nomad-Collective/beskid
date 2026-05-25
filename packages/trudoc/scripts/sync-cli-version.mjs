@@ -13,9 +13,14 @@ const vscodeOutPath = join(websiteRoot, "src", "data", "vscode-extension.json");
 const cargoPath = join(websiteRoot, "..", "..", "compiler", "crates", "beskid_cli", "Cargo.toml");
 const vscodePkgPath = join(websiteRoot, "..", "..", "beskid_vscode", "package.json");
 
-const ROLLING_URL =
-  "https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-latest/cli-version.txt";
+const GITHUB_REPO = "Cyber-Nomad-Collective/beskid_compiler";
+const LATEST_TAG = "cli-latest";
+const ROLLING_URL = `https://github.com/${GITHUB_REPO}/releases/download/${LATEST_TAG}/cli-version.txt`;
 const OPEN_VSX_URL = "https://open-vsx.org/api/beskid/beskid-vscode/latest";
+
+function cliReleaseTag(version) {
+  return `cli-v${version}`;
+}
 
 function readVersionFromCargo() {
   const text = readFileSync(cargoPath, "utf8");
@@ -48,12 +53,29 @@ async function tryFetchRolling() {
   if (!raw) {
     return null;
   }
-  return { version: raw, source: "github" };
+  const downloadTag = cliReleaseTag(raw);
+  return {
+    version: raw,
+    source: "github",
+    downloadTag,
+    latestTag: LATEST_TAG,
+    releasePageUrl: `https://github.com/${GITHUB_REPO}/releases/tag/${downloadTag}`,
+    latestReleasePageUrl: `https://github.com/${GITHUB_REPO}/releases/tag/${LATEST_TAG}`,
+  };
 }
 
 function tryLocalCargo() {
   try {
-    return { version: readVersionFromCargo(), source: "local" };
+    const version = readVersionFromCargo();
+    const downloadTag = cliReleaseTag(version);
+    return {
+      version,
+      source: "local",
+      downloadTag,
+      latestTag: LATEST_TAG,
+      releasePageUrl: `https://github.com/${GITHUB_REPO}/releases/tag/${downloadTag}`,
+      latestReleasePageUrl: `https://github.com/${GITHUB_REPO}/releases/tag/${LATEST_TAG}`,
+    };
   } catch {
     return null;
   }
@@ -78,12 +100,12 @@ async function tryFetchOpenVsx() {
   if (!version) {
     return null;
   }
-  return { version, source: "open-vsx" };
+  return { version, source: "open-vsx", installTarget: version };
 }
 
 function tryLocalVscodePkg() {
   try {
-    return { version: readVersionFromVscodePkg(), source: "local" };
+    return { version: readVersionFromVscodePkg(), source: "local", installTarget: readVersionFromVscodePkg() };
   } catch {
     return null;
   }
@@ -96,7 +118,14 @@ async function main() {
   mkdirSync(dirname(outPath), { recursive: true });
 
   if (!payload) {
-    const fallback = { version: "latest", source: "fallback" };
+    const fallback = {
+      version: "latest",
+      source: "fallback",
+      downloadTag: LATEST_TAG,
+      latestTag: LATEST_TAG,
+      releasePageUrl: `https://github.com/${GITHUB_REPO}/releases/tag/${LATEST_TAG}`,
+      latestReleasePageUrl: `https://github.com/${GITHUB_REPO}/releases/tag/${LATEST_TAG}`,
+    };
     console.warn(
       "sync-cli-version: could not read rolling version from GitHub and no local compiler/crates/beskid_cli/Cargo.toml was found; using fallback version.",
     );

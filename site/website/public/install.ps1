@@ -1,6 +1,7 @@
 $ErrorActionPreference = "Stop"
 
-$baseUrl = "https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-latest"
+$releaseTag = if ($env:BESKID_RELEASE_TAG) { $env:BESKID_RELEASE_TAG.Trim() } else { "cli-latest" }
+$baseUrl = "https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/$releaseTag"
 $versionUrl = "$baseUrl/cli-version.txt"
 $installDir = Join-Path $env:USERPROFILE ".beskid\bin"
 $binaryName = "beskid-windows-amd64.exe"
@@ -10,15 +11,19 @@ Write-Output "Fetching version from $versionUrl"
 try {
     $version = (Invoke-WebRequest -Uri $versionUrl -UseBasicParsing).Content.Trim()
 } catch {
-    Write-Output "Failed to download $versionUrl (rolling release metadata)."
-    Write-Output "If this persists, check that the cli-latest release includes cli-version.txt."
+    Write-Output "Failed to download $versionUrl (release metadata)."
+    Write-Output "If this persists, check that the $releaseTag release includes cli-version.txt."
     throw
 }
 if ([string]::IsNullOrWhiteSpace($version)) {
     throw "cli-version.txt from $versionUrl was empty."
 }
 
-Write-Output "Installing Beskid CLI $version (rolling build)"
+if ($releaseTag -eq "cli-latest") {
+    Write-Output "Installing Beskid CLI $version (rolling build from $releaseTag)"
+} else {
+    Write-Output "Installing Beskid CLI $version (pinned release $releaseTag)"
+}
 
 if (-not (Test-Path $installDir)) {
     New-Item -ItemType Directory -Force -Path $installDir | Out-Null
