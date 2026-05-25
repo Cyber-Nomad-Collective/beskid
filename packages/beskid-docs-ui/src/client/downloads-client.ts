@@ -4,7 +4,7 @@
 
 import { onPageNavigation } from './view-transition-lifecycle';
 
-const RELEASE_BASE =
+const DEFAULT_RELEASE_BASE =
 	'https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-latest';
 
 const INSTALL_SH = 'curl -fsSL https://beskid-lang.org/install.sh | bash';
@@ -66,13 +66,15 @@ function detectPlatform(): PlatformSpec | null {
 	return PLATFORMS.find((p) => p.match()) ?? null;
 }
 
-function directUrl(asset: string): string {
-	return `${RELEASE_BASE}/${asset}`;
+function directUrl(releaseBase: string, asset: string): string {
+	return `${releaseBase}/${asset}`;
 }
 
 function initDownloadsPage(root: HTMLElement): void {
 	if (root.dataset.downloadsPageBound === 'true') return;
 	root.dataset.downloadsPageBound = 'true';
+
+	const releaseBase = root.dataset.releaseBase?.trim() || DEFAULT_RELEASE_BASE;
 
 	const commandEl = root.querySelector<HTMLElement>('[data-install-command]');
 	const commandLabel = root.querySelector<HTMLElement>('[data-command-label]');
@@ -91,7 +93,7 @@ function initDownloadsPage(root: HTMLElement): void {
 		active = platform;
 		commandEl.textContent = platform.installCommand;
 		if (commandLabel) commandLabel.textContent = platform.installLabel;
-		directBtn.href = directUrl(platform.asset);
+		directBtn.href = directUrl(releaseBase, platform.asset);
 		directBtn.setAttribute('download', platform.asset);
 		if (directLabel) {
 			directLabel.textContent = `Download for ${platform.shortLabel}`;

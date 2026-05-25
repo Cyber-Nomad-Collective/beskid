@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE_URL="https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/cli-latest"
+RELEASE_TAG="${BESKID_RELEASE_TAG:-cli-latest}"
+BASE_URL="https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/${RELEASE_TAG}"
 VERSION_URL="${BASE_URL}/cli-version.txt"
 INSTALL_DIR="${HOME}/.beskid/bin"
 
@@ -32,8 +33,8 @@ if [[ "${os}" == "darwin" && "${arch}" != "arm64" ]]; then
 fi
 
 if ! cli_version="$(curl -fsSL "${VERSION_URL}" | tr -d '[:space:]')"; then
-  echo "Failed to download ${VERSION_URL} (rolling release metadata)."
-  echo "If this persists, check that the cli-latest release includes cli-version.txt."
+  echo "Failed to download ${VERSION_URL} (release metadata)."
+  echo "If this persists, check that the ${RELEASE_TAG} release includes cli-version.txt."
   exit 1
 fi
 if [[ -z "${cli_version}" ]]; then
@@ -41,7 +42,11 @@ if [[ -z "${cli_version}" ]]; then
   exit 1
 fi
 
-echo "Installing Beskid CLI ${cli_version} (rolling build)"
+if [[ "${RELEASE_TAG}" == "cli-latest" ]]; then
+  echo "Installing Beskid CLI ${cli_version} (rolling build from ${RELEASE_TAG})"
+else
+  echo "Installing Beskid CLI ${cli_version} (pinned release ${RELEASE_TAG})"
+fi
 
 binary_name="beskid-${os}-${arch}"
 url="${BASE_URL}/${binary_name}"
