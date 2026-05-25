@@ -4,7 +4,7 @@
 # Run (mount or bake repo as needed):
 #   docker run --rm -v "$PWD:/repo" -w /repo trudoc-verify
 #
-FROM oven/bun:1.2-alpine
+FROM oven/bun:latest.2-alpine
 
 WORKDIR /repo
 
