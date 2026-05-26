@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console/console-controls",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/console-controls/index.mdx",
+  "frontmatter": {
+    "title": "Console controls",
+    "description": "In-terminal layout widgets—panel, stacks, progress bar, and live tick rendering.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Terminal and console",
+        "href": "/platform-spec/core-library/terminal-and-console/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Feature",
+        "title": "Console terminal events",
+        "href": "/platform-spec/core-library/terminal-and-console/console-terminal-events/",
+        "relation": "Resize triggers re-layout"
+      }
+    ]
+  },
+  "body": "import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\n`Console.Controls` provides character-cell layout primitives: **Panel**, **VerticalStack** / **HorizontalStack**, **ProgressBar**, **Frame**, and **LiveTick** integration. Rendering produces escape sequences for cursor save/restore, erase, and bounded redraw regions.\n</SpecSection>\n\n<SpecSection title=\"Contract statement\" id=\"contract-statement\">\n- Controls **must** query `Console.QuerySize()` (or injected size) before layout.\n- Full-frame redraw **should** use DEC save/restore (`ESC 7` / `ESC 8`) around the composed buffer.\n- Render output **must** respect `ShouldEmitAnsi()`; plain mode emits text layout without motion sequences.\n- Controls **must not** introduce new syscalls; writes go through [Console I/O streams](/platform-spec/core-library/terminal-and-console/console-io-streams/).\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- `compiler/corelib/packages/console/src/Console/Controls/`\n- Tests: `ControlsFrameTests.bd`, `ControlsPanelTests.bd`, `ControlsProgressBarTests.bd`, `ControlsLayoutTests.bd`\n</SpecSection>\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-TERM-0040`, `D-CORE-TERM-0041`); use the reader **ADRs** tab for expandable detail.\n\n<DomainTiles pathPrefix=\"platform-spec/core-library/terminal-and-console/console-controls\" heading=\"Articles\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/terminal-and-console/console-controls",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/terminal-and-console/console-controls",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/flow-and-algorithm",
+  "repoPath": "src/content/docs/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/flow-and-algorithm.mdx",
+  "frontmatter": {
+    "title": "Flow and algorithm",
+    "description": "Lifecycle of a semantic diagnostic code from definition to surfaced output.",
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Diagnostic code registry",
+        "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
+        "relation": "Parent feature"
+      },
+      {
+        "type": "Feature",
+        "title": "Diagnostics parity",
+        "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
+        "relation": "Registry consistency drives parity across build surfaces"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nCode lifecycle algorithm:\n\n1. Define or reuse an issue kind in `diagnostic_kinds.rs`.\n2. Emit that kind from a semantic rule in `analysis/rules`.\n3. Convert issue kind to stable code/category payload.\n4. Surface payload through services to CLI and LSP.\n5. Validate docs and source sync with diagnostics verification scripts.\n\nThe code identity must survive every handoff unchanged, even when message templates differ between clients.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

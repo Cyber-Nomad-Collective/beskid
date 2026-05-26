@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/verification-and-traceability",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/ansi-escape-model/verification-and-traceability.mdx",
+  "frontmatter": {
+    "title": "Verification and traceability",
+    "description": "Golden tests and source anchors for ANSI escape framing.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "ANSI escape model",
+        "href": "/platform-spec/core-library/terminal-and-console/ansi-escape-model/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose\n\nDocument **verification and traceability** for the **Ansi Escape Model** feature: role-specific normative detail beyond the feature hub.\n\n## Canonical references\n\n- Feature hub: [Ansi Escape Model](/platform-spec/core-library/terminal-and-console/ansi-escape-model/)\n- Sibling articles in this bundle (design model, contracts, flow, examples, verification)\n\n## Detailed behavior\n\n### Source anchors\n\n| Path | Coverage |\n| --- | --- |\n| `compiler/corelib/packages/console/src/Ansi/Escape.bd` | ESC, CSI, private mode, DEC, OSC, gating |\n| `compiler/corelib/packages/console/src/Ansi/Cursor.bd` | Movement CSI |\n| `compiler/corelib/packages/console/src/Ansi/Erase.bd` | Display/line erase |\n| `compiler/corelib/packages/console/src/Ansi/Sgr.bd` | SGR builder and downgrade |\n| `compiler/corelib/packages/console/src/Ansi/Screen.bd` | Scroll region / alt screen |\n| Repository `ANSI.md` | Informative full sequence catalog |\n\n### Corelib tests\n\n| Test file | Asserts |\n| --- | --- |\n| `AnsiEscapeTests.bd` | CSI bold red, reset, `?1049h`, DEC save, cursor home, erase display |\n| `AnsiSgrGoldenTests.bd` | SGR chains and reset suffix |\n| `AnsiStyleChainTests.bd` | Markup attribute chain → escapes |\n| `AnsiBuildersTests.bd` | Screen scroll region framing |\n| `CapabilitiesTests.bd` | Gated vs empty output when ANSI disabled |\n\nTests live under `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/` and run as part of the `corelib_tests` project.\n\n### Traceability rule\n\nAny change to **ANSI-001** through **ANSI-008** in [contracts and edge cases](./contracts-and-edge-cases/) **must** update or add a golden test in the same change. Informative `ANSI.md` updates are recommended but not CI-gated.\n\n## Verification\n\nSee the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.\n\n## Related topics\n\n- Parent [feature hub](/platform-spec/core-library/terminal-and-console/ansi-escape-model/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/terminal-and-console/ansi-escape-model",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/terminal-and-console/ansi-escape-model",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

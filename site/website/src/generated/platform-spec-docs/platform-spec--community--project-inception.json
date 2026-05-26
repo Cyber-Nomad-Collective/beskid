@@ -1,0 +1,51 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/community/project-inception",
+  "repoPath": "src/content/docs/platform-spec/community/project-inception/index.mdx",
+  "frontmatter": {
+    "title": "Project inception decisions",
+    "description": "Cross-cutting architecture decisions from Beskid project inception—platform authority, compiler shape, and language direction that span multiple domains.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Spec maintenance",
+        "href": "/platform-spec/community/spec-maintenance/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Feature",
+        "title": "Specification authority and embedded decisions",
+        "href": "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
+        "relation": "ADR governance"
+      },
+      {
+        "type": "Domain",
+        "title": "Platform specification",
+        "href": "/platform-spec/",
+        "relation": "Root index"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\nCross-cutting **architecture decision records** from Beskid project inception—platform authority, compiler host shape, corelib packaging, and language direction that span multiple domains.\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- Governance: [Specification authority and embedded decisions](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/)\n- Historical intent: `compiler/README.md`, informative [Why Beskid Exists](/book/00-why-beskid-exists/) (non-normative; ADRs here are normative)\n- ADR files: `platform-spec/community/project-inception/adr/*.mdx`\n</SpecSection>\n\n<SpecSection title=\"Contract statement\" id=\"contract-statement\">\nThis feature records **cross-cutting** decisions made at or before public Beskid inception. Domain-specific features **must** defer here for platform-wide direction instead of restating the same rationale.\n</SpecSection>\n\n<SpecSection title=\"Verification and traceability\" id=\"verification-and-traceability\">\n- Each row in **`adr/`** is normative at `status: Standard` unless marked `Proposed` or `Superseded`.\n- Implementation domains **must** link inception `adrId` values from feature hubs when realizing these choices.\n</SpecSection>\n\n## Decisions\n\nNo open decisions. Closed inception ADRs are listed under **`adr/`** (reader **ADRs** tab)—`D-INC-0001` through `D-INC-0008`.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/community/project-inception",
+    "minSpecSections": 2,
+    "widgets": []
+  }
+}

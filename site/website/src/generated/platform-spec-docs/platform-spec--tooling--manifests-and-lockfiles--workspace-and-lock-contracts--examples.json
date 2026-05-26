@@ -1,0 +1,49 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/examples",
+  "repoPath": "src/content/docs/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/examples.mdx",
+  "frontmatter": {
+    "title": "Examples",
+    "description": "Workspace and lockfile examples for tooling workflows.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Project manifest contract",
+        "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+        "relation": "Member `Project.proj` examples"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Minimal workspace manifest\n\n```text\nworkspace {\n  name = \"demo-workspace\"\n}\nmember {\n  id = \"app\"\n  path = \"apps/demo/Project.proj\"\n}\nregistry {\n  default = \"https://pckg.example/api/\"\n}\n```\n\nRun `beskid lock --project apps/demo/Project.proj --workspace-member app` when multiple members exist.\n\n## Lock file excerpt\n\n```text\n# Project.lock v1\nroot_manifest = apps/demo/Project.proj\nproject_name = demo-app\ndependency {\n  name = corelib_foundation\n  manifest = .beskid/packages/corelib_foundation/Project.proj\n  project = corelib_foundation\n  source_root = .beskid/packages/corelib_foundation\n  materialized_root = .beskid/packages/corelib_foundation\n}\n```\n\nExact paths depend on fetch layout; treat materialized roots as opaque but stable for a given lock revision.\n\n## CI sequence\n\n```bash\nbeskid fetch --project apps/demo/Project.proj\nbeskid lock --project apps/demo/Project.proj\ngit add apps/demo/Project.lock\nbeskid build --project apps/demo/Project.proj\n```\n\nCommit the lock when reproducibility is required; use `update` locally when bumping dependency ranges in manifests.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

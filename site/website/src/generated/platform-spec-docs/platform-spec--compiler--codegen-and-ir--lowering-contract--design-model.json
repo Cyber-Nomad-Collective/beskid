@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/design-model",
+  "repoPath": "src/content/docs/platform-spec/compiler/codegen-and-ir/lowering-contract/design-model.mdx",
+  "frontmatter": {
+    "title": "Design model",
+    "description": "Conceptual model for `Lowering contract` and its subsystem boundaries.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Codegen and IR",
+        "href": "/platform-spec/compiler/codegen-and-ir/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Feature",
+        "title": "Stage ordering and artifacts",
+        "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+        "relation": "Pipeline ordering that lowering must follow"
+      },
+      {
+        "type": "Domain",
+        "title": "Execution",
+        "href": "/platform-spec/execution/",
+        "relation": "Lowered artifacts are consumed by execution backends"
+      },
+      {
+        "type": "Feature",
+        "title": "Lowering contract",
+        "href": "/platform-spec/compiler/codegen-and-ir/lowering-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n## Lowering boundary\n\nLowering is the **last semantic gate** before any backend runs. Inputs are a post-merge program snapshot (HIR + `ModuleIndex` + resolved types); output is an immutable **`CodegenArtifact`** containing Cranelift modules, data descriptors, extern imports, and debug metadata.\n\nBackends **must not** re-run parse, mod host, or semantic rules on the artifact.\n\n```mermaid\nflowchart TB\n  subgraph analysis [beskid_analysis]\n    hir[HIR + ModuleIndex]\n  end\n  subgraph codegen [beskid_codegen]\n    lower[lower_program / lower_source]\n    art[CodegenArtifact]\n  end\n  subgraph backends [beskid_engine]\n    jit[JitModule]\n    aot[AOT object emit]\n  end\n  hir --> lower --> art\n  art --> jit\n  art --> aot\n```\n\n## Artifact contents\n\n| Slice | Role |\n| --- | --- |\n| CLIF modules | Per-compilation-unit functions and globals |\n| Builtin imports | `declare_builtin_imports` from `BUILTIN_SPECS` |\n| `ExternImport` rows | User contract symbols for link step |\n| Type descriptors | GC layout + array/string shapes for `alloc` |\n\n## Invariants\n\n- Lowering runs only when `syntax_generation_id` matches the merged tree used by semantic rules ([stage ordering](/platform-spec/compiler/build-pipeline/stage-ordering/)).\n- Panic/abort paths use `AbiReturnKind::Never` imports so unreachable blocks are correct.\n- JIT and AOT consume the **same** artifact type; divergence happens only after `CodegenArtifact` is sealed.\n\n## Code anchors\n\n- `beskid_codegen::lower_source` in `compiler/crates/beskid_codegen`\n- `CodegenArtifact` construction in `compiler/crates/beskid_codegen`\n- `JitModule` in `compiler/crates/beskid_engine/src/jit_module.rs`\n- Runtime smoke: `compiler/crates/beskid_tests/src/runtime/jit.rs`\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/compiler/codegen-and-ir/lowering-contract",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/compiler/codegen-and-ir/lowering-contract",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

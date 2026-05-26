@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/adr/0001-hard-abi-version-check",
+  "repoPath": "src/content/docs/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/adr/0001-hard-abi-version-check.mdx",
+  "frontmatter": {
+    "title": "Hard ABI version check before user code",
+    "description": "Hosts reject mismatched compiler and runtime ABI integers before executing generated code.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-EXEC-ABI-0001",
+    "adrStatus": "Accepted",
+    "adrDate": "2025-11-01",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "ABI versioning and compatibility",
+        "href": "/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nJIT and CLI hosts may load a `beskid_runtime` artifact built separately from the active compiler. Without an explicit version gate, stale toolchains call builtins with wrong layouts or missing symbols.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Version surface | `beskid_runtime_abi_version()` returns `BESKID_RUNTIME_ABI_VERSION` (`u32` in `beskid_abi`) |\n| Host check | Hosts **should** fail before user `main` when runtime version ≠ compiler-embedded constant (**ABI-003**) |\n| Diagnostics | Failure messages **must** name both integers and recommend aligning CLI/VSIX/runtime release sets |\n\n## Consequences\n\nRelease matrices document paired compiler/runtime builds. Conformance **should** assert version parity in JIT smoke tests (`beskid_tests` runtime/jit).\n\n## Verification anchors\n\n`compiler/crates/beskid_abi/src/version.rs`; `beskid_engine` JIT module setup; **ABI-001**–**ABI-003** in [contracts and edge cases](../contracts-and-edge-cases/).",
+  "layoutJson": null
+}

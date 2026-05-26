@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/design-model",
+  "repoPath": "src/content/docs/platform-spec/compiler/resolution-and-projects/project-manifest-contract/design-model.mdx",
+  "frontmatter": {
+    "title": "Project manifest contract - Design model",
+    "description": "Resolution graph entities for Project.proj ingestion (manifest key prose defers to tooling).",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Project manifest contract",
+        "href": "/platform-spec/compiler/resolution-and-projects/project-manifest-contract/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Project manifest contract (tooling)",
+        "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/design-model/",
+        "relation": "defers-to — normative `project` / `project.mod` key tables"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Resolution model (compiler)\n\nAfter structural parse (owned by tooling schema), the compiler materializes:\n\n| Entity | Role |\n| --- | --- |\n| `ProjectManifest` | Typed view of one `Project.proj` node |\n| Workspace/project graph node | Member in the resolved DAG with dependency edges |\n| `Mod` package node | Compiler-mod carrier; validated for topology, not re-documented key-by-key here |\n| `Template` package node | Template authoring root; **excluded** from host compile plans until scaffold output exists |\n\n**Graph validation** runs after parse: invalid Mod dependency cycles, incompatible capability requirements, and missing materialized roots **must** emit stable diagnostics in the mod/manifest band (**E1801–E1899**); see [Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/).\n\n## Schema authority\n\nAll normative **`project`**, **`project.mod`**, **`project.template`**, **`type`** (`Host`, `Mod`, `Template`), readme, and **`project.link`** key definitions live in **[tooling / design model](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/design-model/)**. This article intentionally omits duplicate key tables.\n\n**`Template`** nodes **must not** be selected for `beskid build` / `run` on the authoring tree; the template engine consumes **`.beskid/template.json`** instead. Scaffold instantiation diagnostics use **E1901–E1999** (see **[Project templates](/platform-spec/tooling/project-scaffolding/project-templates/)**).\n\n## Code anchors\n\n- `compiler/crates/beskid_analysis/src/projects/manifest_resolve.rs`\n- `compiler/crates/beskid_analysis/src/projects/graph/`\n- `compiler/crates/beskid_analysis/src/services.rs` — session orchestration after graph is known\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/resolution-and-projects/project-manifest-contract",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

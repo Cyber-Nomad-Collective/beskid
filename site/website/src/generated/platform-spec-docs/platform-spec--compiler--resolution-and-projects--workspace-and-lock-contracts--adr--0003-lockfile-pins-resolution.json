@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/adr/0003-lockfile-pins-resolution",
+  "repoPath": "src/content/docs/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/adr/0003-lockfile-pins-resolution.mdx",
+  "frontmatter": {
+    "title": "Lockfile pins drive resolution",
+    "description": "Floating registry versions broke reproducible compiles.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMP-PROJ-0012",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-05",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Workspace and lock contracts",
+        "href": "/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nFloating registry versions broke reproducible compiles.\n\n## Decision\n\nWorkspace resolution **must** honor lockfile pins from `beskid_analysis::resolve` before applying CLI overrides.\n\n## Consequences\n\nLock update commands are explicit; silent refresh is forbidden in CI modes.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/resolve/mod.rs`\n- `compiler/crates/beskid_cli/src/commands/`.\n",
+  "layoutJson": null
+}

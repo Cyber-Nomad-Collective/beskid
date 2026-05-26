@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0002-fiber-cancellation",
+  "repoPath": "src/content/docs/platform-spec/core-library/concurrency/concurrency-package/adr/0002-fiber-cancellation.mdx",
+  "frontmatter": {
+    "title": "Fiber cancellation via Cancel and OnCancelled",
+    "description": "Cancellation signalling, event ordering, and join/channel error paths.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-CONC-0002",
+    "adrStatus": "Accepted",
+    "adrDate": "2025-08-01",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Concurrency package",
+        "href": "/platform-spec/core-library/concurrency/concurrency-package/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nFibers need cooperative cancellation without panics on join or parked channel ops.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Signal | `Fiber.Cancel()` sets runtime cancellation flag |\n| Event | Each `` `Fiber<T>` `` declares ``event OnCancelled()``; runtime raises on **child** before unblocking parked ops |\n| Join | ``Join`` → `` `Result<T, FiberError::Cancelled>` `` after cancellation observed |\n| Channels | Parked **Send** / **Receive** → `ChannelError::Cancelled` |\n| Ordering | **OnCancelled** runs **before** **Join** / channel errors; handlers **must not** block on **Join** of self |\n\n## Consequences\n\nUnhandled panic in **OnCancelled** aborts process in v1 (same as other unhandled event paths).\n\n## Verification anchors\n\nCorelib + runtime concurrency tests; cancel/join fixtures.\n",
+  "layoutJson": null
+}

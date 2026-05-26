@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/verification-and-traceability",
+  "repoPath": "src/content/docs/platform-spec/execution/abi-and-host/builtins-and-symbols/verification-and-traceability.mdx",
+  "frontmatter": {
+    "title": "Verification and traceability",
+    "description": "Crate paths and tests that pin builtin specs to runtime exports.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Builtins and symbols",
+        "href": "/platform-spec/execution/abi-and-host/builtins-and-symbols/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Canonical files\n\n| File | Contract |\n| --- | --- |\n| `compiler/crates/beskid_abi/src/builtins.rs` | `BUILTIN_SPECS`, `AbiParamKind`, `AbiReturnKind` |\n| `compiler/crates/beskid_abi/src/symbols.rs` | `RUNTIME_EXPORT_SYMBOLS` |\n| `compiler/crates/beskid_runtime/src/builtins/mod.rs` | Module routing to alloc/gc/fiber/… |\n| `compiler/crates/beskid_codegen` (host helpers) | `declare_builtin_imports` |\n| `compiler/crates/beskid_engine/src/jit_module.rs` | Function pointer table for JIT |\n\n## Tests\n\n| Location | Covers |\n| --- | --- |\n| `compiler/crates/beskid_tests/src/runtime/jit.rs` | Builtin calls through JIT |\n| `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` | Panic, IO, runtime smoke |\n| `compiler/crates/beskid_runtime` benches | Microbenchmarks for alloc/GC hot paths |\n\n## Requirement mapping\n\n| ID | Check |\n| --- | --- |\n| **BLT-001** | Grep `BUILTIN_SPECS` symbols against `pub extern` exports in `builtins/` |\n| **BLT-002** | `RUNTIME_EXPORT_SYMBOLS` contains every `BUILTIN_SPECS.symbol` |\n| **BLT-005–006** | Symbol rename tests in fiber/channel integration tests |\n\n## Review checklist (PRs touching builtins)\n\n1. Update `builtins.rs`, `symbols.rs`, runtime impl, and platform-spec together.\n2. Decide if [ABI versioning](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/) bump is required.\n3. Run `cargo test -p beskid_tests runtime` and relevant `beskid_e2e_tests` targets.\n\n## Related topics\n\n- [Contracts and edge cases](./contracts-and-edge-cases/)\n- [ABI versioning verification](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/verification-and-traceability/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

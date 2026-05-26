@@ -1,0 +1,40 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/flow-and-algorithm",
+  "repoPath": "src/content/docs/platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/flow-and-algorithm.mdx",
+  "frontmatter": {
+    "title": "Dependency graph and cycle policy - Flow and algorithm",
+    "description": "Walks through runtime/order-of-operations behavior in the implementation.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Dependency graph and cycle policy",
+        "href": "/platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n## Build algorithm\n\n```mermaid\nflowchart TD\n  nodes[Collect manifest nodes]\n  edges[Expand dependency edges]\n  topo[Topological sort attempt]\n  cycle{Cycle detected?}\n  diag[Emit cycle diagnostic]\n  ok[Freeze ResolvedGraph]\n  nodes --> edges --> topo --> cycle\n  cycle -->|yes| diag\n  cycle -->|no| ok\n```\n\n1. Parse each member `Project.proj` and register a graph node (package id + project type).\n2. Add edges for registry and path dependencies; normalize path roots against workspace policy.\n3. Run cycle detection on the directed graph; apply configured severity.\n4. Expose `ResolvedGraph` to `build_compile_plan_with_policy` and doc workspace scan.\n5. **`Mod`** nodes trigger additional capability validation before the graph is considered sound.\n\n## Anchored code paths\n\n- `beskid_analysis::projects::graph::resolver`\n- `compiler/crates/beskid_tests/src/projects/corelib/`\n- `compiler/crates/beskid_cli/src/commands/doc.rs`\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

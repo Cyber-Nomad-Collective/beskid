@@ -1,4 +1,5 @@
 /** Browser entry for non-bundler hosts (pckg wwwroot). */
-import { initBeskidHub } from "./beskid-hub";
+import { initBeskidHub, initBeskidHubAfterBlazor } from "./beskid-hub";
 
 initBeskidHub();
+initBeskidHubAfterBlazor();

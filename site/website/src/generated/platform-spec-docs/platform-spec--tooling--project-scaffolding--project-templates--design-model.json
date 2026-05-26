@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/project-scaffolding/project-templates/design-model",
+  "repoPath": "src/content/docs/platform-spec/tooling/project-scaffolding/project-templates/design-model.mdx",
+  "frontmatter": {
+    "title": "Design model",
+    "description": "`beskid.template.v1` schema, symbols, sources, placeholders, GUIDs, and corelib policy.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Project templates",
+        "href": "/platform-spec/tooling/project-scaffolding/project-templates/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose and scope\n\nThis article defines the **normative data model** for Beskid templates: manifest file location, `beskid.template.v1` top-level keys, symbol types, content manipulation, and **corelib** behavior on instantiated projects.\n\n## Manifest location\n\n| Context | Path |\n| --- | --- |\n| Template package or git/path tree | **`.beskid/template.json`** at the template root |\n| Optional author metadata in `Project.proj` | `project.template { shortName, identity }` when **`type: Template`** |\n\nThe engine **must** read **`.beskid/template.json`** as authoritative. `project.template` keys are hints for discovery and packaging; if both exist, **`template.json` wins** on conflict.\n\n## Top-level `beskid.template.v1` keys\n\n| Key | Required | Meaning |\n| --- | --- | --- |\n| `schema` | yes | Literal **`beskid.template.v1`** |\n| `identity` | yes | Stable id: `packageId::version` or path/git fingerprint |\n| `name` | yes | Display name in `beskid new list` |\n| `shortName` | yes | CLI selector: `beskid new <shortName>` |\n| `author` | no | Author string |\n| `description` | no | Short summary |\n| `classifications` | no | Search tags |\n| `tags` | no | Object; **`type`** **must** be one of: `project`, `workspace`, `item` |\n| `sourceName` | no | Default token replaced in paths and file bodies (in addition to `{{ }}`) |\n| `symbols` | no | Parameter definitions |\n| `sources` | no | File copy rules; default single mapping `./` → output |\n| `guids` | no | GUIDs to regenerate in output |\n| `forms` | no | Value transforms (see below) |\n| `postActions` | no | Ordered post-instantiation actions |\n| `preferInteractive` | no | When true, prompt for symbols without CLI values before using defaults |\n\n**Forbidden in v1:** `constraints`, foreign schema imports, or alternate placeholder delimiters.\n\n## Tags.type semantics\n\n| `tags.type` | Output |\n| --- | --- |\n| `project` | Creates a directory tree with **`Project.proj`** (and `Src/` or template-defined layout) |\n| `workspace` | Creates **`Workspace.proj`** plus member project trees |\n| `item` | Adds or overwrites files **inside** an existing project directory; **must not** emit a new root `Project.proj` unless `sources` explicitly includes one and the CLI passed `--allow-project-manifest` |\n\n## Symbols\n\nEach symbol is an object keyed by symbol id (used in `{{symbolId}}`):\n\n| Field | Required | Meaning |\n| --- | --- | --- |\n| `type` | yes | `string`, `choice`, `bool`, `integer` |\n| `description` | no | Prompt text |\n| `defaultValue` | no | Used when non-interactive and flag omitted |\n| `choices` | for `choice` | Allowed values |\n| `isRequired` | no | Default false; when true, interactive mode **must** collect a value |\n\nCLI mapping: `--symbol <id>=<value>` and short forms documented in [beskid new](../beskid-new/contracts-and-edge-cases/).\n\n## Placeholders\n\n1. **`{{symbolId}}`** — replaced in all processed text files after `forms` are applied.\n2. **`sourceName`** — when set at template level, every occurrence of the `sourceName` string in **paths and file contents** is replaced with the primary name symbol (default symbol id **`name`** unless `nameSymbol` specifies another).\n\nHosts **must** fail if any `{{...}}` remains after substitution.\n\n## Forms\n\n`forms` define named transforms applied to symbol values before substitution (for example `lowerCase`, `safeName`, `namespace`). Built-in form ids are listed in [contracts and edge cases](./contracts-and-edge-cases/#builtin-forms).\n\n## Sources\n\nEach source entry:\n\n| Field | Default | Meaning |\n| --- | --- | --- |\n| `source` | `./` | Path inside template root |\n| `target` | `./` | Relative to user output directory |\n| `include` | `[\"**/*\"]` | Glob includes |\n| `exclude` | build artifacts, `.beskid/template.json` copy to wrong place | Glob excludes |\n| `copyOnly` | `[]` | Copy without text processing |\n| `rename` | `{}` | Explicit renames after symbol resolution |\n| `condition` | true | When false, skip this source block |\n| `modifiers` | `[]` | Conditional patches to include/exclude |\n\n**`.beskid/template.json`** **must not** appear in generated output unless a source block intentionally copies it to a documentation path.\n\n## Guids\n\nThe `guids` array lists GUID strings appearing in template sources. For each entry, the engine **must** generate a new GUID and replace **all** occurrences in output, preserving **format and casing** of each occurrence (same rules as common template GUID rewriting: match `N`, `D`, `B`, `P`, `X` representations independently).\n\n## corelib policy\n\n| Rule | Normative statement |\n| --- | --- |\n| Implicit dependency | Every **instantiated** project with `project.type` absent or **`Host`** **must** treat **corelib** as an **implicit registry dependency** resolved by the toolchain—equivalent to today’s std/corelib discovery path. |\n| Manifest surface | **`Project.proj` emitted by templates must not** declare a `noCorelib`, `useCorelib: false`, or any flag that disables corelib. |\n| Template author docs | Templates **may** omit an explicit `dependency \"corelib\"` block from generated manifests; the **first** `beskid lock` / `fetch` **must** materialize corelib anyway. |\n| Mod / workspace | **Mod** projects in template output follow mod resolution rules; corelib policy applies to **host** members that execute Beskid user code. |\n\nIf the compiler today requires an explicit dependency for some workflows, tooling **must** inject the dependency during instantiation or in post-action **`addCorelib`**—without exposing a user-facing opt-out.\n\n## Authoring: `project.type = Template`\n\n```text\nproject {\n  name    = \"beskid-templates-console\"\n  version = \"0.0.0\"\n  type    = Template\n  template {\n    shortName = \"console\"\n    identity  = \"beskid.templates.console\"\n  }\n}\n```\n\n`Template` projects **must not** be selected as compile targets for `beskid build` at the template package root; only their packaged `.beskid/template.json` is consumed by consumers.\n\n## Diagram\n\n```arch\nflowchart TB\n  TJ[.beskid/template.json]\n  SYM[symbols]\n  SRC[sources]\n  PH[\"{{ }} + sourceName\"]\n  GD[guids]\n  OUT[Output tree]\n  TJ --> SYM --> PH\n  TJ --> SRC --> PH\n  TJ --> GD --> OUT\n  PH --> OUT\n```\n\n## Code anchors\n\n- Planned: `compiler/crates/beskid_cli/src/template/` (engine)\n- Manifest parse: extend `compiler/crates/beskid_analysis/src/projects/model.rs` with `ProjectKind::Template`\n- Registry: `pckg` template package profile\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/tooling/project-scaffolding/project-templates",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/project-scaffolding/project-templates",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

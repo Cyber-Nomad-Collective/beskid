@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/concurrency/system-threading/adr/0004-per-thread-gc-session",
+  "repoPath": "src/content/docs/platform-spec/core-library/concurrency/system-threading/adr/0004-per-thread-gc-session.mdx",
+  "frontmatter": {
+    "title": "Per-thread GC session on entry",
+    "description": "OS thread entry must attach heap session and GC roots.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-SYST-0004",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "System.Threading",
+        "href": "/platform-spec/core-library/concurrency/system-threading/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nParallel OS threads require independent GC attachment rules in Phase A.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Entry | Thread start **must** establish runtime heap session |\n| FFI | `extern \"C\"` stays pinned to calling OS thread for call duration |\n\n## Consequences\n\nViolations risk root loss or cross-thread heap corruption.\n\n## Verification anchors\n\n[Extern dispatch and policy](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/); GC phase ADRs.\n",
+  "layoutJson": null
+}

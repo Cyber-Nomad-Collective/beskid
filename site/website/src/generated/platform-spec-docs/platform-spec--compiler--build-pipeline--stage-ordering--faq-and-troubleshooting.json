@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/build-pipeline/stage-ordering/faq-and-troubleshooting",
+  "repoPath": "src/content/docs/platform-spec/compiler/build-pipeline/stage-ordering/faq-and-troubleshooting.mdx",
+  "frontmatter": {
+    "title": "Stage ordering and lowering - FAQ and troubleshooting",
+    "description": "Troubleshooting guide for stage ordering assumptions in build and run commands.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Stage ordering and lowering",
+        "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Diagnostics parity (CLI and LSP)",
+        "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
+        "relation": "Diagnostic source differences"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n## Why did `beskid run` and `beskid build` fail at different points?\nCheck whether both paths enabled diagnostics and used the same source input path.\n\n## Why do parse source names differ in output?\nLowering can report parse diagnostics with `\"<memory>\"`, while CLI parse uses file paths.\n\n## Can I skip semantic stages for faster compile?\nNot for normative build/run behavior; skipping semantics is outside this contract.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/build-pipeline/stage-ordering",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/registry-client/pckg-client-contract/adr/0001-hub-authority",
+  "repoPath": "src/content/docs/platform-spec/tooling/registry-client/pckg-client-contract/adr/0001-hub-authority.mdx",
+  "frontmatter": {
+    "title": "Hub authority",
+    "description": "Hub authority",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-TOOL-PCKG-0001",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-09",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "pckg client contract",
+        "href": "/platform-spec/tooling/registry-client/pckg-client-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nOne client story.\n\n## Decision\n\nHub owns HTTP and auth.\n\n## Consequences\n\nExtension defers.\n\n## Verification anchors\n\nbeskid_pckg; pckgClient.\n",
+  "layoutJson": null
+}

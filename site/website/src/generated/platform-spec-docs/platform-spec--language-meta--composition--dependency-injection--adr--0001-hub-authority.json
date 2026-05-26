@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0001-hub-authority",
+  "repoPath": "src/content/docs/platform-spec/language-meta/composition/dependency-injection/adr/0001-hub-authority.mdx",
+  "frontmatter": {
+    "title": "Feature hub owns normative contract",
+    "description": "Sibling articles defer to this hub for MUST/SHOULD authority.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-LMETA-DI-0001",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Native dependency injection",
+        "href": "/platform-spec/language-meta/composition/dependency-injection/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nComposition articles and compiler notes mixed informal wiring guidance with normative host syntax.\n\n## Decision\n\nThis feature hub **must** own normative MUST/SHOULD contract text. Sibling articles **must not** redefine hub requirements and **should** link here for authority.\n\n## Consequences\n\nFAQ locked decisions migrate to ADRs; articles retain examples and troubleshooting tables only.\n\n## Verification anchors\n\n/platform-spec/language-meta/composition/dependency-injection/; `verify:trudoc`.\n",
+  "layoutJson": null
+}

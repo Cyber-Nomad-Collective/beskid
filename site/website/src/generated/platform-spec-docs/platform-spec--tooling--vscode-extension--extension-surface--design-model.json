@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/vscode-extension/extension-surface/design-model",
+  "repoPath": "src/content/docs/platform-spec/tooling/vscode-extension/extension-surface/design-model.mdx",
+  "frontmatter": {
+    "title": "Design model",
+    "description": "Extension layout, focus model, and status-bar phases for the Beskid VS Code extension.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Extension surface",
+        "href": "/platform-spec/tooling/vscode-extension/extension-surface/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Activity bar layout\n\n| View ID | Purpose |\n| --- | --- |\n| `beskidWorkspaceView` | All `Workspace.proj` trees and members |\n| `beskidProjectView` | Focused `Project.proj` targets, dependencies, sources |\n| `beskidProjectOutlineView` | Document symbols for `.bd` under focused project |\n| `beskidPackagesView` | This project + registry search |\n\n## Focus model\n\n- **Focused project** — one `Project.proj` URI drives LSP `focusedProjectUri`, CLI cwd, and the **This project** package section.\n- **Auto-select** — when `beskid.project.autoSelectFromEditor` is true, the active editor selects the nearest project manifest.\n- **Override** — `beskid.selectProject` quick pick remains available.\n\n## Status bar phases\n\n| Phase | Source |\n| --- | --- |\n| `workspace_scan` | LSP notification `beskid/status` |\n| `search` / `details` | pckg HTTP |\n| `fetch` / `lock` / `build` / `test` / `analyze` | CLI runner |\n\nImplementation: `beskid_vscode/src/status/beskidStatusController.ts`, `FocusCoordinator`, slim `BeskidExtensionRuntime`.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/tooling/vscode-extension/extension-surface",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/vscode-extension/extension-surface",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

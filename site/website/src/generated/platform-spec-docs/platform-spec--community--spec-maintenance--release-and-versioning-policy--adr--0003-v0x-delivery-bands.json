@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/community/spec-maintenance/release-and-versioning-policy/adr/0003-v0x-delivery-bands",
+  "repoPath": "src/content/docs/platform-spec/community/spec-maintenance/release-and-versioning-policy/adr/0003-v0x-delivery-bands.mdx",
+  "frontmatter": {
+    "title": "v0.x bands label delivery scope not doc editions",
+    "description": "Roadmap bands scope implementation targets; they do not fork normative URLs.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMM-VERS-0003",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-05",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Release and versioning policy",
+        "href": "/platform-spec/community/spec-maintenance/release-and-versioning-policy/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nReaders interpreted **v0.2** labels as alternate authoritative spec trees at the same URL.\n\n## Decision\n\nLabels such as **v0.1**, **v0.2**, or roadmap bands describe **what the reference platform targets shipping**, not separate specification editions. A page may mention a band when scoping work; it **must not** imply an older band remains authoritative at the same URL without explicit **Superseded** decision notes.\n\n## Consequences\n\n`status: Proposed` plus band mentions are expectations; `status: Standard` plus bands scope verification targets.\n\n## Verification anchors\n\nFeature hub maturity tables; embedded **Superseded** ADR links.\n",
+  "layoutJson": null
+}

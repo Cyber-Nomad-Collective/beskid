@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/project-scaffolding/beskid-new/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/tooling/project-scaffolding/beskid-new/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Contracts and edge cases",
+    "description": "Flags, interactive behavior, and edge cases for `beskid new`.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "beskid new command",
+        "href": "/platform-spec/tooling/project-scaffolding/beskid-new/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose and scope\n\nNormative CLI flags and behaviors.\n\n## Global flags (instantiate)\n\n| Flag | Meaning |\n| --- | --- |\n| `-o`, `--output <path>` | Output directory or file (item templates) |\n| `-n`, `--name <string>` | Primary name symbol (maps to default `name` symbol) |\n| `--symbol <id>=<value>` | Repeatable symbol binding |\n| `--no-interactive` | Fail if required symbols missing |\n| `--force` | Allow non-empty output directory |\n| `--path <dir>` | Template from local path |\n| `--git <url>` | Template from git |\n| `--git-ref <ref>` | Branch, tag, or commit |\n| `--git-subpath <dir>` | Subdirectory within repo |\n| `--package <id>[@version]` | Registry package (`packageKind: template`) |\n| `--project <Project.proj>` | Host project for item templates |\n| `--allow-yanked` | Continue after yanked warning |\n| `--strict-post-actions` | Fail on unknown post-action id |\n| `--allow-project-manifest` | Item template may write `Project.proj` |\n\n## `beskid new list` flags\n\n| Flag | Meaning |\n| --- | --- |\n| `--online` | Include registry search results |\n| `--kind <project\\|workspace\\|item>` | Filter by `tags.type` |\n\n## Interactive\n\nWhen stdin is a TTY:\n\n- Prompt for each required symbol without a CLI value.\n- Confirm overwrite when output exists (unless `--force`).\n- Confirm proceed when template is yanked (unless `--allow-yanked`).\n\n## Examples\n\n```bash\nbeskid new list --online\nbeskid new install beskid.templates.console\nbeskid new console -n MyApp -o ./MyApp\nbeskid new lib --symbol name=MyLib --no-interactive -o ./MyLib\nbeskid new --git https://git.example.com/templates --git-ref main --git-subpath lib -o ./Lib\nbeskid new contract --symbol contractName=Foo -o ./Src/Foo.bd --project ./App/Project.proj\n```\n\n## Edge cases\n\n- **`beskid new console`** without install: auto-install latest from registry when online.\n- **Ambiguous shortName**: error listing matching package ids.\n- **CI**: document `beskid new ... --no-interactive` in guides.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/tooling/project-scaffolding/beskid-new",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/project-scaffolding/beskid-new",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

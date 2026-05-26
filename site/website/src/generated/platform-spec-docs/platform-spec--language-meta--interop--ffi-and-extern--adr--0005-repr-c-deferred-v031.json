@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/ffi-and-extern/adr/0005-repr-c-deferred-v031",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/ffi-and-extern/adr/0005-repr-c-deferred-v031.mdx",
+  "frontmatter": {
+    "title": "repr C records deferred to v0.3.1",
+    "description": "CLayout primitive structs are Proposed not v0.3.0 Standard.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-LMETA-FFI-0005",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "FFI and extern",
+        "href": "/platform-spec/language-meta/interop/ffi-and-extern/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nArbitrary Beskid record `repr(C)` needs layout rules beyond interop views.\n\n## Decision\n\n**`repr(C)`** on arbitrary Beskid types is **out of scope** for v0.3.0 Standard; **CLayout** primitive structs land in **v0.3.1** (Proposed) per [C layout types](/platform-spec/language-meta/interop/c-abi-profile/c-layout-types/).\n\n## Consequences\n\nv0.3.0 Standard ships interop view types and link-time import first.\n\n## Verification anchors\n\n[C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/).\n",
+  "layoutJson": null
+}

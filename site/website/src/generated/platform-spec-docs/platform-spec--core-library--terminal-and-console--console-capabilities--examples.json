@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/examples",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/console-capabilities/examples.mdx",
+  "frontmatter": {
+    "title": "Examples",
+    "description": "Checking capabilities before custom styling.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Console capabilities",
+        "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose\n\nDocument **examples** for the **Console Capabilities** feature: role-specific normative detail beyond the feature hub.\n\n## Canonical references\n\n- Feature hub: [Console Capabilities](/platform-spec/core-library/terminal-and-console/console-capabilities/)\n- Sibling articles in this bundle (design model, contracts, flow, examples, verification)\n\n## Detailed behavior\n\n```beskid\nif Console.Capabilities.ShouldEmitAnsi() {\n    Console.FormatLine(\"[bold]interactive[/]\");\n} else {\n    System.Output.WriteLine(\"interactive\");\n}\n```\n\n```beskid\nConsole.Capabilities.Capabilities caps = Console.Capabilities.ProbeStdout();\nConsole.Capabilities.ColorModel model =\n    Console.Capabilities.EffectiveColorModel(caps);\n// use model for custom RGB downgrade outside SgrBuilder\n```\n\nFor escape tables and SGR parameters, see [ANSI escape model](/platform-spec/core-library/terminal-and-console/ansi-escape-model/).\n\n## Verification\n\nSee the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.\n\n## Related topics\n\n- Parent [feature hub](/platform-spec/core-library/terminal-and-console/console-capabilities/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/terminal-and-console/console-capabilities",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/terminal-and-console/console-capabilities",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

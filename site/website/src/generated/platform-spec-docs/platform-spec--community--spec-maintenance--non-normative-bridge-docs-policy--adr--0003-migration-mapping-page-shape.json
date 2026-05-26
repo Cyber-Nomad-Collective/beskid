@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/adr/0003-migration-mapping-page-shape",
+  "repoPath": "src/content/docs/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/adr/0003-migration-mapping-page-shape.mdx",
+  "frontmatter": {
+    "title": "Migration mapping page required sections",
+    "description": "Mapping pages include scope, canonical destinations grouped by domain, and retirement notes.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMM-BRIDGE-0003",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-05",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Non-normative bridge docs policy",
+        "href": "/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nAd-hoc mapping tables mixed partial coverage with implied normative scope.\n\n## Decision\n\nMigration mapping pages **must** include: (1) a one-sentence non-normative notice; (2) a **Canonical destinations** section linking target feature hubs; (3) a **Mapping scope** section stating coverage and exclusions; (4) a maintenance note for retirement timing. Multi-domain mappings **must** group links by destination domain/area.\n\n## Consequences\n\nBridge pages become checklist-complete before merge; retirement removes the bridge when canonical nav suffices.\n\n## Verification anchors\n\n[Legacy spec mapping](/platform-spec/legacy-spec-mapping/) structure review in PR template.\n",
+  "layoutJson": null
+}

@@ -1,0 +1,63 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/manifests-and-lockfiles",
+  "repoPath": "src/content/docs/platform-spec/tooling/manifests-and-lockfiles/index.mdx",
+  "frontmatter": {
+    "title": "Manifests and lockfiles",
+    "description": "Formal manifest and lockfile contracts for projects, workspaces, and dependency resolution.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "area",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Domain",
+        "title": "Tooling",
+        "href": "/platform-spec/tooling/",
+        "relation": "Parent domain"
+      },
+      {
+        "type": "Area",
+        "title": "Build pipeline",
+        "href": "/platform-spec/compiler/build-pipeline/",
+        "relation": "Workspace resolution and lock materialization are compiler-facing"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\n\n<SpecPageHeader ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n<SpecSection title=\"Scope\" id=\"scope\">\nFormal manifest and lockfile contracts for projects, workspaces, and dependency resolution.\n</SpecSection>\n\n<SpecSection title=\"Feature index\" id=\"feature-index\">\nUse the tiles below for normative **feature** contracts in this area.\n</SpecSection>\n\n<DomainTiles pathPrefix=\"platform-spec/tooling/manifests-and-lockfiles\" heading=\"Features\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/tooling/manifests-and-lockfiles",
+    "sections": [
+      {
+        "id": "scope",
+        "required": true,
+        "kind": "specSection"
+      },
+      {
+        "id": "features",
+        "required": true,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/manifests-and-lockfiles",
+          "heading": "Features"
+        }
+      }
+    ]
+  }
+}

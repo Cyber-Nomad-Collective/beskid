@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console/console-io-streams/adr/0011-write-panic-read-result",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/console-io-streams/adr/0011-write-panic-read-result.mdx",
+  "frontmatter": {
+    "title": "Write panics; read returns Result",
+    "description": "Syscall write failures panic; reads surface Result.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-TERM-0011",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Console I/O streams",
+        "href": "/platform-spec/core-library/terminal-and-console/console-io-streams/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nv1 write helpers are infallible at the type level; read paths need explicit error handling.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Write | `Write` / `WriteLine` **must** panic on `WriteWith` failure |\n| Read | `Read` / `ReadLine` return `` `Result<string, SyscallError>` `` |\n\n## Consequences\n\nDiagnostics for write failures use fixed panic strings; callers cannot catch write errors in Beskid v1.\n\n## Verification anchors\n\nCorelib stream tests; syscall integration in `beskid_runtime`.\n",
+  "layoutJson": null
+}

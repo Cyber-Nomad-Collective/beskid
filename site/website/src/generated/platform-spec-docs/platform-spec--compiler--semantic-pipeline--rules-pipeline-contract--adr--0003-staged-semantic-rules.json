@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/adr/0003-staged-semantic-rules",
+  "repoPath": "src/content/docs/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/adr/0003-staged-semantic-rules.mdx",
+  "frontmatter": {
+    "title": "Staged semantic rules pipeline",
+    "description": "Monolithic semantic passes blocked incremental invalidation.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMP-SEM-0012",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-05",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Rules pipeline contract",
+        "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nMonolithic semantic passes blocked incremental invalidation.\n\n## Decision\n\nSemantic rules are grouped in `analysis/rules/staged/` with explicit stage boundaries wired through `services.rs` for CLI and LSP.\n\n## Consequences\n\nNew rules declare their stage; cross-stage dependencies are documented in the hub articles.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/analysis/rules/`.\n",
+  "layoutJson": null
+}

@@ -2,6 +2,11 @@
  * Fullscreen Beskid services hub — square icon tiles.
  */
 
+/* Host is a layout-transparent wrapper when used as <beskid-hub>. */
+beskid-hub {
+	display: contents;
+}
+
 .beskid-hub-trigger {
 	display: inline-flex;
 	align-items: center;

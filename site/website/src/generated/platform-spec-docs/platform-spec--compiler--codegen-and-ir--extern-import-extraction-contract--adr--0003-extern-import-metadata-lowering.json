@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/adr/0003-extern-import-metadata-lowering",
+  "repoPath": "src/content/docs/platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/adr/0003-extern-import-metadata-lowering.mdx",
+  "frontmatter": {
+    "title": "Extern import metadata at lowering",
+    "description": "FFI symbols were discovered late in the engine.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMP-IR-0006",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-05",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Extern import extraction contract",
+        "href": "/platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nFFI symbols were discovered late in the engine.\n\n## Decision\n\nExtern imports are collected during lowering (`ExternImport` in codegen context) with ABI names from `beskid_abi`—not ad hoc engine scans.\n\n## Consequences\n\nLink-time binding stays aligned with language-meta C ABI profile.\n\n## Verification anchors\n\n- `compiler/crates/beskid_codegen/src/lowering/`\n- `compiler/crates/beskid_abi/src/symbols.rs`.\n",
+  "layoutJson": null
+}

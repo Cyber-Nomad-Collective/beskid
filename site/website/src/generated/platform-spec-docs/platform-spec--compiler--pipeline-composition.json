@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/pipeline-composition",
+  "repoPath": "src/content/docs/platform-spec/compiler/pipeline-composition/index.mdx",
+  "frontmatter": {
+    "title": "Pipeline composition",
+    "description": "Rust-native compiler composition, pass registration, and phase DAG (separate from Mod projects).",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "area",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Domain",
+        "title": "Compiler",
+        "href": "/platform-spec/compiler/",
+        "relation": "Parent domain hub"
+      },
+      {
+        "type": "Area",
+        "title": "Compiler Mods",
+        "href": "/platform-spec/compiler/compiler-mods/",
+        "relation": "Beskid-side mods; does not mutate composition graph"
+      },
+      {
+        "type": "Area",
+        "title": "Build pipeline",
+        "href": "/platform-spec/compiler/build-pipeline/",
+        "relation": "Observable phase ordering"
+      },
+      {
+        "type": "Feature",
+        "title": "Native dependency injection",
+        "href": "/platform-spec/language-meta/composition/dependency-injection/",
+        "relation": "App host DI resolved at composition.resolve"
+      },
+      {
+        "type": "Feature",
+        "title": "Stage ordering and lowering",
+        "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+        "relation": "Observable phase DAG and lowering order (primary pipeline contract)"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"Scope\" id=\"scope\">\nPipeline composition is **Rust-only** compiler infrastructure: pass registration, dependency injection between compiler services, phase DAG wiring, and feature-flagged stage enablement.\n\n`Mod` projects and Beskid Compiler Mod SDK contracts **must not** mutate this graph. Mods observe compiler snapshots through SDK surfaces only.\n\n**Phase ordering and lowering** (parse → semantic gates → HIR → CLIF → backends) are specified under [Build pipeline / Stage ordering](/platform-spec/compiler/build-pipeline/stage-ordering/). This area documents *how* those phases are registered and wired in Rust, not the end-to-end stage list itself. Feature-level articles for composition DAG and pass registration may be added here later; until then, treat stage ordering as the authoritative cross-phase contract.\n</SpecSection>\n\n<SpecSection title=\"Boundary\" id=\"boundary\">\n\n```mermaid\nflowchart TB\n  subgraph rustPlane [Rust pipeline composition]\n    pipeline[beskid_pipeline phase DAG]\n    ioc[Compiler service IoC]\n  end\n  subgraph userPlane [User app composition]\n    host[host registry scope launch]\n  end\n  subgraph modPlane [Compiler mods read-only]\n    sdk[Mod SDK contracts]\n    hostBridge[mod host bridge]\n  end\n  userPlane -->|composition.resolve| rustPlane\n  modPlane -->|snapshots only| rustPlane\n  sdk -.->|must not mutate graph| pipeline\n```\n\n| Plane | Owner |\n| --- | --- |\n| Compiler composition / IoC | Rust (`beskid_analysis`, `beskid_pipeline`, related crates) |\n| User DI (`host`, `launch`) | [Language meta / composition](/platform-spec/language-meta/composition/) |\n| Compiler mods (`type: Mod`) | [Compiler Mods](/platform-spec/compiler/compiler-mods/) + [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/) |\n</SpecSection>\n\n<SpecSection title=\"User program composition (read-only)\" id=\"user-composition\">\nThe reference compiler **resolves** Beskid app composition ([Native dependency injection](/platform-spec/language-meta/composition/dependency-injection/)) at compile time. Rust pipeline code **materializes** a frozen binding plan and **composition snapshot** for lowering and mod queries; it does **not** reinterpret `host` / `registry` / `scope` syntax.\n\nPlanned phase id: **`composition.resolve`** (after `semantic.snapshot`, before `mod.analyze`). See [Native DI / Flow and algorithm](/platform-spec/language-meta/composition/dependency-injection/flow-and-algorithm/).\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"anchors\">\n- `compiler/crates/beskid_pipeline/` — phase ids and observer hooks\n- `compiler/crates/beskid_analysis/src/services.rs` — session orchestration\n- `compiler/crates/beskid_analysis/src/analysis/rules/staged/` — staged semantic pass graph\n- `compiler/crates/beskid_analysis` — planned `composition` module for app DI graph (see native DI feature hub)\n</SpecSection>\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/compiler/pipeline-composition",
+    "sections": [
+      {
+        "id": "scope",
+        "required": true,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 1
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/runtime-feature-flags/adr/0015-arrays-backing-feature",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/runtime-feature-flags/adr/0015-arrays-backing-feature.mdx",
+  "frontmatter": {
+    "title": "arrays_backing gates array element storage",
+    "description": "Without the feature, array_new may emit header-only arrays with null backing.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-EXEC-RT-0015",
+    "adrStatus": "Accepted",
+    "adrDate": "2025-11-01",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Runtime feature flags",
+        "href": "/platform-spec/execution/runtime/runtime-feature-flags/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Builtins and symbols",
+        "href": "/platform-spec/execution/abi-and-host/builtins-and-symbols/",
+        "relation": "array_new builtin"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nArray lowering depends on whether the linked runtime allocates element storage behind `BeskidArray` headers.\n\n## Decision\n\n| `arrays_backing` | Behavior |\n| --- | --- |\n| **Enabled** | `array_new` allocates element storage; `ptr` non-null when length > 0 |\n| **Disabled** | Header-only arrays; `ptr` may be **null** |\n| ABI | Symbol list unchanged; semantics differ by build — document in release matrices |\n| Alignment | Shipped CLI/VSIX **should** enable `arrays_backing` for reference user workflows |\n\n## Consequences\n\nConformance and doc tests **must** pin feature set when asserting array behavior.\n\n## Verification anchors\n\n`beskid_runtime` `array_new`; runtime JIT tests with feature flags.",
+  "layoutJson": null
+}

@@ -1,0 +1,104 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract",
+  "repoPath": "src/content/docs/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/index.mdx",
+  "frontmatter": {
+    "title": "Project manifest contract",
+    "description": "Project manifest schema including Mod project type, resolution inputs, and mod orchestration wiring.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "lastReviewed": "2026-05-01",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Manifests and lockfiles",
+        "href": "/platform-spec/tooling/manifests-and-lockfiles/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Area",
+        "title": "Resolution and projects",
+        "href": "/platform-spec/compiler/resolution-and-projects/",
+        "relation": "Compiler workspace loading consumes manifest contracts"
+      },
+      {
+        "type": "Feature",
+        "title": "Project manifest contract (compiler)",
+        "href": "/platform-spec/compiler/resolution-and-projects/project-manifest-contract/",
+        "relation": "implements — resolution graph, cycles, and manifest-band diagnostics"
+      },
+      {
+        "type": "Area",
+        "title": "Registry client",
+        "href": "/platform-spec/tooling/registry-client/",
+        "relation": "Dependency source metadata can route through registry client flows"
+      },
+      {
+        "type": "Feature",
+        "title": "Metaprogramming overview",
+        "href": "/platform-spec/language-meta/metaprogramming/metaprogramming/",
+        "relation": "Mod projects and Compiler Mod SDK contracts"
+      },
+      {
+        "type": "Feature",
+        "title": "Compiler Mod SDK",
+        "href": "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
+        "relation": "Declarative mod orchestration"
+      },
+      {
+        "type": "Area",
+        "title": "Compiler Mods",
+        "href": "/platform-spec/compiler/compiler-mods/",
+        "relation": "Host execution of mod pipelines"
+      },
+      {
+        "type": "Feature",
+        "title": "Foreign library import",
+        "href": "/platform-spec/tooling/foreign-library-import/",
+        "relation": "Link metadata and CLI library mapping for FFI"
+      },
+      {
+        "type": "Feature",
+        "title": "Project templates",
+        "href": "/platform-spec/tooling/project-scaffolding/project-templates/",
+        "relation": "project.type = Template and scaffolding output manifests"
+      },
+      {
+        "type": "Feature",
+        "title": "Package kinds",
+        "href": "/platform-spec/tooling/registry-client/package-kinds/",
+        "relation": "packageKind on published artifacts"
+      }
+    ]
+  },
+  "body": "import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\n`Project manifest contract` defines one operational contract that a newcomer can follow end-to-end: first the model, then execution flow, then strict guarantees, concrete examples, and verification guidance.\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- Manifest loading in `compiler/crates/beskid_analysis/src/services.rs`\n- CLI project graph setup in `compiler/crates/beskid_cli/src/commands/`\n- Workspace resolution in `compiler/crates/beskid_analysis/src/resolve/items.rs`\n- Contract tests in `compiler/crates/beskid_tests/src/projects/corelib/mod.rs`\n</SpecSection>\n\n<SpecSection title=\"Mod project type (`Mod`)\" id=\"meta-project-type\">\nA manifest may declare **`type: Mod`**. A **`Mod`** project is a compiler-mod package: discovered from the dependency graph, compiled AOT, and executed through SDK contracts during host compilation. See **[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** and **[Compiler Mods](/platform-spec/compiler/compiler-mods/)**.\n\nNormative **`project.mod`** keys (`maxGeneratorRounds`, `capabilities`, optional `artifactPolicy`) are specified in **[design model](./design-model/)**; **[examples](./examples/)** show illustrative manifests.\n\n**v0.3 FFI:** optional **`project.link`** for foreign libraries is specified in **[project link libraries](./project-link-libraries/)** and populated via **[foreign library import](/platform-spec/tooling/foreign-library-import/)**.\n</SpecSection>\n\n<SpecSection title=\"Template project type (`Template`)\" id=\"template-project-type\">\nA manifest may declare **`type: Template`** for template authoring packages. Consumer-facing scaffold contracts live under **[Project scaffolding](/platform-spec/tooling/project-scaffolding/)**. Instantiated **host** projects from templates follow normal `Host` rules; **corelib** is always implicit (no opt-out manifest flag).\n</SpecSection>\n\n<SpecSection title=\"Decisions\" id=\"decisions\">\nNo open decisions. **`D-TOOL-MAN-0001`** (hub authority), **`0002`** (Mod and Template project types)—see **`adr/`** and the **ADRs** tab.\n</SpecSection>\n\n<DomainTiles pathPrefix=\"platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract\" heading=\"Articles\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

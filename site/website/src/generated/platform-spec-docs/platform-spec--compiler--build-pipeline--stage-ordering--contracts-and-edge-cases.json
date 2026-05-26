@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/build-pipeline/stage-ordering/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/compiler/build-pipeline/stage-ordering/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Stage ordering and lowering - Contracts and edge cases",
+    "description": "Required ordering guarantees and behavior under parse or semantic failures.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Stage ordering and lowering",
+        "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Backends (JIT and AOT)",
+        "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/",
+        "relation": "Artifact consumers"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- Build and run command paths must use the same lowering order for parity.\n- Semantic error diagnostics must stop lowering before backend code generation.\n- Parse diagnostics source naming differences must be documented (`path` vs `\"<memory>\"`).\n- Entrypoint lookup must use post-resolution typed metadata from the same lowering result.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/build-pipeline/stage-ordering",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

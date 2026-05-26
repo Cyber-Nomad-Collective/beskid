@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/rust-abi-profile/adr/0002-runtime-c-exports-rust-internal",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/rust-abi-profile/adr/0002-runtime-c-exports-rust-internal.mdx",
+  "frontmatter": {
+    "title": "Runtime exposes C-compatible entrypoints",
+    "description": "Rust-specific choices stay inside the runtime crate boundary.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-LMETA-RUSTABI-0002",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-09",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Rust ABI profile",
+        "href": "/platform-spec/language-meta/interop/rust-abi-profile/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nJIT/AOT loaders need stable C symbol names while implementation remains Rust.\n\n## Decision\n\nThe Beskid runtime **must** expose **stable C-compatible entrypoints** to loaders. **Rust-specific** implementation choices **must** remain **inside** the runtime crate boundary.\n\n## Consequences\n\n`beskid_abi` symbols and unwind bridges document the outward face only.\n\n## Verification anchors\n\n`compiler/crates/beskid_abi`; `compiler/crates/beskid_runtime`.\n",
+  "layoutJson": null
+}

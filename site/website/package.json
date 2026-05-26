@@ -11,6 +11,7 @@
     "verify:last-reviewed": "node ../../packages/trudoc/scripts/verify-last-reviewed.mjs",
     "generate:platform-spec-git-meta": "node ../../packages/trudoc/scripts/generate-platform-spec-git-meta.mjs",
     "generate:platform-spec-nav-tree": "bun ../../packages/trudoc/scripts/generate-platform-spec-nav-tree.mjs",
+    "generate:platform-spec-catalog": "bun ../../packages/trudoc/scripts/generate-platform-spec-catalog.mjs",
     "generate:book-nav-tree": "bun ../../packages/trudoc/scripts/generate-book-nav-tree.mjs",
     "verify:platform-spec-git-meta": "node ../../packages/trudoc/scripts/verify-platform-spec-git-meta.mjs",
     "verify:platform-spec-layout": "node ../../packages/trudoc/bin/trudoc-layout.mjs",

@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/fiber-scheduler-and-stacks/adr/0001-mn-cooperative-scheduler",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/fiber-scheduler-and-stacks/adr/0001-mn-cooperative-scheduler.mdx",
+  "frontmatter": {
+    "title": "M:N cooperative fiber scheduler",
+    "description": "Many fibers multiplex on an OS worker pool without async/await lowering.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-EXEC-RT-0001",
+    "adrStatus": "Accepted",
+    "adrDate": "2025-09-01",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Fiber scheduler and stacks",
+        "href": "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Fibers and spawn",
+        "href": "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
+        "relation": "spawn lowering"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nBeskid rejects Rust-style `async`/`await` state machines at the language level ([D-INC-0008](/platform-spec/community/project-inception/adr/0008-fibers-not-async-await/)). The runtime must provide cooperative concurrency primitives consumed by `corelib_concurrency`.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Model | **M:N** — many **fibers** on a pool of **OS worker threads** |\n| API surface | `fiber_*` builtins back `` `Fiber<T>` ``; no async lowering in compiler |\n| Preemption | User fibers are **cooperative**; preemptive parallelism uses `System.Threading` (OS threads) |\n| Work stealing | Per-worker run queues; work-stealing **permitted** |\n| Parking | Fibers park on channel ops, join, cancel, and blocking syscalls |\n\n## Consequences\n\nScheduler modules live under `beskid_runtime/src/scheduler/`. Deprecated `rt_yield` (`sched` feature) is superseded by `fiber_yield`.\n\n## Verification anchors\n\n`compiler/crates/beskid_runtime/tests/concurrency.rs`; corelib concurrency tests; git: `12ee673`, `76a58f5`.",
+  "layoutJson": null
+}

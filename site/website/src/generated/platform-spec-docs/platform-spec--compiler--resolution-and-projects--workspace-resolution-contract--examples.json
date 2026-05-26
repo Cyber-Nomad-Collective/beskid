@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/examples",
+  "repoPath": "src/content/docs/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/examples.mdx",
+  "frontmatter": {
+    "title": "Workspace resolution contract - Examples",
+    "description": "Practical examples of manifest graph resolution and target path selection.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Workspace resolution contract",
+        "href": "/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Stage ordering and lowering",
+        "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+        "relation": "Downstream compile entry"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- **Single project:** `Project.proj` with one target yields one-entry `CompilePlan`; `resolve_input` points directly to that entry file.\n- **Workspace with deps:** root target depends on local and registry packages; graph includes both, unresolved optional packages are reported according to policy.\n- **Explicit file compile:** `beskid run Src/Main.bd` bypasses target inference and resolves directly from the provided file path.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

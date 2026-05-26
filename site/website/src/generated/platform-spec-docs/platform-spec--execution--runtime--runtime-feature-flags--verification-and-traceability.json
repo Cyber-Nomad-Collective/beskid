@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/runtime-feature-flags/verification-and-traceability",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/runtime-feature-flags/verification-and-traceability.mdx",
+  "frontmatter": {
+    "title": "Verification and traceability",
+    "description": "Cargo feature definitions, conditional compilation gates, and CI matrix expectations.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Runtime feature flags",
+        "href": "/platform-spec/execution/runtime/runtime-feature-flags/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Source files\n\n| Path | Content |\n| --- | --- |\n| `compiler/crates/beskid_runtime/Cargo.toml` | `[features]` table |\n| `compiler/crates/beskid_runtime/src/builtins/arrays.rs` | `#[cfg(feature = \"arrays_backing\")]` |\n| `compiler/crates/beskid_runtime/src/builtins/mod.rs` | `metrics` module gate |\n| `compiler/crates/beskid_engine/Cargo.toml` | `extern_dlopen` feature |\n| `compiler/crates/beskid_cli/src/commands/doc.rs` | Execution modes referencing runtime |\n\n## Tests\n\n| Suite | Notes |\n| --- | --- |\n| `beskid_tests/src/runtime/jit.rs` | Default runtime feature set |\n| Engine `extern_*` tests | Require `extern_dlopen` |\n| Future: explicit `arrays_backing` fixture | Assert `ptr != null` when enabled |\n\n## Traceability\n\n| ID | Check |\n| --- | --- |\n| **RFF-001** | ABI version constant unchanged in feature-only PRs |\n| **RFF-003** | CI job definitions list `arrays_backing` where needed |\n| **RFF-006** | Default engine feature set off in release workflow |\n\n## Related topics\n\n- [Contracts and edge cases](./contracts-and-edge-cases/)\n- [CLI area](/platform-spec/tooling/cli/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/runtime/runtime-feature-flags",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/runtime/runtime-feature-flags",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

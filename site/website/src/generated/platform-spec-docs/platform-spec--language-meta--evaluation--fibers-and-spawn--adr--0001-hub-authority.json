@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/evaluation/fibers-and-spawn/adr/0001-hub-authority",
+  "repoPath": "src/content/docs/platform-spec/language-meta/evaluation/fibers-and-spawn/adr/0001-hub-authority.mdx",
+  "frontmatter": {
+    "title": "Feature hub owns normative contract",
+    "description": "Sibling articles defer to this hub for MUST/SHOULD authority.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-LMETA-FIBERS-0001",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Fibers and spawn",
+        "href": "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLanguage-meta evaluation articles previously mixed informal notes with hub requirements.\n\n## Decision\n\nThis feature hub **must** own normative MUST/SHOULD contract text. Sibling articles **must not** redefine hub requirements and **should** link here for authority.\n\n## Consequences\n\nEditors consolidate conflicting rules on the hub; articles carry detail and examples only.\n\n## Verification anchors\n\n/platform-spec/language-meta/evaluation/fibers-and-spawn/; `site/website` trudoc verify.\n",
+  "layoutJson": null
+}

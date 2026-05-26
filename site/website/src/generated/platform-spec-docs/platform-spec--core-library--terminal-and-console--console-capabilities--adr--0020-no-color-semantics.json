@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/adr/0020-no-color-semantics",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/console-capabilities/adr/0020-no-color-semantics.mdx",
+  "frontmatter": {
+    "title": "NO_COLOR disables color",
+    "description": "Any non-empty NO_COLOR strips ANSI emission.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-TERM-0020",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Console capabilities",
+        "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nUsers and CI expect no-color.org semantics for accessibility and logs.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| `NO_COLOR` | Non-empty value **must** force `ShouldEmitAnsi()` false |\n| Reference | [no-color.org](https://no-color.org/) |\n\n## Consequences\n\nCapability probes and markup render paths consult the same gate.\n\n## Verification anchors\n\n`CapabilitiesTests.bd`; `Console/Capabilities.bd`.\n",
+  "layoutJson": null
+}

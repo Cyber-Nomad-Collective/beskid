@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/flow-and-algorithm",
+  "repoPath": "src/content/docs/platform-spec/compiler/build-pipeline/backends-jit-aot/flow-and-algorithm.mdx",
+  "frontmatter": {
+    "title": "Backends (JIT and AOT) - Flow and algorithm",
+    "description": "Ordered backend execution for run and build after lowering completes.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Backends (JIT and AOT)",
+        "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Stage ordering and lowering",
+        "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+        "relation": "Upstream artifact creation"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n```mermaid\nflowchart TB\n  lower[lower_program -> CodegenArtifact]\n  lower --> jitBranch[JIT branch]\n  lower --> aotBranch[AOT branch]\n  jitBranch --> j1[JitModule compile]\n  j1 --> j2[ABI symbol resolve]\n  j2 --> j3[Run entry]\n  aotBranch --> a1[Object emit]\n  a1 --> a2[Runtime prep]\n  a2 --> a3[Link if requested]\n```\n\n## JIT flow\n\n1. Lower source with diagnostics.\n2. Compile artifact in `JitModule`.\n3. Resolve and validate entrypoint against manifest.\n4. Execute and return formatted result.\n\n## AOT flow\n\n1. Lower source with diagnostics.\n2. Build request from CLI flags.\n3. Emit object module.\n4. Prepare runtime and link when output kind requires it.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/build-pipeline/backends-jit-aot",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

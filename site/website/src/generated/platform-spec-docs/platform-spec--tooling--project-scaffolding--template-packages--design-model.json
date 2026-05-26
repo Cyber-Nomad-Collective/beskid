@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/project-scaffolding/template-packages/design-model",
+  "repoPath": "src/content/docs/platform-spec/tooling/project-scaffolding/template-packages/design-model.mdx",
+  "frontmatter": {
+    "title": "Design model",
+    "description": "`packageKind`, `.bpk` layout, and pckg registry presentation for template packages.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Template packages",
+        "href": "/platform-spec/tooling/project-scaffolding/template-packages/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose and scope\n\nNormative **`beskid.package.v1`** extensions and artifact layout for template packages.\n\n## `package.json` fields\n\n| Key | Required | Meaning |\n| --- | --- | --- |\n| `schema` | yes | `beskid.package.v1` |\n| `id` | yes | Registry package name |\n| `version` | yes | Artifact version string |\n| `packageKind` | yes for template profile | **`template`** |\n| `template` | recommended | Summary: `shortName`, `identity`, `tags.type` copied from `.beskid/template.json` at pack time |\n| `documentation` | — | **Must not** include `apiJson` pointer for `packageKind: template` |\n\nDefault **`packageKind`** when omitted remains **`library`** for backward compatibility.\n\n## Reserved kinds\n\n| `packageKind` | Status |\n| --- | --- |\n| `library` | Current default; requires `api.json` when server policy `RequireStructuredApiDoc` is true |\n| `template` | This feature |\n| `tool` | Reserved; normative contract deferred to [Package kinds](/platform-spec/tooling/registry-client/package-kinds/) |\n\n## `.bpk` required entries (template profile)\n\n| Entry | Required |\n| --- | --- |\n| `package.json` with `packageKind: template` | yes |\n| `Project.proj` | yes (authoring manifest; may be `type: Template`) |\n| `checksums.sha256` | yes |\n| `.beskid/template.json` | yes |\n| `src/**` or template content roots | yes — at least one scaffold file |\n| `.beskid/docs/api.json` | **no** |\n\n## pckg package page (template mode)\n\nWhen `packageKind === template`, the server and dashboard **must**:\n\n1. **Hide** API documentation tabs, symbol browser, and `api.json` download.\n2. **Show** template metadata card: `shortName`, `tags.type`, `classifications`, `description`.\n3. **Show** install snippet: `beskid new install <id>` and `beskid new <shortName>`.\n4. **Show** readme / root markdown when present.\n5. **Show** version list with yank badges (same as libraries).\n\nCategory field on `PackageEntity` **may** mirror `tags.type` for filtering (`Template`, `Console`, etc.) but **`packageKind`** is authoritative for routing.\n\n## Workspace publish\n\nWorkspace bundles **may** include template member packages. Each member `.bpk` **must** declare its own `packageKind`. Mixed workspaces (libraries + templates) are allowed.\n\n## Diagram\n\n```arch\nflowchart LR\n  PACK[beskid pckg pack]\n  BPK[.bpk artifact]\n  VAL[PackageArtifactValidator]\n  REG[pckg registry]\n  UI[Template package page]\n  NEW[beskid new install]\n  PACK --> BPK --> VAL --> REG --> UI\n  REG --> NEW\n```\n\n## Code anchors\n\n- `pckg/src/Server/Services/PackageArtifactValidator.cs`\n- `pckg/src/Server/Components/Pages/` package detail views\n- `compiler/crates/beskid_pckg` pack command (planned `packageKind` emission)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/tooling/project-scaffolding/template-packages",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/project-scaffolding/template-packages",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

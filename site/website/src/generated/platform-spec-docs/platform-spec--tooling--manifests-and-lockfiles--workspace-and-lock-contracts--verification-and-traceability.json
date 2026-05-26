@@ -1,0 +1,49 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/verification-and-traceability",
+  "repoPath": "src/content/docs/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/verification-and-traceability.mdx",
+  "frontmatter": {
+    "title": "Verification and traceability",
+    "description": "Tests and traceability for workspace and lock tooling contracts.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Workspace and lock contracts (compiler)",
+        "href": "/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/",
+        "relation": "Compiler-side verification matrix"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Compiler tests\n\n| Topic | Path |\n| --- | --- |\n| Pipeline + lock sync | `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs` |\n| Corelib workspace layout | `compiler/crates/beskid_tests/src/projects/corelib/layout.rs` |\n| Lock parse errors | `projects/workflow.rs` unit tests |\n\n## pckg server tests\n\n| Topic | Path |\n| --- | --- |\n| Workspace publish | `pckg/src/Server.Tests/Integration/WorkspacePublishIntegrationTests.cs` |\n| Manifest metadata | `pckg/src/Server.Tests/Unit/PackageManifestMetadataReaderTests.cs` |\n| Artifact validation | `pckg/src/Server.Tests/Unit/PackageArtifactValidatorTests.cs` |\n\n## Traceability\n\nTooling articles describe operator-visible contracts; compiler feature pages own diagnostic code bands for lock parse failures. Changes to `Project.lock` v1 **must** update both sides and bump any fixture locks in tests.\n\n## CI\n\nSuperrepo and `compiler` CI run workspace tests on every graph change. Website spec verify: `cd site/website && bun run verify:trudoc -- --preset ci` after MDX edits.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

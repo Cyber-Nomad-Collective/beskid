@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile.mdx",
+  "frontmatter": {
+    "title": "C ABI profile — Dynamic resolution profile",
+    "description": "Non-Standard appendix for runtime dlopen/dlsym extern resolution (legacy v0.1 path).",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Proposed",
+    "lastReviewed": "2026-05-20",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "C ABI profile",
+        "href": "/platform-spec/language-meta/interop/c-abi-profile/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Link-time linking",
+        "href": "/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/",
+        "relation": "Standard conformance path"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n> **Status: Proposed** — This profile is **not** required for v0.3 **Standard** conformance. It documents the reference engine’s optional **`extern_dlopen`** path for migration and tooling experiments.\n\n## Behavior (reference)\n\nWhen enabled on supported hosts (historically Linux x86_64):\n\n- Libraries load via **`dlopen(RTLD_LOCAL | RTLD_NOW)`**.\n- Symbols resolve via **`dlsym`** with process-lifetime caches.\n- **`BESKID_EXTERN_ALLOW`** / **`BESKID_EXTERN_DENY`** apply as in `/execution/runtime/extern-policy-v0-1/`.\n\nImplementation anchors: `compiler/crates/beskid_engine/src/engine.rs` (`extern_dlopen` feature).\n\n## Relationship to v0.3 Standard\n\nProduction builds **should** use **[link-time linking](./link-time-linking/)**. Dynamic resolution remains available for:\n\n- Local development without a full link driver.\n- Tests gated by `--features extern_dlopen`.\n\n## Deprecation direction\n\nNew platform-spec and CLI work **must** target link-time binding. Dynamic resolution **must not** be documented as the default in execution/runtime FFI chapters after v0.3.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/language-meta/interop/c-abi-profile",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/language-meta/interop/c-abi-profile",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

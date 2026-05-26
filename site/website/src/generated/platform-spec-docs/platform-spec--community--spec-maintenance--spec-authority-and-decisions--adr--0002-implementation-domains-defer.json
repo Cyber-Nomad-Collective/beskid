@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions/adr/0002-implementation-domains-defer",
+  "repoPath": "src/content/docs/platform-spec/community/spec-maintenance/spec-authority-and-decisions/adr/0002-implementation-domains-defer.mdx",
+  "frontmatter": {
+    "title": "Implementation domains defer to language-meta",
+    "description": "Compiler, execution, core-library, and tooling realize language law without duplicating normative semantics.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMM-AUTH-0002",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-21",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Specification authority and embedded decisions",
+        "href": "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nPipeline and host details were written as if they owned user-visible meaning, overlapping language-meta chapters.\n\n## Decision\n\n[Compiler](/platform-spec/compiler/), [Execution](/platform-spec/execution/), [Core library](/platform-spec/core-library/), and [Tooling](/platform-spec/tooling/) specify *how the reference platform realizes* language-meta. They **must not** redefine semantics already owned there; they **must** defer with `relatedTopics` (for example `defers-to`, `implements`) instead of duplicating normative key tables.\n\n## Consequences\n\nClassification happens before authoring: “what does valid code mean?” → language-meta first; crates and phases link back.\n\n## Verification anchors\n\n`relatedTopics` frontmatter validation in `verify:trudoc --preset ci`.\n",
+  "layoutJson": null
+}

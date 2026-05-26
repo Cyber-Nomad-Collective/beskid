@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract",
+  "repoPath": "src/content/docs/platform-spec/compiler/semantic-pipeline/type-system-pass-contract/index.mdx",
+  "frontmatter": {
+    "title": "Type-system pass contract",
+    "description": "Feature hub for the type-system pass contract in the reference compiler.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "lastReviewed": "2026-04-30",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Semantic Pipeline",
+        "href": "/platform-spec/compiler/semantic-pipeline/",
+        "relation": "Parent area"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\nThis feature hub defines the normative contract for **type-system pass contract** and links newcomer-oriented reference articles.\n\n## Implementation anchors\n- `compiler/crates/beskid_analysis/src/analysis/` includes typing-oriented semantic checks.\n- `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs` validates core pipeline typing behavior.\n- `compiler/crates/beskid_tests/src/analysis/diagnostics.rs` validates type-related diagnostics.\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-SEM-0013` … `D-COMP-SEM-0015`); use the reader **ADRs** tab for expandable detail.\n\n\n- [Design model](./design-model/)\n- [Flow and algorithm](./flow-and-algorithm/)\n- [Contracts and edge cases](./contracts-and-edge-cases/)\n- [Examples](./examples/)\n- [Verification and traceability](./verification-and-traceability/)\n- [FAQ and troubleshooting](./faq-and-troubleshooting/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/semantic-pipeline/type-system-pass-contract",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

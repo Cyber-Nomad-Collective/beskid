@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/console-terminal-events/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Contracts and edge cases",
+    "description": "Resize polling and delivery requirements.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Console terminal events",
+        "href": "/platform-spec/core-library/terminal-and-console/console-terminal-events/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose\n\nDocument **contracts and edge cases** for the **Console Terminal Events** feature: role-specific normative detail beyond the feature hub.\n\n## Canonical references\n\n- Feature hub: [Console Terminal Events](/platform-spec/core-library/terminal-and-console/console-terminal-events/)\n- Sibling articles in this bundle (design model, contracts, flow, examples, verification)\n\n## Detailed behavior\n\n### Normative requirements\n\n| ID | Requirement |\n| --- | --- |\n| **EVT-001** | `PollResize` **must** compare against `lastSize` and only send on change. |\n| **EVT-002** | Failed `Channel.Send` **must** be ignored silently in v1 poll loop (no panic). |\n| **EVT-003** | `SubscribeOnResize` **must** set `hub.lastSize` and raise `OnResize` immediately with `QuerySize()`. |\n| **EVT-004** | Default size when all probes fail **should** be 80×24 via env fallback. |\n\n### Edge cases\n\n- **Non-TTY stdout**: `QuerySize` may return env defaults; resize events may never fire.\n- **Rapid resize**: Coalescing is caller responsibility; each poll may emit at most one message.\n- **Closed channel**: `Send` errors are dropped per EVT-002.\n\n## Verification\n\nSee the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.\n\n## Related topics\n\n- Parent [feature hub](/platform-spec/core-library/terminal-and-console/console-terminal-events/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/terminal-and-console/console-terminal-events",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/terminal-and-console/console-terminal-events",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

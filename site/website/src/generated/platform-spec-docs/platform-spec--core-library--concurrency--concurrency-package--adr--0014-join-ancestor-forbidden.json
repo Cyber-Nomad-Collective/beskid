@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0014-join-ancestor-forbidden",
+  "repoPath": "src/content/docs/platform-spec/core-library/concurrency/concurrency-package/adr/0014-join-ancestor-forbidden.mdx",
+  "frontmatter": {
+    "title": "Forbidden child Join of ancestor",
+    "description": "Compile-time rule preventing join cycles on fiber stacks.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-CONC-0014",
+    "adrStatus": "Accepted",
+    "adrDate": "2025-08-01",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Concurrency package",
+        "href": "/platform-spec/core-library/concurrency/concurrency-package/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nParent/child Join cycles deadlock the scheduler.\n\n## Decision\n\nChild **Join** parent → compile-time diagnostic **JoinWouldDeadlock**. Parent **Join** child and sibling **Join** remain allowed.\n\n## Consequences\n\nDiagnostic registry documents **JoinWouldDeadlock**.\n\n## Verification anchors\n\nSemantic analyzer tests for join graph.\n",
+  "layoutJson": null
+}

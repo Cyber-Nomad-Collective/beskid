@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/adr/0003-readme-packaging-for-pckg",
+  "repoPath": "src/content/docs/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/adr/0003-readme-packaging-for-pckg.mdx",
+  "frontmatter": {
+    "title": "Readme packaging for pckg artifacts",
+    "description": "Pack copies declared readme into README.md for registry docs.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-COMP-0003",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-04-23",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Corelib discovery and packaging",
+        "href": "/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRegistry consumers expect root README.md in `.bpk` artifacts.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Declare | Optional `readme = \"path.md\"` in Project.proj |\n| Default | `readme.md` at package root when present |\n| Pack | `beskid pckg pack` places resolved file as **`README.md`** |\n\n## Consequences\n\npckg documentation ingest uses consistent entry filename.\n\n## Verification anchors\n\n`PackagePublishDocumentation.cs`; pack integration tests.\n",
+  "layoutJson": null
+}

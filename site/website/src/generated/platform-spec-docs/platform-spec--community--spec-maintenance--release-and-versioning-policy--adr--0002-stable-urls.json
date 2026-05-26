@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/community/spec-maintenance/release-and-versioning-policy/adr/0002-stable-urls",
+  "repoPath": "src/content/docs/platform-spec/community/spec-maintenance/release-and-versioning-policy/adr/0002-stable-urls.mdx",
+  "frontmatter": {
+    "title": "Stable platform-spec URLs across releases",
+    "description": "Behavioral change edits normative text and metadata, not path version segments.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMM-VERS-0002",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-05",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Release and versioning policy",
+        "href": "/platform-spec/community/spec-maintenance/release-and-versioning-policy/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRenaming or version-prefixing feature paths broke bookmarks and `relatedTopics` links across domains.\n\n## Decision\n\nFeature and language-meta paths **must** remain stable across releases. Behavioral change is expressed by editing normative text and metadata (`status`, `lastReviewed`, embedded decisions), not by introducing version segments in site paths.\n\n## Consequences\n\nRedirects handle legacy Starlight paths; normative slugs under `platform-spec/` stay fixed.\n\n## Verification anchors\n\n`site/website` Astro routes; platform-spec nav tree generation.\n",
+  "layoutJson": null
+}

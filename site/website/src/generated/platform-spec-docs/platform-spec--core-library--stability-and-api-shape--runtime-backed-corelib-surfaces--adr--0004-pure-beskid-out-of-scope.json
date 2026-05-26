@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/adr/0004-pure-beskid-out-of-scope",
+  "repoPath": "src/content/docs/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/adr/0004-pure-beskid-out-of-scope.mdx",
+  "frontmatter": {
+    "title": "Pure Beskid modules out of scope",
+    "description": "Foundation-style modules without builtins follow normal lowering.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-STAB-0004",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-04-23",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Runtime-backed corelib surfaces",
+        "href": "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nNot every corelib module is runtime-backed.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| In scope | Builtin/syscall facades documented here |\n| Out of scope | Pure Beskid `foundation` modules |\n\n## Consequences\n\nThis feature does not duplicate language-meta semantics for pure libraries.\n\n## Verification anchors\n\nfoundation package compile tests.\n",
+  "layoutJson": null
+}

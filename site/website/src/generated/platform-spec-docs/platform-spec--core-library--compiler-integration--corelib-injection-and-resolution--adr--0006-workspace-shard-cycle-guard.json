@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/adr/0006-workspace-shard-cycle-guard",
+  "repoPath": "src/content/docs/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/adr/0006-workspace-shard-cycle-guard.mdx",
+  "frontmatter": {
+    "title": "Workspace shard cycle guard",
+    "description": "Corelib member packages must not implicit-back-link to aggregate.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-COMP-0006",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-04-23",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Corelib injection and resolution",
+        "href": "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nShards under `packages/*` would create cycles if they gained implicit host edges.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Guard | `is_corelib_workspace_shard_manifest` skips implicit back-edge |\n| Host | Only application hosts receive implicit corelib |\n\n## Consequences\n\nBuilding `packages/runtime` alone does not pull beskid_corelib as a hidden parent.\n\n## Verification anchors\n\n`resolver.rs`; corelib workspace compile tests.\n",
+  "layoutJson": null
+}

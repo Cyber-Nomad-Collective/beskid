@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/resolution-and-projects/project-manifest-contract/adr/0003-tooling-schema-compiler-graph",
+  "repoPath": "src/content/docs/platform-spec/compiler/resolution-and-projects/project-manifest-contract/adr/0003-tooling-schema-compiler-graph.mdx",
+  "frontmatter": {
+    "title": "Tooling owns schema; compiler owns graph",
+    "description": "Manifest key tables were duplicated between tooling and compiler specs.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMP-PROJ-0006",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-05",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Project manifest contract",
+        "href": "/platform-spec/compiler/resolution-and-projects/project-manifest-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nManifest key tables were duplicated between tooling and compiler specs.\n\n## Decision\n\nAuthor-facing `Project.proj` key tables live only under tooling; this compiler feature documents resolution graph behavior and defers schema prose via `relatedTopics`.\n\n## Consequences\n\nCompiler changes manifest parsing only when graph or diagnostic bands change; tooling spec leads schema edits.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/projects/manifest_resolve.rs`\n- `tooling project-manifest-contract hub.`\n",
+  "layoutJson": null
+}

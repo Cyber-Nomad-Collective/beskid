@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/c-abi-profile/adr/0003-dynamic-resolution-proposed",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/c-abi-profile/adr/0003-dynamic-resolution-proposed.mdx",
+  "frontmatter": {
+    "title": "Runtime dlopen Proposed appendix",
+    "description": "Dynamic resolution profile is non-Standard.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-LMETA-CABI-0003",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "C ABI profile",
+        "href": "/platform-spec/language-meta/interop/c-abi-profile/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nSome hosts want late binding; tier-1 reference path standardizes link-time.\n\n## Decision\n\n**Runtime `dlopen` / `dlsym` resolution** is **demoted** to the [dynamic resolution profile](/platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile/) (**Proposed** appendix, not Standard).\n\n## Consequences\n\nDocumentation and conformance matrices must not require dlopen for Standard tier-1.\n\n## Verification anchors\n\n`compiler/crates/beskid_engine/src/engine.rs` (`extern_dlopen`, Proposed).\n",
+  "layoutJson": null
+}

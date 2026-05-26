@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Contracts and edge cases",
+    "description": "MUST rules for extern validation, dynamic linking policy, and interop dispatch layout.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Extern dispatch and policy",
+        "href": "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Normative requirements\n\n| ID | Requirement |\n| --- | --- |\n| **EXT-001** | If dynamic extern resolution is disabled, compilation **must** fail when the artifact references extern symbols, listing each unresolved import. |\n| **EXT-002** | Engine-validated extern signatures **must** use only approved scalar Cranelift kinds; all other types **must** be rejected. |\n| **EXT-003** | Dynamic loading on Linux **must** use `RTLD_LOCAL \\| RTLD_NOW`; error paths **must** surface `dlerror()` text. |\n| **EXT-004** | `(library, symbol)` resolution **must** be cached for process lifetime without double `dlopen` of the same library path. |\n| **EXT-005** | `interop_dispatch_*` builtins **must** follow layouts documented in `beskid_runtime` `interop_layout.rs` for the active ABI version. |\n| **EXT-006** | User-facing docs **must not** expose internal `__interop_*` mangling; stable names are `interop_dispatch_*` only. |\n\n## Edge cases\n\n| Case | Behavior |\n| --- | --- |\n| Missing shared library | Compile/link failure with library path in diagnostic when dynamic path enabled |\n| Missing symbol | `dlsym` failure with symbol + library name |\n| Extern in artifact, feature off | Fail fast (**EXT-001**); no silent stub addresses |\n| Mixed link-time + dynamic in one workspace | Each artifact follows its manifest/link profile; engine caches are per-process |\n| Non-Linux host with `extern_dlopen` | Unsupported; compilation or tests **should** skip with explicit platform guard |\n\n## SHOULD guidance\n\n- New packages **should** use link-time [C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/) rather than `extern_dlopen`.\n- Panic from foreign code **should** be treated as process-fatal; Beskid does not translate C aborts into `Option`.\n\n## Related topics\n\n- [FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/)\n- [Panic, IO, and syscalls](/platform-spec/execution/runtime/panic-io-and-syscalls/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

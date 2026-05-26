@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/ffi-and-extern/verification-and-traceability",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/ffi-and-extern/verification-and-traceability.mdx",
+  "frontmatter": {
+    "title": "FFI and extern — Verification and traceability",
+    "description": "Conformance strategy for v0.3 FFI spec (fixtures, diagnostics, ignored runtime tests).",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-20",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "FFI and extern",
+        "href": "/platform-spec/language-meta/interop/ffi-and-extern/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Extern import extraction contract",
+        "href": "/platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/",
+        "relation": "Compiler lowering contract"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Spec-first conformance\n\nv0.3 FFI is **normative in platform-spec** before the reference compiler fully implements link-time binding, interop views, and export/callback registration.\n\nToolchains **conform** to this feature when:\n\n1. **Parse and analysis fixtures** accept valid v0.3 extern/export syntax and emit expected diagnostics for invalid forms.\n2. **Codegen extraction tests** record stable **`ExternImport`** / export metadata from fixtures (where implemented).\n3. **Runtime e2e tests** for link-time foreign calls may be marked **`#[ignore]`** with reason **`v0.3 FFI impl`** until the engine/CLI path lands.\n\n## Traceability matrix\n\n| Contract clause | Verification anchor |\n| --- | --- |\n| `Extern` on contract only | `beskid_tests` analysis **E1510** |\n| `Abi:\"C\"` + `Library` | `beskid_tests` extern validation pipeline |\n| Interop view types | Type fixtures + lowering signature scan (`validate_ffi_signature`) |\n| Link-time libraries | Manifest contract tests + future CLI import tests |\n| Export / callbacks | Dedicated fixtures under `export-and-callbacks` hub |\n\n## Runtime ABI separation\n\nTests for **`RUNTIME_EXPORT_SYMBOLS`** and **`BESKID_RUNTIME_ABI_VERSION`** remain under **`beskid_tests/src/abi/contracts.rs`**. User FFI layout versioning **must not** bump the runtime ABI version unless a runtime export symbol changes.\n\n## Maintainer rule\n\nAny behavior change in this area **must** update platform-spec text and add or adjust tests in the same change so the specification stays executable.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/language-meta/interop/ffi-and-extern",
+    "minSpecSections": 2,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console/ansi-escape-model/examples",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/ansi-escape-model/examples.mdx",
+  "frontmatter": {
+    "title": "Examples",
+    "description": "Representative escape composition and gated emission patterns.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "ANSI escape model",
+        "href": "/platform-spec/core-library/terminal-and-console/ansi-escape-model/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose\n\nDocument **examples** for the **Ansi Escape Model** feature: role-specific normative detail beyond the feature hub.\n\n## Canonical references\n\n- Feature hub: [Ansi Escape Model](/platform-spec/core-library/terminal-and-console/ansi-escape-model/)\n- Sibling articles in this bundle (design model, contracts, flow, examples, verification)\n\n## Detailed behavior\n\n### Bold red foreground (CSI `m`)\n\n```beskid\nstring esc = Ansi.Escape.Esc();\nstring seq = Ansi.Escape.EmitCsi(\"1;31\", \"m\");\nSystem.Output.Write(\"${seq}Hello${Ansi.Sgr.ResetSuffix()}\");\n```\n\nUngated framing for tests:\n\n```beskid\nstring raw = Ansi.Escape.CsiSequence(\"1;31\", \"m\");\n// raw == \"\\x1b[1;31m\" when Esc() is U+001B\n```\n\n### Cursor home and clear display\n\n```beskid\nstring moves = Ansi.Cursor.IntoSequence(\n    Ansi.Cursor.Home(Ansi.Cursor.Start())\n);\nstring clear = Ansi.Erase.IntoSequence(\n    Ansi.Erase.DisplayAll(Ansi.Erase.Start())\n);\nSystem.Output.Write(\"${moves}${clear}\");\n```\n\nWhen `ShouldEmitAnsi()` is false, `IntoSequence` returns `\"\"` for both builders.\n\n### Alternate screen buffer\n\n```beskid\nstring on = Ansi.Escape.WhenEnabled(Ansi.Escape.PrivateMode(\"1049\", true));\nstring off = Ansi.Escape.WhenEnabled(Ansi.Escape.PrivateMode(\"1049\", false));\n```\n\nGolden tests call `PrivateMode` without gating to assert framing bytes.\n\n### Fluent SGR with automatic reset\n\n```beskid\nstring line = Ansi.Sgr.Start()\n    .Bold()\n    .FgBasic(31)\n    .ApplyTo(\"error\");\nSystem.Output.WriteLine(line);\n```\n\n`ApplyTo` appends gated `ESC[0m` when attributes were applied.\n\n### DEC save / restore around progress render\n\n```beskid\nstring save = Ansi.Escape.EmitDec(\"7\");\nstring restore = Ansi.Escape.EmitDec(\"8\");\nSystem.Output.Write(\"${save}\");\n// draw status line\nSystem.Output.Write(\"${restore}\");\n```\n\nPrefer DEC sequences over SCO `ESC[s` / `ESC[u` per decision **D-TC-001**.\n\n## Verification\n\nSee the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.\n\n## Related topics\n\n- Parent [feature hub](/platform-spec/core-library/terminal-and-console/ansi-escape-model/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/terminal-and-console/ansi-escape-model",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/terminal-and-console/ansi-escape-model",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/composition",
+  "repoPath": "src/content/docs/platform-spec/language-meta/composition/index.mdx",
+  "frontmatter": {
+    "title": "Composition",
+    "description": "Dependency injection and host composition for the language-meta composition area.",
+    "template": "splash",
+    "tableOfContents": false,
+    "specLevel": "area",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    }
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\n\n<SpecPageHeader\n\townerName=\"Piotr Mikstacki\"\n\townerEmail=\"pmikstacki@cybernomad.it\"\n\tsubmitterName=\"Piotr Mikstacki\"\n\tsubmitterEmail=\"pmikstacki@cybernomad.it\"\n/>\n\n<SpecSection title=\"Scope\" id=\"scope\">\nLanguage-native **dependency injection** and **host composition**: named **`host`** types (multiple per project; one **`launch`** per run), **`registry`** global scope, nested **`scope`** with **`init`** / **`dispose`**, **`with`** activation, field **`inject`** (singular and **`T[]`** plural), **`global::`** / **`parent::`** navigation, and **`launch`**. Library projects may define **`host`** but **must not** **`launch`**. The reference compiler resolves the service graph at compile time; execution backends consume a frozen binding plan.\n\nRust **pipeline composition** (compiler pass wiring) and **compiler mod** registration are specified separately under [Pipeline composition](/platform-spec/compiler/pipeline-composition/) and [Compiler Mods](/platform-spec/compiler/compiler-mods/).\n</SpecSection>\n\n<SpecSection title=\"Feature index\" id=\"features\">\nUse the tiles below for normative **feature** contracts in this area.\n</SpecSection>\n\n<DomainTiles pathPrefix=\"platform-spec/language-meta/composition\" heading=\"Features\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/language-meta/composition",
+    "sections": [
+      {
+        "id": "scope",
+        "required": true,
+        "kind": "specSection"
+      },
+      {
+        "id": "features",
+        "required": true,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/language-meta/composition",
+          "heading": "Features"
+        }
+      }
+    ]
+  }
+}

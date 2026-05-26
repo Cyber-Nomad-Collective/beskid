@@ -12,8 +12,11 @@ function hubIconSvg(icon) {
 }
 
 // src/client/beskid-hub.ts
+var HUB_ROOT_SELECTOR = "[data-beskid-hub-root]";
 var HUB_SELECTOR = "[data-beskid-hub]";
 var TRIGGER_SELECTOR = "[data-beskid-hub-trigger]";
+var CLOSE_SELECTOR = "[data-beskid-hub-close]";
+var documentListenersAttached = false;
 function parseServices(root) {
   const raw = root.getAttribute("data-services");
   if (!raw) return [];
@@ -39,42 +42,74 @@ function renderGrid(dialog, services) {
   if (!grid) return;
   grid.innerHTML = services.map(tileHtml).join("");
 }
+function hubDialogForRoot(root) {
+  return root.querySelector(HUB_SELECTOR);
+}
+function prepareHubRoot(root) {
+  const dialog = hubDialogForRoot(root);
+  if (!dialog) return null;
+  renderGrid(dialog, parseServices(root));
+  return dialog;
+}
 function openHub(dialog) {
   if (!dialog.open) {
     dialog.showModal();
-    const close = dialog.querySelector("[data-beskid-hub-close]");
-    close?.focus();
+    dialog.querySelector(CLOSE_SELECTOR)?.focus();
   }
 }
 function closeHub(dialog) {
   if (dialog.open) dialog.close();
 }
-function bindHub(root) {
-  const dialog = root.matches(HUB_SELECTOR) ? root : root.querySelector(HUB_SELECTOR);
-  if (!dialog || dialog.dataset.beskidHubBound === "true") return;
-  const services = parseServices(root);
-  renderGrid(dialog, services);
-  dialog.dataset.beskidHubBound = "true";
-  root.querySelectorAll(TRIGGER_SELECTOR).forEach((trigger) => {
-    trigger.addEventListener("click", (event) => {
+function attachDocumentListeners() {
+  if (documentListenersAttached) return;
+  documentListenersAttached = true;
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const trigger = target.closest(TRIGGER_SELECTOR);
+    if (trigger) {
       event.preventDefault();
-      openHub(dialog);
-    });
+      const root = trigger.closest(HUB_ROOT_SELECTOR);
+      if (!root) return;
+      const dialog = prepareHubRoot(root);
+      if (dialog) openHub(dialog);
+      return;
+    }
+    const closeBtn = target.closest(CLOSE_SELECTOR);
+    if (closeBtn) {
+      const dialog = closeBtn.closest(HUB_SELECTOR);
+      if (dialog) closeHub(dialog);
+    }
   });
-  dialog.querySelector("[data-beskid-hub-close]")?.addEventListener("click", () => {
-    closeHub(dialog);
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (target instanceof HTMLDialogElement && target.matches(HUB_SELECTOR)) {
+      closeHub(target);
+    }
   });
-  dialog.addEventListener("click", (event) => {
-    if (event.target === dialog) closeHub(dialog);
-  });
-  dialog.addEventListener("cancel", (event) => {
-    event.preventDefault();
-    closeHub(dialog);
-  });
+  document.addEventListener(
+    "cancel",
+    (event) => {
+      const dialog = event.target;
+      if (dialog instanceof HTMLDialogElement && dialog.matches(HUB_SELECTOR)) {
+        event.preventDefault();
+        closeHub(dialog);
+      }
+    },
+    true
+  );
 }
 function initBeskidHub(scope = document) {
-  scope.querySelectorAll("[data-beskid-hub-root]").forEach(bindHub);
+  attachDocumentListeners();
+  scope.querySelectorAll(HUB_ROOT_SELECTOR).forEach(prepareHubRoot);
+}
+function initBeskidHubAfterBlazor() {
+  if (typeof window === "undefined") return;
+  const blazor = window.Blazor;
+  if (!blazor?.addEventListener) return;
+  blazor.addEventListener("enhancedload", () => initBeskidHub());
 }
 
 // src/client/beskid-hub-entry.ts
 initBeskidHub();
+initBeskidHubAfterBlazor();

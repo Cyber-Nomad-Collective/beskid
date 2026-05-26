@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration",
+  "repoPath": "src/content/docs/platform-spec/compiler/build-pipeline/build-and-run-orchestration/index.mdx",
+  "frontmatter": {
+    "title": "Build and run orchestration",
+    "description": "Feature hub for the build and run orchestration in the reference compiler.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "lastReviewed": "2026-04-30",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Build Pipeline",
+        "href": "/platform-spec/compiler/build-pipeline/",
+        "relation": "Parent area"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\nThis feature hub defines the normative contract for **build and run orchestration** and links newcomer-oriented reference articles.\n\n## Implementation anchors\n- `compiler/crates/beskid_cli/src/commands/` coordinates compile, run, and doc commands.\n- `compiler/crates/beskid_engine/src/jit_module.rs` executes JIT pipelines from compiled artifacts.\n- `compiler/crates/beskid_tests/src/runtime/jit.rs` and e2e fixtures verify orchestration behavior.\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-BUILD-0004` … `D-COMP-BUILD-0006`); use the reader **ADRs** tab for expandable detail.\n\n\n- [Design model](./design-model/)\n- [Flow and algorithm](./flow-and-algorithm/)\n- [Contracts and edge cases](./contracts-and-edge-cases/)\n- [Examples](./examples/)\n- [Verification and traceability](./verification-and-traceability/)\n- [FAQ and troubleshooting](./faq-and-troubleshooting/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/build-pipeline/build-and-run-orchestration",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

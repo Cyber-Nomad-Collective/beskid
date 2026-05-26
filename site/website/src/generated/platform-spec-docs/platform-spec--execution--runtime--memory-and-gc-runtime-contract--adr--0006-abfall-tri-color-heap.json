@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/adr/0006-abfall-tri-color-heap",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/memory-and-gc-runtime-contract/adr/0006-abfall-tri-color-heap.mdx",
+  "frontmatter": {
+    "title": "Abfall tri-color heap with write barriers",
+    "description": "Reference runtime uses vendored Abfall mark/sweep with barriered stores.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-EXEC-RT-0006",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-02-01",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Memory and GC runtime contract",
+        "href": "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nThe prior arena model needed a collector that supports concurrent marking and precise scanning with compiler-emitted descriptors.\n\n## Decision\n\n| Component | Role |\n| --- | --- |\n| **Abfall** | Tri-color mark/sweep heap integrated in `beskid_runtime::gc` |\n| **Barriers** | `gc_write_barrier` on pointer stores during marking |\n| **STW** | Limited stop-the-world for root scan and phase transitions |\n| **Snapshots** | `GcSnapshot` / `enter_runtime_scope` for host tooling |\n\nGit anchor: `6ecd493` (vendored Abfall + Beskid heap integration).\n\n## Consequences\n\nLowering **must** emit barriers where Phase requires them. Hosts attach runtime scope before JIT/AOT execution.\n\n## Verification anchors\n\n`compiler/crates/beskid_runtime/src/gc/`; JIT runtime tests.",
+  "layoutJson": null
+}

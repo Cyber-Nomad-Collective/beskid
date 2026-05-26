@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/adr/0005-phase-a-before-phase-b",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/memory-and-gc-runtime-contract/adr/0005-phase-a-before-phase-b.mdx",
+  "frontmatter": {
+    "title": "Ship Phase A GC before parallel mutators",
+    "description": "v0.2 targets single mutator; Phase B requires spec and barrier completion first.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-EXEC-RT-0005",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-01-15",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Memory and GC runtime contract",
+        "href": "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Fiber scheduler and stacks",
+        "href": "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
+        "relation": "Phase A scheduling rules"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nParallel GC mutators need write barriers, stack-map coverage, and scheduler coordination. Shipping partial parallel GC risks data races on the Abfall heap.\n\n## Decision\n\n| Phase | Mutators | Ship order |\n| --- | --- | --- |\n| **A (v0.2)** | One Beskid mutator; many cooperative fibers | **Default ship** |\n| **B (v0.3, opt-in)** | Parallel mutators + real `gc_write_barrier` on pointer-payload channels + syscall-pool guard | Wired behind `BESKID_RUNTIME_PHASE_B` / `set_runtime_phase(RuntimePhase::PhaseB)`; stays opt-in until preemption emission and concurrent-mark stress land |\n| **B (later)** | Phase B becomes the default | Requires AOT/JIT to insert `runtime_preempt_check` prologues and full concurrent-mark stress coverage |\n\nPhase B **must not** become the default without updating this feature hub and fiber\nscheduler contracts.\n\n## Consequences\n\nPhase A barriers stay correct because Phase B reuses the same Dijkstra insertion\nbarrier; the difference is that Phase B exercises it on multi-mutator workloads and\non pointer-payload channel ops. Fiber/feature docs cross-link Phase tables.\n\n## Verification anchors\n\nGC integration tests under `crates/beskid_runtime/tests/`:\n\n- `tests/concurrency.rs` — channel/scheduler core\n- `tests/gc.rs`, `tests/gc_concurrency.rs` — Phase A heap and root handles\n- `tests/phase_b_concurrency.rs` — Phase B multi-mutator stress, pointer-payload\n  channels with write barriers, syscall-pool guard, optional preemption hook\n\nPlatform-spec Phase diagrams in hub and [design model](../design-model/).",
+  "layoutJson": null
+}

@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/examples",
+  "repoPath": "src/content/docs/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/examples.mdx",
+  "frontmatter": {
+    "title": "Examples",
+    "description": "Practical examples that demonstrate `Corelib discovery and packaging` behavior.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Compiler integration",
+        "href": "/platform-spec/core-library/compiler-integration/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Area",
+        "title": "Resolution and projects",
+        "href": "/platform-spec/compiler/resolution-and-projects/",
+        "relation": "Project graph logic resolves and injects corelib"
+      },
+      {
+        "type": "Area",
+        "title": "Stability and API shape",
+        "href": "/platform-spec/core-library/stability-and-api-shape/",
+        "relation": "API stability expectations depend on canonical packaging"
+      },
+      {
+        "type": "Feature",
+        "title": "Corelib discovery and packaging",
+        "href": "/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n## Example 1: Happy path\n\nA standard project exercises the expected producer -> consumer handoff with no contract violations. Trace this via:\n\n- `Canonical package root `compiler/corelib/beskid_corelib``\n- `CLI embedding/install support in `compiler/crates/beskid_cli/build.rs` and `compiler/crates/beskid_cli/src/corelib_runtime.rs``\n\n## Example 2: Contract mismatch\n\nIntentionally alter a boundary definition (for example, a symbol or structure shape), then run the related conformance suite. The expected result is a deterministic failure that identifies the mismatched boundary.\n\n## Example 3: Regression-proofing a fix\n\nAfter applying a fix, add or update a focused fixture in the nearest test crate and rerun wider suites so the behavior remains locked for future refactors.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console/console-controls/adr/0040-character-cell-layout",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/console-controls/adr/0040-character-cell-layout.mdx",
+  "frontmatter": {
+    "title": "Character-cell layout only",
+    "description": "Console controls operate on cell grid, not pixels.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-TERM-0040",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Console controls",
+        "href": "/platform-spec/core-library/terminal-and-console/console-controls/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nTerminal UI in corelib targets TTY character grids.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Coordinates | Rows/columns in character cells |\n| Graphics | Pixel graphics are out of scope |\n\n## Consequences\n\nLayout helpers align with `Console.ConsoleSize` and resize events.\n\n## Verification anchors\n\nConsole control tests under `packages/console`.\n",
+  "layoutJson": null
+}

@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Syntax domain model generation - Contracts and edge cases",
+    "description": "Contract for generating the immutable Beskid syntax domain model consumed by Mod SDK facades and meta discovery.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-04-30",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Syntax domain model generation",
+        "href": "/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThis article states **contracts and edge cases** for **Syntax domain model generation**.\n\n## Hard requirements\n- **Deterministic ordering** — discovery and execution order must be reproducible from equal inputs (path-normalized roots, sorted files, stable tie-breaks).\n- **Bounded work** — host enforces step limits, allocation caps, and recursion depth across nested meta calls.\n- **Versioned facades** — `Beskid.Compiler` surface is tied to compiler language version tokens exposed on the compilation instance.\n\n## Edge cases\n- **Partial programs** — facades must tolerate incomplete syntax where the language permits; diagnostics are preferred over host panics.\n- **Conflicting edits** — multiple meta contributors touching the same declaration identity produce a deterministic merge failure surfaced as structured diagnostics.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

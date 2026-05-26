@@ -28,3 +28,7 @@ Legacy `/execution/` and `/corelib/` URLs are handled by Astro redirects plus ng
 ## Health
 
 Container healthcheck: `wget -q --spider http://127.0.0.1/`. Public URL: `https://beskid-lang.org`.
+
+## Related application
+
+The [Beskid Tracker](../beskid_tracker/COOLIFY.md) is a separate Coolify app (base directory `/beskid_tracker`, port 3000). Deploy the docs site first so `/generated/platform-spec-catalog.json` is available for tracker docs management.

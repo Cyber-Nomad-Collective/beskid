@@ -1,0 +1,58 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/build-pipeline/stage-ordering/design-model",
+  "repoPath": "src/content/docs/platform-spec/compiler/build-pipeline/stage-ordering/design-model.mdx",
+  "frontmatter": {
+    "title": "Stage ordering and lowering - Design model",
+    "description": "Pipeline stage model and artifact boundaries for the reference compiler.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Stage ordering and lowering",
+        "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Area",
+        "title": "Codegen and IR",
+        "href": "/platform-spec/compiler/codegen-and-ir/",
+        "relation": "Lowering internals and IR shape"
+      },
+      {
+        "type": "Area",
+        "title": "Compiler Mods",
+        "href": "/platform-spec/compiler/compiler-mods/",
+        "relation": "Mod host scheduling relative to parse and semantic gates"
+      },
+      {
+        "type": "Feature",
+        "title": "Rules pipeline contract",
+        "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/",
+        "relation": "Staged semantic rules after merged syntax"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Phase handoff model\n\n```mermaid\nflowchart LR\n  resolve_input[resolve_input]\n  assemble[program.assemble]\n  parse[parse]\n  macro[macro.expand]\n  modload[mod.load collect generate]\n  semantic[semantic rules]\n  comp[composition.resolve]\n  modar[mod.analyze rewrite]\n  hir[HIR and ModuleIndex]\n  lower[lower_program]\n  artifact[CodegenArtifact]\n  resolve_input --> assemble --> parse --> macro --> modload --> semantic --> comp --> modar --> hir --> lower --> artifact\n```\n\nThe compile model has a strict handoff chain:\n\n`resolve_input` -> **`program.assemble`** -> parse (entry + indexed units) -> **`macro.expand`** -> **mod collect/generate (when enabled)** -> semantic rules gate -> **`composition.resolve`** (app host DI; see [Native dependency injection](/platform-spec/language-meta/composition/dependency-injection/)) -> analyzer/rewriter passes -> HIR normalization -> resolution (with **`ModuleIndex`**) -> typing -> `lower_program` -> `CodegenArtifact`.\n\nBackends (JIT and AOT) consume this artifact and must not reorder semantic phases.\n\n## Language macro expansion\n\n**[Language macros](/platform-spec/language-meta/metaprogramming/macros/)** expand in **`macro.expand`**, immediately after **`parse`** and **before `mod.load`**. The phase:\n\n1. Resolves `name!` invocations to in-scope **`macro`** definitions.\n2. Substitutes fragment arguments for **`$param`** in macro bodies (typed AST only).\n3. Repeats until no invocations remain or **`maxMacroExpansionDepth`** (default 32) is exceeded.\n\nWhen **`mod.generate`** re-parses merged syntax, hosts **must** run **`macro.expand`** again before the next **`mod.collect`** / semantic gate (same syntax generation). Emit **`syntax.generation`** when either macros or mods mutate the program snapshot.\n\n## Mod phases and stable phase identifiers\n\n**Compiler mods** (see **[Compiler Mods](/platform-spec/compiler/compiler-mods/)**) run as explicit host-driven phases after **`macro.expand`** and before lowering.\n\n1. **Phase vocabulary** — Register stable string ids in `compiler/crates/beskid_pipeline/src/phases.rs` and update `PIPELINE.md` in the same change.\n2. **Observer parity** — CLI and codegen entrypoints must bracket mod phases with `PhaseStart`/`PhaseEnd` (or documented `WorkUnit` ids).\n3. **Bounded generation** — `Generator` is incremental by default and runs with a bounded replay loop (`maxGeneratorRounds`). On each replay, host merges typed AST contributions and re-parses affected units.\n4. **Analyzer/rewrite ordering** — `Analyzer` runs on merged host+generated code; `Rewriter` applies typed replacements and is surfaced as fix-oriented behavior.\n5. **No lowering on torn trees** — lowering runs only on a consistent post-merge snapshot.\n\n## Placement relative to `beskid_codegen` services\n\nThe reference lowering path orders parse, semantic diagnostics, lower, and codegen. Mod phases are inserted after parse: collect/generate, then semantic, then analyze/rewrite, then lowering.\n\n## Normative mod phase id strings (`beskid_pipeline`)\n\nThese literals must match **[Compiler Mods / Mod projects and pipeline phase ids](/platform-spec/compiler/compiler-mods/#mod-projects)**.\n\n**Full build (`FULL_BUILD_PHASE_ORDER`)** — After parse, insert `macro.expand`, then `mod.load`, `mod.collect`, `mod.generate` (plus `syntax.generation` on replay), then semantic phases, then `mod.analyze`, optional `mod.rewrite`, then lower/codegen/link.\n\n**JIT run (`JIT_RUN_PHASE_ORDER`)** — No JIT mod execution path is normative for compiler mods; mod execution is AOT-hosted only.\n\n**Auxiliary ids** — `workspace.graph_changed` and `semantic.snapshot` are emitted by workspace refresh and semantic pipeline orchestration respectively; they **must** use the same string literals when represented as phases (or as documented `WorkUnit` `id` prefixes if only work units are used—pick one representation per id and document it in `PIPELINE.md`).\n\n**`lower.ready`** — Emitted immediately before the existing **`lower`** phase entrypoint runs on a merged program; hosts **must** emit it even when no mods ran (no-op instant) so observers can assert ordering uniformly.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/build-pipeline/stage-ordering",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

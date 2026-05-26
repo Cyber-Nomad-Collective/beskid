@@ -1,0 +1,68 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/concurrency/concurrency-package",
+  "repoPath": "src/content/docs/platform-spec/core-library/concurrency/concurrency-package/index.mdx",
+  "frontmatter": {
+    "title": "Concurrency package",
+    "description": "Normative corelib shapes for Fiber, Channel, Hub, Mutex, and WaitGroup—thin builtins wrappers only.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "lastReviewed": "2026-05-20",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Concurrency",
+        "href": "/platform-spec/core-library/concurrency/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Feature",
+        "title": "Fiber scheduler and stacks",
+        "href": "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
+        "relation": "Runtime implementation contract"
+      },
+      {
+        "type": "Feature",
+        "title": "Channels and synchronization",
+        "href": "/platform-spec/execution/runtime/channels-and-synchronization/",
+        "relation": "Send, Receive, Hub, and memory ordering"
+      },
+      {
+        "type": "Feature",
+        "title": "Fibers and spawn",
+        "href": "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
+        "relation": "spawn keyword requires Fiber contract"
+      }
+    ]
+  },
+  "body": "import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"Layer diagram\" id=\"layer-diagram\">\n\n```mermaid\nflowchart TB\n  author[Beskid source spawn / Channel / Hub]\n  corelib[corelib_concurrency structs]\n  builtins[runtime builtins fiber_* channel_* hub_*]\n  scheduler[fiber scheduler + GC safepoints]\n  author --> corelib --> builtins --> scheduler\n```\n\nThe package is a **thin wrapper** layer only — no duplicate channel abstractions or async state machines.\n\n</SpecSection>\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\nNormative **corelib** shapes for cooperative concurrency: `Fiber<T>`, `Channel<T>`, homogeneous `Hub<T>`, `Mutex`, and `WaitGroup` as thin wrappers over stable runtime builtins. `spawn` lowering returns a move-only fiber handle with `OnCancelled` on the handle; channel and join failures use `Result` / `Option`, not panic.\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- Workspace package `compiler/corelib/packages/concurrency/` (`corelib_concurrency`)\n- Runtime symbols: `compiler/crates/beskid_abi/src/symbols.rs`, `BUILTIN_SPECS`\n- Corelib tests: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/concurrency/`\n- Runtime integration: `compiler/crates/beskid_runtime/tests/concurrency.rs` plus `compiler/crates/beskid_tests/src/runtime/jit.rs` spawn smoke coverage\n</SpecSection>\n\n<SpecSection title=\"Contract statement\" id=\"contract-statement\">\nThe `corelib_concurrency` workspace package provides the only supported user-facing API for cooperative fibers and channel communication. Public types are **structs** whose methods call **stable runtime builtins** (`fiber_*`, `channel_*`, `hub_*`, `mutex_*`, `wait_group_*`). The package **must not** introduce secondary abstraction layers (no builder stacks, no implicit async state machines, no duplicated channel interfaces).\n\nAll fiber operations that can fail **must** return `Core.Results.Result` (or `Option` where absence is ordinary). **Panics are not** the error path for channel or join failures.\n</SpecSection>\n\n<SpecSection title=\"Inputs and outputs\" id=\"inputs-and-outputs\">\n| Surface | Role |\n| --- | --- |\n| `Fiber<T>` | Opaque handle wrapping `fiber_*` builtins; `T` is the spawn entry return type |\n| `Channel<T>` | **Unbounded by default**; `ChannelOptions.Bounded(n)` for bounded queues |\n| `Hub<T>` | Homogeneous multichannel **WaitReceive** (round-robin); unlike types use `Channel<HubMessage>` or multiple hubs |\n| `Mutex` | Mutual exclusion between fibers on shared state |\n| `WaitGroup` | Fork–join counter for batches of fibers |\n| `Concurrency.Yield()` | Cooperative reschedule (`fiber_yield`) |\n| `Concurrency.NowMillis()` | Monotonic milliseconds (`fiber_now_millis` / clock builtin) |\n| `Concurrency.Spawn` | Used by lowering of `spawn`; returns `Fiber<T>` with **OnCancelled** on handle |\n| `Fiber.Join` | `Result<T, FiberError>` |\n| `Fiber.Detach` | Fire-and-forget; unjoined panic still aborts process unless recovered at runtime policy |\n| `Fiber.Cancel` | Sets cancel flag; runs child `event OnCancelled()`; **Join** → `FiberError::Cancelled` |\n</SpecSection>\n\n<SpecSection title=\"State model\" id=\"state-model\">\n- `Fiber<T>` — runtime handle + metadata (id, cancellation flag). Not copyable unless spec later allows handle duplication; **move-only** preferred.\n- `Channel<T>` — holds runtime queue id; **Close** marks writer end closed; **Receive** after drain returns `ChannelError::Closed` in `Result`.\n- `Hub` — registered set of channel endpoints with cached readiness index updated by runtime on send/receive.\n- Phase A (see scheduler spec): many fibers, **single GC mutator thread** documented; Phase B adds parallel mutators without API break.\n</SpecSection>\n\n<SpecSection title=\"Algorithms and flow\" id=\"algorithms-and-flow\">\n1. `spawn entry` lowers to `fiber_spawn_with_cancel_slot(entry, env, onCancelledSlot)`; parent gets a `Fiber<T>` backed by the runtime `i64` fiber id.\n2. **Send** — if queue full, **park current fiber** (not OS thread); on success establishes happens-before edge to receiver.\n3. **Receive** — if empty and open, park; if closed and empty, return `Result::Err(Closed)`.\n4. **TrySend** / **TryReceive** — non-blocking; `Option` for empty/full.\n5. **Hub.WaitReceive** — runtime waits until any registered channel can satisfy Receive; returns which member completed.\n6. Blocking **syscall** paths in `System.Syscall` **should** park the calling fiber and delegate blocking work to the thread pool (runtime), not stall the whole scheduler.\n</SpecSection>\n\n<SpecSection title=\"Edge cases and errors\" id=\"edge-cases-and-errors\">\n- **Send** after **Close** → `Result::Err(ChannelError::Closed)` (no panic).\n- **Cancel** on joined fiber → `FiberError::Cancelled` on **Join**.\n- **Detach** child panic → process abort after diagnostic unless runtime policy adds domain recovery later.\n- Fibers **must not** share pointers to another fiber's stack; **Channel** is the **only** approved cross-fiber communication (language + memory model).\n</SpecSection>\n\n<SpecSection title=\"Compatibility and versioning\" id=\"compatibility-and-versioning\">\nNew builtins require `beskid_runtime_abi_version` bump and entries in `BUILTIN_SPECS` / `define_builtins!`. Deprecated v0.1 `rt_yield` / `rt_now_millis` (`sched` feature) are superseded by `fiber_yield` and monotonic clock builtins—remove legacy doc references to async/await.\n</SpecSection>\n\n<SpecSection title=\"Security and performance notes\" id=\"security-and-performance-notes\">\n- Default fiber stack: **64 KiB**, growable cap **8 MiB** (runtime).\n- Unbounded channels are opt-in; documentation **must** warn about memory growth.\n- **Hub** registration count should be bounded in UI scenarios (console) to avoid linear scans on hot paths.\n</SpecSection>\n\n<SpecSection title=\"Examples\" id=\"examples\">\nSee **[examples](./examples/)** article: spawn + **Join**, bounded **Channel**, **Hub** for stdin/resize multiplexing sketch.\n</SpecSection>\n\n<SpecSection title=\"Verification and traceability\" id=\"verification-and-traceability\">\n- Corelib compile tests under `compiler/corelib/beskid_corelib/tests/corelib_tests/src/concurrency/`\n- Runtime integration: canonical primitive coverage in `compiler/crates/beskid_runtime/tests/concurrency.rs`; JIT smoke in `compiler/crates/beskid_tests/src/runtime/jit.rs`\n- Conformance: bounded/closed **Channel**, **Cancel**, **Hub** readiness ordering, **Mutex**, **WaitGroup**, and syscall parking\n</SpecSection>\n\n<SpecSection title=\"Decisions\" id=\"decisions\">\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-CONC-0001` … `D-CORE-CONC-0014`); use the reader **ADRs** tab for expandable detail. Legacy [decisions record](./decisions-record/) is a migration index only.\n</SpecSection>\n\n<SpecSection title=\"Related features\" id=\"related-features\">\n- **[System.Threading](/platform-spec/core-library/concurrency/system-threading/)** — OS threads (preemptive), not fibers\n- **[Console terminal events](/platform-spec/core-library/terminal-and-console/console-terminal-events/)** — delivers via **Channel**\n</SpecSection>\n\n<DomainTiles pathPrefix=\"platform-spec/core-library/concurrency/concurrency-package\" heading=\"Articles\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/concurrency/concurrency-package",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/concurrency/concurrency-package",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

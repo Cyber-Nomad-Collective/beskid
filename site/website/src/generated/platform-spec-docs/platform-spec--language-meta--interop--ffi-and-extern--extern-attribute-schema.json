@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/ffi-and-extern/extern-attribute-schema",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/ffi-and-extern/extern-attribute-schema.mdx",
+  "frontmatter": {
+    "title": "Extern attribute schema",
+    "description": "Normative Extern and per-method interop attributes for contract imports (v0.3).",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-20",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "FFI and extern",
+        "href": "/platform-spec/language-meta/interop/ffi-and-extern/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "C ABI profile",
+        "href": "/platform-spec/language-meta/interop/c-abi-profile/",
+        "relation": "Linking and type lowering"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Contract-level `Extern`\n\nApplied only to **`contract`** declarations.\n\n| Field | Required | Meaning |\n| --- | --- | --- |\n| **`Abi`** | yes | In v0.3 Standard, **must** be **`\"C\"`** (case-insensitive). Other values are reserved. |\n| **`Library`** | yes | Logical library identity for link-time resolution (see **[link-time linking](/platform-spec/language-meta/interop/c-abi-profile/link-time-linking/)** and **[foreign library import](/platform-spec/tooling/foreign-library-import/)**). Must be non-empty. |\n\nExample:\n\n```beskid\n[Extern(Abi:\"C\", Library:\"libc\")]\npub contract Libc {\n    i64 getpid();\n}\n```\n\n## Per-method overrides (v0.3.0)\n\nContract methods **may** carry method-level attributes:\n\n| Attribute | Required | Meaning |\n| --- | --- | --- |\n| **`Symbol`** | no | Linker / foreign symbol name when it differs from the Beskid method name (for example `Symbol:\"pthread_create\"`). When omitted, the **method identifier** is the logical symbol. |\n| **`Library`** | no | Overrides contract-level **`Library`** for this method only. |\n\nExample:\n\n```beskid\n[Extern(Abi:\"C\", Library:\"libc.so.6\")]\npub contract Libc {\n    [Symbol(\"write\")]\n    i64 write(i32 fd, CBuffer buf, i64 count);\n}\n```\n\n## Parameter modifiers (v0.3.0)\n\n| Modifier | Meaning |\n| --- | --- |\n| *(none)* | **Borrow** — caller retains ownership; foreign code must not retain pointers beyond the call unless documented otherwise. |\n| **`Transfer`** | **Transfer** — ownership of the view’s storage obligation moves per profile rules (see **[ownership at the boundary](/platform-spec/language-meta/interop/interop-contracts/ownership-at-boundary/)**). |\n| **`GcPin`** | **Proposed** — GC-managed handle pinned for the call duration via runtime root handle; not required for Standard conformance in v0.3.0. |\n\n`ref u8` remains valid as a **byte slice start** without length; authors **should** prefer **`CBuffer`** / **`CStringView`** interop views instead.\n\n## Diagnostics\n\n| Code | Condition |\n| --- | --- |\n| **E1510** | `Extern` applied to a disallowed declaration target |\n| **E1520** | Invalid **`Abi`** (not **`\"C\"`**) — transition: **T0901** |\n| **E1521** | Missing **`Library`** — transition: **T0902** |\n| **E1522** | Disallowed extern parameter type — transition: **T0903** |\n| **E1523** | Disallowed extern return type — transition: **T0904** |\n| **E1524–E1539** | Export, interop views, link manifest — see registry |\n\nFull band: **[Diagnostic code registry / design model](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/design-model/)**. Fixtures: `compiler/crates/beskid_tests/src/analysis/ffi_v03_spec.rs`.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/language-meta/interop/ffi-and-extern",
+    "minSpecSections": 2,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

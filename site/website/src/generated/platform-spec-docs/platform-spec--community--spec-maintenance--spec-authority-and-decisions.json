@@ -1,0 +1,69 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions",
+  "repoPath": "src/content/docs/platform-spec/community/spec-maintenance/spec-authority-and-decisions/index.mdx",
+  "frontmatter": {
+    "title": "Specification authority and embedded decisions",
+    "description": "Normative rules for language law vs implementation domains, maturity (Proposed/Standard), and embedded decision records in feature hubs and articles.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "lastReviewed": "2026-05-21",
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Spec maintenance",
+        "href": "/platform-spec/community/spec-maintenance/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Feature",
+        "title": "Feature Hub + Article Bundle template",
+        "href": "/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/",
+        "relation": "Authoring structure for hubs and bundles"
+      },
+      {
+        "type": "Feature",
+        "title": "Release and versioning policy",
+        "href": "/platform-spec/community/spec-maintenance/release-and-versioning-policy/",
+        "relation": "Version axis and maturity bands"
+      },
+      {
+        "type": "Domain",
+        "title": "Language meta",
+        "href": "/platform-spec/language-meta/",
+        "relation": "Canonical language law domain"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n## Normative platform contract\n\n1. **Language law** — User-visible semantics (syntax, types, evaluation, contracts, memory, and cross-cutting language rules) **must** be defined only under the [Language meta](/platform-spec/language-meta/) domain, except where another domain page explicitly declares a **cross-domain exception** and links to the owning language-meta chapter.\n2. **Implementation law** — The [Compiler](/platform-spec/compiler/), [Execution](/platform-spec/execution/), [Core library](/platform-spec/core-library/), and [Tooling](/platform-spec/tooling/) domains specify *how the reference platform realizes* language-meta. They **must not** redefine semantics already owned by language-meta; they **must** defer with `relatedTopics` (for example `defers-to`, `implements`) instead of duplicating normative key tables.\n3. **Spec leads code** — Implementation changes that alter observable language or platform behavior **must** be preceded or accompanied by normative spec updates. The spec is the authority; tests and crates are verification anchors, not a substitute for missing contract text.\n4. **Architecture decision records (ADRs)** — Each **Standard** feature **must** publish closed choices under **`adr/`** as one file per decision (`specLevel: adr`, stable `adrId`). The feature reader exposes an **ADRs** tab with expandable Context / Decision / Consequences detail. Legacy **`decisions-record.mdx`** articles and hub **`## Decisions`** summaries remain valid during migration but new work **must** use `adr/`. Cross-cutting inception decisions live under [Project inception](/platform-spec/community/project-inception/).\n\n## Language law vs implementation domains\n\n| Concern | Owning surface | Realization surfaces |\n| --- | --- | --- |\n| What programs mean (types, control flow, contracts) | language-meta | compiler phases, execution runtime |\n| Author-facing manifests and CLI | tooling (authoring) | compiler resolution (graph, cycles) |\n| Standard library API shape | core-library | execution syscalls, compiler lowering |\n| Diagnostics users see | language-meta + compiler registry | tooling/LSP presentation |\n\nWhen adding a feature, classify the topic **before** writing: if a reader asking “what does valid Beskid code mean?” would need the answer, it belongs in **language-meta** first; pipeline, crate, or host details belong in implementation domains with links back.\n\n## Maturity — Proposed vs Standard\n\n| `status` | Meaning | Requirements |\n| --- | --- | --- |\n| **Proposed** | Incomplete, unstable, or under active design | May omit full verification anchors; **must not** be cited as enforceable language law in conformance arguments |\n| **Standard** | Enforceable platform contract | **Must** include normative MUST/SHOULD/MAY prose, verification anchors (tests, crates, or explicit registry links), and **`## Decisions`** on the feature hub (or a linked `decisions-record` article) |\n\nAny **Standard** page that fails content gates (circular “canonical chapter” stubs, placeholder-only article bundles, missing decisions) **must** be downgraded to **Proposed** until restored.\n\n## ADR file contract\n\nEach ADR file at `platform-spec/<domain>/<area>/<feature>/adr/<slug>.mdx` **must** use:\n\n| Field | Rule |\n| --- | --- |\n| `specLevel` | `adr` |\n| `adrId` | Stable identifier (for example `D-INC-0001`, `D-CORE-CONC-0003`) |\n| `adrStatus` | `Accepted`, `Superseded`, or `Proposed` |\n| `adrDate` | ISO date when the decision closed (inception ADRs **should** reflect historical dates) |\n| Body | **`## Context`**, **`## Decision`**, **`## Consequences`**; **`## Verification anchors`** when testable |\n\nSuperseded ADRs **must** set `supersedesAdr` or link the replacement `adrId` in **Consequences** and note the Git revision (not a URL version segment).\n\n## Hub decisions summary\n\nA **Standard** feature hub **must** include **`## Decisions`** that either lists open items or states **no open decisions** and links the **`adr/`** set (reader **ADRs** tab). Hub bullets **must not** duplicate full ADR prose—summarize and link by `adrId`.\n\n## Related maintenance policies\n\n- [Feature Hub + Article Bundle template](/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/) — Required hub sections, anti-stub rules, and article minimums.\n- [Release and versioning policy](/platform-spec/community/spec-maintenance/release-and-versioning-policy/) — Git as version axis; v0.x delivery bands.\n- [Non-normative bridge docs policy](/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/) — Legacy doc trees and mapping pages.\n\n## Decisions\n\nNo open decisions. Closed maintenance ADRs under **`adr/`** — `D-COMM-AUTH-0001` through `D-COMM-AUTH-0005` (reader **ADRs** tab).\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/community/spec-maintenance/spec-authority-and-decisions",
+    "sections": [
+      {
+        "id": "what-this-feature-specifies",
+        "required": false,
+        "kind": "specSection"
+      },
+      {
+        "id": "implementation-anchors",
+        "required": false,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 0,
+    "widgets": []
+  }
+}

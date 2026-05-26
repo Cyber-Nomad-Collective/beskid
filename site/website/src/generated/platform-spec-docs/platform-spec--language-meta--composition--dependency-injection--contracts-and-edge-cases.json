@@ -1,0 +1,53 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/composition/dependency-injection/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/language-meta/composition/dependency-injection/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Native dependency injection - Contracts and edge cases",
+    "description": "Lifetime rules, plural inject, host override, fail-closed guarantees, E17xx diagnostics.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-20",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Native dependency injection",
+        "href": "/platform-spec/language-meta/composition/dependency-injection/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Diagnostic code registry",
+        "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
+        "relation": "E17xx band reservation"
+      },
+      {
+        "type": "Feature",
+        "title": "Project manifest contract",
+        "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+        "relation": "app target and project kind"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Hard requirements\n\n- **Compile-time resolution** — All bindings **must** be resolved before lowering; no runtime service locator in v0.2.\n- **Fail-closed** — Graph errors **must** block codegen for the host target; partial containers are forbidden.\n- **Launched host wins** — For the same binding key, the **topmost (launched) host** `registry` overrides parent host and corelib base entries.\n- **Plural vs singular inject** — Multiple registrations for one contract **require** `T[]` inject; singular `inject T` **must** resolve to exactly one.\n- **Field inject only** — Constructor parameter `inject` is **forbidden**.\n- **One app per run** — Exactly one **`launch`** per process; manifest **`app`** target is the single application host entry.\n- **Lib hosts without launch** — **`Lib`** targets **may** define **`host`**; **`launch`** **must** be rejected.\n- **Fiber-local scope stack** — Active named scopes are tracked per fiber ([Execution](/platform-spec/execution/)).\n- **Mod isolation** — **`Mod`** projects **must not** define app **`host`** blocks.\n- **Backend parity** — JIT and AOT **must** share the same binding plan.\n\n## Lifetime constraints\n\n| Rule | Enforcement |\n| --- | --- |\n| Global **`single`** must not depend on named-scope services without `with` | Compile error |\n| **`startup`** only uses **global** bindings | Compile error if a named scope is required |\n| Named-scope service used outside a satisfying **`with`** | **E1706** |\n| **Service graph cycle** (including field inject edges) | **E1703** |\n| Singular **`inject`** with multiple registrations at resolution level | **E1705** (use `T[]`) |\n| Plural **`inject T[]`** with zero registrations | **E1704** |\n| Child scope **`with`** without parent on stack | **E1707** |\n| Override changes lifetime kind | Compile error |\n\n## Host and manifest\n\n| Rule | Detail |\n| --- | --- |\n| Multiple **`host`** definitions per project | **Allowed** |\n| **`launch Host`** per run | **Exactly one** host type |\n| **`app` target** | Single executable application target naming the entry that **`launch`**es the app host |\n| Dual **`launch`** in one program | **Forbidden** |\n\n## Scope navigation\n\n| Form | Valid when |\n| --- | --- |\n| Unqualified **`inject`** | Default walk inner → global |\n| **`global::`** | Always targets merged **global** `registry` of launched host |\n| **`parent::`** | Active named scope stack depth ≥ 1 |\n\nInvalid qualifiers or unreachable parents → compile error.\n\n## Diagnostic band E1701–E1799\n\nReserved for composition in [Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/). Register codes in `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` when implemented.\n\n| Code | Condition |\n| --- | --- |\n| **E1701** | Executable **`app`** target missing or no **`launch`** reachable from entry |\n| **E1702** | More than one **`launch`** in the entry program (single-run violation) |\n| **E1703** | Service dependency cycle |\n| **E1704** | Unregistered contract/type at inject site (including empty `T[]`) |\n| **E1705** | Singular inject matches multiple registrations (use `T[]`) |\n| **E1706** | Scoped service used outside active `with` |\n| **E1707** | Child scope activated without parent |\n| **E1708** | `with` argument mismatch vs `scope` parameters |\n| **E1709** | `launch` target is not a `host` type |\n| **E1710** | `host` on **`Mod`** project |\n| **E1711** | `launch` in **`Lib`** target |\n| **E1712** | Constructor `inject` (field-only rule) |\n| **E1713** | Host override lifetime kind mismatch |\n| **E1714** | Invalid scope qualifier (`global::` / `parent::`) |\n\n## Edge cases\n\n- **`init` / dispose on unwind** — If **`init`** completed, **`dispose`** runs for that activation when the **`with`** block exits abnormally; activations that never finished **`init`** do not run **`dispose`**.\n- **Repeated `with HttpScope`** — Independent activations; separate scoped instance sets.\n- **Same contract in parent and child scope** — Unqualified singular inject resolves in **innermost** scope first; use **`global::`** to pull parent/global registration explicitly.\n- **Multiple `Storage` at global** — `inject Storage[]` in **`startup`** receives all; singular `inject Storage` → **E1705**.\n- **Library `host` only** — App **`host : LibHost`** merges registries; only app project **`launch`**es.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/language-meta/composition/dependency-injection",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

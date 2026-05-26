@@ -1,0 +1,40 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Registry and overrides contract - Contracts and edge cases",
+    "description": "States the normative guarantees and what happens at boundaries or failure edges.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Registry and overrides contract",
+        "href": "/platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThis article documents **contracts and edge cases** for **registry and overrides contract** in the reference compiler.\n\n## What this covers\nFor newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.\n\n## Anchored code paths\n- `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` validates project source selection behavior.\n- `compiler/crates/beskid_cli/src/commands/` provides CLI-level switches for registry interaction.\n- `pckg/src/Server/` is the registry-side system consumed by compiler/project tooling.\n\n## Practical notes\n- Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.\n- Treat diagnostics and tests as part of the contract, not optional implementation details.\n- If behavior changes, update this article and add/adjust tests in `compiler/crates/beskid_tests` or `compiler/crates/beskid_e2e_tests`.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/adr/0003-codes-owned-in-analysis",
+  "repoPath": "src/content/docs/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/adr/0003-codes-owned-in-analysis.mdx",
+  "frontmatter": {
+    "title": "Diagnostic codes owned in analysis sources",
+    "description": "Rendered diagnostics drifted from semantic registry.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMP-SEM-0003",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-11",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Diagnostic code registry",
+        "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRendered diagnostics drifted from semantic registry.\n\n## Decision\n\nCode-to-meaning mapping is normative in `SemanticIssueKind::code()` and `diagnostic_kinds.rs`, synchronized with trudoc verify scripts—not LSP presentation layers.\n\n## Consequences\n\nRenaming codes requires migration notes; new issues need unique codes before release.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`\n- `packages/trudoc/scripts/verify-diagnostics-spec-sync.mjs`.\n",
+  "layoutJson": null
+}

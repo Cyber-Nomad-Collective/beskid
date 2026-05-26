@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/rust-abi-profile/adr/0001-hub-authority",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/rust-abi-profile/adr/0001-hub-authority.mdx",
+  "frontmatter": {
+    "title": "Feature hub owns normative contract",
+    "description": "Runtime embedding exports defer to this hub.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-LMETA-RUSTABI-0001",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-09",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Rust ABI profile",
+        "href": "/platform-spec/language-meta/interop/rust-abi-profile/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRust runtime exports were documented beside user C extern rules.\n\n## Decision\n\nThis feature hub **must** own normative MUST/SHOULD for **Rust-hosted runtime** interop distinct from user **C ABI profile** libraries.\n\n## Consequences\n\nBuiltin table and ABI version policy stay here; user `Extern` stays on C profile.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/rust-abi-profile/\n",
+  "layoutJson": null
+}

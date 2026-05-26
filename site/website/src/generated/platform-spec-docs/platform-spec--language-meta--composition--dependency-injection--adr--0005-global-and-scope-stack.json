@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0005-global-and-scope-stack",
+  "repoPath": "src/content/docs/platform-spec/language-meta/composition/dependency-injection/adr/0005-global-and-scope-stack.mdx",
+  "frontmatter": {
+    "title": "Global scope and named scope stack",
+    "description": "Resolution walks innermost named scope toward global.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-LMETA-DI-0005",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Native dependency injection",
+        "href": "/platform-spec/language-meta/composition/dependency-injection/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nAuthors need predictable scope boundaries for web and console activation patterns.\n\n## Decision\n\n| Construct | Rule |\n| --- | --- |\n| **Global** | Merged **`registry`** of the launched host after inheritance chain |\n| **Named `scope`** | Tree under global; per-activation unless `single` / `transient` |\n| **Stack** | Fiber-local scope stack during **`with`** |\n| **Resolution** | Walk innermost → global; **`global::`** and **`parent::`** qualifiers as specified |\n\n## Consequences\n\nExecution backends maintain scope enter/leave with **`with`**; plural inject collects at lowest matching level.\n\n## Verification anchors\n\n[Design model](/platform-spec/language-meta/composition/dependency-injection/design-model/); [Execution](/platform-spec/execution/).\n",
+  "layoutJson": null
+}

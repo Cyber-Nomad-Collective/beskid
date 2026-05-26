@@ -1,0 +1,49 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/cli/build-analyze-run-contract/faq-and-troubleshooting",
+  "repoPath": "src/content/docs/platform-spec/tooling/cli/build-analyze-run-contract/faq-and-troubleshooting.mdx",
+  "frontmatter": {
+    "title": "FAQ and troubleshooting",
+    "description": "Common questions and fixes for build, analyze, and run CLI behavior.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Build, analyze, and run contract",
+        "href": "/platform-spec/tooling/cli/build-analyze-run-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Why does `analyze` pass in the IDE but fail in CI?\n\nThe CLI runs the full project graph and lock policy. Ensure CI calls `beskid lock` (or checks in `Project.lock`) and sets `BESKID_CORELIB_ROOT` when not using the bundled corelib layout. Compare against the focused `Project.proj` the extension sends to the LSP.\n\n## `build` cannot find corelib / `Std`\n\nVerify `BESKID_CORELIB_ROOT` points at a tree containing `beskid_corelib/Project.proj`, or run `beskid corelib` materialization. Superrepo checkouts should resolve via `compiler/corelib/beskid_corelib` discovery in `resolver.rs`.\n\n## Diagnostics differ between `analyze` and `build`\n\n`build` runs lowering and may surface codegen-only failures. Start with `analyze`; if clean, inspect AOT/link logs. Mod generator failures appear in both when semantic gates run.\n\n## `run` works locally but not in containers\n\nConfirm the JIT runtime matches the target triple and that syscall-backed corelib surfaces are available in the image. Release AOT (`build`) is the supported path for minimal runtime images.\n\n## Where are mod artifacts cached?\n\n`beskid mod` subcommands and the analysis cache under the package/object store documented in **[Compiler Mods](/platform-spec/compiler/compiler-mods/)**. Stale caches: use documented clean/rebuild policy from the mod manifest `artifactPolicy`.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/tooling/cli/build-analyze-run-contract",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/cli/build-analyze-run-contract",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

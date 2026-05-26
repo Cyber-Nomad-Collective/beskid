@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/index.mdx",
+  "frontmatter": {
+    "title": "Runtime",
+    "description": "Runtime-level contracts for panic behavior, syscalls, IO, and host-facing semantics.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "area",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Domain",
+        "title": "Execution",
+        "href": "/platform-spec/execution/",
+        "relation": "Parent domain"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\n\n<SpecPageHeader\n\townerName=\"Piotr Mikstacki\"\n\townerEmail=\"pmikstacki@cybernomad.it\"\n\tsubmitterName=\"Piotr Mikstacki\"\n\tsubmitterEmail=\"pmikstacki@cybernomad.it\"\n/>\n<SpecSection title=\"Scope\" id=\"scope\">\nRuntime-level contracts for panic behavior, syscalls, IO, fiber scheduling, channels, and host-facing semantics.\n\nCooperative **fibers** and **Channel** synchronization are normative under **[Fiber scheduler and stacks](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/)** and **[Channels and synchronization](/platform-spec/execution/runtime/channels-and-synchronization/)**. User APIs live in **[Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/)**; preemptive **OS threads** live in **[System.Threading](/platform-spec/core-library/concurrency/system-threading/)**.\n</SpecSection>\n\n\n<SpecSection title=\"Feature index\" id=\"feature-index\">\nUse the tiles below for normative **feature** contracts in this area.\n</SpecSection>\n\n<DomainTiles pathPrefix=\"platform-spec/execution/runtime\" heading=\"Features\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/execution/runtime",
+    "sections": [
+      {
+        "id": "scope",
+        "required": true,
+        "kind": "specSection"
+      },
+      {
+        "id": "features",
+        "required": true,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/runtime",
+          "heading": "Features"
+        }
+      }
+    ]
+  }
+}

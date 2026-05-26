@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/runtime-feature-flags/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/runtime-feature-flags/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Contracts and edge cases",
+    "description": "MUST/SHOULD rules for optional runtime features and toolchain alignment.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Runtime feature flags",
+        "href": "/platform-spec/execution/runtime/runtime-feature-flags/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Normative requirements\n\n| ID | Requirement |\n| --- | --- |\n| **RFF-001** | Optional runtime features **must not** change `BESKID_RUNTIME_ABI_VERSION` unless they alter existing symbol signatures or layouts. |\n| **RFF-002** | Default CI/release runtime builds **must** document which features are enabled in build notes or manifests. |\n| **RFF-003** | Tests that require `arrays_backing` **must** enable the feature on `beskid_runtime` dependency. |\n| **RFF-004** | `metrics` exports **must** be absent from baseline `RUNTIME_EXPORT_SYMBOLS` when built without `metrics`. |\n| **RFF-005** | Compiler lowering **must not** assume element backing exists unless workspace policy enables `arrays_backing`. |\n| **RFF-006** | `extern_dlopen` **must** remain off by default on `beskid_engine` for production toolchains. |\n| **RFF-007** | Phase B GC **must** be opt-in for v0.3; the runtime **must** boot in Phase A unless `BESKID_RUNTIME_PHASE_B=1` or `set_runtime_phase(RuntimePhase::PhaseB)` flips it. |\n| **RFF-008** | Optional preemption **must** stay disabled by default; enabling it via `BESKID_RUNTIME_PREEMPT=1` or `set_preemption_enabled(true)` **must not** change observable semantics of fiber-only programs beyond inserting yield points. |\n\n## Feature behavior table\n\n| Feature | Without | With |\n| --- | --- | --- |\n| `arrays_backing` | `array_new.ptr == null` | Backing store allocated |\n| `metrics` | No `rt_metrics_*` | Counters exposed |\n| `sched` | Default scheduler only | Experimental sched hooks |\n| Phase B GC (`BESKID_RUNTIME_PHASE_B`) | Single-mutator Phase A; channel pointer payloads still routed through external roots but barriers no-op outside marking | Multiple mutators may attach via `attach_phase_b_mutator`; `gc_write_barrier` active on pointer-payload channel ops |\n| Preemption (`BESKID_RUNTIME_PREEMPT`) | `runtime_preempt_check` is a no-op | `runtime_preempt_check` yields the current fiber (or OS thread if off-scheduler) |\n\n## Edge cases\n\n| Case | Outcome |\n| --- | --- |\n| Test expects backing, runtime default | Tests fail allocation or pointer reads — fix features, not ABI |\n| User enables `metrics` locally | JIT must link extra symbols only if codegen calls them |\n| VSIX runtime vs CLI runtime feature mismatch | Subtle array/GC test failures — align Open VSX build matrix |\n\n## Related topics\n\n- [ABI versioning](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/)\n- Legacy mention: [Runtime ABI v0.1 arrays_backing](../../../../execution/runtime/runtime-abi-v0-1.md)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/runtime/runtime-feature-flags",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/runtime/runtime-feature-flags",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/export-and-callbacks/callback-registration",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/export-and-callbacks/callback-registration.mdx",
+  "frontmatter": {
+    "title": "Callback registration",
+    "description": "Host registration table protocol for Beskid exports invoked from foreign code (v0.3).",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-23",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Export and callbacks",
+        "href": "/platform-spec/language-meta/interop/export-and-callbacks/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Callback call shapes",
+        "href": "/platform-spec/language-meta/interop/interop-contracts/callback-call-shapes/",
+        "relation": "Abstract shapes"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Model\n\nForeign hosts (game engines, shells, OS services) register Beskid **callbacks** before or during runtime. v0.3 Standard defines:\n\n1. **Exported Beskid functions** — normal `[Export]` entrypoints.\n2. **Registration contract** — a Beskid `contract` describing callback function-pointer types the host implements or consumes.\n3. **Registration export** — a stable C symbol the host calls to install a table of function pointers.\n\n## Registration export (normative shape)\n\nThe platform reserves a runtime or generated symbol (exact name is toolchain-defined; example):\n\n```text\nbeskid_register_callbacks(version: u32, table: *const CallbackTable, count: usize) -> i32\n```\n\n| Field | Meaning |\n| --- | --- |\n| `version` | **User FFI layout band** — must match `BESKID_USER_FFI_LAYOUT_BAND` |\n| `table` | Array of `{ symbol_id, fn_ptr, userdata }` rows |\n| `count` | Number of rows |\n| Return | `0` success; non-zero stable error codes |\n\nHosts **must** reject unknown `version` values.\n\n## Reference symbol\n\nThe reference runtime exposes `beskid_register_callbacks` from `compiler/crates/beskid_runtime/src/builtins/callback.rs`, registered in `RUNTIME_EXPORT_SYMBOLS` and `BUILTIN_SPECS` via `compiler/crates/beskid_abi/src/symbols.rs`. Hosts **must** pass `version == BESKID_USER_FFI_LAYOUT_BAND` (initial Standard value `1`).\n\n## Beskid-side callback exports\n\nEach callback slot points at a **`[Export(Abi:\"C\")]`** function or a **compiler-generated trampoline** that:\n\n- Enters runtime TLS / heap scope.\n- Performs any GC safepoint policy required before executing Beskid code.\n- Maps parameters from C layout to Beskid types.\n\n## Import-side function pointers\n\n`Extern` contracts **may** accept function-pointer parameters when the pointee is a documented **`Export`** or trampoline symbol. See **[callback call shapes](/platform-spec/language-meta/interop/interop-contracts/callback-call-shapes/)**.\n\n## Non-goals (v0.3)\n\n- Automatic binding generation from C headers.\n- Foreign-thread callback without host lifecycle contract (Proposed later).\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/language-meta/interop/export-and-callbacks",
+    "minSpecSections": 2,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

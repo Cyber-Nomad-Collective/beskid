@@ -1,0 +1,71 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/codegen-and-ir/dynamic-types-and-mapping",
+  "repoPath": "src/content/docs/platform-spec/compiler/codegen-and-ir/dynamic-types-and-mapping.mdx",
+  "frontmatter": {
+    "title": "Dynamic types and mapping (v0.3 scope)",
+    "description": "Normative dynamic cell representation, AOT object-to-object mapping, and runtime fallback for serializable types.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-23",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Codegen and IR",
+        "href": "/platform-spec/compiler/codegen-and-ir/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Feature",
+        "title": "Serialization packages",
+        "href": "/platform-spec/language-meta/metaprogramming/serialization/",
+        "relation": "Serializable type constraints"
+      },
+      {
+        "type": "Area",
+        "title": "Compiler Mods",
+        "href": "/platform-spec/compiler/compiler-mods/",
+        "relation": "Analyzer rules for serializable eligibility"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"v0.3 scope\" id=\"scope\">\nThis article specifies the v0.3 **dynamic typing** surface: a GC-visible dynamic cell, compile-time object-to-object mapping for eligible `[Serialize]` shapes, and a runtime fallback when static shape information is unavailable at compile time.\n\nGoals:\n\n1. **Dynamic type** representation in HIR/CLIF for schema-evolving payloads without language-level reflection.\n2. **AOT object-to-object mapping** for known serializable types at compile time.\n3. **Runtime mapping** for dynamic values when static shape is unavailable.\n4. Eligibility enforced by **Serialization Mod analyzers** — mapping applies only to types classified as serializable; codegen MUST consult that signal and MUST NOT bypass it.\n</SpecSection>\n\n<SpecSection title=\"HIR/CLIF representation\" id=\"hir-clif\">\nThe `dynamic` surface (named alias until a language primitive lands) lowers to a **pointer-sized CLIF value** referencing a runtime [`DynamicCell`](compiler/crates/beskid_runtime/src/dynamic/cell.rs) header allocated through the runtime arena.\n\n**Cell header layout (normative):**\n\n| Field | Width | Semantics |\n| --- | --- | --- |\n| `shape_id` | `u32` | Registered object shape tag used by mapping tables |\n| `flags` | `u32` | Reserved (zero in v0.3) |\n| `payload` | pointer | Arena-allocated static object or inline buffer; traced when non-null |\n\n**Allocation:** cell headers and mapping target objects MUST be allocated through the runtime arena builtins (`dynamic_cell_create`, `dynamic_object_alloc`) to honour Phase A single-mutator rules. Codegen MUST NOT introduce parallel allocators for dynamic cells.\n\n**GC tracing:** non-null `payload` pointers are treated as heap references and traced by the runtime collector; null payloads are ignored.\n\n**Lowering entry points:** cell creation, static wrap, checked cast, AOT map, and fallback map are emitted as imported runtime builtins from `compiler/crates/beskid_codegen/src/lowering/expressions/dynamic.rs`. Type mapping for the `dynamic` alias is centralized in `compiler/crates/beskid_codegen/src/lowering/types.rs`.\n</SpecSection>\n\n<SpecSection title=\"AOT object-to-object mapping\" id=\"aot-mapping\">\nWhen both source and destination static shapes are known and mod-eligible, codegen emits a direct call to `dynamic_map_aot(src_shape, dst_shape, src_ptr, dst_out)` after eligibility checks.\n\n**Eligibility (normative):**\n\n- Delegated to Serialization Mod analyzers on the analysis surface; until a dedicated analyzer signal is threaded into [`TypeResult`](compiler/crates/beskid_analysis/src/types/context/context.rs), codegen applies the same structural rules as the `[Serialize]` contract: only structs whose fields are primitives or nested eligible structs, with deterministic declaration-order field lists.\n- Ineligible pairs MUST fail lowering with structured diagnostic **`E2013`** (`IneligibleSerializeMapping`) — never silent mapping or runtime panic from codegen.\n\n**Mapping kinds (v0.3):**\n\n- **Identity mapping:** source and destination structs share field names, order, and types; field steps copy memory ranges in declaration order.\n- **Transform mapping:** same eligibility gate; v0.3 registers explicit offset/size steps in the runtime shape table (future Serialization Mod generators populate the table).\n\n**Shape identifiers:** stable per resolved item id (FNV-1a hash in v0.3) so AOT tables and runtime registration agree across codegen and tests.\n\nImplementation: `compiler/crates/beskid_codegen/src/lowering/expressions/mapping.rs` (lowering) and `compiler/crates/beskid_codegen/src/lowering/expressions/serialize.rs` (eligibility).\n</SpecSection>\n\n<SpecSection title=\"Runtime fallback\" id=\"runtime-fallback\">\nWhen compile-time shape information is unavailable (value already wrapped in a `DynamicCell`), generated code calls `dynamic_map_fallback(cell, dst_shape, dst_out)`.\n\n**Algorithm:**\n\n1. Reject null cell payload → `DYNAMIC_ERR_NULL_PAYLOAD`.\n2. Require registered source and destination shapes → `DYNAMIC_ERR_UNKNOWN_SRC_SHAPE` / `DYNAMIC_ERR_UNKNOWN_DST_SHAPE`.\n3. Look up field steps for `(cell.shape_id, dst_shape)` in the runtime mapping table.\n4. On missing or incompatible mapping → **`DYNAMIC_ERR_INCOMPATIBLE`** (`E-dynamic-map-001`); this path is deterministic and structured — no implicit reflection or best-effort coercion.\n\nFallback shares the same field-step table as the AOT path (`compiler/crates/beskid_runtime/src/dynamic/table.rs`, `compiler/crates/beskid_runtime/src/dynamic/fallback.rs`).\n</SpecSection>\n\n<SpecSection title=\"Eligibility and Serialization Mods\" id=\"eligibility\">\nMapping MUST NOT bypass Serialization Mod analyzer classification. Codegen reads the analyzer signal on the typed program (structural stand-in until mod host wiring lands) via `require_mapping_eligible` in `serialize.rs`.\n\nCross-reference: [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/) for analyzer contracts; [Serialization packages](/platform-spec/language-meta/metaprogramming/serialization/) for serializable type constraints.\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- CLIF lowering: `compiler/crates/beskid_codegen/src/lowering/expressions/dynamic.rs`\n- AOT mapping + eligibility: `compiler/crates/beskid_codegen/src/lowering/expressions/mapping.rs`, `compiler/crates/beskid_codegen/src/lowering/expressions/serialize.rs`\n- Dynamic CLIF type mapping: `compiler/crates/beskid_codegen/src/lowering/types.rs`\n- Codegen diagnostic **`E2013`**: `compiler/crates/beskid_codegen/src/diagnostics.rs`\n- Runtime cell + tables + fallback: `compiler/crates/beskid_runtime/src/dynamic/`\n- C ABI builtins: `compiler/crates/beskid_runtime/src/builtins/dynamic.rs`\n- ABI symbol registration: `compiler/crates/beskid_abi/src/symbols.rs`, `compiler/crates/beskid_abi/src/builtins.rs`\n- Integration tests: `compiler/crates/beskid_tests/src/codegen/dynamic_types/`, `compiler/crates/beskid_tests/src/runtime/dynamic/`\n</SpecSection>\n\n## Decisions\n\n1. **Pointer-to-cell CLIF representation.** `dynamic` lowers to a single pointer (`I64` on 64-bit System V) rather than a split `(shape, payload)` pair in CLIF, keeping call conventions aligned with other heap objects and allowing checked casts to inspect the header at runtime.\n\n2. **Arena-only allocation.** Dynamic cells and mapping outputs use runtime arena builtins to preserve Phase A single-mutator invariants; embedders must not allocate parallel cell pools outside the Beskid heap.\n\n3. **Shared shape/mapping table for AOT and fallback.** One registration API (`register_shape`, `register_mapping`) serves compile-time-known mappings and runtime fallback probes, avoiding divergent copy semantics.\n\n4. **Deterministic incompatibility errors.** Missing mappings return stable integer status codes surfaced as **`E-dynamic-map-001`** / `DYNAMIC_ERR_INCOMPATIBLE`; codegen ineligibility uses **`E2013`** so failures are diagnosable without undefined behaviour.\n\n5. **Structural eligibility stand-in.** Until Serialization Mod analyzers attach a dedicated bit on `TypeResult`, codegen applies structural `[Serialize]` rules and refuses ineligible pairs at lowering time — never at runtime via reflection.\n\n6. **FNV-1a shape ids from resolved items.** v0.3 derives `shape_id` from `ItemId` bytes so tests and AOT lowering agree without a separate shape registry in the analysis crate; mod-generated tables will replace this hash in a later track.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/compiler/codegen-and-ir",
+    "sections": [
+      {
+        "id": "scope",
+        "required": true,
+        "kind": "specSection"
+      },
+      {
+        "id": "features",
+        "required": true,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/compiler/codegen-and-ir",
+          "heading": "Features"
+        }
+      }
+    ]
+  }
+}

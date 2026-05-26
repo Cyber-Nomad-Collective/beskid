@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/project-scaffolding/beskid-new/adr/0002-interactive-and-noninteractive",
+  "repoPath": "src/content/docs/platform-spec/tooling/project-scaffolding/beskid-new/adr/0002-interactive-and-noninteractive.mdx",
+  "frontmatter": {
+    "title": "Interactive modes",
+    "description": "Interactive modes",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-TOOL-SCAFF-0002",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-21",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "beskid new",
+        "href": "/platform-spec/tooling/project-scaffolding/beskid-new/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nScaffolding entrypoint.\n\n## Decision\n\nSupport interactive and non-interactive instantiation.\n\n## Consequences\n\nSee project-templates ADRs.\n\n## Verification anchors\n\nCLI tests.\n",
+  "layoutJson": null
+}

@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/console-capabilities/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Contracts and edge cases",
+    "description": "MUST rules for capability probing and color stripping.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Console capabilities",
+        "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose\n\nDocument **contracts and edge cases** for the **Console Capabilities** feature: role-specific normative detail beyond the feature hub.\n\n## Canonical references\n\n- Feature hub: [Console Capabilities](/platform-spec/core-library/terminal-and-console/console-capabilities/)\n- Sibling articles in this bundle (design model, contracts, flow, examples, verification)\n\n## Detailed behavior\n\n### Normative requirements\n\n| ID | Requirement |\n| --- | --- |\n| **CAP-001** | `ShouldStripColor` **must** return true when `colorDisabled` is true. |\n| **CAP-002** | When `colorForced` is true, `ShouldStripColor` **must** return false regardless of TTY. |\n| **CAP-003** | When neither forced nor disabled, non-TTY **must** strip color. |\n| **CAP-004** | `ShouldEmitAnsi()` **must** be consistent with `ShouldStripColor(ProbeStdout())`. |\n| **CAP-005** | `EffectiveColorModel` **must** return `Basic16` whenever `ShouldStripColor` is true. |\n\n### Environment table\n\n| Variable | Effect |\n| --- | --- |\n| `NO_COLOR` | Disables color (CAP-001) |\n| `FORCE_COLOR` | Enables color even if not TTY |\n| `COLORTERM` | Upgrades model toward truecolor when color allowed |\n| `TERM=dumb` | `ForcePlainText` true |\n| `TERM=xterm-256color` | Indexed256 probe |\n\n### Edge cases\n\n- **Empty vs unset env**: `EnvFlagSet` treats any non-empty value as set; `NO_COLOR=` may still disable per CAP-001.\n- **stderr styling**: v1 probes **stdout only** for `ShouldEmitAnsi`; stderr diagnostics use the same predicate today.\n- **CI logs**: Piped stdout suppresses escapes unless `FORCE_COLOR=1` in job env.\n\n## Verification\n\nSee the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.\n\n## Related topics\n\n- Parent [feature hub](/platform-spec/core-library/terminal-and-console/console-capabilities/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/terminal-and-console/console-capabilities",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/terminal-and-console/console-capabilities",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

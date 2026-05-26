@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/channels-and-synchronization/adr/0012-hub-round-robin-fairness",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/channels-and-synchronization/adr/0012-hub-round-robin-fairness.mdx",
+  "frontmatter": {
+    "title": "Hub WaitReceive uses round-robin fairness",
+    "description": "Per-hub cursor scans registered channels to avoid starvation.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-EXEC-RT-0012",
+    "adrStatus": "Accepted",
+    "adrDate": "2025-09-15",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Channels and synchronization",
+        "href": "/platform-spec/execution/runtime/channels-and-synchronization/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Concurrency package",
+        "href": "/platform-spec/core-library/concurrency/concurrency-package/",
+        "relation": "Hub API"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nMultiplexing without language `select` needs deterministic fairness when one registered channel is always ready.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Homogeneity | `` `Hub<T>` `` — **homogeneous `T` only** in v1 |\n| Scan | Cursor starts at `k`; scan `k, k+1, …` modulo registration count for **first ready** channel |\n| After success | Cursor advances past chosen index (wrap) |\n| v1 scope | **WaitSend** out of scope; no language `select` |\n| Empty hub | **WaitReceive** with zero registrations → `HubError::Empty` |\n\nMatches [D-CORE-CONC-0003](/platform-spec/core-library/concurrency/concurrency-package/adr/0003-hub-round-robin-fairness/).\n\n## Consequences\n\nRuntime `hub_wait_receive_*` implements rotation; corelib documents registration limits for hot paths.\n\n## Verification anchors\n\nHub builtins; corelib hub tests.",
+  "layoutJson": null
+}

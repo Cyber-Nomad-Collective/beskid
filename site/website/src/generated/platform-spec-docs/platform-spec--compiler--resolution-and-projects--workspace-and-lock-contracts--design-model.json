@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/design-model",
+  "repoPath": "src/content/docs/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/design-model.mdx",
+  "frontmatter": {
+    "title": "Workspace and lock contracts - Design model",
+    "description": "Compiler entities for workspace roots and lock materialization (workspace key prose defers to tooling).",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Workspace and lock contracts",
+        "href": "/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Workspace and lock contracts (tooling)",
+        "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/design-model/",
+        "relation": "defers-to — reserved/forbidden workspace keys and lockfile semantics"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Resolution model (compiler)\n\n| Entity | Role |\n| --- | --- |\n| Workspace root | Anchor for member `Project.proj` discovery |\n| Lock snapshot | Pinned dependency versions consumed when building the graph |\n| Materialized package root | On-disk layout the resolver uses after lock apply |\n\nThe compiler **must** treat lock-backed roots as authoritative for reproducible CI graphs. Ad-hoc workspace toggles that alter Mod policy without a spec bump are rejected at parse time in tooling; the compiler enforces the resulting graph only.\n\n## Schema authority\n\nReserved and forbidden **`Workspace.proj`** keys, `defaultMember`, and lock update semantics are defined in **[tooling / design model](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/design-model/)**. This article does not duplicate those tables.\n\n## Code anchors\n\n- `compiler/crates/beskid_analysis/src/resolve/mod.rs`\n- `compiler/crates/beskid_cli/src/commands/`\n- `compiler/crates/beskid_tests/src/projects/corelib/layout.rs`\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0002-compile-time-resolution",
+  "repoPath": "src/content/docs/platform-spec/language-meta/composition/dependency-injection/adr/0002-compile-time-resolution.mdx",
+  "frontmatter": {
+    "title": "Composition graph resolved at compile time",
+    "description": "Backends do not perform runtime service lookup for app DI.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-LMETA-DI-0002",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Native dependency injection",
+        "href": "/platform-spec/language-meta/composition/dependency-injection/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRuntime DI containers hide wiring and conflict with the project's explicit composition goals (distinct from Rust pipeline IoC in D-INC-0002).\n\n## Decision\n\nThe reference compiler **must** fully resolve the app composition graph at compile time. Backends **must not** perform runtime service lookup for **`host`** / **`registry`** / **`scope`** wiring.\n\n## Consequences\n\nLowering emits ctor wiring and scope enter/leave; execution hosts activate frozen graphs only.\n\n## Verification anchors\n\n`compiler/crates/beskid_analysis` (planned `composition` module); `compiler/crates/beskid_codegen`; [Flow and algorithm](/platform-spec/language-meta/composition/dependency-injection/flow-and-algorithm/).\n",
+  "layoutJson": null
+}

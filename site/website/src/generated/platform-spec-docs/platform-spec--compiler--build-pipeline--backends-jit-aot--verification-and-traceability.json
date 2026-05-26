@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/verification-and-traceability",
+  "repoPath": "src/content/docs/platform-spec/compiler/build-pipeline/backends-jit-aot/verification-and-traceability.mdx",
+  "frontmatter": {
+    "title": "Backends (JIT and AOT) - Verification and traceability",
+    "description": "Crate-level anchors and tests that verify backend divergence and shared lowering contract.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Backends (JIT and AOT)",
+        "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Area",
+        "title": "Conformance",
+        "href": "/platform-spec/compiler/conformance/",
+        "relation": "Test coverage strategy"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nImplementation anchors:\n\n- `compiler/crates/beskid_engine/src/services.rs`\n- `compiler/crates/beskid_engine/src/jit_module.rs`\n- `compiler/crates/beskid_aot/src/api.rs`\n- `compiler/crates/beskid_aot/src/linker.rs`\n- `compiler/crates/beskid_cli/src/commands/build.rs`\n\nEvidence should include JIT runtime tests in `compiler/crates/beskid_tests/src/runtime/` and AOT contract tests in `compiler/crates/beskid_tests/src/aot/`.\n\nCI anchors:\n\n- Compiler pipeline checks in `compiler/.github/workflows/ci.yml` (`test`, `e2e-*`, `extern-engine-security`).\n- Superrepo runtime orchestration in `.github/workflows/runtime-ci.yml`.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/build-pipeline/backends-jit-aot",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

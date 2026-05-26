@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console/console-capabilities/adr/0022-lossy-color-downgrade",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/console-capabilities/adr/0022-lossy-color-downgrade.mdx",
+  "frontmatter": {
+    "title": "Lossy color downgrade",
+    "description": "RGB downgrades through palette ladders automatically.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-TERM-0022",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Console capabilities",
+        "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCallers should not manually pick CSI color modes per terminal.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Downgrade | RGB → indexed → basic is **lossy** |\n| API | No per-sequence model selector on public helpers |\n\n## Consequences\n\nStyled output remains readable on Basic16 hosts without author branches.\n\n## Verification anchors\n\n`AnsiSgrGoldenTests.bd`; capability + SGR integration.\n",
+  "layoutJson": null
+}

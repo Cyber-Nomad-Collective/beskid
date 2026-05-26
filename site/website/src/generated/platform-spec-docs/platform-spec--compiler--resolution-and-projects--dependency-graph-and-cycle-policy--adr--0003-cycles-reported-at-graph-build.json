@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/adr/0003-cycles-reported-at-graph-build",
+  "repoPath": "src/content/docs/platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/adr/0003-cycles-reported-at-graph-build.mdx",
+  "frontmatter": {
+    "title": "Dependency cycles reported at graph build",
+    "description": "Silent cycle handling broke workspace diagnostics parity.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMP-PROJ-0003",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-05",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Dependency graph and cycle policy",
+        "href": "/platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nSilent cycle handling broke workspace diagnostics parity.\n\n## Decision\n\nDirected cycles **must** be reported during graph build; `Mod` cycles **must** include mod id in the diagnostic path.\n\n## Consequences\n\nPolicy knobs (`error`, `warn`, permissive) select abort vs continue; default remains fail-closed for release builds.\n\n## Verification anchors\n\n- `beskid_analysis::projects::graph`\n- `compiler/crates/beskid_tests/src/projects/corelib/layout.rs`.\n",
+  "layoutJson": null
+}

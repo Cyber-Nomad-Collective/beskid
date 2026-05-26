@@ -9,7 +9,8 @@
 		"./data/beskid-services": "./src/data/beskid-services.ts",
 		"./client/beskid-hub": "./src/client/beskid-hub.ts",
 		"./client/beskid-hub-entry": "./src/client/beskid-hub-entry.ts",
-		"./react/BeskidHub": "./src/react/BeskidHub.tsx",
+		"./client/beskid-hub-element-entry": "./src/client/beskid-hub-element-entry.ts",
+		"./custom-elements/beskid-hub-element": "./src/custom-elements/beskid-hub-element.ts",
 		"./styles/hub.css": "./src/styles/hub.css",
 		"./platform-spec/*": "./src/platform-spec/*",
 		"./starlight/*": "./src/starlight/*"

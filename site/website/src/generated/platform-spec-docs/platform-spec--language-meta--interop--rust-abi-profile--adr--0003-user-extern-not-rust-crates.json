@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/rust-abi-profile/adr/0003-user-extern-not-rust-crates",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/rust-abi-profile/adr/0003-user-extern-not-rust-crates.mdx",
+  "frontmatter": {
+    "title": "User Extern not arbitrary Rust crates",
+    "description": "User foreign code uses C ABI profile until a future spec promotes Rust-native interop.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-LMETA-RUSTABI-0003",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-09",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Rust ABI profile",
+        "href": "/platform-spec/language-meta/interop/rust-abi-profile/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLinking arbitrary `rlib` targets as user Extern would imply unstable Rust ABI across toolchains.\n\n## Decision\n\nThis profile is **not** a promise that arbitrary Rust crates can be user **`Extern`** targets without shims. User-authored foreign code on the supported path **must** remain **[C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/)** until a future specification promotes additional Rust-native interop.\n\n## Consequences\n\nEmbedding docs steer authors to C contracts + shims for Rust libraries.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/rust-abi-profile/ and [FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/).\n",
+  "layoutJson": null
+}

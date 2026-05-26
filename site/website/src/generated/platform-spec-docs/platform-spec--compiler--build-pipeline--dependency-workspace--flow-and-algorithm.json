@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/flow-and-algorithm",
+  "repoPath": "src/content/docs/platform-spec/compiler/build-pipeline/dependency-workspace/flow-and-algorithm.mdx",
+  "frontmatter": {
+    "title": "Dependency workspace and lockfile - Flow and algorithm",
+    "description": "Workflow from compile-plan construction to workspace materialization and lockfile synchronization.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Dependency workspace and lockfile",
+        "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Stage ordering and lowering",
+        "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+        "relation": "Uses prepared source roots"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n1. Build compile plan from manifest graph.\n2. Materialize dependency sources into workspace object directory.\n3. Read and reconcile `Project.lock` against resolved dependencies.\n4. Enforce `locked`/`frozen` policy.\n5. Expose final materialized source root to compile commands.\n\nThis flow is implemented in project workflow services and reused by fetch/lock/tree command surfaces.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/build-pipeline/dependency-workspace",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}
