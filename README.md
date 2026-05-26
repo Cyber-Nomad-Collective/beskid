@@ -54,6 +54,10 @@ The marketing site and **canonical documentation** are built with **Astro** and 
 
 Run the dev server from `site/website/` with `bun install` and `bun dev` (see `site/website/README.md` for build, preview, and deployment notes).
 
+### Compiler graph — Beskid Nexus (`beskid_nexus/` submodule)
+
+**Beskid Nexus** is an interactive knowledge graph of the `compiler/` workspace (forked from [GitNexus](https://github.com/abhigyanpatwari/GitNexus)), with a hosted MCP-over-HTTP endpoint for editors. Deploy via Coolify from the superrepo root; see [`beskid_nexus/COOLIFY.md`](beskid_nexus/COOLIFY.md) and [`beskid_nexus/README.md`](beskid_nexus/README.md).
+
 ### Superrepo automation (`ci/`, `.github/`)
 
 Top-level continuous integration ties the submodules together (compiler, pckg, extension publishing, and related checks). Details live under `ci/` and `.github/` for contributors maintaining pipelines.
@@ -66,6 +70,8 @@ Top-level continuous integration ties the submodules together (compiler, pckg, e
 | `pckg/` | Submodule: .NET registry application and infrastructure |
 | `site/website/` | Astro site: landing + Starlight docs |
 | `beskid_vscode/` | Submodule: VS Code extension (Bun/TypeScript) |
+| `beskid_nexus/` | Submodule: compiler knowledge graph UI + MCP (`gitnexus serve`) |
+| `beskid_tracker/` | Submodule: roadmap / issue tracker web app |
 | `ci/` | Superrepo CI documentation and helpers |
 | `AGENTS.md` | Notes for automation and recurring project conventions |
 
@@ -90,7 +96,7 @@ git clone --recurse-submodules <repository-url>
 If you already cloned without submodules:
 
 ```bash
-git submodule update --init --recursive compiler pckg beskid_vscode beskid_templates
+git submodule update --init --recursive compiler pckg beskid_vscode beskid_templates beskid_nexus
 ```
 
 (`compiler` uses nested submodules for corelib; `--recursive` pulls those too.)

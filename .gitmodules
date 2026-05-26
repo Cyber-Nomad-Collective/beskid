@@ -20,3 +20,6 @@
 [submodule "beskid_tracker"]
 	path = beskid_tracker
 	url = https://github.com/pmikstacki/beskid_tracker.git
+[submodule "beskid_nexus"]
+	path = beskid_nexus
+	url = https://github.com/Cyber-Nomad-Collective/beskid_nexus.git
