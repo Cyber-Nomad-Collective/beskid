@@ -20,7 +20,7 @@
 ### Superrepo & services
 
 - Aggregate superrepo: submodules `compiler`, `pckg`, `beskid_vscode`, `beskid_nexus`, `beskid_tracker`, `beskid_web_common` (`trudoc`, `@beskid/docs-ui` via GitHub Packages `@cyber-nomad-collective/*` or Bun workspaces). Manifests: `manifests/` + `./scripts/setup-environment.sh` (`repo`/`sync`, submodule fallback, optional `bun install`).
-- **beskid_nexus:** Standalone Coolify repo (`docker-compose.yml`, `gitnexus serve` **8452** on `0.0.0.0`; `FETCH_COMPILER=1` clones compiler)
+- **beskid_nexus:** Standalone Coolify repo (`docker-compose.yml`, `gitnexus serve` **8452**, `GITNEXUS_HOME` volume, runtime catalog/OAuth/analyze—no build-time compiler bake)
 - **beskid_treesitter:** Tree-sitter grammar submodule; sync from `compiler/.../beskid.pest` via `./scripts/sync-from-pest.sh`; npm **`@beskid/tree-sitter`** on GitHub Packages (`.npmrc` scope `@beskid`)
 - **pckg:** Container deploy; first admin via in-app onboarding when empty. EF migrations on startup by default (`Pckg:Database:AutoMigrateOnStartup`). **Server.Tests:** xUnit parallelization off via `xunit.runner.json`. Optional **iconUrl** on packages (HTTP/S, capped).
 
