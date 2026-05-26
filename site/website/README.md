@@ -17,6 +17,7 @@ website/
 ├── src/content/docs/      # Beskid docs content (canonical)
 ├── src/assets/            # Images and static assets used by docs
 ├── public/                # Static files served as-is
+│   └── generated/         # Public JSON APIs (e.g. platform-spec-nav-tree.json for roadmap)
 ├── astro.config.mjs       # Starlight config (platform-spec + book area nav)
 ├── src/generated/         # Generated nav trees (platform-spec, book)
 └── package.json
@@ -35,6 +36,14 @@ Run from `site/website`:
 | `bun preview` | Preview built site                      |
 
 `bun dev` / `bun build` run `predev` / `prebuild`: CLI version sync, platform-spec git meta, `generate:platform-spec-nav-tree`, `generate:book-nav-tree`, `verify:book-images`, `verify:book-layout` (Starlight two-column width guards), and trudoc CI verify (build only).
+
+**Public JSON APIs** (served from `public/generated/` after prebuild, no separate roadmap deploy when spec changes):
+
+| URL | Purpose |
+|-----|---------|
+| `/generated/platform-spec-nav-tree.json` | Nested platform-spec nav for [beskid_tracker](https://github.com/Cyber-Nomad-Collective/beskid/tree/main/beskid_tracker) spec picker |
+
+Consumers (for example [beskid_tracker](https://github.com/Cyber-Nomad-Collective/beskid/tree/main/beskid_tracker)) fetch from `https://beskid-lang.org` after each docs deploy.
 
 In-site navigation uses Astro `ClientRouter` with `fallback="animate"` (View Transitions polyfill on browsers without native support). Directional slide is applied on the Starlight `<main>` pane via a vendored [`Page.astro`](../../packages/beskid-docs-ui/src/starlight/Page.astro) (re-diff when upgrading `@astrojs/starlight`).
 

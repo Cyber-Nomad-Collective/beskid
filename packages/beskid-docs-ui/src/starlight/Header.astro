@@ -9,6 +9,7 @@ import ThemeSelect from 'virtual:starlight/components/ThemeSelect';
 import BookNavChrome from '../book/BookNavChrome.astro';
 import BookNavToggle from '../book/BookNavToggle.astro';
 import PlatformSpecNavChrome from '../platform-spec/PlatformSpecNavChrome.astro';
+import BeskidHubButton from './BeskidHubButton.astro';
 import PlatformSpecNavToggle from '../platform-spec/PlatformSpecNavToggle.astro';
 
 const shouldRenderSearch =
@@ -39,6 +40,7 @@ const isBook = path === '/book' || path.startsWith('/book/');
 	<Astronav closeOnClick>
 		<div class="beskid-header__row">
 			<div class="beskid-header__brand sl-flex">
+				<BeskidHubButton />
 				{isPlatformSpec && <PlatformSpecNavToggle showInTopBar />}
 				{isBook && <BookNavToggle showInTopBar />}
 				<a class="beskid-header__brand-logo-link" href="/" aria-label="Beskid home">
@@ -109,6 +111,9 @@ const isBook = path === '/book' || path.startsWith('/book/');
 		</div>
 		<MenuItems class="hidden md:sl-hidden beskid-header__mobile-menu">
 			<ul class="beskid-header__mobile-list" aria-label="Primary navigation mobile">
+				<li class="beskid-header__mobile-hub">
+					<BeskidHubButton />
+				</li>
 				<li>
 					<a href="/" class:list={['beskid-header__mobile-link', isActive('/') && 'is-active']}>
 						<svg class="beskid-header__mobile-link-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

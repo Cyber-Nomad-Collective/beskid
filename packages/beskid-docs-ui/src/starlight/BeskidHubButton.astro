@@ -1,0 +1,45 @@
+---
+import { BESKID_SERVICES } from '../data/beskid-services';
+import { HUB_CLOSE_ICON_SVG } from '../hub/beskid-hub-close-icon';
+import { hubLauncherIconSvg } from '../hub/icons';
+
+const servicesJson = JSON.stringify(BESKID_SERVICES);
+const dialogId = 'beskid-hub-dialog';
+---
+
+<div class="beskid-hub-root" data-beskid-hub-root data-services={servicesJson}>
+	<button
+		type="button"
+		class="beskid-hub-trigger"
+		data-beskid-hub-trigger
+		aria-haspopup="dialog"
+		aria-controls={dialogId}
+		title="Beskid services"
+	>
+		<Fragment set:html={hubLauncherIconSvg()} />
+		<span class="sr-only">Open Beskid services</span>
+	</button>
+
+	<dialog id={dialogId} class="beskid-hub" data-beskid-hub>
+		<header class="beskid-hub__header">
+			<div>
+				<h2 class="beskid-hub__title">Beskid</h2>
+				<p class="beskid-hub__subtitle">Jump to a Beskid service</p>
+			</div>
+			<button type="button" class="beskid-hub__close" data-beskid-hub-close aria-label="Close">
+				<Fragment set:html={HUB_CLOSE_ICON_SVG} />
+			</button>
+		</header>
+		<div class="beskid-hub__body">
+			<div class="beskid-hub__grid" data-beskid-hub-grid></div>
+		</div>
+	</dialog>
+</div>
+
+<script>
+	import { initBeskidHub } from '../client/beskid-hub';
+	import { onPageNavigation } from '../client/view-transition-lifecycle';
+
+	onPageNavigation(() => initBeskidHub());
+	initBeskidHub();
+</script>

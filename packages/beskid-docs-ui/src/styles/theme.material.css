@@ -1,5 +1,9 @@
 :root {
 	--beskid-material-seed: #0ea5a3;
+	/* Fluent UI Blazor: FluentDesignTheme CustomColor / loading-theme primary-color */
+	--beskid-fluent-accent: var(--beskid-material-seed);
+	/* Fluent UI Blazor: NeutralBaseColor / loading-theme neutral-color (dark ramp base) */
+	--beskid-fluent-neutral: #3f4948;
 	/* Pin site typography tokens so docs keep a stable sans stack across Starlight updates. */
 	--sl-font: ui-sans-serif, system-ui, sans-serif;
 	--sl-font-mono: 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
@@ -48,6 +52,7 @@
 }
 
 html[data-theme='light'] {
+	--beskid-fluent-neutral: #bec9c8;
 	--beskid-primary: #006a68;
 	--beskid-on-primary: #ffffff;
 	--beskid-primary-container: #96f1ee;

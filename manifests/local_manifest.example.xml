@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copy to repo-root local_manifest.xml (gitignored) to override revisions locally.
+  See: https://gerrit.googlesource.com/git-repo/+/refs/heads/main/docs/manifest-format.md
+-->
+<manifest>
+  <!-- Example: track a feature branch on the compiler -->
+  <!--
+  <project name="beskid_compiler" path="compiler" revision="my-feature-branch" />
+  -->
+</manifest>

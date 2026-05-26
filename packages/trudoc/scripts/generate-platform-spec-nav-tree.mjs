@@ -18,6 +18,13 @@ const DOCS_ROOT = path.join(WEBSITE_ROOT, 'src', 'content', 'docs');
 const SPEC_ROOT = path.join(DOCS_ROOT, 'platform-spec');
 const OUT_DIR = path.join(WEBSITE_ROOT, 'src', 'generated');
 const OUT_FILE = path.join(OUT_DIR, 'platform-spec-nav-tree.json');
+/** Static URL for external consumers (roadmap, tooling): /generated/platform-spec-nav-tree.json */
+const PUBLIC_OUT_FILE = path.join(
+	WEBSITE_ROOT,
+	'public',
+	'generated',
+	'platform-spec-nav-tree.json',
+);
 
 function walk(dir, out = []) {
 	if (!fs.existsSync(dir)) return out;
@@ -85,6 +92,12 @@ const payload = {
 	tree,
 };
 
+const json = `${JSON.stringify(payload, null, 2)}\n`;
+
 fs.mkdirSync(OUT_DIR, { recursive: true });
-fs.writeFileSync(OUT_FILE, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
+fs.writeFileSync(OUT_FILE, json, 'utf8');
 console.log(`Wrote ${path.relative(WEBSITE_ROOT, OUT_FILE)} (${rows.length} nodes).`);
+
+fs.mkdirSync(path.dirname(PUBLIC_OUT_FILE), { recursive: true });
+fs.writeFileSync(PUBLIC_OUT_FILE, json, 'utf8');
+console.log(`Wrote ${path.relative(WEBSITE_ROOT, PUBLIC_OUT_FILE)} (public API).`);

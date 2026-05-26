@@ -17,3 +17,6 @@
 [submodule "beskid_templates"]
 	path = beskid_templates
 	url = https://github.com/Cyber-Nomad-Collective/beskid_templates.git
+[submodule "beskid_tracker"]
+	path = beskid_tracker
+	url = https://github.com/pmikstacki/beskid_tracker.git

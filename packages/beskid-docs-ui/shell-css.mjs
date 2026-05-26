@@ -12,4 +12,5 @@ export const docsShellCustomCss = [
 	path.join(root, 'src/styles/downloads.css'),
 	path.join(root, 'src/styles/platform-spec.css'),
 	path.join(root, 'src/styles/book.css'),
+	path.join(root, 'src/styles/hub.css'),
 ];
