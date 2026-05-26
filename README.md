@@ -69,7 +69,19 @@ Top-level continuous integration ties the submodules together (compiler, pckg, e
 | `ci/` | Superrepo CI documentation and helpers |
 | `AGENTS.md` | Notes for automation and recurring project conventions |
 
-Clone with submodules so `compiler/`, `pckg/`, and `beskid_vscode/` are populated:
+### Clone and sync
+
+**Recommended (git-repo + setup script):** installs [Google's `repo` tool](https://gerrit.googlesource.com/git-repo/), syncs all projects from [`manifests/default.xml`](manifests/default.xml), and runs `bun install` when Bun is available:
+
+```bash
+git clone https://github.com/Cyber-Nomad-Collective/beskid.git
+cd beskid
+./scripts/setup-environment.sh
+```
+
+Optional formatter reference: `./scripts/setup-environment.sh --bsharp`. Details: [`scripts/README.md`](scripts/README.md).
+
+**Git submodules only:**
 
 ```bash
 git clone --recurse-submodules <repository-url>
@@ -78,15 +90,27 @@ git clone --recurse-submodules <repository-url>
 If you already cloned without submodules:
 
 ```bash
-git submodule update --init --recursive compiler pckg beskid_vscode
+git submodule update --init --recursive compiler pckg beskid_vscode beskid_templates
 ```
 
 (`compiler` uses nested submodules for corelib; `--recursive` pulls those too.)
+
+Or run `./scripts/setup-environment.sh --submodules`.
 
 The optional `references/bsharp` formatter reference is **off by default** (it nests a large Roslyn checkout). Enable when needed:
 
 ```bash
 git submodule update --init references/bsharp
+```
+
+**Repo-only fresh directory** (empty parent folder):
+
+```bash
+mkdir beskid && cd beskid
+curl -fsSL https://storage.googleapis.com/git-repo-downloads/repo -o ~/.local/bin/repo && chmod +x ~/.local/bin/repo
+export PATH="$HOME/.local/bin:$PATH"
+repo init -u https://github.com/Cyber-Nomad-Collective/beskid.git -m manifests/default.xml
+repo sync
 ```
 
 ---
