@@ -1,0 +1,74 @@
+# Beskid lazygit config — install:
+#   mkdir -p ~/.config/lazygit
+#   cp scripts/lazygit/config.yml ~/.config/lazygit/config.yml
+#
+# Lazygit has no built-in "commit all submodules recursively". It only offers
+# submodule init/update (Submodules tab, bulk menu `b`, including --recursive).
+# Use custom command `P` below, or plain git:
+#   git push --recurse-submodules=on-demand   # push only, after commits exist
+
+git:
+  pagers:
+    - colorArg: always
+      pager: delta --dark --paging=never
+  autoFetch: true
+
+gui:
+  branchColorPatterns:
+    '^main$': '#5B8CFF'
+    '^master$': '#5B8CFF'
+    '^develop$': '#3DDC97'
+    '^feature/': '#FFB454'
+    '^fix/': '#F778BA'
+  showListFooter: true
+
+customCommands:
+  # Commit + push every dirty repo (submodules deepest-first, then superrepo).
+  - key: 'P'
+    context: 'global'
+    description: 'Beskid: commit + push all submodules (recursive)'
+    prompts:
+      - type: 'input'
+        title: 'Commit message (applied to each dirty repo)'
+        key: 'Message'
+        initialValue: ''
+    command: 'bash "$(git rev-parse --show-toplevel)/scripts/git-commit-push-recursive.sh" {{.Form.Message | quote}}'
+    output: terminal
+
+  # Same workflow without push (commit only).
+  - key: 'C'
+    context: 'global'
+    description: 'Beskid: commit all submodules (recursive, no push)'
+    prompts:
+      - type: 'input'
+        title: 'Commit message'
+        key: 'Message'
+    command: 'bash "$(git rev-parse --show-toplevel)/scripts/git-commit-push-recursive.sh" --no-push {{.Form.Message | quote}}'
+    output: terminal
+
+  # Dry-run from anywhere (shows status per repo).
+  - key: 'D'
+    context: 'global'
+    description: 'Beskid: dry-run recursive commit/push'
+    prompts:
+      - type: 'input'
+        title: 'Label for dry-run (optional)'
+        key: 'Message'
+        initialValue: 'dry-run'
+    command: 'bash "$(git rev-parse --show-toplevel)/scripts/git-commit-push-recursive.sh" --dry-run {{.Form.Message | quote}}'
+    output: terminal
+
+  # Native git: push superproject and on-demand submodule commits (no staging).
+  - key: 'U'
+    context: 'global'
+    description: 'Sync submodules (init + update --recursive)'
+    command: 'git submodule update --init --recursive'
+    loadingText: 'Updating submodules…'
+    output: log
+
+  - key: '<c-p>'
+    context: 'global'
+    description: 'Push with --recurse-submodules=on-demand'
+    command: 'git push --recurse-submodules=on-demand'
+    loadingText: 'Pushing…'
+    output: log
