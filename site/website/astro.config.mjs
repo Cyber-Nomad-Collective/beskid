@@ -103,6 +103,36 @@ function redirectKey(routePrefix) {
 	return routePrefix.endsWith('/') ? routePrefix : `${routePrefix}/`;
 }
 
+/**
+ * Map every legacy-bridge markdown path to a single target (legacy spec mapping hub).
+ * Unlike {@link addMarkdownRedirects}, does not append page basenames under the target.
+ */
+function addFlatLegacyRedirects(dir, fromPrefix, target) {
+	/** @type {Record<string, string>} */
+	const out = {};
+	if (!fs.existsSync(dir)) return out;
+
+	for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+		const full = path.join(dir, entry.name);
+		if (entry.isDirectory()) {
+			out[redirectKey(`${fromPrefix}/${entry.name}`)] = target;
+			Object.assign(
+				out,
+				addFlatLegacyRedirects(full, `${fromPrefix}/${entry.name}`, target),
+			);
+			continue;
+		}
+		if (!/\.(md|mdx)$/i.test(entry.name)) continue;
+		const base = entry.name.replace(/\.(md|mdx)$/i, '');
+		if (base === 'index' || base.toLowerCase() === 'readme') {
+			out[redirectKey(fromPrefix)] = target;
+			continue;
+		}
+		out[redirectKey(`${fromPrefix}/${base}`)] = target;
+	}
+	return out;
+}
+
 /** @param {string} dir @param {string} fromPrefix @param {string} toPrefix */
 function addMarkdownRedirects(dir, fromPrefix, toPrefix) {
 	/** @type {Record<string, string>} */
@@ -140,11 +170,20 @@ function siteRedirects() {
 	for (const legacy of ['execution', 'corelib', 'packages', 'api']) {
 		const legacyDir = path.join(legacyBridgeRoot, legacy);
 		if (!fs.existsSync(legacyDir)) continue;
-		Object.assign(
-			out,
-			addMarkdownRedirects(legacyDir, `/${legacy}`, legacyTarget),
-		);
+		Object.assign(out, addFlatLegacyRedirects(legacyDir, `/${legacy}`, legacyTarget));
 		out[redirectKey(`/${legacy}`)] = legacyTarget;
+	}
+
+	// Common lowercase / legacy URLs (bookmarks, external links) not covered by PascalCase paths.
+	const legacyAliases = [
+		['/corelib/system/error', legacyTarget],
+		['/corelib/system/input', legacyTarget],
+		['/corelib/system/output', legacyTarget],
+		['/corelib/core/results', legacyTarget],
+		['/corelib/core/error-handling', legacyTarget],
+	];
+	for (const [from, to] of legacyAliases) {
+		out[redirectKey(from)] = to;
 	}
 
 	return out;

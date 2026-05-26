@@ -59,6 +59,7 @@ Coolify deployment uses:
 
 - Compose file: [`site/infra/docker-compose.yml`](../infra/docker-compose.yml) (build context: superrepo root)
 - Website image build: `site/website/Dockerfile`
+- Operator notes (submodule clone failures, health): [`site/COOLIFY.md`](../COOLIFY.md)
 
 The Docker build context includes `.git` (and the image installs `git`) so prebuild can generate platform-spec revision history. Prefer a non-shallow clone on Coolify when possible for accurate `git log --follow` counts across renames.
 
