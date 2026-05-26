@@ -20,6 +20,7 @@
   <project name="beskid_vscode" path="beskid_vscode" revision="main" />
   <project name="beskid_templates" path="beskid_templates" revision="main" />
   <project name="beskid_nexus" path="beskid_nexus" revision="main" />
+  <project name="beskid_treesitter" path="beskid_treesitter" revision="main" />
   <project name="beskid_web_common" path="beskid_web_common" revision="main" />
 
   <project

@@ -26,3 +26,6 @@
 [submodule "beskid_web_common"]
 	path = beskid_web_common
 	url = https://github.com/Cyber-Nomad-Collective/beskid_web_common.git
+[submodule "beskid_treesitter"]
+	path = beskid_treesitter
+	url = https://github.com/Cyber-Nomad-Collective/beskid_treesitter.git
