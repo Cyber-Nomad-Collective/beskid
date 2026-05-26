@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/c-abi-profile/types-and-call-conventions",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/c-abi-profile/types-and-call-conventions.mdx",
+  "frontmatter": {
+    "title": "C ABI profile — Types and call conventions",
+    "description": "Permitted C ABI representations for Beskid extern contract parameters and returns in the reference compiler.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-01",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "C ABI profile",
+        "href": "/platform-spec/language-meta/interop/c-abi-profile/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Calling convention\n\nFor user **`contract`** calls lowered through the reference compiler path, parameters and returns are prepared for **System V AMD64** when targeting that platform. This matches the explicit `CallConv::SystemV` selection in the contract call lowering implementation.\n\nOther targets must document their own mapping in a future revision of this article; until then, only the documented tier-1 mapping is normative for **Standard** conformance claims.\n\n## Permitted value shapes (v0.3.0)\n\nThe C ABI profile instantiates **[Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/)** as follows:\n\n- **Scalar** — `bool` as **`i8`**, `u8`, `i32`, `i64`, `f64`, `unit`.\n- **Interop views** — **`CStringView`**, **`CBuffer`**, **`CArrayView`** per **[interop view types](/platform-spec/language-meta/interop/c-abi-profile/interop-view-types/)**.\n- **Opaque handle** — pointer-sized slot or `i64` where documented.\n- **`ref u8`** — narrow legacy slice start; prefer **`CBuffer`**.\n\nBeskid **`string`** and **`T[]`** GC values **must not** appear on user `Extern` signatures in v0.3.0 Standard.\n\n**`CLayout` structs** (primitive fields only) are **v0.3.1** — **[C layout types](/platform-spec/language-meta/interop/c-abi-profile/c-layout-types/)**. Nested complex types are **deferred** until basic FFI is implemented.\n\nTypes with unstable Beskid-only layout **must not** cross the boundary without an adapter or shim.\n\n## Cranelift note\n\nBeskid user code and bridge code are lowered with **Cranelift**; foreign libraries need only expose **C ABI** entrypoints compatible with the emitted calls. See also `/execution/runtime/ffi/` for additional lowering narrative.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/language-meta/interop/c-abi-profile",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/language-meta/interop/c-abi-profile",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

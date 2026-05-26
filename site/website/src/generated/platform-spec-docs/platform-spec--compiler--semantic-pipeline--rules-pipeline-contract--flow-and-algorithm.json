@@ -1,0 +1,40 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/flow-and-algorithm",
+  "repoPath": "src/content/docs/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/flow-and-algorithm.mdx",
+  "frontmatter": {
+    "title": "Rules pipeline contract - Flow and algorithm",
+    "description": "Walks through runtime/order-of-operations behavior in the implementation.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Rules pipeline contract",
+        "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n## Execution order\n\n1. Host finishes **mod collect/generate/merge** and bumps `syntax_generation_id`.\n2. **Inspector-only meta** runs (if any) without mutating the merged tree.\n3. `SemanticPipelineRule` stages execute in registration order within `staged.rs`.\n4. **`stage8_metaprogramming`** validates meta-produced attributes; it does **not** replace mod host orchestration.\n5. Diagnostics publish to CLI/LSP snapshot; pipeline continues only if policy allows after error count.\n6. HIR normalization and resolution consume the same generation id before lowering.\n\n```mermaid\nsequenceDiagram\n  participant Host\n  participant ModHost\n  participant Rules as SemanticPipelineRule\n  participant Lower\n  Host->>ModHost: collect generate merge\n  ModHost-->>Host: syntax_generation_id++\n  Host->>Rules: run staged rules\n  Rules-->>Host: diagnostics\n  Host->>Lower: lower_program on stable snapshot\n```\n\n## Anchored code paths\n\n- `compiler/crates/beskid_analysis/src/analysis/rules/`\n- `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`\n- `compiler/crates/beskid_analysis/src/services.rs`\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

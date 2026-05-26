@@ -1,0 +1,68 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape/examples",
+  "repoPath": "src/content/docs/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/examples.mdx",
+  "frontmatter": {
+    "title": "Examples",
+    "description": "Canonical Tier 1 / Tier 2 / Tier 3 annotations on `Collections.Array.Len`, `Collections.Map.Count`, and `Collections.List.Get`, plus the resulting `api.json` rows.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-23",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Stability and API shape",
+        "href": "/platform-spec/core-library/stability-and-api-shape/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Area",
+        "title": "Compiler integration",
+        "href": "/platform-spec/core-library/compiler-integration/",
+        "relation": "Discovery and packaging guarantee the API shape being consumed"
+      },
+      {
+        "type": "Feature",
+        "title": "Types",
+        "href": "/platform-spec/language-meta/type-system/types/",
+        "relation": "Corelib signatures rely on language type contracts"
+      },
+      {
+        "type": "Feature",
+        "title": "Corelib API shape",
+        "href": "/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Example 1: Tier 1 — `Collections.Array.Len`\n\nSource (`compiler/corelib/packages/foundation/src/Collections/Array.bd`):\n\n```beskid\n/// Returns array length (element count).\n/// @tier(standard)\n/// @par(T) Element type of the slice (length is independent of `T` in v1).\n/// @arg(values) Slice-like array handle.\n/// @returns Element count from the runtime header.\npub i64 Len<T>(T[] values) {\n    return __array_len(values);\n}\n```\n\nResulting `api.json` row (truncated):\n\n```json\n{\n  \"qualifiedName\": \"Collections::Array::Len\",\n  \"kind\": \"function\",\n  \"visibility\": \"public\",\n  \"tier\": \"standard\",\n  \"signature\": \"fn Len<T>(values: T[]) -> i64\"\n}\n```\n\n## Example 2: Tier 2 — `Collections.Map.Count`\n\nSource (`compiler/corelib/packages/foundation/src/Collections/Map.bd`):\n\n```beskid\n/// Counter for the logical map size.\n/// @tier(supported)\n/// @arg(map) Map handle (storage still wired through Tier 3 helpers).\n/// @returns Number of key-value pairs.\npub i64 Count<K, V>(Map<K, V> map) {\n    return map.count;\n}\n```\n\nResulting `api.json` row:\n\n```json\n{\n  \"qualifiedName\": \"Collections::Map::Count\",\n  \"kind\": \"function\",\n  \"visibility\": \"public\",\n  \"tier\": \"supported\",\n  \"signature\": \"fn Count<K, V>(map: Map<K, V>) -> i64\"\n}\n```\n\n## Example 3: Tier 3 — `Collections.List.Get`\n\nSource (`compiler/corelib/packages/foundation/src/Collections/List.bd`):\n\n```beskid\n/// Returns the element at `index`. Tier 3 until List storage is wired into the runtime.\n/// @tier(unstable)\n/// @par(T) Element type stored in the list.\n/// @arg(list) List handle.\n/// @arg(index) Zero-based index.\n/// @returns Element at `index`; behaviour for out-of-range indices is undefined in v1.\npub T Get<T>(List<T> list, i64 index) {\n    return list.head;\n}\n```\n\nResulting `api.json` row:\n\n```json\n{\n  \"qualifiedName\": \"Collections::List::Get\",\n  \"kind\": \"function\",\n  \"visibility\": \"public\",\n  \"tier\": \"unstable\"\n}\n```\n\n## Example 4: Cascade inheritance\n\nWhen a module declares a tier on its first item, the resolver applies that tier to every member that omits its own directive. `Collections.Map`'s module-level `@tier(supported)` covers `Count`, `IsEmpty`, `Insert`, and `Remove`; only `ContainsKey` and `Get` carry an explicit `@tier(unstable)` override.\n\n## Example 5: Omission round-trip\n\nItems that flow through the cascade without a match (rare in corelib because every module annotates itself) emit no `tier` field at all:\n\n```json\n{\n  \"qualifiedName\": \"ThirdParty::Pkg::Helper\",\n  \"kind\": \"function\",\n  \"visibility\": \"public\"\n}\n```\n\nConsumers MUST treat this as `supported` so external packages that have not yet adopted tiering interop cleanly with the corelib pipeline.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/stability-and-api-shape/corelib-api-shape",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

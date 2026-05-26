@@ -1,0 +1,49 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/examples",
+  "repoPath": "src/content/docs/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/examples.mdx",
+  "frontmatter": {
+    "title": "Examples",
+    "description": "Observable corelib injection scenarios.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Corelib injection and resolution",
+        "href": "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Superrepo host app (implicit corelib)\n\nA minimal `Project.proj` with only app dependencies still resolves standard prelude types (including Option types), strings, and fibers because `resolve_dependencies` attaches `beskid_corelib` without an explicit `Std` block.\n\n## Explicit corelib path override\n\n```text\ndependency {\n  name = Std\n  source = path\n  path = \"../../compiler/corelib/beskid_corelib\"\n}\n```\n\nUsed in compiler dogfood projects; must point at aggregate `Project.proj`.\n\n## CI environment\n\n```bash\nexport BESKID_CORELIB_ROOT=/path/to/compiler/corelib\nbeskid build --project apps/demo/Project.proj\n```\n\nEnsures consistent corelib root when not using bundled install artifacts.\n\n## Rejected manifest (parse error)\n\n```text\nproject {\n  name = bad\n  noCorelib = true\n}\n```\n\nFails structural validation in `reject_corelib_opt_out_keys`.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/c-abi-profile/interop-view-types",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/c-abi-profile/interop-view-types.mdx",
+  "frontmatter": {
+    "title": "C ABI profile — Interop view types (v0.3.0)",
+    "description": "CStringView, CBuffer, and CArrayView layouts for user Extern boundaries.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-20",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "C ABI profile",
+        "href": "/platform-spec/language-meta/interop/c-abi-profile/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Core primitives",
+        "href": "/platform-spec/language-meta/interop/interop-contracts/core-primitives/",
+        "relation": "Type-shape classes"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose\n\nv0.3.0 introduces **interop view types**: transparent records with **stable C layout** used only at FFI boundaries. They align with runtime `repr(C)` helpers in `compiler/crates/beskid_abi/src/types.rs` without exposing GC-managed Beskid `string` or `T[]` directly.\n\nCanonical definitions **should** live in corelib under an **`Interop`** package (exact package id is a corelib layout decision).\n\n## Normative layouts (tier-1, 64-bit)\n\nLayouts use pointer-sized fields in C ABI order.\n\n### `CStringView`\n\nUTF-8 byte range (does not imply null termination on the foreign side unless documented).\n\n| Field | Type | Meaning |\n| --- | --- | --- |\n| `ptr` | pointer / `i64` | Start of bytes |\n| `len` | `i64` | Byte length |\n\nMaps to **`BeskidStr`** at the runtime embedding boundary.\n\n### `CBuffer`\n\nRead/write byte range.\n\n| Field | Type | Meaning |\n| --- | --- | --- |\n| `ptr` | pointer / `i64` | Start of bytes |\n| `len` | `i64` | Logical length |\n\n### `CArrayView`\n\nFat-pointer compatible with runtime arrays.\n\n| Field | Type | Meaning |\n| --- | --- | --- |\n| `ptr` | pointer / `i64` | Element storage |\n| `len` | `i64` | Logical element count |\n| `cap` | `i64` | Capacity |\n\nMaps to **`BeskidArray`** where the profile documents element size separately.\n\n## Permitted primitives (v0.3.0)\n\n`bool` (as **`i8`** at boundary), `u8`, `i32`, `i64`, `f64`, `unit`, interop views above, and **`ref u8`** (legacy narrow slice start — prefer views).\n\n## Lowering\n\nThe C ABI profile lowers views to a **flat list** of machine parameters per System V AMD64 (pointer and integer slots). The engine signature validator **must** accept only types expressible in that flat list.\n\n## After basic FFI\n\n**`CLayout` records** with primitive fields only arrive in **v0.3.1** ([C layout types](./c-layout-types/)). Nested structs, enums, and arrays inside FFI structs remain **deferred** until that band is stable.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/language-meta/interop/c-abi-profile",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/language-meta/interop/c-abi-profile",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

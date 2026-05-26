@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/project-scaffolding/template-packages/adr/0001-explicit-package-kind",
+  "repoPath": "src/content/docs/platform-spec/tooling/project-scaffolding/template-packages/adr/0001-explicit-package-kind.mdx",
+  "frontmatter": {
+    "title": "Explicit packageKind",
+    "description": "Explicit packageKind",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-TOOL-SCAFF-0001",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-21",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Template packages",
+        "href": "/platform-spec/tooling/project-scaffolding/template-packages/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRegistry taxonomy.\n\n## Decision\n\nExplicit packageKind on beskid.package.v1.\n\n## Consequences\n\npckg validators.\n\n## Verification anchors\n\nValidator tests.\n",
+  "layoutJson": null
+}

@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/formatter/design-model",
+  "repoPath": "src/content/docs/platform-spec/tooling/formatter/design-model.mdx",
+  "frontmatter": {
+    "title": "Formatter design model",
+    "description": "Emit/EmitCtx/Emitter architecture, policy split, and the layout invariants the formatter exposes.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-23",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Formatter",
+        "href": "/platform-spec/tooling/formatter/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Lexical and syntax",
+        "href": "/platform-spec/language-meta/surface-syntax/lexical-and-syntax/",
+        "relation": "Token model projected back to source"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose and scope\n\nThis article documents the **internal architecture** of the Beskid formatter — how the `Emit`/`EmitCtx`/`Emitter` triad and the policy module cooperate to project a parsed AST back into canonical source. It is informative-with-normative-claims: the **shape of the architecture** is normative for anyone modifying the formatter; the **fine-grained module decomposition** is informative.\n\nThe article does **not** redefine the formatter contract (covered by the parent **[hub](/platform-spec/tooling/formatter/)**) and does **not** prescribe any consumer-facing knob: there are none.\n\n## Canonical references\n\n- **[Formatter](/platform-spec/tooling/formatter/)** — parent feature hub with the normative contract.\n- **[Beskid CLI](/platform-spec/tooling/cli/)** — the `beskid format` / `fmt` host.\n- **`compiler/crates/beskid_analysis/src/format/`** — the reference implementation.\n\n## Architecture overview\n\nThe formatter splits into three concerns:\n\n| Concern | Type | Module | Responsibility |\n| --- | --- | --- | --- |\n| **Trait surface** | `trait Emit` | `format/emit.rs` | Defines the per-construct `emit(&self, w, cx)` contract. |\n| **Context** | `struct EmitCtx` | `format/emit.rs` | Carries indent depth + the policy toggles in scope for the current emission. |\n| **Driver** | `struct Emitter` | `format/emit.rs` | Stateless dispatcher; constructs the buffer, calls into the AST, returns `Result<String, EmitError>`. |\n| **Policy** | free functions | `format/policy.rs` | Encodes blank-line, between-member, and between-block-item rules so the AST-side `Emit` impls remain readable. |\n| **Per-construct impls** | `Emit` implementations | `format/items/`, `expressions_emit.rs`, `statements_emit.rs`, `types_emit.rs` | Project each AST node into the writer in a way that satisfies the layout policy. |\n\nModule decomposition follows the user-rule \"one primary concern per file\" and treats `mod.rs` as exports-only.\n\n## Emit contract\n\n```rust\npub trait Emit {\n    fn emit<W: Write>(&self, w: &mut W, cx: &mut EmitCtx) -> Result<(), EmitError>;\n}\n```\n\nImplementations **must**:\n\n1. **Be local** — emit only the textual representation of the node, never of sibling or parent nodes.\n2. **Be deterministic** — never observe wall-clock time, environment variables, or randomness.\n3. **Be reentrant** — child emits use the same `&mut EmitCtx`; they **must** restore any context they mutate (indent depth, policy toggles) before returning, except for `push_indent`/`pop_indent` pairs that bracket a nested scope.\n4. **Use `EmitCtx` helpers** (`write_indent`, `nl`, `ln`, `space`, `token`, `open_brace`, `close_brace`) rather than writing raw `\\n`/`'    '` characters, so layout policy changes localize to `EmitCtx`.\n\n## EmitCtx invariants\n\n- `indent: usize` — current indent depth in **units**, where one unit is four spaces. `push_indent` adds one; `pop_indent` saturates at zero.\n- `policy_blank_line_between_members: bool` — when true (the default), `between_members` emits one blank line.\n- `open_brace` / `close_brace` are the **only** sanctioned way to emit braces; they handle the indent push/pop for the block body.\n\nA trait implementation that bypasses these helpers (for example, writing `\\n  ` directly) is a defect; it breaks the contract that policy changes live in one place.\n\n## Policy split\n\nThe blank-line and spacing policy lives in `format/policy.rs`:\n\n- **`between_top_level_declarations`** — one newline between top-level items (the default `cx.nl(w)`).\n- **`between_members`** — one newline between members of a container (struct fields, enum cases, type method blocks, etc.); skipped when `policy_blank_line_between_members` is false.\n- **`between_block_items`** — extra blank between a block-like statement (`if`, `while`, `for`) and a following `let`, to keep introductions visually separated.\n\nAdding a new normative rule **must** be done by extending `policy.rs` rather than scattering `\\n` writes across `items/`. Re-running the existing test fixtures after a policy change **must** continue to pass; if the policy intentionally changes byte output, the fixtures **must** be regenerated in the same change set.\n\n## Driver\n\n`Emitter` is a zero-sized type with a single method:\n\n```rust\nimpl Emitter {\n    pub fn write<T: Emit>(&self, item: &T) -> Result<String, EmitError>;\n}\n```\n\n`format_program(&Spanned<Program>)` is the user-facing entry point; it constructs an `Emitter` plus a fresh `EmitCtx` and dispatches into the AST. There are no caches, no concurrency primitives, and no I/O on the driver side.\n\n## Error model\n\nAny `std::fmt::Error` returned by an underlying writer is wrapped as `EmitError` (the formatter never panics on layout failures). The CLI converts `EmitError` to a Miette diagnostic via `emit_error_semantic_diagnostic`, which constructs a single-character span at the start of the source so the user can locate the problem in their editor.\n\nThe formatter **must** propagate parse errors verbatim from the caller (the CLI surfaces them through the existing parser diagnostics) and **must not** attempt partial formatting of a failed parse.\n\n## File-system side effects (CLI layer)\n\nThe CLI layer in `compiler/crates/beskid_cli/src/commands/format.rs` is the **only** place the formatter performs I/O. Its responsibilities:\n\n1. **Discover** `.bd` files: a single file, a single tree (with the `.git`/`target`/etc. ignore set), or stdin (not yet — currently rejected).\n2. **Parse** each discovered file via `services::parse_program_with_source_name`.\n3. **Format** via `format_program`.\n4. **Dispatch** based on flags:\n   - No flags: stdout (single file only).\n   - `--output`: stdout-equivalent into a single output file.\n   - `--write`: in-place rewrite.\n   - `--check`: bail non-zero on the first mismatch with a `not formatted:` message.\n\nThe CLI **must not** attempt to recover from a parse error by skipping the file; CI behaviors that need partial coverage **must** drive the formatter on a curated file list rather than tolerate parse failures.\n\n## Verification and maintenance notes\n\n- **Idempotency** — the canonical test is to run `format_program(parse(format_program(parse(s))))` and assert byte equality with `format_program(parse(s))`. This **must** be exercised in `beskid_analysis` unit tests.\n- **Policy regressions** — any change to `policy.rs` **must** be accompanied by an ADR (or an existing ADR update) and a refresh of fixture outputs.\n- **Drift detection** — CI **should** run `beskid format --check` against a known-formatted source tree (Beskid's own corelib and book code samples) to catch regressions early.\n\n## Related topics\n\n- **[Formatter](/platform-spec/tooling/formatter/)** — parent feature hub.\n- **[Verification and traceability](./verification-and-traceability/)** — concrete test paths.\n- **[Canonical pretty-printer ADR](./adr/0001-canonical-pretty-printer/)** — rationale for the no-knobs policy.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/tooling/formatter",
+    "minSpecSections": 2
+  }
+}

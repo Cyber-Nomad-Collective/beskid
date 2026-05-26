@@ -1,0 +1,77 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/memory-model/memory-and-references",
+  "repoPath": "src/content/docs/platform-spec/language-meta/memory-model/memory-and-references.mdx",
+  "frontmatter": {
+    "title": "Memory and references",
+    "description": "Locals, ref T, heap objects under a concurrent GC, and fiber sharing rules. Runtime write barriers and collector phases defer to execution specs; /execution/ is a non-normative legacy bridge.",
+    "template": "splash",
+    "tableOfContents": false,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Memory model",
+        "href": "/platform-spec/language-meta/memory-model/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Domain",
+        "title": "Language meta",
+        "href": "/platform-spec/language-meta/",
+        "relation": "Parent domain hub"
+      },
+      {
+        "type": "Domain",
+        "title": "Platform specification",
+        "href": "/platform-spec/",
+        "relation": "Cross-cutting index"
+      },
+      {
+        "type": "Domain",
+        "title": "Execution documentation",
+        "href": "/execution/",
+        "relation": "non-normative legacy bridge"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader\n\tstatus=\"Standard\"\n\townerName=\"Piotr Mikstacki\"\n\townerEmail=\"pmikstacki@cybernomad.it\"\n\tsubmitterName=\"Piotr Mikstacki\"\n\tsubmitterEmail=\"pmikstacki@cybernomad.it\"\n/>\n\n## Normative specification\n\n### Scope\n\nDefines **local storage**, **`ref`/`out` parameters**, **GC-managed heap objects**, **arrays**, and **cross-fiber sharing** at the language level. Collector algorithms and write barriers **must** match execution platform-spec; the `/execution/` doc tree is informative only.\n\n### Locals and assignment\n\n- Locals live in function activation records unless captured by closures (see [Lambdas and closures](/platform-spec/language-meta/evaluation/lambdas-and-closures/)).\n- Assignment to immutable bindings **must** error (**E1214**).\n- `mut` on locals and parameters **must** be present to allow reassignment where required by the reference compiler.\n\n### `ref` and `out`\n\n- Parameters **may** use `ref T` or `out T` modifiers (`ParameterModifier`).\n- `ref` passes an alias to existing storage; `out` requires definite assignment before read on callee entry.\n- `ref` in type expressions (`ref T`) denotes reference types in signatures distinct from by-value `T`.\n\n### Arrays\n\n- `T[]` values use the fat-pointer layout (`BeskidArray`) described in execution ABI material.\n- Element access **must** respect bounds checks in safe builds (lowering inserts checks unless proven).\n\n### Heap and garbage collection\n\n- Reference-bearing values that escape their defining frame **must** live on the **GC heap** traced by the runtime collector (concurrent tri-color mark-sweep in the reference implementation).\n- User code **must not** expose manual `free` or untracked pointers in v0.1.\n- Pointer stores to heap objects **must** execute **write barriers** when required by the active GC phase (see execution memory contracts).\n- `null` **must not** appear as a value; optional absence uses `Option<T>` per [Types](/platform-spec/language-meta/type-system/types/).\n\n### Fibers and sharing\n\n- Values **must not** be shared across fibers by alias unless immutability is proven or synchronization uses `Channel<T>` per [Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/).\n- Capturing mutable shared state in `spawn` closures **should** be rejected when detectable.\n\n### Dynamic semantics\n\n- Stack frames are tied to call/return; `return` ends the frame and invalidates temporaries.\n- Closure environments **must** outlive uses tracked by the compiler’s capture analysis.\n\n### Diagnostics\n\nImmutability **E1214**; member access **E1211–E1213**. Registry: [Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/).\n\n### Conformance\n\nMemory rules enforced in `beskid_analysis` **must** be preserved in codegen for **L3** claims.\n\n## Decisions\n\n- **D-LM-MEM-001 — Channel-only fiber sharing:** Language law forbids ad hoc shared mutable globals across fibers.\n- **D-LM-MEM-002 — Fat-pointer arrays:** All `T[]` share one ABI representation per target unless a profile documents otherwise.\n- **D-LM-MEM-003 — GC by default:** Heap objects are collector-managed; escape analysis may stack-allocate but **must not** skip tracing when pointers escape.\n- **D-LM-MEM-004 — No `null` addresses:** References are non-null at the type level; `Option<T>` models absence.\n\n## Platform view\n\nLocals, `ref T`, GC-traced heap objects, and channel-mediated sharing. Runtime barrier and phase details live under platform-spec execution; `/execution/` pages are a legacy bridge only.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/language-meta/memory-model",
+    "sections": [
+      {
+        "id": "scope",
+        "required": true,
+        "kind": "specSection"
+      },
+      {
+        "id": "features",
+        "required": true,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/language-meta/memory-model",
+          "heading": "Features"
+        }
+      }
+    ]
+  }
+}

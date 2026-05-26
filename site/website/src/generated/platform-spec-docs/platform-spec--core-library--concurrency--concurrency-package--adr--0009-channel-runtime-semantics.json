@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0009-channel-runtime-semantics",
+  "repoPath": "src/content/docs/platform-spec/core-library/concurrency/concurrency-package/adr/0009-channel-runtime-semantics.mdx",
+  "frontmatter": {
+    "title": "Channel runtime delivery semantics",
+    "description": "Multi-receiver/sender rules and close behavior.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-CONC-0009",
+    "adrStatus": "Accepted",
+    "adrDate": "2025-08-01",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Concurrency package",
+        "href": "/platform-spec/core-library/concurrency/concurrency-package/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nAuthors need defined fan-in/fan-out and close idempotence.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Receivers | Multiple allowed; each message delivered to **exactly one** successful **Receive** (FIFO) |\n| Senders | Multiple allowed unless **SingleWriter** hint (hint only v1) |\n| Close | Any handle holder may **Close**; idempotent writer shutdown |\n| void spawn | `` `Fiber<Unit>` `` when entry returns no value |\n\n## Consequences\n\nClose after drain returns `ChannelError::Closed` in `Result`.\n\n## Verification anchors\n\nRuntime concurrency.rs; corelib channel tests.\n",
+  "layoutJson": null
+}

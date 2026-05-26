@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/memory-and-gc-runtime-contract/verification-and-traceability",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/memory-and-gc-runtime-contract/verification-and-traceability.mdx",
+  "frontmatter": {
+    "title": "Verification and traceability",
+    "description": "Runtime GC tests, Abfall integration, and compiler stack-map obligations.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Memory and GC runtime contract",
+        "href": "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Implementation anchors\n\n| Path | Role |\n| --- | --- |\n| `compiler/crates/beskid_runtime/src/gc.rs` | Scope, heap TLS, collection drivers |\n| `compiler/crates/beskid_runtime/src/builtins/gc.rs` | Exported `gc_*` builtins |\n| `compiler/crates/beskid_runtime/src/builtins/alloc.rs` | `alloc` entry |\n| `compiler/crates/abfall/` | Tri-color heap implementation |\n| `compiler/crates/beskid_codegen` | Stack maps, barrier insertion, descriptors |\n| `compiler/crates/beskid_tests/src/runtime/jit.rs` | JIT + GC integration |\n\n## Tests and benches\n\n| Target | Coverage |\n| --- | --- |\n| `beskid_tests` runtime JIT | Alloc + collect under execution |\n| `beskid_runtime` `runtime_micro` bench | Hot path regression guard |\n| Future conformance | Stack map completeness per function (Phase B gate) |\n\n## Requirement traceability\n\n| ID | Evidence |\n| --- | --- |\n| **GC-001** | Descriptor emission tests in codegen artifacts |\n| **GC-002** | CLIF inspection / lowering unit tests for barrier calls |\n| **GC-003** | Fiber scheduler tests + code review of `enter_runtime_scope` |\n| **GC-004** | Host `GcSnapshot` / `force_collect` tests |\n\n## Related topics\n\n- [Contracts and edge cases](./contracts-and-edge-cases/)\n- [Codegen and IR](/platform-spec/compiler/codegen-and-ir/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/runtime/memory-and-gc-runtime-contract",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/runtime/memory-and-gc-runtime-contract",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

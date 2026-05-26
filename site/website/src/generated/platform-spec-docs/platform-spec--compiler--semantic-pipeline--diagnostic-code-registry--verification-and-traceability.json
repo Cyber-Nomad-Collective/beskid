@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/verification-and-traceability",
+  "repoPath": "src/content/docs/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/verification-and-traceability.mdx",
+  "frontmatter": {
+    "title": "Verification and traceability",
+    "description": "Checks that keep diagnostic code docs and source synchronized.",
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Diagnostic code registry",
+        "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
+        "relation": "Parent feature"
+      },
+      {
+        "type": "Feature",
+        "title": "Diagnostics parity",
+        "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
+        "relation": "Registry correctness supports parity checks in build surfaces"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nTraceability anchors:\n\n- Source of truth: `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`\n- Rule emitters: `compiler/crates/beskid_analysis/src/analysis/rules`\n- Verification script: `packages/trudoc/scripts/verify-diagnostics-spec-sync.mjs`\n\nSuggested verification path:\n\n1. Run semantic tests after registry changes.\n2. Run diagnostic spec synchronization (`packages/trudoc/scripts/verify-diagnostics-spec-sync.mjs` via the website/trudoc verify scripts).\n3. Validate at least one CLI and one LSP diagnostics scenario to confirm code identity parity.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/semantic-pipeline/diagnostic-code-registry",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/runtime-feature-flags/examples",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/runtime-feature-flags/examples.mdx",
+  "frontmatter": {
+    "title": "Examples",
+    "description": "Building runtime with features, array backing expectations, and engine extern_dlopen.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Runtime feature flags",
+        "href": "/platform-spec/execution/runtime/runtime-feature-flags/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Enable array backing for tests\n\n```bash\ncargo test -p beskid_tests --features beskid_runtime/arrays_backing\n```\n\n(Exact feature propagation follows workspace `Cargo.toml` dependency declarations—maintainers mirror the pattern used in compiler CI.)\n\n## Header-only array scenario (default)\n\nA lowered test creates `array_new(8, 100)` without `arrays_backing`. Inspection shows non-zero `len` but `ptr == null`. Tests that dereference elements **must** enable backing or avoid element access.\n\n## Metrics-enabled profiling build\n\nMaintainers build:\n\n```bash\ncargo build -p beskid_runtime --features metrics\n```\n\nGenerated code that does not call `rt_metrics_*` still links because baseline JIT does not import optional symbols.\n\n## Engine dynamic extern (related)\n\n```bash\ncargo test -p beskid_engine extern_real_call_getpid --features extern_dlopen\n```\n\nThis does not change runtime features; it documents cross-crate flag vocabulary for execution maintainers.\n\n## Release matrix documentation (prose)\n\nOpen VSX jobs should record in CI logs whether `arrays_backing` is enabled for the bundled runtime. Operators comparing local `cargo build` vs extension behavior should check that matrix before reporting array bugs.\n\n## Related topics\n\n- [Verification and traceability](./verification-and-traceability/)\n- [Memory and GC](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/runtime/runtime-feature-flags",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/runtime/runtime-feature-flags",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

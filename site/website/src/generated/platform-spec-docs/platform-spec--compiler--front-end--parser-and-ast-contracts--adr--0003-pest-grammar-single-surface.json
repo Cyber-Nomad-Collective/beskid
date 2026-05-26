@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/front-end/parser-and-ast-contracts/adr/0003-pest-grammar-single-surface",
+  "repoPath": "src/content/docs/platform-spec/compiler/front-end/parser-and-ast-contracts/adr/0003-pest-grammar-single-surface.mdx",
+  "frontmatter": {
+    "title": "Single pest grammar surface",
+    "description": "Multiple parser entrypoints caused span drift.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMP-FRONT-0012",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-05",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Parser and AST contracts",
+        "href": "/platform-spec/compiler/front-end/parser-and-ast-contracts/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nMultiple parser entrypoints caused span drift.\n\n## Decision\n\n`beskid.pest` and `beskid_analysis::parsing` are the authoritative parse surface; AST contracts derive spans from this pipeline only.\n\n## Consequences\n\nAlternate parsers must not ship without an ADR and conformance fixtures.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/beskid.pest`\n- `compiler/crates/beskid_analysis/src/parsing`.\n",
+  "layoutJson": null
+}

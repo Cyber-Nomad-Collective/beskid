@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema",
+  "repoPath": "src/content/docs/platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/index.mdx",
+  "frontmatter": {
+    "title": "Codegen artifact schema",
+    "description": "Feature hub for the codegen artifact schema in the reference compiler.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "lastReviewed": "2026-04-30",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Codegen and IR",
+        "href": "/platform-spec/compiler/codegen-and-ir/",
+        "relation": "Parent area"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\nThis feature hub defines the normative contract for **codegen artifact schema** and links newcomer-oriented reference articles.\n\n## Implementation anchors\n- `compiler/crates/beskid_engine/src/jit_module.rs` consumes generated artifact fields.\n- `compiler/crates/beskid_tests/src/runtime/jit.rs` validates runtime execution from codegen output.\n- `compiler/crates/beskid_tests/src/abi/contracts.rs` checks ABI-level schema compatibility.\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-IR-0001` … `D-COMP-IR-0003`); use the reader **ADRs** tab for expandable detail.\n\n\n- [Design model](./design-model/)\n- [Flow and algorithm](./flow-and-algorithm/)\n- [Contracts and edge cases](./contracts-and-edge-cases/)\n- [Examples](./examples/)\n- [Verification and traceability](./verification-and-traceability/)\n- [FAQ and troubleshooting](./faq-and-troubleshooting/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/codegen-and-ir/codegen-artifact-schema",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

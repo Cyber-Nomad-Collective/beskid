@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/channels-and-synchronization/adr/0011-channel-only-cross-fiber-sharing",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/channels-and-synchronization/adr/0011-channel-only-cross-fiber-sharing.mdx",
+  "frontmatter": {
+    "title": "Channels are the only cross-fiber data path",
+    "description": "Runtime enforces queue transfer; stack pointers must not cross fibers.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-EXEC-RT-0011",
+    "adrStatus": "Accepted",
+    "adrDate": "2025-09-01",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Channels and synchronization",
+        "href": "/platform-spec/execution/runtime/channels-and-synchronization/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Memory and references",
+        "href": "/platform-spec/language-meta/memory-model/memory-and-references/",
+        "relation": "Language-level sharing rules"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nShared mutable stacks across fibers would break GC stack maps and the memory model. The runtime must align with language channel-only rules.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Mechanism | **Channels** are the **only** approved cross-fiber data transfer at runtime |\n| Happens-before | Successful **Send** *happens-before* **Receive** that observes the value |\n| Values | Copied or heap handles with GC tracing — **no** stack pointer transfer |\n| Builtins | `channel_*`, `mutex_*`, `wait_group_*` implement queues and coordination |\n| Compiler | **Must not** lower cross-fiber stack sharing |\n\nCorelib policy: [D-CORE-CONC-0009](/platform-spec/core-library/concurrency/concurrency-package/adr/0009-channel-runtime-semantics/).\n\n## Consequences\n\nNew sync primitives require spec + ABI + corelib trifecta before export.\n\n## Verification anchors\n\n`beskid_runtime` channel tests; git `12ee673`.",
+  "layoutJson": null
+}

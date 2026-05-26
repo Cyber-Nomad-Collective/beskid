@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/runtime-feature-flags/design-model",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/runtime-feature-flags/design-model.mdx",
+  "frontmatter": {
+    "title": "Design model",
+    "description": "Cargo feature gates, runtime build capabilities, and compiler alignment expectations.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Runtime feature flags",
+        "href": "/platform-spec/execution/runtime/runtime-feature-flags/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "ABI versioning and compatibility",
+        "href": "/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/",
+        "relation": "ABI version separate from optional features"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose\n\nDocument **optional runtime capabilities** selected at **build time** via Cargo features. These differ from **`BESKID_RUNTIME_ABI_VERSION`**: features toggle code paths without changing the baseline symbol list unless a feature adds new exports.\n\n## Primary actors\n\n| Actor | Role |\n| --- | --- |\n| **`beskid_runtime` Cargo.toml** | Declares `metrics`, `arrays_backing`, `sched` features |\n| **Maintainers / CI** | Builds runtime with agreed feature set for CLI, VSIX, releases |\n| **Compiler tests** | Enable features when validating optional behavior |\n| **Tooling** | Documents which flags are on in prebuilt binaries |\n\n## Feature catalog (reference tree)\n\n| Feature | Effect |\n| --- | --- |\n| **`arrays_backing`** | `array_new` allocates element storage; without it, header-only arrays (`ptr = null`) |\n| **`metrics`** | Extra `rt_metrics_*` exports for heap/alloc/event counters |\n| **`sched`** | Scheduler internals/experimental hooks (build-time; not user-facing) |\n| **`extern_dlopen`** (engine, not runtime) | Dynamic extern resolution — see [Extern dispatch](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/) |\n\n## Alignment model\n\n```mermaid\nflowchart LR\n  manifest[Workspace / CI profile]\n  rt[beskid_runtime features]\n  tests[Compiler tests]\n  cli[Shipped CLI / VSIX]\n  manifest --> rt\n  rt --> cli\n  rt --> tests\n```\n\nShipped artifacts **must** document enabled features. Mixing a compiler test build that expects `arrays_backing` against a default runtime produces logical failures without ABI version mismatch.\n\n## Related topics\n\n- [Flow and algorithm](./flow-and-algorithm/)\n- [Builtins and symbols](/platform-spec/execution/abi-and-host/builtins-and-symbols/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/runtime/runtime-feature-flags",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/runtime/runtime-feature-flags",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

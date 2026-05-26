@@ -1,0 +1,49 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/registry-client/pckg-client-contract/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/tooling/registry-client/pckg-client-contract/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Contracts and edge cases",
+    "description": "Registry client guarantees and failure modes.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Package kinds",
+        "href": "/platform-spec/tooling/registry-client/package-kinds/",
+        "relation": "packageKind discriminators"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Contracts\n\n- **HTTPS in production** — Operators **should** configure `BESKID_PCKG_URL` with TLS endpoints; clients honor redirects per reqwest defaults.\n- **Auth mutual exclusion** — Bearer and API key flags **must not** be combined on one invocation.\n- **Structured `api.json`** — Library packs **should** include compiler-emitted `.beskid/docs/api.json` as the docs UI contract (see **[api.json contract](/platform-spec/tooling/cli/api-json-contract/)**).\n- **Readme artifact name** — Packed readmes **must** appear as root `README.md` in the zip for dashboard listing.\n- **Template discriminator** — Template packs **must** set `packageKind: template` and ship `.beskid/template.json`.\n\n## Edge cases\n\n| Case | Behavior |\n| --- | --- |\n| Missing `Project.proj` at pack root | Defaults to library profile without template metadata |\n| Invalid manifest during pack | `PckgError::Api` with BAD_REQUEST semantics |\n| Missing auth on publish | `MissingAuthToken` before HTTP |\n| Large trees | Walkdir-based collection; operators exclude build outputs via manifest/layout conventions |\n| `iconUrl` on publish | Server validates HTTP(S) URLs and length caps (`PackageManifestMetadata`) |\n\n## Server rejection mirrors\n\nClient-side pack **should** prevalidate paths the server will reject (docs layout, workspace member consistency) to avoid wasted uploads; integration tests live in `pckg/src/Server.Tests/`.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/tooling/registry-client/pckg-client-contract",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/registry-client/pckg-client-contract",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

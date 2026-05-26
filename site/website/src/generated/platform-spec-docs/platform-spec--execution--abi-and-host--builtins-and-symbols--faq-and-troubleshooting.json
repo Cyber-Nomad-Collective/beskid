@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/faq-and-troubleshooting",
+  "repoPath": "src/content/docs/platform-spec/execution/abi-and-host/builtins-and-symbols/faq-and-troubleshooting.mdx",
+  "frontmatter": {
+    "title": "FAQ and troubleshooting",
+    "description": "Builtin symbol drift, signature mismatches, and codegen/runtime debugging.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Builtins and symbols",
+        "href": "/platform-spec/execution/abi-and-host/builtins-and-symbols/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## FAQ\n\n### Why separate `BUILTIN_SPECS` and `RUNTIME_EXPORT_SYMBOLS`?\n\nNames alone are insufficient for Cranelift: `BuiltinFnSpec` carries parameter and return kinds. The export list additionally includes symbols resolved without going through the spec table (for example version export) and documents the linker surface for AOT.\n\n### Can I add a builtin only in runtime?\n\nNo (**BLT-001**). Codegen will not declare the import; JIT fails at finalize or AOT fails at link.\n\n### What calling convention is used?\n\nGenerated code uses the Cranelift default for the host ISA; runtime exports use `extern \"C-unwind\"` so panics across the boundary remain defined for Rust host frames.\n\n### Do fiber builtins use `Fiber<T>` in the ABI?\n\nNo. ABI uses raw ids and pointers; generic `Fiber<T>` is a corelib surface. See [Fiber scheduler](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/).\n\n## Troubleshooting\n\n| Symptom | Likely fix |\n| --- | --- |\n| `MissingFunction` for `channel_receive` | Call site uses old symbol; use `channel_receive_status` / `channel_receive_value` |\n| CLIF verify failure on builtin call | Arity mismatch—update `BUILTIN_SPECS` and lowering together |\n| GC heap corruption after new store | Missing `gc_write_barrier` in lowering for pointer write |\n| `array_new` always null data pointer | Build runtime with `--features arrays_backing` if tests need backing storage |\n\n## Related topics\n\n- [Flow and algorithm](./flow-and-algorithm/)\n- [Runtime feature flags](/platform-spec/execution/runtime/runtime-feature-flags/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

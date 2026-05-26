@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0013-monotonic-clock",
+  "repoPath": "src/content/docs/platform-spec/core-library/concurrency/concurrency-package/adr/0013-monotonic-clock.mdx",
+  "frontmatter": {
+    "title": "Concurrency.NowMillis monotonic clock",
+    "description": "Monotonic time API owned by concurrency package in v0.2.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-CONC-0013",
+    "adrStatus": "Accepted",
+    "adrDate": "2025-08-01",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Concurrency package",
+        "href": "/platform-spec/core-library/concurrency/concurrency-package/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLegacy `rt_now_millis` and scattered clock builtins confuse package boundaries.\n\n## Decision\n\n`` `Concurrency.NowMillis() -> i64` `` in concurrency package replaces legacy `rt_now_millis`. Wall clock deferred to future `System.Time`.\n\n## Consequences\n\nWall-clock ADR required before exposing civil time in corelib.\n\n## Verification anchors\n\nBuiltin spec table; corelib clock smoke tests.\n",
+  "layoutJson": null
+}

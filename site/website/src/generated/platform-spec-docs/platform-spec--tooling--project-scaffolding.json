@@ -1,0 +1,65 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/project-scaffolding",
+  "repoPath": "src/content/docs/platform-spec/tooling/project-scaffolding/index.mdx",
+  "frontmatter": {
+    "title": "Project scaffolding",
+    "description": "Normative contracts for project and item templates, template packages on pckg, and the `beskid new` command.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "area",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Domain",
+        "title": "Tooling",
+        "href": "/platform-spec/tooling/",
+        "relation": "Parent domain"
+      },
+      {
+        "type": "Area",
+        "title": "Manifests and lockfiles",
+        "href": "/platform-spec/tooling/manifests-and-lockfiles/",
+        "relation": "Project and workspace manifests consumed after instantiation"
+      },
+      {
+        "type": "Area",
+        "title": "Registry client",
+        "href": "/platform-spec/tooling/registry-client/",
+        "relation": "Template packages are published and resolved through pckg"
+      },
+      {
+        "type": "Area",
+        "title": "CLI",
+        "href": "/platform-spec/tooling/cli/",
+        "relation": "beskid new is the primary consumer entrypoint"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\n\n<SpecPageHeader\n\tstatus=\"Standard\"\n\townerName=\"Piotr Mikstacki\"\n\townerEmail=\"pmikstacki@cybernomad.it\"\n\tsubmitterName=\"Piotr Mikstacki\"\n\tsubmitterEmail=\"pmikstacki@cybernomad.it\"\n/>\n\n<SpecSection title=\"Scope\" id=\"scope\">\nFormal contracts for **project**, **workspace**, and **item** templates; **`beskid new`**; **`packageKind: template`** on pckg; and **`project.type = Template`** authoring projects. Out of scope: language syntax, compiler-mod execution, and library API shape (see sibling domains).\n</SpecSection>\n\n<SpecSection title=\"Area contract\" id=\"area-contract\">\n**Project scaffolding** defines how Beskid users create new workspaces, projects, and source files from **templates**: versioned, packagable starter layouts distributed through **pckg**, installable from **local paths** and **git URLs**, and invoked through **`beskid new`**.\n\nThis area does **not** redefine language semantics, dependency injection rules, or compiler-mod contracts; it specifies discovery, packaging, instantiation, and registry presentation only.\n</SpecSection>\n\n<SpecSection title=\"Responsibility boundaries\" id=\"responsibility-boundaries\">\n| Owned here | Owned elsewhere |\n| --- | --- |\n| `beskid.template.v1` engine schema, symbols, `{{ }}` replacement, GUID regeneration | **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** — shape of emitted `Project.proj` / `Workspace.proj` |\n| `packageKind` on **`beskid.package.v1`** (`template`, reserved `tool`) | **[Package kinds](/platform-spec/tooling/registry-client/package-kinds/)** — registry taxonomy and UI routing |\n| Template package `.bpk` layout and pckg page mode | **[api.json contract](/platform-spec/tooling/cli/api-json-contract/)** — library packages only |\n| `beskid new` command families | **[Command surface](/platform-spec/tooling/cli/command-surface/)** — global CLI taxonomy |\n| Post-instantiation `beskid lock` / `fetch` orchestration | **[Workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)** |\n| Implicit **corelib** on every instantiated project | **[Corelib discovery and packaging](/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/)** |\n</SpecSection>\n\n<SpecSection title=\"Internal model\" id=\"internal-model\">\n```arch\nflowchart LR\n  subgraph sources [Template sources]\n    PCKG[pckg template package]\n    PATH[local path]\n    GIT[git URL]\n  end\n  subgraph cache [Tooling cache]\n    INST[installed template snapshot]\n  end\n  subgraph engine [Template engine]\n    MAN[beskid.template.v1]\n    SYM[symbols and forms]\n    RPL[\"{{ }} replacement\"]\n    GUID[guid regeneration]\n  end\n  subgraph out [Output]\n    WS[Workspace.proj optional]\n    PR[Project.proj plus Src]\n    IT[item files in existing project]\n  end\n  PCKG --> INST\n  PATH --> MAN\n  GIT --> MAN\n  INST --> MAN\n  MAN --> SYM --> RPL --> GUID\n  RPL --> WS\n  RPL --> PR\n  RPL --> IT\n```\n\n1. **Resolve** a template identity (registry package version, path, or git ref).\n2. **Check for updates** when the template is used (compare cached snapshot to source).\n3. **Collect** parameters (interactive prompts and CLI flags).\n4. **Materialize** files per `sources` rules; apply `{{ }}` and `sourceName` rewriting; regenerate listed GUIDs.\n5. **Run post-actions** (unrestricted catalog; hosts document supported action ids).\n6. Ensure **corelib** is present in the dependency graph without a user-visible opt-out flag.\n</SpecSection>\n\n<SpecSection title=\"Feature index\" id=\"feature-index\">\nUse the tiles below for normative feature contracts in this area.\n</SpecSection>\n\n<SpecSection title=\"Failure and diagnostics model\" id=\"failure-and-diagnostics-model\">\nTemplate and scaffolding failures **must** use stable codes in the **E1901–E1999** band (see **[Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)**). Categories include: unknown template, invalid `beskid.template.v1`, symbol validation failure, output path collision, git/path resolution failure, and yanked registry package (warning, not hard error, when policy allows proceed).\n</SpecSection>\n\n<SpecSection title=\"Verification matrix\" id=\"verification-matrix\">\n| Check | Anchor |\n| --- | --- |\n| Template schema parsing | `compiler/crates/beskid_cli` (planned template engine crate) |\n| `beskid new` integration tests | `compiler/crates/beskid_tests` (planned `projects/templates/`) |\n| Template `.bpk` validation | `pckg/src/Server/Services/PackageArtifactValidator.cs` (template profile) |\n| First-party packages | Registry packages under `beskid.templates.*` namespace |\n</SpecSection>\n\n<SpecSection title=\"Operational guidance\" id=\"operational-guidance\">\n- First-party templates (`beskid.templates.console`, `beskid.templates.lib`, `beskid.templates.project`, and future `beskid.templates.*`) **must** be consumed from **pckg** when the registry is reachable; the CLI **must not** rely on a permanent embedded copy when a newer registry version exists.\n- Template authors use **`project.type = Template`** and publish with **`packageKind: template`**; see **[Template packages](/platform-spec/tooling/project-scaffolding/template-packages/)**.\n</SpecSection>\n\n<SpecSection title=\"Related areas\" id=\"related-areas\">\n- **[VS Code extension](/platform-spec/tooling/vscode-extension/)** — may invoke the same engine as `beskid new` (future article).\n- **[Compiler resolution](/platform-spec/compiler/resolution-and-projects/)** — `Template` projects are excluded from host compile graphs until instantiated output exists.\n</SpecSection>\n\n<SpecSection title=\"Decisions\" id=\"decisions\">\nArea-wide ADR index: [decisions record](./decisions-record/). Per-feature normative ADRs live under each feature **`adr/`** with ids **`D-TOOL-SCAFF-NNNN`**.\n</SpecSection>\n\n<DomainTiles pathPrefix=\"platform-spec/tooling/project-scaffolding\" heading=\"Features\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/tooling/project-scaffolding",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/project-scaffolding",
+          "heading": "Features"
+        }
+      }
+    ]
+  }
+}

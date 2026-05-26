@@ -1,0 +1,80 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy",
+  "repoPath": "src/content/docs/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/index.mdx",
+  "frontmatter": {
+    "title": "Extern dispatch and policy",
+    "description": "How extern calls are declared, resolved, and constrained by runtime and host policy.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "lastReviewed": "2026-04-30",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "ABI and host boundary",
+        "href": "/platform-spec/execution/abi-and-host/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Area",
+        "title": "Interop",
+        "href": "/platform-spec/language-meta/interop/",
+        "relation": "Extern syntax and semantics feed this runtime dispatch contract"
+      },
+      {
+        "type": "Feature",
+        "title": "Interop.Contracts",
+        "href": "/platform-spec/language-meta/interop/interop-contracts/",
+        "relation": "Abstract symbol and call-shape vocabulary"
+      },
+      {
+        "type": "Feature",
+        "title": "C ABI profile",
+        "href": "/platform-spec/language-meta/interop/c-abi-profile/",
+        "relation": "User extern libraries and linking policy"
+      },
+      {
+        "type": "Feature",
+        "title": "FFI and extern",
+        "href": "/platform-spec/language-meta/interop/ffi-and-extern/",
+        "relation": "Language-level Extern placement"
+      },
+      {
+        "type": "Area",
+        "title": "Runtime",
+        "href": "/platform-spec/execution/runtime/",
+        "relation": "Runtime builtins execute approved dispatch targets"
+      }
+    ]
+  },
+  "body": "import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\n`Extern dispatch and policy` defines one operational contract that a newcomer can follow end-to-end: first the model, then execution flow, then strict guarantees, concrete examples, and verification guidance.\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- Extern parsing and diagnostics in `compiler/crates/beskid_analysis/src/beskid.pest` and `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`\n- ABI builtins definitions in `compiler/crates/beskid_abi/src/builtins.rs`\n- Runtime builtin dispatch in `compiler/crates/beskid_runtime/src/builtins/mod.rs`\n- Panic/syscall bridging in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`\n</SpecSection>\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-EXEC-ABI-0005`, `D-EXEC-ABI-0006`); use the reader **ADRs** tab for expandable detail.\n\n<DomainTiles pathPrefix=\"platform-spec/execution/abi-and-host/extern-dispatch-and-policy\" heading=\"Articles\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

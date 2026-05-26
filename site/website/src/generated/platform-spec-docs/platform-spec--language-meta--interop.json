@@ -1,0 +1,49 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/index.mdx",
+  "frontmatter": {
+    "title": "Interop",
+    "description": "Foreign boundaries: Interop.Contracts, C and Rust ABI profiles, export, and the Beskid extern language surface (v0.3 FFI).",
+    "template": "splash",
+    "tableOfContents": false,
+    "specLevel": "area",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    }
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\n\n<SpecPageHeader\n\townerName=\"Piotr Mikstacki\"\n\townerEmail=\"pmikstacki@cybernomad.it\"\n\tsubmitterName=\"Piotr Mikstacki\"\n\tsubmitterEmail=\"pmikstacki@cybernomad.it\"\n/>\n\n<SpecSection title=\"Scope\" id=\"scope\">\nThis area defines how Beskid programs interact with **foreign code** and with the **Rust-hosted runtime** that implements execution services.\n\n**v0.3 FFI** (spec-first, **Standard** in platform-spec) covers **user interop and layout** only. The **runtime ABI** (`BESKID_RUNTIME_ABI_VERSION`, builtin exports) stays on the **[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/)** and is **not** versioned with user FFI layout bands.\n\n| Feature | Role |\n| --- | --- |\n| **[Interop.Contracts](/platform-spec/language-meta/interop/interop-contracts/)** | Symbols, call shapes, ownership, callbacks, conformance |\n| **[FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/)** | `Extern` import syntax and attributes |\n| **[Export and callbacks](/platform-spec/language-meta/interop/export-and-callbacks/)** | `[Export]` and host callback registration |\n| **[C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/)** | Link-time linking, interop views, tier-1 platforms |\n| **[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/)** | Embedding runtime exports (unchanged scope) |\n| **[Foreign library import](/platform-spec/tooling/foreign-library-import/)** | `project.link` + CLI `import lib` + `ExternalLibrary` trait |\n\n**Delivery bands:** v0.3.0 — interop views + link-time + export/callbacks (spec). v0.3.1 — `CLayout` primitive structs (Proposed). Complex nested FFI types **after** basic FFI is in place.\n\nExecution chapters under **`/platform-spec/execution/`** document lowering and drivers; they **pair** with this area but do not replace normative language rules here.\n</SpecSection>\n\n<SpecSection title=\"Feature index\" id=\"features\">\nUse the tiles below for normative **feature** contracts in this area.\n</SpecSection>\n\n<DomainTiles pathPrefix=\"platform-spec/language-meta/interop\" heading=\"Features\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/language-meta/interop",
+    "sections": [
+      {
+        "id": "scope",
+        "required": true,
+        "kind": "specSection"
+      },
+      {
+        "id": "features",
+        "required": true,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/language-meta/interop",
+          "heading": "Features"
+        }
+      }
+    ]
+  }
+}

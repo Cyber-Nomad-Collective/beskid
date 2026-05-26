@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/compiler/build-pipeline/backends-jit-aot/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Backends (JIT and AOT) - Contracts and edge cases",
+    "description": "Required backend guarantees for output kinds, entrypoints, and shared lowering semantics.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Backends (JIT and AOT)",
+        "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Area",
+        "title": "Codegen and IR",
+        "href": "/platform-spec/compiler/codegen-and-ir/",
+        "relation": "Shared artifact producer"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- JIT and AOT must not diverge in front-end semantic results for the same source.\n- Entrypoint contract for executables requires symbol `main` in current AOT linker strategy.\n- AOT supports `Exe`, `SharedLib`, `StaticLib`, and `ObjectOnly` output kinds, with platform limits enforced by linker strategy checks.\n- Static archive merge currently targets Unix-style toolchains (`ar`/`ranlib` or `libtool` on Apple hosts); Windows static archive merge is rejected as unsupported.\n- When JIT extern loading is enabled (`extern_dlopen`), symbol resolution must respect configured allow/deny policy filters (`BESKID_EXTERN_ALLOW`, `BESKID_EXTERN_DENY`).\n- Backend failures should report compile/build diagnostics, not silently fallback to alternate modes.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/build-pipeline/backends-jit-aot",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/compiler-integration",
+  "repoPath": "src/content/docs/platform-spec/core-library/compiler-integration/index.mdx",
+  "frontmatter": {
+    "title": "Compiler integration",
+    "description": "Contracts for corelib discovery, packaging, and compiler/runtime integration points.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "area",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Domain",
+        "title": "Core library",
+        "href": "/platform-spec/core-library/",
+        "relation": "Parent domain"
+      },
+      {
+        "type": "Domain",
+        "title": "Compiler",
+        "href": "/platform-spec/compiler/",
+        "relation": "Compiler crates discover and package corelib"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\n\n<SpecPageHeader ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n<SpecSection title=\"Scope\" id=\"scope\">\nContracts for corelib discovery, packaging, and compiler/runtime integration points.\n</SpecSection>\n\n<SpecSection title=\"Feature index\" id=\"feature-index\">\nUse the tiles below for normative **feature** contracts in this area.\n</SpecSection>\n\n<DomainTiles pathPrefix=\"platform-spec/core-library/compiler-integration\" heading=\"Features\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/core-library/compiler-integration",
+    "sections": [
+      {
+        "id": "scope",
+        "required": true,
+        "kind": "specSection"
+      },
+      {
+        "id": "features",
+        "required": true,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/compiler-integration",
+          "heading": "Features"
+        }
+      }
+    ]
+  }
+}

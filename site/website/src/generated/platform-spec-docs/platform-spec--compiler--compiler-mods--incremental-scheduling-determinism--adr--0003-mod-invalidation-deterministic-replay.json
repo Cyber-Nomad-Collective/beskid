@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/adr/0003-mod-invalidation-deterministic-replay",
+  "repoPath": "src/content/docs/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/adr/0003-mod-invalidation-deterministic-replay.mdx",
+  "frontmatter": {
+    "title": "Deterministic mod invalidation and replay",
+    "description": "Incremental mod runs produced unstable ordering.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMP-MODS-0009",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Incremental scheduling and determinism",
+        "href": "/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nIncremental mod runs produced unstable ordering.\n\n## Decision\n\nInvalidation keys and dirty sets for mod pipelines **must** replay deterministically for identical inputs (Collector scope + syntax snapshot hashes).\n\n## Consequences\n\nLSP rescan triggers share the same keys as batch compile.\n\n## Verification anchors\n\n- `compiler/crates/beskid_lsp/`\n- `compiler/crates/beskid_analysis/src/analysis/rules/staged/`.\n",
+  "layoutJson": null
+}

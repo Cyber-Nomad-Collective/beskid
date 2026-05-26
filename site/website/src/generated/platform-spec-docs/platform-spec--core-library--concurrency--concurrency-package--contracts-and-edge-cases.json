@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/core-library/concurrency/concurrency-package/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Concurrency package - Contracts and edge cases",
+    "description": "Send, Receive, Join, Cancel, and Hub normative contracts.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-20",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Concurrency package",
+        "href": "/platform-spec/core-library/concurrency/concurrency-package/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## `Channel<T>`\n\n### Construction\n\n- `Channel<T>.Create(options: ChannelOptions = default)` — **default is unbounded**.\n- `ChannelOptions.Bounded(n)` — `n > 0`; **Send** parks when full (Wait mode).\n- `ChannelOptions.Unbounded` — equivalent to default; queue grows until OOM (documented risk).\n- `ChannelOptions.SingleReader()` / `SingleWriter()` — unbounded factories that set optimization hints without changing queue semantics.\n- Optional capacity field inside options **must not** contradict `Bounded` / `Unbounded` variant; bounded wins when `Bounded(n)` is chosen.\n\n### Send and Receive (full names required)\n\n| Method | Contract |\n| --- | --- |\n| **Send** | `Result<(), ChannelError>`; blocks/parks fiber when full (bounded + Wait mode) |\n| **Receive** | `Result<T, ChannelError>`; parks when empty and open |\n| **TrySend** | `Option<()>` — `None` if would block |\n| **TryReceive** | `Option<T>` — `None` if would block |\n| **Close** | Idempotent writer close; no panic |\n\n### ChannelError (closed set)\n\n- `Closed` — endpoint closed\n- `Cancelled` — owning fiber cancelled (**Cancel** / **OnCancelled** path)\n\n**TrySend** / **TryReceive** use `Option` only (`None` = would block); no `ChannelError::Full`.\n\n### ChannelOptions (.NET-inspired, sync-only)\n\n- **SingleReader** / **SingleWriter** — optimization hints; behavior unchanged if violated but may enable faster paths\n- **BoundedChannelFullMode::Wait** — default; sender parks\n- No `AllowSynchronousContinuations` (async-only .NET concept)\n\n## `Fiber<T>`\n\n`Fiber<T>` is a corelib **struct** (runtime handle) that **must** declare:\n\n```beskid\nevent OnCancelled();\n```\n\nThe **spawn entry** function does **not** declare **OnCancelled** — only the handle type does.\n\n| Method | Contract |\n| --- | --- |\n| **Join** | `Result<T, FiberError>` — `Ok(value)`, `Cancelled`, `StackOverflow`, `Panicked` |\n| **Detach** | void; parent waives **Join**; child panic aborts process |\n| **Cancel** | void; raises **OnCancelled** on child fiber, then unblocks parked ops with **Cancelled** |\n\n**OnCancelled** runs on the child fiber. Unhandled failure in a handler **aborts the process**. Handlers **must not** **Join** self, **Join** an ancestor, or block indefinitely.\n\n**Join** from a child fiber to a parent (or ancestor) handle is a **compile error** (`JoinWouldDeadlock`).\n\nM3 completion requires generated code to import the ABI symbol `fiber_spawn_with_cancel_slot`, pass the handle's **OnCancelled** event slot, and treat the returned handle as an **`i64` fiber id** rather than a pointer.\n\n### FiberError (closed set)\n\n- `Cancelled`\n- `StackOverflow`\n- `Panicked` — carries diagnostic handle / message policy per runtime\n\n## `Hub<T>`\n\n- **Homogeneous only in v1** — `Hub<T>` registers only `Channel<T>` instances\n- **Register(index, channel)** / **Unregister(index)** — `index` is user-chosen `i64` key in **WaitReceive** result\n- **WaitReceive** → `Result<HubReceiveResult, HubError>` where `HubReceiveResult` carries member index and received value\n- **Round-robin** fairness among ready channels (see **[decisions record](./decisions-record/)**)\n- Multiplexing unlike types: use `Channel<HubMessage>` (enum/union) or multiple hubs — **not** mixed-type **Hub** in v1\n- **WaitSend** — **not in v1**\n- Replaces language-level `select` for v1\n\n## Mutex and WaitGroup\n\n- **Mutex.Lock** → `Result<MutexGuard, MutexError>`\n- **Mutex.TryLock** → `Option<MutexGuard>` (`None` if would block)\n- **Mutex.Unlock** — explicit in v1 (no `defer` required for spec)\n- **WaitGroup.Wait** parks until counter zero; **Add**/**Done** follow Go semantics\n\n## Console integration\n\n`Console.OnResize` and control `onTick` paths **must** publish into a `Channel<T>` (or **Hub** member) so UI fibers **Receive** events without multicast **event** invocation across fibers. Language **event** syntax may remain for single-fiber use; cross-fiber UI **must** use **Channel** (see console-terminal-events).\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/concurrency/concurrency-package",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/concurrency/concurrency-package",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

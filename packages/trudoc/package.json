@@ -22,6 +22,8 @@
 		"./scripts/architecture-graph-c4.mjs": "./scripts/architecture-graph-c4.mjs",
 		"./platform-spec": "./src/platform-spec/index.ts",
 		"./platform-spec/*": "./src/platform-spec/*.ts",
+		"./verify": "./src/verify/index.ts",
+		"./verify/*": "./src/verify/*.ts",
 		"./book": "./src/book/index.ts",
 		"./book/*": "./src/book/*.ts",
 		"./grammars/beskid.tmLanguage.json": "./grammars/beskid.tmLanguage.json",

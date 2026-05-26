@@ -40,7 +40,6 @@ const isBook = path === '/book' || path.startsWith('/book/');
 	<Astronav closeOnClick>
 		<div class="beskid-header__row">
 			<div class="beskid-header__brand sl-flex">
-				<BeskidHubButton />
 				{isPlatformSpec && <PlatformSpecNavToggle showInTopBar />}
 				{isBook && <BookNavToggle showInTopBar />}
 				<a class="beskid-header__brand-logo-link" href="/" aria-label="Beskid home">
@@ -93,6 +92,7 @@ const isBook = path === '/book' || path.startsWith('/book/');
 					<ThemeSelect />
 					<LanguageSelect />
 				</div>
+				<BeskidHubButton />
 			</div>
 			<div class="md:sl-hidden print:hidden beskid-header__mobile-toggle">
 				<MenuIcon class="beskid-header__menu-btn" aria-label="Toggle navigation menu">
@@ -111,9 +111,6 @@ const isBook = path === '/book' || path.startsWith('/book/');
 		</div>
 		<MenuItems class="hidden md:sl-hidden beskid-header__mobile-menu">
 			<ul class="beskid-header__mobile-list" aria-label="Primary navigation mobile">
-				<li class="beskid-header__mobile-hub">
-					<BeskidHubButton />
-				</li>
 				<li>
 					<a href="/" class:list={['beskid-header__mobile-link', isActive('/') && 'is-active']}>
 						<svg class="beskid-header__mobile-link-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -151,6 +148,9 @@ const isBook = path === '/book' || path.startsWith('/book/');
 						</svg>
 						<span>Download</span>
 					</a>
+				</li>
+				<li class="beskid-header__mobile-hub">
+					<BeskidHubButton />
 				</li>
 			</ul>
 		</MenuItems>

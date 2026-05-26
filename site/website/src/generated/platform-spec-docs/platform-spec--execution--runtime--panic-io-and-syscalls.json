@@ -1,0 +1,74 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/panic-io-and-syscalls",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/panic-io-and-syscalls/index.mdx",
+  "frontmatter": {
+    "title": "Panic, IO, and syscalls",
+    "description": "Runtime panic behavior and syscall read/write contracts exposed by the Beskid runtime.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "lastReviewed": "2026-04-30",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Runtime",
+        "href": "/platform-spec/execution/runtime/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Area",
+        "title": "ABI and host boundary",
+        "href": "/platform-spec/execution/abi-and-host/",
+        "relation": "Builtin symbol contracts define runtime export obligations"
+      },
+      {
+        "type": "Area",
+        "title": "Interop",
+        "href": "/platform-spec/language-meta/interop/",
+        "relation": "Extern boundaries eventually reach syscall and panic surfaces"
+      },
+      {
+        "type": "Feature",
+        "title": "Interop.Contracts",
+        "href": "/platform-spec/language-meta/interop/interop-contracts/",
+        "relation": "Shared vocabulary for runtime vs user foreign boundaries"
+      },
+      {
+        "type": "Feature",
+        "title": "Rust ABI profile",
+        "href": "/platform-spec/language-meta/interop/rust-abi-profile/",
+        "relation": "Runtime export surface for builtins and syscall bridges"
+      }
+    ]
+  },
+  "body": "import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\n`Panic, IO, and syscalls` defines one operational contract that a newcomer can follow end-to-end: first the model, then execution flow, then strict guarantees, concrete examples, and verification guidance.\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- Builtin exports in `compiler/crates/beskid_runtime/src/builtins/mod.rs`\n- Panic and syscall implementation in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`\n- Runtime symbol registration in `compiler/crates/beskid_runtime/src/lib.rs`\n- E2E coverage in `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs`\n</SpecSection>\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-EXEC-RT-0008` … `D-EXEC-RT-0010`); use the reader **ADRs** tab for expandable detail.\n\n<DomainTiles pathPrefix=\"platform-spec/execution/runtime/panic-io-and-syscalls\" heading=\"Articles\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/runtime/panic-io-and-syscalls",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/runtime/panic-io-and-syscalls",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

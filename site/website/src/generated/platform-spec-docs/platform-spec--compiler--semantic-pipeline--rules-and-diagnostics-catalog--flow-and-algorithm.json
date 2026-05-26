@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/flow-and-algorithm",
+  "repoPath": "src/content/docs/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/flow-and-algorithm.mdx",
+  "frontmatter": {
+    "title": "Flow and algorithm",
+    "description": "End-to-end semantic rule flow from resolved items to user-facing diagnostics.",
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Rules and diagnostics catalog",
+        "href": "/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/",
+        "relation": "Parent feature"
+      },
+      {
+        "type": "Feature",
+        "title": "Workspace resolution contract",
+        "href": "/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/",
+        "relation": "Rule execution depends on resolved workspace state"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nHigh-level semantic algorithm:\n\n1. Collect resolved declarations and references from resolver outputs.\n2. Execute staged semantic rules over definitions, expressions, and contract items.\n3. Normalize findings into issue kinds from `diagnostic_kinds.rs`.\n4. Attach source location and contextual message payloads.\n5. Emit diagnostics through analysis services to CLI/LSP pipelines.\n\nThe deterministic contract is important for test stability: the same input project must produce the same set and ordering of semantic diagnostics.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

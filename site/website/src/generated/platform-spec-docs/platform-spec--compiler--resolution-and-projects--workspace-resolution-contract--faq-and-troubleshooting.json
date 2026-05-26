@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/faq-and-troubleshooting",
+  "repoPath": "src/content/docs/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/faq-and-troubleshooting.mdx",
+  "frontmatter": {
+    "title": "Workspace resolution contract - FAQ and troubleshooting",
+    "description": "Common newcomer questions for project graph resolution, manifests, and lock behavior.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Workspace resolution contract",
+        "href": "/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Dependency workspace and lockfile",
+        "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/",
+        "relation": "Lock handling details"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n## Why does the compiler ignore my workspace target?\nExplicit file input overrides target inference; remove the explicit path to use manifest target resolution.\n\n## Why did a dependency warning not fail the command?\nThe command may be using a warning-oriented unresolved dependency policy. Use a strict mode command or policy where available.\n\n## Why does lockfile behavior differ between commands?\n`--frozen` and `--locked` are command-level options propagated into workspace preparation options.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/resolution-and-projects/workspace-resolution-contract",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

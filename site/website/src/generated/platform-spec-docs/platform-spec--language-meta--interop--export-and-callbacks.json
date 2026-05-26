@@ -1,0 +1,65 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/export-and-callbacks",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/export-and-callbacks/index.mdx",
+  "frontmatter": {
+    "title": "Export and callbacks",
+    "description": "v0.3 normative Beskid export to C hosts and callback registration tables.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "lastReviewed": "2026-05-23",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Interop",
+        "href": "/platform-spec/language-meta/interop/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Feature",
+        "title": "FFI and extern",
+        "href": "/platform-spec/language-meta/interop/ffi-and-extern/",
+        "relation": "Import direction"
+      },
+      {
+        "type": "Feature",
+        "title": "Interop.Contracts",
+        "href": "/platform-spec/language-meta/interop/interop-contracts/",
+        "relation": "Callback call shapes"
+      },
+      {
+        "type": "Feature",
+        "title": "C ABI profile",
+        "href": "/platform-spec/language-meta/interop/c-abi-profile/",
+        "relation": "Export lowering and linking"
+      },
+      {
+        "type": "Feature",
+        "title": "Rust ABI profile",
+        "href": "/platform-spec/language-meta/interop/rust-abi-profile/",
+        "relation": "Distinct from runtime builtin exports"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\n\n<SpecPageHeader\n\tstatus=\"Standard\"\n\townerName=\"Piotr Mikstacki\"\n\townerEmail=\"pmikstacki@cybernomad.it\"\n\tsubmitterName=\"Piotr Mikstacki\"\n\tsubmitterEmail=\"pmikstacki@cybernomad.it\"\n/>\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\n**Export and callbacks** defines how Beskid code **exposes** entrypoints to foreign hosts (plugins, embedders, C drivers) and how **function-pointer callbacks** are registered for re-entry.\n\nThis is **user interop**, not the frozen **runtime builtin** table on the **[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/)**. Export symbols are **generated** from Beskid compilation units; runtime builtins remain **`beskid_abi`** exports.\n</SpecSection>\n\n<SpecSection title=\"v0.3 scope\" id=\"v03-scope\">\n| In scope | Out of scope |\n| --- | --- |\n| **`[Export]`** on **`pub` functions** with FFI-permitted types | Exporting arbitrary `contract` vtables as Standard |\n| **Callback registration** table protocol | Foreign-thread entry without host contract (Proposed v0.3.2+) |\n| **Trampolines** for GC-safe re-entry | Changing `BESKID_RUNTIME_ABI_VERSION` for export-only features |\n\nSpec is **Standard** in v0.3; reference compiler support for export lowering, callback registration, and link-time extern resolution is landed on Linux tier-1 (see **[verification](./verification-and-traceability/)**).\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- Export metadata in `compiler/crates/beskid_codegen/src/lowering/expressions/export.rs` and `compiler/crates/beskid_codegen/src/lowering/context.rs` (`CodegenArtifact::exports`)\n- AOT export table and linker export policy: `compiler/crates/beskid_aot/src/export_table.rs`\n- Callback registration and GC-safe trampolines: `compiler/crates/beskid_runtime/src/builtins/callback.rs` (`beskid_register_callbacks`, `BESKID_USER_FFI_LAYOUT_BAND` in `compiler/crates/beskid_abi/src/symbols.rs`)\n- Optional extension of `interop_dispatch_*` for typed host callbacks (reserved; not user `Extern`)\n</SpecSection>\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-EXPORT-0001` … `D-LMETA-EXPORT-0004`); use the reader **ADRs** tab for detail.\n\n<DomainTiles pathPrefix=\"platform-spec/language-meta/interop/export-and-callbacks\" heading=\"Articles\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/language-meta/interop/export-and-callbacks",
+    "minSpecSections": 2,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/flow-and-algorithm",
+  "repoPath": "src/content/docs/platform-spec/execution/abi-and-host/builtins-and-symbols/flow-and-algorithm.mdx",
+  "frontmatter": {
+    "title": "Flow and algorithm",
+    "description": "From lowering call sites through BUILTIN_SPECS to runtime C exports.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Builtins and symbols",
+        "href": "/platform-spec/execution/abi-and-host/builtins-and-symbols/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose\n\nTrace how a builtin reference in CLIF becomes a live function pointer at run time. Registry diagram: [design model](./design-model/).\n\n## Lowering to import declaration\n\n1. HIR/lowering selects a runtime operation (allocate string, `fiber_yield`, etc.).\n2. Codegen emits a `call` to the stable symbol string (for example `alloc`, not a mangled Rust name).\n3. During JIT `compile`, `declare_builtin_imports` walks `BUILTIN_SPECS` in declaration order.\n4. For each spec, codegen maps `AbiParamKind::Ptr` to the host pointer type and `I64` to `i64`, then sets return type from `AbiReturnKind`.\n\n## Runtime entry\n\n1. Generated code calls using the platform default calling convention (SysV on Linux x86_64).\n2. The runtime builtin enters `enter_runtime_scope` / GC rules as needed (`alloc`, barriers).\n3. Fiber/channel builtins park or enqueue work via `beskid_runtime::scheduler` without exposing scheduler internals to CLIF.\n\n## String builtin algorithm (`str_concat`)\n\n1. Read `BeskidStr` headers for left and right operands.\n2. Allocate a fresh buffer via `alloc` for combined byte length.\n3. Copy UTF-8 payload; return new `{ ptr, len }` handle.\n4. On allocation failure or null inputs, trap via `panic` (no implicit `Option` at ABI layer).\n\n## GC barrier hook\n\n1. Lowering emits `gc_write_barrier(parent, child)` after pointer stores when concurrent GC is active.\n2. Runtime barrier ensures tri-color invariant (see [Memory and GC](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/)).\n3. Phase A may simplify barrier work when only one mutator runs; symbol remains reserved.\n\n## Related topics\n\n- [Contracts and edge cases](./contracts-and-edge-cases/)\n- `compiler/crates/beskid_abi/src/builtins.rs` — full spec table\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

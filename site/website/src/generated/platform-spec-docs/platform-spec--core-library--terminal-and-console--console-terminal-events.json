@@ -1,0 +1,62 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/console-terminal-events/index.mdx",
+  "frontmatter": {
+    "title": "Console terminal events",
+    "description": "Terminal resize detection and ConsoleMessage delivery over channels and events.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Terminal and console",
+        "href": "/platform-spec/core-library/terminal-and-console/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Feature",
+        "title": "Concurrency package",
+        "href": "/platform-spec/core-library/concurrency/concurrency-package/",
+        "relation": "Channel and fiber delivery"
+      },
+      {
+        "type": "Feature",
+        "title": "Console controls",
+        "href": "/platform-spec/core-library/terminal-and-console/console-controls/",
+        "relation": "Relayout on Resize messages"
+      }
+    ]
+  },
+  "body": "import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"What this feature specifies\" id=\"what-this-feature-specifies\">\nHow the corelib observes **terminal size changes** and notifies UI code: `Platform.Terminal.QuerySize`, `PollResize` → `Channel<ConsoleMessage>`, and same-fiber `OnResize` event hubs. No new runtime builtins—only existing environment, ioctl externs, and fiber/channel primitives.\n</SpecSection>\n\n<SpecSection title=\"Contract statement\" id=\"contract-statement\">\n- `Console.ConsoleSize` uses **character cells** (`columns`, `rows` as `i32`).\n- `QuerySize` **must** try platform `Winsize` (Linux, macOS, Windows) then fall back to `COLUMNS` / `LINES` parsing.\n- `PollResize` **must** `Send` `ConsoleMessage::Resize(now)` only when dimensions change.\n- `SubscribeOnResize` **must** invoke the handler synchronously once with the current size after subscription.\n- Resize delivery **must not** use a separate OS-thread callback API in v1.\n</SpecSection>\n\n<SpecSection title=\"Implementation anchors\" id=\"implementation-anchors\">\n- `compiler/corelib/packages/console/src/Platform/Terminal.bd`\n- `compiler/corelib/packages/console/src/Console.bd`\n- `compiler/corelib/packages/console/src/Console/ConsoleMessage.bd`\n- Tests: `ConsoleMessageChannelTests.bd`\n</SpecSection>\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-TERM-0050` … `D-CORE-TERM-0052`); use the reader **ADRs** tab for expandable detail.\n\n<DomainTiles pathPrefix=\"platform-spec/core-library/terminal-and-console/console-terminal-events\" heading=\"Articles\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/terminal-and-console/console-terminal-events",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/terminal-and-console/console-terminal-events",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

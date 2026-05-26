@@ -5,3 +5,6 @@ src/data/vscode-extension.json
 src/generated/platform-spec-git-meta.json
 # Mirrored to public/ by generate-platform-spec-nav-tree (served at /generated/platform-spec-nav-tree.json)
 public/generated/platform-spec-nav-tree.json
+# Mirrored to public/ by generate-platform-spec-catalog (tracker docs management API)
+public/generated/platform-spec-catalog.json
+public/generated/platform-spec-docs/

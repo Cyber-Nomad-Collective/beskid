@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/project-scaffolding/project-templates/adr/0005-template-kinds-v1",
+  "repoPath": "src/content/docs/platform-spec/tooling/project-scaffolding/project-templates/adr/0005-template-kinds-v1.mdx",
+  "frontmatter": {
+    "title": "Three template kinds",
+    "description": "Three template kinds",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-TOOL-SCAFF-0005",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-21",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Project templates",
+        "href": "/platform-spec/tooling/project-scaffolding/project-templates/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nWorkspace, project, item flows.\n\n## Decision\n\nSupport all three via tags.type.\n\n## Consequences\n\nOne engine.\n\n## Verification anchors\n\nThree beskid_tests fixtures.\n",
+  "layoutJson": null
+}

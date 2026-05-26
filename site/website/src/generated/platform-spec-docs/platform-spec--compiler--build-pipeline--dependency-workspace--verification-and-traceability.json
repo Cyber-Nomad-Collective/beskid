@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/verification-and-traceability",
+  "repoPath": "src/content/docs/platform-spec/compiler/build-pipeline/dependency-workspace/verification-and-traceability.mdx",
+  "frontmatter": {
+    "title": "Dependency workspace and lockfile - Verification and traceability",
+    "description": "Source anchors and test evidence for compile-plan and lockfile behavior.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Dependency workspace and lockfile",
+        "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Area",
+        "title": "Conformance",
+        "href": "/platform-spec/compiler/conformance/",
+        "relation": "Test policy and fixtures"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nImplementation anchors:\n\n- `compiler/crates/beskid_analysis/src/projects/compile_plan.rs`\n- `compiler/crates/beskid_analysis/src/projects/workflow.rs`\n- `compiler/crates/beskid_cli/src/commands/fetch.rs`\n- `compiler/crates/beskid_cli/src/commands/lock.rs`\n\nTraceability expectation: each lock policy branch is covered by fixture-based tests.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/build-pipeline/dependency-workspace",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

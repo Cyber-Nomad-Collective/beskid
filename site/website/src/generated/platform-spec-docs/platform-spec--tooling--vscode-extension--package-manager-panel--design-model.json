@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/design-model",
+  "repoPath": "src/content/docs/platform-spec/tooling/vscode-extension/package-manager-panel/design-model.mdx",
+  "frontmatter": {
+    "title": "Design model",
+    "description": "PackageTreeItem sections, pckgClient surface, cache keys, and Packages view chrome.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Package manager panel",
+        "href": "/platform-spec/tooling/vscode-extension/package-manager-panel/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose and scope\n\nTree structure for **`beskidPackagesView`**, the **`pckgClient`** TypeScript contract, and status-bar activity phases shared with LSP and CLI.\n\n## View layout\n\nThe Packages view lives in container **`beskidViews`** alongside Workspaces, Project, and Outline (see [extension surface design model](../extension-surface/design-model/#view-containers)).\n\n```arch\nflowchart TB\n  subgraph packagesView [beskidPackagesView]\n    TP[ThisProject section]\n    RS[RegistrySearch section]\n    TP --> D1[Declared/Locked dependency rows]\n    RS --> Q[Search results]\n    Q --> V[Version nodes]\n    V --> Dep[Dependency leaves]\n  end\n```\n\nRoot sections **must** always be visible (not hidden behind empty search).\n\n## PackageTreeItem kinds\n\n| `section` | `kind` | Children |\n| --- | --- | --- |\n| `ThisProject` | `section` | Dependency rows from LSP |\n| `ThisProject` | `dependency` | Optional context actions only |\n| `RegistrySearch` | `section` | Search prompt or results |\n| `RegistrySearch` | `searchResult` | Package summary node |\n| `RegistrySearch` | `version` | Collapsible version metadata |\n| `RegistrySearch` | `registryDependency` | Dependency of selected version |\n\nIcons: dependency **`package`**; unresolved **`warning`**; registry package **`cloud-download`**.\n\n## pckgClient functions (normative)\n\n| Function | HTTP | Cache key |\n| --- | --- | --- |\n| `searchPackages({ q, limit, registryBaseUrl })` | `GET {base}/api/search?q=…&limit=…` | `search:{base}:{q}:{limit}` ~30s TTL |\n| `getPackageDetails({ name, registryBaseUrl })` | `GET {base}/api/packages/{name}` | `details:{base}:{name}` |\n| `buildRegistryPackageUrl({ name, version, registryBaseUrl })` | — | N/A (string builder) |\n| `createPckgFetch(context)` | — | Injects auth from `SecretStorage` |\n\nAll functions **must** use `createPckgFetch` for transport.\n\n## Response typing (camelCase)\n\nAlign TypeScript types with pckg records:\n\n- **`PackageSearchResponse`**: `{ package, reviewCount, health }`\n- **`PackageDetailsResponse`**: `{ package, versions, dependencies, dependentsCount, readme, health, … }`\n- **`PackageDependencyResponse`**: `{ name, version, source, registry }`\n\n## Registry base URL resolution\n\n1. If focused project belongs to a workspace, use `registries` entry with `alias: \"default\"` from `beskid.getWorkspaceSummary`.\n2. Else `vscode.workspace.getConfiguration('beskid.pckg').get('baseUrl')`.\n3. Else `http://localhost:5000`.\n\n## Status-bar phases\n\nExtend shared `PckgActivityPhase` (and CLI phases) with:\n\n| Phase | When |\n| --- | --- |\n| `search` | Registry search in flight |\n| `details` | Package details fetch |\n| `fetch` | `beskid fetch` running |\n| `lock` | `beskid lock` running |\n\nLSP scan phases remain separate on the same status controller.\n\n## View title and welcome actions\n\n| Action | Command |\n| --- | --- |\n| Search | `beskid.packages.search` |\n| Refresh | `beskid.packages.refresh` |\n| Fetch | `beskid.packages.fetch` |\n| Lock | `beskid.packages.lock` |\n\nView welcome content **should** offer “Search registry…” when `RegistrySearch` is empty.\n\n## Related topics\n\n- [Contracts](./contracts-and-edge-cases/) — auth and endpoint tables\n- [pckg client contract](/platform-spec/tooling/registry-client/pckg-client-contract/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/tooling/vscode-extension/package-manager-panel",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/vscode-extension/package-manager-panel",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

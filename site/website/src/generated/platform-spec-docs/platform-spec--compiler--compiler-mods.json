@@ -1,0 +1,90 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/compiler-mods",
+  "repoPath": "src/content/docs/platform-spec/compiler/compiler-mods/index.mdx",
+  "frontmatter": {
+    "title": "Compiler Mods",
+    "description": "Rust-side compiler mod host, AOT mod lifecycle, typed merge pipeline, and incremental orchestration for Mod projects.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "area",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Domain",
+        "title": "Compiler",
+        "href": "/platform-spec/compiler/",
+        "relation": "Parent domain hub"
+      },
+      {
+        "type": "Area",
+        "title": "Metaprogramming (language meta)",
+        "href": "/platform-spec/language-meta/metaprogramming/",
+        "relation": "Beskid-side Mod SDK and language-facing mod contracts"
+      },
+      {
+        "type": "Feature",
+        "title": "Compiler Mod SDK",
+        "href": "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
+        "relation": "Beskid contracts for Collector/Generator/Analyzer/Rewriter"
+      },
+      {
+        "type": "Feature",
+        "title": "Project manifest contract",
+        "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+        "relation": "Mod project type and manifest wiring"
+      },
+      {
+        "type": "Area",
+        "title": "Build pipeline",
+        "href": "/platform-spec/compiler/build-pipeline/",
+        "relation": "Lowering and backends after mod merge"
+      },
+      {
+        "type": "Feature",
+        "title": "Stage ordering and lowering",
+        "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+        "relation": "Where mod collection/generation/analyze phases sit in the compiler pipeline"
+      }
+    ],
+    "architectureGraph": {
+      "source": "src/data/architecture-graphs/compiler-mods.json"
+    }
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\nimport DomainOrAreaHub from '@beskid/docs-ui/platform-spec/DomainOrAreaHub.astro';\n\n<SpecPageHeader\n\townerName=\"Piotr Mikstacki\"\n\townerEmail=\"pmikstacki@cybernomad.it\"\n\tsubmitterName=\"Piotr Mikstacki\"\n\tsubmitterEmail=\"pmikstacki@cybernomad.it\"\n/>\n\n<SpecSection title=\"Canonical ownership\" id=\"ownership\">\nThis **compiler** area defines the Rust-side behavior for compiler mods. **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** defines the **`Mod` project type** and package metadata. **[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** defines Beskid-side contracts; this area defines discovery, AOT artifact lifecycle, execution phases, typed merge semantics, diagnostics transport, and incremental invalidation.\n</SpecSection>\n\n<SpecSection title=\"Scope\" id=\"scope\">\nNormative pages specify **interfaces, cache boundaries, and host policy**—not product backlogs. They drive `compiler/` and **`corelib`** surfaces exposed at compile time.\n\n**`Mod` projects in this area** are strictly for **Beskid-authored compile-time work**: analysis, code generation (typed AST), and rewrites over host compilations. Compiler-core composition and IoC remain Rust-owned and are specified separately under compiler features.\n</SpecSection>\n\n<SpecSection title=\"Compiler mods (concept)\" id=\"compiler-mods\">\n**Compiler mods** are **`Mod` projects** discovered from the dependency graph. The compiler compiles mods AOT and loads their artifacts during host compilation. Discovery is contract-driven (`Collector`, `Generator`, `Analyzer`, `Rewriter`, `AttributeGenerator`), not grammar-item-driven.\n</SpecSection>\n\n<SpecSection title=\"Mod API shape (modules)\" id=\"mod-api-shape\">\nThe compile-time package groups the natural compilation shape into modules (exact naming may evolve; boundaries are normative):\n\n| Module | Role |\n| --- | --- |\n| **`Beskid.Syntax`** | Typed syntax node mirror with stable identities and structural builders. |\n| **`Beskid.Compiler.Query`** | Declarative query surfaces over syntax and semantic snapshots. |\n| **`Beskid.Compiler.Collect`** | `Collector`, `Generator`, `Analyzer`, `Rewriter`, and `AttributeGenerator` contracts plus target-selection primitives. |\n| **`Beskid.Compiler.Diagnostics`** | Compiler-native diagnostics transport for analyzers and rewrite suggestions. |\n| **`Beskid.Compiler.TypedEmitter`** | Typed AST contributions and typed rewrites; no raw text/formatting contract. |\n\n**`Beskid.Compiler.Compilation`** remains the handle for the active host compilation instance.\n\nFeature hubs below map onto these boundaries with traceability into `beskid_analysis`, `beskid_lsp`, `beskid_codegen`, `beskid_engine`, and `beskid_runtime`.\n</SpecSection>\n\n<SpecSection title=\"Mod projects and pipeline phase ids\" id=\"mod-projects\">\n\n```mermaid\nflowchart LR\n  parse[parse]\n  modload[mod.load]\n  collect[mod.collect]\n  generate[mod.generate]\n  reparse[reparse if needed]\n  semantic[semantic.snapshot]\n  analyze[mod.analyze]\n  rewrite[mod.rewrite]\n  lowerready[lower.ready]\n  parse --> modload --> collect --> generate --> reparse --> semantic --> analyze --> rewrite --> lowerready\n```\n\nFor **`project.type = Mod`**, the host registers mod contracts and emits `beskid_pipeline` phase events for collection, generation, analyzer, and rewrite boundaries. Strings below are normative literals that must be defined in `compiler/crates/beskid_pipeline/src/phases.rs` and asserted by conformance tests.\n\n| Phase id (literal) | Rust constant (recommended) | When emitted | Typical invalidation |\n| --- | --- | --- | --- |\n| `mod.load` | `MOD_LOAD` | After dependency graph resolves and mod AOT artifacts are available | Full mod schedule rebuild |\n| `syntax.generation` | `SYNTAX_GENERATION` | After parse produces a new immutable `Program` snapshot for a compilation unit | Query/collect keys tied to syntax ids |\n| `mod.collect` | `MOD_COLLECT` | Collector contracts declare target sets for active mods | Collector cache boundaries |\n| `mod.generate` | `MOD_GENERATE` | Generators emit typed AST contributions (incremental by default) | Generation replay boundaries |\n| `semantic.snapshot` | `SEMANTIC_SNAPSHOT` | After semantic rules complete for merged host+generated program | Analyzer read boundary |\n| `mod.analyze` | `MOD_ANALYZE` | Analyzer contracts emit diagnostics and fixes | Analyzer cache boundaries |\n| `mod.rewrite` | `MOD_REWRITE` | Rewriter contracts apply typed node replacements | Rewrite replay boundaries |\n| `lower.ready` | `LOWER_READY` | Immediately before HIR lowering on a consistent merged program | Lowering safety boundary |\n\n**Insertion order (host compilation with mods)** — After `parse`, run `mod.load` (if needed), `mod.collect`, `mod.generate`, then re-parse when generation changed syntax, followed by `semantic`/`semantic.snapshot`, `mod.analyze`, optional `mod.rewrite`, and then `lower`/backend phases. Exact ordering is pinned in **[Stage ordering and lowering / design model](/platform-spec/compiler/build-pipeline/stage-ordering/design-model/)**.\n\nBudgets (`maxGeneratorRounds`, step caps) and capability checks are specified in **[Mod host bridge](/platform-spec/compiler/compiler-mods/mod-host-bridge/)**; cache keys in **[Incremental scheduling and determinism](/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/)**.\n</SpecSection>\n\n<DomainOrAreaHub pathPrefix=\"platform-spec/compiler/compiler-mods\" summaryTitle=\"Subtree summary\" />\n\n<SpecSection title=\"Relationship diagram\" id=\"architecture\">\nThe embedded architecture graph summarizes how `Mod` manifests, Beskid SDK contracts, the Rust host bridge, and downstream pipelines connect.\n</SpecSection>\n\n<SpecSection title=\"Feature index\" id=\"feature-index\">\nUse the tiles for normative **feature** contracts (`status` + owner metadata on each hub).\n</SpecSection>\n\n<DomainTiles pathPrefix=\"platform-spec/compiler/compiler-mods\" heading=\"Features\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/compiler/compiler-mods",
+    "sections": [
+      {
+        "id": "scope",
+        "required": true,
+        "kind": "specSection"
+      },
+      {
+        "id": "features",
+        "required": true,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/compiler/compiler-mods",
+          "heading": "Features"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/adr/0002-spec-over-implementation-notes",
+  "repoPath": "src/content/docs/platform-spec/compiler/semantic-pipeline/resolver-contract/adr/0002-spec-over-implementation-notes.mdx",
+  "frontmatter": {
+    "title": "Specification over implementation notes",
+    "description": "Platform-spec text supersedes informal crate comments for Resolver contract.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMP-SEM-0005",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-05",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Resolver contract",
+        "href": "/platform-spec/compiler/semantic-pipeline/resolver-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nImplementation crates accumulated informal notes that diverged from published contracts.\n\n## Decision\n\nNormative platform-spec prose and ADRs under this feature **supersede** informal comments in implementation crates until explicitly migrated into spec text.\n\n## Consequences\n\nEngineers file spec/ADR updates when behavior changes; crate comments are non-authoritative for conformance arguments.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/resolve/resolver.rs`\n- `compiler/crates/beskid_analysis/src/resolve/items.rs`\n- `compiler/crates/beskid_tests/src/analysis/resolve.rs`\n",
+  "layoutJson": null
+}

@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/export-and-callbacks/verification-and-traceability",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/export-and-callbacks/verification-and-traceability.mdx",
+  "frontmatter": {
+    "title": "Export and callbacks — Verification and traceability",
+    "description": "Conformance fixtures for Export and callback registration (v0.3).",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-23",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Export and callbacks",
+        "href": "/platform-spec/language-meta/interop/export-and-callbacks/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Reference compiler status\n\n| Surface | Status | Primary verification |\n| --- | --- | --- |\n| `[Export(Abi:\"C\", Symbol:\"...\")]` on `pub fn` | Implemented (codegen + AOT) | `compiler/crates/beskid_engine/tests/ffi_v03_link_time.rs::export_plugin_init_visible_to_linker` |\n| Callback registration `beskid_register_callbacks` + layout band | Implemented (runtime export) | `compiler/crates/beskid_engine/tests/ffi_v03_link_time.rs::host_registers_callbacks_with_layout_band` |\n| Link-time `Extern` via project `link` / `external_libraries` | Implemented (AOT linker, Linux tier-1) | `compiler/crates/beskid_engine/tests/ffi_v03_link_time.rs::link_time_extern_getpid_matches_platform_spec` |\n| `Export` on non-`pub` function | Codegen diagnostic | `compiler/crates/beskid_tests/src/interop/export.rs::export_on_non_pub_function_fails_codegen` |\n\n## Verification anchors\n\n- Engine (Linux tier-1): `compiler/crates/beskid_engine/tests/ffi_v03_link_time.rs` — link-time `getpid`, shared-library export visibility, callback layout-band gate.\n- Integration: `compiler/crates/beskid_tests/src/interop/export.rs`, `compiler/crates/beskid_tests/src/interop/callback.rs`.\n- Codegen export metadata: `compiler/crates/beskid_codegen/src/lowering/expressions/export.rs`, `compiler/crates/beskid_codegen/src/lowering/context.rs` (`CodegenArtifact::exports`).\n- AOT export table: `compiler/crates/beskid_aot/src/export_table.rs`.\n- Runtime callback registration: `compiler/crates/beskid_runtime/src/builtins/callback.rs` (`beskid_register_callbacks`).\n- ABI symbols: `compiler/crates/beskid_abi/src/symbols.rs` (`SYM_BESKID_REGISTER_CALLBACKS`, `BESKID_USER_FFI_LAYOUT_BAND`), `compiler/crates/beskid_abi/src/builtins.rs` (`BUILTIN_SPECS`).\n\n## Runtime ABI\n\nAdding **user export symbols** **must not** change `RUNTIME_EXPORT_SYMBOLS` unless a new **runtime-provided** registrar is promoted to the Rust ABI profile. `beskid_register_callbacks` is a runtime export for host registration; user `[Export]` symbols remain generated from Beskid compilation units.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/language-meta/interop/export-and-callbacks",
+    "minSpecSections": 2,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

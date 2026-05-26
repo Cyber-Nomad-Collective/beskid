@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/ffi-and-extern/adr/0001-hub-authority",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/ffi-and-extern/adr/0001-hub-authority.mdx",
+  "frontmatter": {
+    "title": "Feature hub owns normative contract",
+    "description": "Author-facing extern import rules live on this hub.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-LMETA-FFI-0001",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "FFI and extern",
+        "href": "/platform-spec/language-meta/interop/ffi-and-extern/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nv0.3 interop split author syntax from execution lowering; articles must not fork MUST tables.\n\n## Decision\n\nThis feature hub **must** own normative MUST/SHOULD contract text for foreign **import**. Sibling articles **must not** redefine hub requirements.\n\n## Consequences\n\nExecution and tooling specs link here for `Extern` placement and attribute shape.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/ffi-and-extern/; `compiler/crates/beskid_analysis` contract validation.\n",
+  "layoutJson": null
+}

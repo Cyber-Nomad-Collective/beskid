@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/runtime-feature-flags/flow-and-algorithm",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/runtime-feature-flags/flow-and-algorithm.mdx",
+  "frontmatter": {
+    "title": "Flow and algorithm",
+    "description": "Selecting runtime features at build time and validating behavior at run time.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Runtime feature flags",
+        "href": "/platform-spec/execution/runtime/runtime-feature-flags/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose\n\nHow optional features propagate from Cargo to runtime behavior. Build alignment diagram: [design model](./design-model/).\n\n## Build-time selection\n\n1. CI or local `cargo build -p beskid_runtime --features …` enables cfg gates in `builtins/arrays.rs`, `metrics` module, etc.\n2. `beskid_engine` / CLI link the same feature-enabled runtime artifact (workspace dependency features must match).\n3. `BESKID_RUNTIME_ABI_VERSION` stays constant unless symbol/signatures change (**ABI-005**).\n\n## `arrays_backing` runtime path\n\n1. Lowering always emits `array_new(elem_size, len)`.\n2. Without feature: runtime writes `BeskidArray { ptr: null, len, cap: len }`.\n3. With feature: runtime allocates `elem_size * len` bytes via `alloc` for `ptr`.\n4. `array_len` returns logical `len` in both modes.\n\n## `metrics` export path\n\n1. When enabled, `builtins/metrics.rs` registers additional `rt_metrics_*` symbols.\n2. JIT **must** only declare imports if codegen emits calls—baseline programs ignore them.\n3. Hosts read counters for profiling dashboards; not part of user Beskid language.\n\n## Engine `extern_dlopen` (related)\n\n1. Separate from runtime crate: enable on `beskid_engine` for dynamic extern tests.\n2. Does not alter `beskid_runtime_abi_version`.\n3. Failure modes documented under [Extern dispatch](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/).\n\n## Release verification flow\n\n1. Read release manifest / CI matrix for enabled features.\n2. Run conformance tests compiled with the same feature set.\n3. Compare `array_new` behavior in integration tests (backing vs header-only).\n\n## Related topics\n\n- [Contracts and edge cases](./contracts-and-edge-cases/)\n- `compiler/crates/beskid_runtime/Cargo.toml`\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/runtime/runtime-feature-flags",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/runtime/runtime-feature-flags",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

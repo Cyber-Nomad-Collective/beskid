@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0006-plural-inject-array",
+  "repoPath": "src/content/docs/platform-spec/language-meta/composition/dependency-injection/adr/0006-plural-inject-array.mdx",
+  "frontmatter": {
+    "title": "Multiple implementations via inject T[]",
+    "description": "Singular inject must be unique at the resolution level.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-LMETA-DI-0006",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Native dependency injection",
+        "href": "/platform-spec/language-meta/composition/dependency-injection/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nApps register multiple implementations of one contract (for example two `Storage`).\n\n## Decision\n\nMultiple implementations **must** use **`inject Contract[]`** (or concrete **`T[]`**). Singular **`inject Contract`** **must** be unique at the resolution level (**E1705** when ambiguous).\n\n## Consequences\n\nDeterministic registration merge order defines array element order.\n\n## Verification anchors\n\n[Design model](/platform-spec/language-meta/composition/dependency-injection/design-model/); [FAQ](/platform-spec/language-meta/composition/dependency-injection/faq-and-troubleshooting/).\n",
+  "layoutJson": null
+}

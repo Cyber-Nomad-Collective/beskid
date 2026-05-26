@@ -1,0 +1,71 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/program-structure/extend-type",
+  "repoPath": "src/content/docs/platform-spec/language-meta/program-structure/extend-type.mdx",
+  "frontmatter": {
+    "title": "extend type",
+    "description": "Type extension syntax replacing impl blocks; public members only, full type scope access.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-20",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Program structure",
+        "href": "/platform-spec/language-meta/program-structure/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Feature",
+        "title": "Compiler Mod SDK",
+        "href": "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
+        "relation": "Generators emit extend-type members"
+      },
+      {
+        "type": "Feature",
+        "title": "Modules and visibility",
+        "href": "/platform-spec/language-meta/program-structure/modules-and-visibility/",
+        "relation": "Visibility and module boundaries"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"Purpose\" id=\"purpose\">\n`extend type` is the normative mechanism for adding members to an existing type. It replaces prior impl-block extension patterns for user and generated code.\n</SpecSection>\n\n<SpecSection title=\"Syntax\" id=\"syntax\">\n```beskid\nextend type Account\n{\n    pub unit Deposit(f32 amount)\n    {\n        account.balance += amount;\n    }\n}\n```\n\nThe extended type name (`Account`) must refer to an in-scope type declaration. The body may declare methods and other members allowed by the type system for that target.\n</SpecSection>\n\n<SpecSection title=\"Access rules\" id=\"access\">\n- Members inside `extend type` may access **public** members of the extended type only.\n- **Private member access is forbidden** inside `extend type` bodies.\n- `extend type` does not bypass module visibility; extension sites must satisfy normal import and visibility rules.\n</SpecSection>\n\n<SpecSection title=\"Compiler mods\" id=\"compiler-mods\">\n`Generator` contracts may emit `extend type` blocks as typed AST contributions. Generated extensions follow the same access and visibility rules as hand-authored extensions.\n</SpecSection>\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/language-meta/program-structure",
+    "sections": [
+      {
+        "id": "scope",
+        "required": true,
+        "kind": "specSection"
+      },
+      {
+        "id": "features",
+        "required": true,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/language-meta/program-structure",
+          "heading": "Features"
+        }
+      }
+    ]
+  }
+}

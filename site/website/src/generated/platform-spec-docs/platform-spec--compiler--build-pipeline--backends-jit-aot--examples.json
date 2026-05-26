@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/examples",
+  "repoPath": "src/content/docs/platform-spec/compiler/build-pipeline/backends-jit-aot/examples.mdx",
+  "frontmatter": {
+    "title": "Backends (JIT and AOT) - Examples",
+    "description": "Example command outcomes for JIT execution and AOT output kinds.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Backends (JIT and AOT)",
+        "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Domain",
+        "title": "Execution",
+        "href": "/platform-spec/execution/",
+        "relation": "Runtime-side behavior"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- **`beskid run` success:** JIT compiles and runs `main`, returning a formatted value string.\n- **`beskid build --kind exe`:** AOT emits object, prepares runtime artifacts, then links executable.\n- **`beskid build --kind object`:** AOT stops after object emission and skips link stage.\n- **Bad entrypoint:** backend reports entrypoint resolution/signature diagnostic.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/build-pipeline/backends-jit-aot",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

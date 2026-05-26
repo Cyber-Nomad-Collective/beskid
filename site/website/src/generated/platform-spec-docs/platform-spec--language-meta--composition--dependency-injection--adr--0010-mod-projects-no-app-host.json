@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0010-mod-projects-no-app-host",
+  "repoPath": "src/content/docs/platform-spec/language-meta/composition/dependency-injection/adr/0010-mod-projects-no-app-host.mdx",
+  "frontmatter": {
+    "title": "Mod projects must not alter app composition",
+    "description": "Compiler Mod type forbids host blocks on mod projects.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-LMETA-DI-0010",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Native dependency injection",
+        "href": "/platform-spec/language-meta/composition/dependency-injection/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCompiler mods and app DI share syntax keywords but different planes.\n\n## Decision\n\n`Mod` projects **must not** declare app **`host`** blocks or alter app composition graphs. Mod registration uses contract **`registrations[]`** per [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/).\n\n## Consequences\n\nClear boundary between [Pipeline composition](/platform-spec/compiler/pipeline-composition/) (Rust) and app DI (Beskid).\n\n## Verification anchors\n\n[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/); [Mod host bridge](/platform-spec/compiler/compiler-mods/mod-host-bridge/).\n",
+  "layoutJson": null
+}

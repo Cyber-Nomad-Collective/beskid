@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/verification-and-traceability",
+  "repoPath": "src/content/docs/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/verification-and-traceability.mdx",
+  "frontmatter": {
+    "title": "Verification and traceability",
+    "description": "How semantic rule behavior is validated and traced to source modules.",
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Rules and diagnostics catalog",
+        "href": "/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/",
+        "relation": "Parent feature"
+      },
+      {
+        "type": "Feature",
+        "title": "Test harnesses and fixtures",
+        "href": "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/",
+        "relation": "Fixture suites verify semantic diagnostics remain stable"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nTraceability anchors:\n\n- Rule definitions: `compiler/crates/beskid_analysis/src/analysis/rules`\n- Staged definitions: `.../analysis/rules/staged/definitions.rs`\n- Diagnostic catalog: `.../analysis/diagnostic_kinds.rs`\n- Surface adapters: `.../beskid_analysis/src/services.rs`, `.../beskid_lsp/src/diagnostics.rs`\n\nVerification checklist:\n\n1. Run semantic diagnostics tests and fixture suites after rule edits.\n2. Confirm new issues are assigned stable diagnostic codes.\n3. Verify CLI and LSP report equivalent issue identities and spans.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/composition/dependency-injection/adr/0008-lib-forbids-launch",
+  "repoPath": "src/content/docs/platform-spec/language-meta/composition/dependency-injection/adr/0008-lib-forbids-launch.mdx",
+  "frontmatter": {
+    "title": "Lib targets forbid launch",
+    "description": "Libraries may declare host types but not launch.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-LMETA-DI-0008",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Native dependency injection",
+        "href": "/platform-spec/language-meta/composition/dependency-injection/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nTest and library packages attempted to embed process entry via launch.\n\n## Decision\n\n**`Lib`** project targets **may** declare **`host`** types for reuse but **`launch`** is **forbidden** (**E1711**). Only app/test host targets **may** **`launch`**.\n\n## Consequences\n\nConsumers reference library hosts from their own app targets or approved harness entries.\n\n## Verification anchors\n\n[FAQ](/platform-spec/language-meta/composition/dependency-injection/faq-and-troubleshooting/).\n",
+  "layoutJson": null
+}

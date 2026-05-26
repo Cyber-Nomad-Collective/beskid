@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/examples",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/panic-io-and-syscalls/examples.mdx",
+  "frontmatter": {
+    "title": "Examples",
+    "description": "Panic from lowering, syscall_write status codes, and corelib IO scenarios.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Panic, IO, and syscalls",
+        "href": "/platform-spec/execution/runtime/panic-io-and-syscalls/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Prose: bounds check failure\n\nAn enabled bounds check on array access fails at run time. Lowering emits a call to `panic` with a static message pointer. The process exits; callers do not receive `Option` because the failure is classified as a programmer/contract fault, not a recoverable IO error.\n\n## Prose: broken pipe on stderr\n\nA server logs to stderr after the reader closes the pipe. `syscall_write` returns `-1` or partial failure; `System.Error.Write` panics with the stable stderr message defined in console IO spec. Operators treat this as fatal logging failure in v1.\n\n## Beskid-shaped usage (conceptual)\n\nCorelib (not user panic) wraps builtins:\n\n```beskid\n// System.Output — simplified narrative\nunit Write(string text) {\n    // builds WriteRequest → Syscall.WriteWith(Stdout, bytes)\n    // panics when syscall returns error\n}\n```\n\nUser application code should prefer `Option` for expected failures; reserve runtime panic for violations and v1 stream policy.\n\n## Host testing syscall_write\n\nE2E tests in `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` exercise panic and IO paths without requiring full corelib—they call lowered programs that hit builtins directly.\n\n## Read line scenario\n\n`Input.ReadLine` loops `syscall_read` on stdin until newline or EOF. EOF returns `Result` success with partial/empty string; it **does not** call `panic` (**IO-005** sibling spec).\n\n## Related topics\n\n- [Verification and traceability](./verification-and-traceability/)\n- [Panic, IO hub](./)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/runtime/panic-io-and-syscalls",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/runtime/panic-io-and-syscalls",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

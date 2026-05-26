@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/concurrency/concurrency-package/design-model",
+  "repoPath": "src/content/docs/platform-spec/core-library/concurrency/concurrency-package/design-model.mdx",
+  "frontmatter": {
+    "title": "Concurrency package - Design model",
+    "description": "Package layout, module map, and thin-wrapper rule for Fiber and Channel structs.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-20",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Concurrency package",
+        "href": "/platform-spec/core-library/concurrency/concurrency-package/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Package layout\n\nWorkspace package **`corelib_concurrency`** (directory `compiler/corelib/packages/concurrency/`) with one primary module file per public type (match existing corelib style: `System/Syscall/` split).\n\n| Module path | Responsibility |\n| --- | --- |\n| `Concurrency.Fiber` | `Fiber<T>` struct; **`event OnCancelled()`** on handle; **Join**, **Detach**, **Cancel** |\n| `Concurrency.Channel` | `Channel<T>`; **Send**, **Receive**, **TrySend**, **TryReceive**, **Close** |\n| `Concurrency.ChannelOptions` | `Bounded(capacity)`, `Unbounded`, optional **SingleReader** / **SingleWriter** flags |\n| `Concurrency.Hub` | `Hub<T>` homogeneous; **Register**, **WaitReceive** (round-robin) |\n| `Concurrency.HubReceiveResult` | `index` + `value: T` |\n| `Concurrency.Mutex` | **Lock**, **TryLock**, **Unlock** |\n| `Concurrency.WaitGroup` | **Add**, **Done**, **Wait** |\n| `Concurrency` | **Yield**, **NowMillis**, **ProcessorCount**, **SetProcessorCount** |\n\nPrelude re-exports (optional, versioned): only what most apps need—avoid dumping the whole package into `Prelude.bd` until stable.\n\n## Status code layout\n\nRuntime status values are split by namespace. `Concurrency.Status` is only for channel, hub, mutex, and wait-group paths: `Ok = 0`, `Closed = 1`, `Cancelled = 2`, `WouldBlock = 3`, `HubEmpty = 4`, `HubLimit = 5`, `HubNotFound = 6`, and `MutexBusy = 1` for try-lock. `Concurrency.FiberJoinStatus` is a separate join namespace: `Ok = 0`, `Cancelled = 1`, `Panicked = 2`, `StackOverflow = 3`, and `NotDone = 4`.\n\nFiber **Join** mappings must never compare join results against channel/hub status constants. Hub **Register** and **WaitReceive** map only hub-specific statuses to `HubError`.\n\n## Thin-wrapper rule\n\nEach public method maps **1:1** to a runtime builtin or a small inline sequence documented in **[Channels and synchronization](/platform-spec/execution/runtime/channels-and-synchronization/)**. No intermediate “scheduler interface” trait hierarchy in Beskid source.\n\n## Reference implementation note\n\nRuntime fiber switching may follow a **stack-switching coroutine** design (see [Building lightweight coroutines in Rust (fibers)](https://medium.com/@ksaritek/building-lightweight-coroutines-in-rust-introducing-rust-fibers-53b91625a9de) for engineering patterns). The **normative contract** remains this platform spec and ABI symbols, not the article.\n\n## Anti-patterns (forbidden)\n\n- Parallel .NET-style stacks (`Task`, `ValueTask`, `ChannelReader`/`ChannelWriter` split types in user API)\n- Hidden `async`/`await` lowering\n- Second channel abstraction in `System.*` outside this package\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/concurrency/concurrency-package",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/concurrency/concurrency-package",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

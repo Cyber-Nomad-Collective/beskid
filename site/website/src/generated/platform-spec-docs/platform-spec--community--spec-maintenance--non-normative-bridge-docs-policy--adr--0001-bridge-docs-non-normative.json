@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/adr/0001-bridge-docs-non-normative",
+  "repoPath": "src/content/docs/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/adr/0001-bridge-docs-non-normative.mdx",
+  "frontmatter": {
+    "title": "Bridge documents are non-normative by default",
+    "description": "Migration and mapping pages are transitional navigation aids, not final behavior authority.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMM-BRIDGE-0001",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-05",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Non-normative bridge docs policy",
+        "href": "/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLegacy Starlight paths and informal mapping tables were cited in reviews as if they were language law.\n\n## Decision\n\nBridge documents (migration guides, mapping tables, terminology crosswalks) are **non-normative** by default unless a **Standard** platform-spec feature page explicitly declares normative status. Migration mapping pages **must not** be the final authority for platform behavior.\n\n## Consequences\n\n[Legacy spec mapping](/platform-spec/legacy-spec-mapping/) stays informative; normative fixes land under `platform-spec/`.\n\n## Verification anchors\n\n`PSC005` legacy bridge checks on **Standard** pages linking `/execution/` or `/corelib/`.\n",
+  "layoutJson": null
+}

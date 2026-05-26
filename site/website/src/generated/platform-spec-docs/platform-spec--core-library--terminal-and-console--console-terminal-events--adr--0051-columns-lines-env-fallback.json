@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/adr/0051-columns-lines-env-fallback",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/console-terminal-events/adr/0051-columns-lines-env-fallback.mdx",
+  "frontmatter": {
+    "title": "COLUMNS/LINES env fallback",
+    "description": "Env size parsing is best-effort discrete table in v1.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-TERM-0051",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Console terminal events",
+        "href": "/platform-spec/core-library/terminal-and-console/console-terminal-events/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nNot all hosts expose Winsize ioctl; env vars are a portable fallback.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Order | Winsize ioctl then `COLUMNS`/`LINES` |\n| Parse | Discrete table, not full integer grammar in v1 |\n\n## Consequences\n\nOdd env values may clamp or ignore per contracts article.\n\n## Verification anchors\n\n`Platform/Terminal.bd` tests.\n",
+  "layoutJson": null
+}

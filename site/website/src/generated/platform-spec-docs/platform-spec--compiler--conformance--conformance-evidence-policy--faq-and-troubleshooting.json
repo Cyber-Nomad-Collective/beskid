@@ -1,0 +1,40 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/conformance/conformance-evidence-policy/faq-and-troubleshooting",
+  "repoPath": "src/content/docs/platform-spec/compiler/conformance/conformance-evidence-policy/faq-and-troubleshooting.mdx",
+  "frontmatter": {
+    "title": "Conformance evidence policy - FAQ and troubleshooting",
+    "description": "Answers common operator and contributor questions with practical next checks.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Conformance evidence policy",
+        "href": "/platform-spec/compiler/conformance/conformance-evidence-policy/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThis article documents **faq and troubleshooting** for **conformance evidence policy** in the reference compiler.\n\n## What this covers\nFor newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.\n\n## Anchored code paths\n- `compiler/crates/beskid_tests/src/analysis/diagnostics.rs` provides semantic conformance evidence.\n- `compiler/crates/beskid_tests/src/doc_tests.rs` validates docs-facing conformance examples.\n- `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` provides executable behavior evidence.\n\n## Practical notes\n- Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.\n- Treat diagnostics and tests as part of the contract, not optional implementation details.\n- If behavior changes, update this article and add/adjust tests in `compiler/crates/beskid_tests` or `compiler/crates/beskid_e2e_tests`.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/conformance/conformance-evidence-policy",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

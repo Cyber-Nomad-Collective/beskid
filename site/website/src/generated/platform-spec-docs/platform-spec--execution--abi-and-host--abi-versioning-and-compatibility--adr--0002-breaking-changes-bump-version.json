@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/adr/0002-breaking-changes-bump-version",
+  "repoPath": "src/content/docs/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/adr/0002-breaking-changes-bump-version.mdx",
+  "frontmatter": {
+    "title": "Breaking ABI changes require version bump",
+    "description": "Layout, signature, or semantic breaks must increment BESKID_RUNTIME_ABI_VERSION.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-EXEC-ABI-0002",
+    "adrStatus": "Accepted",
+    "adrDate": "2025-11-01",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "ABI versioning and compatibility",
+        "href": "/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nAdditive runtime symbols and Cargo feature gates are easy to confuse with ABI-stable changes. Silent signature drift breaks AOT/JIT link steps or causes undefined behavior at call sites.\n\n## Decision\n\n| Trigger | Action |\n| --- | --- |\n| `BeskidStr` / `BeskidArray` / interop payload layout change | **Must** increment `BESKID_RUNTIME_ABI_VERSION` (**ABI-004**) |\n| Builtin rename, arity change, or `AbiParamKind` / `AbiReturnKind` change | **Must** bump version |\n| Semantics relied on by lowering change (e.g. barrier no-op) | **Must** bump version |\n| New symbol appended, older artifacts never import it | **May** ship without bump (**ABI-005**) |\n| Optional Cargo `features` only | **Must not** bump ABI version |\n\nReference tree pins **version 2** until the next breaking change.\n\n## Consequences\n\nRelease notes **should** list bumped versions and removed symbols. Renaming without bump is a release-process violation.\n\n## Verification anchors\n\n`beskid_abi` symbol tables; `RUNTIME_EXPORT_SYMBOLS` parity checks in CI.",
+  "layoutJson": null
+}

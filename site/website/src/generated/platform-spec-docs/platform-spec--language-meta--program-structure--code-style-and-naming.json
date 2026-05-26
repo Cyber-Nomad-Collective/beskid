@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/program-structure/code-style-and-naming",
+  "repoPath": "src/content/docs/platform-spec/language-meta/program-structure/code-style-and-naming.mdx",
+  "frontmatter": {
+    "title": "Code style and naming",
+    "description": "Language-level naming and style conventions that affect readability and tooling consistency.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Proposed",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Program structure",
+        "href": "/platform-spec/language-meta/program-structure/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Area",
+        "title": "CLI",
+        "href": "/platform-spec/tooling/cli/",
+        "relation": "Formatter and linting workflows consume style assumptions"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\n\n<SpecPageHeader status=\"Proposed\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n## Normative specification\n\nThis chapter defines naming and style constraints intended to be enforceable by formatter and lint tooling once promoted to Standard (normative) standing.\n\n## Platform view\n\n- Naming conventions shall be stable enough for generated docs and symbols.\n- Formatting conventions shall align with `beskid_analysis` formatter output for code examples.\n- Diagnostic messaging should use canonical term names from this chapter.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/language-meta/program-structure",
+    "sections": [
+      {
+        "id": "scope",
+        "required": true,
+        "kind": "specSection"
+      },
+      {
+        "id": "features",
+        "required": true,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/language-meta/program-structure",
+          "heading": "Features"
+        }
+      }
+    ]
+  }
+}

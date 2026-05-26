@@ -3,8 +3,12 @@
 import type { BeskidService } from "../data/beskid-services";
 import { hubIconSvg } from "../hub/icons";
 
+const HUB_ROOT_SELECTOR = "[data-beskid-hub-root]";
 const HUB_SELECTOR = "[data-beskid-hub]";
 const TRIGGER_SELECTOR = "[data-beskid-hub-trigger]";
+const CLOSE_SELECTOR = "[data-beskid-hub-close]";
+
+let documentListenersAttached = false;
 
 function parseServices(root: HTMLElement): BeskidService[] {
 	const raw = root.getAttribute("data-services");
@@ -39,11 +43,21 @@ function renderGrid(dialog: HTMLDialogElement, services: BeskidService[]) {
 	grid.innerHTML = services.map(tileHtml).join("");
 }
 
+function hubDialogForRoot(root: HTMLElement): HTMLDialogElement | null {
+	return root.querySelector<HTMLDialogElement>(HUB_SELECTOR);
+}
+
+function prepareHubRoot(root: HTMLElement): HTMLDialogElement | null {
+	const dialog = hubDialogForRoot(root);
+	if (!dialog) return null;
+	renderGrid(dialog, parseServices(root));
+	return dialog;
+}
+
 function openHub(dialog: HTMLDialogElement) {
 	if (!dialog.open) {
 		dialog.showModal();
-		const close = dialog.querySelector<HTMLButtonElement>("[data-beskid-hub-close]");
-		close?.focus();
+		dialog.querySelector<HTMLButtonElement>(CLOSE_SELECTOR)?.focus();
 	}
 }
 
@@ -51,37 +65,69 @@ function closeHub(dialog: HTMLDialogElement) {
 	if (dialog.open) dialog.close();
 }
 
-function bindHub(root: HTMLElement) {
-	const dialog = root.matches(HUB_SELECTOR)
-		? (root as HTMLDialogElement)
-		: root.querySelector<HTMLDialogElement>(HUB_SELECTOR);
-	if (!dialog || dialog.dataset.beskidHubBound === "true") return;
+function attachDocumentListeners() {
+	if (documentListenersAttached) return;
+	documentListenersAttached = true;
 
-	const services = parseServices(root);
-	renderGrid(dialog, services);
-	dialog.dataset.beskidHubBound = "true";
+	document.addEventListener("click", (event) => {
+		const target = event.target;
+		if (!(target instanceof Element)) return;
 
-	root.querySelectorAll<HTMLElement>(TRIGGER_SELECTOR).forEach((trigger) => {
-		trigger.addEventListener("click", (event) => {
+		const trigger = target.closest(TRIGGER_SELECTOR);
+		if (trigger) {
 			event.preventDefault();
-			openHub(dialog);
-		});
+			const root = trigger.closest<HTMLElement>(HUB_ROOT_SELECTOR);
+			if (!root) return;
+			const dialog = prepareHubRoot(root);
+			if (dialog) openHub(dialog);
+			return;
+		}
+
+		const closeBtn = target.closest(CLOSE_SELECTOR);
+		if (closeBtn) {
+			const dialog = closeBtn.closest<HTMLDialogElement>(HUB_SELECTOR);
+			if (dialog) closeHub(dialog);
+		}
 	});
 
-	dialog.querySelector("[data-beskid-hub-close]")?.addEventListener("click", () => {
-		closeHub(dialog);
+	document.addEventListener("click", (event) => {
+		const target = event.target;
+		if (target instanceof HTMLDialogElement && target.matches(HUB_SELECTOR)) {
+			closeHub(target);
+		}
 	});
 
-	dialog.addEventListener("click", (event) => {
-		if (event.target === dialog) closeHub(dialog);
-	});
-
-	dialog.addEventListener("cancel", (event) => {
-		event.preventDefault();
-		closeHub(dialog);
-	});
+	document.addEventListener(
+		"cancel",
+		(event) => {
+			const dialog = event.target;
+			if (dialog instanceof HTMLDialogElement && dialog.matches(HUB_SELECTOR)) {
+				event.preventDefault();
+				closeHub(dialog);
+			}
+		},
+		true,
+	);
 }
 
+/** Binds hub behavior for roots in `scope` (delegated clicks survive Blazor DOM swaps). */
 export function initBeskidHub(scope: ParentNode = document) {
-	scope.querySelectorAll<HTMLElement>("[data-beskid-hub-root]").forEach(bindHub);
+	attachDocumentListeners();
+	scope.querySelectorAll<HTMLElement>(HUB_ROOT_SELECTOR).forEach(prepareHubRoot);
+}
+
+declare global {
+	interface Window {
+		Blazor?: {
+			addEventListener?: (eventName: string, callback: () => void) => void;
+		};
+	}
+}
+
+/** Re-prepare hubs after Blazor enhanced navigation replaces layout markup. */
+export function initBeskidHubAfterBlazor() {
+	if (typeof window === "undefined") return;
+	const blazor = window.Blazor;
+	if (!blazor?.addEventListener) return;
+	blazor.addEventListener("enhancedload", () => initBeskidHub());
 }

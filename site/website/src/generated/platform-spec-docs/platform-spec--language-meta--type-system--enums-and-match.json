@@ -1,0 +1,77 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/type-system/enums-and-match",
+  "repoPath": "src/content/docs/platform-spec/language-meta/type-system/enums-and-match.mdx",
+  "frontmatter": {
+    "title": "Enums and match",
+    "description": "Algebraic enums and exhaustive `match` tie data representation to control flow. Lowering must preserve discriminant layout described in Execution where relevant.",
+    "template": "splash",
+    "tableOfContents": false,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Type system",
+        "href": "/platform-spec/language-meta/type-system/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Domain",
+        "title": "Language meta",
+        "href": "/platform-spec/language-meta/",
+        "relation": "Parent domain hub"
+      },
+      {
+        "type": "Domain",
+        "title": "Platform specification",
+        "href": "/platform-spec/",
+        "relation": "Cross-cutting index"
+      },
+      {
+        "type": "Domain",
+        "title": "Execution documentation",
+        "href": "/execution/",
+        "relation": "Non-normative legacy execution bridge"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader\n\tstatus=\"Standard\"\n\townerName=\"Piotr Mikstacki\"\n\townerEmail=\"pmikstacki@cybernomad.it\"\n\tsubmitterName=\"Piotr Mikstacki\"\n\tsubmitterEmail=\"pmikstacki@cybernomad.it\"\n/>\n\n## Normative specification\n\n### Scope\n\nDefines **`enum` declarations**, **constructors**, **`match` expressions**, and **patterns**. Type rules integrate with [Types](/platform-spec/language-meta/type-system/types/) and [Control flow](/platform-spec/language-meta/evaluation/control-flow/).\n\n### Enum declarations\n\n- **`enum Name<G…> { variants }`** introduces a nominal sum type.\n- Variants **may** be nullary (`Ok`) or carry fields (`Err(message: string)`).\n- Duplicate variant names **must** error (**E1002**).\n\n### Constructors and use\n\n- **Qualified** construction **`Enum.Variant(args)`** is required when the enum type is not inferred from context (**E1303** if unqualified where ambiguous).\n- Constructor arity **must** match the variant field list (**E1302**, **E1307**).\n- Enum types in expressions **must** resolve to a known enum (**E1301**).\n\n### `match` expressions\n\n- **`match scrutinee { arms }`** evaluates the scrutinee once, then selects the first arm whose **pattern** matches.\n- Each arm **`pattern => expression`** **must** produce the same type; mismatches **must** error (**E1305**).\n- **`when guard`** on an arm **must** be `bool` (**E1308**).\n- Patterns **may** be wildcard `_`, literals, identifiers (bind), or `Enum.Variant(subpatterns)`.\n- **Exhaustiveness:** For enum scrutinees, arms **must** cover all variants or include `_`; non-exhaustive matches **must** error (**E1304**).\n\n### Dynamic semantics\n\n- Matching **must** bind pattern variables in the arm expression scope only.\n- No fall-through between arms; order is significant for overlapping patterns (overlap **should** be rejected when detectable).\n\n### Diagnostics\n\nEnum/match band **E1301–E1308**. See [Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/).\n\n### Conformance\n\n**L2** implementations **must** agree with reference tests on arity, exhaustiveness, and arm typing.\n\n## Decisions\n\n- **D-LM-ENUM-001 — Expression-oriented match:** `match` is an expression, not a statement; statement contexts wrap it in expression statements.\n- **D-LM-ENUM-002 — Qualified constructors:** Unqualified enum constructors are allowed only when type inference fixes the enum type.\n- **D-LM-ENUM-003 — Exhaustiveness is mandatory:** Partial `match` on enums **must** be rejected unless `_` is present.\n- **D-LM-ENUM-004 — `Option` is not special syntax:** Optional values use the corelib `Option<T>` enum, not a language `optional` keyword.\n\n## Platform view\n\nAlgebraic enums and exhaustive `match` tie data representation to control flow. Lowering must preserve discriminant layout described in Execution where relevant.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/language-meta/type-system",
+    "sections": [
+      {
+        "id": "scope",
+        "required": true,
+        "kind": "specSection"
+      },
+      {
+        "id": "features",
+        "required": true,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/language-meta/type-system",
+          "heading": "Features"
+        }
+      }
+    ]
+  }
+}

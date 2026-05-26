@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console/console-controls/adr/0041-livetick-caller-owned-loop",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/console-controls/adr/0041-livetick-caller-owned-loop.mdx",
+  "frontmatter": {
+    "title": "LiveTick caller-owned redraw loop",
+    "description": "Periodic redraw uses LiveTick; callers own fiber/channel loops.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-TERM-0041",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Console controls",
+        "href": "/platform-spec/core-library/terminal-and-console/console-controls/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCorelib should not embed a full UI framework inside controls.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Tick | `LiveTick` drives periodic redraw |\n| Loop | Callers compose fibers/channels around tick |\n\n## Consequences\n\nInteractive samples pair LiveTick with concurrency package channels.\n\n## Verification anchors\n\nConsole controls examples and tests.\n",
+  "layoutJson": null
+}

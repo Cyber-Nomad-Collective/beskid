@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/front-end/grammar-and-parser-contract/adr/0003-primary-contract-choice",
+  "repoPath": "src/content/docs/platform-spec/compiler/front-end/grammar-and-parser-contract/adr/0003-primary-contract-choice.mdx",
+  "frontmatter": {
+    "title": "Primary contract for Grammar and parser contract",
+    "description": "This feature hub defines the normative contract for **grammar and parser contract** and links newcomer-oriented referenc",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMP-FRONT-0006",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-05",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Grammar and parser contract",
+        "href": "/platform-spec/compiler/front-end/grammar-and-parser-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nThis feature hub defines the normative contract for **grammar and parser contract** and links newcomer-oriented reference articles.\n\n## Decision\n\nThe reference compiler **must** implement Grammar and parser contract as documented in this feature hub and its article bundle.\n\n## Consequences\n\nChanges require hub/ADR updates and verification anchor extensions.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/beskid.pest`\n- `compiler/crates/beskid_analysis/src/syntax/`\n- `compiler/crates/beskid_analysis/src/syntax/items/parse_helpers.rs`\n",
+  "layoutJson": null
+}

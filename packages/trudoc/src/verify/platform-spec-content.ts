@@ -69,6 +69,8 @@ export type PlatformSpecContentVerifyOptions = {
 	warnOnly?: boolean;
 	/** Only report issues for platform-spec paths changed in git (staged + unstaged vs HEAD). */
 	changedOnly?: boolean;
+	/** When set with `changedOnly`, use this path set instead of git diff. */
+	changedRelPaths?: Set<string>;
 };
 
 type PathLevel = 'feature' | 'article' | 'adr' | 'other';
@@ -431,7 +433,9 @@ export function verifyPlatformSpecContent(
 	const { websiteRoot, changedOnly = false } = options;
 	const specRoot = path.join(websiteRoot, 'src', 'content', 'docs', 'platform-spec');
 	const files = walk(specRoot);
-	const changed = changedOnly ? gitChangedPlatformSpecPaths(websiteRoot) : null;
+	const changed = changedOnly
+		? (options.changedRelPaths ?? gitChangedPlatformSpecPaths(websiteRoot))
+		: null;
 	const issues: PlatformSpecContentIssue[] = [];
 
 	for (const file of files) {

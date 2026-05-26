@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/concurrency/concurrency-package/adr/0010-hub-homogeneous-v1",
+  "repoPath": "src/content/docs/platform-spec/core-library/concurrency/concurrency-package/adr/0010-hub-homogeneous-v1.mdx",
+  "frontmatter": {
+    "title": "Homogeneous Hub in v1",
+    "description": "Hub type parameter, limits, and heterogeneous deferral.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-CONC-0010",
+    "adrStatus": "Accepted",
+    "adrDate": "2025-08-01",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Concurrency package",
+        "href": "/platform-spec/core-library/concurrency/concurrency-package/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHeterogeneous select requires tagged unions or multiple hubs in v1.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Fairness | Round-robin (see D-CORE-CONC-0003) |\n| Max registrations | **256** per hub (`HubError::Limit` possible) |\n| Element type | **Homogeneous** — one `` `Hub<T>` `` wraps only `` `Channel<T>` `` with same ``T`` |\n| Heterogeneous | **Not v1** — use multiple hubs or `` `Channel<HubMessage>` `` |\n| Result | ``HubReceiveResult { index: i64, value: T }`` |\n\n## Consequences\n\nUI/console hubs should stay well below 256 registrations.\n\n## Verification anchors\n\nHub builtin tests; examples article.\n",
+  "layoutJson": null
+}

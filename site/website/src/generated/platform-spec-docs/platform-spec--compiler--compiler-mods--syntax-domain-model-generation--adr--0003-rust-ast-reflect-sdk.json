@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation/adr/0003-rust-ast-reflect-sdk",
+  "repoPath": "src/content/docs/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/adr/0003-rust-ast-reflect-sdk.mdx",
+  "frontmatter": {
+    "title": "Rust AST reflection into Beskid.Compiler SDK",
+    "description": "Hand-maintained parallel syntax trees diverged from the host parser.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMP-MODS-0015",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Syntax domain model generation",
+        "href": "/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHand-maintained parallel syntax trees diverged from the host parser.\n\n## Decision\n\nCanonical syntax model is generated via `beskid_ast_reflect_gen` into `Beskid.Compiler.*` SDK sources from the Rust AST—aligned with D-INC-0006.\n\n## Consequences\n\nMods consume generated facades; internal `beskid_analysis::syntax` remains host-only.\n\n## Verification anchors\n\n- `beskid_ast_reflect_gen`\n- `compiler/crates/beskid_analysis/src/syntax/`.\n",
+  "layoutJson": null
+}

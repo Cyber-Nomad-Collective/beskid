@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/project-scaffolding/project-templates/flow-and-algorithm",
+  "repoPath": "src/content/docs/platform-spec/tooling/project-scaffolding/project-templates/flow-and-algorithm.mdx",
+  "frontmatter": {
+    "title": "Flow and algorithm",
+    "description": "End-to-end lifecycle for install, update check, and instantiate.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Project templates",
+        "href": "/platform-spec/tooling/project-scaffolding/project-templates/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "beskid new command",
+        "href": "/platform-spec/tooling/project-scaffolding/beskid-new/",
+        "relation": "CLI orchestration"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose and scope\n\nNormative ordering for `beskid new install`, `beskid new list`, and `beskid new <shortName>` (and equivalents).\n\n## Install (`beskid new install`)\n\n1. Resolve source (registry id, `--path`, or `--git`).\n2. For registry: download `.bpk` or extract template roots per [template packages](../template-packages/); verify `packageKind: template`.\n3. Locate `.beskid/template.json`; parse and validate `beskid.template.v1`.\n4. Store snapshot in tooling cache keyed by `identity`.\n5. Register `shortName` → cache entry for `beskid new list`.\n\n## List (`beskid new list`)\n\n1. Merge **installed cache** entries with optional **registry search** (when `--online`).\n2. Display: `shortName`, `name`, `tags.type`, package id + version, yanked marker if applicable.\n\n## Instantiate (`beskid new`)\n\n```arch\nsequenceDiagram\n  participant User\n  participant CLI as beskid new\n  participant Cache\n  participant Registry as pckg\n  participant Engine as template engine\n  participant FS as output filesystem\n  User->>CLI: select template + output path\n  CLI->>Cache: load snapshot\n  alt registry template\n    CLI->>Registry: query latest version\n    Registry-->>CLI: version metadata\n    CLI-->>User: warn if yanked or update available\n  end\n  CLI->>Engine: load template.json\n  Engine->>User: interactive prompts optional\n  CLI->>Engine: symbol values\n  Engine->>FS: apply sources, placeholders, guids\n  Engine->>CLI: postActions list\n  CLI->>CLI: run postActions\n  CLI->>CLI: ensure corelib via lock/fetch policy\n```\n\n### Step detail\n\n1. **Resolve template** — cache hit by `shortName`, or one-shot path/git without install.\n2. **Update check** — for registry-backed templates, query latest semver; if greater than cached, print: `A newer template version is available: <id>@<ver>. Run 'beskid new install <id>' to update.`\n3. **Yanked check** — if requested version is yanked, emit warning (see contracts).\n4. **Load manifest** — `beskid.template.v1`.\n5. **Collect symbols** — merge CLI flags, defaults, interactive prompts.\n6. **Evaluate conditions** — skip source blocks whose `condition` is false.\n7. **Process sources** — copy, text-process, rename; apply `copyOnly` without substitution.\n8. **Substitute** — `{{ }}`, `sourceName`, `forms`.\n9. **Regenerate guids** — per `guids` array.\n10. **Post-actions** — sequential; failures honor `--strict-post-actions`.\n11. **Corelib** — run default post-action `beskidLock` (or equivalent) so corelib is materialized without user declaring opt-out.\n\n## Workspace templates\n\n1. Write `Workspace.proj` first (substituted).\n2. For each member in `workspaceMembers` symbol or fixed layout in `sources`, write member `Project.proj` and sources.\n3. Post-action `beskidLock` at workspace root **must** lock all members.\n\n`workspaceMembers` is a `choice` or structured symbol when the template offers optional members; fixed layouts **may** omit the symbol.\n\n## Item templates\n\n1. Resolve host `Project.proj` root.\n2. Apply `sources` with `target` relative to chosen file path.\n3. **Must not** run workspace-level lock unless `--lock` passed.\n\n## Git and path sources\n\n| Source | Behavior |\n| --- | --- |\n| `--path` | Read `.beskid/template.json` directly; no cache unless `--install` |\n| `--git` | Clone to cache subdirectory keyed by url+ref; optional sparse checkout for `subpath` |\n\n## Implementation anchors\n\n- `compiler/crates/beskid_cli/src/commands/new.rs` (planned)\n- `compiler/crates/beskid_pckg` registry fetch (existing client)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/tooling/project-scaffolding/project-templates",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/project-scaffolding/project-templates",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

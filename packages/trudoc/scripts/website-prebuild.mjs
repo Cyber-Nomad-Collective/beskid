@@ -29,6 +29,7 @@ const skipTrudoc =
 run('sync:cli-version', ['sync:cli-version']);
 run('generate:platform-spec-git-meta', ['generate:platform-spec-git-meta']);
 run('generate:platform-spec-nav-tree', ['generate:platform-spec-nav-tree']);
+run('generate:platform-spec-catalog', ['generate:platform-spec-catalog']);
 run('generate:book-nav-tree', ['generate:book-nav-tree']);
 run('verify:book-images', ['verify:book-images']);
 run('verify:book-layout', ['verify:book-layout']);

@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/project-scaffolding/project-templates/adr/0010-yanked-template-warning",
+  "repoPath": "src/content/docs/platform-spec/tooling/project-scaffolding/project-templates/adr/0010-yanked-template-warning.mdx",
+  "frontmatter": {
+    "title": "Yanked warning",
+    "description": "Yanked warning",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-TOOL-SCAFF-0010",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-21",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Project templates",
+        "href": "/platform-spec/tooling/project-scaffolding/project-templates/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nYank policy.\n\n## Decision\n\nWarn on yanked; optional continue flag.\n\n## Consequences\n\nRegistry alignment.\n\n## Verification anchors\n\nYank API test.\n",
+  "layoutJson": null
+}

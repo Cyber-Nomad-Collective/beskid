@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/faq-and-troubleshooting",
+  "repoPath": "src/content/docs/platform-spec/compiler/codegen-and-ir/lowering-contract/faq-and-troubleshooting.mdx",
+  "frontmatter": {
+    "title": "FAQ and troubleshooting",
+    "description": "Common questions and debugging guidance for `Lowering contract`.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Codegen and IR",
+        "href": "/platform-spec/compiler/codegen-and-ir/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Feature",
+        "title": "Stage ordering and artifacts",
+        "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+        "relation": "Pipeline ordering that lowering must follow"
+      },
+      {
+        "type": "Domain",
+        "title": "Execution",
+        "href": "/platform-spec/execution/",
+        "relation": "Lowered artifacts are consumed by execution backends"
+      },
+      {
+        "type": "Feature",
+        "title": "Lowering contract",
+        "href": "/platform-spec/compiler/codegen-and-ir/lowering-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n## Why did a change pass locally but fail in CI?\n\nMost often, one crate boundary changed but the corresponding fixture or downstream consumer was not updated. Re-run the nearest conformance suite and inspect cross-crate handoff points.\n\n## Where should I start debugging?\n\n1. Confirm the target requirement in this feature hub.\n2. Step through ``beskid_codegen::lower_source` in `compiler/crates/beskid_codegen`` and ``CodegenArtifact` construction in `compiler/crates/beskid_codegen``.\n3. Validate consumer behavior at ``JitModule` consumption in `compiler/crates/beskid_engine/src/jit_module.rs``.\n4. Reproduce with `Runtime execution coverage in `compiler/crates/beskid_tests/src/runtime/jit.rs``.\n\n## How do I add a new rule safely?\n\nDocument the new contract in the relevant article, update implementation in the owning crate, and add a fixture proving both happy-path and failure-path behavior.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/compiler/codegen-and-ir/lowering-contract",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/compiler/codegen-and-ir/lowering-contract",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

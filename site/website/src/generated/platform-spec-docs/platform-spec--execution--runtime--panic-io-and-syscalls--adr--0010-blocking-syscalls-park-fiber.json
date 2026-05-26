@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/adr/0010-blocking-syscalls-park-fiber",
+  "repoPath": "src/content/docs/platform-spec/execution/runtime/panic-io-and-syscalls/adr/0010-blocking-syscalls-park-fiber.mdx",
+  "frontmatter": {
+    "title": "Blocking syscalls park the calling fiber",
+    "description": "Scheduler run_blocking offloads host work without stalling other fibers.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-EXEC-RT-0010",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-04-01",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Panic, IO, and syscalls",
+        "href": "/platform-spec/execution/runtime/panic-io-and-syscalls/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Fiber scheduler and stacks",
+        "href": "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
+        "relation": "Syscall parking contract"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nBlocking `read`/`write` on a fiber must not freeze the entire M:N scheduler or violate Phase A mutator rules on pool threads.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Blocking path | Enqueue host blocking work on syscall pool; **park** current fiber only |\n| Wake | Resume fiber on scheduler thread when worker completes |\n| Pool workers | **Must not** execute generated Beskid mutator code or allocate as mutators |\n| Pool worker tagging | Each pool thread calls `set_syscall_pool_worker()` so the runtime can assert this rule (`assert_mutator_allowed`) and panic on accidental allocation |\n| Allocation | Runtime object creation for results happens after resume on scheduler thread |\n| Console | Producers **Send** bytes/events; consumers **Receive** on fibers |\n\n## Consequences\n\nM6+ syscall integration is required for conformance on blocking builtins.\n\n## Verification anchors\n\nScheduler `run_blocking`; fiber scheduler [verification](../verification-and-traceability/) article.",
+  "layoutJson": null
+}

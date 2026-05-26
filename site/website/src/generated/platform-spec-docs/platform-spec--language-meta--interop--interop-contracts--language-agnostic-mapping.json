@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/interop-contracts/language-agnostic-mapping",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/interop-contracts/language-agnostic-mapping.mdx",
+  "frontmatter": {
+    "title": "Interop.Contracts — Language-agnostic mapping rules",
+    "description": "How Beskid declarations map to abstract call shapes and foreign symbols before any C- or Rust-specific lowering.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-01",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Interop.Contracts",
+        "href": "/platform-spec/language-meta/interop/interop-contracts/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Declaration to contract\n\nBeskid surfaces foreign entrypoints through **`contract`** declarations annotated for interop (see **[FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/)**). At the **Interop.Contracts** layer, each contract method contributes:\n\n- A **logical symbol** derived from the contract’s extern metadata, optional per-method **`Symbol`** override, or the method’s foreign name when no override is present.\n- A **call shape** derived from Beskid parameter and result types using the type-shape rules on the parent hub’s **[core primitives](/platform-spec/language-meta/interop/interop-contracts/core-primitives/)** article.\n\nThe compiler **must** reject declarations that cannot be lowered to any supported profile’s call shape without undefined behavior.\n\n## Multiple profiles\n\nThe same abstract call shape may admit more than one profile lowering in the future. **Interop.Contracts** defines the shared normalization step; **[C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/)** and **[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/)** document which shapes each profile accepts in the current toolchain.\n\n## Builtin vs user foreign boundary\n\nCalls to **runtime builtins** (allocation, syscalls, internal dispatch helpers) use the same abstract machinery but are **not** user-authored `Extern` contracts. They are governed by the **runtime ABI** and syscall ownership documents under `/execution/runtime/`; those surfaces must remain consistent with the symbol tables in `beskid_abi`.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/language-meta/interop/interop-contracts",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/language-meta/interop/interop-contracts",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

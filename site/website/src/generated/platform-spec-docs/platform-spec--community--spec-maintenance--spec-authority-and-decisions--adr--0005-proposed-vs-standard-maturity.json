@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions/adr/0005-proposed-vs-standard-maturity",
+  "repoPath": "src/content/docs/platform-spec/community/spec-maintenance/spec-authority-and-decisions/adr/0005-proposed-vs-standard-maturity.mdx",
+  "frontmatter": {
+    "title": "Proposed vs Standard maturity gates",
+    "description": "Standard pages are enforceable contracts; Proposed pages must not be cited as language law.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMM-AUTH-0005",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-21",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Specification authority and embedded decisions",
+        "href": "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\n**Standard** pages shipped with circular stubs or without decisions, while readers treated every platform-spec URL as enforceable law.\n\n## Decision\n\n| `status` | Meaning | Requirements |\n| --- | --- | --- |\n| **Proposed** | Incomplete or unstable | May omit full verification anchors; **must not** be cited as enforceable language law in conformance arguments |\n| **Standard** | Enforceable platform contract | **Must** include normative MUST/SHOULD/MAY prose, verification anchors, and hub **`## Decisions`** (or linked `decisions-record`) |\n\nAny **Standard** page failing content gates (circular canon stubs, placeholder-only bundles, missing decisions) **must** downgrade to **Proposed** until restored.\n\n## Consequences\n\nMaturity is explicit in frontmatter; CI strict mode can fail scaffold **Standard** pages.\n\n## Verification anchors\n\n`verify:platform-spec-content` with `--strict`; `LANGUAGE_META_CIRCULAR_CANON_ALLOWLIST` for tracked exceptions.\n",
+  "layoutJson": null
+}

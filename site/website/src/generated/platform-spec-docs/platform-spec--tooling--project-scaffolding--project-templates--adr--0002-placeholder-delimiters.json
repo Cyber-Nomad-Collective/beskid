@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/project-scaffolding/project-templates/adr/0002-placeholder-delimiters",
+  "repoPath": "src/content/docs/platform-spec/tooling/project-scaffolding/project-templates/adr/0002-placeholder-delimiters.mdx",
+  "frontmatter": {
+    "title": "Human-readable {{ }} placeholders",
+    "description": "Use {{symbolId}} delimiters in template text",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-TOOL-SCAFF-0002",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-21",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Project templates",
+        "href": "/platform-spec/tooling/project-scaffolding/project-templates/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nTemplate authors need delimiter syntax distinct from Beskid source.\n\n## Decision\n\nText files **must** use **`{{symbolName}}`** placeholders; optional **`sourceName`** rewriting applies to paths and identifiers.\n\n## Consequences\n\nEditors can highlight unmatched braces; substitution tests stay deterministic.\n\n## Verification anchors\n\nGolden substitution tests under planned `beskid_tests` template fixtures.\n",
+  "layoutJson": null
+}

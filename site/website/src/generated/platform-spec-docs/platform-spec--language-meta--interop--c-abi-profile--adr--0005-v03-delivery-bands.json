@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/c-abi-profile/adr/0005-v03-delivery-bands",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/c-abi-profile/adr/0005-v03-delivery-bands.mdx",
+  "frontmatter": {
+    "title": "v0.3.0 views v0.3.1 CLayout bands",
+    "description": "Delivery bands separate Standard views from Proposed layout structs.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-LMETA-CABI-0005",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "C ABI profile",
+        "href": "/platform-spec/language-meta/interop/c-abi-profile/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nImplementers need a spec-first schedule when codegen trails text.\n\n## Decision\n\n| Band | Content | Status |\n| --- | --- | --- |\n| **v0.3.0** | Interop views, link-time import, symbol overrides | Standard (spec; impl may trail) |\n| **v0.3.1** | `CLayout` primitive structs | Proposed |\n| **Later** | Nested FFI structs, enum ABI, foreign-thread entry | Planned |\n\n## Consequences\n\nArticles tag Proposed vs Standard explicitly; CI strict mode can gate premature Standard claims.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/c-abi-profile/ and child articles.\n",
+  "layoutJson": null
+}

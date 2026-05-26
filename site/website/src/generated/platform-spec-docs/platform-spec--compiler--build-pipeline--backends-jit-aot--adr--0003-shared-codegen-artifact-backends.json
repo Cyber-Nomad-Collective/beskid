@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/build-pipeline/backends-jit-aot/adr/0003-shared-codegen-artifact-backends",
+  "repoPath": "src/content/docs/platform-spec/compiler/build-pipeline/backends-jit-aot/adr/0003-shared-codegen-artifact-backends.mdx",
+  "frontmatter": {
+    "title": "Shared CodegenArtifact for JIT and AOT",
+    "description": "JIT and AOT must consume the same lowered artifact.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMP-BUILD-0003",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-05",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Backends (JIT and AOT)",
+        "href": "/platform-spec/compiler/build-pipeline/backends-jit-aot/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLowering produces one `CodegenArtifact`; backend selection happens after semantic gates complete.\n\n## Decision\n\nBoth JIT (`beskid_engine::JitModule`) and AOT link flows **must** accept the same schema fields from `beskid_codegen` without forking lowering.\n\n## Consequences\n\nBackend-specific options attach at execution time; lowering stays single-path.\n\n## Verification anchors\n\n- `compiler/crates/beskid_engine/src/jit_module.rs`\n- `compiler/crates/beskid_codegen`\n- `compiler/crates/beskid_tests/src/runtime/jit.rs`.\n",
+  "layoutJson": null
+}

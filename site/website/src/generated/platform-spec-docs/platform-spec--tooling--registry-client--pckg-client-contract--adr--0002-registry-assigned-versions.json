@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/registry-client/pckg-client-contract/adr/0002-registry-assigned-versions",
+  "repoPath": "src/content/docs/platform-spec/tooling/registry-client/pckg-client-contract/adr/0002-registry-assigned-versions.mdx",
+  "frontmatter": {
+    "title": "Registry versions",
+    "description": "Registry versions",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-TOOL-PCKG-0002",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-09",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "pckg client contract",
+        "href": "/platform-spec/tooling/registry-client/pckg-client-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nManual semver drift.\n\n## Decision\n\nRegistry-assigned publish versions in routine flows.\n\n## Consequences\n\nUI shows server version.\n\n## Verification anchors\n\npublish API tests.\n",
+  "layoutJson": null
+}

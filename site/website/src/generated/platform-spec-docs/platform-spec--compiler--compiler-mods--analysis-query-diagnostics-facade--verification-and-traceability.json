@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/verification-and-traceability",
+  "repoPath": "src/content/docs/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/verification-and-traceability.mdx",
+  "frontmatter": {
+    "title": "Analysis, query, and diagnostics facades - Verification and traceability",
+    "description": "Semantic queries, symbol handles, and diagnostic transport available inside meta execution.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-04-30",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Analysis, query, and diagnostics facades",
+        "href": "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThis article documents **verification and traceability** for **Analysis, query, and diagnostics facades**.\n\n## Traceability matrix\n- Anchor: `compiler/crates/beskid_analysis/src/analysis/` — staged rules and semantic state.\n- Anchor: `compiler/crates/beskid_analysis/src/resolve/` — resolution products queryable from facades.\n- Anchor: `compiler/crates/beskid_lsp/src/diagnostics.rs` — diagnostic shaping for editor parity.\n\n## Verification expectations\n- Contract tests in `compiler/crates/beskid_tests` assert ordering, diagnostic codes, and merge behavior once implemented.\n- Golden incremental traces (optional) validate invalidation when syntax edits move spans tied to meta registrations.\n\n## Review cadence\n- Update this bundle whenever public `Beskid.Compiler.*` shapes or host policies change.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

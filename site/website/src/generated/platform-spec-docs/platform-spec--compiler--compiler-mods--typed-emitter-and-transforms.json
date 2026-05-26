@@ -1,0 +1,71 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms",
+  "repoPath": "src/content/docs/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/index.mdx",
+  "frontmatter": {
+    "title": "Typed emitter and transforms",
+    "description": "Construction of syntax nodes and declarative transforms without raw text printing.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "lastReviewed": "2026-05-01",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Compiler Mods",
+        "href": "/platform-spec/compiler/compiler-mods/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Domain",
+        "title": "Compiler",
+        "href": "/platform-spec/compiler/",
+        "relation": "Parent domain hub"
+      },
+      {
+        "type": "Area",
+        "title": "Metaprogramming (language meta)",
+        "href": "/platform-spec/language-meta/metaprogramming/",
+        "relation": "Beskid-side Mod SDK contracts"
+      },
+      {
+        "type": "Feature",
+        "title": "Compiler Mod SDK",
+        "href": "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
+        "relation": "Emit phase typed contributions"
+      },
+      {
+        "type": "Feature",
+        "title": "Project manifest contract",
+        "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+        "relation": "Mod project type"
+      },
+      {
+        "type": "Feature",
+        "title": "mod host bridge",
+        "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
+        "relation": "Execution context for emitters"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\nThis feature hub defines the normative contract for **`Beskid.Compiler.Emit`** (typed emitter and transforms) and links detailed articles.\n\n## Language alignment\nOnly the **`emit`** phase may apply **typed** program contributions through this surface; the host validates merge against language rules.\n\n## Implementation anchors\n- `compiler/crates/beskid_analysis/src/syntax/items/` — patterns for well-formed item emission.\n- `compiler/crates/beskid_codegen/` — downstream expectations after merge.\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-MODS-0016` … `D-COMP-MODS-0018`); use the reader **ADRs** tab for expandable detail.\n\n\n- [Design model](./design-model/)\n- [Flow and algorithm](./flow-and-algorithm/)\n- [Contracts and edge cases](./contracts-and-edge-cases/)\n- [Examples](./examples/)\n- [Verification and traceability](./verification-and-traceability/)\n- [FAQ and troubleshooting](./faq-and-troubleshooting/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/compiler-mods/typed-emitter-and-transforms",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

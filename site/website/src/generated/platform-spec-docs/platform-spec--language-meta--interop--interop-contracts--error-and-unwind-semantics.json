@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/interop/interop-contracts/error-and-unwind-semantics",
+  "repoPath": "src/content/docs/platform-spec/language-meta/interop/interop-contracts/error-and-unwind-semantics.mdx",
+  "frontmatter": {
+    "title": "Interop.Contracts — Error and unwind semantics",
+    "description": "Divergence, traps, and cross-boundary panic policy for FFI (v0.3).",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-20",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Interop.Contracts",
+        "href": "/platform-spec/language-meta/interop/interop-contracts/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Rust ABI profile",
+        "href": "/platform-spec/language-meta/interop/rust-abi-profile/",
+        "relation": "Runtime panic bridges"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Return-shape classes\n\n| Shape | Foreign expectation | Beskid mapping |\n| --- | --- | --- |\n| **Value** | Normal C return | Primitive or interop view per profile |\n| **Unit** | `void` | No return value |\n| **Never** | Does not return | `Never` → trap/unwind per profile |\n\n## Errors as values\n\nBeskid **`Result`** types **must not** appear on FFI boundaries in v0.3.0. Authors map foreign error codes to Beskid `Result` **after** the call returns.\n\n## Panics and unwinding\n\nAcross **user FFI** and **export** boundaries in v0.3 Standard:\n\n- Beskid panic **must not** rely on foreign callers catching Rust/Beskid unwinds.\n- The default policy is **abort or trap** at the boundary.\n- Runtime syscalls and selected runtime exports may use **`extern \"C-unwind\"`** internally; that class is **not** implied for user `Extern` or `[Export]` without an explicit future profile.\n\n## Foreign errors\n\nForeign functions that communicate failure via return codes or `errno` remain the caller’s responsibility to translate; the platform does not inject automatic `errno` threading in v0.3.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/language-meta/interop/interop-contracts",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/language-meta/interop/interop-contracts",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/design-model",
+  "repoPath": "src/content/docs/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/design-model.mdx",
+  "frontmatter": {
+    "title": "Analysis, query, and diagnostics facades - Design model",
+    "description": "Semantic queries, symbol handles, and diagnostic transport available inside meta execution.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-20",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Analysis, query, and diagnostics facades",
+        "href": "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThis article documents the **design model** for **Analysis, query, and diagnostics facades**.\n\n## Language alignment\n**Process** pipelines express fluent queries that lower to bounded Rust walkers; **Diagnostics** raised here must use compiler-stable codes for parity with `beskid_analysis` / LSP.\n\n## Persistent entities\n- **Compilation instance** — implicit handle to the compilation under construction (**[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** / `Beskid.Compiler.Compilation`).\n- **Syntax snapshot** — immutable tree with stable node identities suitable for incremental keys.\n- **Capability tokens** — host-granted permissions for I/O, diagnostics, and emit operations during mod execution.\n\n## Boundaries\n- Mod SDK facades never bypass the host bridge for effects.\n- Generation logic in the reference compiler remains Rust-internal; Beskid sees only the generated `Beskid.Compiler.*` projection.\n\n## Anchored code paths\n- `compiler/crates/beskid_analysis/src/analysis/` — staged rules and semantic state.\n- `compiler/crates/beskid_analysis/src/resolve/` — resolution products queryable from facades.\n- `compiler/crates/beskid_lsp/src/diagnostics.rs` — diagnostic shaping for editor parity.\n\n## Diagnostic parity rules\n\n`Beskid.Compiler.Diagnostics` (and internal meta emitters) **must**:\n\n1. Emit `SemanticDiagnostic` values compatible with `run_rules` output (same severity enum, string diagnostic codes matching registered ids).\n2. Allocate mod and mod-host codes only inside **E1801–E1899** using the sub-ranges in **[Diagnostic code registry / design model](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)**; register each code in `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` when introduced.\n3. Never bypass `span_to_sourcespan` / miette adapters used elsewhere so LSP label offsets remain accurate.\n\n## Query lowering and bounded walkers\n\nFluent **`Beskid.Compiler.Query`** plans **must** lower to explicit Rust walkers with **documented** upper bounds on work (max nodes visited, max depth). Hosts **must** abort with diagnostics (not panics) when bounds trip. Optional **`query_semantic_snapshot`** reads **must** declare the minimum staged snapshot version (ties to `semantic.snapshot` events in **[Compiler Mods](/platform-spec/compiler/compiler-mods/)** area hub).\n\nWhen the **Rust compiler** maintains compile-time **composition / IoC** state for user programs ([Native dependency injection](/platform-spec/language-meta/composition/dependency-injection/)), that state **must** be materialized into the same **versioned semantic snapshot** family as other staged products (exported after **`composition.resolve`**) so mod analyzers can query it without special casing: Mod SDK query types **project** compiler-native graphs into Beskid-visible handles; they **must not** recompute or replace Rust-owned resolution unless a dedicated, separately specified capability allows a narrow, audited code path.\n\n## `Beskid.Compiler.Query` surface (normative)\n\nFacade version **`0.4.0`** (see `QueryFacadeVersion()`). All functions lower to `beskid_analysis::query` walkers over a host-built **`SyntaxSnapshot`**.\n\n| Type / function | Semantics |\n| --- | --- |\n| **`NodeRef`** | `{ syntaxGenerationId, nodeId }` — opaque, host-allocated, stable within a generation window |\n| **`NodeSpan`** | `{ start, end, lineStart, columnStart, lineEnd, columnEnd }` for one node in one syntax generation |\n| **`QueryBounds`** | `{ maxNodes, maxDepth }` — default host caps apply when zero |\n| **`SyntaxQuery`** | Cursor at `start` with bounds |\n| **`At` / `AtProgram`** | Entry from `NodeRef` or `Program` root |\n| **`Descendants`** | Pre-order traversal (same order as Rust `Descendants`) |\n| **`Children`** | Direct children only |\n| **`Parent` / `Ancestors`** | Immediate parent and root-to-parent chain via snapshot parent table |\n| **`Span` / `TrySpan`** | Required span lookup and optional span lookup for a `NodeRef` |\n| **`OfKind` / `FindFirst`** | Filter by `Beskid.Syntax.Nodes.NodeKind` |\n| **`As*`** | Host downcast to concrete mirrored type (one helper per kind with a shape type) |\n| **`Walk` + `SyntaxVisitor`** | Depth-first enter/exit (maps to `AstWalker`) |\n| **`SyntaxPipeline`** | Query-driven transformation plan over `NodeRef` selections |\n| **`Select` + `WhereKind`** | Build a deterministic selection set from a root query |\n| **`Replace` / `Remove` / `InsertBefore` / `InsertAfter`** | Minimal rewrite operations over selected `NodeRef`s |\n| **`Apply`** | Validates and commits a pipeline as one host operation |\n\n**Bound trip** — When `maxNodes` or `maxDepth` is exceeded, the host **must** stop iteration, return no further nodes from that query, and emit diagnostic **E1880** (`QueryBoundsExceeded`). **Must not** panic.\n\n**Traversal vs rewrite** — Mod analyzers traverse with **`NodeRef`** only; **`Rewriter`** still receives concrete mirrored source/target types from the host after `As*` validation.\n\n## Span and pipeline invariants\n\n- `Span(nodeRef)` **must** succeed when `nodeRef.syntaxGenerationId` matches the active snapshot generation and `nodeId` resolves; otherwise host emits **E1882** and returns an empty/default result per facade contract.\n- `TrySpan(nodeRef)` **must** never emit diagnostics and returns `none` for stale or unknown refs.\n- Pipeline application is **deterministic**: operations are ordered by snapshot pre-order index, then by operation kind precedence (`Remove`, `Replace`, `InsertBefore`, `InsertAfter`).\n- Hosts **must** reject conflicting operations over the same anchor with **E1883** (`QueryPipelineConflict`) instead of implicit overwrite behavior.\n- Hosts **must** reject generation-stale pipeline handles with **E1884** (`QueryPipelineStaleGeneration`) and keep the previous committed snapshot unchanged.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

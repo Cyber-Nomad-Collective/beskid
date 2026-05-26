@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/examples",
+  "repoPath": "src/content/docs/platform-spec/execution/abi-and-host/builtins-and-symbols/examples.mdx",
+  "frontmatter": {
+    "title": "Examples",
+    "description": "Reading BUILTIN_SPECS, mapping symbols to runtime modules, and typical call patterns.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Builtins and symbols",
+        "href": "/platform-spec/execution/abi-and-host/builtins-and-symbols/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Locating a builtin implementation\n\nGiven CLIF calling `fiber_yield`:\n\n1. Find `SYM_FIBER_YIELD` → `\"fiber_yield\"` in `symbols.rs`.\n2. Locate `BuiltinFnSpec` with `symbol: SYM_FIBER_YIELD` in `builtins.rs`.\n3. Open `compiler/crates/beskid_runtime/src/builtins/fiber.rs` for behavior (park current fiber, requeue).\n\n## Corelib indirection\n\nUser code calls `Fiber.Yield()` in `corelib_concurrency`; lowering **must not** embed scheduler details. The package emits a call to `fiber_yield` only—see [Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/).\n\n## Allocation + GC root scenario\n\nA global `string` cached from native code:\n\n1. Lowering calls `alloc` with type descriptor pointer.\n2. Host registers root via `gc_register_root` when exposing to foreign API.\n3. On teardown, `gc_unregister_root` pairs with registration.\n\nMissing unroot leaks until next collection; handles from `gc_root_handle` document temporary pinning.\n\n## Panic from bounds check\n\nLowering may emit:\n\n```\ncall panic(message_ptr, message_len) -> never\n```\n\nRuntime formats output and terminates the process—no stack unwind through Beskid frames ([error model legacy](../../../../execution/runtime/error-model.md)).\n\n## Inspecting JIT registration\n\nIn `jit_module.rs`, the `declare_builtin_imports` block maps each `beskid_runtime` function pointer to the symbol name Cranelift imports. A drift between Rust function export name and `SYM_*` constant breaks finalize with `MissingFunction`.\n\n## Related topics\n\n- [Verification and traceability](./verification-and-traceability/)\n- Legacy symbol list: [Runtime ABI (v0.1)](../../../../execution/runtime/runtime-abi-v0-1.md)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/abi-and-host/builtins-and-symbols",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

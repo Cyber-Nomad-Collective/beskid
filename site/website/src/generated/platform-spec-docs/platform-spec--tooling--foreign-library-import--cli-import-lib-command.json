@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/foreign-library-import/cli-import-lib-command",
+  "repoPath": "src/content/docs/platform-spec/tooling/foreign-library-import/cli-import-lib-command.mdx",
+  "frontmatter": {
+    "title": "beskid import lib command",
+    "description": "CLI workflow for mapping foreign libraries into Project.proj link metadata (v0.3).",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-20",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Foreign library import",
+        "href": "/platform-spec/tooling/foreign-library-import/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "ExternalLibrary provider trait",
+        "href": "/platform-spec/tooling/foreign-library-import/external-library-trait/",
+        "relation": "Provider implementation"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Command (reserved name)\n\n```bash\nbeskid import lib <logical> [options]\n```\n\nExact spelling may alias `beskid link import` in implementation; platform-spec reserves **`import lib`** as the user-facing verb.\n\n## Responsibilities\n\nThe command **must**:\n\n1. Accept a **logical library** string matching or intended for `Extern` `Library` fields.\n2. Select an **`ExternalLibrary`** provider for the current host (default **`c-posix`** on tier-1).\n3. Emit or update **`project.link`** manifest entries (see **[project link libraries](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries/)**).\n4. Print resolved **linker args** and **search paths** without requiring authors to hand-edit `-l` flags.\n\n## Options (normative minimum)\n\n| Flag | Meaning |\n| --- | --- |\n| `--provider <id>` | Choose `ExternalLibrary` implementation |\n| `--dry-run` | Show resolution only; do not write manifest |\n| `--project <path>` | Target `Project.proj` (default cwd discovery) |\n\n## Non-goals (v0.3)\n\n- Parsing C headers into `contract` declarations (future compiler mod / tool).\n- Downloading SDKs (registry / package manager concerns).\n\n## Security\n\nImported libraries **must** be subject to **`BESKID_EXTERN_ALLOW` / `BESKID_EXTERN_DENY`** at link/run drivers when those variables are set.\n\n## Verification anchors\n\n- **CLI surface:** `compiler/crates/beskid_cli/src/commands/import.rs` (`Commands::Import` in `cli.rs` advertises `import` in `beskid --help`).\n- **Manifest mutation contract:** `compiler/crates/beskid_analysis/src/external_library/manifest_merge.rs` (idempotent merge; preserves non-`link` content).\n- **End-to-end behavior:** `compiler/crates/beskid_tests/src/cli/import_lib.rs` (creates a temp `Project.proj`, runs the resolve + merge pipeline, asserts the resulting `link.libraries` round-trips through the manifest parser).\n- **Closed registry rejection:** the same suite asserts unknown providers (for example `msvc`) and unknown logical names surface as structured `LibraryResolveError` values instead of panics.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/tooling/foreign-library-import",
+    "minSpecSections": 2,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

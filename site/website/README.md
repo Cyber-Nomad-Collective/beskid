@@ -35,13 +35,15 @@ Run from `site/website`:
 | `bun build`   | Build static site into `dist/`          |
 | `bun preview` | Preview built site                      |
 
-`bun dev` / `bun build` run `predev` / `prebuild`: CLI version sync, platform-spec git meta, `generate:platform-spec-nav-tree`, `generate:book-nav-tree`, `verify:book-images`, `verify:book-layout` (Starlight two-column width guards), and trudoc CI verify (build only).
+`bun dev` / `bun build` run `predev` / `prebuild`: CLI version sync, platform-spec git meta, `generate:platform-spec-nav-tree`, `generate:platform-spec-catalog`, `generate:book-nav-tree`, `verify:book-images`, `verify:book-layout` (Starlight two-column width guards), and trudoc CI verify (build only).
 
 **Public JSON APIs** (served from `public/generated/` after prebuild, no separate roadmap deploy when spec changes):
 
 | URL | Purpose |
 |-----|---------|
 | `/generated/platform-spec-nav-tree.json` | Nested platform-spec nav for [beskid_tracker](https://github.com/Cyber-Nomad-Collective/beskid/tree/main/beskid_tracker) spec picker |
+| `/generated/platform-spec-catalog.json` | Flat index of all platform-spec documents (includes ADRs omitted from nav tree) |
+| `/generated/platform-spec-docs/<slug>.json` | Per-document frontmatter + body bundles for tracker proposal editing |
 
 Consumers (for example [beskid_tracker](https://github.com/Cyber-Nomad-Collective/beskid/tree/main/beskid_tracker)) fetch from `https://beskid-lang.org` after each docs deploy.
 

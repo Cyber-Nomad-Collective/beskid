@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/compiler/build-pipeline/diagnostics-parity/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Diagnostics parity (CLI and LSP) - Contracts and edge cases",
+    "description": "Required parity behavior and accepted differences between diagnostic surfaces.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Diagnostics parity (CLI and LSP)",
+        "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Domain",
+        "title": "Tooling",
+        "href": "/platform-spec/tooling/",
+        "relation": "User-facing diagnostic UX"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- Semantic error presence/absence must match across CLI and LSP for equivalent source.\n- Source label differences are allowed when paths intentionally differ (`path`, `source.bd`, `\"<memory>\"`).\n- Manifest (`.proj`) diagnostics must use project-error mapping paths, not code-file parsers.\n- Snapshot reuse in LSP must not hide newly introduced semantic errors.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/build-pipeline/diagnostics-parity",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

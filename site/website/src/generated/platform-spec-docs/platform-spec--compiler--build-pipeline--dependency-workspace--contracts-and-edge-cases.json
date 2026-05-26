@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/build-pipeline/dependency-workspace/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/compiler/build-pipeline/dependency-workspace/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Dependency workspace and lockfile - Contracts and edge cases",
+    "description": "Normative behavior for lock mismatch, missing registry artifacts, and policy flags.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Dependency workspace and lockfile",
+        "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Diagnostics parity (CLI and LSP)",
+        "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
+        "relation": "Error reporting across surfaces"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- `--locked` must reject missing or out-of-date lockfiles.\n- `--frozen` must reject changes that require writing lockfile updates.\n- Registry dependency materialization failures must report stable project errors.\n- Workspace prep must not silently change selected compile target.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/build-pipeline/dependency-workspace",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

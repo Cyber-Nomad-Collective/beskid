@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/examples",
+  "repoPath": "src/content/docs/platform-spec/tooling/vscode-extension/package-manager-panel/examples.mdx",
+  "frontmatter": {
+    "title": "Examples",
+    "description": "Corelib locked dependencies and registry search in the Packages view.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Package manager panel",
+        "href": "/platform-spec/tooling/vscode-extension/package-manager-panel/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose and scope\n\nWorked examples for local and registry sections of the package panel.\n\n## Corelib — This project\n\n**Precondition:** `compiler/corelib` open; member `collections` focused; `Project.lock` present.\n\n**Steps:**\n\n1. Open **Packages** view.\n2. Expand **This project**.\n\n**Expected rows:** Dependencies such as `corelib` with `resolvedVersion` from lock, `registry: default`, tooltip showing materialized path under `.beskid/packages/`.\n\n**Fetch/Lock:** View title **Lock** runs `beskid lock` at `packages/collections/`; status bar shows `lock` phase; on success, locked versions refresh without restarting LSP.\n\n## Registry search — `corelib`\n\n**Precondition:** Registry reachable at resolved base URL (workspace default or localhost).\n\n**Steps:**\n\n1. View title **Search** → query `corelib`.\n2. Expand hit `corelib`.\n\n**Expected:** Versions list from `PackageDetailsResponse.versions`; latest non-yanked version highlighted; dependencies under expanded version match `PackageDependencyResponse` shapes.\n\n**Actions:**\n\n- **Open in browser** uses `buildRegistryPackageUrl`.\n- **Add dependency** prompts version; after apply, user runs **Fetch** from view title.\n\n## Private registry with API key\n\n**Precondition:** Registry requires authentication; package `my.internal.lib` not visible anonymously.\n\n**Steps:**\n\n1. Command palette → configure **Beskid: Set Package Registry API Key** (stores secret).\n2. Search `my.internal.lib`.\n\n**Expected:** Authenticated search returns hits; without key, 401 error node with configuration hint.\n\n## Related topics\n\n- [Workspace explorer examples](../workspace-project-explorer/examples/)\n- [FAQ](../extension-surface/faq-and-troubleshooting/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/tooling/vscode-extension/package-manager-panel",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/vscode-extension/package-manager-panel",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console/console-controls/flow-and-algorithm",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/console-controls/flow-and-algorithm.mdx",
+  "frontmatter": {
+    "title": "Flow and algorithm",
+    "description": "Frame render and live tick loop.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Console controls",
+        "href": "/platform-spec/core-library/terminal-and-console/console-controls/",
+        "relation": "Parent feature hub"
+      },
+      {
+        "type": "Feature",
+        "title": "Console terminal events",
+        "href": "/platform-spec/core-library/terminal-and-console/console-terminal-events/",
+        "relation": "Resize-driven relayout"
+      }
+    ]
+  },
+  "body": "import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose\n\nDocument **flow and algorithm** for the **Console Controls** feature: role-specific normative detail beyond the feature hub.\n\n## Canonical references\n\n- Feature hub: [Console Controls](/platform-spec/core-library/terminal-and-console/console-controls/)\n- Sibling articles in this bundle (design model, contracts, flow, examples, verification)\n\n## Detailed behavior\n\n### Single frame\n\n1. `save ← EmitDec(\"7\")`\n2. Optional `Erase.DisplayAll` when clearing screen\n3. Walk control tree → append styled/plain segments to buffer\n4. `restore ← EmitDec(\"8\")`\n5. `System.Output.Write(buffer)`\n\n### Live tick loop (sketch)\n\n1. Create `Channel<ConsoleMessage>` via `Console.MessagesChannel()`\n2. Fiber loop: `Console.RunTick(channel, lastSize)` → may enqueue `Resize`\n3. On message: if `Resize`, invalidate layout; call `Frame.Render`\n4. Yield or sleep between ticks (host policy)\n\nCursor/erase sequences: [ANSI escape model](/platform-spec/core-library/terminal-and-console/ansi-escape-model/flow-and-algorithm/).\n\n## Verification\n\nSee the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.\n\n## Related topics\n\n- Parent [feature hub](/platform-spec/core-library/terminal-and-console/console-controls/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/terminal-and-console/console-controls",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/terminal-and-console/console-controls",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

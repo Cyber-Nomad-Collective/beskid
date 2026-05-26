@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/examples",
+  "repoPath": "src/content/docs/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/examples.mdx",
+  "frontmatter": {
+    "title": "Examples",
+    "description": "ABI version checks, symbol parity, and migration scenarios for toolchain maintainers.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "ABI versioning and compatibility",
+        "href": "/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Host version gate (Rust pseudocode)\n\nA JIT host can refuse to run when versions diverge:\n\n```rust\nlet expected = beskid_abi::BESKID_RUNTIME_ABI_VERSION;\nlet actual = unsafe { beskid_runtime::beskid_runtime_abi_version() };\nif actual != expected {\n    panic!(\"runtime ABI {actual} != compiler ABI {expected}\");\n}\n```\n\nProduction CLIs **should** surface this as a structured error rather than a raw panic.\n\n## Additive symbol (no bump)\n\nSuppose maintainers add `fiber_debug_trace` to `RUNTIME_EXPORT_SYMBOLS` and `beskid_runtime`, but no released compiler lowering emits calls to it yet. Older artifacts keep working; newer compilers may call the symbol once lowering lands. No `BESKID_RUNTIME_ABI_VERSION` change is required (**ABI-005**).\n\n## Breaking rename (bump required)\n\nRenaming `fiber_join` export to `fiber_join_status` without updating every `BUILTIN_SPECS` consumer breaks link compatibility. The fix set is:\n\n1. `BESKID_RUNTIME_ABI_VERSION` += 1\n2. Synchronized `symbols.rs`, `builtins.rs`, runtime `#[unsafe(no_mangle)]` names, and docs\n3. Rebuild and republish CLI, VSIX, and prebuilt runtime bundles together\n\n## Inspecting the export list\n\nMaintainers compare:\n\n- `compiler/crates/beskid_abi/src/symbols.rs` → `RUNTIME_EXPORT_SYMBOLS`\n- `compiler/crates/beskid_runtime/src/lib.rs` → `pub use builtins::{ … }`\n\nEvery JIT-resolved builtin **must** appear in both lists with identical spelling.\n\n## Related topics\n\n- [Verification and traceability](./verification-and-traceability/) — automated parity checks\n- Legacy: [Runtime ABI (v0.1)](../../../../execution/runtime/runtime-abi-v0-1.md)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

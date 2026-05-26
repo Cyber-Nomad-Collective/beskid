@@ -1,0 +1,55 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/cli/build-analyze-run-contract/flow-and-algorithm",
+  "repoPath": "src/content/docs/platform-spec/tooling/cli/build-analyze-run-contract/flow-and-algorithm.mdx",
+  "frontmatter": {
+    "title": "Flow and algorithm",
+    "description": "Lifecycle and execution flow for `Build, analyze, and run contract`.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "CLI",
+        "href": "/platform-spec/tooling/cli/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Feature",
+        "title": "Build, analyze, and run contract",
+        "href": "/platform-spec/tooling/cli/build-analyze-run-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Startup\n\n1. Expand response files (`argfile`) and parse global flags.\n2. Initialize logging (`BESKID_LOG_CRANELIFT` / `--log-cranelift`).\n3. **`ensure_corelib_ready`** — materialize or locate bundled corelib before any project command runs.\n4. Dispatch the selected subcommand.\n\n## Project-scoped command flow\n\n```mermaid\nsequenceDiagram\n  participant User\n  participant CLI as beskid_cli\n  participant Analysis as beskid_analysis\n  participant Backend as JIT or AOT\n  User->>CLI: subcommand + ProjectResolveArgs\n  CLI->>Analysis: resolve manifest + lock policy\n  Analysis-->>CLI: CompilationContext + CompilePlan\n  CLI->>Analysis: semantic pipeline (+ mods)\n  alt analyze / doc\n    Analysis-->>CLI: diagnostics / api.json\n  else build\n    CLI->>Backend: lower + AOT link\n  else run / test\n    CLI->>Backend: JIT entrypoint\n  end\n  CLI-->>User: exit code + artifacts\n```\n\n### `analyze`\n\n1. Resolve input to a host target and `CompilationContext`.\n2. Run the semantic pipeline with builtin (+ mod) rules.\n3. Print diagnostics to stderr (miette rendering); non-zero exit when errors exist.\n\n### `build`\n\n1. Resolve `CompilePlan` and target kind (`App`, `Lib`, `Test`).\n2. Lower through `beskid_codegen` with pipeline observation.\n3. Invoke `beskid_aot::build` with profile, link mode, and runtime strategy flags.\n4. Write object/shared/static/executable per `--kind` and target defaults.\n\n### `run` / `test`\n\n1. Resolve entry module and optional `--entrypoint`.\n2. JIT-compile via `beskid_engine` and execute; `test` discovers `test` items and aggregates results.\n\n### Workspace maintenance (`fetch`, `lock`, `update`)\n\nThese commands mutate or verify the materialized dependency tree and `Project.lock` **before** host compilation. They share graph resolution with build/run but do not themselves lower user code.\n\n## Lockfile interaction\n\nWhen `LockfilePolicyArgs` require a lock, the CLI **must** fail fast if `Project.lock` is missing or stale relative to manifests, rather than silently fetching in release-critical paths unless the command documents otherwise (`update` vs `build` defaults).\n\n## Verification hooks\n\nIntegration coverage lives in `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs` and command-specific tests beside each `commands/*.rs` module.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/tooling/cli/build-analyze-run-contract",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/tooling/cli/build-analyze-run-contract",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract",
+  "repoPath": "src/content/docs/platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/index.mdx",
+  "frontmatter": {
+    "title": "Extern import extraction contract",
+    "description": "Feature hub for the extern import extraction contract in the reference compiler.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "lastReviewed": "2026-04-30",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Codegen and IR",
+        "href": "/platform-spec/compiler/codegen-and-ir/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Feature",
+        "title": "Interop.Contracts",
+        "href": "/platform-spec/language-meta/interop/interop-contracts/",
+        "relation": "Language-agnostic boundary primitives lowered here"
+      },
+      {
+        "type": "Feature",
+        "title": "C ABI profile",
+        "href": "/platform-spec/language-meta/interop/c-abi-profile/",
+        "relation": "User extern ABI and linking"
+      },
+      {
+        "type": "Feature",
+        "title": "FFI and extern",
+        "href": "/platform-spec/language-meta/interop/ffi-and-extern/",
+        "relation": "Author-facing Extern contract rules"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\nThis feature hub defines the normative contract for **extern import extraction contract** and links newcomer-oriented reference articles.\n\n## Implementation anchors\n- `compiler/crates/beskid_abi/src/builtins.rs` and `symbols.rs` define import-facing ABI names.\n- `compiler/crates/beskid_runtime/src/builtins/mod.rs` provides runtime implementations for extracted imports.\n- `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` verifies extern calls end-to-end.\n\n## Decisions\n\nNo open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-IR-0004` … `D-COMP-IR-0006`); use the reader **ADRs** tab for expandable detail.\n\n\n- [Design model](./design-model/)\n- [Flow and algorithm](./flow-and-algorithm/)\n- [Contracts and edge cases](./contracts-and-edge-cases/)\n- [Examples](./examples/)\n- [Verification and traceability](./verification-and-traceability/)\n- [FAQ and troubleshooting](./faq-and-troubleshooting/)\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

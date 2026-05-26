@@ -1,0 +1,63 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/terminal-and-console",
+  "repoPath": "src/content/docs/platform-spec/core-library/terminal-and-console/index.mdx",
+  "frontmatter": {
+    "title": "Terminal and console",
+    "description": "Corelib console package, ANSI model, stream I/O split, and terminal events.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "area",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Domain",
+        "title": "Core library",
+        "href": "/platform-spec/core-library/",
+        "relation": "Parent domain"
+      },
+      {
+        "type": "Feature",
+        "title": "Panic, IO, and syscalls",
+        "href": "/platform-spec/execution/runtime/panic-io-and-syscalls/",
+        "relation": "Syscall builtins underpin stream I/O"
+      }
+    ]
+  },
+  "body": "import SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\n\n<SpecPageHeader ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n<SpecSection title=\"Scope\" id=\"scope\">\nTerminal-facing corelib splits **byte stream I/O** (`System.Input`, `System.Output`, `System.Error` via `System.Syscall`) from **styled terminal output** (`corelib_console`: `Ansi`, `Console.Format`, controls, capabilities). Resize and tick delivery use **channels** or same-fiber **events**—no new runtime builtins beyond existing syscall and fiber surfaces.\n</SpecSection>\n\n<SpecSection title=\"Authority split\" id=\"authority-split\">\n| Layer | Owns |\n| --- | --- |\n| [Console I/O streams](/platform-spec/core-library/terminal-and-console/console-io-streams/) | Stdin/stdout/stderr routing, UTF-8 bytes, `Result` vs panic on write failure |\n| [ANSI escape model](/platform-spec/core-library/terminal-and-console/ansi-escape-model/) | ESC/CSI/OSC framing and normative sequence tables (aligned with repository `ANSI.md`) |\n| [Console capabilities](/platform-spec/core-library/terminal-and-console/console-capabilities/) | TTY probe, `NO_COLOR` / `FORCE_COLOR`, color-model downgrade |\n| [Console markup format](/platform-spec/core-library/terminal-and-console/console-markup-format/) | Beskid console markup → escape emission |\n| [Console controls](/platform-spec/core-library/terminal-and-console/console-controls/) | In-terminal layout widgets (panel, progress, live tick) |\n| [Console terminal events](/platform-spec/core-library/terminal-and-console/console-terminal-events/) | Resize polling and `ConsoleMessage` delivery |\n</SpecSection>\n\n<SpecSection title=\"Features\" id=\"features\">\nUse the tiles below for normative feature contracts and article bundles.\n</SpecSection>\n\n<DomainTiles pathPrefix=\"platform-spec/core-library/terminal-and-console\" heading=\"Features\" />\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/core-library/terminal-and-console",
+    "sections": [
+      {
+        "id": "scope",
+        "required": true,
+        "kind": "specSection"
+      },
+      {
+        "id": "features",
+        "required": true,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/terminal-and-console",
+          "heading": "Features"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/tooling/project-scaffolding/project-templates/adr/0001-beskid-template-v1-engine",
+  "repoPath": "src/content/docs/platform-spec/tooling/project-scaffolding/project-templates/adr/0001-beskid-template-v1-engine.mdx",
+  "frontmatter": {
+    "title": "Beskid-native template engine schema",
+    "description": "Use beskid.template.v1 only",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-TOOL-SCAFF-0001",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-21",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Project templates",
+        "href": "/platform-spec/tooling/project-scaffolding/project-templates/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nForeign template engines would split validation and documentation across ecosystems.\n\n## Decision\n\nThe platform **must** use **`beskid.template.v1`** only. Foreign engine schemas are forbidden in spec, CLI, and pckg.\n\n## Consequences\n\nSingle parser and validator in tooling; template docs stay in-repo.\n\n## Verification anchors\n\nCI grep excluding foreign schema identifiers under `compiler/` and platform-spec tooling tree.\n",
+  "layoutJson": null
+}

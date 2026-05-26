@@ -1,0 +1,51 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template",
+  "repoPath": "src/content/docs/platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template/index.mdx",
+  "frontmatter": {
+    "title": "Domain, Area, Feature, and Article frontmatter templates",
+    "description": "Canonical frontmatter templates aligned with platform-spec validators and Zod contracts.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "feature",
+    "status": "Standard",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Domain, Area and Feature template bundle",
+        "href": "/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/",
+        "relation": "Companion guidance for section-level structure"
+      }
+    ]
+  },
+  "body": "\nUse these templates when creating new platform-spec nodes. They match current CI validators and `trudoc` Zod contracts.\n\n## Domain template\n\n```yaml\n---\ntitle: <Domain title>\ndescription: <Domain summary>\nspecLevel: domain\nowner:\n  name: <Owner name>\n  email: <owner@example.com>\nsubmitter:\n  name: <Submitter name>\n  email: <submitter@example.com>\nrelatedTopics: []\n---\n```\n\n## Area template\n\n```yaml\n---\ntitle: <Area title>\ndescription: <Area summary>\nspecLevel: area\nowner:\n  name: <Owner name>\n  email: <owner@example.com>\nsubmitter:\n  name: <Submitter name>\n  email: <submitter@example.com>\nrelatedTopics: []\n---\n```\n\n## Feature hub template\n\n```yaml\n---\ntitle: <Feature title>\ndescription: <Feature summary>\nspecLevel: feature\nstatus: Standard\nowner:\n  name: <Owner name>\n  email: <owner@example.com>\nsubmitter:\n  name: <Submitter name>\n  email: <submitter@example.com>\nrelatedTopics: []\n---\n```\n\n## Article template\n\n```yaml\n---\ntitle: <Article title>\ndescription: <Article summary>\nspecLevel: article\nstatus: Standard\nowner:\n  name: <Owner name>\n  email: <owner@example.com>\nsubmitter:\n  name: <Submitter name>\n  email: <submitter@example.com>\nrelatedTopics: []\n---\n```\n\n## Validation notes\n\n- `status` is required for `feature` and `article`.\n- `status` is not allowed on `domain` or `area`.\n- `owner` and `submitter` must include non-empty `name` and valid `email`.\n- Use `layout.json` for every domain/area/feature hub directory.\n\n## Decisions\n\nNo open decisions. Closed maintenance ADR under **`adr/`** — `D-COMM-META-0001` (reader **ADRs** tab).\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template",
+    "sections": [
+      {
+        "id": "what-this-feature-specifies",
+        "required": false,
+        "kind": "specSection"
+      },
+      {
+        "id": "implementation-anchors",
+        "required": false,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 0,
+    "widgets": []
+  }
+}

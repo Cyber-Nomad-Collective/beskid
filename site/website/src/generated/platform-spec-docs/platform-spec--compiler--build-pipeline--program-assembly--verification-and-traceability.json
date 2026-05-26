@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/build-pipeline/program-assembly/verification-and-traceability",
+  "repoPath": "src/content/docs/platform-spec/compiler/build-pipeline/program-assembly/verification-and-traceability.mdx",
+  "frontmatter": {
+    "title": "Program assembly - Verification and traceability",
+    "description": "Test and source anchors for ProgramAssembly and effective roots.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-20",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Program assembly",
+        "href": "/platform-spec/compiler/build-pipeline/program-assembly/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\nImplementation anchors:\n\n- `compiler/crates/beskid_analysis/src/projects/assembly/`\n- `compiler/crates/beskid_analysis/src/services/front_end.rs`\n- `compiler/crates/beskid_pipeline/src/phases.rs` (`program.assemble`)\n- `compiler/crates/beskid_tests/src/projects/assembly.rs`\n\nTests **must** cover materialized root preference, import-closure loading of std modules (corelib_mvp fixture), pipeline phase order, and lowering without analyze-side diagnostic filtering.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-hub-default",
+    "pathPrefix": "platform-spec/compiler/build-pipeline/program-assembly",
+    "minSpecSections": 0,
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

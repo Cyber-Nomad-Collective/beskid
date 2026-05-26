@@ -37,9 +37,10 @@ const dialogId = 'beskid-hub-dialog';
 </div>
 
 <script>
-	import { initBeskidHub } from '../client/beskid-hub';
+	import { initBeskidHub, initBeskidHubAfterBlazor } from '../client/beskid-hub';
 	import { onPageNavigation } from '../client/view-transition-lifecycle';
 
 	onPageNavigation(() => initBeskidHub());
 	initBeskidHub();
+	initBeskidHubAfterBlazor();
 </script>

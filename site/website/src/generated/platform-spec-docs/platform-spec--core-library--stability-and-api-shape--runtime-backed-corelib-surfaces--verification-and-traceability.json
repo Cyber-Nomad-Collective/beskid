@@ -1,0 +1,49 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/verification-and-traceability",
+  "repoPath": "src/content/docs/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/verification-and-traceability.mdx",
+  "frontmatter": {
+    "title": "Verification and traceability",
+    "description": "Verification for runtime-backed corelib surfaces.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Runtime-backed corelib surfaces",
+        "href": "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Automated gates\n\n| Gate | Location |\n| --- | --- |\n| ABI ↔ runtime export parity | `compiler/crates/beskid_tests/src/abi/contracts.rs` |\n| AOT ABI version constant | `beskid_aot` + CLI build tests |\n| Corelib compile smoke | `beskid_tests/src/projects/corelib/compile.rs` |\n\n## Traceability matrix\n\n| Surface area | Spec article | Code |\n| --- | --- | --- |\n| Syscall I/O | This feature + console-io-streams | `panic_io`, `System.*` |\n| Fibers / GC | execution/runtime features | `fiber`, `gc` modules |\n| Console ANSI | terminal-and-console area | `packages/console` |\n\n## Release process\n\nRuntime ABI bumps require: update `beskid_abi`, runtime implementations, ABI tests, platform-spec execution pages, and this feature bundle in one toolchain release.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

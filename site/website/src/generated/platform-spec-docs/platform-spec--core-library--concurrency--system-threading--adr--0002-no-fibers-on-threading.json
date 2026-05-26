@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/concurrency/system-threading/adr/0002-no-fibers-on-threading",
+  "repoPath": "src/content/docs/platform-spec/core-library/concurrency/system-threading/adr/0002-no-fibers-on-threading.mdx",
+  "frontmatter": {
+    "title": "Do not build fibers on OS threads",
+    "description": "Fibers must use Fiber/Channel builtins, not Thread wrappers.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-SYST-0002",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-20",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "System.Threading",
+        "href": "/platform-spec/core-library/concurrency/system-threading/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nMixing models breaks GC safepoints and scheduler invariants.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Forbidden | Fiber scheduler emulation via `System.Threading` in corelib |\n| Required | Use [Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/) |\n\n## Consequences\n\nDocumentation and examples steer authors to spawn/fiber APIs.\n\n## Verification anchors\n\nConcurrency integration tests; system-threading module docs.\n",
+  "layoutJson": null
+}

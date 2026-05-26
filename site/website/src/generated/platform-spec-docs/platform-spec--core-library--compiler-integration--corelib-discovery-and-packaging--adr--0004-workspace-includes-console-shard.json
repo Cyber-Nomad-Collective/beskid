@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/adr/0004-workspace-includes-console-shard",
+  "repoPath": "src/content/docs/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/adr/0004-workspace-includes-console-shard.mdx",
+  "frontmatter": {
+    "title": "Workspace includes console shard",
+    "description": "corelib_console is a workspace member depended on by beskid_corelib.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-CORE-COMP-0004",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-04-23",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Corelib discovery and packaging",
+        "href": "/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nConsole/ANSI must ship with the aggregate package, not as an orphan.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Workspace | `compiler/corelib/Workspace.proj` lists `packages/console` |\n| Aggregate | `beskid_corelib` depends on `corelib_console` |\n\n## Consequences\n\nPublish CI packs the full workspace graph for registry corelib.\n\n## Verification anchors\n\n`Workspace.proj`; corelib CI publish job.\n",
+  "layoutJson": null
+}

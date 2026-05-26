@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/contracts-and-edge-cases",
+  "repoPath": "src/content/docs/platform-spec/compiler/codegen-and-ir/lowering-contract/contracts-and-edge-cases.mdx",
+  "frontmatter": {
+    "title": "Contracts and edge cases",
+    "description": "Normative guarantees and known edge cases for `Lowering contract`.",
+    "template": "splash",
+    "tableOfContents": true,
+    "specLevel": "article",
+    "status": "Standard",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Codegen and IR",
+        "href": "/platform-spec/compiler/codegen-and-ir/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Feature",
+        "title": "Stage ordering and artifacts",
+        "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+        "relation": "Pipeline ordering that lowering must follow"
+      },
+      {
+        "type": "Domain",
+        "title": "Execution",
+        "href": "/platform-spec/execution/",
+        "relation": "Lowered artifacts are consumed by execution backends"
+      },
+      {
+        "type": "Feature",
+        "title": "Lowering contract",
+        "href": "/platform-spec/compiler/codegen-and-ir/lowering-contract/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n## Normative contracts\n\n- Producer crates must emit data in a shape accepted by downstream consumers.\n- Consumer crates must not silently reinterpret the contract surface.\n- Contract regressions must be captured as compile-time or test-time failures, not hidden runtime drift.\n\n## Edge cases to monitor\n\n- Partial refactors that update only one side of a crate boundary.\n- Symbol/name changes that compile locally but break cross-crate integration.\n- Fixtures that pass in isolation but fail in end-to-end harnesses.\n\n## Failure handling expectations\n\nWhen contract checks fail, diagnostics should point contributors to the responsible boundary crate and to the corresponding conformance fixture.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "feature",
+    "extends": "feature-contract-default",
+    "pathPrefix": "platform-spec/compiler/codegen-and-ir/lowering-contract",
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/compiler/codegen-and-ir/lowering-contract",
+          "heading": "Articles"
+        }
+      }
+    ],
+    "articleDefaults": {
+      "extends": "article-default"
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/language-meta/evaluation/events",
+  "repoPath": "src/content/docs/platform-spec/language-meta/evaluation/events.mdx",
+  "frontmatter": {
+    "title": "Events",
+    "description": "Multicast events, subscription lifetime, and thread affinity assumptions. UI stacks build on these primitives.",
+    "template": "splash",
+    "tableOfContents": false,
+    "specLevel": "article",
+    "status": "Standard",
+    "lastReviewed": "2026-05-21",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Area",
+        "title": "Evaluation",
+        "href": "/platform-spec/language-meta/evaluation/",
+        "relation": "Parent area"
+      },
+      {
+        "type": "Domain",
+        "title": "Language meta",
+        "href": "/platform-spec/language-meta/",
+        "relation": "Parent domain hub"
+      },
+      {
+        "type": "Domain",
+        "title": "Platform specification",
+        "href": "/platform-spec/",
+        "relation": "Cross-cutting index"
+      },
+      {
+        "type": "Domain",
+        "title": "Execution documentation",
+        "href": "/execution/",
+        "relation": "Non-normative legacy execution bridge"
+      }
+    ]
+  },
+  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\n\n<SpecPageHeader\n\tstatus=\"Standard\"\n\townerName=\"Piotr Mikstacki\"\n\townerEmail=\"pmikstacki@cybernomad.it\"\n\tsubmitterName=\"Piotr Mikstacki\"\n\tsubmitterEmail=\"pmikstacki@cybernomad.it\"\n/>\n\n## Normative specification\n\n### Scope\n\nDefines **`event` fields** on types and their **raise/subscribe** surface. Fiber cancellation events are specified in [Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/) and the concurrency package.\n\n### Declaration\n\n- **`event Name(params);`** on a `type` declares a multicast callback slot.\n- Optional **`event {N} Name`** sets a capacity hint (`EventCapacity`); runtime **may** use this for bounded subscriber lists.\n- Event fields are **not** ordinary value fields; they **must not** be read like variables.\n\n### Static rules\n\n- Raising or subscribing **must** target an in-scope event member on a value or `this`-equivalent receiver.\n- Event signatures **must** use parameter lists compatible with delegate lowering (no `ref`/`out` on event parameters unless explicitly allowed by host profile).\n\n### Dynamic semantics\n\n- **Multicast:** Multiple subscribers **may** be registered; raise **must** invoke subscribers in registration order unless a host profile defines fairness.\n- **Synchrony:** Unless a host documents otherwise, event handlers run on the **raising fiber** and **must not** block on `Join` of self.\n- **Lifetime:** Subscriptions **should** be detached when the owning object is disposed; leaks are host-defined (corelib hosts document behavior).\n\n### Diagnostics\n\nEvent misuse **must** surface as member/type errors (**E1213** family) until a dedicated event band is allocated.\n\n### Conformance\n\nTypes with `event` fields **must** lower to the same calling convention in AOT and JIT for a given target.\n\n## Decisions\n\n- **D-LM-EVT-001 — Language `event` keyword:** Events are fields, not separate delegate types in user syntax.\n- **D-LM-EVT-002 — Fiber OnCancelled:** Cancellation uses the same `event` mechanism on `Fiber<T>` per concurrency decisions record.\n- **D-LM-EVT-003 — Synchronous default:** Handlers run on the raising fiber unless a host profile says otherwise.\n- **D-LM-EVT-004 — Not `Option`:** Subscription state is host-managed; absence of subscribers is not `Option<T>` at the language surface.\n\n## Platform view\n\nMulticast events, subscription lifetime, and thread affinity assumptions. UI stacks build on these primitives.\n",
+  "layoutJson": {
+    "version": 1,
+    "level": "area",
+    "extends": "area-default",
+    "pathPrefix": "platform-spec/language-meta/evaluation",
+    "sections": [
+      {
+        "id": "scope",
+        "required": true,
+        "kind": "specSection"
+      },
+      {
+        "id": "features",
+        "required": true,
+        "kind": "specSection"
+      }
+    ],
+    "minSpecSections": 2,
+    "widgets": [
+      {
+        "type": "domainTiles",
+        "props": {
+          "pathPrefix": "platform-spec/language-meta/evaluation",
+          "heading": "Features"
+        }
+      }
+    ]
+  }
+}

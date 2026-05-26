@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-05-26T09:23:12.228Z",
+  "slug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/adr/0001-markdown-first-authoring",
+  "repoPath": "src/content/docs/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/adr/0001-markdown-first-authoring.mdx",
+  "frontmatter": {
+    "title": "Markdown-first platform-spec authoring",
+    "description": "Regular sections use markdown headings; arch and mermaid fences for diagrams; components are edge cases only.",
+    "specLevel": "adr",
+    "status": "Standard",
+    "adrId": "D-COMM-HUB-0001",
+    "adrStatus": "Accepted",
+    "adrDate": "2026-05-05",
+    "lastReviewed": "2026-05-22",
+    "owner": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "submitter": {
+      "name": "Piotr Mikstacki",
+      "email": "pmikstacki@cybernomad.it"
+    },
+    "relatedTopics": [
+      {
+        "type": "Feature",
+        "title": "Domain, Area and Feature template bundle",
+        "href": "/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/",
+        "relation": "Parent feature hub"
+      }
+    ]
+  },
+  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHeavy Astro component usage made diffs noisy and hid normative prose from content validators.\n\n## Decision\n\nEvery new or reworked topic **must** choose one canonical level: **Domain**, **Area**, or **Feature**. Regular sections **must** be markdown headings/lists/admonitions first. Architecture visuals **must** use fenced `arch` (Mermaid C4); procedural flows **may** use fenced `mermaid`. Inline graph components in docs are legacy-only. Generics in prose **must** use one backtick literal per type; Mermaid labels **must not** contain raw `` `<` `` or `` `>` ``.\n\n## Consequences\n\nComponent usage requires a rationale note; tables stay sparse.\n\n## Verification anchors\n\n`remark-arch-code-fence`; layout `minMarkdownHeadings` where enabled.\n",
+  "layoutJson": null
+}
