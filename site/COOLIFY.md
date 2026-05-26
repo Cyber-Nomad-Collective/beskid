@@ -6,20 +6,18 @@ Application: **beskid site** (`Cyber-Nomad-Collective/beskid`, branch `main`, ba
 
 Use [`site/docker-compose.yml`](docker-compose.yml) or [`site/infra/docker-compose.yml`](infra/docker-compose.yml) (equivalent build; context is the superrepo root).
 
-## Submodule clone failures (historical)
+## Submodules and build context
 
-Coolify clones with `--recurse-submodules --shallow-submodules`. That can fail when the superrepo pins a submodule SHA that is not reachable from a depth-1 fetch, for example:
+The docs image **requires** the `beskid_web_common` submodule (`packages/trudoc`, `packages/docs-ui`) at build time. The Dockerfile copies `beskid_web_common/` and runs `bun install` from the root workspace lockfile.
 
-```text
-fatal: Fetched in submodule path 'pckg', but it did not contain <sha>
-fatal: Fetched in submodule path 'compiler/corelib', but it did not contain <sha>
-```
+Recommended Coolify settings:
 
-The **docs site image does not need submodules** (only `packages/*`, `site/website`, and `.git` for platform-spec git meta). Recommended Coolify settings:
+1. **Initialize `beskid_web_common`** on clone (recursive submodules is fine; compiler/pckg are not required for this image but may be pulled if recursion is enabled).
+2. Prefer a **non-shallow** clone when platform-spec git-meta needs full history (`fetch-depth: 0` in GitHub Actions).
+3. Set **`NODE_AUTH_TOKEN`** (GitHub Packages read) as a build secret when registry fallback is needed without a populated submodule.
+4. After bumping submodule pointers on `main`, push `beskid_web_common` commits before deploying.
 
-1. **Disable recursive submodules** for this application, or limit init to none.
-2. Prefer a **non-shallow** clone when submodules stay enabled.
-3. After bumping submodule pointers on `main`, ensure each submodule commit is pushed to its remote before deploying.
+Historical shallow-only failures on **compiler/pckg** submodules do not apply when submodule recursion is disabled; if recursion stays on, see [beskid_nexus/COOLIFY.md](../beskid_nexus/COOLIFY.md) for SHA reachability notes.
 
 ## Runtime 404s
 

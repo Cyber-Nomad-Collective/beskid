@@ -1,4 +1,4 @@
-FROM oven/bun:latest AS build
+FROM oven/bun:1.3.14 AS build
 
 # Astro 6 requires Node ≥22.12 (match .github/workflows/docs-site.yml).
 RUN apt-get update \

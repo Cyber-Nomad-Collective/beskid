@@ -4,6 +4,9 @@ This repo is an **aggregate** (submodules and local notes). **Compiler** CI, rel
 
 Workflows here:
 
+- `docs-site.yml` — Astro docs build; uses `.github/actions/setup-beskid-web` (recursive submodule checkout for `beskid_web_common`, root `bun install`, `site/website` prebuild).
+- `platform-spec-contracts.yml` — PR gate for platform-spec validators (same web workspace setup).
+- `security-audits.yml` — Bun/dotnet/Rust/Python audits; root Bun job requires `beskid_web_common` via the shared setup action.
 - `publish-open-vsx.yml` — Nox session `open_vsx_publish` initializes the `compiler` and `beskid_vscode` submodules (`ci/submodules.py`), builds `beskid_lsp`, bundles into `beskid_vscode/server/<platform>/`, packages and publishes the VSIX (`COMPILER_SUBMODULE_TOKEN`, optional `BESKID_VSCODE_SUBMODULE_TOKEN` if the extension submodule is private).
 - `runtime-ci.yml` — aggregate runtime smoke checks against the pinned `compiler` submodule; Nox runs `init_compiler` after checkout (plain `actions/checkout` is enough).
 - `pckg-ci.yml` — `dotnet test` for the pckg .NET service (unit tests only; integration tests are excluded until they run reliably in CI).
