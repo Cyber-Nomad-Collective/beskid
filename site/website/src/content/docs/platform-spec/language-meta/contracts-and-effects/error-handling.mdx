@@ -67,15 +67,19 @@ Defines how **recoverable failures** are represented and propagated in user code
 
 ### `Result`, `Option<T>`, and enums
 
-- Recoverable errors **should** be modeled as `enum` types (for example `Ok` / `Err` variants) or host-provided result types in corelib.
-- There is **no** built-in `Result<T,E>` type alias in v0.1 grammar; projects define explicit enums.
+- Recoverable errors **should** use **`Core.Results.Result<TValue, TError>`** from corelib when the project links **Std** (prelude exposes `Core.Results`).
+- In **App** projects with implicit **Std**, the assembly module path is **`Std::Core::Results`** (source may write ``Std.Core.Results.Result<i32, string>``); inside corelib shards the path remains ``Core.Results.Result<_, _>``.
+- There is **no** built-in `Result<T,E>` type alias in v0.1 grammar; use the corelib generic enum with explicit type arguments.
+- Projects **must not** define a second bare `enum Result` in the same scope as Std; use the corelib type or a distinct name.
 - **Absence of value** (not failure) **must** use `Option<T>`, not `null` or sentinel pointers (**must** align with [Types](/platform-spec/language-meta/type-system/types/)).
 
 ### `try` postfix operator
 
 - Postfix `expr?` (`TryOperator`) **must** apply only where the surrounding function or lambda declares a compatible error propagation target.
-- Operand type **must** be an enum or type with defined error channel per project convention; otherwise **invalid try target** (**E12xx** family in reference compiler).
-- Successful path **must** unwrap the success value into the expression context; failure path **must** return or translate to the enclosing error type.
+- Operand type **must** be a `Result`-shaped enum (typically ``Core.Results.Result<_, _>`` with `Ok` / `Error` variants); otherwise **invalid try target** (**E12xx** family in reference compiler).
+- Successful path **must** unwrap the success payload type into the expression context; failure path **must** return or translate to the enclosing error type.
+- Lowering **must** desugar `?` using the **resolved scrutinee enum** (variant names from that enum), not hard-coded identifier strings.
+- **Analyze**, **compile** (`run` / `build`), and **LSP** **must** share the same typed-HIR spine: resolve, normalize (including `?` desugar), re-resolve, then type-check.
 
 ### Static rules
 
@@ -101,6 +105,7 @@ Programs using `?` **must** compile only when propagation types align; reference
 - **D-LM-ERR-002 — No exceptions keyword:** Cross-language unwinding is interop-scoped, not a Beskid `throw` statement in v0.1.
 - **D-LM-ERR-003 — `Option` vs `Result`:** `Option<T>` models missing data; `Result`-shaped enums model failures—do not conflate them.
 - **D-LM-ERR-004 — Postfix `?` only:** Error propagation uses `expr?`; there is no `try` statement form in v0.1.
+- **D-LM-ERR-005 — Corelib `Result`:** With Std linked, canonical recoverable-result type is ``Core.Results.Result<TValue, TError>``; `?` lowering and type-check use that enum's resolved `Ok` variant.
 
 ## Platform view
 

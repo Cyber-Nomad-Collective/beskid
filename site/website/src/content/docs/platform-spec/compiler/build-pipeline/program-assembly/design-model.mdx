@@ -52,6 +52,11 @@ import SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.a
 - Workspace find references on non-entry units use `ModuleIndex::resolve_unit_hir` per dependency unit when merging matches into `references_at_offset_workspace`.
 - Import aliases collected in the entry unit are exposed on `Resolution.module_imports` for member completion (`IO.` → `Std::System::IO` scope).
 
+## CLI and JIT/AOT parity
+
+- **`beskid build`** and **`beskid run`** **must** use the same [`PreparedProjectWorkspace`](.) materialized roots and [`ModuleIndex::resolve_entry_hir`](.) on the entry unit before codegen.
+- **`beskid run`** **must** call [`compile_front_end_from_resolved_input`](.) (or equivalent) with `prepared_workspace` from project resolve — not a second assemble path with `prepared_workspace: None`.
+
 ## Backend boundary
 
 Assembly and the shared front-end spine end at typed HIR and `CodegenArtifact`. **`beskid_engine`** (JIT) and **`beskid_aot`** (link) **must not** rebuild `CompilePlan` or rediscover modules.
