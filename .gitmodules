@@ -23,3 +23,6 @@
 [submodule "beskid_nexus"]
 	path = beskid_nexus
 	url = https://github.com/Cyber-Nomad-Collective/beskid_nexus.git
+[submodule "beskid_web_common"]
+	path = beskid_web_common
+	url = https://github.com/Cyber-Nomad-Collective/beskid_web_common.git

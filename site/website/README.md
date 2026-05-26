@@ -47,7 +47,7 @@ Run from `site/website`:
 
 Consumers (for example [beskid_tracker](https://github.com/Cyber-Nomad-Collective/beskid/tree/main/beskid_tracker)) fetch from `https://beskid-lang.org` after each docs deploy.
 
-In-site navigation uses Astro `ClientRouter` with `fallback="animate"` (View Transitions polyfill on browsers without native support). Directional slide is applied on the Starlight `<main>` pane via a vendored [`Page.astro`](../../packages/beskid-docs-ui/src/starlight/Page.astro) (re-diff when upgrading `@astrojs/starlight`).
+In-site navigation uses Astro `ClientRouter` with `fallback="animate"` (View Transitions polyfill on browsers without native support). Directional slide is applied on the Starlight `<main>` pane via [`Page.astro`](https://github.com/Cyber-Nomad-Collective/beskid_web_common/blob/main/packages/docs-ui/src/starlight/Page.astro) from `@beskid/docs-ui` (re-diff when upgrading `@astrojs/starlight`).
 
 **Agents:** do not edit book Markdown image tags (`![...](...)`) — especially `src/content/docs/book/00-why-beskid-exists/`. The author uses remote HTTPS URLs on purpose; never replace them with local paths or text. See root `AGENTS.md`. If `verify:book-images` or `ImageNotFound` fails, report to the author; do not rewrite image tags.
 
@@ -65,7 +65,7 @@ Coolify deployment uses:
 
 The Docker build context includes `.git` (and the image installs `git`) so prebuild can generate platform-spec revision history. Prefer a non-shallow clone on Coolify when possible for accurate `git log --follow` counts across renames.
 
-The site image only needs root workspace packages (`packages/trudoc`, `packages/beskid-docs-ui`, `site/website`). The `references/bsharp` submodule is **inactive** in [`.gitmodules`](../../.gitmodules) so Coolify’s shallow recursive clone does not pull the nested Roslyn tree. To work on formatter comparisons locally: `git submodule update --init references/bsharp`.
+The site image installs `trudoc` and `@beskid/docs-ui` from [GitHub Packages](https://github.com/orgs/Cyber-Nomad-Collective/packages?repo_name=beskid_web_common) (see root `.npmrc`). The `references/bsharp` submodule is **inactive** in [`.gitmodules`](../../.gitmodules) so Coolify’s shallow recursive clone does not pull the nested Roslyn tree. To work on formatter comparisons locally: `git submodule update --init references/bsharp`.
 
 If Coolify still runs `git submodule update --recursive`, disable recursive submodules in the application settings or limit init to `compiler` / `pckg` only—the docs site workflow does not require them (CLI version sync falls back to the public `cli-latest` release).
 

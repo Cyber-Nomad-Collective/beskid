@@ -14,16 +14,19 @@ RUN apt-get update \
 
 WORKDIR /app
 
-COPY package.json bun.lock ./
-COPY packages/beskid-docs-ui/package.json packages/beskid-docs-ui/package.json
-COPY packages/trudoc/package.json packages/trudoc/package.json
+COPY package.json bun.lock .npmrc ./
+COPY beskid_web_common/package.json beskid_web_common/bun.lock ./beskid_web_common/
+COPY beskid_web_common/packages/trudoc/package.json ./beskid_web_common/packages/trudoc/
+COPY beskid_web_common/packages/docs-ui/package.json ./beskid_web_common/packages/docs-ui/
 COPY site/website/package.json site/website/package.json
+ARG NODE_AUTH_TOKEN
+ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
 RUN bun install --frozen-lockfile
 
-COPY . .
+COPY beskid_web_common ./beskid_web_common
+COPY site/website ./site/website
 
 # .git is included in build context for platform-spec git-meta generation during prebuild.
-# Skip trudoc CI preset (enforced on GitHub). Book image verify still runs.
 ENV BESKID_SKIP_TRUDOC_VERIFY=1
 
 RUN bun run --cwd site/website prebuild \

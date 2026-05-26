@@ -5,10 +5,9 @@ on:
   pull_request:
     paths:
       - 'site/website/src/content/docs/platform-spec/**'
-      - 'packages/trudoc/**'
-      - 'packages/beskid-docs-ui/**'
       - 'package.json'
       - 'bun.lock'
+      - '.npmrc'
       - 'site/website/package.json'
       - 'site/website/astro.config.mjs'
       - '.github/workflows/platform-spec-contracts.yml'
@@ -18,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest

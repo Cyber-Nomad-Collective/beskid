@@ -12,12 +12,12 @@ import { createRemarkArchCodeFence } from 'trudoc/scripts/remark-arch-code-fence
 import { remarkInlineRepoPaths } from 'trudoc/scripts/remark-inline-repo-paths.mjs';
 import { remarkRepoLinkFence } from 'trudoc/scripts/remark-repo-link-fence.mjs';
 import { loadBeskidGrammar } from 'trudoc/grammars/load-beskid-grammar.mjs';
+import { docsUiRoot } from './src/lib/docs-ui-root.mjs';
 
 const beskidGrammar = loadBeskidGrammar();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '../..');
-const docsUiRoot = path.resolve(__dirname, '../../packages/beskid-docs-ui');
 const docsRoot = path.resolve(__dirname, 'src/content/docs');
 const legacyBridgeRoot = path.resolve(__dirname, 'src/legacy-bridge');
 

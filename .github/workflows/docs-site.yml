@@ -5,17 +5,17 @@ on:
     branches: [main]
     paths:
       - 'site/website/**'
-      - 'packages/beskid-docs-ui/**'
-      - 'packages/trudoc/**'
+      - 'beskid_web_common/**'
       - 'package.json'
+      - '.npmrc'
       - 'bun.lock'
       - '.github/workflows/docs-site.yml'
   pull_request:
     paths:
       - 'site/website/**'
-      - 'packages/beskid-docs-ui/**'
-      - 'packages/trudoc/**'
+      - 'beskid_web_common/**'
       - 'package.json'
+      - '.npmrc'
       - 'bun.lock'
       - '.github/workflows/docs-site.yml'
 
@@ -26,6 +26,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: recursive
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: "1.2.21"

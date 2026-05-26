@@ -2,8 +2,9 @@
 	"name": "beskid",
 	"private": true,
 	"workspaces": [
-		"packages/*",
-		"site/website"
+		"site/website",
+		"beskid_web_common/packages/trudoc",
+		"beskid_web_common/packages/docs-ui"
 	],
 	"overrides": {
 		"uuid": "^14.0.0",
