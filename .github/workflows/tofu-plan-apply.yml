@@ -61,7 +61,7 @@ jobs:
             echo "openbao_addr=https://stg-bao.beskid-lang.org" >> "${GITHUB_OUTPUT}"
           fi
 
-      - name: Coolify project (production creates Beskid)
+      - name: Coolify project (production manages Beskid)
         if: steps.lane.outputs.name == 'production'
         run: |
           echo "TF_VAR_manage_coolify_project=true" >> "${GITHUB_ENV}"
@@ -95,6 +95,15 @@ jobs:
       - name: tofu init
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
         run: tofu init -input=false
+
+      - name: Import existing Coolify project (production)
+        if: steps.lane.outputs.name == 'production'
+        env:
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+        run: |
+          chmod +x ./scripts/ci/ensure-coolify-project-import.sh
+          ./scripts/ci/ensure-coolify-project-import.sh production
 
       - name: tofu plan
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
@@ -142,7 +151,7 @@ jobs:
             echo "openbao_addr=https://stg-bao.beskid-lang.org" >> "${GITHUB_OUTPUT}"
           fi
 
-      - name: Coolify project (production creates Beskid)
+      - name: Coolify project (production manages Beskid)
         if: steps.lane.outputs.name == 'production'
         run: |
           echo "TF_VAR_manage_coolify_project=true" >> "${GITHUB_ENV}"
@@ -176,6 +185,15 @@ jobs:
       - name: tofu init
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
         run: tofu init -input=false
+
+      - name: Import existing Coolify project (production)
+        if: steps.lane.outputs.name == 'production'
+        env:
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+        run: |
+          chmod +x ./scripts/ci/ensure-coolify-project-import.sh
+          ./scripts/ci/ensure-coolify-project-import.sh production
 
       # Bootstrap OpenBao before full apply; this changes state so we must not reuse the plan job artifact.
       - name: Deploy OpenBao (targeted)
