@@ -32,7 +32,8 @@ fi
 
 cd "${src}"
 export CGO_ENABLED=0
-go build -o "${plugin_root}/terraform-provider-coolify_v${VERSION}" .
+go build -trimpath -buildvcs=false -ldflags="-s -w" \
+  -o "${plugin_root}/terraform-provider-coolify_v${VERSION}" .
 
 tofurc="${repo_root}/beskid_infra/terraform.tofurc.generated"
 cat > "${tofurc}" <<EOF
