@@ -1,7 +1,7 @@
 # git-repo (Google repo tool) metadata
 .repo/
 local_manifest.xml
-
+.opencode/
 # Rust build artifacts
 /target/
 **/*.rs.bk
