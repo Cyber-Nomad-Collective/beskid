@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Build vendored arcusis/coolify for OpenTofu CI (not on registry.opentofu.org).
-# Source: beskid_infra/vendor/terraform-provider-coolify (fork of v1.1.18 + Beskid fixes).
+# Install vendored arcusis/coolify for OpenTofu (filesystem mirror; not on registry).
+# Skips go build when the binary is already present (CI cache / local re-runs).
 set -euo pipefail
 
 VERSION="${COOLIFY_PROVIDER_VERSION:-1.1.18-beskid}"
@@ -12,8 +12,8 @@ _arch="$(printf '%s' "${ARCH}" | tr '[:upper:]' '[:lower:]')"
 case "${_os}:${_arch}" in
   linux:x64 | linux:amd64) platform="linux_amd64" ;;
   linux:arm64 | linux:aarch64) platform="linux_arm64" ;;
-  macos:x64 | macos:amd64) platform="darwin_amd64" ;;
-  macos:arm64 | macos:aarch64) platform="darwin_arm64" ;;
+  darwin:x64 | darwin:amd64 | macos:x64 | macos:amd64) platform="darwin_amd64" ;;
+  darwin:arm64 | darwin:aarch64 | macos:arm64 | macos:aarch64) platform="darwin_arm64" ;;
   *)
     echo "Unsupported platform: ${OS}/${ARCH}" >&2
     exit 1
@@ -21,7 +21,7 @@ case "${_os}:${_arch}" in
 esac
 
 plugin_root="${HOME}/.terraform.d/plugins/registry.terraform.io/arcusis/coolify/${VERSION}/${platform}"
-mkdir -p "${plugin_root}"
+binary="${plugin_root}/terraform-provider-coolify_v${VERSION}"
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 src="${repo_root}/beskid_infra/vendor/terraform-provider-coolify"
@@ -30,10 +30,16 @@ if [[ ! -f "${src}/go.mod" ]]; then
   exit 1
 fi
 
-cd "${src}"
-export CGO_ENABLED=0
-go build -trimpath -buildvcs=false -ldflags="-s -w" \
-  -o "${plugin_root}/terraform-provider-coolify_v${VERSION}" .
+mkdir -p "${plugin_root}"
+
+if [[ -x "${binary}" && "${FORCE_COOLIFY_PROVIDER_BUILD:-}" != "1" ]]; then
+  echo "Coolify provider ${VERSION} (${platform}) already at ${binary} (FORCE_COOLIFY_PROVIDER_BUILD=1 to rebuild)"
+else
+  echo "Building Coolify provider ${VERSION} (${platform}) from ${src}..."
+  cd "${src}"
+  export CGO_ENABLED=0
+  go build -trimpath -buildvcs=false -ldflags="-s -w" -o "${binary}" .
+fi
 
 tofurc="${repo_root}/beskid_infra/terraform.tofurc.generated"
 cat > "${tofurc}" <<EOF
@@ -49,5 +55,4 @@ provider_installation {
 }
 EOF
 
-echo "Installed Beskid coolify provider ${VERSION} (${platform}) at ${plugin_root}"
-echo "Wrote ${tofurc} (set TF_CLI_CONFIG_FILE to this path before tofu init)"
+echo "Wrote ${tofurc}"

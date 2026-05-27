@@ -41,7 +41,15 @@ jobs:
         with:
           tofu_version: "1.9.0"
 
+      - name: Cache Coolify provider (vendored)
+        id: coolify_provider_cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.terraform.d/plugins/registry.terraform.io/arcusis/coolify
+          key: coolify-1.1.18-beskid-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('beskid_infra/vendor/terraform-provider-coolify/**') }}
+
       - uses: actions/setup-go@v5
+        if: steps.coolify_provider_cache.outputs.cache-hit != 'true'
         with:
           go-version: "1.22"
 
@@ -131,7 +139,15 @@ jobs:
         with:
           tofu_version: "1.9.0"
 
+      - name: Cache Coolify provider (vendored)
+        id: coolify_provider_cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.terraform.d/plugins/registry.terraform.io/arcusis/coolify
+          key: coolify-1.1.18-beskid-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('beskid_infra/vendor/terraform-provider-coolify/**') }}
+
       - uses: actions/setup-go@v5
+        if: steps.coolify_provider_cache.outputs.cache-hit != 'true'
         with:
           go-version: "1.22"
 

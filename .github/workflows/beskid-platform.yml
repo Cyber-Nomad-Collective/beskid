@@ -40,6 +40,15 @@ on:
       - '.github/workflows/container-images.yml'
       - '.github/workflows/tofu-plan-apply.yml'
   workflow_dispatch:
+    inputs:
+      skip_images:
+        description: Skip GHCR builds (OpenTofu / infra only — faster Terraform debugging)
+        type: boolean
+        default: false
+      apply:
+        description: Run tofu apply after plan
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -47,13 +56,20 @@ permissions:
 
 jobs:
   images:
+    if: github.event_name != 'workflow_dispatch' || inputs.skip_images != true
     uses: ./.github/workflows/container-images.yml
     secrets: inherit
 
   infra:
     needs: images
-    if: always() && (needs.images.result == 'success' || needs.images.result == 'skipped')
+    if: |
+      always() &&
+      (
+        (github.event_name == 'workflow_dispatch' && inputs.skip_images == true) ||
+        needs.images.result == 'success' ||
+        needs.images.result == 'skipped'
+      )
     uses: ./.github/workflows/tofu-plan-apply.yml
     with:
-      apply: ${{ github.event_name != 'pull_request' }}
+      apply: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || inputs.apply) }}
     secrets: inherit
