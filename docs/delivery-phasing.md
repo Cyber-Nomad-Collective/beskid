@@ -10,7 +10,6 @@ Two unrelated pipelines produce the same artifacts, but they never meet:
 GitHub Actions (beskid)          Coolify VPS (per app)
 ─────────────────────            ─────────────────────
 docs-site.yml ──► green ✓        git clone + shallow submodules
-runtime-ci.yml                   docker compose build on server
 publish-open-vsx.yml             NODE_AUTH_TOKEN + env in Coolify UI
            │
            ▼
@@ -52,8 +51,8 @@ CI **builds and pushes**. Coolify **pulls and runs**. No server-side git clone. 
 | `semgrep.yml` | New | Replaces `security-audits.yml`; 3 jobs: Rust, .NET, TS |
 | `container-images.yml` | In progress | Both `beskid-site` and `beskid-auth` had build errors (Dockerfile workspace resolution); fixes pushed in `92a3449` |
 | `publish-open-vsx.yml` | Passing | Cross-platform matrix build |
-| `pckg-ci.yml` | Active | `dotnet test` unit tests |
-| `runtime-ci.yml` | Active | Compiler smoke tests |
+| `pckg-ci.yml` | Removed | Legacy lane removed during CI centralization |
+| `runtime-ci.yml` | Removed | Legacy lane removed during CI centralization |
 
 ### Dockerfile fixes (commit `92a3449`)
 
@@ -177,7 +176,7 @@ site+auth    pull-only     branch+env    +pckg DB      OpenBao
 
 | Scope | Responsible | Tooling |
 |-------|-------------|---------|
-| Verify (lint, test, audit) | GitHub Actions (`beskid`) | `docs-site.yml`, `semgrep.yml`, `pckg-ci.yml` |
+| Verify (lint, test, audit) | GitHub Actions (`beskid`) | Centralized Dagger lanes in `beskid_infra/dagger` |
 | Build + push images | GitHub Actions (`beskid`) | `container-images.yml` → GHCR |
 | **Infrastructure (apps, env)** | **OpenTofu** (`beskid_infra`) | `tofu-plan-apply.yml` → Coolify provider |
 | Runtime deploy | Coolify | Pull `ghcr.io/...:${IMAGE_TAG}`, run compose |

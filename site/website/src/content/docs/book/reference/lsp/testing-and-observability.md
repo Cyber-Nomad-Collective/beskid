@@ -146,7 +146,7 @@ At minimum, CI should run:
 2. Integration tests for diagnostics lifecycle
 3. Lint + format checks
 4. Regression fixtures for previously fixed bugs
-5. Formatter regression gate (`python -m nox --non-interactive -s format_regression`)
+5. Formatter regression gate in centralized Dagger/Cargo CI lane
 
 Optional later:
 

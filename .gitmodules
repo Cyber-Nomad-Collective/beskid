@@ -30,3 +30,7 @@
 	path = beskid_treesitter
 	url = https://github.com/Cyber-Nomad-Collective/beskid_treesitter.git
 	active = false
+[submodule "beskid_infra"]
+	path = beskid_infra
+	url = https://github.com/Cyber-Nomad-Collective/beskid_infra.git
+	active = false

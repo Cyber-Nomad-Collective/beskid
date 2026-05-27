@@ -1,6 +1,4 @@
-# Aggregate repo: primary Beskid compiler CI runs on the compiler submodule public remote.
-# Nox initializes `compiler/` and `beskid_vscode/` via ci/submodules.py (see COMPILER_SUBMODULE_TOKEN,
-# optional BESKID_VSCODE_SUBMODULE_TOKEN for a private extension submodule).
+# Aggregate repo: Open VSX publish via Dagger (beskid_infra/dagger).
 name: Publish VS Code Extension to Open VSX
 
 on:
@@ -54,35 +52,27 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
           token: ${{ secrets.GITHUB_TOKEN }}
-          persist-credentials: true
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Setup Rust toolchain (with Intel macOS LSP target)
-        if: matrix.platform == 'darwin-x64'
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install Dagger
+        uses: dagger/dagger-for-github@v7.2.0
         with:
-          targets: x86_64-apple-darwin
+          version: "0.21.0"
 
-      - name: Setup Rust toolchain
-        if: matrix.platform != 'darwin-x64'
-        uses: dtolnay/rust-toolchain@stable
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install Nox
-        run: pip install -r ci/requirements.txt
+      - name: Install module dependencies
+        run: npm ci
+        working-directory: beskid_infra/dagger
 
       - name: Publish Open VSX
         env:
+          OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
           BESKID_VSCODE_SUBMODULE_URL: https://github.com/Cyber-Nomad-Collective/beskid_vscode.git
           BESKID_VSCODE_SUBMODULE_TOKEN: ${{ secrets.BESKID_VSCODE_SUBMODULE_TOKEN }}
-          OPENVSX_PLATFORM: ${{ matrix.platform }}
-          OPENVSX_BIN_NAME: ${{ matrix.bin_name }}
-          OPENVSX_RUST_TARGET: ${{ matrix.openvsx_rust_target }}
-          OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
-        run: python -m nox --non-interactive -s open_vsx_publish
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_REF_TYPE: ${{ github.ref_type }}
+        run: |
+          dagger -m beskid_infra/dagger call open-vsx-publish \
+            --source=. \
+            --platform="${{ matrix.platform }}" \
+            --bin-name="${{ matrix.bin_name }}" \
+            --rust-target="${{ matrix.openvsx_rust_target }}"

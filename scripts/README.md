@@ -1,5 +1,23 @@
 # Superrepo scripts
 
+## Toolchain (`install-deps.sh`)
+
+Reads [`repo-deps.json`](../repo-deps.json), detects OS (`scripts/lib/detect-os.sh`), checks CLI tools, and installs missing ones per platform (Homebrew, apt, winget, snap, install scripts, GitHub releases).
+
+```bash
+./scripts/install-deps.sh --check
+./scripts/install-deps.sh --install -y
+./scripts/install-deps.sh --install --group beskid   # full dev: rust, bun, dotnet, lazygit, …
+./scripts/install-deps.sh --list-groups
+```
+
+| Group | Tools |
+|-------|--------|
+| `infra` | git, jq, just, tofu, bao |
+| `beskid` | + lazygit, gh, bun, rust, dotnet |
+
+Library: `scripts/lib/{detect-os,deps-check,install-methods,output}.sh`.
+
 ## Environment setup
 
 [`setup-environment.sh`](setup-environment.sh) is the main entry for a fresh or partial checkout:

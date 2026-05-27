@@ -1,7 +1,5 @@
 # Beskid
 
-[![Runtime CI](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/runtime-ci.yml/badge.svg?branch=main)](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/runtime-ci.yml?query=branch%3Amain)
-[![pckg CI](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/pckg-ci.yml/badge.svg?branch=main)](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/pckg-ci.yml?query=branch%3Amain)
 [![Open VSX publish](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/publish-open-vsx.yml/badge.svg?branch=main)](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/publish-open-vsx.yml?query=branch%3Amain)
 [![CLI (rolling)](https://img.shields.io/github/v/tag/Cyber-Nomad-Collective/beskid_compiler/cli-latest?label=CLI&logo=github)](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-latest)
 [![VS Code on Open VSX](https://img.shields.io/open-vsx/v/beskid/beskid-vscode?label=VS%20Code&logo=openvsx)](https://open-vsx.org/extension/beskid/beskid-vscode)
@@ -58,9 +56,9 @@ Run the dev server from `site/website/` with `bun install` and `bun dev` (see `s
 
 **Beskid Nexus** is an interactive knowledge graph of the `compiler/` workspace (forked from [GitNexus](https://github.com/abhigyanpatwari/GitNexus)), with a hosted MCP-over-HTTP endpoint for editors. Deploy via Coolify from the superrepo root; see [`beskid_nexus/COOLIFY.md`](beskid_nexus/COOLIFY.md) and [`beskid_nexus/README.md`](beskid_nexus/README.md).
 
-### Superrepo automation (`ci/`, `.github/`)
+### Superrepo automation (`beskid_infra/dagger/`, `.github/`)
 
-Top-level continuous integration ties the submodules together (compiler, pckg, extension publishing, and related checks). Details live under `ci/` and `.github/` for contributors maintaining pipelines.
+Top-level continuous integration ties the submodules together (compiler, pckg, extension publishing, and related checks). Dagger pipeline logic lives under `beskid_infra/dagger/`, with workflow entrypoints under `.github/`.
 
 ## Repository layout (summary)
 
@@ -72,7 +70,7 @@ Top-level continuous integration ties the submodules together (compiler, pckg, e
 | `beskid_vscode/` | Submodule: VS Code extension (Bun/TypeScript) |
 | `beskid_nexus/` | Submodule: compiler knowledge graph UI + MCP (`gitnexus serve`) |
 | `beskid_tracker/` | Submodule: roadmap / issue tracker web app |
-| `ci/` | Superrepo CI documentation and helpers |
+| `beskid_infra/dagger/` | Shared Dagger CI module used by superrepo and submodule workflows |
 | `AGENTS.md` | Notes for automation and recurring project conventions |
 
 ### Clone and sync
