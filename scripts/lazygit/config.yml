@@ -62,7 +62,7 @@ customCommands:
   - key: 'U'
     context: 'global'
     description: 'Sync submodules (init + update --recursive)'
-    command: 'git submodule update --init --recursive'
+    command: 'git -c submodule.active="*" submodule update --init --recursive'
     loadingText: 'Updating submodules…'
     output: log
 

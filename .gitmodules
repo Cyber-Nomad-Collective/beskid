@@ -2,24 +2,31 @@
 	path = compiler
 	url = ../beskid_compiler.git
 	fetchRecurseSubmodules = true
+	active = false
 [submodule "pckg"]
 	path = pckg
 	url = ../beskid_pckg.git
+	active = false
 [submodule "beskid_vscode"]
 	path = beskid_vscode
 	url = https://github.com/Cyber-Nomad-Collective/beskid_vscode.git
+	active = false
 [submodule "beskid_templates"]
 	path = beskid_templates
 	url = https://github.com/Cyber-Nomad-Collective/beskid_templates.git
+	active = false
 [submodule "beskid_tracker"]
 	path = beskid_tracker
 	url = https://github.com/pmikstacki/beskid_tracker.git
+	active = false
 [submodule "beskid_nexus"]
 	path = beskid_nexus
 	url = https://github.com/Cyber-Nomad-Collective/beskid_nexus.git
+	active = false
 [submodule "beskid_web_common"]
 	path = beskid_web_common
 	url = https://github.com/Cyber-Nomad-Collective/beskid_web_common.git
 [submodule "beskid_treesitter"]
 	path = beskid_treesitter
 	url = https://github.com/Cyber-Nomad-Collective/beskid_treesitter.git
+	active = false

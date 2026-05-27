@@ -28,7 +28,7 @@ Run `lazygit` from the Beskid superrepo root (`/path/to/beskid`).
 | `P` | Commit message → stage, commit, push every dirty repo (recursive, deepest first) |
 | `C` | Same, commit only (`--no-push`) |
 | `D` | Dry-run (status per repo) |
-| `U` | `git submodule update --init --recursive` |
+| `U` | `git -c submodule.active="*" submodule update --init --recursive` (all submodules; default clone only activates `beskid_web_common`) |
 | `<c-p>` | `git push --recurse-submodules=on-demand` (superrepo push helper) |
 
 Press `?` in lazygit to see all bindings.

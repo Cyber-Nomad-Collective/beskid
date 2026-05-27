@@ -12,12 +12,14 @@ The docs image **requires** the `beskid_web_common` submodule (`packages/trudoc`
 
 Recommended Coolify settings:
 
-1. **Initialize `beskid_web_common`** on clone (recursive submodules is fine; compiler/pckg are not required for this image but may be pulled if recursion is enabled).
-2. Prefer a **non-shallow** clone when platform-spec git-meta needs full history (`fetch-depth: 0` in GitHub Actions).
+1. **Recursive submodules** are OK: root [`.gitmodules`](../.gitmodules) sets `active = false` on every submodule except **`beskid_web_common`**, so Coolify’s default `git clone --recurse-submodules --shallow-submodules` only fetches what the docs image needs.
+2. Prefer a **non-shallow** superrepo clone when platform-spec git-meta needs full history (GitHub Actions uses `fetch-depth: 0`).
 3. Set **`NODE_AUTH_TOKEN`** (GitHub Packages read) as a build secret when registry fallback is needed without a populated submodule.
-4. After bumping submodule pointers on `main`, push `beskid_web_common` commits before deploying.
+4. After bumping the `beskid_web_common` pointer on `main`, push that submodule repo before deploying.
 
-Historical shallow-only failures on **compiler/pckg** submodules do not apply when submodule recursion is disabled; if recursion stays on, see [beskid_nexus/COOLIFY.md](../beskid_nexus/COOLIFY.md) for SHA reachability notes.
+If clone still fails with `not our ref` on **pckg** or **compiler**, Coolify is ignoring `submodule.active` (older Git) or using a custom clone command—disable recursive submodules and run `git submodule update --init --depth 1 beskid_web_common` after checkout instead.
+
+**Do not** rely on shallow recursive clone for apps that need **pckg** at a feature-branch SHA; init those submodules explicitly in CI or use a non-shallow fetch (see [beskid_nexus/COOLIFY.md](../beskid_nexus/COOLIFY.md)).
 
 ## Runtime 404s
 
