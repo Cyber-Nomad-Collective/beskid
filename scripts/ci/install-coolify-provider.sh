@@ -4,7 +4,8 @@
 # so POST /services and /applications include destination_uuid (multi-destination servers).
 set -euo pipefail
 
-VERSION="${COOLIFY_PROVIDER_VERSION:-1.1.13}"
+# v1.1.18+ base64-encodes docker_compose_raw for Coolify API (required since ~4.0 beta).
+VERSION="${COOLIFY_PROVIDER_VERSION:-1.1.18}"
 OS="${RUNNER_OS:-linux}"
 ARCH="${RUNNER_ARCH:-X64}"
 
