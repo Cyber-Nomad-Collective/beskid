@@ -14,6 +14,8 @@ obj/
 _refactor/
 # OS files
 .DS_Store
+# some skill
+.omo/
 
 # Env files
 .env

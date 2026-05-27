@@ -12,7 +12,12 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
 	resolve: {
 		tsconfigPaths: true,
+		// Workaround: when Vite aliases resolve @beskid/* packages from workspace
+		// source directories, Rolldown resolves their transitive deps starting from
+		// the workspace location instead of the project root node_modules.
+		// dedupe forces resolution of these packages from the project root.
 		dedupe: [
+			// @beskid/ui-react transitive deps
 			"class-variance-authority",
 			"clsx",
 			"tailwind-merge",
@@ -28,6 +33,8 @@ export default defineConfig({
 			"recharts",
 			"input-otp",
 			"@base-ui/react",
+			// @beskid/auth-client transitive deps
+			"jose",
 		],
 		alias: {
 			"@beskid/ui-react": path.resolve(
