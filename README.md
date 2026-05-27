@@ -1,81 +1,92 @@
-# Beskid
+# Beskid Superrepo
 
 [![Open VSX publish](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/publish-open-vsx.yml/badge.svg?branch=main)](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/publish-open-vsx.yml?query=branch%3Amain)
 [![CLI (rolling)](https://img.shields.io/github/v/tag/Cyber-Nomad-Collective/beskid_compiler/cli-latest?label=CLI&logo=github)](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-latest)
 [![VS Code on Open VSX](https://img.shields.io/open-vsx/v/beskid/beskid-vscode?label=VS%20Code&logo=openvsx)](https://open-vsx.org/extension/beskid/beskid-vscode)
 [![Last commit](https://img.shields.io/github/last-commit/Cyber-Nomad-Collective/beskid/main?label=superrepo&logo=github)](https://github.com/Cyber-Nomad-Collective/beskid/commits/main/)
 
-Welcome. Beskid is a programming language and toolchain designed for clear projects, dependable packages, and a smooth path from editor to runtime.
+Most software is business records with lipstick. Beskid is a language and toolchain for the part where you actually ship those records—without importing a cathedral to save one row.
 
-This repository is the **superrepo**: it aggregates the main pieces of the ecosystem so you can work across them in one checkout. Day-to-day language work usually happens in the **compiler** and **website** trees; the registry service and editor extension live alongside them here. Source and issue tracking: **[github.com/Cyber-Nomad-Collective/beskid](https://github.com/Cyber-Nomad-Collective/beskid)**.
+This repository is the **superrepo**: one checkout that wires together the compiler, registry, docs site, editor extension, and the services that run in production. Source and issues live at **[github.com/Cyber-Nomad-Collective/beskid](https://github.com/Cyber-Nomad-Collective/beskid)**.
 
-## Where to start on the web
+## Live services
 
-- **[beskid-lang.org](https://beskid-lang.org)** — Landing page and home for the project. Documentation (spec, guides, core library reference, and the Beskid Book) is published on the same site.
-- **[pckg.beskid-lang.org](https://pckg.beskid-lang.org)** — The public **pckg** registry: browse packages, read metadata, and use it as the default registry when you publish or fetch dependencies with the Beskid CLI.
+| Service | URL | What you get |
+| --- | --- | --- |
+| **Home & docs** | [beskid-lang.org](https://beskid-lang.org) | Landing page, [Platform specification](https://beskid-lang.org/platform-spec/), and [The Beskid Book](https://beskid-lang.org/book/) |
+| **pckg** | [pckg.beskid-lang.org](https://pckg.beskid-lang.org) | Public package registry—browse packages, publish and fetch with the CLI |
+| **Tracker** | [tracker.beskid-lang.org](https://tracker.beskid-lang.org) | Roadmap, kanban, and bug reports (GitHub Issues stay the source of truth) |
 
-If you are new to the language, open the site and follow **The Beskid Book** from the docs navigation, then explore the CLI and project guides when you start building.
+Auth for Tracker, Nexus, and pckg flows through the shared [auth hub](https://auth.beskid-lang.org) (`site/auth/`).
 
-## Toolchain overview
+## What Beskid is (and is not)
 
-### Compiler and CLI (`compiler/` submodule)
+Beskid is an **AOT-native** language aimed at everyday business software: permissions, workflows, reports that must match finance's spreadsheet, integrations with vendors who treat webhooks as optional. The hard part is rarely algorithms.
 
-The compiler lives in a dedicated Rust workspace (submodule path: `compiler/`). It includes the command-line interface used to build, test, analyze, and format Beskid code, the compiler front end and backends, and supporting crates for diagnostics and tooling.
+| What the industry sells | What Beskid optimizes for |
+| --- | --- |
+| Runtime mystery and reflection | **Compile-time clarity** you can see in the build artifact |
+| Framework religion | **Language features as language features**—not ten layers of corelib indirection |
+| DI container theatre | **Explicit, verifiable wiring**—IoC in the compiler, not in a black box |
+| "Enterprise-friendly" maze | **Fast local dev and honest CI** so structure cannot hide in PowerPoint |
 
-Prebuilt CLI binaries are published from the compiler repository’s CI to GitHub Releases (rolling tag `cli-latest`). Install and upgrade flows are documented on [beskid-lang.org](https://beskid-lang.org).
+If your problem is finite element solvers or a game engine, use Rust or C++ and be happy. Beskid is not auditioning for that job.
 
-The standard library (**corelib**) is maintained as a nested submodule under `compiler/corelib/` and is published as a package through the registry where appropriate.
+Status: opinionated project. Not finished. Not apologizing. Start with [The Beskid Book](https://beskid-lang.org/book/) or the [Platform specification](https://beskid-lang.org/platform-spec/) when you want normative rules, not informative sales pitch.
 
-### Language Server (`beskid_lsp` in `compiler/`)
+## This superrepo
 
-The **Beskid Language Server** implements the Language Server Protocol so editors get completions, go-to-definition, diagnostics, formatting, and related features while you edit `.bd` sources and `.proj` manifests.
+Day-to-day language work happens in **`compiler/`** and documentation in **`site/website/`**. Everything else—registry, VS Code extension, tracker UI, deploy infra—lives in git submodules so each piece can version and ship on its own while CI in this repo ties them together.
 
-It ships as the `beskid_lsp` binary from the compiler workspace. The VS Code extension runs this server by default (bundled per platform or configurable path).
+```
+beskid/                          ← you are here (aggregate root)
+├── compiler/                    ← Rust: CLI, compiler, LSP, corelib (nested submodule)
+├── pckg/                        ← .NET registry service + UI
+├── beskid_vscode/               ← VS Code extension (bundles beskid_lsp)
+├── beskid_tracker/              ← Roadmap / issue tracker (TanStack Start)
+├── beskid_nexus/                ← Compiler knowledge graph + MCP (GitNexus fork)
+├── beskid_web_common/           ← Shared TS: trudoc, beskid-ui, auth client
+├── beskid_treesitter/           ← Tree-sitter grammar (synced from compiler Pest)
+├── beskid_templates/            ← First-party `beskid.templates.*` scaffolds
+├── beskid_infra/                ← OpenTofu, Coolify modules, Dagger CI
+├── site/
+│   ├── website/                 ← Astro + Starlight docs (canonical MDX source)
+│   └── auth/                    ← GitHub OAuth hub for tracker, nexus, pckg
+├── scripts/                     ← setup-environment.sh, install-deps.sh, CI helpers
+└── .github/workflows/           ← Container images, Open VSX publish, tofu apply
+```
 
-### VS Code extension (`beskid_vscode/` submodule)
+## Submodules and READMEs
 
-**beskid_vscode** is the official Visual Studio Code extension (its own repository, checked out under this path): file associations for Beskid, integration with the language server, and settings for dev versus bundled server binaries.
+Each row links to the README in that tree. Clone submodules before following those links locally.
 
-See `beskid_vscode/README.md` for local development (`bun install`, `bun run build`, Extension Development Host).
+| Path | Role | README |
+| --- | --- | --- |
+| `compiler/` | Rust workspace: `beskid` CLI, compiler crates, `beskid_lsp`, package client | [compiler/README.md](compiler/README.md) |
+| `compiler/corelib/` | Standard library (nested submodule: `corelib`, foundation, runtime, Mod SDK) | [compiler/corelib/README.md](compiler/corelib/README.md) |
+| `pckg/` | Registry HTTP API, Blazor UI, PostgreSQL, Docker Compose for local dev | [pckg/README.md](pckg/README.md) |
+| `beskid_vscode/` | Official VS Code extension; Open VSX publish runs from superrepo CI | [beskid_vscode/README.md](beskid_vscode/README.md) |
+| `beskid_tracker/` | Public roadmap and kanban; mirrors GitHub Issues via webhooks + SQLite | [beskid_tracker/README.md](beskid_tracker/README.md) |
+| `beskid_nexus/` | Interactive repo graph explorer; MCP at `/api/mcp` | [beskid_nexus/README.md](beskid_nexus/README.md) |
+| `beskid_web_common/` | `@cyber-nomad-collective/trudoc`, `@beskid/beskid-ui`, auth client packages | [beskid_web_common/README.md](beskid_web_common/README.md) |
+| `beskid_treesitter/` | `@cyber-nomad-collective/beskid-tree-sitter` grammar for editors and tooling | [beskid_treesitter/README.md](beskid_treesitter/README.md) |
+| `beskid_templates/` | Published project/workspace/item templates (`beskid.templates.*`) | [beskid_templates/README.md](beskid_templates/README.md) |
+| `beskid_infra/` | OpenTofu for Coolify apps, OpenBao secrets, staging/production lanes | [beskid_infra/README.md](beskid_infra/README.md) |
 
-### Package registry — pckg (`pckg/` submodule)
+### In-repo (not submodules)
 
-**pckg** is the registry service: HTTP API, web UI, accounts, API keys, and storage for package artifacts. The public instance is **[pckg.beskid-lang.org](https://pckg.beskid-lang.org)**.
+| Path | Role | README |
+| --- | --- | --- |
+| `site/` | Docs site + auth hub; Docker Compose for Coolify/GHCR | [site/README.md](site/README.md) |
+| `site/website/` | Astro dev server, book + platform-spec content, prebuild pipelines | [site/website/README.md](site/website/README.md) |
+| `site/auth/` | Central GitHub OAuth; one app handoff to tracker, nexus, pckg | [site/auth/README.md](site/auth/README.md) |
+| `scripts/` | Toolchain install (`repo-deps.json`), submodule sync, setup wizard entry | [scripts/README.md](scripts/README.md) |
+| `beskid_infra/dagger/` | Shared Dagger module (Open VSX, compiler gates, corelib publish) | [beskid_infra/dagger/README.md](beskid_infra/dagger/README.md) |
+| `.github/` | Workflow index for container images, Open VSX, OpenTofu apply | [.github/README.md](.github/README.md) |
 
-The Beskid CLI includes client commands for registry operations (publish, fetch, keys, and related workflows) that target this service by default or a custom URL you configure.
+## Getting started
 
-Local development typically uses Docker Compose from the `pckg/` directory; see `pckg/README.md` for compose profiles and database setup.
-
-### Website and documentation (`site/website/`)
-
-The marketing site and **canonical documentation** are built with **Astro** and **Starlight**. All user-facing docs are authored under `site/website/src/content/docs/` (no separate docs export step).
-
-Run the dev server from `site/website/` with `bun install` and `bun dev` (see `site/website/README.md` for build, preview, and deployment notes).
-
-### Compiler graph — Beskid Nexus (`beskid_nexus/` submodule)
-
-**Beskid Nexus** is an interactive knowledge graph of the `compiler/` workspace (forked from [GitNexus](https://github.com/abhigyanpatwari/GitNexus)), with a hosted MCP-over-HTTP endpoint for editors. Deploy via Coolify from the superrepo root; see [`beskid_nexus/COOLIFY.md`](beskid_nexus/COOLIFY.md) and [`beskid_nexus/README.md`](beskid_nexus/README.md).
-
-### Superrepo automation (`beskid_infra/dagger/`, `.github/`)
-
-Top-level continuous integration ties the submodules together (compiler, pckg, extension publishing, and related checks). Dagger pipeline logic lives under `beskid_infra/dagger/`, with workflow entrypoints under `.github/`.
-
-## Repository layout (summary)
-
-| Path | Role |
-|------|------|
-| `compiler/` | Submodule: Rust compiler, CLI, LSP, package CLI client, nested corelib |
-| `pckg/` | Submodule: .NET registry application and infrastructure |
-| `site/website/` | Astro site: landing + Starlight docs |
-| `beskid_vscode/` | Submodule: VS Code extension (Bun/TypeScript) |
-| `beskid_nexus/` | Submodule: compiler knowledge graph UI + MCP (`gitnexus serve`) |
-| `beskid_tracker/` | Submodule: roadmap / issue tracker web app |
-| `beskid_infra/dagger/` | Shared Dagger CI module used by superrepo and submodule workflows |
-| `AGENTS.md` | Notes for automation and recurring project conventions |
-
-### Clone and sync
-
-**Recommended:** interactive setup from the superrepo root (toolchain, submodules, Bun workspaces, site `.env` files):
+**Recommended:** interactive setup from the superrepo root (toolchain, submodules, Bun workspaces, `site/` env files):
 
 ```bash
 git clone https://github.com/Cyber-Nomad-Collective/beskid.git
@@ -83,34 +94,57 @@ cd beskid
 just setup
 ```
 
-Requires [just](https://github.com/casey/just) (`./scripts/install-deps.sh --install --tool just`). Non-interactive sync: [`./scripts/setup-environment.sh`](scripts/setup-environment.sh) (uses [Google's `repo` tool](https://gerrit.googlesource.com/git-repo/) when [`manifests/default.xml`](manifests/default.xml) exists, otherwise git submodules).
+Requires [just](https://github.com/casey/just) (`./scripts/install-deps.sh --install --tool just`). The wizard offers profiles for docs-only, full developer, and infra operator workflows—see [site/README.md](site/README.md).
 
-**Git submodules only:**
-
-```bash
-git clone --recurse-submodules <repository-url>
-```
-
-If you already cloned without submodules:
+**Non-interactive sync** (git submodules + `bun install` at the root):
 
 ```bash
-git submodule update --init --recursive compiler pckg beskid_vscode beskid_templates beskid_nexus
+./scripts/setup-environment.sh
 ```
 
-(`compiler` uses nested submodules for corelib; `--recursive` pulls those too.)
+Limit paths: `./scripts/setup-environment.sh compiler pckg beskid_web_common`. Skip JS install: `BESKID_SKIP_JS_INSTALL=1 ./scripts/setup-environment.sh`.
 
-Or run `./scripts/setup-environment.sh --submodules`.
-
-**Repo-only fresh directory** (empty parent folder):
+**Clone with submodules:**
 
 ```bash
-mkdir beskid && cd beskid
-curl -fsSL https://storage.googleapis.com/git-repo-downloads/repo -o ~/.local/bin/repo && chmod +x ~/.local/bin/repo
-export PATH="$HOME/.local/bin:$PATH"
-repo init -u https://github.com/Cyber-Nomad-Collective/beskid.git -m manifests/default.xml
-repo sync
+git clone --recurse-submodules https://github.com/Cyber-Nomad-Collective/beskid.git
+# or, after a plain clone:
+git submodule update --init --recursive
 ```
+
+`compiler/` pulls nested submodules for **corelib**; use `--recursive`.
+
+**Day-to-day submodule work** uses [lazygit](https://github.com/jesseduffield/lazygit) with the Beskid config ([scripts/lazygit/README.md](scripts/lazygit/README.md)):
+
+```bash
+mkdir -p ~/.config/lazygit
+cp scripts/lazygit/config.yml ~/.config/lazygit/config.yml
+lazygit   # U = init/update all submodules; P = recursive commit+push
+```
+
+**Toolchain check** (Rust, Bun, .NET, gh, lazygit—see [repo-deps.json](repo-deps.json)):
+
+```bash
+just deps-check
+just deps-install   # install missing tools
+```
+
+### Common next steps
+
+| Goal | Where to go |
+| --- | --- |
+| Read the language | [beskid-lang.org/book/](https://beskid-lang.org/book/) |
+| Install the CLI | [Downloads](https://beskid-lang.org/downloads/) (rolling tag `cli-latest` on [compiler releases](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-latest)) |
+| Hack the compiler | [compiler/README.md](compiler/README.md) — `cargo build` in `compiler/` |
+| Run docs locally | `cd site/website && bun install && bun dev` → [site/website/README.md](site/website/README.md) |
+| Run pckg locally | `cd pckg && podman compose up --build -d` → [pckg/README.md](pckg/README.md) |
+| VS Code extension dev | [beskid_vscode/README.md](beskid_vscode/README.md) — `bun install`, Extension Development Host |
+| Deploy / infra | [beskid_infra/docs/greenfield.md](beskid_infra/docs/greenfield.md) |
+
+Local CI sanity check for web/docs: `./validate-ci-local.sh` (submodule init, prebuild, platform-spec verify).
 
 ---
 
-Questions about the language itself are best answered by the docs on **[beskid-lang.org](https://beskid-lang.org)**. For registry-specific behavior and URLs, use **[pckg.beskid-lang.org](https://pckg.beskid-lang.org)** together with the guides for the `pckg` CLI in the documentation sidebar.
+Questions about the language: **[beskid-lang.org](https://beskid-lang.org)**. Registry behavior and URLs: **[pckg.beskid-lang.org](https://pckg.beskid-lang.org)** plus the pckg guides in the docs sidebar. Delivery timeline and bugs: **[tracker.beskid-lang.org](https://tracker.beskid-lang.org)**.
+
+Automation conventions for agents and recurring tasks: [AGENTS.md](AGENTS.md).
