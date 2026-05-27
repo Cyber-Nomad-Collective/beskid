@@ -173,16 +173,11 @@ jobs:
             echo "TF_VAR_seed_openbao_secrets=false" >> "${GITHUB_ENV}"
           fi
 
-      - name: Download plan
-        uses: actions/download-artifact@v4
-        with:
-          name: tofu-plan-${{ steps.lane.outputs.name }}
-          path: beskid_infra/environments/${{ steps.lane.outputs.name }}
-
       - name: tofu init
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
         run: tofu init -input=false
 
+      # Bootstrap OpenBao before full apply; this changes state so we must not reuse the plan job artifact.
       - name: Deploy OpenBao (targeted)
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
         run: |
@@ -194,8 +189,20 @@ jobs:
           OPENBAO_ADDR: ${{ steps.lane.outputs.openbao_addr }}
           OPENBAO_UNSEAL_KEY: ${{ secrets.OPENBAO_UNSEAL_KEY }}
         run: |
+          set -euo pipefail
           chmod +x beskid_infra/scripts/openbao-init-unseal.sh
-          eval "$(beskid_infra/scripts/openbao-init-unseal.sh)" || true
+          while IFS= read -r line; do
+            [[ -n "${line}" ]] && eval "${line}"
+          done < <(beskid_infra/scripts/openbao-init-unseal.sh || true)
+          if [[ -n "${OPENBAO_ROOT_TOKEN:-}" ]]; then
+            echo "TF_VAR_openbao_token=${OPENBAO_ROOT_TOKEN}" >> "${GITHUB_ENV}"
+            echo "TF_VAR_openbao_enabled=true" >> "${GITHUB_ENV}"
+            echo "TF_VAR_seed_openbao_secrets=true" >> "${GITHUB_ENV}"
+          fi
+
+      - name: tofu plan (post-bootstrap)
+        working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
+        run: tofu plan -input=false -out=tfplan
 
       - name: tofu apply
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
