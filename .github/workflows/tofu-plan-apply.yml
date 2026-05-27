@@ -45,8 +45,16 @@ jobs:
         with:
           go-version: "1.22"
 
-      - name: Install Coolify provider (patched for destination_uuid)
+      - name: Install Coolify provider (vendored 1.1.18-beskid)
         run: ./scripts/ci/install-coolify-provider.sh
+
+      - name: Sync Coolify provider lock checksum (linux_amd64)
+        working-directory: beskid_infra/environments/production
+        run: |
+          tofu providers lock -platform=linux_amd64 \
+            -fs-mirror="${HOME}/.terraform.d/plugins" \
+            registry.terraform.io/arcusis/coolify
+          cp .terraform.lock.hcl ../staging/.terraform.lock.hcl
 
       - name: Resolve lane from branch
         id: lane
@@ -135,8 +143,16 @@ jobs:
         with:
           go-version: "1.22"
 
-      - name: Install Coolify provider (patched for destination_uuid)
+      - name: Install Coolify provider (vendored 1.1.18-beskid)
         run: ./scripts/ci/install-coolify-provider.sh
+
+      - name: Sync Coolify provider lock checksum (linux_amd64)
+        working-directory: beskid_infra/environments/production
+        run: |
+          tofu providers lock -platform=linux_amd64 \
+            -fs-mirror="${HOME}/.terraform.d/plugins" \
+            registry.terraform.io/arcusis/coolify
+          cp .terraform.lock.hcl ../staging/.terraform.lock.hcl
 
       - name: Resolve lane from branch
         id: lane
