@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # Pre-install arcusis/coolify for OpenTofu CI (not on registry.opentofu.org).
+# Builds from upstream with beskid_infra/provider-patches/destination_uuid.patch
+# so POST /services and /applications include destination_uuid (multi-destination servers).
 set -euo pipefail
 
 VERSION="${COOLIFY_PROVIDER_VERSION:-1.1.13}"
@@ -22,17 +24,26 @@ esac
 plugin_root="${HOME}/.terraform.d/plugins/registry.terraform.io/arcusis/coolify/${VERSION}/${platform}"
 mkdir -p "${plugin_root}"
 
-_os_part="${platform%_*}"
-_arch_part="${platform#*_}"
-download_url="$(
-  curl -fsSL "https://registry.terraform.io/v1/providers/arcusis/coolify/${VERSION}/download/${_os_part}/${_arch_part}" \
-    | jq -r '.download_url'
-)"
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+patch_file="${repo_root}/beskid_infra/provider-patches/destination_uuid.patch"
+if [[ ! -f "${patch_file}" ]]; then
+  echo "Missing provider patch: ${patch_file}" >&2
+  exit 1
+fi
 
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "${tmpdir}"' EXIT
-curl -fsSL "${download_url}" -o "${tmpdir}/provider.zip"
-unzip -qo "${tmpdir}/provider.zip" -d "${tmpdir}"
-install -m 0755 "${tmpdir}"/terraform-provider-coolify* "${plugin_root}/terraform-provider-coolify_v${VERSION}"
 
-echo "Installed arcusis/coolify ${VERSION} for ${platform} at ${plugin_root}"
+git clone --depth 1 --branch "v${VERSION}" https://github.com/arcusis/terraform-provider-coolify.git "${tmpdir}/src" 2>/dev/null \
+  || git clone --depth 1 https://github.com/arcusis/terraform-provider-coolify.git "${tmpdir}/src"
+
+cd "${tmpdir}/src"
+git checkout "v${VERSION}" 2>/dev/null || true
+patch -p1 --forward < "${patch_file}"
+
+export CGO_ENABLED=0
+go build -o "${tmpdir}/terraform-provider-coolify" .
+
+install -m 0755 "${tmpdir}/terraform-provider-coolify" "${plugin_root}/terraform-provider-coolify_v${VERSION}"
+
+echo "Installed patched arcusis/coolify ${VERSION} (${platform}) at ${plugin_root}"

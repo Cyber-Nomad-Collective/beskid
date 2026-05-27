@@ -23,6 +23,7 @@ env:
   TF_VAR_coolify_endpoint: ${{ vars.COOLIFY_ENDPOINT }}
   TF_VAR_coolify_api_token: ${{ secrets.COOLIFY_API_TOKEN }}
   TF_VAR_server_uuid: ${{ vars.COOLIFY_SERVER_UUID }}
+  TF_VAR_destination_uuid: ${{ vars.COOLIFY_DESTINATION_UUID }}
   TF_VAR_deploy_openbao: "true"
   TF_VAR_instant_deploy: "true"
 
@@ -40,7 +41,11 @@ jobs:
         with:
           tofu_version: "1.9.0"
 
-      - name: Install Coolify provider (Terraform Registry)
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Install Coolify provider (patched for destination_uuid)
         run: ./scripts/ci/install-coolify-provider.sh
 
       - name: Resolve lane from branch
@@ -117,7 +122,11 @@ jobs:
         with:
           tofu_version: "1.9.0"
 
-      - name: Install Coolify provider (Terraform Registry)
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Install Coolify provider (patched for destination_uuid)
         run: ./scripts/ci/install-coolify-provider.sh
 
       - name: Resolve lane from branch
