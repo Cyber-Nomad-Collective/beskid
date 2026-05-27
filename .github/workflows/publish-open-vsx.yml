@@ -1,4 +1,4 @@
-# Open VSX publish (Nox + native Rust per platform; see ci/open_vsx.py).
+# Open VSX publish (native Rust per platform; see scripts/ci/open-vsx-publish.sh).
 name: Publish VS Code Extension to Open VSX
 
 on:
@@ -63,14 +63,8 @@ jobs:
         if: matrix.platform != 'darwin-x64'
         uses: dtolnay/rust-toolchain@stable
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install Nox
-        run: pip install -r ci/requirements.txt
-
       - name: Publish Open VSX
+        shell: bash
         env:
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
           BESKID_VSCODE_SUBMODULE_URL: https://github.com/Cyber-Nomad-Collective/beskid_vscode.git
@@ -79,4 +73,4 @@ jobs:
           OPENVSX_BIN_NAME: ${{ matrix.bin_name }}
           OPENVSX_RUST_TARGET: ${{ matrix.openvsx_rust_target }}
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
-        run: python -m nox --non-interactive -s open_vsx_publish
+        run: bash ./scripts/ci/open-vsx-publish.sh

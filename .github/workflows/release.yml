@@ -87,7 +87,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Build and push (${{ matrix.image }})
         uses: docker/build-push-action@v6
@@ -99,7 +99,7 @@ jobs:
             ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:${{ steps.tag.outputs.value }}
             ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:main
           build-args: |
-            NODE_AUTH_TOKEN=${{ matrix.node_auth && (secrets.NODE_AUTH_TOKEN != '' && secrets.NODE_AUTH_TOKEN || github.token) || '' }}
+            NODE_AUTH_TOKEN=${{ matrix.node_auth && secrets.NODE_AUTH_TOKEN || '' }}
 
   # Open VSX publishes via publish-open-vsx.yml (also on release:published).
 

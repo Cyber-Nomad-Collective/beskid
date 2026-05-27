@@ -6,7 +6,7 @@ local_manifest.xml
 /target/
 **/*.rs.bk
 obj/
-# Python venvs (local Nox / CI)
+# Python venvs
 .venv/
 # IDE/editor
 .vscode/

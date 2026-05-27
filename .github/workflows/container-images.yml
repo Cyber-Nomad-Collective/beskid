@@ -71,7 +71,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Docker metadata
         id: meta
@@ -93,4 +93,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            NODE_AUTH_TOKEN=${{ matrix.node_auth && (secrets.NODE_AUTH_TOKEN != '' && secrets.NODE_AUTH_TOKEN || github.token) || '' }}
+            NODE_AUTH_TOKEN=${{ matrix.node_auth && secrets.NODE_AUTH_TOKEN || '' }}
