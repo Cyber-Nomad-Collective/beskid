@@ -18,10 +18,12 @@ jobs:
     name: beskid-site
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/checkout-beskid
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: beskid_web_common
+
+      - name: Init submodules
+        run: ./scripts/ci/init-submodules.sh beskid_web_common
 
       - uses: ./.github/actions/setup-beskid-web
         with:
@@ -60,10 +62,12 @@ jobs:
     name: beskid-auth
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/checkout-beskid
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: beskid_web_common
+
+      - name: Init submodules
+        run: ./scripts/ci/init-submodules.sh beskid_web_common
 
       - uses: ./.github/actions/setup-beskid-web
 

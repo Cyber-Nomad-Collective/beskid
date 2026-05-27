@@ -20,9 +20,10 @@ jobs:
     name: tofu plan
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/checkout-beskid
-        with:
-          submodules: beskid_infra
+      - uses: actions/checkout@v4
+
+      - name: Init beskid_infra submodule
+        run: ./scripts/ci/init-submodules.sh beskid_infra
 
       - uses: opentofu/setup-opentofu@v1
         with:
@@ -71,9 +72,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
     steps:
-      - uses: ./.github/actions/checkout-beskid
-        with:
-          submodules: beskid_infra
+      - uses: actions/checkout@v4
+
+      - name: Init beskid_infra submodule
+        run: ./scripts/ci/init-submodules.sh beskid_infra
 
       - uses: opentofu/setup-opentofu@v1
         with:
