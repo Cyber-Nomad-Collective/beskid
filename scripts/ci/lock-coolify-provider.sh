@@ -17,6 +17,7 @@ for env_dir in "${repo_root}/beskid_infra/environments/production" "${repo_root}
   echo "Updating Coolify lock in ${env_dir}..."
   (
     cd "${env_dir}"
+    tofu init -input=false
     args=()
     for p in ${lock_platforms}; do
       args+=("-platform=${p}")
