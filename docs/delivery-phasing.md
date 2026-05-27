@@ -161,22 +161,28 @@ site+auth    pull-only     branch+env    +pckg DB      OpenBao
 - [ ] `beskid_pckg` — per-repo `container-images.yml` + Coolify pull (Postgres + EF migrations)
 - [ ] Staging DB isolation for pckg
 
-### Phase 5: OpenTofu + OpenBao (optional depth)
+### Phase 5: OpenTofu + OpenBao
 
-- [ ] `beskid_infra` — OpenTofu plan/apply via GitHub Environments
-- [ ] OpenBao KV paths for all services × environments
-- [ ] Coolify provider import (`tofu import`) for existing resources
-- [ ] Secrets rotation: GitHub Secrets → OpenBao for CI; Coolify env → OpenBao for runtime
+- [x] `beskid_infra` scaffolded with `coolify_image_app` module
+- [x] Production and staging environments defined in OpenTofu
+- [x] CI: `.github/workflows/tofu-plan-apply.yml` in `beskid_infra`
+- [x] OpenBao KV paths documented for all services × environments (see [beskid_infra/docs/openbao-layout.md](https://github.com/Cyber-Nomad-Collective/beskid_infra/blob/main/docs/openbao-layout.md))
+- [x] Bootstrap guide: [beskid_infra/docs/bootstrap.md](https://github.com/Cyber-Nomad-Collective/beskid_infra/blob/main/docs/bootstrap.md)
+- [ ] `tofu import` existing Coolify resources (project, server, site app)
+- [ ] `tofu apply` to create `beskid-auth` app
+- [ ] Populate OpenBao with production secrets
+- [ ] Move Terraform state to remote backend
 
 ## CI ownership
 
 | Scope | Responsible | Tooling |
 |-------|-------------|---------|
-| Verify (lint, test, build) | GitHub Actions | `docs-site.yml`, `semgrep.yml`, `pckg-ci.yml`, `runtime-ci.yml` |
-| Build + push images | GitHub Actions | `container-images.yml` (GHCR) |
+| Verify (lint, test, audit) | GitHub Actions (`beskid`) | `docs-site.yml`, `semgrep.yml`, `pckg-ci.yml` |
+| Build + push images | GitHub Actions (`beskid`) | `container-images.yml` → GHCR |
+| **Infrastructure (apps, env)** | **OpenTofu** (`beskid_infra`) | `tofu-plan-apply.yml` → Coolify provider |
 | Runtime deploy | Coolify | Pull `ghcr.io/...:${IMAGE_TAG}`, run compose |
-| Secrets (until phase 5) | GitHub Secrets (CI) + Coolify env (runtime) | Manual rotation |
-| Secrets (after phase 5) | OpenBao KV | `beskid_infra` OpenTofu apply |
+| Secrets (runtime) | OpenBao KV | `beskid_infra` reads at apply time |
+| Secrets (CI) | GitHub Secrets | `NODE_AUTH_TOKEN`, `SEMGREP_APP_TOKEN` |
 
 ## Related docs
 

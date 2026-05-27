@@ -8,10 +8,11 @@ Application: **beskid site** (`Cyber-Nomad-Collective/beskid`).
 |-------|----------------|
 | **Drone CI** ([`.drone.yml`](../.drone.yml)) | PR: site verify; push `main`/`staging`: build and push `ghcr.io/cyber-nomad-collective/beskid-site` |
 | **GHCR** | Immutable images tagged `main`, `staging`, `sha-<commit>` |
-| **beskid_infra** | OpenTofu configures Coolify image apps; secrets from OpenBao |
+| **beskid_infra** | [OpenTofu](https://github.com/Cyber-Nomad-Collective/beskid_infra) configures Coolify image apps; secrets from OpenBao |
 | **Coolify** | Pull image only — **no** Git build-pack on the server |
 
-Deploy matrix and operator steps: [beskid_infra/docs/deploy-matrix.md](https://github.com/Cyber-Nomad-Collective/beskid_infra/blob/main/docs/deploy-matrix.md) (or local clone of `beskid_infra`).
+Deploy matrix and operator steps: [beskid_infra/docs/deploy-matrix.md](https://github.com/Cyber-Nomad-Collective/beskid_infra/blob/main/docs/deploy-matrix.md).
+Bootstrap guide: [beskid_infra/docs/bootstrap.md](https://github.com/Cyber-Nomad-Collective/beskid_infra/blob/main/docs/bootstrap.md).
 
 Tracker catalog task: `coolify-multi-service-deploy-matrix` (v0.4).
 
