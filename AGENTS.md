@@ -39,4 +39,4 @@
 
 ### Compiler
 
-- Mods: `Mod`/`CompilerMod`, compiler-sdk contracts, AOT-only; no language `meta` blocks; host composition is Rust-only. Compiler never in Beskid; `Option<T>` only; Rust AST canonical (`beskid_ast_reflect_gen`). **`beskid run`** uses `lower_resolved_input_with_pipeline` + full `ResolvedInput` like **`beskid build`**. `Module::Type::Variant` may be unimplemented—fixtures may use local enums. `.cursorignore` `!references/`; **bsharp** under `references/bsharp` for Rust style.
+- Mods: `Mod`/`CompilerMod`, compiler-sdk contracts, AOT-only; no language `meta` blocks; host composition is Rust-only. Compiler never in Beskid; `Option<T>` only; Rust AST canonical (`beskid_ast_reflect_gen`). **`beskid run`** uses `lower_resolved_input_with_pipeline` + full `ResolvedInput` like **`beskid build`**. `Module::Type::Variant` may be unimplemented—fixtures may use local enums.

@@ -85,8 +85,6 @@ cd beskid
 ./scripts/setup-environment.sh
 ```
 
-Optional formatter reference: `./scripts/setup-environment.sh --bsharp`. Details: [`scripts/README.md`](scripts/README.md).
-
 **Git submodules only:**
 
 ```bash
@@ -102,12 +100,6 @@ git submodule update --init --recursive compiler pckg beskid_vscode beskid_templ
 (`compiler` uses nested submodules for corelib; `--recursive` pulls those too.)
 
 Or run `./scripts/setup-environment.sh --submodules`.
-
-The optional `references/bsharp` formatter reference is **off by default** (it nests a large Roslyn checkout). Enable when needed:
-
-```bash
-git submodule update --init references/bsharp
-```
 
 **Repo-only fresh directory** (empty parent folder):
 

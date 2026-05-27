@@ -23,7 +23,3 @@
 [submodule "beskid_treesitter"]
 	path = beskid_treesitter
 	url = https://github.com/Cyber-Nomad-Collective/beskid_treesitter.git
-[submodule "references/bsharp"]
-	path = references/bsharp
-	url = https://github.com/pmikstacki/bsharp.git
-	update = none
