@@ -1,16 +1,21 @@
-# GitHub Actions (disabled)
+# GitHub Actions (disabled quality/security workflows)
 
-CI moved to **self-hosted [Drone CI](https://www.drone.io/)**. Pipelines live in each repo’s `.drone.yml`.
-
-Infrastructure (OpenTofu → Coolify): [Cyber-Nomad-Collective/beskid_infra](https://github.com/Cyber-Nomad-Collective/beskid_infra).
+GitHub Actions remains the CI platform, but active pipelines are intentionally limited to **build/publish** lanes.
 
 These workflow files are kept for reference only. They are **not** executed while they remain in this folder (GitHub only runs `.github/workflows/`).
 
-| Former workflow | Replaced by |
-|-----------------|-------------|
-| `docs-site.yml` | `beskid` `.drone.yml` → `site-verify` |
-| `pckg-ci.yml` | Drone on `beskid` / `beskid_pckg` (migrate when ready) |
-| `runtime-ci.yml`, `platform-spec-contracts.yml`, `security-audits.yml` | Drone (to be added). `security-audits.yml` replaced by `semgrep.yml` in active workflows. |
-| `publish-open-vsx.yml` | Drone on `beskid_vscode` (to be added) |
+## Active policy
 
-Re-enable Actions only if Drone is unavailable; do not run both in parallel on the same branches.
+- Keep build/publish workflows active in `.github/workflows/`.
+- Do not run quality/test/security checks as required CI gates in pipelines.
+- Run validation/quality checks manually or in separate non-gating flows when needed.
+
+| Disabled workflow | Reason |
+|-------------------|--------|
+| `docs-site.yml` | quality/verification lane |
+| `pckg-ci.yml` | test lane |
+| `runtime-ci.yml` | runtime test lane |
+| `platform-spec-contracts.yml` | contract verification lane |
+| `semgrep.yml` | security quality scan lane |
+
+`publish-open-vsx.yml` stays active because it is a release/build publishing workflow, not a quality gate.

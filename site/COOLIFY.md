@@ -2,13 +2,13 @@
 
 Application: **beskid site** (`Cyber-Nomad-Collective/beskid`).
 
-## Delivery model (GHCR + Drone + OpenTofu)
+## Delivery model (GHCR + GitHub Actions + OpenTofu)
 
 | Layer | Responsibility |
 |-------|----------------|
-| **Drone CI** ([`.drone.yml`](../.drone.yml)) | PR: site verify; push `main`/`staging`: build and push `ghcr.io/cyber-nomad-collective/beskid-site` |
+| **GitHub Actions** (`.github/workflows/container-images.yml`) | Push `main`/`staging`: build and push `ghcr.io/cyber-nomad-collective/beskid-site` |
 | **GHCR** | Immutable images tagged `main`, `staging`, `sha-<commit>` |
-| **beskid_infra** | [OpenTofu](https://github.com/Cyber-Nomad-Collective/beskid_infra) configures Coolify image apps; secrets from OpenBao |
+| **beskid_infra** | [OpenTofu](https://github.com/Cyber-Nomad-Collective/beskid_infra) configures Coolify image apps and env/project resources; secrets from OpenBao |
 | **Coolify** | Pull image only — **no** Git build-pack on the server |
 
 Deploy matrix and operator steps: [beskid_infra/docs/deploy-matrix.md](https://github.com/Cyber-Nomad-Collective/beskid_infra/blob/main/docs/deploy-matrix.md).
@@ -29,12 +29,12 @@ image: ghcr.io/cyber-nomad-collective/beskid-site:${IMAGE_TAG}
 
 ## Submodule / build context (legacy build path)
 
-If you still build on Coolify from Git (not recommended after cutover), the docs image requires `beskid_web_common` at build time. Prefer **Drone → GHCR** instead.
+If you still build on Coolify from Git (not recommended after cutover), the docs image requires `beskid_web_common` at build time. Prefer **GitHub Actions → GHCR** instead.
 
 1. Submodule pointers on `main` must be shallow-reachable for any Git-based build.
 2. Docs build needs `beskid_web_common` checked out.
-3. Prefer **non-shallow** clone when platform-spec git-meta needs full history (Drone uses `clone.depth: 0`).
-4. **`NODE_AUTH_TOKEN`** for Drone builds (OpenBao `secret/beskid/ci/build`) — not Coolify build secrets after migration.
+3. Prefer **non-shallow** clone when platform-spec git-meta needs full history (`fetch-depth: 0` in workflow).
+4. **`NODE_AUTH_TOKEN`** for GitHub Actions builds — not Coolify build secrets after migration.
 
 ## Runtime 404s
 
@@ -48,4 +48,4 @@ Container healthcheck: `wget -q --spider http://127.0.0.1/`. Public URL: `https:
 
 - [Beskid auth hub](auth/COOLIFY.md) — combined GitHub OAuth for Tracker, Nexus, and pckg
 - [Beskid Tracker](../beskid_tracker/COOLIFY.md)
-- [beskid_infra](https://github.com/Cyber-Nomad-Collective/beskid_infra) — Drone server compose, OpenTofu, OpenBao layout
+- [beskid_infra](https://github.com/Cyber-Nomad-Collective/beskid_infra) — OpenTofu + OpenBao layout

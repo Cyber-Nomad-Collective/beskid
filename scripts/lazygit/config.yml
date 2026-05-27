@@ -32,7 +32,7 @@ customCommands:
         title: 'Commit message (applied to each dirty repo)'
         key: 'Message'
         initialValue: ''
-    command: 'bash "$(git rev-parse --show-toplevel)/scripts/git-commit-push-recursive.sh" {{.Form.Message | quote}}'
+    command: 'SUPERROOT="$(git rev-parse --show-superproject-working-tree 2>/dev/null || true)"; if [ -z "$SUPERROOT" ]; then SUPERROOT="$(git rev-parse --show-toplevel)"; fi; bash "$SUPERROOT/scripts/git-commit-push-recursive.sh" {{.Form.Message | quote}}'
     output: terminal
 
   # Same workflow without push (commit only).
@@ -43,7 +43,7 @@ customCommands:
       - type: 'input'
         title: 'Commit message'
         key: 'Message'
-    command: 'bash "$(git rev-parse --show-toplevel)/scripts/git-commit-push-recursive.sh" --no-push {{.Form.Message | quote}}'
+    command: 'SUPERROOT="$(git rev-parse --show-superproject-working-tree 2>/dev/null || true)"; if [ -z "$SUPERROOT" ]; then SUPERROOT="$(git rev-parse --show-toplevel)"; fi; bash "$SUPERROOT/scripts/git-commit-push-recursive.sh" --no-push {{.Form.Message | quote}}'
     output: terminal
 
   # Dry-run from anywhere (shows status per repo).
@@ -55,7 +55,7 @@ customCommands:
         title: 'Label for dry-run (optional)'
         key: 'Message'
         initialValue: 'dry-run'
-    command: 'bash "$(git rev-parse --show-toplevel)/scripts/git-commit-push-recursive.sh" --dry-run {{.Form.Message | quote}}'
+    command: 'SUPERROOT="$(git rev-parse --show-superproject-working-tree 2>/dev/null || true)"; if [ -z "$SUPERROOT" ]; then SUPERROOT="$(git rev-parse --show-toplevel)"; fi; bash "$SUPERROOT/scripts/git-commit-push-recursive.sh" --dry-run {{.Form.Message | quote}}'
     output: terminal
 
   # Native git: push superproject and on-demand submodule commits (no staging).

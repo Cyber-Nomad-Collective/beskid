@@ -19,7 +19,7 @@ mkdir -p ~/.config/lazygit
 cp scripts/lazygit/config.yml ~/.config/lazygit/config.yml
 ```
 
-Run `lazygit` from the Beskid superrepo root (`/path/to/beskid`).
+Run `lazygit` anywhere inside the Beskid git tree. `P`/`C`/`D` resolve the superrepo root automatically, so invoking from a submodule still uses `scripts/git-commit-push-recursive.sh` from the top-level repo.
 
 ## Keybindings (custom)
 

@@ -2,11 +2,11 @@
 
 Application: **beskid auth** (`Cyber-Nomad-Collective/beskid`).
 
-## Delivery model (GHCR + Drone + OpenTofu)
+## Delivery model (GHCR + GitHub Actions + OpenTofu)
 
 | Layer | Responsibility |
 |-------|----------------|
-| **Drone CI** ([`.drone.yml`](../../.drone.yml)) | Push `main`/`staging`: `ghcr.io/cyber-nomad-collective/beskid-auth` |
+| **GitHub Actions** (`.github/workflows/container-images.yml`) | Push `main`/`staging`: `ghcr.io/cyber-nomad-collective/beskid-auth` |
 | **beskid_infra** | Staging pilot and production apps via `modules/coolify_image_app`; secrets from `secret/beskid/{staging,production}/auth` |
 | **Coolify** | Image-only — [`docker-compose.yml`](docker-compose.yml) (GHCR pull) |
 
