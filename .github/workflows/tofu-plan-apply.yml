@@ -30,6 +30,9 @@ jobs:
         with:
           tofu_version: "1.9.0"
 
+      - name: Install Coolify provider (Terraform Registry)
+        run: ./scripts/ci/install-coolify-provider.sh
+
       - name: Resolve lane from branch
         id: lane
         shell: bash
@@ -81,6 +84,9 @@ jobs:
       - uses: opentofu/setup-opentofu@v1
         with:
           tofu_version: "1.9.0"
+
+      - name: Install Coolify provider (Terraform Registry)
+        run: ./scripts/ci/install-coolify-provider.sh
 
       - name: Resolve lane from branch
         id: lane
