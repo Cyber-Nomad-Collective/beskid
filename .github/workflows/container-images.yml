@@ -1,0 +1,90 @@
+name: Container images
+
+on:
+  push:
+    branches: [main, staging]
+    paths:
+      - 'site/website/**'
+      - 'site/auth/**'
+      - 'beskid_web_common/**'
+      - 'package.json'
+      - 'bun.lock'
+      - '.npmrc'
+      - '.github/workflows/container-images.yml'
+      - 'site/website/Dockerfile'
+      - 'site/auth/Dockerfile'
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/cyber-nomad-collective
+
+jobs:
+  build-site:
+    name: beskid-site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Checkout beskid_web_common submodule
+        run: git -c protocol.version=2 submodule update --init --depth 1 beskid_web_common
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Docker metadata (site)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_PREFIX }}/beskid-site
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix=sha-,format=short
+      - name: Build and push site image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: site/website/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            NODE_AUTH_TOKEN=${{ secrets.NODE_AUTH_TOKEN }}
+
+  build-auth:
+    name: beskid-auth
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Checkout beskid_web_common submodule
+        run: git -c protocol.version=2 submodule update --init --depth 1 beskid_web_common
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Docker metadata (auth)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_PREFIX }}/beskid-auth
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix=sha-,format=short
+      - name: Build and push auth image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: site/auth/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

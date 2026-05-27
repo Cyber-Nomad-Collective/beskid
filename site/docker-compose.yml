@@ -1,3 +1,4 @@
+# Local / build-from-source compose. For GHCR image-only Coolify deploy use docker-compose.coolify.yml.
 services:
   website:
     build:

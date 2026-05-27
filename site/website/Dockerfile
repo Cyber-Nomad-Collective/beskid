@@ -1,6 +1,7 @@
-FROM oven/bun:1.3.14 AS build
+FROM oven/bun:latest AS build
 
 # Astro 6 requires Node ≥22.12 (match .github/workflows/docs-site.yml).
+# Bun version tracks oven/bun:latest; local/CI use packageManager + setup-beskid-web (currently 1.3.14).
 RUN apt-get update \
   && apt-get install -y ca-certificates curl gnupg \
   && mkdir -p /etc/apt/keyrings \
