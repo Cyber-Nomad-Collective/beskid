@@ -58,7 +58,9 @@ jobs:
 
       - name: Coolify project (production creates Beskid)
         if: steps.lane.outputs.name == 'production'
-        run: echo "TF_VAR_manage_coolify_project=true" >> "${GITHUB_ENV}"
+        run: |
+          echo "TF_VAR_manage_coolify_project=true" >> "${GITHUB_ENV}"
+          echo "TF_VAR_manage_environment=false" >> "${GITHUB_ENV}"
 
       - name: Coolify project (staging resolves Beskid UUID)
         if: steps.lane.outputs.name == 'staging'
@@ -133,7 +135,9 @@ jobs:
 
       - name: Coolify project (production creates Beskid)
         if: steps.lane.outputs.name == 'production'
-        run: echo "TF_VAR_manage_coolify_project=true" >> "${GITHUB_ENV}"
+        run: |
+          echo "TF_VAR_manage_coolify_project=true" >> "${GITHUB_ENV}"
+          echo "TF_VAR_manage_environment=false" >> "${GITHUB_ENV}"
 
       - name: Coolify project (staging resolves Beskid UUID)
         if: steps.lane.outputs.name == 'staging'
