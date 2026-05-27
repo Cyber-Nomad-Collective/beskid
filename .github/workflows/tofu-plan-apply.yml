@@ -9,6 +9,7 @@ permissions:
   contents: read
 
 env:
+  TF_CLI_CONFIG_FILE: ${{ github.workspace }}/beskid_infra/terraform.tofurc
   TF_VAR_coolify_endpoint: ${{ vars.COOLIFY_ENDPOINT }}
   TF_VAR_coolify_api_token: ${{ vars.COOLIFY_API_TOKEN }}
   TF_VAR_project_uuid: ${{ vars.COOLIFY_PROJECT_UUID }}
