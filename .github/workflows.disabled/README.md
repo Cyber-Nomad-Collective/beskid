@@ -10,7 +10,7 @@ These workflow files are kept for reference only. They are **not** executed whil
 |-----------------|-------------|
 | `docs-site.yml` | `beskid` `.drone.yml` → `site-verify` |
 | `pckg-ci.yml` | Drone on `beskid` / `beskid_pckg` (migrate when ready) |
-| `runtime-ci.yml`, `platform-spec-contracts.yml`, `security-audits.yml` | Drone (to be added) |
+| `runtime-ci.yml`, `platform-spec-contracts.yml`, `security-audits.yml` | Drone (to be added). `security-audits.yml` replaced by `semgrep.yml` in active workflows. |
 | `publish-open-vsx.yml` | Drone on `beskid_vscode` (to be added) |
 
 Re-enable Actions only if Drone is unavailable; do not run both in parallel on the same branches.

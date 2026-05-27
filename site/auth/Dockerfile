@@ -1,19 +1,15 @@
 FROM oven/bun:latest AS build
 
-WORKDIR /app/site/auth
+WORKDIR /app
 
-COPY site/auth/package.json ./
-COPY beskid_web_common/packages/beskid-auth-client/package.json /app/beskid_web_common/packages/beskid-auth-client/
-COPY beskid_web_common/packages/beskid-ui-react/package.json /app/beskid_web_common/packages/beskid-ui-react/
+# Copy all source so workspace file: links and tsconfig base resolve correctly.
+COPY beskid_web_common ./beskid_web_common
+COPY site/auth ./site/auth
 
-RUN bun install
-
-COPY site/auth/ ./
-COPY beskid_web_common/packages/beskid-auth-client/ /app/beskid_web_common/packages/beskid-auth-client/
-COPY beskid_web_common/packages/beskid-ui-react/ /app/beskid_web_common/packages/beskid-ui-react/
+RUN cd site/auth && bun install
 
 ENV SKIP_ENV_VALIDATION=1
-RUN bun run build
+RUN cd site/auth && bun run build
 
 FROM oven/bun:latest AS runtime
 

@@ -8,4 +8,7 @@
 compiler/
 pckg/
 beskid_vscode/
+beskid_tracker/
+beskid_nexus/
+beskid_treesitter/
 references/
