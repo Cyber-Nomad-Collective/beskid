@@ -6,9 +6,13 @@ on:
     branches: [main, stg]
     paths:
       - 'site/**'
+      - 'beskid_web_common'
       - 'beskid_web_common/**'
+      - 'beskid_tracker'
       - 'beskid_tracker/**'
+      - 'beskid_nexus'
       - 'beskid_nexus/**'
+      - 'pckg'
       - 'pckg/**'
       - 'beskid_infra'
       - 'beskid_infra/**'
@@ -22,9 +26,13 @@ on:
     branches: [main, stg]
     paths:
       - 'site/**'
+      - 'beskid_web_common'
       - 'beskid_web_common/**'
+      - 'beskid_tracker'
       - 'beskid_tracker/**'
+      - 'beskid_nexus'
       - 'beskid_nexus/**'
+      - 'pckg'
       - 'pckg/**'
       - 'beskid_infra'
       - 'beskid_infra/**'
