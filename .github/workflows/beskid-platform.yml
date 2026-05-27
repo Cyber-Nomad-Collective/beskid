@@ -37,4 +37,6 @@ jobs:
     needs: images
     if: always() && (needs.images.result == 'success' || needs.images.result == 'skipped')
     uses: ./.github/workflows/tofu-plan-apply.yml
+    with:
+      apply: ${{ github.event_name != 'pull_request' }}
     secrets: inherit

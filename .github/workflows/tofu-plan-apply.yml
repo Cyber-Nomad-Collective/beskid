@@ -1,9 +1,19 @@
-# OpenTofu: Coolify apps for site/auth/tracker/nexus/pckg (beskid_infra).
+# OpenTofu: OpenBao on Coolify + GHCR apps (beskid_infra).
 name: OpenTofu plan and apply
 
 on:
   workflow_dispatch:
+    inputs:
+      apply:
+        description: Run tofu apply after plan
+        type: boolean
+        default: true
   workflow_call:
+    inputs:
+      apply:
+        description: Run tofu apply after plan
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -11,10 +21,10 @@ permissions:
 env:
   TF_CLI_CONFIG_FILE: ${{ github.workspace }}/beskid_infra/terraform.tofurc
   TF_VAR_coolify_endpoint: ${{ vars.COOLIFY_ENDPOINT }}
-  TF_VAR_coolify_api_token: ${{ vars.COOLIFY_API_TOKEN }}
-  TF_VAR_project_uuid: ${{ vars.COOLIFY_PROJECT_UUID }}
+  TF_VAR_coolify_api_token: ${{ secrets.COOLIFY_API_TOKEN }}
   TF_VAR_server_uuid: ${{ vars.COOLIFY_SERVER_UUID }}
-  TF_VAR_openbao_enabled: ${{ vars.OPENBAO_EXPORT_ENABLED == 'true' && 'true' || 'false' }}
+  TF_VAR_deploy_openbao: "true"
+  TF_VAR_instant_deploy: "true"
 
 jobs:
   plan:
@@ -38,22 +48,42 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # shellcheck source=scripts/lib/git-tofu-env.sh
           source scripts/lib/git-tofu-env.sh
           echo "name=$(beskid_tofu_env_from_git)" >> "${GITHUB_OUTPUT}"
+          if [[ "$(beskid_tofu_env_from_git)" == "production" ]]; then
+            echo "openbao_addr=https://bao.beskid-lang.org" >> "${GITHUB_OUTPUT}"
+          else
+            echo "openbao_addr=https://stg-bao.beskid-lang.org" >> "${GITHUB_OUTPUT}"
+          fi
 
-      - name: Export OpenBao -> TF variables
-        if: vars.OPENBAO_EXPORT_ENABLED == 'true'
-        run: source beskid_infra/scripts/export-openbao-for-tofu.sh
+      - name: Coolify project (production creates Beskid)
+        if: steps.lane.outputs.name == 'production'
+        run: echo "TF_VAR_manage_coolify_project=true" >> "${GITHUB_ENV}"
+
+      - name: Coolify project (staging resolves Beskid UUID)
+        if: steps.lane.outputs.name == 'staging'
         env:
-          VAULT_ADDR: ${{ secrets.OPENBAO_ADDR }}
-          VAULT_TOKEN: ${{ secrets.OPENBAO_TOKEN }}
-
-      - name: OpenBao placeholders (plan without KV)
-        if: vars.OPENBAO_EXPORT_ENABLED != 'true'
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
         run: |
-          echo "TF_VAR_openbao_address=${VAULT_PLACEHOLDER:-https://openbao.invalid}" >> "${GITHUB_ENV}"
-          echo "TF_VAR_openbao_token=unused" >> "${GITHUB_ENV}"
+          chmod +x ./scripts/ci/resolve-coolify-project-uuid.sh
+          echo "TF_VAR_project_uuid=$(./scripts/ci/resolve-coolify-project-uuid.sh)" >> "${GITHUB_ENV}"
+
+      - name: Configure OpenBao TF variables
+        env:
+          OPENBAO_TOKEN: ${{ secrets.OPENBAO_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "TF_VAR_openbao_address=${{ steps.lane.outputs.openbao_addr }}" >> "${GITHUB_ENV}"
+          if [[ -n "${OPENBAO_TOKEN}" ]]; then
+            echo "TF_VAR_openbao_token=${OPENBAO_TOKEN}" >> "${GITHUB_ENV}"
+            echo "TF_VAR_openbao_enabled=true" >> "${GITHUB_ENV}"
+            echo "TF_VAR_seed_openbao_secrets=true" >> "${GITHUB_ENV}"
+          else
+            echo "TF_VAR_openbao_token=unused" >> "${GITHUB_ENV}"
+            echo "TF_VAR_openbao_enabled=false" >> "${GITHUB_ENV}"
+            echo "TF_VAR_seed_openbao_secrets=false" >> "${GITHUB_ENV}"
+          fi
 
       - name: tofu init
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
@@ -72,7 +102,7 @@ jobs:
   apply:
     name: tofu apply
     needs: plan
-    if: github.event_name == 'push' && vars.BESKID_TOFU_APPLY_ENABLED == 'true'
+    if: inputs.apply
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
     steps:
@@ -95,33 +125,40 @@ jobs:
           set -euo pipefail
           source scripts/lib/git-tofu-env.sh
           echo "name=$(beskid_tofu_env_from_git)" >> "${GITHUB_OUTPUT}"
+          if [[ "$(beskid_tofu_env_from_git)" == "production" ]]; then
+            echo "openbao_addr=https://bao.beskid-lang.org" >> "${GITHUB_OUTPUT}"
+          else
+            echo "openbao_addr=https://stg-bao.beskid-lang.org" >> "${GITHUB_OUTPUT}"
+          fi
 
-      - name: Export OpenBao -> TF variables
-        if: vars.OPENBAO_EXPORT_ENABLED == 'true'
-        run: source beskid_infra/scripts/export-openbao-for-tofu.sh
-        env:
-          VAULT_ADDR: ${{ secrets.OPENBAO_ADDR }}
-          VAULT_TOKEN: ${{ secrets.OPENBAO_TOKEN }}
+      - name: Coolify project (production creates Beskid)
+        if: steps.lane.outputs.name == 'production'
+        run: echo "TF_VAR_manage_coolify_project=true" >> "${GITHUB_ENV}"
 
-      - name: Configure Coolify host (Ansible)
-        if: vars.ANSIBLE_PREPARE_HOST == 'true'
+      - name: Coolify project (staging resolves Beskid UUID)
+        if: steps.lane.outputs.name == 'staging'
         env:
-          ANSIBLE_HOST_KEY_CHECKING: "False"
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
         run: |
-          sudo apt-get update -qq
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ansible openssh-client
-          mkdir -p .tmp
-          echo "${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}" > .tmp/id_ed25519
-          chmod 600 .tmp/id_ed25519
-          cat > .tmp/inventory.ini <<'EOF'
-          [coolify_hosts]
-          coolify ansible_host=${{ secrets.ANSIBLE_HOST }} ansible_user=${{ secrets.ANSIBLE_USER }}
-          EOF
-          ansible-playbook -i .tmp/inventory.ini \
-            -u "${{ secrets.ANSIBLE_USER }}" \
-            --private-key .tmp/id_ed25519 \
-            beskid_infra/ansible/playbooks/prepare-opentofu-host.yml \
-            -e coolify_install=false
+          chmod +x ./scripts/ci/resolve-coolify-project-uuid.sh
+          echo "TF_VAR_project_uuid=$(./scripts/ci/resolve-coolify-project-uuid.sh)" >> "${GITHUB_ENV}"
+
+      - name: Configure OpenBao TF variables
+        env:
+          OPENBAO_TOKEN: ${{ secrets.OPENBAO_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "TF_VAR_openbao_address=${{ steps.lane.outputs.openbao_addr }}" >> "${GITHUB_ENV}"
+          if [[ -n "${OPENBAO_TOKEN}" ]]; then
+            echo "TF_VAR_openbao_token=${OPENBAO_TOKEN}" >> "${GITHUB_ENV}"
+            echo "TF_VAR_openbao_enabled=true" >> "${GITHUB_ENV}"
+            echo "TF_VAR_seed_openbao_secrets=true" >> "${GITHUB_ENV}"
+          else
+            echo "TF_VAR_openbao_token=unused" >> "${GITHUB_ENV}"
+            echo "TF_VAR_openbao_enabled=false" >> "${GITHUB_ENV}"
+            echo "TF_VAR_seed_openbao_secrets=false" >> "${GITHUB_ENV}"
+          fi
 
       - name: Download plan
         uses: actions/download-artifact@v4
@@ -132,6 +169,20 @@ jobs:
       - name: tofu init
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
         run: tofu init -input=false
+
+      - name: Deploy OpenBao (targeted)
+        working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
+        run: |
+          tofu apply -input=false -auto-approve \
+            -target=module.stack.module.openbao[0] || true
+
+      - name: Initialize OpenBao
+        env:
+          OPENBAO_ADDR: ${{ steps.lane.outputs.openbao_addr }}
+          OPENBAO_UNSEAL_KEY: ${{ secrets.OPENBAO_UNSEAL_KEY }}
+        run: |
+          chmod +x beskid_infra/scripts/openbao-init-unseal.sh
+          eval "$(beskid_infra/scripts/openbao-init-unseal.sh)" || true
 
       - name: tofu apply
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}

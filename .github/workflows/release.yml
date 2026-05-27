@@ -77,6 +77,7 @@ jobs:
   infra-apply:
     name: OpenTofu apply (production)
     needs: images
-    if: vars.BESKID_TOFU_APPLY_ENABLED == 'true'
     uses: ./.github/workflows/tofu-plan-apply.yml
+    with:
+      apply: true
     secrets: inherit
