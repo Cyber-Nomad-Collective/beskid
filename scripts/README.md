@@ -15,6 +15,7 @@ Reads [`repo-deps.json`](../repo-deps.json), detects OS (`scripts/lib/detect-os.
 |-------|--------|
 | `infra` | git, jq, just, tofu, bao |
 | `beskid` | + lazygit, gh, bun, rust, dotnet |
+| `ops` | ansible |
 
 Library: `scripts/lib/{detect-os,deps-check,install-methods,output}.sh`.
 

@@ -5,6 +5,18 @@ BESKID_LOCAL_BIN="${BESKID_LOCAL_BIN:-${HOME}/.local/bin}"
 
 beskid_ensure_local_bin() {
   mkdir -p "${BESKID_LOCAL_BIN}"
+
+  # Guardrail: never write tool binaries into the git worktree.
+  # (This prevents accidental BESKID_LOCAL_BIN=./bin, which would leave `bin/` in-repo.)
+  local local_bin_abs repo_root
+  local_bin_abs="$(cd "${BESKID_LOCAL_BIN}" && pwd)"
+  repo_root="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+  if [[ -n "${repo_root}" ]]; then
+    case "${local_bin_abs}/" in
+      "${repo_root}/"*) die "Refusing BESKID_LOCAL_BIN inside repo: ${local_bin_abs} (set BESKID_LOCAL_BIN to e.g. ~/.local/bin)" ;;
+    esac
+  fi
+
   path_contains_dir "${BESKID_LOCAL_BIN}" || export PATH="${BESKID_LOCAL_BIN}:${PATH}"
 }
 

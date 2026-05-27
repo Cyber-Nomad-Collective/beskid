@@ -81,6 +81,29 @@ jobs:
           source beskid_infra/scripts/lib/git-tofu-env.sh
           echo "name=$(beskid_tofu_env_from_git)" >> "${GITHUB_OUTPUT}"
 
+      - name: Configure Coolify host (Ansible)
+        if: vars.ANSIBLE_PREPARE_HOST == 'true'
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "False"
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ansible openssh-client
+
+          mkdir -p .tmp
+          echo "${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}" > .tmp/id_ed25519
+          chmod 600 .tmp/id_ed25519
+
+          cat > .tmp/inventory.ini <<'EOF'
+          [coolify_hosts]
+          coolify ansible_host=${{ secrets.ANSIBLE_HOST }} ansible_user=${{ secrets.ANSIBLE_USER }}
+          EOF
+
+          ansible-playbook -i .tmp/inventory.ini \
+            -u "${{ secrets.ANSIBLE_USER }}" \
+            --private-key .tmp/id_ed25519 \
+            beskid_infra/ansible/playbooks/prepare-opentofu-host.yml \
+            -e coolify_install=false
+
       - name: download plan
         uses: actions/download-artifact@v4
         with:

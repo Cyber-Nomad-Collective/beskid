@@ -7,6 +7,10 @@
       "description": "OpenTofu / OpenBao / Just (beskid_infra operators)",
       "tools": ["git", "jq", "just", "tofu", "bao"]
     },
+    "ops": {
+      "description": "Operator tooling (Ansible for host bootstrap)",
+      "tools": ["ansible"]
+    },
     "beskid": {
       "description": "Full superrepo development",
       "tools": [
@@ -207,6 +211,20 @@
         "darwin": [{ "method": "homebrew", "formula": "bun" }],
         "linux": [{ "method": "bun_installer" }],
         "windows": [{ "method": "bun_installer" }]
+      }
+    },
+    "ansible": {
+      "description": "Ansible (for provisioning hosts before OpenTofu)",
+      "bins": ["ansible-playbook"],
+      "version_cmd": ["ansible-playbook", "--version"],
+      "install": {
+        "darwin": [{ "method": "homebrew", "formula": "ansible" }],
+        "linux": [
+          { "method": "apt", "packages": ["ansible"] },
+          { "method": "dnf", "packages": ["ansible"] },
+          { "method": "pacman", "packages": ["ansible"] }
+        ],
+        "windows": []
       }
     }
   }
