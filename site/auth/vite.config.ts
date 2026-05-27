@@ -12,6 +12,23 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
 	resolve: {
 		tsconfigPaths: true,
+		dedupe: [
+			"class-variance-authority",
+			"clsx",
+			"tailwind-merge",
+			"radix-ui",
+			"lucide-react",
+			"next-themes",
+			"sonner",
+			"vaul",
+			"cmdk",
+			"react-day-picker",
+			"react-resizable-panels",
+			"embla-carousel-react",
+			"recharts",
+			"input-otp",
+			"@base-ui/react",
+		],
 		alias: {
 			"@beskid/ui-react": path.resolve(
 				rootDir,
