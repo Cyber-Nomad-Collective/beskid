@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nManual semver drift.\n\n## Decision\n\nRegistry-assigned publish versions in routine flows.\n\n## Consequences\n\nUI shows server version.\n\n## Verification anchors\n\npublish API tests.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nManual semver drift.\n\n## Decision\n\nRegistry-assigned publish versions in routine flows.\n\n## Consequences\n\nUI shows server version.\n\n## Verification anchors\n\npublish API tests.\n",
   "layoutJson": null
 }

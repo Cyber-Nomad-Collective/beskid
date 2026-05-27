@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nA single Console IO type obscures direction and syscall descriptors.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Modules | `System.Input`, `System.Output`, `System.Error` |\n| Forbidden | Monolithic console IO type for standard streams |\n\n## Consequences\n\nEach module binds one `StandardStream` descriptor; cross-stream APIs stay separate.\n\n## Verification anchors\n\n`packages/runtime/src/System/Input.bd`, `Output.bd`, `Error.bd`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nA single Console IO type obscures direction and syscall descriptors.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Modules | `System.Input`, `System.Output`, `System.Error` |\n| Forbidden | Monolithic console IO type for standard streams |\n\n## Consequences\n\nEach module binds one `StandardStream` descriptor; cross-stream APIs stay separate.\n\n## Verification anchors\n\n`packages/runtime/src/System/Input.bd`, `Output.bd`, `Error.bd`.\n",
   "layoutJson": null
 }

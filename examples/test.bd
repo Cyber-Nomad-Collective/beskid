@@ -1,9 +1,0 @@
-i32 main() {
-    i32 x = 1;
-    i32 mut y = 2;
-    
-    if x < y {
-        return x + y;
-    }
-    return 0;
-}

@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nExtension UX.\n\n## Decision\n\nSingle focus drives outline and packages.\n\n## Consequences\n\nbeskid_vscode runtime.\n\n## Verification anchors\n\npackage.json; runtime tests.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nExtension UX.\n\n## Decision\n\nSingle focus drives outline and packages.\n\n## Consequences\n\nbeskid_vscode runtime.\n\n## Verification anchors\n\npackage.json; runtime tests.\n",
   "layoutJson": null
 }

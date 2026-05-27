@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLanguage-meta evaluation articles previously mixed informal notes with hub requirements.\n\n## Decision\n\nThis feature hub **must** own normative MUST/SHOULD contract text. Sibling articles **must not** redefine hub requirements and **should** link here for authority.\n\n## Consequences\n\nEditors consolidate conflicting rules on the hub; articles carry detail and examples only.\n\n## Verification anchors\n\n/platform-spec/language-meta/evaluation/fibers-and-spawn/; `site/website` trudoc verify.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLanguage-meta evaluation articles previously mixed informal notes with hub requirements.\n\n## Decision\n\nThis feature hub **must** own normative MUST/SHOULD contract text. Sibling articles **must not** redefine hub requirements and **should** link here for authority.\n\n## Consequences\n\nEditors consolidate conflicting rules on the hub; articles carry detail and examples only.\n\n## Verification anchors\n\n/platform-spec/language-meta/evaluation/fibers-and-spawn/; `site/website` trudoc verify.\n",
   "layoutJson": null
 }

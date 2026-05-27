@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nComposition articles and compiler notes mixed informal wiring guidance with normative host syntax.\n\n## Decision\n\nThis feature hub **must** own normative MUST/SHOULD contract text. Sibling articles **must not** redefine hub requirements and **should** link here for authority.\n\n## Consequences\n\nFAQ locked decisions migrate to ADRs; articles retain examples and troubleshooting tables only.\n\n## Verification anchors\n\n/platform-spec/language-meta/composition/dependency-injection/; `verify:trudoc`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nComposition articles and compiler notes mixed informal wiring guidance with normative host syntax.\n\n## Decision\n\nThis feature hub **must** own normative MUST/SHOULD contract text. Sibling articles **must not** redefine hub requirements and **should** link here for authority.\n\n## Consequences\n\nFAQ locked decisions migrate to ADRs; articles retain examples and troubleshooting tables only.\n\n## Verification anchors\n\n/platform-spec/language-meta/composition/dependency-injection/; `verify:trudoc`.\n",
   "layoutJson": null
 }

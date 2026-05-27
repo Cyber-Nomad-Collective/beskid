@@ -30,7 +30,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n### A new rule compiles, but docs sync fails. Why?\n\nThe rule likely emits a kind not represented in the documented registry mapping. Update both source and docs references together.\n\n### Can I rename an existing diagnostic code?\n\nTreat code renames as migrations, not inline edits. Preserve compatibility notes and update downstream filters before removing old identifiers.\n\n### Where do I debug code mismatch between CLI and editor?\n\nStart with `diagnostic_kinds.rs`, then check conversion in analysis services and LSP diagnostics adapters to ensure code strings are passed through unchanged.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n### A new rule compiles, but docs sync fails. Why?\n\nThe rule likely emits a kind not represented in the documented registry mapping. Update both source and docs references together.\n\n### Can I rename an existing diagnostic code?\n\nTreat code renames as migrations, not inline edits. Preserve compatibility notes and update downstream filters before removing old identifiers.\n\n### Where do I debug code mismatch between CLI and editor?\n\nStart with `diagnostic_kinds.rs`, then check conversion in analysis services and LSP diagnostics adapters to ensure code strings are passed through unchanged.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

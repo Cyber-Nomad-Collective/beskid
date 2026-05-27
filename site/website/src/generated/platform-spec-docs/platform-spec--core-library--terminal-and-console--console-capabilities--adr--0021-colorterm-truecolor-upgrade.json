@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nModern terminals advertise truecolor via COLORTERM without breaking NO_COLOR.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Probe | `COLORTERM` set → `TrueColor` when color not stripped |\n| `FORCE_COLOR` | May enable emission on non-TTY stdout |\n\n## Consequences\n\nEffectiveColorModel reflects env probes before SGR downgrade (see D-CORE-TERM-0003).\n\n## Verification anchors\n\n`CapabilitiesTests.bd`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nModern terminals advertise truecolor via COLORTERM without breaking NO_COLOR.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Probe | `COLORTERM` set → `TrueColor` when color not stripped |\n| `FORCE_COLOR` | May enable emission on non-TTY stdout |\n\n## Consequences\n\nEffectiveColorModel reflects env probes before SGR downgrade (see D-CORE-TERM-0003).\n\n## Verification anchors\n\n`CapabilitiesTests.bd`.\n",
   "layoutJson": null
 }

@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHeader-style `Extern` on `mod` was considered for v0.3 but increases parser and ABI ambiguity.\n\n## Decision\n\n**`Extern` on `mod`** is **not** part of v0.3 Standard. Authors **must** use **`contract`** blocks with method signatures ending in **`;`**.\n\n## Consequences\n\nFuture promotion requires a dedicated ADR and profile conformance tests.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/ffi-and-extern/ v0.3 scope section.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHeader-style `Extern` on `mod` was considered for v0.3 but increases parser and ABI ambiguity.\n\n## Decision\n\n**`Extern` on `mod`** is **not** part of v0.3 Standard. Authors **must** use **`contract`** blocks with method signatures ending in **`;`**.\n\n## Consequences\n\nFuture promotion requires a dedicated ADR and profile conformance tests.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/ffi-and-extern/ v0.3 scope section.\n",
   "layoutJson": null
 }

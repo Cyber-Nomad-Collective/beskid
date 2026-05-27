@@ -30,7 +30,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n### Why does one syntax error produce many diagnostics?\n\nLook for missing parser recovery boundaries. A single malformed token can cascade if parsing keeps consuming nodes with shifted spans.\n\n### Where should I add a new language form first?\n\nStart in `beskid.pest`, then add syntax node mapping, then update resolver/analysis consumers. Skipping syntax mapping leads to unresolved or partially shaped nodes.\n\n### How do I know if a bug is parser or semantic?\n\nIf syntax nodes are malformed or missing fields, fix parser/syntax first. If nodes are correct but rule checks fail, continue in `analysis/rules` or resolver passes.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n### Why does one syntax error produce many diagnostics?\n\nLook for missing parser recovery boundaries. A single malformed token can cascade if parsing keeps consuming nodes with shifted spans.\n\n### Where should I add a new language form first?\n\nStart in `beskid.pest`, then add syntax node mapping, then update resolver/analysis consumers. Skipping syntax mapping leads to unresolved or partially shaped nodes.\n\n### How do I know if a bug is parser or semantic?\n\nIf syntax nodes are malformed or missing fields, fix parser/syntax first. If nodes are correct but rule checks fail, continue in `analysis/rules` or resolver passes.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

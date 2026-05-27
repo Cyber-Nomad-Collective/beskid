@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nParallel GC mutators require write barriers not ready for initial ship.\n\n## Decision\n\n| Phase | Rule |\n| --- | --- |\n| A (ship) | Many fibers, **one GC mutator**; `gc_write_barrier` no-op |\n| B (documented) | Parallel mutators + real barriers; no corelib API break |\n\n## Consequences\n\nScheduler and memory specs must stay consistent with phase A barriers.\n\n## Verification anchors\n\nRuntime GC tests; memory-and-gc-runtime-contract feature.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nParallel GC mutators require write barriers not ready for initial ship.\n\n## Decision\n\n| Phase | Rule |\n| --- | --- |\n| A (ship) | Many fibers, **one GC mutator**; `gc_write_barrier` no-op |\n| B (documented) | Parallel mutators + real barriers; no corelib API break |\n\n## Consequences\n\nScheduler and memory specs must stay consistent with phase A barriers.\n\n## Verification anchors\n\nRuntime GC tests; memory-and-gc-runtime-contract feature.\n",
   "layoutJson": null
 }

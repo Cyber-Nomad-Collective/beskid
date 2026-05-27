@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nConsumers need one contract.\n\n## Decision\n\nHub owns Project.proj normative text.\n\n## Consequences\n\nMod/Template on hub.\n\n## Verification anchors\n\nmanifest tests.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nConsumers need one contract.\n\n## Decision\n\nHub owns Project.proj normative text.\n\n## Consequences\n\nMod/Template on hub.\n\n## Verification anchors\n\nmanifest tests.\n",
   "layoutJson": null
 }

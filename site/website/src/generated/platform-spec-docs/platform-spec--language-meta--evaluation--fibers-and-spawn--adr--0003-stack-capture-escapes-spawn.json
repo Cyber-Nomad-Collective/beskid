@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nMoving stack references into another fiber breaks the memory model and GC rooting assumptions.\n\n## Decision\n\nClosure captures that would leak stack references across fibers **must** be rejected with diagnostic **`StackReferenceEscapesSpawn`** (compile error).\n\n## Consequences\n\nAuthors pass data through `Channel<T>` or other approved sharing; runtime does not repair invalid captures.\n\n## Verification anchors\n\n`compiler/crates/beskid_analysis/` capture analysis; [Memory and references](/platform-spec/language-meta/memory-model/memory-and-references/).\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nMoving stack references into another fiber breaks the memory model and GC rooting assumptions.\n\n## Decision\n\nClosure captures that would leak stack references across fibers **must** be rejected with diagnostic **`StackReferenceEscapesSpawn`** (compile error).\n\n## Consequences\n\nAuthors pass data through `Channel<T>` or other approved sharing; runtime does not repair invalid captures.\n\n## Verification anchors\n\n`compiler/crates/beskid_analysis/` capture analysis; [Memory and references](/platform-spec/language-meta/memory-model/memory-and-references/).\n",
   "layoutJson": null
 }

@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCompiler mods need a frozen composition snapshot but must not mutate app graphs.\n\n## Decision\n\nPipeline phase **`composition.resolve`** **must** run after **`semantic.snapshot`** and before **`mod.analyze`** (see [Stage ordering](/platform-spec/compiler/build-pipeline/stage-ordering/)).\n\n## Consequences\n\nMods query read-only snapshots; app graph build stays in analysis.\n\n## Verification anchors\n\n`compiler/crates/beskid_pipeline`; [Flow and algorithm](/platform-spec/language-meta/composition/dependency-injection/flow-and-algorithm/).\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCompiler mods need a frozen composition snapshot but must not mutate app graphs.\n\n## Decision\n\nPipeline phase **`composition.resolve`** **must** run after **`semantic.snapshot`** and before **`mod.analyze`** (see [Stage ordering](/platform-spec/compiler/build-pipeline/stage-ordering/)).\n\n## Consequences\n\nMods query read-only snapshots; app graph build stays in analysis.\n\n## Verification anchors\n\n`compiler/crates/beskid_pipeline`; [Flow and algorithm](/platform-spec/language-meta/composition/dependency-injection/flow-and-algorithm/).\n",
   "layoutJson": null
 }

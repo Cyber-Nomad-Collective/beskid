@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nScaffolding entrypoint.\n\n## Decision\n\nCommand **must** be `beskid new`.\n\n## Consequences\n\nSee project-templates ADRs.\n\n## Verification anchors\n\nCLI command table.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nScaffolding entrypoint.\n\n## Decision\n\nCommand **must** be `beskid new`.\n\n## Consequences\n\nSee project-templates ADRs.\n\n## Verification anchors\n\nCLI command table.\n",
   "layoutJson": null
 }

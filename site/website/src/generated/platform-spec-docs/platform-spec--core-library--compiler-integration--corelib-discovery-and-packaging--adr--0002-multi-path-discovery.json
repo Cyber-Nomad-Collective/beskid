@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nDevelopers run from superrepo, installed CLI, or CI without divergent roots.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| `BESKID_CORELIB_ROOT` | Points at root containing `beskid_corelib/Project.proj` |\n| Walk | Ancestor search for `compiler/corelib/beskid_corelib` |\n| Bundle | `beskid_cli` `ensure_corelib_ready` materializes embedded tree |\n\n## Consequences\n\nMissing roots fail fast with resolver diagnostics.\n\n## Verification anchors\n\n`corelib_runtime.rs`; `resolver.rs` tests.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nDevelopers run from superrepo, installed CLI, or CI without divergent roots.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| `BESKID_CORELIB_ROOT` | Points at root containing `beskid_corelib/Project.proj` |\n| Walk | Ancestor search for `compiler/corelib/beskid_corelib` |\n| Bundle | `beskid_cli` `ensure_corelib_ready` materializes embedded tree |\n\n## Consequences\n\nMissing roots fail fast with resolver diagnostics.\n\n## Verification anchors\n\n`corelib_runtime.rs`; `resolver.rs` tests.\n",
   "layoutJson": null
 }

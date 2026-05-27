@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nMultiple parser entrypoints caused span drift.\n\n## Decision\n\n`beskid.pest` and `beskid_analysis::parsing` are the authoritative parse surface; AST contracts derive spans from this pipeline only.\n\n## Consequences\n\nAlternate parsers must not ship without an ADR and conformance fixtures.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/beskid.pest`\n- `compiler/crates/beskid_analysis/src/parsing`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nMultiple parser entrypoints caused span drift.\n\n## Decision\n\n`beskid.pest` and `beskid_analysis::parsing` are the authoritative parse surface; AST contracts derive spans from this pipeline only.\n\n## Consequences\n\nAlternate parsers must not ship without an ADR and conformance fixtures.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/beskid.pest`\n- `compiler/crates/beskid_analysis/src/parsing`.\n",
   "layoutJson": null
 }

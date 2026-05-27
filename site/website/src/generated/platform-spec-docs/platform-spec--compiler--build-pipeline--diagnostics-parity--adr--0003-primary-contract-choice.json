@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nThis feature hub documents where diagnostics come from in CLI and LSP, and what differences are expected versus considered regressions.\n\n## Decision\n\nThe reference compiler **must** implement Diagnostics parity (CLI and LSP) as documented in this feature hub and its article bundle.\n\n## Consequences\n\nChanges require hub/ADR updates and verification anchor extensions.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/`\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nThis feature hub documents where diagnostics come from in CLI and LSP, and what differences are expected versus considered regressions.\n\n## Decision\n\nThe reference compiler **must** implement Diagnostics parity (CLI and LSP) as documented in this feature hub and its article bundle.\n\n## Consequences\n\nChanges require hub/ADR updates and verification anchor extensions.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/`\n",
   "layoutJson": null
 }

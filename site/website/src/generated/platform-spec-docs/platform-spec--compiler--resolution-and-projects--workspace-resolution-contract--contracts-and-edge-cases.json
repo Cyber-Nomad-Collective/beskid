@@ -32,7 +32,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- Missing or malformed project manifests must produce stable project diagnostics, not parser panics.\n- Unresolved dependencies must follow the selected policy and remain observable in command output.\n- Explicit source-file input takes precedence over workspace target inference.\n- Resolution must preserve deterministic target selection for identical manifests and lockfiles.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- Missing or malformed project manifests must produce stable project diagnostics, not parser panics.\n- Unresolved dependencies must follow the selected policy and remain observable in command output.\n- Explicit source-file input takes precedence over workspace target inference.\n- Resolution must preserve deterministic target selection for identical manifests and lockfiles.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRequiring `beskid build` on template sources slows authoring and blocks non-host template layouts.\n\n## Decision\n\nTemplate packages **need not** compile at the template project root. Tooling **must** validate via instantiation output builds.\n\n## Consequences\n\nFaster template iteration; CI runs instantiate-then-build on consumer output.\n\n## Verification anchors\n\n`beskid.templates.*` CI pipeline; planned `beskid_tests` template fixtures.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRequiring `beskid build` on template sources slows authoring and blocks non-host template layouts.\n\n## Decision\n\nTemplate packages **need not** compile at the template project root. Tooling **must** validate via instantiation output builds.\n\n## Consequences\n\nFaster template iteration; CI runs instantiate-then-build on consumer output.\n\n## Verification anchors\n\n`beskid.templates.*` CI pipeline; planned `beskid_tests` template fixtures.\n",
   "layoutJson": null
 }

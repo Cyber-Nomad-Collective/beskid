@@ -32,7 +32,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThe model separates planning from materialization:\n\n- `CompilePlan` describes target graph and dependency intent.\n- `PreparedProjectWorkspace` records concrete source roots under `obj/beskid/deps/src`; these paths are **authoritative** for **[Program assembly](/platform-spec/compiler/build-pipeline/program-assembly/)** when present.\n- `WorkspacePrepareOptions` carries lock policy (`frozen`, `locked`).\n- `Project.lock` is the persisted snapshot used for repeatable resolution.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThe model separates planning from materialization:\n\n- `CompilePlan` describes target graph and dependency intent.\n- `PreparedProjectWorkspace` records concrete source roots under `obj/beskid/deps/src`; these paths are **authoritative** for **[Program assembly](/platform-spec/compiler/build-pipeline/program-assembly/)** when present.\n- `WorkspacePrepareOptions` carries lock policy (`frozen`, `locked`).\n- `Project.lock` is the persisted snapshot used for repeatable resolution.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

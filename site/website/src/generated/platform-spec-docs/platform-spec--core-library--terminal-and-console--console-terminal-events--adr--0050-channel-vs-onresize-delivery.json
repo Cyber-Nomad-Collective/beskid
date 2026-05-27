@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nResize notifications must integrate with fiber concurrency without OS-thread callbacks.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Cross-fiber | `PollResize` → `` `Channel<ConsoleMessage>` `` |\n| Same-fiber | `OnResize` event hub |\n\n## Consequences\n\nNo separate OS-thread callback API in v1.\n\n## Verification anchors\n\n`ConsoleMessageChannelTests.bd`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nResize notifications must integrate with fiber concurrency without OS-thread callbacks.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Cross-fiber | `PollResize` → `` `Channel<ConsoleMessage>` `` |\n| Same-fiber | `OnResize` event hub |\n\n## Consequences\n\nNo separate OS-thread callback API in v1.\n\n## Verification anchors\n\n`ConsoleMessageChannelTests.bd`.\n",
   "layoutJson": null
 }

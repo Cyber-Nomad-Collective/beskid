@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nInterop.Contracts primitives need a single C profile authority for tier-1 hosts.\n\n## Decision\n\nThis feature hub **must** own normative MUST/SHOULD for **C-compatible** foreign libraries. Sibling articles add detail without redefining hub MUST tables.\n\n## Consequences\n\nCranelift lowering and foreign library import tooling align to this profile.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/c-abi-profile/\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nInterop.Contracts primitives need a single C profile authority for tier-1 hosts.\n\n## Decision\n\nThis feature hub **must** own normative MUST/SHOULD for **C-compatible** foreign libraries. Sibling articles add detail without redefining hub MUST tables.\n\n## Consequences\n\nCranelift lowering and foreign library import tooling align to this profile.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/c-abi-profile/\n",
   "layoutJson": null
 }

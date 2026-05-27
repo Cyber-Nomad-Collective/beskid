@@ -27,7 +27,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThis article collects **examples** for **Incremental scheduling and determinism** (informative sketches aligned with contracts).\n\n## Example A — Minimal query\nA compile-time module reads a syntax attribute using the query API, then emits a diagnostic without mutating syntax.\n\n## Example B — Emitter sketch\nA contributor constructs a new method declaration through `Beskid.Compiler.Emit`, attaches trivia, and registers it with the incremental graph.\n\n> Executable snippets will track the reference implementation as mod host execution lands in the compiler; until then, treat these as specification fixtures.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThis article collects **examples** for **Incremental scheduling and determinism** (informative sketches aligned with contracts).\n\n## Example A — Minimal query\nA compile-time module reads a syntax attribute using the query API, then emits a diagnostic without mutating syntax.\n\n## Example B — Emitter sketch\nA contributor constructs a new method declaration through `Beskid.Compiler.Emit`, attaches trivia, and registers it with the incremental graph.\n\n> Executable snippets will track the reference implementation as mod host execution lands in the compiler; until then, treat these as specification fixtures.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

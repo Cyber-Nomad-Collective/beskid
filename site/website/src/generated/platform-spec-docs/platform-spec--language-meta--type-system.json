@@ -17,7 +17,7 @@
       "email": "pmikstacki@cybernomad.it"
     }
   },
-  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\n\n<SpecPageHeader\n\townerName=\"Piotr Mikstacki\"\n\townerEmail=\"pmikstacki@cybernomad.it\"\n\tsubmitterName=\"Piotr Mikstacki\"\n\tsubmitterEmail=\"pmikstacki@cybernomad.it\"\n/>\n\n<SpecSection title=\"Scope\" id=\"scope\">\nTypes, inference, dispatch, and algebraic data.\n</SpecSection>\n\n<SpecSection title=\"Feature index\" id=\"features\">\nUse the tiles below for normative **feature** contracts in this area.\n</SpecSection>\n\n<DomainTiles pathPrefix=\"platform-spec/language-meta/type-system\" heading=\"Features\" />\n",
+  "body": "\nimport SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';\nimport DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';\n\n<SpecPageHeader\n\townerName=\"Piotr Mikstacki\"\n\townerEmail=\"pmikstacki@cybernomad.it\"\n\tsubmitterName=\"Piotr Mikstacki\"\n\tsubmitterEmail=\"pmikstacki@cybernomad.it\"\n/>\n\n<SpecSection title=\"Scope\" id=\"scope\">\nTypes, inference, dispatch, and algebraic data.\n</SpecSection>\n\n<SpecSection title=\"Feature index\" id=\"features\">\nUse the tiles below for normative **feature** contracts in this area.\n</SpecSection>\n\n<DomainTiles pathPrefix=\"platform-spec/language-meta/type-system\" heading=\"Features\" />\n",
   "layoutJson": {
     "version": 1,
     "level": "area",

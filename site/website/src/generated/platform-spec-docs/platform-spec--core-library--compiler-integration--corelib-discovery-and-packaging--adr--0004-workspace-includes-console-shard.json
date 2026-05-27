@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nConsole/ANSI must ship with the aggregate package, not as an orphan.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Workspace | `compiler/corelib/Workspace.proj` lists `packages/console` |\n| Aggregate | `beskid_corelib` depends on `corelib_console` |\n\n## Consequences\n\nPublish CI packs the full workspace graph for registry corelib.\n\n## Verification anchors\n\n`Workspace.proj`; corelib CI publish job.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nConsole/ANSI must ship with the aggregate package, not as an orphan.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Workspace | `compiler/corelib/Workspace.proj` lists `packages/console` |\n| Aggregate | `beskid_corelib` depends on `corelib_console` |\n\n## Consequences\n\nPublish CI packs the full workspace graph for registry corelib.\n\n## Verification anchors\n\n`Workspace.proj`; corelib CI publish job.\n",
   "layoutJson": null
 }

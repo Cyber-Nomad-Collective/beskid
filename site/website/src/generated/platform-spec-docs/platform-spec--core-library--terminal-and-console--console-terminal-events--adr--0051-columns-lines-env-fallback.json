@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nNot all hosts expose Winsize ioctl; env vars are a portable fallback.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Order | Winsize ioctl then `COLUMNS`/`LINES` |\n| Parse | Discrete table, not full integer grammar in v1 |\n\n## Consequences\n\nOdd env values may clamp or ignore per contracts article.\n\n## Verification anchors\n\n`Platform/Terminal.bd` tests.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nNot all hosts expose Winsize ioctl; env vars are a portable fallback.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Order | Winsize ioctl then `COLUMNS`/`LINES` |\n| Parse | Discrete table, not full integer grammar in v1 |\n\n## Consequences\n\nOdd env values may clamp or ignore per contracts article.\n\n## Verification anchors\n\n`Platform/Terminal.bd` tests.\n",
   "layoutJson": null
 }

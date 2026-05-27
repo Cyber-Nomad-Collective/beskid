@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nSibling articles under this feature previously restated requirements in inconsistent forms.\n\n## Decision\n\nThis feature hub **owns** normative MUST/SHOULD contract text. Sibling articles **must not** redefine hub requirements and **should** link here for authority.\n\n## Consequences\n\nContract changes start on the hub or in linked ADRs, then propagate to articles and implementation anchors.\n\n## Verification anchors\n\n- `site/website/src/content/docs/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/index.mdx`\n- `article bundle under the same feature directory.`\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nSibling articles under this feature previously restated requirements in inconsistent forms.\n\n## Decision\n\nThis feature hub **owns** normative MUST/SHOULD contract text. Sibling articles **must not** redefine hub requirements and **should** link here for authority.\n\n## Consequences\n\nContract changes start on the hub or in linked ADRs, then propagate to articles and implementation anchors.\n\n## Verification anchors\n\n- `site/website/src/content/docs/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/index.mdx`\n- `article bundle under the same feature directory.`\n",
   "layoutJson": null
 }

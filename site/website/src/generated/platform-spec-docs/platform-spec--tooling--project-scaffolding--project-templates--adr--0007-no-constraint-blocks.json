@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nDSL delay.\n\n## Decision\n\nNo constraint blocks in schema.\n\n## Consequences\n\nSimpler v1.\n\n## Verification anchors\n\nReject constraints key.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nDSL delay.\n\n## Decision\n\nNo constraint blocks in schema.\n\n## Consequences\n\nSimpler v1.\n\n## Verification anchors\n\nReject constraints key.\n",
   "layoutJson": null
 }

@@ -32,7 +32,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nParity is defined at semantic meaning, not identical text formatting. CLI and LSP **must** use the same `ProgramAssembly` discovery mode policy (closure for build/run; workspace scan for IDE project diagnostics when a compile plan exists).\n\n- CLI parse diagnostics are path-anchored for user files.\n- Lowering parse diagnostics may use synthetic source names.\n- LSP has cold-parse and warm-snapshot paths but must align on rule outcomes.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nParity is defined at semantic meaning, not identical text formatting. CLI and LSP **must** use the same `ProgramAssembly` discovery mode policy (closure for build/run; workspace scan for IDE project diagnostics when a compile plan exists).\n\n- CLI parse diagnostics are path-anchored for user files.\n- Lowering parse diagnostics may use synthetic source names.\n- LSP has cold-parse and warm-snapshot paths but must align on rule outcomes.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

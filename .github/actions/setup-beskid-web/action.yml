@@ -27,7 +27,7 @@ runs:
       run: |
         set -euo pipefail
         test -f beskid_web_common/packages/trudoc/package.json
-        test -f beskid_web_common/packages/docs-ui/package.json
+        test -f beskid_web_common/packages/beskid-ui/package.json
         test -f site/website/scripts/run-trudoc.mjs
 
     - name: Install workspace dependencies

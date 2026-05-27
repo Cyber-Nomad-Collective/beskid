@@ -1,0 +1,21 @@
+services:
+  auth:
+    build:
+      context: ../..
+      dockerfile: site/auth/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    env_file:
+      - .env
+    volumes:
+      - auth-data:/app/site/auth/data/runtime
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8090/api/v1/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  auth-data:

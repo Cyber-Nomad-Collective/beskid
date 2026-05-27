@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nOne client story.\n\n## Decision\n\nHub owns HTTP and auth.\n\n## Consequences\n\nExtension defers.\n\n## Verification anchors\n\nbeskid_pckg; pckgClient.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nOne client story.\n\n## Decision\n\nHub owns HTTP and auth.\n\n## Consequences\n\nExtension defers.\n\n## Verification anchors\n\nbeskid_pckg; pckgClient.\n",
   "layoutJson": null
 }

@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nFFI symbols were discovered late in the engine.\n\n## Decision\n\nExtern imports are collected during lowering (`ExternImport` in codegen context) with ABI names from `beskid_abi`—not ad hoc engine scans.\n\n## Consequences\n\nLink-time binding stays aligned with language-meta C ABI profile.\n\n## Verification anchors\n\n- `compiler/crates/beskid_codegen/src/lowering/`\n- `compiler/crates/beskid_abi/src/symbols.rs`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nFFI symbols were discovered late in the engine.\n\n## Decision\n\nExtern imports are collected during lowering (`ExternImport` in codegen context) with ABI names from `beskid_abi`—not ad hoc engine scans.\n\n## Consequences\n\nLink-time binding stays aligned with language-meta C ABI profile.\n\n## Verification anchors\n\n- `compiler/crates/beskid_codegen/src/lowering/`\n- `compiler/crates/beskid_abi/src/symbols.rs`.\n",
   "layoutJson": null
 }

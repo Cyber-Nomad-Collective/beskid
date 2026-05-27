@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nUsers and CI expect no-color.org semantics for accessibility and logs.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| `NO_COLOR` | Non-empty value **must** force `ShouldEmitAnsi()` false |\n| Reference | [no-color.org](https://no-color.org/) |\n\n## Consequences\n\nCapability probes and markup render paths consult the same gate.\n\n## Verification anchors\n\n`CapabilitiesTests.bd`; `Console/Capabilities.bd`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nUsers and CI expect no-color.org semantics for accessibility and logs.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| `NO_COLOR` | Non-empty value **must** force `ShouldEmitAnsi()` false |\n| Reference | [no-color.org](https://no-color.org/) |\n\n## Consequences\n\nCapability probes and markup render paths consult the same gate.\n\n## Verification anchors\n\n`CapabilitiesTests.bd`; `Console/Capabilities.bd`.\n",
   "layoutJson": null
 }

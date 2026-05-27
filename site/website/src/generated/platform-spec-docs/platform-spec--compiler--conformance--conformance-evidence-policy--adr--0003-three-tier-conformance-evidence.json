@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRelease arguments lacked traceable proof layers.\n\n## Decision\n\nStandard conformance claims require analysis fixtures, doc tests, and e2e runtime evidence—mapped in hub verification articles.\n\n## Consequences\n\nA single test kind cannot satisfy Standard maturity alone.\n\n## Verification anchors\n\n- `compiler/crates/beskid_tests/`\n- `compiler/crates/beskid_e2e_tests/`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRelease arguments lacked traceable proof layers.\n\n## Decision\n\nStandard conformance claims require analysis fixtures, doc tests, and e2e runtime evidence—mapped in hub verification articles.\n\n## Consequences\n\nA single test kind cannot satisfy Standard maturity alone.\n\n## Verification anchors\n\n- `compiler/crates/beskid_tests/`\n- `compiler/crates/beskid_e2e_tests/`.\n",
   "layoutJson": null
 }

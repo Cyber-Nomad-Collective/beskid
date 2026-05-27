@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nStale snapshots.\n\n## Decision\n\nInvalidate on focus, manifest, lock; debounce watchers.\n\n## Consequences\n\nConfig notification.\n\n## Verification anchors\n\nsession store.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nStale snapshots.\n\n## Decision\n\nInvalidate on focus, manifest, lock; debounce watchers.\n\n## Consequences\n\nConfig notification.\n\n## Verification anchors\n\nsession store.\n",
   "layoutJson": null
 }

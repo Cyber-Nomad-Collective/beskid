@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHTTP scatter.\n\n## Decision\n\nHTTP via pckgClient.ts only.\n\n## Consequences\n\nShared auth.\n\n## Verification anchors\n\nGrep fetch in packages/.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHTTP scatter.\n\n## Decision\n\nHTTP via pckgClient.ts only.\n\n## Consequences\n\nShared auth.\n\n## Verification anchors\n\nGrep fetch in packages/.\n",
   "layoutJson": null
 }

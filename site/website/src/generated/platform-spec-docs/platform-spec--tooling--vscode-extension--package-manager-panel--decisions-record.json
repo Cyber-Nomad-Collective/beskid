@@ -27,7 +27,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose\n\nLegacy URL. See **`adr/`** and the hub **ADRs** tab for normative text.\n\n| adrId | Title |\n| --- | --- |\n| D-TOOL-VSC-0001 | [pckgClient boundary](./adr/0001-single-pckg-client-boundary/) |\n| D-TOOL-VSC-0002 | [CLI for fetch and lock](./adr/0002-cli-for-lock-mutations/) |\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose\n\nLegacy URL. See **`adr/`** and the hub **ADRs** tab for normative text.\n\n| adrId | Title |\n| --- | --- |\n| D-TOOL-VSC-0001 | [pckgClient boundary](./adr/0001-single-pckg-client-boundary/) |\n| D-TOOL-VSC-0002 | [CLI for fetch and lock](./adr/0002-cli-for-lock-mutations/) |\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

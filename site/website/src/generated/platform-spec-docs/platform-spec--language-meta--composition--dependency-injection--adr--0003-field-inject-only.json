@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nConstructor injection churns signatures across inheritance and complicates lowering.\n\n## Decision\n\n**`inject`** **must** apply to **fields** on ordinary types only. Constructor-parameter **`inject`** **must** be rejected (**E1712**).\n\n## Consequences\n\nUniform type headers and a single slot-lowering story for injected fields.\n\n## Verification anchors\n\n[Design model](/platform-spec/language-meta/composition/dependency-injection/design-model/); [FAQ](/platform-spec/language-meta/composition/dependency-injection/faq-and-troubleshooting/).\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nConstructor injection churns signatures across inheritance and complicates lowering.\n\n## Decision\n\n**`inject`** **must** apply to **fields** on ordinary types only. Constructor-parameter **`inject`** **must** be rejected (**E1712**).\n\n## Consequences\n\nUniform type headers and a single slot-lowering story for injected fields.\n\n## Verification anchors\n\n[Design model](/platform-spec/language-meta/composition/dependency-injection/design-model/); [FAQ](/platform-spec/language-meta/composition/dependency-injection/faq-and-troubleshooting/).\n",
   "layoutJson": null
 }

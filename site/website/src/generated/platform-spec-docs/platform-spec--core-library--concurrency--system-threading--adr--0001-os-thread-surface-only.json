@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCooperative and preemptive concurrency need distinct entry points.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| API | `System.Threading` is the only supported **preemptive** OS-thread module |\n| Fibers | Cooperative APIs stay in the concurrency package |\n\n## Consequences\n\nUser code must not implement fibers atop `Thread.Spawn`.\n\n## Verification anchors\n\n`packages/concurrency` System.Threading sources; runtime syscall docs.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCooperative and preemptive concurrency need distinct entry points.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| API | `System.Threading` is the only supported **preemptive** OS-thread module |\n| Fibers | Cooperative APIs stay in the concurrency package |\n\n## Consequences\n\nUser code must not implement fibers atop `Thread.Spawn`.\n\n## Verification anchors\n\n`packages/concurrency` System.Threading sources; runtime syscall docs.\n",
   "layoutJson": null
 }

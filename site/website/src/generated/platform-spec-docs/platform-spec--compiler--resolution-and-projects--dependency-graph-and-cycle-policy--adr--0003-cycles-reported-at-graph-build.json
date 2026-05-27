@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nSilent cycle handling broke workspace diagnostics parity.\n\n## Decision\n\nDirected cycles **must** be reported during graph build; `Mod` cycles **must** include mod id in the diagnostic path.\n\n## Consequences\n\nPolicy knobs (`error`, `warn`, permissive) select abort vs continue; default remains fail-closed for release builds.\n\n## Verification anchors\n\n- `beskid_analysis::projects::graph`\n- `compiler/crates/beskid_tests/src/projects/corelib/layout.rs`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nSilent cycle handling broke workspace diagnostics parity.\n\n## Decision\n\nDirected cycles **must** be reported during graph build; `Mod` cycles **must** include mod id in the diagnostic path.\n\n## Consequences\n\nPolicy knobs (`error`, `warn`, permissive) select abort vs continue; default remains fail-closed for release builds.\n\n## Verification anchors\n\n- `beskid_analysis::projects::graph`\n- `compiler/crates/beskid_tests/src/projects/corelib/layout.rs`.\n",
   "layoutJson": null
 }

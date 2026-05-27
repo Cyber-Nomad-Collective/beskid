@@ -42,7 +42,7 @@ relatedTopics:
     relation: Parent feature hub
 ---
 
-import SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';
+import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';
 
 <SpecAdrChrome />
 

@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nResolver bypass risk.\n\n## Decision\n\nfetch/lock must use CLI resolver.\n\n## Consequences\n\nMatches VSC-0002.\n\n## Verification anchors\n\nCLI integration.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nResolver bypass risk.\n\n## Decision\n\nfetch/lock must use CLI resolver.\n\n## Consequences\n\nMatches VSC-0002.\n\n## Verification anchors\n\nCLI integration.\n",
   "layoutJson": null
 }

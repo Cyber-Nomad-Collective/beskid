@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHosts and compilers need a shared compatibility story at boundaries.\n\n## Decision\n\nThis feature **must** specify symbol identity, type-shape classes, call-shape classes, ownership obligations, error/unwind semantics, and a **conformance envelope** (versioning and forward compatibility) for compatibility claims.\n\n## Consequences\n\nABI contract tests and `BESKID_RUNTIME_ABI_VERSION` align to the envelope.\n\n## Verification anchors\n\n`compiler/crates/beskid_tests/src/abi/contracts.rs`; [conformance and versioning](/platform-spec/language-meta/interop/interop-contracts/conformance-and-versioning/).\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHosts and compilers need a shared compatibility story at boundaries.\n\n## Decision\n\nThis feature **must** specify symbol identity, type-shape classes, call-shape classes, ownership obligations, error/unwind semantics, and a **conformance envelope** (versioning and forward compatibility) for compatibility claims.\n\n## Consequences\n\nABI contract tests and `BESKID_RUNTIME_ABI_VERSION` align to the envelope.\n\n## Verification anchors\n\n`compiler/crates/beskid_tests/src/abi/contracts.rs`; [conformance and versioning](/platform-spec/language-meta/interop/interop-contracts/conformance-and-versioning/).\n",
   "layoutJson": null
 }

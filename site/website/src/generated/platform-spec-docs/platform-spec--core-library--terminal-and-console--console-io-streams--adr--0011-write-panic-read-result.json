@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nv1 write helpers are infallible at the type level; read paths need explicit error handling.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Write | `Write` / `WriteLine` **must** panic on `WriteWith` failure |\n| Read | `Read` / `ReadLine` return `` `Result<string, SyscallError>` `` |\n\n## Consequences\n\nDiagnostics for write failures use fixed panic strings; callers cannot catch write errors in Beskid v1.\n\n## Verification anchors\n\nCorelib stream tests; syscall integration in `beskid_runtime`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nv1 write helpers are infallible at the type level; read paths need explicit error handling.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Write | `Write` / `WriteLine` **must** panic on `WriteWith` failure |\n| Read | `Read` / `ReadLine` return `` `Result<string, SyscallError>` `` |\n\n## Consequences\n\nDiagnostics for write failures use fixed panic strings; callers cannot catch write errors in Beskid v1.\n\n## Verification anchors\n\nCorelib stream tests; syscall integration in `beskid_runtime`.\n",
   "layoutJson": null
 }

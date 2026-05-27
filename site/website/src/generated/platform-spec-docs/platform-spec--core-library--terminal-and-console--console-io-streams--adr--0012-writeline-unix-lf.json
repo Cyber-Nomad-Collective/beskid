@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCross-platform hosts may translate line endings below the Beskid API.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Ending | `WriteLine` **must** append `\\n` only |\n| Windows | Host/platform layer **may** translate later without API change |\n\n## Consequences\n\nAuthors see consistent Beskid source semantics; CRLF is not encoded in corelib strings.\n\n## Verification anchors\n\n`Output.bd` / `Error.bd` tests; platform IO docs.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCross-platform hosts may translate line endings below the Beskid API.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Ending | `WriteLine` **must** append `\\n` only |\n| Windows | Host/platform layer **may** translate later without API change |\n\n## Consequences\n\nAuthors see consistent Beskid source semantics; CRLF is not encoded in corelib strings.\n\n## Verification anchors\n\n`Output.bd` / `Error.bd` tests; platform IO docs.\n",
   "layoutJson": null
 }

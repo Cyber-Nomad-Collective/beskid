@@ -1,0 +1,47 @@
+{
+	"name": "beskid-auth",
+	"private": true,
+	"type": "module",
+	"packageManager": "bun@1.3.0",
+	"imports": {
+		"#/*": "./src/*"
+	},
+	"scripts": {
+		"dev": "bun --bun vite dev --port 8090",
+		"build": "bun --bun vite build",
+		"start": "bun --bun vite preview --host 0.0.0.0 --port ${PORT:-8090}",
+		"preview": "bun --bun vite preview",
+		"check": "bunx biome check",
+		"typecheck": "tsc --noEmit"
+	},
+	"engines": {
+		"bun": ">=1.2.0"
+	},
+	"dependencies": {
+		"@beskid/auth-client": "file:../../beskid_web_common/packages/beskid-auth-client",
+		"@beskid/ui-react": "file:../../beskid_web_common/packages/beskid-ui-react",
+		"@t3-oss/env-core": "^0.13.10",
+		"@tailwindcss/vite": "^4.1.18",
+		"@tanstack/react-query": "latest",
+		"@tanstack/react-router": "latest",
+		"@tanstack/react-start": "latest",
+		"jose": "^6.2.3",
+		"lucide-react": "^0.577.0",
+		"next-themes": "^0.4.6",
+		"react": "^19.2.0",
+		"react-dom": "^19.2.0",
+		"tailwindcss": "^4.1.18",
+		"zod": "^4.3.6"
+	},
+	"devDependencies": {
+		"@tanstack/devtools-vite": "latest",
+		"@tanstack/react-devtools": "latest",
+		"@tanstack/react-router-devtools": "latest",
+		"@types/node": "^25.9.1",
+		"@types/react": "^19.2.0",
+		"@types/react-dom": "^19.2.0",
+		"@vitejs/plugin-react": "^6.0.1",
+		"typescript": "^6.0.2",
+		"vite": "^8.0.0"
+	}
+}

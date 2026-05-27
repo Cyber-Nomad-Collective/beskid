@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nIncremental mod runs produced unstable ordering.\n\n## Decision\n\nInvalidation keys and dirty sets for mod pipelines **must** replay deterministically for identical inputs (Collector scope + syntax snapshot hashes).\n\n## Consequences\n\nLSP rescan triggers share the same keys as batch compile.\n\n## Verification anchors\n\n- `compiler/crates/beskid_lsp/`\n- `compiler/crates/beskid_analysis/src/analysis/rules/staged/`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nIncremental mod runs produced unstable ordering.\n\n## Decision\n\nInvalidation keys and dirty sets for mod pipelines **must** replay deterministically for identical inputs (Collector scope + syntax snapshot hashes).\n\n## Consequences\n\nLSP rescan triggers share the same keys as batch compile.\n\n## Verification anchors\n\n- `compiler/crates/beskid_lsp/`\n- `compiler/crates/beskid_analysis/src/analysis/rules/staged/`.\n",
   "layoutJson": null
 }

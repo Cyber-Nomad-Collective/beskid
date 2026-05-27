@@ -4,7 +4,7 @@
 	"workspaces": [
 		"site/website",
 		"beskid_web_common/packages/trudoc",
-		"beskid_web_common/packages/docs-ui"
+		"beskid_web_common/packages/beskid-ui"
 	],
 	"overrides": {
 		"uuid": "^14.0.0",

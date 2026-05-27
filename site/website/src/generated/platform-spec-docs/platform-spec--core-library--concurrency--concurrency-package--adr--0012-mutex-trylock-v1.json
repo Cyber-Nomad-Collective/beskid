@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nTryLock supports non-blocking attempts; Lock parks with cancel path.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| TryLock | **In v1** — returns `` `Option<MutexGuard>` `` |\n| Lock | Parks until acquired or **Cancelled** |\n\n## Consequences\n\nNo poison semantics in v1.\n\n## Verification anchors\n\nMutex corelib tests.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nTryLock supports non-blocking attempts; Lock parks with cancel path.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| TryLock | **In v1** — returns `` `Option<MutexGuard>` `` |\n| Lock | Parks until acquired or **Cancelled** |\n\n## Consequences\n\nNo poison semantics in v1.\n\n## Verification anchors\n\nMutex corelib tests.\n",
   "layoutJson": null
 }

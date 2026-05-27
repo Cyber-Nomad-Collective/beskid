@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRegistry taxonomy.\n\n## Decision\n\nExplicit packageKind on package manifest.\n\n## Consequences\n\nValidators and UI.\n\n## Verification anchors\n\nServer tests.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRegistry taxonomy.\n\n## Decision\n\nExplicit packageKind on package manifest.\n\n## Consequences\n\nValidators and UI.\n\n## Verification anchors\n\nServer tests.\n",
   "layoutJson": null
 }

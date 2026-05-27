@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nParallel OS threads require independent GC attachment rules in Phase A.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Entry | Thread start **must** establish runtime heap session |\n| FFI | `extern \"C\"` stays pinned to calling OS thread for call duration |\n\n## Consequences\n\nViolations risk root loss or cross-thread heap corruption.\n\n## Verification anchors\n\n[Extern dispatch and policy](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/); GC phase ADRs.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nParallel OS threads require independent GC attachment rules in Phase A.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Entry | Thread start **must** establish runtime heap session |\n| FFI | `extern \"C\"` stays pinned to calling OS thread for call duration |\n\n## Consequences\n\nViolations risk root loss or cross-thread heap corruption.\n\n## Verification anchors\n\n[Extern dispatch and policy](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/); GC phase ADRs.\n",
   "layoutJson": null
 }

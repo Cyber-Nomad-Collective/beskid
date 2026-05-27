@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nEarly drafts considered alternate container keywords.\n\n## Decision\n\nThe global registration block **must** be spelled **`registry`** (locked for v0.2+).\n\n## Consequences\n\nParser, diagnostics, and docs use one keyword; no alias `container` in Standard conformance.\n\n## Verification anchors\n\nGrammar and semantic snapshots when composition lands.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nEarly drafts considered alternate container keywords.\n\n## Decision\n\nThe global registration block **must** be spelled **`registry`** (locked for v0.2+).\n\n## Consequences\n\nParser, diagnostics, and docs use one keyword; no alias `container` in Standard conformance.\n\n## Verification anchors\n\nGrammar and semantic snapshots when composition lands.\n",
   "layoutJson": null
 }

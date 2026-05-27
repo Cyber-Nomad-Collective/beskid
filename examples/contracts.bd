@@ -1,4 +1,0 @@
-unit main() {
-    Console.Out.WriteLine("Storage contract example");
-    return;
-}

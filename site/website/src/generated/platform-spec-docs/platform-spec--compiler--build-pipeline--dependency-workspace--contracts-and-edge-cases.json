@@ -32,7 +32,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- `--locked` must reject missing or out-of-date lockfiles.\n- `--frozen` must reject changes that require writing lockfile updates.\n- Registry dependency materialization failures must report stable project errors.\n- Workspace prep must not silently change selected compile target.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- `--locked` must reject missing or out-of-date lockfiles.\n- `--frozen` must reject changes that require writing lockfile updates.\n- Registry dependency materialization failures must report stable project errors.\n- Workspace prep must not silently change selected compile target.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

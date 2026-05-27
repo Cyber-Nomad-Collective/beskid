@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nNot every corelib module is runtime-backed.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| In scope | Builtin/syscall facades documented here |\n| Out of scope | Pure Beskid `foundation` modules |\n\n## Consequences\n\nThis feature does not duplicate language-meta semantics for pure libraries.\n\n## Verification anchors\n\nfoundation package compile tests.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nNot every corelib module is runtime-backed.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| In scope | Builtin/syscall facades documented here |\n| Out of scope | Pure Beskid `foundation` modules |\n\n## Consequences\n\nThis feature does not duplicate language-meta semantics for pure libraries.\n\n## Verification anchors\n\nfoundation package compile tests.\n",
   "layoutJson": null
 }

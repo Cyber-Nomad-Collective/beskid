@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCrate references were scattered across hubs without a single ownership surface.\n\n## Decision\n\nThis feature hub is the canonical map from `compiler/crates/*` to platform-spec features; other pages link here instead of duplicating tables.\n\n## Consequences\n\nNew crates require anchor rows before Standard promotion of dependent features.\n\n## Verification anchors\n\n- Implementation-map articles and `compiler/Cargo.toml` workspace layout.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCrate references were scattered across hubs without a single ownership surface.\n\n## Decision\n\nThis feature hub is the canonical map from `compiler/crates/*` to platform-spec features; other pages link here instead of duplicating tables.\n\n## Consequences\n\nNew crates require anchor rows before Standard promotion of dependent features.\n\n## Verification anchors\n\n- Implementation-map articles and `compiler/Cargo.toml` workspace layout.\n",
   "layoutJson": null
 }

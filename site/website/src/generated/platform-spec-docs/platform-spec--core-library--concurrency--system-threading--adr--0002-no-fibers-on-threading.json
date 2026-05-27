@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nMixing models breaks GC safepoints and scheduler invariants.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Forbidden | Fiber scheduler emulation via `System.Threading` in corelib |\n| Required | Use [Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/) |\n\n## Consequences\n\nDocumentation and examples steer authors to spawn/fiber APIs.\n\n## Verification anchors\n\nConcurrency integration tests; system-threading module docs.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nMixing models breaks GC safepoints and scheduler invariants.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Forbidden | Fiber scheduler emulation via `System.Threading` in corelib |\n| Required | Use [Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/) |\n\n## Consequences\n\nDocumentation and examples steer authors to spawn/fiber APIs.\n\n## Verification anchors\n\nConcurrency integration tests; system-threading module docs.\n",
   "layoutJson": null
 }

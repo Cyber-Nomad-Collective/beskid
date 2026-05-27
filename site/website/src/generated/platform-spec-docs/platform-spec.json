@@ -17,7 +17,7 @@
       "email": "pmikstacki@cybernomad.it"
     }
   },
-  "body": "\nimport PlatformSpecHome from '@beskid/docs-ui/platform-spec/PlatformSpecHome.astro';\n\n<PlatformSpecHome />\n",
+  "body": "\nimport PlatformSpecHome from '@beskid/beskid-ui/platform-spec/PlatformSpecHome.astro';\n\n<PlatformSpecHome />\n",
   "layoutJson": {
     "version": 1,
     "level": "root",

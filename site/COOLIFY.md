@@ -8,7 +8,7 @@ Use [`site/docker-compose.yml`](docker-compose.yml) or [`site/infra/docker-compo
 
 ## Submodules and build context
 
-The docs image **requires** the `beskid_web_common` submodule (`packages/trudoc`, `packages/docs-ui`) at build time. The Dockerfile copies `beskid_web_common/` and runs `bun install` from the root workspace lockfile.
+The docs image **requires** the `beskid_web_common` submodule (`packages/trudoc`, `packages/beskid-ui`) at build time. The Dockerfile copies `beskid_web_common/` and runs `bun install` from the root workspace lockfile.
 
 Recommended Coolify settings:
 
@@ -27,6 +27,7 @@ Legacy `/execution/` and `/corelib/` URLs are handled by Astro redirects plus ng
 
 Container healthcheck: `wget -q --spider http://127.0.0.1/`. Public URL: `https://beskid-lang.org`.
 
-## Related application
+## Related applications
 
-The [Beskid Tracker](../beskid_tracker/COOLIFY.md) is a separate Coolify app (base directory `/beskid_tracker`, port 3000). Deploy the docs site first so `/generated/platform-spec-catalog.json` is available for tracker docs management.
+- [Beskid auth hub](auth/COOLIFY.md) — combined GitHub OAuth for Tracker, Nexus, and pckg (`/site/auth`, port 8090)
+- [Beskid Tracker](../beskid_tracker/COOLIFY.md) — separate app (`/beskid_tracker`, port 3000). Deploy the docs site first so `/generated/platform-spec-catalog.json` is available for tracker docs management.

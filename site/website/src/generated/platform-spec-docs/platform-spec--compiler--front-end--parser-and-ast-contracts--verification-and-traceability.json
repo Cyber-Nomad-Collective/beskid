@@ -30,7 +30,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nTraceability map for this feature:\n\n- **Grammar source:** `compiler/crates/beskid_analysis/src/beskid.pest`\n- **Syntax node construction:** `compiler/crates/beskid_analysis/src/syntax/items`, `.../src/syntax/types`\n- **Handoff consumers:** `.../src/resolve`, `.../src/analysis`\n\nRecommended verification routine:\n\n1. Run targeted parser and analysis tests after grammar or syntax edits.\n2. Confirm diagnostics include expected code/category and stable source location mapping.\n3. Run formatter checks when AST shape changes affect output ordering or spacing.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nTraceability map for this feature:\n\n- **Grammar source:** `compiler/crates/beskid_analysis/src/beskid.pest`\n- **Syntax node construction:** `compiler/crates/beskid_analysis/src/syntax/items`, `.../src/syntax/types`\n- **Handoff consumers:** `.../src/resolve`, `.../src/analysis`\n\nRecommended verification routine:\n\n1. Run targeted parser and analysis tests after grammar or syntax edits.\n2. Confirm diagnostics include expected code/category and stable source location mapping.\n3. Run formatter checks when AST shape changes affect output ordering or spacing.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

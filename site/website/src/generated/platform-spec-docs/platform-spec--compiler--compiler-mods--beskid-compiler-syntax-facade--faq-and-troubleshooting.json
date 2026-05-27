@@ -27,7 +27,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThis article collects **FAQ** entries for **Beskid.Compiler.SyntaxMirror facade**.\n\n## Why separate language-meta and compiler pages?\nLanguage-meta defines Beskid-side mod contracts; this compiler area defines how the Rust host executes them safely and incrementally.\n\n## Can meta call arbitrary FFI?\nNo — unless explicitly granted by platform policy and declared in compilation capabilities. Default contracts deny ambient FFI.\n\n## Where do Roslyn/KSP parallels apply?\nOnly as rationale for incremental caches and typed models; Beskid contracts are authoritative here, not foreign tool behavior.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThis article collects **FAQ** entries for **Beskid.Compiler.SyntaxMirror facade**.\n\n## Why separate language-meta and compiler pages?\nLanguage-meta defines Beskid-side mod contracts; this compiler area defines how the Rust host executes them safely and incrementally.\n\n## Can meta call arbitrary FFI?\nNo — unless explicitly granted by platform policy and declared in compilation capabilities. Default contracts deny ambient FFI.\n\n## Where do Roslyn/KSP parallels apply?\nOnly as rationale for incremental caches and typed models; Beskid contracts are authoritative here, not foreign tool behavior.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

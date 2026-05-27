@@ -30,7 +30,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nKey front-end contracts:\n\n- Parse failures must map to source spans users can act on.\n- Syntax nodes must preserve declaration identity needed by item resolution.\n- Optional syntax forms (attributes, docs, modifiers) must have explicit absent-state semantics, not implicit null behavior.\n\nFrequent edge cases:\n\n- Unterminated grouped constructs should produce one primary error and avoid noisy cascades.\n- Unknown tokens after valid prefixes should preserve partial nodes for downstream reporting when safe.\n- Ambiguous grammar expansions must be resolved in parser logic, not deferred into semantic phases.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nKey front-end contracts:\n\n- Parse failures must map to source spans users can act on.\n- Syntax nodes must preserve declaration identity needed by item resolution.\n- Optional syntax forms (attributes, docs, modifiers) must have explicit absent-state semantics, not implicit null behavior.\n\nFrequent edge cases:\n\n- Unterminated grouped constructs should produce one primary error and avoid noisy cascades.\n- Unknown tokens after valid prefixes should preserve partial nodes for downstream reporting when safe.\n- Ambiguous grammar expansions must be resolved in parser logic, not deferred into semantic phases.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

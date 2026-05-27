@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nDrift risk.\n\n## Decision\n\nHub owns MUST/SHOULD.\n\n## Consequences\n\nArticles defer.\n\n## Verification anchors\n\ntrudoc.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nDrift risk.\n\n## Decision\n\nHub owns MUST/SHOULD.\n\n## Consequences\n\nArticles defer.\n\n## Verification anchors\n\ntrudoc.\n",
   "layoutJson": null
 }

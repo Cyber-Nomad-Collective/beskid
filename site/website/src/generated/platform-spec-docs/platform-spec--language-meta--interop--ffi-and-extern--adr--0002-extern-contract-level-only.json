@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nBulk C-style surfaces need stable contract blocks; module-level extern was exploratory.\n\n## Decision\n\n**`Extern`** **must** apply only to **`contract`** declarations in v0.3 Standard. The reference compiler **must** reject **`Extern`** on non-contract declarations (**E1510**).\n\n## Consequences\n\nCodegen collects `ExternImport` from contract metadata; mod-level extern remains non-Standard.\n\n## Verification anchors\n\n`compiler/crates/beskid_analysis/src/types/context/context.rs`; [extern attribute schema](/platform-spec/language-meta/interop/ffi-and-extern/extern-attribute-schema/).\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nBulk C-style surfaces need stable contract blocks; module-level extern was exploratory.\n\n## Decision\n\n**`Extern`** **must** apply only to **`contract`** declarations in v0.3 Standard. The reference compiler **must** reject **`Extern`** on non-contract declarations (**E1510**).\n\n## Consequences\n\nCodegen collects `ExternImport` from contract metadata; mod-level extern remains non-Standard.\n\n## Verification anchors\n\n`compiler/crates/beskid_analysis/src/types/context/context.rs`; [extern attribute schema](/platform-spec/language-meta/interop/ffi-and-extern/extern-attribute-schema/).\n",
   "layoutJson": null
 }

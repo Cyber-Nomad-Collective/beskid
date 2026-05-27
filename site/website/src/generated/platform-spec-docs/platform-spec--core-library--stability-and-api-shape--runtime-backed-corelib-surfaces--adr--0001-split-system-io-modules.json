@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nMonolithic IO.bd hid syscall direction and descriptor typing.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Surface | `System.Input`, `System.Output`, `System.Error` under `packages/runtime` |\n| Non-goal | Monolithic `IO.bd` for standard streams |\n\n## Consequences\n\nSyscall descriptors stay typed per stream.\n\n## Verification anchors\n\n`packages/runtime/src/System/`; stream contract tests.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nMonolithic IO.bd hid syscall direction and descriptor typing.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Surface | `System.Input`, `System.Output`, `System.Error` under `packages/runtime` |\n| Non-goal | Monolithic `IO.bd` for standard streams |\n\n## Consequences\n\nSyscall descriptors stay typed per stream.\n\n## Verification anchors\n\n`packages/runtime/src/System/`; stream contract tests.\n",
   "layoutJson": null
 }

@@ -32,7 +32,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- **Fresh install:** no lockfile, normal mode creates `Project.lock v1`.\n- **CI locked mode:** `--locked` fails if dependency versions differ from lockfile.\n- **Frozen release mode:** `--frozen` compiles only when current lockfile already matches graph.\n- **Registry outage:** optional dependency fetch failure is surfaced according to unresolved policy.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- **Fresh install:** no lockfile, normal mode creates `Project.lock v1`.\n- **CI locked mode:** `--locked` fails if dependency versions differ from lockfile.\n- **Frozen release mode:** `--frozen` compiles only when current lockfile already matches graph.\n- **Registry outage:** optional dependency fetch failure is surfaced according to unresolved policy.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

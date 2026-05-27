@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHand-maintained parallel syntax trees diverged from the host parser.\n\n## Decision\n\nCanonical syntax model is generated via `beskid_ast_reflect_gen` into `Beskid.Compiler.*` SDK sources from the Rust AST—aligned with D-INC-0006.\n\n## Consequences\n\nMods consume generated facades; internal `beskid_analysis::syntax` remains host-only.\n\n## Verification anchors\n\n- `beskid_ast_reflect_gen`\n- `compiler/crates/beskid_analysis/src/syntax/`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHand-maintained parallel syntax trees diverged from the host parser.\n\n## Decision\n\nCanonical syntax model is generated via `beskid_ast_reflect_gen` into `Beskid.Compiler.*` SDK sources from the Rust AST—aligned with D-INC-0006.\n\n## Consequences\n\nMods consume generated facades; internal `beskid_analysis::syntax` remains host-only.\n\n## Verification anchors\n\n- `beskid_ast_reflect_gen`\n- `compiler/crates/beskid_analysis/src/syntax/`.\n",
   "layoutJson": null
 }

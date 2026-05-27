@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCallers should not manually pick CSI color modes per terminal.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Downgrade | RGB → indexed → basic is **lossy** |\n| API | No per-sequence model selector on public helpers |\n\n## Consequences\n\nStyled output remains readable on Basic16 hosts without author branches.\n\n## Verification anchors\n\n`AnsiSgrGoldenTests.bd`; capability + SGR integration.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCallers should not manually pick CSI color modes per terminal.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Downgrade | RGB → indexed → basic is **lossy** |\n| API | No per-sequence model selector on public helpers |\n\n## Consequences\n\nStyled output remains readable on Basic16 hosts without author branches.\n\n## Verification anchors\n\n`AnsiSgrGoldenTests.bd`; capability + SGR integration.\n",
   "layoutJson": null
 }

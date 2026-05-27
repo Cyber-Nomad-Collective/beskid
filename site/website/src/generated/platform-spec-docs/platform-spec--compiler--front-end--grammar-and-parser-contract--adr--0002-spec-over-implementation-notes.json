@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nImplementation crates accumulated informal notes that diverged from published contracts.\n\n## Decision\n\nNormative platform-spec prose and ADRs under this feature **supersede** informal comments in implementation crates until explicitly migrated into spec text.\n\n## Consequences\n\nEngineers file spec/ADR updates when behavior changes; crate comments are non-authoritative for conformance arguments.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/beskid.pest`\n- `compiler/crates/beskid_analysis/src/syntax/`\n- `compiler/crates/beskid_analysis/src/syntax/items/parse_helpers.rs`\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nImplementation crates accumulated informal notes that diverged from published contracts.\n\n## Decision\n\nNormative platform-spec prose and ADRs under this feature **supersede** informal comments in implementation crates until explicitly migrated into spec text.\n\n## Consequences\n\nEngineers file spec/ADR updates when behavior changes; crate comments are non-authoritative for conformance arguments.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/beskid.pest`\n- `compiler/crates/beskid_analysis/src/syntax/`\n- `compiler/crates/beskid_analysis/src/syntax/items/parse_helpers.rs`\n",
   "layoutJson": null
 }

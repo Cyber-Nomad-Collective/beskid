@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nParent/child Join cycles deadlock the scheduler.\n\n## Decision\n\nChild **Join** parent → compile-time diagnostic **JoinWouldDeadlock**. Parent **Join** child and sibling **Join** remain allowed.\n\n## Consequences\n\nDiagnostic registry documents **JoinWouldDeadlock**.\n\n## Verification anchors\n\nSemantic analyzer tests for join graph.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nParent/child Join cycles deadlock the scheduler.\n\n## Decision\n\nChild **Join** parent → compile-time diagnostic **JoinWouldDeadlock**. Parent **Join** child and sibling **Join** remain allowed.\n\n## Consequences\n\nDiagnostic registry documents **JoinWouldDeadlock**.\n\n## Verification anchors\n\nSemantic analyzer tests for join graph.\n",
   "layoutJson": null
 }

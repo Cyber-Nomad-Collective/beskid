@@ -30,7 +30,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nContracts enforced by semantic rules:\n\n- Rules must report through canonical issue kinds, not ad-hoc string identifiers.\n- Rules should not mutate resolver state while validating semantic constraints.\n- Rule failures must preserve source spans that point to user-owned code.\n\nEdge cases to monitor:\n\n- Forward references across modules with cyclical dependencies.\n- Generic-like type usage that resolves in parser form but fails in semantic type passes.\n- Method and contract member collisions discovered only after full symbol table assembly.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nContracts enforced by semantic rules:\n\n- Rules must report through canonical issue kinds, not ad-hoc string identifiers.\n- Rules should not mutate resolver state while validating semantic constraints.\n- Rule failures must preserve source spans that point to user-owned code.\n\nEdge cases to monitor:\n\n- Forward references across modules with cyclical dependencies.\n- Generic-like type usage that resolves in parser form but fails in semantic type passes.\n- Method and contract member collisions discovered only after full symbol table assembly.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

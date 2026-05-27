@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLowering was split across experimental paths.\n\n## Decision\n\n`beskid_codegen::lower_source` is the single lowering entry producing `CodegenArtifact` consumed by `JitModule`.\n\n## Consequences\n\nExperimental IR dumps must not bypass this entry in release builds.\n\n## Verification anchors\n\n- `compiler/crates/beskid_codegen`\n- `compiler/crates/beskid_engine/src/jit_module.rs`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLowering was split across experimental paths.\n\n## Decision\n\n`beskid_codegen::lower_source` is the single lowering entry producing `CodegenArtifact` consumed by `JitModule`.\n\n## Consequences\n\nExperimental IR dumps must not bypass this entry in release builds.\n\n## Verification anchors\n\n- `compiler/crates/beskid_codegen`\n- `compiler/crates/beskid_engine/src/jit_module.rs`.\n",
   "layoutJson": null
 }

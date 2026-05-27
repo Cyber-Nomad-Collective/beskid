@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCorelib should not embed a full UI framework inside controls.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Tick | `LiveTick` drives periodic redraw |\n| Loop | Callers compose fibers/channels around tick |\n\n## Consequences\n\nInteractive samples pair LiveTick with concurrency package channels.\n\n## Verification anchors\n\nConsole controls examples and tests.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nCorelib should not embed a full UI framework inside controls.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Tick | `LiveTick` drives periodic redraw |\n| Loop | Callers compose fibers/channels around tick |\n\n## Consequences\n\nInteractive samples pair LiveTick with concurrency package channels.\n\n## Verification anchors\n\nConsole controls examples and tests.\n",
   "layoutJson": null
 }

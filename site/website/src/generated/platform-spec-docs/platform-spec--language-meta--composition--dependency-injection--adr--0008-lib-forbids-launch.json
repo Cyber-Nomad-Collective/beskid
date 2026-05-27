@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nTest and library packages attempted to embed process entry via launch.\n\n## Decision\n\n**`Lib`** project targets **may** declare **`host`** types for reuse but **`launch`** is **forbidden** (**E1711**). Only app/test host targets **may** **`launch`**.\n\n## Consequences\n\nConsumers reference library hosts from their own app targets or approved harness entries.\n\n## Verification anchors\n\n[FAQ](/platform-spec/language-meta/composition/dependency-injection/faq-and-troubleshooting/).\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nTest and library packages attempted to embed process entry via launch.\n\n## Decision\n\n**`Lib`** project targets **may** declare **`host`** types for reuse but **`launch`** is **forbidden** (**E1711**). Only app/test host targets **may** **`launch`**.\n\n## Consequences\n\nConsumers reference library hosts from their own app targets or approved harness entries.\n\n## Verification anchors\n\n[FAQ](/platform-spec/language-meta/composition/dependency-injection/faq-and-troubleshooting/).\n",
   "layoutJson": null
 }

@@ -27,7 +27,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThis article documents **flow and algorithms** for **Syntax domain model generation**.\n\n## Primary flow\n1. Materialize or refresh the syntax snapshot for the active compilation generation.\n2. Classify meta contributors vs read-only inspectors (language-meta classification carries through here).\n3. Execute host policy checks before surfacing Mod SDK calls.\n4. Commit outputs atomically per scheduling round (see incremental scheduling feature).\n\n## Ordering constraints\n- No meta body runs before a parseable syntax model exists for its lexical scope.\n- Semantic queries that depend on staged rules must declare the minimal snapshot version they require; the host may defer or rerun automatically.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThis article documents **flow and algorithms** for **Syntax domain model generation**.\n\n## Primary flow\n1. Materialize or refresh the syntax snapshot for the active compilation generation.\n2. Classify meta contributors vs read-only inspectors (language-meta classification carries through here).\n3. Execute host policy checks before surfacing Mod SDK calls.\n4. Commit outputs atomically per scheduling round (see incremental scheduling feature).\n\n## Ordering constraints\n- No meta body runs before a parseable syntax model exists for its lexical scope.\n- Semantic queries that depend on staged rules must declare the minimal snapshot version they require; the host may defer or rerun automatically.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

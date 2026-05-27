@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nExport/callback rules were scattered between runtime and language-meta drafts.\n\n## Decision\n\nThis feature hub **must** own normative MUST/SHOULD for Beskid **export** and **callback registration** (user interop).\n\n## Consequences\n\nDistinct from runtime builtin exports on Rust ABI profile.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/export-and-callbacks/\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nExport/callback rules were scattered between runtime and language-meta drafts.\n\n## Decision\n\nThis feature hub **must** own normative MUST/SHOULD for Beskid **export** and **callback registration** (user interop).\n\n## Consequences\n\nDistinct from runtime builtin exports on Rust ABI profile.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/export-and-callbacks/\n",
   "layoutJson": null
 }

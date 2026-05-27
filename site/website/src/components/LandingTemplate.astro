@@ -1,6 +1,6 @@
 ---
 import { Code } from 'astro:components';
-import { docsUiSrcUrl } from '../lib/docs-ui-root.mjs';
+import { beskidUiSrcUrl } from '../lib/beskid-ui-root.mjs';
 import type { LandingTileSectionData } from '../data/landing-tile-sections';
 import LandingCodeWindow from './LandingCodeWindow.astro';
 import LandingCompareTable, { type CompareRow } from './LandingCompareTable.astro';
@@ -95,7 +95,7 @@ const actionVariantClass = (variant?: string) =>
   variant === 'primary' ? 'landing-action--primary' : variant === 'ghost' ? 'landing-action--ghost' : 'landing-action--secondary';
 ---
 
-<link rel="stylesheet" href={docsUiSrcUrl('styles/landing.css')} />
+<link rel="stylesheet" href={beskidUiSrcUrl('styles/landing.css')} />
 
 <section class:list={['landing-root', 'not-content', landingPage && 'landing-page']}>
   <header class="landing-hero">

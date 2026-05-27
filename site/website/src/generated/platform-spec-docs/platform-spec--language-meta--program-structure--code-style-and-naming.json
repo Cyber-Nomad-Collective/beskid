@@ -32,7 +32,7 @@
       }
     ]
   },
-  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\n\n<SpecPageHeader status=\"Proposed\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n## Normative specification\n\nThis chapter defines naming and style constraints intended to be enforceable by formatter and lint tooling once promoted to Standard (normative) standing.\n\n## Platform view\n\n- Naming conventions shall be stable enough for generated docs and symbols.\n- Formatting conventions shall align with `beskid_analysis` formatter output for code examples.\n- Diagnostic messaging should use canonical term names from this chapter.\n",
+  "body": "\nimport SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\n\n<SpecPageHeader status=\"Proposed\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n## Normative specification\n\nThis chapter defines naming and style constraints intended to be enforceable by formatter and lint tooling once promoted to Standard (normative) standing.\n\n## Platform view\n\n- Naming conventions shall be stable enough for generated docs and symbols.\n- Formatting conventions shall align with `beskid_analysis` formatter output for code examples.\n- Diagnostic messaging should use canonical term names from this chapter.\n",
   "layoutJson": {
     "version": 1,
     "level": "area",

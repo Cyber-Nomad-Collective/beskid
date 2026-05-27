@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nSome hosts want late binding; tier-1 reference path standardizes link-time.\n\n## Decision\n\n**Runtime `dlopen` / `dlsym` resolution** is **demoted** to the [dynamic resolution profile](/platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile/) (**Proposed** appendix, not Standard).\n\n## Consequences\n\nDocumentation and conformance matrices must not require dlopen for Standard tier-1.\n\n## Verification anchors\n\n`compiler/crates/beskid_engine/src/engine.rs` (`extern_dlopen`, Proposed).\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nSome hosts want late binding; tier-1 reference path standardizes link-time.\n\n## Decision\n\n**Runtime `dlopen` / `dlsym` resolution** is **demoted** to the [dynamic resolution profile](/platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile/) (**Proposed** appendix, not Standard).\n\n## Consequences\n\nDocumentation and conformance matrices must not require dlopen for Standard tier-1.\n\n## Verification anchors\n\n`compiler/crates/beskid_engine/src/engine.rs` (`extern_dlopen`, Proposed).\n",
   "layoutJson": null
 }

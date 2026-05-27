@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nAuthors need portable cursor stacking without SCO-specific CSI variants in typed builders.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Save/restore | **DEC** `ESC 7` / `ESC 8` is the normative pair |\n| SCO | `CSI s` / `CSI u` are **not** required in v1 typed builders |\n\n## Consequences\n\nTyped `Ansi.Cursor` helpers emit DEC only; raw `Csi` may still be used in tests.\n\n## Verification anchors\n\n`AnsiEscapeTests.bd`; `ANSI.md` tables.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nAuthors need portable cursor stacking without SCO-specific CSI variants in typed builders.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Save/restore | **DEC** `ESC 7` / `ESC 8` is the normative pair |\n| SCO | `CSI s` / `CSI u` are **not** required in v1 typed builders |\n\n## Consequences\n\nTyped `Ansi.Cursor` helpers emit DEC only; raw `Csi` may still be used in tests.\n\n## Verification anchors\n\n`AnsiEscapeTests.bd`; `ANSI.md` tables.\n",
   "layoutJson": null
 }

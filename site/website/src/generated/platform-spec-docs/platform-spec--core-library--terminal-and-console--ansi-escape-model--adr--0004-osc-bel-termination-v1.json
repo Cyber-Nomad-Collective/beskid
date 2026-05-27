@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nOSC framing varies across terminals; v1 picks one terminator for golden tests.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Terminator | **BEL** (`0x07`) in v1 |\n| ST | `ESC ` termination is **not** required |\n\n## Consequences\n\nOSC helpers emit BEL-terminated sequences only until a future ADR extends ST.\n\n## Verification anchors\n\n`AnsiEscapeTests.bd`; `Ansi.Osc` sources.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nOSC framing varies across terminals; v1 picks one terminator for golden tests.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Terminator | **BEL** (`0x07`) in v1 |\n| ST | `ESC ` termination is **not** required |\n\n## Consequences\n\nOSC helpers emit BEL-terminated sequences only until a future ADR extends ST.\n\n## Verification anchors\n\n`AnsiEscapeTests.bd`; `Ansi.Osc` sources.\n",
   "layoutJson": null
 }

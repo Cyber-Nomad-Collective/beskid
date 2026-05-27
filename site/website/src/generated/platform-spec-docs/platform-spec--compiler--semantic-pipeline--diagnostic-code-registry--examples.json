@@ -30,7 +30,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nExample A: adding a new semantic issue\n\n1. Add a new issue kind and code in `diagnostic_kinds.rs`.\n2. Emit it from the relevant staged rule.\n3. Add/update docs and sync checks.\n4. Verify CLI and LSP both expose the new code.\n\nExample B: deprecating an old code\n\n1. Keep legacy code mapping documented.\n2. Route rule output to a replacement code behind an explicit migration step.\n3. Update troubleshooting notes for users with code-based alerting.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nExample A: adding a new semantic issue\n\n1. Add a new issue kind and code in `diagnostic_kinds.rs`.\n2. Emit it from the relevant staged rule.\n3. Add/update docs and sync checks.\n4. Verify CLI and LSP both expose the new code.\n\nExample B: deprecating an old code\n\n1. Keep legacy code mapping documented.\n2. Route rule output to a replacement code behind an explicit migration step.\n3. Update troubleshooting notes for users with code-based alerting.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

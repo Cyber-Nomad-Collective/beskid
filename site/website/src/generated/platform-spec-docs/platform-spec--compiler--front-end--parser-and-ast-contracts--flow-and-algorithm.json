@@ -30,7 +30,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThe parsing flow is intentionally linear:\n\n1. Read source units from project services.\n2. Execute grammar entry points from `beskid.pest`.\n3. Convert parse tree fragments into syntax item/type nodes in `src/syntax`.\n4. Emit parser diagnostics for malformed input and continue when recovery is defined.\n5. Hand syntax trees to resolver (`src/resolve`) and semantic passes (`src/analysis`).\n\nAlgorithmically, the important invariant is determinism: identical source text must produce identical syntax node graphs and stable diagnostic ordering.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nThe parsing flow is intentionally linear:\n\n1. Read source units from project services.\n2. Execute grammar entry points from `beskid.pest`.\n3. Convert parse tree fragments into syntax item/type nodes in `src/syntax`.\n4. Emit parser diagnostics for malformed input and continue when recovery is defined.\n5. Hand syntax trees to resolver (`src/resolve`) and semantic passes (`src/analysis`).\n\nAlgorithmically, the important invariant is determinism: identical source text must produce identical syntax node graphs and stable diagnostic ordering.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

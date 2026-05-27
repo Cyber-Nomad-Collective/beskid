@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHosts need standard library.\n\n## Decision\n\nInject corelib; forbid noCorelib flags.\n\n## Consequences\n\nSimpler manifests.\n\n## Verification anchors\n\nE18xx linter.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHosts need standard library.\n\n## Decision\n\nInject corelib; forbid noCorelib flags.\n\n## Consequences\n\nSimpler manifests.\n\n## Verification anchors\n\nE18xx linter.\n",
   "layoutJson": null
 }

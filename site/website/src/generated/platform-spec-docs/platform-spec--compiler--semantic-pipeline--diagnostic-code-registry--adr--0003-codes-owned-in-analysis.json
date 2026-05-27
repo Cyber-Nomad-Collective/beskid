@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRendered diagnostics drifted from semantic registry.\n\n## Decision\n\nCode-to-meaning mapping is normative in `SemanticIssueKind::code()` and `diagnostic_kinds.rs`, synchronized with trudoc verify scripts—not LSP presentation layers.\n\n## Consequences\n\nRenaming codes requires migration notes; new issues need unique codes before release.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`\n- `packages/trudoc/scripts/verify-diagnostics-spec-sync.mjs`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRendered diagnostics drifted from semantic registry.\n\n## Decision\n\nCode-to-meaning mapping is normative in `SemanticIssueKind::code()` and `diagnostic_kinds.rs`, synchronized with trudoc verify scripts—not LSP presentation layers.\n\n## Consequences\n\nRenaming codes requires migration notes; new issues need unique codes before release.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`\n- `packages/trudoc/scripts/verify-diagnostics-spec-sync.mjs`.\n",
   "layoutJson": null
 }

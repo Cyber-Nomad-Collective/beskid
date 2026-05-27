@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nThis feature hub defines the normative contract for **grammar and parser contract** and links newcomer-oriented reference articles.\n\n## Decision\n\nThe reference compiler **must** implement Grammar and parser contract as documented in this feature hub and its article bundle.\n\n## Consequences\n\nChanges require hub/ADR updates and verification anchor extensions.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/beskid.pest`\n- `compiler/crates/beskid_analysis/src/syntax/`\n- `compiler/crates/beskid_analysis/src/syntax/items/parse_helpers.rs`\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nThis feature hub defines the normative contract for **grammar and parser contract** and links newcomer-oriented reference articles.\n\n## Decision\n\nThe reference compiler **must** implement Grammar and parser contract as documented in this feature hub and its article bundle.\n\n## Consequences\n\nChanges require hub/ADR updates and verification anchor extensions.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/beskid.pest`\n- `compiler/crates/beskid_analysis/src/syntax/`\n- `compiler/crates/beskid_analysis/src/syntax/items/parse_helpers.rs`\n",
   "layoutJson": null
 }

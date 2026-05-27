@@ -1,5 +1,5 @@
 ---
-import { docsUiSrcUrl } from '../lib/docs-ui-root.mjs';
+import { beskidUiSrcUrl } from '../lib/beskid-ui-root.mjs';
 import {
 	cliDownloadBase,
 	loadCliVersion,
@@ -57,7 +57,7 @@ const platforms = [
 ] as const;
 ---
 
-<link rel="stylesheet" href={docsUiSrcUrl('styles/downloads.css')} />
+<link rel="stylesheet" href={beskidUiSrcUrl('styles/downloads.css')} />
 
 <section
 	class="downloads-page not-content"
@@ -204,4 +204,4 @@ const platforms = [
 	</div>
 </section>
 
-<script type="module" src={docsUiSrcUrl('client/downloads-client.ts')}></script>
+<script type="module" src={beskidUiSrcUrl('client/downloads-client.ts')}></script>

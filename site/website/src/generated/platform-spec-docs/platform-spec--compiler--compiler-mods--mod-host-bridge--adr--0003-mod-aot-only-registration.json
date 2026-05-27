@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\n`Mod` packages **must** export public Beskid types implementing SDK contracts; host loads AOT artifacts and `mod.descriptor.json` registrations—not manifest attach metadata.\n\n## Decision\n\nContract discovery uses `(contractId, typeId, entrySymbol)` tuples; failures emit E1821–E1870 before `mod.collect`.\n\n## Consequences\n\nJIT mod execution is not normative; rebuild uses `beskid mod rebuild`.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/`\n- `mod artifact store paths in analysis services.`\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\n`Mod` packages **must** export public Beskid types implementing SDK contracts; host loads AOT artifacts and `mod.descriptor.json` registrations—not manifest attach metadata.\n\n## Decision\n\nContract discovery uses `(contractId, typeId, entrySymbol)` tuples; failures emit E1821–E1870 before `mod.collect`.\n\n## Consequences\n\nJIT mod execution is not normative; rebuild uses `beskid mod rebuild`.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/`\n- `mod artifact store paths in analysis services.`\n",
   "layoutJson": null
 }

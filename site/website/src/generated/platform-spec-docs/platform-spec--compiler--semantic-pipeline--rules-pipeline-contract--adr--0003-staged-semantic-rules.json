@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nMonolithic semantic passes blocked incremental invalidation.\n\n## Decision\n\nSemantic rules are grouped in `analysis/rules/staged/` with explicit stage boundaries wired through `services.rs` for CLI and LSP.\n\n## Consequences\n\nNew rules declare their stage; cross-stage dependencies are documented in the hub articles.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/analysis/rules/`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nMonolithic semantic passes blocked incremental invalidation.\n\n## Decision\n\nSemantic rules are grouped in `analysis/rules/staged/` with explicit stage boundaries wired through `services.rs` for CLI and LSP.\n\n## Consequences\n\nNew rules declare their stage; cross-stage dependencies are documented in the hub articles.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/analysis/rules/`.\n",
   "layoutJson": null
 }

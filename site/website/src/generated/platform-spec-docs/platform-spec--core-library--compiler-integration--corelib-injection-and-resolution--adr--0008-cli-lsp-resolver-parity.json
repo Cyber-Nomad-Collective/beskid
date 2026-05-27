@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nIDE analysis must match CLI compilation attachment.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| CLI | `ensure_corelib_ready` before commands |\n| LSP | `CompilationContext::try_for_analysis_path_with_graph_options` |\n\n## Consequences\n\nDiagnostic drift between CLI and LSP indicates a resolver bug.\n\n## Verification anchors\n\nLSP workspace tests; `corelib/compile.rs`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nIDE analysis must match CLI compilation attachment.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| CLI | `ensure_corelib_ready` before commands |\n| LSP | `CompilationContext::try_for_analysis_path_with_graph_options` |\n\n## Consequences\n\nDiagnostic drift between CLI and LSP indicates a resolver bug.\n\n## Verification anchors\n\nLSP workspace tests; `corelib/compile.rs`.\n",
   "layoutJson": null
 }

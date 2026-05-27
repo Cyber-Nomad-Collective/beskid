@@ -32,7 +32,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n1. Build compile plan from manifest graph.\n2. Materialize dependency sources into workspace object directory.\n3. Read and reconcile `Project.lock` against resolved dependencies.\n4. Enforce `locked`/`frozen` policy.\n5. Expose final materialized source root to compile commands.\n\nThis flow is implemented in project workflow services and reused by fetch/lock/tree command surfaces.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n1. Build compile plan from manifest graph.\n2. Materialize dependency sources into workspace object directory.\n3. Read and reconcile `Project.lock` against resolved dependencies.\n4. Enforce `locked`/`frozen` policy.\n5. Expose final materialized source root to compile commands.\n\nThis flow is implemented in project workflow services and reused by fetch/lock/tree command surfaces.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

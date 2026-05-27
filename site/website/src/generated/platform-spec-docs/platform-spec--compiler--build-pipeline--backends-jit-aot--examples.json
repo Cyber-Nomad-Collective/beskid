@@ -32,7 +32,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- **`beskid run` success:** JIT compiles and runs `main`, returning a formatted value string.\n- **`beskid build --kind exe`:** AOT emits object, prepares runtime artifacts, then links executable.\n- **`beskid build --kind object`:** AOT stops after object emission and skips link stage.\n- **Bad entrypoint:** backend reports entrypoint resolution/signature diagnostic.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- **`beskid run` success:** JIT compiles and runs `main`, returning a formatted value string.\n- **`beskid build --kind exe`:** AOT emits object, prepares runtime artifacts, then links executable.\n- **`beskid build --kind object`:** AOT stops after object emission and skips link stage.\n- **Bad entrypoint:** backend reports entrypoint resolution/signature diagnostic.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

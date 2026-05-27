@@ -27,7 +27,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose\n\nLegacy URL. Normative text is in **`adr/`** and the hub **ADRs** tab.\n\n| adrId | Title |\n| --- | --- |\n| D-TOOL-VSC-0001 | [LSP-backed graph](./adr/0001-lsp-backed-graph/) |\n| D-TOOL-VSC-0002 | [Focus without LSP restart](./adr/0002-focus-without-lsp-restart/) |\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n## Purpose\n\nLegacy URL. Normative text is in **`adr/`** and the hub **ADRs** tab.\n\n| adrId | Title |\n| --- | --- |\n| D-TOOL-VSC-0001 | [LSP-backed graph](./adr/0001-lsp-backed-graph/) |\n| D-TOOL-VSC-0002 | [Focus without LSP restart](./adr/0002-focus-without-lsp-restart/) |\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

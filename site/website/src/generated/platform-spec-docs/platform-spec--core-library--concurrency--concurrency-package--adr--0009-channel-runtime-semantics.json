@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nAuthors need defined fan-in/fan-out and close idempotence.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Receivers | Multiple allowed; each message delivered to **exactly one** successful **Receive** (FIFO) |\n| Senders | Multiple allowed unless **SingleWriter** hint (hint only v1) |\n| Close | Any handle holder may **Close**; idempotent writer shutdown |\n| void spawn | `` `Fiber<Unit>` `` when entry returns no value |\n\n## Consequences\n\nClose after drain returns `ChannelError::Closed` in `Result`.\n\n## Verification anchors\n\nRuntime concurrency.rs; corelib channel tests.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nAuthors need defined fan-in/fan-out and close idempotence.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Receivers | Multiple allowed; each message delivered to **exactly one** successful **Receive** (FIFO) |\n| Senders | Multiple allowed unless **SingleWriter** hint (hint only v1) |\n| Close | Any handle holder may **Close**; idempotent writer shutdown |\n| void spawn | `` `Fiber<Unit>` `` when entry returns no value |\n\n## Consequences\n\nClose after drain returns `ChannelError::Closed` in `Result`.\n\n## Verification anchors\n\nRuntime concurrency.rs; corelib channel tests.\n",
   "layoutJson": null
 }

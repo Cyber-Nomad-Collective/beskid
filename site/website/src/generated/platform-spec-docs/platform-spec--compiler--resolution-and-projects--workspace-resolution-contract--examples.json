@@ -32,7 +32,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- **Single project:** `Project.proj` with one target yields one-entry `CompilePlan`; `resolve_input` points directly to that entry file.\n- **Workspace with deps:** root target depends on local and registry packages; graph includes both, unresolved optional packages are reported according to policy.\n- **Explicit file compile:** `beskid run Src/Main.bd` bypasses target inference and resolves directly from the provided file path.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- **Single project:** `Project.proj` with one target yields one-entry `CompilePlan`; `resolve_input` points directly to that entry file.\n- **Workspace with deps:** root target depends on local and registry packages; graph includes both, unresolved optional packages are reported according to policy.\n- **Explicit file compile:** `beskid run Src/Main.bd` bypasses target inference and resolves directly from the provided file path.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

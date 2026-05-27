@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nAuthors should not declare cancellation events on arbitrary spawn closures.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Placement | **OnCancelled** on `` `Fiber<T>` `` handle from ``spawn`` only |\n| Spawn entry | Ordinary `` `fn(...) -> T` ``; **does not** declare **OnCancelled** |\n| Handle | `` `Fiber<T>` `` struct wrapping runtime builtins |\n\n## Consequences\n\nLowering wires cancel slot from handle metadata.\n\n## Verification anchors\n\nSemantic + lowering tests for spawn.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nAuthors should not declare cancellation events on arbitrary spawn closures.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Placement | **OnCancelled** on `` `Fiber<T>` `` handle from ``spawn`` only |\n| Spawn entry | Ordinary `` `fn(...) -> T` ``; **does not** declare **OnCancelled** |\n| Handle | `` `Fiber<T>` `` struct wrapping runtime builtins |\n\n## Consequences\n\nLowering wires cancel slot from handle metadata.\n\n## Verification anchors\n\nSemantic + lowering tests for spawn.\n",
   "layoutJson": null
 }

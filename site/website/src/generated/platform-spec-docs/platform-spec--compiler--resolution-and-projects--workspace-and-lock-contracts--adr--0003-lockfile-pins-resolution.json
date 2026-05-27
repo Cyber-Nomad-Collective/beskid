@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nFloating registry versions broke reproducible compiles.\n\n## Decision\n\nWorkspace resolution **must** honor lockfile pins from `beskid_analysis::resolve` before applying CLI overrides.\n\n## Consequences\n\nLock update commands are explicit; silent refresh is forbidden in CI modes.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/resolve/mod.rs`\n- `compiler/crates/beskid_cli/src/commands/`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nFloating registry versions broke reproducible compiles.\n\n## Decision\n\nWorkspace resolution **must** honor lockfile pins from `beskid_analysis::resolve` before applying CLI overrides.\n\n## Consequences\n\nLock update commands are explicit; silent refresh is forbidden in CI modes.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/resolve/mod.rs`\n- `compiler/crates/beskid_cli/src/commands/`.\n",
   "layoutJson": null
 }

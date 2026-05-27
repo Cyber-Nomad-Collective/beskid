@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nParser drift.\n\n## Decision\n\nGraph via LSP executeCommand.\n\n## Consequences\n\nThin wrappers.\n\n## Verification anchors\n\nbeskid_lsp handlers.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nParser drift.\n\n## Decision\n\nGraph via LSP executeCommand.\n\n## Consequences\n\nThin wrappers.\n\n## Verification anchors\n\nbeskid_lsp handlers.\n",
   "layoutJson": null
 }

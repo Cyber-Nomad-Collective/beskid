@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nStale cache.\n\n## Decision\n\nCompare cache on every use when online.\n\n## Consequences\n\nUpdate prompts.\n\n## Verification anchors\n\nMock HTTP test.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nStale cache.\n\n## Decision\n\nCompare cache on every use when online.\n\n## Consequences\n\nUpdate prompts.\n\n## Verification anchors\n\nMock HTTP test.\n",
   "layoutJson": null
 }

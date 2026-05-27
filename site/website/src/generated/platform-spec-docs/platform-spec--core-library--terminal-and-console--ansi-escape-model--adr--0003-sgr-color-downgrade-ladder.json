@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nTerminals differ in color depth; emitting unsupported `38;2` breaks dumb hosts.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Ladder | truecolor → 256 → basic per `EffectiveColorModel` |\n| Policy | Callers do not pick per-sequence models manually |\n\n## Consequences\n\nSGR builders consult capability probes before emitting RGB CSI.\n\n## Verification anchors\n\n`AnsiSgrGoldenTests.bd`; `CapabilitiesTests.bd`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nTerminals differ in color depth; emitting unsupported `38;2` breaks dumb hosts.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Ladder | truecolor → 256 → basic per `EffectiveColorModel` |\n| Policy | Callers do not pick per-sequence models manually |\n\n## Consequences\n\nSGR builders consult capability probes before emitting RGB CSI.\n\n## Verification anchors\n\n`AnsiSgrGoldenTests.bd`; `CapabilitiesTests.bd`.\n",
   "layoutJson": null
 }

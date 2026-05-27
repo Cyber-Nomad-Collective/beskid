@@ -32,7 +32,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- Semantic error presence/absence must match across CLI and LSP for equivalent source.\n- Source label differences are allowed when paths intentionally differ (`path`, `source.bd`, `\"<memory>\"`).\n- Manifest (`.proj`) diagnostics must use project-error mapping paths, not code-file parsers.\n- Snapshot reuse in LSP must not hide newly introduced semantic errors.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- Semantic error presence/absence must match across CLI and LSP for equivalent source.\n- Source label differences are allowed when paths intentionally differ (`path`, `source.bd`, `\"<memory>\"`).\n- Manifest (`.proj`) diagnostics must use project-error mapping paths, not code-file parsers.\n- Snapshot reuse in LSP must not hide newly introduced semantic errors.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

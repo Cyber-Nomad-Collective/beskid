@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nEvery host compilation must see the standard library graph.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Forbidden keys | `noCorelib`, `useCorelib: false` rejected at parse |\n| Templates | Scaffolds **must not** emit opt-out keys |\n\n## Consequences\n\nImplicit injection in `resolve_dependencies` always attaches corelib.\n\n## Verification anchors\n\n`projects/parser.rs`; template manifest tests.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nEvery host compilation must see the standard library graph.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Forbidden keys | `noCorelib`, `useCorelib: false` rejected at parse |\n| Templates | Scaffolds **must not** emit opt-out keys |\n\n## Consequences\n\nImplicit injection in `resolve_dependencies` always attaches corelib.\n\n## Verification anchors\n\n`projects/parser.rs`; template manifest tests.\n",
   "layoutJson": null
 }

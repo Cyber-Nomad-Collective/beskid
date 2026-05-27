@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nTerminal UI in corelib targets TTY character grids.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Coordinates | Rows/columns in character cells |\n| Graphics | Pixel graphics are out of scope |\n\n## Consequences\n\nLayout helpers align with `Console.ConsoleSize` and resize events.\n\n## Verification anchors\n\nConsole control tests under `packages/console`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nTerminal UI in corelib targets TTY character grids.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Coordinates | Rows/columns in character cells |\n| Graphics | Pixel graphics are out of scope |\n\n## Consequences\n\nLayout helpers align with `Console.ConsoleSize` and resize events.\n\n## Verification anchors\n\nConsole control tests under `packages/console`.\n",
   "layoutJson": null
 }

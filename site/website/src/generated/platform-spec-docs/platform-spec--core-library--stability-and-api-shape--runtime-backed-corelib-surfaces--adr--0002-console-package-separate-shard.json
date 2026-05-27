@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHigher console work must not bloat runtime syscall modules.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Package | `compiler/corelib/packages/console` (`corelib_console`) |\n| Runtime | Streams stay in runtime package |\n\n## Consequences\n\nTerminal features document against console package anchors.\n\n## Verification anchors\n\n`packages/console`; pckg workspace publish.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nHigher console work must not bloat runtime syscall modules.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Package | `compiler/corelib/packages/console` (`corelib_console`) |\n| Runtime | Streams stay in runtime package |\n\n## Consequences\n\nTerminal features document against console package anchors.\n\n## Verification anchors\n\n`packages/console`; pckg workspace publish.\n",
   "layoutJson": null
 }

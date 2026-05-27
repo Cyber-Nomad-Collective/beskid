@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLowering produces one `CodegenArtifact`; backend selection happens after semantic gates complete.\n\n## Decision\n\nBoth JIT (`beskid_engine::JitModule`) and AOT link flows **must** accept the same schema fields from `beskid_codegen` without forking lowering.\n\n## Consequences\n\nBackend-specific options attach at execution time; lowering stays single-path.\n\n## Verification anchors\n\n- `compiler/crates/beskid_engine/src/jit_module.rs`\n- `compiler/crates/beskid_codegen`\n- `compiler/crates/beskid_tests/src/runtime/jit.rs`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLowering produces one `CodegenArtifact`; backend selection happens after semantic gates complete.\n\n## Decision\n\nBoth JIT (`beskid_engine::JitModule`) and AOT link flows **must** accept the same schema fields from `beskid_codegen` without forking lowering.\n\n## Consequences\n\nBackend-specific options attach at execution time; lowering stays single-path.\n\n## Verification anchors\n\n- `compiler/crates/beskid_engine/src/jit_module.rs`\n- `compiler/crates/beskid_codegen`\n- `compiler/crates/beskid_tests/src/runtime/jit.rs`.\n",
   "layoutJson": null
 }

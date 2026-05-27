@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nReference compiler **must** emit stable `beskid_pipeline` phase events from parse through `lower.ready` without reordering semantic gates relative to mod boundaries.\n\n## Decision\n\nPhase literals are defined in `compiler/crates/beskid_pipeline/src/phases.rs` and asserted by conformance tests; CLI/LSP observers rely on the same ids.\n\n## Consequences\n\nReordering phases requires an ADR and registry updates.\n\n## Verification anchors\n\n- `compiler/crates/beskid_pipeline/`\n- `compiler/crates/beskid_analysis/src/services.rs`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nReference compiler **must** emit stable `beskid_pipeline` phase events from parse through `lower.ready` without reordering semantic gates relative to mod boundaries.\n\n## Decision\n\nPhase literals are defined in `compiler/crates/beskid_pipeline/src/phases.rs` and asserted by conformance tests; CLI/LSP observers rely on the same ids.\n\n## Consequences\n\nReordering phases requires an ADR and registry updates.\n\n## Verification anchors\n\n- `compiler/crates/beskid_pipeline/`\n- `compiler/crates/beskid_analysis/src/services.rs`.\n",
   "layoutJson": null
 }

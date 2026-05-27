@@ -30,7 +30,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nTraceability anchors:\n\n- Source of truth: `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`\n- Rule emitters: `compiler/crates/beskid_analysis/src/analysis/rules`\n- Verification script: `packages/trudoc/scripts/verify-diagnostics-spec-sync.mjs`\n\nSuggested verification path:\n\n1. Run semantic tests after registry changes.\n2. Run diagnostic spec synchronization (`packages/trudoc/scripts/verify-diagnostics-spec-sync.mjs` via the website/trudoc verify scripts).\n3. Validate at least one CLI and one LSP diagnostics scenario to confirm code identity parity.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nTraceability anchors:\n\n- Source of truth: `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs`\n- Rule emitters: `compiler/crates/beskid_analysis/src/analysis/rules`\n- Verification script: `packages/trudoc/scripts/verify-diagnostics-spec-sync.mjs`\n\nSuggested verification path:\n\n1. Run semantic tests after registry changes.\n2. Run diagnostic spec synchronization (`packages/trudoc/scripts/verify-diagnostics-spec-sync.mjs` via the website/trudoc verify scripts).\n3. Validate at least one CLI and one LSP diagnostics scenario to confirm code identity parity.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Stage, commit, and push every dirty git repo in the current superproject tree
-# (nested submodules deepest-first, then the root). Intended for Beskid's
-# multi-repo layout; pair with scripts/lazygit/config.yml in lazygit.
+# (nested submodules deepest-first, then the root). Approved entry: lazygit with
+# scripts/lazygit/config.yml — not for routine direct shell use.
 set -euo pipefail
 
 usage() {
@@ -16,7 +16,7 @@ Options:
   --no-push        Commit only; skip push
   -h, --help       Show this help
 
-If message is omitted, prompts on a TTY (lazygit should pass one via -m).
+If message is omitted, prompts on a TTY (lazygit passes the form message).
 EOF
 }
 

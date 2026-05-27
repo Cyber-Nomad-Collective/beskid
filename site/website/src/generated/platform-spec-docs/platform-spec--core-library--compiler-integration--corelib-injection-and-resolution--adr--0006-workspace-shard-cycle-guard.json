@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nShards under `packages/*` would create cycles if they gained implicit host edges.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Guard | `is_corelib_workspace_shard_manifest` skips implicit back-edge |\n| Host | Only application hosts receive implicit corelib |\n\n## Consequences\n\nBuilding `packages/runtime` alone does not pull beskid_corelib as a hidden parent.\n\n## Verification anchors\n\n`resolver.rs`; corelib workspace compile tests.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nShards under `packages/*` would create cycles if they gained implicit host edges.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Guard | `is_corelib_workspace_shard_manifest` skips implicit back-edge |\n| Host | Only application hosts receive implicit corelib |\n\n## Consequences\n\nBuilding `packages/runtime` alone does not pull beskid_corelib as a hidden parent.\n\n## Verification anchors\n\n`resolver.rs`; corelib workspace compile tests.\n",
   "layoutJson": null
 }

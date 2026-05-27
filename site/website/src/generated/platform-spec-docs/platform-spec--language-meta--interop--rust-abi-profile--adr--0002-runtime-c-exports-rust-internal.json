@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nJIT/AOT loaders need stable C symbol names while implementation remains Rust.\n\n## Decision\n\nThe Beskid runtime **must** expose **stable C-compatible entrypoints** to loaders. **Rust-specific** implementation choices **must** remain **inside** the runtime crate boundary.\n\n## Consequences\n\n`beskid_abi` symbols and unwind bridges document the outward face only.\n\n## Verification anchors\n\n`compiler/crates/beskid_abi`; `compiler/crates/beskid_runtime`.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nJIT/AOT loaders need stable C symbol names while implementation remains Rust.\n\n## Decision\n\nThe Beskid runtime **must** expose **stable C-compatible entrypoints** to loaders. **Rust-specific** implementation choices **must** remain **inside** the runtime crate boundary.\n\n## Consequences\n\n`beskid_abi` symbols and unwind bridges document the outward face only.\n\n## Verification anchors\n\n`compiler/crates/beskid_abi`; `compiler/crates/beskid_runtime`.\n",
   "layoutJson": null
 }

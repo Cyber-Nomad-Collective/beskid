@@ -27,7 +27,7 @@
       }
     ]
   },
-  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n## Normative platform contract\n\n1. High-churn feature pages should set `lastReviewed` in ISO date format.\n2. If implementation anchors change materially, `lastReviewed` should be updated in the same change set.\n3. Optional verification scripts may warn when pages with implementation anchors omit `lastReviewed`.\n\n## Decisions\n\nNo open decisions. Closed maintenance ADR under **`adr/`** — `D-COMM-REV-0001` (reader **ADRs** tab).\n",
+  "body": "\nimport SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\n\n<SpecPageHeader status=\"Standard\" ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n\n## Normative platform contract\n\n1. High-churn feature pages should set `lastReviewed` in ISO date format.\n2. If implementation anchors change materially, `lastReviewed` should be updated in the same change set.\n3. Optional verification scripts may warn when pages with implementation anchors omit `lastReviewed`.\n\n## Decisions\n\nNo open decisions. Closed maintenance ADR under **`adr/`** — `D-COMM-REV-0001` (reader **ADRs** tab).\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

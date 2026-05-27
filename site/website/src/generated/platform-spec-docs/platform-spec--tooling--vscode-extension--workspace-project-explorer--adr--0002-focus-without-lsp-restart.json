@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nUX on focus.\n\n## Decision\n\ndidChangeConfiguration for focus; no LSP restart.\n\n## Consequences\n\nFast focus switch.\n\n## Verification anchors\n\nSession invalidation.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nUX on focus.\n\n## Decision\n\ndidChangeConfiguration for focus; no LSP restart.\n\n## Consequences\n\nFast focus switch.\n\n## Verification anchors\n\nSession invalidation.\n",
   "layoutJson": null
 }

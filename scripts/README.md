@@ -17,9 +17,7 @@ Set `REPO_VERBOSE=1` for full `repo version` output from `install-repo-tool.sh`.
 | Goal | Command |
 |------|---------|
 | Git submodules only (no `repo`) | `./scripts/setup-environment.sh --submodules` |
-| Include optional `references/bsharp` | `./scripts/setup-environment.sh --bsharp` or `BESKID_WITH_BSHARP=1` |
 | Skip JS install | `BESKID_SKIP_JS_INSTALL=1 ./scripts/setup-environment.sh` |
-| Manifest with bsharp by default | `BESKID_MANIFEST_FILE=manifests/with-bsharp.xml ./scripts/setup-environment.sh` |
 
 ### Fresh directory (repo-only workflow)
 
@@ -41,3 +39,9 @@ Copy [`manifests/local_manifest.example.xml`](../manifests/local_manifest.exampl
 ## Manifests
 
 See [`manifests/default.xml`](../manifests/default.xml). Project paths match [`.gitmodules`](../.gitmodules), including nested `compiler/corelib` (`beskid_standard`).
+
+## Recursive commit and push
+
+Stage, commit, and push every dirty repo in the superproject tree (nested submodules deepest-first, then the root) through **lazygit** only. Install the Beskid config and use custom keys `P` / `C` / `D` (and related bindings) as documented in [`lazygit/README.md`](lazygit/README.md).
+
+[`git-commit-push-recursive.sh`](git-commit-push-recursive.sh) exists for lazygit to invoke; it is not an approved standalone CLI workflow.

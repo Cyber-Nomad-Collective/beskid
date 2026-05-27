@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\n`event` multicast is defined for ownership within one fiber; UI/IO delivery across fibers needs a defined transport.\n\n## Decision\n\nDelivering notifications to **another** fiber **must** use `Channel<T>` (or coordination primitives), not language `event` delivery across fiber boundaries.\n\n## Consequences\n\n[Events](/platform-spec/language-meta/evaluation/events/) stays single-fiber; console and host specs reference channels for cross-fiber IO.\n\n## Verification anchors\n\n[Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/); [Events](/platform-spec/language-meta/evaluation/events/).\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\n`event` multicast is defined for ownership within one fiber; UI/IO delivery across fibers needs a defined transport.\n\n## Decision\n\nDelivering notifications to **another** fiber **must** use `Channel<T>` (or coordination primitives), not language `event` delivery across fiber boundaries.\n\n## Consequences\n\n[Events](/platform-spec/language-meta/evaluation/events/) stays single-fiber; console and host specs reference channels for cross-fiber IO.\n\n## Verification anchors\n\n[Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/); [Events](/platform-spec/language-meta/evaluation/events/).\n",
   "layoutJson": null
 }

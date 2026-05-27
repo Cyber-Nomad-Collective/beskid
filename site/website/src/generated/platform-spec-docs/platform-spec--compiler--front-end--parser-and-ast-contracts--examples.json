@@ -30,7 +30,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nExample A: adding a new declaration form\n\n1. Extend `beskid.pest` with the production.\n2. Add/adjust syntax item parser in `src/syntax/items`.\n3. Validate formatter behavior if the new node is printable.\n4. Confirm resolver can discover names from the new declaration.\n\nExample B: fixing a parser diagnostic\n\n1. Reproduce failure in parser/analysis tests.\n2. Adjust parse error mapping in `src/parsing`.\n3. Ensure diagnostic code identity remains stable when routed through later phases.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nExample A: adding a new declaration form\n\n1. Extend `beskid.pest` with the production.\n2. Add/adjust syntax item parser in `src/syntax/items`.\n3. Validate formatter behavior if the new node is printable.\n4. Confirm resolver can discover names from the new declaration.\n\nExample B: fixing a parser diagnostic\n\n1. Reproduce failure in parser/analysis tests.\n2. Adjust parse error mapping in `src/parsing`.\n3. Ensure diagnostic code identity remains stable when routed through later phases.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

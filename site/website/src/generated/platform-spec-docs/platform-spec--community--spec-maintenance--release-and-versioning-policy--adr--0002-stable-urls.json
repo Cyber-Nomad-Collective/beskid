@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRenaming or version-prefixing feature paths broke bookmarks and `relatedTopics` links across domains.\n\n## Decision\n\nFeature and language-meta paths **must** remain stable across releases. Behavioral change is expressed by editing normative text and metadata (`status`, `lastReviewed`, embedded decisions), not by introducing version segments in site paths.\n\n## Consequences\n\nRedirects handle legacy Starlight paths; normative slugs under `platform-spec/` stay fixed.\n\n## Verification anchors\n\n`site/website` Astro routes; platform-spec nav tree generation.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRenaming or version-prefixing feature paths broke bookmarks and `relatedTopics` links across domains.\n\n## Decision\n\nFeature and language-meta paths **must** remain stable across releases. Behavioral change is expressed by editing normative text and metadata (`status`, `lastReviewed`, embedded decisions), not by introducing version segments in site paths.\n\n## Consequences\n\nRedirects handle legacy Starlight paths; normative slugs under `platform-spec/` stay fixed.\n\n## Verification anchors\n\n`site/website` Astro routes; platform-spec nav tree generation.\n",
   "layoutJson": null
 }

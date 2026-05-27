@@ -32,7 +32,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n## Why does the compiler ignore my workspace target?\nExplicit file input overrides target inference; remove the explicit path to use manifest target resolution.\n\n## Why did a dependency warning not fail the command?\nThe command may be using a warning-oriented unresolved dependency policy. Use a strict mode command or policy where available.\n\n## Why does lockfile behavior differ between commands?\n`--frozen` and `--locked` are command-level options propagated into workspace preparation options.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n## Why does the compiler ignore my workspace target?\nExplicit file input overrides target inference; remove the explicit path to use manifest target resolution.\n\n## Why did a dependency warning not fail the command?\nThe command may be using a warning-oriented unresolved dependency policy. Use a strict mode command or policy where available.\n\n## Why does lockfile behavior differ between commands?\n`--frozen` and `--locked` are command-level options propagated into workspace preparation options.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

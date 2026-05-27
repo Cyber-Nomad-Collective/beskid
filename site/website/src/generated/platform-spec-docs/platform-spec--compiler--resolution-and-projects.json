@@ -31,7 +31,7 @@
       }
     ]
   },
-  "body": "\nimport SpecPageHeader from '@beskid/docs-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/docs-ui/platform-spec/SpecSection.astro';\nimport DomainTiles from '@beskid/docs-ui/platform-spec/DomainTiles.astro';\n\n<SpecPageHeader ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n<SpecSection title=\"Scope\" id=\"scope\">\nName resolution, workspace/project discovery, and lockfile-related compiler contracts.\n</SpecSection>\n\n<SpecSection title=\"Feature index\" id=\"feature-index\">\nUse the tiles below for normative **feature** contracts in this area.\n</SpecSection>\n\n<DomainTiles pathPrefix=\"platform-spec/compiler/resolution-and-projects\" heading=\"Features\" />\n",
+  "body": "\nimport SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';\nimport SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';\nimport DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';\n\n<SpecPageHeader ownerName=\"Piotr Mikstacki\" ownerEmail=\"pmikstacki@cybernomad.it\" submitterName=\"Piotr Mikstacki\" submitterEmail=\"pmikstacki@cybernomad.it\" />\n<SpecSection title=\"Scope\" id=\"scope\">\nName resolution, workspace/project discovery, and lockfile-related compiler contracts.\n</SpecSection>\n\n<SpecSection title=\"Feature index\" id=\"feature-index\">\nUse the tiles below for normative **feature** contracts in this area.\n</SpecSection>\n\n<DomainTiles pathPrefix=\"platform-spec/compiler/resolution-and-projects\" heading=\"Features\" />\n",
   "layoutJson": {
     "version": 1,
     "level": "area",

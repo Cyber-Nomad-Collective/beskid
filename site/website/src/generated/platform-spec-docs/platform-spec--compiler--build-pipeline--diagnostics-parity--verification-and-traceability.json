@@ -32,7 +32,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nImplementation anchors:\n\n- `compiler/crates/beskid_cli/src/frontend.rs`\n- `compiler/crates/beskid_codegen/src/services.rs`\n- `compiler/crates/beskid_lsp/src/diagnostics.rs`\n- `compiler/crates/beskid_analysis/src/services.rs`\n\nVerification strategy should compare fixture diagnostics across CLI and LSP cold/warm paths.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nImplementation anchors:\n\n- `compiler/crates/beskid_cli/src/frontend.rs`\n- `compiler/crates/beskid_codegen/src/services.rs`\n- `compiler/crates/beskid_lsp/src/diagnostics.rs`\n- `compiler/crates/beskid_analysis/src/services.rs`\n\nVerification strategy should compare fixture diagnostics across CLI and LSP cold/warm paths.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

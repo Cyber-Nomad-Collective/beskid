@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nPlugin authors confused generated exports with frozen JIT builtin tables.\n\n## Decision\n\nUser **export** symbols are **generated** from Beskid compilation units. Frozen **runtime builtin** exports remain on **`beskid_abi`** / **[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/)** — export-only work **must not** change `BESKID_RUNTIME_ABI_VERSION`.\n\n## Consequences\n\nCodegen plans export metadata beside `ExternImport`; trampolines use runtime TLS hooks.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/export-and-callbacks/ implementation anchors.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nPlugin authors confused generated exports with frozen JIT builtin tables.\n\n## Decision\n\nUser **export** symbols are **generated** from Beskid compilation units. Frozen **runtime builtin** exports remain on **`beskid_abi`** / **[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/)** — export-only work **must not** change `BESKID_RUNTIME_ABI_VERSION`.\n\n## Consequences\n\nCodegen plans export metadata beside `ExternImport`; trampolines use runtime TLS hooks.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/export-and-callbacks/ implementation anchors.\n",
   "layoutJson": null
 }

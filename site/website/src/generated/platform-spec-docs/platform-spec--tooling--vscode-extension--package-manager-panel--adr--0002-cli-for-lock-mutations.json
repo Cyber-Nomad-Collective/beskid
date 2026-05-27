@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLock integrity.\n\n## Decision\n\nUse beskid fetch/lock via CLI.\n\n## Consequences\n\nShared resolver.\n\n## Verification anchors\n\nPanel CLI invocations.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nLock integrity.\n\n## Decision\n\nUse beskid fetch/lock via CLI.\n\n## Consequences\n\nShared resolver.\n\n## Verification anchors\n\nPanel CLI invocations.\n",
   "layoutJson": null
 }

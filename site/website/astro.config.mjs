@@ -6,13 +6,13 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import embeds from 'astro-embed/integration';
 import mermaid from 'astro-mermaid';
-import { docsShellCustomCss } from '@beskid/docs-ui/shell-css';
+import { docsShellCustomCss } from '@beskid/beskid-ui/shell-css';
 import trudoc from 'trudoc/integration';
 import { createRemarkArchCodeFence } from 'trudoc/scripts/remark-arch-code-fence.mjs';
 import { remarkInlineRepoPaths } from 'trudoc/scripts/remark-inline-repo-paths.mjs';
 import { remarkRepoLinkFence } from 'trudoc/scripts/remark-repo-link-fence.mjs';
 import { loadBeskidGrammar } from 'trudoc/grammars/load-beskid-grammar.mjs';
-import { docsUiRoot } from './src/lib/docs-ui-root.mjs';
+import { beskidUiRoot } from './src/lib/beskid-ui-root.mjs';
 
 const beskidGrammar = loadBeskidGrammar();
 
@@ -196,11 +196,11 @@ export default defineConfig({
 	vite: {
 		server: {
 			fs: {
-				allow: [repoRoot, docsUiRoot],
+				allow: [repoRoot, beskidUiRoot],
 			},
 		},
 		ssr: {
-			noExternal: ['@beskid/docs-ui', 'trudoc'],
+			noExternal: ['@beskid/beskid-ui', 'trudoc'],
 		},
 	},
 	redirects: {
@@ -259,13 +259,13 @@ export default defineConfig({
 				baseUrl: 'https://github.com/Cyber-Nomad-Collective/beskid/edit/main/site/website/',
 			},
 			components: {
-				Head: '@beskid/docs-ui/starlight/Head.astro',
-				Header: '@beskid/docs-ui/starlight/Header.astro',
-				Footer: '@beskid/docs-ui/starlight/Footer.astro',
-				ThemeSelect: '@beskid/docs-ui/starlight/ThemeSelect.astro',
-				Sidebar: '@beskid/docs-ui/starlight/Sidebar.astro',
-				Banner: '@beskid/docs-ui/starlight/Banner.astro',
-				Page: '@beskid/docs-ui/starlight/Page.astro',
+				Head: '@beskid/beskid-ui/starlight/Head.astro',
+				Header: '@beskid/beskid-ui/starlight/Header.astro',
+				Footer: '@beskid/beskid-ui/starlight/Footer.astro',
+				ThemeSelect: '@beskid/beskid-ui/starlight/ThemeSelect.astro',
+				Sidebar: '@beskid/beskid-ui/starlight/Sidebar.astro',
+				Banner: '@beskid/beskid-ui/starlight/Banner.astro',
+				Page: '@beskid/beskid-ui/starlight/Page.astro',
 			},
 			customCss: docsShellCustomCss,
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/Cyber-Nomad-Collective/beskid' }],

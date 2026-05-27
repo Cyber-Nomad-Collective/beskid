@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRust runtime exports were documented beside user C extern rules.\n\n## Decision\n\nThis feature hub **must** own normative MUST/SHOULD for **Rust-hosted runtime** interop distinct from user **C ABI profile** libraries.\n\n## Consequences\n\nBuiltin table and ABI version policy stay here; user `Extern` stays on C profile.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/rust-abi-profile/\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nRust runtime exports were documented beside user C extern rules.\n\n## Decision\n\nThis feature hub **must** own normative MUST/SHOULD for **Rust-hosted runtime** interop distinct from user **C ABI profile** libraries.\n\n## Consequences\n\nBuiltin table and ABI version policy stay here; user `Extern` stays on C profile.\n\n## Verification anchors\n\n/platform-spec/language-meta/interop/rust-abi-profile/\n",
   "layoutJson": null
 }

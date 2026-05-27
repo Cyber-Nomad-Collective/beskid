@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nTemplate authors need delimiter syntax distinct from Beskid source.\n\n## Decision\n\nText files **must** use **`{{symbolName}}`** placeholders; optional **`sourceName`** rewriting applies to paths and identifiers.\n\n## Consequences\n\nEditors can highlight unmatched braces; substitution tests stay deterministic.\n\n## Verification anchors\n\nGolden substitution tests under planned `beskid_tests` template fixtures.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nTemplate authors need delimiter syntax distinct from Beskid source.\n\n## Decision\n\nText files **must** use **`{{symbolName}}`** placeholders; optional **`sourceName`** rewriting applies to paths and identifiers.\n\n## Consequences\n\nEditors can highlight unmatched braces; substitution tests stay deterministic.\n\n## Verification anchors\n\nGolden substitution tests under planned `beskid_tests` template fixtures.\n",
   "layoutJson": null
 }

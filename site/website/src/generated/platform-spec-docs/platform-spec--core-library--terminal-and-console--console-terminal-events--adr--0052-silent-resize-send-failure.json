@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nUI loops should not crash when consumers drop resize messages.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| EVT-002 | Failed `Send` on resize is **silent** in v1 |\n| Future | May gain diagnostics in a later ADR |\n\n## Consequences\n\nPoll loops continue after dropped resize notifications.\n\n## Verification anchors\n\n`ConsoleMessageChannelTests.bd`; EVT-002 traceability.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nUI loops should not crash when consumers drop resize messages.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| EVT-002 | Failed `Send` on resize is **silent** in v1 |\n| Future | May gain diagnostics in a later ADR |\n\n## Consequences\n\nPoll loops continue after dropped resize notifications.\n\n## Verification anchors\n\n`ConsoleMessageChannelTests.bd`; EVT-002 traceability.\n",
   "layoutJson": null
 }

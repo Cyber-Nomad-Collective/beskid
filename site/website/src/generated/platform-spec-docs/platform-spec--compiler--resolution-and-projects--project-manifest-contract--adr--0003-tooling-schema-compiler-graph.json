@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nManifest key tables were duplicated between tooling and compiler specs.\n\n## Decision\n\nAuthor-facing `Project.proj` key tables live only under tooling; this compiler feature documents resolution graph behavior and defers schema prose via `relatedTopics`.\n\n## Consequences\n\nCompiler changes manifest parsing only when graph or diagnostic bands change; tooling spec leads schema edits.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/projects/manifest_resolve.rs`\n- `tooling project-manifest-contract hub.`\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nManifest key tables were duplicated between tooling and compiler specs.\n\n## Decision\n\nAuthor-facing `Project.proj` key tables live only under tooling; this compiler feature documents resolution graph behavior and defers schema prose via `relatedTopics`.\n\n## Consequences\n\nCompiler changes manifest parsing only when graph or diagnostic bands change; tooling spec leads schema edits.\n\n## Verification anchors\n\n- `compiler/crates/beskid_analysis/src/projects/manifest_resolve.rs`\n- `tooling project-manifest-contract hub.`\n",
   "layoutJson": null
 }

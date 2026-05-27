@@ -17,7 +17,7 @@ WORKDIR /app
 COPY package.json bun.lock .npmrc ./
 COPY beskid_web_common/package.json beskid_web_common/bun.lock ./beskid_web_common/
 COPY beskid_web_common/packages/trudoc/package.json ./beskid_web_common/packages/trudoc/
-COPY beskid_web_common/packages/docs-ui/package.json ./beskid_web_common/packages/docs-ui/
+COPY beskid_web_common/packages/beskid-ui/package.json ./beskid_web_common/packages/beskid-ui/
 COPY site/website/package.json site/website/package.json
 ARG NODE_AUTH_TOKEN
 ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}

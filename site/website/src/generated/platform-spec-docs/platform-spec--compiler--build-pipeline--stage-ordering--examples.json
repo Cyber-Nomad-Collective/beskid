@@ -32,7 +32,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- **Successful run:** parse + rules + typing succeed; artifact is sent to JIT and executed.\n- **Build with semantic error:** rules emit an error; lowering exits before object emission.\n- **Parse failure:** parse stage emits diagnostics and no HIR or backend stages run.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\n- **Successful run:** parse + rules + typing succeed; artifact is sent to JIT and executed.\n- **Build with semantic error:** rules emit an error; lowering exits before object emission.\n- **Parse failure:** parse stage emits diagnostics and no HIR or backend stages run.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",

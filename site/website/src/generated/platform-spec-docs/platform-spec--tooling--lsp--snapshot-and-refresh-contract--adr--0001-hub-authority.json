@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nOne authority.\n\n## Decision\n\nHub owns snapshot/refresh MUST/SHOULD.\n\n## Consequences\n\nIDE parity.\n\n## Verification anchors\n\nbeskid_lsp tests.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nOne authority.\n\n## Decision\n\nHub owns snapshot/refresh MUST/SHOULD.\n\n## Consequences\n\nIDE parity.\n\n## Verification anchors\n\nbeskid_lsp tests.\n",
   "layoutJson": null
 }

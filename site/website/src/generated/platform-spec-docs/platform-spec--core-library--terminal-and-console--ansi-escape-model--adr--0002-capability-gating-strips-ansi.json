@@ -28,6 +28,6 @@
       }
     ]
   },
-  "body": "\nimport SpecAdrChrome from '@beskid/docs-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nPrograms must not leak escapes to pipes, log files, or NO_COLOR environments.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Gating | User-visible styled output **must** pass `Ansi.Escape.WhenEnabled` |\n| Tests | Ungated `Csi` remains for golden tests |\n\n## Consequences\n\nWhen `ShouldEmitAnsi()` is false, gated builders return empty strings.\n\n## Verification anchors\n\n`AnsiEscapeTests.bd`; console capability integration.\n",
+  "body": "\nimport SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';\n\n<SpecAdrChrome />\n\n## Context\n\nPrograms must not leak escapes to pipes, log files, or NO_COLOR environments.\n\n## Decision\n\n| Rule | Detail |\n| --- | --- |\n| Gating | User-visible styled output **must** pass `Ansi.Escape.WhenEnabled` |\n| Tests | Ungated `Csi` remains for golden tests |\n\n## Consequences\n\nWhen `ShouldEmitAnsi()` is false, gated builders return empty strings.\n\n## Verification anchors\n\n`AnsiEscapeTests.bd`; console capability integration.\n",
   "layoutJson": null
 }

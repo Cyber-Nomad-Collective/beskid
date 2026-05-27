@@ -30,7 +30,7 @@
       }
     ]
   },
-  "body": "\nimport SpecArticleChrome from '@beskid/docs-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nRegistry contracts:\n\n- Codes must be unique and semantically stable once published.\n- Rules may evolve messages, but not silently repurpose existing codes.\n- Deprecated codes should remain documented until consumer migration is complete.\n\nEdge cases:\n\n- Splitting one broad issue into multiple specific codes can break external filters.\n- Merging codes can hide important distinctions used by editor workflows.\n- Reordering kinds without preserving explicit mappings may create accidental code churn.\n",
+  "body": "\nimport SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';\n\n<SpecArticleChrome />\n\n\n\nRegistry contracts:\n\n- Codes must be unique and semantically stable once published.\n- Rules may evolve messages, but not silently repurpose existing codes.\n- Deprecated codes should remain documented until consumer migration is complete.\n\nEdge cases:\n\n- Splitting one broad issue into multiple specific codes can break external filters.\n- Merging codes can hide important distinctions used by editor workflows.\n- Reordering kinds without preserving explicit mappings may create accidental code churn.\n",
   "layoutJson": {
     "version": 1,
     "level": "feature",
