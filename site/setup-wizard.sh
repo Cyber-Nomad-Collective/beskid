@@ -50,6 +50,7 @@ pick_profile() {
       PROFILE=full
       DEPS_GROUP="beskid"
       INSTALL_DEPS=1
+      COPY_WEBSITE_ENV=1
       SUBMODULE_PATHS=()
       ;;
     3 | infra)
@@ -203,9 +204,15 @@ if [[ $# -gt 0 ]]; then
       PROFILE="${2:?}"
       INSTALL_DEPS=1
       case "${PROFILE}" in
-        docs) SUBMODULE_PATHS=(beskid_web_common) ;;
+        docs)
+          SUBMODULE_PATHS=(beskid_web_common)
+          COPY_WEBSITE_ENV=1
+          ;;
         infra) DEPS_GROUP=infra; SUBMODULE_PATHS=(beskid_infra) ;;
-        full) SUBMODULE_PATHS=() ;;
+        full)
+          SUBMODULE_PATHS=()
+          COPY_WEBSITE_ENV=1
+          ;;
         *) die "Unknown profile: ${PROFILE}" ;;
       esac
       ;;

@@ -19,9 +19,19 @@ Reads [`repo-deps.json`](../repo-deps.json), detects OS (`scripts/lib/detect-os.
 
 Library: `scripts/lib/{detect-os,deps-check,install-methods,output}.sh`.
 
+## Interactive setup
+
+From the superrepo root:
+
+```bash
+just setup
+```
+
+Runs [`site/setup-wizard.sh`](../site/setup-wizard.sh) (profiles: docs, full dev, infra). See [`site/README.md`](../site/README.md).
+
 ## Environment setup
 
-[`setup-environment.sh`](setup-environment.sh) is the main entry for a fresh or partial checkout:
+[`setup-environment.sh`](setup-environment.sh) is the non-interactive entry for a fresh or partial checkout:
 
 ```bash
 ./scripts/setup-environment.sh

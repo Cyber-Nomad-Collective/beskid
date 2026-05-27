@@ -75,13 +75,15 @@ Top-level continuous integration ties the submodules together (compiler, pckg, e
 
 ### Clone and sync
 
-**Recommended (git-repo + setup script):** installs [Google's `repo` tool](https://gerrit.googlesource.com/git-repo/), syncs all projects from [`manifests/default.xml`](manifests/default.xml), and runs `bun install` when Bun is available:
+**Recommended:** interactive setup from the superrepo root (toolchain, submodules, Bun workspaces, site `.env` files):
 
 ```bash
 git clone https://github.com/Cyber-Nomad-Collective/beskid.git
 cd beskid
-./scripts/setup-environment.sh
+just setup
 ```
+
+Requires [just](https://github.com/casey/just) (`./scripts/install-deps.sh --install --tool just`). Non-interactive sync: [`./scripts/setup-environment.sh`](scripts/setup-environment.sh) (uses [Google's `repo` tool](https://gerrit.googlesource.com/git-repo/) when [`manifests/default.xml`](manifests/default.xml) exists, otherwise git submodules).
 
 **Git submodules only:**
 

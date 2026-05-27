@@ -59,7 +59,8 @@ Public documentation is split into **[Platform specification](/platform-spec/)**
 
 Coolify deployment uses:
 
-- Compose file: [`site/infra/docker-compose.yml`](../infra/docker-compose.yml) (build context: superrepo root)
+- Image deploy: [`site/docker-compose.yml`](../docker-compose.yml)
+- Build from Git: [`site/docker-compose.build.yml`](../docker-compose.build.yml) (build context: superrepo root)
 - Website image build: `site/website/Dockerfile`
 - Operator notes (submodule clone failures, health): [`site/COOLIFY.md`](../COOLIFY.md)
 

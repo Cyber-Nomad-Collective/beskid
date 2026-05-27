@@ -1,4 +1,5 @@
-# Local / build-from-source compose. For GHCR image-only Coolify deploy use docker-compose.yml.
+# Local / build-from-source compose (superrepo root context).
+# For GHCR image-only Coolify deploy use docker-compose.yml.
 services:
   website:
     build:
