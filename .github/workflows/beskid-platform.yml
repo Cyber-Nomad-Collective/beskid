@@ -1,0 +1,40 @@
+# Website ecosystem: GHCR build → OpenTofu plan (beskid_infra manages Coolify deploy).
+name: Beskid platform (site + auth)
+
+on:
+  push:
+    branches: [main, stg]
+    paths:
+      - 'site/**'
+      - 'beskid_web_common/**'
+      - 'beskid_infra/**'
+      - 'package.json'
+      - 'bun.lock'
+      - '.npmrc'
+      - '.github/workflows/beskid-platform.yml'
+      - '.github/workflows/container-images.yml'
+      - '.github/workflows/tofu-plan-apply.yml'
+  pull_request:
+    branches: [main, stg]
+    paths:
+      - 'site/**'
+      - 'beskid_web_common/**'
+      - 'beskid_infra/**'
+      - '.github/workflows/beskid-platform.yml'
+      - '.github/workflows/container-images.yml'
+      - '.github/workflows/tofu-plan-apply.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  images:
+    uses: ./.github/workflows/container-images.yml
+
+  infra:
+    needs: images
+    if: always() && (needs.images.result == 'success' || needs.images.result == 'skipped')
+    uses: ./.github/workflows/tofu-plan-apply.yml
+    secrets: inherit

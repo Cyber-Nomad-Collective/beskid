@@ -1,0 +1,80 @@
+# Production release: versioned GHCR tags + OpenTofu apply (when enabled).
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Image tag (e.g. v0.4.0)
+        required: true
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/cyber-nomad-collective
+
+jobs:
+  images:
+    name: Release images
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/actions/checkout-beskid
+        with:
+          fetch-depth: 0
+          submodules: beskid_web_common
+
+      - uses: ./.github/actions/setup-beskid-web
+
+      - name: Resolve release tag
+        id: tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            echo "value=${{ github.event.release.tag_name }}" >> "${GITHUB_OUTPUT}"
+          else
+            echo "value=${{ inputs.tag }}" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push site (release)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: site/website/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_PREFIX }}/beskid-site:${{ steps.tag.outputs.value }}
+            ${{ env.IMAGE_PREFIX }}/beskid-site:main
+          build-args: |
+            NODE_AUTH_TOKEN=${{ secrets.NODE_AUTH_TOKEN != '' && secrets.NODE_AUTH_TOKEN || github.token }}
+
+      - name: Build and push auth (release)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: site/auth/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_PREFIX }}/beskid-auth:${{ steps.tag.outputs.value }}
+            ${{ env.IMAGE_PREFIX }}/beskid-auth:main
+
+  # Open VSX publishes via publish-open-vsx.yml (also on release:published).
+
+  infra-apply:
+    name: OpenTofu apply (production)
+    needs: images
+    if: vars.BESKID_TOFU_APPLY_ENABLED == 'true'
+    uses: ./.github/workflows/tofu-plan-apply.yml
+    secrets: inherit

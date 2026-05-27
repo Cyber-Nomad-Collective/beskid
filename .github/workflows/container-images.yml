@@ -1,18 +1,9 @@
+# GHCR images for beskid site + auth (consumed by beskid_infra OpenTofu / Coolify).
 name: Container images
 
 on:
-  push:
-    branches: [main, staging]
-    paths:
-      - 'site/website/**'
-      - 'site/auth/**'
-      - 'beskid_web_common/**'
-      - 'package.json'
-      - 'bun.lock'
-      - '.npmrc'
-      - '.github/workflows/container-images.yml'
-      - 'site/website/Dockerfile'
-      - 'site/auth/Dockerfile'
+  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -27,17 +18,22 @@ jobs:
     name: beskid-site
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: ./.github/actions/checkout-beskid
         with:
           fetch-depth: 0
-      - name: Checkout beskid_web_common submodule
-        run: git -c protocol.version=2 submodule update --init --depth 1 beskid_web_common
+          submodules: beskid_web_common
+
+      - uses: ./.github/actions/setup-beskid-web
+        with:
+          node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Docker metadata (site)
         id: meta
         uses: docker/metadata-action@v5
@@ -46,6 +42,9 @@ jobs:
           tags: |
             type=ref,event=branch
             type=sha,prefix=sha-,format=short
+            type=raw,value=main,enable=${{ github.ref_name == 'main' }}
+            type=raw,value=staging,enable=${{ github.ref_name == 'stg' }}
+
       - name: Build and push site image
         uses: docker/build-push-action@v6
         with:
@@ -55,23 +54,26 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            NODE_AUTH_TOKEN=${{ secrets.NODE_AUTH_TOKEN }}
+            NODE_AUTH_TOKEN=${{ secrets.NODE_AUTH_TOKEN != '' && secrets.NODE_AUTH_TOKEN || github.token }}
 
   build-auth:
     name: beskid-auth
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: ./.github/actions/checkout-beskid
         with:
           fetch-depth: 0
-      - name: Checkout beskid_web_common submodule
-        run: git -c protocol.version=2 submodule update --init --depth 1 beskid_web_common
+          submodules: beskid_web_common
+
+      - uses: ./.github/actions/setup-beskid-web
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Docker metadata (auth)
         id: meta
         uses: docker/metadata-action@v5
@@ -80,6 +82,9 @@ jobs:
           tags: |
             type=ref,event=branch
             type=sha,prefix=sha-,format=short
+            type=raw,value=main,enable=${{ github.ref_name == 'main' }}
+            type=raw,value=staging,enable=${{ github.ref_name == 'stg' }}
+
       - name: Build and push auth image
         uses: docker/build-push-action@v6
         with:

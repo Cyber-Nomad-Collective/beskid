@@ -1,37 +1,40 @@
+# OpenTofu: Coolify apps for site/auth/tracker/nexus/pckg (beskid_infra).
 name: OpenTofu plan and apply
 
 on:
-  push:
-    branches: [main, stg]
-    paths:
-      - 'beskid_infra/environments/**'
-      - 'beskid_infra/modules/**'
-      - '.github/workflows/tofu-plan-apply.yml'
-  pull_request:
-    branches: [main, stg]
-    paths:
-      - 'beskid_infra/environments/**'
-      - 'beskid_infra/modules/**'
-      - '.github/workflows/tofu-plan-apply.yml'
+  workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
+
+env:
+  TF_VAR_coolify_endpoint: ${{ vars.COOLIFY_ENDPOINT }}
+  TF_VAR_coolify_api_token: ${{ vars.COOLIFY_API_TOKEN }}
+  TF_VAR_project_uuid: ${{ vars.COOLIFY_PROJECT_UUID }}
+  TF_VAR_server_uuid: ${{ vars.COOLIFY_SERVER_UUID }}
+  TF_VAR_openbao_enabled: ${{ vars.OPENBAO_EXPORT_ENABLED == 'true' && 'true' || 'false' }}
 
 jobs:
   plan:
     name: tofu plan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: ./.github/actions/checkout-beskid
+        with:
+          submodules: beskid_infra
 
       - uses: opentofu/setup-opentofu@v1
         with:
-          tofu_version: '1.8.0'
+          tofu_version: "1.9.0"
 
       - name: Resolve lane from branch
         id: lane
+        shell: bash
         run: |
-          source beskid_infra/scripts/lib/git-tofu-env.sh
+          set -euo pipefail
+          # shellcheck source=scripts/lib/git-tofu-env.sh
+          source scripts/lib/git-tofu-env.sh
           echo "name=$(beskid_tofu_env_from_git)" >> "${GITHUB_OUTPUT}"
 
       - name: Export OpenBao -> TF variables
@@ -41,6 +44,12 @@ jobs:
           VAULT_ADDR: ${{ secrets.OPENBAO_ADDR }}
           VAULT_TOKEN: ${{ secrets.OPENBAO_TOKEN }}
 
+      - name: OpenBao placeholders (plan without KV)
+        if: vars.OPENBAO_EXPORT_ENABLED != 'true'
+        run: |
+          echo "TF_VAR_openbao_address=${VAULT_PLACEHOLDER:-https://openbao.invalid}" >> "${GITHUB_ENV}"
+          echo "TF_VAR_openbao_token=unused" >> "${GITHUB_ENV}"
+
       - name: tofu init
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
         run: tofu init -input=false
@@ -48,15 +57,8 @@ jobs:
       - name: tofu plan
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
         run: tofu plan -input=false -out=tfplan
-        env:
-          TF_VAR_coolify_endpoint: ${{ secrets.COOLIFY_ENDPOINT }}
-          TF_VAR_coolify_api_token: ${{ secrets.COOLIFY_API_TOKEN }}
-          TF_VAR_openbao_address: ${{ secrets.OPENBAO_ADDR }}
-          TF_VAR_openbao_token: ${{ secrets.OPENBAO_TOKEN }}
-          TF_VAR_project_uuid: ${{ secrets.COOLIFY_PROJECT_UUID }}
-          TF_VAR_server_uuid: ${{ secrets.COOLIFY_SERVER_UUID }}
 
-      - name: upload plan
+      - name: Upload plan
         uses: actions/upload-artifact@v4
         with:
           name: tofu-plan-${{ steps.lane.outputs.name }}
@@ -65,21 +67,32 @@ jobs:
   apply:
     name: tofu apply
     needs: plan
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && vars.BESKID_TOFU_APPLY_ENABLED == 'true'
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: ./.github/actions/checkout-beskid
+        with:
+          submodules: beskid_infra
 
       - uses: opentofu/setup-opentofu@v1
         with:
-          tofu_version: '1.8.0'
+          tofu_version: "1.9.0"
 
       - name: Resolve lane from branch
         id: lane
+        shell: bash
         run: |
-          source beskid_infra/scripts/lib/git-tofu-env.sh
+          set -euo pipefail
+          source scripts/lib/git-tofu-env.sh
           echo "name=$(beskid_tofu_env_from_git)" >> "${GITHUB_OUTPUT}"
+
+      - name: Export OpenBao -> TF variables
+        if: vars.OPENBAO_EXPORT_ENABLED == 'true'
+        run: source beskid_infra/scripts/export-openbao-for-tofu.sh
+        env:
+          VAULT_ADDR: ${{ secrets.OPENBAO_ADDR }}
+          VAULT_TOKEN: ${{ secrets.OPENBAO_TOKEN }}
 
       - name: Configure Coolify host (Ansible)
         if: vars.ANSIBLE_PREPARE_HOST == 'true'
@@ -88,23 +101,20 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ansible openssh-client
-
           mkdir -p .tmp
           echo "${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}" > .tmp/id_ed25519
           chmod 600 .tmp/id_ed25519
-
           cat > .tmp/inventory.ini <<'EOF'
           [coolify_hosts]
           coolify ansible_host=${{ secrets.ANSIBLE_HOST }} ansible_user=${{ secrets.ANSIBLE_USER }}
           EOF
-
           ansible-playbook -i .tmp/inventory.ini \
             -u "${{ secrets.ANSIBLE_USER }}" \
             --private-key .tmp/id_ed25519 \
             beskid_infra/ansible/playbooks/prepare-opentofu-host.yml \
             -e coolify_install=false
 
-      - name: download plan
+      - name: Download plan
         uses: actions/download-artifact@v4
         with:
           name: tofu-plan-${{ steps.lane.outputs.name }}
@@ -117,10 +127,3 @@ jobs:
       - name: tofu apply
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
         run: tofu apply -input=false -auto-approve tfplan
-        env:
-          TF_VAR_coolify_endpoint: ${{ secrets.COOLIFY_ENDPOINT }}
-          TF_VAR_coolify_api_token: ${{ secrets.COOLIFY_API_TOKEN }}
-          TF_VAR_openbao_address: ${{ secrets.OPENBAO_ADDR }}
-          TF_VAR_openbao_token: ${{ secrets.OPENBAO_TOKEN }}
-          TF_VAR_project_uuid: ${{ secrets.COOLIFY_PROJECT_UUID }}
-          TF_VAR_server_uuid: ${{ secrets.COOLIFY_SERVER_UUID }}

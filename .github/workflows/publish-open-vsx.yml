@@ -1,10 +1,9 @@
-# Aggregate repo: Open VSX publish via Dagger (beskid_infra/dagger).
+# Open VSX publish via Dagger (beskid_infra/dagger).
 name: Publish VS Code Extension to Open VSX
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   release:
     types: [published]
   workflow_dispatch:
@@ -47,14 +46,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: ./.github/actions/checkout-beskid
         with:
           fetch-depth: 0
           fetch-tags: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          submodules: beskid_infra
 
       - name: Install Dagger
-        uses: dagger/dagger-for-github@v7.2.0
+        uses: dagger/dagger-for-github@v8.4.1
         with:
           version: "0.21.0"
 
