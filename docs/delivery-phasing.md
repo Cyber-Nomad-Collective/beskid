@@ -128,19 +128,21 @@ site+auth    pull-only     branch+env    +pckg DB      OpenBao
 ### Phase 1: GHCR for site + auth (now)
 
 - [x] `.github/workflows/container-images.yml` — builds and pushes `beskid-site` and `beskid-auth` on push to `main`/`staging`
-- [x] `site/docker-compose.coolify.yml` — image-only, `IMAGE_TAG` env var
-- [x] `site/auth/docker-compose.coolify.yml` — image-only, `IMAGE_TAG` env var
-- [x] Dockerfile fixes for workspace resolution (commit `92a3449`)
+- [x] `site/docker-compose.yml` — GHCR image pull, defaults to `IMAGE_TAG=main`
+- [x] `site/auth/docker-compose.yml` — GHCR image pull, defaults to `IMAGE_TAG=main`
+- [x] `site/docker-compose.build.yml` — local build-based compose (preserved)
+- [x] `site/auth/docker-compose.build.yml` — local build-based compose (preserved)
+- [x] Dockerfile fixes for workspace resolution
 - [x] `.dockerignore` — exclude unused submodules from Docker context
 - [x] Semgrep SAST replacing per-ecosystem security-audits (`semgrep.yml`)
-- [ ] GHCR package permissions — ensure `ghcr.io` packages are visible to the org
-- [ ] First successful image push to GHCR (container-images.yml run in progress)
+- [x] GHCR packages verified — `beskid-site:main` and `beskid-auth:main` pushed
+- [x] First successful image push to GHCR
 
 ### Phase 2: Coolify image pull
 
-- [ ] Register GHCR pull credentials on Coolify server (personal access token with `read:packages`)
-- [ ] Switch `beskid-site` Coolify app from build to `docker-compose.coolify.yml` + `IMAGE_TAG=main`
-- [ ] Switch `beskid-auth` Coolify app from build to `docker-compose.coolify.yml` + `IMAGE_TAG=main`
+- [ ] Register GHCR pull credentials on Coolify server (PAT with `read:packages`)
+- [x] `docker-compose.yml` files are now GHCR-based — Coolify picks them up on next git pull
+- [ ] Redeploy `beskid-site` Coolify app to pull `ghcr.io/cyber-nomad-collective/beskid-site:main`
 - [ ] Remove `NODE_AUTH_TOKEN` build secret from Coolify for site/auth (now in GHA only)
 - [ ] Verify production URLs after switch
 

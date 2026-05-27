@@ -27,7 +27,7 @@ Workflow: [`.github/workflows/container-images.yml`](../.github/workflows/contai
 ## Coolify
 
 - One project (e.g. **Beskid**), environment **`staging`** (separate from **`production`**).
-- Use `docker-compose.coolify.yml` per service with `IMAGE_TAG=staging`.
+- Use `docker-compose.yml` per service with `IMAGE_TAG=staging`.
 - Prefer Coolify wildcard auto-domains for staging hostnames unless OpenTofu sets explicit FQDNs.
 
 ## Isolation (required)

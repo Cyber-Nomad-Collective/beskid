@@ -8,7 +8,7 @@ Application: **beskid auth** (`Cyber-Nomad-Collective/beskid`).
 |-------|----------------|
 | **Drone CI** ([`.drone.yml`](../../.drone.yml)) | Push `main`/`staging`: `ghcr.io/cyber-nomad-collective/beskid-auth` |
 | **beskid_infra** | Staging pilot and production apps via `modules/coolify_image_app`; secrets from `secret/beskid/{staging,production}/auth` |
-| **Coolify** | Image-only — [`docker-compose.coolify.yml`](docker-compose.coolify.yml) |
+| **Coolify** | Image-only — [`docker-compose.yml`](docker-compose.yml) (GHCR pull) |
 
 Operator guides: [beskid_infra/docs/coolify-import.md](https://github.com/Cyber-Nomad-Collective/beskid_infra/blob/main/docs/coolify-import.md), [openbao-layout.md](https://github.com/Cyber-Nomad-Collective/beskid_infra/blob/main/docs/openbao-layout.md).
 
@@ -16,8 +16,8 @@ Operator guides: [beskid_infra/docs/coolify-import.md](https://github.com/Cyber-
 
 | Mode | File |
 |------|------|
-| **Image deploy** | [`docker-compose.coolify.yml`](docker-compose.coolify.yml) |
-| **Local build** | [`docker-compose.yml`](docker-compose.yml) |
+| **Image deploy** | [`docker-compose.yml`](docker-compose.yml) |
+| **Local build** | [`docker-compose.build.yml`](docker-compose.build.yml) |
 
 ## Runtime secrets
 

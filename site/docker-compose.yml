@@ -1,9 +1,9 @@
-# Local / build-from-source compose. For GHCR image-only Coolify deploy use docker-compose.coolify.yml.
+# Coolify / GHCR image-only deploy (no server-side build).
+# Set IMAGE_TAG to main or staging per environment (OpenTofu in beskid_infra).
+# Registry: ghcr.io/cyber-nomad-collective/beskid-site
 services:
   website:
-    build:
-      context: ..
-      dockerfile: site/website/Dockerfile
+    image: ghcr.io/cyber-nomad-collective/beskid-site:${IMAGE_TAG:-main}
     restart: unless-stopped
     expose:
       - "80"

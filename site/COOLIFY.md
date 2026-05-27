@@ -19,8 +19,8 @@ Tracker catalog task: `coolify-multi-service-deploy-matrix` (v0.4).
 
 | Mode | File |
 |------|------|
-| **Production/staging (image)** | [`docker-compose.coolify.yml`](docker-compose.coolify.yml) — `IMAGE_TAG=main` or `staging` |
-| **Local build** | [`docker-compose.yml`](docker-compose.yml) or [`infra/docker-compose.yml`](infra/docker-compose.yml) |
+| **Production/staging (image)** | [`docker-compose.yml`](docker-compose.yml) — defaults to `IMAGE_TAG=main` |
+| **Local build** | [`docker-compose.build.yml`](docker-compose.build.yml) |
 
 ```yaml
 image: ghcr.io/cyber-nomad-collective/beskid-site:${IMAGE_TAG}

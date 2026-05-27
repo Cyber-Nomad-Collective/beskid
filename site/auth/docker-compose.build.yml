@@ -1,8 +1,8 @@
-# Coolify / GHCR image-only deploy for the auth hub.
-# IMAGE_TAG: main (production) or staging — set via beskid_infra OpenTofu / Coolify env.
 services:
   auth:
-    image: ghcr.io/cyber-nomad-collective/beskid-auth:${IMAGE_TAG:?set IMAGE_TAG}
+    build:
+      context: ../..
+      dockerfile: site/auth/Dockerfile
     restart: unless-stopped
     ports:
       - "8090:8090"
