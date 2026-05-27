@@ -20,8 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - name: Checkout beskid_web_common submodule
+        run: git -c protocol.version=2 submodule update --init --depth 1 beskid_web_common
       - uses: ./.github/actions/setup-beskid-web
       - name: Platform spec CI validation
         id: verify_platform_spec

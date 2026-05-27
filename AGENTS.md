@@ -22,7 +22,7 @@
 - Aggregate superrepo: submodules `compiler`, `pckg`, `beskid_vscode`, `beskid_nexus`, `beskid_tracker`, `beskid_web_common` (`trudoc`, `packages/beskid-ui` → `@beskid/beskid-ui` / `@cyber-nomad-collective/beskid-ui` via GitHub Packages or Bun workspaces). Manifests: `manifests/` + `./scripts/setup-environment.sh` (`repo`/`sync`, submodule fallback, optional `bun install`).
 - **site/auth:** Go combined GitHub OAuth hub (`site/auth/`, port **8090**); one OAuth app handoffs to tracker, nexus, and pckg (`AUTH_HUB_PUBLIC_URL` + shared `AUTH_HUB_SECRET`, issuer `beskid-auth-hub`); see `site/auth/README.md`.
 - **beskid_nexus:** Standalone Coolify repo (`docker-compose.yml`, `gitnexus serve` **8452**, `GITNEXUS_HOME` volume, runtime catalog/OAuth/analyze—no build-time compiler bake)
-- **beskid_treesitter:** Tree-sitter grammar submodule; sync from `compiler/.../beskid.pest` via `./scripts/sync-from-pest.sh`; npm **`@beskid/tree-sitter`** on GitHub Packages (`.npmrc` scope `@beskid`)
+- **beskid_treesitter:** Tree-sitter grammar submodule; sync from `compiler/.../beskid.pest` via `./scripts/sync-from-pest.sh`; npm **`@cyber-nomad-collective/beskid-tree-sitter`** on GitHub Packages (import alias `@beskid/tree-sitter`; `.npmrc` scopes `@beskid` + `@cyber-nomad-collective`)
 - **pckg:** Container deploy; first admin via in-app onboarding when empty. EF migrations on startup by default (`Pckg:Database:AutoMigrateOnStartup`). **Server.Tests:** xUnit parallelization off via `xunit.runner.json`. Optional **iconUrl** on packages (HTTP/S, capped).
 
 ### Corelib, CLI, VS Code

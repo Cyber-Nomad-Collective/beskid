@@ -1,5 +1,5 @@
 name: Setup Beskid web workspace
-description: Pin Bun/Node and install root workspace (run after actions/checkout with submodules).
+description: Pin Bun/Node and install root workspace (requires beskid_web_common checkout).
 
 inputs:
   bun-version:
