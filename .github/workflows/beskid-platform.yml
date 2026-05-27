@@ -7,6 +7,7 @@ on:
     paths:
       - 'site/**'
       - 'beskid_web_common/**'
+      - 'beskid_infra'
       - 'beskid_infra/**'
       - 'package.json'
       - 'bun.lock'
@@ -19,6 +20,7 @@ on:
     paths:
       - 'site/**'
       - 'beskid_web_common/**'
+      - 'beskid_infra'
       - 'beskid_infra/**'
       - '.github/workflows/beskid-platform.yml'
       - '.github/workflows/container-images.yml'
