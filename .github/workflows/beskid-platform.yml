@@ -1,5 +1,5 @@
-# Website ecosystem: GHCR build → OpenTofu plan (beskid_infra manages Coolify deploy).
-name: Beskid platform (site + auth)
+# Beskid platform: GHCR build → OpenTofu plan/apply (beskid_infra / Coolify).
+name: Beskid platform
 
 on:
   push:
@@ -7,6 +7,9 @@ on:
     paths:
       - 'site/**'
       - 'beskid_web_common/**'
+      - 'beskid_tracker/**'
+      - 'beskid_nexus/**'
+      - 'pckg/**'
       - 'beskid_infra'
       - 'beskid_infra/**'
       - 'package.json'
@@ -20,6 +23,9 @@ on:
     paths:
       - 'site/**'
       - 'beskid_web_common/**'
+      - 'beskid_tracker/**'
+      - 'beskid_nexus/**'
+      - 'pckg/**'
       - 'beskid_infra'
       - 'beskid_infra/**'
       - '.github/workflows/beskid-platform.yml'

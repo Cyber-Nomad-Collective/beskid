@@ -1,4 +1,4 @@
-# GHCR images for beskid site + auth (consumed by beskid_infra OpenTofu / Coolify).
+# GHCR images for the Beskid platform (consumed by beskid_infra OpenTofu / Coolify).
 name: Container images
 
 on:
@@ -14,18 +14,55 @@ env:
   IMAGE_PREFIX: ghcr.io/cyber-nomad-collective
 
 jobs:
-  build-site:
-    name: beskid-site
+  build:
+    name: ${{ matrix.image }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: beskid-site
+            context: .
+            dockerfile: site/website/Dockerfile
+            submodule: beskid_web_common
+            prebuild: true
+            node_auth: true
+          - image: beskid-auth
+            context: .
+            dockerfile: site/auth/Dockerfile
+            submodule: beskid_web_common
+            prebuild: true
+            node_auth: false
+          - image: beskid-tracker
+            context: beskid_tracker
+            dockerfile: beskid_tracker/Dockerfile
+            submodule: beskid_tracker
+            prebuild: false
+            node_auth: true
+          - image: beskid-nexus
+            context: beskid_nexus
+            dockerfile: beskid_nexus/Dockerfile
+            submodule: beskid_nexus
+            prebuild: false
+            node_auth: true
+          - image: beskid-pckg
+            context: pckg
+            dockerfile: pckg/Dockerfile
+            submodule: pckg
+            prebuild: false
+            node_auth: false
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Init submodules
-        run: ./scripts/ci/init-submodules.sh beskid_web_common
+      - name: Init submodule
+        run: ./scripts/ci/init-submodules.sh ${{ matrix.submodule }}
 
-      - uses: ./.github/actions/setup-beskid-web
+      - name: Prebuild web workspace
+        if: matrix.prebuild
+        uses: ./.github/actions/setup-beskid-web
         with:
           node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
 
@@ -36,64 +73,24 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker metadata (site)
+      - name: Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.IMAGE_PREFIX }}/beskid-site
+          images: ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}
           tags: |
             type=ref,event=branch
             type=sha,prefix=sha-,format=short
             type=raw,value=main,enable=${{ github.ref_name == 'main' }}
             type=raw,value=staging,enable=${{ github.ref_name == 'stg' }}
 
-      - name: Build and push site image
+      - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: site/website/Dockerfile
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            NODE_AUTH_TOKEN=${{ secrets.NODE_AUTH_TOKEN != '' && secrets.NODE_AUTH_TOKEN || github.token }}
-
-  build-auth:
-    name: beskid-auth
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Init submodules
-        run: ./scripts/ci/init-submodules.sh beskid_web_common
-
-      - uses: ./.github/actions/setup-beskid-web
-
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Docker metadata (auth)
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.IMAGE_PREFIX }}/beskid-auth
-          tags: |
-            type=ref,event=branch
-            type=sha,prefix=sha-,format=short
-            type=raw,value=main,enable=${{ github.ref_name == 'main' }}
-            type=raw,value=staging,enable=${{ github.ref_name == 'stg' }}
-
-      - name: Build and push auth image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: site/auth/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+            NODE_AUTH_TOKEN=${{ matrix.node_auth && (secrets.NODE_AUTH_TOKEN != '' && secrets.NODE_AUTH_TOKEN || github.token) || '' }}

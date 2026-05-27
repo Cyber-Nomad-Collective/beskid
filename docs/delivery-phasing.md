@@ -68,7 +68,7 @@ Both Dockerfiles were restructured to copy **all source before `bun install`**, 
 **GHCR workflows in GitHub Actions** (`container-images.yml`)
 
 - Reuses proven patterns from `docs-site.yml`: `fetch-depth: 0`, explicit submodule init, `NODE_AUTH_TOKEN` as build secret, Bun aligned across CI and Docker.
-- Pilot scope: `beskid-site` + `beskid-auth` only (superrepo, shared context) — biggest submodule pain, highest deploy frequency.
+- Pilot scope: all five platform images in superrepo CI (`beskid-site`, `beskid-auth`, `beskid-tracker`, `beskid-nexus`, `beskid-pckg`) — site/auth first validated; satellites use submodule Docker contexts.
 - Tags: `main`, `staging`, `sha-<short>` per service.
 - Immediate win without OpenTofu: push images on main; manually point Coolify apps at `ghcr.io/.../:main`; remove server-side `build:` blocks and `NODE_AUTH_TOKEN` build secrets entirely for those apps.
 
@@ -84,8 +84,8 @@ Both Dockerfiles were restructured to copy **all source before `bun install`**, 
 
 **Satellite GHCR** (tracker, nexus, pckg)
 
-- Dockerfiles and COOLIFY docs exist; missing piece is per-repo `container-images.yml`.
-- `pckg` is the hardest: Postgres in compose, EF migrations, staging DB volume.
+- Dockerfiles and Coolify compose exist; superrepo `container-images.yml` matrix builds and pushes all three.
+- `pckg` still the hardest operationally: Coolify-managed Postgres + EF migrations + staging DB isolation.
 
 **Merge docs-site verify + container push**
 
@@ -155,10 +155,10 @@ site+auth    pull-only     branch+env    +pckg DB      OpenBao
 
 ### Phase 4: Satellite images
 
-- [ ] `beskid_tracker` — per-repo `container-images.yml` + Coolify pull
-- [ ] `beskid_nexus` — per-repo `container-images.yml` + Coolify pull
-- [ ] `beskid_pckg` — per-repo `container-images.yml` + Coolify pull (Postgres + EF migrations)
-- [ ] Staging DB isolation for pckg
+- [x] `container-images.yml` — matrix builds for `beskid-tracker`, `beskid-nexus`, `beskid-pckg` from superrepo submodule contexts
+- [x] OpenTofu `enable_services` defaults — tracker, nexus, pckg on for production and staging
+- [ ] Redeploy Coolify apps to pull new GHCR tags (after first successful push)
+- [ ] Staging DB isolation for pckg verified end-to-end
 
 ### Phase 5: OpenTofu + OpenBao
 

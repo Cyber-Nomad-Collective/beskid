@@ -22,15 +22,45 @@ jobs:
   images:
     name: Release images
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: beskid-site
+            context: .
+            dockerfile: site/website/Dockerfile
+            submodule: beskid_web_common
+            prebuild: true
+            node_auth: true
+          - image: beskid-auth
+            context: .
+            dockerfile: site/auth/Dockerfile
+            submodule: beskid_web_common
+            prebuild: true
+            node_auth: false
+          - image: beskid-tracker
+            context: beskid_tracker
+            dockerfile: beskid_tracker/Dockerfile
+            submodule: beskid_tracker
+            prebuild: false
+            node_auth: true
+          - image: beskid-nexus
+            context: beskid_nexus
+            dockerfile: beskid_nexus/Dockerfile
+            submodule: beskid_nexus
+            prebuild: false
+            node_auth: true
+          - image: beskid-pckg
+            context: pckg
+            dockerfile: pckg/Dockerfile
+            submodule: pckg
+            prebuild: false
+            node_auth: false
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Init submodules
-        run: ./scripts/ci/init-submodules.sh beskid_web_common
-
-      - uses: ./.github/actions/setup-beskid-web
 
       - name: Resolve release tag
         id: tag
@@ -43,6 +73,15 @@ jobs:
             echo "value=${{ inputs.tag }}" >> "${GITHUB_OUTPUT}"
           fi
 
+      - name: Init submodule
+        run: ./scripts/ci/init-submodules.sh ${{ matrix.submodule }}
+
+      - name: Prebuild web workspace
+        if: matrix.prebuild
+        uses: ./.github/actions/setup-beskid-web
+        with:
+          node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -50,27 +89,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push site (release)
+      - name: Build and push (${{ matrix.image }})
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: site/website/Dockerfile
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
           push: true
           tags: |
-            ${{ env.IMAGE_PREFIX }}/beskid-site:${{ steps.tag.outputs.value }}
-            ${{ env.IMAGE_PREFIX }}/beskid-site:main
+            ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:${{ steps.tag.outputs.value }}
+            ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:main
           build-args: |
-            NODE_AUTH_TOKEN=${{ secrets.NODE_AUTH_TOKEN != '' && secrets.NODE_AUTH_TOKEN || github.token }}
-
-      - name: Build and push auth (release)
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: site/auth/Dockerfile
-          push: true
-          tags: |
-            ${{ env.IMAGE_PREFIX }}/beskid-auth:${{ steps.tag.outputs.value }}
-            ${{ env.IMAGE_PREFIX }}/beskid-auth:main
+            NODE_AUTH_TOKEN=${{ matrix.node_auth && (secrets.NODE_AUTH_TOKEN != '' && secrets.NODE_AUTH_TOKEN || github.token) || '' }}
 
   # Open VSX publishes via publish-open-vsx.yml (also on release:published).
 
