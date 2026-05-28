@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Record arcusis/coolify 1.1.18-beskid checksums in .terraform.lock.hcl (filesystem mirror).
+# Record arcusis/coolify 1.1.19-beskid checksums in .terraform.lock.hcl (filesystem mirror).
 # Run after install-coolify-provider.sh and whenever vendor/provider sources change.
 set -euo pipefail
 
