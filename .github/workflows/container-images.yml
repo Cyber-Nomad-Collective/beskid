@@ -83,6 +83,7 @@ jobs:
             type=sha,prefix=sha-,format=short
             type=raw,value=main,enable=${{ github.ref_name == 'main' }}
             type=raw,value=staging,enable=${{ github.ref_name == 'stg' }}
+            type=raw,value=latest,enable=${{ github.ref_name == 'main' }}
 
       - name: Build and push
         uses: docker/build-push-action@v6

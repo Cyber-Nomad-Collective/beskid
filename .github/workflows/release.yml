@@ -97,7 +97,7 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:${{ steps.tag.outputs.value }}
-            ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:main
+            ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:latest
           build-args: |
             NODE_AUTH_TOKEN=${{ matrix.node_auth && secrets.NODE_AUTH_TOKEN || '' }}
 

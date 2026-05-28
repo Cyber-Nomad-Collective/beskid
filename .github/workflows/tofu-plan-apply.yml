@@ -44,7 +44,7 @@ jobs:
 
       - uses: opentofu/setup-opentofu@v1
         with:
-          tofu_version: "1.9.0"
+          tofu_version: "1.12.0"
 
       - name: Cache Coolify provider (vendored)
         id: coolify_provider_cache
@@ -162,9 +162,9 @@ jobs:
 
       - name: tofu plan
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
-        run: tofu plan -input=false -out=tfplan
+        run: tofu plan -input=false -parallelism=1 -out=tfplan
 
       - name: tofu apply
         if: inputs.apply
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
-        run: tofu apply -input=false -auto-approve tfplan
+        run: tofu apply -input=false -parallelism=1 -auto-approve tfplan
