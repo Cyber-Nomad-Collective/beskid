@@ -101,6 +101,16 @@ jobs:
           build-args: |
             NODE_AUTH_TOKEN=${{ matrix.node_auth && secrets.NODE_AUTH_TOKEN || '' }}
 
+      - name: Set GHCR package public
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api \
+            --method PATCH \
+            -H "Accept: application/vnd.github+json" \
+            "/orgs/cyber-nomad-collective/packages/container/${{ matrix.image }}/visibility" \
+            -f visibility=public
+
   # Open VSX publishes via publish-open-vsx.yml (also on release:published).
 
   infra-apply:

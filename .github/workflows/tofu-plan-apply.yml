@@ -100,6 +100,13 @@ jobs:
             echo "TF_VAR_seed_openbao_secrets=false" >> "${GITHUB_ENV}"
           fi
 
+      - name: Ensure Coolify provider not in lock file
+        run: |
+          chmod +x ./scripts/ci/ensure-coolify-lock-open.sh
+          ./scripts/ci/ensure-coolify-lock-open.sh \
+            beskid_infra/environments/production/.terraform.lock.hcl \
+            beskid_infra/environments/staging/.terraform.lock.hcl
+
       - name: tofu init
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
         run: tofu init -input=false
@@ -197,6 +204,13 @@ jobs:
             echo "TF_VAR_openbao_enabled=false" >> "${GITHUB_ENV}"
             echo "TF_VAR_seed_openbao_secrets=false" >> "${GITHUB_ENV}"
           fi
+
+      - name: Ensure Coolify provider not in lock file
+        run: |
+          chmod +x ./scripts/ci/ensure-coolify-lock-open.sh
+          ./scripts/ci/ensure-coolify-lock-open.sh \
+            beskid_infra/environments/production/.terraform.lock.hcl \
+            beskid_infra/environments/staging/.terraform.lock.hcl
 
       - name: tofu init
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
