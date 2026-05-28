@@ -90,10 +90,6 @@ import_if_missing() {
 
 cd "${env_dir}"
 
-openbao_name="beskid-openbao${suffix}"
-openbao_id="$(single_uuid_by_name "/api/v1/services" "${openbao_name}")"
-import_if_missing "module.stack.module.openbao[0].coolify_service.this" "${openbao_id}"
-
 for service in site auth tracker nexus; do
   app_name="beskid-${service}${suffix}"
   app_id="$(single_uuid_by_name "/api/v1/applications" "${app_name}")"
