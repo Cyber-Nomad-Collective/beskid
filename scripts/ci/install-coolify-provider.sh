@@ -3,7 +3,7 @@
 # Skips go build when the binary is already present (CI cache / local re-runs).
 set -euo pipefail
 
-VERSION="${COOLIFY_PROVIDER_VERSION:-1.1.19-beskid}"
+VERSION="${COOLIFY_PROVIDER_VERSION:-1.1.20-beskid}"
 OS="${RUNNER_OS:-$(uname -s)}"
 ARCH="${RUNNER_ARCH:-$(uname -m)}"
 

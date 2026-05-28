@@ -18,7 +18,28 @@ export interface VscodeExtensionVersionPayload extends VersionPayload {
 	installTarget?: string;
 }
 
-const websiteRoot = join(fileURLToPath(new URL('.', import.meta.url)), '../..');
+/** Astro/Vite may bundle this module; `import.meta.url` then no longer sits under `site/website`. */
+function resolveWebsiteRoot(): string {
+	const env = process.env.BESKID_WEBSITE_ROOT?.trim();
+	if (env) {
+		return join(env);
+	}
+	const cwd = process.cwd();
+	const cwdPkg = join(cwd, 'package.json');
+	if (existsSync(cwdPkg)) {
+		try {
+			const pkg = JSON.parse(readFileSync(cwdPkg, 'utf8')) as { name?: string };
+			if (pkg.name === 'beskid-website') {
+				return cwd;
+			}
+		} catch {
+			/* fall through */
+		}
+	}
+	return join(fileURLToPath(new URL('.', import.meta.url)), '../..');
+}
+
+const websiteRoot = resolveWebsiteRoot();
 const dataDir = join(websiteRoot, 'src', 'data');
 const vscodePkgPath = join(websiteRoot, '..', '..', 'beskid_vscode', 'package.json');
 const cliCargoPath = join(websiteRoot, '..', '..', 'compiler', 'crates', 'beskid_cli', 'Cargo.toml');

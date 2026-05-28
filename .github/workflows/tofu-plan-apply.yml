@@ -51,14 +51,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.terraform.d/plugins/registry.terraform.io/arcusis/coolify
-          key: coolify-1.1.19-beskid-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('beskid_infra/vendor/terraform-provider-coolify/**') }}
+          key: coolify-1.1.20-beskid-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('beskid_infra/vendor/terraform-provider-coolify/**') }}
 
       - uses: actions/setup-go@v5
         if: steps.coolify_provider_cache.outputs.cache-hit != 'true'
         with:
           go-version: "1.22"
 
-      - name: Install Coolify provider (vendored 1.1.19-beskid)
+      - name: Install Coolify provider (vendored 1.1.20-beskid)
         run: ./scripts/ci/install-coolify-provider.sh
 
       - name: Resolve lane from branch
