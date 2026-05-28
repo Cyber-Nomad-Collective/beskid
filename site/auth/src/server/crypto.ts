@@ -53,10 +53,27 @@ export function randomToken(bytes = 32): string {
 
 export function pairingCode(): string {
 	const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-	let out = "";
-	const bytes = randomBytes(8);
-	for (let i = 0; i < 8; i++) {
-		out += alphabet[bytes[i]! % alphabet.length];
+	const codeLength = 8;
+	const alphabetLength = alphabet.length;
+	if (alphabetLength < 2 || alphabetLength > 256) {
+		throw new Error("pairingCode alphabet length must be between 2 and 256");
 	}
+
+	let out = "";
+	// Reject bytes in the tail range to keep a uniform distribution.
+	const maxUnbiasedByte = 256 - (256 % alphabetLength);
+	while (out.length < codeLength) {
+		const bytes = randomBytes(codeLength);
+		for (const value of bytes) {
+			if (value >= maxUnbiasedByte) {
+				continue;
+			}
+			out += alphabet[value % alphabetLength];
+			if (out.length === codeLength) {
+				break;
+			}
+		}
+	}
+
 	return out;
 }

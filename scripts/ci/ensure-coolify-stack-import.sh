@@ -90,17 +90,17 @@ import_if_missing() {
 
 cd "${env_dir}"
 
+# coolify_envs_bulk is not imported: it uses count (address …this[0]), and apply
+# creates/updates env vars from OpenBao once the application is in state.
 for service in site auth tracker nexus; do
   app_name="beskid-${service}${suffix}"
   app_id="$(single_uuid_by_name "/api/v1/applications" "${app_name}")"
   import_if_missing "module.stack.module.apps[\"${service}\"].coolify_application.this" "${app_id}"
-  import_if_missing "module.stack.module.apps[\"${service}\"].coolify_envs_bulk.this" "${app_id}"
 done
 
 pckg_app_name="beskid-pckg${suffix}"
 pckg_app_id="$(single_uuid_by_name "/api/v1/applications" "${pckg_app_name}")"
 import_if_missing "module.stack.module.pckg[0].coolify_application.app" "${pckg_app_id}"
-import_if_missing "module.stack.module.pckg[0].coolify_envs_bulk.app" "${pckg_app_id}"
 
 pckg_db_name="beskid-pckg-db${suffix}"
 pckg_db_id="$(single_uuid_by_name "/api/v1/databases" "${pckg_db_name}")"
