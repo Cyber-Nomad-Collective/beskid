@@ -27,113 +27,13 @@ env:
   TF_VAR_deploy_openbao: "true"
   TF_VAR_instant_deploy: "true"
 
+concurrency:
+  group: tofu-${{ github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
-  plan:
-    name: tofu plan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Init beskid_infra submodule
-        run: ./scripts/ci/init-submodules.sh beskid_infra
-
-      - uses: opentofu/setup-opentofu@v1
-        with:
-          tofu_version: "1.9.0"
-
-      - name: Cache Coolify provider (vendored)
-        id: coolify_provider_cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.terraform.d/plugins/registry.terraform.io/arcusis/coolify
-          key: coolify-1.1.18-beskid-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('beskid_infra/vendor/terraform-provider-coolify/**') }}
-
-      - uses: actions/setup-go@v5
-        if: steps.coolify_provider_cache.outputs.cache-hit != 'true'
-        with:
-          go-version: "1.22"
-
-      - name: Install Coolify provider (vendored 1.1.18-beskid)
-        run: ./scripts/ci/install-coolify-provider.sh
-
-      - name: Resolve lane from branch
-        id: lane
-        shell: bash
-        run: |
-          set -euo pipefail
-          source scripts/lib/git-tofu-env.sh
-          echo "name=$(beskid_tofu_env_from_git)" >> "${GITHUB_OUTPUT}"
-          if [[ "$(beskid_tofu_env_from_git)" == "production" ]]; then
-            echo "openbao_addr=https://bao.beskid-lang.org" >> "${GITHUB_OUTPUT}"
-          else
-            echo "openbao_addr=https://stg-bao.beskid-lang.org" >> "${GITHUB_OUTPUT}"
-          fi
-
-      - name: Coolify project (production manages Beskid)
-        if: steps.lane.outputs.name == 'production'
-        run: |
-          echo "TF_VAR_manage_coolify_project=true" >> "${GITHUB_ENV}"
-          echo "TF_VAR_manage_environment=false" >> "${GITHUB_ENV}"
-
-      - name: Coolify project (staging resolves Beskid UUID)
-        if: steps.lane.outputs.name == 'staging'
-        env:
-          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
-          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
-        run: |
-          chmod +x ./scripts/ci/resolve-coolify-project-uuid.sh
-          echo "TF_VAR_project_uuid=$(./scripts/ci/resolve-coolify-project-uuid.sh)" >> "${GITHUB_ENV}"
-
-      - name: Configure OpenBao TF variables
-        env:
-          OPENBAO_TOKEN: ${{ secrets.OPENBAO_TOKEN }}
-        run: |
-          set -euo pipefail
-          echo "TF_VAR_openbao_address=${{ steps.lane.outputs.openbao_addr }}" >> "${GITHUB_ENV}"
-          if [[ -n "${OPENBAO_TOKEN}" ]]; then
-            echo "TF_VAR_openbao_token=${OPENBAO_TOKEN}" >> "${GITHUB_ENV}"
-            echo "TF_VAR_openbao_enabled=true" >> "${GITHUB_ENV}"
-            echo "TF_VAR_seed_openbao_secrets=true" >> "${GITHUB_ENV}"
-          else
-            echo "TF_VAR_openbao_token=unused" >> "${GITHUB_ENV}"
-            echo "TF_VAR_openbao_enabled=false" >> "${GITHUB_ENV}"
-            echo "TF_VAR_seed_openbao_secrets=false" >> "${GITHUB_ENV}"
-          fi
-
-      - name: Ensure Coolify provider not in lock file
-        run: |
-          chmod +x ./scripts/ci/ensure-coolify-lock-open.sh
-          ./scripts/ci/ensure-coolify-lock-open.sh \
-            beskid_infra/environments/production/.terraform.lock.hcl \
-            beskid_infra/environments/staging/.terraform.lock.hcl
-
-      - name: tofu init
-        working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
-        run: tofu init -input=false
-
-      - name: Import existing Coolify project (production)
-        if: steps.lane.outputs.name == 'production'
-        env:
-          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
-          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
-        run: |
-          chmod +x ./scripts/ci/ensure-coolify-project-import.sh
-          ./scripts/ci/ensure-coolify-project-import.sh production
-
-      - name: tofu plan
-        working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
-        run: tofu plan -input=false -out=tfplan
-
-      - name: Upload plan
-        uses: actions/upload-artifact@v4
-        with:
-          name: tofu-plan-${{ steps.lane.outputs.name }}
-          path: beskid_infra/environments/${{ steps.lane.outputs.name }}/tfplan
-
-  apply:
-    name: tofu apply
-    needs: plan
-    if: inputs.apply
+  deploy:
+    name: tofu deploy (fresh plan+apply)
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
     steps:
@@ -212,9 +112,44 @@ jobs:
             beskid_infra/environments/production/.terraform.lock.hcl \
             beskid_infra/environments/staging/.terraform.lock.hcl
 
+      - name: Validate remote state backend vars
+        env:
+          TF_BACKEND_PG_HOST: ${{ vars.TF_BACKEND_PG_HOST }}
+          TF_BACKEND_PG_PORT: ${{ vars.TF_BACKEND_PG_PORT }}
+          TF_BACKEND_PG_DATABASE: ${{ vars.TF_BACKEND_PG_DATABASE }}
+          TF_BACKEND_PG_USER: ${{ secrets.TF_BACKEND_PG_USER }}
+          TF_BACKEND_PG_PASSWORD: ${{ secrets.TF_BACKEND_PG_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${TF_BACKEND_PG_HOST:?Set repository variable TF_BACKEND_PG_HOST}"
+          : "${TF_BACKEND_PG_PORT:?Set repository variable TF_BACKEND_PG_PORT}"
+          : "${TF_BACKEND_PG_DATABASE:?Set repository variable TF_BACKEND_PG_DATABASE}"
+          : "${TF_BACKEND_PG_USER:?Set repository secret TF_BACKEND_PG_USER}"
+          : "${TF_BACKEND_PG_PASSWORD:?Set repository secret TF_BACKEND_PG_PASSWORD}"
+
+      - name: Render backend config
+        working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
+        env:
+          TF_BACKEND_PG_HOST: ${{ vars.TF_BACKEND_PG_HOST }}
+          TF_BACKEND_PG_PORT: ${{ vars.TF_BACKEND_PG_PORT }}
+          TF_BACKEND_PG_DATABASE: ${{ vars.TF_BACKEND_PG_DATABASE }}
+          TF_BACKEND_PG_SSLMODE: ${{ vars.TF_BACKEND_PG_SSLMODE }}
+          TF_BACKEND_PG_SCHEMA_PREFIX: ${{ vars.TF_BACKEND_PG_SCHEMA_PREFIX }}
+          TF_BACKEND_PG_USER: ${{ secrets.TF_BACKEND_PG_USER }}
+          TF_BACKEND_PG_PASSWORD: ${{ secrets.TF_BACKEND_PG_PASSWORD }}
+        run: |
+          set -euo pipefail
+          schema_prefix="${TF_BACKEND_PG_SCHEMA_PREFIX:-beskid_infra}"
+          sslmode="${TF_BACKEND_PG_SSLMODE:-require}"
+          conn_str="postgres://${TF_BACKEND_PG_USER}:${TF_BACKEND_PG_PASSWORD}@${TF_BACKEND_PG_HOST}:${TF_BACKEND_PG_PORT}/${TF_BACKEND_PG_DATABASE}?sslmode=${sslmode}"
+          cat > backend.auto.hcl <<EOF
+          conn_str = "${conn_str}"
+          schema_name = "${schema_prefix}_${{ steps.lane.outputs.name }}"
+          EOF
+
       - name: tofu init
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
-        run: tofu init -input=false
+        run: tofu init -input=false -backend-config=backend.auto.hcl
 
       - name: Import existing Coolify project (production)
         if: steps.lane.outputs.name == 'production'
@@ -225,12 +160,19 @@ jobs:
           chmod +x ./scripts/ci/ensure-coolify-project-import.sh
           ./scripts/ci/ensure-coolify-project-import.sh production
 
-      # Bootstrap OpenBao before full apply; this changes state so we must not reuse the plan job artifact.
+      - name: Import existing Coolify stack resources
+        env:
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+        run: |
+          chmod +x ./scripts/ci/ensure-coolify-stack-import.sh
+          ./scripts/ci/ensure-coolify-stack-import.sh ${{ steps.lane.outputs.name }}
+
+      # Bootstrap OpenBao before final full-plan apply.
       - name: Deploy OpenBao (targeted)
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
         run: |
-          tofu apply -input=false -auto-approve \
-            -target=module.stack.module.openbao[0] || true
+          tofu apply -input=false -auto-approve -target=module.stack.module.openbao[0]
 
       - name: Initialize OpenBao
         env:
@@ -241,7 +183,7 @@ jobs:
           chmod +x beskid_infra/scripts/openbao-init-unseal.sh
           while IFS= read -r line; do
             [[ -n "${line}" ]] && eval "${line}"
-          done < <(beskid_infra/scripts/openbao-init-unseal.sh || true)
+          done < <(beskid_infra/scripts/openbao-init-unseal.sh)
           if [[ -n "${OPENBAO_ROOT_TOKEN:-}" ]]; then
             echo "TF_VAR_openbao_token=${OPENBAO_ROOT_TOKEN}" >> "${GITHUB_ENV}"
             echo "TF_VAR_openbao_enabled=true" >> "${GITHUB_ENV}"
@@ -253,5 +195,6 @@ jobs:
         run: tofu plan -input=false -out=tfplan
 
       - name: tofu apply
+        if: inputs.apply
         working-directory: beskid_infra/environments/${{ steps.lane.outputs.name }}
         run: tofu apply -input=false -auto-approve tfplan
