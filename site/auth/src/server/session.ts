@@ -1,6 +1,6 @@
 import { jwtVerify, SignJWT } from "jose";
 
-import { env } from "#/env";
+import { env } from "#/env.server";
 import {
 	getGithubTokenForSession,
 	getUserSession,

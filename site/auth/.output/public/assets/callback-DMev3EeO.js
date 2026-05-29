@@ -1,0 +1,1 @@
+import{T as e}from"./index-HIPHLXGB.js";function t(){throw e({to:`/`})}export{t as component};

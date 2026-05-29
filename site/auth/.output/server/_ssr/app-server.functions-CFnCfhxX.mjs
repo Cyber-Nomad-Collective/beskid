@@ -1,0 +1,22 @@
+import { i as getServerFnById, n as createServerFn, t as TSS_SERVER_FUNCTION } from "./ssr.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/app-server.functions-CFnCfhxX.js
+var createSsrRpc = (functionId) => {
+	const url = "/_serverFn/" + functionId;
+	const serverFnMeta = { id: functionId };
+	const fn = async (...args) => {
+		return (await getServerFnById(functionId, { origin: "server" }))(...args);
+	};
+	return Object.assign(fn, {
+		url,
+		serverFnMeta,
+		[TSS_SERVER_FUNCTION]: true
+	});
+};
+var fetchHomeData = createServerFn({ method: "GET" }).handler(createSsrRpc("482db671a8f1342fa7d317ac478d599c2eab3fc826d2f63984e558cbbaffe7db"));
+var fetchLoginPageContext = createServerFn({ method: "GET" }).handler(createSsrRpc("ec2b72241cd565806da76157f819a7646738d3420993cb997508f53de607c76f"));
+var fetchProfileData = createServerFn({ method: "GET" }).handler(createSsrRpc("cbaebcbcd4bbc47663e9affc5ed7611451ef23e8dc1273807b7747de8090da98"));
+var fetchAdminAccess = createServerFn({ method: "GET" }).handler(createSsrRpc("0a89ee1416973a2d25600020f4bf156615779811249f14f5f93214502a5ab0ef"));
+var fetchOnboardingGate = createServerFn({ method: "GET" }).handler(createSsrRpc("a3f632bac40d5c74206e7d883a8ee04016f5c13d63973121bcdff9eaf1c51a84"));
+var fetchPairingRequests = createServerFn({ method: "GET" }).handler(createSsrRpc("c170a1a18b98f1d9a48c33d84f070c42185b0b50923b3a51f2846e74187f1acd"));
+//#endregion
+export { fetchPairingRequests as a, fetchOnboardingGate as i, fetchHomeData as n, fetchProfileData as o, fetchLoginPageContext as r, fetchAdminAccess as t };

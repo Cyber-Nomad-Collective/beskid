@@ -1,6 +1,6 @@
 import type { AuthAppId } from "@beskid/auth-client";
 
-import { env } from "#/env";
+import { env } from "#/env.server";
 import {
 	hashPairingCode,
 	pairingCode,

@@ -1,7 +1,7 @@
 import type { AuthAppId } from "@beskid/auth-client";
 import { AUTH_APP_META } from "@beskid/auth-client";
 
-import { env } from "#/env";
+import { env } from "#/env.server";
 import { hashSecret } from "#/server/crypto";
 import {
 	getAuthDatabase,

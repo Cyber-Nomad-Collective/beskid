@@ -1,6 +1,6 @@
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "node:crypto";
 
-import { env } from "#/env";
+import { env } from "#/env.server";
 
 const ALGO = "aes-256-gcm";
 const IV_LEN = 12;

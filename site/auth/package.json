@@ -12,7 +12,9 @@
 		"start": "bun run .output/server/index.mjs",
 		"preview": "bun --bun vite preview",
 		"check": "bunx biome check",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"test": "bun --bun vitest run",
+		"test:bundle": "VERIFY_CLIENT_BUNDLE=1 bun --bun vitest run src/scripts/verify-client-bundle.test.ts"
 	},
 	"engines": {
 		"bun": ">=1.2.0"
@@ -43,6 +45,7 @@
 		"@types/react-dom": "^19.2.0",
 		"@vitejs/plugin-react": "^6.0.1",
 		"typescript": "^6.0.2",
-		"vite": "^8.0.0"
+		"vite": "^8.0.0",
+		"vitest": "^4.1.5"
 	}
 }

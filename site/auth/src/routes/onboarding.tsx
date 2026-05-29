@@ -12,16 +12,13 @@ import {
 	Label,
 } from "@beskid/ui-react";
 import { ThemeToggle } from "#/components/theme-toggle";
-import { env } from "#/env";
-import { fetchOnboardingGate } from "#/server/app-server";
+import { fetchOnboardingGate } from "#/server/app-server.functions";
 
 export const Route = createFileRoute("/onboarding")({
 	loader: async () => {
-		const { onboarded } = await fetchOnboardingGate();
+		const { onboarded, defaultCallback } = await fetchOnboardingGate();
 		if (onboarded) throw redirect({ to: "/admin" });
-		return {
-			defaultCallback: `${env.AUTH_HUB_PUBLIC_URL.replace(/\/$/, "")}/callback`,
-		};
+		return { defaultCallback };
 	},
 	component: OnboardingPage,
 });

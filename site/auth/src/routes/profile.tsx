@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { Button, ProfileCard } from "@beskid/ui-react";
 import { ThemeToggle } from "#/components/theme-toggle";
-import { fetchProfileData } from "#/server/app-server";
+import { fetchProfileData } from "#/server/app-server.functions";
 
 const profileSearchSchema = z.object({
 	github_login: z.string().optional(),

@@ -1,12 +1,10 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
 
 import { AuthPageShell, Button } from "@beskid/ui-react";
 import { ThemeToggle } from "#/components/theme-toggle";
-import { env } from "#/env";
-import { getAppById, isOAuthConfigured, resolveOAuthConfig } from "#/server/config-store";
-import { buildGitHubAuthorizeUrl } from "#/server/github-oauth";
-import { buildOAuthState, oauthStateCookieHeader } from "#/server/oauth-cookies";
+import { fetchLoginPageContext } from "#/server/app-server.functions";
+import { handleLoginGet } from "#/server/oauth.server";
 
 const loginSearchSchema = z.object({
 	app: z.string().optional(),
@@ -15,38 +13,10 @@ const loginSearchSchema = z.object({
 
 export const Route = createFileRoute("/login")({
 	validateSearch: loginSearchSchema,
+	loader: () => fetchLoginPageContext(),
 	server: {
 		handlers: {
-			GET: async ({ request }) => {
-				const url = new URL(request.url);
-				const app = url.searchParams.get("app")?.trim();
-				if (!app) return undefined;
-
-				if (!(await isOAuthConfigured())) {
-					return new Response(null, {
-						status: 302,
-						headers: { Location: "/onboarding" },
-					});
-				}
-
-				if (app !== "hub") {
-					const consumer = await getAppById(app);
-					if (!consumer) {
-						return new Response(null, {
-							status: 302,
-							headers: { Location: "/?error=unknown_app" },
-						});
-					}
-				}
-
-				const nonce = crypto.randomUUID();
-				const state = buildOAuthState(nonce, app);
-				const cfg = await resolveOAuthConfig();
-				const headers = new Headers();
-				headers.set("Location", buildGitHubAuthorizeUrl(cfg, state));
-				headers.append("Set-Cookie", oauthStateCookieHeader(state));
-				return new Response(null, { status: 302, headers });
-			},
+			GET: ({ request }) => handleLoginGet(request),
 		},
 	},
 	component: LoginPage,
@@ -65,7 +35,7 @@ function errorMessage(code?: string) {
 
 function LoginPage() {
 	const { error } = Route.useSearch();
-	const hubBase = env.AUTH_HUB_PUBLIC_URL.replace(/\/$/, "");
+	const { hubBase } = Route.useLoaderData();
 
 	return (
 		<div className="page-wrap relative">

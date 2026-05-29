@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { env } from "#/env";
+import { env } from "#/env.server";
 
 export function authDataDir(): string {
 	return env.AUTH_DATA_DIR?.trim() || path.join(process.cwd(), "data/runtime");

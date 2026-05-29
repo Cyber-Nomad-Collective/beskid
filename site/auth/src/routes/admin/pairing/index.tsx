@@ -2,18 +2,17 @@ import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@beskid/ui-react";
 import { ThemeToggle } from "#/components/theme-toggle";
-import { fetchAdminAccess } from "#/server/app-server";
-import { listPairingRequests } from "#/server/repositories/pairing";
+import { fetchPairingRequests } from "#/server/app-server.functions";
 
 export const Route = createFileRoute("/admin/pairing/")({
 	loader: async () => {
-		const access = await fetchAdminAccess();
+		const access = await fetchPairingRequests();
 		if (access.kind === "onboarding") throw redirect({ to: "/onboarding" });
 		if (access.kind === "login") {
 			throw redirect({ to: "/login", search: { app: "hub" } });
 		}
 		if (access.kind === "profile") throw redirect({ to: "/profile" });
-		return { requests: listPairingRequests() };
+		return { requests: access.requests };
 	},
 	component: PairingListPage,
 });

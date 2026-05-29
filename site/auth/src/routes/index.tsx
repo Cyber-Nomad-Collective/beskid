@@ -5,8 +5,7 @@ import {
 	ServicePicker,
 } from "@beskid/ui-react";
 import { ThemeToggle } from "#/components/theme-toggle";
-import { env } from "#/env";
-import { fetchHomeData } from "#/server/app-server";
+import { fetchHomeData } from "#/server/app-server.functions";
 
 export const Route = createFileRoute("/")({
 	loader: () => fetchHomeData(),
@@ -14,8 +13,7 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-	const { apps, session } = Route.useLoaderData();
-	const hubBase = env.AUTH_HUB_PUBLIC_URL.replace(/\/$/, "");
+	const { apps, session, hubBase } = Route.useLoaderData();
 
 	return (
 		<div className="page-wrap">

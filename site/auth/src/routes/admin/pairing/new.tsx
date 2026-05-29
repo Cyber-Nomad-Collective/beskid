@@ -14,7 +14,7 @@ import {
 	Label,
 } from "@beskid/ui-react";
 import { ThemeToggle } from "#/components/theme-toggle";
-import { fetchAdminAccess } from "#/server/app-server";
+import { fetchAdminAccess } from "#/server/app-server.functions";
 
 const APP_IDS: AuthAppId[] = ["tracker", "nexus", "pckg"];
 

@@ -1,4 +1,4 @@
-import { env } from "#/env";
+import { env } from "#/env.server";
 
 export const OAUTH_STATE_COOKIE = "beskid_auth_oauth_state";
 

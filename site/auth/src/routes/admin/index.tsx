@@ -13,8 +13,7 @@ import {
 	CardTitle,
 } from "@beskid/ui-react";
 import { ThemeToggle } from "#/components/theme-toggle";
-import { env } from "#/env";
-import { fetchAdminAccess } from "#/server/app-server";
+import { fetchAdminAccess } from "#/server/app-server.functions";
 
 export const Route = createFileRoute("/admin/")({
 	loader: async () => {
@@ -30,9 +29,8 @@ export const Route = createFileRoute("/admin/")({
 });
 
 function AdminPage() {
-	const { session } = Route.useLoaderData();
+	const { session, hubBase } = Route.useLoaderData();
 	const [message, setMessage] = useState<string | null>(null);
-	const hubBase = env.AUTH_HUB_PUBLIC_URL.replace(/\/$/, "");
 
 	async function refreshStatus() {
 		const res = await fetch("/api/v1/admin/status");

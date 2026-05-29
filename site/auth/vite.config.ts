@@ -11,7 +11,17 @@ import { defineConfig } from "vite";
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-	plugins: [devtools(), tailwindcss(), tanstackStart(), nitro({ preset: "bun" }), viteReact()],
+	plugins: [
+		devtools(),
+		tailwindcss(),
+		tanstackStart({
+			importProtection: {
+				enabled: true,
+			},
+		}),
+		nitro({ preset: "bun" }),
+		viteReact(),
+	],
 	resolve: {
 		tsconfigPaths: true,
 		// Workaround: when Vite aliases resolve @beskid/* packages from workspace

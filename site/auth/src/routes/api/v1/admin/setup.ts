@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
-import { env } from "#/env";
+import { env } from "#/env.server";
 import {
 	isOnboarded,
 	verifySetupToken,
