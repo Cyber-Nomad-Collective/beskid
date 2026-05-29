@@ -52,6 +52,7 @@ jobs:
           persist-credentials: true
 
       - name: Init beskid_infra submodule
+        shell: bash
         run: ./scripts/ci/init-submodules.sh beskid_infra
 
       - uses: oven-sh/setup-bun@v2
