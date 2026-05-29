@@ -116,13 +116,15 @@ function OnboardingPage() {
 							/>
 						</div>
 						<div className="space-y-2">
-							<Label htmlFor="adminGitHubLogins">Admin GitHub logins</Label>
+							<Label htmlFor="adminGitHubLogins">Admin GitHub logins (optional)</Label>
 							<Input
 								id="adminGitHubLogins"
 								name="adminGitHubLogins"
 								placeholder="login1, login2"
-								required
 							/>
+							<p className="text-muted-foreground text-xs">
+								Leave empty — the first GitHub sign-in becomes hub admin.
+							</p>
 						</div>
 					</CardContent>
 				</Card>

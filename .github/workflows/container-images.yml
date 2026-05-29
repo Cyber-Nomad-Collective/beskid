@@ -73,6 +73,7 @@ jobs:
           bun install
           bun run test
           SKIP_ENV_VALIDATION=1 bun run build
+          bun run verify:client-bundle
           bun run test:bundle
 
       - name: Log in to GHCR

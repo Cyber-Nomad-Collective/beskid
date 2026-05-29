@@ -50,10 +50,14 @@ export async function writeAuthConfig(config: AuthConfigFile): Promise<void> {
 	if (config.githubOAuthCallbackUrl) {
 		setHubSetting("github_oauth_callback_url", config.githubOAuthCallbackUrl);
 	}
-	setHubSetting(
-		"admin_github_logins",
-		JSON.stringify(config.adminGitHubLogins),
-	);
+	if (config.adminGitHubLogins.length > 0) {
+		setHubSetting(
+			"admin_github_logins",
+			JSON.stringify(
+				config.adminGitHubLogins.map((entry) => entry.trim().toLowerCase()),
+			),
+		);
+	}
 }
 
 export async function resolveOAuthConfig(): Promise<ResolvedOAuthConfig> {

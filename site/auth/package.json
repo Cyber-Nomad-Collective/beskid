@@ -8,7 +8,8 @@
 	},
 	"scripts": {
 		"dev": "bun --bun vite dev --port 8090",
-		"build": "bun --bun vite build",
+		"build": "bun --bun vite build && bash scripts/sync-root-stylesheet.sh",
+		"verify:client-bundle": "bash scripts/verify-client-bundle.sh",
 		"start": "bun run .output/server/index.mjs",
 		"preview": "bun --bun vite preview",
 		"check": "bunx biome check",
@@ -21,6 +22,7 @@
 	},
 	"dependencies": {
 		"@beskid/auth-client": "file:../../beskid_web_common/packages/beskid-auth-client",
+		"@beskid/beskid-ui": "file:../../beskid_web_common/packages/beskid-ui",
 		"@beskid/ui-react": "file:../../beskid_web_common/packages/beskid-ui-react",
 		"@t3-oss/env-core": "^0.13.10",
 		"@tailwindcss/vite": "^4.1.18",

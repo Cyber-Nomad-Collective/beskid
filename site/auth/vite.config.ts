@@ -9,6 +9,37 @@ import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
+const beskidUiRoot = path.resolve(
+	rootDir,
+	"../../beskid_web_common/packages/beskid-ui",
+);
+const uiReactRoot = path.resolve(
+	rootDir,
+	"../../beskid_web_common/packages/beskid-ui-react",
+);
+const authClientRoot = path.resolve(
+	rootDir,
+	"../../beskid_web_common/packages/beskid-auth-client",
+);
+
+const workspaceAliases = [
+	{
+		find: "@beskid/ui-react/styles/shadcn-entry.css",
+		replacement: path.join(uiReactRoot, "src/styles/shadcn-entry.css"),
+	},
+	{
+		find: "@beskid/ui-react",
+		replacement: path.join(uiReactRoot, "src/index.ts"),
+	},
+	{
+		find: "@beskid/auth-client",
+		replacement: path.join(authClientRoot, "src/index.ts"),
+	},
+	{
+		find: "@beskid/material-theme",
+		replacement: path.join(beskidUiRoot, "src/styles/theme.material.css"),
+	},
+];
 
 export default defineConfig({
 	plugins: [
@@ -48,29 +79,11 @@ export default defineConfig({
 			// @beskid/auth-client transitive deps
 			"jose",
 		],
-		alias: {
-			"@beskid/ui-react": path.resolve(
-				rootDir,
-				"../../beskid_web_common/packages/beskid-ui-react/src/index.ts",
-			),
-			"@beskid/auth-client": path.resolve(
-				rootDir,
-				"../../beskid_web_common/packages/beskid-auth-client/src/index.ts",
-			),
-		},
+		alias: workspaceAliases,
 	},
 	ssr: {
 		resolve: {
-			alias: {
-				"@beskid/ui-react": path.resolve(
-					rootDir,
-					"../../beskid_web_common/packages/beskid-ui-react/src/index.ts",
-				),
-				"@beskid/auth-client": path.resolve(
-					rootDir,
-					"../../beskid_web_common/packages/beskid-auth-client/src/index.ts",
-				),
-			},
+			alias: workspaceAliases,
 		},
 		noExternal: ["@beskid/ui-react", "@beskid/auth-client"],
 	},

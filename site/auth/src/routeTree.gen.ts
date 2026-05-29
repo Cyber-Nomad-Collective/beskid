@@ -29,6 +29,7 @@ import { Route as ApiV1OpenapiJsonRouteImport } from './routes/api/v1/openapi.js
 import { Route as ApiV1GithubSplatRouteImport } from './routes/api/v1/github/$'
 import { Route as ApiV1AdminStatusRouteImport } from './routes/api/v1/admin/status'
 import { Route as ApiV1AdminSetupRouteImport } from './routes/api/v1/admin/setup'
+import { Route as ApiV1AdminAdminsRouteImport } from './routes/api/v1/admin/admins'
 
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
@@ -130,6 +131,11 @@ const ApiV1AdminSetupRoute = ApiV1AdminSetupRouteImport.update({
   path: '/api/v1/admin/setup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1AdminAdminsRoute = ApiV1AdminAdminsRouteImport.update({
+  id: '/api/v1/admin/admins',
+  path: '/api/v1/admin/admins',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/api/v1/health': typeof ApiV1HealthRoute
   '/api/v1/me': typeof ApiV1MeRoute
   '/admin/pairing/': typeof AdminPairingIndexRoute
+  '/api/v1/admin/admins': typeof ApiV1AdminAdminsRoute
   '/api/v1/admin/setup': typeof ApiV1AdminSetupRoute
   '/api/v1/admin/status': typeof ApiV1AdminStatusRoute
   '/api/v1/github/$': typeof ApiV1GithubSplatRoute
@@ -167,6 +174,7 @@ export interface FileRoutesByTo {
   '/api/v1/health': typeof ApiV1HealthRoute
   '/api/v1/me': typeof ApiV1MeRoute
   '/admin/pairing': typeof AdminPairingIndexRoute
+  '/api/v1/admin/admins': typeof ApiV1AdminAdminsRoute
   '/api/v1/admin/setup': typeof ApiV1AdminSetupRoute
   '/api/v1/admin/status': typeof ApiV1AdminStatusRoute
   '/api/v1/github/$': typeof ApiV1GithubSplatRoute
@@ -190,6 +198,7 @@ export interface FileRoutesById {
   '/api/v1/health': typeof ApiV1HealthRoute
   '/api/v1/me': typeof ApiV1MeRoute
   '/admin/pairing/': typeof AdminPairingIndexRoute
+  '/api/v1/admin/admins': typeof ApiV1AdminAdminsRoute
   '/api/v1/admin/setup': typeof ApiV1AdminSetupRoute
   '/api/v1/admin/status': typeof ApiV1AdminStatusRoute
   '/api/v1/github/$': typeof ApiV1GithubSplatRoute
@@ -214,6 +223,7 @@ export interface FileRouteTypes {
     | '/api/v1/health'
     | '/api/v1/me'
     | '/admin/pairing/'
+    | '/api/v1/admin/admins'
     | '/api/v1/admin/setup'
     | '/api/v1/admin/status'
     | '/api/v1/github/$'
@@ -236,6 +246,7 @@ export interface FileRouteTypes {
     | '/api/v1/health'
     | '/api/v1/me'
     | '/admin/pairing'
+    | '/api/v1/admin/admins'
     | '/api/v1/admin/setup'
     | '/api/v1/admin/status'
     | '/api/v1/github/$'
@@ -258,6 +269,7 @@ export interface FileRouteTypes {
     | '/api/v1/health'
     | '/api/v1/me'
     | '/admin/pairing/'
+    | '/api/v1/admin/admins'
     | '/api/v1/admin/setup'
     | '/api/v1/admin/status'
     | '/api/v1/github/$'
@@ -281,6 +293,7 @@ export interface RootRouteChildren {
   ApiV1HealthRoute: typeof ApiV1HealthRoute
   ApiV1MeRoute: typeof ApiV1MeRoute
   AdminPairingIndexRoute: typeof AdminPairingIndexRoute
+  ApiV1AdminAdminsRoute: typeof ApiV1AdminAdminsRoute
   ApiV1AdminSetupRoute: typeof ApiV1AdminSetupRoute
   ApiV1AdminStatusRoute: typeof ApiV1AdminStatusRoute
   ApiV1GithubSplatRoute: typeof ApiV1GithubSplatRoute
@@ -432,6 +445,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1AdminSetupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/admin/admins': {
+      id: '/api/v1/admin/admins'
+      path: '/api/v1/admin/admins'
+      fullPath: '/api/v1/admin/admins'
+      preLoaderRoute: typeof ApiV1AdminAdminsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -449,6 +469,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiV1HealthRoute: ApiV1HealthRoute,
   ApiV1MeRoute: ApiV1MeRoute,
   AdminPairingIndexRoute: AdminPairingIndexRoute,
+  ApiV1AdminAdminsRoute: ApiV1AdminAdminsRoute,
   ApiV1AdminSetupRoute: ApiV1AdminSetupRoute,
   ApiV1AdminStatusRoute: ApiV1AdminStatusRoute,
   ApiV1GithubSplatRoute: ApiV1GithubSplatRoute,

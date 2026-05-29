@@ -6,6 +6,7 @@ import {
 	listEnabledApps,
 } from "#/server/config-store";
 import { hubOAuthCallbackUrl, hubPublicBase } from "#/server/hub-public.server";
+import { getAdminLogins } from "#/server/hub-admin-bootstrap.server";
 import { listPairingRequests } from "#/server/repositories/pairing";
 import { getSessionFromRequest } from "#/server/session";
 
@@ -36,8 +37,22 @@ export async function loadProfileData() {
 	const request = getRequest();
 	const session = await getSessionFromRequest(request);
 	if (!session) return null;
-	const apps = await listEnabledApps();
-	return { session, apps };
+	const [apps, isAdmin] = await Promise.all([
+		listEnabledApps(),
+		isAdminLogin(session.login),
+	]);
+	return { session, apps, isAdmin };
+}
+
+export async function loadAdminDashboard() {
+	const access = await resolveAdminAccess();
+	if (access.kind !== "ok") return access;
+	return {
+		kind: "ok" as const,
+		session: access.session,
+		hubBase: access.hubBase,
+		admins: getAdminLogins(),
+	};
 }
 
 export async function loadOnboardingGate() {

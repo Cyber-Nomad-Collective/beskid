@@ -4,6 +4,7 @@ import { z } from "zod";
 import { env } from "#/env.server";
 import {
 	isOnboarded,
+	readAuthConfig,
 	verifySetupToken,
 	writeAuthConfig,
 } from "#/server/config-store";
@@ -13,7 +14,7 @@ const setupSchema = z.object({
 	githubClientId: z.string().min(1),
 	githubClientSecret: z.string().min(1),
 	githubOAuthCallbackUrl: z.string().url(),
-	adminGitHubLogins: z.array(z.string().min(1)).min(1),
+	adminGitHubLogins: z.array(z.string().min(1)).min(0),
 	apps: z
 		.array(
 			z.object({
@@ -59,14 +60,26 @@ export const Route = createFileRoute("/api/v1/admin/setup")({
 					return Response.json({ error: "Invalid setup payload" }, { status: 400 });
 				}
 
+				const existing = await readAuthConfig();
+				const incomingAdmins = parsed.data.adminGitHubLogins.map((s) =>
+					s.trim().toLowerCase(),
+				);
+				const adminGitHubLogins =
+					incomingAdmins.length > 0
+						? [
+								...new Set([
+									...existing.adminGitHubLogins,
+									...incomingAdmins,
+								]),
+							]
+						: existing.adminGitHubLogins;
+
 				await writeAuthConfig({
 					onboarded: true,
 					githubClientId: parsed.data.githubClientId,
 					githubClientSecret: parsed.data.githubClientSecret,
 					githubOAuthCallbackUrl: parsed.data.githubOAuthCallbackUrl,
-					adminGitHubLogins: parsed.data.adminGitHubLogins.map((s) =>
-						s.trim().toLowerCase(),
-					),
+					adminGitHubLogins,
 					apps: [],
 				});
 

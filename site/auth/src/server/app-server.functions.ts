@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 
 import {
+	loadAdminDashboard,
 	loadHomeData,
 	loadLoginPageContext,
 	loadOnboardingGate,
@@ -23,6 +24,10 @@ export const fetchProfileData = createServerFn({ method: "GET" }).handler(
 
 export const fetchAdminAccess = createServerFn({ method: "GET" }).handler(
 	async () => resolveAdminAccess(),
+);
+
+export const fetchAdminDashboard = createServerFn({ method: "GET" }).handler(
+	async () => loadAdminDashboard(),
 );
 
 export const fetchOnboardingGate = createServerFn({ method: "GET" }).handler(

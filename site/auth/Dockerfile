@@ -10,6 +10,7 @@ RUN cd site/auth && bun install
 
 ENV SKIP_ENV_VALIDATION=1
 RUN cd site/auth && bun run build
+RUN cd site/auth && bun run verify:client-bundle
 
 FROM oven/bun:latest AS runtime
 

@@ -5,9 +5,11 @@ import {
 
 import {
 	getAppById,
+	isAdminLogin,
 	isOAuthConfigured,
 	resolveOAuthConfig,
 } from "#/server/config-store";
+import { promoteBootstrapAdminIfNeeded } from "#/server/hub-admin-bootstrap.server";
 import {
 	buildGitHubAuthorizeUrl,
 	exchangeGitHubCode,
@@ -93,10 +95,13 @@ export async function handleCallbackGet(request: Request): Promise<Response> {
 			name: user.name,
 		});
 
+		const bootstrapped = promoteBootstrapAdminIfNeeded(user.login);
+
 		if (parsed.app === "hub") {
 			const token = await sealHubBrowserSession({ sessionId });
 			headers.append("Set-Cookie", hubBrowserSessionCookieHeader(token));
-			headers.set("Location", "/profile");
+			const isAdmin = bootstrapped || (await isAdminLogin(user.login));
+			headers.set("Location", isAdmin ? "/admin" : "/profile");
 			return new Response(null, { status: 302, headers });
 		}
 

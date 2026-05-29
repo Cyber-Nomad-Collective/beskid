@@ -11,13 +11,15 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
+	Input,
+	Label,
 } from "@beskid/ui-react";
 import { ThemeToggle } from "#/components/theme-toggle";
-import { fetchAdminAccess } from "#/server/app-server.functions";
+import { fetchAdminDashboard } from "#/server/app-server.functions";
 
 export const Route = createFileRoute("/admin/")({
 	loader: async () => {
-		const access = await fetchAdminAccess();
+		const access = await fetchAdminDashboard();
 		if (access.kind === "onboarding") throw redirect({ to: "/onboarding" });
 		if (access.kind === "login") {
 			throw redirect({ to: "/login", search: { app: "hub" } });
@@ -29,13 +31,54 @@ export const Route = createFileRoute("/admin/")({
 });
 
 function AdminPage() {
-	const { session, hubBase } = Route.useLoaderData();
+	const { session, hubBase, admins: initialAdmins } = Route.useLoaderData();
+	const [admins, setAdmins] = useState(initialAdmins);
+	const [newLogin, setNewLogin] = useState("");
+	const [adminError, setAdminError] = useState<string | null>(null);
+	const [adminBusy, setAdminBusy] = useState(false);
 	const [message, setMessage] = useState<string | null>(null);
 
 	async function refreshStatus() {
 		const res = await fetch("/api/v1/admin/status");
 		const body = await res.json();
 		setMessage(JSON.stringify(body, null, 2));
+	}
+
+	async function addAdmin(event: React.FormEvent) {
+		event.preventDefault();
+		setAdminBusy(true);
+		setAdminError(null);
+		const res = await fetch("/api/v1/admin/admins", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ login: newLogin.trim() }),
+		});
+		setAdminBusy(false);
+		if (!res.ok) {
+			const body = (await res.json()) as { error?: string };
+			setAdminError(body.error ?? "Failed to add admin");
+			return;
+		}
+		const body = (await res.json()) as { admins: string[] };
+		setAdmins(body.admins);
+		setNewLogin("");
+	}
+
+	async function removeAdmin(login: string) {
+		setAdminBusy(true);
+		setAdminError(null);
+		const res = await fetch(
+			`/api/v1/admin/admins?login=${encodeURIComponent(login)}`,
+			{ method: "DELETE" },
+		);
+		setAdminBusy(false);
+		if (!res.ok) {
+			const body = (await res.json()) as { error?: string };
+			setAdminError(body.error ?? "Failed to remove admin");
+			return;
+		}
+		const body = (await res.json()) as { admins: string[] };
+		setAdmins(body.admins);
 	}
 
 	return (
@@ -60,6 +103,57 @@ function AdminPage() {
 						<code className="text-xs">{hubBase}/callback</code>
 					</AlertDescription>
 				</Alert>
+				<Card>
+					<CardHeader>
+						<CardTitle>Hub admins</CardTitle>
+						<CardDescription>
+							GitHub logins with access to pairing and hub settings.
+						</CardDescription>
+					</CardHeader>
+					<CardContent className="space-y-4">
+						{adminError ? (
+							<p className="text-destructive text-sm" role="alert">
+								{adminError}
+							</p>
+						) : null}
+						<ul className="space-y-2">
+							{admins.map((login) => (
+								<li
+									key={login}
+									className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm"
+								>
+									<span>@{login}</span>
+									<Button
+										type="button"
+										variant="outline"
+										size="sm"
+										disabled={adminBusy}
+										onClick={() => removeAdmin(login)}
+									>
+										Remove
+									</Button>
+								</li>
+							))}
+						</ul>
+						<form onSubmit={addAdmin} className="flex flex-col gap-2 sm:flex-row">
+							<div className="flex-1 space-y-1">
+								<Label htmlFor="newAdminLogin" className="sr-only">
+									GitHub login
+								</Label>
+								<Input
+									id="newAdminLogin"
+									value={newLogin}
+									onChange={(event) => setNewLogin(event.target.value)}
+									placeholder="github-username"
+									disabled={adminBusy}
+								/>
+							</div>
+							<Button type="submit" disabled={adminBusy || !newLogin.trim()}>
+								Add admin
+							</Button>
+						</form>
+					</CardContent>
+				</Card>
 				<Card>
 					<CardHeader>
 						<CardTitle>API</CardTitle>

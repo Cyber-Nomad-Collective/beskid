@@ -1,0 +1,63 @@
+/**
+ * Auth hub shell — aligned with tracker / platform-spec Material chrome.
+ */
+
+html,
+body {
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	font-family: var(--font-sans);
+	color: var(--foreground);
+	background-color: var(--background);
+	background-image:
+		radial-gradient(
+			ellipse 120% 80% at 0% -20%,
+			color-mix(in srgb, var(--beskid-primary-container) 22%, transparent),
+			transparent 55%
+		),
+		radial-gradient(
+			ellipse 90% 60% at 100% 0%,
+			color-mix(in srgb, var(--beskid-primary) 8%, transparent),
+			transparent 50%
+		);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.island-shell {
+	background: color-mix(
+		in srgb,
+		var(--platform-spec-card-bg, var(--card)) 92%,
+		transparent
+	);
+	border: 1px solid var(--platform-spec-card-border, var(--border));
+	box-shadow: 0 24px 80px
+		color-mix(in srgb, var(--beskid-primary-container) 12%, transparent);
+}
+
+.island-kicker {
+	font-size: 0.75rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--muted-foreground);
+}
+
+.display-title {
+	letter-spacing: -0.02em;
+}
+
+.page-wrap {
+	max-width: 72rem;
+	margin: 0 auto;
+	padding: 0 1rem;
+}
+
+.auth-topbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 0;
+}

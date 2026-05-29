@@ -20,7 +20,7 @@ export const Route = createFileRoute("/profile")({
 });
 
 function ProfilePage() {
-	const { session, apps } = Route.useLoaderData();
+	const { session, apps, isAdmin } = Route.useLoaderData();
 	const { github_login: linkedLogin } = Route.useSearch();
 
 	return (
@@ -30,6 +30,11 @@ function ProfilePage() {
 					Beskid Auth
 				</Link>
 				<div className="flex items-center gap-2">
+					{isAdmin ? (
+						<Button variant="outline" size="sm" asChild>
+							<Link to="/admin">Administration</Link>
+						</Button>
+					) : null}
 					<Button variant="outline" size="sm" asChild>
 						<Link to="/account">Account</Link>
 					</Button>
