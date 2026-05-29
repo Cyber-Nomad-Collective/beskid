@@ -56,10 +56,11 @@ jobs:
             echo "OPENBAO_TOKEN not set; skipping bao install"
             exit 0
           fi
-          ver="2.1.0"
-          curl -fsSL -o /tmp/bao.zip \
-            "https://github.com/openbao/openbao/releases/download/v${ver}/bao_${ver}_linux_amd64.zip"
-          sudo unzip -p /tmp/bao.zip bao >/usr/local/bin/bao
+          ver="2.5.4"
+          asset="bao_${ver}_Linux_x86_64.tar.gz"
+          curl -fsSL -o "/tmp/${asset}" \
+            "https://github.com/openbao/openbao/releases/download/v${ver}/${asset}"
+          sudo tar -xzf "/tmp/${asset}" -C /usr/local/bin bao
           sudo chmod +x /usr/local/bin/bao
           bao version
 
