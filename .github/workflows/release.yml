@@ -89,7 +89,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.NODE_AUTH_TOKEN }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build and push (${{ matrix.image }})
+        id: push
+        continue-on-error: true
         uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.context }}
@@ -98,6 +103,31 @@ jobs:
           tags: |
             ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:${{ steps.tag.outputs.value }}
             ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:latest
+          provenance: false
+          sbom: false
+          build-args: |
+            NODE_AUTH_TOKEN=${{ matrix.node_auth && secrets.NODE_AUTH_TOKEN || '' }}
+
+      - name: Re-login to GHCR (retry)
+        if: steps.push.outcome == 'failure'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.NODE_AUTH_TOKEN }}
+
+      - name: Build and push (${{ matrix.image }}, retry)
+        if: steps.push.outcome == 'failure'
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: |
+            ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:${{ steps.tag.outputs.value }}
+            ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:latest
+          provenance: false
+          sbom: false
           build-args: |
             NODE_AUTH_TOKEN=${{ matrix.node_auth && secrets.NODE_AUTH_TOKEN || '' }}
 
