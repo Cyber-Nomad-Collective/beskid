@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -9,35 +11,32 @@ import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
-const beskidUiRoot = path.resolve(
-	rootDir,
-	"../../beskid_web_common/packages/beskid-ui",
-);
-const uiReactRoot = path.resolve(
-	rootDir,
-	"../../beskid_web_common/packages/beskid-ui-react",
-);
-const authClientRoot = path.resolve(
-	rootDir,
-	"../../beskid_web_common/packages/beskid-auth-client",
-);
+const require = createRequire(import.meta.url);
 
-const workspaceAliases = [
+function packageSrc(specifier: string): string {
+	const segments = specifier.split("/");
+	const candidate = path.join(rootDir, "node_modules", ...segments);
+	const root = fs.existsSync(path.join(candidate, "package.json"))
+		? candidate
+		: path.dirname(require.resolve(specifier));
+	return path.join(root, "src");
+}
+
+const beskidUiSrc = packageSrc("@beskid/beskid-ui");
+const uiReactSrc = packageSrc("@beskid/ui-react");
+
+const packageAliases = [
 	{
 		find: "@beskid/ui-react/styles/shadcn-entry.css",
-		replacement: path.join(uiReactRoot, "src/styles/shadcn-entry.css"),
+		replacement: path.join(uiReactSrc, "styles/shadcn-entry.css"),
 	},
 	{
 		find: "@beskid/ui-react",
-		replacement: path.join(uiReactRoot, "src/index.ts"),
-	},
-	{
-		find: "@beskid/auth-client",
-		replacement: path.join(authClientRoot, "src/index.ts"),
+		replacement: path.join(uiReactSrc, "index.ts"),
 	},
 	{
 		find: "@beskid/material-theme",
-		replacement: path.join(beskidUiRoot, "src/styles/theme.material.css"),
+		replacement: path.join(beskidUiSrc, "styles/theme.material.css"),
 	},
 ];
 
@@ -55,12 +54,7 @@ export default defineConfig({
 	],
 	resolve: {
 		tsconfigPaths: true,
-		// Workaround: when Vite aliases resolve @beskid/* packages from workspace
-		// source directories, Rolldown resolves their transitive deps starting from
-		// the workspace location instead of the project root node_modules.
-		// dedupe forces resolution of these packages from the project root.
 		dedupe: [
-			// @beskid/ui-react transitive deps
 			"class-variance-authority",
 			"clsx",
 			"tailwind-merge",
@@ -76,15 +70,11 @@ export default defineConfig({
 			"recharts",
 			"input-otp",
 			"@base-ui/react",
-			// @beskid/auth-client transitive deps
 			"jose",
 		],
-		alias: workspaceAliases,
+		alias: packageAliases,
 	},
 	ssr: {
-		resolve: {
-			alias: workspaceAliases,
-		},
 		noExternal: ["@beskid/ui-react", "@beskid/auth-client"],
 	},
 });

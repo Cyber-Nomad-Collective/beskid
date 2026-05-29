@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+@source "../node_modules/@beskid/ui-react/src";
+@source inline("rounded-4xl");
+
 @import "@beskid/ui-react/styles/shadcn-entry.css";
 @import "./styles/auth-app.css";
 
@@ -30,6 +33,7 @@
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);
 	--radius-xl: calc(var(--radius) + 4px);
+	--radius-4xl: calc(var(--radius) + 0.5rem);
 }
 
 @layer base {

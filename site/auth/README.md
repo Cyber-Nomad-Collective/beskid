@@ -14,8 +14,8 @@ GitHub access tokens stay on the hub. TypeScript apps call GitHub through **`/ap
 
 | Package | Role |
 | --- | --- |
-| [`@beskid/auth-client`](../../beskid_web_common/packages/beskid-auth-client/) | Handoff JWT, login URL, GitHub proxy base URL |
-| [`@beskid/ui-react`](../../beskid_web_common/packages/beskid-ui-react/) | Shared auth/account UI (shadcn + Material tokens) |
+| [`@beskid/auth-client`](https://github.com/Cyber-Nomad-Collective/beskid_web_common/tree/main/packages/beskid-auth-client) | Handoff JWT, login URL, GitHub proxy base URL |
+| [`@beskid/ui-react`](https://github.com/Cyber-Nomad-Collective/beskid_web_common/tree/main/packages/beskid-ui-react) | Shared auth/account UI (shadcn + Material tokens) |
 
 ## Hub admins
 

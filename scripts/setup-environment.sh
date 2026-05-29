@@ -114,6 +114,19 @@ run_js_install() {
   ok "bun install complete"
 }
 
+run_beskid_package_sync() {
+  if [[ "${BESKID_SKIP_PACKAGE_SYNC:-0}" == "1" ]]; then
+    note "Skipping Beskid package sync (BESKID_SKIP_PACKAGE_SYNC=1)"
+    return 0
+  fi
+  if [[ -z "${NODE_AUTH_TOKEN:-}" ]]; then
+    note "NODE_AUTH_TOKEN unset — skip sync-beskid-packages (use published lockfile versions)"
+    return 0
+  fi
+  section "Beskid GitHub Packages"
+  "${SCRIPT_DIR}/sync-beskid-packages.sh"
+}
+
 section "Beskid environment setup"
 
 if [[ "${USE_SUBMODULES_ONLY}" == "1" ]]; then
@@ -123,5 +136,7 @@ else
 fi
 
 run_js_install
+
+run_beskid_package_sync
 
 ok "Environment setup finished"

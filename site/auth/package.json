@@ -15,15 +15,16 @@
 		"check": "bunx biome check",
 		"typecheck": "tsc --noEmit",
 		"test": "bun --bun vitest run",
-		"test:bundle": "VERIFY_CLIENT_BUNDLE=1 bun --bun vitest run src/scripts/verify-client-bundle.test.ts"
+		"test:bundle": "VERIFY_CLIENT_BUNDLE=1 bun --bun vitest run src/scripts/verify-client-bundle.test.ts",
+		"sync:beskid-packages": "bash ../../scripts/sync-beskid-packages.sh site/auth"
 	},
 	"engines": {
 		"bun": ">=1.2.0"
 	},
 	"dependencies": {
-		"@beskid/auth-client": "file:../../beskid_web_common/packages/beskid-auth-client",
-		"@beskid/beskid-ui": "file:../../beskid_web_common/packages/beskid-ui",
-		"@beskid/ui-react": "file:../../beskid_web_common/packages/beskid-ui-react",
+		"@beskid/auth-client": "npm:@cyber-nomad-collective/beskid-auth-client@latest",
+		"@beskid/beskid-ui": "npm:@cyber-nomad-collective/beskid-ui@latest",
+		"@beskid/ui-react": "npm:@cyber-nomad-collective/beskid-ui-react@latest",
 		"@t3-oss/env-core": "^0.13.10",
 		"@tailwindcss/vite": "^4.1.18",
 		"@tanstack/react-query": "latest",
