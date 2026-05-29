@@ -66,6 +66,12 @@ jobs:
         with:
           node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
 
+      - name: Setup Bun
+        if: matrix.image != 'beskid-pckg' && matrix.prebuild == false
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
       - name: Auth hub checks
         if: matrix.image == 'beskid-auth'
         env:
@@ -83,12 +89,25 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
         run: |
-          ./scripts/ci/verify-frozen-lockfile.sh \
-            "${{ github.workspace }}" \
-            "${{ github.workspace }}/beskid_tracker" \
-            "${{ github.workspace }}/site/auth" \
-            "${{ github.workspace }}/beskid_nexus/gitnexus" \
-            "${{ github.workspace }}/beskid_nexus/gitnexus-web"
+          set -euo pipefail
+          case "${{ matrix.image }}" in
+            beskid-site)
+              lock_dirs=("${{ github.workspace }}")
+              ;;
+            beskid-auth)
+              lock_dirs=("${{ github.workspace }}/site/auth")
+              ;;
+            beskid-tracker)
+              lock_dirs=("${{ github.workspace }}/beskid_tracker")
+              ;;
+            beskid-nexus)
+              lock_dirs=(
+                "${{ github.workspace }}/beskid_nexus/gitnexus"
+                "${{ github.workspace }}/beskid_nexus/gitnexus-web"
+              )
+              ;;
+          esac
+          ./scripts/ci/verify-frozen-lockfile.sh "${lock_dirs[@]}"
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
