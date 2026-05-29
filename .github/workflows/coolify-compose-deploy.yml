@@ -47,9 +47,15 @@ jobs:
         run: ./scripts/ci/init-submodules.sh beskid_infra
 
       - name: Install OpenBao CLI
-        if: github.ref_name == 'main' && secrets.OPENBAO_TOKEN != ''
+        if: github.ref_name == 'main'
+        env:
+          OPENBAO_TOKEN: ${{ secrets.OPENBAO_TOKEN }}
         run: |
           set -euo pipefail
+          if [[ -z "${OPENBAO_TOKEN}" ]]; then
+            echo "OPENBAO_TOKEN not set; skipping bao install"
+            exit 0
+          fi
           ver="2.1.0"
           curl -fsSL -o /tmp/bao.zip \
             "https://github.com/openbao/openbao/releases/download/v${ver}/bao_${ver}_linux_amd64.zip"
@@ -67,10 +73,15 @@ jobs:
           echo "docker compose config OK"
 
       - name: Check OpenBao keys
-        if: github.ref_name == 'main' && secrets.OPENBAO_TOKEN != ''
+        if: github.ref_name == 'main'
         env:
           OPENBAO_TOKEN: ${{ secrets.OPENBAO_TOKEN }}
         run: |
+          set -euo pipefail
+          if [[ -z "${OPENBAO_TOKEN}" ]]; then
+            echo "OPENBAO_TOKEN not set; skipping OpenBao key audit"
+            exit 0
+          fi
           chmod +x beskid_infra/scripts/coolify-sync-env-from-openbao.sh
           beskid_infra/scripts/coolify-sync-env-from-openbao.sh --check
 
@@ -85,4 +96,5 @@ jobs:
           chmod +x beskid_infra/scripts/coolify-deploy-compose.sh
           chmod +x beskid_infra/scripts/coolify-sync-env-from-openbao.sh
           chmod +x beskid_infra/scripts/lib/coolify-api.sh
+          chmod +x beskid_infra/scripts/lib/domains.sh
           beskid_infra/scripts/coolify-deploy-compose.sh --lane production

@@ -51,6 +51,9 @@ jobs:
           fetch-tags: true
           persist-credentials: true
 
+      - name: Init beskid_infra submodule
+        run: ./scripts/ci/init-submodules.sh beskid_infra
+
       - uses: oven-sh/setup-bun@v2
 
       - name: Setup Rust toolchain (Intel macOS LSP target)
