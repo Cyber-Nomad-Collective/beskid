@@ -5,14 +5,14 @@ import { t as Route$16 } from "./admin-CJ-arQiO.mjs";
 import { t as J } from "../_libs/next-themes.mjs";
 import { a as string, i as object, n as array, r as boolean, t as _enum } from "../_libs/zod.mjs";
 import { n as jwtVerify } from "../_libs/jose.mjs";
-import { C as readAuthConfig, D as verifySetupToken, O as writeAuthConfig, T as resolveOAuthConfig, _ as isAdminLogin, a as approvePairing, b as listEnabledApps, f as getGithubTokenForSession, h as getSessionFromRequest, i as addAdminLogin, l as env, m as getServiceTokenForApp, n as AUTH_HUB_ISSUER, o as clearSessionCookieHeader, p as getPairedApp, s as createPairingRequest, u as getAdminLogins, v as isOAuthConfigured, w as removeAdminLogin, y as isOnboarded } from "./pairing-C0O8oKd7.mjs";
-import { n as handleCallbackGet, t as Route$17 } from "./login-BmaYCkzD.mjs";
+import { C as readAuthConfig, D as verifySetupToken, O as writeAuthConfig, T as resolveOAuthConfig, _ as isAdminLogin, a as approvePairing, b as listEnabledApps, f as getGithubTokenForSession, h as getSessionFromRequest, i as addAdminLogin, l as env, m as getServiceTokenForApp, n as AUTH_HUB_ISSUER, o as clearSessionCookieHeader, p as getPairedApp, s as createPairingRequest, u as getAdminLogins, v as isOAuthConfigured, w as removeAdminLogin, y as isOnboarded } from "./pairing-Ch2zXxL_.mjs";
+import { n as handleCallbackGet, t as Route$17 } from "./login-DLmVOGJq.mjs";
 import { t as Route$18 } from "./onboarding-aNwjY9k4.mjs";
 import { t as Route$19 } from "./pairing-D6WnzSqp.mjs";
 import { t as Route$20 } from "./profile-C6UWY7WB.mjs";
 import { t as Route$21 } from "./routes-LeyG4ety.mjs";
 import { t as QueryClient } from "../_libs/tanstack__query-core.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-B9gcuiMK.js
+//#region node_modules/.nitro/vite/services/ssr/assets/router-JNiVHNXO.js
 var import_jsx_runtime = require_jsx_runtime();
 function getContext() {
 	return { queryClient: new QueryClient() };
@@ -26,7 +26,7 @@ function ThemeProvider$1({ children }) {
 		children
 	});
 }
-var styles_default = "/assets/styles-BMANNFqe.css";
+var styles_default = "/assets/styles-ti9cf6Ss.css";
 var Route$15 = createRootRoute({
 	head: () => ({
 		meta: [
@@ -104,7 +104,7 @@ var Route$9 = createFileRoute("/api/auth/logout")({ server: { handlers: {
 		});
 	}
 } } });
-var $$splitComponentImporter = () => import("./new-P5scuHod.mjs");
+var $$splitComponentImporter = () => import("./new-B4e0uLdD.mjs");
 var Route$8 = createFileRoute("/admin/pairing/new")({
 	loader: async () => {
 		const access = await fetchAdminAccess();

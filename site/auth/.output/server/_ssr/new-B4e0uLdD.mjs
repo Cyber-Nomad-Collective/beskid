@@ -3,8 +3,8 @@ import { c as require_jsx_runtime, l as require_react } from "../_libs/@radix-ui
 import { u as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { a as Button, c as CardDescription, d as Input, f as Label$1, l as CardHeader, o as Card, s as CardContent, u as CardTitle } from "./src-DexVnyi_.mjs";
 import { t as ThemeToggle } from "./theme-toggle-BENAOEYN.mjs";
-import { t as AUTH_APP_META } from "./pairing-C0O8oKd7.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/new-P5scuHod.js
+import { t as AUTH_APP_META } from "./pairing-Ch2zXxL_.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/new-B4e0uLdD.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var APP_IDS = [

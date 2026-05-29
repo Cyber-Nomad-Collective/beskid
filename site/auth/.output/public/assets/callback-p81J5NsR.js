@@ -1,1 +1,0 @@
-import{T as e}from"./index-CCty0Zvi.js";function t(){throw e({to:`/`})}export{t as component};

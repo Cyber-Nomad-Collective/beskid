@@ -2,8 +2,8 @@ import { c as createFileRoute, s as lazyRouteComponent } from "../_libs/@tanstac
 import { i as fetchLoginPageContext } from "./app-server.functions-C9vF87JV.mjs";
 import { a as string, i as object } from "../_libs/zod.mjs";
 import { t as SignJWT } from "../_libs/jose.mjs";
-import { E as sealHubBrowserSession, S as promoteBootstrapAdminIfNeeded, T as resolveOAuthConfig, _ as isAdminLogin, c as createUserSession, d as getAppById, g as hubBrowserSessionCookieHeader, l as env, m as getServiceTokenForApp, n as AUTH_HUB_ISSUER, o as clearSessionCookieHeader, r as HUB_USER_TOKEN_TTL_SECONDS, v as isOAuthConfigured } from "./pairing-C0O8oKd7.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/login-BmaYCkzD.js
+import { E as sealHubBrowserSession, S as promoteBootstrapAdminIfNeeded, T as resolveOAuthConfig, _ as isAdminLogin, c as createUserSession, d as getAppById, g as hubBrowserSessionCookieHeader, l as env, m as getServiceTokenForApp, n as AUTH_HUB_ISSUER, o as clearSessionCookieHeader, r as HUB_USER_TOKEN_TTL_SECONDS, v as isOAuthConfigured } from "./pairing-Ch2zXxL_.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/login-DLmVOGJq.js
 function secretKey(secret) {
 	if (secret.length < 32) throw new Error("Service token must be at least 32 characters");
 	return new TextEncoder().encode(secret);
@@ -195,7 +195,7 @@ async function handleCallbackGet(request) {
 		});
 	}
 }
-var $$splitComponentImporter = () => import("./login-mkiaIEm0.mjs");
+var $$splitComponentImporter = () => import("./login-CGIcb_PX.mjs");
 var loginSearchSchema = object({
 	app: string().optional(),
 	error: string().optional()

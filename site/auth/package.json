@@ -22,9 +22,9 @@
 		"bun": ">=1.2.0"
 	},
 	"dependencies": {
-		"@beskid/auth-client": "npm:@cyber-nomad-collective/beskid-auth-client@latest",
-		"@beskid/beskid-ui": "npm:@cyber-nomad-collective/beskid-ui@latest",
-		"@beskid/ui-react": "npm:@cyber-nomad-collective/beskid-ui-react@latest",
+		"@beskid/auth-client": "npm:@cyber-nomad-collective/beskid-auth-client@^0.2.0",
+		"@beskid/beskid-ui": "npm:@cyber-nomad-collective/beskid-ui@^0.2.0",
+		"@beskid/ui-react": "npm:@cyber-nomad-collective/beskid-ui-react@^0.2.0",
 		"@t3-oss/env-core": "^0.13.10",
 		"@tailwindcss/vite": "^4.1.18",
 		"@tanstack/react-query": "latest",

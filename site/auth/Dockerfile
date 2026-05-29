@@ -1,16 +1,17 @@
 FROM oven/bun:latest AS build
 
-WORKDIR /app
+WORKDIR /app/site/auth
 
-# Copy all source so workspace file: links and tsconfig base resolve correctly.
-COPY beskid_web_common ./beskid_web_common
-COPY site/auth ./site/auth
+COPY site/auth/package.json site/auth/bun.lock site/auth/.npmrc ./
+ARG NODE_AUTH_TOKEN
+ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
+RUN bun install --frozen-lockfile
 
-RUN cd site/auth && bun install
+COPY site/auth/ ./
 
 ENV SKIP_ENV_VALIDATION=1
-RUN cd site/auth && bun run build
-RUN cd site/auth && bun run verify:client-bundle
+RUN bun run build
+RUN bun run verify:client-bundle
 
 FROM oven/bun:latest AS runtime
 
@@ -23,7 +24,7 @@ WORKDIR /app/site/auth
 ENV NODE_ENV=production
 ENV PORT=8090
 
-COPY --from=build /app/site/auth/package.json ./
+COPY --from=build /app/site/auth/package.json /app/site/auth/bun.lock ./
 COPY --from=build /app/site/auth/node_modules ./node_modules
 COPY --from=build /app/site/auth/.output ./.output
 

@@ -95,7 +95,7 @@ var HEADERS = { TSS_SHELL: "X-TSS_SHELL" };
 * the dev styles URL for route-scoped CSS collection.
 */
 async function getStartManifest(matchedRoutes) {
-	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-CZKIYC67.mjs");
+	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-BvxheRlO.mjs");
 	const startManifest = tsrStartManifest();
 	let routes = startManifest.routes;
 	routes[rootRouteId];
@@ -120,31 +120,31 @@ async function getStartManifest(matchedRoutes) {
 var manifest = {
 	"0a89ee1416973a2d25600020f4bf156615779811249f14f5f93214502a5ab0ef": {
 		functionName: "fetchAdminAccess_createServerFn_handler",
-		importer: () => import("./app-server.functions-Bo-UH6mr.mjs")
+		importer: () => import("./app-server.functions-DdqBOGvj.mjs")
 	},
 	"482db671a8f1342fa7d317ac478d599c2eab3fc826d2f63984e558cbbaffe7db": {
 		functionName: "fetchHomeData_createServerFn_handler",
-		importer: () => import("./app-server.functions-Bo-UH6mr.mjs")
+		importer: () => import("./app-server.functions-DdqBOGvj.mjs")
 	},
 	"a3f632bac40d5c74206e7d883a8ee04016f5c13d63973121bcdff9eaf1c51a84": {
 		functionName: "fetchOnboardingGate_createServerFn_handler",
-		importer: () => import("./app-server.functions-Bo-UH6mr.mjs")
+		importer: () => import("./app-server.functions-DdqBOGvj.mjs")
 	},
 	"b01ac6cfa8c45b77f270c51e9b76970ec2b519c3089f503864f33322f1d61ae3": {
 		functionName: "fetchAdminDashboard_createServerFn_handler",
-		importer: () => import("./app-server.functions-Bo-UH6mr.mjs")
+		importer: () => import("./app-server.functions-DdqBOGvj.mjs")
 	},
 	"c170a1a18b98f1d9a48c33d84f070c42185b0b50923b3a51f2846e74187f1acd": {
 		functionName: "fetchPairingRequests_createServerFn_handler",
-		importer: () => import("./app-server.functions-Bo-UH6mr.mjs")
+		importer: () => import("./app-server.functions-DdqBOGvj.mjs")
 	},
 	"cbaebcbcd4bbc47663e9affc5ed7611451ef23e8dc1273807b7747de8090da98": {
 		functionName: "fetchProfileData_createServerFn_handler",
-		importer: () => import("./app-server.functions-Bo-UH6mr.mjs")
+		importer: () => import("./app-server.functions-DdqBOGvj.mjs")
 	},
 	"ec2b72241cd565806da76157f819a7646738d3420993cb997508f53de607c76f": {
 		functionName: "fetchLoginPageContext_createServerFn_handler",
-		importer: () => import("./app-server.functions-Bo-UH6mr.mjs")
+		importer: () => import("./app-server.functions-DdqBOGvj.mjs")
 	}
 };
 async function getServerFnById(id, access) {
@@ -1439,7 +1439,7 @@ var getBaseManifest = getProdBaseManifest;
 var createEarlyHintsForRequest = createEarlyHintsCollector;
 async function loadEntries() {
 	const [routerEntry, startEntry, pluginAdapters] = await Promise.all([
-		import("./router-B9gcuiMK.mjs"),
+		import("./router-JNiVHNXO.mjs"),
 		import("./start-5Z2QO8AU.mjs"),
 		import("./empty-plugin-adapters-D9UWiqvJ.mjs")
 	]);

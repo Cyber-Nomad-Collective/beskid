@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Refresh @beskid / trudoc packages from GitHub Packages (latest published versions).
+# Refresh @beskid / trudoc packages from GitHub Packages (respects ^ ranges in package.json).
 #
 # Usage:
 #   ./scripts/sync-beskid-packages.sh

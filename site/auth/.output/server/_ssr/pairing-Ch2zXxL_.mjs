@@ -6,7 +6,7 @@ import { mkdirSync } from "node:fs";
 import path from "node:path";
 import fs from "node:fs/promises";
 import { Database } from "bun:sqlite";
-//#region node_modules/.nitro/vite/services/ssr/assets/pairing-C0O8oKd7.js
+//#region node_modules/.nitro/vite/services/ssr/assets/pairing-Ch2zXxL_.js
 var AUTH_HUB_ISSUER = "beskid-auth-hub";
 var HUB_USER_TOKEN_TTL_SECONDS = 10080 * 60;
 var AUTH_APP_META = {

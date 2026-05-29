@@ -32,7 +32,7 @@ jobs:
             dockerfile: site/auth/Dockerfile
             submodule: beskid_web_common
             prebuild: true
-            node_auth: false
+            node_auth: true
           - image: beskid-tracker
             context: beskid_tracker
             dockerfile: beskid_tracker/Dockerfile
@@ -68,13 +68,27 @@ jobs:
 
       - name: Auth hub checks
         if: matrix.image == 'beskid-auth'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
         run: |
           cd site/auth
-          bun install
+          bun install --frozen-lockfile
           bun run test
           SKIP_ENV_VALIDATION=1 bun run build
           bun run verify:client-bundle
           bun run test:bundle
+
+      - name: Verify lockfiles
+        if: matrix.image != 'beskid-pckg'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+        run: |
+          ./scripts/ci/verify-frozen-lockfile.sh \
+            "${{ github.workspace }}" \
+            "${{ github.workspace }}/beskid_tracker" \
+            "${{ github.workspace }}/site/auth" \
+            "${{ github.workspace }}/beskid_nexus/gitnexus" \
+            "${{ github.workspace }}/beskid_nexus/gitnexus-web"
 
       - name: Log in to GHCR
         uses: docker/login-action@v3

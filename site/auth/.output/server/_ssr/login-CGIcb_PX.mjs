@@ -2,8 +2,8 @@ import { c as require_jsx_runtime } from "../_libs/@radix-ui/react-avatar+[...].
 import { u as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { a as Button, i as AuthPageShell } from "./src-DexVnyi_.mjs";
 import { t as ThemeToggle } from "./theme-toggle-BENAOEYN.mjs";
-import { t as Route } from "./login-BmaYCkzD.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/login-mkiaIEm0.js
+import { t as Route } from "./login-DLmVOGJq.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/login-CGIcb_PX.js
 var import_jsx_runtime = require_jsx_runtime();
 function errorMessage(code) {
 	switch (code) {
