@@ -1,1 +1,0 @@
-var e={tracker:{label:`Beskid Tracker`,description:`Kanban and platform-spec docs on GitHub issues.`},nexus:{label:`Beskid Nexus`,description:`Compiler graph explorer and catalog.`},pckg:{label:`pckg registry`,description:`Package registry accounts and publishing.`}};export{e as t};
