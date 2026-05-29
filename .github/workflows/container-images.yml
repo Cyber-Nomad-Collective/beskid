@@ -34,8 +34,8 @@ jobs:
             prebuild: true
             node_auth: true
           - image: beskid-tracker
-            context: .
-            dockerfile: beskid_tracker/Dockerfile
+            context: beskid_tracker
+            dockerfile: Dockerfile
             submodule: beskid_tracker
             prebuild: false
             node_auth: true
