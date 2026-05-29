@@ -32,3 +32,7 @@ Required keys: `SESSION_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `AU
 ## Pairing
 
 Tracker, Nexus, and pckg use `AUTH_HUB_PUBLIC_URL` pointing at this hub.
+
+## Production runtime
+
+The image runs the TanStack Start app via **Nitro** (`bun run .output/server/index.mjs`), not `vite preview`. Rebuild and redeploy the compose service after changing `vite.config.ts` or the Dockerfile.

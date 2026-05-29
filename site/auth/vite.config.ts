@@ -4,12 +4,14 @@ import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import { nitro } from "nitro/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+	plugins: [devtools(), tailwindcss(), tanstackStart(), nitro({ preset: "bun" }), viteReact()],
 	resolve: {
 		tsconfigPaths: true,
 		// Workaround: when Vite aliases resolve @beskid/* packages from workspace
@@ -62,5 +64,4 @@ export default defineConfig({
 		},
 		noExternal: ["@beskid/ui-react", "@beskid/auth-client"],
 	},
-	plugins: [devtools(), tailwindcss(), tanstackStart(), viteReact()],
 });

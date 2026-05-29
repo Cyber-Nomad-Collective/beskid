@@ -24,7 +24,7 @@ ENV PORT=8090
 
 COPY --from=build /app/site/auth/package.json ./
 COPY --from=build /app/site/auth/node_modules ./node_modules
-COPY --from=build /app/site/auth/dist ./dist
+COPY --from=build /app/site/auth/.output ./.output
 
 EXPOSE 8090
 
