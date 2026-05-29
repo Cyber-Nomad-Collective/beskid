@@ -17,6 +17,9 @@ export const env = createEnv({
 		NEXUS_PUBLIC_URL: z.string().url().optional(),
 		PCKG_PUBLIC_URL: z.string().url().optional(),
 		NODE_ENV: z.enum(["development", "production", "test"]).optional(),
+		LOG_LEVEL: z
+			.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
+			.optional(),
 	},
 	runtimeEnv: {
 		AUTH_HUB_PUBLIC_URL: process.env.AUTH_HUB_PUBLIC_URL,
@@ -31,6 +34,7 @@ export const env = createEnv({
 		NEXUS_PUBLIC_URL: process.env.NEXUS_PUBLIC_URL,
 		PCKG_PUBLIC_URL: process.env.PCKG_PUBLIC_URL,
 		NODE_ENV: process.env.NODE_ENV,
+		LOG_LEVEL: process.env.LOG_LEVEL,
 	},
 	emptyStringAsUndefined: true,
 	skipValidation:

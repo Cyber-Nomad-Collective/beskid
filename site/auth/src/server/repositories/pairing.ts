@@ -22,6 +22,14 @@ export interface PairingRequestRow {
 	created_at: string;
 }
 
+export interface PairingAuditRow {
+	id: number;
+	request_id: string;
+	event: string;
+	actor_login: string | null;
+	created_at: string;
+}
+
 function audit(
 	requestId: string,
 	event: string,
@@ -132,4 +140,40 @@ export function listPairingRequests(): PairingRequestRow[] {
 			"SELECT * FROM pairing_requests ORDER BY created_at DESC LIMIT 50",
 		)
 		.all();
+}
+
+export function getPairingRequest(id: string): PairingRequestRow | null {
+	return (
+		getAuthDatabase()
+			.query<PairingRequestRow, [string]>(
+				"SELECT * FROM pairing_requests WHERE id = ?",
+			)
+			.get(id) ?? null
+	);
+}
+
+export function listPairingAudit(requestId: string): PairingAuditRow[] {
+	return getAuthDatabase()
+		.query<PairingAuditRow, [string]>(
+			"SELECT * FROM pairing_audit WHERE request_id = ? ORDER BY created_at ASC",
+		)
+		.all(requestId);
+}
+
+export function cancelPairingRequest(
+	id: string,
+	actorLogin: string,
+): { ok: true } | { error: string } {
+	const row = getPairingRequest(id);
+	if (!row) return { error: "Pairing request not found" };
+	if (row.status !== "pending") {
+		return { error: "Only pending pairing requests can be cancelled" };
+	}
+
+	getAuthDatabase()
+		.prepare("UPDATE pairing_requests SET status = 'cancelled' WHERE id = ?")
+		.run(id);
+
+	audit(id, "cancelled", actorLogin);
+	return { ok: true };
 }

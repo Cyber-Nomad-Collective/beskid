@@ -7,8 +7,12 @@ import {
 } from "#/server/config-store";
 import { hubOAuthCallbackUrl, hubPublicBase } from "#/server/hub-public.server";
 import { getAdminLogins } from "#/server/hub-admin-bootstrap.server";
-import { listPairingRequests } from "#/server/repositories/pairing";
 import { getSessionFromRequest } from "#/server/session";
+import {
+	getPairingRequest,
+	listPairingAudit,
+	listPairingRequests,
+} from "#/server/repositories/pairing";
 
 export async function resolveAdminAccess() {
 	if (!(await isOnboarded())) return { kind: "onboarding" as const };
@@ -66,4 +70,20 @@ export async function loadPairingRequests() {
 	const access = await resolveAdminAccess();
 	if (access.kind !== "ok") return access;
 	return { kind: "ok" as const, requests: listPairingRequests() };
+}
+
+export async function loadPairingRequestDetail(requestId: string) {
+	const access = await resolveAdminAccess();
+	if (access.kind !== "ok") return access;
+
+	const request = getPairingRequest(requestId);
+	if (!request) {
+		return { kind: "not_found" as const };
+	}
+
+	return {
+		kind: "ok" as const,
+		request,
+		audit: listPairingAudit(requestId),
+	};
 }

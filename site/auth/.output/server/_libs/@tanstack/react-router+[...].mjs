@@ -1,4 +1,4 @@
-import { r as __toESM, t as __commonJSMin } from "../../_runtime.mjs";
+import { o as __toESM, t as __commonJSMin } from "../../_runtime.mjs";
 import { c as require_jsx_runtime, l as require_react, o as require_react_dom, s as require_shim } from "../@radix-ui/react-avatar+[...].mjs";
 import { r as parseHref } from "../tanstack__history.mjs";
 import { PassThrough, Readable } from "node:stream";
@@ -13642,4 +13642,4 @@ var renderRouterToStream = async ({ request, router, responseHeaders, children }
 	throw new Error("No renderToReadableStream or renderToPipeableStream found in react-dom/server. Ensure you are using a version of react-dom that supports streaming.");
 };
 //#endregion
-export { parseRedirect as C, createLRUCache as D, isNotFound as E, invariant as O, isResolvedRedirect as S, rootRouteId as T, getStylesheetHref as _, createRouter as a, executeRewriteInput as b, createFileRoute as c, GLOBAL_TSR as d, TSR_SCRIPT_BARRIER_ID as f, getScriptPreloadAttrs as g, getManifestScriptFormat as h, RouterProvider as i, decodePath as k, createRootRoute as l, createInlineCssStyleAsset as m, Scripts as n, Outlet as o, createInlineCssPlaceholderAsset as p, HeadContent as r, lazyRouteComponent as s, renderRouterToStream as t, Link as u, resolveManifestAssetLink as v, redirect as w, isRedirect as x, resolveManifestCssLink as y };
+export { decodePath as A, isResolvedRedirect as C, isNotFound as D, rootRouteId as E, createLRUCache as O, isRedirect as S, redirect as T, getScriptPreloadAttrs as _, createRouter as a, resolveManifestCssLink as b, createFileRoute as c, useRouter as d, GLOBAL_TSR as f, getManifestScriptFormat as g, createInlineCssStyleAsset as h, RouterProvider as i, invariant as k, createRootRoute as l, createInlineCssPlaceholderAsset as m, Scripts as n, Outlet as o, TSR_SCRIPT_BARRIER_ID as p, HeadContent as r, lazyRouteComponent as s, renderRouterToStream as t, Link as u, getStylesheetHref as v, parseRedirect as w, executeRewriteInput as x, resolveManifestAssetLink as y };

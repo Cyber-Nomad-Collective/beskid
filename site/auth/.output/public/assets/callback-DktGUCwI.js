@@ -1,0 +1,1 @@
+import{m as e}from"./index-DiOlYUF_.js";function t(){throw e({to:`/`})}export{t as component};

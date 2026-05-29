@@ -12,10 +12,11 @@ SUPERREPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 # shellcheck source=lib/output.sh
 source "${SCRIPT_DIR}/lib/output.sh"
 
-BESKID_SPECS=(
+	BESKID_SPECS=(
 	"@beskid/auth-client"
 	"@beskid/beskid-ui"
 	"@beskid/ui-react"
+	"@beskid/server-observability"
 	"@cyber-nomad-collective/trudoc"
 	trudoc
 )

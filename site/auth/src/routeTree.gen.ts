@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as MetricsRouteImport } from './routes/metrics'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CallbackRouteImport } from './routes/callback'
 import { Route as AccountRouteImport } from './routes/account'
@@ -22,6 +23,7 @@ import { Route as ApiV1HealthRouteImport } from './routes/api/v1/health'
 import { Route as ApiV1AppsRouteImport } from './routes/api/v1/apps'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as AdminPairingNewRouteImport } from './routes/admin/pairing/new'
+import { Route as AdminPairingRequestIdRouteImport } from './routes/admin/pairing/$requestId'
 import { Route as ApiV1PairingStatusRouteImport } from './routes/api/v1/pairing/status'
 import { Route as ApiV1PairingRequestsRouteImport } from './routes/api/v1/pairing/requests'
 import { Route as ApiV1PairingApproveRouteImport } from './routes/api/v1/pairing/approve'
@@ -30,6 +32,7 @@ import { Route as ApiV1GithubSplatRouteImport } from './routes/api/v1/github/$'
 import { Route as ApiV1AdminStatusRouteImport } from './routes/api/v1/admin/status'
 import { Route as ApiV1AdminSetupRouteImport } from './routes/api/v1/admin/setup'
 import { Route as ApiV1AdminAdminsRouteImport } from './routes/api/v1/admin/admins'
+import { Route as ApiV1PairingRequestsRequestIdRouteImport } from './routes/api/v1/pairing/requests/$requestId'
 
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
@@ -39,6 +42,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MetricsRoute = MetricsRouteImport.update({
+  id: '/metrics',
+  path: '/metrics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -96,6 +104,11 @@ const AdminPairingNewRoute = AdminPairingNewRouteImport.update({
   path: '/admin/pairing/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPairingRequestIdRoute = AdminPairingRequestIdRouteImport.update({
+  id: '/admin/pairing/$requestId',
+  path: '/admin/pairing/$requestId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1PairingStatusRoute = ApiV1PairingStatusRouteImport.update({
   id: '/api/v1/pairing/status',
   path: '/api/v1/pairing/status',
@@ -136,15 +149,23 @@ const ApiV1AdminAdminsRoute = ApiV1AdminAdminsRouteImport.update({
   path: '/api/v1/admin/admins',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1PairingRequestsRequestIdRoute =
+  ApiV1PairingRequestsRequestIdRouteImport.update({
+    id: '/$requestId',
+    path: '/$requestId',
+    getParentRoute: () => ApiV1PairingRequestsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/callback': typeof CallbackRoute
   '/login': typeof LoginRoute
+  '/metrics': typeof MetricsRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/pairing/$requestId': typeof AdminPairingRequestIdRoute
   '/admin/pairing/new': typeof AdminPairingNewRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/v1/apps': typeof ApiV1AppsRoute
@@ -157,17 +178,20 @@ export interface FileRoutesByFullPath {
   '/api/v1/github/$': typeof ApiV1GithubSplatRoute
   '/api/v1/openapi/json': typeof ApiV1OpenapiJsonRoute
   '/api/v1/pairing/approve': typeof ApiV1PairingApproveRoute
-  '/api/v1/pairing/requests': typeof ApiV1PairingRequestsRoute
+  '/api/v1/pairing/requests': typeof ApiV1PairingRequestsRouteWithChildren
   '/api/v1/pairing/status': typeof ApiV1PairingStatusRoute
+  '/api/v1/pairing/requests/$requestId': typeof ApiV1PairingRequestsRequestIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/callback': typeof CallbackRoute
   '/login': typeof LoginRoute
+  '/metrics': typeof MetricsRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/pairing/$requestId': typeof AdminPairingRequestIdRoute
   '/admin/pairing/new': typeof AdminPairingNewRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/v1/apps': typeof ApiV1AppsRoute
@@ -180,8 +204,9 @@ export interface FileRoutesByTo {
   '/api/v1/github/$': typeof ApiV1GithubSplatRoute
   '/api/v1/openapi/json': typeof ApiV1OpenapiJsonRoute
   '/api/v1/pairing/approve': typeof ApiV1PairingApproveRoute
-  '/api/v1/pairing/requests': typeof ApiV1PairingRequestsRoute
+  '/api/v1/pairing/requests': typeof ApiV1PairingRequestsRouteWithChildren
   '/api/v1/pairing/status': typeof ApiV1PairingStatusRoute
+  '/api/v1/pairing/requests/$requestId': typeof ApiV1PairingRequestsRequestIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -189,9 +214,11 @@ export interface FileRoutesById {
   '/account': typeof AccountRoute
   '/callback': typeof CallbackRoute
   '/login': typeof LoginRoute
+  '/metrics': typeof MetricsRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/pairing/$requestId': typeof AdminPairingRequestIdRoute
   '/admin/pairing/new': typeof AdminPairingNewRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/v1/apps': typeof ApiV1AppsRoute
@@ -204,8 +231,9 @@ export interface FileRoutesById {
   '/api/v1/github/$': typeof ApiV1GithubSplatRoute
   '/api/v1/openapi/json': typeof ApiV1OpenapiJsonRoute
   '/api/v1/pairing/approve': typeof ApiV1PairingApproveRoute
-  '/api/v1/pairing/requests': typeof ApiV1PairingRequestsRoute
+  '/api/v1/pairing/requests': typeof ApiV1PairingRequestsRouteWithChildren
   '/api/v1/pairing/status': typeof ApiV1PairingStatusRoute
+  '/api/v1/pairing/requests/$requestId': typeof ApiV1PairingRequestsRequestIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -214,9 +242,11 @@ export interface FileRouteTypes {
     | '/account'
     | '/callback'
     | '/login'
+    | '/metrics'
     | '/onboarding'
     | '/profile'
     | '/admin/'
+    | '/admin/pairing/$requestId'
     | '/admin/pairing/new'
     | '/api/auth/logout'
     | '/api/v1/apps'
@@ -231,15 +261,18 @@ export interface FileRouteTypes {
     | '/api/v1/pairing/approve'
     | '/api/v1/pairing/requests'
     | '/api/v1/pairing/status'
+    | '/api/v1/pairing/requests/$requestId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/account'
     | '/callback'
     | '/login'
+    | '/metrics'
     | '/onboarding'
     | '/profile'
     | '/admin'
+    | '/admin/pairing/$requestId'
     | '/admin/pairing/new'
     | '/api/auth/logout'
     | '/api/v1/apps'
@@ -254,15 +287,18 @@ export interface FileRouteTypes {
     | '/api/v1/pairing/approve'
     | '/api/v1/pairing/requests'
     | '/api/v1/pairing/status'
+    | '/api/v1/pairing/requests/$requestId'
   id:
     | '__root__'
     | '/'
     | '/account'
     | '/callback'
     | '/login'
+    | '/metrics'
     | '/onboarding'
     | '/profile'
     | '/admin/'
+    | '/admin/pairing/$requestId'
     | '/admin/pairing/new'
     | '/api/auth/logout'
     | '/api/v1/apps'
@@ -277,6 +313,7 @@ export interface FileRouteTypes {
     | '/api/v1/pairing/approve'
     | '/api/v1/pairing/requests'
     | '/api/v1/pairing/status'
+    | '/api/v1/pairing/requests/$requestId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -284,9 +321,11 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRoute
   CallbackRoute: typeof CallbackRoute
   LoginRoute: typeof LoginRoute
+  MetricsRoute: typeof MetricsRoute
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminPairingRequestIdRoute: typeof AdminPairingRequestIdRoute
   AdminPairingNewRoute: typeof AdminPairingNewRoute
   ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
   ApiV1AppsRoute: typeof ApiV1AppsRoute
@@ -299,7 +338,7 @@ export interface RootRouteChildren {
   ApiV1GithubSplatRoute: typeof ApiV1GithubSplatRoute
   ApiV1OpenapiJsonRoute: typeof ApiV1OpenapiJsonRoute
   ApiV1PairingApproveRoute: typeof ApiV1PairingApproveRoute
-  ApiV1PairingRequestsRoute: typeof ApiV1PairingRequestsRoute
+  ApiV1PairingRequestsRoute: typeof ApiV1PairingRequestsRouteWithChildren
   ApiV1PairingStatusRoute: typeof ApiV1PairingStatusRoute
 }
 
@@ -317,6 +356,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/metrics': {
+      id: '/metrics'
+      path: '/metrics'
+      fullPath: '/metrics'
+      preLoaderRoute: typeof MetricsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -396,6 +442,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPairingNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/pairing/$requestId': {
+      id: '/admin/pairing/$requestId'
+      path: '/admin/pairing/$requestId'
+      fullPath: '/admin/pairing/$requestId'
+      preLoaderRoute: typeof AdminPairingRequestIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/v1/pairing/status': {
       id: '/api/v1/pairing/status'
       path: '/api/v1/pairing/status'
@@ -452,17 +505,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1AdminAdminsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/pairing/requests/$requestId': {
+      id: '/api/v1/pairing/requests/$requestId'
+      path: '/$requestId'
+      fullPath: '/api/v1/pairing/requests/$requestId'
+      preLoaderRoute: typeof ApiV1PairingRequestsRequestIdRouteImport
+      parentRoute: typeof ApiV1PairingRequestsRoute
+    }
   }
 }
+
+interface ApiV1PairingRequestsRouteChildren {
+  ApiV1PairingRequestsRequestIdRoute: typeof ApiV1PairingRequestsRequestIdRoute
+}
+
+const ApiV1PairingRequestsRouteChildren: ApiV1PairingRequestsRouteChildren = {
+  ApiV1PairingRequestsRequestIdRoute: ApiV1PairingRequestsRequestIdRoute,
+}
+
+const ApiV1PairingRequestsRouteWithChildren =
+  ApiV1PairingRequestsRoute._addFileChildren(ApiV1PairingRequestsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRoute,
   CallbackRoute: CallbackRoute,
   LoginRoute: LoginRoute,
+  MetricsRoute: MetricsRoute,
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminPairingRequestIdRoute: AdminPairingRequestIdRoute,
   AdminPairingNewRoute: AdminPairingNewRoute,
   ApiAuthLogoutRoute: ApiAuthLogoutRoute,
   ApiV1AppsRoute: ApiV1AppsRoute,
@@ -475,7 +548,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiV1GithubSplatRoute: ApiV1GithubSplatRoute,
   ApiV1OpenapiJsonRoute: ApiV1OpenapiJsonRoute,
   ApiV1PairingApproveRoute: ApiV1PairingApproveRoute,
-  ApiV1PairingRequestsRoute: ApiV1PairingRequestsRoute,
+  ApiV1PairingRequestsRoute: ApiV1PairingRequestsRouteWithChildren,
   ApiV1PairingStatusRoute: ApiV1PairingStatusRoute,
 }
 export const routeTree = rootRouteImport

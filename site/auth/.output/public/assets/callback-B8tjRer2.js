@@ -1,1 +1,0 @@
-import{T as e}from"./index-Bs6PvpN0.js";function t(){throw e({to:`/`})}export{t as component};

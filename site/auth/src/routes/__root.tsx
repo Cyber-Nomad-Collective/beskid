@@ -5,10 +5,14 @@ import {
 	createRootRoute,
 } from "@tanstack/react-router";
 
+import { observabilityMiddleware } from "#/server/observability-middleware";
 import { ThemeProvider } from "#/components/theme-provider";
 import appCss from "#/styles.css?url";
 
 export const Route = createRootRoute({
+	server: {
+		middleware: [observabilityMiddleware],
+	},
 	head: () => ({
 		meta: [
 			{ charSet: "utf-8" },

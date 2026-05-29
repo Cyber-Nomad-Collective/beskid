@@ -1,18 +1,19 @@
-import { n as __exportAll } from "../_runtime.mjs";
+import { r as __exportAll } from "../_runtime.mjs";
 import { c as require_jsx_runtime, l as require_react } from "../_libs/@radix-ui/react-avatar+[...].mjs";
-import { C as parseRedirect, E as isNotFound, O as invariant, S as isResolvedRedirect, T as rootRouteId, _ as getStylesheetHref, b as executeRewriteInput, g as getScriptPreloadAttrs, h as getManifestScriptFormat, i as RouterProvider, t as renderRouterToStream, v as resolveManifestAssetLink, x as isRedirect, y as resolveManifestCssLink } from "../_libs/@tanstack/react-router+[...].mjs";
+import { C as isResolvedRedirect, D as isNotFound, E as rootRouteId, S as isRedirect, _ as getScriptPreloadAttrs, b as resolveManifestCssLink, g as getManifestScriptFormat, i as RouterProvider, k as invariant, t as renderRouterToStream, v as getStylesheetHref, w as parseRedirect, x as executeRewriteInput, y as resolveManifestAssetLink } from "../_libs/@tanstack/react-router+[...].mjs";
 import { n as createMemoryHistory } from "../_libs/tanstack__history.mjs";
 import { a as getOrigin, c as createSerializationAdapter, d as iu, f as su, i as getNormalizedURL, l as makeSerovalPlugin, n as mergeHeaders, o as defaultSerovalPlugins, r as attachRouterServerSsrUtils, s as createRawStreamRPCPlugin, t as defineHandlerCallback, u as Pu } from "../_libs/@tanstack/router-core+[...].mjs";
 import { n as toResponse, t as H3Event } from "../_libs/h3-v2.mjs";
 import { AsyncLocalStorage } from "node:async_hooks";
 //#region node_modules/.nitro/vite/services/ssr/index.js
 var ssr_exports = /* @__PURE__ */ __exportAll({
+	a: () => getRequest,
 	createServerEntry: () => createServerEntry,
 	default: () => server_default,
-	i: () => getRequest,
-	n: () => TSS_SERVER_FUNCTION,
-	r: () => getServerFnById,
-	t: () => createServerFn
+	i: () => getServerFnById,
+	n: () => createServerFn,
+	r: () => TSS_SERVER_FUNCTION,
+	t: () => createMiddleware
 });
 require_react();
 var import_jsx_runtime = require_jsx_runtime();
@@ -95,7 +96,7 @@ var HEADERS = { TSS_SHELL: "X-TSS_SHELL" };
 * the dev styles URL for route-scoped CSS collection.
 */
 async function getStartManifest(matchedRoutes) {
-	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-BvxheRlO.mjs");
+	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-jn7wEQzi.mjs");
 	const startManifest = tsrStartManifest();
 	let routes = startManifest.routes;
 	routes[rootRouteId];
@@ -120,31 +121,39 @@ async function getStartManifest(matchedRoutes) {
 var manifest = {
 	"0a89ee1416973a2d25600020f4bf156615779811249f14f5f93214502a5ab0ef": {
 		functionName: "fetchAdminAccess_createServerFn_handler",
-		importer: () => import("./app-server.functions-DdqBOGvj.mjs")
+		importer: () => import("./app-server.functions-BM4n6D05.mjs")
+	},
+	"0d11da4c1efd2d83a03143f5e08737e9fb022e422a7420fedb93ff5f4b52a8e3": {
+		functionName: "cancelPairingRequestFn_createServerFn_handler",
+		importer: () => import("./app-server.functions-BM4n6D05.mjs")
 	},
 	"482db671a8f1342fa7d317ac478d599c2eab3fc826d2f63984e558cbbaffe7db": {
 		functionName: "fetchHomeData_createServerFn_handler",
-		importer: () => import("./app-server.functions-DdqBOGvj.mjs")
+		importer: () => import("./app-server.functions-BM4n6D05.mjs")
 	},
 	"a3f632bac40d5c74206e7d883a8ee04016f5c13d63973121bcdff9eaf1c51a84": {
 		functionName: "fetchOnboardingGate_createServerFn_handler",
-		importer: () => import("./app-server.functions-DdqBOGvj.mjs")
+		importer: () => import("./app-server.functions-BM4n6D05.mjs")
+	},
+	"a740e8996b5993cca3aee6e1c828eb74339c4aebfee393a8660c7db34778a286": {
+		functionName: "fetchPairingRequestDetail_createServerFn_handler",
+		importer: () => import("./app-server.functions-BM4n6D05.mjs")
 	},
 	"b01ac6cfa8c45b77f270c51e9b76970ec2b519c3089f503864f33322f1d61ae3": {
 		functionName: "fetchAdminDashboard_createServerFn_handler",
-		importer: () => import("./app-server.functions-DdqBOGvj.mjs")
+		importer: () => import("./app-server.functions-BM4n6D05.mjs")
 	},
 	"c170a1a18b98f1d9a48c33d84f070c42185b0b50923b3a51f2846e74187f1acd": {
 		functionName: "fetchPairingRequests_createServerFn_handler",
-		importer: () => import("./app-server.functions-DdqBOGvj.mjs")
+		importer: () => import("./app-server.functions-BM4n6D05.mjs")
 	},
 	"cbaebcbcd4bbc47663e9affc5ed7611451ef23e8dc1273807b7747de8090da98": {
 		functionName: "fetchProfileData_createServerFn_handler",
-		importer: () => import("./app-server.functions-DdqBOGvj.mjs")
+		importer: () => import("./app-server.functions-BM4n6D05.mjs")
 	},
 	"ec2b72241cd565806da76157f819a7646738d3420993cb997508f53de607c76f": {
 		functionName: "fetchLoginPageContext_createServerFn_handler",
-		importer: () => import("./app-server.functions-DdqBOGvj.mjs")
+		importer: () => import("./app-server.functions-BM4n6D05.mjs")
 	}
 };
 async function getServerFnById(id, access) {
@@ -1439,7 +1448,7 @@ var getBaseManifest = getProdBaseManifest;
 var createEarlyHintsForRequest = createEarlyHintsCollector;
 async function loadEntries() {
 	const [routerEntry, startEntry, pluginAdapters] = await Promise.all([
-		import("./router-JNiVHNXO.mjs"),
+		import("./router-BLQXG9CO.mjs"),
 		import("./start-5Z2QO8AU.mjs"),
 		import("./empty-plugin-adapters-D9UWiqvJ.mjs")
 	]);
@@ -1784,4 +1793,4 @@ function createServerEntry(entry) {
 }
 var server_default = createServerEntry({ fetch });
 //#endregion
-export { ssr_exports as a, getServerFnById as i, createServerFn as n, getRequest as r, TSS_SERVER_FUNCTION as t };
+export { getServerFnById as a, getRequest as i, createMiddleware as n, ssr_exports as o, createServerFn as r, TSS_SERVER_FUNCTION as t };

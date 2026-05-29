@@ -34,7 +34,7 @@ jobs:
             prebuild: true
             node_auth: true
           - image: beskid-tracker
-            context: beskid_tracker
+            context: .
             dockerfile: beskid_tracker/Dockerfile
             submodule: beskid_tracker
             prebuild: false
@@ -59,6 +59,10 @@ jobs:
 
       - name: Init submodule
         run: ./scripts/ci/init-submodules.sh ${{ matrix.submodule }}
+
+      - name: Init observability package submodule
+        if: matrix.image == 'beskid-tracker' || matrix.image == 'beskid-auth'
+        run: ./scripts/ci/init-submodules.sh beskid_web_common
 
       - name: Prebuild web workspace
         if: matrix.prebuild
