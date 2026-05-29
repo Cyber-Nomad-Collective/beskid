@@ -6,9 +6,10 @@ This repo is an **aggregate** (submodules and shared web tooling). CI is central
 
 | Workflow | Purpose |
 |----------|---------|
-| `container-images.yml` | Build and push `beskid-site`, `beskid-auth`, `beskid-tracker`, `beskid-nexus`, and `beskid-pckg` to GHCR on `main` / `stg` |
-| `publish-open-vsx.yml` | Build `beskid_lsp`, bundle into `beskid_vscode`, publish VSIX to Open VSX (matrix via `scripts/ci/open-vsx-publish.sh`; local/Dagger: [beskid_infra/dagger/](../beskid_infra/dagger/)) |
-| `tofu-plan-apply.yml` | Run OpenTofu plan/apply for `beskid_infra/` environments |
+| `beskid-platform.yml` | GHCR builds + Coolify compose deploy on `main` |
+| `container-images.yml` | Build and push platform images to GHCR |
+| `coolify-compose-deploy.yml` | Sync OpenBao → Coolify compose service (production) |
+| `publish-open-vsx.yml` | VS Code extension to Open VSX |
 
 Legacy quality/test/security workflows were intentionally removed. Replacement validation is **Dagger-first** — see [beskid_infra/dagger/README.md](../beskid_infra/dagger/README.md).
 
@@ -16,3 +17,4 @@ Legacy quality/test/security workflows were intentionally removed. Replacement v
 
 - **Web / docs (aggregate):** `./validate-ci-local.sh` — submodule init, `bun install`, site prebuild, platform-spec git-meta verify
 - **Dagger lanes:** `cd beskid_infra/dagger && dagger call <function>` (see [beskid_infra/dagger/README.md](../beskid_infra/dagger/README.md))
+- **Compose:** `cd beskid_infra && just compose-config`

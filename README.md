@@ -48,12 +48,12 @@ beskid/                          ← you are here (aggregate root)
 ├── beskid_web_common/           ← Shared TS: trudoc, beskid-ui, auth client
 ├── beskid_treesitter/           ← Tree-sitter grammar (synced from compiler Pest)
 ├── beskid_templates/            ← First-party `beskid.templates.*` scaffolds
-├── beskid_infra/                ← OpenTofu, Coolify modules, Dagger CI
+├── beskid_infra/                ← Coolify Compose deploy, OpenBao, Dagger CI
 ├── site/
 │   ├── website/                 ← Astro + Starlight docs (canonical MDX source)
 │   └── auth/                    ← GitHub OAuth hub for tracker, nexus, pckg
 ├── scripts/                     ← setup-environment.sh, install-deps.sh, CI helpers
-└── .github/workflows/           ← Container images, Open VSX publish, tofu apply
+└── .github/workflows/           ← Container images, Open VSX, Coolify compose deploy
 ```
 
 ## Submodules and READMEs
@@ -71,7 +71,7 @@ Each row links to the README in that tree. Clone submodules before following tho
 | `beskid_web_common/` | `@cyber-nomad-collective/trudoc`, `@beskid/beskid-ui`, auth client packages | [beskid_web_common/README.md](beskid_web_common/README.md) |
 | `beskid_treesitter/` | `@cyber-nomad-collective/beskid-tree-sitter` grammar for editors and tooling | [beskid_treesitter/README.md](beskid_treesitter/README.md) |
 | `beskid_templates/` | Published project/workspace/item templates (`beskid.templates.*`) | [beskid_templates/README.md](beskid_templates/README.md) |
-| `beskid_infra/` | OpenTofu for Coolify apps, OpenBao secrets, staging/production lanes | [beskid_infra/README.md](beskid_infra/README.md) |
+| `beskid_infra/` | Coolify Compose stack, OpenBao secrets, production deploy | [beskid_infra/README.md](beskid_infra/README.md) |
 
 ### In-repo (not submodules)
 
@@ -82,7 +82,7 @@ Each row links to the README in that tree. Clone submodules before following tho
 | `site/auth/` | Central GitHub OAuth; one app handoff to tracker, nexus, pckg | [site/auth/README.md](site/auth/README.md) |
 | `scripts/` | Toolchain install (`repo-deps.json`), submodule sync, setup wizard entry | [scripts/README.md](scripts/README.md) |
 | `beskid_infra/dagger/` | Shared Dagger module (Open VSX, compiler gates, corelib publish) | [beskid_infra/dagger/README.md](beskid_infra/dagger/README.md) |
-| `.github/` | Workflow index for container images, Open VSX, OpenTofu apply | [.github/README.md](.github/README.md) |
+| `.github/` | Workflow index for container images, Open VSX, Coolify compose | [.github/README.md](.github/README.md) |
 
 ## Getting started
 
@@ -139,7 +139,7 @@ just deps-install   # install missing tools
 | Run docs locally | `cd site/website && bun install && bun dev` → [site/website/README.md](site/website/README.md) |
 | Run pckg locally | `cd pckg && podman compose up --build -d` → [pckg/README.md](pckg/README.md) |
 | VS Code extension dev | [beskid_vscode/README.md](beskid_vscode/README.md) — `bun install`, Extension Development Host |
-| Deploy / infra | [beskid_infra/docs/greenfield.md](beskid_infra/docs/greenfield.md) |
+| Deploy / infra | [beskid_infra/docs/deploy-compose.md](beskid_infra/docs/deploy-compose.md) |
 
 Local CI sanity check for web/docs: `./validate-ci-local.sh` (submodule init, prebuild, platform-spec verify).
 

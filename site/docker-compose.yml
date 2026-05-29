@@ -1,5 +1,5 @@
 # Coolify / GHCR image-only deploy (no server-side build).
-# Set IMAGE_TAG to main or staging per environment (OpenTofu in beskid_infra).
+# Set IMAGE_TAG to main or staging per environment (Coolify compose in beskid_infra).
 # Registry: ghcr.io/cyber-nomad-collective/beskid-site
 services:
   website:

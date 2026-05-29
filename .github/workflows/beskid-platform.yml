@@ -1,4 +1,4 @@
-# Beskid platform: GHCR build → OpenTofu plan/apply (beskid_infra / Coolify).
+# Beskid platform: GHCR build → Coolify Compose deploy (beskid_infra).
 name: Beskid platform
 
 on:
@@ -21,7 +21,7 @@ on:
       - '.npmrc'
       - '.github/workflows/beskid-platform.yml'
       - '.github/workflows/container-images.yml'
-      - '.github/workflows/tofu-plan-apply.yml'
+      - '.github/workflows/coolify-compose-deploy.yml'
   pull_request:
     branches: [main, stg]
     paths:
@@ -38,15 +38,15 @@ on:
       - 'beskid_infra/**'
       - '.github/workflows/beskid-platform.yml'
       - '.github/workflows/container-images.yml'
-      - '.github/workflows/tofu-plan-apply.yml'
+      - '.github/workflows/coolify-compose-deploy.yml'
   workflow_dispatch:
     inputs:
       skip_images:
-        description: Skip GHCR builds (OpenTofu / infra only — faster Terraform debugging)
+        description: Skip GHCR builds (Coolify compose / infra only)
         type: boolean
         default: false
-      apply:
-        description: Run tofu apply after plan
+      deploy:
+        description: Run Coolify compose deploy after validation
         type: boolean
         default: true
 
@@ -69,7 +69,7 @@ jobs:
         needs.images.result == 'success' ||
         needs.images.result == 'skipped'
       )
-    uses: ./.github/workflows/tofu-plan-apply.yml
+    uses: ./.github/workflows/coolify-compose-deploy.yml
     with:
-      apply: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || inputs.apply) }}
+      deploy: ${{ github.ref_name == 'main' && github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || inputs.deploy) }}
     secrets: inherit

@@ -1,0 +1,88 @@
+# Coolify Compose: sync OpenBao → deploy production stack (beskid_infra).
+name: Coolify compose deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Run coolify-deploy-compose.sh (not just validate)
+        type: boolean
+        default: true
+  workflow_call:
+    inputs:
+      deploy:
+        description: Run coolify-deploy-compose.sh
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+env:
+  COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+  COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+  COOLIFY_SERVER_UUID: ${{ vars.COOLIFY_SERVER_UUID }}
+  COOLIFY_DESTINATION_UUID: ${{ vars.COOLIFY_DESTINATION_UUID }}
+  COOLIFY_SERVICE_UUID: ${{ vars.COOLIFY_COMPOSE_SERVICE_UUID }}
+  OPENBAO_TOKEN: ${{ secrets.OPENBAO_TOKEN }}
+  BAO_ADDR: https://secrets.bdziam.dev
+
+concurrency:
+  group: coolify-compose-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: coolify compose (production)
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Staging not configured (phase 2)
+        if: github.ref_name != 'main'
+        run: echo "Coolify compose deploy runs on main only."
+
+      - uses: actions/checkout@v4
+
+      - name: Init beskid_infra submodule
+        run: ./scripts/ci/init-submodules.sh beskid_infra
+
+      - name: Install OpenBao CLI
+        if: github.ref_name == 'main' && secrets.OPENBAO_TOKEN != ''
+        run: |
+          set -euo pipefail
+          ver="2.1.0"
+          curl -fsSL -o /tmp/bao.zip \
+            "https://github.com/openbao/openbao/releases/download/v${ver}/bao_${ver}_linux_amd64.zip"
+          sudo unzip -p /tmp/bao.zip bao >/usr/local/bin/bao
+          sudo chmod +x /usr/local/bin/bao
+          bao version
+
+      - name: Validate compose file
+        if: github.ref_name == 'main'
+        run: |
+          set -euo pipefail
+          cd beskid_infra/compose/production
+          cp .env.example .env
+          docker compose config >/dev/null
+          echo "docker compose config OK"
+
+      - name: Check OpenBao keys
+        if: github.ref_name == 'main' && secrets.OPENBAO_TOKEN != ''
+        env:
+          OPENBAO_TOKEN: ${{ secrets.OPENBAO_TOKEN }}
+        run: |
+          chmod +x beskid_infra/scripts/coolify-sync-env-from-openbao.sh
+          beskid_infra/scripts/coolify-sync-env-from-openbao.sh --check
+
+      - name: Deploy to Coolify
+        if: |
+          github.ref_name == 'main' &&
+          inputs.deploy &&
+          (github.event_name != 'pull_request')
+        env:
+          OPENBAO_TOKEN: ${{ secrets.OPENBAO_TOKEN }}
+        run: |
+          chmod +x beskid_infra/scripts/coolify-deploy-compose.sh
+          chmod +x beskid_infra/scripts/coolify-sync-env-from-openbao.sh
+          chmod +x beskid_infra/scripts/lib/coolify-api.sh
+          beskid_infra/scripts/coolify-deploy-compose.sh --lane production

@@ -1,4 +1,4 @@
-# GHCR images for the Beskid platform (consumed by beskid_infra OpenTofu / Coolify).
+# GHCR images for the Beskid platform (consumed by beskid_infra Coolify Compose).
 name: Container images
 
 on:
