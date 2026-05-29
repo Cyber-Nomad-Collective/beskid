@@ -7,7 +7,7 @@
       "dependencies": {
         "@beskid/auth-client": "npm:@cyber-nomad-collective/beskid-auth-client@^0.2.0",
         "@beskid/beskid-ui": "npm:@cyber-nomad-collective/beskid-ui@^0.2.0",
-        "@beskid/server-observability": "file:../../beskid_web_common/packages/beskid-server-observability",
+        "@beskid/server-observability": "npm:@cyber-nomad-collective/beskid-server-observability@^0.2.0",
         "@beskid/ui-react": "npm:@cyber-nomad-collective/beskid-ui-react@^0.2.0",
         "@t3-oss/env-core": "^0.13.10",
         "@tailwindcss/vite": "^4.1.18",
@@ -102,7 +102,7 @@
 
     "@beskid/beskid-ui": ["@cyber-nomad-collective/beskid-ui@0.2.0", "https://npm.pkg.github.com/download/@cyber-nomad-collective/beskid-ui/0.2.0/6afcd14bb0f366cef75f924342bbd6cb81c01f63", { "dependencies": { "@cyber-nomad-collective/trudoc": "file:../trudoc", "@dagrejs/dagre": "^1.1.5", "@material/material-color-utilities": "^0.4.0", "astro-navbar": "^2.4.0", "d3": "^7.9.0", "intro.js": "^8.3.2", "rehype-stringify": "^10.0.1", "remark-gfm": "^4.0.1", "remark-parse": "^11.0.0", "remark-rehype": "^11.1.2", "unified": "^11.0.5" }, "peerDependencies": { "@astrojs/starlight": ">=0.30.0", "astro": ">=5.0.0", "react": ">=18.0.0" } }, "sha512-AaaICaOEjjn+TtaTIIFsLwptPK1Jx49wEERtHDaT/o2F9m2ssiWuXPafkNh1S5Y0k4G7fti2IBACfti0HPyviA=="],
 
-    "@beskid/server-observability": ["@cyber-nomad-collective/beskid-server-observability@file:../../beskid_web_common/packages/beskid-server-observability", { "dependencies": { "pino": "^10.3.1", "prom-client": "^15.1.3" }, "devDependencies": { "@types/node": "^22.15.0", "nitro": "^3.0.260522-beta", "typescript": "^5.8.2" } }],
+    "@beskid/server-observability": ["@cyber-nomad-collective/beskid-server-observability@0.2.0", "https://npm.pkg.github.com/download/@cyber-nomad-collective/beskid-server-observability/0.2.0/4e459e5a4982ed8e7ddb82c39b51211df857b297", { "dependencies": { "pino": "^10.3.1", "prom-client": "^15.1.3" } }, "sha512-oN1rp10hef4GvUHFg64tThlOqLL2Jv/Ym8mFuA8V8v4fRNzhWM85yMbhtuDfmkVlKjRz/kAET0ld0PHBXP2FAw=="],
 
     "@beskid/ui-react": ["@cyber-nomad-collective/beskid-ui-react@0.2.0", "https://npm.pkg.github.com/download/@cyber-nomad-collective/beskid-ui-react/0.2.0/8567fcd8e92e680a542e2ca8c63d85f664f2d4c5", { "dependencies": { "@base-ui/react": "^1.5.0", "class-variance-authority": "^0.7.1", "clsx": "^2.1.1", "cmdk": "^1.1.1", "embla-carousel-react": "^8.6.0", "input-otp": "^1.4.2", "lucide-react": "^0.577.0", "next-themes": "^0.4.6", "radix-ui": "^1.4.3", "react-day-picker": "^10.0.1", "react-resizable-panels": "^4.11.2", "recharts": "3.8.0", "sonner": "^2.0.7", "tailwind-merge": "^3.0.2", "vaul": "^1.1.2" }, "peerDependencies": { "react": ">=18.0.0", "react-dom": ">=18.0.0" } }, "sha512-1M+ZTuhPR7E+fe3TMMCFqMEYo4yrdD8sEzZv4I0qrT061cHTCx6JjoMWCudTm3BsICuQCPfGCTfhsasyKX5ktA=="],
 
@@ -1658,10 +1658,6 @@
 
     "@beskid/beskid-ui/@cyber-nomad-collective/trudoc": ["@cyber-nomad-collective/trudoc@file:../trudoc", {}],
 
-    "@beskid/server-observability/@types/node": ["@types/node@22.19.19", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-dyh/xO2Fh5bYrfWaaqGrRQQGkNdmYw6AmaAUvYeUMNTWQtvb796ikLdmTchRmOlOiIJ1TDXfWgVx1QkUlQ6Hew=="],
-
-    "@beskid/server-observability/typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
-
     "@mdx-js/mdx/@types/estree": ["@types/estree@1.0.9", "", {}, "sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg=="],
 
     "@reduxjs/toolkit/immer": ["immer@11.1.8", "", {}, "sha512-/tbkHMW7y10Lx6i1crLjD4/OhNkRG+Fo7byZHtah0547nIeXYcpIXaUh0IAQY6gO5459qpGGYapcEOHtFXkIuA=="],
@@ -1739,8 +1735,6 @@
     "unifont/ofetch": ["ofetch@1.5.1", "", { "dependencies": { "destr": "^2.0.5", "node-fetch-native": "^1.6.7", "ufo": "^1.6.1" } }, "sha512-2W4oUZlVaqAPAil6FUg/difl6YhqhUR7x2eZY4bQCko22UXg3hptq9KLQdqFClV+Wu85UX7hNtdGTngi/1BxcA=="],
 
     "@astrojs/mdx/@astrojs/markdown-remark/@astrojs/internal-helpers": ["@astrojs/internal-helpers@0.9.1", "", { "dependencies": { "picomatch": "^4.0.4" } }, "sha512-1pWuARqYom/TzuU3+0ZugsTrKlUydWKuULmDqSMTuonY+9IRDUEGKX/8PXQ1nBxRq3w85uGtd9q9SXfqEldMIQ=="],
-
-    "@beskid/server-observability/@types/node/undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
 
     "astro/esbuild/@esbuild/aix-ppc64": ["@esbuild/aix-ppc64@0.27.7", "", { "os": "aix", "cpu": "ppc64" }, "sha512-EKX3Qwmhz1eMdEJokhALr0YiD0lhQNwDqkPYyPhiSwKrh7/4KRjQc04sZ8db+5DVVnZ1LmbNDI1uAMPEUBnQPg=="],
 

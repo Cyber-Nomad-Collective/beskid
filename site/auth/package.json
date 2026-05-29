@@ -23,7 +23,7 @@
 	},
 	"dependencies": {
 		"@beskid/auth-client": "npm:@cyber-nomad-collective/beskid-auth-client@^0.2.0",
-		"@beskid/server-observability": "file:../../beskid_web_common/packages/beskid-server-observability",
+		"@beskid/server-observability": "npm:@cyber-nomad-collective/beskid-server-observability@^0.2.0",
 		"@beskid/beskid-ui": "npm:@cyber-nomad-collective/beskid-ui@^0.2.0",
 		"@beskid/ui-react": "npm:@cyber-nomad-collective/beskid-ui-react@^0.2.0",
 		"@t3-oss/env-core": "^0.13.10",

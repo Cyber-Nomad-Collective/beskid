@@ -75,6 +75,12 @@ export default defineConfig({
 		alias: packageAliases,
 	},
 	ssr: {
-		noExternal: ["@beskid/ui-react", "@beskid/auth-client", "@beskid/server-observability"],
+		noExternal: [
+			"@beskid/ui-react",
+			"@beskid/auth-client",
+			"@beskid/server-observability",
+			"pino",
+			"prom-client",
+		],
 	},
 });
