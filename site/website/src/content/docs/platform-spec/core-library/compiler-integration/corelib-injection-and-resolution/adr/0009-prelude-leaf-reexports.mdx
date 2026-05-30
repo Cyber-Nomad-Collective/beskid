@@ -1,0 +1,49 @@
+---
+title: Prelude leaf reexports
+description: Aggregate and shard preludes expose leaf public API modules; assembly must not denylist re-exports.
+specLevel: adr
+status: Standard
+adrId: D-CORE-COMP-0009
+adrStatus: Accepted
+adrDate: 2026-05-29
+lastReviewed: 2026-05-29
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Corelib injection and resolution
+    href: /platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/
+    relation: Parent feature hub
+  - type: ADR
+    title: Dependency prelude union seeding
+    href: /platform-spec/compiler/build-pipeline/program-assembly/adr/0004-dependency-prelude-union-seeding/
+    relation: Assembly consumes prelude pub mod lines
+---
+
+import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Shard preludes partially overlap the aggregate `beskid_corelib` prelude. Loader-side denylists (for example skipping `Console`) papered over units that were not valid standalone compilation files.
+
+## Decision
+
+1. Aggregate and shard `Prelude.bd` files **must** list **leaf** public API surfaces via `pub mod` (for example `Ansi`, `Console` submodules re-exported as documented paths—not opaque marker comments).
+2. Every `pub mod` line in a prelude **must** resolve to a `.bd` unit that parses and lowers as a standalone module (fix packaging when closure seeding pulls a file).
+3. The compiler **must not** maintain loader-side module denylists to compensate for prelude or packaging mistakes.
+
+## Consequences
+
+Corelib packaging changes precede assembly union seeding (D-COMP-BUILD-0022). Console and other terminal modules ship as valid standalone units or are removed from prelude `pub mod` lists.
+
+## Verification anchors
+
+- `compiler/corelib/beskid_corelib/src/Prelude.bd`
+- `compiler/corelib/packages/console/src/Console/`
+- `compiler/crates/beskid_tests/src/projects/corelib/compile.rs`

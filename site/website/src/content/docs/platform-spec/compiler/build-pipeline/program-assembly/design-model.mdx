@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-20
+lastReviewed: 2026-05-29
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -30,12 +30,13 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 | `EffectiveCompilationRoots` | Host + dependency **source roots**; materialized paths from `PreparedProjectWorkspace` or `Project.lock` take precedence over plan `source_root` paths |
 | `SourceUnit` | One parsed `.bd` file: logical name, path, text, `Spanned<Program>` |
 | `ModuleIndex` | Cross-unit module graph and item table used to **prefetch** resolution for the entry unit |
-| `ProgramAssembly` | Roots, units, entry index, discovery mode, and `ModuleIndex` |
+| `ProgramAssembly` | Roots, units, cached `hir_units`, entry index, discovery mode, and `ModuleIndex` |
+| `UnitHir` / `hir_units` | Per-unit lowered HIR built once at assemble time; dependency units stay pre-rewrite when entry is mod-rewritten |
 | `AssemblyOptions` | `discovery` (`ImportClosure` vs `WorkspaceScan`), `include_std_prelude`, `max_units` |
 
 ## Hybrid discovery (normative)
 
-- **Build / run / lower / test** — `ImportClosure`: entry file, transitive `use` edges, and implicit std/prelude when `CompilePlan.has_std_dependency` is true.
+- **Build / run / lower / test** — `ImportClosure`: entry file, **prelude union** seeds (`pub mod` from every effective `Prelude.bd`, deduped per D-COMP-BUILD-0022), then transitive `use` edges only (D-COMP-BUILD-0023)—no directory sweep.
 - **LSP workspace file index** — `WorkspaceScan`: all `*.bd` files under each effective root for closed-buffer diagnostics indexing, capped by `max_units` (deterministic sort order).
 - **LSP / IDE document snapshots** — `ImportClosure` via `CompilationContext::assembly_for_entry` so IntelliSense resolution matches compile/lower (`ModuleIndex::resolve_entry_hir` on the entry buffer).
 

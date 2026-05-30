@@ -1,0 +1,54 @@
+---
+title: Dependency prelude union seeding
+description: include_std_prelude unions pub mod lines from every effective root Prelude.bd without string heuristics.
+specLevel: adr
+status: Standard
+adrId: D-COMP-BUILD-0022
+adrStatus: Accepted
+adrDate: 2026-05-29
+lastReviewed: 2026-05-29
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Program assembly
+    href: /platform-spec/compiler/build-pipeline/program-assembly/
+    relation: Parent feature hub
+  - type: ADR
+    title: Prelude leaf reexports
+    href: /platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/adr/0009-prelude-leaf-reexports/
+    relation: Corelib prelude surface
+---
+
+import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Assembly seeding used `host ConsoleHost` text markers and a `Console` module denylist to avoid pulling invalid shard units. That heuristic diverged from manifest-declared preludes and blocked legitimate `pub mod` re-exports.
+
+## Decision
+
+When `AssemblyOptions.include_std_prelude` is true and `CompilePlan.has_std_dependency`:
+
+1. For **each** effective module root containing `Prelude.bd` (aggregate `beskid_corelib` and workspace shards), parse all `pub mod Path.Segment;` lines and enqueue the resolved module file for each path.
+2. **Union** seeds across roots, then **dedupe** by canonical file path (deterministic sort order).
+3. **Must not** filter modules by substring markers (`ConsoleHost`, etc.) or ad-hoc denylists in the loader.
+4. `is_compiler_mod_sdk_source_root` skip remains only for compiler Mod SDK trees documented in implementation-map anchors.
+
+Invalid standalone units **must** be fixed in corelib packaging (see D-CORE-COMP-0009), not suppressed in assembly.
+
+## Consequences
+
+`loader.rs` prelude seeding becomes declarative. Corelib must ensure every seeded `pub mod` resolves to a valid compilation unit.
+
+## Verification anchors
+
+- `compiler/crates/beskid_analysis/src/projects/assembly/loader.rs`
+- `compiler/corelib/beskid_corelib/src/Prelude.bd`
+- `compiler/crates/beskid_tests/src/projects/corelib/`

@@ -1,0 +1,53 @@
+---
+title: Project files require compilation context
+description: Project-backed .bd files must use CompilationContext and prepare_compilation; parse-only fallback is forbidden.
+specLevel: adr
+status: Standard
+adrId: D-COMP-BUILD-0024
+adrStatus: Accepted
+adrDate: 2026-05-29
+lastReviewed: 2026-05-29
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Diagnostics parity (CLI and LSP)
+    href: /platform-spec/compiler/build-pipeline/diagnostics-parity/
+    relation: Parent feature hub
+  - type: ADR
+    title: Primary contract for Diagnostics parity (CLI and LSP)
+    href: /platform-spec/compiler/build-pipeline/diagnostics-parity/adr/0003-primary-contract-choice/
+    relation: Extends D-COMP-BUILD-0012 parity baseline
+---
+
+import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+[D-COMP-BUILD-0012](./0003-primary-contract-choice/) requires semantic diagnostic parity between CLI and LSP. LSP still degraded project `.bd` files to parse-only semantic tiers when `CompilationContext` was missing, hiding cross-module and post-rewrite errors that `beskid build` reported.
+
+## Decision
+
+| Rule | Detail |
+| --- | --- |
+| Project files | Any `.bd` under a discovered `Project.proj` / workspace graph **must** analyze through `CompilationContext` and `prepare_compilation(DiagnosticsOnly)`—the same spine as CLI |
+| No analyze divergence | CLI `analyze` and LSP diagnostics for equivalent buffer text **must not** diverge on semantic presence/absence (extends D-COMP-BUILD-0012) |
+| Fallback scope | Parse-only / single-file semantic fallback is **limited to non-project buffers** (scratch `"<memory>"`, files with no manifest attachment) |
+| LSP tiers | Tier-3/4 degraded paths **must not** run for project-attached URIs when a plan can be resolved |
+
+## Consequences
+
+`beskid_lsp` diagnostics and references handlers require cached `CompilationContext`. Snapshot reuse **must** invalidate when manifest or workspace graph changes.
+
+## Verification anchors
+
+- `compiler/crates/beskid_lsp/src/diagnostics.rs`
+- `compiler/crates/beskid_analysis/src/compilation_context.rs`
+- `compiler/crates/beskid_lsp/src/session/project_context.rs`
+- `compiler/crates/beskid_tests/src/spine/` (diagnostics parity fixtures)
