@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-21
+lastReviewed: 2026-05-30
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -25,55 +25,66 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 ## Purpose and scope
 
-Tree structure for **`beskidPackagesView`**, the **`pckgClient`** TypeScript contract, and status-bar activity phases shared with LSP and CLI.
+**`pckgClient`** TypeScript contract, sidebar **This project** deps, and **registry document panel** (WebviewPanel) for browse/search/details. Status-bar activity phases shared with LSP and CLI.
 
 ## View layout
 
-The Packages view lives in container **`beskidViews`** alongside Workspaces, Project, and Outline (see [extension surface design model](../extension-surface/design-model/#view-containers)).
+Sidebar **`beskidPackagesView`** shows **This project** only (declared + locked deps from LSP).
+
+Registry browse uses **`PackageRegistryPanel`** (editor-area WebviewPanel, command `beskid.packages.open`):
 
 ```arch
-flowchart TB
-  subgraph packagesView [beskidPackagesView]
-    TP[ThisProject section]
-    RS[RegistrySearch section]
-    TP --> D1[Declared/Locked dependency rows]
-    RS --> Q[Search results]
-    Q --> V[Version nodes]
-    V --> Dep[Dependency leaves]
+flowchart LR
+  subgraph sidebar [beskidPackagesView]
+    TP[ThisProject]
+    TP --> D1[Declared/Locked rows]
   end
+  subgraph docPanel [PackageRegistryPanel]
+    LIST[Package list]
+    DET[Detail pane]
+    LIST --> DET
+  end
+  docPanel --> BROWSER[Open in browser]
 ```
 
-Root sections **must** always be visible (not hidden behind empty search).
+On open, the document panel **must** load the public catalog via `GET /api/packages` or `GET /api/search?limit=…` without requiring an API key.
 
-## PackageTreeItem kinds
+## packageKind UI routing
+
+Branch detail actions on `package.packageKind` (see [package kinds](/platform-spec/tooling/registry-client/package-kinds/)):
+
+| Kind | Show | Primary actions |
+| --- | --- | --- |
+| `library` | readme, versions, deps | Add dependency, fetch, lock |
+| `template` | shortName, tags.type, readme | `beskid new install`, `beskid new <shortName>` |
+| `tool` | install card, readme | download snippet |
+
+## PackageTreeItem kinds (sidebar)
 
 | `section` | `kind` | Children |
 | --- | --- | --- |
 | `ThisProject` | `section` | Dependency rows from LSP |
 | `ThisProject` | `dependency` | Optional context actions only |
-| `RegistrySearch` | `section` | Search prompt or results |
-| `RegistrySearch` | `searchResult` | Package summary node |
-| `RegistrySearch` | `version` | Collapsible version metadata |
-| `RegistrySearch` | `registryDependency` | Dependency of selected version |
 
-Icons: dependency **`package`**; unresolved **`warning`**; registry package **`cloud-download`**.
+Icons: dependency **`package`**; unresolved **`warning`**.
 
 ## pckgClient functions (normative)
 
 | Function | HTTP | Cache key |
 | --- | --- | --- |
+| `listPackages({ limit, registryBaseUrl })` | `GET {base}/api/packages` or search with empty `q` | `list:{base}:{limit}` ~30s TTL |
 | `searchPackages({ q, limit, registryBaseUrl })` | `GET {base}/api/search?q=…&limit=…` | `search:{base}:{q}:{limit}` ~30s TTL |
 | `getPackageDetails({ name, registryBaseUrl })` | `GET {base}/api/packages/{name}` | `details:{base}:{name}` |
-| `buildRegistryPackageUrl({ name, version, registryBaseUrl })` | — | N/A (string builder) |
-| `createPckgFetch(context)` | — | Injects auth from `SecretStorage` |
+| `buildRegistryPackageUrl({ name, registryBaseUrl })` | — | Opens `{base}/packages/{name}` in browser |
+| `createPckgFetch(context)` | — | Optional Bearer from settings or SecretStorage |
 
-All functions **must** use `createPckgFetch` for transport.
+All functions **must** use `createPckgFetch` for transport. Public catalog endpoints **must** work with an empty API key.
 
 ## Response typing (camelCase)
 
 Align TypeScript types with pckg records:
 
-- **`PackageSearchResponse`**: `{ package, reviewCount, health }`
+- **`PackageSummary`**: includes `packageKind` (`library` | `template` | `tool`), optional template fields (`shortName`, `tags`)
 - **`PackageDetailsResponse`**: `{ package, versions, dependencies, dependentsCount, readme, health, … }`
 - **`PackageDependencyResponse`**: `{ name, version, source, registry }`
 
@@ -100,12 +111,13 @@ LSP scan phases remain separate on the same status controller.
 
 | Action | Command |
 | --- | --- |
+| Open registry | `beskid.packages.open` |
 | Search | `beskid.packages.search` |
 | Refresh | `beskid.packages.refresh` |
 | Fetch | `beskid.packages.fetch` |
 | Lock | `beskid.packages.lock` |
 
-View welcome content **should** offer “Search registry…” when `RegistrySearch` is empty.
+Sidebar welcome **should** offer “Browse registry…” linking to `beskid.packages.open`.
 
 ## Related topics
 

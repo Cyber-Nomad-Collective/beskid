@@ -1,9 +1,18 @@
 {
   "version": 1,
   "level": "feature",
-  "extends": "feature-hub-default",
+  "extends": "feature-contract-default",
   "pathPrefix": "platform-spec/language-meta/interop/export-and-callbacks",
   "minSpecSections": 2,
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/language-meta/interop/export-and-callbacks",
+        "heading": "Articles"
+      }
+    }
+  ],
   "articleDefaults": {
     "extends": "article-default"
   }

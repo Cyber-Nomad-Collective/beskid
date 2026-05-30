@@ -56,7 +56,7 @@ The **workspace and project explorer** exposes two Beskid activity-bar tree view
 | --- | --- |
 | VS Code workspace folders | Editor |
 | Focused project URI | `beskid.project.autoSelectFromEditor`, tree selection, or `beskid.selectProject` |
-| LSP executeCommands | `beskid.listWorkspaces`, `beskid.getWorkspaceSummary`, `beskid.getProjectGraph`, `beskid.getProjectDependencies` |
+| LSP executeCommands | `beskid.listWorkspaces`, `beskid.getWorkspaceSummary`, `beskid.getGraph`, `beskid.getProjectDependencies` |
 
 | Output | Consumer |
 | --- | --- |
@@ -72,7 +72,7 @@ The **workspace and project explorer** exposes two Beskid activity-bar tree view
 <SpecSection title="Algorithms and flow" id="algorithms-and-flow">
 1. Extension activates → start LSP with `initializationOptions.focusedProjectUri`.
 2. **Workspaces** view calls `beskid.listWorkspaces` → render members; member click runs `beskid.focusProject`.
-3. **Project** view reads focused URI → `beskid.getProjectDependencies` / `beskid.getProjectGraph` for children.
+3. **Project** view reads focused URI → `beskid.getProjectDependencies` / `beskid.getGraph` metadata for children; full graph exploration uses the Graph Explorer panel.
 4. Optional **auto-select**: active editor path → nearest `Project.proj` when `beskid.project.autoSelectFromEditor` is true.
 5. Focus change updates configuration **without** full LSP restart unless server binary settings change.
 </SpecSection>

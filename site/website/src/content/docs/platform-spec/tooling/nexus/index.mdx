@@ -1,0 +1,71 @@
+---
+title: Beskid Nexus
+description: Graph-first public explorer for indexed Beskid repositories — cached knowledge graphs, repo-scoped code documentation, and owner-gated catalog administration.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Domain
+    title: Tooling
+    href: /platform-spec/tooling/
+    relation: Parent domain
+  - type: Feature
+    title: Graph visualization
+    href: /platform-spec/tooling/graph-visualization/
+    relation: Compiler graph presentation (distinct from Nexus repo graphs)
+---
+
+import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	status="Standard"
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+**Beskid Nexus** is the hosted graph explorer at [nexus.beskid-lang.org](https://nexus.beskid-lang.org). The server maintains **cached knowledge graphs** for a global public registry of Beskid repositories. Visitors land on a **graph-first** experience — not a catalog grid — and read **repo-scoped code documentation** on nodes and clusters. **Platform spec** content stays on this site; Nexus stores only **validated links** into platform-spec pages, never spec body text.
+
+Repo **owners** (GitHub-verified) administer their entries: add, re-index, refresh docs, delete. **AI documentation** runs server-side only and is invisible in public API responses and UI copy.
+</SpecSection>
+
+<SpecSection title="Access model" id="access-model">
+| Actor | Capabilities |
+| --- | --- |
+| **Public visitor** | View any indexed repo graph; switch repos via navbar selector; read `codeDoc` and `specLinks` on entities |
+| **Signed-in GitHub user** | Same as public; unlock admin actions for repos they own on GitHub |
+| **Repo owner (per repo)** | Catalog CRUD, trigger analyze and doc refresh, delete from Nexus, view MCP connect URL |
+| **Instance operator** | First-run auth hub pairing (`NEXUS_SETUP_TOKEN`), deployment secrets, webhook HMAC |
+
+All indexed graphs are **public read**. Per-repo private graphs are **not** in scope.
+</SpecSection>
+
+<SpecSection title="Removed product surfaces" id="removed-product-surfaces">
+The following GitNexus-derived flows **must not** ship in Beskid Nexus public UI:
+
+- DropZone, local analyze, CatalogHome grid
+- Cypher QueryFAB, LLM settings, Graph RAG chat
+- OnboardingGuide (hosted), advanced server connect from the browser
+
+The analyze engine (LadybugDB, tree-sitter, MCP tools) remains; product chrome is replaced by the graph-first shell aligned with tracker and site.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- `beskid_nexus/gitnexus/` — Express server, catalog, graph API, MCP, code-doc pipeline
+- `beskid_nexus/gitnexus-web/` — React shell, repo selector, graph explorer layout
+- `site/website/src/content/docs/platform-spec/` — normative contracts (this section); read-only spec link index at deploy time via `NEXUS_SPEC_ROOT`
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/tooling/nexus" heading="Articles" />

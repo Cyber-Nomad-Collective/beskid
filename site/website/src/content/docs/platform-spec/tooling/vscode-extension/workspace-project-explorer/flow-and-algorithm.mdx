@@ -42,8 +42,8 @@ sequenceDiagram
   LSP-->>Ext: workspaces[]
   Ext->>Ext: populate WorkspaceTreeProvider
   alt focusedProjectUri set
-    Ext->>LSP: executeCommand beskid.getProjectGraph
-    LSP-->>Ext: graph JSON
+    Ext->>LSP: executeCommand beskid.getGraph (projectDeps)
+    LSP-->>Ext: GraphPayload metadata.nodes
     Ext->>Ext: populate ProjectTreeProvider
   end
 ```
@@ -56,7 +56,7 @@ sequenceDiagram
 1. User activates a **member** node in `beskidWorkspaceView`.
 2. Extension sets `focusedProjectUri = member.uri`.
 3. Extension persists workspace state and sends configuration notification to LSP (no restart).
-4. Extension refreshes `beskidProjectView`, outline, and package panel local section (parallel `getProjectGraph` + `getProjectDependencies`).
+4. Extension refreshes project tree sections, outline, and package panel (parallel `getGraph` + `getProjectDependencies`).
 5. Status bar **may** show project name briefly (non-blocking).
 
 ## Auto-select from editor
@@ -86,7 +86,7 @@ Both **must** be available from editor title/context when a Beskid file is activ
 
 ## Verification notes
 
-- Flow tests **should** mock LSP executeCommand and assert ordering: `listWorkspaces` before `getProjectGraph` on cold start.
+- Flow tests **should** mock LSP executeCommand and assert ordering: `listWorkspaces` before `getGraph` on cold start.
 - Changing `focusedProjectUri` **must not** appear in logs as a full language-client restart.
 
 ## Related topics

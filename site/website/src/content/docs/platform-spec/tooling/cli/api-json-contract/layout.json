@@ -4,12 +4,16 @@
   "extends": "feature-contract-default",
   "pathPrefix": "platform-spec/tooling/cli/api-json-contract",
   "minSpecSections": 2,
-  "widgets": [{
-    "type": "domainTiles",
-    "props": {
-      "pathPrefix": "platform-spec/tooling/cli/api-json-contract",
-      "heading": "Articles"
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/tooling/cli/api-json-contract",
+        "heading": "Normative articles"
+      }
     }
-  }],
-  "articleDefaults": { "extends": "article-default" }
+  ],
+  "articleDefaults": {
+    "extends": "article-default"
+  }
 }

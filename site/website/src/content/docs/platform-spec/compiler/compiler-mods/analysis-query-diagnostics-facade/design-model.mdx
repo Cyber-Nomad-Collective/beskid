@@ -31,15 +31,26 @@ This article documents the **design model** for **Analysis, query, and diagnosti
 **Process** pipelines express fluent queries that lower to bounded Rust walkers; **Diagnostics** raised here must use compiler-stable codes for parity with `beskid_analysis` / LSP.
 
 ## Persistent entities
-- **Compilation instance** — implicit handle to the compilation under construction (**[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** / `Beskid.Compiler.Compilation`).
+- **Compilation instance** — implicit handle to the compilation under construction (**[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** / `Beskid.Compiler.Compilation`). In the reference Rust host this maps to **`beskid_queries::BeskidDatabase`** query groups (unit, graph, entry, mod-host).
 - **Syntax snapshot** — immutable tree with stable node identities suitable for incremental keys.
 - **Capability tokens** — host-granted permissions for I/O, diagnostics, and emit operations during mod execution.
+
+## Salsa query groups (reference host)
+
+| Group | Queries | Invalidated when |
+| --- | --- | --- |
+| **Inputs** | `file_text`, `ProjectSession`, `GrammarRevision` | buffer edit, lockfile/manifest change, grammar bump |
+| **Unit** | `parse_and_expand_unit`, `unit_hir`, `unit_imports` | owning file text |
+| **Graph** | `discovered_units`, `module_index_fingerprint`, `program_assembly` | discovery inputs or any unit in closure |
+| **Entry** | `prepare_compilation_*`, `semantic_snapshot`, `typed_entry_bundle` | entry file, mod invalidation keys, assembly |
+| **Mod host** | `mod_generate`, syntax/manifest/capability ids | per [incremental scheduling](/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/) |
 
 ## Boundaries
 - Mod SDK facades never bypass the host bridge for effects.
 - Generation logic in the reference compiler remains Rust-internal; Beskid sees only the generated `Beskid.Compiler.*` projection.
 
 ## Anchored code paths
+- `compiler/crates/beskid_queries/` — Salsa incremental database and query groups.
 - `compiler/crates/beskid_analysis/src/analysis/` — staged rules and semantic state.
 - `compiler/crates/beskid_analysis/src/resolve/` — resolution products queryable from facades.
 - `compiler/crates/beskid_lsp/src/diagnostics.rs` — diagnostic shaping for editor parity.

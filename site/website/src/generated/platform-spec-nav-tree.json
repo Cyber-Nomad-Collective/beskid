@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-28T13:51:00.597Z",
+  "generatedAt": "2026-05-30T19:07:48.111Z",
   "tree": {
     "slug": "platform-spec",
     "href": "/platform-spec/",
@@ -2807,6 +2807,26 @@
         "level": "domain",
         "children": [
           {
+            "slug": "platform-spec/tooling/nexus",
+            "href": "/platform-spec/tooling/nexus/",
+            "title": "Beskid Nexus",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/tooling/nexus/contracts-and-edge-cases",
+                "href": "/platform-spec/tooling/nexus/contracts-and-edge-cases/",
+                "title": "Contracts and edge cases",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/tooling/nexus/design-model",
+                "href": "/platform-spec/tooling/nexus/design-model/",
+                "title": "Design model",
+                "level": "article"
+              }
+            ]
+          },
+          {
             "slug": "platform-spec/tooling/cli",
             "href": "/platform-spec/tooling/cli/",
             "title": "CLI",
@@ -2920,6 +2940,26 @@
                 "slug": "platform-spec/tooling/formatter/verification-and-traceability",
                 "href": "/platform-spec/tooling/formatter/verification-and-traceability/",
                 "title": "Formatter verification and traceability",
+                "level": "article"
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/tooling/graph-visualization",
+            "href": "/platform-spec/tooling/graph-visualization/",
+            "title": "Graph visualization",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/tooling/graph-visualization/contracts-and-edge-cases",
+                "href": "/platform-spec/tooling/graph-visualization/contracts-and-edge-cases/",
+                "title": "Contracts and edge cases",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/tooling/graph-visualization/design-model",
+                "href": "/platform-spec/tooling/graph-visualization/design-model/",
+                "title": "Design model",
                 "level": "article"
               }
             ]
@@ -3343,6 +3383,20 @@
                     "slug": "platform-spec/tooling/vscode-extension/package-manager-panel/flow-and-algorithm",
                     "href": "/platform-spec/tooling/vscode-extension/package-manager-panel/flow-and-algorithm/",
                     "title": "Flow and algorithm",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/tooling/vscode-extension/symbol-documentation",
+                "href": "/platform-spec/tooling/vscode-extension/symbol-documentation/",
+                "title": "Symbol documentation",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/tooling/vscode-extension/symbol-documentation/design-model",
+                    "href": "/platform-spec/tooling/vscode-extension/symbol-documentation/design-model/",
+                    "title": "Design model",
                     "level": "article"
                   }
                 ]

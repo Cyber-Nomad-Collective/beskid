@@ -1,0 +1,51 @@
+---
+title: MCP connect dialog with Bearer auth
+description: Signed-in users connect MCP clients to same-origin /api/mcp using deployment Bearer token; UI documents endpoint without exposing secrets.
+specLevel: adr
+status: Standard
+adrId: D-TOOL-NEXUS-0004
+adrStatus: Accepted
+adrDate: 2026-05-30
+lastReviewed: 2026-05-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Beskid Nexus
+    href: /platform-spec/tooling/nexus/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Nexus exposes graph query tools over **MCP Streamable HTTP** for IDE and agent integrations. Operators deploy a shared **`NEXUS_MCP_AUTH_TOKEN`** secret. Users need a discoverable, copy-friendly surface — without embedding secrets in client bundles or public pages.
+
+## Decision
+
+1. MCP **must** be mounted at **`/api/mcp`** on the Nexus deployment origin.
+2. All MCP requests **must** require **`Authorization: Bearer $NEXUS_MCP_AUTH_TOKEN`**.
+3. Header button **Connect MCP** **must** appear for **signed-in** users (any authenticated session).
+4. **ConnectMcpDialog** shows:
+   - Endpoint URL (`{window.location.origin}/api/mcp`)
+   - Auth header template with placeholder token guidance
+   - Copy buttons for URL and header format
+   - Link to [MCP contracts](/platform-spec/tooling/nexus/contracts-and-edge-cases#mcp)
+5. The live Bearer token **must not** be returned by public or session API routes — operators supply it via deployment env (Coolify, etc.).
+
+## Consequences
+
+- `gitnexus-web` ships `connect-mcp-dialog.tsx` wired into `NexusAppShell`.
+- MCP shares the cached graph data plane with public `/api/graph` — no parallel index.
+- Platform spec documents the contract; Nexus UI links here for operator and integrator reference.
+
+## Status
+
+Accepted — complements GitNexus MCP engine retention under Beskid Nexus product shell.

@@ -3,5 +3,8 @@
   "level": "feature",
   "extends": "feature-contract-default",
   "pathPrefix": "platform-spec/tooling/registry-client/package-kinds",
-  "minSpecSections": 2
+  "minSpecSections": 2,
+  "articleDefaults": {
+    "extends": "article-default"
+  }
 }

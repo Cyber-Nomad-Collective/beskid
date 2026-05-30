@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-21
+lastReviewed: 2026-05-30
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -40,8 +40,8 @@ Testable rules for **`pckgClient`**, registry auth, CLI mutations, and Packages 
 | --- | --- |
 | A-01 | When `beskid.pckg.apiKey` is set, `createPckgFetch` **must** send `Authorization: Bearer <token>` on every registry request. |
 | A-02 | Auth scheme **must** match pckg `ApiKeyAuthentication` (Bearer). |
-| A-03 | On HTTP 401/403, panel **must** show actionable error (“Configure API key in Beskid: Package Registry API Key”). |
-| A-04 | Missing API key on private registry **must not** throw unhandled exceptions; tree shows error node. |
+| A-03 | On HTTP 401/403 **for a request that requires auth** (private package or publisher action), UI **must** show actionable error (“Configure API key…”). Public search/details **must not** prompt for a key when anonymous access succeeds. |
+| A-04 | Missing API key **must not** block public catalog browse; connection label **should** read “Public catalog · {url}” when anonymous probe succeeds. |
 | A-05 | Command `beskid.packages.configureApiKey` **must** prompt for a key and persist it via `SecretStorage` (`beskid.pckg.apiKey` secret id). |
 | A-06 | Registry connection state **must** be read from LSP `beskid.pckg.getConnectionStatus` first; the client passes `authConfigured` (boolean only). API keys **must not** be stored or logged by the language server. |
 | A-07 | After storing an API key, `beskid.packages.configureApiKey` **must** call LSP `beskid.pckg.validateConnection` with the key in command args (one-shot); secrets remain in VS Code `SecretStorage`. |
@@ -60,10 +60,18 @@ Testable rules for **`pckgClient`**, registry auth, CLI mutations, and Packages 
 
 | ID | Rule |
 | --- | --- |
-| S-01 | **Must** call `GET /api/search` with query params `q` (required) and `limit` (default 20, max 50). |
+| S-01 | **Must** call `GET /api/search` with `limit` (default 20, max 50); `q` optional (empty loads browse catalog). |
 | S-02 | **Must** return typed `PackageSearchResponse[]` (array of hits). |
 | S-03 | **Must** cache responses ~30 seconds per `(registryBaseUrl, q, limit)`. |
 | S-04 | **Must** debounce user input ≥300ms before network. |
+
+## listPackages
+
+| ID | Rule |
+| --- | --- |
+| B-01 | **Must** call `GET /api/packages` (or search with empty `q`) for initial document panel load. |
+| B-02 | **Must** work without API key for public packages. |
+| B-03 | **Must** cache ~30 seconds per `(registryBaseUrl, limit)`. |
 
 ## getPackageDetails
 
@@ -91,6 +99,7 @@ Testable rules for **`pckgClient`**, registry auth, CLI mutations, and Packages 
 | `beskid.packages.addDependency` | **Must** prompt for name and version; apply via CLI subcommand when available, else structured `Project.proj` dependency entry + `refreshWorkspace` |
 | `beskid.packages.refresh` | **Must** clear `pckgClient` caches and refresh tree |
 | `beskid.packages.configureApiKey` | **Must** prompt, store registry API key in `SecretStorage`, validate via `beskid.pckg.validateConnection`, then refresh; subsequent search/details **must** use Bearer auth |
+| `beskid.packages.open` | **Must** open/focus registry document WebviewPanel |
 | `beskid.packages.openRegistryUri` | **Must** open browser URL from `buildRegistryPackageUrl` |
 | `beskid.packages.openManifest` | **Must** open focused `Project.proj` for a local dependency row |
 | `beskid.packages.openMaterializedFolder` | **Must** reveal materialized package path when `materializedPath` is present |
@@ -101,7 +110,7 @@ Testable rules for **`pckgClient`**, registry auth, CLI mutations, and Packages 
 | Scenario | Expected behavior |
 | --- | --- |
 | Offline / DNS failure | Registry section error node; retry action |
-| Empty search query | No network; show inline “Enter a search term” |
+| Empty search query | Document panel shows browse catalog from `listPackages` |
 | No `Project.lock` | **ThisProject** shows declared only; badge “not locked” on rows |
 | Focus cleared | **ThisProject** shows select-project message |
 | Concurrent fetch + search | Status bar shows dominant phase; both complete independently |

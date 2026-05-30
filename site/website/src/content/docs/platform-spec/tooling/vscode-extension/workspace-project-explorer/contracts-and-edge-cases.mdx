@@ -138,51 +138,15 @@ When `roots` is omitted, LSP **must** use initialized workspace folders.
 | `registries` | yes | Effective registry URLs from workspace resolution rules (see compiler workspace contracts); used by package panel for default registry base |
 | `members[].projectName` | no | Parsed `project.name` when available |
 
-## `beskid.getProjectGraph`
+## `beskid.getGraph` (tree navigation)
 
-**Arguments:**
+The Projects tree **must** call `beskid.getGraph` with `kind=projectDeps` and read `metadata.nodes` for Targets and Dependencies sections. See [Graph visualization contracts](/platform-spec/tooling/graph-visualization/contracts-and-edge-cases) for the full payload.
 
-```json
-{
-  "projectUri": "file:///…/Project.proj"
-}
-```
-
-**Result:**
-
-```json
-{
-  "projectUri": "file:///…/Project.proj",
-  "nodes": [
-    {
-      "id": "dep:corelib",
-      "kind": "dependency",
-      "label": "corelib",
-      "manifestUri": "file:///…/Project.proj",
-      "materializedRoot": "file:///…/.beskid/packages/corelib/1.0.0"
-    }
-  ],
-  "edges": [
-    { "from": "project", "to": "dep:corelib" }
-  ],
-  "unresolved": [
-    {
-      "dependencyName": "missing-pkg",
-      "source": "registry",
-      "descriptor": "missing-pkg@1.0.0"
-    }
-  ]
-}
-```
-
-| `nodes[].kind` | Meaning |
+| `metadata.nodes[].kind` | Tree section |
 | --- | --- |
-| `project` | Root project node (exactly one per result) |
-| `target` | Build target |
-| `dependency` | Resolved or declared dependency project |
-| `sourceRoot` | Source directory |
-
-`unresolved[]` **must** mirror analysis `UnresolvedDependencyNote` (`dependencyName`, `source`, `descriptor`).
+| `root` | Targets |
+| `path`, `git`, `registry` | Dependencies |
+| *(warnings with code `unresolved`)* | Dependencies (unresolved) |
 
 ## `beskid.getProjectDependencies`
 
@@ -236,7 +200,7 @@ Merged view of manifest declarations and lock lines for one project.
 | ID | Rule |
 | --- | --- |
 | E-W01 | `beskid.listWorkspaces` **must** complete in O(roots × files) with scan skip dirs; **must not** build full compile graphs. |
-| E-W02 | `beskid.getProjectGraph` **may** use `build_project_graph_with_options` from analysis; cycles **must** be represented as edges without infinite expansion in the tree UI. |
+| E-W02 | `beskid.getGraph` (`projectDeps`) **must** route through `beskid_queries::graph_mermaid`; cycles **must** surface as warnings without infinite tree expansion. |
 | E-W03 | When `projectUri` is outside workspace roots, LSP **must** return error `InvalidParams` with a clear message. |
 | E-W04 | Extension command `beskid.focusProject` **must** set `focusedProjectUri`; `beskid.clearFocus` **must** clear it and notify LSP. |
 

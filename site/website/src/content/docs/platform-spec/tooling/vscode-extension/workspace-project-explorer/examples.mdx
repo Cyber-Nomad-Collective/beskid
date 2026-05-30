@@ -42,7 +42,7 @@ Representative explorer behavior for the **corelib** workspace and a **single-ap
 **Expected:**
 
 - `focusedProjectUri` → `file://…/packages/collections/Project.proj`
-- Project view root shows `collections` targets and dependencies from `beskid.getProjectGraph`
+- Project view root shows `collections` targets and dependencies from `beskid.getGraph` metadata
 - `beskid.getProjectDependencies` returns locked versions after `beskid lock` has been run in that workspace
 
 **Smoke checklist:**
@@ -63,7 +63,7 @@ Representative explorer behavior for the **corelib** workspace and a **single-ap
 **Expected Project view:**
 
 - Root = the lone `Project.proj`
-- Dependencies from `getProjectGraph`; unresolved registry deps show warning icon until `beskid fetch`
+- Dependencies from `getGraph` metadata; unresolved registry deps show warning icon until `beskid fetch`
 
 **Auto-select:** Opening `Src/Main.bd` sets focus to the containing `Project.proj` when `beskid.project.autoSelectFromEditor` is true.
 

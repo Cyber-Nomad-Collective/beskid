@@ -3,12 +3,5 @@
   "level": "area",
   "extends": "area-default",
   "pathPrefix": "platform-spec/compiler/pipeline-composition",
-  "sections": [
-    {
-      "id": "scope",
-      "required": true,
-      "kind": "specSection"
-    }
-  ],
   "minSpecSections": 1
 }

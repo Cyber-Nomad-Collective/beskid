@@ -1,0 +1,44 @@
+---
+title: Design model
+description: Documentation URI resolution and browser open flow.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-05-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Symbol documentation
+    href: /platform-spec/tooling/vscode-extension/symbol-documentation/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## URI resolution
+
+| Source | URL pattern |
+| --- | --- |
+| Registry package symbol | `{pckgBase}/docs/{packageName}@{resolvedVersion}` |
+| Core / book fallback | `https://beskid-lang.org/book/` (search or mapped path) |
+
+Implementation: `beskid_lsp` executeCommand handler; extension `beskid.openSymbolDocumentation`.
+
+## Hover integration
+
+When `beskid.symbol.getDocumentationUri` returns a URL for the hover offset, append a markdown link to hover content. VS Code opens `https:` links from hover on modifier-click.
+
+## Settings
+
+| Setting | Default | Role |
+| --- | --- | --- |
+| `beskid.pckg.baseUrl` | `https://pckg.beskid-lang.org` | Registry docs base |
+| `beskid.docs.bookBaseUrl` | `https://beskid-lang.org` | Book fallback base |

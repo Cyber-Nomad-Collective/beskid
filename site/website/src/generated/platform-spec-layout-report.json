@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-28T13:51:02.765Z",
+  "generatedAt": "2026-05-30T19:08:37.313Z",
   "summary": {
-    "nodes": 791,
+    "nodes": 812,
     "errors": 0,
     "warnings": 0
   },
@@ -73,7 +73,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -87,18 +87,7 @@
       "slug": "platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template",
       "level": "feature",
       "status": "ok",
-      "sections": [
-        {
-          "id": "what-this-feature-specifies",
-          "required": false,
-          "found": false
-        },
-        {
-          "id": "implementation-anchors",
-          "required": false,
-          "found": false
-        }
-      ],
+      "sections": [],
       "counts": {
         "specSections": 0,
         "markdownH2": 6
@@ -120,18 +109,7 @@
       "slug": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template",
       "level": "feature",
       "status": "ok",
-      "sections": [
-        {
-          "id": "what-this-feature-specifies",
-          "required": false,
-          "found": false
-        },
-        {
-          "id": "implementation-anchors",
-          "required": false,
-          "found": false
-        }
-      ],
+      "sections": [],
       "counts": {
         "specSections": 0,
         "markdownH2": 11
@@ -197,18 +175,7 @@
       "slug": "platform-spec/community/spec-maintenance/last-reviewed-policy",
       "level": "feature",
       "status": "ok",
-      "sections": [
-        {
-          "id": "what-this-feature-specifies",
-          "required": false,
-          "found": false
-        },
-        {
-          "id": "implementation-anchors",
-          "required": false,
-          "found": false
-        }
-      ],
+      "sections": [],
       "counts": {
         "specSections": 0,
         "markdownH2": 2
@@ -230,18 +197,7 @@
       "slug": "platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy",
       "level": "feature",
       "status": "ok",
-      "sections": [
-        {
-          "id": "what-this-feature-specifies",
-          "required": false,
-          "found": false
-        },
-        {
-          "id": "implementation-anchors",
-          "required": false,
-          "found": false
-        }
-      ],
+      "sections": [],
       "counts": {
         "specSections": 0,
         "markdownH2": 5
@@ -285,18 +241,7 @@
       "slug": "platform-spec/community/spec-maintenance/release-and-versioning-policy",
       "level": "feature",
       "status": "ok",
-      "sections": [
-        {
-          "id": "what-this-feature-specifies",
-          "required": false,
-          "found": false
-        },
-        {
-          "id": "implementation-anchors",
-          "required": false,
-          "found": false
-        }
-      ],
+      "sections": [],
       "counts": {
         "specSections": 0,
         "markdownH2": 5
@@ -351,18 +296,7 @@
       "slug": "platform-spec/community/spec-maintenance/spec-authority-and-decisions",
       "level": "feature",
       "status": "ok",
-      "sections": [
-        {
-          "id": "what-this-feature-specifies",
-          "required": false,
-          "found": false
-        },
-        {
-          "id": "implementation-anchors",
-          "required": false,
-          "found": false
-        }
-      ],
+      "sections": [],
       "counts": {
         "specSections": 0,
         "markdownH2": 7
@@ -458,7 +392,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -623,6 +557,28 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/adr/0004-single-prepared-compilation-spine",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/adr/0005-beskid-test-shared-prepare",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/compiler/build-pipeline/build-and-run-orchestration/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
@@ -640,7 +596,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -843,6 +799,17 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/adr/0004-project-files-require-compilation-context",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/compiler/build-pipeline/diagnostics-parity/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
@@ -953,6 +920,28 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/compiler/build-pipeline/program-assembly/adr/0004-dependency-prelude-union-seeding",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/program-assembly/adr/0005-import-closure-not-directory-sweep",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/compiler/build-pipeline/program-assembly/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
@@ -1041,6 +1030,28 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/compiler/build-pipeline/stage-ordering/adr/0004-mod-rewrite-before-semantic-gate",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/stage-ordering/adr/0005-salsa-database-incremental-memoization",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/compiler/build-pipeline/stage-ordering/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
@@ -1118,7 +1129,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -1415,6 +1426,28 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/adr/0004-reachability-link-plan",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/adr/0005-supersede-lower-source-entry",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/compiler/codegen-and-ir/lowering-contract/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
@@ -1492,7 +1525,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -1564,7 +1597,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 8
+        "markdownH2": 9
       },
       "messages": []
     },
@@ -2185,7 +2218,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -2361,6 +2394,17 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/adr/0004-spine-parity-fixtures",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/compiler/conformance/test-harnesses-and-fixtures/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
@@ -2438,7 +2482,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -2900,7 +2944,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -3065,7 +3109,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -3137,7 +3181,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3637,7 +3681,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -3792,6 +3836,17 @@
     },
     {
       "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/adr/0003-primary-contract-choice",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/adr/0004-use-imports-public-types",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -4231,7 +4286,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -4440,6 +4495,17 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/adr/0009-prelude-leaf-reexports",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
@@ -4517,7 +4583,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -4825,7 +4891,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -5100,7 +5166,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -5793,7 +5859,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -6145,7 +6211,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -6695,7 +6761,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -6904,7 +6970,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -6937,7 +7003,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -6992,7 +7058,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -7124,7 +7190,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -7292,7 +7358,18 @@
       "slug": "platform-spec/language-meta/interop/export-and-callbacks",
       "level": "feature",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
         "specSections": 3,
         "markdownH2": 1
@@ -7380,7 +7457,18 @@
       "slug": "platform-spec/language-meta/interop/ffi-and-extern",
       "level": "feature",
       "status": "ok",
-      "sections": [],
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
       "counts": {
         "specSections": 7,
         "markdownH2": 1
@@ -7685,7 +7773,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -7718,7 +7806,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -7784,7 +7872,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -7850,7 +7938,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -7894,7 +7982,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -8034,7 +8122,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -8309,6 +8397,50 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/tooling/graph-visualization",
+      "level": "area",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 4,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/graph-visualization/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/graph-visualization/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/tooling/lsp",
       "level": "area",
       "status": "ok",
@@ -8320,7 +8452,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -8414,7 +8546,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 6
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -8474,7 +8606,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -8712,6 +8844,50 @@
       "counts": {
         "specSections": 0,
         "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/nexus",
+      "level": "area",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 4,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/nexus/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 8
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/nexus/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -9134,7 +9310,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -9332,7 +9508,7 @@
         },
         {
           "id": "features",
-          "required": true,
+          "required": false,
           "found": true
         }
       ],
@@ -9431,6 +9607,17 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/tooling/vscode-extension/extension-surface/adr/0006-status-bar-modal-overlay",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/tooling/vscode-extension/extension-surface/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
@@ -9448,7 +9635,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -9470,7 +9657,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 9
+        "markdownH2": 11
       },
       "messages": []
     },
@@ -9547,7 +9734,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 10
+        "markdownH2": 11
       },
       "messages": []
     },
@@ -9569,7 +9756,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 9
+        "markdownH2": 10
       },
       "messages": []
     },
@@ -9592,6 +9779,28 @@
       "counts": {
         "specSections": 0,
         "markdownH2": 7
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/symbol-documentation",
+      "level": "feature",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 3,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/vscode-extension/symbol-documentation/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
       },
       "messages": []
     },

@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-21
+lastReviewed: 2026-05-30
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -37,7 +37,15 @@ Operator and contributor FAQ for the extension surface and linked features.
 
 ## Registry search returns 401
 
-Configure **Beskid: Set Package Registry API Key** (stores in VS Code secret storage). For human browsing, open the pckg web dashboard in a browser (login is out of band for the extension in v0.2).
+**Public packages** (`GET /api/search`, `GET /api/packages`) work without an API key. HTTP 401/403 on search usually means the registry URL is wrong, the server is misconfigured, or you are requesting a **private** package. Configure **Beskid: Configure Package Registry API Key** only when you need private catalog access or publishing. For human browsing, open `{baseUrl}/packages` in a browser.
+
+## How do I open the quick panel?
+
+Click the **Beskid** item in the status bar (or run **Beskid: Open Quick Panel**). This opens the modal overlay; it is not a sidebar view.
+
+## Debug view is missing
+
+Enable **`beskid.debug.enabled`** in settings (default off). The Debug tree appears in the activity bar when enabled.
 
 ## Packages show declared but not locked versions
 

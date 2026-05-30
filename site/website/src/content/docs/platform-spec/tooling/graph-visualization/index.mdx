@@ -1,0 +1,72 @@
+---
+title: Graph visualization
+description: Unified Mermaid graph presentation for project dependencies, modules, imports, and host composition across CLI, LSP, and VS Code.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-05-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: VS Code extension
+    href: /platform-spec/tooling/vscode-extension/
+    relation: Graph Explorer panel consumer
+  - type: Feature
+    title: Dependency graph and cycle policy
+    href: /platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/
+    relation: Project graph build authority
+  - type: Feature
+    title: Analysis query diagnostics facade
+    href: /platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/
+    relation: Salsa graph memoization
+---
+
+import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+	status="Standard"
+	ownerName="Piotr Mikstacki"
+	ownerEmail="pmikstacki@cybernomad.it"
+	submitterName="Piotr Mikstacki"
+	submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+A single **Mermaid-only** presentation layer (`beskid_graph`) for compiler graph domains. CLI, LSP, and VS Code **must** consume cached Mermaid strings from `beskid_queries` — no duplicate graph builders in TypeScript or hand-rolled ASCII renderers.
+</SpecSection>
+
+<SpecSection title="Graph kinds" id="graph-kinds">
+| Kind | Source | When available |
+| --- | --- | --- |
+| `projectDeps` | `ProjectGraph` | Always for a resolved `Project.proj` |
+| `workspace` | Multiple member graphs | When opened folder contains `Workspace.proj` |
+| `moduleTree` | `ModuleGraph` from program assembly | After entry resolves |
+| `importClosure` | Unit import edges | After program assembly |
+| `hostComposition` | DI registration DAG | When entry launches a native host |
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- `compiler/crates/beskid_graph/` — IR, adapters, Mermaid render via `mermaid-builder`
+- `compiler/crates/beskid_queries/src/graph.rs` — Salsa `graph_mermaid` / `graph_fingerprint`
+- `compiler/crates/beskid_lsp/src/commands/project_explorer/graph.rs` — `beskid.getGraph`
+- `compiler/crates/beskid_cli/src/commands/graph.rs` — `beskid graph` + `graphs-tui`
+- `beskid_vscode/src/graphs/` — Graph Explorer webview panel
+</SpecSection>
+
+<SpecSection title="Consumers" id="consumers">
+| Consumer | Default output |
+| --- | --- |
+| CLI `beskid graph` | Terminal TUI via `graphs-tui`; `--mermaid` for raw string |
+| LSP `beskid.getGraph` | JSON payload with `mermaid`, `revision`, `warnings`, `metadata` |
+| VS Code Graph Explorer | Interactive Mermaid webview; Projects tree remains for navigation |
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/tooling/graph-visualization" heading="Articles" />

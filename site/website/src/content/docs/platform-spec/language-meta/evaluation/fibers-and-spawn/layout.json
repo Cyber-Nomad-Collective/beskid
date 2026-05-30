@@ -4,15 +4,6 @@
   "extends": "feature-contract-default",
   "pathPrefix": "platform-spec/language-meta/evaluation/fibers-and-spawn",
   "minSpecSections": 2,
-  "widgets": [
-    {
-      "type": "domainTiles",
-      "props": {
-        "pathPrefix": "platform-spec/language-meta/evaluation/fibers-and-spawn",
-        "heading": "Articles"
-      }
-    }
-  ],
   "articleDefaults": {
     "extends": "article-default"
   }

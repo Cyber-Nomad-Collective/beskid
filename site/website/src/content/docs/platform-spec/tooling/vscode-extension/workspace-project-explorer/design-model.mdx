@@ -59,14 +59,14 @@ Icons: workspace root **`root-folder`**; member **`folder-library`**; registry h
 
 ## Project tree shape
 
-Root **must** be the focused `Project.proj` node. Children **must** be built from `beskid.getProjectGraph` and **must** include:
+Root **must** be the focused `Project.proj` node. Children **must** be built from `beskid.getGraph` (`kind=projectDeps`) `metadata.nodes` and **must** include:
 
 | Child section | Source | Notes |
 | --- | --- | --- |
-| **Targets** | `nodes[]` where `kind === "target"` | One node per declared target |
-| **Dependencies** | `nodes[]` / `edges[]` with `kind === "dependency"` | Tooltip shows materialized path when present in graph metadata |
-| **Source folders** | `nodes[]` where `kind === "sourceRoot"` | Opens folder or first `.bd` on click |
-| **Unresolved** | `unresolved[]` | Warning icon; label includes dependency name and descriptor |
+| **Targets** | `metadata.nodes[]` where `kind === "root"` | One node for the root project |
+| **Dependencies** | `metadata.nodes[]` where `kind` is `path`, `git`, or `registry` | Opens manifest URI when present; warning icon when `unresolved` |
+| **Source folders** | Workspace file discovery under project root | Opens folder on click |
+| **Unresolved** | `warnings[]` with code `unresolved` plus nodes with `unresolved: true` | Warning icon; label from warning message or node label |
 
 ## Multi-root labeling
 

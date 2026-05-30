@@ -57,10 +57,10 @@ When unset, LSP scans all workspace roots without prioritizing a single manifest
 **Arguments:** `[workspaceUri: string]`  
 **Returns:** `{ workspaceUri, name, resolver, members[], registries: [{ name, url }] }`
 
-### `beskid.getProjectGraph`
+### `beskid.getGraph`
 
-**Arguments:** `[projectUri: string]`  
-**Returns:** `{ projectUri, nodes[], edges[], unresolved[] }`
+**Arguments:** `[{ projectUri, kind, entryUri?, workspaceUri? }]`  
+**Returns:** `{ kind, mermaid, revision, warnings[], metadata: { nodes[], focusedProjectUri? } }` — see [Graph visualization](/platform-spec/tooling/graph-visualization/contracts-and-edge-cases).
 
 ### `beskid.getProjectDependencies`
 

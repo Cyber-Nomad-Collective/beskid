@@ -3,7 +3,7 @@
   "level": "area",
   "extends": "area-default",
   "pathPrefix": "platform-spec/tooling/project-scaffolding",
-  "minSpecSections": 2,
+  "minSpecSections": 1,
   "widgets": [
     {
       "type": "domainTiles",

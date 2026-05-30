@@ -1,0 +1,50 @@
+---
+title: Salsa database owns incremental analysis memoization
+description: BeskidDatabase in beskid_queries is the host for incremental compilation memoization across CLI, LSP, and tests.
+specLevel: adr
+status: Standard
+adrId: D-COMP-BUILD-0021
+adrStatus: Accepted
+adrDate: 2026-05-30
+lastReviewed: 2026-05-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Stage ordering and lowering
+    href: /platform-spec/compiler/build-pipeline/stage-ordering/
+    relation: Parent feature hub
+  - type: Feature
+    title: LSP snapshot and refresh contract
+    href: /platform-spec/tooling/lsp/snapshot-and-refresh-contract/
+    relation: IDE invalidation consumer
+---
+
+import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Within-run deduplication and ad-hoc JSON unit caches did not provide dependency-tracked invalidation. LSP and CLI paths recomputed assembly and typing independently; session caches could return stale assemblies after edits.
+
+## Decision
+
+1. **`beskid_queries::BeskidDatabase`** is the single incremental host for analysis memoization (Salsa 0.26 inputs + tracked queries + on-disk persistence under `{project}/obj/beskid/cache/salsa/`).
+2. **CLI, LSP, and tests** route prepare/assembly through `beskid_queries` entry points—CLI via process-scoped session in `beskid_queries::session`, LSP via workspace `State.compilation_db`, tests via local or session handles—no second analysis spine.
+3. **Unit materialization** during program assembly uses Salsa-backed unit queries; legacy `obj/beskid/cache/units/` JSON records are retired.
+4. **Pipeline observers** emit `salsa.query_hit`, `salsa.query_miss`, and `salsa.revision_bump` counters for verification.
+
+## Consequences
+
+- File text edits invalidate only affected units and dependents via import edges.
+- LSP `didChange` sets `file_text` inputs; diagnostics and IDE snapshots share the same database.
+- Mod-host invalidation keys (`syntax_generation_id`, `manifest_generation_id`, `capability_set_id`) map to Salsa inputs in `beskid_queries::modhost`.
+
+## Status
+
+Accepted — reference implementation in `compiler/crates/beskid_queries/`.

@@ -1,12 +1,10 @@
 {
   "version": 1,
   "level": "feature",
-  "extends": "feature-contract-default",
+  "extends": "feature-hub-default",
   "pathPrefix": "platform-spec/community/spec-maintenance/feature-hub-article-bundle-template",
-  "sections": [
-    { "id": "what-this-feature-specifies", "required": false, "kind": "specSection" },
-    { "id": "implementation-anchors", "required": false, "kind": "specSection" }
-  ],
   "minSpecSections": 0,
-  "widgets": []
+  "articleDefaults": {
+    "extends": "article-default"
+  }
 }

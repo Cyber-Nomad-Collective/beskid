@@ -4,12 +4,16 @@
   "extends": "feature-contract-default",
   "pathPrefix": "platform-spec/core-library/terminal-and-console/console-capabilities",
   "minSpecSections": 2,
-  "widgets": [{
-    "type": "domainTiles",
-    "props": {
-      "pathPrefix": "platform-spec/core-library/terminal-and-console/console-capabilities",
-      "heading": "Articles"
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/core-library/terminal-and-console/console-capabilities",
+        "heading": "Articles"
+      }
     }
-  }],
-  "articleDefaults": { "extends": "article-default" }
+  ],
+  "articleDefaults": {
+    "extends": "article-default"
+  }
 }

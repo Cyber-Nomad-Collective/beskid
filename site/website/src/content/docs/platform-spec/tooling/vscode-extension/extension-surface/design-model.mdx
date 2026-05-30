@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-21
+lastReviewed: 2026-05-30
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -30,7 +30,17 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 | `beskidWorkspaceView` | All `Workspace.proj` trees and members |
 | `beskidProjectView` | Focused `Project.proj` targets, dependencies, sources |
 | `beskidProjectOutlineView` | Document symbols for `.bd` under focused project |
-| `beskidPackagesView` | This project + registry search |
+| `beskidPackagesView` | **This project** dependencies only (local lockfile rows) |
+
+Registry browse and package details use a **document WebviewPanel** (`beskid.packages.open`), not the sidebar tree.
+
+## Status bar modal overlay
+
+Clicking the Beskid status-bar item runs **`beskid.modal.open`**, which reveals a singleton WebviewPanel styled as a modal overlay (runtime snapshot, focused project, quick actions). There is **no** sidebar dashboard webview. See [ADR 0006](./adr/0006-status-bar-modal-overlay/).
+
+## Debug view (optional)
+
+`beskidDebugView` is contributed only when **`beskid.debug.enabled`** is `true` (default **false**). Contributors enable it for LSP/runtime inspection.
 
 ## Focus model
 

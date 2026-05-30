@@ -1,0 +1,49 @@
+---
+title: Graph-first landing replaces catalog home
+description: Nexus opens the first indexed repo graph on / instead of a catalog grid or onboarding flows.
+specLevel: adr
+status: Standard
+adrId: D-TOOL-NEXUS-0001
+adrStatus: Accepted
+adrDate: 2026-05-30
+lastReviewed: 2026-05-30
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Beskid Nexus
+    href: /platform-spec/tooling/nexus/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+GitNexus shipped a **CatalogHome** grid, DropZone local analyze, onboarding phases, and server-connect wizards. Beskid Nexus is a **hosted public explorer** for pre-indexed repos — visitors arrive to browse graphs, not to analyze local folders or configure LLM providers.
+
+## Decision
+
+1. **`/` must load the graph explorer**, selecting the first enabled catalog entry with `indexed: true` ordered by `sortOrder`.
+2. **Deep link `?repo=<catalog-id>`** selects an explicit entry when present.
+3. **CatalogHome, DropZone, QueryFAB, Graph RAG chat, and hosted OnboardingGuide are removed** from public UI.
+4. **Repo switching** happens via navbar `<Select>`, not a separate home phase.
+5. When no indexed repo exists, show **empty state + sign-in CTA** for repo owners — not a marketing catalog grid.
+
+Admin actions (add repo, re-index) **must** be overlays (dialog/sheet), not full-page route phases.
+
+## Consequences
+
+- `gitnexus-web` App phases reduce to `boot | setup | server-down | explorer`.
+- E2E tests target graph canvas visibility and repo selector — not onboarding wizards.
+- Cached LadybugDB exports remain the only graph source for public visitors.
+
+## Status
+
+Accepted — supersedes GitNexus CatalogHome as the default Nexus entry experience.
