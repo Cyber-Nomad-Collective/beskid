@@ -11,6 +11,16 @@ import { upsertPairedApp } from "#/server/repositories/paired-apps";
 
 const PAIRING_TTL_MS = 24 * 60 * 60 * 1000;
 
+/** Approve link opened by the consumer app (same path for all Beskid apps). */
+export function pairingApproveUrl(
+	publicUrl: string,
+	_appId: AuthAppId,
+	code: string,
+): string {
+	const base = publicUrl.replace(/\/$/, "");
+	return `${base}/settings/auth/pair?code=${encodeURIComponent(code)}`;
+}
+
 export interface PairingRequestRow {
 	id: string;
 	app_id: string;
@@ -78,7 +88,7 @@ export function createPairingRequest(input: {
 		requestId,
 		pairingCode: code,
 		expiresAt,
-		approveUrlTemplate: `${publicUrl}/settings/auth/pair?code=${encodeURIComponent(code)}`,
+		approveUrlTemplate: pairingApproveUrl(publicUrl, input.appId, code),
 	};
 }
 

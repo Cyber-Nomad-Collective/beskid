@@ -1,3 +1,4 @@
+import type { AuthAppId } from "@beskid/auth-client";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { requireHubAdmin } from "#/server/hub-admin";
@@ -5,6 +6,7 @@ import {
 	cancelPairingRequest,
 	getPairingRequest,
 	listPairingAudit,
+	pairingApproveUrl,
 } from "#/server/repositories/pairing";
 
 export const Route = createFileRoute("/api/v1/pairing/requests/$requestId")({
@@ -24,7 +26,11 @@ export const Route = createFileRoute("/api/v1/pairing/requests/$requestId")({
 				return Response.json({
 					request: row,
 					audit: listPairingAudit(row.id),
-					approveUrlTemplate: `${row.public_url.replace(/\/$/, "")}/settings/auth/pair?code=<code>`,
+					approveUrlTemplate: pairingApproveUrl(
+						row.public_url,
+						row.app_id as AuthAppId,
+						"<code>",
+					),
 				});
 			},
 			DELETE: async ({ request, params }) => {
