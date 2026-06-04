@@ -1,0 +1,81 @@
+# Corelib: quality gate + test → publish to pckg.beskid-lang.org.
+name: Corelib
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'compiler'
+      - 'compiler/corelib'
+      - 'compiler/corelib/**'
+      - 'scripts/ci/corelib*.sh'
+      - 'scripts/ci/init-compiler-submodule.sh'
+      - '.github/workflows/corelib.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'compiler'
+      - 'compiler/corelib'
+      - 'compiler/corelib/**'
+      - 'scripts/ci/corelib*.sh'
+      - 'scripts/ci/init-compiler-submodule.sh'
+      - '.github/workflows/corelib.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: corelib-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: Corelib gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: compiler
+
+      - name: Corelib quality + test gate
+        env:
+          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+        run: bash ./scripts/ci/corelib-gate.sh
+
+  publish:
+    name: Publish corelib to pckg
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [gate]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: compiler
+
+      - name: Publish corelib to pckg.beskid-lang.org
+        env:
+          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+          BESKID_PCKG_KEY: ${{ secrets.BESKID_PCKG_KEY }}
+          BESKID_PCKG_BASE_URL: https://pckg.beskid-lang.org
+        run: bash ./scripts/ci/corelib-publish.sh patch
