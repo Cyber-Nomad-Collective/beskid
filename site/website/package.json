@@ -11,6 +11,7 @@
     "verify:last-reviewed": "node scripts/run-trudoc.mjs verify-last-reviewed.mjs",
     "generate:platform-spec-git-meta": "node scripts/run-trudoc.mjs generate-platform-spec-git-meta.mjs",
     "generate:platform-spec-nav-tree": "bun scripts/run-trudoc.mjs generate-platform-spec-nav-tree.mjs",
+    "generate:platform-spec-catalog": "bun scripts/run-trudoc.mjs publish-platform-spec-catalog.mjs",
     "generate:book-nav-tree": "bun scripts/run-trudoc.mjs generate-book-nav-tree.mjs",
     "verify:platform-spec-git-meta": "node scripts/run-trudoc.mjs verify-platform-spec-git-meta.mjs",
     "verify:platform-spec-layout": "node scripts/run-trudoc.mjs bin/trudoc-layout.mjs",
