@@ -7,14 +7,13 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
 bash ./scripts/ci/init-compiler-submodule.sh
+bash ./scripts/ci/init-beskid-infra-submodule.sh
 
 : "${GITHUB_REF:?GITHUB_REF is required}"
 : "${GITHUB_REF_NAME:?GITHUB_REF_NAME is required}"
 : "${GITHUB_EVENT_NAME:?GITHUB_EVENT_NAME is required}"
 
 GITHUB_RUN_NUMBER="${GITHUB_RUN_NUMBER:-}"
-
-DAGGER_VERSION="$(tr -d '[:space:]' < beskid_infra/dagger/.dagger-version)"
 
 (
   cd beskid_infra/dagger

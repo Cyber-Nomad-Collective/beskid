@@ -6,8 +6,12 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
 bash ./scripts/ci/init-compiler-submodule.sh
+bash ./scripts/ci/init-beskid-infra-submodule.sh
 
-DAGGER_VERSION="$(tr -d '[:space:]' < beskid_infra/dagger/.dagger-version)"
+DAGGER_VERSION="0.21.0"
+if [[ -f beskid_infra/dagger/.dagger-version ]]; then
+  DAGGER_VERSION="$(tr -d '[:space:]' < beskid_infra/dagger/.dagger-version)"
+fi
 
 echo "==> Install Dagger module deps"
 (
