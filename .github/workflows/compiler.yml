@@ -1,0 +1,262 @@
+# Compiler submodule: Rust gate (Dagger) + CLI/LSP releases on beskid_compiler.
+name: Compiler
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'compiler/**'
+      - 'beskid_infra/dagger/**'
+      - 'scripts/ci/compiler*.sh'
+      - 'scripts/ci/init-compiler-submodule.sh'
+      - '.github/workflows/compiler.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'compiler/**'
+      - 'beskid_infra/dagger/**'
+      - 'scripts/ci/compiler*.sh'
+      - 'scripts/ci/init-compiler-submodule.sh'
+      - '.github/workflows/compiler.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: compiler-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  RUST_MIN_STACK: "67108864"
+
+jobs:
+  gate:
+    name: Rust gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: dagger/dagger-for-github@v8.4.1
+        with:
+          version: "0.21.0"
+          dagger-version: "0.21.0"
+
+      - name: Compiler Rust gate (Dagger)
+        env:
+          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+        run: bash ./scripts/ci/compiler-gate.sh
+
+  version:
+    name: Resolve release version
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      compiler_sha: ${{ steps.compiler.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: dagger/dagger-for-github@v8.4.1
+        with:
+          version: "0.21.0"
+          dagger-version: "0.21.0"
+
+      - name: Init compiler submodule
+        env:
+          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+        run: bash ./scripts/ci/init-compiler-submodule.sh
+
+      - id: compiler
+        name: Record compiler submodule SHA
+        run: echo "sha=$(git -C compiler rev-parse HEAD)" >> "${GITHUB_OUTPUT}"
+
+      - id: version
+        name: Compute rolling semver
+        env:
+          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+          GITHUB_REF: ${{ github.ref }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          set -euo pipefail
+          v="$(bash ./scripts/ci/compiler-version.sh | tr -d '[:space:]')"
+          echo "version=${v}" >> "${GITHUB_OUTPUT}"
+          echo "Resolved CLI/LSP version: ${v}"
+
+  release-cli-build:
+    name: Build CLI (${{ matrix.asset_name }})
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [gate, version]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            asset_name: beskid-linux-amd64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            asset_name: beskid-darwin-arm64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            asset_name: beskid-windows-amd64.exe
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Init compiler submodule
+        env:
+          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+        run: bash ./scripts/ci/init-compiler-submodule.sh
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: compiler
+
+      - name: Build CLI artifact
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+          MATRIX_TARGET: ${{ matrix.target }}
+          MATRIX_ASSET_NAME: ${{ matrix.asset_name }}
+          RELEASE_PACKAGE: beskid_cli
+        run: bash ./scripts/ci/compiler-release-build.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cli-${{ matrix.asset_name }}
+          path: ${{ matrix.asset_name }}
+          if-no-files-found: error
+
+  release-cli-publish:
+    name: Publish CLI releases
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [version, release-cli-build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          pattern: cli-beskid-*
+          merge-multiple: true
+
+      - name: Flatten CLI artifact names
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release-assets
+          for f in cli-beskid-*; do
+            [[ -e "$f" ]] || continue
+            mv -f "$f" "${f#cli-}"
+          done
+          ls -la
+
+      - name: Publish cli-v* and cli-latest
+        env:
+          RELEASE_STREAM: cli
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+          COMPILER_SHA: ${{ needs.version.outputs.compiler_sha }}
+          COMPILER_RELEASE_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN }}
+          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+        run: bash ./scripts/ci/compiler-release-publish.sh
+
+  release-lsp-build:
+    name: Build LSP (${{ matrix.asset_name }})
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [gate, version]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            asset_name: beskid_lsp-linux-amd64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            asset_name: beskid_lsp-darwin-arm64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            asset_name: beskid_lsp-windows-amd64.exe
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Init compiler submodule
+        env:
+          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+        run: bash ./scripts/ci/init-compiler-submodule.sh
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: compiler
+
+      - name: Build LSP artifact
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+          MATRIX_TARGET: ${{ matrix.target }}
+          MATRIX_ASSET_NAME: ${{ matrix.asset_name }}
+          RELEASE_PACKAGE: beskid_lsp
+        run: bash ./scripts/ci/compiler-release-build.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lsp-${{ matrix.asset_name }}
+          path: ${{ matrix.asset_name }}
+          if-no-files-found: error
+
+  release-lsp-publish:
+    name: Publish LSP releases
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [version, release-lsp-build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          pattern: lsp-beskid_lsp-*
+          merge-multiple: true
+
+      - name: Flatten LSP artifact names
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release-assets
+          for f in lsp-beskid_lsp-*; do
+            [[ -e "$f" ]] || continue
+            mv -f "$f" "${f#lsp-}"
+          done
+          ls -la
+
+      - name: Publish lsp-v* and lsp-latest
+        env:
+          RELEASE_STREAM: lsp
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+          COMPILER_SHA: ${{ needs.version.outputs.compiler_sha }}
+          COMPILER_RELEASE_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN }}
+          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+        run: bash ./scripts/ci/compiler-release-publish.sh

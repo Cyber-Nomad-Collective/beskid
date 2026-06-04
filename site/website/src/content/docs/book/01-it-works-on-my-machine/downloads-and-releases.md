@@ -8,12 +8,12 @@ Beskid does not ask you to compile from source on day one unless you want to. Th
 
 ## Rolling `cli-latest`
 
-Compiler CI publishes prebuilt binaries to **GitHub Releases** on the rolling tag `cli-latest`, alongside `cli-version.txt` (the same rolling semver model as corelib—see `compiler/ci/version.py` in the compiler repo). Install scripts under the website (`site/website/public/`) and the [Downloads](/downloads/) page consume that stream.
+The **beskid** superrepo workflow `.github/workflows/compiler.yml` publishes prebuilt binaries to **GitHub Releases** on [beskid_compiler](https://github.com/Cyber-Nomad-Collective/beskid_compiler) (`cli-latest`, `cli-version.txt`, immutable `cli-v*`). Rolling semver is resolved in Dagger (`beskid_infra/dagger` `compiler-release.compute-cli-version`, port of the former `compiler/ci/version.py`). Install scripts under the website (`site/website/public/`) and the [Downloads](/downloads/) page consume that stream.
 
 ```mermaid
 flowchart TD
   subgraph ci [Compiler CI]
-    T[Git tags v*] --> V[version.py resolves rolling semver]
+    T[Git tags v*] --> V[Dagger resolves rolling semver]
     V --> B[Build matrix binaries]
     B --> R[Release cli-latest + cli-version.txt]
   end
