@@ -17,10 +17,10 @@ GITHUB_RUN_NUMBER="${GITHUB_RUN_NUMBER:-}"
 
 (
   cd beskid_infra/dagger
-  npm ci --silent
+  npm ci --silent --include=dev
 )
 
-dagger -m beskid_infra/dagger call compiler-release compute-cli-version \
+dagger -m beskid_infra/dagger call compute-cli-version \
   --source="${ROOT}" \
   --github-ref="${GITHUB_REF}" \
   --github-ref-name="${GITHUB_REF_NAME}" \

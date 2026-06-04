@@ -16,7 +16,7 @@ fi
 echo "==> Install Dagger module deps"
 (
   cd beskid_infra/dagger
-  npm ci
+  npm ci --include=dev
 )
 
 echo "==> compiler-rust-gate (Dagger ${DAGGER_VERSION})"

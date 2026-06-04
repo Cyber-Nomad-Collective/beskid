@@ -45,7 +45,6 @@ jobs:
       - uses: dagger/dagger-for-github@v8.4.1
         with:
           version: "0.21.0"
-          dagger-version: "0.21.0"
 
       - name: Compiler Rust gate (Dagger)
         env:
@@ -70,7 +69,6 @@ jobs:
       - uses: dagger/dagger-for-github@v8.4.1
         with:
           version: "0.21.0"
-          dagger-version: "0.21.0"
 
       - name: Init compiler submodule
         env:
