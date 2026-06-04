@@ -20,4 +20,4 @@ echo "==> Install Dagger module deps"
 )
 
 echo "==> compiler-rust-gate (Dagger ${DAGGER_VERSION})"
-dagger -m beskid_infra/dagger call compiler-rust-gate --source=.
+dagger -m beskid_infra/dagger call compiler-rust-gate --source=./compiler

@@ -46,6 +46,11 @@ jobs:
         with:
           version: "0.21.0"
 
+      - name: Init compiler submodule
+        env:
+          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+        run: bash ./scripts/ci/init-compiler-submodule.sh
+
       - name: Compiler Rust gate (Dagger)
         env:
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}

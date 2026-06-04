@@ -21,7 +21,7 @@ GITHUB_RUN_NUMBER="${GITHUB_RUN_NUMBER:-}"
 )
 
 dagger -m beskid_infra/dagger call compute-cli-version \
-  --source="${ROOT}" \
+  --source="${ROOT}/compiler" \
   --github-ref="${GITHUB_REF}" \
   --github-ref-name="${GITHUB_REF_NAME}" \
   --github-event-name="${GITHUB_EVENT_NAME}" \
