@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - 'compiler/**'
+      - 'beskid_infra'
+      - 'beskid_infra/**'
       - 'beskid_infra/dagger/**'
       - 'scripts/ci/compiler*.sh'
       - 'scripts/ci/init-compiler-submodule.sh'
@@ -14,6 +16,8 @@ on:
     branches: [main]
     paths:
       - 'compiler/**'
+      - 'beskid_infra'
+      - 'beskid_infra/**'
       - 'beskid_infra/dagger/**'
       - 'scripts/ci/compiler*.sh'
       - 'scripts/ci/init-compiler-submodule.sh'
