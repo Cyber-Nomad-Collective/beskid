@@ -5,6 +5,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'compiler'
       - 'compiler/**'
       - 'beskid_infra'
       - 'beskid_infra/**'
@@ -15,6 +16,7 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - 'compiler'
       - 'compiler/**'
       - 'beskid_infra'
       - 'beskid_infra/**'
