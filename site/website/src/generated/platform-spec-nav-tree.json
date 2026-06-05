@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-30T19:07:48.111Z",
+  "generatedAt": "2026-06-05T15:09:01.352Z",
   "tree": {
     "slug": "platform-spec",
     "href": "/platform-spec/",
@@ -331,6 +331,12 @@
                     "slug": "platform-spec/compiler/build-pipeline/stage-ordering/verification-and-traceability",
                     "href": "/platform-spec/compiler/build-pipeline/stage-ordering/verification-and-traceability/",
                     "title": "Stage ordering and lowering - Verification and traceability",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/build-pipeline/stage-ordering/unit-artifact-cache",
+                    "href": "/platform-spec/compiler/build-pipeline/stage-ordering/unit-artifact-cache/",
+                    "title": "Unit artifact cache schema",
                     "level": "article"
                   }
                 ]
