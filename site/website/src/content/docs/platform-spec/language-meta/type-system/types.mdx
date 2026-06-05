@@ -65,11 +65,14 @@ Primitives **must** map to `HirPrimitiveType` variants in the reference compiler
 
 ### Type declarations
 
-- `type Name<G…> : Contracts… { fields }` introduces a nominal record-like type.
-- **Fields** **may** be value fields (`T name`), `event` fields (see [Events](/platform-spec/language-meta/evaluation/events/)), or `inject` fields (composition only).
+- `type Name<G…> : Contracts… { members }` introduces a nominal record-like type.
+- **Members** **may** be:
+  - value fields (`T name`), `event` fields (see [Events](/platform-spec/language-meta/evaluation/events/)), or `inject` fields (composition only);
+  - methods (`pub R Name(params) { body }`) with implicit receiver access to the type's fields (see [Method dispatch](/platform-spec/language-meta/type-system/method-dispatch/)).
+- Inline methods in the owning type body **may** access all fields (public and private) of that type.
 - **Conformance list** (`: I, J`) declares contract implementations checked in [Contracts](/platform-spec/language-meta/contracts-and-effects/contracts/).
 - `enum` declarations are specified in [Enums and match](/platform-spec/language-meta/type-system/enums-and-match/).
-- `extend type` adds members externally per [extend type](/platform-spec/language-meta/program-structure/extend-type/).
+- `extend type` adds members **externally** to a type defined elsewhere per [extend type](/platform-spec/language-meta/program-structure/extend-type/). Use inline methods when the behavior belongs with the type definition; use `extend type` for cross-module extension or generated contributions.
 
 ### Static rules
 
@@ -99,6 +102,7 @@ Type band **E12xx** (unknown type, mismatch, missing annotation, member access).
 - **D-LM-TYP-002 — `Option<T>` only:** Optional values use `Option<T>` or explicit enums; `null` and `optional` keyword are forbidden.
 - **D-LM-TYP-003 — `T[]` fat pointer:** Array types share one runtime representation across targets unless a profile documents otherwise.
 - **D-LM-TYP-004 — Single type system:** No parallel reference/value kinds; `ref` is a passing mode, not a second class of types.
+- **D-LM-TYP-005 — Inline type methods:** Methods **may** appear in the owning `type` body; they share the type's scope for field access. `extend type` remains the extension mechanism for types defined elsewhere.
 
 ## Implementation anchors
 - `compiler/crates/beskid_analysis/src/types/` — type declaration, nominal resolution, and `BeskidArray` layout

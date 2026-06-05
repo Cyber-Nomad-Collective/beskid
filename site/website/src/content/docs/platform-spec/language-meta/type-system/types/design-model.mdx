@@ -28,7 +28,7 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 | Construct | Role |
 | --- | --- |
 | **`BeskidType`** | AST node representing any type expression in the grammar |
-| **`TypeDefinition`** | Nominal record-like type with fields and conformances |
+| **`TypeDefinition`** | Nominal record-like type with fields, inline methods, and conformances |
 | **`EnumDefinition`** | Sum type with named variants and optional payload fields |
 | **`HirPrimitiveType`** | Lowered primitive type enum used by HIR and codegen |
 | **`BeskidArray`** | Runtime fat-pointer layout for array values |
@@ -54,8 +54,10 @@ Parsed from `beskid.pest` grammar productions. The `BeskidType` enum covers prim
 ### AST declaration layer
 
 `TypeDefinition` (from `syntax/items/type_definition.rs`) stores:
-- `visibility`, `name`, `generics`, `conformances`, `fields`
-- Per-field documentation via `field_docs`
+- `visibility`, `name`, `generics`, `conformances`, `fields`, `methods`
+- Per-field documentation via `field_docs`; per-method documentation via `method_docs`
+
+Inline methods use the same implicit-receiver model as `extend type` methods but may access private fields of the owning type. `extend type` methods may access **public** fields only (**E1511**).
 
 `EnumDefinition` (from `syntax/items/enum_definition.rs`) stores:
 - `visibility`, `name`, `generics`, `variants`
