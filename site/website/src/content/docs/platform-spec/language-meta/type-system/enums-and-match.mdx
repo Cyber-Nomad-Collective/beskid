@@ -7,7 +7,7 @@ template: splash
 tableOfContents: false
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-21
+lastReviewed: 2026-06-06
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -58,8 +58,9 @@ Defines **`enum` declarations**, **constructors**, **`match` expressions**, and 
 
 ### Constructors and use
 
-- **Qualified** construction **`Enum.Variant(args)`** is required when the enum type is not inferred from context (**E1303** if unqualified where ambiguous).
-- Constructor arity **must** match the variant field list (**E1302**, **E1307**).
+- **Qualified** construction **`Enum.Variant`** or **`Enum.Variant(args)`** is required when the enum type is not inferred from context (**E1303** if unqualified where ambiguous).
+- For **nullary** variants (no declared fields), parentheses **may** be omitted: **`Enum.Variant`** and **`Enum.Variant()`** are equivalent.
+- For variants with fields, **`Enum.Variant(args)`** **must** include parentheses; constructor arity **must** match the variant field list (**E1302**, **E1307**).
 - Enum types in expressions **must** resolve to a known enum (**E1301**).
 
 ### `match` expressions
