@@ -1,10 +1,11 @@
 ---
 title: Resolver contract - Examples
-description: Gives concrete newcomer-friendly scenarios mapped to real compiler paths.
+description: Concrete symbol identity and cross-unit reference scenarios.
 template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-06-05
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -22,19 +23,42 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 <SpecArticleChrome />
 
+## Prefetch dependency symbol
 
+`Main.bd` calls `Output.WriteLine` from a dependency unit collected into `ModuleIndex`:
 
-This article documents **examples** for **resolver contract** in the reference compiler.
+| Identity | Example |
+| --- | --- |
+| `ItemId` | Dense index into merged `items` (stable for prefetch rows) |
+| `SymbolId` | Interned key for export |
+| **`symbolKey`** (api.json) | `corelib_mvp::Std::System::IO::Output::WriteLine` (exact package prefix from materialized project) |
+| **`qualifiedName`** | May use module-relative display; prefer **`symbolKey`** for cross-package links |
 
-## What this covers
-For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
+Workspace find-references on the `WriteLine` use site **must** include references in `Output.bd` when assembly is available.
 
-## Anchored code paths
-- `compiler/crates/beskid_analysis/src/resolve/resolver.rs` owns name resolution and scope lookup.
-- `compiler/crates/beskid_analysis/src/resolve/items.rs` resolves item-level references.
-- `compiler/crates/beskid_tests/src/analysis/resolve.rs` exercises resolver behavior in tests.
+## Entry-defined symbol referenced elsewhere
 
-## Practical notes
-- Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
-- Treat diagnostics and tests as part of the contract, not optional implementation details.
-- If behavior changes, update this article and add/adjust tests in `compiler/crates/beskid_tests` or `compiler/crates/beskid_e2e_tests`.
+`helper()` declared in the entry unit and called from a dependency file:
+
+- Entry merged resolution assigns `helper` a registry symbol under the host **`project_name`**.
+- Per-unit resolve of the dependency file may assign a **different dense `ItemId`** to the same logical import target.
+- IDE reference matching **must** still succeed via equal **`SymbolId`**, not `ItemId` equality.
+
+## `@ref` by full symbol key
+
+Documentation comment:
+
+```beskid
+/// See also @ref(corelib::Std::Console::Esc)
+```
+
+Resolution **must** locate the target item by exact registry string before falling back to `qualifiedName` suffix heuristics (`doc/refs.rs`).
+
+## Non-exportable rows
+
+Parameters and other synthetics have **`ItemInfo.symbol: None`**. They omit **`symbolKey`** in `api.json` and use **`ItemId`** / local identity in IDE queries.
+
+## Anchored fixtures
+
+- `compiler/crates/beskid_e2e_tests/fixtures/corelib_mvp/` — assembly-backed document tests
+- `compiler/corelib/beskid_corelib/tests/corelib_tests/` — corelib integration surfaces

@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-20
+lastReviewed: 2026-06-05
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -42,15 +42,22 @@ This article documents the **design model** for **Analysis, query, and diagnosti
 | **Inputs** | `file_text`, `ProjectSession`, `GrammarRevision` | buffer edit, lockfile/manifest change, grammar bump |
 | **Unit** | `parse_and_expand_unit`, `unit_hir`, `unit_imports` | owning file text |
 | **Graph** | `discovered_units`, `module_index_fingerprint`, `program_assembly` | discovery inputs or any unit in closure |
-| **Entry** | `prepare_compilation_*`, `semantic_snapshot`, `typed_entry_bundle` | entry file, mod invalidation keys, assembly |
+| **Entry** | `prepare_compilation_*`, `semantic_snapshot`, `typed_entry_bundle`, **`entry_resolution_with_db`** | entry file, mod invalidation keys, assembly |
 | **Mod host** | `mod_generate`, syntax/manifest/capability ids | per [incremental scheduling](/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/) |
 
 ## Boundaries
 - Mod SDK facades never bypass the host bridge for effects.
 - Generation logic in the reference compiler remains Rust-internal; Beskid sees only the generated `Beskid.Compiler.*` projection.
 
+## Shared resolution products
+
+`beskid_queries::SharedResolution` wraps `Arc<Resolution>` and exposes symbol registry helpers (`symbol_for_item`, `by_symbol`, `qualified_name`, …) without cloning the full resolution table. **`entry_resolution_with_db`** returns this product after assembly + entry resolve **without** running the type checker — for tooling that needs registry-backed identity only ([D-COMP-MODS-0019](/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/adr/0004-shared-resolution-query-bundle/)).
+
+IDE LSP paths use the same `Resolution` bundle via `DocumentAnalysisSnapshot`; symbol invariants match [resolver design model](/platform-spec/compiler/semantic-pipeline/resolver-contract/design-model/).
+
 ## Anchored code paths
-- `compiler/crates/beskid_queries/` — Salsa incremental database and query groups.
+- `compiler/crates/beskid_queries/src/output.rs` — `SharedResolution`
+- `compiler/crates/beskid_queries/src/entry.rs` — `entry_resolution_with_db`
 - `compiler/crates/beskid_analysis/src/analysis/` — staged rules and semantic state.
 - `compiler/crates/beskid_analysis/src/resolve/` — resolution products queryable from facades.
 - `compiler/crates/beskid_lsp/src/diagnostics.rs` — diagnostic shaping for editor parity.

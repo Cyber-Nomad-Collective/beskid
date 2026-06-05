@@ -5,6 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-06-05
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -103,6 +104,31 @@ Nav role is **derived from `kind`** unless a future schema adds an explicit `nav
 
 Core identity (unchanged from v3): `id`, `qualifiedName`, `name`, `displayName`, `kind`, `visibility`, `location`, `parentId`, `memberIds`, `docMarkdown`, `doc`, `controls`.
 
+### Stable symbol identity (v4 additive)
+
+| Field | Required | Meaning |
+| --- | --- | --- |
+| **`symbolKey`** | no | Package-prefixed canonical symbol string from **`SymbolRegistry`** when the row is exportable; **omitted** when collect assigns no symbol (parameters, synthetics). Same encoding as [resolver symbol identity](/platform-spec/compiler/semantic-pipeline/resolver-contract/design-model/). |
+
+Rules ([D-TOOL-CLI-0003](/platform-spec/tooling/cli/api-json-contract/adr/0003-symbol-key-field/)):
+
+1. Emitters **must** set `symbolKey` only when registry lookup succeeds — **must not** copy `qualifiedName` as a fallback.
+2. Consumers **should** prefer `symbolKey` over parsing `qualifiedName` for cross-package identity and `@ref` resolution.
+3. Graph navigation (`parentId`, `memberIds`, `refItemId`) is unchanged; `symbolKey` is parallel stable identity.
+4. Packed artifacts: pckg validates uniqueness and `::` prefix when present ([D-TOOL-PCKG-0005](/platform-spec/tooling/registry-client/pckg-client-contract/adr/0005-api-json-symbol-key-validation/)).
+
+Example row (truncated):
+
+```json
+{
+  "id": 42,
+  "qualifiedName": "Std::System::IO::Output::WriteLine",
+  "symbolKey": "corelib_mvp::Std::System::IO::Output::WriteLine",
+  "name": "WriteLine",
+  "kind": "function"
+}
+```
+
 ### Compiler-derived fields (v4)
 
 | Field | When present | Meaning |
@@ -127,7 +153,7 @@ Core identity (unchanged from v3): `id`, `qualifiedName`, `name`, `displayName`,
 - **`display`**: formatted type text (primitives, arrays, refs, paths).
 - **`refItemId`**: present when resolution maps the type span to a **type-like** item (`type`, `enum`, `contract`). Omitted for primitives, unresolved paths, and generic parameters.
 
-Type links in UI **must** use **`refItemId`**, not string parsing of `display`.
+Type links in UI **must** use **`refItemId`**, not string parsing of `display`. Cross-package type navigation **may** also use **`symbolKey`** on target rows when `refItemId` is absent but the symbol is registry-backed.
 
 ## Documentation fields
 

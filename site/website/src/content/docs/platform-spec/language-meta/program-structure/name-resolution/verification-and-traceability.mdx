@@ -46,8 +46,8 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 - [x] Resolver: `resolver.rs`, `collect.rs`, `resolve_refs.rs`
 - [x] Name resolution rules: `name_resolution.rs`
 - [x] Diagnostics: **E1101–E1108**, **W1103**
-- [ ] Cross-package resolution
-- [ ] Stable qualifiedName generation for tooling
+- [x] Cross-package resolution (assembly prefetch + `ModuleIndex`)
+- [x] Stable package-prefixed symbol identity for tooling (`SymbolRegistry`, `symbolKey`) — see [resolver contract](/platform-spec/compiler/semantic-pipeline/resolver-contract/)
 
 ## Test locations
 

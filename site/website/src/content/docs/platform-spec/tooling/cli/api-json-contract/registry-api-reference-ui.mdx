@@ -64,9 +64,9 @@ Legacy artifacts without module parenting **may** synthesize module edges from `
 
 ## Type and cross-package links
 
-- In-package types: navigate via **`refItemId`** when set; otherwise select by `qualifiedName`.
-- External types (`declaringPackage` ≠ current package): link to `` `/docs/{declaringPackage}@{version}/api/{qualifiedName}` `` (same version segment as the host page when possible).
-- Markdown `@ref` links packed at publish time **must** use the same qualified-name rules as the design model.
+- In-package types: navigate via **`refItemId`** when set; otherwise select by `qualifiedName` or exact **`symbolKey`** when present.
+- External types (`declaringPackage` ≠ current package): link to `` `/docs/{declaringPackage}@{version}/api/{qualifiedName}` `` (same version segment as the host page when possible); prefer **`symbolKey`**-stable routes when the UI supports percent-encoded symbol keys.
+- Markdown `@ref` links packed at publish time **must** use the same qualified-name and **symbolKey** rules as the [design model](/platform-spec/tooling/cli/api-json-contract/design-model/).
 
 ## Implementation anchors
 

@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-11
+lastReviewed: 2026-06-05
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -42,9 +42,9 @@ This page defines the concrete IntelliSense behavior exposed by Beskid LSP to ed
 3. **Member completion after import aliases** — After a trailing `.` following a registered `use` alias (for example `IO.` after `use Std.System.IO`), completion **shall** list public members from the aliased module path in the assembly `ModuleGraph`.
 4. **`use` path completion** — On a `use` line, completion **shall** offer next path segments from assembly-known logical module paths (`assembly_module_paths` / `ModuleGraph`).
 5. **Hover** shall return Markdown content for resolved `.bd` symbols and manifest tokens in `.proj`. The hover **range** shall use [`SymbolLocation`](compiler/crates/beskid_analysis/src/services/document.rs) and the declaring unit's source text when `ItemInfo.source_path` differs from the buffer path (same cross-file mapping as go-to-definition). Hover ranges **shall** map through `SymbolLocation` and the target unit source when `ItemInfo.source_path` differs from the buffer path (same cross-file range contract as go-to-definition).
-6. **Go to definition** shall resolve to the declaration span for resolved symbols in `.bd`, using `ItemInfo.source_path` when set so the LSP returns a `file://` URI for dependency units; in `.proj`, `path = "..."` dependency values shall navigate to the target `Project.proj`.
+6. **Go to definition** shall resolve to the declaration span for resolved symbols in `.bd`, using `ItemInfo.source_path` when set so the LSP returns a `file://` URI for dependency units; item targets **shall** be canonicalized through `Resolution.by_symbol` (`canonical_item_id`) before locating `ItemInfo`. In `.proj`, `path = "..."` dependency values shall navigate to the target `Project.proj`.
 7. **Go to declaration** shall be supported and shall follow the same target resolution contract as go-to-definition.
-8. **Find references** shall be supported for resolved `.bd` symbols and manifest tokens in `.proj`; when `CompilationContext` provides `ProgramAssembly`, workspace references **shall** include matches from non-entry units via `references_at_offset_workspace` (dependency units resolved with `ModuleIndex::resolve_unit_hir`); declaration inclusion shall follow the `includeDeclaration` request flag.
+8. **Find references** shall be supported for resolved `.bd` symbols and manifest tokens in `.proj`; when `CompilationContext` provides `ProgramAssembly`, workspace references **shall** include matches from non-entry units via `references_at_offset_workspace` (dependency units resolved with `ModuleIndex::resolve_unit_hir`); reference equality for exportable symbols **shall** use shared **`SymbolId`** from `SymbolRegistry` when available, not raw **`ItemId`** equality across per-unit resolutions; declaration inclusion shall follow the `includeDeclaration` request flag.
 9. **Rename + prepare rename** shall be supported for resolved symbols and manifest tokens with identifier validation (`[A-Za-z_][A-Za-z0-9_]*`); invalid identifiers shall return no rename edit. Rename remains **single-document** per request even when workspace references span multiple files.
 10. **Signature help** shall be supported for `.bd` call sites and return one active signature derived from the callable hover payload.
 11. **Document symbols** shall be supported for `.bd` and `.proj` with stable symbol-kind mapping.
