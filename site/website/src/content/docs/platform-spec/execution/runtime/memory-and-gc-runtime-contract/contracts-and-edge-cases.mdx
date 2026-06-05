@@ -66,6 +66,11 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 Reference counting, conservative GC, and region-only allocation are **rejected** for v0.2; see legacy [Concurrent GC](../../../../execution/memory/gc.md) decision summary.
 
+## Implementation anchors
+- `compiler/crates/beskid_runtime/src/gc.rs` — write barriers, heap allocation, and mutator guard
+- `compiler/crates/abfall/src/` — precise type descriptors and tri-color invariants
+- `compiler/crates/beskid_abi/src/builtins.rs` — `gc_write_barrier`, `gc_collect` builtin specs
+
 ## Related topics
 
 - [Memory model (language)](/platform-spec/language-meta/memory-model/)

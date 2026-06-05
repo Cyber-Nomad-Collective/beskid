@@ -56,6 +56,11 @@ When the feature is **disabled**, artifacts containing externs **must** fail com
 2. Generated code calls `interop_dispatch_unit`, `interop_dispatch_ptr`, or `interop_dispatch_usize` depending on return shape.
 3. Runtime reads tag at offset **+8** and payload at **+16** from the object header (v0.2 baseline; ABI-bumped if layout changes).
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/beskid.pest` — `Extern` grammar rules
+- `compiler/crates/beskid_codegen/src/` — validated extern lowering
+- `compiler/crates/beskid_runtime/src/interop_layout.rs` — tagged interop handle layout
+
 ## Related topics
 
 - [Contracts and edge cases](./contracts-and-edge-cases/)

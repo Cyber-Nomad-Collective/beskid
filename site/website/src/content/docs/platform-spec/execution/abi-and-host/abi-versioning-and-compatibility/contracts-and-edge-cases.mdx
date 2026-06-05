@@ -48,6 +48,11 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 - Release notes **should** document ABI bumps and list removed or renamed symbols.
 - Conformance fixtures **should** assert symbol list parity between `symbols.rs` and `beskid_runtime::lib.rs` re-exports.
 
+## Implementation anchors
+- `compiler/crates/beskid_abi/src/version.rs` — version check and compatibility gates
+- `compiler/crates/beskid_abi/src/symbols.rs` — symbol stability across ABI versions
+- `compiler/crates/beskid_engine/src/jit_module.rs` — JIT symbol registration
+
 ## Related topics
 
 - [Extern dispatch and policy](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/) — user library symbols outside `RUNTIME_EXPORT_SYMBOLS`

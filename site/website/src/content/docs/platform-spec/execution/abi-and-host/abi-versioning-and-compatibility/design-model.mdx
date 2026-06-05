@@ -79,6 +79,11 @@ Codegen and the engine read the **same** `beskid_abi` crate revision at build ti
 
 Reference implementations target **64-bit pointers** and Linux x86_64 for syscall-backed builtins; other hosts may stub behavior but must preserve symbol names and Cranelift signature shapes declared in `BUILTIN_SPECS`.
 
+## Implementation anchors
+- `compiler/crates/beskid_abi/src/version.rs` — `BESKID_RUNTIME_ABI_VERSION` constant and version negotiation
+- `compiler/crates/beskid_abi/src/symbols.rs` — `RUNTIME_EXPORT_SYMBOLS` registry
+- `compiler/crates/beskid_abi/src/builtins.rs` — `BUILTIN_SPECS` signature catalog
+
 ## Related topics
 
 - [Flow and algorithm](./flow-and-algorithm/) — JIT registration and version check ordering

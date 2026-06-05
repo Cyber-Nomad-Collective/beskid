@@ -1,0 +1,55 @@
+---
+title: "Error handling - FAQ and troubleshooting"
+description: "Common issues, troubleshooting, and locked decisions for Beskid error handling."
+template: splash
+tableOfContents: true
+specLevel: article
+status: Draft
+lastReviewed: 2026-06-05
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: "Error handling"
+    href: /platform-spec/language-meta/contracts-and-effects/error-handling/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Locked decisions
+
+| Decision | ID | Summary |
+| --- | --- | --- |
+| Enum-first errors | D-LM-ERR-001 | Explicit sum types over magic results |
+| No exceptions keyword | D-LM-ERR-002 | Interop-scoped unwinding only |
+| `Option` vs `Result` | D-LM-ERR-003 | Separate absence and failure |
+| Postfix `?` only | D-LM-ERR-004 | No `try` statement form |
+
+## FAQ
+
+### Why no `try`/`catch`?
+
+Beskid prefers explicit sum types. The `?` operator provides ergonomic propagation without hidden control flow. Cross-language unwinding is handled at FFI boundaries.
+
+### Can I use `?` on `Option<T>`?
+
+In v0.1, `?` expects a Result-shaped enum. Using it on `Option<T>` emits **E1222** unless `Option` is made Result-compatible.
+
+### What happens on `?` in a `unit` function?
+
+The desugared `return` must match the function's return type. If the function returns `unit`, `?` on a Result type fails type checking.
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+| --- | --- |
+| **E1222** | `?` applied to non-Result expression |
+| Type mismatch after `?` | Enclosing return type incompatible with Error variant |
+| `?` in `unit` function | Cannot return Error from `unit` function |

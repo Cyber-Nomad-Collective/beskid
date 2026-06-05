@@ -64,6 +64,11 @@ flowchart LR
 
 Shipped artifacts **must** document enabled features. Mixing a compiler test build that expects `arrays_backing` against a default runtime produces logical failures without ABI version mismatch.
 
+## Implementation anchors
+- `compiler/crates/beskid_runtime/Cargo.toml` — `[features]` definitions (`arrays_backing`, `metrics`)
+- `compiler/crates/beskid_runtime/src/builtins/arrays.rs` — `arrays_backing` gated array builtins
+- `compiler/crates/beskid_engine/Cargo.toml` — `extern_dlopen` engine feature
+
 ## Related topics
 
 - [Flow and algorithm](./flow-and-algorithm/)

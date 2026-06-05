@@ -71,6 +71,11 @@ flowchart TB
 
 See [Fiber scheduler and stacks](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/) for parking and safepoints.
 
+## Implementation anchors
+- `compiler/crates/beskid_runtime/src/gc.rs` — GC arena, write barriers, and collection cycle
+- `compiler/crates/beskid_runtime/src/runtime/` — `GcSnapshot`, mutator attachment, and arena access
+- `compiler/crates/abfall/src/` — tri-color marking and heap implementation
+
 ## Related topics
 
 - [Flow and algorithm](./flow-and-algorithm/)

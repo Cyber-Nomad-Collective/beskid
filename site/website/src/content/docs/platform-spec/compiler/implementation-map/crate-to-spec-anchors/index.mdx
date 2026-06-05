@@ -41,7 +41,19 @@ This feature explains how maintainers trace each normative statement to a concre
 - `beskid_analysis` -> parser/resolution/semantic leaves
 - `beskid_codegen` -> lowering contract leaves
 - `beskid_abi` and `beskid_runtime` -> execution ABI/runtime leaves
+- `beskid_engine` -> JIT execution of CodegenArtifact
+- `beskid_aot` -> AOT compilation and object emission
+- `beskid_pipeline` -> stable pipeline phase ordering and composition
+- `beskid_graph` -> project graph model
+- `beskid_queries` -> Salsa incremental query engine
+- `beskid_cli` -> command surface and build/run orchestration
+- `beskid_lsp` -> language server and diagnostics parity
+- `beskid_pckg` -> package registry client
+- `beskid_runtime_bridge` -> arch/OS interop (extern dispatch)
+- `beskid_template` -> project scaffolding templates
+- `abfall` -> garbage-collector allocator (Sweep, Mark, Compact)
 - `beskid_tests` and `beskid_e2e_tests` -> conformance leaves
+- `beskid_ast_derive`, `beskid_ast_reflect_gen` -> internal code-generation utilities (no normative spec surface)
 </SpecSection>
 
 ## Decisions

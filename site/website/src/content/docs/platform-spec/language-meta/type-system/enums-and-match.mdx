@@ -90,6 +90,11 @@ Enum/match band **E1301–E1308**. See [Diagnostic code registry](/platform-spec
 - **D-LM-ENUM-003 — Exhaustiveness is mandatory:** Partial `match` on enums **must** be rejected unless `_` is present.
 - **D-LM-ENUM-004 — `Option` is not special syntax:** Optional values use the corelib `Option<T>` enum, not a language `optional` keyword.
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/types/` — enum declaration, variant resolution, and exhaustiveness checking
+- `compiler/crates/beskid_analysis/src/analysis/` — `match` expression lowering and arm typing
+- `compiler/crates/beskid_codegen/src/` — discriminant layout and match codegen
+
 ## Platform view
 
 Algebraic enums and exhaustive `match` tie data representation to control flow. Lowering must preserve discriminant layout described in Execution where relevant.

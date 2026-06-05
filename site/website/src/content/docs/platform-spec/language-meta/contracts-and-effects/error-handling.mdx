@@ -107,6 +107,10 @@ Programs using `?` **must** compile only when propagation types align; reference
 - **D-LM-ERR-004 — Postfix `?` only:** Error propagation uses `expr?`; there is no `try` statement form in v0.1.
 - **D-LM-ERR-005 — Corelib `Result`:** With Std linked, canonical recoverable-result type is ``Core.Results.Result<TValue, TError>``; `?` lowering and type-check use that enum's resolved `Ok` variant.
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/analysis/` — `?` operator lowering and type-check
+- `compiler/crates/beskid_codegen/src/` — try-expression lowering to control flow
+
 ## Platform view
 
 Representing and propagating failures (`Result`, `try`, unwinding policy). Runtime lowering shares the ABI error envelope described in Execution.

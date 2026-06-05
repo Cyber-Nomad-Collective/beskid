@@ -53,6 +53,11 @@ Trace how a builtin reference in CLIF becomes a live function pointer at run tim
 2. Runtime barrier ensures tri-color invariant (see [Memory and GC](/platform-spec/execution/runtime/memory-and-gc-runtime-contract/)).
 3. Phase A may simplify barrier work when only one mutator runs; symbol remains reserved.
 
+## Implementation anchors
+- `compiler/crates/beskid_codegen/src/` — `declare_builtin_imports` Cranelift registration
+- `compiler/crates/beskid_abi/src/builtins.rs` — signature specification table
+- `compiler/crates/beskid_engine/src/jit_module.rs` — symbol map initialization
+
 ## Related topics
 
 - [Contracts and edge cases](./contracts-and-edge-cases/)

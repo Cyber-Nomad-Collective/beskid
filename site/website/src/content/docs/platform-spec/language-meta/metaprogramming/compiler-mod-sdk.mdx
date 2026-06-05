@@ -128,3 +128,8 @@ Mods may define and call language macros like any library; `Generator` output th
 - No runtime reflection over arbitrary Beskid objects.
 - No mutation of Rust compiler composition graphs from Beskid mod code.
 </SpecSection>
+
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/mod_host/` — mod discovery, load, and orchestration phases
+- `compiler/crates/beskid_analysis/src/macros/` — `contract` type handling for mod contracts
+- `compiler/corelib/` — SDK types (`Collector`, `Generator`, `Analyzer`, `Rewriter`)

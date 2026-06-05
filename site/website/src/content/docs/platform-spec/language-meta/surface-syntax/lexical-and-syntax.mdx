@@ -92,6 +92,11 @@ A tool claiming Beskid **L0** conformance **must** accept the same token stream 
 - **D-LM-LEX-002 — `///` documentation:** Triple-slash doc lines attach only via `ItemWithDocs`; four-or-more slashes are never doc comments.
 - **D-LM-LEX-003 — Reserved async/await:** Tokens exist in the grammar for forward compatibility; semantic use is forbidden in [Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/) (compile error if used as expressions).
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/beskid.pest` — canonical PEG grammar, token definitions, and context-free skeleton
+- `compiler/crates/beskid_analysis/src/parser.rs` — parser entry point consuming `beskid.pest`
+- `compiler/crates/beskid_analysis/src/syntax/` — AST node definitions built from parser output
+
 ## Platform view
 
 Defines tokens, whitespace, and the context-free skeleton that every later phase assumes. Formatter and LSP **must** preserve token boundaries defined here.

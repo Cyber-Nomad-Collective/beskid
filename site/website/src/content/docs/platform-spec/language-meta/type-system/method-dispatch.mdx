@@ -86,6 +86,10 @@ Call resolution tests in `beskid_analysis` **must** pass for **L2** claims.
 - **D-LM-DISP-003 — Receiver static type:** Dispatch keys off the static type of the receiver expression, not runtime tags.
 - **D-LM-DISP-004 — No `null` receiver:** Calls on possibly-absent values **must** use `Option<T>` and `match`, not null checks.
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/resolve/` — method resolution and `extend type` member lookup
+- `compiler/crates/beskid_analysis/src/analysis/` — static dispatch and call resolution diagnostics
+
 ## Platform view
 
 Virtual dispatch, overload resolution, and receiver rules decide which code runs. Interop and codegen consume the same dispatch table model.

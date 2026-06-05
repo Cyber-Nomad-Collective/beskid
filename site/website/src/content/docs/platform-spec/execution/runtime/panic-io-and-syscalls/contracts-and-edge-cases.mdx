@@ -53,6 +53,10 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 | Panic during another panic | Process abort; no nested recovery |
 | Redirected stdout | Still `fd=1`; TTY detection is corelib-only |
 
+## Implementation anchors
+- `compiler/crates/beskid_runtime/src/builtins/panic_io.rs` — syscall dispatch, write-loop, and panic termination
+- `compiler/crates/beskid_abi/src/builtins.rs` — IO builtin signature contracts
+
 ## Related topics
 
 - [Error handling (language)](/platform-spec/language-meta/contracts-and-effects/error-handling/)

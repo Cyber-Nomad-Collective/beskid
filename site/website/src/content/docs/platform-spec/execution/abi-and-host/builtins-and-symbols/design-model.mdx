@@ -69,6 +69,11 @@ flowchart LR
   clif -->|same symbol string| nm
 ```
 
+## Implementation anchors
+- `compiler/crates/beskid_abi/src/builtins.rs` — `BuiltinFnSpec` entries and `BUILTIN_SPECS` table
+- `compiler/crates/beskid_abi/src/symbols.rs` — `RUNTIME_EXPORT_SYMBOLS` and `SYM_*` constants
+- `compiler/crates/beskid_runtime/src/builtins/` — `#[unsafe(no_mangle)]` runtime implementations
+
 ## Related topics
 
 - [ABI versioning](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/) — when to bump version after symbol changes

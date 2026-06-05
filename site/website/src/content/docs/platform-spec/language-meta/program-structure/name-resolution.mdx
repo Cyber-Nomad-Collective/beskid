@@ -106,6 +106,11 @@ Import band **E1104–E1108**; resolve duplicates **E1102**. Registry: [Diagnost
 - **D-LM-NAME-003 — Qualified names for tooling:** Emitted `qualifiedName` strings **must** be stable across compiles for the same source snapshot.
 - **D-LM-NAME-004 — No implicit `null` imports:** Resolution **must not** inject nullable or `optional` aliases.
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/resolve/` — resolver graph, `qualifiedName` generation, and import resolution
+- `compiler/crates/beskid_analysis/src/resolve/resolver.rs` — name lookup and shadowing rules
+- `compiler/crates/beskid_analysis/src/resolve/items.rs` — item resolution and `pub use` re-exports
+
 ## Platform view
 
 Scopes, imports, and shadowing tie syntax to symbols. Diagnostics for unresolved names must cite these rules verbatim.

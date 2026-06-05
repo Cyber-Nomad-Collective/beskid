@@ -27,12 +27,27 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 This article documents **design model** for **conformance evidence policy** in the reference compiler.
 
 ## What this covers
-For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
+The conformance evidence policy enforces a three-tier model for proving compiler behavior remains stable:
+
+| Tier | Scope | Lives in |
+|------|-------|----------|
+| **T1 — Semantic diagnostics** | Diagnostic codes, resolver graphs, staged rules | `beskid_tests/src/analysis` |
+| **T2 — Mod pipeline** | Mod load/collect/generate/analyze/rewrite ordering and replay | `beskid_tests/src/mods` |
+| **T3 — E2E behavior** | Source-to-runtime outcomes through CLI backends | `beskid_e2e_tests` |
+
+Each tier locks a different interface boundary: T1 locks the analysis surface, T2 locks the Mod contract dispatch, and T3 locks user-visible runtime behavior.
+
+## Subsystem boundaries
+- **Analysis layer** (`beskid_analysis`): Emits diagnostics and staged rules consumed by downstream crates.
+- **Mod host** (`beskid_analysis::mod_host`): Owns the `PipelineObserver` trait and the canonical `mod.load → collect → generate → analyze → rewrite` chain.
+- **Test crates** (`beskid_tests`, `beskid_e2e_tests`): Assert that boundaries hold; must not redefine semantics of the crates they test.
 
 ## Anchored code paths
-- `compiler/crates/beskid_tests/src/analysis/diagnostics.rs` provides semantic conformance evidence.
-- `compiler/crates/beskid_tests/src/doc_tests.rs` validates docs-facing conformance examples.
-- `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` provides executable behavior evidence.
+- `compiler/crates/beskid_tests/src/analysis/diagnostics.rs` — T1 semantic conformance evidence.
+- `compiler/crates/beskid_tests/src/mods/contract_dispatch.rs` — T2 Mod pipeline ordering.
+- `compiler/crates/beskid_tests/src/mods/incremental_replay.rs` — T2 incremental replay.
+- `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs` — T3 executable behavior evidence.
+- `compiler/crates/beskid_tests/src/spine/diagnostics_parity.rs` — LSP parity across tiers.
 
 ## Practical notes
 - Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.

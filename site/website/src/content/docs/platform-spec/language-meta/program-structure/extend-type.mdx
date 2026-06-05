@@ -60,3 +60,7 @@ The extended type name (`Account`) must refer to an in-scope type declaration. T
 <SpecSection title="Compiler mods" id="compiler-mods">
 `Generator` contracts may emit `extend type` blocks as typed AST contributions. Generated extensions follow the same access and visibility rules as hand-authored extensions.
 </SpecSection>
+
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/analysis/` — `extend type` parsing, member resolution, and access rules
+- `compiler/crates/beskid_analysis/src/types/` — extended type member injection into type tables

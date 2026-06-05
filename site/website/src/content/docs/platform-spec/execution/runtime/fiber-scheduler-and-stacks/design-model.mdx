@@ -44,3 +44,8 @@ Only **one** thread at a time may hold the mutator role for GC allocation in Pha
 ## Processor count
 
 `ProcessorCount` / `SetProcessorCount` map to worker pool size (Go **GOMAXPROCS** analogue); default logical CPUs.
+
+## Implementation anchors
+- `compiler/crates/beskid_runtime/src/scheduler/` — scheduler run queue, parking, and GC safepoints
+- `compiler/crates/beskid_runtime/src/fiber/` — fiber lifecycle (spawn, yield, cancel, join)
+- `compiler/crates/beskid_abi/src/symbols.rs` — `fiber_spawn`, `fiber_yield`, `fiber_join_value` export symbols

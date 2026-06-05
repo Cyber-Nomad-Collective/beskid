@@ -83,6 +83,10 @@ Reference compiler tests for `let` inference and generic call inference **must**
 - **D-LM-INF-003 — No nullable inference:** Inference **must not** introduce nullable or `optional` types; use `Option<T>` explicitly.
 - **D-LM-INF-004 — Contextual lambdas:** Untyped lambda parameters require an expected function type from the enclosing expression.
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/types/` — type inference engine and constraint solving
+- `compiler/crates/beskid_analysis/src/analysis/` — diagnostic emission for inference failures (E1202, E1206)
+
 ## Platform view
 
 Local type inference reduces annotation burden while keeping programs predictable. The inference algorithm is specified here; diagnostics reference these rules.

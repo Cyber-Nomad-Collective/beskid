@@ -81,6 +81,10 @@ Types with `event` fields **must** lower to the same calling convention in AOT a
 - **D-LM-EVT-003 — Synchronous default:** Handlers run on the raising fiber unless a host profile says otherwise.
 - **D-LM-EVT-004 — Not `Option`:** Subscription state is host-managed; absence of subscribers is not `Option<T>` at the language surface.
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/types/` — `event` field declaration and subscription type-checking
+- `compiler/crates/beskid_codegen/src/` — event handler call generation and calling convention
+
 ## Platform view
 
 Multicast events, subscription lifetime, and thread affinity assumptions. UI stacks build on these primitives.

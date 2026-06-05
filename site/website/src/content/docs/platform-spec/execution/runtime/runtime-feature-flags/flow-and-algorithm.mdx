@@ -58,6 +58,11 @@ How optional features propagate from Cargo to runtime behavior. Build alignment 
 2. Run conformance tests compiled with the same feature set.
 3. Compare `array_new` behavior in integration tests (backing vs header-only).
 
+## Implementation anchors
+- `compiler/crates/beskid_runtime/src/builtins/arrays.rs` — `arrays_backing` enabled array construction
+- `compiler/crates/beskid_engine/src/` — `extern_dlopen` dynamic extern resolution
+- `compiler/crates/beskid_tests/src/runtime/` — feature-gated integration test fixtures
+
 ## Related topics
 
 - [Contracts and edge cases](./contracts-and-edge-cases/)

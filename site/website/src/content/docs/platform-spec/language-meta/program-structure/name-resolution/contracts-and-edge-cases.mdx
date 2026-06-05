@@ -1,0 +1,61 @@
+---
+title: "Name resolution - Contracts and edge cases"
+description: "Normative contracts, edge cases, and invariants for Beskid name resolution."
+template: splash
+tableOfContents: true
+specLevel: article
+status: Draft
+lastReviewed: 2026-06-05
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: "Name resolution"
+    href: /platform-spec/language-meta/program-structure/name-resolution/
+    relation: Parent feature hub
+  - type: Feature
+    title: "Diagnostic code registry"
+    href: /platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/
+    relation: E11xx band reservation
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Hard requirements
+
+- **Single resolver graph** — Package driver and typechecker share one resolution snapshot per compilation.
+- **Contract namespaces** — Contracts may appear as path prefixes for static methods.
+- **Qualified names for tooling** — Emitted `qualifiedName` strings must be stable across compiles.
+- **No implicit `null` imports** — Resolution must not inject nullable or `optional` aliases.
+
+## Diagnostic band E11xx
+
+| Code | Condition |
+| --- | --- |
+| **E1101** | Unknown value |
+| **E1102** | Duplicate item or local |
+| **E1104** | Ambiguous import |
+| **E1105** | Unknown import path |
+| **E1106** | Use before declaration |
+| **E1107** | Private item access |
+| **E1108** | Unknown module path |
+| **W1103** | Shadowed local |
+
+## Edge cases
+
+- **Forward reference** — `use` before declaration in the same module emits **E1106** when forward reference is illegal.
+- **Generic parameter shadowing** — Generic parameters shadow type names in signature scope only for the declaring signature.
+- **Self-referential type** — A type may reference itself in its own field types; resolution handles this via deferred binding.
+- **Import cycle** — Circular `use` dependencies are allowed as long as no forward references are used.
+
+## Invariants
+
+- Resolution must respect visibility from the importer's module.
+- Every resolved symbol must have a stable `qualifiedName` for tooling.
+- Re-resolution on incremental edits must produce the same result as full compilation for unchanged sites.

@@ -56,6 +56,10 @@ Full table: `compiler/crates/beskid_abi/src/builtins.rs`.
 | Test helpers `test_bytes_*` | Only for compiler tests; not a stable user API |
 | Metrics exports | Gated by `metrics` feature; not in baseline `RUNTIME_EXPORT_SYMBOLS` unless enabled at build |
 
+## Implementation anchors
+- `compiler/crates/beskid_abi/src/builtins.rs` — signature validation, null-safety, error sentinel contracts
+- `compiler/crates/beskid_runtime/src/builtins/` — runtime impl parity with specs
+
 ## Related topics
 
 - [Panic, IO, and syscalls](/platform-spec/execution/runtime/panic-io-and-syscalls/)

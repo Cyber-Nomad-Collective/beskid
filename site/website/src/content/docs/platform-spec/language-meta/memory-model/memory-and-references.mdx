@@ -99,6 +99,11 @@ Memory rules enforced in `beskid_analysis` **must** be preserved in codegen for 
 - **D-LM-MEM-003 — GC by default:** Heap objects are collector-managed; escape analysis may stack-allocate but **must not** skip tracing when pointers escape.
 - **D-LM-MEM-004 — No `null` addresses:** References are non-null at the type level; `Option<T>` models absence.
 
+## Implementation anchors
+- `compiler/crates/beskid_runtime/src/` — heap allocation, GC tracing, and `ref T` fat-pointer layout
+- `compiler/crates/beskid_analysis/src/types/` — reference type checking and immutability rules
+- `compiler/crates/beskid_abi/src/builtins.rs` — `gc_write_barrier` and allocation builtins
+
 ## Platform view
 
 Locals, `ref T`, GC-traced heap objects, and channel-mediated sharing. Runtime barrier and phase details live under platform-spec execution; `/execution/` pages are a legacy bridge only.

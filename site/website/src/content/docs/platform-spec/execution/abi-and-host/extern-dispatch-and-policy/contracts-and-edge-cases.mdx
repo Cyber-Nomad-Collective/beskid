@@ -49,6 +49,11 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 - New packages **should** use link-time [C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/) rather than `extern_dlopen`.
 - Panic from foreign code **should** be treated as process-fatal; Beskid does not translate C aborts into `Option`.
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/` — extern validation diagnostics and feature gating
+- `compiler/crates/beskid_engine/src/` — optional `extern_dlopen` path
+- `compiler/crates/beskid_runtime/src/interop/` — runtime panic policy for foreign code
+
 ## Related topics
 
 - [FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/)

@@ -67,6 +67,11 @@ Syscall builtins accept **file descriptor + buffer** (`syscall_write` uses `Besk
 
 Reference implementation: **Linux x86_64** direct syscalls for performance. Other targets may delegate to `std::io` for fds 1/2 while preserving signatures (**IO-ABI-003**).
 
+## Implementation anchors
+- `compiler/crates/beskid_runtime/src/builtins/panic_io.rs` — `panic`, `panic_str`, `syscall_write` implementations
+- `compiler/crates/beskid_abi/src/builtins.rs` — `syscall_write`, `syscall_read` builtin specs
+- `compiler/corelib/packages/system/src/IO/` — corelib IO facade over runtime syscalls
+
 ## Related topics
 
 - [Flow and algorithm](./flow-and-algorithm/)

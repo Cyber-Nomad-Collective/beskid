@@ -29,6 +29,11 @@ import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro
 
 This feature hub defines how JIT and AOT diverge after lowering while sharing the same `CodegenArtifact`.
 
+## Implementation anchors
+- `compiler/crates/beskid_engine/src/` — JIT execution of `CodegenArtifact` via Cranelift
+- `compiler/crates/beskid_aot/src/` — AOT compilation, object emission, and linking
+- `compiler/crates/beskid_codegen/src/` — shared `CodegenArtifact` consumed by both backends
+
 ## Decisions
 
 No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-BUILD-0001` … `D-COMP-BUILD-0003`); use the reader **ADRs** tab for expandable detail.

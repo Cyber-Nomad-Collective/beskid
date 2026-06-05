@@ -54,6 +54,11 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 | User enables `metrics` locally | JIT must link extra symbols only if codegen calls them |
 | VSIX runtime vs CLI runtime feature mismatch | Subtle array/GC test failures — align Open VSX build matrix |
 
+## Implementation anchors
+- `compiler/crates/beskid_runtime/Cargo.toml` — feature flags and build-time gating
+- `compiler/crates/beskid_abi/src/version.rs` — ABI version independence from features
+- `compiler/crates/beskid_runtime/src/builtins/arrays.rs` — `arrays_backing` conditional compilation
+
 ## Related topics
 
 - [ABI versioning](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/)

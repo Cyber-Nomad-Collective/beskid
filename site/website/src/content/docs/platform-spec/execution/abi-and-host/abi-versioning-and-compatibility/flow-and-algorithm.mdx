@@ -59,6 +59,11 @@ Missing symbols surface as **`JitError::MissingFunction`** at finalize time rath
 3. Refresh platform-spec articles and `compiler/crates/beskid_tests` / `beskid_e2e_tests` fixtures that pin version or symbol lists.
 4. Publish runtime and compiler artifacts in lockstep; mixed versions are unsupported for production (**ABI-004**).
 
+## Implementation anchors
+- `compiler/crates/beskid_abi/src/version.rs` — version constant and bump workflow
+- `compiler/crates/beskid_engine/src/jit_module.rs` — `new_with_symbols` registration and startup check
+- `compiler/crates/beskid_codegen/src/` — `declare_builtin_imports` lowers specs to Cranelift
+
 ## Related topics
 
 - [Design model](./design-model/) — compatibility diagram and actors

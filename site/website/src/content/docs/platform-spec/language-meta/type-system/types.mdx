@@ -100,6 +100,11 @@ Type band **E12xx** (unknown type, mismatch, missing annotation, member access).
 - **D-LM-TYP-003 — `T[]` fat pointer:** Array types share one runtime representation across targets unless a profile documents otherwise.
 - **D-LM-TYP-004 — Single type system:** No parallel reference/value kinds; `ref` is a passing mode, not a second class of types.
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/types/` — type declaration, nominal resolution, and `BeskidArray` layout
+- `compiler/crates/beskid_analysis/src/hir/` — HIR type representations consumed by lowering
+- `compiler/crates/beskid_codegen/src/` — type lowering to Cranelift IR
+
 ## Platform view
 
 The type grammar (nominal types, generics, `ref T`, `Option<T>`) is the backbone of static checking. All analysis phases share these definitions.

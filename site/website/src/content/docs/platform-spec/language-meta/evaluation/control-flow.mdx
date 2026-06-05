@@ -91,6 +91,10 @@ Control band **E1401–E1403**; bool condition errors in type band. Registry: [D
 - **D-LM-CF-003 — `bool` conditions only:** `if`/`while` **must not** treat non-bool values as truthy (no C-style `0` truthiness).
 - **D-LM-CF-004 — Structured transfer only:** `goto` is not in the grammar; use `break`/`continue`/`return`.
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/analysis/` — HIR lowering of `if`/`while`/`for`/`break`/`continue`/`return`
+- `compiler/crates/beskid_codegen/src/` — Cranelift control-flow emission from lowered HIR
+
 ## Platform view
 
 Conditionals, loops, and structured control transfer. Lowering to HIR/CLIF follows the evaluation order defined here.

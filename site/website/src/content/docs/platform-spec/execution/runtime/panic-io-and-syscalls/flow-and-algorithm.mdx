@@ -57,6 +57,11 @@ Step-by-step algorithms for panic and syscall builtins. Layering diagram: [desig
 1. `System.Output.Write` calls `WriteWith`.
 2. On syscall error, corelib **must** panic with stable message — not `Option` — per console IO spec.
 
+## Implementation anchors
+- `compiler/crates/beskid_runtime/src/builtins/panic_io.rs` — `syscall_write`, `syscall_read` implementation
+- `compiler/crates/beskid_runtime/src/scheduler/` — `run_blocking` for blocking syscall work
+- `compiler/crates/beskid_abi/src/builtins.rs` — IO builtin signature specs
+
 ## Related topics
 
 - [Contracts and edge cases](./contracts-and-edge-cases/)

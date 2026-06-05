@@ -1,0 +1,57 @@
+---
+title: "Type inference - Verification and traceability"
+description: "Tests, implementation checklist, and verification matrix for Beskid type inference."
+template: splash
+tableOfContents: true
+specLevel: article
+status: Draft
+lastReviewed: 2026-06-05
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: "Type inference"
+    href: /platform-spec/language-meta/type-system/type-inference/
+    relation: Parent feature hub
+  - type: Area
+    title: "Conformance"
+    href: /platform-spec/compiler/conformance/
+    relation: Evidence policy for compiler features
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Verification matrix
+
+| Scenario | Expected evidence |
+| --- | --- |
+| `let x = 42` | Inferred as `i32`; no diagnostic |
+| `let x = []` | **E1202** emitted |
+| Lambda with context | Parameters inferred from expected function type |
+| Lambda without context | **E1202** if parameters lack types |
+| Generic call omission | Arguments inferred from parameter types |
+| Public function without return type | Warning or recommendation to annotate |
+
+## Implementation checklist
+
+- [x] Grammar: `let` with and without type annotation
+- [x] AST: `TypedLet` vs `ExplicitLet` distinction
+- [x] Type context: `try_infer.rs` local inference
+- [x] Lambda parameter inference from expected type
+- [x] Generic call-site argument inference
+- [x] Diagnostics: **E1202**, **E1203**, **W1203**
+- [ ] Return type inference for all function forms
+- [ ] Enum constructor context inference
+- [ ] Integration tests for nested lambda inference
+
+## Test locations
+
+- `compiler/crates/beskid_analysis/src/types/context/try_infer.rs` — inference unit tests
+- `compiler/crates/beskid_analysis/src/types/context/expressions.rs` — expression typing tests
+- `compiler/crates/beskid_tests` — integration tests for inference scenarios

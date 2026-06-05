@@ -54,6 +54,11 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 Compiler workspace CI **must** run runtime JIT tests on Linux x86_64 agents. ABI-breaking PRs **must** include spec updates under this feature and a version constant bump when **ABI-004** applies.
 
+## Implementation anchors
+- `compiler/crates/beskid_abi/src/version.rs` — ABI version constant for CI assertions
+- `compiler/crates/beskid_abi/src/symbols.rs` — symbol list parity checks
+- `compiler/crates/beskid_tests/src/abi/` — ABI conformance fixtures
+
 ## Related topics
 
 - [Contracts and edge cases](./contracts-and-edge-cases/) — requirement IDs

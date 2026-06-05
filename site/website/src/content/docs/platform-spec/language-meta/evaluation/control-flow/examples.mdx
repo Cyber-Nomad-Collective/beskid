@@ -1,0 +1,87 @@
+---
+title: "Control flow - Examples"
+description: "Code examples showing control flow constructs in Beskid."
+template: splash
+tableOfContents: true
+specLevel: article
+status: Draft
+lastReviewed: 2026-06-05
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: "Control flow"
+    href: /platform-spec/language-meta/evaluation/control-flow/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Conditional
+
+```beskid
+unit Check(i32 value) {
+    if (value > 0) {
+        Console.WriteLine("positive");
+    } else {
+        Console.WriteLine("non-positive");
+    }
+}
+```
+
+## While loop
+
+```beskid
+unit Countdown(i32 start) {
+    while (start > 0) {
+        Console.WriteLine(start);
+        start -= 1;
+    }
+}
+```
+
+## For loop
+
+```beskid
+unit Sum(i32[] values) {
+    let total = 0;
+    for v in values {
+        total += v;
+    }
+    Console.WriteLine(total);
+}
+```
+
+## Break and continue
+
+```beskid
+unit Find(i32[] values, i32 target) {
+    for v in values {
+        if (v == target) {
+            Console.WriteLine("found");
+            break;
+        }
+        if (v < 0) {
+            continue;
+        }
+        Console.WriteLine(v);
+    }
+}
+```
+
+## Return
+
+```beskid
+unit Max(i32 a, i32 b) -> i32 {
+    if (a > b) {
+        return a;
+    }
+    return b;
+}
+```

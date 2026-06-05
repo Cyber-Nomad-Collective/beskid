@@ -1,0 +1,56 @@
+---
+title: "Contracts - Verification and traceability"
+description: "Tests, implementation checklist, and verification matrix for Beskid contracts."
+template: splash
+tableOfContents: true
+specLevel: article
+status: Draft
+lastReviewed: 2026-06-05
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: "Contracts"
+    href: /platform-spec/language-meta/contracts-and-effects/contracts/
+    relation: Parent feature hub
+  - type: Area
+    title: "Conformance"
+    href: /platform-spec/compiler/conformance/
+    relation: Evidence policy for compiler features
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Verification matrix
+
+| Scenario | Expected evidence |
+| --- | --- |
+| Contract with method signatures | Parses; AST round-trip correct |
+| Type conforms to contract | Compiles; no diagnostic |
+| Missing implementation | **E1601** emitted |
+| Signature mismatch | **E1602** emitted |
+| Embedding conflict | **E1004** emitted |
+| Invalid conformance target | **E1607** emitted |
+
+## Implementation checklist
+
+- [x] Grammar: `contract`, method signatures, embeddings
+- [x] AST: `ContractDefinition`, `ContractNode`, `ContractMethodSignature`
+- [x] Parser: `beskid.pest` productions for contract items
+- [x] Resolver: conformance target resolution
+- [x] Contract rules: satisfaction checking in `contracts.rs`
+- [x] Diagnostics: **E1601**, **E1602**, **E1606**, **E1607**, **E1003**, **E1004**
+- [ ] Generic contract conformance
+- [ ] Contract method default bodies (deferred)
+
+## Test locations
+
+- `compiler/crates/beskid_analysis/src/syntax/items/contract_definition.rs` — parser tests
+- `compiler/crates/beskid_analysis/src/analysis/rules/staged/contracts.rs` — satisfaction tests
+- `compiler/crates/beskid_tests` — integration tests for contracts

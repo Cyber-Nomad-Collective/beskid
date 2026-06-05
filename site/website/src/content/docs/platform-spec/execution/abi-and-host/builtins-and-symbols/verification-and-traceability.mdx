@@ -55,6 +55,10 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 2. Decide if [ABI versioning](/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/) bump is required.
 3. Run `cargo test -p beskid_tests runtime` and relevant `beskid_e2e_tests` targets.
 
+## Implementation anchors
+- `compiler/crates/beskid_abi/src/builtins.rs` — spec parity assertions
+- `compiler/crates/beskid_tests/src/runtime/` — JIT and runtime test fixtures
+
 ## Related topics
 
 - [Contracts and edge cases](./contracts-and-edge-cases/)

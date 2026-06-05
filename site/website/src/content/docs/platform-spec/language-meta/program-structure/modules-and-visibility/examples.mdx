@@ -1,0 +1,72 @@
+---
+title: "Modules and visibility - Examples"
+description: "Code examples showing module and visibility patterns in Beskid."
+template: splash
+tableOfContents: true
+specLevel: article
+status: Draft
+lastReviewed: 2026-06-05
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: "Modules and visibility"
+    href: /platform-spec/language-meta/program-structure/modules-and-visibility/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## File-scoped module
+
+```beskid
+mod MyApp.Services;
+
+pub type UserService {
+    // ...
+}
+```
+
+## Inline module
+
+```beskid
+mod Internal {
+    type Helper {
+        // private by default
+    }
+}
+```
+
+## Import with alias
+
+```beskid
+use MyApp.Services.UserService as Service;
+
+unit UseService() {
+    let s = Service {};
+}
+```
+
+## Re-export
+
+```beskid
+mod PublicApi {
+    pub use MyApp.Services.UserService;
+    pub use MyApp.Models.User;
+}
+```
+
+## Visibility
+
+```beskid
+mod Library {
+    type InternalHelper { }          // private
+    pub type PublicApi { }           // public
+}
+```

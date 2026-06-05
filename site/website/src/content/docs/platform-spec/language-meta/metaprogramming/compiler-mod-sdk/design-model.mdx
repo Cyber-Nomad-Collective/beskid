@@ -1,0 +1,78 @@
+---
+title: "Compiler Mod SDK - Design model"
+description: "Conceptual model for Beskid-side compiler-mod contracts, Beskid.Syntax mirror, and typed AST operations."
+template: splash
+tableOfContents: true
+specLevel: article
+status: Draft
+lastReviewed: 2026-06-05
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: "Compiler Mod SDK"
+    href: /platform-spec/language-meta/metaprogramming/compiler-mod-sdk/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Vocabulary
+
+| Construct | Role |
+| --- | --- |
+| **`Collector`** | Declarative target collection and scope narrowing |
+| **`Generator`** | Incremental typed AST emission |
+| **`Analyzer`** | Diagnostic emission and rewrite registration |
+| **`Rewriter`** | AST node replacement |
+| **`AttributeGenerator`** | Attribute definition for mod packages |
+| **`NodeRef`** | Stable syntax node handle `{ syntaxGenerationId, nodeId }` |
+
+## Mod SDK architecture
+
+The Compiler Mod SDK is the Beskid-side surface for `type: Mod` projects. Mod behavior is declared through contracts and `Beskid.Syntax` operations.
+
+```mermaid
+flowchart LR
+    mod[Mod package]
+    aot[AOT compile]
+    descriptor[mod.descriptor.json]
+    host[Mod host]
+    collect[mod.collect]
+    generate[mod.generate]
+    analyze[mod.analyze]
+    mod --> aot --> descriptor --> host --> collect --> generate --> analyze
+```
+
+### Subsystem boundaries
+
+| Subsystem | Responsibility | Key file |
+| --- | --- | --- |
+| Mod author | Write contract implementations | Mod project sources |
+| AOT compile | Build mod artifact | `beskid build` |
+| Mod host | Load and schedule mods | `beskid_analysis/src/mod_host/` |
+| Discovery | Read `mod.descriptor.json` | `mod_host/discovery.rs` |
+| Execution | Run collect/generate/analyze | `mod_host/invoker.rs` |
+
+## Contract hierarchy
+
+| Contract | Role |
+| --- | --- |
+| `Collector` | Target collection and scope narrowing |
+| `Generator` | Incremental typed AST emission |
+| `Analyzer` | Diagnostics and rewrites |
+| `Rewriter<TSource, TTarget>` | Node replacement |
+| `AttributeGenerator` | Attribute definitions |
+
+## Beskid.Syntax
+
+- `Beskid.Syntax.Nodes.Node` is a contract (not a variant enum) for mod traversal.
+- `NodeRef` handles provide stable identities per syntax generation.
+- Concrete mirrored types (`FunctionDefinition`, `Expression`, ...) remain for typed construction.
+- No string formatting or source-text emission.

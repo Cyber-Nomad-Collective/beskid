@@ -1,0 +1,57 @@
+---
+title: "Control flow - FAQ and troubleshooting"
+description: "Common issues, troubleshooting, and locked decisions for Beskid control flow."
+template: splash
+tableOfContents: true
+specLevel: article
+status: Draft
+lastReviewed: 2026-06-05
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: "Control flow"
+    href: /platform-spec/language-meta/evaluation/control-flow/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Locked decisions
+
+| Decision | ID | Summary |
+| --- | --- | --- |
+| No `switch` | D-LM-CF-001 | Use `match` expressions for sum-type branching |
+| Short-circuit booleans | D-LM-CF-002 | `&&` and `||` are mandatory short-circuit |
+| `bool` conditions only | D-LM-CF-003 | No C-style truthiness |
+| Structured transfer only | D-LM-CF-004 | No `goto`; use `break`/`continue`/`return` |
+
+## FAQ
+
+### Why no `switch`?
+
+Beskid uses `match` expressions for sum-type branching, which are exhaustive and type-safe. A separate `switch` statement would duplicate functionality.
+
+### Can I use `break` in a `for` loop?
+
+Yes. `break` exits the innermost enclosing loop, whether `while` or `for`.
+
+### Is there a `do...while` loop?
+
+No. Use `while` or `for` only.
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+| --- | --- |
+| **E1208** | `if` or `while` condition is not `bool` |
+| **E1401** | `break` outside any loop |
+| **E1402** | `continue` outside any loop |
+| **W1403** | Code after `return`, `break`, or `continue` |
+| **E1215** | `for` target is not iterable |

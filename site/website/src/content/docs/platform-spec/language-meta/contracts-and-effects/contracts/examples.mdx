@@ -1,0 +1,88 @@
+---
+title: "Contracts - Examples"
+description: "Code examples showing contract declarations and conformance in Beskid."
+template: splash
+tableOfContents: true
+specLevel: article
+status: Draft
+lastReviewed: 2026-06-05
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: "Contracts"
+    href: /platform-spec/language-meta/contracts-and-effects/contracts/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Basic contract
+
+```beskid
+contract Named {
+    string Name();
+}
+
+type Person : Named {
+    string name;
+
+    pub string Name() {
+        return name;
+    }
+}
+```
+
+## Contract embedding
+
+```beskid
+contract HasId {
+    i32 Id();
+}
+
+contract Entity : HasId {
+    string Name();
+}
+
+type Product : Entity {
+    i32 id;
+    string name;
+
+    pub i32 Id() { return id; }
+    pub string Name() { return name; }
+}
+```
+
+## Conformance error
+
+```beskid
+contract Drawable {
+    unit Draw();
+}
+
+// Missing Draw() — E1601
+type Circle : Drawable {
+    f32 radius;
+}
+```
+
+## Signature mismatch
+
+```beskid
+contract Comparable {
+    i32 CompareTo(other);
+}
+
+// Wrong return type — E1602
+type Item : Comparable {
+    pub bool CompareTo(Item other) {
+        return false;
+    }
+}
+```

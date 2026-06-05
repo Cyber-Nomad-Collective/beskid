@@ -90,6 +90,10 @@ All `Standard` types advertising conformance **must** pass contract satisfaction
 - **D-LM-CON-003 — No `requires`/`ensures` in v0.1:** Design-by-contract assertions are deferred; `contract` items are interface shapes only.
 - **D-LM-CON-004 — Distinct from Mod SDK:** Compiler mod `contract` placements follow [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/), not this user-language surface.
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/types/` — contract declaration and structural conformance checking
+- `compiler/crates/beskid_analysis/src/analysis/` — diagnostic emission for contract violations (E1601–E1607)
+
 ## Platform view
 
 Structural `contract` declarations and type conformance lists. Compiler mods and optional future runtime contract checks are specified elsewhere.

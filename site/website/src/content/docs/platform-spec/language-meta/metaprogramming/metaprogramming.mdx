@@ -90,6 +90,11 @@ Tooling **must** invoke the same phase order for CI and IDE builds on a given pr
 - **D-LM-META-002 — Macros before mods:** Expansion order prevents mods from observing unexpanded macro invocations.
 - **D-LM-META-003 — No legacy Meta language:** Prior experimental meta syntax is retired; use macros or Mod SDK only.
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/macros/` — `macro` expansion pipeline and attribute processing
+- `compiler/crates/beskid_analysis/src/mod_host/` — Compiler Mod orchestration bridges
+- `compiler/corelib/` — SDK contracts for `Collector`, `Generator`, `Analyzer`, `Rewriter`
+
 ## Platform view
 
 Source generators, attributes that drive compiler plug-ins, and scheduling relative to other analyses. The broader generator roadmap may live in guides; v0.1 rules are normative here.

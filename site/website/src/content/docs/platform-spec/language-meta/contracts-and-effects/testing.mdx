@@ -89,6 +89,11 @@ Attribute and visibility issues use **E15xx**; test-specific codes **may** be ad
 - **D-LM-TST-003 — Test project kind:** Discovery **should** scope to `Test` projects unless manifest policy allows otherwise.
 - **D-LM-TST-004 — Corelib helpers are additive:** Assertion helpers in corelib **must not** redefine language-level `test` syntax.
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/analysis/` — `test` item parsing and test-project discovery
+- `compiler/crates/beskid_cli/src/commands/test.rs` — `beskid test` command and runner integration
+- `compiler/crates/beskid_tests/src/test_harness.rs` — test discovery and execution harness
+
 ## Platform view
 
 The language-level test harness, discovery, and assertions users rely on. Corelib testing helpers extend but do not redefine these semantics.

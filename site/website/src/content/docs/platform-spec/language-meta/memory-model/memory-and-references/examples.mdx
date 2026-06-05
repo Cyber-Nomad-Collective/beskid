@@ -1,0 +1,86 @@
+---
+title: "Memory and references - Examples"
+description: "Code examples showing memory and reference patterns in Beskid."
+template: splash
+tableOfContents: true
+specLevel: article
+status: Draft
+lastReviewed: 2026-06-05
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: "Memory and references"
+    href: /platform-spec/language-meta/memory-model/memory-and-references/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## ref parameter
+
+```beskid
+unit Swap(ref i32 a, ref i32 b) {
+    let temp = a;
+    a = b;
+    b = temp;
+}
+
+unit UseSwap() {
+    let x = 1;
+    let y = 2;
+    Swap(ref x, ref y);
+}
+```
+
+## out parameter
+
+```beskid
+unit TryParse(string s, out i32 result) -> bool {
+    // parse s into result
+    result = 42;
+    return true;
+}
+
+unit UseOut() {
+    let value = 0;
+    let ok = TryParse("42", out value);
+}
+```
+
+## Array allocation
+
+```beskid
+unit Arrays() {
+    let values = i32[] { 1, 2, 3 };
+    let first = values[0];
+}
+```
+
+## Closure capture
+
+```beskid
+unit Closure() {
+    let local = 10;
+    let f = () => local + 1;
+    let result = f();
+}
+```
+
+## Channel sharing
+
+```beskid
+unit ShareAcrossFibers() {
+    let ch = Channel<i32>();
+    spawn {
+        ch.Send(42);
+    };
+    let value = ch.Receive();
+}
+```

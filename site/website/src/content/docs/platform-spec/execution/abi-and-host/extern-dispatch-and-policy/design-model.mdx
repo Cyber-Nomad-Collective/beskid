@@ -67,6 +67,11 @@ flowchart TB
 - Allowed Cranelift scalar kinds for engine-validated externs: pointer-width integer, `i64`, `i32`, `i8`, `f64` (legacy [Extern policy v0.1](../../../../execution/runtime/extern-policy-v0-1.md)).
 - High-level Beskid types in extern signatures **must** be rejected before codegen.
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/` — `Extern` contract parsing and type validation
+- `compiler/crates/beskid_codegen/src/` — extern call lowering to Cranelift targets
+- `compiler/crates/beskid_runtime/src/interop/` — `interop_dispatch_*` runtime builtins
+
 ## Related topics
 
 - [Flow and algorithm](./flow-and-algorithm/)

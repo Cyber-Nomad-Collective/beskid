@@ -77,6 +77,11 @@ Formatter **must not** reorder `///` runs across distinct items. LSP **must** re
 - **D-LM-DOC-003 — `@arg` on callables only:** Parameter tags apply to functions, methods, and contract methods—not record fields.
 - **D-LM-DOC-004 — Signatures from compiler:** `api.json` types and links are compiler-derived; prose must not invent parallel type strings.
 
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/doc/` — doc comment extraction and API doc model
+- `compiler/crates/beskid_analysis/src/doc_comment_parser.rs` — `///` parsing and `@arg`/`@ref` tag resolution
+- `compiler/crates/beskid_cli/src/commands/doc.rs` — `beskid doc` command emitting `api.json`
+
 ## Platform view
 
 Structured comments attach human-readable contracts to declarations. Tooling must preserve them through formatting and refactors without changing semantics.

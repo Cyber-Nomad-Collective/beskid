@@ -32,7 +32,7 @@ For newcomers, this page explains where the contract shows up in day-to-day comp
 ## Anchored code paths
 - `compiler/crates/beskid_analysis/src/analysis/rules/` defines staged rule groups.
 - `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` classifies emitted diagnostics.
-- `compiler/crates/beskid_analysis/src/services.rs` wires semantic services used by CLI/LSP.
+- `compiler/crates/beskid_analysis/src/services/` wires semantic services used by CLI/LSP.
 
 ## Practical notes
 - Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.

@@ -57,6 +57,11 @@ Algorithms for allocation, collection, and barrier execution. Architecture diagr
 
 Rust hosts call `beskid_runtime::runtime::GcSnapshot` instead of parsing raw `gc_*` exports when displaying heap stats or forcing `collect`.
 
+## Implementation anchors
+- `compiler/crates/beskid_runtime/src/runtime/` — `alloc` entry and `GcSnapshot` inspection
+- `compiler/crates/beskid_abi/src/builtins.rs` — `gc_write_barrier` spec signature
+- `compiler/crates/abfall/src/` — tri-color write barrier and STW transition
+
 ## Related topics
 
 - [Contracts and edge cases](./contracts-and-edge-cases/)
