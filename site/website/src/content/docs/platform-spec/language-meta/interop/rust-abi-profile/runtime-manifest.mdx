@@ -1,6 +1,6 @@
 ---
 title: Rust ABI profile — Runtime manifest
-description: Schema, generation pipeline, and ownership for the language-owned runtime manifest.
+description: Schema, generation pipeline, ownership, and runtime profiles for the language-owned runtime manifest.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -29,24 +29,44 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 ## Purpose
 
-The **runtime manifest** (`compiler/runtime_manifest.toml`) is the language-owned catalog that classifies every runtime builtin as either a **kernel** direct export or a **dispatch** soft op. Rust registries are **generated** from this file — not edited by hand.
+The **runtime manifest** (`compiler/runtime_manifest.toml`) is the language-owned catalog that classifies every runtime builtin as a **kernel** direct export or a **dispatch** soft op. ABI v4 also classifies every dispatch row by runtime authority: **language** or **host**.
+
+Rust registries are **generated** from this file — not edited by hand.
 
 ## Schema
 
 Manifest rows use TOML tables grouped by role:
 
 ```toml
+[manifest]
+abi_version = 4
+
+[profiles.minimal]
+owners = ["language"]
+
+[profiles.std]
+owners = ["language", "host"]
+
 [[kernel]]
 symbol = "alloc"
-params = ["ptr", "ptr"]
+params = ["usize", "ptr"]
 returns = "ptr"
-kind = "direct"
+injected = true
+beskid_path = ["__alloc"]
 
 [[dispatch.usize]]
 tag = 0
 name = "StrLen"
 beskid_path = ["__str_len"]
 legacy_symbol = "str_len"
+owner = "language"
+
+[[dispatch.usize]]
+tag = 1
+name = "FsWriteText"
+beskid_path = ["__fs_write_text"]
+legacy_symbol = "fs_write_text"
+owner = "host"
 ```
 
 Each entry carries:
@@ -56,10 +76,34 @@ Each entry carries:
 | `symbol` | Linker-visible name for kernel rows |
 | `params` / `returns` | Cranelift ABI kinds |
 | `beskid_path` | Compiler-visible `__*` path |
-| `dispatch_tag` | Tag integer for soft ops |
-| `return_group` | `unit`, `ptr`, `usize`, `i64`, or `direct` |
-| `corelib_owner` | Optional corelib module owning the Beskid shim |
-| `legacy_symbol` | v2 direct export name (removed from kernel in v3) |
+| `tag` | Tag integer for dispatch rows |
+| `return_group` | The dispatch table group: `unit`, `ptr`, `usize`, or `i64` |
+| `legacy_symbol` | Pre-dispatch symbol name used by generated lookup tables and wrappers |
+| `owner` | Dispatch authority: `language` or `host` |
+| `injected` | Whether the compiler injects the Beskid `__*` path |
+
+## Runtime profiles
+
+| Profile | Owners | Behavior |
+| --- | --- | --- |
+| `minimal` | `language` | Links `beskid_runtime` only. Language-owned dispatch has runtime fallback; host-owned tags trap if called. |
+| `std` | `language`, `host` | Links `beskid_runtime` plus `beskid_host`. Host-owned tags are registered before user entry. |
+
+The CLI defaults to `std`. `--runtime-profile minimal` exists for testing and host-less programs that do not use FS/env/process/TTY surfaces.
+
+## Ownership
+
+| Owner | Responsibility |
+| --- | --- |
+| **Language / platform spec** | Manifest schema, kernel inventory, tag assignment policy, profile semantics |
+| **Generator** | Mechanical emission — no business logic outside manifest classification |
+| **Runtime crate** | Kernel exports, dispatch router, and static fallback for language-owned dispatch |
+| **Host crate** | FS/env/process/TTY dispatch handlers and `beskid_host_register_all()` |
+| **Corelib** | Public `System.*` facades and `Runtime.Abi` constants that mirror manifest tags |
+
+Host-owned dispatch rows in ABI v4 are `fs_write_text`, `fs_read_text`, `fs_delete`, `fs_exists`, `fs_mkdir`, `env_get`, `env_getcwd`, `env_set`, `process_exit`, `process_getpid`, and `tty_winsize`.
+
+`syscall_*`, clocks, fibers, channels, strings, bytes, arrays, GC status, events, mutexes, hubs, and wait groups remain language-owned.
 
 ## Generation pipeline
 
@@ -68,13 +112,15 @@ flowchart LR
   manifest[runtime_manifest.toml]
   gen[beskid_manifest generator]
   abi[beskid_abi tables]
-  analysis[define_builtins!]
-  jit[JIT registration]
+  analysis[define_builtins]
+  runtime[beskid_runtime dispatch table]
+  host[beskid_host handler table]
   bridge[runtime_bridge anchor]
   manifest --> gen
   gen --> abi
   gen --> analysis
-  gen --> jit
+  gen --> runtime
+  gen --> host
   gen --> bridge
 ```
 
@@ -82,20 +128,14 @@ flowchart LR
 
 - `src/generated/builtins.rs` — `BUILTIN_SPECS`
 - `src/generated/symbols.rs` — `RUNTIME_EXPORT_SYMBOLS`, `SYM_*`
-- Analysis, JIT, and bridge stubs in their respective crates
+- dispatch lookup and tag tables consumed by compiler and tests
+- runtime dispatch tables with language fallback only
+- host-handler tables consumed by `beskid_host`
+- analysis, JIT, and bridge stubs in their respective crates
 
 `cargo:rerun-if-changed=runtime_manifest.toml` keeps outputs in sync.
 
-## Ownership
-
-| Owner | Responsibility |
-| --- | --- |
-| **Language / platform spec** | Manifest schema, kernel inventory, tag assignment policy |
-| **Corelib** | `[Runtime]` attributes and `Runtime.Abi` constants that mirror manifest tags |
-| **Generator** | Mechanical emission — no business logic |
-| **Runtime crate** | Private implementations; kernel exports and dispatch handlers only |
-
-Normative decision: [D-LMETA-RUSTABI-0004](/platform-spec/language-meta/interop/rust-abi-profile/adr/0004-language-owned-runtime-manifest/).
+Normative decisions: [D-LMETA-RUSTABI-0004](/platform-spec/language-meta/interop/rust-abi-profile/adr/0004-language-owned-runtime-manifest/) and [D-EXEC-RT-0017](/platform-spec/language-meta/interop/rust-abi-profile/adr/0017-runtime-host-split-v4/).
 
 ## Related topics
 

@@ -1,6 +1,6 @@
 ---
 title: Rust ABI profile — Kernel and dispatch
-description: v3 call paths from generated code through kernel exports and tag-driven dispatch.
+description: ABI v4 call paths from generated code through kernel exports, language dispatch, and host-owned dispatch registration.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -33,7 +33,7 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 ## Purpose
 
-ABI v3 splits runtime entry into a **small kernel** of direct exports and **soft ops** routed through `interop_dispatch_*` builtins. This article describes the call paths and registration model.
+ABI v4 splits runtime entry into a **small language kernel**, **language-owned dispatch fallbacks**, and **host-owned dispatch handlers** registered by `beskid_host`. This article describes the call paths and the registration model after [D-EXEC-RT-0017](/platform-spec/language-meta/interop/rust-abi-profile/adr/0017-runtime-host-split-v4/).
 
 ## Direct kernel path
 
@@ -47,7 +47,7 @@ flowchart LR
   codegen -->|symbol name| kernel --> impl
 ```
 
-Examples: `alloc`, `gc_write_barrier`, `panic`, `runtime_preempt_check`, `fiber_yield`, composition container lifecycle, dynamic mapping (Phase A).
+Examples: `alloc`, `gc_write_barrier`, `panic`, `panic_str`, `runtime_preempt_check`, `fiber_yield`, composition container lifecycle, dynamic mapping, dispatch entrypoints, registration entrypoints, and the ABI version export.
 
 ## Dispatch path
 
@@ -58,26 +58,32 @@ flowchart LR
   codegen[Lowered soft call]
   env[RuntimeInteropEnvelope]
   dispatch["interop_dispatch_{unit,ptr,usize}"]
-  table[Handler table]
-  impl[pub(crate) impl]
-  codegen --> env --> dispatch --> table --> impl
+  override[Registered handler table]
+  static[Language fallback]
+  host[beskid_host handlers]
+  trap[Missing host trap]
+  codegen --> env --> dispatch
+  dispatch --> override --> host
+  dispatch --> static
+  dispatch --> trap
 ```
 
-Codegen selects `interop_dispatch_unit`, `interop_dispatch_ptr`, or `interop_dispatch_usize` from the manifest `return_group`. The runtime validates the tag (bitmap or table lookup) and delegates to the registered handler.
+Codegen selects `interop_dispatch_unit`, `interop_dispatch_ptr`, or `interop_dispatch_usize` from the manifest return group. The runtime validates the tag and first checks the registered handler table. If no handler is registered, language-owned tags may fall back to static `beskid_runtime` builtins. Host-owned tags must not fall back to runtime builtins; they trap with a missing-host-handler diagnostic.
 
 ## Handler registration
 
-Before user code runs:
+Before user code runs in the `std` runtime profile:
 
-1. Corelib `Runtime.Init` builds a compile-time handler table from manifest tags and `[Runtime]` attributes.
-2. Init calls `beskid_register_handlers(version, table, count)`.
-3. Static kernel handlers cover bootstrap; corelib registration fills soft-op slots.
+1. The engine, runtime bridge, or AOT link anchor includes `beskid_host`.
+2. Startup calls `beskid_host_register_all()`.
+3. `beskid_host_register_all()` calls `beskid_register_handlers(4, table, count)` with FS/env/process/TTY handler entries.
+4. User code may call host-owned dispatch surfaces through the same `System.*` facades.
 
-Registration **must** complete before user static init ([D-EXEC-ABI-0008](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/adr/0007-handler-registration-init-order/)).
+The `minimal` profile links `beskid_runtime` only. In that profile, host-owned tags remain valid manifest tags but trap when used because no host handler table is registered.
 
-Unknown tags **must** trap — conformance tests cover every manifest tag.
+Registration **must** complete before user static init ([D-EXEC-ABI-0008](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/adr/0007-handler-registration-init-order/)). Unknown tags must trap; known host tags without registration must trap deterministically.
 
-## v3 kernel inventory (initial)
+## v4 kernel inventory
 
 | Category | Symbols |
 | --- | --- |
@@ -86,12 +92,12 @@ Unknown tags **must** trap — conformance tests cover every manifest tag.
 | Faults / scheduling | `panic`, `panic_str`, `runtime_preempt_check`, `fiber_yield` |
 | Dispatch | `interop_dispatch_unit`, `interop_dispatch_ptr`, `interop_dispatch_usize` |
 | Registration | `beskid_register_callbacks`, `beskid_register_handlers` |
-| Composition / dynamic | composition container lifecycle symbols; dynamic mapping symbols (direct until Phase D audit) |
+| Composition / dynamic | composition container lifecycle symbols; dynamic mapping symbols |
 
-All other manifest entries are dispatch-only in v3.
+Language-owned dispatch remains in `beskid_runtime` for strings, bytes, arrays, GC status, fibers, channels, clocks, and `syscall_*`. Host-owned dispatch (`fs_*`, `env_*`, `process_*`, `tty_winsize`) is supplied by `beskid_host` in the `std` profile.
 
 ## Related topics
 
-- [Runtime manifest](./runtime-manifest/) — schema and generation
+- [Runtime manifest](./runtime-manifest/) — schema, owners, and profiles
 - [Boundary and stability](./boundary-and-stability/) — what loaders may rely on
 - [Dispatch envelope layout](/platform-spec/language-meta/interop/interop-contracts/adr/0004-dispatch-envelope-layout/)
