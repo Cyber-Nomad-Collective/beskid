@@ -4,7 +4,7 @@ description: Runtime-facing Rust ABI—not arbitrary crate imports.
 tableOfContents: true
 ---
 
-[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/) documents boundary stability and shims. This is for controlled runtime integration—not embedding random `syn` into your app through wishful thinking.
+[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/) documents boundary stability, the language-owned [runtime manifest](/platform-spec/language-meta/interop/rust-abi-profile/runtime-manifest/), and the v3 [kernel and dispatch](/platform-spec/language-meta/interop/rust-abi-profile/kernel-and-dispatch/) model. This is for controlled runtime integration—not embedding random `syn` into your app through wishful thinking.
 
 ## Hub
 

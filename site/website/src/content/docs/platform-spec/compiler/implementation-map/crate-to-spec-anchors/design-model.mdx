@@ -73,7 +73,7 @@ flowchart TB
 | --- | --- |
 | **Producer crates** | Emit diagnostics, artifacts, and ABI metadata (`beskid_analysis`, `beskid_codegen`) |
 | **Consumer crates** | Execute or validate artifacts (`beskid_engine`, `beskid_runtime`, tooling) |
-| **Tooling crates** | CLI, LSP, package client (`beskid_cli`, `beskid_lsp`, `beskid_pckg`) |
+| **Tooling crates** | CLI binary, shared command framework, LSP, package client (`beskid_cli`, `beskid_tools`, `beskid_lsp`, `beskid_pckg`) |
 | **Infrastructure crates** | Pipeline ordering, graph model, queries, codegen utilities (`beskid_pipeline`, `beskid_graph`, `beskid_queries`, `beskid_ast_derive`, `beskid_ast_reflect_gen`, `beskid_runtime_bridge`, `beskid_template`, `abfall`) |
 | **Conformance crates** | Pin observable behavior (`beskid_tests`, `beskid_e2e_tests`) |
 
@@ -87,7 +87,8 @@ flowchart TB
 - `beskid_pipeline` — stable pipeline phase ordering
 - `beskid_graph` — project graph model
 - `beskid_queries` — Salsa incremental query engine
-- `beskid_cli` — command surface, build/run orchestration
+- `beskid_cli` — Clap command surface and thin dispatch
+- `beskid_tools` — pipeline UI, diagnostics, `CommandSession`, corelib provision, registry helpers
 - `beskid_lsp` — language server, diagnostics parity
 - `beskid_pckg` — package registry client
 - `beskid_runtime_bridge` — arch/OS interop bridge

@@ -25,29 +25,29 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 ## Purpose
 
-Document the **dual registry** that connects Beskid lowered code to the host runtime: symbolic names for the linker (`RUNTIME_EXPORT_SYMBOLS`) and machine signatures for Cranelift (`BUILTIN_SPECS`).
+Document the **manifest-driven registry** that connects Beskid lowered code to the host runtime: a language-owned manifest generates symbolic names for the linker, Cranelift signatures, analysis builtins, JIT registration, and bridge anchors — split into **kernel** direct exports and **dispatch** entrypoints in ABI v3.
 
 ## Primary actors
 
 | Actor | Artifact |
 | --- | --- |
-| **`beskid_abi::builtins`** | `BuiltinFnSpec { symbol, params, returns }` entries |
-| **`beskid_abi::symbols`** | `SYM_*` constants + `RUNTIME_EXPORT_SYMBOLS` list |
-| **`beskid_codegen`** | `declare_builtin_imports` builds Cranelift `FuncId`s from specs |
-| **`beskid_runtime::builtins`** | `#[unsafe(no_mangle)] pub extern "C-unwind"` implementations |
+| **`runtime_manifest.toml`** | Normative classification of kernel vs dispatch ops |
+| **`beskid_manifest` generator** | Emits generated Rust tables at build time |
+| **`beskid_abi::builtins`** | Generated `BuiltinFnSpec { symbol, params, returns }` entries |
+| **`beskid_abi::symbols`** | Generated `SYM_*` constants + `RUNTIME_EXPORT_SYMBOLS` (kernel-only in v3) |
+| **`beskid_codegen`** | `declare_builtin_imports` builds Cranelift `FuncId`s from generated specs |
+| **`beskid_runtime::builtins`** | Kernel `#[unsafe(no_mangle)] pub extern "C-unwind"` exports; soft impls via dispatch |
 
 ## Builtin families
 
-| Family | Examples | Consumer |
+| Family | v3 path | Consumer |
 | --- | --- | --- |
-| **Allocation / values** | `alloc`, `str_new`, `str_concat`, `array_new` | All backends |
-| **GC** | `gc_write_barrier`, `gc_collect`, `gc_root_handle` | Lowering + host snapshots |
-| **Fibers** | `fiber_spawn`, `fiber_yield`, `fiber_join_value` | `corelib_concurrency` |
-| **Channels / hubs** | `channel_send`, `hub_wait_receive_value` | Concurrency package |
-| **Sync** | `mutex_lock`, `wait_group_wait` | Runtime scheduler |
-| **Interop** | `interop_dispatch_unit`, `interop_dispatch_ptr` | Tagged interop lowering |
-| **IO / faults** | `syscall_write`, `panic`, `panic_str` | Corelib + traps |
-| **Diagnostics** | `test_bytes_ptr` (test-only) | Compiler tests |
+| **Allocation / GC (kernel)** | Direct `alloc`, `gc_*` | All backends |
+| **Faults / preempt (kernel)** | Direct `panic`, `runtime_preempt_check` | Traps and scheduling |
+| **Dispatch (kernel entry)** | `interop_dispatch_{unit,ptr,usize}` | Soft op envelopes |
+| **Soft ops (dispatch)** | Manifest tags → handler table | Strings, channels, fibers, IO, … |
+| **Registration (kernel)** | `beskid_register_callbacks`, `beskid_register_handlers` | Host and corelib init |
+| **Composition / dynamic (kernel, Phase A)** | Direct composition and dynamic symbols | DI and dynamic lowering |
 
 Return kinds include **`AbiReturnKind::Never`** for diverging `panic` calls so Cranelift marks unreachable correctly.
 
@@ -60,19 +60,29 @@ Return kinds include **`AbiReturnKind::Never`** for diverging `panic` calls so C
 
 ```mermaid
 flowchart LR
-  specs[BUILTIN_SPECS signatures]
-  names[RUNTIME_EXPORT_SYMBOLS]
+  manifest[runtime_manifest.toml]
+  gen[beskid_manifest generator]
+  specs[Generated BUILTIN_SPECS]
+  names[Generated RUNTIME_EXPORT_SYMBOLS]
   clif[Cranelift imports]
-  nm[no_mangle exports]
+  kernel[Kernel no_mangle exports]
+  dispatch[interop_dispatch_*]
+  handlers[Handler table]
+  manifest --> gen
+  gen --> specs
+  gen --> names
   specs --> clif
-  names --> nm
-  clif -->|same symbol string| nm
+  names --> kernel
+  clif -->|kernel symbols| kernel
+  clif -->|soft ops| dispatch
+  dispatch --> handlers
 ```
 
 ## Implementation anchors
-- `compiler/crates/beskid_abi/src/builtins.rs` — `BuiltinFnSpec` entries and `BUILTIN_SPECS` table
-- `compiler/crates/beskid_abi/src/symbols.rs` — `RUNTIME_EXPORT_SYMBOLS` and `SYM_*` constants
-- `compiler/crates/beskid_runtime/src/builtins/` — `#[unsafe(no_mangle)]` runtime implementations
+- `compiler/runtime_manifest.toml` — normative manifest input
+- `compiler/crates/beskid_manifest/` — generator crate
+- `compiler/crates/beskid_abi/src/generated/` — `BUILTIN_SPECS`, `RUNTIME_EXPORT_SYMBOLS`, `SYM_*`
+- `compiler/crates/beskid_runtime/src/builtins/` — kernel exports and private soft implementations
 
 ## Related topics
 

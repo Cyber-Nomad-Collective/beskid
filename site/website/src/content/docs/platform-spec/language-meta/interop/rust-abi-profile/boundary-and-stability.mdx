@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-05-01
+lastReviewed: 2026-06-06
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -29,7 +29,12 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 ## Stable surface
 
-The **normative stable surface** for loaders and generated code is the set of **exported symbols** and their **documented C-compatible signatures** published through `beskid_abi` and realized in `beskid_runtime`. Conformance tests lock this set for a given **runtime ABI version** (see `compiler/crates/beskid_tests/src/abi/contracts.rs`).
+The **normative stable surface** for loaders and generated code in ABI v3 is:
+
+1. **Kernel exports** — the small set of direct `extern "C-unwind"` symbols published through generated `beskid_abi` tables and realized in `beskid_runtime` (see [kernel and dispatch](/platform-spec/language-meta/interop/rust-abi-profile/kernel-and-dispatch/)).
+2. **Dispatch envelope layout** — the versioned `RuntimeInteropEnvelope` band and tag validity rules ([D-LMETA-IC-0004](/platform-spec/language-meta/interop/interop-contracts/adr/0004-dispatch-envelope-layout/)).
+
+Soft runtime ops are **not** stable as individual linker symbols in v3; they are stable as **manifest-assigned dispatch tags** routed through `interop_dispatch_*` kernel entrypoints. Conformance tests lock the kernel allowlist and envelope band for a given **runtime ABI version** (see `compiler/crates/beskid_tests/src/abi/contracts.rs`).
 
 ## Implementation-private Rust
 

@@ -51,7 +51,7 @@ Define how the **compiler**, **JIT/AOT backends**, and **Beskid runtime** agree 
 
 ## Version and symbol model
 
-The ABI version is a **`u32`** exposed as `beskid_runtime_abi_version`. The reference tree currently pins **`BESKID_RUNTIME_ABI_VERSION = 2`**. A bump is required when any of the following change incompatibly:
+The ABI version is a **`u32`** exposed as `beskid_runtime_abi_version`. The reference tree pins **`BESKID_RUNTIME_ABI_VERSION = 3`** (kernel-only export set). A bump is required when any of the following change incompatibly:
 
 - C layout of `BeskidStr`, `BeskidArray`, or interop payload offsets referenced by lowering.
 - Name, parameter count, or `AbiParamKind` / `AbiReturnKind` of a builtin in `BUILTIN_SPECS`.

@@ -47,6 +47,11 @@ rustup target add "${MATRIX_TARGET}" 2>/dev/null || true
 
 cargo build -p "${RELEASE_PACKAGE}" --release --target "${MATRIX_TARGET}"
 
+if [[ "${RELEASE_PACKAGE}" == "beskid_cli" ]]; then
+  cargo build -p beskid_runtime_bridge -p beskid_host --release --target "${MATRIX_TARGET}"
+  cargo check -p beskid_repl --release --target "${MATRIX_TARGET}"
+fi
+
 if [[ "${RUNNER_OS:-Linux}" == "Windows" ]]; then
   built="target/${MATRIX_TARGET}/release/${bin_name}.exe"
 else

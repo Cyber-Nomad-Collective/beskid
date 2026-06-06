@@ -49,7 +49,9 @@ The **`beskid new`** command family — list, install, uninstall, and instantiat
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
 - `compiler/crates/beskid_cli/src/cli.rs` — subcommand tree
-- Planned `compiler/crates/beskid_cli/src/commands/new.rs`
+- `compiler/crates/beskid_cli/src/commands/new.rs` — Clap args and dispatch
+- `compiler/crates/beskid_template::service` — list / install / uninstall / instantiate
+- `compiler/crates/beskid_tools::registry` — shared pckg client helpers
 - `compiler/crates/beskid_pckg` — registry download
 </SpecSection>
 

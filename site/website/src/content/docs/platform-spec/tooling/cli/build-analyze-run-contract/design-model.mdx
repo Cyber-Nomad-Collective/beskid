@@ -36,7 +36,7 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 ## Purpose
 
-The `beskid` executable is a thin orchestration layer over **`beskid_analysis`** (project graph, semantic pipeline, document snapshots) and backend-specific drivers (**JIT** for `run`/`test`, **AOT** for `build`, **CLIF** introspection). Every project-scoped command shares the same resolution inputs (`ProjectResolveArgs`, `LockfilePolicyArgs`) and **must** provision bundled corelib before dispatch (`ensure_corelib_ready` in `compiler/crates/beskid_cli/src/cli.rs`).
+The `beskid` executable is a thin Clap binary over **`beskid_tools`** (pipeline progress, diagnostic rendering, `CommandSession` resolve/gate helpers, corelib provisioning) and **`beskid_analysis`** (project graph, semantic pipeline, document snapshots), with backend-specific drivers (**AOT** for `run`/`build`, **JIT** for `repl` and interim `test`, **CLIF** introspection). Every project-scoped command shares the same resolution inputs (`ProjectResolveArgs`, `LockfilePolicyArgs`) and **must** provision bundled corelib before dispatch (`ensure_corelib_ready` in `compiler/crates/beskid_cli/src/cli.rs` via `beskid_tools::corelib`).
 
 ## Layered model
 
@@ -45,18 +45,24 @@ flowchart TB
   subgraph cli [beskid_cli]
     Parse[parse / tree / format]
     Analyze[analyze / doc]
-    Run[run / test]
+    Run[run / test / repl]
     Build[build / mod]
     Pkg[fetch / lock / update / pckg]
   end
+  subgraph tools [beskid_tools]
+    Session[CommandSession]
+    Pipeline[CliPipeline]
+    Corelib[corelib provision]
+  end
+  cli --> tools
   subgraph analysis [beskid_analysis]
     Ctx[CompilationContext]
     Graph[Project graph + CompilePlan]
     Sem[Semantic pipeline + diagnostics]
   end
   subgraph backends [Execution backends]
-    JIT[beskid_engine JIT]
-    AOT[beskid_aot link]
+    JIT[beskid_engine JIT repl + test]
+    AOT[beskid_aot link + run subprocess]
   end
   Parse --> Ctx
   Analyze --> Ctx
@@ -74,7 +80,7 @@ flowchart TB
 | **Argv + global flags** | `@file` expansion, `--log-cranelift`, subcommand dispatch |
 | **Project resolution** | Discover `Project.proj` / `Workspace.proj`, honor lockfile policy, build `CompilationContext` |
 | **Pipeline observation** | Map `beskid_pipeline` phase IDs to stderr spinners or `--plain` lines |
-| **Command backend** | `analyze` emits diagnostics only; `build` lowers + AOT; `run`/`test` JIT entrypoints |
+| **Command backend** | `analyze` emits diagnostics only; `build`/`run` lower + AOT; `repl`/`test` JIT entrypoints |
 
 ## Shared resolution contract
 
@@ -97,5 +103,6 @@ File-only commands (`parse`, `tree` with a single `.bd` path) may bypass the pro
 - Subcommand wiring: `compiler/crates/beskid_cli/src/cli.rs`, `compiler/crates/beskid_cli/src/commands/`
 - Resolution + pipeline UI: `compiler/crates/beskid_cli/src/frontend.rs`, `compiler/crates/beskid_cli/src/project_args.rs`
 - Analysis services: `compiler/crates/beskid_analysis/src/services/`, `compilation_context.rs`
-- JIT launch: `compiler/crates/beskid_engine/`
-- AOT link: `compiler/crates/beskid_aot/`
+- JIT launch (interim test + REPL): `compiler/crates/beskid_engine/`
+- REPL snippets: `compiler/crates/beskid_repl/`
+- AOT link and run subprocess: `compiler/crates/beskid_aot/`

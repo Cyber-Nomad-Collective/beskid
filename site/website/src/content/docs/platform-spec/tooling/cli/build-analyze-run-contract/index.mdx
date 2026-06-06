@@ -39,7 +39,7 @@ import SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';
 <SpecSection title="Implementation anchors" id="implementation-anchors">
 - CLI command implementations in `compiler/crates/beskid_cli/src/commands/`
 - Analysis pipeline in `compiler/crates/beskid_analysis/src/services/`
-- Runtime launch via engine in `compiler/crates/beskid_engine/src/jit_module.rs`
+- Runtime launch via AOT subprocess in `compiler/crates/beskid_aot/src/run.rs`; JIT REPL in `compiler/crates/beskid_repl/`
 - CLI-facing tests in `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs`
 </SpecSection>
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-05T15:09:01.352Z",
+  "generatedAt": "2026-06-06T20:03:51.650Z",
   "tree": {
     "slug": "platform-spec",
     "href": "/platform-spec/",
@@ -1663,6 +1663,12 @@
                     "level": "article"
                   }
                 ]
+              },
+              {
+                "slug": "platform-spec/core-library/compiler-integration/runtime-registration",
+                "href": "/platform-spec/core-library/compiler-integration/runtime-registration/",
+                "title": "Runtime registration",
+                "level": "article"
               }
             ]
           },
@@ -1710,6 +1716,66 @@
                 "title": "System.Threading",
                 "level": "feature",
                 "children": []
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/core-library/foundation-and-primitives",
+            "href": "/platform-spec/core-library/foundation-and-primitives/",
+            "title": "Foundation and primitives",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/core-library/foundation-and-primitives/core-bytes",
+                "href": "/platform-spec/core-library/foundation-and-primitives/core-bytes/",
+                "title": "Core.Bytes",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/foundation-and-primitives/core-bytes/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/foundation-and-primitives/core-bytes/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/foundation-and-primitives/core-bytes/design-model",
+                    "href": "/platform-spec/core-library/foundation-and-primitives/core-bytes/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/foundation-and-primitives/core-bytes/verification-and-traceability",
+                    "href": "/platform-spec/core-library/foundation-and-primitives/core-bytes/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/core-library/foundation-and-primitives/core-encoding",
+                "href": "/platform-spec/core-library/foundation-and-primitives/core-encoding/",
+                "title": "Core.Encoding",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/foundation-and-primitives/core-encoding/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/foundation-and-primitives/core-encoding/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/foundation-and-primitives/core-encoding/design-model",
+                    "href": "/platform-spec/core-library/foundation-and-primitives/core-encoding/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/foundation-and-primitives/core-encoding/verification-and-traceability",
+                    "href": "/platform-spec/core-library/foundation-and-primitives/core-encoding/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
               }
             ]
           },
@@ -1803,6 +1869,20 @@
                     "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/verification-and-traceability",
                     "href": "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/verification-and-traceability/",
                     "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/core-library/stability-and-api-shape/system-syscall",
+                "href": "/platform-spec/core-library/stability-and-api-shape/system-syscall/",
+                "title": "System.Syscall",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/system-syscall/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/system-syscall/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
                     "level": "article"
                   }
                 ]
@@ -2665,6 +2745,18 @@
                     "level": "article"
                   },
                   {
+                    "slug": "platform-spec/language-meta/interop/rust-abi-profile/kernel-and-dispatch",
+                    "href": "/platform-spec/language-meta/interop/rust-abi-profile/kernel-and-dispatch/",
+                    "title": "Rust ABI profile — Kernel and dispatch",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/language-meta/interop/rust-abi-profile/runtime-manifest",
+                    "href": "/platform-spec/language-meta/interop/rust-abi-profile/runtime-manifest/",
+                    "title": "Rust ABI profile — Runtime manifest",
+                    "level": "article"
+                  },
+                  {
                     "slug": "platform-spec/language-meta/interop/rust-abi-profile/shims-and-compatibility",
                     "href": "/platform-spec/language-meta/interop/rust-abi-profile/shims-and-compatibility/",
                     "title": "Rust ABI profile — Shims and compatibility strategy",
@@ -2907,6 +2999,13 @@
                 "href": "/platform-spec/tooling/cli/command-surface/",
                 "title": "Command surface",
                 "level": "article"
+              },
+              {
+                "slug": "platform-spec/tooling/cli/repl-command",
+                "href": "/platform-spec/tooling/cli/repl-command/",
+                "title": "REPL command",
+                "level": "feature",
+                "children": []
               }
             ]
           },

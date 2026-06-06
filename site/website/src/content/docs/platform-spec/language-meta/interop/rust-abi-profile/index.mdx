@@ -50,8 +50,9 @@ This profile is **not** a promise that arbitrary Rust crates can be linked as us
 </SpecSection>
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
-- Exported symbol names: `compiler/crates/beskid_abi/src/symbols.rs`
-- Builtin ABI shapes for lowering: `compiler/crates/beskid_abi/src/builtins.rs`
+- Language-owned manifest: `compiler/runtime_manifest.toml`
+- Generated symbol names and specs: `compiler/crates/beskid_abi/src/generated/`
+- Manifest generator: `compiler/crates/beskid_manifest/`
 - Runtime exports and modules: `compiler/crates/beskid_runtime/src/lib.rs`, `compiler/crates/beskid_runtime/src/builtins/mod.rs`
 - Syscall and panic bridges (example of `extern "C-unwind"` usage): `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
 - JIT registration of runtime symbols: `compiler/crates/beskid_engine/src/jit_module.rs`
@@ -60,6 +61,6 @@ This profile is **not** a promise that arbitrary Rust crates can be linked as us
 
 ## Decisions
 
-No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-RUSTABI-0001` … `D-LMETA-RUSTABI-0003`); use the reader **ADRs** tab for detail.
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-RUSTABI-0001` … `D-LMETA-RUSTABI-0005`); use the reader **ADRs** tab for detail.
 
 <DomainTiles pathPrefix="platform-spec/language-meta/interop/rust-abi-profile" heading="Articles" />
