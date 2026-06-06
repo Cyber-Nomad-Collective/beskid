@@ -1,0 +1,26 @@
+---
+title: Encoding contract v1
+description: Shared Encoder contract with Result-based decode.
+specLevel: adr
+status: Standard
+adrId: D-CORE-PRIM-0020
+adrStatus: Accepted
+adrDate: 2026-06-06
+lastReviewed: 2026-06-06
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Core.Encoding
+    href: /platform-spec/core-library/foundation-and-primitives/core-encoding/
+    relation: Parent feature hub
+---
+
+import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Decision
+
+v1 uses a Beskid `contract Encoder` with `EncodeToBytes` / `DecodeFromBytes` returning `Result`. No lossy decode in v1.

@@ -127,7 +127,7 @@ Cross-domain pages **must** link to the owning `language-meta` chapter with `rel
 | **Channel** | Cross-fiber communication primitive; memory sharing **must** go through channels per [Memory and references](/platform-spec/language-meta/memory-model/memory-and-references/) |
 | `Option<T>` | The sole optional-value surface in v0.1 (corelib `Query.Contracts.Option`); **must not** be spelled `optional` or `?T` |
 | `null` | **Must not** exist as a type, literal, or implicit default; absence uses `Option<T>::None` or explicit enums |
-| `ref T` | By-reference parameter or signature form; distinct from nullable or pointer types (see [Memory and references](/platform-spec/language-meta/memory-model/memory-and-references/)) |
+| `mut` | Prefix modifier marking a reassignable local or parameter (`mut T name`, `let mut name`) |
 | **GC heap** | Traced object store with concurrent mark-sweep; runtime details in execution specs; `/execution/` tree is a **non-normative legacy bridge** only |
 
 ### Conformance of specifications themselves

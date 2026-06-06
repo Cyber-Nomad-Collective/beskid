@@ -91,6 +91,6 @@ Beskid uses **nominal** types resolved by path. Two structurally identical types
 
 `T[]` uses a single runtime representation (`BeskidArray`) across targets: a fat pointer carrying length plus data pointer. This is locked by decision **D-LM-TYP-003**.
 
-## Reference semantics
+## Mutability
 
-`ref T` is a **passing mode**, not a separate type class. It appears only in parameter signatures and denotes by-reference aliasing. There is no `ref T` value type distinct from `T`.
+`mut` is a **prefix modifier** on bindings: `mut T name` for typed locals and parameters, `let mut name` for inferred locals. Parameters pass by value in v0.1.

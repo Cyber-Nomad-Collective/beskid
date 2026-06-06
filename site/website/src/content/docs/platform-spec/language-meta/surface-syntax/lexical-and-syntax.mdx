@@ -71,7 +71,8 @@ This chapter defines **lexical structure** and the **context-free program skelet
 ### Static rules (syntax-only)
 
 - Generic parameter lists use angle brackets: `<T, U>`.
-- Type syntax order of precedence: `ArrowFunctionType` before `FunctionType` before `ref T` before `T[]` before `TypeName`.
+- Type syntax order of precedence: `ArrowFunctionType` before `FunctionType` before `T[]` before `TypeName`.
+- `mut` **must** prefix the type in `TypedLetStatement` and `Parameter`, or follow `let` in `InferredLetStatement` (`let mut name = expr`).
 - `match`, `if`/`else`, `while`, `for … in`, `with`, and `launch` statements **must** parse as `Statement` productions; malformed nesting is a parse error, not a semantic error.
 
 ### Dynamic semantics

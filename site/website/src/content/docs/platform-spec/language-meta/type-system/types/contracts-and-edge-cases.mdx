@@ -63,7 +63,6 @@ Reserved for type system diagnostics in `diagnostic_kinds.rs`:
 - **Generic shadowing** — A generic parameter `T` on a type shadows an outer type named `T` within that type's scope only.
 - **Self-referential types** — Direct recursive type definitions (for example `type Node { Node next; }`) are allowed; the compiler handles them through HIR lowering.
 - **Empty structs** — `type Empty { }` is valid; it has size determined by the codegen backend.
-- **Array of references** — `ref T[]` parses as `ref (T[])` due to precedence; explicit grouping may be required.
 
 ## Invariants
 

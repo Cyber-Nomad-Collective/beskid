@@ -41,9 +41,8 @@ flowchart LR
 
 ## Memory validation algorithm (normative)
 
-1. **Parse declarations** — `ref`/`out` modifiers become `ParameterModifier` nodes.
-2. **Type-check references** — `ref T` is valid in signatures; invalid in value positions.
-3. **Check immutability** — `ImmutableAssignment` (**E1214**) fires when assigning to an immutable binding.
+1. **Parse declarations** — prefix `mut` on `TypedLetStatement`, `InferredLetStatement`, and `Parameter` nodes.
+2. **Check immutability** — `ImmutableAssignment` (**E1214**) fires when assigning to a non-`mut` binding.
 4. **Escape analysis** — Identify reference-bearing values that escape their defining frame.
 5. **Heap allocation decision** — Escaped values must live on the GC heap.
 6. **Insert write barriers** — Pointer stores to heap objects execute write barriers when required by the active GC phase.

@@ -1,0 +1,30 @@
+---
+title: Foundation and primitives
+description: Core.Bytes, Core.Encoding, and byte-oriented primitives in corelib_foundation.
+template: splash
+tableOfContents: false
+specLevel: area
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+---
+
+import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+  ownerName="Piotr Mikstacki"
+  ownerEmail="pmikstacki@cybernomad.it"
+  submitterName="Piotr Mikstacki"
+  submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="Rationale" id="rationale">
+Pure Beskid primitive modules (`Core.Bytes`, `Core.Encoding`) live in `corelib_foundation`. They **must not** embed OS syscall semantics; binary I/O routes through [System.Syscall](/platform-spec/core-library/stability-and-api-shape/system-syscall/).
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/core-library/foundation-and-primitives" heading="Features" />

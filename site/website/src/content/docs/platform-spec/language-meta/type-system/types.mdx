@@ -1,6 +1,6 @@
 ---
 title: Types
-description: The type grammar (nominal types, generics, ref T, Option T) is
+description: The type grammar (nominal types, generics, Option T) is
   the backbone of static checking. All analysis phases share these definitions.
 template: splash
 tableOfContents: false
@@ -58,7 +58,6 @@ A **type expression** (`BeskidType`) **must** be exactly one of:
 | Primitive | `bool`, `i32`, `i64`, `u8`, `f64`, `char`, `string`, `unit` | Builtin scalar types |
 | Named | `Path` with optional `GenericArguments` | Nominal reference to `type`, `enum`, or generic parameter |
 | Array | `T[]` | Homogeneous slice-like sequence; runtime ABI uses fat pointer layout |
-| Reference | `ref T` | By-reference parameter passing surface (see memory chapter) |
 | Function | `T(params)` or `(params) => R` | Function types for values and signatures |
 
 Primitives **must** map to `HirPrimitiveType` variants in the reference compiler.
@@ -82,8 +81,6 @@ Primitives **must** map to `HirPrimitiveType` variants in the reference compiler
 - `unit` is the statement-result type; `never` is the bottom type for non-returning calls.
 - There is **no** `null` literal and **no** nullable reference type (`?T`, `T?`, or `optional` keyword) in v0.1.
 - Optional presence **must** use `Option<T>` (`Query.Contracts.Option` in corelib) or an explicit `enum` with a dedicated absent variant at API boundaries.
-- `ref T` in signatures denotes by-reference passing; it **must not** imply nullability or a separate reference/value type split.
-
 ### Dynamic semantics
 
 Types describe compile-time properties; runtime representation is defined by lowering and execution ABI. Array values **must** use the `BeskidArray` layout documented in execution ABI material.
@@ -101,7 +98,7 @@ Type band **E12xx** (unknown type, mismatch, missing annotation, member access).
 - **D-LM-TYP-001 — Nominal types:** Beskid uses nominal, path-resolved types; structural equivalence is not user-definable in v0.1.
 - **D-LM-TYP-002 — `Option<T>` only:** Optional values use `Option<T>` or explicit enums; `null` and `optional` keyword are forbidden.
 - **D-LM-TYP-003 — `T[]` fat pointer:** Array types share one runtime representation across targets unless a profile documents otherwise.
-- **D-LM-TYP-004 — Single type system:** No parallel reference/value kinds; `ref` is a passing mode, not a second class of types.
+- **D-LM-TYP-004 — Single type system:** No parallel reference/value kinds in v0.1; parameters pass by value unless documented heap handles apply.
 - **D-LM-TYP-005 — Inline type methods:** Methods **may** appear in the owning `type` body; they share the type's scope for field access. `extend type` remains the extension mechanism for types defined elsewhere.
 
 ## Implementation anchors
@@ -111,4 +108,4 @@ Type band **E12xx** (unknown type, mismatch, missing annotation, member access).
 
 ## Platform view
 
-The type grammar (nominal types, generics, `ref T`, `Option<T>`) is the backbone of static checking. All analysis phases share these definitions.
+The type grammar (nominal types, generics, `Option<T>`) is the backbone of static checking. All analysis phases share these definitions.

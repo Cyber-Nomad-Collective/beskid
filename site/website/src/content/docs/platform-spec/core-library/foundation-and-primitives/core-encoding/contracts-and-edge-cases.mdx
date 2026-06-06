@@ -1,0 +1,48 @@
+---
+title: Contracts and edge cases
+description: MUST rules for Core.Encoding.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-06-06
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Core.Encoding
+    href: /platform-spec/core-library/foundation-and-primitives/core-encoding/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Base contract — **ENC-001** … **ENC-009**
+
+| ID | Requirement |
+| --- | --- |
+| **ENC-001** | Every encoding **must** expose `EncodeToBytes` and `DecodeFromBytes` returning `Result`. |
+| **ENC-002** | Error type **must** be `EncodingError` with distinct variants. |
+| **ENC-003** | Utf8 **must** be the language-default encoding for `string` boundaries. |
+| **ENC-004** | Invalid UTF-8 decode **must** return `InvalidSequence`, not panic (corelib layer). |
+| **ENC-005** | Encoders **must not** perform I/O. |
+| **ENC-006** | Hex encode **must** use lowercase `a`–`f`. |
+| **ENC-007** | Hex decode **must** accept case-insensitive pairs. |
+| **ENC-008** | Base64 **must** use RFC 4648 standard alphabet with `=` padding on decode. |
+| **ENC-009** | Module tier **must** be `@tier(standard)` for prelude re-export. |
+
+## Per-encoding IDs
+
+| ID | Requirement |
+| --- | --- |
+| **ENC-UTF8-001** | `EncodeToBytes` copies UTF-8 code units without re-encoding. |
+| **ENC-UTF8-002** | `DecodeFromBytes` validates full buffer as UTF-8. |
+| **ENC-HEX-001** | Odd-length hex input **must** error. |
+| **ENC-B64-001** | Invalid padding or alphabet char **must** error. |
+
+## Implementation anchors
+
+- `compiler/corelib/packages/foundation/src/Core/Encoding/`

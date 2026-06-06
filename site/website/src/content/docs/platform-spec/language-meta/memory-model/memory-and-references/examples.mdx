@@ -23,34 +23,29 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 <SpecArticleChrome />
 
-## ref parameter
+## Mutable local
 
 ```beskid
-unit Swap(ref i32 a, ref i32 b) {
-    let temp = a;
-    a = b;
-    b = temp;
-}
-
-unit UseSwap() {
-    let x = 1;
-    let y = 2;
-    Swap(ref x, ref y);
+unit Counter() {
+    mut i64 count = 0;
+    count = count + 1;
 }
 ```
 
-## out parameter
+## Inferred mutable local
 
 ```beskid
-unit TryParse(string s, out i32 result) -> bool {
-    // parse s into result
-    result = 42;
-    return true;
+unit InferredMut() {
+    let mut total = 0;
+    total = total + 10;
 }
+```
 
-unit UseOut() {
-    let value = 0;
-    let ok = TryParse("42", out value);
+## Mutable parameter
+
+```beskid
+unit Bump(mut i64 value) {
+    value = value + 1;
 }
 ```
 
@@ -58,26 +53,16 @@ unit UseOut() {
 
 ```beskid
 unit Arrays() {
-    let values = i32[] { 1, 2, 3 };
-    let first = values[0];
+    u8[] buf = __array_new(1, 4);
+    buf[0] = 1;
 }
 ```
 
-## Closure capture
+## Cross-fiber channel
 
 ```beskid
-unit Closure() {
-    let local = 10;
-    let f = () => local + 1;
-    let result = f();
-}
-```
-
-## Channel sharing
-
-```beskid
-unit ShareAcrossFibers() {
-    let ch = Channel<i32>();
+unit FiberShare() {
+    let ch = Channel.New<i64>();
     spawn {
         ch.Send(42);
     };

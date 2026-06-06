@@ -1,6 +1,6 @@
 ---
 title: Memory and references
-description: Locals, ref T, heap objects under a concurrent GC, and fiber
+description: Locals, mut bindings, heap objects under a concurrent GC, and fiber
   sharing rules. Runtime write barriers and collector phases defer to execution
   specs; /execution/ is a non-normative legacy bridge.
 template: splash
@@ -48,19 +48,22 @@ import SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';
 
 ### Scope
 
-Defines **local storage**, **`ref`/`out` parameters**, **GC-managed heap objects**, **arrays**, and **cross-fiber sharing** at the language level. Collector algorithms and write barriers **must** match execution platform-spec; the `/execution/` doc tree is informative only.
+Defines **local storage**, **`mut` bindings**, **GC-managed heap objects**, **arrays**, and **cross-fiber sharing** at the language level. Collector algorithms and write barriers **must** match execution platform-spec; the `/execution/` doc tree is informative only.
 
 ### Locals and assignment
 
 - Locals live in function activation records unless captured by closures (see [Lambdas and closures](/platform-spec/language-meta/evaluation/lambdas-and-closures/)).
 - Assignment to immutable bindings **must** error (**E1214**).
-- `mut` on locals and parameters **must** be present to allow reassignment where required by the reference compiler.
+- `mut` **must** appear as a **prefix modifier** before the type or after `let` to allow reassignment:
+  - Typed locals: `mut T name = expr` (for example `mut i64 acc = 0`).
+  - Inferred locals: `let mut name = expr`.
+  - Parameters: `mut T name` (for example `fn f(mut u8[] buf)`).
+- Legacy suffix form `T mut name` **must** be rejected by the parser.
 
-### `ref` and `out`
+### Parameter passing
 
-- Parameters **may** use `ref T` or `out T` modifiers (`ParameterModifier`).
-- `ref` passes an alias to existing storage; `out` requires definite assignment before read on callee entry.
-- `ref` in type expressions (`ref T`) denotes reference types in signatures distinct from by-value `T`.
+- Parameters are passed **by value** in v0.1. Callees that must update caller-visible state **must** return values or use heap/`T[]` handles per the array ABI.
+- `ref` and `out` parameter modifiers are **not** part of v0.1.
 
 ### Arrays
 
@@ -100,10 +103,10 @@ Memory rules enforced in `beskid_analysis` **must** be preserved in codegen for 
 - **D-LM-MEM-004 — No `null` addresses:** References are non-null at the type level; `Option<T>` models absence.
 
 ## Implementation anchors
-- `compiler/crates/beskid_runtime/src/` — heap allocation, GC tracing, and `ref T` fat-pointer layout
+- `compiler/crates/beskid_runtime/src/` — heap allocation, GC tracing, and `T[]` fat-pointer layout
 - `compiler/crates/beskid_analysis/src/types/` — reference type checking and immutability rules
 - `compiler/crates/beskid_abi/src/builtins.rs` — `gc_write_barrier` and allocation builtins
 
 ## Platform view
 
-Locals, `ref T`, GC-traced heap objects, and channel-mediated sharing. Runtime barrier and phase details live under platform-spec execution; `/execution/` pages are a legacy bridge only.
+Locals, prefix `mut` bindings, GC-traced heap objects, and channel-mediated sharing. Runtime barrier and phase details live under platform-spec execution; `/execution/` pages are a legacy bridge only.

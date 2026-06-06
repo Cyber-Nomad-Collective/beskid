@@ -37,7 +37,7 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 | Unknown type in field | **E1005** emitted during definition checking |
 | Duplicate type name | **E1001** or **E1006** emitted |
 | Array type parsing | `T[]` resolves to array type node |
-| `ref T` in parameter | Accepted in signatures; rejected in value positions where invalid |
+| `mut T` parameter | Accepted in signatures; reassignment allowed in callee |
 | Conformance target resolution | **E1607** for invalid contract paths |
 
 ## Implementation checklist

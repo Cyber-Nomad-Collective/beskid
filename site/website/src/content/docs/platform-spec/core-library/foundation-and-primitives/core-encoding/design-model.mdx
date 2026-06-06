@@ -1,0 +1,33 @@
+---
+title: Design model
+description: Encoding contract and algorithm modules.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-06-06
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Core.Encoding
+    href: /platform-spec/core-library/foundation-and-primitives/core-encoding/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Modules
+
+| Module | Role |
+| --- | --- |
+| `Core.Encoding.EncodingError` | Shared error enum |
+| `Core.Encoding.Contract` | `Encoder` contract with encode/decode |
+| `Core.Encoding.Utf8` | Language-default UTF-8 |
+| `Core.Encoding.Hex` | Hexadecimal |
+| `Core.Encoding.Base64` | RFC 4648 standard Base64 |
+
+Utf8 uses `__bytes_from_str` / `__str_from_bytes_utf8` at the runtime boundary. Hex and Base64 are pure Beskid over `Core.Bytes`.

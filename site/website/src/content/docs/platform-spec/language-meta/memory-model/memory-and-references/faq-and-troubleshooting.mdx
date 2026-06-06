@@ -38,9 +38,9 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 No. User code must not expose manual `free` or untracked pointers in v0.1.
 
-### What is the difference between `ref` and `out`?
+### How do I declare a mutable local?
 
-`ref` passes an alias to existing storage. `out` requires the callee to assign the parameter before returning.
+Use prefix `mut` before the type (`mut i64 acc = 0`) or `let mut name = expr` when the type is inferred.
 
 ### How do I share data between fibers?
 

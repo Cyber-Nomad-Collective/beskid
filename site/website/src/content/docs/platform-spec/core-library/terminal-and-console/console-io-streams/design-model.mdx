@@ -60,7 +60,7 @@ flowchart TB
 | `Stdout` | 1 | `System.Output` | **Forbidden** | `Write`, `WriteLine` |
 | `Stderr` | 2 | `System.Error` | **Forbidden** | `Write`, `WriteLine` |
 
-User code **must not** pass integer fds to `ReadWith` / `WriteWith` for these helpers. Arbitrary descriptors, sockets, and pipes are out of scope for v1 stream modules.
+User code **must not** pass integer fds to `ReadWith` / `WriteWith` for these helpers. Arbitrary descriptors, sockets, and pipes are out of scope for v1 stream modules; binary and raw-fd I/O lives in [System.Syscall](/platform-spec/core-library/stability-and-api-shape/system-syscall/) (**SC-002**, **SC-003**), which is a superset profile of which console streams are the **SC-004** restricted subset.
 
 ### Syscall routing rules
 

@@ -10,7 +10,7 @@ Beskid types are **nominal** and **static**. The compiler is not impressed by yo
 
 - Records, enums, contracts as declared types
 - Generics on types and methods where the grammar allows
-- `ref T` for reference semantics per memory model—**not** nullable pointers
+- Prefix `mut` for reassignable locals and parameters (`mut i64 x`, `let mut x`)
 - No `null` literal, no `optional` keyword—see [Option](/book/07-compiler-is-not-your-therapist/option-and-nullability/)
 
 ## Generics
@@ -27,7 +27,7 @@ Instance calls resolve per [method dispatch](/platform-spec/language-meta/type-s
 flowchart TD
   Q[Need absence?] -->|yes| O[Option T]
   Q -->|failure| R[Result-shaped enum]
-  Q -->|never| V[plain T or ref T]
+  Q -->|never| V[plain T]
 ```
 
 ## Normative

@@ -58,7 +58,7 @@ Defines **`event` fields** on types and their **raise/subscribe** surface. Fiber
 ### Static rules
 
 - Raising or subscribing **must** target an in-scope event member on a value or `this`-equivalent receiver.
-- Event signatures **must** use parameter lists compatible with delegate lowering (no `ref`/`out` on event parameters unless explicitly allowed by host profile).
+- Event signatures **must** use parameter lists compatible with delegate lowering (value parameters only in v0.1).
 
 ### Dynamic semantics
 

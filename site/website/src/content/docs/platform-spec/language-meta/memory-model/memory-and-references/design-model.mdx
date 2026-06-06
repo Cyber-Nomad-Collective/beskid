@@ -1,6 +1,6 @@
 ---
 title: "Memory and references - Design model"
-description: "Conceptual model for locals, ref T, heap objects under GC, and cross-fiber sharing in Beskid."
+description: "Conceptual model for locals, mut bindings, heap objects under GC, and cross-fiber sharing in Beskid."
 template: splash
 tableOfContents: true
 specLevel: article
@@ -27,8 +27,8 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 | Construct | Role |
 | --- | --- |
-| **`ref T`** | By-reference parameter passing mode |
-| **`out T`** | Output parameter requiring definite assignment |
+| **`mut T name`** | Mutable binding (prefix modifier before type) |
+| **`let mut name`** | Mutable inferred local |
 | **`BeskidArray`** | Fat-pointer layout for array values |
 | **GC heap** | Collector-managed storage for escaped reference-bearing values |
 
@@ -51,8 +51,8 @@ flowchart TB
 
 | Subsystem | Responsibility | Key file |
 | --- | --- | --- |
-| Parser | Parse `ref`/`out` modifiers | `beskid.pest` |
-| Type checker | Validate `ref` usage | `types/context/` |
+| Parser | Parse prefix `mut` on bindings | `beskid.pest` |
+| Type checker | Validate `mut` reassignment rules | `types/context/` |
 | Semantic rules | Immutable assignment check | `analysis/rules/staged/` |
 | Runtime | GC and heap management | `beskid_runtime/src/gc.rs` |
 | Codegen | Emit write barriers | `beskid_codegen` |
@@ -61,11 +61,11 @@ flowchart TB
 
 Locals live in function activation records unless captured by closures. Assignment to immutable bindings emits **E1214**.
 
-## `ref` and `out`
+## `mut` bindings
 
-- `ref` passes an alias to existing storage.
-- `out` requires definite assignment before read on callee entry.
-- Both appear only in parameter signatures; `ref T` in type expressions denotes reference types in signatures distinct from by-value `T`.
+- Typed locals and parameters use `mut` before the type: `mut i64 acc = 0`, `fn f(mut u8[] buf)`.
+- Inferred locals use `let mut name = expr`.
+- Parameters pass by value; mutation of caller state uses return values or heap/`T[]` handles.
 
 ## Arrays
 
