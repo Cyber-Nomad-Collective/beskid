@@ -1,0 +1,31 @@
+---
+title: Tracker data model and GitHub sync
+description: SQLite source of truth, import format, and scoped GitHub Issues sync for beskid_tracker.
+---
+
+The Beskid tracker stores delivery versions, roadmap tasks, deliverables, workstreams, and public bugs in **SQLite**. Seed JSON under the tracker repository (`data/v0.x/`) is a **portable import format**, not the runtime master.
+
+## Active version sync scope
+
+GitHub Issues sync applies to:
+
+- **All bugs** (open and closed, `bug` label on export)
+- **Roadmap tasks** in the **active delivery version** only
+
+Active version resolution:
+
+1. Prefer versions with status `In Progress`; if multiple, pick the **highest semver** (e.g. `v0.4` over `v0.2`).
+2. If none are in progress, pick the **highest semver** among all versions.
+
+Maintainers may override the active version in tracker **Settings → GitHub Sync → Sync scope**.
+
+## Bidirectional sync
+
+- **Outbound:** Local mutations enqueue an export outbox; maintainers run **Export to GitHub** or exports run after writes when credentials are available.
+- **Inbound:** GitHub webhooks update the database for in-scope issues. Conflicts: **local wins** for roadmap tasks; **newer timestamp wins** for bugs.
+
+## Import
+
+Upload a folder matching the seed layout (`version.json`, `workstreams/`, `deliverables/`, `tasks/`) via Settings. The import API upserts normalized tables without requiring GitHub writes first.
+
+Use **Backfill from mirror** once if migrating from a legacy GitHub issue cache (`github_issues` table).
