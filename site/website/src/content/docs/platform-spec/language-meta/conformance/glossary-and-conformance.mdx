@@ -128,6 +128,8 @@ Cross-domain pages **must** link to the owning `language-meta` chapter with `rel
 | `Option<T>` | The sole optional-value surface in v0.1 (corelib `Query.Contracts.Option`); **must not** be spelled `optional` or `?T` |
 | `null` | **Must not** exist as a type, literal, or implicit default; absence uses `Option<T>::None` or explicit enums |
 | `mut` | Prefix modifier marking a reassignable local or parameter (`mut T name`, `let mut name`) |
+| **PascalCase** | Identifier profile for types, enums, contracts, variants, module segments, and callable members; see [Code style and naming](/platform-spec/language-meta/program-structure/code-style-and-naming/) |
+| **lowerCamelCase** | Identifier profile for fields, parameters, locals, and macro names; see [Code style and naming](/platform-spec/language-meta/program-structure/code-style-and-naming/) |
 | **GC heap** | Traced object store with concurrent mark-sweep; runtime details in execution specs; `/execution/` tree is a **non-normative legacy bridge** only |
 
 ### Conformance of specifications themselves

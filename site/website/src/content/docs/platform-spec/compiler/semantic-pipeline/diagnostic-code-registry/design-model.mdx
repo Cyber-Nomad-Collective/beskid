@@ -133,6 +133,23 @@ The inclusive ranges **W1610–W1619** and **W1620–W1625** are reserved for **
 | **W1624** | `@par(name)` does not match a generic type parameter on the item. |
 | **W1625** | Duplicate `@par(name)` in the same block. |
 
+## Code style and naming (**W1630–W1639**)
+
+The inclusive range **W1630–W1639** is owned by **[Code style and naming](/platform-spec/language-meta/program-structure/code-style-and-naming/)**. These warnings **should** be produced by style lint rules after name resolution; they **must not** use ad hoc string codes outside `SemanticIssueKind`.
+
+| Code | Meaning (summary) |
+| --- | --- |
+| **W1630** | `type`, `enum`, or `contract` name is not **PascalCase** |
+| **W1631** | Enum variant name is not **PascalCase** |
+| **W1632** | Type field or named variant payload field is not **lowerCamelCase** |
+| **W1633** | Function or type method name is not **PascalCase** |
+| **W1634** | Module path segment is not **PascalCase** |
+| **W1635** | Generic type parameter is not **PascalCase** |
+| **W1636** | Parameter or local binding is not **lowerCamelCase** (except `self`) |
+| **W1637** | `test` name is not **snake_case** |
+| **W1638** | `macro` name is not **lowerCamelCase** |
+| **W1639** | **Reserved** |
+
 Codes **must** be stable across patch releases once shipped; breaking message text is allowed only with a migration note in **[Rules and diagnostics catalog](/platform-spec/compiler/semantic-pipeline/rules-and-diagnostics-catalog/)**.
 
 ## User FFI diagnostics (**E1520–E1539**, v0.3)
