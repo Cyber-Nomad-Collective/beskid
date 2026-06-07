@@ -17,6 +17,7 @@ This chapter is the mental model for **what** you are building (targets), **what
 | [`beskid new`](/book/03-project-proj-or-it-didnt-happen/beskid-new/) | Scaffolding templates without hand-copy hell. |
 | [Fetch, lock, update](/book/03-project-proj-or-it-didnt-happen/fetch-lock-update/) | Resolution, `Project.lock`, reproducibility. |
 | [Tree and resolution](/book/03-project-proj-or-it-didnt-happen/tree-and-resolution/) | DAG order, `obj/beskid`, debugging graphs. |
+| [Bsol and the config stack](/book/03-project-proj-or-it-didnt-happen/bsol-and-the-config-stack/) | Meta-language, HCL parallels, schema profiles, analysis spine. |
 
 ## By the end of this chapter
 

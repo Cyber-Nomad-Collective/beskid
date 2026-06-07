@@ -5,6 +5,7 @@
 		"entries": [
 			"index",
 			"00-why-beskid-exists",
+			"00-why-beskid-exists/whats-in-the-name",
 			"00-why-beskid-exists/my-story",
 			"00-why-beskid-exists/current-state-of-languages",
 			"00-why-beskid-exists/solid-dry-and-ddd",
@@ -31,6 +32,7 @@
 			"03-project-proj-or-it-didnt-happen/beskid-new",
 			"03-project-proj-or-it-didnt-happen/fetch-lock-update",
 			"03-project-proj-or-it-didnt-happen/tree-and-resolution",
+			"03-project-proj-or-it-didnt-happen/bsol-and-the-config-stack",
 			"04-where-does-this-file-go",
 			"04-where-does-this-file-go/module-layout",
 			"04-where-does-this-file-go/compilation-units",

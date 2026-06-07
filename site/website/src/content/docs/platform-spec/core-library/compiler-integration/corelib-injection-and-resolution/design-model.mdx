@@ -20,6 +20,10 @@ relatedTopics:
     title: Corelib discovery and packaging
     href: /platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/
     relation: Canonical package identity and roots
+  - type: ADR
+    title: Explicit use, no prelude
+    href: /platform-spec/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/
+    relation: Symbol visibility after graph attachment
 ---
 
 import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
@@ -28,13 +32,13 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 ## Purpose
 
-Host projects (`Host`, including template output) **always** receive an implicit dependency on the canonical **corelib** aggregate (`beskid_corelib`, package identity **`corelib`**). Injection happens during DAG construction in `resolve_dependencies`, not via optional manifest flags.
+Host projects (`Host`, including template output) **always** receive an implicit dependency on the canonical **corelib** aggregate (`beskid_corelib`, package identity **`corelib`**, manifest **`corelib.bproj`**, `type = Aggregate`). Injection happens during DAG construction in `resolve_dependencies`, not via optional manifest flags. **Graph attachment is unchanged**; reachable symbols require manifest dependencies and explicit **`use`** imports—see **[Explicit use, no prelude](/platform-spec/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/)**.
 
 ## Injection model
 
 ```mermaid
 flowchart TB
-  Host[Host Project.proj]
+  Host[Host .bproj]
   Resolver[resolve_dependencies]
   Std[Implicit Std / corelib path]
   Graph[Project DAG]
@@ -48,10 +52,12 @@ flowchart TB
 
 | Input | Resolution |
 | --- | --- |
-| `BESKID_CORELIB_ROOT` | Points at workspace or install root containing `beskid_corelib/Project.proj` |
+| `BESKID_CORELIB_ROOT` | Points at workspace or install root containing `beskid_corelib/corelib.bproj` |
 | Repo discovery | Walk ancestors for `compiler/corelib/beskid_corelib` |
-| Explicit `Std` path dep | Honored when declared; path fallback uses `default_corelib_dependency_path()` |
+| Explicit `Std` / `corelib` path dep | Honored when declared; path fallback uses `default_corelib_dependency_path()` |
 | Corelib workspace shards | `compiler/corelib/packages/*` **must not** get implicit back-edge (cycle guard) |
+
+The aggregate **`corelib`** node is **dependency-only** (`type = Aggregate`): it groups shard path dependencies and **must not** contribute a prelude or implicit module seed list to assembly.
 
 ## Manifest prohibitions
 
@@ -59,7 +65,7 @@ flowchart TB
 
 ## Symbol resolution
 
-After the graph attaches corelib nodes, semantic resolution treats corelib types and builtins like any other dependency assembly: same `CompilationContext`, same diagnostic catalog. User-visible names defer to language-meta; this feature covers **graph attachment only**.
+After the graph attaches corelib nodes, semantic resolution treats corelib types and builtins like any other dependency assembly: same `CompilationContext`, same diagnostic catalog. Modules become visible only through **`use`** paths declared against effective dependency roots—no automatic prelude union seeding. User-visible names defer to language-meta; this feature covers **graph attachment only**.
 
 ## CLI and LSP parity
 

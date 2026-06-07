@@ -63,4 +63,4 @@ The failure mode is not DDD the book—it is **DDD the performance**: architects
 - Prefer **explicit modules and compile-time composition** over runtime discovery.
 - Make illegal states harder at compile time without inventing a new bounded context for `EmailAddress`.
 
-Next: [1.4 Trauma — by developers, for developers](/book/00-why-beskid-exists/trauma-by-developers-for-developers/).
+Next: [1.5 Trauma — by developers, for developers](/book/00-why-beskid-exists/trauma-by-developers-for-developers/).

@@ -1,6 +1,6 @@
 ---
 title: Verification and traceability
-description: Tests and maintenance rules for the Bsol grammar and AST builder.
+description: Tests and maintenance rules for the Bsol grammar, schema profiles, and lowering.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -27,15 +27,18 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 | Topic | Path |
 | --- | --- |
-| Bsol AST builder smoke | `beskid_analysis::projects::bsol::build::tests` |
+| Bsol parse + schema profile load | `beskid_bsol::schema::load::tests` |
 | Project manifest lowering | `beskid_analysis::projects::parser::tests` |
+| Runtime manifest lowering | `beskid_manifest::lower::tests`, `beskid_manifest::codegen::tests` |
+| Link block merge spans | `beskid_analysis::external_library::manifest_merge::tests` |
 | Manifest contract integration | `beskid_tests::projects::manifest` (when crate compiles) |
-| Mod / template manifest shape | `beskid_tests::projects::mod_manifest`, `templates` |
 
 Run targeted gate:
 
 ```bash
+cd compiler && cargo test -p beskid_bsol
 cd compiler && cargo test -p beskid_analysis projects::
+cd compiler && cargo test -p beskid_manifest
 ```
 
 Full compiler workspace per project policy:
@@ -46,18 +49,21 @@ cd compiler && cargo test
 
 ## Spec maintenance
 
-Grammar or AST shape changes **must** update, in order:
+Grammar, AST, or profile shape changes **must** update, in order:
 
-1. **`bsol.pest`** and **`projects/bsol/ast.rs`** (keep in sync)
-2. **[Bsol design model](./design-model/)** Rust AST excerpt when public types change
-3. Manifest contract articles when lowering semantics or diagnostic bands change
-4. `cd site/website && bun run verify:trudoc -- --preset ci` after MDX edits
+1. **`beskid_bsol/src/bsol.pest`** and **`ast.rs`** (keep in sync)
+2. Embedded **`schemas/*.v1.bsol`** when validation rules change
+3. **[Bsol design model](./design-model/)** Rust AST excerpt when public types change
+4. **[Runtime manifest profile](./runtime-manifest-profile/)** when `runtime_manifest.bsol` rules change
+5. Manifest contract articles when lowering semantics or diagnostic bands change
+6. `cd site/website && bun run verify:trudoc -- --preset ci` after MDX edits
 
 ## Traceability matrix
 
 | Bsol rule | Implementation | Verification |
 | --- | --- | --- |
-| BSOL-001 Single grammar file | `bsol.pest` | Pest compile via `BsolParser` derive |
-| BSOL-002 Stable AST types | `projects/bsol/ast.rs` | Struct/enum names match design model |
-| BSOL-003 Span-backed parse errors | `ProjectError::ParseAt` | `projects::parser::tests::name_must_stay_quoted` |
-| BSOL-004 Lowering defers semantics | `projects/parser.rs` | Existing E18xx manifest tests unchanged |
+| BSOL-001 Single grammar file | `beskid_bsol/src/bsol.pest` | Pest compile via `BsolParser` derive |
+| BSOL-002 Stable generic AST | `beskid_bsol/src/ast.rs` | Struct/enum names match design model |
+| BSOL-003 Span-backed parse errors | `BsolError`, `ProjectError::ParseAt` | `projects::parser::tests::name_must_stay_quoted` |
+| BSOL-004 Schema profiles | `beskid_bsol/schemas/*.v1.bsol` | `schema::load::tests`, profile validate tests |
+| BSOL-005 Lowering defers semantics | `projects/parser.rs`, `beskid_manifest/lower.rs` | Existing E18xx manifest tests unchanged |

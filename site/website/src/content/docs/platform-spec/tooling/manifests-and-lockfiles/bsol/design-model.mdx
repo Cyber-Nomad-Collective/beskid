@@ -1,6 +1,6 @@
 ---
 title: Design model
-description: Bsol lexical rules, grammar architecture, and normative Rust AST types.
+description: Bsol lexical rules, generic block grammar, schema profiles, and normative Rust AST types.
 template: splash
 tableOfContents: true
 specLevel: article
@@ -21,6 +21,10 @@ relatedTopics:
     title: Project manifest contract
     href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
     relation: Semantic lowering target for `.bproj`
+  - type: Article
+    title: Runtime manifest profile
+    href: /platform-spec/tooling/manifests-and-lockfiles/bsol/runtime-manifest-profile/
+    relation: Schema profile for `runtime_manifest.bsol`
 ---
 
 import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
@@ -31,22 +35,27 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 | Construct | Role |
 | --- | --- |
-| **`bsol.pest`** | Authoritative PEG grammar (single syntactic truth for manifests) |
-| **`BsolParser`** | Pest-derived parser entry type |
-| **`BsolDocument`** | Root AST node: ordered top-level blocks |
-| **`ProjectManifest` / `WorkspaceManifest`** | Typed models produced **after** Bsol lowering + contract validation |
+| **`bsol.pest`** | Authoritative PEG grammar (single syntactic truth for all Bsol documents) |
+| **`BsolParser`** | Pest-derived parser entry type in `beskid_bsol` |
+| **`BsolDocument`** | Generic root AST: ordered top-level blocks |
+| **`SchemaProfile`** | Declarative rule set loaded from embedded `*.v1.bsol` profile files |
+| **`ValidatedDocument`** | AST after schema validation; input to downstream lowering |
+| **`ProjectManifest` / `WorkspaceManifest` / `ManifestRoot`** | Typed models produced **after** profile validation + lowering |
 
 ## Pipeline
 
 ```mermaid
 flowchart LR
-  source[".bproj / .bws text"]
+  source[".bproj / .bws / runtime_manifest.bsol text"]
   pest["BsolParser (pest)"]
-  ast["BsolDocument AST"]
-  lower["parser.rs lowering"]
-  model["ProjectManifest / WorkspaceManifest"]
-  validate["validator.rs"]
-  source --> pest --> ast --> lower --> model --> validate
+  ast["BsolDocument"]
+  profile["load_profile(name)"]
+  validate["validate(document, profile)"]
+  lower["Downstream lowering"]
+  model["ProjectManifest / WorkspaceManifest / ManifestRoot"]
+  source --> pest --> ast --> validate
+  profile --> validate
+  validate --> lower --> model
 ```
 
 ## Lexical rules
@@ -60,71 +69,50 @@ flowchart LR
 
 ## Surface document shape
 
-A Bsol document is a sequence of blocks. Each block is one of:
+A Bsol document is a sequence of blocks. Each block has the same syntactic form:
 
-| Form | Example |
-| --- | --- |
-| Named project root | `myapp { name = "myapp" ... }` |
-| Labeled reserved block | `target "main" { kind = App ... }` |
-| Unlabeled reserved block | `link { libraries = [libc] }` |
+```bsol
+block_kind optional "label" {
+  key = value
+  nested_block { ... }
+}
+```
 
-**Reserved top-level keywords** (cannot be used as a project root ident): `target`, `dependency`, `link`, `workspace`, `member`, `override`, `registry`.
+Optional **`@schemaless`** before `{` captures the inner `{ ... }` text verbatim without parsing assignments (profile rule must set `schemaless = true`):
 
-Nested blocks allowed **only** inside a project root body: `mod` / `meta`, `template`.
+```bsol
+opaque @schemaless {
+  raw { nested } text preserved
+}
+```
+
+When present, the AST stores the body in `BsolBlock.schemaless_body` instead of `items`.
+
+Manifest-specific block kinds (`target`, `dependency`, `workspace`, `kernel`, …) are **not** encoded in the grammar. They are defined by **schema profiles** (`project.v1`, `workspace.v1`, `runtime.v1`).
 
 ## Normative Rust AST
 
-The reference compiler **must** build the following types from a successful Bsol parse. Field names and enum variants are stable contract surface for tooling, LSP, and test fixtures.
+The reference compiler **must** build the following types from a successful Bsol parse. Field names are stable contract surface for tooling, LSP, and test fixtures.
 
 ```rust
-/// A parsed `.bproj` or `.bws` document.
+/// A parsed Bsol document (any profile).
 pub struct BsolDocument {
     pub blocks: Vec<BsolBlock>,
 }
 
-/// One top-level block in a manifest file.
+/// One block in a Bsol document.
 pub struct BsolBlock {
     pub span: BsolSpan,
-    pub header: BsolBlockHeader,
-    pub body: Vec<BsolBodyItem>,
+    pub kind: String,                      // block keyword
+    pub label: Option<BsolQuotedString>,   // optional quoted label
+    pub schemaless_body: Option<String>,   // set when `@schemaless` is used
+    pub items: Vec<BsolItem>,
 }
 
-/// Block header: either a named project root or a reserved manifest block kind.
-pub enum BsolBlockHeader {
-    /// `{ myapp { name = "myapp" ... } }` — block kind must match lowered `name`.
-    ProjectRoot { ident: String },
-    /// Reserved blocks such as `target "main" { ... }`.
-    Reserved {
-        kind: BsolReservedBlockKind,
-        label: Option<BsolQuotedString>,
-    },
-}
-
-pub enum BsolReservedBlockKind {
-    Target,
-    Dependency,
-    Link,
-    Workspace,
-    Member,
-    Override,
-    Registry,
-}
-
-pub enum BsolBodyItem {
+/// Body item: assignment or nested block.
+pub enum BsolItem {
     Assignment(BsolAssignment),
-    NestedBlock(BsolNestedBlock),
-}
-
-pub struct BsolNestedBlock {
-    pub span: BsolSpan,
-    pub kind: BsolNestedBlockKind,
-    pub assignments: Vec<BsolAssignment>,
-}
-
-pub enum BsolNestedBlockKind {
-    Mod,
-    Meta,     // legacy alias; lowered identically to Mod
-    Template,
+    Block(BsolBlock),
 }
 
 pub struct BsolAssignment {
@@ -163,25 +151,43 @@ pub struct BsolSpan {
 }
 ```
 
-Source of truth in the repository: `compiler/crates/beskid_analysis/src/projects/bsol/ast.rs`.
+Source of truth in the repository: `compiler/crates/beskid_bsol/src/ast.rs`.
+
+## Schema profiles
+
+Profiles ship embedded in `beskid_bsol` (`include_str!` from `schemas/`). The only non-declarative layer is the Rust bootstrap loader in `schema/load.rs`.
+
+| Profile | Document | Lowering crate |
+| --- | --- | --- |
+| `project.v1` | `*.bproj` project manifests | `beskid_analysis::projects::parser` |
+| `workspace.v1` | `*.bws` / `workspace.proj` | `beskid_analysis::projects::parser` |
+| `runtime.v1` | `compiler/runtime_manifest.bsol` | `beskid_manifest::lower` |
+
+Public API:
+
+| API | Returns |
+| --- | --- |
+| `parse_bsol_document(&str)` | `Result<BsolDocument, BsolError>` |
+| `load_profile(&str)` | `Result<SchemaProfile, BsolError>` |
+| `validate(&BsolDocument, &SchemaProfile)` | `Result<ValidatedDocument, BsolError>` |
 
 ## Lowering boundary
 
-Bsol parsing **stops** at `BsolDocument`. The following are **not** Bsol syntax errors—they are manifest contract failures during lowering or validation:
+Bsol parsing **stops** at `BsolDocument`. Schema validation rejects unknown blocks, missing labels, and invalid field types. The following are **not** Bsol syntax errors—they are manifest contract failures during lowering or validation:
 
-- Missing required fields (`name`, `version`, target labels, dependency labels)
+- Missing required semantic fields after schema pass (`entry` on App targets, dependency path when `source = path`)
 - Unknown or misplaced nested blocks (`mod` on host projects)
 - Meta-contract band **E1801–E1899** (for example legacy `project { }`, corelib opt-out keys)
 - Graph and lockfile rules in compiler resolution features
 
-Public entry points:
+Downstream entry points (unchanged public surface):
 
 | API | Returns |
 | --- | --- |
-| `parse_bsol_document(&str)` | `Result<BsolDocument, ProjectError>` |
 | `parse_manifest(&str)` | `Result<ProjectManifest, ProjectError>` |
 | `parse_workspace_manifest(&str)` | `Result<WorkspaceManifest, ProjectError>` |
+| `beskid_manifest::load_manifest(path)` | `Result<ManifestRoot, String>` |
 
 ## Relationship to Beskid surface syntax
 
-Bsol is a **distinct** meta-language from Beskid `.bd` source. It shares the pest-based implementation stack but uses its own grammar file (`bsol.pest`) and AST module (`projects/bsol/`). Beskid program syntax remains specified under **[Surface syntax](/platform-spec/language-meta/surface-syntax/)**.
+Bsol is a **distinct** meta-language from Beskid `.bd` source. It shares the pest-based implementation stack but uses its own grammar file (`beskid_bsol/src/bsol.pest`) and crate. Beskid program syntax remains specified under **[Surface syntax](/platform-spec/language-meta/surface-syntax/)**.

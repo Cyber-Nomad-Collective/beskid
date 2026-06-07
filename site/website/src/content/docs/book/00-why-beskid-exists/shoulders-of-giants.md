@@ -78,4 +78,4 @@ Shoulders of giants implies **visibility**. Abstraction towers imply **fog**.
 
 Beskid is not anti-abstraction. It is anti-**unpaid** abstraction: layers you did not choose, cannot see in the binary, and cannot remove when the business rule is simple but the stack is not.
 
-Next: [1.6 segfault or not to segfault](/book/00-why-beskid-exists/segfault-or-not-to-segfault/).
+Next: [1.7 segfault or not to segfault](/book/00-why-beskid-exists/segfault-or-not-to-segfault/).

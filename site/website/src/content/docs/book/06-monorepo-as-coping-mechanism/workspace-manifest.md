@@ -1,15 +1,17 @@
 ---
 title: "Workspace manifest"
-description: Workspace.proj structure—identity, members, overrides, registries."
+description: ".bws structure—identity, members, overrides, registries."
 tableOfContents: true
 ---
 
-`Workspace.proj` is the umbrella manifest for multi-project repos. It does not replace per-project `Project.proj` files—it coordinates them.
+**`.bws`** workspace manifests coordinate multi-project repos. They do not replace per-member **`.bproj`** files—they declare members and shared resolver policy.
+
+Legacy **`Workspace.proj`** is rejected (**E1895**); rename to a `.bws` file (for example `CoreLib.bws`).
 
 ## Building blocks
 
-- **`workspace { ... }`** — workspace identity and resolver policy
-- **`member "<label>" { path = "..." }`** — adds a project at `path`
+- **`workspace { ... }`** — workspace identity and resolver policy; extras such as **`defaultTestMember`** select the member when you pass the workspace path without `--workspace-member`
+- **`member "<label>" { path = "..." }`** — adds a project at `path`; optional extras (`package`, `description`, `category`, `tags`) are publish/editor metadata merged from the workspace manifest
 - **`override "<dep>" { version = "..." }`** — shared version policy (forward-looking as registry deps mature)
 - **`registry "<name>" { url = "..." }`** — centralized registry endpoints
 
@@ -19,16 +21,16 @@ tableOfContents: true
 | --- | --- |
 | Each project owns conflicting dep policy | Shared overrides |
 | CI scripts special-case every folder | One lock/resolution story |
-| "Which Project.proj?" roulette | Explicit members |
+| "Which `.bproj`?" roulette | Explicit members |
 
 ## Minimal mental picture
 
 ```mermaid
 flowchart TD
-  W[Workspace.proj] --> M1[member app]
+  W[CoreLib.bws] --> M1[member app]
   W --> M2[member lib]
-  M1 --> P1[Project.proj]
-  M2 --> P2[Project.proj]
+  M1 --> P1[app.bproj]
+  M2 --> P2[lib.bproj]
 ```
 
 ## Guides and spec

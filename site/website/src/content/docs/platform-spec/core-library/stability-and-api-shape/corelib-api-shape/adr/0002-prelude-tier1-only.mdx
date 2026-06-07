@@ -1,12 +1,13 @@
 ---
-title: Corelib prelude is Tier 1 only
+title: Corelib prelude is Tier 1 only (superseded)
 description: The aggregate corelib prelude `Prelude.bd` must re-export Tier-1 modules only; Tier 2 / Tier 3 require explicit `use` imports.
 specLevel: adr
-status: Standard
+status: Superseded
 adrId: D-CORE-API-SHAPE-0002
-adrStatus: Accepted
+adrStatus: Superseded
 adrDate: 2026-05-23
-lastReviewed: 2026-05-23
+supersededBy: D-TOOL-MAN-0006
+lastReviewed: 2026-06-07
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -18,21 +19,27 @@ relatedTopics:
     title: Corelib API shape
     href: /platform-spec/core-library/stability-and-api-shape/corelib-api-shape/
     relation: Parent feature hub
-  - type: Feature
-    title: Corelib injection and resolution
-    href: /platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/
-    relation: Defines how the prelude is injected
+  - type: ADR
+    title: Explicit use, no prelude
+    href: /platform-spec/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/
+    relation: Superseding decision
 ---
 
 import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';
 
 <SpecAdrChrome />
 
-## Context
+## Status
 
-Every Beskid project gets the corelib prelude injected by default (see [Corelib injection and resolution](/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/)). Adding a module to the prelude makes it transitively visible to **all** downstream code. Including Tier 2 / Tier 3 modules in the prelude would expose unstable surfaces by default and violate the [tier compatibility table](../#compatibility-and-versioning).
+**Superseded by [D-TOOL-MAN-0006 — Explicit use, no prelude](/platform-spec/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/)** on 2026-06-07.
 
-## Decision
+There is no aggregate prelude surface; tier policy applies to modules authors import explicitly.
+
+## Context (historical)
+
+Every Beskid project got the corelib prelude injected by default (see [Corelib injection and resolution](/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/)). Adding a module to the prelude made it transitively visible to **all** downstream code. Including Tier 2 / Tier 3 modules in the prelude would expose unstable surfaces by default and violate the [tier compatibility table](../#compatibility-and-versioning).
+
+## Decision (historical)
 
 | Rule | Detail |
 | --- | --- |
@@ -41,14 +48,12 @@ Every Beskid project gets the corelib prelude injected by default (see [Corelib 
 | Promotion path | Promoting a Tier 2 module to Tier 1 requires (a) updating the directive to `@tier(standard)` on the module's package source and (b) adding a row to the hub's `## Decisions` section pointing at this ADR or a new follow-up ADR |
 | Demotion path | Demoting a Tier 1 prelude item requires a normative ADR under `adr/` and a compatibility alias for at least one minor release |
 
-## Consequences
+## Consequences (historical)
 
-- The prelude stays small and predictable: only a vetted surface ships transitively.
-- Tier 2 / Tier 3 modules remain reachable via explicit `use System.FS;` (etc.); no expressivity lost.
-- CI catches accidental prelude growth before merge, keeping the v0.3 → v1.0 compatibility budget intact.
+- The prelude stayed small and predictable: only a vetted surface shipped transitively.
+- Tier 2 / Tier 3 modules remained reachable via explicit `use System.FS;` (etc.); no expressivity lost.
+- CI caught accidental prelude growth before merge, keeping the v0.3 → v1.0 compatibility budget intact.
 
-## Verification anchors
+## Verification anchors (historical)
 
-- `compiler/corelib/beskid_corelib/src/Prelude.bd`
-- `compiler/crates/beskid_tests/src/projects/corelib/layout.rs::corelib_prelude_only_re_exports_tier1_modules`
-- `compiler/crates/beskid_tests/src/projects/corelib/compile.rs::checked_in_corelib_prelude_exports_mvp_modules`
+Verification responsibility transferred to D-TOOL-MAN-0006.

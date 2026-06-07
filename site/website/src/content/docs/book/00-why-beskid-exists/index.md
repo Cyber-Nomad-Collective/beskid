@@ -17,14 +17,15 @@ I tried to build a form generator with Blazor, ended up with rewriting C# in Rus
 
 | Section | Topic |
 | --- | --- |
-| [1.1 My story](/book/00-why-beskid-exists/my-story/) | Personal context. |
-| [1.2 Current state of languages](/book/00-why-beskid-exists/current-state-of-languages/) | C#, Java, Go, and why Rust/Zig are not daily drivers. |
-| [1.3 SOLID, DRY, and the failure of DDD](/book/00-why-beskid-exists/solid-dry-and-ddd/) | Good principles weaponized into ceremony. |
-| [1.4 Trauma — by developers, for developers](/book/00-why-beskid-exists/trauma-by-developers-for-developers/) | Ecosystem fracture, designer fantasy vs field reality. |
-| [1.5 Are we really standing on the shoulders of giants?](/book/00-why-beskid-exists/shoulders-of-giants/) | Compilation history, VMs, JIT, and cognitive traps. |
-| [1.6 segfault or not to segfault](/book/00-why-beskid-exists/segfault-or-not-to-segfault/) | Memory models, GC, ownership, and why Go is almost right. |
-| [1.7 Why are we making this so hard?](/book/00-why-beskid-exists/why-are-we-making-this-so-hard/) | Business reality vs engineering theatre. |
-| [1.8 Conclusion](/book/00-why-beskid-exists/conclusion/) | What Beskid is actually trying to be. |
+| [1.1 What's in the name?](/book/00-why-beskid-exists/whats-in-the-name/) | Beskid the mountains—and the medium-tier language iceberg metaphor. |
+| [1.2 My story](/book/00-why-beskid-exists/my-story/) | Personal context. |
+| [1.3 Current state of languages](/book/00-why-beskid-exists/current-state-of-languages/) | C#, Java, Go, and why Rust/Zig are not daily drivers. |
+| [1.4 SOLID, DRY, and the failure of DDD](/book/00-why-beskid-exists/solid-dry-and-ddd/) | Good principles weaponized into ceremony. |
+| [1.5 Trauma — by developers, for developers](/book/00-why-beskid-exists/trauma-by-developers-for-developers/) | Ecosystem fracture, designer fantasy vs field reality. |
+| [1.6 Are we really standing on the shoulders of giants?](/book/00-why-beskid-exists/shoulders-of-giants/) | Compilation history, VMs, JIT, and cognitive traps. |
+| [1.7 segfault or not to segfault](/book/00-why-beskid-exists/segfault-or-not-to-segfault/) | Memory models, GC, ownership, and why Go is almost right. |
+| [1.8 Why are we making this so hard?](/book/00-why-beskid-exists/why-are-we-making-this-so-hard/) | Business reality vs engineering theatre. |
+| [1.9 Conclusion](/book/00-why-beskid-exists/conclusion/) | What Beskid is actually trying to be. |
 
 ## Not into the philosophy?
 
@@ -34,6 +35,6 @@ Fair. Skip to [01. Tooling and Editors](/book/01-tooling-and-editors/) and treat
 
 ## Start the chapter
 
-Begin with [1.1 My story](/book/00-why-beskid-exists/my-story/) or jump to [1.2 Current state of languages](/book/00-why-beskid-exists/current-state-of-languages/) if you do not care about autobiography.
+Begin with [1.1 What's in the name?](/book/00-why-beskid-exists/whats-in-the-name/), continue with [1.2 My story](/book/00-why-beskid-exists/my-story/), or jump to [1.3 Current state of languages](/book/00-why-beskid-exists/current-state-of-languages/) if you do not care about autobiography.
 
 ![Office Space — that would be great](https://media.giphy.com/media/2si2On9NsGOYxk0g58/giphy.gif)

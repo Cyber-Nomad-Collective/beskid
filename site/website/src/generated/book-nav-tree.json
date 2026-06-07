@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-06T20:03:52.279Z",
+  "generatedAt": "2026-06-07T01:32:56.780Z",
   "tree": {
     "slug": "book",
     "href": "/book/",
@@ -25,51 +25,57 @@
             "part": "Tutorial",
             "children": [
               {
+                "slug": "book/00-why-beskid-exists/whats-in-the-name",
+                "href": "/book/00-why-beskid-exists/whats-in-the-name/",
+                "title": "1.1 What's in the name?",
+                "part": "Tutorial"
+              },
+              {
                 "slug": "book/00-why-beskid-exists/my-story",
                 "href": "/book/00-why-beskid-exists/my-story/",
-                "title": "1.1 My story",
+                "title": "1.2 My story",
                 "part": "Tutorial"
               },
               {
                 "slug": "book/00-why-beskid-exists/current-state-of-languages",
                 "href": "/book/00-why-beskid-exists/current-state-of-languages/",
-                "title": "1.2 Current state of languages",
+                "title": "1.3 Current state of languages",
                 "part": "Tutorial"
               },
               {
                 "slug": "book/00-why-beskid-exists/solid-dry-and-ddd",
                 "href": "/book/00-why-beskid-exists/solid-dry-and-ddd/",
-                "title": "1.3 SOLID, DRY, and the failure of DDD",
+                "title": "1.4 SOLID, DRY, and the failure of DDD",
                 "part": "Tutorial"
               },
               {
                 "slug": "book/00-why-beskid-exists/trauma-by-developers-for-developers",
                 "href": "/book/00-why-beskid-exists/trauma-by-developers-for-developers/",
-                "title": "1.4 Trauma — by developers, for developers",
+                "title": "1.5 Trauma — by developers, for developers",
                 "part": "Tutorial"
               },
               {
                 "slug": "book/00-why-beskid-exists/shoulders-of-giants",
                 "href": "/book/00-why-beskid-exists/shoulders-of-giants/",
-                "title": "1.5 Are we really standing on the shoulders of giants?",
+                "title": "1.6 Are we really standing on the shoulders of giants?",
                 "part": "Tutorial"
               },
               {
                 "slug": "book/00-why-beskid-exists/segfault-or-stop-the-world",
                 "href": "/book/00-why-beskid-exists/segfault-or-stop-the-world/",
-                "title": "1.6 segfault or stop-the-world",
+                "title": "1.7 segfault or stop-the-world",
                 "part": "Tutorial"
               },
               {
                 "slug": "book/00-why-beskid-exists/why-are-we-making-this-so-hard",
                 "href": "/book/00-why-beskid-exists/why-are-we-making-this-so-hard/",
-                "title": "1.7 Why are we making this so hard?",
+                "title": "1.8 Why are we making this so hard?",
                 "part": "Tutorial"
               },
               {
                 "slug": "book/00-why-beskid-exists/conclusion",
                 "href": "/book/00-why-beskid-exists/conclusion/",
-                "title": "1.8 Conclusion",
+                "title": "1.9 Conclusion",
                 "part": "Tutorial"
               }
             ]
@@ -184,6 +190,12 @@
                 "slug": "book/03-project-proj-or-it-didnt-happen/tree-and-resolution",
                 "href": "/book/03-project-proj-or-it-didnt-happen/tree-and-resolution/",
                 "title": "03.5 Tree and resolution",
+                "part": "Tutorial"
+              },
+              {
+                "slug": "book/03-project-proj-or-it-didnt-happen/bsol-and-the-config-stack",
+                "href": "/book/03-project-proj-or-it-didnt-happen/bsol-and-the-config-stack/",
+                "title": "03.6 Bsol — structured config without YAML trauma",
                 "part": "Tutorial"
               }
             ]
@@ -1130,7 +1142,7 @@
               {
                 "slug": "book/reference/projects/manifest",
                 "href": "/book/reference/projects/manifest/",
-                "title": "Beskid Project Manifest (`Project.proj`)",
+                "title": "Beskid project manifest (`.bproj`)",
                 "part": "Reference"
               },
               {
@@ -1199,44 +1211,49 @@
       "title": "1. Why Beskid Exists"
     },
     {
+      "slug": "book/00-why-beskid-exists/whats-in-the-name",
+      "href": "/book/00-why-beskid-exists/whats-in-the-name/",
+      "title": "1.1 What's in the name?"
+    },
+    {
       "slug": "book/00-why-beskid-exists/my-story",
       "href": "/book/00-why-beskid-exists/my-story/",
-      "title": "1.1 My story"
+      "title": "1.2 My story"
     },
     {
       "slug": "book/00-why-beskid-exists/current-state-of-languages",
       "href": "/book/00-why-beskid-exists/current-state-of-languages/",
-      "title": "1.2 Current state of languages"
+      "title": "1.3 Current state of languages"
     },
     {
       "slug": "book/00-why-beskid-exists/solid-dry-and-ddd",
       "href": "/book/00-why-beskid-exists/solid-dry-and-ddd/",
-      "title": "1.3 SOLID, DRY, and the failure of DDD"
+      "title": "1.4 SOLID, DRY, and the failure of DDD"
     },
     {
       "slug": "book/00-why-beskid-exists/trauma-by-developers-for-developers",
       "href": "/book/00-why-beskid-exists/trauma-by-developers-for-developers/",
-      "title": "1.4 Trauma — by developers, for developers"
+      "title": "1.5 Trauma — by developers, for developers"
     },
     {
       "slug": "book/00-why-beskid-exists/shoulders-of-giants",
       "href": "/book/00-why-beskid-exists/shoulders-of-giants/",
-      "title": "1.5 Are we really standing on the shoulders of giants?"
+      "title": "1.6 Are we really standing on the shoulders of giants?"
     },
     {
       "slug": "book/00-why-beskid-exists/segfault-or-stop-the-world",
       "href": "/book/00-why-beskid-exists/segfault-or-stop-the-world/",
-      "title": "1.6 segfault or stop-the-world"
+      "title": "1.7 segfault or stop-the-world"
     },
     {
       "slug": "book/00-why-beskid-exists/why-are-we-making-this-so-hard",
       "href": "/book/00-why-beskid-exists/why-are-we-making-this-so-hard/",
-      "title": "1.7 Why are we making this so hard?"
+      "title": "1.8 Why are we making this so hard?"
     },
     {
       "slug": "book/00-why-beskid-exists/conclusion",
       "href": "/book/00-why-beskid-exists/conclusion/",
-      "title": "1.8 Conclusion"
+      "title": "1.9 Conclusion"
     },
     {
       "slug": "book/01-it-works-on-my-machine",
@@ -1327,6 +1344,11 @@
       "slug": "book/03-project-proj-or-it-didnt-happen/tree-and-resolution",
       "href": "/book/03-project-proj-or-it-didnt-happen/tree-and-resolution/",
       "title": "03.5 Tree and resolution"
+    },
+    {
+      "slug": "book/03-project-proj-or-it-didnt-happen/bsol-and-the-config-stack",
+      "href": "/book/03-project-proj-or-it-didnt-happen/bsol-and-the-config-stack/",
+      "title": "03.6 Bsol — structured config without YAML trauma"
     },
     {
       "slug": "book/04-where-does-this-file-go",
@@ -1902,100 +1924,112 @@
   "prevNextBySlug": {
     "book/00-why-beskid-exists": {
       "next": {
-        "slug": "book/00-why-beskid-exists/my-story",
-        "href": "/book/00-why-beskid-exists/my-story/",
-        "title": "1.1 My story"
+        "slug": "book/00-why-beskid-exists/whats-in-the-name",
+        "href": "/book/00-why-beskid-exists/whats-in-the-name/",
+        "title": "1.1 What's in the name?"
       }
     },
-    "book/00-why-beskid-exists/my-story": {
+    "book/00-why-beskid-exists/whats-in-the-name": {
       "prev": {
         "slug": "book/00-why-beskid-exists",
         "href": "/book/00-why-beskid-exists/",
         "title": "1. Why Beskid Exists"
       },
       "next": {
+        "slug": "book/00-why-beskid-exists/my-story",
+        "href": "/book/00-why-beskid-exists/my-story/",
+        "title": "1.2 My story"
+      }
+    },
+    "book/00-why-beskid-exists/my-story": {
+      "prev": {
+        "slug": "book/00-why-beskid-exists/whats-in-the-name",
+        "href": "/book/00-why-beskid-exists/whats-in-the-name/",
+        "title": "1.1 What's in the name?"
+      },
+      "next": {
         "slug": "book/00-why-beskid-exists/current-state-of-languages",
         "href": "/book/00-why-beskid-exists/current-state-of-languages/",
-        "title": "1.2 Current state of languages"
+        "title": "1.3 Current state of languages"
       }
     },
     "book/00-why-beskid-exists/current-state-of-languages": {
       "prev": {
         "slug": "book/00-why-beskid-exists/my-story",
         "href": "/book/00-why-beskid-exists/my-story/",
-        "title": "1.1 My story"
+        "title": "1.2 My story"
       },
       "next": {
         "slug": "book/00-why-beskid-exists/solid-dry-and-ddd",
         "href": "/book/00-why-beskid-exists/solid-dry-and-ddd/",
-        "title": "1.3 SOLID, DRY, and the failure of DDD"
+        "title": "1.4 SOLID, DRY, and the failure of DDD"
       }
     },
     "book/00-why-beskid-exists/solid-dry-and-ddd": {
       "prev": {
         "slug": "book/00-why-beskid-exists/current-state-of-languages",
         "href": "/book/00-why-beskid-exists/current-state-of-languages/",
-        "title": "1.2 Current state of languages"
+        "title": "1.3 Current state of languages"
       },
       "next": {
         "slug": "book/00-why-beskid-exists/trauma-by-developers-for-developers",
         "href": "/book/00-why-beskid-exists/trauma-by-developers-for-developers/",
-        "title": "1.4 Trauma — by developers, for developers"
+        "title": "1.5 Trauma — by developers, for developers"
       }
     },
     "book/00-why-beskid-exists/trauma-by-developers-for-developers": {
       "prev": {
         "slug": "book/00-why-beskid-exists/solid-dry-and-ddd",
         "href": "/book/00-why-beskid-exists/solid-dry-and-ddd/",
-        "title": "1.3 SOLID, DRY, and the failure of DDD"
+        "title": "1.4 SOLID, DRY, and the failure of DDD"
       },
       "next": {
         "slug": "book/00-why-beskid-exists/shoulders-of-giants",
         "href": "/book/00-why-beskid-exists/shoulders-of-giants/",
-        "title": "1.5 Are we really standing on the shoulders of giants?"
+        "title": "1.6 Are we really standing on the shoulders of giants?"
       }
     },
     "book/00-why-beskid-exists/shoulders-of-giants": {
       "prev": {
         "slug": "book/00-why-beskid-exists/trauma-by-developers-for-developers",
         "href": "/book/00-why-beskid-exists/trauma-by-developers-for-developers/",
-        "title": "1.4 Trauma — by developers, for developers"
+        "title": "1.5 Trauma — by developers, for developers"
       },
       "next": {
         "slug": "book/00-why-beskid-exists/segfault-or-stop-the-world",
         "href": "/book/00-why-beskid-exists/segfault-or-stop-the-world/",
-        "title": "1.6 segfault or stop-the-world"
+        "title": "1.7 segfault or stop-the-world"
       }
     },
     "book/00-why-beskid-exists/segfault-or-stop-the-world": {
       "prev": {
         "slug": "book/00-why-beskid-exists/shoulders-of-giants",
         "href": "/book/00-why-beskid-exists/shoulders-of-giants/",
-        "title": "1.5 Are we really standing on the shoulders of giants?"
+        "title": "1.6 Are we really standing on the shoulders of giants?"
       },
       "next": {
         "slug": "book/00-why-beskid-exists/why-are-we-making-this-so-hard",
         "href": "/book/00-why-beskid-exists/why-are-we-making-this-so-hard/",
-        "title": "1.7 Why are we making this so hard?"
+        "title": "1.8 Why are we making this so hard?"
       }
     },
     "book/00-why-beskid-exists/why-are-we-making-this-so-hard": {
       "prev": {
         "slug": "book/00-why-beskid-exists/segfault-or-stop-the-world",
         "href": "/book/00-why-beskid-exists/segfault-or-stop-the-world/",
-        "title": "1.6 segfault or stop-the-world"
+        "title": "1.7 segfault or stop-the-world"
       },
       "next": {
         "slug": "book/00-why-beskid-exists/conclusion",
         "href": "/book/00-why-beskid-exists/conclusion/",
-        "title": "1.8 Conclusion"
+        "title": "1.9 Conclusion"
       }
     },
     "book/00-why-beskid-exists/conclusion": {
       "prev": {
         "slug": "book/00-why-beskid-exists/why-are-we-making-this-so-hard",
         "href": "/book/00-why-beskid-exists/why-are-we-making-this-so-hard/",
-        "title": "1.7 Why are we making this so hard?"
+        "title": "1.8 Why are we making this so hard?"
       },
       "next": {
         "slug": "book/01-it-works-on-my-machine",
@@ -2007,7 +2041,7 @@
       "prev": {
         "slug": "book/00-why-beskid-exists/conclusion",
         "href": "/book/00-why-beskid-exists/conclusion/",
-        "title": "1.8 Conclusion"
+        "title": "1.9 Conclusion"
       },
       "next": {
         "slug": "book/01-it-works-on-my-machine/downloads-and-releases",
@@ -2214,6 +2248,18 @@
         "title": "03.4 Fetch, lock, update"
       },
       "next": {
+        "slug": "book/03-project-proj-or-it-didnt-happen/bsol-and-the-config-stack",
+        "href": "/book/03-project-proj-or-it-didnt-happen/bsol-and-the-config-stack/",
+        "title": "03.6 Bsol — structured config without YAML trauma"
+      }
+    },
+    "book/03-project-proj-or-it-didnt-happen/bsol-and-the-config-stack": {
+      "prev": {
+        "slug": "book/03-project-proj-or-it-didnt-happen/tree-and-resolution",
+        "href": "/book/03-project-proj-or-it-didnt-happen/tree-and-resolution/",
+        "title": "03.5 Tree and resolution"
+      },
+      "next": {
         "slug": "book/04-where-does-this-file-go",
         "href": "/book/04-where-does-this-file-go/",
         "title": "04. Where does this file even go?"
@@ -2221,9 +2267,9 @@
     },
     "book/04-where-does-this-file-go": {
       "prev": {
-        "slug": "book/03-project-proj-or-it-didnt-happen/tree-and-resolution",
-        "href": "/book/03-project-proj-or-it-didnt-happen/tree-and-resolution/",
-        "title": "03.5 Tree and resolution"
+        "slug": "book/03-project-proj-or-it-didnt-happen/bsol-and-the-config-stack",
+        "href": "/book/03-project-proj-or-it-didnt-happen/bsol-and-the-config-stack/",
+        "title": "03.6 Bsol — structured config without YAML trauma"
       },
       "next": {
         "slug": "book/04-where-does-this-file-go/module-layout",
@@ -3586,14 +3632,15 @@
   "displayTitleBySlug": {
     "book": "The Beskid Book",
     "book/00-why-beskid-exists": "1. Why Beskid Exists",
-    "book/00-why-beskid-exists/my-story": "1.1 My story",
-    "book/00-why-beskid-exists/current-state-of-languages": "1.2 Current state of languages",
-    "book/00-why-beskid-exists/solid-dry-and-ddd": "1.3 SOLID, DRY, and the failure of DDD",
-    "book/00-why-beskid-exists/trauma-by-developers-for-developers": "1.4 Trauma — by developers, for developers",
-    "book/00-why-beskid-exists/shoulders-of-giants": "1.5 Are we really standing on the shoulders of giants?",
-    "book/00-why-beskid-exists/segfault-or-stop-the-world": "1.6 segfault or stop-the-world",
-    "book/00-why-beskid-exists/why-are-we-making-this-so-hard": "1.7 Why are we making this so hard?",
-    "book/00-why-beskid-exists/conclusion": "1.8 Conclusion",
+    "book/00-why-beskid-exists/whats-in-the-name": "1.1 What's in the name?",
+    "book/00-why-beskid-exists/my-story": "1.2 My story",
+    "book/00-why-beskid-exists/current-state-of-languages": "1.3 Current state of languages",
+    "book/00-why-beskid-exists/solid-dry-and-ddd": "1.4 SOLID, DRY, and the failure of DDD",
+    "book/00-why-beskid-exists/trauma-by-developers-for-developers": "1.5 Trauma — by developers, for developers",
+    "book/00-why-beskid-exists/shoulders-of-giants": "1.6 Are we really standing on the shoulders of giants?",
+    "book/00-why-beskid-exists/segfault-or-stop-the-world": "1.7 segfault or stop-the-world",
+    "book/00-why-beskid-exists/why-are-we-making-this-so-hard": "1.8 Why are we making this so hard?",
+    "book/00-why-beskid-exists/conclusion": "1.9 Conclusion",
     "book/01-it-works-on-my-machine": "01. It works on my machine (and yours, eventually)",
     "book/01-it-works-on-my-machine/downloads-and-releases": "01.1 Downloads and rolling releases",
     "book/01-it-works-on-my-machine/install-scripts-and-path": "01.2 Install scripts and PATH",
@@ -3612,6 +3659,7 @@
     "book/03-project-proj-or-it-didnt-happen/beskid-new": "03.3 beskid new",
     "book/03-project-proj-or-it-didnt-happen/fetch-lock-update": "03.4 Fetch, lock, update",
     "book/03-project-proj-or-it-didnt-happen/tree-and-resolution": "03.5 Tree and resolution",
+    "book/03-project-proj-or-it-didnt-happen/bsol-and-the-config-stack": "03.6 Bsol — structured config without YAML trauma",
     "book/04-where-does-this-file-go": "04. Where does this file even go?",
     "book/04-where-does-this-file-go/module-layout": "04.1 Module layout",
     "book/04-where-does-this-file-go/compilation-units": "04.2 Compilation units",

@@ -96,4 +96,4 @@ Our projects got cancelled one after another, because the management was spendin
 That is when I started drafting my own programming language, because I could not find the answer in .NET.
 
 
-Next: [1.2 Current state of languages](/book/00-why-beskid-exists/current-state-of-languages/).
+Next: [1.3 Current state of languages](/book/00-why-beskid-exists/current-state-of-languages/).

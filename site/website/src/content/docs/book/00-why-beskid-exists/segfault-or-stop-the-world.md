@@ -73,4 +73,4 @@ Go proves most teams want **GC and a small runtime**, not a proof assistant. Bes
 - **Compile-time metaprogramming** over reflection—power without opaque runtime discovery.
 - Memory strategy aligned with **application reality**, not kernel driver reality (details in platform-spec execution/core-library hubs).
 
-Next: [1.7 Why are we making this so hard?](/book/00-why-beskid-exists/why-are-we-making-this-so-hard/).
+Next: [1.8 Why are we making this so hard?](/book/00-why-beskid-exists/why-are-we-making-this-so-hard/).

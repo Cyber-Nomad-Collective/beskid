@@ -33,7 +33,7 @@ Because **complexity sells**:
 - Consultancies bill by **transformation**.
 - Vendors bill by **seat** and **tier**.
 - Hiring managers signal maturity with **buzzwords**.
-- Developers protect craft pride with **patterns** (see [1.3 SOLID, DRY, and DDD](/book/00-why-beskid-exists/solid-dry-and-ddd/)).
+- Developers protect craft pride with **patterns** (see [1.4 SOLID, DRY, and DDD](/book/00-why-beskid-exists/solid-dry-and-ddd/)).
 
 ![Sales pitch — complexity sells](https://i.ytimg.com/vi/BWKOVX-74Z0/maxresdefault.jpg)
 
@@ -60,4 +60,4 @@ If your problem is genuinely novel—finite element solvers, game engines, codec
 
 ![Noted — use the right tool](https://i.imgflip.com/7vcab7.jpg)
 
-Next: [1.8 Conclusion](/book/00-why-beskid-exists/conclusion/).
+Next: [1.9 Conclusion](/book/00-why-beskid-exists/conclusion/).

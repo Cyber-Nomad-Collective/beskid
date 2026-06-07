@@ -1,0 +1,69 @@
+---
+title: Explicit use, no prelude
+description: Retire automatic prelude injection; corelib visibility flows from manifest dependencies and explicit use imports only.
+specLevel: adr
+status: Standard
+adrId: D-TOOL-MAN-0006
+adrStatus: Accepted
+adrDate: 2026-06-07
+lastReviewed: 2026-06-07
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Manifests and lockfiles
+    href: /platform-spec/tooling/manifests-and-lockfiles/
+    relation: Parent area
+  - type: Feature
+    title: Corelib injection and resolution
+    href: /platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/
+    relation: Graph attachment unchanged; prelude seeding retired
+  - type: ADR
+    title: Dependency prelude union seeding
+    href: /platform-spec/compiler/build-pipeline/program-assembly/adr/0004-dependency-prelude-union-seeding/
+    relation: Supersedes assembly prelude union
+  - type: ADR
+    title: Prelude leaf reexports
+    href: /platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/adr/0009-prelude-leaf-reexports/
+    relation: Supersedes prelude packaging rules
+  - type: ADR
+    title: Corelib prelude is Tier 1 only
+    href: /platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0002-prelude-tier1-only/
+    relation: Supersedes prelude tier policy
+---
+
+import SpecAdrChrome from '@beskid/beskid-ui/platform-spec/SpecAdrChrome.astro';
+
+<SpecAdrChrome />
+
+## Context
+
+Historically the compiler seeded compilation from every effective root **`Prelude.bd`**, unioning `pub mod` lines across the aggregate corelib and workspace shards. That implicit surface made Tier-1 vs Tier-2 boundaries opaque, complicated aggregate vs shard layouts, and diverged from normal dependency + `use` semantics. The **`.bproj` / `.bws`** manifest migration aligns project metadata with Bsol and removes legacy `Project.proj` / `Workspace.proj`.
+
+## Decision
+
+| Rule | Detail |
+| --- | --- |
+| Prelude retirement | Tooling **must not** automatically inject or seed modules from **`Prelude.bd`** (no `include_std_prelude` / prelude union in program assembly) |
+| Visibility | Reachable symbols come from **manifest dependencies** plus **explicit `use`** imports on the entry module and its transitive `use` graph |
+| Graph attachment | Host projects **still** receive implicit **corelib aggregate** path wiring in `resolve_dependencies` — unchanged from [Corelib injection and resolution](/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/) |
+| Aggregate corelib | Canonical **`corelib.bproj`** uses **`type = Aggregate`**; it **must not** ship **`Prelude.bd`**; shard packages expose modules under their own source roots |
+| Superseded ADRs | **D-COMP-BUILD-0022**, **D-CORE-COMP-0009**, and **D-CORE-API-SHAPE-0002** are **Superseded** by this decision |
+
+Authors who previously relied on prelude re-exports **must** add explicit `use` paths (for example `use Console.Ansi;`) and declare path or registry dependencies where needed.
+
+## Consequences
+
+- Assembly discovers modules via **import closure** or **workspace scan** only—never via prelude `pub mod` harvesting.
+- Corelib CI no longer maintains prelude tier guards tied to `Prelude.bd` membership; tier policy applies to published modules and explicit imports.
+- Template and scaffold output **must not** assume prelude-visible builtins; starter sources include explicit `use` for corelib modules they reference.
+
+## Verification anchors
+
+- `compiler/crates/beskid_analysis/src/projects/assembly/loader.rs`
+- `compiler/corelib/beskid_corelib/corelib.bproj`
+- `compiler/crates/beskid_tests/src/projects/corelib/`
