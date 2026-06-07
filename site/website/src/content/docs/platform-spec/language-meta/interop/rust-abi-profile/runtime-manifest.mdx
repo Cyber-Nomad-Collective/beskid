@@ -58,14 +58,14 @@ beskid_path = ["__alloc"]
 tag = 0
 name = "StrLen"
 beskid_path = ["__str_len"]
-legacy_symbol = "str_len"
+dispatch_key = "str_len"
 owner = "language"
 
 [[dispatch.usize]]
 tag = 1
 name = "FsWriteText"
 beskid_path = ["__fs_write_text"]
-legacy_symbol = "fs_write_text"
+dispatch_key = "fs_write_text"
 owner = "host"
 ```
 
@@ -78,7 +78,7 @@ Each entry carries:
 | `beskid_path` | Compiler-visible `__*` path |
 | `tag` | Tag integer for dispatch rows |
 | `return_group` | The dispatch table group: `unit`, `ptr`, `usize`, or `i64` |
-| `legacy_symbol` | Pre-dispatch symbol name used by generated lookup tables and wrappers |
+| `dispatch_key` | Stable routing key for generated lookup tables and handler wrappers (not a kernel export) |
 | `owner` | Dispatch authority: `language` or `host` |
 | `injected` | Whether the compiler injects the Beskid `__*` path |
 

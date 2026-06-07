@@ -49,8 +49,13 @@ cargo build -p "${RELEASE_PACKAGE}" --release --target "${MATRIX_TARGET}"
 
 if [[ "${RELEASE_PACKAGE}" == "beskid_cli" ]]; then
   cargo build -p beskid_runtime_bridge --no-default-features --release --target "${MATRIX_TARGET}"
-  cp "target/${MATRIX_TARGET}/release/libbeskid_runtime_bridge.a" \
-    "target/${MATRIX_TARGET}/release/libbeskid_runtime_minimal.a"
+  if [[ "${RUNNER_OS:-Linux}" == "Windows" ]]; then
+    cp "target/${MATRIX_TARGET}/release/beskid_runtime_bridge.lib" \
+      "target/${MATRIX_TARGET}/release/beskid_runtime_minimal.lib"
+  else
+    cp "target/${MATRIX_TARGET}/release/libbeskid_runtime_bridge.a" \
+      "target/${MATRIX_TARGET}/release/libbeskid_runtime_minimal.a"
+  fi
   cargo build -p beskid_runtime_bridge --release --target "${MATRIX_TARGET}"
   cargo check -p beskid_repl --release --target "${MATRIX_TARGET}"
 fi

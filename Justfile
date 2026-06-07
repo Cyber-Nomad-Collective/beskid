@@ -2,6 +2,7 @@
 #
 #   just setup     Interactive checkout setup (site wizard)
 #   just deps      Check toolchain from repo-deps.json
+#   just test-corelib-spine  Slow corelib spine tests with live progress
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
@@ -19,3 +20,7 @@ deps-check:
 
 deps-install:
     "{{root}}/scripts/install-deps.sh" --install --group beskid
+
+# Corelib spine integration tests: serial + stderr progress (use --nocapture).
+test-corelib-spine:
+    cd "{{root}}/compiler" && cargo test -p beskid_tests corelib_test -- --nocapture --test-threads=1
