@@ -35,6 +35,8 @@ When editing manifest keys, update [tooling / design model](/platform-spec/tooli
 </SpecSection>
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
+- `compiler/crates/beskid_analysis/src/bsol.pest` — Bsol surface grammar for manifests
+- `compiler/crates/beskid_analysis/src/projects/bsol/` — AST builder (`parse_bsol_document`)
 - `compiler/crates/beskid_analysis/src/projects/manifest_resolve.rs` — discovery and parse into workspace graph
 - `compiler/crates/beskid_analysis/src/projects/graph/` — DAG insertion, Mod topology
 - `compiler/crates/beskid_cli/src/commands/` — manifest-driven compile inputs

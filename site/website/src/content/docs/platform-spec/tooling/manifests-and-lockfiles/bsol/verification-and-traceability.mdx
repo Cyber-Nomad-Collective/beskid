@@ -1,0 +1,63 @@
+---
+title: Verification and traceability
+description: Tests and maintenance rules for the Bsol grammar and AST builder.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-06-07
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Bsol (Beskid Structured Object Language)
+    href: /platform-spec/tooling/manifests-and-lockfiles/bsol/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Compiler tests
+
+| Topic | Path |
+| --- | --- |
+| Bsol AST builder smoke | `beskid_analysis::projects::bsol::build::tests` |
+| Project manifest lowering | `beskid_analysis::projects::parser::tests` |
+| Manifest contract integration | `beskid_tests::projects::manifest` (when crate compiles) |
+| Mod / template manifest shape | `beskid_tests::projects::mod_manifest`, `templates` |
+
+Run targeted gate:
+
+```bash
+cd compiler && cargo test -p beskid_analysis projects::
+```
+
+Full compiler workspace per project policy:
+
+```bash
+cd compiler && cargo test
+```
+
+## Spec maintenance
+
+Grammar or AST shape changes **must** update, in order:
+
+1. **`bsol.pest`** and **`projects/bsol/ast.rs`** (keep in sync)
+2. **[Bsol design model](./design-model/)** Rust AST excerpt when public types change
+3. Manifest contract articles when lowering semantics or diagnostic bands change
+4. `cd site/website && bun run verify:trudoc -- --preset ci` after MDX edits
+
+## Traceability matrix
+
+| Bsol rule | Implementation | Verification |
+| --- | --- | --- |
+| BSOL-001 Single grammar file | `bsol.pest` | Pest compile via `BsolParser` derive |
+| BSOL-002 Stable AST types | `projects/bsol/ast.rs` | Struct/enum names match design model |
+| BSOL-003 Span-backed parse errors | `ProjectError::ParseAt` | `projects::parser::tests::name_must_stay_quoted` |
+| BSOL-004 Lowering defers semantics | `projects/parser.rs` | Existing E18xx manifest tests unchanged |

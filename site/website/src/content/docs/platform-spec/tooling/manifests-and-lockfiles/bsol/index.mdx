@@ -1,0 +1,61 @@
+---
+title: Bsol (Beskid Structured Object Language)
+description: Normative surface grammar and AST for `.bproj` and `.bws` manifest files.
+template: splash
+tableOfContents: true
+specLevel: feature
+status: Standard
+lastReviewed: 2026-06-07
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Area
+    title: Manifests and lockfiles
+    href: /platform-spec/tooling/manifests-and-lockfiles/
+    relation: Parent area
+  - type: Feature
+    title: Project manifest contract
+    href: /platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/
+    relation: Semantic manifest keys and validation layered on Bsol
+  - type: Feature
+    title: Workspace and lock contracts
+    href: /platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/
+    relation: Workspace blocks parsed as Bsol documents
+  - type: Feature
+    title: Project manifest contract (compiler)
+    href: /platform-spec/compiler/resolution-and-projects/project-manifest-contract/
+    relation: Graph validation after Bsol lowering
+---
+
+import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';
+import DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';
+import SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';
+
+<SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
+
+<SpecSection title="What Bsol is" id="what-bsol-is">
+**Bsol** (Beskid Structured Object Language) is the shared meta-language for Beskid manifest files: block-oriented assignment syntax used by **`*.bproj`** project manifests and **`*.bws`** workspace manifests.
+
+Bsol specifies **lexical rules**, **surface grammar**, and the **reference AST**. Manifest **semantics** (required keys, project kinds, Mod blocks, link metadata) remain in sibling **[Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)** and **[Workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)**—those features lower a Bsol AST into typed models and apply contract validation.
+</SpecSection>
+
+<SpecSection title="Authority split" id="authority-split">
+| Layer | Owner | Artifact |
+| --- | --- | --- |
+| Surface syntax + AST | **This feature** | `compiler/crates/beskid_analysis/src/bsol.pest`, `projects/bsol/ast.rs` |
+| Manifest semantics | Project / workspace contract features | `projects/model.rs`, `projects/validator.rs` |
+| Diagnostics | Compiler resolution feature | E1801–E1899 meta-contract band after lowering |
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- `compiler/crates/beskid_analysis/src/bsol.pest` — authoritative PEG grammar
+- `compiler/crates/beskid_analysis/src/projects/bsol/` — `BsolParser`, AST builder, public `parse_bsol_document`
+- `compiler/crates/beskid_analysis/src/projects/parser.rs` — lowers Bsol AST to `ProjectManifest` / `WorkspaceManifest`
+- Unit tests: `projects::parser`, `projects::bsol::build`
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/tooling/manifests-and-lockfiles/bsol" heading="Articles" />

@@ -36,7 +36,7 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 ## Purpose
 
-Tooling-facing shape of **`Project.proj`**: project kind, mod orchestration block, template metadata, readme publishing, and host `app` launch rules. Resolution-graph behavior and diagnostic bands live in **[Project manifest contract (compiler)](/platform-spec/compiler/resolution-and-projects/project-manifest-contract/)**—this article does not duplicate full manifest key tables from the manifests area hub.
+Tooling-facing shape of **`Project.proj`**: project kind, mod orchestration block, template metadata, readme publishing, and host `app` launch rules. Files are written in **[Bsol](/platform-spec/tooling/manifests-and-lockfiles/bsol/)** and parsed to `BsolDocument` before lowering to `ProjectManifest`. Resolution-graph behavior and diagnostic bands live in **[Project manifest contract (compiler)](/platform-spec/compiler/resolution-and-projects/project-manifest-contract/)**—this article does not duplicate full manifest key tables from the manifests area hub.
 
 ## Project kinds
 
