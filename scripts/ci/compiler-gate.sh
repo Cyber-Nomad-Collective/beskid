@@ -19,5 +19,8 @@ echo "==> Install Dagger module deps"
   npm ci --include=dev
 )
 
+echo "==> corelib_tests bproj ↔ typecheck parity"
+bash ./compiler/scripts/verify-corelib-tests-parity.sh
+
 echo "==> compiler-rust-gate (Dagger ${DAGGER_VERSION})"
 dagger -m beskid_infra/dagger call compiler-rust-gate --source=./compiler

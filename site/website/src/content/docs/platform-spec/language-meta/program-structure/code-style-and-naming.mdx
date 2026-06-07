@@ -79,6 +79,7 @@ The special name **`self`** is the only fixed lowercase receiver parameter; it i
 | **Type field** | **lowerCamelCase** | `bool isTty`, `i64 handle` |
 | **Module path segment** | **PascalCase** | `Core.Results`, `Beskid.Syntax.Nodes` |
 | **Top-level function** | **PascalCase** | `pub bool IsOk(...)` |
+| **App entry function** (`target.kind = App`) | **PascalCase**; **must** be named **`Main`** | `pub i32 Main()` — see [App entrypoint](#app-entrypoint) |
 | **Type method** (inside `pub type { }` or `extend type`) | **PascalCase** | `Create`, `Register`, `WaitReceive` |
 | **Parameter** (except `self`) | **lowerCamelCase** | `i64 index`, `Channel<T> channel` |
 | **Local `let` binding** | **lowerCamelCase** | `Capabilities caps = ...` |
@@ -93,6 +94,18 @@ The special name **`self`** is the only fixed lowercase receiver parameter; it i
 - Folder names in package trees **should** use **PascalCase** segments that match the module namespace (`src/Concurrency/Hub.bd`).
 
 `root_namespace` in project metadata documents package branding; it **must not** override module path segment casing in source.
+
+### App entrypoint
+
+Executable **`App`** targets **must** declare a top-level entry function named **`Main`** (PascalCase callable profile). The function **should** be `pub` when it is the project entry named in manifest metadata (`entry = "Main.bd"`).
+
+| Surface | Symbol |
+| --- | --- |
+| Beskid source name | **`Main`** |
+| JIT / link-plan entrypoint | **`Main`** |
+| Native AOT object export (C link) | **`main`** |
+
+The reference compiler maps Beskid **`Main`** to the native C link symbol **`main`** at AOT object emission (`beskid_codegen::object_link_symbol`, `beskid_aot::native_link_entrypoint`). CLI defaults (`beskid run`, `beskid build`) resolve an empty `--entrypoint` to **`Main`**.
 
 ### Generated and reflected surfaces
 
@@ -167,6 +180,8 @@ This chapter is the **language-meta** owner for case conventions. [Core library]
 - `compiler/crates/beskid_ast_reflect_gen/src/emit_idents.rs` — Rust→Beskid field camelCase and keyword escape
 - `compiler/corelib/` — reference conforming library (`Core.Results`, `Concurrency.Hub`, …)
 - `compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds.rs` — **W163x** registration
+- `compiler/crates/beskid_aot/src/api.rs` — `DEFAULT_ENTRYPOINT`, `native_link_entrypoint`
+- `compiler/crates/beskid_codegen/src/lowering/expressions/export.rs` — `object_link_symbol` (`Main` → `main`)
 
 ## Verification anchors
 
@@ -174,3 +189,4 @@ This chapter is the **language-meta** owner for case conventions. [Core library]
 - [x] Mod SDK reflection tests golden field names (`beskid_ast_reflect_gen` `emit_idents` tests)
 - [x] Reference compiler emits **W1630–W1638** from style rules (`beskid_analysis` `naming_style`)
 - [x] `beskid fmt` applies case fixes idempotently (`beskid_analysis` `format/naming_normalize`)
+- [x] App entry uses **`Main`**; AOT maps to native **`main`** (`beskid_e2e_tests` `Minimal.bd`, `beskid_aot` `build_and_run`)
