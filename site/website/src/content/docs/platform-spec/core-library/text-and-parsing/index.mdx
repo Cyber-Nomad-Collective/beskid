@@ -1,0 +1,59 @@
+---
+title: Text and parsing
+description: Combinator-style text parsing primitives, Pest-generated parsers, and regex-as-grammar in corelib.
+template: splash
+tableOfContents: false
+specLevel: area
+status: Standard
+lastReviewed: 2026-06-08
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Domain
+    title: Core library
+    href: /platform-spec/core-library/
+    relation: Parent domain hub
+  - type: Area
+    title: Foundation and primitives
+    href: /platform-spec/core-library/foundation-and-primitives/
+    relation: Shared string/byte primitives
+  - type: Area
+    title: Terminal and console
+    href: /platform-spec/core-library/terminal-and-console/
+    relation: Console markup consumer
+  - type: Feature
+    title: Pest parser generator
+    href: /platform-spec/compiler/compiler-mods/pest-parser-generator/
+    relation: Build-time grammar codegen
+---
+
+import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro';
+import SpecSection from '@beskid/beskid-ui/platform-spec/SpecSection.astro';
+import DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';
+
+<SpecPageHeader
+  status="Standard"
+  ownerName="Piotr Mikstacki"
+  ownerEmail="pmikstacki@cybernomad.it"
+  submitterName="Piotr Mikstacki"
+  submitterEmail="pmikstacki@cybernomad.it"
+/>
+
+<SpecSection title="Area contract" id="area-contract">
+Text parsing in corelib is **combinator-first**: a byte-indexed cursor, primitive parser combinators, and **Pest `.pest` grammars** compiled to Beskid combinator parsers by the [Pest parser generator](/platform-spec/compiler/compiler-mods/pest-parser-generator/) mod. Regex matching is **not** a separate engine — it is a generated parser from canonical `regex.pest`.
+</SpecSection>
+
+<SpecSection title="Responsibility boundaries" id="responsibility-boundaries">
+- **In scope:** `Core.Text.Cursor`, `Core.Text.Parser`, `Core.Text.Regex`, generated parsers for embedded DSLs (console markup, regex patterns).
+- **Out of scope:** Beskid surface syntax parsing ([`beskid.pest`](/platform-spec/compiler/front-end/parser-and-ast-contracts/)); full CommonMark ([ADR D-CORE-TERM-0030](/platform-spec/core-library/terminal-and-console/console-markup-format/adr/0030-markup-not-full-commonmark/)).
+</SpecSection>
+
+<SpecSection title="Failure and diagnostics model" id="failure-and-diagnostics-model">
+Parse failures return structured `ParseResult` errors at a byte offset with a rule label. Grammar codegen failures use diagnostic band **E18xx** (mod host). Runtime combinators **must not** panic on malformed input.
+</SpecSection>
+
+<DomainTiles pathPrefix="platform-spec/core-library/text-and-parsing" heading="Features" />

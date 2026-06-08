@@ -32,6 +32,7 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 | **`Analyzer`** | Diagnostic emission and rewrite registration |
 | **`Rewriter`** | AST node replacement |
 | **`AttributeGenerator`** | Attribute definition for mod packages |
+| **`GrammarGenerator`** | Registers `.pest` roots; host `beskid_pest_gen` emits combinator parsers |
 | **`NodeRef`** | Stable syntax node handle `{ syntaxGenerationId, nodeId }` |
 
 ## Mod SDK architecture
@@ -69,6 +70,7 @@ flowchart LR
 | `Analyzer` | Diagnostics and rewrites |
 | `Rewriter<TSource, TTarget>` | Node replacement |
 | `AttributeGenerator` | Attribute definitions |
+| `GrammarGenerator` | Pest grammar discovery and combinator codegen ([Pest parser generator](/platform-spec/compiler/compiler-mods/pest-parser-generator/)) |
 
 ## Beskid.Syntax
 

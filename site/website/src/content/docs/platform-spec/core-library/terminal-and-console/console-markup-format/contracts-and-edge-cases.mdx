@@ -42,14 +42,21 @@ Document **contracts and edge cases** for the **Console Markup Format** feature:
 | **FMT-003** | Backslash before a recognized sigil **must** emit the sigil literally and continue parsing. |
 | **FMT-004** | `Format` **must** delegate to styled render only when `ShouldStyle()` is true. |
 | **FMT-005** | Each styled span **should** reset attributes after the span (`StyleChain` / SGR reset). |
+| **FMT-006** | `[label](url)` **must** emit OSC hyperlink when styled; literal when plain. |
 
 ### Supported constructs (v1)
+
+Per [ADR D-CORE-TEXT-0001](./adr/0032-canonical-markup-syntax-v1/):
 
 | Construct | Effect when styled |
 | --- | --- |
 | `**text**` | Bold |
+| `*text*` | Italic |
 | `__text__` | Underline |
+| `~~text~~` | Strikethrough |
 | `[red]text[/]` | Foreground palette (name table in `Attributes.bd`) |
+| `&[fg=red](text)` | Attribute span (named, `#hex`, `rgb()`) |
+| `[label](url)` | OSC hyperlink |
 | `\[` etc. | Escape sigil |
 
 ### Edge cases

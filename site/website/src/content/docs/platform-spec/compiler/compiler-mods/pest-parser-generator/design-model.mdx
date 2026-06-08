@@ -1,0 +1,38 @@
+---
+title: Design model
+description: GrammarGenerator contract and artifact layout.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-06-08
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Pest parser generator
+    href: /platform-spec/compiler/compiler-mods/pest-parser-generator/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+
+## Components
+
+| Component | Role |
+| --- | --- |
+| `GrammarGenerator` contract | Mod registers `.pest` roots via Collector |
+| `beskid_pest_gen` | Host Rust crate: Pest AST → Beskid combinator emission |
+| `mod.descriptor.json` | Adds `generatedModules` entries with output paths |
+
+## Supported Pest subset
+
+Rules, `~` sequence, `|` choice, `*`/`+`/`?` repeat, string/char literals, rule references. Modifiers `_`, `@`, `$`, `!` mapped per Pest docs. Left recursion **must** be rejected (**E18xx**).
+

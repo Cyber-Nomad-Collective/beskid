@@ -27,4 +27,5 @@ Production: `https://beskid-lang.org` (Coolify **Domains** on the `site` compose
 ## Related
 
 - [Beskid auth hub](auth/COOLIFY.md)
+- [Platform deploy matrix](../beskid_infra/docs/deploy-matrix.md)
 - [beskid_infra](../beskid_infra/README.md)

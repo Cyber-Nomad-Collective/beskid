@@ -47,8 +47,9 @@ The extension and LSP **must** resolve a documentation URL for a symbol at a cur
 Resolution rules:
 
 1. When the symbol belongs to a locked registry dependency, `{registryBase}/docs/{package}@{version}` (fragment optional for symbol anchor).
-2. Otherwise `{bookBase}/book/` search or qualified-name path when mapped.
-3. Empty response when no documentation target exists.
+2. When the symbol source is corelib or a builtin, return a site-relative `/platform-spec/...` path (extension joins with `beskid.docs.specBaseUrl`).
+3. Otherwise `{bookBase}/book/?q={symbolName}` or `{bookBase}/book/`.
+4. Empty response when no documentation target exists.
 
 Hover **should** append `[View documentation](url)` when `url` is present (modifier-click opens in browser).
 </SpecSection>

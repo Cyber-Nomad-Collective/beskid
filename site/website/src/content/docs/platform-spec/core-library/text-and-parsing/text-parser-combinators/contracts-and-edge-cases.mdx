@@ -1,0 +1,33 @@
+---
+title: Contracts and edge cases
+description: MUST rules for Core.Text.Parser.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-06-08
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Core.Text.Parser
+    href: /platform-spec/core-library/text-and-parsing/text-parser-combinators/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Normative requirements
+
+| ID | Requirement |
+| --- | --- |
+| **PARSER-001** | `ParseResult<T>` **must** be `Ok` or `Err` with offset and rule label. |
+| **PARSER-002** | `Choice` **must** restore cursor on branch failure. |
+| **PARSER-003** | `Many` on zero-width parser **must** error. |
+| **PARSER-004** | Combinators **must not** panic on malformed input. |

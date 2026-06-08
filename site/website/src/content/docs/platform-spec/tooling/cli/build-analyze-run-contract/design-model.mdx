@@ -79,7 +79,7 @@ flowchart TB
 | --- | --- |
 | **Argv + global flags** | `@file` expansion, `--log-cranelift`, subcommand dispatch |
 | **Project resolution** | Discover `Project.proj` / `Workspace.proj`, honor lockfile policy, build `CompilationContext` |
-| **Pipeline observation** | Map `beskid_pipeline` phase IDs to stderr spinners or `--plain` lines |
+| **Pipeline observation** | Map `beskid_pipeline` phase IDs to a Ratatui TUI (Elm Architecture: model / message / update / view) or `--plain` stderr lines |
 | **Command backend** | `analyze` emits diagnostics only; `build`/`run` lower + AOT; `repl`/`test` JIT entrypoints |
 
 ## Shared resolution contract
@@ -97,6 +97,10 @@ File-only commands (`parse`, `tree` with a single `.bd` path) may bypass the pro
 | Progress | New pipeline phase IDs **must** surface through the CLI `PipelineObserver` implementation |
 | Diagnostics | Meta and semantic diagnostics share `SemanticDiagnostic` / miette shaping |
 | Parity | Changing mod scheduling **must** update CLI, LSP, and **[Diagnostics parity](/platform-spec/compiler/build-pipeline/diagnostics-parity/)** together |
+
+## Terminal UI summary
+
+When stderr is a TTY and `--plain` is not set, pipeline-backed commands render phase progress on the alternate screen, then show a **summary screen** (stats table and optional pie chart for tests or analyze severities) before returning to the shell. The same facts are always echoed as a one-line stderr summary after the TUI exits so scripts and CI logs stay parseable. `--plain` skips the alternate-screen UI entirely.
 
 ## Implementation anchors
 

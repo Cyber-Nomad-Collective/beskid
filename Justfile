@@ -21,6 +21,7 @@ deps-check:
 deps-install:
     "{{root}}/scripts/install-deps.sh" --install --group beskid
 
-# Corelib spine integration tests: serial + stderr progress (use --nocapture).
+# Corelib spine matrix gate (semantic gate, single Salsa session). Use smoke locally:
+#   BESKID_CORELIB_SPINE_SMOKE=1 just test-corelib-spine
 test-corelib-spine:
-    cd "{{root}}/compiler" && cargo test -p beskid_tests corelib_test -- --nocapture --test-threads=1
+    cd "{{root}}/compiler" && cargo test -p beskid_tests corelib_tests_front_end_typechecks_matrix -- --nocapture --test-threads=1

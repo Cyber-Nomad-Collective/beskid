@@ -24,7 +24,7 @@ import DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';
 />
 
 <SpecSection title="Rationale" id="rationale">
-Pure Beskid primitive modules (`Core.Bytes`, `Core.Encoding`) live in `corelib_foundation`. They **must not** embed OS syscall semantics; binary I/O routes through [System.Syscall](/platform-spec/core-library/stability-and-api-shape/system-syscall/).
+Pure Beskid primitive modules (`Core.Bytes`, `Core.Encoding`, `Core.Text.*`) live in `corelib_foundation`. They **must not** embed OS syscall semantics; binary I/O routes through [System.Syscall](/platform-spec/core-library/stability-and-api-shape/system-syscall/). Text parsing primitives are specified under [Text and parsing](/platform-spec/core-library/text-and-parsing/).
 </SpecSection>
 
 <DomainTiles pathPrefix="platform-spec/core-library/foundation-and-primitives" heading="Features" />

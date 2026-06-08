@@ -1,0 +1,32 @@
+---
+title: Flow and algorithm
+description: Rebuild pipeline for grammar codegen.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-06-08
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Pest parser generator
+    href: /platform-spec/compiler/compiler-mods/pest-parser-generator/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Flow
+
+1. `beskid mod rebuild` builds Mod AOT artifact.
+2. Host scans `grammars/**/*.pest`.
+3. `beskid_pest_gen` emits `.bd` files.
+4. Consumer imports generated parsers.
+

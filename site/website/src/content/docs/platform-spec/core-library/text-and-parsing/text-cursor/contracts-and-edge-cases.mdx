@@ -1,0 +1,33 @@
+---
+title: Contracts and edge cases
+description: MUST rules for Core.Text.Cursor.
+template: splash
+tableOfContents: true
+specLevel: article
+status: Standard
+lastReviewed: 2026-06-08
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+relatedTopics:
+  - type: Feature
+    title: Core.Text.Cursor
+    href: /platform-spec/core-library/text-and-parsing/text-cursor/
+    relation: Parent feature hub
+---
+
+import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome.astro';
+
+<SpecArticleChrome />
+
+## Normative requirements
+
+| ID | Requirement |
+| --- | --- |
+| **CURSOR-001** | `Cursor` **must** track `{ source: string, pos: i64 }`. |
+| **CURSOR-002** | `Slice`, `Drop`, `Peek`, `Advance` **must** be bounds-safe. |
+| **CURSOR-003** | `Position` **must** return current byte offset. |
+| **CURSOR-004** | Hot paths **must not** allocate except `Slice`/`Drop` views. |

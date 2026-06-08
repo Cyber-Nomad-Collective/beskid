@@ -35,8 +35,8 @@ Document **design model** for the **Console Markup Format** feature: role-specif
 
 ### Pipeline
 
-1. **Scan** — `Console.Format.Scan` provides length, prefix, slice, and index helpers (no allocation-heavy regex engine).
-2. **Parse** — `Markdown.RenderInner` walks the source recursively for `**`, `__`, `\` escapes, and bracket tags.
+1. **Cursor** — [Core.Text.Cursor](/platform-spec/core-library/text-and-parsing/text-cursor/) provides byte-indexed string cursor operations.
+2. **Parse** — Generated parser from `console_markup.pest` (via [Pest parser generator](/platform-spec/compiler/compiler-mods/pest-parser-generator/)) built on [Core.Text.Parser](/platform-spec/core-library/text-and-parsing/text-parser-combinators/) combinators. Canonical syntax per [ADR D-CORE-TEXT-0001](./adr/0032-canonical-markup-syntax-v1/).
 3. **Style** — `Attributes` / `StyleChain` map names (`red`, `bold`) to `Ansi.Sgr` or chain steps.
 4. **Emit** — Concatenated gated escape prefixes wrap plain text segments.
 
