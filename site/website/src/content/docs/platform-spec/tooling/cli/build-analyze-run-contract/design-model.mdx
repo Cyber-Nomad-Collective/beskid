@@ -100,7 +100,7 @@ File-only commands (`parse`, `tree` with a single `.bd` path) may bypass the pro
 
 ## Terminal UI summary
 
-When stderr is a TTY and `--plain` is not set, pipeline-backed commands render phase progress on the alternate screen, then show a **summary screen** (stats table and optional pie chart for tests or analyze severities) before returning to the shell. The same facts are always echoed as a one-line stderr summary after the TUI exits so scripts and CI logs stay parseable. `--plain` skips the alternate-screen UI entirely.
+When stderr is a TTY and `--plain` is not set, pipeline-backed commands render phase progress on the alternate screen using a **single flexible shell**: a context bar, a stage-focused primary pane, a secondary pane (pipeline tree, test list, or summary chart), a log strip, and dual progress gauges in the footer. Pane weights shift with the active pipeline stage (workspace resolve, front-end parse, semantic analysis, lowering/codegen, or test execution). **Navigation:** after compile completes the pipeline screen stays visible until **Space** opens the test table (`beskid test`) or summary (other commands); **Space** again opens the summary chart; **Space** or **q** exits. The same facts are always echoed as a one-line stderr summary after the TUI exits so scripts and CI logs stay parseable. `--plain` skips the alternate-screen UI entirely.
 
 ## Implementation anchors
 
