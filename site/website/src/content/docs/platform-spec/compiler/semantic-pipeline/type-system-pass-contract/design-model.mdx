@@ -30,9 +30,14 @@ This article documents **design model** for **type-system pass contract** in the
 For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
 
 ## Anchored code paths
-- `compiler/crates/beskid_analysis/src/analysis/` includes typing-oriented semantic checks.
-- `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs` validates core pipeline typing behavior.
-- `compiler/crates/beskid_tests/src/analysis/diagnostics.rs` validates type-related diagnostics.
+- `compiler/crates/beskid_analysis/src/services/lower.rs` — **`lower.type_check`** is the sole authoritative type pass.
+- `compiler/crates/beskid_analysis/src/analysis/rules/staged/type_checking.rs` — structural immutability only (not full typing).
+- `compiler/crates/beskid_tests/src/analysis/type_check_diagnostics.rs` — prepare-spine diagnostic code conformance.
+- `compiler/crates/beskid_tests/src/analysis/diagnostics.rs` — stable `SemanticIssueKind` → code mapping.
+
+## Type-check placement
+
+Full expression typing runs on the lower spine under phase id **`lower.type_check`**. See [Semantic pipeline / Stage ordering](/platform-spec/compiler/semantic-pipeline/stage-ordering/design-model/) for the split between lower authority and semantic structural checks.
 
 ## Practical notes
 - Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.

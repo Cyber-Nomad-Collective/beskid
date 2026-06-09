@@ -1,6 +1,6 @@
 ---
 title: "System.Time"
-description: "Instant and duration types (clock reads currently stubbed)."
+description: "Instant, duration, and UTC civil time types backed by runtime nanosecond clock builtins."
 ---
 
 > **Non-normative (legacy bridge).** This page is transitional API reference material. **Canonical** core-library contracts: [/platform-spec/core-library/](/platform-spec/core-library/). Full path mapping: [/platform-spec/legacy-spec-mapping/](/platform-spec/legacy-spec-mapping/).

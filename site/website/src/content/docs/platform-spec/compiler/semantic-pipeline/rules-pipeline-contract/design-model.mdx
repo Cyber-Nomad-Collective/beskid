@@ -34,9 +34,9 @@ flowchart LR
   gate[syntax generation gate]
   s1[early binding stages]
   s8[stage8_metaprogramming]
-  late[type + effect checks]
+  structural[structural semantic checks]
   hir[HIR normalization]
-  merge --> gate --> s1 --> s8 --> late --> hir
+  merge --> gate --> s1 --> s8 --> structural --> hir
 ```
 
 ## Anchored code paths

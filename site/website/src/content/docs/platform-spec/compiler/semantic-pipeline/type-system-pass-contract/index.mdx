@@ -26,9 +26,9 @@ import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro
 This feature hub defines the normative contract for **type-system pass contract** and links newcomer-oriented reference articles.
 
 ## Implementation anchors
-- `compiler/crates/beskid_analysis/src/analysis/` includes typing-oriented semantic checks.
-- `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs` validates core pipeline typing behavior.
-- `compiler/crates/beskid_tests/src/analysis/diagnostics.rs` validates type-related diagnostics.
+- `compiler/crates/beskid_analysis/src/services/lower.rs` — authoritative `lower.type_check` pass.
+- `compiler/crates/beskid_tests/src/analysis/type_check_diagnostics.rs` — prepare-spine type diagnostic conformance.
+- `compiler/crates/beskid_tests/src/analysis/diagnostics.rs` — stable issue kind codes.
 
 ## Decisions
 

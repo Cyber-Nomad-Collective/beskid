@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-05-30T19:08:37.313Z",
+  "generatedAt": "2026-06-09T15:41:18.975Z",
   "summary": {
-    "nodes": 812,
-    "errors": 0,
+    "nodes": 981,
+    "errors": 10,
     "warnings": 0
   },
   "nodes": [
@@ -409,7 +409,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -651,7 +651,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -761,7 +761,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -882,7 +882,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -926,7 +926,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -992,7 +992,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -1103,6 +1103,17 @@
       "counts": {
         "specSections": 0,
         "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/build-pipeline/stage-ordering/unit-artifact-cache",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -1580,6 +1591,17 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/adr/0004-shared-resolution-query-bundle",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
@@ -1597,7 +1619,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 9
+        "markdownH2": 10
       },
       "messages": []
     },
@@ -1987,6 +2009,113 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator",
+      "level": "feature",
+      "status": "fail",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": false
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": [
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator",
+          "message": "Missing required specSection \"what-this-feature-specifies\"",
+          "detail": "platform-spec/compiler/compiler-mods/pest-parser-generator/index.mdx"
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/adr/0001-embedded-pest-carve-out",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/compiler/compiler-mods/syntax-domain-model-generation",
       "level": "feature",
       "status": "ok",
@@ -2279,7 +2408,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -2290,7 +2419,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -2301,7 +2430,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -2323,7 +2452,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -2334,7 +2463,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -3566,7 +3695,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 1
+        "markdownH2": 2
       },
       "messages": []
     },
@@ -3753,7 +3882,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3857,13 +3986,24 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/adr/0005-package-prefixed-symbol-identity",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/compiler/semantic-pipeline/resolver-contract/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -3874,7 +4014,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -3885,7 +4025,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -4501,6 +4641,17 @@
       "sections": [],
       "counts": {
         "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/adr/0010-runtime-registration-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
         "markdownH2": 4
       },
       "messages": []
@@ -4568,6 +4719,17 @@
       "counts": {
         "specSections": 0,
         "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/compiler-integration/runtime-registration",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -4880,6 +5042,183 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/core-library/foundation-and-primitives",
+      "level": "area",
+      "status": "fail",
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": false
+        },
+        {
+          "id": "features",
+          "required": false,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": [
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/core-library/foundation-and-primitives",
+          "message": "Missing required specSection \"scope\"",
+          "detail": "platform-spec/core-library/foundation-and-primitives/index.mdx"
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/core-library/foundation-and-primitives/core-bytes",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/foundation-and-primitives/core-bytes/adr/0010-u8-array-canonical-buffer",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/foundation-and-primitives/core-bytes/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/foundation-and-primitives/core-bytes/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/foundation-and-primitives/core-bytes/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/foundation-and-primitives/core-encoding",
+      "level": "feature",
+      "status": "fail",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": [
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/core-library/foundation-and-primitives/core-encoding",
+          "message": "Missing required specSection \"implementation-anchors\"",
+          "detail": "platform-spec/core-library/foundation-and-primitives/core-encoding/index.mdx"
+        },
+        {
+          "code": "MIN_SPEC_SECTIONS",
+          "severity": "error",
+          "slug": "platform-spec/core-library/foundation-and-primitives/core-encoding",
+          "message": "Expected at least 2 <SpecSection> blocks, found 1",
+          "detail": "platform-spec/core-library/foundation-and-primitives/core-encoding/index.mdx"
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/core-library/foundation-and-primitives/core-encoding/adr/0020-encoding-contract-v1",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/foundation-and-primitives/core-encoding/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/foundation-and-primitives/core-encoding/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/foundation-and-primitives/core-encoding/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/core-library/stability-and-api-shape",
       "level": "area",
       "status": "ok",
@@ -4941,7 +5280,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -5106,7 +5445,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -5145,6 +5484,106 @@
     },
     {
       "slug": "platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/system-syscall",
+      "level": "feature",
+      "status": "fail",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 1,
+        "markdownH2": 0
+      },
+      "messages": [
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/core-library/stability-and-api-shape/system-syscall",
+          "message": "Missing required specSection \"implementation-anchors\"",
+          "detail": "platform-spec/core-library/stability-and-api-shape/system-syscall/index.mdx"
+        },
+        {
+          "code": "MIN_SPEC_SECTIONS",
+          "severity": "error",
+          "slug": "platform-spec/core-library/stability-and-api-shape/system-syscall",
+          "message": "Expected at least 2 <SpecSection> blocks, found 1",
+          "detail": "platform-spec/core-library/stability-and-api-shape/system-syscall/index.mdx"
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/system-syscall/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/system-time",
+      "level": "feature",
+      "status": "fail",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": [
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/core-library/stability-and-api-shape/system-time",
+          "message": "Missing required specSection \"implementation-anchors\"",
+          "detail": "platform-spec/core-library/stability-and-api-shape/system-time/index.mdx"
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/system-time/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/stability-and-api-shape/system-time/design-model",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -5661,6 +6100,17 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/core-library/terminal-and-console/console-markup-format/adr/0032-canonical-markup-syntax-v1",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/core-library/terminal-and-console/console-markup-format/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
@@ -5826,6 +6276,311 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/core-library/text-and-parsing",
+      "level": "area",
+      "status": "fail",
+      "sections": [
+        {
+          "id": "scope",
+          "required": true,
+          "found": false
+        },
+        {
+          "id": "features",
+          "required": false,
+          "found": false
+        }
+      ],
+      "counts": {
+        "specSections": 3,
+        "markdownH2": 0
+      },
+      "messages": [
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/core-library/text-and-parsing",
+          "message": "Missing required specSection \"scope\"",
+          "detail": "platform-spec/core-library/text-and-parsing/index.mdx"
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-cursor",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-cursor/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-cursor/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-cursor/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-cursor/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-cursor/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-cursor/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/adr/0001-combinator-runtime-contracts",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-regex",
+      "level": "feature",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 2,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-regex/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-regex/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-regex/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-regex/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-regex/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/core-library/text-and-parsing/text-regex/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/execution",
       "level": "domain",
       "status": "ok",
@@ -5914,7 +6669,7 @@
       "messages": []
     },
     {
-      "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/contracts-and-edge-cases",
+      "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/adr/0003-v3-kernel-shrink-bump",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -5925,13 +6680,24 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/design-model",
       "level": "article",
       "status": "ok",
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 7
+        "markdownH2": 8
       },
       "messages": []
     },
@@ -5964,7 +6730,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 6
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -5975,7 +6741,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -6024,7 +6790,7 @@
       "messages": []
     },
     {
-      "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/contracts-and-edge-cases",
+      "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/adr/0005-manifest-generated-registries",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -6035,13 +6801,24 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/execution/abi-and-host/builtins-and-symbols/design-model",
       "level": "article",
       "status": "ok",
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 6
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -6074,7 +6851,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 6
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -6085,7 +6862,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -6134,7 +6911,7 @@
       "messages": []
     },
     {
-      "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/contracts-and-edge-cases",
+      "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/adr/0007-handler-registration-init-order",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -6145,13 +6922,24 @@
       "messages": []
     },
     {
-      "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/design-model",
+      "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
       "sections": [],
       "counts": {
         "specSections": 0,
         "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/abi-and-host/extern-dispatch-and-policy/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -6184,7 +6972,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 6
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -6244,17 +7032,6 @@
       "messages": []
     },
     {
-      "slug": "platform-spec/execution/runtime/channels-and-synchronization/adr/0011-channel-only-cross-fiber-sharing",
-      "level": "article",
-      "status": "ok",
-      "sections": [],
-      "counts": {
-        "specSections": 0,
-        "markdownH2": 4
-      },
-      "messages": []
-    },
-    {
       "slug": "platform-spec/execution/runtime/channels-and-synchronization/adr/0012-hub-round-robin-fairness",
       "level": "article",
       "status": "ok",
@@ -6267,6 +7044,17 @@
     },
     {
       "slug": "platform-spec/execution/runtime/channels-and-synchronization/adr/0013-result-at-builtin-boundary",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/execution/runtime/channels-and-synchronization/adr/0016-channel-only-cross-fiber-sharing",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -6360,7 +7148,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -6437,7 +7225,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -6448,7 +7236,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 6
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -6481,7 +7269,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 7
+        "markdownH2": 8
       },
       "messages": []
     },
@@ -6552,13 +7340,24 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/adr/0011-binary-syscall-builtins",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/execution/runtime/panic-io-and-syscalls/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -6569,7 +7368,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 6
+        "markdownH2": 7
       },
       "messages": []
     },
@@ -6602,7 +7401,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 7
+        "markdownH2": 8
       },
       "messages": []
     },
@@ -6668,7 +7467,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -6679,7 +7478,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -6712,7 +7511,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 7
+        "markdownH2": 8
       },
       "messages": []
     },
@@ -6723,7 +7522,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 4
+        "markdownH2": 5
       },
       "messages": []
     },
@@ -7020,6 +7819,72 @@
       "sections": [],
       "counts": {
         "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/contracts/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/contracts/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/contracts/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/contracts/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/contracts/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/contracts/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
         "markdownH2": 3
       },
       "messages": []
@@ -7031,12 +7896,144 @@
       "sections": [],
       "counts": {
         "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/error-handling/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
         "markdownH2": 4
       },
       "messages": []
     },
     {
+      "slug": "platform-spec/language-meta/contracts-and-effects/error-handling/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/error-handling/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/error-handling/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/error-handling/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/error-handling/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/language-meta/contracts-and-effects/testing",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/testing/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/testing/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/testing/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/testing/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/testing/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/contracts-and-effects/testing/verification-and-traceability",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -7075,12 +8072,144 @@
       "sections": [],
       "counts": {
         "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/control-flow/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/control-flow/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/control-flow/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/control-flow/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/control-flow/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/control-flow/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
         "markdownH2": 3
       },
       "messages": []
     },
     {
       "slug": "platform-spec/language-meta/evaluation/events",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/events/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/events/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/events/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/events/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/events/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/events/verification-and-traceability",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -7169,6 +8298,72 @@
     },
     {
       "slug": "platform-spec/language-meta/evaluation/lambdas-and-closures",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/lambdas-and-closures/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/lambdas-and-closures/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/lambdas-and-closures/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/lambdas-and-closures/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/lambdas-and-closures/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/evaluation/lambdas-and-closures/verification-and-traceability",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -7619,6 +8814,17 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/language-meta/interop/interop-contracts/adr/0004-dispatch-envelope-layout",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/language-meta/interop/interop-contracts/callback-call-shapes",
       "level": "article",
       "status": "ok",
@@ -7740,6 +8946,39 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/language-meta/interop/rust-abi-profile/adr/0004-language-owned-runtime-manifest",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/rust-abi-profile/adr/0005-kernel-vs-dispatch-registration",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/rust-abi-profile/adr/0017-runtime-host-split-v4",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/language-meta/interop/rust-abi-profile/boundary-and-stability",
       "level": "article",
       "status": "ok",
@@ -7747,6 +8986,28 @@
       "counts": {
         "specSections": 0,
         "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/rust-abi-profile/kernel-and-dispatch",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/interop/rust-abi-profile/runtime-manifest",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -7790,6 +9051,72 @@
       "sections": [],
       "counts": {
         "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/memory-model/memory-and-references/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/memory-model/memory-and-references/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/memory-model/memory-and-references/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/memory-model/memory-and-references/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/memory-model/memory-and-references/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/memory-model/memory-and-references/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
         "markdownH2": 3
       },
       "messages": []
@@ -7823,7 +9150,73 @@
       "sections": [],
       "counts": {
         "specSections": 8,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -7839,13 +9232,79 @@
       "messages": []
     },
     {
-      "slug": "platform-spec/language-meta/metaprogramming/metaprogramming",
+      "slug": "platform-spec/language-meta/metaprogramming/macros/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/macros/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/macros/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/macros/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/macros/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/macros/verification-and-traceability",
       "level": "article",
       "status": "ok",
       "sections": [],
       "counts": {
         "specSections": 0,
         "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/metaprogramming/metaprogramming",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
       },
       "messages": []
     },
@@ -7889,7 +9348,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 2
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -7900,12 +9359,144 @@
       "sections": [],
       "counts": {
         "specSections": 4,
-        "markdownH2": 0
+        "markdownH2": 1
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/extend-type/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/extend-type/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/extend-type/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/extend-type/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 2
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/extend-type/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/extend-type/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
       },
       "messages": []
     },
     {
       "slug": "platform-spec/language-meta/program-structure/modules-and-visibility",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/modules-and-visibility/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/modules-and-visibility/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/modules-and-visibility/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/modules-and-visibility/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/modules-and-visibility/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/modules-and-visibility/verification-and-traceability",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -7922,7 +9513,73 @@
       "sections": [],
       "counts": {
         "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/name-resolution/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
         "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/name-resolution/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/name-resolution/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/name-resolution/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/name-resolution/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/program-structure/name-resolution/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -7955,12 +9612,78 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
     {
       "slug": "platform-spec/language-meta/surface-syntax/lexical-and-syntax",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/surface-syntax/lexical-and-syntax/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/surface-syntax/lexical-and-syntax/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/surface-syntax/lexical-and-syntax/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/surface-syntax/lexical-and-syntax/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/surface-syntax/lexical-and-syntax/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/surface-syntax/lexical-and-syntax/verification-and-traceability",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -7999,12 +9722,78 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 3
+        "markdownH2": 4
       },
       "messages": []
     },
     {
       "slug": "platform-spec/language-meta/type-system/method-dispatch",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/method-dispatch/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/method-dispatch/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/method-dispatch/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/method-dispatch/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/method-dispatch/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/method-dispatch/verification-and-traceability",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -8021,12 +9810,144 @@
       "sections": [],
       "counts": {
         "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/type-inference/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/type-inference/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/type-inference/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/type-inference/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/type-inference/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/type-inference/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
         "markdownH2": 3
       },
       "messages": []
     },
     {
       "slug": "platform-spec/language-meta/type-system/types",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/types/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/types/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/types/examples",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 7
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/types/faq-and-troubleshooting",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/types/flow-and-algorithm",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/language-meta/type-system/types/verification-and-traceability",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -8111,6 +10032,50 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/tooling/auth-hub",
+      "level": "area",
+      "status": "ok",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": true
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 3,
+        "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/auth-hub/contracts-and-edge-cases",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/auth-hub/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 6
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/tooling/cli",
       "level": "area",
       "status": "ok",
@@ -8167,6 +10132,17 @@
     },
     {
       "slug": "platform-spec/tooling/cli/api-json-contract/adr/0002-hub-authority",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/api-json-contract/adr/0003-symbol-key-field",
       "level": "article",
       "status": "ok",
       "sections": [],
@@ -8260,7 +10236,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 5
+        "markdownH2": 6
       },
       "messages": []
     },
@@ -8318,6 +10294,36 @@
         "markdownH2": 2
       },
       "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/cli/repl-command",
+      "level": "feature",
+      "status": "fail",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": false
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 3,
+        "markdownH2": 0
+      },
+      "messages": [
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/tooling/cli/repl-command",
+          "message": "Missing required specSection \"what-this-feature-specifies\"",
+          "detail": "platform-spec/tooling/cli/repl-command/index.mdx"
+        }
+      ]
     },
     {
       "slug": "platform-spec/tooling/foreign-library-import",
@@ -8611,8 +10617,71 @@
         }
       ],
       "counts": {
-        "specSections": 2,
+        "specSections": 6,
         "markdownH2": 0
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/bsol",
+      "level": "feature",
+      "status": "fail",
+      "sections": [
+        {
+          "id": "what-this-feature-specifies",
+          "required": true,
+          "found": false
+        },
+        {
+          "id": "implementation-anchors",
+          "required": true,
+          "found": true
+        }
+      ],
+      "counts": {
+        "specSections": 3,
+        "markdownH2": 0
+      },
+      "messages": [
+        {
+          "code": "MISSING_SECTION",
+          "severity": "error",
+          "slug": "platform-spec/tooling/manifests-and-lockfiles/bsol",
+          "message": "Missing required specSection \"what-this-feature-specifies\"",
+          "detail": "platform-spec/tooling/manifests-and-lockfiles/bsol/index.mdx"
+        }
+      ]
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/bsol/design-model",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 8
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/bsol/runtime-manifest-profile",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 5
+      },
+      "messages": []
+    },
+    {
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/bsol/verification-and-traceability",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 3
       },
       "messages": []
     },
@@ -8678,7 +10747,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 7
+        "markdownH2": 11
       },
       "messages": []
     },
@@ -8799,7 +10868,7 @@
       "sections": [],
       "counts": {
         "specSections": 0,
-        "markdownH2": 6
+        "markdownH2": 8
       },
       "messages": []
     },
@@ -9431,6 +11500,17 @@
       "messages": []
     },
     {
+      "slug": "platform-spec/tooling/registry-client/pckg-client-contract/adr/0005-api-json-symbol-key-validation",
+      "level": "article",
+      "status": "ok",
+      "sections": [],
+      "counts": {
+        "specSections": 0,
+        "markdownH2": 4
+      },
+      "messages": []
+    },
+    {
       "slug": "platform-spec/tooling/registry-client/pckg-client-contract/contracts-and-edge-cases",
       "level": "article",
       "status": "ok",
@@ -9904,5 +11984,76 @@
       "messages": []
     }
   ],
-  "diagnostics": []
+  "diagnostics": [
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator",
+      "message": "Missing required specSection \"what-this-feature-specifies\"",
+      "detail": "platform-spec/compiler/compiler-mods/pest-parser-generator/index.mdx"
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/core-library/foundation-and-primitives",
+      "message": "Missing required specSection \"scope\"",
+      "detail": "platform-spec/core-library/foundation-and-primitives/index.mdx"
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/core-library/foundation-and-primitives/core-encoding",
+      "message": "Missing required specSection \"implementation-anchors\"",
+      "detail": "platform-spec/core-library/foundation-and-primitives/core-encoding/index.mdx"
+    },
+    {
+      "code": "MIN_SPEC_SECTIONS",
+      "severity": "error",
+      "slug": "platform-spec/core-library/foundation-and-primitives/core-encoding",
+      "message": "Expected at least 2 <SpecSection> blocks, found 1",
+      "detail": "platform-spec/core-library/foundation-and-primitives/core-encoding/index.mdx"
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/core-library/stability-and-api-shape/system-syscall",
+      "message": "Missing required specSection \"implementation-anchors\"",
+      "detail": "platform-spec/core-library/stability-and-api-shape/system-syscall/index.mdx"
+    },
+    {
+      "code": "MIN_SPEC_SECTIONS",
+      "severity": "error",
+      "slug": "platform-spec/core-library/stability-and-api-shape/system-syscall",
+      "message": "Expected at least 2 <SpecSection> blocks, found 1",
+      "detail": "platform-spec/core-library/stability-and-api-shape/system-syscall/index.mdx"
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/core-library/stability-and-api-shape/system-time",
+      "message": "Missing required specSection \"implementation-anchors\"",
+      "detail": "platform-spec/core-library/stability-and-api-shape/system-time/index.mdx"
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/core-library/text-and-parsing",
+      "message": "Missing required specSection \"scope\"",
+      "detail": "platform-spec/core-library/text-and-parsing/index.mdx"
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/tooling/cli/repl-command",
+      "message": "Missing required specSection \"what-this-feature-specifies\"",
+      "detail": "platform-spec/tooling/cli/repl-command/index.mdx"
+    },
+    {
+      "code": "MISSING_SECTION",
+      "severity": "error",
+      "slug": "platform-spec/tooling/manifests-and-lockfiles/bsol",
+      "message": "Missing required specSection \"what-this-feature-specifies\"",
+      "detail": "platform-spec/tooling/manifests-and-lockfiles/bsol/index.mdx"
+    }
+  ]
 }

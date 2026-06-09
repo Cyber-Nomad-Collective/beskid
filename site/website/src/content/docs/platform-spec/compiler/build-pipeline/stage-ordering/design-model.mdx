@@ -90,6 +90,8 @@ These literals must match **[Compiler Mods / Mod projects and pipeline phase ids
 
 **JIT run (`JIT_RUN_PHASE_ORDER`)** — No JIT mod execution path is normative for compiler mods; mod execution is AOT-hosted only.
 
+**Semantic sub-phases (`semantic`)** — Under the parent `semantic` phase, `SemanticPipelineRule` emits these ordered observer ids (see `SEMANTIC_SUB_PHASE_ORDER` in `beskid_tools`): `semantic.ast_lower`, `semantic.definitions`, `semantic.control_flow`, `semantic.name_resolution`, `semantic.visibility`, `semantic.contracts`, `semantic.error_handling`, `semantic.type_check`, `semantic.naming_style`.
+
 **Auxiliary ids** — `workspace.graph_changed` and `semantic.snapshot` are emitted by workspace refresh and semantic pipeline orchestration respectively; they **must** use the same string literals when represented as phases (or as documented `WorkUnit` `id` prefixes if only work units are used—pick one representation per id and document it in `PIPELINE.md`).
 
 **`lower.ready`** — Emitted immediately before the existing **`lower`** phase entrypoint runs on a merged program; hosts **must** emit it even when no mods ran (no-op instant) so observers can assert ordering uniformly.

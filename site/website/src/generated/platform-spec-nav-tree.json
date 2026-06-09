@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-06T20:03:51.650Z",
+  "generatedAt": "2026-06-09T15:32:14.365Z",
   "tree": {
     "slug": "platform-spec",
     "href": "/platform-spec/",
@@ -673,6 +673,50 @@
                     "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge/verification-and-traceability",
                     "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/verification-and-traceability/",
                     "title": "mod host bridge - Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator",
+                "href": "/platform-spec/compiler/compiler-mods/pest-parser-generator/",
+                "title": "Pest parser generator",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/contracts-and-edge-cases",
+                    "href": "/platform-spec/compiler/compiler-mods/pest-parser-generator/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/design-model",
+                    "href": "/platform-spec/compiler/compiler-mods/pest-parser-generator/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/examples",
+                    "href": "/platform-spec/compiler/compiler-mods/pest-parser-generator/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/faq-and-troubleshooting",
+                    "href": "/platform-spec/compiler/compiler-mods/pest-parser-generator/faq-and-troubleshooting/",
+                    "title": "FAQ",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/flow-and-algorithm",
+                    "href": "/platform-spec/compiler/compiler-mods/pest-parser-generator/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/compiler/compiler-mods/pest-parser-generator/verification-and-traceability",
+                    "href": "/platform-spec/compiler/compiler-mods/pest-parser-generator/verification-and-traceability/",
+                    "title": "Verification",
                     "level": "article"
                   }
                 ]
@@ -1886,6 +1930,26 @@
                     "level": "article"
                   }
                 ]
+              },
+              {
+                "slug": "platform-spec/core-library/stability-and-api-shape/system-time",
+                "href": "/platform-spec/core-library/stability-and-api-shape/system-time/",
+                "title": "System.Time",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/system-time/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/system-time/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/stability-and-api-shape/system-time/design-model",
+                    "href": "/platform-spec/core-library/stability-and-api-shape/system-time/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  }
+                ]
               }
             ]
           },
@@ -2119,6 +2183,146 @@
                     "slug": "platform-spec/core-library/terminal-and-console/console-terminal-events/verification-and-traceability",
                     "href": "/platform-spec/core-library/terminal-and-console/console-terminal-events/verification-and-traceability/",
                     "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "slug": "platform-spec/core-library/text-and-parsing",
+            "href": "/platform-spec/core-library/text-and-parsing/",
+            "title": "Text and parsing",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/core-library/text-and-parsing/text-cursor",
+                "href": "/platform-spec/core-library/text-and-parsing/text-cursor/",
+                "title": "Core.Text.Cursor",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-cursor/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-cursor/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-cursor/design-model",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-cursor/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-cursor/examples",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-cursor/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-cursor/faq-and-troubleshooting",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-cursor/faq-and-troubleshooting/",
+                    "title": "FAQ",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-cursor/flow-and-algorithm",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-cursor/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-cursor/verification-and-traceability",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-cursor/verification-and-traceability/",
+                    "title": "Verification",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators",
+                "href": "/platform-spec/core-library/text-and-parsing/text-parser-combinators/",
+                "title": "Core.Text.Parser",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-parser-combinators/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/design-model",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-parser-combinators/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/examples",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-parser-combinators/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/faq-and-troubleshooting",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-parser-combinators/faq-and-troubleshooting/",
+                    "title": "FAQ",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/flow-and-algorithm",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-parser-combinators/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-parser-combinators/verification-and-traceability",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-parser-combinators/verification-and-traceability/",
+                    "title": "Verification",
+                    "level": "article"
+                  }
+                ]
+              },
+              {
+                "slug": "platform-spec/core-library/text-and-parsing/text-regex",
+                "href": "/platform-spec/core-library/text-and-parsing/text-regex/",
+                "title": "Core.Text.Regex",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-regex/contracts-and-edge-cases",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-regex/contracts-and-edge-cases/",
+                    "title": "Contracts and edge cases",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-regex/design-model",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-regex/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-regex/examples",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-regex/examples/",
+                    "title": "Examples",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-regex/faq-and-troubleshooting",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-regex/faq-and-troubleshooting/",
+                    "title": "FAQ",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-regex/flow-and-algorithm",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-regex/flow-and-algorithm/",
+                    "title": "Flow and algorithm",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/core-library/text-and-parsing/text-regex/verification-and-traceability",
+                    "href": "/platform-spec/core-library/text-and-parsing/text-regex/verification-and-traceability/",
+                    "title": "Verification",
                     "level": "article"
                   }
                 ]
@@ -2905,6 +3109,26 @@
         "level": "domain",
         "children": [
           {
+            "slug": "platform-spec/tooling/auth-hub",
+            "href": "/platform-spec/tooling/auth-hub/",
+            "title": "Beskid auth hub",
+            "level": "area",
+            "children": [
+              {
+                "slug": "platform-spec/tooling/auth-hub/contracts-and-edge-cases",
+                "href": "/platform-spec/tooling/auth-hub/contracts-and-edge-cases/",
+                "title": "Contracts and edge cases",
+                "level": "article"
+              },
+              {
+                "slug": "platform-spec/tooling/auth-hub/design-model",
+                "href": "/platform-spec/tooling/auth-hub/design-model/",
+                "title": "Design model",
+                "level": "article"
+              }
+            ]
+          },
+          {
             "slug": "platform-spec/tooling/nexus",
             "href": "/platform-spec/tooling/nexus/",
             "title": "Beskid Nexus",
@@ -3139,6 +3363,32 @@
             "title": "Manifests and lockfiles",
             "level": "area",
             "children": [
+              {
+                "slug": "platform-spec/tooling/manifests-and-lockfiles/bsol",
+                "href": "/platform-spec/tooling/manifests-and-lockfiles/bsol/",
+                "title": "Bsol (Beskid Structured Object Language)",
+                "level": "feature",
+                "children": [
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/bsol/design-model",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/bsol/design-model/",
+                    "title": "Design model",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/bsol/runtime-manifest-profile",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/bsol/runtime-manifest-profile/",
+                    "title": "Runtime manifest profile",
+                    "level": "article"
+                  },
+                  {
+                    "slug": "platform-spec/tooling/manifests-and-lockfiles/bsol/verification-and-traceability",
+                    "href": "/platform-spec/tooling/manifests-and-lockfiles/bsol/verification-and-traceability/",
+                    "title": "Verification and traceability",
+                    "level": "article"
+                  }
+                ]
+              },
               {
                 "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract",
                 "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",

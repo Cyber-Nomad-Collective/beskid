@@ -30,9 +30,11 @@ This article documents **verification and traceability** for **type-system pass 
 For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
 
 ## Anchored code paths
-- `compiler/crates/beskid_analysis/src/analysis/` includes typing-oriented semantic checks.
-- `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs` validates core pipeline typing behavior.
-- `compiler/crates/beskid_tests/src/analysis/diagnostics.rs` validates type-related diagnostics.
+- `compiler/crates/beskid_tests/src/analysis/type_check_diagnostics.rs` — `E12xx` codes via `prepare_compilation_diagnostics` (lower spine).
+- `compiler/crates/beskid_tests/src/analysis/diagnostics.rs` — issue kind → code contract.
+- `compiler/crates/beskid_tests/src/analysis/types.rs` — lower typing integration cases.
+
+Conformance tests assert **diagnostic code sets**, not pipeline phase ordering relative to semantic sub-phases.
 
 ## Practical notes
 - Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.

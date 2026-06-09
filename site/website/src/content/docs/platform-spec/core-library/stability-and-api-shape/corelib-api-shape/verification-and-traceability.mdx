@@ -87,9 +87,10 @@ cd site/website && bun run verify:trudoc -- --preset ci
   - `compiler/corelib/packages/foundation/src/Collections/Set.bd` (Tier 2 with `Contains` at Tier 3)
   - `compiler/corelib/packages/foundation/src/Collections/Queue.bd` (Tier 2 with `Peek` at Tier 3)
   - `compiler/corelib/packages/foundation/src/Collections/Stack.bd` (Tier 2 with `Peek` at Tier 3)
-  - `compiler/corelib/packages/runtime/src/System/Input.bd`, `Output.bd`, `Error.bd`, `Syscall.bd` (Tier 1)
-  - `compiler/corelib/packages/runtime/src/System/FS.bd` (Tier 2)
-  - `compiler/corelib/packages/runtime/src/System/Path.bd` (Tier 2 with `FileName`, `Extension`, `IsAbsolute` at Tier 3)
+  - `compiler/corelib/packages/runtime/src/System/Input/Input.bd`, `Output/Output.bd`, `Error/Error.bd`, `Syscall.bd` (Tier 1)
+  - `compiler/corelib/packages/runtime/src/System/FS.bd`, `FS/FsError.bd` (Tier 2)
+  - `compiler/corelib/packages/runtime/src/System/Path/Path.bd` (Tier 2 with `FileName`, `Extension`, `IsAbsolute` at Tier 3)
+  - `compiler/corelib/packages/runtime/src/System/Time.bd`, `Time/` (Tier 2)
 - Conformance anchor: `compiler/crates/beskid_tests/src/projects/corelib/layout.rs`.
 
 ## Review checklist

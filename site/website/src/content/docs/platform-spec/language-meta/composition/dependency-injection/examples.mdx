@@ -43,7 +43,7 @@ type StorageAggregator {
     inject Storage[] storages;
 }
 
-unit main(string[] args) {
+unit Main(string[] args) {
     launch AppHost(args);
 }
 ```
@@ -71,7 +71,7 @@ host AppHost(string[] args) : InfraHost {
     startup(Logger logger) { }
 }
 
-unit main(string[] args) {
+unit Main(string[] args) {
     launch AppHost(args);
 }
 ```

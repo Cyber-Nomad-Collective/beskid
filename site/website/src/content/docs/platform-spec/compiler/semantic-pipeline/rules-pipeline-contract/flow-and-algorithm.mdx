@@ -31,7 +31,7 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 3. `SemanticPipelineRule` stages execute in registration order within `staged.rs`.
 4. **`stage8_metaprogramming`** validates meta-produced attributes; it does **not** replace mod host orchestration.
 5. Diagnostics publish to CLI/LSP snapshot; pipeline continues only if policy allows after error count.
-6. HIR normalization and resolution consume the same generation id before lowering.
+6. HIR normalization, resolution, and **`lower.type_check`** consume the same generation id before codegen lowering (see [Semantic pipeline / Stage ordering](/platform-spec/compiler/semantic-pipeline/stage-ordering/design-model/)).
 
 ```mermaid
 sequenceDiagram

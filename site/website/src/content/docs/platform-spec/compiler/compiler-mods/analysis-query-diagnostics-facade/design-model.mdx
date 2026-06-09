@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-06-05
+lastReviewed: 2026-06-09
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -55,9 +55,29 @@ This article documents the **design model** for **Analysis, query, and diagnosti
 
 IDE LSP paths use the same `Resolution` bundle via `DocumentAnalysisSnapshot`; symbol invariants match [resolver design model](/platform-spec/compiler/semantic-pipeline/resolver-contract/design-model/).
 
+## Debounced typed entry bundle (LSP / IDE)
+
+The reference host separates **immediate** graph inputs from **debounced** Executable prepare so IDE latency stays bounded while diagnostics and compile commands share one spine.
+
+| Input | Tracks | Invalidated by |
+| --- | --- | --- |
+| **File revision** | `file_text` / buffer hash in `BeskidDatabase` | every `didChange` |
+| **Typed prepare revision** | debounced background bump (120ms coalescing with diagnostic publish) | scheduled after edit pause |
+| **Assembly generation** | `program_assembly` Salsa key | discovery, imports, manifest/lock |
+
+**Algorithm**
+
+1. On buffer edit, update `file_text` immediately; rebuild parse-level `DocumentAnalysisSnapshot` using `entry_resolution_with_db` when assembly is warm.
+2. Schedule debounced typed prepare; superseded tasks no-op per URI revision counter.
+3. On debounce fire, run `typed_entry_bundle` (Executable prepare, `with_semantic_diagnostics: false` for intellisense-only consumers) and store `SharedFrontEnd` keyed by entry session fingerprint + syntax generation id.
+4. While typed output is stale, IDE queries **must** use `entry_resolution_with_db` (`SharedResolution`) — never a parallel resolver path.
+5. Diagnostics **must** call `prepare_compilation_diagnostics_with_db` (full prepare with diagnostic collection) on publish, not legacy `analyze_source_in_project` / `analyze_source_with_compilation_context` helpers.
+
+Typed bundle invalidation **must** include import-closure dependents, mod-host generation keys, and grammar revision bumps aligned with **[Snapshot and refresh contract](/platform-spec/tooling/lsp/snapshot-and-refresh-contract/)**.
+
 ## Anchored code paths
 - `compiler/crates/beskid_queries/src/output.rs` — `SharedResolution`
-- `compiler/crates/beskid_queries/src/entry.rs` — `entry_resolution_with_db`
+- `compiler/crates/beskid_queries/src/entry.rs` — `entry_resolution_with_db`, `typed_entry_bundle`, `prepare_compilation_diagnostics_with_db`
 - `compiler/crates/beskid_analysis/src/analysis/` — staged rules and semantic state.
 - `compiler/crates/beskid_analysis/src/resolve/` — resolution products queryable from facades.
 - `compiler/crates/beskid_lsp/src/diagnostics.rs` — diagnostic shaping for editor parity.
