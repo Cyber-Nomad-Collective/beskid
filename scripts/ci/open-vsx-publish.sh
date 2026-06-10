@@ -54,6 +54,9 @@ init_submodule compiler \
   COMPILER_SUBMODULE_TOKEN \
   true
 
+echo "==> Init beskid_bsol submodule (compiler workspace path dep)"
+bash ./scripts/ci/init-submodules.sh beskid_bsol
+
 cargo_cmd=(cargo build -p beskid_lsp --release)
 if [[ -n "$rust_target" ]]; then
   cargo_cmd+=(--target "$rust_target")

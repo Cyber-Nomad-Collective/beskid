@@ -48,6 +48,14 @@ if [[ ! -f compiler/Cargo.toml ]]; then
   exit 1
 fi
 
+echo "==> Init beskid_bsol submodule (compiler workspace path dep)"
+bash ./scripts/ci/init-submodules.sh beskid_bsol
+
+if [[ ! -f beskid_bsol/crates/bsol/Cargo.toml ]]; then
+  echo "beskid_bsol/crates/bsol/Cargo.toml missing after submodule init" >&2
+  exit 1
+fi
+
 echo "==> Fetch compiler tags for rolling semver"
 (
   cd compiler

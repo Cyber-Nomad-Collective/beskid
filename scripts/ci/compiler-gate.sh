@@ -28,4 +28,4 @@ echo "==> corelib_tests bproj ↔ typecheck parity"
 bash ./compiler/scripts/verify-corelib-tests-parity.sh
 
 echo "==> compiler-rust-gate (Dagger ${DAGGER_VERSION})"
-dagger -m beskid_infra/dagger call compiler-rust-gate --source=./compiler
+dagger -m beskid_infra/dagger call compiler-rust-gate --source=.
