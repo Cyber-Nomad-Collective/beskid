@@ -9,6 +9,9 @@ cd "$ROOT"
 echo "==> Init compiler submodule (recursive corelib)"
 bash ./scripts/ci/init-compiler-submodule.sh
 
+echo "==> Init beskid_bsol submodule (compiler workspace path dep)"
+bash ./scripts/ci/init-submodules.sh beskid_bsol
+
 echo "==> Install Python dependencies for corelib CI"
 python3 -m pip install --upgrade pip --quiet
 python3 -m pip install -r compiler/corelib/ci/requirements.txt --quiet

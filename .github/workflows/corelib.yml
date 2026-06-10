@@ -29,6 +29,9 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  RUST_MIN_STACK: "67108864"
+
 jobs:
   gate:
     name: Corelib gate
