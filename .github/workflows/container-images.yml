@@ -99,9 +99,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
         run: |
-          cd beskid_web_common/packages/spec-core
+          cd beskid_web_common
           bun install --frozen-lockfile
-          bun run test
+          bun run --filter '@cyber-nomad-collective/spec-core' test
           cd "${{ github.workspace }}/site/platform-spec"
           bun install --frozen-lockfile
           bun run test
