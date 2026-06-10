@@ -1,40 +1,17 @@
-import { Link, createFileRoute, redirect, useRouter } from "@tanstack/react-router";
+import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { NormativeRepoSettingsPanel } from "@beskid/ui-react/platform-spec";
 
 import {
 	approveDraftFn,
-	listPendingReviewFn,
 	rejectDraftFn,
 } from "#/server/drafts";
-import {
-	fetchNormativeRepoSettingsFn,
-	updateNormativeRepoSettingsFn,
-} from "#/server/normative-repo-settings";
-import {
-	canConfigureNormativeRepo,
-	canModerateSpec,
-} from "#/lib/github/permissions";
-import { requireSession, withOctokit } from "#/server/auth-guard.server";
+import { updateNormativeRepoSettingsFn } from "#/server/normative-repo-settings";
+import { loadModerationPageFn } from "#/server/moderation";
 
 export const Route = createFileRoute("/_edit/moderation/")({
-	loader: async () => {
-		const session = await requireSession();
-		const [canEdit, canModerate, repoSettings] = await Promise.all([
-			withOctokit((octokit) => canConfigureNormativeRepo(octokit, session.login)),
-			withOctokit((octokit) => canModerateSpec(octokit, session.login)),
-			fetchNormativeRepoSettingsFn(),
-		]);
-
-		if (!canEdit && !canModerate) {
-			throw redirect({ to: "/edit" });
-		}
-
-		const queue = canModerate ? await listPendingReviewFn() : [];
-
-		return { queue, repoSettings, canEdit, canModerate };
-	},
+	loader: () => loadModerationPageFn(),
 	component: ModerationPage,
 });
 
