@@ -16,10 +16,15 @@ const require = createRequire(import.meta.url);
 function packageSrc(specifier: string): string {
 	const segments = specifier.split("/");
 	const candidate = path.join(rootDir, "node_modules", ...segments);
-	const root = fs.existsSync(path.join(candidate, "package.json"))
-		? candidate
-		: path.dirname(require.resolve(specifier));
-	return path.join(root, "src");
+	if (fs.existsSync(path.join(candidate, "package.json"))) {
+		return path.join(candidate, "src");
+	}
+	const resolved = require.resolve(specifier);
+	const resolvedDir = path.dirname(resolved);
+	if (path.basename(resolvedDir) === "src") {
+		return resolvedDir;
+	}
+	return path.join(resolvedDir, "src");
 }
 
 const beskidUiSrc = packageSrc("@beskid/beskid-ui");
@@ -29,6 +34,10 @@ const packageAliases = [
 	{
 		find: "@beskid/ui-react/styles/shadcn-entry.css",
 		replacement: path.join(uiReactSrc, "styles/shadcn-entry.css"),
+	},
+	{
+		find: "@beskid/ui-react/platform-spec",
+		replacement: path.join(uiReactSrc, "platform-spec/index.ts"),
 	},
 	{
 		find: "@beskid/ui-react",
