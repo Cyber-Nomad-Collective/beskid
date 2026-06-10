@@ -1,0 +1,180 @@
+/// Console markup parser built on Core.Text.Cursor.
+use Core.Text.Cursor;
+
+pub enum MarkupKind {
+    Literal,
+    Escape,
+    Bold,
+    Italic,
+    Underline,
+    Strike,
+    AttrSpan,
+    PaletteTag,
+    Link,
+}
+
+pub type MarkupMatch {
+    MarkupKind kind,
+    string body,
+    string attrs,
+    string tagName,
+    string url,
+    i64 consumed,
+}
+
+pub MarkupMatch TryParse(string s) {
+    i64 n = Core.String.Len(s);
+    if n == 0 {
+        return MarkupMatch {
+            kind: MarkupKind::Literal,
+            body: "",
+            attrs: "",
+            tagName: "",
+            url: "",
+            consumed: 0,
+        };
+    }
+    Cursor.TextCursor c = Cursor.From(s);
+
+    if Cursor.StartsWith(c, "\\") {
+        if n > 1 {
+            string next = Cursor.Slice(c, 1, 1);
+            if IsEscapableSigil(next) {
+                return MarkupMatch {
+                    kind: MarkupKind::Escape,
+                    body: next,
+                    attrs: "",
+                    tagName: "",
+                    url: "",
+                    consumed: 2,
+                };
+            }
+        }
+    }
+
+    if Cursor.StartsWith(c, "**") {
+        i64 close = Cursor.IndexOfFrom(c, 2, "**");
+        if !(close < 0) {
+            return MarkupMatch {
+                kind: MarkupKind::Bold,
+                body: Cursor.Slice(c, 2, close - 2),
+                attrs: "",
+                tagName: "",
+                url: "",
+                consumed: close + 2,
+            };
+        }
+    }
+
+    if Cursor.StartsWith(c, "__") {
+        i64 close = Cursor.IndexOfFrom(c, 2, "__");
+        if !(close < 0) {
+            return MarkupMatch {
+                kind: MarkupKind::Underline,
+                body: Cursor.Slice(c, 2, close - 2),
+                attrs: "",
+                tagName: "",
+                url: "",
+                consumed: close + 2,
+            };
+        }
+    }
+
+    if Cursor.StartsWith(c, "~~") {
+        i64 close = Cursor.IndexOfFrom(c, 2, "~~");
+        if !(close < 0) {
+            return MarkupMatch {
+                kind: MarkupKind::Strike,
+                body: Cursor.Slice(c, 2, close - 2),
+                attrs: "",
+                tagName: "",
+                url: "",
+                consumed: close + 2,
+            };
+        }
+    }
+
+    if Cursor.StartsWith(c, "&[") {
+        i64 delim = Cursor.IndexOfFrom(c, 2, "](");
+        if !(delim < 0) {
+            string attrs = Cursor.Slice(c, 2, delim - 2);
+            i64 contentStart = delim + 2;
+            i64 closeParen = Cursor.IndexOfFrom(c, contentStart, ")");
+            if !(closeParen < 0) {
+                return MarkupMatch {
+                    kind: MarkupKind::AttrSpan,
+                    body: Cursor.Slice(c, contentStart, closeParen - contentStart),
+                    attrs: attrs,
+                    tagName: "",
+                    url: "",
+                    consumed: closeParen + 1,
+                };
+            }
+        }
+    }
+
+    if Cursor.StartsWith(c, "[") {
+        i64 nameEnd = Cursor.IndexOfFrom(c, 1, "]");
+        if nameEnd > 0 {
+            string afterName = Cursor.Slice(c, nameEnd, 2);
+            if afterName != "](" {
+                i64 closeTag = Cursor.IndexOfFrom(c, nameEnd + 1, "[/");
+                if !(closeTag < 0) {
+                    return MarkupMatch {
+                        kind: MarkupKind::PaletteTag,
+                        body: Cursor.Slice(c, nameEnd + 1, closeTag - nameEnd - 1),
+                        attrs: "",
+                        tagName: Cursor.Slice(c, 1, nameEnd - 1),
+                        url: "",
+                        consumed: closeTag + 3,
+                    };
+                }
+            }
+        }
+        i64 delim = Cursor.IndexOfFrom(c, 1, "](");
+        if !(delim < 0) {
+            i64 urlStart = delim + 2;
+            i64 closeParen = Cursor.IndexOfFrom(c, urlStart, ")");
+            if !(closeParen < 0) {
+                return MarkupMatch {
+                    kind: MarkupKind::Link,
+                    body: Cursor.Slice(c, 1, delim - 1),
+                    attrs: "",
+                    tagName: "",
+                    url: Cursor.Slice(c, urlStart, closeParen - urlStart),
+                    consumed: closeParen + 1,
+                };
+            }
+        }
+    }
+
+    if Cursor.StartsWith(c, "*") {
+        i64 close = Cursor.IndexOfFrom(c, 1, "*");
+        if !(close < 0) {
+            return MarkupMatch {
+                kind: MarkupKind::Italic,
+                body: Cursor.Slice(c, 1, close - 1),
+                attrs: "",
+                tagName: "",
+                url: "",
+                consumed: close + 1,
+            };
+        }
+    }
+
+    return MarkupMatch {
+        kind: MarkupKind::Literal,
+        body: Cursor.Slice(c, 0, 1),
+        attrs: "",
+        tagName: "",
+        url: "",
+        consumed: 1,
+    };
+}
+
+pub bool IsEscapableSigil(string c) {
+    if c == "*" || c == "_" || c == "~" || c == "[" || c == "]" || c == "(" || c == ")" || c == "&" || c == "\\" {
+        return true;
+    }
+    return false;
+}

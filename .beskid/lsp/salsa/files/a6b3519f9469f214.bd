@@ -1,0 +1,16 @@
+/// Term-level character class parsers (v1 stubs).
+use Core.Text.Cursor;
+use Core.Text.Parser.Result;
+use Core.Text.Parser.Literals;
+
+pub TextParseResult<string> WhiteSpace(Cursor.TextCursor c, string rule) {
+    return Literals.Text(c, " ", rule);
+}
+
+pub TextParseResult<string> NonWhiteSpace(Cursor.TextCursor c, string rule) {
+    TextParseResult<string> space = Literals.Text(c, " ", rule);
+    if IsOk(space) {
+        return Literals.Fail(c, ParseErrorKind::ExpectedRule, rule);
+    }
+    return Literals.Any(c, rule);
+}

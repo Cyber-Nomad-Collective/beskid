@@ -1,0 +1,56 @@
+/// Deprecated scan helpers — delegates to Core.Text.Cursor. Prefer Core.Text.Cursor directly.
+use Core.Text.Cursor;
+
+pub i64 Len(string text) {
+    return Core.String.Len(text);
+}
+
+pub string Slice(string text, i64 start, i64 count) {
+    return Cursor.Slice(Cursor.From(text), start, count);
+}
+
+pub string Drop(string text, i64 count) {
+    return Cursor.DropSource(Cursor.From(text), count);
+}
+
+pub bool StartsWith(string text, string prefix) {
+    return Cursor.StartsWith(Cursor.From(text), prefix);
+}
+
+pub i64 IndexOfFrom(string haystack, i64 start, string needle) {
+    return Cursor.IndexOfFrom(Cursor.From(haystack), start, needle);
+}
+
+pub bool ContainsSubstring(string haystack, string needle) {
+    return Cursor.ContainsSubstring(Cursor.From(haystack), needle);
+}
+
+pub string TrimLeft(string text) {
+    i64 n = Len(text);
+    i64 i = 0;
+    while i < n {
+        string c = Slice(text, i, 1);
+        if c != " " {
+            return Slice(text, i, n - i);
+        }
+        i = i + 1;
+    }
+    return "";
+}
+
+pub string Trim(string text) {
+    return TrimRight(TrimLeft(text));
+}
+
+pub string TrimRight(string text) {
+    i64 n = Len(text);
+    i64 end = n;
+    while end > 0 {
+        string c = Slice(text, end - 1, 1);
+        if c != " " {
+            return Slice(text, 0, end);
+        }
+        end = end - 1;
+    }
+    return "";
+}

@@ -1,0 +1,57 @@
+/// Box-drawing characters for framed controls (Unicode vs ASCII).
+use Console.Capabilities;
+
+pub type FrameChars {
+    string topLeft,
+    string top,
+    string topRight,
+    string side,
+    string bottomLeft,
+    string bottom,
+    string bottomRight,
+}
+
+pub FrameChars Unicode() {
+    return FrameChars {
+        topLeft: "┌",
+        top: "─",
+        topRight: "┐",
+        side: "│",
+        bottomLeft: "└",
+        bottom: "─",
+        bottomRight: "┘",
+    };
+}
+
+pub FrameChars Ascii() {
+    return FrameChars {
+        topLeft: "+",
+        top: "-",
+        topRight: "+",
+        side: "|",
+        bottomLeft: "+",
+        bottom: "-",
+        bottomRight: "+",
+    };
+}
+
+pub FrameChars ForHost(bool useUnicode) {
+    if useUnicode {
+        return Unicode();
+    }
+    return Ascii();
+}
+
+pub bool PreferUnicodeFrame() {
+    return Console.Capabilities.ShouldEmitAnsi();
+}
+
+pub string Repeat(string unit, i64 count) {
+    string acc = "";
+    i64 i = 0;
+    while i < count {
+        acc = "${acc}${unit}";
+        i = i + 1;
+    }
+    return acc;
+}

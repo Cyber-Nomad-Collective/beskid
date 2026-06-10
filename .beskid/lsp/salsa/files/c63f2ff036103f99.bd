@@ -1,0 +1,5 @@
+/// Query hub — LINQ-style combinators over array iterators.
+/// @tier(supported)
+pub mod Query.QueryState;
+pub mod Query.Operators;
+pub mod Query.Execution;

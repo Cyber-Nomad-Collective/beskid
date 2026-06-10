@@ -1,0 +1,5 @@
+/// Self-returning fluent step contract pattern for chainable corelib APIs.
+/// Hand-written reference: `Ansi.Contracts.AnsiStyleStep` in corelib_console.
+/// @tier(standard)
+pub contract FluentStep {
+}

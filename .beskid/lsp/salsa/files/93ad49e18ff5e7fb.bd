@@ -1,0 +1,54 @@
+/// Process environment variable helpers.
+/// @ref(Core.Optional.Option) optional lookup surface for `TryGet`.
+/// @ref(Core.Results.Result) result envelopes for strict getters/setters.
+
+use Core.Environment.EnvironmentError;
+use Core.Optional;
+
+pub Core.Results.Result<string, EnvironmentError> Get(string name) {
+    if name == "" {
+        return Result::Error(EnvironmentError::InvalidName(name));
+    }
+    string value = __env_get(name);
+    if value == "" {
+        return Result::Error(EnvironmentError::NotFound(name));
+    }
+    return Result::Ok(value);
+}
+
+pub Option<string> TryGet(string name) {
+    if name == "" {
+        return Option::None();
+    }
+    string value = __env_get(name);
+    if value == "" {
+        return Option::None();
+    }
+    return Option::Some(value);
+}
+
+pub Core.Results.Result<bool, EnvironmentError> Set(string name, string value) {
+    if name == "" {
+        return Result::Error(EnvironmentError::InvalidName(name));
+    }
+    if __env_set(name, value) == 0 {
+        return Result::Ok(true);
+    }
+    return Result::Error(EnvironmentError::UnsupportedMutation());
+}
+
+pub Core.Results.Result<string, EnvironmentError> GetVariable(string name) {
+    return Get(name);
+}
+
+pub bool Has(string name) {
+    return Core.Optional.HasValue(TryGet(name));
+}
+
+pub string CurrentDirectory() {
+    return __env_getcwd();
+}
+
+pub Core.Results.Result<string, EnvironmentError> Expand(string name) {
+    return Get(name);
+}

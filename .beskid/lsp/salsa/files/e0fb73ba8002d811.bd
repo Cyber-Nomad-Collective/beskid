@@ -1,0 +1,5 @@
+/// UTC or monotonic instant stored as nanoseconds in its clock domain.
+/// Realtime instants use nanoseconds since the Unix epoch; monotonic instants use host monotonic nanos.
+pub type Instant {
+    i64 nanos,
+}

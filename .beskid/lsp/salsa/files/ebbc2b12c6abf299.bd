@@ -1,0 +1,20 @@
+// CHECKED IN: hand-maintained Mod SDK surface (regen_mod_sdk_surfaces.sh write_workspace)
+
+/// One resolved workspace member project visible to mod contracts.
+pub type WorkspaceMember {
+    string memberId,
+    string projectName,
+    string projectRoot,
+    string sourceRoot,
+}
+
+/// Active workspace summary: root path, members, and lockfile identity.
+pub type Workspace {
+    string rootPath,
+    WorkspaceMember[] members,
+    string lockHash,
+}
+
+pub string WorkspaceFacadeVersion() {
+    return "0.1.0";
+}

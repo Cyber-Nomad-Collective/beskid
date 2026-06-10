@@ -1,0 +1,14 @@
+/// Parser context and whitespace configuration.
+use Core.Text.Cursor;
+
+pub type ParseContext {
+    bool skipWhiteSpace,
+}
+
+pub ParseContext DefaultContext() {
+    return ParseContext { skipWhiteSpace: false };
+}
+
+pub Cursor.TextCursor WithWhiteSpaceParser(Cursor.TextCursor c, ParseContext ctx) {
+    return c;
+}

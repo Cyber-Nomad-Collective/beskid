@@ -1,0 +1,62 @@
+/// Shared layout/style enums for console controls.
+
+pub enum Size {
+    Small,
+    Medium,
+    Large,
+}
+
+pub enum TitleAlignment {
+    Left,
+    Center,
+    Right,
+}
+
+pub enum Padding {
+    None,
+    Sized(Size size),
+    Value(i32 value),
+}
+
+pub enum Margin {
+    None,
+    Sized(Size size),
+    Value(i32 value),
+}
+
+/// Resolves `Size` to a character count for the given terminal width.
+/// @arg(size) Logical size token.
+/// @arg(columns) Terminal width in columns.
+pub i32 ResolveSize(Size size, i32 columns) {
+    return match size {
+        Size::Small => 1,
+        Size::Medium => 2,
+        Size::Large => 4,
+    };
+}
+
+pub i32 ResolvePadding(Padding padding, i32 columns) {
+    return match padding {
+        Padding::None => 0,
+        Padding::Sized(s) => ResolveSize(s, columns),
+        Padding::Value(v) => v,
+    };
+}
+
+pub i32 ResolveMargin(Margin margin, i32 columns) {
+    return match margin {
+        Margin::None => 0,
+        Margin::Sized(s) => ResolveSize(s, columns),
+        Margin::Value(v) => v,
+    };
+}
+
+pub i32 ClampWidth(i32 value, i32 minValue, i32 maxValue) {
+    if value < minValue {
+        return minValue;
+    }
+    if value > maxValue {
+        return maxValue;
+    }
+    return value;
+}

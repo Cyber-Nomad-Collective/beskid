@@ -1,0 +1,57 @@
+/// Iterator-backed query pipeline state over a source array.
+/// @tier(supported)
+use Core.Optional;
+use Query.Operators;
+
+pub type QueryState<T> {
+    T[] source,
+    i64 index,
+    i64 length,
+    Option<T> first,
+
+    pub QueryState<T> Where(bool predicate) {
+        return Operators.Where<T>(
+            QueryState<T> { source: source, index: index, length: length, first: first },
+            predicate
+        );
+    }
+
+    pub QueryState<TOut> Select(TOut sample) {
+        return Operators.Select<T, TOut>(
+            QueryState<T> { source: source, index: index, length: length, first: first },
+            sample
+        );
+    }
+
+    pub QueryState<T> Take(i64 count) {
+        return Operators.Take<T>(
+            QueryState<T> { source: source, index: index, length: length, first: first },
+            count
+        );
+    }
+
+    pub QueryState<T> Skip(i64 count) {
+        return Operators.Skip<T>(
+            QueryState<T> { source: source, index: index, length: length, first: first },
+            count
+        );
+    }
+
+    pub i64 Count() {
+        return Operators.Count<T>(
+            QueryState<T> { source: source, index: index, length: length, first: first }
+        );
+    }
+
+    pub Option<T> First() {
+        return Operators.First<T>(
+            QueryState<T> { source: source, index: index, length: length, first: first }
+        );
+    }
+
+    pub T[] ToList() {
+        return Operators.ToList<T>(
+            QueryState<T> { source: source, index: index, length: length, first: first }
+        );
+    }
+}

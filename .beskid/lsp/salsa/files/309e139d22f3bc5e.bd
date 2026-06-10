@@ -1,0 +1,9 @@
+/// Read-limit selector for syscall wrappers.
+/// @variant(UpTo) Explicit positive cap in bytes.
+/// @variant(Default) Delegates to `Core.Syscall.DefaultReadLimit`.
+pub enum ReadLimit {
+    /// Use explicit byte count.
+    UpTo(i64 maxBytes),
+    /// Use corelib default read size.
+    Default,
+}

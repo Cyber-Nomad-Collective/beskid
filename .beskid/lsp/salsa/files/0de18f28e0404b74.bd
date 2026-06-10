@@ -1,0 +1,17 @@
+// CHECKED IN: hand-maintained Mod SDK emit helpers (syntax node primitives).
+use Beskid.Syntax.Nodes;
+
+/// Build a public identifier node.
+pub Identifier PubIdentifier(string name) {
+    return Identifier { name: name };
+}
+
+/// Build a public visibility token.
+pub Visibility PubVisibility() {
+    return Visibility.Public;
+}
+
+/// Empty attribute list helper for synthesized nodes.
+pub AttributeList EmptyAttributes() {
+    return AttributeList.Empty;
+}

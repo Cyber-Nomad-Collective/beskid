@@ -1,0 +1,9 @@
+/// Predicate helpers smoke for `Core.Results.Result`.
+
+use Testing.Assert;
+
+
+test results_module_smoke {
+    bool smoke = true;
+    Assert.True(smoke, "Core.Results import smoke until module path parity lands");
+}

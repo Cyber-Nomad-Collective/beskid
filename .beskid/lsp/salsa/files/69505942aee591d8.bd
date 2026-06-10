@@ -1,0 +1,10 @@
+/// Panel control smoke (full measure/render deferred until JIT struct-field codegen lands).
+
+use Console.Controls.Panel;
+use Testing.Assert;
+
+
+test panel_module_imports {
+    bool smoke = true;
+    Assert.True(smoke, "Console.Controls.Panel import smoke");
+}

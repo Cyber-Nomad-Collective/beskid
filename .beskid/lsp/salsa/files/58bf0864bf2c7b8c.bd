@@ -1,0 +1,5 @@
+/// Core.Text.Pest hub — Pest parse and combinator emit surface.
+pub mod Core.Text.Pest.Grammar;
+pub mod Core.Text.Pest.Names;
+pub mod Core.Text.Pest.Expr;
+pub mod Core.Text.Pest.Emit;

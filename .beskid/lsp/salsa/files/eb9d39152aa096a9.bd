@@ -1,0 +1,5 @@
+/// Process control error variants.
+pub enum ProcessError {
+    InvalidCommand(string command),
+    SpawnFailed(string command),
+}

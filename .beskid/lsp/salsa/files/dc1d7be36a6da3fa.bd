@@ -1,0 +1,61 @@
+/// Combinators for ordered choice and sequence.
+use Core.Text.Cursor;
+use Core.Text.Parser.Result;
+use Core.Text.Parser.Literals;
+
+pub TextParseResult<string> Or(
+    Cursor.TextCursor c,
+    string rule,
+    TextParseResult<string> first,
+    TextParseResult<string> second
+) {
+    if IsOk(first) {
+        return first;
+    }
+    if IsOk(second) {
+        return second;
+    }
+    return Literals.Fail(c, ParseErrorKind::ChoiceFailed, rule);
+}
+
+pub TextParseResult<string> And(
+    Cursor.TextCursor c,
+    string rule,
+    TextParseResult<string> first,
+    TextParseResult<string> second
+) {
+    if !IsOk(first) {
+        return first;
+    }
+    if !IsOk(second) {
+        return second;
+    }
+    return match second {
+        TextParseResult::Ok(_, rest) => TextParseResult<string>::Ok("", rest),
+        TextParseResult::Err(err) => TextParseResult<string>::Err(err),
+    };
+}
+
+pub TextParseResult<string> AndSkip(
+    Cursor.TextCursor c,
+    string rule,
+    TextParseResult<string> first,
+    TextParseResult<string> second
+) {
+    if !IsOk(first) {
+        return first;
+    }
+    return second;
+}
+
+pub TextParseResult<string> SkipAnd(
+    Cursor.TextCursor c,
+    string rule,
+    TextParseResult<string> first,
+    TextParseResult<string> second
+) {
+    if !IsOk(first) {
+        return first;
+    }
+    return second;
+}

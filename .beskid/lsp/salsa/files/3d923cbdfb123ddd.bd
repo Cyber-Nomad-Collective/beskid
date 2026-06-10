@@ -1,0 +1,149 @@
+/// Cross-platform syscall facade for read and write primitives.
+/// Types are split under `Core/Syscall/` with one type per file.
+/// @tier(standard)
+/// @ref(Core.Results.Result) result envelopes for read/write helpers.
+
+use Core.Syscall.SyscallError;
+use Core.Syscall.Descriptor;
+use Core.Syscall.StandardStream;
+use Core.Syscall.ReadLimit;
+use Core.Syscall.ReadRequest;
+use Core.Syscall.ReadBytesRequest;
+use Core.Syscall.WriteRequest;
+use Core.Syscall.WriteBytesRequest;
+
+/// Returns descriptor for standard output.
+/// @returns POSIX-style stdout file descriptor constant (`1`).
+pub i64 StdoutFd() {
+    return 1;
+}
+
+/// Returns descriptor for standard input.
+/// @returns POSIX-style stdin file descriptor constant (`0`).
+pub i64 StdinFd() {
+    return 0;
+}
+
+/// Returns descriptor for standard error.
+/// @returns POSIX-style stderr file descriptor constant (`2`).
+pub i64 StderrFd() {
+    return 2;
+}
+
+/// Returns default byte limit used by `ReadWith`.
+/// @returns Default cap passed to `__syscall_read` when `ReadLimit::Default` is selected.
+pub i64 DefaultReadLimit() {
+    return 1024;
+}
+
+/// Resolves a typed descriptor into a numeric fd.
+/// @arg(descriptor) Logical stream or raw fd selector.
+/// @returns Host numeric descriptor suitable for `Read` / `Write`.
+pub i64 ResolveDescriptorFd(Descriptor descriptor) {
+    return match descriptor {
+        Descriptor::Standard(stream) => match stream {
+            StandardStream::Stdin => StdinFd(),
+            StandardStream::Stdout => StdoutFd(),
+            StandardStream::Stderr => StderrFd(),
+        },
+        Descriptor::Raw(fd) => fd,
+    };
+}
+
+/// Resolves read-limit options to a concrete byte size.
+/// @arg(limit) Explicit cap or default sentinel.
+/// @returns Positive byte count forwarded to `Read`.
+pub i64 ResolveReadLimit(ReadLimit limit) {
+    return match limit {
+        ReadLimit::UpTo(maxBytes) => maxBytes,
+        ReadLimit::Default => DefaultReadLimit(),
+    };
+}
+
+/// Writes data to a descriptor.
+/// @arg(fd) Numeric host descriptor.
+/// @arg(data) UTF-8 payload.
+/// @returns Written byte count or a `SyscallError` when validation or syscall fails.
+pub Core.Results.Result<i64, Core.Syscall.SyscallError> Write(i64 fd, string data) {
+    if fd < 0 {
+        return Result::Error(SyscallError::InvalidFd(fd));
+    }
+    i64 written = __syscall_write(fd, data);
+    if written < 0 {
+        return Result::Error(SyscallError::IoFailure(written));
+    }
+    return Result::Ok(written);
+}
+
+/// Writes data based on a typed descriptor request.
+/// @arg(request) Descriptor plus payload bundle.
+/// @returns Written byte count or a `SyscallError`.
+pub Core.Results.Result<i64, Core.Syscall.SyscallError> WriteWith(WriteRequest request) {
+    return Write(ResolveDescriptorFd(request.descriptor), request.data);
+}
+
+/// Reads up to max bytes from a descriptor.
+/// @arg(fd) Numeric host descriptor (stdin-only in v1).
+/// @arg(maxBytes) Upper bound on returned string length.
+/// @returns Payload string or a `SyscallError`.
+pub Core.Results.Result<string, Core.Syscall.SyscallError> Read(i64 fd, i64 maxBytes) {
+    if fd != StdinFd() {
+        return Result::Error(SyscallError::UnsupportedReadFd(fd));
+    }
+    if maxBytes < 1 {
+        return Result::Error(SyscallError::InvalidReadLimit(maxBytes));
+    }
+    return Result::Ok(__syscall_read(fd, maxBytes));
+}
+
+/// Reads data based on typed descriptor and read-limit options.
+/// @arg(request) Descriptor, limit, and implicit stdin routing rules for v1.
+/// @returns Payload string or a `SyscallError`.
+pub Core.Results.Result<string, Core.Syscall.SyscallError> ReadWith(ReadRequest request) {
+    return Read(
+        ResolveDescriptorFd(request.descriptor),
+        ResolveReadLimit(request.limit)
+    );
+}
+
+/// Reads up to max bytes from a descriptor into a `u8[]` (no UTF-8 validation).
+/// @arg(fd) Numeric host descriptor.
+/// @arg(maxBytes) Upper bound on returned buffer length.
+/// @returns Payload buffer or a `SyscallError`.
+pub Core.Results.Result<u8[], Core.Syscall.SyscallError> ReadBytes(i64 fd, i64 maxBytes) {
+    if fd < 0 {
+        return Result::Error(SyscallError::InvalidFd(fd));
+    }
+    if maxBytes < 1 {
+        return Result::Error(SyscallError::InvalidReadLimit(maxBytes));
+    }
+    return Result::Ok(__syscall_read_bytes(fd, maxBytes));
+}
+
+/// Writes a `u8[]` payload to a descriptor.
+/// @arg(fd) Numeric host descriptor.
+/// @arg(data) Raw byte payload.
+/// @returns Written byte count or a `SyscallError`.
+pub Core.Results.Result<i64, Core.Syscall.SyscallError> WriteBytes(i64 fd, u8[] data) {
+    if fd < 0 {
+        return Result::Error(SyscallError::InvalidFd(fd));
+    }
+    i64 written = __syscall_write_bytes(fd, data);
+    if written < 0 {
+        return Result::Error(SyscallError::IoFailure(written));
+    }
+    return Result::Ok(written);
+}
+
+/// Reads binary data based on a typed descriptor request.
+pub Core.Results.Result<i64, Core.Syscall.SyscallError> ReadBytesWith(ReadBytesRequest request) {
+    return ReadBytes(
+        ResolveDescriptorFd(request.descriptor),
+        ResolveReadLimit(request.limit)
+    );
+}
+
+/// Writes binary data based on a typed descriptor request.
+pub Core.Results.Result<i64, Core.Syscall.SyscallError> WriteBytesWith(WriteBytesRequest request) {
+    return WriteBytes(ResolveDescriptorFd(request.descriptor), request.data);
+}

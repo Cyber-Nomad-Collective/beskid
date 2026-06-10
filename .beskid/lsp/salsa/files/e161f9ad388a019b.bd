@@ -1,0 +1,30 @@
+/// Layout/render contracts for console controls.
+use Console;
+use Console.Style;
+
+pub contract PaddingProvider {
+    Padding Padding();
+}
+
+pub contract MarginProvider {
+    Margin Margin();
+}
+
+pub contract ConsoleControl {
+    Console.ConsoleSize Measure(Console.ConsoleSize available);
+    string Render(Console.ConsoleSize size);
+}
+
+pub contract Container {
+    i64 ChildCount();
+}
+
+pub contract FramedControl {
+    bool UseUnicodeFrame();
+}
+
+/// Marker for controls driven by `Console.RunTick()`.
+/// Implementing types should declare `event onTick();` on the type.
+pub contract LiveControl {
+    unit OnTick();
+}

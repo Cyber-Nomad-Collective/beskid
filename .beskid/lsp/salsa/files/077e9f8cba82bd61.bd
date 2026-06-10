@@ -1,0 +1,53 @@
+/// Unordered set backed by linear `T[]` scan.
+/// @tier(supported)
+use Collections.Array;
+
+pub type Set<T> {
+    T[] storage,
+    i64 count,
+
+    pub i64 Count() {
+        return count;
+    }
+
+    pub bool IsEmpty() {
+        return count == 0;
+    }
+
+    pub Set<T> Add(T value) {
+        if Contains(value) {
+            return Set<T> { storage: storage, count: count };
+        }
+        i64 next = count + 1;
+        T[] nextStorage = Array.AppendAt<T>(storage, next, value);
+        return Set<T> { storage: nextStorage, count: next };
+    }
+
+    pub Set<T> Remove(T value) {
+        mut i64 i = 0;
+        while i < count {
+            T candidate = Array.Get<T>(storage, i);
+            if candidate == value {
+                T[] shifted = Array.Set<T>(storage, i, Array.Get<T>(storage, count - 1));
+                return Set<T> { storage: shifted, count: count - 1 };
+            }
+            i = i + 1;
+        }
+        return Set<T> { storage: storage, count: count };
+    }
+
+    pub bool Contains(T value) {
+        mut i64 i = 0;
+        while i < count {
+            if Array.Get<T>(storage, i) == value {
+                return true;
+            }
+            i = i + 1;
+        }
+        return false;
+    }
+}
+
+pub Set<T> New<T>() {
+    return Set<T> { storage: Array.Empty<T>(), count: 0 };
+}

@@ -1,0 +1,25 @@
+// CHECKED IN: hand-maintained Mod SDK surface (regen_mod_sdk_surfaces.sh write_mod_package)
+
+/// One `(contractId, typeId, entrySymbol)` registration from a loaded mod descriptor.
+pub type ModContractRegistration {
+    string contractId,
+    string typeId,
+    string entrySymbol,
+}
+
+/// Introspection view of a single loaded mod package in the active compilation.
+pub type ModPackage {
+    string packageId,
+    string packageVersion,
+    string projectName,
+    string projectRoot,
+    string sourceRoot,
+    string manifestPath,
+    string descriptorPath,
+    string[] capabilities,
+    ModContractRegistration[] registrations,
+}
+
+pub string ModPackageFacadeVersion() {
+    return "0.1.0";
+}

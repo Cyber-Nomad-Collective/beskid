@@ -1,0 +1,69 @@
+/// Incremental render cursor state (ANSI cursor positioning).
+use Ansi.Cursor;
+use Ansi.Erase;
+
+pub type RenderContext {
+    i32 originRow,
+    i32 originCol,
+    i32 cursorRow,
+    i32 cursorCol,
+    bool incremental,
+}
+
+pub RenderContext New(i32 row, i32 col) {
+    return RenderContext {
+        originRow: row,
+        originCol: col,
+        cursorRow: row,
+        cursorCol: col,
+        incremental: true,
+    };
+}
+
+pub RenderContext WithoutIncremental(i32 row, i32 col) {
+    return RenderContext {
+        originRow: row,
+        originCol: col,
+        cursorRow: row,
+        cursorCol: col,
+        incremental: false,
+    };
+}
+
+pub string MoveTo(RenderContext ctx, i32 row, i32 col) {
+    if !ctx.incremental {
+        return "";
+    }
+    return Ansi.Cursor.IntoSequence(
+        Ansi.Cursor.Position(Ansi.Cursor.Start(), row, col)
+    );
+}
+
+pub string RenderAt(RenderContext ctx, string text) {
+    if !ctx.incremental {
+        return text;
+    }
+    string pos = MoveTo(ctx, ctx.cursorRow, ctx.originCol);
+    return "${pos}${text}";
+}
+
+pub string EraseLineAndRender(RenderContext ctx, string line) {
+    if !ctx.incremental {
+        return line;
+    }
+    string pos = MoveTo(ctx, ctx.cursorRow, ctx.originCol);
+    string erase = Ansi.Erase.IntoSequence(
+        Ansi.Erase.LineAll(Ansi.Erase.Start())
+    );
+    return "${pos}${erase}${line}";
+}
+
+pub RenderContext AdvanceRow(RenderContext ctx) {
+    return RenderContext {
+        originRow: ctx.originRow,
+        originCol: ctx.originCol,
+        cursorRow: ctx.cursorRow + 1,
+        cursorCol: ctx.cursorCol,
+        incremental: ctx.incremental,
+    };
+}

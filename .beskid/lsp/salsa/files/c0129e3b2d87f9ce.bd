@@ -1,0 +1,26 @@
+/// Global live-control tick dispatch for `Console.RunTick()`.
+use Console.Controls.ProgressBar;
+
+pub type LiveTickState {
+    ProgressBar.ProgressBar progressBar,
+    bool hasProgressBar,
+}
+
+pub LiveTickState New() {
+    return LiveTickState {
+        progressBar: ProgressBar.New(),
+        hasProgressBar: false,
+    };
+}
+
+pub LiveTickState RegisterProgressBar(LiveTickState state, ProgressBar.ProgressBar bar) {
+    return LiveTickState { progressBar: bar, hasProgressBar: true };
+}
+
+pub LiveTickState Pulse(LiveTickState state) {
+    if !state.hasProgressBar {
+        return state;
+    }
+    ProgressBar.ProgressBar next = ProgressBar.OnTick(state.progressBar);
+    return LiveTickState { progressBar: next, hasProgressBar: true };
+}

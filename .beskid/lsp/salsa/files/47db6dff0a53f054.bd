@@ -1,0 +1,22 @@
+/// Lightweight error metadata for user-facing messages.
+pub type ErrorInfo {
+    /// Machine-readable error identifier.
+    string code,
+    /// Human-readable error description.
+    string message,
+}
+
+/// Constructs an ErrorInfo from a code and message.
+/// @arg(code) Stable machine-readable code.
+/// @arg(message) Human-readable explanation.
+/// @returns Populated `ErrorInfo`.
+pub ErrorInfo NewErrorInfo(string code, string message) {
+    return ErrorInfo { code: code, message: message };
+}
+
+/// Returns true when both ErrorInfo fields are empty.
+/// @arg(info) Metadata record to inspect.
+/// @returns `true` when both fields are empty strings.
+pub bool IsErrorInfoEmpty(ErrorInfo info) {
+    return info.code == "" && info.message == "";
+}

@@ -1,0 +1,9 @@
+/// Iterator state for slice-like `T[]` traversal.
+/// @tier(standard)
+/// @par(T) Element type for iterators.
+pub type ArrayIter<T> {
+    /// Current traversal position.
+    i64 index,
+    /// Total number of readable elements.
+    i64 length,
+}

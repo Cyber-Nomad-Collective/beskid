@@ -1,0 +1,28 @@
+/// Delimiter and separator combinators (v1 stubs).
+use Core.Text.Cursor;
+use Core.Text.Parser.Result;
+
+pub TextParseResult<string> Between(
+    Cursor.TextCursor c,
+    string rule,
+    TextParseResult<string> open,
+    TextParseResult<string> inner,
+    TextParseResult<string> close
+) {
+    if !IsOk(open) {
+        return open;
+    }
+    if !IsOk(inner) {
+        return inner;
+    }
+    return close;
+}
+
+pub TextParseResult<string> Separated(
+    Cursor.TextCursor c,
+    string rule,
+    TextParseResult<string> item,
+    TextParseResult<string> sep
+) {
+    return item;
+}

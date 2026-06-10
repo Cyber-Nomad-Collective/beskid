@@ -1,0 +1,9 @@
+/// Errors returned from `Fiber.Join`.
+/// @variant(Cancelled) Fiber was cancelled after `Cancel`.
+/// @variant(StackOverflow) Child exceeded stack growth policy.
+/// @variant(Panicked) Child exited via panic.
+pub enum FiberError {
+    Cancelled(),
+    StackOverflow(),
+    Panicked(i64 code),
+}

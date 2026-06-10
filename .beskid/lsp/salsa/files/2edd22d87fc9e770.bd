@@ -1,0 +1,8 @@
+/// Key/value pair stored in array-backed maps.
+/// @tier(supported)
+/// @par(TKey) Key type parameter.
+/// @par(TValue) Value type parameter.
+pub type MapEntry<TKey, TValue> {
+    TKey key,
+    TValue value,
+}

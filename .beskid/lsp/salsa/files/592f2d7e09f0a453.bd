@@ -1,0 +1,8 @@
+/// Cross-fiber terminal signals delivered via `Channel<ConsoleMessage>`.
+/// Multiplexed console events for UI fibers (`Receive` / `Hub.WaitReceive`).
+pub enum ConsoleMessage {
+    /// Terminal size changed (character cells).
+    Resize(Console.ConsoleSize size),
+    /// Tick pulse for live controls (`Console.RunTick`).
+    Tick(),
+}

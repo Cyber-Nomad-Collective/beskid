@@ -1,0 +1,7 @@
+/// Errors for blocking channel operations (`Send`, `Receive`).
+/// @variant(Closed) Endpoint closed.
+/// @variant(Cancelled) Owning fiber was cancelled.
+pub enum ChannelError {
+    Closed(),
+    Cancelled(),
+}

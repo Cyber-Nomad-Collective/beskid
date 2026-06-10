@@ -1,0 +1,98 @@
+/// Fluent screen / private-mode builder implementing `Ansi.Contracts.AnsiScreenStep` shapes.
+use Ansi.Escape;
+
+pub type ScreenBuilder {
+    string parts,
+
+    pub ScreenBuilder EnableAltScreen() {
+        return Append(Escape.PrivateMode("1049", true));
+    }
+
+    pub ScreenBuilder DisableAltScreen() {
+        return Append(Escape.PrivateMode("1049", false));
+    }
+
+    pub ScreenBuilder ShowCursor() {
+        return Append(Escape.PrivateMode("25", true));
+    }
+
+    pub ScreenBuilder HideCursor() {
+        return Append(Escape.PrivateMode("25", false));
+    }
+
+    pub ScreenBuilder SaveScreen() {
+        return Append(Escape.PrivateMode("47", true));
+    }
+
+    pub ScreenBuilder RestoreScreen() {
+        return Append(Escape.PrivateMode("47", false));
+    }
+
+    pub ScreenBuilder EnableLineWrap() {
+        return Append(Escape.PrivateMode("7", true));
+    }
+
+    pub ScreenBuilder DisableLineWrap() {
+        return Append(Escape.PrivateMode("7", false));
+    }
+
+    pub ScreenBuilder ScrollRegion(i64 top, i64 bottom) {
+        return Append(Escape.Csi("${top};${bottom}", "r"));
+    }
+
+    pub string IntoSequence() {
+        return Escape.WhenEnabled(parts);
+    }
+
+    pub ScreenBuilder Append(string fragment) {
+        return ScreenBuilder { parts: "${parts}${fragment}" };
+    }
+}
+
+pub ScreenBuilder Start() {
+    return ScreenBuilder { parts: "" };
+}
+
+pub ScreenBuilder EnableAltScreen(ScreenBuilder self) {
+    return Append(self, Escape.PrivateMode("1049", true));
+}
+
+pub ScreenBuilder DisableAltScreen(ScreenBuilder self) {
+    return Append(self, Escape.PrivateMode("1049", false));
+}
+
+pub ScreenBuilder ShowCursor(ScreenBuilder self) {
+    return Append(self, Escape.PrivateMode("25", true));
+}
+
+pub ScreenBuilder HideCursor(ScreenBuilder self) {
+    return Append(self, Escape.PrivateMode("25", false));
+}
+
+pub ScreenBuilder SaveScreen(ScreenBuilder self) {
+    return Append(self, Escape.PrivateMode("47", true));
+}
+
+pub ScreenBuilder RestoreScreen(ScreenBuilder self) {
+    return Append(self, Escape.PrivateMode("47", false));
+}
+
+pub ScreenBuilder EnableLineWrap(ScreenBuilder self) {
+    return Append(self, Escape.PrivateMode("7", true));
+}
+
+pub ScreenBuilder DisableLineWrap(ScreenBuilder self) {
+    return Append(self, Escape.PrivateMode("7", false));
+}
+
+pub ScreenBuilder ScrollRegion(ScreenBuilder self, i64 top, i64 bottom) {
+    return Append(self, Escape.Csi("${top};${bottom}", "r"));
+}
+
+pub string IntoSequence(ScreenBuilder self) {
+    return Escape.WhenEnabled(self.parts);
+}
+
+pub ScreenBuilder Append(ScreenBuilder self, string fragment) {
+    return ScreenBuilder { parts: "${self.parts}${fragment}" };
+}

@@ -1,0 +1,98 @@
+/// FIFO channel for cross-fiber communication.
+use Concurrency.ChannelError;
+use Concurrency.ChannelOptions;
+use Concurrency.Status;
+use Core.Optional;
+
+/// Success marker for [`Send`] / [`TrySend`] (`Result<SendOk, ChannelError>` per platform spec `Result<(), _>`).
+pub type SendOk {
+}
+
+/// Opaque channel handle (move-only at language layer).
+pub type Channel<T> {
+    i64 handle,
+}
+
+/// Runtime queue id for `Hub.Register` and builtins.
+pub i64 Handle<T>(Channel<T> self) {
+    return self.handle;
+}
+
+/// Creates an unbounded channel (default per platform spec).
+pub Channel<T> Create<T>() {
+    return CreateWithOptions<T>(ChannelOptions.Default());
+}
+
+/// Creates a channel with explicit options.
+pub Channel<T> CreateWithOptions<T>(ChannelOptions options) {
+    i64 capacity = ChannelOptions.EncodeCapacity(options);
+    i64 flags = ChannelOptions.EncodeFlags(options);
+    i64 handle = __channel_create(capacity, flags);
+    return Channel<T> { handle: handle };
+}
+
+/// Sends a value; parks the current fiber when the queue is full (bounded + wait mode).
+pub Core.Results.Result<SendOk, ChannelError> Send<T>(Channel<T> self, T value) {
+    i64 status = __channel_send(self.handle, value);
+    return MapSendStatus(status);
+}
+
+/// Receives a value; parks when empty and open.
+pub Core.Results.Result<T, ChannelError> Receive<T>(Channel<T> self) {
+    i64 status = __channel_receive(self.handle);
+    if status == Status.Ok() {
+        return Result::Ok(__channel_receive_value(self.handle));
+    }
+    return Result::Error(MapReceiveError(status));
+}
+
+/// Non-blocking send; `None` when the operation would block.
+pub Option<SendOk> TrySend<T>(Channel<T> self, T value) {
+    i64 status = __channel_try_send(self.handle, value);
+    if status == Status.Ok() {
+        return Option::Some(SendOk { });
+    }
+    if status == Status.WouldBlock() {
+        return Option::None();
+    }
+    return Option::None();
+}
+
+/// Non-blocking receive; `None` when the operation would block.
+pub Option<T> TryReceive<T>(Channel<T> self) {
+    mut i64 value = 0;
+    i64 status = __channel_try_receive(self.handle, value);
+    if status == Status.Ok() {
+        return Option::Some(value);
+    }
+    if status == Status.WouldBlock() {
+        return Option::None();
+    }
+    return Option::None();
+}
+
+/// Idempotent writer shutdown.
+pub unit Close<T>(Channel<T> self) {
+    __channel_close(self.handle);
+    return;
+}
+
+pub Core.Results.Result<SendOk, ChannelError> MapSendStatus(i64 status) {
+    if status == Status.Ok() {
+        return Result::Ok(SendOk { });
+    }
+    if status == Status.Closed() {
+        return Result::Error(ChannelError::Closed());
+    }
+    if status == Status.Cancelled() {
+        return Result::Error(ChannelError::Cancelled());
+    }
+    return Result::Error(ChannelError::Closed());
+}
+
+pub ChannelError MapReceiveError(i64 status) {
+    if status == Status.Cancelled() {
+        return ChannelError::Cancelled();
+    }
+    return ChannelError::Closed();
+}

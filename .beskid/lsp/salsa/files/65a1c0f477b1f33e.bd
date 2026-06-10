@@ -1,0 +1,159 @@
+/// Bordered panel control with optional title.
+use Console;
+use Console.Style;
+use Console.Controls.Contracts;
+use Console.Controls.Frame;
+use Console.Controls.RenderContext;
+use Console.Capabilities;
+
+pub type Panel : Contracts.PaddingProvider, Contracts.MarginProvider, Contracts.FramedControl, Contracts.ConsoleControl {
+    string title,
+    TitleAlignment align,
+    Padding padding,
+    Margin margin,
+    bool forceAscii,
+    string body,
+}
+
+pub Panel New(string body) {
+    return Panel {
+        title: "",
+        align: TitleAlignment::Left(),
+        padding: Padding::None(),
+        margin: Margin::None(),
+        forceAscii: false,
+        body: body,
+    };
+}
+
+pub Panel WithTitle(Panel panel, string title) {
+    return Panel {
+        title: title,
+        align: panel.align,
+        padding: panel.padding,
+        margin: panel.margin,
+        forceAscii: panel.forceAscii,
+        body: panel.body,
+    };
+}
+
+pub Panel WithAlignment(Panel panel, TitleAlignment align) {
+    return Panel {
+        title: panel.title,
+        align: align,
+        padding: panel.padding,
+        margin: panel.margin,
+        forceAscii: panel.forceAscii,
+        body: panel.body,
+    };
+}
+
+pub Panel WithAsciiFrame(Panel panel) {
+    return Panel {
+        title: panel.title,
+        align: panel.align,
+        padding: panel.padding,
+        margin: panel.margin,
+        forceAscii: true,
+        body: panel.body,
+    };
+}
+
+pub Panel WithPadding(Panel panel, Padding padding) {
+    return Panel {
+        title: panel.title,
+        align: panel.align,
+        padding: padding,
+        margin: panel.margin,
+        forceAscii: panel.forceAscii,
+        body: panel.body,
+    };
+}
+
+pub Padding Padding(Panel panel) {
+    return panel.padding;
+}
+
+pub Margin Margin(Panel panel) {
+    return panel.margin;
+}
+
+pub bool UseUnicodeFrame(Panel panel) {
+    if panel.forceAscii {
+        return false;
+    }
+    return Frame.PreferUnicodeFrame();
+}
+
+pub i64 ContentWidth(Panel panel) {
+    return Core.String.Len(panel.body);
+}
+
+pub Console.ConsoleSize Measure(Panel panel, Console.ConsoleSize available) {
+    i32 pad = Console.Style.ResolvePadding(panel.padding, available.columns);
+    i32 margin = Console.Style.ResolveMargin(panel.margin, available.columns);
+    i64 inner = ContentWidth(panel) + (pad * 2);
+    i32 width = Console.Style.ClampWidth(inner + 2, 4, available.columns - margin);
+    i32 rows = 3;
+    if panel.title != "" {
+        rows = rows + 1;
+    }
+    return Console.ConsoleSize { columns: width, rows: rows };
+}
+
+pub string TopBorder(Panel panel, Frame.FrameChars frame, i32 innerWidth) {
+    if panel.title == "" {
+        return "${frame.topLeft}${Frame.Repeat(frame.top, innerWidth)}${frame.topRight}";
+    }
+    i64 titleLen = Core.String.Len(panel.title);
+    i32 titleWidth = innerWidth - 2;
+    if titleWidth < 1 {
+        titleWidth = 1;
+    }
+    i32 leftFill = match panel.align {
+        TitleAlignment::Left => 1,
+        TitleAlignment::Center => (titleWidth - titleLen) / 2,
+        TitleAlignment::Right => titleWidth - titleLen - 1,
+    };
+    i32 rightFill = match panel.align {
+        TitleAlignment::Left => titleWidth - titleLen - leftFill,
+        TitleAlignment::Center => titleWidth - titleLen - leftFill,
+        TitleAlignment::Right => 1,
+    };
+    if leftFill < 0 {
+        leftFill = 0;
+    }
+    if rightFill < 0 {
+        rightFill = 0;
+    }
+    return "${frame.topLeft}${Frame.Repeat(frame.top, leftFill)} ${panel.title} ${Frame.Repeat(frame.top, rightFill)}${frame.topRight}";
+}
+
+pub string BodyLine(Panel panel, Frame.FrameChars frame, i32 innerWidth) {
+    i32 pad = Console.Style.ResolvePadding(panel.padding, innerWidth + 2);
+    i64 bodyLen = Core.String.Len(panel.body);
+    i32 padRight = innerWidth - bodyLen - pad;
+    if padRight < 0 {
+        padRight = 0;
+    }
+    return "${frame.side}${Frame.Repeat(" ", pad)}${panel.body}${Frame.Repeat(" ", padRight)}${frame.side}";
+}
+
+pub string Render(Panel panel, Console.ConsoleSize size) {
+    Frame.FrameChars frame = Frame.ForHost(UseUnicodeFrame(panel));
+    i32 innerWidth = size.columns - 2;
+    if innerWidth < 1 {
+        innerWidth = 1;
+    }
+    string top = TopBorder(panel, frame, innerWidth);
+    string mid = BodyLine(panel, frame, innerWidth);
+    string bottom = "${frame.bottomLeft}${Frame.Repeat(frame.bottom, innerWidth)}${frame.bottomRight}";
+    return "${top}
+${mid}
+${bottom}";
+}
+
+pub string RenderWithContext(Panel panel, Console.ConsoleSize size, RenderContext.RenderContext ctx) {
+    string block = Render(panel, size);
+    return RenderContext.RenderAt(ctx, block);
+}

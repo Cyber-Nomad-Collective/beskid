@@ -1,0 +1,58 @@
+/// OS-thread wrappers (preemptive); distinct from cooperative `Concurrency.Yield`.
+use Core.Threading.ThreadError;
+
+/// Opaque pthread handle on Linux and macOS.
+pub type Thread {
+    i64 handle,
+}
+
+/// Linux libc pthread surface (v1).
+[Extern(Abi:"C", Library:"libc.so.6")]
+pub contract LinuxPthread {
+    i32 pthread_create(i64 threadOut, i64 attr, i64 startRoutine, i64 arg);
+    i32 pthread_join(i64 thread, i64 valueOut);
+    i32 sched_yield();
+}
+
+/// macOS libc pthread surface (v1).
+[Extern(Abi:"C", Library:"libc")]
+pub contract DarwinPthread {
+    i32 pthread_create(i64 threadOut, i64 attr, i64 startRoutine, i64 arg);
+    i32 pthread_join(i64 thread, i64 valueOut);
+    i32 sched_yield();
+}
+
+/// Starts an OS thread. Beskid entry attachment is enforced by the runtime before user code runs.
+/// @returns `Thread` handle or `ThreadError::SpawnFailed` when pthread creation fails.
+pub Core.Results.Result<Thread, ThreadError> Spawn(i64 entryRoutine, i64 arg) {
+    i64 threadOut = 0;
+    i32 rc = LinuxPthread.pthread_create(threadOut, 0, entryRoutine, arg);
+    if rc != 0 {
+        rc = DarwinPthread.pthread_create(threadOut, 0, entryRoutine, arg);
+    }
+    if rc != 0 {
+        return Result::Error(ThreadError::SpawnFailed(rc));
+    }
+    return Result::Ok(Thread { handle: threadOut });
+}
+
+/// Waits for OS thread completion.
+pub Core.Results.Result<i64, ThreadError> Join(Thread self) {
+    i64 valueOut = 0;
+    i32 rc = LinuxPthread.pthread_join(self.handle, valueOut);
+    if rc != 0 {
+        rc = DarwinPthread.pthread_join(self.handle, valueOut);
+    }
+    if rc != 0 {
+        return Result::Error(ThreadError::SpawnFailed(rc));
+    }
+    return Result::Ok(valueOut);
+}
+
+/// OS-level yield (not `Concurrency.Yield`).
+pub unit Yield() {
+    if LinuxPthread.sched_yield() != 0 {
+        DarwinPthread.sched_yield();
+    }
+    return;
+}

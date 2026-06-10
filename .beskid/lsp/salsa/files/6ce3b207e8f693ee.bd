@@ -1,0 +1,46 @@
+/// Horizontal stack container control.
+use Console;
+use Console.Style;
+use Console.Controls.Contracts;
+use Console.Controls.RenderContext;
+
+pub type HorizontalStack : Contracts.Container, Contracts.ConsoleControl {
+    string segment,
+    i64 childCount,
+}
+
+pub HorizontalStack New() {
+    return HorizontalStack { segment: "", childCount: 0 };
+}
+
+pub HorizontalStack WithChild(HorizontalStack stack, string body) {
+    string joined = stack.segment;
+    if joined != "" {
+        joined = "${joined} ";
+    }
+    joined = "${joined}${body}";
+    return HorizontalStack { segment: joined, childCount: stack.childCount + 1 };
+}
+
+pub i64 ChildCount(HorizontalStack stack) {
+    return stack.childCount;
+}
+
+pub Console.ConsoleSize Measure(HorizontalStack stack, Console.ConsoleSize available) {
+    i64 width = Core.String.Len(stack.segment);
+    if width < 1 {
+        width = 1;
+    }
+    if width > available.columns {
+        width = available.columns;
+    }
+    return Console.ConsoleSize { columns: width, rows: 1 };
+}
+
+pub string Render(HorizontalStack stack, Console.ConsoleSize size) {
+    return stack.segment;
+}
+
+pub string RenderWithContext(HorizontalStack stack, Console.ConsoleSize size, RenderContext.RenderContext ctx) {
+    return RenderContext.RenderAt(ctx, Render(stack, size));
+}

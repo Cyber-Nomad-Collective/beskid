@@ -1,0 +1,19 @@
+// CHECKED IN: Mod SDK typed emit hub — split across `Emitter/*` modules.
+/// Typed AST builders for generator mods (no raw-text emit contract).
+
+pub mod Beskid.Compiler.Emitter.Kind;
+pub mod Beskid.Compiler.Emitter.Nodes;
+pub mod Beskid.Compiler.Emitter.Contracts;
+pub mod Beskid.Compiler.Emitter.Items;
+pub mod Beskid.Compiler.Emitter.Contribution;
+
+use Beskid.Compiler.Collect;
+
+/// Assemble a generator contribution from typed top-level items.
+pub GeneratedSyntaxContribution Contribution(SyntaxContributionItem[] items) {
+    return Beskid.Compiler.Emitter.Contribution.From(items);
+}
+
+pub string EmitterFacadeVersion() {
+    return "0.6.0";
+}

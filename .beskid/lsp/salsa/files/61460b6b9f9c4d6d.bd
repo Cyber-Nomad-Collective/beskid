@@ -1,0 +1,27 @@
+// CHECKED IN: `[FluentStep]`-annotated fluent wrapper; step contract emitted by `corelib_fluent_gen`.
+/// Fluent wrapper for `Collections.List<T>`.
+/// @tier(supported)
+use Beskid.Fluent;
+use Collections.List;
+use Core.Results;
+
+[FluentStep(stepName: "ListStep", innerField: "inner")]
+pub type ListFluent<T> {
+    [FluentInner]
+    Collections.List<T> inner,
+
+    [FluentChain]
+    pub ListFluent<T> Push(T value) => (ListFluent<T> { inner: inner.Push(value) })
+
+    [FluentChain]
+    pub ListFluent<T> Pop() => (ListFluent<T> { inner: inner.Pop() })
+
+    pub Result<T, string> Get(i64 index) => inner.Get(index)
+
+    [FluentTerminal]
+    pub Collections.List<T> IntoList() => inner
+}
+
+pub ListFluent<T> FromList<T>(Collections.List<T> list) {
+    return ListFluent<T> { inner: list };
+}

@@ -1,0 +1,76 @@
+/// ANSI escape framing helpers (see repository `ANSI.md`).
+use Console.Capabilities;
+
+/// Returns the ASCII ESC control character (U+001B).
+pub string Esc() {
+    return "";
+}
+
+pub string CsiOpen() {
+    return "${Esc()}[";
+}
+
+pub string JoinArgs(string a, string b) {
+    if a == "" {
+        return b;
+    }
+    if b == "" {
+        return a;
+    }
+    return "${a};${b}";
+}
+
+/// Builds a CSI sequence without capability gating (for composition and golden tests).
+pub string Csi(string body, string finalByte) {
+    return "${CsiOpen()}${body}${finalByte}";
+}
+
+pub string CsiSequence(string body, string finalByte) {
+    return Csi(body, finalByte);
+}
+
+/// CSI private-mode set (`h`) or reset (`l`), e.g. `?1049h`.
+pub string PrivateMode(string mode, bool enable) {
+    string tail = "h";
+    if !enable {
+        tail = "l";
+    }
+    return CsiSequence("?${mode}", tail);
+}
+
+/// DEC save/restore cursor (`ESC 7` / `ESC 8`).
+pub string DecSaveCursor() {
+    return "${Esc()}7";
+}
+
+pub string DecRestoreCursor() {
+    return "${Esc()}8";
+}
+
+/// OSC payload terminated with BEL (0x07).
+pub string OscSequence(string payload) {
+    return "${Esc()}]${payload}";
+}
+
+/// Returns `sequence` when ANSI emission is allowed, otherwise `""`.
+pub string WhenEnabled(string sequence) {
+    if !Console.Capabilities.ShouldEmitAnsi() {
+        return "";
+    }
+    return sequence;
+}
+
+/// Capability-gated CSI sequence.
+pub string EmitCsi(string body, string finalByte) {
+    return WhenEnabled(Csi(body, finalByte));
+}
+
+/// Capability-gated OSC sequence.
+pub string EmitOsc(string payload) {
+    return WhenEnabled(OscSequence(payload));
+}
+
+/// Capability-gated DEC escape.
+pub string EmitDec(string suffix) {
+    return WhenEnabled("${Esc()}${suffix}");
+}

@@ -1,0 +1,5 @@
+/// Core.Bytes hub — byte buffer primitives and encoding conversion helpers.
+/// @tier(standard)
+pub mod Core.Bytes.Errors;
+pub mod Core.Bytes.Slice;
+pub mod Core.Bytes.Convert;

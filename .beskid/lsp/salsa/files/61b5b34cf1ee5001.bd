@@ -1,0 +1,7 @@
+/// Core.Encoding hub — shared errors, contract, and concrete codecs.
+/// @tier(standard)
+pub mod Core.Encoding.EncodingError;
+pub mod Core.Encoding.Contract;
+pub mod Core.Encoding.Utf8;
+pub mod Core.Encoding.Hex;
+pub mod Core.Encoding.Base64;

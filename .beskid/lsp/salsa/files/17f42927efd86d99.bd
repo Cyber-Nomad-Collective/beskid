@@ -1,0 +1,327 @@
+/// Pest expression AST and parsing for the supported subset.
+use Collections.Array;
+use Core.Results;
+use Core.String;
+
+pub enum PestRepeatKind {
+    ZeroOrMore,
+    OneOrMore,
+}
+
+pub enum PestExpr {
+    Literal(string value),
+    RuleRef(string name),
+    Any,
+    Seq(PestExpr[] parts),
+    Choice(PestExpr[] parts),
+    Repeat(PestExpr inner, PestRepeatKind kind),
+    Opt(PestExpr inner),
+    Group(PestExpr inner),
+}
+
+pub i64 ExprCount(PestExpr[] parts) {
+    return Array.Len<PestExpr>(parts);
+}
+
+pub PestExpr ExprAt(PestExpr[] parts, i64 index) {
+    return Array.Get<PestExpr>(parts, index);
+}
+
+pub PestExpr[] AppendExpr(PestExpr[] parts, PestExpr expr) {
+    i64 next = ExprCount(parts) + 1;
+    return Array.AppendAt<PestExpr>(parts, next, expr);
+}
+
+pub string UnwrapStringOk(Result<string, string> value) {
+    return match value {
+        Result::Ok(v) => v,
+        Result::Error(_) => "",
+    };
+}
+
+pub string[] UnwrapStringArrayOk(Result<string[], string> value) {
+    return match value {
+        Result::Ok(v) => v,
+        Result::Error(_) => Array.Empty<string>(),
+    };
+}
+
+pub PestExpr UnwrapExprOk(Result<PestExpr, string> value) {
+    return match value {
+        Result::Ok(v) => v,
+        Result::Error(_) => PestExpr::Any,
+    };
+}
+
+pub string TrimExpr(string text) {
+    return String.Trim(text);
+}
+
+pub bool IsIdentChar(u8 b, bool first) {
+    if first {
+        return (b >= 65 && b <= 90) || (b >= 97 && b <= 122) || b == 95;
+    }
+    return (b >= 65 && b <= 90) || (b >= 97 && b <= 122) || (b >= 48 && b <= 57) || b == 95;
+}
+
+pub bool IsIdent(string text) {
+    i64 len = Core.String.Len(text);
+    if len < 1 {
+        return false;
+    }
+    if !IsIdentChar(Core.String.ByteAt(text, 0), true) {
+        return false;
+    }
+    mut i64 i = 1;
+    while i < len {
+        if !IsIdentChar(Core.String.ByteAt(text, i), false) {
+            return false;
+        }
+        i = i + 1;
+    }
+    return true;
+}
+
+pub Result<PestExpr, string> ParseStringLiteral(string input) {
+    i64 len = Core.String.Len(input);
+    if len < 1 || Core.String.ByteAt(input, 0) != 34 {
+        return Result::Error("expected opening quote");
+    }
+    mut string out = "";
+    mut i64 i = 1;
+    while i < len {
+        u8 b = Core.String.ByteAt(input, i);
+        if b == 34 {
+            return Result::Ok(PestExpr::Literal(out));
+        }
+        if b == 92 {
+            if i + 1 >= len {
+                return Result::Error("unfinished escape");
+            }
+            u8 esc = Core.String.ByteAt(input, i + 1);
+            if esc == 110 {
+                out = out + Core.String.CodeUnitChar(10);
+            } else if esc == 114 {
+                out = out + Core.String.CodeUnitChar(13);
+            } else if esc == 116 {
+                out = out + Core.String.CodeUnitChar(9);
+            } else if esc == 92 {
+                out = out + Core.String.CodeUnitChar(92);
+            } else if esc == 34 {
+                out = out + Core.String.CodeUnitChar(34);
+            } else {
+                out = out + Core.String.CodeUnitChar(92) + Core.String.CodeUnitChar(esc);
+            }
+            i = i + 2;
+            continue;
+        }
+        out = out + Core.String.CodeUnitChar(b);
+        i = i + 1;
+    }
+    return Result::Error("unterminated string literal");
+}
+
+pub Result<string, string> StripParens(string input) {
+    string trimmed = TrimExpr(input);
+    i64 len = Core.String.Len(trimmed);
+    if len < 2 || Core.String.ByteAt(trimmed, 0) != 40 || Core.String.ByteAt(trimmed, len - 1) != 41 {
+        return Result::Error("expected parenthesized expression");
+    }
+    mut i64 depth = 0;
+    mut i64 i = 0;
+    while i < len {
+        u8 b = Core.String.ByteAt(trimmed, i);
+        if b == 40 {
+            depth = depth + 1;
+        } else if b == 41 {
+            depth = depth - 1;
+            if depth == 0 {
+                if i + 1 != len {
+                    return Result::Error("trailing tokens after group");
+                }
+                return Result::Ok(TrimExpr(String.SubSlice(trimmed, 1, i - 1)));
+            }
+        }
+        i = i + 1;
+    }
+    return Result::Error("unbalanced parentheses");
+}
+
+pub Result<string[], string> SplitMany(string input, string sep) {
+    string trimmed = TrimExpr(input);
+    if Core.String.Len(trimmed) < 1 {
+        return Result::Error("empty expression");
+    }
+    u8 sepByte = Core.String.ByteAt(sep, 0);
+    string[] parts = Array.Empty<string>();
+    mut i64 start = 0;
+    mut i64 depth = 0;
+    mut bool inString = false;
+    i64 len = Core.String.Len(trimmed);
+    mut i64 i = 0;
+    while i < len {
+        u8 b = Core.String.ByteAt(trimmed, i);
+        if inString {
+            if b == 92 {
+                i = i + 2;
+                continue;
+            }
+            if b == 34 {
+                inString = false;
+            }
+            i = i + 1;
+            continue;
+        }
+        if b == 34 {
+            inString = true;
+        } else if b == 40 {
+            depth = depth + 1;
+        } else if b == 41 {
+            depth = depth - 1;
+        } else if b == sepByte && depth == 0 {
+            string part = TrimExpr(String.SubSlice(trimmed, start, i - start));
+            if Core.String.Len(part) > 0 {
+                i64 next = Array.Len<string>(parts) + 1;
+                parts = Array.AppendAt<string>(parts, next, part);
+            }
+            start = i + 1;
+        }
+        i = i + 1;
+    }
+    if inString {
+        return Result::Error("unterminated string literal");
+    }
+    if depth != 0 {
+        return Result::Error("unbalanced parentheses");
+    }
+    string tail = TrimExpr(String.SubSlice(trimmed, start, len - start));
+    if Core.String.Len(tail) > 0 {
+        i64 next = Array.Len<string>(parts) + 1;
+        parts = Array.AppendAt<string>(parts, next, tail);
+    }
+    if Array.Len<string>(parts) < 1 {
+        return Result::Error("empty expression");
+    }
+    return Result::Ok(parts);
+}
+
+pub Result<PestExpr, string> ParsePrimary(string input) {
+    string trimmed = TrimExpr(input);
+    if Core.String.Len(trimmed) < 1 {
+        return Result::Error("empty primary");
+    }
+    if trimmed == "ANY" {
+        return Result::Ok(PestExpr::Any);
+    }
+    if Core.String.ByteAt(trimmed, 0) == 34 {
+        return ParseStringLiteral(trimmed);
+    }
+    if Core.String.ByteAt(trimmed, 0) == 40 {
+        Result<string, string> inner = StripParens(trimmed);
+        if Result.IsError(inner) {
+            return Result::Error("invalid group");
+        }
+        string groupText = UnwrapStringOk(inner);
+        Result<PestExpr, string> parsed = ParseExpr(groupText);
+        if Result.IsError(parsed) {
+            return parsed;
+        }
+        PestExpr node = UnwrapExprOk(parsed);
+        return Result::Ok(PestExpr::Group(node));
+    }
+    if IsIdent(trimmed) {
+        return Result::Ok(PestExpr::RuleRef(trimmed));
+    }
+    return Result::Error("unsupported primary");
+}
+
+pub Result<PestExpr, string> ParseRepeat(string input) {
+    string trimmed = TrimExpr(input);
+    if Core.String.Len(trimmed) < 1 {
+        return Result::Error("empty repeat operand");
+    }
+    i64 len = Core.String.Len(trimmed);
+    u8 last = Core.String.ByteAt(trimmed, len - 1);
+    if last == 42 {
+        string innerText = TrimExpr(String.SubSlice(trimmed, 0, len - 1));
+        Result<PestExpr, string> inner = ParsePrimary(innerText);
+        if Result.IsError(inner) {
+            return inner;
+        }
+        PestExpr node = UnwrapExprOk(inner);
+        return Result::Ok(PestExpr::Repeat(node, PestRepeatKind::ZeroOrMore));
+    }
+    if last == 43 {
+        string innerText = TrimExpr(String.SubSlice(trimmed, 0, len - 1));
+        Result<PestExpr, string> inner = ParsePrimary(innerText);
+        if Result.IsError(inner) {
+            return inner;
+        }
+        PestExpr node = UnwrapExprOk(inner);
+        return Result::Ok(PestExpr::Repeat(node, PestRepeatKind::OneOrMore));
+    }
+    if last == 63 {
+        string innerText = TrimExpr(String.SubSlice(trimmed, 0, len - 1));
+        Result<PestExpr, string> inner = ParsePrimary(innerText);
+        if Result.IsError(inner) {
+            return inner;
+        }
+        PestExpr node = UnwrapExprOk(inner);
+        return Result::Ok(PestExpr::Opt(node));
+    }
+    return ParsePrimary(trimmed);
+}
+
+pub Result<PestExpr, string> ParseSeq(string input) {
+    Result<string[], string> items = SplitMany(input, "~");
+    if Result.IsError(items) {
+        return Result::Error("invalid sequence");
+    }
+    string[] parts = UnwrapStringArrayOk(items);
+    PestExpr[] parsed = Array.Empty<PestExpr>();
+    mut i64 i = 0;
+    i64 n = Array.Len<string>(parts);
+    while i < n {
+        string part = Array.Get<string>(parts, i);
+        Result<PestExpr, string> node = ParseRepeat(part);
+        if Result.IsError(node) {
+            return node;
+        }
+        PestExpr expr = UnwrapExprOk(node);
+        parsed = AppendExpr(parsed, expr);
+        i = i + 1;
+    }
+    if ExprCount(parsed) == 1 {
+        return Result::Ok(ExprAt(parsed, 0));
+    }
+    return Result::Ok(PestExpr::Seq(parsed));
+}
+
+pub Result<PestExpr, string> ParseChoice(string input) {
+    Result<string[], string> items = SplitMany(input, "|");
+    if Result.IsError(items) {
+        return Result::Error("invalid choice");
+    }
+    string[] parts = UnwrapStringArrayOk(items);
+    PestExpr[] parsed = Array.Empty<PestExpr>();
+    mut i64 i = 0;
+    i64 n = Array.Len<string>(parts);
+    while i < n {
+        string part = Array.Get<string>(parts, i);
+        Result<PestExpr, string> node = ParseSeq(part);
+        if Result.IsError(node) {
+            return node;
+        }
+        PestExpr expr = UnwrapExprOk(node);
+        parsed = AppendExpr(parsed, expr);
+        i = i + 1;
+    }
+    if ExprCount(parsed) == 1 {
+        return Result::Ok(ExprAt(parsed, 0));
+    }
+    return Result::Ok(PestExpr::Choice(parsed));
+}
+
+pub Result<PestExpr, string> ParseExpr(string input) {
+    return ParseChoice(input);
+}

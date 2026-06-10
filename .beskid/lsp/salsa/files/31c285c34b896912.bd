@@ -1,0 +1,146 @@
+/// Pest grammar rule records and `.pest` source parsing.
+use Collections.Array;
+use Core.Results;
+use Core.String;
+
+pub type GrammarRule {
+    string name,
+    string expression,
+}
+
+pub string Newline() {
+    return String.CodeUnitChar(10);
+}
+
+pub GrammarRule NewRule(string name, string expression) {
+    return GrammarRule { name: name, expression: expression };
+}
+
+pub i64 RuleCount(GrammarRule[] rules) {
+    return Array.Len<GrammarRule>(rules);
+}
+
+pub GrammarRule RuleAt(GrammarRule[] rules, i64 index) {
+    return Array.Get<GrammarRule>(rules, index);
+}
+
+pub bool RuleExists(GrammarRule[] rules, string name) {
+    mut i64 i = 0;
+    i64 n = RuleCount(rules);
+    while i < n {
+        GrammarRule rule = RuleAt(rules, i);
+        if rule.name == name {
+            return true;
+        }
+        i = i + 1;
+    }
+    return false;
+}
+
+pub string StripLineComment(string line) {
+    i64 idx = String.IndexOfFrom(line, 0, "//");
+    if idx < 0 {
+        return line;
+    }
+    return String.SubSlice(line, 0, idx);
+}
+
+pub string TrimStartBrace(string text) {
+    string trimmed = String.Trim(text);
+    if String.Len(trimmed) > 0 && String.ByteAt(trimmed, 0) == 123 {
+        return String.Trim(String.SubSlice(trimmed, 1, String.Len(trimmed) - 1));
+    }
+    return trimmed;
+}
+
+pub string TrimEndBrace(string text) {
+    string trimmed = String.Trim(text);
+    i64 len = String.Len(trimmed);
+    if len > 0 && String.ByteAt(trimmed, len - 1) == 125 {
+        return String.Trim(String.SubSlice(trimmed, 0, len - 1));
+    }
+    return trimmed;
+}
+
+pub bool LineEndsWithBrace(string line) {
+    string trimmed = String.Trim(line);
+    i64 len = String.Len(trimmed);
+    if len < 1 {
+        return false;
+    }
+    return String.ByteAt(trimmed, len - 1) == 125;
+}
+
+pub GrammarRule[] AppendRule(GrammarRule[] rules, string name, string expression) {
+    i64 next = RuleCount(rules) + 1;
+    return Array.AppendAt<GrammarRule>(rules, next, NewRule(name, expression));
+}
+
+pub Result<GrammarRule[], string> ParseGrammarRules(string source) {
+    GrammarRule[] rules = Array.Empty<GrammarRule>();
+    string currentName = "";
+    string currentExpr = "";
+    mut i64 pos = 0;
+    i64 len = String.Len(source);
+    while pos <= len {
+        i64 nextNl = String.IndexOfFrom(source, pos, Newline());
+        string line = "";
+        if nextNl < 0 {
+            line = String.SubSlice(source, pos, len - pos);
+            pos = len + 1;
+        } else {
+            line = String.SubSlice(source, pos, nextNl - pos);
+            pos = nextNl + 1;
+        }
+        string trimmed = String.Trim(StripLineComment(line));
+        if String.Len(trimmed) < 1 {
+            if pos > len {
+                break;
+            }
+            continue;
+        }
+        i64 eq = String.IndexOfFrom(trimmed, 0, "=");
+        if eq >= 0 {
+            if String.Len(currentName) > 0 {
+                rules = AppendRule(rules, currentName, String.Trim(currentExpr));
+                currentName = "";
+                currentExpr = "";
+            }
+            string name = String.Trim(String.SubSlice(trimmed, 0, eq));
+            string exprPart = TrimStartBrace(String.Trim(String.SubSlice(trimmed, eq + 1, String.Len(trimmed) - eq - 1)));
+            if String.Len(name) < 1 {
+                return Result::Error("empty rule name");
+            }
+            if LineEndsWithBrace(trimmed) {
+                rules = AppendRule(rules, name, TrimEndBrace(exprPart));
+                currentName = "";
+                currentExpr = "";
+            } else {
+                currentName = name;
+                currentExpr = exprPart;
+            }
+        } else if String.Len(currentName) > 0 {
+            string part = TrimEndBrace(trimmed);
+            if String.Len(currentExpr) > 0 {
+                currentExpr = currentExpr + " " + part;
+            } else {
+                currentExpr = part;
+            }
+            if LineEndsWithBrace(trimmed) {
+                rules = AppendRule(rules, currentName, String.Trim(currentExpr));
+                currentName = "";
+                currentExpr = "";
+            }
+        }
+        if pos > len {
+            break;
+        }
+    }
+    if String.Len(currentName) > 0 {
+        rules = AppendRule(rules, currentName, String.Trim(currentExpr));
+    }
+    if RuleCount(rules) < 1 {
+        return Result::Error("no grammar rules found");
+    }
+    return Result::Ok(rules);
+}

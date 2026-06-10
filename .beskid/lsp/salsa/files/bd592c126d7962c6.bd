@@ -1,0 +1,12 @@
+// CHECKED IN: hand-maintained Mod SDK surface (regen_mod_sdk_surfaces.sh write_mod_catalog)
+
+use Beskid.Compiler.ModPackage;
+
+/// Catalog of mod packages loaded for the active host compilation.
+pub type ModCatalog {
+    ModPackage[] packages,
+}
+
+pub string ModCatalogFacadeVersion() {
+    return "0.1.0";
+}

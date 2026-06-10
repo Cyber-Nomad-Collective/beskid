@@ -1,0 +1,31 @@
+/// Discriminated success or failure carrier used across corelib and user code.
+/// @par(TValue) Type of the successful payload.
+/// @par(TError) Type of the failure payload.
+/// @variant(Ok) Successful branch carrying `value`.
+/// @variant(Error) Failure branch carrying `error`.
+pub enum Result<TValue, TError> {
+    /// Carries the successful payload.
+    Ok(TValue value),
+    /// Carries the failure payload.
+    Error(TError error),
+}
+
+/// Returns true when result carries `Ok`.
+/// @arg(value) Result to inspect.
+/// @returns `true` when `value` is `Ok`.
+pub bool IsOk<TValue, TError>(Result<TValue, TError> value) {
+    return match value {
+        Result::Ok(_) => true,
+        Result::Error(_) => false,
+    };
+}
+
+/// Returns true when result carries `Error`.
+/// @arg(value) Result to inspect.
+/// @returns `true` when `value` is `Error`.
+pub bool IsError<TValue, TError>(Result<TValue, TError> value) {
+    return match value {
+        Result::Ok(_) => false,
+        Result::Error(_) => true,
+    };
+}

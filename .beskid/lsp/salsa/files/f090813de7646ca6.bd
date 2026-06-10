@@ -1,0 +1,47 @@
+/// Repeat and optional combinators.
+use Core.Text.Cursor;
+use Core.Text.Parser.Result;
+use Core.Text.Parser.Literals;
+
+pub TextParseResult<string> ZeroOrOne(
+    Cursor.TextCursor c,
+    string rule,
+    TextParseResult<string> inner
+) {
+    if IsOk(inner) {
+        return inner;
+    }
+    return Pure("", c);
+}
+
+pub TextParseResult<string> ZeroOrMany(
+    Cursor.TextCursor c,
+    string rule,
+    TextParseResult<string> step,
+    Cursor.TextCursor endCur
+) {
+    return Pure("", endCur);
+}
+
+pub TextParseResult<string> OneOrMany(
+    Cursor.TextCursor c,
+    string rule,
+    i64 count,
+    Cursor.TextCursor endCur
+) {
+    if count < 1 {
+        return Literals.Fail(c, ParseErrorKind::ExpectedRule, rule);
+    }
+    return Pure("", endCur);
+}
+
+pub TextParseResult<string> Not(
+    Cursor.TextCursor c,
+    string rule,
+    TextParseResult<string> inner
+) {
+    if IsOk(inner) {
+        return Literals.Fail(c, ParseErrorKind::ExpectedRule, rule);
+    }
+    return Pure("", c);
+}

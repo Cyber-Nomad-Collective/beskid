@@ -1,0 +1,284 @@
+/// Parses `&[fg=…, bg=…]` attribute lists into `Ansi.StyleChain` steps.
+use Ansi.StyleChain;
+use Console.Format.Scan;
+
+pub type ParsedRgb {
+    bool ok,
+    i64 r,
+    i64 g,
+    i64 b,
+}
+
+pub StyleChain ApplyPaletteTag(StyleChain chain, string tagName) {
+    ParsedRgb rgb = ParseNamedColor(tagName);
+    if rgb.ok {
+        return StyleChain.ForegroundRgb(chain, rgb.r, rgb.g, rgb.b);
+    }
+    return chain;
+}
+
+pub StyleChain ApplyAttrList(StyleChain chain, string attrs) {
+    string rest = attrs;
+    while !Core.String.IsEmpty(rest) {
+        string token = "";
+        i64 comma = Scan.IndexOfFrom(rest, 0, ",");
+        if comma < 0 {
+            token = Scan.Trim(rest);
+            rest = "";
+        } else {
+            token = Scan.Trim(Scan.Slice(rest, 0, comma));
+            rest = Scan.Trim(Scan.Drop(rest, comma + 1));
+        }
+        if token != "" {
+            chain = ApplyAttrToken(chain, token);
+        }
+    }
+    return chain;
+}
+
+pub StyleChain ApplyAttrToken(StyleChain chain, string token) {
+    if Scan.StartsWith(token, "fg=") {
+        string value = Scan.Trim(Scan.Drop(token, 3));
+        ParsedRgb rgb = ParseColor(value);
+        if rgb.ok {
+            return StyleChain.ForegroundRgb(chain, rgb.r, rgb.g, rgb.b);
+        }
+        return chain;
+    }
+    if Scan.StartsWith(token, "bg=") {
+        string value = Scan.Trim(Scan.Drop(token, 3));
+        ParsedRgb rgb = ParseColor(value);
+        if rgb.ok {
+            return StyleChain.BackgroundRgb(chain, rgb.r, rgb.g, rgb.b);
+        }
+        return chain;
+    }
+    return chain;
+}
+
+pub ParsedRgb ParseColor(string value) {
+    if value == "" {
+        return ParsedRgb { ok: false, r: 0, g: 0, b: 0 };
+    }
+    if Scan.StartsWith(value, "#") {
+        return ParseHexColor(Scan.Drop(value, 1));
+    }
+    if Scan.StartsWith(value, "rgb(") {
+        i64 close = Scan.IndexOfFrom(value, 4, ")");
+        if close < 0 {
+            return ParsedRgb { ok: false, r: 0, g: 0, b: 0 };
+        }
+        string inner = Scan.Slice(value, 4, close - 4);
+        return ParseRgbTriplet(inner);
+    }
+    ParsedRgb triplet = ParseRgbTriplet(value);
+    if triplet.ok {
+        return triplet;
+    }
+    return ParseNamedColor(value);
+}
+
+pub ParsedRgb ParseNamedColor(string name) {
+    if name == "black" {
+        return ParsedRgb { ok: true, r: 0, g: 0, b: 0 };
+    }
+    if name == "red" {
+        return ParsedRgb { ok: true, r: 205, g: 0, b: 0 };
+    }
+    if name == "green" {
+        return ParsedRgb { ok: true, r: 0, g: 205, b: 0 };
+    }
+    if name == "yellow" {
+        return ParsedRgb { ok: true, r: 205, g: 205, b: 0 };
+    }
+    if name == "blue" {
+        return ParsedRgb { ok: true, r: 0, g: 0, b: 238 };
+    }
+    if name == "magenta" {
+        return ParsedRgb { ok: true, r: 205, g: 0, b: 205 };
+    }
+    if name == "cyan" {
+        return ParsedRgb { ok: true, r: 0, g: 205, b: 205 };
+    }
+    if name == "white" {
+        return ParsedRgb { ok: true, r: 229, g: 229, b: 229 };
+    }
+    return ParsedRgb { ok: false, r: 0, g: 0, b: 0 };
+}
+
+pub ParsedRgb ParseRgbTriplet(string value) {
+    i64 c1 = Scan.IndexOfFrom(value, 0, ",");
+    if c1 < 0 {
+        return ParsedRgb { ok: false, r: 0, g: 0, b: 0 };
+    }
+    i64 c2 = Scan.IndexOfFrom(value, c1 + 1, ",");
+    if c2 < 0 {
+        return ParsedRgb { ok: false, r: 0, g: 0, b: 0 };
+    }
+    string rs = Scan.Trim(Scan.Slice(value, 0, c1));
+    string gs = Scan.Trim(Scan.Slice(value, c1 + 1, c2 - c1 - 1));
+    string bs = Scan.Trim(Scan.Drop(value, c2 + 1));
+    ParsedU8 pr = ParseU8(rs);
+    ParsedU8 pg = ParseU8(gs);
+    ParsedU8 pb = ParseU8(bs);
+    if !pr.ok || !pg.ok || !pb.ok {
+        return ParsedRgb { ok: false, r: 0, g: 0, b: 0 };
+    }
+    return ParsedRgb { ok: true, r: pr.value, g: pg.value, b: pb.value };
+}
+
+pub ParsedRgb ParseHexColor(string hex) {
+    i64 n = Scan.Len(hex);
+    if n == 3 {
+        ParsedNibble hr = ParseHexNibble(Scan.Slice(hex, 0, 1));
+        ParsedNibble hg = ParseHexNibble(Scan.Slice(hex, 1, 1));
+        ParsedNibble hb = ParseHexNibble(Scan.Slice(hex, 2, 1));
+        if !hr.ok || !hg.ok || !hb.ok {
+            return ParsedRgb { ok: false, r: 0, g: 0, b: 0 };
+        }
+        i64 r = hr.value * 16 + hr.value;
+        i64 g = hg.value * 16 + hg.value;
+        i64 b = hb.value * 16 + hb.value;
+        return ParsedRgb { ok: true, r: r, g: g, b: b };
+    }
+    if n == 6 {
+        ParsedU8 pr = ParseHexByte(Scan.Slice(hex, 0, 2));
+        ParsedU8 pg = ParseHexByte(Scan.Slice(hex, 2, 2));
+        ParsedU8 pb = ParseHexByte(Scan.Slice(hex, 4, 2));
+        if !pr.ok || !pg.ok || !pb.ok {
+            return ParsedRgb { ok: false, r: 0, g: 0, b: 0 };
+        }
+        return ParsedRgb { ok: true, r: pr.value, g: pg.value, b: pb.value };
+    }
+    return ParsedRgb { ok: false, r: 0, g: 0, b: 0 };
+}
+
+pub type ParsedU8 {
+    bool ok,
+    i64 value,
+}
+
+pub type ParsedNibble {
+    bool ok,
+    i64 value,
+}
+
+pub ParsedU8 ParseHexByte(string two) {
+    if Scan.Len(two) != 2 {
+        return ParsedU8 { ok: false, value: 0 };
+    }
+    ParsedNibble hi = ParseHexNibble(Scan.Slice(two, 0, 1));
+    ParsedNibble lo = ParseHexNibble(Scan.Slice(two, 1, 1));
+    if !hi.ok || !lo.ok {
+        return ParsedU8 { ok: false, value: 0 };
+    }
+    return ParsedU8 { ok: true, value: hi.value * 16 + lo.value };
+}
+
+pub ParsedNibble ParseHexNibble(string digit) {
+    if digit == "0" {
+        return ParsedNibble { ok: true, value: 0 };
+    }
+    if digit == "1" {
+        return ParsedNibble { ok: true, value: 1 };
+    }
+    if digit == "2" {
+        return ParsedNibble { ok: true, value: 2 };
+    }
+    if digit == "3" {
+        return ParsedNibble { ok: true, value: 3 };
+    }
+    if digit == "4" {
+        return ParsedNibble { ok: true, value: 4 };
+    }
+    if digit == "5" {
+        return ParsedNibble { ok: true, value: 5 };
+    }
+    if digit == "6" {
+        return ParsedNibble { ok: true, value: 6 };
+    }
+    if digit == "7" {
+        return ParsedNibble { ok: true, value: 7 };
+    }
+    if digit == "8" {
+        return ParsedNibble { ok: true, value: 8 };
+    }
+    if digit == "9" {
+        return ParsedNibble { ok: true, value: 9 };
+    }
+    if digit == "a" || digit == "A" {
+        return ParsedNibble { ok: true, value: 10 };
+    }
+    if digit == "b" || digit == "B" {
+        return ParsedNibble { ok: true, value: 11 };
+    }
+    if digit == "c" || digit == "C" {
+        return ParsedNibble { ok: true, value: 12 };
+    }
+    if digit == "d" || digit == "D" {
+        return ParsedNibble { ok: true, value: 13 };
+    }
+    if digit == "e" || digit == "E" {
+        return ParsedNibble { ok: true, value: 14 };
+    }
+    if digit == "f" || digit == "F" {
+        return ParsedNibble { ok: true, value: 15 };
+    }
+    return ParsedNibble { ok: false, value: 0 };
+}
+
+pub ParsedU8 ParseU8(string digits) {
+    if digits == "" {
+        return ParsedU8 { ok: false, value: 0 };
+    }
+    i64 n = Scan.Len(digits);
+    i64 i = 0;
+    i64 acc = 0;
+    while i < n {
+        string c = Scan.Slice(digits, i, 1);
+        ParsedNibble digit = ParseDecimalDigit(c);
+        if !digit.ok {
+            return ParsedU8 { ok: false, value: 0 };
+        }
+        acc = acc * 10 + digit.value;
+        if acc > 255 {
+            return ParsedU8 { ok: false, value: 0 };
+        }
+        i = i + 1;
+    }
+    return ParsedU8 { ok: true, value: acc };
+}
+
+pub ParsedNibble ParseDecimalDigit(string c) {
+    if c == "0" {
+        return ParsedNibble { ok: true, value: 0 };
+    }
+    if c == "1" {
+        return ParsedNibble { ok: true, value: 1 };
+    }
+    if c == "2" {
+        return ParsedNibble { ok: true, value: 2 };
+    }
+    if c == "3" {
+        return ParsedNibble { ok: true, value: 3 };
+    }
+    if c == "4" {
+        return ParsedNibble { ok: true, value: 4 };
+    }
+    if c == "5" {
+        return ParsedNibble { ok: true, value: 5 };
+    }
+    if c == "6" {
+        return ParsedNibble { ok: true, value: 6 };
+    }
+    if c == "7" {
+        return ParsedNibble { ok: true, value: 7 };
+    }
+    if c == "8" {
+        return ParsedNibble { ok: true, value: 8 };
+    }
+    if c == "9" {
+        return ParsedNibble { ok: true, value: 9 };
+    }
+    return ParsedNibble { ok: false, value: 0 };
+}

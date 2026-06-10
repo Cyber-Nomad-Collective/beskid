@@ -1,0 +1,71 @@
+/// Hexadecimal encoding (lowercase encode).
+/// @tier(standard)
+use Core.Bytes.Convert;
+use Core.Encoding.EncodingError;
+use Core.Results;
+
+pub u8 NibbleToHex(u8 nibble) {
+    if nibble < 10 {
+        return 48 + nibble;
+    }
+    return 87 + nibble;
+}
+
+pub u8 HexToNibble(u8 digit) {
+    if digit >= 48 && digit <= 57 {
+        return digit - 48;
+    }
+    if digit >= 65 && digit <= 70 {
+        return digit - 55;
+    }
+    if digit >= 97 && digit <= 102 {
+        return digit - 87;
+    }
+    return 255;
+}
+
+pub Core.Results.Result<u8[], EncodingError> EncodeBytes(u8[] data) {
+    i64 len = __array_len(data);
+    u8[] buf = Core.Bytes.Slice.New(len * 2);
+    mut i64 i = 0;
+    while i < len {
+        u8 b = data[i];
+        u8 hi = b / 16;
+        u8 lo = b % 16;
+        Core.Bytes.Slice.Set(buf, i * 2, NibbleToHex(hi));
+        Core.Bytes.Slice.Set(buf, i * 2 + 1, NibbleToHex(lo));
+        i = i + 1;
+    }
+    return Result::Ok(buf);
+}
+
+pub Core.Results.Result<u8[], EncodingError> DecodeBytes(u8[] data) {
+    i64 len = __array_len(data);
+    if len % 2 != 0 {
+        return Result::Error(EncodingError::OddLength());
+    }
+    i64 outLen = len / 2;
+    u8[] buf = Core.Bytes.Slice.New(outLen);
+    mut i64 i = 0;
+    while i < outLen {
+        u8 hi = HexToNibble(data[i * 2]);
+        u8 lo = HexToNibble(data[i * 2 + 1]);
+        if hi > 15 || lo > 15 {
+            return Result::Error(EncodingError::InvalidSequence());
+        }
+        Core.Bytes.Slice.Set(buf, i, hi * 16 + lo);
+        i = i + 1;
+    }
+    return Result::Ok(buf);
+}
+
+pub Core.Results.Result<u8[], EncodingError> EncodeToBytes(string text) {
+    return EncodeBytes(Convert.StringToBytes(text));
+}
+
+pub Core.Results.Result<string, EncodingError> DecodeFromBytes(u8[] data) {
+    return match DecodeBytes(data) {
+        Result::Ok(bytes) => Core.Encoding.Utf8.DecodeFromBytes(bytes),
+        Result::Error(err) => Result::Error(err),
+    };
+}

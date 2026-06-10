@@ -1,0 +1,8 @@
+/// Byte buffer error variants.
+/// @tier(standard)
+pub enum BytesError {
+    /// Index is outside the buffer range.
+    OutOfRange(i64 index),
+    /// Negative length or offset was supplied.
+    InvalidLength(i64 value),
+}

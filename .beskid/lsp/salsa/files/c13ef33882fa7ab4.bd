@@ -1,0 +1,78 @@
+/// Shouldly-style assertion helpers for Beskid `test` blocks and user tests.
+/// Prefer actual-first argument order: `Testing.Assert.Equal(len, 3, "because")`.
+
+use Core.String;
+
+/// Emits a message and forces a runtime crash.
+unit trigger_failure(string message) {
+    __panic_str(message);
+}
+
+/// Unconditionally fails the current test.
+/// @arg(message) Failure reason surfaced to the user.
+pub unit Fail(string message) {
+    trigger_failure("Assertion failed: ${message}");
+}
+
+unit fail_with_because(string headline, string because) {
+    if because == "" {
+        Fail(headline);
+        return;
+    }
+    Fail("${headline}; because: ${because}");
+}
+
+/// Fails when actual and expected values differ.
+/// @par(T) Type of values being compared.
+/// @arg(actual) Observed value.
+/// @arg(expected) Expected value.
+/// @arg(because) Optional diagnostic context (pass `""` when omitted).
+pub unit Equal<T>(T actual, T expected, string because) {
+    if actual == expected {
+        return;
+    }
+    fail_with_because("should be ${expected} but was ${actual}", because);
+}
+
+/// Fails when actual and expected values are equal.
+/// @par(T) Type of values being compared.
+/// @arg(actual) Observed value.
+/// @arg(expected) Value that must differ from `actual`.
+/// @arg(because) Optional diagnostic context (pass `""` when omitted).
+pub unit NotEqual<T>(T actual, T expected, string because) {
+    if actual != expected {
+        return;
+    }
+    fail_with_because("should not be ${expected} but was ${actual}", because);
+}
+
+/// Fails when condition is not true.
+/// @arg(condition) Predicate that must hold.
+/// @arg(because) Optional diagnostic context (pass `""` when omitted).
+pub unit True(bool condition, string because) {
+    if condition {
+        return;
+    }
+    fail_with_because("should be true but was false", because);
+}
+
+/// Fails when condition is true.
+/// @arg(condition) Predicate that must be false.
+/// @arg(because) Optional diagnostic context (pass `""` when omitted).
+pub unit False(bool condition, string because) {
+    if !condition {
+        return;
+    }
+    fail_with_because("should be false but was true", because);
+}
+
+/// Fails when needle is not found in text.
+/// @arg(text) Haystack UTF-8 string.
+/// @arg(needle) Needle UTF-8 string.
+/// @arg(because) Optional diagnostic context (pass `""` when omitted).
+pub unit Contains(string text, string needle, string because) {
+    if Core.String.Contains(text, needle) {
+        return;
+    }
+    fail_with_because("should contain ${needle}", because);
+}

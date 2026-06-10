@@ -1,0 +1,34 @@
+/// Parse result and error types for combinator parsers.
+use Core.Text.Cursor;
+
+pub enum ParseErrorKind {
+    ExpectedLiteral,
+    ExpectedRule,
+    ZeroWidthRepeat,
+    ChoiceFailed,
+}
+
+pub type ParseError {
+    i64 offset,
+    ParseErrorKind kind,
+    string rule,
+}
+
+pub enum TextParseResult<T> {
+    Ok(T value, Cursor.TextCursor rest),
+    Err(ParseError error),
+}
+
+pub bool IsOk(TextParseResult<string> result) {
+    return match result {
+        TextParseResult::Ok(_, _) => true,
+        TextParseResult::Err(_) => false,
+    };
+}
+
+pub Cursor.TextCursor RestOnOk(TextParseResult<string> result, Cursor.TextCursor fallback) {
+    return match result {
+        TextParseResult::Ok(_, rest) => rest,
+        TextParseResult::Err(_) => fallback,
+    };
+}

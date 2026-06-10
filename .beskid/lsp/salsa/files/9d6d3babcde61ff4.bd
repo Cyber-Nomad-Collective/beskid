@@ -1,0 +1,29 @@
+/// Optional value helpers (`Core.Optional.Option<T>`).
+/// @tier(standard)
+/// @par(T) Element type stored in `Some`.
+/// @variant(Some) Carries a present `value`.
+/// @variant(None) Represents absence.
+pub enum Option<T> {
+    /// Present value variant.
+    Some(T value),
+    /// Absent value variant.
+    None,
+}
+
+/// Returns true when the option is `Some`.
+/// @tier(standard)
+pub bool HasValue<T>(Option<T> value) {
+    return match value {
+        Option::Some(_) => true,
+        Option::None => false,
+    };
+}
+
+/// Returns `defaultValue` when `value` is `None`.
+/// @tier(standard)
+pub T UnwrapOr<T>(Option<T> value, T defaultValue) {
+    return match value {
+        Option::Some(v) => v,
+        Option::None => defaultValue,
+    };
+}

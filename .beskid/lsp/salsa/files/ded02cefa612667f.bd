@@ -1,0 +1,7 @@
+/// Time-of-day within a UTC civil day.
+pub type TimeOfDay {
+    i64 hour,
+    i64 minute,
+    i64 second,
+    i64 nanosecond,
+}

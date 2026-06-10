@@ -1,0 +1,85 @@
+/// Byte-indexed UTF-8 cursor for combinator parsing.
+
+pub type TextCursor {
+    string source,
+    i64 pos,
+}
+
+pub TextCursor From(string source) {
+    return TextCursor { source: source, pos: 0 };
+}
+
+pub i64 Len(TextCursor c) {
+    return Core.String.Len(c.source);
+}
+
+pub i64 Position(TextCursor c) {
+    return c.pos;
+}
+
+pub bool AtEnd(TextCursor c) {
+    return c.pos >= Len(c);
+}
+
+pub string Slice(TextCursor c, i64 start, i64 count) {
+    if count < 1 {
+        return "";
+    }
+    if start < 0 {
+        return "";
+    }
+    return __str_slice(c.source, start, count);
+}
+
+pub string Remaining(TextCursor c) {
+    i64 n = Len(c);
+    if c.pos >= n {
+        return "";
+    }
+    return Slice(c, c.pos, n - c.pos);
+}
+
+pub string DropSource(TextCursor c, i64 count) {
+    i64 total = Len(c);
+    if count < 1 {
+        return c.source;
+    }
+    if !(count < total) {
+        return "";
+    }
+    return Slice(c, count, total - count);
+}
+
+pub TextCursor Advance(TextCursor c, i64 count) {
+    i64 n = Len(c);
+    i64 next = c.pos + count;
+    if next > n {
+        next = n;
+    }
+    if next < 0 {
+        next = 0;
+    }
+    return TextCursor { source: c.source, pos: next };
+}
+
+pub bool StartsWith(TextCursor c, string prefix) {
+    string rest = Remaining(c);
+    i64 plen = Core.String.Len(prefix);
+    if plen == 0 {
+        return true;
+    }
+    i64 tlen = Core.String.Len(rest);
+    if plen > tlen {
+        return false;
+    }
+    string head = Slice(c, c.pos, plen);
+    return head == prefix;
+}
+
+pub i64 IndexOfFrom(TextCursor c, i64 start, string needle) {
+    return Core.String.IndexOfFrom(c.source, c.pos + start, needle);
+}
+
+pub bool ContainsSubstring(TextCursor c, string needle) {
+    return !(IndexOfFrom(c, 0, needle) < 0);
+}

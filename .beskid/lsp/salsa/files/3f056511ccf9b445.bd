@@ -1,0 +1,77 @@
+/// File system helper API backed by runtime `fs_*` builtins.
+/// Types are split under `Core/FS/` with one type per file.
+/// @tier(supported)
+/// @ref(Core.Results.Result) envelopes for read/write helpers.
+
+use Core.FS.FsError;
+
+pub Core.Results.Result<string, FsError> ReadAllText(string path) {
+    if path == "" {
+        return Result::Error(FsError::InvalidPath(path));
+    }
+    string text = __fs_read_text(path);
+    if text == "" && !Exists(path) {
+        return Result::Error(FsError::NotFound(path));
+    }
+    return Result::Ok(text);
+}
+
+pub Core.Results.Result<bool, FsError> WriteAllText(string path, string text) {
+    if path == "" {
+        return Result::Error(FsError::InvalidPath(path));
+    }
+    if text == "" {
+        i64 rc = __fs_write_text(path, "");
+        if rc == 0 {
+            return Result::Ok(true);
+        }
+        return Result::Error(FsError::Unknown("WriteAllText failed"));
+    }
+    i64 rc = __fs_write_text(path, text);
+    if rc == 0 {
+        return Result::Ok(true);
+    }
+    return Result::Error(FsError::Unknown("WriteAllText failed"));
+}
+
+pub Core.Results.Result<bool, FsError> Delete(string path) {
+    if path == "" {
+        return Result::Error(FsError::InvalidPath(path));
+    }
+    if __fs_delete(path) == 0 {
+        return Result::Ok(true);
+    }
+    return Result::Error(FsError::Unknown("Delete failed"));
+}
+
+pub Core.Results.Result<bool, FsError> CreateDirectory(string path) {
+    if path == "" {
+        return Result::Error(FsError::InvalidPath(path));
+    }
+    if __fs_mkdir(path) == 0 {
+        return Result::Ok(true);
+    }
+    return Result::Error(FsError::Unknown("CreateDirectory failed"));
+}
+
+pub bool Exists(string path) {
+    if path == "" {
+        return false;
+    }
+    return __fs_exists(path) == 1;
+}
+
+pub Core.Results.Result<bool, FsError> Copy(string source, string destination) {
+    if source == "" || destination == "" {
+        return Result::Error(FsError::InvalidPath(source));
+    }
+    Core.Results.Result<string, FsError> read = ReadAllText(source);
+    match read {
+        Result::Ok(text) => {
+            return WriteAllText(destination, text);
+        },
+        Result::Error(err) => {
+            return Result::Error(err);
+        },
+    };
+}

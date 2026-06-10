@@ -1,0 +1,92 @@
+/// Live progress bar control (incremental string render).
+use Console;
+use Console.Controls.Contracts;
+use Console.Controls.RenderContext;
+use Console.Controls.Frame;
+
+pub type ProgressBar : Contracts.LiveControl, Contracts.ConsoleControl {
+    i64 percent,
+    i32 anchorRow,
+    i32 anchorCol,
+    event{4} onTick(),
+}
+
+pub ProgressBar New() {
+    return ProgressBar {
+        percent: 0,
+        anchorRow: 1,
+        anchorCol: 1,
+    };
+}
+
+pub ProgressBar WithPercent(ProgressBar bar, i64 percent) {
+    if percent < 0 {
+        return ProgressBar {
+            percent: 0,
+            anchorRow: bar.anchorRow,
+            anchorCol: bar.anchorCol,
+        };
+    }
+    if percent > 100 {
+        return ProgressBar {
+            percent: 100,
+            anchorRow: bar.anchorRow,
+            anchorCol: bar.anchorCol,
+        };
+    }
+    return ProgressBar {
+        percent: percent,
+        anchorRow: bar.anchorRow,
+        anchorCol: bar.anchorCol,
+    };
+}
+
+pub ProgressBar WithAnchor(ProgressBar bar, i32 row, i32 col) {
+    return ProgressBar {
+        percent: bar.percent,
+        anchorRow: row,
+        anchorCol: col,
+    };
+}
+
+pub unit OnTick(ProgressBar bar) {
+    return;
+}
+
+pub ProgressBar Tick(ProgressBar bar) {
+    OnTick(bar);
+    return bar;
+}
+
+pub Console.ConsoleSize Measure(ProgressBar bar, Console.ConsoleSize available) {
+    i32 width = available.columns;
+    if width < 4 {
+        width = 4;
+    }
+    return Console.ConsoleSize { columns: width, rows: 1 };
+}
+
+pub string BarBody(ProgressBar bar, i32 width) {
+    i32 inner = width - 2;
+    if inner < 1 {
+        inner = 1;
+    }
+    i64 filled = (bar.percent * inner) / 100;
+    string barChars = Frame.Repeat("=", filled);
+    i32 empty = inner - filled;
+    if empty < 0 {
+        empty = 0;
+    }
+    string emptyChars = Frame.Repeat(" ", empty);
+    return "[${barChars}${emptyChars}] ${bar.percent}%";
+}
+
+pub string Render(ProgressBar bar, Console.ConsoleSize size) {
+    return BarBody(bar, size.columns);
+}
+
+pub string RenderIncremental(ProgressBar bar, Console.ConsoleSize size) {
+    RenderContext.RenderContext ctx = RenderContext.New(bar.anchorRow, bar.anchorCol);
+    string line = BarBody(bar, size.columns);
+    return RenderContext.EraseLineAndRender(ctx, line);
+}

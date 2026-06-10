@@ -1,0 +1,7 @@
+/// Typed binary write request payload.
+/// @par(descriptor) Logical destination for the write.
+/// @par(data) Raw byte payload.
+pub type WriteBytesRequest {
+    Core.Syscall.Descriptor descriptor,
+    u8[] data,
+}

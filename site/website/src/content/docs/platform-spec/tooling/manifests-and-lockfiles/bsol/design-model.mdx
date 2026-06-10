@@ -151,7 +151,21 @@ pub struct BsolSpan {
 }
 ```
 
-Source of truth in the repository: `compiler/crates/beskid_bsol/src/ast.rs`.
+Source of truth in the repository: `beskid_bsol/crates/bsol-syntax/src/ast.rs`.
+
+### BSOL v2 extensions
+
+v2 adds optional syntax and schema features (backward compatible with v1 documents):
+
+- **Attributes:** `[Deprecated(since = "2.0")]` on blocks
+- **References:** `@node/label` in assignments and lists
+- **Inline maps:** `{ key = value, ... }`
+- **Typed validation:** `ValidatedValue` alongside string-compat `fields` map
+- **Profile composition:** `extends`, `mixes`, `extend "base.v1"`, `import_schema` merge
+- **Discriminated unions:** `variant "git" { require = [url, rev] }`
+- **Migration routes:** `migration { from = "project.v1" ... }` with `beskid migrate-bsol`
+
+Embedded v2 profiles: `project.v2`, `runtime.v2`, `board.v3`, `configuration.v2`, `schema.v2`.
 
 ## Schema profiles
 
@@ -159,9 +173,10 @@ Profiles ship embedded in `beskid_bsol` (`include_str!` from `schemas/`). The on
 
 | Profile | Document | Lowering crate |
 | --- | --- | --- |
-| `project.v1` | `*.bproj` project manifests | `beskid_analysis::projects::parser` |
+| `project.v1` / `project.v2` | `*.bproj` project manifests | `beskid_analysis::projects::parser` |
 | `workspace.v1` | `*.bws` / `workspace.proj` | `beskid_analysis::projects::parser` |
-| `runtime.v1` | `compiler/runtime_manifest.bsol` | `beskid_manifest::lower` |
+| `runtime.v1` / `runtime.v2` | `compiler/runtime_manifest.bsol` | `beskid_manifest::lower` |
+| `board.v2` / `board.v3` | shell layout BSOL | `beskid_tools::shell::layout` |
 
 Public API:
 

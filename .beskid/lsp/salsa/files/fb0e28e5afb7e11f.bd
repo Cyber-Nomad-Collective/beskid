@@ -1,0 +1,279 @@
+/// UTF-8 string helpers backed by runtime string builtins (`__str_len`).
+/// @tier(standard)
+
+use Core.Bytes.Slice;
+
+/// Returns the number of UTF-8 code units in text.
+/// @arg(text) UTF-8 string handle.
+/// @returns Code unit count as `i64`.
+pub i64 Len(string text) {
+    return __str_len(text);
+}
+
+/// Returns true when text is empty.
+/// @arg(text) UTF-8 string handle.
+/// @returns `true` when `Len` is zero.
+pub bool IsEmpty(string text) {
+    return Len(text) == 0;
+}
+
+/// Returns the zero-based byte index of `needle` in `haystack` starting at `start`, or `-1`.
+pub i64 IndexOfFrom(string haystack, i64 start, string needle) {
+    i64 hlen = Len(haystack);
+    i64 nlen = Len(needle);
+    if nlen == 0 {
+        return start;
+    }
+    if start < 0 {
+        start = 0;
+    }
+    i64 i = start;
+    while !(i + nlen > hlen) {
+        i64 j = 0;
+        bool matched = true;
+        while j < nlen {
+            if ByteAt(haystack, i + j) != ByteAt(needle, j) {
+                matched = false;
+                break;
+            }
+            j = j + 1;
+        }
+        if matched {
+            return i;
+        }
+        i = i + 1;
+    }
+    return -1;
+}
+
+/// Returns true when `needle` occurs as a substring of `text`.
+pub bool Contains(string text, string needle) {
+    return !(IndexOfFrom(text, 0, needle) < 0);
+}
+
+/// Returns a substring of `text` starting at byte `start` with `count` code units.
+pub string SubSlice(string text, i64 start, i64 count) {
+    return __str_slice(text, start, count);
+}
+
+/// Trims ASCII space, tab, and carriage return from both ends.
+pub string Trim(string text) {
+    i64 len = Len(text);
+    mut i64 start = 0;
+    while start < len {
+        u8 b = ByteAt(text, start);
+        if b != 32 && b != 9 && b != 13 {
+            break;
+        }
+        start = start + 1;
+    }
+    mut i64 end = len;
+    while end > start {
+        u8 b = ByteAt(text, end - 1);
+        if b != 32 && b != 9 && b != 13 {
+            break;
+        }
+        end = end - 1;
+    }
+    if start >= end {
+        return "";
+    }
+    return SubSlice(text, start, end - start);
+}
+
+/// Returns the byte at the given zero-based index in the UTF-8 representation.
+/// Out-of-bounds access triggers a runtime error.
+/// @tier(standard)
+/// @arg(text) Source string.
+/// @arg(index) Zero-based byte offset.
+/// @returns Byte value as u8.
+pub u8 ByteAt(string text, i64 index) {
+    return text[index];
+}
+
+/// Latin-1 supplement U+0080–U+00FF as concatenated UTF-8 code units (two bytes each).
+pub string Latin1Block() {
+    return " ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ";
+}
+
+pub string DigitChar(i64 digit) {
+    return match digit {
+        0 => "0",
+        1 => "1",
+        2 => "2",
+        3 => "3",
+        4 => "4",
+        5 => "5",
+        6 => "6",
+        7 => "7",
+        8 => "8",
+        _ => "9",
+    };
+}
+
+pub string LowerChar(i64 offset) {
+    return match offset {
+        0 => "a",
+        1 => "b",
+        2 => "c",
+        3 => "d",
+        4 => "e",
+        5 => "f",
+        6 => "g",
+        7 => "h",
+        8 => "i",
+        9 => "j",
+        10 => "k",
+        11 => "l",
+        12 => "m",
+        13 => "n",
+        14 => "o",
+        15 => "p",
+        16 => "q",
+        17 => "r",
+        18 => "s",
+        19 => "t",
+        20 => "u",
+        21 => "v",
+        22 => "w",
+        23 => "x",
+        24 => "y",
+        _ => "z",
+    };
+}
+
+pub string UpperChar(i64 offset) {
+    return match offset {
+        0 => "A",
+        1 => "B",
+        2 => "C",
+        3 => "D",
+        4 => "E",
+        5 => "F",
+        6 => "G",
+        7 => "H",
+        8 => "I",
+        9 => "J",
+        10 => "K",
+        11 => "L",
+        12 => "M",
+        13 => "N",
+        14 => "O",
+        15 => "P",
+        16 => "Q",
+        17 => "R",
+        18 => "S",
+        19 => "T",
+        20 => "U",
+        21 => "V",
+        22 => "W",
+        23 => "X",
+        24 => "Y",
+        _ => "Z",
+    };
+}
+
+pub string CodeUnitChar(u8 b) {
+    if b >= 48 && b <= 57 {
+        return DigitChar(b - 48);
+    }
+    if b >= 65 && b <= 90 {
+        return UpperChar(b - 65);
+    }
+    if b >= 97 && b <= 122 {
+        return LowerChar(b - 97);
+    }
+    return match b {
+        32 => " ",
+        33 => "!",
+        35 => "#",
+        36 => "$",
+        37 => "%",
+        38 => "&",
+        39 => "'",
+        40 => "(",
+        41 => ")",
+        42 => "*",
+        43 => "+",
+        44 => ",",
+        45 => "-",
+        46 => ".",
+        47 => "/",
+        58 => ":",
+        59 => ";",
+        60 => "<",
+        61 => "=",
+        62 => ">",
+        63 => "?",
+        64 => "@",
+        91 => "[",
+        93 => "]",
+        94 => "^",
+        95 => "_",
+        96 => "`",
+        123 => "{",
+        124 => "|",
+        125 => "}",
+        126 => "~",
+        _ => "",
+    };
+}
+
+pub i64 Utf8RuneByteLen(u8 lead) {
+    if lead < 128 {
+        return 1;
+    }
+    if lead < 192 {
+        return 0;
+    }
+    if lead < 224 {
+        return 2;
+    }
+    if lead < 240 {
+        return 3;
+    }
+    if lead < 248 {
+        return 4;
+    }
+    return 0;
+}
+
+pub string Latin1Rune(u8 lead, u8 trail) {
+    i64 cp = (lead - 192) * 64 + (trail - 128);
+    i64 offset = (cp - 128) * 2;
+    return __str_slice(Latin1Block(), offset, 2);
+}
+
+pub string AppendUtf8Rune(string out, u8[] data, i64 start, i64 runeLen) {
+    if runeLen == 1 {
+        u8 b = Slice.Get(data, start);
+        return out + CodeUnitChar(b);
+    }
+    if runeLen == 2 {
+        u8 lead = Slice.Get(data, start);
+        u8 trail = Slice.Get(data, start + 1);
+        return out + Latin1Rune(lead, trail);
+    }
+    u8[] rune = Slice.SubSlice(data, start, runeLen);
+    return out + __str_from_bytes_utf8(rune);
+}
+
+/// Materializes validated UTF-8 code units into a `string` without `__bytes_from_str`.
+pub string FromUtf8CodeUnits(u8[] data) {
+    i64 len = Slice.Len(data);
+    if len == 0 {
+        return "";
+    }
+    mut string out = "";
+    mut i64 i = 0;
+    while i < len {
+        u8 lead = Slice.Get(data, i);
+        i64 runeLen = Utf8RuneByteLen(lead);
+        if runeLen < 1 {
+            return out;
+        }
+        out = AppendUtf8Rune(out, data, i, runeLen);
+        i = i + runeLen;
+    }
+    return out;
+}

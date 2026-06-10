@@ -1,0 +1,15 @@
+/// Error variants for common syscall wrapper operations.
+/// @variant(InvalidFd) Negative or otherwise unusable descriptor.
+/// @variant(UnsupportedReadFd) Read attempted on a non-stdin descriptor in v1.
+/// @variant(InvalidReadLimit) Non-positive read cap.
+/// @variant(IoFailure) Negative syscall return code surfaced as error payload.
+pub enum SyscallError {
+    /// Descriptor is invalid.
+    InvalidFd(i64 fd),
+    /// Reads are unsupported on descriptor.
+    UnsupportedReadFd(i64 fd),
+    /// Requested byte limit is invalid.
+    InvalidReadLimit(i64 maxBytes),
+    /// Runtime syscall reported an I/O failure code.
+    IoFailure(i64 code),
+}

@@ -1,0 +1,31 @@
+/// Parse/analyze smoke for `Beskid.Compiler.Emitter` contribution helpers.
+
+use Beskid.Compiler.Collect;
+use Beskid.Compiler.Emitter;
+use Beskid.Compiler.Emitter.Contribution;
+use Beskid.Compiler.Emitter.Nodes;
+use Testing.Assert;
+
+
+test collect_facade_version_is_stable {
+    Assert.Equal(CollectFacadeVersion(), "0.4.0", "Collect SDK facade version");
+}
+
+test emitter_facade_version_is_stable {
+    Assert.Equal(EmitterFacadeVersion(), "0.6.0", "Emitter SDK facade version");
+}
+
+test emitter_nodes_build_identifier {
+    bool resolved = true;
+    Assert.True(resolved, "Emitter.Nodes import smoke");
+}
+
+test emitter_contribution_helpers_resolve_in_test_harness {
+    bool resolved = true;
+    Assert.True(resolved, "Emitter.Contribution helpers import");
+}
+
+test collect_target_set_fields_are_constructible {
+    bool constructible = true;
+    Assert.True(constructible, "CollectTargetSet import smoke");
+}

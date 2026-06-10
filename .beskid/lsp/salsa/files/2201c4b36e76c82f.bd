@@ -1,0 +1,49 @@
+/// LIFO stack backed by `T[]` storage.
+/// @tier(supported)
+use Collections.Array;
+use Core.Results;
+
+pub type Stack<T> {
+    T[] storage,
+    i64 count,
+
+    pub i64 Count() {
+        return count;
+    }
+
+    pub bool IsEmpty() {
+        return count == 0;
+    }
+
+    pub Stack<T> Push(T value) {
+        i64 next = count + 1;
+        T[] nextStorage = Array.AppendAt<T>(storage, next, value);
+        return Stack<T> { storage: nextStorage, count: next };
+    }
+
+    pub Stack<T> Pop() {
+        if count <= 0 {
+            return Stack<T> { storage: storage, count: 0 };
+        }
+        return Stack<T> { storage: storage, count: count - 1 };
+    }
+
+    pub Result<T, string> Peek() {
+        if count <= 0 {
+            return Result::Error("stack is empty");
+        }
+        return Result::Ok(Array.Get<T>(storage, count - 1));
+    }
+}
+
+pub Stack<T> New<T>() {
+    return Stack<T> { storage: Array.Empty<T>(), count: 0 };
+}
+
+pub i64 Count<T>(Stack<T> stack) {
+    return stack.Count();
+}
+
+pub Stack<T> Push<T>(Stack<T> stack, T value) {
+    return stack.Push(value);
+}

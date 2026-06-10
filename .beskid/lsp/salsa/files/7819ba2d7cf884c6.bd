@@ -1,0 +1,71 @@
+/// Standard input read helpers (stdin-only via syscall layer).
+/// @tier(standard)
+/// @ref(Core.Syscall.ReadWith) syscall-backed read path.
+
+use Core.Syscall.SyscallError;
+use Core.Syscall.Descriptor;
+use Core.Syscall.StandardStream;
+use Core.Syscall.ReadLimit;
+use Core.Syscall.ReadRequest;
+
+/// Reads up to the default byte limit from standard input.
+/// @returns Payload string or a `SyscallError`.
+pub Core.Results.Result<string, SyscallError> Read() {
+    StandardStream stream = StandardStream::Stdin();
+    Descriptor descriptor = Descriptor::Standard(stream);
+    return Core.Syscall.ReadWith(
+        ReadRequest {
+            descriptor: descriptor,
+            limit: ReadLimit::Default()
+        }
+    );
+}
+
+/// Reads a single byte from stdin (bounded read of one code unit).
+pub Core.Results.Result<string, SyscallError> ReadByte() {
+    StandardStream stream = StandardStream::Stdin();
+    Descriptor descriptor = Descriptor::Standard(stream);
+    return Core.Syscall.ReadWith(
+        ReadRequest {
+            descriptor: descriptor,
+            limit: ReadLimit::UpTo(1)
+        }
+    );
+}
+
+/// Reads a line from standard input until `\n` or EOF (excludes the newline).
+/// @returns Payload string or a `SyscallError`.
+pub Core.Results.Result<string, SyscallError> ReadLine() {
+    string line = "";
+    bool done = false;
+    while !done {
+        Core.Results.Result<string, SyscallError> chunk = ReadByte();
+        match chunk {
+            Result::Ok(byte) => {
+                if Core.String.IsEmpty(byte) {
+                    done = true;
+                } else {
+                    if byte == "
+" {
+                        done = true;
+                    } else {
+                        line = line + byte;
+                    }
+                }
+            },
+            Result::Error(err) => {
+                return Result::Error(err);
+            },
+        };
+    }
+    return Result::Ok(line);
+}
+
+/// Returns true when stdin has no buffered bytes available (best-effort empty read).
+pub bool IsEmpty() {
+    Core.Results.Result<string, SyscallError> peek = ReadByte();
+    return match peek {
+        Result::Ok(byte) => Core.String.IsEmpty(byte),
+        Result::Error(_) => true,
+    };
+}

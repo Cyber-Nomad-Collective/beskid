@@ -1,0 +1,9 @@
+/// Typed read request payload for syscall-based reads.
+/// @par(descriptor) Logical source for the read.
+/// @par(limit) Byte cap selection forwarded to `Read`.
+pub type ReadRequest {
+    /// Descriptor selector for read source.
+    Core.Syscall.Descriptor descriptor,
+    /// Read-size option for this call.
+    Core.Syscall.ReadLimit limit,
+}

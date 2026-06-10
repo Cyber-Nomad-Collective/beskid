@@ -1,0 +1,6 @@
+/// Pest grammar parse and combinator emission over Core.Text.Parser.
+pub mod Core.Text.Casing;
+pub mod Core.Text.Pest.Grammar;
+pub mod Core.Text.Pest.Names;
+pub mod Core.Text.Pest.Expr;
+pub mod Core.Text.Pest.Emit;

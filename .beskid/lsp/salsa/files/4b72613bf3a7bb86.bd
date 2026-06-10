@@ -1,0 +1,8 @@
+/// Collections hub — re-exports array-backed container modules.
+/// @tier(standard)
+pub mod Collections.Array;
+pub mod Collections.List;
+pub mod Collections.Map;
+pub mod Collections.Set;
+pub mod Collections.Queue;
+pub mod Collections.Stack;

@@ -1,0 +1,9 @@
+/// Descriptor selector for syscall wrappers.
+/// @variant(Standard) Well-known stdin/stdout/stderr mapping.
+/// @variant(Raw) Opaque numeric descriptor supplied by the host.
+pub enum Descriptor {
+    /// Use one of the runtime-defined standard streams.
+    Standard(Core.Syscall.StandardStream stream),
+    /// Use a raw numeric descriptor.
+    Raw(i64 fd),
+}

@@ -1,0 +1,64 @@
+/// FIFO queue backed by ring buffer over `T[]` storage.
+/// @tier(supported)
+use Collections.Array;
+use Core.Results;
+
+pub type Queue<T> {
+    T[] storage,
+    i64 head,
+    i64 count,
+
+    pub i64 Count() {
+        return count;
+    }
+
+    pub bool IsEmpty() {
+        return count == 0;
+    }
+
+    pub Queue<T> Enqueue(T value) {
+        i64 capacity = Array.Len<T>(storage);
+        if capacity < 1 {
+            capacity = 4;
+            storage = Array.EnsureCapacity<T>(storage, capacity);
+        }
+        i64 tail = head + count;
+        if tail >= capacity {
+            tail = tail - capacity;
+        }
+        if count >= capacity {
+            capacity = capacity * 2;
+            storage = Array.EnsureCapacity<T>(storage, capacity);
+        }
+        T[] nextStorage = Array.Set<T>(storage, tail, value);
+        return Queue<T> { storage: nextStorage, head: head, count: count + 1 };
+    }
+
+    pub Queue<T> Dequeue() {
+        if count <= 0 {
+            return Queue<T> { storage: storage, head: head, count: 0 };
+        }
+        i64 capacity = Array.Len<T>(storage);
+        i64 nextHead = head + 1;
+        if capacity > 0 && nextHead >= capacity {
+            nextHead = 0;
+        }
+        return Queue<T> { storage: storage, head: nextHead, count: count - 1 };
+    }
+
+    pub Result<T, string> Peek() {
+        if count <= 0 {
+            return Result::Error("queue is empty");
+        }
+        i64 capacity = Array.Len<T>(storage);
+        i64 index = head;
+        if capacity > 0 && index >= capacity {
+            index = 0;
+        }
+        return Result::Ok(Array.Get<T>(storage, index));
+    }
+}
+
+pub Queue<T> New<T>() {
+    return Queue<T> { storage: Array.Empty<T>(), head: 0, count: 0 };
+}

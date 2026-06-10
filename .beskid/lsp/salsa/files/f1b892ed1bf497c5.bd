@@ -1,0 +1,44 @@
+/// Fluent OSC builder implementing `Ansi.Contracts.AnsiOscStep` shapes.
+use Ansi.Escape;
+use Console.Capabilities;
+
+pub type OscBuilder {
+    string parts,
+
+    pub OscBuilder SetTitle(string title) {
+        return Append(Escape.OscSequence("0;${title}"));
+    }
+
+    pub string IntoSequence() {
+        return Escape.WhenEnabled(parts);
+    }
+
+    pub OscBuilder Append(string fragment) {
+        return OscBuilder { parts: "${parts}${fragment}" };
+    }
+}
+
+pub OscBuilder Start() {
+    return OscBuilder { parts: "" };
+}
+
+pub OscBuilder SetTitle(OscBuilder self, string title) {
+    return Append(self, Escape.OscSequence("0;${title}"));
+}
+
+pub string Hyperlink(string uri, string label) {
+    if !Console.Capabilities.ShouldEmitAnsi() {
+        return label;
+    }
+    string open = Escape.OscSequence("8;;${uri}");
+    string close = Escape.OscSequence("8;;");
+    return "${open}${label}${close}";
+}
+
+pub string IntoSequence(OscBuilder self) {
+    return Escape.WhenEnabled(self.parts);
+}
+
+pub OscBuilder Append(OscBuilder self, string fragment) {
+    return OscBuilder { parts: "${self.parts}${fragment}" };
+}

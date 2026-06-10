@@ -1,0 +1,151 @@
+/// Platform terminal probes (Linux / macOS / Windows).
+use Console.Capabilities;
+use Console.Capabilities.ColorModel;
+use Console.ConsoleMessage;
+use Concurrency.Channel;
+use Platform.Linux;
+use Platform.MacOS;
+use Platform.Windows;
+
+pub bool EnvFlagSet(string name) {
+    string value = __env_get(name);
+    return !Core.String.IsEmpty(value);
+}
+
+pub bool EnvEquals(string name, string expected) {
+    string value = __env_get(name);
+    return value == expected;
+}
+
+pub i64 IsAtty(i64 fd) {
+    if Linux.IsAtty(fd) {
+        return 1;
+    }
+    if MacOS.IsAtty(fd) {
+        return 1;
+    }
+    if Windows.IsAtty(fd) {
+        return 1;
+    }
+    return 0;
+}
+
+pub bool ForcePlainText() {
+    if EnvFlagSet("NO_COLOR") {
+        return true;
+    }
+    if IsAtty(1) == 0 && !EnvFlagSet("FORCE_COLOR") {
+        return true;
+    }
+    if EnvEquals("TERM", "dumb") {
+        return true;
+    }
+    return false;
+}
+
+pub ColorModel ProbeColorModel() {
+    if ForcePlainText() {
+        return ColorModel::Basic16();
+    }
+    if EnvFlagSet("COLORTERM") {
+        return ColorModel::TrueColor();
+    }
+    if EnvEquals("TERM", "xterm-256color") {
+        return ColorModel::Indexed256();
+    }
+    if EnvEquals("TERM", "xterm-color") {
+        return ColorModel::Basic16();
+    }
+    if EnvFlagSet("TERM") {
+        return ColorModel::Indexed256();
+    }
+    return ColorModel::Indexed256();
+}
+
+/// Best-effort parse of `COLUMNS` / `LINES` when numeric ioctl paths are unavailable.
+pub Console.ConsoleSize EnvFallbackSize() {
+    i32 columns = 80;
+    i32 rows = 24;
+    string cols = __env_get("COLUMNS");
+    if !Core.String.IsEmpty(cols) {
+        columns = ParseEnvColumns(cols, columns);
+    }
+    string lines = __env_get("LINES");
+    if !Core.String.IsEmpty(lines) {
+        rows = ParseEnvRows(lines, rows);
+    }
+    return Console.ConsoleSize { columns: columns, rows: rows };
+}
+
+pub i32 ParsePositiveInt(string value, i32 defaultValue) {
+    if Core.String.IsEmpty(value) {
+        return defaultValue;
+    }
+    i64 len = Core.String.Len(value);
+    i64 i = 0;
+    i64 acc = 0;
+    while i < len {
+        u8 b = Core.String.ByteAt(value, i);
+        if b < 48 || b > 57 {
+            return defaultValue;
+        }
+        acc = acc * 10 + (b - 48);
+        i = i + 1;
+    }
+    if acc < 1 || acc > 2147483647 {
+        return defaultValue;
+    }
+    i32 parsed = acc;
+    return parsed;
+}
+
+pub i32 ParseEnvColumns(string value, i32 defaultValue) {
+    return ParsePositiveInt(value, defaultValue);
+}
+
+pub i32 ParseEnvRows(string value, i32 defaultValue) {
+    return ParsePositiveInt(value, defaultValue);
+}
+
+pub Console.ConsoleSize QuerySize() {
+    Console.ConsoleSize linux = Linux.Winsize();
+    if linux.columns > 0 && linux.rows > 0 {
+        return linux;
+    }
+    Console.ConsoleSize mac = MacOS.Winsize();
+    if mac.columns > 0 && mac.rows > 0 {
+        return mac;
+    }
+    Console.ConsoleSize win = Windows.Winsize();
+    if win.columns > 0 && win.rows > 0 {
+        return win;
+    }
+    return EnvFallbackSize();
+}
+
+pub unit EnsureInitialized() {
+    return;
+}
+
+/// Publishes `ConsoleMessage::Resize` when terminal dimensions change.
+pub unit PollResize(Channel<ConsoleMessage> messages, mut Console.ConsoleSize lastSize) {
+    Console.ConsoleSize now = QuerySize();
+    if now.columns != lastSize.columns || now.rows != lastSize.rows {
+        lastSize = now;
+        match messages.Send(ConsoleMessage::Resize(now)) {
+            Result::Ok(_) => {},
+            Result::Error(_) => {},
+        };
+    }
+    return;
+}
+
+/// In-fiber resize hub (event multicast on the owning fiber).
+pub unit PollResizeHub(mut Console.OnResize hub) {
+    Console.ConsoleSize now = QuerySize();
+    if now.columns != hub.lastSize.columns || now.rows != hub.lastSize.rows {
+        hub.lastSize = now;
+        hub.OnResize(now);
+    }
+    return;
+}

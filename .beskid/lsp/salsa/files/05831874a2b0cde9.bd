@@ -1,0 +1,12 @@
+/// Standard stream handles normalized by runtime conventions.
+/// @variant(Stdin) Standard input.
+/// @variant(Stdout) Standard output.
+/// @variant(Stderr) Standard error.
+pub enum StandardStream {
+    /// Standard input stream.
+    Stdin,
+    /// Standard output stream.
+    Stdout,
+    /// Standard error stream.
+    Stderr,
+}

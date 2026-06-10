@@ -1,0 +1,19 @@
+/// String ↔ byte conversions delegating to `Core.Encoding.Utf8`.
+/// @tier(standard)
+use Core.Bytes.Slice;
+use Core.Encoding.EncodingError;
+use Core.Encoding.Utf8;
+use Core.Results;
+
+/// Encodes UTF-8 text into a byte buffer (infallible for language `string` values).
+pub u8[] StringToBytes(string text) {
+    return match Utf8.EncodeToBytes(text) {
+        Result::Ok(bytes) => bytes,
+        Result::Error(_) => Slice.New(0),
+    };
+}
+
+/// Decodes a UTF-8 byte buffer into `string`.
+pub Result<string, EncodingError> BytesToString(u8[] data) {
+    return Utf8.DecodeFromBytes(data);
+}

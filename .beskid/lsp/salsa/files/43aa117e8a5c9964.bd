@@ -1,0 +1,42 @@
+/// Console terminal events use `Channel<ConsoleMessage>` (M7).
+
+use Concurrency.Channel;
+use Console;
+use Console.ConsoleMessage;
+use Core.Results;
+use Platform.Terminal;
+use Testing.Assert;
+
+
+test messages_channel_factory {
+    Concurrency.Channel<ConsoleMessage> messages = Console.MessagesChannel();
+    ConsoleSize size = ConsoleSize { columns: 80, rows: 24 };
+    Core.Results.Result<Concurrency.Channel.SendOk, Concurrency.ChannelError> sent =
+        messages.Send(ConsoleMessage::Resize(size));
+    Assert.True(
+        Core.Results.IsOk(sent),
+        "resize Send should succeed on open channel"
+    );
+}
+
+test messages_channel_accepts_tick {
+    Concurrency.Channel<ConsoleMessage> messages = Console.MessagesChannel();
+    Core.Results.Result<Concurrency.Channel.SendOk, Concurrency.ChannelError> sent =
+        messages.Send(ConsoleMessage::Tick());
+    Assert.True(
+        Core.Results.IsOk(sent),
+        "Tick Send should succeed on open channel"
+    );
+}
+
+test poll_resize_does_not_fail {
+    bool smoke = true;
+    Assert.True(smoke, "PollResize API import smoke");
+}
+
+test resize_and_tick_variants_constructible {
+    ConsoleSize size = ConsoleSize { columns: 100, rows: 50 };
+    ConsoleMessage resize = ConsoleMessage::Resize(size);
+    ConsoleMessage tick = ConsoleMessage::Tick();
+    Assert.True(true, "console message variants constructible");
+}

@@ -1,0 +1,10 @@
+/// Pest rule naming helpers (delegates to `Core.Text.Casing`).
+use Core.Text.Casing;
+
+pub string RuleNameToPascal(string ruleName) {
+    return Casing.SnakeToPascal(ruleName);
+}
+
+pub string RuleNameToCallable(string ruleName) {
+    return Casing.CallableFromSnake(ruleName, "Parse");
+}

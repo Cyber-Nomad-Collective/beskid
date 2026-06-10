@@ -1,0 +1,10 @@
+/// Shared encoding failure variants.
+/// @tier(standard)
+pub enum EncodingError {
+    /// Byte sequence is not valid for this encoding.
+    InvalidSequence(),
+    /// Base64 padding or length is invalid.
+    InvalidPadding(),
+    /// Hex input has odd length.
+    OddLength(),
+}
