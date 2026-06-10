@@ -134,13 +134,13 @@
       "dependencies": {
         "@astrojs/internal-helpers": "0.9.0",
         "@astrojs/starlight": "^0.38.4",
-        "@beskid/beskid-ui": "npm:@cyber-nomad-collective/beskid-ui@^0.2.1",
+        "@beskid/beskid-ui": "npm:@cyber-nomad-collective/beskid-ui@0.2.3",
         "astro": "6.2.2",
         "astro-embed": "^0.13.0",
         "astro-mermaid": "^2.0.1",
         "mermaid": "^11.15.0",
         "sharp": "^0.34.2",
-        "trudoc": "npm:@cyber-nomad-collective/trudoc@^0.2.1",
+        "trudoc": "npm:@cyber-nomad-collective/trudoc@0.2.3",
       },
       "devDependencies": {
         "tsx": "^4.19.4",
@@ -1956,7 +1956,7 @@
 
     "trough": ["trough@2.2.0", "", {}, "sha512-tmMpK00BjZiUyVyvrBK7knerNgmgvcV/KLVyuma/SC+TQN167GrMRciANTz09+k3zW8L8t60jWO1GpfkZdjTaw=="],
 
-    "trudoc": ["@cyber-nomad-collective/trudoc@0.2.2", "https://npm.pkg.github.com/download/@cyber-nomad-collective/trudoc/0.2.2/d4e72a8b3d51efeebb44ce5ffa3c0b4397268e9e", { "dependencies": { "yaml": "^2.7.0", "zod": "^4.4.3" }, "peerDependencies": { "astro": ">=4.0.0" }, "bin": { "trudoc": "bin/trudoc.mjs", "trudoc-layout": "bin/trudoc-layout.mjs" } }, "sha512-T9g0sDpEsoG0gbSCeU/sxCAyX8QMhUQp8kzTTMWmEKxu9VvNJOIfyqfkF+RSVj7aZVUU/MLLTC3g3GOCIi9OdA=="],
+    "trudoc": ["@cyber-nomad-collective/trudoc@0.2.3", "https://npm.pkg.github.com/download/@cyber-nomad-collective/trudoc/0.2.3/7a7425a76cd6992812831f4f131fb01f48f0e609", { "dependencies": { "yaml": "^2.7.0", "zod": "^4.4.3" }, "peerDependencies": { "astro": ">=4.0.0" }, "bin": { "trudoc": "bin/trudoc.mjs", "trudoc-layout": "bin/trudoc-layout.mjs" } }, "sha512-lhlZjvuqU/Qv9GXunRRPaI1dAxkj8nOp2wLHEVIn3hsA1AFL0k2gg/s8U6+KPva4Gh3JLsrP97ONwlpmmLS0xQ=="],
 
     "ts-dedent": ["ts-dedent@2.2.0", "", {}, "sha512-q5W7tVM71e2xjHZTlgfTDoPF/SmqKG5hddq9SzR49CH2hayqRKJtQ4mtRlSxKaJlR/+9rEM+mnBHf7I2/BQcpQ=="],
 
@@ -2150,7 +2150,7 @@
 
     "beskid-platform-spec/vite": ["vite@8.0.16", "", { "dependencies": { "lightningcss": "^1.32.0", "picomatch": "^4.0.4", "postcss": "^8.5.15", "rolldown": "1.0.3", "tinyglobby": "^0.2.17" }, "optionalDependencies": { "fsevents": "~2.3.3" }, "peerDependencies": { "@types/node": "^20.19.0 || >=22.12.0", "@vitejs/devtools": "^0.1.18", "esbuild": "^0.27.0 || ^0.28.0", "jiti": ">=1.21.0", "less": "^4.0.0", "sass": "^1.70.0", "sass-embedded": "^1.70.0", "stylus": ">=0.54.8", "sugarss": "^5.0.0", "terser": "^5.16.0", "tsx": "^4.8.1", "yaml": "^2.4.2" }, "optionalPeers": ["@types/node", "@vitejs/devtools", "esbuild", "jiti", "less", "sass", "sass-embedded", "stylus", "sugarss", "terser", "tsx", "yaml"], "bin": { "vite": "bin/vite.js" } }, "sha512-h9bXPmJichP5fLmVQo3PyaGSDE2n3aPuomeAlVRm0JLmt4rY6zmPKd59HYI4LNW8oTK7tlTsuC7l/m7awx9Jcw=="],
 
-    "beskid-website/@beskid/beskid-ui": ["@cyber-nomad-collective/beskid-ui@0.2.2", "https://npm.pkg.github.com/download/@cyber-nomad-collective/beskid-ui/0.2.2/9a5ac0576d1df36806737a044962cb1dafc9082d", { "dependencies": { "@cyber-nomad-collective/trudoc": "file:../trudoc", "@dagrejs/dagre": "^1.1.5", "@material/material-color-utilities": "^0.4.0", "astro-navbar": "^2.4.0", "d3": "^7.9.0", "intro.js": "^8.3.2", "rehype-stringify": "^10.0.1", "remark-gfm": "^4.0.1", "remark-parse": "^11.0.0", "remark-rehype": "^11.1.2", "unified": "^11.0.5" }, "peerDependencies": { "@astrojs/starlight": ">=0.30.0", "astro": ">=5.0.0", "react": ">=18.0.0" } }, "sha512-m4fAcIni8aT1sB5lLLpVFEHk/aN9Ln1Yj/+et6JKObBhNMO8Vve9rXuOGKoA2YtHvcW4W5KKRQTM4669HPCLJQ=="],
+    "beskid-website/@beskid/beskid-ui": ["@cyber-nomad-collective/beskid-ui@0.2.3", "https://npm.pkg.github.com/download/@cyber-nomad-collective/beskid-ui/0.2.3/9acc3a63b20aba0aaa9ff8ae7a66dad2052d661d", { "dependencies": { "@cyber-nomad-collective/trudoc": "file:../trudoc", "@dagrejs/dagre": "^1.1.5", "@material/material-color-utilities": "^0.4.0", "astro-navbar": "^2.4.0", "d3": "^7.9.0", "intro.js": "^8.3.2", "rehype-stringify": "^10.0.1", "remark-gfm": "^4.0.1", "remark-parse": "^11.0.0", "remark-rehype": "^11.1.2", "unified": "^11.0.5" }, "peerDependencies": { "@astrojs/starlight": ">=0.30.0", "astro": ">=5.0.0", "react": ">=18.0.0" } }, "sha512-KPwwB8B0UEaZh9w3i0h7s/ZNu1jgI3Nm3WUQ6p8tL3ly0508ZTmzLVyS4qTv688SdZ6GCAyVUM29hgAFvdntgQ=="],
 
     "beskid-website/astro": ["astro@6.2.2", "", { "dependencies": { "@astrojs/compiler": "^4.0.0", "@astrojs/internal-helpers": "0.9.0", "@astrojs/markdown-remark": "7.1.1", "@astrojs/telemetry": "3.3.1", "@capsizecss/unpack": "^4.0.0", "@clack/prompts": "^1.1.0", "@oslojs/encoding": "^1.1.0", "@rollup/pluginutils": "^5.3.0", "aria-query": "^5.3.2", "axobject-query": "^4.1.0", "ci-info": "^4.4.0", "clsx": "^2.1.1", "common-ancestor-path": "^2.0.0", "cookie": "^1.1.1", "devalue": "^5.6.3", "diff": "^8.0.3", "dset": "^3.1.4", "es-module-lexer": "^2.0.0", "esbuild": "^0.27.3", "flattie": "^1.1.1", "fontace": "~0.4.1", "get-tsconfig": "5.0.0-beta.4", "github-slugger": "^2.0.0", "html-escaper": "3.0.3", "http-cache-semantics": "^4.2.0", "js-yaml": "^4.1.1", "jsonc-parser": "^3.3.1", "magic-string": "^0.30.21", "magicast": "^0.5.2", "mrmime": "^2.0.1", "neotraverse": "^0.6.18", "obug": "^2.1.1", "p-limit": "^7.3.0", "p-queue": "^9.1.0", "package-manager-detector": "^1.6.0", "piccolore": "^0.1.3", "picomatch": "^4.0.4", "rehype": "^13.0.2", "semver": "^7.7.4", "shiki": "^4.0.2", "smol-toml": "^1.6.0", "svgo": "^4.0.1", "tinyclip": "^0.1.12", "tinyexec": "^1.0.4", "tinyglobby": "^0.2.15", "ultrahtml": "^1.6.0", "unifont": "~0.7.4", "unist-util-visit": "^5.1.0", "unstorage": "^1.17.5", "vfile": "^6.0.3", "vite": "^7.3.2", "vitefu": "^1.1.2", "xxhash-wasm": "^1.1.0", "yargs-parser": "^22.0.0", "zod": "^4.3.6" }, "optionalDependencies": { "sharp": "^0.34.0" }, "bin": { "astro": "bin/astro.mjs" } }, "sha512-zkne2lZU+iTZPBK8F4gbMfrw5f11bT4VXiBxcdFHcPvYyH+Hox7V1sZu97RDpvwmHi+wQ0efKv89KY5744a0jQ=="],
 
