@@ -38,7 +38,7 @@ Document **examples** for the **Ansi Escape Model** feature: role-specific norma
 ```beskid
 string esc = Ansi.Escape.Esc();
 string seq = Ansi.Escape.EmitCsi("1;31", "m");
-System.Output.Write("${seq}Hello${Ansi.Sgr.ResetSuffix()}");
+Core.Output.Write("${seq}Hello${Ansi.Sgr.ResetSuffix()}");
 ```
 
 Ungated framing for tests:
@@ -57,7 +57,7 @@ string moves = Ansi.Cursor.IntoSequence(
 string clear = Ansi.Erase.IntoSequence(
     Ansi.Erase.DisplayAll(Ansi.Erase.Start())
 );
-System.Output.Write("${moves}${clear}");
+Core.Output.Write("${moves}${clear}");
 ```
 
 When `ShouldEmitAnsi()` is false, `IntoSequence` returns `""` for both builders.
@@ -78,7 +78,7 @@ string line = Ansi.Sgr.Start()
     .Bold()
     .FgBasic(31)
     .ApplyTo("error");
-System.Output.WriteLine(line);
+Core.Output.WriteLine(line);
 ```
 
 `ApplyTo` appends gated `ESC[0m` when attributes were applied.
@@ -88,9 +88,9 @@ System.Output.WriteLine(line);
 ```beskid
 string save = Ansi.Escape.EmitDec("7");
 string restore = Ansi.Escape.EmitDec("8");
-System.Output.Write("${save}");
+Core.Output.Write("${save}");
 // draw status line
-System.Output.Write("${restore}");
+Core.Output.Write("${restore}");
 ```
 
 Prefer DEC sequences over SCO `ESC[s` / `ESC[u` per decision **D-TC-001**.

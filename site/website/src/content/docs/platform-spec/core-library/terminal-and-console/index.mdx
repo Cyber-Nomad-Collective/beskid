@@ -27,7 +27,7 @@ import DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';
 <SpecPageHeader ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
 
 <SpecSection title="Scope" id="scope">
-Terminal-facing corelib splits **byte stream I/O** (`System.Input`, `System.Output`, `System.Error` via `System.Syscall`) from **styled terminal output** (`corelib_console`: `Ansi`, `Console.Format`, controls, capabilities). Resize and tick delivery use **channels** or same-fiber **events**—no new runtime builtins beyond existing syscall and fiber surfaces.
+Terminal-facing corelib splits **byte stream I/O** (`Core.Input`, `Core.Output`, `Core.Error` via `Core.Syscall`) from **styled terminal output** (`corelib_console`: `Ansi`, `Console.Format`, controls, capabilities). Resize and tick delivery use **channels** or same-fiber **events**—no new runtime builtins beyond existing syscall and fiber surfaces.
 </SpecSection>
 
 <SpecSection title="Authority split" id="authority-split">

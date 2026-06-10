@@ -1,0 +1,89 @@
+import { createFileRoute, notFound } from "@tanstack/react-router";
+
+import { ReaderChrome } from "#/components/reader/reader-chrome";
+import { SpecShell } from "#/components/reader/spec-shell";
+import { StructuredDocumentView } from "#/components/reader/structured-document-view";
+import { fetchCatalog, fetchDocumentBySlug, fetchNavTree } from "#/server/catalog";
+
+// Run `bun run dev` to regenerate routeTree.gen.ts after route changes.
+export const Route = createFileRoute("/platform-spec/$")({
+	loader: async ({ params }) => {
+		const splat = params._splat?.replace(/^\/+|\/+$/g, "") ?? "";
+		const slug = splat ? `platform-spec/${splat}` : "platform-spec";
+
+		const [document, navTree, catalog] = await Promise.all([
+			fetchDocumentBySlug({ data: { slug } }),
+			fetchNavTree(),
+			fetchCatalog(),
+		]);
+
+		if (!document) {
+			throw notFound();
+		}
+
+		const frontmatter = document.frontmatter;
+		const title =
+			typeof frontmatter.title === "string" ? frontmatter.title : slug;
+		const specLevel =
+			typeof frontmatter.specLevel === "string"
+				? frontmatter.specLevel
+				: null;
+		const status =
+			typeof frontmatter.status === "string" ? frontmatter.status : null;
+		const description =
+			typeof frontmatter.description === "string"
+				? frontmatter.description
+				: null;
+
+		return {
+			slug,
+			navTree,
+			catalog,
+			title,
+			specLevel,
+			status,
+			description,
+			bodyMd: document.body,
+			layoutJson: document.layoutJson,
+		};
+	},
+	component: PlatformSpecDocument,
+});
+
+function PlatformSpecDocument() {
+	const {
+		slug,
+		navTree,
+		catalog,
+		title,
+		specLevel,
+		status,
+		description,
+		bodyMd,
+		layoutJson,
+	} = Route.useLoaderData();
+
+	return (
+		<ReaderChrome>
+			<SpecShell navTree={navTree} activeSlug={slug}>
+				<StructuredDocumentView
+					slug={slug}
+					title={title}
+					specLevel={specLevel}
+					status={status}
+					description={description}
+					bodyMd={bodyMd}
+					layoutJson={layoutJson}
+					catalogEntries={catalog.entries.map((entry) => ({
+						slug: entry.slug,
+						href: entry.href,
+						title: entry.title,
+						description: entry.description,
+						status: entry.status,
+						pathClass: entry.pathClass,
+					}))}
+				/>
+			</SpecShell>
+		</ReaderChrome>
+	);
+}

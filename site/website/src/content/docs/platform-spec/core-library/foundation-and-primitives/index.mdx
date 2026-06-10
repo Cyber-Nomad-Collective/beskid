@@ -1,6 +1,6 @@
 ---
 title: Foundation and primitives
-description: Core.Bytes, Core.Encoding, and byte-oriented primitives in corelib_foundation.
+description: Core.Bytes, Core.Encoding, Core.Optional, Collections, and primitive modules in corelib_foundation.
 template: splash
 tableOfContents: false
 specLevel: area
@@ -24,7 +24,7 @@ import DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';
 />
 
 <SpecSection title="Rationale" id="rationale">
-Pure Beskid primitive modules (`Core.Bytes`, `Core.Encoding`, `Core.Text.*`) live in `corelib_foundation`. They **must not** embed OS syscall semantics; binary I/O routes through [System.Syscall](/platform-spec/core-library/stability-and-api-shape/system-syscall/). Text parsing primitives are specified under [Text and parsing](/platform-spec/core-library/text-and-parsing/).
+`corelib_foundation` hosts the unified `Core.*` namespace: primitive modules (`Core.Bytes`, `Core.Encoding`, `Core.Text.*`, [Core.Optional](/platform-spec/core-library/foundation-and-primitives/core-optional/)), [Collections](/platform-spec/core-library/foundation-and-primitives/core-collections/), and OS-backed surfaces ([Core.Syscall](/platform-spec/core-library/stability-and-api-shape/core-syscall/), [Core.Time](/platform-spec/core-library/stability-and-api-shape/core-time/)). Stability is expressed with `@tier(...)` and documented builtin backing—not a separate `System.*` namespace. Text parsing primitives are specified under [Text and parsing](/platform-spec/core-library/text-and-parsing/).
 </SpecSection>
 
 <DomainTiles pathPrefix="platform-spec/core-library/foundation-and-primitives" heading="Features" />

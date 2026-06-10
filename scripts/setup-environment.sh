@@ -109,6 +109,15 @@ run_js_install() {
     warn "bun not on PATH — run: ./scripts/install-deps.sh --install --tool bun"
     return 0
   fi
+  if [[ -z "${NODE_AUTH_TOKEN:-}" && -f "${SUPERREPO_ROOT}/.env" ]]; then
+    # shellcheck disable=SC1091
+    set -a
+    source "${SUPERREPO_ROOT}/.env" 2>/dev/null || true
+    set +a
+  fi
+  if [[ -z "${NODE_AUTH_TOKEN:-}" ]] && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+    note "NODE_AUTH_TOKEN unset — run ./scripts/setup-npm-auth.sh for GitHub Packages"
+  fi
   section "Bun workspaces"
   (cd "${SUPERREPO_ROOT}" && bun install)
   ok "bun install complete"

@@ -1,0 +1,49 @@
+# Local development: Memgraph + platform-spec app.
+services:
+  memgraph:
+    image: memgraph/memgraph:3.0.0
+    restart: unless-stopped
+    ports:
+      - "7687:7687"
+      - "7444:7444"
+    command: ["--log-level=WARNING"]
+
+  platform-spec:
+    build:
+      context: ../..
+      dockerfile: site/platform-spec/Dockerfile
+      args:
+        NODE_AUTH_TOKEN: ${NODE_AUTH_TOKEN:-}
+    restart: unless-stopped
+    ports:
+      - "8460:8460"
+    depends_on:
+      - memgraph
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: "8460"
+      MEMGRAPH_URI: bolt://memgraph:7687
+      AUTH_HUB_PUBLIC_URL: ${AUTH_HUB_PUBLIC_URL:-}
+      SESSION_SECRET: ${SESSION_SECRET:-}
+      PLATFORM_SPEC_PUBLIC_URL: ${PLATFORM_SPEC_PUBLIC_URL:-http://127.0.0.1:8460}
+      GITHUB_REPO_OWNER: ${GITHUB_REPO_OWNER:-Cyber-Nomad-Collective}
+      GITHUB_REPO_NAME: ${GITHUB_REPO_NAME:-beskid}
+      GITHUB_SYNC_TOKEN: ${GITHUB_SYNC_TOKEN:-}
+      GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET:-}
+      PLATFORM_SPEC_MODERATOR_LOGINS: ${PLATFORM_SPEC_MODERATOR_LOGINS:-}
+      PLATFORM_SPEC_DATA_DIR: ${PLATFORM_SPEC_DATA_DIR:-/app/site/platform-spec/data/runtime}
+      PLATFORM_SPEC_PAIRING_APPROVER_LOGIN: ${PLATFORM_SPEC_PAIRING_APPROVER_LOGIN:-}
+      PLATFORM_SPEC_SETUP_TOKEN: ${PLATFORM_SPEC_SETUP_TOKEN:-}
+    volumes:
+      - platform-spec-data:/app/site/platform-spec/data/runtime
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8460/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  platform-spec-data:

@@ -74,9 +74,11 @@ The compile-time package groups the natural compilation shape into modules (exac
 | **`Beskid.Compiler.Query`** | Declarative query surfaces over syntax and semantic snapshots. |
 | **`Beskid.Compiler.Collect`** | `Collector`, `Generator`, `Analyzer`, `Rewriter`, and `AttributeGenerator` contracts plus target-selection primitives. |
 | **`Beskid.Compiler.Diagnostics`** | Compiler-native diagnostics transport for analyzers and rewrite suggestions. |
-| **`Beskid.Compiler.TypedEmitter`** | Typed AST contributions and typed rewrites; no raw text/formatting contract. |
+| **`Beskid.Compiler.Emitter`** | Typed AST contributions and typed rewrites; split across `Emitter/{Nodes,Contracts,Items,Contribution,Fluent}`; no raw text/formatting contract. |
+| **`Beskid.Compiler.Workspace`** | Workspace root, members, lock hash, mod dependency graph (populated on collect/generate requests). |
+| **`Beskid.Compiler.ModCatalog`** | Loaded mod packages, capabilities, and registration metadata. |
 
-**`Beskid.Compiler.Compilation`** remains the handle for the active host compilation instance.
+**`Beskid.Compiler.Compilation`** remains the handle for the active host compilation instance. Request payload shapes are specified in **[Compiler Mod SDK / design model](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/design-model/)**.
 
 Feature hubs below map onto these boundaries with traceability into `beskid_analysis`, `beskid_lsp`, `beskid_codegen`, `beskid_engine`, and `beskid_runtime`.
 </SpecSection>
@@ -113,6 +115,17 @@ For **`project.type = Mod`**, the host registers mod contracts and emits `beskid
 **Insertion order (host compilation with mods)** — After `parse`, run `mod.load` (if needed), `mod.collect`, `mod.generate`, then re-parse when generation changed syntax, followed by `semantic`/`semantic.snapshot`, `mod.analyze`, optional `mod.rewrite`, and then `lower`/backend phases. Exact ordering is pinned in **[Stage ordering and lowering / design model](/platform-spec/compiler/build-pipeline/stage-ordering/design-model/)**.
 
 Budgets (`maxGeneratorRounds`, step caps) and capability checks are specified in **[Mod host bridge](/platform-spec/compiler/compiler-mods/mod-host-bridge/)**; cache keys in **[Incremental scheduling and determinism](/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/)**.
+</SpecSection>
+
+<SpecSection title="Mod CLI surface" id="mod-cli">
+The **`beskid mod`** command group manages **AOT artifact cache lifecycle** only. Generation and optional on-disk materialization are **compiler-owned**—they run during host **`beskid build`**, **`beskid run`**, **`beskid test`**, **`beskid analyze`**, and LSP analysis when observed Collector targets miss their fingerprint (see **[Mod host bridge / design model](/platform-spec/compiler/compiler-mods/mod-host-bridge/design-model/)**).
+
+| Subcommand | Role |
+| --- | --- |
+| **`beskid mod rebuild`** | Clean and rebuild mod AOT artifacts for the active workspace slice |
+| **`beskid mod clean`** | Remove cached mod artifacts under the object store |
+
+**`beskid mod generate`** is **not** a normative CLI surface. Earlier tooling that invoked a standalone generate step with `--layout` / `--output` flags is **removed**; mods that declare **`generatedOutputs`** in their manifest receive disk writes from the host on fingerprint miss during rebuild/build, not from a separate operator command.
 </SpecSection>
 
 <DomainOrAreaHub pathPrefix="platform-spec/compiler/compiler-mods" summaryTitle="Subtree summary" />

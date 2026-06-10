@@ -32,7 +32,7 @@ A single Console IO type obscures direction and syscall descriptors.
 
 | Rule | Detail |
 | --- | --- |
-| Modules | `System.Input`, `System.Output`, `System.Error` |
+| Modules | `Core.Input`, `Core.Output`, `Core.Error` |
 | Forbidden | Monolithic console IO type for standard streams |
 
 ## Consequences
@@ -41,4 +41,4 @@ Each module binds one `StandardStream` descriptor; cross-stream APIs stay separa
 
 ## Verification anchors
 
-`packages/runtime/src/System/Input/Input.bd`, `Output/Output.bd`, `Error/Error.bd`.
+`packages/foundation/src/Core/Input/Input.bd`, `Output/Output.bd`, `Error/Error.bd`.

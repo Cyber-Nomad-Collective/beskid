@@ -19,6 +19,11 @@ echo "==> Install Dagger module deps"
   npm ci --include=dev
 )
 
+if ! command -v rg >/dev/null 2>&1; then
+  echo "==> Install ripgrep (parity script)"
+  sudo apt-get update -qq && sudo apt-get install -y ripgrep
+fi
+
 echo "==> corelib_tests bproj ↔ typecheck parity"
 bash ./compiler/scripts/verify-corelib-tests-parity.sh
 

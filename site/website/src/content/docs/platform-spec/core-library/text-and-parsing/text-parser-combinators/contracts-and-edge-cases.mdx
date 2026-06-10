@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
-lastReviewed: 2026-06-08
+lastReviewed: 2026-06-10
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -31,3 +31,15 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 | **PARSER-002** | `Choice` **must** restore cursor on branch failure. |
 | **PARSER-003** | `Many` on zero-width parser **must** error. |
 | **PARSER-004** | Combinators **must not** panic on malformed input. |
+| **PARSER-005** | Generated and hand-authored parser callables **must** use **PascalCase** identifiers (`ParseDigit`, `ZeroOrMany`). Locals and parameters **must** use **camelCase** (`choice0`, `seqCur`, `manyCount`). Diagnostic `rule` label strings **may** retain Pest **snake_case** spellings (`"digit"`, `"lower_run"`)—they are string literals, not Beskid identifiers. Emitters **must not** produce snake_case Beskid callables or underscored locals (for example `Parse_digit`, `choice_0`). |
+
+### PARSER-005 examples
+
+| Surface | Normative | Rejected |
+| --- | --- | --- |
+| Rule callable | `ParseLowerRun` | `Parse_lower_run`, `Parse_lowerRun` |
+| Local | `choice0` | `choice_0` |
+| Local | `seqCur` | `seq_cur` |
+| Diagnostic label | `"lower_run"` | — (Pest spelling allowed in strings) |
+
+Naming authority: [code style and naming](/platform-spec/language-meta/program-structure/code-style-and-naming/). Pest codegen applies the same rules via [Pest parser generator](/platform-spec/compiler/compiler-mods/pest-parser-generator/).

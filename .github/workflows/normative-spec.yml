@@ -1,0 +1,42 @@
+name: Normative spec
+
+on:
+  pull_request:
+    paths:
+      - "beskid_normative_spec/**"
+      - "beskid_web_common/packages/spec-core/**"
+      - "packages/spec-cli/**"
+  push:
+    branches: [main]
+    paths:
+      - "beskid_normative_spec/**"
+
+jobs:
+  validate-normative-spec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install spec-core
+        working-directory: beskid_web_common/packages/spec-core
+        run: bun install
+
+      - name: Validate normative workspace
+        run: bun run beskid_web_common/packages/spec-core/scripts/validate-workspace.ts beskid_normative_spec
+
+      - name: Install spec CLI
+        working-directory: packages/spec-cli
+        run: bun install
+
+      - name: Smoke test CLI new node
+        run: |
+          tmp=$(mktemp -d)
+          cp -R beskid_normative_spec/spec.json "$tmp/"
+          cp -R beskid_normative_spec/platform-spec "$tmp/"
+          cd "$tmp"
+          bun run ../packages/spec-cli/bin/spec.mjs new node -t Article --slug platform-spec/smoke-test --title "Smoke"
+          bun run ../packages/spec-cli/bin/spec.mjs validate --dir .

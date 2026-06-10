@@ -37,15 +37,15 @@ Run from `site/website`:
 
 `bun dev` / `bun build` run `predev` / `prebuild`: CLI version sync, platform-spec git meta, `generate:platform-spec-nav-tree`, `generate:platform-spec-catalog`, `generate:book-nav-tree`, `verify:book-images`, `verify:book-layout` (Starlight two-column width guards), and trudoc CI verify (build only).
 
-**Public JSON APIs** (served from `public/generated/` after prebuild, no separate roadmap deploy when spec changes):
+**Public JSON APIs** (platform spec — served from `spec.beskid-lang.org` after deploy):
 
 | URL | Purpose |
 |-----|---------|
-| `/generated/platform-spec-nav-tree.json` | Nested platform-spec nav for [beskid_tracker](https://github.com/Cyber-Nomad-Collective/beskid/tree/main/beskid_tracker) spec picker |
-| `/generated/platform-spec-catalog.json` | Flat index of all platform-spec documents (includes ADRs omitted from nav tree) |
-| `/generated/platform-spec-docs/<slug>.json` | Per-document frontmatter + body bundles for tracker proposal editing |
+| `/api/v1/catalog` | Flat index of all platform-spec documents |
+| `/api/v1/nav-tree` | Nested platform-spec nav |
+| `/api/v1/docs/{slug}` | Per-document frontmatter + body bundles |
 
-Consumers (for example [beskid_tracker](https://github.com/Cyber-Nomad-Collective/beskid/tree/main/beskid_tracker)) fetch from `https://beskid-lang.org` after each docs deploy.
+Consumers (for example [beskid_tracker](https://github.com/Cyber-Nomad-Collective/beskid/tree/main/beskid_tracker)) fetch from `https://spec.beskid-lang.org`.
 
 In-site navigation uses Astro `ClientRouter` with `fallback="animate"` (View Transitions polyfill on browsers without native support). Directional slide is applied on the Starlight `<main>` pane via [`Page.astro`](https://github.com/Cyber-Nomad-Collective/beskid_web_common/blob/main/packages/beskid-ui/src/starlight/Page.astro) from `@beskid/beskid-ui` (re-diff when upgrading `@astrojs/starlight`).
 
@@ -53,7 +53,9 @@ In-site navigation uses Astro `ClientRouter` with `fallback="animate"` (View Tra
 
 Authoring note: co-located images beside `.md` files are allowed where the author placed them; a missing file can brick `astro dev` until you add the asset and run `bun run dev:clean`.
 
-Public documentation is split into **[Platform specification](/platform-spec/)** (normative) and **[The Beskid Book](/book/)** (informative tutorial + reference). Starlight’s default docs sidebar is disabled; each area uses its own navigation rail.
+Public documentation is split into **[Platform specification](https://spec.beskid-lang.org/platform-spec/)** (normative, Memgraph app) and **[The Beskid Book](/book/)** (informative tutorial + reference). Starlight’s default docs sidebar is disabled; each area uses its own navigation rail.
+
+Legacy platform-spec URLs on `beskid-lang.org/platform-spec/*` redirect to `spec.beskid-lang.org`.
 
 ## Deployment
 

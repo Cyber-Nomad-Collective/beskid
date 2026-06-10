@@ -30,7 +30,7 @@ Legacy `rt_now_millis` and scattered clock builtins confuse package boundaries.
 
 ## Decision
 
-`` `Concurrency.NowMillis() -> i64` `` in concurrency package replaces legacy `rt_now_millis`. Wall clock deferred to future `System.Time`.
+`` `Concurrency.NowMillis() -> i64` `` in concurrency package replaces legacy `rt_now_millis`. Wall clock deferred to future `Core.Time`.
 
 ## Consequences
 

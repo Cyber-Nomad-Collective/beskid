@@ -16,6 +16,7 @@ export const env = createEnv({
 		TRACKER_PUBLIC_URL: z.string().url().optional(),
 		NEXUS_PUBLIC_URL: z.string().url().optional(),
 		PCKG_PUBLIC_URL: z.string().url().optional(),
+		PLATFORM_SPEC_PUBLIC_URL: z.string().url().optional(),
 		NODE_ENV: z.enum(["development", "production", "test"]).optional(),
 		LOG_LEVEL: z
 			.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
@@ -33,6 +34,7 @@ export const env = createEnv({
 		TRACKER_PUBLIC_URL: process.env.TRACKER_PUBLIC_URL,
 		NEXUS_PUBLIC_URL: process.env.NEXUS_PUBLIC_URL,
 		PCKG_PUBLIC_URL: process.env.PCKG_PUBLIC_URL,
+		PLATFORM_SPEC_PUBLIC_URL: process.env.PLATFORM_SPEC_PUBLIC_URL,
 		NODE_ENV: process.env.NODE_ENV,
 		LOG_LEVEL: process.env.LOG_LEVEL,
 	},

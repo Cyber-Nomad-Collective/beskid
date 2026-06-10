@@ -97,7 +97,7 @@ All fiber operations that can fail **must** return `Core.Results.Result` (or `Op
 3. **Receive** — if empty and open, park; if closed and empty, return `Result::Err(Closed)`.
 4. **TrySend** / **TryReceive** — non-blocking; `Option` for empty/full.
 5. **Hub.WaitReceive** — runtime waits until any registered channel can satisfy Receive; returns which member completed.
-6. Blocking **syscall** paths in `System.Syscall` **should** park the calling fiber and delegate blocking work to the thread pool (runtime), not stall the whole scheduler.
+6. Blocking **syscall** paths in `Core.Syscall` **should** park the calling fiber and delegate blocking work to the thread pool (runtime), not stall the whole scheduler.
 </SpecSection>
 
 <SpecSection title="Edge cases and errors" id="edge-cases-and-errors">
@@ -132,7 +132,7 @@ No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-C
 </SpecSection>
 
 <SpecSection title="Related features" id="related-features">
-- **[System.Threading](/platform-spec/core-library/concurrency/system-threading/)** — OS threads (preemptive), not fibers
+- **[Core.Threading](/platform-spec/core-library/concurrency/core-threading/)** — OS threads (preemptive), not fibers
 - **[Console terminal events](/platform-spec/core-library/terminal-and-console/console-terminal-events/)** — delivers via **Channel**
 </SpecSection>
 

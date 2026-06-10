@@ -51,11 +51,11 @@ Document **flow and algorithm** for the **Console Io Streams** feature: role-spe
 
 ### Console tick integration
 
-`Console.RunTick` polls resize and may write control sequences via `System.Output` after formatting. The tick loop **should** run on a fiber that owns the terminal UI; see [Console terminal events](/platform-spec/core-library/terminal-and-console/console-terminal-events/).
+`Console.RunTick` polls resize and may write control sequences via `Core.Output` after formatting. The tick loop **should** run on a fiber that owns the terminal UI; see [Console terminal events](/platform-spec/core-library/terminal-and-console/console-terminal-events/).
 
 ### Styled output flow
 
-Markup or `Ansi` builders → gated string → `System.Output.Write` / `WriteLine`. Capability probing runs **before** write, not inside `Output.bd`.
+Markup or `Ansi` builders → gated string → `Core.Output.Write` / `WriteLine`. Capability probing runs **before** write, not inside `Output.bd`.
 
 ## Verification
 

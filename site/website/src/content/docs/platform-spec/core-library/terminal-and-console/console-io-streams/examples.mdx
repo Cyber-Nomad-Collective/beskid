@@ -36,19 +36,19 @@ Document **examples** for the **Console Io Streams** feature: role-specific norm
 ### Plain stdout
 
 ```beskid
-System.Output.WriteLine("ready");
-System.Error.WriteLine("warning: deprecated flag");
+Core.Output.WriteLine("ready");
+Core.Error.WriteLine("warning: deprecated flag");
 ```
 
 ### Stdin line input
 
 ```beskid
-match System.Input.ReadLine() {
+match Core.Input.ReadLine() {
     Result::Ok(line) => {
-        System.Output.WriteLine("echo: ${line}");
+        Core.Output.WriteLine("echo: ${line}");
     },
     Result::Error(err) => {
-        System.Error.WriteLine("read failed");
+        Core.Error.WriteLine("read failed");
     },
 }
 ```
@@ -59,13 +59,13 @@ match System.Input.ReadLine() {
 Console.FormatLine("[red]Error:[/] file not found");
 ```
 
-`FormatLine` calls `Console.Format` then `System.Output.WriteLine`; ANSI gating is applied inside format/escape layers, not in `Output.bd`.
+`FormatLine` calls `Console.Format` then `Core.Output.WriteLine`; ANSI gating is applied inside format/escape layers, not in `Output.bd`.
 
 ### Low-level escape bytes on stdout
 
 ```beskid
 string seq = Ansi.Escape.EmitCsi("2", "J");
-System.Output.Write(seq);
+Core.Output.Write(seq);
 ```
 
 Escape semantics are specified in [ANSI escape model](/platform-spec/core-library/terminal-and-console/ansi-escape-model/); this example only shows the write surface.

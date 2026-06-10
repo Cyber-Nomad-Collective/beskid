@@ -1,0 +1,48 @@
+services:
+  platform-spec:
+    image: ghcr.io/cyber-nomad-collective/beskid-platform-spec:${IMAGE_TAG:-main}
+    restart: unless-stopped
+    depends_on:
+      - memgraph
+    expose:
+      - "8460"
+    environment:
+      NODE_ENV: production
+      PORT: "8460"
+      MEMGRAPH_URI: ${MEMGRAPH_URI:-bolt://memgraph:7687}
+      AUTH_HUB_PUBLIC_URL: ${AUTH_HUB_PUBLIC_URL:-}
+      SESSION_SECRET: ${SESSION_SECRET:-}
+      PLATFORM_SPEC_PUBLIC_URL: ${PLATFORM_SPEC_PUBLIC_URL:-https://spec.beskid-lang.org}
+      GITHUB_REPO_OWNER: ${GITHUB_REPO_OWNER:-Cyber-Nomad-Collective}
+      GITHUB_REPO_NAME: ${GITHUB_REPO_NAME:-beskid_normative_spec}
+      GITHUB_OAUTH_REPO_OWNER: ${GITHUB_OAUTH_REPO_OWNER:-Cyber-Nomad-Collective}
+      GITHUB_OAUTH_REPO_NAME: ${GITHUB_OAUTH_REPO_NAME:-beskid}
+      GITHUB_SYNC_TOKEN: ${GITHUB_SYNC_TOKEN:-}
+      GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET:-}
+      SPEC_GIT_REPO_URL: ${SPEC_GIT_REPO_URL:-https://github.com/Cyber-Nomad-Collective/beskid_normative_spec.git}
+      SPEC_GIT_REF: ${SPEC_GIT_REF:-main}
+      SPEC_SYNC_MODE: ${SPEC_SYNC_MODE:-json}
+      PLATFORM_SPEC_PAIRING_APPROVER_LOGIN: ${PLATFORM_SPEC_PAIRING_APPROVER_LOGIN:-}
+      PLATFORM_SPEC_MODERATOR_LOGINS: ${PLATFORM_SPEC_MODERATOR_LOGINS:-}
+      PLATFORM_SPEC_DATA_DIR: ${PLATFORM_SPEC_DATA_DIR:-/app/site/platform-spec/data/runtime}
+    volumes:
+      - platform-spec-data:/app/site/platform-spec/data/runtime
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8460/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  memgraph:
+    image: memgraph/memgraph-mage:3.6.2
+    restart: unless-stopped
+    expose:
+      - "7687"
+      - "7444"
+    volumes:
+      - memgraph-data:/var/lib/memgraph
+
+volumes:
+  platform-spec-data:
+  memgraph-data:

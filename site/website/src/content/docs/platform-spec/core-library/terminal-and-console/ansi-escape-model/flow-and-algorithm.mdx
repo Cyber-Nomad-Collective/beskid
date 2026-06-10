@@ -45,7 +45,7 @@ flowchart LR
   markup[Console.Format or Ansi builders]
   gate[Ansi.Escape.WhenEnabled]
   bytes[UTF-8 string]
-  out[System.Output.Write / WriteLine]
+  out[Core.Output.Write / WriteLine]
   markup --> gate --> bytes --> out
 ```
 

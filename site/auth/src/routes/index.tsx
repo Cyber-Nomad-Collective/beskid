@@ -52,7 +52,7 @@ function HomePage() {
 					/>
 					<p className="text-muted-foreground text-center text-xs">
 						<a
-							href="https://beskid-lang.org/platform-spec/"
+							href="https://spec.beskid-lang.org/platform-spec/"
 							className="underline-offset-4 hover:underline"
 						>
 							Platform specification

@@ -41,7 +41,7 @@ Show how application code turns **console markup** into syscall-backed stdout/st
 Console.FormatLine("[green]ok[/] **built** in 12ms");
 ```
 
-`FormatLine` renders with `ShouldStyle()` (same predicate as `ShouldEmitAnsi()`), then calls `System.Output.WriteLine`. When color is stripped, output is plain text without bracket tags interpreted as color.
+`FormatLine` renders with `ShouldStyle()` (same predicate as `ShouldEmitAnsi()`), then calls `Core.Output.WriteLine`. When color is stripped, output is plain text without bracket tags interpreted as color.
 
 ### Plain vs styled render entry points
 
@@ -58,7 +58,7 @@ Use `RenderPlain` for logs and redirected stdout; use `RenderStyled` or `Format`
 string line = Console.Format.Markdown.RenderStyled(
     "[blue]**Error:**[/] file not found"
 );
-System.Output.WriteLine(line);
+Core.Output.WriteLine(line);
 ```
 
 Inner `**` spans compose with outer bracket color via `Ansi.StyleChain` (see [flow and algorithm](./flow-and-algorithm/)).

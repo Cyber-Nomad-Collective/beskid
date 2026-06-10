@@ -64,7 +64,7 @@ Sequences present in `ANSI.md` but **without** a corelib builder or golden test 
 
 ### Edge cases
 
-- **Piped stdout**: When stdout is not a TTY and `FORCE_COLOR` is unset, styled helpers **must** emit no escapes (**ANSI-003**); plain `System.Output.Write` still writes bytes.
+- **Piped stdout**: When stdout is not a TTY and `FORCE_COLOR` is unset, styled helpers **must** emit no escapes (**ANSI-003**); plain `Core.Output.Write` still writes bytes.
 - **Partial terminal support**: Terminals **may** ignore italic, blink, or truecolor; downgrade reduces garbled output but cannot guarantee visual fidelity.
 - **Multiplexers** (`tmux`, `screen`): Alternate-buffer and private-mode sequences **may** behave differently; corelib does not special-case multiplexers in v1.
 - **Keyboard redefinition (`ESC[{code};{string}p`)**: Not implemented; documented in `ANSI.md` for historical completeness only.

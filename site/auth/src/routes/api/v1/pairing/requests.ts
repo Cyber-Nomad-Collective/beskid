@@ -5,7 +5,7 @@ import { requireHubAdmin } from "#/server/hub-admin";
 import { createPairingRequest } from "#/server/repositories/pairing";
 
 const bodySchema = z.object({
-	appId: z.enum(["tracker", "nexus", "pckg"]),
+	appId: z.enum(["tracker", "nexus", "pckg", "platform-spec"]),
 	publicUrl: z.string().url(),
 });
 

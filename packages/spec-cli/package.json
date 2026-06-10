@@ -1,0 +1,23 @@
+{
+	"name": "@beskid/spec-cli",
+	"version": "0.2.0",
+	"private": true,
+	"description": "CLI for normative platform-spec workspace management (init, validate, serve, import, GitHub PR flow).",
+	"type": "module",
+	"bin": {
+		"spec": "./bin/spec.mjs"
+	},
+	"scripts": {
+		"typecheck": "tsc -p tsconfig.json",
+		"test": "vitest run"
+	},
+	"dependencies": {
+		"@cyber-nomad-collective/spec-core": "file:../../beskid_web_common/packages/spec-core"
+	},
+	"devDependencies": {
+		"@types/node": "^22.13.5",
+		"typescript": "^5.8.2",
+		"vitest": "^3.2.4"
+	},
+	"license": "MIT"
+}

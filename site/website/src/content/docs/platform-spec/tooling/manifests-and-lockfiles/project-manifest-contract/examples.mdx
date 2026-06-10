@@ -75,6 +75,8 @@ The compiler auto-loads transitive `Mod` dependencies (for example `serializatio
 - `beskid mod rebuild` — clean and rebuild mod artifacts for the active workspace slice.
 - `beskid mod clean` — remove cached mod artifacts under the object store.
 
+**`beskid mod generate`** is not normative. Typed generation and optional disk writes run during host builds when Collector targets miss their fingerprint; mods declare materialization roots via **`generatedOutputs`** in the `mod { }` block (see **[design model](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/design-model/)**).
+
 See **[Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/)** and **[Compiler Mods](/platform-spec/compiler/compiler-mods/)** for contract and host execution details.
 
 ## Template authoring project

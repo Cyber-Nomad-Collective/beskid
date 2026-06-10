@@ -25,8 +25,9 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 ## Flow
 
-1. `beskid mod rebuild` builds Mod AOT artifact.
-2. Host scans `grammars/**/*.pest`.
-3. `beskid_pest_gen` emits `.bd` files.
-4. Consumer imports generated parsers.
+1. Consumer project declares `grammar { roots, grammarOutput }` in `.bproj`.
+2. `beskid mod rebuild` builds the grammar mod AOT artifact (`corelib_pest_gen`).
+3. On fingerprint miss, the mod's `GrammarGenerator` uses `Core.Text.Pest` to parse `.pest` sources and emit combinator `.bd` files (PascalCase callables, camelCase locals).
+4. Host materializes typed output under the mod's `generatedOutput` root.
+5. Consumer imports generated parsers from the declared `module` path.
 

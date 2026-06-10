@@ -144,6 +144,10 @@ my_mod {
   mod {
     maxGeneratorRounds = 4
     capabilities       = [emit_syntax]
+    generatedOutputs   = [
+      { layout = "generate.layout.json", root = "Generated" }
+    ]
+    artifactPolicy     = reuse
   }
 }
 ```
@@ -154,9 +158,41 @@ my_mod {
 | --- | --- | --- |
 | `maxGeneratorRounds` | no | Positive cap on generator replay; default `4` |
 | `capabilities` | no | Closed vocabulary (`emit_syntax`, `read_project_sources`, `query_semantic_snapshot`, `extern_ffi`, `rewrite_syntax`) |
-| `artifactPolicy` | no | Cache policy for fetched mods (`reuse`, `rebuild`, `clean_rebuild`) |
+| `generatedOutputs` | no | When present, host **may** materialize generator output to disk on Collector target fingerprint miss. Each entry names a **`layout`** file (relative to project root) and a **`root`** directory for emitted `.bd` paths. Disk write is optional and compiler-owned—there is no `beskid mod generate` CLI. |
+| `artifactPolicy` | no | Cache policy for fetched mods (`reuse`, `rebuild`, `clean_rebuild`); governs mod artifact invalidation before collect/generate during rebuild and host builds |
 
 Validation phases: structural parse in `ProjectManifest` build, then graph validation for mod topology (**E1801–E1899** band).
+
+## Grammar block (`grammar { }`)
+
+Consumer projects that ship embedded Pest grammars **may** declare a root-level **`grammar`** block. Keys **must** use **camelCase** (BSOL manifest convention). The block tells `GrammarGenerator` mods (for example `corelib_pest_gen`) which `.pest` roots to collect and where to emit generated combinator modules.
+
+```text
+my_dsl {
+  name    = "my_dsl"
+  version = "0.1.0"
+  root    = "Src"
+
+  grammar {
+    roots = ["grammars"]
+    grammarOutput {
+      pest      = "grammars/regex.pest"
+      module    = "Core.Text.Regex.Generated"
+      packageId = "corelib_foundation"
+    }
+  }
+}
+```
+
+| Key | Required | Meaning |
+| --- | --- | --- |
+| `roots` | no | Directory paths (relative to project root) scanned for `*.pest` files when no per-entry `pest` path is given |
+| `grammarOutput` | no | Single output binding; repeatable as additional `grammarOutput` entries when multiple generated modules are required |
+| `grammarOutput.pest` | yes (per entry) | Source `.pest` file path relative to project root |
+| `grammarOutput.module` | yes (per entry) | Beskid module path for emitted combinator sources (for example `Core.Text.Regex.Generated`) |
+| `grammarOutput.packageId` | yes (per entry) | Owning package id in the workspace graph (for example `corelib_foundation`) |
+
+The compiler lowers the block to `ProjectGrammarSection` / `GrammarOutputEntry` in the resolution model. Disk materialization is compiler-owned on `GrammarGenerator` fingerprint miss—there is no `beskid mod generate` CLI. Mod tunables (callable prefix, term emission) live in a separate **`pestGenConfig`** BSOL schema read by the mod package, not in the consumer `grammar` block.
 
 ## Application host and `app` target
 

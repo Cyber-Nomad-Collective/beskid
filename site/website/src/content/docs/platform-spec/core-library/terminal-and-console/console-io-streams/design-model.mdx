@@ -28,14 +28,14 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 ## Purpose
 
-Define how **syscall-backed standard streams** are exposed as three Beskid modules (`System.Input`, `System.Output`, `System.Error`) without leaking raw file descriptors or host APIs into user code.
+Define how **syscall-backed standard streams** are exposed as three Beskid modules (`Core.Input`, `Core.Output`, `Core.Error`) without leaking raw file descriptors or host APIs into user code.
 
 ## Canonical references
 
 - Feature hub: [Console I/O streams](/platform-spec/core-library/terminal-and-console/console-io-streams/)
 - Runtime syscall surface: [Panic, IO, and syscalls](/platform-spec/execution/runtime/panic-io-and-syscalls/)
 - Normative requirement IDs **IO-001**–**IO-006**: [contracts and edge cases](./contracts-and-edge-cases/)
-- Implementation: `compiler/corelib/packages/runtime/src/System/Input/Input.bd`, `Output/Output.bd`, `Error/Error.bd`, `Syscall/`
+- Implementation: `compiler/corelib/packages/foundation/src/Core/Input/Input.bd`, `Output/Output.bd`, `Error/Error.bd`, `Syscall/`
 
 ## Detailed behavior
 
@@ -44,8 +44,8 @@ Define how **syscall-backed standard streams** are exposed as three Beskid modul
 ```mermaid
 flowchart TB
   app[Application or Console.Format]
-  streams[System.Input / Output / Error]
-  syscall[System.Syscall ReadWith WriteWith]
+  streams[Core.Input / Output / Error]
+  syscall[Core.Syscall ReadWith WriteWith]
   builtin[__syscall_read / __syscall_write]
   app --> streams --> syscall --> builtin
 ```
@@ -56,11 +56,11 @@ flowchart TB
 
 | `StandardStream` | Typical fd | Module | Read | Write |
 | --- | --- | --- | --- | --- |
-| `Stdin` | 0 | `System.Input` | `Read`, `ReadLine` → `Result` | **Forbidden** |
-| `Stdout` | 1 | `System.Output` | **Forbidden** | `Write`, `WriteLine` |
-| `Stderr` | 2 | `System.Error` | **Forbidden** | `Write`, `WriteLine` |
+| `Stdin` | 0 | `Core.Input` | `Read`, `ReadLine` → `Result` | **Forbidden** |
+| `Stdout` | 1 | `Core.Output` | **Forbidden** | `Write`, `WriteLine` |
+| `Stderr` | 2 | `Core.Error` | **Forbidden** | `Write`, `WriteLine` |
 
-User code **must not** pass integer fds to `ReadWith` / `WriteWith` for these helpers. Arbitrary descriptors, sockets, and pipes are out of scope for v1 stream modules; binary and raw-fd I/O lives in [System.Syscall](/platform-spec/core-library/stability-and-api-shape/system-syscall/) (**SC-002**, **SC-003**), which is a superset profile of which console streams are the **SC-004** restricted subset.
+User code **must not** pass integer fds to `ReadWith` / `WriteWith` for these helpers. Arbitrary descriptors, sockets, and pipes are out of scope for v1 stream modules; binary and raw-fd I/O lives in [Core.Syscall](/platform-spec/core-library/stability-and-api-shape/core-syscall/) (**SC-002**, **SC-003**), which is a superset profile of which console streams are the **SC-004** restricted subset.
 
 ### Syscall routing rules
 
@@ -79,12 +79,12 @@ User code **must not** pass integer fds to `ReadWith` / `WriteWith` for these he
 
 ### Relationship to `Console` facade
 
-`Console.FormatLine` and control renderers **must** call `System.Output` or `System.Error` after producing a final string. They **must not** bypass syscall descriptors with host-specific writes. Capability probing runs in [Console capabilities](/platform-spec/core-library/terminal-and-console/console-capabilities/), not inside `Output.bd`.
+`Console.FormatLine` and control renderers **must** call `Core.Output` or `Core.Error` after producing a final string. They **must not** bypass syscall descriptors with host-specific writes. Capability probing runs in [Console capabilities](/platform-spec/core-library/terminal-and-console/console-capabilities/), not inside `Output.bd`.
 
 ## Verification
 
 - Contract IDs **IO-001**–**IO-006** are enforced by runtime module structure and corelib integration tests that exercise stdin/stdout/stderr through the public API.
-- Styled output paths are verified indirectly via console tests that call `System.Output` after `Ansi` gating.
+- Styled output paths are verified indirectly via console tests that call `Core.Output` after `Ansi` gating.
 
 ## Related topics
 

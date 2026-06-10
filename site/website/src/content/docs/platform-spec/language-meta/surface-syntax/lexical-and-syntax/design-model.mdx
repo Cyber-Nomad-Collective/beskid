@@ -30,7 +30,7 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 | **`beskid.pest`** | Authoritative grammar file (single syntactic truth) |
 | **`Identifier`** | ASCII letter or `_` followed by alphanumeric/`_` |
 | **`Keyword`** | Reserved tokens (for example `type`, `enum`, `if`, `host`) |
-| **`Literal`** | Integer, float, string, or char literal |
+| **`Literal`** | Integer, float, string, char, or **`code`** fenced literal |
 
 ## Lexical architecture
 
@@ -60,6 +60,7 @@ flowchart LR
 - Identifiers must match `Identifier` production and must not spell a reserved `Keyword`.
 - Integer and float literals follow pest productions; no implicit radix or suffix.
 - String literals support `"..."` with escapes `\"`, `\\`, `\${`, and `${ expression }` interpolation.
+- **`code`** literals use markdown-style fences: `code ```lang` newline body closing `` ``` `` on its own line. Default language tag is **`beskid`**. Non-`beskid` tags store body text verbatim (no parse, no `@{}` evaluation). In **`beskid`** bodies, **`@{ expression }`** holes are Beskid expressions evaluated at **mod generate time** by the host (distinct from runtime `${ expression }` string interpolation).
 - Char literals use single quotes with `\'` escape.
 - `//` line comments (not starting a third `/`) are ordinary comments.
 - `///` on items begins a documentation run; `////` and longer are not documentation.

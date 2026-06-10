@@ -5,7 +5,7 @@ import { approvePairing } from "#/server/repositories/pairing";
 
 const bodySchema = z.object({
 	code: z.string().min(4),
-	appId: z.enum(["tracker", "nexus", "pckg"]),
+	appId: z.enum(["tracker", "nexus", "pckg", "platform-spec"]),
 	publicUrl: z.string().url(),
 	approverLogin: z.string().min(1),
 	approvalNonce: z.string().optional(),

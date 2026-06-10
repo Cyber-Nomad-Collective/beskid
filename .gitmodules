@@ -40,4 +40,4 @@
 	active = false
 [submodule "beskid_normative_spec"]
 	path = beskid_normative_spec
-	url = https://github.com/pmikstacki/beskid_normative_spec.git
+	url = https://github.com/Cyber-Nomad-Collective/beskid_normative_spec.git

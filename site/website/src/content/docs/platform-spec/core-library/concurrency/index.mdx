@@ -1,6 +1,6 @@
 ---
 title: Concurrency
-description: Corelib concurrency package and System.Threading OS-thread surface—thin runtime wrappers without layered .NET-style stacks.
+description: Corelib concurrency package and Core.Threading OS-thread surface—thin runtime wrappers without layered .NET-style stacks.
 template: splash
 tableOfContents: true
 specLevel: area
@@ -41,7 +41,7 @@ import DomainTiles from '@beskid/beskid-ui/platform-spec/DomainTiles.astro';
 <SpecSection title="Scope" id="scope">
 Cooperative **fibers** (goroutine-style), **channels** for fiber-to-fiber communication, and optional **OS threads** for preemptive parallelism live in a dedicated **corelib workspace package** (`corelib_concurrency`), not as deep abstraction layers inside the main prelude.
 
-**`System.Threading`** exposes syscall-backed OS thread primitives. **`Concurrency`** (package root module) exposes `Fiber<T>`, `Channel<T>`, `Hub`, `Mutex`, and `WaitGroup` as **structs that wrap runtime builtins**—one thin layer, no parallel type hierarchies like .NET `Task` / `TaskCompletionSource` / `IAsyncEnumerable`.
+**`Core.Threading`** exposes syscall-backed OS thread primitives. **`Concurrency`** (package root module) exposes `Fiber<T>`, `Channel<T>`, `Hub`, `Mutex`, and `WaitGroup` as **structs that wrap runtime builtins**—one thin layer, no parallel type hierarchies like .NET `Task` / `TaskCompletionSource` / `IAsyncEnumerable`.
 
 Terminal and console code **must** use channels for cross-fiber delivery (see **[Console terminal events](/platform-spec/core-library/terminal-and-console/console-terminal-events/)**).
 </SpecSection>

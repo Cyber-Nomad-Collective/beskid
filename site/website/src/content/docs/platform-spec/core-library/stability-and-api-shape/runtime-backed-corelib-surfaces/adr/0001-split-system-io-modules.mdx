@@ -32,7 +32,7 @@ Monolithic IO.bd hid syscall direction and descriptor typing.
 
 | Rule | Detail |
 | --- | --- |
-| Surface | `System.Input`, `System.Output`, `System.Error` under `packages/runtime` |
+| Surface | `Core.Input`, `Core.Output`, `Core.Error` under `packages/foundation/src/Core/` |
 | Non-goal | Monolithic `IO.bd` for standard streams |
 
 ## Consequences
@@ -41,4 +41,4 @@ Syscall descriptors stay typed per stream.
 
 ## Verification anchors
 
-`packages/runtime/src/System/`; stream contract tests.
+`packages/foundation/src/Core/Input/`, `Output/`, `Error/`; stream contract tests.

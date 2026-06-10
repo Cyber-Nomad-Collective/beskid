@@ -16,7 +16,7 @@ import {
 import { ThemeToggle } from "#/components/theme-toggle";
 import { fetchAdminAccess } from "#/server/app-server.functions";
 
-const APP_IDS: AuthAppId[] = ["tracker", "nexus", "pckg"];
+const APP_IDS: AuthAppId[] = ["tracker", "nexus", "pckg", "platform-spec"];
 
 export const Route = createFileRoute("/admin/pairing/new")({
 	loader: async () => {

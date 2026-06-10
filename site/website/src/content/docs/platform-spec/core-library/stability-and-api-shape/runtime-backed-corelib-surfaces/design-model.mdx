@@ -41,7 +41,7 @@ Higher-level console and ANSI behavior lives in **`corelib_console`** (`compiler
 ```mermaid
 flowchart TB
   App[User code]
-  Corelib[System.* / corelib_console]
+  Corelib[Core.* / corelib_console]
   Codegen[beskid_codegen injected __* calls]
   Dispatch[beskid_runtime dispatch router]
   Lang[Language-owned runtime handlers]
@@ -54,7 +54,7 @@ flowchart TB
 
 | Layer | Examples |
 | --- | --- |
-| **Beskid surface** | `System.Input`, `System.Output`, `System.Error`, `System.FS`, environment/process facades |
+| **Beskid surface** | `Core.Input`, `Core.Output`, `Core.Error`, `Core.FS`, `Core.Syscall`, `Core.Time`, environment/process facades |
 | **Console package** | ANSI and terminal helpers in `packages/console`; terminal-size fallback when host TTY returns `0` |
 | **Language runtime module** | `alloc`, `fiber`, `channel`, `gc`, `panic_io`, clocks, strings, bytes in `beskid_runtime` |
 | **Host module** | `fs_*`, `env_*`, `process_*`, `tty_winsize` handlers in `beskid_host` |
@@ -83,11 +83,11 @@ Language semantics (fiber scheduling, GC barriers) remain in **language-meta** a
 
 ## Documentation sources
 
-Trudoc-compatible prose lives beside Beskid sources in `compiler/corelib/`. Public site mirrors may appear under `site/website/src/legacy-bridge/corelib/System/` for browsing.
+Trudoc-compatible prose lives beside Beskid sources in `compiler/corelib/`. Public site mirrors may appear under `site/website/src/legacy-bridge/corelib/Core/` for browsing.
 
 ## Implementation anchors
 
-- Streams and system facades: `compiler/corelib/packages/runtime/src/System/`
+- Streams and Core facades: `compiler/corelib/packages/foundation/src/Core/`
 - Console: `compiler/corelib/packages/console/`
 - Language runtime: `compiler/crates/beskid_runtime/src/builtins/`
 - Host runtime: `compiler/crates/beskid_host/`

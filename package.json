@@ -3,7 +3,10 @@
 	"private": true,
 	"workspaces": [
 		"site/website",
+		"site/platform-spec",
+		"packages/spec-cli",
 		"beskid_web_common/packages/trudoc",
+		"beskid_web_common/packages/spec-core",
 		"beskid_web_common/packages/beskid-ui"
 	],
 	"overrides": {

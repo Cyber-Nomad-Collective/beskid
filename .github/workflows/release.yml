@@ -38,6 +38,12 @@ jobs:
             submodule: beskid_web_common
             prebuild: true
             node_auth: false
+          - image: beskid-platform-spec
+            context: .
+            dockerfile: site/platform-spec/Dockerfile
+            submodule: beskid_web_common
+            prebuild: true
+            node_auth: true
           - image: beskid-tracker
             context: beskid_tracker
             dockerfile: beskid_tracker/Dockerfile

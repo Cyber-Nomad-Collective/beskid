@@ -41,20 +41,20 @@ Document **verification and traceability** for the **Console Io Streams** featur
 
 | Path | Role |
 | --- | --- |
-| `compiler/corelib/packages/runtime/src/System/Input/Input.bd` | stdin reads |
-| `compiler/corelib/packages/runtime/src/System/Output/Output.bd` | stdout writes |
-| `compiler/corelib/packages/runtime/src/System/Error/Error.bd` | stderr writes |
-| `compiler/corelib/packages/runtime/src/System/Syscall/` | Descriptor and request types |
+| `compiler/corelib/packages/foundation/src/Core/Input/Input.bd` | stdin reads |
+| `compiler/corelib/packages/foundation/src/Core/Output/Output.bd` | stdout writes |
+| `compiler/corelib/packages/foundation/src/Core/Error/Error.bd` | stderr writes |
+| `compiler/corelib/packages/foundation/src/Core/Syscall/` | Descriptor and request types |
 | `compiler/crates/beskid_abi` / `BUILTIN_SPECS` | `__syscall_read`, `__syscall_write` |
 
 ### Tests and runtime checks
 
-- Console package integration tests write styled output via `System.Output` indirectly (`FormatMarkdownTests.bd`, controls tests).
+- Console package integration tests write styled output via `Core.Output` indirectly (`FormatMarkdownTests.bd`, controls tests).
 - Syscall behavior is covered by execution/runtime specs and runtime integration tests (see [Panic, IO, and syscalls](/platform-spec/execution/runtime/panic-io-and-syscalls/)).
 
 ### Traceability
 
-Changes to **IO-001**–**IO-006** **must** update the informative docs under `compiler/corelib/beskid_corelib/docs/System/` when public behavior changes.
+Changes to **IO-001**–**IO-006** **must** update the informative docs under `compiler/corelib/beskid_corelib/docs/Core/` when public behavior changes.
 
 ## Verification
 

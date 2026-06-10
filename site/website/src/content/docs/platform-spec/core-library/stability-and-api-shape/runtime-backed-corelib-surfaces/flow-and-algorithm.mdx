@@ -13,7 +13,7 @@ submitter:
   email: pmikstacki@cybernomad.it
 relatedTopics:
   - type: Feature
-    title: Runtime-backed corelib surfaces
+    title: Core-backed surfaces
     href: /platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/
     relation: Parent feature hub
 ---
@@ -43,8 +43,8 @@ sequenceDiagram
 
 ## I/O split algorithm
 
-- **`System.Input`** — read paths funnel through `syscall_read` helpers in `panic_io` module.
-- **`System.Output` / `System.Error`** — write paths use `syscall_write` with distinct handles where the host distinguishes stderr.
+- **`Core.Input`** — read paths funnel through `syscall_read` helpers in `panic_io` module.
+- **`Core.Output` / `Core.Error`** — write paths use `syscall_write` with distinct handles where the host distinguishes stderr.
 - **Console package** — layers formatting/ANSI on top without redefining syscall contracts.
 
 ## Fiber and GC interaction

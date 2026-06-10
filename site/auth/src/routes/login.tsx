@@ -48,7 +48,7 @@ function LoginPage() {
 				error={errorMessage(error) ?? undefined}
 				footer={
 					<a
-						href="https://beskid-lang.org/platform-spec/"
+						href="https://spec.beskid-lang.org/platform-spec/"
 						className="underline-offset-4 hover:underline"
 					>
 						Platform specification

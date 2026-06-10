@@ -115,13 +115,15 @@ See [Verification and traceability](/platform-spec/core-library/stability-and-ap
 | [D-CORE-API-SHAPE-0001](/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0001-three-tier-classification/) | Three-tier classification with default `supported` |
 | [D-CORE-API-SHAPE-0002](/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0002-prelude-tier1-only/) | Corelib prelude re-exports only Tier 1 modules |
 | [D-CORE-API-SHAPE-0003](/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0003-tier-via-api-json-not-parallel-manifest/) | Tier metadata travels inside `api.json`, not a parallel manifest |
+| [D-CORE-NS-0001](/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0004-single-core-namespace/) | Single `Core.*` namespace; `System.*` removed |
+| [D-CORE-API-0002](/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0005-owning-type-inline-methods/) | Owning-type inline methods; `extend type` forbidden for corelib-owned types |
 </SpecSection>
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
 - Tier resolver: `compiler/crates/beskid_analysis/src/doc/api_tier.rs`
 - Tier field on `ApiDocItem`: `compiler/crates/beskid_analysis/src/doc/api_snapshot.rs`
 - Tier resolution call site: `compiler/crates/beskid_cli/src/commands/doc.rs`
-- Tier-tagged corelib sources: `compiler/corelib/packages/foundation/src/Collections/`, `compiler/corelib/packages/runtime/src/System/`
+- Tier-tagged corelib sources: `compiler/corelib/packages/foundation/src/Collections/`, `compiler/corelib/packages/foundation/src/Core/`
 - Tier conformance tests: `compiler/crates/beskid_tests/src/projects/corelib/layout.rs`
 - Beskid-side coverage suites: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/collections/`, `compiler/corelib/beskid_corelib/tests/corelib_tests/src/system/`
 </SpecSection>

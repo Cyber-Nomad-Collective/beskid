@@ -103,6 +103,41 @@ function redirectKey(routePrefix) {
 	return routePrefix.endsWith('/') ? routePrefix : `${routePrefix}/`;
 }
 
+const PLATFORM_SPEC_ORIGIN = 'https://spec.beskid-lang.org';
+
+/** Redirect every legacy in-site platform-spec URL to spec.beskid-lang.org (preserve path). */
+function platformSpecExternalRedirects() {
+	const specRoot = path.join(docsRoot, 'platform-spec');
+	/** @type {Record<string, { status: number; destination: string }>} */
+	const out = {};
+	if (!fs.existsSync(specRoot)) return out;
+
+	/** @param {string} dir @param {string} routePrefix */
+	function walk(dir, routePrefix) {
+		out[redirectKey(routePrefix)] = {
+			status: 301,
+			destination: `${PLATFORM_SPEC_ORIGIN}${redirectKey(routePrefix)}`,
+		};
+		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+			const full = path.join(dir, entry.name);
+			if (entry.isDirectory()) {
+				walk(full, `${routePrefix}/${entry.name}`);
+				continue;
+			}
+			if (!/\.(md|mdx)$/i.test(entry.name)) continue;
+			const base = entry.name.replace(/\.(mdx|md)$/i, '');
+			if (base === 'index' || base.toLowerCase() === 'readme') continue;
+			out[redirectKey(`${routePrefix}/${base}`)] = {
+				status: 301,
+				destination: `${PLATFORM_SPEC_ORIGIN}${redirectKey(`${routePrefix}/${base}`)}`,
+			};
+		}
+	}
+
+	walk(specRoot, '/platform-spec');
+	return out;
+}
+
 /**
  * Map every legacy-bridge markdown path to a single target (legacy spec mapping hub).
  * Unlike {@link addMarkdownRedirects}, does not append page basenames under the target.
@@ -166,7 +201,8 @@ function siteRedirects() {
 	const refRoot = path.join(docsRoot, 'book', 'reference');
 	Object.assign(out, addMarkdownRedirects(refRoot, '/guides', '/book/reference'));
 
-	const legacyTarget = redirectKey('/platform-spec/legacy-spec-mapping');
+	const legacyTarget =
+		'https://spec.beskid-lang.org/platform-spec/legacy-spec-mapping/';
 	for (const legacy of ['execution', 'corelib', 'packages', 'api']) {
 		const legacyDir = path.join(legacyBridgeRoot, legacy);
 		if (!fs.existsSync(legacyDir)) continue;
@@ -204,6 +240,7 @@ export default defineConfig({
 		},
 	},
 	redirects: {
+		...platformSpecExternalRedirects(),
 		...platformSpecV0Redirects(),
 		...compilerModsRedirects(),
 		...siteRedirects(),
@@ -234,10 +271,6 @@ export default defineConfig({
 		}),
 		trudoc({
 			htmlDataAttrs: [
-				{
-					htmlSubdir: 'platform-spec',
-					docAttr: 'data-platform-spec',
-				},
 				{
 					htmlSubdir: 'book',
 					docAttr: 'data-book',
