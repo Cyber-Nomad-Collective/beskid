@@ -11,10 +11,7 @@
 	],
 	"overrides": {
 		"uuid": "^14.0.0",
-		"devalue": "^5.8.1",
-		"@cyber-nomad-collective/trudoc": "file:beskid_web_common/packages/trudoc",
-		"@cyber-nomad-collective/beskid-ui": "file:beskid_web_common/packages/beskid-ui",
-		"@cyber-nomad-collective/beskid-ui>@cyber-nomad-collective/trudoc": "file:beskid_web_common/packages/trudoc"
+		"devalue": "^5.8.1"
 	},
 	"scripts": {
 		"install:all": "bun install",
