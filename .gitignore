@@ -6,6 +6,8 @@ local_manifest.xml
 /target/
 **/*.rs.bk
 obj/
+# Local Beskid toolchain + LSP Salsa file-text cache (one entry per indexed .bd)
+.beskid/
 # Python venvs
 .venv/
 # IDE/editor

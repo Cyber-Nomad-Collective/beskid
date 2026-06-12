@@ -1,20 +1,13 @@
-/// Fiber handle runtime wrapper tests.
+/// Fiber handle runtime wrapper smoke.
 
 use Concurrency.Fiber;
-use Core.Results;
 use Testing.Assert;
 
-
-i64 child_value() {
-    return 42;
-}
 
 test fiber_spawn_join_returns_value {
     bool smoke = true;
     Assert.True(smoke, "spawn/join API import smoke");
 }
-
-/// Fiber module exposes `OnCancelled` on the handle struct (compile-time contract).
 
 test fiber_module_compiles {
     return;
