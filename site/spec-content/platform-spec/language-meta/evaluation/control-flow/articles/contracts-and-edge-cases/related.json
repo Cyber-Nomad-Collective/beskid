@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Control flow",
+      "href": "/platform-spec/language-meta/evaluation/control-flow/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Diagnostic code registry",
+      "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
+      "relation": "E14xx band reservation"
+    }
+  ]
+}

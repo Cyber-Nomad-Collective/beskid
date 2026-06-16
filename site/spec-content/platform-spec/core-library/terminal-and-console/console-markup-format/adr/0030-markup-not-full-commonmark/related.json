@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Console markup format",
+      "href": "/platform-spec/core-library/terminal-and-console/console-markup-format/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

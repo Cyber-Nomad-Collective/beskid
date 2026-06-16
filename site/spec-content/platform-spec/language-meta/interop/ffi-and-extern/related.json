@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Interop",
+      "href": "/platform-spec/language-meta/interop/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Interop.Contracts",
+      "href": "/platform-spec/language-meta/interop/interop-contracts/",
+      "relation": "Abstract boundary vocabulary"
+    },
+    {
+      "type": "Feature",
+      "title": "C ABI profile",
+      "href": "/platform-spec/language-meta/interop/c-abi-profile/",
+      "relation": "User native libraries and link-time binding"
+    },
+    {
+      "type": "Feature",
+      "title": "Export and callbacks",
+      "href": "/platform-spec/language-meta/interop/export-and-callbacks/",
+      "relation": "Beskid to foreign export and callback registration"
+    },
+    {
+      "type": "Feature",
+      "title": "Rust ABI profile",
+      "href": "/platform-spec/language-meta/interop/rust-abi-profile/",
+      "relation": "Runtime embedding exports (unchanged by user FFI)"
+    },
+    {
+      "type": "Feature",
+      "title": "Foreign library import",
+      "href": "/platform-spec/tooling/foreign-library-import/",
+      "relation": "Manifest link metadata and CLI library mapping"
+    }
+  ]
+}

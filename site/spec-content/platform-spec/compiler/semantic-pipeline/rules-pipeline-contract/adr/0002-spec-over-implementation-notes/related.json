@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Rules pipeline contract",
+      "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

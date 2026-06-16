@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "level": "article",
+  "sections": [],
+  "pathPrefix": "platform-spec/core-library/terminal-and-console/console-controls/adr/0041-livetick-caller-owned-loop",
+  "widgets": [],
+  "grid": {
+    "cols": 12,
+    "rowHeight": 30,
+    "items": []
+  }
+}

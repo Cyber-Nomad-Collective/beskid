@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Stage ordering and lowering",
+      "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Diagnostics parity (CLI and LSP)",
+      "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
+      "relation": "Diagnostic gates during lowering"
+    },
+    {
+      "type": "Area",
+      "title": "Compiler Mods",
+      "href": "/platform-spec/compiler/compiler-mods/",
+      "relation": "Mod host flow and typed merge rounds"
+    }
+  ]
+}

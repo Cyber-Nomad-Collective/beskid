@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Template packages",
+      "href": "/platform-spec/tooling/project-scaffolding/template-packages/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

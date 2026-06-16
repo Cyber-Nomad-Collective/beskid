@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Foundation and primitives",
+      "href": "/platform-spec/core-library/foundation-and-primitives/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Core.Collections",
+      "href": "/platform-spec/core-library/foundation-and-primitives/core-collections/",
+      "relation": "List/Map fluent surfaces"
+    },
+    {
+      "type": "ADR",
+      "title": "Fluent step contract",
+      "href": "/platform-spec/core-library/foundation-and-primitives/core-fluent/adr/0001-fluent-step-contract/",
+      "relation": "Normative contract shape"
+    }
+  ]
+}

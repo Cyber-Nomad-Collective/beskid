@@ -1,0 +1,56 @@
+---
+title: Resolver contract - Contracts and edge cases
+description: Normative resolver guarantees including SymbolRegistry invariants
+  and cross-unit reference matching.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-06-05
+---
+
+## Registry invariants
+
+1. Every interned **`SymbolQualifier`** in a merged resolution **must** map to exactly one **`ItemId`** in `by_symbol` for that resolution pass.
+2. Duplicate exportable symbols with the same qualifier **must** fail collect with a structured error — not silent last-wins in name scans.
+3. Prefetch symbols from dependency units **must** reuse the same `SymbolId` / `ItemId` pair when entry resolve imports them (no duplicate registry rows for one logical export).
+
+## Cross-unit reference matching (IDE)
+
+When `ProgramAssembly` is available, workspace find-references **must** treat two `ResolvedValue::Item` occurrences as the same target when:
+
+- both resolve to the same **`SymbolId`** via `symbol_for_item`, even if dense **`ItemId`** differs across per-unit `resolve_unit_hir` tables, or
+- fallback: raw `ItemId` equality when neither side has an exportable symbol (parameters, synthetics), or
+- **`LocalId`** equality for locals.
+
+Go-to-definition **must** map item targets through **`canonical_item_id`** so `by_symbol` remains authoritative when duplicate dense rows exist.
+
+## `qualifiedName` vs `symbolKey`
+
+| Field | Source | Cross-package stable? |
+| --- | --- | --- |
+| `qualifiedName` (api.json / display) | Registry first, legacy module-path fallback | Not guaranteed for all rows |
+| `symbolKey` (api.json, when present) | Registry only | Yes — package-prefixed canonical string |
+
+Consumers **must not** infer registry identity by parsing `qualifiedName` alone when `symbolKey` is present.
+
+## Edge cases
+
+| Case | Expected behavior |
+| --- | --- |
+| Entry-defined symbol referenced from dependency unit | Workspace refs match via shared **`SymbolId`** |
+| Prefetch-only symbol (e.g. `WriteLine` in IO module) | Same `ItemId` in prefetch table; symbol match still applies when ids align |
+| Row with no exportable shape | No `ItemInfo.symbol`; IDE falls back to `ItemId` / span identity |
+| Builtin intrinsics | Package `beskid`; encoded as `SymbolShape::Builtin` |
+| Re-resolve single file without assembly | No prefetch registry merge; symbol keys limited to entry-local collect |
+
+## Anchored code paths
+
+- `compiler/crates/beskid_analysis/src/resolve/symbol.rs`
+- `compiler/crates/beskid_analysis/src/services/document.rs`
+- `compiler/crates/beskid_analysis/src/doc/qualified_names.rs`
+- `compiler/crates/beskid_analysis/src/doc/refs.rs`

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "LSP",
+      "href": "/platform-spec/tooling/lsp/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Area",
+      "title": "Semantic pipeline",
+      "href": "/platform-spec/compiler/semantic-pipeline/",
+      "relation": "LSP diagnostics reuse semantic analysis rules"
+    },
+    {
+      "type": "Area",
+      "title": "VS Code extension",
+      "href": "/platform-spec/tooling/vscode-extension/",
+      "relation": "Extension commands trigger and observe LSP refresh operations"
+    }
+  ]
+}

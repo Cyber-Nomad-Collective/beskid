@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "level": "article",
+  "sections": [],
+  "pathPrefix": "platform-spec/language-meta/composition/dependency-injection/adr/0010-mod-projects-no-app-host",
+  "widgets": [],
+  "grid": {
+    "cols": 12,
+    "rowHeight": 30,
+    "items": []
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "origin": "https://spec.beskid-lang.org",
+  "contentRoot": "platform-spec",
+  "github": {
+    "owner": "Cyber-Nomad-Collective",
+    "repo": "beskid_normative_spec",
+    "defaultBranch": "main"
+  },
+  "nodeTypes": {
+    "root": {
+      "label": "Root",
+      "extendsLayout": "root-default",
+      "childLevels": ["domain"]
+    },
+    "domain": {
+      "label": "Domain",
+      "extendsLayout": "domain-default",
+      "childLevels": ["area", "domain"],
+      "contentSections": ["overview", "scope"]
+    },
+    "area": {
+      "label": "Area",
+      "extendsLayout": "area-default",
+      "childLevels": ["feature", "area"],
+      "contentSections": ["overview"]
+    },
+    "feature": {
+      "label": "Feature",
+      "extendsLayout": "feature-hub-default",
+      "childLevels": ["article", "adr", "feature"],
+      "contentSections": ["summary"]
+    },
+    "article": {
+      "label": "Article",
+      "extendsLayout": "article-default",
+      "contentSections": ["summary", "details"]
+    },
+    "adr": {
+      "label": "ADR",
+      "extendsLayout": "article-default",
+      "contentSections": ["context", "decision", "consequences"],
+      "adrRequired": true
+    }
+  },
+  "widgetTypes": {
+    "domainTiles": {
+      "description": "Grid of child domain/area tiles",
+      "defaultGrid": { "w": 12, "h": 4, "minW": 4, "minH": 2 }
+    },
+    "specSection": {
+      "description": "Normative spec section block",
+      "defaultGrid": { "w": 12, "h": 3, "minW": 4, "minH": 2 }
+    },
+    "markdownProse": {
+      "description": "Markdown prose block",
+      "defaultGrid": { "w": 12, "h": 4, "minW": 4, "minH": 2 }
+    },
+    "twoColumn": {
+      "description": "Two-column widget layout",
+      "defaultGrid": { "w": 12, "h": 4, "minW": 6, "minH": 2 }
+    }
+  },
+  "architectureGraphs": []
+}

@@ -1,0 +1,42 @@
+---
+title: Interop.Contracts — Ownership at the boundary
+description: Borrow, transfer, and opaque-handle rules for parameters on foreign
+  call shapes (v0.3).
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-20
+---
+
+## Ownership classes
+
+Every parameter on an abstract **call shape** has an ownership class:
+
+| Class | Meaning |
+| --- | --- |
+| **Borrow** | Caller retains ownership. Foreign code must not store pointers beyond the call unless the contract documents an exception. |
+| **Transfer** | Caller relinquishes the obligation described by the interop view (for example heap-allocated buffer freed by callee). |
+| **Opaque borrow** | Address-sized token with no Beskid layout on the foreign side; lifetime is caller-managed. |
+
+Default when no modifier is present: **Borrow**.
+
+## GC-managed values
+
+Beskid **string** and **slice (`T[]`)** values **must not** cross the user FFI boundary as ordinary GC references in v0.3.0 Standard. Authors **must** use **interop view types** (see **[interop view types](/platform-spec/language-meta/interop/c-abi-profile/interop-view-types/)**).
+
+Passing GC pointers to foreign code without a view is **undefined behavior**.
+
+Optional **`GcPin`** (Proposed) would extend a call with a runtime root for the call duration; until standardized, hosts **must** reject or lower pinned forms only when explicitly implemented.
+
+## Safepoints
+
+Every foreign call is a **safepoint** for the active collector policy. Foreign code **must not** be assumed to run with a migrated fiber stack unless documented by the execution runtime.
+
+## Complex types (deferred)
+
+Nested records, enums with non-trivial representation, and nested arrays inside FFI structs are **out of scope** for v0.3.0 Standard. They are specified under **[C layout types](/platform-spec/language-meta/interop/c-abi-profile/c-layout-types/)** for v0.3.1 after basic FFI is in place.

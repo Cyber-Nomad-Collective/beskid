@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import { BeskidHub } from "@beskid/beskid-ui";
 import { Link } from "@tanstack/react-router";
 
+import { ReaderTopBarActions } from "#/components/reader/reader-topbar-actions";
+
 export function ReaderChrome({ children }: { children: ReactNode }) {
 	return (
 		<div className="reader-layout flex min-h-screen flex-col">
@@ -14,6 +16,7 @@ export function ReaderChrome({ children }: { children: ReactNode }) {
 				>
 					Platform specification
 				</Link>
+				<ReaderTopBarActions />
 			</header>
 			<div className="min-h-0 flex-1">{children}</div>
 		</div>

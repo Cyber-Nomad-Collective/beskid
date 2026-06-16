@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Rust ABI profile",
+      "href": "/platform-spec/language-meta/interop/rust-abi-profile/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Article",
+      "title": "Kernel and dispatch",
+      "href": "/platform-spec/language-meta/interop/rust-abi-profile/kernel-and-dispatch/",
+      "relation": "Dispatch behavior amended by this decision"
+    },
+    {
+      "type": "Article",
+      "title": "Runtime registration",
+      "href": "/platform-spec/core-library/compiler-integration/runtime-registration/",
+      "relation": "Init authority amended by this decision"
+    }
+  ]
+}

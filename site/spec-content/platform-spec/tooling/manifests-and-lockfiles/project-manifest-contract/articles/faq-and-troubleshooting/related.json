@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Project manifest contract",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Project link libraries",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries/",
+      "relation": "FFI link metadata"
+    }
+  ]
+}

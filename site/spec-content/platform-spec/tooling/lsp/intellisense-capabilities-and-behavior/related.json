@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "LSP",
+      "href": "/platform-spec/tooling/lsp/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Snapshot and refresh contract",
+      "href": "/platform-spec/tooling/lsp/snapshot-and-refresh-contract/",
+      "relation": "IntelliSense requests read from the same document/workspace snapshot model"
+    },
+    {
+      "type": "Area",
+      "title": "VS Code extension",
+      "href": "/platform-spec/tooling/vscode-extension/",
+      "relation": "Extension delegates language features to this LSP capability surface"
+    }
+  ]
+}

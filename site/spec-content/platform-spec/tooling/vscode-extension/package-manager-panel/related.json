@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "VS Code extension",
+      "href": "/platform-spec/tooling/vscode-extension/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "pckg client contract",
+      "href": "/platform-spec/tooling/registry-client/pckg-client-contract/",
+      "relation": "HTTP shapes"
+    },
+    {
+      "type": "Feature",
+      "title": "Extension surface",
+      "href": "/platform-spec/tooling/vscode-extension/extension-surface/",
+      "relation": "Commands and status bar"
+    }
+  ]
+}

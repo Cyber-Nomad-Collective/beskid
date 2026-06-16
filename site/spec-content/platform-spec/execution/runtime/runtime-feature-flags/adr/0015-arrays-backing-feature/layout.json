@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "level": "article",
+  "sections": [],
+  "pathPrefix": "platform-spec/execution/runtime/runtime-feature-flags/adr/0015-arrays-backing-feature",
+  "widgets": [],
+  "grid": {
+    "cols": 12,
+    "rowHeight": 30,
+    "items": []
+  }
+}

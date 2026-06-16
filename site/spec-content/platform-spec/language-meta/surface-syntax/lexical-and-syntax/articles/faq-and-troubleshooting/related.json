@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Lexical and syntax",
+      "href": "/platform-spec/language-meta/surface-syntax/lexical-and-syntax/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

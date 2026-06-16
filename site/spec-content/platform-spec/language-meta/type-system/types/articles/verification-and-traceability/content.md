@@ -1,0 +1,46 @@
+---
+title: Types - Verification and traceability
+description: Tests, implementation checklist, and verification matrix for the
+  Beskid type system.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Proposed
+lastReviewed: 2026-06-05
+---
+
+## Verification matrix
+
+| Scenario | Expected evidence |
+| --- | --- |
+| Primitive type parsing | `beskid_analysis` parser tests pass for all primitives |
+| Type declaration with fields | AST round-trip preserves `TypeDefinition` structure |
+| Generic arity mismatch | **E1204** emitted at use site |
+| Unknown type in field | **E1005** emitted during definition checking |
+| Duplicate type name | **E1001** or **E1006** emitted |
+| Array type parsing | `T[]` resolves to array type node |
+| `mut T` parameter | Accepted in signatures; reassignment allowed in callee |
+| Conformance target resolution | **E1607** for invalid contract paths |
+
+## Implementation checklist
+
+- [x] Grammar: `type`, `enum`, generics, conformances, fields, variants
+- [x] AST nodes: `TypeDefinition`, `EnumDefinition`, `EnumVariant`
+- [x] Parser: `beskid.pest` productions for all type forms
+- [x] HIR lowering: primitive mapping, type references
+- [x] Type context: primitive registration, declaration lookup
+- [x] Semantic rules: `type_checking.rs` with **E12xx** diagnostics
+- [x] Diagnostics: `diagnostic_kinds.rs` codes **E1201–E1215**
+- [ ] Runtime layout: `BeskidArray` fat pointer verified in codegen
+- [ ] Cross-target parity: JIT and AOT agree on primitive sizes
+
+## Test locations
+
+- `compiler/crates/beskid_analysis/src/syntax/items/type_definition.rs` — parser unit tests
+- `compiler/crates/beskid_analysis/src/syntax/items/enum_definition.rs` — parser unit tests
+- `compiler/crates/beskid_analysis/src/analysis/rules/staged/type_checking.rs` — type rule tests
+- `compiler/crates/beskid_tests` — integration tests for type checking

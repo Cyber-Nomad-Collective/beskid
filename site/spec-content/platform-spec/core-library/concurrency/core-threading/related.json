@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Concurrency",
+      "href": "/platform-spec/core-library/concurrency/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Concurrency package",
+      "href": "/platform-spec/core-library/concurrency/concurrency-package/",
+      "relation": "Cooperative fibers and channels"
+    },
+    {
+      "type": "Feature",
+      "title": "Panic, IO, and syscalls",
+      "href": "/platform-spec/execution/runtime/panic-io-and-syscalls/",
+      "relation": "Syscall surface for thread creation"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+---
+title: Metaprogramming
+description: Source generators, attributes that drive compiler plug-ins, and
+  scheduling relative to other analyses. The broader generator roadmap may live
+  in guides; v0.1 rules are normative here.
+specLevel: feature
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-21
+---
+
+## Normative specification
+
+### Scope
+
+Defines the **two metaprogramming planes** in Beskid and how they interact with compilation. Detailed rules live in child articles; this hub **must not** duplicate their full text.
+
+| Plane | Mechanism | Normative home |
+| --- | --- | --- |
+| **Language macros** | `macro` items, `name!` invocation | [Language macros](/platform-spec/language-meta/metaprogramming/macros/) |
+| **Compiler mods** | `type: Mod` projects, SDK contracts | [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/) |
+| **Serialization** | Reference mod + attributes | [Serialization packages](/platform-spec/language-meta/metaprogramming/serialization/) |
+
+### Scheduling (reference compiler)
+
+1. Parse and build HIR.
+2. **`macro.expand`** — expand language macros (**E1901–E1908** band).
+3. Re-run resolution and types on expanded surface.
+4. **`mod.load` / `mod.collect` / generators** — mod pipeline per [Compiler Mods](/platform-spec/compiler/compiler-mods/).
+5. Continue semantic analysis, composition (if host project), and codegen.
+
+Mods **must not** run before macro expansion completes on the same compilation unit unless a future decision explicitly orders otherwise.
+
+### Static rules
+
+- **App/Lib/Test** projects **may** declare `macro` items and consume mods.
+- **Mod** projects **must not** declare app `host` graphs ([Native dependency injection](/platform-spec/language-meta/composition/dependency-injection/)).
+- Attribute declarations **`attribute Name(targets) { … }`** are module items; misuse of targets **must** error (**E1508–E1510**).
+
+### Dynamic semantics
+
+Metaprogramming effects are **compile-time only**; expanded/generated AST becomes input to later phases. No interpreted Beskid execution at compile time except through compiled mod AOT artifacts.
+
+### Diagnostics
+
+Macro band **E1901+**; mod band **E1829**, **E1851–E1870**; attribute **E1508+**. Registry: [Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/).
+
+### Conformance
+
+Tooling **must** invoke the same phase order for CI and IDE builds on a given project kind.
+
+## Decisions
+
+- **D-LM-META-001 — Two planes:** Language macros and compiler mods are separate; mods do not subsume `macro` syntax.
+- **D-LM-META-002 — Macros before mods:** Expansion order prevents mods from observing unexpanded macro invocations.
+- **D-LM-META-003 — No legacy Meta language:** Prior experimental meta syntax is retired; use macros or Mod SDK only.
+
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/macros/` — `macro` expansion pipeline and attribute processing
+- `compiler/crates/beskid_analysis/src/mod_host/` — Compiler Mod orchestration bridges
+- `compiler/corelib/` — SDK contracts for `Collector`, `Generator`, `Analyzer`, `Rewriter`
+
+## Platform view
+
+Source generators, attributes that drive compiler plug-ins, and scheduling relative to other analyses. The broader generator roadmap may live in guides; v0.1 rules are normative here.

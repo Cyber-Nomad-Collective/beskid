@@ -1,0 +1,32 @@
+---
+title: Runtime dlopen Proposed appendix
+description: Dynamic resolution profile is non-Standard.
+specLevel: adr
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+adrId: D-LMETA-CABI-0003
+adrStatus: Accepted
+adrDate: 2026-05-20
+lastReviewed: 2026-05-22
+---
+
+## Context
+
+Some hosts want late binding; tier-1 reference path standardizes link-time.
+
+## Decision
+
+**Runtime `dlopen` / `dlsym` resolution** is **demoted** to the [dynamic resolution profile](/platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile/) (**Proposed** appendix, not Standard).
+
+## Consequences
+
+Documentation and conformance matrices must not require dlopen for Standard tier-1.
+
+## Verification anchors
+
+`compiler/crates/beskid_engine/src/engine.rs` (`extern_dlopen`, Proposed).

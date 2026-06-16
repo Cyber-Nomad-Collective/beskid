@@ -1,0 +1,35 @@
+---
+title: GC phase A single mutator
+description: Ship many fibers with one GC mutator; document phase B parallel mutators.
+specLevel: adr
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+adrId: D-CORE-CONC-0007
+adrStatus: Accepted
+adrDate: 2025-08-01
+lastReviewed: 2026-05-22
+---
+
+## Context
+
+Parallel GC mutators require write barriers not ready for initial ship.
+
+## Decision
+
+| Phase | Rule |
+| --- | --- |
+| A (ship) | Many fibers, **one GC mutator**; `gc_write_barrier` no-op |
+| B (documented) | Parallel mutators + real barriers; no corelib API break |
+
+## Consequences
+
+Scheduler and memory specs must stay consistent with phase A barriers.
+
+## Verification anchors
+
+Runtime GC tests; memory-and-gc-runtime-contract feature.

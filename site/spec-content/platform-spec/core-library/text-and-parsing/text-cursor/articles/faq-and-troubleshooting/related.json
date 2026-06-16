@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Core.Text.Cursor",
+      "href": "/platform-spec/core-library/text-and-parsing/text-cursor/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

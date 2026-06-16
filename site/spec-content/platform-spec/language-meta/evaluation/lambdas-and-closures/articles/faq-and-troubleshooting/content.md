@@ -1,0 +1,45 @@
+---
+title: Lambdas and closures - FAQ and troubleshooting
+description: Common issues, troubleshooting, and locked decisions for Beskid
+  lambdas and closures.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Proposed
+lastReviewed: 2026-06-05
+---
+
+## Locked decisions
+
+| Decision | ID | Summary |
+| --- | --- | --- |
+| Expression lambdas | D-LM-LAM-001 | Block bodies; no `fn` literal syntax |
+| No async lambdas | D-LM-LAM-002 | Use `spawn` instead |
+| Capture extends lifetime | D-LM-LAM-003 | Captured locals kept alive |
+| GC for escaped captures | D-LM-LAM-004 | Heap-traced when escaping |
+
+## FAQ
+
+### Can a lambda reference itself recursively?
+
+Not directly. Bind the lambda to a `let` first, then reference the variable name.
+
+### Why can't I capture `mut` bindings?
+
+Mutability capture is restricted to prevent data races. This may be relaxed in future versions with explicit capture modifiers.
+
+### Do lambdas allocate?
+
+Stack closures do not allocate. Heap closures allocate only when the closure escapes the defining frame.
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+| --- | --- |
+| **E1202** | Lambda parameter type cannot be inferred |
+| **E1223** | Lambda passed to `spawn` is not fiber-compatible |
+| **E1225** | Stack reference captured in a `spawn` closure |

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Spec maintenance",
+      "href": "/platform-spec/community/spec-maintenance/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Specification authority and embedded decisions",
+      "href": "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
+      "relation": "Maturity and authority model"
+    },
+    {
+      "type": "Feature",
+      "title": "Last reviewed policy",
+      "href": "/platform-spec/community/spec-maintenance/last-reviewed-policy/",
+      "relation": "Review freshness on high-churn pages"
+    }
+  ]
+}

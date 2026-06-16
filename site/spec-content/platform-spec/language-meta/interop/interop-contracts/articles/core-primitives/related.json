@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Interop.Contracts",
+      "href": "/platform-spec/language-meta/interop/interop-contracts/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

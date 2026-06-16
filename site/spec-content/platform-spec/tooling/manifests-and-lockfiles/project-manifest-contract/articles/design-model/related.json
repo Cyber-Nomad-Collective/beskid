@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Manifests and lockfiles",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Project manifest contract",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Workspace and lock contracts",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/",
+      "relation": "Reserved workspace keys and lockfile interaction"
+    },
+    {
+      "type": "Feature",
+      "title": "Project manifest contract (compiler)",
+      "href": "/platform-spec/compiler/resolution-and-projects/project-manifest-contract/",
+      "relation": "defers-to — manifest-band diagnostics and graph validation"
+    }
+  ]
+}

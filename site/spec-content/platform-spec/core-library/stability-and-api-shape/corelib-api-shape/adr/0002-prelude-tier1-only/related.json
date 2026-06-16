@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Corelib API shape",
+      "href": "/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "ADR",
+      "title": "Explicit use, no prelude",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/",
+      "relation": "Superseding decision"
+    }
+  ]
+}

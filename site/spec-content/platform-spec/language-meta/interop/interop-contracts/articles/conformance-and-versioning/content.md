@@ -1,0 +1,55 @@
+---
+title: Interop.Contracts — Conformance and versioning
+description: ABI version gates, forward compatibility, and how artifacts claim
+  Interop.Contracts conformance.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-01
+---
+
+## Runtime ABI version (embedding)
+
+The platform publishes a monotonic **runtime ABI version** constant for the **Rust runtime export surface** (`BESKID_RUNTIME_ABI_VERSION`). An artifact **must not** load against a runtime that reports an incompatible version when linking builtins.
+
+Implementation reference: `compiler/crates/beskid_abi/src/version.rs` and `compiler/crates/beskid_tests/src/abi/contracts.rs`.
+
+**User FFI** (import layouts, interop views, export tables) is versioned separately — see **User FFI layout band** below. Bumping user FFI layouts **must not** require bumping `BESKID_RUNTIME_ABI_VERSION` unless a runtime export symbol or builtin signature changes.
+
+## User FFI layout band (v0.3)
+
+The platform maintains a **user FFI layout band** for:
+
+- Interop view record layouts (`CStringView`, `CBuffer`, `CArrayView`).
+- Export/callback registration table header layout.
+- Optional future `repr(C)` rules (v0.3.1).
+
+Toolchains **should** record the band in build metadata (for example manifest or artifact stamp) so linkers and hosts reject incompatible combinations. The reference constant name is reserved as **`BESKID_USER_FFI_LAYOUT_BAND`** (implementation may trail spec).
+
+| Band | Standard content |
+| --- | --- |
+| **v0.3.0** | Interop views, link-time import, export + callback registration |
+| **v0.3.1** | `CLayout` records with primitive fields only |
+| **v0.3.2+** | Proposed: nested FFI structs, foreign-thread entry |
+
+## Forward compatibility
+
+**Interop.Contracts** distinguishes:
+
+- **Normative contracts** — behavior and layouts the platform commits to for a given ABI version band.
+- **Reserved extensions** — symbol names or dispatch slots documented as internal or experimental; user code **must not** depend on them unless a feature explicitly promotes them to normative status.
+
+When adding symbols or shapes, the platform **should** extend tables in `beskid_abi` with documentation in the **[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/)** before declaring user-visible stability.
+
+## Profile conformance
+
+A toolchain build **conforms** to **Interop.Contracts** if:
+
+1. Every emitted foreign call can be traced to an abstract call shape and symbol identity defined here or in a normative profile article.
+2. Runtime exports match the allowlisted symbol set for the declared ABI version.
+3. Diagnostics reject unsupported combinations (for example extern imports when the engine feature that resolves them is disabled).

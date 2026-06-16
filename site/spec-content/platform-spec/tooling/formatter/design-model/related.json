@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Formatter",
+      "href": "/platform-spec/tooling/formatter/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Lexical and syntax",
+      "href": "/platform-spec/language-meta/surface-syntax/lexical-and-syntax/",
+      "relation": "Token model projected back to source"
+    }
+  ]
+}

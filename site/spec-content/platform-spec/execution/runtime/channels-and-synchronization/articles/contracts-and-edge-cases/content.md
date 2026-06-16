@@ -1,0 +1,43 @@
+---
+title: Channels and synchronization - Contracts and edge cases
+description: Runtime-level Send, Receive, Hub, and cancellation contracts.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-20
+---
+
+Runtime **must** mirror corelib **Result** semantics at the builtin boundary (no panic for closed/cancelled channel ops).
+
+Duplicate **Close** is safe. **Receive** on closed empty queue returns **Closed**. **Send** after **Close** returns **Closed**.
+
+**Hub.WaitReceive** with zero registrations returns **`HubError::Empty`**. **Hub** uses **round-robin** readiness scan (normative).
+
+Multiple fibers may **Receive** on the same channel; each message goes to one receiver (FIFO).
+
+Cancellation wakes parked fibers with **Cancelled** after **OnCancelled** on the child fiber.
+
+## Pointer-payload channels (Phase B)
+
+The runtime exposes pointer-payload channel ops at the ABI: `channel_send_ptr`,
+`channel_try_send_ptr`, `channel_receive_ptr`, `channel_try_receive_ptr`. These ops
+share the existing `ChannelId` table and the same FIFO semantics described above; only
+the payload moves a GC-managed pointer instead of a raw `i64`.
+
+Implementations **must**:
+
+- Register the in-flight pointer as an **external GC handle** before pushing the
+  handle id onto the internal queue, and drop the registration on both the receiver
+  side and on any error path. The pointer is reachable to the GC for the full duration
+  it sits in the queue.
+- Apply the **Dijkstra insertion write barrier** (`gc_write_barrier`) on **both** the
+  send and the receive sides. The barrier is correct regardless of whether the runtime
+  is in Phase A or Phase B; in Phase A it is effectively a no-op.
+- Return **Closed** when no active mutator is registered, rather than leaking the
+  external handle.
+- When called from an OS thread that is **not** a Beskid fiber (a Phase B mutator
+  registered via `attach_phase_b_mutator`), back-pressure on a bounded queue **must
+  not** call into the fiber scheduler. The runtime instead falls back to
+  `try_send` / `try_receive` polling with `std::thread::yield_now`.

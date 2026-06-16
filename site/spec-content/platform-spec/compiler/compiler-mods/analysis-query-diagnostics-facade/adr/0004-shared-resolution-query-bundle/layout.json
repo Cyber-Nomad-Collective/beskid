@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "level": "article",
+  "sections": [],
+  "pathPrefix": "platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/adr/0004-shared-resolution-query-bundle",
+  "widgets": [],
+  "grid": {
+    "cols": 12,
+    "rowHeight": 30,
+    "items": []
+  }
+}

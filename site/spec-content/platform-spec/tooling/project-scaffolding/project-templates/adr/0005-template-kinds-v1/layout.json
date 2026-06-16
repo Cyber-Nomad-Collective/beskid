@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "level": "article",
+  "sections": [],
+  "pathPrefix": "platform-spec/tooling/project-scaffolding/project-templates/adr/0005-template-kinds-v1",
+  "widgets": [],
+  "grid": {
+    "cols": 12,
+    "rowHeight": 30,
+    "items": []
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Evaluation",
+      "href": "/platform-spec/language-meta/evaluation/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Concurrency package",
+      "href": "/platform-spec/core-library/concurrency/concurrency-package/",
+      "relation": "Fiber T struct and Channel API"
+    },
+    {
+      "type": "Feature",
+      "title": "Fiber scheduler and stacks",
+      "href": "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
+      "relation": "Lowering target"
+    },
+    {
+      "type": "Feature",
+      "title": "Memory and references",
+      "href": "/platform-spec/language-meta/memory-model/memory-and-references/",
+      "relation": "Channel-only sharing"
+    }
+  ]
+}

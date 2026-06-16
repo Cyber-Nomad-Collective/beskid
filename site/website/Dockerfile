@@ -22,7 +22,7 @@ COPY package.json bun.lock .npmrc ./
 COPY beskid_web_common ./beskid_web_common
 COPY site/website ./site/website
 COPY site/platform-spec ./site/platform-spec
-COPY packages/spec-cli ./packages/spec-cli
+COPY site/spec-content ./site/spec-content
 ARG NODE_AUTH_TOKEN
 ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
 RUN bun install --frozen-lockfile

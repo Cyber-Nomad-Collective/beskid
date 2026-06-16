@@ -53,16 +53,26 @@ export function SpecNavRail({ tree, activeSlug }: SpecNavRailProps) {
 	return (
 		<nav
 			aria-label="Platform specification"
-			className="spec-nav-rail h-full overflow-y-auto border-r border-border/80 px-3 py-4"
+			className="spec-nav-rail flex h-full flex-col border-r border-border/80"
 		>
-			<p className="mb-3 px-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-				Specification
-			</p>
-			<ul className="space-y-0.5">
-				{tree.children?.map((child) => (
-					<NavNode key={child.slug} node={child} activeSlug={activeSlug} />
-				))}
-			</ul>
+			<div className="flex-1 overflow-y-auto px-3 py-4">
+				<p className="mb-3 px-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+					Specification
+				</p>
+				<ul className="space-y-0.5">
+					{tree.children?.map((child) => (
+						<NavNode key={child.slug} node={child} activeSlug={activeSlug} />
+					))}
+				</ul>
+			</div>
+			<div className="border-t border-border/80 p-3">
+				<Link
+					to="/settings/auth/login"
+					className="flex w-full items-center justify-center rounded-md border border-border px-3 py-2 text-sm font-medium hover:bg-muted/60"
+				>
+					Login
+				</Link>
+			</div>
 		</nav>
 	);
 }

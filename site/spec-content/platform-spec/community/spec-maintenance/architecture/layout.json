@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "level": "feature",
+  "sections": [],
+  "minSpecSections": 3,
+  "pathPrefix": "platform-spec/community/spec-maintenance/architecture",
+  "widgets": [],
+  "grid": {
+    "cols": 12,
+    "rowHeight": 30,
+    "items": []
+  }
+}

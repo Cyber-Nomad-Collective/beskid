@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Snapshot and refresh contract",
+      "href": "/platform-spec/tooling/lsp/snapshot-and-refresh-contract/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

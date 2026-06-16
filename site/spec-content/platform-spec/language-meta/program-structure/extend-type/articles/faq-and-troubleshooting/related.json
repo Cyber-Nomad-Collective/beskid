@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "extend type",
+      "href": "/platform-spec/language-meta/program-structure/extend-type/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

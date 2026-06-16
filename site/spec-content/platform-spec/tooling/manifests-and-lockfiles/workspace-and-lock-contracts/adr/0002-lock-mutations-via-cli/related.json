@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Workspace and lock contracts",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

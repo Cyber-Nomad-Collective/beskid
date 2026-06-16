@@ -1,0 +1,95 @@
+---
+title: Concurrency package - Contracts and edge cases
+description: Send, Receive, Join, Cancel, and Hub normative contracts.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-20
+---
+
+## `Channel<T>`
+
+### Construction
+
+- `Channel<T>.Create(options: ChannelOptions = default)` — **default is unbounded**.
+- `ChannelOptions.Bounded(n)` — `n > 0`; **Send** parks when full (Wait mode).
+- `ChannelOptions.Unbounded` — equivalent to default; queue grows until OOM (documented risk).
+- `ChannelOptions.SingleReader()` / `SingleWriter()` — unbounded factories that set optimization hints without changing queue semantics.
+- Optional capacity field inside options **must not** contradict `Bounded` / `Unbounded` variant; bounded wins when `Bounded(n)` is chosen.
+
+### Send and Receive (full names required)
+
+| Method | Contract |
+| --- | --- |
+| **Send** | `Result<(), ChannelError>`; blocks/parks fiber when full (bounded + Wait mode) |
+| **Receive** | `Result<T, ChannelError>`; parks when empty and open |
+| **TrySend** | `Option<()>` — `None` if would block |
+| **TryReceive** | `Option<T>` — `None` if would block |
+| **Close** | Idempotent writer close; no panic |
+
+### ChannelError (closed set)
+
+- `Closed` — endpoint closed
+- `Cancelled` — owning fiber cancelled (**Cancel** / **OnCancelled** path)
+
+**TrySend** / **TryReceive** use `Option` only (`None` = would block); no `ChannelError::Full`.
+
+### ChannelOptions (.NET-inspired, sync-only)
+
+- **SingleReader** / **SingleWriter** — optimization hints; behavior unchanged if violated but may enable faster paths
+- **BoundedChannelFullMode::Wait** — default; sender parks
+- No `AllowSynchronousContinuations` (async-only .NET concept)
+
+## `Fiber<T>`
+
+`Fiber<T>` is a corelib **struct** (runtime handle) that **must** declare:
+
+```beskid
+event OnCancelled();
+```
+
+The **spawn entry** function does **not** declare **OnCancelled** — only the handle type does.
+
+| Method | Contract |
+| --- | --- |
+| **Join** | `Result<T, FiberError>` — `Ok(value)`, `Cancelled`, `StackOverflow`, `Panicked` |
+| **Detach** | void; parent waives **Join**; child panic aborts process |
+| **Cancel** | void; raises **OnCancelled** on child fiber, then unblocks parked ops with **Cancelled** |
+
+**OnCancelled** runs on the child fiber. Unhandled failure in a handler **aborts the process**. Handlers **must not** **Join** self, **Join** an ancestor, or block indefinitely.
+
+**Join** from a child fiber to a parent (or ancestor) handle is a **compile error** (`JoinWouldDeadlock`).
+
+M3 completion requires generated code to import the ABI symbol `fiber_spawn_with_cancel_slot`, pass the handle's **OnCancelled** event slot, and treat the returned handle as an **`i64` fiber id** rather than a pointer.
+
+### FiberError (closed set)
+
+- `Cancelled`
+- `StackOverflow`
+- `Panicked` — carries diagnostic handle / message policy per runtime
+
+## `Hub<T>`
+
+- **Homogeneous only in v1** — `Hub<T>` registers only `Channel<T>` instances
+- **Register(index, channel)** / **Unregister(index)** — `index` is user-chosen `i64` key in **WaitReceive** result
+- **WaitReceive** → `Result<HubReceiveResult, HubError>` where `HubReceiveResult` carries member index and received value
+- **Round-robin** fairness among ready channels (see **[decisions record](./decisions-record/)**)
+- Multiplexing unlike types: use `Channel<HubMessage>` (enum/union) or multiple hubs — **not** mixed-type **Hub** in v1
+- **WaitSend** — **not in v1**
+- Replaces language-level `select` for v1
+
+## Mutex and WaitGroup
+
+- **Mutex.Lock** → `Result<MutexGuard, MutexError>`
+- **Mutex.TryLock** → `Option<MutexGuard>` (`None` if would block)
+- **Mutex.Unlock** — explicit in v1 (no `defer` required for spec)
+- **WaitGroup.Wait** parks until counter zero; **Add**/**Done** follow Go semantics
+
+## Console integration
+
+`Console.OnResize` and control `onTick` paths **must** publish into a `Channel<T>` (or **Hub** member) so UI fibers **Receive** events without multicast **event** invocation across fibers. Language **event** syntax may remain for single-fiber use; cross-fiber UI **must** use **Channel** (see console-terminal-events).

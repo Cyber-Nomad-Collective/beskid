@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Codegen artifact schema",
+      "href": "/platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "api.json contract",
+      "href": "/platform-spec/tooling/cli/api-json-contract/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Design model",
+      "href": "/platform-spec/tooling/cli/api-json-contract/design-model/",
+      "relation": "Schema and library tree invariants"
+    }
+  ]
+}

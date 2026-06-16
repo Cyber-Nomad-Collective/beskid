@@ -1,0 +1,34 @@
+---
+title: Contracts and edge cases
+description: Registry client guarantees and failure modes.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+---
+
+## Contracts
+
+- **HTTPS in production** — Operators **should** configure `BESKID_PCKG_URL` with TLS endpoints; clients honor redirects per reqwest defaults.
+- **Auth mutual exclusion** — Bearer and API key flags **must not** be combined on one invocation.
+- **Structured `api.json`** — Library packs **should** include compiler-emitted `.beskid/docs/api.json` as the docs UI contract (see **[api.json contract](/platform-spec/tooling/cli/api-json-contract/)**). When **`symbolKey`** is present on v4 rows, pack validation **must** enforce registry invariants ([D-TOOL-PCKG-0005](/platform-spec/tooling/registry-client/pckg-client-contract/adr/0005-api-json-symbol-key-validation/)).
+- **Readme artifact name** — Packed readmes **must** appear as root `README.md` in the zip for dashboard listing.
+- **Template discriminator** — Template packs **must** set `packageKind: template` and ship `.beskid/template.json`.
+
+## Edge cases
+
+| Case | Behavior |
+| --- | --- |
+| Missing `Project.proj` at pack root | Defaults to library profile without template metadata |
+| Invalid `api.json` graph / symbolKey | `validate_packed_api_doc` rejects before ingest (duplicate or malformed **`symbolKey`**, broken `parentId`, absolute paths) |
+| Missing auth on publish | `MissingAuthToken` before HTTP |
+| Large trees | Walkdir-based collection; operators exclude build outputs via manifest/layout conventions |
+| `iconUrl` on publish | Server validates HTTP(S) URLs and length caps (`PackageManifestMetadata`) |
+
+## Server rejection mirrors
+
+Client-side pack **should** prevalidate paths the server will reject (docs layout, workspace member consistency) to avoid wasted uploads; integration tests live in `pckg/src/Server.Tests/`.

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Method dispatch",
+      "href": "/platform-spec/language-meta/type-system/method-dispatch/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Area",
+      "title": "Conformance",
+      "href": "/platform-spec/compiler/conformance/",
+      "relation": "Evidence policy for compiler features"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+---
+title: Fiber scheduler and stacks - Verification and traceability
+description: Tests and ABI anchors for fiber scheduler work.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-20
+---
+
+## v0.2 minimum conformance (Q30)
+
+- [ ] `spawn` + **Join** returns `Result` with child value
+- [ ] Bounded **Channel** **Send**/**Receive** rendezvous
+- [ ] **Yield** schedules another runnable fiber
+- [ ] Blocking syscall path parks fiber (thread pool smoke test)
+- [ ] **Cancel** surfaces on **Join** and blocked **Receive**
+- [ ] Phase A: stress test under single mutator with N fibers
+- [ ] **Hub** round-robin: two channels, hot/cold traffic — cold channel receives within bounded turns
+- [ ] **Cancel**: **OnCancelled** runs before **Join** returns **Cancelled**
+- [ ] Default **Channel** is unbounded (no capacity until **Bounded** set)
+- [ ] **JoinWouldDeadlock** diagnostic for child joining parent
+- [ ] `Hub<T>` rejects mixed element types at compile time
+- [ ] **Mutex.TryLock** returns `None` under contention without parking
+- [ ] Unhandled panic in **OnCancelled** aborts process (conformance policy)
+
+## Anchors
+
+- `compiler/crates/beskid_abi/src/symbols.rs`
+- `compiler/crates/beskid_analysis/src/builtins.rs`
+- `compiler/crates/beskid_runtime/` scheduler module
+- Scheduler implementation lives in `compiler/crates/beskid_runtime/src/scheduler/`

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Lambdas and closures",
+      "href": "/platform-spec/language-meta/evaluation/lambdas-and-closures/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Console capabilities",
+      "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Project scaffolding",
+      "href": "/platform-spec/tooling/project-scaffolding/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Project templates",
+      "href": "/platform-spec/tooling/project-scaffolding/project-templates/",
+      "relation": "Engine consumes template packages"
+    },
+    {
+      "type": "Feature",
+      "title": "Package kinds",
+      "href": "/platform-spec/tooling/registry-client/package-kinds/",
+      "relation": "Taxonomy"
+    },
+    {
+      "type": "Feature",
+      "title": "api.json contract",
+      "href": "/platform-spec/tooling/cli/api-json-contract/",
+      "relation": "Library packages only"
+    },
+    {
+      "type": "Feature",
+      "title": "pckg client contract",
+      "href": "/platform-spec/tooling/registry-client/pckg-client-contract/",
+      "relation": "Publish and download"
+    }
+  ]
+}

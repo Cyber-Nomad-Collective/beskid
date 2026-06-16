@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "CLI",
+      "href": "/platform-spec/tooling/cli/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Area",
+      "title": "Build pipeline",
+      "href": "/platform-spec/compiler/build-pipeline/",
+      "relation": "CLI orchestrates build stages"
+    },
+    {
+      "type": "Area",
+      "title": "Runtime",
+      "href": "/platform-spec/execution/runtime/",
+      "relation": "Run commands invoke runtime contracts"
+    }
+  ]
+}

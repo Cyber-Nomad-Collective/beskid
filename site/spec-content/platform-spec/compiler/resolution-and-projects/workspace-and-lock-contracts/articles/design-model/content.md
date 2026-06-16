@@ -1,0 +1,33 @@
+---
+title: Workspace and lock contracts - Design model
+description: Compiler entities for workspace roots and lock materialization
+  (workspace key prose defers to tooling).
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+---
+
+## Resolution model (compiler)
+
+| Entity | Role |
+| --- | --- |
+| Workspace root | Anchor for member `Project.proj` discovery |
+| Lock snapshot | Pinned dependency versions consumed when building the graph |
+| Materialized package root | On-disk layout the resolver uses after lock apply |
+
+The compiler **must** treat lock-backed roots as authoritative for reproducible CI graphs. Ad-hoc workspace toggles that alter Mod policy without a spec bump are rejected at parse time in tooling; the compiler enforces the resulting graph only.
+
+## Schema authority
+
+Reserved and forbidden **`Workspace.proj`** keys, `defaultMember`, and lock update semantics are defined in **[tooling / design model](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/design-model/)**. This article does not duplicate those tables.
+
+## Code anchors
+
+- `compiler/crates/beskid_analysis/src/resolve/mod.rs`
+- `compiler/crates/beskid_cli/src/commands/`
+- `compiler/crates/beskid_tests/src/projects/corelib/layout.rs`

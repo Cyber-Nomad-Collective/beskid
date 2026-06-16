@@ -1,0 +1,43 @@
+---
+title: Use imports public types
+description: use Module.Path brings public types and enum constructors into
+  unqualified scope.
+specLevel: adr
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+adrId: D-COMP-SEM-0007
+adrStatus: Accepted
+adrDate: 2026-05-29
+lastReviewed: 2026-05-29
+---
+
+## Context
+
+`use Core.Results` registered module aliases for member completion (`IO.PrintLine`) but did not import public **types** or **enum constructors** into unqualified value/type scope—breaking patterns such as `Result::Ok` after `use Core.Results`.
+
+## Decision
+
+When resolving `use Logical.Module.Path` (with optional `as Alias`):
+
+| Binding | Rule |
+| --- | --- |
+| Module alias | Existing `module_imports` behavior for qualified member access **remains** |
+| Public types | Each `public type` exported from the target module **must** bind in type scope under its simple name (or alias) |
+| Enum constructors | Each public enum constructor **must** bind in value scope as `Type::Variant` and, when the type name is in scope, as unqualified constructor names per language-meta visibility rules |
+| Non-public items | **Must not** be introduced into scope via `use` |
+
+## Consequences
+
+Resolver and `items.rs` grow `use`-import registration beyond alias tables. Analysis fixtures cover `Core.Results` / `Result::Ok` patterns.
+
+## Verification anchors
+
+- `compiler/crates/beskid_analysis/src/resolve/resolver.rs`
+- `compiler/crates/beskid_analysis/src/resolve/items.rs`
+- `compiler/crates/beskid_tests/src/analysis/resolve.rs`
+- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/core/ResultsTests.bd`

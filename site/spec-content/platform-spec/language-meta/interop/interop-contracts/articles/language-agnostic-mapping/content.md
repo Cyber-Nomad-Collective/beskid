@@ -1,0 +1,31 @@
+---
+title: Interop.Contracts — Language-agnostic mapping rules
+description: How Beskid declarations map to abstract call shapes and foreign
+  symbols before any C- or Rust-specific lowering.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-01
+---
+
+## Declaration to contract
+
+Beskid surfaces foreign entrypoints through **`contract`** declarations annotated for interop (see **[FFI and extern](/platform-spec/language-meta/interop/ffi-and-extern/)**). At the **Interop.Contracts** layer, each contract method contributes:
+
+- A **logical symbol** derived from the contract’s extern metadata, optional per-method **`Symbol`** override, or the method’s foreign name when no override is present.
+- A **call shape** derived from Beskid parameter and result types using the type-shape rules on the parent hub’s **[core primitives](/platform-spec/language-meta/interop/interop-contracts/core-primitives/)** article.
+
+The compiler **must** reject declarations that cannot be lowered to any supported profile’s call shape without undefined behavior.
+
+## Multiple profiles
+
+The same abstract call shape may admit more than one profile lowering in the future. **Interop.Contracts** defines the shared normalization step; **[C ABI profile](/platform-spec/language-meta/interop/c-abi-profile/)** and **[Rust ABI profile](/platform-spec/language-meta/interop/rust-abi-profile/)** document which shapes each profile accepts in the current toolchain.
+
+## Builtin vs user foreign boundary
+
+Calls to **runtime builtins** (allocation, syscalls, internal dispatch helpers) use the same abstract machinery but are **not** user-authored `Extern` contracts. They are governed by the **runtime ABI** and syscall ownership documents under `/execution/runtime/`; those surfaces must remain consistent with the symbol tables in `beskid_abi`.

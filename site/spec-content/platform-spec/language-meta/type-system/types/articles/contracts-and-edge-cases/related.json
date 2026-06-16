@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Types",
+      "href": "/platform-spec/language-meta/type-system/types/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Diagnostic code registry",
+      "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
+      "relation": "E12xx band reservation"
+    }
+  ]
+}

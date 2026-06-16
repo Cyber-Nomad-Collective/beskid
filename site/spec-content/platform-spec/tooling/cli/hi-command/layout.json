@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "level": "feature",
+  "extends": "feature-hub-default",
+  "pathPrefix": "platform-spec/tooling/cli/hi-command",
+  "minSpecSections": 1,
+  "widgets": [],
+  "grid": {
+    "cols": 12,
+    "rowHeight": 30,
+    "items": []
+  }
+}

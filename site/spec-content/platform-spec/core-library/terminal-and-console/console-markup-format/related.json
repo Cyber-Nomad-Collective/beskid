@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Terminal and console",
+      "href": "/platform-spec/core-library/terminal-and-console/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "ANSI escape model",
+      "href": "/platform-spec/core-library/terminal-and-console/ansi-escape-model/",
+      "relation": "Render target for markup"
+    },
+    {
+      "type": "Feature",
+      "title": "Console capabilities",
+      "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/",
+      "relation": "Styled vs plain render paths"
+    }
+  ]
+}

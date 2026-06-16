@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Foundation and primitives",
+      "href": "/platform-spec/core-library/foundation-and-primitives/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Core.Optional",
+      "href": "/platform-spec/core-library/foundation-and-primitives/core-optional/",
+      "relation": "Get/TryGet return Option"
+    },
+    {
+      "type": "Feature",
+      "title": "Core.Fluent",
+      "href": "/platform-spec/core-library/foundation-and-primitives/core-fluent/",
+      "relation": "Optional fluent facades"
+    },
+    {
+      "type": "ADR",
+      "title": "Owning-type inline methods",
+      "href": "/platform-spec/core-library/stability-and-api-shape/corelib-api-shape/adr/0005-owning-type-inline-methods/",
+      "relation": "Method placement rule"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Terminal and console",
+      "href": "/platform-spec/core-library/terminal-and-console/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Console terminal events",
+      "href": "/platform-spec/core-library/terminal-and-console/console-terminal-events/",
+      "relation": "Resize triggers re-layout"
+    }
+  ]
+}

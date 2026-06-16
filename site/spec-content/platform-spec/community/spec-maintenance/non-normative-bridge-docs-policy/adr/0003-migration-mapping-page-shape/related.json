@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Non-normative bridge docs policy",
+      "href": "/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

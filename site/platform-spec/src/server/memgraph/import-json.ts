@@ -5,20 +5,22 @@ import path from "node:path";
 
 import {
 	emitBodyMd,
+	hrefToSlug,
 	nodeMetadataToFrontmatter,
-	parseNodeContent,
 	parseNodeMetadata,
+	parseRelatedFile,
 	parseWorkspaceManifest,
-	SPEC_CONTENT_FILE,
+	readNodeMarkdown,
 	SPEC_LAYOUT_FILE,
 	SPEC_NODE_FILE,
+	SPEC_RELATED_FILE,
 	SPEC_WORKSPACE_MANIFEST,
 	type NodeMetadata,
 } from "@cyber-nomad-collective/spec-core";
 import {
-	parentSlugFromPath,
-	pathClassFromRel,
-} from "@cyber-nomad-collective/spec-core/path-rules";
+	parentSlugFromNodeRel,
+	pathClassFromNodeRel,
+} from "@cyber-nomad-collective/spec-core/node-path";
 import { slugToHref } from "@cyber-nomad-collective/trudoc/platform-spec/nav-tree";
 import { ensureMemgraphReady } from "#/server/memgraph/client";
 import {
@@ -64,7 +66,7 @@ function nodeToUpsert(
 	node: NodeMetadata,
 	bodyMd: string,
 	layoutJson: string | null,
-	contentJson: string,
+	contentJson: string | null,
 	workspaceDir: string,
 	manifestContentRoot: string,
 	nodeDir: string,
@@ -76,9 +78,9 @@ function nodeToUpsert(
 		.split(path.sep)
 		.join("/");
 	const slug = rel ? `platform-spec/${rel}` : "platform-spec";
-	const pathClass = pathClassFromRel(rel || "index");
+	const pathClass = pathClassFromNodeRel(rel || "");
 	const parentSlug =
-		node.parentSlug ?? parentSlugFromPath(slug, pathClass);
+		node.parentSlug ?? parentSlugFromNodeRel(rel || "", pathClass);
 
 	return {
 		slug,
@@ -132,19 +134,14 @@ export async function importJsonWorkspace(
 		const node = parseNodeMetadata(
 			JSON.parse(fs.readFileSync(path.join(nodeDir, SPEC_NODE_FILE), "utf8")),
 		);
-		const contentPath = path.join(nodeDir, SPEC_CONTENT_FILE);
 		const layoutPath = path.join(nodeDir, SPEC_LAYOUT_FILE);
+		const relatedPath = path.join(nodeDir, SPEC_RELATED_FILE);
 
-		let contentJson = JSON.stringify({ version: 1, blocks: [] });
-		let bodyMd = "";
+		let contentJson: string | null = null;
+		let bodyMd = readNodeMarkdown(nodeDir);
 
-		if (fs.existsSync(contentPath)) {
-			const content = parseNodeContent(
-				JSON.parse(fs.readFileSync(contentPath, "utf8")),
-			);
-			contentJson = JSON.stringify(content);
-			bodyMd = emitBodyMd(content);
-		}
+		// content.json is deprecated in the content.md-only workspace format.
+		// We keep contentJson unset and rely on content.md as the source of truth.
 
 		const layoutJson = fs.existsSync(layoutPath)
 			? fs.readFileSync(layoutPath, "utf8")
@@ -163,6 +160,20 @@ export async function importJsonWorkspace(
 		);
 		upserts.push(upsert);
 		contains.push({ slug: upsert.slug, parentSlug: upsert.parentSlug });
+
+		if (fs.existsSync(relatedPath)) {
+			const relatedFile = parseRelatedFile(
+				JSON.parse(fs.readFileSync(relatedPath, "utf8")),
+				relatedPath,
+			);
+			for (const topic of relatedFile.topics) {
+				related.push({
+					fromSlug: upsert.slug,
+					toSlug: hrefToSlug(topic.href),
+					relation: topic.relation ?? "relatedTopic",
+				});
+			}
+		}
 
 		for (const topic of node.relatedTopics ?? []) {
 			related.push({

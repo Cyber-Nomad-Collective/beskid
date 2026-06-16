@@ -1,0 +1,33 @@
+---
+title: Project manifest contract - Contracts and edge cases
+description: Compiler resolution guarantees, graph cycles, and manifest-band diagnostics.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+---
+
+## Compiler resolution contracts
+
+- **Graph before compile** — No host `CompilePlan` runs until workspace/project DAG validation succeeds.
+- **Mod carriers only in graph** — Compiler-mod contracts are reachable only through resolved `type: Mod` nodes (see tooling for manifest-level rules).
+- **Stable diagnostics** — Graph and resolution failures use assigned codes in **E1801–E1899**; changing codes requires registry and test updates.
+- **Transitive Mod closure** — Host builds must resolve the full transitive Mod set before `mod.load`; partial graphs are errors.
+
+## Edge cases (resolution)
+
+- **Dependency cycles** — Any cycle in the workspace/project graph is a hard error at graph build time.
+- **Missing materialized package** — Unresolved registry or lock roots fail before analysis, with distinct codes from parse errors.
+- **Lock/workspace drift** — Mismatches between lockfile pins and on-disk layout are diagnosed in the workspace feature; see [workspace and lock contracts](/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/).
+
+Mod-specific manifest shape rules (`capabilities`, `maxGeneratorRounds`, host targets on Mod projects) are **not** duplicated here; see **[tooling / contracts and edge cases](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/contracts-and-edge-cases/)**.
+
+## Code anchors
+
+- `compiler/crates/beskid_analysis/src/projects/graph/`
+- `compiler/crates/beskid_tests/src/projects/corelib/mod.rs`
+- `compiler/crates/beskid_tests/src/projects/corelib/compile.rs`

@@ -1,0 +1,110 @@
+---
+title: Contracts and edge cases
+description: pckgClient HTTP rules, authentication, caching, and package command contracts.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-30
+---
+
+## Purpose and scope
+
+Testable rules for **`pckgClient`**, registry auth, CLI mutations, and Packages view commands.
+
+## Settings
+
+| Setting | Type | Default | Rule |
+| --- | --- | --- | --- |
+| `beskid.pckg.baseUrl` | string | `https://pckg.beskid-lang.org` | **Must** be absolute HTTP(S) URL without trailing slash normalization issues |
+| `beskid.pckg.apiKey` | string (secret) | empty | Stored via `SecretStorage`; **must not** sync to global settings |
+
+## Authentication
+
+| ID | Rule |
+| --- | --- |
+| A-01 | When `beskid.pckg.apiKey` is set, `createPckgFetch` **must** send `Authorization: Bearer <token>` on every registry request. |
+| A-02 | Auth scheme **must** match pckg `ApiKeyAuthentication` (Bearer). |
+| A-03 | On HTTP 401/403 **for a request that requires auth** (private package or publisher action), UI **must** show actionable error (“Configure API key…”). Public search/details **must not** prompt for a key when anonymous access succeeds. |
+| A-04 | Missing API key **must not** block public catalog browse; connection label **should** read “Public catalog · {url}” when anonymous probe succeeds. |
+| A-05 | Command `beskid.packages.configureApiKey` **must** prompt for a key and persist it via `SecretStorage` (`beskid.pckg.apiKey` secret id). |
+| A-06 | Registry connection state **must** be read from LSP `beskid.pckg.getConnectionStatus` first; the client passes `authConfigured` (boolean only). API keys **must not** be stored or logged by the language server. |
+| A-07 | After storing an API key, `beskid.packages.configureApiKey` **must** call LSP `beskid.pckg.validateConnection` with the key in command args (one-shot); secrets remain in VS Code `SecretStorage`. |
+
+## LSP registry commands
+
+| Command | Arguments (JSON object) | Response |
+| --- | --- | --- |
+| `beskid.pckg.getConnectionStatus` | `{ workspaceUri?: string, authConfigured: boolean }` | `{ baseUrl, registryName?, workspaceDefaultRegistryUrl?, workspaceDefaultRegistryName?, authConfigured, validation: { status, message? }, connected }` |
+| `beskid.pckg.setRegistry` | `{ baseUrl: string, registryName?: string }` | none |
+| `beskid.pckg.validateConnection` | `{ baseUrl?: string, workspaceUri?: string, apiKey?: string }` | `{ ok, error?, validation: { status, message? } }` — `apiKey` is never echoed or logged |
+
+`status` is `unknown`, `ok`, or `error`. `connected` is `true` when validation is `ok` and auth requirements are satisfied (`authConfigured` when the registry returns 401/403 without a key).
+
+## searchPackages
+
+| ID | Rule |
+| --- | --- |
+| S-01 | **Must** call `GET /api/search` with `limit` (default 20, max 50); `q` optional (empty loads browse catalog). |
+| S-02 | **Must** return typed `PackageSearchResponse[]` (array of hits). |
+| S-03 | **Must** cache responses ~30 seconds per `(registryBaseUrl, q, limit)`. |
+| S-04 | **Must** debounce user input ≥300ms before network. |
+
+## listPackages
+
+| ID | Rule |
+| --- | --- |
+| B-01 | **Must** call `GET /api/packages` (or search with empty `q`) for initial document panel load. |
+| B-02 | **Must** work without API key for public packages. |
+| B-03 | **Must** cache ~30 seconds per `(registryBaseUrl, limit)`. |
+
+## getPackageDetails
+
+| ID | Rule |
+| --- | --- |
+| D-01 | **Must** call `GET /api/packages/{name}` where `{name}` is URL-encoded package id. |
+| D-02 | **Must** map `versions[]`, `dependencies[]`, `readme`, `health`, `latestVersion` from response. |
+| D-03 | Yanked versions (`isYanked: true`) **must** render with warning in tree. |
+
+## Local project section
+
+| ID | Rule |
+| --- | --- |
+| L-01 | **ThisProject** children **must** come only from `beskid.getProjectDependencies` for `focusedProjectUri`. |
+| L-02 | Each row **must** show `name`, effective version (`locked.resolvedVersion` or declared descriptor), `source`, `registry`. |
+| L-03 | Tooltip **should** include `materializedRoot` when present in locked entries. |
+| L-04 | Context menu: Open manifest, Open materialized folder, Copy `name@version`. |
+
+## Mutation commands
+
+| Command | Rule |
+| --- | --- |
+| `beskid.packages.fetch` | **Must** run `beskid fetch` with `cwd` = focused project directory via shared CLI runner |
+| `beskid.packages.lock` | **Must** run `beskid lock` likewise |
+| `beskid.packages.addDependency` | **Must** prompt for name and version; apply via CLI subcommand when available, else structured `Project.proj` dependency entry + `refreshWorkspace` |
+| `beskid.packages.refresh` | **Must** clear `pckgClient` caches and refresh tree |
+| `beskid.packages.configureApiKey` | **Must** prompt, store registry API key in `SecretStorage`, validate via `beskid.pckg.validateConnection`, then refresh; subsequent search/details **must** use Bearer auth |
+| `beskid.packages.open` | **Must** open/focus registry document WebviewPanel |
+| `beskid.packages.openRegistryUri` | **Must** open browser URL from `buildRegistryPackageUrl` |
+| `beskid.packages.openManifest` | **Must** open focused `Project.proj` for a local dependency row |
+| `beskid.packages.openMaterializedFolder` | **Must** reveal materialized package path when `materializedPath` is present |
+| `beskid.packages.copyDependencyLabel` | **Must** copy `name@version` label for local dependency rows |
+
+## Edge cases
+
+| Scenario | Expected behavior |
+| --- | --- |
+| Offline / DNS failure | Registry section error node; retry action |
+| Empty search query | Document panel shows browse catalog from `listPackages` |
+| No `Project.lock` | **ThisProject** shows declared only; badge “not locked” on rows |
+| Focus cleared | **ThisProject** shows select-project message |
+| Concurrent fetch + search | Status bar shows dominant phase; both complete independently |
+
+## Related topics
+
+- [Workspace explorer contracts](../workspace-project-explorer/contracts-and-edge-cases/#beskidgetprojectdependencies)
+- Server contracts: `pckg/src/Server/Features/Packages/Contracts.cs`

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Error handling",
+      "href": "/platform-spec/language-meta/contracts-and-effects/error-handling/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

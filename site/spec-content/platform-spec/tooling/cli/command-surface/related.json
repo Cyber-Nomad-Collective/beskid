@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "CLI",
+      "href": "/platform-spec/tooling/cli/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "beskid new command",
+      "href": "/platform-spec/tooling/project-scaffolding/beskid-new/",
+      "relation": "Template scaffolding entrypoint"
+    }
+  ]
+}

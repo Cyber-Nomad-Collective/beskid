@@ -1,0 +1,40 @@
+---
+title: Supersede lower_source production entry
+description: Production codegen enters through
+  lower_resolved_input_with_pipeline; lower_source is test-only.
+specLevel: adr
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+adrId: D-COMP-IR-0011
+adrStatus: Accepted
+adrDate: 2026-05-29
+lastReviewed: 2026-05-29
+---
+
+## Context
+
+[D-COMP-IR-0009](./0003-cranelift-lowering-single-entry/) named `beskid_codegen::lower_source` the single lowering entry. Project-backed commands still fell through to `lower_source_single_unit_legacy`, bypassing assembly, dependency HIR, and `LinkPlan`.
+
+## Decision
+
+| Rule | Detail |
+| --- | --- |
+| Production entry | `lower_resolved_input_with_pipeline` (after `prepare_compilation` / `compile_front_end_from_resolved_input`) is the **only** production path to `CodegenArtifact` |
+| Legacy ban | `lower_source_single_unit_legacy` and pre-assembly mod/semantic scheduling **must not** run in CLI, LSP, or engine production paths |
+| Test-only `lower_source` | `lower_source` / in-memory helpers **may** remain for unit tests by constructing a minimal single-unit `ProgramAssembly` and delegating to `lower_resolved_input` |
+| Link plan | Production paths **must** satisfy [D-COMP-IR-0010](./0004-reachability-link-plan/) |
+
+## Consequences
+
+[D-COMP-IR-0009](./0003-cranelift-lowering-single-entry/) is superseded for production semantics; JIT/AOT still consume `CodegenArtifact` from the resolved-input entry only.
+
+## Verification anchors
+
+- `compiler/crates/beskid_codegen/src/services.rs`
+- `compiler/crates/beskid_cli/src/commands/`
+- `compiler/crates/beskid_engine/tests/`

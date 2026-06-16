@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Compiler Mods",
+      "href": "/platform-spec/compiler/compiler-mods/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Domain",
+      "title": "Compiler",
+      "href": "/platform-spec/compiler/",
+      "relation": "Parent domain hub"
+    },
+    {
+      "type": "Area",
+      "title": "Metaprogramming (language meta)",
+      "href": "/platform-spec/language-meta/metaprogramming/",
+      "relation": "Beskid-side Mod SDK contracts"
+    },
+    {
+      "type": "Feature",
+      "title": "Compiler Mod SDK",
+      "href": "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
+      "relation": "Process diagnostics and emit-side reporting"
+    },
+    {
+      "type": "Feature",
+      "title": "Project manifest contract",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+      "relation": "Mod project type"
+    },
+    {
+      "type": "Feature",
+      "title": "Typed emitter and transforms",
+      "href": "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/",
+      "relation": "Complementary output surface for meta authors"
+    }
+  ]
+}

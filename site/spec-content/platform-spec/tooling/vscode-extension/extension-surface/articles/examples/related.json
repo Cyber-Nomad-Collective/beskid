@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Extension surface",
+      "href": "/platform-spec/tooling/vscode-extension/extension-surface/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Workspace and lock contracts",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/",
+      "relation": "corelib Workspace.proj"
+    }
+  ]
+}

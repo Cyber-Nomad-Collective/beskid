@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Memory and references",
+      "href": "/platform-spec/language-meta/memory-model/memory-and-references/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

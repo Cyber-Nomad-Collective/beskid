@@ -1,0 +1,36 @@
+---
+title: Verification and traceability
+description: Tests and traceability for workspace and lock tooling contracts.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+---
+
+## Compiler tests
+
+| Topic | Path |
+| --- | --- |
+| Pipeline + lock sync | `compiler/crates/beskid_tests/src/analysis/pipeline/core.rs` |
+| Corelib workspace layout | `compiler/crates/beskid_tests/src/projects/corelib/layout.rs` |
+| Lock parse errors | `projects/workflow.rs` unit tests |
+
+## pckg server tests
+
+| Topic | Path |
+| --- | --- |
+| Workspace publish | `pckg/src/Server.Tests/Integration/WorkspacePublishIntegrationTests.cs` |
+| Manifest metadata | `pckg/src/Server.Tests/Unit/PackageManifestMetadataReaderTests.cs` |
+| Artifact validation | `pckg/src/Server.Tests/Unit/PackageArtifactValidatorTests.cs` |
+
+## Traceability
+
+Tooling articles describe operator-visible contracts; compiler feature pages own diagnostic code bands for lock parse failures. Changes to `Project.lock` v1 **must** update both sides and bump any fixture locks in tests.
+
+## CI
+
+Superrepo and `compiler` CI run workspace tests on every graph change. Website spec verify: `cd site/website && bun run verify:trudoc -- --preset ci` after MDX edits.

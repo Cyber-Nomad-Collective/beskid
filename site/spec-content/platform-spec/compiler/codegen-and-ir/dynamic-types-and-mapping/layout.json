@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "level": "area",
+  "extends": "area-default",
+  "pathPrefix": "platform-spec/compiler/codegen-and-ir",
+  "minSpecSections": 1,
+  "widgets": [
+    {
+      "type": "domainTiles",
+      "props": {
+        "pathPrefix": "platform-spec/compiler/codegen-and-ir",
+        "heading": "Features"
+      }
+    }
+  ],
+  "grid": {
+    "cols": 12,
+    "rowHeight": 30,
+    "items": [
+      {
+        "i": "widget-0",
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 4,
+        "widget": {
+          "type": "domainTiles",
+          "props": {
+            "pathPrefix": "platform-spec/compiler/codegen-and-ir",
+            "heading": "Features"
+          }
+        }
+      }
+    ]
+  }
+}

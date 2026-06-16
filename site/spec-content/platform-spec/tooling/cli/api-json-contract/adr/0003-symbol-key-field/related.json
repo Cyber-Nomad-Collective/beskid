@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "api.json contract",
+      "href": "/platform-spec/tooling/cli/api-json-contract/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Package-prefixed symbol identity",
+      "href": "/platform-spec/compiler/semantic-pipeline/resolver-contract/adr/0005-package-prefixed-symbol-identity/",
+      "relation": "Registry authority"
+    },
+    {
+      "type": "Feature",
+      "title": "pckg client contract",
+      "href": "/platform-spec/tooling/registry-client/pckg-client-contract/",
+      "relation": "Pack-time validation"
+    }
+  ]
+}

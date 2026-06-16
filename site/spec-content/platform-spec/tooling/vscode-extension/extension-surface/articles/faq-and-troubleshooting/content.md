@@ -1,0 +1,59 @@
+---
+title: FAQ and troubleshooting
+description: Common questions about focus, private registries, offline mode, and
+  LSP restarts.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-30
+---
+
+## Purpose and scope
+
+Operator and contributor FAQ for the extension surface and linked features.
+
+## Why do Workspaces and Project show different roots?
+
+**Workspaces** lists every `Workspace.proj` under VS Code folders. **Project** shows only the **focused** `Project.proj` DAG. Standalone apps may leave Workspaces empty while Project still works after auto-select.
+
+## The LSP restarted when I clicked a member — is that expected?
+
+**No.** Focus changes **must** use configuration notification only. If a full restart occurs, file a bug against extension runtime wiring.
+
+## Registry search returns 401
+
+**Public packages** (`GET /api/search`, `GET /api/packages`) work without an API key. HTTP 401/403 on search usually means the registry URL is wrong, the server is misconfigured, or you are requesting a **private** package. Configure **Beskid: Configure Package Registry API Key** only when you need private catalog access or publishing. For human browsing, open `{baseUrl}/packages` in a browser.
+
+## How do I open the quick panel?
+
+Click the **Beskid** item in the status bar (or run **Beskid: Open Quick Panel**). This opens the modal overlay; it is not a sidebar view.
+
+## Debug view is missing
+
+Enable **`beskid.debug.enabled`** in settings (default off). The Debug tree appears in the activity bar when enabled.
+
+## Packages show declared but not locked versions
+
+Run **Lock** from the Packages view title or `beskid lock` in the terminal. Ensure `Project.lock` exists beside `Project.proj` per [workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/).
+
+## `beskid` command not found for Fetch/Lock
+
+Set **`beskid.cli.path`** to the absolute CLI binary (for example from [downloads](/docs/downloads/) or `cli-latest` release).
+
+## Offline development
+
+LSP and **This project** work offline. Registry search requires network; cached hits may appear until TTL expiry.
+
+## Where are executeCommand JSON schemas defined?
+
+Canonical schemas live in [workspace and project explorer — contracts](../workspace-project-explorer/contracts-and-edge-cases/). LSP tests should golden-match those shapes.
+
+## Related topics
+
+- [Contracts](./contracts-and-edge-cases/)
+- [Verification](./verification-and-traceability/)

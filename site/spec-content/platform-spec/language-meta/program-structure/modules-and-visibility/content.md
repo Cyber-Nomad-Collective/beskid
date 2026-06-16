@@ -1,0 +1,70 @@
+---
+title: Modules and visibility
+description: File layout, `public`/`internal` boundaries, and how packages
+  compose. The driver and package manager use the same module graph the
+  typechecker sees.
+specLevel: feature
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-21
+---
+
+## Normative specification
+
+### Scope
+
+Defines the **module graph**, **file-scoped modules**, and **`pub` visibility** rules. Name binding is in [Name resolution](/platform-spec/language-meta/program-structure/name-resolution/).
+
+### Module forms
+
+| Form | Rule |
+| --- | --- |
+| **Path `mod`** | `mod a.b;` declares the file’s module path; **must** be the first top-level item when used (**E1505**, **E1506**, **E1507**) |
+| **Inline `mod`** | `mod name { items }` nests a submodule in the current file |
+| **File path** | Without file-scoped `mod`, module identity **must** derive from file path relative to project source root |
+
+### Visibility
+
+- Items default to **private** to their module.
+- **`pub`** on an item **must** export it to importers of the containing module.
+- **`pub use path`** re-exports symbols; re-exported names **must** refer to accessible items.
+- Importing a private item **must** error (**E1501**, **E1107**).
+
+### Static rules
+
+- Duplicate module declarations in one file **must** error.
+- Nested `mod` declarations inside a file-scoped module file **must** error (**E1507**).
+- Package boundaries **must** align with project manifests; cross-package visibility follows the same `pub` rules within each compilation.
+
+### Dynamic semantics
+
+Modules exist at compile time; runtime has no separate module loader beyond linked assemblies/packages produced by the toolchain.
+
+### Diagnostics
+
+Visibility band **E1501–E1507**; unused import **W1503**. Registry: [Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/).
+
+### Conformance
+
+**L1** implementations **must** match reference layout tests for file-scoped modules and `pub` boundaries.
+
+## Decisions
+
+- **D-LM-MOD-001 — File-scoped precedence:** Explicit `mod path;` wins over path-derived module identity when present.
+- **D-LM-MOD-002 — No `internal` keyword:** v0.1 uses private-by-default plus `pub`; assembly-internal friends are deferred.
+- **D-LM-MOD-003 — Package graph is external:** Cross-package edges come from manifests; this chapter defines symbol visibility only.
+- **D-LM-MOD-004 — `pub use` re-export:** Re-exports **must** preserve the underlying symbol’s accessibility rules.
+
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/projects/` — module graph construction and file layout discovery
+- `compiler/crates/beskid_analysis/src/resolve/` — import resolution and `pub` visibility enforcement
+- `compiler/crates/beskid_analysis/src/mod_host/` — Mod project module registration
+
+## Platform view
+
+File layout, `public`/`internal` boundaries, and how packages compose. The driver and package manager use the same module graph the typechecker sees.

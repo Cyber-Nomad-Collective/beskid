@@ -1,0 +1,72 @@
+---
+title: Examples
+description: Corelib workspace and single-application explorer scenarios.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-21
+---
+
+## Purpose and scope
+
+Representative explorer behavior for the **corelib** workspace and a **single-app** folder opened without a workspace manifest.
+
+## Corelib workspace
+
+**Setup:** Open folder `compiler/corelib/` containing `Workspace.proj` named `corelib` with multiple members under `packages/`.
+
+**Expected Workspaces view:**
+
+- One workspace root labeled `corelib` (or `corelib / corelib` when multi-root).
+- Member children for each `Workspace.proj` entry (for example `collections`, `query`, `system`).
+- Optional node `workspace.package.json` when present at workspace root.
+
+**User action:** Click member `collections`.
+
+**Expected:**
+
+- `focusedProjectUri` → `file://…/packages/collections/Project.proj`
+- Project view root shows `collections` targets and dependencies from `beskid.getGraph` metadata
+- `beskid.getProjectDependencies` returns locked versions after `beskid lock` has been run in that workspace
+
+**Smoke checklist:**
+
+1. All members listed match `Workspace.proj` without manual refresh.
+2. Editing `Project.lock` triggers debounced refresh; locked versions update in Project tree tooltips.
+3. `beskid.refreshWorkspace` from palette completes without LSP restart.
+
+## Single-application project
+
+**Setup:** Open folder containing only `Project.proj` (no parent `Workspace.proj`), e.g. a console app template output.
+
+**Expected Workspaces view:**
+
+- Empty state: “No Beskid workspaces found” (or equivalent localized string).
+- User **may** still focus via Project picker or auto-select.
+
+**Expected Project view:**
+
+- Root = the lone `Project.proj`
+- Dependencies from `getGraph` metadata; unresolved registry deps show warning icon until `beskid fetch`
+
+**Auto-select:** Opening `Src/Main.bd` sets focus to the containing `Project.proj` when `beskid.project.autoSelectFromEditor` is true.
+
+## Multi-root VS Code workspace
+
+**Setup:** VS Code workspace with folders `corelib/` and `my-app/` side by side.
+
+**Expected labeling:**
+
+- `corelib / collections` vs `my-app / my-app` member labels to disambiguate.
+
+**Focus:** Switching editors between folders updates focus per auto-select rules without mixing dependency graphs.
+
+## Related topics
+
+- [Extension surface examples](../extension-surface/examples/)
+- [Workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)

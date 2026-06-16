@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Graph visualization",
+      "href": "/platform-spec/tooling/graph-visualization/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

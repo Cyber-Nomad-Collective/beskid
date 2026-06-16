@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Build, analyze, and run contract",
+      "href": "/platform-spec/tooling/cli/build-analyze-run-contract/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Diagnostics parity",
+      "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
+      "relation": "Shared diagnostic shaping with LSP"
+    }
+  ]
+}

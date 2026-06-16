@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Semantic Pipeline",
+      "href": "/platform-spec/compiler/semantic-pipeline/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Stage ordering and lowering",
+      "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+      "relation": "End-to-end compile phase DAG"
+    },
+    {
+      "type": "Feature",
+      "title": "Type-system pass contract",
+      "href": "/platform-spec/compiler/semantic-pipeline/type-system-pass-contract/",
+      "relation": "Typed HIR product and diagnostic mapping"
+    }
+  ]
+}

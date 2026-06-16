@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Concurrency package",
+      "href": "/platform-spec/core-library/concurrency/concurrency-package/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

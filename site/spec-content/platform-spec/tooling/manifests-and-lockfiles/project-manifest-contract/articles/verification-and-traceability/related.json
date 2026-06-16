@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Project manifest contract (compiler)",
+      "href": "/platform-spec/compiler/resolution-and-projects/project-manifest-contract/",
+      "relation": "implements — diagnostic and graph tests"
+    }
+  ]
+}

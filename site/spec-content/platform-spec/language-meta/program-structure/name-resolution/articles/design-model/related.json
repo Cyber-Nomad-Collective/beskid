@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Name resolution",
+      "href": "/platform-spec/language-meta/program-structure/name-resolution/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+---
+title: Standard feature hubs require adr directory
+description: Every Standard feature hub ships Decisions summary and at least one
+  adr/ file unless explicitly exempt.
+specLevel: adr
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+adrId: D-COMM-HUB-0003
+adrStatus: Accepted
+adrDate: 2026-05-05
+lastReviewed: 2026-05-22
+---
+
+## Context
+
+**Standard** features shipped without traceable closed choices, blocking the reader **ADRs** tab.
+
+## Decision
+
+Every **Standard** feature hub **must** include **`## Decisions`** (open items or **no open decisions** plus `adrId` pointers) and publish at least one `` `adr/<slug>.mdx` `` with `specLevel: adr` unless explicitly exempt in a **Standard** maintenance policy. Each ADR **must** include **Context**, **Decision**, and **Consequences**. New decisions **must not** be added only to monolithic decision tables.
+
+## Consequences
+
+Reference: [Concurrency package ADRs](/platform-spec/core-library/concurrency/concurrency-package/adr/0001-channel-default-unbounded/). Legacy `decisions-record.mdx` is migration-only.
+
+## Verification anchors
+
+`PSC003` in `platform-spec-content.ts`.

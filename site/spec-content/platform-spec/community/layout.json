@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "level": "domain",
+  "sections": [
+    {
+      "id": "rationale",
+      "required": true,
+      "kind": "specSection"
+    },
+    {
+      "id": "background",
+      "required": false,
+      "kind": "specSection"
+    }
+  ],
+  "minSpecSections": 1,
+  "pathPrefix": "platform-spec/community",
+  "widgets": [],
+  "grid": {
+    "cols": 12,
+    "rowHeight": 30,
+    "items": []
+  }
+}

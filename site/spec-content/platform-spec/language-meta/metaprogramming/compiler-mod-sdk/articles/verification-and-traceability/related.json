@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Compiler Mod SDK",
+      "href": "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Area",
+      "title": "Conformance",
+      "href": "/platform-spec/compiler/conformance/",
+      "relation": "Evidence policy for compiler features"
+    }
+  ]
+}

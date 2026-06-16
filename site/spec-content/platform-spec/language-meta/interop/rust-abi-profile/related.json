@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Interop",
+      "href": "/platform-spec/language-meta/interop/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Interop.Contracts",
+      "href": "/platform-spec/language-meta/interop/interop-contracts/",
+      "relation": "Abstract primitives this profile instantiates"
+    },
+    {
+      "type": "Feature",
+      "title": "C ABI profile",
+      "href": "/platform-spec/language-meta/interop/c-abi-profile/",
+      "relation": "User libraries; distinct from Rust runtime exports"
+    },
+    {
+      "type": "Feature",
+      "title": "Extern dispatch and policy",
+      "href": "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/",
+      "relation": "Dispatch tables and internal interop helpers"
+    }
+  ]
+}

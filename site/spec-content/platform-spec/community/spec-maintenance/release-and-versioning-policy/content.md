@@ -1,0 +1,43 @@
+---
+title: Release and versioning policy
+description: Git as the canonical version axis; v0.x bands label delivery scope,
+  not alternate documentation URLs or parallel normative trees.
+specLevel: feature
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-21
+---
+
+## Normative platform contract
+
+1. **Canonical version axis** — The platform specification under [/platform-spec/](/platform-spec/) is versioned by **Git** (typically `main` as the rolling integration branch). Readers and tooling **must** treat the spec at a given commit as the contract for that commit; there is **no** parallel normative URL hierarchy such as `/platform-spec/v0.2/...`.
+2. **Stable URLs** — Feature and language-meta paths **must** remain stable across releases. Behavioral change is expressed by editing normative text and metadata (`status`, `lastReviewed`, embedded decisions), not by introducing version segments in site paths.
+3. **v0.x bands are delivery scope, not doc versions** — Labels such as **v0.1**, **v0.2**, or roadmap bands describe **what the reference platform targets shipping**, not separate specification editions. A page may mention a band in prose when scoping implementation work; it **must not** imply that an older band remains authoritative at the same URL without explicit **Superseded** decision notes.
+4. **Single normative entry** — The [Platform specification](/platform-spec/) domain is the **one** normative documentation tree for language and platform contracts. Legacy trees ([`/execution/`](/execution/), [`/corelib/`](/corelib/), informative book and guides) are **non-normative** unless explicitly bridged per [Non-normative bridge docs policy](/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/).
+
+## How bands interact with maturity
+
+| Label | Role in documentation |
+| --- | --- |
+| Git revision / `lastReviewed` | When the normative text was last aligned with implementation |
+| `status: Proposed` | Contract still forming; band mentions are expectations, not guarantees |
+| `status: Standard` | Enforceable at the current Git revision; band mentions scope verification targets |
+| Embedded **Superseded** decisions | Historical choice retired at a noted revision; replacement section owns current law |
+
+## Tooling and release artifacts
+
+- CLI and package publication may use rolling tags (for example `cli-latest`) for **binaries**; that does not fork the spec URL space.
+- Registry-assigned package versions and lockfiles are **tooling/execution** concerns; their normative definitions live under platform-spec features with `relatedTopics` links, not under version-prefixed doc paths.
+
+## Maintainer expectations
+
+When a delivery band closes a gap (for example promoting fibers from Proposed to Standard), update normative prose, verification anchors, and `lastReviewed` in the **same change set** as the implementation merge when possible. Do not leave **Standard** pages describing behavior that only exists on another branch without a **Proposed** downgrade or an explicit decision noting the gap.
+
+## Decisions
+
+No open decisions. Closed maintenance ADRs under **`adr/`** — `D-COMM-VERS-0001` through `D-COMM-VERS-0004` (reader **ADRs** tab). Inception cross-cut: **D-INC-0007**.

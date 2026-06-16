@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Console markup format",
+      "href": "/platform-spec/core-library/terminal-and-console/console-markup-format/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "ADR",
+      "title": "Bracket palette tags v1",
+      "href": "/platform-spec/core-library/terminal-and-console/console-markup-format/adr/0031-bracket-palette-tags-v1/",
+      "relation": "Superseded palette scope"
+    }
+  ]
+}

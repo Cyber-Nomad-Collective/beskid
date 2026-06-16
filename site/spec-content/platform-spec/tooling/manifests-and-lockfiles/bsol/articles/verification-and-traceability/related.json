@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Bsol (Beskid Structured Object Language)",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/bsol/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

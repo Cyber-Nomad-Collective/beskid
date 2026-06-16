@@ -1,0 +1,39 @@
+---
+title: Manifest-generated registries
+description: BUILTIN_SPECS and RUNTIME_EXPORT_SYMBOLS are generated from
+  runtime_manifest.toml.
+specLevel: adr
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+adrId: D-EXEC-ABI-0007
+adrStatus: Accepted
+adrDate: 2026-06-06
+lastReviewed: 2026-06-06
+---
+
+## Context
+
+ABI v2 required parallel edits to `beskid_abi`, analysis builtins, JIT registration, and runtime bridge whenever a runtime symbol changed. Drift between registries caused link failures and silent analysis gaps.
+
+## Decision
+
+| Rule | Detail |
+| --- | --- |
+| Source | `compiler/runtime_manifest.toml` is the **sole** input for registry generation |
+| Outputs | `BUILTIN_SPECS`, `RUNTIME_EXPORT_SYMBOLS`, analysis `define_builtins!`, JIT `register_runtime_symbols`, and bridge link anchors **must** be **generated** |
+| v3 scope | Generated `BUILTIN_SPECS` lists **kernel exports plus dispatch entrypoints** only; soft legacy symbols are absent |
+| CLIF authority | [D-EXEC-ABI-0003](/platform-spec/execution/abi-and-host/builtins-and-symbols/adr/0003-builtin-specs-sole-clif-source/) remains valid — generated `BUILTIN_SPECS` is still the sole Cranelift import source |
+| Parity | Generator **must** enforce symbol-string parity between specs and export lists |
+
+## Consequences
+
+Adding or reclassifying a runtime builtin **must** change the manifest and regenerate — not hand-edit Rust tables. Supersedes manual dual-registry maintenance for v3 onward.
+
+## Verification anchors
+
+`compiler/crates/beskid_manifest/`; `compiler/crates/beskid_abi/build.rs`; `compiler/crates/beskid_tests/src/abi/contracts.rs`.

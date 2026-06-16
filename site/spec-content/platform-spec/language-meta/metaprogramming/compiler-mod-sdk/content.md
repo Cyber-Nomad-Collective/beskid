@@ -1,0 +1,103 @@
+---
+title: Compiler Mod SDK
+description: Beskid-side compiler-mod contracts, Beskid.Syntax mirror,
+  declarative query, and typed AST operations.
+specLevel: feature
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-20
+---
+
+<SpecSection title="Package role" id="package-role">
+The **Compiler Mod SDK** (`compiler-sdk` package) is the Beskid-side surface for `type: Mod` projects. Mod behavior is declared through **contracts** and `Beskid.Syntax` operations — not through dedicated metaprogramming grammar items in the host language.
+</SpecSection>
+
+<SpecSection title="Contract hierarchy" id="contracts">
+All mod entrypoints derive from `Collector`:
+
+| Contract | Role |
+| --- | --- |
+| `Collector` | Declarative target collection and scope narrowing (replaces project-level attach metadata). |
+| `Generator` | Incremental by default; emits typed AST contributions only. |
+| `Analyzer` | Runs on host + generated code; emits diagnostics and registers rewrites as fixes. |
+| `Rewriter<TSourceNode, TTargetNode>` | `Result<TTargetNode, FixError> Rewrite(TSourceNode sourceNode)` — replaces any AST node with any valid typed AST node. |
+| `AttributeGenerator` | Defines attributes exported by mod packages (SDK infrastructure; domain mods such as Serialization Mod define concrete attributes). |
+
+Hosts discover contract implementations from AOT-compiled `Mod` packages in the dependency graph (direct and transitive).
+</SpecSection>
+
+<SpecSection title="Contract discovery (normative)" id="contract-discovery">
+Mod packages **export** contract implementations through **public Beskid types** that implement the SDK `contract` interfaces (`Collector`, `Generator`, `Analyzer`, `Rewriter`, `AttributeGenerator`). Authors do not register entrypoints in the manifest; discovery is entirely artifact-driven.
+
+During `mod.load`, the Rust mod host:
+
+1. Resolves every transitive `type: Mod` dependency from the host `CompilePlan`.
+2. Locates the AOT artifact for the active **target triple** and **cache key** (see **[AOT artifact contract](/platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/)**).
+3. Reads the export descriptor (`mod.descriptor.json`) and/or the native object export table.
+4. Builds a schedule of `(contractId, typeId, entrySymbol)` tuples, where:
+   - `contractId` — stable SDK contract name (e.g. `Beskid.Compiler.Collect.Collector`).
+   - `typeId` — public type name in the mod assembly implementing that contract.
+   - `entrySymbol` — AOT-linked symbol used to invoke the contract entrypoint.
+
+Duplicate or conflicting registrations **must** fail with **E1829** / **E1851–E1870** diagnostics before `mod.collect` runs. Missing required contracts for a scheduled mod **must** fail closed (no partial host merge).
+
+Manifest `attachTo` / `entryModules` are **not** part of discovery; `Collector` owns scope narrowing at execution time.
+</SpecSection>
+
+<SpecSection title="Beskid.Syntax and declarative query" id="syntax-mirror">
+- `Beskid.Syntax` is the typed mirror of compiler syntax nodes (legacy `Beskid.Compiler.Syntax` / “SyntaxMirror” naming is deprecated).
+- `Beskid.Syntax.Nodes.Node` is a **contract** (not a variant enum): the sole navigation surface for mod traversal. Hosts materialize `NodeRef` handles `{ syntaxGenerationId, nodeId }` with stable identities per syntax generation.
+- `Node` exposes required identity and span metadata (`Ref`, `Kind`, `Span`) and child enumeration hooks. Query facade also exposes span helpers (`Span`, `TrySpan`) for `NodeRef`-first workflows.
+- Concrete mirrored types (`FunctionDefinition`, `Expression`, …) remain for `Generator` / `Rewriter` typed construction; mod **traversal** uses `NodeRef` + `Beskid.Compiler.Query`, then `As*` projections when a concrete shape is required.
+- `Program.items` is a `NodeList` of `NodeRef` values (cons-list encoding); there is **no** mirrored item-wrapper enum for module items.
+- Mod code builds and transforms trees through declarative fluent APIs — **no string formatting or source-text emission**.
+- `Rewriter` and `Generator` use concrete mirrored types; query and merge invalidation keys use `NodeRef` identities from the host snapshot.
+- AST manipulation ergonomics are standardized around a **query-pipeline DSL** (`Select` / `WhereKind` / `Replace` / `Remove` / `Insert*` / `Apply`), with deterministic host execution and conflict diagnostics.
+</SpecSection>
+
+<SpecSection title="Pipeline interaction (Beskid view)" id="pipeline">
+From a mod author's perspective:
+
+1. **Collect** — `Collector` narrows targets for this mod instance.
+2. **Generate** — `Generator` contributes typed AST; host re-parses and merges (bounded by `maxGeneratorRounds`).
+3. **Analyze** — `Analyzer` runs after semantic snapshot on merged program (including generated code).
+4. **Rewrite** — `Rewriter` applies when an analyzer declares a fix; host validates typed replacement.
+
+Rust-side phase ids and artifact lifecycle are specified under **[Compiler Mods](/platform-spec/compiler/compiler-mods/)**.
+</SpecSection>
+
+<SpecSection title="Language macros vs Mod SDK" id="language-macros-vs-mod-sdk">
+**[Language macros](/platform-spec/language-meta/metaprogramming/macros/)** are **not** Mod contracts. They are ordinary `macro` module items expanded by the compiler `macro.expand` phase before `mod.load`.
+
+| | Language macros | Mod SDK |
+| --- | --- | --- |
+| Declaration | `macro name (kind param) { ... }` in any project | `contract` types in `type: Mod` packages |
+| Invocation | `name!(...)` / `name! { }` | N/A (mods run on host compilation events) |
+| Expansion host | Rust intrinsic in `beskid_analysis` | AOT mod artifacts + `Collector` / `Generator` |
+| Discovery | Name resolution / `use` | `mod.descriptor.json` contract registry |
+
+Mods may define and call language macros like any library; `Generator` output that contains `foo!` is expanded after re-parse per stage-ordering rules.
+</SpecSection>
+
+<SpecSection title="Language features used by mods" id="language-features">
+- **[Language macros](/platform-spec/language-meta/metaprogramming/macros/)** — optional in mod-authored sources; expanded before mod phases on each syntax generation.
+- **[extend type](/platform-spec/language-meta/program-structure/extend-type/)** — primary extension syntax for generated members (replaces impl-block extension).
+- **[Serialization packages](/platform-spec/language-meta/metaprogramming/serialization/)** — reference domain mod defining `[Serialize]`.
+- **[Dynamic types and mapping (v0.3)](/platform-spec/compiler/codegen-and-ir/dynamic-types-and-mapping/)** — planned IR/runtime mapping for serializable types.
+</SpecSection>
+
+<SpecSection title="Non-goals" id="non-goals">
+- No language-level `meta` items or collect/generate/analyze/rewrite blocks.
+- No runtime reflection over arbitrary Beskid objects.
+- No mutation of Rust compiler composition graphs from Beskid mod code.
+</SpecSection>
+
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/mod_host/` — mod discovery, load, and orchestration phases
+- `compiler/crates/beskid_analysis/src/macros/` — `contract` type handling for mod contracts
+- `compiler/corelib/` — SDK types (`Collector`, `Generator`, `Analyzer`, `Rewriter`)

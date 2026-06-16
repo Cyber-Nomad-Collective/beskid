@@ -1,0 +1,32 @@
+---
+title: AST and HIR shape contract - Design model
+description: Explains the persistent concepts, entities, and boundaries this
+  feature relies on.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+---
+
+This article documents **design model** for **ast and hir shape contract** in the reference compiler.
+
+## What this covers
+For newcomers, this page explains where the contract shows up in day-to-day compiler work and which code paths are most useful first reads.
+
+## Anchored code paths
+- `compiler/crates/beskid_analysis/src/syntax/items/` exposes AST-like syntax node shapes.
+- `compiler/crates/beskid_analysis/src/resolve/items.rs` maps parsed items into resolved structures.
+- `compiler/crates/beskid_analysis/src/analysis/` consumes those shapes for semantic passes.
+
+## `extend type` and HIR
+
+`extend type` lowers to HIR member metadata attached to the extended type symbol. Generated extensions from mod contracts follow the same lowering path as hand-authored extensions. HIR **must not** partially encode unmerged generator contributions.
+
+## Practical notes
+- Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
+- Treat diagnostics and tests as part of the contract, not optional implementation details.
+- If behavior changes, update this article and add/adjust tests in `compiler/crates/beskid_tests` or `compiler/crates/beskid_e2e_tests`.

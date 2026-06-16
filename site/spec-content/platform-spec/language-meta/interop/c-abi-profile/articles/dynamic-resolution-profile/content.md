@@ -1,0 +1,37 @@
+---
+title: C ABI profile — Dynamic resolution profile
+description: Non-Standard appendix for runtime dlopen/dlsym extern resolution
+  (legacy v0.1 path).
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Proposed
+lastReviewed: 2026-05-20
+---
+
+> **Status: Proposed** — This profile is **not** required for v0.3 **Standard** conformance. It documents the reference engine’s optional **`extern_dlopen`** path for migration and tooling experiments.
+
+## Behavior (reference)
+
+When enabled on supported hosts (historically Linux x86_64):
+
+- Libraries load via **`dlopen(RTLD_LOCAL | RTLD_NOW)`**.
+- Symbols resolve via **`dlsym`** with process-lifetime caches.
+- **`BESKID_EXTERN_ALLOW`** / **`BESKID_EXTERN_DENY`** apply as in `/execution/runtime/extern-policy-v0-1/`.
+
+Implementation anchors: `compiler/crates/beskid_engine/src/engine.rs` (`extern_dlopen` feature).
+
+## Relationship to v0.3 Standard
+
+Production builds **should** use **[link-time linking](./link-time-linking/)**. Dynamic resolution remains available for:
+
+- Local development without a full link driver.
+- Tests gated by `--features extern_dlopen`.
+
+## Deprecation direction
+
+New platform-spec and CLI work **must** target link-time binding. Dynamic resolution **must not** be documented as the default in execution/runtime FFI chapters after v0.3.

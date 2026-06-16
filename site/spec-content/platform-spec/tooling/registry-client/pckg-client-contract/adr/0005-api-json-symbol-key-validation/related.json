@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "pckg client contract",
+      "href": "/platform-spec/tooling/registry-client/pckg-client-contract/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "symbolKey stable identity field",
+      "href": "/platform-spec/tooling/cli/api-json-contract/adr/0003-symbol-key-field/",
+      "relation": "Field definition"
+    }
+  ]
+}

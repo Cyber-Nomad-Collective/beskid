@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Concurrency",
+      "href": "/platform-spec/core-library/concurrency/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Fiber scheduler and stacks",
+      "href": "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
+      "relation": "Runtime implementation contract"
+    },
+    {
+      "type": "Feature",
+      "title": "Channels and synchronization",
+      "href": "/platform-spec/execution/runtime/channels-and-synchronization/",
+      "relation": "Send, Receive, Hub, and memory ordering"
+    },
+    {
+      "type": "Feature",
+      "title": "Fibers and spawn",
+      "href": "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
+      "relation": "spawn keyword requires Fiber contract"
+    }
+  ]
+}

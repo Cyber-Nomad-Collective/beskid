@@ -1,0 +1,40 @@
+---
+title: Testing - Verification and traceability
+description: Tests, implementation checklist, and verification matrix for Beskid testing.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Proposed
+lastReviewed: 2026-06-05
+---
+
+## Verification matrix
+
+| Scenario | Expected evidence |
+| --- | --- |
+| `test` item parsing | AST round-trip preserves structure |
+| `meta` section | Parsed as `TestMetaSection` |
+| `skip` section | Parsed as `TestSkipSection` |
+| Test discovery | `beskid test` finds all tests in Test project |
+| Skip predicate true | Test skipped; not counted as failure |
+
+## Implementation checklist
+
+- [x] Grammar: `test`, `meta`, `skip`
+- [x] AST: `TestDefinition`, `TestMetaSection`, `TestSkipSection`, `TestMetadataEntry`
+- [x] Parser: `beskid.pest` productions for test items
+- [x] Formatter: `tests_emit.rs` for pretty-printing tests
+- [x] Diagnostics: **E1508–E1510** for attribute issues
+- [ ] Test runner integration with `beskid test`
+- [ ] Skip predicate evaluation at runtime
+- [ ] Timeout enforcement from `meta`
+
+## Test locations
+
+- `compiler/crates/beskid_analysis/src/syntax/items/test_definition.rs` — parser tests
+- `compiler/crates/beskid_analysis/src/format/items/tests_emit.rs` — formatter tests
+- `compiler/crates/beskid_tests` — integration tests for test syntax

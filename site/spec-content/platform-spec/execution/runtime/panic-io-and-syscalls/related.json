@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Runtime",
+      "href": "/platform-spec/execution/runtime/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Area",
+      "title": "ABI and host boundary",
+      "href": "/platform-spec/execution/abi-and-host/",
+      "relation": "Builtin symbol contracts define runtime export obligations"
+    },
+    {
+      "type": "Area",
+      "title": "Interop",
+      "href": "/platform-spec/language-meta/interop/",
+      "relation": "Extern boundaries eventually reach syscall and panic surfaces"
+    },
+    {
+      "type": "Feature",
+      "title": "Interop.Contracts",
+      "href": "/platform-spec/language-meta/interop/interop-contracts/",
+      "relation": "Shared vocabulary for runtime vs user foreign boundaries"
+    },
+    {
+      "type": "Feature",
+      "title": "Rust ABI profile",
+      "href": "/platform-spec/language-meta/interop/rust-abi-profile/",
+      "relation": "Runtime export surface for builtins and syscall bridges"
+    }
+  ]
+}

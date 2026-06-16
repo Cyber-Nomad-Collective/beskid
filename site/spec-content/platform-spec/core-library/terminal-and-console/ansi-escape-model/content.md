@@ -1,0 +1,37 @@
+---
+title: ANSI escape model
+description: Normative ESC/CSI/OSC framing and sequence tables for
+  corelib_console Ansi modules.
+specLevel: feature
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-21
+---
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+Normative **terminal escape framing** for `corelib_console`: how `Ansi.Escape`, `Ansi.Cursor`, `Ansi.Erase`, `Ansi.Sgr`, `Ansi.Screen`, and `Ansi.Osc` compose bytes that terminals interpret. Tables in the [design model](./design-model/) article match repository **`ANSI.md`**; this hub states package boundaries and emission rules shared with [Console capabilities](/platform-spec/core-library/terminal-and-console/console-capabilities/).
+</SpecSection>
+
+<SpecSection title="Contract statement" id="contract-statement">
+- **ESC** is ASCII **U+001B** (decimal 27). Implementations **must** use a single-byte ESC; language-specific `\e` escapes are informative only.
+- **CSI** sequences **must** use the form `ESC [` + *parameter bytes* + *final byte* (semicolon-separated numeric parameters; optional spaces **may** appear between parameters and are **ignored** when parsing).
+- **Private CSI modes** use `?` before parameters and final byte **`h`** (set) or **`l`** (reset).
+- **DEC single-character** sequences (`ESC 7` / `ESC 8` save/restore cursor) are the **preferred** save/restore form; SCO `ESC[s` / `ESC[u` are not required in v1.
+- User-visible emission **must** pass through **`Ansi.Escape.WhenEnabled`** (or builders that call it) so non-TTY and `NO_COLOR` hosts receive **empty** styled output, not raw escapes.
+- Sequences marked *de-facto* in `ANSI.md` but not implemented in corelib **may** be emitted only via raw `Csi`/`OscSequence` helpers; they are not conformance-tested until listed in [contracts and edge cases](./contracts-and-edge-cases/).
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- `compiler/corelib/packages/console/src/Ansi/`
+- Informative aggregate reference: repository root `ANSI.md`
+- Golden tests: `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/AnsiEscapeTests.bd`, `AnsiSgrGoldenTests.bd`
+</SpecSection>
+
+## Decisions
+
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-TERM-0001` … `D-CORE-TERM-0004`); use the reader **ADRs** tab for expandable detail.

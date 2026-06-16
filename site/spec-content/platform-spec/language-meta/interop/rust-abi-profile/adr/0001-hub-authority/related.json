@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Rust ABI profile",
+      "href": "/platform-spec/language-meta/interop/rust-abi-profile/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

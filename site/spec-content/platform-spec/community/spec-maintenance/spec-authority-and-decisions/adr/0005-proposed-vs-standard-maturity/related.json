@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Specification authority and embedded decisions",
+      "href": "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

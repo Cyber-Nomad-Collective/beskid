@@ -1,0 +1,29 @@
+---
+title: Panic, IO, and syscalls
+description: Runtime panic behavior and syscall read/write contracts exposed by
+  the Beskid runtime.
+specLevel: feature
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-04-30
+---
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+`Panic, IO, and syscalls` defines one operational contract that a newcomer can follow end-to-end: first the model, then execution flow, then strict guarantees, concrete examples, and verification guidance.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- Builtin exports in `compiler/crates/beskid_runtime/src/builtins/mod.rs`
+- Panic and syscall implementation in `compiler/crates/beskid_runtime/src/builtins/panic_io.rs`
+- Runtime symbol registration in `compiler/crates/beskid_runtime/src/lib.rs`
+- E2E coverage in `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs`
+</SpecSection>
+
+## Decisions
+
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-EXEC-RT-0008` … `D-EXEC-RT-0010`); use the reader **ADRs** tab for expandable detail.

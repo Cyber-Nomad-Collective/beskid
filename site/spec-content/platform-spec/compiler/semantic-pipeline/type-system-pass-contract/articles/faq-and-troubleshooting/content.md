@@ -1,0 +1,73 @@
+---
+title: Type-system pass contract - FAQ and troubleshooting
+description: Answers common operator and contributor questions with practical next checks.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-06-16
+---
+
+## Why `HirNodeId` instead of span-keyed maps?
+
+Source spans are not stable across normalize rewrites, multi-unit merges, or incremental re-checks. `HirNodeId` is assigned once per compilation session in `index_program` and carried on every `Spanned<T>` node. `TypeResult.node_types` and `LoweringPrep` both key off this id.
+
+If you see codegen or IDE code calling `expr_type_at(span, path)`, that API is deleted — migrate to `node_type(node.id)`.
+
+## Why three passes inside `lower.type_check`?
+
+| Pass | Purpose |
+| --- | --- |
+| Surface | Collect per-unit exported shapes (`UnitTypeSurface`) without walking bodies |
+| Check | Type bodies, solve constraints, populate `node_types` |
+| Lowering prep | Record call dispatch and cast intents for codegen |
+
+Splitting check from lowering prep keeps inference out of codegen metadata collection and lets Salsa cache surfaces independently of body typing.
+
+## When should I use `EntryOnly` vs `FullClosure`?
+
+- **`FullClosure`** — required for `beskid run`, `beskid build`, and executable prepare. Surfaces dependency body errors.
+- **`EntryOnly`** — allowed for IDE fast paths (`type_entry_gate`) when dependency surfaces are fresh. Dependency body errors may not appear until a full prepare.
+
+If IDE diagnostics disagree with `beskid build`, check whether the LSP path is still using `FullClosure` everywhere.
+
+## Why does my dependency error show only on build?
+
+Under **`EntryOnly`**, only entry bodies are walked. A broken dependency body can still export a valid surface (signatures parse) while failing body check. Run `cargo test` or `beskid build` to force **`FullClosure`**.
+
+## E1202 at an inference site — what to check
+
+**E1202** (`MissingTypeAnnotation`) means the constraint solver could not pick a unique type. Common fixes:
+
+- Add an explicit type: `let i64 x = ...`
+- Provide expected function type for lambdas
+- Supply generic arguments at call sites when inference is ambiguous
+
+The solver intentionally does not guess. See [Type inference / Design model](/platform-spec/language-meta/type-system/type-inference/design-model/).
+
+## Surface cache not invalidating
+
+1. Confirm the edited unit's content fingerprint changed in Salsa.
+2. Check reverse-deps: importers' surfaces should be evicted via `unit_imports` BFS in `beskid_queries/db.rs`.
+3. Run `compiler/crates/beskid_queries/tests/incremental.rs` surface tests locally.
+
+## Pipeline tracing checklist
+
+Enable pipeline tracing and confirm:
+
+- Exactly one `lower.type_check` per prepare run
+- No second authoritative pass under `semantic.type_check`
+- Nested spans may show index / surface / check / lowering prep inside `lower.type_check`
+
+## Contributor debugging order
+
+1. `compiler/crates/beskid_analysis/src/services/lower.rs` — orchestration and policy
+2. `compiler/crates/beskid_analysis/src/types/checker/` — body typing
+3. `compiler/crates/beskid_analysis/src/types/inference/solve.rs` — constraint failures
+4. `compiler/crates/beskid_codegen/src/lowering/locals.rs` — consumer lookup
+
+Treat `compiler/crates/beskid_tests/src/analysis/type_check_diagnostics.rs` as the diagnostic code contract.

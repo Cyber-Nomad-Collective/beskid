@@ -1,4 +1,4 @@
-# Open VSX publish (native Rust per platform; see scripts/ci/open-vsx-publish.sh).
+# Open VSX publish (Dagger: gates → LSP build → VSIX → registry).
 name: Publish VS Code Extension to Open VSX
 
 on:
@@ -18,31 +18,27 @@ concurrency:
 jobs:
   publish:
     name: Publish (${{ matrix.label }})
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
-            label: linux-x64
+          - label: linux-x64
             platform: linux-x64
             bin_name: beskid_lsp
-            openvsx_rust_target: ""
-          - os: macos-latest
-            label: darwin-arm64
+            rust_target: ""
+          - label: darwin-arm64
             platform: darwin-arm64
             bin_name: beskid_lsp
-            openvsx_rust_target: ""
-          - os: macos-latest
-            label: darwin-x64
+            rust_target: ""
+          - label: darwin-x64
             platform: darwin-x64
             bin_name: beskid_lsp
-            openvsx_rust_target: x86_64-apple-darwin
-          - os: windows-latest
-            label: win32-x64
+            rust_target: x86_64-apple-darwin
+          - label: win32-x64
             platform: win32-x64
             bin_name: beskid_lsp.exe
-            openvsx_rust_target: ""
+            rust_target: ""
 
     steps:
       - uses: actions/checkout@v4
@@ -52,29 +48,27 @@ jobs:
           persist-credentials: true
 
       - name: Init beskid_infra submodule
-        shell: bash
         run: ./scripts/ci/init-submodules.sh beskid_infra
 
-      - uses: oven-sh/setup-bun@v2
-
-      - name: Setup Rust toolchain (Intel macOS LSP target)
-        if: matrix.platform == 'darwin-x64'
-        uses: dtolnay/rust-toolchain@stable
+      - uses: dagger/dagger-for-github@v8.4.1
         with:
-          targets: x86_64-apple-darwin
+          version: "0.21.0"
 
-      - name: Setup Rust toolchain
-        if: matrix.platform != 'darwin-x64'
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install Dagger module deps
+        run: npm ci
+        working-directory: beskid_infra/dagger
 
-      - name: Publish Open VSX
-        shell: bash
+      - name: Publish Open VSX (Dagger)
         env:
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
           BESKID_VSCODE_SUBMODULE_URL: https://github.com/Cyber-Nomad-Collective/beskid_vscode.git
           BESKID_VSCODE_SUBMODULE_TOKEN: ${{ secrets.BESKID_VSCODE_SUBMODULE_TOKEN }}
-          OPENVSX_PLATFORM: ${{ matrix.platform }}
-          OPENVSX_BIN_NAME: ${{ matrix.bin_name }}
-          OPENVSX_RUST_TARGET: ${{ matrix.openvsx_rust_target }}
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
-        run: bash ./scripts/ci/open-vsx-publish.sh
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_REF_TYPE: ${{ github.ref_type }}
+        run: |
+          dagger -m beskid_infra/dagger call open-vsx-publish \
+            --source=. \
+            --platform="${{ matrix.platform }}" \
+            --bin-name="${{ matrix.bin_name }}" \
+            --rust-target="${{ matrix.rust_target }}"

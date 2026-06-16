@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Extern import extraction contract",
+      "href": "/platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

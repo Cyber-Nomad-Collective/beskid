@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Compiler integration",
+      "href": "/platform-spec/core-library/compiler-integration/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Area",
+      "title": "Resolution and projects",
+      "href": "/platform-spec/compiler/resolution-and-projects/",
+      "relation": "Project graph logic resolves and injects corelib"
+    },
+    {
+      "type": "Area",
+      "title": "Stability and API shape",
+      "href": "/platform-spec/core-library/stability-and-api-shape/",
+      "relation": "API stability expectations depend on canonical packaging"
+    }
+  ]
+}

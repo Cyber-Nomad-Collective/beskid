@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Registry client",
+      "href": "/platform-spec/tooling/registry-client/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "pckg client contract",
+      "href": "/platform-spec/tooling/registry-client/pckg-client-contract/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Workspace and lock contracts",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/",
+      "relation": "Fetch materializes roots referenced by locks"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "extend type",
+      "href": "/platform-spec/language-meta/program-structure/extend-type/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Area",
+      "title": "Conformance",
+      "href": "/platform-spec/compiler/conformance/",
+      "relation": "Evidence policy for compiler features"
+    }
+  ]
+}

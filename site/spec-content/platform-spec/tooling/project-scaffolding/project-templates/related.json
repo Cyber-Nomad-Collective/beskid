@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Project scaffolding",
+      "href": "/platform-spec/tooling/project-scaffolding/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Template packages",
+      "href": "/platform-spec/tooling/project-scaffolding/template-packages/",
+      "relation": "Packaging and registry profile for templates"
+    },
+    {
+      "type": "Feature",
+      "title": "beskid new command",
+      "href": "/platform-spec/tooling/project-scaffolding/beskid-new/",
+      "relation": "CLI entrypoint"
+    },
+    {
+      "type": "Feature",
+      "title": "Project manifest contract",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+      "relation": "project.type = Template and emitted manifests"
+    },
+    {
+      "type": "Feature",
+      "title": "Workspace and lock contracts",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/",
+      "relation": "Workspace templates emit `Workspace.proj`"
+    },
+    {
+      "type": "Feature",
+      "title": "Package kinds",
+      "href": "/platform-spec/tooling/registry-client/package-kinds/",
+      "relation": "packageKind template on registry artifacts"
+    }
+  ]
+}

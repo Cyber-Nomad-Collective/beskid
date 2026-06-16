@@ -1,0 +1,50 @@
+---
+title: Testing - FAQ and troubleshooting
+description: Common issues, troubleshooting, and locked decisions for Beskid testing.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Proposed
+lastReviewed: 2026-06-05
+---
+
+## Locked decisions
+
+| Decision | ID | Summary |
+| --- | --- | --- |
+| First-class `test` item | D-LM-TST-001 | Tests are module items |
+| Meta/skip blocks | D-LM-TST-002 | Structured sections replace comments |
+| Test project kind | D-LM-TST-003 | Discovery scopes to `Test` projects |
+| Corelib helpers additive | D-LM-TST-004 | Corelib does not redefine `test` syntax |
+
+## FAQ
+
+### Can I put tests in a Lib project?
+
+It may warn depending on manifest policy. Use a `Test` project for dedicated test code.
+
+### What assertion library should I use?
+
+Corelib provides assertion helpers. The language-level `test` syntax is independent of any specific assertion library.
+
+### How do I skip a test conditionally?
+
+Use the `skip` section with a predicate expression:
+```beskid
+test WindowsOnly {
+    skip { platform = "windows"; }
+    // ...
+}
+```
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+| --- | --- |
+| Test not discovered | Project kind is not `Test` |
+| **E1508–E1510** | Invalid attribute on test item |
+| Skip not working | Predicate expression evaluation failure |

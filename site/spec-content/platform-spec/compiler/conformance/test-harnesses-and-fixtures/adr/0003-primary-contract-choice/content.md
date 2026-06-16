@@ -1,0 +1,35 @@
+---
+title: Primary contract for Test harnesses and fixtures
+description: This feature explains how the project proves that implemented
+  behavior remains stable release over release. It is organi
+specLevel: adr
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+adrId: D-COMP-CONF-0006
+adrStatus: Accepted
+adrDate: 2026-05-05
+lastReviewed: 2026-05-22
+---
+
+## Context
+
+This feature explains how the project proves that implemented behavior remains stable release over release. It is organized into newcomer-friendly articles that move from model, to flow, to contracts, then practical verification and debugging guidance.
+
+## Decision
+
+The reference compiler **must** implement Test harnesses and fixtures as documented in this feature hub and its article bundle.
+
+## Consequences
+
+Changes require hub/ADR updates and verification anchor extensions.
+
+## Verification anchors
+
+- `compiler/crates/beskid_tests/src/analysis`
+- `compiler/crates/beskid_tests/src/runtime`
+- `compiler/crates/beskid_e2e_tests/src/tests/runtime_cases.rs`

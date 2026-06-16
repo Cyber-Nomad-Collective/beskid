@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "C ABI profile",
+      "href": "/platform-spec/language-meta/interop/c-abi-profile/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Interop view types",
+      "href": "/platform-spec/language-meta/interop/c-abi-profile/interop-view-types/",
+      "relation": "v0.3.0 prerequisite"
+    }
+  ]
+}

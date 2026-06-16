@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Dependency workspace and lockfile",
+      "href": "/platform-spec/compiler/build-pipeline/dependency-workspace/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Project manifest contract",
+      "href": "/platform-spec/compiler/resolution-and-projects/project-manifest-contract/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Project manifest contract (tooling)",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/contracts-and-edge-cases/",
+      "relation": "defers-to — Mod capability and manifest-shape contracts for authors"
+    }
+  ]
+}

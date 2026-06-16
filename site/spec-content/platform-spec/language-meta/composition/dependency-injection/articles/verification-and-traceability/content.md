@@ -1,0 +1,54 @@
+---
+title: Native dependency injection - Verification and traceability
+description: Tests, snapshot versioning, and implementation checklist.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-20
+---
+
+## Verification matrix (target)
+
+| Scenario | Expected evidence |
+| --- | --- |
+| `launch` + field inject | `beskid run` / `beskid build` succeed; JIT/AOT parity |
+| Host chain override | Launched `registry` wins over `: ParentHost` |
+| `inject Contract[]` with two registrations | Both instances wired; order stable |
+| Singular inject with two registrations | **E1705** |
+| `global::` inside named scope | Resolves global binding, not inner shadow |
+| `dispose` on `with` exit | Called after body; unwind cases per spec |
+| Child `with` without parent | **E1707** |
+| `launch` in `Lib` | **E1711** |
+| Constructor `inject` | **E1712** |
+| Two `launch` on entry path | **E1702** |
+| `Mod` project `host` | **E1710** |
+| Mod reads snapshot | No graph mutation |
+
+## Implementation checklist
+
+- [x] Grammar: `host`, `registry`, `scope`, `init`, `dispose`, `startup`, `with`, `launch`, field `inject`, `global::`, `parent::`, `T[]` inject
+- [x] Reject constructor `inject`
+- [x] Host-chain merge + override diagnostics
+- [x] Plural inject aggregation
+- [x] `beskid_analysis::composition` + **E1701–E1799** in `diagnostic_kinds.rs`
+- [x] `composition.resolve` in `beskid_pipeline` + `PIPELINE.md`
+- [x] Composition snapshot export (`CompositionSnapshot` / `BindingPlan`)
+- [x] **Runtime container** in `beskid_runtime::composition` (registration ordering, plural inject, scope stack, reverse-order dispose)
+- [x] **Runtime ABI** `composition_container_create` / `register` / `bind_plural` / `launch` / `scope_enter` / `scope_leave` / `resolve` / `resolve_plural` / `shutdown` / `container_drop` / `scope_depth` in `beskid_abi`
+- [x] `beskid_codegen` `launch` / `with` lowering to runtime container ABI (`RUNTIME_CONTAINER_LOWERING_ENABLED = true`)
+- [ ] `beskid_codegen` field init for `[Inject]` (single + plural) — runtime container ABI is ready (`composition_resolve` / `composition_resolve_plural`), HIR-pass wiring lands with the next codegen iteration
+- [ ] Manifest validation: **`app`** target + single launch
+- [ ] Corelib `ConsoleHost`
+- [ ] Fixtures: lib host + app launch, plural inject, dispose, override chain
+
+## v0.3 evidence
+
+- `compiler/crates/beskid_tests/src/composition/container.rs::two_scopes_plural_inject_reverse_dispose` — two scopes, plural inject, reverse-order dispose
+- `compiler/crates/beskid_tests/src/composition/host_e2e.rs::host_with_two_scopes_plural_inject_reverse_dispose` — nested request + session scopes, plural Middleware, global Logger singleton disposes at shutdown
+- `compiler/crates/beskid_tests/src/composition/container.rs::extern_c_abi_roundtrip_through_builtins` — `extern "C-unwind"` round trip via `composition_*` builtins
+- `compiler/crates/beskid_tests/src/composition/lowering.rs` — gate flag is on, all `composition_*` symbols registered with `BuiltinFnSpec` and `RUNTIME_EXPORT_SYMBOLS`

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Rust ABI profile",
+      "href": "/platform-spec/language-meta/interop/rust-abi-profile/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Extern dispatch and policy",
+      "href": "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/",
+      "relation": "Handler table and init order"
+    },
+    {
+      "type": "Feature",
+      "title": "Interop.Contracts",
+      "href": "/platform-spec/language-meta/interop/interop-contracts/",
+      "relation": "Dispatch envelope layout"
+    }
+  ]
+}

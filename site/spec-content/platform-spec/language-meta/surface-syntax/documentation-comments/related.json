@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Surface syntax",
+      "href": "/platform-spec/language-meta/surface-syntax/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Domain",
+      "title": "Language meta",
+      "href": "/platform-spec/language-meta/",
+      "relation": "Parent domain hub"
+    },
+    {
+      "type": "Domain",
+      "title": "Platform specification",
+      "href": "/platform-spec/",
+      "relation": "Cross-cutting index"
+    },
+    {
+      "type": "Domain",
+      "title": "Execution documentation",
+      "href": "/execution/",
+      "relation": "Non-normative legacy execution bridge"
+    }
+  ]
+}

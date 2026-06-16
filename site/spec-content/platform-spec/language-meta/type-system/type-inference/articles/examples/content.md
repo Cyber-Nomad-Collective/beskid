@@ -1,0 +1,65 @@
+---
+title: Type inference - Examples
+description: Code examples showing type inference in Beskid.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Proposed
+lastReviewed: 2026-06-05
+---
+
+## Inferred let
+
+```beskid
+unit Inferred() {
+    let x = 42;        // inferred: i32
+    let y = "hello";   // inferred: string
+    let z = true;      // inferred: bool
+}
+```
+
+## Typed let
+
+```beskid
+unit Explicit() {
+    let i64 big = 42;
+    let string name = "hello";
+}
+```
+
+## Lambda inference
+
+```beskid
+unit Lambdas() {
+    // Context from function parameter type
+    let add = (a, b) => a + b;   // inferred: (i32, i32) => i32 from context
+
+    // Explicit lambda parameter types when no context
+    let mul = (i32 a, i32 b) => a * b;
+}
+```
+
+## Generic inference
+
+```beskid
+type Box<T> {
+    T value;
+}
+
+unit Generics() {
+    let b = Box { value = 42 };   // inferred: Box<i32>
+}
+```
+
+## Ambiguous inference (error)
+
+```beskid
+unit Ambiguous() {
+    // let empty = [];   // E1202 — cannot infer element type
+    let i32[] empty = [];   // OK — explicit annotation
+}
+```

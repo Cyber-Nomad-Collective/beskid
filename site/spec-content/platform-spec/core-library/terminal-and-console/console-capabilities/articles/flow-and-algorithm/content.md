@@ -1,0 +1,56 @@
+---
+title: Flow and algorithm
+description: Probe and strip algorithms for terminal capabilities.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-21
+---
+
+## Purpose
+
+Document **flow and algorithm** for the **Console Capabilities** feature: role-specific normative detail beyond the feature hub.
+
+## Canonical references
+
+- Feature hub: [Console Capabilities](/platform-spec/core-library/terminal-and-console/console-capabilities/)
+- Sibling articles in this bundle (design model, contracts, flow, examples, verification)
+
+## Detailed behavior
+
+### `ProbeStdout` algorithm
+
+1. `isTty ← Terminal.IsAtty(1) != 0`
+2. `colorDisabled ← EnvFlagSet("NO_COLOR")`
+3. `colorForced ← EnvFlagSet("FORCE_COLOR")`
+4. `model ← Terminal.ProbeColorModel()` (honors `ForcePlainText` internally)
+5. Return `Capabilities { ... }`
+
+### `ShouldStripColor` decision tree
+
+1. If `colorDisabled` → **strip**
+2. Else if `colorForced` → **do not strip**
+3. Else if `!isTty` → **strip**
+4. Else → **do not strip**
+
+### `ProbeColorModel` (platform)
+
+1. If `ForcePlainText()` → `Basic16`
+2. Else if `COLORTERM` set → `TrueColor`
+3. Else match `TERM` (`xterm-256color`, `xterm-color`, …)
+4. Default → `Indexed256`
+
+Downstream `Ansi.Sgr` reads the model once per `IntoPrefix` / RGB call path.
+
+## Verification
+
+See the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.
+
+## Related topics
+
+- Parent [feature hub](/platform-spec/core-library/terminal-and-console/console-capabilities/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)

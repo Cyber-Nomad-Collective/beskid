@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Lexical and syntax",
+      "href": "/platform-spec/language-meta/surface-syntax/lexical-and-syntax/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Diagnostic code registry",
+      "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
+      "relation": "E11xx band reservation"
+    }
+  ]
+}

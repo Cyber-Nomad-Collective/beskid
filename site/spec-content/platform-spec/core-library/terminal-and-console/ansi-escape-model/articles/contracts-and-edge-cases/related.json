@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "ANSI escape model",
+      "href": "/platform-spec/core-library/terminal-and-console/ansi-escape-model/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Console capabilities",
+      "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/",
+      "relation": "Emission gating contract"
+    }
+  ]
+}

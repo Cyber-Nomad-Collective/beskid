@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "beskid new",
+      "href": "/platform-spec/tooling/project-scaffolding/beskid-new/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

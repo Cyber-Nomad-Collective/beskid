@@ -1,0 +1,35 @@
+---
+title: ABI version lockstep for builtins
+description: Runtime-backed surfaces require coordinated ABI bumps.
+specLevel: adr
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+adrId: D-CORE-STAB-0003
+adrStatus: Accepted
+adrDate: 2026-04-23
+lastReviewed: 2026-05-22
+---
+
+## Context
+
+Builtin shape changes break AOT/JIT link without version alignment.
+
+## Decision
+
+| Rule | Detail |
+| --- | --- |
+| Version | `beskid_runtime_abi_version` / `BESKID_RUNTIME_ABI_VERSION` must match |
+| Change | Requires `beskid_abi`, runtime, and corelib updates together |
+
+## Consequences
+
+Link failures surface at build time, not lazy dlopen.
+
+## Verification anchors
+
+`beskid_abi/src/builtins.rs`; `abi/contracts.rs`.

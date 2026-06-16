@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Type-system pass contract",
+      "href": "/platform-spec/compiler/semantic-pipeline/type-system-pass-contract/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Types",
+      "href": "/platform-spec/language-meta/type-system/types/design-model/",
+      "relation": "Language type backbone"
+    },
+    {
+      "type": "Feature",
+      "title": "Type inference",
+      "href": "/platform-spec/language-meta/type-system/type-inference/design-model/",
+      "relation": "Constraint solver contract"
+    }
+  ]
+}

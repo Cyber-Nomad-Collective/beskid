@@ -8,8 +8,11 @@
 	},
 	"scripts": {
 		"dev": "bun --bun vite dev --port 8460",
-		"build": "bun --bun vite build && bash scripts/sync-root-stylesheet.sh",
-		"verify:client-bundle": "bash scripts/verify-client-bundle.sh",
+	"build": "bun --bun vite build && bun run scripts/sync-root-stylesheet.ts",
+		"verify:client-bundle": "bun run scripts/verify-client-bundle.ts",
+		"seed": "bun run scripts/seed.ts",
+		"seed:force": "bun run scripts/seed.ts --force",
+		"validate:spec-content": "bun run scripts/seed.ts",
 		"start": "bun run .output/server/index.mjs",
 		"preview": "bun --bun vite preview",
 		"check": "bunx biome check",
@@ -43,7 +46,8 @@
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0",
 		"tailwindcss": "^4.1.18",
-		"zod": "^4.3.6"
+		"zod": "^4.3.6",
+		"yaml": "^2.9.0"
 	},
 	"devDependencies": {
 		"@tanstack/devtools-vite": "latest",

@@ -1,0 +1,82 @@
+---
+title: Method dispatch - Examples
+description: Code examples showing method dispatch in Beskid.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Proposed
+lastReviewed: 2026-06-05
+---
+
+## Instance method call
+
+```beskid
+type Counter {
+    i32 value;
+
+    pub unit Increment() {
+        value += 1;
+    }
+}
+
+unit UseCounter() {
+    let c = Counter { value = 0 };
+    c.Increment();
+}
+```
+
+## extend type
+
+```beskid
+type Point {
+    f32 x;
+    f32 y;
+}
+
+extend type Point {
+    pub f32 DistanceTo(Point other) {
+        let dx = x - other.x;
+        let dy = y - other.y;
+        return dx * dx + dy * dy;
+    }
+}
+
+unit UseExtension() {
+    let a = Point { x = 0.0, y = 0.0 };
+    let b = Point { x = 3.0, y = 4.0 };
+    let d = a.DistanceTo(b);
+}
+```
+
+## Contract namespace call
+
+```beskid
+contract Math {
+    i32 Abs(i32 value);
+}
+
+unit UseContractNamespace() {
+    let n = Math.Abs(-5);   // static-style contract namespace call
+}
+```
+
+## Generic method
+
+```beskid
+type Container<T> {
+    T item;
+
+    pub T Get() {
+        return item;
+    }
+}
+
+unit UseGeneric() {
+    let c = Container<i32> { item = 42 };
+    let v = c.Get();   // inferred return type: i32
+}
+```

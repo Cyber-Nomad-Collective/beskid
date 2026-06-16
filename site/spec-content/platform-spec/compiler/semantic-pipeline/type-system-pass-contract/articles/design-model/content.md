@@ -1,0 +1,93 @@
+---
+title: Type-system pass contract - Design model
+description: Explains the persistent concepts, entities, and boundaries this
+  feature relies on.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-06-16
+---
+
+## What this covers
+
+Persistent entities and boundaries for the authoritative type pass on the lower spine. For stage ordering relative to semantic structural checks, see [Semantic pipeline / Stage ordering](/platform-spec/compiler/semantic-pipeline/stage-ordering/design-model/).
+
+## Type-check placement
+
+**Normative:** Full expression typing runs exactly once under pipeline phase id **`lower.type_check`** (`LOWER_TYPE_CHECK`). Staged semantic rules **must not** duplicate this pass.
+
+Within **`lower.type_check`**, the reference compiler runs, in order:
+
+1. **`index_program`** — assign `HirNodeId` on every typable `Spanned<T>` node
+2. **Surface** — build or load per-unit [`UnitTypeSurface`](/platform-spec/language-meta/type-system/types/design-model/) values and merge for entry
+3. **Check** — [`TypeChecker`](/platform-spec/language-meta/type-system/type-inference/design-model/) body typing with constraint solving; write `node_types`
+4. **Lowering prep** — [`LoweringPrep`](/platform-spec/language-meta/type-system/types/design-model/) (`call_kinds`, `cast_intents`) keyed by `HirNodeId`
+5. **Assemble `TypeResult`** — merge surfaces, signatures, and lowering metadata for codegen and IDE
+
+```mermaid
+flowchart LR
+  index[index_program]
+  surface[Surface pass]
+  check[Check pass]
+  prep[Lowering prep]
+  result[TypeResult]
+  index --> surface --> check --> prep --> result
+```
+
+## Anchored code paths
+
+| Path | Role |
+| --- | --- |
+| `compiler/crates/beskid_analysis/src/services/lower.rs` | Orchestrates `lower.type_check`; `DependencyTypingPolicy` |
+| `compiler/crates/beskid_analysis/src/services/unit_ops.rs` | `type_entry` (`FullClosure`), `type_entry_gate` (`EntryOnly`) |
+| `compiler/crates/beskid_analysis/src/hir/index.rs` | `HirNodeId` assignment |
+| `compiler/crates/beskid_analysis/src/types/surface.rs` | `UnitTypeSurface`, `build_unit_type_surface` |
+| `compiler/crates/beskid_analysis/src/types/checker.rs` | Body typing and `node_types` |
+| `compiler/crates/beskid_analysis/src/types/inference/` | Constraint solver |
+| `compiler/crates/beskid_analysis/src/types/lowering_prep.rs` | Codegen call/cast metadata |
+| `compiler/crates/beskid_queries/src/unit.rs` | `unit_type_surface_tracked` Salsa query |
+| `compiler/crates/beskid_analysis/src/analysis/rules/staged/type_checking.rs` | Structural immutability only |
+
+## `TypeResult` contract
+
+`TypeResult` is the sole typed-HIR artifact consumed by codegen, LSP hover, and prepare diagnostics.
+
+| Lookup | API | Notes |
+| --- | --- | --- |
+| Expression type | `node_type(HirNodeId)` or `expr_type(&Spanned<HirExpressionNode>)` | **Primary** — reads `node.id` |
+| Local type | `local_types[LocalId]` | Unchanged |
+| Item signature | `function_signatures[ItemId]` | Includes merged dependency surfaces |
+| Call lowering | `lowering.call_kinds[HirNodeId]` | Not a top-level `TypeResult` field |
+| Cast intent | `lowering.cast_intents` filtered by `node_id` | Span on intent is diagnostic-only |
+
+**Deleted (normative):** `expr_types`, `scoped_expr_types`, `TypeResult::expr_type_at`, span-keyed `call_kinds` / `cast_intents`, and disk re-parse prefetch typing (`type_prefetched_source_path`).
+
+## Per-unit Salsa surfaces
+
+Dependency typing **must** use cached per-unit surfaces, not re-parse sibling files during entry type check.
+
+- Salsa query `unit_type_surface_tracked` stores `Arc<UnitTypeSurface>` in `UnitArtifactCache`, keyed by project, grammar, source path, and content fingerprint.
+- Invalidation follows `unit_imports` reverse-dependency BFS in `beskid_queries/db.rs` — when unit A changes, surfaces for units that import A are evicted.
+- Prefetch paths from [`ModuleIndex::prefetched_paths`](compiler/crates/beskid_analysis/src/projects/assembly/module_index.rs) resolve through the tracked surface query.
+
+## Dependency typing policy
+
+[`DependencyTypingPolicy`](compiler/crates/beskid_analysis/src/services/lower.rs) controls how much of the import closure is body-checked:
+
+| Policy | Dependency bodies | Typical consumer |
+| --- | --- | --- |
+| **`EntryOnly`** | Surfaces only — signatures and layouts merged; bodies not walked | LSP fast path when typed prepare is stale; `type_entry_gate` |
+| **`FullClosure`** | Full body type check across dependency HIR units | `beskid run` / `beskid build`, executable prepare (debounced) |
+
+**Normative:** `prepare_compilation_with_db` **must** thread the policy explicitly. The default CLI spine uses **`FullClosure`**. IDE entry prepare **may** use **`EntryOnly`** when only entry diagnostics are needed and dependency surfaces are still valid in the Salsa cache.
+
+## Cross references
+
+- Language type backbone: [Types / Design model](/platform-spec/language-meta/type-system/types/design-model/)
+- Inference and E1202: [Type inference / Design model](/platform-spec/language-meta/type-system/type-inference/design-model/)
+- Resolver ids: [Resolver contract / Design model](/platform-spec/compiler/semantic-pipeline/resolver-contract/design-model/)

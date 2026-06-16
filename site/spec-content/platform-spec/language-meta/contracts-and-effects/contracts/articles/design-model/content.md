@@ -1,0 +1,55 @@
+---
+title: Contracts - Design model
+description: Conceptual model for structural contract declarations, conformance
+  lists, and embedding in Beskid.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Proposed
+lastReviewed: 2026-06-05
+---
+
+## Vocabulary
+
+| Construct | Role |
+| --- | --- |
+| **`ContractDefinition`** | Declares required members (method signatures and embeddings) |
+| **`ContractNode`** | Either a method signature or an embedded contract reference |
+| **`ContractEmbedding`** | Flattened member requirements from another contract |
+| **`ContractMethodSignature`** | Method signature without body inside a contract |
+
+## Contract architecture
+
+Contracts are **structural interfaces** checked at compile time. Types implement contracts via conformance lists (`: I, J`).
+
+```mermaid
+flowchart LR
+    parse[parse contract]
+    collect[collect definitions]
+    resolve[resolve conformances]
+    check[contracts.rs]
+    lower[lower to HIR]
+    parse --> collect --> resolve --> check --> lower
+```
+
+### Subsystem boundaries
+
+| Subsystem | Responsibility | Key file |
+| --- | --- | --- |
+| Parser | Parse `contract` and `ContractNode` | `syntax/items/contract_definition.rs` |
+| AST | Store contract structure | `syntax/items/contract_node.rs` |
+| Resolver | Bind conformance targets | `resolve/` |
+| Contract rules | Check satisfaction | `analysis/rules/staged/contracts.rs` |
+| HIR lowering | Embed contract metadata | `hir/lowering/items.rs` |
+
+## Embedding model
+
+Contracts may embed other contracts (`OtherContract;` inside a contract body). This flattens member requirements without inheritance syntax. Conflicting embedded methods emit **E1004**.
+
+## Distinction from Mod SDK
+
+This user-language `contract` surface is distinct from compiler Mod SDK contracts. Mod contracts follow the [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/) specification.

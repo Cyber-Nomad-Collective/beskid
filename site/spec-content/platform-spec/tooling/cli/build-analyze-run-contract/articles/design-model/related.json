@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "CLI",
+      "href": "/platform-spec/tooling/cli/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Build, analyze, and run contract",
+      "href": "/platform-spec/tooling/cli/build-analyze-run-contract/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Area",
+      "title": "Compiler Mods",
+      "href": "/platform-spec/compiler/compiler-mods/",
+      "relation": "Meta host scheduling and diagnostics parity"
+    },
+    {
+      "type": "Feature",
+      "title": "Stage ordering and lowering",
+      "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+      "relation": "Host pipeline ordering after graph resolve"
+    }
+  ]
+}

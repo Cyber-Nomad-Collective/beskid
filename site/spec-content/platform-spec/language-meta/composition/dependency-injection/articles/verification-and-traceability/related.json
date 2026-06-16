@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Native dependency injection",
+      "href": "/platform-spec/language-meta/composition/dependency-injection/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Area",
+      "title": "Conformance",
+      "href": "/platform-spec/compiler/conformance/",
+      "relation": "Evidence policy for compiler features"
+    }
+  ]
+}

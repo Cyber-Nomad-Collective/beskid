@@ -38,8 +38,7 @@ Evidence template mirroring v0.3 closure at [`aba4331`](https://github.com/Cyber
 | Command | Result |
 | --- | --- |
 | `cd compiler && just corelib` | _(N/42 — record final count)_ |
-| `cd compiler/corelib && python3 ci/run_corelib_tests.py` | |
-| `cd compiler/corelib && python3 ci/quality.py` | |
+| `dagger -m beskid_infra/dagger call corelib-gate --source=.` | |
 
 ## Service smoke (production)
 

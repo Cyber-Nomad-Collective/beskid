@@ -1,0 +1,35 @@
+---
+title: DEC save/restore cursor pair
+description: Normative cursor save/restore uses DEC sequences, not SCO.
+specLevel: adr
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+adrId: D-CORE-TERM-0001
+adrStatus: Accepted
+adrDate: 2026-05-20
+lastReviewed: 2026-05-22
+---
+
+## Context
+
+Authors need portable cursor stacking without SCO-specific CSI variants in typed builders.
+
+## Decision
+
+| Rule | Detail |
+| --- | --- |
+| Save/restore | **DEC** `ESC 7` / `ESC 8` is the normative pair |
+| SCO | `CSI s` / `CSI u` are **not** required in v1 typed builders |
+
+## Consequences
+
+Typed `Ansi.Cursor` helpers emit DEC only; raw `Csi` may still be used in tests.
+
+## Verification anchors
+
+`AnsiEscapeTests.bd`; `ANSI.md` tables.

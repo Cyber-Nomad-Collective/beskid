@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Last reviewed policy",
+      "href": "/platform-spec/community/spec-maintenance/last-reviewed-policy/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

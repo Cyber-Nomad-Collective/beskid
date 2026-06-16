@@ -1,0 +1,62 @@
+---
+title: Lambdas and closures
+description: Capture lists, environment layout, and lifetime of delegates. JIT
+  and AOT must agree on closure calling conventions.
+specLevel: feature
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-21
+---
+
+## Normative specification
+
+### Scope
+
+Defines **lambda expressions** (`=>`), **closures**, and their typing. Function types are in [Types](/platform-spec/language-meta/type-system/types/); inference in [Type inference](/platform-spec/language-meta/type-system/type-inference/).
+
+### Syntax
+
+- **`param => body`** or **`(p1, p2) => body`** where `body` is an expression or `{ block }`.
+- Parameters **may** be typed (`T name`) or untyped (`name`) when contextual type is available.
+- Lambdas **may** appear anywhere an `Expression` is allowed, including as `spawn` operands.
+
+### Static rules
+
+- Lambda type **must** be inferable from expected type or parameter annotations (**E1202** otherwise).
+- Captured locals **must** be definitely assigned before capture or diagnosed per definite-assignment rules (v0.1: follow reference compiler behavior).
+- Lambdas **must not** capture `mut` bindings unless the implementation explicitly allows it; otherwise **must** error.
+
+### Dynamic semantics
+
+- A closure **must** extend the lifetime of captured storage to at least the closure value’s lifetime.
+- Invocation uses the standard function call ABI for the target triple.
+- Closures passed to `spawn` **must** be compatible with fiber entry signatures (see [Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/)).
+
+### Diagnostics
+
+Type inference and call mismatch bands **E1202**, **E1205**. Registry: [Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/).
+
+### Conformance
+
+Closure codegen tests **must** match between debug and release for the reference backend on each supported triple.
+
+## Decisions
+
+- **D-LM-LAM-001 — Expression lambdas:** Statement lambdas use block bodies; no separate `fn` literal syntax in v0.1.
+- **D-LM-LAM-002 — No async lambdas:** `async`/`await` are not closure modifiers; use `spawn` instead.
+- **D-LM-LAM-003 — Capture extends lifetime:** Closures **must** keep captured locals alive for the closure value’s lifetime.
+- **D-LM-LAM-004 — GC for escaped captures:** Captured reference-bearing values **must** be heap-traced when they escape the frame.
+
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/analysis/` — closure capture analysis and environment layout
+- `compiler/crates/beskid_codegen/src/` — closure lowering to Cranelift calls
+- `compiler/crates/beskid_runtime/src/gc.rs` — GC tracing for escaped closure captures
+
+## Platform view
+
+Capture lists, environment layout, and lifetime of delegates. JIT and AOT must agree on closure calling conventions.

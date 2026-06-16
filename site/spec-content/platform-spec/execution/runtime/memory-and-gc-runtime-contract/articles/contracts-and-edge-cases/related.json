@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Memory and GC runtime contract",
+      "href": "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "ABI and host boundary",
+      "href": "/platform-spec/execution/abi-and-host/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Area",
+      "title": "Codegen and IR",
+      "href": "/platform-spec/compiler/codegen-and-ir/",
+      "relation": "Lowering and backend emission consume ABI symbol definitions"
+    },
+    {
+      "type": "Area",
+      "title": "Runtime",
+      "href": "/platform-spec/execution/runtime/",
+      "relation": "Runtime builtins export and implement the ABI contract"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "VS Code extension",
+      "href": "/platform-spec/tooling/vscode-extension/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Extension surface",
+      "href": "/platform-spec/tooling/vscode-extension/extension-surface/",
+      "relation": "Parent integration hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Workspace and lock contracts",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/",
+      "relation": "Workspace.proj and member paths"
+    },
+    {
+      "type": "Area",
+      "title": "LSP",
+      "href": "/platform-spec/tooling/lsp/",
+      "relation": "Graph executeCommands"
+    }
+  ]
+}

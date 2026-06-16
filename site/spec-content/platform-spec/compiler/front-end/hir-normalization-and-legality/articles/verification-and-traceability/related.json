@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "HIR normalization and legality",
+      "href": "/platform-spec/compiler/front-end/hir-normalization-and-legality/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

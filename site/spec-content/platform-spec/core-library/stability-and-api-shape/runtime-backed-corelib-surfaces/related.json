@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Stability and API shape",
+      "href": "/platform-spec/core-library/stability-and-api-shape/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Area",
+      "title": "Runtime",
+      "href": "/platform-spec/execution/runtime/",
+      "relation": "Runtime exports implement parts of the corelib API surface"
+    },
+    {
+      "type": "Area",
+      "title": "ABI and host boundary",
+      "href": "/platform-spec/execution/abi-and-host/",
+      "relation": "Corelib/runtime coupling relies on stable ABI symbol contracts"
+    }
+  ]
+}

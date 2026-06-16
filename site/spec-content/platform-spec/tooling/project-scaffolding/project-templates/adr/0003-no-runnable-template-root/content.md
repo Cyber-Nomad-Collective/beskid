@@ -1,0 +1,32 @@
+---
+title: Templates need not build at template root
+description: Validation runs on instantiation output only, not template project build.
+specLevel: adr
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+adrId: D-TOOL-SCAFF-0003
+adrStatus: Accepted
+adrDate: 2026-05-21
+lastReviewed: 2026-05-22
+---
+
+## Context
+
+Requiring `beskid build` on template sources slows authoring and blocks non-host template layouts.
+
+## Decision
+
+Template packages **need not** compile at the template project root. Tooling **must** validate via instantiation output builds.
+
+## Consequences
+
+Faster template iteration; CI runs instantiate-then-build on consumer output.
+
+## Verification anchors
+
+`beskid.templates.*` CI pipeline; planned `beskid_tests` template fixtures.

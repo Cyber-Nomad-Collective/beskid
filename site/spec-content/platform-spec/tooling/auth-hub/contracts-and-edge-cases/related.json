@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Beskid auth hub",
+      "href": "/platform-spec/tooling/auth-hub/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

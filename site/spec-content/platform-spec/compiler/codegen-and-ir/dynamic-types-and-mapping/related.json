@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Codegen and IR",
+      "href": "/platform-spec/compiler/codegen-and-ir/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Serialization packages",
+      "href": "/platform-spec/language-meta/metaprogramming/serialization/",
+      "relation": "Serializable type constraints"
+    },
+    {
+      "type": "Area",
+      "title": "Compiler Mods",
+      "href": "/platform-spec/compiler/compiler-mods/",
+      "relation": "Analyzer rules for serializable eligibility"
+    }
+  ]
+}

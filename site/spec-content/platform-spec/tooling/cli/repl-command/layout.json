@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "level": "feature",
+  "extends": "feature-contract-default",
+  "pathPrefix": "platform-spec/tooling/cli/repl-command",
+  "minSpecSections": 2,
+  "widgets": [],
+  "articleDefaults": {
+    "extends": "article-default"
+  },
+  "grid": {
+    "cols": 12,
+    "rowHeight": 30,
+    "items": []
+  }
+}

@@ -1,13 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { PlatformSpecHomeClient } from "#/components/reader/platform-spec-home-client";
 import { ReaderChrome } from "#/components/reader/reader-chrome";
 import { SpecShell } from "#/components/reader/spec-shell";
-import {
-	PlatformSpecHome,
-	SpecOriginProvider,
-	type NavTreeNode as UiNavTreeNode,
-} from "@beskid/ui-react/platform-spec";
-import type { NavTreeNode } from "#/server/catalog";
+import { SpecViewModeProvider } from "#/components/reader/spec-view-mode";
+import { SpecOriginProvider } from "@beskid/ui-react/platform-spec";
 import { fetchCatalog, fetchNavTree } from "#/server/catalog";
 
 export const Route = createFileRoute("/platform-spec/")({
@@ -21,24 +18,15 @@ export const Route = createFileRoute("/platform-spec/")({
 	component: PlatformSpecHomePage,
 });
 
-function toUiNavTree(node: NavTreeNode): UiNavTreeNode {
-	return {
-		slug: node.slug,
-		href: node.href,
-		title: node.title,
-		children: node.children?.map(toUiNavTree),
-	};
-}
-
 function PlatformSpecHomePage() {
 	const { catalog, navTree } = Route.useLoaderData();
 
 	return (
-		<ReaderChrome>
-			<SpecOriginProvider>
-				<SpecShell navTree={navTree} activeSlug="platform-spec">
-					<div className="mx-auto w-full max-w-6xl px-6 py-6">
-						<PlatformSpecHome
+		<SpecViewModeProvider>
+			<ReaderChrome>
+				<SpecOriginProvider>
+					<SpecShell navTree={navTree} activeSlug="platform-spec">
+						<PlatformSpecHomeClient
 							catalog={catalog.entries.map((entry) => ({
 								slug: entry.slug,
 								href: entry.href,
@@ -47,11 +35,11 @@ function PlatformSpecHomePage() {
 								status: entry.status,
 								pathClass: entry.pathClass,
 							}))}
-							navTree={[toUiNavTree(navTree)]}
+							navTree={navTree}
 						/>
-					</div>
-				</SpecShell>
-			</SpecOriginProvider>
-		</ReaderChrome>
+					</SpecShell>
+				</SpecOriginProvider>
+			</ReaderChrome>
+		</SpecViewModeProvider>
 	);
 }

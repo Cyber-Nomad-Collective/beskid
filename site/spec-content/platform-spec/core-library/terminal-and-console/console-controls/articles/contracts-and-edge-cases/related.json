@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Console controls",
+      "href": "/platform-spec/core-library/terminal-and-console/console-controls/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+---
+title: FAQ and troubleshooting
+description: Common pckg client and registry issues.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+---
+
+## 401 / MissingAuthToken
+
+Set `BESKID_PCKG_API_KEY` or bearer token. For multi-registry setups, ensure `.beskid/pckg/repositories.json` keys match `Workspace.proj` registry alias names.
+
+## Pack missing docs on pckg site
+
+Run `beskid doc --project ...` before pack so `.beskid/docs/api.json` exists. Server ingestion (`PackagePublishDocumentation`) treats that tree as first-class.
+
+## Template pack rejected
+
+Verify `project.type = Template`, `.beskid/template.json` (`beskid.template.v1`), and `packageKind: template` in generated `package.json`.
+
+## Wrong package version after publish
+
+Registry assigns versions in normal flows—do not expect local `project.version` alone to drive the published label. Query the server for the assigned version summary.
+
+## Local dev server URL
+
+Default `https://pckg.beskid-lang.org` points at the public registry; override with `BESKID_PCKG_URL` for local compose (`http://127.0.0.1:8082`) or other hosts.

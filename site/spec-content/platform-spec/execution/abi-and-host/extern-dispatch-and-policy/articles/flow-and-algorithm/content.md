@@ -1,0 +1,57 @@
+---
+title: Flow and algorithm
+description: Extern validation, link registration, optional dlopen resolution,
+  and interop dispatch calls.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-22
+---
+
+## Purpose
+
+Step-by-step flow from source `Extern` to executable call target. Actor diagram: [design model](./design-model/).
+
+## Compile-time validation
+
+1. Parser records `Extern` ABI string (typically `"C"`) and optional `Library` for dynamic profiles.
+2. Semantic analysis rejects Beskid-only types in extern parameter/return positions.
+3. `declare_validated_extern_imports` (`beskid_codegen`) maps each extern to a Cranelift signature; invalid shapes become `ExternDeclarationError::InvalidSignature`.
+
+## JIT link without dynamic externs
+
+1. `BeskidJitModule::new()` registers runtime builtins only.
+2. `declare_validated_extern_imports` declares extern imports; addresses **must** be supplied by the linker or pre-resolved `extras` table before execution.
+3. `remap_testcase_externals` rewrites CLIF external names to registered `FuncId`s during define.
+
+## Optional dynamic resolution (`extern_dlopen`)
+
+When the engine feature is enabled on Linux x86_64:
+
+1. For each distinct `(library, symbol)` in the artifact, `dlopen(RTLD_LOCAL | RTLD_NOW)` once per process.
+2. `dlsym` resolves the symbol; failures include `dlerror()` text in diagnostics.
+3. Process-lifetime caches deduplicate libraries and symbols across compilation units.
+4. `BeskidJitModule::new_with_symbols` passes `(name, *const u8)` pairs into the JIT builder so Cranelift imports bind to resolved addresses.
+
+When the feature is **disabled**, artifacts containing externs **must** fail compilation with an explicit list of unresolved symbols (**EXT-001**).
+
+## Runtime interop dispatch path
+
+1. Lowering passes a tagged interop handle (header + discriminant + payload per `interop_layout.rs`).
+2. Generated code calls `interop_dispatch_unit`, `interop_dispatch_ptr`, or `interop_dispatch_usize` depending on return shape.
+3. Runtime reads tag at offset **+8** and payload at **+16** from the object header (v0.2 baseline; ABI-bumped if layout changes).
+
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/beskid.pest` — `Extern` grammar rules
+- `compiler/crates/beskid_codegen/src/` — validated extern lowering
+- `compiler/crates/beskid_runtime/src/interop_layout.rs` — tagged interop handle layout
+
+## Related topics
+
+- [Contracts and edge cases](./contracts-and-edge-cases/)
+- [Examples](./examples/) — `getpid` smoke pattern

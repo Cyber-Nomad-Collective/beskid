@@ -1,0 +1,41 @@
+---
+title: Control flow - Contracts and edge cases
+description: Normative contracts, edge cases, and invariants for Beskid control flow.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Proposed
+lastReviewed: 2026-06-05
+---
+
+## Hard requirements
+
+- **No `switch` statement** — Sum-type branching uses `match` expressions only.
+- **Short-circuit booleans** — `&&` and `||` are mandatory short-circuit operators.
+- **`bool` conditions only** — `if`/`while` must not treat non-bool values as truthy.
+- **Structured transfer only** — `goto` is not in the grammar; use `break`/`continue`/`return`.
+
+## Diagnostic band E14xx
+
+| Code | Condition |
+| --- | --- |
+| **E1401** | `break` outside loop |
+| **E1402** | `continue` outside loop |
+| **W1403** | Unreachable code after unconditional transfer |
+
+## Edge cases
+
+- **Nested loops** — `break` and `continue` target the innermost enclosing loop. There is no labeled break in v0.1.
+- **Return in lambda** — `return` inside a lambda returns from the lambda, not the enclosing function.
+- **Unreachable after panic** — Code after a non-returning call (for example `panic`) is unreachable; **W1403** applies.
+- **Empty loop body** — `while (cond) { }` is valid; the condition is re-evaluated each iteration.
+
+## Invariants
+
+- Every function body must normalize to a valid control flow graph without irreducible loops.
+- `break` and `continue` must not appear in HIR after normalization unless inside a loop.
+- The compiler must preserve short-circuit semantics for `&&` and `||` through all optimization levels.

@@ -1,0 +1,32 @@
+---
+title: FAQ and troubleshooting
+description: Common LSP snapshot and refresh issues.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+---
+
+## Diagnostics stuck after `Project.lock` update
+
+Trigger a manifest save or run **Beskid: Rescan workspace** (extension command) so the server calls `invalidate_compilation_cache` and rescans. Verify lock materialization succeeded with `beskid lock` in a terminal.
+
+## Wrong project context for a file
+
+Confirm **focused project** in the Project view matches the `Project.proj` owning the file. Multi-root workspaces need the member containing the source path.
+
+## Slow initial open
+
+Full workspace scan is O(files); excluded directories are skipped but large trees still cost IO. Narrow workspace roots or exclude generated folders from the VS Code workspace.
+
+## Stale hover after mod emit
+
+Hard-invalidate paths apply when generated sources touch disk. If emit stays in-memory only, invalidation follows document generation counters—bump `ANALYSIS_CACHE_VERSION` when changing that contract.
+
+## `BESKID_WORKSPACE_MEMBER_FOR_META_DEFAULT`
+
+Sets default workspace member for meta scheduling when the environment variable is present; must align with extension focus for consistent mod attachment.

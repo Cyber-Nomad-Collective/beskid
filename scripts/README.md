@@ -15,16 +15,14 @@
 
 ## CI (`scripts/ci/`)
 
+Submodule init only — gates and publish lanes run via Dagger ([`beskid_infra/dagger/README.md`](../beskid_infra/dagger/README.md)).
+
 | Script | Used by |
 |--------|---------|
-| [`resolve-coolify-project-uuid.sh`](ci/resolve-coolify-project-uuid.sh) | Resolve **Beskid** Coolify project UUID |
-| [`init-submodules.sh`](ci/init-submodules.sh) | GHCR / release matrix checkouts |
+| [`init-submodules.sh`](ci/init-submodules.sh) | GHCR / release / Open VSX / platform matrix checkouts |
 | [`init-compiler-submodule.sh`](ci/init-compiler-submodule.sh) | Compiler + corelib (tags for semver) |
-| [`compiler-gate.sh`](ci/compiler-gate.sh) | Dagger `compiler-rust-gate` |
-| [`compiler-version.sh`](ci/compiler-version.sh) | Rolling CLI/LSP semver (Dagger) |
-| [`compiler-release-build.sh`](ci/compiler-release-build.sh) | Cross-target `beskid_cli` / `beskid_lsp` artifacts |
-| [`compiler-release-publish.sh`](ci/compiler-release-publish.sh) | `cli-latest` / `cli-v*` on `beskid_compiler` |
-| [`open-vsx-publish.sh`](ci/open-vsx-publish.sh) | VS Code extension publish |
+| [`init-beskid-infra-submodule.sh`](ci/init-beskid-infra-submodule.sh) | Workflows that invoke `beskid_infra/dagger` |
+| [`resolve-coolify-project-uuid.sh`](ci/resolve-coolify-project-uuid.sh) | Operator: resolve **Beskid** Coolify project UUID |
 
 Coolify compose deploy: [`beskid_infra/scripts/`](../beskid_infra/scripts/README.md).
 
@@ -34,7 +32,7 @@ Coolify compose deploy: [`beskid_infra/scripts/`](../beskid_infra/scripts/README
 
 ## Local web CI
 
-[`../validate-ci-local.sh`](../validate-ci-local.sh) — submodule init, site prebuild, platform-spec git-meta verify.
+[`../validate-ci-local.sh`](../validate-ci-local.sh) — `dagger call platform-smoke` (see [`beskid_infra/dagger/README.md`](../beskid_infra/dagger/README.md)).
 
 ## Interactive setup
 

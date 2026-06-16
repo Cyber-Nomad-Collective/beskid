@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Type inference",
+      "href": "/platform-spec/language-meta/type-system/type-inference/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Diagnostic code registry",
+      "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
+      "relation": "E12xx band reservation"
+    }
+  ]
+}

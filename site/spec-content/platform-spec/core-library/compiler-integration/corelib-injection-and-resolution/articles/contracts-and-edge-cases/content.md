@@ -1,0 +1,34 @@
+---
+title: Contracts and edge cases
+description: Corelib injection guarantees and edge cases.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+---
+
+## Contracts
+
+- **No opt-out** — Host manifests **must not** disable corelib; parser rejects forbidden keys.
+- **Single aggregate identity** — Implicit attachment targets `beskid_corelib` / package name **`corelib`**, not arbitrary forks, unless explicitly overridden by a declared `Std` path dependency in advanced layouts.
+- **Transitive closure** — Host compilations **must** see the full corelib workspace member packages required by the aggregate manifest.
+- **Mod projects** — `Mod` packages do not receive implicit host injection rules; they compile as mod carriers, not application hosts.
+- **Template output** — Instantiated host projects from templates follow host rules (implicit corelib).
+
+## Edge cases
+
+| Case | Behavior |
+| --- | --- |
+| Explicit `Std` dependency | Used instead of fallback path when `path` provided |
+| `beskid_corelib` building itself | `is_std_project` / manifest path checks avoid self-cycle |
+| Shard under `packages/runtime` | No implicit back-link to aggregate |
+| Missing `BESKID_CORELIB_ROOT` in CI | Repo discovery or bundled CLI corelib materialization |
+| Legacy `standard_library` paths | Tooling may accept aliases; canonical identity remains **`corelib`** |
+
+## Relationship to discovery feature
+
+Packaging, readme, and pckg publish rules live under **[Corelib discovery and packaging](/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/)**; injection assumes those roots exist on disk or in cache.

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Console I/O streams",
+      "href": "/platform-spec/core-library/terminal-and-console/console-io-streams/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Panic, IO, and syscalls",
+      "href": "/platform-spec/execution/runtime/panic-io-and-syscalls/",
+      "relation": "Builtin contracts"
+    }
+  ]
+}

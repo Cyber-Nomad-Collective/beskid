@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "level": "area",
+  "sections": [
+    {
+      "id": "scope",
+      "required": true,
+      "kind": "specSection"
+    },
+    {
+      "id": "features",
+      "required": false,
+      "kind": "specSection"
+    }
+  ],
+  "minSpecSections": 1,
+  "pathPrefix": "platform-spec/language-meta/surface-syntax",
+  "widgets": [],
+  "grid": {
+    "cols": 12,
+    "rowHeight": 30,
+    "items": []
+  }
+}

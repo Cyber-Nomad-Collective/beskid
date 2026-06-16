@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Manifests and lockfiles",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Project manifest contract",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

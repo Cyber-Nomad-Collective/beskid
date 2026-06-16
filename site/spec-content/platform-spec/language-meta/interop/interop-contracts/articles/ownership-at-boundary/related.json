@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Interop.Contracts",
+      "href": "/platform-spec/language-meta/interop/interop-contracts/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Memory and GC runtime contract",
+      "href": "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/",
+      "relation": "Pinning and safepoints during foreign calls"
+    }
+  ]
+}

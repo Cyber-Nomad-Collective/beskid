@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Corelib injection and resolution",
+      "href": "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

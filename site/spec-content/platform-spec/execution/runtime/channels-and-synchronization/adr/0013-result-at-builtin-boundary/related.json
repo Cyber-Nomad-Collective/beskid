@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Channels and synchronization",
+      "href": "/platform-spec/execution/runtime/channels-and-synchronization/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

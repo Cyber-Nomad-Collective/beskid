@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Diagnostics parity (CLI and LSP)",
+      "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Primary contract for Diagnostics parity (CLI and LSP)",
+      "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/adr/0003-primary-contract-choice/",
+      "relation": "Extends D-COMP-BUILD-0012 parity baseline"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+---
+title: Callback registration
+description: Host registration table protocol for Beskid exports invoked from
+  foreign code (v0.3).
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-23
+---
+
+## Model
+
+Foreign hosts (game engines, shells, OS services) register Beskid **callbacks** before or during runtime. v0.3 Standard defines:
+
+1. **Exported Beskid functions** — normal `[Export]` entrypoints.
+2. **Registration contract** — a Beskid `contract` describing callback function-pointer types the host implements or consumes.
+3. **Registration export** — a stable C symbol the host calls to install a table of function pointers.
+
+## Registration export (normative shape)
+
+The platform reserves a runtime or generated symbol (exact name is toolchain-defined; example):
+
+```text
+beskid_register_callbacks(version: u32, table: *const CallbackTable, count: usize) -> i32
+```
+
+| Field | Meaning |
+| --- | --- |
+| `version` | **User FFI layout band** — must match `BESKID_USER_FFI_LAYOUT_BAND` |
+| `table` | Array of `{ symbol_id, fn_ptr, userdata }` rows |
+| `count` | Number of rows |
+| Return | `0` success; non-zero stable error codes |
+
+Hosts **must** reject unknown `version` values.
+
+## Reference symbol
+
+The reference runtime exposes `beskid_register_callbacks` from `compiler/crates/beskid_runtime/src/builtins/callback.rs`, registered in `RUNTIME_EXPORT_SYMBOLS` and `BUILTIN_SPECS` via `compiler/crates/beskid_abi/src/symbols.rs`. Hosts **must** pass `version == BESKID_USER_FFI_LAYOUT_BAND` (initial Standard value `1`).
+
+## Beskid-side callback exports
+
+Each callback slot points at a **`[Export(Abi:"C")]`** function or a **compiler-generated trampoline** that:
+
+- Enters runtime TLS / heap scope.
+- Performs any GC safepoint policy required before executing Beskid code.
+- Maps parameters from C layout to Beskid types.
+
+## Import-side function pointers
+
+`Extern` contracts **may** accept function-pointer parameters when the pointee is a documented **`Export`** or trampoline symbol. See **[callback call shapes](/platform-spec/language-meta/interop/interop-contracts/callback-call-shapes/)**.
+
+## Non-goals (v0.3)
+
+- Automatic binding generation from C headers.
+- Foreign-thread callback without host lifecycle contract (Proposed later).

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Pest parser generator",
+      "href": "/platform-spec/compiler/compiler-mods/pest-parser-generator/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

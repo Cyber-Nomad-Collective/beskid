@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Modules and visibility",
+      "href": "/platform-spec/language-meta/program-structure/modules-and-visibility/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

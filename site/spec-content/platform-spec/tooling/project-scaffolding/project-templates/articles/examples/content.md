@@ -1,0 +1,174 @@
+---
+title: Examples
+description: Sample `beskid.template.v1` manifests and first-party
+  `beskid.templates.*` packages.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-21
+---
+
+## Purpose and scope
+
+Illustrative templates for the three first-party packages and common user flows.
+
+## Console application (`beskid.templates.console`)
+
+**`tags.type`:** `project`
+
+```json
+{
+  "schema": "beskid.template.v1",
+  "identity": "beskid.templates.console::1.0.0",
+  "name": "Beskid Console Application",
+  "shortName": "console",
+  "description": "Executable app with Main.bd and App target",
+  "tags": { "type": "project" },
+  "sourceName": "MyApp",
+  "symbols": {
+    "name": {
+      "type": "string",
+      "description": "Project name",
+      "defaultValue": "MyApp",
+      "isRequired": true
+    }
+  },
+  "sources": [{ "source": "./content/", "target": "./" }],
+  "postActions": [
+    { "actionId": "beskidLock", "args": {} },
+    { "actionId": "openReadme", "args": { "path": "README.md" } }
+  ]
+}
+```
+
+Generated `Project.proj` (excerpt—note **no** corelib opt-out; no explicit corelib dependency required in template):
+
+```text
+project {
+  name    = "{{name}}"
+  version = "0.1.0"
+  root    = "Src"
+}
+
+target "app" {
+  kind  = App
+  entry = "Main.bd"
+}
+```
+
+**CLI:** `beskid new console -n MyGame -o ./MyGame`
+
+## Class library (`beskid.templates.lib`)
+
+**`tags.type`:** `project`
+
+```json
+{
+  "schema": "beskid.template.v1",
+  "identity": "beskid.templates.lib::1.0.0",
+  "name": "Beskid Class Library",
+  "shortName": "lib",
+  "tags": { "type": "project" },
+  "sourceName": "MyLib",
+  "symbols": {
+    "name": { "type": "string", "isRequired": true, "defaultValue": "MyLib" }
+  },
+  "sources": [{ "source": "./content/", "target": "./" }]
+}
+```
+
+```text
+target "lib" {
+  kind  = Lib
+  entry = "Lib.bd"
+}
+```
+
+## Template authoring (`beskid.templates.project`)
+
+**`tags.type`:** `project` (scaffolds a `type: Template` authoring tree)
+
+```json
+{
+  "schema": "beskid.template.v1",
+  "identity": "beskid.templates.project::1.0.0",
+  "name": "Beskid Template Package",
+  "shortName": "template",
+  "tags": { "type": "project" },
+  "symbols": {
+    "name": { "type": "string", "isRequired": true },
+    "shortName": { "type": "string", "isRequired": true }
+  },
+  "sources": [{ "source": "./content/", "target": "./" }]
+}
+```
+
+Emitted author `Project.proj`:
+
+```text
+project {
+  name    = "{{name}}"
+  version = "0.1.0"
+  type    = Template
+  template {
+    shortName = "{{shortName}}"
+    identity  = "{{name}}"
+  }
+}
+```
+
+Includes stub **`.beskid/template.json`** with placeholders for the author to complete.
+
+## Workspace template (illustrative)
+
+```json
+{
+  "schema": "beskid.template.v1",
+  "identity": "beskid.templates.workspace-demo::1.0.0",
+  "name": "Two-member workspace",
+  "shortName": "workspace-demo",
+  "tags": { "type": "workspace" },
+  "symbols": {
+    "workspaceName": { "type": "string", "defaultValue": "MyWorkspace" }
+  },
+  "sources": [
+    { "source": "./workspace/", "target": "./" }
+  ]
+}
+```
+
+## Item template — contract file
+
+```json
+{
+  "schema": "beskid.template.v1",
+  "identity": "beskid.templates.contract-item::1.0.0",
+  "name": "Contract stub",
+  "shortName": "contract",
+  "tags": { "type": "item" },
+  "symbols": {
+    "contractName": { "type": "string", "isRequired": true }
+  },
+  "sources": [
+    {
+      "source": "./item/Contract.bd",
+      "target": "./Src/{{contractName}}.bd"
+    }
+  ]
+}
+```
+
+**CLI:** `beskid new contract --symbol contractName=Payment -o ./Src/Payment.bd --project ./MyApp`
+
+## Git and path usage
+
+```bash
+beskid new --path ./local-templates/console -n Demo -o ./Demo
+beskid new --git https://example.com/templates.git --git-ref v1.2.0 --git-subpath console -n Demo -o ./Demo
+beskid new install beskid.templates.console
+```

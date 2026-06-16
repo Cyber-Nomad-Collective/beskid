@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "CLI",
+      "href": "/platform-spec/tooling/cli/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Build, analyze, and run contract",
+      "href": "/platform-spec/tooling/cli/build-analyze-run-contract/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Release and versioning policy",
+      "href": "/platform-spec/community/spec-maintenance/release-and-versioning-policy/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

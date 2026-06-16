@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Corelib injection and resolution",
+      "href": "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/",
+      "relation": "Injection and resolution hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Rust ABI profile",
+      "href": "/platform-spec/language-meta/interop/rust-abi-profile/",
+      "relation": "Manifest and kernel/dispatch"
+    },
+    {
+      "type": "Feature",
+      "title": "Extern dispatch and policy",
+      "href": "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/",
+      "relation": "Handler registration policy"
+    }
+  ]
+}

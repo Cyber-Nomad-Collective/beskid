@@ -38,6 +38,9 @@
 	path = beskid_bsol
 	url = https://github.com/Cyber-Nomad-Collective/beskid_bsol.git
 	active = false
+[submodule "site/spec-content"]
+	path = site/spec-content
+	url = https://github.com/Cyber-Nomad-Collective/beskid_normative_spec.git
 [submodule "beskid_normative_spec"]
 	path = beskid_normative_spec
 	url = https://github.com/Cyber-Nomad-Collective/beskid_normative_spec.git

@@ -1,0 +1,44 @@
+---
+title: Memory and references - Verification and traceability
+description: Tests, implementation checklist, and verification matrix for Beskid
+  memory and references.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Proposed
+lastReviewed: 2026-06-05
+---
+
+## Verification matrix
+
+| Scenario | Expected evidence |
+| --- | --- |
+| `mut i64` local | Parses; reassignment allowed |
+| `let mut` inferred local | Parses; reassignment allowed |
+| `mut T` parameter | Parses; callee may reassign parameter binding |
+| Immutable assignment | **E1214** emitted |
+| Array bounds check | Inserted in safe builds |
+| Escape to heap | GC-traced when pointers escape |
+| Spawn capture | **E1225** for unsafe stack reference capture |
+
+## Implementation checklist
+
+- [x] Grammar: prefix `mut` on bindings
+- [x] Parser: `beskid.pest` productions for `mut`
+- [x] Type checker: `mut` reassignment validation
+- [x] Immutable check: **E1214**
+- [x] Runtime: GC in `beskid_runtime/src/gc.rs`
+- [x] Diagnostics: **E1214**, **E1225**
+- [ ] Escape analysis full implementation
+- [ ] Write barrier insertion in codegen
+- [ ] Bounds check elimination optimization
+
+## Test locations
+
+- `compiler/crates/beskid_analysis/src/analysis/rules/staged/` — immutability and escape tests
+- `compiler/crates/beskid_runtime/src/gc.rs` — GC unit tests
+- `compiler/crates/beskid_tests` — integration tests for memory

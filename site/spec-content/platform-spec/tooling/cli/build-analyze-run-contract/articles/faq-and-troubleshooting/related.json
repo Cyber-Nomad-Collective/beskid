@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Build, analyze, and run contract",
+      "href": "/platform-spec/tooling/cli/build-analyze-run-contract/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

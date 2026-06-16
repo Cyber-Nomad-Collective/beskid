@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Core.Text.Regex",
+      "href": "/platform-spec/core-library/text-and-parsing/text-regex/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

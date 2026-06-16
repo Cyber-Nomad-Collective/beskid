@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Project templates",
+      "href": "/platform-spec/tooling/project-scaffolding/project-templates/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "beskid new command",
+      "href": "/platform-spec/tooling/project-scaffolding/beskid-new/",
+      "relation": "CLI orchestration"
+    }
+  ]
+}

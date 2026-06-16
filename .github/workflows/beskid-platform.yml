@@ -59,6 +59,29 @@ permissions:
   packages: write
 
 jobs:
+  smoke:
+    name: Platform smoke (Dagger)
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Init beskid_infra submodule
+        run: ./scripts/ci/init-submodules.sh beskid_infra
+
+      - uses: dagger/dagger-for-github@v8.4.1
+        with:
+          version: "0.21.0"
+
+      - name: Install Dagger module deps
+        run: npm ci
+        working-directory: beskid_infra/dagger
+
+      - name: Platform smoke
+        run: dagger -m beskid_infra/dagger call platform-smoke --source=.
+
   images:
     if: github.event_name != 'workflow_dispatch' || inputs.skip_images != true
     uses: ./.github/workflows/container-images.yml

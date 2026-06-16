@@ -1,0 +1,45 @@
+---
+title: Three-tier classification with default `supported`
+description: Public corelib items classify as Tier 1 (Standard), Tier 2
+  (Supported), or Tier 3 (Unstable); missing directives default to `supported`.
+specLevel: adr
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+adrId: D-CORE-API-SHAPE-0001
+adrStatus: Accepted
+adrDate: 2026-05-23
+lastReviewed: 2026-05-23
+---
+
+## Context
+
+The corelib workspace exposes hundreds of public items across `packages/foundation`, `packages/runtime`, `packages/console`, `packages/concurrency`, and `packages/compiler-sdk`. Some items (`Collections.Array.Len`, `System.Output.Write`) are battle-tested and already part of the prelude; others (`Collections.List.Get`, `System.FS.WriteAllText`) ship as shape-only stubs while the runtime catches up. Without a tier classification, downstream consumers cannot tell which APIs are safe to depend on and which may break in the next minor release.
+
+## Decision
+
+| Rule | Detail |
+| --- | --- |
+| Tier vocabulary | **Tier 1 — `standard`**, **Tier 2 — `supported`**, **Tier 3 — `unstable`** |
+| Authoring directive | `/// @tier(<value>)` on the declaring doc comment of any public item |
+| Aliases | `Tier1`/`Standard`/`standard`, `Tier2`/`Supported`/`supported`, `Tier3`/`Unstable`/`unstable` (case-insensitive) |
+| Default | Public items without a directive resolve to **`supported`** |
+| Cascade | Item-site → parent → package default → workspace default |
+| Serialization | Lowercase string under camelCase `tier` field in `ApiDocItem`; omitted when unresolved |
+
+## Consequences
+
+- Downstream tooling can badge every documented item by tier without consulting an external manifest.
+- Authors get a one-line annotation surface; existing items default to a meaningful tier (`supported`) without a sweeping refactor.
+- The default of `supported` is the safest "no commitment, no claim of unstable" choice. Future tightening to require explicit directives is possible without a compatibility break.
+
+## Verification anchors
+
+- `compiler/crates/beskid_analysis/src/doc/api_tier.rs` (resolver + tests)
+- `compiler/crates/beskid_analysis/src/doc/api_snapshot.rs` (`tier` field)
+- `compiler/crates/beskid_cli/src/commands/doc.rs::execute` (CLI emission)
+- `compiler/crates/beskid_tests/src/projects/corelib/layout.rs::checked_in_corelib_tier_metadata_round_trips_through_api_json`

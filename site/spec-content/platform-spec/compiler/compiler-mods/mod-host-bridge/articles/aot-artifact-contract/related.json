@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Mod host bridge",
+      "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Diagnostic code registry",
+      "href": "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
+      "relation": "E1821–E1835 load-failure band"
+    },
+    {
+      "type": "Feature",
+      "title": "Project manifest contract",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+      "relation": "Mod project type and artifactPolicy"
+    }
+  ]
+}

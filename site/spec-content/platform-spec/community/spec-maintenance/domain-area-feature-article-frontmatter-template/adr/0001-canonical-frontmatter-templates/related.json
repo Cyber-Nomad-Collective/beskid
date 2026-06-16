@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Domain, Area, Feature, and Article frontmatter templates",
+      "href": "/platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

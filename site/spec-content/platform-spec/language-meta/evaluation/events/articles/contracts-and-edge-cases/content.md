@@ -1,0 +1,41 @@
+---
+title: Events - Contracts and edge cases
+description: Normative contracts, edge cases, and invariants for Beskid events.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Proposed
+lastReviewed: 2026-06-05
+---
+
+## Hard requirements
+
+- **Language `event` keyword** — Events are fields, not separate delegate types.
+- **Fiber OnCancelled** — Cancellation uses the same `event` mechanism on `Fiber<T>`.
+- **Synchronous default** — Handlers run on the raising fiber unless a host profile says otherwise.
+- **Not `Option`** — Subscription state is host-managed; absence is not `Option<T>`.
+
+## Diagnostic band
+
+| Code | Condition |
+| --- | --- |
+| **E1219** | Invalid event invocation scope |
+| **E1220** | Invalid event capacity |
+| **E1221** | Invalid event subscription target |
+
+## Edge cases
+
+- **Empty subscriber list** — Raising an event with no subscribers is a no-op.
+- **Handler exception** — If a handler panics, the behavior is host-defined (continue vs abort).
+- **Re-entrant raise** — A handler that raises the same event may cause re-entrancy; the runtime handles this per host policy.
+- **Event field in struct literal** — Event fields must not appear in struct literal initializers.
+
+## Invariants
+
+- Event fields are not ordinary value fields; they must not be read like variables.
+- Event signatures must use parameter lists compatible with delegate lowering.
+- Types with `event` fields must lower to the same calling convention in AOT and JIT.

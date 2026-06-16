@@ -1,0 +1,61 @@
+---
+title: Registry API reference UI
+description: Normative layout and navigation for pckg package API documentation
+  driven by api.json.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+---
+
+## What this covers
+
+How the **pckg** registry renders published package documentation as an **API reference** (Microsoft .NET API Docs–style), using **`api.json`** as the sole structure driver.
+
+## Page layout
+
+| Region | Content |
+| --- | --- |
+| Header | Package id, version, primary symbol search |
+| Left rail | **Library tree** — collapsible modules, optional dependency groups, kind folders (Types, Enums, Contracts, Functions) |
+| Center | Selected symbol: signature, type links, structured `doc`, `docMarkdown` body |
+| Right rail | In-page table of contents from markdown headings |
+| Overflow | Flat symbol grid and kind filters (secondary to the tree) |
+
+The main content column **must** stay aligned beside the left rail (not displaced below it).
+
+## URL routes
+
+| Route | Purpose |
+| --- | --- |
+| `` `/docs/{package}@{version}` `` | Package docs landing; default tree selection |
+| `` `/docs/{package}@{version}/api/{qualifiedName}` `` | Deep link to one API row (`qualifiedName` percent-encoded) |
+| `` `/docs/{package}@{version}/search/{query}` `` | Initial symbol search filter |
+
+The `version` segment may be `latest` or an exact registry version.
+
+## Library tree algorithm
+
+1. Deserialize `api.json` with `navigationModel: "graph-v1"` and `schemaVersion >= 3`.
+2. Build parent/child edges from **`parentId`** / **`memberIds`** only ([design model](/platform-spec/tooling/cli/api-json-contract/design-model/)).
+3. Include only **explorer** kinds in the tree (`module`, `type`, `enum`, `contract`, `function`).
+4. Under each `module` node, group explorer children into UI folders by `kind`.
+5. When **`declaringPackage`** is present and differs from the page package, group under **Dependencies** → that package id before module nesting.
+
+Legacy artifacts without module parenting **may** synthesize module edges from `modulePath` until re-published; emitters should not rely on this path.
+
+## Type and cross-package links
+
+- In-package types: navigate via **`refItemId`** when set; otherwise select by `qualifiedName` or exact **`symbolKey`** when present.
+- External types (`declaringPackage` ≠ current package): link to `` `/docs/{declaringPackage}@{version}/api/{qualifiedName}` `` (same version segment as the host page when possible); prefer **`symbolKey`**-stable routes when the UI supports percent-encoded symbol keys.
+- Markdown `@ref` links packed at publish time **must** use the same qualified-name and **symbolKey** rules as the [design model](/platform-spec/tooling/cli/api-json-contract/design-model/).
+
+## Implementation anchors
+
+- UI: `pckg/src/Server/Components/Docs/` (`PackageDocs`, `ApiDocNavigationBuilder`, `DocsView`)
+- API: `GET /api/packages/{id}/versions/{ver}/docs/structured`
+- Pack: `.beskid/docs/api.json` inside `.bpk` artifacts

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Corelib injection and resolution",
+      "href": "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Corelib discovery and packaging",
+      "href": "/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/",
+      "relation": "Canonical package identity and roots"
+    },
+    {
+      "type": "Feature",
+      "title": "Explicit use, no prelude",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/",
+      "relation": "Symbol visibility after graph attachment"
+    }
+  ]
+}

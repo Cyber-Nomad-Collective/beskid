@@ -1,4 +1,4 @@
-# Corelib: quality gate + test → publish to pckg.beskid-lang.org.
+# Corelib: quality gate + test → publish to pckg.beskid-lang.org (Dagger).
 name: Corelib
 
 on:
@@ -8,8 +8,9 @@ on:
       - 'compiler'
       - 'compiler/corelib'
       - 'compiler/corelib/**'
-      - 'scripts/ci/corelib*.sh'
+      - 'beskid_infra/dagger/**'
       - 'scripts/ci/init-compiler-submodule.sh'
+      - 'scripts/ci/init-beskid-infra-submodule.sh'
       - '.github/workflows/corelib.yml'
   pull_request:
     branches: [main]
@@ -17,8 +18,9 @@ on:
       - 'compiler'
       - 'compiler/corelib'
       - 'compiler/corelib/**'
-      - 'scripts/ci/corelib*.sh'
+      - 'beskid_infra/dagger/**'
       - 'scripts/ci/init-compiler-submodule.sh'
+      - 'scripts/ci/init-beskid-infra-submodule.sh'
       - '.github/workflows/corelib.yml'
   workflow_dispatch:
 
@@ -41,20 +43,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - name: Init beskid_infra submodule
+        run: bash ./scripts/ci/init-beskid-infra-submodule.sh
+
+      - uses: dagger/dagger-for-github@v8.4.1
         with:
-          python-version: "3.12"
+          version: "0.21.0"
 
-      - uses: dtolnay/rust-toolchain@stable
-
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: compiler
-
-      - name: Corelib quality + test gate
+      - name: Init compiler submodule
         env:
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-        run: bash ./scripts/ci/corelib-gate.sh
+        run: bash ./scripts/ci/init-compiler-submodule.sh
+
+      - name: Install Dagger module deps
+        run: npm ci
+        working-directory: beskid_infra/dagger
+
+      - name: Corelib quality + test gate (Dagger)
+        env:
+          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+        run: dagger -m beskid_infra/dagger call corelib-gate --source=.
 
   publish:
     name: Publish corelib to pckg
@@ -66,19 +74,28 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - name: Init beskid_infra submodule
+        run: bash ./scripts/ci/init-beskid-infra-submodule.sh
+
+      - uses: dagger/dagger-for-github@v8.4.1
         with:
-          python-version: "3.12"
+          version: "0.21.0"
 
-      - uses: dtolnay/rust-toolchain@stable
-
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: compiler
-
-      - name: Publish corelib to pckg.beskid-lang.org
+      - name: Init compiler submodule
         env:
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-          BESKID_PCKG_KEY: ${{ secrets.BESKID_PCKG_KEY }}
-          BESKID_PCKG_BASE_URL: https://pckg.beskid-lang.org
-        run: bash ./scripts/ci/corelib-publish.sh patch
+        run: bash ./scripts/ci/init-compiler-submodule.sh
+
+      - name: Install Dagger module deps
+        run: npm ci
+        working-directory: beskid_infra/dagger
+
+      - name: Publish corelib workspace to pckg
+        env:
+          BESKID_PCKG_API_KEY: ${{ secrets.BESKID_PCKG_KEY }}
+        run: |
+          dagger -m beskid_infra/dagger call package-publish publish-corelib \
+            --source=. \
+            --pckg-api-key=env:BESKID_PCKG_API_KEY \
+            --pckg-base-url=https://pckg.beskid-lang.org \
+            --version-bump=patch

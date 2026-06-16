@@ -82,59 +82,66 @@ jobs:
         with:
           bun-version: "1.3.14"
 
-      - name: Auth hub checks
+      - name: Init beskid_infra for Dagger checks
+        if: matrix.image != 'beskid-pckg'
+        run: ./scripts/ci/init-submodules.sh beskid_infra
+
+      - uses: dagger/dagger-for-github@v8.4.1
+        if: matrix.image != 'beskid-pckg'
+        with:
+          version: "0.21.0"
+
+      - name: Install Dagger module deps
+        if: matrix.image != 'beskid-pckg'
+        run: npm ci
+        working-directory: beskid_infra/dagger
+
+      - name: Auth hub checks (Dagger)
         if: matrix.image == 'beskid-auth'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
         run: |
-          cd site/auth
-          bun install --frozen-lockfile
-          bun run test
-          SKIP_ENV_VALIDATION=1 bun run build
-          bun run verify:client-bundle
-          bun run test:bundle
+          dagger -m beskid_infra/dagger call site-build-gate \
+            --source=. \
+            --app=auth \
+            --node-auth-token=env:NODE_AUTH_TOKEN
 
-      - name: Platform spec checks
+      - name: Platform spec checks (Dagger)
         if: matrix.image == 'beskid-platform-spec'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
         run: |
-          cd beskid_web_common
-          bun install --frozen-lockfile
-          bun run --filter '@cyber-nomad-collective/spec-core' test
-          cd "${{ github.workspace }}/site/platform-spec"
-          bun install --frozen-lockfile
-          bun run test
-          SKIP_ENV_VALIDATION=1 bun run build
-          bun run verify:client-bundle
+          dagger -m beskid_infra/dagger call site-build-gate \
+            --source=. \
+            --app=platform-spec \
+            --node-auth-token=env:NODE_AUTH_TOKEN
 
-      - name: Verify lockfiles
-        if: matrix.image != 'beskid-pckg'
+      - name: Verify lockfiles (Dagger)
+        if: matrix.image != 'beskid-pckg' && matrix.image != 'beskid-auth' && matrix.image != 'beskid-platform-spec'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
         run: |
           set -euo pipefail
           case "${{ matrix.image }}" in
             beskid-site)
-              lock_dirs=("${{ github.workspace }}")
-              ;;
-            beskid-auth)
-              lock_dirs=("${{ github.workspace }}/site/auth")
-              ;;
-            beskid-platform-spec)
-              lock_dirs=("${{ github.workspace }}/site/platform-spec")
+              dirs="."
               ;;
             beskid-tracker)
-              lock_dirs=("${{ github.workspace }}/beskid_tracker")
+              dirs="beskid_tracker"
               ;;
             beskid-nexus)
-              lock_dirs=(
-                "${{ github.workspace }}/beskid_nexus/gitnexus"
-                "${{ github.workspace }}/beskid_nexus/gitnexus-web"
-              )
+              dirs="beskid_nexus/gitnexus,beskid_nexus/gitnexus-web"
+              ;;
+            *)
+              dirs="."
               ;;
           esac
-          ./scripts/ci/verify-frozen-lockfile.sh "${lock_dirs[@]}"
+          IFS=',' read -ra lock_dirs <<< "${dirs}"
+          args=()
+          for d in "${lock_dirs[@]}"; do
+            args+=(--dirs "${d}")
+          done
+          dagger -m beskid_infra/dagger call platform-lockfile-gate --source=. "${args[@]}"
 
       - name: Log in to GHCR
         uses: docker/login-action@v3

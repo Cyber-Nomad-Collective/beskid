@@ -1,0 +1,54 @@
+---
+title: Examples
+description: ABI version checks, symbol parity, and migration scenarios for
+  toolchain maintainers.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-22
+---
+
+## Host version gate (Rust pseudocode)
+
+A JIT host can refuse to run when versions diverge:
+
+```rust
+let expected = beskid_abi::BESKID_RUNTIME_ABI_VERSION;
+let actual = unsafe { beskid_runtime::beskid_runtime_abi_version() };
+if actual != expected {
+    panic!("runtime ABI {actual} != compiler ABI {expected}");
+}
+```
+
+Production CLIs **should** surface this as a structured error rather than a raw panic.
+
+## Additive symbol (no bump)
+
+Suppose maintainers add `fiber_debug_trace` to `RUNTIME_EXPORT_SYMBOLS` and `beskid_runtime`, but no released compiler lowering emits calls to it yet. Older artifacts keep working; newer compilers may call the symbol once lowering lands. No `BESKID_RUNTIME_ABI_VERSION` change is required (**ABI-005**).
+
+## Breaking rename (bump required)
+
+Renaming `fiber_join` export to `fiber_join_status` without updating every `BUILTIN_SPECS` consumer breaks link compatibility. The fix set is:
+
+1. `BESKID_RUNTIME_ABI_VERSION` += 1
+2. Synchronized `symbols.rs`, `builtins.rs`, runtime `#[unsafe(no_mangle)]` names, and docs
+3. Rebuild and republish CLI, VSIX, and prebuilt runtime bundles together
+
+## Inspecting the export list
+
+Maintainers compare:
+
+- `compiler/crates/beskid_abi/src/symbols.rs` → `RUNTIME_EXPORT_SYMBOLS`
+- `compiler/crates/beskid_runtime/src/lib.rs` → `pub use builtins::{ … }`
+
+Every JIT-resolved builtin **must** appear in both lists with identical spelling.
+
+## Related topics
+
+- [Verification and traceability](./verification-and-traceability/) — automated parity checks
+- Legacy: [Runtime ABI (v0.1)](../../../../execution/runtime/runtime-abi-v0-1.md)

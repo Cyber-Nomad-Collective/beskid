@@ -1,0 +1,27 @@
+---
+title: Backends (JIT and AOT) - FAQ and troubleshooting
+description: Troubleshooting for backend-specific build or run failures.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+---
+
+## Why does `run` pass but `build --kind exe` fail?
+Linking and runtime packaging are AOT-only steps; inspect linker/runtime preparation diagnostics.
+
+## Why does object-only build skip runtime files?
+`ObjectOnly` intentionally omits runtime preparation and native linking.
+
+## Why does `build --kind static` fail on Windows targets?
+Current static archive merge is implemented for Unix-style toolchains (`ar`/`ranlib`, and `libtool` on Apple hosts). Windows static archive merge currently returns an unsupported-linker-strategy error.
+
+## Why does `build --kind exe --entrypoint foo` fail?
+Current executable linker strategy requires entrypoint symbol `main`; alternate executable entrypoint names are rejected.
+
+## Can JIT use a different lowering path?
+Not in the current contract; both backends share the same lowering entrypoint.

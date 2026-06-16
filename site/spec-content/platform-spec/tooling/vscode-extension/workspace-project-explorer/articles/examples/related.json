@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Workspace and project explorer",
+      "href": "/platform-spec/tooling/vscode-extension/workspace-project-explorer/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

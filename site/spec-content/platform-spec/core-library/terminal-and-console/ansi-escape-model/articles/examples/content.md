@@ -1,0 +1,94 @@
+---
+title: Examples
+description: Representative escape composition and gated emission patterns.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-21
+---
+
+## Purpose
+
+Document **examples** for the **Ansi Escape Model** feature: role-specific normative detail beyond the feature hub.
+
+## Canonical references
+
+- Feature hub: [Ansi Escape Model](/platform-spec/core-library/terminal-and-console/ansi-escape-model/)
+- Sibling articles in this bundle (design model, contracts, flow, examples, verification)
+
+## Detailed behavior
+
+### Bold red foreground (CSI `m`)
+
+```beskid
+string esc = Ansi.Escape.Esc();
+string seq = Ansi.Escape.EmitCsi("1;31", "m");
+Core.Output.Write("${seq}Hello${Ansi.Sgr.ResetSuffix()}");
+```
+
+Ungated framing for tests:
+
+```beskid
+string raw = Ansi.Escape.CsiSequence("1;31", "m");
+// raw == "\x1b[1;31m" when Esc() is U+001B
+```
+
+### Cursor home and clear display
+
+```beskid
+string moves = Ansi.Cursor.IntoSequence(
+    Ansi.Cursor.Home(Ansi.Cursor.Start())
+);
+string clear = Ansi.Erase.IntoSequence(
+    Ansi.Erase.DisplayAll(Ansi.Erase.Start())
+);
+Core.Output.Write("${moves}${clear}");
+```
+
+When `ShouldEmitAnsi()` is false, `IntoSequence` returns `""` for both builders.
+
+### Alternate screen buffer
+
+```beskid
+string on = Ansi.Escape.WhenEnabled(Ansi.Escape.PrivateMode("1049", true));
+string off = Ansi.Escape.WhenEnabled(Ansi.Escape.PrivateMode("1049", false));
+```
+
+Golden tests call `PrivateMode` without gating to assert framing bytes.
+
+### Fluent SGR with automatic reset
+
+```beskid
+string line = Ansi.Sgr.Start()
+    .Bold()
+    .FgBasic(31)
+    .ApplyTo("error");
+Core.Output.WriteLine(line);
+```
+
+`ApplyTo` appends gated `ESC[0m` when attributes were applied.
+
+### DEC save / restore around progress render
+
+```beskid
+string save = Ansi.Escape.EmitDec("7");
+string restore = Ansi.Escape.EmitDec("8");
+Core.Output.Write("${save}");
+// draw status line
+Core.Output.Write("${restore}");
+```
+
+Prefer DEC sequences over SCO `ESC[s` / `ESC[u` per decision **D-TC-001**.
+
+## Verification
+
+See the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.
+
+## Related topics
+
+- Parent [feature hub](/platform-spec/core-library/terminal-and-console/ansi-escape-model/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)

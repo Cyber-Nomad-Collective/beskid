@@ -1,0 +1,51 @@
+---
+title: Verification and traceability
+description: Runtime syscall and corelib anchors for standard stream I/O.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-21
+---
+
+## Purpose
+
+Document **verification and traceability** for the **Console Io Streams** feature: role-specific normative detail beyond the feature hub.
+
+## Canonical references
+
+- Feature hub: [Console Io Streams](/platform-spec/core-library/terminal-and-console/console-io-streams/)
+- Sibling articles in this bundle (design model, contracts, flow, examples, verification)
+
+## Detailed behavior
+
+### Source anchors
+
+| Path | Role |
+| --- | --- |
+| `compiler/corelib/packages/foundation/src/Core/Input/Input.bd` | stdin reads |
+| `compiler/corelib/packages/foundation/src/Core/Output/Output.bd` | stdout writes |
+| `compiler/corelib/packages/foundation/src/Core/Error/Error.bd` | stderr writes |
+| `compiler/corelib/packages/foundation/src/Core/Syscall/` | Descriptor and request types |
+| `compiler/crates/beskid_abi` / `BUILTIN_SPECS` | `__syscall_read`, `__syscall_write` |
+
+### Tests and runtime checks
+
+- Console package integration tests write styled output via `Core.Output` indirectly (`FormatMarkdownTests.bd`, controls tests).
+- Syscall behavior is covered by execution/runtime specs and runtime integration tests (see [Panic, IO, and syscalls](/platform-spec/execution/runtime/panic-io-and-syscalls/)).
+
+### Traceability
+
+Changes to **IO-001**–**IO-006** **must** update the informative docs under `compiler/corelib/beskid_corelib/docs/Core/` when public behavior changes.
+
+## Verification
+
+See the verification and traceability article in this bundle and `compiler/corelib/beskid_corelib/tests/corelib_tests/src/console/`.
+
+## Related topics
+
+- Parent [feature hub](/platform-spec/core-library/terminal-and-console/console-io-streams/) and [Terminal and console area](/platform-spec/core-library/terminal-and-console/)

@@ -1,0 +1,62 @@
+---
+title: Verification and traceability
+description: Tests, CI, and smoke checks for the VS Code extension surface.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-21
+---
+
+## Purpose and scope
+
+How implementers prove the extension surface matches this spec.
+
+## LSP (compiler)
+
+| Check | Location |
+| --- | --- |
+| executeCommand JSON golden tests | `compiler/crates/beskid_lsp` (fixtures with `Workspace.proj` + `Project.lock`) |
+| `beskid.refreshWorkspace` regression | Existing `backend.rs` handler + snapshot contract tests |
+
+## Extension (beskid_vscode)
+
+| Check | Location |
+| --- | --- |
+| `pckgClient` cache + auth header | Unit tests with mock `fetch` |
+| `autoSelect` path → project URI | Unit tests under `src/workspace/` |
+| E2E smoke | `@vscode/test-electron`: activate, mock executeCommand, assert tree labels |
+| Lint in CI | `beskid_vscode` `bun run lint` in extension workflow |
+
+## Platform spec
+
+| Check | Command |
+| --- | --- |
+| trudoc + platform-spec content | `cd site/website && bun run verify:trudoc -- --preset ci` |
+
+## Manual smoke (corelib)
+
+1. Open `compiler/corelib`.
+2. Workspaces: all members visible.
+3. Packages: locked deps for selected member.
+4. Search registry for `corelib`.
+5. Fetch/Lock from view title without LSP restart on focus change.
+
+## Traceability matrix
+
+| Spec section | Implementation | Test |
+| --- | --- | --- |
+| Four views | `package.json` `contributes.views` | E2E view registration |
+| `focusedProjectUri` | `focusState.ts`, LSP init | Unit + LSP golden |
+| executeCommands | `beskid_lsp` handlers | Rust JSON golden |
+| `pckgClient` | `pckgClient.ts` | Unit mock fetch |
+| CLI runner | `beskidCliRunner.ts` | Unit argv builder |
+
+## Related topics
+
+- [Workspace explorer hub](../workspace-project-explorer/)
+- [Package panel hub](../package-manager-panel/)

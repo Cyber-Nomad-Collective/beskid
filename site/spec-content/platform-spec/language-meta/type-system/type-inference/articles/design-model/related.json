@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Type inference",
+      "href": "/platform-spec/language-meta/type-system/type-inference/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

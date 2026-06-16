@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
 # Local pre-push checks for aggregate web CI (docs site + root workspace install).
+# Delegates to Dagger platform-smoke.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT"
 
-echo "==> Init beskid_web_common submodule"
-git submodule update --init beskid_web_common
+echo "==> Init beskid_infra submodule"
+git submodule update --init beskid_infra
 
-echo "==> bun install (root workspace)"
-bun install --frozen-lockfile
+if ! command -v dagger >/dev/null 2>&1; then
+  echo "dagger CLI is required (see beskid_infra/dagger/README.md)" >&2
+  exit 1
+fi
 
-echo "==> site/website prebuild"
+echo "==> Install Dagger module deps"
 (
-	cd site/website
-	bun run prebuild
+  cd beskid_infra/dagger
+  npm ci --include=dev
 )
 
-echo "==> site/website platform-spec git-meta verify"
-(
-	cd site/website
-	bun run verify:platform-spec-git-meta -- --require-git
-)
+echo "==> platform-smoke (Dagger)"
+dagger -m beskid_infra/dagger call platform-smoke --source=.
 
 echo "validate-ci-local: OK"

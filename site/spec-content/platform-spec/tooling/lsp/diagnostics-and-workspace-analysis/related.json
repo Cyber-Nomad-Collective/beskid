@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "LSP",
+      "href": "/platform-spec/tooling/lsp/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Diagnostics parity (CLI and LSP)",
+      "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
+      "relation": "Common diagnostic provenance rules"
+    },
+    {
+      "type": "Area",
+      "title": "Compiler Mods",
+      "href": "/platform-spec/compiler/compiler-mods/",
+      "relation": "Meta diagnostics and host policy"
+    },
+    {
+      "type": "Feature",
+      "title": "Snapshot and refresh contract",
+      "href": "/platform-spec/tooling/lsp/snapshot-and-refresh-contract/",
+      "relation": "Debounced prepare and snapshot invalidation"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+---
+title: Platform specification
+description: Authoritative map of the Beskid platform as an interconnected
+  system—language standard, compiler, execution, libraries, and tooling—and how
+  each part connects to normative specification text.
+specLevel: domain
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+---
+
+<PlatformSpecHome />

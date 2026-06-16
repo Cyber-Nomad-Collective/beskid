@@ -1,0 +1,40 @@
+---
+title: Events - Verification and traceability
+description: Tests, implementation checklist, and verification matrix for Beskid events.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Proposed
+lastReviewed: 2026-06-05
+---
+
+## Verification matrix
+
+| Scenario | Expected evidence |
+| --- | --- |
+| Event field declaration | Parses; included in `TypeDefinition` fields |
+| Event raise | Compiles; invokes subscribers |
+| Invalid event scope | **E1219** emitted |
+| Invalid capacity | **E1220** emitted |
+| Invalid subscription | **E1221** emitted |
+
+## Implementation checklist
+
+- [x] Grammar: `event` fields on types
+- [x] AST: Event fields parsed in `TypeDefinition`
+- [x] Parser: `beskid.pest` productions for event fields
+- [x] Type checker: Event signature validation
+- [x] Diagnostics: **E1219**, **E1220**, **E1221**
+- [ ] Runtime subscriber list management
+- [ ] Event lowering to runtime ABI
+- [ ] Fiber cancellation event integration
+
+## Test locations
+
+- `compiler/crates/beskid_analysis/src/syntax/items/type_definition.rs` — parser tests
+- `compiler/crates/beskid_analysis/src/types/context/expressions.rs` — event typing tests
+- `compiler/crates/beskid_runtime/src/builtins/events.rs` — runtime tests

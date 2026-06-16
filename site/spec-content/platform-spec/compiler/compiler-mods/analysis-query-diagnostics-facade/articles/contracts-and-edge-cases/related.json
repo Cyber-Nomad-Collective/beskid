@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Analysis, query, and diagnostics facades",
+      "href": "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

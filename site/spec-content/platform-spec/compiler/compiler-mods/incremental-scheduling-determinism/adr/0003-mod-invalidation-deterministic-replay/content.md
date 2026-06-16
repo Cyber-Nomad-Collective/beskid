@@ -1,0 +1,33 @@
+---
+title: Deterministic mod invalidation and replay
+description: Incremental mod runs produced unstable ordering.
+specLevel: adr
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+adrId: D-COMP-MODS-0009
+adrStatus: Accepted
+adrDate: 2026-05-20
+lastReviewed: 2026-05-22
+---
+
+## Context
+
+Incremental mod runs produced unstable ordering.
+
+## Decision
+
+Invalidation keys and dirty sets for mod pipelines **must** replay deterministically for identical inputs (Collector scope + syntax snapshot hashes).
+
+## Consequences
+
+LSP rescan triggers share the same keys as batch compile.
+
+## Verification anchors
+
+- `compiler/crates/beskid_lsp/`
+- `compiler/crates/beskid_analysis/src/analysis/rules/staged/`.

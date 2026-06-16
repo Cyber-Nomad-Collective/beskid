@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "ABI and host boundary",
+      "href": "/platform-spec/execution/abi-and-host/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Area",
+      "title": "Interop",
+      "href": "/platform-spec/language-meta/interop/",
+      "relation": "Extern syntax and semantics feed this runtime dispatch contract"
+    },
+    {
+      "type": "Feature",
+      "title": "Interop.Contracts",
+      "href": "/platform-spec/language-meta/interop/interop-contracts/",
+      "relation": "Abstract symbol and call-shape vocabulary"
+    },
+    {
+      "type": "Feature",
+      "title": "C ABI profile",
+      "href": "/platform-spec/language-meta/interop/c-abi-profile/",
+      "relation": "User extern libraries and linking policy"
+    },
+    {
+      "type": "Feature",
+      "title": "FFI and extern",
+      "href": "/platform-spec/language-meta/interop/ffi-and-extern/",
+      "relation": "Language-level Extern placement"
+    },
+    {
+      "type": "Area",
+      "title": "Runtime",
+      "href": "/platform-spec/execution/runtime/",
+      "relation": "Runtime builtins execute approved dispatch targets"
+    }
+  ]
+}

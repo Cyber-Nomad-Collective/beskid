@@ -1,0 +1,42 @@
+---
+title: Project manifest contract
+description: Compiler resolution and graph contracts for Project.proj (schema
+  and author surfaces defer to tooling).
+specLevel: feature
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-21
+---
+
+<SpecSection title="Authority split" id="authority-split">
+**Tooling** owns the normative **`Project.proj` schema** (keys, types, Mod blocks, link metadata, and CLI/LSP examples). **This feature** owns how the reference compiler **loads**, **validates in the resolution graph**, and **diagnoses** manifest-driven project graphs—without duplicating key tables.
+
+When editing manifest keys, update [tooling / design model](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/design-model/) first; adjust compiler resolution text here only when graph behavior or diagnostic bands change.
+</SpecSection>
+
+<SpecSection title="Implementation anchors" id="implementation-anchors">
+- `compiler/crates/beskid_analysis/src/bsol.pest` — Bsol surface grammar for manifests
+- `compiler/crates/beskid_analysis/src/projects/bsol/` — AST builder (`parse_bsol_document`)
+- `compiler/crates/beskid_analysis/src/projects/manifest_resolve.rs` — discovery and parse into workspace graph
+- `compiler/crates/beskid_analysis/src/projects/graph/` — DAG insertion, Mod topology
+- `compiler/crates/beskid_cli/src/commands/` — manifest-driven compile inputs
+- `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` and `compile.rs` — manifest fixtures
+</SpecSection>
+
+## Decisions
+
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-PROJ-0004` … `D-COMP-PROJ-0006`), including tooling/schema split (`D-COMP-PROJ-0006`); use the reader **ADRs** tab for expandable detail.
+
+## Articles
+
+- [Design model](./design-model/) — resolution entities (no duplicate key tables)
+- [Flow and algorithm](./flow-and-algorithm/) — graph build and host/mod load order
+- [Contracts and edge cases](./contracts-and-edge-cases/) — resolution diagnostics and cycle policy
+- [Examples](./examples/)
+- [Verification and traceability](./verification-and-traceability/)
+- [FAQ and troubleshooting](./faq-and-troubleshooting/)

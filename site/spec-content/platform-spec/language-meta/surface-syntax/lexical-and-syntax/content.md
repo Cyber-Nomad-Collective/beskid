@@ -1,0 +1,73 @@
+---
+title: Lexical and syntax
+description: Defines tokens, whitespace, and the context-free skeleton that
+  every later phase assumes. The normative grammar and lexical rules live in the
+  Language Spec; this page records platform ownership and ho…
+specLevel: feature
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-21
+---
+
+## Normative specification
+
+### Scope
+
+This chapter defines **lexical structure** and the **context-free program skeleton** for Beskid v0.1. The authoritative grammar is `compiler/crates/beskid_analysis/src/beskid.pest`; this page states language-law constraints implementations **must** share across parser, formatter, and LSP.
+
+### Lexical rules
+
+- **Whitespace** (` `, tab, CR, LF) is insignificant except as a separator; it **must not** appear inside tokens unless the grammar allows it.
+- **Identifiers** **must** match `Identifier`: ASCII letter or `_` followed by alphanumeric/`_` characters, and **must not** spell a reserved **Keyword** (see grammar `Keyword` production).
+- **Integer** and **float** literals **must** follow the pest productions; there is no implicit radix or suffix form in v0.1.
+- **String** literals support `"..."` with escapes `\"`, `\\`, `\\${`, and `${ expression }` interpolation. Interpolation expressions **must** be valid `Expression` subtrees.
+- **Char** literals use single quotes with `\'` escape.
+- **Comments:**
+  - `//` line comments (not starting a third `/`) are ordinary comments.
+  - `///` on items begins a **documentation run** (see [Documentation comments](/platform-spec/language-meta/surface-syntax/documentation-comments/)); `////` and longer slash runs are **not** documentation.
+  - `/* ... */` block comments nest by terminator only (no nesting of `/*`).
+
+### Program structure
+
+- A **compilation unit** is `Program = ItemList` terminated by end of input.
+- Top-level items **must** be one of: `host`, `macro`, function, `impl`, `extend type`, `type`, `enum`, `contract`, `test`, `attribute`, inline `mod`, `mod` declaration, or `use`.
+- **Keywords** reserved for DI (`host`, `registry`, `scope`, `launch`, `inject`, …) **must** be tokenized as keywords even when not yet used in a given compilation unit.
+
+### Static rules (syntax-only)
+
+- Generic parameter lists use angle brackets: `<T, U>`.
+- Type syntax order of precedence: `ArrowFunctionType` before `FunctionType` before `T[]` before `TypeName`.
+- `mut` **must** prefix the type in `TypedLetStatement` and `Parameter`, or follow `let` in `InferredLetStatement` (`let mut name = expr`).
+- `match`, `if`/`else`, `while`, `for … in`, `with`, and `launch` statements **must** parse as `Statement` productions; malformed nesting is a parse error, not a semantic error.
+
+### Dynamic semantics
+
+Lexical and syntactic validity **does not** imply semantic validity. Phases after parsing **must** reject programs that parse but violate module, type, or contract rules.
+
+### Diagnostics
+
+Parse failures **must** surface as parser diagnostics (no stable `E####` band in v0.1). Early structural issues discovered during HIR construction use **E1151–E1154**. See [Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/).
+
+### Conformance
+
+A tool claiming Beskid **L0** conformance **must** accept the same token stream as `beskid.pest` for all inputs in the reference parser test corpus.
+
+## Decisions
+
+- **D-LM-LEX-001 — Pest as grammar source:** The checked-in pest file is the single syntactic truth; prose here summarizes but does not fork the grammar.
+- **D-LM-LEX-002 — `///` documentation:** Triple-slash doc lines attach only via `ItemWithDocs`; four-or-more slashes are never doc comments.
+- **D-LM-LEX-003 — Reserved async/await:** Tokens exist in the grammar for forward compatibility; semantic use is forbidden in [Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/) (compile error if used as expressions).
+
+## Implementation anchors
+- `compiler/crates/beskid_analysis/src/beskid.pest` — canonical PEG grammar, token definitions, and context-free skeleton
+- `compiler/crates/beskid_analysis/src/parser.rs` — parser entry point consuming `beskid.pest`
+- `compiler/crates/beskid_analysis/src/syntax/` — AST node definitions built from parser output
+
+## Platform view
+
+Defines tokens, whitespace, and the context-free skeleton that every later phase assumes. Formatter and LSP **must** preserve token boundaries defined here.

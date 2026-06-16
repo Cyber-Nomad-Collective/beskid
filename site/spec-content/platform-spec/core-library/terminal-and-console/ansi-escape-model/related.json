@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Terminal and console",
+      "href": "/platform-spec/core-library/terminal-and-console/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Console capabilities",
+      "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/",
+      "relation": "Gates emission via ShouldEmitAnsi"
+    },
+    {
+      "type": "Feature",
+      "title": "Console I/O streams",
+      "href": "/platform-spec/core-library/terminal-and-console/console-io-streams/",
+      "relation": "Bytes written after escape composition"
+    }
+  ]
+}

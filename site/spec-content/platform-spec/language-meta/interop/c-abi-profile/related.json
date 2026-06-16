@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Area",
+      "title": "Interop",
+      "href": "/platform-spec/language-meta/interop/",
+      "relation": "Parent area"
+    },
+    {
+      "type": "Feature",
+      "title": "Interop.Contracts",
+      "href": "/platform-spec/language-meta/interop/interop-contracts/",
+      "relation": "Abstract primitives this profile instantiates"
+    },
+    {
+      "type": "Feature",
+      "title": "FFI and extern",
+      "href": "/platform-spec/language-meta/interop/ffi-and-extern/",
+      "relation": "Beskid syntax for extern contracts"
+    },
+    {
+      "type": "Feature",
+      "title": "Export and callbacks",
+      "href": "/platform-spec/language-meta/interop/export-and-callbacks/",
+      "relation": "Beskid export and plugin registration"
+    },
+    {
+      "type": "Feature",
+      "title": "Foreign library import",
+      "href": "/platform-spec/tooling/foreign-library-import/",
+      "relation": "Manifest link metadata and CLI mapping"
+    },
+    {
+      "type": "Feature",
+      "title": "Extern dispatch and policy",
+      "href": "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/",
+      "relation": "Engine and runtime dispatch details"
+    }
+  ]
+}

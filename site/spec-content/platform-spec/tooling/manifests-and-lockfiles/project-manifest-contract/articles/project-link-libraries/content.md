@@ -1,0 +1,64 @@
+---
+title: Project link libraries
+description: Normative project.link block for Extern library resolution at link time (v0.3).
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-20
+---
+
+## `project.link` block (v0.3)
+
+Hosts **must** parse a nested block under `project`:
+
+```text
+project:
+  name: myapp
+  link:
+    libraries: [libc, pthread]
+    searchPaths: [/usr/lib, /opt/local/lib]
+    extraArgs: ["-lm"]
+```
+
+| Key | Required | Meaning |
+| --- | --- | --- |
+| **`libraries`** | no | Logical names matching `Extern` `Library` fields; resolved via **[ExternalLibrary](/platform-spec/tooling/foreign-library-import/external-library-trait/)** |
+| **`searchPaths`** | no | Additional linker search paths |
+| **`extraArgs`** | no | Raw linker arguments appended after provider resolution |
+
+Unknown keys **must** error with stable diagnostics (manifest band **E1801–E1899** or dedicated link band when assigned).
+
+## Validation
+
+1. Every **`Extern`** `Library` string used by the project **should** appear in `link.libraries` or be resolved by a provider without manifest entry (provider-defined).
+2. Conflicting resolutions between manifest and CLI import **must** be diagnosed at build time.
+
+## Platform tables (optional extension)
+
+Projects **may** add host-scoped tables in a later manifest revision:
+
+```text
+link:
+  linux:
+    libraries: [libc.so.6]
+  macos:
+    libraries: [libc]
+```
+
+Until host tables are implemented, platform packages (console, threading) carry per-file `Extern` `Library` strings as today.
+
+## WinAPI
+
+**WinAPI** / MSVC link metadata is **not** required for stdlib **Standard** manifests ([platform tier matrix](/platform-spec/language-meta/interop/c-abi-profile/platform-tier-matrix/)).
+
+## Verification anchors
+
+- **Model:** `compiler/crates/beskid_analysis/src/projects/model.rs::ProjectLinkSection`.
+- **Parser:** `compiler/crates/beskid_analysis/src/projects/parser.rs::parse_link_block_contents` (top-level `link { ... }` block; accepts `libraries`, `searchPaths`, `extraArgs` list fields only).
+- **Validator:** `compiler/crates/beskid_analysis/src/projects/validator.rs::validate_link_section` (diagnostic band **E1890** duplicate block / **E1891** unknown field / **E1892** empty entry / **E1893** duplicate library).
+- **Round-trip tests:** parser unit tests in `projects::parser::tests::parse_link_block_*` and CLI integration tests in `compiler/crates/beskid_tests/src/cli/import_lib.rs`.

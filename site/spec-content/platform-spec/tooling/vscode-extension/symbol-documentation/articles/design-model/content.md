@@ -1,0 +1,39 @@
+---
+title: Design model
+description: Documentation URI resolution and browser open flow.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-30
+---
+
+## URI resolution
+
+| Source | URL pattern |
+| --- | --- |
+| Registry package symbol | `{pckgBase}/docs/{packageName}@{resolvedVersion}` |
+| Corelib / builtin workspace source | `{siteRoot}/platform-spec/core-library/...` or `/platform-spec/language-meta/interop/builtins-and-symbols/` |
+| Other symbols | `{bookBase}/book/?q={symbolName}` or `{bookBase}/book/` |
+
+The LSP returns site-relative `/platform-spec/...` paths for corelib and builtin symbols. The extension joins them with `beskid.docs.specBaseUrl` (or the site root derived from it) before `vscode.env.openExternal`.
+
+Implementation: `beskid_lsp` executeCommand handler; extension `beskid.openSymbolDocumentation` and `resolveDocumentationUrl`.
+
+## Hover integration
+
+When `beskid.symbol.getDocumentationUri` returns a URL for the hover offset, append a markdown link to hover content. VS Code opens `https:` links from hover on modifier-click.
+
+## Settings
+
+| Setting | Default | Role |
+| --- | --- | --- |
+| `beskid.pckg.baseUrl` | `https://pckg.beskid-lang.org` | Registry docs base |
+| `beskid.docs.bookBaseUrl` | `https://beskid-lang.org` | Book fallback base |
+| `beskid.docs.specBaseUrl` | `https://beskid-lang.org/platform-spec` | Platform-spec base for `/platform-spec/...` paths from the LSP |
+
+The extension forwards `BESKID_PCKG_BASE_URL`, `BESKID_BOOK_BASE_URL`, and `BESKID_SPEC_BASE_URL` to the LSP child process so server-side URI resolution matches workspace settings.

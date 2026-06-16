@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Package kinds",
+      "href": "/platform-spec/tooling/registry-client/package-kinds/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Formatter",
+      "href": "/platform-spec/tooling/formatter/",
+      "relation": "First non-CLI-bundled candidate for tool kind"
+    }
+  ]
+}

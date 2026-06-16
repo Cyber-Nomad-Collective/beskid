@@ -1,0 +1,51 @@
+---
+title: symbolKey stable identity field
+description: Additive api.json field for registry-backed package-prefixed symbol keys.
+specLevel: adr
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+adrId: D-TOOL-CLI-0003
+adrStatus: Accepted
+adrDate: 2026-06-05
+lastReviewed: 2026-06-05
+---
+
+## Context
+
+Schema v4 already carries `qualifiedName`, `refItemId`, and compiler-derived signatures. Cross-package workspace doc runs and registry consumers still need a **stable, package-qualified string** that does not depend on recomputing module paths or splitting display names—especially when the same logical symbol can appear under different dense `ItemId` values during per-unit resolve.
+
+## Decision
+
+Add optional field **`symbolKey`** on each `ApiDocItem` (JSON camelCase) for schema v4 emitters:
+
+| Rule | Requirement |
+| --- | --- |
+| Presence | Emit **only** when `qualified_name(resolution, item.id)` succeeds (registry-backed exportable symbol) |
+| Omission | Non-exportable rows (`parameter`, synthetic rows, unresolved collect) **must** omit the field |
+| Value | Same encoding as [`SymbolRegistry`](compiler/crates/beskid_analysis/src/resolve/symbol.rs) / `symbol_to_string` (package prefix + `::` segments) |
+| `qualifiedName` | Unchanged; legacy recompute + fallback remains for display and tree labels |
+| Graph edges | **`refItemId`** stays the primary type-link and parent graph edge; `symbolKey` is parallel stable identity |
+
+Emitters **must not** copy `qualifiedName` into `symbolKey` when the registry has no symbol for the row.
+
+Consumers **may** index and resolve `@ref` targets by exact `symbolKey` before suffix heuristics on `qualifiedName`.
+
+Packed library artifacts: pckg **must** validate `symbolKey` when present ([D-TOOL-PCKG-0005](/platform-spec/tooling/registry-client/pckg-client-contract/adr/0005-api-json-symbol-key-validation/)).
+
+## Consequences
+
+- Rust type: `ApiSymbolKey` newtype in `api_snapshot.rs` (transparent JSON string).
+- CLI: `beskid doc` sets `symbolKey` from registry lookup only.
+- Older artifacts without `symbolKey` remain valid; field is additive on v4.
+
+## Verification anchors
+
+- `compiler/crates/beskid_analysis/src/doc/api_snapshot.rs`
+- `compiler/crates/beskid_cli/src/commands/doc.rs`
+- `compiler/crates/beskid_analysis/src/doc/refs.rs`
+- `compiler/crates/beskid_pckg/src/api_doc.rs`

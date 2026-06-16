@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Core.Optional",
+      "href": "/platform-spec/core-library/foundation-and-primitives/core-optional/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Article",
+      "title": "Types",
+      "href": "/platform-spec/language-meta/type-system/types/",
+      "relation": "Option at API boundaries"
+    }
+  ]
+}

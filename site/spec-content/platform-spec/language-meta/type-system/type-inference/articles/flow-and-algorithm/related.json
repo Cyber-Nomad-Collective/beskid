@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Type inference",
+      "href": "/platform-spec/language-meta/type-system/type-inference/",
+      "relation": "Parent feature hub"
+    },
+    {
+      "type": "Feature",
+      "title": "Stage ordering and lowering",
+      "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+      "relation": "Pipeline ordering relative to semantic and lower"
+    }
+  ]
+}

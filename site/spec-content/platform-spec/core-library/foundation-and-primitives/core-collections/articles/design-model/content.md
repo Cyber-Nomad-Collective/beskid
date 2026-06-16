@@ -1,0 +1,42 @@
+---
+title: Design model
+description: Array-backed collections, iterator protocol, and Query pipeline integration.
+specLevel: article
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-06-10
+---
+
+## Module layout
+
+```
+Collections/
+  Collections.bd       # hub re-exports
+  Array/Array.bd       # Len, Get, Set, Append, Iterate
+  List/List.bd
+  Map/Map.bd, Map/MapEntry.bd
+  Set/Set.bd
+  Queue/Queue.bd
+  Stack/Stack.bd
+```
+
+Each collection type file uses hub-plus-type-directory layout; methods are **inline** on `pub type`.
+
+## Iterator protocol
+
+`Array.Iterate<T>` yields index advancement over `T[]`. `Query.QueryState<T>` holds `source`, `index`, `length`, and optional cached `first`—see Query operators (`Where`, `Select`, `Take`, `Skip`, `First`, `ToList`, `Any`, `All`, `OrderBy`, `CollectArray`, `Count`).
+
+## Fluent relationship
+
+Underlying types expose inline methods. Optional `{Type}Fluent` wrappers delegate to the same semantics; they do not introduce new storage or error models.
+
+## Grow policy
+
+`Array.Append` uses copy-on-grow until a runtime grow builtin exists; list capacity growth is `@tier(unstable)` where documented.
+
+## Implementation anchors
+
+- `compiler/corelib/packages/foundation/src/Collections/`
+- `compiler/corelib/beskid_corelib/tests/corelib_tests/src/collections/`

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Parser and AST contracts",
+      "href": "/platform-spec/compiler/front-end/parser-and-ast-contracts/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

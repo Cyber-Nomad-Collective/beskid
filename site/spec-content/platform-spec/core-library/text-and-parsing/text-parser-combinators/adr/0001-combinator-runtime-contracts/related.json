@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "type": "Feature",
+      "title": "Core.Text.Parser",
+      "href": "/platform-spec/core-library/text-and-parsing/text-parser-combinators/",
+      "relation": "Parent feature hub"
+    }
+  ]
+}

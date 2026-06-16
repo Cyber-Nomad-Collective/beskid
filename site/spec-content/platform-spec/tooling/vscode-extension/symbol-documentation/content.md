@@ -1,0 +1,44 @@
+---
+title: Symbol documentation
+description: Opening Beskid symbol documentation from VS Code and the language server.
+specLevel: feature
+owner:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+submitter:
+  name: Piotr Mikstacki
+  email: pmikstacki@cybernomad.it
+status: Standard
+lastReviewed: 2026-05-30
+---
+
+<SpecSection title="What this feature specifies" id="what-this-feature-specifies">
+The extension and LSP **must** resolve a documentation URL for a symbol at a cursor position and open it in the system browser. Registry packages link to pckg docs; unknown symbols fall back to the Beskid book.
+</SpecSection>
+
+<SpecSection title="LSP executeCommand" id="lsp-executecommand">
+| Command | Arguments | Response |
+| --- | --- | --- |
+| `beskid.symbol.getDocumentationUri` | `{ uri: string, offset: number }` | `{ url?: string }` |
+
+Resolution rules:
+
+1. When the symbol belongs to a locked registry dependency, `{registryBase}/docs/{package}@{version}` (fragment optional for symbol anchor).
+2. When the symbol source is corelib or a builtin, return a site-relative `/platform-spec/...` path (extension joins with `beskid.docs.specBaseUrl`).
+3. Otherwise `{bookBase}/book/?q={symbolName}` or `{bookBase}/book/`.
+4. Empty response when no documentation target exists.
+
+Hover **should** append `[View documentation](url)` when `url` is present (modifier-click opens in browser).
+</SpecSection>
+
+<SpecSection title="Extension commands" id="extension-commands">
+| Command | Rule |
+| --- | --- |
+| `beskid.openSymbolDocumentation` | Uses active editor URI + selection offset; calls LSP command; `vscode.env.openExternal` when URL returned |
+
+Editor context menu **should** expose this command for `beskid` and `beskid-proj` resources.
+</SpecSection>
+
+## Decisions
+
+No open decisions.
