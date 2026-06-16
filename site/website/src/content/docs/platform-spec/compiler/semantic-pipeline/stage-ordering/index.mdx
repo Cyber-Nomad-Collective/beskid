@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: feature
 status: Standard
-lastReviewed: 2026-06-09
+lastReviewed: 2026-06-16
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -36,7 +36,9 @@ This feature hub pins **where type checking runs** relative to staged semantic r
 ## Implementation anchors
 
 - `compiler/crates/beskid_pipeline/src/phases.rs` — `lower.type_check` phase id
-- `compiler/crates/beskid_analysis/src/services/lower.rs` — typed HIR spine and `TypeContext`
+- `compiler/crates/beskid_analysis/src/services/lower.rs` — typed HIR spine (`typed_hir_from_lowered`, `type_check_lowered_hir`)
+- `compiler/crates/beskid_analysis/src/hir/index.rs` — `index_program` before type checking
+- `compiler/crates/beskid_analysis/src/types/checker/entry.rs` — `TypeChecker::check_entry` (surface → check → lowering prep)
 - `compiler/crates/beskid_analysis/src/analysis/rules/staged/type_checking.rs` — structural immutability only
 - `compiler/crates/beskid_tests/src/analysis/type_check_diagnostics.rs` — diagnostic code conformance
 

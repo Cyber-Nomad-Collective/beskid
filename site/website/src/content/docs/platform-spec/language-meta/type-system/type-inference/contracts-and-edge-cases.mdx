@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Proposed
-lastReviewed: 2026-06-05
+lastReviewed: 2026-06-16
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -52,6 +52,6 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 ## Invariants
 
-- Every `let` binding must have a resolved type after inference completes.
-- Inference does not mutate the AST; it fills a side table in `TypeContext`.
+- Every `let` binding must have a resolved type after `TypeChecker::finish` completes.
+- Inference does not mutate HIR; solved types are recorded in `TypeResult.node_types` and `TypeResult.local_types`.
 - Re-inference on incremental edits must produce the same result as full compilation for unchanged sites.

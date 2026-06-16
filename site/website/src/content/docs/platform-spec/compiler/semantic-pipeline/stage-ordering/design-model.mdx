@@ -5,6 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Standard
+lastReviewed: 2026-06-16
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -26,16 +27,27 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 
 **Normative:** Expression and declaration **type checking** runs exactly once on the **lower spine**, observed as pipeline phase id **`lower.type_check`** (`LOWER_TYPE_CHECK` in `beskid_pipeline::phases`).
 
-The reference compiler **must not** run a second full `TypeContext::type_program` pass under **`semantic.type_check`**. That phase id is **not** authoritative for typed HIR or for `E12xx` type diagnostics.
+The reference compiler **must not** run a second full body-typing pass under **`semantic.type_check`**. That phase id is **not** authoritative for typed HIR or for `E12xx` type diagnostics.
+
+Within **`lower.type_check`**, the reference compiler runs **`index_program`** first, then a **three-pass spine**:
+
+1. **Surface** — build or load per-unit `UnitTypeSurface` values and merge for entry
+2. **Check** — [`TypeChecker::check_entry`](compiler/crates/beskid_analysis/src/types/checker/entry.rs) body typing with constraint solving; write `node_types`
+3. **Lowering prep** — `LoweringPrep` (`call_kinds`, `cast_intents`) keyed by `HirNodeId`
+
+`TypeResult` assembly follows the three passes. See [Type-system pass contract](/platform-spec/compiler/semantic-pipeline/type-system-pass-contract/design-model/) for the full step list.
 
 ```mermaid
 flowchart TB
   semantic[semantic staged rules]
   structural[structural checks only]
   lower[lower spine]
-  typecheck[lower.type_check]
+  index[index_program]
+  surface[surface pass]
+  check[TypeChecker::check_entry]
+  prep[lowering prep]
   semantic --> structural
-  lower --> typecheck
+  lower --> index --> surface --> check --> prep
 ```
 
 ## What stays in semantic rules
