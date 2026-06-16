@@ -1,5 +1,0 @@
-/// Errors from `Core.Threading.Thread.Spawn`.
-/// @variant(SpawnFailed) Host rejected thread creation.
-pub enum ThreadError {
-    SpawnFailed(i64 code),
-}

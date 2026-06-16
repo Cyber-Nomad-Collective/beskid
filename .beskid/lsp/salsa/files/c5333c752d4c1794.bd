@@ -1,6 +1,0 @@
-/// Environment variable error variants.
-pub enum EnvironmentError {
-    InvalidName(string name),
-    NotFound(string name),
-    UnsupportedMutation,
-}

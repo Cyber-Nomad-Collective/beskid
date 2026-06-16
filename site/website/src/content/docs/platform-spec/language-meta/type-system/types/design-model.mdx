@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: article
 status: Proposed
-lastReviewed: 2026-06-05
+lastReviewed: 2026-06-16
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -32,6 +32,9 @@ import SpecArticleChrome from '@beskid/beskid-ui/platform-spec/SpecArticleChrome
 | **`EnumDefinition`** | Sum type with named variants and optional payload fields |
 | **`HirPrimitiveType`** | Lowered primitive type enum used by HIR and codegen |
 | **`BeskidArray`** | Runtime fat-pointer layout for array values |
+| **`HirNodeId`** | Dense stable id for every typable HIR node within one compilation session |
+| **`TypeId`** | Opaque handle into a hash-consed [`TypeTable`](#type-table) |
+| **`UnitTypeSurface`** | Per-unit exported signatures, field layouts, and generic arity for dependency typing |
 
 ## Type system architecture
 
@@ -42,9 +45,10 @@ flowchart TB
     surface[Surface syntax<br/>BeskidType]
     ast[AST nodes<br/>TypeDefinition, EnumDefinition]
     hir[HIR types<br/>HirPrimitiveType, type references]
-    lower[Lowering<br/>type_checking.rs]
+    index[hir_index pass<br/>assign HirNodeId]
+    typepass[lower.type_check<br/>surface → check → lowering-prep]
     codegen[Codegen ABI]
-    surface --> ast --> hir --> lower --> codegen
+    surface --> ast --> hir --> index --> typepass --> codegen
 ```
 
 ### Surface syntax layer
@@ -65,12 +69,65 @@ Inline methods use the same implicit-receiver model as `extend type` methods but
 
 ### HIR and analysis layer
 
-The `types/` directory in `beskid_analysis` implements context-driven type checking:
-- `types/context/context.rs` — main type context with symbol tables
-- `types/context/expressions.rs` — expression type inference
-- `types/context/items.rs` — item-level type checking
-- `types/context/statements.rs` — statement type checking
-- `types/context/try_infer.rs` — local type inference for `let` bindings
+After HIR normalization, the reference compiler assigns stable node ids and runs a three-stage type pass under **`lower.type_check`** (see [Type-system pass contract](/platform-spec/compiler/semantic-pipeline/type-system-pass-contract/design-model/)).
+
+#### `HirNodeId` on `Spanned<T>`
+
+Every typable HIR node is wrapped in [`Spanned<T>`](compiler/crates/beskid_analysis/src/syntax/common/span.rs) with three fields: `node`, `span`, and `id: HirNodeId`. New nodes start with `HirNodeId::INVALID`; [`index_program`](compiler/crates/beskid_analysis/src/hir/index.rs) runs **after normalize** and **before** type checking to assign dense `u32` ids in pre-order walk order.
+
+Ids are assigned to expressions, statements, patterns, type-annotated `let` bindings, and match arms. **`HirNodeId` is per compilation session** — it is not serialized and does not cross unit boundaries. Cross-unit typing uses [`ItemId`](#dual-identity-with-resolution) and [`UnitTypeSurface`](#unit-type-surface), not expression ids from dependencies.
+
+**Normative:** HIR normalization that clones or rewrites nodes **must** preserve or remap ids (re-run `index_program` when ids cannot be preserved).
+
+#### Type table
+
+[`TypeTable`](compiler/crates/beskid_analysis/src/types/table.rs) hash-conses structural type info (`TypeInfo`) into opaque [`TypeId`](compiler/crates/beskid_analysis/src/types/table.rs) handles. Primitive and array element lookups are O(1) via dedicated indexes; consumers **must not** scan the intern table linearly.
+
+#### Unit type surface
+
+[`UnitTypeSurface`](compiler/crates/beskid_analysis/src/types/surface.rs) captures the **exported** type shape of one compilation unit in a single walk:
+
+- struct field order and field types
+- enum variant payloads
+- function and method signatures (including receiver metadata)
+- generic parameter lists per item
+- contract and foreign-export signatures when present
+
+Dependency units contribute surfaces only; entry compilation merges surfaces into a `MergedTypeEnv` before body checking. Surfaces are keyed by **`ItemId`**, not `HirNodeId`.
+
+Per-unit surfaces are cached incrementally via Salsa (`unit_type_surface_tracked` in `beskid_queries`); the type pass **must not** re-parse dependency sources from disk for prefetch typing.
+
+#### `TypeResult` and node-keyed expression types
+
+The authoritative output of **`lower.type_check`** is [`TypeResult`](compiler/crates/beskid_analysis/src/types/mod.rs), exported from `beskid_analysis::types`. Expression types are stored in **`node_types: HashMap<HirNodeId, TypeId>`** — the primary lookup table for codegen and IDE queries.
+
+| Field | Key | Role |
+| --- | --- | --- |
+| `types` | — | Hash-consed `TypeTable` |
+| `node_types` | `HirNodeId` | Expression and statement result types |
+| `local_types` | `LocalId` | Function-local binding types |
+| `unit_surfaces` | source path | Cached per-unit `UnitTypeSurface` |
+| `function_signatures` | `ItemId` | Top-level and nested function signatures |
+| `method_function_signatures` | `ItemId` | Method signatures (receiver-aware) |
+| `struct_fields_ordered` | `ItemId` | Declaration-order field names and types |
+| `enum_variants_ordered` | `ItemId` | Variant names and payload type lists |
+| `generic_items` | `ItemId` | Generic parameter name lists |
+| `lowering` | `HirNodeId` | [`LoweringPrep`](#lowering-prep) — call dispatch and cast intents |
+
+**Deleted (normative):** span-keyed `expr_types`, `scoped_expr_types`, top-level `call_kinds` / `cast_intents` flat maps, and `TypeResult::expr_type_at`. Lookup **must** use `node_type(HirNodeId)` or `expr_type(&Spanned<HirExpressionNode>)` (reads `node.id`).
+
+#### Lowering prep
+
+[`LoweringPrep`](compiler/crates/beskid_analysis/src/types/lowering_prep.rs) is produced in a dedicated sub-pass **after** body typing and **before** codegen consumes `TypeResult`:
+
+- `call_kinds: HashMap<HirNodeId, CallLoweringKind>` — how each call site lowers
+- `cast_intents: Vec<CastIntent>` — each intent carries `node_id: HirNodeId` (span retained for diagnostics only)
+
+Lowering prep walks an already-typed tree; it performs **no** type inference.
+
+#### Dual identity with resolution
+
+Type maps use **`ItemId`** and **`LocalId`** from resolution ([Resolver contract](/platform-spec/compiler/semantic-pipeline/resolver-contract/design-model/)). `SpanIndex` (`resolve/span_index.rs`) maps `(source_path, byte_offset)` to `ItemId` / `LocalId` / `HirNodeId` for IDE navigation; type lookup **must not** fall back to fuzzy span scans.
 
 ## Subsystem boundaries
 
@@ -79,9 +136,14 @@ The `types/` directory in `beskid_analysis` implements context-driven type check
 | Parser | Validate type syntax shape | `beskid.pest` |
 | AST | Store declaration structure | `syntax/items/type_definition.rs` |
 | HIR lowering | Normalize type references | `hir/lowering/items.rs` |
-| Type context | Resolve and check types | `types/context/context.rs` |
-| Semantic rules | Emit type diagnostics | `analysis/rules/staged/type_checking.rs` |
-| Codegen | Choose runtime layout | `beskid_codegen` |
+| HIR index | Assign `HirNodeId` after normalize | `hir/index.rs` |
+| Type surface | Build per-unit exported shapes | `types/surface.rs`, `services/unit_ops.rs` |
+| Type checker | Body typing; emit constraints | `types/checker.rs` |
+| Inference | Solve local constraint sets | `types/inference/` |
+| Lowering prep | Call kinds and cast intents | `types/lowering_prep.rs` |
+| Type orchestration | Wire three passes on lower spine | `services/lower.rs` |
+| Semantic rules | Structural immutability only | `analysis/rules/staged/type_checking.rs` |
+| Codegen | Read `node_types` and `lowering` | `beskid_codegen` |
 
 ## Nominal type model
 

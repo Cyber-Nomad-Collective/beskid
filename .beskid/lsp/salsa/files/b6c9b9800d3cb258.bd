@@ -1,6 +1,0 @@
-/// Encoder contract for byte-oriented encodings.
-/// @tier(standard)
-pub contract Encoder {
-    Core.Results.Result<u8[], Core.Encoding.EncodingError> EncodeToBytes(string text);
-    Core.Results.Result<string, Core.Encoding.EncodingError> DecodeFromBytes(u8[] data);
-}

@@ -1,3 +1,0 @@
-/// Testing hub — assertion helpers and contracts.
-pub mod Testing.Contracts;
-pub mod Testing.Assert;

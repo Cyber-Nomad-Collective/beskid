@@ -5,7 +5,7 @@ template: splash
 tableOfContents: true
 specLevel: feature
 status: Standard
-lastReviewed: 2026-04-30
+lastReviewed: 2026-06-16
 owner:
   name: Piotr Mikstacki
   email: pmikstacki@cybernomad.it
@@ -23,12 +23,22 @@ import SpecPageHeader from '@beskid/beskid-ui/platform-spec/SpecPageHeader.astro
 
 <SpecPageHeader status="Standard" ownerName="Piotr Mikstacki" ownerEmail="pmikstacki@cybernomad.it" submitterName="Piotr Mikstacki" submitterEmail="pmikstacki@cybernomad.it" />
 
-This feature hub defines the normative contract for **type-system pass contract** and links newcomer-oriented reference articles.
+This feature hub defines the normative contract for the authoritative **`lower.type_check`** pass: three internal stages (surface, check, lowering prep), `HirNodeId`-keyed `TypeResult`, per-unit Salsa surfaces, and `EntryOnly` / `FullClosure` dependency typing policy.
 
 ## Implementation anchors
-- `compiler/crates/beskid_analysis/src/services/lower.rs` — authoritative `lower.type_check` pass.
-- `compiler/crates/beskid_tests/src/analysis/type_check_diagnostics.rs` — prepare-spine type diagnostic conformance.
-- `compiler/crates/beskid_tests/src/analysis/diagnostics.rs` — stable issue kind codes.
+
+| Anchor | Role |
+| --- | --- |
+| `compiler/crates/beskid_analysis/src/services/lower.rs` | `lower.type_check` orchestration, `DependencyTypingPolicy` |
+| `compiler/crates/beskid_analysis/src/services/unit_ops.rs` | `type_entry`, `type_entry_gate` |
+| `compiler/crates/beskid_analysis/src/hir/index.rs` | `HirNodeId` assignment |
+| `compiler/crates/beskid_analysis/src/types/surface.rs` | Per-unit `UnitTypeSurface` |
+| `compiler/crates/beskid_analysis/src/types/checker.rs` | Body typing, `node_types` |
+| `compiler/crates/beskid_analysis/src/types/inference/` | Constraint solver |
+| `compiler/crates/beskid_analysis/src/types/lowering_prep.rs` | Codegen metadata |
+| `compiler/crates/beskid_queries/src/unit.rs` | `unit_type_surface_tracked` |
+| `compiler/crates/beskid_tests/src/analysis/type_check_diagnostics.rs` | **E12xx** prepare-spine conformance |
+| `compiler/crates/beskid_tests/src/analysis/diagnostics.rs` | Stable issue kind codes |
 
 ## Decisions
 

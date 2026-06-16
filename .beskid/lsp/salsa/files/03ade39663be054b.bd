@@ -1,8 +1,0 @@
-/// UTC civil date and time-of-day pair.
-use Core.Time.Date;
-use Core.Time.TimeOfDay;
-
-pub type DateTime {
-    Date date,
-    TimeOfDay time,
-}

@@ -1,9 +1,0 @@
-/// Coverage smoke for `Core.Optional` helpers.
-
-use Testing.Assert;
-
-
-test optional_module_smoke {
-    bool smoke = true;
-    Assert.True(smoke, "Core.Optional import smoke until module path parity lands");
-}

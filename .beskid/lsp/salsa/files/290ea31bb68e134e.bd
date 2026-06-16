@@ -1,5 +1,0 @@
-/// Parse and conversion errors for civil time helpers.
-pub enum TimeError {
-    InvalidFormat(string input),
-    OutOfRange(string field),
-}
