@@ -8,20 +8,28 @@ on:
       - 'compiler'
       - 'compiler/corelib'
       - 'compiler/corelib/**'
-      - 'beskid_infra/dagger/**'
-      - 'scripts/ci/init-compiler-submodule.sh'
-      - 'scripts/ci/init-beskid-infra-submodule.sh'
+      - 'beskid_bsol'
+      - 'beskid_bsol/**'
+      - 'beskid_infra'
+      - 'beskid_infra/**'
+      - 'scripts/ci/**'
+      - '.github/actions/**'
       - '.github/workflows/corelib.yml'
+      - 'dagger.json'
   pull_request:
     branches: [main]
     paths:
       - 'compiler'
       - 'compiler/corelib'
       - 'compiler/corelib/**'
-      - 'beskid_infra/dagger/**'
-      - 'scripts/ci/init-compiler-submodule.sh'
-      - 'scripts/ci/init-beskid-infra-submodule.sh'
+      - 'beskid_bsol'
+      - 'beskid_bsol/**'
+      - 'beskid_infra'
+      - 'beskid_infra/**'
+      - 'scripts/ci/**'
+      - '.github/actions/**'
       - '.github/workflows/corelib.yml'
+      - 'dagger.json'
   workflow_dispatch:
 
 concurrency:
@@ -38,8 +46,12 @@ jobs:
   gate:
     name: Corelib gate
     runs-on: blacksmith-4vcpu-ubuntu-2404
+    env:
+      # Opt-in: persists the Dagger build/layer cache across CI runs when the
+      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
+      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
 
@@ -60,8 +72,12 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [gate]
     runs-on: blacksmith-4vcpu-ubuntu-2404
+    env:
+      # Opt-in: persists the Dagger build/layer cache across CI runs when the
+      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
+      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
 
