@@ -1,0 +1,32 @@
+name: Blacksmith Testbox
+on:
+  workflow_dispatch:
+    inputs:
+      testbox_id:
+        type: string
+        description: "Testbox session ID"
+        required: true
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+
+jobs:
+  gate:
+    name: Rust gate
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    steps:
+      - name: Begin Testbox
+        uses: useblacksmith/begin-testbox@v2
+        with:
+          testbox_id: ${{ inputs.testbox_id }}
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-dagger-module
+      - name: Init compiler submodule
+        env:
+          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+        run: bash ./scripts/ci/init-compiler-submodule.sh
+      - name: Run Testbox
+        uses: useblacksmith/run-testbox@v2
+        if: always()
