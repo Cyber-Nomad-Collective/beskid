@@ -36,16 +36,20 @@ runs:
       shell: bash
       run: bash ./scripts/ci/init-submodules.sh beskid_vscode
 
-    - uses: dtolnay/rust-toolchain@stable
-      with:
-        toolchain: ${{ inputs.rust-toolchain }}
-        components: clippy
+    - name: Install Rust toolchain (+ clippy)
+      shell: bash
+      run: |
+        set -euo pipefail
+        rustup toolchain install "${{ inputs.rust-toolchain }}" \
+          --profile minimal --component clippy --no-self-update
+        rustup default "${{ inputs.rust-toolchain }}"
+        rustc --version && cargo --version && cargo clippy --version
 
-    - uses: Swatinem/rust-cache@v2
+    - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
       with:
         workspaces: compiler
 
-    - uses: oven-sh/setup-bun@v2
+    - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       with:
         bun-version: ${{ inputs.bun-version }}
 
