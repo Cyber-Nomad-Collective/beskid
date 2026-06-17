@@ -76,25 +76,8 @@ jobs:
         with:
           node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
 
-      - name: Setup Bun
-        if: matrix.image != 'beskid-pckg' && matrix.prebuild == false
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: "1.3.14"
-
-      - name: Init beskid_infra for Dagger checks
+      - uses: ./.github/actions/setup-dagger-module
         if: matrix.image != 'beskid-pckg'
-        run: ./scripts/ci/init-submodules.sh beskid_infra
-
-      - uses: dagger/dagger-for-github@v8.4.1
-        if: matrix.image != 'beskid-pckg'
-        with:
-          version: "0.21.0"
-
-      - name: Install Dagger module deps
-        if: matrix.image != 'beskid-pckg'
-        run: bun install --frozen-lockfile
-        working-directory: beskid_infra/dagger
 
       - name: Auth hub checks (Dagger)
         if: matrix.image == 'beskid-auth'

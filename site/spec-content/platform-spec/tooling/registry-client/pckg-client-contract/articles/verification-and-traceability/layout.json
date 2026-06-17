@@ -1,9 +1,7 @@
 {
   "version": 1,
-  "level": "feature",
-  "extends": "feature-contract-default",
+  "level": "article",
   "pathPrefix": "platform-spec/tooling/registry-client/pckg-client-contract",
-  "minSpecSections": 2,
   "widgets": [
     {
       "type": "domainTiles",
@@ -13,9 +11,6 @@
       }
     }
   ],
-  "articleDefaults": {
-    "extends": "article-default"
-  },
   "grid": {
     "cols": 12,
     "rowHeight": 30,

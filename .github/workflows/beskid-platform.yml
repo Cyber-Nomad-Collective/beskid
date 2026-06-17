@@ -68,18 +68,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Init beskid_infra submodule
-        run: ./scripts/ci/init-submodules.sh beskid_infra
-
-      - uses: dagger/dagger-for-github@v8.4.1
-        with:
-          version: "0.21.0"
-
-      - uses: oven-sh/setup-bun@v2
-
-      - name: Install Dagger module deps
-        run: bun install --frozen-lockfile
-        working-directory: beskid_infra/dagger
+      - uses: ./.github/actions/setup-dagger-module
 
       - name: Platform smoke
         run: dagger -m beskid_infra/dagger call platform-smoke --source=.

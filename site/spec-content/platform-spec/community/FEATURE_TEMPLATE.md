@@ -1,20 +1,23 @@
 ---
 specLevel: feature
-title: Feature title
+title: '{Feature}'
 status: Proposed
 owner:
-  name: Maintainer
-  email: maintainer@example.com
+  name: Specification team
+  email: spec-team@beskid-lang.org
 submitter:
-  name: Maintainer
-  email: maintainer@example.com
+  name: Specification team
+  email: spec-team@beskid-lang.org
 ---
 
 ## Summary
-This feature hub defines canonical behavior that downstream articles and ADRs must follow.
+This feature defines the {feature} policy — the conventions, procedures, or constraints that govern spec maintenance.
 
-## Implementation anchors
-When behavior changes, update the listed anchors first so the rest of the hub can remain stable.
+## Policy scope
+Describe what this policy covers and, equally importantly, what it does not cover.
+
+## Enforcement
+Describe how this policy is enforced — automated validation, review requirements, or manual processes.
 
 ## Decisions
 The decision summary below is generated from the hub's `adr/` directory.

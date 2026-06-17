@@ -1,12 +1,7 @@
 {
   "version": 1,
-  "level": "feature",
-  "extends": "feature-hub-default",
+  "level": "article",
   "pathPrefix": "platform-spec/core-library/foundation-and-primitives/core-collections",
-  "minSpecSections": 0,
-  "articleDefaults": {
-    "extends": "article-default"
-  },
   "widgets": [],
   "grid": {
     "cols": 12,

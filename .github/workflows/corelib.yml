@@ -43,23 +43,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Init beskid_infra submodule
-        run: bash ./scripts/ci/init-beskid-infra-submodule.sh
-
-      - uses: dagger/dagger-for-github@v8.4.1
-        with:
-          version: "0.21.0"
+      - uses: ./.github/actions/setup-dagger-module
 
       - name: Init compiler submodule
         env:
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
         run: bash ./scripts/ci/init-compiler-submodule.sh
-
-      - uses: oven-sh/setup-bun@v2
-
-      - name: Install Dagger module deps
-        run: bun install --frozen-lockfile
-        working-directory: beskid_infra/dagger
 
       - name: Corelib quality + test gate (Dagger)
         env:
@@ -76,23 +65,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Init beskid_infra submodule
-        run: bash ./scripts/ci/init-beskid-infra-submodule.sh
-
-      - uses: dagger/dagger-for-github@v8.4.1
-        with:
-          version: "0.21.0"
+      - uses: ./.github/actions/setup-dagger-module
 
       - name: Init compiler submodule
         env:
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
         run: bash ./scripts/ci/init-compiler-submodule.sh
-
-      - uses: oven-sh/setup-bun@v2
-
-      - name: Install Dagger module deps
-        run: bun install --frozen-lockfile
-        working-directory: beskid_infra/dagger
 
       - name: Publish corelib workspace to pckg
         env:

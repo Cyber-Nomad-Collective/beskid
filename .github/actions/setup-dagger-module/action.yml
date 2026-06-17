@@ -1,0 +1,34 @@
+# Setup Dagger module — init submodule, install CLI + Bun, install deps.
+# Replaces the 5-step boilerplate repeated across 11 job definitions.
+name: Setup Dagger module
+description: Init beskid_infra submodule, install Dagger CLI, setup Bun, install module deps
+
+inputs:
+  dagger-version:
+    description: Dagger engine version
+    required: false
+    default: "0.21.0"
+  bun-version:
+    description: Bun version for oven-sh/setup-bun
+    required: false
+    default: "1.3.14"
+
+runs:
+  using: composite
+  steps:
+    - name: Init beskid_infra submodule
+      shell: bash
+      run: ./scripts/ci/init-submodules.sh beskid_infra
+
+    - uses: dagger/dagger-for-github@v8.4.1
+      with:
+        version: ${{ inputs.dagger-version }}
+
+    - uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: ${{ inputs.bun-version }}
+
+    - name: Install Dagger module dependencies
+      shell: bash
+      run: bun install --frozen-lockfile
+      working-directory: beskid_infra/dagger

@@ -1,16 +1,19 @@
 ---
 specLevel: domain
-title: Domain title
+title: Community & Governance — {Subdomain}
 owner:
-  name: Maintainer
-  email: maintainer@example.com
+  name: Specification team
+  email: spec-team@beskid-lang.org
 submitter:
-  name: Maintainer
-  email: maintainer@example.com
+  name: Specification team
+  email: spec-team@beskid-lang.org
 ---
 
 ## Overview
-This domain defines the scope and boundaries for related areas and features.
+This area defines the governance policies, conventions, and procedures for maintaining the Beskid platform specification.
 
 ## Scope
-This domain scope explains what is included (and what is intentionally out of scope).
+Describe the scope of this governance area — which decision-making processes, review policies, or conventions it covers.
+
+## Decision records
+Link to the relevant ADRs that establish the policies in this area. Each policy decision should be traceable to an accepted ADR.
