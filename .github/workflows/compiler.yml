@@ -39,7 +39,7 @@ env:
 jobs:
   gate:
     name: Rust gate
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
@@ -72,7 +72,7 @@ jobs:
   version:
     name: Resolve release version
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
       compiler_sha: ${{ steps.compiler.outputs.sha }}
@@ -125,7 +125,7 @@ jobs:
     name: Build CLI (${{ matrix.asset_name }})
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [gate, version]
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -184,7 +184,7 @@ jobs:
     name: Publish CLI releases
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [version, release-cli-build]
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
@@ -242,7 +242,7 @@ jobs:
     name: Build LSP (${{ matrix.asset_name }})
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [gate, version]
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -301,7 +301,7 @@ jobs:
     name: Publish LSP releases
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [version, release-lsp-build]
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
