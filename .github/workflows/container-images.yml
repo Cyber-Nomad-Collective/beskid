@@ -89,7 +89,7 @@ jobs:
       - uses: dagger/dagger-for-github@v8.4.1
         if: matrix.image != 'beskid-pckg'
         with:
-          version: "0.21.5"
+          version: "0.21.0"
 
       - name: Install Dagger module deps
         if: matrix.image != 'beskid-pckg'
