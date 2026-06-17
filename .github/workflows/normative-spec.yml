@@ -17,7 +17,7 @@ jobs:
   validate-normative-spec:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -50,5 +50,5 @@ jobs:
             cp -R beskid_normative_spec/platform-spec "$tmp/"
           fi
           cd "$tmp"
-          bun run ../../beskid_web_common/packages/spec-cli/bin/spec.mjs new node -t Article --slug platform-spec/smoke-test --title "Smoke"
-          bun run ../../beskid_web_common/packages/spec-cli/bin/spec.mjs validate --dir .
+          bun run ${{ github.workspace }}/beskid_web_common/packages/spec-cli/bin/spec.mjs new node -t Article --slug platform-spec/smoke-test --title "Smoke"
+          bun run ${{ github.workspace }}/beskid_web_common/packages/spec-cli/bin/spec.mjs validate --dir .

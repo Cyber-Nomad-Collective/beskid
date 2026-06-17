@@ -41,7 +41,7 @@ jobs:
         if: github.ref_name != 'main'
         run: echo "Coolify compose deploy runs on main only."
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Init beskid_infra submodule
         run: ./scripts/ci/init-submodules.sh beskid_infra

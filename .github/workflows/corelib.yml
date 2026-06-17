@@ -39,7 +39,7 @@ jobs:
     name: Corelib gate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -48,12 +48,14 @@ jobs:
 
       - uses: dagger/dagger-for-github@v8.4.1
         with:
-          version: "0.21.0"
+          version: "0.21.6"
 
       - name: Init compiler submodule
         env:
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
         run: bash ./scripts/ci/init-compiler-submodule.sh
+
+      - uses: oven-sh/setup-bun@v2
 
       - name: Install Dagger module deps
         run: bun install --frozen-lockfile
@@ -70,7 +72,7 @@ jobs:
     needs: [gate]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -79,12 +81,14 @@ jobs:
 
       - uses: dagger/dagger-for-github@v8.4.1
         with:
-          version: "0.21.0"
+          version: "0.21.6"
 
       - name: Init compiler submodule
         env:
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
         run: bash ./scripts/ci/init-compiler-submodule.sh
+
+      - uses: oven-sh/setup-bun@v2
 
       - name: Install Dagger module deps
         run: bun install --frozen-lockfile
