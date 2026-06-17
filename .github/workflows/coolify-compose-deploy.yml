@@ -34,7 +34,7 @@ concurrency:
 jobs:
   deploy:
     name: coolify compose (production)
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     environment: production
     steps:
       - name: Staging not configured (phase 2)
