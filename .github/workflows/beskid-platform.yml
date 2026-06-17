@@ -24,6 +24,9 @@ on:
       - '.github/workflows/beskid-platform.yml'
       - '.github/workflows/container-images.yml'
       - '.github/workflows/coolify-compose-deploy.yml'
+      - '.github/actions/**'
+      - 'scripts/ci/**'
+      - 'dagger.json'
   pull_request:
     branches: [main, stg]
     paths:
@@ -43,6 +46,9 @@ on:
       - '.github/workflows/beskid-platform.yml'
       - '.github/workflows/container-images.yml'
       - '.github/workflows/coolify-compose-deploy.yml'
+      - '.github/actions/**'
+      - 'scripts/ci/**'
+      - 'dagger.json'
   workflow_dispatch:
     inputs:
       skip_images:
@@ -58,13 +64,22 @@ permissions:
   contents: read
   packages: write
 
+# Cancel superseded PR runs; never cancel an in-flight main run (it deploys).
+concurrency:
+  group: beskid-platform-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   smoke:
     name: Platform smoke (Dagger)
     if: github.event_name == 'pull_request' || github.event_name == 'push'
     runs-on: blacksmith-4vcpu-ubuntu-2404
+    env:
+      # Opt-in: persists the Dagger build/layer cache across CI runs when the
+      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
+      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
 

@@ -8,23 +8,27 @@ on:
     paths:
       - 'compiler'
       - 'compiler/**'
+      - 'beskid_bsol'
+      - 'beskid_bsol/**'
       - 'beskid_infra'
       - 'beskid_infra/**'
-      - 'beskid_infra/dagger/**'
-      - 'scripts/ci/init-compiler-submodule.sh'
-      - 'scripts/ci/init-beskid-infra-submodule.sh'
+      - 'scripts/ci/**'
+      - '.github/actions/**'
       - '.github/workflows/compiler.yml'
+      - 'dagger.json'
   pull_request:
     branches: [main]
     paths:
       - 'compiler'
       - 'compiler/**'
+      - 'beskid_bsol'
+      - 'beskid_bsol/**'
       - 'beskid_infra'
       - 'beskid_infra/**'
-      - 'beskid_infra/dagger/**'
-      - 'scripts/ci/init-compiler-submodule.sh'
-      - 'scripts/ci/init-beskid-infra-submodule.sh'
+      - 'scripts/ci/**'
+      - '.github/actions/**'
       - '.github/workflows/compiler.yml'
+      - 'dagger.json'
   workflow_dispatch:
 
 concurrency:
@@ -41,8 +45,12 @@ jobs:
   gate:
     name: Rust gate
     runs-on: blacksmith-4vcpu-ubuntu-2404
+    env:
+      # Opt-in: persists the Dagger build/layer cache across CI runs when the
+      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
+      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
 
@@ -60,11 +68,15 @@ jobs:
     name: Resolve release version
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: blacksmith-4vcpu-ubuntu-2404
+    env:
+      # Opt-in: persists the Dagger build/layer cache across CI runs when the
+      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
+      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     outputs:
       version: ${{ steps.version.outputs.version }}
       compiler_sha: ${{ steps.compiler.outputs.sha }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
 
@@ -102,6 +114,10 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [gate, version]
     runs-on: blacksmith-4vcpu-ubuntu-2404
+    env:
+      # Opt-in: persists the Dagger build/layer cache across CI runs when the
+      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
+      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     strategy:
       fail-fast: false
       matrix:
@@ -116,7 +132,7 @@ jobs:
             asset_name: beskid-windows-amd64.exe
             runner_os: Windows
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
 
@@ -139,7 +155,7 @@ jobs:
             --runner-os="${{ matrix.runner_os }}" \
             export --path="${{ matrix.asset_name }}"
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: cli-${{ matrix.asset_name }}
           path: ${{ matrix.asset_name }}
@@ -150,14 +166,18 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [version, release-cli-build]
     runs-on: blacksmith-4vcpu-ubuntu-2404
+    env:
+      # Opt-in: persists the Dagger build/layer cache across CI runs when the
+      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
+      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
       - uses: ./.github/actions/setup-dagger-module
 
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           path: release-assets
           pattern: cli-beskid-*
@@ -197,6 +217,10 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [gate, version]
     runs-on: blacksmith-4vcpu-ubuntu-2404
+    env:
+      # Opt-in: persists the Dagger build/layer cache across CI runs when the
+      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
+      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     strategy:
       fail-fast: false
       matrix:
@@ -211,7 +235,7 @@ jobs:
             asset_name: beskid_lsp-windows-amd64.exe
             runner_os: Windows
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
 
@@ -234,7 +258,7 @@ jobs:
             --runner-os="${{ matrix.runner_os }}" \
             export --path="${{ matrix.asset_name }}"
 
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: lsp-${{ matrix.asset_name }}
           path: ${{ matrix.asset_name }}
@@ -245,14 +269,18 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [version, release-lsp-build]
     runs-on: blacksmith-4vcpu-ubuntu-2404
+    env:
+      # Opt-in: persists the Dagger build/layer cache across CI runs when the
+      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
+      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
       - uses: ./.github/actions/setup-dagger-module
 
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           path: release-assets
           pattern: lsp-beskid_lsp-*
