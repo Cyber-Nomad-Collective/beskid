@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/build-beskid-service
+        with:
+          service-name: auth
+          docker-context: site/auth
+          push-image: ${{ github.ref == 'refs/heads/main' }}
+          tags: latest

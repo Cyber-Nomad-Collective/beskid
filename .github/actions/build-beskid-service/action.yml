@@ -1,0 +1,48 @@
+name: Build Beskid Service
+description: Build, test, push Docker images for Beskid platform services
+
+inputs:
+  service-name:
+    required: true
+    description: Name of the service being built
+  docker-context:
+    required: true
+    description: Docker build context path (directory containing Dockerfile)
+  extra-build-args:
+    required: false
+    default: ''
+    description: Additional arguments for docker build
+  push-image:
+    required: false
+    default: 'false'
+    description: Set to 'true' to push the built image to the registry
+  tags:
+    required: false
+    default: 'latest'
+    description: Comma-separated image tags
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to GitHub Container Registry
+      if: inputs.push-image == 'true'
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ github.token }}
+
+    - name: Build and push
+      shell: bash
+      env:
+        INPUT_SERVICE_NAME: ${{ inputs.service-name }}
+        INPUT_DOCKER_CONTEXT: ${{ inputs.docker-context }}
+        INPUT_EXTRA_BUILD_ARGS: ${{ inputs.extra-build-args }}
+        INPUT_PUSH_IMAGE: ${{ inputs.push-image }}
+        INPUT_TAGS: ${{ inputs.tags }}
+      run: |
+        chmod +x "${{ github.action_path }}/entrypoint.sh"
+        "${{ github.action_path }}/entrypoint.sh"
