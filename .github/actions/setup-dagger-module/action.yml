@@ -20,11 +20,11 @@ runs:
       shell: bash
       run: ./scripts/ci/init-submodules.sh beskid_infra
 
-    - uses: dagger/dagger-for-github@v8.4.1
+    - uses: dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.4.1
       with:
         version: ${{ inputs.dagger-version }}
 
-    - uses: oven-sh/setup-bun@v2
+    - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       with:
         bun-version: ${{ inputs.bun-version }}
 
