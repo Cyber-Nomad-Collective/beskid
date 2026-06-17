@@ -1,0 +1,58 @@
+# Setup compiler gate — provision the toolchain the compiler gate needs without Dagger.
+#
+# Replaces the Dagger `rust:alpine` / `oven/bun` containers that used to host the
+# gate. Initializes the compiler (+ recursive corelib) and beskid_bsol submodules
+# (compiler workspace path dependency) plus beskid_vscode (LSP command contract),
+# then installs the Rust and Bun toolchains so `scripts/ci/compiler-rust-gate.sh`
+# and `scripts/ci/lsp-command-contract-gate.sh` can run directly on a Blacksmith
+# runner or Testbox VM.
+name: Setup compiler gate
+description: Init compiler/beskid_bsol/beskid_vscode submodules and install the Rust + Bun toolchain for the compiler gate.
+
+inputs:
+  compiler-submodule-token:
+    description: Token used to fetch the private beskid_compiler submodule.
+    required: false
+    default: ""
+  rust-toolchain:
+    description: Rust toolchain channel.
+    required: false
+    default: stable
+  bun-version:
+    description: Bun version for oven-sh/setup-bun.
+    required: false
+    default: "1.3.14"
+
+runs:
+  using: composite
+  steps:
+    - name: Init compiler (+ corelib) and beskid_bsol submodules
+      shell: bash
+      env:
+        COMPILER_SUBMODULE_TOKEN: ${{ inputs.compiler-submodule-token }}
+      run: bash ./scripts/ci/init-compiler-submodule.sh
+
+    - name: Init beskid_vscode submodule (LSP command contract)
+      shell: bash
+      run: bash ./scripts/ci/init-submodules.sh beskid_vscode
+
+    - uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: ${{ inputs.rust-toolchain }}
+        components: clippy
+
+    - uses: Swatinem/rust-cache@v2
+      with:
+        workspaces: compiler
+
+    - uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: ${{ inputs.bun-version }}
+
+    - name: Ensure ripgrep (compiler gate legacy-pattern guard)
+      shell: bash
+      run: |
+        if ! command -v rg >/dev/null 2>&1; then
+          sudo apt-get update
+          sudo apt-get install -y ripgrep
+        fi
