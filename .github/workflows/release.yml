@@ -14,6 +14,11 @@ permissions:
   contents: read
   packages: write
 
+# Serialize releases per tag; never cancel an in-flight release/deploy.
+concurrency:
+  group: release-${{ github.event.release.tag_name || inputs.tag || github.ref }}
+  cancel-in-progress: false
+
 env:
   REGISTRY: ghcr.io
   IMAGE_PREFIX: ghcr.io/cyber-nomad-collective
@@ -64,7 +69,7 @@ jobs:
             node_auth: false
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
 
@@ -89,19 +94,19 @@ jobs:
           node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Log in to GHCR
-        uses: docker/login-action@v4
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Setup Blacksmith Builder
-        uses: useblacksmith/setup-docker-builder@v1
+        uses: useblacksmith/setup-docker-builder@ab5c1da94f53f5cd75c1038092aa276dddfccbba # v1
 
       - name: Build and push (${{ matrix.image }})
         id: push
         continue-on-error: true
-        uses: useblacksmith/build-push-action@v2
+        uses: useblacksmith/build-push-action@fb9e3e6a9299c78462bfadd0d93352c316adc9b8 # v2
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
@@ -116,7 +121,7 @@ jobs:
 
       - name: Re-login to GHCR (retry)
         if: steps.push.outcome == 'failure'
-        uses: docker/login-action@v4
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -124,7 +129,7 @@ jobs:
 
       - name: Build and push (${{ matrix.image }}, retry)
         if: steps.push.outcome == 'failure'
-        uses: useblacksmith/build-push-action@v2
+        uses: useblacksmith/build-push-action@fb9e3e6a9299c78462bfadd0d93352c316adc9b8 # v2
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
