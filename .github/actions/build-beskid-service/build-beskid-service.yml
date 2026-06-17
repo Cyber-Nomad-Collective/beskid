@@ -1,0 +1,44 @@
+name: Build Beskid Service
+
+on:
+  workflow_call:
+    inputs:
+      service-name:
+        required: true
+        type: string
+      docker-context:
+        required: true
+        type: string
+      extra-build-args:
+        required: false
+        type: string
+        default: ''
+      push-image:
+        required: false
+        type: boolean
+        default: false
+      tags:
+        required: false
+        type: string
+        default: 'latest'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run build-beskid-service
+        env:
+          INPUT_SERVICE_NAME: ${{ inputs.service-name }}
+          INPUT_DOCKER_CONTEXT: ${{ inputs.docker-context }}
+          INPUT_EXTRA_BUILD_ARGS: ${{ inputs.extra-build-args }}
+          INPUT_PUSH_IMAGE: ${{ inputs.push-image }}
+          INPUT_TAGS: ${{ inputs.tags }}
+        run: |
+          chmod +x ./.github/actions/build-beskid-service/entrypoint.sh
+          ./.github/actions/build-beskid-service/entrypoint.sh
