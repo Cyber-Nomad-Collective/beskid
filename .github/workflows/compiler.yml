@@ -1,4 +1,5 @@
-# Compiler submodule: Rust gate (Dagger) + CLI/LSP releases on beskid_compiler.
+# Compiler submodule: Rust gate (Testbox-compatible scripts, no Dagger)
+# + CLI/LSP releases (Dagger) on beskid_compiler.
 name: Compiler
 
 on:
@@ -45,18 +46,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: ./.github/actions/setup-dagger-module
+      - uses: ./.github/actions/setup-compiler-gate
+        with:
+          compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
 
-      - name: Init compiler submodule
-        env:
-          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-        run: bash ./scripts/ci/init-compiler-submodule.sh
+      - name: Compiler Rust gate
+        run: bash ./scripts/ci/compiler-rust-gate.sh
 
-      - name: Compiler Rust gate (Dagger)
-        run: dagger -m beskid_infra/dagger call compiler-rust-gate --source=.
-
-      - name: LSP command contract (Dagger)
-        run: dagger -m beskid_infra/dagger call lsp-command-contract-gate --source=.
+      - name: LSP command contract gate
+        run: bash ./scripts/ci/lsp-command-contract-gate.sh
 
   version:
     name: Resolve release version
