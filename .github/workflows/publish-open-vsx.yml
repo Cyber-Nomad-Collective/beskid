@@ -52,7 +52,7 @@ jobs:
 
       - uses: dagger/dagger-for-github@v8.4.1
         with:
-          version: "0.21.6"
+          version: "0.21.5"
 
       - uses: oven-sh/setup-bun@v2
 
