@@ -141,7 +141,8 @@ jobs:
           for d in "${lock_dirs[@]}"; do
             args+=(--dirs "${d}")
           done
-          dagger -m beskid_infra/dagger call platform-lockfile-gate --source=. "${args[@]}"
+          dagger -m beskid_infra/dagger call platform-lockfile-gate \
+            --source=. "${args[@]}" --node-auth-token=env:NODE_AUTH_TOKEN
 
       - name: Log in to GHCR
         uses: docker/login-action@v4
