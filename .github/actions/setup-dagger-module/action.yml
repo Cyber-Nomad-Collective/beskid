@@ -32,3 +32,11 @@ runs:
       shell: bash
       run: bun install --frozen-lockfile
       working-directory: beskid_infra/dagger
+
+    # Dagger installs the module's deps via npm at module load. A local
+    # beskid_infra/dagger/bun.lock makes the TypeScript Node runtime segfault
+    # (runtime_node.go SetupContainer nil deref). Drop it after the host-side
+    # install so module load stays on npm. See beskid_infra bb79798.
+    - name: Drop module bun.lock so Dagger module load stays on npm
+      shell: bash
+      run: rm -f beskid_infra/dagger/bun.lock
