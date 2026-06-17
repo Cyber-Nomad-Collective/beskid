@@ -54,16 +54,15 @@ Contract band **E1601–E1607**. Registry: [Diagnostic code registry](/platform-
 All `Standard` types advertising conformance **must** pass contract satisfaction in the reference compiler.
 
 ## Decisions
-
-- **D-LM-CON-001 — Structural contracts:** Beskid contracts are nominal surfaces checked structurally, not runtime interface tables in v0.1.
-- **D-LM-CON-002 — Embedding:** Contract embedding composes requirements without inheritance syntax.
-- **D-LM-CON-003 — No `requires`/`ensures` in v0.1:** Design-by-contract assertions are deferred; `contract` items are interface shapes only.
-- **D-LM-CON-004 — Distinct from Mod SDK:** Compiler mod `contract` placements follow [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/), not this user-language surface.
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/types/` — contract declaration and structural conformance checking
-- `compiler/crates/beskid_analysis/src/analysis/` — diagnostic emission for contract violations (E1601–E1607)
-
-## Platform view
-
-Structural `contract` declarations and type conformance lists. Compiler mods and optional future runtime contract checks are specified elsewhere.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Contracts - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Contracts - Design model](./articles/design-model/)
+- [Contracts - Examples](./articles/examples/)
+- [Contracts - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Contracts - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Contracts - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

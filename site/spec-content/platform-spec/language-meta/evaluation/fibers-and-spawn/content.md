@@ -75,5 +75,10 @@ Language `event` members remain for single-fiber multicast within one fiber's ow
 </SpecSection>
 
 ## Decisions
-
-No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-FIBERS-0001` … `D-LMETA-FIBERS-0005`); use the reader **ADRs** tab for detail. Fiber/async keyword policy is also recorded in inception **[D-INC-0008](/platform-spec/community/project-inception/adr/0008-fibers-not-async-await/)** (not duplicated here).
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-FIBERS-0001` … `D-LMETA-FIBERS-0005`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

@@ -37,5 +37,10 @@ lastReviewed: 2026-06-10
 </SpecSection>
 
 ## Decisions
-
-Closed choices are normative ADRs under **`adr/`** — see [Core.Optional canonical](./adr/0001-core-optional-canonical/).
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-OPT-0003`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Design model](./articles/design-model/)
+<!-- /spec:generate:article-index -->

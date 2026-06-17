@@ -47,5 +47,10 @@ OS thread entry points **must** establish a runtime heap session and GC root att
 Phase A: fiber scheduler may use a **fixed pool** of OS threads with **one GC mutator**; `Core.Threading` documents raw thread creation for libraries that truly need preemptive threads. Phase B: parallel GC mutators—thread module and fiber pool coordination updated in scheduler spec without renaming public **Thread** APIs.
 </SpecSection>
 ## Decisions
-
+<!-- spec:generate:adr-index -->
 No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-SYST-0001` … `D-CORE-SYST-0004`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

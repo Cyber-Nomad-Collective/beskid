@@ -1,0 +1,211 @@
+{
+  "version": 2,
+  "title": "Compiler Mod contracts",
+  "description": "Relationships between Mod projects, Compiler Mod SDK contracts, the Rust mod host, and downstream semantic/codegen stages.",
+  "groups": [
+    {
+      "id": "language",
+      "label": "Language meta",
+      "color": "#38bdf8"
+    },
+    {
+      "id": "host",
+      "label": "Compiler host",
+      "color": "#a78bfa"
+    },
+    {
+      "id": "sdk",
+      "label": "Compiler Mod SDK",
+      "color": "#f472b6"
+    },
+    {
+      "id": "pipeline",
+      "label": "Pipeline",
+      "color": "#4ade80"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "mod_sdk_contracts",
+      "label": "Compiler Mod SDK",
+      "group": "language",
+      "description": "Collector, Generator, Analyzer, Rewriter, AttributeGenerator contracts.",
+      "href": "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
+      "links": [
+        {
+          "kind": "specNode",
+          "slug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk"
+        }
+      ],
+      "kind": "specNode",
+      "props": {
+        "slug": "platform-spec/language-meta/metaprogramming/compiler-mod-sdk"
+      }
+    },
+    {
+      "id": "mod_project",
+      "label": "Mod Project.proj",
+      "group": "language",
+      "description": "project.type Mod; discovered via dependency graph.",
+      "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+      "links": [
+        {
+          "kind": "specNode",
+          "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract"
+        }
+      ],
+      "kind": "specNode",
+      "props": {
+        "slug": "platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract"
+      }
+    },
+    {
+      "id": "syntax_mirror",
+      "label": "SyntaxMirror",
+      "group": "sdk",
+      "description": "Typed syntax node mirror with query and AST operation contracts.",
+      "href": "/platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/",
+      "links": [
+        {
+          "kind": "specNode",
+          "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade"
+        }
+      ],
+      "kind": "specNode",
+      "props": {
+        "slug": "platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade"
+      }
+    },
+    {
+      "id": "host_bridge",
+      "label": "Mod host bridge",
+      "group": "host",
+      "description": "AOT mod load, collect/generate/analyze/rewrite orchestration.",
+      "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
+      "links": [
+        {
+          "kind": "specNode",
+          "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge"
+        }
+      ],
+      "kind": "specNode",
+      "props": {
+        "slug": "platform-spec/compiler/compiler-mods/mod-host-bridge"
+      }
+    },
+    {
+      "id": "incremental",
+      "label": "Incremental graph",
+      "group": "host",
+      "description": "Hash-based invalidation and deterministic replay for mod outputs.",
+      "href": "/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/",
+      "links": [
+        {
+          "kind": "specNode",
+          "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism"
+        }
+      ],
+      "kind": "specNode",
+      "props": {
+        "slug": "platform-spec/compiler/compiler-mods/incremental-scheduling-determinism"
+      }
+    },
+    {
+      "id": "semantic",
+      "label": "Semantic pipelines",
+      "group": "pipeline",
+      "description": "Rules and typing on merged host + generated program.",
+      "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/",
+      "links": [
+        {
+          "kind": "specNode",
+          "slug": "platform-spec/compiler/semantic-pipeline/rules-pipeline-contract"
+        }
+      ],
+      "kind": "rustModule",
+      "props": {
+        "crate": "beskid_analysis",
+        "modulePath": "semantic"
+      }
+    },
+    {
+      "id": "lowering",
+      "label": "Lowering / codegen",
+      "group": "pipeline",
+      "description": "HIR and backend lowering consume final merged program.",
+      "href": "/platform-spec/compiler/build-pipeline/",
+      "links": [
+        {
+          "kind": "specNode",
+          "slug": "platform-spec/compiler/build-pipeline"
+        }
+      ],
+      "kind": "rustModule",
+      "props": {
+        "crate": "beskid_codegen",
+        "modulePath": "lowering"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "kind": "contains",
+      "from": "mod_project",
+      "to": "host_bridge",
+      "label": "discovered",
+      "description": "Transitive Mod dependencies resolve to AOT artifacts loaded by the host.",
+      "props": {}
+    },
+    {
+      "kind": "implements",
+      "from": "mod_project",
+      "to": "mod_sdk_contracts",
+      "label": "implements",
+      "description": "Mod packages implement SDK contracts discovered at load time.",
+      "props": {}
+    },
+    {
+      "kind": "relatesTo",
+      "from": "mod_sdk_contracts",
+      "to": "syntax_mirror",
+      "label": "uses",
+      "description": "Contracts operate over SyntaxMirror nodes and declarative query surfaces.",
+      "props": {
+        "inferred": true
+      }
+    },
+    {
+      "kind": "calls",
+      "from": "syntax_mirror",
+      "to": "host_bridge",
+      "label": "invoked under",
+      "description": "Host validates and merges typed AST operations from mod code.",
+      "props": {}
+    },
+    {
+      "kind": "feeds",
+      "from": "host_bridge",
+      "to": "incremental",
+      "label": "records",
+      "description": "Collection, generation, and rewrite work register invalidation keys.",
+      "props": {}
+    },
+    {
+      "kind": "feeds",
+      "from": "incremental",
+      "to": "semantic",
+      "label": "feeds",
+      "description": "After generation merge, semantic pipeline runs on full program including generated code.",
+      "props": {}
+    },
+    {
+      "kind": "lowersTo",
+      "from": "semantic",
+      "to": "lowering",
+      "label": "lowers",
+      "description": "Typed output continues through lowering.",
+      "props": {}
+    }
+  ]
+}
+

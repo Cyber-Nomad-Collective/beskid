@@ -67,7 +67,13 @@ The Feature Hub page **must** include all of the following sections in this orde
 
 Every **Standard** feature hub **must**:
 
-1. Include a **`## Decisions`** section (summary only: open items, or **no open decisions**, plus pointers to `adrId` values).
+1. Include a **`## Decisions
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMM-HUB-0001` … `D-COMM-HUB-0005`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMM-HUB-0001` … `D-COMM-HUB-0005`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->`** section (summary only: open items, or **no open decisions**, plus pointers to `adrId` values).
 2. Publish at least one file under **`adr/<slug>.mdx`** with `specLevel: adr` (unless the feature is explicitly exempt in a **Standard** maintenance policy).
 
 Each ADR file **must** include **`## Context`**, **`## Decision`**, and **`## Consequences`**, with frontmatter `adrId`, `adrStatus`, and optional `adrDate`. Use [Project inception](/platform-spec/community/project-inception/) for cross-cutting historical ADRs.
@@ -128,5 +134,7 @@ The order **must** be written to remain stable when new articles are added; appe
 - Component usage is allowed only for non-standard interactive UI or migration edge cases, and must include a rationale note in the page.
 
 ## Decisions
-
-No open decisions. Closed maintenance ADRs under **`adr/`** — `D-COMM-HUB-0001` through `D-COMM-HUB-0005` (reader **ADRs** tab).
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

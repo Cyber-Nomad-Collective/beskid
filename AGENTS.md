@@ -20,3 +20,47 @@
 - **Compiler & corelib:** Rust workspace in `compiler/`; nested `compiler/corelib` (`beskid_standard`) is publish authority for corelib artifacts (standalone CI/Nox in that repo, not superrepo Dagger). Superrepo `.github/workflows/compiler.yml` runs Dagger `compiler-rust-gate` (`cargo clippy --workspace --all-targets -- -D warnings` + tests) and publishes CLI/LSP to `beskid_compiler` releases (`cli-latest`, `cli-v*`). Secret: `COMPILER_RELEASE_TOKEN` or `COMPILER_SUBMODULE_TOKEN` with `contents: write` on `beskid_compiler`. pckg package **`corelib`**. Corelib packages use hub-plus-type-directory layout (one type per file, hub `.bd` re-exports); homonymous subdirs (`Core/Fluent/Step.bd`) need no parent `pub mod` hub. Unified `Core.*` namespace—`System.*` shims removed; UTC civil types, `Instant.nanos`/`Duration.nanos`. `Core.Bytes`/`Core.Encoding` native Utf8 via `Core.String.ByteAt` (no runtime string helpers). Compiler SDK in `packages/compiler-sdk` exposes Workspace, ModCatalog, mod metadata, and compilation context to mods in Beskid (marshaled from `mod_host`). Site prebuild/sync via `bun run --cwd site/website sync:cli-version` (rolling `cli-latest`). VS Code published from superrepo Open VSX workflow. **`beskid_bsol`:** standalone submodule at `beskid_bsol/` (schema authority, own CI; `bsol-lsp` binary); compiler crate consumes schemas for project, workspace, `runtime_manifest.bsol`, shell layouts; `configuration.v1` profile for cross-module compiler/corelib config (composed by domain profiles like `pestGenConfig.v1`). Runtime ABI: Go-style builtin registration in Beskid; Rust host runtime via dispatch table. **PEST/codegen:** `corelib_pest_gen` mod replaces `beskid_pest_gen` + `regen_grammar_parsers.sh`; parse/emit in Beskid (`Core.Text.Parser` combinators; PascalCase emitted callables, camelCase locals); BSOL `grammar`/`pestGenConfig` in project manifests; combinator-first via `Core.Text.Cursor` + `Core.Text.Parser` (e.g. `Core.Text.Regex`).
 - **pckg & grammar:** Registry in `pckg/` (.NET, Compose locally). Tree-sitter in `beskid_treesitter/`; sync grammar from `compiler/.../beskid.pest` via `beskid_treesitter/scripts/sync-from-pest.sh`.
 - **Compiler design:** AOT-only; host composition in Rust; `beskid run` and `beskid build` share the same resolved pipeline input. Single-prepare spine: `executable_gate_prepared` → `lower_from_front_end`; executable results cached in entry-session weak-ref registry; conformance in `beskid_tests/src/spine/single_prepare.rs`. Crate naming: `beskid_<domain>`; export-only hub modules. Locals: `mut` prefix before type (`mut i64 x`); `out`/`ref` removed from language. Lib/Test targets with explicit `entry` use `ImportClosure` assembly; `WorkspaceScan` only when no entry. `syntax_query/` module (was `query/`); `services/unit_ops.rs` (was `queries.rs`); IDE/document paths use `beskid_queries` only (no parallel resolve in analysis).
+
+<!-- gitnexus:start -->
+# GitNexus — Code Intelligence
+
+This project is indexed by GitNexus as **beskid** (64715 symbols, 124181 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+
+> Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
+
+## Always Do
+
+- **MUST run impact analysis before editing any symbol.** Before modifying a function, class, or method, run `impact({target: "symbolName", direction: "upstream"})` and report the blast radius (direct callers, affected processes, risk level) to the user.
+- **MUST run `detect_changes()` before committing** to verify your changes only affect expected symbols and execution flows. For regression review, compare against the default branch: `detect_changes({scope: "compare", base_ref: "main"})`.
+- **MUST warn the user** if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.
+- When exploring unfamiliar code, use `query({query: "concept"})` to find execution flows instead of grepping. It returns process-grouped results ranked by relevance.
+- When you need full context on a specific symbol — callers, callees, which execution flows it participates in — use `context({name: "symbolName"})`.
+
+## Never Do
+
+- NEVER edit a function, class, or method without first running `impact` on it.
+- NEVER ignore HIGH or CRITICAL risk warnings from impact analysis.
+- NEVER rename symbols with find-and-replace — use `rename` which understands the call graph.
+- NEVER commit changes without running `detect_changes()` to check affected scope.
+
+## Resources
+
+| Resource | Use for |
+|----------|---------|
+| `gitnexus://repo/beskid/context` | Codebase overview, check index freshness |
+| `gitnexus://repo/beskid/clusters` | All functional areas |
+| `gitnexus://repo/beskid/processes` | All execution flows |
+| `gitnexus://repo/beskid/process/{name}` | Step-by-step execution trace |
+
+## CLI
+
+| Task | Read this skill file |
+|------|---------------------|
+| Understand architecture / "How does X work?" | `.claude/skills/gitnexus/gitnexus-exploring/SKILL.md` |
+| Blast radius / "What breaks if I change X?" | `.claude/skills/gitnexus/gitnexus-impact-analysis/SKILL.md` |
+| Trace bugs / "Why is X failing?" | `.claude/skills/gitnexus/gitnexus-debugging/SKILL.md` |
+| Rename / extract / split / refactor | `.claude/skills/gitnexus/gitnexus-refactoring/SKILL.md` |
+| Tools, resources, schema reference | `.claude/skills/gitnexus/gitnexus-guide/SKILL.md` |
+| Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
+
+<!-- gitnexus:end -->

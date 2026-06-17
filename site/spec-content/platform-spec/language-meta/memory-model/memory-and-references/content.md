@@ -66,17 +66,15 @@ Immutability **E1214**; member access **E1211–E1213**. Registry: [Diagnostic c
 Memory rules enforced in `beskid_analysis` **must** be preserved in codegen for **L3** claims.
 
 ## Decisions
-
-- **D-LM-MEM-001 — Channel-only fiber sharing:** Language law forbids ad hoc shared mutable globals across fibers.
-- **D-LM-MEM-002 — Fat-pointer arrays:** All `T[]` share one ABI representation per target unless a profile documents otherwise.
-- **D-LM-MEM-003 — GC by default:** Heap objects are collector-managed; escape analysis may stack-allocate but **must not** skip tracing when pointers escape.
-- **D-LM-MEM-004 — No `null` addresses:** References are non-null at the type level; `Option<T>` models absence.
-
-## Implementation anchors
-- `compiler/crates/beskid_runtime/src/` — heap allocation, GC tracing, and `T[]` fat-pointer layout
-- `compiler/crates/beskid_analysis/src/types/` — reference type checking and immutability rules
-- `compiler/crates/beskid_abi/src/builtins.rs` — `gc_write_barrier` and allocation builtins
-
-## Platform view
-
-Locals, prefix `mut` bindings, GC-traced heap objects, and channel-mediated sharing. Runtime barrier and phase details live under platform-spec execution; `/execution/` pages are a legacy bridge only.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Memory and references - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Memory and references - Design model](./articles/design-model/)
+- [Memory and references - Examples](./articles/examples/)
+- [Memory and references - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Memory and references - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Memory and references - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

@@ -58,7 +58,7 @@ jobs:
         run: bash ./scripts/ci/init-compiler-submodule.sh
 
       - name: Install Dagger module deps
-        run: npm ci
+        run: bun install --frozen-lockfile
         working-directory: beskid_infra/dagger
 
       - name: Compiler Rust gate (Dagger)
@@ -92,7 +92,7 @@ jobs:
         run: bash ./scripts/ci/init-compiler-submodule.sh
 
       - name: Install Dagger module deps
-        run: npm ci
+        run: bun install --frozen-lockfile
         working-directory: beskid_infra/dagger
 
       - id: compiler
@@ -153,7 +153,7 @@ jobs:
         run: bash ./scripts/ci/init-compiler-submodule.sh
 
       - name: Install Dagger module deps
-        run: npm ci
+        run: bun install --frozen-lockfile
         working-directory: beskid_infra/dagger
 
       - name: Build CLI artifact (Dagger)
@@ -208,7 +208,7 @@ jobs:
           ls -la
 
       - name: Install Dagger module deps
-        run: npm ci
+        run: bun install --frozen-lockfile
         working-directory: beskid_infra/dagger
 
       - name: Publish cli-v* and cli-latest (Dagger)
@@ -266,7 +266,7 @@ jobs:
         run: bash ./scripts/ci/init-compiler-submodule.sh
 
       - name: Install Dagger module deps
-        run: npm ci
+        run: bun install --frozen-lockfile
         working-directory: beskid_infra/dagger
 
       - name: Build LSP artifact (Dagger)
@@ -321,7 +321,7 @@ jobs:
           ls -la
 
       - name: Install Dagger module deps
-        run: npm ci
+        run: bun install --frozen-lockfile
         working-directory: beskid_infra/dagger
 
       - name: Publish lsp-v* and lsp-latest (Dagger)

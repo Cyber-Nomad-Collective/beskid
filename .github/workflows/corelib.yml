@@ -56,7 +56,7 @@ jobs:
         run: bash ./scripts/ci/init-compiler-submodule.sh
 
       - name: Install Dagger module deps
-        run: npm ci
+        run: bun install --frozen-lockfile
         working-directory: beskid_infra/dagger
 
       - name: Corelib quality + test gate (Dagger)
@@ -87,7 +87,7 @@ jobs:
         run: bash ./scripts/ci/init-compiler-submodule.sh
 
       - name: Install Dagger module deps
-        run: npm ci
+        run: bun install --frozen-lockfile
         working-directory: beskid_infra/dagger
 
       - name: Publish corelib workspace to pckg

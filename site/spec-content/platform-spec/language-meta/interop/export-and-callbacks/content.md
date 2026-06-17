@@ -36,5 +36,12 @@ Spec is **Standard** in v0.3; reference compiler support for export lowering, ca
 </SpecSection>
 
 ## Decisions
-
-No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-EXPORT-0001` … `D-LMETA-EXPORT-0004`); use the reader **ADRs** tab for detail.
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-EXPORT-0001` … `D-LMETA-EXPORT-0004`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Callback registration](./articles/callback-registration/)
+- [Export attribute](./articles/export-attribute/)
+- [Export and callbacks — Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

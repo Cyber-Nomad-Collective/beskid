@@ -36,3 +36,12 @@ Serialization Mod generators:
 
 Analyzers in Serialization Mod validate serializable shape constraints before lowering.
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

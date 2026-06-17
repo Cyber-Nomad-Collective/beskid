@@ -16,30 +16,25 @@
     "domain": {
       "label": "Domain",
       "extendsLayout": "domain-default",
-      "childLevels": ["area", "domain"],
-      "contentSections": ["overview", "scope"]
+      "childLevels": ["area", "domain"]
     },
     "area": {
       "label": "Area",
       "extendsLayout": "area-default",
-      "childLevels": ["feature", "area"],
-      "contentSections": ["overview"]
+      "childLevels": ["feature", "area"]
     },
     "feature": {
       "label": "Feature",
       "extendsLayout": "feature-hub-default",
-      "childLevels": ["article", "adr", "feature"],
-      "contentSections": ["summary"]
+      "childLevels": ["article", "adr", "feature"]
     },
     "article": {
       "label": "Article",
-      "extendsLayout": "article-default",
-      "contentSections": ["summary", "details"]
+      "extendsLayout": "article-default"
     },
     "adr": {
       "label": "ADR",
       "extendsLayout": "article-default",
-      "contentSections": ["context", "decision", "consequences"],
       "adrRequired": true
     }
   },

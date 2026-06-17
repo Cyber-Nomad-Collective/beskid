@@ -53,3 +53,12 @@ Imported libraries **must** be subject to **`BESKID_EXTERN_ALLOW` / `BESKID_EXTE
 - **Manifest mutation contract:** `compiler/crates/beskid_analysis/src/external_library/manifest_merge.rs` (idempotent merge; preserves non-`link` content).
 - **End-to-end behavior:** `compiler/crates/beskid_tests/src/cli/import_lib.rs` (creates a temp `Project.proj`, runs the resolve + merge pipeline, asserts the resulting `link.libraries` round-trips through the manifest parser).
 - **Closed registry rejection:** the same suite asserts unknown providers (for example `msvc`) and unknown logical names surface as structured `LibraryResolveError` values instead of panics.
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

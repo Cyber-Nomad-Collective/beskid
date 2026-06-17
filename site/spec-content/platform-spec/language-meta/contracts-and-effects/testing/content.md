@@ -53,17 +53,15 @@ Attribute and visibility issues use **E15xx**; test-specific codes **may** be ad
 `beskid test` (tooling) **must** discover all `test` items in Test projects matching this syntax.
 
 ## Decisions
-
-- **D-LM-TST-001 — First-class `test` item:** Tests are module items, not attributes on functions only.
-- **D-LM-TST-002 — meta/skip blocks:** Structured sections replace ad hoc comment conventions.
-- **D-LM-TST-003 — Test project kind:** Discovery **should** scope to `Test` projects unless manifest policy allows otherwise.
-- **D-LM-TST-004 — Corelib helpers are additive:** Assertion helpers in corelib **must not** redefine language-level `test` syntax.
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/analysis/` — `test` item parsing and test-project discovery
-- `compiler/crates/beskid_cli/src/commands/test.rs` — `beskid test` command and runner integration
-- `compiler/crates/beskid_tests/src/test_harness.rs` — test discovery and execution harness
-
-## Platform view
-
-The language-level test harness, discovery, and assertions users rely on. Corelib testing helpers extend but do not redefine these semantics.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Testing - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Testing - Design model](./articles/design-model/)
+- [Testing - Examples](./articles/examples/)
+- [Testing - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Testing - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Testing - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

@@ -24,3 +24,12 @@ lastReviewed: 2026-06-10
 | Reference | Hand-written reference: `Ansi.AnsiStyleStep` in `corelib_console` |
 | Tier | Generated fluent facades are **Supported** (Tier 2) until merge is automatic in the mod harness |
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-FLUENT-0004`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Design model](./articles/design-model/)
+<!-- /spec:generate:article-index -->

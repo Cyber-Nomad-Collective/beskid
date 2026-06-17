@@ -26,3 +26,13 @@ This feature hub pins **where type checking runs** relative to staged semantic r
 
 - [Design model](./design-model/)
 - [Verification and traceability](./verification-and-traceability/)
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Semantic pipeline stage ordering - Design model](./articles/design-model/)
+- [Semantic pipeline stage ordering - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

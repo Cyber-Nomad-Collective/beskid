@@ -19,7 +19,13 @@ lastReviewed: 2026-05-21
 1. **Language law** — User-visible semantics (syntax, types, evaluation, contracts, memory, and cross-cutting language rules) **must** be defined only under the [Language meta](/platform-spec/language-meta/) domain, except where another domain page explicitly declares a **cross-domain exception** and links to the owning language-meta chapter.
 2. **Implementation law** — The [Compiler](/platform-spec/compiler/), [Execution](/platform-spec/execution/), [Core library](/platform-spec/core-library/), and [Tooling](/platform-spec/tooling/) domains specify *how the reference platform realizes* language-meta. They **must not** redefine semantics already owned by language-meta; they **must** defer with `relatedTopics` (for example `defers-to`, `implements`) instead of duplicating normative key tables.
 3. **Spec leads code** — Implementation changes that alter observable language or platform behavior **must** be preceded or accompanied by normative spec updates. The spec is the authority; tests and crates are verification anchors, not a substitute for missing contract text.
-4. **Architecture decision records (ADRs)** — Each **Standard** feature **must** publish closed choices under **`adr/`** as one file per decision (`specLevel: adr`, stable `adrId`). The feature reader exposes an **ADRs** tab with expandable Context / Decision / Consequences detail. Legacy **`decisions-record.mdx`** articles and hub **`## Decisions`** summaries remain valid during migration but new work **must** use `adr/`. Cross-cutting inception decisions live under [Project inception](/platform-spec/community/project-inception/).
+4. **Architecture decision records (ADRs)** — Each **Standard** feature **must** publish closed choices under **`adr/`** as one file per decision (`specLevel: adr`, stable `adrId`). The feature reader exposes an **ADRs** tab with expandable Context / Decision / Consequences detail. Legacy **`decisions-record.mdx`** articles and hub **`## Decisions
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMM-AUTH-0001` … `D-COMM-AUTH-0005`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMM-AUTH-0001` … `D-COMM-AUTH-0005`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->`** summaries remain valid during migration but new work **must** use `adr/`. Cross-cutting inception decisions live under [Project inception](/platform-spec/community/project-inception/).
 
 ## Language law vs implementation domains
 
@@ -66,5 +72,7 @@ A **Standard** feature hub **must** include **`## Decisions`** that either lists
 - [Non-normative bridge docs policy](/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/) — Legacy doc trees and mapping pages.
 
 ## Decisions
-
-No open decisions. Closed maintenance ADRs under **`adr/`** — `D-COMM-AUTH-0001` through `D-COMM-AUTH-0005` (reader **ADRs** tab).
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

@@ -68,7 +68,13 @@ Any change to `format/policy.rs` or `format/emit.rs::EmitCtx` **must** be accomp
 ## CI hooks
 
 - **PR drift check** — the Beskid CI pipeline **must** include a `beskid format --check` step against the workspace source tree. A drift hit **must** fail the PR.
-- **Spec verification** — the `verify:trudoc -- --preset ci` step covers PSC003 (Standard feature hubs require ## Decisions) and PSC006 (ADR pages require ## Context / ## Decision). This hub satisfies both via the embedded Decisions section and the ADR bundle under `adr/`.
+- **Spec verification** — the `verify:trudoc -- --preset ci` step covers PSC003 (Standard feature hubs require ## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->) and PSC006 (ADR pages require ## Context / ## Decision). This hub satisfies both via the embedded Decisions section and the ADR bundle under `adr/`.
 
 ## Drift detection between hub and code
 
@@ -86,3 +92,8 @@ Discrepancies between this article and the implementation are defects: report th
 - **[Formatter](/platform-spec/tooling/formatter/)**
 - **[Design model](../design-model/)**
 - **[Canonical pretty-printer ADR](./adr/0001-canonical-pretty-printer/)**
+
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

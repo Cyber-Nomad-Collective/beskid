@@ -70,17 +70,15 @@ Import band **E1104–E1108**; resolve duplicates **E1102**. Registry: [Diagnost
 **L1** resolver tests **must** pass for cross-module `use` and private item rejection.
 
 ## Decisions
-
-- **D-LM-NAME-001 — Single resolver graph:** Package driver and typechecker share one resolution snapshot per compilation.
-- **D-LM-NAME-002 — Contract namespaces:** Contracts may appear as path prefixes for static methods without a separate `use` import of each method.
-- **D-LM-NAME-003 — Qualified names for tooling:** Emitted `qualifiedName` strings **must** be stable across compiles for the same source snapshot.
-- **D-LM-NAME-004 — No implicit `null` imports:** Resolution **must not** inject nullable or `optional` aliases.
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/resolve/` — resolver graph, `qualifiedName` generation, and import resolution
-- `compiler/crates/beskid_analysis/src/resolve/resolver.rs` — name lookup and shadowing rules
-- `compiler/crates/beskid_analysis/src/resolve/items.rs` — item resolution and `pub use` re-exports
-
-## Platform view
-
-Scopes, imports, and shadowing tie syntax to symbols. Diagnostics for unresolved names must cite these rules verbatim.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Name resolution - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Name resolution - Design model](./articles/design-model/)
+- [Name resolution - Examples](./articles/examples/)
+- [Name resolution - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Name resolution - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Name resolution - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

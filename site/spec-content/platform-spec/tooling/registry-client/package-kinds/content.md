@@ -99,3 +99,12 @@ Use the **ADRs** tab to expand each decision.
 - **[Formatter](/platform-spec/tooling/formatter/)** — representative tool delivered via `beskid format` (a possible future `packageKind: tool` distribution candidate).
 - **[api.json contract](/platform-spec/tooling/cli/api-json-contract/)** — applies to `library` packages; **does not** apply to `tool` artifacts.
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-TOOL-PCKG-0001` … `D-TOOL-PCKG-0004`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

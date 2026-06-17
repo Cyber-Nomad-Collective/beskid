@@ -78,3 +78,12 @@ Consumers **must** preserve the post-login return path via a redirect cookie set
 Exactly **one** GitHub OAuth application is registered on the hub during `/onboarding`. Callback URL **must** be `{AUTH_HUB_PUBLIC_URL}/callback` with no trailing slash on the origin.
 
 Consumers **must not** set `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, or `GITHUB_OAUTH_CALLBACK_URL`.
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

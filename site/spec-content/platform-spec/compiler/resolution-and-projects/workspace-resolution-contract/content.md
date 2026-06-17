@@ -21,12 +21,15 @@ This feature hub explains how the compiler discovers `Project.proj`, builds a pr
 - `compiler/crates/beskid_analysis/src/mod_host/` — Mod project registration after resolution
 
 ## Decisions
-
+<!-- spec:generate:adr-index -->
 No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-PROJ-0013` … `D-COMP-PROJ-0015`); use the reader **ADRs** tab for expandable detail.
-
-- [Design model](./design-model/)
-- [Flow and algorithm](./flow-and-algorithm/)
-- [Contracts and edge cases](./contracts-and-edge-cases/)
-- [Examples](./examples/)
-- [Verification and traceability](./verification-and-traceability/)
-- [FAQ and troubleshooting](./faq-and-troubleshooting/)
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Workspace resolution contract - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Workspace resolution contract - Design model](./articles/design-model/)
+- [Workspace resolution contract - Examples](./articles/examples/)
+- [Workspace resolution contract - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Workspace resolution contract - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Workspace resolution contract - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

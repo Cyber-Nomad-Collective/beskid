@@ -55,7 +55,7 @@ jobs:
           version: "0.21.0"
 
       - name: Install Dagger module deps
-        run: npm ci
+        run: bun install --frozen-lockfile
         working-directory: beskid_infra/dagger
 
       - name: Publish Open VSX (Dagger)

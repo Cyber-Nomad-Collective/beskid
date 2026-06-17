@@ -151,3 +151,12 @@ Extension crates export:
 - BSOL profiles: `board.v1.bsol`, `board.v2.bsol`, `shell.pages.v1.bsol`, `tools.config.v1.bsol`
 - Sample extension: `compiler/crates/beskid_hi/`
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

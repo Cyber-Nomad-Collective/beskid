@@ -36,3 +36,13 @@ No open decisions. **`D-TOOL-CLI-0001`** (`api.json` primary contract), **`0002`
 </SpecSection>
 
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-TOOL-CLI-0001` … `D-TOOL-CLI-0003`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Design model](./articles/design-model/)
+- [Registry API reference UI](./articles/registry-api-reference-ui/)
+<!-- /spec:generate:article-index -->

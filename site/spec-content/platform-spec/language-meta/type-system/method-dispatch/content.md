@@ -50,16 +50,15 @@ Resolution **E1101**; type/call **E1204–E1205**; invalid member **E1213**. Reg
 Call resolution tests in `beskid_analysis` **must** pass for **L2** claims.
 
 ## Decisions
-
-- **D-LM-DISP-001 — Static dispatch default:** v0.1 uses compile-time member selection; dynamic polymorphism is deferred.
-- **D-LM-DISP-002 — extend over impl:** `extend type` is the normative extension syntax; `impl` remains parse-compatible during migration.
-- **D-LM-DISP-003 — Receiver static type:** Dispatch keys off the static type of the receiver expression, not runtime tags.
-- **D-LM-DISP-004 — No `null` receiver:** Calls on possibly-absent values **must** use `Option<T>` and `match`, not null checks.
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/resolve/` — method resolution and `extend type` member lookup
-- `compiler/crates/beskid_analysis/src/analysis/` — static dispatch and call resolution diagnostics
-
-## Platform view
-
-Virtual dispatch, overload resolution, and receiver rules decide which code runs. Interop and codegen consume the same dispatch table model.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Method dispatch - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Method dispatch - Design model](./articles/design-model/)
+- [Method dispatch - Examples](./articles/examples/)
+- [Method dispatch - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Method dispatch - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Method dispatch - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

@@ -72,5 +72,10 @@ Syscall and console blocking **must** integrate with channel parking: producers 
 </SpecSection>
 
 ## Decisions
-
-No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-EXEC-RT-0012` … `D-EXEC-RT-0013`, `D-EXEC-RT-0016`); use the reader **ADRs** tab for expandable detail.
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-EXEC-RT-0012` … `D-EXEC-RT-0016`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Channels and synchronization - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+<!-- /spec:generate:article-index -->

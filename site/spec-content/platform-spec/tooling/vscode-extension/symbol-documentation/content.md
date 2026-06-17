@@ -40,5 +40,10 @@ Editor context menu **should** expose this command for `beskid` and `beskid-proj
 </SpecSection>
 
 ## Decisions
-
-No open decisions.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Design model](./articles/design-model/)
+<!-- /spec:generate:article-index -->

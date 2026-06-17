@@ -55,16 +55,10 @@ Macro band **E1901+**; mod band **E1829**, **E1851–E1870**; attribute **E1508+
 Tooling **must** invoke the same phase order for CI and IDE builds on a given project kind.
 
 ## Decisions
-
-- **D-LM-META-001 — Two planes:** Language macros and compiler mods are separate; mods do not subsume `macro` syntax.
-- **D-LM-META-002 — Macros before mods:** Expansion order prevents mods from observing unexpanded macro invocations.
-- **D-LM-META-003 — No legacy Meta language:** Prior experimental meta syntax is retired; use macros or Mod SDK only.
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/macros/` — `macro` expansion pipeline and attribute processing
-- `compiler/crates/beskid_analysis/src/mod_host/` — Compiler Mod orchestration bridges
-- `compiler/corelib/` — SDK contracts for `Collector`, `Generator`, `Analyzer`, `Rewriter`
-
-## Platform view
-
-Source generators, attributes that drive compiler plug-ins, and scheduling relative to other analyses. The broader generator roadmap may live in guides; v0.1 rules are normative here.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

@@ -91,15 +91,10 @@ Cross-reference: [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming
 </SpecSection>
 
 ## Decisions
-
-1. **Pointer-to-cell CLIF representation.** `dynamic` lowers to a single pointer (`I64` on 64-bit System V) rather than a split `(shape, payload)` pair in CLIF, keeping call conventions aligned with other heap objects and allowing checked casts to inspect the header at runtime.
-
-2. **Arena-only allocation.** Dynamic cells and mapping outputs use runtime arena builtins to preserve Phase A single-mutator invariants; embedders must not allocate parallel cell pools outside the Beskid heap.
-
-3. **Shared shape/mapping table for AOT and fallback.** One registration API (`register_shape`, `register_mapping`) serves compile-time-known mappings and runtime fallback probes, avoiding divergent copy semantics.
-
-4. **Deterministic incompatibility errors.** Missing mappings return stable integer status codes surfaced as **`E-dynamic-map-001`** / `DYNAMIC_ERR_INCOMPATIBLE`; codegen ineligibility uses **`E2013`** so failures are diagnosable without undefined behaviour.
-
-5. **Structural eligibility stand-in.** Until Serialization Mod analyzers attach a dedicated bit on `TypeResult`, codegen applies structural `[Serialize]` rules and refuses ineligible pairs at lowering time — never at runtime via reflection.
-
-6. **FNV-1a shape ids from resolved items.** v0.3 derives `shape_id` from `ItemId` bytes so tests and AOT lowering agree without a separate shape registry in the analysis crate; mod-generated tables will replace this hash in a later track.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

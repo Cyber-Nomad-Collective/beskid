@@ -47,16 +47,15 @@ Inference affects compile-time only; no runtime reflection of inferred types bey
 Reference compiler tests for `let` inference and generic call inference **must** pass for **L2** claims.
 
 ## Decisions
-
-- **D-LM-INF-001 — Fail on ambiguity:** Prefer errors over guessing when multiple types satisfy constraints.
-- **D-LM-INF-002 — Public API annotations:** Exported functions **should** declare return types even when inference succeeds.
-- **D-LM-INF-003 — No nullable inference:** Inference **must not** introduce nullable or `optional` types; use `Option<T>` explicitly.
-- **D-LM-INF-004 — Contextual lambdas:** Untyped lambda parameters require an expected function type from the enclosing expression.
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/types/` — type inference engine and constraint solving
-- `compiler/crates/beskid_analysis/src/analysis/` — diagnostic emission for inference failures (E1202, E1206)
-
-## Platform view
-
-Local type inference reduces annotation burden while keeping programs predictable. The inference algorithm is specified here; diagnostics reference these rules.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Type inference - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Type inference - Design model](./articles/design-model/)
+- [Type inference - Examples](./articles/examples/)
+- [Type inference - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Type inference - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Type inference - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

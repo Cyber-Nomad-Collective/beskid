@@ -92,3 +92,17 @@ No open decisions. ADRs **`D-TOOL-VSC-0001`** … **`0005`** under **`adr/`**; u
 2. This hub → [Design model](./design-model/) → [Contracts](./contracts-and-edge-cases/) → [Flow](./flow-and-algorithm/) → [Examples](./examples/) → [Verification](./verification-and-traceability/)
 3. Child features [workspace explorer](../workspace-project-explorer/) and [package panel](../package-manager-panel/) for depth
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-TOOL-VSC-0001` … `D-TOOL-VSC-0006`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Design model](./articles/design-model/)
+- [Examples](./articles/examples/)
+- [FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Flow and algorithm](./articles/flow-and-algorithm/)
+- [Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

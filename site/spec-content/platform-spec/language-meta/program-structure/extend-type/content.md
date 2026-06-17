@@ -44,3 +44,17 @@ The extended type name (`Account`) must refer to an in-scope type declaration. T
 ## Implementation anchors
 - `compiler/crates/beskid_analysis/src/analysis/` — `extend type` parsing, member resolution, and access rules
 - `compiler/crates/beskid_analysis/src/types/` — extended type member injection into type tables
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [extend type - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [extend type - Design model](./articles/design-model/)
+- [extend type - Examples](./articles/examples/)
+- [extend type - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [extend type - Flow and algorithm](./articles/flow-and-algorithm/)
+- [extend type - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

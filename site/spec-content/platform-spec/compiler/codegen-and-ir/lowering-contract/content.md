@@ -25,5 +25,15 @@ This feature explains how source text becomes a backend-ready artifact without c
 </SpecSection>
 
 ## Decisions
-
-No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-IR-0007` … `D-COMP-IR-0011`; `D-COMP-IR-0009` superseded); use the reader **ADRs** tab for expandable detail.
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-IR-0007` … `D-COMP-IR-0011`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Design model](./articles/design-model/)
+- [Examples](./articles/examples/)
+- [FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Flow and algorithm](./articles/flow-and-algorithm/)
+- [Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

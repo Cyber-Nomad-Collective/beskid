@@ -58,3 +58,12 @@ This page defines the concrete IntelliSense behavior exposed by Beskid LSP to ed
 - `compiler/crates/beskid_analysis/src/doc/edit.rs`
 - `beskid_vscode/src/lsp/beskidLanguageClient.ts`
 - `beskid_vscode/src/runtime/BeskidExtensionRuntime.ts`
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

@@ -93,7 +93,7 @@ jobs:
 
       - name: Install Dagger module deps
         if: matrix.image != 'beskid-pckg'
-        run: npm ci
+        run: bun install --frozen-lockfile
         working-directory: beskid_infra/dagger
 
       - name: Auth hub checks (Dagger)

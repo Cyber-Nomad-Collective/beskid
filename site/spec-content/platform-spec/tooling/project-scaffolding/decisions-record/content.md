@@ -47,3 +47,12 @@ Legacy URL for bookmarks. Normative decisions **must** be read from feature **`a
 | D-TOOL-SCAFF-0001 | [Explicit packageKind](./template-packages/adr/0001-explicit-package-kind/) |
 | D-TOOL-SCAFF-0002 | [Template registry UI](./template-packages/adr/0002-template-registry-ui-mode/) |
 | D-TOOL-SCAFF-0003 | [No api.json for templates](./template-packages/adr/0003-no-api-json-for-templates/) |
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

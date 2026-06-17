@@ -47,5 +47,10 @@ Canonical destination links **must** satisfy:
 - Bi-directional discoverability when practical (canonical pages should also link to major migration bridges during active transition windows).
 
 ## Decisions
-
-No open decisions. Closed maintenance ADRs under **`adr/`** — `D-COMM-BRIDGE-0001` through `D-COMM-BRIDGE-0003` (reader **ADRs** tab).
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMM-BRIDGE-0001` … `D-COMM-BRIDGE-0003`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

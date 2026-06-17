@@ -70,17 +70,15 @@ Defines how **recoverable failures** are represented and propagated in user code
 Programs using `?` **must** compile only when propagation types align; reference tests cover try lowering.
 
 ## Decisions
-
-- **D-LM-ERR-001 — Enum-first errors:** Language law prefers explicit sum types over magic result types.
-- **D-LM-ERR-002 — No exceptions keyword:** Cross-language unwinding is interop-scoped, not a Beskid `throw` statement in v0.1.
-- **D-LM-ERR-003 — `Option` vs `Result`:** `Option<T>` models missing data; `Result`-shaped enums model failures—do not conflate them.
-- **D-LM-ERR-004 — Postfix `?` only:** Error propagation uses `expr?`; there is no `try` statement form in v0.1.
-- **D-LM-ERR-005 — Corelib `Result`:** With Std linked, canonical recoverable-result type is ``Core.Results.Result<TValue, TError>``; `?` lowering and type-check use that enum's resolved `Ok` variant.
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/analysis/` — `?` operator lowering and type-check
-- `compiler/crates/beskid_codegen/src/` — try-expression lowering to control flow
-
-## Platform view
-
-Representing and propagating failures (`Result`, `try`, unwinding policy). Runtime lowering shares the ABI error envelope described in Execution.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Error handling - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Error handling - Design model](./articles/design-model/)
+- [Error handling - Examples](./articles/examples/)
+- [Error handling - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Error handling - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Error handling - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

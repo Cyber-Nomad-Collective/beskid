@@ -23,12 +23,15 @@ Only the **`emit`** phase may apply **typed** program contributions through this
 - `compiler/crates/beskid_codegen/` — downstream expectations after merge.
 
 ## Decisions
-
+<!-- spec:generate:adr-index -->
 No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-MODS-0016` … `D-COMP-MODS-0018`); use the reader **ADRs** tab for expandable detail.
-
-- [Design model](./design-model/)
-- [Flow and algorithm](./flow-and-algorithm/)
-- [Contracts and edge cases](./contracts-and-edge-cases/)
-- [Examples](./examples/)
-- [Verification and traceability](./verification-and-traceability/)
-- [FAQ and troubleshooting](./faq-and-troubleshooting/)
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Typed emitter and transforms - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Typed emitter and transforms - Design model](./articles/design-model/)
+- [Typed emitter and transforms - Examples](./articles/examples/)
+- [Typed emitter and transforms - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Typed emitter and transforms - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Typed emitter and transforms - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

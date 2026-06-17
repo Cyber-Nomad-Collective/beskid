@@ -41,3 +41,16 @@ Registry base URL resolution order: workspace `default` registry from `beskid.ge
 <SpecSection title="Decisions" id="decisions">
 No open decisions. **`D-TOOL-VSC-0001`** (pckgClient boundary), **`0002`** (CLI for fetch/lock)—see **`adr/`** and the **ADRs** tab.
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-TOOL-VSC-0001` … `D-TOOL-VSC-0002`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Decisions record (legacy index)](./articles/decisions-record/)
+- [Design model](./articles/design-model/)
+- [Examples](./articles/examples/)
+- [Flow and algorithm](./articles/flow-and-algorithm/)
+<!-- /spec:generate:article-index -->

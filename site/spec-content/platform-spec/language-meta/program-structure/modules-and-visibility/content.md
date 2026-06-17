@@ -54,17 +54,15 @@ Visibility band **E1501–E1507**; unused import **W1503**. Registry: [Diagnosti
 **L1** implementations **must** match reference layout tests for file-scoped modules and `pub` boundaries.
 
 ## Decisions
-
-- **D-LM-MOD-001 — File-scoped precedence:** Explicit `mod path;` wins over path-derived module identity when present.
-- **D-LM-MOD-002 — No `internal` keyword:** v0.1 uses private-by-default plus `pub`; assembly-internal friends are deferred.
-- **D-LM-MOD-003 — Package graph is external:** Cross-package edges come from manifests; this chapter defines symbol visibility only.
-- **D-LM-MOD-004 — `pub use` re-export:** Re-exports **must** preserve the underlying symbol’s accessibility rules.
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/projects/` — module graph construction and file layout discovery
-- `compiler/crates/beskid_analysis/src/resolve/` — import resolution and `pub` visibility enforcement
-- `compiler/crates/beskid_analysis/src/mod_host/` — Mod project module registration
-
-## Platform view
-
-File layout, `public`/`internal` boundaries, and how packages compose. The driver and package manager use the same module graph the typechecker sees.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Modules and visibility - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Modules and visibility - Design model](./articles/design-model/)
+- [Modules and visibility - Examples](./articles/examples/)
+- [Modules and visibility - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Modules and visibility - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Modules and visibility - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

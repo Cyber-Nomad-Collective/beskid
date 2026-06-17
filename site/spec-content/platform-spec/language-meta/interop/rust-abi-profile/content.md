@@ -30,5 +30,13 @@ This profile is **not** a promise that arbitrary Rust crates can be linked as us
 </SpecSection>
 
 ## Decisions
-
-No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-RUSTABI-0001` … `D-LMETA-RUSTABI-0005`); use the reader **ADRs** tab for detail.
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-RUSTABI-0001` … `D-EXEC-RT-0017`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Rust ABI profile — Boundary and stability](./articles/boundary-and-stability/)
+- [Rust ABI profile — Kernel and dispatch](./articles/kernel-and-dispatch/)
+- [Rust ABI profile — Runtime manifest](./articles/runtime-manifest/)
+- [Rust ABI profile — Shims and compatibility strategy](./articles/shims-and-compatibility/)
+<!-- /spec:generate:article-index -->

@@ -34,5 +34,10 @@ lastReviewed: 2026-06-06
 </SpecSection>
 
 ## Decisions
-
-No open decisions. Normative syscall rules (**SC-001** … **SC-010**) live in [contracts and edge cases](./contracts-and-edge-cases/).
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Contracts and edge cases](./articles/contracts-and-edge-cases/)
+<!-- /spec:generate:article-index -->

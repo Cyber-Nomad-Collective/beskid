@@ -30,5 +30,14 @@ lastReviewed: 2026-05-21
 </SpecSection>
 
 ## Decisions
-
-No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-TERM-0040`, `D-CORE-TERM-0041`); use the reader **ADRs** tab for expandable detail.
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-TERM-0040` … `D-CORE-TERM-0041`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Design model](./articles/design-model/)
+- [Examples](./articles/examples/)
+- [Flow and algorithm](./articles/flow-and-algorithm/)
+- [Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

@@ -116,3 +116,12 @@ The CLI **must not** attempt to recover from a parse error by skipping the file;
 - **[Formatter](/platform-spec/tooling/formatter/)** — parent feature hub.
 - **[Verification and traceability](./verification-and-traceability/)** — concrete test paths.
 - **[Canonical pretty-printer ADR](./adr/0001-canonical-pretty-printer/)** — rationale for the no-knobs policy.
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

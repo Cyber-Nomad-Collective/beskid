@@ -46,14 +46,17 @@ Anchors name the modules that own each plane of native DI in the reference compi
 End-to-end verification lives at `compiler/crates/beskid_tests/src/composition/` (`container.rs`, `host_e2e.rs`, `lowering.rs`).
 
 ## Articles
-
 ## Decisions
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-DI-0001` … `D-LMETA-DI-0010`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
 
-No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-DI-0001` … `D-LMETA-DI-0010`); use the reader **ADRs** tab for detail. Rust compiler-host IoC remains **[D-INC-0002](/platform-spec/community/project-inception/adr/0002-compile-time-ioc/)** (separate plane).
-
-- [Design model](./design-model/)
-- [Flow and algorithm](./flow-and-algorithm/)
-- [Contracts and edge cases](./contracts-and-edge-cases/)
-- [Examples](./examples/)
-- [Verification and traceability](./verification-and-traceability/)
-- [FAQ and troubleshooting](./faq-and-troubleshooting/)
+## Articles
+<!-- spec:generate:article-index -->
+- [Native dependency injection - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Native dependency injection - Design model](./articles/design-model/)
+- [Native dependency injection - Examples](./articles/examples/)
+- [Native dependency injection - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Native dependency injection - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Native dependency injection - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

@@ -58,16 +58,15 @@ Parse failures **must** surface as parser diagnostics (no stable `E####` band in
 A tool claiming Beskid **L0** conformance **must** accept the same token stream as `beskid.pest` for all inputs in the reference parser test corpus.
 
 ## Decisions
-
-- **D-LM-LEX-001 — Pest as grammar source:** The checked-in pest file is the single syntactic truth; prose here summarizes but does not fork the grammar.
-- **D-LM-LEX-002 — `///` documentation:** Triple-slash doc lines attach only via `ItemWithDocs`; four-or-more slashes are never doc comments.
-- **D-LM-LEX-003 — Reserved async/await:** Tokens exist in the grammar for forward compatibility; semantic use is forbidden in [Fibers and spawn](/platform-spec/language-meta/evaluation/fibers-and-spawn/) (compile error if used as expressions).
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/beskid.pest` — canonical PEG grammar, token definitions, and context-free skeleton
-- `compiler/crates/beskid_analysis/src/parser.rs` — parser entry point consuming `beskid.pest`
-- `compiler/crates/beskid_analysis/src/syntax/` — AST node definitions built from parser output
-
-## Platform view
-
-Defines tokens, whitespace, and the context-free skeleton that every later phase assumes. Formatter and LSP **must** preserve token boundaries defined here.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Lexical and syntax - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Lexical and syntax - Design model](./articles/design-model/)
+- [Lexical and syntax - Examples](./articles/examples/)
+- [Lexical and syntax - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Lexical and syntax - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Lexical and syntax - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

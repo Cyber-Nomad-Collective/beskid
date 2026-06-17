@@ -93,5 +93,10 @@ relatedTopics: []
 - Use `layout.json` for every domain/area/feature hub directory.
 
 ## Decisions
-
-No open decisions. Closed maintenance ADR under **`adr/`** — `D-COMM-META-0001` (reader **ADRs** tab).
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMM-META-0001`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

@@ -6,12 +6,10 @@ import {
 	SPEC_COMMENTS_FILE,
 	SPEC_LAYOUT_FILE,
 	SPEC_MARKDOWN_FILE,
-	SPEC_NODE_FILE,
 	SPEC_WORKSPACE_MANIFEST,
 	parseNodeComments,
-	parseNodeMetadata,
+	parseNodeDocument,
 	parseWorkspaceManifest,
-	readNodeMarkdown,
 	slugFromNodeDir,
 	validateWorkspace,
 	writeNodeMarkdown,
@@ -39,8 +37,8 @@ function collectNodeDirs(): string[] {
 	const root = contentRoot();
 	const dirs: string[] = [];
 	function walk(dir: string) {
-		const nodeJson = path.join(dir, SPEC_NODE_FILE);
-		if (fs.existsSync(nodeJson)) dirs.push(dir);
+		const markdownPath = path.join(dir, SPEC_MARKDOWN_FILE);
+		if (fs.existsSync(markdownPath)) dirs.push(dir);
 		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
 			if (entry.isDirectory() && !entry.name.startsWith(".")) {
 				walk(path.join(dir, entry.name));
@@ -69,15 +67,14 @@ export function listLocalNodes(): LocalSpecNode[] {
 	);
 	const nodes: LocalSpecNode[] = [];
 	for (const nodeDir of collectNodeDirs()) {
-		const node = parseNodeMetadata(
-			JSON.parse(fs.readFileSync(path.join(nodeDir, SPEC_NODE_FILE), "utf8")),
-		);
+		const doc = parseNodeDocument({ nodeDir, workspaceDir: workspace, manifest });
+		const node = doc.node;
 		const layoutPath = path.join(nodeDir, SPEC_LAYOUT_FILE);
 		const commentsPath = path.join(nodeDir, SPEC_COMMENTS_FILE);
 		nodes.push({
-			slug: slugFromNodeDir(manifest.contentRoot, nodeDir),
+			slug: node.slug,
 			node,
-			bodyMd: readNodeMarkdown(nodeDir),
+			bodyMd: doc.body,
 			layoutJson: fs.existsSync(layoutPath)
 				? (JSON.parse(fs.readFileSync(layoutPath, "utf8")) as Record<
 						string,
@@ -111,9 +108,6 @@ export function saveLocalNodeContent(slug: string, bodyMd: string): void {
 		workspace,
 		slug.replace(/^platform-spec\/?/, `${manifest.contentRoot}/`).replace(/\/$/, ""),
 	);
-	if (!fs.existsSync(path.join(nodeDir, SPEC_NODE_FILE))) {
-		throw new Error(`Node not found: ${slug}`);
-	}
 	writeNodeMarkdown(nodeDir, bodyMd);
 }
 

@@ -31,7 +31,13 @@ The keywords **MUST**, **MUST NOT**, **REQUIRED**, **SHALL**, **SHALL NOT**, **S
 | --- | --- |
 | **MUST** / **REQUIRED** / **SHALL** | Absolute requirement for conformance at the stated level |
 | **MUST NOT** / **SHALL NOT** | Absolute prohibition |
-| **SHOULD** / **RECOMMENDED** | Strong default; deviation requires explicit rationale in `## Decisions` |
+| **SHOULD** / **RECOMMENDED** | Strong default; deviation requires explicit rationale in `## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->` |
 | **SHOULD NOT** | Strong discouragement; allowed only with documented exception |
 | **MAY** / **OPTIONAL** | Truly optional behavior or surface |
 
@@ -104,12 +110,7 @@ Cross-domain pages **must** link to the owning `language-meta` chapter with `rel
 Editors **must** update `lastReviewed` when normative text changes. Tier-1 language-meta chapters **must** include `## Decisions` for non-obvious choices. Verification anchors **should** name crate paths or test directories where the reference compiler enforces the rule.
 
 ## Decisions
-
-- **D-LM-CONF-001 — RFC 2119 profile:** Beskid adopts BCP 14 keywords in all `Standard` platform-spec normative sections; the book remains informative.
-- **D-LM-CONF-002 — L0–L4 ladder:** Conformance levels are cumulative; claiming L4 without L3 is non-conformant marketing, not a partial compiler.
-- **D-LM-CONF-003 — Standard without body:** Any `Standard` page failing substantive content gates **must** be downgraded to `Proposed` until restored (Track A removes circular stubs).
-- **D-LM-CONF-004 — Diagnostic bands:** Language chapters reference code bands; per-message wording is implementation detail owned by the registry feature.
-
-## Platform view
-
-Defines **MUST** / **SHOULD** / **MAY** usage across all Beskid specifications. Every diagnostic and platform RFC should reference this vocabulary consistently. Use this page before authoring or reviewing any other `language-meta` chapter.
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

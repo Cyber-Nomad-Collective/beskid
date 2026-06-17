@@ -55,17 +55,10 @@ Enum/match band **E1301–E1308**. See [Diagnostic code registry](/platform-spec
 **L2** implementations **must** agree with reference tests on arity, exhaustiveness, and arm typing.
 
 ## Decisions
-
-- **D-LM-ENUM-001 — Expression-oriented match:** `match` is an expression, not a statement; statement contexts wrap it in expression statements.
-- **D-LM-ENUM-002 — Qualified constructors:** Unqualified enum constructors are allowed only when type inference fixes the enum type.
-- **D-LM-ENUM-003 — Exhaustiveness is mandatory:** Partial `match` on enums **must** be rejected unless `_` is present.
-- **D-LM-ENUM-004 — `Option` is not special syntax:** Optional values use the corelib `Option<T>` enum, not a language `optional` keyword.
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/types/` — enum declaration, variant resolution, and exhaustiveness checking
-- `compiler/crates/beskid_analysis/src/analysis/` — `match` expression lowering and arm typing
-- `compiler/crates/beskid_codegen/src/` — discriminant layout and match codegen
-
-## Platform view
-
-Algebraic enums and exhaustive `match` tie data representation to control flow. Lowering must preserve discriminant layout described in Execution where relevant.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

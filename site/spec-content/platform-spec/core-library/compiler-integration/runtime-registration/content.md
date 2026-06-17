@@ -69,3 +69,12 @@ Concurrency and IO modules import status constants from **`Runtime.Abi`** instea
 - [Kernel and dispatch](/platform-spec/language-meta/interop/rust-abi-profile/kernel-and-dispatch/) — call paths
 - [ABI v4 runtime/host split](/platform-spec/language-meta/interop/rust-abi-profile/adr/0017-runtime-host-split-v4/) — host registration authority
 - [Handler registration init order](/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/adr/0007-handler-registration-init-order/)
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

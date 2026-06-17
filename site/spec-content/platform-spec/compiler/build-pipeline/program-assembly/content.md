@@ -22,10 +22,13 @@ This feature hub defines how the reference compiler turns a resolved **`CompileP
 - `compiler/crates/beskid_pipeline/src/` — pipeline integration of assembly into compile spine
 
 ## Decisions
-
+<!-- spec:generate:adr-index -->
 No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-BUILD-0013` … `D-COMP-BUILD-0023`); use the reader **ADRs** tab for expandable detail.
-
-- [Design model](./design-model/)
-- [Flow and algorithm](./flow-and-algorithm/)
-- [Contracts and edge cases](./contracts-and-edge-cases/)
-- [Verification and traceability](./verification-and-traceability/)
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Program assembly - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Program assembly - Design model](./articles/design-model/)
+- [Program assembly - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Program assembly - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

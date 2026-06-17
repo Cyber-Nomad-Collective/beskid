@@ -47,3 +47,12 @@ Domain graphs (`ProjectGraph`, `ModuleGraph`, `RegistrationDag`) remain in `besk
 - **Mermaid flowchart** is the only supported output format.
 - CLI renders via `graphs-tui`; VS Code renders via bundled `mermaid.min.js`.
 - Internal `daggy` graphs are never serialized directly to tooling.
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

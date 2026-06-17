@@ -20,12 +20,15 @@ This feature hub defines the normative contract for **codegen artifact schema** 
 - `compiler/crates/beskid_tests/src/abi/contracts.rs` checks ABI-level schema compatibility.
 
 ## Decisions
-
+<!-- spec:generate:adr-index -->
 No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-IR-0001` … `D-COMP-IR-0003`); use the reader **ADRs** tab for expandable detail.
-
-- [Design model](./design-model/)
-- [Flow and algorithm](./flow-and-algorithm/)
-- [Contracts and edge cases](./contracts-and-edge-cases/)
-- [Examples](./examples/)
-- [Verification and traceability](./verification-and-traceability/)
-- [FAQ and troubleshooting](./faq-and-troubleshooting/)
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Codegen artifact schema - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Codegen artifact schema - Design model](./articles/design-model/)
+- [Codegen artifact schema - Examples](./articles/examples/)
+- [Codegen artifact schema - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Codegen artifact schema - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Codegen artifact schema - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

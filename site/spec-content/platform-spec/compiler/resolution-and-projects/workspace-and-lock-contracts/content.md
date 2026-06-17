@@ -25,14 +25,15 @@ lastReviewed: 2026-05-21
 </SpecSection>
 
 ## Decisions
-
+<!-- spec:generate:adr-index -->
 No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-PROJ-0010` … `D-COMP-PROJ-0012`); use the reader **ADRs** tab for expandable detail.
-
+<!-- /spec:generate:adr-index -->
 ## Articles
-
-- [Design model](./design-model/) — materialized graph and lock roots (no duplicate workspace key tables)
-- [Flow and algorithm](./flow-and-algorithm/) — resolve and lock application order
-- [Contracts and edge cases](./contracts-and-edge-cases/) — graph/lock diagnostic contracts
-- [Examples](./examples/)
-- [Verification and traceability](./verification-and-traceability/)
-- [FAQ and troubleshooting](./faq-and-troubleshooting/)
+<!-- spec:generate:article-index -->
+- [Workspace and lock contracts - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Workspace and lock contracts - Design model](./articles/design-model/)
+- [Workspace and lock contracts - Examples](./articles/examples/)
+- [Workspace and lock contracts - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Workspace and lock contracts - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Workspace and lock contracts - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

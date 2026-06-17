@@ -159,3 +159,12 @@ This chapter is the **language-meta** owner for case conventions. [Core library]
 - [x] Reference compiler emits **W1630–W1638** from style rules (`beskid_analysis` `naming_style`)
 - [x] `beskid fmt` applies case fixes idempotently (`beskid_analysis` `format/naming_normalize`)
 - [x] App entry uses **`Main`**; AOT maps to native **`main`** (`beskid_e2e_tests` `Minimal.bd`, `beskid_aot` `build_and_run`)
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

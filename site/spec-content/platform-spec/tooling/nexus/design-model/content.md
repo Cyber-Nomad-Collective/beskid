@@ -121,3 +121,12 @@ Token value is a deployment secret — UI shows placeholder guidance for operato
 ## Ownership verification
 
 On mutating catalog operations the server **must** call GitHub `GET /repos/{owner}/{repo}` with the user's hub token and require `permissions.admin` or owner login match. Env-based admin rosters **must not** gate per-repo CRUD (operator setup endpoints excepted).
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

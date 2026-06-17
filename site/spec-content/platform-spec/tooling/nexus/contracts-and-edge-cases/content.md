@@ -215,3 +215,12 @@ interface PublicCatalogEntry {
 ```
 
 Normative TypeScript mirrors live in `beskid_nexus/gitnexus/src/server/nexus/types.ts`.
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

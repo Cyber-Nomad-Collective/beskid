@@ -56,3 +56,16 @@ The **workspace and project explorer** exposes two Beskid activity-bar tree view
 <SpecSection title="Decisions" id="decisions">
 No open decisions. **`D-TOOL-VSC-0001`** (LSP-backed graph), **`0002`** (focus without LSP restart)—see **`adr/`** and the **ADRs** tab.
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-TOOL-VSC-0001` … `D-TOOL-VSC-0002`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Decisions record (legacy index)](./articles/decisions-record/)
+- [Design model](./articles/design-model/)
+- [Examples](./articles/examples/)
+- [Flow and algorithm](./articles/flow-and-algorithm/)
+<!-- /spec:generate:article-index -->

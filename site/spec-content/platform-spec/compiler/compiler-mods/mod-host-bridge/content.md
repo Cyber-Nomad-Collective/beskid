@@ -26,13 +26,16 @@ Implements language-meta compiler-mod contracts (`Collector`, `Generator`, `Anal
 - `compiler/crates/beskid_engine/tests/mod_host.rs` — engine integration test driving the full pipeline through `Engine::compile_artifact`.
 
 ## Decisions
-
+<!-- spec:generate:adr-index -->
 No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-MODS-0010` … `D-COMP-MODS-0012`); use the reader **ADRs** tab for expandable detail.
-
-- [Design model](./design-model/)
-- [AOT artifact contract](./aot-artifact-contract/)
-- [Flow and algorithm](./flow-and-algorithm/)
-- [Contracts and edge cases](./contracts-and-edge-cases/)
-- [Examples](./examples/)
-- [Verification and traceability](./verification-and-traceability/)
-- [FAQ and troubleshooting](./faq-and-troubleshooting/)
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Mod host bridge - AOT artifact contract](./articles/aot-artifact-contract/)
+- [mod host bridge - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [mod host bridge - Design model](./articles/design-model/)
+- [mod host bridge - Examples](./articles/examples/)
+- [mod host bridge - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [mod host bridge - Flow and algorithm](./articles/flow-and-algorithm/)
+- [mod host bridge - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

@@ -108,3 +108,12 @@ Coolify proxy URLs include explicit ports. App-facing env origins omit the port 
 | pckg | `https://pckg.beskid-lang.org:8082` | `PCKG_PUBLIC_URL` |
 
 Canonical matrix: [beskid_infra/docs/deploy-matrix.md](https://github.com/Cyber-Nomad-Collective/beskid_infra/blob/main/docs/deploy-matrix.md).
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

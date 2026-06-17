@@ -20,12 +20,15 @@ This feature hub defines the normative contract for **build and run orchestratio
 - `compiler/crates/beskid_tests/src/runtime/jit.rs` and e2e fixtures verify orchestration behavior.
 
 ## Decisions
-
+<!-- spec:generate:adr-index -->
 No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-BUILD-0004` … `D-COMP-BUILD-0021`); use the reader **ADRs** tab for expandable detail.
-
-- [Design model](./design-model/)
-- [Flow and algorithm](./flow-and-algorithm/)
-- [Contracts and edge cases](./contracts-and-edge-cases/)
-- [Examples](./examples/)
-- [Verification and traceability](./verification-and-traceability/)
-- [FAQ and troubleshooting](./faq-and-troubleshooting/)
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Build and run orchestration - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Build and run orchestration - Design model](./articles/design-model/)
+- [Build and run orchestration - Examples](./articles/examples/)
+- [Build and run orchestration - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Build and run orchestration - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Build and run orchestration - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

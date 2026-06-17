@@ -64,18 +64,15 @@ Type band **E12xx** (unknown type, mismatch, missing annotation, member access).
 **L2** conforming implementations **must** reject programs with unknown types, arity mismatches, and invalid field access per the reference `beskid_analysis` type tests.
 
 ## Decisions
-
-- **D-LM-TYP-001 — Nominal types:** Beskid uses nominal, path-resolved types; structural equivalence is not user-definable in v0.1.
-- **D-LM-TYP-002 — `Option<T>` only:** Optional values use `Option<T>` or explicit enums; `null` and `optional` keyword are forbidden.
-- **D-LM-TYP-003 — `T[]` fat pointer:** Array types share one runtime representation across targets unless a profile documents otherwise.
-- **D-LM-TYP-004 — Single type system:** No parallel reference/value kinds in v0.1; parameters pass by value unless documented heap handles apply.
-- **D-LM-TYP-005 — Inline type methods:** Methods **may** appear in the owning `type` body; they share the type's scope for field access. `extend type` remains the extension mechanism for types defined elsewhere.
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/types/` — type declaration, nominal resolution, and `BeskidArray` layout
-- `compiler/crates/beskid_analysis/src/hir/` — HIR type representations consumed by lowering
-- `compiler/crates/beskid_codegen/src/` — type lowering to Cranelift IR
-
-## Platform view
-
-The type grammar (nominal types, generics, `Option<T>`) is the backbone of static checking. All analysis phases share these definitions.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Types - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Types - Design model](./articles/design-model/)
+- [Types - Examples](./articles/examples/)
+- [Types - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Types - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Types - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

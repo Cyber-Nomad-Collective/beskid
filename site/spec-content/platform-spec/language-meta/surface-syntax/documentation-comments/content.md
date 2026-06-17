@@ -41,23 +41,10 @@ Malformed doc attachment **should** warn once the doc pipeline is strict; v0.1 *
 Formatter **must not** reorder `///` runs across distinct items. LSP **must** return stored doc strings for resolved symbols.
 
 ## Decisions
-
-- **D-LM-DOC-001 — `///` only:** Block and `//` comments never form API documentation.
-- **D-LM-DOC-002 — Non-normative doc:** Doc comments cannot introduce new MUST rules.
-- **D-LM-DOC-003 — `@arg` on callables only:** Parameter tags apply to functions, methods, and contract methods—not record fields.
-- **D-LM-DOC-004 — Signatures from compiler:** `api.json` types and links are compiler-derived; prose must not invent parallel type strings.
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/doc/` — doc comment extraction and API doc model
-- `compiler/crates/beskid_analysis/src/doc_comment_parser.rs` — `///` parsing and `@arg`/`@ref` tag resolution
-- `compiler/crates/beskid_cli/src/commands/doc.rs` — `beskid doc` command emitting `api.json`
-
-## Platform view
-
-Structured comments attach human-readable contracts to declarations. Tooling must preserve them through formatting and refactors without changing semantics.
-
-### Relationship to `api.json`
-
-`beskid doc` emits **[api.json schema v4](/platform-spec/tooling/cli/api-json-contract/design-model/)** with **compiler-derived signatures and type links** for every resolved symbol. Authors do not duplicate type names in JSON: non-primitive types use **`typeAnnotation.refItemId`** for navigation; optional `///` prose uses **`@ref(Qualified.Name)`** for markdown cross-links in `docMarkdown` and structured `summaryMarkdown`.
-
-**`@ref` resolution** prefers **`symbolKey`** when the target row carries one, then falls back to the same **`qualifiedName`** index as other `api.json` navigation (not raw declaration `name` alone). Packed docs emit registry links of the form `/docs/{package}@{version}/api/{qualifiedName}` when a publish context is available; cross-package targets use the target row’s **`declaringPackage`** when present. See **[Registry API reference UI](/platform-spec/tooling/cli/api-json-contract/registry-api-reference-ui/)** and **[symbolKey field](/platform-spec/tooling/cli/api-json-contract/adr/0003-symbol-key-field/)**.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

@@ -39,5 +39,16 @@ Lowering uses **Cranelift**; foreign libraries need only expose C ABI entrypoint
 </SpecSection>
 
 ## Decisions
-
-No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-CABI-0001` … `D-LMETA-CABI-0005`); use the reader **ADRs** tab for detail.
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-CABI-0001` … `D-LMETA-CABI-0005`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [C ABI profile — C layout types (v0.3.1)](./articles/c-layout-types/)
+- [C ABI profile — Dynamic resolution profile](./articles/dynamic-resolution-profile/)
+- [C ABI profile — Extern contracts and linking](./articles/extern-contracts-and-linking/)
+- [C ABI profile — Interop view types (v0.3.0)](./articles/interop-view-types/)
+- [C ABI profile — Link-time linking](./articles/link-time-linking/)
+- [C ABI profile — Platform tier matrix](./articles/platform-tier-matrix/)
+- [C ABI profile — Types and call conventions](./articles/types-and-call-conventions/)
+<!-- /spec:generate:article-index -->

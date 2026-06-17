@@ -39,3 +39,12 @@ Legacy URL for bookmarks. Read normative text from feature **`adr/`** files and 
 | --- | --- |
 | D-TOOL-VSC-0001 | [LSP-backed graph](./workspace-project-explorer/adr/0001-lsp-backed-graph/) |
 | D-TOOL-VSC-0002 | [Focus without restart](./workspace-project-explorer/adr/0002-focus-without-lsp-restart/) |
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

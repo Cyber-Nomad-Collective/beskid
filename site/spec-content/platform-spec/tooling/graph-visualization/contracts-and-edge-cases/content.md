@@ -59,3 +59,12 @@ beskid graph [--kind project|workspace|module|imports|host] [--project PATH] [--
 - Projects tree **must** remain for Targets / Dependencies / Source folders navigation.
 - Graph Explorer panel **must** fetch `beskid.getGraph` and render bundled Mermaid locally (no CDN).
 - Refresh **must** follow `onRefreshWorkspaceUi` and display `revision` badge.
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

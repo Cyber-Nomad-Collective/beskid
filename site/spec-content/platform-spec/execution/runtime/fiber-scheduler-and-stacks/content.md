@@ -87,5 +87,11 @@ M6 completion requires blocking runtime syscalls to enqueue host blocking work o
 </SpecSection>
 
 ## Decisions
-
+<!-- spec:generate:adr-index -->
 No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-EXEC-RT-0001` … `D-EXEC-RT-0004`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Fiber scheduler and stacks - Design model](./articles/design-model/)
+- [Fiber scheduler and stacks - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

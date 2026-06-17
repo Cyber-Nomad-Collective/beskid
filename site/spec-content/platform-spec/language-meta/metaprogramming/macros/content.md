@@ -137,3 +137,17 @@ macro identity (expression value)
 let x = identity!(1 + 2);
 ```
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Language macros - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Language macros - Design model](./articles/design-model/)
+- [Language macros - Examples](./articles/examples/)
+- [Language macros - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Language macros - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Language macros - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

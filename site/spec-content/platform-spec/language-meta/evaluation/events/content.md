@@ -45,16 +45,15 @@ Event misuse **must** surface as member/type errors (**E1213** family) until a d
 Types with `event` fields **must** lower to the same calling convention in AOT and JIT for a given target.
 
 ## Decisions
-
-- **D-LM-EVT-001 — Language `event` keyword:** Events are fields, not separate delegate types in user syntax.
-- **D-LM-EVT-002 — Fiber OnCancelled:** Cancellation uses the same `event` mechanism on `Fiber<T>` per concurrency decisions record.
-- **D-LM-EVT-003 — Synchronous default:** Handlers run on the raising fiber unless a host profile says otherwise.
-- **D-LM-EVT-004 — Not `Option`:** Subscription state is host-managed; absence of subscribers is not `Option<T>` at the language surface.
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/types/` — `event` field declaration and subscription type-checking
-- `compiler/crates/beskid_codegen/src/` — event handler call generation and calling convention
-
-## Platform view
-
-Multicast events, subscription lifetime, and thread affinity assumptions. UI stacks build on these primitives.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Events - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Events - Design model](./articles/design-model/)
+- [Events - Examples](./articles/examples/)
+- [Events - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Events - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Events - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

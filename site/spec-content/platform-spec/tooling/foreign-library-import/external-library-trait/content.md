@@ -59,3 +59,12 @@ Future providers (Rust `rlib`, Swift, etc.) **must** implement **`ExternalLibrar
 - **Closed provider list:** `compiler/crates/beskid_analysis/src/external_library/registry.rs::default_registry` ships `c-posix` (+ `posix` alias) only; per ADR `D-TOOL-FLI-0002`.
 - **C / POSIX mapping table:** `compiler/crates/beskid_analysis/src/external_library/providers.rs::C_POSIX_LOGICAL_NAMES` (e.g. `c -> -lc`, `m -> -lm`, `pthread -> -lpthread`); canonicalization strips `lib` prefix and `.so`/`.dylib`/`.a` suffixes.
 - **Tests:** `external_library::providers::tests` and `external_library::registry::tests` (in-tree unit tests). End-to-end coverage in `compiler/crates/beskid_tests/src/cli/import_lib.rs`.
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

@@ -20,12 +20,15 @@ This feature hub defines the normative contract for **grammar and parser contrac
 - `compiler/crates/beskid_analysis/src/syntax/items/parse_helpers.rs` contains shared parse helpers used by item parsers.
 
 ## Decisions
-
+<!-- spec:generate:adr-index -->
 No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-FRONT-0004` … `D-COMP-FRONT-0006`); use the reader **ADRs** tab for expandable detail.
-
-- [Design model](./design-model/)
-- [Flow and algorithm](./flow-and-algorithm/)
-- [Contracts and edge cases](./contracts-and-edge-cases/)
-- [Examples](./examples/)
-- [Verification and traceability](./verification-and-traceability/)
-- [FAQ and troubleshooting](./faq-and-troubleshooting/)
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Grammar and parser contract - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Grammar and parser contract - Design model](./articles/design-model/)
+- [Grammar and parser contract - Examples](./articles/examples/)
+- [Grammar and parser contract - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Grammar and parser contract - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Grammar and parser contract - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

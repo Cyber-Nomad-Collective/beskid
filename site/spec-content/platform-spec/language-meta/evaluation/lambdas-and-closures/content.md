@@ -46,17 +46,15 @@ Type inference and call mismatch bands **E1202**, **E1205**. Registry: [Diagnost
 Closure codegen tests **must** match between debug and release for the reference backend on each supported triple.
 
 ## Decisions
-
-- **D-LM-LAM-001 — Expression lambdas:** Statement lambdas use block bodies; no separate `fn` literal syntax in v0.1.
-- **D-LM-LAM-002 — No async lambdas:** `async`/`await` are not closure modifiers; use `spawn` instead.
-- **D-LM-LAM-003 — Capture extends lifetime:** Closures **must** keep captured locals alive for the closure value’s lifetime.
-- **D-LM-LAM-004 — GC for escaped captures:** Captured reference-bearing values **must** be heap-traced when they escape the frame.
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/analysis/` — closure capture analysis and environment layout
-- `compiler/crates/beskid_codegen/src/` — closure lowering to Cranelift calls
-- `compiler/crates/beskid_runtime/src/gc.rs` — GC tracing for escaped closure captures
-
-## Platform view
-
-Capture lists, environment layout, and lifetime of delegates. JIT and AOT must agree on closure calling conventions.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Lambdas and closures - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Lambdas and closures - Design model](./articles/design-model/)
+- [Lambdas and closures - Examples](./articles/examples/)
+- [Lambdas and closures - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Lambdas and closures - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Lambdas and closures - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

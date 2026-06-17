@@ -26,3 +26,12 @@ lastReviewed: 2026-04-30
 - `compiler/crates/beskid_cli/src/cli.rs`
 - `compiler/crates/beskid_tools` — shared pipeline UI, pluggable shell (`beskid_tools::shell`), diagnostics, session, registry helpers
 - `compiler/crates/beskid_cli/src/commands/hi.rs` — `beskid hi` dashboard entrypoint
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

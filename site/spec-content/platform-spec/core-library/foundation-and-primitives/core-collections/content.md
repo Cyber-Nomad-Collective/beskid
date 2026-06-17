@@ -26,3 +26,12 @@ lastReviewed: 2026-06-10
 | `Map<K,V>` | `MapEntry<K,V>[] entries`, `i64 count` |
 | `Array` | `T[]` handle + `Len` / `Get` / `Set` / `Append` / `Iterate` |
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Design model](./articles/design-model/)
+<!-- /spec:generate:article-index -->

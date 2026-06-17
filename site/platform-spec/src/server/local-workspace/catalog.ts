@@ -62,6 +62,7 @@ export function getLocalDocumentBySlug(
 			adrStatus: item.node.adrStatus,
 			adrDate: item.node.adrDate,
 			relatedTopics: item.node.relatedTopics,
+			architectureGraph: item.node.architectureGraph,
 		},
 		body: item.bodyMd,
 		layoutJson: item.layoutJson,

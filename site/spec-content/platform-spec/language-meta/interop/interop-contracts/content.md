@@ -33,5 +33,15 @@ User-visible **`[Extern(...)] contract`** declarations are specified under **[FF
 </SpecSection>
 
 ## Decisions
-
-No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-IC-0001` … `D-LMETA-IC-0003`); use the reader **ADRs** tab for detail.
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-IC-0001` … `D-LMETA-IC-0004`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Interop.Contracts — Callback call shapes](./articles/callback-call-shapes/)
+- [Interop.Contracts — Conformance and versioning](./articles/conformance-and-versioning/)
+- [Interop.Contracts — Core primitives](./articles/core-primitives/)
+- [Interop.Contracts — Error and unwind semantics](./articles/error-and-unwind-semantics/)
+- [Interop.Contracts — Language-agnostic mapping rules](./articles/language-agnostic-mapping/)
+- [Interop.Contracts — Ownership at the boundary](./articles/ownership-at-boundary/)
+<!-- /spec:generate:article-index -->

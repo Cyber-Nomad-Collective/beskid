@@ -49,3 +49,13 @@ When the registry is reachable, the CLI **must** resolve **`beskid.templates.con
 <SpecSection title="Decisions" id="decisions">
 No open decisions. Closed choices: **`D-TOOL-SCAFF-0001`** (`beskid new` command), **`0002`** (interactive modes), **`0003`** (update check on instantiate)—see **`adr/`** and the **ADRs** tab.
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-TOOL-SCAFF-0001` … `D-TOOL-SCAFF-0003`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Design model](./articles/design-model/)
+<!-- /spec:generate:article-index -->

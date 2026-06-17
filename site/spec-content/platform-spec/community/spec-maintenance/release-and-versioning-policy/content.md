@@ -39,5 +39,10 @@ lastReviewed: 2026-05-21
 When a delivery band closes a gap (for example promoting fibers from Proposed to Standard), update normative prose, verification anchors, and `lastReviewed` in the **same change set** as the implementation merge when possible. Do not leave **Standard** pages describing behavior that only exists on another branch without a **Proposed** downgrade or an explicit decision noting the gap.
 
 ## Decisions
-
-No open decisions. Closed maintenance ADRs under **`adr/`** — `D-COMM-VERS-0001` through `D-COMM-VERS-0004` (reader **ADRs** tab). Inception cross-cut: **D-INC-0007**.
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMM-VERS-0001` … `D-COMM-VERS-0004`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

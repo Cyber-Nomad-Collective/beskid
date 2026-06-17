@@ -27,3 +27,17 @@ lastReviewed: 2026-04-30
 <SpecSection title="Decisions" id="decisions">
 No open decisions. **`D-TOOL-CLI-0001`** (hub authority), **`0002`** (shared analysis pipeline with LSP)—see **`adr/`** and the **ADRs** tab.
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-TOOL-CLI-0001` … `D-TOOL-CLI-0002`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Design model](./articles/design-model/)
+- [Examples](./articles/examples/)
+- [FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Flow and algorithm](./articles/flow-and-algorithm/)
+- [Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

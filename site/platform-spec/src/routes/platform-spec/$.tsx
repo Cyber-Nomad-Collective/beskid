@@ -34,6 +34,19 @@ export const Route = createFileRoute("/platform-spec/$")({
 			typeof frontmatter.description === "string"
 				? frontmatter.description
 				: null;
+		const architectureGraphMeta = (frontmatter as Record<string, unknown> | undefined)?.architectureGraph as
+			| { graphKey?: unknown; entryNode?: unknown; layout?: unknown }
+			| undefined;
+		const architectureGraph =
+			typeof architectureGraphMeta?.graphKey === "string"
+				? {
+						graphKey: architectureGraphMeta.graphKey,
+						entryNode:
+							typeof architectureGraphMeta.entryNode === "string"
+								? architectureGraphMeta.entryNode
+								: undefined,
+					}
+				: null;
 
 		return {
 			slug,
@@ -45,6 +58,7 @@ export const Route = createFileRoute("/platform-spec/$")({
 			description,
 			bodyMd: document.body,
 			layoutJson: document.layoutJson,
+			architectureGraph,
 		};
 	},
 	component: PlatformSpecDocument,
@@ -61,7 +75,17 @@ function PlatformSpecDocument() {
 		description,
 		bodyMd,
 		layoutJson,
+		architectureGraph,
 	} = Route.useLoaderData();
+
+	const adrs =
+		catalog.entries
+			.filter(
+				(entry) =>
+					entry.specLevel === "adr" &&
+					entry.parentSlug === slug,
+			)
+			.map((entry) => ({ href: entry.href, title: entry.title }));
 
 	return (
 		<ReaderChrome>
@@ -74,6 +98,8 @@ function PlatformSpecDocument() {
 					description={description}
 					bodyMd={bodyMd}
 					layoutJson={layoutJson}
+					architectureGraph={architectureGraph}
+					adrs={adrs}
 					catalogEntries={catalog.entries.map((entry) => ({
 						slug: entry.slug,
 						href: entry.href,

@@ -53,3 +53,12 @@ IntelliSense and diagnostics share project scope but **must not** run full Execu
 - `compiler/crates/beskid_lsp/src/features`
 - `compiler/crates/beskid_queries/src/entry.rs` — `prepare_compilation_diagnostics_with_db`, `entry_resolution_with_db`, `typed_entry_bundle`
 - `compiler/crates/beskid_analysis/src/doc/validate.rs`
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+_No articles in this bundle yet._
+<!-- /spec:generate:article-index -->

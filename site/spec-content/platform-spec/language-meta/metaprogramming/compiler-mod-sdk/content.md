@@ -101,3 +101,17 @@ Mods may define and call language macros like any library; `Generator` output th
 - `compiler/crates/beskid_analysis/src/mod_host/` — mod discovery, load, and orchestration phases
 - `compiler/crates/beskid_analysis/src/macros/` — `contract` type handling for mod contracts
 - `compiler/corelib/` — SDK types (`Collector`, `Generator`, `Analyzer`, `Rewriter`)
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Compiler Mod SDK - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Compiler Mod SDK - Design model](./articles/design-model/)
+- [Compiler Mod SDK - Examples](./articles/examples/)
+- [Compiler Mod SDK - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Compiler Mod SDK - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Compiler Mod SDK - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

@@ -21,12 +21,15 @@ This feature hub documents where diagnostics come from in CLI and LSP, and what 
 - `compiler/crates/beskid_cli/src/commands/` — CLI diagnostic emission from shared compilation spine
 
 ## Decisions
-
+<!-- spec:generate:adr-index -->
 No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-COMP-BUILD-0010` … `D-COMP-BUILD-0024`); use the reader **ADRs** tab for expandable detail.
-
-- [Design model](./design-model/)
-- [Flow and algorithm](./flow-and-algorithm/)
-- [Contracts and edge cases](./contracts-and-edge-cases/)
-- [Examples](./examples/)
-- [Verification and traceability](./verification-and-traceability/)
-- [FAQ and troubleshooting](./faq-and-troubleshooting/)
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Diagnostics parity (CLI and LSP) - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Diagnostics parity (CLI and LSP) - Design model](./articles/design-model/)
+- [Diagnostics parity (CLI and LSP) - Examples](./articles/examples/)
+- [Diagnostics parity (CLI and LSP) - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Diagnostics parity (CLI and LSP) - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Diagnostics parity (CLI and LSP) - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

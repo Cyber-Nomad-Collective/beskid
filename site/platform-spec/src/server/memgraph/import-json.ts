@@ -4,15 +4,13 @@ import fs from "node:fs";
 import path from "node:path";
 
 import {
-	emitBodyMd,
 	hrefToSlug,
 	nodeMetadataToFrontmatter,
-	parseNodeMetadata,
+	parseNodeDocument,
 	parseRelatedFile,
 	parseWorkspaceManifest,
-	readNodeMarkdown,
 	SPEC_LAYOUT_FILE,
-	SPEC_NODE_FILE,
+	SPEC_MARKDOWN_FILE,
 	SPEC_RELATED_FILE,
 	SPEC_WORKSPACE_MANIFEST,
 	type NodeMetadata,
@@ -48,7 +46,7 @@ function collectNodeDirs(contentRoot: string): string[] {
 	if (!fs.existsSync(contentRoot)) return dirs;
 
 	function walk(dir: string) {
-		if (fs.existsSync(path.join(dir, SPEC_NODE_FILE))) {
+		if (fs.existsSync(path.join(dir, SPEC_MARKDOWN_FILE))) {
 			dirs.push(dir);
 		}
 		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -91,7 +89,7 @@ function nodeToUpsert(
 		status: node.status ?? null,
 		adrId: node.adrId ?? null,
 		adrStatus: node.adrStatus ?? null,
-		repoPath: `site/platform-spec/content/docs/platform-spec/${rel}/node.json`,
+		repoPath: `site/platform-spec/content/docs/platform-spec/${rel}/content.md`,
 		href: slugToHref(slug),
 		parentSlug,
 		bodyMd,
@@ -131,14 +129,13 @@ export async function importJsonWorkspace(
 		[];
 
 	for (const nodeDir of nodeDirs) {
-		const node = parseNodeMetadata(
-			JSON.parse(fs.readFileSync(path.join(nodeDir, SPEC_NODE_FILE), "utf8")),
-		);
+		const doc = parseNodeDocument({ nodeDir, workspaceDir, manifest });
+		const node = doc.node;
 		const layoutPath = path.join(nodeDir, SPEC_LAYOUT_FILE);
 		const relatedPath = path.join(nodeDir, SPEC_RELATED_FILE);
 
 		let contentJson: string | null = null;
-		let bodyMd = readNodeMarkdown(nodeDir);
+		const bodyMd = doc.body;
 
 		// content.json is deprecated in the content.md-only workspace format.
 		// We keep contentJson unset and rely on content.md as the source of truth.

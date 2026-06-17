@@ -111,5 +111,12 @@ Compiler mods do **not** gain ambient FFI unless the manifest grants **`extern_f
 </SpecSection>
 
 ## Decisions
-
-No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-FFI-0001` … `D-LMETA-FFI-0005`); use the reader **ADRs** tab for detail.
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-LMETA-FFI-0001` … `D-LMETA-FFI-0005`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Contract import syntax](./articles/contract-import-syntax/)
+- [Extern attribute schema](./articles/extern-attribute-schema/)
+- [FFI and extern — Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

@@ -40,3 +40,18 @@ A manifest may declare **`type: Template`** for template authoring packages. Con
 <SpecSection title="Decisions" id="decisions">
 No open decisions. **`D-TOOL-MAN-0001`** (hub authority), **`0002`** (Mod and Template project types), **`D-TOOL-MAN-0006`** (explicit use, no prelude; supersedes prelude ADRs under compiler and core-library)—see **`adr/`** and the **ADRs** tab.
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-TOOL-MAN-0001` … `D-TOOL-MAN-0002`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Design model](./articles/design-model/)
+- [Examples](./articles/examples/)
+- [FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Flow and algorithm](./articles/flow-and-algorithm/)
+- [Project link libraries](./articles/project-link-libraries/)
+- [Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

@@ -36,3 +36,14 @@ Bsol specifies **lexical rules**, **generic surface grammar**, the **reference A
 - `compiler/runtime_manifest.bsol` — authoritative runtime ABI manifest
 - Unit tests: `beskid_bsol`, `beskid_analysis::projects::parser`, `beskid_manifest`
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Design model](./articles/design-model/)
+- [Runtime manifest profile](./articles/runtime-manifest-profile/)
+- [Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->

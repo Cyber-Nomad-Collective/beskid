@@ -112,3 +112,15 @@ No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-C
 - **[Core.Threading](/platform-spec/core-library/concurrency/core-threading/)** — OS threads (preemptive), not fibers
 - **[Console terminal events](/platform-spec/core-library/terminal-and-console/console-terminal-events/)** — delivers via **Channel**
 </SpecSection>
+
+## Decisions
+<!-- spec:generate:adr-index -->
+No open decisions. Closed choices are normative ADRs under **`adr/`** (`D-CORE-CONC-0001` … `D-CORE-CONC-0014`); use the reader **ADRs** tab for expandable detail.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Concurrency package - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Concurrency package - Decisions record (legacy index)](./articles/decisions-record/)
+- [Concurrency package - Design model](./articles/design-model/)
+- [Concurrency package - Examples](./articles/examples/)
+<!-- /spec:generate:article-index -->

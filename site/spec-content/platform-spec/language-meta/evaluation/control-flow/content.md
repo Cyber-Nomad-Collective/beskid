@@ -55,16 +55,15 @@ Control band **E1401–E1403**; bool condition errors in type band. Registry: [D
 **L3** semantic tests for break/continue and return paths **must** pass.
 
 ## Decisions
-
-- **D-LM-CF-001 — No `switch` statement:** Sum-type branching uses `match` expressions only.
-- **D-LM-CF-002 — Short-circuit booleans:** `&&` and `||` are mandatory short-circuit operators.
-- **D-LM-CF-003 — `bool` conditions only:** `if`/`while` **must not** treat non-bool values as truthy (no C-style `0` truthiness).
-- **D-LM-CF-004 — Structured transfer only:** `goto` is not in the grammar; use `break`/`continue`/`return`.
-
-## Implementation anchors
-- `compiler/crates/beskid_analysis/src/analysis/` — HIR lowering of `if`/`while`/`for`/`break`/`continue`/`return`
-- `compiler/crates/beskid_codegen/src/` — Cranelift control-flow emission from lowered HIR
-
-## Platform view
-
-Conditionals, loops, and structured control transfer. Lowering to HIR/CLIF follows the evaluation order defined here.
+<!-- spec:generate:adr-index -->
+No ADRs published under **`adr/`** yet.
+<!-- /spec:generate:adr-index -->
+## Articles
+<!-- spec:generate:article-index -->
+- [Control flow - Contracts and edge cases](./articles/contracts-and-edge-cases/)
+- [Control flow - Design model](./articles/design-model/)
+- [Control flow - Examples](./articles/examples/)
+- [Control flow - FAQ and troubleshooting](./articles/faq-and-troubleshooting/)
+- [Control flow - Flow and algorithm](./articles/flow-and-algorithm/)
+- [Control flow - Verification and traceability](./articles/verification-and-traceability/)
+<!-- /spec:generate:article-index -->
