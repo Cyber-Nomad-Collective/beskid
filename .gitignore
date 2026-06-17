@@ -489,11 +489,4 @@ FodyWeavers.xsd
 **/*.tgz
 **/*.log
 **/*.bun
-
-# Lockfiles (submodules manage their own; superrepo-level bun sites use ! override below)
-bun.lock
 package-lock.json
-
-# Site apps intentionally commit bun.lock
-!site/auth/bun.lock
-!site/platform-spec/bun.lock
