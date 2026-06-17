@@ -116,7 +116,7 @@ jobs:
             --app=platform-spec \
             --node-auth-token=env:NODE_AUTH_TOKEN
 
-      - name: Verify lockfiles (Dagger)
+      - name: Verify lockfiles
         if: matrix.image != 'beskid-pckg' && matrix.image != 'beskid-auth' && matrix.image != 'beskid-platform-spec'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
@@ -137,12 +137,15 @@ jobs:
               ;;
           esac
           IFS=',' read -ra lock_dirs <<< "${dirs}"
-          args=()
           for d in "${lock_dirs[@]}"; do
-            args+=(--dirs "${d}")
+            if [ -f "$d/package.json" ] && [ -f "$d/bun.lock" ]; then
+              echo "==> verify frozen lockfile: $d"
+              (cd "$d" && bun install --frozen-lockfile >/dev/null)
+            else
+              echo "skip $d (no package.json or bun.lock)"
+            fi
           done
-          dagger -m beskid_infra/dagger call platform-lockfile-gate \
-            --source=. "${args[@]}" --node-auth-token=env:NODE_AUTH_TOKEN
+          echo "All lockfiles match package.json"
 
       - name: Log in to GHCR
         uses: docker/login-action@v4
