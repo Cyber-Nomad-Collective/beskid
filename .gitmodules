@@ -41,3 +41,6 @@
 [submodule "site/spec-content"]
 	path = site/spec-content
 	url = https://github.com/Cyber-Nomad-Collective/beskid_normative_spec.git
+[submodule "beskid_distrib"]
+	path = beskid_distrib
+	url = ../beskid_distrib.git
