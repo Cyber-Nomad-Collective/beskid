@@ -30,6 +30,10 @@ runs:
       shell: bash
       env:
         COMPILER_SUBMODULE_TOKEN: ${{ inputs.compiler-submodule-token }}
+        # Corelib lowering can recurse deeply; match the Dagger gate's stack
+        # bump. Hoisted here so every gate/release job inherits it from a
+        # single source instead of repeating RUST_MIN_STACK in each workflow.
+        RUST_MIN_STACK: "67108864"
       run: bash ./scripts/ci/init-compiler-submodule.sh
 
     - name: Init beskid_vscode submodule (LSP command contract)

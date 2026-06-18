@@ -15,13 +15,26 @@
 
 ## CI (`scripts/ci/`)
 
-Submodule init only — gates and publish lanes run via Dagger ([`beskid_infra/dagger/README.md`](../beskid_infra/dagger/README.md)).
+Submodule init + native gates/publish lanes that run directly on Blacksmith
+runners (the compiler gate is also Testbox-compatible). Dagger is only used for
+the beskid_infra compose/deploy tooling, not for gates.
 
 | Script | Used by |
 |--------|---------|
 | [`init-submodules.sh`](ci/init-submodules.sh) | GHCR / release / Open VSX / platform matrix checkouts |
 | [`init-compiler-submodule.sh`](ci/init-compiler-submodule.sh) | Compiler + corelib (tags for semver) |
-| [`init-beskid-infra-submodule.sh`](ci/init-beskid-infra-submodule.sh) | Workflows that invoke `beskid_infra/dagger` |
+| [`compiler-rust-gate.sh`](ci/compiler-rust-gate.sh) | Compiler Rust gate (clippy + workspace tests) |
+| [`lsp-command-contract-gate.sh`](ci/lsp-command-contract-gate.sh) | LSP + VS Code command-contract gate |
+| [`corelib-gate.sh`](ci/corelib-gate.sh) | Corelib quality + `beskid test` |
+| [`platform-smoke.sh`](ci/platform-smoke.sh) | Aggregate web-workspace smoke |
+| [`site-build-gate.sh`](ci/site-build-gate.sh) | Auth / platform-spec build gate |
+| [`vscode-gate.sh`](ci/vscode-gate.sh) | VS Code extension `bun test` |
+| [`verify-frozen-lockfile.sh`](ci/verify-frozen-lockfile.sh) | Per-directory `bun install --frozen-lockfile` |
+| [`compute-cli-version.sh`](ci/compute-cli-version.sh) | Rolling CLI/LSP semver |
+| [`build-release-artifact.sh`](ci/build-release-artifact.sh) | Native CLI/LSP release build |
+| [`publish-release-stream.sh`](ci/publish-release-stream.sh) | `gh release` for `cli-*` / `lsp-*` streams |
+| [`corelib-publish.sh`](ci/corelib-publish.sh) | Corelib workspace → pckg |
+| [`open-vsx-publish.sh`](ci/open-vsx-publish.sh) | Open VSX publish (native) |
 | [`resolve-coolify-project-uuid.sh`](ci/resolve-coolify-project-uuid.sh) | Operator: resolve **Beskid** Coolify project UUID |
 
 Coolify compose deploy: [`beskid_infra/scripts/`](../beskid_infra/scripts/README.md).

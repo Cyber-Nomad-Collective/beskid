@@ -1,4 +1,4 @@
-# Corelib: quality gate + test → publish to pckg.beskid-lang.org (Dagger).
+# Corelib: quality + test gate (native) → publish to pckg.beskid-lang.org (Dagger).
 name: Corelib
 
 on:
@@ -54,25 +54,21 @@ jobs:
       group: corelib-gate-${{ github.ref }}
       cancel-in-progress: true
     env:
-      # Opt-in: persists the Dagger build/layer cache across CI runs when the
-      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
-      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
+      # RUST_MIN_STACK is also set by setup-compiler-gate and the gate script;
+      # keep it here for visibility / parity with the compiler gate.
+      RUST_MIN_STACK: "67108864"
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: ./.github/actions/checkout-beskid
+
+      # Native gate: provisions Rust + Bun + compiler/bsol submodules without
+      # Dagger, and surfaces full per-test output in the job log (Dagger only
+      # streamed the final exit code, hiding the failing assertion).
+      - uses: ./.github/actions/setup-compiler-gate
         with:
-          fetch-depth: 0
+          compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
 
-      - uses: ./.github/actions/setup-dagger-module
-
-      - name: Init compiler submodule
-        env:
-          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-        run: bash ./scripts/ci/init-compiler-submodule.sh
-
-      - name: Corelib quality + test gate (Dagger)
-        env:
-          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-        run: dagger -m beskid_infra/dagger call corelib-gate --source=.
+      - name: Corelib quality + test gate (native)
+        run: bash ./scripts/ci/corelib-gate.sh
 
   publish:
     name: Publish corelib to pckg
@@ -80,28 +76,18 @@ jobs:
     needs: [gate]
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 30
-    env:
-      # Opt-in: persists the Dagger build/layer cache across CI runs when the
-      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
-      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: ./.github/actions/checkout-beskid
+
+      # Native publish: provisions Rust + Bun + compiler/bsol submodules without
+      # Dagger, then builds beskid_cli and runs the (pure-Node) publish runner
+      # on the host. The runner itself is unchanged; only its host/container
+      # invocation moved off Dagger.
+      - uses: ./.github/actions/setup-compiler-gate
         with:
-          fetch-depth: 0
+          compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
 
-      - uses: ./.github/actions/setup-dagger-module
-
-      - name: Init compiler submodule
-        env:
-          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-        run: bash ./scripts/ci/init-compiler-submodule.sh
-
-      - name: Publish corelib workspace to pckg
+      - name: Publish corelib workspace to pckg (native)
         env:
           BESKID_PCKG_API_KEY: ${{ secrets.BESKID_PCKG_KEY }}
-        run: |
-          dagger -m beskid_infra/dagger call package-publish publish-corelib \
-            --source=. \
-            --pckg-api-key=env:BESKID_PCKG_API_KEY \
-            --pckg-base-url=https://pckg.beskid-lang.org \
-            --version-bump=patch
+        run: bash ./scripts/ci/corelib-publish.sh patch

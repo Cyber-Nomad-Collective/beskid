@@ -4,14 +4,12 @@ on:
   pull_request:
     paths:
       - "site/spec-content/**"
-      - "beskid_normative_spec/**"
       - "beskid_web_common/packages/spec-core/**"
       - "beskid_web_common/packages/spec-cli/**"
   push:
     branches: [main]
     paths:
       - "site/spec-content/**"
-      - "beskid_normative_spec/**"
 
 concurrency:
   group: normative-spec-${{ github.ref }}
@@ -33,12 +31,7 @@ jobs:
         run: bun install
 
       - name: Validate normative workspace
-        run: |
-          if [ -f site/spec-content/spec.json ]; then
-            bun run beskid_web_common/packages/spec-core/scripts/validate-workspace.ts site/spec-content
-          else
-            bun run beskid_web_common/packages/spec-core/scripts/validate-workspace.ts beskid_normative_spec
-          fi
+        run: bun run beskid_web_common/packages/spec-core/scripts/validate-workspace.ts site/spec-content
 
       - name: Install spec CLI
         working-directory: beskid_web_common
@@ -47,13 +40,8 @@ jobs:
       - name: Smoke test CLI new node
         run: |
           tmp=$(mktemp -d)
-          if [ -f site/spec-content/spec.json ]; then
-            cp -R site/spec-content/spec.json "$tmp/"
-            cp -R site/spec-content/platform-spec "$tmp/"
-          else
-            cp -R beskid_normative_spec/spec.json "$tmp/"
-            cp -R beskid_normative_spec/platform-spec "$tmp/"
-          fi
+          cp -R site/spec-content/spec.json "$tmp/"
+          cp -R site/spec-content/platform-spec "$tmp/"
           cd "$tmp"
           bun run ${{ github.workspace }}/beskid_web_common/packages/spec-cli/bin/spec.mjs new node -t Article --slug platform-spec/smoke-test --title "Smoke"
           bun run ${{ github.workspace }}/beskid_web_common/packages/spec-cli/bin/spec.mjs validate --dir .

@@ -18,10 +18,6 @@ jobs:
     name: ${{ matrix.image }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 45
-    env:
-      # Opt-in: persists the Dagger build/layer cache across CI runs when the
-      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
-      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     strategy:
       fail-fast: false
       matrix:
@@ -81,69 +77,29 @@ jobs:
         with:
           node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
 
-      - uses: ./.github/actions/setup-dagger-module
-        if: matrix.image != 'beskid-pckg'
-
-      - name: Auth hub checks (Dagger)
+      # Native gates (were Dagger `site-build-gate`); output now streams to the
+      # job log directly. beskid-pckg has no web gate.
+      - name: Auth hub checks
         if: matrix.image == 'beskid-auth'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
-        run: |
-          dagger -m beskid_infra/dagger call site-build-gate \
-            --source=. \
-            --app=auth \
-            --node-auth-token=env:NODE_AUTH_TOKEN
+        run: bash ./scripts/ci/site-build-gate.sh auth "${NODE_AUTH_TOKEN}"
 
-      - name: Platform spec checks (Dagger)
+      - name: Platform spec checks
         if: matrix.image == 'beskid-platform-spec'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
-        run: |
-          dagger -m beskid_infra/dagger call site-build-gate \
-            --source=. \
-            --app=platform-spec \
-            --node-auth-token=env:NODE_AUTH_TOKEN
+        run: bash ./scripts/ci/site-build-gate.sh platform-spec "${NODE_AUTH_TOKEN}"
 
       - name: Verify lockfiles
         if: matrix.image != 'beskid-pckg' && matrix.image != 'beskid-auth' && matrix.image != 'beskid-platform-spec'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
         run: |
-          set -euo pipefail
           case "${{ matrix.image }}" in
-            beskid-site)
-              dirs="."
-              ;;
-            beskid-tracker)
-              dirs="beskid_tracker"
-              ;;
-            beskid-nexus)
-              dirs="beskid_nexus/gitnexus,beskid_nexus/gitnexus-web"
-              ;;
-            *)
-              dirs="."
-              ;;
+            beskid-site)    bash ./scripts/ci/verify-frozen-lockfile.sh "." ;;
+            beskid-tracker) bash ./scripts/ci/verify-frozen-lockfile.sh "beskid_tracker" ;;
+            beskid-nexus)   bash ./scripts/ci/verify-frozen-lockfile.sh "beskid_nexus/gitnexus,beskid_nexus/gitnexus-web" ;;
+            *)              bash ./scripts/ci/verify-frozen-lockfile.sh "." ;;
           esac
-          IFS=',' read -ra lock_dirs <<< "${dirs}"
-          for d in "${lock_dirs[@]}"; do
-            if [ -f "$d/package.json" ] && [ -f "$d/bun.lock" ]; then
-              echo "==> verify frozen lockfile: $d"
-              (cd "$d" && bun install --frozen-lockfile >/dev/null)
-            else
-              echo "skip $d (no package.json or bun.lock)"
-            fi
-          done
-          echo "All lockfiles match package.json"
-
-      - name: Log in to GHCR
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.NODE_AUTH_TOKEN }}
-
-      - name: Setup Blacksmith Builder
-        uses: useblacksmith/setup-docker-builder@ab5c1da94f53f5cd75c1038092aa276dddfccbba # v1
 
       - name: Docker metadata
         id: meta
@@ -157,39 +113,13 @@ jobs:
             type=raw,value=staging,enable=${{ github.ref_name == 'stg' }}
             type=raw,value=latest,enable=${{ github.ref_name == 'main' }}
 
-      - name: Build and push
-        id: push
-        continue-on-error: true
-        uses: useblacksmith/build-push-action@fb9e3e6a9299c78462bfadd0d93352c316adc9b8 # v2
+      - name: Build and push (with retry)
+        uses: ./.github/actions/build-beskid-service
         with:
+          image: ${{ matrix.image }}
           context: ${{ matrix.context }}
-          file: ${{ matrix.dockerfile }}
-          push: ${{ github.event_name != 'pull_request' }}
+          dockerfile: ${{ matrix.dockerfile }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          provenance: false
-          sbom: false
-          build-args: |
-            NODE_AUTH_TOKEN=${{ matrix.node_auth && secrets.NODE_AUTH_TOKEN || '' }}
-
-      - name: Re-login to GHCR (retry)
-        if: steps.push.outcome == 'failure'
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.NODE_AUTH_TOKEN }}
-
-      - name: Build and push (retry)
-        if: steps.push.outcome == 'failure'
-        uses: useblacksmith/build-push-action@fb9e3e6a9299c78462bfadd0d93352c316adc9b8 # v2
-        with:
-          context: ${{ matrix.context }}
-          file: ${{ matrix.dockerfile }}
+          node-auth: ${{ matrix.node_auth }}
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          provenance: false
-          sbom: false
-          build-args: |
-            NODE_AUTH_TOKEN=${{ matrix.node_auth && secrets.NODE_AUTH_TOKEN || '' }}

@@ -43,7 +43,7 @@ jobs:
             dockerfile: site/auth/Dockerfile
             submodule: beskid_web_common
             prebuild: true
-            node_auth: false
+            node_auth: true
           - image: beskid-platform-spec
             context: .
             dockerfile: site/platform-spec/Dockerfile
@@ -94,54 +94,17 @@ jobs:
         with:
           node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
 
-      - name: Log in to GHCR
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
+      - name: Build and push (${{ matrix.image }}, with retry)
+        uses: ./.github/actions/build-beskid-service
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.NODE_AUTH_TOKEN }}
-
-      - name: Setup Blacksmith Builder
-        uses: useblacksmith/setup-docker-builder@ab5c1da94f53f5cd75c1038092aa276dddfccbba # v1
-
-      - name: Build and push (${{ matrix.image }})
-        id: push
-        continue-on-error: true
-        uses: useblacksmith/build-push-action@fb9e3e6a9299c78462bfadd0d93352c316adc9b8 # v2
-        with:
+          image: ${{ matrix.image }}
           context: ${{ matrix.context }}
-          file: ${{ matrix.dockerfile }}
-          push: true
+          dockerfile: ${{ matrix.dockerfile }}
           tags: |
             ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:${{ steps.tag.outputs.value }}
             ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:latest
-          provenance: false
-          sbom: false
-          build-args: |
-            NODE_AUTH_TOKEN=${{ matrix.node_auth && secrets.NODE_AUTH_TOKEN || '' }}
-
-      - name: Re-login to GHCR (retry)
-        if: steps.push.outcome == 'failure'
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.NODE_AUTH_TOKEN }}
-
-      - name: Build and push (${{ matrix.image }}, retry)
-        if: steps.push.outcome == 'failure'
-        uses: useblacksmith/build-push-action@fb9e3e6a9299c78462bfadd0d93352c316adc9b8 # v2
-        with:
-          context: ${{ matrix.context }}
-          file: ${{ matrix.dockerfile }}
-          push: true
-          tags: |
-            ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:${{ steps.tag.outputs.value }}
-            ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:latest
-          provenance: false
-          sbom: false
-          build-args: |
-            NODE_AUTH_TOKEN=${{ matrix.node_auth && secrets.NODE_AUTH_TOKEN || '' }}
+          node-auth: ${{ matrix.node_auth }}
+          push: 'true'
 
   # Open VSX publishes via publish-open-vsx.yml (also on release:published).
 

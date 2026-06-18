@@ -71,23 +71,23 @@ concurrency:
 
 jobs:
   smoke:
-    name: Platform smoke (Dagger)
+    name: Platform smoke
     if: github.event_name == 'pull_request' || github.event_name == 'push'
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 30
-    env:
-      # Opt-in: persists the Dagger build/layer cache across CI runs when the
-      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
-      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
 
-      - uses: ./.github/actions/setup-dagger-module
+      # Native smoke (was Dagger `platform-smoke`, which exited 127 on a missing
+      # command inside the container). Pins Bun/Node and inits beskid_web_common.
+      - uses: ./.github/actions/setup-beskid-web
+        with:
+          node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Platform smoke
-        run: dagger -m beskid_infra/dagger call platform-smoke --source=.
+        run: bash ./scripts/ci/platform-smoke.sh
 
   images:
     if: github.event_name != 'workflow_dispatch' || inputs.skip_images != true

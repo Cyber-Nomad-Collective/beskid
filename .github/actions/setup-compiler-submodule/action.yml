@@ -1,0 +1,25 @@
+# Setup compiler submodule — initialize the compiler (+ recursive corelib)
+# and beskid_bsol submodules without installing any toolchain.
+#
+# Collapses the verbatim "Init compiler submodule" block that was repeated across
+# the compiler release jobs and the corelib gate. Use setup-compiler-gate when you
+# also need the Rust/Bun toolchain (compiler-rust-gate.sh); use this action when
+# the job only needs the source tree (Dagger release builds, native corelib gate
+# that provisions its own toolchain).
+name: Setup compiler submodule
+description: Init compiler (+ corelib) and beskid_bsol submodules for jobs that only need the source tree.
+
+inputs:
+  compiler-submodule-token:
+    description: Token used to fetch the private beskid_compiler submodule.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Init compiler (+ corelib) and beskid_bsol submodules
+      shell: bash
+      env:
+        COMPILER_SUBMODULE_TOKEN: ${{ inputs.compiler-submodule-token }}
+      run: bash ./scripts/ci/init-compiler-submodule.sh

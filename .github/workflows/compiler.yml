@@ -1,5 +1,5 @@
-# Compiler submodule: Rust gate (Testbox-compatible scripts, no Dagger)
-# + CLI/LSP releases (Dagger) on beskid_compiler.
+# Compiler submodule: native Rust gate (Testbox-compatible scripts, no Dagger)
+# + CLI/LSP releases on beskid_compiler (native per-OS build matrix).
 name: Compiler
 
 on:
@@ -55,9 +55,7 @@ jobs:
       group: compiler-gate-${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-        with:
-          fetch-depth: 0
+      - uses: ./.github/actions/checkout-beskid
 
       - uses: ./.github/actions/setup-compiler-gate
         with:
@@ -74,31 +72,22 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 15
-    env:
-      # Opt-in: persists the Dagger build/layer cache across CI runs when the
-      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
-      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     outputs:
       version: ${{ steps.version.outputs.version }}
       compiler_sha: ${{ steps.compiler.outputs.sha }}
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: ./.github/actions/checkout-beskid
+
+      - uses: ./.github/actions/setup-compiler-submodule
         with:
-          fetch-depth: 0
-
-      - uses: ./.github/actions/setup-dagger-module
-
-      - name: Init compiler submodule
-        env:
-          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-        run: bash ./scripts/ci/init-compiler-submodule.sh
+          compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
 
       - id: compiler
         name: Record compiler submodule SHA
         run: echo "sha=$(git -C compiler rev-parse HEAD)" >> "${GITHUB_OUTPUT}"
 
       - id: version
-        name: Compute rolling semver
+        name: Compute rolling semver (native)
         env:
           GITHUB_REF: ${{ github.ref }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
@@ -106,12 +95,7 @@ jobs:
           GITHUB_RUN_NUMBER: ${{ github.run_number }}
         run: |
           set -euo pipefail
-          v="$(dagger -m beskid_infra/dagger call compute-cli-version \
-            --source=. \
-            --github-ref="${GITHUB_REF}" \
-            --github-ref-name="${GITHUB_REF_NAME}" \
-            --github-event-name="${GITHUB_EVENT_NAME}" \
-            --github-run-number="${GITHUB_RUN_NUMBER}" | tr -d '[:space:]')"
+          v="$(bash ./scripts/ci/compute-cli-version.sh | tr -d '[:space:]')"
           echo "version=${v}" >> "${GITHUB_OUTPUT}"
           echo "Resolved CLI/LSP version: ${v}"
 
@@ -119,48 +103,42 @@ jobs:
     name: Build CLI (${{ matrix.asset_name }})
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [gate, version]
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 60
-    env:
-      # Opt-in: persists the Dagger build/layer cache across CI runs when the
-      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
-      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - target: x86_64-unknown-linux-gnu
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
             asset_name: beskid-linux-amd64
-            runner_os: Linux
-          - target: aarch64-apple-darwin
+          - os: macos-latest
+            target: aarch64-apple-darwin
             asset_name: beskid-darwin-arm64
-            runner_os: macOS
-          - target: x86_64-pc-windows-msvc
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
             asset_name: beskid-windows-amd64.exe
-            runner_os: Windows
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: ./.github/actions/checkout-beskid
+
+      - uses: ./.github/actions/setup-compiler-submodule
         with:
-          fetch-depth: 0
+          compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
 
-      - uses: ./.github/actions/setup-dagger-module
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
 
-      - name: Init compiler submodule
-        env:
-          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-        run: bash ./scripts/ci/init-compiler-submodule.sh
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          workspaces: compiler
 
-      - name: Build CLI artifact (Dagger)
+      - name: Build CLI artifact (native)
+        shell: bash
         env:
           RELEASE_VERSION: ${{ needs.version.outputs.version }}
-        run: |
-          dagger -m beskid_infra/dagger call compiler-release build-cli-release \
-            --compiler-source=compiler \
-            --release-version="${RELEASE_VERSION}" \
-            --target="${{ matrix.target }}" \
-            --asset-name="${{ matrix.asset_name }}" \
-            --runner-os="${{ matrix.runner_os }}" \
-            export --path="${{ matrix.asset_name }}"
+        run: bash ./scripts/ci/build-release-artifact.sh beskid_cli beskid_cli "${{ matrix.target }}" "${{ matrix.asset_name }}" "${RELEASE_VERSION}"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
@@ -174,16 +152,10 @@ jobs:
     needs: [version, release-cli-build]
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
-    env:
-      # Opt-in: persists the Dagger build/layer cache across CI runs when the
-      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
-      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-
-      - uses: ./.github/actions/setup-dagger-module
+      - uses: ./.github/actions/checkout-beskid
 
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
@@ -191,81 +163,61 @@ jobs:
           pattern: cli-beskid-*
           merge-multiple: true
 
-      - name: Flatten CLI artifact names
-        run: |
-          set -euo pipefail
-          cd release-assets
-          for f in cli-beskid-*; do
-            [[ -e "$f" ]] || continue
-            mv -f "$f" "${f#cli-}"
-          done
-          ls -la
-
-      - name: Publish cli-v* and cli-latest (Dagger)
+      - name: Publish cli-v* and cli-latest (native)
         env:
           RELEASE_VERSION: ${{ needs.version.outputs.version }}
           COMPILER_SHA: ${{ needs.version.outputs.compiler_sha }}
           COMPILER_RELEASE_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN }}
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
         run: |
+          set -euo pipefail
           export GH_TOKEN="${COMPILER_RELEASE_TOKEN:-${COMPILER_SUBMODULE_TOKEN}}"
           if [[ -z "${GH_TOKEN}" ]]; then
             echo "Set COMPILER_RELEASE_TOKEN or COMPILER_SUBMODULE_TOKEN" >&2
             exit 1
           fi
-          dagger -m beskid_infra/dagger call compiler-release publish-release-stream \
-            --release-stream=cli \
-            --release-version="${RELEASE_VERSION}" \
-            --compiler-sha="${COMPILER_SHA}" \
-            --assets=release-assets \
-            --github-token=env:GH_TOKEN
+          bash ./scripts/ci/publish-release-stream.sh cli "${RELEASE_VERSION}" "${COMPILER_SHA}" release-assets
 
   release-lsp-build:
     name: Build LSP (${{ matrix.asset_name }})
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [gate, version]
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 60
-    env:
-      # Opt-in: persists the Dagger build/layer cache across CI runs when the
-      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
-      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - target: x86_64-unknown-linux-gnu
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
             asset_name: beskid_lsp-linux-amd64
-            runner_os: Linux
-          - target: aarch64-apple-darwin
+          - os: macos-latest
+            target: aarch64-apple-darwin
             asset_name: beskid_lsp-darwin-arm64
-            runner_os: macOS
-          - target: x86_64-pc-windows-msvc
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
             asset_name: beskid_lsp-windows-amd64.exe
-            runner_os: Windows
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: ./.github/actions/checkout-beskid
+
+      - uses: ./.github/actions/setup-compiler-submodule
         with:
-          fetch-depth: 0
+          compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
 
-      - uses: ./.github/actions/setup-dagger-module
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
 
-      - name: Init compiler submodule
-        env:
-          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-        run: bash ./scripts/ci/init-compiler-submodule.sh
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          workspaces: compiler
 
-      - name: Build LSP artifact (Dagger)
+      - name: Build LSP artifact (native)
+        shell: bash
         env:
           RELEASE_VERSION: ${{ needs.version.outputs.version }}
-        run: |
-          dagger -m beskid_infra/dagger call compiler-release build-lsp-release \
-            --compiler-source=compiler \
-            --release-version="${RELEASE_VERSION}" \
-            --target="${{ matrix.target }}" \
-            --asset-name="${{ matrix.asset_name }}" \
-            --runner-os="${{ matrix.runner_os }}" \
-            export --path="${{ matrix.asset_name }}"
+        run: bash ./scripts/ci/build-release-artifact.sh beskid_lsp beskid_lsp "${{ matrix.target }}" "${{ matrix.asset_name }}" "${RELEASE_VERSION}"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
@@ -279,16 +231,10 @@ jobs:
     needs: [version, release-lsp-build]
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
-    env:
-      # Opt-in: persists the Dagger build/layer cache across CI runs when the
-      # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
-      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-
-      - uses: ./.github/actions/setup-dagger-module
+      - uses: ./.github/actions/checkout-beskid
 
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
@@ -296,31 +242,17 @@ jobs:
           pattern: lsp-beskid_lsp-*
           merge-multiple: true
 
-      - name: Flatten LSP artifact names
-        run: |
-          set -euo pipefail
-          cd release-assets
-          for f in lsp-beskid_lsp-*; do
-            [[ -e "$f" ]] || continue
-            mv -f "$f" "${f#lsp-}"
-          done
-          ls -la
-
-      - name: Publish lsp-v* and lsp-latest (Dagger)
+      - name: Publish lsp-v* and lsp-latest (native)
         env:
           RELEASE_VERSION: ${{ needs.version.outputs.version }}
           COMPILER_SHA: ${{ needs.version.outputs.compiler_sha }}
           COMPILER_RELEASE_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN }}
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
         run: |
+          set -euo pipefail
           export GH_TOKEN="${COMPILER_RELEASE_TOKEN:-${COMPILER_SUBMODULE_TOKEN}}"
           if [[ -z "${GH_TOKEN}" ]]; then
             echo "Set COMPILER_RELEASE_TOKEN or COMPILER_SUBMODULE_TOKEN" >&2
             exit 1
           fi
-          dagger -m beskid_infra/dagger call compiler-release publish-release-stream \
-            --release-stream=lsp \
-            --release-version="${RELEASE_VERSION}" \
-            --compiler-sha="${COMPILER_SHA}" \
-            --assets=release-assets \
-            --github-token=env:GH_TOKEN
+          bash ./scripts/ci/publish-release-stream.sh lsp "${RELEASE_VERSION}" "${COMPILER_SHA}" release-assets

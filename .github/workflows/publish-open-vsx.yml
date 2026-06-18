@@ -1,4 +1,9 @@
-# Open VSX publish (Dagger: gates → LSP build → VSIX → registry).
+# Open VSX publish: native LSP build (per-OS) → bundle → publish to Open VSX.
+#
+# Ported off Dagger so the publish path no longer depends on the Dagger engine
+# or the beskid_infra TS module. Mirrors the staging design: a GitHub-hosted OS
+# matrix builds the LSP binary natively, runs the gates natively (output visible
+# in the log), then assembles + publishes the VSIX with retry/backoff.
 name: Publish VS Code Extension to Open VSX
 
 on:
@@ -18,25 +23,35 @@ concurrency:
 jobs:
   publish:
     name: Publish (${{ matrix.label }})
-    runs-on: blacksmith-4vcpu-ubuntu-2404
-    timeout-minutes: 40
+    # Skip the whole matrix when the publish token isn't configured for this
+    # ref/env, instead of failing deep inside the publish pipeline. Open VSX
+    # publishes run on push to main and on release; both expose secrets, so an
+    # empty OVSX_TOKEN here means a repo/env misconfiguration that should be
+    # surfaced as a clear skip, not a red stack trace.
+    if: ${{ secrets.OVSX_TOKEN != '' }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 50
     strategy:
       fail-fast: false
       matrix:
         include:
-          - label: linux-x64
+          - os: ubuntu-latest
+            label: linux-x64
             platform: linux-x64
             bin_name: beskid_lsp
             rust_target: ""
-          - label: darwin-arm64
+          - os: macos-latest
+            label: darwin-arm64
             platform: darwin-arm64
             bin_name: beskid_lsp
             rust_target: ""
-          - label: darwin-x64
+          - os: macos-latest
+            label: darwin-x64
             platform: darwin-x64
             bin_name: beskid_lsp
             rust_target: x86_64-apple-darwin
-          - label: win32-x64
+          - os: windows-latest
+            label: win32-x64
             platform: win32-x64
             bin_name: beskid_lsp.exe
             rust_target: ""
@@ -48,19 +63,47 @@ jobs:
           fetch-tags: true
           persist-credentials: true
 
-      - uses: ./.github/actions/setup-dagger-module
-
-      - name: Publish Open VSX (Dagger)
+      - name: Init compiler (+ corelib) and beskid_bsol submodules
+        shell: bash
         env:
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+        run: bash ./scripts/ci/init-compiler-submodule.sh
+
+      - name: Init beskid_vscode submodule
+        shell: bash
+        env:
           BESKID_VSCODE_SUBMODULE_URL: https://github.com/Cyber-Nomad-Collective/beskid_vscode.git
           BESKID_VSCODE_SUBMODULE_TOKEN: ${{ secrets.BESKID_VSCODE_SUBMODULE_TOKEN }}
+        run: bash ./scripts/ci/init-submodules.sh beskid_vscode
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_target }}
+
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          workspaces: compiler
+
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.3.14"
+
+      # Native gates — output streams directly to the job log.
+      - name: VS Code extension gate
+        shell: bash
+        run: bash ./scripts/ci/vscode-gate.sh
+
+      - name: Compiler Rust gate
+        shell: bash
+        env:
+          RUST_MIN_STACK: "67108864"
+        run: bash ./scripts/ci/compiler-rust-gate.sh
+
+      - name: Publish Open VSX (native)
+        shell: bash
+        env:
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
           GITHUB_REF_TYPE: ${{ github.ref_type }}
-        run: |
-          dagger -m beskid_infra/dagger call open-vsx-publish \
-            --source=. \
-            --platform="${{ matrix.platform }}" \
-            --bin-name="${{ matrix.bin_name }}" \
-            --rust-target="${{ matrix.rust_target }}"
+        run: bash ./scripts/ci/open-vsx-publish.sh "${{ matrix.platform }}" "${{ matrix.bin_name }}" "${{ matrix.rust_target }}"
