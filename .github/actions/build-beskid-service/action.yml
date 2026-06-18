@@ -33,10 +33,10 @@ inputs:
     required: false
     default: "false"
   node-auth-token:
-    description: |
-      GitHub Packages token for GHCR login + npm build-arg. Composite actions
-      cannot read the `secrets` context, so callers must forward the secret
-      explicitly (e.g. ${{ secrets.NODE_AUTH_TOKEN }}).
+    description: >-
+      GitHub Packages token for GHCR login and npm build-arg. Composite actions
+      cannot read the secrets context, so callers must forward the GitHub
+      Packages token explicitly via this input.
     required: true
   push:
     description: When false, build only (no push) — e.g. for pull_request runs.
