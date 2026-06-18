@@ -27,6 +27,41 @@ function packageSrc(specifier: string): string {
 	return path.join(resolvedDir, "src");
 }
 
+// Resolve a subpath of a @beskid package to its source file, preferring the
+// published node_modules copy and falling back to the beskid_web_common
+// workspace source when the published version doesn't yet ship that subpath
+// (publish-gap bridge — remove once the subpath ships on the registry).
+function packageSubpath(specifier: string, subpath: string): string {
+	const pkgSrc = packageSrc(specifier);
+	const published = path.join(pkgSrc, subpath);
+	if (fs.existsSync(published)) {
+		return published;
+	}
+	// Workspace fallback: beskid_web_common is a sibling submodule, checked
+	// out by setup-beskid-web / init-submodules.sh in CI and present locally.
+	// rootDir is site/platform-spec, so ../.. reaches the superrepo root;
+	// the workspace package dir is beskid-<name> (e.g. @beskid/ui-react ->
+	// packages/beskid-ui-react).
+	const segments = specifier.split("/");
+	const pkgName = `beskid-${segments[segments.length - 1]}`;
+	const workspaceSrc = path.join(
+		rootDir,
+		"..",
+		"..",
+		"beskid_web_common",
+		"packages",
+		pkgName,
+		"src",
+		subpath,
+	);
+	if (fs.existsSync(workspaceSrc)) {
+		return workspaceSrc;
+	}
+	// Last resort: return the published path so the error message points at
+	// the expected location rather than a confusing fallback.
+	return published;
+}
+
 const beskidUiSrc = packageSrc("@beskid/beskid-ui");
 const uiReactSrc = packageSrc("@beskid/ui-react");
 
@@ -37,7 +72,11 @@ const packageAliases = [
 	},
 	{
 		find: "@beskid/ui-react/platform-spec",
-		replacement: path.join(uiReactSrc, "platform-spec/index.ts"),
+		replacement: packageSubpath("@beskid/ui-react", "platform-spec/index.ts"),
+	},
+	{
+		find: "@beskid/ui-react/architecture-graph",
+		replacement: packageSubpath("@beskid/ui-react", "architecture-graph/index.ts"),
 	},
 	{
 		find: "@beskid/ui-react",
