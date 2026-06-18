@@ -27,6 +27,7 @@ jobs:
   images:
     name: Release images
     runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:

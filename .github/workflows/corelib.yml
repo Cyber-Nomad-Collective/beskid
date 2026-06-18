@@ -46,6 +46,13 @@ jobs:
   gate:
     name: Corelib gate
     runs-on: blacksmith-4vcpu-ubuntu-2404
+    # Hard ceiling so a hung corelib test cannot burn the 6h GitHub cap.
+    timeout-minutes: 45
+    # Supersede an in-flight gate when a newer commit lands (including on main);
+    # the publish job uses the workflow-level group and is never cancelled.
+    concurrency:
+      group: corelib-gate-${{ github.ref }}
+      cancel-in-progress: true
     env:
       # Opt-in: persists the Dagger build/layer cache across CI runs when the
       # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
@@ -72,6 +79,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [gate]
     runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 30
     env:
       # Opt-in: persists the Dagger build/layer cache across CI runs when the
       # DAGGER_CLOUD_TOKEN secret is set. No-op (empty string) when unset.
