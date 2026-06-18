@@ -1,0 +1,370 @@
+# Distribution: wrap the rolling cli-latest / lsp-latest release assets into
+# per-platform installers and publish them, in a single CI run.
+#
+# Triggered as a workflow_run on the Compiler workflow completing successfully
+# (decoupled from compiler.yml). Resolves the rolling version from
+# Cyber-Nomad-Collective/beskid_compiler, fans out to the platform packaging
+# jobs, and publishes:
+#   - Windows .msi          -> beskid_compiler cli-latest / cli-v<ver> release
+#   - macOS brew formula    -> Cyber-Nomad-Collective/beskid_homebrew tap
+#   - Arch AUR              -> beskid-bin on the AUR
+#   - Ubuntu/Debian .deb    -> beskid_compiler cli-latest / cli-v<ver> release
+#   - Snap                  -> Snap Store (snap name: beskid)
+#
+# All platform recipes live in the beskid_distrib submodule (content-only);
+# this workflow holds only the orchestration.
+name: Distribute
+
+on:
+  workflow_run:
+    workflows: [Compiler]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Re-publish even if the rolling version is unchanged
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# Serialize per-default-branch; never cancel an in-flight publish run.
+concurrency:
+  group: distribute-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  COMPILER_REPO: Cyber-Nomad-Collective/beskid_compiler
+  HOMEBREW_TAP_REPO: Cyber-Nomad-Collective/beskid_homebrew
+
+jobs:
+  # Guard + resolve job. Only proceeds when the triggering Compiler run actually
+  # published a rolling release (it skips the publish jobs on PRs), and when the
+  # rolling version differs from the last published distrib marker.
+  resolve-rolling:
+    name: Resolve rolling release
+    # `workflow_run` sends conclusions other than success for failed/aborted
+    # Compiler runs; skip those. Manual dispatch always runs.
+    if: ${{ (github.event.workflow_run.conclusion == 'success') || (github.event_name == 'workflow_dispatch') }}
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      compiler_sha: ${{ steps.sha.outputs.compiler_sha }}
+      cli_darwin_sha: ${{ steps.shas.outputs.cli_darwin_sha }}
+      cli_linux_sha: ${{ steps.shas.outputs.cli_linux_sha }}
+      lsp_linux_sha: ${{ steps.shas.outputs.lsp_linux_sha }}
+      should_run: ${{ steps.guard.outputs.should_run }}
+    steps:
+      # NOTE: the first step MUST be a real actions/checkout — a local composite
+      # action cannot be loaded before the repository is checked out.
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+          # beskid_distrib holds the platform recipes + scripts.
+          submodules: recursive
+
+      - name: Init beskid_distrib submodule (shallow)
+        run: ./scripts/ci/init-submodules.sh beskid_distrib
+
+      - name: Resolve rolling version
+        id: version
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+        run: |
+          set -euo pipefail
+          v="$(bash beskid_distrib/scripts/resolve-version.sh | tr -d '[:space:]')"
+          [[ -n "$v" ]] || { echo "empty rolling version" >&2; exit 1; }
+          echo "version=${v}" >> "${GITHUB_OUTPUT}"
+          echo "Resolved rolling version: ${v}"
+
+      - name: Record compiler SHA (target_commitish of cli-latest)
+        id: sha
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+        run: |
+          set -euo pipefail
+          s="$(gh release view cli-latest --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
+          echo "compiler_sha=${s}" >> "${GITHUB_OUTPUT}"
+
+      - name: Compute sha256 of rolling assets
+        id: shas
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          gh release download cli-latest  --repo "${COMPILER_REPO}" --pattern "beskid-darwin-arm64"     --dir "$tmp" --clobber
+          gh release download cli-latest  --repo "${COMPILER_REPO}" --pattern "beskid-linux-amd64"     --dir "$tmp" --clobber
+          gh release download lsp-latest  --repo "${COMPILER_REPO}" --pattern "beskid_lsp-linux-amd64" --dir "$tmp" --clobber
+          {
+            echo "cli_darwin_sha=$(sha256sum "$tmp/beskid-darwin-arm64"   | awk '{print $1}')"
+            echo "cli_linux_sha=$(sha256sum "$tmp/beskid-linux-amd64"     | awk '{print $1}')"
+            echo "lsp_linux_sha=$(sha256sum "$tmp/beskid_lsp-linux-amd64" | awk '{print $1}')"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Guard — publish only when the version changed (or forced)
+        id: guard
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          FORCE: ${{ inputs.force }}
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+        run: |
+          set -euo pipefail
+          if [[ "${FORCE}" == "true" ]]; then
+            echo "should_run=true" >> "${GITHUB_OUTPUT}"
+            echo "Forced re-publish."
+            exit 0
+          fi
+          # Marker: the version uploaded to the beskid_compiler cli-latest release
+          # as distrib-version.txt by a previous successful run.
+          prev="$(gh release download cli-latest --repo "${COMPILER_REPO}" \
+                    --pattern "distrib-version.txt" --output - 2>/dev/null | tr -d '[:space:]' || true)"
+          echo "Previous distrib marker: ${prev:-<none>}"
+          if [[ "$prev" == "$VERSION" ]]; then
+            echo "Version unchanged (${VERSION}); skipping platform jobs."
+            echo "should_run=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "should_run=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+  # Stamp the distrib marker so the next run knows this version was published.
+  # Runs once after the guard passes, before the fan-out, so partial platform
+  # failures still record an attempt.
+  stamp-marker:
+    name: Stamp distrib marker
+    needs: resolve-rolling
+    if: needs.resolve-rolling.outputs.should_run == 'true'
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - name: Upload distrib-version.txt to cli-latest + cli-v<ver>
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
+        run: |
+          set -euo pipefail
+          printf '%s\n' "${VERSION}" > distrib-version.txt
+          gh release upload cli-latest --repo "${COMPILER_REPO}" distrib-version.txt --clobber
+          tag="cli-v${VERSION}"
+          if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
+            gh release upload "$tag" --repo "${COMPILER_REPO}" distrib-version.txt --clobber || true
+          fi
+
+  windows-msi:
+    name: Windows MSI
+    needs: [resolve-rolling, stamp-marker]
+    if: needs.resolve-rolling.outputs.should_run == 'true'
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+      - name: Init beskid_distrib submodule
+        run: ./scripts/ci/init-submodules.sh beskid_distrib
+        shell: bash
+
+      - name: Fetch rolling CLI + LSP (windows-amd64)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+        run: |
+          mkdir -p build
+          bash beskid_distrib/scripts/fetch-rolling-assets.sh cli  x86_64-pc-windows-msvc build/beskid.exe
+          bash beskid_distrib/scripts/fetch-rolling-assets.sh lsp  x86_64-pc-windows-msvc build/beskid_lsp.exe
+
+      - name: Setup .NET (for WiX v4 dotnet tool)
+        uses: actions/setup-dotnet@3940d3729529571e04ac2bf6e1a500d4b2566b8c # v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build MSI
+        shell: bash
+        env:
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
+        run: bash beskid_distrib/windows/build-msi.sh "${VERSION}" "$PWD/build" "$PWD/beskid_distrib/assets"
+
+      - name: Upload MSI to beskid_compiler releases
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
+        run: |
+          set -euo pipefail
+          msi="beskid-${VERSION}-windows-amd64.msi"
+          gh release upload cli-latest --repo "${COMPILER_REPO}" "${msi}" --clobber
+          tag="cli-v${VERSION}"
+          if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
+            gh release upload "$tag" --repo "${COMPILER_REPO}" "${msi}" --clobber || true
+          fi
+
+  macos-brew:
+    name: macOS Homebrew formula
+    needs: [resolve-rolling, stamp-marker]
+    if: needs.resolve-rolling.outputs.should_run == 'true'
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+      - name: Init beskid_distrib submodule
+        run: ./scripts/ci/init-submodules.sh beskid_distrib
+
+      # NOTE: we push the formula directly via git rather than using
+      # Justintime50/homebrew-releaser. That action (a) is incompatible with
+      # monorepos, (b) always reads the release from the repo the workflow runs
+      # in, and (c) names the formula after the repo — none of which fit our
+      # cross-repo setup (release lives on beskid_compiler; workflow runs in the
+      # superrepo; we want `brew install beskid`, not `beskid_compiler`). The
+      # formula template is rendered here with the rolling version + sha256 and
+      # committed to beskid_homebrew. See MacOS_Guide.md.
+      - name: Render + push formula to beskid_homebrew tap
+        env:
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
+          CLI_DARWIN_SHA: ${{ needs.resolve-rolling.outputs.cli_darwin_sha }}
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_GIT_TOKEN }}
+        run: |
+          set -euo pipefail
+          tmp="$(mktemp -d)"
+          git clone --depth=1 "https://x-access-token:${GH_TOKEN}@github.com/${HOMEBREW_TAP_REPO}.git" "$tmp"
+          mkdir -p "$tmp/Formula"
+          sed -e "s/__VERSION__/${VERSION}/g" \
+              -e "s/__SHA256__/${CLI_DARWIN_SHA}/g" \
+              beskid_distrib/macos/Formula/beskid.rb.tpl > "$tmp/Formula/beskid.rb"
+          echo "Rendered Formula/beskid.rb:"; cat "$tmp/Formula/beskid.rb"
+          cd "$tmp"
+          git config user.name  "beskid-ci"
+          git config user.email "ci@beskid-lang.org"
+          git add Formula/beskid.rb
+          if git diff --cached --quiet; then
+            echo "Formula unchanged; nothing to push."
+            exit 0
+          fi
+          git commit -m "bump beskid to ${VERSION}"
+          git push origin HEAD
+
+  arch-aur:
+    name: Arch AUR (beskid-bin)
+    needs: [resolve-rolling, stamp-marker]
+    if: needs.resolve-rolling.outputs.should_run == 'true'
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+      - name: Init beskid_distrib submodule
+        run: ./scripts/ci/init-submodules.sh beskid_distrib
+
+      - name: Stamp PKGBUILD version + sha256sums
+        env:
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
+          CLI_LINUX_SHA: ${{ needs.resolve-rolling.outputs.cli_linux_sha }}
+          LSP_LINUX_SHA: ${{ needs.resolve-rolling.outputs.lsp_linux_sha }}
+        run: |
+          set -euo pipefail
+          # Strip a leading 'v' if present (AUR pkgver is bare semver).
+          bare="${VERSION#v}"
+          sed -e "s/__VERSION__/${bare}/g" \
+              -e "s/__CLI_SHA256__/${CLI_LINUX_SHA}/g" \
+              -e "s/__LSP_SHA256__/${LSP_LINUX_SHA}/g" \
+              beskid_distrib/arch/PKGBUILD > PKGBUILD
+          echo "Stamped PKGBUILD:"; cat PKGBUILD
+
+      - name: Publish to AUR
+        uses: KSXGitHub/github-actions-deploy-aur@v3
+        with:
+          pkgname: beskid-bin
+          pkgbuild: ./PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: "Update beskid-bin to ${{ needs.resolve-rolling.outputs.version }}"
+
+  ubuntu-deb:
+    name: Ubuntu/Debian .deb
+    needs: [resolve-rolling, stamp-marker]
+    if: needs.resolve-rolling.outputs.should_run == 'true'
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+      - name: Init beskid_distrib submodule
+        run: ./scripts/ci/init-submodules.sh beskid_distrib
+
+      - name: Fetch rolling CLI + LSP (linux-amd64)
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+        run: |
+          mkdir -p build
+          bash beskid_distrib/scripts/fetch-rolling-assets.sh cli x86_64-unknown-linux-gnu
+          bash beskid_distrib/scripts/fetch-rolling-assets.sh lsp x86_64-unknown-linux-gnu
+
+      - name: Build .deb
+        env:
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
+        run: bash beskid_distrib/deb/build-deb.sh "${VERSION}" "$PWD/build"
+
+      - name: Upload .deb to beskid_compiler releases
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
+        run: |
+          set -euo pipefail
+          deb="beskid-${VERSION}-amd64.deb"
+          gh release upload cli-latest --repo "${COMPILER_REPO}" "${deb}" --clobber
+          tag="cli-v${VERSION}"
+          if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
+            gh release upload "$tag" --repo "${COMPILER_REPO}" "${deb}" --clobber || true
+          fi
+
+  linux-snap:
+    name: Snap (beskid)
+    needs: [resolve-rolling, stamp-marker]
+    if: needs.resolve-rolling.outputs.should_run == 'true'
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+      - name: Init beskid_distrib submodule
+        run: ./scripts/ci/init-submodules.sh beskid_distrib
+
+      - name: Fetch rolling CLI + LSP (linux-amd64) into snap/bin
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+        run: |
+          mkdir -p beskid_distrib/snap/bin
+          cd beskid_distrib/snap
+          bash ../../scripts/fetch-rolling-assets.sh cli x86_64-unknown-linux-gnu
+          bash ../../scripts/fetch-rolling-assets.sh lsp x86_64-unknown-linux-gnu
+          mv beskid-linux-amd64 bin/beskid
+          mv beskid_lsp-linux-amd64 bin/beskid_lsp
+
+      - name: Stamp snapcraft.yaml version
+        env:
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
+        run: |
+          sed -i "s/__VERSION__/${VERSION}/g" beskid_distrib/snap/snapcraft.yaml
+          cat beskid_distrib/snap/snapcraft.yaml
+
+      - name: Build snap
+        id: build
+        uses: canonical/action-build@v1
+        with:
+          path: beskid_distrib/snap
+
+      - name: Publish snap
+        uses: canonical/action-publish@v1
+        with:
+          snap: ${{ steps.build.outputs.snap }}
+          release: stable
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
