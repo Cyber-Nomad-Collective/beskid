@@ -1,8 +1,0 @@
-{
-  "version": 1,
-  "level": "feature",
-  "extends": "feature-default",
-  "pathPrefix": "platform-spec/tooling/cli/hi-command",
-  "minSpecSections": 1,
-  "widgets": []
-}

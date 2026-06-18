@@ -19,84 +19,6 @@ const beskidGrammar = loadBeskidGrammar();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '../..');
 const docsRoot = path.resolve(__dirname, 'src/content/docs');
-const legacyBridgeRoot = path.resolve(__dirname, 'src/legacy-bridge');
-
-/** Old language-meta URLs used a `v0-1` segment; features now live directly under each area. */
-function platformSpecV0Redirects() {
-	const areas = {
-		composition: ['dependency-injection'],
-		conformance: ['glossary-and-conformance'],
-		'contracts-and-effects': ['contracts', 'error-handling', 'testing'],
-		evaluation: ['control-flow', 'events', 'lambdas-and-closures'],
-		interop: ['ffi-and-extern'],
-		'memory-model': ['memory-and-references'],
-		metaprogramming: ['metaprogramming'],
-		'program-structure': ['modules-and-visibility', 'name-resolution'],
-		'surface-syntax': ['documentation-comments', 'lexical-and-syntax'],
-		'type-system': ['enums-and-match', 'method-dispatch', 'type-inference', 'types'],
-	};
-	/** @type {Record<string, string>} */
-	const out = {};
-	for (const [area, feats] of Object.entries(areas)) {
-		const base = `/platform-spec/language-meta/${area}`;
-		const oldTrack = `${base}/v0-1`;
-		out[redirectKey(oldTrack)] = redirectKey(base);
-		for (const f of feats) {
-			out[redirectKey(`${oldTrack}/${f}`)] = redirectKey(`${base}/${f}`);
-		}
-	}
-	return out;
-}
-
-/** Compiler Mods area and Mod host bridge feature were renamed from metaprogramming-mod-sdk / meta-block-host-bridge. */
-function compilerModsRedirects() {
-	const oldArea = '/platform-spec/compiler/metaprogramming-mod-sdk';
-	const newArea = '/platform-spec/compiler/compiler-mods';
-	const contentRoot = path.resolve(__dirname, 'src/content/docs/platform-spec/compiler/compiler-mods');
-	/** @type {Record<string, string>} */
-	const out = {
-		[redirectKey(oldArea)]: redirectKey(newArea),
-		[redirectKey(`${oldArea}/meta-block-host-bridge`)]: redirectKey(`${newArea}/mod-host-bridge`),
-		[redirectKey(`${newArea}/meta-block-host-bridge`)]: redirectKey(`${newArea}/mod-host-bridge`),
-	};
-
-	/** @param {string} fromPrefix @param {string} toPrefix @param {string} dir */
-	function addPageRedirects(fromPrefix, toPrefix, dir) {
-		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-			const segment = `${fromPrefix}/${entry.name}`;
-			const targetSegment = `${toPrefix}/${entry.name}`;
-			if (entry.isDirectory()) {
-				out[redirectKey(segment)] = redirectKey(targetSegment);
-				addPageRedirects(segment, targetSegment, path.join(dir, entry.name));
-				continue;
-			}
-
-			if (!entry.name.endsWith('.mdx') || entry.name === 'index.mdx') {
-				continue;
-			}
-
-			const page = entry.name.replace(/\.mdx$/, '');
-			out[redirectKey(`${segment}/${page}`)] = redirectKey(`${targetSegment}/${page}`);
-		}
-	}
-
-	for (const entry of fs.readdirSync(contentRoot, { withFileTypes: true })) {
-		if (!entry.isDirectory()) {
-			continue;
-		}
-
-		const feature = entry.name;
-		const featureDir = path.join(contentRoot, feature);
-		out[redirectKey(`${oldArea}/${feature}`)] = redirectKey(`${newArea}/${feature}`);
-		addPageRedirects(`${oldArea}/${feature}`, `${newArea}/${feature}`, featureDir);
-		if (feature === 'mod-host-bridge') {
-			out[redirectKey(`${oldArea}/meta-block-host-bridge`)] = redirectKey(`${newArea}/mod-host-bridge`);
-			addPageRedirects(`${oldArea}/meta-block-host-bridge`, `${newArea}/mod-host-bridge`, featureDir);
-		}
-	}
-
-	return out;
-}
 
 /** One redirect key per route (trailingSlash: 'always' — no `/path` and `/path/` pairs). */
 function redirectKey(routePrefix) {
@@ -105,68 +27,18 @@ function redirectKey(routePrefix) {
 
 const PLATFORM_SPEC_ORIGIN = 'https://spec.beskid-lang.org';
 
-/** Redirect every legacy in-site platform-spec URL to spec.beskid-lang.org (preserve path). */
-function platformSpecExternalRedirects() {
-	const specRoot = path.join(docsRoot, 'platform-spec');
-	/** @type {Record<string, { status: number; destination: string }>} */
-	const out = {};
-	if (!fs.existsSync(specRoot)) return out;
-
-	/** @param {string} dir @param {string} routePrefix */
-	function walk(dir, routePrefix) {
-		out[redirectKey(routePrefix)] = {
-			status: 301,
-			destination: `${PLATFORM_SPEC_ORIGIN}${redirectKey(routePrefix)}`,
-		};
-		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-			const full = path.join(dir, entry.name);
-			if (entry.isDirectory()) {
-				walk(full, `${routePrefix}/${entry.name}`);
-				continue;
-			}
-			if (!/\.(md|mdx)$/i.test(entry.name)) continue;
-			const base = entry.name.replace(/\.(mdx|md)$/i, '');
-			if (base === 'index' || base.toLowerCase() === 'readme') continue;
-			out[redirectKey(`${routePrefix}/${base}`)] = {
-				status: 301,
-				destination: `${PLATFORM_SPEC_ORIGIN}${redirectKey(`${routePrefix}/${base}`)}`,
-			};
-		}
-	}
-
-	walk(specRoot, '/platform-spec');
-	return out;
-}
-
 /**
- * Map every legacy-bridge markdown path to a single target (legacy spec mapping hub).
- * Unlike {@link addMarkdownRedirects}, does not append page basenames under the target.
+ * Static catch-all redirect: every /platform-spec/* URL (including book
+ * internal links to /platform-spec/...) 301s to the React app at
+ * spec.beskid-lang.org. The Astro site no longer hosts platform-spec content.
+ * Previously this walked the MDX tree; now it's a single wildcard.
  */
-function addFlatLegacyRedirects(dir, fromPrefix, target) {
-	/** @type {Record<string, string>} */
-	const out = {};
-	if (!fs.existsSync(dir)) return out;
-
-	for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-		const full = path.join(dir, entry.name);
-		if (entry.isDirectory()) {
-			out[redirectKey(`${fromPrefix}/${entry.name}`)] = target;
-			Object.assign(
-				out,
-				addFlatLegacyRedirects(full, `${fromPrefix}/${entry.name}`, target),
-			);
-			continue;
-		}
-		if (!/\.(md|mdx)$/i.test(entry.name)) continue;
-		const base = entry.name.replace(/\.(md|mdx)$/i, '');
-		if (base === 'index' || base.toLowerCase() === 'readme') {
-			out[redirectKey(fromPrefix)] = target;
-			continue;
-		}
-		out[redirectKey(`${fromPrefix}/${base}`)] = target;
-	}
-	return out;
-}
+const platformSpecRedirects = {
+	[redirectKey('/platform-spec')]: {
+		status: 301,
+		destination: `${PLATFORM_SPEC_ORIGIN}/platform-spec/`,
+	},
+};
 
 /** @param {string} dir @param {string} fromPrefix @param {string} toPrefix */
 function addMarkdownRedirects(dir, fromPrefix, toPrefix) {
@@ -181,7 +53,7 @@ function addMarkdownRedirects(dir, fromPrefix, toPrefix) {
 			continue;
 		}
 		if (!/\.(md|mdx)$/i.test(entry.name)) continue;
-		const base = entry.name.replace(/\.(md|mdx)$/i, '');
+		const base = entry.name.replace(/\.(mdx|md)$/i, '');
 		if (base === 'index' || base.toLowerCase() === 'readme') {
 			out[redirectKey(fromPrefix)] = redirectKey(toPrefix);
 			continue;
@@ -201,16 +73,18 @@ function siteRedirects() {
 	const refRoot = path.join(docsRoot, 'book', 'reference');
 	Object.assign(out, addMarkdownRedirects(refRoot, '/guides', '/book/reference'));
 
+	/**
+	 * Legacy bridge URLs (/execution, /corelib, /api, /packages) and common
+	 * lowercase aliases — static 301s to the legacy spec mapping hub.
+	 * The legacy-bridge content tree is deleted; these redirects preserve
+	 * old bookmarks at zero file-dependency cost.
+	 */
 	const legacyTarget =
 		'https://spec.beskid-lang.org/platform-spec/legacy-spec-mapping/';
 	for (const legacy of ['execution', 'corelib', 'packages', 'api']) {
-		const legacyDir = path.join(legacyBridgeRoot, legacy);
-		if (!fs.existsSync(legacyDir)) continue;
-		Object.assign(out, addFlatLegacyRedirects(legacyDir, `/${legacy}`, legacyTarget));
 		out[redirectKey(`/${legacy}`)] = legacyTarget;
 	}
 
-	// Common lowercase / legacy URLs (bookmarks, external links) not covered by PascalCase paths.
 	const legacyAliases = [
 		['/corelib/system/error', legacyTarget],
 		['/corelib/system/input', legacyTarget],
@@ -240,9 +114,7 @@ export default defineConfig({
 		},
 	},
 	redirects: {
-		...platformSpecExternalRedirects(),
-		...platformSpecV0Redirects(),
-		...compilerModsRedirects(),
+		...platformSpecRedirects,
 		...siteRedirects(),
 	},
 	markdown: {
