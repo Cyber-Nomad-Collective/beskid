@@ -42,4 +42,21 @@ cargo clippy --workspace --all-targets --no-deps -- -D warnings
 
 # Build the runtime bridge archive AOT tests resolve, then run workspace tests.
 bash scripts/ensure-runtime-bridge.sh
-cargo test --workspace --exclude beskid_e2e_tests -- --test-threads=1
+
+# Hard cap the test phase. Tests run serially (--test-threads=1), so a single
+# deadlocked or infinitely-looping test (e.g. a mis-lowered loop executed under
+# JIT) would otherwise block the whole suite until GitHub's 6h job cap. Fail in
+# minutes instead. Override with BESKID_TEST_TIMEOUT (seconds); 0 disables.
+test_timeout="${BESKID_TEST_TIMEOUT:-1800}"
+if [[ "${test_timeout}" != "0" ]]; then
+  if ! timeout --kill-after=60s "${test_timeout}" \
+    cargo test --workspace --exclude beskid_e2e_tests -- --test-threads=1; then
+    status=$?
+    if [[ "${status}" -eq 124 ]]; then
+      echo "::error::Workspace tests exceeded ${test_timeout}s hard cap; a test is hung or looping. Failing fast instead of burning the job timeout." >&2
+    fi
+    exit "${status}"
+  fi
+else
+  cargo test --workspace --exclude beskid_e2e_tests -- --test-threads=1
+fi

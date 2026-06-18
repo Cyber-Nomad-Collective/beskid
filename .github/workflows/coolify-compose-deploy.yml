@@ -35,6 +35,7 @@ jobs:
   deploy:
     name: coolify compose (production)
     runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 30
     environment: production
     steps:
       - name: Staging not configured (phase 2)
