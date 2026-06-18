@@ -5,8 +5,14 @@ import { spawnSync } from "node:child_process";
 
 const root = path.resolve(import.meta.dirname, "..");
 const assets = path.join(root, ".output/public/assets");
+// Match actual secret-leak vectors, not bare secret-name strings. The env
+// values only reach the client bundle through the env.server module (which
+// reads process.env.*) or through direct process.env.SECRET access. Bare
+// secret names like "SESSION_SECRET" can legitimately appear in client-side
+// UI text (e.g. the auth-hub pairing wizard shows operators which env vars
+// to set) and are harmless — the name carries no value.
 const forbidden =
-	/SESSION_SECRET|GITHUB_SYNC_TOKEN|GITHUB_WEBHOOK_SECRET|PLATFORM_SPEC_SETUP_TOKEN|env\.server/;
+	/env[._-]?server|process\.env\.(SESSION_SECRET|GITHUB_SYNC_TOKEN|GITHUB_WEBHOOK_SECRET|PLATFORM_SPEC_SETUP_TOKEN)/;
 
 function main(): void {
 	const verify = spawnSync(

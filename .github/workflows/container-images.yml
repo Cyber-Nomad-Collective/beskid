@@ -91,6 +91,16 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
         run: bash ./scripts/ci/site-build-gate.sh platform-spec "${NODE_AUTH_TOKEN}"
 
+      # Bun is required by verify-frozen-lockfile.sh (runs `bun install
+      # --frozen-lockfile`). Images with prebuild=true already have Bun via
+      # setup-beskid-web above; tracker/nexus (prebuild=false) need it installed
+      # here so the lockfile check doesn't fail with `bun: command not found`.
+      - name: Setup Bun
+        if: matrix.prebuild != true && matrix.image != 'beskid-pckg'
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.3.14"
+
       - name: Verify lockfiles
         if: matrix.image != 'beskid-pckg' && matrix.image != 'beskid-auth' && matrix.image != 'beskid-platform-spec'
         run: |

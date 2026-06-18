@@ -28,6 +28,7 @@ import { Route as ApiAuthHubFinishRouteImport } from './routes/api/auth/hub-fini
 import { Route as ApiAuthGithubRouteImport } from './routes/api/auth/github'
 import { Route as ApiAdminSetupRouteImport } from './routes/api/admin/setup'
 import { Route as ApiV1DocsSplatRouteImport } from './routes/api/v1/docs/$'
+import { Route as ApiV1ArchitectureKeyRouteImport } from './routes/api/v1/architecture/$key'
 import { Route as ApiV1AdminSyncRouteImport } from './routes/api/v1/admin/sync'
 import { Route as ApiV1AdminNormativeRepoRouteImport } from './routes/api/v1/admin/normative-repo'
 import { Route as EditEditDraftsIdRouteImport } from './routes/_edit/edit/drafts/$id'
@@ -126,6 +127,11 @@ const ApiV1DocsSplatRoute = ApiV1DocsSplatRouteImport.update({
   path: '/api/v1/docs/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1ArchitectureKeyRoute = ApiV1ArchitectureKeyRouteImport.update({
+  id: '/api/v1/architecture/$key',
+  path: '/api/v1/architecture/$key',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1AdminSyncRoute = ApiV1AdminSyncRouteImport.update({
   id: '/api/v1/admin/sync',
   path: '/api/v1/admin/sync',
@@ -163,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/edit/drafts/$id': typeof EditEditDraftsIdRoute
   '/api/v1/admin/normative-repo': typeof ApiV1AdminNormativeRepoRoute
   '/api/v1/admin/sync': typeof ApiV1AdminSyncRoute
+  '/api/v1/architecture/$key': typeof ApiV1ArchitectureKeyRoute
   '/api/v1/docs/$': typeof ApiV1DocsSplatRoute
 }
 export interface FileRoutesByTo {
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/edit/drafts/$id': typeof EditEditDraftsIdRoute
   '/api/v1/admin/normative-repo': typeof ApiV1AdminNormativeRepoRoute
   '/api/v1/admin/sync': typeof ApiV1AdminSyncRoute
+  '/api/v1/architecture/$key': typeof ApiV1ArchitectureKeyRoute
   '/api/v1/docs/$': typeof ApiV1DocsSplatRoute
 }
 export interface FileRoutesById {
@@ -211,6 +219,7 @@ export interface FileRoutesById {
   '/_edit/edit/drafts/$id': typeof EditEditDraftsIdRoute
   '/api/v1/admin/normative-repo': typeof ApiV1AdminNormativeRepoRoute
   '/api/v1/admin/sync': typeof ApiV1AdminSyncRoute
+  '/api/v1/architecture/$key': typeof ApiV1ArchitectureKeyRoute
   '/api/v1/docs/$': typeof ApiV1DocsSplatRoute
 }
 export interface FileRouteTypes {
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/edit/drafts/$id'
     | '/api/v1/admin/normative-repo'
     | '/api/v1/admin/sync'
+    | '/api/v1/architecture/$key'
     | '/api/v1/docs/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -259,6 +269,7 @@ export interface FileRouteTypes {
     | '/edit/drafts/$id'
     | '/api/v1/admin/normative-repo'
     | '/api/v1/admin/sync'
+    | '/api/v1/architecture/$key'
     | '/api/v1/docs/$'
   id:
     | '__root__'
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
     | '/_edit/edit/drafts/$id'
     | '/api/v1/admin/normative-repo'
     | '/api/v1/admin/sync'
+    | '/api/v1/architecture/$key'
     | '/api/v1/docs/$'
   fileRoutesById: FileRoutesById
 }
@@ -305,6 +317,7 @@ export interface RootRouteChildren {
   SettingsAuthPairRoute: typeof SettingsAuthPairRoute
   ApiV1AdminNormativeRepoRoute: typeof ApiV1AdminNormativeRepoRoute
   ApiV1AdminSyncRoute: typeof ApiV1AdminSyncRoute
+  ApiV1ArchitectureKeyRoute: typeof ApiV1ArchitectureKeyRoute
   ApiV1DocsSplatRoute: typeof ApiV1DocsSplatRoute
 }
 
@@ -443,6 +456,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1DocsSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/architecture/$key': {
+      id: '/api/v1/architecture/$key'
+      path: '/api/v1/architecture/$key'
+      fullPath: '/api/v1/architecture/$key'
+      preLoaderRoute: typeof ApiV1ArchitectureKeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/v1/admin/sync': {
       id: '/api/v1/admin/sync'
       path: '/api/v1/admin/sync'
@@ -500,6 +520,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsAuthPairRoute: SettingsAuthPairRoute,
   ApiV1AdminNormativeRepoRoute: ApiV1AdminNormativeRepoRoute,
   ApiV1AdminSyncRoute: ApiV1AdminSyncRoute,
+  ApiV1ArchitectureKeyRoute: ApiV1ArchitectureKeyRoute,
   ApiV1DocsSplatRoute: ApiV1DocsSplatRoute,
 }
 export const routeTree = rootRouteImport
