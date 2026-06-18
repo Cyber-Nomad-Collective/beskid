@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { NavTreeNode } from "@cyber-nomad-collective/trudoc/platform-spec/nav-tree";
+import type { NavTreeNode } from "@cyber-nomad-collective/spec-core";
 
 import { SpecNavRail } from "#/components/reader/spec-nav-rail";
 

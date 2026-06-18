@@ -1,13 +1,13 @@
-import type { PathClass } from "@cyber-nomad-collective/trudoc/layout";
+import type { PathClass } from "@cyber-nomad-collective/spec-core";
 import type {
 	PlatformSpecCatalogEntry,
 	PlatformSpecDocumentBundle,
-} from "@cyber-nomad-collective/trudoc/platform-spec/catalog";
+} from "@cyber-nomad-collective/spec-core";
 import {
 	buildNavTree,
 	pathClassToNavLevel,
 	type NavTreeNode,
-} from "@cyber-nomad-collective/trudoc/platform-spec/nav-tree";
+} from "@cyber-nomad-collective/spec-core";
 import { runQuery, runWrite } from "#/server/memgraph/client";
 
 export interface SpecDocumentUpsertInput {

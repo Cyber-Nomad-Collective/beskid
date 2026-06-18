@@ -19,7 +19,7 @@ import {
 	parentSlugFromNodeRel,
 	pathClassFromNodeRel,
 } from "@cyber-nomad-collective/spec-core/node-path";
-import { slugToHref } from "@cyber-nomad-collective/trudoc/platform-spec/nav-tree";
+import { slugToHref } from "@cyber-nomad-collective/spec-core";
 import { ensureMemgraphReady } from "#/server/memgraph/client";
 import {
 	rebuildContainsEdges,

@@ -1,19 +1,13 @@
 import {
 	buildRepoPathFromForm,
 	buildSlugFromRepoPath,
-} from "@cyber-nomad-collective/trudoc/platform-spec/docs-spec";
-import {
 	formValuesToFrontmatter,
 	frontmatterToFormValues,
-} from "@cyber-nomad-collective/trudoc/platform-spec/docs-spec";
-import {
 	parseFrontmatterJson,
 	validateFrontmatterForLevel,
-} from "@cyber-nomad-collective/trudoc/platform-spec/docs-spec";
-import {
 	pathClassFromRepoPath,
 	validateSpecLevelPath,
-} from "@cyber-nomad-collective/trudoc/platform-spec/docs-spec";
+} from "@cyber-nomad-collective/spec-core";
 import { createServerFn } from "@tanstack/react-start";
 
 import type {

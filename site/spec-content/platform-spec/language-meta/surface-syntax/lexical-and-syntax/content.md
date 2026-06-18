@@ -12,6 +12,9 @@ submitter:
   email: pmikstacki@cybernomad.it
 status: Standard
 lastReviewed: 2026-05-21
+architectureGraph:
+  graphKey: syntax-railroad
+  entryNode: Program
 ---
 
 ## Normative specification

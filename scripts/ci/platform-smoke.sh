@@ -19,11 +19,10 @@ fi
 echo "==> bun install --frozen-lockfile (root)"
 bun install --frozen-lockfile
 
-echo "==> site/website prebuild"
-(cd site/website && bun run prebuild)
-
-echo "==> site/website platform-spec git meta check"
-(cd site/website && bun run verify:platform-spec-git-meta -- --require-git)
+# NOTE: site/website prebuild + verify:platform-spec-git-meta removed.
+# The platform-spec is fully detached from the website (normative content lives
+# in site/spec-content, validated by spec-core). The website prebuild now only
+# handles book nav + CLI version sync, which runs via the website's own build.
 
 echo "==> verify root lockfile"
 if [[ -f package.json && -f bun.lock ]]; then

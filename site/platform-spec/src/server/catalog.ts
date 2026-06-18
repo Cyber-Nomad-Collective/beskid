@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 
-import type { PlatformSpecDocumentBundle } from "@cyber-nomad-collective/trudoc/platform-spec/catalog";
-import type { NavTreeNode } from "@cyber-nomad-collective/trudoc/platform-spec/nav-tree";
+import type { PlatformSpecDocumentBundle } from "@cyber-nomad-collective/spec-core";
+import type { NavTreeNode } from "@cyber-nomad-collective/spec-core";
 import {
 	getLocalDocumentBySlug,
 	getLocalNavTree,

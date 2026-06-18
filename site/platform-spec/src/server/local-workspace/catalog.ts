@@ -1,12 +1,12 @@
 import type {
 	PlatformSpecCatalogEntry,
 	PlatformSpecDocumentBundle,
-} from "@cyber-nomad-collective/trudoc/platform-spec/catalog";
+} from "@cyber-nomad-collective/spec-core";
 import {
 	buildNavTree,
 	pathClassToNavLevel,
 	type NavTreeNode,
-} from "@cyber-nomad-collective/trudoc/platform-spec/nav-tree";
+} from "@cyber-nomad-collective/spec-core";
 import { pathClassFromRel } from "@cyber-nomad-collective/spec-core";
 import { listLocalNodes } from "./index.js";
 

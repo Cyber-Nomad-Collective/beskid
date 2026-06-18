@@ -1,7 +1,9 @@
-import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { DraftLayoutEditor } from "#/components/editor/draft-layout-editor";
+import { ProposalBanner } from "#/components/editor/proposal-banner";
+import { ProposalValidationPanel } from "#/components/editor/proposal-validation-panel";
 import {
 	SpecCommentsPanel,
 	SpecContentEditor,
@@ -127,31 +129,18 @@ function DraftEditorPage() {
 
 	return (
 		<div className="mx-auto max-w-3xl space-y-6">
-			<div className="flex items-center justify-between">
-				<h1 className="text-2xl font-semibold">
-					{isNew ? "New draft" : draft?.title ?? "Draft"}
-				</h1>
-				<Link to="/edit" className="text-sm underline">
-					← Back to drafts
-				</Link>
-			</div>
-
-			{draft?.status ? (
-				<p className="text-sm text-muted-foreground">
-					Status: <strong>{draft.status}</strong>
-					{draft.prUrl ? (
-						<>
-							{" · "}
-							<a href={draft.prUrl} className="underline" target="_blank" rel="noreferrer">
-								PR #{draft.prNumber}
-							</a>
-						</>
-					) : null}
-					{draft.rejectReason ? (
-						<> · Rejected: {draft.rejectReason}</>
-					) : null}
-				</p>
-			) : null}
+			<ProposalBanner
+				draft={draft ?? null}
+				title={title}
+				summary={summary}
+				specLevel={specLevel}
+				changeKind={changeKind}
+				readOnly={readOnly}
+				onTitleChange={setTitle}
+				onSummaryChange={setSummary}
+				onSpecLevelChange={setSpecLevel}
+				onChangeKindChange={setChangeKind}
+			/>
 
 			{error ? (
 				<p className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
@@ -160,56 +149,6 @@ function DraftEditorPage() {
 			) : null}
 
 			<div className="grid gap-4">
-				<label className="grid gap-1 text-sm">
-					<span>Title</span>
-					<input
-						className="rounded-md border px-3 py-2"
-						value={title}
-						onChange={(e) => setTitle(e.target.value)}
-						disabled={readOnly}
-					/>
-				</label>
-				<label className="grid gap-1 text-sm">
-					<span>Summary</span>
-					<textarea
-						className="min-h-20 rounded-md border px-3 py-2"
-						value={summary}
-						onChange={(e) => setSummary(e.target.value)}
-						disabled={readOnly}
-					/>
-				</label>
-				<div className="grid grid-cols-2 gap-4">
-					<label className="grid gap-1 text-sm">
-						<span>Spec level</span>
-						<select
-							className="rounded-md border px-3 py-2"
-							value={specLevel}
-							onChange={(e) => setSpecLevel(e.target.value as SpecLevel)}
-							disabled={readOnly}
-						>
-							{["domain", "area", "feature", "article", "adr"].map((level) => (
-								<option key={level} value={level}>
-									{level}
-								</option>
-							))}
-						</select>
-					</label>
-					<label className="grid gap-1 text-sm">
-						<span>Change kind</span>
-						<select
-							className="rounded-md border px-3 py-2"
-							value={changeKind}
-							onChange={(e) => setChangeKind(e.target.value as DraftChangeKind)}
-							disabled={readOnly}
-						>
-							{["create", "update", "delete"].map((kind) => (
-								<option key={kind} value={kind}>
-									{kind}
-								</option>
-							))}
-						</select>
-					</label>
-				</div>
 				<div className="grid grid-cols-2 gap-4">
 					<label className="grid gap-1 text-sm">
 						<span>Parent slug</span>
@@ -246,6 +185,14 @@ function DraftEditorPage() {
 						disabled={readOnly}
 					/>
 				</div>
+				<ProposalValidationPanel
+					specLevel={specLevel}
+					title={title}
+					description={summary}
+					ownerName=""
+					ownerEmail=""
+					bodyMd={bodyMd}
+				/>
 				<SpecCommentsPanel
 					comments={comments}
 					onChange={setComments}

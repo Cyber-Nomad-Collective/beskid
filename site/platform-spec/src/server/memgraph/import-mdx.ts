@@ -1,13 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
-import { classifyPlatformSpecRel } from "@cyber-nomad-collective/trudoc/layout";
+import { classifyPlatformSpecRel } from "@cyber-nomad-collective/spec-core";
 import {
 	parentSlugFromPath,
 	slugFromRepoPath,
 	splitMdxFrontmatter,
-} from "@cyber-nomad-collective/trudoc/platform-spec/docs-spec";
-import { slugToHref } from "@cyber-nomad-collective/trudoc/platform-spec/nav-tree";
+} from "@cyber-nomad-collective/spec-core";
+import { slugToHref } from "@cyber-nomad-collective/spec-core";
 import { ensureMemgraphReady } from "#/server/memgraph/client";
 import {
 	rebuildContainsEdges,
@@ -34,18 +34,11 @@ function defaultContentRoot(): string {
 	if (process.env.PLATFORM_SPEC_CONTENT_ROOT?.trim()) {
 		return path.resolve(process.env.PLATFORM_SPEC_CONTENT_ROOT);
 	}
-	if (process.env.BESKID_WEBSITE_ROOT?.trim()) {
-		return path.join(
-			path.resolve(process.env.BESKID_WEBSITE_ROOT),
-			"src",
-			"content",
-			"docs",
-			"platform-spec",
-		);
-	}
+	/** Normative content source: site/spec-content (canonical submodule).
+	 * Legacy website MDX fallback removed — the Astro platform-spec is retired. */
 	return path.resolve(
 		import.meta.dirname,
-		"../../../../website/src/content/docs/platform-spec",
+		"../../../../spec-content/platform-spec",
 	);
 }
 
@@ -104,8 +97,9 @@ function parseDocument(
 		.relative(contentRoot, absFile)
 		.split(path.sep)
 		.join("/");
-	const repoPath = `src/content/docs/platform-spec/${relUnderSpec}`;
-	const slug = slugFromRepoPath(`site/website/${repoPath}`);
+	/** Normative repo path (site/spec-content), not the legacy website path. */
+	const repoPath = `platform-spec/${relUnderSpec}`;
+	const slug = slugFromRepoPath(`site/spec-content/${repoPath}`);
 	const pathClass = classifyPlatformSpecRel(
 		relUnderSpec.replace(/\.(md|mdx)$/i, ""),
 	);

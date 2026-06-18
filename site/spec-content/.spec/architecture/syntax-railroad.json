@@ -1,0 +1,1685 @@
+{
+  "version": 2,
+  "title": "Beskid Grammar Railroad",
+  "description": "Grammar production graph derived from compiler/crates/beskid_analysis/src/beskid.pest. Nodes are pest rules; `produces` edges show containment. Entry node: Program.",
+  "groups": [
+    {
+      "id": "lexical",
+      "label": "Lexical",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "program",
+      "label": "Program",
+      "color": "#a78bfa"
+    },
+    {
+      "id": "types",
+      "label": "Types",
+      "color": "#f472b6"
+    },
+    {
+      "id": "definitions",
+      "label": "Definitions",
+      "color": "#4ade80"
+    },
+    {
+      "id": "statements",
+      "label": "Statements",
+      "color": "#fbbf24"
+    },
+    {
+      "id": "expressions",
+      "label": "Expressions",
+      "color": "#34d399"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ItemWithDocs",
+      "kind": "astSyntaxNode",
+      "label": "ItemWithDocs",
+      "group": "definitions",
+      "description": "ItemWithDocs grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "ModuleDeclaration"
+      }
+    },
+    {
+      "id": "ItemList",
+      "kind": "astSyntaxNode",
+      "label": "ItemList",
+      "group": "definitions",
+      "description": "ItemList grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "ModuleDeclaration"
+      }
+    },
+    {
+      "id": "Program",
+      "kind": "astSyntaxNode",
+      "label": "Program",
+      "group": "definitions",
+      "description": "Program grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "TypeDefinition"
+      }
+    },
+    {
+      "id": "InnerItem",
+      "kind": "astSyntaxNode",
+      "label": "InnerItem",
+      "group": "definitions",
+      "description": "InnerItem (silent choice — inlines at parse time)",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "ModuleDeclaration"
+      }
+    },
+    {
+      "id": "AttributeDeclaration",
+      "kind": "astSyntaxNode",
+      "label": "AttributeDeclaration",
+      "group": "definitions",
+      "description": "AttributeDeclaration grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "AttributeDeclaration"
+      }
+    },
+    {
+      "id": "ModuleDeclaration",
+      "kind": "astSyntaxNode",
+      "label": "ModuleDeclaration",
+      "group": "definitions",
+      "description": "ModuleDeclaration grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "ModuleDeclaration"
+      }
+    },
+    {
+      "id": "InlineModule",
+      "kind": "astSyntaxNode",
+      "label": "InlineModule",
+      "group": "definitions",
+      "description": "InlineModule grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "InlineModule"
+      }
+    },
+    {
+      "id": "UseDeclaration",
+      "kind": "astSyntaxNode",
+      "label": "UseDeclaration",
+      "group": "definitions",
+      "description": "UseDeclaration grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "UseDeclaration"
+      }
+    },
+    {
+      "id": "PrimitiveType",
+      "kind": "astSyntaxNode",
+      "label": "PrimitiveType",
+      "group": "types",
+      "description": "PrimitiveType grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Type",
+        "syntaxKind": "Primitive"
+      }
+    },
+    {
+      "id": "GenericParameters",
+      "kind": "astSyntaxNode",
+      "label": "GenericParameters",
+      "group": "types",
+      "description": "GenericParameters grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Type",
+        "syntaxKind": "Complex"
+      }
+    },
+    {
+      "id": "GenericArguments",
+      "kind": "astSyntaxNode",
+      "label": "GenericArguments",
+      "group": "types",
+      "description": "GenericArguments grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Type",
+        "syntaxKind": "Complex"
+      }
+    },
+    {
+      "id": "TypeName",
+      "kind": "astSyntaxNode",
+      "label": "TypeName",
+      "group": "types",
+      "description": "TypeName grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Type",
+        "syntaxKind": "Complex"
+      }
+    },
+    {
+      "id": "ArrayType",
+      "kind": "astSyntaxNode",
+      "label": "ArrayType",
+      "group": "types",
+      "description": "ArrayType grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Type",
+        "syntaxKind": "Array"
+      }
+    },
+    {
+      "id": "FunctionType",
+      "kind": "astSyntaxNode",
+      "label": "FunctionType",
+      "group": "types",
+      "description": "FunctionType grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Type",
+        "syntaxKind": "Complex"
+      }
+    },
+    {
+      "id": "ArrowFunctionType",
+      "kind": "astSyntaxNode",
+      "label": "ArrowFunctionType",
+      "group": "types",
+      "description": "ArrowFunctionType grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Type",
+        "syntaxKind": "Complex"
+      }
+    },
+    {
+      "id": "BeskidTypeList",
+      "kind": "astSyntaxNode",
+      "label": "BeskidTypeList",
+      "group": "types",
+      "description": "BeskidTypeList grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Type",
+        "syntaxKind": "Complex"
+      }
+    },
+    {
+      "id": "BeskidType",
+      "kind": "astSyntaxNode",
+      "label": "BeskidType",
+      "group": "types",
+      "description": "BeskidType grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Type",
+        "syntaxKind": "Complex"
+      }
+    },
+    {
+      "id": "FunctionDefinition",
+      "kind": "astSyntaxNode",
+      "label": "FunctionDefinition",
+      "group": "definitions",
+      "description": "FunctionDefinition grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "Function"
+      }
+    },
+    {
+      "id": "ImplBlock",
+      "kind": "astSyntaxNode",
+      "label": "ImplBlock",
+      "group": "definitions",
+      "description": "ImplBlock grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "TypeDefinition"
+      }
+    },
+    {
+      "id": "ExtendTypeDefinition",
+      "kind": "astSyntaxNode",
+      "label": "ExtendTypeDefinition",
+      "group": "definitions",
+      "description": "ExtendTypeDefinition grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "ExtendTypeDefinition"
+      }
+    },
+    {
+      "id": "MacroDefinition",
+      "kind": "astSyntaxNode",
+      "label": "MacroDefinition",
+      "group": "definitions",
+      "description": "MacroDefinition grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "MacroDefinition"
+      }
+    },
+    {
+      "id": "TypeDefinition",
+      "kind": "astSyntaxNode",
+      "label": "TypeDefinition",
+      "group": "definitions",
+      "description": "TypeDefinition grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "TypeDefinition"
+      }
+    },
+    {
+      "id": "EnumDefinition",
+      "kind": "astSyntaxNode",
+      "label": "EnumDefinition",
+      "group": "definitions",
+      "description": "EnumDefinition grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "EnumDefinition"
+      }
+    },
+    {
+      "id": "ContractDefinition",
+      "kind": "astSyntaxNode",
+      "label": "ContractDefinition",
+      "group": "definitions",
+      "description": "ContractDefinition grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "ContractDefinition"
+      }
+    },
+    {
+      "id": "RegistryBlock",
+      "kind": "astSyntaxNode",
+      "label": "RegistryBlock",
+      "group": "definitions",
+      "description": "RegistryBlock grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "HostDefinition"
+      }
+    },
+    {
+      "id": "ScopeDefinition",
+      "kind": "astSyntaxNode",
+      "label": "ScopeDefinition",
+      "group": "definitions",
+      "description": "ScopeDefinition grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "HostDefinition"
+      }
+    },
+    {
+      "id": "HostDefinition",
+      "kind": "astSyntaxNode",
+      "label": "HostDefinition",
+      "group": "definitions",
+      "description": "HostDefinition grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "HostDefinition"
+      }
+    },
+    {
+      "id": "TestDefinition",
+      "kind": "astSyntaxNode",
+      "label": "TestDefinition",
+      "group": "definitions",
+      "description": "TestDefinition grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Item",
+        "syntaxKind": "TestDefinition"
+      }
+    },
+    {
+      "id": "Block",
+      "kind": "astSyntaxNode",
+      "label": "Block",
+      "group": "statements",
+      "description": "Block grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "Expression"
+      }
+    },
+    {
+      "id": "WithStatement",
+      "kind": "astSyntaxNode",
+      "label": "WithStatement",
+      "group": "statements",
+      "description": "WithStatement grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "With"
+      }
+    },
+    {
+      "id": "LaunchStatement",
+      "kind": "astSyntaxNode",
+      "label": "LaunchStatement",
+      "group": "statements",
+      "description": "LaunchStatement grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "Launch"
+      }
+    },
+    {
+      "id": "Statement",
+      "kind": "astSyntaxNode",
+      "label": "Statement",
+      "group": "statements",
+      "description": "Statement (silent choice — inlines at parse time)",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "Expression"
+      }
+    },
+    {
+      "id": "LetStatement",
+      "kind": "astSyntaxNode",
+      "label": "LetStatement",
+      "group": "statements",
+      "description": "LetStatement grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "Let"
+      }
+    },
+    {
+      "id": "TypedLetStatement",
+      "kind": "astSyntaxNode",
+      "label": "TypedLetStatement",
+      "group": "statements",
+      "description": "TypedLetStatement grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "Let"
+      }
+    },
+    {
+      "id": "InferredLetStatement",
+      "kind": "astSyntaxNode",
+      "label": "InferredLetStatement",
+      "group": "statements",
+      "description": "InferredLetStatement grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "Let"
+      }
+    },
+    {
+      "id": "ReturnStatement",
+      "kind": "astSyntaxNode",
+      "label": "ReturnStatement",
+      "group": "statements",
+      "description": "ReturnStatement grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "Return"
+      }
+    },
+    {
+      "id": "BreakStatement",
+      "kind": "astSyntaxNode",
+      "label": "BreakStatement",
+      "group": "statements",
+      "description": "BreakStatement grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "Break"
+      }
+    },
+    {
+      "id": "ContinueStatement",
+      "kind": "astSyntaxNode",
+      "label": "ContinueStatement",
+      "group": "statements",
+      "description": "ContinueStatement grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "Continue"
+      }
+    },
+    {
+      "id": "IfStatement",
+      "kind": "astSyntaxNode",
+      "label": "IfStatement",
+      "group": "statements",
+      "description": "IfStatement grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "If"
+      }
+    },
+    {
+      "id": "ElsePart",
+      "kind": "astSyntaxNode",
+      "label": "ElsePart",
+      "group": "statements",
+      "description": "ElsePart grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "If"
+      }
+    },
+    {
+      "id": "WhileStatement",
+      "kind": "astSyntaxNode",
+      "label": "WhileStatement",
+      "group": "statements",
+      "description": "WhileStatement grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "While"
+      }
+    },
+    {
+      "id": "ForStatement",
+      "kind": "astSyntaxNode",
+      "label": "ForStatement",
+      "group": "statements",
+      "description": "ForStatement grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "For"
+      }
+    },
+    {
+      "id": "ExpressionStatement",
+      "kind": "astSyntaxNode",
+      "label": "ExpressionStatement",
+      "group": "statements",
+      "description": "ExpressionStatement grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Statement",
+        "syntaxKind": "Expression"
+      }
+    },
+    {
+      "id": "Expression",
+      "kind": "astSyntaxNode",
+      "label": "Expression",
+      "group": "expressions",
+      "description": "Expression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Assign"
+      }
+    },
+    {
+      "id": "LambdaExpression",
+      "kind": "astSyntaxNode",
+      "label": "LambdaExpression",
+      "group": "expressions",
+      "description": "LambdaExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Lambda"
+      }
+    },
+    {
+      "id": "AssignmentExpression",
+      "kind": "astSyntaxNode",
+      "label": "AssignmentExpression",
+      "group": "expressions",
+      "description": "AssignmentExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Assign"
+      }
+    },
+    {
+      "id": "LogicalOrExpression",
+      "kind": "astSyntaxNode",
+      "label": "LogicalOrExpression",
+      "group": "expressions",
+      "description": "LogicalOrExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Binary"
+      }
+    },
+    {
+      "id": "LogicalAndExpression",
+      "kind": "astSyntaxNode",
+      "label": "LogicalAndExpression",
+      "group": "expressions",
+      "description": "LogicalAndExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Binary"
+      }
+    },
+    {
+      "id": "EqualityExpression",
+      "kind": "astSyntaxNode",
+      "label": "EqualityExpression",
+      "group": "expressions",
+      "description": "EqualityExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Binary"
+      }
+    },
+    {
+      "id": "ComparisonExpression",
+      "kind": "astSyntaxNode",
+      "label": "ComparisonExpression",
+      "group": "expressions",
+      "description": "ComparisonExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Binary"
+      }
+    },
+    {
+      "id": "AdditionExpression",
+      "kind": "astSyntaxNode",
+      "label": "AdditionExpression",
+      "group": "expressions",
+      "description": "AdditionExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Binary"
+      }
+    },
+    {
+      "id": "MultiplicationExpression",
+      "kind": "astSyntaxNode",
+      "label": "MultiplicationExpression",
+      "group": "expressions",
+      "description": "MultiplicationExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Binary"
+      }
+    },
+    {
+      "id": "UnaryExpression",
+      "kind": "astSyntaxNode",
+      "label": "UnaryExpression",
+      "group": "expressions",
+      "description": "UnaryExpression (silent choice — inlines at parse time)",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Unary"
+      }
+    },
+    {
+      "id": "SpawnUnary",
+      "kind": "astSyntaxNode",
+      "label": "SpawnUnary",
+      "group": "expressions",
+      "description": "SpawnUnary grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Spawn"
+      }
+    },
+    {
+      "id": "PrefixUnary",
+      "kind": "astSyntaxNode",
+      "label": "PrefixUnary",
+      "group": "expressions",
+      "description": "PrefixUnary grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Unary"
+      }
+    },
+    {
+      "id": "PostfixExpression",
+      "kind": "astSyntaxNode",
+      "label": "PostfixExpression",
+      "group": "expressions",
+      "description": "PostfixExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Member"
+      }
+    },
+    {
+      "id": "PostfixOperator",
+      "kind": "astSyntaxNode",
+      "label": "PostfixOperator",
+      "group": "expressions",
+      "description": "PostfixOperator grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Member"
+      }
+    },
+    {
+      "id": "CallOperator",
+      "kind": "astSyntaxNode",
+      "label": "CallOperator",
+      "group": "expressions",
+      "description": "CallOperator grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Call"
+      }
+    },
+    {
+      "id": "MemberAccess",
+      "kind": "astSyntaxNode",
+      "label": "MemberAccess",
+      "group": "expressions",
+      "description": "MemberAccess grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Member"
+      }
+    },
+    {
+      "id": "SubscriptOperator",
+      "kind": "astSyntaxNode",
+      "label": "SubscriptOperator",
+      "group": "expressions",
+      "description": "SubscriptOperator grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Index"
+      }
+    },
+    {
+      "id": "TryOperator",
+      "kind": "astSyntaxNode",
+      "label": "TryOperator",
+      "group": "expressions",
+      "description": "TryOperator grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Try"
+      }
+    },
+    {
+      "id": "MacroInvocation",
+      "kind": "astSyntaxNode",
+      "label": "MacroInvocation",
+      "group": "expressions",
+      "description": "MacroInvocation grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "MacroInvocation"
+      }
+    },
+    {
+      "id": "PrimaryExpression",
+      "kind": "astSyntaxNode",
+      "label": "PrimaryExpression",
+      "group": "expressions",
+      "description": "PrimaryExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Path"
+      }
+    },
+    {
+      "id": "EnumConstructorExpression",
+      "kind": "astSyntaxNode",
+      "label": "EnumConstructorExpression",
+      "group": "expressions",
+      "description": "EnumConstructorExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "EnumConstructor"
+      }
+    },
+    {
+      "id": "StructLiteralExpression",
+      "kind": "astSyntaxNode",
+      "label": "StructLiteralExpression",
+      "group": "expressions",
+      "description": "StructLiteralExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "StructLiteral"
+      }
+    },
+    {
+      "id": "ArrayLiteralExpression",
+      "kind": "astSyntaxNode",
+      "label": "ArrayLiteralExpression",
+      "group": "expressions",
+      "description": "ArrayLiteralExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "ArrayLiteral"
+      }
+    },
+    {
+      "id": "CallExpression",
+      "kind": "astSyntaxNode",
+      "label": "CallExpression",
+      "group": "expressions",
+      "description": "CallExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Call"
+      }
+    },
+    {
+      "id": "MatchExpression",
+      "kind": "astSyntaxNode",
+      "label": "MatchExpression",
+      "group": "expressions",
+      "description": "MatchExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Match"
+      }
+    },
+    {
+      "id": "MatchArm",
+      "kind": "astSyntaxNode",
+      "label": "MatchArm",
+      "group": "expressions",
+      "description": "MatchArm grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Match"
+      }
+    },
+    {
+      "id": "Pattern",
+      "kind": "astSyntaxNode",
+      "label": "Pattern",
+      "group": "expressions",
+      "description": "Pattern grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Match"
+      }
+    },
+    {
+      "id": "EnumPattern",
+      "kind": "astSyntaxNode",
+      "label": "EnumPattern",
+      "group": "expressions",
+      "description": "EnumPattern grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "EnumConstructor"
+      }
+    },
+    {
+      "id": "GroupedExpression",
+      "kind": "astSyntaxNode",
+      "label": "GroupedExpression",
+      "group": "expressions",
+      "description": "GroupedExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Grouped"
+      }
+    },
+    {
+      "id": "BlockExpression",
+      "kind": "astSyntaxNode",
+      "label": "BlockExpression",
+      "group": "expressions",
+      "description": "BlockExpression grammar production",
+      "hidden": false,
+      "props": {
+        "family": "Expression",
+        "syntaxKind": "Block"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "feeds-ItemWithDocs-InnerItem-0",
+      "kind": "feeds",
+      "from": "ItemWithDocs",
+      "to": "InnerItem",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-ItemList-ItemWithDocs-1",
+      "kind": "feeds",
+      "from": "ItemList",
+      "to": "ItemWithDocs",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Program-ItemList-2",
+      "kind": "feeds",
+      "from": "Program",
+      "to": "ItemList",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-InnerItem-HostDefinition-3",
+      "kind": "feeds",
+      "from": "InnerItem",
+      "to": "HostDefinition",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-InnerItem-MacroDefinition-4",
+      "kind": "feeds",
+      "from": "InnerItem",
+      "to": "MacroDefinition",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-InnerItem-FunctionDefinition-5",
+      "kind": "feeds",
+      "from": "InnerItem",
+      "to": "FunctionDefinition",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-InnerItem-ImplBlock-6",
+      "kind": "feeds",
+      "from": "InnerItem",
+      "to": "ImplBlock",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-InnerItem-ExtendTypeDefinition-7",
+      "kind": "feeds",
+      "from": "InnerItem",
+      "to": "ExtendTypeDefinition",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-InnerItem-TypeDefinition-8",
+      "kind": "feeds",
+      "from": "InnerItem",
+      "to": "TypeDefinition",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-InnerItem-EnumDefinition-9",
+      "kind": "feeds",
+      "from": "InnerItem",
+      "to": "EnumDefinition",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-InnerItem-ContractDefinition-10",
+      "kind": "feeds",
+      "from": "InnerItem",
+      "to": "ContractDefinition",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-InnerItem-TestDefinition-11",
+      "kind": "feeds",
+      "from": "InnerItem",
+      "to": "TestDefinition",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-InnerItem-AttributeDeclaration-12",
+      "kind": "feeds",
+      "from": "InnerItem",
+      "to": "AttributeDeclaration",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-InnerItem-InlineModule-13",
+      "kind": "feeds",
+      "from": "InnerItem",
+      "to": "InlineModule",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-InnerItem-ModuleDeclaration-14",
+      "kind": "feeds",
+      "from": "InnerItem",
+      "to": "ModuleDeclaration",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-InnerItem-UseDeclaration-15",
+      "kind": "feeds",
+      "from": "InnerItem",
+      "to": "UseDeclaration",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-GenericArguments-BeskidType-16",
+      "kind": "feeds",
+      "from": "GenericArguments",
+      "to": "BeskidType",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-TypeName-PrimitiveType-17",
+      "kind": "feeds",
+      "from": "TypeName",
+      "to": "PrimitiveType",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-ArrayType-TypeName-18",
+      "kind": "feeds",
+      "from": "ArrayType",
+      "to": "TypeName",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-FunctionType-TypeName-19",
+      "kind": "feeds",
+      "from": "FunctionType",
+      "to": "TypeName",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-FunctionType-BeskidTypeList-20",
+      "kind": "feeds",
+      "from": "FunctionType",
+      "to": "BeskidTypeList",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-ArrowFunctionType-BeskidTypeList-21",
+      "kind": "feeds",
+      "from": "ArrowFunctionType",
+      "to": "BeskidTypeList",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-ArrowFunctionType-BeskidType-22",
+      "kind": "feeds",
+      "from": "ArrowFunctionType",
+      "to": "BeskidType",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-BeskidTypeList-BeskidType-23",
+      "kind": "feeds",
+      "from": "BeskidTypeList",
+      "to": "BeskidType",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-BeskidType-ArrowFunctionType-24",
+      "kind": "feeds",
+      "from": "BeskidType",
+      "to": "ArrowFunctionType",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-BeskidType-FunctionType-25",
+      "kind": "feeds",
+      "from": "BeskidType",
+      "to": "FunctionType",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-BeskidType-ArrayType-26",
+      "kind": "feeds",
+      "from": "BeskidType",
+      "to": "ArrayType",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-BeskidType-TypeName-27",
+      "kind": "feeds",
+      "from": "BeskidType",
+      "to": "TypeName",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-FunctionDefinition-BeskidType-28",
+      "kind": "feeds",
+      "from": "FunctionDefinition",
+      "to": "BeskidType",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-FunctionDefinition-GenericParameters-29",
+      "kind": "feeds",
+      "from": "FunctionDefinition",
+      "to": "GenericParameters",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-FunctionDefinition-Block-30",
+      "kind": "feeds",
+      "from": "FunctionDefinition",
+      "to": "Block",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-MacroDefinition-Block-31",
+      "kind": "feeds",
+      "from": "MacroDefinition",
+      "to": "Block",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-TypeDefinition-GenericParameters-32",
+      "kind": "feeds",
+      "from": "TypeDefinition",
+      "to": "GenericParameters",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-EnumDefinition-GenericParameters-33",
+      "kind": "feeds",
+      "from": "EnumDefinition",
+      "to": "GenericParameters",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Block-Statement-34",
+      "kind": "feeds",
+      "from": "Block",
+      "to": "Statement",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-WithStatement-Block-35",
+      "kind": "feeds",
+      "from": "WithStatement",
+      "to": "Block",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Statement-LetStatement-36",
+      "kind": "feeds",
+      "from": "Statement",
+      "to": "LetStatement",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Statement-ReturnStatement-37",
+      "kind": "feeds",
+      "from": "Statement",
+      "to": "ReturnStatement",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Statement-BreakStatement-38",
+      "kind": "feeds",
+      "from": "Statement",
+      "to": "BreakStatement",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Statement-ContinueStatement-39",
+      "kind": "feeds",
+      "from": "Statement",
+      "to": "ContinueStatement",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Statement-WhileStatement-40",
+      "kind": "feeds",
+      "from": "Statement",
+      "to": "WhileStatement",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Statement-ForStatement-41",
+      "kind": "feeds",
+      "from": "Statement",
+      "to": "ForStatement",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Statement-IfStatement-42",
+      "kind": "feeds",
+      "from": "Statement",
+      "to": "IfStatement",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Statement-WithStatement-43",
+      "kind": "feeds",
+      "from": "Statement",
+      "to": "WithStatement",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Statement-LaunchStatement-44",
+      "kind": "feeds",
+      "from": "Statement",
+      "to": "LaunchStatement",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Statement-ExpressionStatement-45",
+      "kind": "feeds",
+      "from": "Statement",
+      "to": "ExpressionStatement",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-LetStatement-TypedLetStatement-46",
+      "kind": "feeds",
+      "from": "LetStatement",
+      "to": "TypedLetStatement",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-LetStatement-InferredLetStatement-47",
+      "kind": "feeds",
+      "from": "LetStatement",
+      "to": "InferredLetStatement",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-TypedLetStatement-BeskidType-48",
+      "kind": "feeds",
+      "from": "TypedLetStatement",
+      "to": "BeskidType",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-TypedLetStatement-Expression-49",
+      "kind": "feeds",
+      "from": "TypedLetStatement",
+      "to": "Expression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-InferredLetStatement-Expression-50",
+      "kind": "feeds",
+      "from": "InferredLetStatement",
+      "to": "Expression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-ReturnStatement-Expression-51",
+      "kind": "feeds",
+      "from": "ReturnStatement",
+      "to": "Expression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-IfStatement-Expression-52",
+      "kind": "feeds",
+      "from": "IfStatement",
+      "to": "Expression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-IfStatement-Block-53",
+      "kind": "feeds",
+      "from": "IfStatement",
+      "to": "Block",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-IfStatement-ElsePart-54",
+      "kind": "feeds",
+      "from": "IfStatement",
+      "to": "ElsePart",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-ElsePart-IfStatement-55",
+      "kind": "feeds",
+      "from": "ElsePart",
+      "to": "IfStatement",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-ElsePart-Block-56",
+      "kind": "feeds",
+      "from": "ElsePart",
+      "to": "Block",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-WhileStatement-Expression-57",
+      "kind": "feeds",
+      "from": "WhileStatement",
+      "to": "Expression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-WhileStatement-Block-58",
+      "kind": "feeds",
+      "from": "WhileStatement",
+      "to": "Block",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-ForStatement-Expression-59",
+      "kind": "feeds",
+      "from": "ForStatement",
+      "to": "Expression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-ForStatement-Block-60",
+      "kind": "feeds",
+      "from": "ForStatement",
+      "to": "Block",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-ExpressionStatement-Expression-61",
+      "kind": "feeds",
+      "from": "ExpressionStatement",
+      "to": "Expression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Expression-LambdaExpression-62",
+      "kind": "feeds",
+      "from": "Expression",
+      "to": "LambdaExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Expression-MatchExpression-63",
+      "kind": "feeds",
+      "from": "Expression",
+      "to": "MatchExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Expression-AssignmentExpression-64",
+      "kind": "feeds",
+      "from": "Expression",
+      "to": "AssignmentExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-AssignmentExpression-LogicalOrExpression-65",
+      "kind": "feeds",
+      "from": "AssignmentExpression",
+      "to": "LogicalOrExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-LogicalOrExpression-LogicalAndExpression-66",
+      "kind": "feeds",
+      "from": "LogicalOrExpression",
+      "to": "LogicalAndExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-LogicalAndExpression-EqualityExpression-67",
+      "kind": "feeds",
+      "from": "LogicalAndExpression",
+      "to": "EqualityExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-EqualityExpression-ComparisonExpression-68",
+      "kind": "feeds",
+      "from": "EqualityExpression",
+      "to": "ComparisonExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-ComparisonExpression-AdditionExpression-69",
+      "kind": "feeds",
+      "from": "ComparisonExpression",
+      "to": "AdditionExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-AdditionExpression-MultiplicationExpression-70",
+      "kind": "feeds",
+      "from": "AdditionExpression",
+      "to": "MultiplicationExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-MultiplicationExpression-UnaryExpression-71",
+      "kind": "feeds",
+      "from": "MultiplicationExpression",
+      "to": "UnaryExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-UnaryExpression-SpawnUnary-72",
+      "kind": "feeds",
+      "from": "UnaryExpression",
+      "to": "SpawnUnary",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-UnaryExpression-PrefixUnary-73",
+      "kind": "feeds",
+      "from": "UnaryExpression",
+      "to": "PrefixUnary",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-SpawnUnary-PostfixExpression-74",
+      "kind": "feeds",
+      "from": "SpawnUnary",
+      "to": "PostfixExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-PrefixUnary-PostfixExpression-75",
+      "kind": "feeds",
+      "from": "PrefixUnary",
+      "to": "PostfixExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-PostfixExpression-PrimaryExpression-76",
+      "kind": "feeds",
+      "from": "PostfixExpression",
+      "to": "PrimaryExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-PostfixExpression-PostfixOperator-77",
+      "kind": "feeds",
+      "from": "PostfixExpression",
+      "to": "PostfixOperator",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-PostfixOperator-CallOperator-78",
+      "kind": "feeds",
+      "from": "PostfixOperator",
+      "to": "CallOperator",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-PostfixOperator-MemberAccess-79",
+      "kind": "feeds",
+      "from": "PostfixOperator",
+      "to": "MemberAccess",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-PostfixOperator-SubscriptOperator-80",
+      "kind": "feeds",
+      "from": "PostfixOperator",
+      "to": "SubscriptOperator",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-PostfixOperator-TryOperator-81",
+      "kind": "feeds",
+      "from": "PostfixOperator",
+      "to": "TryOperator",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-SubscriptOperator-Expression-82",
+      "kind": "feeds",
+      "from": "SubscriptOperator",
+      "to": "Expression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-PrimaryExpression-MacroInvocation-83",
+      "kind": "feeds",
+      "from": "PrimaryExpression",
+      "to": "MacroInvocation",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-PrimaryExpression-GroupedExpression-84",
+      "kind": "feeds",
+      "from": "PrimaryExpression",
+      "to": "GroupedExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-PrimaryExpression-BlockExpression-85",
+      "kind": "feeds",
+      "from": "PrimaryExpression",
+      "to": "BlockExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-PrimaryExpression-EnumConstructorExpression-86",
+      "kind": "feeds",
+      "from": "PrimaryExpression",
+      "to": "EnumConstructorExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-PrimaryExpression-StructLiteralExpression-87",
+      "kind": "feeds",
+      "from": "PrimaryExpression",
+      "to": "StructLiteralExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-PrimaryExpression-ArrayLiteralExpression-88",
+      "kind": "feeds",
+      "from": "PrimaryExpression",
+      "to": "ArrayLiteralExpression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-MatchExpression-Expression-89",
+      "kind": "feeds",
+      "from": "MatchExpression",
+      "to": "Expression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-MatchExpression-MatchArm-90",
+      "kind": "feeds",
+      "from": "MatchExpression",
+      "to": "MatchArm",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-MatchArm-Pattern-91",
+      "kind": "feeds",
+      "from": "MatchArm",
+      "to": "Pattern",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-MatchArm-Expression-92",
+      "kind": "feeds",
+      "from": "MatchArm",
+      "to": "Expression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-Pattern-EnumPattern-93",
+      "kind": "feeds",
+      "from": "Pattern",
+      "to": "EnumPattern",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-GroupedExpression-Expression-94",
+      "kind": "feeds",
+      "from": "GroupedExpression",
+      "to": "Expression",
+      "label": "produces",
+      "props": {}
+    },
+    {
+      "id": "feeds-BlockExpression-Block-95",
+      "kind": "feeds",
+      "from": "BlockExpression",
+      "to": "Block",
+      "label": "produces",
+      "props": {}
+    }
+  ]
+}

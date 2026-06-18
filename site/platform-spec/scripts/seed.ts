@@ -9,11 +9,13 @@ import { validateWorkspace } from "../../../beskid_web_common/packages/spec-core
 import { seedWorkspace } from "../../../beskid_web_common/packages/spec-core/src/seed-workspace.ts";
 
 const workspaceDir = path.resolve(import.meta.dirname, "../../spec-content");
-const defaultMdxRoot = path.resolve(
-	import.meta.dirname,
-	"../../website/src/content/docs/platform-spec",
-);
-const mdxRoot = process.env.PLATFORM_SPEC_SEED_FROM?.trim() || defaultMdxRoot;
+/**
+ * Normative content source is site/spec-content (the canonical submodule).
+ * Legacy MDX import from site/website is no longer the default — the website
+ * platform-spec rendering is retired. Set PLATFORM_SPEC_SEED_FROM only for
+ * one-off legacy migrations.
+ */
+const mdxRoot = process.env.PLATFORM_SPEC_SEED_FROM?.trim() || workspaceDir;
 const force = process.argv.includes("--force");
 
 if (!fs.existsSync(path.join(workspaceDir, "spec.json"))) {

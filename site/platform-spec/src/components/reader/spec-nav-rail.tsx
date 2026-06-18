@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import type { NavTreeNode } from "@cyber-nomad-collective/trudoc/platform-spec/nav-tree";
+import type { NavTreeNode } from "@cyber-nomad-collective/spec-core";
 
 interface SpecNavRailProps {
 	tree: NavTreeNode;

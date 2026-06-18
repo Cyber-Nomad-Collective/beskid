@@ -56,5 +56,11 @@
       "defaultGrid": { "w": 12, "h": 4, "minW": 6, "minH": 2 }
     }
   },
-  "architectureGraphs": []
+  "architectureGraphs": [
+    "compiler-build-pipeline",
+    "compiler-mod-host-flow",
+    "compiler-mods",
+    "execution-stack",
+    "syntax-railroad"
+  ]
 }
