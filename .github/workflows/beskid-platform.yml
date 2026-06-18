@@ -82,6 +82,9 @@ jobs:
 
       # Native smoke (was Dagger `platform-smoke`, which exited 127 on a missing
       # command inside the container). Pins Bun/Node and inits beskid_web_common.
+      - name: Init beskid_web_common submodule
+        run: ./scripts/ci/init-submodules.sh beskid_web_common
+
       - uses: ./.github/actions/setup-beskid-web
         with:
           node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}

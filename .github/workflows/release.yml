@@ -104,6 +104,7 @@ jobs:
             ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:${{ steps.tag.outputs.value }}
             ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:latest
           node-auth: ${{ matrix.node_auth }}
+          node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
           push: 'true'
 
   # Open VSX publishes via publish-open-vsx.yml (also on release:published).

@@ -122,4 +122,5 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           node-auth: ${{ matrix.node_auth }}
+          node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
           push: ${{ github.event_name != 'pull_request' }}

@@ -32,6 +32,12 @@ inputs:
     description: When true, pass NODE_AUTH_TOKEN as a build arg.
     required: false
     default: "false"
+  node-auth-token:
+    description: |
+      GitHub Packages token for GHCR login + npm build-arg. Composite actions
+      cannot read the `secrets` context, so callers must forward the secret
+      explicitly (e.g. ${{ secrets.NODE_AUTH_TOKEN }}).
+    required: true
   push:
     description: When false, build only (no push) — e.g. for pull_request runs.
     required: false
@@ -45,7 +51,7 @@ runs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.NODE_AUTH_TOKEN }}
+        password: ${{ inputs.node-auth-token }}
 
     - name: Setup Blacksmith Builder
       uses: useblacksmith/setup-docker-builder@ab5c1da94f53f5cd75c1038092aa276dddfccbba # v1
@@ -63,7 +69,7 @@ runs:
         provenance: false
         sbom: false
         build-args: |
-          NODE_AUTH_TOKEN=${{ inputs.node-auth == 'true' && secrets.NODE_AUTH_TOKEN || '' }}
+          NODE_AUTH_TOKEN=${{ inputs.node-auth == 'true' && inputs.node-auth-token || '' }}
 
     - name: Re-login to GHCR (retry)
       if: steps.push.outcome == 'failure'
@@ -71,7 +77,7 @@ runs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.NODE_AUTH_TOKEN }}
+        password: ${{ inputs.node-auth-token }}
 
     - name: Build and push (retry)
       if: steps.push.outcome == 'failure'
@@ -85,4 +91,4 @@ runs:
         provenance: false
         sbom: false
         build-args: |
-          NODE_AUTH_TOKEN=${{ inputs.node-auth == 'true' && secrets.NODE_AUTH_TOKEN || '' }}
+          NODE_AUTH_TOKEN=${{ inputs.node-auth == 'true' && inputs.node-auth-token || '' }}
