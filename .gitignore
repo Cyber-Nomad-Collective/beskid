@@ -93,6 +93,7 @@ bld/
 [Ll]og/
 [Ll]ogs/
 .claude/
+.superpowers/
 # Build results on 'Bin' directories
 **/[Bb]in/*
 # Never commit ad-hoc tool bins (e.g. dagger downloads).
