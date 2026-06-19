@@ -31,6 +31,8 @@ jobs:
         run: bun install
 
       - name: Validate normative workspace
+        env:
+          GATE_JUNIT_DIR: ${{ runner.temp }}/gate-junit
         run: bun run beskid_web_common/packages/spec-core/scripts/validate-workspace.ts site/spec-content
 
       - name: Install spec CLI
@@ -45,3 +47,12 @@ jobs:
           cd "$tmp"
           bun run ${{ github.workspace }}/beskid_web_common/packages/spec-cli/bin/spec.mjs new node -t Article --slug platform-spec/smoke-test --title "Smoke"
           bun run ${{ github.workspace }}/beskid_web_common/packages/spec-cli/bin/spec.mjs validate --dir .
+
+      - name: Upload gate JUnit
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: gate-junit-normative-spec
+          path: ${{ runner.temp }}/gate-junit/
+          if-no-files-found: ignore
+          retention-days: 14
