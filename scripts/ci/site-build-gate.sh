@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Site build gate for the auth hub and the platform-spec app.
 #
-# Ported from the Dagger function siteBuildGate() in
-# beskid_infra/dagger/src/platform-gates.ts so it runs directly on a Blacksmith
-# runner. Run from the superrepo root.
+# Runs identically here, in the container-images GHA matrix, and under
+# `just gate`. Sourced gate-harness gives structured output, log-fragment
+# capture, and JUnit emission (when GATE_JUNIT_DIR is set).
 #
 # Usage: site-build-gate.sh <auth|platform-spec> [NODE_AUTH_TOKEN]
 set -euo pipefail
@@ -14,34 +14,38 @@ NODE_AUTH_TOKEN="${2:-}"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "${ROOT}"
 
+# shellcheck source=lib/gate-harness.sh
+source "${ROOT}/scripts/ci/lib/gate-harness.sh"
+
 if [[ "$APP" == "auth" ]]; then
+  gate_init "site-build-auth"
   [[ -n "$NODE_AUTH_TOKEN" ]] && export NODE_AUTH_TOKEN
-  echo "==> auth: bun install --frozen-lockfile"
-  (cd site/auth && bun install --frozen-lockfile)
-  echo "==> auth: bun run test"
-  (cd site/auth && bun run test)
-  echo "==> auth: bun run build (SKIP_ENV_VALIDATION=1)"
-  (cd site/auth && SKIP_ENV_VALIDATION=1 bun run build)
-  echo "==> auth: bun run verify:client-bundle"
-  (cd site/auth && bun run verify:client-bundle)
-  echo "==> auth: bun run test:bundle"
-  (cd site/auth && bun run test:bundle)
+  gate_step "auth-frozen-install"  -- sh -c 'cd site/auth && bun install --frozen-lockfile'
+  gate_step "auth-test"            -- sh -c 'cd site/auth && bun run test'
+  gate_step "auth-build"           -- sh -c 'cd site/auth && SKIP_ENV_VALIDATION=1 bun run build'
+  gate_step "auth-verify-bundle"   -- sh -c 'cd site/auth && bun run verify:client-bundle'
+  gate_step "auth-test-bundle"     -- sh -c 'cd site/auth && bun run test:bundle'
 elif [[ "$APP" == "platform-spec" ]]; then
+  gate_init "site-build-platform-spec"
   [[ -n "$NODE_AUTH_TOKEN" ]] && export NODE_AUTH_TOKEN
-  echo "==> spec-core: bun install + test (beskid_web_common)"
-  (cd beskid_web_common && bun install --frozen-lockfile)
-  (cd beskid_web_common && bun run --filter '@cyber-nomad-collective/spec-core' test)
-  echo "==> platform-spec: bun install --frozen-lockfile"
-  (cd site/platform-spec && bun install --frozen-lockfile)
-  echo "==> platform-spec: bun run test"
-  (cd site/platform-spec && bun run test)
-  echo "==> platform-spec: bun run build (SKIP_ENV_VALIDATION=1)"
-  (cd site/platform-spec && SKIP_ENV_VALIDATION=1 bun run build)
-  echo "==> platform-spec: bun run verify:client-bundle"
-  (cd site/platform-spec && bun run verify:client-bundle)
+  gate_step "spec-core-install"    -- sh -c 'cd beskid_web_common && bun install --frozen-lockfile'
+  gate_step "spec-core-test"       -- sh -c 'cd beskid_web_common && bun run --filter "@cyber-nomad-collective/spec-core" test'
+  gate_step "pspec-frozen-install" -- sh -c 'cd site/platform-spec && bun install --frozen-lockfile'
+  gate_step "pspec-test"           -- sh -c 'cd site/platform-spec && bun run test'
+  gate_step "pspec-build"          -- sh -c 'cd site/platform-spec && SKIP_ENV_VALIDATION=1 bun run build'
+  gate_step "pspec-verify-bundle"  -- sh -c 'cd site/platform-spec && bun run verify:client-bundle'
 else
   echo "Usage: $0 <auth|platform-spec> [NODE_AUTH_TOKEN]" >&2
   exit 1
 fi
 
-echo "site-build-gate OK (${APP})"
+gate_summary
+gate_emit_junit
+
+if gate_overall_rc; then
+  echo "site-build-gate OK (${APP})"
+  exit 0
+else
+  echo "site-build-gate FAILED (${APP})" >&2
+  exit 1
+fi
