@@ -5,7 +5,6 @@
 
 @import "@beskid/ui-react/styles/shadcn-entry.css";
 @import "@beskid/material-theme";
-@import "@beskid/ui-react/styles/hub.css";
 @import "./styles/reader-app.css";
 
 @custom-variant dark (&:is([data-theme="dark"] *));

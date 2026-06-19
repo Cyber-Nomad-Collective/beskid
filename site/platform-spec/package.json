@@ -8,7 +8,7 @@
 	},
 	"scripts": {
 		"dev": "bun --bun vite dev --port 8460",
-	"build": "bun --bun vite build && bun run scripts/sync-root-stylesheet.ts",
+		"build": "bun --bun vite build && bun run scripts/sync-root-stylesheet.ts",
 		"verify:client-bundle": "bun run scripts/verify-client-bundle.ts",
 		"seed": "bun run scripts/seed.ts",
 		"seed:force": "bun run scripts/seed.ts --force",
@@ -27,14 +27,14 @@
 	"dependencies": {
 		"@beskid/auth-client": "npm:@cyber-nomad-collective/beskid-auth-client@^0.2.0",
 		"@beskid/server-observability": "npm:@cyber-nomad-collective/beskid-server-observability@^0.2.0",
-		"@beskid/ui-react": "npm:@cyber-nomad-collective/beskid-ui-react@^0.2.0",
+		"@beskid/ui-react": "npm:@cyber-nomad-collective/beskid-ui-react@^0.2.7",
 		"@cyber-nomad-collective/spec-core": "npm:@cyber-nomad-collective/spec-core@^0.2.0",
+		"@octokit/rest": "^22.0.1",
 		"@t3-oss/env-core": "^0.13.10",
 		"@tailwindcss/vite": "^4.1.18",
 		"@tanstack/react-query": "latest",
 		"@tanstack/react-router": "latest",
 		"@tanstack/react-start": "latest",
-		"@octokit/rest": "^22.0.1",
 		"jose": "^6.2.3",
 		"lucide-react": "^0.577.0",
 		"marked": "^15.0.12",
@@ -44,8 +44,8 @@
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0",
 		"tailwindcss": "^4.1.18",
-		"zod": "^4.3.6",
-		"yaml": "^2.9.0"
+		"yaml": "^2.9.0",
+		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@tanstack/devtools-vite": "latest",
