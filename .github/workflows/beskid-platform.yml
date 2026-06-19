@@ -4,7 +4,7 @@ name: Beskid platform
 on:
   push:
     branches: [main, stg]
-    paths:
+    paths: &platform-paths
       - 'site/**'
       - 'beskid_web_common'
       - 'beskid_web_common/**'
@@ -29,26 +29,7 @@ on:
       - 'dagger.json'
   pull_request:
     branches: [main, stg]
-    paths:
-      - 'site/**'
-      - 'beskid_web_common'
-      - 'beskid_web_common/**'
-      - 'beskid_tracker'
-      - 'beskid_tracker/**'
-      - 'beskid_nexus'
-      - 'beskid_nexus/**'
-      - 'pckg'
-      - 'pckg/**'
-      - 'compiler'
-      - 'compiler/**'
-      - 'beskid_infra'
-      - 'beskid_infra/**'
-      - '.github/workflows/beskid-platform.yml'
-      - '.github/workflows/container-images.yml'
-      - '.github/workflows/coolify-compose-deploy.yml'
-      - '.github/actions/**'
-      - 'scripts/ci/**'
-      - 'dagger.json'
+    paths: *platform-paths
   workflow_dispatch:
     inputs:
       skip_images:
