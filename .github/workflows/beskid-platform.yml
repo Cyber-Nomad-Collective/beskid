@@ -71,7 +71,18 @@ jobs:
           node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Platform smoke
+        env:
+          GATE_JUNIT_DIR: ${{ runner.temp }}/gate-junit
         run: bash ./scripts/ci/platform-smoke.sh
+
+      - name: Upload gate JUnit
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: gate-junit-platform-smoke
+          path: ${{ runner.temp }}/gate-junit/
+          if-no-files-found: ignore
+          retention-days: 14
 
   images:
     if: github.event_name != 'workflow_dispatch' || inputs.skip_images != true
@@ -91,3 +102,39 @@ jobs:
     with:
       deploy: ${{ github.ref_name == 'main' && github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || inputs.deploy) }}
     secrets: inherit
+
+  report:
+    name: Gate report
+    if: always()
+    needs: [smoke, images, infra]
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Download gate JUnit
+        uses: actions/download-artifact@v6
+        with:
+          pattern: gate-junit-*
+          path: junit
+          merge-multiple: true
+
+      - name: Build gate report
+        run: bash ./scripts/ci/build-gate-report.sh junit report
+
+      - name: Publish test annotations
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Gate report
+          path: report/gate-report.junit.xml
+          reporter: java-junit
+
+      - name: Upload gate report
+        uses: actions/upload-artifact@v6
+        with:
+          name: gate-report
+          path: report/
+          retention-days: 30
