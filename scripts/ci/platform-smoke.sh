@@ -19,16 +19,4 @@ fi
 echo "==> bun install --frozen-lockfile (root)"
 bun install --frozen-lockfile
 
-# NOTE: site/website prebuild + verify:platform-spec-git-meta removed.
-# The platform-spec is fully detached from the website (normative content lives
-# in site/spec-content, validated by spec-core). The website prebuild now only
-# handles book nav + CLI version sync, which runs via the website's own build.
-
-echo "==> verify root lockfile"
-if [[ -f package.json && -f bun.lock ]]; then
-  bun install --frozen-lockfile
-else
-  echo "skip root (no package.json or bun.lock)"
-fi
-
 echo "platform-smoke OK"

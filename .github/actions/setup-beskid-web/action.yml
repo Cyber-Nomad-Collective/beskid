@@ -27,8 +27,9 @@ runs:
       run: |
         set -euo pipefail
         # spec-core is the canonical web package (trudoc is retired from spec-core).
+        # platform-spec is fully detached from beskid-ui, so its presence is no
+        # longer a meaningful signal — only spec-core is mandatory here.
         test -f beskid_web_common/packages/spec-core/package.json
-        test -f beskid_web_common/packages/beskid-ui/package.json || echo "warn: beskid-ui (Astro) optional for detached platform-spec"
 
     - name: Install workspace dependencies
       shell: bash
