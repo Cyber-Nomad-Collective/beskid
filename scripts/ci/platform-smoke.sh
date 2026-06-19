@@ -1,22 +1,29 @@
 #!/usr/bin/env bash
-# Platform smoke: aggregate web-workspace checks for site/website.
+# Platform smoke gate — root workspace install + structure check.
 #
-# Ported from the Dagger function platformSmoke() in
-# beskid_infra/dagger/src/platform-gates.ts so it runs directly on a Blacksmith
-# runner instead of inside a Dagger container (which exited 127 on a missing
-# command). Run from the superrepo root; assumes beskid_web_common submodule is
-# already initialised (the calling workflow does this via setup-beskid-web).
+# Runs identically here, in the beskid-platform GHA job, and under `just gate`.
+# Sourced gate-harness gives structured output, log-fragment capture, and JUnit
+# emission (when GATE_JUNIT_DIR is set).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "${ROOT}"
 
-# Ensure beskid_web_common is present (idempotent with setup-beskid-web).
-if [[ ! -d beskid_web_common/packages ]]; then
-  ./scripts/ci/init-submodules.sh beskid_web_common
+# shellcheck source=lib/gate-harness.sh
+source "${ROOT}/scripts/ci/lib/gate-harness.sh"
+
+gate_init "platform-smoke"
+
+gate_step "root-frozen-install" -- bun install --frozen-lockfile
+
+gate_summary
+gate_emit_junit
+
+# Exit with the worst step's rc so CI fails on any failed step.
+if gate_overall_rc; then
+  echo "platform-smoke OK"
+  exit 0
+else
+  echo "platform-smoke FAILED" >&2
+  exit 1
 fi
-
-echo "==> bun install --frozen-lockfile (root)"
-bun install --frozen-lockfile
-
-echo "platform-smoke OK"
