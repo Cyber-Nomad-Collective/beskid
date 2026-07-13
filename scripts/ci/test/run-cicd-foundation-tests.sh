@@ -18,6 +18,10 @@ for script in \
   bash -n "${root}/scripts/ci/${script}"
 done
 
+# CoreLib workspace member aliases intentionally differ from registry package
+# names; the quality gate must validate each member's package declaration.
+CORELIB_QUALITY_ONLY=1 "${root}/scripts/ci/corelib-gate.sh"
+
 mkdir -p "${tmp}/records" "${tmp}/bin"
 cat >"${tmp}/records/site.json" <<'JSON'
 {"name":"beskid-site","repository":"ghcr.io/cyber-nomad-collective/beskid-site","digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
@@ -61,6 +65,19 @@ for dockerfile in \
   fi
   rg -q 'mount=type=secret,id=NODE_AUTH_TOKEN' "${secure}"
 done
+
+# Nexus keeps its service directory as the primary Docker context while the
+# centralized image workflow supplies the canonical standard as an explicit,
+# read-only named BuildKit context.
+rg -Fq 'build-contexts:' "${root}/.github/workflows/reusable-image.yml"
+rg -Fq 'build-contexts: ${{ inputs.build-contexts }}' "${root}/.github/workflows/reusable-image.yml"
+rg -Fq 'openspec=./openspec' "${root}/.github/workflows/platform-delivery.yml"
+rg -Fq "apply: \${{ github.event_name == 'workflow_dispatch' && inputs.apply-staging }}" "${root}/.github/workflows/platform-delivery.yml"
+rg -Fq 'COPY --from=openspec catalog.json /app/openspec/catalog.json' "${root}/beskid_nexus/Dockerfile"
+rg -Fq 'NEXUS_OPEN_SPEC_CATALOG=/app/openspec/catalog.json' "${root}/beskid_nexus/Dockerfile"
+rg -Fq 'openspec: ${NEXUS_OPEN_SPEC_CONTEXT:-../openspec}' "${root}/beskid_nexus/docker-compose.yml"
+rg -Fq 'openspec: ${NEXUS_OPEN_SPEC_CONTEXT:-../../openspec}' "${root}/beskid_nexus/infra/docker-compose.yml"
+rg -Fq 'NEXUS_OPEN_SPEC_CATALOG: ${NEXUS_OPEN_SPEC_CATALOG:-/app/openspec/catalog.json}' "${root}/beskid_nexus/docker-compose.coolify.yml"
 
 jq '.images[0].digest = "latest"' "${tmp}/release.json" >"${tmp}/invalid.json"
 if "${root}/scripts/ci/validate-release-manifest.sh" "${tmp}/invalid.json" >/dev/null 2>&1; then

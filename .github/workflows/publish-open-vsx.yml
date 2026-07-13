@@ -109,6 +109,19 @@ jobs:
         with:
           bun-version: "1.3.14"
 
+      - name: Ensure ripgrep
+        shell: bash
+        run: |
+          if command -v rg >/dev/null 2>&1; then
+            exit 0
+          fi
+          case "${RUNNER_OS}" in
+            Linux) sudo apt-get update && sudo apt-get install -y ripgrep ;;
+            macOS) brew install ripgrep ;;
+            Windows) choco install ripgrep --yes --no-progress ;;
+            *) echo "Unsupported runner OS for ripgrep installation: ${RUNNER_OS}" >&2; exit 1 ;;
+          esac
+
       # Native gates — output streams directly to the job log.
       - name: VS Code extension gate
         shell: bash

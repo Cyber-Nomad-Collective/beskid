@@ -35,6 +35,16 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Validate Corelib workspace member aliases against their explicit registry
+  package declarations and keep Rust Clippy iterator checks warning-free.
+- Stabilize Open VSX extension gates across randomized Bun test ordering and
+  Windows/macOS runners by completing shared VS Code mocks, using portable file
+  URL conversion, and provisioning ripgrep before compiler parity checks.
+- Package the canonical OpenSpec catalog into the Nexus image through an
+  explicit named BuildKit context while retaining the service-local Docker
+  build context.
+- Keep main-branch staging promotion in fail-safe plan mode and require an
+  explicit workflow dispatch before mutating the external staging lane.
 - Default Tracker non-bug task synchronization to disabled while preserving the
   bug synchronization path behind focused regression coverage.
 - Replace Nexus's legacy website-MDX standard index with the revisioned OpenSpec

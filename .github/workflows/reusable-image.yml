@@ -16,6 +16,11 @@ on:
       dockerfile:
         required: true
         type: string
+      build-contexts:
+        description: Optional newline-separated BuildKit named contexts
+        required: false
+        default: ''
+        type: string
       submodules:
         description: Space-separated submodules required by the build context
         required: false
@@ -99,6 +104,7 @@ jobs:
         with:
           context: ${{ inputs.context }}
           file: ${{ steps.dockerfile.outputs.file }}
+          build-contexts: ${{ inputs.build-contexts }}
           push: ${{ inputs.push }}
           tags: ${{ inputs.repository }}:sha-${{ github.sha }}
           # min deliberately omits build parameters; package credentials are

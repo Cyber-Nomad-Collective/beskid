@@ -168,6 +168,8 @@ jobs:
       repository: ghcr.io/cyber-nomad-collective/beskid-nexus
       context: beskid_nexus
       dockerfile: beskid_nexus/Dockerfile
+      build-contexts: |
+        openspec=./openspec
       submodules: beskid_nexus
       node-auth: true
       push: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
@@ -210,5 +212,7 @@ jobs:
     with:
       environment: staging
       manifest-run-id: ${{ format('{0}', github.run_id) }}
-      apply: true
+      # Every main delivery renders a staging plan. External mutation remains
+      # an explicit dispatch until the lane has its own Coolify service UUID.
+      apply: ${{ github.event_name == 'workflow_dispatch' && inputs.apply-staging }}
     secrets: inherit

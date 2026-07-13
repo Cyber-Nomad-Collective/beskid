@@ -22,4 +22,11 @@ if rg -n --glob '*.md' '^#{1,6}[[:space:]]+(Normative|Requirements?)$' \
   exit 1
 fi
 
+if sed -n '/^  platform-spec:/,/^  tracker:/p' \
+  beskid_infra/compose/production/docker-compose.yml | rg -n \
+  'SPEC_GIT_(REPO_URL|REF|CONTENT_PATH)|SPEC_SYNC_MODE|beskid_normative_spec'; then
+  echo "platform-spec deployment retains retired custom authority or GitHub synchronization configuration" >&2
+  exit 1
+fi
+
 echo "OpenSpec conformance provenance OK"
