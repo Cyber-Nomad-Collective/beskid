@@ -17,7 +17,7 @@ flowchart LR
   gap[Design gap or bug]
   spec[Spec PR — language-meta or domain feature]
   impl[Compiler / corelib / tooling PR]
-  verify[Conformance + trudoc verify]
+  verify[Conformance + OpenSpec validate]
   gap --> spec --> impl --> verify
 ```
 

@@ -22,16 +22,12 @@ COPY package.json bun.lock .npmrc ./
 COPY beskid_web_common ./beskid_web_common
 COPY site/website ./site/website
 COPY site/platform-spec ./site/platform-spec
-COPY site/spec-content ./site/spec-content
+COPY openspec ./openspec
 ARG NODE_AUTH_TOKEN
 ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
 RUN bun install --frozen-lockfile
 
-# .git is included in build context for platform-spec git-meta generation during prebuild.
-ENV BESKID_SKIP_TRUDOC_VERIFY=1
-
-RUN bun run --cwd site/website prebuild \
-  && cd site/website && npx --no-install astro build
+RUN bun run --cwd site/website build
 
 FROM nginx:1.27-alpine AS runtime
 

@@ -1,6 +1,6 @@
 ---
 title: "Docs and website"
-description: Astro site, book vs platform-spec, and trudoc verification commands.
+description: Astro site, informative Book content, and canonical OpenSpec links.
 tableOfContents: true
 ---
 
@@ -14,10 +14,11 @@ Use **Bun** for local workflows:
 ```bash
 cd site/website
 bun run dev
-bun run verify:trudoc -- --preset ci
+bun run test:docs-links
+bun run build
 ```
 
-Book nav comes from `book/nav.order.json` → `generate:book-nav-tree`. Platform-spec nav is generated separately—do not hand-edit JSON trees in `src/generated/` and call it a day.
+Book nav comes from `book/nav.order.json` → `generate:book-nav-tree`. Platform-spec navigation comes directly from root `openspec/catalog.json`; the website does not generate or own normative content.
 
 ## Book vs spec
 

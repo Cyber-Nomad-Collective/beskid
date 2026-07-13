@@ -29,7 +29,7 @@ When `mod domain.feature;` owns a file, everything top-level in that file shares
 | Cross-layer imports | Introduce boundary module + `pub use` |
 | "Util" package imported everywhere | Split domain modules |
 
-## Normative
+## Standard reference (informative)
 
 - [Modules and Visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/)
 - [Code style and naming](/platform-spec/language-meta/program-structure/code-style-and-naming/)

@@ -1,0 +1,214 @@
+name: Platform delivery
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/**'
+      - 'scripts/ci/**'
+      - 'openspec/**'
+      - 'scripts/openspec/**'
+      - 'site/**'
+      - 'beskid_web_common'
+      - 'beskid_web_common/**'
+      - 'beskid_tracker'
+      - 'beskid_tracker/**'
+      - 'beskid_nexus'
+      - 'beskid_nexus/**'
+      - 'pckg'
+      - 'pckg/**'
+      - 'beskid_infra'
+      - 'beskid_infra/**'
+      - 'package.json'
+      - 'bun.lock'
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish signed SHA images and a release manifest
+        type: boolean
+        default: false
+      apply-staging:
+        description: Deploy the generated manifest to staging
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: platform-delivery-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  openspec:
+    uses: ./.github/workflows/reusable-quality.yml
+    with:
+      gate-name: openspec
+      submodules: beskid_web_common
+      setup-web: true
+      command: bash scripts/ci/openspec-gate.sh
+    secrets:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+
+  conformance:
+    uses: ./.github/workflows/reusable-quality.yml
+    with:
+      gate-name: conformance
+      submodules: beskid_web_common
+      setup-web: true
+      command: bash scripts/ci/conformance-gate.sh
+    secrets:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+
+  integration:
+    uses: ./.github/workflows/reusable-quality.yml
+    with:
+      gate-name: platform-integration
+      submodules: beskid_web_common beskid_tracker beskid_nexus
+      setup-web: true
+      timeout-minutes: 60
+      command: bash scripts/ci/platform-integration-gate.sh
+    secrets:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+
+  security:
+    uses: ./.github/workflows/reusable-quality.yml
+    with:
+      gate-name: supply-chain-security
+      command: bash scripts/ci/security-policy-gate.sh
+
+  image-site:
+    needs: [openspec, conformance, integration, security]
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/reusable-image.yml
+    with:
+      name: beskid-site
+      repository: ghcr.io/cyber-nomad-collective/beskid-site
+      context: .
+      dockerfile: site/website/Dockerfile
+      submodules: beskid_web_common
+      node-auth: true
+      push: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+      sign: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+    secrets:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+
+  image-auth:
+    needs: [openspec, conformance, integration, security]
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/reusable-image.yml
+    with:
+      name: beskid-auth
+      repository: ghcr.io/cyber-nomad-collective/beskid-auth
+      context: .
+      dockerfile: site/auth/Dockerfile
+      submodules: beskid_web_common
+      node-auth: true
+      push: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+      sign: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+    secrets:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+
+  image-platform-spec:
+    needs: [openspec, conformance, integration, security]
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/reusable-image.yml
+    with:
+      name: beskid-platform-spec
+      repository: ghcr.io/cyber-nomad-collective/beskid-platform-spec
+      context: .
+      dockerfile: site/platform-spec/Dockerfile
+      submodules: beskid_web_common
+      node-auth: true
+      push: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+      sign: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+    secrets:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+
+  image-tracker:
+    needs: [openspec, conformance, integration, security]
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/reusable-image.yml
+    with:
+      name: beskid-tracker
+      repository: ghcr.io/cyber-nomad-collective/beskid-tracker
+      context: beskid_tracker
+      dockerfile: beskid_tracker/Dockerfile
+      submodules: beskid_tracker
+      node-auth: true
+      push: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+      sign: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+    secrets:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+
+  image-nexus:
+    needs: [openspec, conformance, integration, security]
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/reusable-image.yml
+    with:
+      name: beskid-nexus
+      repository: ghcr.io/cyber-nomad-collective/beskid-nexus
+      context: beskid_nexus
+      dockerfile: beskid_nexus/Dockerfile
+      submodules: beskid_nexus
+      node-auth: true
+      push: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+      sign: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+    secrets:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+
+  image-pckg:
+    needs: [openspec, conformance, integration, security]
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/reusable-image.yml
+    with:
+      name: beskid-pckg
+      repository: ghcr.io/cyber-nomad-collective/beskid-pckg
+      context: pckg
+      dockerfile: pckg/Dockerfile
+      submodules: pckg
+      push: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+      sign: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+
+  manifest:
+    needs: [image-site, image-auth, image-platform-spec, image-tracker, image-nexus, image-pckg]
+    if: github.event_name == 'push' || inputs.publish || inputs.apply-staging
+    uses: ./.github/workflows/reusable-release-manifest.yml
+    with:
+      artifact-name: release-manifest
+
+  staging:
+    needs: manifest
+    if: github.event_name == 'push' || inputs.apply-staging
+    permissions:
+      actions: read
+      contents: read
+      deployments: write
+      id-token: write
+    uses: ./.github/workflows/reusable-promote.yml
+    with:
+      environment: staging
+      manifest-run-id: ${{ format('{0}', github.run_id) }}
+      apply: true
+    secrets: inherit

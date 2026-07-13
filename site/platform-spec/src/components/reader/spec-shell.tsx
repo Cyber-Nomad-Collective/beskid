@@ -1,8 +1,6 @@
 import type { ReactNode } from "react";
-
-import type { NavTreeNode } from "@cyber-nomad-collective/spec-core";
-
 import { SpecNavRail } from "#/components/reader/spec-nav-rail";
+import type { OpenSpecNavNode as NavTreeNode } from "#/server/openspec/reader";
 
 interface SpecShellProps {
 	navTree: NavTreeNode;

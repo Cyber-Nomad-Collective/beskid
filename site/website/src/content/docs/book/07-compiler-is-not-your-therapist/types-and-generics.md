@@ -30,7 +30,7 @@ flowchart TD
   Q -->|never| V[plain T]
 ```
 
-## Normative
+## Standard reference (informative)
 
 - [Types](/platform-spec/language-meta/type-system/types/)
 - [Enums and match](/platform-spec/language-meta/type-system/enums-and-match/)

@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 
-import { BeskidHub } from "@beskid/ui-react";
 import { Link } from "@tanstack/react-router";
 
 import { ReaderTopBarActions } from "#/components/reader/reader-topbar-actions";
+import { BeskidHub } from "#/components/ui-primitives";
 
 export function ReaderChrome({ children }: { children: ReactNode }) {
 	return (

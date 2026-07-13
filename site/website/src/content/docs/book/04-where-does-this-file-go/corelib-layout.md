@@ -33,7 +33,7 @@ flowchart TD
 
 Compiler `doc` emission can place `api.json` and markdown under `.beskid/docs/`—registry and pckg treat structured API JSON as the primary contract. You consume std docs like any package docs, not a separate mythological website.
 
-## Normative
+## Standard reference (informative)
 
 - [Core library domain](/platform-spec/core-library/)
 - [Types — Option](/platform-spec/language-meta/type-system/types/)

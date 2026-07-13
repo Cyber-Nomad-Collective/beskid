@@ -7,7 +7,7 @@ import {
 	CardTitle,
 	Input,
 	Label,
-} from "@beskid/ui-react";
+} from "#/components/ui-primitives";
 import { useState } from "react";
 
 export interface AuthHubSetupDefaults {

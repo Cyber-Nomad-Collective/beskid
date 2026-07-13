@@ -27,7 +27,7 @@ export const completeAuthHubPairingFn = createServerFn({ method: "POST" })
 		if (!result.ok) {
 			if (result.reason === "auth_required") {
 				throw new Error(
-					"Sign in as a repository admin, or set GITHUB_SYNC_TOKEN or PLATFORM_SPEC_PAIRING_APPROVER_LOGIN",
+					"Sign in as a repository admin, or set PLATFORM_SPEC_PAIRING_APPROVER_LOGIN",
 				);
 			}
 			throw new Error(

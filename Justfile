@@ -35,3 +35,11 @@ gate args='':
 # container gates. Compiler gate is SKIPped (Blacksmith Testbox only).
 gate-full:
     "{{root}}/scripts/local-preflight.sh" --full
+
+# Build release beskid_cli + beskid_lsp and replace installed toolchain binaries.
+replace:
+    cd "{{root}}/compiler" && just replace
+
+# Build beskid_vscode and reinstall into Cursor or VS Code (reload window after).
+vscode:
+    cd "{{root}}/compiler" && just vscode

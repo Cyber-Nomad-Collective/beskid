@@ -27,10 +27,9 @@ import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as ApiAuthHubFinishRouteImport } from './routes/api/auth/hub-finish'
 import { Route as ApiAuthGithubRouteImport } from './routes/api/auth/github'
 import { Route as ApiAdminSetupRouteImport } from './routes/api/admin/setup'
+import { Route as ApiV1EmbedSplatRouteImport } from './routes/api/v1/embed/$'
 import { Route as ApiV1DocsSplatRouteImport } from './routes/api/v1/docs/$'
 import { Route as ApiV1ArchitectureKeyRouteImport } from './routes/api/v1/architecture/$key'
-import { Route as ApiV1AdminSyncRouteImport } from './routes/api/v1/admin/sync'
-import { Route as ApiV1AdminNormativeRepoRouteImport } from './routes/api/v1/admin/normative-repo'
 import { Route as EditEditDraftsIdRouteImport } from './routes/_edit/edit/drafts/$id'
 
 const EditRoute = EditRouteImport.update({
@@ -122,6 +121,11 @@ const ApiAdminSetupRoute = ApiAdminSetupRouteImport.update({
   path: '/api/admin/setup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1EmbedSplatRoute = ApiV1EmbedSplatRouteImport.update({
+  id: '/api/v1/embed/$',
+  path: '/api/v1/embed/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1DocsSplatRoute = ApiV1DocsSplatRouteImport.update({
   id: '/api/v1/docs/$',
   path: '/api/v1/docs/$',
@@ -130,16 +134,6 @@ const ApiV1DocsSplatRoute = ApiV1DocsSplatRouteImport.update({
 const ApiV1ArchitectureKeyRoute = ApiV1ArchitectureKeyRouteImport.update({
   id: '/api/v1/architecture/$key',
   path: '/api/v1/architecture/$key',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiV1AdminSyncRoute = ApiV1AdminSyncRouteImport.update({
-  id: '/api/v1/admin/sync',
-  path: '/api/v1/admin/sync',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiV1AdminNormativeRepoRoute = ApiV1AdminNormativeRepoRouteImport.update({
-  id: '/api/v1/admin/normative-repo',
-  path: '/api/v1/admin/normative-repo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EditEditDraftsIdRoute = EditEditDraftsIdRouteImport.update({
@@ -167,10 +161,9 @@ export interface FileRoutesByFullPath {
   '/edit/': typeof EditEditIndexRoute
   '/moderation/': typeof EditModerationIndexRoute
   '/edit/drafts/$id': typeof EditEditDraftsIdRoute
-  '/api/v1/admin/normative-repo': typeof ApiV1AdminNormativeRepoRoute
-  '/api/v1/admin/sync': typeof ApiV1AdminSyncRoute
   '/api/v1/architecture/$key': typeof ApiV1ArchitectureKeyRoute
   '/api/v1/docs/$': typeof ApiV1DocsSplatRoute
+  '/api/v1/embed/$': typeof ApiV1EmbedSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -191,10 +184,9 @@ export interface FileRoutesByTo {
   '/edit': typeof EditEditIndexRoute
   '/moderation': typeof EditModerationIndexRoute
   '/edit/drafts/$id': typeof EditEditDraftsIdRoute
-  '/api/v1/admin/normative-repo': typeof ApiV1AdminNormativeRepoRoute
-  '/api/v1/admin/sync': typeof ApiV1AdminSyncRoute
   '/api/v1/architecture/$key': typeof ApiV1ArchitectureKeyRoute
   '/api/v1/docs/$': typeof ApiV1DocsSplatRoute
+  '/api/v1/embed/$': typeof ApiV1EmbedSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -217,10 +209,9 @@ export interface FileRoutesById {
   '/_edit/edit/': typeof EditEditIndexRoute
   '/_edit/moderation/': typeof EditModerationIndexRoute
   '/_edit/edit/drafts/$id': typeof EditEditDraftsIdRoute
-  '/api/v1/admin/normative-repo': typeof ApiV1AdminNormativeRepoRoute
-  '/api/v1/admin/sync': typeof ApiV1AdminSyncRoute
   '/api/v1/architecture/$key': typeof ApiV1ArchitectureKeyRoute
   '/api/v1/docs/$': typeof ApiV1DocsSplatRoute
+  '/api/v1/embed/$': typeof ApiV1EmbedSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -243,10 +234,9 @@ export interface FileRouteTypes {
     | '/edit/'
     | '/moderation/'
     | '/edit/drafts/$id'
-    | '/api/v1/admin/normative-repo'
-    | '/api/v1/admin/sync'
     | '/api/v1/architecture/$key'
     | '/api/v1/docs/$'
+    | '/api/v1/embed/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -267,10 +257,9 @@ export interface FileRouteTypes {
     | '/edit'
     | '/moderation'
     | '/edit/drafts/$id'
-    | '/api/v1/admin/normative-repo'
-    | '/api/v1/admin/sync'
     | '/api/v1/architecture/$key'
     | '/api/v1/docs/$'
+    | '/api/v1/embed/$'
   id:
     | '__root__'
     | '/'
@@ -292,10 +281,9 @@ export interface FileRouteTypes {
     | '/_edit/edit/'
     | '/_edit/moderation/'
     | '/_edit/edit/drafts/$id'
-    | '/api/v1/admin/normative-repo'
-    | '/api/v1/admin/sync'
     | '/api/v1/architecture/$key'
     | '/api/v1/docs/$'
+    | '/api/v1/embed/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -315,10 +303,9 @@ export interface RootRouteChildren {
   ApiWebhooksGithubRoute: typeof ApiWebhooksGithubRoute
   SettingsAuthLoginRoute: typeof SettingsAuthLoginRoute
   SettingsAuthPairRoute: typeof SettingsAuthPairRoute
-  ApiV1AdminNormativeRepoRoute: typeof ApiV1AdminNormativeRepoRoute
-  ApiV1AdminSyncRoute: typeof ApiV1AdminSyncRoute
   ApiV1ArchitectureKeyRoute: typeof ApiV1ArchitectureKeyRoute
   ApiV1DocsSplatRoute: typeof ApiV1DocsSplatRoute
+  ApiV1EmbedSplatRoute: typeof ApiV1EmbedSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -449,6 +436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminSetupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/embed/$': {
+      id: '/api/v1/embed/$'
+      path: '/api/v1/embed/$'
+      fullPath: '/api/v1/embed/$'
+      preLoaderRoute: typeof ApiV1EmbedSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/v1/docs/$': {
       id: '/api/v1/docs/$'
       path: '/api/v1/docs/$'
@@ -461,20 +455,6 @@ declare module '@tanstack/react-router' {
       path: '/api/v1/architecture/$key'
       fullPath: '/api/v1/architecture/$key'
       preLoaderRoute: typeof ApiV1ArchitectureKeyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/v1/admin/sync': {
-      id: '/api/v1/admin/sync'
-      path: '/api/v1/admin/sync'
-      fullPath: '/api/v1/admin/sync'
-      preLoaderRoute: typeof ApiV1AdminSyncRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/v1/admin/normative-repo': {
-      id: '/api/v1/admin/normative-repo'
-      path: '/api/v1/admin/normative-repo'
-      fullPath: '/api/v1/admin/normative-repo'
-      preLoaderRoute: typeof ApiV1AdminNormativeRepoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_edit/edit/drafts/$id': {
@@ -518,10 +498,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiWebhooksGithubRoute: ApiWebhooksGithubRoute,
   SettingsAuthLoginRoute: SettingsAuthLoginRoute,
   SettingsAuthPairRoute: SettingsAuthPairRoute,
-  ApiV1AdminNormativeRepoRoute: ApiV1AdminNormativeRepoRoute,
-  ApiV1AdminSyncRoute: ApiV1AdminSyncRoute,
   ApiV1ArchitectureKeyRoute: ApiV1ArchitectureKeyRoute,
   ApiV1DocsSplatRoute: ApiV1DocsSplatRoute,
+  ApiV1EmbedSplatRoute: ApiV1EmbedSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

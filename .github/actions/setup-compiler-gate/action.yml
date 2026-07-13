@@ -1,7 +1,6 @@
-# Setup compiler gate — provision the toolchain the compiler gate needs without Dagger.
+# Setup compiler gate — provision the native toolchain used by compiler gates.
 #
-# Replaces the Dagger `rust:alpine` / `oven/bun` containers that used to host the
-# gate. Initializes the compiler (+ recursive corelib) and beskid_bsol submodules
+# Initializes the compiler (+ recursive corelib) and beskid_bsol submodules
 # (compiler workspace path dependency) plus beskid_vscode (LSP command contract),
 # then installs the Rust and Bun toolchains so `scripts/ci/compiler-rust-gate.sh`
 # and `scripts/ci/lsp-command-contract-gate.sh` can run directly on a Blacksmith
@@ -30,7 +29,7 @@ runs:
       shell: bash
       env:
         COMPILER_SUBMODULE_TOKEN: ${{ inputs.compiler-submodule-token }}
-        # Corelib lowering can recurse deeply; match the Dagger gate's stack
+        # Corelib lowering can recurse deeply; preserve the required stack
         # bump. Hoisted here so every gate/release job inherits it from a
         # single source instead of repeating RUST_MIN_STACK in each workflow.
         RUST_MIN_STACK: "67108864"

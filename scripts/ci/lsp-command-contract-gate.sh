@@ -2,8 +2,7 @@
 # LSP command contract gate: keeps the beskid_lsp project-explorer command surface
 # and the beskid_vscode extension's expected command contract in lockstep.
 #
-# Ported verbatim from the Dagger `lspCommandContractGate`
-# (beskid_infra/dagger/src/gates.ts). Run from the superrepo root; needs the
+# Run from the superrepo root; needs the
 # `compiler/` and `beskid_vscode/` submodules checked out.
 set -euo pipefail
 

@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="$(cd "$(dirname "$0")/../../.." && pwd)"
+tmp="$(mktemp -d)"
+trap 'rm -rf "${tmp}"' EXIT
+
+for script in \
+  build-release-manifest.sh \
+  validate-release-manifest.sh \
+  render-release-compose.sh \
+  deploy-release-manifest.sh \
+  post-deploy-smoke.sh \
+  sign-image.sh \
+  prepare-secure-dockerfile.sh \
+  sync-runtime-env.sh \
+  validate-promotion-source.sh; do
+  bash -n "${root}/scripts/ci/${script}"
+done
+
+mkdir -p "${tmp}/records" "${tmp}/bin"
+cat >"${tmp}/records/site.json" <<'JSON'
+{"name":"beskid-site","repository":"ghcr.io/cyber-nomad-collective/beskid-site","digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
+JSON
+cat >"${tmp}/records/platform-spec-image.json" <<'JSON'
+{"name":"beskid-platform-spec","repository":"ghcr.io/cyber-nomad-collective/beskid-platform-spec","digest":"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
+JSON
+cat >"${tmp}/compose.yml" <<'YAML'
+name: beskid-platform-production
+services:
+  site:
+    image: ghcr.io/cyber-nomad-collective/beskid-site:${BESKID_RELEASE_TAG:?immutable manifest required}
+  platform-spec:
+    image: ghcr.io/cyber-nomad-collective/beskid-platform-spec:${BESKID_RELEASE_TAG:?immutable manifest required}
+  postgres:
+    image: postgres:16
+YAML
+
+export GITHUB_REPOSITORY=Cyber-Nomad-Collective/beskid
+export GITHUB_SHA=0123456789abcdef0123456789abcdef01234567
+export GITHUB_RUN_ID=123
+export GITHUB_RUN_ATTEMPT=1
+export GITHUB_WORKFLOW_REF=local-test
+"${root}/scripts/ci/build-release-manifest.sh" "${tmp}/records" "${tmp}/release.json"
+"${root}/scripts/ci/render-release-compose.sh" "${tmp}/release.json" "${tmp}/compose.yml" "${tmp}/rendered.yml"
+rg -q 'beskid-site@sha256:a{64}' "${tmp}/rendered.yml"
+rg -q 'beskid-platform-spec@sha256:b{64}' "${tmp}/rendered.yml"
+rg -q 'image: postgres:16' "${tmp}/rendered.yml"
+
+for dockerfile in \
+  site/website/Dockerfile \
+  site/auth/Dockerfile \
+  site/platform-spec/Dockerfile \
+  beskid_tracker/Dockerfile \
+  beskid_nexus/Dockerfile; do
+  secure="${tmp}/$(echo "${dockerfile}" | tr / -)"
+  "${root}/scripts/ci/prepare-secure-dockerfile.sh" "${root}/${dockerfile}" "${secure}"
+  if rg -q 'ARG[[:space:]]+NODE_AUTH_TOKEN|ENV[[:space:]]+NODE_AUTH_TOKEN' "${secure}"; then
+    echo "package token declaration remains in ${secure}" >&2
+    exit 1
+  fi
+  rg -q 'mount=type=secret,id=NODE_AUTH_TOKEN' "${secure}"
+done
+
+jq '.images[0].digest = "latest"' "${tmp}/release.json" >"${tmp}/invalid.json"
+if "${root}/scripts/ci/validate-release-manifest.sh" "${tmp}/invalid.json" >/dev/null 2>&1; then
+  echo "invalid mutable manifest unexpectedly passed" >&2
+  exit 1
+fi
+
+cat >"${tmp}/workflow-run.json" <<'JSON'
+{"id":123,"conclusion":"success","head_branch":"main","path":".github/workflows/platform-delivery.yml"}
+JSON
+"${root}/scripts/ci/validate-promotion-source.sh" "${tmp}/workflow-run.json" "${tmp}/release.json"
+jq '.head_branch = "feature"' "${tmp}/workflow-run.json" >"${tmp}/invalid-run.json"
+if "${root}/scripts/ci/validate-promotion-source.sh" "${tmp}/invalid-run.json" "${tmp}/release.json" >/dev/null 2>&1; then
+  echo "non-main production source unexpectedly passed" >&2
+  exit 1
+fi
+
+cat >"${tmp}/lane.json" <<'JSON'
+{"openbao_services":["auth"],"compose_profiles":"tracker","static_env":{"STATIC_VALUE":"staging"}}
+JSON
+export MOCK_SYNC_BODY="${tmp}/sync-body.json"
+cat >"${tmp}/bin/curl" <<'SH'
+#!/usr/bin/env bash
+url=''
+body=''
+previous=''
+for argument in "$@"; do
+  if [[ "${previous}" == -d ]]; then body="${argument}"; fi
+  if [[ "${argument}" == https://* ]]; then url="${argument}"; fi
+  previous="${argument}"
+done
+case "${url}" in
+  https://bao.invalid/*)
+    echo '{"data":{"data":{"SESSION_SECRET":"secret-value"}}}'
+    ;;
+  https://coolify.invalid/*/envs/bulk)
+    printf '%s' "${body}" >"${MOCK_SYNC_BODY}"
+    echo '{}'
+    ;;
+  *)
+    echo "unexpected sync URL: ${url}" >&2
+    exit 2
+    ;;
+esac
+SH
+chmod +x "${tmp}/bin/curl"
+PATH="${tmp}/bin:${PATH}" \
+  TRACEPARENT=00-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-bbbbbbbbbbbbbbbb-01 \
+  BESKID_RELEASE_MANIFEST_SHA256=cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc \
+  OPENBAO_ADDR=https://bao.invalid OPENBAO_TOKEN=test \
+  COOLIFY_ENDPOINT=https://coolify.invalid COOLIFY_API_TOKEN=test COOLIFY_SERVICE_UUID=test \
+  "${root}/scripts/ci/sync-runtime-env.sh" staging "${tmp}/lane.json"
+jq -e '
+  ([.data[] | select(.key == "SESSION_SECRET" and .value == "secret-value")] | length == 1) and
+  ([.data[] | select(.key == "STATIC_VALUE" and .value == "staging")] | length == 1) and
+  ([.data[] | select(.key == "COMPOSE_PROFILES" and .value == "tracker")] | length == 1) and
+  ([.data[] | select(.key == "BESKID_RELEASE_MANIFEST_SHA256" and (.value | length) == 64)] | length == 1) and
+  ([.data[] | select(.key == "BESKID_DEPLOYMENT_TRACEPARENT" and (.value | startswith("00-")))] | length == 1)
+' "${MOCK_SYNC_BODY}" >/dev/null
+
+cat >"${tmp}/bin/docker" <<'SH'
+#!/usr/bin/env bash
+[[ "$1" == compose ]] || exit 2
+exit 0
+SH
+chmod +x "${tmp}/bin/docker"
+PATH="${tmp}/bin:${PATH}" "${root}/scripts/ci/deploy-release-manifest.sh" \
+  --lane staging --manifest "${tmp}/release.json" --compose "${tmp}/compose.yml"
+
+export MOCK_COOLIFY_STATE="${tmp}/coolify-state"
+mkdir -p "${MOCK_COOLIFY_STATE}"
+cat >"${tmp}/bin/curl" <<'SH'
+#!/usr/bin/env bash
+method=GET
+url=''
+previous=''
+for argument in "$@"; do
+  if [[ "${previous}" == -X ]]; then method="${argument}"; fi
+  if [[ "${argument}" == https://coolify.invalid/* ]]; then url="${argument}"; fi
+  previous="${argument}"
+done
+case "${method}:${url}" in
+  GET:*/services/test)
+    echo '{"docker_compose_raw":"bmFtZTogb2xkCg=="}'
+    ;;
+  PATCH:*/services/test)
+    echo '{}'
+    ;;
+  GET:*/deploy\?*)
+    if [[ ! -f "${MOCK_COOLIFY_STATE}/trigger-failed" ]]; then
+      touch "${MOCK_COOLIFY_STATE}/trigger-failed"
+      echo 'simulated deployment trigger failure' >&2
+      exit 22
+    fi
+    echo '{"deployment_uuid":"rollback-1"}'
+    ;;
+  GET:*/deployments/rollback-1)
+    touch "${MOCK_COOLIFY_STATE}/rollback-complete"
+    echo '{"status":"finished"}'
+    ;;
+  *)
+    echo "unexpected mock Coolify call: ${method} ${url}" >&2
+    exit 2
+    ;;
+esac
+SH
+chmod +x "${tmp}/bin/curl"
+if PATH="${tmp}/bin:${PATH}" \
+  COOLIFY_ENDPOINT=https://coolify.invalid \
+  COOLIFY_API_TOKEN=test \
+  COOLIFY_SERVICE_UUID=test \
+  "${root}/scripts/ci/deploy-release-manifest.sh" --apply \
+    --lane staging --manifest "${tmp}/release.json" --compose "${tmp}/compose.yml" >/dev/null 2>&1; then
+  echo "failed Coolify API unexpectedly produced a successful deployment" >&2
+  exit 1
+fi
+[[ -f "${MOCK_COOLIFY_STATE}/rollback-complete" ]] || {
+  echo "failed deployment did not complete rollback" >&2
+  exit 1
+}
+
+echo "CI/CD foundation tests OK"

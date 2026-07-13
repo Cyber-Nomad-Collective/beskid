@@ -1,4 +1,5 @@
 import { marked } from "marked";
+import { transformBeskidDirectives } from "./markdown-directives";
 
 marked.setOptions({
 	gfm: true,
@@ -6,5 +7,7 @@ marked.setOptions({
 });
 
 export function renderMarkdownToHtml(markdown: string): string {
-	return marked.parse(markdown, { async: false }) as string;
+	return marked.parse(transformBeskidDirectives(markdown), {
+		async: false,
+	}) as string;
 }

@@ -26,7 +26,7 @@ With `mod app.core;` at the top, imports resolve inside that module scope. Local
 
 Prefer aliases when two imports collide (`AParser`, `BParser`) instead of "helpful" shortening that confuses readers.
 
-## Normative
+## Standard reference (informative)
 
 - [Name Resolution](/platform-spec/language-meta/program-structure/name-resolution/)
 - [Modules and Visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/)

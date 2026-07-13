@@ -1,21 +1,6 @@
-import {
-	buildRepoPathFromForm,
-	buildSlugFromRepoPath,
-	formValuesToFrontmatter,
-	frontmatterToFormValues,
-	parseFrontmatterJson,
-	validateFrontmatterForLevel,
-	pathClassFromRepoPath,
-	validateSpecLevelPath,
-} from "@cyber-nomad-collective/spec-core";
 import { createServerFn } from "@tanstack/react-start";
-
-import type {
-	DraftChangeKind,
-	DraftChangeNode,
-	SpecLevel,
-} from "#/server/memgraph/types";
-import { withAuthUser, requireMaintainer } from "#/server/auth-guard.server";
+import { requireMaintainer, withAuthUser } from "#/server/auth-guard.server";
+import { createDraftPullRequest } from "#/server/git-sync/pr";
 import {
 	approveDraft,
 	createDraft,
@@ -27,12 +12,34 @@ import {
 	submitDraft,
 	updateDraft,
 } from "#/server/memgraph/drafts";
-import { exportApprovedDraft } from "#/server/git-sync/export";
-import { createDraftPullRequest } from "#/server/git-sync/pr";
+import type {
+	DraftChangeKind,
+	DraftChangeNode,
+	SpecLevel,
+} from "#/server/memgraph/types";
+
+function normalizeCapability(value: string): string {
+	const capability = value
+		.trim()
+		.replace(/^platform-spec\/capabilities\//, "")
+		.replace(/^\/+|\/+$/g, "")
+		.replace(/[^a-z0-9-]+/gi, "--")
+		.toLowerCase();
+	if (
+		!capability ||
+		!/^[a-z0-9]+(?:-+[a-z0-9]+)*(?:--[a-z0-9]+(?:-+[a-z0-9]+)*)+$/.test(
+			capability,
+		)
+	) {
+		throw new Error(
+			"Capability must use OpenSpec segments such as language--syntax--blocks",
+		);
+	}
+	return capability;
+}
 
 export const listMyDraftsFn = createServerFn({ method: "GET" }).handler(
-	async () =>
-		withAuthUser(async ({ login }) => listDraftsForUser(login)),
+	async () => withAuthUser(async ({ login }) => listDraftsForUser(login)),
 );
 
 export const getDraftFn = createServerFn({ method: "GET" })
@@ -60,51 +67,10 @@ export const createDraftFn = createServerFn({ method: "POST" })
 	)
 	.handler(async ({ data }) =>
 		withAuthUser(async ({ login }) => {
-			let repoPath: string;
-			if (data.changeKind === "create") {
-				repoPath = buildRepoPathFromForm(
-					data.specLevel,
-					data.values.parent_slug ?? "platform-spec",
-					data.values.leaf_slug ?? "new-doc",
-				);
-			} else {
-				repoPath =
-					data.values.repo_path?.trim() ||
-					buildRepoPathFromForm(
-						data.specLevel,
-						data.values.parent_slug ?? "platform-spec",
-						data.values.leaf_slug ?? "new-doc",
-					);
-			}
-
-			const pathError = validateSpecLevelPath(data.specLevel, repoPath);
-			if (pathError) throw new Error(pathError);
-
-			const frontmatter = formValuesToFrontmatter(
-				data.specLevel,
-				data.values,
-			);
-			const fmCheck = validateFrontmatterForLevel(
-				data.specLevel,
-				frontmatter,
-			);
-			if (!fmCheck.ok) {
-				throw new Error(fmCheck.errors.join("; "));
-			}
-
-			const slug = buildSlugFromRepoPath(repoPath);
-			const pathClass = pathClassFromRepoPath(repoPath);
+			const capability = normalizeCapability(data.values.capability ?? "");
+			const repoPath = `openspec/specs/${capability}/spec.md`;
+			const slug = `platform-spec/capabilities/${capability}`;
 			const bodyMd = data.values.body_md ?? "";
-			let layoutJson: string | null = data.values.layout_json?.trim()
-				? data.values.layout_json
-				: null;
-			if (!layoutJson && data.values.layout_preset?.trim()) {
-				layoutJson = JSON.stringify({
-					version: 1,
-					level: data.specLevel,
-					extends: data.values.layout_preset.trim(),
-				});
-			}
 
 			const id = crypto.randomUUID();
 			return createDraft({
@@ -114,11 +80,11 @@ export const createDraftFn = createServerFn({ method: "POST" })
 				changeKind: data.changeKind,
 				repoPath,
 				slug,
-				pathClass,
-				specLevel: data.specLevel,
-				frontmatterJson: JSON.stringify(frontmatter),
+				pathClass: "feature",
+				specLevel: "feature",
+				frontmatterJson: "{}",
 				bodyMd,
-				layoutJson,
+				layoutJson: null,
 				authorLogin: login,
 			});
 		}),
@@ -144,47 +110,14 @@ export const updateDraftFn = createServerFn({ method: "POST" })
 			}
 
 			let repoPath = existing.repoPath;
-			let frontmatterJson = existing.frontmatterJson;
 			let bodyMd = existing.bodyMd;
-			let layoutJson = existing.layoutJson;
 			let slug = existing.slug;
-			let pathClass = existing.pathClass;
-			let specLevel = existing.specLevel;
 
-			if (data.values && data.specLevel) {
-				if (data.changeKind === "create" || !data.changeKind) {
-					repoPath = buildRepoPathFromForm(
-						data.specLevel,
-						data.values.parent_slug ?? "platform-spec",
-						data.values.leaf_slug ?? "new-doc",
-					);
-				} else if (data.values.repo_path?.trim()) {
-					repoPath = data.values.repo_path.trim();
-				}
-
-				const pathError = validateSpecLevelPath(data.specLevel, repoPath);
-				if (pathError) throw new Error(pathError);
-
-				const frontmatter = formValuesToFrontmatter(
-					data.specLevel,
-					data.values,
-				);
-				const fmCheck = validateFrontmatterForLevel(
-					data.specLevel,
-					frontmatter,
-				);
-				if (!fmCheck.ok) {
-					throw new Error(fmCheck.errors.join("; "));
-				}
-
-				frontmatterJson = JSON.stringify(frontmatter);
+			if (data.values) {
+				const capability = normalizeCapability(data.values.capability ?? slug);
+				repoPath = `openspec/specs/${capability}/spec.md`;
+				slug = `platform-spec/capabilities/${capability}`;
 				bodyMd = data.values.body_md ?? bodyMd;
-				layoutJson = data.values.layout_json?.trim()
-					? data.values.layout_json
-					: layoutJson;
-				slug = buildSlugFromRepoPath(repoPath);
-				pathClass = pathClassFromRepoPath(repoPath);
-				specLevel = data.specLevel;
 			}
 
 			return updateDraft(data.id, {
@@ -193,11 +126,11 @@ export const updateDraftFn = createServerFn({ method: "POST" })
 				changeKind: data.changeKind,
 				repoPath,
 				slug,
-				pathClass,
-				specLevel,
-				frontmatterJson,
+				pathClass: "feature",
+				specLevel: "feature",
+				frontmatterJson: "{}",
 				bodyMd,
-				layoutJson,
+				layoutJson: null,
 			});
 		}),
 	);
@@ -249,7 +182,6 @@ export const approveDraftFn = createServerFn({ method: "POST" })
 				throw new Error("Draft is not awaiting review");
 			}
 
-			exportApprovedDraft(draft);
 			const pr = await createDraftPullRequest(octokit, draft);
 			return approveDraft(data.id, login, {
 				headBranch: pr.branch,
@@ -274,5 +206,4 @@ export const rejectDraftFn = createServerFn({ method: "POST" })
 		}),
 	);
 
-export { frontmatterToFormValues };
 export type { DraftChangeNode };

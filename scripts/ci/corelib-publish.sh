@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 # Publish the corelib workspace to the pckg registry.
 #
-# Ports the Dagger function corelibPublish() in
-# beskid_infra/dagger/src/corelib-gate.ts onto a Blacksmith runner. The actual
-# packaging + upload logic lives in the (Dagger-agnostic, pure-Node) runner at
-# beskid_infra/dagger/src/lib/corelib-publish-runner.mjs — this script builds
+# The packaging + upload logic lives in the native pure-Node runner at
+# scripts/ci/lib/corelib-publish-runner.mjs. This script builds
 # beskid_cli, ensures the runtime bridge, and invokes that runner with host
-# paths instead of the Dagger container mounts.
+# paths used by native runners.
 #
 # Run from the superrepo root. Assumes the compiler (+ corelib) and beskid_bsol
 # submodules are initialised.
@@ -48,7 +46,7 @@ else
   COMPILER_ROOT="${ROOT}"
 fi
 
-RUNNER="${ROOT}/beskid_infra/dagger/src/lib/corelib-publish-runner.mjs"
+RUNNER="${ROOT}/scripts/ci/lib/corelib-publish-runner.mjs"
 [[ -f "$RUNNER" ]] || { echo "Missing publish runner: $RUNNER" >&2; exit 1; }
 
 cd "$COMPILER_ROOT"

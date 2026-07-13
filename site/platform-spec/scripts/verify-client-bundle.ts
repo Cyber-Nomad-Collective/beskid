@@ -12,7 +12,7 @@ const assets = path.join(root, ".output/public/assets");
 // UI text (e.g. the auth-hub pairing wizard shows operators which env vars
 // to set) and are harmless — the name carries no value.
 const forbidden =
-	/env[._-]?server|process\.env\.(SESSION_SECRET|GITHUB_SYNC_TOKEN|GITHUB_WEBHOOK_SECRET|PLATFORM_SPEC_SETUP_TOKEN)/;
+	/env[._-]?server|process\.env\.(SESSION_SECRET|GITHUB_WEBHOOK_SECRET|PLATFORM_SPEC_SETUP_TOKEN)/;
 
 function main(): void {
 	const verify = spawnSync(

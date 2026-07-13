@@ -2,11 +2,8 @@
 # Open VSX publish: build the LSP binary natively, bundle the VS Code
 # extension, and publish to Open VSX with retry/backoff.
 #
-# Ported from the Dagger function openVsxPublish() in
-# beskid_infra/dagger/src/open-vsx.ts (plus its helper scripts
-# resolve-extension-version.sh and open-vsx-bundle-publish.sh) so the whole
-# pipeline runs natively on a GitHub-hosted OS runner. Eliminates the Dagger
-# engine/container from the publish path and surfaces every step in the log.
+# The pipeline runs natively on a GitHub-hosted OS runner and surfaces every
+# step in the log.
 #
 # Run from the superrepo root. Assumes the compiler and beskid_vscode submodules
 # are already initialised, and that OVSX_TOKEN is exported.
@@ -136,7 +133,7 @@ bunx @vscode/vsce package --target "$PLATFORM" --out "$vsix"
 
 # ---------------------------------------------------------------------------
 # 5. Publish with 4-attempt exponential backoff on transient errors.
-#    Ported verbatim from the Dagger open-vsx-bundle-publish.sh semantics.
+#    Preserve the original bundle/publish semantics.
 # ---------------------------------------------------------------------------
 max_attempts=4
 base_delay=3

@@ -10,7 +10,7 @@ tableOfContents: true
 
 - Do not mark scaffold-only hubs as **Standard** to win an argument.
 - Prefer updating existing feature hubs over spawning duplicate stubs.
-- Run `cd site/website && bun run verify:trudoc -- --preset ci` after platform-spec edits.
+- Run `openspec validate --all --strict` after platform-spec edits, then build the affected implementation and Book site.
 
 ## Read first
 

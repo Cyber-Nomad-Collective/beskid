@@ -1,10 +1,7 @@
 "use client";
 
-import { SpecNavRail } from "@beskid/ui-react/platform-spec";
-
 import { useSpecViewMode } from "#/components/reader/spec-view-mode";
-import type { NavTreeNode } from "#/server/catalog";
-import { Badge } from "@beskid/ui-react";
+import { Badge } from "#/components/ui-primitives";
 
 export interface PlatformSpecHomeClientProps {
 	catalog: Array<{
@@ -14,29 +11,32 @@ export interface PlatformSpecHomeClientProps {
 		description: string | null;
 		status: string | null;
 		pathClass: string;
+		domain: string | null;
 	}>;
-	navTree: NavTreeNode;
-}
-
-function toUiNavTree(node: NavTreeNode) {
-	return {
-		slug: node.slug,
-		href: node.href,
-		title: node.title,
-		children: node.children?.map(toUiNavTree),
-	};
 }
 
 export function PlatformSpecHomeClient({
 	catalog,
-	navTree,
 }: PlatformSpecHomeClientProps) {
 	const { mode } = useSpecViewMode();
-	const domains = catalog.filter((entry) => entry.pathClass === "domain");
+	const byDomain = new Map<
+		string,
+		{ domain: string; entry: (typeof catalog)[number]; count: number }
+	>();
+	for (const entry of catalog) {
+		if (!entry.domain) continue;
+		const current = byDomain.get(entry.domain);
+		byDomain.set(entry.domain, {
+			domain: entry.domain,
+			entry: current?.entry ?? entry,
+			count: (current?.count ?? 0) + 1,
+		});
+	}
+	const domains = [...byDomain.values()];
 	const stats = {
 		domains: domains.length,
 		total: catalog.length,
-		features: catalog.filter((entry) => entry.pathClass === "feature").length,
+		features: catalog.length,
 	};
 
 	return (
@@ -49,7 +49,7 @@ export function PlatformSpecHomeClient({
 					</h1>
 					<p className="text-lg text-muted-foreground">
 						Structured Beskid platform contract — browse domains, areas, and
-						features. Edit via the editorial app or local spec CLI.
+						capabilities. Edit through reviewed OpenSpec changes.
 					</p>
 					<div className="flex flex-wrap gap-4 pt-2 text-sm">
 						<span>
@@ -66,28 +66,21 @@ export function PlatformSpecHomeClient({
 			</section>
 
 			{mode === "browse" ? (
-				<div className="grid gap-6 lg:grid-cols-[240px_1fr]">
-					<SpecNavRail
-						navTree={[toUiNavTree(navTree)]}
-						activeSlug="platform-spec"
-						className="hidden lg:block"
-					/>
-					<div className="grid gap-4 sm:grid-cols-2">
-						{domains.map((domain) => (
-							<a
-								key={domain.slug}
-								href={domain.href}
-								className="island-shell rounded-xl p-5 transition-colors hover:border-primary/40"
-							>
-								<h2 className="text-lg font-semibold">{domain.title}</h2>
-								{domain.description ? (
-									<p className="mt-2 text-sm text-muted-foreground">
-										{domain.description}
-									</p>
-								) : null}
-							</a>
-						))}
-					</div>
+				<div className="grid gap-4 sm:grid-cols-2">
+					{domains.map(({ domain, entry, count }) => (
+						<a
+							key={domain}
+							href={entry.href}
+							className="island-shell rounded-xl p-5 transition-colors hover:border-primary/40"
+						>
+							<h2 className="text-lg font-semibold capitalize">
+								{domain.replace(/-/g, " ")}
+							</h2>
+							<p className="mt-2 text-sm text-muted-foreground">
+								{count} canonical OpenSpec capabilities
+							</p>
+						</a>
+					))}
 				</div>
 			) : (
 				<div className="rounded-xl border border-dashed border-border/70 p-8 text-center text-muted-foreground">

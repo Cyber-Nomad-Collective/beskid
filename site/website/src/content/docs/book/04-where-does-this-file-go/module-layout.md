@@ -44,7 +44,7 @@ flowchart TD
 2. Keep implementation files under matching folders.
 3. Re-export only stable types/functions at the boundary (chapter [05](/book/05-names-nobody-agreed-on/)).
 
-## Normative
+## Standard reference (informative)
 
 - [Modules and Visibility](/platform-spec/language-meta/program-structure/modules-and-visibility/)
 

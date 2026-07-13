@@ -35,7 +35,9 @@ Run from `site/website`:
 | `bun build`   | Build static site into `dist/`          |
 | `bun preview` | Preview built site                      |
 
-`bun dev` / `bun build` run `predev` / `prebuild`: CLI version sync, platform-spec git meta, `generate:platform-spec-nav-tree`, `generate:platform-spec-catalog`, `generate:book-nav-tree`, `verify:book-images`, `verify:book-layout` (Starlight two-column width guards), and trudoc CI verify (build only).
+`bun dev` / `bun build` run the configured Book validation and navigation
+generation steps. Normative content is not generated from this package; the
+platform-spec service reads repository-root OpenSpec content.
 
 **Public JSON APIs** (platform spec — served from `spec.beskid-lang.org` after deploy):
 
@@ -46,6 +48,21 @@ Run from `site/website`:
 | `/api/v1/docs/{slug}` | Per-document frontmatter + body bundles |
 
 Consumers (for example [beskid_tracker](https://github.com/Cyber-Nomad-Collective/beskid/tree/main/beskid_tracker)) fetch from `https://spec.beskid-lang.org`.
+
+## Typed cross-site embeds
+
+Markdown can link or embed canonical content without copying it:
+
+````markdown
+```spec
+ref: compiler--build-pipeline--program-assembly#artifact-selection
+title: Artifact selection requirement
+```
+````
+
+Supported directive types are `spec`, `book`, `nexus`, and `bug`. Unsupported
+renderers still show a normal link; Astro progressively enhances `spec`
+directives with the framework-neutral custom element served by platform-spec.
 
 In-site navigation uses Astro `ClientRouter` with `fallback="animate"` (View Transitions polyfill on browsers without native support). Directional slide is applied on the Starlight `<main>` pane via [`Page.astro`](https://github.com/Cyber-Nomad-Collective/beskid_web_common/blob/main/packages/beskid-ui/src/starlight/Page.astro) from `@beskid/beskid-ui` (re-diff when upgrading `@astrojs/starlight`).
 

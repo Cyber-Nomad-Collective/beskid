@@ -13,6 +13,7 @@ import { remarkInlineRepoPaths } from 'trudoc/scripts/remark-inline-repo-paths.m
 import { remarkRepoLinkFence } from 'trudoc/scripts/remark-repo-link-fence.mjs';
 import { loadBeskidGrammar } from 'trudoc/grammars/load-beskid-grammar.mjs';
 import { beskidUiRoot } from './src/lib/beskid-ui-root.mjs';
+import { remarkBeskidDirectives } from './src/lib/remark-beskid-directives.mjs';
 
 const beskidGrammar = loadBeskidGrammar();
 
@@ -119,6 +120,7 @@ export default defineConfig({
 	},
 	markdown: {
 		remarkPlugins: [
+			remarkBeskidDirectives,
 			createRemarkArchCodeFence(),
 			remarkRepoLinkFence({ repo: 'Cyber-Nomad-Collective/beskid' }),
 			remarkInlineRepoPaths({ repo: 'Cyber-Nomad-Collective/beskid' }),

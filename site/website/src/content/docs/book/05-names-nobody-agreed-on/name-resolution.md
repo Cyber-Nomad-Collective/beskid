@@ -34,7 +34,7 @@ Assuming `use Foo;` lets you shadow a local `Foo` is a fast path to embarrassmen
 
 Fully qualified paths follow module nesting declared by files and `mod` statements. When lost, `beskid analyze` with a one-file repro beats staring at folders.
 
-## Normative
+## Standard reference (informative)
 
 - [Name Resolution](/platform-spec/language-meta/program-structure/name-resolution/)
 

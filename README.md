@@ -15,7 +15,7 @@ This repository is the **superrepo**: one checkout that wires together the compi
 | --- | --- | --- |
 | **Home & docs** | [beskid-lang.org](https://beskid-lang.org) | Landing page, [Platform specification](https://beskid-lang.org/platform-spec/), and [The Beskid Book](https://beskid-lang.org/book/) |
 | **pckg** | [pckg.beskid-lang.org](https://pckg.beskid-lang.org) | Public package registry—browse packages, publish and fetch with the CLI |
-| **Tracker** | [tracker.beskid-lang.org](https://tracker.beskid-lang.org) | Roadmap, kanban, and bug reports (GitHub Issues stay the source of truth) |
+| **Tracker** | [tracker.beskid-lang.org](https://tracker.beskid-lang.org) | SQLite-backed roadmap and kanban; GitHub synchronization is limited to public bugs |
 
 Auth for Tracker, Nexus, and pckg flows through the shared [auth hub](https://auth.beskid-lang.org) (`site/auth/`).
 
@@ -36,10 +36,11 @@ Status: opinionated project. Not finished. Not apologizing. Start with [The Besk
 
 ## This superrepo
 
-Day-to-day language work happens in **`compiler/`** and documentation in **`site/website/`**. Everything else—registry, VS Code extension, tracker UI, deploy infra—lives in git submodules so each piece can version and ship on its own while CI in this repo ties them together.
+Day-to-day language work happens in **`compiler/`**, normative standard changes in **`openspec/`**, and informative documentation in **`site/website/`**. Everything else—registry, VS Code extension, tracker UI, deploy infra—lives in git submodules so each piece can version and ship on its own while CI in this repo ties them together.
 
 ```
 beskid/                          ← you are here (aggregate root)
+├── openspec/                    ← sole normative standard + change workflow
 ├── compiler/                    ← Rust: CLI, compiler, LSP, corelib (nested submodule)
 ├── pckg/                        ← .NET registry service + UI
 ├── beskid_vscode/               ← VS Code extension (bundles beskid_lsp)
@@ -48,9 +49,10 @@ beskid/                          ← you are here (aggregate root)
 ├── beskid_web_common/           ← Shared TS: trudoc, beskid-ui, auth client
 ├── beskid_treesitter/           ← Tree-sitter grammar (synced from compiler Pest)
 ├── beskid_templates/            ← First-party `beskid.templates.*` scaffolds
-├── beskid_infra/                ← Coolify Compose deploy, OpenBao, Dagger CI
+├── beskid_infra/                ← Coolify Compose deploy, OpenBao, monitoring
 ├── site/
-│   ├── website/                 ← Astro + Starlight docs (canonical MDX source)
+│   ├── platform-spec/           ← OpenSpec reader, editor and embed APIs
+│   ├── website/                 ← Astro + Starlight informative Book/docs
 │   └── auth/                    ← GitHub OAuth hub for tracker, nexus, pckg
 ├── scripts/                     ← setup-environment.sh, install-deps.sh, CI helpers
 └── .github/workflows/           ← Container images, Open VSX, Coolify compose deploy
@@ -66,7 +68,7 @@ Each row links to the README in that tree. Clone submodules before following tho
 | `compiler/corelib/` | Standard library (nested submodule: `corelib`, foundation, runtime, Mod SDK) | [compiler/corelib/README.md](compiler/corelib/README.md) |
 | `pckg/` | Registry HTTP API, Blazor UI, PostgreSQL, Docker Compose for local dev | [pckg/README.md](pckg/README.md) |
 | `beskid_vscode/` | Official VS Code extension; Open VSX publish runs from superrepo CI | [beskid_vscode/README.md](beskid_vscode/README.md) |
-| `beskid_tracker/` | Public roadmap and kanban; mirrors GitHub Issues via webhooks + SQLite | [beskid_tracker/README.md](beskid_tracker/README.md) |
+| `beskid_tracker/` | SQLite roadmap/kanban and public bugs; GitHub synchronization is bug-only | [beskid_tracker/README.md](beskid_tracker/README.md) |
 | `beskid_nexus/` | Interactive repo graph explorer; MCP at `/api/mcp` | [beskid_nexus/README.md](beskid_nexus/README.md) |
 | `beskid_web_common/` | `@cyber-nomad-collective/trudoc`, `@beskid/beskid-ui`, auth client packages | [beskid_web_common/README.md](beskid_web_common/README.md) |
 | `beskid_treesitter/` | `@cyber-nomad-collective/beskid-tree-sitter` grammar for editors and tooling | [beskid_treesitter/README.md](beskid_treesitter/README.md) |
@@ -78,10 +80,11 @@ Each row links to the README in that tree. Clone submodules before following tho
 | Path | Role | README |
 | --- | --- | --- |
 | `site/` | Docs site + auth hub; Docker Compose for Coolify/GHCR | [site/README.md](site/README.md) |
-| `site/website/` | Astro dev server, book + platform-spec content, prebuild pipelines | [site/website/README.md](site/website/README.md) |
+| `openspec/` | Canonical standard capabilities, change proposals, and migration catalog | [GUIDE.md](GUIDE.md) |
+| `site/platform-spec/` | OpenSpec reader/editor and framework-neutral embed service | [site/platform-spec/README.md](site/platform-spec/README.md) |
+| `site/website/` | Astro dev server and informative Beskid Book/docs | [site/website/README.md](site/website/README.md) |
 | `site/auth/` | Central GitHub OAuth; one app handoff to tracker, nexus, pckg | [site/auth/README.md](site/auth/README.md) |
 | `scripts/` | Toolchain install (`repo-deps.json`), submodule sync, setup wizard entry | [scripts/README.md](scripts/README.md) |
-| `beskid_infra/dagger/` | Shared Dagger module (Open VSX, compiler gates, corelib publish) | [beskid_infra/dagger/README.md](beskid_infra/dagger/README.md) |
 | `.github/` | Workflow index for container images, Open VSX, Coolify compose | [.github/README.md](.github/README.md) |
 
 ## Getting started

@@ -1,0 +1,166 @@
+name: Reusable immutable image build
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
+      repository:
+        description: Full OCI repository without tag
+        required: true
+        type: string
+      context:
+        required: true
+        type: string
+      dockerfile:
+        required: true
+        type: string
+      submodules:
+        description: Space-separated submodules required by the build context
+        required: false
+        default: ''
+        type: string
+      push:
+        required: false
+        default: false
+        type: boolean
+      sign:
+        required: false
+        default: false
+        type: boolean
+      node-auth:
+        required: false
+        default: false
+        type: boolean
+    outputs:
+      digest:
+        value: ${{ jobs.image.outputs.digest }}
+    secrets:
+      NODE_AUTH_TOKEN:
+        required: false
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  image:
+    name: ${{ inputs.name }}
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 45
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Initialize image submodule
+        if: inputs.submodules != ''
+        env:
+          SUBMODULES: ${{ inputs.submodules }}
+        run: |
+          set -euo pipefail
+          for submodule in ${SUBMODULES}; do
+            ./scripts/ci/init-submodules.sh "${submodule}"
+          done
+
+      - name: Log in to GHCR
+        if: inputs.push
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Setup Blacksmith builder
+        uses: useblacksmith/setup-docker-builder@ab5c1da94f53f5cd75c1038092aa276dddfccbba # v1
+
+      - name: Prepare package-auth Dockerfile
+        id: dockerfile
+        env:
+          SOURCE_DOCKERFILE: ${{ inputs.dockerfile }}
+          NODE_AUTH: ${{ inputs.node-auth }}
+        run: |
+          set -euo pipefail
+          selected="${SOURCE_DOCKERFILE}"
+          if [[ "${NODE_AUTH}" == true ]]; then
+            mkdir -p "${GITHUB_WORKSPACE}/.ci-generated"
+            selected="${GITHUB_WORKSPACE}/.ci-generated/${{ inputs.name }}.Dockerfile"
+            ./scripts/ci/prepare-secure-dockerfile.sh "${SOURCE_DOCKERFILE}" "${selected}"
+          fi
+          echo "file=${selected}" >>"${GITHUB_OUTPUT}"
+
+      - name: Build immutable image
+        id: build
+        uses: useblacksmith/build-push-action@fb9e3e6a9299c78462bfadd0d93352c316adc9b8 # v2
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ steps.dockerfile.outputs.file }}
+          push: ${{ inputs.push }}
+          tags: ${{ inputs.repository }}:sha-${{ github.sha }}
+          # min deliberately omits build parameters; package credentials are
+          # supplied only through BuildKit's ephemeral secret mount.
+          provenance: mode=min
+          sbom: true
+          secrets: |
+            NODE_AUTH_TOKEN=${{ secrets.NODE_AUTH_TOKEN }}
+
+      - name: Require immutable digest
+        if: inputs.push
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          [[ "${DIGEST}" =~ ^sha256:[0-9a-f]{64}$ ]]
+
+      - name: Scan immutable image for vulnerabilities
+        if: inputs.push
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ inputs.repository }}@${{ steps.build.outputs.digest }}
+          format: sarif
+          output: trivy-${{ inputs.name }}.sarif
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+
+      - name: Upload vulnerability report
+        if: always() && inputs.push
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: vulnerability-${{ inputs.name }}
+          path: trivy-${{ inputs.name }}.sarif
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Keyless signing hook
+        if: inputs.push && inputs.sign
+        env:
+          IMAGE: ${{ inputs.repository }}@${{ steps.build.outputs.digest }}
+        run: |
+          mkdir -p "${RUNNER_TEMP}/cosign-bin"
+          GOBIN="${RUNNER_TEMP}/cosign-bin" go install github.com/sigstore/cosign/v2/cmd/cosign@v2.4.3
+          PATH="${RUNNER_TEMP}/cosign-bin:${PATH}" ./scripts/ci/sign-image.sh "${IMAGE}"
+
+      - name: Write image manifest record
+        if: inputs.push
+        env:
+          NAME: ${{ inputs.name }}
+          REPOSITORY: ${{ inputs.repository }}
+          DIGEST: ${{ steps.build.outputs.digest }}
+          SIGNED: ${{ inputs.sign }}
+        run: |
+          mkdir -p image-record
+          jq -n --arg name "${NAME}" --arg repository "${REPOSITORY}" --arg digest "${DIGEST}" --argjson signed "${SIGNED}" \
+            '{name: $name, repository: $repository, digest: $digest, sbom: true, provenance: true, vulnerabilities: "passed", signed: $signed}' \
+            >"image-record/${NAME}.json"
+
+      - name: Upload image manifest record
+        if: inputs.push
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: image-record-${{ inputs.name }}
+          path: image-record/
+          retention-days: 90

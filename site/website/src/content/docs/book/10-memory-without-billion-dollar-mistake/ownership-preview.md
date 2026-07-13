@@ -30,7 +30,7 @@ Closures capture environment values; the compiler roots captures for **GC** when
 
 Put it behind **`extern`** / native libraries with a documented ABI profile, or contribute to `compiler/crates/`—do not demand `unsafe` in Beskid because C# had `unsafe` and nobody learned anyway.
 
-## Normative
+## Standard reference (informative)
 
 [Memory and references](/platform-spec/language-meta/memory-model/memory-and-references/)
 

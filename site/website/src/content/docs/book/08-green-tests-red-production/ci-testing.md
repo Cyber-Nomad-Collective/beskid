@@ -29,7 +29,7 @@ Workspace members tied to verification (from `compiler/Cargo.toml`):
 
 ## Superrepo and website CI
 
-The aggregate repo may run `bun run verify:trudoc` on docs and platform-spec gates separately from your package tests. Docs green + app red is still a bad release—just a different failure mode.
+The aggregate repo runs Book link/build checks and OpenSpec validation separately from package tests. Docs green + app red is still a bad release—just a different failure mode.
 
 ## Reference links
 

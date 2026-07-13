@@ -15,7 +15,6 @@ on:
       - 'scripts/ci/**'
       - '.github/actions/**'
       - '.github/workflows/compiler.yml'
-      - 'dagger.json'
   pull_request:
     branches: [main]
     paths:
@@ -28,7 +27,6 @@ on:
       - 'scripts/ci/**'
       - '.github/actions/**'
       - '.github/workflows/compiler.yml'
-      - 'dagger.json'
   workflow_dispatch:
 
 concurrency:

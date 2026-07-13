@@ -2,10 +2,7 @@
 # Corelib gate: workspace/manifest quality checks (corelibQuality) + the
 # beskid_cli corelib test suite (corelibTest).
 #
-# Ported verbatim from the Dagger functions beskid_infra/dagger/src/corelib-quality.ts
-# and corelib-test.ts so the gate runs directly on a Blacksmith runner instead of
-# inside a Dagger container. Running natively also surfaces the full per-test
-# output in the job log (Dagger only streamed the final exit code).
+# Runs directly on a Blacksmith runner and surfaces full per-test output.
 #
 # Run from the superrepo root. The compiler workspace lives in `compiler/` and the
 # corelib sources under `compiler/corelib/beskid_corelib`.
@@ -13,7 +10,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
-# Corelib lowering can recurse deeply; match the Dagger gate's stack bump.
+# Corelib lowering can recurse deeply; preserve the required stack bump.
 export RUST_MIN_STACK="${RUST_MIN_STACK:-67108864}"
 
 # ---------------------------------------------------------------------------

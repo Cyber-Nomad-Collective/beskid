@@ -16,8 +16,7 @@
 ## CI (`scripts/ci/`)
 
 Submodule init + native gates/publish lanes that run directly on Blacksmith
-runners (the compiler gate is also Testbox-compatible). Dagger is only used for
-the beskid_infra compose/deploy tooling, not for gates.
+runners (the compiler gate is also Testbox-compatible). Dagger is retired.
 
 | Script | Used by |
 |--------|---------|
@@ -36,16 +35,35 @@ the beskid_infra compose/deploy tooling, not for gates.
 | [`corelib-publish.sh`](ci/corelib-publish.sh) | Corelib workspace → pckg |
 | [`open-vsx-publish.sh`](ci/open-vsx-publish.sh) | Open VSX publish (native) |
 | [`resolve-coolify-project-uuid.sh`](ci/resolve-coolify-project-uuid.sh) | Operator: resolve **Beskid** Coolify project UUID |
+| [`build-release-manifest.sh`](ci/build-release-manifest.sh) | Aggregate immutable OCI image records into a release manifest |
+| [`validate-release-manifest.sh`](ci/validate-release-manifest.sh) | Enforce digest, SBOM, provenance, and source-commit policy |
+| [`render-release-compose.sh`](ci/render-release-compose.sh) | Replace Beskid Compose image tags with exact manifest digests |
+| [`deploy-release-manifest.sh`](ci/deploy-release-manifest.sh) | Plan/apply Coolify promotion with polling and rollback |
+| [`post-deploy-smoke.sh`](ci/post-deploy-smoke.sh) | Trace-correlated lane health checks |
+| [`sign-image.sh`](ci/sign-image.sh) | Required keyless cosign signing for promotable images |
+| [`prepare-secure-dockerfile.sh`](ci/prepare-secure-dockerfile.sh) | Convert package-token ARGs to BuildKit secret mounts at build time |
+| [`sync-runtime-env.sh`](ci/sync-runtime-env.sh) | Fail-closed OpenBao KV v2 → Coolify lane env synchronization |
+| [`openspec-gate.sh`](ci/openspec-gate.sh) | Strict OpenSpec authority validation |
+| [`conformance-gate.sh`](ci/conformance-gate.sh) | Requirement/provenance conformance validation |
+| [`platform-integration-gate.sh`](ci/platform-integration-gate.sh) | Cross-site delivery integration contract |
+| [`security-policy-gate.sh`](ci/security-policy-gate.sh) | Offline workflow and supply-chain policy |
 
-Coolify compose deploy: [`beskid_infra/scripts/`](../beskid_infra/scripts/README.md).
+Coolify lane configuration: [`beskid_infra/`](../beskid_infra/README.md).
 
 ## Lazygit
 
 [`lazygit/config.yml`](lazygit/config.yml) — recursive commit/push via [`git-commit-push-recursive.sh`](git-commit-push-recursive.sh) (lazygit only; not a standalone workflow).
 
-## Local web CI
+## Local CI
 
-[`../validate-ci-local.sh`](../validate-ci-local.sh) — `dagger call platform-smoke` (see [`beskid_infra/dagger/README.md`](../beskid_infra/dagger/README.md)).
+[`../validate-ci-local.sh`](../validate-ci-local.sh) runs the same integration,
+OpenSpec, conformance, and supply-chain policy used by platform delivery.
+
+Replacement delivery contracts run without external state changes:
+
+```bash
+bash scripts/ci/test/run-cicd-foundation-tests.sh
+```
 
 ## Interactive setup
 

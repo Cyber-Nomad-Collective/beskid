@@ -4,7 +4,7 @@
 # Collapses the verbatim "Init compiler submodule" block that was repeated across
 # the compiler release jobs and the corelib gate. Use setup-compiler-gate when you
 # also need the Rust/Bun toolchain (compiler-rust-gate.sh); use this action when
-# the job only needs the source tree (Dagger release builds, native corelib gate
+# the job only needs the source tree (native release builds and corelib gates
 # that provisions its own toolchain).
 name: Setup compiler submodule
 description: Init compiler (+ corelib) and beskid_bsol submodules for jobs that only need the source tree.
