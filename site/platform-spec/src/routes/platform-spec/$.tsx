@@ -61,6 +61,7 @@ export const Route = createFileRoute("/platform-spec/$")({
 			status,
 			description,
 			bodyMd: document.body,
+			bookLinks: document.bookLinks,
 			architectureGraph,
 		};
 	},
@@ -77,6 +78,7 @@ function PlatformSpecDocument() {
 		status,
 		description,
 		bodyMd,
+		bookLinks,
 		architectureGraph,
 	} = Route.useLoaderData();
 
@@ -93,6 +95,7 @@ function PlatformSpecDocument() {
 					status={status}
 					description={description}
 					bodyMd={bodyMd}
+					bookLinks={bookLinks}
 					architectureGraph={architectureGraph}
 					adrs={adrs}
 				/>

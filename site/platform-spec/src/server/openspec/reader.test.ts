@@ -43,6 +43,9 @@ function fixture(): string {
 					title: "Block syntax",
 					specPath: "specs/language--syntax--blocks/spec.md",
 					path: "/platform-spec/capabilities/language--syntax--blocks/",
+					bookLinks: [
+						"/book/07-compiler-is-not-your-therapist/lexical-basics/",
+					],
 					requirements: [
 						{ id: "BSP-REQ-BLOCK", anchor: "requirement-block-delimiter" },
 					],
@@ -78,6 +81,20 @@ describe("OpenSpec reader", () => {
 			getOpenSpecEmbed("language--syntax--blocks#BSP-REQ-BLOCK", root)
 				?.markdown,
 		).toContain("#### Scenario: Parse a block");
+	});
+
+	it("exposes catalog-derived informative Book guides with a document", () => {
+		const root = fixture();
+		const expectedBookLinks = [
+			"/book/07-compiler-is-not-your-therapist/lexical-basics/",
+		];
+
+		expect(loadOpenSpecCatalog(root).entries[0]?.bookLinks).toEqual(
+			expectedBookLinks,
+		);
+		expect(getOpenSpecDocument("language--syntax--blocks", root)?.bookLinks).toEqual(
+			expectedBookLinks,
+		);
 	});
 
 	it("extracts stable requirement anchors", () => {

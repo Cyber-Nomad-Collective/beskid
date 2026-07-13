@@ -4,6 +4,8 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
+import { deriveBookLinks } from "./validate-book-traceability.ts";
+
 const repoRoot = path.resolve(import.meta.dirname, "../..");
 const catalogPath = path.join(repoRoot, "openspec/catalog.json");
 
@@ -28,6 +30,14 @@ function slugify(value: string): string {
 
 function requirementTitles(markdown: string): string[] {
 	return [...markdown.matchAll(/^### Requirement:\s*(.+)$/gm)].map((match) => match[1].trim());
+}
+
+function standardLinks(markdown: string): string[] {
+	return [
+		...new Set(
+			[...markdown.matchAll(/\]\((\/platform-spec\/[^\s)#?]*\/?)(?:#[^)]+)?\)/g)].map((match) => match[1]),
+		),
+	];
 }
 
 function displayTitle(capability: string): string {
@@ -102,9 +112,18 @@ const documents = (catalog.documents as UnknownRecord[]) ?? [];
 for (const document of documents) {
 	const absolute = path.join(repoRoot, String(document.path));
 	if (!existsSync(absolute)) continue;
-	const hash = sha256(readFileSync(absolute, "utf8"));
+	const markdown = readFileSync(absolute, "utf8");
+	const hash = sha256(markdown);
 	document.sourceHash = hash;
+	if (String(document.path).startsWith("site/website/src/content/docs/book/")) {
+		document.standardLinks = standardLinks(markdown);
+	}
 	revisionInputs.push(`${document.path}:${hash}`);
+}
+
+const bookLinksByCapability = deriveBookLinks({ entries, documents });
+for (const entry of entries) {
+	entry.bookLinks = bookLinksByCapability[String(entry.capability)] ?? [];
 }
 
 const requirements = entries.flatMap((entry) => entry.requirements as UnknownRecord[]);

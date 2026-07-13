@@ -26,6 +26,8 @@ export interface OpenSpecCatalogEntry {
 	feature: string | null;
 	specPath: string;
 	legacySlugs: string[];
+	/** Informative Book guides; OpenSpec remains the normative source. */
+	bookLinks: string[];
 	requirements: OpenSpecRequirement[];
 }
 
@@ -52,6 +54,8 @@ export interface OpenSpecDocumentBundle {
 	description: string | null;
 	status: string | null;
 	specLevel: string;
+	/** Informative Book guides; OpenSpec remains the normative source. */
+	bookLinks: string[];
 	frontmatter: {
 		title: string;
 		description: string | null;
@@ -239,6 +243,7 @@ function loadEntry(
 			.split(path.sep)
 			.join("/"),
 		legacySlugs: entryAliases(raw, topAliases),
+		bookLinks: asStringArray(raw.bookLinks),
 		requirements: mergeRequirementMetadata(extractRequirements(markdown), raw),
 	};
 }
@@ -321,6 +326,7 @@ export function getOpenSpecDocument(
 		description: entry.description,
 		status: entry.status,
 		specLevel: entry.specLevel,
+		bookLinks: entry.bookLinks,
 		frontmatter: {
 			title: entry.title,
 			description: entry.description,
