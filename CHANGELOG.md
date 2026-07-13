@@ -43,6 +43,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Package the canonical OpenSpec catalog into the Nexus image through an
   explicit named BuildKit context while retaining the service-local Docker
   build context.
+- Retain the generic resizable-panel dependency used by the shared UI primitive
+  after removing the legacy platform-spec component bundle.
 - Keep main-branch staging promotion in fail-safe plan mode and require an
   explicit workflow dispatch before mutating the external staging lane.
 - Default Tracker non-bug task synchronization to disabled while preserving the

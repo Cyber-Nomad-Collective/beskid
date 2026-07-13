@@ -16,9 +16,9 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 | `site/website/` | Astro landing site and informative Beskid Book |
 | `beskid_tracker/` | SQLite-backed roadmap and bug application; GitHub integration is bug-only after migration |
 | `beskid_nexus/` | Code/document/standard graph indexing and explorer |
-| `beskid_web_common/` | Published shared TypeScript packages; currently contains user-owned deletions that must not be restored implicitly |
+| `beskid_web_common/` | Published shared TypeScript packages shared by web applications |
 | `beskid_infra/` | Coolify Compose, OpenBao, monitoring, deployment helpers, and infrastructure docs |
-| `pckg/` | .NET package registry and package documentation services |
+| `pckg/` | Package registry being migrated from .NET/Blazor to Rust/React |
 | `beskid_vscode/`, `beskid_treesitter/`, `beskid_bsol/`, `beskid_distrib/`, `beskid_templates/` | Editor, grammar, BSOL, distribution, and template subprojects |
 | `.github/workflows/`, `scripts/ci/` | Root CI orchestration, reusable delivery contracts, and local validation |
 
@@ -34,11 +34,9 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 | Test platform-spec | `bun --cwd site/platform-spec run test` |
 | Build website | `bun --cwd site/website run build` |
 | Test Tracker | `bun --cwd beskid_tracker run test` |
-| Test Nexus | Use package-specific scripts under `beskid_nexus/gitnexus` and `beskid_nexus/gitnexus-web` |
 | Install compiler tools | `just replace` |
 | Rebuild VS Code extension | `just vscode` |
 | Inspect GitNexus index | `node .gitnexus/run.cjs status` |
-| Detect changed graph scope | `node .gitnexus/run.cjs detect-changes --scope compare --base-ref main` (confirm CLI syntax with `--help`) |
 
 ## Processes
 
@@ -49,7 +47,18 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 5. Run focused tests plus strict OpenSpec/provenance validation and GitNexus change detection before commit.
 6. Update `CHANGELOG.md`; update `GLOSSARY.md` when canonical terminology changes. Do not add `Co-authored-by` trailers.
 
+## ABI v5 rewrite invariants
+
+- Expanded AST nodes plus generation-safe Salsa facts are the sole semantic representation.
+- Generated ISLE rules are the sole language-operation lowering layer; every emitted function must pass `verify_function`.
+- ABI v5 calls manifest-declared `beskid_rt_v5_*` symbols directly; do not reintroduce ABI-v4 fallback or handler dispatch.
+- `compiler/runtime_manifest.bsol` and generated `abi.json` are the symbol/layout authority; never hand-edit generated ABI files.
+- The supported target set is `x86_64-unknown-linux-gnu`, `aarch64-apple-darwin`, and `x86_64-pc-windows-msvc`.
+- Runtime intrinsics are available only to the canonical runtime compilation through a non-forgeable trusted capability.
+
 ## Agent boundaries
+
+Parallel agents must use disjoint write scopes. Knowledge files live outside the repository and must never be pushed. Before an existing-symbol edit, run GitNexus upstream impact analysis; before a commit, run focused tests and GitNexus change detection.
 
 | Domain | Paths | Knowledge doc |
 |---|---|---|
@@ -57,8 +66,8 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 | Tracker and Nexus integration | `beskid_tracker/`, `beskid_nexus/`, relevant shared package APIs | `~/.agents/knowledge/apps-integration.md` |
 | CI/CD and infrastructure | `.github/`, `scripts/ci/`, `beskid_infra/` | `~/.agents/knowledge/cicd.md` |
 | Compiler/runtime | `compiler/` | `~/.agents/knowledge/compiler.md` |
-
-Parallel agents must use disjoint write scopes. Knowledge files live outside the repository and must never be pushed.
+| ABI contracts | `compiler/runtime_manifest.bsol`, ABI model and generated metadata | `~/.agents/knowledge/abi-v5.md` |
+| pckg migration | `pckg/`, `compiler/crates/beskid_pckg_*`, `site/auth/` | `~/.agents/knowledge/pckg-*.md` |
 
 ## Prior agent and IDE artifacts
 
@@ -70,16 +79,8 @@ Parallel agents must use disjoint write scopes. Knowledge files live outside the
 - GitNexus index: `.gitnexus/`; verify freshness before relying on impact results.
 - Existing user work is present in the root and several submodules. Always inspect `git status` before edits and never restore unrelated deletions.
 
-## Open questions
-
-- Which GitHub users or teams approve the protected production environment?
-- Which organization-standard signing and verification policy should enforce image promotion?
-- How long must historical Tracker task links and legacy standard aliases remain available?
-- Should complete ADR rationale be exposed only through archived OpenSpec changes or also through a generated design-history view?
-
 ## Related docs
 
 - [GLOSSARY.md](./GLOSSARY.md)
 - [CHANGELOG.md](./CHANGELOG.md)
-- [OpenSpec migration design](./openspec/changes/migrate-beskid-standard-to-openspec/design.md)
 - [Root README](./README.md)
