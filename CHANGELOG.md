@@ -11,6 +11,11 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Bidirectional Book-to-OpenSpec traceability: catalog-derived public Book
+  links, a reader panel that labels those guides informative, validation for
+  the technical Book pilot, and expanded chapters on specification reading,
+  documentation comments, and FFI.
+
 - OpenSpec 1.4.1 as the pinned normative-standard workflow, with a validated
   repository change proposal, design, behavioral deltas, and phased migration
   plan.
@@ -87,6 +92,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Auth/tracker autopairing and GitHub sync
 
 ### Changed
+
+- Updated the BSOL analysis pipeline, the native compiler runtime migration,
+  the registry web application, and the shared authentication handoff client.
 
 - **CI/CD migration from Dagger to Blacksmith Testbox**
   - Compiler gate runs via Testbox scripts instead of Dagger
