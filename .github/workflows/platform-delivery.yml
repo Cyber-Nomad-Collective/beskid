@@ -67,7 +67,7 @@ jobs:
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: platform-integration
-      submodules: beskid_web_common beskid_tracker beskid_nexus
+      submodules: beskid_web_common beskid_tracker beskid_nexus compiler
       setup-web: true
       timeout-minutes: 60
       command: bash scripts/ci/platform-integration-gate.sh

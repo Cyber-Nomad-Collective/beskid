@@ -45,6 +45,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   build context.
 - Retain the generic resizable-panel dependency used by the shared UI primitive
   after removing the legacy platform-spec component bundle.
+- Initialize selected CI submodules recursively and include the compiler in the
+  platform integration gate so nested Corelib validation is always available.
 - Keep main-branch staging promotion in fail-safe plan mode and require an
   explicit workflow dispatch before mutating the external staging lane.
 - Default Tracker non-bug task synchronization to disabled while preserving the
