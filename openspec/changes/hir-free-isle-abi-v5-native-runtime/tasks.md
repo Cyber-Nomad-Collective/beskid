@@ -40,3 +40,15 @@
 - [ ] 5.4 Pass retired-pattern, runtime Rust-provenance, dependency, actionlint, package-content, and distribution-order gates
 - [ ] 5.5 Update GUIDE, GLOSSARY, CHANGELOG, OpenSpec catalog, implementation anchors, and release-closure evidence
 - [ ] 5.6 Run GitNexus changed-scope analysis and whole-branch review before integration
+
+## 6. 0.4 release-closure execution waves
+
+The detailed dependency-ordered execution record is `docs/superpowers/plans/2026-07-14-0.4-release-closure.md`. Items in this section are intentionally unchecked until their listed fresh acceptance commands are recorded in release evidence.
+
+- [ ] 6.1 Production adapter: compile an actual expanded-syntax `TypedProgram` through `CodegenInput` and ISLE to verified CLIF without HIR or `Lowerable`; run `cargo test -p beskid_codegen --all-targets` and `cargo test -p beskid_isle --all-targets`.
+- [ ] 6.2 Semantic-fact closure: land generation-safe captures, spawn, trusted runtime intrinsics, diagnostics, and spans; run `cargo test -p beskid_queries --tests -- --test-threads=1`.
+- [ ] 6.3 AOT exact-kit closure: remove prebuilt/standalone and fallback runtime-kit compatibility; run `cargo test -p beskid_aot --all-targets`.
+- [ ] 6.4 Migrate remaining codegen and LSP consumers after 6.1–6.2; run ISLE/codegen/LSP focused suites and record results.
+- [ ] 6.5 Finish canonical runtime corpus and installed-prefix debug/release smokes across the three supported targets.
+- [ ] 6.6 Delete HIR, legacy lowering, Rust bridge/host/runtime linkage, ABI dispatch, and obsolete dependencies after their callers are migrated; make retired-pattern and binary-provenance audits green.
+- [ ] 6.7 Run fresh workspace, corelib, package, documentation, GitNexus changed-scope, and whole-branch review gates; record evidence before release sign-off.
