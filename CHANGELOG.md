@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- v0.4 release-closure design covering compiler/corelib, artifact delivery,
+  retry-safe distribution, and production-evidence gates.
 - Bidirectional Book-to-OpenSpec traceability: catalog-derived public Book
   links, a reader panel that labels those guides informative, validation for
   the technical Book pilot, and expanded chapters on specification reading,
