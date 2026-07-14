@@ -52,3 +52,21 @@ The detailed dependency-ordered execution record is `docs/superpowers/plans/2026
 - [ ] 6.5 Finish canonical runtime corpus and installed-prefix debug/release smokes across the three supported targets.
 - [ ] 6.6 Delete HIR, legacy lowering, Rust bridge/host/runtime linkage, ABI dispatch, and obsolete dependencies after their callers are migrated; make retired-pattern and binary-provenance audits green.
 - [ ] 6.7 Run fresh workspace, corelib, package, documentation, GitNexus changed-scope, and whole-branch review gates; record evidence before release sign-off.
+
+### 6.8 Canonical runtime completion and kit matrix
+
+- [ ] 6.8.1 Implement canonical Beskid lifecycle, traps, TLS, allocation, non-moving mark/sweep GC, root frames/barriers, strings, collections, scheduler/concurrency, composition, clocks, callbacks, and target OS adapters; add capability and untrusted-intrinsic denial tests.
+- [ ] 6.8.2 Compile canonical runtime sources through `TypedProgram` → `CodegenInput` → ISLE → verified CLIF; reject any alternate HIR or Rust-runtime build path.
+- [ ] 6.8.3 Produce static/shared debug and release kits for Linux x86-64, macOS arm64, and Windows x86-64 at the installed ABI-v5 layout; run JIT and AOT empty-prefix smokes for every matrix cell.
+
+### 6.9 Complete consumer migration before deletion
+
+- [ ] 6.9.1 Expand the production syntax-fact adapter and ISLE inventory to all expressions, statements, calls, locals, memory, control flow, items, aggregates, closures/captures, spawn, trusted intrinsics, and span diagnostics; enforce a bijective inventory test.
+- [ ] 6.9.2 Migrate every LSP feature (hover, definition, references, completion, diagnostics, refresh) and CLI/frontend service to syntax indexes plus Salsa facts; each feature needs a regression without a legacy analysis snapshot.
+- [ ] 6.9.3 Migrate JIT, AOT, corelib, installers, and release bundles to the sole `CodegenInput` plus exact validated runtime-kit route; retain deliberately unlinked object-only output only.
+
+### 6.10 Retirement, provenance, and sign-off
+
+- [ ] 6.10.1 Delete HIR, normalization, legacy lowering, `Lowerable`, bridge/host/Rust runtime, dispatch, envelope, fallback, and obsolete dependency paths once 6.9 callers are migrated.
+- [ ] 6.10.2 Make `verify-hir-free-abi-v5.sh`, dependency inspection, and per-artifact binary provenance/allowlist audits report zero violations; use only an explicit reviewed fixture allowlist.
+- [ ] 6.10.3 Record fresh focused tests, full workspace/corelib tests, matrix smokes, package/actionlint checks, GitNexus changed-scope analysis, whole-branch review, and documentation evidence before marking the change or 0.4 release complete.

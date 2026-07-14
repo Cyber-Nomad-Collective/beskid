@@ -8,8 +8,10 @@ The current compiler still routes validated programs through HIR and a Rust-link
 - **BREAKING** Replace Rust `Lowerable` dispatch with exhaustive generated ISLE rules that consume typed AST/Salsa facts and emit verifier-approved stock CLIF.
 - **BREAKING** Replace legacy runtime dispatch, bridges, and Rust-linked runtime objects with direct `beskid_rt_v5_*` imports and target runtime kits generated from the authoritative runtime manifest.
 - Compile the canonical Beskid runtime through the same frontend and codegen path as applications, with only context initialization and switching implemented in target assembly.
+- Complete the canonical runtime corpus (lifecycle, GC, roots, collections, strings, scheduler, composition, clocks, callbacks, and target OS adapters) before any ABI-v5 kit is releasable.
 - Make JIT, AOT, installed toolchains, and release bundles validate the same ABI metadata, hashes, target, and profile.
-- Delete compatibility fallbacks after the three supported target lanes and conformance gates are green.
+- Require debug and release static/shared installed-prefix smokes on all three supported target lanes, with binary provenance and allowlist audits.
+- Delete compatibility fallbacks only after every consumer is migrated; make HIR, `Lowerable`, bridge/host/runtime linkage, and ABI dispatch scans release-blocking.
 - Preserve existing public `/platform-spec/` routes through the OpenSpec catalog; no legacy URL migration is required.
 - Stage rollout behind contract, coverage, verifier, runtime-kit, and installed-prefix gates. Rollback is a whole-toolchain rollback to the last ABI-v4 bundle; mixed ABI-v4/v5 components are rejected.
 
