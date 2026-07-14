@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Immutable compiler-release packaging for Windows MSI/EXE, macOS DMG and
+  Homebrew, Debian, and Snap; the new Windows EXE is a WiX Burn bootstrapper
+  and the DMG bundles CLI and LSP in `Beskid.app`.
+
 - Bidirectional Book-to-OpenSpec traceability: catalog-derived public Book
   links, a reader panel that labels those guides informative, validation for
   the technical Book pilot, and expanded chapters on specification reading,

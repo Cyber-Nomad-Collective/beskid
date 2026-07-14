@@ -21,6 +21,11 @@ RUST_TARGET="${3:-}"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "${ROOT}"
 
+: "${BESKID_RELEASE_VERSION:?BESKID_RELEASE_VERSION must be exported}"
+[[ "$BESKID_RELEASE_VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]] || {
+  echo "BESKID_RELEASE_VERSION \`$BESKID_RELEASE_VERSION\` is not valid semver" >&2
+  exit 1
+}
 : "${OVSX_TOKEN:?OVSX_TOKEN must be exported}"
 [[ -d beskid_vscode ]] || { echo "beskid_vscode submodule not initialised" >&2; exit 1; }
 [[ -d compiler ]]     || { echo "compiler submodule not initialised" >&2; exit 1; }
@@ -57,28 +62,8 @@ fi
 echo "Open VSX: placed ${BIN_NAME} for platform=${PLATFORM}"
 
 # ---------------------------------------------------------------------------
-# 3. Resolve extension version from git tags + commit count (or GITHUB_REF tag).
-#    Ported from resolve-extension-version.sh.
-# ---------------------------------------------------------------------------
-resolve_version() {
-  local ref_name="${GITHUB_REF_NAME:-}" ref_type="${GITHUB_REF_TYPE:-}"
-  if [[ "$ref_type" == "tag" ]] && [[ "$ref_name" =~ ^v?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
-    printf '%s' "${ref_name#v}"; return 0
-  fi
-  local latest major minor patch commits
-  latest="$(git describe --tags --abbrev=0 --match 'v[0-9]*.[0-9]*.[0-9]*' 2>/dev/null)" || return 0
-  [[ "$latest" =~ ^v?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || { echo "Tag \`${latest}\` is not semver" >&2; return 1; }
-  major="${BASH_REMATCH[1]}"; minor="${BASH_REMATCH[2]}"; patch="${BASH_REMATCH[3]}"
-  commits="$(git rev-list --count "${latest}..HEAD")"
-  if [[ "$commits" -le 0 ]]; then
-    printf '%s.%s.%s' "$major" "$minor" "$patch"
-  else
-    printf '%s.%s.%s' "$major" "$minor" "$((patch + commits))"
-  fi
-}
-
-# ---------------------------------------------------------------------------
-# 4. Override the extension version in package.json (restored on exit).
+# 3. Override the extension version from the centrally resolved release
+#    version (restored on exit).
 # ---------------------------------------------------------------------------
 cd beskid_vscode
 previous_version=""
@@ -94,15 +79,12 @@ icon="$(node -p "require('./package.json').icon || ''")"
 [[ -f "$icon" ]] || { echo "Extension icon file not found: $icon" >&2; exit 1; }
 case "$icon" in *.svg|*.SVG) echo "Icon must be PNG/JPG (found SVG): $icon" >&2; exit 1;; esac
 
-target="$(resolve_version || true)"
-if [[ -n "$target" ]]; then
-  [[ "$target" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]] || { echo "Derived version \`$target\` is not valid semver" >&2; exit 1; }
-  previous_version="$(node -p "require('./package.json').version")"
-  if [[ "$previous_version" != "$target" ]]; then
-    node -e "const fs=require('fs');const t=process.argv[1];const d=JSON.parse(fs.readFileSync('package.json','utf8'));const c=String(d.version??'').trim();d.version=t;fs.writeFileSync('package.json',JSON.stringify(d,null,2)+'\n');console.log('Open VSX: overriding extension version '+c+' -> '+t);" "$target"
-  else
-    echo "Open VSX: using extension version $previous_version"
-  fi
+target="$BESKID_RELEASE_VERSION"
+previous_version="$(node -p "require('./package.json').version")"
+if [[ "$previous_version" != "$target" ]]; then
+  node -e "const fs=require('fs');const t=process.argv[1];const d=JSON.parse(fs.readFileSync('package.json','utf8'));const c=String(d.version??'').trim();d.version=t;fs.writeFileSync('package.json',JSON.stringify(d,null,2)+'\n');console.log('Open VSX: overriding extension version '+c+' -> '+t);" "$target"
+else
+  echo "Open VSX: using extension version $previous_version"
 fi
 
 echo "==> beskid_vscode: bun install --frozen-lockfile"
