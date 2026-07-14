@@ -112,6 +112,17 @@ bun run build
 
 publisher="$(node -p "require('./package.json').publisher")"
 [[ -n "$publisher" ]] || { echo "Missing \`publisher\` in package.json" >&2; exit 1; }
+extension_name="$(node -p "require('./package.json').name")"
+[[ -n "$extension_name" ]] || { echo "Missing \`name\` in package.json" >&2; exit 1; }
+extension_version="$(node -p "require('./package.json').version")"
+[[ -n "$extension_version" ]] || { echo "Missing \`version\` in package.json" >&2; exit 1; }
+
+is_already_published() {
+  local output="$1" identity="${publisher}.${extension_name}"
+  printf '%s' "$output" | grep -Eiq '(already exists|already published|version already exists)' \
+    && printf '%s' "$output" | grep -Fqi "$identity" \
+    && printf '%s' "$output" | grep -Fqi "$extension_version"
+}
 
 # Idempotent namespace creation (already-exists is fine).
 set +e
@@ -147,7 +158,7 @@ for ((attempt = 1; attempt <= max_attempts; attempt++)); do
     echo "Open VSX: publish complete (${PLATFORM})"
     exit 0
   fi
-  if printf '%s' "$publish_out" | grep -Eiq '(already exists|already published|version already exists)'; then
+  if is_already_published "$publish_out"; then
     echo "Open VSX: artifact already exists (${PLATFORM}); treating as published"
     exit 0
   fi
