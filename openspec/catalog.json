@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "799a03cf203e80ff513b1e6589ad560bebe7218f079ec3dbfd66c89b56219e5e",
+  "revision": "992254fd14b9c9ee1c08ae5e38cb41bb267aaedd735e789b8c554b5a95ad074a",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -37640,7 +37640,7 @@
       "path": "docs/distribution/SECRETS.md",
       "title": "Distribution Pipeline Secrets",
       "authority": "informative",
-      "sourceHash": "5096d173bb7eac9c99ffc88dfd8866d795f749ef27d3da53a4e9d3e603ede72d",
+      "sourceHash": "58242114285d027bd9bb81ccf3be8489d84301f5b0b942e96a9541dcbbcf3a6a",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37649,7 +37649,7 @@
       "path": "docs/orchestrate/verify-all-on-main-v04.md",
       "title": "verify-all-on-main (v0.4)",
       "authority": "informative",
-      "sourceHash": "a4e321fcb1ce1c88be7cd58f2cdcc39390af511029f316545ee45f9c5d83b8bc",
+      "sourceHash": "73c306c3ce5a4162eb5463a738a47b2e2311e0ad25d8e915b320602c29f101f4",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"

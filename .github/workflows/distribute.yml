@@ -65,6 +65,27 @@ jobs:
           # beskid_distrib holds the platform recipes + scripts.
           submodules: recursive
 
+      - name: Require distribution GitHub token
+        env:
+          DISTRIB_GH_PAT: ${{ secrets.DISTRIB_GH_PAT }}
+          HOMEBREW_TAP_GIT_TOKEN: ${{ secrets.HOMEBREW_TAP_GIT_TOKEN }}
+          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          AUR_USERNAME: ${{ secrets.AUR_USERNAME }}
+          AUR_EMAIL: ${{ secrets.AUR_EMAIL }}
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+        run: |
+          set -euo pipefail
+          [[ -n "${DISTRIB_GH_PAT}" ]] || {
+            echo "DISTRIB_GH_PAT must be configured before distribution can read or publish release artifacts." >&2
+            exit 1
+          }
+          for credential in HOMEBREW_TAP_GIT_TOKEN AUR_SSH_PRIVATE_KEY AUR_USERNAME AUR_EMAIL SNAPCRAFT_STORE_CREDENTIALS; do
+            [[ -n "${!credential}" ]] || {
+              echo "${credential} must be configured before distribution can publish release artifacts." >&2
+              exit 1
+            }
+          done
+
       - name: Init beskid_distrib submodule (shallow)
         run: ./scripts/ci/init-submodules.sh beskid_distrib
 
@@ -129,33 +150,9 @@ jobs:
             echo "should_run=true" >> "${GITHUB_OUTPUT}"
           fi
 
-  # Stamp the distrib marker so the next run knows this version was published.
-  # Runs once after the guard passes, before the fan-out, so partial platform
-  # failures still record an attempt.
-  stamp-marker:
-    name: Stamp distrib marker
-    needs: resolve-rolling
-    if: needs.resolve-rolling.outputs.should_run == 'true'
-    runs-on: blacksmith-4vcpu-ubuntu-2404
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-      - name: Upload distrib-version.txt to cli-latest + cli-v<ver>
-        env:
-          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
-          VERSION: ${{ needs.resolve-rolling.outputs.version }}
-        run: |
-          set -euo pipefail
-          printf '%s\n' "${VERSION}" > distrib-version.txt
-          gh release upload cli-latest --repo "${COMPILER_REPO}" distrib-version.txt --clobber
-          tag="cli-v${VERSION}"
-          if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
-            gh release upload "$tag" --repo "${COMPILER_REPO}" distrib-version.txt --clobber || true
-          fi
-
   windows-msi:
     name: Windows MSI
-    needs: [resolve-rolling, stamp-marker]
+    needs: resolve-rolling
     if: needs.resolve-rolling.outputs.should_run == 'true'
     runs-on: windows-latest
     timeout-minutes: 30
@@ -203,7 +200,7 @@ jobs:
 
   macos-brew:
     name: macOS Homebrew formula
-    needs: [resolve-rolling, stamp-marker]
+    needs: resolve-rolling
     if: needs.resolve-rolling.outputs.should_run == 'true'
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 15
@@ -249,7 +246,7 @@ jobs:
 
   arch-aur:
     name: Arch AUR (beskid-bin)
-    needs: [resolve-rolling, stamp-marker]
+    needs: resolve-rolling
     if: needs.resolve-rolling.outputs.should_run == 'true'
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 15
@@ -287,7 +284,7 @@ jobs:
 
   ubuntu-deb:
     name: Ubuntu/Debian .deb
-    needs: [resolve-rolling, stamp-marker]
+    needs: resolve-rolling
     if: needs.resolve-rolling.outputs.should_run == 'true'
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 15
@@ -326,7 +323,7 @@ jobs:
 
   linux-snap:
     name: Snap (beskid)
-    needs: [resolve-rolling, stamp-marker]
+    needs: resolve-rolling
     if: needs.resolve-rolling.outputs.should_run == 'true'
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 30
@@ -368,3 +365,36 @@ jobs:
           release: stable
         env:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+
+  # This marker is the only completed-release state. It is written after every
+  # platform publication succeeds, so a failed fan-out stays eligible for a
+  # retry on the same rolling version.
+  record-complete-marker:
+    name: Record completed distribution
+    needs: [resolve-rolling, windows-msi, macos-brew, arch-aur, ubuntu-deb, linux-snap]
+    if: >-
+      ${{
+        always() &&
+        needs.resolve-rolling.outputs.should_run == 'true' &&
+        needs.windows-msi.result == 'success' &&
+        needs.macos-brew.result == 'success' &&
+        needs.arch-aur.result == 'success' &&
+        needs.ubuntu-deb.result == 'success' &&
+        needs.linux-snap.result == 'success'
+      }}
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - name: Upload distrib-version.txt to cli-latest + cli-v<ver>
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
+        run: |
+          set -euo pipefail
+          printf '%s\n' "${VERSION}" > distrib-version.txt
+          gh release upload cli-latest --repo "${COMPILER_REPO}" distrib-version.txt --clobber
+          tag="cli-v${VERSION}"
+          if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
+            gh release upload "$tag" --repo "${COMPILER_REPO}" distrib-version.txt --clobber
+          fi
