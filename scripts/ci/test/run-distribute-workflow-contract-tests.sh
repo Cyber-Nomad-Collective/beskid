@@ -29,4 +29,15 @@ grep -Fq "needs.arch-aur.result == 'success'" "${workflow}" || fail "completion 
 grep -Fq "needs.ubuntu-deb.result == 'success'" "${workflow}" || fail "completion marker must require successful Debian publication"
 grep -Fq "needs.linux-snap.result == 'success'" "${workflow}" || fail "completion marker must require successful Snap publication"
 
+# `cli-latest` is what resolve-rolling reads. It must be the final commit point:
+# if a versioned marker upload fails, a retry must still see no completed marker.
+marker_block="$(sed -n '/record-complete-marker:/,$p' "${workflow}")"
+# shellcheck disable=SC2016 # Match the literal workflow shell commands.
+versioned_marker_line="$(printf '%s\n' "${marker_block}" | grep -n -F 'gh release upload "$tag" --repo "${COMPILER_REPO}" distrib-version.txt --clobber' | cut -d: -f1)"
+# shellcheck disable=SC2016 # Match the literal workflow shell commands.
+latest_marker_line="$(printf '%s\n' "${marker_block}" | grep -n -F 'gh release upload cli-latest --repo "${COMPILER_REPO}" distrib-version.txt --clobber' | cut -d: -f1)"
+[[ -n "${versioned_marker_line}" ]] || fail "missing versioned completion marker upload"
+[[ -n "${latest_marker_line}" ]] || fail "missing cli-latest completion marker upload"
+[[ "${versioned_marker_line}" -lt "${latest_marker_line}" ]] || fail "cli-latest marker must be written only after the versioned marker succeeds"
+
 echo "distribution workflow contract tests OK"

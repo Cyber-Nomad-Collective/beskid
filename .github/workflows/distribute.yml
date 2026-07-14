@@ -393,8 +393,10 @@ jobs:
         run: |
           set -euo pipefail
           printf '%s\n' "${VERSION}" > distrib-version.txt
-          gh release upload cli-latest --repo "${COMPILER_REPO}" distrib-version.txt --clobber
           tag="cli-v${VERSION}"
           if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
             gh release upload "$tag" --repo "${COMPILER_REPO}" distrib-version.txt --clobber
           fi
+          # resolve-rolling consults only cli-latest. Upload it last so a
+          # versioned-release failure remains retryable instead of looking done.
+          gh release upload cli-latest --repo "${COMPILER_REPO}" distrib-version.txt --clobber
