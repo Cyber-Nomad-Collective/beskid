@@ -8,10 +8,10 @@
 ## 2. Introduce replacement authorities
 
 - [ ] 2.1 Complete indexed expanded-AST semantic facts for resolution, typing, calls, casts, control flow, captures, legality, spans, bodies, and reachability
-- [ ] 2.2 Add `TypedProgram` construction and the sole `CodegenInput` boundary for project assemblies
+- [x] 2.2 Add `TypedProgram` construction and the sole `CodegenInput` boundary for project assemblies
 - [ ] 2.3 Complete the generated typed-operation inventory and exhaustive ISLE rule compiler
-- [ ] 2.4 Require stock CLIF verification with originating AST spans for every generated function
-- [ ] 2.5 Generate exact ABI-v5 allowlists, layouts, traps, and deterministic hashes from `runtime_manifest.bsol`
+- [x] 2.4 Require stock CLIF verification with originating AST spans for every generated function
+- [x] 2.5 Generate exact ABI-v5 allowlists, layouts, traps, and deterministic hashes from `runtime_manifest.bsol`
 - [ ] 2.6 Implement canonical Beskid runtime modules and the two target assembly context exports
 - [ ] 2.7 Implement runtime-kit build, validation, and exact installed-prefix discovery for all targets and profiles
 
