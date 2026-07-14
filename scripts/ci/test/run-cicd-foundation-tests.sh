@@ -18,6 +18,8 @@ for script in \
   bash -n "${root}/scripts/ci/${script}"
 done
 
+bash "${root}/scripts/ci/test/delivery-contract.test.sh"
+
 # CoreLib workspace member aliases intentionally differ from registry package
 # names; the quality gate must validate each member's package declaration.
 CORELIB_QUALITY_ONLY=1 "${root}/scripts/ci/corelib-gate.sh"

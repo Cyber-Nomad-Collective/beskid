@@ -42,6 +42,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Build the platform-spec image from the superrepo Bun workspace lockfile
+  instead of a nonexistent service-local lockfile.
+- Treat an already-published platform VSIX as a successful, idempotent Open VSX
+  publication so release retries do not fail on duplicate artifacts.
 - Validate Corelib workspace member aliases against their explicit registry
   package declarations and keep Rust Clippy iterator checks warning-free.
 - Stabilize Open VSX extension gates across randomized Bun test ordering and
