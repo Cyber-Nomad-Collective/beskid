@@ -31,7 +31,7 @@ ENV OPENSPEC_ROOT=/app/openspec
 
 COPY --from=build /app/openspec /app/openspec
 COPY --from=build /app/site/platform-spec/package.json ./
-COPY --from=build /app/site/platform-spec/node_modules ./node_modules
+COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/site/platform-spec/.output ./.output
 
 EXPOSE 8460
