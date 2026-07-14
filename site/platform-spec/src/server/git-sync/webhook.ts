@@ -92,23 +92,10 @@ export async function handleGithubWebhook(
 	}
 
 	await markDraftMerged(draft.id);
-
-	try {
-		const { syncFromGitClone } = await import("#/server/memgraph/import-json");
-		const importResult = await syncFromGitClone();
-		return Response.json({
-			ok: true,
-			draftId: draft.id,
-			status: "merged",
-			import: importResult,
-		});
-	} catch (error) {
-		const message = error instanceof Error ? error.message : String(error);
-		return Response.json({
-			ok: true,
-			draftId: draft.id,
-			status: "merged",
-			importError: message,
-		});
-	}
+	return Response.json({
+		ok: true,
+		draftId: draft.id,
+		status: "merged",
+		catalogRefresh: "filesystem-on-request",
+	});
 }

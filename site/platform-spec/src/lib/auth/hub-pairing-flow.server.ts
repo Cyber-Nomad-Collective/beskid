@@ -7,12 +7,10 @@ import { env } from "#/env.server";
 import {
 	getStoredPairingApproverLogin,
 	saveAuthHubPairing,
-	savePairingApproverLogin,
 } from "#/lib/auth/hub-settings.server";
-import { createOctokit } from "#/lib/github/octokit";
 import { canManageRoadmap } from "#/lib/github/permissions";
-import { createOctokitForSession } from "#/server/auth-guard.server";
 import { getSessionFromRequest } from "#/lib/session/cookie";
+import { createOctokitForSession } from "#/server/auth-guard.server";
 
 /** Public origin sent to the auth hub when approving pairing. */
 export function resolvePlatformSpecPublicUrlForPairing(): string {
@@ -27,7 +25,7 @@ export function pairingFailureMessage(
 ): string {
 	switch (reason) {
 		case "auth_required":
-			return "Server cannot approve pairing: set PLATFORM_SPEC_PAIRING_APPROVER_LOGIN or GITHUB_SYNC_TOKEN, or sign in as a repo admin.";
+			return "Server cannot approve pairing: set PLATFORM_SPEC_PAIRING_APPROVER_LOGIN or sign in as a repo admin.";
 		case "not_configured":
 			return "AUTH_HUB_PUBLIC_URL is not configured on platform-spec.";
 		default:
@@ -53,15 +51,6 @@ async function resolvePairingApproverLogin(): Promise<string | null> {
 		const octokit = createOctokitForSession(session);
 		if (await canManageRoadmap(octokit, session.login)) {
 			return session.login;
-		}
-	}
-
-	const syncToken = env.GITHUB_SYNC_TOKEN?.trim();
-	if (syncToken) {
-		const octokit = createOctokit(syncToken);
-		const { data: user } = await octokit.users.getAuthenticated();
-		if (await canManageRoadmap(octokit, user.login)) {
-			return user.login;
 		}
 	}
 
@@ -99,7 +88,7 @@ export async function approveAuthHubPairing(input: {
 	return { ok: true };
 }
 
-/** Server-side autopair (hub link or sync token). */
+/** Server-side autopair using a configured or authenticated repo administrator. */
 export async function completeAuthHubPairing(input: {
 	code: string;
 	publicUrl: string;

@@ -1,13 +1,10 @@
 import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { NormativeRepoSettingsPanel } from "@beskid/ui-react/platform-spec";
-
 import {
 	approveDraftFn,
 	rejectDraftFn,
 } from "#/server/drafts";
-import { updateNormativeRepoSettingsFn } from "#/server/normative-repo-settings";
 import { loadModerationPageFn } from "#/server/moderation";
 
 export const Route = createFileRoute("/_edit/moderation/")({
@@ -17,7 +14,7 @@ export const Route = createFileRoute("/_edit/moderation/")({
 
 function ModerationPage() {
 	const router = useRouter();
-	const { queue, repoSettings, canEdit, canModerate } = Route.useLoaderData();
+	const { queue, canModerate } = Route.useLoaderData();
 	const [busyId, setBusyId] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
@@ -53,7 +50,7 @@ function ModerationPage() {
 		<div className="mx-auto max-w-4xl space-y-6">
 			<div className="flex items-center justify-between">
 				<h1 className="text-2xl font-semibold">
-					{canModerate ? "Moderation" : "Spec repository settings"}
+					OpenSpec change moderation
 				</h1>
 				<Link to="/edit" className="text-sm underline">
 					← My drafts
@@ -65,17 +62,6 @@ function ModerationPage() {
 					{error}
 				</p>
 			) : null}
-
-			<NormativeRepoSettingsPanel
-				initialRepoUrl={repoSettings.repoUrl}
-				defaultRepoUrl={repoSettings.defaultRepoUrl}
-				source={repoSettings.source}
-				canEdit={canEdit}
-				onSave={async (repoUrl) => {
-					await updateNormativeRepoSettingsFn({ data: { repoUrl } });
-					await router.invalidate();
-				}}
-			/>
 
 			{canModerate ? (
 				queue.length === 0 ? (

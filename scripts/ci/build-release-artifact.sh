@@ -2,14 +2,10 @@
 # Build a single compiler release artifact (CLI or LSP) for the host runner's
 # native target.
 #
-# Ported from the Dagger function buildReleaseArtifact() in
-# beskid_infra/dagger/src/compiler-release.ts so the build runs natively on the
-# matching OS runner instead of inside a Dagger container (whose TS module was
-# never registering the compiler-release object). Cross-platform coverage comes
+# Builds natively on the matching OS runner. Cross-platform coverage comes
 # from the calling workflow's OS matrix (linux on ubuntu, mac on macos, windows
 # on windows) — each target builds on its native host, which avoids the
-# fragile Linux→macOS/Windows cross-linker setup the Dagger engine used to hide
-# behind QEMU/binfmt.
+# fragile Linux→macOS/Windows cross-linker setup behind QEMU/binfmt.
 #
 # Stamps the resolved release version into crates/beskid_cli/Cargo.toml, builds
 # the package in release mode, and copies the binary to <asset-name> in the

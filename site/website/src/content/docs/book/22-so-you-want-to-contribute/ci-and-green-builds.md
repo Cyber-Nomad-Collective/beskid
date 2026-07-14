@@ -15,4 +15,4 @@ Superrepo changes often need commits in **`compiler`**, **`pckg`**, or **`beskid
 
 ## Website CI
 
-`site/website` prebuild runs trudoc verify with CI preset. Container builds may skip verify with `BESKID_SKIP_TRUDOC_VERIFY=1`—do not treat that as permission to skip verify on your laptop.
+`site/website` prebuild tests typed embeds and catalog-backed platform-spec aliases before Astro renders the Book. Root CI separately runs `openspec validate --all --strict`; neither build may substitute for the other.

@@ -10,15 +10,11 @@
 		"dev": "bun --bun vite dev --port 8460",
 		"build": "bun --bun vite build && bun run scripts/sync-root-stylesheet.ts",
 		"verify:client-bundle": "bun run scripts/verify-client-bundle.ts",
-		"seed": "bun run scripts/seed.ts",
-		"seed:force": "bun run scripts/seed.ts --force",
-		"validate:spec-content": "bun run scripts/seed.ts",
 		"start": "bun run .output/server/index.mjs",
 		"preview": "bun --bun vite preview",
 		"check": "bunx biome check",
 		"typecheck": "tsc --noEmit",
 		"test": "vitest run",
-		"import:mdx": "bun run scripts/import-mdx-to-memgraph.ts",
 		"sync:beskid-packages": "bash ../../scripts/sync-beskid-packages.sh site/platform-spec"
 	},
 	"engines": {
@@ -27,8 +23,6 @@
 	"dependencies": {
 		"@beskid/auth-client": "npm:@cyber-nomad-collective/beskid-auth-client@^0.2.0",
 		"@beskid/server-observability": "npm:@cyber-nomad-collective/beskid-server-observability@^0.2.0",
-		"@beskid/ui-react": "npm:@cyber-nomad-collective/beskid-ui-react@^0.2.7",
-		"@cyber-nomad-collective/spec-core": "npm:@cyber-nomad-collective/spec-core@^0.2.0",
 		"@octokit/rest": "^22.0.1",
 		"@t3-oss/env-core": "^0.13.10",
 		"@tailwindcss/vite": "^4.1.18",

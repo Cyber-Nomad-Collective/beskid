@@ -1,0 +1,49 @@
+name: Reusable release manifest
+
+on:
+  workflow_call:
+    inputs:
+      records-pattern:
+        required: false
+        default: image-record-*
+        type: string
+      artifact-name:
+        required: false
+        default: release-manifest
+        type: string
+    outputs:
+      manifest-sha256:
+        value: ${{ jobs.manifest.outputs.manifest-sha256 }}
+
+permissions:
+  contents: read
+
+jobs:
+  manifest:
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 10
+    outputs:
+      manifest-sha256: ${{ steps.manifest.outputs.sha256 }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          pattern: ${{ inputs.records-pattern }}
+          path: image-records
+          merge-multiple: true
+
+      - name: Build immutable release manifest
+        id: manifest
+        run: |
+          ./scripts/ci/build-release-manifest.sh image-records release-manifest.json
+          echo "sha256=$(awk '{print $1}' release-manifest.json.sha256)" >>"${GITHUB_OUTPUT}"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: |
+            release-manifest.json
+            release-manifest.json.sha256
+          retention-days: 90
+

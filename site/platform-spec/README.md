@@ -1,13 +1,24 @@
 # Beskid Platform Spec (`beskid-platform-spec`)
 
-Memgraph-backed normative platform specification at **`https://spec.beskid-lang.org`**.
+OpenSpec-backed normative platform specification at **`https://spec.beskid-lang.org`**.
+`openspec/specs` is the authority; Memgraph is an optional derived index, not a
+normative store.
 
-## Features
+## Canonical source
 
-- **Public reader** — anonymous SSR at `/platform-spec/*` (Memgraph `SpecDocument` nodes)
-- **Draft workflow** — authenticated users submit `DraftChange` proposals
-- **Moderation** — maintainers approve → GitHub PR → merge webhook → published graph + git export
-- **JSON APIs** — `/api/v1/catalog`, `/api/v1/nav-tree`, `/api/v1/docs/{slug}`
+The reader loads the repository-root `openspec/specs/*/spec.md` files directly.
+`openspec/catalog.json` supplies stable capability IDs, revision metadata, and
+legacy aliases; it is compatibility metadata rather than a second source of
+normative text.
+
+Public APIs:
+
+- `/api/v1/catalog` — versioned OpenSpec capability and alias catalog
+- `/api/v1/nav-tree` — reader navigation generated from that catalog
+- `/api/v1/docs/{id-or-legacy-slug}` — complete canonical capability document
+- `/api/v1/embed/{capability[#requirement]}` — JSON fragment; add
+  `?format=html` for embeddable HTML
+- `/beskid-doc-embed.js` — dependency-free `<beskid-doc-embed>` custom element
 
 ## Local development
 
@@ -15,36 +26,23 @@ Memgraph-backed normative platform specification at **`https://spec.beskid-lang.
 # Terminal 1 — Memgraph
 docker compose up memgraph
 
-# Terminal 2 — normative JSON submodule + app
-git submodule update --init site/spec-content
+# Terminal 2 — OpenSpec reader app
 cp .env.example .env   # set MEMGRAPH_URI, SESSION_SECRET, AUTH_HUB_PUBLIC_URL
 bun install            # requires NODE_AUTH_TOKEN for @beskid/* packages
 bun run dev            # http://localhost:8460
 ```
 
-Normative JSON lives in **`site/spec-content`** (submodule). Author with the spec CLI from the superrepo root:
+Author changes through OpenSpec from the superrepo root:
 
 ```bash
-bun run spec validate
-bun run spec new node -t Feature --slug platform-spec/community/spec-maintenance/architecture
+openspec validate --all --strict
+openspec new change <change-name>
 ```
 
-Local reader against the submodule checkout:
+For a non-default checkout, point the reader at its OpenSpec directory:
 
 ```bash
-SPEC_LOCAL_WORKSPACE=site/spec-content bun run dev
-```
-
-Optional: refresh submodule content from legacy website MDX (migration aid only):
-
-```bash
-PLATFORM_SPEC_SEED_FROM=site/website/src/content/docs/platform-spec bun run seed:force
-```
-
-Legacy Memgraph MDX import (optional):
-
-```bash
-SKIP_ENV_VALIDATION=1 bun run import:mdx
+OPENSPEC_ROOT=/path/to/repo/openspec bun run dev
 ```
 
 ## Auth hub pairing
@@ -55,10 +53,16 @@ SKIP_ENV_VALIDATION=1 bun run import:mdx
 
 See [COOLIFY.md](./COOLIFY.md) for production deploy.
 
-## Git export path
+## Markdown embeds
 
-Published MDX is written to:
+Book and platform Markdown may use typed fenced directives. Each directive has
+a readable link fallback and is progressively enhanced when JavaScript loads:
 
-`content/docs/platform-spec/`
+````markdown
+```spec
+ref: compiler--build-pipeline--program-assembly#artifact-selection
+title: Artifact selection requirement
+```
+````
 
-(trudoc CI verifies this tree after merge)
+The same shape supports `book`, `nexus`, and `bug` directive types.

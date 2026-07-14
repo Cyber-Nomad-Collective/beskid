@@ -1,0 +1,42 @@
+name: Promote production
+
+on:
+  workflow_dispatch:
+    inputs:
+      delivery-run-id:
+        description: Successful main Platform delivery run containing release-manifest
+        required: true
+        type: number
+      confirmation:
+        description: Type PROMOTE to enter the protected production gate
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+  deployments: write
+  id-token: write
+
+concurrency:
+  group: promote-production
+  cancel-in-progress: false
+
+jobs:
+  confirmation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require explicit production confirmation
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+        run: |
+          [[ "${CONFIRMATION}" == PROMOTE ]]
+
+  production:
+    needs: confirmation
+    uses: ./.github/workflows/reusable-promote.yml
+    with:
+      environment: production
+      manifest-run-id: ${{ format('{0}', inputs.delivery-run-id) }}
+      apply: true
+    secrets: inherit

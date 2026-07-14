@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Site build gate for the auth hub and the platform-spec app.
 #
-# Runs identically here, in the container-images GHA matrix, and under
-# `just gate`. Sourced gate-harness gives structured output, log-fragment
+# Runs identically locally and in the reusable delivery workflows. Sourced
+# gate-harness gives structured output, log-fragment
 # capture, and JUnit emission (when GATE_JUNIT_DIR is set).
 #
 # Usage: site-build-gate.sh <auth|platform-spec> [NODE_AUTH_TOKEN]
@@ -14,7 +14,8 @@ NODE_AUTH_TOKEN="${2:-}"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "${ROOT}"
 
-# shellcheck source=lib/gate-harness.sh
+# Path is resolved from the repository root above.
+# shellcheck disable=SC1091
 source "${ROOT}/scripts/ci/lib/gate-harness.sh"
 
 if [[ "$APP" == "auth" ]]; then
@@ -28,8 +29,6 @@ if [[ "$APP" == "auth" ]]; then
 elif [[ "$APP" == "platform-spec" ]]; then
   gate_init "site-build-platform-spec"
   [[ -n "$NODE_AUTH_TOKEN" ]] && export NODE_AUTH_TOKEN
-  gate_step "spec-core-install"    -- sh -c 'cd beskid_web_common && bun install --frozen-lockfile'
-  gate_step "spec-core-test"       -- sh -c 'cd beskid_web_common && bun run --filter "@cyber-nomad-collective/spec-core" test'
   gate_step "pspec-frozen-install" -- sh -c 'cd site/platform-spec && bun install --frozen-lockfile'
   gate_step "pspec-test"           -- sh -c 'cd site/platform-spec && bun run test'
   gate_step "pspec-build"          -- sh -c 'cd site/platform-spec && SKIP_ENV_VALIDATION=1 bun run build'

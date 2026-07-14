@@ -42,7 +42,7 @@ flowchart TD
 
 Materialized dependencies land under `obj/beskid/` (layout details in [build workflow](/book/reference/projects/build-workflow/)). Treat `obj/` as generated unless you enjoy merge conflicts.
 
-## Normative
+## Standard reference (informative)
 
 - [Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)
 - [Build workflow](/book/reference/projects/build-workflow/)

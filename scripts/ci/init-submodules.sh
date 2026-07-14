@@ -8,4 +8,4 @@ if [[ $# -eq 0 ]]; then
   exit 1
 fi
 
-git -c protocol.version=2 submodule update --init --depth 1 "$@"
+git -c protocol.version=2 submodule update --init --recursive --depth 1 "$@"

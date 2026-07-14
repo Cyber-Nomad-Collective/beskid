@@ -1,0 +1,74 @@
+name: Reusable quality gate
+
+on:
+  workflow_call:
+    inputs:
+      gate-name:
+        description: Stable check name for branch protection
+        required: true
+        type: string
+      command:
+        description: Repository-owned shell command that runs the gate
+        required: true
+        type: string
+      submodules:
+        description: Space-separated submodules to initialize
+        required: false
+        default: ''
+        type: string
+      timeout-minutes:
+        required: false
+        default: 30
+        type: number
+      setup-web:
+        description: Install the root Bun/Node workspace before running the gate
+        required: false
+        default: false
+        type: boolean
+    secrets:
+      NODE_AUTH_TOKEN:
+        required: false
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  quality:
+    name: ${{ inputs.gate-name }}
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Initialize requested submodules
+        if: inputs.submodules != ''
+        env:
+          SUBMODULES: ${{ inputs.submodules }}
+        run: |
+          set -euo pipefail
+          for submodule in ${SUBMODULES}; do
+            ./scripts/ci/init-submodules.sh "${submodule}"
+          done
+
+      - uses: ./.github/actions/setup-beskid-web
+        if: inputs.setup-web
+        with:
+          node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
+
+      - name: Run blocking quality gate
+        env:
+          QUALITY_COMMAND: ${{ inputs.command }}
+          GATE_JUNIT_DIR: ${{ runner.temp }}/gate-junit
+        run: bash -euo pipefail -c "${QUALITY_COMMAND}"
+
+      - name: Upload gate evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: gate-junit-${{ inputs.gate-name }}
+          path: ${{ runner.temp }}/gate-junit/
+          if-no-files-found: ignore
+          retention-days: 30

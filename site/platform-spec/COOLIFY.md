@@ -29,20 +29,17 @@ Managed in **OpenBao** and synced to Coolify by `coolify-sync-env-from-openbao.s
 | `SESSION_SECRET` | yes | ≥32 chars; session cookies |
 | `MEMGRAPH_URI` | yes | Bolt URI to Memgraph (e.g. `bolt://memgraph:7687`) |
 | `PLATFORM_SPEC_PUBLIC_URL` | recommended | Public origin for pairing and webhooks |
-| `GITHUB_REPO_OWNER` / `GITHUB_REPO_NAME` | yes | Normative spec repo (default `Cyber-Nomad-Collective/beskid_normative_spec`) |
-| `GITHUB_OAUTH_REPO_OWNER` / `GITHUB_OAUTH_REPO_NAME` | optional | Beskid OAuth home repo; admins may set normative repo link in UI (default `Cyber-Nomad-Collective/beskid`) |
-| `GITHUB_SYNC_TOKEN` | optional | Server-side GitHub API PAT |
+| `GITHUB_REPO_OWNER` / `GITHUB_REPO_NAME` | yes | Beskid superrepo that contains canonical `openspec/` (default `Cyber-Nomad-Collective/beskid`) |
+| `GITHUB_OAUTH_REPO_OWNER` / `GITHUB_OAUTH_REPO_NAME` | optional | Beskid OAuth home repo (default `Cyber-Nomad-Collective/beskid`) |
 | `GITHUB_WEBHOOK_SECRET` | optional | Verifies GitHub webhooks |
 | `PLATFORM_SPEC_MODERATOR_LOGINS` | optional | Comma-separated GitHub logins with moderator role |
 | `PLATFORM_SPEC_PAIRING_APPROVER_LOGIN` | optional | Default pairing approver when no admin session |
 | `PLATFORM_SPEC_SETUP_TOKEN` | optional | Protects re-running setup when already paired |
-| `SPEC_GIT_REPO_URL` | recommended | GitHub repo to clone for JSON workspace sync |
-| `SPEC_GIT_REF` | optional | Branch or tag (default `main`) |
-| `SPEC_SYNC_MODE` | optional | `json` (default) or `mdx-legacy` |
+| `OPENSPEC_ROOT` | optional | Runtime path to canonical OpenSpec data; the image sets `/app/openspec` |
 
 ## Memgraph
 
-Canonical spec snapshots and draft changes live in **Memgraph**. Production sync: git clone of the superrepo (requires `SPEC_GIT_REPO_URL` + `GITHUB_SYNC_TOKEN`) → JSON import via `POST /api/v1/admin/sync` or PR merge webhook. Legacy: `bun run import:mdx` from website MDX tree.
+Canonical requirements live only in the image's root **OpenSpec** tree (`openspec/specs` plus `openspec/catalog.json`). The application reads those files directly. Memgraph stores editorial drafts and derived graph caches; it is not a normative content store. Approved edits create an `openspec/changes/<change>/` pull request in the Beskid superrepo, and a subsequent image build publishes the merged standard.
 
 ## Service pairing
 

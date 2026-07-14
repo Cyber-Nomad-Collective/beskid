@@ -2,9 +2,8 @@
 # Compiler Rust gate: legacy type-system guard + corelib-tests parity + clippy
 # (deny warnings) + workspace tests.
 #
-# Ported verbatim from the Dagger `compilerRustGate` (beskid_infra/dagger/src/gates.ts)
-# so the gate runs directly on a Blacksmith runner / Testbox VM instead of inside a
-# Dagger container. Run from the superrepo root; the compiler workspace lives in
+# Runs directly on a Blacksmith runner / Testbox VM. Run from the superrepo root;
+# the compiler workspace lives in
 # `compiler/` and resolves its `../beskid_bsol` path dependency against the sibling
 # `beskid_bsol/` submodule.
 set -euo pipefail
@@ -12,7 +11,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "${ROOT}/compiler"
 
-# Corelib lowering can recurse deeply; match the Dagger gate's stack bump.
+# Corelib lowering can recurse deeply; preserve the required stack bump.
 export RUST_MIN_STACK="${RUST_MIN_STACK:-67108864}"
 
 # Guard: retired type-system internals must not be reintroduced in compiler sources.

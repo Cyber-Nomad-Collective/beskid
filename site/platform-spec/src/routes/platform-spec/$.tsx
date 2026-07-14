@@ -3,7 +3,11 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ReaderChrome } from "#/components/reader/reader-chrome";
 import { SpecShell } from "#/components/reader/spec-shell";
 import { StructuredDocumentView } from "#/components/reader/structured-document-view";
-import { fetchCatalog, fetchDocumentBySlug, fetchNavTree } from "#/server/catalog";
+import {
+	fetchCatalog,
+	fetchDocumentBySlug,
+	fetchNavTree,
+} from "#/server/catalog";
 
 // Run `bun run dev` to regenerate routeTree.gen.ts after route changes.
 export const Route = createFileRoute("/platform-spec/$")({
@@ -25,16 +29,16 @@ export const Route = createFileRoute("/platform-spec/$")({
 		const title =
 			typeof frontmatter.title === "string" ? frontmatter.title : slug;
 		const specLevel =
-			typeof frontmatter.specLevel === "string"
-				? frontmatter.specLevel
-				: null;
+			typeof frontmatter.specLevel === "string" ? frontmatter.specLevel : null;
 		const status =
 			typeof frontmatter.status === "string" ? frontmatter.status : null;
 		const description =
 			typeof frontmatter.description === "string"
 				? frontmatter.description
 				: null;
-		const architectureGraphMeta = (frontmatter as Record<string, unknown> | undefined)?.architectureGraph as
+		const architectureGraphMeta = (
+			frontmatter as Record<string, unknown> | undefined
+		)?.architectureGraph as
 			| { graphKey?: unknown; entryNode?: unknown; layout?: unknown }
 			| undefined;
 		const architectureGraph =
@@ -57,7 +61,7 @@ export const Route = createFileRoute("/platform-spec/$")({
 			status,
 			description,
 			bodyMd: document.body,
-			layoutJson: document.layoutJson,
+			bookLinks: document.bookLinks,
 			architectureGraph,
 		};
 	},
@@ -74,40 +78,26 @@ function PlatformSpecDocument() {
 		status,
 		description,
 		bodyMd,
-		layoutJson,
+		bookLinks,
 		architectureGraph,
 	} = Route.useLoaderData();
 
-	const adrs =
-		catalog.entries
-			.filter(
-				(entry) =>
-					entry.specLevel === "adr" &&
-					entry.parentSlug === slug,
-			)
-			.map((entry) => ({ href: entry.href, title: entry.title }));
+	const adrs = catalog.entries
+		.filter((entry) => entry.specLevel === "adr" && entry.parentSlug === slug)
+		.map((entry) => ({ href: entry.href, title: entry.title }));
 
 	return (
 		<ReaderChrome>
 			<SpecShell navTree={navTree} activeSlug={slug}>
 				<StructuredDocumentView
-					slug={slug}
 					title={title}
 					specLevel={specLevel}
 					status={status}
 					description={description}
 					bodyMd={bodyMd}
-					layoutJson={layoutJson}
+					bookLinks={bookLinks}
 					architectureGraph={architectureGraph}
 					adrs={adrs}
-					catalogEntries={catalog.entries.map((entry) => ({
-						slug: entry.slug,
-						href: entry.href,
-						title: entry.title,
-						description: entry.description,
-						status: entry.status,
-						pathClass: entry.pathClass,
-					}))}
 				/>
 			</SpecShell>
 		</ReaderChrome>

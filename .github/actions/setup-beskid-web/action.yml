@@ -22,14 +22,14 @@ runs:
       with:
         node-version: "22.12"
 
-    - name: Verify beskid_web_common submodule
+    - name: Verify canonical standard and shared web checkout
       shell: bash
       run: |
         set -euo pipefail
-        # spec-core is the canonical web package (trudoc is retired from spec-core).
-        # platform-spec is fully detached from beskid-ui, so its presence is no
-        # longer a meaningful signal — only spec-core is mandatory here.
-        test -f beskid_web_common/packages/spec-core/package.json
+        test -f openspec/catalog.json
+        test -d openspec/specs
+        test ! -d beskid_web_common/packages/spec-core
+        test -f beskid_web_common/package.json
 
     - name: Install workspace dependencies
       shell: bash

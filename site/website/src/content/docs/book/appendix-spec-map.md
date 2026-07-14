@@ -4,7 +4,16 @@ description: Cross-reference book chapters to normative platform-spec, book refe
 tableOfContents: true
 ---
 
-Use this matrix when you know *what* you want to do in the book and need the *law* (platform-spec), a *workflow guide* (`book/reference/`), or the *Rust crate* that implements it.
+Use this matrix when you know *what* you want to do in the book and need the *law* (platform-spec), a *workflow guide* (`book/reference/`), or the *Rust crate* that implements it. The platform-spec column is authoritative; Book and crate links are explanatory and implementation-traceability aids.
+
+## How to use this map
+
+1. Start with the Book chapter for context and examples.
+2. Open the linked platform-spec feature or hub for requirements and maturity.
+3. Use the reference guide for a practical workflow.
+4. Follow a crate link only when you need to investigate implementation or conformance evidence.
+
+Do not infer a guarantee from a crate name or a Book summary. If an entry has several standard links, begin with the broader hub and follow the feature that owns the exact question.
 
 | Ch | Book chapter | Primary platform-spec | Book reference | Compiler / service crates |
 | --- | --- | --- | --- | --- |
@@ -43,3 +52,5 @@ Use this matrix when you know *what* you want to do in the book and need the *la
 | Community | [/platform-spec/community/](/platform-spec/community/) |
 
 For full language indexing, see [Beskid Specification](/platform-spec/language-meta/).
+
+For the navigation method behind this table, see [13. Reading the law](/book/13-reading-the-law/). For the authority and maturity model, see [Specification authority and decisions](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/).

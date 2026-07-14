@@ -18,13 +18,3 @@ export function settingsDbPath(): string {
 export function ensurePlatformSpecDataDir(): void {
 	fs.mkdirSync(platformSpecDataDir(), { recursive: true });
 }
-
-export function localContentRoot(): string {
-	const localWorkspace = process.env.SPEC_LOCAL_WORKSPACE?.trim();
-	if (localWorkspace) {
-		return path.isAbsolute(localWorkspace)
-			? localWorkspace
-			: path.resolve(process.cwd(), localWorkspace);
-	}
-	return path.resolve(process.cwd(), "content/docs/platform-spec");
-}

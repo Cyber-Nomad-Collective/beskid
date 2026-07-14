@@ -4,9 +4,20 @@ description: Navigate execution and core library in platform-spec and tie readin
 tableOfContents: true
 ---
 
-Open the normative hub: [Execution and core library](/platform-spec/execution/ and /platform-spec/core-library/).
+Execution and the core library answer different questions. Read [Execution](/platform-spec/execution/) for runtime, ABI, and host behavior; read [Core library](/platform-spec/core-library/) for the library surface exposed to programs.
 
-This section is the **map chapter** companion—use the platform-spec reader (domain tiles, feature hubs, **Architecture** tab with dagre pipeline graphs) instead of memorizing folder names.
+## Choose the right domain
+
+| If you are asking about… | Start here |
+| --- | --- |
+| Host calls, runtime services, ABI boundaries, or conformance execution | [Execution](/platform-spec/execution/) |
+| Public library APIs, corelib organization, or compiler integration | [Core library](/platform-spec/core-library/) |
+
+Cross-domain features may link to both hubs. Follow those links rather than assuming that an API name describes its owning contract.
+
+## Trace into code carefully
+
+Once you have identified the feature, use its implementation anchors and tests as supporting evidence. The standard remains the authority for observable behavior; source layout is allowed to change.
 
 ## Hub
 

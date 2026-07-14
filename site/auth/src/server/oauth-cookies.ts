@@ -17,14 +17,19 @@ export function readOAuthStateCookie(request: Request): string | null {
 	for (const part of header.split(";")) {
 		const [name, ...rest] = part.trim().split("=");
 		if (name === OAUTH_STATE_COOKIE) {
-			return decodeURIComponent(rest.join("="));
+			try {
+				return decodeURIComponent(rest.join("="));
+			} catch {
+				return null;
+			}
 		}
 	}
 	return null;
 }
 
 export function clearOAuthStateCookieHeader(): string {
-	return `${OAUTH_STATE_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`;
+	const secure = isProduction() ? "; Secure" : "";
+	return `${OAUTH_STATE_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`;
 }
 
 export function buildOAuthState(nonce: string, app: string): string {

@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # Publish a CLI or LSP release stream to beskid_compiler GitHub releases.
 #
-# Ported from the Dagger function publishReleaseStream() in
-# beskid_infra/dagger/src/compiler-release.ts. For the given stream, uploads the
+# For the given stream, uploads the
 # assets to both an immutable tag (cli-v<version> / lsp-v<version>) and a
 # rolling tag (cli-latest / lsp-latest), creating the release if it doesn't
 # exist. Operates on a directory of assets produced by build-release-artifact.sh.

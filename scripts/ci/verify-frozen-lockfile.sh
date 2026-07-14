@@ -2,7 +2,7 @@
 # Verify that bun.lock matches package.json for one or more directories.
 #
 # Canonical multi-dir frozen-lockfile check. Runs identically here, in the
-# container-images GHA matrix, and under `just gate`. Sourced gate-harness
+# reusable delivery workflows, and under `just gate`. Sourced gate-harness
 # gives structured output, log-fragment capture, and JUnit emission.
 #
 # Usage: verify-frozen-lockfile.sh <dir>[,<dir>...] [<dir>[,<dir>...] ...]

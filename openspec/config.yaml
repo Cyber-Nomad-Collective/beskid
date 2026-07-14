@@ -1,0 +1,27 @@
+schema: spec-driven
+
+context: |
+  Beskid is an AOT-only language and toolchain. The canonical normative standard
+  lives in openspec/specs. The Beskid Book, READMEs, generated site content, and
+  implementation comments are informative and MUST link to OpenSpec rather than
+  restating normative rules.
+  Public standard routes remain under /platform-spec/ and are resolved through
+  openspec/catalog.json so legacy links remain stable during migration.
+  Observable language, compiler, runtime, core-library, tooling, and conformance
+  changes require an OpenSpec delta in the same change set.
+  Use Bun for sites, Rust workspace commands from compiler/, GitHub Actions for
+  orchestration, and OpenTelemetry-compatible trace propagation.
+
+rules:
+  proposal:
+    - Identify normative compatibility and legacy URL migration impact.
+    - Include rollback and staged deployment implications.
+  specs:
+    - Use SHALL or MUST for every normative requirement.
+    - Use GIVEN, WHEN, THEN, and optional AND bullets for every scenario.
+    - Link implementation and conformance anchors without making them normative.
+  design:
+    - Preserve one implementation path per construct and list deleted legacy paths.
+    - Define observability, security, rollback, and source-of-truth boundaries.
+  tasks:
+    - Order work as validate, introduce, migrate, delete, then verify.

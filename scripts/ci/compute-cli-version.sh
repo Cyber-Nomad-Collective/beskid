@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # Resolve the rolling CLI/LSP semver for a release build.
 #
-# Ported from the Dagger function resolveCliVersion() / computeCliVersion() in
-# beskid_infra/dagger/src/compiler-release.ts (itself a port of the former
+# Native implementation of resolveCliVersion()/computeCliVersion(), based on the former
 # compiler/ci/version.py). On a semver tag, the tag wins; on main, the version
 # is MAJOR.MINOR.(PATCH + commits-since-last-semver-tag), or
 # MAJOR.MINOR.(PATCH + run-number) when no tag exists yet.

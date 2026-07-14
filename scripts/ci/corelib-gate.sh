@@ -2,10 +2,7 @@
 # Corelib gate: workspace/manifest quality checks (corelibQuality) + the
 # beskid_cli corelib test suite (corelibTest).
 #
-# Ported verbatim from the Dagger functions beskid_infra/dagger/src/corelib-quality.ts
-# and corelib-test.ts so the gate runs directly on a Blacksmith runner instead of
-# inside a Dagger container. Running natively also surfaces the full per-test
-# output in the job log (Dagger only streamed the final exit code).
+# Runs directly on a Blacksmith runner and surfaces full per-test output.
 #
 # Run from the superrepo root. The compiler workspace lives in `compiler/` and the
 # corelib sources under `compiler/corelib/beskid_corelib`.
@@ -13,7 +10,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
-# Corelib lowering can recurse deeply; match the Dagger gate's stack bump.
+# Corelib lowering can recurse deeply; preserve the required stack bump.
 export RUST_MIN_STACK="${RUST_MIN_STACK:-67108864}"
 
 # ---------------------------------------------------------------------------
@@ -108,19 +105,19 @@ if [[ "$ws_name" != "corelib" ]]; then
   exit 1
 fi
 
-# WORKSPACE_MEMBERS (registryName, sourceRel) — must match lib/corelib-manifest.ts.
+# WORKSPACE_MEMBERS (registryName, memberId, sourceRel) — must match
+# scripts/ci/lib/corelib-publish-runner.mjs.
 WORKSPACE_MEMBERS=(
-  "corelib beskid_corelib"
-  "corelib_foundation packages/foundation"
-  "corelib_runtime packages/runtime"
-  "corelib_compiler_sdk packages/compiler-sdk"
-  "corelib_console packages/console"
-  "corelib_concurrency packages/concurrency"
+  "corelib corelib beskid_corelib"
+  "corelib_foundation foundation packages/foundation"
+  "corelib_runtime runtime packages/runtime"
+  "corelib_compiler_sdk compiler_sdk packages/compiler-sdk"
+  "corelib_console console packages/console"
+  "corelib_concurrency concurrency packages/concurrency"
 )
 
 for entry in "${WORKSPACE_MEMBERS[@]}"; do
-  set -- $entry
-  registry_name="$1"; source_rel="$2"
+  read -r registry_name member_id source_rel <<<"$entry"
   member_dir="${CORELIB_ROOT}/${source_rel}"
   if [[ ! -d "$member_dir" ]]; then
     echo "Missing member directory for ${registry_name}: ${source_rel}" >&2
@@ -136,8 +133,35 @@ for entry in "${WORKSPACE_MEMBERS[@]}"; do
     echo "Missing member README for ${registry_name}" >&2
     exit 1
   fi
-  if ! grep -Eq "member[[:space:]]+\"${registry_name}\"" "$WORKSPACE_PATH"; then
-    echo "CoreLib.bws is missing a member entry for registry package ${registry_name}" >&2
+  if ! awk -v wanted_member="$member_id" -v wanted_package="$registry_name" '
+    {
+      line=$0
+      sub(/^[[:space:]]+/, "", line)
+      sub(/[[:space:]]+$/, "", line)
+      if (line == "member \"" wanted_member "\" {") {
+        in_member=1
+        saw_member=1
+        next
+      }
+      if (in_member && line == "}") {
+        in_member=0
+        next
+      }
+      if (!in_member) next
+      n=index(line, "=")
+      if (n == 0) next
+      key=substr(line, 1, n-1)
+      gsub(/[[:space:]]+$/, "", key)
+      if (key != "package") next
+      value=substr(line, n+1)
+      gsub(/^[[:space:]]+/, "", value)
+      sub(/^"/, "", value)
+      sub(/"$/, "", value)
+      if (value == wanted_package) package_matches=1
+    }
+    END { exit !(saw_member && package_matches) }
+  ' "$WORKSPACE_PATH"; then
+    echo "CoreLib.bws member ${member_id} must declare package = \"${registry_name}\"" >&2
     exit 1
   fi
 done
@@ -168,6 +192,10 @@ for rel in "${REQUIRED_FILES[@]}"; do
 done
 echo "quality OK: corelib workspace manifest version ${version}"
 
+if [[ "${CORELIB_QUALITY_ONLY:-0}" == "1" ]]; then
+  exit 0
+fi
+
 # ---------------------------------------------------------------------------
 # Corelib test suite via beskid_cli. Mirrors corelibTest() in corelib-test.ts:
 # build the CLI release, ensure the runtime bridge, then run the test project.
@@ -185,8 +213,6 @@ else
   echo "Could not locate compiler workspace root (no compiler/Cargo.toml)" >&2
   exit 1
 fi
-TESTS_CWD="${TESTS_DIR#${COMPILER_ROOT}/}"
-
 cd "${COMPILER_ROOT}"
 cargo build -p beskid_cli --release
 bash scripts/ensure-runtime-bridge.sh

@@ -4,9 +4,18 @@ description: Navigate tooling domain map in platform-spec and tie reading to cra
 tableOfContents: true
 ---
 
-Open the normative hub: [Tooling domain map](/platform-spec/tooling/).
+Open the [Tooling hub](/platform-spec/tooling/) for contracts around the commands, editor integrations, manifests, registries, and supporting tools that surround a Beskid project.
 
-This section is the **map chapter** companion—use the platform-spec reader (domain tiles, feature hubs, **Architecture** tab with dagre pipeline graphs) instead of memorizing folder names.
+## Start from the task
+
+| Task | Useful standard area |
+| --- | --- |
+| Invoke compiler commands | [CLI](/platform-spec/tooling/cli/) |
+| Configure a project or workspace | [Manifests and lockfiles](/platform-spec/tooling/manifests-and-lockfiles/) |
+| Work in an editor | [LSP](/platform-spec/tooling/lsp/) |
+| Consume or publish packages | [Registry client](/platform-spec/tooling/registry-client/) |
+
+The [Book reference](/book/reference/) is the practical companion for command walkthroughs. Follow the standard link whenever a workflow depends on a contract rather than a local convenience.
 
 ## Hub
 

@@ -2,16 +2,16 @@
 # Local CI preflight — run the host-callable gates before pushing.
 #
 #   scripts/local-preflight.sh           # host tier (seconds)
-#   scripts/local-preflight.sh --full    # host tier + act/podman (minutes)
+#   scripts/local-preflight.sh --full    # host tier + workflow policy checks
 #
 # Host tier runs the same scripts/ci/*.sh gates GHA runs, so the class of bug
 # that broke main (stale bun.lock) is caught in seconds locally. --full adds
-# act+podman for YAML/container fidelity.
+# static workflow validation without invoking deployment jobs.
 #
 # Skip rules (non-failing):
 #   - @beskid/* / @cyber-nomad-* app gates skip if NODE_AUTH_TOKEN unset
 #   - compiler gate is never run here (Blacksmith Testbox only)
-#   - --full skips with a clear reason if act or podman are missing
+#   - --full requires actionlint
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -53,43 +53,14 @@ run_host_gate() {  # run_host_gate <label> <cmd...>
 
 echo "==> HOST TIER"
 
-# 1. Lockfile drift — the check that would have caught the week-long main break.
-run_host_gate "verify-frozen-lockfile" \
-  bash "${ROOT}/scripts/ci/verify-frozen-lockfile.sh" \
-    "." "site/website" "site/auth" "site/platform-spec" "beskid_web_common"
-
-# 2. Root workspace structure.
-run_host_gate "platform-smoke" \
-  bash "${ROOT}/scripts/ci/platform-smoke.sh"
-
-# 3. App gates — skip cleanly if the GitHub Packages token is missing.
-if [[ -z "${NODE_AUTH_TOKEN:-${BESKID_NODE_AUTH_TOKEN:-}}" ]]; then
-  echo ""
-  echo "======== site-build-gate: SKIP ========"
-  echo "  set NODE_AUTH_TOKEN (or BESKID_NODE_AUTH_TOKEN) to run the auth and"
-  echo "  platform-spec app gates (needed for @beskid/* GitHub Packages deps)."
-else
-  export NODE_AUTH_TOKEN="${NODE_AUTH_TOKEN:-${BESKID_NODE_AUTH_TOKEN}}"
-  run_host_gate "site-build-gate (auth)" \
-    bash "${ROOT}/scripts/ci/site-build-gate.sh" auth "${NODE_AUTH_TOKEN}"
-  run_host_gate "site-build-gate (platform-spec)" \
-    bash "${ROOT}/scripts/ci/site-build-gate.sh" platform-spec "${NODE_AUTH_TOKEN}"
-fi
-
-# 4. Normative spec validation — same invocation as normative-spec.yml.
-if [[ -f "${ROOT}/beskid_web_common/packages/spec-core/scripts/validate-workspace.ts" ]] \
-  && [[ -d "${ROOT}/site/spec-content" ]]; then
-  run_host_gate "normative-spec-validate" \
-    sh -c '(cd beskid_web_common/packages/spec-core && bun install >/dev/null 2>&1) && bun run beskid_web_common/packages/spec-core/scripts/validate-workspace.ts site/spec-content'
-else
-  echo ""
-  echo "======== normative-spec-validate: SKIP ========"
-  echo "  beskid_web_common submodule or site/spec-content not present."
-fi
+run_host_gate "openspec" bash "${ROOT}/scripts/ci/openspec-gate.sh"
+run_host_gate "conformance" bash "${ROOT}/scripts/ci/conformance-gate.sh"
+run_host_gate "platform-integration" bash "${ROOT}/scripts/ci/platform-integration-gate.sh"
+run_host_gate "supply-chain-security" bash "${ROOT}/scripts/ci/security-policy-gate.sh"
 
 if [[ "$FULL" -eq 1 ]]; then
   echo ""
-  echo "==> FULL TIER (act + podman)"
+  echo "==> FULL TIER (workflow policy)"
   "${ROOT}/scripts/local-preflight-full.sh" || HOST_RC=$?
 fi
 

@@ -4,7 +4,6 @@ import { PlatformSpecHomeClient } from "#/components/reader/platform-spec-home-c
 import { ReaderChrome } from "#/components/reader/reader-chrome";
 import { SpecShell } from "#/components/reader/spec-shell";
 import { SpecViewModeProvider } from "#/components/reader/spec-view-mode";
-import { SpecOriginProvider } from "@beskid/ui-react/platform-spec";
 import { fetchCatalog, fetchNavTree } from "#/server/catalog";
 
 export const Route = createFileRoute("/platform-spec/")({
@@ -24,21 +23,19 @@ function PlatformSpecHomePage() {
 	return (
 		<SpecViewModeProvider>
 			<ReaderChrome>
-				<SpecOriginProvider>
-					<SpecShell navTree={navTree} activeSlug="platform-spec">
-						<PlatformSpecHomeClient
-							catalog={catalog.entries.map((entry) => ({
-								slug: entry.slug,
-								href: entry.href,
-								title: entry.title,
-								description: entry.description,
-								status: entry.status,
-								pathClass: entry.pathClass,
-							}))}
-							navTree={navTree}
-						/>
-					</SpecShell>
-				</SpecOriginProvider>
+				<SpecShell navTree={navTree} activeSlug="platform-spec">
+					<PlatformSpecHomeClient
+						catalog={catalog.entries.map((entry) => ({
+							slug: entry.slug,
+							href: entry.href,
+							title: entry.title,
+							description: entry.description,
+							status: entry.status,
+							pathClass: entry.pathClass,
+							domain: entry.domain,
+						}))}
+					/>
+				</SpecShell>
 			</ReaderChrome>
 		</SpecViewModeProvider>
 	);

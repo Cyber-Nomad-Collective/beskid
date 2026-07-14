@@ -1,8 +1,0 @@
-{
-  "name": "beskid-ci",
-  "engineVersion": "v0.21.0",
-  "sdk": {
-    "source": "typescript"
-  },
-  "source": "beskid_infra/dagger"
-}

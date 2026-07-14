@@ -41,6 +41,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				{children}
+				<script type="module" src="/beskid-doc-embed.js" />
 				<Scripts />
 			</body>
 		</html>

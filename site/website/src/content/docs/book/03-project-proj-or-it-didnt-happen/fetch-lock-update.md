@@ -45,7 +45,7 @@ Do **not** `.gitignore` the lock because "it is generated" unless you enjoy prod
 
 With `source = path` as the enabled provider, "version drift" is often literally **different folders on disk**. Workspaces add shared override policy—chapter [06](/book/06-monorepo-as-coping-mechanism/).
 
-## Normative
+## Standard reference (informative)
 
 - [Workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
 

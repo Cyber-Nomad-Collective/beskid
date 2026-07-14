@@ -1,4 +1,4 @@
-# Corelib: quality + test gate (native) → publish to pckg.beskid-lang.org (Dagger).
+# Corelib: native quality + test gate → publish to pckg.beskid-lang.org.
 name: Corelib
 
 on:
@@ -15,7 +15,6 @@ on:
       - 'scripts/ci/**'
       - '.github/actions/**'
       - '.github/workflows/corelib.yml'
-      - 'dagger.json'
   pull_request:
     branches: [main]
     paths:
@@ -29,7 +28,6 @@ on:
       - 'scripts/ci/**'
       - '.github/actions/**'
       - '.github/workflows/corelib.yml'
-      - 'dagger.json'
   workflow_dispatch:
 
 concurrency:
@@ -58,18 +56,13 @@ jobs:
       # keep it here for visibility / parity with the compiler gate.
       RUST_MIN_STACK: "67108864"
     steps:
-      # NOTE: the first step MUST be a real actions/checkout — a local composite
-      # action (./.github/actions/checkout-beskid) cannot be loaded before the
-      # repository is checked out. checkout-beskid is kept for callers that
-      # already have the workspace on disk; jobs here inline the real checkout
-      # with the same defaults (fetch-depth 0) instead.
+      # The repository checkout includes history for version and release logic.
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
 
-      # Native gate: provisions Rust + Bun + compiler/bsol submodules without
-      # Dagger, and surfaces full per-test output in the job log (Dagger only
-      # streamed the final exit code, hiding the failing assertion).
+      # Native gate: provisions Rust + Bun + compiler/bsol submodules and
+      # surfaces full per-test output in the job log.
       - uses: ./.github/actions/setup-compiler-gate
         with:
           compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
@@ -84,19 +77,13 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 30
     steps:
-      # NOTE: the first step MUST be a real actions/checkout — a local composite
-      # action (./.github/actions/checkout-beskid) cannot be loaded before the
-      # repository is checked out. checkout-beskid is kept for callers that
-      # already have the workspace on disk; jobs here inline the real checkout
-      # with the same defaults (fetch-depth 0) instead.
+      # The repository checkout includes history for version and release logic.
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
 
-      # Native publish: provisions Rust + Bun + compiler/bsol submodules without
-      # Dagger, then builds beskid_cli and runs the (pure-Node) publish runner
-      # on the host. The runner itself is unchanged; only its host/container
-      # invocation moved off Dagger.
+      # Native publish: provisions Rust + Bun + compiler/bsol submodules, then
+      # builds beskid_cli and runs the pure-Node publish runner on the host.
       - uses: ./.github/actions/setup-compiler-gate
         with:
           compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}

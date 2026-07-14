@@ -1,56 +1,48 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-import type { LayoutFile } from "@cyber-nomad-collective/spec-core";
-import {
-	SpecOriginProvider,
-	SpecPageHeader,
-	SpecReaderShell,
-	SpecWidgetGrid,
-	SpecCommentsPanel,
-	type CatalogEntry,
-	type NavTreeNode,
-	type SpecCommentItem,
-} from "@beskid/ui-react/platform-spec";
-import { ArchitectureGraphCanvas } from "@beskid/ui-react/architecture-graph";
 import { Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { renderMarkdownToHtml } from "#/lib/markdown";
 
 export interface StructuredDocumentViewProps {
-	slug: string;
 	title: string;
 	specLevel?: string | null;
 	status?: string | null;
 	description?: string | null;
 	bodyMd: string;
-	layoutJson?: Record<string, unknown> | null;
+	/** Informative Book guides; they never alter this standard's authority. */
+	bookLinks?: string[];
 	adrs?: { href: string; title: string }[];
-	comments?: SpecCommentItem[];
-	catalogEntries?: CatalogEntry[];
 	relatedTopics?: { href: string; title: string }[];
 	architectureGraph?: { graphKey: string; entryNode?: string } | null;
 	showEditLink?: boolean;
 }
 
+function bookGuideTitle(href: string): string {
+	const slug = href.replace(/^\/+|\/+$/g, "").split("/").at(-1) ?? href;
+	return slug
+		.replace(/^\d+-/, "")
+		.replace(/-/g, " ")
+		.replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function bookGuideHref(href: string): string {
+	return new URL(href, "https://beskid-lang.org").href;
+}
+
 export function StructuredDocumentView({
-	slug,
 	title,
 	specLevel,
 	status,
 	description,
 	bodyMd,
-	layoutJson,
+	bookLinks = [],
 	adrs = [],
-	comments = [],
-	catalogEntries = [],
 	relatedTopics = [],
 	architectureGraph = null,
 	showEditLink = true,
 }: StructuredDocumentViewProps) {
 	const bodyHtml = renderMarkdownToHtml(bodyMd);
-	const layout = layoutJson as LayoutFile | null | undefined;
-
 	const [graph, setGraph] = useState<unknown | null>(null);
 	const [graphError, setGraphError] = useState<string | null>(null);
 
@@ -58,72 +50,125 @@ export function StructuredDocumentView({
 		if (!architectureGraph?.graphKey) return;
 		setGraph(null);
 		setGraphError(null);
-		fetch(`/api/v1/architecture/${encodeURIComponent(architectureGraph.graphKey)}`)
+		fetch(
+			`/api/v1/architecture/${encodeURIComponent(architectureGraph.graphKey)}`,
+		)
 			.then(async (res) => {
 				if (!res.ok) {
 					const payload = await res.json().catch(() => ({}));
-					throw new Error(payload?.error ?? `failed to load architecture graph (${res.status})`);
+					throw new Error(
+						payload?.error ??
+							`failed to load architecture graph (${res.status})`,
+					);
 				}
 				return res.json();
 			})
 			.then((data) => setGraph(data))
-			.catch((err) => setGraphError(err instanceof Error ? err.message : String(err)));
+			.catch((err) =>
+				setGraphError(err instanceof Error ? err.message : String(err)),
+			);
 	}, [architectureGraph?.graphKey]);
 
 	const architectureSlot = architectureGraph ? (
 		graph ? (
-			<ArchitectureGraphCanvas graph={graph} entryNodeId={architectureGraph.entryNode} />
+			<details className="rounded-lg border border-border p-4">
+				<summary className="cursor-pointer font-semibold">
+					Derived architecture graph
+				</summary>
+				{architectureGraph.entryNode ? (
+					<p className="mt-2 text-sm text-muted-foreground">
+						Entry node: <code>{architectureGraph.entryNode}</code>
+					</p>
+				) : null}
+				<pre className="mt-3 max-h-96 overflow-auto text-xs">
+					{JSON.stringify(graph, null, 2)}
+				</pre>
+			</details>
 		) : graphError ? (
-			<p className="text-sm text-muted-foreground">Failed to load architecture graph: {graphError}</p>
+			<p className="text-sm text-muted-foreground">
+				Failed to load architecture graph: {graphError}
+			</p>
 		) : (
-			<p className="text-sm text-muted-foreground">Loading architecture graph…</p>
+			<p className="text-sm text-muted-foreground">
+				Loading architecture graph…
+			</p>
 		)
 	) : null;
 
 	return (
-		<SpecOriginProvider>
-			<article className="spec-document-view mx-auto w-full max-w-5xl px-6 py-8">
-				<div className="mb-4 flex justify-end">
-					{showEditLink ? (
-						<Link
-							to="/edit/drafts/new"
-							className="text-sm text-primary underline"
-						>
-							Edit this page
-						</Link>
-					) : null}
+		<article className="spec-document-view mx-auto w-full max-w-5xl px-6 py-8">
+			<div className="mb-4 flex justify-end">
+				{showEditLink ? (
+					<Link
+						to="/edit/drafts/new"
+						className="text-sm text-primary underline"
+					>
+						Edit this page
+					</Link>
+				) : null}
+			</div>
+			<header className="mb-8 space-y-3 border-b border-border pb-6">
+				<div className="flex flex-wrap gap-2 text-xs uppercase tracking-wide text-muted-foreground">
+					{specLevel ? <span>{specLevel}</span> : null}
+					{status ? <span>{status}</span> : null}
 				</div>
-				<SpecReaderShell
-					relatedTopics={relatedTopics}
-					adrs={adrs}
-					adrCount={adrs.length}
-					architecture={architectureSlot}
-				>
-					<SpecPageHeader
-						title={title}
-						description={description}
-						specLevel={specLevel}
-						status={status}
-					/>
-					{layout ? (
-						<SpecWidgetGrid
-							layout={layout}
-							catalogEntries={catalogEntries}
-							className="mb-8"
-						/>
+				<h1 className="text-4xl font-bold tracking-tight">{title}</h1>
+				{description ? (
+					<p className="text-lg text-muted-foreground">{description}</p>
+				) : null}
+			</header>
+			{architectureSlot ? (
+				<section className="mb-8">{architectureSlot}</section>
+			) : null}
+			<div
+				className="spec-prose prose prose-invert max-w-none"
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: server-rendered markdown
+				dangerouslySetInnerHTML={{ __html: bodyHtml }}
+			/>
+			{relatedTopics.length > 0 || adrs.length > 0 || bookLinks.length > 0 ? (
+				<aside className="mt-8 grid gap-4 border-t border-border pt-6 sm:grid-cols-2">
+					{bookLinks.length > 0 ? (
+						<section>
+							<h2 className="font-semibold">Informative Book guides</h2>
+							<p className="mt-1 text-sm text-muted-foreground">
+								These guides explain and contextualize this standard; OpenSpec
+									remains the normative source.
+							</p>
+							<ul>
+								{bookLinks.map((href) => (
+									<li key={href}>
+										<a href={bookGuideHref(href)}>{bookGuideTitle(href)}</a>
+									</li>
+								))}
+							</ul>
+						</section>
 					) : null}
-					<div
-						className="spec-prose prose prose-invert max-w-none"
-						// biome-ignore lint/security/noDangerouslySetInnerHtml: server-rendered markdown
-						dangerouslySetInnerHTML={{ __html: bodyHtml }}
-					/>
-					{comments.length > 0 ? (
-						<SpecCommentsPanel comments={comments} onChange={() => {}} disabled />
+					{relatedTopics.length > 0 ? (
+						<section>
+							<h2 className="font-semibold">Related capabilities</h2>
+							<ul>
+								{relatedTopics.map((item) => (
+									<li key={item.href}>
+										<a href={item.href}>{item.title}</a>
+									</li>
+								))}
+							</ul>
+						</section>
 					) : null}
-				</SpecReaderShell>
-			</article>
-		</SpecOriginProvider>
+					{adrs.length > 0 ? (
+						<section>
+							<h2 className="font-semibold">Decisions</h2>
+							<ul>
+								{adrs.map((item) => (
+									<li key={item.href}>
+										<a href={item.href}>{item.title}</a>
+									</li>
+								))}
+							</ul>
+						</section>
+					) : null}
+				</aside>
+			) : null}
+		</article>
 	);
 }
-
-export type { CatalogEntry, NavTreeNode };

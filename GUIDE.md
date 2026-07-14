@@ -1,30 +1,86 @@
-# Beskid ABI-v5 rewrite guide
+# Beskid project guide
 
-This guide contains the coordination rules needed by implementers of the HIR-free ISLE/CLIF and native-runtime rewrite. The approved design is `docs/superpowers/specs/2026-07-13-hir-free-isle-native-runtime-design.md`; the delivery sequence is `docs/superpowers/plans/2026-07-13-hir-free-isle-native-runtime.md`.
+Basis for parallel agent work in this repository. Complement with `AGENTS.md` and the global orchestrator at `~/.agents/ORCHESTRATOR.md`.
 
-## Rewrite invariants
+## Purpose
 
-- Expanded AST nodes plus generation-safe Salsa facts are the sole semantic representation. Do not add HIR adapters, shadow caches, or source-offset-only identities.
-- Generated ISLE rules are the sole language-operation lowering layer. Every typed operation has exactly one rule and every emitted function passes `verify_function`.
-- ABI v5 calls manifest-declared `beskid_rt_v5_*` symbols directly. Do not add dispatch tags, envelopes, handler registration, ABI-v4 fallback, or a universal System V/pointer-as-`i64` assumption.
-- `compiler/runtime_manifest.bsol` is the symbol/layout authority; generated `abi.json` is the exact target/profile allowlist and hash contract. Never hand-edit generated ABI files.
-- There is one hosted Beskid runtime in debug and release profiles. Only `beskid_arch_v5_context_init` and `beskid_arch_v5_context_switch` may be implemented in target assembly.
-- Only the canonical runtime compilation may receive the trusted runtime-intrinsic capability. The capability is not serializable or inheritable by user packages.
-- The supported target set is exactly `x86_64-unknown-linux-gnu`, `aarch64-apple-darwin`, and `x86_64-pc-windows-msvc`, all little-endian with 64-bit pointers.
-- Runtime traps use codes 1–10, call `beskid_rt_v5_trap`, and terminate with status 101; there is no panic, unwind, resume, or compatibility handler.
-- The cutover is big-bang. A task checkout may temporarily leave untouched legacy consumers for compilation, but the integration branch must delete HIR, ABI-v4, and the Rust runtime before acceptance.
+Beskid is an AOT-only programming language, compiler/runtime, core library, package ecosystem, editor tooling, documentation/standard platform, project tracker, knowledge graph, and self-hosted service stack. The repository coordinates regular directories and Git submodules; inspect both the root and the affected nested repository before changing or committing work.
 
-## Parallel-agent ownership
+## Layout
 
-| Agent domain | Write scope | Knowledge file |
+| Path | Role |
+|---|---|
+| `openspec/` | Sole normative Beskid standard, change proposals, migration catalog, and capability specs |
+| `compiler/` | Rust compiler, runtime, LSP, CLI, conformance tests, and Beskid corelib sources |
+| `site/platform-spec/` | React standard reader/editor and OpenSpec embed APIs |
+| `site/website/` | Astro landing site and informative Beskid Book |
+| `beskid_tracker/` | SQLite-backed roadmap and bug application; GitHub integration is bug-only after migration |
+| `beskid_nexus/` | Code/document/standard graph indexing and explorer |
+| `beskid_web_common/` | Published shared TypeScript packages shared by web applications |
+| `beskid_infra/` | Coolify Compose, OpenBao, monitoring, deployment helpers, and infrastructure docs |
+| `pckg/` | Package registry being migrated from .NET/Blazor to Rust/React |
+| `beskid_vscode/`, `beskid_treesitter/`, `beskid_bsol/`, `beskid_distrib/`, `beskid_templates/` | Editor, grammar, BSOL, distribution, and template subprojects |
+| `.github/workflows/`, `scripts/ci/` | Root CI orchestration, reusable delivery contracts, and local validation |
+
+## Commands
+
+| Task | Command |
+|---|---|
+| Checkout/setup | `./scripts/setup-environment.sh` |
+| Install root web dependencies | `bun install` |
+| Rebuild the OpenSpec read catalog | `bun run openspec:catalog` |
+| Validate OpenSpec and provenance | `bun run openspec:validate` |
+| Build platform-spec | `bun --cwd site/platform-spec run build` |
+| Test platform-spec | `bun --cwd site/platform-spec run test` |
+| Build website | `bun --cwd site/website run build` |
+| Test Tracker | `bun --cwd beskid_tracker run test` |
+| Install compiler tools | `just replace` |
+| Rebuild VS Code extension | `just vscode` |
+| Inspect GitNexus index | `node .gitnexus/run.cjs status` |
+
+## Processes
+
+1. Define observable behavior changes in an OpenSpec delta before implementation.
+2. Run GitNexus impact analysis before editing an existing symbol; report high or critical blast radius.
+3. Stabilize tests, add the canonical path, migrate consumers, and only then delete the legacy path.
+4. Build artifacts once by commit SHA, deploy the same digest manifest to staging, then promote through a protected production environment.
+5. Run focused tests plus strict OpenSpec/provenance validation and GitNexus change detection before commit.
+6. Update `CHANGELOG.md`; update `GLOSSARY.md` when canonical terminology changes. Do not add `Co-authored-by` trailers.
+
+## ABI v5 rewrite invariants
+
+- Expanded AST nodes plus generation-safe Salsa facts are the sole semantic representation.
+- Generated ISLE rules are the sole language-operation lowering layer; every emitted function must pass `verify_function`.
+- ABI v5 calls manifest-declared `beskid_rt_v5_*` symbols directly; do not reintroduce ABI-v4 fallback or handler dispatch.
+- `compiler/runtime_manifest.bsol` and generated `abi.json` are the symbol/layout authority; never hand-edit generated ABI files.
+- The supported target set is `x86_64-unknown-linux-gnu`, `aarch64-apple-darwin`, and `x86_64-pc-windows-msvc`.
+- Runtime intrinsics are available only to the canonical runtime compilation through a non-forgeable trusted capability.
+
+## Agent boundaries
+
+Parallel agents must use disjoint write scopes. Knowledge files live outside the repository and must never be pushed. Before an existing-symbol edit, run GitNexus upstream impact analysis; before a commit, run focused tests and GitNexus change detection.
+
+| Domain | Paths | Knowledge doc |
 |---|---|---|
-| Frontend contracts and migration | AST identities, Salsa queries, parser/expansion indexes, analysis spine | `~/.agents/knowledge/frontend-salsa.md` |
-| ABI contracts | Runtime manifest/model, validation, deterministic ABI metadata | `~/.agents/knowledge/abi-v5.md` |
-| Specification | Root `GUIDE.md`, `GLOSSARY.md`, and `docs/superpowers/` design/plan | `~/.agents/knowledge/abi-v5-spec.md` |
-| LSP migration | Document indexes and LSP semantic consumers | `~/.agents/knowledge/lsp-hir-free.md` |
-| Codegen | ISLE terms/rules, CLIF construction boundary, coverage/verifier gates | `~/.agents/knowledge/isle-codegen.md` |
-| Runtime and assembly | Beskid runtime sources, trusted capability, target assembly | `~/.agents/knowledge/native-runtime.md` |
-| Kit/JIT/AOT integration | Runtime-kit build/resolution, linking, wrappers, library lifetime | `~/.agents/knowledge/runtime-kit.md` |
-| CI and distribution | Target matrix, bundles, packages, installed-prefix smoke tests | `~/.agents/knowledge/abi-v5-distribution.md` |
+| Standard and docs | `openspec/`, `site/platform-spec/`, `site/website/`, `docs/` | `~/.agents/knowledge/spec-docs.md` |
+| Tracker and Nexus integration | `beskid_tracker/`, `beskid_nexus/`, relevant shared package APIs | `~/.agents/knowledge/apps-integration.md` |
+| CI/CD and infrastructure | `.github/`, `scripts/ci/`, `beskid_infra/` | `~/.agents/knowledge/cicd.md` |
+| Compiler/runtime | `compiler/` | `~/.agents/knowledge/compiler.md` |
+| ABI contracts | `compiler/runtime_manifest.bsol`, ABI model and generated metadata | `~/.agents/knowledge/abi-v5.md` |
+| pckg migration | `pckg/`, `compiler/crates/beskid_pckg_*`, `site/auth/` | `~/.agents/knowledge/pckg-*.md` |
 
-Use disjoint worktrees and write scopes. Do not edit another agent's checkout, `Cargo.lock`, generated files, submodule pointers, or another agent's knowledge file. Before an existing symbol edit, run GitNexus upstream impact analysis and warn on high/critical risk. Before commit, run focused tests and GitNexus change detection. Audit `~/.agents` and worktree-only coordination files so none can be staged or pushed.
+## Prior agent and IDE artifacts
+
+- Root instructions: `AGENTS.md`, `CLAUDE.md`.
+- Cursor: `.cursor/` with rules, hooks, plans, skills, and agents.
+- Claude-compatible skills: `.claude/skills/`.
+- OpenCode: `.opencode/`.
+- Additional orchestration evidence: `.omo/`, `.superpowers/`, `docs/superpowers/`, `docs/orchestrate/`.
+- GitNexus index: `.gitnexus/`; verify freshness before relying on impact results.
+- Existing user work is present in the root and several submodules. Always inspect `git status` before edits and never restore unrelated deletions.
+
+## Related docs
+
+- [GLOSSARY.md](./GLOSSARY.md)
+- [CHANGELOG.md](./CHANGELOG.md)
+- [Root README](./README.md)

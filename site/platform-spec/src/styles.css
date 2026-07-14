@@ -1,13 +1,35 @@
 @import "tailwindcss";
 
-@source "../node_modules/@beskid/ui-react/src";
 @source inline("rounded-4xl");
 
-@import "@beskid/ui-react/styles/shadcn-entry.css";
 @import "@beskid/material-theme";
 @import "./styles/reader-app.css";
 
 @custom-variant dark (&:is([data-theme="dark"] *));
+
+html[data-theme="light"],
+html[data-theme="dark"] {
+	--background: var(--beskid-surface);
+	--foreground: var(--beskid-on-primary-container);
+	--card: var(--platform-spec-card-bg);
+	--card-foreground: var(--foreground);
+	--popover: var(--platform-spec-surface-strong);
+	--popover-foreground: var(--foreground);
+	--primary: var(--beskid-primary);
+	--primary-foreground: var(--beskid-on-primary);
+	--secondary: var(--beskid-secondary-container);
+	--secondary-foreground: var(--beskid-on-primary-container);
+	--muted: var(--platform-spec-surface-muted);
+	--muted-foreground: var(--beskid-outline);
+	--accent: var(--beskid-primary-container);
+	--accent-foreground: var(--beskid-primary);
+	--destructive: #b3261e;
+	--destructive-foreground: #fff;
+	--border: var(--platform-spec-divider);
+	--input: var(--beskid-outline-variant);
+	--ring: var(--beskid-primary);
+	--radius: 0.75rem;
+}
 
 @theme inline {
 	--font-sans: ui-sans-serif, system-ui, sans-serif;

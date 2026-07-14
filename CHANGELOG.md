@@ -9,6 +9,76 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Added
+
+- Bidirectional Book-to-OpenSpec traceability: catalog-derived public Book
+  links, a reader panel that labels those guides informative, validation for
+  the technical Book pilot, and expanded chapters on specification reading,
+  documentation comments, and FFI.
+
+- OpenSpec 1.4.1 as the pinned normative-standard workflow, with a validated
+  repository change proposal, design, behavioral deltas, and phased migration
+  plan.
+- Semantic migration of 1,042 legacy platform-spec nodes into 184 OpenSpec
+  capabilities and 418 reviewed or explicitly provisional requirements, while
+  retaining all 1,042 source records and 3,189 artifact hashes for provenance.
+- Direct OpenSpec catalog/content reading in the platform-spec site, versioned
+  JSON/HTML requirement embeds, a dependency-free `<beskid-doc-embed>` element,
+  and typed `spec`, `book`, `nexus`, and `bug` Markdown directives.
+- OpenSpec catalog adapters for Tracker and Nexus, including stable requirement
+  IDs, catalog revision metadata, legacy aliases, and Nexus cache invalidation.
+- Repository `GUIDE.md` and `GLOSSARY.md` for cross-project operations and the
+  new standard/authority terminology.
+- Reusable CI/CD workflows for blocking quality gates, immutable image records,
+  checksummed release manifests, and protected staging/production promotion.
+- Fail-closed Coolify deployment polling with exact-digest Compose rendering,
+  post-deploy smoke checks, automatic rollback, and W3C trace correlation.
+- Local CI/CD contract tests covering manifest policy, immutable rendering,
+  plan-only promotion, and failed-API handling.
+- Blocking Trivy HIGH/CRITICAL image scans with retained SARIF evidence and a
+  release-manifest policy that rejects unscanned artifacts.
+
+### Fixed
+
+- Validate Corelib workspace member aliases against their explicit registry
+  package declarations and keep Rust Clippy iterator checks warning-free.
+- Stabilize Open VSX extension gates across randomized Bun test ordering and
+  Windows/macOS runners by completing shared VS Code mocks, using portable file
+  URL conversion, and provisioning ripgrep before compiler parity checks.
+- Package the canonical OpenSpec catalog into the Nexus image through an
+  explicit named BuildKit context while retaining the service-local Docker
+  build context.
+- Retain the generic resizable-panel dependency used by the shared UI primitive
+  after removing the legacy platform-spec component bundle.
+- Initialize selected CI submodules recursively and include the compiler in the
+  platform integration gate so nested Corelib validation is always available.
+- Keep main-branch staging promotion in fail-safe plan mode and require an
+  explicit workflow dispatch before mutating the external staging lane.
+- Default Tracker non-bug task synchronization to disabled while preserving the
+  bug synchronization path behind focused regression coverage.
+- Replace Nexus's legacy website-MDX standard index with the revisioned OpenSpec
+  catalog and render typed authority-aware standard links in the graph explorer.
+- Require platform smoke success before the existing platform deploy job.
+- Block release image publication and production deployment on release gates.
+- Propagate Coolify deploy and OpenBao synchronization failures instead of
+  reporting a successful deployment after suppressed errors.
+
+### Removed
+
+- The `site/spec-content` custom `spec.json`/`content.md`/`layout.json` corpus
+  and its submodule registration after strict provenance and alias validation.
+- The root custom spec CLI entry point and migration-only regeneration path;
+  canonical authoring now happens through OpenSpec changes.
+- The obsolete shared `spec-core` and `spec-cli` source packages and the
+  platform-spec dependency that could recreate them through `workspace:*`.
+- Legacy Dagger, OpenTofu, duplicate container/deploy workflows, and mutable-tag
+  delivery paths superseded by the staged GitHub Actions pipeline.
+
+### Security
+
+- Enable SBOM and minimal BuildKit provenance in the replacement image workflow,
+  with an explicit keyless image-signing hook and OIDC permission boundary.
+
 ## [0.4.0] - TBD
 
 ### Added
@@ -24,6 +94,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Auth/tracker autopairing and GitHub sync
 
 ### Changed
+
+- Updated the BSOL analysis pipeline, the native compiler runtime migration,
+  the registry web application, and the shared authentication handoff client.
 
 - **CI/CD migration from Dagger to Blacksmith Testbox**
   - Compiler gate runs via Testbox scripts instead of Dagger

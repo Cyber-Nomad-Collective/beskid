@@ -1,55 +1,51 @@
-import { createFileRoute } from "@tanstack/react-router";
-
 import fs from "node:fs";
 import path from "node:path";
+import { createFileRoute } from "@tanstack/react-router";
 
-import { validateArchitectureGraph } from "@cyber-nomad-collective/spec-core";
-import { SPEC_ARCHITECTURE_DIR } from "@cyber-nomad-collective/spec-core";
-import { localWorkspaceRoot } from "#/server/local-workspace/index";
-import { env } from "#/env.server";
 import { platformSpecDataDir } from "#/lib/storage/paths";
+
+function isArchitectureGraph(value: unknown): value is Record<string, unknown> {
+	return (
+		typeof value === "object" &&
+		value !== null &&
+		Array.isArray((value as Record<string, unknown>).nodes) &&
+		Array.isArray((value as Record<string, unknown>).edges)
+	);
+}
 
 export const Route = createFileRoute("/api/v1/architecture/$key")({
 	server: {
 		handlers: {
 			GET: async ({ params }) => {
 				const key = params.key?.replace(/^\/+|\/+$/g, "") ?? "";
-				if (!key) return Response.json({ error: "missing key" }, { status: 400 });
-
-				const workspaceRoot =
-					localWorkspaceRoot() ??
-					(env.SPEC_GIT_CLONE_DIR?.trim() ??
-						path.join(platformSpecDataDir(), "git-clone"));
+				if (!/^[a-z0-9][a-z0-9-]*$/i.test(key)) {
+					return Response.json({ error: "invalid key" }, { status: 400 });
+				}
 
 				const filePath = path.join(
-					workspaceRoot,
-					SPEC_ARCHITECTURE_DIR,
+					platformSpecDataDir(),
+					"derived",
+					"architecture",
 					`${key}.json`,
 				);
 
 				if (!fs.existsSync(filePath)) {
-					return Response.json(
-						{ error: "not found", key },
-						{ status: 404 },
-					);
+					return Response.json({ error: "not found", key }, { status: 404 });
 				}
 
 				const raw = JSON.parse(fs.readFileSync(filePath, "utf8")) as unknown;
-				const result = validateArchitectureGraph(raw, { context: filePath });
-				if (!result.ok || !result.graph) {
+				if (!isArchitectureGraph(raw)) {
 					return Response.json(
 						{
 							error: "invalid architecture graph",
 							key,
-							issues: result.issues,
 						},
 						{ status: 400 },
 					);
 				}
 
-				return Response.json(result.graph);
+				return Response.json(raw);
 			},
 		},
 	},
 });
-

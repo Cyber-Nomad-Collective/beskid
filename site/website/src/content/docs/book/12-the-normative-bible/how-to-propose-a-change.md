@@ -1,6 +1,6 @@
 ---
 title: "How to propose a change"
-description: A contributor path from design gap to spec PR, implementation, and trudoc verify.
+description: A contributor path from design gap to OpenSpec change, implementation, and validation.
 tableOfContents: true
 ---
 
@@ -17,10 +17,10 @@ Use [language law vs implementation](/book/12-the-normative-bible/language-law-v
 
 ## 2. Write or update spec
 
-- Pick the correct **feature hub** under `/platform-spec/`.
-- Add normative prose, diagnostics codes, and `relatedTopics` deferrals—not duplicated tables.
-- For closed choices, add an **`adr/`** file or hub **Decisions** row.
-- Run `cd site/website && bun run verify:trudoc -- --preset ci` after edits.
+- Find the capability in `openspec/catalog.json` and edit it through an `openspec/changes/<change>/` delta.
+- Put normative behavior in `### Requirement:` sections with at least one `#### Scenario:`.
+- Keep tutorials and rationale in the Book; link them with typed `spec` and `book` embeds.
+- Run `openspec validate --all --strict` from the repository root after edits.
 
 Templates: [Feature hub + article bundle](/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/), [Frontmatter template](/platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template/).
 
@@ -32,9 +32,9 @@ Update `compiler/` (or corelib/tooling) and refresh [crate-to-spec anchors](/pla
 
 | Check | Command / location |
 | --- | --- |
-| Spec layout + frontmatter | `bun run verify:trudoc -- --preset ci` |
+| OpenSpec structure and deltas | `openspec validate --all --strict` |
 | Compiler behavior | `cargo test` in `compiler/`, `beskid_tests` fixtures |
-| Strict spec content (optional) | `verify:platform-spec-content --strict` |
+| Repository conformance gate | `bash scripts/ci/openspec-gate.sh` |
 
 ## 5. Informative follow-up
 
