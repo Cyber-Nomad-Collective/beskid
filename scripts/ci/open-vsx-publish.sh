@@ -84,7 +84,7 @@ cd beskid_vscode
 previous_version=""
 restore_version() {
   if [[ -n "$previous_version" ]]; then
-    node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('package.json','utf8'));d.version=process.env.PV;fs.writeFileSync('package.json',JSON.stringify(d,null,2)+'\n');" PV="$previous_version"
+    PV="$previous_version" node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('package.json','utf8'));d.version=process.env.PV;fs.writeFileSync('package.json',JSON.stringify(d,null,2)+'\n');"
   fi
 }
 trap restore_version EXIT
