@@ -42,6 +42,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Defer the distribution completion marker until all platform publications
+  succeed, fail closed on missing distribution credentials, and keep failed
+  fan-outs retryable for the same rolling version.
 - Validate Corelib workspace member aliases against their explicit registry
   package declarations and keep Rust Clippy iterator checks warning-free.
 - Stabilize Open VSX extension gates across randomized Bun test ordering and
