@@ -46,7 +46,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   carry its root dependency layout into the runtime image.
 - Treat an already-published platform VSIX as a successful, idempotent Open VSX
   publication only when its publisher, name, and version match the release
-  artifact, so retries do not confuse unrelated duplicates for success.
+  artifact, and restore the extension manifest after packaging so retries do
+  not confuse unrelated duplicates for success.
 - Validate Corelib workspace member aliases against their explicit registry
   package declarations and keep Rust Clippy iterator checks warning-free.
 - Stabilize Open VSX extension gates across randomized Bun test ordering and

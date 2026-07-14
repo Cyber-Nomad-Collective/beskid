@@ -60,6 +60,14 @@ if run_publish 'Extension other.beskid-vscode with version 9.8.7 already exists'
 	echo 'publisher accepted a duplicate response for a different extension' >&2
 	exit 1
 fi
+if run_publish 'Extension beskid.beskid-vscode with version 9.8.6 already exists'; then
+	echo 'publisher accepted a duplicate response for a different version' >&2
+	exit 1
+fi
 run_publish 'Extension beskid.beskid-vscode with version 9.8.7 already exists'
+[[ "$(node -p "require('${tmp}/root/beskid_vscode/package.json').version")" == 0.0.1 ]] || {
+	echo 'publisher did not restore the extension version after packaging' >&2
+	exit 1
+}
 
 echo 'Open VSX duplicate publish contract OK'
