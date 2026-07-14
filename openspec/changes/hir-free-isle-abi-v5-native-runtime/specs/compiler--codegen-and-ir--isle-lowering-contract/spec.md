@@ -38,9 +38,9 @@ The production adapter and ISLE inventory MUST cover expressions, statements, ca
 - **THEN** compilation fails deterministically with its syntax span; it MUST NOT fall back to HIR or Rust lowering
 
 ### Requirement: Canonical runtime intrinsic source surface
-Canonical Beskid runtime sources MUST express calls to only manifest-approved trusted intrinsics through a typed intrinsic declaration and call surface. That surface MUST support the ABI-required `pointer`, `usize`, and `never` types, retain source spans, and lower through the production Salsa-to-ISLE route; it MUST NOT model trusted calls as user-declarable extern functions.
+Canonical Beskid runtime sources MUST express calls to only manifest-approved trusted intrinsics through a typed intrinsic declaration and call surface. That surface MUST support the ABI-required `pointer`, `word`, and `never` source types, retain source spans, and lower through the production Salsa-to-ISLE route; it MUST NOT model trusted calls as user-declarable extern functions. ABI metadata continues to spell the pointer-width unsigned layout type `usize`.
 
 #### Scenario: Canonical trap call
 - **GIVEN** canonical runtime source invoking the manifest-approved `trap` intrinsic
 - **WHEN** semantic checking and ISLE lowering run
-- **THEN** the call receives the ABI-declared signature, is rejected outside the trusted runtime package, and lowers to the direct ABI-v5 trap symbol with its source span
+- **THEN** the call receives the ABI-declared signature, maps ABI `usize` parameters to source `word`, is rejected outside the trusted runtime package, and lowers to the direct ABI-v5 trap symbol with its source span

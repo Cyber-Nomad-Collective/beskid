@@ -83,3 +83,7 @@ A delivery process that builds an artifact once, verifies and deploys its immuta
 ## Typed Markdown directive
 
 A readable Markdown block or link that identifies a `spec`, `book`, `nexus`, or `bug` target and can be enhanced into an embed by supported renderers while remaining understandable in generic Markdown.
+
+## word
+
+The lowercase Beskid source primitive for an unsigned pointer-width machine value. `word` maps to the target native integer during semantic typing and ISLE lowering; ABI-v5 manifests and generated headers retain `usize` as their wire/layout term.
