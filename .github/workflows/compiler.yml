@@ -99,7 +99,7 @@ jobs:
         run: echo "sha=$(git -C compiler rev-parse HEAD)" >> "${GITHUB_OUTPUT}"
 
       - id: version
-        name: Compute rolling semver (native)
+        name: Resolve canonical Beskid SemVer
         env:
           GITHUB_REF: ${{ github.ref }}
           GITHUB_REF_NAME: ${{ github.ref_name }}
@@ -107,7 +107,7 @@ jobs:
           GITHUB_RUN_NUMBER: ${{ github.run_number }}
         run: |
           set -euo pipefail
-          v="$(bash ./scripts/ci/compute-cli-version.sh | tr -d '[:space:]')"
+          v="$(bash ./scripts/ci/resolve-beskid-version.sh | tr -d '[:space:]')"
           echo "version=${v}" >> "${GITHUB_OUTPUT}"
           echo "Resolved CLI/LSP version: ${v}"
 
@@ -202,7 +202,7 @@ jobs:
             echo "Set COMPILER_RELEASE_TOKEN or COMPILER_SUBMODULE_TOKEN" >&2
             exit 1
           fi
-          bash ./scripts/ci/publish-release-stream.sh cli "${RELEASE_VERSION}" "${COMPILER_SHA}" release-assets
+          bash ./scripts/ci/publish-release-stream.sh cli "${RELEASE_VERSION}" "${COMPILER_SHA}" release-assets immutable
 
   release-lsp-build:
     name: Build LSP (${{ matrix.asset_name }})
@@ -295,4 +295,108 @@ jobs:
             echo "Set COMPILER_RELEASE_TOKEN or COMPILER_SUBMODULE_TOKEN" >&2
             exit 1
           fi
-          bash ./scripts/ci/publish-release-stream.sh lsp "${RELEASE_VERSION}" "${COMPILER_SHA}" release-assets
+          bash ./scripts/ci/publish-release-stream.sh lsp "${RELEASE_VERSION}" "${COMPILER_SHA}" release-assets immutable
+
+  release-bundle-build:
+    name: Build direct-install bundle (${{ matrix.target }})
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [gate, version]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            asset_name: beskid-x86_64-unknown-linux-gnu.tar.gz
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            asset_name: beskid-aarch64-apple-darwin.tar.gz
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            asset_name: beskid-x86_64-pc-windows-msvc.tar.gz
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-compiler-submodule
+        with:
+          compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          workspaces: compiler
+
+      - name: Build direct-install bundle (native)
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+        run: bash ./scripts/ci/build-release-artifact.sh beskid_bundle ignored "${{ matrix.target }}" "${{ matrix.asset_name }}" "${RELEASE_VERSION}"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: bundle-${{ matrix.target }}
+          path: ${{ matrix.asset_name }}
+          if-no-files-found: error
+
+  release-bundle-publish:
+    name: Publish bundle manifest and rolling aliases
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [version, release-cli-publish, release-lsp-publish, release-bundle-build]
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          path: release-assets
+          pattern: bundle-*
+          merge-multiple: true
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          path: release-assets
+          pattern: cli-beskid-*
+          merge-multiple: true
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          path: release-assets
+          pattern: lsp-beskid_lsp-*
+          merge-multiple: true
+
+      - name: Publish immutable bundles and release manifest before rolling aliases
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+          COMPILER_SHA: ${{ needs.version.outputs.compiler_sha }}
+          COMPILER_RELEASE_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN }}
+          COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+        run: |
+          set -euo pipefail
+          export GH_TOKEN="${COMPILER_RELEASE_TOKEN:-${COMPILER_SUBMODULE_TOKEN}}"
+          if [[ -z "${GH_TOKEN}" ]]; then
+            echo "Set COMPILER_RELEASE_TOKEN or COMPILER_SUBMODULE_TOKEN" >&2
+            exit 1
+          fi
+          cd release-assets
+          release_url="https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/v${RELEASE_VERSION}"
+          bash ../scripts/ci/build-beskid-release-manifest.sh "${RELEASE_VERSION}" "${COMPILER_SHA}" beskid-release.json \
+            "x86_64-unknown-linux-gnu|${release_url}/beskid-x86_64-unknown-linux-gnu.tar.gz|$(sha256sum beskid-x86_64-unknown-linux-gnu.tar.gz | awk '{print $1}')" \
+            "aarch64-apple-darwin|${release_url}/beskid-aarch64-apple-darwin.tar.gz|$(sha256sum beskid-aarch64-apple-darwin.tar.gz | awk '{print $1}')" \
+            "x86_64-pc-windows-msvc|${release_url}/beskid-x86_64-pc-windows-msvc.tar.gz|$(sha256sum beskid-x86_64-pc-windows-msvc.tar.gz | awk '{print $1}')"
+          bash ../scripts/ci/publish-release-stream.sh bundle "${RELEASE_VERSION}" "${COMPILER_SHA}" . immutable
+          bash ../scripts/ci/publish-release-stream.sh cli "${RELEASE_VERSION}" "${COMPILER_SHA}" . rolling
+          bash ../scripts/ci/publish-release-stream.sh lsp "${RELEASE_VERSION}" "${COMPILER_SHA}" . rolling
+          bash ../scripts/ci/publish-release-stream.sh bundle "${RELEASE_VERSION}" "${COMPILER_SHA}" . rolling

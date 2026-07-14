@@ -1,73 +1,28 @@
 #!/usr/bin/env bash
-# Run the publisher with mocked toolchain commands to test duplicate handling.
+# Contract tests for Open VSX release-version propagation.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
-tmp="$(mktemp -d)"
-trap 'rm -rf "${tmp}"' EXIT
+SCRIPT="$ROOT/scripts/ci/open-vsx-publish.sh"
 
-mkdir -p "${tmp}/root/scripts/ci" "${tmp}/root/compiler" "${tmp}/root/beskid_vscode"
-cp "${ROOT}/scripts/ci/open-vsx-publish.sh" "${tmp}/root/scripts/ci/"
-cat >"${tmp}/root/beskid_vscode/package.json" <<'JSON'
-{"name":"beskid-vscode","version":"0.0.1","publisher":"beskid","icon":"icon.png"}
-JSON
-touch "${tmp}/root/beskid_vscode/icon.png"
-mkdir -p "${tmp}/bin"
-
-cat >"${tmp}/bin/cargo" <<'SH'
-#!/usr/bin/env bash
-set -euo pipefail
-mkdir -p target/release
-touch target/release/beskid_lsp
-SH
-cat >"${tmp}/bin/bun" <<'SH'
-#!/usr/bin/env bash
-set -euo pipefail
-exit 0
-SH
-cat >"${tmp}/bin/bunx" <<'SH'
-#!/usr/bin/env bash
-set -euo pipefail
-case "$1" in
-  ovsx)
-    if [[ "$2" == create-namespace ]]; then exit 0; fi
-    if [[ "$2" == publish ]]; then
-      printf '%s\n' "${OVSX_PUBLISH_OUTPUT}"
-      exit "${OVSX_PUBLISH_CODE}"
-    fi
-    ;;
-  @vscode/vsce)
-    for ((i = 1; i <= $#; i++)); do
-      if [[ "${!i}" == --out ]]; then
-        next=$((i + 1)); touch "${!next}"; exit 0
-      fi
-    done
-    ;;
-esac
-exit 0
-SH
-chmod +x "${tmp}/bin/cargo" "${tmp}/bin/bun"
-chmod +x "${tmp}/bin/bunx"
-
-run_publish() {
-	PATH="${tmp}/bin:${PATH}" \
-	OVSX_TOKEN=test GITHUB_REF_TYPE=tag GITHUB_REF_NAME=v9.8.7 \
-	OVSX_PUBLISH_OUTPUT="$1" OVSX_PUBLISH_CODE=1 \
-	bash "${tmp}/root/scripts/ci/open-vsx-publish.sh" linux-x64 beskid_lsp
+fail() {
+  echo "FAIL: $*" >&2
+  exit 1
 }
 
-if run_publish 'Extension other.beskid-vscode with version 9.8.7 already exists'; then
-	echo 'publisher accepted a duplicate response for a different extension' >&2
-	exit 1
-fi
-if run_publish 'Extension beskid.beskid-vscode with version 9.8.6 already exists'; then
-	echo 'publisher accepted a duplicate response for a different version' >&2
-	exit 1
-fi
-run_publish 'Extension beskid.beskid-vscode with version 9.8.7 already exists'
-[[ "$(node -p "require('${tmp}/root/beskid_vscode/package.json').version")" == 0.0.1 ]] || {
-	echo 'publisher did not restore the extension version after packaging' >&2
-	exit 1
-}
+missing_version_output="$(
+  cd "$ROOT"
+  env -u BESKID_RELEASE_VERSION -u OVSX_TOKEN bash "$SCRIPT" linux-x64 beskid_lsp 2>&1
+)" && fail "publisher accepted a missing BESKID_RELEASE_VERSION"
+[[ "$missing_version_output" == *"BESKID_RELEASE_VERSION must be exported"* ]] || \
+  fail "missing-version error did not identify BESKID_RELEASE_VERSION: $missing_version_output"
 
-echo 'Open VSX duplicate publish contract OK'
+grep -Fq ': "${BESKID_RELEASE_VERSION:?BESKID_RELEASE_VERSION must be exported}"' "$SCRIPT" || \
+  fail "publisher does not require BESKID_RELEASE_VERSION"
+grep -Fq 'target="$BESKID_RELEASE_VERSION"' "$SCRIPT" || \
+  fail "publisher does not use BESKID_RELEASE_VERSION as the extension version"
+if grep -Fq 'git describe' "$SCRIPT" || grep -Fq 'git rev-list' "$SCRIPT"; then
+  fail "publisher still resolves its version from git"
+fi
+
+echo "PASS: Open VSX publisher uses the centrally resolved release version"

@@ -1,12 +1,13 @@
-# Distribution: wrap the rolling cli-latest / lsp-latest release assets into
-# per-platform installers and publish them, in a single CI run.
+# Distribution: wrap immutable cli-v<version> / lsp-v<version> release assets
+# into per-platform installers and publish them in a single CI run.
 #
 # Triggered as a workflow_run on the Compiler workflow completing successfully
-# (decoupled from compiler.yml). Resolves the rolling version from
+# (decoupled from compiler.yml). Resolves the current version from the rolling
+# alias only for discovery, then packages only immutable release assets.
 # Cyber-Nomad-Collective/beskid_compiler, fans out to the platform packaging
 # jobs, and publishes:
-#   - Windows .msi          -> beskid_compiler cli-latest / cli-v<ver> release
-#   - macOS brew formula    -> Cyber-Nomad-Collective/beskid_homebrew tap
+#   - Windows .msi + .exe   -> beskid_compiler cli-latest / cli-v<ver> release
+#   - macOS .dmg + brew     -> compiler release + beskid_homebrew tap
 #   - Arch AUR              -> beskid-bin on the AUR
 #   - Ubuntu/Debian .deb    -> beskid_compiler cli-latest / cli-v<ver> release
 #   - Snap                  -> Snap Store (snap name: beskid)
@@ -109,16 +110,17 @@ jobs:
           s="$(gh release view cli-latest --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
           echo "compiler_sha=${s}" >> "${GITHUB_OUTPUT}"
 
-      - name: Compute sha256 of rolling assets
+      - name: Compute sha256 of immutable release assets
         id: shas
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
           tmp="$(mktemp -d)"
-          gh release download cli-latest  --repo "${COMPILER_REPO}" --pattern "beskid-darwin-arm64"     --dir "$tmp" --clobber
-          gh release download cli-latest  --repo "${COMPILER_REPO}" --pattern "beskid-linux-amd64"     --dir "$tmp" --clobber
-          gh release download lsp-latest  --repo "${COMPILER_REPO}" --pattern "beskid_lsp-linux-amd64" --dir "$tmp" --clobber
+          gh release download "cli-v${VERSION}" --repo "${COMPILER_REPO}" --pattern "beskid-darwin-arm64"     --dir "$tmp" --clobber
+          gh release download "cli-v${VERSION}" --repo "${COMPILER_REPO}" --pattern "beskid-linux-amd64"     --dir "$tmp" --clobber
+          gh release download "lsp-v${VERSION}" --repo "${COMPILER_REPO}" --pattern "beskid_lsp-linux-amd64" --dir "$tmp" --clobber
           {
             echo "cli_darwin_sha=$(sha256sum "$tmp/beskid-darwin-arm64"   | awk '{print $1}')"
             echo "cli_linux_sha=$(sha256sum "$tmp/beskid-linux-amd64"     | awk '{print $1}')"
@@ -164,14 +166,15 @@ jobs:
         run: ./scripts/ci/init-submodules.sh beskid_distrib
         shell: bash
 
-      - name: Fetch rolling CLI + LSP (windows-amd64)
+      - name: Fetch immutable CLI + LSP (windows-amd64)
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
         run: |
           mkdir -p build
-          bash beskid_distrib/scripts/fetch-rolling-assets.sh cli  x86_64-pc-windows-msvc build/beskid.exe
-          bash beskid_distrib/scripts/fetch-rolling-assets.sh lsp  x86_64-pc-windows-msvc build/beskid_lsp.exe
+          bash beskid_distrib/scripts/fetch-release-assets.sh cli "${VERSION}" x86_64-pc-windows-msvc build/beskid.exe
+          bash beskid_distrib/scripts/fetch-release-assets.sh lsp "${VERSION}" x86_64-pc-windows-msvc build/beskid_lsp.exe
 
       - name: Setup .NET (for WiX v4 dotnet tool)
         uses: actions/setup-dotnet@3940d3729529571e04ac2bf6e1a500d4b2566b8c # v4
@@ -184,6 +187,12 @@ jobs:
           VERSION: ${{ needs.resolve-rolling.outputs.version }}
         run: bash beskid_distrib/windows/build-msi.sh "${VERSION}" "$PWD/build" "$PWD/beskid_distrib/assets"
 
+      - name: Build Windows EXE bootstrapper
+        shell: bash
+        env:
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
+        run: bash beskid_distrib/windows/build-exe.sh "${VERSION}" "$PWD/beskid-${VERSION}-windows-amd64.msi" "$PWD/beskid_distrib/assets"
+
       - name: Upload MSI to beskid_compiler releases
         shell: bash
         env:
@@ -191,11 +200,11 @@ jobs:
           VERSION: ${{ needs.resolve-rolling.outputs.version }}
         run: |
           set -euo pipefail
-          msi="beskid-${VERSION}-windows-amd64.msi"
-          gh release upload cli-latest --repo "${COMPILER_REPO}" "${msi}" --clobber
+          assets=("beskid-${VERSION}-windows-amd64.msi" "beskid-${VERSION}-windows-amd64.exe")
+          gh release upload cli-latest --repo "${COMPILER_REPO}" "${assets[@]}" --clobber
           tag="cli-v${VERSION}"
           if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
-            gh release upload "$tag" --repo "${COMPILER_REPO}" "${msi}" --clobber || true
+            gh release upload "$tag" --repo "${COMPILER_REPO}" "${assets[@]}" --clobber || true
           fi
 
   macos-brew:
@@ -243,6 +252,44 @@ jobs:
           fi
           git commit -m "bump beskid to ${VERSION}"
           git push origin HEAD
+
+  macos-dmg:
+    name: macOS DMG
+    needs: [resolve-rolling, stamp-marker]
+    if: needs.resolve-rolling.outputs.should_run == 'true'
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+      - name: Init beskid_distrib submodule
+        run: ./scripts/ci/init-submodules.sh beskid_distrib
+
+      - name: Fetch immutable CLI + LSP (darwin-arm64)
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
+        run: |
+          mkdir -p build
+          bash beskid_distrib/scripts/fetch-release-assets.sh cli "${VERSION}" aarch64-apple-darwin build/beskid
+          bash beskid_distrib/scripts/fetch-release-assets.sh lsp "${VERSION}" aarch64-apple-darwin build/beskid_lsp
+          chmod 0755 build/beskid build/beskid_lsp
+
+      - name: Build macOS DMG
+        env:
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
+        run: bash beskid_distrib/macos/build-dmg.sh "${VERSION}" "$PWD/build" "$PWD/beskid_distrib/assets"
+
+      - name: Upload DMG to compiler releases
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
+        run: |
+          set -euo pipefail
+          dmg="beskid-${VERSION}-macos-arm64.dmg"
+          gh release upload cli-latest --repo "${COMPILER_REPO}" "${dmg}" --clobber
+          gh release upload "cli-v${VERSION}" --repo "${COMPILER_REPO}" "${dmg}" --clobber
 
   arch-aur:
     name: Arch AUR (beskid-bin)
@@ -295,13 +342,15 @@ jobs:
       - name: Init beskid_distrib submodule
         run: ./scripts/ci/init-submodules.sh beskid_distrib
 
-      - name: Fetch rolling CLI + LSP (linux-amd64)
+      - name: Fetch immutable CLI + LSP (linux-amd64)
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
         run: |
           mkdir -p build
-          bash beskid_distrib/scripts/fetch-rolling-assets.sh cli x86_64-unknown-linux-gnu
-          bash beskid_distrib/scripts/fetch-rolling-assets.sh lsp x86_64-unknown-linux-gnu
+          cd build
+          bash ../beskid_distrib/scripts/fetch-release-assets.sh cli "${VERSION}" x86_64-unknown-linux-gnu beskid
+          bash ../beskid_distrib/scripts/fetch-release-assets.sh lsp "${VERSION}" x86_64-unknown-linux-gnu beskid_lsp
 
       - name: Build .deb
         env:
@@ -334,16 +383,15 @@ jobs:
       - name: Init beskid_distrib submodule
         run: ./scripts/ci/init-submodules.sh beskid_distrib
 
-      - name: Fetch rolling CLI + LSP (linux-amd64) into snap/bin
+      - name: Fetch immutable CLI + LSP (linux-amd64) into snap/bin
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          VERSION: ${{ needs.resolve-rolling.outputs.version }}
         run: |
           mkdir -p beskid_distrib/snap/bin
           cd beskid_distrib/snap
-          bash ../../scripts/fetch-rolling-assets.sh cli x86_64-unknown-linux-gnu
-          bash ../../scripts/fetch-rolling-assets.sh lsp x86_64-unknown-linux-gnu
-          mv beskid-linux-amd64 bin/beskid
-          mv beskid_lsp-linux-amd64 bin/beskid_lsp
+          bash ../scripts/fetch-release-assets.sh cli "${VERSION}" x86_64-unknown-linux-gnu bin/beskid
+          bash ../scripts/fetch-release-assets.sh lsp "${VERSION}" x86_64-unknown-linux-gnu bin/beskid_lsp
 
       - name: Stamp snapcraft.yaml version
         env:
