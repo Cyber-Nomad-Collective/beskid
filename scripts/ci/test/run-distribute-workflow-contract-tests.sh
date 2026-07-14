@@ -4,11 +4,14 @@ set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 workflow="${root}/.github/workflows/distribute.yml"
+foundation_suite="${root}/scripts/ci/test/run-cicd-foundation-tests.sh"
 
 fail() {
   echo "FAIL: $*" >&2
   exit 1
 }
+
+grep -Fq 'run-distribute-workflow-contract-tests.sh' "${foundation_suite}" || fail "distribution workflow contract is not run by the CI/CD foundation suite"
 
 grep -Fq 'name: Require distribution GitHub token' "${workflow}" || fail "missing DISTRIB_GH_PAT preflight"
 grep -Fq 'DISTRIB_GH_PAT must be configured before distribution can read or publish release artifacts.' "${workflow}" || fail "preflight does not fail closed"
