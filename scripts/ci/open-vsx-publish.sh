@@ -147,6 +147,10 @@ for ((attempt = 1; attempt <= max_attempts; attempt++)); do
     echo "Open VSX: publish complete (${PLATFORM})"
     exit 0
   fi
+  if printf '%s' "$publish_out" | grep -Eiq '(already exists|already published|version already exists)'; then
+    echo "Open VSX: artifact already exists (${PLATFORM}); treating as published"
+    exit 0
+  fi
   if [[ "$attempt" -lt "$max_attempts" ]] && printf '%s' "$publish_out" | grep -Eiq '(status 50[0-9]|bad gateway|gateway timeout|timed out|econnreset|econnrefused|service unavailable)'; then
     delay=$((base_delay * (2 ** (attempt - 1))))
     echo "Open VSX: publish attempt ${attempt}/${max_attempts} failed with transient error; retrying in ${delay}s..." >&2
