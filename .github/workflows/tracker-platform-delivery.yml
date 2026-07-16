@@ -8,14 +8,15 @@ on:
 
 permissions:
   contents: read
+  packages: read
 
 jobs:
   openspec-projection:
     runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - name: Validate OpenSpec strictly
@@ -32,10 +33,12 @@ jobs:
 
   tracker:
     runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - name: Initialize tracker submodule
+        run: ./scripts/ci/init-submodules.sh beskid_tracker
       - uses: oven-sh/setup-bun@v2
       - run: bun install --cwd beskid_tracker --frozen-lockfile
       - run: bun run --cwd beskid_tracker test | tee tracker-tests.txt
@@ -47,10 +50,10 @@ jobs:
 
   platform-spec:
     runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
       - uses: oven-sh/setup-bun@v2
       - run: bun install --cwd site/platform-spec --frozen-lockfile
       - run: bun run --cwd site/platform-spec test | tee platform-spec-tests.txt
@@ -62,10 +65,12 @@ jobs:
 
   website-nexus:
     runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - name: Initialize nexus submodule
+        run: ./scripts/ci/init-submodules.sh beskid_nexus
       - uses: oven-sh/setup-bun@v2
       - run: bun install --cwd site/website --frozen-lockfile
       - run: bun test --cwd site/website src/lib/tracker-delivery.test.ts | tee latest-delivery.txt

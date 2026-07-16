@@ -18,7 +18,7 @@ for required in \
 	'bun run --cwd site/website build' \
 	'beskid_nexus/gitnexus' \
 	'latest-delivery'; do
-	rg -Fq "${required}" "${workflow}" || { echo "workflow missing required gate: ${required}" >&2; exit 1; }
+	grep -Fq "${required}" "${workflow}" || { echo "workflow missing required gate: ${required}" >&2; exit 1; }
 done
 
 echo "Tracker platform delivery workflow contract OK"
