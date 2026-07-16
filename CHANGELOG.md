@@ -11,6 +11,14 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Generation-safe expanded-syntax semantic facts now cover cross-unit calls,
+  trusted canonical-runtime intrinsics, and test metadata used by the CLI
+  migration.
+- Canonical runtime allocation ownership and descriptor pointer-map contracts,
+  with mark/sweep regressions for rooted object graphs.
+- Syntax-to-ISLE CLI build/run routing and a target/profile runtime-kit
+  publication and provenance validation matrix.
+
 - Bidirectional Book-to-OpenSpec traceability: catalog-derived public Book
   links, a reader panel that labels those guides informative, validation for
   the technical Book pilot, and expanded chapters on specification reading,
