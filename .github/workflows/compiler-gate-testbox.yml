@@ -22,14 +22,10 @@ on:
         type: string
         description: "Testbox session ID"
         required: true
-  pull_request:
-    paths:
-      - '.github/workflows/compiler-gate-testbox.yml'
-      - '.github/actions/setup-compiler-gate/**'
-      - 'scripts/ci/compiler-rust-gate.sh'
-      - 'scripts/ci/lsp-command-contract-gate.sh'
-      - 'scripts/ci/init-compiler-submodule.sh'
-      - 'scripts/ci/init-submodules.sh'
+# A Testbox run requires a session created out-of-band and supplied as the
+# required `testbox_id` dispatch input. A pull-request trigger has no such
+# input, so it can only fail before the gate starts. `compiler.yml` is the
+# authoritative PR gate; this workflow is intentionally dispatch-only.
 
 env:
   RUST_MIN_STACK: "67108864"

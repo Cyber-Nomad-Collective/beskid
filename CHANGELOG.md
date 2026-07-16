@@ -40,6 +40,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Make the manual Compiler Testbox workflow dispatch-only so pull requests no
+  longer start a job without its required Testbox session identifier.
+- Make the local supply-chain policy gate inspect only superrepo-tracked
+  workflows, matching its non-recursive GitHub checkout.
 - Validate Corelib workspace member aliases against their explicit registry
   package declarations and keep Rust Clippy iterator checks warning-free.
 - Stabilize Open VSX extension gates across randomized Bun test ordering and
