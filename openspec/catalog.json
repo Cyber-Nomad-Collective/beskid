@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "799a03cf203e80ff513b1e6589ad560bebe7218f079ec3dbfd66c89b56219e5e",
+  "revision": "babf63fbf53c7aa07b840e4d4d265d073543a8627ce19d1d4570c0155956b60d",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -37155,7 +37155,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "d5a7e447a345b1b1fa61fed47dbee633bd02956828f4c41c3cb0aca9429d6df4",
+      "sourceHash": "cc121b3dc7bf3b78164452956ffadfc6a69b7765eb85a669ca148355eec70e3b",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -37297,7 +37297,7 @@
       "path": "beskid_infra/docs/deploy-compose.md",
       "title": "Coolify Compose deploy (production)",
       "authority": "informative",
-      "sourceHash": "cebdf21711565ee678fa639aeebf29c1e90b347b95de0eb0195e05a4d1d8ef60",
+      "sourceHash": "42bb3020097a9ccb79f8be1a9d508e8c4acd15959655ea1ed72f2a37fc796f43",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37306,7 +37306,7 @@
       "path": "beskid_infra/docs/deploy-matrix.md",
       "title": "Coolify deploy matrix",
       "authority": "informative",
-      "sourceHash": "01636e8f0ddca3cff27193d25d305908d79fc0ee2a7b2755d9215e4051ef192d",
+      "sourceHash": "868bd439444aaacf5c20371e9d49730e02946a3dba537818aae06300e0726b6d",
       "standardLinks": [
         "/platform-spec/tooling/auth-hub/"
       ],
@@ -37326,7 +37326,7 @@
       "path": "beskid_infra/docs/openbao-layout.md",
       "title": "OpenBao secret layout",
       "authority": "informative",
-      "sourceHash": "ebc0705d89771cae238f18166b8752ba8a15ea514ab9cae1bdcc8889a56b5573",
+      "sourceHash": "b8eb9409794cc6665d604df701eef3d43f8a54db51d3c779af4da54d0e168da8",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37355,7 +37355,7 @@
       "path": "beskid_tracker/docs/roadmap-labels.md",
       "title": "Roadmap GitHub labels",
       "authority": "informative",
-      "sourceHash": "998ae6745bf850c2282ac4af8f95847dcc3e368311960d74dba34d43d2199d13",
+      "sourceHash": "8eb44c14589c4c9589139bfc73b03a8b4b64bb5422bb67ef3ee225046dd5db14",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/...",
@@ -39541,7 +39541,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/build.md",
       "title": "beskid build",
       "authority": "informative",
-      "sourceHash": "174837ef0a612b4de27617087ae933f2ba521c221d4a5a23b97dea9ee4df84b8",
+      "sourceHash": "f4865c301cc2ef0c33bca5e575427d5f8a1a9ac46a361ec82f440124984b6f6d",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
