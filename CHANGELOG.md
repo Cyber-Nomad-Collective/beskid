@@ -23,6 +23,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   documentation and source-tree browsing; PostgreSQL-backed profiles, boards,
   posts, comments, follows, votes, and notifications; and matching React
   package/community screens.
+- Subject-scoped pckg API-key management with one-time plaintext issuance,
+  hash-only PostgreSQL storage, scoped ownership-safe revocation, and React
+  dashboard support for API keys and the current owner's packages.
 
 - Immutable compiler-release packaging for Windows MSI/EXE, macOS DMG and
   Homebrew, Debian, and Snap; the new Windows EXE is a WiX Burn bootstrapper
