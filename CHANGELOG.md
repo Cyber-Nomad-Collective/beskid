@@ -31,6 +31,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   audit decisions, and React administration screens.
 - Public publisher discovery and catalog pages backed by verified profiles and
   visibility-filtered package ownership.
+- Owner-authorized package deletion and version listing, with retained
+  visibility and artifact-cleanup guarantees; retired unsupported dashboard
+  routes now resolve through the normal 404 experience.
 
 - Immutable compiler-release packaging for Windows MSI/EXE, macOS DMG and
   Homebrew, Debian, and Snap; the new Windows EXE is a WiX Burn bootstrapper
