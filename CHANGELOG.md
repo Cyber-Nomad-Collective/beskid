@@ -18,6 +18,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   with mark/sweep regressions for rooted object graphs.
 - Syntax-to-ISLE CLI build/run routing and a target/profile runtime-kit
   publication and provenance validation matrix.
+- Prepared-syntax AOT lowering, transparent aggregate ABI facts, and native
+  static/shared library-pair emission without an executable runtime-kit.
 
 - Bidirectional Book-to-OpenSpec traceability: catalog-derived public Book
   links, a reader panel that labels those guides informative, validation for
