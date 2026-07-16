@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Derive `beskid doc` API signatures directly from parsed syntax and source-unit
+  indexes, removing its independent HIR lowering and declaration traversal.
 - Stage a freshly produced native-host ABI-v5 runtime kit for compiler and corelib CI gates,
   replacing Rust runtime-bridge setup.
 
