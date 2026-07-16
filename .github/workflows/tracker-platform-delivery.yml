@@ -1,0 +1,84 @@
+name: Tracker platform delivery
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  openspec-projection:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Validate OpenSpec strictly
+        run: bun run openspec:validate | tee openspec-validation.txt
+      - name: Validate deterministic projection/reconciliation report
+        run: |
+          bun run openspec:catalog
+          git diff --exit-code -- openspec/catalog.json
+          printf 'projection/reconciliation validation passed\n' | tee projection-reconciliation.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: openspec-projection-reports
+          path: "*-validation.txt\nprojection-reconciliation.txt"
+
+  tracker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --cwd beskid_tracker --frozen-lockfile
+      - run: bun run --cwd beskid_tracker test | tee tracker-tests.txt
+      - run: bun run --cwd beskid_tracker check | tee tracker-check.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tracker-reports
+          path: "tracker-tests.txt\ntracker-check.txt"
+
+  platform-spec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --cwd site/platform-spec --frozen-lockfile
+      - run: bun run --cwd site/platform-spec test | tee platform-spec-tests.txt
+      - run: bun run --cwd site/platform-spec typecheck | tee platform-spec-typecheck.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: platform-spec-reports
+          path: "platform-spec-tests.txt\nplatform-spec-typecheck.txt"
+
+  website-nexus:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --cwd site/website --frozen-lockfile
+      - run: bun test --cwd site/website src/lib/tracker-delivery.test.ts | tee latest-delivery.txt
+      - run: bun run --cwd site/website build | tee website-build.txt
+      - run: bun install --cwd beskid_nexus/gitnexus --frozen-lockfile
+      - run: cd beskid_nexus/gitnexus && ./node_modules/.bin/vitest run test/unit/tracker-delivery-link-index.test.ts | tee ../../nexus-delivery.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: website-nexus-reports
+          path: "latest-delivery.txt\nwebsite-build.txt\nnexus-delivery.txt"
+
+  workflow-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/ci/test/run-tracker-platform-delivery-tests.sh

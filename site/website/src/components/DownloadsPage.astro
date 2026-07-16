@@ -3,6 +3,7 @@ import { beskidUiSrcUrl } from '../lib/beskid-ui-root.mjs';
 import {
 	cliDownloadBase,
 	loadCliVersion,
+	loadTrackerDelivery,
 	loadVscodeExtensionVersion,
 	vscodeInstallCommand,
 } from '../lib/load-download-versions';
@@ -15,9 +16,10 @@ export interface Props {
 }
 
 const cli = loadCliVersion();
+const trackerDelivery = await loadTrackerDelivery();
 const vscode = loadVscodeExtensionVersion();
 
-const version = Astro.props.version ?? cli.version;
+const version = Astro.props.version ?? trackerDelivery?.downloadLabel ?? cli.version;
 const versionSource = Astro.props.versionSource ?? cli.source;
 const vscodeVersion = Astro.props.vscodeVersion ?? vscode.version;
 const vscodeVersionSource = Astro.props.vscodeVersionSource ?? vscode.source;

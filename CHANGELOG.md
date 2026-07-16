@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Add Tracker delivery consumption across the downloads page and Nexus, with
+  revision-keyed Tracker-to-OpenSpec relations and non-mutating PR/main gates.
+- Publish Tracker delivery versions and deterministic, reviewed history-backfill
+  proposals with explicit unmapped commit handling.
 - OpenSpec 1.4.1 as the pinned normative-standard workflow, with a validated
   repository change proposal, design, behavioral deltas, and phased migration
   plan.
