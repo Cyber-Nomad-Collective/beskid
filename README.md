@@ -42,7 +42,7 @@ Day-to-day language work happens in **`compiler/`**, normative standard changes 
 beskid/                          ← you are here (aggregate root)
 ├── openspec/                    ← sole normative standard + change workflow
 ├── compiler/                    ← Rust: CLI, compiler, LSP, corelib (nested submodule)
-├── pckg/                        ← .NET registry service + UI
+├── pckg/                        ← Rust registry service + React UI
 ├── beskid_vscode/               ← VS Code extension (bundles beskid_lsp)
 ├── beskid_tracker/              ← Roadmap / issue tracker (TanStack Start)
 ├── beskid_nexus/                ← Compiler knowledge graph + MCP (GitNexus fork)
@@ -66,7 +66,7 @@ Each row links to the README in that tree. Clone submodules before following tho
 | --- | --- | --- |
 | `compiler/` | Rust workspace: `beskid` CLI, compiler crates, `beskid_lsp`, package client | [compiler/README.md](compiler/README.md) |
 | `compiler/corelib/` | Standard library (nested submodule: `corelib`, foundation, runtime, Mod SDK) | [compiler/corelib/README.md](compiler/corelib/README.md) |
-| `pckg/` | Registry HTTP API, Blazor UI, PostgreSQL, Docker Compose for local dev | [pckg/README.md](pckg/README.md) |
+| `pckg/` | Rust registry HTTP API, React UI, PostgreSQL, Docker Compose for local dev | [pckg/README.md](pckg/README.md) |
 | `beskid_vscode/` | Official VS Code extension; Open VSX publish runs from superrepo CI | [beskid_vscode/README.md](beskid_vscode/README.md) |
 | `beskid_tracker/` | SQLite roadmap/kanban and public bugs; GitHub synchronization is bug-only | [beskid_tracker/README.md](beskid_tracker/README.md) |
 | `beskid_nexus/` | Interactive repo graph explorer; MCP at `/api/mcp` | [beskid_nexus/README.md](beskid_nexus/README.md) |

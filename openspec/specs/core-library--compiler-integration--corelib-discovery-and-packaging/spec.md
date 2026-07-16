@@ -354,7 +354,7 @@ Published `.bpk` artifacts **should** expose registry documentation through root
 - Discovery: `compiler/crates/beskid_analysis/src/projects/graph/resolver.rs`
 - CLI embedding: `compiler/crates/beskid_cli/build.rs`, `corelib_runtime.rs`
 - Tests: `compiler/crates/beskid_tests/src/projects/corelib`
-- Server ingest: `pckg/src/Server/Services/PackagePublishDocumentation.cs`
+- Server ingest: `compiler/crates/beskid_pckg_server/Services/PackagePublishDocumentation.cs`
 ``````
 
 </details>

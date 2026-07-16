@@ -170,7 +170,7 @@ The records below preserve migration history and are not normative except where 
 - `compiler/crates/beskid_template` — `beskid.template.v1` engine and `service` orchestration
 - `compiler/crates/beskid_cli/src/commands/new.rs` — Clap wrapper for `beskid new`
 - `compiler/crates/beskid_analysis/src/projects/model.rs` — `ProjectKind::Template`
-- `pckg/src/Server/Services/PackageArtifactValidator.cs` — template profile
+- `compiler/crates/beskid_pckg_server/Services/PackageArtifactValidator.cs` — template profile
 - First-party packages `beskid.templates.console`, `beskid.templates.lib`, `beskid.templates.project`
 </SpecSection>
 

@@ -57,7 +57,7 @@ Packages activity-bar view: local dependency listing and registry browse/search 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
 - `beskid_vscode/src/packages/pckgClient.ts`, `PackageManagerProvider.ts`
 - `beskid_vscode/src/cli/beskidCliRunner.ts`
-- `pckg/src/Server/Features/Packages/Contracts.cs`
+- `compiler/crates/beskid_pckg_server/Features/Packages/Contracts.cs`
 </SpecSection>
 
 <SpecSection title="Contract statement" id="contract-statement">
@@ -261,7 +261,7 @@ Testable rules for **`pckgClient`**, registry auth, CLI mutations, and Packages 
 ## Related topics
 
 - [Workspace explorer contracts](../workspace-project-explorer/contracts-and-edge-cases/#beskidgetprojectdependencies)
-- Server contracts: `pckg/src/Server/Features/Packages/Contracts.cs`
+- Server contracts: `compiler/crates/beskid_pckg_server/Features/Packages/Contracts.cs`
 ``````
 
 </details>

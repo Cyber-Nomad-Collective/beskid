@@ -18,7 +18,7 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 | `beskid_nexus/` | Code/document/standard graph indexing and explorer |
 | `beskid_web_common/` | Published shared TypeScript packages shared by web applications |
 | `beskid_infra/` | Coolify Compose, OpenBao, monitoring, deployment helpers, and infrastructure docs |
-| `pckg/` | Package registry being migrated from .NET/Blazor to Rust/React |
+| `pckg/` | Rust package registry, React client, and GitHub-only Auth Hub identity |
 | `beskid_vscode/`, `beskid_treesitter/`, `beskid_bsol/`, `beskid_distrib/`, `beskid_templates/` | Editor, grammar, BSOL, distribution, and template subprojects |
 | `.github/workflows/`, `scripts/ci/` | Root CI orchestration, reusable delivery contracts, and local validation |
 

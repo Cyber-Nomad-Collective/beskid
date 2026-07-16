@@ -11,6 +11,11 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Retire pckg operational .NET/Aspire and reCAPTCHA configuration in favor of
+  the Rust service, Bun-built React client, GitHub-only Auth Hub sessions, and
+  GitHub avatar identity; historical data moves only through the transactional
+  cutover runner and reconciliation procedure, while the legacy source remains
+  the migration reference until the importer is complete.
 - Derive `beskid doc` API signatures directly from parsed syntax and source-unit
   indexes, removing its independent HIR lowering and declaration traversal.
 - Stage a freshly produced native-host ABI-v5 runtime kit for compiler and corelib CI gates,
@@ -94,8 +99,6 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Block release image publication and production deployment on release gates.
 - Propagate Coolify deploy and OpenBao synchronization failures instead of
   reporting a successful deployment after suppressed errors.
-
-### Removed
 
 - The `site/spec-content` custom `spec.json`/`content.md`/`layout.json` corpus
   and its submodule registration after strict provenance and alias validation.

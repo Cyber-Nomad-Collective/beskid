@@ -75,10 +75,10 @@ The **`packageKind`** field on **`beskid.package.v1`** — discriminates **libra
 </SpecSection>
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
-- **`pckg/src/Server/Services/PackageKinds.cs`** — kind constants and `IsSupported` / `IsTemplate` / `IsTool` predicates
-- **`pckg/src/Server/Services/PackageArtifactValidator.cs`** — per-kind validator profiles (library / template / tool)
-- **`pckg/src/Server/Services/PackagePublishDocumentation.cs`** — exempts `template` and `tool` from structured `api.json` requirements
-- **`pckg/src/Server/Components/Pages/PackageDetails.razor`(`.cs`)** — Fluent UI dashboard routing (badge, install-instructions card, hidden Documentation / Source tabs for `template` and `tool`)
+- **`compiler/crates/beskid_pckg_server/Services/PackageKinds.cs`** — kind constants and `IsSupported` / `IsTemplate` / `IsTool` predicates
+- **`compiler/crates/beskid_pckg_server/Services/PackageArtifactValidator.cs`** — per-kind validator profiles (library / template / tool)
+- **`compiler/crates/beskid_pckg_server/Services/PackagePublishDocumentation.cs`** — exempts `template` and `tool` from structured `api.json` requirements
+- **`compiler/crates/beskid_pckg_server/Components/Pages/PackageDetails.razor`(`.cs`)** — Fluent UI dashboard routing (badge, install-instructions card, hidden Documentation / Source tabs for `template` and `tool`)
 - **`compiler/crates/beskid_pckg/src/pack.rs`** and **`cli.rs`** — Rust `PackProfile` (`Library` / `Template` / `Tool`), `detect_pack_profile_with_override`, `strip_tool_pack_excludes`, and `beskid pckg pack --package-kind {auto,tool}`
 </SpecSection>
 
@@ -143,9 +143,9 @@ Use the **ADRs** tab to expand each decision.
 </SpecSection>
 
 <SpecSection title="Verification and traceability" id="verification-and-traceability">
-- `pckg/src/Server.Tests/Unit/PackageArtifactValidatorTests.cs` — `ValidateAsync_Accepts_Tool_Artifact_Without_Api_Json`, `ValidateAsync_Accepts_Tool_Artifact_With_Optional_Api_Json`, `ValidateAsync_Rejects_Tool_With_Template_Json`, `ValidateAsync_Rejects_Unknown_Package_Kind`.
-- `pckg/src/Server.Tests/Unit/PackagePublishDocumentationTests.cs` — `EnsureStructuredApiDoc_skips_tool_packages`.
-- `pckg/src/Server.Tests/Integration/ToolPackagePublishIntegrationTests.cs` — end-to-end tool publish with structured docs absent, kind persisted on the version summary.
+- `compiler/crates/beskid_pckg_server/tests/Unit/PackageArtifactValidatorTests.cs` — `ValidateAsync_Accepts_Tool_Artifact_Without_Api_Json`, `ValidateAsync_Accepts_Tool_Artifact_With_Optional_Api_Json`, `ValidateAsync_Rejects_Tool_With_Template_Json`, `ValidateAsync_Rejects_Unknown_Package_Kind`.
+- `compiler/crates/beskid_pckg_server/tests/Unit/PackagePublishDocumentationTests.cs` — `EnsureStructuredApiDoc_skips_tool_packages`.
+- `compiler/crates/beskid_pckg_server/tests/Integration/ToolPackagePublishIntegrationTests.cs` — end-to-end tool publish with structured docs absent, kind persisted on the version summary.
 - `compiler/crates/beskid_pckg/src/pack.rs` tests — `pack_profile_helpers_track_variant`, `build_package_json_tool_profile_omits_api_doc_pointer`, `strip_tool_pack_excludes_removes_generated_docs`, `detect_pack_profile_with_override_forces_tool_when_no_manifest`, `detect_pack_profile_with_override_rejects_template_project`, `detect_pack_profile_auto_matches_legacy_behavior`.
 - `compiler/crates/beskid_pckg/src/cli.rs` tests — `pack_args_default_package_kind_is_auto`, `pack_args_package_kind_tool_flag_parses`, `pack_args_package_kind_rejects_unknown_value`.
 </SpecSection>
@@ -303,13 +303,13 @@ Lift **`packageKind: tool`** from Reserved to **Standard** with the following no
 - **Forwards-compatible:** Existing **`library`** and **`template`** artifacts are unaffected; pre-existing `tool`-rejection tests are updated rather than removed.
 - **Server-side migration:** `PackageKinds.IsSupported` now returns true for `tool`. Operators running validator policy `RequireStructuredApiDoc = true` see no behavior change for library packages; tool packages explicitly bypass that requirement.
 - **CLI ergonomics:** Publishers who want to ship a developer tool through the registry no longer need to hand-author **`package.json`**; the **`beskid pckg pack --package-kind tool`** flow handles it.
-- **Dashboard parity:** The pckg UI uses Fluent UI Blazor patterns for the new tool card, matching the existing template install card. No new design tokens are introduced.
+- **Dashboard parity:** The pckg UI uses shared `@beskid` React component patterns for the new tool card, matching the existing template install card. No new design tokens are introduced.
 
 ## Verification anchors
 
-- `pckg/src/Server.Tests/Unit/PackageArtifactValidatorTests.cs::ValidateAsync_Accepts_Tool_Artifact_Without_Api_Json`
-- `pckg/src/Server.Tests/Unit/PackageArtifactValidatorTests.cs::ValidateAsync_Rejects_Tool_With_Template_Json`
-- `pckg/src/Server.Tests/Integration/ToolPackagePublishIntegrationTests.cs`
+- `compiler/crates/beskid_pckg_server/tests/Unit/PackageArtifactValidatorTests.cs::ValidateAsync_Accepts_Tool_Artifact_Without_Api_Json`
+- `compiler/crates/beskid_pckg_server/tests/Unit/PackageArtifactValidatorTests.cs::ValidateAsync_Rejects_Tool_With_Template_Json`
+- `compiler/crates/beskid_pckg_server/tests/Integration/ToolPackagePublishIntegrationTests.cs`
 - `compiler/crates/beskid_pckg/src/pack.rs::tests::build_package_json_tool_profile_omits_api_doc_pointer`
 - `compiler/crates/beskid_pckg/src/pack.rs::tests::strip_tool_pack_excludes_removes_api_json`
 - `compiler/crates/beskid_pckg/src/cli.rs::tests::pack_args_accepts_package_kind_tool`
