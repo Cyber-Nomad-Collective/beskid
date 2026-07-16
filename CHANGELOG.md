@@ -55,6 +55,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Build the Platform Spec image from the root Bun workspace lockfile rather
+  than a nonexistent site-local lockfile.
 - Make the manual Compiler Testbox workflow dispatch-only so pull requests no
   longer start a job without its required Testbox session identifier.
 - Make the local supply-chain policy gate inspect only superrepo-tracked
