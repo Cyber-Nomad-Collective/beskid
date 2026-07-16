@@ -6,6 +6,7 @@ WORKDIR /app
 # root, so install from that authority rather than referring to a nonexistent
 # per-site lockfile.
 COPY package.json bun.lock .npmrc ./
+COPY site/website/package.json ./site/website/package.json
 COPY site/platform-spec/package.json ./site/platform-spec/package.json
 ARG NODE_AUTH_TOKEN
 ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
