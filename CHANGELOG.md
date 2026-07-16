@@ -19,6 +19,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Rust/React pckg registry delivery with GitHub-subject Auth Hub sessions,
   PostgreSQL-backed package persistence, validated package artifacts, and
   production Docker/Compose configuration.
+- Complete pckg package browsing and community parity: safe README, structured
+  documentation and source-tree browsing; PostgreSQL-backed profiles, boards,
+  posts, comments, follows, votes, and notifications; and matching React
+  package/community screens.
 
 - Immutable compiler-release packaging for Windows MSI/EXE, macOS DMG and
   Homebrew, Debian, and Snap; the new Windows EXE is a WiX Burn bootstrapper
@@ -53,6 +57,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Reject hidden artifact paths outside the root `.beskid/docs` metadata tree
+  before any package documentation or source is exposed.
 - Validate Corelib workspace member aliases against their explicit registry
   package declarations and keep Rust Clippy iterator checks warning-free.
 - Stabilize Open VSX extension gates across randomized Bun test ordering and
