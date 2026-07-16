@@ -55,6 +55,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Install the scoped Trudoc package required by the published shared UI so the
+  website image can resolve its platform-spec navigation imports.
 - Build the Platform Spec image from the root Bun workspace lockfile rather
   than a nonexistent site-local lockfile.
 - Make the manual Compiler Testbox workflow dispatch-only so pull requests no
