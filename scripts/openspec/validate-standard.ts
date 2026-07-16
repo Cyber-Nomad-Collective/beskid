@@ -4,6 +4,8 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
+import { deriveBookLinks } from "./validate-book-traceability.ts";
+
 const repoRoot = path.resolve(import.meta.dirname, "../..");
 const catalogPath = path.join(repoRoot, "openspec/catalog.json");
 const legacyRoot = path.join(repoRoot, "site/spec-content");
@@ -50,6 +52,16 @@ for (const document of documents) {
 	assert(document.authority === "informative", `Document is not informative: ${document.path}`);
 	assert(document.disposition === "informative-by-policy", `Document lacks authority disposition: ${document.path}`);
 	assert(document.sourceHash === sha256(readFileSync(documentPath, "utf8")), `Document catalog drift: ${document.path}`);
+}
+
+const expectedBookLinks = deriveBookLinks({ entries, documents });
+for (const entry of entries) {
+	const capability = String(entry.capability);
+	const actualBookLinks = (entry.bookLinks as string[] | undefined) ?? [];
+	assert(
+		JSON.stringify(actualBookLinks) === JSON.stringify(expectedBookLinks[capability] ?? []),
+		`Book traceability catalog drift: ${capability}`,
+	);
 }
 
 for (const asset of [

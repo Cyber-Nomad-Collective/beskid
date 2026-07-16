@@ -6,6 +6,8 @@ tableOfContents: true
 
 Open [/platform-spec/](/platform-spec/). That is the normative front door—no version prefix in the URL, Git as the axis ([Release policy](/platform-spec/community/spec-maintenance/release-and-versioning-policy/)).
 
+Use the home page to select the domain that owns a question, not to infer a rule from a tile title. Each domain leads to areas and feature hubs where the governing material is linked.
+
 ## Top-level shape
 
 ```mermaid
@@ -40,6 +42,8 @@ Platform-spec pages use dedicated reader UI (tabs, ADRs, architecture graphs)—
 | Tutorial voice, workflows | `/book/` |
 | Enforceable contracts | `/platform-spec/` |
 | CLI flag lists | `/book/reference/cli/` |
+
+When a page is marked Proposed, treat it as a design or work-in-progress signal rather than silently relying on it as a stable guarantee. The [specification authority guidance](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/) explains how authority and maturity are presented.
 
 ## Next
 

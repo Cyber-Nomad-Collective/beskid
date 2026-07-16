@@ -13,16 +13,18 @@ Actions**. Per-platform setup instructions live in `docs/<Platform>_Guide.md`.
 | `AUR_EMAIL` | `arch-aur` | Commit author email for AUR commits. |
 | `SNAPCRAFT_STORE_CREDENTIALS` | `linux-snap` | Snap Store login credentials. Generate via `snapcraft export-login` (or the Snap Store dashboard). The legacy `SNAPCRAFT_TOKEN` is deprecated. |
 
-## Minimum viable set
+## Release preflight
 
-To ship a subset of platforms, only the corresponding secrets are needed; the
-workflow guards each job on its own secret being present and skips cleanly
-when missing (same pattern as `publish-open-vsx.yml`'s `check-token` job).
+A full v0.4 distribution is all-or-nothing at the completion-marker level.
+The workflow checks every listed secret before it reads rolling release assets
+or starts any platform publication. It fails without mutating release state
+when a credential is absent. Operators verify secret names and update timestamps
+only; GitHub Actions never reveals secret values.
 
-- **Windows + Ubuntu only:** `DISTRIB_GH_PAT`.
-- **+ macOS:** add `HOMEBREW_TAP_GIT_TOKEN`.
-- **+ Arch:** add `AUR_SSH_PRIVATE_KEY`, `AUR_USERNAME`, `AUR_EMAIL`.
-- **+ Snap:** add `SNAPCRAFT_STORE_CREDENTIALS`.
+If a platform publication fails after preflight, no `distrib-version.txt` marker
+is written. Correct the external problem and rerun the same version: publication
+steps are clobber/idempotent where the destination allows it, and the marker is
+recorded only after all platform jobs have succeeded.
 
 ## Rotation
 

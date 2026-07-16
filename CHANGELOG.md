@@ -9,12 +9,44 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Changed
+
+- Stage a freshly produced native-host ABI-v5 runtime kit for compiler and corelib CI gates,
+  replacing Rust runtime-bridge setup.
+
 ### Added
 
 - Add Tracker delivery consumption across the downloads page and Nexus, with
   revision-keyed Tracker-to-OpenSpec relations and non-mutating PR/main gates.
 - Publish Tracker delivery versions and deterministic, reviewed history-backfill
   proposals with explicit unmapped commit handling.
+- Rust/React pckg registry delivery with GitHub-subject Auth Hub sessions,
+  PostgreSQL-backed package persistence, validated package artifacts, and
+  production Docker/Compose configuration.
+- Complete pckg package browsing and community parity: safe README, structured
+  documentation and source-tree browsing; PostgreSQL-backed profiles, boards,
+  posts, comments, follows, votes, and notifications; and matching React
+  package/community screens.
+- Subject-scoped pckg API-key management with one-time plaintext issuance,
+  hash-only PostgreSQL storage, scoped ownership-safe revocation, and React
+  dashboard support for API keys and the current owner's packages.
+- GitHub-subject pckg administration: explicit one-time superadmin bootstrap,
+  role and publisher-verification management, resource grants, package-review
+  audit decisions, and React administration screens.
+- Public publisher discovery and catalog pages backed by verified profiles and
+  visibility-filtered package ownership.
+- Owner-authorized package deletion and version listing, with retained
+  visibility and artifact-cleanup guarantees; retired unsupported dashboard
+  routes now resolve through the normal 404 experience.
+
+- Immutable compiler-release packaging for Windows MSI/EXE, macOS DMG and
+  Homebrew, Debian, and Snap; the new Windows EXE is a WiX Burn bootstrapper
+  and the DMG bundles CLI and LSP in `Beskid.app`.
+
+- Bidirectional Book-to-OpenSpec traceability: catalog-derived public Book
+  links, a reader panel that labels those guides informative, validation for
+  the technical Book pilot, and expanded chapters on specification reading,
+  documentation comments, and FFI.
 - OpenSpec 1.4.1 as the pinned normative-standard workflow, with a validated
   repository change proposal, design, behavioral deltas, and phased migration
   plan.
@@ -39,6 +71,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Reject hidden artifact paths outside the root `.beskid/docs` metadata tree
+  before any package documentation or source is exposed.
 - Validate Corelib workspace member aliases against their explicit registry
   package declarations and keep Rust Clippy iterator checks warning-free.
 - Stabilize Open VSX extension gates across randomized Bun test ordering and
@@ -47,6 +81,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Package the canonical OpenSpec catalog into the Nexus image through an
   explicit named BuildKit context while retaining the service-local Docker
   build context.
+- Retain the generic resizable-panel dependency used by the shared UI primitive
+  after removing the legacy platform-spec component bundle.
+- Initialize selected CI submodules recursively and include the compiler in the
+  platform integration gate so nested Corelib validation is always available.
 - Keep main-branch staging promotion in fail-safe plan mode and require an
   explicit workflow dispatch before mutating the external staging lane.
 - Default Tracker non-bug task synchronization to disabled while preserving the
@@ -89,6 +127,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Auth/tracker autopairing and GitHub sync
 
 ### Changed
+
+- Updated the BSOL analysis pipeline, the native compiler runtime migration,
+  the registry web application, and the shared authentication handoff client.
 
 - **CI/CD migration from Dagger to Blacksmith Testbox**
   - Compiler gate runs via Testbox scripts instead of Dagger

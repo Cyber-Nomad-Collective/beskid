@@ -10,10 +10,24 @@ export interface StructuredDocumentViewProps {
 	status?: string | null;
 	description?: string | null;
 	bodyMd: string;
+	/** Informative Book guides; they never alter this standard's authority. */
+	bookLinks?: string[];
 	adrs?: { href: string; title: string }[];
 	relatedTopics?: { href: string; title: string }[];
 	architectureGraph?: { graphKey: string; entryNode?: string } | null;
 	showEditLink?: boolean;
+}
+
+function bookGuideTitle(href: string): string {
+	const slug = href.replace(/^\/+|\/+$/g, "").split("/").at(-1) ?? href;
+	return slug
+		.replace(/^\d+-/, "")
+		.replace(/-/g, " ")
+		.replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function bookGuideHref(href: string): string {
+	return new URL(href, "https://beskid-lang.org").href;
 }
 
 export function StructuredDocumentView({
@@ -22,6 +36,7 @@ export function StructuredDocumentView({
 	status,
 	description,
 	bodyMd,
+	bookLinks = [],
 	adrs = [],
 	relatedTopics = [],
 	architectureGraph = null,
@@ -110,8 +125,24 @@ export function StructuredDocumentView({
 				// biome-ignore lint/security/noDangerouslySetInnerHtml: server-rendered markdown
 				dangerouslySetInnerHTML={{ __html: bodyHtml }}
 			/>
-			{relatedTopics.length > 0 || adrs.length > 0 ? (
+			{relatedTopics.length > 0 || adrs.length > 0 || bookLinks.length > 0 ? (
 				<aside className="mt-8 grid gap-4 border-t border-border pt-6 sm:grid-cols-2">
+					{bookLinks.length > 0 ? (
+						<section>
+							<h2 className="font-semibold">Informative Book guides</h2>
+							<p className="mt-1 text-sm text-muted-foreground">
+								These guides explain and contextualize this standard; OpenSpec
+									remains the normative source.
+							</p>
+							<ul>
+								{bookLinks.map((href) => (
+									<li key={href}>
+										<a href={bookGuideHref(href)}>{bookGuideTitle(href)}</a>
+									</li>
+								))}
+							</ul>
+						</section>
+					) : null}
 					{relatedTopics.length > 0 ? (
 						<section>
 							<h2 className="font-semibold">Related capabilities</h2>

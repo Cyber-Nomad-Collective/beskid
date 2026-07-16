@@ -39,8 +39,11 @@ echo "no legacy type-system patterns in compiler .rs sources"
 rustup component add clippy >/dev/null 2>&1 || true
 cargo clippy --workspace --all-targets --no-deps -- -D warnings
 
-# Build the runtime bridge archive AOT tests resolve, then run workspace tests.
-bash scripts/ensure-runtime-bridge.sh
+# Build a fresh canonical runtime kit for this exact native host, then run workspace tests.
+# Debug tests resolve only the debug profile; cross-target publication remains a separate gate.
+export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${ROOT}/compiler/target}/native-runtime-kit}"
+export BESKID_RUNTIME_KIT_PROFILE=debug
+bash scripts/stage-native-runtime-kit.sh
 
 # Hard cap the test phase. Tests run serially (--test-threads=1), so a single
 # deadlocked or infinitely-looping test (e.g. a mis-lowered loop executed under

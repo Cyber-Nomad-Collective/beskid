@@ -53,11 +53,10 @@ jobs:
         with:
           compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
 
-      - name: Warm gate build (fetch deps + runtime bridge)
+      - name: Warm gate build (fetch dependencies)
         run: |
           cd compiler
           cargo fetch --locked || cargo fetch
-          bash scripts/ensure-runtime-bridge.sh
 
       - name: Run Testbox
         uses: useblacksmith/run-testbox@5ca05834db1d3813554d1dd109e5f2087a8d7cbc # v2

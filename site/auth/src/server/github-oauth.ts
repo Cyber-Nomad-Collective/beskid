@@ -5,6 +5,7 @@ const GITHUB_TOKEN_URL = "https://github.com/login/oauth/access_token";
 const GITHUB_USER_URL = "https://api.github.com/user";
 
 export interface GitHubUser {
+	id: number;
 	login: string;
 	avatar_url: string;
 	name: string | null;
@@ -75,8 +76,8 @@ export async function fetchGitHubUser(
 	}
 
 	const user = (await response.json()) as GitHubUser;
-	if (!user.login) {
-		throw new Error("Missing GitHub login");
+	if (!Number.isSafeInteger(user.id) || user.id <= 0 || !user.login) {
+		throw new Error("Missing GitHub user identity");
 	}
 	return user;
 }

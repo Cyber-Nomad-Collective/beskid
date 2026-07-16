@@ -37,7 +37,9 @@ async function unsealHubBrowserSession(
 	token: string,
 ): Promise<HubBrowserSession | null> {
 	try {
-		const { payload } = await jwtVerify(token, sessionSecret());
+		const { payload } = await jwtVerify(token, sessionSecret(), {
+			algorithms: ["HS256"],
+		});
 		if (typeof payload.sid !== "string") return null;
 		return { sessionId: payload.sid };
 	} catch {
@@ -78,7 +80,11 @@ export function readSessionCookie(request: Request): string | null {
 	for (const part of header.split(";")) {
 		const [name, ...rest] = part.trim().split("=");
 		if (name === SESSION_COOKIE_NAME) {
-			return decodeURIComponent(rest.join("="));
+			try {
+				return decodeURIComponent(rest.join("="));
+			} catch {
+				return null;
+			}
 		}
 	}
 	return null;
@@ -93,7 +99,8 @@ export function hubBrowserSessionCookieHeader(
 }
 
 export function clearSessionCookieHeader(): string {
-	return `${SESSION_COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`;
+	const secure = env.NODE_ENV === "production" ? "; Secure" : "";
+	return `${SESSION_COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secure}`;
 }
 
 /** @deprecated use hubBrowserSessionCookieHeader */

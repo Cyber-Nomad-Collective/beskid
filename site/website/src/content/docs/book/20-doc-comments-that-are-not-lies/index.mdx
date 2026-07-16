@@ -13,6 +13,8 @@ This chapter is **informative**. Enforceable rules live under the [Platform spec
 
 Documentation lives next to declarations in **`///` line comments** only—no XML novel, no separate doc assembly that drifts from the code every sprint. If the comment disagrees with the compiler, the compiler wins.
 
+Use this chapter to keep explanations, structured tags, generated API output, and review checks in one contributor loop. For exact language rules, start with [Documentation comments](/platform-spec/language-meta/surface-syntax/documentation-comments/); for generated package metadata, use [the api.json contract](/platform-spec/tooling/cli/api-json-contract/).
+
 ## What you will find here
 
 | Section | Topic |
@@ -21,6 +23,12 @@ Documentation lives next to declarations in **`///` line comments** only—no XM
 | [@arg and cross-links](/book/20-doc-comments-that-are-not-lies/arg-and-cross-links/) | Callable params only; `@ref` validation. |
 | [Generated SDK docs](/book/20-doc-comments-that-are-not-lies/generated-sdk-docs/) | Mirrored compiler SDK sources. |
 | [Verify docs](/book/20-doc-comments-that-are-not-lies/verify-docs/) | trudoc and CI presets. |
+
+<Aside type="tip">
+
+Make a documentation change part of the declaration's review. A clear comment explains intent; the linked standard defines what the toolchain accepts and emits.
+
+</Aside>
 
 ## Next
 

@@ -2,13 +2,14 @@ FROM oven/bun:latest AS build
 
 WORKDIR /app
 
-WORKDIR /app/site/platform-spec
-
-COPY site/platform-spec/package.json site/platform-spec/bun.lock site/platform-spec/.npmrc ./
+COPY package.json bun.lock .npmrc ./
+COPY site/platform-spec/package.json ./site/platform-spec/
+COPY site/platform-spec/.npmrc ./site/platform-spec/.npmrc
 ARG NODE_AUTH_TOKEN
 ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
 RUN bun install --frozen-lockfile
 
+WORKDIR /app/site/platform-spec
 COPY site/platform-spec/ ./
 COPY openspec /app/openspec
 
@@ -29,8 +30,8 @@ ENV PORT=8460
 ENV OPENSPEC_ROOT=/app/openspec
 
 COPY --from=build /app/openspec /app/openspec
-COPY --from=build /app/site/platform-spec/package.json /app/site/platform-spec/bun.lock ./
-COPY --from=build /app/site/platform-spec/node_modules ./node_modules
+COPY --from=build /app/site/platform-spec/package.json ./
+COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/site/platform-spec/.output ./.output
 
 EXPOSE 8460

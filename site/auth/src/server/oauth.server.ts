@@ -123,6 +123,7 @@ export async function handleCallbackGet(request: Request): Promise<Response> {
 			login: user.login,
 			avatarUrl: user.avatar_url,
 			name: user.name,
+			subject: `github:${user.id}`,
 		});
 		headers.set("Location", buildHandoffFinishUrl(app.publicUrl, handoff));
 		return new Response(null, { status: 302, headers });

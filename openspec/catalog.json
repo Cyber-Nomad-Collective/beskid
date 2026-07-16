@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "155941d83934507fecb1cde662f04cfaab48af576b919b893a776a3b0fd5e21e",
+  "revision": "992254fd14b9c9ee1c08ae5e38cb41bb267aaedd735e789b8c554b5a95ad074a",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -57,7 +57,8 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-61C1DE390E90",
@@ -140,6 +141,9 @@
           "href": "/platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/12-the-normative-bible/how-to-propose-a-change/"
       ]
     },
     {
@@ -395,6 +399,10 @@
           "href": "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
           "relation": "ADR governance"
         }
+      ],
+      "bookLinks": [
+        "/book/12-the-normative-bible/how-to-propose-a-change/",
+        "/book/12-the-normative-bible/proposed-vs-standard/"
       ]
     },
     {
@@ -478,6 +486,9 @@
           "href": "/platform-spec/community/spec-maintenance/last-reviewed-policy/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/12-the-normative-bible/git-as-version-axis/"
       ]
     },
     {
@@ -633,6 +644,10 @@
           "href": "/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/12-the-normative-bible/git-as-version-axis/",
+        "/book/12-the-normative-bible/informative-vs-normative/"
       ]
     },
     {
@@ -830,6 +845,14 @@
           "href": "/platform-spec/community/spec-maintenance/release-and-versioning-policy/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/12-the-normative-bible/adrs-and-decisions/",
+        "/book/12-the-normative-bible/git-as-version-axis/",
+        "/book/12-the-normative-bible/proposed-vs-standard/",
+        "/book/13-reading-the-law/platform-spec-home/",
+        "/book/22-so-you-want-to-contribute/spec-first-workflow/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -1092,6 +1115,17 @@
           "href": "/platform-spec/community/project-inception/",
           "relation": "Inception ADR D-INC-0001"
         }
+      ],
+      "bookLinks": [
+        "/book/08-green-tests-red-production/conformance-vs-unit/",
+        "/book/12-the-normative-bible/adrs-and-decisions/",
+        "/book/12-the-normative-bible/language-law-vs-implementation/",
+        "/book/12-the-normative-bible/proposed-vs-standard/",
+        "/book/12-the-normative-bible/spec-leads-code/",
+        "/book/13-reading-the-law/platform-spec-home/",
+        "/book/20-doc-comments-that-are-not-lies/verify-docs/",
+        "/book/22-so-you-want-to-contribute/spec-first-workflow/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -1433,6 +1467,12 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Test coverage strategy"
         }
+      ],
+      "bookLinks": [
+        "/book/14-from-source-to-runs/aot-build/",
+        "/book/14-from-source-to-runs/clif-and-debug/",
+        "/book/14-from-source-to-runs/codegen-and-ir/",
+        "/book/14-from-source-to-runs/jit-run/"
       ]
     },
     {
@@ -1774,7 +1814,8 @@
           "href": "/platform-spec/compiler/build-pipeline/build-and-run-orchestration/adr/0004-single-prepared-compilation-spine/",
           "relation": "Shared prepare API"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-F657795EE222",
@@ -2115,7 +2156,8 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Test policy and fixtures"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-2C72070F24A9",
@@ -2498,6 +2540,9 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Cross-surface regression testing"
         }
+      ],
+      "bookLinks": [
+        "/book/14-from-source-to-runs/clif-and-debug/"
       ]
     },
     {
@@ -2838,6 +2883,10 @@
           "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
           "relation": "Pipeline phase program.assemble"
         }
+      ],
+      "bookLinks": [
+        "/book/14-from-source-to-runs/front-end/",
+        "/book/14-from-source-to-runs/jit-run/"
       ]
     },
     {
@@ -3324,6 +3373,9 @@
           "href": "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/",
           "relation": "Conformance evidence"
         }
+      ],
+      "bookLinks": [
+        "/book/15-mods-plugins-with-consequences/pipeline-phases/"
       ]
     },
     {
@@ -3581,7 +3633,8 @@
           "href": "/platform-spec/compiler/codegen-and-ir/codegen-artifact-schema/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-E24D8B0BAAC5",
@@ -3663,7 +3716,8 @@
           "href": "/platform-spec/compiler/compiler-mods/",
           "relation": "Analyzer rules for serializable eligibility"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-46B9370548CA",
@@ -3956,7 +4010,8 @@
           "href": "/platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-63AEABF2E571",
@@ -4429,7 +4484,8 @@
           "href": "/platform-spec/compiler/codegen-and-ir/lowering-contract/adr/0003-cranelift-lowering-single-entry/",
           "relation": "Supersedes D-COMP-IR-0009"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-17D447489B2D",
@@ -4800,6 +4856,11 @@
           "href": "/platform-spec/compiler/build-pipeline/stage-ordering/adr/0005-salsa-database-incremental-memoization/",
           "relation": "Query host"
         }
+      ],
+      "bookLinks": [
+        "/book/14-from-source-to-runs/semantic-pipeline/",
+        "/book/15-mods-plugins-with-consequences/generator-analyzer-rewriter/",
+        "/book/reference/analysis/semantic-rules/"
       ]
     },
     {
@@ -5129,6 +5190,9 @@
           "href": "/platform-spec/language-meta/interop/interop-contracts/",
           "relation": "Formal boundary vocabulary vs capability tokens"
         }
+      ],
+      "bookLinks": [
+        "/book/14-from-source-to-runs/front-end/"
       ]
     },
     {
@@ -5446,6 +5510,10 @@
           "href": "/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/15-mods-plugins-with-consequences/generator-analyzer-rewriter/",
+        "/book/15-mods-plugins-with-consequences/mod-sdk/"
       ]
     },
     {
@@ -5812,6 +5880,15 @@
           "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
           "relation": "Mod project type and artifactPolicy"
         }
+      ],
+      "bookLinks": [
+        "/book/09-contracts-effects-and-polite-threats/panic-vs-contract/",
+        "/book/12-the-normative-bible/adrs-and-decisions/",
+        "/book/14-from-source-to-runs/aot-build/",
+        "/book/14-from-source-to-runs/semantic-pipeline/",
+        "/book/15-mods-plugins-with-consequences/",
+        "/book/15-mods-plugins-with-consequences/mod-sdk/",
+        "/book/reference/analysis/semantic-rules/"
       ]
     },
     {
@@ -6045,7 +6122,8 @@
           "href": "/platform-spec/compiler/compiler-mods/pest-parser-generator/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-9DDBFB74F30B",
@@ -6362,6 +6440,10 @@
           "href": "/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/14-from-source-to-runs/front-end/",
+        "/book/15-mods-plugins-with-consequences/mod-sdk/"
       ]
     },
     {
@@ -6679,6 +6761,10 @@
           "href": "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/14-from-source-to-runs/codegen-and-ir/",
+        "/book/15-mods-plugins-with-consequences/generator-analyzer-rewriter/"
       ]
     },
     {
@@ -6936,6 +7022,9 @@
           "href": "/platform-spec/compiler/conformance/conformance-evidence-policy/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/08-green-tests-red-production/conformance-vs-unit/"
       ]
     },
     {
@@ -7367,6 +7456,10 @@
           "href": "/platform-spec/compiler/build-pipeline/build-and-run-orchestration/adr/0004-single-prepared-compilation-spine/",
           "relation": "Spine under test"
         }
+      ],
+      "bookLinks": [
+        "/book/08-green-tests-red-production/conformance-vs-unit/",
+        "/book/reference/cli/formatter-development/"
       ]
     },
     {
@@ -7624,6 +7717,9 @@
           "href": "/platform-spec/compiler/front-end/ast-hir-shape-contract/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/14-from-source-to-runs/front-end/"
       ]
     },
     {
@@ -7917,6 +8013,9 @@
           "href": "/platform-spec/compiler/front-end/parser-and-ast-contracts/",
           "relation": "AST mapping for grammar productions"
         }
+      ],
+      "bookLinks": [
+        "/book/14-from-source-to-runs/front-end/"
       ]
     },
     {
@@ -8174,6 +8273,9 @@
           "href": "/platform-spec/compiler/front-end/hir-normalization-and-legality/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/14-from-source-to-runs/front-end/"
       ]
     },
     {
@@ -8545,6 +8647,10 @@
           "href": "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/",
           "relation": "Compiler fixtures validate parser and syntax behavior"
         }
+      ],
+      "bookLinks": [
+        "/book/14-from-source-to-runs/front-end/",
+        "/book/reference/cli/formatter-development/"
       ]
     },
     {
@@ -8934,6 +9040,16 @@
           "href": "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/11-fibers-cheaper-than-threads/corelib-concurrency/",
+        "/book/12-the-normative-bible/how-to-propose-a-change/",
+        "/book/13-reading-the-law/architecture-graphs/",
+        "/book/13-reading-the-law/implementation-map/",
+        "/book/15-mods-plugins-with-consequences/pipeline-phases/",
+        "/book/17-execution-abi-host-runtime/execution-domain/",
+        "/book/22-so-you-want-to-contribute/compiler-contributor-path/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -9191,7 +9307,8 @@
           "href": "/platform-spec/compiler/resolution-and-projects/dependency-graph-and-cycle-policy/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-BC7E0C8ABB38",
@@ -9496,7 +9613,8 @@
           "href": "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/flow-and-algorithm/",
           "relation": "defers-to — validation phases described for authors"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-F68197B76FE9",
@@ -9753,7 +9871,8 @@
           "href": "/platform-spec/compiler/resolution-and-projects/registry-and-overrides-contract/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-5E3A9B427D59",
@@ -10058,7 +10177,8 @@
           "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/flow-and-algorithm/",
           "relation": "defers-to — author lock update lifecycle"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-9B3CB614FCB7",
@@ -10429,6 +10549,9 @@
           "href": "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/",
           "relation": "Validation strategy"
         }
+      ],
+      "bookLinks": [
+        "/book/14-from-source-to-runs/front-end/"
       ]
     },
     {
@@ -10788,6 +10911,12 @@
           "href": "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
           "relation": "Registry correctness supports parity checks in build surfaces"
         }
+      ],
+      "bookLinks": [
+        "/book/05-names-nobody-agreed-on/diagnostics-you-will-see/",
+        "/book/07-compiler-is-not-your-therapist/read-a-diagnostic/",
+        "/book/14-from-source-to-runs/semantic-pipeline/",
+        "/book/20-doc-comments-that-are-not-lies/arg-and-cross-links/"
       ]
     },
     {
@@ -11153,7 +11282,8 @@
           "href": "/platform-spec/compiler/semantic-pipeline/resolver-contract/adr/0005-package-prefixed-symbol-identity/",
           "relation": "Normative symbol identity decision"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-73C8AEEA3691",
@@ -11512,7 +11642,8 @@
           "href": "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/",
           "relation": "Fixture suites verify semantic diagnostics remain stable"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-D67C8D8BF343",
@@ -11769,6 +11900,9 @@
           "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/14-from-source-to-runs/semantic-pipeline/"
       ]
     },
     {
@@ -11895,7 +12029,8 @@
           "href": "/platform-spec/compiler/semantic-pipeline/stage-ordering/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-C7D0858CC610",
@@ -12176,7 +12311,8 @@
           "href": "/platform-spec/language-meta/type-system/type-inference/design-model/",
           "relation": "Constraint solver contract"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-C011944B8DE1",
@@ -12601,6 +12737,9 @@
           "href": "/platform-spec/tooling/registry-client/pckg-client-contract/",
           "relation": "Pack and publish HTTP flow"
         }
+      ],
+      "bookLinks": [
+        "/book/16-corelib-batteries-with-opinions/corelib-command/"
       ]
     },
     {
@@ -13027,6 +13166,9 @@
           "href": "/platform-spec/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/",
           "relation": "Symbol visibility after graph attachment"
         }
+      ],
+      "bookLinks": [
+        "/book/16-corelib-batteries-with-opinions/injection-and-resolution/"
       ]
     },
     {
@@ -13109,6 +13251,9 @@
           "href": "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/",
           "relation": "Handler registration policy"
         }
+      ],
+      "bookLinks": [
+        "/book/21-ffi-and-forbidden-friendships/interop-overview/"
       ]
     },
     {
@@ -13694,6 +13839,13 @@
           "href": "/platform-spec/core-library/concurrency/concurrency-package/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/11-fibers-cheaper-than-threads/",
+        "/book/11-fibers-cheaper-than-threads/channels-preview/",
+        "/book/11-fibers-cheaper-than-threads/corelib-concurrency/",
+        "/book/11-fibers-cheaper-than-threads/evaluation-model/",
+        "/book/12-the-normative-bible/language-law-vs-implementation/"
       ]
     },
     {
@@ -14011,7 +14163,8 @@
           "href": "/platform-spec/core-library/concurrency/core-threading/",
           "relation": "Parent feature"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-5227A84F3018",
@@ -14175,7 +14328,8 @@
           "href": "/platform-spec/core-library/foundation-and-primitives/core-bytes/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-1A5ED8189156",
@@ -14294,7 +14448,8 @@
           "href": "/platform-spec/core-library/foundation-and-primitives/core-collections/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-9A450EC7FC62",
@@ -14434,7 +14589,8 @@
           "href": "/platform-spec/core-library/foundation-and-primitives/core-encoding/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-6F03584E4BAF",
@@ -14572,7 +14728,8 @@
           "href": "/platform-spec/core-library/terminal-and-console/ansi-escape-model/",
           "relation": "Hand-written AnsiStyleStep reference"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-C96DEAFE46A6",
@@ -14710,7 +14867,8 @@
           "href": "/platform-spec/language-meta/type-system/types/",
           "relation": "Option at API boundaries"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-6B5F8A006AAE",
@@ -14805,7 +14963,8 @@
           "href": "/platform-spec/core-library/stability-and-api-shape/core-syscall/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-1518A2020336",
@@ -14919,7 +15078,8 @@
           "href": "/platform-spec/core-library/stability-and-api-shape/core-time/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-9D9408E938CD",
@@ -15484,7 +15644,8 @@
           "href": "/platform-spec/core-library/foundation-and-primitives/core-collections/",
           "relation": "Collection type method migration"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-334BB1A9ADAD",
@@ -15831,6 +15992,10 @@
           "href": "/platform-spec/core-library/terminal-and-console/console-io-streams/",
           "relation": "Stream-facing ergonomics"
         }
+      ],
+      "bookLinks": [
+        "/book/16-corelib-batteries-with-opinions/runtime-backed-surfaces/",
+        "/book/16-corelib-batteries-with-opinions/terminal-and-console/"
       ]
     },
     {
@@ -16170,7 +16335,8 @@
           "href": "/platform-spec/core-library/terminal-and-console/console-io-streams/",
           "relation": "Write path to stdout"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-810857DE9D8E",
@@ -16420,7 +16586,8 @@
           "href": "/platform-spec/core-library/terminal-and-console/console-capabilities/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-01754E758689",
@@ -16652,7 +16819,8 @@
           "href": "/platform-spec/core-library/terminal-and-console/console-terminal-events/",
           "relation": "Resize-driven relayout"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-D2FACDF0AD2D",
@@ -16938,7 +17106,8 @@
           "href": "/platform-spec/execution/runtime/panic-io-and-syscalls/",
           "relation": "Builtin contracts"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-DD214A45C1B5",
@@ -17212,7 +17381,8 @@
           "href": "/platform-spec/core-library/terminal-and-console/console-markup-format/adr/0031-bracket-palette-tags-v1/",
           "relation": "Superseded palette scope"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-74B121DC74ED",
@@ -17474,7 +17644,8 @@
           "href": "/platform-spec/core-library/terminal-and-console/console-terminal-events/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-3D04E50A6A95",
@@ -17652,7 +17823,8 @@
           "href": "/platform-spec/core-library/text-and-parsing/text-cursor/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-3988D6FE7B7F",
@@ -17849,7 +18021,8 @@
           "href": "/platform-spec/core-library/text-and-parsing/text-parser-combinators/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-0F8883AC82C2",
@@ -18027,7 +18200,8 @@
           "href": "/platform-spec/core-library/text-and-parsing/text-regex/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-C7402D638D9D",
@@ -18350,6 +18524,9 @@
           "href": "/platform-spec/execution/abi-and-host/builtins-and-symbols/",
           "relation": "Symbol tables versioned with ABI bumps"
         }
+      ],
+      "bookLinks": [
+        "/book/17-execution-abi-host-runtime/abi-and-host/"
       ]
     },
     {
@@ -18655,6 +18832,10 @@
           "href": "/platform-spec/language-meta/interop/rust-abi-profile/",
           "relation": "Language-owned manifest authority"
         }
+      ],
+      "bookLinks": [
+        "/book/10-memory-without-billion-dollar-mistake/unsafe-and-extern-preview/",
+        "/book/14-from-source-to-runs/codegen-and-ir/"
       ]
     },
     {
@@ -19032,6 +19213,13 @@
           "href": "/platform-spec/language-meta/interop/c-abi-profile/",
           "relation": "Link-time user libraries"
         }
+      ],
+      "bookLinks": [
+        "/book/17-execution-abi-host-runtime/abi-and-host/",
+        "/book/21-ffi-and-forbidden-friendships/c-abi-profile/",
+        "/book/21-ffi-and-forbidden-friendships/ffi-and-extern/",
+        "/book/21-ffi-and-forbidden-friendships/interop-overview/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -19254,6 +19442,10 @@
           "href": "/platform-spec/language-meta/memory-model/memory-and-references/",
           "relation": "Language-level sharing rules"
         }
+      ],
+      "bookLinks": [
+        "/book/17-execution-abi-host-runtime/runtime-fibers/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -19531,6 +19723,14 @@
           "href": "/platform-spec/core-library/concurrency/concurrency-package/",
           "relation": "Join and Detach API"
         }
+      ],
+      "bookLinks": [
+        "/book/10-memory-without-billion-dollar-mistake/stack-heap-and-spans/",
+        "/book/11-fibers-cheaper-than-threads/",
+        "/book/11-fibers-cheaper-than-threads/corelib-concurrency/",
+        "/book/11-fibers-cheaper-than-threads/fibers-and-spawn/",
+        "/book/12-the-normative-bible/language-law-vs-implementation/",
+        "/book/17-execution-abi-host-runtime/runtime-fibers/"
       ]
     },
     {
@@ -19836,6 +20036,10 @@
           "href": "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
           "relation": "Phase A single mutator"
         }
+      ],
+      "bookLinks": [
+        "/book/10-memory-without-billion-dollar-mistake/",
+        "/book/10-memory-without-billion-dollar-mistake/memory-model-overview/"
       ]
     },
     {
@@ -20207,6 +20411,11 @@
           "href": "/platform-spec/core-library/terminal-and-console/console-io-streams/",
           "relation": "Corelib facades over syscall builtins"
         }
+      ],
+      "bookLinks": [
+        "/book/09-contracts-effects-and-polite-threats/effects-and-purity/",
+        "/book/09-contracts-effects-and-polite-threats/panic-vs-contract/",
+        "/book/17-execution-abi-host-runtime/panic-io-syscalls/"
       ]
     },
     {
@@ -20494,7 +20703,8 @@
           "href": "/platform-spec/execution/abi-and-host/abi-versioning-and-compatibility/",
           "relation": "ABI version separate from optional features"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-3380C7E3C94B",
@@ -21069,7 +21279,8 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-19A30D104B4E",
@@ -21175,6 +21386,9 @@
           "href": "/execution/",
           "relation": "non-normative legacy bridge"
         }
+      ],
+      "bookLinks": [
+        "/book/07-compiler-is-not-your-therapist/option-and-nullability/"
       ]
     },
     {
@@ -21425,6 +21639,11 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
+      ],
+      "bookLinks": [
+        "/book/07-compiler-is-not-your-therapist/functions-and-methods/",
+        "/book/09-contracts-effects-and-polite-threats/contracts-in-source/",
+        "/book/09-contracts-effects-and-polite-threats/panic-vs-contract/"
       ]
     },
     {
@@ -21675,6 +21894,11 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
+      ],
+      "bookLinks": [
+        "/book/07-compiler-is-not-your-therapist/functions-and-methods/",
+        "/book/07-compiler-is-not-your-therapist/option-and-nullability/",
+        "/book/09-contracts-effects-and-polite-threats/errors-and-results/"
       ]
     },
     {
@@ -21925,6 +22149,12 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
+      ],
+      "bookLinks": [
+        "/book/08-green-tests-red-production/",
+        "/book/08-green-tests-red-production/arrange-act-assert/",
+        "/book/08-green-tests-red-production/test-items-in-source/",
+        "/book/12-the-normative-bible/language-law-vs-implementation/"
       ]
     },
     {
@@ -22175,7 +22405,8 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-45225798B5DF",
@@ -22425,7 +22656,8 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-72E38AE0DF50",
@@ -22784,6 +23016,19 @@
           "href": "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
           "relation": "Parent feature"
         }
+      ],
+      "bookLinks": [
+        "/book/07-compiler-is-not-your-therapist/control-flow/",
+        "/book/09-contracts-effects-and-polite-threats/effects-and-purity/",
+        "/book/10-memory-without-billion-dollar-mistake/memory-model-overview/",
+        "/book/10-memory-without-billion-dollar-mistake/ownership-preview/",
+        "/book/11-fibers-cheaper-than-threads/",
+        "/book/11-fibers-cheaper-than-threads/channels-preview/",
+        "/book/11-fibers-cheaper-than-threads/corelib-concurrency/",
+        "/book/11-fibers-cheaper-than-threads/fibers-and-spawn/",
+        "/book/12-the-normative-bible/language-law-vs-implementation/",
+        "/book/17-execution-abi-host-runtime/runtime-fibers/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -23034,6 +23279,10 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
+      ],
+      "bookLinks": [
+        "/book/10-memory-without-billion-dollar-mistake/memory-model-overview/",
+        "/book/11-fibers-cheaper-than-threads/evaluation-model/"
       ]
     },
     {
@@ -23502,6 +23751,12 @@
           "href": "/platform-spec/language-meta/interop/c-abi-profile/extern-contracts-and-linking/",
           "relation": "Extern metadata"
         }
+      ],
+      "bookLinks": [
+        "/book/10-memory-without-billion-dollar-mistake/unsafe-and-extern-preview/",
+        "/book/21-ffi-and-forbidden-friendships/c-abi-profile/",
+        "/book/21-ffi-and-forbidden-friendships/interop-overview/",
+        "/book/21-ffi-and-forbidden-friendships/rust-abi-profile/"
       ]
     },
     {
@@ -23792,6 +24047,9 @@
           "href": "/platform-spec/language-meta/interop/interop-contracts/callback-call-shapes/",
           "relation": "Abstract shapes"
         }
+      ],
+      "bookLinks": [
+        "/book/21-ffi-and-forbidden-friendships/export-and-callbacks/"
       ]
     },
     {
@@ -24159,6 +24417,11 @@
           "href": "/platform-spec/compiler/codegen-and-ir/extern-import-extraction-contract/",
           "relation": "Compiler lowering contract"
         }
+      ],
+      "bookLinks": [
+        "/book/09-contracts-effects-and-polite-threats/effects-and-purity/",
+        "/book/10-memory-without-billion-dollar-mistake/unsafe-and-extern-preview/",
+        "/book/21-ffi-and-forbidden-friendships/ffi-and-extern/"
       ]
     },
     {
@@ -24566,6 +24829,11 @@
           "href": "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/",
           "relation": "Pinning and safepoints during foreign calls"
         }
+      ],
+      "bookLinks": [
+        "/book/09-contracts-effects-and-polite-threats/errors-and-results/",
+        "/book/10-memory-without-billion-dollar-mistake/unsafe-and-extern-preview/",
+        "/book/21-ffi-and-forbidden-friendships/interop-overview/"
       ]
     },
     {
@@ -25019,6 +25287,10 @@
           "href": "/platform-spec/language-meta/interop/c-abi-profile/",
           "relation": "Current user extern path"
         }
+      ],
+      "bookLinks": [
+        "/book/21-ffi-and-forbidden-friendships/interop-overview/",
+        "/book/21-ffi-and-forbidden-friendships/rust-abi-profile/"
       ]
     },
     {
@@ -25269,6 +25541,11 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
+      ],
+      "bookLinks": [
+        "/book/10-memory-without-billion-dollar-mistake/memory-model-overview/",
+        "/book/10-memory-without-billion-dollar-mistake/ownership-preview/",
+        "/book/11-fibers-cheaper-than-threads/channels-preview/"
       ]
     },
     {
@@ -25543,6 +25820,15 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
+      ],
+      "bookLinks": [
+        "/book/09-contracts-effects-and-polite-threats/contracts-in-source/",
+        "/book/15-mods-plugins-with-consequences/",
+        "/book/15-mods-plugins-with-consequences/mod-sdk/",
+        "/book/15-mods-plugins-with-consequences/pipeline-phases/",
+        "/book/15-mods-plugins-with-consequences/what-is-a-mod/",
+        "/book/appendix-spec-map/",
+        "/book/reference/analysis/semantic-rules/"
       ]
     },
     {
@@ -25805,6 +26091,9 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
+      ],
+      "bookLinks": [
+        "/book/15-mods-plugins-with-consequences/what-is-a-mod/"
       ]
     },
     {
@@ -26019,6 +26308,9 @@
           "href": "/platform-spec/language-meta/metaprogramming/metaprogramming/",
           "relation": "Parent feature"
         }
+      ],
+      "bookLinks": [
+        "/book/09-contracts-effects-and-polite-threats/effects-and-purity/"
       ]
     },
     {
@@ -26221,7 +26513,8 @@
           "href": "/platform-spec/language-meta/metaprogramming/serialization/",
           "relation": "Parent feature"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-B4C3D0A816E1",
@@ -26459,6 +26752,11 @@
           "href": "/platform-spec/language-meta/program-structure/code-style-and-naming/",
           "relation": "Parent feature"
         }
+      ],
+      "bookLinks": [
+        "/book/04-where-does-this-file-go/visibility-basics/",
+        "/book/19-public-api-that-survives-review/naming-and-style/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -26697,7 +26995,8 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-D2A8ED388364",
@@ -26947,6 +27246,13 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
+      ],
+      "bookLinks": [
+        "/book/04-where-does-this-file-go/module-layout/",
+        "/book/04-where-does-this-file-go/visibility-basics/",
+        "/book/05-names-nobody-agreed-on/import-syntax/",
+        "/book/19-public-api-that-survives-review/pub-boundaries/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -27197,6 +27503,12 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
+      ],
+      "bookLinks": [
+        "/book/05-names-nobody-agreed-on/import-syntax/",
+        "/book/05-names-nobody-agreed-on/name-resolution/",
+        "/book/19-public-api-that-survives-review/naming-and-style/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -27422,6 +27734,15 @@
           "href": "/platform-spec/language-meta/surface-syntax/documentation-comments/",
           "relation": "Parent feature"
         }
+      ],
+      "bookLinks": [
+        "/book/07-compiler-is-not-your-therapist/lexical-basics/",
+        "/book/16-corelib-batteries-with-opinions/doc-and-api-json/",
+        "/book/20-doc-comments-that-are-not-lies/",
+        "/book/20-doc-comments-that-are-not-lies/arg-and-cross-links/",
+        "/book/20-doc-comments-that-are-not-lies/doc-comment-syntax/",
+        "/book/20-doc-comments-that-are-not-lies/verify-docs/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -27672,6 +27993,10 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
+      ],
+      "bookLinks": [
+        "/book/07-compiler-is-not-your-therapist/control-flow/",
+        "/book/07-compiler-is-not-your-therapist/lexical-basics/"
       ]
     },
     {
@@ -27886,6 +28211,11 @@
           "href": "/platform-spec/language-meta/type-system/enums-and-match/",
           "relation": "Parent feature"
         }
+      ],
+      "bookLinks": [
+        "/book/07-compiler-is-not-your-therapist/control-flow/",
+        "/book/07-compiler-is-not-your-therapist/option-and-nullability/",
+        "/book/07-compiler-is-not-your-therapist/types-and-generics/"
       ]
     },
     {
@@ -28136,6 +28466,10 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
+      ],
+      "bookLinks": [
+        "/book/07-compiler-is-not-your-therapist/functions-and-methods/",
+        "/book/07-compiler-is-not-your-therapist/types-and-generics/"
       ]
     },
     {
@@ -28386,6 +28720,9 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
+      ],
+      "bookLinks": [
+        "/book/07-compiler-is-not-your-therapist/types-and-generics/"
       ]
     },
     {
@@ -28636,6 +28973,12 @@
           "href": "/platform-spec/compiler/conformance/",
           "relation": "Evidence policy for compiler features"
         }
+      ],
+      "bookLinks": [
+        "/book/04-where-does-this-file-go/corelib-layout/",
+        "/book/07-compiler-is-not-your-therapist/option-and-nullability/",
+        "/book/07-compiler-is-not-your-therapist/types-and-generics/",
+        "/book/10-memory-without-billion-dollar-mistake/stack-heap-and-spans/"
       ]
     },
     {
@@ -28708,7 +29051,8 @@
           "anchor": "requirement-production-failures-are-never-suppressed"
         }
       ],
-      "records": []
+      "records": [],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-63A4E8674CFC",
@@ -28769,7 +29113,8 @@
           "anchor": "requirement-public-standard-links-remain-stable"
         }
       ],
-      "records": []
+      "records": [],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-31D787BB4B9C",
@@ -28825,7 +29170,28 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book//",
+        "/book/00-why-beskid-exists/",
+        "/book/00-why-beskid-exists/conclusion/",
+        "/book/02-path-not-found-tooling-anyway/reference-deep-dives/",
+        "/book/12-the-normative-bible/",
+        "/book/12-the-normative-bible/git-as-version-axis/",
+        "/book/12-the-normative-bible/informative-vs-normative/",
+        "/book/12-the-normative-bible/spec-leads-code/",
+        "/book/13-reading-the-law/",
+        "/book/13-reading-the-law/implementation-map/",
+        "/book/13-reading-the-law/platform-spec-home/",
+        "/book/16-corelib-batteries-with-opinions/",
+        "/book/17-execution-abi-host-runtime/",
+        "/book/18-packages-without-npm-trauma/",
+        "/book/19-public-api-that-survives-review/",
+        "/book/20-doc-comments-that-are-not-lies/",
+        "/book/21-ffi-and-forbidden-friendships/",
+        "/book/22-so-you-want-to-contribute/docs-and-website/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-F10978C9648F",
@@ -28875,7 +29241,8 @@
           "anchor": "requirement-markdown-directives-resolve-typed-entities"
         }
       ],
-      "records": []
+      "records": [],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-9ABEC0385C88",
@@ -28925,7 +29292,8 @@
           "anchor": "requirement-traceability-distinguishes-authority"
         }
       ],
-      "records": []
+      "records": [],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-D7F55D6A0E1F",
@@ -28969,7 +29337,10 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-D191DF3645F6",
@@ -29013,7 +29384,12 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/12-the-normative-bible/how-to-propose-a-change/",
+        "/book/22-so-you-want-to-contribute/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-3B30DF6730D8",
@@ -29057,7 +29433,13 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/01-it-works-on-my-machine/build-from-source/",
+        "/book/12-the-normative-bible/language-law-vs-implementation/",
+        "/book/13-reading-the-law/compiler-domain-map/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-CE2399E01F9F",
@@ -29101,7 +29483,15 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/13-reading-the-law/architecture-graphs/",
+        "/book/13-reading-the-law/compiler-domain-map/",
+        "/book/14-from-source-to-runs/",
+        "/book/14-from-source-to-runs/codegen-and-ir/",
+        "/book/14-from-source-to-runs/pipeline-overview/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-2E54C3541293",
@@ -29145,7 +29535,10 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-34509795F938",
@@ -29189,7 +29582,13 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/13-reading-the-law/compiler-domain-map/",
+        "/book/15-mods-plugins-with-consequences/",
+        "/book/15-mods-plugins-with-consequences/mod-sdk/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-A3D30F4D01CA",
@@ -29233,7 +29632,17 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/08-green-tests-red-production/",
+        "/book/08-green-tests-red-production/ci-testing/",
+        "/book/08-green-tests-red-production/conformance-vs-unit/",
+        "/book/13-reading-the-law/compiler-domain-map/",
+        "/book/15-mods-plugins-with-consequences/beskid-mod-cli/",
+        "/book/17-execution-abi-host-runtime/conformance-evidence/",
+        "/book/22-so-you-want-to-contribute/conformance-and-tests/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-4E1CCCFB49A0",
@@ -29277,7 +29686,11 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/10-memory-without-billion-dollar-mistake/stack-heap-and-spans/",
+        "/book/13-reading-the-law/compiler-domain-map/"
+      ]
     },
     {
       "id": "BSP-CAP-46FB1262CFA1",
@@ -29321,7 +29734,11 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/12-the-normative-bible/spec-leads-code/",
+        "/book/13-reading-the-law/compiler-domain-map/"
+      ]
     },
     {
       "id": "BSP-CAP-AFE6F9BE3A89",
@@ -29365,7 +29782,11 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/13-reading-the-law/compiler-domain-map/",
+        "/book/16-corelib-batteries-with-opinions/injection-and-resolution/"
+      ]
     },
     {
       "id": "BSP-CAP-C39434A97D4C",
@@ -29409,7 +29830,11 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/09-contracts-effects-and-polite-threats/errors-and-results/",
+        "/book/13-reading-the-law/compiler-domain-map/"
+      ]
     },
     {
       "id": "BSP-CAP-8AFBCF2B481C",
@@ -29453,7 +29878,14 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/04-where-does-this-file-go/corelib-layout/",
+        "/book/09-contracts-effects-and-polite-threats/effects-and-purity/",
+        "/book/12-the-normative-bible/language-law-vs-implementation/",
+        "/book/13-reading-the-law/execution-and-corelib/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-C4596AC45AA3",
@@ -29497,7 +29929,8 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-E754685C7CB9",
@@ -29541,7 +29974,8 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-4920A25A4B44",
@@ -29585,7 +30019,8 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-A988187BABBC",
@@ -29629,7 +30064,11 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/16-corelib-batteries-with-opinions/runtime-backed-surfaces/",
+        "/book/19-public-api-that-survives-review/stable-vs-internal/"
+      ]
     },
     {
       "id": "BSP-CAP-CDDAD8E12CA4",
@@ -29673,7 +30112,10 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/16-corelib-batteries-with-opinions/terminal-and-console/"
+      ]
     },
     {
       "id": "BSP-CAP-8F026D0D0959",
@@ -29717,7 +30159,8 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-4738F36FC568",
@@ -29761,7 +30204,14 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/12-the-normative-bible/language-law-vs-implementation/",
+        "/book/13-reading-the-law/execution-and-corelib/",
+        "/book/17-execution-abi-host-runtime/",
+        "/book/17-execution-abi-host-runtime/execution-domain/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-342862F1A5D1",
@@ -29805,7 +30255,11 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/21-ffi-and-forbidden-friendships/",
+        "/book/21-ffi-and-forbidden-friendships/export-and-callbacks/"
+      ]
     },
     {
       "id": "BSP-CAP-F2702EA2011D",
@@ -29849,7 +30303,11 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/09-contracts-effects-and-polite-threats/effects-and-purity/",
+        "/book/10-memory-without-billion-dollar-mistake/memory-model-overview/"
+      ]
     },
     {
       "id": "BSP-CAP-75B1B6059ABB",
@@ -29893,7 +30351,16 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book//",
+        "/book/07-compiler-is-not-your-therapist/",
+        "/book/07-compiler-is-not-your-therapist/read-a-diagnostic/",
+        "/book/12-the-normative-bible/language-law-vs-implementation/",
+        "/book/13-reading-the-law/compiler-domain-map/",
+        "/book/13-reading-the-law/language-meta-map/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-5F83E25728C7",
@@ -29937,7 +30404,8 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-53F27F5F7BF5",
@@ -29981,7 +30449,10 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/13-reading-the-law/language-meta-map/"
+      ]
     },
     {
       "id": "BSP-CAP-F04A87CD71BC",
@@ -30025,7 +30496,13 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/09-contracts-effects-and-polite-threats/",
+        "/book/09-contracts-effects-and-polite-threats/effects-and-purity/",
+        "/book/13-reading-the-law/language-meta-map/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-B31913F56C1B",
@@ -30069,7 +30546,13 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/09-contracts-effects-and-polite-threats/effects-and-purity/",
+        "/book/11-fibers-cheaper-than-threads/evaluation-model/",
+        "/book/13-reading-the-law/language-meta-map/",
+        "/book/17-execution-abi-host-runtime/execution-domain/"
+      ]
     },
     {
       "id": "BSP-CAP-D65AAD3F2612",
@@ -30113,7 +30596,13 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/13-reading-the-law/language-meta-map/",
+        "/book/21-ffi-and-forbidden-friendships/",
+        "/book/21-ffi-and-forbidden-friendships/interop-overview/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-9EB4FEF94C59",
@@ -30157,7 +30646,13 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/10-memory-without-billion-dollar-mistake/",
+        "/book/10-memory-without-billion-dollar-mistake/memory-model-overview/",
+        "/book/13-reading-the-law/language-meta-map/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-AEEAB3DA615A",
@@ -30201,7 +30696,10 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/13-reading-the-law/language-meta-map/"
+      ]
     },
     {
       "id": "BSP-CAP-B4A97D344306",
@@ -30245,7 +30743,12 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/02-path-not-found-tooling-anyway/reference-deep-dives/",
+        "/book/13-reading-the-law/language-meta-map/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-8C6138C11B20",
@@ -30289,7 +30792,10 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-1663C29038C1",
@@ -30333,7 +30839,11 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/13-reading-the-law/language-meta-map/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-9B3C0B499674",
@@ -30377,7 +30887,15 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/01-it-works-on-my-machine/",
+        "/book/02-path-not-found-tooling-anyway/vscode-and-lsp/",
+        "/book/12-the-normative-bible/informative-vs-normative/",
+        "/book/12-the-normative-bible/language-law-vs-implementation/",
+        "/book/13-reading-the-law/tooling-domain-map/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-FE849996316F",
@@ -30421,7 +30939,8 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-440EB09934DB",
@@ -30465,7 +30984,11 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/13-reading-the-law/tooling-domain-map/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-42B30053140D",
@@ -30509,7 +31032,12 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/10-memory-without-billion-dollar-mistake/unsafe-and-extern-preview/",
+        "/book/18-packages-without-npm-trauma/foreign-libraries/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-BBD1B22E6908",
@@ -30553,7 +31081,8 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-C3671F928295",
@@ -30597,7 +31126,8 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-038ACE6F2AC8",
@@ -30641,7 +31171,11 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/13-reading-the-law/tooling-domain-map/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-288D768E0DC1",
@@ -30685,7 +31219,11 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/02-path-not-found-tooling-anyway/reference-deep-dives/",
+        "/book/13-reading-the-law/tooling-domain-map/"
+      ]
     },
     {
       "id": "BSP-CAP-A6DEE0A6956F",
@@ -30729,7 +31267,8 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-B576CECE83AF",
@@ -30773,7 +31312,11 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/appendix-spec-map/",
+        "/book/reference/projects/scaffolding/"
+      ]
     },
     {
       "id": "BSP-CAP-AF2D756A9440",
@@ -30817,7 +31360,12 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/13-reading-the-law/tooling-domain-map/",
+        "/book/18-packages-without-npm-trauma/pckg-cli/",
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-38A199397237",
@@ -30861,7 +31409,10 @@
           "relations": []
         }
       ],
-      "relations": []
+      "relations": [],
+      "bookLinks": [
+        "/book/appendix-spec-map/"
+      ]
     },
     {
       "id": "BSP-CAP-4513A496C8E2",
@@ -30919,7 +31470,8 @@
           "href": "/platform-spec/tooling/auth-hub/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-2BA104D80F90",
@@ -30977,7 +31529,8 @@
           "href": "/platform-spec/tooling/auth-hub/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-E096E4EC7106",
@@ -31236,6 +31789,13 @@
           "href": "/platform-spec/tooling/cli/api-json-contract/design-model/",
           "relation": "Schema and library tree invariants"
         }
+      ],
+      "bookLinks": [
+        "/book/16-corelib-batteries-with-opinions/doc-and-api-json/",
+        "/book/20-doc-comments-that-are-not-lies/",
+        "/book/20-doc-comments-that-are-not-lies/arg-and-cross-links/",
+        "/book/20-doc-comments-that-are-not-lies/generated-sdk-docs/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -31535,6 +32095,14 @@
           "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
           "relation": "Host pipeline ordering after graph resolve"
         }
+      ],
+      "bookLinks": [
+        "/book/08-green-tests-red-production/beskid-test-cli/",
+        "/book/08-green-tests-red-production/ci-testing/",
+        "/book/12-the-normative-bible/language-law-vs-implementation/",
+        "/book/14-from-source-to-runs/jit-run/",
+        "/book/14-from-source-to-runs/pipeline-overview/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -31605,6 +32173,9 @@
           "href": "/platform-spec/tooling/project-scaffolding/beskid-new/",
           "relation": "Template scaffolding entrypoint"
         }
+      ],
+      "bookLinks": [
+        "/book/reference/cli/formatter-development/"
       ]
     },
     {
@@ -31675,7 +32246,8 @@
           "href": "/platform-spec/tooling/cli/build-analyze-run-contract/",
           "relation": "Pipeline commands open compile widget instead"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-EC168DCD7411",
@@ -31745,7 +32317,8 @@
           "href": "/platform-spec/tooling/cli/build-analyze-run-contract/",
           "relation": "Complementary execution mode"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-76964FA71797",
@@ -31815,6 +32388,9 @@
           "href": "/platform-spec/tooling/foreign-library-import/external-library-trait/",
           "relation": "Provider implementation"
         }
+      ],
+      "bookLinks": [
+        "/book/18-packages-without-npm-trauma/foreign-libraries/"
       ]
     },
     {
@@ -31873,7 +32449,8 @@
           "href": "/platform-spec/tooling/foreign-library-import/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-146B0F4B27B4",
@@ -31943,7 +32520,8 @@
           "href": "/platform-spec/language-meta/surface-syntax/lexical-and-syntax/",
           "relation": "Token model projected back to source"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-0CD7857FDDC2",
@@ -32013,7 +32591,8 @@
           "href": "/platform-spec/tooling/cli/",
           "relation": "Host for beskid format / fmt"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-C93B7A5B7319",
@@ -32071,7 +32650,8 @@
           "href": "/platform-spec/tooling/graph-visualization/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-3F83EAB70C19",
@@ -32129,7 +32709,8 @@
           "href": "/platform-spec/tooling/graph-visualization/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-AB448FEFB7CE",
@@ -32223,6 +32804,9 @@
           "href": "/platform-spec/tooling/lsp/snapshot-and-refresh-contract/",
           "relation": "Debounced prepare and snapshot invalidation"
         }
+      ],
+      "bookLinks": [
+        "/book/14-from-source-to-runs/pipeline-overview/"
       ]
     },
     {
@@ -32305,7 +32889,8 @@
           "href": "/platform-spec/tooling/vscode-extension/",
           "relation": "Extension delegates language features to this LSP capability surface"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-942BDF7AAE15",
@@ -32598,7 +33183,8 @@
           "href": "/platform-spec/tooling/vscode-extension/workspace-project-explorer/",
           "relation": "Focused project drives context cache"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-08FECFB7E3ED",
@@ -32791,6 +33377,9 @@
           "href": "/platform-spec/tooling/manifests-and-lockfiles/bsol/design-model/",
           "relation": "Generic AST and profile pipeline"
         }
+      ],
+      "bookLinks": [
+        "/book/03-project-proj-or-it-didnt-happen/bsol-and-the-config-stack/"
       ]
     },
     {
@@ -33211,6 +33800,16 @@
           "href": "/platform-spec/compiler/resolution-and-projects/project-manifest-contract/",
           "relation": "implements — diagnostic and graph tests"
         }
+      ],
+      "bookLinks": [
+        "/book/02-path-not-found-tooling-anyway/file-types-and-discovery/",
+        "/book/03-project-proj-or-it-didnt-happen/project-manifest/",
+        "/book/03-project-proj-or-it-didnt-happen/targets-and-outputs/",
+        "/book/03-project-proj-or-it-didnt-happen/tree-and-resolution/",
+        "/book/08-green-tests-red-production/test-items-in-source/",
+        "/book/15-mods-plugins-with-consequences/beskid-mod-cli/",
+        "/book/18-packages-without-npm-trauma/registry-versions/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -33540,6 +34139,13 @@
           "href": "/platform-spec/compiler/resolution-and-projects/workspace-and-lock-contracts/",
           "relation": "Compiler-side verification matrix"
         }
+      ],
+      "bookLinks": [
+        "/book/02-path-not-found-tooling-anyway/file-types-and-discovery/",
+        "/book/03-project-proj-or-it-didnt-happen/fetch-lock-update/",
+        "/book/06-monorepo-as-coping-mechanism/ci-and-monorepos/",
+        "/book/06-monorepo-as-coping-mechanism/workspace-manifest/",
+        "/book/appendix-spec-map/"
       ]
     },
     {
@@ -33598,7 +34204,8 @@
           "href": "/platform-spec/tooling/nexus/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-9AD1DF1EC777",
@@ -33656,7 +34263,8 @@
           "href": "/platform-spec/tooling/nexus/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-86DF5D5624A3",
@@ -33873,6 +34481,10 @@
           "href": "/platform-spec/tooling/project-scaffolding/beskid-new/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/reference/cli/commands/new/",
+        "/book/reference/projects/scaffolding/"
       ]
     },
     {
@@ -33931,7 +34543,8 @@
           "href": "/platform-spec/tooling/project-scaffolding/",
           "relation": "Parent area"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-6576CC51AAB5",
@@ -34489,6 +35102,10 @@
           "href": "/platform-spec/tooling/project-scaffolding/beskid-new/",
           "relation": "CLI orchestration"
         }
+      ],
+      "bookLinks": [
+        "/book/reference/cli/commands/new/",
+        "/book/reference/projects/scaffolding/"
       ]
     },
     {
@@ -34748,6 +35365,10 @@
           "href": "/platform-spec/tooling/project-scaffolding/template-packages/",
           "relation": "Parent feature hub"
         }
+      ],
+      "bookLinks": [
+        "/book/reference/cli/commands/pckg/",
+        "/book/reference/projects/scaffolding/"
       ]
     },
     {
@@ -35090,6 +35711,9 @@
           "href": "/platform-spec/tooling/registry-client/package-kinds/",
           "relation": "Parent feature"
         }
+      ],
+      "bookLinks": [
+        "/book/18-packages-without-npm-trauma/registry-versions/"
       ]
     },
     {
@@ -35407,6 +36031,9 @@
           "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/",
           "relation": "Fetch materializes roots referenced by locks"
         }
+      ],
+      "bookLinks": [
+        "/book/18-packages-without-npm-trauma/pckg-cli/"
       ]
     },
     {
@@ -35465,7 +36092,8 @@
           "href": "/platform-spec/tooling/vscode-extension/",
           "relation": "Parent area"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-FF8D098D858C",
@@ -35884,7 +36512,8 @@
           "href": "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/",
           "relation": "corelib Workspace.proj"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-D8E1C109B260",
@@ -36116,7 +36745,8 @@
           "href": "/platform-spec/tooling/vscode-extension/package-manager-panel/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-02AF4240F380",
@@ -36211,7 +36841,8 @@
           "href": "/platform-spec/tooling/vscode-extension/symbol-documentation/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-FE5E6B03B768",
@@ -36455,7 +37086,8 @@
           "href": "/platform-spec/tooling/vscode-extension/workspace-project-explorer/",
           "relation": "Parent feature hub"
         }
-      ]
+      ],
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-B31F63D710D0",
@@ -36505,7 +37137,8 @@
           "anchor": "requirement-tracker-consumes-the-openspec-catalog"
         }
       ],
-      "records": []
+      "records": [],
+      "bookLinks": []
     }
   ],
   "documents": [
@@ -36522,7 +37155,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "f580efeb4ed00f482a5bc63699fa377603eab90db3191676e6a490a560691801",
+      "sourceHash": "d5a7e447a345b1b1fa61fed47dbee633bd02956828f4c41c3cb0aca9429d6df4",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -36533,7 +37166,7 @@
       "path": "GUIDE.md",
       "title": "Beskid project guide",
       "authority": "informative",
-      "sourceHash": "fe91384c0367ef453326381908be51c84e9a085caf10ef527f69344c8ab645a4",
+      "sourceHash": "22c7b04429e4b756fa943b728df182441b6ff55903114e1a2a94d69cf32a5d90",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -37007,7 +37640,7 @@
       "path": "docs/distribution/SECRETS.md",
       "title": "Distribution Pipeline Secrets",
       "authority": "informative",
-      "sourceHash": "5096d173bb7eac9c99ffc88dfd8866d795f749ef27d3da53a4e9d3e603ede72d",
+      "sourceHash": "58242114285d027bd9bb81ccf3be8489d84301f5b0b942e96a9541dcbbcf3a6a",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37016,7 +37649,7 @@
       "path": "docs/orchestrate/verify-all-on-main-v04.md",
       "title": "verify-all-on-main (v0.4)",
       "authority": "informative",
-      "sourceHash": "a4e321fcb1ce1c88be7cd58f2cdcc39390af511029f316545ee45f9c5d83b8bc",
+      "sourceHash": "73c306c3ce5a4162eb5463a738a47b2e2311e0ad25d8e915b320602c29f101f4",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37295,8 +37928,8 @@
       "sourceHash": "b3f1f38a14e52453e45e5cca2515fc75a4b1b9d0bffc5a06d145f56df41bfab5",
       "standardLinks": [
         "/platform-spec/",
-        "/platform-spec/language-meta/program-structure/",
-        "/platform-spec/tooling/manifests-and-lockfiles/"
+        "/platform-spec/tooling/manifests-and-lockfiles/",
+        "/platform-spec/language-meta/program-structure/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37434,8 +38067,8 @@
       "authority": "informative",
       "sourceHash": "8c364ca53b7e0bae6084c5602f50bb5d65962db7b39d26796672cd7784c745b2",
       "standardLinks": [
-        "/platform-spec/language-meta/program-structure/code-style-and-naming/",
-        "/platform-spec/language-meta/program-structure/modules-and-visibility/"
+        "/platform-spec/language-meta/program-structure/modules-and-visibility/",
+        "/platform-spec/language-meta/program-structure/code-style-and-naming/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37457,8 +38090,8 @@
       "authority": "informative",
       "sourceHash": "7287d31250a048662a23c0b956c076183be34e49b06cf7f466caddfedbbb7656",
       "standardLinks": [
-        "/platform-spec/language-meta/program-structure/modules-and-visibility/",
-        "/platform-spec/language-meta/program-structure/name-resolution/"
+        "/platform-spec/language-meta/program-structure/name-resolution/",
+        "/platform-spec/language-meta/program-structure/modules-and-visibility/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37547,9 +38180,9 @@
       "authority": "informative",
       "sourceHash": "4fc63dc69544e041bc04ca4ca354aedd8b1a0daad1d052a98cfb2e6dff91c1b2",
       "standardLinks": [
-        "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
         "/platform-spec/language-meta/surface-syntax/lexical-and-syntax/",
-        "/platform-spec/language-meta/type-system/enums-and-match/"
+        "/platform-spec/language-meta/type-system/enums-and-match/",
+        "/platform-spec/language-meta/evaluation/fibers-and-spawn/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37560,9 +38193,9 @@
       "authority": "informative",
       "sourceHash": "d8c9fb0b4c44e8468ff9aebe583c98b1c26b0d8d526fdbd3bc140afd45f99ee4",
       "standardLinks": [
+        "/platform-spec/language-meta/type-system/method-dispatch/",
         "/platform-spec/language-meta/contracts-and-effects/contracts/",
-        "/platform-spec/language-meta/contracts-and-effects/error-handling/",
-        "/platform-spec/language-meta/type-system/method-dispatch/"
+        "/platform-spec/language-meta/contracts-and-effects/error-handling/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37584,8 +38217,8 @@
       "authority": "informative",
       "sourceHash": "71001a5462ff73e005c8f82fd4a9a903768582f7fc663ba68e7f589914135236",
       "standardLinks": [
-        "/platform-spec/language-meta/surface-syntax/documentation-comments/",
-        "/platform-spec/language-meta/surface-syntax/lexical-and-syntax/"
+        "/platform-spec/language-meta/surface-syntax/lexical-and-syntax/",
+        "/platform-spec/language-meta/surface-syntax/documentation-comments/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37596,10 +38229,10 @@
       "authority": "informative",
       "sourceHash": "eefc50e2e68a0619c7f73c0c16b805738270aa3f57a335e114a3fe4c1b68d3d3",
       "standardLinks": [
-        "/platform-spec/language-meta/conformance/glossary-and-conformance/",
         "/platform-spec/language-meta/contracts-and-effects/error-handling/",
         "/platform-spec/language-meta/type-system/enums-and-match/",
-        "/platform-spec/language-meta/type-system/types/"
+        "/platform-spec/language-meta/type-system/types/",
+        "/platform-spec/language-meta/conformance/glossary-and-conformance/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37622,10 +38255,10 @@
       "authority": "informative",
       "sourceHash": "3d87dc588705a64a0654331bd97504a6f9bee71559d28a9de89c3e32716b9b3f",
       "standardLinks": [
-        "/platform-spec/language-meta/type-system/enums-and-match/",
-        "/platform-spec/language-meta/type-system/method-dispatch/",
         "/platform-spec/language-meta/type-system/type-inference/",
-        "/platform-spec/language-meta/type-system/types/"
+        "/platform-spec/language-meta/type-system/method-dispatch/",
+        "/platform-spec/language-meta/type-system/types/",
+        "/platform-spec/language-meta/type-system/enums-and-match/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37670,10 +38303,10 @@
       "authority": "informative",
       "sourceHash": "8effd37dfaa3b02b741b4d32fc447d5a899e70ff9e8c7c0383b9aa044d558113",
       "standardLinks": [
-        "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
         "/platform-spec/compiler/conformance/",
         "/platform-spec/compiler/conformance/conformance-evidence-policy/",
-        "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/"
+        "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/",
+        "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37684,8 +38317,8 @@
       "authority": "informative",
       "sourceHash": "b950e898d7ad1fdf9d5036bf4f6ce722ddf6abcf80c8e8f40f90dc438c25e8b9",
       "standardLinks": [
-        "/platform-spec/compiler/conformance/",
-        "/platform-spec/language-meta/contracts-and-effects/testing/"
+        "/platform-spec/language-meta/contracts-and-effects/testing/",
+        "/platform-spec/compiler/conformance/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37720,14 +38353,14 @@
       "authority": "informative",
       "sourceHash": "ff0df16a782cb3e6bf369ec1d9e77edd877f9b820fd2effe78a374488c8d7750",
       "standardLinks": [
-        "/platform-spec/core-library/",
-        "/platform-spec/execution/runtime/",
-        "/platform-spec/execution/runtime/panic-io-and-syscalls/",
-        "/platform-spec/language-meta/contracts-and-effects/",
+        "/platform-spec/language-meta/metaprogramming/metaprogramming/",
         "/platform-spec/language-meta/evaluation/",
+        "/platform-spec/execution/runtime/",
+        "/platform-spec/core-library/",
+        "/platform-spec/execution/runtime/panic-io-and-syscalls/",
         "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
         "/platform-spec/language-meta/interop/ffi-and-extern/",
-        "/platform-spec/language-meta/metaprogramming/metaprogramming/"
+        "/platform-spec/language-meta/contracts-and-effects/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37738,10 +38371,10 @@
       "authority": "informative",
       "sourceHash": "a7514393ea4aa75ea6f52406bd8230bef2893cc6ba5e1c1c844fdb8a6626f244",
       "standardLinks": [
-        "/platform-spec/compiler/semantic-pipeline/",
         "/platform-spec/language-meta/contracts-and-effects/error-handling/",
         "/platform-spec/language-meta/interop/interop-contracts/",
-        "/platform-spec/language-meta/interop/interop-contracts/error-and-unwind-semantics/"
+        "/platform-spec/language-meta/interop/interop-contracts/error-and-unwind-semantics/",
+        "/platform-spec/compiler/semantic-pipeline/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37763,10 +38396,10 @@
       "authority": "informative",
       "sourceHash": "14b125d351cbdc7b01a56e54a1527ba94a251102921c642a0c0989ff311586f3",
       "standardLinks": [
-        "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
-        "/platform-spec/execution/runtime/panic-io-and-syscalls/",
         "/platform-spec/language-meta/contracts-and-effects/contracts/",
-        "/platform-spec/language-meta/interop/interop-contracts/error-and-unwind-semantics/"
+        "/platform-spec/execution/runtime/panic-io-and-syscalls/",
+        "/platform-spec/language-meta/interop/interop-contracts/error-and-unwind-semantics/",
+        "/platform-spec/compiler/compiler-mods/mod-host-bridge/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37777,8 +38410,8 @@
       "authority": "informative",
       "sourceHash": "6805e1f111a6b14269a577412e27dc2a1bad225a25cdc0c0b0f721a5ea3a8872",
       "standardLinks": [
-        "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/",
-        "/platform-spec/language-meta/memory-model/"
+        "/platform-spec/language-meta/memory-model/",
+        "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37789,13 +38422,13 @@
       "authority": "informative",
       "sourceHash": "e9988f385d9b941a2ec47998bb3571f04deabd4b77271bd7fe5ae1a6cc488e89",
       "standardLinks": [
-        "/platform-spec/execution/runtime/",
+        "/platform-spec/language-meta/memory-model/memory-and-references/",
         "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/",
+        "/platform-spec/language-meta/evaluation/lambdas-and-closures/",
         "/platform-spec/execution/runtime/memory-and-gc-runtime-contract/adr/0006-abfall-tri-color-heap/",
         "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
-        "/platform-spec/language-meta/evaluation/lambdas-and-closures/",
         "/platform-spec/language-meta/memory-model/",
-        "/platform-spec/language-meta/memory-model/memory-and-references/"
+        "/platform-spec/execution/runtime/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37818,8 +38451,8 @@
       "authority": "informative",
       "sourceHash": "ba9e6e1bcf109aac92ab7bca9aa35a267e4e453214cde7692d352564ec307776",
       "standardLinks": [
-        "/platform-spec/compiler/front-end/",
         "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
+        "/platform-spec/compiler/front-end/",
         "/platform-spec/language-meta/type-system/types/"
       ],
       "containsNormativeKeywords": false,
@@ -37831,13 +38464,13 @@
       "authority": "informative",
       "sourceHash": "c4e69d8273f66fbd9f59e11032755f266ecf8f1f76633d049ad6b204002f829c",
       "standardLinks": [
-        "/platform-spec/execution/abi-and-host/builtins-and-symbols/",
-        "/platform-spec/language-meta/interop/c-abi-profile/",
-        "/platform-spec/language-meta/interop/c-abi-profile/adr/0003-dynamic-resolution-proposed/",
         "/platform-spec/language-meta/interop/ffi-and-extern/",
         "/platform-spec/language-meta/interop/interop-contracts/",
+        "/platform-spec/tooling/foreign-library-import/",
+        "/platform-spec/language-meta/interop/c-abi-profile/",
         "/platform-spec/language-meta/interop/interop-contracts/error-and-unwind-semantics/",
-        "/platform-spec/tooling/foreign-library-import/"
+        "/platform-spec/execution/abi-and-host/builtins-and-symbols/",
+        "/platform-spec/language-meta/interop/c-abi-profile/adr/0003-dynamic-resolution-proposed/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37861,10 +38494,10 @@
       "authority": "informative",
       "sourceHash": "6464a0123363aeb8c88b5ad6e177c1134ed31c14b340cd9078d235cd61c121de",
       "standardLinks": [
-        "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/",
         "/platform-spec/core-library/concurrency/concurrency-package/",
+        "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
         "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
-        "/platform-spec/language-meta/evaluation/fibers-and-spawn/"
+        "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37875,9 +38508,9 @@
       "authority": "informative",
       "sourceHash": "b43be83bbff7d7f32edebb686b63f68caedf6ac15e673bafe58bcb74bfb13c70",
       "standardLinks": [
+        "/platform-spec/language-meta/evaluation/lambdas-and-closures/",
         "/platform-spec/core-library/concurrency/concurrency-package/",
-        "/platform-spec/language-meta/evaluation/",
-        "/platform-spec/language-meta/evaluation/lambdas-and-closures/"
+        "/platform-spec/language-meta/evaluation/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37888,9 +38521,9 @@
       "authority": "informative",
       "sourceHash": "97e78884cf4f680efaa0b91c51721edeae4b509778f6edfc9585dbb5da4ce858",
       "standardLinks": [
+        "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
         "/platform-spec/core-library/concurrency/concurrency-package/decisions-record/",
-        "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
-        "/platform-spec/language-meta/evaluation/fibers-and-spawn/"
+        "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37901,9 +38534,9 @@
       "authority": "informative",
       "sourceHash": "3c7f2788ccdbb38e85d33ae72ba03c00be252831e39f3b1466601c8b5a954abd",
       "standardLinks": [
-        "/platform-spec/core-library/concurrency/concurrency-package/",
+        "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
         "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
-        "/platform-spec/language-meta/evaluation/fibers-and-spawn/"
+        "/platform-spec/core-library/concurrency/concurrency-package/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37915,8 +38548,8 @@
       "sourceHash": "63ca8c47f8532315ad4cb9aa95c7685b9bb0e264c471f4ed42b3eb4ed977ab80",
       "standardLinks": [
         "/platform-spec/community/project-inception/",
-        "/platform-spec/community/spec-maintenance/release-and-versioning-policy/adr/0001-git-version-axis/",
         "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
+        "/platform-spec/community/spec-maintenance/release-and-versioning-policy/adr/0001-git-version-axis/",
         "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/adr/0003-spec-leads-code/",
         "/platform-spec/compiler/compiler-mods/mod-host-bridge/adr/0003-mod-aot-only-registration/"
       ],
@@ -37929,12 +38562,10 @@
       "authority": "informative",
       "sourceHash": "11a5ab1410005c9e811f6b5a70fe5946fdbece4d685709b6c5a028457b4d0b38",
       "standardLinks": [
-        "/platform-spec/",
-        "/platform-spec/community/spec-maintenance/last-reviewed-policy/",
-        "/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/",
         "/platform-spec/community/spec-maintenance/release-and-versioning-policy/",
-        "/platform-spec/language-meta/contracts-and-effects/contracts/",
-        "/platform-spec/v0.2/..."
+        "/platform-spec/community/spec-maintenance/last-reviewed-policy/",
+        "/platform-spec/",
+        "/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37945,11 +38576,10 @@
       "authority": "informative",
       "sourceHash": "6f6357c8290e905578c1d5b2f913fa01daee265b706c788b55ea59d716dbb304",
       "standardLinks": [
-        "/platform-spec/",
-        "/platform-spec/community/spec-maintenance/",
-        "/platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template/",
         "/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/",
-        "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/"
+        "/platform-spec/community/spec-maintenance/domain-area-feature-article-frontmatter-template/",
+        "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/",
+        "/platform-spec/community/spec-maintenance/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37960,8 +38590,7 @@
       "authority": "informative",
       "sourceHash": "8944d874fe2c4f6204eb660df188fd434cbcb3baa554132a15048144a2012c1b",
       "standardLinks": [
-        "/platform-spec/",
-        "/platform-spec/v0.2/"
+        "/platform-spec/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37985,16 +38614,16 @@
       "authority": "informative",
       "sourceHash": "fd19de47451d35c8b191cd4b04b9cf76cf0506c3502aadb02f7828800b77ff67",
       "standardLinks": [
-        "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
-        "/platform-spec/compiler/",
-        "/platform-spec/core-library/",
-        "/platform-spec/core-library/concurrency/concurrency-package/",
-        "/platform-spec/execution/",
-        "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
         "/platform-spec/language-meta/",
-        "/platform-spec/language-meta/contracts-and-effects/testing/",
-        "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
+        "/platform-spec/compiler/",
+        "/platform-spec/execution/",
+        "/platform-spec/core-library/",
         "/platform-spec/tooling/",
+        "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
+        "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
+        "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
+        "/platform-spec/core-library/concurrency/concurrency-package/",
+        "/platform-spec/language-meta/contracts-and-effects/testing/",
         "/platform-spec/tooling/cli/build-analyze-run-contract/"
       ],
       "containsNormativeKeywords": false,
@@ -38006,9 +38635,9 @@
       "authority": "informative",
       "sourceHash": "405a43f2f186267b4f5d7569941f077dd60968ff5ef2ab6852ddddcbf21a894c",
       "standardLinks": [
+        "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
         "/platform-spec/community/spec-maintenance/feature-hub-article-bundle-template/",
-        "/platform-spec/community/spec-maintenance/release-and-versioning-policy/",
-        "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/"
+        "/platform-spec/community/spec-maintenance/release-and-versioning-policy/"
       ],
       "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"
@@ -38030,9 +38659,10 @@
       "path": "site/website/src/content/docs/book/13-reading-the-law/architecture-graphs.md",
       "title": "Architecture graphs",
       "authority": "informative",
-      "sourceHash": "3c4c979057418bd0943fb2965bb308e784838593636a0660ba7fd488efbf02c5",
+      "sourceHash": "cfefbcfa9c3b68e46464ec78b9e62e9895b1303a2235687a1cc39d523854021c",
       "standardLinks": [
-        "/platform-spec/compiler/build-pipeline/"
+        "/platform-spec/compiler/build-pipeline/",
+        "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38041,17 +38671,18 @@
       "path": "site/website/src/content/docs/book/13-reading-the-law/compiler-domain-map.md",
       "title": "Compiler domain map",
       "authority": "informative",
-      "sourceHash": "0d178f454b820fe86303543b5d52c982763c89dc0279d413cb98bfbe01719220",
+      "sourceHash": "cfba26d146b1f97bd5926e12e60640ed836cf945f53e7504a16757899d08425b",
       "standardLinks": [
         "/platform-spec/compiler/",
+        "/platform-spec/language-meta/",
         "/platform-spec/compiler/build-pipeline/",
+        "/platform-spec/compiler/front-end/",
+        "/platform-spec/compiler/semantic-pipeline/",
+        "/platform-spec/compiler/resolution-and-projects/",
         "/platform-spec/compiler/compiler-mods/",
         "/platform-spec/compiler/conformance/",
-        "/platform-spec/compiler/front-end/",
         "/platform-spec/compiler/implementation-map/",
-        "/platform-spec/compiler/pipeline-composition/",
-        "/platform-spec/compiler/resolution-and-projects/",
-        "/platform-spec/compiler/semantic-pipeline/"
+        "/platform-spec/compiler/pipeline-composition/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38060,10 +38691,10 @@
       "path": "site/website/src/content/docs/book/13-reading-the-law/execution-and-corelib.md",
       "title": "Execution and core library",
       "authority": "informative",
-      "sourceHash": "b283c8ff950dc952b21864105d20b51edc43774091168b207f58d215e54f00c3",
+      "sourceHash": "f33e94139fcd3f1497253d6ee7e9cab80a6578c1e49dda0629180ceaafe3ba01",
       "standardLinks": [
-        "/platform-spec/core-library/",
-        "/platform-spec/execution/"
+        "/platform-spec/execution/",
+        "/platform-spec/core-library/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38072,9 +38703,10 @@
       "path": "site/website/src/content/docs/book/13-reading-the-law/implementation-map.md",
       "title": "Implementation map",
       "authority": "informative",
-      "sourceHash": "ee6ae68731f2ffcbf5c95550b8bdd36e6cdbe51dd8d608438888114bfcad888c",
+      "sourceHash": "354ce277d9f1cc27e1caae79be200cc3c5afec006cb1b4d512415832c12073bb",
       "standardLinks": [
-        "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/"
+        "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/",
+        "/platform-spec/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38083,7 +38715,7 @@
       "path": "site/website/src/content/docs/book/13-reading-the-law/index.mdx",
       "title": "Reading the law without going blind",
       "authority": "informative",
-      "sourceHash": "ac50254a88f07464e672affc40b815c2f43ae1cf3b156d32f71afbf40845a5bb",
+      "sourceHash": "0b84709c32c566a00bc325f26187f2efd22b22547337fc0ba805b1f8c72238e1",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -38094,17 +38726,17 @@
       "path": "site/website/src/content/docs/book/13-reading-the-law/language-meta-map.md",
       "title": "Language meta map",
       "authority": "informative",
-      "sourceHash": "fb926f78570a864d28b642df561f7a6ae0fefa64b3db34cfefa60962ee790bdc",
+      "sourceHash": "0a903407ebfdb6543d8f76f80d93b7fd5e345bb36ed44e87aa0669e94db2261b",
       "standardLinks": [
         "/platform-spec/language-meta/",
-        "/platform-spec/language-meta/conformance/",
+        "/platform-spec/language-meta/program-structure/",
+        "/platform-spec/language-meta/type-system/",
         "/platform-spec/language-meta/contracts-and-effects/",
+        "/platform-spec/language-meta/memory-model/",
         "/platform-spec/language-meta/evaluation/",
         "/platform-spec/language-meta/interop/",
-        "/platform-spec/language-meta/memory-model/",
         "/platform-spec/language-meta/metaprogramming/",
-        "/platform-spec/language-meta/program-structure/",
-        "/platform-spec/language-meta/type-system/"
+        "/platform-spec/language-meta/conformance/"
       ],
       "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"
@@ -38113,10 +38745,11 @@
       "path": "site/website/src/content/docs/book/13-reading-the-law/platform-spec-home.md",
       "title": "Platform spec home",
       "authority": "informative",
-      "sourceHash": "3c2b6134632ede97d704fdb9758f287677b8c84f695aff9161f9fc0c447ac0fd",
+      "sourceHash": "627b9c24ceea05a1bdf4051b86379308a5aab5b3b37e146d060886e607cd71ce",
       "standardLinks": [
         "/platform-spec/",
-        "/platform-spec/community/spec-maintenance/release-and-versioning-policy/"
+        "/platform-spec/community/spec-maintenance/release-and-versioning-policy/",
+        "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38125,9 +38758,13 @@
       "path": "site/website/src/content/docs/book/13-reading-the-law/tooling-domain-map.md",
       "title": "Tooling domain map",
       "authority": "informative",
-      "sourceHash": "eef77a918f176d121e0e95bc4e6066c623022254a1d23371653c950bb12c6663",
+      "sourceHash": "b5c8350b88b6fd7243692bef6630fa36db67936bb7350432c916da62a309f385",
       "standardLinks": [
-        "/platform-spec/tooling/"
+        "/platform-spec/tooling/",
+        "/platform-spec/tooling/cli/",
+        "/platform-spec/tooling/manifests-and-lockfiles/",
+        "/platform-spec/tooling/lsp/",
+        "/platform-spec/tooling/registry-client/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38139,8 +38776,8 @@
       "sourceHash": "cee4bdbb1cfccf6f3f876ce0b5cfbee76f9bd4aadce95afe771fa6aa841105c8",
       "standardLinks": [
         "/platform-spec/compiler/build-pipeline/backends-jit-aot/",
-        "/platform-spec/compiler/compiler-mods/mod-host-bridge/adr/0003-mod-aot-only-registration/",
-        "/platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/"
+        "/platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/",
+        "/platform-spec/compiler/compiler-mods/mod-host-bridge/adr/0003-mod-aot-only-registration/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38151,9 +38788,9 @@
       "authority": "informative",
       "sourceHash": "3b30213797e079da5a2c8d60d15644d38e7881b6be53ed39fa80bd01b95ba271",
       "standardLinks": [
-        "/platform-spec/compiler/build-pipeline/backends-jit-aot/",
+        "/platform-spec/compiler/pipeline-composition/",
         "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
-        "/platform-spec/compiler/pipeline-composition/"
+        "/platform-spec/compiler/build-pipeline/backends-jit-aot/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38178,13 +38815,13 @@
       "authority": "informative",
       "sourceHash": "a359f09f754d7f7a238a1af0d4ea5a1eeba38e3a64775df6f80a7a60eaf5f6b9",
       "standardLinks": [
-        "/platform-spec/compiler/build-pipeline/program-assembly/",
-        "/platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/",
-        "/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/",
-        "/platform-spec/compiler/front-end/ast-hir-shape-contract/",
         "/platform-spec/compiler/front-end/grammar-and-parser-contract/",
-        "/platform-spec/compiler/front-end/hir-normalization-and-legality/",
         "/platform-spec/compiler/front-end/parser-and-ast-contracts/",
+        "/platform-spec/compiler/front-end/ast-hir-shape-contract/",
+        "/platform-spec/compiler/front-end/hir-normalization-and-legality/",
+        "/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/",
+        "/platform-spec/compiler/compiler-mods/beskid-compiler-syntax-facade/",
+        "/platform-spec/compiler/build-pipeline/program-assembly/",
         "/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/"
       ],
       "containsNormativeKeywords": false,
@@ -38233,10 +38870,10 @@
       "authority": "informative",
       "sourceHash": "9ccb8028176ecfeacbac4c5fec4d41835e4bf94f41366b7f18fe749068573568",
       "standardLinks": [
-        "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/",
-        "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
+        "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/",
         "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
-        "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/"
+        "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
+        "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38247,9 +38884,9 @@
       "authority": "informative",
       "sourceHash": "805379d03e453745c553fb5a3ba27f5172239dcff92c528386136e78417a5c1b",
       "standardLinks": [
+        "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
         "/platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/",
-        "/platform-spec/compiler/conformance/",
-        "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/"
+        "/platform-spec/compiler/conformance/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38260,9 +38897,9 @@
       "authority": "informative",
       "sourceHash": "134458a52f5ed9fd8ada82d718064ed600cebaf1d16e869835ba6d4e9c5b7140",
       "standardLinks": [
+        "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/",
         "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/",
-        "/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/",
-        "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/"
+        "/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38273,9 +38910,9 @@
       "authority": "informative",
       "sourceHash": "b0a8ee59fc0fff54b1066a56f335d8670a899e4c4647114bac6e4677f25ba374",
       "standardLinks": [
+        "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
         "/platform-spec/compiler/compiler-mods/",
-        "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
-        "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/"
+        "/platform-spec/compiler/compiler-mods/mod-host-bridge/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38286,11 +38923,11 @@
       "authority": "informative",
       "sourceHash": "ea541bbf8e1c4f85cf6df8870d36227b6b21607a0feb1001c6e56e36da929268",
       "standardLinks": [
+        "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
         "/platform-spec/compiler/compiler-mods/",
-        "/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/",
         "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
         "/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/",
-        "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/"
+        "/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38301,11 +38938,11 @@
       "authority": "informative",
       "sourceHash": "341d1d8e93e7d9e04f046e3e27cbed354c1a6db8e5ed4ad094041d25e929fc24",
       "standardLinks": [
-        "/platform-spec/compiler/build-pipeline/stage-ordering/",
+        "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
         "/platform-spec/compiler/compiler-mods/mod-host-bridge/flow-and-algorithm/",
         "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/",
         "/platform-spec/compiler/pipeline-composition/",
-        "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/"
+        "/platform-spec/compiler/build-pipeline/stage-ordering/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38316,8 +38953,8 @@
       "authority": "informative",
       "sourceHash": "4e362474bc3363e459b0b03c6c92dd553462f0c69b4385d35440a61c2925afcb",
       "standardLinks": [
-        "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
-        "/platform-spec/language-meta/metaprogramming/macros/"
+        "/platform-spec/language-meta/metaprogramming/macros/",
+        "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38339,8 +38976,8 @@
       "authority": "informative",
       "sourceHash": "f6e793bf008ad36d2a5495df300c3c7eda9fc6167bcf65e71e05b8eb28806578",
       "standardLinks": [
-        "/platform-spec/language-meta/surface-syntax/documentation-comments/",
-        "/platform-spec/tooling/cli/api-json-contract/"
+        "/platform-spec/tooling/cli/api-json-contract/",
+        "/platform-spec/language-meta/surface-syntax/documentation-comments/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38362,8 +38999,8 @@
       "authority": "informative",
       "sourceHash": "22c64fbca1f5f03cc79ea7d75eb6b7336863130eccfa5871dd51f0da49daadc5",
       "standardLinks": [
-        "/platform-spec/compiler/resolution-and-projects/",
-        "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/"
+        "/platform-spec/core-library/compiler-integration/corelib-injection-and-resolution/",
+        "/platform-spec/compiler/resolution-and-projects/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38374,8 +39011,8 @@
       "authority": "informative",
       "sourceHash": "bb8018e7dee174a5a5bba29ccbc3d4a4b45d8129a7049152e5634fd912521d7c",
       "standardLinks": [
-        "/platform-spec/core-library/stability-and-api-shape/",
-        "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/"
+        "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/",
+        "/platform-spec/core-library/stability-and-api-shape/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38386,8 +39023,8 @@
       "authority": "informative",
       "sourceHash": "5b3d99f20e16886747469fd2c34b966a6aec11403a650dd545eed37a7bbe002b",
       "standardLinks": [
-        "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/",
-        "/platform-spec/core-library/terminal-and-console/"
+        "/platform-spec/core-library/terminal-and-console/",
+        "/platform-spec/core-library/stability-and-api-shape/runtime-backed-corelib-surfaces/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38421,9 +39058,9 @@
       "authority": "informative",
       "sourceHash": "a8bb977bb8f010bbc0d6cf213cc4adac58fe98a687a67cbb603b276bd172e518",
       "standardLinks": [
-        "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/",
         "/platform-spec/execution/",
-        "/platform-spec/language-meta/evaluation/"
+        "/platform-spec/language-meta/evaluation/",
+        "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/"
       ],
       "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"
@@ -38458,8 +39095,8 @@
       "sourceHash": "fc9a315b9da2d40fa30265a1f22c4cbb704098b5f8ba469b439f291d642ab4e8",
       "standardLinks": [
         "/platform-spec/community/project-inception/adr/0008-fibers-not-async-await/",
-        "/platform-spec/execution/runtime/channels-and-synchronization/",
         "/platform-spec/execution/runtime/fiber-scheduler-and-stacks/",
+        "/platform-spec/execution/runtime/channels-and-synchronization/",
         "/platform-spec/language-meta/evaluation/fibers-and-spawn/"
       ],
       "containsNormativeKeywords": false,
@@ -38472,8 +39109,8 @@
       "sourceHash": "c891de5698fe8aecc57b9b2049478ab47baea7a8dc21f33d6113b3f71ccfdee0",
       "standardLinks": [
         "/platform-spec/tooling/foreign-library-import/",
-        "/platform-spec/tooling/foreign-library-import/cli-import-lib-command/",
-        "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries/"
+        "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries/",
+        "/platform-spec/tooling/foreign-library-import/cli-import-lib-command/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38516,8 +39153,8 @@
       "authority": "informative",
       "sourceHash": "eea756aa89163a0f183f5eff37de4a43b392ab489fad3a5f59d960fcb323347e",
       "standardLinks": [
-        "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
-        "/platform-spec/tooling/registry-client/package-kinds/"
+        "/platform-spec/tooling/registry-client/package-kinds/",
+        "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38580,9 +39217,11 @@
       "path": "site/website/src/content/docs/book/20-doc-comments-that-are-not-lies/arg-and-cross-links.md",
       "title": "@arg and cross-links",
       "authority": "informative",
-      "sourceHash": "9f885f97ef86b347cb2e619e775feb7ce6419f0b74be3f3bdc394e837c867d94",
+      "sourceHash": "074c61cd4249fb15428370dced69d2e8ff380833f1c06e788e75bfcd1a9de187",
       "standardLinks": [
-        "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/"
+        "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
+        "/platform-spec/language-meta/surface-syntax/documentation-comments/",
+        "/platform-spec/tooling/cli/api-json-contract/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38591,7 +39230,7 @@
       "path": "site/website/src/content/docs/book/20-doc-comments-that-are-not-lies/doc-comment-syntax.md",
       "title": "Doc comment syntax",
       "authority": "informative",
-      "sourceHash": "dbbd145a531e0ef6d4e4e73797146becebd8d4f1518540cbd294090582d8092b",
+      "sourceHash": "4fd1e599b2158fc63ca7c7ad903c052af1f1c640b4d0f0835ef2ae53d7a203f8",
       "standardLinks": [
         "/platform-spec/language-meta/surface-syntax/documentation-comments/"
       ],
@@ -38602,8 +39241,10 @@
       "path": "site/website/src/content/docs/book/20-doc-comments-that-are-not-lies/generated-sdk-docs.md",
       "title": "Generated SDK docs",
       "authority": "informative",
-      "sourceHash": "1ed8a181634d7e59286e5c0c119325aefdd416f6a5ca9271fd7371fb5d864f2a",
-      "standardLinks": [],
+      "sourceHash": "f0afc4ae20864b1aa882a9da0e25f869b4855b99ef1f9dbd16c77629219bee1b",
+      "standardLinks": [
+        "/platform-spec/tooling/cli/api-json-contract/"
+      ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
     },
@@ -38611,9 +39252,11 @@
       "path": "site/website/src/content/docs/book/20-doc-comments-that-are-not-lies/index.mdx",
       "title": "/// comments that are not lies",
       "authority": "informative",
-      "sourceHash": "99ffed58f3a7326790910c7496577eddcfc4f3c466ddb3f2d98b6884977e8c2d",
+      "sourceHash": "54fcff9e97f68dae4159dc9c74e254274a29e71437a64b22e45286581a69c0b1",
       "standardLinks": [
-        "/platform-spec/"
+        "/platform-spec/",
+        "/platform-spec/language-meta/surface-syntax/documentation-comments/",
+        "/platform-spec/tooling/cli/api-json-contract/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38622,8 +39265,11 @@
       "path": "site/website/src/content/docs/book/20-doc-comments-that-are-not-lies/verify-docs.md",
       "title": "Verify docs in CI",
       "authority": "informative",
-      "sourceHash": "3661d0fbc4ed4b49460f6891295112d6fafc1afacc3c40db12d99384655aea09",
-      "standardLinks": [],
+      "sourceHash": "45e16bab2c3a52bd3a7e72bbaa1e371ba4af6e076ebe61bc626dad7127fff2ef",
+      "standardLinks": [
+        "/platform-spec/language-meta/surface-syntax/documentation-comments/",
+        "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/"
+      ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
     },
@@ -38631,9 +39277,10 @@
       "path": "site/website/src/content/docs/book/21-ffi-and-forbidden-friendships/c-abi-profile.md",
       "title": "C ABI profile",
       "authority": "informative",
-      "sourceHash": "75a297cc24d1cae1d35a9600c8b47013640634baa0c8e8a817c5d9e0d389b078",
+      "sourceHash": "b46edfaa43ca05eabda1e45e778646601adb6e765dfeb17a853e633b79813174",
       "standardLinks": [
-        "/platform-spec/language-meta/interop/c-abi-profile/"
+        "/platform-spec/language-meta/interop/c-abi-profile/",
+        "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38642,9 +39289,10 @@
       "path": "site/website/src/content/docs/book/21-ffi-and-forbidden-friendships/export-and-callbacks.md",
       "title": "Export and callbacks",
       "authority": "informative",
-      "sourceHash": "c2a093c50b437d3d33438c1d44c76cd8a817768973ff6060774f1ce7cafc305a",
+      "sourceHash": "c1d5c87027efd012ae4e09c976b6f3dddb50b00c88f3dcc7320bc1b37d511fa3",
       "standardLinks": [
-        "/platform-spec/language-meta/interop/export-and-callbacks/"
+        "/platform-spec/language-meta/interop/export-and-callbacks/",
+        "/platform-spec/execution/abi-and-host/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38653,10 +39301,10 @@
       "path": "site/website/src/content/docs/book/21-ffi-and-forbidden-friendships/ffi-and-extern.md",
       "title": "FFI and extern",
       "authority": "informative",
-      "sourceHash": "b15b7475dbc40d4e32d92ba1fcec18c9b94de05a02fe352b0b603c75096cc42a",
+      "sourceHash": "548733b0c78cd836b7a6b6c17b90f99fb9e5171ab477e8602e2021dbb1599b1d",
       "standardLinks": [
-        "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/",
-        "/platform-spec/language-meta/interop/ffi-and-extern/"
+        "/platform-spec/language-meta/interop/ffi-and-extern/",
+        "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38665,9 +39313,11 @@
       "path": "site/website/src/content/docs/book/21-ffi-and-forbidden-friendships/index.mdx",
       "title": "FFI and other forbidden friendships",
       "authority": "informative",
-      "sourceHash": "51488898d10e5b378e76fddf0755398c2b56a055d281a0ed8c81977658194f6e",
+      "sourceHash": "b0b86615788091d2badfa8f0030aeb641a3ab498437c9bd58b50107f0c9f5c14",
       "standardLinks": [
-        "/platform-spec/"
+        "/platform-spec/",
+        "/platform-spec/language-meta/interop/",
+        "/platform-spec/execution/abi-and-host/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38676,11 +39326,14 @@
       "path": "site/website/src/content/docs/book/21-ffi-and-forbidden-friendships/interop-overview.md",
       "title": "Interop overview",
       "authority": "informative",
-      "sourceHash": "e9a5514297fc01951a26d4ce3a9d3319475c245e23818be434fb88a75c454801",
+      "sourceHash": "7d15d73b601a4f265e8a9a250c3eadbe18a3372980eb6616166d2a55b2a3ded9",
       "standardLinks": [
-        "/platform-spec/core-library/compiler-integration/runtime-registration/",
         "/platform-spec/language-meta/interop/",
-        "/platform-spec/language-meta/interop/interop-contracts/"
+        "/platform-spec/language-meta/interop/c-abi-profile/",
+        "/platform-spec/language-meta/interop/rust-abi-profile/",
+        "/platform-spec/language-meta/interop/interop-contracts/",
+        "/platform-spec/core-library/compiler-integration/runtime-registration/",
+        "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38689,11 +39342,12 @@
       "path": "site/website/src/content/docs/book/21-ffi-and-forbidden-friendships/rust-abi-profile.md",
       "title": "Rust ABI profile",
       "authority": "informative",
-      "sourceHash": "349910772ab086327b90a6505c5be2d988e5a08f3aa23737190ef96ccbd2992e",
+      "sourceHash": "14effe733beb9949ce42a0c8128a3c58e6fe6826d36aeab9fddf7194488a2340",
       "standardLinks": [
         "/platform-spec/language-meta/interop/rust-abi-profile/",
+        "/platform-spec/language-meta/interop/rust-abi-profile/runtime-manifest/",
         "/platform-spec/language-meta/interop/rust-abi-profile/kernel-and-dispatch/",
-        "/platform-spec/language-meta/interop/rust-abi-profile/runtime-manifest/"
+        "/platform-spec/language-meta/interop/c-abi-profile/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38775,8 +39429,8 @@
       "authority": "informative",
       "sourceHash": "5a39a6be85206fc158c527f94c5bae845e4b43bd5c134a22603883f365e38054",
       "standardLinks": [
-        "/platform-spec/community/spec-maintenance/release-and-versioning-policy/",
-        "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/"
+        "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
+        "/platform-spec/community/spec-maintenance/release-and-versioning-policy/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38785,47 +39439,47 @@
       "path": "site/website/src/content/docs/book/appendix-spec-map.md",
       "title": "Appendix: Spec Map",
       "authority": "informative",
-      "sourceHash": "90f739c5599a233f58a015f78e64441ea1826206d92ffb06fa7af3c9a3ee24ad",
+      "sourceHash": "71ddf0d8a768f8b636cc99b61faff2e142c5cfc8312d99e186963c771d16b75e",
       "standardLinks": [
-        "/platform-spec/",
-        "/platform-spec/community/",
+        "/platform-spec/tooling/cli/",
+        "/platform-spec/tooling/cli/build-analyze-run-contract/",
+        "/platform-spec/tooling/lsp/",
+        "/platform-spec/tooling/vscode-extension/",
+        "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
+        "/platform-spec/tooling/project-scaffolding/",
+        "/platform-spec/language-meta/program-structure/",
+        "/platform-spec/language-meta/program-structure/modules-and-visibility/",
+        "/platform-spec/language-meta/program-structure/name-resolution/",
+        "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/",
+        "/platform-spec/language-meta/surface-syntax/",
+        "/platform-spec/language-meta/type-system/",
+        "/platform-spec/language-meta/contracts-and-effects/",
+        "/platform-spec/language-meta/memory-model/",
+        "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
+        "/platform-spec/execution/runtime/channels-and-synchronization/",
         "/platform-spec/community/spec-maintenance/",
-        "/platform-spec/community/spec-maintenance/release-and-versioning-policy/",
-        "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
-        "/platform-spec/compiler/",
+        "/platform-spec/",
+        "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/",
         "/platform-spec/compiler/build-pipeline/",
         "/platform-spec/compiler/codegen-and-ir/",
         "/platform-spec/compiler/compiler-mods/",
-        "/platform-spec/compiler/conformance/",
-        "/platform-spec/compiler/implementation-map/crate-to-spec-anchors/",
-        "/platform-spec/core-library/",
-        "/platform-spec/execution/",
-        "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/",
-        "/platform-spec/execution/runtime/channels-and-synchronization/",
-        "/platform-spec/language-meta/",
-        "/platform-spec/language-meta/contracts-and-effects/",
-        "/platform-spec/language-meta/evaluation/fibers-and-spawn/",
-        "/platform-spec/language-meta/interop/",
-        "/platform-spec/language-meta/memory-model/",
         "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
-        "/platform-spec/language-meta/program-structure/",
-        "/platform-spec/language-meta/program-structure/code-style-and-naming/",
-        "/platform-spec/language-meta/program-structure/modules-and-visibility/",
-        "/platform-spec/language-meta/program-structure/name-resolution/",
-        "/platform-spec/language-meta/surface-syntax/",
-        "/platform-spec/language-meta/surface-syntax/documentation-comments/",
-        "/platform-spec/language-meta/type-system/",
-        "/platform-spec/tooling/",
-        "/platform-spec/tooling/cli/",
+        "/platform-spec/core-library/",
         "/platform-spec/tooling/cli/api-json-contract/",
-        "/platform-spec/tooling/cli/build-analyze-run-contract/",
-        "/platform-spec/tooling/foreign-library-import/",
-        "/platform-spec/tooling/lsp/",
-        "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
-        "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/",
-        "/platform-spec/tooling/project-scaffolding/",
+        "/platform-spec/execution/",
+        "/platform-spec/compiler/conformance/",
         "/platform-spec/tooling/registry-client/",
-        "/platform-spec/tooling/vscode-extension/"
+        "/platform-spec/tooling/foreign-library-import/",
+        "/platform-spec/language-meta/program-structure/code-style-and-naming/",
+        "/platform-spec/language-meta/surface-syntax/documentation-comments/",
+        "/platform-spec/language-meta/interop/",
+        "/platform-spec/execution/abi-and-host/extern-dispatch-and-policy/",
+        "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/",
+        "/platform-spec/community/spec-maintenance/release-and-versioning-policy/",
+        "/platform-spec/language-meta/",
+        "/platform-spec/compiler/",
+        "/platform-spec/tooling/",
+        "/platform-spec/community/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -38857,10 +39511,10 @@
       "authority": "informative",
       "sourceHash": "ac9e9f7fbc1c532499e49c77d551c59902c0dfff7165436ba713d9476c2713fe",
       "standardLinks": [
-        "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/",
-        "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
         "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/design-model/",
-        "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/"
+        "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
+        "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
+        "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39023,9 +39677,9 @@
       "authority": "informative",
       "sourceHash": "00866c247cfccdd8ed91e1d9a2316615af9c41c3dcefc4c74da681a246840d61",
       "standardLinks": [
-        "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/",
         "/platform-spec/compiler/front-end/parser-and-ast-contracts/",
-        "/platform-spec/tooling/cli/command-surface/"
+        "/platform-spec/tooling/cli/command-surface/",
+        "/platform-spec/compiler/conformance/test-harnesses-and-fixtures/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39053,9 +39707,7 @@
       "title": "GitHub-managed docs feedback",
       "authority": "informative",
       "sourceHash": "f5a1f78d3eaa7510046de67b5f2efee0308e7bfde1380fe292fc3cf51ddefc81",
-      "standardLinks": [
-        "/platform-spec/..."
-      ],
+      "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
     },
@@ -39065,17 +39717,8 @@
       "authority": "informative",
       "sourceHash": "03a223c2e7422452d0d99dcf042f3f2de5ced44d410d84a56ca9409f23c3ea57",
       "standardLinks": [
-        "/platform-spec/language-meta/interop/",
-        "/platform-spec/language-meta/interop/c-abi-profile/",
-        "/platform-spec/language-meta/interop/c-abi-profile/dynamic-resolution-profile/",
         "/platform-spec/language-meta/interop/c-abi-profile/platform-tier-matrix/",
-        "/platform-spec/language-meta/interop/export-and-callbacks/",
-        "/platform-spec/language-meta/interop/ffi-and-extern/",
-        "/platform-spec/language-meta/interop/interop-contracts/",
-        "/platform-spec/language-meta/interop/interop-contracts/conformance-and-versioning/",
-        "/platform-spec/language-meta/interop/rust-abi-profile/",
-        "/platform-spec/tooling/foreign-library-import/",
-        "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries/"
+        "/platform-spec/language-meta/interop/interop-contracts/conformance-and-versioning/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39159,10 +39802,7 @@
       "title": "Project Resolution",
       "authority": "informative",
       "sourceHash": "4a43e9288891ade5dd73b65ea0cf9f43bfc4638a840a985ef1a1021cba40617a",
-      "standardLinks": [
-        "/platform-spec/language-meta/program-structure/name-resolution/",
-        "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/"
-      ],
+      "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
     },
@@ -39173,9 +39813,9 @@
       "sourceHash": "c3e867eb8d07b3a72481e0d0db7e702edf1c2c0cf197e414672b1a8e977a41ab",
       "standardLinks": [
         "/platform-spec/tooling/project-scaffolding/",
-        "/platform-spec/tooling/project-scaffolding/beskid-new/",
+        "/platform-spec/tooling/project-scaffolding/template-packages/",
         "/platform-spec/tooling/project-scaffolding/project-templates/",
-        "/platform-spec/tooling/project-scaffolding/template-packages/"
+        "/platform-spec/tooling/project-scaffolding/beskid-new/"
       ],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39194,9 +39834,7 @@
       "title": "Testing Framework",
       "authority": "informative",
       "sourceHash": "d17dd10c7e2942d4b746a425b81b4a76c13b1ac13cf1cf203b809e805c8cd147",
-      "standardLinks": [
-        "/platform-spec/language-meta/contracts-and-effects/testing/"
-      ],
+      "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
     },

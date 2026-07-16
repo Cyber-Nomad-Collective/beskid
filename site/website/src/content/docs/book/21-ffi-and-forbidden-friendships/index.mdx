@@ -13,6 +13,8 @@ This chapter is **informative**. Enforceable rules live under the [Platform spec
 
 FFI is where languages go to die. Beskid separates **language interop law** (language-meta) from **host dispatch** (execution ABI) so you know which spec page to argue about.
 
+Start by choosing the boundary you need, then read the applicable profile before writing declarations or host glue. This chapter provides the route; [Interop](/platform-spec/language-meta/interop/) and [ABI and host](/platform-spec/execution/abi-and-host/) provide the authoritative contracts.
+
 ## What you will find here
 
 | Section | Topic |
@@ -31,6 +33,12 @@ flowchart LR
   cabi --> native[Native library]
   rabi --> shims[Runtime shims]
 ```
+
+<Aside type="tip">
+
+Keep an interop boundary narrow and explicit. If a design mixes several foreign runtimes, split it into individual boundaries and validate each against its profile before composing them.
+
+</Aside>
 
 ## Next
 

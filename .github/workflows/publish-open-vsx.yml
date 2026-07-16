@@ -133,10 +133,17 @@ jobs:
           RUST_MIN_STACK: "67108864"
         run: bash ./scripts/ci/compiler-rust-gate.sh
 
+      - name: Resolve unified Beskid release version
+        id: release-version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(bash ./scripts/ci/resolve-beskid-version.sh)"
+          echo "version=${version}" >> "${GITHUB_OUTPUT}"
+
       - name: Publish Open VSX (native)
         shell: bash
         env:
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
-          GITHUB_REF_NAME: ${{ github.ref_name }}
-          GITHUB_REF_TYPE: ${{ github.ref_type }}
+          BESKID_RELEASE_VERSION: ${{ steps.release-version.outputs.version }}
         run: bash ./scripts/ci/open-vsx-publish.sh "${{ matrix.platform }}" "${{ matrix.bin_name }}" "${{ matrix.rust_target }}"
