@@ -21,13 +21,13 @@ export async function fetchLatestDelivery(
 ): Promise<LatestDelivery> {
 	if (!baseUrl) throw new Error('BESKID_TRACKER_API_URL is not configured');
 
+	const response = await fetcher(latestDeliveryUrl(baseUrl));
+	if (!response.ok) throw new Error(`Tracker latest delivery request failed (${response.status})`);
+
 	let payload: unknown;
 	try {
-		const response = await fetcher(latestDeliveryUrl(baseUrl));
-		if (!response.ok) throw new Error(`Tracker latest delivery request failed (${response.status})`);
 		payload = await response.json();
-	} catch (error) {
-		if (error instanceof Error) throw error;
+	} catch {
 		throw malformedLatestDelivery();
 	}
 
