@@ -215,8 +215,11 @@ else
 fi
 cd "${COMPILER_ROOT}"
 cargo build -p beskid_cli --release
-bash scripts/ensure-runtime-bridge.sh
 
 CLI="${COMPILER_ROOT}/target/release/beskid_cli"
+export BESKID_CLI_BIN="${CLI}"
+export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${COMPILER_ROOT}/target}/native-runtime-kit}"
+export BESKID_RUNTIME_KIT_PROFILE=release
+bash scripts/stage-native-runtime-kit.sh
 cd "${TESTS_DIR}"
 "$CLI" test --project "${TESTS_MANIFEST}" --all-targets --plain

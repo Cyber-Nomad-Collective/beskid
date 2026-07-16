@@ -9,6 +9,11 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Changed
+
+- Stage a freshly produced native-host ABI-v5 runtime kit for compiler and corelib CI gates,
+  replacing Rust runtime-bridge setup.
+
 ### Added
 
 - Generation-safe expanded-syntax semantic facts now cover cross-unit calls,

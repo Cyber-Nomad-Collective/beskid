@@ -51,7 +51,9 @@ RUNNER="${ROOT}/scripts/ci/lib/corelib-publish-runner.mjs"
 
 cd "$COMPILER_ROOT"
 cargo build -p beskid_cli --release
-bash scripts/ensure-runtime-bridge.sh
 export BESKID_CLI_BIN="${COMPILER_ROOT}/target/release/beskid_cli"
+export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${COMPILER_ROOT}/target}/native-runtime-kit}"
+export BESKID_RUNTIME_KIT_PROFILE=release
+bash scripts/stage-native-runtime-kit.sh
 
 node "$RUNNER"
