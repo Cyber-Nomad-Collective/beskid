@@ -55,6 +55,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Publish the active shared UI package set and make the Nexus image consume the
+  public settings export rather than an unavailable package subpath.
 - Install the scoped Trudoc package required by the published shared UI so the
   website image can resolve its platform-spec navigation imports.
 - Build the Platform Spec image from the root Bun workspace lockfile rather
