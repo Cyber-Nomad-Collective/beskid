@@ -12,7 +12,7 @@ ARG NODE_AUTH_TOKEN
 ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
 RUN bun install --frozen-lockfile
 
-COPY site/platform-spec/ ./
+COPY site/platform-spec/ ./site/platform-spec/
 COPY openspec /app/openspec
 
 ENV SKIP_ENV_VALIDATION=1
