@@ -45,7 +45,7 @@ function assertBatch(batch: OpenSpecEditBatch): void {
 	}
 	if (batch.edits.length === 0) throw new Error("edit batch cannot be empty");
 	for (const edit of batch.edits) {
-		if (!edit.path || edit.path.startsWith("/") || edit.path.split("/").includes("..")) {
+		if (!edit.path || edit.path.startsWith("/") || edit.path.split(/[\\/]/).includes("..")) {
 			throw new Error("edit path must be relative to the OpenSpec change");
 		}
 	}
@@ -75,11 +75,14 @@ function serializedFiles(batch: OpenSpecEditBatch): OpenSpecEdit[] {
 async function ensureBranch(
 	octokit: Octokit,
 	branch: string,
-): Promise<void> {
+): Promise<string> {
 	try {
-		await octokit.git.getRef({ owner: owner(), repo: repo(), ref: `heads/${branch}` });
-		return;
-	} catch {
+		const { data: existing } = await octokit.git.getRef({
+			owner: owner(), repo: repo(), ref: `heads/${branch}`,
+		});
+		return existing.object.sha;
+	} catch (error) {
+		if ((error as { status?: number }).status !== 404) throw error;
 		const { data: base } = await octokit.repos.getBranch({
 			owner: owner(),
 			repo: repo(),
@@ -91,6 +94,7 @@ async function ensureBranch(
 			ref: `refs/heads/${branch}`,
 			sha: base.commit.sha,
 		});
+		return base.commit.sha;
 	}
 }
 
@@ -108,28 +112,34 @@ async function assertWriteAccess(octokit: Octokit, login: string): Promise<void>
 async function writeFiles(
 	octokit: Octokit,
 	branch: string,
+	baseCommitSha: string,
 	files: OpenSpecEdit[],
 ): Promise<void> {
-	for (const file of files) {
-		let sha: string | undefined;
-		try {
-			const existing = await octokit.repos.getContent({
-				owner: owner(), repo: repo(), path: file.path, ref: branch,
-			});
-			if (!Array.isArray(existing.data) && existing.data.sha) sha = existing.data.sha;
-		} catch {
-			sha = undefined;
-		}
-		await octokit.repos.createOrUpdateFileContents({
+	const { data: parent } = await octokit.git.getCommit({
+		owner: owner(), repo: repo(), commit_sha: baseCommitSha,
+	});
+	const tree = await Promise.all(files.map(async (file) => {
+		const { data: blob } = await octokit.git.createBlob({
 			owner: owner(),
 			repo: repo(),
-			path: file.path,
-			message: `spec: synchronize platform editor batch ${branch.split("/").at(-1)}`,
 			content: Buffer.from(file.content, "utf8").toString("base64"),
-			branch,
-			sha,
+			encoding: "base64",
 		});
-	}
+		return { path: file.path, mode: "100644" as const, type: "blob" as const, sha: blob.sha };
+	}));
+	const { data: nextTree } = await octokit.git.createTree({
+		owner: owner(), repo: repo(), base_tree: parent.tree.sha, tree,
+	});
+	const { data: commit } = await octokit.git.createCommit({
+		owner: owner(),
+		repo: repo(),
+		message: `spec: synchronize platform editor batch ${branch.split("/").at(-1)}`,
+		tree: nextTree.sha,
+		parents: [baseCommitSha],
+	});
+	await octokit.git.updateRef({
+		owner: owner(), repo: repo(), ref: `heads/${branch}`, sha: commit.sha, force: false,
+	});
 }
 
 export async function openOpenSpecEditPullRequest(
@@ -158,8 +168,8 @@ export async function openOpenSpecEditPullRequest(
 		};
 	}
 
-	await ensureBranch(octokit, branch);
-	await writeFiles(octokit, branch, serializedFiles(input));
+	const baseCommitSha = await ensureBranch(octokit, branch);
+	await writeFiles(octokit, branch, baseCommitSha, serializedFiles(input));
 	const { data: pr } = await octokit.pulls.create({
 		owner: owner(),
 		repo: repo(),

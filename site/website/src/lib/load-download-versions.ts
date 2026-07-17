@@ -121,7 +121,7 @@ export function loadCliVersion(): CliVersionPayload {
  */
 export async function loadTrackerDelivery(): Promise<LatestDelivery | null> {
 	if (!process.env.BESKID_TRACKER_API_URL?.trim()) return null;
-	return fetchLatestDelivery();
+	return fetchLatestDelivery().catch(() => null);
 }
 
 export function cliDownloadBase(cli: CliVersionPayload): string {

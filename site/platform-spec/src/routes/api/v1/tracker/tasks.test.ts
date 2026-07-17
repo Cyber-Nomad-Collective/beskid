@@ -38,4 +38,24 @@ describe("Tracker task embeds", () => {
 			catalogRevision: "catalog-5",
 		});
 	});
+
+	it("rejects malformed task links with a validation error", async () => {
+		await expect(listTrackerTasks(
+			{ standardId: null, catalogRevision: "catalog-5" } as unknown as { standardId: string; catalogRevision: string },
+			fetch,
+			trackerBaseUrl,
+		)).rejects.toThrow("OpenSpec task links require standardId and catalogRevision");
+	});
+
+	it("rejects malformed task titles with a validation error", async () => {
+		await expect(createTrackerTask(
+			{
+				standardId: "language--syntax--blocks#BSP-REQ-BLOCK",
+				catalogRevision: "catalog-5",
+				title: null,
+			} as unknown as { standardId: string; catalogRevision: string; title: string },
+			fetch,
+			trackerBaseUrl,
+		)).rejects.toThrow("Tracker task title is required");
+	});
 });

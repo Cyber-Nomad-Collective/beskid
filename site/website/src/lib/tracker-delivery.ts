@@ -23,13 +23,9 @@ export async function fetchLatestDelivery(
 
 	const response = await fetcher(latestDeliveryUrl(baseUrl));
 	if (!response.ok) throw new Error(`Tracker latest delivery request failed (${response.status})`);
-
-	let payload: unknown;
-	try {
-		payload = await response.json();
-	} catch {
+	const payload = await response.json().catch(() => {
 		throw malformedLatestDelivery();
-	}
+	});
 
 	if (
 		!payload ||

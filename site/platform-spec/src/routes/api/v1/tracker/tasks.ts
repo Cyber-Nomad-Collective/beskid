@@ -19,8 +19,12 @@ function trackerUrl(path: string, baseUrl = env.TRACKER_PUBLIC_URL): URL {
 	return new URL(path, baseUrl);
 }
 
+function hasText(value: unknown): value is string {
+	return typeof value === "string" && value.trim().length > 0;
+}
+
 function assertLink(link: TrackerTaskLink): void {
-	if (!link.standardId.trim() || !link.catalogRevision.trim()) {
+	if (!hasText(link.standardId) || !hasText(link.catalogRevision)) {
 		throw new Error("OpenSpec task links require standardId and catalogRevision");
 	}
 }
@@ -48,7 +52,7 @@ export async function createTrackerTask(
 	trackerBaseUrl?: string,
 ): Promise<unknown> {
 	assertLink(input);
-	if (!input.title.trim()) throw new Error("Tracker task title is required");
+	if (!hasText(input.title)) throw new Error("Tracker task title is required");
 	return responseJson(
 		await fetcher(trackerUrl("/api/v1/tasks", trackerBaseUrl), {
 			method: "POST",

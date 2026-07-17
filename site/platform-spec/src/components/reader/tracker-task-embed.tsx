@@ -16,14 +16,21 @@ export function TrackerTaskEmbed({ standardId, catalogRevision }: TrackerTaskEmb
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
+		const controller = new AbortController();
 		const query = new URLSearchParams({ standardId, catalogRevision });
-		fetch(`/api/v1/tracker/tasks?${query}`)
+		setError(null);
+		fetch(`/api/v1/tracker/tasks?${query}`, { signal: controller.signal })
 			.then(async (response) => {
 				if (!response.ok) throw new Error("Tracker tasks are unavailable");
 				return response.json() as Promise<TrackerTask[]>;
 			})
 			.then(setTasks)
-			.catch((reason: unknown) => setError(reason instanceof Error ? reason.message : "Tracker tasks are unavailable"));
+			.catch((reason: unknown) => {
+				if (reason instanceof Error && reason.name === "AbortError") return;
+				setError(reason instanceof Error ? reason.message : "Tracker tasks are unavailable");
+			});
+
+		return () => controller.abort();
 	}, [catalogRevision, standardId]);
 
 	return (
