@@ -81,6 +81,7 @@ export default defineConfig({
 	ssr: {
 		noExternal: [
 			"@beskid/beskid-ui",
+			"@beskid/ui-react",
 			"@beskid/auth-client",
 			"@beskid/server-observability",
 			"pino",

@@ -46,7 +46,7 @@ export function ReaderTopBarActions() {
 			<ThemeToggle />
 			<Link
 				to="/settings/auth/login"
-				className="hidden rounded-md border border-border px-3 py-1.5 text-sm font-medium hover:bg-muted/60 sm:inline-flex"
+				className="inline-flex rounded-md border border-border px-3 py-1.5 text-sm font-medium hover:bg-muted/60"
 			>
 				Login
 			</Link>

@@ -51,9 +51,12 @@ bash scripts/stage-native-runtime-kit.sh
 # minutes instead. Override with BESKID_TEST_TIMEOUT (seconds); 0 disables.
 test_timeout="${BESKID_TEST_TIMEOUT:-1800}"
 if [[ "${test_timeout}" != "0" ]]; then
-  if ! timeout --kill-after=60s "${test_timeout}" \
-    cargo test --workspace --exclude beskid_e2e_tests -- --test-threads=1; then
-    status=$?
+  set +e
+  timeout --kill-after=60s "${test_timeout}" \
+    cargo test --workspace --exclude beskid_e2e_tests -- --test-threads=1
+  status=$?
+  set -e
+  if [[ "${status}" -ne 0 ]]; then
     if [[ "${status}" -eq 124 ]]; then
       echo "::error::Workspace tests exceeded ${test_timeout}s hard cap; a test is hung or looping. Failing fast instead of burning the job timeout." >&2
     fi

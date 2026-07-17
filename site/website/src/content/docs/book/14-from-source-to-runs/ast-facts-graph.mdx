@@ -1,0 +1,28 @@
+---
+title: "AST and facts graph demo"
+description: Interactive fixture demo of the shared AST tree linked to a facts DAG.
+tableOfContents: true
+---
+
+import LinkedAstFactsShell from '../../../../components/LinkedAstFactsShell.astro';
+
+The compiler front-end produces an AST; analysis attaches **facts** that later stages consume. This page mounts the shared `@beskid/ui-react` viewers (fixture data until live compiler streaming exists).
+
+Click an AST node to highlight related facts. Click a fact node to open its source location on GitHub.
+
+<LinkedAstFactsShell
+	title="Hello program — AST ↔ facts"
+	description="Fixture from @beskid/ui-react/graph. Fact clicks open GitHub blob URLs."
+	githubRepo="Cyber-Nomad-Collective/beskid"
+	githubRef="main"
+/>
+
+## Spec and book context
+
+- [Front-end](/book/14-from-source-to-runs/front-end/)
+- [Parser and AST contracts](/platform-spec/compiler/front-end/parser-and-ast-contracts/)
+- [Architecture graphs](/book/13-reading-the-law/architecture-graphs/)
+
+## Hub
+
+[14. From source to runs](/book/14-from-source-to-runs/)

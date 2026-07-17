@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Plan-only release promotion no longer fails `docker compose config` when
+  `POSTGRES_PASSWORD` is unset; placeholders cover required Compose
+  interpolation, and real secrets remain OpenBao-only on `--apply`.
 - Surface ISLE `MissingRuleOrFact` sites as `path#gN:nN Construct@line:col-line:col`
   (not only `#gN:nN`) on FAIL lines and isle.missing traces.
 - Unblock Corelib gate progress: specialize generic factories, lower Assert/String through syntax ISLE, export Text.Parser helpers, and rewrite syscall/output tests off privileged builtins.
@@ -50,6 +53,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- `scripts/sync-beskid-packages.sh` includes `site/platform-spec` and `pckg/web`,
+  skips temporary `file:` pins (website, platform-spec, pckg, tracker ui-react)
+  until `@beskid/ui-react` 0.2.9 / `@beskid/beskid-ui` 0.2.8 publish to GitHub
+  Packages, then documents switching back to `^0.2.0` ranges.
 - Produce and retain a sanitized detailed Corelib Markdown build report for
   every native gate outcome, including compiler trace evidence, command
   durations, runtime-kit metadata, and concise failure diagnostics.
@@ -58,6 +65,25 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Website book demo `14-from-source-to-runs/ast-facts-graph` mounts linked AST →
+  facts DAG (`LinkedAstFactsShell`); `@beskid/beskid-ui` 0.2.8 ships matching
+  Astro shells for Starlight islands.
+- Platform-spec map mode mounts shared `FactsDagView` (catalog-derived DAG) with
+  open-in-editor links; index chrome keeps Login reachable and declares local
+  `@beskid/beskid-ui` / `@beskid/ui-react` deps.
+- Tracker task/spec linking mounts shared `RepoExplorerDialog` (`RepoPathField`)
+  on create-task and issue detail, persisting repo-relative paths as task
+  metadata (`repoPaths` / schema v9 `repo_paths_json`), linking local
+  `@beskid/ui-react` 0.2.9 (`./explorer` + `./graph`). `/docs` remains a
+  platform-spec redirect (no in-app AST viewer).
+- pckg docs/source view mounts `PackageSourceGraphPanel` (`RepoExplorerDialog` +
+  fixture AST/facts) on `/packages/$packageName/docs`, linking local
+  `@beskid/ui-react` 0.2.9.
+- `@beskid/ui-react` `./graph` and `./explorer` subpaths: `AstTreeView` (ReactFlow +
+  d3-hierarchy), `FactsDagView` (ReactFlow + dagre), AST→facts linking via
+  `useAstFactsLink`, `RepoExplorerDialog` (local entries / remote `listChildren`),
+  canonical `openInEditorUrl` (cursor/vscode on local hosts, else GitHub blob),
+  and sample fixtures for P1 surface integrations.
 - Generation-safe expanded-syntax semantic facts now cover cross-unit calls,
   trusted canonical-runtime intrinsics, and test metadata used by the CLI
   migration.

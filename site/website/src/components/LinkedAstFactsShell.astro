@@ -1,0 +1,107 @@
+---
+/**
+ * Website island shell: mounts LinkedAstFactsView from @beskid/ui-react/graph.
+ */
+---
+
+<section
+	class="linked-ast-facts-shell"
+	data-linked-ast-facts-root
+	data-graph-data="website-linked-ast-facts-data"
+>
+	<header class="linked-ast-facts-shell__header">
+		<h2 class="linked-ast-facts-shell__title">{Astro.props.title ?? 'AST and facts DAG'}</h2>
+		<p class="linked-ast-facts-shell__desc">
+			{
+				Astro.props.description ??
+					'Click an AST node to highlight related facts. Click a fact to open its source on GitHub.'
+			}
+		</p>
+	</header>
+	<div
+		class="linked-ast-facts-shell__mount"
+		data-linked-ast-facts-mount
+		aria-label="Linked AST and facts graph"
+	></div>
+</section>
+
+<script
+	type="application/json"
+	id="website-linked-ast-facts-data"
+	set:html={JSON.stringify({
+		githubRepo: Astro.props.githubRepo ?? 'Cyber-Nomad-Collective/beskid',
+		githubRef: Astro.props.githubRef ?? 'main',
+	})}
+/>
+
+<script>
+	import { createElement } from 'react';
+	import { createRoot } from 'react-dom/client';
+	import {
+		LinkedAstFactsView,
+		sampleAst,
+		sampleFacts,
+	} from '@beskid/ui-react/graph';
+
+	function boot() {
+		document
+			.querySelectorAll('[data-linked-ast-facts-root]')
+			.forEach((root) => {
+				const el = /** @type {HTMLElement} */ (root);
+				if (el.dataset.mounted === '1') return;
+				el.dataset.mounted = '1';
+				const dataId = el.getAttribute('data-graph-data');
+				const dataEl = dataId ? document.getElementById(dataId) : null;
+				let githubRepo = 'Cyber-Nomad-Collective/beskid';
+				let githubRef = 'main';
+				try {
+					if (dataEl?.textContent) {
+						const parsed = JSON.parse(dataEl.textContent);
+						if (parsed.githubRepo) githubRepo = parsed.githubRepo;
+						if (parsed.githubRef) githubRef = parsed.githubRef;
+					}
+				} catch {
+					/* ignore */
+				}
+				const mount = el.querySelector('[data-linked-ast-facts-mount]');
+				if (!mount) return;
+				createRoot(mount).render(
+					createElement(LinkedAstFactsView, {
+						ast: sampleAst,
+						facts: sampleFacts,
+						openInEditor: { isLocal: false, githubRepo, githubRef },
+					}),
+				);
+			});
+	}
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', boot);
+	} else {
+		boot();
+	}
+	document.addEventListener('astro:page-load', boot);
+</script>
+
+<style>
+	.linked-ast-facts-shell {
+		margin: 1.5rem 0;
+		padding: 1rem 0;
+	}
+	.linked-ast-facts-shell__header {
+		margin-bottom: 0.75rem;
+	}
+	.linked-ast-facts-shell__title {
+		font-size: 1.15rem;
+		font-weight: 600;
+		margin: 0 0 0.35rem;
+	}
+	.linked-ast-facts-shell__desc {
+		margin: 0;
+		color: var(--sl-color-gray-3, #64748b);
+		font-size: 0.95rem;
+	}
+	.linked-ast-facts-shell__mount {
+		min-height: 320px;
+	}
+</style>
