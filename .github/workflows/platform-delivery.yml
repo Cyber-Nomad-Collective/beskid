@@ -187,11 +187,11 @@ jobs:
     with:
       name: beskid-pckg
       repository: ghcr.io/cyber-nomad-collective/beskid-pckg
-      # The pckg image copies both pckg/web and the compiler workspace.
+      # The pckg image builds the pckg web client and .NET server from this checkout.
       # Keep the context at the repository root so those paths exist.
       context: .
       dockerfile: pckg/Dockerfile
-      submodules: beskid_bsol compiler pckg
+      submodules: pckg
       node-auth: true
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}

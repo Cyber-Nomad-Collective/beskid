@@ -83,7 +83,7 @@ fi
 pckg_image_block="$(sed -n '/^  image-pckg:/,/^  manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
 for required in \
   'context: .' \
-  'submodules: beskid_bsol compiler pckg' \
+  'submodules: pckg' \
   'node-auth: true' \
   'NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}'; do
   if [[ "${pckg_image_block}" != *"${required}"* ]]; then

@@ -77,9 +77,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
-- Copy the BSOL source workspace into pckg's compiler-backed server image.
-- Build the pckg image from the repository-root context and initialize its
-  compiler dependency, matching the Dockerfile's source layout.
+- Build the pckg image from the repository-root context and publish its existing
+  .NET 10 server application, without a stale compiler workspace dependency.
 - Authenticate the pckg web image build against the existing GitHub Packages
   registry for its published `@beskid` dependencies.
 - Route pckg web dependency resolution to GitHub Packages through the same
