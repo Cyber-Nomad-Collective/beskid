@@ -76,6 +76,10 @@ rg -Fq 'build-contexts: ${{ inputs.build-contexts }}' "${root}/.github/workflows
 rg -Fq 'openspec=./openspec' "${root}/.github/workflows/platform-delivery.yml"
 rg -Fq "apply: \${{ github.event_name == 'workflow_dispatch' && inputs.apply-staging }}" "${root}/.github/workflows/platform-delivery.yml"
 rg -Fq 'submodules: beskid_web_common beskid_tracker beskid_nexus compiler' "${root}/.github/workflows/platform-delivery.yml"
+if rg -Fq "github.event_name == 'push' || inputs." "${root}/.github/workflows/platform-delivery.yml"; then
+  echo "platform delivery must guard workflow_dispatch inputs outside dispatch events" >&2
+  exit 1
+fi
 rg -Fq 'submodule update --init --recursive --depth 1' "${root}/scripts/ci/init-submodules.sh"
 rg -Fq 'COPY --from=openspec catalog.json /app/openspec/catalog.json' "${root}/beskid_nexus/Dockerfile"
 rg -Fq 'NEXUS_OPEN_SPEC_CATALOG=/app/openspec/catalog.json' "${root}/beskid_nexus/Dockerfile"

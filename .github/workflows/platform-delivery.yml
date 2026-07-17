@@ -94,8 +94,8 @@ jobs:
       dockerfile: site/website/Dockerfile
       submodules: beskid_web_common
       node-auth: true
-      push: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
-      sign: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
 
@@ -113,8 +113,8 @@ jobs:
       dockerfile: site/auth/Dockerfile
       submodules: beskid_web_common
       node-auth: true
-      push: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
-      sign: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
 
@@ -132,8 +132,8 @@ jobs:
       dockerfile: site/platform-spec/Dockerfile
       submodules: beskid_web_common
       node-auth: true
-      push: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
-      sign: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
 
@@ -151,8 +151,8 @@ jobs:
       dockerfile: beskid_tracker/Dockerfile
       submodules: beskid_tracker
       node-auth: true
-      push: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
-      sign: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
 
@@ -172,8 +172,8 @@ jobs:
         openspec=./openspec
       submodules: beskid_nexus
       node-auth: true
-      push: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
-      sign: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
 
@@ -190,19 +190,19 @@ jobs:
       context: pckg
       dockerfile: pckg/Dockerfile
       submodules: pckg
-      push: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
-      sign: ${{ github.event_name == 'push' || inputs.publish || inputs.apply-staging }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
 
   manifest:
     needs: [image-site, image-auth, image-platform-spec, image-tracker, image-nexus, image-pckg]
-    if: github.event_name == 'push' || inputs.publish || inputs.apply-staging
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging))
     uses: ./.github/workflows/reusable-release-manifest.yml
     with:
       artifact-name: release-manifest
 
   staging:
     needs: manifest
-    if: github.event_name == 'push' || inputs.apply-staging
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.apply-staging)
     permissions:
       actions: read
       contents: read
