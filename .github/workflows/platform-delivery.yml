@@ -187,9 +187,11 @@ jobs:
     with:
       name: beskid-pckg
       repository: ghcr.io/cyber-nomad-collective/beskid-pckg
-      context: pckg
+      # The pckg image copies both pckg/web and the compiler workspace.
+      # Keep the context at the repository root so those paths exist.
+      context: .
       dockerfile: pckg/Dockerfile
-      submodules: pckg
+      submodules: compiler pckg
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
 
