@@ -3,6 +3,7 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { renderMarkdownToHtml } from "#/lib/markdown";
+import type { LayoutValidation, SpecLayout } from "#/lib/spec/layouts";
 
 export interface StructuredDocumentViewProps {
 	title: string;
@@ -15,6 +16,10 @@ export interface StructuredDocumentViewProps {
 	adrs?: { href: string; title: string }[];
 	relatedTopics?: { href: string; title: string }[];
 	architectureGraph?: { graphKey: string; entryNode?: string } | null;
+	/** Enforceable layout resolved for this document's spec level. */
+	layout?: SpecLayout | null;
+	/** Result of validating the body against its enforceable layout. */
+	layoutValidation?: LayoutValidation | null;
 	showEditLink?: boolean;
 }
 
@@ -40,6 +45,8 @@ export function StructuredDocumentView({
 	adrs = [],
 	relatedTopics = [],
 	architectureGraph = null,
+	layout = null,
+	layoutValidation = null,
 	showEditLink = true,
 }: StructuredDocumentViewProps) {
 	const bodyHtml = renderMarkdownToHtml(bodyMd);
@@ -95,6 +102,57 @@ export function StructuredDocumentView({
 		)
 	) : null;
 
+	const missingHeadings = new Set(
+		(layoutValidation?.violations ?? [])
+			.filter((violation) => violation.heading)
+			.map((violation) => violation.heading as string),
+	);
+	const layoutSlot = layout ? (
+		<details
+			className="rounded-lg border border-border p-4"
+			open={layoutValidation ? !layoutValidation.ok : false}
+		>
+			<summary className="cursor-pointer font-semibold">
+				Document layout: {layout.title}
+				{layoutValidation ? (
+					<span
+						className={`ml-2 text-xs uppercase tracking-wide ${
+							layoutValidation.ok ? "text-muted-foreground" : "text-destructive"
+						}`}
+					>
+						{layoutValidation.ok ? "conforms" : "non-conforming"}
+					</span>
+				) : null}
+			</summary>
+			<ul className="mt-3 space-y-1 text-sm">
+				{layout.sections.map((section) => {
+					const missing =
+						section.required !== false && missingHeadings.has(section.heading);
+					return (
+						<li key={section.heading} className="flex items-center gap-2">
+							<span aria-hidden className={missing ? "text-destructive" : ""}>
+								{missing ? "✗" : "✓"}
+							</span>
+							<code>{`${"#".repeat(section.level)} ${section.heading}`}</code>
+							{section.required === false ? (
+								<span className="text-xs text-muted-foreground">optional</span>
+							) : null}
+						</li>
+					);
+				})}
+			</ul>
+			{layoutValidation && !layoutValidation.ok ? (
+				<ul className="mt-3 space-y-1 text-xs text-destructive">
+					{layoutValidation.violations.map((violation) => (
+						<li key={`${violation.code}-${violation.heading ?? ""}`}>
+							{violation.message}
+						</li>
+					))}
+				</ul>
+			) : null}
+		</details>
+	) : null;
+
 	return (
 		<article className="spec-document-view mx-auto w-full max-w-5xl px-6 py-8">
 			<div className="mb-4 flex justify-end">
@@ -120,6 +178,7 @@ export function StructuredDocumentView({
 			{architectureSlot ? (
 				<section className="mb-8">{architectureSlot}</section>
 			) : null}
+			{layoutSlot ? <section className="mb-8">{layoutSlot}</section> : null}
 			<div
 				className="spec-prose prose prose-invert max-w-none"
 				// biome-ignore lint/security/noDangerouslySetInnerHtml: server-rendered markdown

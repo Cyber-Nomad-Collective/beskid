@@ -41,6 +41,15 @@ Managed in **OpenBao** and synced to Coolify by `coolify-sync-env-from-openbao.s
 
 Canonical requirements live only in the image's root **OpenSpec** tree (`openspec/specs` plus `openspec/catalog.json`). The application reads those files directly. Memgraph stores editorial drafts and derived graph caches; it is not a normative content store. Approved edits create an `openspec/changes/<change>/` pull request in the Beskid superrepo, and a subsequent image build publishes the merged standard.
 
+## Seeding and migrations
+
+OpenSpec is the native shape. The image bakes a statically generated JSON seed workspace (`seed/*.json`) at build time, and the container entrypoint upserts it into the runtime stores before the server starts:
+
+- **SQLite** settings DB (`spec_capability`, `spec_layout`, `spec_seed_meta`) — always, via idempotent `INSERT ... ON CONFLICT DO UPDATE` migrations.
+- **Memgraph** domain -> area -> feature graph — when `MEMGRAPH_URI` is set, via `MERGE` (graph-native upsert).
+
+Seeding is idempotent: re-running an unchanged revision is a no-op, and a changed revision converges in place (stale capabilities/nodes are pruned). No manual migration step is required on deploy or redeploy.
+
 ## Service pairing
 
 1. Deploy and complete [auth hub](../auth/COOLIFY.md) onboarding.

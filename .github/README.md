@@ -6,7 +6,7 @@ This repo is an **aggregate** (submodules and shared web tooling). CI is central
 
 | Workflow | Purpose |
 |----------|---------|
-| `platform-delivery.yml` | Authoritative OpenSpec/conformance/integration/security gates, build-once images, manifest, staging |
+| `platform-delivery.yml` | OpenSpec/conformance/integration/security quality checks (non-blocking for delivery) plus build-once images, manifest, and Coolify staging that publish regardless of those checks |
 | `promote-production.yml` | Protected production promotion of a successful main delivery manifest |
 | `corelib.yml` | Corelib quality + test (native) + pckg publish |
 | `compiler.yml` | Compiler Rust gate, LSP contract, CLI/LSP releases (native per-OS matrix) |
@@ -26,12 +26,20 @@ implementation details of `platform-delivery.yml`, not alternate entry points:
 | `reusable-release-manifest.yml` | Aggregate image digests into one checksummed release manifest |
 | `reusable-promote.yml` | Render exact image digests and plan or deploy through protected `staging` / `production` environments |
 
-PRs run all gates and build images without pushing. A successful `main` run
-publishes signed SHA images (all six lanes are hard gates, including `beskid-pckg`),
-creates one checksummed digest manifest, and **auto-applies** that manifest to
-staging Coolify. Manual `workflow_dispatch` with `apply-staging` re-applies the
-same path. Production accepts only a successful main delivery run ID and promotes
-its existing manifest after the protected environment approval.
+PRs run all gates and build images without pushing. On `main`, image build/push,
+the digest manifest, and the staging Coolify apply are **decoupled from the
+quality gates**: `openspec`, `conformance`, `integration`, and `security` run in
+parallel as independent branch-protection checks, but they do **not** block
+publishing. Every image lane builds and pushes its signed SHA image regardless of
+gate results, the manifest is assembled from whatever lanes succeeded
+(`if: !cancelled()`, so one broken lane never blocks the rest), and that manifest
+**auto-applies** to staging Coolify. Manual `workflow_dispatch` with
+`apply-staging` re-applies the same path. Production accepts only a successful
+main delivery run ID and promotes its existing manifest after the protected
+environment approval.
+
+Branch protection (not the workflow graph) is the place to make any quality gate
+mandatory for merge; delivery itself intentionally never waits on them.
 
 The `beskid-pckg` GHCR package is owned by the sibling `beskid_pckg` repo. Grant
 this repo **Write** on that package, or set org/repo secret `GHCR_TOKEN` with

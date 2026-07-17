@@ -1,18 +1,18 @@
 import "@tanstack/react-start/server-only";
 
 import fs from "node:fs";
-import path from "node:path";
 
-const DEFAULT_DATA_DIR = "data/runtime";
+import {
+	resolvePlatformSpecDataDir,
+	settingsDbPathIn,
+} from "#/lib/spec/paths.core";
 
 export function platformSpecDataDir(): string {
-	const configured = process.env.PLATFORM_SPEC_DATA_DIR?.trim();
-	const base = configured || DEFAULT_DATA_DIR;
-	return path.isAbsolute(base) ? base : path.resolve(process.cwd(), base);
+	return resolvePlatformSpecDataDir();
 }
 
 export function settingsDbPath(): string {
-	return path.join(platformSpecDataDir(), "platform-spec.sqlite");
+	return settingsDbPathIn(platformSpecDataDir());
 }
 
 export function ensurePlatformSpecDataDir(): void {
