@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Surface ISLE `MissingRuleOrFact` sites as `path#gN:nN Construct@line:col-line:col`
+  (not only `#gN:nN`) on FAIL lines and isle.missing traces.
 - Unblock Corelib gate progress: specialize generic factories, lower Assert/String through syntax ISLE, export Text.Parser helpers, and rewrite syscall/output tests off privileged builtins.
 - Drop a ghost Nexus plan path from `openspec/catalog.json` so catalog regen
   matches the pinned `beskid_nexus` tree (revision `96e1c447`).
