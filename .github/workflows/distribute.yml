@@ -255,7 +255,7 @@ jobs:
 
   macos-dmg:
     name: macOS DMG
-    needs: [resolve-rolling, stamp-marker]
+    needs: resolve-rolling
     if: needs.resolve-rolling.outputs.should_run == 'true'
     runs-on: macos-latest
     timeout-minutes: 20
