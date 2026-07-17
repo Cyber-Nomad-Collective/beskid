@@ -11,6 +11,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Unblock Corelib gate progress: specialize generic factories, lower Assert/String through syntax ISLE, export Text.Parser helpers, and rewrite syscall/output tests off privileged builtins.
 - Drop a ghost Nexus plan path from `openspec/catalog.json` so catalog regen
   matches the pinned `beskid_nexus` tree (revision `96e1c447`).
 - Clear `clippy::cloned_ref_to_slice_refs` in `beskid_pckg_operations` so the
