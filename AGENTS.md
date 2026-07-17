@@ -66,3 +66,20 @@ This project is indexed by GitNexus as **beskid** (59804 symbols, 118171 relatio
 | Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
 
 <!-- gitnexus:end -->
+
+## Learned User Preferences
+- Prefer Cursor Auto agents for parallel work; do not use Composer 2.5 Fast when Auto is available
+- Prefer full, complete refactors that purge the old design—no leftover legacy APIs or half-migrations
+- Prefer parallel agents for large multi-surface work; serialize only for final integration when merge/revert loops appear
+- Always spell the project name `beskid` (never `beschid`)
+- In beskid hi on macOS, prefer menu shortcut Ctrl+M (not F10); keep shortcuts centralized and mouse-clickable
+- Prefer readable symbol/type identifiers in compiler traces—not raw numeric type ids
+- Settings/kanban dialogs: structural tabs/groups; settings shell with left nav tree and right auto-rendered form; task dialogs roughly 70% form / 30% preview
+
+## Learned Workspace Facts
+- Tracker SQLite DB is the task-tracking source of truth; GitHub Issues sync is limited to active version and bugs
+- Normative platform-spec content lives in `site/spec-content` (submodule `beskid_normative_spec`); content.md-only (no coexisting content.json); ADR status in markdown metadata; keep `layout.json`
+- VS Code extension is BSOL-only (`.bws` / `.bproj`); outline panel removed; projects panel retained; dashboard should open from the Beskid status-bar entry like rust-analyzer
+- Cranelift ISLE is the intended path for lowering Beskid constructs and gradually porting runtime from Rust to Beskid
+- Local `.beskid` directories should stay gitignored
+- Platform-spec / tracker integration: seed and divide workstreams from `beskid_tracker/data/` and OpenSpec so platform-spec stays the SOT for tracked work

@@ -9,6 +9,12 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Removed
+
+- AUR (`beskid-bin`) distribution channel: Arch packaging job, PKGBUILD, and
+  related GitHub Actions secrets are no longer part of the distribute pipeline.
+  Remaining channels: Windows MSI/EXE, macOS DMG/Homebrew, Debian `.deb`, Snap.
+
 ### Changed
 
 - Produce and retain a sanitized detailed Corelib Markdown build report for
