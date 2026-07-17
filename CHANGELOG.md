@@ -16,8 +16,13 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   matches the pinned `beskid_nexus` tree (revision `96e1c447`).
 - Clear `clippy::cloned_ref_to_slice_refs` in `beskid_pckg_operations` so the
   Compiler Rust gate and Open VSX publish jobs compile under `-D warnings`.
-- Soften image Trivy gate to report-only and prefer org GHCR credentials so
-  sibling-linked packages (beskid-pckg) can publish from the superrepo.
+- Push platform images to GHCR with the job's `GITHUB_TOKEN` (which carries
+  `packages: write`) instead of the releases PAT `DISTRIB_GH_PAT`, which lacks
+  `write:packages` and made every image lane fail its push with "the token
+  provided does not match expected scopes". `GHCR_TOKEN` remains an optional
+  override for packages linked to sibling repos.
+- Keep the image Trivy gate report-only and stop a missing SARIF from failing a
+  lane after the image has already been pushed (`if-no-files-found: warn`).
 - Rebuild OpenSpec document hashes after AGENTS.md memory updates, and restore
   the compiler submodule to the ABI-v5 runtime-kit tip so CI stage scripts and
   `beskid_pckg_server` workspace members resolve again.

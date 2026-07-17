@@ -44,9 +44,10 @@ on:
     secrets:
       NODE_AUTH_TOKEN:
         required: false
+      # Optional org-capable packages token. Only needed when a target package is
+      # linked to a sibling repo the job's GITHUB_TOKEN cannot push to. Must carry
+      # write:packages; a plain releases PAT will be rejected by GHCR.
       GHCR_TOKEN:
-        required: false
-      DISTRIB_GH_PAT:
         required: false
 
 permissions:
@@ -81,11 +82,15 @@ jobs:
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
         with:
           registry: ghcr.io
-          # Prefer an org-capable packages token when packages are linked to sibling
-          # repos (e.g. beskid-pckg → beskid_pckg). GITHUB_TOKEN only writes to
-          # packages linked to this repository.
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GHCR_TOKEN || secrets.DISTRIB_GH_PAT || github.token }}
+          # GITHUB_TOKEN carries `packages: write` for this repository, so it can
+          # create and push the org's beskid-* packages (GHCR links a new package
+          # to the pushing repo). Only override with GHCR_TOKEN when a package is
+          # linked to a sibling repo and the job token cannot reach it. The
+          # releases PAT (DISTRIB_GH_PAT) is deliberately NOT used here: it lacks
+          # write:packages, so GHCR authenticates it but denies the push with
+          # "the token provided does not match expected scopes".
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN || github.token }}
 
       - name: Setup Blacksmith builder
         uses: useblacksmith/setup-docker-builder@ab5c1da94f53f5cd75c1038092aa276dddfccbba # v1
@@ -148,7 +153,9 @@ jobs:
         with:
           name: vulnerability-${{ inputs.name }}
           path: trivy-${{ inputs.name }}.sarif
-          if-no-files-found: error
+          # The scan is report-only (continue-on-error). Don't fail the lane if a
+          # transient scanner miss leaves no SARIF after the image already pushed.
+          if-no-files-found: warn
           retention-days: 90
 
       - name: Keyless signing hook
