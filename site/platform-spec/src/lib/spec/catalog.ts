@@ -79,13 +79,24 @@ function normalizeLegacySlug(value: string): string {
 		: `platform-spec/${clean}`;
 }
 
+function stripHtmlComments(value: string): string {
+	let previous: string;
+	let current = value;
+	do {
+		previous = current;
+		current = current.replace(/<!--[\s\S]*?-->/g, "");
+	} while (current !== previous);
+	// Drop any dangling markers left by unterminated comments so the result
+	// can never still contain "<!--" / "-->".
+	return current.replace(/<!--|-->/g, "");
+}
+
 function extractPurpose(markdown: string): string | null {
 	const match = markdown.match(/^## Purpose\s*\n+([\s\S]*?)(?=\n## |$)/m);
 	if (!match) return null;
 	return (
-		match[1]
+		stripHtmlComments(match[1])
 			.replace(/\s+/g, " ")
-			.replace(/<!--.*?-->/g, "")
 			.trim() || null
 	);
 }

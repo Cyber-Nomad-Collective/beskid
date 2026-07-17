@@ -148,7 +148,7 @@ function main(): void {
 	for (const entry of entries) {
 		const specPath = entry.specPath;
 		if (!specPath) continue;
-		const absolute = path.join(repoRoot, specPath.replace(/^openspec\//, "openspec/"));
+		const absolute = path.join(repoRoot, specPath);
 		if (!existsSync(absolute)) continue;
 		const layout = resolveLayout(specLevelFor(entry), index, layouts);
 		if (!layout) continue;
