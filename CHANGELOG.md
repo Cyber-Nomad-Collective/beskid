@@ -14,6 +14,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Rebuild OpenSpec document hashes after AGENTS.md memory updates, and restore
   the compiler submodule to the ABI-v5 runtime-kit tip so CI stage scripts and
   `beskid_pckg_server` workspace members resolve again.
+- Make OpenSpec catalog rebuild prune missing documents and initialize
+  document-bearing submodules in the tracker projection job so revision hashes
+  stay deterministic in CI.
 
 ### Removed
 

@@ -11,7 +11,7 @@
     "normativeSources": 304,
     "provisionalCapabilities": 92,
     "legacyArtifacts": 3189,
-    "informativeDocuments": 252,
+    "informativeDocuments": 251,
     "documentsWithNormativeKeywords": 10
   },
   "entries": [
@@ -37244,15 +37244,6 @@
       "title": "Tree-sitter grammar",
       "authority": "informative",
       "sourceHash": "cf90e2c611328f4f525458553abf00316d075bd937fd17fb1ea14ba88b9774f3",
-      "standardLinks": [],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "beskid_distrib/docs/Arch_Guide.md",
-      "title": "Arch Guide — obtaining CI secrets for the AUR pipeline",
-      "authority": "informative",
-      "sourceHash": "062d341d344bc4606ab4bde8a42766dd152fddd0d14593ec085f60fdb39ebc61",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"

@@ -108,10 +108,12 @@ for (const entry of entries) {
 	});
 }
 
-const documents = (catalog.documents as UnknownRecord[]) ?? [];
+const documents = ((catalog.documents as UnknownRecord[]) ?? []).filter((document) =>
+	existsSync(path.join(repoRoot, String(document.path))),
+);
+catalog.documents = documents;
 for (const document of documents) {
 	const absolute = path.join(repoRoot, String(document.path));
-	if (!existsSync(absolute)) continue;
 	const markdown = readFileSync(absolute, "utf8");
 	const hash = sha256(markdown);
 	document.sourceHash = hash;
