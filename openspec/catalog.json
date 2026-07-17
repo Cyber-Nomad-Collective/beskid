@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "96e1c447f5a0b3075a8916cb111d0b476bc7390fe87d460c2cbb852946ecd72f",
+  "revision": "817500de8580fc2688e228aee542968243329c6c814875f7cd915b1c3f59e8c0",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -37146,7 +37146,7 @@
       "path": "AGENTS.md",
       "title": "Beskid — Toolchain & Stack",
       "authority": "informative",
-      "sourceHash": "6fecb1c697bbc3f430a2a04fba92ca99ff5442436ed99cab164358c7f6bf18e0",
+      "sourceHash": "a2196f9546dfcdb42776d02e555c583d3474231671081a2ff41fff0650e6d2ea",
       "standardLinks": [],
       "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"
@@ -38802,7 +38802,7 @@
       "path": "site/website/src/content/docs/book/14-from-source-to-runs/index.mdx",
       "title": "From source to something that runs",
       "authority": "informative",
-      "sourceHash": "36b121a4459b148b52b20bcd251f6cfd213b0e3fa4d2be6de74cd03b4777745d",
+      "sourceHash": "e7117ff3494adf7ff5bb752e8202641fddb822963f06ad4e2726bd75dea66be6",
       "standardLinks": [
         "/platform-spec/compiler/build-pipeline/"
       ],

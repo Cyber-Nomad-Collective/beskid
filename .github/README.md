@@ -27,9 +27,17 @@ implementation details of `platform-delivery.yml`, not alternate entry points:
 | `reusable-promote.yml` | Render exact image digests and plan or deploy through protected `staging` / `production` environments |
 
 PRs run all gates and build images without pushing. A successful `main` run
-publishes signed SHA images, creates one checksummed digest manifest, and deploys
-that manifest to staging. Production accepts only a successful main delivery run
-ID and promotes its existing manifest after the protected environment approval.
+publishes signed SHA images (all six lanes are hard gates, including `beskid-pckg`),
+creates one checksummed digest manifest, and **auto-applies** that manifest to
+staging Coolify. Manual `workflow_dispatch` with `apply-staging` re-applies the
+same path. Production accepts only a successful main delivery run ID and promotes
+its existing manifest after the protected environment approval.
+
+The `beskid-pckg` GHCR package is owned by the sibling `beskid_pckg` repo. Grant
+this repo **Write** on that package, or set org/repo secret `GHCR_TOKEN` with
+`write:packages` (wired in `reusable-image.yml` as
+`password: ${{ secrets.GHCR_TOKEN || github.token }}`). Without write access the
+pckg lane fails delivery.
 
 Required environment configuration:
 

@@ -73,8 +73,9 @@ This project is indexed by GitNexus as **beskid** (59804 symbols, 118171 relatio
 - Prefer parallel agents for large multi-surface work; serialize only for final integration when merge/revert loops appear
 - Always spell the project name `beskid` (never `beschid`)
 - In beskid hi on macOS, prefer menu shortcut Ctrl+M (not F10); keep shortcuts centralized and mouse-clickable
-- Prefer readable symbol/type identifiers in compiler traces—not raw numeric type ids
+- Prefer readable symbol/type identifiers in compiler and ISLE traces—expand `SourceUnitId`/`AstNodeKey` and `#gN:nM` into real names plus span/construct detail, not raw numeric ids
 - Settings/kanban dialogs: structural tabs/groups; settings shell with left nav tree and right auto-rendered form; task dialogs roughly 70% form / 30% preview
+- Verify builds and gates locally until they pass before pushing; do not stop at the first remote CI failure
 
 ## Learned Workspace Facts
 - Tracker SQLite DB is the task-tracking source of truth; GitHub Issues sync is limited to active version and bugs
@@ -83,3 +84,6 @@ This project is indexed by GitNexus as **beskid** (59804 symbols, 118171 relatio
 - Cranelift ISLE is the intended path for lowering Beskid constructs and gradually porting runtime from Rust to Beskid
 - Local `.beskid` directories should stay gitignored
 - Platform-spec / tracker integration: seed and divide workstreams from `beskid_tracker/data/` and OpenSpec so platform-spec stays the SOT for tracked work
+- Distribution pipelines intentionally omit AUR; keep the remaining packaging channels
+- Shared AST/DAG explorer UI (ReactFlow/d3) belongs in common `@beskid` components and should reuse one repo/browser explorer dialog across website, pckg, platform-spec, and tracker
+- OpenSpec `validate-standard` catalogues `AGENTS.md`; regenerating `openspec/catalog.json` may be required after editing it

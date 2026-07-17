@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Sync root `bun.lock` with website/platform-spec `file:` pins for
+  `@beskid/beskid-ui` / `@beskid/ui-react` so `bun install --frozen-lockfile`
+  (openspec CI gate) succeeds after the shared AST/facts explorer landing.
 - Plan-only release promotion no longer fails `docker compose config` when
   `POSTGRES_PASSWORD` is unset; placeholders cover required Compose
   interpolation, and real secrets remain OpenBao-only on `--apply`.
@@ -26,16 +29,6 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   `write:packages` and made every image lane fail its push with "the token
   provided does not match expected scopes". `GHCR_TOKEN` remains an optional
   override for packages linked to sibling repos.
-- Stop the `beskid-pckg` image lane from blocking platform delivery and the
-  website deploy. Its GHCR package is owned by the sibling `beskid_pckg` repo, so
-  this repo's `GITHUB_TOKEN` is denied (`permission_denied: write_package`) and
-  the failed push skipped `manifest`/`staging` for the whole platform. The lane
-  is now a best-effort `optional` delivery: a failed push no longer fails the run
-  (only on push events; pull-request build smoke tests still gate), it emits no
-  image record, and `render-release-compose.sh` drops the profile-gated `pckg`
-  service so the rendered Compose stays fully digest-pinned. Granting this repo
-  Write on the package (or setting a `GHCR_TOKEN` org secret with
-  `write:packages`) lets `pckg` rejoin the manifest automatically.
 - Keep the image Trivy gate report-only and stop a missing SARIF from failing a
   lane after the image has already been pushed (`if-no-files-found: warn`).
 - Rebuild OpenSpec document hashes after AGENTS.md memory updates, and restore
@@ -53,6 +46,17 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Hard-gate the `beskid-pckg` image lane in `platform-delivery.yml` (remove
+  `optional: true`): a failed pckg build/push fails the whole delivery.
+  Sibling-package Write or `GHCR_TOKEN` with `write:packages` is required;
+  Compose `profiles: [pckg]` remains deploy-profile gating only.
+- Auto-apply staging Coolify on every green `push` to `main`
+  (`apply: push || (dispatch && apply-staging)`); production promotion stays
+  explicit via `promote-production.yml`.
+- Website and platform-spec Docker builds hard-fail when `openspec/catalog.json`
+  is missing or has zero entries; website Book remark aliases throw in
+  CI/production when the catalog is absent/empty. Site-build and
+  platform-integration gates now include a website lane.
 - `scripts/sync-beskid-packages.sh` includes `site/platform-spec` and `pckg/web`,
   skips temporary `file:` pins (website, platform-spec, pckg, tracker ui-react)
   until `@beskid/ui-react` 0.2.9 / `@beskid/beskid-ui` 0.2.8 publish to GitHub

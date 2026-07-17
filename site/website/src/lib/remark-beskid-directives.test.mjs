@@ -59,3 +59,17 @@ test('labels every Book source as informative', () => {
 	assert.match(tree.children[0].value, /Informative guide/);
 	assert.match(tree.children[0].value, /Beskid Platform Specification/);
 });
+
+test('loadCanonicalAliases hard-fails when catalog is required and missing', () => {
+	const previous = process.env.BESKID_REQUIRE_OPENSPEC_CATALOG;
+	process.env.BESKID_REQUIRE_OPENSPEC_CATALOG = '1';
+	try {
+		assert.throws(
+			() => __test.loadCanonicalAliases('/nonexistent/openspec-root'),
+			/OpenSpec catalog missing/,
+		);
+	} finally {
+		if (previous === undefined) delete process.env.BESKID_REQUIRE_OPENSPEC_CATALOG;
+		else process.env.BESKID_REQUIRE_OPENSPEC_CATALOG = previous;
+	}
+});

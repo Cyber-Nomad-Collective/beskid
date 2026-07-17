@@ -27,6 +27,11 @@ ARG NODE_AUTH_TOKEN
 ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
 RUN bun install --frozen-lockfile
 
+# Book link rewrite needs a non-empty OpenSpec catalog at build time.
+RUN test -f openspec/catalog.json \
+  && bun -e 'const c=await Bun.file("openspec/catalog.json").json(); if(!Array.isArray(c.entries)||c.entries.length===0){console.error("openspec/catalog.json missing or empty; website image build requires catalog entries"); process.exit(1)}'
+ENV BESKID_REQUIRE_OPENSPEC_CATALOG=1
+ENV NODE_ENV=production
 RUN bun run --cwd site/website build
 
 FROM nginx:1.27-alpine AS runtime

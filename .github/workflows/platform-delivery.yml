@@ -198,16 +198,11 @@ jobs:
       dockerfile: pckg/Dockerfile
       submodules: pckg
       node-auth: true
-      # The beskid-pckg GHCR package is owned by the sibling beskid_pckg repo, so
-      # this repo's GITHUB_TOKEN cannot push to it (permission_denied:
-      # write_package), which was failing the whole delivery and blocking the
-      # website deploy. Treat the lane as best-effort so it cannot block delivery
-      # of the website and the rest of the platform. When the package grants this
-      # repo Write, or a GHCR_TOKEN org secret with write:packages is set, the
-      # push succeeds and pckg rejoins the release manifest automatically.
-      # profiles: [pckg] keeps it optional in the rendered Compose, so it is
-      # simply omitted from the deploy until then.
-      optional: true
+      # Hard gate: a failed pckg build/push fails the whole delivery. The
+      # beskid-pckg GHCR package is owned by the sibling beskid_pckg repo, so
+      # grant this repo Write on that package, or set org/repo secret GHCR_TOKEN
+      # with write:packages (password: secrets.GHCR_TOKEN || github.token).
+      # Compose profiles: [pckg] remains deploy-profile gating only.
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
@@ -233,7 +228,7 @@ jobs:
     with:
       environment: staging
       manifest-run-id: ${{ format('{0}', github.run_id) }}
-      # Every main delivery renders a staging plan. External mutation remains
-      # an explicit dispatch until the lane has its own Coolify service UUID.
-      apply: ${{ github.event_name == 'workflow_dispatch' && inputs.apply-staging }}
+      # Auto-apply staging on every green push to main; dispatch keeps
+      # apply-staging for manual re-apply. Production stays promote-only.
+      apply: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.apply-staging) }}
     secrets: inherit

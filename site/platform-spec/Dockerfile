@@ -17,6 +17,10 @@ WORKDIR /app/site/platform-spec
 COPY site/platform-spec/ ./
 COPY openspec /app/openspec
 
+# Platform-spec serves OpenSpec; refuse to bake an image without catalog data.
+RUN test -f /app/openspec/catalog.json \
+  && bun -e 'const c=await Bun.file("/app/openspec/catalog.json").json(); if(!Array.isArray(c.entries)||c.entries.length===0){console.error("/app/openspec/catalog.json missing or empty; platform-spec image build requires catalog entries"); process.exit(1)}'
+
 ENV SKIP_ENV_VALIDATION=1
 RUN bun run build
 RUN bun run verify:client-bundle

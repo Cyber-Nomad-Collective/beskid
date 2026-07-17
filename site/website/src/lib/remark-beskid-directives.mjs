@@ -20,12 +20,37 @@ function resolveOpenSpecRoot() {
 	return path.resolve(import.meta.dirname, '../../../../openspec');
 }
 
+function requireOpenSpecCatalog() {
+	return (
+		process.env.BESKID_REQUIRE_OPENSPEC_CATALOG === '1' ||
+		process.env.CI === 'true' ||
+		process.env.NODE_ENV === 'production'
+	);
+}
+
 function loadCanonicalAliases(openSpecRoot = resolveOpenSpecRoot()) {
 	const catalogPath = path.join(openSpecRoot, 'catalog.json');
-	if (!fs.existsSync(catalogPath)) return new Map();
+	const hardFail = requireOpenSpecCatalog();
+	if (!fs.existsSync(catalogPath)) {
+		if (hardFail) {
+			throw new Error(
+				`OpenSpec catalog missing at ${catalogPath}; Book link rewrite requires openspec/catalog.json`,
+			);
+		}
+		return new Map();
+	}
 	const catalog = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
+	const entries = catalog.entries ?? [];
+	if (entries.length === 0) {
+		if (hardFail) {
+			throw new Error(
+				`OpenSpec catalog at ${catalogPath} has zero entries; Book link rewrite requires a non-empty catalog`,
+			);
+		}
+		return new Map();
+	}
 	const aliases = new Map();
-	for (const entry of catalog.entries ?? []) {
+	for (const entry of entries) {
 		if (!entry?.path) continue;
 		const canonical = `/${normalizeSpecPath(entry.path)}/`.replace(/\/+/g, '/');
 		for (const alias of [...(entry.legacySlugs ?? []), ...(entry.aliases ?? [])]) {
