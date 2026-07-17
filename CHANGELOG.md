@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Drop a ghost Nexus plan path from `openspec/catalog.json` so catalog regen
+  matches the pinned `beskid_nexus` tree (revision `96e1c447`).
 - Clear `clippy::cloned_ref_to_slice_refs` in `beskid_pckg_operations` so the
   Compiler Rust gate and Open VSX publish jobs compile under `-D warnings`.
 - Soften image Trivy gate to report-only and prefer org GHCR credentials so

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "fa669f69a86a1d31bd94f6eb840ed2c0fe859ee9144bd1cff30744f034cff822",
+  "revision": "96e1c447f5a0b3075a8916cb111d0b476bc7390fe87d460c2cbb852946ecd72f",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -11,7 +11,7 @@
     "normativeSources": 304,
     "provisionalCapabilities": 92,
     "legacyArtifacts": 3189,
-    "informativeDocuments": 251,
+    "informativeDocuments": 250,
     "documentsWithNormativeKeywords": 10
   },
   "entries": [
@@ -37320,26 +37320,6 @@
       "sourceHash": "ebc0705d89771cae238f18166b8752ba8a15ea514ab9cae1bdcc8889a56b5573",
       "standardLinks": [],
       "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "beskid_nexus/docs/plans/2026-05-30-nexus-redesign-multi-agent.md",
-      "title": "Beskid Nexus Redesign — Multi-Agent Implementation Plan",
-      "authority": "informative",
-      "sourceHash": "890675109a2ba65650c29eee9753d4b1e7dd4138a2f0ba5f77846456b2be847e",
-      "standardLinks": [
-        "/platform-spec/tooling/",
-        "/platform-spec/tooling/nexus/adr/0001-public-graph-first-ux.mdx",
-        "/platform-spec/tooling/nexus/adr/0002-repo-owner-admin.mdx",
-        "/platform-spec/tooling/nexus/adr/0003-code-docs-separate-from-spec.mdx",
-        "/platform-spec/tooling/nexus/adr/0004-mcp-connect-surface.mdx",
-        "/platform-spec/tooling/nexus/contracts-and-edge-cases",
-        "/platform-spec/tooling/nexus/contracts-and-edge-cases.mdx",
-        "/platform-spec/tooling/nexus/design-model",
-        "/platform-spec/tooling/nexus/design-model.mdx",
-        "/platform-spec/tooling/nexus/index.mdx"
-      ],
-      "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"
     },
     {
