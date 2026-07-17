@@ -79,6 +79,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 - Restore valid distribution workflow scheduling by removing the retired
   `stamp-marker` dependency from macOS DMG packaging.
+- Point release integration at the published Tracker revision so fresh CI
+  checkouts can initialize its required submodule.
 - Publish the active shared UI package set and make the Nexus image consume the
   public settings export rather than an unavailable package subpath.
 - Install the scoped Trudoc package required by the published shared UI so the
