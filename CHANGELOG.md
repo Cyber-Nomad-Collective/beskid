@@ -77,6 +77,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Render compiler lower-spine type mismatches with source-level type names instead of internal IDs.
 - Build the pckg image from the repository-root context and publish its existing
   .NET 10 server application, without a stale compiler workspace dependency.
 - Authenticate the pckg web image build against the existing GitHub Packages
