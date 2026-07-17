@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "d58e75f1245d03bbd860729a27eebd802c1fdad40d87eba5c07b7a27377bfff4",
+  "revision": "fa669f69a86a1d31bd94f6eb840ed2c0fe859ee9144bd1cff30744f034cff822",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -37146,7 +37146,7 @@
       "path": "AGENTS.md",
       "title": "Beskid — Toolchain & Stack",
       "authority": "informative",
-      "sourceHash": "1be1defe6e3078d9ee391288ca8d22ac53d1ace546f13e1d7584c40bb4ecd414",
+      "sourceHash": "6fecb1c697bbc3f430a2a04fba92ca99ff5442436ed99cab164358c7f6bf18e0",
       "standardLinks": [],
       "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"
@@ -37261,7 +37261,7 @@
       "path": "beskid_distrib/docs/MacOS_Guide.md",
       "title": "macOS Guide — obtaining CI secrets for the Homebrew pipeline",
       "authority": "informative",
-      "sourceHash": "bf4237350f4f83fc68919fc13486305b3ab4551675ec2f240bb78b3606520dcf",
+      "sourceHash": "a772c633fb28e80f06f726486608c3081c00e045c68d2b47b4ba69043b530f22",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37288,7 +37288,7 @@
       "path": "beskid_distrib/docs/Windows_Guide.md",
       "title": "Windows Guide — obtaining CI secrets for the MSI pipeline",
       "authority": "informative",
-      "sourceHash": "1af1b1b7c63105f6df7bf0637eef601f39a758e2cd27ee365c9fcd496a64aad5",
+      "sourceHash": "161c9559acfd7e9503c367a2d619426dec85258bfb30e7f44f09a1ebab296f50",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37640,7 +37640,7 @@
       "path": "docs/distribution/SECRETS.md",
       "title": "Distribution Pipeline Secrets",
       "authority": "informative",
-      "sourceHash": "58242114285d027bd9bb81ccf3be8489d84301f5b0b942e96a9541dcbbcf3a6a",
+      "sourceHash": "b7f727a960c76a07074520a046a0a7d6729fa79d17a747c0fc35482adc770832",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37649,7 +37649,7 @@
       "path": "docs/orchestrate/verify-all-on-main-v04.md",
       "title": "verify-all-on-main (v0.4)",
       "authority": "informative",
-      "sourceHash": "73c306c3ce5a4162eb5463a738a47b2e2311e0ad25d8e915b320602c29f101f4",
+      "sourceHash": "5ce4c1c83e09e55a47d1bd0c1106d3765c92feb96d5d9de79304bb302498c037",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"

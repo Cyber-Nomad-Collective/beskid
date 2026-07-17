@@ -9,6 +9,12 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Fixed
+
+- Rebuild OpenSpec document hashes after AGENTS.md memory updates, and restore
+  the compiler submodule to the ABI-v5 runtime-kit tip so CI stage scripts and
+  `beskid_pckg_server` workspace members resolve again.
+
 ### Removed
 
 - AUR (`beskid-bin`) distribution channel: Arch packaging job, PKGBUILD, and
