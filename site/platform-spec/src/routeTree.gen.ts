@@ -27,6 +27,7 @@ import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as ApiAuthHubFinishRouteImport } from './routes/api/auth/hub-finish'
 import { Route as ApiAuthGithubRouteImport } from './routes/api/auth/github'
 import { Route as ApiAdminSetupRouteImport } from './routes/api/admin/setup'
+import { Route as ApiV1TrackerTasksRouteImport } from './routes/api/v1/tracker/tasks'
 import { Route as ApiV1EmbedSplatRouteImport } from './routes/api/v1/embed/$'
 import { Route as ApiV1DocsSplatRouteImport } from './routes/api/v1/docs/$'
 import { Route as ApiV1ArchitectureKeyRouteImport } from './routes/api/v1/architecture/$key'
@@ -121,6 +122,11 @@ const ApiAdminSetupRoute = ApiAdminSetupRouteImport.update({
   path: '/api/admin/setup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1TrackerTasksRoute = ApiV1TrackerTasksRouteImport.update({
+  id: '/api/v1/tracker/tasks',
+  path: '/api/v1/tracker/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1EmbedSplatRoute = ApiV1EmbedSplatRouteImport.update({
   id: '/api/v1/embed/$',
   path: '/api/v1/embed/$',
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/api/v1/architecture/$key': typeof ApiV1ArchitectureKeyRoute
   '/api/v1/docs/$': typeof ApiV1DocsSplatRoute
   '/api/v1/embed/$': typeof ApiV1EmbedSplatRoute
+  '/api/v1/tracker/tasks': typeof ApiV1TrackerTasksRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -187,6 +194,7 @@ export interface FileRoutesByTo {
   '/api/v1/architecture/$key': typeof ApiV1ArchitectureKeyRoute
   '/api/v1/docs/$': typeof ApiV1DocsSplatRoute
   '/api/v1/embed/$': typeof ApiV1EmbedSplatRoute
+  '/api/v1/tracker/tasks': typeof ApiV1TrackerTasksRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -212,6 +220,7 @@ export interface FileRoutesById {
   '/api/v1/architecture/$key': typeof ApiV1ArchitectureKeyRoute
   '/api/v1/docs/$': typeof ApiV1DocsSplatRoute
   '/api/v1/embed/$': typeof ApiV1EmbedSplatRoute
+  '/api/v1/tracker/tasks': typeof ApiV1TrackerTasksRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -237,6 +246,7 @@ export interface FileRouteTypes {
     | '/api/v1/architecture/$key'
     | '/api/v1/docs/$'
     | '/api/v1/embed/$'
+    | '/api/v1/tracker/tasks'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/api/v1/architecture/$key'
     | '/api/v1/docs/$'
     | '/api/v1/embed/$'
+    | '/api/v1/tracker/tasks'
   id:
     | '__root__'
     | '/'
@@ -284,6 +295,7 @@ export interface FileRouteTypes {
     | '/api/v1/architecture/$key'
     | '/api/v1/docs/$'
     | '/api/v1/embed/$'
+    | '/api/v1/tracker/tasks'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -306,6 +318,7 @@ export interface RootRouteChildren {
   ApiV1ArchitectureKeyRoute: typeof ApiV1ArchitectureKeyRoute
   ApiV1DocsSplatRoute: typeof ApiV1DocsSplatRoute
   ApiV1EmbedSplatRoute: typeof ApiV1EmbedSplatRoute
+  ApiV1TrackerTasksRoute: typeof ApiV1TrackerTasksRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -436,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminSetupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/tracker/tasks': {
+      id: '/api/v1/tracker/tasks'
+      path: '/api/v1/tracker/tasks'
+      fullPath: '/api/v1/tracker/tasks'
+      preLoaderRoute: typeof ApiV1TrackerTasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/v1/embed/$': {
       id: '/api/v1/embed/$'
       path: '/api/v1/embed/$'
@@ -501,6 +521,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiV1ArchitectureKeyRoute: ApiV1ArchitectureKeyRoute,
   ApiV1DocsSplatRoute: ApiV1DocsSplatRoute,
   ApiV1EmbedSplatRoute: ApiV1EmbedSplatRoute,
+  ApiV1TrackerTasksRoute: ApiV1TrackerTasksRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

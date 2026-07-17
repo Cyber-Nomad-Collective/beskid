@@ -16,6 +16,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Add Tracker delivery consumption across the downloads page and Nexus, with
+  revision-keyed Tracker-to-OpenSpec relations and non-mutating PR/main gates.
+- Publish Tracker delivery versions and deterministic, reviewed history-backfill
+  proposals with explicit unmapped commit handling.
 - Rust/React pckg registry delivery with GitHub-subject Auth Hub sessions,
   PostgreSQL-backed package persistence, validated package artifacts, and
   production Docker/Compose configuration.
@@ -43,7 +47,6 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   links, a reader panel that labels those guides informative, validation for
   the technical Book pilot, and expanded chapters on specification reading,
   documentation comments, and FFI.
-
 - OpenSpec 1.4.1 as the pinned normative-standard workflow, with a validated
   repository change proposal, design, behavioral deltas, and phased migration
   plan.
