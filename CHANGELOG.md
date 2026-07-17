@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Clear `clippy::cloned_ref_to_slice_refs` in `beskid_pckg_operations` so the
+  Compiler Rust gate and Open VSX publish jobs compile under `-D warnings`.
 - Soften image Trivy gate to report-only and prefer org GHCR credentials so
   sibling-linked packages (beskid-pckg) can publish from the superrepo.
 - Rebuild OpenSpec document hashes after AGENTS.md memory updates, and restore
