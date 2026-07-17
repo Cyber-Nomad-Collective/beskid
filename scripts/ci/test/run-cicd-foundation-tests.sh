@@ -23,6 +23,8 @@ done
 # CoreLib workspace member aliases intentionally differ from registry package
 # names; the quality gate must validate each member's package declaration.
 CORELIB_QUALITY_ONLY=1 "${root}/scripts/ci/corelib-gate.sh"
+bash "${root}/scripts/ci/test/corelib-gate-report.test.sh"
+bash "${root}/scripts/ci/test/corelib-workflow-report-contract.test.sh"
 
 mkdir -p "${tmp}/records" "${tmp}/bin"
 cat >"${tmp}/records/site.json" <<'JSON'
@@ -76,6 +78,21 @@ rg -Fq 'build-contexts: ${{ inputs.build-contexts }}' "${root}/.github/workflows
 rg -Fq 'openspec=./openspec' "${root}/.github/workflows/platform-delivery.yml"
 rg -Fq "apply: \${{ github.event_name == 'workflow_dispatch' && inputs.apply-staging }}" "${root}/.github/workflows/platform-delivery.yml"
 rg -Fq 'submodules: beskid_web_common beskid_tracker beskid_nexus compiler' "${root}/.github/workflows/platform-delivery.yml"
+if rg -Fq "github.event_name == 'push' || inputs." "${root}/.github/workflows/platform-delivery.yml"; then
+  echo "platform delivery must guard workflow_dispatch inputs outside dispatch events" >&2
+  exit 1
+fi
+pckg_image_block="$(sed -n '/^  image-pckg:/,/^  manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
+for required in \
+  'context: .' \
+  'submodules: pckg' \
+  'node-auth: true' \
+  'NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}'; do
+  if [[ "${pckg_image_block}" != *"${required}"* ]]; then
+    echo "pckg image workflow is missing required contract: ${required}" >&2
+    exit 1
+  fi
+done
 rg -Fq 'submodule update --init --recursive --depth 1' "${root}/scripts/ci/init-submodules.sh"
 rg -Fq 'COPY --from=openspec catalog.json /app/openspec/catalog.json' "${root}/beskid_nexus/Dockerfile"
 rg -Fq 'NEXUS_OPEN_SPEC_CATALOG=/app/openspec/catalog.json' "${root}/beskid_nexus/Dockerfile"

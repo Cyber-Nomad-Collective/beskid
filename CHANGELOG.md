@@ -11,11 +11,23 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Produce and retain a sanitized detailed Corelib Markdown build report for
+  every native gate outcome, including compiler trace evidence, command
+  durations, runtime-kit metadata, and concise failure diagnostics.
 - Stage a freshly produced native-host ABI-v5 runtime kit for compiler and corelib CI gates,
   replacing Rust runtime-bridge setup.
 
 ### Added
 
+- Generation-safe expanded-syntax semantic facts now cover cross-unit calls,
+  trusted canonical-runtime intrinsics, and test metadata used by the CLI
+  migration.
+- Canonical runtime allocation ownership and descriptor pointer-map contracts,
+  with mark/sweep regressions for rooted object graphs.
+- Syntax-to-ISLE CLI build/run routing and a target/profile runtime-kit
+  publication and provenance validation matrix.
+- Prepared-syntax AOT lowering, transparent aggregate ABI facts, and native
+  static/shared library-pair emission without an executable runtime-kit.
 - Add Tracker delivery consumption across the downloads page and Nexus, with
   revision-keyed Tracker-to-OpenSpec relations and non-mutating PR/main gates.
 - Publish Tracker delivery versions and deterministic, reviewed history-backfill
@@ -47,6 +59,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   links, a reader panel that labels those guides informative, validation for
   the technical Book pilot, and expanded chapters on specification reading,
   documentation comments, and FFI.
+- Starlight-native release-blog index with chronological status-labelled cards,
+  accessible hover/focus treatment, and reduced-motion-safe transitions.
+- Six sourced release and runtime-migration posts, including explicit delivery
+  status and tracker provenance for the in-progress v0.4 band.
 - OpenSpec 1.4.1 as the pinned normative-standard workflow, with a validated
   repository change proposal, design, behavioral deltas, and phased migration
   plan.
@@ -71,6 +87,33 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Render compiler lower-spine type mismatches with source-level type names instead of internal IDs.
+- Build the pckg image from the repository-root context and publish its existing
+  .NET 10 server application, without a stale compiler workspace dependency.
+- Authenticate the pckg web image build against the existing GitHub Packages
+  registry for its published `@beskid` dependencies.
+- Route pckg web dependency resolution to GitHub Packages through the same
+  ephemeral build secret used by the other platform images.
+- Resolve pckg's material-theme alias from the installed GitHub Packages
+  artifact rather than a monorepo-only path.
+- Initialize the Beskid BSOL submodule for pckg's compiler-backed server
+  image build.
+- Restore valid distribution workflow scheduling by removing the retired
+  `stamp-marker` dependency from macOS DMG packaging.
+- Point release integration at the published Tracker revision so fresh CI
+  checkouts can initialize its required submodule.
+- Keep pull-request image validation enabled by guarding manual-dispatch inputs
+  outside workflow-dispatch events.
+- Publish the active shared UI package set and make the Nexus image consume the
+  public settings export rather than an unavailable package subpath.
+- Install the scoped Trudoc package required by the published shared UI so the
+  website image can resolve its platform-spec navigation imports.
+- Build the Platform Spec image from the root Bun workspace lockfile rather
+  than a nonexistent site-local lockfile.
+- Make the manual Compiler Testbox workflow dispatch-only so pull requests no
+  longer start a job without its required Testbox session identifier.
+- Make the local supply-chain policy gate inspect only superrepo-tracked
+  workflows, matching its non-recursive GitHub checkout.
 - Reject hidden artifact paths outside the root `.beskid/docs` metadata tree
   before any package documentation or source is exposed.
 - Validate Corelib workspace member aliases against their explicit registry

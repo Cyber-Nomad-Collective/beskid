@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "950c642a9009e479eb6fd9416c5294247e5d9f7d80ce5994bd1e6224307b7f9e",
+  "revision": "d58e75f1245d03bbd860729a27eebd802c1fdad40d87eba5c07b7a27377bfff4",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -37155,7 +37155,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "3f09df89dad06501a98a396469dba30727d862fcb0d7f4857c1098299d275de4",
+      "sourceHash": "9a1703b8cb503b44e3ae12d63794366dda0b990cf66e3c87904c92896112bd59",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -39541,7 +39541,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/build.md",
       "title": "beskid build",
       "authority": "informative",
-      "sourceHash": "174837ef0a612b4de27617087ae933f2ba521c221d4a5a23b97dea9ee4df84b8",
+      "sourceHash": "f4865c301cc2ef0c33bca5e575427d5f8a1a9ac46a361ec82f440124984b6f6d",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39860,7 +39860,7 @@
       "path": "site/website/src/content/docs/index.mdx",
       "title": "beskid",
       "authority": "informative",
-      "sourceHash": "e36cf7270f0715321d002d8f885b9f5ec77b04181980e85bfc3021dff698ec24",
+      "sourceHash": "2429f4492fba9dfc0cd7788eff07e8ccc5bb8a92fc376cfb6bea3e7e46c15838",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/language-meta/"

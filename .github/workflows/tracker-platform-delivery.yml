@@ -18,7 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
           persist-credentials: false
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
@@ -40,10 +39,10 @@ jobs:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
       - uses: actions/checkout@v4
-      - name: Initialize tracker submodule
-        run: ./scripts/ci/init-submodules.sh beskid_tracker
         with:
           persist-credentials: false
+      - name: Initialize tracker submodule
+        run: ./scripts/ci/init-submodules.sh beskid_tracker
       - uses: oven-sh/setup-bun@v2
       - run: bun install --cwd beskid_tracker --frozen-lockfile
       - run: bun run --cwd beskid_tracker test | tee tracker-tests.txt
@@ -60,7 +59,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
           persist-credentials: false
       - uses: oven-sh/setup-bun@v2
       - run: bun install --cwd site/platform-spec --frozen-lockfile
@@ -77,10 +75,10 @@ jobs:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
       - uses: actions/checkout@v4
-      - name: Initialize nexus submodule
-        run: ./scripts/ci/init-submodules.sh beskid_nexus
         with:
           persist-credentials: false
+      - name: Initialize nexus submodule
+        run: ./scripts/ci/init-submodules.sh beskid_nexus
       - uses: oven-sh/setup-bun@v2
       - run: bun install --cwd site/website --frozen-lockfile
       - run: bun test --cwd site/website src/lib/tracker-delivery.test.ts | tee latest-delivery.txt

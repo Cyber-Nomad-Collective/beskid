@@ -255,7 +255,7 @@ jobs:
 
   macos-dmg:
     name: macOS DMG
-    needs: [resolve-rolling, stamp-marker]
+    needs: resolve-rolling
     if: needs.resolve-rolling.outputs.should_run == 'true'
     runs-on: macos-latest
     timeout-minutes: 20
@@ -419,13 +419,14 @@ jobs:
   # retry on the same rolling version.
   record-complete-marker:
     name: Record completed distribution
-    needs: [resolve-rolling, windows-msi, macos-brew, arch-aur, ubuntu-deb, linux-snap]
+    needs: [resolve-rolling, windows-msi, macos-brew, macos-dmg, arch-aur, ubuntu-deb, linux-snap]
     if: >-
       ${{
         always() &&
         needs.resolve-rolling.outputs.should_run == 'true' &&
         needs.windows-msi.result == 'success' &&
         needs.macos-brew.result == 'success' &&
+        needs.macos-dmg.result == 'success' &&
         needs.arch-aur.result == 'success' &&
         needs.ubuntu-deb.result == 'success' &&
         needs.linux-snap.result == 'success'

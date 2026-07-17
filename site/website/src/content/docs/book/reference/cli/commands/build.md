@@ -3,7 +3,7 @@ title: "beskid build"
 description: "AOT-compile and link a Beskid program to object, library, or executable outputs."
 ---
 
-AOT-compiles a resolved Beskid program, links against the Beskid runtime (unless standalone), and writes build artifacts. Progress output can be animated unless `--plain` is set.
+AOT-compiles a resolved Beskid program and writes build artifacts. Executable and library outputs link only the matching hash-validated ABI-v5 runtime kit installed with the toolchain; `--kind object` emits no runtime dependency. Progress output can be animated unless `--plain` is set.
 
 ## Project and entrypoint
 
@@ -31,9 +31,6 @@ AOT-compiles a resolved Beskid program, links against the Beskid runtime (unless
 
 | Argument | Description |
 | --- | --- |
-| `--runtime-archive` | Override the toolchain-bundled prebuilt runtime static library |
-| `--runtime-abi-version` | ABI version for `--runtime-archive` (defaults to the toolchain ABI) |
-| `--standalone` | No Beskid runtime archive linkage (cannot combine with `--runtime-archive`) |
 | `--export` | Repeatable: explicit symbols to export in shared/static artifacts |
 | `--prefer-static` / `--prefer-dynamic` | Link mode preference (mutually exclusive with each other) |
 

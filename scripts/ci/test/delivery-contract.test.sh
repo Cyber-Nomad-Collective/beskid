@@ -20,6 +20,11 @@ if rg -Fq 'COPY --from=build /app/site/platform-spec/node_modules' "${platform_d
 	exit 1
 fi
 
+if rg -Fq 'RUN bun run --cwd site/platform-spec' "${platform_dockerfile}"; then
+	echo "platform-spec build commands must be relative to their configured WORKDIR" >&2
+	exit 1
+fi
+
 # A retry after an already-published platform VSIX must verify the target identity.
 bash "${ROOT}/scripts/ci/test/open-vsx-publish.test.sh"
 

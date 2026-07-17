@@ -18,12 +18,14 @@ for workflow in "${authoritative[@]}"; do
   [[ -f "${workflow}" ]] || { echo "missing authoritative workflow: ${workflow}" >&2; exit 1; }
 done
 
-# Project delivery is orchestrated only from the superrepo. Vendored third-party
-# fixtures are excluded because their upstream metadata is not a Beskid lane.
-nested_workflows="$({
-  find site beskid_tracker beskid_nexus pckg compiler/corelib beskid_bsol \
-    -name node_modules -prune -o -path '*/.github/workflows/*' -type f -print 2>/dev/null || true
-} | rg -v '^compiler/vendor/' || true)"
+# Project delivery is orchestrated only from the superrepo. Inspect its tracked
+# paths rather than the working tree: initialized submodules are gitlinks here,
+# and their upstream workflow metadata is not an authoritative Beskid lane.
+# This keeps the local gate identical to the non-recursive GitHub checkout.
+nested_workflows="$(git ls-files -- \
+  site beskid_tracker beskid_nexus pckg compiler/corelib beskid_bsol \
+  | rg '/\.github/workflows/' \
+  | rg -v '^compiler/vendor/' || true)"
 if [[ -n "${nested_workflows}" ]]; then
   printf 'nested project workflows bypass the authoritative pipeline:\n%s\n' "${nested_workflows}" >&2
   exit 1

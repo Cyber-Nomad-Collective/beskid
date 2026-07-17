@@ -55,6 +55,8 @@ jobs:
       # RUST_MIN_STACK is also set by setup-compiler-gate and the gate script;
       # keep it here for visibility / parity with the compiler gate.
       RUST_MIN_STACK: "67108864"
+      # Include compiler trace events in the captured gate evidence.
+      BESKID_COMPILER_TRACE: "1"
     steps:
       # The repository checkout includes history for version and release logic.
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
@@ -68,7 +70,25 @@ jobs:
           compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
 
       - name: Corelib quality + test gate (native)
+        env:
+          CORELIB_REPORT_DIR: ${{ runner.temp }}/corelib-build-report
         run: bash ./scripts/ci/corelib-gate.sh
+
+      # The gate writes the Markdown report through an EXIT trap, including
+      # failures before the test suite starts. Retain it after a failed gate;
+      # GitHub cannot guarantee post-cancellation steps after a hard runner
+      # termination, hence a missing file is a warning rather than a second
+      # failure that obscures the original result.
+      - name: Upload Corelib build report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: corelib-build-report
+          # The gate keeps raw command logs in a separate temporary directory;
+          # publish only the sanitized Markdown report.
+          path: ${{ runner.temp }}/corelib-build-report/corelib-build-report.md
+          if-no-files-found: warn
+          retention-days: 14
 
   publish:
     name: Publish corelib to pckg

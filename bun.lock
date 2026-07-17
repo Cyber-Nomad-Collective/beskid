@@ -51,6 +51,7 @@
         "@astrojs/internal-helpers": "0.9.0",
         "@astrojs/starlight": "^0.38.4",
         "@beskid/beskid-ui": "npm:@cyber-nomad-collective/beskid-ui@0.2.6",
+        "@cyber-nomad-collective/trudoc": "0.2.5",
         "astro": "6.4.6",
         "astro-embed": "^0.13.0",
         "astro-mermaid": "^2.0.1",
@@ -189,6 +190,8 @@
     "@csstools/css-tokenizer": ["@csstools/css-tokenizer@3.0.4", "", {}, "sha512-Vd/9EVDiu6PPJt9yAh6roZP6El1xHrdvIVGjyBsHR0RYwNHgL7FJPyIIW4fANJNG6FtyZfvlRPpFI4ZM/lubvw=="],
 
     "@ctrl/tinycolor": ["@ctrl/tinycolor@4.2.0", "", {}, "sha512-kzyuwOAQnXJNLS9PSyrk0CWk35nWJW/zl/6KvnTBMFK65gm7U1/Z5BqjxeapjZCIhQcM/DsrEmcbRwDyXyXK4A=="],
+
+    "@cyber-nomad-collective/trudoc": ["@cyber-nomad-collective/trudoc@0.2.5", "https://npm.pkg.github.com/download/@cyber-nomad-collective/trudoc/0.2.5/a68a95f2c9913bbf57f0278a37e01c79b9e9fafc", { "dependencies": { "yaml": "^2.7.0", "zod": "^4.4.3" }, "peerDependencies": { "astro": ">=4.0.0" }, "bin": { "trudoc": "bin/trudoc.mjs", "trudoc-layout": "bin/trudoc-layout.mjs" } }, "sha512-R95tDnOIlzBg9b9LTHsPJrMY6cuWDkHmmTX9hZGKjLaGMYvWSLGeSt0vgt3mYkpA+Fmorbw66ZXwXL8TkkZdSQ=="],
 
     "@dagrejs/dagre": ["@dagrejs/dagre@1.1.8", "", { "dependencies": { "@dagrejs/graphlib": "2.2.4" } }, "sha512-5SEDlndt4W/LaVzPYJW+bSmSEZc9EzTf8rJ20WCKvjS5EAZAN0b+x0Yww7VMT4R3Wootkg+X9bUfUxazYw6Blw=="],
 
