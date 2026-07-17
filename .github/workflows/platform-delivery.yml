@@ -198,6 +198,16 @@ jobs:
       dockerfile: pckg/Dockerfile
       submodules: pckg
       node-auth: true
+      # The beskid-pckg GHCR package is owned by the sibling beskid_pckg repo, so
+      # this repo's GITHUB_TOKEN cannot push to it (permission_denied:
+      # write_package), which was failing the whole delivery and blocking the
+      # website deploy. Treat the lane as best-effort so it cannot block delivery
+      # of the website and the rest of the platform. When the package grants this
+      # repo Write, or a GHCR_TOKEN org secret with write:packages is set, the
+      # push succeeds and pckg rejoins the release manifest automatically.
+      # profiles: [pckg] keeps it optional in the rendered Compose, so it is
+      # simply omitted from the deploy until then.
+      optional: true
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
