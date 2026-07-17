@@ -81,10 +81,16 @@ if rg -Fq "github.event_name == 'push' || inputs." "${root}/.github/workflows/pl
   exit 1
 fi
 pckg_image_block="$(sed -n '/^  image-pckg:/,/^  manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
-[[ "${pckg_image_block}" == *'context: .'* ]]
-[[ "${pckg_image_block}" == *'submodules: beskid_bsol compiler pckg'* ]]
-[[ "${pckg_image_block}" == *'node-auth: true'* ]]
-[[ "${pckg_image_block}" == *'NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}'* ]]
+for required in \
+  'context: .' \
+  'submodules: beskid_bsol compiler pckg' \
+  'node-auth: true' \
+  'NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}'; do
+  if [[ "${pckg_image_block}" != *"${required}"* ]]; then
+    echo "pckg image workflow is missing required contract: ${required}" >&2
+    exit 1
+  fi
+done
 rg -Fq 'submodule update --init --recursive --depth 1' "${root}/scripts/ci/init-submodules.sh"
 rg -Fq 'COPY --from=openspec catalog.json /app/openspec/catalog.json' "${root}/beskid_nexus/Dockerfile"
 rg -Fq 'NEXUS_OPEN_SPEC_CATALOG=/app/openspec/catalog.json' "${root}/beskid_nexus/Dockerfile"
