@@ -38,6 +38,17 @@ on:
         required: false
         default: false
         type: boolean
+      optional:
+        description: >-
+          Best-effort lane. When true, a failed build/push does not fail the job
+          or block platform delivery; the lane simply emits no image record, so
+          the release manifest omits it and render-release-compose.sh drops the
+          matching optional (profile-gated) Compose service. Use for services
+          whose GHCR package is owned by a sibling repo the job token cannot push
+          to. A successful build/push behaves identically to a required lane.
+        required: false
+        default: false
+        type: boolean
     outputs:
       digest:
         value: ${{ jobs.image.outputs.digest }}
@@ -112,6 +123,13 @@ jobs:
 
       - name: Build immutable image
         id: build
+        # Optional lanes tolerate a failed push (e.g. a GHCR package owned by a
+        # sibling repo this token cannot push to) so it cannot block delivery.
+        # Scoped to push events: on pull_request (push=false) the lane is a build
+        # smoke test, so a build regression still fails it. The subsequent steps
+        # are gated on this step succeeding, so a tolerated failure emits no
+        # record and the manifest omits the image.
+        continue-on-error: ${{ inputs.optional && inputs.push }}
         uses: useblacksmith/build-push-action@fb9e3e6a9299c78462bfadd0d93352c316adc9b8 # v2
         with:
           context: ${{ inputs.context }}
@@ -127,14 +145,14 @@ jobs:
             NODE_AUTH_TOKEN=${{ secrets.NODE_AUTH_TOKEN }}
 
       - name: Require immutable digest
-        if: inputs.push
+        if: inputs.push && steps.build.outcome == 'success'
         env:
           DIGEST: ${{ steps.build.outputs.digest }}
         run: |
           [[ "${DIGEST}" =~ ^sha256:[0-9a-f]{64}$ ]]
 
       - name: Scan immutable image for vulnerabilities
-        if: inputs.push
+        if: inputs.push && steps.build.outcome == 'success'
         continue-on-error: true
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
@@ -148,7 +166,7 @@ jobs:
           exit-code: '0'
 
       - name: Upload vulnerability report
-        if: always() && inputs.push
+        if: always() && inputs.push && steps.build.outcome == 'success'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: vulnerability-${{ inputs.name }}
@@ -159,7 +177,7 @@ jobs:
           retention-days: 90
 
       - name: Keyless signing hook
-        if: inputs.push && inputs.sign
+        if: inputs.push && inputs.sign && steps.build.outcome == 'success'
         env:
           IMAGE: ${{ inputs.repository }}@${{ steps.build.outputs.digest }}
         run: |
@@ -168,7 +186,7 @@ jobs:
           PATH="${RUNNER_TEMP}/cosign-bin:${PATH}" ./scripts/ci/sign-image.sh "${IMAGE}"
 
       - name: Write image manifest record
-        if: inputs.push
+        if: inputs.push && steps.build.outcome == 'success'
         env:
           NAME: ${{ inputs.name }}
           REPOSITORY: ${{ inputs.repository }}
@@ -181,7 +199,7 @@ jobs:
             >"image-record/${NAME}.json"
 
       - name: Upload image manifest record
-        if: inputs.push
+        if: inputs.push && steps.build.outcome == 'success'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: image-record-${{ inputs.name }}

@@ -23,6 +23,16 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   `write:packages` and made every image lane fail its push with "the token
   provided does not match expected scopes". `GHCR_TOKEN` remains an optional
   override for packages linked to sibling repos.
+- Stop the `beskid-pckg` image lane from blocking platform delivery and the
+  website deploy. Its GHCR package is owned by the sibling `beskid_pckg` repo, so
+  this repo's `GITHUB_TOKEN` is denied (`permission_denied: write_package`) and
+  the failed push skipped `manifest`/`staging` for the whole platform. The lane
+  is now a best-effort `optional` delivery: a failed push no longer fails the run
+  (only on push events; pull-request build smoke tests still gate), it emits no
+  image record, and `render-release-compose.sh` drops the profile-gated `pckg`
+  service so the rendered Compose stays fully digest-pinned. Granting this repo
+  Write on the package (or setting a `GHCR_TOKEN` org secret with
+  `write:packages`) lets `pckg` rejoin the manifest automatically.
 - Keep the image Trivy gate report-only and stop a missing SARIF from failing a
   lane after the image has already been pushed (`if-no-files-found: warn`).
 - Rebuild OpenSpec document hashes after AGENTS.md memory updates, and restore
