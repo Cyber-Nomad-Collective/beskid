@@ -1,9 +1,12 @@
+import { TrackerTaskEmbed } from "#/components/reader/tracker-task-embed";
+
 interface SpecDocumentViewProps {
 	title: string;
 	specLevel?: string | null;
 	status?: string | null;
 	description?: string | null;
 	bodyHtml: string;
+	trackerLinks?: Array<{ standardId: string; catalogRevision: string }>;
 }
 
 export function SpecDocumentView({
@@ -12,6 +15,7 @@ export function SpecDocumentView({
 	status,
 	description,
 	bodyHtml,
+	trackerLinks = [],
 }: SpecDocumentViewProps) {
 	return (
 		<article className="spec-document-view mx-auto w-full max-w-4xl px-6 py-8">
@@ -38,6 +42,9 @@ export function SpecDocumentView({
 				// biome-ignore lint/security/noDangerouslySetInnerHtml: server-rendered markdown
 				dangerouslySetInnerHTML={{ __html: bodyHtml }}
 			/>
+			{trackerLinks.map((link) => (
+				<TrackerTaskEmbed key={`${link.standardId}:${link.catalogRevision}`} {...link} />
+			))}
 		</article>
 	);
 }

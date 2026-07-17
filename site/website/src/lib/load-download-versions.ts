@@ -2,6 +2,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { fetchLatestDelivery, type LatestDelivery } from './tracker-delivery';
+
 export interface VersionPayload {
 	version: string;
 	source: string;
@@ -111,6 +113,15 @@ export function loadCliVersion(): CliVersionPayload {
 			latestReleasePageUrl: `https://github.com/${GITHUB_REPO}/releases/tag/${DEFAULT_LATEST_TAG}`,
 		}
 	);
+}
+
+/**
+ * The Tracker is authoritative for the public delivery label, while compiler
+ * release metadata remains authoritative for binary asset URLs.
+ */
+export async function loadTrackerDelivery(): Promise<LatestDelivery | null> {
+	if (!process.env.BESKID_TRACKER_API_URL?.trim()) return null;
+	return fetchLatestDelivery().catch(() => null);
 }
 
 export function cliDownloadBase(cli: CliVersionPayload): string {

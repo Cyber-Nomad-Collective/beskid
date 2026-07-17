@@ -29,9 +29,11 @@ if grep -Fq 'needs: [resolve-rolling, stamp-marker]' "${workflow}"; then
 fi
 
 grep -Fq 'record-complete-marker:' "${workflow}" || fail "missing post-publication marker job"
-grep -Fq 'needs: [resolve-rolling, windows-msi, macos-brew, arch-aur, ubuntu-deb, linux-snap]' "${workflow}" || fail "completion marker must wait for every platform job"
+grep -Fq 'macos-dmg:' "${workflow}" || fail "missing macos-dmg job"
+grep -Fq 'needs: [resolve-rolling, windows-msi, macos-brew, macos-dmg, arch-aur, ubuntu-deb, linux-snap]' "${workflow}" || fail "completion marker must wait for every platform job"
 grep -Fq "needs.windows-msi.result == 'success'" "${workflow}" || fail "completion marker must require successful Windows publication"
-grep -Fq "needs.macos-brew.result == 'success'" "${workflow}" || fail "completion marker must require successful macOS publication"
+grep -Fq "needs.macos-brew.result == 'success'" "${workflow}" || fail "completion marker must require successful macOS Homebrew publication"
+grep -Fq "needs.macos-dmg.result == 'success'" "${workflow}" || fail "completion marker must require successful macOS DMG publication"
 grep -Fq "needs.arch-aur.result == 'success'" "${workflow}" || fail "completion marker must require successful Arch publication"
 grep -Fq "needs.ubuntu-deb.result == 'success'" "${workflow}" || fail "completion marker must require successful Debian publication"
 grep -Fq "needs.linux-snap.result == 'success'" "${workflow}" || fail "completion marker must require successful Snap publication"
