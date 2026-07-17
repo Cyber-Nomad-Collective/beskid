@@ -40,17 +40,44 @@ interface Options {
 	static: boolean;
 	stores: boolean;
 	graph: boolean;
+	explicitGraph: boolean;
 	checkLayouts: boolean;
 	strict: boolean;
 	pruneGraph: boolean;
 	outDir: string;
 }
 
+const KNOWN_FLAGS = new Set([
+	"--static",
+	"--stores",
+	"--graph",
+	"--check-layouts",
+	"--strict",
+	"--prune-graph",
+	"--out",
+]);
+
 function parseArgs(argv: string[]): Options {
-	const flags = new Set(argv.filter((arg) => arg.startsWith("--")));
-	const outIndex = argv.indexOf("--out");
-	const outDir =
-		outIndex >= 0 && argv[outIndex + 1] ? argv[outIndex + 1]! : resolveSeedDir();
+	const flags = new Set<string>();
+	let outDir: string | null = null;
+
+	for (let index = 0; index < argv.length; index++) {
+		const arg = argv[index]!;
+		if (!arg.startsWith("--")) continue;
+		if (arg === "--out") {
+			const value = argv[index + 1];
+			if (!value || value.startsWith("--")) {
+				throw new Error("--out requires a directory");
+			}
+			outDir = value;
+			index += 1;
+			continue;
+		}
+		if (!KNOWN_FLAGS.has(arg)) {
+			throw new Error(`Unknown option: ${arg}`);
+		}
+		flags.add(arg);
+	}
 
 	const explicitStage =
 		flags.has("--static") || flags.has("--stores") || flags.has("--graph");
@@ -60,10 +87,11 @@ function parseArgs(argv: string[]): Options {
 		static: flags.has("--static") || !explicitStage,
 		stores: flags.has("--stores") || !explicitStage,
 		graph: flags.has("--graph") || (!explicitStage && graphConfigured),
+		explicitGraph: flags.has("--graph"),
 		checkLayouts: flags.has("--check-layouts"),
 		strict: flags.has("--strict"),
 		pruneGraph: flags.has("--prune-graph"),
-		outDir,
+		outDir: outDir ?? resolveSeedDir(),
 	};
 }
 
@@ -135,7 +163,15 @@ async function main(): Promise<void> {
 	if (options.graph && workspace) {
 		const uri = process.env.MEMGRAPH_URI?.trim();
 		if (!uri) {
-			console.error("--graph requested but MEMGRAPH_URI is not set; skipping graph seed.");
+			// An explicit `--graph` (e.g. the `seed:graph` command) must report
+			// failure so automation notices a stale graph; implicit startup
+			// seeding stays non-fatal.
+			const message =
+				"--graph requested but MEMGRAPH_URI is not set; skipping graph seed.";
+			if (options.explicitGraph) {
+				throw new Error(message);
+			}
+			console.error(message);
 		} else {
 			try {
 				const result = await seedSpecGraph(uri, workspace, {
@@ -145,6 +181,7 @@ async function main(): Promise<void> {
 					`Memgraph seed upserted: ${result.nodes} spec nodes, ${result.pruned} pruned.`,
 				);
 			} catch (error) {
+				if (options.explicitGraph) throw error;
 				const message = error instanceof Error ? error.message : String(error);
 				console.error(`Memgraph seed failed (non-fatal): ${message}`);
 			}

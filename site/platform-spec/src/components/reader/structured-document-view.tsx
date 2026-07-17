@@ -104,7 +104,10 @@ export function StructuredDocumentView({
 
 	const missingHeadings = new Set(
 		(layoutValidation?.violations ?? [])
-			.filter((violation) => violation.heading)
+			.filter(
+				(violation) =>
+					violation.code === "missing-section" && violation.heading,
+			)
 			.map((violation) => violation.heading as string),
 	);
 	const layoutSlot = layout ? (

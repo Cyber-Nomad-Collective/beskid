@@ -6,10 +6,12 @@ normative store.
 
 ## Canonical source
 
-The reader loads the repository-root `openspec/specs/*/spec.md` files directly.
-`openspec/catalog.json` supplies stable capability IDs, revision metadata, and
-legacy aliases; it is compatibility metadata rather than a second source of
-normative text.
+`openspec/specs/*/spec.md` is the build-time authority. `bun run seed:static`
+projects it into a deterministic `seed/` workspace that the image bakes and the
+runtime serves by default, rather than rescanning the repository-root files on
+every request. `openspec/catalog.json` supplies stable capability IDs, revision
+metadata, and legacy aliases; it is compatibility metadata rather than a second
+source of normative text.
 
 ## Native shape: OpenSpec, hybrid rendering
 

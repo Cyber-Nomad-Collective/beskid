@@ -5,6 +5,8 @@
 // own driver rather than the server-only client singleton, so it runs under the
 // standalone seed script and the container entrypoint.
 
+import { createHash } from "node:crypto";
+
 import type { SeedWorkspace } from "#/lib/spec/static";
 
 const CONSTRAINTS = [
@@ -35,6 +37,12 @@ MERGE (s:SpecDocument {slug: row.slug})
       s.repoPath = row.repoPath, s.requirementCount = row.requirementCount,
       s.layoutId = row.layoutId, s.layoutOk = row.layoutOk,
       s.contentHash = row.contentHash, s.updatedAt = row.updatedAt
+WITH a, s
+// A capability may move between areas while keeping its slug. Drop every
+// existing feature edge into this document before linking the current area so a
+// moved capability never retains its old HAS_FEATURE edge.
+OPTIONAL MATCH (:Area)-[stale:HAS_FEATURE]->(s)
+DELETE stale
 MERGE (a)-[:HAS_FEATURE]->(s)
 `;
 
@@ -42,6 +50,21 @@ const PRUNE = `
 MATCH (s:SpecDocument)
 WHERE NOT s.slug IN $slugs
 DETACH DELETE s
+`;
+
+// Taxonomy nodes are not slug-scoped, so pruning documents can leave empty
+// areas/domains behind. Remove areas with no features, then domains with no
+// remaining areas.
+const PRUNE_ORPHAN_AREAS = `
+MATCH (a:Area)
+WHERE NOT (a)-[:HAS_FEATURE]->(:SpecDocument)
+DETACH DELETE a
+`;
+
+const PRUNE_ORPHAN_DOMAINS = `
+MATCH (dom:Domain)
+WHERE NOT (dom)-[:HAS_AREA]->(:Area)
+DETACH DELETE dom
 `;
 
 export interface GraphSeedResult {
@@ -79,7 +102,7 @@ function buildRows(workspace: SeedWorkspace): GraphRow[] {
 				const bundle = workspace.documents[feature.slug];
 				const contentHash =
 					bundle && typeof bundle.body === "string"
-						? String(bundle.body.length)
+						? createHash("sha256").update(bundle.body).digest("hex")
 						: "0";
 				rows.push({
 					domain: domain.domain,
@@ -129,8 +152,13 @@ export async function seedSpecGraph(
 		let pruned = 0;
 		if (options.prune) {
 			const slugs = rows.map((row) => row.slug);
-			const result = await session.run(PRUNE, { slugs });
-			pruned = result.summary.counters.updates().nodesDeleted ?? 0;
+			const deletedNodes = async (query: string, params?: object) => {
+				const result = await session.run(query, params);
+				return result.summary.counters.updates().nodesDeleted ?? 0;
+			};
+			pruned += await deletedNodes(PRUNE, { slugs });
+			pruned += await deletedNodes(PRUNE_ORPHAN_AREAS);
+			pruned += await deletedNodes(PRUNE_ORPHAN_DOMAINS);
 		}
 		return { nodes: rows.length, pruned };
 	} finally {

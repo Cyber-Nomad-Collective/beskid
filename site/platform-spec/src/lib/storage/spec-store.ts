@@ -77,6 +77,12 @@ export function seedSpecStore(
 	`);
 
 	const seededCapabilities = new Set<string>();
+	const seededLayouts = new Set<string>();
+	const deleteCapability = db.prepare(
+		"DELETE FROM spec_capability WHERE capability = ?",
+	);
+	const deleteLayout = db.prepare("DELETE FROM spec_layout WHERE id = ?");
+	let prunedCapabilities = 0;
 
 	const run = db.transaction(() => {
 		for (const entry of workspace.catalog.entries) {
@@ -113,6 +119,7 @@ export function seedSpecStore(
 				$payload: JSON.stringify(layout),
 				$updated_at: now,
 			});
+			seededLayouts.add(layout.id);
 		}
 
 		upsertMeta.run({
@@ -130,28 +137,33 @@ export function seedSpecStore(
 			$value: JSON.stringify(workspace.domainModel),
 			$updated_at: now,
 		});
-	});
 
-	run();
-
-	// Prune capabilities that no longer exist in the current OpenSpec revision
-	// so the store converges to the native shape rather than accreting stale rows.
-	const existing = db
-		.query<{ capability: string }, []>("SELECT capability FROM spec_capability")
-		.all();
-	let prunedCapabilities = 0;
-	const deleteCapability = db.prepare(
-		"DELETE FROM spec_capability WHERE capability = ?",
-	);
-	const prune = db.transaction(() => {
-		for (const row of existing) {
+		// Prune capabilities and layouts that no longer exist in the current
+		// OpenSpec revision within the same transaction as the upserts and
+		// metadata, so metadata never commits ahead of stale-row removal.
+		const existingCapabilities = db
+			.query<{ capability: string }, []>(
+				"SELECT capability FROM spec_capability",
+			)
+			.all();
+		for (const row of existingCapabilities) {
 			if (!seededCapabilities.has(row.capability)) {
 				deleteCapability.run(row.capability);
 				prunedCapabilities += 1;
 			}
 		}
+
+		const existingLayouts = db
+			.query<{ id: string }, []>("SELECT id FROM spec_layout")
+			.all();
+		for (const row of existingLayouts) {
+			if (!seededLayouts.has(row.id)) {
+				deleteLayout.run(row.id);
+			}
+		}
 	});
-	prune();
+
+	run();
 
 	return {
 		revision: workspace.meta.revision,

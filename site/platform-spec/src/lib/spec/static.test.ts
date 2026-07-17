@@ -97,4 +97,32 @@ describe("static seed workspace", () => {
 			"### Requirement: Block delimiter",
 		);
 	});
+
+	it("produces byte-identical output across repeated generations", () => {
+		const openSpecRoot = fixture();
+		const seedFiles = [
+			"meta.json",
+			"catalog.json",
+			"nav-tree.json",
+			"domain-model.json",
+			"layouts.json",
+			"documents.json",
+		];
+
+		const generateInto = (): string => {
+			const outDir = fs.mkdtempSync(path.join(os.tmpdir(), "beskid-out-"));
+			roots.push(outDir);
+			generateSeed({ openSpecRoot, outDir });
+			return outDir;
+		};
+
+		const first = generateInto();
+		const second = generateInto();
+
+		for (const file of seedFiles) {
+			expect(fs.readFileSync(path.join(second, file))).toEqual(
+				fs.readFileSync(path.join(first, file)),
+			);
+		}
+	});
 });

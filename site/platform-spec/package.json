@@ -8,7 +8,7 @@
 	},
 	"scripts": {
 		"dev": "bun --bun vite dev --port 8460",
-		"build": "bun run seed:static && bun --bun vite build && bun run seed:bundle && bun run scripts/sync-root-stylesheet.ts",
+		"build": "bun run seed:static && bun run verify:seed && bun --bun vite build && bun run seed:bundle && bun run scripts/sync-root-stylesheet.ts",
 		"verify:client-bundle": "bun run scripts/verify-client-bundle.ts",
 		"start": "bun run .output/server/index.mjs",
 		"preview": "bun --bun vite preview",

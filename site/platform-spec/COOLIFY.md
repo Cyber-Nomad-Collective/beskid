@@ -39,7 +39,7 @@ Managed in **OpenBao** and synced to Coolify by `coolify-sync-env-from-openbao.s
 
 ## Memgraph
 
-Canonical requirements live only in the image's root **OpenSpec** tree (`openspec/specs` plus `openspec/catalog.json`). The application reads those files directly. Memgraph stores editorial drafts and derived graph caches; it is not a normative content store. Approved edits create an `openspec/changes/<change>/` pull request in the Beskid superrepo, and a subsequent image build publishes the merged standard.
+Canonical requirements live only in the image's root **OpenSpec** tree (`openspec/specs` plus `openspec/catalog.json`), which is the build-time authority. The image bakes a static seed generated from it, and the runtime serves that baked seed (upserted into its stores) rather than reading the canonical files directly on every request. Memgraph stores editorial drafts and derived graph caches; it is not a normative content store. Approved edits create an `openspec/changes/<change>/` pull request in the Beskid superrepo, and a subsequent image build publishes the merged standard.
 
 ## Seeding and migrations
 

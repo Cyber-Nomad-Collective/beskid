@@ -17,7 +17,18 @@ if (!seed) {
 	fail(`no seed workspace found in ${seedDir}. Run \`bun run seed:static\`.`);
 }
 
-const { workspace: live } = buildSeedWorkspace();
+const { workspace: live, findings: liveFindings } = buildSeedWorkspace();
+
+if (seed.meta.version !== live.meta.version) {
+	fail(
+		`seed format version ${seed.meta.version} does not match ${live.meta.version}. ` +
+			"Re-run `bun run seed:static`.",
+	);
+}
+
+if (liveFindings.length > 0) {
+	fail(`${liveFindings.length} live capability layout violation(s).`);
+}
 
 if (seed.meta.revision !== live.meta.revision) {
 	fail(

@@ -34,7 +34,6 @@ export const SEED_VERSION = 1;
 export interface SeedMeta {
 	version: number;
 	revision: string;
-	generatedAt: string;
 	counts: {
 		domains: number;
 		areas: number;
@@ -109,7 +108,11 @@ export function buildSeedWorkspace(
 			catalog,
 			registry,
 		});
-		if (!bundle) continue;
+		if (!bundle) {
+			throw new Error(
+				`Unable to build document bundle for ${entry.capability}`,
+			);
+		}
 		documents[entry.slug] = bundle;
 		assignments[entry.capability] = bundle.layoutValidation.layoutId;
 		validations[entry.capability] = bundle.layoutValidation;
@@ -127,7 +130,6 @@ export function buildSeedWorkspace(
 	const meta: SeedMeta = {
 		version: SEED_VERSION,
 		revision: catalog.revision,
-		generatedAt: new Date().toISOString(),
 		counts: {
 			domains: domainModel.domainCount,
 			areas: domainModel.areaCount,
