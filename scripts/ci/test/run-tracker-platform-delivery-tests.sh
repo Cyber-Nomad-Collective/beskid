@@ -10,6 +10,7 @@ for required in \
 	'bun run openspec:validate' \
 	'bun run openspec:catalog' \
 	'projection/reconciliation' \
+	'./scripts/ci/init-submodules.sh' \
 	'bun run --cwd beskid_tracker test' \
 	'bun run --cwd beskid_tracker check' \
 	'bun run --cwd site/platform-spec test' \
