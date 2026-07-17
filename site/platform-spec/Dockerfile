@@ -13,13 +13,13 @@ ARG NODE_AUTH_TOKEN
 ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
 RUN bun install --frozen-lockfile
 
- WORKDIR /app/site/platform-spec
- COPY site/platform-spec/ ./
+WORKDIR /app/site/platform-spec
+COPY site/platform-spec/ ./
 COPY openspec /app/openspec
 
 ENV SKIP_ENV_VALIDATION=1
-RUN bun run --cwd site/platform-spec build
-RUN bun run --cwd site/platform-spec verify:client-bundle
+RUN bun run build
+RUN bun run verify:client-bundle
 
 FROM oven/bun:latest AS runtime
 
@@ -36,7 +36,6 @@ ENV OPENSPEC_ROOT=/app/openspec
 COPY --from=build /app/openspec /app/openspec
 COPY --from=build /app/site/platform-spec/package.json ./
 COPY --from=build /app/node_modules /app/node_modules
- COPY --from=build /app/site/platform-spec/node_modules ./node_modules
 COPY --from=build /app/site/platform-spec/.output ./.output
 
 EXPOSE 8460
