@@ -98,6 +98,7 @@ jobs:
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+      DISTRIB_GH_PAT: ${{ secrets.DISTRIB_GH_PAT }}
 
   image-auth:
     needs: [openspec, conformance, integration, security]
@@ -117,6 +118,7 @@ jobs:
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+      DISTRIB_GH_PAT: ${{ secrets.DISTRIB_GH_PAT }}
 
   image-platform-spec:
     needs: [openspec, conformance, integration, security]
@@ -136,6 +138,7 @@ jobs:
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+      DISTRIB_GH_PAT: ${{ secrets.DISTRIB_GH_PAT }}
 
   image-tracker:
     needs: [openspec, conformance, integration, security]
@@ -155,6 +158,7 @@ jobs:
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+      DISTRIB_GH_PAT: ${{ secrets.DISTRIB_GH_PAT }}
 
   image-nexus:
     needs: [openspec, conformance, integration, security]
@@ -176,6 +180,7 @@ jobs:
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+      DISTRIB_GH_PAT: ${{ secrets.DISTRIB_GH_PAT }}
 
   image-pckg:
     needs: [openspec, conformance, integration, security]
@@ -197,6 +202,7 @@ jobs:
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+      DISTRIB_GH_PAT: ${{ secrets.DISTRIB_GH_PAT }}
 
   manifest:
     needs: [image-site, image-auth, image-platform-spec, image-tracker, image-nexus, image-pckg]

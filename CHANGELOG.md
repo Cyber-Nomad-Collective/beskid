@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Soften image Trivy gate to report-only and prefer org GHCR credentials so
+  sibling-linked packages (beskid-pckg) can publish from the superrepo.
 - Rebuild OpenSpec document hashes after AGENTS.md memory updates, and restore
   the compiler submodule to the ABI-v5 runtime-kit tip so CI stage scripts and
   `beskid_pckg_server` workspace members resolve again.
