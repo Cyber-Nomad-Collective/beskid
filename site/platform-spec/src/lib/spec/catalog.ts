@@ -84,11 +84,15 @@ function stripHtmlComments(value: string): string {
 	let current = value;
 	do {
 		previous = current;
-		current = current.replace(/<!--[\s\S]*?-->/g, "");
+		// Remove HTML comments, accepting both the "-->" and legacy "--!>"
+		// terminators and treating an unterminated "<!--" as running to the end
+		// of the string. Re-run until the string stabilises so a removal that
+		// exposes a fresh "<!--" cannot slip through. Because every "<!--" is
+		// matched (at worst up to end-of-string), the result can never still
+		// contain "<!--".
+		current = current.replace(/<!--[\s\S]*?(?:--!?>|$)/g, "");
 	} while (current !== previous);
-	// Drop any dangling markers left by unterminated comments so the result
-	// can never still contain "<!--" / "-->".
-	return current.replace(/<!--|-->/g, "");
+	return current;
 }
 
 function extractPurpose(markdown: string): string | null {
