@@ -9,6 +9,7 @@
     "verify:book-images": "node scripts/run-trudoc.mjs verify-book-images.mjs",
     "verify:book-layout": "node scripts/run-trudoc.mjs verify-book-layout.mjs",
     "test:docs-links": "node --test src/lib/remark-beskid-directives.test.mjs",
+    "test:blog": "node --test src/lib/blog.test.mjs src/lib/tracker-provenance.test.mjs",
     "prebuild": "bun run test:docs-links",
     "dev": "astro dev",
     "dev:clean": "rm -rf .astro dist node_modules/.vite && bun run dev",
