@@ -83,6 +83,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   registry for its published `@beskid` dependencies.
 - Route pckg web dependency resolution to GitHub Packages through the same
   ephemeral build secret used by the other platform images.
+- Remove pckg's unused monorepo-only theme alias so container image builds use
+  the published package layout.
 - Restore valid distribution workflow scheduling by removing the retired
   `stamp-marker` dependency from macOS DMG packaging.
 - Point release integration at the published Tracker revision so fresh CI
