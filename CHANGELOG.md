@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Starlight-native release-blog index with chronological status-labelled cards,
+  accessible hover/focus treatment, and reduced-motion-safe transitions.
+- Six sourced release and runtime-migration posts, including explicit delivery
+  status and tracker provenance for the in-progress v0.4 band.
 - OpenSpec 1.4.1 as the pinned normative-standard workflow, with a validated
   repository change proposal, design, behavioral deltas, and phased migration
   plan.
