@@ -191,7 +191,7 @@ jobs:
       # Keep the context at the repository root so those paths exist.
       context: .
       dockerfile: pckg/Dockerfile
-      submodules: compiler pckg
+      submodules: beskid_bsol compiler pckg
       node-auth: true
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}

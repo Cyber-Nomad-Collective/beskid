@@ -85,6 +85,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   ephemeral build secret used by the other platform images.
 - Resolve pckg's material-theme alias from the installed GitHub Packages
   artifact rather than a monorepo-only path.
+- Initialize the Beskid BSOL submodule for pckg's compiler-backed server
+  image build.
 - Restore valid distribution workflow scheduling by removing the retired
   `stamp-marker` dependency from macOS DMG packaging.
 - Point release integration at the published Tracker revision so fresh CI
