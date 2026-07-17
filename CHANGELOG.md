@@ -25,6 +25,28 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   publication and provenance validation matrix.
 - Prepared-syntax AOT lowering, transparent aggregate ABI facts, and native
   static/shared library-pair emission without an executable runtime-kit.
+- Rust/React pckg registry delivery with GitHub-subject Auth Hub sessions,
+  PostgreSQL-backed package persistence, validated package artifacts, and
+  production Docker/Compose configuration.
+- Complete pckg package browsing and community parity: safe README, structured
+  documentation and source-tree browsing; PostgreSQL-backed profiles, boards,
+  posts, comments, follows, votes, and notifications; and matching React
+  package/community screens.
+- Subject-scoped pckg API-key management with one-time plaintext issuance,
+  hash-only PostgreSQL storage, scoped ownership-safe revocation, and React
+  dashboard support for API keys and the current owner's packages.
+- GitHub-subject pckg administration: explicit one-time superadmin bootstrap,
+  role and publisher-verification management, resource grants, package-review
+  audit decisions, and React administration screens.
+- Public publisher discovery and catalog pages backed by verified profiles and
+  visibility-filtered package ownership.
+- Owner-authorized package deletion and version listing, with retained
+  visibility and artifact-cleanup guarantees; retired unsupported dashboard
+  routes now resolve through the normal 404 experience.
+
+- Immutable compiler-release packaging for Windows MSI/EXE, macOS DMG and
+  Homebrew, Debian, and Snap; the new Windows EXE is a WiX Burn bootstrapper
+  and the DMG bundles CLI and LSP in `Beskid.app`.
 
 - Bidirectional Book-to-OpenSpec traceability: catalog-derived public Book
   links, a reader panel that labels those guides informative, validation for
@@ -65,6 +87,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   longer start a job without its required Testbox session identifier.
 - Make the local supply-chain policy gate inspect only superrepo-tracked
   workflows, matching its non-recursive GitHub checkout.
+- Reject hidden artifact paths outside the root `.beskid/docs` metadata tree
+  before any package documentation or source is exposed.
 - Validate Corelib workspace member aliases against their explicit registry
   package declarations and keep Rust Clippy iterator checks warning-free.
 - Stabilize Open VSX extension gates across randomized Bun test ordering and

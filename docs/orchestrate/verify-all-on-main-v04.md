@@ -60,6 +60,12 @@ MCP `deploy` or manual redeploy after GitHub Actions green. See [deploy matrix](
 
 ## Sign-off checklist
 
+- [ ] Distribution preflight confirms required secret names are configured, without disclosing values: `DISTRIB_GH_PAT`, `HOMEBREW_TAP_GIT_TOKEN`, `AUR_SSH_PRIVATE_KEY`, `AUR_USERNAME`, `AUR_EMAIL`, and `SNAPCRAFT_STORE_CREDENTIALS`
+- [ ] GitHub Packages install proof covers the exact `@beskid/beskid-ui`, `@beskid/ui-react`, and `trudoc` versions used by the release; the associated image workflow URL is recorded
+- [ ] Open VSX credential is configured and the extension publication run is green or records an idempotent already-published outcome
+- [ ] Coolify production evidence records immutable image digests and deployment URLs; Auth Hub OAuth pairing succeeds for every consumer
+- [ ] Tracker webhook delivery and Nexus catalog analyze smoke both have timestamped production evidence
+- [ ] Distribution run records a completed marker only after every platform publication is green; a failed fan-out has no marker and is rerun after remediation
 - [ ] All six v0.4 deliverables closed in seed catalog
 - [ ] `version.json` status → `Released`
 - [ ] Seed imported into tracker SQLite on production

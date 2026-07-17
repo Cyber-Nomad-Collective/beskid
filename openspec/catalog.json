@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "babf63fbf53c7aa07b840e4d4d265d073543a8627ce19d1d4570c0155956b60d",
+  "revision": "813342a03648584a8d2d46ac4d82384dbb75a304578bb79471e2fd76ca93ba49",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -37297,7 +37297,7 @@
       "path": "beskid_infra/docs/deploy-compose.md",
       "title": "Coolify Compose deploy (production)",
       "authority": "informative",
-      "sourceHash": "42bb3020097a9ccb79f8be1a9d508e8c4acd15959655ea1ed72f2a37fc796f43",
+      "sourceHash": "cebdf21711565ee678fa639aeebf29c1e90b347b95de0eb0195e05a4d1d8ef60",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37306,7 +37306,7 @@
       "path": "beskid_infra/docs/deploy-matrix.md",
       "title": "Coolify deploy matrix",
       "authority": "informative",
-      "sourceHash": "868bd439444aaacf5c20371e9d49730e02946a3dba537818aae06300e0726b6d",
+      "sourceHash": "01636e8f0ddca3cff27193d25d305908d79fc0ee2a7b2755d9215e4051ef192d",
       "standardLinks": [
         "/platform-spec/tooling/auth-hub/"
       ],
@@ -37326,7 +37326,7 @@
       "path": "beskid_infra/docs/openbao-layout.md",
       "title": "OpenBao secret layout",
       "authority": "informative",
-      "sourceHash": "b8eb9409794cc6665d604df701eef3d43f8a54db51d3c779af4da54d0e168da8",
+      "sourceHash": "ebc0705d89771cae238f18166b8752ba8a15ea514ab9cae1bdcc8889a56b5573",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37355,7 +37355,7 @@
       "path": "beskid_tracker/docs/roadmap-labels.md",
       "title": "Roadmap GitHub labels",
       "authority": "informative",
-      "sourceHash": "8eb44c14589c4c9589139bfc73b03a8b4b64bb5422bb67ef3ee225046dd5db14",
+      "sourceHash": "998ae6745bf850c2282ac4af8f95847dcc3e368311960d74dba34d43d2199d13",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/...",
@@ -37640,7 +37640,7 @@
       "path": "docs/distribution/SECRETS.md",
       "title": "Distribution Pipeline Secrets",
       "authority": "informative",
-      "sourceHash": "5096d173bb7eac9c99ffc88dfd8866d795f749ef27d3da53a4e9d3e603ede72d",
+      "sourceHash": "58242114285d027bd9bb81ccf3be8489d84301f5b0b942e96a9541dcbbcf3a6a",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -37649,7 +37649,7 @@
       "path": "docs/orchestrate/verify-all-on-main-v04.md",
       "title": "verify-all-on-main (v0.4)",
       "authority": "informative",
-      "sourceHash": "a4e321fcb1ce1c88be7cd58f2cdcc39390af511029f316545ee45f9c5d83b8bc",
+      "sourceHash": "73c306c3ce5a4162eb5463a738a47b2e2311e0ad25d8e915b320602c29f101f4",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
