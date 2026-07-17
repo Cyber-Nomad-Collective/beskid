@@ -192,8 +192,11 @@ jobs:
       context: .
       dockerfile: pckg/Dockerfile
       submodules: compiler pckg
+      node-auth: true
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+    secrets:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
 
   manifest:
     needs: [image-site, image-auth, image-platform-spec, image-tracker, image-nexus, image-pckg]

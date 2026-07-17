@@ -79,6 +79,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 - Build the pckg image from the repository-root context and initialize its
   compiler dependency, matching the Dockerfile's source layout.
+- Authenticate the pckg web image build against the existing GitHub Packages
+  registry for its published `@beskid` dependencies.
 - Restore valid distribution workflow scheduling by removing the retired
   `stamp-marker` dependency from macOS DMG packaging.
 - Point release integration at the published Tracker revision so fresh CI

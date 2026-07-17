@@ -83,6 +83,8 @@ fi
 pckg_image_block="$(sed -n '/^  image-pckg:/,/^  manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
 [[ "${pckg_image_block}" == *'context: .'* ]]
 [[ "${pckg_image_block}" == *'submodules: compiler pckg'* ]]
+[[ "${pckg_image_block}" == *'node-auth: true'* ]]
+[[ "${pckg_image_block}" == *'NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}'* ]]
 rg -Fq 'submodule update --init --recursive --depth 1' "${root}/scripts/ci/init-submodules.sh"
 rg -Fq 'COPY --from=openspec catalog.json /app/openspec/catalog.json' "${root}/beskid_nexus/Dockerfile"
 rg -Fq 'NEXUS_OPEN_SPEC_CATALOG=/app/openspec/catalog.json' "${root}/beskid_nexus/Dockerfile"
