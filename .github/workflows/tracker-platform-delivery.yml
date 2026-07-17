@@ -19,14 +19,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      # Catalog documents include submodule docs; without these the revision hash
-      # diverges from a fully checked-out developer tree.
+      # Catalog revision hashes informative docs under these submodules; without
+      # them, regen drifts from the committed openspec/catalog.json.
       - name: Initialize catalog document submodules
-        run: |
-          set -euo pipefail
-          for submodule in beskid_bsol beskid_distrib beskid_infra beskid_nexus beskid_tracker compiler; do
-            ./scripts/ci/init-submodules.sh "${submodule}"
-          done
+        run: >
+          ./scripts/ci/init-submodules.sh
+          beskid_bsol
+          beskid_distrib
+          beskid_infra
+          beskid_nexus
+          beskid_tracker
+          compiler
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - name: Validate OpenSpec strictly
