@@ -23,6 +23,8 @@ done
 # CoreLib workspace member aliases intentionally differ from registry package
 # names; the quality gate must validate each member's package declaration.
 CORELIB_QUALITY_ONLY=1 "${root}/scripts/ci/corelib-gate.sh"
+bash "${root}/scripts/ci/test/corelib-gate-report.test.sh"
+bash "${root}/scripts/ci/test/corelib-workflow-report-contract.test.sh"
 
 mkdir -p "${tmp}/records" "${tmp}/bin"
 cat >"${tmp}/records/site.json" <<'JSON'

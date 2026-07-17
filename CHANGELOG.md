@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Produce and retain a sanitized detailed Corelib Markdown build report for
+  every native gate outcome, including compiler trace evidence, command
+  durations, runtime-kit metadata, and concise failure diagnostics.
 - Stage a freshly produced native-host ABI-v5 runtime kit for compiler and corelib CI gates,
   replacing Rust runtime-bridge setup.
 
