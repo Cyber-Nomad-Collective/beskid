@@ -1,3 +1,5 @@
-# Generated JSON workspace — run `bun run seed` to populate from website MDX.
+# Generated native-shape seed workspace. `bun run seed:static` regenerates it
+# from the OpenSpec authority (openspec/specs + catalog.json); the image build
+# bakes it and the entrypoint upserts it into SQLite/Memgraph. Never committed.
 *
 !.gitignore

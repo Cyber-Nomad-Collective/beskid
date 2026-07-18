@@ -1,0 +1,11 @@
+{
+  "id": "_default",
+  "specLevel": "default",
+  "title": "Default capability layout",
+  "description": "Fallback layout applied to any spec level without a dedicated layout. Requires a single title and a Purpose narrative.",
+  "requireTitle": true,
+  "sections": [
+    { "heading": "Purpose", "level": 2, "required": true, "order": 1 }
+  ],
+  "optionalSections": []
+}

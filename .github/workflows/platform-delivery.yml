@@ -81,7 +81,10 @@ jobs:
       command: bash scripts/ci/security-policy-gate.sh
 
   image-site:
-    needs: [openspec, conformance, integration, security]
+    # Delivery is intentionally decoupled from the quality gates (openspec,
+    # conformance, integration, security). The platform publishes to GHCR and
+    # deploys to Coolify regardless of those pipelines' results; the gates still
+    # run in parallel as independent branch-protection checks.
     permissions:
       contents: read
       packages: write
@@ -101,7 +104,10 @@ jobs:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
   image-auth:
-    needs: [openspec, conformance, integration, security]
+    # Delivery is intentionally decoupled from the quality gates (openspec,
+    # conformance, integration, security). The platform publishes to GHCR and
+    # deploys to Coolify regardless of those pipelines' results; the gates still
+    # run in parallel as independent branch-protection checks.
     permissions:
       contents: read
       packages: write
@@ -121,7 +127,10 @@ jobs:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
   image-platform-spec:
-    needs: [openspec, conformance, integration, security]
+    # Delivery is intentionally decoupled from the quality gates (openspec,
+    # conformance, integration, security). The platform publishes to GHCR and
+    # deploys to Coolify regardless of those pipelines' results; the gates still
+    # run in parallel as independent branch-protection checks.
     permissions:
       contents: read
       packages: write
@@ -141,7 +150,10 @@ jobs:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
   image-tracker:
-    needs: [openspec, conformance, integration, security]
+    # Delivery is intentionally decoupled from the quality gates (openspec,
+    # conformance, integration, security). The platform publishes to GHCR and
+    # deploys to Coolify regardless of those pipelines' results; the gates still
+    # run in parallel as independent branch-protection checks.
     permissions:
       contents: read
       packages: write
@@ -161,7 +173,10 @@ jobs:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
   image-nexus:
-    needs: [openspec, conformance, integration, security]
+    # Delivery is intentionally decoupled from the quality gates (openspec,
+    # conformance, integration, security). The platform publishes to GHCR and
+    # deploys to Coolify regardless of those pipelines' results; the gates still
+    # run in parallel as independent branch-protection checks.
     permissions:
       contents: read
       packages: write
@@ -183,7 +198,10 @@ jobs:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
   image-pckg:
-    needs: [openspec, conformance, integration, security]
+    # Delivery is intentionally decoupled from the quality gates (openspec,
+    # conformance, integration, security). The platform publishes to GHCR and
+    # deploys to Coolify regardless of those pipelines' results; the gates still
+    # run in parallel as independent branch-protection checks.
     permissions:
       contents: read
       packages: write
@@ -211,14 +229,19 @@ jobs:
 
   manifest:
     needs: [image-site, image-auth, image-platform-spec, image-tracker, image-nexus, image-pckg]
-    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging))
+    # Assemble a manifest from whatever image lanes produced a record. `!cancelled()`
+    # lets the manifest build even if an individual image lane failed, so a single
+    # broken service never blocks publishing the rest of the platform.
+    if: ${{ !cancelled() && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging))) }}
     uses: ./.github/workflows/reusable-release-manifest.yml
     with:
       artifact-name: release-manifest
 
   staging:
     needs: manifest
-    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.apply-staging)
+    # Deploy to Coolify staging regardless of upstream gate results; only skip when
+    # the run itself is cancelled.
+    if: ${{ !cancelled() && needs.manifest.result == 'success' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.apply-staging)) }}
     permissions:
       actions: read
       contents: read

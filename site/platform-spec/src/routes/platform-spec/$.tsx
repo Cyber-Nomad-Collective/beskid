@@ -63,6 +63,8 @@ export const Route = createFileRoute("/platform-spec/$")({
 			bodyMd: document.body,
 			bookLinks: document.bookLinks,
 			architectureGraph,
+			layout: document.layout,
+			layoutValidation: document.layoutValidation,
 		};
 	},
 	component: PlatformSpecDocument,
@@ -80,6 +82,8 @@ function PlatformSpecDocument() {
 		bodyMd,
 		bookLinks,
 		architectureGraph,
+		layout,
+		layoutValidation,
 	} = Route.useLoaderData();
 
 	const adrs = catalog.entries
@@ -98,6 +102,8 @@ function PlatformSpecDocument() {
 					bookLinks={bookLinks}
 					architectureGraph={architectureGraph}
 					adrs={adrs}
+					layout={layout}
+					layoutValidation={layoutValidation}
 				/>
 			</SpecShell>
 		</ReaderChrome>
