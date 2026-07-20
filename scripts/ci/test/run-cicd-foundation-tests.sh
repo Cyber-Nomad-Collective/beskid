@@ -19,6 +19,7 @@ for script in \
 done
 
 "${root}/scripts/ci/test/run-distribute-workflow-contract-tests.sh"
+bash "${root}/scripts/ci/test/delivery-contract.test.sh"
 
 # CoreLib workspace member aliases intentionally differ from registry package
 # names; the quality gate must validate each member's package declaration.
