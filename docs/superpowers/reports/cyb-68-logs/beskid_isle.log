@@ -1,0 +1,84 @@
+=== beskid_isle (compact) ===
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+running 5 tests
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+running 1 test
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 3 tests
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+running 6 tests
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+running 3 tests
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+running 6 tests
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+running 1 test
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 1 test
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+running 4 tests
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+--- tail ---
+     Running tests/locals.rs (target/debug/deps/locals-38a69bc32cfb09a2)
+
+running 1 test
+test let_assign_and_path_rules_share_one_ssa_local ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/rule_coverage.rs (target/debug/deps/rule_coverage-74dcf1432d195ba6)
+
+running 4 tests
+test typed_operation_families_have_explicit_classifications ... ok
+test expanded_syntax_catalogue_is_total_unique_deterministic_and_surjective ... ok
+test binary_and_unary_operator_facts_have_isle_rules ... ok
+test every_owned_rule_group_contains_a_real_rule ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/statement_emitter.rs (target/debug/deps/statement_emitter-4aa4ee72633f948a)
+
+running 2 tests
+test unterminated_statement_is_rejected_by_mandatory_verification ... ok
+test return_statement_recurses_through_isle_and_emits_verified_clif ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/string_literals.rs (target/debug/deps/string_literals-07521ac4dd6f0001)
+
+running 1 test
+test string_rule_interns_data_and_emits_verified_stock_clif ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/struct_memory.rs (target/debug/deps/struct_memory-aaecff696c1b4064)
+
+running 4 tests
+test missing_struct_field_is_an_exact_keyed_error ... ok
+test invalid_struct_layout_is_an_exact_keyed_error ... ok
+test struct_literal_and_field_read_emit_stock_clif_and_execute ... ok
+test field_assignment_emits_stock_clif_store_and_executes ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/while_transfer.rs (target/debug/deps/while_transfer-d2da7ef241dd1cba)
+
+running 2 tests
+test while_false_contains_verified_continue_backedge ... ok
+test while_true_breaks_to_following_statement ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

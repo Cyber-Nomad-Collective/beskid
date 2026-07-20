@@ -1,0 +1,54 @@
+=== beskid_lsp (compact) ===
+running 52 tests
+test result: ok. 52 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 34.58s
+--- tail ---
+test commands::project_explorer::tests::focused_project_from_configuration_paths ... ok
+test commands::project_explorer::tests::get_graph_returns_mermaid_and_metadata ... ok
+test commands::project_explorer::tests::get_project_dependencies_merges_declared_and_lock ... ok
+test commands::project_explorer::tests::get_project_dependencies_reports_unresolved_when_lock_missing_entry ... ok
+test commands::project_explorer::tests::get_workspace_summary_emits_member_id_for_multi_member_workspace ... ok
+test commands::project_explorer::tests::get_workspace_summary_includes_registries ... ok
+test commands::project_explorer::tests::handle_get_workspace_summary_requires_uri ... ok
+test commands::project_explorer::tests::handle_list_workspaces_via_command_router ... ok
+test commands::project_explorer::tests::handle_unknown_command_returns_none ... ok
+test commands::project_explorer::tests::list_workspaces_emits_member_id_for_each_bsol_member ... ok
+test commands::project_explorer::tests::list_workspaces_json_shape ... ok
+test commands::project_explorer::tests::project_explorer_command_contract_matches_snapshot ... ok
+test commands::project_explorer::tests::project_explorer_commands_include_refresh_workspace ... ok
+test commands::symbol_documentation::tests::absolute_spec_url_joins_default_site_root ... ok
+test commands::symbol_documentation::tests::corelib_source_path_maps_to_spec ... ok
+test commands::symbol_documentation::tests::package_from_deps_path ... ok
+test diagnostics::tests::lsp_cached_snapshot_surfaces_composition_diagnostic_codes ... ok
+test features::completion::handler::tests::syntax_completion_lists_imported_members_without_legacy_analysis ... ok
+test features::completion::handler::tests::syntax_completion_works_without_legacy_analysis ... ok
+test features::formatting::handler::tests::formatting_edit_reparses ... ok
+test features::formatting::handler::tests::formatting_matches_format_program_fixture_docs_and_control ... ok
+test features::formatting::handler::tests::formatting_returns_edit_for_non_canonical_source ... ok
+test features::formatting::handler::tests::formatting_returns_empty_when_already_formatted ... ok
+test features::formatting::handler::tests::range_formatting_uses_full_document_strategy ... ok
+test features::inlay_hints::handler::tests::syntax_inlay_hints_work_without_legacy_analysis_snapshot ... ok
+test features::intellisense_tests::tests::completion_after_output_dot_lists_writeline ... ok
+test features::intellisense_tests::tests::definition_on_declaration_uses_syntax_symbol_without_legacy_analysis ... ok
+test features::intellisense_tests::tests::definition_on_printline_targets_dependency_file ... ok
+test features::intellisense_tests::tests::definition_uses_syntax_fact_without_legacy_analysis ... ok
+test features::intellisense_tests::tests::documentation_and_signature_help_use_syntax_hover_without_analysis ... ok
+test features::intellisense_tests::tests::entry_resolution_with_db_populates_writeline_for_intellisense ... ok
+test features::intellisense_tests::tests::hover_on_printline_range_in_dependency_file ... ok
+test features::intellisense_tests::tests::lifecycle_build_document_corelib_mvp_has_resolution ... ok
+test features::intellisense_tests::tests::lifecycle_build_document_parses_corelib_mvp ... ok
+test features::intellisense_tests::tests::references_on_printline_includes_dependency ... ok
+test features::intellisense_tests::tests::references_use_syntax_facts_without_legacy_analysis ... ok
+test features::rename::handler::tests::prepare_rename_for_resolved_symbol_returns_selection ... ok
+test features::rename::handler::tests::rename_updates_definition_and_references ... ok
+test features::semantic_tokens::encoder::tests::syntax_symbols_preserve_legend_order_and_delta_encoding ... ok
+test features::semantic_tokens::handler::tests::syntax_tokens_work_without_legacy_analysis ... ok
+test server::init_capabilities_tests::tests::initialize_advertises_project_explorer_commands ... ok
+test server::init_capabilities_tests::tests::initialize_enables_workspace_folders ... ok
+test session::lifecycle::tests::set_document_ignores_stale_versions ... ok
+test session::lifecycle::tests::set_document_rebuilds_when_cache_version_changes ... ok
+test session::startup_tests::invalidate_and_set_document_do_not_panic_concurrently ... ok
+test text_sync::tests::applies_incremental_replacement ... ok
+test text_sync::tests::full_document_change_replaces_all ... ok
+
+test result: ok. 52 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 34.58s
+

@@ -1,0 +1,62 @@
+=== beskid_queries (compact) ===
+running 1 test
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 3 tests
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+running 14 tests
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+running 9 tests
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.64s
+running 64 tests
+test result: ok. 64 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.82s
+--- tail ---
+test enum_layout_keeps_channel_capacity_variants_in_source_order ... ok
+test enum_match_keeps_source_ordered_nullary_variant_arms ... ok
+test generic_imported_receiver_call_uses_receiver_specialization_for_zero_argument_abi ... ok
+test generic_imported_static_call_resolves_to_its_exact_syntax_item ... ok
+test generic_imported_terminal_call_requires_an_exact_declared_generic_arity ... ok
+test generic_parameter_type_argument_call_remains_direct_inside_generic_body ... ok
+test imported_assembly_module_call_resolves_through_its_use_binding ... ok
+test imported_generic_type_annotation_resolves_without_registry_reentrance ... ok
+test imported_type_qualified_static_call_resolves_to_its_exact_syntax_item ... ok
+test inferred_generic_call_allows_a_bare_integer_to_follow_an_exact_i64_argument ... ok
+test inferred_generic_call_does_not_rebind_an_explicit_integer_suffix ... ok
+test inferred_generic_call_has_an_exact_argument_derived_abi_signature ... ok
+test item_and_call_graph_facts_resolve_named_calls_and_recursion ... ok
+test item_body_is_the_exact_function_and_method_body_child ... ok
+test item_resolution_does_not_cross_local_shadowing_or_unresolved_names ... ok
+test item_resolution_prefers_the_nearest_module_and_falls_back_lexically ... ok
+test item_signature_does_not_guess_complex_type_identity ... ok
+test item_signatures_cover_primitive_functions_methods_and_contracts ... ok
+test local_declaration_is_not_visible_in_its_own_initializer ... ok
+test local_resolution_covers_lambda_for_and_match_bindings ... ok
+test local_resolution_never_guesses_from_positions ... ok
+test local_resolution_uses_generation_safe_declarations_and_lexical_shadowing ... ok
+test local_slots_are_stable_within_function_and_distinct_for_lambda_frames ... ok
+test local_slots_cover_methods_for_iterators_and_match_bindings ... ok
+test node_type_derives_primitive_literals_and_annotated_local_references ... ok
+test node_type_does_not_guess_complex_local_types ... ok
+test nominal_generic_types_have_only_source_derived_pointer_abi_facts ... ok
+test operator_facts_cover_expression_selection ... ok
+test qualified_import_alias_ambiguity_has_no_syntax_item_fact ... ok
+test qualified_import_resolution_follows_public_module_reexports ... ok
+test qualified_import_resolution_follows_public_reexports_and_declared_modules ... ok
+test qualified_import_resolution_uses_registered_dependency_syntax ... ok
+test runtime_intrinsic_uses_the_manifest_owned_builtin_index ... ok
+test sample_mod_method_abi_signatures_include_pointer_receiver_and_nominal_parameter ... ok
+test spawn_target_preserves_lambda_operand_and_capture_environment ... ok
+test stale_generation_cannot_reuse_a_local_slot_identity ... ok
+test stale_generation_cannot_reuse_item_or_call_graph_facts ... ok
+test stale_generation_never_observes_semantic_facts ... ok
+test structural_facts_survive_while_unported_semantics_are_unavailable ... ok
+test syntax_facts_do_not_resolve_core_output_writeline_through_alias ... ok
+test syntax_facts_resolve_core_output_writeline_via_import_alias ... ok
+test syntax_facts_resolve_core_output_writeline_without_hir ... ok
+test syntax_only_signatures_preserve_runtime_pointer_and_never_primitives ... ok
+test test_item_facts_preserve_metadata_and_reject_stale_generations ... ok
+test test_items_have_a_unit_signature_and_own_generation_safe_body_cursor ... ok
+test unqualified_import_resolution_requires_one_registered_syntax_target ... ok
+test warm_point_query_uses_registered_expanded_syntax_without_reparse ... ok
+
+test result: ok. 64 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.82s
+

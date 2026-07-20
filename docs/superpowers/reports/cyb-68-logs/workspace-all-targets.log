@@ -1,0 +1,200 @@
+     Running unittests src/lib.rs (target/debug/deps/abfall-f94fe34482c953e6)
+
+running 7 tests
+test tests::basic_allocation ... ok
+test cell::tests::test_gcptrcell_write_barrier ... ok
+test cell::tests::test_gcptrcell_basic ... ok
+test tests::allocation_and_collection ... ok
+test tests::heap_reports_idle_phase_after_forced_collection ... ok
+test tests::incremental_marking ... ok
+test tests::concurrent_collection ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s
+
+     Running tests/gc_functional.rs (target/debug/deps/gc_functional-ddfa66f882b831ae)
+
+running 8 tests
+test beskid_descriptor_trace_keeps_child_payload_alive ... ok
+test tracing_chain_keeps_all_nodes ... ok
+test sweep_frees_memory ... ok
+test large_object_graph_survives_multiple_cycles ... ok
+test root_preservation_after_collection ... ok
+test write_barrier_concurrent_mutation ... ok
+test concurrent_alloc_and_collect_no_race ... ok
+test threshold_triggers_collection ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+
+     Running benches/compare.rs (target/debug/deps/compare-181cb28a6b9e8a0e)
+Gnuplot not found, using plotters backend
+Testing abfall_alloc_collect_50k
+Success
+
+Testing dumpster_alloc_collect_50k
+Success
+
+     Running benches/gc_bench.rs (target/debug/deps/gc_bench-3ceae65e38e5382a)
+Gnuplot not found, using plotters backend
+Testing alloc_100k_ints
+Success
+
+Testing alloc_trace_chain_10k
+Success
+
+Testing concurrent_alloc
+Success
+
+     Running unittests examples/demo.rs (target/debug/examples/demo-2f14a8830407cb00)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/multi_threaded.rs (target/debug/examples/multi_threaded-b0d6f8a006a82901)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/trace_demo.rs (target/debug/examples/trace_demo-76accc0471f166d1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests examples/vtable_drop_test.rs (target/debug/examples/vtable_drop_test-0cc241a53c6b6167)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/beskid_abi-526e7b2db5300bcf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/beskid_runtime_provenance.rs (target/debug/deps/beskid_runtime_provenance-757f9d6bda6da07c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/aarch64_darwin_context_assembly.rs (target/debug/deps/aarch64_darwin_context_assembly-93b1f1ab4148da4f)
+
+running 2 tests
+test object_exports_exactly_the_manifest_approved_symbols_and_saves_the_full_context ... ok
+test initialized_context_enters_returns_and_switches_repeatedly ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+
+     Running tests/abi_v5_contract.rs (target/debug/deps/abi_v5_contract-2b0918e535be42e6)
+
+running 8 tests
+test abi_version_contract_is_v5 ... ok
+test supported_targets_are_little_endian_64_bit_with_target_owned_calling_conventions ... ok
+test layout_and_source_hashes_are_canonical_and_sensitive ... ok
+test manifest_accepts_only_unique_direct_v5_symbols ... ok
+test manifest_rejects_wrong_assembly_symbol_set_and_invalid_traps ... ok
+test assembly_contract_rejects_signature_and_preserved_register_drift ... ok
+test runtime_kit_metadata_is_serializable_and_requires_the_exact_target_artifacts ... ok
+test runtime_kit_rejects_non_portable_artifact_paths ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/canonical_runtime_sources.rs (target/debug/deps/canonical_runtime_sources-d6f062dc59b1ad17)
+
+running 8 tests
+test canonical_bootstrap_source_is_embedded_and_exports_the_v5_probe ... ok
+test canonical_bootstrap_source_uses_only_manifest_owned_allocation_and_tls_primitives ... ok
+test canonical_runtime_source_owns_allocation_headers_and_lifo_root_frames ... ok
+test canonical_bootstrap_source_exports_the_v5_lifecycle_and_trap_wrappers ... ok
+test manifest_drift_cannot_expand_runtime_authority ... ok
+test canonical_foundation_assert_owns_only_the_panic_service ... ok
+test exact_embedded_source_set_receives_non_serializable_intrinsic_authority ... ok
+test lookalike_source_path_name_or_contents_cannot_receive_authority ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/runtime_bootstrap_contract.rs (target/debug/deps/runtime_bootstrap_contract-78a5667037103d70)
+
+running 10 tests
+test trusted_intrinsics_are_typed_and_owned_only_by_the_canonical_package ... ok
+test canonical_contract_has_the_exact_lifecycle_and_trap_exports ... ok
+test runtime_provenance_allows_intrinsics_without_making_them_loader_requirements ... ok
+test assembly_init_signature_uses_stack_top_not_a_hardcoded_size ... ok
+test abi_json_rejects_unknown_fields ... ok
+test target_system_imports_are_exact_and_unknown_contracts_are_rejected ... ok
+test canonical_layouts_freeze_common_and_target_context_offsets ... ok
+test audit_metadata_rejects_unknown_duplicate_and_rust_provenance_contracts ... ok
+test generated_headers_are_deterministic_fresh_and_include_contract_constants ... ok
+test runtime_kit_abi_json_embeds_the_single_contract_and_generated_audit_metadata ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/runtime_kit_build.rs (target/debug/deps/runtime_kit_build-76891fa89b1d0f21)
+
+running 4 tests
+test failed_input_validation_publishes_no_partial_kit_or_metadata ... ok
+test canonical_runtime_kit_builder_denies_noncanonical_source_hashes ... ok
+test canonical_runtime_kit_builder_publishes_the_embedded_corpus_hash ... ok
+test builds_a_resolvable_kit_from_prebuilt_artifacts_and_writes_metadata_last ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/runtime_kit_resolution.rs (target/debug/deps/runtime_kit_resolution-f6947d6de7beca2f)
+
+running 2 tests
+test resolves_only_the_exact_installed_target_and_profile_and_verifies_artifacts ... ok
+test rejects_metadata_identity_and_artifact_hash_mismatches_without_fallback ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/runtime_provenance_audit.rs (target/debug/deps/runtime_provenance_audit-33b8417a378ec759)
+
+running 7 tests
+test symbol_list_rejects_non_abi_panic_export ... ok
+test canonical_audit_serializes_a_stable_machine_readable_contract ... ok
+test symbol_list_rejects_rust_bridge_and_unwind_provenance ... ok
+test symbol_list_parser_rejects_target_mismatch ... ok
+test canonical_audit_is_deterministic_and_derives_target_allowlists ... ok
+test linux_shared_runtime_allows_only_documented_dynamic_loader_imports ... ok
+test portable_fixture_uses_each_targets_native_symbol_spelling ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/runtime_provenance_cli.rs (target/debug/deps/runtime_provenance_cli-e8f343691c5ccec4)
+
+running 3 tests
+runtime provenance audit: forbidden runtime provenance symbol `_Unwind_Resume`
+test cli_rejects_forbidden_bridge_and_unwind_symbols_from_standard_input ... ok
+test cli_emits_and_verifies_a_portable_symbol_list_from_standard_input ... ok
+runtime provenance audit: undefined symbol table has unexpected=["_ITM_deregisterTMCloneTable", "_ITM_registerTMCloneTable", "__cxa_finalize", "__gmon_start__", "__tls_get_addr"]
+test cli_verifies_linux_shared_loader_imports_only_in_shared_mode ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+
+     Running tests/x86_64_linux_context_assembly.rs (target/debug/deps/x86_64_linux_context_assembly-c082b4dd71e642fd)
+
+running 3 tests
+test elf_object_exports_exactly_two_symbols_and_saves_the_manifest_preserved_set ... ok
+test linux_platform_tls_uses_dynamic_relocations_for_dlopen ... ok
+test sysv_context_enters_returns_and_switches_repeatedly ... FAILED
+
+failures:
+
+---- sysv_context_enters_returns_and_switches_repeatedly stdout ----
+
+thread 'sysv_context_enters_returns_and_switches_repeatedly' (14518963) panicked at crates/beskid_abi/tests/x86_64_linux_context_assembly.rs:62:5:
+command failed: ld: open() failed, errno=2 for '/var/folders/8x/95r3z1ys5v9fk0v9dqh4v2640000gn/T/beskid-x86-64-context-49608-1784544302791665000/context_harness'
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    sysv_context_enters_returns_and_switches_repeatedly
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+error: test failed, to rerun pass `-p beskid_abi --test x86_64_linux_context_assembly`

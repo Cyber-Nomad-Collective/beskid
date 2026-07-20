@@ -1,0 +1,6 @@
+=== START workspace 2026-07-20T10:39:52Z ===
+name=workspace exit=101 duration_sec=78
+=== test result lines ===
+=== FAILED tests ===
+=== END workspace 2026-07-20T10:41:10Z ===
+     521 /Users/mikserek/Projects/beskid/.worktrees/cyb-68/docs/superpowers/reports/cyb-68-logs/workspace-all-targets.log

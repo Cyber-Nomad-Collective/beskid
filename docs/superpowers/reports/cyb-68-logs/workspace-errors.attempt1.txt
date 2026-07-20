@@ -1,0 +1,80 @@
+   Compiling serial-unix v0.4.0
+   Compiling beskid_pckg_artifacts v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_pckg_artifacts)
+   Compiling beskid_pckg_community v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_pckg_community)
+   Compiling axum-core v0.5.6
+   Compiling sqlx-postgres v0.8.6
+   Compiling eventsource-stream v0.2.3
+   Compiling console v0.16.0
+   Compiling beskid_pckg_auth v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_pckg_auth)
+   Compiling serde_path_to_error v0.1.20
+   Compiling alloca v0.4.0
+   Compiling futures-timer v3.0.4
+   Compiling similar v2.7.0
+   Compiling matchit v0.8.4
+   Compiling spin v0.9.8
+   Compiling reqwest-eventsource v0.6.0
+   Compiling serial v0.4.0
+   Compiling nix v0.25.1
+   Compiling filedescriptor v0.8.3
+   Compiling insta v1.47.2
+   Compiling axum v0.8.9
+   Compiling portpicker v0.1.1
+   Compiling backon v1.5.2
+   Compiling itertools v0.13.0
+   Compiling beskid_pckg_contract v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_pckg_contract)
+   Compiling urlencoding v2.1.3
+   Compiling downcast-rs v1.2.1
+   Compiling shell-words v1.1.1
+   Compiling opencode-sdk v0.1.7
+   Compiling ref-cast-impl v1.0.25
+   Compiling dumpster_derive v2.0.0
+   Compiling page_size v0.6.0
+   Compiling ref-cast v1.0.25
+   Compiling dumpster v2.1.0
+   Compiling criterion-plot v0.5.0
+   Compiling beskid_aot v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_aot)
+   Compiling fluent-uri v0.4.1
+   Compiling is-terminal v0.4.17
+   Compiling dashmap v6.2.1
+   Compiling criterion-plot v0.8.2
+   Compiling portable-pty v0.8.1
+   Compiling criterion v0.8.2
+   Compiling ls-types v0.0.6
+   Compiling criterion v0.5.1
+   Compiling beskid_up v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_up)
+   Compiling beskid_engine v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_engine)
+   Compiling vte v0.15.0
+   Compiling vt100 v0.16.2
+   Compiling beskid_host v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_host)
+   Compiling fs-err v2.11.0
+   Compiling tui-term v0.3.4
+   Compiling serde_spanned v0.6.9
+   Compiling toml_datetime v0.6.11
+   Compiling toml_write v0.1.2
+   Compiling beskid_runtime_bridge v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_runtime_bridge)
+   Compiling toml_edit v0.22.27
+   Compiling os_str_bytes v7.2.0
+   Compiling argfile v0.2.1
+   Compiling beskid_repl v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_repl)
+   Compiling bsol-beskid-bridge v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/beskid_bsol/crates/bsol-beskid-bridge)
+   Compiling toml v0.8.23
+   Compiling beskid_template v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_template)
+   Compiling beskid_hi v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_hi)
+   Compiling beskid_ast_reflect_gen v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_ast_reflect_gen)
+   Compiling sqlx-macros-core v0.8.6
+   Compiling tower-lsp-server v0.23.0
+   Compiling beskid_lsp v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_lsp)
+   Compiling sqlx-macros v0.8.6
+   Compiling sqlx v0.8.6
+   Compiling beskid_pckg_store v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_pckg_store)
+   Compiling beskid_pckg_server v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_pckg_server)
+   Compiling beskid_e2e_tests v0.1.0 (/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/crates/beskid_e2e_tests)
+error: could not compile `beskid_queries` (lib test)
+error: could not compile `beskid_queries` (lib)
+error: could not write output to /Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/target/debug/deps/beskid_lsp-860b13b18eb8d231.9hzv2arwz5jazl9si8e3suu2p.0c5cleh.rcgu.o: No space left on device
+error: could not compile `beskid_pckg_store` (bin "pckg_cutover" test)
+error: could not compile `beskid_lsp` (lib) due to 1 previous error
+error: failed to write to `/Users/mikserek/Projects/beskid/.worktrees/cyb-68/compiler/target/debug/deps/rmetacrjdI2/full.rmeta`: No space left on device (os error 28)
+error: could not compile `beskid_pckg_server` (lib) due to 1 previous error
+error: could not compile `beskid_pckg_server` (lib test)
+error: could not compile `beskid_analysis` (lib test)
