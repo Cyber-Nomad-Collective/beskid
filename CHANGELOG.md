@@ -61,6 +61,11 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   requirements (`promote-provisional-wave-1`): tooling CLI/BSOL, language-meta
   lexical/resolution/modules/enums, core collections/regex/time, and semantic
   pipeline stage ordering. Taxonomy hubs remain provisional for a later wave.
+- Promote provisional waves 2–4 (28 more feature capabilities): tooling
+  contracts/LSP/import/formatter/nexus/symbol-docs, remaining language-meta
+  feature stubs, and corelib runtime-registration/syscall/text-cursor. Catalog
+  provisional count 80→52; empty architecture/governance stubs and tooling
+  design-model/decisions-record stubs stay provisional by design.
 - Close out Tracker/Platform Spec delivery sync: catalog import reconciles
   without overwriting local conflicts, CI runs a real `reconcile:plan` dry-run
   instead of a printf stub, Platform Spec PRs go only through

@@ -7,15 +7,29 @@ Type extension syntax replacing impl blocks; public members only, full type scop
 
 ## Requirements
 
-### Requirement: extend type conformance status
-This capability SHALL remain non-conformant and MUST NOT be cited as an implemented Beskid guarantee until a validated OpenSpec change adds explicit behavioral requirements.
+### Requirement: extend type syntax and target binding
+`extend type` MUST be the normative mechanism for adding members to an existing type. The extended type name MUST refer to an in-scope type declaration. The body MAY declare methods and other members allowed by the type system for that target.
 
-**Stable ID:** `BSP-REQ-20DD1C0CE91B`
+#### Scenario: Unknown extended type
+- **GIVEN** an `extend type Missing { ... }` where `Missing` is not in scope
+- **WHEN** name resolution runs
+- **THEN** the compiler rejects the extension because the target type does not resolve
 
-#### Scenario: Capability has descriptive material only
-- **GIVEN** the migrated sources contain no uppercase BCP-14 obligation or accepted ADR decision
-- **WHEN** an implementation reports Beskid conformance
-- **THEN** it MUST NOT claim conformance based on this capability
+### Requirement: Public-only access and visibility
+Members inside `extend type` MAY access public members of the extended type only. Private member access is forbidden inside `extend type` bodies. `extend type` MUST NOT bypass module visibility; extension sites MUST satisfy normal import and visibility rules.
+
+#### Scenario: Private field access from extend type
+- **GIVEN** an `extend type` body that reads a private field of the extended type
+- **WHEN** access checking runs
+- **THEN** the compiler rejects the private member access
+
+### Requirement: Generated extend type contributions
+`Generator` contracts MAY emit `extend type` blocks as typed AST contributions. Generated extensions MUST follow the same access and visibility rules as hand-authored extensions.
+
+#### Scenario: Generated extension obeys access rules
+- **GIVEN** a `Generator` that emits an `extend type` attempting private member access
+- **WHEN** the host merges and re-checks the contribution
+- **THEN** the private access is rejected under the same rules as hand-authored extensions
 
 ## Informative Source Provenance
 
