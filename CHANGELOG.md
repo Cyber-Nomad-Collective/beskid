@@ -46,6 +46,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Align the 0.4 OpenSpec execution ledger and release plan with the fresh W1
+  readiness audit: keep AST-owned verifier diagnostics open, separate platform
+  delivery plumbing from compiler blockers, and map CYB-5 through CYB-44 to
+  evidence-backed compiler, runtime, retirement, and sign-off gates.
 - Align post-migration OpenSpec consumers: AGENTS.md cites `openspec/specs` as
   sole normative SOT (Tracker is delivery/version authority); fill archive TBD
   Purpose headers; hard-fail TBD Purpose placeholders in
