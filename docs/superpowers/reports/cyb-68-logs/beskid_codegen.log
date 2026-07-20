@@ -1,0 +1,64 @@
+=== beskid_codegen (compact) ===
+running 10 tests
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 0 tests
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+running 5 tests
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.52s
+running 43 tests
+test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.69s
+running 5 tests
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.05s
+running 2 tests
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.47s
+--- tail ---
+test parsed_parameter_read_materializes_the_generation_safe_local_slot ... ok
+test parsed_pointer_signature_uses_the_target_pointer_type_without_hir ... ok
+test parsed_program_declares_then_imports_syntax_items_without_hir ... ok
+test parsed_program_specializes_a_qualified_imported_generic_call_without_hir ... ok
+test parsed_statement_final_block_error_identifies_the_originating_body_site ... ok
+test parsed_program_lowers_to_backend_artifact_without_hir ... ok
+test parsed_program_specializes_an_inferred_generic_call_without_hir ... ok
+test parsed_program_specializes_zero_argument_generic_factory_without_hir ... ok
+test parsed_struct_literal_uses_source_aggregate_layout_without_hir ... ok
+test parsed_syntax_program_omits_uncalled_generic_enum_declarations ... ok
+test parsed_syntax_program_emits_imported_unit_calls_as_statements ... ok
+test parsed_struct_literal_method_call_uses_receiver_abi_without_hir ... ok
+test parsed_syntax_root_emits_verified_isle_clif_without_hir ... ok
+test parsed_syntax_program_uses_the_existing_artifact_string_pool ... ok
+test parsed_test_item_emits_verified_isle_clif_without_lowerable ... ok
+test parsed_u8_comparison_coerces_integer_literals_without_hir ... ok
+test parsed_test_program_lowers_a_bare_i64_generic_argument_without_hir ... ok
+test unsupported_typed_operation_reports_deterministic_span_bearing_missing_rule ... ok
+test copied_foundation_assert_source_cannot_receive_panic_authority ... ok
+test parsed_test_program_specializes_a_generic_call_without_hir ... ok
+test canonical_foundation_assert_trigger_failure_lowers_only_the_panic_service ... ok
+test canonical_foundation_assert_equal_specialization_lowers_through_syntax_isle ... ok
+test canonical_foundation_assert_public_helpers_lower_through_syntax_isle ... ok
+test symlinked_foundation_assert_source_cannot_receive_panic_authority ... ok
+test canonical_corelib_service_call_imports_its_distinct_abi_symbol ... ok
+test materialized_foundation_syscall_facade_imports_its_authorized_write_service ... ok
+test canonical_runtime_allocation_and_root_frame_helpers_emit_verified_clif_with_manifest_imports ... ok
+test canonical_foundation_string_len_lowers_through_syntax_isle ... ok
+
+test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.69s
+
+     Running tests/prepared_syntax.rs (target/debug/deps/prepared_syntax-773904a7fc985dad)
+
+running 5 tests
+test compiler_trace_child_lowers_a_syntax_entrypoint ... ignored, run only as the isolated child process that captures compiler trace stderr
+test prepared_syntax_module_lowers_functions_and_methods_without_hir ... ok
+test compiler_trace_reports_syntax_facts_without_source_literal_payloads ... ok
+test prepared_syntax_entrypoint_lowers_without_hir_host_authority ... ok
+test prepared_syntax_module_lowers_sample_mod_nominal_contract_methods ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/system_io_linking.rs (target/debug/deps/system_io_linking-a5b1aa6d065fffc9)
+
+running 2 tests
+test lower_system_error_writeline_smoke_without_jit ... ok
+test lower_system_input_read_smoke_without_jit ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.47s
+
