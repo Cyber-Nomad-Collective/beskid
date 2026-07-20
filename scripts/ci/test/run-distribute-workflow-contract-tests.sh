@@ -24,6 +24,10 @@ if grep -Fq 'stamp-marker:' "${workflow}"; then
   fail "marker must not be stamped before platform publication"
 fi
 
+if grep -Fq 'needs: [resolve-rolling, stamp-marker]' "${workflow}"; then
+  fail "distribution jobs must not depend on the retired stamp-marker job"
+fi
+
 grep -Fq 'record-complete-marker:' "${workflow}" || fail "missing post-publication marker job"
 grep -Fq 'needs: [resolve-rolling, windows-msi, macos-brew, macos-dmg, ubuntu-deb, linux-snap]' "${workflow}" || fail "completion marker must wait for every platform job"
 grep -Fq "needs.windows-msi.result == 'success'" "${workflow}" || fail "completion marker must require successful Windows publication"
