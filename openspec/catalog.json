@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "901c1f3aef5a1b266e12cb5959db38ceb77ba27eaa222c3d3fd5a6f17c760ec0",
+  "revision": "a4f406508d273a9076d60db611825a3b630f0425cc971cd14ba45841b366566b",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -38251,7 +38251,7 @@
       "path": "GUIDE.md",
       "title": "Beskid project guide",
       "authority": "informative",
-      "sourceHash": "b4b7cb650941100f1d204f4be7f2095c93ae4f2e32c7159295218e28016b31c3",
+      "sourceHash": "ecef6076450f9a559ba6f94c59b5ff2c06d48559c2615e512844fcbf5db0c67c",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -38262,7 +38262,7 @@
       "path": "README.md",
       "title": "Beskid Superrepo",
       "authority": "informative",
-      "sourceHash": "f8cff529e305597e084c5cdb942a518d7c458d6d260292447500be2d634a66fd",
+      "sourceHash": "8689afcd141bf4a78bc5cb2c44d408f9ae1c11a054d359c1c265cb3f77942c13",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/README.md"
