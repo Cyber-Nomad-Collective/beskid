@@ -1,11 +1,15 @@
-FROM oven/bun:latest AS build
+# syntax=docker/dockerfile:1.7
+# Bun pinned to the repo-wide version for reproducible, cache-stable installs.
+FROM oven/bun:1.3.14 AS build
 
 WORKDIR /app/site/auth
 
 COPY site/auth/package.json site/auth/bun.lock site/auth/.npmrc ./
 ARG NODE_AUTH_TOKEN
 ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
-RUN bun install --frozen-lockfile
+# Persist + isolate the Bun install cache (see site/website/Dockerfile).
+ENV BUN_INSTALL_CACHE_DIR=/bun-cache
+RUN --mount=type=cache,target=/bun-cache bun install --frozen-lockfile
 
 COPY site/auth/ ./
 
@@ -13,7 +17,7 @@ ENV SKIP_ENV_VALIDATION=1
 RUN bun run build
 RUN bun run verify:client-bundle
 
-FROM oven/bun:latest AS runtime
+FROM oven/bun:1.3.14 AS runtime
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends wget \

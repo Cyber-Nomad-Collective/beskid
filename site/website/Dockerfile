@@ -1,7 +1,10 @@
-FROM oven/bun:latest AS build
+# syntax=docker/dockerfile:1.7
+FROM oven/bun:1.3.14 AS build
 
 # Astro 6 requires Node ≥22.12 (match .github/workflows/docs-site.yml).
-# Bun version tracks oven/bun:latest; local/CI use packageManager + setup-beskid-web (currently 1.3.14).
+# Bun is pinned to the repo-wide version (packageManager + setup-beskid-web:
+# 1.3.14) for reproducible installs. oven/bun:latest previously drifted onto a
+# Bun release that hit a scoped GitHub Packages install-cache regression.
 RUN apt-get update \
   && apt-get install -y ca-certificates curl gnupg \
   && mkdir -p /etc/apt/keyrings \
@@ -25,7 +28,12 @@ COPY site/platform-spec ./site/platform-spec
 COPY openspec ./openspec
 ARG NODE_AUTH_TOKEN
 ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
-RUN bun install --frozen-lockfile
+# Isolate and persist the Bun install cache in a stable path. The BuildKit cache
+# mount keeps package downloads across builds (efficiency) and gives Bun a
+# writable cache root, avoiding the scoped-registry "failed opening
+# cache/package/version dir" ENOENT seen with the empty default cache.
+ENV BUN_INSTALL_CACHE_DIR=/bun-cache
+RUN --mount=type=cache,target=/bun-cache bun install --frozen-lockfile
 
 # Book link rewrite needs a non-empty OpenSpec catalog at build time.
 RUN test -f openspec/catalog.json \

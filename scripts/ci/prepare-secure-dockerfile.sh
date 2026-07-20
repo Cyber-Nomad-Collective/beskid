@@ -11,8 +11,20 @@ awk '
   /^[[:space:]]*ARG[[:space:]]+NODE_AUTH_TOKEN([=[:space:]]|$)/ { removed_arg++; next }
   /^[[:space:]]*ENV[[:space:]]+NODE_AUTH_TOKEN=\$\{NODE_AUTH_TOKEN\}[[:space:]]*$/ { removed_env++; next }
   /^[[:space:]]*RUN[[:space:]].*bun install/ {
-    sub(/RUN[[:space:]]+/, "RUN --mount=type=secret,id=NODE_AUTH_TOKEN,target=/run/secrets/NODE_AUTH_TOKEN,required=true export NODE_AUTH_TOKEN=\"$(cat /run/secrets/NODE_AUTH_TOKEN)\"; ")
+    # Preserve any existing RUN flags (e.g. --mount=type=cache for the Bun
+    # install cache) by inserting the ephemeral secret mount + token export
+    # after the flag block but before the shell command.
+    match($0, /^[[:space:]]*RUN[[:space:]]+/)
+    head = substr($0, 1, RLENGTH)
+    rest = substr($0, RLENGTH + 1)
+    flags = ""
+    while (match(rest, /^--[^[:space:]]+[[:space:]]+/)) {
+      flags = flags substr(rest, 1, RLENGTH)
+      rest = substr(rest, RLENGTH + 1)
+    }
+    print head flags "--mount=type=secret,id=NODE_AUTH_TOKEN,target=/run/secrets/NODE_AUTH_TOKEN,required=true export NODE_AUTH_TOKEN=\"$(cat /run/secrets/NODE_AUTH_TOKEN)\"; " rest
     mounted++
+    next
   }
   { print }
   END {
