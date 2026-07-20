@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Sanitized CYB-102 release-gate summary that records reviewed integrations and
+  actionable blockers without carrying raw host-specific evidence logs into the
+  release branch.
 - Root release gate for shared UI Vitest/jsdom and Nexus `gitnexus-web` unit +
   Playwright E2E (`scripts/ci/shared-ui-nexus-gate.sh`, root
   `gate:shared-ui-nexus` / mirrored test scripts, `platform-delivery`
