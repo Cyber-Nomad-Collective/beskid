@@ -60,7 +60,7 @@ Coolify lane configuration: [`beskid_infra/`](../beskid_infra/README.md).
 [`../validate-ci-local.sh`](../validate-ci-local.sh) runs the same integration,
 shared-ui/Nexus, OpenSpec, conformance, and supply-chain policy used by
 platform delivery. Shared UI + Nexus command parity:
-[`../docs/release/shared-ui-nexus-gate.md`](../docs/release/shared-ui-nexus-gate.md).
+[`../docs/orchestrate/shared-ui-nexus-gate.md`](../docs/orchestrate/shared-ui-nexus-gate.md).
 
 Replacement delivery contracts run without external state changes:
 

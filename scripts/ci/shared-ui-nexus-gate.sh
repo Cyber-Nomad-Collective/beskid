@@ -7,7 +7,7 @@
 #   3. gitnexus-web Playwright E2E (CYB-90)
 #
 # Local and CI use the same script. Root package.json mirrors the package
-# commands; see docs/release/shared-ui-nexus-gate.md for parity notes.
+# commands; see docs/orchestrate/shared-ui-nexus-gate.md for parity notes.
 #
 # Env:
 #   GATE_JUNIT_DIR  optional; emit JUnit via gate-harness
@@ -51,7 +51,7 @@ check_tree() {
 ensure_web_common_install() {
   if [[ ! -d "${WEB_COMMON}/node_modules" ]] && [[ ! -d "${WEB_COMMON}/packages/beskid-ui-react/node_modules" ]]; then
     echo "==> shared-ui-nexus-gate: installing beskid_web_common deps" >&2
-    (cd "${WEB_COMMON}" && bun install --frozen-lockfile) || die_prereq \
+    bun install --cwd="${WEB_COMMON}" --frozen-lockfile || die_prereq \
       "bun install failed in beskid_web_common. Fix lockfile/registry auth (NODE_AUTH_TOKEN for GitHub Packages if needed), then retry."
   fi
 }
@@ -59,12 +59,12 @@ ensure_web_common_install() {
 ensure_nexus_web_install() {
   if [[ ! -d "${NEXUS_WEB}/node_modules" ]]; then
     echo "==> shared-ui-nexus-gate: installing gitnexus-web deps" >&2
-    (cd "${NEXUS_WEB}" && bun install --frozen-lockfile) || die_prereq \
+    bun install --cwd="${NEXUS_WEB}" --frozen-lockfile || die_prereq \
       "bun install failed in beskid_nexus/gitnexus-web. Fix lockfile/registry auth, then retry."
   fi
   if [[ ! -d "${ROOT}/beskid_nexus/gitnexus-shared/node_modules" ]] && [[ -f "${ROOT}/beskid_nexus/gitnexus-shared/package.json" ]]; then
     echo "==> shared-ui-nexus-gate: installing gitnexus-shared deps" >&2
-    (cd "${ROOT}/beskid_nexus/gitnexus-shared" && bun install --frozen-lockfile) || die_prereq \
+    bun install --cwd="${ROOT}/beskid_nexus/gitnexus-shared" --frozen-lockfile || die_prereq \
       "bun install failed in beskid_nexus/gitnexus-shared (required by gitnexus-web file: dependency)."
   fi
 }
@@ -77,10 +77,12 @@ ensure_nexus_web_install
 gate_init "shared-ui-nexus"
 
 # Authoritative shared UI suite (Vitest + jsdom). Do not use bare `bun test`.
-gate_step "shared-ui-vitest" -- bun --cwd "${WEB_COMMON}" test
+# Prefer `bun run --cwd=…` (equals form): `bun --cwd DIR run SCRIPT` with a
+# space before DIR is misparsed by Bun and can exit 0 without running tests.
+gate_step "shared-ui-vitest" -- bun run --cwd="${WEB_COMMON}" test
 
 # Nexus unit suite — Vitest + jsdom only (no Playwright specs).
-gate_step "nexus-unit-vitest" -- bun --cwd "${NEXUS_WEB}" run test:unit
+gate_step "nexus-unit-vitest" -- bun run --cwd="${NEXUS_WEB}" test:unit
 
 # Browser prerequisite before E2E (actionable failure if install cannot complete).
 gate_step "nexus-playwright-chromium" -- bash -c '
@@ -90,17 +92,16 @@ gate_step "nexus-playwright-chromium" -- bash -c '
     echo "SKIP_NEXUS_E2E_INSTALL=1 — assuming Chromium is already installed"
     exit 0
   fi
-  cd "${NEXUS_WEB}"
-  if ! bun run test:e2e:install; then
+  if ! bun run --cwd="${NEXUS_WEB}" test:e2e:install; then
     echo "Playwright Chromium install failed." >&2
-    echo "  Local: bun --cwd beskid_nexus/gitnexus-web run test:e2e:install" >&2
+    echo "  Local: bun run --cwd=beskid_nexus/gitnexus-web test:e2e:install" >&2
     echo "  CI: ensure the runner can download browsers (network) and OS deps." >&2
     exit 1
   fi
 '
 
 # Nexus Playwright E2E — separate runner from unit (no mixing).
-gate_step "nexus-e2e-playwright" -- bun --cwd "${NEXUS_WEB}" run test:e2e
+gate_step "nexus-e2e-playwright" -- bun run --cwd="${NEXUS_WEB}" test:e2e
 
 gate_summary
 gate_emit_junit
@@ -110,10 +111,10 @@ if gate_overall_rc; then
   exit 0
 else
   echo "shared-ui-nexus-gate FAILED" >&2
-  echo "  Shared UI:  bun --cwd beskid_web_common test" >&2
-  echo "  Nexus unit: bun --cwd beskid_nexus/gitnexus-web run test:unit" >&2
-  echo "  Nexus E2E:  bun --cwd beskid_nexus/gitnexus-web run test:e2e:install && bun --cwd beskid_nexus/gitnexus-web run test:e2e" >&2
-  echo "  Package both: bun --cwd beskid_nexus/gitnexus-web run test:gate" >&2
-  echo "  Docs: docs/release/shared-ui-nexus-gate.md" >&2
+  echo "  Shared UI:  bun run --cwd=beskid_web_common test" >&2
+  echo "  Nexus unit: bun run --cwd=beskid_nexus/gitnexus-web test:unit" >&2
+  echo "  Nexus E2E:  bun run --cwd=beskid_nexus/gitnexus-web test:e2e:install && bun run --cwd=beskid_nexus/gitnexus-web test:e2e" >&2
+  echo "  Package both: bun run --cwd=beskid_nexus/gitnexus-web test:gate" >&2
+  echo "  Docs: docs/orchestrate/shared-ui-nexus-gate.md" >&2
   exit 1
 fi

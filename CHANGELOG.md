@@ -15,7 +15,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   Playwright E2E (`scripts/ci/shared-ui-nexus-gate.sh`, root
   `gate:shared-ui-nexus` / mirrored test scripts, `platform-delivery`
   `shared-ui-nexus` job, `validate-ci-local.sh` parity). See
-  `docs/release/shared-ui-nexus-gate.md` (CYB-93).
+  `docs/orchestrate/shared-ui-nexus-gate.md` (CYB-93).
 - Draft CYB-70 documentation/OpenSpec closure packet for Codex review of
   CYB-42 (mechanical evidence only; no OpenSpec checkbox or release claim).
 - Nexus `gitnexus-web` package gate scripts: authoritative Vitest/jsdom unit
@@ -24,6 +24,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Use `bun run --cwd=DIR` (equals form) in the shared-ui/Nexus root gate and
+  package scripts so Bun actually executes Vitest/Playwright instead of
+  printing script help with exit 0 (`bun --cwd DIR run SCRIPT` space form).
 - Keep Bun's built-in `bun test` from loading Nexus Playwright `e2e/*.spec.ts`
   (`bunfig.toml` pathIgnorePatterns + preload redirect) so E2E hooks are not
   invoked outside Playwright; use `bun run test` / `bun run test:e2e` instead.
@@ -64,8 +67,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 ### Changed
 
 - Consolidate all local 0.4 worktree histories onto repository `main` branches, preserving
-  unfinished compiler/runtime work as explicit checkpoints and moving remaining acceptance to
-  tagged Linear Cursor handoffs.
+  unfinished compiler/runtime work as explicit checkpoints and restoring Codex ownership of
+  critical-path acceptance while Cursor supplies bounded configuration, fixture, and evidence
+  handoffs.
 - Define the Linear execution design for the full 0.4 scope: preserve the
   dependency-ordered W1–W7 hierarchy, map every work item back to OpenSpec,
   reserve architectural work and release decisions for Codex, and constrain
