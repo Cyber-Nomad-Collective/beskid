@@ -492,3 +492,4 @@ FodyWeavers.xsd
 **/*.log
 **/*.bun
 package-lock.json
+.worktrees/
