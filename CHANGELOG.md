@@ -11,6 +11,11 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Root release gate for shared UI Vitest/jsdom and Nexus `gitnexus-web` unit +
+  Playwright E2E (`scripts/ci/shared-ui-nexus-gate.sh`, root
+  `gate:shared-ui-nexus` / mirrored test scripts, `platform-delivery`
+  `shared-ui-nexus` job, `validate-ci-local.sh` parity). See
+  `docs/release/shared-ui-nexus-gate.md` (CYB-93).
 - Draft CYB-70 documentation/OpenSpec closure packet for Codex review of
   CYB-42 (mechanical evidence only; no OpenSpec checkbox or release claim).
 - Nexus `gitnexus-web` package gate scripts: authoritative Vitest/jsdom unit

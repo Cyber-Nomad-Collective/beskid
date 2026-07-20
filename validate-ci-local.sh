@@ -7,6 +7,8 @@ cd "$ROOT"
 
 echo "==> platform delivery integration contracts"
 bash scripts/ci/platform-integration-gate.sh
+echo "==> shared UI + Nexus web suites"
+bash scripts/ci/shared-ui-nexus-gate.sh
 echo "==> OpenSpec authority"
 bash scripts/ci/openspec-gate.sh
 echo "==> conformance provenance"

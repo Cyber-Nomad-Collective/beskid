@@ -46,6 +46,7 @@ runners (the compiler gate is also Testbox-compatible). Dagger is retired.
 | [`openspec-gate.sh`](ci/openspec-gate.sh) | Strict OpenSpec authority validation |
 | [`conformance-gate.sh`](ci/conformance-gate.sh) | Requirement/provenance conformance validation |
 | [`platform-integration-gate.sh`](ci/platform-integration-gate.sh) | Cross-site delivery integration contract |
+| [`shared-ui-nexus-gate.sh`](ci/shared-ui-nexus-gate.sh) | Shared UI Vitest + Nexus unit/Playwright E2E |
 | [`security-policy-gate.sh`](ci/security-policy-gate.sh) | Offline workflow and supply-chain policy |
 
 Coolify lane configuration: [`beskid_infra/`](../beskid_infra/README.md).
@@ -57,7 +58,9 @@ Coolify lane configuration: [`beskid_infra/`](../beskid_infra/README.md).
 ## Local CI
 
 [`../validate-ci-local.sh`](../validate-ci-local.sh) runs the same integration,
-OpenSpec, conformance, and supply-chain policy used by platform delivery.
+shared-ui/Nexus, OpenSpec, conformance, and supply-chain policy used by
+platform delivery. Shared UI + Nexus command parity:
+[`../docs/release/shared-ui-nexus-gate.md`](../docs/release/shared-ui-nexus-gate.md).
 
 Replacement delivery contracts run without external state changes:
 

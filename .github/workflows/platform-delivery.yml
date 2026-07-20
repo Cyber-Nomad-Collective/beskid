@@ -80,9 +80,20 @@ jobs:
       gate-name: supply-chain-security
       command: bash scripts/ci/security-policy-gate.sh
 
+  shared-ui-nexus:
+    uses: ./.github/workflows/reusable-quality.yml
+    with:
+      gate-name: shared-ui-nexus
+      submodules: beskid_web_common beskid_nexus
+      setup-web: true
+      timeout-minutes: 45
+      command: bash scripts/ci/shared-ui-nexus-gate.sh
+    secrets:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+
   image-site:
     # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, security). The platform publishes to GHCR and
+    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
     # deploys to Coolify regardless of those pipelines' results; the gates still
     # run in parallel as independent branch-protection checks.
     permissions:
@@ -105,7 +116,7 @@ jobs:
 
   image-auth:
     # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, security). The platform publishes to GHCR and
+    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
     # deploys to Coolify regardless of those pipelines' results; the gates still
     # run in parallel as independent branch-protection checks.
     permissions:
@@ -128,7 +139,7 @@ jobs:
 
   image-platform-spec:
     # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, security). The platform publishes to GHCR and
+    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
     # deploys to Coolify regardless of those pipelines' results; the gates still
     # run in parallel as independent branch-protection checks.
     permissions:
@@ -151,7 +162,7 @@ jobs:
 
   image-tracker:
     # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, security). The platform publishes to GHCR and
+    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
     # deploys to Coolify regardless of those pipelines' results; the gates still
     # run in parallel as independent branch-protection checks.
     permissions:
@@ -174,7 +185,7 @@ jobs:
 
   image-nexus:
     # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, security). The platform publishes to GHCR and
+    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
     # deploys to Coolify regardless of those pipelines' results; the gates still
     # run in parallel as independent branch-protection checks.
     permissions:
@@ -199,7 +210,7 @@ jobs:
 
   image-pckg:
     # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, security). The platform publishes to GHCR and
+    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
     # deploys to Coolify regardless of those pipelines' results; the gates still
     # run in parallel as independent branch-protection checks.
     permissions:

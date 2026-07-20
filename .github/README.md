@@ -6,7 +6,7 @@ This repo is an **aggregate** (submodules and shared web tooling). CI is central
 
 | Workflow | Purpose |
 |----------|---------|
-| `platform-delivery.yml` | OpenSpec/conformance/integration/security quality checks (non-blocking for delivery) plus build-once images, manifest, and Coolify staging that publish regardless of those checks |
+| `platform-delivery.yml` | OpenSpec/conformance/integration/shared-ui-nexus/security quality checks (non-blocking for delivery) plus build-once images, manifest, and Coolify staging that publish regardless of those checks |
 | `promote-production.yml` | Protected production promotion of a successful main delivery manifest |
 | `corelib.yml` | Corelib quality + test (native) + pckg publish |
 | `compiler.yml` | Compiler Rust gate, LSP contract, CLI/LSP releases (native per-OS matrix) |
@@ -28,7 +28,8 @@ implementation details of `platform-delivery.yml`, not alternate entry points:
 
 PRs run all gates and build images without pushing. On `main`, image build/push,
 the digest manifest, and the staging Coolify apply are **decoupled from the
-quality gates**: `openspec`, `conformance`, `integration`, and `security` run in
+quality gates**: `openspec`, `conformance`, `integration`, `shared-ui-nexus`, and
+`security` run in
 parallel as independent branch-protection checks, but they do **not** block
 publishing. Every image lane builds and pushes its signed SHA image regardless of
 gate results, the manifest is assembled from whatever lanes succeeded
