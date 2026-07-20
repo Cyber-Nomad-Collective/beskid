@@ -81,7 +81,7 @@ The records below preserve migration history and are not normative except where 
 - Public client API in `compiler/crates/beskid_pckg/src/lib.rs`
 - HTTP and auth flows in `compiler/crates/beskid_pckg/src/client.rs`
 - CLI integration in `compiler/crates/beskid_pckg/src/cli.rs`
-- Package dashboard behavior in `pckg/src/Server/Components/Pages/Dashboard/Packages.razor.cs`
+- Package dashboard behavior in `compiler/crates/beskid_pckg_server/Components/Pages/Dashboard/Packages.razor.cs`
 </SpecSection>
 
 <SpecSection title="Decisions" id="decisions">
@@ -236,7 +236,7 @@ Absence of `symbolKey` on any row **remains valid** (backward compatibility with
 
 ## Server rejection mirrors
 
-Client-side pack **should** prevalidate paths the server will reject (docs layout, workspace member consistency) to avoid wasted uploads; integration tests live in `pckg/src/Server.Tests/`.
+Client-side pack **should** prevalidate paths the server will reject (docs layout, workspace member consistency) to avoid wasted uploads; integration tests live in `compiler/crates/beskid_pckg_server/tests/`.
 ``````
 
 </details>
@@ -254,7 +254,7 @@ Client-side pack **should** prevalidate paths the server will reject (docs layou
 ``````markdown
 ## Purpose
 
-`beskid_pckg` is the single HTTP client for the **pckg** registry service. The CLI exposes it as `beskid pckg <subcommand>`; analysis-time fetch uses the same `PckgClient` types. Server behavior for published artifacts is implemented in `pckg/src/Server/` (validation, docs ingestion, workspace bundles).
+`beskid_pckg` is the single HTTP client for the **pckg** registry service. The CLI exposes it as `beskid pckg <subcommand>`; analysis-time fetch uses the same `PckgClient` types. Server behavior for published artifacts is implemented in `compiler/crates/beskid_pckg_server/` (validation, docs ingestion, workspace bundles).
 
 ## Component model
 
@@ -299,10 +299,10 @@ Readme resolution uses `discover_readme_for_package_root` from `beskid_analysis`
 
 | Concern | pckg path |
 | --- | --- |
-| Publish validation | `pckg/src/Server/Services/PackageArtifactValidator.cs` |
-| Docs + `api.json` | `pckg/src/Server/Services/PackagePublishDocumentation.cs` |
-| Workspace bundles | `pckg/src/Server/Services/Workspace/WorkspacePublishService.cs` |
-| Dashboard listing | `pckg/src/Server/Components/Pages/Dashboard/Packages.razor.cs` |
+| Publish validation | `compiler/crates/beskid_pckg_server/Services/PackageArtifactValidator.cs` |
+| Docs + `api.json` | `compiler/crates/beskid_pckg_server/Services/PackagePublishDocumentation.cs` |
+| Workspace bundles | `compiler/crates/beskid_pckg_server/Services/Workspace/WorkspacePublishService.cs` |
+| Dashboard listing | `compiler/crates/beskid_pckg_server/Components/Pages/Dashboard/Packages.razor.cs` |
 
 ## Implementation anchors
 
@@ -469,10 +469,10 @@ All HTTP failures surface as `PckgError` with status, message, and optional body
 
 | Area | Location |
 | --- | --- |
-| Artifact validation | `pckg/src/Server.Tests/Unit/PackageArtifactValidatorTests.cs` |
-| Publish documentation | `pckg/src/Server.Tests/Unit/PackagePublishDocumentationTests.cs` |
-| Workspace publish | `pckg/src/Server.Tests/Integration/WorkspacePublishIntegrationTests.cs` |
-| Manifest metadata | `pckg/src/Server.Tests/Unit/PackageManifestMetadataReaderTests.cs` |
+| Artifact validation | `compiler/crates/beskid_pckg_server/tests/Unit/PackageArtifactValidatorTests.cs` |
+| Publish documentation | `compiler/crates/beskid_pckg_server/tests/Unit/PackagePublishDocumentationTests.cs` |
+| Workspace publish | `compiler/crates/beskid_pckg_server/tests/Integration/WorkspacePublishIntegrationTests.cs` |
+| Manifest metadata | `compiler/crates/beskid_pckg_server/tests/Unit/PackageManifestMetadataReaderTests.cs` |
 
 ## Traceability
 
@@ -483,7 +483,7 @@ All HTTP failures surface as `PckgError` with status, message, and optional body
 | Template `packageKind` | `detect_pack_profile` + server template validators |
 | Registry-assigned versions | Server API integration (no client-side version override in CI publish) |
 
-Spec edits **must** stay aligned with `PackageManifestMetadata` and workspace provisioning changes in `pckg/src/Server/Services/Workspace/`.
+Spec edits **must** stay aligned with `PackageManifestMetadata` and workspace provisioning changes in `compiler/crates/beskid_pckg_server/Services/Workspace/`.
 ``````
 
 </details>

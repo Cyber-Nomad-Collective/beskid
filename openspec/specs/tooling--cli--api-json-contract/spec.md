@@ -379,7 +379,7 @@ Undocumented symbols **must** still appear with `signature` / type fields and **
 - Schema types: `compiler/crates/beskid_analysis/src/doc/api_snapshot.rs`
 - Emission: `compiler/crates/beskid_cli/src/commands/doc.rs`
 - Pack validation: `compiler/crates/beskid_pckg/src/api_doc.rs`
-- Registry UI: `pckg/src/Server/Components/Docs/`
+- Registry UI: `compiler/crates/beskid_pckg_server/Components/Docs/`
 ``````
 
 </details>
@@ -397,7 +397,7 @@ Undocumented symbols **must** still appear with `signature` / type fields and **
 ``````markdown
 ## What this covers
 
-How the **pckg** registry renders published package documentation as an **API reference** (Microsoft .NET API Docs–style), using **`api.json`** as the sole structure driver.
+How the **pckg** registry renders published package documentation as an **API reference** (familiar API reference–style), using **`api.json`** as the sole structure driver.
 
 ## Page layout
 
@@ -439,7 +439,7 @@ Legacy artifacts without module parenting **may** synthesize module edges from `
 
 ## Implementation anchors
 
-- UI: `pckg/src/Server/Components/Docs/` (`PackageDocs`, `ApiDocNavigationBuilder`, `DocsView`)
+- UI: `compiler/crates/beskid_pckg_server/Components/Docs/` (`PackageDocs`, `ApiDocNavigationBuilder`, `DocsView`)
 - API: `GET /api/packages/{id}/versions/{ver}/docs/structured`
 - Pack: `.beskid/docs/api.json` inside `.bpk` artifacts
 ``````

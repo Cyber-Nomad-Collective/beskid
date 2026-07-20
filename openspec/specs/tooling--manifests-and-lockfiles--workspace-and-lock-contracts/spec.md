@@ -173,7 +173,7 @@ CLI integration.
 
 ## pckg integration
 
-Published workspace bundles on the registry use server-side validation in `pckg/src/Server/Services/Workspace/` (`WorkspacePublishService`, `WorkspacePackageManifest`). Client-side `beskid pckg` commands **must** emit manifests compatible with those validators before upload.
+Published workspace bundles on the registry use server-side validation in `compiler/crates/beskid_pckg_server/Services/Workspace/` (`WorkspacePublishService`, `WorkspacePackageManifest`). Client-side `beskid pckg` commands **must** emit manifests compatible with those validators before upload.
 ``````
 
 </details>
@@ -462,9 +462,9 @@ While walking the DAG, host projects without explicit `Std` receive implicit cor
 
 | Topic | Path |
 | --- | --- |
-| Workspace publish | `pckg/src/Server.Tests/Integration/WorkspacePublishIntegrationTests.cs` |
-| Manifest metadata | `pckg/src/Server.Tests/Unit/PackageManifestMetadataReaderTests.cs` |
-| Artifact validation | `pckg/src/Server.Tests/Unit/PackageArtifactValidatorTests.cs` |
+| Workspace publish | `compiler/crates/beskid_pckg_server/tests/Integration/WorkspacePublishIntegrationTests.cs` |
+| Manifest metadata | `compiler/crates/beskid_pckg_server/tests/Unit/PackageManifestMetadataReaderTests.cs` |
+| Artifact validation | `compiler/crates/beskid_pckg_server/tests/Unit/PackageArtifactValidatorTests.cs` |
 
 ## Traceability
 

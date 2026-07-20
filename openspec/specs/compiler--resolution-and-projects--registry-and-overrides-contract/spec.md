@@ -69,7 +69,7 @@ This feature hub defines the normative contract for **registry and overrides con
 ## Implementation anchors
 - `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` validates project source selection behavior.
 - `compiler/crates/beskid_cli/src/commands/` provides CLI-level switches for registry interaction.
-- `pckg/src/Server/` is the registry-side system consumed by compiler/project tooling.
+- `compiler/crates/beskid_pckg_server/` is the registry-side system consumed by compiler/project tooling.
 
 ## Decisions
 <!-- spec:generate:adr-index -->
@@ -200,7 +200,7 @@ For newcomers, this page explains where the contract shows up in day-to-day comp
 ## Anchored code paths
 - `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` validates project source selection behavior.
 - `compiler/crates/beskid_cli/src/commands/` provides CLI-level switches for registry interaction.
-- `pckg/src/Server/` is the registry-side system consumed by compiler/project tooling.
+- `compiler/crates/beskid_pckg_server/` is the registry-side system consumed by compiler/project tooling.
 
 ## Practical notes
 - Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
@@ -229,7 +229,7 @@ For newcomers, this page explains where the contract shows up in day-to-day comp
 ## Anchored code paths
 - `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` validates project source selection behavior.
 - `compiler/crates/beskid_cli/src/commands/` provides CLI-level switches for registry interaction.
-- `pckg/src/Server/` is the registry-side system consumed by compiler/project tooling.
+- `compiler/crates/beskid_pckg_server/` is the registry-side system consumed by compiler/project tooling.
 
 ## Practical notes
 - Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
@@ -258,7 +258,7 @@ For newcomers, this page explains where the contract shows up in day-to-day comp
 ## Anchored code paths
 - `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` validates project source selection behavior.
 - `compiler/crates/beskid_cli/src/commands/` provides CLI-level switches for registry interaction.
-- `pckg/src/Server/` is the registry-side system consumed by compiler/project tooling.
+- `compiler/crates/beskid_pckg_server/` is the registry-side system consumed by compiler/project tooling.
 
 ## Practical notes
 - Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
@@ -287,7 +287,7 @@ For newcomers, this page explains where the contract shows up in day-to-day comp
 ## Anchored code paths
 - `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` validates project source selection behavior.
 - `compiler/crates/beskid_cli/src/commands/` provides CLI-level switches for registry interaction.
-- `pckg/src/Server/` is the registry-side system consumed by compiler/project tooling.
+- `compiler/crates/beskid_pckg_server/` is the registry-side system consumed by compiler/project tooling.
 
 ## Practical notes
 - Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
@@ -316,7 +316,7 @@ For newcomers, this page explains where the contract shows up in day-to-day comp
 ## Anchored code paths
 - `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` validates project source selection behavior.
 - `compiler/crates/beskid_cli/src/commands/` provides CLI-level switches for registry interaction.
-- `pckg/src/Server/` is the registry-side system consumed by compiler/project tooling.
+- `compiler/crates/beskid_pckg_server/` is the registry-side system consumed by compiler/project tooling.
 
 ## Practical notes
 - Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.
@@ -345,7 +345,7 @@ For newcomers, this page explains where the contract shows up in day-to-day comp
 ## Anchored code paths
 - `compiler/crates/beskid_tests/src/projects/corelib/mod.rs` validates project source selection behavior.
 - `compiler/crates/beskid_cli/src/commands/` provides CLI-level switches for registry interaction.
-- `pckg/src/Server/` is the registry-side system consumed by compiler/project tooling.
+- `compiler/crates/beskid_pckg_server/` is the registry-side system consumed by compiler/project tooling.
 
 ## Practical notes
 - Prefer tracing from CLI/test entry points into analysis/codegen crates before changing internals.

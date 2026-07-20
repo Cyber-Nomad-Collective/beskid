@@ -83,7 +83,7 @@ The records below preserve migration history and are not normative except where 
 </SpecSection>
 
 <SpecSection title="Implementation anchors" id="implementation-anchors">
-- `pckg/src/Server/Services/PackageArtifactValidator.cs`
+- `compiler/crates/beskid_pckg_server/Services/PackageArtifactValidator.cs`
 - `pckg` package detail components (template page mode)
 - `beskid pckg pack` — emit `packageKind` and `.beskid/template.json`
 </SpecSection>
@@ -129,8 +129,8 @@ No open decisions. ADRs **`D-TOOL-SCAFF-0001`** … **`0003`** (explicit `packag
 </SpecSection>
 
 <SpecSection title="Verification and traceability" id="verification-and-traceability">
-- `pckg/src/Server/Services/PackageArtifactValidator.cs` — template profile branch
-- `pckg` Blazor package detail routing by `packageKind`
+- `compiler/crates/beskid_pckg_server/Services/PackageArtifactValidator.cs` — template profile branch
+- `pckg` React package detail routing by `packageKind`
 - Server tests: template `.bpk` publish without `api.json`
 </SpecSection>
 
@@ -359,8 +359,8 @@ flowchart LR
 
 ## Code anchors
 
-- `pckg/src/Server/Services/PackageArtifactValidator.cs`
-- `pckg/src/Server/Components/Pages/` package detail views
+- `compiler/crates/beskid_pckg_server/Services/PackageArtifactValidator.cs`
+- `compiler/crates/beskid_pckg_server/Components/Pages/` package detail views
 - `compiler/crates/beskid_pckg` pack command (planned `packageKind` emission)
 ``````
 
@@ -385,7 +385,7 @@ Traceability for pckg template profile implementation.
 
 | Test | Location (planned) |
 | --- | --- |
-| Template `.bpk` validates without `api.json` | `pckg/src/Server.Tests/Unit/PackageArtifactValidatorTests.cs` |
+| Template `.bpk` validates without `api.json` | `compiler/crates/beskid_pckg_server/tests/Unit/PackageArtifactValidatorTests.cs` |
 | Library `.bpk` still requires `api.json` when policy on | same |
 | Template package page hides docs | `Server.Tests` integration or bUnit on package detail |
 | Pack sets `packageKind: template` | `beskid_tests` pack golden `package.json` |
