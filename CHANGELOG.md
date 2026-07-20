@@ -13,8 +13,15 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 - Draft CYB-70 documentation/OpenSpec closure packet for Codex review of
   CYB-42 (mechanical evidence only; no OpenSpec checkbox or release claim).
+- Nexus `gitnexus-web` package gate scripts: authoritative Vitest/jsdom unit
+  (`bun run test` / `test:unit`), Playwright E2E (`test:e2e` + `test:e2e:install`),
+  and `test:gate` that runs both for release evidence (CYB-90; root wiring CYB-93).
 
 ### Fixed
+
+- Keep Bun's built-in `bun test` from loading Nexus Playwright `e2e/*.spec.ts`
+  (`bunfig.toml` pathIgnorePatterns + preload redirect) so E2E hooks are not
+  invoked outside Playwright; use `bun run test` / `bun run test:e2e` instead.
 
 - Sync root `bun.lock` with website/platform-spec `file:` pins for
   `@beskid/beskid-ui` / `@beskid/ui-react` so `bun install --frozen-lockfile`
