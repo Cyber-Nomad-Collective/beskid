@@ -1,0 +1,3 @@
+=== verify-native-runtime-kit-ci.sh ===
+native ABI-v5 runtime-kit CI migration gate passed
+EXIT:0

@@ -1,0 +1,17 @@
+stage-native-runtime-kit.sh: NOT executed (builds kit; out of inventory-only scope)
+would invoke: cargo run -p beskid_cli -- runtime-kit build-native-host
+compiler/crates/beskid_cli/src/cli.rs:379:            "runtime-kit",
+compiler/crates/beskid_cli/src/cli.rs:392:        .expect("parse runtime-kit build");
+compiler/crates/beskid_cli/src/cli.rs:395:            panic!("expected runtime-kit command");
+compiler/crates/beskid_cli/src/cli.rs:398:            panic!("expected runtime-kit build command");
+compiler/crates/beskid_cli/src/cli.rs:412:            "runtime-kit",
+compiler/crates/beskid_cli/src/cli.rs:413:            "build-native-host",
+compiler/crates/beskid_cli/src/cli.rs:419:        .expect("parse native host runtime-kit build");
+compiler/crates/beskid_cli/src/cli.rs:422:            panic!("expected runtime-kit command");
+compiler/crates/beskid_cli/src/cli.rs:426:            panic!("expected native host runtime-kit build");
+compiler/crates/beskid_cli/src/cli.rs:436:            "runtime-kit",
+compiler/crates/beskid_cli/src/cli.rs:457:            "runtime-kit",
+compiler/crates/beskid_cli/src/cli.rs:476:        .expect("parse runtime-kit matrix");
+compiler/crates/beskid_cli/src/cli.rs:478:            panic!("expected runtime-kit command");
+compiler/crates/beskid_cli/src/cli.rs:482:            panic!("expected runtime-kit matrix command");
+compiler/crates/beskid_cli/src/commands/runtime_kit.rs:1://! `beskid runtime-kit build` — publish one exact ABI-v5 target/profile kit.

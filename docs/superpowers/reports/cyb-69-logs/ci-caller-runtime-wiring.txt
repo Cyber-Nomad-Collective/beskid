@@ -1,0 +1,16 @@
+=== rg ensure-runtime-bridge in callers ===
+-- scripts/ci/compiler-rust-gate.sh --
+44:export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${ROOT}/compiler/target}/native-runtime-kit}"
+46:bash scripts/stage-native-runtime-kit.sh
+-- scripts/ci/corelib-gate.sh --
+78:  if [[ -n "${BESKID_RUNTIME_PREFIX:-}" && -d "${BESKID_RUNTIME_PREFIX}" ]]; then
+79:    runtime_files="$(find "${BESKID_RUNTIME_PREFIX}" -type f | wc -l | tr -d ' ')"
+80:    runtime_size="$(du -sh "${BESKID_RUNTIME_PREFIX}" | awk '{print $1}')"
+95:    echo "| runtime kit prefix | ${BESKID_RUNTIME_PREFIX:-unresolved} |"
+365:export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${COMPILER_ROOT}/target}/native-runtime-kit}"
+367:corelib_report_step "stage native runtime kit" bash scripts/stage-native-runtime-kit.sh
+-- scripts/ci/corelib-publish.sh --
+55:export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${COMPILER_ROOT}/target}/native-runtime-kit}"
+57:bash scripts/stage-native-runtime-kit.sh
+-- .github/workflows/compiler-gate-testbox.yml --
+(no matches)

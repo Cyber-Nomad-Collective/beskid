@@ -1,0 +1,1026 @@
+host: Darwin arm64
+kit_root: /Users/mikserek/Projects/beskid/compiler/target/native-runtime-kit
+listed: 2026-07-20T10:36:11Z
+/Users/mikserek/Projects/beskid/compiler/target/native-runtime-kit/lib/beskid-runtime/abi-5/aarch64-apple-darwin/release/abi.json
+/Users/mikserek/Projects/beskid/compiler/target/native-runtime-kit/lib/beskid-runtime/abi-5/aarch64-apple-darwin/release/shared/libbeskid_runtime.dylib
+/Users/mikserek/Projects/beskid/compiler/target/native-runtime-kit/lib/beskid-runtime/abi-5/aarch64-apple-darwin/release/static/libbeskid_runtime.a
+--- abi.json ---
+{
+  "schema_version": 1,
+  "abi_version": 5,
+  "target": {
+    "triple": "aarch64-apple-darwin",
+    "endianness": "little",
+    "pointer_width": 64,
+    "calling_convention": "apple_aarch64",
+    "object_format": "macho",
+    "symbol_prefix": "_",
+    "stack_alignment": 16,
+    "shadow_space": 0
+  },
+  "profile": "release",
+  "layout_hash": "5284ec72f700baaa14c46d9ef5ab324246c775d24f3baf1e4465f21f85cfdc10",
+  "source_hash": "5f821cc4edede0f20740e1035dc75fee74b51a495a986b5537231048311b62fb",
+  "artifacts": {
+    "static_library": {
+      "relative_path": "static/libbeskid_runtime.a",
+      "sha256": "08d69f3f3da0f1ba5d5ab59a9261d782c160f163c349e6110b3e64ced2b12f09"
+    },
+    "shared_library": {
+      "relative_path": "shared/libbeskid_runtime.dylib",
+      "sha256": "109bd0e8f7f1f2e26b2c4ccad1607791578e91abee92ddf6b6459eef2b484e04"
+    }
+  },
+  "import_allowlist": [
+    "_exit",
+    "_tlv_bootstrap",
+    "mmap",
+    "munmap",
+    "write"
+  ],
+  "export_allowlist": [
+    "beskid_arch_v5_context_init",
+    "beskid_arch_v5_context_switch",
+    "beskid_library_attach_v5",
+    "beskid_library_detach_v5",
+    "beskid_rt_v5_abi_version",
+    "beskid_rt_v5_intrinsic_memory_compare",
+    "beskid_rt_v5_intrinsic_memory_copy",
+    "beskid_rt_v5_intrinsic_memory_set",
+    "beskid_rt_v5_intrinsic_native_word_from_pointer",
+    "beskid_rt_v5_intrinsic_pointer_add",
+    "beskid_rt_v5_intrinsic_pointer_from_native_word",
+    "beskid_rt_v5_intrinsic_raw_byte_load",
+    "beskid_rt_v5_intrinsic_raw_byte_store",
+    "beskid_rt_v5_intrinsic_raw_word_load",
+    "beskid_rt_v5_intrinsic_raw_word_store",
+    "beskid_rt_v5_intrinsic_system_allocate",
+    "beskid_rt_v5_intrinsic_system_free",
+    "beskid_rt_v5_intrinsic_tls_get",
+    "beskid_rt_v5_intrinsic_tls_set",
+    "beskid_rt_v5_process_init",
+    "beskid_rt_v5_process_shutdown",
+    "beskid_rt_v5_thread_attach",
+    "beskid_rt_v5_thread_detach",
+    "beskid_rt_v5_trap"
+  ],
+  "loader_required_exports": [
+    "beskid_arch_v5_context_init",
+    "beskid_arch_v5_context_switch",
+    "beskid_library_attach_v5",
+    "beskid_library_detach_v5",
+    "beskid_rt_v5_abi_version",
+    "beskid_rt_v5_process_init",
+    "beskid_rt_v5_process_shutdown",
+    "beskid_rt_v5_thread_attach",
+    "beskid_rt_v5_thread_detach",
+    "beskid_rt_v5_trap"
+  ],
+  "abi_contract": {
+    "abi_version": 5,
+    "trap_exit_status": 101,
+    "trap_diagnostic": "beskid runtime trap v5",
+    "target": {
+      "triple": "aarch64-apple-darwin",
+      "endianness": "little",
+      "pointer_width": 64,
+      "calling_convention": "apple_aarch64",
+      "object_format": "macho",
+      "symbol_prefix": "_",
+      "stack_alignment": 16,
+      "shadow_space": 0
+    },
+    "imports": [],
+    "exports": [
+      {
+        "symbol": "beskid_library_attach_v5",
+        "param_names": [
+          "runtime"
+        ],
+        "params": [
+          "pointer"
+        ],
+        "result": "i32",
+        "noreturn": false
+      },
+      {
+        "symbol": "beskid_library_detach_v5",
+        "param_names": [
+          "runtime"
+        ],
+        "params": [
+          "pointer"
+        ],
+        "result": "void",
+        "noreturn": false
+      },
+      {
+        "symbol": "beskid_rt_v5_abi_version",
+        "param_names": [],
+        "params": [],
+        "result": "u32",
+        "noreturn": false
+      },
+      {
+        "symbol": "beskid_rt_v5_process_init",
+        "param_names": [
+          "config"
+        ],
+        "params": [
+          "pointer"
+        ],
+        "result": "pointer",
+        "noreturn": false
+      },
+      {
+        "symbol": "beskid_rt_v5_process_shutdown",
+        "param_names": [
+          "runtime"
+        ],
+        "params": [
+          "pointer"
+        ],
+        "result": "void",
+        "noreturn": false
+      },
+      {
+        "symbol": "beskid_rt_v5_thread_attach",
+        "param_names": [
+          "runtime"
+        ],
+        "params": [
+          "pointer"
+        ],
+        "result": "pointer",
+        "noreturn": false
+      },
+      {
+        "symbol": "beskid_rt_v5_thread_detach",
+        "param_names": [
+          "thread"
+        ],
+        "params": [
+          "pointer"
+        ],
+        "result": "void",
+        "noreturn": false
+      },
+      {
+        "symbol": "beskid_rt_v5_trap",
+        "param_names": [
+          "code",
+          "message",
+          "message_len"
+        ],
+        "params": [
+          "u8",
+          "pointer",
+          "u_size"
+        ],
+        "result": "void",
+        "noreturn": true
+      }
+    ],
+    "layouts": [
+      {
+        "name": "BeskidAllocationRequest",
+        "size": 24,
+        "alignment": 8,
+        "fields": [
+          {
+            "name": "size",
+            "offset": 0,
+            "ty": "u_size"
+          },
+          {
+            "name": "alignment",
+            "offset": 8,
+            "ty": "u_size"
+          },
+          {
+            "name": "descriptor",
+            "offset": 16,
+            "ty": "pointer"
+          }
+        ]
+      },
+      {
+        "name": "BeskidHandle",
+        "size": 16,
+        "alignment": 8,
+        "fields": [
+          {
+            "name": "slot",
+            "offset": 0,
+            "ty": "u32"
+          },
+          {
+            "name": "generation",
+            "offset": 4,
+            "ty": "u32"
+          },
+          {
+            "name": "owner_cookie",
+            "offset": 8,
+            "ty": "u64"
+          }
+        ]
+      },
+      {
+        "name": "BeskidObjectHeader",
+        "size": 16,
+        "alignment": 8,
+        "fields": [
+          {
+            "name": "descriptor",
+            "offset": 0,
+            "ty": "pointer"
+          },
+          {
+            "name": "gc_word",
+            "offset": 8,
+            "ty": "u_size"
+          }
+        ]
+      },
+      {
+        "name": "BeskidRootFrame",
+        "size": 24,
+        "alignment": 8,
+        "fields": [
+          {
+            "name": "previous",
+            "offset": 0,
+            "ty": "pointer"
+          },
+          {
+            "name": "slots",
+            "offset": 8,
+            "ty": "pointer"
+          },
+          {
+            "name": "slot_count",
+            "offset": 16,
+            "ty": "u_size"
+          }
+        ]
+      },
+      {
+        "name": "BeskidRootSlot",
+        "size": 8,
+        "alignment": 8,
+        "fields": [
+          {
+            "name": "value",
+            "offset": 0,
+            "ty": "pointer"
+          }
+        ]
+      },
+      {
+        "name": "BeskidRuntimeState",
+        "size": 64,
+        "alignment": 8,
+        "fields": [
+          {
+            "name": "abi_version",
+            "offset": 0,
+            "ty": "u32"
+          },
+          {
+            "name": "flags",
+            "offset": 4,
+            "ty": "u32"
+          },
+          {
+            "name": "current_thread",
+            "offset": 8,
+            "ty": "pointer"
+          },
+          {
+            "name": "heap",
+            "offset": 16,
+            "ty": "pointer"
+          },
+          {
+            "name": "handles",
+            "offset": 24,
+            "ty": "pointer"
+          },
+          {
+            "name": "scheduler",
+            "offset": 32,
+            "ty": "pointer"
+          },
+          {
+            "name": "root_frame",
+            "offset": 40,
+            "ty": "pointer"
+          },
+          {
+            "name": "tls_key",
+            "offset": 48,
+            "ty": "u_size"
+          },
+          {
+            "name": "corruption_cookie",
+            "offset": 56,
+            "ty": "u64"
+          }
+        ]
+      },
+      {
+        "name": "BeskidTlsState",
+        "size": 32,
+        "alignment": 8,
+        "fields": [
+          {
+            "name": "runtime",
+            "offset": 0,
+            "ty": "pointer"
+          },
+          {
+            "name": "root_frame",
+            "offset": 8,
+            "ty": "pointer"
+          },
+          {
+            "name": "current_fiber",
+            "offset": 16,
+            "ty": "pointer"
+          },
+          {
+            "name": "attach_depth",
+            "offset": 24,
+            "ty": "u_size"
+          }
+        ]
+      },
+      {
+        "name": "BeskidTypeDescriptor",
+        "size": 40,
+        "alignment": 8,
+        "fields": [
+          {
+            "name": "size",
+            "offset": 0,
+            "ty": "u_size"
+          },
+          {
+            "name": "alignment",
+            "offset": 8,
+            "ty": "u_size"
+          },
+          {
+            "name": "pointer_map",
+            "offset": 16,
+            "ty": "pointer"
+          },
+          {
+            "name": "pointer_count",
+            "offset": 24,
+            "ty": "u_size"
+          },
+          {
+            "name": "flags",
+            "offset": 32,
+            "ty": "u32"
+          },
+          {
+            "name": "reserved",
+            "offset": 36,
+            "ty": "u32"
+          }
+        ]
+      },
+      {
+        "name": "BeskidArchContextAarch64Darwin",
+        "size": 176,
+        "alignment": 16,
+        "fields": [
+          {
+            "name": "x19",
+            "offset": 0,
+            "ty": "u64"
+          },
+          {
+            "name": "x20",
+            "offset": 8,
+            "ty": "u64"
+          },
+          {
+            "name": "x21",
+            "offset": 16,
+            "ty": "u64"
+          },
+          {
+            "name": "x22",
+            "offset": 24,
+            "ty": "u64"
+          },
+          {
+            "name": "x23",
+            "offset": 32,
+            "ty": "u64"
+          },
+          {
+            "name": "x24",
+            "offset": 40,
+            "ty": "u64"
+          },
+          {
+            "name": "x25",
+            "offset": 48,
+            "ty": "u64"
+          },
+          {
+            "name": "x26",
+            "offset": 56,
+            "ty": "u64"
+          },
+          {
+            "name": "x27",
+            "offset": 64,
+            "ty": "u64"
+          },
+          {
+            "name": "x28",
+            "offset": 72,
+            "ty": "u64"
+          },
+          {
+            "name": "x29",
+            "offset": 80,
+            "ty": "u64"
+          },
+          {
+            "name": "x30",
+            "offset": 88,
+            "ty": "u64"
+          },
+          {
+            "name": "sp",
+            "offset": 96,
+            "ty": "u64"
+          },
+          {
+            "name": "pc",
+            "offset": 104,
+            "ty": "u64"
+          },
+          {
+            "name": "d8",
+            "offset": 112,
+            "ty": "f64"
+          },
+          {
+            "name": "d9",
+            "offset": 120,
+            "ty": "f64"
+          },
+          {
+            "name": "d10",
+            "offset": 128,
+            "ty": "f64"
+          },
+          {
+            "name": "d11",
+            "offset": 136,
+            "ty": "f64"
+          },
+          {
+            "name": "d12",
+            "offset": 144,
+            "ty": "f64"
+          },
+          {
+            "name": "d13",
+            "offset": 152,
+            "ty": "f64"
+          },
+          {
+            "name": "d14",
+            "offset": 160,
+            "ty": "f64"
+          },
+          {
+            "name": "d15",
+            "offset": 168,
+            "ty": "f64"
+          }
+        ]
+      }
+    ],
+    "trusted_runtime_package": {
+      "publisher": "beskid-lang.org",
+      "name": "beskid-runtime-native",
+      "abi_version": 5
+    },
+    "trusted_runtime_intrinsics": [
+      {
+        "name": "memory_compare",
+        "symbol": "beskid_rt_v5_intrinsic_memory_compare",
+        "capability": "runtime.bootstrap.memory_compare",
+        "param_names": [
+          "left",
+          "right",
+          "length"
+        ],
+        "params": [
+          "pointer",
+          "pointer",
+          "u_size"
+        ],
+        "result": "i32",
+        "noreturn": false
+      },
+      {
+        "name": "memory_copy",
+        "symbol": "beskid_rt_v5_intrinsic_memory_copy",
+        "capability": "runtime.bootstrap.memory_copy",
+        "param_names": [
+          "destination",
+          "source",
+          "length"
+        ],
+        "params": [
+          "pointer",
+          "pointer",
+          "u_size"
+        ],
+        "result": "void",
+        "noreturn": false
+      },
+      {
+        "name": "memory_set",
+        "symbol": "beskid_rt_v5_intrinsic_memory_set",
+        "capability": "runtime.bootstrap.memory_set",
+        "param_names": [
+          "destination",
+          "byte",
+          "length"
+        ],
+        "params": [
+          "pointer",
+          "u8",
+          "u_size"
+        ],
+        "result": "void",
+        "noreturn": false
+      },
+      {
+        "name": "native_word_from_pointer",
+        "symbol": "beskid_rt_v5_intrinsic_native_word_from_pointer",
+        "capability": "runtime.bootstrap.native_word_from_pointer",
+        "param_names": [
+          "value"
+        ],
+        "params": [
+          "pointer"
+        ],
+        "result": "u_size",
+        "noreturn": false
+      },
+      {
+        "name": "pointer_add",
+        "symbol": "beskid_rt_v5_intrinsic_pointer_add",
+        "capability": "runtime.bootstrap.pointer_add",
+        "param_names": [
+          "base",
+          "offset"
+        ],
+        "params": [
+          "pointer",
+          "u_size"
+        ],
+        "result": "pointer",
+        "noreturn": false
+      },
+      {
+        "name": "pointer_from_native_word",
+        "symbol": "beskid_rt_v5_intrinsic_pointer_from_native_word",
+        "capability": "runtime.bootstrap.pointer_from_native_word",
+        "param_names": [
+          "value"
+        ],
+        "params": [
+          "u_size"
+        ],
+        "result": "pointer",
+        "noreturn": false
+      },
+      {
+        "name": "raw_byte_load",
+        "symbol": "beskid_rt_v5_intrinsic_raw_byte_load",
+        "capability": "runtime.bootstrap.raw_byte_load",
+        "param_names": [
+          "address"
+        ],
+        "params": [
+          "pointer"
+        ],
+        "result": "u8",
+        "noreturn": false
+      },
+      {
+        "name": "raw_byte_store",
+        "symbol": "beskid_rt_v5_intrinsic_raw_byte_store",
+        "capability": "runtime.bootstrap.raw_byte_store",
+        "param_names": [
+          "address",
+          "value"
+        ],
+        "params": [
+          "pointer",
+          "u8"
+        ],
+        "result": "void",
+        "noreturn": false
+      },
+      {
+        "name": "raw_word_load",
+        "symbol": "beskid_rt_v5_intrinsic_raw_word_load",
+        "capability": "runtime.bootstrap.raw_word_load",
+        "param_names": [
+          "address"
+        ],
+        "params": [
+          "pointer"
+        ],
+        "result": "u_size",
+        "noreturn": false
+      },
+      {
+        "name": "raw_word_store",
+        "symbol": "beskid_rt_v5_intrinsic_raw_word_store",
+        "capability": "runtime.bootstrap.raw_word_store",
+        "param_names": [
+          "address",
+          "value"
+        ],
+        "params": [
+          "pointer",
+          "u_size"
+        ],
+        "result": "void",
+        "noreturn": false
+      },
+      {
+        "name": "system_allocate",
+        "symbol": "beskid_rt_v5_intrinsic_system_allocate",
+        "capability": "runtime.bootstrap.system_allocate",
+        "param_names": [
+          "size",
+          "alignment"
+        ],
+        "params": [
+          "u_size",
+          "u_size"
+        ],
+        "result": "pointer",
+        "noreturn": false
+      },
+      {
+        "name": "system_free",
+        "symbol": "beskid_rt_v5_intrinsic_system_free",
+        "capability": "runtime.bootstrap.system_free",
+        "param_names": [
+          "address",
+          "size"
+        ],
+        "params": [
+          "pointer",
+          "u_size"
+        ],
+        "result": "void",
+        "noreturn": false
+      },
+      {
+        "name": "tls_get",
+        "symbol": "beskid_rt_v5_intrinsic_tls_get",
+        "capability": "runtime.bootstrap.tls_get",
+        "param_names": [],
+        "params": [],
+        "result": "pointer",
+        "noreturn": false
+      },
+      {
+        "name": "tls_set",
+        "symbol": "beskid_rt_v5_intrinsic_tls_set",
+        "capability": "runtime.bootstrap.tls_set",
+        "param_names": [
+          "value"
+        ],
+        "params": [
+          "pointer"
+        ],
+        "result": "void",
+        "noreturn": false
+      },
+      {
+        "name": "trap",
+        "symbol": "beskid_rt_v5_trap",
+        "capability": "runtime.bootstrap.trap",
+        "param_names": [
+          "code",
+          "message",
+          "message_len"
+        ],
+        "params": [
+          "u8",
+          "pointer",
+          "u_size"
+        ],
+        "result": "void",
+        "noreturn": true
+      }
+    ],
+    "platform_imports": [
+      {
+        "symbol": "_exit",
+        "library": "libSystem",
+        "param_names": [
+          "status"
+        ],
+        "params": [
+          "i32"
+        ],
+        "result": "void",
+        "noreturn": true
+      },
+      {
+        "symbol": "mmap",
+        "library": "libSystem",
+        "param_names": [
+          "address",
+          "length",
+          "protection",
+          "flags",
+          "fd",
+          "offset"
+        ],
+        "params": [
+          "pointer",
+          "u_size",
+          "i32",
+          "i32",
+          "i32",
+          "i64"
+        ],
+        "result": "pointer",
+        "noreturn": false
+      },
+      {
+        "symbol": "munmap",
+        "library": "libSystem",
+        "param_names": [
+          "address",
+          "length"
+        ],
+        "params": [
+          "pointer",
+          "u_size"
+        ],
+        "result": "i32",
+        "noreturn": false
+      },
+      {
+        "symbol": "write",
+        "library": "libSystem",
+        "param_names": [
+          "fd",
+          "buffer",
+          "length"
+        ],
+        "params": [
+          "i32",
+          "pointer",
+          "u_size"
+        ],
+        "result": "i_size",
+        "noreturn": false
+      }
+    ],
+    "assembly_exports": [
+      {
+        "symbol": "beskid_arch_v5_context_init",
+        "param_names": [
+          "context",
+          "stack_top",
+          "entry",
+          "argument",
+          "return_trampoline"
+        ],
+        "params": [
+          "pointer",
+          "pointer",
+          "pointer",
+          "pointer",
+          "pointer"
+        ],
+        "parameter_locations": [
+          {
+            "kind": "register",
+            "register": "x0"
+          },
+          {
+            "kind": "register",
+            "register": "x1"
+          },
+          {
+            "kind": "register",
+            "register": "x2"
+          },
+          {
+            "kind": "register",
+            "register": "x3"
+          },
+          {
+            "kind": "register",
+            "register": "x4"
+          }
+        ],
+        "result": "void",
+        "preserved_registers": [
+          "x19",
+          "x20",
+          "x21",
+          "x22",
+          "x23",
+          "x24",
+          "x25",
+          "x26",
+          "x27",
+          "x28",
+          "x29",
+          "v8",
+          "v9",
+          "v10",
+          "v11",
+          "v12",
+          "v13",
+          "v14",
+          "v15"
+        ]
+      },
+      {
+        "symbol": "beskid_arch_v5_context_switch",
+        "param_names": [
+          "from",
+          "to"
+        ],
+        "params": [
+          "pointer",
+          "pointer"
+        ],
+        "parameter_locations": [
+          {
+            "kind": "register",
+            "register": "x0"
+          },
+          {
+            "kind": "register",
+            "register": "x1"
+          }
+        ],
+        "result": "void",
+        "preserved_registers": [
+          "x19",
+          "x20",
+          "x21",
+          "x22",
+          "x23",
+          "x24",
+          "x25",
+          "x26",
+          "x27",
+          "x28",
+          "x29",
+          "v8",
+          "v9",
+          "v10",
+          "v11",
+          "v12",
+          "v13",
+          "v14",
+          "v15"
+        ]
+      }
+    ],
+    "traps": [
+      {
+        "name": "null_reference",
+        "code": 1
+      },
+      {
+        "name": "bounds",
+        "code": 2
+      },
+      {
+        "name": "arithmetic_overflow",
+        "code": 3
+      },
+      {
+        "name": "invalid_utf8",
+        "code": 4
+      },
+      {
+        "name": "out_of_memory",
+        "code": 5
+      },
+      {
+        "name": "invalid_or_stale_handle",
+        "code": 6
+      },
+      {
+        "name": "scheduler_deadlock",
+        "code": 7
+      },
+      {
+        "name": "abi_or_layout_mismatch",
+        "code": 8
+      },
+      {
+        "name": "unreachable_or_isle_invariant",
+        "code": 9
+      },
+      {
+        "name": "runtime_internal_corruption",
+        "code": 10
+      }
+    ]
+  },
+  "audit": {
+    "allowed_imports": [
+      "_exit",
+      "_tlv_bootstrap",
+      "mmap",
+      "munmap",
+      "write"
+    ],
+    "allowed_exports": [
+      "beskid_arch_v5_context_init",
+      "beskid_arch_v5_context_switch",
+      "beskid_library_attach_v5",
+      "beskid_library_detach_v5",
+      "beskid_rt_v5_abi_version",
+      "beskid_rt_v5_intrinsic_memory_compare",
+      "beskid_rt_v5_intrinsic_memory_copy",
+      "beskid_rt_v5_intrinsic_memory_set",
+      "beskid_rt_v5_intrinsic_native_word_from_pointer",
+      "beskid_rt_v5_intrinsic_pointer_add",
+      "beskid_rt_v5_intrinsic_pointer_from_native_word",
+      "beskid_rt_v5_intrinsic_raw_byte_load",
+      "beskid_rt_v5_intrinsic_raw_byte_store",
+      "beskid_rt_v5_intrinsic_raw_word_load",
+      "beskid_rt_v5_intrinsic_raw_word_store",
+      "beskid_rt_v5_intrinsic_system_allocate",
+      "beskid_rt_v5_intrinsic_system_free",
+      "beskid_rt_v5_intrinsic_tls_get",
+      "beskid_rt_v5_intrinsic_tls_set",
+      "beskid_rt_v5_process_init",
+      "beskid_rt_v5_process_shutdown",
+      "beskid_rt_v5_thread_attach",
+      "beskid_rt_v5_thread_detach",
+      "beskid_rt_v5_trap"
+    ],
+    "loader_required_exports": [
+      "beskid_arch_v5_context_init",
+      "beskid_arch_v5_context_switch",
+      "beskid_library_attach_v5",
+      "beskid_library_detach_v5",
+      "beskid_rt_v5_abi_version",
+      "beskid_rt_v5_process_init",
+      "beskid_rt_v5_process_shutdown",
+      "beskid_rt_v5_thread_attach",
+      "beskid_rt_v5_thread_detach",
+      "beskid_rt_v5_trap"
+    ],
+    "forbidden_rust_symbols": [
+      "_Unwind",
+      "__Unwind",
+      "__rust",
+      "_rust",
+      "abfall",
+      "alloc::alloc",
+      "core::panicking",
+      "corosensei",
+      "eh_personality",
+      "gcc_personality",
+      "panic",
+      "rust",
+      "std::panicking"
+    ],
+    "object_format": "macho",
+    "symbol_prefix": "_",
+    "layout_hash": "5284ec72f700baaa14c46d9ef5ab324246c775d24f3baf1e4465f21f85cfdc10",
+    "runtime_source_hash": "5f821cc4edede0f20740e1035dc75fee74b51a495a986b5537231048311b62fb"
+  }
+}
+--- sha256 ---
+109bd0e8f7f1f2e26b2c4ccad1607791578e91abee92ddf6b6459eef2b484e04  /Users/mikserek/Projects/beskid/compiler/target/native-runtime-kit/lib/beskid-runtime/abi-5/aarch64-apple-darwin/release/shared/libbeskid_runtime.dylib
+08d69f3f3da0f1ba5d5ab59a9261d782c160f163c349e6110b3e64ced2b12f09  /Users/mikserek/Projects/beskid/compiler/target/native-runtime-kit/lib/beskid-runtime/abi-5/aarch64-apple-darwin/release/static/libbeskid_runtime.a
+8996febe4b0b489d10b1826104ea67ab277078a661ab54a238124bb2db35327f  /Users/mikserek/Projects/beskid/compiler/target/native-runtime-kit/lib/beskid-runtime/abi-5/aarch64-apple-darwin/release/abi.json
+--- file(1) ---
+/Users/mikserek/Projects/beskid/compiler/target/native-runtime-kit/lib/beskid-runtime/abi-5/aarch64-apple-darwin/release/shared/libbeskid_runtime.dylib: Mach-O 64-bit dynamically linked shared library arm64
+/Users/mikserek/Projects/beskid/compiler/target/native-runtime-kit/lib/beskid-runtime/abi-5/aarch64-apple-darwin/release/static/libbeskid_runtime.a: current ar archive random library

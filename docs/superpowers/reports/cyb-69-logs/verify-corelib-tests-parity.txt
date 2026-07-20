@@ -1,0 +1,3 @@
+=== verify-corelib-tests-parity.sh ===
+corelib_tests parity ok (58 targets)
+EXIT:0
