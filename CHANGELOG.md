@@ -51,6 +51,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Consolidate all local 0.4 worktree histories onto repository `main` branches, preserving
+  unfinished compiler/runtime work as explicit checkpoints and moving remaining acceptance to
+  tagged Linear Cursor handoffs.
 - Define the Linear execution design for the full 0.4 scope: preserve the
   dependency-ordered W1–W7 hierarchy, map every work item back to OpenSpec,
   reserve architectural work and release decisions for Codex, and constrain
