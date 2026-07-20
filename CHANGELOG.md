@@ -9,6 +9,11 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Added
+
+- Draft CYB-70 documentation/OpenSpec closure packet for Codex review of
+  CYB-42 (mechanical evidence only; no OpenSpec checkbox or release claim).
+
 ### Fixed
 
 - Sync root `bun.lock` with website/platform-spec `file:` pins for
