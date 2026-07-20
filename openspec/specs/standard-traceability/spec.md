@@ -1,7 +1,7 @@
 # standard-traceability Specification
 
 ## Purpose
-TBD - created by archiving change migrate-beskid-standard-to-openspec. Update Purpose after archive.
+Define stable typed identifiers for OpenSpec entities and how Nexus and other consumers index, invalidate, and present normative versus informative versus evidence relations.
 ## Requirements
 ### Requirement: Standard entities have stable typed identifiers
 Every canonical capability and requirement SHALL have a stable identifier that can be referenced by Book pages, implementation anchors, conformance tests, Tracker bugs, Nexus nodes, and CI evidence.

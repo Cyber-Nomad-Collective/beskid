@@ -1,7 +1,7 @@
 # staged-delivery-observability Specification
 
 ## Purpose
-TBD - created by archiving change migrate-beskid-standard-to-openspec. Update Purpose after archive.
+Require CI gates before promotion, digest-addressed artifact promotion, distinct staging and production environments, and end-to-end delivery traceability.
 ## Requirements
 ### Requirement: CI blocks unsafe integration
 Pull-request and main-branch workflows SHALL require relevant format, type, unit, integration, conformance, OpenSpec, Compose, and security gates before artifacts may be promoted.

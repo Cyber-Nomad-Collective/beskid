@@ -1,7 +1,7 @@
 # tracker-bug-integration Specification
 
 ## Purpose
-TBD - created by archiving change migrate-beskid-standard-to-openspec. Update Purpose after archive.
+Limit GitHub synchronization to bugs, remove legacy task mirroring after migration, and require Tracker to resolve standard relations from the versioned OpenSpec catalog.
 ## Requirements
 ### Requirement: GitHub synchronization is limited to bugs
 Tracker SHALL use GitHub only for public bug intake, bug discussion/status synchronization, and bug references. Roadmap tasks, workstreams, versions, milestones, deliverables, and standard relations SHALL remain in Tracker's SQLite domain model and SHALL NOT be mirrored to GitHub Issues.

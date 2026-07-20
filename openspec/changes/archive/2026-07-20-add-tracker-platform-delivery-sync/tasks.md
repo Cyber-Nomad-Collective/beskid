@@ -7,12 +7,12 @@
 
 ## 2. Reconcile Tracker delivery data
 
-- [ ] 2.1 Persist catalog revisions and typed specification links.
-- [ ] 2.2 Reconcile approved catalog data into Tracker without overwriting
+- [x] 2.1 Persist catalog revisions and typed specification links.
+- [x] 2.2 Reconcile approved catalog data into Tracker without overwriting
   local conflicts.
 
 ## 3. Integrate delivery consumers
 
-- [ ] 3.1 Expose public latest delivery data from Tracker.
-- [ ] 3.2 Add authenticated Platform Spec pull-request editing and revisioned
+- [x] 3.1 Expose public latest delivery data from Tracker.
+- [x] 3.2 Add authenticated Platform Spec pull-request editing and revisioned
   Tracker task embeds.

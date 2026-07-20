@@ -140,7 +140,7 @@ Doc runs between attributes and a declaration belong to the declaration, not to 
 
 ## Contract guarantees
 
-Implementations must satisfy the contracts defined in the parent hub and in the four decisions D-LM-DOC-001 through D-LM-DOC-004. Violations must be surfaced through the diagnostic system.
+Implementations must satisfy the contracts defined in this capability's Requirements section and in the four decisions D-LM-DOC-001 through D-LM-DOC-004. Violations must be surfaced through the diagnostic system.
 ``````
 
 </details>
@@ -231,7 +231,7 @@ flowchart LR
 // TODO: Add edge case examples
 ```
 
-> **Note:** Full code examples for this feature are being developed. See the parent hub for the normative specification.
+> **Note:** Full code examples for this feature are being developed. See this capability's Requirements section for the normative specification.
 ``````
 
 </details>
@@ -251,7 +251,7 @@ flowchart LR
 
 ### Is this feature stable?
 
-The parent hub's `status` field indicates the maturity level. Articles marked `Proposed` are under active development.
+This capability's status metadata indicates the maturity level. Articles marked `Proposed` are under active development.
 
 ### How does this interact with other features?
 
@@ -259,17 +259,17 @@ See the "Related articles" section in each article and the `related.json` files 
 
 ### Where can I find implementation details?
 
-Implementation anchors are listed in the parent hub's `content.md` under "Implementation anchors".
+Implementation anchors are listed under Implementation anchors in this capability's Requirements or Informative Source Provenance.
 
 ## Troubleshooting
 
 ### Diagnostic codes
 
-Refer to the parent hub for feature-specific diagnostic codes. All codes are registered in the [Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/).
+Refer to this capability's Requirements section for feature-specific diagnostic codes. All codes are registered in the [Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/).
 
 ### Common errors
 
-- **Spec violation:** If behavior contradicts the parent hub, the hub specification takes precedence.
+- **Spec violation:** If behavior contradicts this capability's Requirements section, the capability specification takes precedence.
 - **Missing conformance:** If a test case is missing, add it to the `articles/verification-and-traceability/` article.
 ``````
 
@@ -370,7 +370,7 @@ Conformance to this specification is verified through:
 
 ## Traceability
 
-Each normative statement in the parent hub should be traceable to:
+Each normative statement in this capability's Requirements section should be traceable to:
 - A test case in the compiler test suite
 - An ADR documenting the decision (D-LM-DOC-001 through D-LM-DOC-004)
 - A diagnostic code in the diagnostic registry

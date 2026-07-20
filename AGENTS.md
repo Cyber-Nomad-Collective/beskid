@@ -76,14 +76,16 @@ This project is indexed by GitNexus as **beskid** (59804 symbols, 118171 relatio
 - Prefer readable symbol/type identifiers in compiler and ISLE traces—expand `SourceUnitId`/`AstNodeKey` and `#gN:nM` into real names plus span/construct detail, not raw numeric ids
 - Settings/kanban dialogs: structural tabs/groups; settings shell with left nav tree and right auto-rendered form; task dialogs roughly 70% form / 30% preview
 - Verify builds and gates locally until they pass before pushing; do not stop at the first remote CI failure
+- When promoting provisional OpenSpec capabilities, require real SHALL requirements and scenarios via OpenSpec changes—not stub fills
 
 ## Learned Workspace Facts
 - Tracker SQLite DB is the task-tracking source of truth; GitHub Issues sync is limited to active version and bugs
-- Normative platform-spec content lives in `site/spec-content` (submodule `beskid_normative_spec`); content.md-only (no coexisting content.json); ADR status in markdown metadata; keep `layout.json`
+- Normative standard lives in `openspec/specs` + `openspec/catalog.json` (sole authority); `site/platform-spec` reads OpenSpec directly and serves it at `spec.beskid-lang.org`; website uses `openspec/catalog.json` at build time only and redirects `/platform-spec`; legacy `site/spec-content` corpus is removed
 - VS Code extension is BSOL-only (`.bws` / `.bproj`); outline panel removed; projects panel retained; dashboard should open from the Beskid status-bar entry like rust-analyzer
 - Cranelift ISLE is the intended path for lowering Beskid constructs and gradually porting runtime from Rust to Beskid
 - Local `.beskid` directories should stay gitignored
-- Platform-spec / tracker integration: seed and divide workstreams from `beskid_tracker/data/` and OpenSpec so platform-spec stays the SOT for tracked work
+- Platform-spec / tracker integration: OpenSpec is normative SOT; Tracker is delivery/version authority (revisioned catalog links, public latest delivery, reconciliation without overwrite); seed workstreams from `beskid_tracker/data/` and OpenSpec; platform-spec auth PR editing uses `site/platform-spec/src/server/git-sync/pr.ts` only
 - Distribution pipelines intentionally omit AUR; keep the remaining packaging channels
 - Shared AST/DAG explorer UI (ReactFlow/d3) belongs in common `@beskid` components and should reuse one repo/browser explorer dialog across website, pckg, platform-spec, and tracker
-- OpenSpec `validate-standard` catalogues `AGENTS.md`; regenerating `openspec/catalog.json` may be required after editing it
+- OpenSpec `validate-standard` catalogues `AGENTS.md` and hard-fails TBD Purpose headers; regenerating `openspec/catalog.json` may be required after editing either
+- Platform delivery CI hard-gates every lane image including `pckg` (needs GHCR Write on `beskid-pckg` or `GHCR_TOKEN` with `write:packages`); green `main` auto-applies Coolify staging with digest-pinned compose

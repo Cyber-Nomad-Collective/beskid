@@ -1,7 +1,7 @@
 # Normative Spec Migration to `site/spec-content` + React Platform-Spec
 
 **Date:** 2026-06-18
-**Status:** Design — pending approval
+**Status:** Superseded — OpenSpec cutover archived (`openspec/changes/archive/2026-07-13-migrate-beskid-standard-to-openspec`). Normative SOT is now `openspec/specs` + `openspec/catalog.json`; `site/spec-content` is gone. Kept for historical design context only.
 **Scope:** Full migration of the normative platform-spec off the Astro website into the React `site/platform-spec` app, retiring `trudoc`, adding railroad syntax graphs + interactive spec content + realtime validation, enforcing exhaustive uniform templates per nesting level, adding a proposal/draft banner, and cleaning up CICD.
 
 ---

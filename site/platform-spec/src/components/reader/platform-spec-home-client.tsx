@@ -37,7 +37,7 @@ function catalogToFactsDag(
 			id: rootId,
 			kind: "Root",
 			label: "Platform specification",
-			location: { path: "site/spec-content", line: 1 },
+			location: { path: "openspec/specs", line: 1 },
 		},
 	];
 	const edges: FactsDagModel["edges"] = [];
@@ -48,7 +48,7 @@ function catalogToFactsDag(
 			id,
 			kind: "Domain",
 			label: `${domain.replace(/-/g, " ")} (${count})`,
-			location: { path: `site/spec-content/${domain}`, line: 1 },
+			location: { path: `openspec/specs`, line: 1 },
 		});
 		edges.push({ from: rootId, to: id, label: "domain" });
 	}
@@ -61,13 +61,13 @@ function catalogToFactsDag(
 					id: "domain:compiler",
 					kind: "Domain",
 					label: "compiler",
-					location: { path: "site/spec-content/compiler", line: 1 },
+					location: { path: "openspec/specs", line: 1 },
 				},
 				{
 					id: "domain:language",
 					kind: "Domain",
 					label: "language",
-					location: { path: "site/spec-content/language", line: 1 },
+					location: { path: "openspec/specs", line: 1 },
 				},
 			],
 			edges: [

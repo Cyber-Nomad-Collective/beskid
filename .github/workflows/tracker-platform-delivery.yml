@@ -38,7 +38,8 @@ jobs:
         run: |
           bun run openspec:catalog
           git diff --exit-code -- openspec/catalog.json
-          printf 'projection/reconciliation validation passed\n' | tee projection-reconciliation.txt
+          bun install --cwd beskid_tracker --frozen-lockfile
+          bun run --cwd beskid_tracker reconcile:plan | tee projection-reconciliation.txt
       - uses: actions/upload-artifact@v4
         with:
           name: openspec-projection-reports

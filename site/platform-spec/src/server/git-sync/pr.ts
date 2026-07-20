@@ -4,7 +4,10 @@ import "@tanstack/react-start/server-only";
 import { env } from "#/env.server";
 import { repoParams } from "#/lib/github/octokit";
 import type { DraftChangeNode } from "#/server/memgraph/types";
-import { resolveOpenSpecEntry } from "#/server/openspec/reader";
+import {
+	loadOpenSpecCatalog,
+	resolveOpenSpecEntry,
+} from "#/server/openspec/reader";
 
 const OWNER = () => env.GITHUB_REPO_OWNER;
 const REPO = () => env.GITHUB_REPO_NAME;
@@ -74,15 +77,16 @@ async function ensureBranch(
 	baseRef: string,
 	branchName: string,
 ): Promise<string> {
-	const baseSha = await getBaseSha(octokit, baseRef);
 	try {
-		const ref = await octokit.git.getRef({
+		const { data: existing } = await octokit.git.getRef({
 			owner: OWNER(),
 			repo: REPO(),
 			ref: `heads/${branchName}`,
 		});
-		return ref.data.object.sha;
-	} catch {
+		return existing.object.sha;
+	} catch (error) {
+		if ((error as { status?: number }).status !== 404) throw error;
+		const baseSha = await getBaseSha(octokit, baseRef);
 		await octokit.git.createRef({
 			owner: OWNER(),
 			repo: REPO(),
@@ -93,7 +97,71 @@ async function ensureBranch(
 	}
 }
 
-export function buildOpenSpecChangeFiles(draft: DraftChangeNode): Array<{
+async function assertWriteAccess(octokit: Octokit, login: string): Promise<void> {
+	const { data } = await octokit.repos.getCollaboratorPermissionLevel({
+		owner: OWNER(),
+		repo: REPO(),
+		username: login,
+	});
+	if (!data.permission || !["admin", "maintain", "write"].includes(data.permission)) {
+		throw new Error("GitHub write access is required");
+	}
+}
+
+async function writeFilesAtomically(
+	octokit: Octokit,
+	branch: string,
+	baseCommitSha: string,
+	files: Array<{ path: string; content: string }>,
+	message: string,
+): Promise<void> {
+	const { data: parent } = await octokit.git.getCommit({
+		owner: OWNER(),
+		repo: REPO(),
+		commit_sha: baseCommitSha,
+	});
+	const tree = await Promise.all(
+		files.map(async (file) => {
+			const { data: blob } = await octokit.git.createBlob({
+				owner: OWNER(),
+				repo: REPO(),
+				content: Buffer.from(file.content, "utf8").toString("base64"),
+				encoding: "base64",
+			});
+			return {
+				path: file.path,
+				mode: "100644" as const,
+				type: "blob" as const,
+				sha: blob.sha,
+			};
+		}),
+	);
+	const { data: nextTree } = await octokit.git.createTree({
+		owner: OWNER(),
+		repo: REPO(),
+		base_tree: parent.tree.sha,
+		tree,
+	});
+	const { data: commit } = await octokit.git.createCommit({
+		owner: OWNER(),
+		repo: REPO(),
+		message,
+		tree: nextTree.sha,
+		parents: [baseCommitSha],
+	});
+	await octokit.git.updateRef({
+		owner: OWNER(),
+		repo: REPO(),
+		ref: `heads/${branch}`,
+		sha: commit.sha,
+		force: false,
+	});
+}
+
+export function buildOpenSpecChangeFiles(
+	draft: DraftChangeNode,
+	sourceRevision: string,
+): Array<{
 	path: string;
 	content: string;
 	message: string;
@@ -101,7 +169,7 @@ export function buildOpenSpecChangeFiles(draft: DraftChangeNode): Array<{
 	const change = changeName(draft.id);
 	const capability = capabilityForDraft(draft);
 	const root = `openspec/changes/${change}`;
-	return [
+	const files = [
 		{
 			path: `${root}/.openspec.yaml`,
 			content: "schema: spec-driven\n",
@@ -123,48 +191,83 @@ export function buildOpenSpecChangeFiles(draft: DraftChangeNode): Array<{
 			message: `spec: add ${capability} delta`,
 		},
 	];
+	const ledger = {
+		draftId: draft.id,
+		sourceRevision,
+		authorLogin: draft.authorLogin,
+		files: files
+			.map(({ path, content }) => ({ path, content }))
+			.sort((left, right) => left.path.localeCompare(right.path)),
+	};
+	return [
+		{
+			path: `${root}/.platform-spec-ledger.json`,
+			content: `${JSON.stringify(ledger, null, 2)}\n`,
+			message: `spec: record ledger for ${change}`,
+		},
+		...files,
+	];
 }
 
 export interface CreateDraftPrResult {
 	branch: string;
 	prNumber: number;
 	prUrl: string;
+	reused: boolean;
+	sourceRevision: string;
 }
 
 export async function createDraftPullRequest(
 	octokit: Octokit,
 	draft: DraftChangeNode,
 	baseRef = "main",
+	sourceRevision?: string,
 ): Promise<CreateDraftPrResult> {
-	const branch = draft.headBranch ?? draftBranchName(draft.id);
-	await ensureBranch(octokit, baseRef, branch);
-
-	for (const file of buildOpenSpecChangeFiles(draft)) {
-		let sha: string | undefined;
-		try {
-			const existing = await octokit.repos.getContent({
-				owner: OWNER(),
-				repo: REPO(),
-				path: file.path,
-				ref: branch,
-			});
-			if (!Array.isArray(existing.data) && existing.data.sha) {
-				sha = existing.data.sha;
-			}
-		} catch {
-			sha = undefined;
-		}
-
-		await octokit.repos.createOrUpdateFileContents({
-			owner: OWNER(),
-			repo: REPO(),
-			path: file.path,
-			message: file.message,
-			content: Buffer.from(file.content, "utf8").toString("base64"),
-			branch,
-			sha,
-		});
+	const catalog = loadOpenSpecCatalog();
+	const revision = sourceRevision ?? catalog.revision;
+	if (revision !== catalog.revision) {
+		throw new Error("catalog revision conflict");
 	}
+
+	const { data: authenticated } = await octokit.users.getAuthenticated();
+	await assertWriteAccess(octokit, authenticated.login);
+
+	const branch = draft.headBranch ?? draftBranchName(draft.id);
+	const open = await octokit.pulls.list({
+		owner: OWNER(),
+		repo: REPO(),
+		state: "open",
+		head: `${OWNER()}:${branch}`,
+	});
+	const existing = open.data[0];
+	if (existing) {
+		return {
+			branch,
+			prNumber: existing.number,
+			prUrl: existing.html_url,
+			reused: true,
+			sourceRevision: revision,
+		};
+	}
+	if (draft.prNumber && draft.prUrl) {
+		return {
+			branch,
+			prNumber: draft.prNumber,
+			prUrl: draft.prUrl,
+			reused: true,
+			sourceRevision: revision,
+		};
+	}
+
+	const baseCommitSha = await ensureBranch(octokit, baseRef, branch);
+	const files = buildOpenSpecChangeFiles(draft, revision);
+	await writeFilesAtomically(
+		octokit,
+		branch,
+		baseCommitSha,
+		files.map(({ path, content }) => ({ path, content })),
+		`spec: synchronize platform editor draft ${changeName(draft.id)}`,
+	);
 
 	const prBody = [
 		draft.summary || draft.title,
@@ -173,6 +276,8 @@ export async function createDraftPullRequest(
 		`- **${draft.changeKind}** \`${draft.slug}\` (${draft.specLevel})`,
 		"",
 		`OpenSpec change: \`openspec/changes/${changeName(draft.id)}/\`.`,
+		"",
+		`Catalog revision: \`${revision}\`.`,
 		"",
 		`_Opened from Beskid Platform Spec editor by @${draft.authorLogin}._`,
 	].join("\n");
@@ -189,5 +294,7 @@ export async function createDraftPullRequest(
 		branch,
 		prNumber: pr.number,
 		prUrl: pr.html_url,
+		reused: false,
+		sourceRevision: revision,
 	};
 }

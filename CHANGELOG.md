@@ -46,6 +46,22 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Align post-migration OpenSpec consumers: AGENTS.md cites `openspec/specs` as
+  sole normative SOT (Tracker is delivery/version authority); fill archive TBD
+  Purpose headers; hard-fail TBD Purpose placeholders in
+  `validate-standard.ts`; retarget platform-spec home DAG paths to
+  `openspec/specs`; scrub hub `content.md` wording in eight migrated specs;
+  archive `add-tracker-platform-delivery-sync` as
+  `tracker-platform-delivery`.
+- Promote twelve feature-level provisional capabilities to explicit SHALL
+  requirements (`promote-provisional-wave-1`): tooling CLI/BSOL, language-meta
+  lexical/resolution/modules/enums, core collections/regex/time, and semantic
+  pipeline stage ordering. Taxonomy hubs remain provisional for a later wave.
+- Close out Tracker/Platform Spec delivery sync: catalog import reconciles
+  without overwriting local conflicts, CI runs a real `reconcile:plan` dry-run
+  instead of a printf stub, Platform Spec PRs go only through
+  `git-sync/pr` (ledger/idempotency; orphan `openspec/pr-sync` removed), and
+  the false `backfill:apply` script claim is dropped.
 - Hard-gate the `beskid-pckg` image lane in `platform-delivery.yml` (remove
   `optional: true`): a failed pckg build/push fails the whole delivery.
   Sibling-package Write or `GHCR_TOKEN` with `write:packages` is required;

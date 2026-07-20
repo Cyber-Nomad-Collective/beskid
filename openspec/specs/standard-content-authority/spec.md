@@ -1,7 +1,7 @@
 # standard-content-authority Specification
 
 ## Purpose
-TBD - created by archiving change migrate-beskid-standard-to-openspec. Update Purpose after archive.
+Establish OpenSpec as the sole normative authority, require deltas for observable behavior changes, and keep legacy provenance and structural validity enforceable by repository gates.
 ## Requirements
 ### Requirement: OpenSpec is the sole normative authority
 The Beskid project SHALL store current normative requirements only in `openspec/specs/<capability>/spec.md`. Book pages, READMEs, generated catalogs, application caches, source comments, and archived designs MUST be informative or provenance material and MUST NOT redefine standard behavior.

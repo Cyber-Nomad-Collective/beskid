@@ -1,14 +1,17 @@
 #!/usr/bin/env bun
 
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import { deriveBookLinks } from "./validate-book-traceability.ts";
 
 const repoRoot = path.resolve(import.meta.dirname, "../..");
 const catalogPath = path.join(repoRoot, "openspec/catalog.json");
+const specsRoot = path.join(repoRoot, "openspec/specs");
 const legacyRoot = path.join(repoRoot, "site/spec-content");
+const archiveTbdPurpose =
+	"TBD - created by archiving change migrate-beskid-standard-to-openspec. Update Purpose after archive.";
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -44,6 +47,17 @@ for (const entry of entries) {
 	for (const record of (entry.records as UnknownRecord[]) ?? []) {
 		assert(aliases.has(String(record.legacySlug)), `Missing legacy alias ${record.legacySlug}`);
 	}
+}
+
+for (const capabilityDir of readdirSync(specsRoot, { withFileTypes: true })) {
+	if (!capabilityDir.isDirectory()) continue;
+	const specPath = path.join(specsRoot, capabilityDir.name, "spec.md");
+	if (!existsSync(specPath)) continue;
+	const body = readFileSync(specPath, "utf8");
+	assert(
+		!body.includes(archiveTbdPurpose),
+		`Archive TBD Purpose placeholder remains in ${path.relative(repoRoot, specPath)}`,
+	);
 }
 
 for (const document of documents) {

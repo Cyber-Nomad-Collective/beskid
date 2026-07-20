@@ -31,7 +31,7 @@
 | `beskid_tracker/src/lib/tracker/reconciliation.ts` | Pure DB/data/catalog diff and transactional application. |
 | `beskid_tracker/src/lib/tracker/history-backfill.ts` | Version-band git provenance proposal. |
 | `beskid_tracker/src/routes/api/v1/delivery/**` | Public latest-version, version, and typed-link APIs. |
-| `site/platform-spec/src/server/openspec/pr-sync.ts` | Authenticated batch-to-PR adapter plus idempotency ledger. |
+| `site/platform-spec/src/server/git-sync/pr.ts` | Authenticated draft-to-PR path with ledger/idempotency. |
 | `beskid_tracker/src/components/task-display.tsx` | Shared configurable card/preview renderer. |
 | `.github/workflows/tracker-platform-delivery.yml` | PR and main verification gate. |
 
@@ -47,7 +47,7 @@
 - Produces `TrackerSpecLink`, `DeliveryLatest`, `DeliveryVersion`, and `TypedLinkTarget`.
 - These names are used unchanged by Tasks 2–6.
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 ```ts
 import { expect, test } from "vitest";
@@ -62,13 +62,13 @@ test("allows only released public versions to be latest", () => {
 });
 ```
 
-- [ ] **Step 2: Verify red**
+- [x] **Step 2: Verify red**
 
 Run: `bun --cwd beskid_tracker run test src/lib/tracker/delivery-contract.test.ts`
 
 Expected: FAIL because `delivery-contract.ts` does not exist.
 
-- [ ] **Step 3: Implement the minimal contract and OpenSpec delta**
+- [x] **Step 3: Implement the minimal contract and OpenSpec delta**
 
 ```ts
 export interface TrackerSpecLink {
@@ -83,13 +83,13 @@ export function assertTrackerSpecLink(link: Pick<TrackerSpecLink, "standardId" |
 
 Define the public delivery and typed-link interfaces in the same module. Add OpenSpec scenarios for PR-backed Platform Spec edits, revisioned Tracker links, Tracker version authority, and bug-only GitHub synchronization.
 
-- [ ] **Step 4: Verify green**
+- [x] **Step 4: Verify green**
 
 Run: `bun --cwd beskid_tracker run test src/lib/tracker/delivery-contract.test.ts && openspec validate add-tracker-platform-delivery-sync --strict --no-interactive`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add openspec/changes/add-tracker-platform-delivery-sync beskid_tracker/src/lib/tracker/delivery-contract.ts beskid_tracker/src/lib/tracker/delivery-contract.test.ts
@@ -111,7 +111,7 @@ git commit -m "spec: define tracker platform delivery contracts"
 - Consumes Task 1 `TrackerSpecLink`.
 - Produces `planTrackerReconciliation(input): ReconciliationPlan` and `applyTrackerReconciliation(db, plan): ReconciliationSummary`.
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 ```ts
 test("plans create, stale, and conflict operations without mutation", () => {
@@ -127,23 +127,23 @@ test("round trips standardId and catalogRevision from SQLite", () => {
 });
 ```
 
-- [ ] **Step 2: Verify red**
+- [x] **Step 2: Verify red**
 
 Run: `bun --cwd beskid_tracker run test src/lib/tracker/reconciliation.test.ts`
 
 Expected: FAIL because reconciliation and catalog revision persistence do not exist.
 
-- [ ] **Step 3: Implement migration and plan/apply boundary**
+- [x] **Step 3: Implement migration and plan/apply boundary**
 
 Increase `SCHEMA_VERSION`; add version visibility/catalog revision, relation catalog revision, and task-provenance range storage. Preserve `standardId` in `taskToSeed`. Reject a task workstream that is not present for its version. Make reconciliation planning pure and require an approved proposal digest for mutations.
 
-- [ ] **Step 4: Verify green**
+- [x] **Step 4: Verify green**
 
 Run: `bun --cwd beskid_tracker run test src/lib/tracker/reconciliation.test.ts src/lib/tracker/import-catalog.test.ts`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add beskid_tracker/src/lib/storage/schema.ts beskid_tracker/src/lib/tracker
@@ -163,7 +163,7 @@ git commit -m "feat(tracker): reconcile delivery catalog state"
 - Consumes Task 2 data/reconciliation.
 - Produces `planHistoryBackfill(ledger, commits): BackfillProposal`, `GET /api/v1/delivery/latest`, `GET /api/v1/delivery/:version`, and `GET /api/v1/links/:target`.
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 ```ts
 test("puts ambiguous commits in an explicit unmapped bucket", () => {
@@ -175,23 +175,23 @@ test("returns only newest public released version", async () => {
 });
 ```
 
-- [ ] **Step 2: Verify red**
+- [x] **Step 2: Verify red**
 
 Run: `bun --cwd beskid_tracker run test src/lib/tracker/history-backfill.test.ts src/routes/api/v1/delivery/delivery-api.test.ts`
 
 Expected: FAIL because the planner and API do not exist.
 
-- [ ] **Step 3: Implement deterministic planner and routes**
+- [x] **Step 3: Implement deterministic planner and routes**
 
-Define reviewed repository/range/workstream/catalog-revision records in `version-bands.json`. Sort by repository/SHA, assign only explicit mappings, mark `exact | inferred | unmapped`, and hash canonical JSON into `proposalDigest`. Add `backfill:plan` and `backfill:apply` scripts. API responses use `Cache-Control: public, max-age=300` and reject unknown/non-public versions.
+Define reviewed repository/range/workstream/catalog-revision records in `version-bands.json`. Sort by repository/SHA, assign only explicit mappings, mark `exact | inferred | unmapped`, and hash canonical JSON into `proposalDigest`. Add `backfill:plan` (plan-only) and `reconcile:plan`/`reconcile:apply` scripts. API responses use `Cache-Control: public, max-age=300` and reject unknown/non-public versions.
 
-- [ ] **Step 4: Verify green**
+- [x] **Step 4: Verify green**
 
 Run: `bun --cwd beskid_tracker run test src/lib/tracker/history-backfill.test.ts src/routes/api/v1/delivery/delivery-api.test.ts && bun --cwd beskid_tracker run backfill:plan -- --ledger data/version-bands.json --dry-run`
 
 Expected: PASS; dry run writes no database state.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add beskid_tracker/data/version-bands.json beskid_tracker/src/lib/tracker/history-backfill.ts beskid_tracker/src/routes/api/v1 beskid_tracker/package.json
@@ -201,7 +201,7 @@ git commit -m "feat(tracker): publish delivery versions and backfill plans"
 ### Task 4: Platform Spec authenticated PR sync and Tracker task embeds
 
 **Files:**
-- Create: `site/platform-spec/src/server/openspec/pr-sync.{ts,test.ts}`
+- Modify: `site/platform-spec/src/server/git-sync/pr.{ts,test.ts}` (ledger/idempotency; orphan `openspec/pr-sync` removed)
 - Modify: `site/platform-spec/src/routes/api/webhooks/github.ts`
 - Create: `site/platform-spec/src/routes/api/v1/tracker/{tasks.ts,tasks.test.ts}`
 - Create: `site/platform-spec/src/components/reader/tracker-task-embed.tsx`
@@ -211,7 +211,7 @@ git commit -m "feat(tracker): publish delivery versions and backfill plans"
 - Consumes Task 1 `TrackerSpecLink` and Task 3 delivery APIs.
 - Produces `openOpenSpecEditPullRequest(input, octokit): Promise<OpenSpecPullRequest>`.
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 ```ts
 test("reuses an open pull request for an identical editor batch", async () => {
@@ -223,23 +223,23 @@ test("rejects a stale catalog revision", async () => {
 });
 ```
 
-- [ ] **Step 2: Verify red**
+- [x] **Step 2: Verify red**
 
-Run: `bun --cwd site/platform-spec run test src/server/openspec/pr-sync.test.ts src/routes/api/v1/tracker/tasks.test.ts`
+Run: `bun --cwd site/platform-spec run test src/server/git-sync/pr.test.ts src/routes/api/v1/tracker/tasks.test.ts`
 
 Expected: FAIL because adapter/routes do not exist.
 
-- [ ] **Step 3: Implement authenticated and idempotent sync**
+- [x] **Step 3: Implement authenticated and idempotent sync**
 
 Verify GitHub write access for the signed-in user, serialize edit batches deterministically into `openspec/changes/platform-spec-<batch-id>/`, then create/update `platform-spec/<login>/<batch-id>` and one PR. Persist the batch/source revision/PR ledger. Refresh Platform Spec only for merged PR catalog revisions. Task embeds and creates call Tracker with stable OpenSpec IDs and revisions; no Platform Spec directory restructuring or direct normative writes occur.
 
-- [ ] **Step 4: Verify green**
+- [x] **Step 4: Verify green**
 
-Run: `bun --cwd site/platform-spec run test src/server/openspec/pr-sync.test.ts src/routes/api/v1/tracker/tasks.test.ts && bun --cwd site/platform-spec run typecheck`
+Run: `bun --cwd site/platform-spec run test src/server/git-sync/pr.test.ts src/routes/api/v1/tracker/tasks.test.ts && bun --cwd site/platform-spec run typecheck`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add site/platform-spec/src/server/openspec site/platform-spec/src/routes/api site/platform-spec/src/components/reader
@@ -257,7 +257,7 @@ git commit -m "feat(platform-spec): synchronize edits through OpenSpec pull requ
 **Interfaces:**
 - Produces `TaskDisplayConfig`, `TaskDisplay`, and `moveIssueColumn({ versionId, taskId, targetColumn, targetIndex })`.
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 ```ts
 test("uses configured property ordering for card and preview", () => {
@@ -270,23 +270,23 @@ test("persists a same-column reorder", async () => {
 });
 ```
 
-- [ ] **Step 2: Verify red**
+- [x] **Step 2: Verify red**
 
 Run: `bun --cwd beskid_tracker run test src/lib/roadmap/task-display.test.ts src/components/task-display.test.tsx`
 
 Expected: FAIL because shared rendering and target-index persistence are absent.
 
-- [ ] **Step 3: Implement the one rendering path**
+- [x] **Step 3: Implement the one rendering path**
 
 Implement accessible status chroma and property visibility/order in `task-display.ts`. Cards and preview render only through `TaskDisplay`. Persist all drag moves transactionally with target index and restore optimistic state on error. Use Overview, Delivery, Specification, and Provenance tabs in a responsive `react-resizable-panels` 70/30 form/preview dialog.
 
-- [ ] **Step 4: Verify green**
+- [x] **Step 4: Verify green**
 
 Run: `bun --cwd beskid_tracker run test src/lib/roadmap/task-display.test.ts src/components/task-display.test.tsx && bun --cwd beskid_tracker run check`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add beskid_tracker/src/lib/roadmap/task-display.ts beskid_tracker/src/components/task-display.tsx beskid_tracker/src/components/roadmap-kanban-board.tsx beskid_tracker/src/components/create-task-work-item.tsx beskid_tracker/src/server/issues.ts
@@ -311,7 +311,7 @@ git commit -m "feat(tracker): improve task display and kanban"
 - Consumes Task 3 delivery APIs and Task 1 catalog revision identifiers.
 - Produces website download version display, Nexus typed delivery relations, and PR/main gates.
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 ```ts
 test("normalizes Tracker latest delivery to a download label", async () => {
@@ -323,23 +323,23 @@ test("normalizes Tracker latest delivery to a download label", async () => {
 
 Create a shell contract test that fails when the workflow omits strict OpenSpec validation, projection/reconciliation validation, Tracker tests, Platform Spec tests, or latest-delivery validation.
 
-- [ ] **Step 2: Verify red**
+- [x] **Step 2: Verify red**
 
 Run: `bun --cwd site/website run test src/lib/tracker-delivery.test.ts; bash scripts/ci/test/run-tracker-platform-delivery-tests.sh`
 
 Expected: FAIL because consumer/workflow do not exist.
 
-- [ ] **Step 3: Implement consumers and gates**
+- [x] **Step 3: Implement consumers and gates**
 
 Read one API base URL environment variable and visibly reject malformed latest-version payloads. Ingest Tracker nodes/edges in Nexus keyed by Tracker ID plus catalog revision. Add PR/main workflow jobs for strict OpenSpec validation, deterministic catalog/projection report, Tracker test/check, Platform Spec test/typecheck, website test/build, Nexus focused test, and shell contract; upload reports as artifacts and do not deploy/mutate external data.
 
-- [ ] **Step 4: Verify green and completion gate**
+- [x] **Step 4: Verify green and completion gate**
 
 Run: `bash scripts/ci/test/run-tracker-platform-delivery-tests.sh && bun --cwd site/website run test src/lib/tracker-delivery.test.ts && bun --cwd site/website run build && bun run openspec:validate && bun --cwd beskid_tracker run test && bun --cwd site/platform-spec run test && bun --cwd site/platform-spec run typecheck && node .gitnexus/run.cjs detect-changes --scope compare --base-ref main`
 
 Expected: PASS; change detection is limited to Tracker, Platform Spec, Website, Nexus, OpenSpec, and CI integration.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add site/website beskid_nexus .github/workflows/tracker-platform-delivery.yml scripts/ci/test/run-tracker-platform-delivery-tests.sh CHANGELOG.md GLOSSARY.md

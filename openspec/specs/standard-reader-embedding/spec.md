@@ -1,7 +1,7 @@
 # standard-reader-embedding Specification
 
 ## Purpose
-TBD - created by archiving change migrate-beskid-standard-to-openspec. Update Purpose after archive.
+Define how platform-spec reads OpenSpec as the sole corpus and exposes framework-neutral standard embeds and typed Markdown directives for Book and site consumers.
 ## Requirements
 ### Requirement: Platform-spec reads OpenSpec directly
 The platform-spec application SHALL derive its catalog, navigation, rendered content, and edit targets from `openspec/specs` and SHALL NOT require the custom `spec.json`, `content.md`, `layout.json`, or `related.json` storage model.
