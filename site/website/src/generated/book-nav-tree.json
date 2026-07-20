@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-18T23:04:27.413Z",
+  "generatedAt": "2026-07-20T10:14:55.468Z",
   "tree": {
     "slug": "book",
     "href": "/book/",
@@ -470,6 +470,12 @@
                 "slug": "book/11-fibers-cheaper-than-threads/corelib-concurrency",
                 "href": "/book/11-fibers-cheaper-than-threads/corelib-concurrency/",
                 "title": "11.4 Corelib concurrency",
+                "part": "Tutorial"
+              },
+              {
+                "slug": "book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap",
+                "href": "/book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap/",
+                "title": "11.5 Planned v0.5 foundations",
                 "part": "Tutorial"
               }
             ]
@@ -1564,6 +1570,11 @@
       "slug": "book/11-fibers-cheaper-than-threads/corelib-concurrency",
       "href": "/book/11-fibers-cheaper-than-threads/corelib-concurrency/",
       "title": "11.4 Corelib concurrency"
+    },
+    {
+      "slug": "book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap",
+      "href": "/book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap/",
+      "title": "11.5 Planned v0.5 foundations"
     },
     {
       "slug": "book/12-the-normative-bible",
@@ -2776,6 +2787,18 @@
         "title": "11.3 Channels preview"
       },
       "next": {
+        "slug": "book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap",
+        "href": "/book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap/",
+        "title": "11.5 Planned v0.5 foundations"
+      }
+    },
+    "book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap": {
+      "prev": {
+        "slug": "book/11-fibers-cheaper-than-threads/corelib-concurrency",
+        "href": "/book/11-fibers-cheaper-than-threads/corelib-concurrency/",
+        "title": "11.4 Corelib concurrency"
+      },
+      "next": {
         "slug": "book/12-the-normative-bible",
         "href": "/book/12-the-normative-bible/",
         "title": "12. The normative bible (and why we bothered)"
@@ -2783,9 +2806,9 @@
     },
     "book/12-the-normative-bible": {
       "prev": {
-        "slug": "book/11-fibers-cheaper-than-threads/corelib-concurrency",
-        "href": "/book/11-fibers-cheaper-than-threads/corelib-concurrency/",
-        "title": "11.4 Corelib concurrency"
+        "slug": "book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap",
+        "href": "/book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap/",
+        "title": "11.5 Planned v0.5 foundations"
       },
       "next": {
         "slug": "book/12-the-normative-bible/informative-vs-normative",
@@ -3703,6 +3726,7 @@
     "book/11-fibers-cheaper-than-threads/fibers-and-spawn": "11.2 Fibers and spawn",
     "book/11-fibers-cheaper-than-threads/channels-preview": "11.3 Channels preview",
     "book/11-fibers-cheaper-than-threads/corelib-concurrency": "11.4 Corelib concurrency",
+    "book/11-fibers-cheaper-than-threads/v0-5-foundations-roadmap": "11.5 Planned v0.5 foundations",
     "book/12-the-normative-bible": "12. The normative bible (and why we bothered)",
     "book/12-the-normative-bible/informative-vs-normative": "12.1 Informative vs normative",
     "book/12-the-normative-bible/spec-leads-code": "12.2 Spec leads code",

@@ -76,6 +76,7 @@
 			"11-fibers-cheaper-than-threads/fibers-and-spawn",
 			"11-fibers-cheaper-than-threads/channels-preview",
 			"11-fibers-cheaper-than-threads/corelib-concurrency",
+			"11-fibers-cheaper-than-threads/v0-5-foundations-roadmap",
 			"12-the-normative-bible",
 			"12-the-normative-bible/informative-vs-normative",
 			"12-the-normative-bible/spec-leads-code",

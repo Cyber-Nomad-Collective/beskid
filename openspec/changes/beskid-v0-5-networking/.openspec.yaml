@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-07-20
+dependsOn:
+  - beskid-v0-5-foundations

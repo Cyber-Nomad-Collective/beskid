@@ -46,6 +46,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Define the Linear execution design for the full 0.4 scope: preserve the
+  dependency-ordered W1–W7 hierarchy, map every work item back to OpenSpec,
+  reserve architectural work and release decisions for Codex, and constrain
+  Cursor to bounded documentation, configuration, fixture, and evidence tasks.
 - Refresh the 0.4 closure plan and readiness report with the pushed multi-agent
   integration checkpoint, exact commit evidence, completed CYB-13/CYB-14 gates,
   and the remaining release-finalization blockers.
@@ -105,6 +109,11 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Add the Beskid 0.5 release split and executable planning baseline: the
+  `beskid-v0-5-foundations` and `beskid-v0-5-networking` OpenSpec proposals, Foundation/Networking/HTTP
+  implementation plans, CYB-59–62 coordination links, and a clearly
+  non-normative Book roadmap for the prerequisite fiber, channel, scheduler,
+  resource-scope, bytes/encoding, and Core.IO work.
 - Website book demo `14-from-source-to-runs/ast-facts-graph` mounts linked AST →
   facts DAG (`LinkedAstFactsShell`); `@beskid/beskid-ui` 0.2.8 ships matching
   Astro shells for Starlight islands.
