@@ -69,22 +69,22 @@ This project is indexed by GitNexus as **beskid** (64652 symbols, 131369 relatio
 
 ## Learned User Preferences
 - Prefer Cursor Auto agents for parallel work; do not use Composer 2.5 Fast when Auto is available
-- Prefer full, complete refactors that purge the old design—no leftover legacy APIs or half-migrations
-- Prefer parallel agents for large multi-surface work; serialize only for final integration when merge/revert loops appear
+- Prefer full, complete refactors that purge the old design—no leftover legacy APIs, half-migrations, or compatibility fallbacks; fail closed instead
+- Prefer parallel agents for large multi-surface work in isolated git worktrees/branches per slice; serialize only for final integration when merge/revert loops appear
 - Always spell the project name `beskid` (never `beschid`)
 - In beskid hi on macOS, prefer menu shortcut Ctrl+M (not F10); keep shortcuts centralized and mouse-clickable
 - Prefer readable symbol/type identifiers in compiler and ISLE traces—expand `SourceUnitId`/`AstNodeKey` and `#gN:nM` into real names plus span/construct detail, not raw numeric ids
 - Settings/kanban dialogs: structural tabs/groups; settings shell with left nav tree and right auto-rendered form; task dialogs roughly 70% form / 30% preview
 - Verify builds and gates locally until they pass before pushing; do not stop at the first remote CI failure
 - When promoting provisional OpenSpec capabilities, require real SHALL requirements and scenarios via OpenSpec changes—not stub fills; leave taxonomy hubs and empty governance/design-model stubs provisional until leaf obligations exist
-- Respect Linear ownership labels (`agent/cursor` vs `agent/codex`); do not claim or edit Codex-owned workstreams
-- Prefer parent and submodule state on `main` with clean merges; fix merge noise rather than leaving divergent local branches
+- Respect Linear ownership labels (`agent/cursor` vs `agent/codex`); create Cursor children under Codex parents without relabeling or closing them; file Codex blockers for missing facts outside exclusive scope rather than expanding into Codex-owned crates
+- Prefer parent and submodule state on `main` with clean merges; fix merge noise rather than leaving divergent local branches; agents push only their own branch and do not merge `main`
 
 ## Learned Workspace Facts
 - Tracker SQLite DB is the task-tracking source of truth; GitHub Issues sync is limited to active version and bugs
 - Normative standard lives in `openspec/specs` + `openspec/catalog.json` (sole authority); `site/platform-spec` reads OpenSpec directly and serves it at `spec.beskid-lang.org`; website uses `openspec/catalog.json` at build time only and redirects `/platform-spec`; legacy `site/spec-content` corpus is removed
 - VS Code extension is BSOL-only (`.bws` / `.bproj`); outline panel removed; projects panel retained; dashboard should open from the Beskid status-bar entry like rust-analyzer
-- Cranelift ISLE is the intended path for lowering Beskid constructs and gradually porting runtime from Rust to Beskid
+- Production lowering is CodegenInput → ISLE → stock-verifier-clean CLIF; reject HIR/Lowerable compatibility entry points; Cranelift ISLE remains the path for gradually porting runtime from Rust to Beskid
 - Local `.beskid` directories should stay gitignored
 - Platform-spec / tracker integration: OpenSpec is normative SOT; Tracker is delivery/version authority (revisioned catalog links, public latest delivery, reconciliation without overwrite); seed workstreams from `beskid_tracker/data/` and OpenSpec; platform-spec auth PR editing uses `site/platform-spec/src/server/git-sync/pr.ts` only
 - Distribution pipelines intentionally omit AUR; keep the remaining packaging channels
@@ -92,4 +92,4 @@ This project is indexed by GitNexus as **beskid** (64652 symbols, 131369 relatio
 - OpenSpec `validate-standard` catalogues `AGENTS.md` and hard-fails TBD Purpose headers; regenerating `openspec/catalog.json` may be required after editing either
 - Platform delivery CI hard-gates every lane image including `pckg` (needs GHCR Write on `beskid-pckg` or `GHCR_TOKEN` with `write:packages`); green `main` auto-applies Coolify staging with digest-pinned compose
 - While sites still resolve `@beskid/*` via `file:../../beskid_web_common`, CI and Docker must checkout/copy that submodule before `bun install` (same pattern as the website image)
-- Linear workstreams are partitioned by `agent/cursor` and `agent/codex` labels; taxonomy hub promotion (`taxonomy--*`) stays deferred until leaf obligations exist
+- Generation-bound Salsa/syntax facts in `beskid_queries` are semantic authority for LSP/IDE (no per-request HIR rebuilds or dual snapshot paths); ABI-v5 runtime kits use exact installed-prefix discovery/validation and fail closed on missing, mismatched, or tampered kits
