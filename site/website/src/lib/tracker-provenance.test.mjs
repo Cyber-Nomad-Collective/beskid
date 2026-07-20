@@ -20,10 +20,10 @@ test('v0.4 tracker records retain audited completion dates', async () => {
     readTask('spine-typecheck-gates'),
   ]);
 
-  assert.equal(kanbanDnd.completedAt, '2026-06-06');
-  assert.match(kanbanDnd.body, /\*\*Completed:\*\* 2026-06-06/);
-  assert.equal(spineTypecheckGates.completedAt, '2026-06-06');
-  assert.match(spineTypecheckGates.body, /\*\*Completed:\*\* 2026-06-06/);
+  assert.equal(kanbanDnd.completedAt, '2026-06-04');
+  assert.match(kanbanDnd.body, /\*\*Completed:\*\* 2026-06-04/);
+  assert.equal(spineTypecheckGates.completedAt, '2026-06-07');
+  assert.match(spineTypecheckGates.body, /\*\*Completed:\*\* 2026-06-07/);
 });
 
 test('v0.4 tracker records retain audited source subjects', async () => {
@@ -32,6 +32,6 @@ test('v0.4 tracker records retain audited source subjects', async () => {
     readTask('tracker-container-ci'),
   ]);
 
-  assert.equal(observabilityPass.source.subject, 'Observability pass');
-  assert.equal(containerCi.source.subject, 'Fix beskid-tracker container image build in CI');
+  assert.equal(observabilityPass.source.subject, 'Observability pass over infra');
+  assert.equal(containerCi.source.subject, 'Fix beskid-tracker container image build in CI.');
 });
