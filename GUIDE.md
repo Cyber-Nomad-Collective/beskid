@@ -60,6 +60,8 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 
 Parallel agents must use disjoint write scopes. Knowledge files live outside the repository and must never be pushed. Before an existing-symbol edit, run GitNexus upstream impact analysis; before a commit, run focused tests and GitNexus change detection.
 
+For the 0.4 release critical path (`hir-free-isle-abi-v5-native-runtime` / Linear CYB-5–44): **Codex** owns compiler/runtime behavior, normative OpenSpec requirements and checkboxes, integration, review, issue completion, and the release decision. **Cursor** is limited to bounded W7 support leaves (CYB-68–71): documentation/OpenSpec bookkeeping, configuration checks, command-log and package inventories, and mechanical audit drafts. Cursor evidence hands off to a Codex-owned parent; Cursor must not mark OpenSpec checkboxes complete, claim release-ready, or close CYB-42 / CYB-44.
+
 | Domain | Paths | Knowledge doc |
 |---|---|---|
 | Standard and docs | `openspec/`, `site/platform-spec/`, `site/website/`, `docs/` | `~/.agents/knowledge/spec-docs.md` |
