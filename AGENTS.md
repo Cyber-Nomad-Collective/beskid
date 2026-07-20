@@ -26,7 +26,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **beskid** (59804 symbols, 118171 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **beskid** (64525 symbols, 131119 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
 
@@ -76,7 +76,9 @@ This project is indexed by GitNexus as **beskid** (59804 symbols, 118171 relatio
 - Prefer readable symbol/type identifiers in compiler and ISLE traces—expand `SourceUnitId`/`AstNodeKey` and `#gN:nM` into real names plus span/construct detail, not raw numeric ids
 - Settings/kanban dialogs: structural tabs/groups; settings shell with left nav tree and right auto-rendered form; task dialogs roughly 70% form / 30% preview
 - Verify builds and gates locally until they pass before pushing; do not stop at the first remote CI failure
-- When promoting provisional OpenSpec capabilities, require real SHALL requirements and scenarios via OpenSpec changes—not stub fills
+- When promoting provisional OpenSpec capabilities, require real SHALL requirements and scenarios via OpenSpec changes—not stub fills; leave taxonomy hubs and empty governance/design-model stubs provisional until leaf obligations exist
+- Respect Linear ownership labels (`agent/cursor` vs `agent/codex`); do not claim or edit Codex-owned workstreams
+- Prefer parent and submodule state on `main` with clean merges; fix merge noise rather than leaving divergent local branches
 
 ## Learned Workspace Facts
 - Tracker SQLite DB is the task-tracking source of truth; GitHub Issues sync is limited to active version and bugs
@@ -89,3 +91,5 @@ This project is indexed by GitNexus as **beskid** (59804 symbols, 118171 relatio
 - Shared AST/DAG explorer UI (ReactFlow/d3) belongs in common `@beskid` components and should reuse one repo/browser explorer dialog across website, pckg, platform-spec, and tracker
 - OpenSpec `validate-standard` catalogues `AGENTS.md` and hard-fails TBD Purpose headers; regenerating `openspec/catalog.json` may be required after editing either
 - Platform delivery CI hard-gates every lane image including `pckg` (needs GHCR Write on `beskid-pckg` or `GHCR_TOKEN` with `write:packages`); green `main` auto-applies Coolify staging with digest-pinned compose
+- While sites still resolve `@beskid/*` via `file:../../beskid_web_common`, CI and Docker must checkout/copy that submodule before `bun install` (same pattern as the website image)
+- Linear workstreams are partitioned by `agent/cursor` and `agent/codex` labels; taxonomy hub promotion (`taxonomy--*`) stays deferred until leaf obligations exist
