@@ -46,6 +46,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Refresh the 0.4 closure plan and readiness report with the pushed multi-agent
+  integration checkpoint, exact commit evidence, completed CYB-13/CYB-14 gates,
+  and the remaining release-finalization blockers.
 - Make Platform Spec use the root Bun workspace authority in CI and containers,
   initialize the shared web package before delivery checks, and align generated
   TanStack routes, auth result narrowing, OpenSpec PR root resolution, and
