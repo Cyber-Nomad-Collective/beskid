@@ -1,0 +1,3 @@
+=== verify-native-runtime-kit-linux.sh ===
+Linux native runtime-kit evidence requires an x86_64 Linux host
+EXIT:1

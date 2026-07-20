@@ -1,0 +1,50 @@
+=== package-related paths ===
+total 0
+drwxr-xr-x@ 8 mikserek  staff  256 Jul 20 12:34 .
+drwxr-xr-x@ 9 mikserek  staff  288 Jul 20 12:34 ..
+drwxr-xr-x@ 7 mikserek  staff  224 Jul 20 12:34 compiler-sdk
+drwxr-xr-x@ 6 mikserek  staff  192 Jul 20 12:34 concurrency
+drwxr-xr-x@ 7 mikserek  staff  224 Jul 20 12:34 console
+drwxr-xr-x@ 8 mikserek  staff  256 Jul 20 12:34 foundation
+drwxr-xr-x@ 4 mikserek  staff  128 Jul 20 12:34 pest-gen-schema
+drwxr-xr-x@ 6 mikserek  staff  192 Jul 20 12:34 runtime
+compiler/corelib/packages/runtime/readme.md
+compiler/corelib/packages/runtime/Project.lock
+compiler/corelib/packages/runtime/corelib_runtime.bproj
+compiler/corelib/packages/runtime/src/Runtime/Attribute.bd
+compiler/corelib/packages/runtime/src/Runtime/Abi.bd
+compiler/corelib/packages/runtime/src/Runtime/Handlers/Test/Bytes.bd
+compiler/corelib/packages/runtime/src/Runtime/Handlers/String.bd
+compiler/corelib/packages/runtime/src/Runtime/Handlers/Bytes.bd
+compiler/corelib/packages/runtime/src/Runtime/Init.bd
+compiler/corelib/packages/foundation/corelib_foundation.bproj
+compiler/corelib/packages/foundation/.generated/Core/Text/Regex/Generated.g.bd
+compiler/corelib/packages/foundation/readme.md
+compiler/corelib/packages/foundation/grammars/regex.pest
+compiler/corelib/packages/foundation/Project.lock
+compiler/corelib/packages/foundation/src/Core/Bytes/Slice.bd
+compiler/corelib/packages/foundation/src/Core/Bytes/Convert.bd
+compiler/corelib/packages/foundation/src/Core/Bytes/Errors.bd
+compiler/corelib/packages/foundation/src/Core/Bytes/Bytes.bd
+compiler/corelib/packages/foundation/src/Core/Input/Input.bd
+compiler/corelib/packages/foundation/src/Core/ErrorHandling/ErrorHandling.bd
+compiler/corelib/packages/foundation/src/Core/Path/Path.bd
+compiler/corelib/packages/foundation/src/Core/Fluent/Step.bd
+compiler/corelib/packages/foundation/src/Core/Output/Output.bd
+compiler/corelib/packages/foundation/src/Core/Encoding/Base64.bd
+compiler/corelib/packages/foundation/src/Core/Encoding/Encoding.bd
+compiler/corelib/packages/foundation/src/Core/Encoding/EncodingError.bd
+compiler/corelib/packages/foundation/src/Core/Encoding/Utf8.bd
+compiler/corelib/packages/foundation/src/Core/Encoding/Hex.bd
+compiler/corelib/packages/foundation/src/Core/Encoding/Contract.bd
+compiler/corelib/packages/foundation/src/Core/Time/Time.bd
+compiler/corelib/packages/foundation/src/Core/Time/Duration.bd
+compiler/corelib/packages/foundation/src/Core/Time/TimeError.bd
+compiler/corelib/packages/foundation/src/Core/Time/Date.bd
+compiler/corelib/packages/foundation/src/Core/Time/Instant.bd
+compiler/corelib/packages/foundation/src/Core/Time/TimeOfDay.bd
+compiler/corelib/packages/foundation/src/Core/Time/DateTime.bd
+compiler/corelib/packages/foundation/src/Core/Optional/Optional.bd
+compiler/corelib/packages/foundation/src/Core/Optional/Option.bd
+compiler/corelib/packages/foundation/src/Core/Results/Results.bd
+compiler/corelib/packages/foundation/src/Core/Environment/EnvironmentError.bd

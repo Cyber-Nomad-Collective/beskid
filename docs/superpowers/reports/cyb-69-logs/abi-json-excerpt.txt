@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "abi_version": 5,
+  "target": {
+    "triple": "aarch64-apple-darwin",
+    "endianness": "little",
+    "pointer_width": 64,
+    "calling_convention": "apple_aarch64",
+    "object_format": "macho",
+    "symbol_prefix": "_",
+    "stack_alignment": 16,
+    "shadow_space": 0
+  },
+  "profile": "release",
+  "layout_hash": "5284ec72f700baaa14c46d9ef5ab324246c775d24f3baf1e4465f21f85cfdc10",
+  "source_hash": "5f821cc4edede0f20740e1035dc75fee74b51a495a986b5537231048311b62fb",
+  "artifacts": {
+    "static_library": {
+      "relative_path": "static/libbeskid_runtime.a",
+      "sha256": "08d69f3f3da0f1ba5d5ab59a9261d782c160f163c349e6110b3e64ced2b12f09"
+    },
+    "shared_library": {
+      "relative_path": "shared/libbeskid_runtime.dylib",
+      "sha256": "109bd0e8f7f1f2e26b2c4ccad1607791578e91abee92ddf6b6459eef2b484e04"
+    }
+  },
+  "import_allowlist": [
+    "_exit",
+    "_tlv_bootstrap",
+    "mmap",
+    "munmap",
+    "write"
+  ],
+  "export_allowlist": [
+    "beskid_arch_v5_context_init",
+    "beskid_arch_v5_context_switch",
+    "beskid_library_attach_v5",
+    "beskid_library_detach_v5",
+    "beskid_rt_v5_abi_version",
+    "beskid_rt_v5_intrinsic_memory_compare",
+    "beskid_rt_v5_intrinsic_memory_copy",
+    "beskid_rt_v5_intrinsic_memory_set",
+    "beskid_rt_v5_intrinsic_native_word_from_pointer",
+    "beskid_rt_v5_intrinsic_pointer_add",
+    "beskid_rt_v5_intrinsic_pointer_from_native_word",
+    "beskid_rt_v5_intrinsic_raw_byte_load",
+    "beskid_rt_v5_intrinsic_raw_byte_store",
+    "beskid_rt_v5_intrinsic_raw_word_load",
+    "beskid_rt_v5_intrinsic_raw_word_store",
+    "beskid_rt_v5_intrinsic_system_allocate",
+    "beskid_rt_v5_intrinsic_system_free",
+    "beskid_rt_v5_intrinsic_tls_get",
+    "beskid_rt_v5_intrinsic_tls_set",
+    "beskid_rt_v5_process_init",
+    "beskid_rt_v5_process_shutdown",
+    "beskid_rt_v5_thread_attach",
+    "beskid_rt_v5_thread_detach",
+    "beskid_rt_v5_trap"
+  ],
+  "loader_required_exports": [
+    "beskid_arch_v5_context_init",
+    "beskid_arch_v5_context_switch",
+    "beskid_library_attach_v5",
+    "beskid_library_detach_v5",
+    "beskid_rt_v5_abi_version",
+    "beskid_rt_v5_process_init",
+    "beskid_rt_v5_process_shutdown",
+    "beskid_rt_v5_thread_attach",
+    "beskid_rt_v5_thread_detach",
+    "beskid_rt_v5_trap"
+  ]
+}
+
+# note: abi_contract and audit truncated; full abi.json in host-main-repo-native-runtime-kit.txt

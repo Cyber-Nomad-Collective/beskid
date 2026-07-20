@@ -1,0 +1,5 @@
+date_utc=2026-07-20T10:37:07Z
+host=Darwin mac-d.local 25.5.0 Darwin Kernel Version 25.5.0: Mon Apr 27 20:39:42 PDT 2026; root:xnu-12377.121.6~2/RELEASE_ARM64_T6031 arm64
+root_sha=9f1d88fd86fdff2ccb6d14dc2e2c687bc8b06f7f
+compiler_sha=79eccbd9fa8dd975b8ed6dfcfb6056eb1894efef
+worktree=/Users/mikserek/Projects/beskid/.worktrees/cyb-69
