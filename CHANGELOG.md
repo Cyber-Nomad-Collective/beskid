@@ -46,6 +46,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Advance the compiler pin to the reviewed W1 catalogue and verifier-site work:
+  exhaustive typed-operation classification with semantic-family coverage, plus
+  source-owned stock-CLIF verification diagnostics exercised through the real
+  multi-function module boundary.
 - Align the 0.4 OpenSpec execution ledger and release plan with the fresh W1
   readiness audit: keep AST-owned verifier diagnostics open, separate platform
   delivery plumbing from compiler blockers, and map CYB-5 through CYB-44 to
