@@ -1,0 +1,32 @@
+warning: exhaustive rename detection was skipped due to too many files.
+warning: you may want to set your diff.renameLimit variable to at least 3227 and retry the command.
+Changes: 567 files, 8862 symbols
+Affected processes: 7
+Risk level: high
+
+Changed symbols:
+  Symbol GitNexus — Code Intelligence → AGENTS.md
+  Symbol Resources → AGENTS.md
+  Symbol CLI → AGENTS.md
+  Symbol Learned User Preferences → AGENTS.md
+  Symbol Learned Workspace Facts → AGENTS.md
+  Symbol GitNexus — Code Intelligence → CLAUDE.md
+  Symbol Always Do → CLAUDE.md
+  Symbol Never Do → CLAUDE.md
+  Symbol Resources → CLAUDE.md
+  Symbol CLI → CLAUDE.md
+  Symbol Glossary → GLOSSARY.md
+  Symbol ABI v5 → GLOSSARY.md
+  Symbol AST semantic facts → GLOSSARY.md
+  Symbol Auth Hub → GLOSSARY.md
+  Symbol Beskid standard → GLOSSARY.md
+... and 8847 more
+
+Affected execution flows:
+  • HandleCallbackGet → AuthDataDir (7 steps) — changed: handleCallbackGet
+  • HandleCallbackGet → MasterKey (6 steps) — changed: handleCallbackGet
+  • HandleCallbackGet → ApplyV1 (6 steps) — changed: handleCallbackGet
+  • HandleCallbackGet → ApplyV2 (6 steps) — changed: handleCallbackGet
+  • HandleCallbackGet → HashSecret (5 steps) — changed: handleCallbackGet
+  • GET → SessionSecret (5 steps) — changed: unsealHubBrowserSession
+  • GET → ReadSessionCookie (4 steps) — changed: readSessionCookie

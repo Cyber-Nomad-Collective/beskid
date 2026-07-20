@@ -1,0 +1,112 @@
+# CYB-71 raw inventory helpers
+generated: 2026-07-20T10:36:19Z
+base: b19e3b1c750bf894dfbff5ad5d4217c8f3209195
+tip: 9f1d88fd86fdff2ccb6d14dc2e2c687bc8b06f7f
+
+## git file counts by top-level
+3356 site
+ 309 openspec
+  48 scripts
+  25 docs
+  25 .github
+   1 validate-ci-local.sh
+   1 pckg
+   1 package.json
+   1 dagger.json
+   1 compiler
+   1 bun.lock
+   1 beskid_web_common
+   1 beskid_vscode
+   1 beskid_tracker
+   1 beskid_nexus
+   1 beskid_infra
+   1 beskid_distrib
+   1 beskid_bsol
+   1 README.md
+   1 Justfile
+   1 GUIDE.md
+   1 GLOSSARY.md
+   1 CLAUDE.md
+   1 CHANGELOG.md
+   1 AGENTS.md
+   1 .gitmodules
+   1 .gitignore
+   1 .dockerignore
+
+## site/* second level
+3185 site/spec-content
+  94 site/platform-spec
+  69 site/website
+   8 site/auth
+
+## openspec/* second level
+ 185 openspec/specs
+ 112 openspec/changes
+   5 openspec/layouts
+   5 openspec/assets
+   1 openspec/config.yaml
+   1 openspec/catalog.json
+
+## submodule pointer tips (gitlink)
+compiler 8707723d5d019ed96339e3a7fc2805d86873fada 79eccbd9fa8dd975b8ed6dfcfb6056eb1894efef
+beskid_tracker ebaba97e49f06501f5fce5af5739169ab8cf2899 c6893ff33a5b8d133d056f92f2b18699737bf63f
+beskid_nexus 153f40f8ccd1e82b962bcb920f0e3d51030bf3f6 ede3cb2096c4da3855d6157fc06718d402281b7a
+beskid_web_common b2985c28481bcd99938144227190ffca3a35414b 4b1b54e8abcb4fa4cde43eecb6b741658958354f
+beskid_bsol 2822dcf9932a2abec42bd49d43b587b10eb6d7e8 3977803614185fbb5a5a81b56f1860b18f0da3ce
+beskid_distrib 074c4a35cbe249a84194fa39696dc042dfb0b2a6 4e3b08660169e0e6a2601b3af0642c7083c768ba
+beskid_infra 423ca6109d9caae72f9c365e3835beb761ade33f fbe95631ddd00abf604cfd44f1a8a55e3e42672a
+beskid_vscode 1418aeb7b824b0254ff5dbff1b5eed7782177072 45ed62a5a60e13f36caafe3c263986c139bc6f23
+pckg b45f850ab4ce27fc0df0dc62e451be021fffd0ed 79832486096c9bfc744bc175a68bb49fa3125d8c
+
+## commit list
+9f1d88fd docs: align 0.4 execution and plan 0.5
+1b8bda79 docs: prepare 0.4 release finalization handoff
+066a2621 docs(openspec): close verifier source-site task
+f322182d fix(platform-spec): align workspace build and route types
+d1667347 chore: pin compiler W1 catalogue and diagnostics
+73c9b03f Promote OpenSpec provisional waves 2–4 (tooling, language-meta, corelib).
+20404b3d docs: align 0.4 readiness evidence
+4f18618d chore: pin compiler to main with corelib on main
+07156370 Align OpenSpec consumers and promote provisional wave 1.
+22bd255b Decouple platform delivery from gates; OpenSpec-native hybrid seed + upsert migrations (#157)
+a38579ae fix: hard-gate platform images and auto-apply staging
+7db004b3 feat: ship shared AST/facts explorer across site surfaces
+b74c3ec2 Unblock website delivery: make the beskid-pckg image lane optional (#156)
+7ad8f92c fix: pin compiler for richer ISLE MissingRuleOrFact sites (#155)
+c28a70f1 Fix platform image delivery: push to GHCR with GITHUB_TOKEN (#154)
+0be77808 fix: Corelib gate — ISLE, generics, Text/syscall hygiene (#153)
+d918285b Fix OpenSpec catalog drift from missing Nexus plan document.
+2daf6453 fix: OpenSpec catalog CI deterministic with submodule docs (#152)
+f1597a01 Bump compiler to clear clippy cloned_ref_to_slice_refs gate.
+67fe853f Unblock platform image delivery for Trivy and GHCR auth.
+b8142637 Stabilize OpenSpec catalog CI and clear pckg dead_code gate.
+636b041c Fix CI: restore ABI-v5 compiler tip and OpenSpec catalog hashes.
+810b55d6 Drop AUR from distribute and bump published submodules.
+bd85a1c8 0.4: canonical native runtime and CI migration (#150)
+cc948a24 feat: integrate tracker platform delivery (#151)
+c04436cc feat: integrate pckg lifecycle retirement work
+09c4457c feat: integrate pckg publisher catalog
+069aa052 feat: integrate pckg administration parity
+2764d084 feat: integrate pckg API key management
+9bf49608 feat: integrate pckg community and artifact parity
+d8b08a71 feat: complete rust pckg registry cutover
+fbb9c524 ci: stage native runtime kits in compiler gates
+0771b364 merge: unify Beskid distribution release flow
+2333e4e2 feat: unify Beskid distribution releases
+58238334 fix: restore extension manifest after publish
+ef350aba fix: verify delivery retry contracts
+5569bf52 fix: close delivery release blockers
+3229ea34 test: run distribution contract in foundation gate
+07a49d96 fix: commit distribution marker last
+8b04967d fix: make distribution retries release-safe
+5dddc68b docs: define v0.4 release closure
+7f529572 docs: add distribution updater implementation plan
+923061bd merge: synchronize main delivery updates
+9672e227 chore: synchronize integrated workspace state
+59866ba1 Refactor Beskid web and docs for platform alignment
+9868fe69 fix: initialize nested integration dependencies
+aefdb7f2 fix: preserve shared resizable dependency
+db47036d merge: integrate ABI v5 runtime design worktree
+f7280290 refactor: consolidate standard and delivery
+775adeca progress on purification
+acc90b41 docs: specify HIR-free ABI-v5 runtime
