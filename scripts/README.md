@@ -29,7 +29,7 @@ runners (the compiler gate is also Testbox-compatible). Dagger is retired.
 | [`site-build-gate.sh`](ci/site-build-gate.sh) | Auth / platform-spec build gate |
 | [`vscode-gate.sh`](ci/vscode-gate.sh) | VS Code extension `bun test` |
 | [`verify-frozen-lockfile.sh`](ci/verify-frozen-lockfile.sh) | Per-directory `bun install --frozen-lockfile` |
-| [`compute-cli-version.sh`](ci/compute-cli-version.sh) | Rolling CLI/LSP semver |
+| [`compute-cli-version.sh`](ci/compute-cli-version.sh) | Compiler-minted global `0.4.<build>` version |
 | [`build-release-artifact.sh`](ci/build-release-artifact.sh) | Native CLI/LSP release build |
 | [`publish-release-stream.sh`](ci/publish-release-stream.sh) | `gh release` for `cli-*` / `lsp-*` streams |
 | [`corelib-publish.sh`](ci/corelib-publish.sh) | Corelib workspace → pckg |

@@ -7,17 +7,17 @@
 name: Publish VS Code Extension to Open VSX
 
 on:
-  push:
+  workflow_run:
+    workflows: [Compiler]
     branches: [main]
-  release:
-    types: [published]
-  workflow_dispatch:
+    types: [completed]
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
-  group: open-vsx-publish-${{ github.ref }}
+  group: open-vsx-publish-${{ github.event.workflow_run.id }}
   cancel-in-progress: false
 
 jobs:
@@ -29,6 +29,9 @@ jobs:
   # failing deep inside the publish step.
   check-token:
     name: Check OVSX token
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
     runs-on: ubuntu-latest
     outputs:
       enabled: ${{ steps.check.outputs.enabled }}
@@ -79,6 +82,7 @@ jobs:
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
           fetch-tags: true
           persist-credentials: true
@@ -133,12 +137,21 @@ jobs:
           RUST_MIN_STACK: "67108864"
         run: bash ./scripts/ci/compiler-rust-gate.sh
 
-      - name: Resolve unified Beskid release version
+      - name: Download global release version from Compiler
         id: release-version
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMPILER_RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           set -euo pipefail
-          version="$(bash ./scripts/ci/resolve-beskid-version.sh)"
+          gh run download "${COMPILER_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
+            --name release-version --dir release-version
+          version="$(tr -d '[:space:]' < release-version/release-version.txt)"
+          [[ "${version}" =~ ^0\.4\.(0|[1-9][0-9]*)$ ]] || {
+            echo "Compiler emitted invalid global release version: ${version:-<empty>}" >&2
+            exit 1
+          }
           echo "version=${version}" >> "${GITHUB_OUTPUT}"
 
       - name: Publish Open VSX (native)

@@ -158,6 +158,7 @@ See **[flow and algorithm](./flow-and-algorithm/)** for activation → LSP init 
 
 <SpecSection title="Compatibility and versioning" id="compatibility-and-versioning">
 - Extension engine pin and Open VSX platform matrix remain governed by publish workflow (darwin-arm64 / darwin-x64 LSP target pairing).
+- The Compiler CI workflow is the sole global distribution-version authority: it **must** mint exactly `0.4.<GITHUB_RUN_NUMBER>` on `main` and emit that value. Open VSX **must** consume the emitted value from the triggering Compiler run; it **must not** derive a version from its own tag, commit, manifest, or workflow run number.
 - `selectedProjectUri` deprecated in favor of `focusedProjectUri` for one release cycle.
 </SpecSection>
 

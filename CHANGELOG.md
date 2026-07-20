@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Compiler CI now mints the only global distribution identity as
+  `0.4.<GITHUB_RUN_NUMBER>` and emits it as an artifact for release consumers;
+  Open VSX consumes that exact artifact instead of independently deriving a
+  version (CYB-108).
 - Sanitized CYB-102 release-gate summary that records reviewed integrations and
   actionable blockers without carrying raw host-specific evidence logs into the
   release branch.
