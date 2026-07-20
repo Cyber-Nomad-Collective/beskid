@@ -111,6 +111,18 @@ jobs:
           echo "version=${v}" >> "${GITHUB_OUTPUT}"
           echo "Resolved CLI/LSP version: ${v}"
 
+      - name: Emit global release version
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: printf '%s\n' "${RELEASE_VERSION}" > release-version.txt
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: release-version
+          path: release-version.txt
+          if-no-files-found: error
+
   release-cli-build:
     name: Build CLI (${{ matrix.asset_name }})
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'

@@ -28,4 +28,9 @@ fi
 # A retry after an already-published platform VSIX must verify the target identity.
 bash "${ROOT}/scripts/ci/test/open-vsx-publish.test.sh"
 
+# Compiler CI mints the single 0.4.<build> version; delivery consumers must
+# receive that exact emitted value rather than resolving a second version.
+bash "${ROOT}/scripts/ci/test/resolve-beskid-version.test.sh"
+bash "${ROOT}/scripts/ci/test/release-version-contract.test.sh"
+
 echo "delivery contracts OK"
