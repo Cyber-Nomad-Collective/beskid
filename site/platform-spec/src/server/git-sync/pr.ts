@@ -7,6 +7,7 @@ import type { DraftChangeNode } from "#/server/memgraph/types";
 import {
 	loadOpenSpecCatalog,
 	resolveOpenSpecEntry,
+	resolveOpenSpecRoot,
 } from "#/server/openspec/reader";
 
 const OWNER = () => env.GITHUB_REPO_OWNER;
@@ -223,7 +224,7 @@ export async function createDraftPullRequest(
 	baseRef = "main",
 	sourceRevision?: string,
 ): Promise<CreateDraftPrResult> {
-	const catalog = loadOpenSpecCatalog();
+	const catalog = loadOpenSpecCatalog(resolveOpenSpecRoot());
 	const revision = sourceRevision ?? catalog.revision;
 	if (revision !== catalog.revision) {
 		throw new Error("catalog revision conflict");

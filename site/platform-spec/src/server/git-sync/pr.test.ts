@@ -121,34 +121,34 @@ describe("OpenSpec draft pull request sync", () => {
 		process.env.OPENSPEC_ROOT = fixtureCatalog();
 		const client = octokit();
 		const calls: Array<{ method: string; input: Record<string, unknown> }> = [];
-		client.git.getRef = async (input: Record<string, unknown>) => {
-			calls.push({ method: "getRef", input });
+		client.git.getRef = async (input?: Record<string, unknown>) => {
+			calls.push({ method: "getRef", input: input ?? {} });
 			throw Object.assign(new Error("not found"), { status: 404 });
 		};
-		client.git.createRef = async (input: Record<string, unknown>) => {
-			calls.push({ method: "createRef", input });
+		client.git.createRef = async (input?: Record<string, unknown>) => {
+			calls.push({ method: "createRef", input: input ?? {} });
 			return { data: {} };
 		};
-		client.git.getCommit = async (input: Record<string, unknown>) => {
-			calls.push({ method: "getCommit", input });
+		client.git.getCommit = async (input?: Record<string, unknown>) => {
+			calls.push({ method: "getCommit", input: input ?? {} });
 			return { data: { tree: { sha: "base-tree" } } };
 		};
 		let blobNumber = 0;
-		client.git.createBlob = async (input: Record<string, unknown>) => {
-			calls.push({ method: "createBlob", input });
+		client.git.createBlob = async (input?: Record<string, unknown>) => {
+			calls.push({ method: "createBlob", input: input ?? {} });
 			blobNumber += 1;
 			return { data: { sha: `blob-${blobNumber}` } };
 		};
-		client.git.createTree = async (input: Record<string, unknown>) => {
-			calls.push({ method: "createTree", input });
+		client.git.createTree = async (input?: Record<string, unknown>) => {
+			calls.push({ method: "createTree", input: input ?? {} });
 			return { data: { sha: "tree-sha" } };
 		};
-		client.git.createCommit = async (input: Record<string, unknown>) => {
-			calls.push({ method: "createCommit", input });
+		client.git.createCommit = async (input?: Record<string, unknown>) => {
+			calls.push({ method: "createCommit", input: input ?? {} });
 			return { data: { sha: "commit-sha" } };
 		};
-		client.git.updateRef = async (input: Record<string, unknown>) => {
-			calls.push({ method: "updateRef", input });
+		client.git.updateRef = async (input?: Record<string, unknown>) => {
+			calls.push({ method: "updateRef", input: input ?? {} });
 			return { data: {} };
 		};
 

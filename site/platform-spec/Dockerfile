@@ -4,18 +4,18 @@ WORKDIR /app
 
 # Platform Spec is a root Bun workspace. Its lockfile lives at the repository
 # root, so install from that authority rather than referring to a nonexistent
-# per-site lockfile.
+# per-site lockfile. Copy file:-linked packages before install so Bun can
+# resolve workspace symlinks (same pattern as site/website/Dockerfile).
 COPY package.json bun.lock .npmrc ./
+COPY beskid_web_common ./beskid_web_common
 COPY site/website/package.json ./site/website/package.json
-COPY site/platform-spec/package.json ./site/platform-spec/package.json
-COPY site/platform-spec/.npmrc ./site/platform-spec/.npmrc
+COPY site/platform-spec ./site/platform-spec
+COPY openspec ./openspec
 ARG NODE_AUTH_TOKEN
 ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
 RUN bun install --frozen-lockfile
 
 WORKDIR /app/site/platform-spec
-COPY site/platform-spec/ ./
-COPY openspec /app/openspec
 
 # Platform-spec serves OpenSpec; refuse to bake an image without catalog data.
 RUN test -f /app/openspec/catalog.json \

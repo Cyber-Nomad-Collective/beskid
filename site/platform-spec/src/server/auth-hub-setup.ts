@@ -23,7 +23,7 @@ export const submitAuthHubSetupFn = createServerFn({ method: "POST" })
 	.handler(async ({ data }) => {
 		const { getRequest } = await import("@tanstack/react-start/server");
 		const result = await submitAuthHubSetup(getRequest(), data);
-		if (!result.ok) {
+		if ("error" in result) {
 			throw new Error(result.error);
 		}
 		return { ok: true as const };

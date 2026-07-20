@@ -9,37 +9,42 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as EditRouteImport } from './routes/_edit'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EditRouteImport } from './routes/_edit'
+import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as PlatformSpecIndexRouteImport } from './routes/platform-spec/index'
 import { Route as PlatformSpecSplatRouteImport } from './routes/platform-spec/$'
-import { Route as ApiHealthRouteImport } from './routes/api/health'
-import { Route as EditModerationIndexRouteImport } from './routes/_edit/moderation/index'
 import { Route as EditEditIndexRouteImport } from './routes/_edit/edit/index'
-import { Route as SettingsAuthPairRouteImport } from './routes/settings/auth/pair'
-import { Route as SettingsAuthLoginRouteImport } from './routes/settings/auth/login'
-import { Route as ApiWebhooksGithubRouteImport } from './routes/api/webhooks/github'
-import { Route as ApiV1NavTreeRouteImport } from './routes/api/v1/nav-tree'
-import { Route as ApiV1CatalogRouteImport } from './routes/api/v1/catalog'
-import { Route as ApiAuthPairRouteImport } from './routes/api/auth/pair'
-import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
-import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
-import { Route as ApiAuthHubFinishRouteImport } from './routes/api/auth/hub-finish'
-import { Route as ApiAuthGithubRouteImport } from './routes/api/auth/github'
+import { Route as EditModerationIndexRouteImport } from './routes/_edit/moderation/index'
 import { Route as ApiAdminSetupRouteImport } from './routes/api/admin/setup'
-import { Route as ApiV1TrackerTasksRouteImport } from './routes/api/v1/tracker/tasks'
-import { Route as ApiV1EmbedSplatRouteImport } from './routes/api/v1/embed/$'
-import { Route as ApiV1DocsSplatRouteImport } from './routes/api/v1/docs/$'
-import { Route as ApiV1ArchitectureKeyRouteImport } from './routes/api/v1/architecture/$key'
+import { Route as ApiAuthGithubRouteImport } from './routes/api/auth/github'
+import { Route as ApiAuthHubFinishRouteImport } from './routes/api/auth/hub-finish'
+import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
+import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
+import { Route as ApiAuthPairRouteImport } from './routes/api/auth/pair'
+import { Route as ApiV1CatalogRouteImport } from './routes/api/v1/catalog'
+import { Route as ApiV1NavTreeRouteImport } from './routes/api/v1/nav-tree'
+import { Route as ApiWebhooksGithubRouteImport } from './routes/api/webhooks/github'
+import { Route as SettingsAuthLoginRouteImport } from './routes/settings/auth/login'
+import { Route as SettingsAuthPairRouteImport } from './routes/settings/auth/pair'
 import { Route as EditEditDraftsIdRouteImport } from './routes/_edit/edit/drafts/$id'
+import { Route as ApiV1ArchitectureKeyRouteImport } from './routes/api/v1/architecture/$key'
+import { Route as ApiV1DocsSplatRouteImport } from './routes/api/v1/docs/$'
+import { Route as ApiV1EmbedSplatRouteImport } from './routes/api/v1/embed/$'
+import { Route as ApiV1TrackerTasksRouteImport } from './routes/api/v1/tracker/tasks'
 
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EditRoute = EditRouteImport.update({
   id: '/_edit',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlatformSpecIndexRoute = PlatformSpecIndexRouteImport.update({
@@ -52,64 +57,19 @@ const PlatformSpecSplatRoute = PlatformSpecSplatRouteImport.update({
   path: '/platform-spec/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiHealthRoute = ApiHealthRouteImport.update({
-  id: '/api/health',
-  path: '/api/health',
-  getParentRoute: () => rootRouteImport,
+const EditEditIndexRoute = EditEditIndexRouteImport.update({
+  id: '/edit/',
+  path: '/edit/',
+  getParentRoute: () => EditRoute,
 } as any)
 const EditModerationIndexRoute = EditModerationIndexRouteImport.update({
   id: '/moderation/',
   path: '/moderation/',
   getParentRoute: () => EditRoute,
 } as any)
-const EditEditIndexRoute = EditEditIndexRouteImport.update({
-  id: '/edit/',
-  path: '/edit/',
-  getParentRoute: () => EditRoute,
-} as any)
-const SettingsAuthPairRoute = SettingsAuthPairRouteImport.update({
-  id: '/settings/auth/pair',
-  path: '/settings/auth/pair',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsAuthLoginRoute = SettingsAuthLoginRouteImport.update({
-  id: '/settings/auth/login',
-  path: '/settings/auth/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiWebhooksGithubRoute = ApiWebhooksGithubRouteImport.update({
-  id: '/api/webhooks/github',
-  path: '/api/webhooks/github',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiV1NavTreeRoute = ApiV1NavTreeRouteImport.update({
-  id: '/api/v1/nav-tree',
-  path: '/api/v1/nav-tree',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiV1CatalogRoute = ApiV1CatalogRouteImport.update({
-  id: '/api/v1/catalog',
-  path: '/api/v1/catalog',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAuthPairRoute = ApiAuthPairRouteImport.update({
-  id: '/api/auth/pair',
-  path: '/api/auth/pair',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAuthMeRoute = ApiAuthMeRouteImport.update({
-  id: '/api/auth/me',
-  path: '/api/auth/me',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
-  id: '/api/auth/logout',
-  path: '/api/auth/logout',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAuthHubFinishRoute = ApiAuthHubFinishRouteImport.update({
-  id: '/api/auth/hub-finish',
-  path: '/api/auth/hub-finish',
+const ApiAdminSetupRoute = ApiAdminSetupRouteImport.update({
+  id: '/api/admin/setup',
+  path: '/api/admin/setup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthGithubRoute = ApiAuthGithubRouteImport.update({
@@ -117,19 +77,59 @@ const ApiAuthGithubRoute = ApiAuthGithubRouteImport.update({
   path: '/api/auth/github',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAdminSetupRoute = ApiAdminSetupRouteImport.update({
-  id: '/api/admin/setup',
-  path: '/api/admin/setup',
+const ApiAuthHubFinishRoute = ApiAuthHubFinishRouteImport.update({
+  id: '/api/auth/hub-finish',
+  path: '/api/auth/hub-finish',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiV1TrackerTasksRoute = ApiV1TrackerTasksRouteImport.update({
-  id: '/api/v1/tracker/tasks',
-  path: '/api/v1/tracker/tasks',
+const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
+  id: '/api/auth/logout',
+  path: '/api/auth/logout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiV1EmbedSplatRoute = ApiV1EmbedSplatRouteImport.update({
-  id: '/api/v1/embed/$',
-  path: '/api/v1/embed/$',
+const ApiAuthMeRoute = ApiAuthMeRouteImport.update({
+  id: '/api/auth/me',
+  path: '/api/auth/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthPairRoute = ApiAuthPairRouteImport.update({
+  id: '/api/auth/pair',
+  path: '/api/auth/pair',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1CatalogRoute = ApiV1CatalogRouteImport.update({
+  id: '/api/v1/catalog',
+  path: '/api/v1/catalog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiV1NavTreeRoute = ApiV1NavTreeRouteImport.update({
+  id: '/api/v1/nav-tree',
+  path: '/api/v1/nav-tree',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWebhooksGithubRoute = ApiWebhooksGithubRouteImport.update({
+  id: '/api/webhooks/github',
+  path: '/api/webhooks/github',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsAuthLoginRoute = SettingsAuthLoginRouteImport.update({
+  id: '/settings/auth/login',
+  path: '/settings/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsAuthPairRoute = SettingsAuthPairRouteImport.update({
+  id: '/settings/auth/pair',
+  path: '/settings/auth/pair',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EditEditDraftsIdRoute = EditEditDraftsIdRouteImport.update({
+  id: '/edit/drafts/$id',
+  path: '/edit/drafts/$id',
+  getParentRoute: () => EditRoute,
+} as any)
+const ApiV1ArchitectureKeyRoute = ApiV1ArchitectureKeyRouteImport.update({
+  id: '/api/v1/architecture/$key',
+  path: '/api/v1/architecture/$key',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiV1DocsSplatRoute = ApiV1DocsSplatRouteImport.update({
@@ -137,15 +137,15 @@ const ApiV1DocsSplatRoute = ApiV1DocsSplatRouteImport.update({
   path: '/api/v1/docs/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiV1ArchitectureKeyRoute = ApiV1ArchitectureKeyRouteImport.update({
-  id: '/api/v1/architecture/$key',
-  path: '/api/v1/architecture/$key',
+const ApiV1EmbedSplatRoute = ApiV1EmbedSplatRouteImport.update({
+  id: '/api/v1/embed/$',
+  path: '/api/v1/embed/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EditEditDraftsIdRoute = EditEditDraftsIdRouteImport.update({
-  id: '/edit/drafts/$id',
-  path: '/edit/drafts/$id',
-  getParentRoute: () => EditRoute,
+const ApiV1TrackerTasksRoute = ApiV1TrackerTasksRouteImport.update({
+  id: '/api/v1/tracker/tasks',
+  path: '/api/v1/tracker/tasks',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -323,6 +323,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_edit': {
       id: '/_edit'
       path: ''
@@ -330,11 +337,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EditRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/platform-spec/': {
@@ -351,12 +358,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlatformSpecSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/health': {
-      id: '/api/health'
-      path: '/api/health'
-      fullPath: '/api/health'
-      preLoaderRoute: typeof ApiHealthRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_edit/edit/': {
+      id: '/_edit/edit/'
+      path: '/edit'
+      fullPath: '/edit/'
+      preLoaderRoute: typeof EditEditIndexRouteImport
+      parentRoute: typeof EditRoute
     }
     '/_edit/moderation/': {
       id: '/_edit/moderation/'
@@ -365,74 +372,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EditModerationIndexRouteImport
       parentRoute: typeof EditRoute
     }
-    '/_edit/edit/': {
-      id: '/_edit/edit/'
-      path: '/edit'
-      fullPath: '/edit/'
-      preLoaderRoute: typeof EditEditIndexRouteImport
-      parentRoute: typeof EditRoute
-    }
-    '/settings/auth/pair': {
-      id: '/settings/auth/pair'
-      path: '/settings/auth/pair'
-      fullPath: '/settings/auth/pair'
-      preLoaderRoute: typeof SettingsAuthPairRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings/auth/login': {
-      id: '/settings/auth/login'
-      path: '/settings/auth/login'
-      fullPath: '/settings/auth/login'
-      preLoaderRoute: typeof SettingsAuthLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/webhooks/github': {
-      id: '/api/webhooks/github'
-      path: '/api/webhooks/github'
-      fullPath: '/api/webhooks/github'
-      preLoaderRoute: typeof ApiWebhooksGithubRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/v1/nav-tree': {
-      id: '/api/v1/nav-tree'
-      path: '/api/v1/nav-tree'
-      fullPath: '/api/v1/nav-tree'
-      preLoaderRoute: typeof ApiV1NavTreeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/v1/catalog': {
-      id: '/api/v1/catalog'
-      path: '/api/v1/catalog'
-      fullPath: '/api/v1/catalog'
-      preLoaderRoute: typeof ApiV1CatalogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/pair': {
-      id: '/api/auth/pair'
-      path: '/api/auth/pair'
-      fullPath: '/api/auth/pair'
-      preLoaderRoute: typeof ApiAuthPairRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/me': {
-      id: '/api/auth/me'
-      path: '/api/auth/me'
-      fullPath: '/api/auth/me'
-      preLoaderRoute: typeof ApiAuthMeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/logout': {
-      id: '/api/auth/logout'
-      path: '/api/auth/logout'
-      fullPath: '/api/auth/logout'
-      preLoaderRoute: typeof ApiAuthLogoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/hub-finish': {
-      id: '/api/auth/hub-finish'
-      path: '/api/auth/hub-finish'
-      fullPath: '/api/auth/hub-finish'
-      preLoaderRoute: typeof ApiAuthHubFinishRouteImport
+    '/api/admin/setup': {
+      id: '/api/admin/setup'
+      path: '/api/admin/setup'
+      fullPath: '/api/admin/setup'
+      preLoaderRoute: typeof ApiAdminSetupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/github': {
@@ -442,25 +386,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthGithubRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/admin/setup': {
-      id: '/api/admin/setup'
-      path: '/api/admin/setup'
-      fullPath: '/api/admin/setup'
-      preLoaderRoute: typeof ApiAdminSetupRouteImport
+    '/api/auth/hub-finish': {
+      id: '/api/auth/hub-finish'
+      path: '/api/auth/hub-finish'
+      fullPath: '/api/auth/hub-finish'
+      preLoaderRoute: typeof ApiAuthHubFinishRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/v1/tracker/tasks': {
-      id: '/api/v1/tracker/tasks'
-      path: '/api/v1/tracker/tasks'
-      fullPath: '/api/v1/tracker/tasks'
-      preLoaderRoute: typeof ApiV1TrackerTasksRouteImport
+    '/api/auth/logout': {
+      id: '/api/auth/logout'
+      path: '/api/auth/logout'
+      fullPath: '/api/auth/logout'
+      preLoaderRoute: typeof ApiAuthLogoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/v1/embed/$': {
-      id: '/api/v1/embed/$'
-      path: '/api/v1/embed/$'
-      fullPath: '/api/v1/embed/$'
-      preLoaderRoute: typeof ApiV1EmbedSplatRouteImport
+    '/api/auth/me': {
+      id: '/api/auth/me'
+      path: '/api/auth/me'
+      fullPath: '/api/auth/me'
+      preLoaderRoute: typeof ApiAuthMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/pair': {
+      id: '/api/auth/pair'
+      path: '/api/auth/pair'
+      fullPath: '/api/auth/pair'
+      preLoaderRoute: typeof ApiAuthPairRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/catalog': {
+      id: '/api/v1/catalog'
+      path: '/api/v1/catalog'
+      fullPath: '/api/v1/catalog'
+      preLoaderRoute: typeof ApiV1CatalogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/nav-tree': {
+      id: '/api/v1/nav-tree'
+      path: '/api/v1/nav-tree'
+      fullPath: '/api/v1/nav-tree'
+      preLoaderRoute: typeof ApiV1NavTreeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/webhooks/github': {
+      id: '/api/webhooks/github'
+      path: '/api/webhooks/github'
+      fullPath: '/api/webhooks/github'
+      preLoaderRoute: typeof ApiWebhooksGithubRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/auth/login': {
+      id: '/settings/auth/login'
+      path: '/settings/auth/login'
+      fullPath: '/settings/auth/login'
+      preLoaderRoute: typeof SettingsAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/auth/pair': {
+      id: '/settings/auth/pair'
+      path: '/settings/auth/pair'
+      fullPath: '/settings/auth/pair'
+      preLoaderRoute: typeof SettingsAuthPairRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_edit/edit/drafts/$id': {
+      id: '/_edit/edit/drafts/$id'
+      path: '/edit/drafts/$id'
+      fullPath: '/edit/drafts/$id'
+      preLoaderRoute: typeof EditEditDraftsIdRouteImport
+      parentRoute: typeof EditRoute
+    }
+    '/api/v1/architecture/$key': {
+      id: '/api/v1/architecture/$key'
+      path: '/api/v1/architecture/$key'
+      fullPath: '/api/v1/architecture/$key'
+      preLoaderRoute: typeof ApiV1ArchitectureKeyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/v1/docs/$': {
@@ -470,19 +470,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1DocsSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/v1/architecture/$key': {
-      id: '/api/v1/architecture/$key'
-      path: '/api/v1/architecture/$key'
-      fullPath: '/api/v1/architecture/$key'
-      preLoaderRoute: typeof ApiV1ArchitectureKeyRouteImport
+    '/api/v1/embed/$': {
+      id: '/api/v1/embed/$'
+      path: '/api/v1/embed/$'
+      fullPath: '/api/v1/embed/$'
+      preLoaderRoute: typeof ApiV1EmbedSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_edit/edit/drafts/$id': {
-      id: '/_edit/edit/drafts/$id'
-      path: '/edit/drafts/$id'
-      fullPath: '/edit/drafts/$id'
-      preLoaderRoute: typeof EditEditDraftsIdRouteImport
-      parentRoute: typeof EditRoute
+    '/api/v1/tracker/tasks': {
+      id: '/api/v1/tracker/tasks'
+      path: '/api/v1/tracker/tasks'
+      fullPath: '/api/v1/tracker/tasks'
+      preLoaderRoute: typeof ApiV1TrackerTasksRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }

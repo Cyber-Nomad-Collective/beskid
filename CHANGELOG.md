@@ -46,6 +46,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Make Platform Spec use the root Bun workspace authority in CI and containers,
+  initialize the shared web package before delivery checks, and align generated
+  TanStack routes, auth result narrowing, OpenSpec PR root resolution, and
+  Memgraph/test typings with the current dependency APIs.
 - Advance the compiler pin to the reviewed W1 catalogue and verifier-site work:
   exhaustive typed-operation classification with semantic-family coverage, plus
   source-owned stock-CLIF verification diagnostics exercised through the real

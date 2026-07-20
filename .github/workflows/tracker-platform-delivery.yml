@@ -72,8 +72,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Initialize shared web packages submodule
+        run: ./scripts/ci/init-submodules.sh beskid_web_common
       - uses: oven-sh/setup-bun@v2
-      - run: bun install --cwd site/platform-spec --frozen-lockfile
+      - run: bun install --frozen-lockfile
       - run: bun run --cwd site/platform-spec test | tee platform-spec-tests.txt
       - run: bun run --cwd site/platform-spec typecheck | tee platform-spec-typecheck.txt
       - uses: actions/upload-artifact@v4

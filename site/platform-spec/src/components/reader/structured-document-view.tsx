@@ -161,7 +161,8 @@ export function StructuredDocumentView({
 			<div className="mb-4 flex justify-end">
 				{showEditLink ? (
 					<Link
-						to="/edit/drafts/new"
+						to="/edit/drafts/$id"
+						params={{ id: "new" }}
 						className="text-sm text-primary underline"
 					>
 						Edit this page

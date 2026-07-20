@@ -30,7 +30,7 @@ export const Route = createFileRoute("/_edit")({
 });
 
 function EditShell() {
-	const { user } = Route.useRouteContext({ from: "/_edit" });
+	const { user } = Route.useRouteContext();
 
 	return (
 		<div className="min-h-screen">

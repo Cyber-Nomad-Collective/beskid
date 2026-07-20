@@ -3,7 +3,6 @@ import "@tanstack/react-start/server-only";
 import neo4j, {
 	type Driver,
 	type Record as Neo4jRecord,
-	type Transaction,
 } from "neo4j-driver";
 
 import { env } from "#/env.server";
@@ -49,7 +48,7 @@ export async function runWrite(
 ): Promise<void> {
 	const session = getDriver().session();
 	try {
-		await session.executeWrite((tx: Transaction) => tx.run(cypher, params));
+		await session.executeWrite((tx) => tx.run(cypher, params));
 	} finally {
 		await session.close();
 	}
