@@ -10,7 +10,7 @@
 - [ ] 2.1 Complete indexed expanded-AST semantic facts for resolution, typing, calls, casts, control flow, captures, legality, spans, bodies, and reachability
 - [x] 2.2 Add `TypedProgram` construction and the sole `CodegenInput` boundary for project assemblies
 - [ ] 2.3 Complete the generated typed-operation inventory and exhaustive ISLE rule compiler
-- [ ] 2.4 Require stock CLIF verification with originating AST spans for every generated function
+- [x] 2.4 Require stock CLIF verification with originating AST spans for every generated function
 - [x] 2.5 Generate exact ABI-v5 allowlists, layouts, traps, and deterministic hashes from `runtime_manifest.bsol`
 - [ ] 2.6 Implement canonical Beskid runtime modules and the two target assembly context exports
 - [ ] 2.7 Implement runtime-kit build, validation, and exact installed-prefix discovery for all targets and profiles
@@ -45,7 +45,7 @@
 
 The detailed dependency-ordered execution record is `docs/superpowers/plans/2026-07-14-0.4-release-closure.md`. Items in this section are intentionally unchecked until their listed fresh acceptance commands are recorded in release evidence.
 
-The 2026-07-20 readiness audit is recorded in `docs/superpowers/reports/2026-07-20-0.4-readiness-baseline.md`. Stock CLIF verification and the production `TypedProgram` → `CodegenInput` route exist, but task 2.4 remains open because `FunctionEmissionError::Verification` does not yet retain an originating AST site. The focused codegen/ISLE pass therefore does not close CYB-5, CYB-14, or CYB-15.
+The 2026-07-20 readiness audit is recorded in `docs/superpowers/reports/2026-07-20-0.4-readiness-baseline.md`. Compiler `79eccbd` closes task 2.4 and CYB-14: `FunctionEmissionError::Verification` retains the originating AST site, canonical database-aware rendering includes path, generation/node identity, construct, and range, and a multi-function `lower_syntax_program` regression proves module-level attribution. Fresh rebased gates passed 108 tests with one intentionally isolated child ignored. CYB-5 and CYB-15 remain open because the broader parsed-project no-legacy acceptance harness is not yet complete.
 
 - [ ] 6.1 Production adapter: compile an actual expanded-syntax `TypedProgram` through `CodegenInput` and ISLE to verified CLIF without HIR or `Lowerable`; run `cargo test -p beskid_codegen --all-targets` and `cargo test -p beskid_isle --all-targets`.
 - [ ] 6.2 Semantic-fact closure: land generation-safe captures, spawn, trusted runtime intrinsics, diagnostics, and spans; run `cargo test -p beskid_queries --tests -- --test-threads=1`.
