@@ -31,6 +31,11 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- `scripts/ci/sync-runtime-env.sh` falls back to lane-config `service_uuid` when
+  `COOLIFY_SERVICE_UUID` is unset (local `just sync-env-*`), with a clearer error
+  naming the config path; production UUID remains in
+  `beskid_infra/config/coolify-production.json`.
+
 - Use `bun run --cwd=DIR` (equals form) in the shared-ui/Nexus root gate and
   package scripts so Bun actually executes Vitest/Playwright instead of
   printing script help with exit 0 (`bun --cwd DIR run SCRIPT` space form).

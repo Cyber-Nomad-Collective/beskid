@@ -12,7 +12,13 @@ case "${lane}" in staging|production) ;; *) echo "invalid lane: ${lane}" >&2; ex
 : "${OPENBAO_TOKEN:?Set OPENBAO_TOKEN}"
 : "${COOLIFY_ENDPOINT:?Set COOLIFY_ENDPOINT}"
 : "${COOLIFY_API_TOKEN:?Set COOLIFY_API_TOKEN}"
-: "${COOLIFY_SERVICE_UUID:?Set COOLIFY_SERVICE_UUID}"
+
+# Prefer explicit env (GitHub Actions vars); else lane config service_uuid.
+if [[ -z "${COOLIFY_SERVICE_UUID:-}" ]]; then
+  COOLIFY_SERVICE_UUID="$(jq -r '.service_uuid // empty' "${config}")"
+fi
+: "${COOLIFY_SERVICE_UUID:?Set COOLIFY_SERVICE_UUID or add service_uuid to ${config}}"
+export COOLIFY_SERVICE_UUID
 
 merged="$(mktemp)"
 chunk="$(mktemp)"
