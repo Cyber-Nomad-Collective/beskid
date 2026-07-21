@@ -23,6 +23,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Pin compiler tip that registers process-linked soft builtins for exact ABI-v5 JIT and
+  types string `+` BinaryExpressions so Corelib Assert/Escape ISLE paths can clear.
 - Pin compiler tip that forwards Windows COFF import libraries through
   `build_native_host` (CYB-112) and includes soft-builtin JIT allowlist + lexical
   Corelib path matching needed by the Corelib gate.
