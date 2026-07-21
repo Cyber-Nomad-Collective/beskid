@@ -5,10 +5,10 @@
     "": {
       "name": "beskid-auth",
       "dependencies": {
-        "@beskid/auth-client": "npm:@cyber-nomad-collective/beskid-auth-client@^0.2.0",
-        "@beskid/beskid-ui": "npm:@cyber-nomad-collective/beskid-ui@^0.2.0",
-        "@beskid/server-observability": "npm:@cyber-nomad-collective/beskid-server-observability@^0.2.0",
-        "@beskid/ui-react": "npm:@cyber-nomad-collective/beskid-ui-react@^0.2.0",
+        "@beskid/auth-client": "npm:@cyber-nomad-collective/beskid-auth-client@^0.2.9",
+        "@beskid/beskid-ui": "npm:@cyber-nomad-collective/beskid-ui@^0.2.8",
+        "@beskid/server-observability": "npm:@cyber-nomad-collective/beskid-server-observability@^0.2.8",
+        "@beskid/ui-react": "npm:@cyber-nomad-collective/beskid-ui-react@^0.2.8",
         "@t3-oss/env-core": "^0.13.10",
         "@tailwindcss/vite": "^4.1.18",
         "@tanstack/react-query": "latest",
@@ -98,13 +98,13 @@
 
     "@base-ui/utils": ["@base-ui/utils@0.2.9", "", { "dependencies": { "@babel/runtime": "^7.29.2", "@floating-ui/utils": "^0.2.11", "reselect": "^5.1.1", "use-sync-external-store": "^1.6.0" }, "peerDependencies": { "@types/react": "^17 || ^18 || ^19", "react": "^17 || ^18 || ^19", "react-dom": "^17 || ^18 || ^19" }, "optionalPeers": ["@types/react"] }, "sha512-x/PDDCYzoqPpjrdyb3VcyylTI2IjUXEtYDGi5foh7KsnmNJIIaVwA2GLgDH1dps1GgXiJbA60hM+AyuTfQzIvw=="],
 
-    "@beskid/auth-client": ["@cyber-nomad-collective/beskid-auth-client@0.2.0", "https://npm.pkg.github.com/download/@cyber-nomad-collective/beskid-auth-client/0.2.0/47badfdfabec8937e8b4f70a304fd8e1fd9da140", { "dependencies": { "jose": "^6.2.3" } }, "sha512-CLCOJ0oo0Tih9KU86HsUjqCR0GpcTqImEfGPuhN2mQj4GerWj/+3nnQG0fiYpKauiYvolGZhanNuHvNr3wjhug=="],
+    "@beskid/auth-client": ["@cyber-nomad-collective/beskid-auth-client@0.2.9", "https://npm.pkg.github.com/download/@cyber-nomad-collective/beskid-auth-client/0.2.9/601fa820c31295ae41e6d47b03d7856de3f8a020", { "dependencies": { "jose": "^6.2.3" } }, "sha512-wsbUV78HTYS1np/HfqZAvbOiphv/z0AavxVUvQDo7RRNXolPL4IIIK8/AAPwa1vrgFOM6RaWbhy9GuQVPV5OUQ=="],
 
-    "@beskid/beskid-ui": ["@cyber-nomad-collective/beskid-ui@0.2.0", "https://npm.pkg.github.com/download/@cyber-nomad-collective/beskid-ui/0.2.0/6afcd14bb0f366cef75f924342bbd6cb81c01f63", { "dependencies": { "@cyber-nomad-collective/trudoc": "file:../trudoc", "@dagrejs/dagre": "^1.1.5", "@material/material-color-utilities": "^0.4.0", "astro-navbar": "^2.4.0", "d3": "^7.9.0", "intro.js": "^8.3.2", "rehype-stringify": "^10.0.1", "remark-gfm": "^4.0.1", "remark-parse": "^11.0.0", "remark-rehype": "^11.1.2", "unified": "^11.0.5" }, "peerDependencies": { "@astrojs/starlight": ">=0.30.0", "astro": ">=5.0.0", "react": ">=18.0.0" } }, "sha512-AaaICaOEjjn+TtaTIIFsLwptPK1Jx49wEERtHDaT/o2F9m2ssiWuXPafkNh1S5Y0k4G7fti2IBACfti0HPyviA=="],
+    "@beskid/beskid-ui": ["@cyber-nomad-collective/beskid-ui@0.2.8", "https://npm.pkg.github.com/download/@cyber-nomad-collective/beskid-ui/0.2.8/6095bf02c1b34017b97deee0ee2b1e8478551dbd", { "dependencies": { "@cyber-nomad-collective/trudoc": "^0.2.7", "@dagrejs/dagre": "^1.1.5", "@material/material-color-utilities": "^0.4.0", "astro-navbar": "^2.4.0", "d3": "^7.9.0", "intro.js": "^8.3.2", "rehype-stringify": "^10.0.1", "remark-gfm": "^4.0.1", "remark-parse": "^11.0.0", "remark-rehype": "^11.1.2", "unified": "^11.0.5" }, "peerDependencies": { "@astrojs/starlight": ">=0.30.0", "astro": ">=5.0.0", "react": ">=18.0.0" } }, "sha512-0ICjMfFZ6kquGi4ocYGLAm6lNXtaRiSVI+zozMqHdS3AH0qt4caTspWdK+WE9JD0bD9BZsySTJ9+daz4dDRDKw=="],
 
-    "@beskid/server-observability": ["@cyber-nomad-collective/beskid-server-observability@0.2.0", "https://npm.pkg.github.com/download/@cyber-nomad-collective/beskid-server-observability/0.2.0/4e459e5a4982ed8e7ddb82c39b51211df857b297", { "dependencies": { "pino": "^10.3.1", "prom-client": "^15.1.3" } }, "sha512-oN1rp10hef4GvUHFg64tThlOqLL2Jv/Ym8mFuA8V8v4fRNzhWM85yMbhtuDfmkVlKjRz/kAET0ld0PHBXP2FAw=="],
+    "@beskid/server-observability": ["@cyber-nomad-collective/beskid-server-observability@0.2.8", "https://npm.pkg.github.com/download/@cyber-nomad-collective/beskid-server-observability/0.2.8/355f263cb5c271ff34ae45b94739ddaa82580805", { "dependencies": { "pino": "^10.3.1", "prom-client": "^15.1.3" } }, "sha512-7AYGyQ3cF+PHFh236bnqTAJ0Dyhq8G5R4zMzDfjVngec3EYrK0rnkQkXj3uwtcUt6QFN/CVSdRff5qPPU8aVaw=="],
 
-    "@beskid/ui-react": ["@cyber-nomad-collective/beskid-ui-react@0.2.0", "https://npm.pkg.github.com/download/@cyber-nomad-collective/beskid-ui-react/0.2.0/8567fcd8e92e680a542e2ca8c63d85f664f2d4c5", { "dependencies": { "@base-ui/react": "^1.5.0", "class-variance-authority": "^0.7.1", "clsx": "^2.1.1", "cmdk": "^1.1.1", "embla-carousel-react": "^8.6.0", "input-otp": "^1.4.2", "lucide-react": "^0.577.0", "next-themes": "^0.4.6", "radix-ui": "^1.4.3", "react-day-picker": "^10.0.1", "react-resizable-panels": "^4.11.2", "recharts": "3.8.0", "sonner": "^2.0.7", "tailwind-merge": "^3.0.2", "vaul": "^1.1.2" }, "peerDependencies": { "react": ">=18.0.0", "react-dom": ">=18.0.0" } }, "sha512-1M+ZTuhPR7E+fe3TMMCFqMEYo4yrdD8sEzZv4I0qrT061cHTCx6JjoMWCudTm3BsICuQCPfGCTfhsasyKX5ktA=="],
+    "@beskid/ui-react": ["@cyber-nomad-collective/beskid-ui-react@0.2.8", "https://npm.pkg.github.com/download/@cyber-nomad-collective/beskid-ui-react/0.2.8/93858e4ffe042c04417e815575fdc7e71e2b4861", { "dependencies": { "@base-ui/react": "^1.5.0", "class-variance-authority": "^0.7.1", "clsx": "^2.1.1", "cmdk": "^1.1.1", "embla-carousel-react": "^8.6.0", "input-otp": "^1.4.2", "lucide-react": "^0.577.0", "next-themes": "^0.4.6", "radix-ui": "^1.4.3", "react-day-picker": "^10.0.1", "react-resizable-panels": "^4.11.2", "recharts": "3.8.0", "sonner": "^2.0.7", "tailwind-merge": "^3.0.2", "vaul": "^1.1.2" }, "peerDependencies": { "react": ">=18.0.0", "react-dom": ">=18.0.0" } }, "sha512-K9iTmo5UTXcK3vurOc/aI6qi7knq9iGfJ8YY1bSgN1mtWqjt5mzh4v+Ra4qUmu1mnTVsb3lGvh7rJYfkqLGJVg=="],
 
     "@capsizecss/unpack": ["@capsizecss/unpack@4.0.0", "", { "dependencies": { "fontkitten": "^1.0.0" } }, "sha512-VERIM64vtTP1C4mxQ5thVT9fK0apjPFobqybMtA1UdUujWka24ERHbRHFGmpbbhp73MhV+KSsHQH9C6uOTdEQA=="],
 
@@ -113,6 +113,8 @@
     "@clack/prompts": ["@clack/prompts@1.4.0", "", { "dependencies": { "@clack/core": "1.3.1", "fast-string-width": "^3.0.2", "fast-wrap-ansi": "^0.2.0", "sisteransi": "^1.0.5" } }, "sha512-S0My7XPGIgpRWMDG8uRqalbgT+a6FmCUdOW+HaIOVVpUPHOb7RrpvjTjiODadKp06fsrVDJZlIzc6yCTp4AnxA=="],
 
     "@ctrl/tinycolor": ["@ctrl/tinycolor@4.2.0", "", {}, "sha512-kzyuwOAQnXJNLS9PSyrk0CWk35nWJW/zl/6KvnTBMFK65gm7U1/Z5BqjxeapjZCIhQcM/DsrEmcbRwDyXyXK4A=="],
+
+    "@cyber-nomad-collective/trudoc": ["@cyber-nomad-collective/trudoc@0.2.8", "https://npm.pkg.github.com/download/@cyber-nomad-collective/trudoc/0.2.8/57bf17cf17808955f4776cd7c237ef322680a8ca", { "dependencies": { "yaml": "^2.9.0", "zod": "^4.4.3" }, "peerDependencies": { "astro": ">=4.0.0" }, "bin": { "trudoc": "bin/trudoc.mjs", "trudoc-layout": "bin/trudoc-layout.mjs" } }, "sha512-s/FII6+IXEJG880gyZF0jyxOGC3fZmdIkMxQXpXTZEuERg0VTR+JYNNxsGzgyHzrPKbmZqBXKY0J5lul1NjKyw=="],
 
     "@dagrejs/dagre": ["@dagrejs/dagre@1.1.8", "", { "dependencies": { "@dagrejs/graphlib": "2.2.4" } }, "sha512-5SEDlndt4W/LaVzPYJW+bSmSEZc9EzTf8rJ20WCKvjS5EAZAN0b+x0Yww7VMT4R3Wootkg+X9bUfUxazYw6Blw=="],
 
@@ -1636,6 +1638,8 @@
 
     "yallist": ["yallist@3.1.1", "", {}, "sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g=="],
 
+    "yaml": ["yaml@2.9.0", "", { "bin": { "yaml": "bin.mjs" } }, "sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA=="],
+
     "yargs-parser": ["yargs-parser@22.0.0", "", {}, "sha512-rwu/ClNdSMpkSrUb+d6BRsSkLUq1fmfsY6TOpYzTwvwkg1/NRG85KBy3kq++A8LKQwX6lsu+aWad+2khvuXrqw=="],
 
     "yocto-queue": ["yocto-queue@1.2.2", "", {}, "sha512-4LCcse/U2MHZ63HAJVE+v71o7yOdIe4cZ70Wpf8D/IyjDKYQLV5GD46B+hSTjJsvV5PztjvHoU580EftxjDZFQ=="],
@@ -1655,8 +1659,6 @@
     "@babel/template/@babel/code-frame": ["@babel/code-frame@7.29.7", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.29.7", "js-tokens": "^4.0.0", "picocolors": "^1.1.1" } }, "sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw=="],
 
     "@babel/traverse/@babel/code-frame": ["@babel/code-frame@7.29.7", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.29.7", "js-tokens": "^4.0.0", "picocolors": "^1.1.1" } }, "sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw=="],
-
-    "@beskid/beskid-ui/@cyber-nomad-collective/trudoc": ["@cyber-nomad-collective/trudoc@file:../trudoc", {}],
 
     "@mdx-js/mdx/@types/estree": ["@types/estree@1.0.9", "", {}, "sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg=="],
 

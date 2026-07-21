@@ -38,6 +38,9 @@ describe("auth-app-meta", () => {
 
 		const options = pairingAppOptions();
 		expect(options.length).toBeGreaterThan(0);
+		expect(AUTH_APP_IDS).toContain("platform-spec");
+		expect(AUTH_APP_META["platform-spec"]?.label).toBe("Platform Spec Editor");
+		expect(options.map((o) => o.id)).toContain("platform-spec");
 		for (const id of AUTH_APP_IDS) {
 			if (AUTH_APP_META[id]) {
 				expect(options.some((o) => o.id === id)).toBe(true);

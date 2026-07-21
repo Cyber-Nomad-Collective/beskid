@@ -38,7 +38,7 @@ The records below preserve migration history and are not normative except where 
 | --- | --- | --- |
 | `AUTH_HUB_ISSUER` | `beskid-auth-hub` | `@beskid/auth-client` |
 | `AUTH_API_VERSION` | `v1` | `@beskid/auth-client` |
-| `AUTH_APP_IDS` | `tracker`, `nexus`, `pckg` | `@beskid/auth-client` |
+| `AUTH_APP_IDS` | `tracker`, `nexus`, `pckg`, `platform-spec` | `@beskid/auth-client` |
 
 Handoff JWTs **must** use `iss: beskid-auth-hub`, `alg: HS256`, and a signing key derived from the consumer's **service token** (32+ characters) issued at pairing time.
 
