@@ -47,8 +47,8 @@ The detailed dependency-ordered execution record is `docs/superpowers/plans/2026
 
 The 2026-07-20 readiness audit is recorded in `docs/superpowers/reports/2026-07-20-0.4-readiness-baseline.md`. Compiler `79eccbd` closes task 2.4 and CYB-14: `FunctionEmissionError::Verification` retains the originating AST site, canonical database-aware rendering includes path, generation/node identity, construct, and range, and a multi-function `lower_syntax_program` regression proves module-level attribution. Fresh rebased gates passed 108 tests with one intentionally isolated child ignored. CYB-5 and CYB-15 remain open because the broader parsed-project no-legacy acceptance harness is not yet complete.
 
-- [ ] 6.1 Production adapter: compile an actual expanded-syntax `TypedProgram` through `CodegenInput` and ISLE to verified CLIF without HIR or `Lowerable`; run `cargo test -p beskid_codegen --all-targets` and `cargo test -p beskid_isle --all-targets`.
-- [ ] 6.2 Semantic-fact closure: land generation-safe captures, spawn, trusted runtime intrinsics, diagnostics, and spans; run `cargo test -p beskid_queries --tests -- --test-threads=1`.
+- [x] 6.1 Production adapter: compile an actual expanded-syntax `TypedProgram` through `CodegenInput` and ISLE to verified CLIF without HIR or `Lowerable`; run `cargo test -p beskid_codegen --all-targets` and `cargo test -p beskid_isle --all-targets`.
+- [x] 6.2 Semantic-fact closure: land generation-safe captures, spawn, trusted runtime intrinsics, diagnostics, and spans; run `cargo test -p beskid_queries --tests -- --test-threads=1`.
 - [ ] 6.3 AOT exact-kit closure: remove prebuilt/standalone and fallback runtime-kit compatibility; run `cargo test -p beskid_aot --all-targets`.
 - [ ] 6.4 Migrate remaining codegen and LSP consumers after 6.1–6.2; run ISLE/codegen/LSP focused suites and record results.
 - [ ] 6.5 Finish canonical runtime corpus and installed-prefix debug/release smokes across the three supported targets.

@@ -18,6 +18,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Compiler W1/W2 acceptance: production parsed-project harness covers inline methods, capture
+  facts with fail-closed capturing lambdas, and canonical-runtime trusted intrinsics; method
+  reachability facts include `MethodDefinition`; LSP member completion uses syntax-only
+  completion without a legacy analysis snapshot (CYB-12, CYB-15, CYB-16, CYB-19, CYB-64).
 - Compiler CI now mints the only global distribution identity as
   `0.4.<GITHUB_RUN_NUMBER>` and emits it as an artifact for release consumers;
   Open VSX consumes that exact artifact instead of independently deriving a
