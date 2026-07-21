@@ -9,6 +9,13 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Changed
+
+- W3 exact ABI-v5 runtime-kit route: public AOT host emitters require opaque
+  canonical-corpus authority and always lower Bootstrap for platform pairs;
+  JIT/AOT continue to fail closed on missing/mismatched/tampered installed
+  kits with no prebuilt fallback (CYB-20/21/22/76/82 under CYB-7).
+
 ### Added
 
 - Compiler CI now mints the only global distribution identity as
