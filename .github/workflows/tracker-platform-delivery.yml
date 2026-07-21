@@ -29,6 +29,7 @@ jobs:
           beskid_infra
           beskid_nexus
           beskid_tracker
+          beskid_web_common
           compiler
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
@@ -53,8 +54,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Initialize tracker submodule
-        run: ./scripts/ci/init-submodules.sh beskid_tracker
+      - name: Initialize tracker and shared web packages submodules
+        run: ./scripts/ci/init-submodules.sh beskid_tracker beskid_web_common
       - uses: oven-sh/setup-bun@v2
       - run: bun install --cwd beskid_tracker --frozen-lockfile
       - run: bun run --cwd beskid_tracker test | tee tracker-tests.txt
@@ -91,8 +92,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Initialize nexus submodule
-        run: ./scripts/ci/init-submodules.sh beskid_nexus
+      - name: Initialize nexus and shared web packages submodules
+        run: ./scripts/ci/init-submodules.sh beskid_nexus beskid_web_common
       - uses: oven-sh/setup-bun@v2
       - run: bun install --cwd site/website --frozen-lockfile
       - run: bun test --cwd site/website src/lib/tracker-delivery.test.ts | tee latest-delivery.txt
