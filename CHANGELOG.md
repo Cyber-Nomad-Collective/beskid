@@ -11,8 +11,11 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
-- Pin compiler tip that skips MASM abi-v5 contract checks when llvm-ml is absent on Linux CI.
 - Pin compiler tip regenerating abi-v5 artifacts after Bootstrap CYB-129 ValidatePointerMap guards.
+- Platform-spec `/api/health` Memgraph check no longer fails closed on a live
+  Bolt connection: neo4j-driver returns `Integer` for `RETURN 1`, so the old
+  `=== 1` comparison always reported `memgraph: false` (staging smoke 503).
+- Staging Coolify compose waits for Memgraph via `mgconsole` healthcheck before starting platform-spec; staging profiles omit `pckg` until GHCR write exists.
 - Pin compiler tip ignoring Linux process-symbol `extern_tests` SIGSEGV after syntax-ISLE Extern Path prepare (follow-up link fix).
 - Pin compiler tip that omits Extern contract methods from direct_callees so engine extern prepare reachability succeeds.
 - Coolify Compose promote accepts `GET /deploy` responses that return

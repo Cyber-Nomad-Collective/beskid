@@ -54,10 +54,18 @@ export async function runWrite(
 	}
 }
 
+export function isMemgraphPingValue(value: unknown): boolean {
+	if (value === true) return true;
+	if (neo4j.isInt(value)) return value.toNumber() === 1;
+	return value === 1;
+}
+
 export async function pingMemgraph(): Promise<boolean> {
 	try {
-		const rows = await runQuery<{ ok: number }>("RETURN 1 AS ok");
-		return rows[0]?.ok === 1;
+		// Prefer a boolean so neo4j-driver does not wrap the payload as Integer;
+		// still accept Integer/number for older call sites and drivers.
+		const rows = await runQuery<{ ok: unknown }>("RETURN true AS ok");
+		return isMemgraphPingValue(rows[0]?.ok);
 	} catch {
 		return false;
 	}
