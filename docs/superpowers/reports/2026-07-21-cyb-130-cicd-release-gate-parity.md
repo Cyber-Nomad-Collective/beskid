@@ -7,8 +7,10 @@
 | Superrepo main (pre-land) | `af696b8f` | Includes Coolify UUID lane fallback (#158) |
 | Integration PR | [#160](https://github.com/Cyber-Nomad-Collective/beskid/pull/160) @ `84b57a17` | Lockfile pins, Docker web_common, tracker delivery init, Bun cache, deploy UUID fallback |
 | `beskid_web_common` | `294b3585` | Frozen lockfile refresh on submodule main |
-| `pckg` | `5d12dc20` | Docker COPY `beskid_web_common` before `bun install` |
-| `beskid_tracker` | `b1826a8b` | BuildKit named context `web_common` |
+| `pckg` | `bf664f53` | GitHub Packages `@beskid/*` pins + `@xyflow/react` |
+| `beskid_tracker` | `6267ee01` | GitHub Packages `@beskid/*` image pins |
+| `beskid_nexus` | `c1a37451` | Vitest exact aliases for `gitnexus-shared` |
+| `compiler` | `ed7231f4` | clippy `collapsible_if` in LSP diagnostics |
 | `beskid_infra` | `24283c56` | Docs for lane `service_uuid` (infra #5) |
 
 ## Defects closed in this sweep

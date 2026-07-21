@@ -41,6 +41,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   context); drifted `beskid_web_common` / `pckg/web` lockfiles refreshed.
 - `resolve-beskid-version` contract unsets ambient `GITHUB_RUN_NUMBER` so the
   “main requires a run number” assertion does not inherit Actions’ job env.
+- Pin `beskid_nexus` vitest exact aliases for `gitnexus-shared` (+ test-helpers),
+  `pckg`/`beskid_tracker` `@beskid/*` GitHub Packages image pins + `@xyflow/react`,
+  and compiler clippy `collapsible_if` fix for the Rust gate (CYB-130).
 - Tracker platform delivery initializes `beskid_web_common` and sets
   `BUN_INSTALL_CACHE_DIR` so `file:` / scoped-registry installs match image lanes
   (CYB-130).

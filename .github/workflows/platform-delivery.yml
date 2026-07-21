@@ -173,12 +173,10 @@ jobs:
     with:
       name: beskid-tracker
       repository: ghcr.io/cyber-nomad-collective/beskid-tracker
+      # Tracker pins @beskid/* to GitHub Packages (no file: web_common in image).
       context: beskid_tracker
       dockerfile: beskid_tracker/Dockerfile
-      # Named context supplies file:../beskid_web_common for @beskid/ui-react.
-      build-contexts: |
-        web_common=./beskid_web_common
-      submodules: beskid_tracker beskid_web_common
+      submodules: beskid_tracker
       node-auth: true
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
@@ -225,11 +223,11 @@ jobs:
       name: beskid-pckg
       repository: ghcr.io/cyber-nomad-collective/beskid-pckg
       # The pckg image builds the pckg web client and .NET server from this checkout.
-      # Keep the context at the repository root so those paths exist, including
-      # beskid_web_common for file:../../beskid_web_common @beskid/* deps.
+      # Keep the context at the repository root so those paths exist. @beskid/*
+      # pins use GitHub Packages (see pckg/web/package.json).
       context: .
       dockerfile: pckg/Dockerfile
-      submodules: pckg beskid_web_common
+      submodules: pckg
       node-auth: true
       # Hard gate: a failed pckg build/push fails the whole delivery. The
       # beskid-pckg GHCR package is owned by the sibling beskid_pckg repo, so
