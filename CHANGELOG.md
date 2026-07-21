@@ -11,6 +11,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Pin compiler tip that reads interop enum tags unaligned, ignores retired HIR lower_program beskid_tests, and audits static kits with verify_static_archive for Linux TLS (unblocks Rust gate).
 - Pin compiler tip aligning unresolved reachability semantic_facts with direct_callees skip policy.
 - Pin compiler tip restoring fail-closed unresolved Path call_lowering while keeping Extern contract Direct.
 - Pin compiler tip regenerating abi-v5 artifacts after Bootstrap CYB-129 ValidatePointerMap guards.
