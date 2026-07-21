@@ -11,6 +11,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Pin compiler tip regenerating abi-v5 artifacts after Bootstrap CYB-129 ValidatePointerMap guards.
 - Pin compiler tip ignoring Linux process-symbol `extern_tests` SIGSEGV after syntax-ISLE Extern Path prepare (follow-up link fix).
 - Pin compiler tip that omits Extern contract methods from direct_callees so engine extern prepare reachability succeeds.
 - Coolify Compose promote accepts `GET /deploy` responses that return
