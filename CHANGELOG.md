@@ -11,6 +11,11 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Coolify Compose promote accepts `GET /deploy` responses that return
+  `resource_uuid` + message without a `deployment_uuid` (Coolify 4.x service
+  shape), polls service status instead, and base64-encodes rollback
+  `docker_compose_raw` patches so staging promote no longer fails closed then
+  422s on rollback.
 - Pin compiler tip aligning canonical-runtime source tests with wrapping ValidatePointerMap / bare-if descriptorOk guards (unblocks Rust gate after #169).
 - Pin compiler tip that resolves `[Extern] Contract.method` Path calls through syntax ISLE so Linux `extern_tests` can prepare again after W1/W2 acceptance.
 

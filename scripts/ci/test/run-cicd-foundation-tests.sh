@@ -237,7 +237,13 @@ for argument in "$@"; do
 done
 case "${method}:${url}" in
   GET:*/services/test)
-    echo '{"docker_compose_raw":"bmFtZTogb2xkCg=="}'
+    # Match Coolify Compose services: YAML docker_compose_raw + status polling.
+    if [[ -f "${MOCK_COOLIFY_STATE}/rollback-redeployed" ]]; then
+      touch "${MOCK_COOLIFY_STATE}/rollback-complete"
+      echo '{"docker_compose_raw":"name: old\n","status":"running:healthy","applications":[{"name":"site","image":"x@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"}]}'
+    else
+      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[]}'
+    fi
     ;;
   PATCH:*/services/test)
     echo '{}'
@@ -248,11 +254,9 @@ case "${method}:${url}" in
       echo 'simulated deployment trigger failure' >&2
       exit 22
     fi
-    echo '{"deployment_uuid":"rollback-1"}'
-    ;;
-  GET:*/deployments/rollback-1)
-    touch "${MOCK_COOLIFY_STATE}/rollback-complete"
-    echo '{"status":"finished"}'
+    # Coolify Compose services return resource_uuid without deployment_uuid.
+    touch "${MOCK_COOLIFY_STATE}/rollback-redeployed"
+    echo '{"deployments":[{"message":"Service test started.","resource_uuid":"test"}]}'
     ;;
   *)
     echo "unexpected mock Coolify call: ${method} ${url}" >&2
@@ -265,6 +269,7 @@ if PATH="${tmp}/bin:${PATH}" \
   COOLIFY_ENDPOINT=https://coolify.invalid \
   COOLIFY_API_TOKEN=test \
   COOLIFY_SERVICE_UUID=test \
+  DEPLOY_POLL_SECONDS=0 \
   "${root}/scripts/ci/deploy-release-manifest.sh" --apply \
     --lane staging --manifest "${tmp}/release.json" --compose "${tmp}/compose.yml" >/dev/null 2>&1; then
   echo "failed Coolify API unexpectedly produced a successful deployment" >&2
@@ -272,6 +277,54 @@ if PATH="${tmp}/bin:${PATH}" \
 fi
 [[ -f "${MOCK_COOLIFY_STATE}/rollback-complete" ]] || {
   echo "failed deployment did not complete rollback" >&2
+  exit 1
+}
+
+# Happy path: Coolify Compose deploy accepts with resource_uuid only, even when
+# aggregate status stays starting:unhealthy due to orphaned non-digest children.
+rm -rf "${MOCK_COOLIFY_STATE}"
+mkdir -p "${MOCK_COOLIFY_STATE}"
+cat >"${tmp}/bin/curl" <<'SH'
+#!/usr/bin/env bash
+method=GET
+url=''
+previous=''
+for argument in "$@"; do
+  if [[ "${previous}" == -X ]]; then method="${argument}"; fi
+  if [[ "${argument}" == https://coolify.invalid/* ]]; then url="${argument}"; fi
+  previous="${argument}"
+done
+case "${method}:${url}" in
+  GET:*/services/test)
+    if [[ -f "${MOCK_COOLIFY_STATE}/deployed" ]]; then
+      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[{"name":"site","image":"x@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"},{"name":"pckg","image":"ghcr.io/x/pckg:${IMAGE_TAG:-main}","status":"exited"}]}'
+    else
+      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[]}'
+    fi
+    ;;
+  PATCH:*/services/test)
+    echo '{}'
+    ;;
+  GET:*/deploy\?*)
+    touch "${MOCK_COOLIFY_STATE}/deployed"
+    echo '{"deployments":[{"message":"Service test started.","resource_uuid":"test"}]}'
+    ;;
+  *)
+    echo "unexpected mock Coolify call: ${method} ${url}" >&2
+    exit 2
+    ;;
+esac
+SH
+chmod +x "${tmp}/bin/curl"
+PATH="${tmp}/bin:${PATH}" \
+  COOLIFY_ENDPOINT=https://coolify.invalid \
+  COOLIFY_API_TOKEN=test \
+  COOLIFY_SERVICE_UUID=test \
+  DEPLOY_POLL_SECONDS=0 \
+  "${root}/scripts/ci/deploy-release-manifest.sh" --apply \
+    --lane staging --manifest "${tmp}/release.json" --compose "${tmp}/compose.yml" \
+  | grep -q 'deployment verified: service:test' || {
+  echo "service-shaped Coolify deploy response was not accepted" >&2
   exit 1
 }
 

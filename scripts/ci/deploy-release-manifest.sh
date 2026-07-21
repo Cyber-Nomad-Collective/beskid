@@ -75,24 +75,94 @@ api_call() {
     -H "traceparent: ${TRACEPARENT}" "${api}${path}" "$@"
 }
 
+patch_compose() {
+  local compose_file="$1" compose_b64 patch_body
+  compose_b64="$(base64 <"${compose_file}" | tr -d '\n')"
+  patch_body="$(jq -n --arg compose "${compose_b64}" '{docker_compose_raw: $compose}')"
+  api_call PATCH "/services/${COOLIFY_SERVICE_UUID}" -d "${patch_body}" >/dev/null
+}
+
 service_json="$(api_call GET "/services/${COOLIFY_SERVICE_UUID}")"
 jq -e '.docker_compose_raw | type == "string" and length > 0' <<<"${service_json}" >/dev/null
 jq -rj '.docker_compose_raw' <<<"${service_json}" >"${previous_payload}"
 
-compose_b64="$(base64 <"${rendered}" | tr -d '\n')"
-patch_body="$(jq -n --arg compose "${compose_b64}" '{docker_compose_raw: $compose}')"
-api_call PATCH "/services/${COOLIFY_SERVICE_UUID}" -d "${patch_body}" >/dev/null
+patch_compose "${rendered}"
 
+# Coolify application deploys return deployment_uuid; Compose services often return
+# only message + resource_uuid. Encode the latter as service:<uuid> for status polling.
 trigger_deploy() {
-  local response deployment_id
+  local response deployment_id resource_uuid message
   response="$(api_call GET "/deploy?uuid=${COOLIFY_SERVICE_UUID}&force=true")"
   deployment_id="$(jq -r '(.deployments[0].deployment_uuid // .deployments[0].uuid // .deployment_uuid // .uuid) // empty' <<<"${response}")"
-  [[ -n "${deployment_id}" ]] || { echo "Coolify did not return a deployment id" >&2; return 1; }
-  printf '%s' "${deployment_id}"
+  if [[ -n "${deployment_id}" ]]; then
+    printf '%s' "${deployment_id}"
+    return 0
+  fi
+  resource_uuid="$(jq -r '(.deployments[0].resource_uuid // empty)' <<<"${response}")"
+  message="$(jq -r '(.deployments[0].message // empty)' <<<"${response}")"
+  if [[ -n "${resource_uuid}" && "${resource_uuid}" == "${COOLIFY_SERVICE_UUID}" ]]; then
+    # Must stay on stderr: callers capture stdout as the deployment handle.
+    echo "Coolify service deploy accepted without deployment UUID: ${message:-ok}" >&2
+    printf 'service:%s' "${COOLIFY_SERVICE_UUID}"
+    return 0
+  fi
+  echo "Coolify did not return a deployment id" >&2
+  echo "deploy response: ${response}" >&2
+  return 1
+}
+
+# Coolify Compose services may keep orphaned children (e.g. dropped profile
+# services) that pin aggregate status at starting:unhealthy. Digest-pinned apps
+# from the immutable release are the readiness signal.
+digest_pinned_apps_ready() {
+  jq -e '
+    [.applications[]? | select(.image | type == "string" and test("@sha256:"))] as $apps
+    | ($apps | length) > 0
+    and all($apps[]; (.status // "" | test("^running"; "i")))
+  ' >/dev/null
+}
+
+poll_service_status() {
+  local service_uuid="$1" started now status response
+  started="$(date +%s)"
+  while true; do
+    response="$(api_call GET "/services/${service_uuid}")"
+    status="$(jq -r '.status // empty' <<<"${response}" | tr '[:upper:]' '[:lower:]')"
+    case "${status}" in
+      running|running:*|degraded|degraded:*)
+        echo "Coolify service ${service_uuid}: ${status}"
+        return 0
+        ;;
+      exited|exited:*|*failed*|*error*|cancelled|canceled)
+        echo "Coolify service ${service_uuid}: ${status}" >&2
+        return 1
+        ;;
+      starting|starting:*|restarting|restarting:*|'')
+        if digest_pinned_apps_ready <<<"${response}"; then
+          echo "Coolify service ${service_uuid}: digest-pinned apps running (aggregate ${status:-empty})"
+          return 0
+        fi
+        ;;
+      *)
+        if digest_pinned_apps_ready <<<"${response}"; then
+          echo "Coolify service ${service_uuid}: digest-pinned apps running (aggregate ${status})"
+          return 0
+        fi
+        echo "Coolify service ${service_uuid}: unknown status '${status}'" >&2
+        ;;
+    esac
+    now="$(date +%s)"
+    (( now - started < timeout_seconds )) || { echo "service status polling timed out (${status:-empty})" >&2; return 1; }
+    sleep "${poll_seconds}"
+  done
 }
 
 poll_deploy() {
   local deployment_id="$1" started now status response
+  if [[ "${deployment_id}" == service:* ]]; then
+    poll_service_status "${deployment_id#service:}"
+    return
+  fi
   started="$(date +%s)"
   while true; do
     response="$(api_call GET "/deployments/${deployment_id}")"
@@ -111,8 +181,8 @@ poll_deploy() {
 
 rollback() {
   echo "rolling back Coolify Compose after failed deployment" >&2
-  rollback_body="$(jq -n --rawfile compose "${previous_payload}" '{docker_compose_raw: $compose}')"
-  api_call PATCH "/services/${COOLIFY_SERVICE_UUID}" -d "${rollback_body}" >/dev/null
+  # Coolify PATCH expects base64(docker_compose_raw), same as the apply path.
+  patch_compose "${previous_payload}"
   rollback_id="$(trigger_deploy)"
   poll_deploy "${rollback_id}"
 }
