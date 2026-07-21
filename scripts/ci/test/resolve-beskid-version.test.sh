@@ -37,6 +37,8 @@ assert_equals \
   "$(GITHUB_REF=refs/heads/main GITHUB_RUN_NUMBER=481 bash "${legacy_resolver}")" \
   'the legacy CLI resolver delegates to the canonical global resolver'
 
+# Unset ambient GITHUB_RUN_NUMBER (always present in GitHub Actions jobs) so
+# the missing-run-number contract is exercised instead of inheriting CI's value.
 assert_fails \
   'main requires a GitHub run number' \
   env -u GITHUB_RUN_NUMBER GITHUB_REF=refs/heads/main bash "${resolver}"
