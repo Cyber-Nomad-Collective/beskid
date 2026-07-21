@@ -39,7 +39,7 @@ assert_equals \
 
 assert_fails \
   'main requires a GitHub run number' \
-  env GITHUB_REF=refs/heads/main bash "${resolver}"
+  env -u GITHUB_RUN_NUMBER GITHUB_REF=refs/heads/main bash "${resolver}"
 
 assert_fails \
   'a non-numeric GitHub run number is rejected' \
