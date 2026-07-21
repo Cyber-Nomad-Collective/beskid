@@ -11,6 +11,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Pin compiler tip that omits Extern contract methods from direct_callees so engine extern prepare reachability succeeds.
 - Coolify Compose promote accepts `GET /deploy` responses that return
   `resource_uuid` + message without a `deployment_uuid` (Coolify 4.x service
   shape), polls service status instead, and base64-encodes rollback
