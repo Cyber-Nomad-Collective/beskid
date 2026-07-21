@@ -38,11 +38,27 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Platform delivery pckg/tracker images frozen-install `beskid_web_common` before
+  `file:` `@beskid/*` consumers (npm 0.2.8 lacks graph/explorer); restore
+  `NODE_AUTH_TOKEN` on reusable quality-gate commands for submodule installs.
 - `scripts/ci/sync-runtime-env.sh` falls back to lane-config `service_uuid` when
   `COOLIFY_SERVICE_UUID` is unset (local `just sync-env-*`), with a clearer error
   naming the config path; production UUID remains in
   `beskid_infra/config/coolify-production.json`.
-
+- Platform delivery image lanes that still resolve `@beskid/*` via
+  `file:…/beskid_web_common` now copy/init that submodule before
+  `bun install --frozen-lockfile` (pckg web-build + tracker named BuildKit
+  context); drifted `beskid_web_common` / `pckg/web` lockfiles refreshed.
+- `resolve-beskid-version` contract unsets ambient `GITHUB_RUN_NUMBER` so the
+  “main requires a run number” assertion does not inherit Actions’ job env.
+- Pin `beskid_nexus` vitest exact aliases for `gitnexus-shared` (+ test-helpers),
+  `pckg`/`beskid_tracker` `@beskid/*` GitHub Packages image pins + `@xyflow/react`,
+  and compiler clippy `collapsible_if` fix for the Rust gate (CYB-130).
+- Tracker platform delivery initializes `beskid_web_common` and sets
+  `BUN_INSTALL_CACHE_DIR` so `file:` / scoped-registry installs match image lanes
+  (CYB-130).
+- `deploy-release-manifest.sh` uses the same lane-config `service_uuid` fallback
+  as `sync-runtime-env.sh` when `COOLIFY_SERVICE_UUID` is unset (CYB-130).
 - Use `bun run --cwd=DIR` (equals form) in the shared-ui/Nexus root gate and
   package scripts so Bun actually executes Vitest/Playwright instead of
   printing script help with exit 0 (`bun --cwd DIR run SCRIPT` space form).

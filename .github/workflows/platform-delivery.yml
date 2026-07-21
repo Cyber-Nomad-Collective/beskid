@@ -67,7 +67,7 @@ jobs:
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: platform-integration
-      submodules: beskid_web_common beskid_tracker beskid_nexus compiler
+      submodules: beskid_web_common beskid_tracker beskid_nexus compiler pckg
       setup-web: true
       timeout-minutes: 60
       command: bash scripts/ci/platform-integration-gate.sh
@@ -173,9 +173,12 @@ jobs:
     with:
       name: beskid-tracker
       repository: ghcr.io/cyber-nomad-collective/beskid-tracker
+      # file:../beskid_web_common for @beskid/ui-react (graph/explorer not in npm 0.2.8).
       context: beskid_tracker
       dockerfile: beskid_tracker/Dockerfile
-      submodules: beskid_tracker
+      build-contexts: |
+        web_common=./beskid_web_common
+      submodules: beskid_tracker beskid_web_common
       node-auth: true
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
@@ -196,11 +199,13 @@ jobs:
     with:
       name: beskid-nexus
       repository: ghcr.io/cyber-nomad-collective/beskid-nexus
+      # file:../../beskid_web_common from gitnexus-web (CI auth parity).
       context: beskid_nexus
       dockerfile: beskid_nexus/Dockerfile
       build-contexts: |
         openspec=./openspec
-      submodules: beskid_nexus
+        web_common=./beskid_web_common
+      submodules: beskid_nexus beskid_web_common
       node-auth: true
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
@@ -222,10 +227,10 @@ jobs:
       name: beskid-pckg
       repository: ghcr.io/cyber-nomad-collective/beskid-pckg
       # The pckg image builds the pckg web client and .NET server from this checkout.
-      # Keep the context at the repository root so those paths exist.
+      # Keep the context at the repository root so file:../../beskid_web_common exists.
       context: .
       dockerfile: pckg/Dockerfile
-      submodules: pckg
+      submodules: pckg beskid_web_common
       node-auth: true
       # Hard gate: a failed pckg build/push fails the whole delivery. The
       # beskid-pckg GHCR package is owned by the sibling beskid_pckg repo, so

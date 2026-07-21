@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "b16676ef542284c710f0afdce4b162002ec31290754bf9863c74b8d11b47c1ab",
+  "revision": "36651342bb3ff2a7760a6dcb65e00233051c91444a446a5d9d8a138b37e735fe",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -38316,7 +38316,7 @@
       "path": "docs/orchestrate/verify-all-on-main-v04.md",
       "title": "verify-all-on-main (v0.4)",
       "authority": "informative",
-      "sourceHash": "5ce4c1c83e09e55a47d1bd0c1106d3765c92feb96d5d9de79304bb302498c037",
+      "sourceHash": "06d8af08bd45f533e0b5e2cb37f59e3bcca970b2cfdd5338a002a09af5375c05",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"

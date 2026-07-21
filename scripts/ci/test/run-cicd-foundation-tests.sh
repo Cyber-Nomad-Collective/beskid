@@ -79,7 +79,7 @@ rg -Fq 'build-contexts:' "${root}/.github/workflows/reusable-image.yml"
 rg -Fq 'build-contexts: ${{ inputs.build-contexts }}' "${root}/.github/workflows/reusable-image.yml"
 rg -Fq 'openspec=./openspec' "${root}/.github/workflows/platform-delivery.yml"
 rg -Fq "apply: \${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.apply-staging) }}" "${root}/.github/workflows/platform-delivery.yml"
-rg -Fq 'submodules: beskid_web_common beskid_tracker beskid_nexus compiler' "${root}/.github/workflows/platform-delivery.yml"
+rg -Fq 'submodules: beskid_web_common beskid_tracker beskid_nexus compiler pckg' "${root}/.github/workflows/platform-delivery.yml"
 if rg -Fq "github.event_name == 'push' || inputs." "${root}/.github/workflows/platform-delivery.yml"; then
   echo "platform delivery must guard workflow_dispatch inputs outside dispatch events" >&2
   exit 1
@@ -87,7 +87,7 @@ fi
 pckg_image_block="$(sed -n '/^  image-pckg:/,/^  manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
 for required in \
   'context: .' \
-  'submodules: pckg' \
+  'submodules: pckg beskid_web_common' \
   'node-auth: true' \
   'NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}'; do
   if [[ "${pckg_image_block}" != *"${required}"* ]]; then
@@ -95,6 +95,24 @@ for required in \
     exit 1
   fi
 done
+tracker_image_block="$(sed -n '/^  image-tracker:/,/^  image-nexus:/p' "${root}/.github/workflows/platform-delivery.yml")"
+for required in \
+  'web_common=./beskid_web_common' \
+  'submodules: beskid_tracker beskid_web_common'; do
+  if [[ "${tracker_image_block}" != *"${required}"* ]]; then
+    echo "tracker image workflow is missing required contract: ${required}" >&2
+    exit 1
+  fi
+done
+if ! rg -Fq 'bun install --cwd=/src/beskid_web_common --frozen-lockfile' "${root}/pckg/Dockerfile"; then
+  echo "pckg Dockerfile must frozen-install beskid_web_common before pckg/web" >&2
+  exit 1
+fi
+if ! rg -Fq 'COPY --from=web_common' "${root}/beskid_tracker/Dockerfile"; then
+  echo "tracker Dockerfile must consume the web_common BuildKit context before bun install" >&2
+  exit 1
+fi
+rg -Fq 'NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}' "${root}/.github/workflows/reusable-quality.yml"
 if [[ "${pckg_image_block}" == *'optional: true'* ]]; then
   echo "pckg image lane must be a hard gate (optional: true is forbidden)" >&2
   exit 1
