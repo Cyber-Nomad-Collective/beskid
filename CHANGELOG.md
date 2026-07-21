@@ -11,6 +11,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Pin compiler tip aligning canonical-runtime source tests with wrapping ValidatePointerMap / bare-if descriptorOk guards (unblocks Rust gate after #169).
 - Pin compiler tip that resolves `[Extern] Contract.method` Path calls through syntax ISLE so Linux `extern_tests` can prepare again after W1/W2 acceptance.
 
 ### Changed
