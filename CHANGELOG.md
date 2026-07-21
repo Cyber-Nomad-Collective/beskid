@@ -9,6 +9,12 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Fixed
+
+- Pin compiler tip that accepts valid ABI-v5 closure descriptors under post-CYB-129
+  signed `word` compares and lowers unresolved Path call receivers as Dynamic, unblocking
+  the Rust/Corelib gates (CYB-129; `beskid_compiler` #22).
+
 ### Changed
 
 - Pinned `beskid_infra` to wire Coolify staging lane UUID
