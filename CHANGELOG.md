@@ -9,6 +9,12 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Changed
+
+- OpenSpec task 2.1 closed: generation-bound indexed semantic facts cover resolution,
+  typing, calls, casts, control flow, captures, legality, spans, bodies, and
+  reachability; stale/foreign keys return explicit unavailable (CYB-64).
+
 ### Removed
 
 - Retire LSP `ANALYSIS_CACHE_VERSION` residual after CYB-98/103: hard invalidation clears
