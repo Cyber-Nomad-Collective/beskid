@@ -23,6 +23,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Auth admin `/admin/pairing/new` no longer crashes when `AUTH_APP_META` lags
+  behind hardcoded app ids (prod lacked `platform-spec`); options are derived
+  from catalogued meta only, with fail-closed labels.
 - Platform-spec reader wraps `SpecViewModeProvider` in `ReaderChrome` so capability
   document routes no longer crash with `useSpecViewMode must be used within
   SpecViewModeProvider`.
