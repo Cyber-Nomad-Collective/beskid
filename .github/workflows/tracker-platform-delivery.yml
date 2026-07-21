@@ -21,6 +21,9 @@ jobs:
           persist-credentials: false
       # Catalog revision hashes informative docs under these submodules; without
       # them, regen drifts from the committed openspec/catalog.json.
+      # beskid_web_common is required because the root workspace members
+      # (site/website, site/platform-spec) and beskid_tracker resolve @beskid/*
+      # via file: links into it, so --frozen-lockfile installs fail without it.
       - name: Initialize catalog document submodules
         run: >
           ./scripts/ci/init-submodules.sh
@@ -54,6 +57,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      # beskid_web_common supplies the file:../beskid_web_common @beskid/* deps
+      # (e.g. @beskid/ui-react), so --frozen-lockfile fails without it.
       - name: Initialize tracker and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_tracker beskid_web_common
       - uses: oven-sh/setup-bun@v2
@@ -92,6 +97,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      # beskid_web_common supplies the file:../../beskid_web_common @beskid/*
+      # deps for site/website, so --frozen-lockfile fails without it.
       - name: Initialize nexus and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_nexus beskid_web_common
       - uses: oven-sh/setup-bun@v2
