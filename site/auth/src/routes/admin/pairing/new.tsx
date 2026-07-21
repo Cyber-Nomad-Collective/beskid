@@ -2,7 +2,6 @@ import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 
 import type { AuthAppId } from "@beskid/auth-client";
-import { AUTH_APP_META } from "@beskid/auth-client";
 import {
 	Button,
 	Card,
@@ -14,9 +13,13 @@ import {
 	Label,
 } from "@beskid/ui-react";
 import { ThemeToggle } from "#/components/theme-toggle";
+import {
+	defaultPairingAppId,
+	pairingAppOptions,
+} from "#/lib/auth-app-meta";
 import { fetchAdminAccess } from "#/server/app-server.functions";
 
-const APP_IDS: AuthAppId[] = ["tracker", "nexus", "pckg", "platform-spec"];
+const PAIRING_APP_OPTIONS = pairingAppOptions();
 
 export const Route = createFileRoute("/admin/pairing/new")({
 	loader: async () => {
@@ -32,7 +35,7 @@ export const Route = createFileRoute("/admin/pairing/new")({
 });
 
 function NewPairingPage() {
-	const [appId, setAppId] = useState<AuthAppId>("tracker");
+	const [appId, setAppId] = useState<AuthAppId>(defaultPairingAppId(PAIRING_APP_OPTIONS));
 	const [publicUrl, setPublicUrl] = useState("");
 	const [result, setResult] = useState<{
 		pairingCode: string;
@@ -87,18 +90,25 @@ function NewPairingPage() {
 						<form className="space-y-4" onSubmit={onSubmit}>
 							<div className="space-y-2">
 								<Label htmlFor="appId">App</Label>
-								<select
-									id="appId"
-									className="w-full rounded-md border px-3 py-2 text-sm"
-									value={appId}
-									onChange={(e) => setAppId(e.target.value as AuthAppId)}
-								>
-									{APP_IDS.map((id) => (
-										<option key={id} value={id}>
-											{AUTH_APP_META[id].label}
-										</option>
-									))}
-								</select>
+								{PAIRING_APP_OPTIONS.length === 0 ? (
+									<p className="text-destructive text-sm">
+										No known consumer apps are configured. Update @beskid/auth-client
+										and redeploy.
+									</p>
+								) : (
+									<select
+										id="appId"
+										className="w-full rounded-md border px-3 py-2 text-sm"
+										value={appId}
+										onChange={(e) => setAppId(e.target.value as AuthAppId)}
+									>
+										{PAIRING_APP_OPTIONS.map((opt) => (
+											<option key={opt.id} value={opt.id}>
+												{opt.label}
+											</option>
+										))}
+									</select>
+								)}
 							</div>
 							<div className="space-y-2">
 								<Label htmlFor="publicUrl">Public URL</Label>
@@ -114,7 +124,10 @@ function NewPairingPage() {
 							{error ? (
 								<p className="text-destructive text-sm">{error}</p>
 							) : null}
-							<Button type="submit" disabled={busy}>
+							<Button
+								type="submit"
+								disabled={busy || PAIRING_APP_OPTIONS.length === 0}
+							>
 								{busy ? "Creating…" : "Create pairing request"}
 							</Button>
 						</form>

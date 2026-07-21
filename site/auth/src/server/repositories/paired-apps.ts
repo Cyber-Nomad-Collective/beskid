@@ -1,5 +1,5 @@
 import type { AuthAppId } from "@beskid/auth-client";
-import { AUTH_APP_META } from "@beskid/auth-client";
+import { authAppDescription, authAppLabel } from "#/lib/auth-app-meta";
 
 import { env } from "#/env.server";
 import { hashSecret } from "#/server/crypto";
@@ -72,8 +72,8 @@ export async function listEnabledApps(): Promise<
 	const hubBase = env.AUTH_HUB_PUBLIC_URL.replace(/\/$/, "");
 	return listActivePairedApps().map((row) => ({
 		id: row.id as AuthAppId,
-		label: AUTH_APP_META[row.id as AuthAppId].label,
-		description: AUTH_APP_META[row.id as AuthAppId].description,
+		label: authAppLabel(row.id),
+		description: authAppDescription(row.id),
 		publicUrl: row.public_url,
 		finishUrl: `${row.public_url}/api/auth/hub-finish`,
 		loginUrl: `${hubBase}/login?app=${row.id}`,

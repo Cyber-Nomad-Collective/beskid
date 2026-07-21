@@ -1,9 +1,9 @@
 import { createFileRoute, Link, redirect, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { AUTH_APP_META, type AuthAppId } from "@beskid/auth-client";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@beskid/ui-react";
 import { ThemeToggle } from "#/components/theme-toggle";
+import { authAppLabel } from "#/lib/auth-app-meta";
 import {
 	cancelPairingRequestFn,
 	fetchPairingRequests,
@@ -73,8 +73,7 @@ function PairingListPage() {
 									row.status === "pending" &&
 									new Date(row.expires_at).getTime() < Date.now();
 								const canCancel = row.status === "pending" && !expired;
-								const appLabel =
-									AUTH_APP_META[row.app_id as AuthAppId]?.label ?? row.app_id;
+								const appLabel = authAppLabel(row.app_id);
 
 								return (
 									<div

@@ -1,7 +1,6 @@
 import { createFileRoute, Link, redirect, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { AUTH_APP_META } from "@beskid/auth-client";
 import {
 	Button,
 	Card,
@@ -11,6 +10,7 @@ import {
 	CardTitle,
 } from "@beskid/ui-react";
 import { ThemeToggle } from "#/components/theme-toggle";
+import { authAppLabel } from "#/lib/auth-app-meta";
 import {
 	cancelPairingRequestFn,
 	fetchPairingRequestDetail,
@@ -71,8 +71,7 @@ function PairingDetailPage() {
 					<div>
 						<h1 className="text-2xl font-bold">Pairing request</h1>
 						<p className="text-muted-foreground text-sm">
-							{AUTH_APP_META[request.app_id as keyof typeof AUTH_APP_META]?.label ??
-								request.app_id}
+							{authAppLabel(request.app_id)}
 						</p>
 					</div>
 					{canCancel ? (
