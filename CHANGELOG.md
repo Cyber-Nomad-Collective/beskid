@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Pinned `beskid_infra` to wire Coolify staging lane UUID
+  `n2faf85soesljo4bng5g1gck` (`beskid-platform-staging`) for main→staging
+  promote (CYB-130).
+
 - W3 exact ABI-v5 runtime-kit route: public AOT host emitters require opaque
   canonical-corpus authority and always lower Bootstrap for platform pairs;
   JIT/AOT continue to fail closed on missing/mismatched/tampered installed
