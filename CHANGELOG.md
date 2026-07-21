@@ -11,6 +11,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Pin compiler tip restoring fail-closed unresolved Path call_lowering while keeping Extern contract Direct.
 - Pin compiler tip regenerating abi-v5 artifacts after Bootstrap CYB-129 ValidatePointerMap guards.
 - Platform-spec `/api/health` Memgraph check no longer fails closed on a live
   Bolt connection: neo4j-driver returns `Integer` for `RETURN 1`, so the old
