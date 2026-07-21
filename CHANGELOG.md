@@ -17,6 +17,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Pin compiler tip that lexically normalizes Corelib service source paths so
+  materialized Foundation `Testing/Assert.bd` retains `__panic_str` CorelibService
+  provenance (Corelib gate).
 - Pin compiler tip aligning unresolved reachability semantic_facts with direct_callees skip policy.
 - Pin compiler tip restoring fail-closed unresolved Path call_lowering while keeping Extern contract Direct.
 - Pin compiler tip regenerating abi-v5 artifacts after Bootstrap CYB-129 ValidatePointerMap guards.
