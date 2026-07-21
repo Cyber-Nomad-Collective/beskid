@@ -13,11 +13,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 - Pin compiler tip that accepts valid ABI-v5 closure descriptors under post-CYB-129
   signed `word` compares, updates the ValidatePointerMap source contract, and resolves
-  Extern Path calls as Direct (CYB-129; `beskid_compiler` #22/#23/#24).
-
-### Fixed
-
-- Pin compiler tip that resolves `[Extern] Contract.method` Path calls through syntax ISLE so Linux `extern_tests` can prepare again after W1/W2 acceptance.
+  Extern Path/`[Extern] Contract.method` calls through syntax ISLE (CYB-129;
+  `beskid_compiler` #22/#23/#24).
 
 ### Changed
 
