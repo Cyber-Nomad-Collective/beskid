@@ -25,7 +25,6 @@
     "@astrojs/starlight": "^0.38.4",
     "@beskid/beskid-ui": "file:../../beskid_web_common/packages/beskid-ui",
     "@beskid/ui-react": "file:../../beskid_web_common/packages/beskid-ui-react",
-    "@cyber-nomad-collective/trudoc": "0.2.5",
     "astro": "6.4.6",
     "astro-embed": "^0.13.0",
     "astro-mermaid": "^2.0.1",

@@ -37,6 +37,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Keep Bun's built-in `bun test` from loading Nexus Playwright `e2e/*.spec.ts`
   (`bunfig.toml` pathIgnorePatterns + preload redirect) so E2E hooks are not
   invoked outside Playwright; use `bun run test` / `bun run test:e2e` instead.
+- Remove duplicate `@cyber-nomad-collective/trudoc` dependency entry from
+  `site/website/package.json` so `validate-ci-local.sh` no longer fails local
+  frozen-install and matching package-lock resolution.
 
 - Sync root `bun.lock` with website/platform-spec `file:` pins for
   `@beskid/beskid-ui` / `@beskid/ui-react` so `bun install --frozen-lockfile`
