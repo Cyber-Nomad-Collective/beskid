@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+      BUN_INSTALL_CACHE_DIR: ${{ runner.temp }}/bun-install-cache
     steps:
       - uses: actions/checkout@v4
         with:
@@ -53,6 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+      BUN_INSTALL_CACHE_DIR: ${{ runner.temp }}/bun-install-cache
     steps:
       - uses: actions/checkout@v4
         with:
@@ -74,6 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+      BUN_INSTALL_CACHE_DIR: ${{ runner.temp }}/bun-install-cache
     steps:
       - uses: actions/checkout@v4
         with:
@@ -93,6 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+      BUN_INSTALL_CACHE_DIR: ${{ runner.temp }}/bun-install-cache
     steps:
       - uses: actions/checkout@v4
         with:
