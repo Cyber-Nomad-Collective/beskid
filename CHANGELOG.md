@@ -17,6 +17,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Pin compiler tip allowing soft builtins in exact ABI-v5 JIT validation so
+  Corelib tests clearing ISLE are not rejected for `interop_dispatch_*` kit
+  allowlist absence.
 - Pin compiler tip that lexically normalizes Corelib service source paths so
   materialized Foundation `Testing/Assert.bd` retains `__panic_str` CorelibService
   provenance without granting authority to user-project symlinks (Corelib gate).
