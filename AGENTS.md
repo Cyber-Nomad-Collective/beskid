@@ -78,18 +78,19 @@ This project is indexed by GitNexus as **beskid** (64652 symbols, 131369 relatio
 - Verify builds and gates locally until they pass before pushing; do not stop at the first remote CI failure
 - When promoting provisional OpenSpec capabilities, require real SHALL requirements and scenarios via OpenSpec changes—not stub fills; leave taxonomy hubs and empty governance/design-model stubs provisional until leaf obligations exist
 - Respect Linear ownership labels (`agent/cursor` vs `agent/codex`); create Cursor children under Codex parents without relabeling or closing them; file Codex blockers for missing facts outside exclusive scope rather than expanding into Codex-owned crates
-- Prefer parent and submodule state on `main` with clean merges; fix merge noise rather than leaving divergent local branches; agents push only their own branch and do not merge `main`
+- Prefer parent and submodule state on `main` with clean merges; fix merge noise rather than leaving divergent local branches; agents push only their own branch and do not merge `main` unless the user explicitly authorizes merge for that task
+- Do not invent Coolify service UUIDs, GHCR package Write grants, or secret token values—fail closed and document the exact human admin step instead
 
 ## Learned Workspace Facts
 - Tracker SQLite DB is the task-tracking source of truth; GitHub Issues sync is limited to active version and bugs
 - Normative standard lives in `openspec/specs` + `openspec/catalog.json` (sole authority); `site/platform-spec` reads OpenSpec directly and serves it at `spec.beskid-lang.org`; website uses `openspec/catalog.json` at build time only and redirects `/platform-spec`; legacy `site/spec-content` corpus is removed
 - VS Code extension is BSOL-only (`.bws` / `.bproj`); outline panel removed; projects panel retained; dashboard should open from the Beskid status-bar entry like rust-analyzer
-- Production lowering is CodegenInput → ISLE → stock-verifier-clean CLIF; reject HIR/Lowerable compatibility entry points; Cranelift ISLE remains the path for gradually porting runtime from Rust to Beskid
-- Local `.beskid` directories should stay gitignored
+- Production lowering is TypedProgram → CodegenInput → ISLE → stock-verifier-clean CLIF; reject HIR/Lowerable compatibility entry points; Cranelift ISLE remains the path for gradually porting runtime from Rust to Beskid
+- Local `.beskid` directories and `beskid_infra/config/openbao-*.env` (init/secrets) should stay gitignored; never commit secret values
 - Platform-spec / tracker integration: OpenSpec is normative SOT; Tracker is delivery/version authority (revisioned catalog links, public latest delivery, reconciliation without overwrite); seed workstreams from `beskid_tracker/data/` and OpenSpec; platform-spec auth PR editing uses `site/platform-spec/src/server/git-sync/pr.ts` only
 - Distribution pipelines intentionally omit AUR; keep the remaining packaging channels
 - Shared AST/DAG explorer UI (ReactFlow/d3) belongs in common `@beskid` components and should reuse one repo/browser explorer dialog across website, pckg, platform-spec, and tracker
 - OpenSpec `validate-standard` catalogues `AGENTS.md` and hard-fails TBD Purpose headers; regenerating `openspec/catalog.json` may be required after editing either
-- Platform delivery CI hard-gates every lane image including `pckg` (needs GHCR Write on `beskid-pckg` or `GHCR_TOKEN` with `write:packages`); green `main` auto-applies Coolify staging with digest-pinned compose
+- Platform delivery hard-gates every lane image including `pckg`; GHCR `beskid-pckg` is linked to sibling repo `beskid_pckg`, so grant package Actions Write to `beskid` or set `GHCR_TOKEN` with `write:packages` (not `read:packages` alone—login can succeed while push fails with scope mismatch); login/push already use `secrets.GHCR_TOKEN || github.token` in `.github/workflows/reusable-image.yml` (do not re-add in callers; do not weaken the gate); green `main` auto-applies Coolify staging with digest-pinned compose; staging secrets sync from OpenBao `secret/beskid/staging/*` via `just sync-env-staging` / `sync-runtime-env.sh`, with `COOLIFY_SERVICE_UUID` from GitHub staging env or lane JSON `service_uuid` in `beskid_infra/config/coolify-*.json`
 - While sites still resolve `@beskid/*` via `file:../../beskid_web_common`, CI and Docker must checkout/copy that submodule before `bun install` (same pattern as the website image)
 - Generation-bound Salsa/syntax facts in `beskid_queries` are semantic authority for LSP/IDE (no per-request HIR rebuilds or dual snapshot paths); ABI-v5 runtime kits use exact installed-prefix discovery/validation and fail closed on missing, mismatched, or tampered kits
