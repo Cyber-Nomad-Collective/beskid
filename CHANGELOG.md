@@ -9,6 +9,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Fixed
+
+- Pin compiler tip that resolves `[Extern] Contract.method` Path calls through syntax ISLE so Linux `extern_tests` can prepare again after W1/W2 acceptance.
+
 ### Changed
 
 - Pinned `beskid_infra` to wire Coolify staging lane UUID
