@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "36651342bb3ff2a7760a6dcb65e00233051c91444a446a5d9d8a138b37e735fe",
+  "revision": "3b7b979dff123c7fed065735ade890c6891ced41a20427de0045efbbb3774c21",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
