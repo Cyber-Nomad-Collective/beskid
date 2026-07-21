@@ -54,6 +54,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      # beskid_tracker pins @beskid/ui-react to file:../beskid_web_common, so the
+      # tracker install needs the shared web packages submodule checked out too.
       - name: Initialize tracker and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_tracker beskid_web_common
       - uses: oven-sh/setup-bun@v2
@@ -92,6 +94,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      # site/website resolves @beskid/beskid-ui and @beskid/ui-react via file: links
+      # into beskid_web_common, so its install needs that submodule checked out.
       - name: Initialize nexus and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_nexus beskid_web_common
       - uses: oven-sh/setup-bun@v2
