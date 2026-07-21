@@ -56,7 +56,15 @@ fi
 
 : "${COOLIFY_ENDPOINT:?Set COOLIFY_ENDPOINT}"
 : "${COOLIFY_API_TOKEN:?Set COOLIFY_API_TOKEN}"
-: "${COOLIFY_SERVICE_UUID:?Set COOLIFY_SERVICE_UUID}"
+# Prefer explicit env (GitHub Actions vars); else lane config service_uuid.
+if [[ -z "${COOLIFY_SERVICE_UUID:-}" ]]; then
+  lane_config="${script_dir}/../../beskid_infra/config/coolify-${lane}.json"
+  if [[ -f "${lane_config}" ]]; then
+    COOLIFY_SERVICE_UUID="$(jq -r '.service_uuid // empty' "${lane_config}")"
+  fi
+fi
+: "${COOLIFY_SERVICE_UUID:?Set COOLIFY_SERVICE_UUID or add service_uuid to beskid_infra/config/coolify-${lane}.json}"
+export COOLIFY_SERVICE_UUID
 api="${COOLIFY_ENDPOINT%/}/api/v1"
 
 api_call() {
