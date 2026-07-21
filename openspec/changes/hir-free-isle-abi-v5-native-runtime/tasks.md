@@ -7,7 +7,7 @@
 
 ## 2. Introduce replacement authorities
 
-- [ ] 2.1 Complete indexed expanded-AST semantic facts for resolution, typing, calls, casts, control flow, captures, legality, spans, bodies, and reachability
+- [x] 2.1 Complete indexed expanded-AST semantic facts for resolution, typing, calls, casts, control flow, captures, legality, spans, bodies, and reachability
 - [x] 2.2 Add `TypedProgram` construction and the sole `CodegenInput` boundary for project assemblies
 - [ ] 2.3 Complete the generated typed-operation inventory and exhaustive ISLE rule compiler
 - [x] 2.4 Require stock CLIF verification with originating AST spans for every generated function
