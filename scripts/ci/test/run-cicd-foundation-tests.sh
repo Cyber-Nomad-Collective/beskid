@@ -165,6 +165,37 @@ jq -e '
   ([.data[] | select(.key == "BESKID_DEPLOYMENT_TRACEPARENT" and (.value | startswith("00-")))] | length == 1)
 ' "${MOCK_SYNC_BODY}" >/dev/null
 
+# COOLIFY_SERVICE_UUID may come from lane config service_uuid when unset.
+cat >"${tmp}/lane-uuid.json" <<'JSON'
+{"service_uuid":"from-lane-config","openbao_services":["auth"],"static_env":{}}
+JSON
+export MOCK_SYNC_URL="${tmp}/sync-url.txt"
+cat >"${tmp}/bin/curl" <<'SH'
+#!/usr/bin/env bash
+url=''
+previous=''
+for argument in "$@"; do
+  if [[ "${argument}" == https://* ]]; then url="${argument}"; fi
+  previous="${argument}"
+done
+case "${url}" in
+  https://bao.invalid/*)
+    echo '{"data":{"data":{"SESSION_SECRET":"secret-value"}}}'
+    ;;
+  https://coolify.invalid/*/envs/bulk)
+    printf '%s' "${url}" >"${MOCK_SYNC_URL}"
+    echo '{}'
+    ;;
+  *)
+    echo "unexpected sync URL: ${url}" >&2
+    exit 2
+    ;;
+esac
+SH
+chmod +x "${tmp}/bin/curl"
+PATH="${tmp}/bin:${PATH}"   OPENBAO_ADDR=https://bao.invalid OPENBAO_TOKEN=test   COOLIFY_ENDPOINT=https://coolify.invalid COOLIFY_API_TOKEN=test   env -u COOLIFY_SERVICE_UUID   "${root}/scripts/ci/sync-runtime-env.sh" staging "${tmp}/lane-uuid.json"
+grep -Fq '/services/from-lane-config/envs/bulk' "${MOCK_SYNC_URL}"
+
 cat >"${tmp}/bin/docker" <<'SH'
 #!/usr/bin/env bash
 [[ "$1" == compose ]] || exit 2
