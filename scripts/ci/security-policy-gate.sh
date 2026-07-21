@@ -18,6 +18,33 @@ for workflow in "${authoritative[@]}"; do
   [[ -f "${workflow}" ]] || { echo "missing authoritative workflow: ${workflow}" >&2; exit 1; }
 done
 
+# Caller/callee concurrency groups must differ. promote-production.yml used to
+# share `promote-production` with reusable-promote.yml (environment=production),
+# which GitHub cancels as a concurrency deadlock before the environment gate.
+caller_group="$(
+  awk '
+    /^concurrency:/ { in_conc=1; next }
+    in_conc && /^[^[:space:]#]/ { exit }
+    in_conc && /group:/ {
+      line=$0
+      sub(/^[^:]*:[[:space:]]*/, "", line)
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+      gsub(/^["'\'']|["'\'']$/, "", line)
+      print line
+      exit
+    }
+  ' .github/workflows/promote-production.yml
+)"
+[[ -n "${caller_group}" ]] || {
+  echo "promote-production.yml is missing a top-level concurrency group" >&2
+  exit 1
+}
+[[ "${caller_group}" != "promote-production" ]] || {
+  echo "promote-production.yml concurrency group must not be promote-production (deadlocks reusable-promote.yml)" >&2
+  exit 1
+}
+
+
 # Project delivery is orchestrated only from the superrepo. Inspect its tracked
 # paths rather than the working tree: initialized submodules are gitlinks here,
 # and their upstream workflow metadata is not an authoritative Beskid lane.
