@@ -23,6 +23,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Platform-spec reader wraps `SpecViewModeProvider` in `ReaderChrome` so capability
+  document routes no longer crash with `useSpecViewMode must be used within
+  SpecViewModeProvider`.
 - Production promote no longer deadlocks: `promote-production.yml` concurrency
   group no longer collides with `reusable-promote.yml`'s `promote-production`
   lane lock, so the nested environment gate can create pending reviewer
