@@ -52,7 +52,7 @@ Evidence template mirroring v0.3 closure at [`aba4331`](https://github.com/Cyber
 
 ## Prior CI fixes (still valid)
 
-- _(record any carry-over fixes from v0.4 landings that remain green)_
+- CYB-130 (2026-07-21): web_common lockfile pin, pckg/tracker Docker `file:` parity, tracker-delivery submodule+Bun cache, Coolify `service_uuid` fallback — see `docs/superpowers/reports/2026-07-21-cyb-130-cicd-release-gate-parity.md`. Staging Coolify service UUID still missing.
 
 ## Coolify
 
