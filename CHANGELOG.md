@@ -31,6 +31,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Platform delivery pckg/tracker images frozen-install `beskid_web_common` before
+  `file:` `@beskid/*` consumers (npm 0.2.8 lacks graph/explorer); restore
+  `NODE_AUTH_TOKEN` on reusable quality-gate commands for submodule installs.
 - `scripts/ci/sync-runtime-env.sh` falls back to lane-config `service_uuid` when
   `COOLIFY_SERVICE_UUID` is unset (local `just sync-env-*`), with a clearer error
   naming the config path; production UUID remains in
