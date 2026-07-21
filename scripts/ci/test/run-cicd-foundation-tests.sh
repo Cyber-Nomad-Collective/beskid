@@ -87,7 +87,7 @@ fi
 pckg_image_block="$(sed -n '/^  image-pckg:/,/^  manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
 for required in \
   'context: .' \
-  'submodules: pckg' \
+  'submodules: pckg beskid_web_common' \
   'node-auth: true' \
   'NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}'; do
   if [[ "${pckg_image_block}" != *"${required}"* ]]; then
@@ -95,6 +95,23 @@ for required in \
     exit 1
   fi
 done
+tracker_image_block="$(sed -n '/^  image-tracker:/,/^  image-nexus:/p' "${root}/.github/workflows/platform-delivery.yml")"
+for required in \
+  'web_common=./beskid_web_common' \
+  'submodules: beskid_tracker beskid_web_common'; do
+  if [[ "${tracker_image_block}" != *"${required}"* ]]; then
+    echo "tracker image workflow is missing required contract: ${required}" >&2
+    exit 1
+  fi
+done
+if ! rg -Fq 'COPY beskid_web_common /src/beskid_web_common' "${root}/pckg/Dockerfile"; then
+  echo "pckg Dockerfile must copy beskid_web_common before bun install" >&2
+  exit 1
+fi
+if ! rg -Fq 'COPY --from=web_common' "${root}/beskid_tracker/Dockerfile"; then
+  echo "tracker Dockerfile must consume the web_common BuildKit context before bun install" >&2
+  exit 1
+fi
 if [[ "${pckg_image_block}" == *'optional: true'* ]]; then
   echo "pckg image lane must be a hard gate (optional: true is forbidden)" >&2
   exit 1
