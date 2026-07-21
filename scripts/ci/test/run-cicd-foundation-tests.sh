@@ -104,14 +104,15 @@ for required in \
     exit 1
   fi
 done
-if ! rg -Fq 'COPY beskid_web_common /src/beskid_web_common' "${root}/pckg/Dockerfile"; then
-  echo "pckg Dockerfile must copy beskid_web_common before bun install" >&2
+if ! rg -Fq 'bun install --cwd=/src/beskid_web_common --frozen-lockfile' "${root}/pckg/Dockerfile"; then
+  echo "pckg Dockerfile must frozen-install beskid_web_common before pckg/web" >&2
   exit 1
 fi
 if ! rg -Fq 'COPY --from=web_common' "${root}/beskid_tracker/Dockerfile"; then
   echo "tracker Dockerfile must consume the web_common BuildKit context before bun install" >&2
   exit 1
 fi
+rg -Fq 'NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}' "${root}/.github/workflows/reusable-quality.yml"
 if [[ "${pckg_image_block}" == *'optional: true'* ]]; then
   echo "pckg image lane must be a hard gate (optional: true is forbidden)" >&2
   exit 1
