@@ -70,6 +70,14 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
+### Requirement: Manifest-derived ABI-v5 closure environment helpers
+The canonical ABI-v5 runtime manifest SHALL declare `beskid_rt_v5_closure_environment_allocate` with signature `(ptr) -> ptr`, `beskid_rt_v5_closure_capture_store` with signature `(ptr, ptr, usize, ptr) -> u8`, and `beskid_rt_v5_closure_environment_root` with signature `(ptr, usize, ptr) -> u8`. The generated ABI JSON, C header, Rust bindings, runtime-kit allowlist, and canonical Bootstrap source SHALL agree on those exact names and signatures. Lowering MUST reject any closure-environment import absent from that manifest-derived contract.
+
+#### Scenario: Canonical closure environment import provenance
+- **GIVEN** a canonical ABI-v5 runtime kit and syntax-owned captured-closure lowering
+- **WHEN** the toolchain validates the ABI contract and audits the native runtime archive
+- **THEN** each declared closure-environment helper is present with its exact signature and canonical Bootstrap provenance, and no undeclared closure helper is imported or exported
+
 ## Informative Source Provenance
 
 The records below preserve migration history and are not normative except where text was extracted into a requirement above.

@@ -73,6 +73,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Define the manifest-derived ABI-v5 closure-environment helper contract in the
+  normative OpenSpec, requiring the generated bindings, runtime-kit allowlist,
+  and canonical Bootstrap provenance to agree on exact names and signatures
+  (CYB-122).
 - Consolidate all local 0.4 worktree histories onto repository `main` branches, preserving
   unfinished compiler/runtime work as explicit checkpoints and restoring Codex ownership of
   critical-path acceptance while Cursor supplies bounded configuration, fixture, and evidence

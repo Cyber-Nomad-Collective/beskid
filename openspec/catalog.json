@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "2d3e3fbe3ac44e5e9fe8adcb005690794d7151b76d056306603479f124822734",
+  "revision": "d67bfac1a19282c98ddce51e1bd50d0d46f6553a842cc2b752d452ee80915149",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
     "capabilities": 185,
-    "requirements": 515,
+    "requirements": 516,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
@@ -18469,6 +18469,17 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-08DF40C72BD1",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--abi-and-host--abi-versioning-and-compatibility/spec.md",
+          "sourceHash": "09a9d1460c914e66e460388a7259cab59ba7adbf91a511ae3dccb8243d6188ef",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Manifest-derived ABI-v5 closure environment helpers",
+          "anchor": "requirement-manifest-derived-abi-v5-closure-environment-helpers"
         }
       ],
       "records": [
