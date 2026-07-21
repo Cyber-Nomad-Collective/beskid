@@ -73,10 +73,18 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 ### Requirement: Manifest-derived ABI-v5 closure environment helpers
 The canonical ABI-v5 runtime manifest SHALL declare `beskid_rt_v5_closure_environment_allocate` with signature `(ptr) -> ptr`, `beskid_rt_v5_closure_capture_store` with signature `(ptr, ptr, usize, ptr) -> u8`, and `beskid_rt_v5_closure_environment_root` with signature `(ptr, usize, ptr) -> u8`. The generated ABI JSON, C header, Rust bindings, runtime-kit allowlist, and canonical Bootstrap source SHALL agree on those exact names and signatures. Lowering MUST reject any closure-environment import absent from that manifest-derived contract.
 
-#### Scenario: Canonical closure environment import provenance
+#### Scenario: Canonical closure environment helper provenance
 - **GIVEN** a canonical ABI-v5 runtime kit and syntax-owned captured-closure lowering
 - **WHEN** the toolchain validates the ABI contract and audits the native runtime archive
-- **THEN** each declared closure-environment helper is present with its exact signature and canonical Bootstrap provenance, and no undeclared closure helper is imported or exported
+- **THEN** each declared closure-environment helper is present with its exact signature and canonical Bootstrap provenance
+
+### Requirement: Manifest-derived ABI-v5 current-root helper
+The canonical ABI-v5 runtime manifest SHALL declare `beskid_rt_v5_closure_environment_root_current` with signature `(usize, ptr) -> u8`. The generated ABI JSON, C header, Rust bindings, runtime-kit allowlist, and canonical Bootstrap source SHALL agree on that exact signature. Tooling-generated lowering MAY call this symbol only through syntax-owned generated runtime entry points, and user-authored syntax/native metadata MUST NOT read runtime TLS directly, manufacture its own TLS pointer, or bypass the single exported current-root helper.
+
+#### Scenario: Canonical closure current-root provenance
+- **GIVEN** a canonical ABI-v5 runtime kit and syntax-owned captured-closure lowering
+- **WHEN** the toolchain validates the ABI contract and audits the native runtime archive
+- **THEN** the `RootClosureEnvironmentCurrent` path appears only through `RootClosureEnvironment` in canonical runtime bootstrap and the generated lowering emits no alternate root-path symbol for current-thread closure rooting
 
 ## Informative Source Provenance
 

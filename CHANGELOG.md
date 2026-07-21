@@ -76,6 +76,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Define the canonical ABI-v5 fiber-spawn boundary in the normative OpenSpec,
   including exact-kit provenance, cancellation-slot initialization, and the
   prohibition on legacy dispatch/envelope or Rust bridge fallback (CYB-126).
+- Define the canonical ABI-v5 current-root closure helper in the normative
+  OpenSpec and expose it through manifest, generated headers/bindings,
+  and Bootstrap runtime for current-thread closure-rooting (CYB-127).
 - Define the manifest-derived ABI-v5 closure-environment helper contract in the
   normative OpenSpec, requiring the generated bindings, runtime-kit allowlist,
   and canonical Bootstrap provenance to agree on exact names and signatures

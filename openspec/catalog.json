@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "c5604a976ff4c85bdab244967a62ae2a0b68291a93528f5d4154fc4261d904ef",
+  "revision": "b16676ef542284c710f0afdce4b162002ec31290754bf9863c74b8d11b47c1ab",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
     "capabilities": 185,
-    "requirements": 517,
+    "requirements": 518,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
@@ -18480,6 +18480,17 @@
           "migrationStatus": "extracted",
           "title": "Manifest-derived ABI-v5 closure environment helpers",
           "anchor": "requirement-manifest-derived-abi-v5-closure-environment-helpers"
+        },
+        {
+          "id": "BSP-REQ-6C5802DE7E3E",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--abi-and-host--abi-versioning-and-compatibility/spec.md",
+          "sourceHash": "7f4844fe64cfaa61fc771c372bfee66acee8e581a7653a7874023a16f5c64ccd",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Manifest-derived ABI-v5 current-root helper",
+          "anchor": "requirement-manifest-derived-abi-v5-current-root-helper"
         }
       ],
       "records": [
