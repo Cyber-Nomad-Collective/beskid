@@ -38,6 +38,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Tracker platform delivery job-level `BUN_INSTALL_CACHE_DIR` no longer uses
+  `runner.temp` (invalid at job `env`); use `/tmp/beskid-bun-install-cache` so
+  the workflow parses on `main` (CYB-130).
 - Platform delivery pckg/tracker images frozen-install `beskid_web_common` before
   `file:` `@beskid/*` consumers (npm 0.2.8 lacks graph/explorer); restore
   `NODE_AUTH_TOKEN` on reusable quality-gate commands for submodule installs.
