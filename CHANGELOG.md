@@ -9,6 +9,12 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Removed
+
+- Retire LSP `ANALYSIS_CACHE_VERSION` residual after CYB-98/103: hard invalidation clears
+  generation-bound syntax facts fail-closed and rebuild rebinds documentation/diagnostics
+  (CYB-78).
+
 ### Fixed
 
 - Pin compiler tip aligning unresolved reachability semantic_facts with direct_callees skip policy.

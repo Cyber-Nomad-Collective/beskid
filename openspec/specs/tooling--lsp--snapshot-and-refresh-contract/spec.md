@@ -157,7 +157,7 @@ session store.
 
 - **Open buffer wins** — Disk index **must not** overwrite an open `Document` for the same `Uri`.
 - **Monotonic versions** — Stale `didChange` versions **must** be ignored per LSP rules.
-- **Cache generation** — When `ANALYSIS_CACHE_VERSION` increments, all snapshots **must** rebuild even if text is unchanged.
+- **Generation-bound facts** — Open buffers own syntax documentation/diagnostics facts for the current text revision. Hard invalidation **must** clear those facts (fail closed) and rebuild via `rebuild_open_document_syntax_facts`; there is no `ANALYSIS_CACHE_VERSION` shape cache.
 - **Diagnostic debounce** — Only the latest scheduled revision per URI may publish; superseded tasks **must** no-op.
 - **Manifest URIs** — `.proj` files **must not** run Beskid semantic analysis snapshots.
 - **Parity** — Diagnostic codes and severities **must** match `beskid analyze` for the same `CompilationContext`.
@@ -192,11 +192,11 @@ Changes to `project.mod` or mod AOT outputs **must** hard-invalidate compilation
 ``````markdown
 ## Purpose
 
-The Beskid LSP maintains open document buffers (`State.docs`), disk-backed workspace index entries (`State.workspace_index`), optional **`DocumentAnalysisSnapshot`** values versioned by `ANALYSIS_CACHE_VERSION`, and a workspace-scoped **`beskid_queries::BeskidDatabase`** (`State.compilation_db`) that owns incremental invalidation. A separate **`CompilationContext`** cache keys off resolved `Project.proj` paths plus workspace member defaults.
+The Beskid LSP maintains open document buffers (`State.docs`), disk-backed workspace index entries (`State.workspace_index`), generation-bound syntax fact fields on each `Document` (definitions, hovers, symbols, completion, inlay hints, documentation, diagnostics), and a workspace-scoped **`beskid_queries::BeskidDatabase`** (`State.compilation_db`) that owns incremental invalidation. A separate **`CompilationContext`** cache keys off resolved `Project.proj` paths plus workspace member defaults. Lifecycle **must not** own a `DocumentAnalysisSnapshot` or `ANALYSIS_CACHE_VERSION` shape cache.
 
 ## Invalidation model
 
-`didChange` **must** call `BeskidDatabase::ensure_file_text` for the edited URI before rebuilding snapshots or publishing diagnostics. Manual per-document `text_hash` fast paths are replaced by Salsa revision tracking and query invalidation; `ANALYSIS_CACHE_VERSION` remains the snapshot **shape** version only.
+`didChange` **must** call `BeskidDatabase::ensure_file_text` for the edited URI before rebuilding generation-bound syntax facts or publishing diagnostics. Hard invalidation clears `compilation_context_cache`, resets the Salsa DB when warm, and clears open/index syntax facts until `rebuild_open_document_syntax_facts` rebinds them.
 
 ## Snapshot stores
 
@@ -205,7 +205,7 @@ flowchart LR
   subgraph open [Open buffers]
     DidOpen[didOpen / didChange]
     Doc[Document + Salsa file_text]
-    Snap[DocumentAnalysisSnapshot]
+    Snap[syntax facts on Document]
     DidOpen --> Doc --> Snap
   end
   subgraph disk [Disk index]
@@ -234,7 +234,7 @@ flowchart LR
 
 ## Hard vs soft invalidation
 
-**Hard invalidation** clears `compilation_context_cache` and bumps per-document `analysis_cache_version` so every open buffer re-analyzes:
+**Hard invalidation** clears `compilation_context_cache`, resets the warm Salsa DB, and clears per-document generation-bound syntax facts so every open buffer rebinds via `rebuild_open_document_syntax_facts`:
 
 - `Project.proj`, `Workspace.proj`, or lockfile writes affecting dependency roots
 - `project.mod` changes on attached `Mod` projects
@@ -319,7 +319,7 @@ Full workspace scan is O(files); excluded directories are skipped but large tree
 
 ## Stale hover after mod emit
 
-Hard-invalidate paths apply when generated sources touch disk. If emit stays in-memory only, invalidation follows document generation counters—bump `ANALYSIS_CACHE_VERSION` when changing that contract.
+Hard-invalidate paths apply when generated sources touch disk. If emit stays in-memory only, invalidation follows document generation counters—clear and rebuild generation-bound syntax facts when changing that contract.
 
 ## `BESKID_WORKSPACE_MEMBER_FOR_META_DEFAULT`
 
@@ -358,8 +358,8 @@ sequenceDiagram
 ```
 
 1. Apply LSP content changes to the open `Document`.
-2. If text hash unchanged and version monotonic, skip re-analysis.
-3. Otherwise rebuild `DocumentAnalysisSnapshot` using cached `CompilationContext`.
+2. If the LSP version is stale, ignore the update.
+3. Otherwise rebuild generation-bound syntax facts using the workspace Salsa DB and cached `CompilationContext`.
 4. Coalesce diagnostic publish jobs per URI revision counter.
 
 ## Workspace scan algorithm
@@ -412,7 +412,7 @@ IDE features (`completion`, `hover`, `definition`, …) snapshot document text t
 
 | Requirement | Evidence |
 | --- | --- |
-| `ANALYSIS_CACHE_VERSION` bump forces rebuild | Lifecycle tests or manual protocol check when version changes |
+| Hard invalidation clears facts then rebuild binds documentation | Lifecycle `hard_invalidation_clears_syntax_facts_until_rebuild` |
 | Skip directories during scan | `should_skip_dir_for_scan` unit coverage in `workspace_scan.rs` |
 | Invalidation on manifest change | `backend.rs` configuration handler paths |
 | Diagnostic debounce | Revision counter logic in `schedule_publish_diagnostics` |
