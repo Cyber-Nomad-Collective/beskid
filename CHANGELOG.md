@@ -23,12 +23,16 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+<<<<<<< HEAD
 - Pin compiler tip that registers process-linked soft builtins for exact ABI-v5 JIT and
   types string `+` BinaryExpressions so Corelib Assert/Escape ISLE paths can clear.
 - Pin compiler tip that forwards Windows COFF import libraries through
   `build_native_host` (CYB-112) and includes soft-builtin JIT allowlist + lexical
   Corelib path matching needed by the Corelib gate.
 - Pin compiler tip that reads interop enum tags unaligned, ignores retired HIR lower_program beskid_tests, and audits static kits with verify_static_archive for Linux TLS (unblocks Rust gate).
+=======
+- Pin compiler tip requiring exact-kit `beskid_rt_v5_closure_environment_root_current` provenance and Darwin arm64 JIT fail-closed closure allocate/root evidence (CYB-131 under CYB-79/CYB-109).
+>>>>>>> cursor/cyb-79-pin-c10aca8
 - Pin compiler tip aligning unresolved reachability semantic_facts with direct_callees skip policy.
 - Pin compiler tip restoring fail-closed unresolved Path call_lowering while keeping Extern contract Direct.
 - Pin compiler tip regenerating abi-v5 artifacts after Bootstrap CYB-129 ValidatePointerMap guards.
