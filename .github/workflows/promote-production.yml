@@ -18,8 +18,12 @@ permissions:
   deployments: write
   id-token: write
 
+# Must NOT reuse reusable-promote.yml's group `promote-${{ environment }}`
+# (production → promote-production). Matching caller/callee concurrency groups
+# deadlocks: GitHub cancels the nested production job before the environment
+# gate creates a pending deployment for required reviewers.
 concurrency:
-  group: promote-production
+  group: promote-production-dispatch
   cancel-in-progress: false
 
 jobs:
@@ -34,6 +38,11 @@ jobs:
 
   production:
     needs: confirmation
+    permissions:
+      actions: read
+      contents: read
+      deployments: write
+      id-token: write
     uses: ./.github/workflows/reusable-promote.yml
     with:
       environment: production

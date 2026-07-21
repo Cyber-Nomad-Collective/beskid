@@ -39,6 +39,30 @@ gate results, the manifest is assembled from whatever lanes succeeded
 main delivery run ID and promotes its existing manifest after the protected
 environment approval.
 
+### Re-run production promote (dry procedure)
+
+Do **not** force a Coolify prod deploy until the workflow itself reaches the
+`production` environment gate (pending deployment for required reviewers).
+
+1. Pick a successful main **Platform delivery** run that uploaded
+   `release-manifest` (example: Actions → Platform delivery → green run).
+2. Actions → **Promote production** → Run workflow:
+   - `delivery-run-id`: that run’s numeric ID
+   - `confirmation`: exactly `PROMOTE`
+3. After confirmation, expect nested jobs
+   `production / Validate promotion policy` then
+   `production / Promote production` waiting on the **production** environment
+   (reviewers with `prevent_self_review`). Approve there — not via Coolify UI.
+4. If the run ends after `confirmation` only, with no nested production jobs and
+   no pending deployment, treat it as a workflow bug (historically: caller/callee
+   concurrency group collision). Do not patch Coolify by hand as the primary path.
+
+**pckg note:** digest-pinned promote can crash-loop when Coolify/`beskid-pckg`
+was previously running a mutable `:main` tag that drifted from the delivery
+manifest digest. Prefer promoting a manifest whose pckg digest is known-good, or
+reconcile GHCR write + digest apply; mutable tags are rejected by policy.
+
+
 Branch protection (not the workflow graph) is the place to make any quality gate
 mandatory for merge; delivery itself intentionally never waits on them.
 
