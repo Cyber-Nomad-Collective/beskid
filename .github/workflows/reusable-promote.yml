@@ -36,9 +36,13 @@ permissions:
   deployments: write
   id-token: write
 
+# Lane apply lock. Callers must use a different concurrency group — sharing
+# `promote-production` with promote-production.yml deadlocks the nested call
+# and skips the protected environment approval job.
 concurrency:
   group: promote-${{ inputs.environment }}
   cancel-in-progress: false
+
 
 jobs:
   policy:
