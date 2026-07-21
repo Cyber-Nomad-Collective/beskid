@@ -56,16 +56,56 @@ ensure_web_common_install() {
   fi
 }
 
+ensure_gitnexus_shared_build() {
+  # gitnexus-web depends on gitnexus-shared via `file:../gitnexus-shared`, whose
+  # package "main"/"exports" resolve to dist/index.js. Bun links a file: dep's
+  # contents at install time, so gitnexus-shared must be installed AND built
+  # (dist/) BEFORE gitnexus-web is installed — otherwise the compiled output is
+  # never linked into gitnexus-web/node_modules and Vitest fails to resolve the
+  # `gitnexus-shared` import at transform time (normalizeUrl).
+  local shared="${ROOT}/beskid_nexus/gitnexus-shared"
+  [[ -f "${shared}/package.json" ]] || return 0
+  if [[ ! -d "${shared}/node_modules" ]]; then
+    echo "==> shared-ui-nexus-gate: installing gitnexus-shared deps" >&2
+    bun install --cwd="${shared}" --frozen-lockfile || die_prereq \
+      "bun install failed in beskid_nexus/gitnexus-shared (required by gitnexus-web file: dependency)."
+  fi
+  if [[ ! -f "${shared}/dist/index.js" ]]; then
+    echo "==> shared-ui-nexus-gate: building gitnexus-shared (dist)" >&2
+    bun run --cwd="${shared}" build || die_prereq \
+      "gitnexus-shared build (tsc) failed; gitnexus-web resolves it via dist/index.js (package \"main\"/\"exports\")."
+    # tsconfig uses `composite: true` (incremental .tsbuildinfo). A stale
+    # buildinfo left after a dist wipe makes tsc skip emit, so verify the
+    # output exists; if not, drop the incremental cache and rebuild once.
+    if [[ ! -f "${shared}/dist/index.js" ]]; then
+      echo "==> shared-ui-nexus-gate: clearing stale tsc buildinfo and rebuilding gitnexus-shared" >&2
+      rm -f "${shared}"/*.tsbuildinfo "${shared}"/dist/*.tsbuildinfo 2>/dev/null || true
+      bun run --cwd="${shared}" build || die_prereq \
+        "gitnexus-shared build (tsc) failed after clearing incremental cache."
+    fi
+    [[ -f "${shared}/dist/index.js" ]] || die_prereq \
+      "gitnexus-shared build produced no dist/index.js; check beskid_nexus/gitnexus-shared/tsconfig.json outDir."
+  fi
+}
+
 ensure_nexus_web_install() {
+  # Build gitnexus-shared first so its dist/ is present when the gitnexus-web
+  # file: dependency is linked (see ensure_gitnexus_shared_build).
+  ensure_gitnexus_shared_build
+
+  local shared_dist="${ROOT}/beskid_nexus/gitnexus-shared/dist/index.js"
+  local linked_dist="${NEXUS_WEB}/node_modules/gitnexus-shared/dist/index.js"
+  if [[ -d "${NEXUS_WEB}/node_modules" ]] && [[ -f "${shared_dist}" ]] && [[ ! -e "${linked_dist}" ]]; then
+    # Stale install: gitnexus-web was installed before gitnexus-shared/dist
+    # existed, so the built output is not linked. Force a clean relink.
+    echo "==> shared-ui-nexus-gate: relinking gitnexus-shared into gitnexus-web (stale dist link)" >&2
+    rm -rf "${NEXUS_WEB}/node_modules/gitnexus-shared"
+    rm -rf "${NEXUS_WEB}/node_modules"
+  fi
   if [[ ! -d "${NEXUS_WEB}/node_modules" ]]; then
     echo "==> shared-ui-nexus-gate: installing gitnexus-web deps" >&2
     bun install --cwd="${NEXUS_WEB}" --frozen-lockfile || die_prereq \
       "bun install failed in beskid_nexus/gitnexus-web. Fix lockfile/registry auth, then retry."
-  fi
-  if [[ ! -d "${ROOT}/beskid_nexus/gitnexus-shared/node_modules" ]] && [[ -f "${ROOT}/beskid_nexus/gitnexus-shared/package.json" ]]; then
-    echo "==> shared-ui-nexus-gate: installing gitnexus-shared deps" >&2
-    bun install --cwd="${ROOT}/beskid_nexus/gitnexus-shared" --frozen-lockfile || die_prereq \
-      "bun install failed in beskid_nexus/gitnexus-shared (required by gitnexus-web file: dependency)."
   fi
 }
 
