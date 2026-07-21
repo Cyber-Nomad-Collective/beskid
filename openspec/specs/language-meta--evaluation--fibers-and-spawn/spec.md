@@ -54,6 +54,14 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
+### Requirement: Canonical ABI-v5 fiber spawn boundary
+Syntax-owned spawn lowering SHALL import only `beskid_rt_v5_fiber_spawn_with_cancel_slot(entry:pointer, environment:pointer, cancelled_slot:pointer) -> i64` from the exact manifest-derived ABI-v5 runtime kit. The canonical runtime SHALL initialize the caller-owned cancellation slot to zero and transfer entry/environment execution through its canonical fiber trampoline or scheduler ownership. Syntax spawn lowering MUST NOT emit `interop_dispatch_*`, resolve a legacy envelope or compatibility dispatcher, or use a Rust bridge or unmanifested dynamic symbol.
+
+#### Scenario: Exact-kit syntax spawn
+- **GIVEN** a supported zero-capture spawn entry and an exact ABI-v5 runtime kit
+- **WHEN** JIT or AOT lowers and links the spawn expression
+- **THEN** the artifact imports the canonical fiber-spawn boundary with its exact signature, the cancellation slot starts clear, and the kit/provenance audit finds no legacy dispatch or bridge dependency
+
 ### Requirement: Cross-fiber notification uses Channel: Decision [D-LMETA-FIBERS-0004]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 

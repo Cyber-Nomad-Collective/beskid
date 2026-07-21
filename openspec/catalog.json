@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "d67bfac1a19282c98ddce51e1bd50d0d46f6553a842cc2b752d452ee80915149",
+  "revision": "c5604a976ff4c85bdab244967a62ae2a0b68291a93528f5d4154fc4261d904ef",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
     "capabilities": 185,
-    "requirements": 516,
+    "requirements": 517,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
@@ -23028,6 +23028,17 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-E7C6A74A0492",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/language-meta--evaluation--fibers-and-spawn/spec.md",
+          "sourceHash": "f1986144c38ee5fa26aab785007cc3239b538ec32a80e51c37167f30336c74a5",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Canonical ABI-v5 fiber spawn boundary",
+          "anchor": "requirement-canonical-abi-v5-fiber-spawn-boundary"
         },
         {
           "id": "BSP-REQ-291393595717",
