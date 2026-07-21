@@ -67,7 +67,7 @@ jobs:
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: platform-integration
-      submodules: beskid_web_common beskid_tracker beskid_nexus compiler
+      submodules: beskid_web_common beskid_tracker beskid_nexus compiler pckg
       setup-web: true
       timeout-minutes: 60
       command: bash scripts/ci/platform-integration-gate.sh
@@ -199,11 +199,13 @@ jobs:
     with:
       name: beskid-nexus
       repository: ghcr.io/cyber-nomad-collective/beskid-nexus
+      # file:../../beskid_web_common from gitnexus-web (CI auth parity).
       context: beskid_nexus
       dockerfile: beskid_nexus/Dockerfile
       build-contexts: |
         openspec=./openspec
-      submodules: beskid_nexus
+        web_common=./beskid_web_common
+      submodules: beskid_nexus beskid_web_common
       node-auth: true
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
