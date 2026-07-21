@@ -6,6 +6,7 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 compiler_workflow="${root}/.github/workflows/compiler.yml"
 open_vsx_workflow="${root}/.github/workflows/publish-open-vsx.yml"
+distribute_workflow="${root}/.github/workflows/distribute.yml"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -33,5 +34,15 @@ resolver_workflows="$(rg -l 'resolve-beskid-version\.sh' "${root}/.github/workfl
 if [[ "${resolver_workflows}" != "${compiler_workflow}" ]]; then
   fail "only compiler.yml may mint a release version (found: ${resolver_workflows:-none})"
 fi
+
+
+grep -Fq 'workflow_run:' "${distribute_workflow}" || \
+  fail 'Distribute is not triggered by a completed Compiler workflow run'
+grep -Fq 'workflows: [Compiler]' "${distribute_workflow}" || \
+  fail 'Distribute does not consume Compiler workflow runs'
+grep -Fq -- '--name release-version' "${distribute_workflow}" || \
+  fail 'Distribute does not consume the compiler release-version artifact'
+grep -Fq '^0\.4\.(0|[1-9][0-9]*)$' "${distribute_workflow}" || \
+  fail 'Distribute does not fail closed on a non-global 0.4.<build> version'
 
 printf 'Global release version workflow contract tests OK\n'

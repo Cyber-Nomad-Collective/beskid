@@ -42,6 +42,13 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- ISLE `if`/`while`/`for` no longer plant a trap on a reachable merge or leave
+  nested arm/body blocks unterminated; `return` after a bare `if` lowers again,
+  fixing macOS arm64 SIGILL when JIT calls
+  `beskid_rt_v5_fiber_spawn_with_cancel_slot` (CYB-129).
+- Distribute consumes the Compiler `release-version` artifact on `workflow_run`
+  and fail-closes unless the value is strict `0.4.<build>` (CYB-108).
+
 - Tracker platform delivery job-level `BUN_INSTALL_CACHE_DIR` no longer uses
   `runner.temp` (invalid at job `env`); use `/tmp/beskid-bun-install-cache` so
   the workflow parses on `main` (CYB-130).

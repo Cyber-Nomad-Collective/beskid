@@ -84,16 +84,30 @@ jobs:
       - name: Init beskid_distrib submodule (shallow)
         run: ./scripts/ci/init-submodules.sh beskid_distrib
 
-      - name: Resolve rolling version
+      - name: Resolve compiler-minted global version
         id: version
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          COMPILER_RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           set -euo pipefail
-          v="$(bash beskid_distrib/scripts/resolve-version.sh | tr -d '[:space:]')"
-          [[ -n "$v" ]] || { echo "empty rolling version" >&2; exit 1; }
-          echo "version=${v}" >> "${GITHUB_OUTPUT}"
-          echo "Resolved rolling version: ${v}"
+          # Prefer the Compiler workflow's release-version artifact (exact mint).
+          # Manual dispatch falls back to cli-latest's published cli-version.txt.
+          version=""
+          if [[ -n "${COMPILER_RUN_ID:-}" && "${{ github.event_name }}" == "workflow_run" ]]; then
+            mkdir -p release-version
+            gh run download "${COMPILER_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
+              --name release-version --dir release-version
+            version="$(tr -d '[:space:]' < release-version/release-version.txt)"
+          else
+            version="$(bash beskid_distrib/scripts/resolve-version.sh | tr -d '[:space:]')"
+          fi
+          [[ "${version}" =~ ^0\.4\.(0|[1-9][0-9]*)$ ]] || {
+            echo "Compiler-published version is absent or not strict 0.4.<build>: ${version:-<empty>}" >&2
+            exit 1
+          }
+          echo "version=${version}" >> "${GITHUB_OUTPUT}"
+          echo "Resolved global release version: ${version}"
 
       - name: Record compiler SHA (target_commitish of cli-latest)
         id: sha
