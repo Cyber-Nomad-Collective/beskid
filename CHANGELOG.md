@@ -17,6 +17,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Pin compiler tip requiring exact-kit `beskid_rt_v5_closure_environment_root_current` provenance and Darwin arm64 JIT fail-closed closure allocate/root evidence (CYB-131 under CYB-79/CYB-109).
 - Pin compiler tip aligning unresolved reachability semantic_facts with direct_callees skip policy.
 - Pin compiler tip restoring fail-closed unresolved Path call_lowering while keeping Extern contract Direct.
 - Pin compiler tip regenerating abi-v5 artifacts after Bootstrap CYB-129 ValidatePointerMap guards.
