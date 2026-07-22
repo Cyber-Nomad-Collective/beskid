@@ -29,6 +29,11 @@ COPY beskid_bsol ./beskid_bsol
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
   --mount=type=cache,target=/workspace/target \
   cd compiler && cargo build -p beskid_cli --release
+RUN cd compiler \
+  && BESKID_RUNTIME_PREFIX=/workspace/compiler/target/native-runtime-kit \
+  BESKID_RUNTIME_KIT_PROFILE=debug \
+  BESKID_CLI_BIN=/workspace/compiler/target/release/beskid \
+  ./scripts/stage-native-runtime-kit.sh
 
 FROM oven/bun:1.3.14
 RUN apt-get update \
@@ -41,10 +46,12 @@ COPY --from=web /app/site/learn/server.ts /app/site/learn/server.ts
 COPY --from=web /app/site/learn/package.json /app/site/learn/package.json
 COPY --from=web /app/site/learn/.npmrc /app/site/learn/.npmrc
 COPY --from=rust /workspace/compiler/target/release/beskid /app/site/learn/beskid
+COPY --from=rust /workspace/compiler/target/native-runtime-kit /app/site/learn/native-runtime-kit
 
 ENV NODE_ENV=production
 ENV PORT=80
 ENV BESKID_BINARY=/app/site/learn/beskid
+ENV BESKID_RUNTIME_PREFIX=/app/site/learn/native-runtime-kit
 ENV BESKID_COMMAND_TIMEOUT_MS=25000
 EXPOSE 80
 

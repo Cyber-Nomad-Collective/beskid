@@ -27,9 +27,10 @@ Interactive learning surface for the Beskid language.
 - Check all seeded lessons:
   - `cd site/learn`
   - `pnpm run check:all`
-- Start the browser UI using the checked binary:
-  - `cd site/learn`
-  - `BESKID_BINARY=../../compiler/target/release/beskid pnpm run start`
+    - Start the browser UI using the checked binary:
+    - `cd site/learn`
+    - `just learn-runtime-kit` (if local runtime kit is missing)
+    - `cd /workspaces/beskid && just learn-server`
 
 Run with `BESKID_BINARY` explicitly whenever possible so the endpoint uses the prebuilt
 `beskid` CLI binary (faster and deterministic).
@@ -40,11 +41,13 @@ This lane is Rustlings-like:
 
 - Monaco editor for edits.
 - Xterm terminal for real compiler diagnostics.
-- API-driven checks via `POST /api/check` backed by `beskid analyze`/`tree`/`parse` on demand.
+- API-driven checks via `POST /api/check` backed by `analyze`/`parse`/`tree`/`run` on demand.
 
 The check request writes learner code to a temporary workspace file and runs the Beskid CLI.
 If `BESKID_BINARY` is set, that binary is invoked directly; otherwise
 `cargo run -p beskid_cli` is used.
+`run` mode uses an ABI-v5 runtime-kit, so the command auto-stages under
+`compiler/target/native-runtime-kit` when absent.
 
 If you use `cargo run`, ensure the server runs from the repo root or set `BESKID_REPO_ROOT`
 to a checkout that contains both `/compiler/Cargo.toml` and `/site/learn`.

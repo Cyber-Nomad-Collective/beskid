@@ -7,7 +7,7 @@ This folder holds the rustlings-style exercise source of truth.
 - The web learn surface pulls exercise metadata from `src/data/learningCatalog.ts`.
 - Lesson IDs are intentionally numeric-prefix directories so both CLI (`check:all`) and
   web navigation stay deterministic.
-- Command coverage now includes `analyze`, `parse`, and `tree`.
+- Command coverage now includes `analyze`, `parse`, `tree`, and `run`.
 - New exercise template:
 
 ```text

@@ -12,7 +12,8 @@
 ## Runtime model
 
 - Node/Bun-backed app server that serves the built SPA and exposes `/api/check`.
-- The API runs `beskid analyze` against learner code.
+- The API runs `analyze`, `parse`, `tree`, and `run` against learner code.
+- `run` is backed by a staged ABI-v5 runtime-kit (`compiler/target/native-runtime-kit` in local source builds).
 - Healthcheck: `wget -q --spider http://127.0.0.1/`
 
 ## Local preview

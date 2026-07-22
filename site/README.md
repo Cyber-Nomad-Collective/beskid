@@ -1,6 +1,7 @@
 # Beskid site (`site/`)
 
-Public web surface: documentation ([`website/`](website/)), auth hub ([`auth/`](auth/)), and Docker Compose for Coolify.
+Public web surface: documentation ([`website/`](website/)), auth hub ([`auth/`](auth/)),
+learn lane ([`learn/`](learn/)), and Docker Compose for Coolify.
 
 ## First-time setup
 
@@ -25,7 +26,8 @@ Non-interactive equivalent:
 |---------|--------------------------------|-------------|
 | Docs site | [`docker-compose.yml`](docker-compose.yml) | [`docker-compose.build.yml`](docker-compose.build.yml) |
 | Auth hub | [`auth/docker-compose.yml`](auth/docker-compose.yml) | [`auth/docker-compose.build.yml`](auth/docker-compose.build.yml) |
+| Learn lane | [`learn/docker-compose.yml`](learn/docker-compose.yml) | [`learn/docker-compose.build.yml`](learn/docker-compose.build.yml) |
 
 Build context for `*.build.yml` files is the **superrepo root** (required for `site/website/Dockerfile` and platform-spec git meta).
 
-Operator notes: [`COOLIFY.md`](COOLIFY.md), [`auth/COOLIFY.md`](auth/COOLIFY.md).
+Operator notes: [`COOLIFY.md`](COOLIFY.md), [`auth/COOLIFY.md`](auth/COOLIFY.md), [`learn/COOLIFY.md`](learn/COOLIFY.md).

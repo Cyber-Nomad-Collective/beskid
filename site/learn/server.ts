@@ -46,6 +46,10 @@ const BESKID_BINARY = process.env.BESKID_BINARY;
 const BESKID_CARGO_PKG = process.env.BESKID_CARGO_PKG ?? "beskid_cli";
 const BESKID_COMMAND_TIMEOUT_MS = Number(process.env.BESKID_COMMAND_TIMEOUT_MS ?? "25000");
 const REPO_ROOT = process.env.BESKID_REPO_ROOT ?? resolveRepoRoot();
+const BESKID_RUNTIME_PREFIX =
+  process.env.BESKID_RUNTIME_PREFIX ?? resolve(REPO_ROOT, "compiler", "target", "native-runtime-kit");
+const BESKID_RUNTIME_KIT_PROFILE = process.env.BESKID_RUNTIME_KIT_PROFILE ?? "debug";
+let runtimeKitBootstrapPromise: Promise<void> | null = null;
 
 function resolveRepoRoot(): string {
   const candidates = [
@@ -65,6 +69,76 @@ function resolveRepoRoot(): string {
   }
 
   return resolve(process.cwd(), "..");
+}
+
+function hostRuntimeTriple(): string | null {
+  const platform = process.platform;
+  const arch = process.arch;
+  if (platform === "linux" && arch === "x64") {
+    return "x86_64-unknown-linux-gnu";
+  }
+  if (platform === "darwin" && arch === "arm64") {
+    return "aarch64-apple-darwin";
+  }
+  if (platform === "win32" && arch === "x64") {
+    return "x86_64-pc-windows-msvc";
+  }
+
+  return null;
+}
+
+function runtimeKitMetadataPath(prefix: string): string | null {
+  const triple = hostRuntimeTriple();
+  if (triple) {
+    return resolve(prefix, "lib", "beskid-runtime", "abi-5", triple, "debug", "abi.json");
+  }
+  return null;
+}
+
+function hasRuntimeKit(prefix: string): boolean {
+  const metadataPath = runtimeKitMetadataPath(prefix);
+  return metadataPath !== null && existsSync(metadataPath);
+}
+
+function ensureRuntimeKitForRunCommand(): Promise<void> {
+  if (runtimeKitBootstrapPromise) {
+    return runtimeKitBootstrapPromise;
+  }
+
+  if (hasRuntimeKit(BESKID_RUNTIME_PREFIX)) {
+    return Promise.resolve();
+  }
+
+  runtimeKitBootstrapPromise = (async () => {
+    await new Promise<void>((resolve, reject) => {
+      const script = resolve(REPO_ROOT, "compiler", "scripts", "stage-native-runtime-kit.sh");
+      const proc = spawn(
+        "bash",
+        [script],
+        {
+          cwd: REPO_ROOT,
+          env: {
+            ...process.env,
+            BESKID_RUNTIME_PREFIX,
+            BESKID_RUNTIME_KIT_PROFILE,
+            BESKID_CLI_BIN:
+              BESKID_BINARY ?? resolve(REPO_ROOT, "compiler", "target", "release", "beskid"),
+          },
+        },
+      );
+
+      proc.once("error", (error) => reject(error));
+      proc.once("close", (code) => {
+        if (code === 0) {
+          resolve();
+        } else {
+          reject(new Error(`failed to stage runtime kit (exit ${code})`));
+        }
+      });
+    });
+  })();
+
+  return runtimeKitBootstrapPromise;
 }
 
 const exerciseById = new Map(learnExercises.map((exercise) => [exercise.id, exercise]));
@@ -133,7 +207,14 @@ function runCommand(cmd: string, args: string[], cwd: string, timeoutMs: number)
       resolve(value);
     };
 
-    const proc: ChildProcess = spawn(cmd, args, { cwd, env: process.env });
+    const proc: ChildProcess = spawn(cmd, args, {
+      cwd,
+      env: {
+        ...process.env,
+        BESKID_RUNTIME_PREFIX,
+        BESKID_RUNTIME_KIT_PROFILE,
+      },
+    });
 
     proc.stdout?.setEncoding("utf8");
     proc.stderr?.setEncoding("utf8");
@@ -221,6 +302,10 @@ async function runBeskidCheck(payload: CheckRequest): Promise<CheckResult> {
   const commandStart = Date.now();
   try {
     await writeFile(tempFile, payload.code);
+
+    if (command === "run") {
+      await ensureRuntimeKitForRunCommand();
+    }
 
     const { cmd, args } = resolveBeskidCommand(command, tempFile);
     const execResult = await runCommand(cmd, args, REPO_ROOT, BESKID_COMMAND_TIMEOUT_MS);
