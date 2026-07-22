@@ -1,31 +1,30 @@
 {
 	"name": "beskid",
 	"private": true,
-	"workspaces": [
-		"site/website",
-		"site/platform-spec"
-	],
-	"overrides": {
-		"uuid": "^14.0.0",
-		"devalue": "^5.8.1",
-		"@dagrejs/dagre": "^3.0.0",
-		"@dagrejs/graphlib": "^4.0.1"
+	"pnpm": {
+		"overrides": {
+			"uuid": "^14.0.0",
+			"devalue": "^5.8.1",
+			"@dagrejs/dagre": "^3.0.0",
+			"@dagrejs/graphlib": "^4.0.1"
+		}
 	},
 	"scripts": {
-		"install:all": "bun install",
-		"website": "bun --cwd site/website",
-		"openspec:catalog": "bun run scripts/openspec/build-catalog.ts",
-		"openspec:layouts": "bun run scripts/openspec/validate-layouts.ts",
-		"openspec:validate": "bun run scripts/openspec/validate-standard.ts && bun run scripts/openspec/validate-book-traceability.ts && bun run scripts/openspec/validate-layouts.ts && openspec validate --all --strict --no-interactive",
-		"test:shared-ui": "bun run --cwd=beskid_web_common test",
-		"test:nexus:unit": "bun run --cwd=beskid_nexus/gitnexus-web test:unit",
-		"test:nexus:e2e": "bun run --cwd=beskid_nexus/gitnexus-web test:e2e",
-		"test:nexus:e2e:install": "bun run --cwd=beskid_nexus/gitnexus-web test:e2e:install",
-		"test:nexus:gate": "bun run --cwd=beskid_nexus/gitnexus-web test:gate",
+		"install:all": "pnpm install",
+		"website": "pnpm --dir site/website run dev",
+		"openspec:catalog": "pnpm exec tsx scripts/openspec/build-catalog.ts",
+		"openspec:layouts": "pnpm exec tsx scripts/openspec/validate-layouts.ts",
+		"openspec:validate": "pnpm exec tsx scripts/openspec/validate-standard.ts && pnpm exec tsx scripts/openspec/validate-book-traceability.ts && pnpm exec tsx scripts/openspec/validate-layouts.ts && pnpm exec openspec validate --all --strict --no-interactive",
+		"test:shared-ui": "pnpm --dir beskid_web_common run test",
+		"test:nexus:unit": "pnpm --dir beskid_nexus/gitnexus-web run test:unit",
+		"test:nexus:e2e": "pnpm --dir beskid_nexus/gitnexus-web run test:e2e",
+		"test:nexus:e2e:install": "pnpm --dir beskid_nexus/gitnexus-web run test:e2e:install",
+		"test:nexus:gate": "pnpm --dir beskid_nexus/gitnexus-web run test:gate",
 		"gate:shared-ui-nexus": "bash scripts/ci/shared-ui-nexus-gate.sh"
 	},
 	"packageManager": "pnpm@10.17.1+sha512.17c560fca4867ae9473a3899ad84a88334914f379be46d455cbf92e5cf4b39d34985d452d2583baf19967fa76cb5c17bc9e245529d0b98745721aa7200ecaf7a",
 	"devDependencies": {
-		"@fission-ai/openspec": "1.4.1"
+		"@fission-ai/openspec": "1.4.1",
+		"tsx": "^4.20.6"
 	}
 }

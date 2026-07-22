@@ -27,7 +27,7 @@ Options:
   -h, --help       Show help
 
 Environment:
-  BESKID_SKIP_JS_INSTALL=1   Skip bun install at repo root
+  BESKID_SKIP_JS_INSTALL=1   Skip pnpm install at repo root
   BESKID_MANIFEST_URL        repo init -u URL (default: superrepo origin)
   BESKID_MANIFEST_BRANCH     Branch for manifests/default.xml (default: main)
 EOF
@@ -102,13 +102,14 @@ run_repo_sync() {
 
 run_js_install() {
   if [[ "${SKIP_JS}" == "1" ]]; then
-    note "Skipping bun install (BESKID_SKIP_JS_INSTALL=1)"
+    note "Skipping pnpm install (BESKID_SKIP_JS_INSTALL=1)"
     return 0
   fi
-  if ! command -v bun >/dev/null 2>&1; then
-    warn "bun not on PATH — run: ./scripts/install-deps.sh --install --tool bun"
+  if ! command -v corepack >/dev/null 2>&1; then
+    warn "corepack not on PATH — install a supported Node.js release"
     return 0
   fi
+  corepack enable
   if [[ -z "${NODE_AUTH_TOKEN:-}" && -f "${SUPERREPO_ROOT}/.env" ]]; then
     # shellcheck disable=SC1091
     set -a
@@ -118,9 +119,9 @@ run_js_install() {
   if [[ -z "${NODE_AUTH_TOKEN:-}" ]] && command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
     note "NODE_AUTH_TOKEN unset — run ./scripts/setup-npm-auth.sh for GitHub Packages"
   fi
-  section "Bun workspaces"
-  (cd "${SUPERREPO_ROOT}" && bun install)
-  ok "bun install complete"
+  section "pnpm workspaces"
+  (cd "${SUPERREPO_ROOT}" && pnpm install)
+  ok "pnpm install complete"
 }
 
 run_beskid_package_sync() {

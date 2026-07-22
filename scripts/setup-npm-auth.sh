@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Configure GitHub Packages auth for bun/npm using the gh CLI token.
+# Configure GitHub Packages auth for pnpm/npm using the gh CLI token.
 #
 # Writes ~/.npmrc (user scope) and root .env (gitignored, for tools that read it).
 # Project .npmrc keeps ${NODE_AUTH_TOKEN} for CI; local installs use ~/.npmrc.
@@ -78,4 +78,4 @@ echo "  user:   ${USER_NPMRC}"
 echo "  project: ${PROJECT_NPMRC} (uses \${NODE_AUTH_TOKEN} for CI)"
 echo "  env:    ${ENV_FILE} (gitignored)"
 echo ""
-echo "Run: bun install"
+echo "Run: pnpm install"

@@ -5,7 +5,7 @@
 #   ./scripts/sync-beskid-packages.sh
 #   ./scripts/sync-beskid-packages.sh beskid_tracker site/auth
 #
-# file: pins (local submodule links during pre-publish work) are skipped — bun update
+# file: pins (local submodule links during pre-publish work) are skipped — pnpm update
 # would otherwise try the registry and rewrite them. Revert to npm:@cyber-nomad-collective/...@^0.2.0
 # after publishing, then re-run this script.
 #
@@ -40,8 +40,8 @@ if [[ $# -gt 0 ]]; then
 	consumers=("$@")
 fi
 
-if ! command -v bun >/dev/null 2>&1; then
-	die "bun is required on PATH"
+if ! command -v pnpm >/dev/null 2>&1; then
+	die "pnpm is required on PATH (run: corepack enable)"
 fi
 
 pkg_has_spec() {
@@ -98,11 +98,11 @@ for rel in "${consumers[@]}"; do
 
 	if (
 		cd "${dir}"
-		bun update "${to_update[@]}"
+		pnpm update "${to_update[@]}"
 	); then
 		:
 	else
-		warn "  bun update failed for ${rel} (often missing NODE_AUTH_TOKEN for GitHub Packages) — continuing"
+		warn "  pnpm update failed for ${rel} (often missing NODE_AUTH_TOKEN for GitHub Packages) — continuing"
 	fi
 done
 
