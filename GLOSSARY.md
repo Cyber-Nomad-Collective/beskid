@@ -94,7 +94,7 @@ The process of turning preserved descriptive migration text into precise, indepe
 
 ## Staged promotion
 
-A delivery process that builds an artifact once, verifies and deploys its immutable digest to staging, then promotes the exact same digest to a protected production environment with smoke/SLO gates and rollback evidence.
+A delivery process that builds an artifact once, verifies and deploys its immutable digest to staging, then automatically promotes that exact digest to production after staging succeeds, with environment-scoped secrets, smoke/SLO gates, and rollback evidence.
 
 ## Typed Markdown directive
 

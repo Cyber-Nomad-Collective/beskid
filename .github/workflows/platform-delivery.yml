@@ -268,6 +268,23 @@ jobs:
       environment: staging
       manifest-run-id: ${{ format('{0}', github.run_id) }}
       # Auto-apply staging on every green push to main; dispatch keeps
-      # apply-staging for manual re-apply. Production stays promote-only.
+      # apply-staging for manual re-apply.
       apply: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.apply-staging) }}
+    secrets: inherit
+
+  production:
+    needs: [manifest, staging]
+    # Production can only consume the exact manifest after staging's full
+    # deploy, smoke, and rollback policy has succeeded in this same run.
+    if: ${{ !cancelled() && needs.manifest.result == 'success' && needs.staging.result == 'success' }}
+    permissions:
+      actions: read
+      contents: read
+      deployments: write
+      id-token: write
+    uses: ./.github/workflows/reusable-promote.yml
+    with:
+      environment: production
+      manifest-run-id: ${{ format('{0}', github.run_id) }}
+      apply: true
     secrets: inherit

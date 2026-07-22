@@ -16,11 +16,11 @@ The delivery pipeline SHALL publish immutable SHA-addressed artifacts with SBOM,
 
 #### Scenario: A release is promoted
 - **GIVEN** staging passed for a signed manifest
-- **WHEN** production approval is granted
+- **WHEN** the staging deployment, smoke checks, and rollback policy complete successfully
 - **THEN** production receives the identical image digests verified in staging
 
 ### Requirement: Staging and production are distinct protected environments
-The deployment system SHALL implement automatic staging deployment from main and protected production promotion with environment-specific secrets, URLs, policy gates, health checks, and rollback targets.
+The deployment system SHALL implement automatic staging deployment from main followed by automatic production promotion only after the same run's staging deployment, smoke checks, and rollback policy succeed. Production SHALL retain environment-specific secrets, URLs, policy gates, health checks, and rollback targets.
 
 #### Scenario: Production health check fails
 - **GIVEN** a previous healthy manifest exists
@@ -42,4 +42,3 @@ Production secret audits, deployment API calls, status polling, smoke checks, an
 - **GIVEN** a production deployment was requested
 - **WHEN** required secret-audit credentials are missing
 - **THEN** the workflow stops before deployment with a failing status
-
