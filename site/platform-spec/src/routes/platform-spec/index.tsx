@@ -24,6 +24,7 @@ function PlatformSpecHomePage() {
 			<SpecShell navTree={navTree} activeSlug="platform-spec">
 				<PlatformSpecHomeClient
 					catalog={catalog.entries.map((entry) => ({
+						capability: entry.capability,
 						slug: entry.slug,
 						href: entry.href,
 						title: entry.title,

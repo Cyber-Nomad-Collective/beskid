@@ -1,12 +1,14 @@
 "use client";
 
-import { FactsDagView, type FactsDagModel } from "@beskid/ui-react/graph";
-
+import { CompilerArchitectureMap } from "#/components/reader/compiler-architecture-map";
 import { useSpecViewMode } from "#/components/reader/spec-view-mode";
 import { Badge } from "#/components/ui-primitives";
+import { CompilerArchitectureManifest } from "#/lib/architecture/compiler-architecture";
+import { resolveArchitectureModel } from "#/lib/architecture/architecture-model";
 
 export interface PlatformSpecHomeClientProps {
 	catalog: Array<{
+		capability: string;
 		slug: string;
 		href: string;
 		title: string;
@@ -15,69 +17,6 @@ export interface PlatformSpecHomeClientProps {
 		pathClass: string;
 		domain: string | null;
 	}>;
-}
-
-function catalogToFactsDag(
-	catalog: PlatformSpecHomeClientProps["catalog"],
-): FactsDagModel {
-	const domains = new Map<string, { domain: string; count: number; href: string }>();
-	for (const entry of catalog) {
-		if (!entry.domain) continue;
-		const current = domains.get(entry.domain);
-		domains.set(entry.domain, {
-			domain: entry.domain,
-			count: (current?.count ?? 0) + 1,
-			href: current?.href ?? entry.href,
-		});
-	}
-
-	const rootId = "platform-spec-root";
-	const nodes: FactsDagModel["nodes"] = [
-		{
-			id: rootId,
-			kind: "Root",
-			label: "Platform specification",
-			location: { path: "openspec/specs", line: 1 },
-		},
-	];
-	const edges: FactsDagModel["edges"] = [];
-
-	for (const { domain, count } of domains.values()) {
-		const id = `domain:${domain}`;
-		nodes.push({
-			id,
-			kind: "Domain",
-			label: `${domain.replace(/-/g, " ")} (${count})`,
-			location: { path: `openspec/specs`, line: 1 },
-		});
-		edges.push({ from: rootId, to: id, label: "domain" });
-	}
-
-	if (nodes.length === 1) {
-		return {
-			nodes: [
-				...nodes,
-				{
-					id: "domain:compiler",
-					kind: "Domain",
-					label: "compiler",
-					location: { path: "openspec/specs", line: 1 },
-				},
-				{
-					id: "domain:language",
-					kind: "Domain",
-					label: "language",
-					location: { path: "openspec/specs", line: 1 },
-				},
-			],
-			edges: [
-				{ from: rootId, to: "domain:compiler", label: "domain" },
-				{ from: rootId, to: "domain:language", label: "domain" },
-			],
-		};
-	}
-
-	return { nodes, edges };
 }
 
 export function PlatformSpecHomeClient({
@@ -103,7 +42,10 @@ export function PlatformSpecHomeClient({
 		total: catalog.length,
 		features: catalog.length,
 	};
-	const mapModel = catalogToFactsDag(catalog);
+	const architectureModel = resolveArchitectureModel(
+		CompilerArchitectureManifest,
+		catalog.map(({ capability, href, title }) => ({ capability, href, title })),
+	);
 
 	return (
 		<div className="platform-spec-home mx-auto w-full max-w-6xl space-y-8 px-6 py-6">
@@ -148,25 +90,7 @@ export function PlatformSpecHomeClient({
 						</a>
 					))}
 				</div>
-			) : (
-				<section className="space-y-3">
-					<div>
-						<h2 className="text-lg font-semibold">Architecture map</h2>
-						<p className="text-sm text-muted-foreground">
-							Domain graph derived from the catalog. Click a node to open the
-							matching source path when an editor URL is available.
-						</p>
-					</div>
-					<FactsDagView
-						model={mapModel}
-						className="h-[420px]"
-						openInEditor={{
-							githubRepo: "Cyber-Nomad-Collective/beskid",
-							githubRef: "main",
-						}}
-					/>
-				</section>
-			)}
+			) : <CompilerArchitectureMap model={architectureModel} />}
 		</div>
 	);
 }

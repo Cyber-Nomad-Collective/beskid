@@ -28,12 +28,14 @@
 		"bun": ">=1.2.0"
 	},
 	"dependencies": {
+		"@dagrejs/dagre": "^3.0.0",
 		"@beskid/auth-client": "npm:@cyber-nomad-collective/beskid-auth-client@^0.2.9",
 		"@beskid/beskid-ui": "file:../../beskid_web_common/packages/beskid-ui",
 		"@beskid/server-observability": "npm:@cyber-nomad-collective/beskid-server-observability@^0.2.8",
 		"@beskid/ui-react": "file:../../beskid_web_common/packages/beskid-ui-react",
 		"@octokit/rest": "^22.0.1",
 		"@t3-oss/env-core": "^0.13.10",
+		"@xyflow/react": "^12.11.2",
 		"@tailwindcss/vite": "^4.1.18",
 		"@tanstack/react-query": "latest",
 		"@tanstack/react-router": "latest",
