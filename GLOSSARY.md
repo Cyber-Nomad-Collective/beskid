@@ -56,6 +56,10 @@ The exhaustive generated rule set that consumes typed AST shape plus AST semanti
 
 A stable `/platform-spec/**` path mapped through `openspec/catalog.json` to a canonical capability or requirement, preserving existing Book, Tracker, Nexus, and external links.
 
+## Managed object allocation
+
+The ABI-v5 operation that validates a descriptor-backed `BeskidAllocationRequest`, reserves and zeroes the requested storage, and installs the `BeskidObjectHeader` at the returned base address. Allocation makes the object eligible for descriptor and root-frame traversal but does not itself root the object.
+
 ## Native runtime kit
 
 The installed ABI-v5 target/profile directory containing `abi.json` and matching static and shared artifacts for the single hosted Beskid runtime. A kit is usable only when its ABI, target, profile, layouts, sources, symbols, and hashes exactly match the compiled program.

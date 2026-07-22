@@ -70,6 +70,29 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
+### Requirement: Manifest-derived ABI-v5 managed object allocation
+The canonical ABI-v5 runtime manifest SHALL declare `beskid_rt_v5_managed_object_allocate` with signature `(ptr) -> ptr`. Its request SHALL point to a `BeskidAllocationRequest` whose non-null `BeskidTypeDescriptor`, size, and alignment agree exactly; the canonical runtime MUST reject null, structurally invalid, mismatched, or unrepresentable requests before allocation. A successful call SHALL return the object-header base of one zeroed allocation, install the validated descriptor in `BeskidObjectHeader.descriptor`, initialize `BeskidObjectHeader.gc_word` to zero, and expose the object to the established descriptor and root-frame traversal model. The raw `system_allocate` intrinsic MUST remain private to canonical runtime Bootstrap source and MUST NOT become a generated-code allocation fallback.
+
+#### Scenario: Valid managed object request
+- **GIVEN** a canonical descriptor and allocation request with matching size and power-of-two alignment
+- **WHEN** generated lowering calls `beskid_rt_v5_managed_object_allocate`
+- **THEN** the runtime returns a zeroed object-header base whose descriptor and GC word match the ABI-v5 layout
+
+#### Scenario: Invalid managed object request
+- **GIVEN** a null request or a request whose descriptor, size, alignment, or pointer map violates the ABI-v5 contract
+- **WHEN** managed allocation validates the request
+- **THEN** it returns null without allocating, initializing a header, or exposing raw system allocation to generated code
+
+#### Scenario: Closure allocation shares the canonical implementation
+- **GIVEN** a closure allocation request accepted by the managed-object contract
+- **WHEN** `beskid_rt_v5_closure_environment_allocate` handles that request
+- **THEN** it delegates to the same managed-object allocation implementation and maintains no parallel validation, zeroing, or header-initialization path
+
+#### Scenario: Managed object rooting remains explicit
+- **GIVEN** a newly allocated managed object that must survive an allocation-capable operation
+- **WHEN** generated code retains the object across that operation
+- **THEN** it roots the object through manifest-approved root-frame authority before the operation rather than treating allocation alone as a root
+
 ### Requirement: Manifest-derived ABI-v5 closure environment helpers
 The canonical ABI-v5 runtime manifest SHALL declare `beskid_rt_v5_closure_environment_allocate` with signature `(ptr) -> ptr`, `beskid_rt_v5_closure_capture_store` with signature `(ptr, ptr, usize, ptr) -> u8`, and `beskid_rt_v5_closure_environment_root` with signature `(ptr, usize, ptr) -> u8`. The generated ABI JSON, C header, Rust bindings, runtime-kit allowlist, and canonical Bootstrap source SHALL agree on those exact names and signatures. Lowering MUST reject any closure-environment import absent from that manifest-derived contract.
 

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "bc626ddd949b27759dab93e664ea7e4d50fe3393bbba86a78e8ac40f8e0fe614",
+  "revision": "b9f49fde0c990d95287b18839ca9b56c86510b95979291a280d81fe4cdfcff36",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
     "capabilities": 185,
-    "requirements": 518,
+    "requirements": 519,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
@@ -18469,6 +18469,17 @@
           "status": "Standard",
           "normative": true,
           "migrationStatus": "extracted"
+        },
+        {
+          "id": "BSP-REQ-4E0095827A63",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/execution--abi-and-host--abi-versioning-and-compatibility/spec.md",
+          "sourceHash": "757ce82caf35281ea1d430b8656ab401ea1eaea4b2f4893a0ff41d3ea7c8fd73",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Manifest-derived ABI-v5 managed object allocation",
+          "anchor": "requirement-manifest-derived-abi-v5-managed-object-allocation"
         },
         {
           "id": "BSP-REQ-08DF40C72BD1",
@@ -38264,7 +38275,7 @@
       "path": "AGENTS.md",
       "title": "Beskid — Toolchain & Stack",
       "authority": "informative",
-      "sourceHash": "c41825b1d8f5f6ed5cfb20f7df3b5439ae04b3956cc241ca255a46aba749d006",
+      "sourceHash": "279868a27d686c70f455cf76ff6ef4e155147a02663eabf5c73851d6b85debf6",
       "standardLinks": [],
       "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"
@@ -38273,7 +38284,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "87ba2cf6e39c53723b896a2c6b597009207494817909491834acc5f49dee6a9f",
+      "sourceHash": "d6fd7cbca6ae33f5d1534c1d935e3c5efb3e09fa7021be644374715c72915c25",
       "standardLinks": [
         "/platform-spec/"
       ],

@@ -93,6 +93,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Specify the manifest-derived ABI-v5 managed-object allocation boundary, including
+  fail-closed descriptor validation, single-path closure delegation, zeroed header
+  initialization, and explicit root-frame ownership (CYB-157).
 - Platform Spec now presents an informative, immutable compiler architecture map with canonical OpenSpec links, evidence details, and build, IDE, and specification-to-code traversals.
 - Platform Spec navigation now uses one searchable, highlighted specification tree with independently scrolling desktop and mobile reader surfaces.
 - Compiler W1/W2 acceptance: production parsed-project harness covers inline methods, capture
