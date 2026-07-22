@@ -1,0 +1,10 @@
+i32 is_positive(i32 value) {
+  if value > 0 {
+    return 1;
+  }
+  return 0;
+}
+
+i32 Main() {
+  return is_positive(7);
+}

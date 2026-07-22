@@ -1,0 +1,12 @@
+i32 is_even(i32 n) {
+  if n % 2 == 0 {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+i32 Main() {
+  i32 value = is_even(3);
+  return value;
+}

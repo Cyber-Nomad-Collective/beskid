@@ -107,6 +107,7 @@ An immutable graph that remains usable for exploration: pointer, touch, and keyb
 ## word
 
 The lowercase Beskid source primitive for an unsigned pointer-width machine value. `word` maps to the target native integer during semantic typing and ISLE lowering; ABI-v5 manifests and generated headers retain `usize` as their wire/layout term.
+
 ## Tracker delivery relation
 
 A typed Nexus edge from a Tracker entity to an OpenSpec standard identifier. Its graph identity includes both the Tracker ID and catalog revision, so a link cannot be silently reused against a different catalog revision.

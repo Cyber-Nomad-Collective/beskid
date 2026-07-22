@@ -1,0 +1,39 @@
+{
+  "name": "Beskid Learn",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "remoteUser": "vscode",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/rust:1": {
+      "version": "stable"
+    }
+  },
+  "onCreateCommand": "git config --global --add safe.directory /workspaces/beskid",
+  "postCreateCommand": "cd /workspaces/beskid && corepack enable && corepack prepare pnpm@10.14.0 --activate && (cd compiler && cargo build -p beskid_cli --release) && (BESKID_RUNTIME_PREFIX=\"/workspaces/beskid/compiler/target/native-runtime-kit\" BESKID_RUNTIME_KIT_PROFILE=debug BESKID_CLI_BIN=/workspaces/beskid/compiler/target/release/beskid ./compiler/scripts/stage-native-runtime-kit.sh) && (cd site/learn && pnpm install)",
+  "workspaceFolder": "/workspaces/beskid",
+  "forwardPorts": [4173],
+  "portsAttributes": {
+    "4173": {
+      "label": "learn.beskid-ui",
+      "onAutoForward": "notify"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "ms-azuretools.vscode-docker",
+        "GitHub.copilot"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  "remoteEnv": {
+    "BESKID_REPO_ROOT": "/workspaces/beskid"
+  },
+  "postAttachCommand": "printf 'Ready to start!\\nUse: cd /workspaces/beskid && just learn-server (local check API) or pnpm run dev in site/learn.\\nIf run checks still fail, stage the runtime kit with: BESKID_RUNTIME_PREFIX=/workspaces/beskid/compiler/target/native-runtime-kit BESKID_RUNTIME_KIT_PROFILE=debug BESKID_CLI_BIN=/workspaces/beskid/compiler/target/release/beskid ./compiler/scripts/stage-native-runtime-kit.sh\\n'"
+}

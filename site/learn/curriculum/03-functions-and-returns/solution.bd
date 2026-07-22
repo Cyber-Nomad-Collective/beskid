@@ -1,0 +1,11 @@
+i32 add(i32 a, i32 b) {
+  return a + b;
+}
+
+i32 Main() {
+  i32 sum = add(1, 2);
+  if sum == 3 {
+    return 0;
+  }
+  return 1;
+}
