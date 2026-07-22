@@ -75,6 +75,8 @@ export default defineConfig({
 			"input-otp",
 			"@base-ui/react",
 			"jose",
+			"@dagrejs/dagre",
+			"@dagrejs/graphlib",
 		],
 		alias: packageAliases,
 	},

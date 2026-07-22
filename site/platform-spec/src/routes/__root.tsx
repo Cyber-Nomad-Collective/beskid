@@ -5,6 +5,7 @@ import {
 	createRootRoute,
 } from "@tanstack/react-router";
 
+import { RootSpecRouteError } from "#/components/spec-route-error";
 import { ThemeProvider } from "#/components/theme-provider";
 import { observabilityMiddleware } from "#/server/observability-middleware";
 import appCss from "#/styles.css?url";
@@ -23,6 +24,7 @@ export const Route = createRootRoute({
 	}),
 	component: RootComponent,
 	shellComponent: RootDocument,
+	errorComponent: RootSpecRouteError,
 });
 
 function RootComponent() {

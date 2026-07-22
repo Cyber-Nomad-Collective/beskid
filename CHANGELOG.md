@@ -9,6 +9,15 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Fixed
+
+- Platform-spec Map / Facts DAG no longer crashes with `gm.Graph is not a constructor`
+  when root lockfile hoists `@dagrejs/dagre@1.x` over ui-react's v3 named `Graph`
+  export; pin override to `^3.0.0` and resolve Graph fail-closed in shared layout.
+- Platform-spec route errors now use a Tracker-style error panel (friendly message,
+  try-again / home actions, hide/show technical details) instead of TanStack's bare
+  "Something went wrong! Hide Error" CatchBoundary.
+
 ### Changed
 
 - OpenSpec task 2.1 closed: generation-bound indexed semantic facts cover resolution,

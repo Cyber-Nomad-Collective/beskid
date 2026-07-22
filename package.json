@@ -7,7 +7,9 @@
 	],
 	"overrides": {
 		"uuid": "^14.0.0",
-		"devalue": "^5.8.1"
+		"devalue": "^5.8.1",
+		"@dagrejs/dagre": "^3.0.0",
+		"@dagrejs/graphlib": "^4.0.1"
 	},
 	"scripts": {
 		"install:all": "bun install",
