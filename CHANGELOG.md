@@ -20,6 +20,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Compiler CI now runs the native Windows ABI-v5 runtime-kit debug/release matrix, including
+  COFF import-library checks and exact installed-prefix JIT/AOT smoke tests (CYB-112, CYB-116).
 - Successful staging deployment now automatically promotes the exact release manifest to production; production retains environment-scoped secrets, smoke checks, and rollback behavior.
 - OpenSpec task 2.1 closed: generation-bound indexed semantic facts cover resolution,
   typing, calls, casts, control flow, captures, legality, spans, bodies, and
