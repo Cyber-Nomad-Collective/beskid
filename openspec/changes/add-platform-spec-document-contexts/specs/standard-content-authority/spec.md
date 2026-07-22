@@ -11,41 +11,41 @@ specification. A feature MAY own only informative documents at
 `openspec/documents/platform-spec/<feature>/decisions/<number>-<slug>.md`.
 
 Taxonomy hubs MUST NOT be cited as an implemented guarantee merely because
-they organize a domain or area. The feature specification remains the sole
-normative authority for its requirements; its articles and decisions MUST NOT
-redefine standard behavior.
+they organize a domain or area. A feature specification remains the sole
+normative authority for its requirements; associated articles and decisions
+MUST NOT redefine standard behavior.
 
 #### Scenario: A feature article is published
 
-- **GIVEN** an article is added for `compiler--front-end--parser`
+- **GIVEN** an article is added for an existing feature
 - **WHEN** its document identity is resolved
-- **THEN** its canonical path is under
-  `openspec/documents/platform-spec/compiler--front-end--parser/articles/`, its
-  parent is the parser feature, and its authority is informative
+- **THEN** its canonical path is under that feature's `articles` directory, its
+  parent is that feature, and its authority is informative
 
 #### Scenario: A taxonomy hub is rendered
 
 - **GIVEN** a reader follows a taxonomy domain or area link
-- **WHEN** the Platform Spec renders the hub
-- **THEN** it presents the hub as provisional organization and does not treat it
-  as a feature-level conformance guarantee
+- **WHEN** Platform Spec renders the hub
+- **THEN** it presents the hub as provisional organization and not as a
+  feature-level conformance guarantee
 
 ### Requirement: Platform Spec catalog identities are revisioned and validated
 
-The OpenSpec catalog SHALL record each Platform Spec document's canonical path,
-kind, title, parent capability, authority, disposition, and source hash. A
-Platform Spec draft SHALL record its immutable catalog `baseRevision` when the
-draft is created. The server MUST reject a draft whose base revision differs
-from the current catalog revision, and MUST NOT silently rewrite or re-base it.
+The OpenSpec catalog SHALL record every Platform Spec taxonomy hub, feature
+specification, article, and decision with its canonical path, kind, title,
+parent capability, authority, disposition, and source hash. A Platform Spec
+draft SHALL record its immutable catalog `baseRevision` when the draft is
+created. The server MUST reject a draft whose base revision differs from the
+current catalog revision, and MUST NOT silently rewrite or re-base it.
 
 Catalog generation and Platform Spec server-side validation SHALL reject an
-unknown document kind, an invalid canonical path, a parent mismatch, or a
-feature document that is not informative.
+unknown document kind, an invalid canonical path, a parent mismatch, a
+non-informative article or decision, or a malformed `baseRevision`.
 
 #### Scenario: A document kind is unknown
 
 - **GIVEN** a catalog record names a Platform Spec document kind other than
-  `article` or `decision`
+  `taxonomy-domain`, `taxonomy-area`, `feature`, `article`, or `decision`
 - **WHEN** catalog or server-side validation runs
 - **THEN** validation rejects the record before it is published or proposed in
   a pull request

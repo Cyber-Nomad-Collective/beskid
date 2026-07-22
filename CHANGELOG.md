@@ -9,12 +9,6 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
-### Added
-
-- Define first-class Platform Spec document contexts: canonical taxonomy,
-  feature, article, and decision paths; revisioned draft bases; catalog
-  identity metadata; and validation of document kinds and ownership.
-
 ### Fixed
 
 - Platform-spec Map / Facts DAG no longer crashes with `gm.Graph is not a constructor`
