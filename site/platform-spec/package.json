@@ -2,7 +2,7 @@
 	"name": "beskid-platform-spec",
 	"private": true,
 	"type": "module",
-	"packageManager": "bun@1.3.14",
+	"packageManager": "pnpm@10.17.1",
 	"imports": {
 		"#/*": "./src/*"
 	},

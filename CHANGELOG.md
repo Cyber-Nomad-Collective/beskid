@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Align Platform Spec's workspace package-manager declaration with pnpm, pin
+  the pckg workspace root, and make package refresh explicitly skip the
+  temporarily Bun-only Auth application.
 - Platform-spec Map / Facts DAG no longer crashes with `gm.Graph is not a constructor`
   when root lockfile hoists `@dagrejs/dagre@1.x` over ui-react's v3 named `Graph`
   export; pin override to `^3.0.0` and resolve Graph fail-closed in shared layout.
