@@ -2,7 +2,7 @@ import type { Octokit } from "@octokit/rest";
 import "@tanstack/react-start/server-only";
 
 import { env } from "#/env.server";
-import { loadOpenSpecCatalog } from "#/server/openspec/reader";
+import { loadOpenSpecCatalog, resolveOpenSpecRoot } from "#/server/openspec/reader";
 
 export interface OpenSpecEdit {
 	path: string;
@@ -147,7 +147,7 @@ export async function openOpenSpecEditPullRequest(
 	octokit: Octokit,
 ): Promise<OpenSpecPullRequest> {
 	assertBatch(input);
-	const catalog = loadOpenSpecCatalog();
+	const catalog = loadOpenSpecCatalog(resolveOpenSpecRoot());
 	if (input.sourceRevision !== catalog.revision) {
 		throw new Error("catalog revision conflict");
 	}
