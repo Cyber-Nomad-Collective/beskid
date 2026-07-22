@@ -53,6 +53,12 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   Corelib path matching needed by the Corelib gate.
 - Pin compiler tip that reads interop enum tags unaligned, ignores retired HIR lower_program beskid_tests, and audits static kits with verify_static_archive for Linux TLS (unblocks Rust gate).
 - Pin compiler tip requiring exact-kit `beskid_rt_v5_closure_environment_root_current` provenance and Darwin arm64 JIT fail-closed closure allocate/root evidence (CYB-131 under CYB-79/CYB-109).
+- Pin compiler tip allowing soft builtins in exact ABI-v5 JIT validation so
+  Corelib tests clearing ISLE are not rejected for `interop_dispatch_*` kit
+  allowlist absence.
+- Pin compiler tip that lexically normalizes Corelib service source paths so
+  materialized Foundation `Testing/Assert.bd` retains `__panic_str` CorelibService
+  provenance without granting authority to user-project symlinks (Corelib gate).
 - Pin compiler tip aligning unresolved reachability semantic_facts with direct_callees skip policy.
 - Pin compiler tip restoring fail-closed unresolved Path call_lowering while keeping Extern contract Direct.
 - Pin compiler tip regenerating abi-v5 artifacts after Bootstrap CYB-129 ValidatePointerMap guards.
