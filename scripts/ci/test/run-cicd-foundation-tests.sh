@@ -20,6 +20,7 @@ done
 
 "${root}/scripts/ci/test/run-distribute-workflow-contract-tests.sh"
 bash "${root}/scripts/ci/test/delivery-contract.test.sh"
+bash "${root}/scripts/ci/test/post-deploy-smoke.test.sh"
 bash "${root}/scripts/ci/test/shared-ui-nexus-gate-contract.test.sh"
 
 # CoreLib workspace member aliases intentionally differ from registry package
