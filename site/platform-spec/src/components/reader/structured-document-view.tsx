@@ -157,7 +157,7 @@ export function StructuredDocumentView({
 	) : null;
 
 	return (
-		<article className="spec-document-view mx-auto w-full max-w-5xl px-6 py-8">
+		<article className="spec-document-view mx-auto w-full min-w-0 max-w-5xl px-6 py-8">
 			<div className="mb-4 flex justify-end">
 				{showEditLink ? (
 					<Link

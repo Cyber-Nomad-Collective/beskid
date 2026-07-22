@@ -9,8 +9,8 @@ import { BeskidHub } from "#/components/ui-primitives";
 export function ReaderChrome({ children }: { children: ReactNode }) {
 	return (
 		<SpecViewModeProvider>
-			<div className="reader-layout flex min-h-screen flex-col">
-				<header className="spec-topbar sticky top-0 z-20 flex h-12 items-center gap-3 border-b border-border/80 bg-background/90 px-4 backdrop-blur">
+			<div className="reader-layout flex h-dvh overflow-hidden flex-col">
+				<header className="spec-topbar z-20 flex h-12 shrink-0 items-center gap-3 border-b border-border/80 bg-background/90 px-4 backdrop-blur">
 					<BeskidHub />
 					<Link
 						to="/platform-spec/$"
@@ -21,7 +21,7 @@ export function ReaderChrome({ children }: { children: ReactNode }) {
 					</Link>
 					<ReaderTopBarActions />
 				</header>
-				<div className="min-h-0 flex-1">{children}</div>
+				<div className="min-h-0 flex-1 overflow-hidden">{children}</div>
 			</div>
 		</SpecViewModeProvider>
 	);

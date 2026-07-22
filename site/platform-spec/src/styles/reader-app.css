@@ -50,6 +50,7 @@ body {
 }
 
 .spec-prose :is(p, ul, ol, pre, table) {
+	max-width: 100%;
 	margin: 0.85em 0;
 	line-height: 1.65;
 }
@@ -70,11 +71,16 @@ body {
 }
 
 .spec-prose code {
+	overflow-x: auto;
+	max-width: 100%;
 	font-size: 0.9em;
 }
 
 .spec-prose table {
+	display: block;
+	overflow-x: auto;
 	width: 100%;
+	max-width: 100%;
 	border-collapse: collapse;
 	font-size: 0.9rem;
 }
