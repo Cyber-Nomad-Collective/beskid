@@ -38,14 +38,32 @@ draft SHALL record its immutable catalog `baseRevision` when the draft is
 created. The server MUST reject a draft whose base revision differs from the
 current catalog revision, and MUST NOT silently rewrite or re-base it.
 
+For a catalog record, `parent capability` SHALL identify the complete document
+hierarchy: a `taxonomy-domain` record SHALL have the Platform Spec top level as
+its parent; a `taxonomy-area` record SHALL have the taxonomy-domain hub for its
+domain as its parent; a `feature` record SHALL have the taxonomy-area hub for
+its domain and area as its parent; and an `article` or `decision` record SHALL
+have an existing feature specification as its parent. No other parent
+capability value is valid for those kinds.
+
 Catalog generation and Platform Spec server-side validation SHALL reject an
-unknown document kind, an invalid canonical path, a parent mismatch, a
-non-informative article or decision, or a malformed `baseRevision`.
+unknown document kind, an invalid canonical path, a missing or invalid parent
+capability for the record kind, a non-informative article or decision, or a
+malformed `baseRevision`.
 
 #### Scenario: A document kind is unknown
 
 - **GIVEN** a catalog record names a Platform Spec document kind other than
   `taxonomy-domain`, `taxonomy-area`, `feature`, `article`, or `decision`
+- **WHEN** catalog or server-side validation runs
+- **THEN** validation rejects the record before it is published or proposed in
+  a pull request
+
+#### Scenario: A document has an invalid parent capability
+
+- **GIVEN** a catalog record has a parent capability other than the top level
+  for a taxonomy-domain, its domain hub for a taxonomy-area, its area hub for a
+  feature, or an existing feature specification for an article or decision
 - **WHEN** catalog or server-side validation runs
 - **THEN** validation rejects the record before it is published or proposed in
   a pull request
