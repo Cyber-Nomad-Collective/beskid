@@ -59,6 +59,22 @@ corelib_report_step() {
   return "${rc}"
 }
 
+corelib_run_bounded_phase() {
+  local label="$1"
+  local timeout_seconds="$2"
+  shift 2
+
+  echo "==> ${label} (timeout: ${timeout_seconds}s)"
+  set +e
+  timeout --kill-after=60s "${timeout_seconds}" "$@"
+  local rc=$?
+  set -e
+  if [[ "${rc}" -eq 124 ]]; then
+    echo "::error::${label} exceeded its ${timeout_seconds}s hard cap; failing with phase evidence." >&2
+  fi
+  return "${rc}"
+}
+
 corelib_sanitize_diagnostic_tail() {
   local log="$1"
   tail -n 40 "${log}" 2>/dev/null | sed -E \
@@ -358,12 +374,18 @@ corelib_report_step "resolve Corelib workspace" corelib_resolve_workspace
 corelib_report_step "quality checks" corelib_quality_checks
 corelib_report_step "resolve Corelib test inputs" corelib_prepare_test_inputs
 cd "${COMPILER_ROOT}"
-corelib_report_step "build beskid_cli (release)" cargo build -p beskid_cli --release
+corelib_report_step "build beskid_cli (release)" \
+  corelib_run_bounded_phase "build beskid_cli (release)" "${CORELIB_CLI_BUILD_TIMEOUT:-900}" \
+  cargo build -p beskid_cli --release
 
 CLI="${COMPILER_ROOT}/target/release/beskid_cli"
 export BESKID_CLI_BIN="${CLI}"
 export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${COMPILER_ROOT}/target}/native-runtime-kit}"
 export BESKID_RUNTIME_KIT_PROFILE=release
-corelib_report_step "stage native runtime kit" bash scripts/stage-native-runtime-kit.sh
+corelib_report_step "stage native runtime kit" \
+  corelib_run_bounded_phase "stage native runtime kit" "${CORELIB_RUNTIME_KIT_TIMEOUT:-900}" \
+  bash scripts/stage-native-runtime-kit.sh
 cd "${TESTS_DIR}"
-corelib_report_step "run Corelib tests" "$CLI" test --project "${TESTS_MANIFEST}" --all-targets --plain
+corelib_report_step "run Corelib tests" \
+  corelib_run_bounded_phase "run Corelib tests" "${CORELIB_TEST_TIMEOUT:-1800}" \
+  "$CLI" test --project "${TESTS_MANIFEST}" --all-targets --plain

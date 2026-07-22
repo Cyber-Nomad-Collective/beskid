@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Corelib CI now bounds release CLI build, native runtime-kit staging, and test execution with
+  explicit phase markers while retaining sanitized per-step failure reports (CYB-87).
 - Platform-spec Map / Facts DAG no longer crashes with `gm.Graph is not a constructor`
   when root lockfile hoists `@dagrejs/dagre@1.x` over ui-react's v3 named `Graph`
   export; pin override to `^3.0.0` and resolve Graph fail-closed in shared layout.
