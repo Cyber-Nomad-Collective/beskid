@@ -12,11 +12,12 @@ export interface OpenSpecNavNode {
 	slug: string;
 	href: string;
 	title: string;
-	level: "root" | "domain" | "area" | "feature" | "article";
+	level: "root" | "domain" | "area" | "feature" | "article" | "decision";
 	children?: OpenSpecNavNode[];
 }
 
 export interface FeatureNode {
+	documentKey: string;
 	capability: string;
 	id: string;
 	slug: string;
@@ -31,6 +32,7 @@ export interface FeatureNode {
 }
 
 export interface AreaNode {
+	documentKey: string;
 	area: string;
 	title: string;
 	slug: string;
@@ -39,6 +41,7 @@ export interface AreaNode {
 }
 
 export interface DomainNode {
+	documentKey: string;
 	domain: string;
 	title: string;
 	slug: string;
@@ -54,76 +57,76 @@ export interface DomainAreaFeatureModel {
 	featureCount: number;
 }
 
-function titleCase(value: string): string {
-	return value
-		.replace(/-/g, " ")
-		.replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
-
-function domainOf(entry: OpenSpecCatalogEntry): string {
-	return entry.domain ?? entry.capability.split("--")[0] ?? "standard";
-}
-
-function areaOf(entry: OpenSpecCatalogEntry): string {
-	return entry.area ?? entry.capability.split("--")[1] ?? "general";
-}
-
-function featureOf(entry: OpenSpecCatalogEntry): string {
-	return entry.feature ?? entry.capability.split("--").at(-1) ?? entry.capability;
-}
-
 export function buildDomainModel(
 	catalog: OpenSpecCatalog,
 ): DomainAreaFeatureModel {
-	const domains = new Map<string, Map<string, FeatureNode[]>>();
-
-	for (const entry of catalog.entries) {
-		const domain = domainOf(entry);
-		const area = areaOf(entry);
-		const areas = domains.get(domain) ?? new Map<string, FeatureNode[]>();
-		const features = areas.get(area) ?? [];
-		features.push({
-			capability: entry.capability,
-			id: entry.id,
-			slug: entry.slug,
-			href: entry.href,
-			title: entry.title,
-			specLevel: entry.specLevel,
-			status: entry.status,
-			domain,
-			area,
-			feature: featureOf(entry),
-			requirementCount: entry.requirements.length,
-		});
-		areas.set(area, features);
-		domains.set(domain, areas);
-	}
-
-	let areaCount = 0;
-	let featureCount = 0;
-	const domainNodes: DomainNode[] = [...domains.entries()].map(
-		([domain, areas]) => {
-			const areaNodes: AreaNode[] = [...areas.entries()].map(
-				([area, features]) => {
-					areaCount += 1;
-					featureCount += features.length;
+	const featureDocuments = catalog.documents.filter(
+		(document) => document.kind === "feature",
+	);
+	const areaDocuments = catalog.documents.filter(
+		(document) => document.kind === "taxonomy-area",
+	);
+	const domainNodes: DomainNode[] = catalog.documents
+		.filter((document) => document.kind === "taxonomy-domain")
+		.map((domainDocument) => {
+			const areaNodes: AreaNode[] = areaDocuments
+				.filter(
+					(areaDocument) =>
+						areaDocument.parentCapability === domainDocument.capability,
+				)
+				.map((areaDocument) => {
+					const features: FeatureNode[] = featureDocuments
+						.filter(
+							(featureDocument) =>
+								featureDocument.parentCapability === areaDocument.capability,
+						)
+						.map((featureDocument) => ({
+							documentKey: featureDocument.key,
+							capability: featureDocument.capability,
+							id: featureDocument.id,
+							slug: featureDocument.slug,
+							href: featureDocument.href,
+							title: featureDocument.title,
+							specLevel: featureDocument.specLevel,
+							status: featureDocument.status,
+							domain: featureDocument.domain,
+							area: featureDocument.area,
+							feature: featureDocument.feature,
+							requirementCount: featureDocument.requirements.length,
+						}))
+						.sort((left, right) => left.title.localeCompare(right.title));
 					return {
-						area,
-						title: titleCase(area),
-						slug: `platform-spec/domain/${domain}/${area}`,
-						href: features[0]?.href ?? "/platform-spec/",
+						documentKey: areaDocument.key,
+						area: areaDocument.area,
+						title: areaDocument.title,
+						slug: areaDocument.slug,
+						href: areaDocument.href,
 						features,
 					};
-				},
-			);
+				})
+				.sort((left, right) => left.title.localeCompare(right.title));
 			return {
-				domain,
-				title: titleCase(domain),
-				slug: `platform-spec/domain/${domain}`,
-				href: areaNodes[0]?.features[0]?.href ?? "/platform-spec/",
+				documentKey: domainDocument.key,
+				domain: domainDocument.domain,
+				title: domainDocument.title,
+				slug: domainDocument.slug,
+				href: domainDocument.href,
 				areas: areaNodes,
 			};
-		},
+		})
+		.sort((left, right) => left.title.localeCompare(right.title));
+	const areaCount = domainNodes.reduce(
+		(count, domain) => count + domain.areas.length,
+		0,
+	);
+	const featureCount = domainNodes.reduce(
+		(count, domain) =>
+			count +
+			domain.areas.reduce(
+				(areaTotal, area) => areaTotal + area.features.length,
+				0,
+			),
+		0,
 	);
 
 	return {
@@ -137,6 +140,14 @@ export function buildDomainModel(
 
 export function buildNavTree(catalog: OpenSpecCatalog): OpenSpecNavNode {
 	const model = buildDomainModel(catalog);
+	const childDocuments = new Map<string, OpenSpecCatalogEntry[]>();
+	for (const document of catalog.documents.filter(
+		(document) => document.kind === "article" || document.kind === "decision",
+	)) {
+		const children = childDocuments.get(document.parentCapability) ?? [];
+		children.push(document);
+		childDocuments.set(document.parentCapability, children);
+	}
 	return {
 		slug: "platform-spec",
 		href: "/platform-spec/",
@@ -157,6 +168,15 @@ export function buildNavTree(catalog: OpenSpecCatalog): OpenSpecNavNode {
 					href: feature.href,
 					title: feature.title,
 					level: "feature",
+					children: (childDocuments.get(feature.capability) ?? [])
+						.sort((left, right) => left.title.localeCompare(right.title))
+						.map((document) => ({
+							slug: document.slug,
+							href: document.href,
+							title: document.title,
+							level:
+								document.kind === "article" ? "article" : "decision",
+						})),
 				})),
 			})),
 		})),

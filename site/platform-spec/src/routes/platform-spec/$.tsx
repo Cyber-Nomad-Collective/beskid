@@ -86,8 +86,8 @@ function PlatformSpecDocument() {
 		layoutValidation,
 	} = Route.useLoaderData();
 
-	const adrs = catalog.entries
-		.filter((entry) => entry.specLevel === "adr" && entry.parentSlug === slug)
+	const adrs = catalog.documents
+		.filter((entry) => entry.kind === "decision" && entry.parentSlug === slug)
 		.map((entry) => ({ href: entry.href, title: entry.title }));
 
 	return (

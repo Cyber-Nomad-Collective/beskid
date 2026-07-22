@@ -23,16 +23,18 @@ function PlatformSpecHomePage() {
 		<ReaderChrome>
 			<SpecShell navTree={navTree} activeSlug="platform-spec">
 				<PlatformSpecHomeClient
-					catalog={catalog.entries.map((entry) => ({
-						capability: entry.capability,
-						slug: entry.slug,
-						href: entry.href,
-						title: entry.title,
-						description: entry.description,
-						status: entry.status,
-						pathClass: entry.pathClass,
-						domain: entry.domain,
-					}))}
+					catalog={catalog.documents
+						.filter((entry) => entry.kind === "feature")
+						.map((entry) => ({
+							capability: entry.capability,
+							slug: entry.slug,
+							href: entry.href,
+							title: entry.title,
+							description: entry.description,
+							status: entry.status,
+							pathClass: entry.pathClass,
+							domain: entry.domain,
+						}))}
 				/>
 			</SpecShell>
 		</ReaderChrome>

@@ -6,6 +6,14 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { createHash } from "node:crypto";
+
+import {
+	resolveDocumentIdentityFromPath,
+	type SpecDocumentIdentity,
+	type SpecDocumentKind,
+} from "#/lib/spec/document-identity";
+
 export interface OpenSpecRequirement {
 	id: string;
 	anchor: string;
@@ -13,8 +21,11 @@ export interface OpenSpecRequirement {
 	markdown: string;
 }
 
-export interface OpenSpecCatalogEntry {
+interface OpenSpecCatalogDocumentBase {
 	id: string;
+	kind: SpecDocumentKind;
+	identity: SpecDocumentIdentity;
+	key: string;
 	capability: string;
 	slug: string;
 	href: string;
@@ -23,10 +34,21 @@ export interface OpenSpecCatalogEntry {
 	status: string | null;
 	pathClass: string;
 	specLevel: string;
+	layout: string;
+	canonicalPath: string;
+	parentCapability: string;
 	parentSlug: string | null;
-	domain: string | null;
+	authority: "normative" | "informative";
+	disposition:
+		| "provisional-taxonomy"
+		| "normative-standard"
+		| "informative-by-policy";
+	sourceHash: string;
+	domain: string;
 	area: string | null;
 	feature: string | null;
+	article: string | null;
+	decision: string | null;
 	specPath: string;
 	legacySlugs: string[];
 	/** Informative Book guides; OpenSpec remains the normative source. */
@@ -34,11 +56,45 @@ export interface OpenSpecCatalogEntry {
 	requirements: OpenSpecRequirement[];
 }
 
+export type OpenSpecCatalogDocument =
+	| (OpenSpecCatalogDocumentBase & {
+			kind: "taxonomy-domain";
+			area: null;
+			feature: null;
+	  })
+	| (OpenSpecCatalogDocumentBase & {
+			kind: "taxonomy-area";
+			area: string;
+			feature: null;
+	  })
+	| (OpenSpecCatalogDocumentBase & {
+			kind: "feature";
+			area: string;
+			feature: string;
+	  })
+	| (OpenSpecCatalogDocumentBase & {
+			kind: "article";
+			area: string;
+			feature: string;
+			article: string;
+	  })
+	| (OpenSpecCatalogDocumentBase & {
+			kind: "decision";
+			area: string;
+			feature: string;
+			decision: string;
+	  });
+
+/** @deprecated Prefer OpenSpecCatalogDocument and filter by its kind. */
+export type OpenSpecCatalogEntry = OpenSpecCatalogDocument;
+
 export interface OpenSpecCatalog {
 	version: number;
 	revision: string;
 	generatedAt: string;
-	entries: OpenSpecCatalogEntry[];
+	documents: OpenSpecCatalogDocument[];
+	/** Compatibility alias to the canonical document list. */
+	entries: OpenSpecCatalogDocument[];
 }
 
 type UnknownRecord = Record<string, unknown>;
@@ -62,6 +118,10 @@ function capabilityTitle(capability: string): string {
 	return (capability.split("--").at(-1) ?? capability)
 		.replace(/-/g, " ")
 		.replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function sha256(value: string): string {
+	return createHash("sha256").update(value).digest("hex");
 }
 
 export function anchorFor(title: string): string {
@@ -172,6 +232,40 @@ function discoverCapabilities(specsRoot: string): UnknownRecord[] {
 		}));
 }
 
+function artifactInputForCapability(
+	raw: UnknownRecord,
+): SpecDocumentIdentity | null {
+	const capability =
+		asString(raw.capability) ?? asString(raw.stableId) ?? asString(raw.id);
+	if (!capability) return null;
+	const parts = capability.split("--");
+	const declaredLevel = asString(raw.specLevel);
+	if (capability.startsWith("taxonomy--")) {
+		return resolveDocumentIdentityFromPath(
+			`openspec/specs/${capability}/spec.md`,
+		);
+	}
+	if (declaredLevel === "domain") {
+		throw new Error(
+			`domain artifact must use taxonomy--<domain>: ${capability}`,
+		);
+	}
+	if (declaredLevel === "area") {
+		throw new Error(
+			`area artifact must use taxonomy--<domain>--<area>: ${capability}`,
+		);
+	}
+	if (declaredLevel === "article" || declaredLevel === "adr") {
+		throw new Error(
+			`${declaredLevel} artifacts must use openspec/documents/platform-spec: ${capability}`,
+		);
+	}
+	if (parts.length !== 3) return null;
+	return resolveDocumentIdentityFromPath(
+		`openspec/specs/${capability}/spec.md`,
+	);
+}
+
 function entryAliases(raw: UnknownRecord, topAliases: UnknownRecord): string[] {
 	const direct = [
 		...asStringArray(raw.legacySlugs),
@@ -190,49 +284,90 @@ function loadEntry(
 	raw: UnknownRecord,
 	topAliases: UnknownRecord,
 ): OpenSpecCatalogEntry | null {
-	const capability =
-		asString(raw.capability) ?? asString(raw.stableId) ?? asString(raw.id);
-	if (!capability) return null;
-	const specPath =
-		asString(raw.specPath) ??
-		asString(raw.path) ??
-		asString(raw.file) ??
-		`specs/${capability}/spec.md`;
-	const absoluteSpecPath = path.resolve(
+	const identity = artifactInputForCapability(raw);
+	if (!identity) return null;
+	const configuredPath = asString(raw.specPath) ?? asString(raw.file);
+	if (
+		configuredPath &&
+		`openspec/${configuredPath.replace(/^openspec\//, "")}` !==
+			identity.canonicalPath
+	) {
+		throw new Error(
+			`Invalid canonical path for ${identity.capability}: ${configuredPath}`,
+		);
+	}
+	const absoluteSpecPath = path.join(
 		openSpecRoot,
-		specPath.replace(/^openspec\//, ""),
+		identity.canonicalPath.replace(/^openspec\//, ""),
 	);
-	if (!absoluteSpecPath.startsWith(path.resolve(openSpecRoot) + path.sep))
-		return null;
 	if (!fs.existsSync(absoluteSpecPath)) return null;
 	const markdown = fs.readFileSync(absoluteSpecPath, "utf8");
 	const heading = markdown.match(/^#\s+(.+)$/m)?.[1]?.trim();
-	const publicPath = asString(raw.path);
-	const slug = publicPath?.startsWith("/platform-spec/")
-		? publicPath.replace(/^\/+|\/+$/g, "")
-		: `platform-spec/capabilities/${capability}`;
+	const aliases = entryAliases(raw, topAliases);
+	const configuredPublicPath = asString(raw.path);
+	if (
+		configuredPublicPath?.startsWith("/platform-spec/") &&
+		normalizeLegacySlug(configuredPublicPath) !== identity.publicSlug
+	) {
+		aliases.push(normalizeLegacySlug(configuredPublicPath));
+	}
 	return {
-		id: asString(raw.id) ?? capability,
-		capability,
-		slug,
-		href: `/${slug}/`,
-		title: asString(raw.title) ?? heading ?? capabilityTitle(capability),
+		...identity,
+		identity,
+		id: asString(raw.id) ?? identity.key,
+		slug: identity.publicSlug,
+		title:
+			asString(raw.title) ?? heading ?? capabilityTitle(identity.capability),
 		description: asString(raw.description) ?? extractPurpose(markdown),
 		status: asString(raw.status) ?? "Standard",
-		pathClass: "feature",
-		specLevel: asString(raw.specLevel) ?? "feature",
-		parentSlug: "platform-spec",
-		domain: asString(raw.domain) ?? capability.split("--")[0] ?? null,
-		area: asString(raw.area) ?? capability.split("--")[1] ?? null,
-		feature: asString(raw.feature) ?? capability.split("--").at(-1) ?? null,
+		pathClass: identity.artifactKind,
+		sourceHash: sha256(markdown),
 		specPath: path
 			.relative(openSpecRoot, absoluteSpecPath)
 			.split(path.sep)
 			.join("/"),
-		legacySlugs: entryAliases(raw, topAliases),
+		legacySlugs: [...new Set(aliases)],
 		bookLinks: asStringArray(raw.bookLinks),
 		requirements: mergeRequirementMetadata(extractRequirements(markdown), raw),
-	};
+	} as OpenSpecCatalogEntry;
+}
+
+function discoverPlatformSpecDocuments(openSpecRoot: string): string[] {
+	const root = path.join(openSpecRoot, "documents", "platform-spec");
+	if (!fs.existsSync(root)) return [];
+	const visit = (directory: string): string[] =>
+		fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+			const child = path.join(directory, entry.name);
+			if (entry.isDirectory()) return visit(child);
+			return entry.isFile() && entry.name.endsWith(".md") ? [child] : [];
+		});
+	return visit(root).sort();
+}
+
+function loadInformativeDocument(
+	openSpecRoot: string,
+	absolutePath: string,
+): OpenSpecCatalogDocument {
+	const identity = resolveDocumentIdentityFromPath(
+		`openspec/${path.relative(openSpecRoot, absolutePath).split(path.sep).join("/")}`,
+	);
+	const markdown = fs.readFileSync(absolutePath, "utf8");
+	const heading = markdown.match(/^#\s+(.+)$/m)?.[1]?.trim();
+	return {
+		...identity,
+		identity,
+		id: identity.key,
+		slug: identity.publicSlug,
+		title: heading ?? capabilityTitle(identity.key),
+		description: extractPurpose(markdown),
+		status: null,
+		pathClass: identity.artifactKind,
+		sourceHash: sha256(markdown),
+		specPath: identity.canonicalPath.replace(/^openspec\//, ""),
+		legacySlugs: [],
+		bookLinks: [],
+		requirements: [],
+	} as OpenSpecCatalogDocument;
 }
 
 export function loadOpenSpecCatalog(
@@ -254,10 +389,36 @@ export function loadOpenSpecCatalog(
 			asString(entry.id);
 		if (capability) byCapability.set(capability, entry);
 	}
-	const entries = [...byCapability.values()]
+	const capabilityDocuments = [...byCapability.values()]
 		.map((entry) => loadEntry(openSpecRoot, entry, aliases))
 		.filter((entry): entry is OpenSpecCatalogEntry => entry != null)
-		.sort((a, b) => a.capability.localeCompare(b.capability));
+	const featureCapabilities = new Set(
+		capabilityDocuments
+			.filter((document) => document.kind === "feature")
+			.map((document) => document.capability),
+	);
+	const informativeDocuments = discoverPlatformSpecDocuments(openSpecRoot).map(
+		(documentPath) => loadInformativeDocument(openSpecRoot, documentPath),
+	);
+	for (const document of informativeDocuments) {
+		if (!featureCapabilities.has(document.parentCapability)) {
+			throw new Error(
+				`Missing feature parent ${document.parentCapability} for ${document.canonicalPath}`,
+			);
+		}
+	}
+	const kindOrder: Record<SpecDocumentKind, number> = {
+		"taxonomy-domain": 0,
+		"taxonomy-area": 1,
+		feature: 2,
+		article: 3,
+		decision: 4,
+	};
+	const documents = [...capabilityDocuments, ...informativeDocuments].sort(
+		(left, right) =>
+			kindOrder[left.kind] - kindOrder[right.kind] ||
+			left.key.localeCompare(right.key),
+	);
 
 	return {
 		version:
@@ -271,7 +432,8 @@ export function loadOpenSpecCatalog(
 			asString(catalog.sourceRevision) ??
 			"working-tree",
 		generatedAt: asString(catalog.generatedAt) ?? new Date(0).toISOString(),
-		entries,
+		documents,
+		entries: documents,
 	};
 }
 
@@ -283,11 +445,13 @@ export function resolveOpenSpecEntry(
 	const clean = identifier.replace(/^\/+|\/+$/g, "");
 	const resolved = catalog ?? loadOpenSpecCatalog(openSpecRoot);
 	return (
-		resolved.entries.find(
+		resolved.documents.find(
 			(entry) =>
 				entry.id === clean ||
+				entry.key === clean ||
 				entry.capability === clean ||
 				entry.slug === clean ||
+				entry.canonicalPath === clean ||
 				entry.legacySlugs.includes(normalizeLegacySlug(clean)),
 		) ?? null
 	);
@@ -297,7 +461,10 @@ export function readEntryMarkdown(
 	entry: OpenSpecCatalogEntry,
 	openSpecRoot: string,
 ): string {
-	return fs.readFileSync(path.join(openSpecRoot, entry.specPath), "utf8");
+	return fs.readFileSync(
+		path.join(openSpecRoot, entry.canonicalPath.replace(/^openspec\//, "")),
+		"utf8",
+	);
 }
 
 export function getOpenSpecEmbed(

@@ -6,6 +6,7 @@
 import {
 	loadOpenSpecCatalog,
 	type OpenSpecCatalog,
+	type OpenSpecCatalogDocument,
 	readEntryMarkdown,
 	resolveOpenSpecEntry,
 	resolveOpenSpecRoot,
@@ -19,6 +20,12 @@ import {
 } from "#/lib/spec/layouts";
 
 export interface OpenSpecDocumentBundle {
+	kind: OpenSpecCatalogDocument["kind"];
+	key: string;
+	canonicalPath: string;
+	parentCapability: string;
+	authority: OpenSpecCatalogDocument["authority"];
+	disposition: OpenSpecCatalogDocument["disposition"];
 	slug: string;
 	href: string;
 	pathClass: string;
@@ -29,6 +36,9 @@ export interface OpenSpecDocumentBundle {
 	/** Informative Book guides; they never alter this standard's authority. */
 	bookLinks: string[];
 	frontmatter: {
+		kind: OpenSpecCatalogDocument["kind"];
+		authority: OpenSpecCatalogDocument["authority"];
+		disposition: OpenSpecCatalogDocument["disposition"];
 		title: string;
 		description: string | null;
 		status: string | null;
@@ -65,6 +75,12 @@ export function getOpenSpecDocument(
 	const body = readEntryMarkdown(entry, openSpecRoot);
 	const { layout, validation } = validateEntryLayout(body, entry, registry);
 	return {
+		kind: entry.kind,
+		key: entry.key,
+		canonicalPath: entry.canonicalPath,
+		parentCapability: entry.parentCapability,
+		authority: entry.authority,
+		disposition: entry.disposition,
 		slug: entry.slug,
 		href: entry.href,
 		pathClass: entry.pathClass,
@@ -74,6 +90,9 @@ export function getOpenSpecDocument(
 		specLevel: entry.specLevel,
 		bookLinks: entry.bookLinks,
 		frontmatter: {
+			kind: entry.kind,
+			authority: entry.authority,
+			disposition: entry.disposition,
 			title: entry.title,
 			description: entry.description,
 			status: entry.status,

@@ -96,6 +96,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Add one fail-closed Platform Spec document identity model across catalog
+  generation, reader routes, static seeds, and Memgraph seeds for taxonomy
+  domains/areas, normative features, and informative articles/decisions.
 - Specify the manifest-derived ABI-v5 managed-object allocation boundary, including
   fail-closed descriptor validation, single-path closure delegation, zeroed header
   initialization, and explicit root-frame ownership (CYB-157).

@@ -4,6 +4,10 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
+import {
+	resolveDocumentIdentityFromPath,
+	type SpecDocumentIdentity,
+} from "../../site/platform-spec/src/lib/spec/document-identity.ts";
 import { deriveBookLinks } from "./validate-book-traceability.ts";
 
 const repoRoot = path.resolve(import.meta.dirname, "../..");
@@ -49,10 +53,84 @@ function displayTitle(capability: string): string {
 		.join(" ");
 }
 
+function titleFromMarkdown(markdown: string, fallback: string): string {
+	return markdown.match(/^#\s+(.+)$/m)?.[1].trim() ?? fallback;
+}
+
+function canonicalCapabilityIdentity(
+	entry: UnknownRecord,
+): SpecDocumentIdentity | null {
+	const capability = String(entry.capability ?? "");
+	const declaredLevel = String(entry.specLevel ?? "");
+	if (!capability) return null;
+	if (declaredLevel === "domain" && !capability.startsWith("taxonomy--")) {
+		throw new Error(
+			`domain artifact must use taxonomy--<domain>: ${capability}`,
+		);
+	}
+	if (declaredLevel === "area" && !capability.startsWith("taxonomy--")) {
+		throw new Error(
+			`area artifact must use taxonomy--<domain>--<area>: ${capability}`,
+		);
+	}
+	if (!capability.startsWith("taxonomy--") && capability.split("--").length !== 3) {
+		return null;
+	}
+	return resolveDocumentIdentityFromPath(
+		`openspec/specs/${capability}/spec.md`,
+	);
+}
+
+function platformSpecDocumentPaths(directory: string): string[] {
+	if (!existsSync(directory)) return [];
+	return readdirSync(directory, { withFileTypes: true })
+		.flatMap((entry) => {
+			const child = path.join(directory, entry.name);
+			if (entry.isDirectory()) return platformSpecDocumentPaths(child);
+			return entry.isFile() && entry.name.endsWith(".md") ? [child] : [];
+		})
+		.sort();
+}
+
+function catalogDocument(
+	identity: SpecDocumentIdentity,
+	markdown: string,
+	metadata: UnknownRecord = {},
+): UnknownRecord {
+	return {
+		id: metadata.id ?? identity.key,
+		key: identity.key,
+		kind: identity.kind,
+		canonicalPath: identity.canonicalPath,
+		publicSlug: identity.publicSlug,
+		href: identity.href,
+		capability: identity.capability,
+		parentCapability: identity.parentCapability,
+		layout: identity.layout,
+		specLevel: identity.specLevel,
+		authority: identity.authority,
+		disposition: identity.disposition,
+		domain: identity.domain,
+		area: identity.area,
+		feature: identity.feature,
+		article: identity.article,
+		decision: identity.decision,
+		title:
+			metadata.title ??
+			titleFromMarkdown(markdown, displayTitle(identity.key)),
+		status: metadata.status ?? null,
+		sourceHash: sha256(markdown),
+	};
+}
+
 const catalog = JSON.parse(readFileSync(catalogPath, "utf8")) as UnknownRecord;
 const entries = catalog.entries as UnknownRecord[];
 const knownCapabilities = new Set(entries.map((entry) => String(entry.capability)));
 const specsRoot = path.join(repoRoot, "openspec/specs");
+const platformSpecDocumentsRoot = path.join(
+	repoRoot,
+	"openspec/documents/platform-spec",
+);
 
 for (const directory of readdirSync(specsRoot, { withFileTypes: true })) {
 	if (!directory.isDirectory() || knownCapabilities.has(directory.name)) continue;
@@ -109,6 +187,7 @@ for (const entry of entries) {
 }
 
 const documents = ((catalog.documents as UnknownRecord[]) ?? []).filter((document) =>
+	!String(document.path).startsWith("openspec/documents/platform-spec/") &&
 	existsSync(path.join(repoRoot, String(document.path))),
 );
 catalog.documents = documents;
@@ -122,6 +201,49 @@ for (const document of documents) {
 	}
 	revisionInputs.push(`${document.path}:${hash}`);
 }
+
+const specDocuments: UnknownRecord[] = [];
+const featureCapabilities = new Set<string>();
+for (const entry of entries) {
+	const identity = canonicalCapabilityIdentity(entry);
+	if (!identity) continue;
+	if (String(entry.specPath) !== identity.canonicalPath) {
+		throw new Error(
+			`Invalid canonical path for ${identity.capability}: ${String(entry.specPath)}`,
+		);
+	}
+	const markdown = readFileSync(path.join(repoRoot, identity.canonicalPath), "utf8");
+	specDocuments.push(catalogDocument(identity, markdown, entry));
+	if (identity.kind === "feature") featureCapabilities.add(identity.capability);
+}
+
+for (const absolutePath of platformSpecDocumentPaths(platformSpecDocumentsRoot)) {
+	const canonicalPath = path.relative(repoRoot, absolutePath).split(path.sep).join("/");
+	const identity = resolveDocumentIdentityFromPath(canonicalPath);
+	if (!featureCapabilities.has(identity.parentCapability)) {
+		throw new Error(
+			`Missing feature parent ${identity.parentCapability} for ${canonicalPath}`,
+		);
+	}
+	const markdown = readFileSync(absolutePath, "utf8");
+	specDocuments.push(catalogDocument(identity, markdown));
+	const hash = sha256(markdown);
+	revisionInputs.push(`${canonicalPath}:${hash}`);
+}
+
+const documentKindOrder = new Map([
+	["taxonomy-domain", 0],
+	["taxonomy-area", 1],
+	["feature", 2],
+	["article", 3],
+	["decision", 4],
+]);
+catalog.specDocuments = specDocuments.sort(
+	(left, right) =>
+		(documentKindOrder.get(String(left.kind)) ?? Number.MAX_SAFE_INTEGER) -
+			(documentKindOrder.get(String(right.kind)) ?? Number.MAX_SAFE_INTEGER) ||
+		String(left.key).localeCompare(String(right.key)),
+);
 
 const bookLinksByCapability = deriveBookLinks({ entries, documents });
 for (const entry of entries) {
@@ -145,6 +267,7 @@ catalog.stats = {
 		),
 	).length,
 	informativeDocuments: documents.length,
+	specDocuments: specDocuments.length,
 };
 
 writeFileSync(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`);
