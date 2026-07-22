@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Coolify `pckg` crash loop: non-root uid 10001 could not create `/app/wwwroot/uploads`
+  (image COPY left `/app` root-owned). Uploads now live under `/app/data/uploads` on the
+  existing named volume; Dockerfile uses `COPY --chown` and entrypoint ensures the path.
 - Compiler CI now bounds Clippy and native ABI-v5 runtime-kit staging/verification phases with
   explicit phase markers, so a pre-test stall fails with actionable evidence instead of consuming
   the whole Rust-gate job timeout (CYB-87).
