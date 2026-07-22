@@ -62,12 +62,6 @@ is_file_pin() {
 section "Sync Beskid packages from GitHub Packages"
 
 for rel in "${consumers[@]}"; do
-	# Keep Auth in the default list so its temporary Bun boundary is visible.
-	if [[ "${rel}" == "site/auth" ]]; then
-		warn "Skip ${rel} (Bun runtime migration is pending)"
-		continue
-	fi
-
 	dir="${SUPERREPO_ROOT}/${rel}"
 	pkg_json="${dir}/package.json"
 	if [[ ! -f "${pkg_json}" ]]; then

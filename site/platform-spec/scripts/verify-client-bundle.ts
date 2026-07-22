@@ -1,4 +1,3 @@
-#!/usr/bin/env bun
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
@@ -12,12 +11,16 @@ const assets = path.join(root, ".output/public/assets");
 // UI text (e.g. the auth-hub pairing wizard shows operators which env vars
 // to set) and are harmless — the name carries no value.
 const forbidden =
-	/env[._-]?server|process\.env\.(SESSION_SECRET|GITHUB_WEBHOOK_SECRET|PLATFORM_SPEC_SETUP_TOKEN)/;
+	/better-sqlite3|env[._-]?server|process\.env\.(SESSION_SECRET|GITHUB_WEBHOOK_SECRET|PLATFORM_SPEC_SETUP_TOKEN)/;
 
 function main(): void {
 	const verify = spawnSync(
-		"bun",
-		["run", path.join(import.meta.dirname, "verify-build-assets.ts")],
+		process.execPath,
+		[
+			"--import",
+			"tsx",
+			path.join(import.meta.dirname, "verify-build-assets.ts"),
+		],
 		{ stdio: "inherit", cwd: root },
 	);
 	if (verify.status !== 0) process.exit(verify.status ?? 1);

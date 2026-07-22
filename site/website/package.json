@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "test": "bun test",
+    "test": "node --test src/lib/*.test.mjs src/lib/*.test.ts",
     "sync:beskid-packages": "bash ../../scripts/sync-beskid-packages.sh site/website",
     "sync:cli-version": "node scripts/run-trudoc.mjs sync-cli-version.mjs",
     "generate:book-nav-tree": "bun scripts/run-trudoc.mjs generate-book-nav-tree.mjs",

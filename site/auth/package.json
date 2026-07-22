@@ -2,7 +2,7 @@
 	"name": "beskid-auth",
 	"private": true,
 	"type": "module",
-	"packageManager": "bun@1.3.14",
+	"packageManager": "pnpm@10.17.1",
 	"imports": {
 		"#/*": "./src/*"
 	},
@@ -14,18 +14,19 @@
 		"preview": "bun --bun vite preview",
 		"check": "bunx biome check",
 		"typecheck": "tsc --noEmit",
-		"test": "bun --bun vitest run",
-		"test:bundle": "VERIFY_CLIENT_BUNDLE=1 bun --bun vitest run src/scripts/verify-client-bundle.test.ts",
+		"test": "vitest run",
+		"test:bundle": "VERIFY_CLIENT_BUNDLE=1 vitest run src/scripts/verify-client-bundle.test.ts",
 		"sync:beskid-packages": "bash ../../scripts/sync-beskid-packages.sh site/auth"
 	},
 	"engines": {
-		"bun": ">=1.2.0"
+		"node": ">=22.12.0"
 	},
 	"dependencies": {
 		"@beskid/auth-client": "npm:@cyber-nomad-collective/beskid-auth-client@^0.2.9",
 		"@beskid/beskid-ui": "npm:@cyber-nomad-collective/beskid-ui@^0.2.8",
 		"@beskid/server-observability": "npm:@cyber-nomad-collective/beskid-server-observability@^0.2.8",
 		"@beskid/ui-react": "npm:@cyber-nomad-collective/beskid-ui-react@^0.2.8",
+		"better-sqlite3": "13.0.1",
 		"@t3-oss/env-core": "^0.13.10",
 		"@tailwindcss/vite": "^4.1.18",
 		"@tanstack/react-query": "latest",
@@ -44,6 +45,7 @@
 		"@tanstack/devtools-vite": "latest",
 		"@tanstack/react-devtools": "latest",
 		"@tanstack/react-router-devtools": "latest",
+		"@types/better-sqlite3": "7.6.13",
 		"@types/node": "^25.9.1",
 		"@types/react": "^19.2.0",
 		"@types/react-dom": "^19.2.0",

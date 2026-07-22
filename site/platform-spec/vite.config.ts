@@ -53,7 +53,10 @@ export default defineConfig({
 				enabled: true,
 			},
 		}),
-		nitro({ preset: "bun" }),
+		nitro({
+			preset: "node-server",
+			rolldownConfig: { external: ["better-sqlite3"] },
+		}),
 		viteReact(),
 	],
 	resolve: {
@@ -89,5 +92,6 @@ export default defineConfig({
 			"pino",
 			"prom-client",
 		],
+		external: ["better-sqlite3"],
 	},
 });

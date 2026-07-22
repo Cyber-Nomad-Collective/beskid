@@ -11,9 +11,9 @@
 set -eu
 
 echo "[entrypoint] seeding platform-spec stores from baked OpenSpec workspace"
-bun run .output/seed.mjs --stores
+node .output/seed.mjs --stores
 if [ -n "${MEMGRAPH_URI:-}" ]; then
-	bun run .output/seed.mjs --graph ||
+	node .output/seed.mjs --graph ||
 		echo "[entrypoint] graph seed reported an error; continuing without graph refresh"
 fi
 

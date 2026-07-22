@@ -23,6 +23,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Port Auth, Platform Spec, and Tracker SQLite access to a pinned Node adapter
+  with synchronous prepared statements and transactions; run affected web and
+  VS Code tests on Node-native runners.
 - Package workspaces now use pinned pnpm 10.17.1 lockfiles; setup, package
   authentication, and Beskid package refresh commands invoke pnpm instead of Bun.
 - Compiler CI now runs the native Windows ABI-v5 runtime-kit debug/release matrix, including
@@ -34,6 +37,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Removed
 
+- Remove Auth's Bun lockfile after admitting the service to the pnpm workspace.
 - Retire LSP `ANALYSIS_CACHE_VERSION` residual after CYB-98/103: hard invalidation clears
   generation-bound syntax facts fail-closed and rebuild rebinds documentation/diagnostics
   (CYB-78).

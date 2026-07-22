@@ -6,9 +6,9 @@
 // and a changed revision converges in place without duplicates.
 
 import { createHash } from "node:crypto";
-import type { Database } from "bun:sqlite";
 
 import { migrateSchema } from "#/lib/storage/schema";
+import type { Database } from "#/lib/storage/sqlite";
 import type { SeedWorkspace } from "#/lib/spec/static";
 
 export interface SeedStoreResult {
@@ -90,52 +90,52 @@ export function seedSpecStore(
 			const validation = workspace.layouts.validations[entry.capability];
 			const body = bundle?.body ?? "";
 			upsertCapability.run({
-				$capability: entry.capability,
-				$id: entry.id,
-				$slug: entry.slug,
-				$href: entry.href,
-				$title: entry.title,
-				$description: entry.description,
-				$status: entry.status,
-				$spec_level: entry.specLevel,
-				$domain: entry.domain,
-				$area: entry.area,
-				$feature: entry.feature,
-				$requirement_count: entry.requirements.length,
-				$layout_id: validation?.layoutId ?? null,
-				$layout_ok: validation ? (validation.ok ? 1 : 0) : 1,
-				$content_hash: sha256(body),
-				$payload: JSON.stringify(bundle ?? entry),
-				$updated_at: now,
+				capability: entry.capability,
+				id: entry.id,
+				slug: entry.slug,
+				href: entry.href,
+				title: entry.title,
+				description: entry.description,
+				status: entry.status,
+				spec_level: entry.specLevel,
+				domain: entry.domain,
+				area: entry.area,
+				feature: entry.feature,
+				requirement_count: entry.requirements.length,
+				layout_id: validation?.layoutId ?? null,
+				layout_ok: validation ? (validation.ok ? 1 : 0) : 1,
+				content_hash: sha256(body),
+				payload: JSON.stringify(bundle ?? entry),
+				updated_at: now,
 			});
 			seededCapabilities.add(entry.capability);
 		}
 
 		for (const layout of workspace.layouts.layouts) {
 			upsertLayout.run({
-				$id: layout.id,
-				$spec_level: layout.specLevel,
-				$title: layout.title,
-				$payload: JSON.stringify(layout),
-				$updated_at: now,
+				id: layout.id,
+				spec_level: layout.specLevel,
+				title: layout.title,
+				payload: JSON.stringify(layout),
+				updated_at: now,
 			});
 			seededLayouts.add(layout.id);
 		}
 
 		upsertMeta.run({
-			$key: "revision",
-			$value: workspace.meta.revision,
-			$updated_at: now,
+			key: "revision",
+			value: workspace.meta.revision,
+			updated_at: now,
 		});
 		upsertMeta.run({
-			$key: "meta",
-			$value: JSON.stringify(workspace.meta),
-			$updated_at: now,
+			key: "meta",
+			value: JSON.stringify(workspace.meta),
+			updated_at: now,
 		});
 		upsertMeta.run({
-			$key: "domain-model",
-			$value: JSON.stringify(workspace.domainModel),
-			$updated_at: now,
+			key: "domain-model",
+			value: JSON.stringify(workspace.domainModel),
+			updated_at: now,
 		});
 
 		// Prune capabilities and layouts that no longer exist in the current

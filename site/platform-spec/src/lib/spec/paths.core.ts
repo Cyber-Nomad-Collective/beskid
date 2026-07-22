@@ -1,6 +1,6 @@
 // Pure path helpers shared by the server runtime and the standalone seed
 // scripts. This module must stay free of `@tanstack/react-start/server-only`
-// (and any server-only import) so it can run under a raw `bun run` invocation.
+// (and any server-only import) so it can run under the Node seed runner.
 
 import path from "node:path";
 

@@ -1,10 +1,10 @@
 import fs from "node:fs/promises";
 import { mkdirSync } from "node:fs";
-import { Database } from "bun:sqlite";
 
 import type { AuthConfigFile } from "#/server/config-store-types";
 import { authDataDir, authDbPath, legacyConfigPath } from "#/server/db/paths";
 import { migrateAuthSchema } from "#/server/db/schema";
+import { type Database, openSqlite } from "#/server/db/sqlite";
 import {
 	decryptSecret,
 	encryptSecret,
@@ -17,7 +17,7 @@ let legacyImported = false;
 export function getAuthDatabase(): Database {
 	if (!dbInstance) {
 		mkdirSync(authDataDir(), { recursive: true });
-		dbInstance = new Database(authDbPath(), { create: true });
+		dbInstance = openSqlite(authDbPath());
 		migrateAuthSchema(dbInstance);
 	}
 	return dbInstance;

@@ -1,4 +1,4 @@
-import type { Database } from "bun:sqlite";
+import type { Database } from "#/server/db/sqlite";
 
 export const AUTH_SCHEMA_VERSION = 2;
 

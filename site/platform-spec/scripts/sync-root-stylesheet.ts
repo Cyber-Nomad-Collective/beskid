@@ -1,4 +1,3 @@
-#!/usr/bin/env bun
 /**
  * Align SSR router stylesheet href with the Nitro public asset map (index.mjs).
  */
