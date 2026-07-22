@@ -33,6 +33,9 @@ const SpecToCodeTraversal = [
 	"openspec-catalog",
 	"conformance-evidence",
 	"codegen-input",
+	"isle-operation-selection",
+	"stock-clif",
+	"clif-verifier",
 	"codegen-artifact",
 ] as const;
 
@@ -62,7 +65,7 @@ export const CompilerArchitectureManifest: ArchitectureManifest = {
 		{ id: "beskid-source", label: "Beskid source", description: "Beskid program source supplied to an AOT build.", group: "projects", kind: "source", state: "current", specKeys: [], sourcePaths: ["compiler"] },
 		{ id: "bsol-manifest", label: "BSOL manifest", description: "Project manifest for a Beskid workspace.", group: "projects", kind: "manifest", state: "current", specKeys: ["compiler--resolution-and-projects--project-manifest-contract"], sourcePaths: ["compiler"] },
 		{ id: "workspace-resolver", label: "Workspace resolver", description: "Resolves workspace inputs, dependencies, and lock state.", group: "projects", kind: "process", state: "current", specKeys: ["compiler--resolution-and-projects--workspace-resolution-contract"], sourcePaths: ["compiler/crates"] },
-		{ id: "pckg", label: "pckg", description: "Package registry boundary used by dependency resolution.", group: "projects", kind: "package", state: "current", specKeys: ["compiler--resolution-and-projects--registry-and-overrides-contract"], sourcePaths: ["beskid_pckg"] },
+		{ id: "pckg", label: "pckg", description: "Package registry boundary used by dependency resolution.", group: "projects", kind: "package", state: "current", specKeys: ["compiler--resolution-and-projects--registry-and-overrides-contract"], sourcePaths: ["pckg"] },
 		{ id: "corelib", label: "Corelib", description: "Beskid core library resolved into compilation.", group: "projects", kind: "package", state: "current", specKeys: ["core-library--compiler-integration--corelib-injection-and-resolution"], sourcePaths: ["compiler/corelib"] },
 		{ id: "compiler-mods", label: "Compiler Mods", description: "Compiler extension and composition boundary.", group: "projects", kind: "package", state: "current", specKeys: ["compiler--compiler-mods--mod-host-bridge"], sourcePaths: ["compiler/crates"] },
 		{ id: "parser", label: "Parser", description: "Parses source into immutable syntax.", group: "frontend", kind: "process", state: "current", specKeys: ["compiler--front-end--grammar-and-parser-contract"], sourcePaths: ["compiler/crates"] },
@@ -84,8 +87,8 @@ export const CompilerArchitectureManifest: ArchitectureManifest = {
 		{ id: "native-artifact", label: "Native artifact", description: "Native executable or library produced by AOT compilation.", group: "codegen", kind: "artifact", state: "current", specKeys: [], sourcePaths: ["compiler"] },
 		{ id: "cli", label: "CLI", description: "Command-line build and run boundary.", group: "tooling", kind: "tool", state: "current", specKeys: ["compiler--build-pipeline--build-and-run-orchestration"], sourcePaths: ["compiler/crates"] },
 		{ id: "lsp", label: "LSP", description: "Language-server boundary backed by generation-safe facts.", group: "tooling", kind: "tool", state: "current", specKeys: [], sourcePaths: ["compiler/crates"] },
-		{ id: "vs-code", label: "VS Code", description: "BSOL-only editor extension boundary.", group: "tooling", kind: "tool", state: "current", specKeys: [], sourcePaths: ["compiler/editors"] },
-		{ id: "tree-sitter", label: "Tree-sitter", description: "Editor syntax-highlighting boundary.", group: "tooling", kind: "tool", state: "current", specKeys: [], sourcePaths: ["compiler/editors"] },
+		{ id: "vs-code", label: "VS Code", description: "BSOL-only editor extension boundary.", group: "tooling", kind: "tool", state: "current", specKeys: [], sourcePaths: ["beskid_vscode"] },
+		{ id: "tree-sitter", label: "Tree-sitter", description: "Editor syntax-highlighting boundary.", group: "tooling", kind: "tool", state: "current", specKeys: [], sourcePaths: ["beskid_treesitter"] },
 	],
 	edges: [
 		...BuildTraversal.slice(0, -1).map((from, index) =>
@@ -106,7 +109,6 @@ export const CompilerArchitectureManifest: ArchitectureManifest = {
 		edge("catalog-to-conformance-evidence", "openspec-catalog", "conformance-evidence", "governs", "Conformance scope", "Identifies the requirements covered by evidence."),
 		edge("conformance-evidence-to-codegen-input", "conformance-evidence", "codegen-input", "evidences", "Lowering evidence", "Records conformance evidence for the lowering contract."),
 		edge("conformance-evidence-to-codegen-artifact", "conformance-evidence", "codegen-artifact", "evidences", "Artifact evidence", "Records conformance evidence for generated artifacts."),
-		edge("codegen-input-to-codegen-artifact", "codegen-input", "codegen-artifact", "transforms", "Lowering result", "Connects the lowering contract to its verified artifact result."),
 		edge("bsol-manifest-to-workspace-resolver", "bsol-manifest", "workspace-resolver", "declares", "Workspace declaration", "Declares the workspace resolved for compilation."),
 		edge("pckg-to-workspace-resolver", "pckg", "workspace-resolver", "resolves", "Package resolution", "Supplies registered dependencies to workspace resolution."),
 		edge("corelib-to-workspace-resolver", "corelib", "workspace-resolver", "resolves", "Corelib resolution", "Injects corelib through workspace resolution."),

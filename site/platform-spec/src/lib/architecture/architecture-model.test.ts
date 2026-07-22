@@ -165,6 +165,32 @@ describe("architecture model", () => {
 		}
 	});
 
+	it("traces specification evidence through the complete verified lowering chain", () => {
+		const model = resolveArchitectureModel(CompilerArchitectureManifest, catalogForManifest());
+		expect(model.traversals["spec-to-code"]).toEqual([
+			"openspec",
+			"openspec-catalog",
+			"conformance-evidence",
+			"codegen-input",
+			"isle-operation-selection",
+			"stock-clif",
+			"clif-verifier",
+			"codegen-artifact",
+		]);
+		expect(
+			model.edges.some(
+				(edge) => edge.from === "codegen-input" && edge.to === "codegen-artifact",
+			),
+		).toBe(false);
+	});
+
+	it("uses checkout paths for external package and editor evidence", () => {
+		const model = resolveArchitectureModel(CompilerArchitectureManifest, catalogForManifest());
+		expect(model.nodesById.pckg.sourcePaths).toEqual(["pckg"]);
+		expect(model.nodesById["vs-code"].sourcePaths).toEqual(["beskid_vscode"]);
+		expect(model.nodesById["tree-sitter"].sourcePaths).toEqual(["beskid_treesitter"]);
+	});
+
 	it("connects direct compiler boundary and compatibility nodes", () => {
 		const model = resolveArchitectureModel(CompilerArchitectureManifest, catalogForManifest());
 		const boundaryIds = [
