@@ -23,8 +23,11 @@ function PlatformSpecHomePage() {
 		<ReaderChrome>
 			<SpecShell navTree={navTree} activeSlug="platform-spec">
 				<PlatformSpecHomeClient
-					catalog={catalog.documents
-						.filter((entry) => entry.kind === "feature")
+					catalog={catalog.entries
+						.filter(
+							(entry) =>
+								entry.kind === "feature" || entry.kind === "legacy-capability",
+						)
 						.map((entry) => ({
 							capability: entry.capability,
 							slug: entry.slug,

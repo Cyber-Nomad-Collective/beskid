@@ -63,6 +63,11 @@ export interface SpecDocumentIdentity {
 	decision: string | null;
 }
 
+export interface CapabilityDocumentIdentityInput {
+	capability: string;
+	specLevel?: string | null;
+}
+
 const SEGMENT = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const DECISION = /^\d{4}-[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -214,6 +219,41 @@ export function resolveDocumentIdentity(
 				`Unknown document kind: ${String((input as { kind?: unknown }).kind)}`,
 			);
 	}
+}
+
+export function resolveCapabilityDocumentIdentity({
+	capability,
+	specLevel,
+}: CapabilityDocumentIdentityInput): SpecDocumentIdentity | null {
+	const declaredLevel = specLevel?.trim() ?? "";
+	if (declaredLevel === "domain" && !capability.startsWith("taxonomy--")) {
+		throw new Error(
+			`domain artifact must use taxonomy--<domain>: ${capability}`,
+		);
+	}
+	if (declaredLevel === "area" && !capability.startsWith("taxonomy--")) {
+		throw new Error(
+			`area artifact must use taxonomy--<domain>--<area>: ${capability}`,
+		);
+	}
+	if (
+		declaredLevel === "article" ||
+		declaredLevel === "adr" ||
+		declaredLevel === "decision"
+	) {
+		throw new Error(
+			`${declaredLevel} artifacts must use openspec/documents/platform-spec: ${capability}`,
+		);
+	}
+	if (
+		!capability.startsWith("taxonomy--") &&
+		capability.split("--").length !== 3
+	) {
+		return null;
+	}
+	return resolveDocumentIdentityFromPath(
+		`openspec/specs/${capability}/spec.md`,
+	);
 }
 
 export function resolveDocumentIdentityFromPath(

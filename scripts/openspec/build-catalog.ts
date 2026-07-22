@@ -5,6 +5,7 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import {
+	resolveCapabilityDocumentIdentity,
 	resolveDocumentIdentityFromPath,
 	type SpecDocumentIdentity,
 } from "../../site/platform-spec/src/lib/spec/document-identity.ts";
@@ -63,22 +64,10 @@ function canonicalCapabilityIdentity(
 	const capability = String(entry.capability ?? "");
 	const declaredLevel = String(entry.specLevel ?? "");
 	if (!capability) return null;
-	if (declaredLevel === "domain" && !capability.startsWith("taxonomy--")) {
-		throw new Error(
-			`domain artifact must use taxonomy--<domain>: ${capability}`,
-		);
-	}
-	if (declaredLevel === "area" && !capability.startsWith("taxonomy--")) {
-		throw new Error(
-			`area artifact must use taxonomy--<domain>--<area>: ${capability}`,
-		);
-	}
-	if (!capability.startsWith("taxonomy--") && capability.split("--").length !== 3) {
-		return null;
-	}
-	return resolveDocumentIdentityFromPath(
-		`openspec/specs/${capability}/spec.md`,
-	);
+	return resolveCapabilityDocumentIdentity({
+		capability,
+		specLevel: declaredLevel,
+	});
 }
 
 function platformSpecDocumentPaths(directory: string): string[] {

@@ -6,7 +6,7 @@
 import {
 	loadOpenSpecCatalog,
 	type OpenSpecCatalog,
-	type OpenSpecCatalogDocument,
+	type OpenSpecCatalogEntry,
 	readEntryMarkdown,
 	resolveOpenSpecEntry,
 	resolveOpenSpecRoot,
@@ -20,12 +20,12 @@ import {
 } from "#/lib/spec/layouts";
 
 export interface OpenSpecDocumentBundle {
-	kind: OpenSpecCatalogDocument["kind"];
+	kind: OpenSpecCatalogEntry["kind"];
 	key: string;
 	canonicalPath: string;
 	parentCapability: string;
-	authority: OpenSpecCatalogDocument["authority"];
-	disposition: OpenSpecCatalogDocument["disposition"];
+	authority: OpenSpecCatalogEntry["authority"];
+	disposition: OpenSpecCatalogEntry["disposition"];
 	slug: string;
 	href: string;
 	pathClass: string;
@@ -36,9 +36,9 @@ export interface OpenSpecDocumentBundle {
 	/** Informative Book guides; they never alter this standard's authority. */
 	bookLinks: string[];
 	frontmatter: {
-		kind: OpenSpecCatalogDocument["kind"];
-		authority: OpenSpecCatalogDocument["authority"];
-		disposition: OpenSpecCatalogDocument["disposition"];
+		kind: OpenSpecCatalogEntry["kind"];
+		authority: OpenSpecCatalogEntry["authority"];
+		disposition: OpenSpecCatalogEntry["disposition"];
 		title: string;
 		description: string | null;
 		status: string | null;

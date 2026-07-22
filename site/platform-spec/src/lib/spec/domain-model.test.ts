@@ -99,8 +99,9 @@ const catalog: OpenSpecCatalog = {
 	version: 1,
 	revision: "rev1",
 	generatedAt: new Date(0).toISOString(),
-	documents,
-	entries: documents,
+		documents,
+		legacyEntries: [],
+		entries: documents,
 };
 
 describe("domain-area-feature model", () => {

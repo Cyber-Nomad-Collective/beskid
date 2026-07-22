@@ -128,6 +128,19 @@ export function buildSeedWorkspace(
 		}
 	}
 
+	for (const entry of catalog.legacyEntries) {
+		const bundle = getOpenSpecDocument(entry.key, openSpecRoot, {
+			catalog,
+			registry,
+		});
+		if (!bundle) {
+			throw new Error(
+				`Unable to build legacy document bundle for ${entry.capability}`,
+			);
+		}
+		documents[entry.slug] = bundle;
+	}
+
 	const meta: SeedMeta = {
 		version: SEED_VERSION,
 		revision: catalog.revision,

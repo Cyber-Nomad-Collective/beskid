@@ -4,7 +4,10 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { loadOpenSpecCatalog } from "#/lib/spec/catalog";
+import {
+	loadOpenSpecCatalog,
+	resolveOpenSpecEntry,
+} from "#/lib/spec/catalog";
 
 const roots: string[] = [];
 
@@ -24,6 +27,10 @@ function fixture(): string {
 	const root = fs.mkdtempSync(path.join(os.tmpdir(), "beskid-catalog-"));
 	roots.push(root);
 	const specs = [
+		[
+			"standard-content-authority",
+			"# Standard content authority\n\n## Purpose\n\nCross-feature governance.\n",
+		],
 		["taxonomy--compiler", "# Compiler\n\n## Purpose\n\nCompiler taxonomy.\n"],
 		[
 			"taxonomy--compiler--front-end",
@@ -78,7 +85,19 @@ describe("canonical OpenSpec catalog", () => {
 			"article",
 			"decision",
 		]);
-		expect(catalog.entries).toBe(catalog.documents);
+		expect(catalog.entries).toHaveLength(6);
+		expect(catalog.legacyEntries).toHaveLength(1);
+		expect(catalog.legacyEntries[0]).toMatchObject({
+			kind: "legacy-capability",
+			capability: "standard-content-authority",
+			authority: "normative",
+		});
+		expect(
+			resolveOpenSpecEntry("standard-content-authority", root, catalog),
+		).toMatchObject({
+			kind: "legacy-capability",
+			href: "/platform-spec/capabilities/standard-content-authority/",
+		});
 
 		const area = catalog.documents.find(
 			(document) => document.kind === "taxonomy-area",

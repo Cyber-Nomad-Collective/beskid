@@ -10,6 +10,7 @@ import type { Database } from "bun:sqlite";
 
 import { migrateSchema } from "#/lib/storage/schema";
 import type { SeedWorkspace } from "#/lib/spec/static";
+import { specStoreDocumentKey } from "#/lib/storage/spec-store-identity";
 
 export interface SeedStoreResult {
 	revision: string;
@@ -85,12 +86,13 @@ export function seedSpecStore(
 	let prunedCapabilities = 0;
 
 	const run = db.transaction(() => {
-		for (const entry of workspace.catalog.entries) {
+		for (const entry of workspace.catalog.documents) {
+			const documentKey = specStoreDocumentKey(entry);
 			const bundle = workspace.documents[entry.slug];
-			const validation = workspace.layouts.validations[entry.capability];
+			const validation = workspace.layouts.validations[documentKey];
 			const body = bundle?.body ?? "";
 			upsertCapability.run({
-				$capability: entry.capability,
+				$capability: documentKey,
 				$id: entry.id,
 				$slug: entry.slug,
 				$href: entry.href,
@@ -108,7 +110,7 @@ export function seedSpecStore(
 				$payload: JSON.stringify(bundle ?? entry),
 				$updated_at: now,
 			});
-			seededCapabilities.add(entry.capability);
+			seededCapabilities.add(documentKey);
 		}
 
 		for (const layout of workspace.layouts.layouts) {

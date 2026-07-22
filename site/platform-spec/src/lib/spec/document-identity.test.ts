@@ -1,11 +1,33 @@
 import { describe, expect, it } from "vitest";
 
 import {
+	resolveCapabilityDocumentIdentity,
 	resolveDocumentIdentity,
 	resolveDocumentIdentityFromPath,
 } from "#/lib/spec/document-identity";
 
 describe("resolveDocumentIdentity", () => {
+	it("rejects informative levels from capability paths without inventing a feature identity", () => {
+		expect(() =>
+			resolveCapabilityDocumentIdentity({
+				capability: "compiler--front-end--parser",
+				specLevel: "article",
+			}),
+		).toThrow("article artifacts must use openspec/documents/platform-spec");
+		expect(() =>
+			resolveCapabilityDocumentIdentity({
+				capability: "compiler--front-end--parser",
+				specLevel: "adr",
+			}),
+		).toThrow("adr artifacts must use openspec/documents/platform-spec");
+		expect(
+			resolveCapabilityDocumentIdentity({
+				capability: "standard-content-authority",
+				specLevel: "feature",
+			}),
+		).toBeNull();
+	});
+
 	it("resolves the canonical taxonomy domain identity", () => {
 		expect(
 			resolveDocumentIdentity({ kind: "domain", domain: "compiler" }),

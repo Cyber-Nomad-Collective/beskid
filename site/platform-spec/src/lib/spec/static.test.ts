@@ -17,6 +17,7 @@ function fixture(): string {
 	const root = fs.mkdtempSync(path.join(os.tmpdir(), "beskid-seed-"));
 	roots.push(root);
 	for (const [capability, title] of [
+		["standard-content-authority", "Standard content authority"],
 		["taxonomy--language", "Language"],
 		["taxonomy--language--syntax", "Syntax"],
 		["language--syntax--blocks", "Blocks"],
@@ -76,6 +77,7 @@ function fixture(): string {
 			version: 1,
 			revision: "seed-rev",
 			entries: [
+				"standard-content-authority",
 				"taxonomy--language",
 				"taxonomy--language--syntax",
 				"language--syntax--blocks",
@@ -111,6 +113,11 @@ describe("static seed workspace", () => {
 				"platform-spec/capabilities/language--syntax--blocks/articles/examples"
 			]?.kind,
 		).toBe("article");
+		expect(
+			workspace.documents[
+				"platform-spec/capabilities/standard-content-authority"
+			]?.kind,
+		).toBe("legacy-capability");
 		expect(Object.keys(workspace.layouts.assignments)).toHaveLength(4);
 
 		for (const file of [
