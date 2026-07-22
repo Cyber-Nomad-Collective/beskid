@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Compiler CI now bounds Clippy and native ABI-v5 runtime-kit staging/verification phases with
+  explicit phase markers, so a pre-test stall fails with actionable evidence instead of consuming
+  the whole Rust-gate job timeout (CYB-87).
 - Platform-spec Map / Facts DAG no longer crashes with `gm.Graph is not a constructor`
   when root lockfile hoists `@dagrejs/dagre@1.x` over ui-react's v3 named `Graph`
   export; pin override to `^3.0.0` and resolve Graph fail-closed in shared layout.
