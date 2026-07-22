@@ -15,16 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
-      BUN_INSTALL_CACHE_DIR: /tmp/beskid-bun-install-cache
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
       # Catalog revision hashes informative docs under these submodules; without
       # them, regen drifts from the committed openspec/catalog.json.
-      # beskid_web_common is required because the root workspace members
-      # (site/website, site/platform-spec) and beskid_tracker resolve @beskid/*
-      # via file: links into it, so --frozen-lockfile installs fail without it.
       - name: Initialize catalog document submodules
         run: >
           ./scripts/ci/init-submodules.sh
@@ -54,13 +50,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
-      BUN_INSTALL_CACHE_DIR: /tmp/beskid-bun-install-cache
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      # beskid_web_common supplies the file:../beskid_web_common @beskid/* deps
-      # (e.g. @beskid/ui-react), so --frozen-lockfile fails without it.
+      # beskid_tracker pins @beskid/ui-react to file:../beskid_web_common, so the
+      # tracker install needs the shared web packages submodule checked out too.
       - name: Initialize tracker and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_tracker beskid_web_common
       - uses: oven-sh/setup-bun@v2
@@ -76,7 +71,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
-      BUN_INSTALL_CACHE_DIR: /tmp/beskid-bun-install-cache
     steps:
       - uses: actions/checkout@v4
         with:
@@ -96,13 +90,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
-      BUN_INSTALL_CACHE_DIR: /tmp/beskid-bun-install-cache
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      # beskid_web_common supplies the file:../../beskid_web_common @beskid/*
-      # deps for site/website, so --frozen-lockfile fails without it.
+      # site/website resolves @beskid/beskid-ui and @beskid/ui-react via file: links
+      # into beskid_web_common, so its install needs that submodule checked out.
       - name: Initialize nexus and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_nexus beskid_web_common
       - uses: oven-sh/setup-bun@v2
