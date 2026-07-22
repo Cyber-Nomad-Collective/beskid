@@ -9,6 +9,11 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Added
+
+- Platform Spec now presents an informative, immutable compiler architecture map with canonical OpenSpec links, evidence details, and build, IDE, and specification-to-code traversals.
+- Platform Spec navigation now uses one searchable, highlighted specification tree with independently scrolling desktop and mobile reader surfaces.
+
 ### Fixed
 
 - Platform-spec Map / Facts DAG no longer crashes with `gm.Graph is not a constructor`

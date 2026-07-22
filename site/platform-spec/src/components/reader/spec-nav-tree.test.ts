@@ -129,6 +129,13 @@ describe("highlightTitle", () => {
 			{ start: 12, end: 18, match: true },
 		]);
 	});
+
+	it("preserves original title offsets when locale case folding expands a character", () => {
+		expect(highlightTitle("AİB", "b")).toEqual([
+			{ start: 0, end: 2, match: false },
+			{ start: 2, end: 3, match: true },
+		]);
+	});
 });
 
 describe("resolveTreeKey", () => {

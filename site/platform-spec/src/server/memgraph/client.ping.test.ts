@@ -9,9 +9,9 @@ describe("isMemgraphPingValue", () => {
 		expect(isMemgraphPingValue(false)).toBe(false);
 	});
 
-	it("accepts neo4j Integer without strict === 1", () => {
+	it("accepts neo4j Integer values", () => {
 		const value = neo4j.int(1);
-		expect(value === 1).toBe(false);
+		expect(value.toNumber()).toBe(1);
 		expect(isMemgraphPingValue(value)).toBe(true);
 		expect(isMemgraphPingValue(neo4j.int(0))).toBe(false);
 	});

@@ -8,6 +8,10 @@ The direct-call native application binary interface for the rewritten Beskid com
 
 Generation-scoped results computed by Salsa for expanded AST nodes, including resolution, types, signatures, call lowering, cast intent, control flow, and runtime-intrinsic authorization. They are keyed by `AstNodeKey` and replace HIR as the semantic input to tooling and code generation.
 
+## Architecture map
+
+An informative, checked-in conceptual map of the Beskid compiler and its direct boundaries. It resolves canonical public specification links from the OpenSpec catalog, presents implementation paths as evidence, and never replaces OpenSpec requirements as the normative authority.
+
 ## Auth Hub
 
 The central `site/auth` service. It is the only browser identity authority for pckg and authenticates users through the GitHub application login flow. pckg consumes a paired handoff and retains only pckg-specific authorization and profile data.
@@ -31,6 +35,10 @@ An OpenSpec unit stored at `openspec/specs/<capability>/spec.md`. During migrati
 ## HIR-free
 
 The compiler invariant that no high-level intermediate representation type, lowering pass, cache, adapter, serialization, or compatibility path exists between expanded AST/Salsa facts and ISLE/CLIF code generation.
+
+## Immutable graph
+
+A graph whose data and structure cannot be changed through its reader interface: users may inspect, select, pan, zoom, fit, and follow links, but cannot move, connect, delete, or edit nodes or edges.
 
 ## Global distribution version
 
@@ -87,6 +95,10 @@ A delivery process that builds an artifact once, verifies and deploys its immuta
 ## Typed Markdown directive
 
 A readable Markdown block or link that identifies a `spec`, `book`, `nexus`, or `bug` target and can be enhanced into an embed by supported renderers while remaining understandable in generic Markdown.
+
+## Traversable graph
+
+An immutable graph that remains usable for exploration: pointer, touch, and keyboard users can pan, zoom, fit, select nodes, inspect connected relationships, activate canonical links, and focus named paths without altering graph data.
 
 ## word
 

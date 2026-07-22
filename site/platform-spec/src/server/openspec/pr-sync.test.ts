@@ -89,33 +89,33 @@ describe("OpenSpec edit pull request sync", () => {
 		client.repos.createOrUpdateFileContents = async () => {
 			throw new Error("legacy per-file write used");
 		};
-		client.git.getRef = async (input: Record<string, unknown>) => {
+		client.git.getRef = async (input: Record<string, unknown> = {}) => {
 			calls.push({ method: "getRef", input });
 			throw Object.assign(new Error("not found"), { status: 404 });
 		};
-		client.git.createRef = async (input: Record<string, unknown>) => {
+		client.git.createRef = async (input: Record<string, unknown> = {}) => {
 			calls.push({ method: "createRef", input });
 			return { data: {} };
 		};
-		client.git.getCommit = async (input: Record<string, unknown>) => {
+		client.git.getCommit = async (input: Record<string, unknown> = {}) => {
 			calls.push({ method: "getCommit", input });
 			return { data: { tree: { sha: "base-tree" } } };
 		};
 		let blobNumber = 0;
-		client.git.createBlob = async (input: Record<string, unknown>) => {
+		client.git.createBlob = async (input: Record<string, unknown> = {}) => {
 			calls.push({ method: "createBlob", input });
 			blobNumber += 1;
 			return { data: { sha: `blob-${blobNumber}` } };
 		};
-		client.git.createTree = async (input: Record<string, unknown>) => {
+		client.git.createTree = async (input: Record<string, unknown> = {}) => {
 			calls.push({ method: "createTree", input });
 			return { data: { sha: "tree-sha" } };
 		};
-		client.git.createCommit = async (input: Record<string, unknown>) => {
+		client.git.createCommit = async (input: Record<string, unknown> = {}) => {
 			calls.push({ method: "createCommit", input });
 			return { data: { sha: "commit-sha" } };
 		};
-		client.git.updateRef = async (input: Record<string, unknown>) => {
+		client.git.updateRef = async (input: Record<string, unknown> = {}) => {
 			calls.push({ method: "updateRef", input });
 			return { data: {} };
 		};

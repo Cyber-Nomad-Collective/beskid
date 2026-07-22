@@ -176,16 +176,33 @@ export function highlightTitle(title: string, query: string): TitleRange[] {
 	const normalizedQuery = normalize(query);
 	if (!normalizedQuery) return [{ start: 0, end: title.length, match: false }];
 	const searchableTitle = title.toLocaleLowerCase();
+	const foldedOffsets: Array<{ start: number; end: number }> = [];
+	let titleOffset = 0;
+	for (const character of title) {
+		const end = titleOffset + character.length;
+		for (let index = 0; index < character.toLocaleLowerCase().length; index++) {
+			foldedOffsets.push({ start: titleOffset, end });
+		}
+		titleOffset = end;
+	}
 	const ranges: TitleRange[] = [];
 	let cursor = 0;
 	let index = searchableTitle.indexOf(normalizedQuery, cursor);
 	while (index !== -1) {
-		if (index > cursor) ranges.push({ start: cursor, end: index, match: false });
+		const start = foldedOffsets[index]?.start ?? title.length;
 		const end = index + normalizedQuery.length;
-		ranges.push({ start: index, end, match: true });
+		const matchEnd = foldedOffsets[end - 1]?.end ?? title.length;
+		const previousEnd = ranges.at(-1)?.end ?? 0;
+		if (start > previousEnd) {
+			ranges.push({ start: previousEnd, end: start, match: false });
+		}
+		ranges.push({ start, end: matchEnd, match: true });
 		cursor = end;
 		index = searchableTitle.indexOf(normalizedQuery, cursor);
 	}
-	if (cursor < title.length) ranges.push({ start: cursor, end: title.length, match: false });
+	const finalEnd = ranges.at(-1)?.end ?? 0;
+	if (finalEnd < title.length) {
+		ranges.push({ start: finalEnd, end: title.length, match: false });
+	}
 	return ranges;
 }

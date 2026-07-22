@@ -258,4 +258,3 @@ Run `detect_changes({ scope: "compare", base_ref: "main" })`, review every affec
 Complete a whole-branch spec/code-quality review, fix every Critical or Important issue with focused tests, rerun affected verification, and commit:
 
 `docs: record platform spec navigation and map`
-
