@@ -1,4 +1,8 @@
-import type { ArchitectureManifest } from "#/lib/architecture/architecture-model";
+import type {
+	ArchitectureEdge,
+	ArchitectureEdgeKind,
+	ArchitectureManifest,
+} from "#/lib/architecture/architecture-model";
 
 export const BuildTraversal = [
 	"beskid-source",
@@ -15,6 +19,33 @@ export const BuildTraversal = [
 	"runtime-kit",
 	"native-artifact",
 ] as const;
+
+const IdeTraversal = [
+	"tree-sitter",
+	"vs-code",
+	"lsp",
+	"generation-safe-facts",
+	"diagnostics",
+] as const;
+
+const SpecToCodeTraversal = [
+	"openspec",
+	"openspec-catalog",
+	"conformance-evidence",
+	"codegen-input",
+	"codegen-artifact",
+] as const;
+
+function edge(
+	id: string,
+	from: string,
+	to: string,
+	kind: ArchitectureEdgeKind,
+	label: string,
+	description: string,
+): ArchitectureEdge {
+	return { id, from, to, kind, label, description, state: "current" };
+}
 
 export const CompilerArchitectureManifest: ArchitectureManifest = {
 	groups: [
@@ -56,10 +87,40 @@ export const CompilerArchitectureManifest: ArchitectureManifest = {
 		{ id: "vs-code", label: "VS Code", description: "BSOL-only editor extension boundary.", group: "tooling", kind: "tool", state: "current", specKeys: [], sourcePaths: ["compiler/editors"] },
 		{ id: "tree-sitter", label: "Tree-sitter", description: "Editor syntax-highlighting boundary.", group: "tooling", kind: "tool", state: "current", specKeys: [], sourcePaths: ["compiler/editors"] },
 	],
-	edges: BuildTraversal.slice(0, -1).map((from, index) => ({ id: `${from}-to-${BuildTraversal[index + 1]}`, from, to: BuildTraversal[index + 1]!, kind: "transforms", label: "Build stage", description: "Feeds the next AOT build stage.", state: "current" })),
+	edges: [
+		...BuildTraversal.slice(0, -1).map((from, index) =>
+			edge(
+				`${from}-to-${BuildTraversal[index + 1]}`,
+				from,
+				BuildTraversal[index + 1]!,
+				"transforms",
+				"Build stage",
+				"Feeds the next AOT build stage.",
+			),
+		),
+		edge("tree-sitter-to-vs-code", "tree-sitter", "vs-code", "supports", "Syntax support", "Provides editor syntax support."),
+		edge("vs-code-to-lsp", "vs-code", "lsp", "supports", "Language tooling", "Connects the editor extension to the language server."),
+		edge("lsp-to-generation-safe-facts", "lsp", "generation-safe-facts", "derives", "Semantic queries", "Queries generation-bound semantic facts."),
+		edge("generation-safe-facts-to-diagnostics", "generation-safe-facts", "diagnostics", "derives", "Diagnostics", "Derives diagnostics from semantic facts."),
+		edge("openspec-to-catalog", "openspec", "openspec-catalog", "derives", "Catalog generation", "Generates the canonical public catalog."),
+		edge("catalog-to-conformance-evidence", "openspec-catalog", "conformance-evidence", "governs", "Conformance scope", "Identifies the requirements covered by evidence."),
+		edge("conformance-evidence-to-codegen-input", "conformance-evidence", "codegen-input", "evidences", "Lowering evidence", "Records conformance evidence for the lowering contract."),
+		edge("conformance-evidence-to-codegen-artifact", "conformance-evidence", "codegen-artifact", "evidences", "Artifact evidence", "Records conformance evidence for generated artifacts."),
+		edge("codegen-input-to-codegen-artifact", "codegen-input", "codegen-artifact", "transforms", "Lowering result", "Connects the lowering contract to its verified artifact result."),
+		edge("bsol-manifest-to-workspace-resolver", "bsol-manifest", "workspace-resolver", "declares", "Workspace declaration", "Declares the workspace resolved for compilation."),
+		edge("pckg-to-workspace-resolver", "pckg", "workspace-resolver", "resolves", "Package resolution", "Supplies registered dependencies to workspace resolution."),
+		edge("corelib-to-workspace-resolver", "corelib", "workspace-resolver", "resolves", "Corelib resolution", "Injects corelib through workspace resolution."),
+		edge("compiler-mods-to-expanded-syntax", "compiler-mods", "expanded-syntax-assembly", "transforms", "Compiler expansion", "Contributes compiler-mod transformations to expanded syntax."),
+		edge("parser-to-expanded-syntax", "parser", "expanded-syntax-assembly", "parses", "Syntax assembly", "Feeds parsed syntax into immutable expanded assembly."),
+		edge("typed-hir-to-typed-program", "typed-hir-compatibility", "typed-program", "supports", "Compatibility preparation", "Keeps the transitional typed-HIR preparation path visible."),
+		edge("abi-manifest-to-generated-abi", "abi-manifest", "generated-abi", "derives", "ABI generation", "Generates bindings from the versioned ABI manifest."),
+		edge("generated-abi-to-runtime-kit", "generated-abi", "runtime-kit", "packages", "Runtime ABI", "Packages generated ABI bindings with runtime kits."),
+		edge("rust-runtime-host-to-runtime-kit", "rust-runtime-host-compatibility", "runtime-kit", "supports", "Host compatibility", "Keeps the retiring Rust host path visible beside runtime kits."),
+		edge("cli-to-workspace-resolver", "cli", "workspace-resolver", "executes", "Build orchestration", "Starts workspace resolution for CLI builds."),
+	],
 	traversals: {
 		build: BuildTraversal,
-		ide: ["tree-sitter", "vs-code", "lsp", "generation-safe-facts", "diagnostics"],
-		"spec-to-code": ["openspec", "openspec-catalog", "conformance-evidence", "codegen-input", "codegen-artifact"],
+		ide: IdeTraversal,
+		"spec-to-code": SpecToCodeTraversal,
 	},
 };

@@ -122,6 +122,28 @@ describe("architecture model", () => {
 		expect(model.edges[0]).toMatchObject({ kind: "transforms", from: "source", to: "output" });
 	});
 
+	it("rejects manifests with an unknown traversal ID", () => {
+		const base = manifest();
+		const invalid = {
+			...base,
+			traversals: { ...base.traversals, preview: ["source"] },
+		} as unknown as ArchitectureManifest;
+		expect(() => resolveArchitectureModel(invalid, catalogEntries)).toThrow(
+			'unknown traversal ID "preview"',
+		);
+	});
+
+	it("requires build, ide, and spec-to-code traversals", () => {
+		const base = manifest();
+		const invalid = {
+			...base,
+			traversals: { build: base.traversals.build, ide: base.traversals.ide },
+		} as unknown as ArchitectureManifest;
+		expect(() => resolveArchitectureModel(invalid, catalogEntries)).toThrow(
+			'missing required traversal "spec-to-code"',
+		);
+	});
+
 	it("provides the complete canonical AOT build traversal", () => {
 		const model = resolveArchitectureModel(CompilerArchitectureManifest, catalogForManifest());
 		expect(model.traversals.build).toEqual(BuildTraversal);
@@ -132,5 +154,31 @@ describe("architecture model", () => {
 		const model = resolveArchitectureModel(CompilerArchitectureManifest, catalogForManifest());
 		expect(model.nodesById["typed-hir-compatibility"].state).toBe("transitional");
 		expect(model.nodesById["rust-runtime-host-compatibility"].state).toBe("retiring");
+	});
+
+	it("connects every consecutive step in each named traversal", () => {
+		const model = resolveArchitectureModel(CompilerArchitectureManifest, catalogForManifest());
+		for (const traversal of Object.values(model.traversals)) {
+			for (let index = 0; index < traversal.length - 1; index += 1) {
+				expect(model.adjacency[traversal[index]!]).toContain(traversal[index + 1]);
+			}
+		}
+	});
+
+	it("connects direct compiler boundary and compatibility nodes", () => {
+		const model = resolveArchitectureModel(CompilerArchitectureManifest, catalogForManifest());
+		const boundaryIds = [
+			"bsol-manifest",
+			"pckg",
+			"corelib",
+			"compiler-mods",
+			"parser",
+			"typed-hir-compatibility",
+			"abi-manifest",
+			"generated-abi",
+			"rust-runtime-host-compatibility",
+			"cli",
+		] as const;
+		for (const nodeId of boundaryIds) expect(model.adjacency[nodeId]).not.toHaveLength(0);
 	});
 });

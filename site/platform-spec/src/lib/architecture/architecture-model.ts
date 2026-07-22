@@ -94,6 +94,8 @@ export interface ArchitectureCatalogEntry {
 	title: string;
 }
 
+const RequiredTraversalIds = ["build", "ide", "spec-to-code"] as const;
+
 function resolveSpecLinks(
 	node: ArchitectureNode,
 	catalogByCapability: ReadonlyMap<string, ArchitectureCatalogEntry>,
@@ -114,6 +116,18 @@ export function resolveArchitectureModel(
 	manifest: ArchitectureManifest,
 	catalogEntries: readonly ArchitectureCatalogEntry[],
 ): ResolvedArchitectureModel {
+	const traversals = manifest.traversals as Readonly<Record<string, readonly string[] | undefined>>;
+	for (const traversalId of Object.keys(traversals)) {
+		if (!(RequiredTraversalIds as readonly string[]).includes(traversalId)) {
+			throw new Error(`unknown traversal ID "${traversalId}"`);
+		}
+	}
+	for (const traversalId of RequiredTraversalIds) {
+		if (!traversals[traversalId]) {
+			throw new Error(`missing required traversal "${traversalId}"`);
+		}
+	}
+
 	const groupIds = new Set<string>();
 	for (const group of manifest.groups) {
 		if (groupIds.has(group.id)) throw new Error(`duplicate group ID "${group.id}"`);
