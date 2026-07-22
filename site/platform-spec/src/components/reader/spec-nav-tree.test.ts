@@ -136,6 +136,17 @@ describe("highlightTitle", () => {
 			{ start: 2, end: 3, match: true },
 		]);
 	});
+
+	it("maps whole-string Lithuanian case folding back to original title offsets", () => {
+		expect(highlightTitle("I\u0301B", "i\u0307", "lt")).toEqual([
+			{ start: 0, end: 1, match: true },
+			{ start: 1, end: 3, match: false },
+		]);
+		expect(highlightTitle("I\u0301B", "b", "lt")).toEqual([
+			{ start: 0, end: 2, match: false },
+			{ start: 2, end: 3, match: true },
+		]);
+	});
 });
 
 describe("resolveTreeKey", () => {

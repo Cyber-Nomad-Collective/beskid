@@ -6,8 +6,8 @@ export interface TitleRange {
 	match: boolean;
 }
 
-function normalize(value: string): string {
-	return value.trim().toLocaleLowerCase();
+function normalize(value: string, locale?: string | string[]): string {
+	return value.trim().toLocaleLowerCase(locale);
 }
 
 export interface NavSearchResult {
@@ -172,18 +172,45 @@ export function findActivePath(
 	return visit(tree, []) ?? [];
 }
 
-export function highlightTitle(title: string, query: string): TitleRange[] {
-	const normalizedQuery = normalize(query);
+export function highlightTitle(
+	title: string,
+	query: string,
+	locale?: string | string[],
+): TitleRange[] {
+	const normalizedQuery = normalize(query, locale);
 	if (!normalizedQuery) return [{ start: 0, end: title.length, match: false }];
-	const searchableTitle = title.toLocaleLowerCase();
+	const searchableTitle = title.toLocaleLowerCase(locale);
 	const foldedOffsets: Array<{ start: number; end: number }> = [];
 	let titleOffset = 0;
+	let foldedOffset = 0;
+	let previousCharacter: { start: number; end: number } | undefined;
 	for (const character of title) {
 		const end = titleOffset + character.length;
-		for (let index = 0; index < character.toLocaleLowerCase().length; index++) {
+		const currentCharacter = { start: titleOffset, end };
+		const characterFold = character.toLocaleLowerCase(locale);
+		const nextFoldedOffset = characterFold
+			? searchableTitle.indexOf(characterFold, foldedOffset)
+			: foldedOffset;
+		const characterFoldStart = nextFoldedOffset === -1 ? foldedOffset : nextFoldedOffset;
+		const contextualCharacter = previousCharacter ?? currentCharacter;
+		while (foldedOffset < characterFoldStart) {
+			foldedOffsets.push(contextualCharacter);
+			foldedOffset += 1;
+		}
+		for (
+			let index = 0;
+			index < characterFold.length && foldedOffset < searchableTitle.length;
+			index += 1
+		) {
 			foldedOffsets.push({ start: titleOffset, end });
+			foldedOffset += 1;
 		}
 		titleOffset = end;
+		previousCharacter = currentCharacter;
+	}
+	while (foldedOffset < searchableTitle.length && previousCharacter) {
+		foldedOffsets.push(previousCharacter);
+		foldedOffset += 1;
 	}
 	const ranges: TitleRange[] = [];
 	let cursor = 0;
