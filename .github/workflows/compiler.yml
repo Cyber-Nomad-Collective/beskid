@@ -72,6 +72,52 @@ jobs:
       - name: LSP command contract gate
         run: bash ./scripts/ci/lsp-command-contract-gate.sh
 
+  windows-runtime-kit-matrix:
+    name: Windows ABI-v5 runtime-kit matrix
+    needs: gate
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-compiler-submodule
+        with:
+          compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          workspaces: compiler
+
+      - name: Require native LLVM tooling
+        shell: pwsh
+        run: |
+          $llvmNm = Get-Command llvm-nm.exe -ErrorAction Stop
+          $llvmMl = Get-Command llvm-ml.exe -ErrorAction Stop
+          $clang = Get-Command clang.exe -ErrorAction Stop
+          $llvmBin = Split-Path -Parent $llvmNm.Source
+          "LLVM_NM=$($llvmNm.Source)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $llvmBin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          Write-Host "Using LLVM tools: $($llvmNm.Source), $($llvmMl.Source), $($clang.Source)"
+
+      - name: Build and smoke exact Windows runtime-kit matrix
+        shell: bash
+        env:
+          BESKID_RUNTIME_PREFIX: ${{ github.workspace }}/runtime-kit-windows-matrix
+        run: bash ./compiler/scripts/stage-native-runtime-kit-matrix.sh
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: abi-v5-runtime-kit-windows-x86_64
+          path: runtime-kit-windows-matrix/lib/beskid-runtime/abi-5/x86_64-pc-windows-msvc
+          if-no-files-found: error
+
   version:
     name: Resolve release version
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
