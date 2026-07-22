@@ -7,7 +7,6 @@ cd "${ROOT}"
 
 authoritative=(
   .github/workflows/platform-delivery.yml
-  .github/workflows/promote-production.yml
   .github/workflows/reusable-image.yml
   .github/workflows/reusable-promote.yml
   .github/workflows/reusable-quality.yml
@@ -18,29 +17,18 @@ for workflow in "${authoritative[@]}"; do
   [[ -f "${workflow}" ]] || { echo "missing authoritative workflow: ${workflow}" >&2; exit 1; }
 done
 
-# Caller/callee concurrency groups must differ. promote-production.yml used to
-# share `promote-production` with reusable-promote.yml (environment=production),
-# which GitHub cancels as a concurrency deadlock before the environment gate.
-caller_group="$(
-  awk '
-    /^concurrency:/ { in_conc=1; next }
-    in_conc && /^[^[:space:]#]/ { exit }
-    in_conc && /group:/ {
-      line=$0
-      sub(/^[^:]*:[[:space:]]*/, "", line)
-      gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
-      gsub(/^["'\'']|["'\'']$/, "", line)
-      print line
-      exit
-    }
-  ' .github/workflows/promote-production.yml
-)"
-[[ -n "${caller_group}" ]] || {
-  echo "promote-production.yml is missing a top-level concurrency group" >&2
+# The delivery workflow is the only promotion caller. Its workflow-level
+# concurrency group deliberately differs from reusable-promote's per-lane lock.
+[[ ! -e .github/workflows/promote-production.yml ]] || {
+  echo "manual production promotion workflow must not bypass staging" >&2
   exit 1
 }
-[[ "${caller_group}" != "promote-production" ]] || {
-  echo "promote-production.yml concurrency group must not be promote-production (deadlocks reusable-promote.yml)" >&2
+rg -Fq 'group: platform-delivery-${{ github.ref }}' .github/workflows/platform-delivery.yml || {
+  echo "platform delivery must retain its distinct workflow-level concurrency group" >&2
+  exit 1
+}
+rg -Fq 'needs: [manifest, staging]' .github/workflows/platform-delivery.yml || {
+  echo "production promotion must wait for the same run's staging job" >&2
   exit 1
 }
 
