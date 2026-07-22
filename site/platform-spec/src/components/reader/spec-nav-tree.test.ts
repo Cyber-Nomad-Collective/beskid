@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import {
+	createNavSearchResult,
 	filterNavTree,
 	findActivePath,
 	highlightTitle,
+	resolveTrappedFocusIndex,
+	resolveTreeKey,
 } from "#/components/reader/spec-nav-tree";
 import type { OpenSpecNavNode } from "#/lib/spec/domain-model";
 
@@ -77,6 +80,35 @@ describe("filterNavTree", () => {
 	});
 });
 
+describe("createNavSearchResult", () => {
+	it("counts only direct title matches, not preserved ancestors", () => {
+		const result = createNavSearchResult(tree, "parser");
+
+		expect(result.matchCount).toBe(1);
+		expect(result.matchingSlugs).toEqual(new Set(["parser"]));
+		expect(result.expandedSlugs).toEqual(
+			new Set(["platform-spec", "compiler", "compiler/frontend"]),
+		);
+	});
+
+	it("counts each matching title when more than one node matches", () => {
+		const repeatedTree: OpenSpecNavNode = {
+			...tree,
+			children: [
+				...tree.children!,
+				{
+					slug: "parser-runtime",
+					href: "/platform-spec/parser-runtime",
+					title: "Parser runtime",
+					level: "feature",
+				},
+			],
+		};
+
+		expect(createNavSearchResult(repeatedTree, "parser").matchCount).toBe(2);
+	});
+});
+
 describe("findActivePath", () => {
 	it("returns every ancestor through the active node", () => {
 		expect(findActivePath(tree, "parser")).toEqual([
@@ -96,5 +128,36 @@ describe("highlightTitle", () => {
 			{ start: 6, end: 12, match: false },
 			{ start: 12, end: 18, match: true },
 		]);
+	});
+});
+
+describe("resolveTreeKey", () => {
+	const expanded = new Set(["compiler", "compiler/frontend"]);
+
+	it("moves through the visible items and to either boundary", () => {
+		expect(resolveTreeKey(tree, expanded, "compiler/frontend", "ArrowDown")).toEqual({ focusSlug: "parser" });
+		expect(resolveTreeKey(tree, expanded, "compiler/frontend", "ArrowUp")).toEqual({ focusSlug: "compiler" });
+		expect(resolveTreeKey(tree, expanded, "parser", "Home")).toEqual({ focusSlug: "compiler" });
+		expect(resolveTreeKey(tree, expanded, "compiler", "End")).toEqual({ focusSlug: "runtime" });
+	});
+
+	it("expands or enters children with Right and collapses or moves to the parent with Left", () => {
+		expect(resolveTreeKey(tree, new Set(), "compiler", "ArrowRight")).toEqual({ expandSlug: "compiler" });
+		expect(resolveTreeKey(tree, expanded, "compiler", "ArrowRight")).toEqual({ focusSlug: "compiler/frontend" });
+		expect(resolveTreeKey(tree, expanded, "compiler/frontend", "ArrowLeft")).toEqual({ collapseSlug: "compiler/frontend" });
+		expect(resolveTreeKey(tree, new Set(["compiler"]), "compiler/frontend", "ArrowLeft")).toEqual({ focusSlug: "compiler" });
+	});
+
+	it("activates the focused item with Enter", () => {
+		expect(resolveTreeKey(tree, expanded, "parser", "Enter")).toEqual({ activate: true });
+	});
+});
+
+describe("resolveTrappedFocusIndex", () => {
+	it("wraps Tab and Shift+Tab at modal focus boundaries", () => {
+		expect(resolveTrappedFocusIndex(3, 4, false)).toBe(0);
+		expect(resolveTrappedFocusIndex(0, 4, true)).toBe(3);
+		expect(resolveTrappedFocusIndex(-1, 4, false)).toBe(0);
+		expect(resolveTrappedFocusIndex(1, 4, false)).toBeNull();
 	});
 });

@@ -76,6 +76,11 @@ body {
 	font-size: 0.9em;
 }
 
+.spec-prose :not(pre) > code {
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
 .spec-prose table {
 	display: block;
 	overflow-x: auto;
