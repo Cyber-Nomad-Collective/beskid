@@ -72,6 +72,14 @@ A named OpenSpec requirement using SHALL or MUST and one or more testable scenar
 
 The public reader and service that renders the Beskid standard. It is a presentation and integration surface; `openspec/specs` is its source of authority.
 
+## Platform Spec document context
+
+The catalogued identity of a Platform Spec taxonomy hub, normative feature
+specification, informative article, or informative decision. It records a
+canonical path, kind, parent capability, authority, disposition, title, and
+source hash; a submitted draft also retains its immutable catalog base
+revision.
+
 ## Provenance catalog
 
 The deterministic `openspec/catalog.json` mapping stable capability/requirement identifiers to source hashes, legacy slugs, canonical paths, statuses, aliases, and informative document references.

@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "d787a62def8bb1e6f71c3bf75d36b3ab9857d38b997592c4fa569c07cfd3a0f5",
+  "revision": "dc29bad3e7cde9846a647fa77b3e018aed96177bff2f5c58929431674a0ac768",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
-    "capabilities": 185,
-    "requirements": 519,
+    "capabilities": 186,
+    "requirements": 523,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
-    "informativeDocuments": 204,
+    "informativeDocuments": 206,
     "documentsWithNormativeKeywords": 10
   },
   "entries": [
@@ -8277,6 +8277,48 @@
       "bookLinks": [
         "/book/14-from-source-to-runs/front-end/"
       ]
+    },
+    {
+      "id": "BSP-CAP-8B84ADF6B6A0",
+      "capability": "compiler--front-end--parser",
+      "specPath": "openspec/specs/compiler--front-end--parser/spec.md",
+      "path": "/platform-spec/capabilities/compiler--front-end--parser/",
+      "title": "Parser",
+      "description": "Canonical OpenSpec capability for Parser.",
+      "status": "Standard",
+      "domain": "compiler",
+      "area": "front-end",
+      "feature": "parser",
+      "legacySlugs": [],
+      "aliases": [],
+      "requirements": [
+        {
+          "id": "BSP-REQ-D8546C3B7CCC",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--front-end--parser/spec.md",
+          "sourceHash": "6d3072ee399349b90101c7adba16706567550abd78aec5a7bc69835eb065c14b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Parser feature authority is explicit",
+          "anchor": "requirement-parser-feature-authority-is-explicit"
+        },
+        {
+          "id": "BSP-REQ-8CA4525505A8",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/compiler--front-end--parser/spec.md",
+          "sourceHash": "6d3072ee399349b90101c7adba16706567550abd78aec5a7bc69835eb065c14b",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Parser documents retain their feature parent",
+          "anchor": "requirement-parser-documents-retain-their-feature-parent"
+        }
+      ],
+      "records": [],
+      "specLevel": "feature",
+      "parentCapability": "taxonomy--compiler--front-end",
+      "bookLinks": []
     },
     {
       "id": "BSP-CAP-FD212817389A",
@@ -29793,6 +29835,28 @@
           "migrationStatus": "extracted",
           "title": "Public standard links remain stable",
           "anchor": "requirement-public-standard-links-remain-stable"
+        },
+        {
+          "id": "BSP-REQ-3D23A0F1822A",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-content-authority/spec.md",
+          "sourceHash": "3d2533a743824db3c782e4ca1836d4c055f8cd7b4abdc75f3921375dbf6a18c7",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Platform Spec document contexts have canonical authority",
+          "anchor": "requirement-platform-spec-document-contexts-have-canonical-authority"
+        },
+        {
+          "id": "BSP-REQ-88F005279FB8",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-content-authority/spec.md",
+          "sourceHash": "3d2533a743824db3c782e4ca1836d4c055f8cd7b4abdc75f3921375dbf6a18c7",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Platform Spec catalog identities are revisioned and validated",
+          "anchor": "requirement-platform-spec-catalog-identities-are-revisioned-and-validated"
         }
       ],
       "records": [],
@@ -38284,7 +38348,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "a9382e139ff89f9d07069cb62272f77920cdc18025cec050b8abd45aeb8a5248",
+      "sourceHash": "0660deadc0ffd9f24d3342a3e85fc87c91dbd01341e50ccf4f271796871b8ce8",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -40626,6 +40690,26 @@
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
+    },
+    {
+      "path": "openspec/documents/platform-spec/compiler--front-end--parser/articles/grammar-notes.md",
+      "title": "Grammar notes",
+      "kind": "article",
+      "parentCapability": "compiler--front-end--parser",
+      "authority": "informative",
+      "disposition": "informative-by-policy",
+      "standardLinks": [],
+      "sourceHash": "82e1fe714a339c4d98b8d334532acd620182b81b1dc0196c03c63b87691ddcd3"
+    },
+    {
+      "path": "openspec/documents/platform-spec/compiler--front-end--parser/decisions/0001-parser-shape.md",
+      "title": "Parser shape",
+      "kind": "decision",
+      "parentCapability": "compiler--front-end--parser",
+      "authority": "informative",
+      "disposition": "informative-by-policy",
+      "standardLinks": [],
+      "sourceHash": "00362f128a4e5af5d9b93f14786ef03315e979d43e3629c9e17878195a412973"
     }
   ],
   "legacyArtifacts": [

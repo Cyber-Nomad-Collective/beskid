@@ -15,6 +15,31 @@ const archiveTbdPurpose =
 
 type UnknownRecord = Record<string, unknown>;
 
+const platformSpecDocumentKinds = new Set(["article", "decision"]);
+
+export function validateDocumentCatalog(documents: UnknownRecord[]): string[] {
+	return documents.flatMap((document) => {
+		const documentPath = String(document.path ?? "");
+		if (!documentPath.startsWith("openspec/documents/platform-spec/")) return [];
+		const kind = String(document.kind ?? "");
+		if (!platformSpecDocumentKinds.has(kind)) {
+			return [`Unknown Platform Spec document kind: ${kind || "(missing)"} (${documentPath})`];
+		}
+		const expectedDirectory = kind === "article" ? "articles" : "decisions";
+		const match = documentPath.match(
+			new RegExp(`^openspec/documents/platform-spec/([^/]+)/${expectedDirectory}/[^/]+\\.md$`),
+		);
+		if (!match) return [`Invalid Platform Spec document path for ${kind}: ${documentPath}`];
+		if (document.parentCapability !== match[1]) {
+			return [`Platform Spec document parent mismatch: ${documentPath}`];
+		}
+		if (document.authority !== "informative") {
+			return [`Platform Spec document is not informative: ${documentPath}`];
+		}
+		return [];
+	});
+}
+
 function assert(condition: unknown, message: string): asserts condition {
 	if (!condition) throw new Error(message);
 }
@@ -39,6 +64,17 @@ assert(new Set(requirements.map((item) => item.id)).size === requirements.length
 assert(new Set(records.map((item) => item.id)).size === records.length, "Duplicate source record IDs");
 assert(new Set(artifacts.map((item) => item.path)).size === artifacts.length, "Duplicate archived artifact paths");
 assert(!requirements.some((item) => item.migrationStatus === "needs-semantic-review"), "Unreviewed migration requirements remain");
+const documentCatalogErrors = validateDocumentCatalog(documents);
+assert(documentCatalogErrors.length === 0, documentCatalogErrors.join("\n"));
+const knownCapabilities = new Set(entries.map((entry) => String(entry.capability)));
+for (const document of documents) {
+	const documentPath = String(document.path ?? "");
+	if (!documentPath.startsWith("openspec/documents/platform-spec/")) continue;
+	assert(
+		knownCapabilities.has(String(document.parentCapability)),
+		`Platform Spec document has no canonical parent capability: ${documentPath}`,
+	);
+}
 
 for (const entry of entries) {
 	const specPath = path.join(repoRoot, String(entry.specPath));
