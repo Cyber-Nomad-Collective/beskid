@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { Position } from "@xyflow/react";
 
 import {
 	deriveArchitectureNeighborhood,
@@ -48,6 +49,44 @@ describe("architecture map layout", () => {
 			expect(nodeIds.has(edge.source)).toBe(true);
 			expect(nodeIds.has(edge.target)).toBe(true);
 		}
+	});
+
+	it("provides static left and right edge anchors for every architecture card", () => {
+		const layout = layoutArchitectureMap(model);
+
+		for (const node of layout.nodes) {
+			expect(node.targetPosition).toBe(Position.Left);
+			expect(node.sourcePosition).toBe(Position.Right);
+		}
+	});
+
+	it("renders selected neighborhoods and active traversal edges with visible emphasis", () => {
+		const inactive = layoutArchitectureMap(model);
+		const selected = layoutArchitectureMap(model, { selectedNodeId: "typed" });
+		const traversal = layoutArchitectureMap(model, {
+			traversalNodeIds: ["source", "typed"],
+		});
+
+		for (const edge of inactive.edges) {
+			expect(edge.selected).toBe(false);
+			expect(edge.animated).toBe(false);
+			expect(edge.style).toMatchObject({ opacity: 0.45 });
+		}
+		for (const edge of selected.edges) {
+			expect(edge.selected).toBe(true);
+			expect(edge.animated).toBe(true);
+			expect(edge.style).toMatchObject({ opacity: 1, strokeWidth: 2.5 });
+		}
+		expect(traversal.edges.find((edge) => edge.id === "source-to-typed")).toMatchObject({
+			selected: true,
+			animated: true,
+			style: { opacity: 1, strokeWidth: 2.5 },
+		});
+		expect(traversal.edges.find((edge) => edge.id === "typed-to-artifact")).toMatchObject({
+			selected: false,
+			animated: false,
+			style: { opacity: 0.45 },
+		});
 	});
 
 	it("derives the selected node and its direct neighborhood", () => {

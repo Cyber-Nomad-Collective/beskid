@@ -1,5 +1,5 @@
 import * as dagre from "@dagrejs/dagre";
-import type { Edge, Node } from "@xyflow/react";
+import { Position, type Edge, type Node } from "@xyflow/react";
 
 import type {
 	ArchitectureEdge,
@@ -73,6 +73,8 @@ export function layoutArchitectureMap(
 				},
 				width: ArchitectureMapNodeWidth,
 				height: ArchitectureMapNodeHeight,
+				targetPosition: Position.Left,
+				sourcePosition: Position.Right,
 				data: {
 					node,
 					selected: node.id === options.selectedNodeId,
@@ -81,18 +83,24 @@ export function layoutArchitectureMap(
 				},
 			};
 		}),
-		edges: model.edges.map((edge) => ({
-			id: edge.id,
-			source: edge.from,
-			target: edge.to,
-			type: "smoothstep",
-			label: edge.label,
-			data: {
-				edge,
-				selected:
-					neighborhood.has(edge.from) && neighborhood.has(edge.to),
-				traversal: traversal.has(edge.from) && traversal.has(edge.to),
-			},
-		})),
+		edges: model.edges.map((edge) => {
+			const selected = neighborhood.has(edge.from) && neighborhood.has(edge.to);
+			const traversalEdge = traversal.has(edge.from) && traversal.has(edge.to);
+			const emphasized = selected || traversalEdge;
+			return {
+				id: edge.id,
+				source: edge.from,
+				target: edge.to,
+				type: "smoothstep",
+				label: edge.label,
+				selected: emphasized,
+				animated: emphasized,
+				style: {
+					opacity: emphasized ? 1 : 0.45,
+					strokeWidth: emphasized ? 2.5 : 1.25,
+				},
+				data: { edge, selected, traversal: traversalEdge },
+			};
+		}),
 	};
 }

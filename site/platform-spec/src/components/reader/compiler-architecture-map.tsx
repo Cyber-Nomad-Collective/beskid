@@ -3,6 +3,8 @@
 import {
 	Background,
 	Controls,
+	Handle,
+	Position,
 	ReactFlow,
 	type Node,
 	type NodeProps,
@@ -36,6 +38,13 @@ function ArchitectureNodeCard({ data }: NodeProps<Node<ArchitectureMapNodeData>>
 				data.traversal ? "outline outline-1 outline-amber-500/70" : "",
 			].join(" ")}
 		>
+			<Handle
+				type="target"
+				position={Position.Left}
+				isConnectable={false}
+				aria-hidden="true"
+				className="!h-1 !w-1 !border-0 !bg-transparent !opacity-0"
+			/>
 			<div className="flex items-start justify-between gap-2">
 				<span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
 					{data.node.group} · {data.node.kind}
@@ -56,6 +65,13 @@ function ArchitectureNodeCard({ data }: NodeProps<Node<ArchitectureMapNodeData>>
 			) : (
 				<span className="mt-1 block text-xs text-muted-foreground">No canonical spec link</span>
 			)}
+			<Handle
+				type="source"
+				position={Position.Right}
+				isConnectable={false}
+				aria-hidden="true"
+				className="!h-1 !w-1 !border-0 !bg-transparent !opacity-0"
+			/>
 		</div>
 	);
 }
