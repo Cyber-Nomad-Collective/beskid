@@ -46,10 +46,6 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   deployments again.
 - Pin `beskid_nexus` tip with exact-match Vitest aliases for `gitnexus-shared` (and
   `gitnexus-shared/test-helpers`) so the shared-ui-nexus unit gate resolves imports.
-- Production promote no longer deadlocks: `promote-production.yml` concurrency
-  group no longer collides with `reusable-promote.yml`'s `promote-production`
-  lane lock, so the nested environment gate can create pending reviewer
-  deployments again.
 - Pin compiler tip that registers process-linked soft builtins for exact ABI-v5 JIT and
   types string `+` BinaryExpressions so Corelib Assert/Escape ISLE paths can clear.
 - Pin compiler tip that forwards Windows COFF import libraries through
