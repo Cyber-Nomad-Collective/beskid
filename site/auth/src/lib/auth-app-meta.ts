@@ -4,7 +4,7 @@ import {
 	type AuthAppId,
 } from "@beskid/auth-client";
 
-/** Fail-closed label when meta is missing or out of date vs app id. */
+/** Fail-closed label when meta is missing or out of date vs app id (catalog may lag). */
 export function authAppLabel(appId: string): string {
 	return AUTH_APP_META[appId as AuthAppId]?.label ?? appId;
 }

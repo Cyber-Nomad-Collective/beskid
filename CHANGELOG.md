@@ -33,7 +33,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 ### Fixed
 
 - Auth admin pairing select restores Platform Spec via `@beskid/auth-client@0.2.9`
-  (`AUTH_APP_IDS` / `AUTH_APP_META`); auth/tracker/nexus leave the `0.2.0` lock.
+  (`AUTH_APP_IDS` / `AUTH_APP_META`); auth/tracker/nexus leave the old `0.2.0` lock behind.
 - Auth admin `/admin/pairing/new` no longer crashes when `AUTH_APP_META` lags
   behind hardcoded app ids (prod lacked `platform-spec`); options are derived
   from catalogued meta only, with fail-closed labels.
