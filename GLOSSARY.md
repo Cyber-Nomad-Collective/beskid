@@ -77,10 +77,10 @@ The installed ABI-v5 target/profile directory containing `abi.json` and matching
 
 ## Node SQLite adapter
 
-The service-local compatibility boundary backed by pinned `better-sqlite3`. It
-preserves the synchronous prepared-statement and transaction behavior used by
-Auth, Platform Spec, and Tracker while keeping the native dependency out of
-browser bundles.
+The service-local synchronous SQLite boundary used by Node-hosted site apps.
+Auth uses pinned `better-sqlite3`; Platform Spec uses the Bun-compatible facade
+over built-in `node:sqlite`. Both preserve prepared statements and transactions
+while keeping native SQLite out of browser bundles.
 
 ## Normative requirement
 
