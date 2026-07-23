@@ -9,6 +9,15 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Added
+
+- Platform Spec Draft Context authoring: multi-document revision-pinned contexts,
+  layout templates, restricted Tiptap WYSIWYG with Markdown SOT, reader
+  “Propose change”, richer moderation with stale-revision fail-closed, merge/abandon
+  webhooks, and Tracker `/api/v1/tasks` linking by `standardId` + `catalogRevision`.
+- Platform-spec Node 22.12 / pnpm 10.17.1 runtime cutover (`node:sqlite` adapter,
+  Node Nitro preset, Node Docker image).
+
 ### Fixed
 
 - Platform-spec Map / Facts DAG no longer crashes with `gm.Graph is not a constructor`

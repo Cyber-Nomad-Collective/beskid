@@ -104,6 +104,24 @@ function PlatformSpecDocument() {
 					adrs={adrs}
 					layout={layout}
 					layoutValidation={layoutValidation}
+					catalogRevision={catalog.revision}
+					standardId={
+						catalog.documents.find((entry) => entry.slug === slug)?.key ??
+						slug.replace(/^platform-spec\/capabilities\//, "")
+					}
+					proposeSearch={{
+						capability: catalog.documents
+							.find((entry) => entry.slug === slug)
+							?.capability,
+						domain: catalog.documents.find((entry) => entry.slug === slug)
+							?.domain,
+						area:
+							catalog.documents.find((entry) => entry.slug === slug)?.area ??
+							undefined,
+						feature:
+							catalog.documents.find((entry) => entry.slug === slug)
+								?.feature ?? undefined,
+					}}
 				/>
 			</SpecShell>
 		</ReaderChrome>

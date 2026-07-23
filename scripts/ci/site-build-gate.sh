@@ -38,11 +38,11 @@ elif [[ "$APP" == "platform-spec" ]]; then
   [[ -n "$NODE_AUTH_TOKEN" ]] && export NODE_AUTH_TOKEN
   # Platform-spec is a root workspace member; install from the repo lockfile.
   gate_step "pspec-frozen-install" -- bun install --frozen-lockfile
-  gate_step "pspec-layouts"        -- sh -c 'cd site/platform-spec && bun run layouts:check'
-  gate_step "pspec-test"           -- sh -c 'cd site/platform-spec && bun run test'
-  gate_step "pspec-build"          -- sh -c 'cd site/platform-spec && SKIP_ENV_VALIDATION=1 bun run build'
-  gate_step "pspec-verify-seed"    -- sh -c 'cd site/platform-spec && bun run verify:seed'
-  gate_step "pspec-verify-bundle"  -- sh -c 'cd site/platform-spec && bun run verify:client-bundle'
+  gate_step "pspec-layouts"        -- sh -c 'cd site/platform-spec && corepack enable && corepack prepare pnpm@10.17.1 --activate && pnpm run layouts:check'
+  gate_step "pspec-test"           -- sh -c 'cd site/platform-spec && pnpm run test'
+  gate_step "pspec-build"          -- sh -c 'cd site/platform-spec && SKIP_ENV_VALIDATION=1 pnpm run build'
+  gate_step "pspec-verify-seed"    -- sh -c 'cd site/platform-spec && pnpm run verify:seed'
+  gate_step "pspec-verify-bundle"  -- sh -c 'cd site/platform-spec && pnpm run verify:client-bundle'
 else
   echo "Usage: $0 <auth|website|platform-spec> [NODE_AUTH_TOKEN]" >&2
   exit 1

@@ -3,65 +3,68 @@ import "@tanstack/react-start/server-only";
 
 import { env } from "#/env.server";
 import { repoParams } from "#/lib/github/octokit";
-import type { DraftChangeNode } from "#/server/memgraph/types";
+import type { ParsedDraftContextBundle } from "#/server/memgraph/types";
 import {
 	loadOpenSpecCatalog,
-	resolveOpenSpecEntry,
 	resolveOpenSpecRoot,
 } from "#/server/openspec/reader";
 
 const OWNER = () => env.GITHUB_REPO_OWNER;
 const REPO = () => env.GITHUB_REPO_NAME;
 
-function draftBranchName(draftId: string): string {
-	const short = draftId.replace(/-/g, "").slice(0, 8);
+function draftBranchName(contextId: string): string {
+	const short = contextId.replace(/-/g, "").slice(0, 8);
 	return `openspec/platform-editor-${short}`;
 }
 
-function changeName(draftId: string): string {
-	return `platform-editor-${draftId.replace(/-/g, "").slice(0, 8)}`;
+function changeName(contextId: string): string {
+	return `platform-editor-${contextId.replace(/-/g, "").slice(0, 8)}`;
 }
 
-function capabilityForDraft(draft: DraftChangeNode): string {
-	const existing = resolveOpenSpecEntry(draft.slug);
-	if (existing) return existing.capability;
-	const derived = draft.slug
-		.replace(/^platform-spec\/?/, "")
-		.split("/")
-		.filter((part) => part && part !== "articles" && part !== "adr")
-		.slice(0, 3)
-		.join("--")
-		.replace(/[^a-z0-9-]/gi, "-")
-		.toLowerCase();
-	return derived || `proposed-${draft.id.replace(/-/g, "").slice(0, 8)}`;
+function assertPathContained(filePath: string): void {
+	if (
+		!filePath.startsWith("openspec/changes/") ||
+		filePath.includes("..") ||
+		pathIsAbsolute(filePath)
+	) {
+		throw new Error(`Refusing to write outside OpenSpec change tree: ${filePath}`);
+	}
 }
 
-function deltaForDraft(draft: DraftChangeNode, capability: string): string {
-	const existing = resolveOpenSpecEntry(draft.slug);
-	const operation =
-		draft.changeKind === "create"
-			? "ADDED"
-			: draft.changeKind === "delete"
-				? "REMOVED"
-				: "MODIFIED";
-	const requirementTitle = existing?.requirements[0]?.title ?? draft.title;
-	const supplied = draft.bodyMd.trim();
-	const requirementBody = /^### Requirement:/m.test(supplied)
-		? supplied
-		: [
-				`### Requirement: ${requirementTitle}`,
-				draft.changeKind === "delete"
-					? "This requirement is removed by the approved OpenSpec change."
-					: supplied ||
-						draft.summary ||
-						`The Beskid standard SHALL define ${draft.title}.`,
-				"",
-				`#### Scenario: Review ${capability} change`,
-				`- **GIVEN** the proposed ${capability} change`,
-				"- **WHEN** maintainers validate and merge the OpenSpec change",
-				"- **THEN** the canonical capability specification reflects the approved behavior",
-			].join("\n");
-	return `# Delta for ${capability}\n\n## ${operation} Requirements\n\n${requirementBody}\n`;
+function pathIsAbsolute(filePath: string): boolean {
+	return filePath.startsWith("/") || /^[A-Za-z]:[\\/]/.test(filePath);
+}
+
+function deltaBodyForChange(
+	operation: "create" | "update" | "delete",
+	sourceMarkdown: string,
+	artifactKind: string,
+): string {
+	const supplied = sourceMarkdown.trim();
+	if (!supplied && operation !== "delete") {
+		throw new Error("Refusing to synthesize OpenSpec content from empty prose");
+	}
+	if (artifactKind === "feature") {
+		if (operation !== "delete" && !/^### Requirement:/m.test(supplied)) {
+			throw new Error(
+				"Feature deltas require explicit ### Requirement: headings; synthesis is disabled",
+			);
+		}
+		const opLabel =
+			operation === "create"
+				? "ADDED"
+				: operation === "delete"
+					? "REMOVED"
+					: "MODIFIED";
+		if (operation === "delete") {
+			return `# Delta\n\n## ${opLabel} Requirements\n\n${supplied || "### Requirement: Removed\nThis requirement is removed by the approved OpenSpec change.\n"}`;
+		}
+		if (/^#\s+Delta\b/m.test(supplied) || /^##\s+(ADDED|MODIFIED|REMOVED)\b/m.test(supplied)) {
+			return supplied.endsWith("\n") ? supplied : `${supplied}\n`;
+		}
+		return `# Delta\n\n## ${opLabel} Requirements\n\n${supplied}\n`;
+	}
+	return supplied.endsWith("\n") ? supplied : `${supplied}\n`;
 }
 
 async function getBaseSha(octokit: Octokit, baseRef = "main"): Promise<string> {
@@ -123,6 +126,7 @@ async function writeFilesAtomically(
 	});
 	const tree = await Promise.all(
 		files.map(async (file) => {
+			assertPathContained(file.path);
 			const { data: blob } = await octokit.git.createBlob({
 				owner: OWNER(),
 				repo: REPO(),
@@ -160,17 +164,45 @@ async function writeFilesAtomically(
 }
 
 export function buildOpenSpecChangeFiles(
-	draft: DraftChangeNode,
+	bundle: ParsedDraftContextBundle,
 	sourceRevision: string,
 ): Array<{
 	path: string;
 	content: string;
 	message: string;
 }> {
-	const change = changeName(draft.id);
-	const capability = capabilityForDraft(draft);
+	const { context, documentChanges } = bundle;
+	if (documentChanges.length === 0) {
+		throw new Error("Cannot serialize an empty draft context");
+	}
+	for (const change of documentChanges) {
+		if (!change.validation.ok && change.operation !== "delete") {
+			const hard = change.validation.issues.some((issue) => issue.severity === "error");
+			if (hard) {
+				throw new Error(
+					`Cannot serialize invalid document change ${change.canonicalPath}`,
+				);
+			}
+		}
+		if (
+			change.identity.authority === "informative" &&
+			change.artifactKind !== "article" &&
+			change.artifactKind !== "decision"
+		) {
+			throw new Error("informative");
+		}
+	}
+
+	const change = changeName(context.id);
 	const root = `openspec/changes/${change}`;
-	const files = [
+	const whatChanges = documentChanges
+		.map(
+			(doc) =>
+				`- ${doc.operation} \`${doc.identity.key}\` (${doc.artifactKind}) at \`${doc.canonicalPath}\``,
+		)
+		.join("\n");
+
+	const files: Array<{ path: string; content: string; message: string }> = [
 		{
 			path: `${root}/.openspec.yaml`,
 			content: "schema: spec-driven\n",
@@ -178,7 +210,7 @@ export function buildOpenSpecChangeFiles(
 		},
 		{
 			path: `${root}/proposal.md`,
-			content: `# ${draft.title}\n\n## Why\n\n${draft.summary || "Proposed through the Beskid platform specification editor."}\n\n## What Changes\n\n- ${draft.changeKind} capability \`${capability}\`.\n\n## Impact\n\n- Canonical standard: \`openspec/specs/${capability}/spec.md\`\n`,
+			content: `# ${context.title}\n\n## Why\n\n${context.summary || "Proposed through the Beskid platform specification editor."}\n\n## What Changes\n\n${whatChanges}\n\n## Impact\n\n- Catalog revision pin: \`${context.baseCatalogRevision}\`\n`,
 			message: `spec: propose ${change}`,
 		},
 		{
@@ -186,21 +218,36 @@ export function buildOpenSpecChangeFiles(
 			content: `# Tasks\n\n- [ ] Validate the delta with \`openspec validate ${change} --strict\`.\n- [ ] Update implementation and conformance evidence.\n- [ ] Archive the change after verification.\n`,
 			message: `spec: add tasks for ${change}`,
 		},
-		{
-			path: `${root}/specs/${capability}/spec.md`,
-			content: deltaForDraft(draft, capability),
-			message: `spec: add ${capability} delta`,
-		},
 	];
+
+	for (const doc of documentChanges) {
+		const relative = doc.canonicalPath.replace(/^openspec\//, "");
+		const outPath =
+			doc.artifactKind === "article" || doc.artifactKind === "decision"
+				? `${root}/${relative}`
+				: `${root}/specs/${doc.identity.capability}/spec.md`;
+		files.push({
+			path: outPath,
+			content: deltaBodyForChange(
+				doc.operation,
+				doc.sourceMarkdown,
+				doc.artifactKind,
+			),
+			message: `spec: ${doc.operation} ${doc.identity.key}`,
+		});
+	}
+
 	const ledger = {
-		draftId: draft.id,
+		draftId: context.id,
 		sourceRevision,
-		authorLogin: draft.authorLogin,
+		authorLogin: context.authorLogin,
+		baseCatalogRevision: context.baseCatalogRevision,
 		files: files
 			.map(({ path, content }) => ({ path, content }))
 			.sort((left, right) => left.path.localeCompare(right.path)),
 	};
-	return [
+
+	const withLedger = [
 		{
 			path: `${root}/.platform-spec-ledger.json`,
 			content: `${JSON.stringify(ledger, null, 2)}\n`,
@@ -208,6 +255,11 @@ export function buildOpenSpecChangeFiles(
 		},
 		...files,
 	];
+
+	const sorted = withLedger
+		.slice()
+		.sort((left, right) => left.path.localeCompare(right.path));
+	return sorted;
 }
 
 export interface CreateDraftPrResult {
@@ -220,7 +272,7 @@ export interface CreateDraftPrResult {
 
 export async function createDraftPullRequest(
 	octokit: Octokit,
-	draft: DraftChangeNode,
+	bundle: ParsedDraftContextBundle,
 	baseRef = "main",
 	sourceRevision?: string,
 ): Promise<CreateDraftPrResult> {
@@ -229,11 +281,14 @@ export async function createDraftPullRequest(
 	if (revision !== catalog.revision) {
 		throw new Error("catalog revision conflict");
 	}
+	if (bundle.context.baseCatalogRevision !== catalog.revision) {
+		throw new Error("stale-base-revision");
+	}
 
 	const { data: authenticated } = await octokit.users.getAuthenticated();
 	await assertWriteAccess(octokit, authenticated.login);
 
-	const branch = draft.headBranch ?? draftBranchName(draft.id);
+	const branch = bundle.context.headBranch ?? draftBranchName(bundle.context.id);
 	const open = await octokit.pulls.list({
 		owner: OWNER(),
 		repo: REPO(),
@@ -250,42 +305,45 @@ export async function createDraftPullRequest(
 			sourceRevision: revision,
 		};
 	}
-	if (draft.prNumber && draft.prUrl) {
+	if (bundle.context.prNumber && bundle.context.prUrl) {
 		return {
 			branch,
-			prNumber: draft.prNumber,
-			prUrl: draft.prUrl,
+			prNumber: bundle.context.prNumber,
+			prUrl: bundle.context.prUrl,
 			reused: true,
 			sourceRevision: revision,
 		};
 	}
 
 	const baseCommitSha = await ensureBranch(octokit, baseRef, branch);
-	const files = buildOpenSpecChangeFiles(draft, revision);
+	const files = buildOpenSpecChangeFiles(bundle, revision);
 	await writeFilesAtomically(
 		octokit,
 		branch,
 		baseCommitSha,
 		files.map(({ path, content }) => ({ path, content })),
-		`spec: synchronize platform editor draft ${changeName(draft.id)}`,
+		`spec: synchronize platform editor draft ${changeName(bundle.context.id)}`,
 	);
 
 	const prBody = [
-		draft.summary || draft.title,
+		bundle.context.summary || bundle.context.title,
 		"",
 		"## Change",
-		`- **${draft.changeKind}** \`${draft.slug}\` (${draft.specLevel})`,
+		...bundle.documentChanges.map(
+			(doc) =>
+				`- **${doc.operation}** \`${doc.identity.key}\` (${doc.artifactKind})`,
+		),
 		"",
-		`OpenSpec change: \`openspec/changes/${changeName(draft.id)}/\`.`,
+		`OpenSpec change: \`openspec/changes/${changeName(bundle.context.id)}/\`.`,
 		"",
 		`Catalog revision: \`${revision}\`.`,
 		"",
-		`_Opened from Beskid Platform Spec editor by @${draft.authorLogin}._`,
+		`_Opened from Beskid Platform Spec editor by @${bundle.context.authorLogin}._`,
 	].join("\n");
 
 	const { data: pr } = await octokit.pulls.create({
 		...repoParams(),
-		title: draft.title,
+		title: bundle.context.title,
 		head: branch,
 		base: baseRef,
 		body: prBody,

@@ -53,7 +53,7 @@ export default defineConfig({
 				enabled: true,
 			},
 		}),
-		nitro({ preset: "bun" }),
+		nitro({ preset: "node-server" }),
 		viteReact(),
 	],
 	resolve: {

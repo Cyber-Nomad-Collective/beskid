@@ -6,7 +6,7 @@
 // and a changed revision converges in place without duplicates.
 
 import { createHash } from "node:crypto";
-import type { Database } from "bun:sqlite";
+import type { SqliteDatabase as Database } from "#/lib/storage/sqlite";
 
 import { migrateSchema } from "#/lib/storage/schema";
 import type { SeedWorkspace } from "#/lib/spec/static";

@@ -17,7 +17,7 @@ There is no Bun compatibility path, mixed active lockfile, UI-only document type
 | Deployable data layer | Auth, Platform Spec, and Tracker import `bun:sqlite` | Node-compatible SQLite boundary before Node containers ship |
 | Platform Spec authoring | A `DraftChange` holds one forced Feature-shaped body | `DraftContext` with ordered document changes |
 | Spec document model | Catalog, routes, seed, graph, and PR generation are feature-only | One canonical identity model for Domain, Area, Feature, Article, and ADR |
-| Visual authoring | Plain Markdown textarea and client-only advisory validation | Source-first restricted Tiptap plus shared fail-closed validation |
+| Visual authoring | Plain Markdown textarea and client-only advisory validation | Restricted Tiptap WYSIWYG primary surface; Markdown is the only persisted SOT; reader fidelity pane via StructuredDocumentView; source tab retained |
 | CI/containers | Actions and seven Dockerfiles directly execute Bun | Corepack/pnpm and Node 22 builders/runtimes |
 
 ## Draft Context model
@@ -79,7 +79,7 @@ The catalog normalizes capabilities and documents into one discriminated list. D
 
 The wizard creates a context then adds documents through operation, artifact kind, parent selection, server-derived identity, and a layout template. It permits only valid parent/type combinations and fails closed on conflicts.
 
-Tiptap 3.28.0 is restricted to headings, paragraphs, lists, blockquotes, code, emphasis, strong, inline code, and links. Markdown source remains the only persisted data. Visual edits require a source diff confirmation before they replace source; no Tiptap JSON, raw HTML, images, embeds, tables, or collaboration payloads are persisted. TanStack Start rendering is client-only with `immediatelyRender: false`.
+Tiptap 3.28.0 is restricted to headings, paragraphs, lists, blockquotes, code, emphasis, strong, inline code, and links. Markdown source remains the only persisted data. The primary editing surface is WYSIWYG; applying visual edits requires an explicit source-diff confirmation before they replace Markdown. A reader fidelity pane reuses StructuredDocumentView. No Tiptap JSON, raw HTML, images, embeds, tables, or collaboration payloads are persisted. TanStack Start rendering is client-only with `immediatelyRender: false`.
 
 A shared pure validation module runs client preflight and server save/submit/approval. Invalid drafts may be saved, but submission and approval fail closed. Feature documents require explicit `### Requirement:` headings and testable GIVEN/WHEN/THEN scenarios. The active `git-sync/pr.ts` serializer emits the complete context atomically and never synthesizes a requirement or scenario from arbitrary prose. GitHub OpenSpec validation remains final authority.
 

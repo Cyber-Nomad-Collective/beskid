@@ -2,8 +2,9 @@
 
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { TrackerTaskEmbed } from "#/components/reader/tracker-task-embed";
 import { renderMarkdownToHtml } from "#/lib/markdown";
-import type { LayoutValidation, SpecLayout } from "#/lib/spec/layouts";
+import type { LayoutValidation, SpecLayout } from "#/lib/spec/layouts-pure";
 
 export interface StructuredDocumentViewProps {
 	title: string;
@@ -21,6 +22,16 @@ export interface StructuredDocumentViewProps {
 	/** Result of validating the body against its enforceable layout. */
 	layoutValidation?: LayoutValidation | null;
 	showEditLink?: boolean;
+	/** Prefill for Propose change → draft context wizard. */
+	proposeSearch?: {
+		capability?: string;
+		domain?: string;
+		area?: string;
+		feature?: string;
+	};
+	/** Catalog revision for Tracker embed. */
+	catalogRevision?: string | null;
+	standardId?: string | null;
 }
 
 function bookGuideTitle(href: string): string {
@@ -48,6 +59,9 @@ export function StructuredDocumentView({
 	layout = null,
 	layoutValidation = null,
 	showEditLink = true,
+	proposeSearch,
+	catalogRevision = null,
+	standardId = null,
 }: StructuredDocumentViewProps) {
 	const bodyHtml = renderMarkdownToHtml(bodyMd);
 	const [graph, setGraph] = useState<unknown | null>(null);
@@ -163,9 +177,10 @@ export function StructuredDocumentView({
 					<Link
 						to="/edit/drafts/$id"
 						params={{ id: "new" }}
+						search={proposeSearch ?? {}}
 						className="text-sm text-primary underline"
 					>
-						Edit this page
+						Propose change
 					</Link>
 				) : null}
 			</div>
@@ -231,6 +246,12 @@ export function StructuredDocumentView({
 						</section>
 					) : null}
 				</aside>
+			) : null}
+			{standardId && catalogRevision ? (
+				<TrackerTaskEmbed
+					standardId={standardId}
+					catalogRevision={catalogRevision}
+				/>
 			) : null}
 		</article>
 	);

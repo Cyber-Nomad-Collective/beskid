@@ -32,6 +32,17 @@ Tracker integration in which GitHub Issues represents public bugs and their supp
 
 An OpenSpec unit stored at `openspec/specs/<capability>/spec.md`. During migration, Beskid feature hubs become feature capabilities while domains and areas become taxonomy/governance capabilities.
 
+## Draft Context
+
+A revision-pinned, ordered set of Platform Spec document operations authored in the
+editor. It is a reviewable OpenSpec change bundle, never a second normative store.
+Statuses include draft, submitted, approved, rejected, merged, abandoned, and superseded.
+
+## Draft Context abandoned
+
+Terminal status when the linked GitHub pull request closes without merge. Distinct from
+moderator rejection of a submitted context.
+
 ## HIR-free
 
 The compiler invariant that no high-level intermediate representation type, lowering pass, cache, adapter, serialization, or compatibility path exists between expanded AST/Salsa facts and ISLE/CLIF code generation.
