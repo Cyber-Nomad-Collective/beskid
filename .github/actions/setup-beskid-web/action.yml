@@ -15,7 +15,8 @@ runs:
   using: composite
   steps:
     # No `version:` input: pnpm/action-setup reads the pinned pnpm version from
-    # the root package.json `packageManager` field. Passing both errors with
+    # the root package.json `packageManager` field. Providing both the `version`
+    # input and a `packageManager` pin makes the action fail with
     # "Multiple versions of pnpm specified".
     - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
 

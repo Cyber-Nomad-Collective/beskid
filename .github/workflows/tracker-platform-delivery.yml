@@ -32,7 +32,8 @@ jobs:
           beskid_web_common
           compiler
       # No `version:` input: pnpm/action-setup reads the pinned pnpm version from
-      # the root package.json `packageManager` field. Passing both errors with
+      # the root package.json `packageManager` field. Providing both the `version`
+      # input and a `packageManager` pin makes the action fail with
       # "Multiple versions of pnpm specified".
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
@@ -63,7 +64,8 @@ jobs:
       - name: Initialize tracker and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_tracker beskid_web_common
       # No `version:` input: pnpm/action-setup reads the pinned pnpm version from
-      # the root package.json `packageManager` field. Passing both errors with
+      # the root package.json `packageManager` field. Providing both the `version`
+      # input and a `packageManager` pin makes the action fail with
       # "Multiple versions of pnpm specified".
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
@@ -86,7 +88,8 @@ jobs:
       - name: Initialize shared web packages submodule
         run: ./scripts/ci/init-submodules.sh beskid_web_common
       # No `version:` input: pnpm/action-setup reads the pinned pnpm version from
-      # the root package.json `packageManager` field. Passing both errors with
+      # the root package.json `packageManager` field. Providing both the `version`
+      # input and a `packageManager` pin makes the action fail with
       # "Multiple versions of pnpm specified".
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - run: pnpm install --frozen-lockfile
@@ -110,7 +113,8 @@ jobs:
       - name: Initialize nexus and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_nexus beskid_web_common
       # No `version:` input: pnpm/action-setup reads the pinned pnpm version from
-      # the root package.json `packageManager` field. Passing both errors with
+      # the root package.json `packageManager` field. Providing both the `version`
+      # input and a `packageManager` pin makes the action fail with
       # "Multiple versions of pnpm specified".
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
