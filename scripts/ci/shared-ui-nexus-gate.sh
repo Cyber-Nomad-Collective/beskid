@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Shared UI + Nexus web test gate (CYB-93).
 #
-# Invokes the authoritative package runners only — never bare recursive `bun test`:
+# Invokes the authoritative package runners only — never bare recursive test runs:
 #   1. beskid_web_common Vitest/jsdom (CYB-89)
 #   2. gitnexus-web Vitest/jsdom unit (CYB-90)
 #   3. gitnexus-web Playwright E2E (CYB-90)
@@ -58,7 +58,7 @@ ensure_web_common_install() {
 
 ensure_gitnexus_shared_build() {
   # gitnexus-web depends on gitnexus-shared via `file:../gitnexus-shared`, whose
-  # package "main"/"exports" resolve to dist/index.js. Bun links a file: dep's
+  # package "main"/"exports" resolve to dist/index.js. pnpm links a file: dep's
   # contents at install time, so gitnexus-shared must be installed AND built
   # (dist/) BEFORE gitnexus-web is installed — otherwise the compiled output is
   # never linked into gitnexus-web/node_modules and Vitest fails to resolve the
@@ -67,12 +67,12 @@ ensure_gitnexus_shared_build() {
   [[ -f "${shared}/package.json" ]] || return 0
   if [[ ! -d "${shared}/node_modules" ]]; then
     echo "==> shared-ui-nexus-gate: installing gitnexus-shared deps" >&2
-    bun install --cwd="${shared}" --frozen-lockfile || die_prereq \
-      "bun install failed in beskid_nexus/gitnexus-shared (required by gitnexus-web file: dependency)."
+    pnpm install --dir="${shared}" --frozen-lockfile --ignore-workspace || die_prereq \
+      "pnpm install failed in beskid_nexus/gitnexus-shared (required by gitnexus-web file: dependency)."
   fi
   if [[ ! -f "${shared}/dist/index.js" ]]; then
     echo "==> shared-ui-nexus-gate: building gitnexus-shared (dist)" >&2
-    bun run --cwd="${shared}" build || die_prereq \
+    pnpm --dir="${shared}" build || die_prereq \
       "gitnexus-shared build (tsc) failed; gitnexus-web resolves it via dist/index.js (package \"main\"/\"exports\")."
     # tsconfig uses `composite: true` (incremental .tsbuildinfo). A stale
     # buildinfo left after a dist wipe makes tsc skip emit, so verify the
@@ -80,7 +80,7 @@ ensure_gitnexus_shared_build() {
     if [[ ! -f "${shared}/dist/index.js" ]]; then
       echo "==> shared-ui-nexus-gate: clearing stale tsc buildinfo and rebuilding gitnexus-shared" >&2
       rm -f "${shared}"/*.tsbuildinfo "${shared}"/dist/*.tsbuildinfo 2>/dev/null || true
-      bun run --cwd="${shared}" build || die_prereq \
+      pnpm --dir="${shared}" build || die_prereq \
         "gitnexus-shared build (tsc) failed after clearing incremental cache."
     fi
     [[ -f "${shared}/dist/index.js" ]] || die_prereq \
@@ -104,12 +104,11 @@ ensure_nexus_web_install() {
   fi
   if [[ ! -d "${NEXUS_WEB}/node_modules" ]]; then
     echo "==> shared-ui-nexus-gate: installing gitnexus-web deps" >&2
-    bun install --cwd="${NEXUS_WEB}" --frozen-lockfile || die_prereq \
-      "bun install failed in beskid_nexus/gitnexus-web. Fix lockfile/registry auth, then retry."
+    pnpm install --dir="${NEXUS_WEB}" --frozen-lockfile --ignore-workspace || die_prereq \
+      "pnpm install failed in beskid_nexus/gitnexus-web. Fix lockfile/registry auth, then retry."
   fi
 }
 
-require_cmd bun "Install Bun (https://bun.sh) and ensure it is on PATH."
 require_cmd pnpm "Install pnpm (https://pnpm.io) and ensure it is on PATH."
 corepack prepare pnpm@10.17.1 --activate
 check_tree
@@ -122,7 +121,7 @@ gate_init "shared-ui-nexus"
 gate_step "shared-ui-vitest" -- pnpm --dir="${WEB_COMMON}" test
 
 # Nexus unit suite — Vitest + jsdom only (no Playwright specs).
-gate_step "nexus-unit-vitest" -- bun run --cwd="${NEXUS_WEB}" test:unit
+gate_step "nexus-unit-vitest" -- pnpm --dir="${NEXUS_WEB}" test:unit
 
 # Browser prerequisite before E2E (actionable failure if install cannot complete).
 gate_step "nexus-playwright-chromium" -- bash -c '
@@ -132,16 +131,16 @@ gate_step "nexus-playwright-chromium" -- bash -c '
     echo "SKIP_NEXUS_E2E_INSTALL=1 — assuming Chromium is already installed"
     exit 0
   fi
-  if ! bun run --cwd="${NEXUS_WEB}" test:e2e:install; then
+  if ! pnpm --dir="${NEXUS_WEB}" test:e2e:install; then
     echo "Playwright Chromium install failed." >&2
-    echo "  Local: bun run --cwd=beskid_nexus/gitnexus-web test:e2e:install" >&2
+    echo "  Local: pnpm --dir=beskid_nexus/gitnexus-web test:e2e:install" >&2
     echo "  CI: ensure the runner can download browsers (network) and OS deps." >&2
     exit 1
   fi
 '
 
 # Nexus Playwright E2E — separate runner from unit (no mixing).
-gate_step "nexus-e2e-playwright" -- bun run --cwd="${NEXUS_WEB}" test:e2e
+gate_step "nexus-e2e-playwright" -- pnpm --dir="${NEXUS_WEB}" test:e2e
 
 gate_summary
 gate_emit_junit
@@ -152,9 +151,9 @@ if gate_overall_rc; then
 else
   echo "shared-ui-nexus-gate FAILED" >&2
   echo "  Shared UI:  pnpm --dir=beskid_web_common test" >&2
-  echo "  Nexus unit: bun run --cwd=beskid_nexus/gitnexus-web test:unit" >&2
-  echo "  Nexus E2E:  bun run --cwd=beskid_nexus/gitnexus-web test:e2e:install && bun run --cwd=beskid_nexus/gitnexus-web test:e2e" >&2
-  echo "  Package both: bun run --cwd=beskid_nexus/gitnexus-web test:gate" >&2
+  echo "  Nexus unit: pnpm --dir=beskid_nexus/gitnexus-web test:unit" >&2
+  echo "  Nexus E2E:  pnpm --dir=beskid_nexus/gitnexus-web test:e2e:install && pnpm --dir=beskid_nexus/gitnexus-web test:e2e" >&2
+  echo "  Package both: pnpm --dir=beskid_nexus/gitnexus-web test:gate" >&2
   echo "  Docs: docs/orchestrate/shared-ui-nexus-gate.md" >&2
   exit 1
 fi

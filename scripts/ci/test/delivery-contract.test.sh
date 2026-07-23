@@ -9,7 +9,7 @@ platform_dockerfile="${ROOT}/site/platform-spec/Dockerfile"
 # Platform-spec installs with Corepack pnpm from its own package lock.
 [[ -f "${ROOT}/site/platform-spec/package.json" ]]
 rg -Fq 'packageManager": "pnpm@10.17.1"' "${ROOT}/site/platform-spec/package.json"
-rg -Fq 'FROM node:22.12' "${platform_dockerfile}"
+rg -q 'FROM node:2[4-9]' "${platform_dockerfile}"
 rg -Fq 'corepack prepare pnpm@10.17.1' "${platform_dockerfile}"
 rg -Fq 'pnpm install --frozen-lockfile' "${platform_dockerfile}"
 rg -Fq 'COPY --from=build /app/site/platform-spec/node_modules ./node_modules' "${platform_dockerfile}"

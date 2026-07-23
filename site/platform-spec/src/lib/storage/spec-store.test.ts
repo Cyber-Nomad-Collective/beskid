@@ -11,7 +11,9 @@ describe("seedSpecStore", () => {
 			const workspace = buildSeedWorkspace().workspace;
 			const result = seedSpecStore(db, workspace);
 
-			expect(result.capabilities).toBe(workspace.catalog.entries.length);
+			// seedSpecStore persists one row per spec document; catalog
+			// entries also cover provisional non-document hubs.
+			expect(result.capabilities).toBe(workspace.catalog.documents.length);
 			expect(readSeedRevision(db)).toBe(workspace.meta.revision);
 		} finally {
 			db.close();
