@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Production promotion source validation now accepts the in-progress same-run
+  `platform-delivery` workflow (conclusion still null) so automatic staging→production
+  promote is not blocked by requiring a completed successful run conclusion.
 - Coolify `pckg` crash loop: non-root uid 10001 could not create `/app/wwwroot/uploads`
   (image COPY left `/app` root-owned). Uploads now live under `/app/data/uploads` on the
   existing named volume; Dockerfile uses `COPY --chown` and entrypoint ensures the path.
