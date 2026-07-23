@@ -1,0 +1,91 @@
+CYB-10	In Progress		0.4 W6 — Retire HIR and all legacy runtime paths
+CYB-100	Done	CYB-81	W4.1c-cursor — Bijective syntax/ISLE inventory classification evidence
+CYB-101	Done	CYB-79	W5.1a-cursor — Closure environment allocation and GC rooting (post-TLS)
+CYB-102	Done	CYB-87	W7.1a-cursor — Record reproducible 0.4 gate evidence and gap issues
+CYB-103	Done	CYB-65	W4.5b-cursor — Migrate LSP diagnostics and refresh off analysis snapshots
+CYB-104	Done	CYB-17	W2.2a-cursor — Spawn and concurrency legality facts (queries)
+CYB-105	Done	CYB-82	W3.4a-cursor — JIT/REPL exact-kit CodegenInput route regressions
+CYB-106	Done	CYB-81	W4.1c-codex — Span-bearing rejection fixtures for remaining unsupported inventory families
+CYB-107	Done	CYB-22	W7.1a-cursor gap — Migrate beskid_aot mod_artifact off retired HIR/Lowerable entry
+CYB-109	Done	CYB-79	W5.1b — Harden closure environment descriptor validation and allocation fail-closed
+CYB-11	In Progress		0.4 W7 — Run release gates and record sign-off evidence
+CYB-110	Done	CYB-87	W7 gate bug — Resolve clippy collapsible_if in semantic_contract
+CYB-112	Done	CYB-83	W5.5b — Produce ABI-v5 Windows COFF import library for native runtime-kit matrix
+CYB-118	Done	CYB-111	Migrate stale beskid_tests imports from deleted Codegen APIs
+CYB-119	Done	CYB-118	Reject non-public [Export] declarations in syntax module lowering
+CYB-120	Done	CYB-77	W4.2a leaf — Lower captured immediate lambda calls through ABI-v5 closure environments
+CYB-121	Done	CYB-77	W4.2a leaf — Lower zero-argument lambda spawn through an ABI-v5 closure entry trampoline
+CYB-123	Done	CYB-86	W6.4a leaf — Approve syntax spawn dispatch through the exact ABI-v5 runtime kit
+CYB-125	Done	CYB-120	W4.2a blocker — Emit generation-safe closure descriptor and root-slot authority
+CYB-13	Done	CYB-5	W1.2 — Generate exhaustive typed-operation inventory
+CYB-130	Done	CYB-11	W7.C5 — Cursor: close CI/CD release-gate parity and evidence drift
+CYB-131	Done	CYB-79	W5.1a-cursor — Exact-kit root_current provenance + host JIT fail-closed evidence
+CYB-134	Backlog	CYB-9	W5.9c — Prevent JIT allocation overflow in Console ANSI corelib test
+CYB-140	Backlog	CYB-9	W5.9a.3 — Generalize generic call ABI-specialization harvesting for reachable corelib helpers
+CYB-142	Done	CYB-133	W5.9b.3 — Declare Core.Output Results import for generic match facts
+CYB-149	Done	CYB-147	W5.9b.10 — Lower canonical Core.Syscall.ResolveDescriptorFd facade
+CYB-15	Done	CYB-5	W1.4 — Parsed-source to verified-CLIF integration harness
+CYB-156	Backlog	CYB-134	W5.9c.2 — Preserve valid string handles through ANSI style-chain JIT lowering
+CYB-158	Backlog	CYB-156	W5.9c.2b — Emit header-aware syntax aggregate layouts and static allocation plans
+CYB-16	Done	CYB-6	W2.1 — Generation-safe capture and closure facts
+CYB-160	Backlog	CYB-137	W5.9b.4 — Lower Core.Error unit enum-match panic arm through syntax ISLE
+CYB-162	Todo	CYB-140	W5.9a.3a — Lower value-field projections on event-bearing nominal aggregates
+CYB-17	Done	CYB-6	W2.2 — Spawn and concurrency legality facts
+CYB-18	Done	CYB-6	W2.3 — Non-forgeable trusted runtime intrinsic authority
+CYB-19	Done	CYB-6	W2.4 — Completion candidate and replacement-span facts
+CYB-21	Done	CYB-7	W3.2 — Validate ABI-v5 kit manifest, hashes and capabilities
+CYB-22	Done	CYB-7	W3.3 — Migrate AOT linker to validated kits only
+CYB-23	Duplicate	CYB-7	W3.4 — Migrate JIT/REPL to validated runtime kits
+CYB-24	Done	CYB-8	W4.1 — Complete expression, statement and control-flow ISLE lowering
+CYB-25	Done	CYB-8	W4.2 — Lower aggregates, closures, captures and spawn
+CYB-26	Done	CYB-8	W4.3 — Migrate LSP hover, definition and references
+CYB-27	Done	CYB-8	W4.4 — Migrate LSP completion and semantic tokens
+CYB-28	Todo	CYB-9	W5.1 — Canonical runtime lifecycle, traps and TLS
+CYB-29	Backlog	CYB-9	W5.2 — Allocator, roots, barriers and mark/sweep GC
+CYB-31	Backlog	CYB-9	W5.4 — Scheduler, concurrency and callbacks
+CYB-32	In Progress	CYB-9	W5.5 — Linux x86-64 debug/release runtime kits
+CYB-33	In Progress	CYB-9	W5.6 — macOS arm64 debug/release runtime kits
+CYB-34	In Progress	CYB-9	W5.7 — Windows x86-64 debug/release runtime kits
+CYB-35	Todo	CYB-10	W6.1 — Delete HIR model, lowering and caches
+CYB-36	Todo	CYB-10	W6.2 — Delete Lowerable and legacy codegen entry points
+CYB-37	Duplicate	CYB-10	W6.3 — Remove Rust runtime bridge, host and fallback objects
+CYB-38	Duplicate	CYB-10	W6.4 — Remove legacy ABI dispatch and kit fallbacks
+CYB-39	Todo	CYB-10	W6.5 — Make retirement and binary-provenance gates authoritative
+CYB-40	Todo	CYB-11	W7.1 — Fresh full compiler workspace verification
+CYB-41	Todo	CYB-11	W7.2 — Corelib, installed-prefix and package verification
+CYB-42	Done	CYB-11	W7.3 — Documentation and OpenSpec release closure
+CYB-43	Todo	CYB-11	W7.4 — GitNexus changed-scope and whole-branch review
+CYB-44	Todo	CYB-11	W7.5 — Assemble release evidence and sign off 0.4
+CYB-45	Duplicate		OpenSpec alignment workstream (Cursor)
+CYB-46	Done		OpenSpec alignment workstream (Cursor)
+CYB-47	Canceled	CYB-45	A — Consumer/delivery alignment
+CYB-49	Canceled	CYB-45	B — Provisional promotion wave 1 (12 caps)
+CYB-5	Done		0.4 W1 — Production TypedProgram → ISLE adapter
+CYB-50	Canceled	CYB-45	C — Provisional promotion wave 2 (remaining tooling feature stubs)
+CYB-52	Canceled	CYB-45	D — Provisional promotion wave 3 (remaining language-meta feature stubs)
+CYB-55	Canceled	CYB-45	F — Defer taxonomy hub promotion
+CYB-56	Canceled	CYB-45	E — Provisional promotion wave 4 (remaining core-library + singles)
+CYB-6	Done		0.4 W2 — Close semantic facts and diagnostics
+CYB-64	Done	CYB-6	W2.5 — Complete remaining indexed semantic-fact authority
+CYB-68	Done	CYB-40	W7.C1 — Capture clean-checkout compiler gate evidence
+CYB-69	Done	CYB-41	W7.C2 — Inventory installed-prefix and package artifacts
+CYB-7	Done		0.4 W3 — Exact ABI-v5 runtime-kit route
+CYB-70	Done	CYB-42	W7.C3 — Prepare documentation and OpenSpec closure draft
+CYB-71	Done	CYB-43	W7.C4 — Prepare GitNexus change manifest and review packet
+CYB-77	Done	CYB-25	W4.2a — Lower closures and spawn from syntax facts to ABI-v5 runtime
+CYB-78	Done	CYB-65	W4.5a — Replace LSP document-analysis cache with generation-bound syntax documentation facts
+CYB-79	Done	CYB-29	W5.1a — Canonical runtime closure environment allocation and GC rooting
+CYB-8	Done		0.4 W4 — Migrate remaining codegen, LSP, and frontend consumers
+CYB-81	Done	CYB-24	W4.1c — Complete syntax/ISLE executable node inventory
+CYB-82	Done	CYB-7	W3.4a — Migrate JIT and REPL to CodegenInput plus exact runtime kits
+CYB-85	Backlog	CYB-10	W6.3a — Remove Rust runtime bridge, handlers, envelopes, and fallback objects
+CYB-86	Backlog	CYB-10	W6.4a — Remove legacy ABI dispatch and compatibility resolver branches
+CYB-87	Done	CYB-11	W7.1a — Establish reproducible 0.4 full-test and release-gate evidence
+CYB-9	In Progress		0.4 W5 — Complete canonical runtime and three-target kit matrix
+CYB-93	Done	CYB-87	W7.1d — Wire authoritative shared UI and Nexus test commands into the root release gate
+CYB-94	Done	CYB-12	W1.1a — Cursor exclusive: sole CodegenInput→ISLE production route (reject HIR/Lowerable in-scope)
+CYB-95	Done	CYB-82	Cursor: exact JIT kit discovery/validation for missing abi.json fail-closed
+CYB-96	Done	CYB-16	Cursor evidence — generation-safe capture fact gap (CYB-16)
+CYB-97	Done	CYB-28	W5.1a-cursor — Canonical BeskidTlsState ownership on thread attach/detach
+CYB-98	Done	CYB-78	W4.5a Cursor — LSP doc-comment + lifecycle snapshot retirement (syntax facts)
+CYB-99	Done	CYB-15	W1.4a-cursor — Expand parsed-project verified-CLIF harness coverage
