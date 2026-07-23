@@ -31,6 +31,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   the whole Rust-gate job timeout (CYB-87).
 - Corelib CI now bounds release CLI build, native runtime-kit staging, and test execution while
   retaining sanitized per-step failure reports (CYB-87).
+- Complete root pnpm workspace cutover for Auth/Website/Platform Spec (Node SQLite
+  adapters, pnpm lockfile, setup/sync scripts); Auth leaves Bun-only SQLite.
 - Platform-spec Map / Facts DAG no longer crashes with `gm.Graph is not a constructor`
   when root lockfile hoists `@dagrejs/dagre@1.x` over ui-react's v3 named `Graph`
   export; pin override to `^3.0.0` and resolve Graph fail-closed in shared layout.
@@ -40,6 +42,11 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Port Auth, Platform Spec, and Tracker SQLite access to a pinned Node adapter
+  with synchronous prepared statements and transactions; run affected web and
+  VS Code tests on Node-native runners.
+- Package workspaces now use pinned pnpm 10.17.1 lockfiles; setup, package
+  authentication, and Beskid package refresh commands invoke pnpm instead of Bun.
 - Compiler CI now runs the native Windows ABI-v5 runtime-kit debug/release matrix, including
   COFF import-library checks and exact installed-prefix JIT/AOT smoke tests (CYB-112, CYB-116).
 - Successful staging deployment now automatically promotes the exact release manifest to production; production retains environment-scoped secrets, smoke checks, and rollback behavior.
@@ -49,6 +56,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Removed
 
+- Remove Auth's Bun lockfile after admitting the service to the pnpm workspace.
 - Retire LSP `ANALYSIS_CACHE_VERSION` residual after CYB-98/103: hard invalidation clears
   generation-bound syntax facts fail-closed and rebuild rebinds documentation/diagnostics
   (CYB-78).

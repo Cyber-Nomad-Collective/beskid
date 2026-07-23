@@ -75,6 +75,13 @@ The ABI-v5 operation that validates a descriptor-backed `BeskidAllocationRequest
 
 The installed ABI-v5 target/profile directory containing `abi.json` and matching static and shared artifacts for the single hosted Beskid runtime. A kit is usable only when its ABI, target, profile, layouts, sources, symbols, and hashes exactly match the compiled program.
 
+## Node SQLite adapter
+
+The service-local compatibility boundary backed by pinned `better-sqlite3`. It
+preserves the synchronous prepared-statement and transaction behavior used by
+Auth, Platform Spec, and Tracker while keeping the native dependency out of
+browser bundles.
+
 ## Normative requirement
 
 A named OpenSpec requirement using SHALL or MUST and one or more testable scenarios. It defines behavior required for Beskid conformance.

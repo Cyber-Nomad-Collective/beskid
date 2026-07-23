@@ -1,7 +1,6 @@
-#!/usr/bin/env bun
 // Verifies the baked static seed workspace is present, complete, and matches the
 // current OpenSpec revision, and that every capability conforms to its
-// enforceable layout. Run after `bun run seed:static` in CI and the image build.
+// enforceable layout. Run after `pnpm run seed:static` in CI and the image build.
 
 import { buildSeedWorkspace, loadSeed } from "#/lib/spec/static";
 import { resolveSeedDir } from "#/lib/spec/paths.core";
@@ -14,7 +13,7 @@ function fail(message: string): never {
 const seedDir = resolveSeedDir();
 const seed = loadSeed(seedDir);
 if (!seed) {
-	fail(`no seed workspace found in ${seedDir}. Run \`bun run seed:static\`.`);
+	fail(`no seed workspace found in ${seedDir}. Run \`pnpm run seed:static\`.`);
 }
 
 const { workspace: live, findings: liveFindings } = buildSeedWorkspace();
@@ -22,7 +21,7 @@ const { workspace: live, findings: liveFindings } = buildSeedWorkspace();
 if (seed.meta.version !== live.meta.version) {
 	fail(
 		`seed format version ${seed.meta.version} does not match ${live.meta.version}. ` +
-			"Re-run `bun run seed:static`.",
+			"Re-run `pnpm run seed:static`.",
 	);
 }
 
@@ -33,7 +32,7 @@ if (liveFindings.length > 0) {
 if (seed.meta.revision !== live.meta.revision) {
 	fail(
 		`seed revision ${seed.meta.revision.slice(0, 12)} is stale; OpenSpec is at ` +
-			`${live.meta.revision.slice(0, 12)}. Re-run \`bun run seed:static\`.`,
+			`${live.meta.revision.slice(0, 12)}. Re-run \`pnpm run seed:static\`.`,
 	);
 }
 

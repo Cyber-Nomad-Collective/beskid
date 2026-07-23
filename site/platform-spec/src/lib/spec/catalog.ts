@@ -1,7 +1,7 @@
 // Pure OpenSpec catalog reader. OpenSpec is the native shape: capabilities live
 // in openspec/specs/<domain--area--feature>/spec.md and are indexed by
 // openspec/catalog.json. This module has no server-only or database imports so
-// it runs both inside the TanStack server bundle and under a raw `bun` seed run.
+// it runs both inside the TanStack server bundle and under the Node seed runner.
 
 import fs from "node:fs";
 import path from "node:path";

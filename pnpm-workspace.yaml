@@ -1,0 +1,5 @@
+packages:
+  - site/auth
+  - site/website
+  - site/platform-spec
+  - site/learn
