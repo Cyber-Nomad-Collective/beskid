@@ -31,14 +31,18 @@ jobs:
           beskid_tracker
           beskid_web_common
           compiler
+      # setup-node must run before pnpm/action-setup: the pnpm action does not
+      # install Node and prepares pnpm (via Corepack + the root package.json
+      # `packageManager` pin) against whatever Node is active. Pin Node first so
+      # pnpm is prepared under Node 24, not the runner's default.
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: "24"
       # No `version:` input: pnpm/action-setup reads the pinned pnpm version from
       # the root package.json `packageManager` field. Providing both the `version`
       # input and a `packageManager` pin makes the action fail with
       # "Multiple versions of pnpm specified".
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
-        with:
-          node-version: "24"
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: pnpm install --frozen-lockfile
       - name: Validate OpenSpec strictly
@@ -86,14 +90,18 @@ jobs:
           persist-credentials: false
       - name: Initialize shared web packages submodule
         run: ./scripts/ci/init-submodules.sh beskid_web_common
+      # setup-node must run before pnpm/action-setup: the pnpm action does not
+      # install Node and prepares pnpm (via Corepack + the root package.json
+      # `packageManager` pin) against whatever Node is active. Pin Node first so
+      # pnpm is prepared under Node 24, not the runner's default.
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: "24"
       # No `version:` input: pnpm/action-setup reads the pinned pnpm version from
       # the root package.json `packageManager` field. Providing both the `version`
       # input and a `packageManager` pin makes the action fail with
       # "Multiple versions of pnpm specified".
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
-        with:
-          node-version: "24"
       - run: pnpm install --frozen-lockfile
       - run: pnpm --dir site/platform-spec test | tee platform-spec-tests.txt
       - run: pnpm --dir site/platform-spec typecheck | tee platform-spec-typecheck.txt
@@ -114,14 +122,18 @@ jobs:
       # into beskid_web_common, so its install needs that submodule checked out.
       - name: Initialize nexus and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_nexus beskid_web_common
+      # setup-node must run before pnpm/action-setup: the pnpm action does not
+      # install Node and prepares pnpm (via Corepack + the root package.json
+      # `packageManager` pin) against whatever Node is active. Pin Node first so
+      # pnpm is prepared under Node 24, not the runner's default.
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: "24"
       # No `version:` input: pnpm/action-setup reads the pinned pnpm version from
       # the root package.json `packageManager` field. Providing both the `version`
       # input and a `packageManager` pin makes the action fail with
       # "Multiple versions of pnpm specified".
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
-        with:
-          node-version: "24"
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: pnpm install --frozen-lockfile
       - run: pnpm --dir site/website exec vitest run src/lib/tracker-delivery.test.ts | tee latest-delivery.txt
