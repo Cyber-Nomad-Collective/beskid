@@ -16,7 +16,7 @@ jobs:
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           persist-credentials: false
       # Catalog revision hashes informative docs under these submodules; without
@@ -31,13 +31,16 @@ jobs:
           beskid_tracker
           beskid_web_common
           compiler
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
+      - uses: pnpm/action-setup@a74893613d16e5921bfb0ac2f9af2a3e41842027 # v4
+        with:
+          version: "10.17.1"
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - run: pnpm install --frozen-lockfile
       - name: Validate OpenSpec strictly
-        run: bun run openspec:validate | tee openspec-validation.txt
+        run: pnpm run openspec:validate | tee openspec-validation.txt
       - name: Validate deterministic projection/reconciliation report
         run: |
-          bun run openspec:catalog
+          pnpm run openspec:catalog
           git diff --exit-code -- openspec/catalog.json
           bun install --cwd beskid_tracker --frozen-lockfile
           bun run --cwd beskid_tracker reconcile:plan | tee projection-reconciliation.txt
@@ -51,14 +54,17 @@ jobs:
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           persist-credentials: false
       # beskid_tracker pins @beskid/ui-react to file:../beskid_web_common, so the
       # tracker install needs the shared web packages submodule checked out too.
       - name: Initialize tracker and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_tracker beskid_web_common
-      - uses: oven-sh/setup-bun@v2
+      - uses: pnpm/action-setup@a74893613d16e5921bfb0ac2f9af2a3e41842027 # v4
+        with:
+          version: "10.17.1"
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: bun install --cwd beskid_tracker --frozen-lockfile
       - run: bun run --cwd beskid_tracker test | tee tracker-tests.txt
       - run: bun run --cwd beskid_tracker check | tee tracker-check.txt
@@ -72,15 +78,17 @@ jobs:
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           persist-credentials: false
       - name: Initialize shared web packages submodule
         run: ./scripts/ci/init-submodules.sh beskid_web_common
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
-      - run: bun run --cwd site/platform-spec test | tee platform-spec-tests.txt
-      - run: bun run --cwd site/platform-spec typecheck | tee platform-spec-typecheck.txt
+      - uses: pnpm/action-setup@a74893613d16e5921bfb0ac2f9af2a3e41842027 # v4
+        with:
+          version: "10.17.1"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --dir site/platform-spec test | tee platform-spec-tests.txt
+      - run: pnpm --dir site/platform-spec typecheck | tee platform-spec-typecheck.txt
       - uses: actions/upload-artifact@v4
         with:
           name: platform-spec-reports
@@ -91,17 +99,20 @@ jobs:
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           persist-credentials: false
       # site/website resolves @beskid/beskid-ui and @beskid/ui-react via file: links
       # into beskid_web_common, so its install needs that submodule checked out.
       - name: Initialize nexus and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_nexus beskid_web_common
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --cwd site/website --frozen-lockfile
-      - run: bun test --cwd site/website src/lib/tracker-delivery.test.ts | tee latest-delivery.txt
-      - run: bun run --cwd site/website build | tee website-build.txt
+      - uses: pnpm/action-setup@a74893613d16e5921bfb0ac2f9af2a3e41842027 # v4
+        with:
+          version: "10.17.1"
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --dir site/website exec vitest run src/lib/tracker-delivery.test.ts | tee latest-delivery.txt
+      - run: pnpm --dir site/website build | tee website-build.txt
       - run: bun install --cwd beskid_nexus/gitnexus --frozen-lockfile
       - run: cd beskid_nexus/gitnexus && ./node_modules/.bin/vitest run test/unit/tracker-delivery-link-index.test.ts | tee ../../nexus-delivery.txt
       - uses: actions/upload-artifact@v4
@@ -112,7 +123,7 @@ jobs:
   workflow-contract:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           persist-credentials: false
       - run: bash scripts/ci/test/run-tracker-platform-delivery-tests.sh

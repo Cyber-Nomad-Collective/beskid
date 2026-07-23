@@ -27,13 +27,13 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 | Task | Command |
 |---|---|
 | Checkout/setup | `./scripts/setup-environment.sh` |
-| Install root web dependencies | `bun install` |
-| Rebuild the OpenSpec read catalog | `bun run openspec:catalog` |
-| Validate OpenSpec and provenance | `bun run openspec:validate` |
-| Build platform-spec | `bun --cwd site/platform-spec run build` |
-| Test platform-spec | `bun --cwd site/platform-spec run test` |
-| Build website | `bun --cwd site/website run build` |
-| Test Tracker | `bun --cwd beskid_tracker run test` |
+| Install root web dependencies | `pnpm install` |
+| Rebuild the OpenSpec read catalog | `pnpm openspec:catalog` |
+| Validate OpenSpec and provenance | `pnpm openspec:validate` |
+| Build platform-spec | `pnpm --cwd site/platform-spec run build` |
+| Test platform-spec | `pnpm --cwd site/platform-spec run test` |
+| Build website | `pnpm --cwd site/website run build` |
+| Test Tracker | `pnpm --cwd beskid_tracker run test` |
 | Install compiler tools | `just replace` |
 | Rebuild VS Code extension | `just vscode` |
 | Inspect GitNexus index | `node .gitnexus/run.cjs status` |

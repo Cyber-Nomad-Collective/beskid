@@ -7,12 +7,12 @@
 		"#/*": "./src/*"
 	},
 	"scripts": {
-		"dev": "bun --bun vite dev --port 8090",
-		"build": "bun --bun vite build && bash scripts/sync-root-stylesheet.sh",
+		"dev": "pnpm vite dev --port 8090",
+		"build": "pnpm vite build && bash scripts/sync-root-stylesheet.sh",
 		"verify:client-bundle": "bash scripts/verify-client-bundle.sh",
-		"start": "bun run .output/server/index.mjs",
-		"preview": "bun --bun vite preview",
-		"check": "bunx biome check",
+		"start": "node .output/server/index.mjs",
+		"preview": "pnpm vite preview",
+		"check": "pnpm exec biome check",
 		"typecheck": "tsc --noEmit",
 		"test": "vitest run",
 		"test:bundle": "VERIFY_CLIENT_BUNDLE=1 vitest run src/scripts/verify-client-bundle.test.ts",

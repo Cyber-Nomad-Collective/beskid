@@ -11,7 +11,7 @@
 
 ## Checkout
 
-[`setup-environment.sh`](setup-environment.sh) — submodules + root `bun install` (see [`../README.md`](../README.md)).
+[`setup-environment.sh`](setup-environment.sh) — submodules + root `pnpm install` (see [`../README.md`](../README.md)).
 
 ## CI (`scripts/ci/`)
 
@@ -27,8 +27,8 @@ runners (the compiler gate is also Testbox-compatible). Dagger is retired.
 | [`corelib-gate.sh`](ci/corelib-gate.sh) | Corelib quality + `beskid test` |
 | [`platform-smoke.sh`](ci/platform-smoke.sh) | Aggregate web-workspace smoke |
 | [`site-build-gate.sh`](ci/site-build-gate.sh) | Auth / platform-spec build gate |
-| [`vscode-gate.sh`](ci/vscode-gate.sh) | VS Code extension `bun test` |
-| [`verify-frozen-lockfile.sh`](ci/verify-frozen-lockfile.sh) | Per-directory `bun install --frozen-lockfile` |
+| [`vscode-gate.sh`](ci/vscode-gate.sh) | VS Code extension `pnpm test` |
+| [`verify-frozen-lockfile.sh`](ci/verify-frozen-lockfile.sh) | Per-directory `pnpm install --frozen-lockfile` |
 | [`compute-cli-version.sh`](ci/compute-cli-version.sh) | Compiler-minted global `0.4.<build>` version |
 | [`build-release-artifact.sh`](ci/build-release-artifact.sh) | Native CLI/LSP release build |
 | [`publish-release-stream.sh`](ci/publish-release-stream.sh) | `gh release` for `cli-*` / `lsp-*` streams |

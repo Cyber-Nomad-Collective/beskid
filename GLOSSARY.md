@@ -98,6 +98,10 @@ The public reader and service that renders the Beskid standard. It is a presenta
 
 The resolver-derived catalog identity of a taxonomy domain, taxonomy area, feature specification, feature-owned article, or feature-owned decision. It fixes the canonical source path, public slug, parent capability, layout, authority, disposition, title, and source hash; taxonomy hubs remain provisional, features own normative requirements, and articles or decisions remain informative.
 
+## One-type-per-file module
+
+A Foundation packaging convention where a public type such as `SyscallError` lives in its own unit whose module path ends with the type name (`Core.Syscall.SyscallError`). Qualified type references therefore name both the module and the type; semantic facts must resolve the type via the assembly module registry when ordinary parent-module lookup misses.
+
 ## Provenance catalog
 
 The deterministic `openspec/catalog.json` mapping stable capability/requirement identifiers to source hashes, legacy slugs, canonical paths, statuses, aliases, and informative document references.

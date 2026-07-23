@@ -1,33 +1,27 @@
 # syntax=docker/dockerfile:1.7
-FROM node:22.12-bookworm AS build
+FROM node:24-bookworm AS build
 
 WORKDIR /app
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
-RUN corepack enable && corepack prepare pnpm@10.17.1 --activate
+RUN npm install -g corepack@latest && corepack enable && corepack prepare pnpm@10.17.1 --activate
 
-COPY site/platform-spec/package.json site/platform-spec/pnpm-lock.yaml* ./site/platform-spec/
-COPY site/platform-spec/.npmrc ./site/platform-spec/.npmrc
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY beskid_web_common ./beskid_web_common
 COPY openspec ./openspec
 COPY site/platform-spec ./site/platform-spec
 
-ARG NODE_AUTH_TOKEN
-ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
-WORKDIR /app/site/platform-spec
-RUN --mount=type=cache,id=pnpm-platform-spec,target=/pnpm/store \
-	pnpm config set store-dir /pnpm/store && \
-	pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=pnpm-platform-spec,target=/pnpm/store pnpm config set store-dir /pnpm/store && pnpm install --frozen-lockfile
 
 RUN test -f /app/openspec/catalog.json \
 	&& node -e 'const fs=require("fs"); const c=JSON.parse(fs.readFileSync("/app/openspec/catalog.json","utf8")); if(!Array.isArray(c.entries)||c.entries.length===0){console.error("/app/openspec/catalog.json missing or empty"); process.exit(1)}'
 
 ENV SKIP_ENV_VALIDATION=1
 ENV OPENSPEC_ROOT=/app/openspec
-RUN pnpm run build
-RUN pnpm run verify:client-bundle
+RUN pnpm --dir site/platform-spec run build
+RUN pnpm --dir site/platform-spec run verify:client-bundle
 
-FROM node:22.12-bookworm-slim AS runtime
+FROM node:24-bookworm-slim AS runtime
 
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends wget ca-certificates \
@@ -40,6 +34,8 @@ ENV PORT=8460
 ENV OPENSPEC_ROOT=/app/openspec
 
 COPY --from=build /app/openspec /app/openspec
+COPY --from=build /app/package.json /app/package.json
+COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/site/platform-spec/package.json ./
 COPY --from=build /app/site/platform-spec/node_modules ./node_modules
 COPY --from=build /app/site/platform-spec/.output ./.output

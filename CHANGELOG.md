@@ -20,6 +20,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- CYB-137: `enum_match` / applied generic enum layouts now resolve one-type-per-file
+  type arguments such as `Core.Syscall.SyscallError` via the assembly module registry,
+  so Corelib `SystemSyscallWriteTests` (and Syscall.Read ApiTests) generate CLIF without
+  `MissingRuleOrFact` on discard/bind `Result` matches.
 - Post-deploy smoke now asserts `/document.txt` is served as HTML (not attachment)
   for website SPA document routes; nginx `default.conf` aligns Content-Type handling.
 - pnpm workspace contract covers Auth/Website/Platform Spec/Learn packageManager

@@ -1,17 +1,16 @@
 # syntax=docker/dockerfile:1.7
-FROM oven/bun:1.3.14 AS web
+FROM node:24-alpine AS web
 
 WORKDIR /app
 
-RUN apt-get update \
-  && apt-get install -y ca-certificates git \
-  && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache git
 
 COPY site/learn/package.json site/learn/pnpm-lock.yaml site/learn/.npmrc ./site/learn/
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
-RUN corepack enable \
-  && corepack prepare pnpm@10.14.0 --activate \
+RUN npm install -g corepack@latest \
+  && corepack enable \
+  && corepack prepare pnpm@10.17.1 --activate \
   && mkdir -p /pnpm/store
 RUN --mount=type=cache,target=/pnpm/store pnpm --dir site/learn install --frozen-lockfile
 
@@ -35,10 +34,11 @@ RUN cd compiler \
   BESKID_CLI_BIN=/workspace/compiler/target/release/beskid \
   ./scripts/stage-native-runtime-kit.sh
 
-FROM oven/bun:1.3.14
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends wget \
-  && rm -rf /var/lib/apt/lists/*
+FROM node:24-alpine
+RUN npm install -g corepack@latest \
+  && corepack enable && corepack prepare pnpm@10.17.1 --activate \
+  && apk add --no-cache wget \
+  && npm install -g tsx
 WORKDIR /app/site/learn
 
 COPY --from=web /app/site/learn/dist /app/site/learn/dist
@@ -55,4 +55,4 @@ ENV BESKID_RUNTIME_PREFIX=/app/site/learn/native-runtime-kit
 ENV BESKID_COMMAND_TIMEOUT_MS=25000
 EXPOSE 80
 
-CMD ["bun", "run", "server.ts"]
+CMD ["pnpm", "exec", "tsx", "server.ts"]

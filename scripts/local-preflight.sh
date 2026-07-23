@@ -5,7 +5,7 @@
 #   scripts/local-preflight.sh --full    # host tier + workflow policy checks
 #
 # Host tier runs the same scripts/ci/*.sh gates GHA runs, so the class of bug
-# that broke main (stale bun.lock) is caught in seconds locally. --full adds
+# that broke main (stale pnpm-lock.yaml) is caught in seconds locally. --full adds
 # static workflow validation without invoking deployment jobs.
 #
 # Skip rules (non-failing):

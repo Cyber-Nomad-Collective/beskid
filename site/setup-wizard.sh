@@ -22,7 +22,7 @@ usage() {
 Beskid setup wizard — run from superrepo root via: just setup
 
 Profiles:
-  1  Docs & website (bun, beskid_web_common, site env)
+  1  Docs & website (pnpm, beskid_web_common, site env)
   2  Full developer (toolchain + all submodules)
   3  Infra operator (tofu, bao, just, beskid_infra)
   4  Custom step-by-step
@@ -92,11 +92,11 @@ custom_menu() {
     SETUP_AUTH=1
   fi
 
-  if ! confirm "Run bun install at repo root?"; then
+  if ! confirm "Run pnpm install at repo root?"; then
     export BESKID_SKIP_JS_INSTALL=1
   fi
 
-  if confirm "Start site dev server (bun dev) when done?"; then
+  if confirm "Start site dev server (pnpm dev) when done?"; then
     START_WEBSITE=1
   fi
 }
@@ -162,12 +162,12 @@ print_next_steps() {
   section "Next steps"
   case "${PROFILE}" in
     docs)
-      note "Docs dev:  cd site/website && bun dev  → http://localhost:4321"
-      note "Optional:  cd site/auth && bun install && bun run dev  (port 8090)"
+      note "Docs dev:  cd site/website && pnpm dev  → http://localhost:4321"
+      note "Optional:  cd site/auth && pnpm install && pnpm dev  (port 8090)"
       ;;
     full)
       note "Compiler:  cd compiler && cargo build"
-      note "Docs:      cd site/website && bun dev"
+      note "Docs:      cd site/website && pnpm dev"
       note "Registry:  see pckg/README.md"
       ;;
     infra)
@@ -182,18 +182,18 @@ print_next_steps() {
 
 maybe_start_website() {
   if [[ "${START_WEBSITE}" != "1" ]]; then
-    if [[ "${PROFILE}" != "docs" ]] || ! confirm "Start docs dev server now (bun dev)?"; then
+    if [[ "${PROFILE}" != "docs" ]] || ! confirm "Start docs dev server now (pnpm dev)?"; then
       return 0
     fi
   fi
-  if ! command -v bun >/dev/null 2>&1; then
-    warn "bun not found — skip dev server"
+  if ! command -v pnpm >/dev/null 2>&1; then
+    warn "pnpm not found — skip dev server"
     return 0
   fi
   section "Starting docs dev server"
   note "Press Ctrl+C to stop"
   cd "${SUPERREPO_ROOT}/site/website"
-  exec bun dev
+  exec pnpm dev
 }
 
 ensure_superrepo
