@@ -63,11 +63,7 @@ jobs:
       # tracker install needs the shared web packages submodule checked out too.
       - name: Initialize tracker and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_tracker beskid_web_common
-      # No `version:` input: pnpm/action-setup reads the pinned pnpm version from
-      # the root package.json `packageManager` field. Providing both the `version`
-      # input and a `packageManager` pin makes the action fail with
-      # "Multiple versions of pnpm specified".
-      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+      # This job runs entirely on Bun (beskid_tracker), so no pnpm setup is needed.
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: bun install --cwd beskid_tracker --frozen-lockfile
       - run: bun run --cwd beskid_tracker test | tee tracker-tests.txt
