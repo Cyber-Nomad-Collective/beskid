@@ -19,6 +19,13 @@ runs:
     # "Multiple versions of pnpm specified".
     - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
 
+    # Submodule apps (beskid_tracker, beskid_nexus/gitnexus-web) still run on Bun,
+    # and gate scripts such as shared-ui-nexus-gate.sh require `bun` on PATH. The
+    # bun->pnpm cutover moved the root workspace to pnpm but must keep Bun here.
+    - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      with:
+        bun-version: ${{ inputs.bun-version }}
+
     - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
       with:
         node-version: "24"
