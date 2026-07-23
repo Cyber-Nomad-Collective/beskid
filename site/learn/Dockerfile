@@ -22,6 +22,12 @@ FROM rust:1.90 AS rust
 WORKDIR /workspace
 
 COPY compiler/Cargo.toml compiler/Cargo.lock ./compiler/
+# beskid_abi's build script reads the runtime manifest at the compiler root.
+COPY compiler/runtime_manifest.bsol ./compiler/runtime_manifest.bsol
+# beskid_abi embeds corelib foundation sources via include_str!.
+COPY compiler/corelib ./compiler/corelib
+# beskid_abi also embeds the canonical Beskid runtime bootstrap source.
+COPY compiler/runtime ./compiler/runtime
 COPY compiler/crates ./compiler/crates
 COPY compiler/vendor ./compiler/vendor
 COPY beskid_bsol ./beskid_bsol
