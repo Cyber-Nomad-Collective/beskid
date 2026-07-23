@@ -14,7 +14,7 @@ source "${ROOT}/scripts/ci/lib/gate-harness.sh"
 
 gate_init "platform-smoke"
 
-gate_step "root-frozen-install" -- bun install --frozen-lockfile
+gate_step "root-frozen-install" -- pnpm install --frozen-lockfile
 
 gate_summary
 gate_emit_junit

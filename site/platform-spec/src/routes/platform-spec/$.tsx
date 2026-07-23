@@ -9,7 +9,7 @@ import {
 	fetchNavTree,
 } from "#/server/catalog";
 
-// Run `bun run dev` to regenerate routeTree.gen.ts after route changes.
+// Run `pnpm dev` to regenerate routeTree.gen.ts after route changes.
 export const Route = createFileRoute("/platform-spec/$")({
 	loader: async ({ params }) => {
 		const splat = params._splat?.replace(/^\/+|\/+$/g, "") ?? "";
