@@ -133,12 +133,22 @@ if "${root}/scripts/ci/validate-release-manifest.sh" "${tmp}/invalid.json" >/dev
 fi
 
 cat >"${tmp}/workflow-run.json" <<'JSON'
-{"id":123,"conclusion":"success","head_branch":"main","path":".github/workflows/platform-delivery.yml"}
+{"id":123,"conclusion":"success","status":"completed","head_branch":"main","path":".github/workflows/platform-delivery.yml"}
 JSON
 "${root}/scripts/ci/validate-promotion-source.sh" "${tmp}/workflow-run.json" "${tmp}/release.json"
+# Same-run auto-promote: production runs while platform-delivery is still in progress.
+cat >"${tmp}/workflow-run-in-progress.json" <<'JSON'
+{"id":123,"conclusion":null,"status":"in_progress","head_branch":"main","path":".github/workflows/platform-delivery.yml"}
+JSON
+"${root}/scripts/ci/validate-promotion-source.sh" "${tmp}/workflow-run-in-progress.json" "${tmp}/release.json"
 jq '.head_branch = "feature"' "${tmp}/workflow-run.json" >"${tmp}/invalid-run.json"
 if "${root}/scripts/ci/validate-promotion-source.sh" "${tmp}/invalid-run.json" "${tmp}/release.json" >/dev/null 2>&1; then
   echo "non-main production source unexpectedly passed" >&2
+  exit 1
+fi
+jq '.conclusion = "failure" | .status = "completed"' "${tmp}/workflow-run.json" >"${tmp}/failed-run.json"
+if "${root}/scripts/ci/validate-promotion-source.sh" "${tmp}/failed-run.json" "${tmp}/release.json" >/dev/null 2>&1; then
+  echo "failed production source unexpectedly passed" >&2
   exit 1
 fi
 

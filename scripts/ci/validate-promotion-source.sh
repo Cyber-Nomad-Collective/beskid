@@ -7,12 +7,17 @@ run_json="$1"
 manifest="$2"
 "$(dirname "$0")/validate-release-manifest.sh" "${manifest}"
 
+# Same-run auto-promote queries this run while it is still in_progress
+# (conclusion is null). Completed prior runs must have conclusion success.
 jq -e --arg runId "$(jq -r '.build.run_id' "${manifest}")" '
   (.id | tostring) == $runId and
-  .conclusion == "success" and
   .head_branch == "main" and
   (.path == ".github/workflows/platform-delivery.yml" or
-   ((.workflow_url // "") | endswith("/actions/workflows/platform-delivery.yml")))
+   ((.workflow_url // "") | endswith("/actions/workflows/platform-delivery.yml"))) and
+  (
+    .conclusion == "success" or
+    (.status == "in_progress" and .conclusion == null)
+  )
 ' "${run_json}" >/dev/null
 
 echo "production promotion source OK"
