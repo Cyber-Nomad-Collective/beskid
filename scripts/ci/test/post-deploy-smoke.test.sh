@@ -18,12 +18,41 @@ mkdir -p "${TMP}/bin"
 cat >"${TMP}/bin/curl" <<SH
 #!/usr/bin/env bash
 url=''
+next_is_header_file=0
+header_file=''
 for argument in "\$@"; do
+  if [[ "\${next_is_header_file}" == 1 ]]; then
+    header_file="\${argument}"
+    next_is_header_file=0
+    continue
+  fi
+  if [[ "\${argument}" == "-D" ]]; then
+    next_is_header_file=1
+    continue
+  fi
   if [[ "\${argument}" == https://* ]]; then
     url="\${argument}"
   fi
 done
 [[ -n "\${url}" ]] || { echo "missing URL argument" >&2; exit 2; }
+[[ -n "\${header_file}" ]] || { echo "missing header output path" >&2; exit 3; }
+if [[ "\${url}" == *"bad-document.example/document.txt" ]]; then
+  cat <<EOF >"\${header_file}"
+HTTP/2 200
+content-disposition: attachment; filename=\"document.txt\"
+content-type: application/octet-stream
+EOF
+elif [[ "\${url}" == *"/document.txt" ]]; then
+  cat <<EOF >"\${header_file}"
+HTTP/2 200
+content-type: text/html; charset=utf-8
+EOF
+else
+  cat <<EOF >"\${header_file}"
+HTTP/2 200
+content-type: application/json
+EOF
+fi
 printf '%s\n' "\${url}" >>"\${MOCK_LOG}"
 exit 0
 SH
@@ -54,6 +83,14 @@ assert_eq 'https://beskid-lang.org/' "${logged_urls[0]}" "first space-separated 
 assert_eq 'https://auth.beskid-lang.org/api/v1/health' "${logged_urls[1]}" "second space-separated URL"
 assert_eq 'https://spec.beskid-lang.org/api/health' "${logged_urls[2]}" "third space-separated URL"
 
+run_smoke \
+  'https://beskid-lang.org/document.txt https://beskid-lang.org/api/health' \
+  production
+read_logged_urls
+assert_eq 2 "${#logged_urls[@]}" "document.txt route smoke includes document and api endpoints"
+assert_eq 'https://beskid-lang.org/document.txt' "${logged_urls[0]}" "document.txt endpoint is checked in smoke"
+assert_eq 'https://beskid-lang.org/api/health' "${logged_urls[1]}" "api endpoint remains included in smoke"
+
 run_smoke $'https://one.example/health\r\nhttps://two.example/health\r\n' production
 read_logged_urls
 assert_eq 2 "${#logged_urls[@]}" "CRLF-separated URLs produce one curl per endpoint"
@@ -73,6 +110,15 @@ if run_smoke 'http://insecure.example/health' production >/dev/null 2>&1; then
 else
   _TESTS_RUN=$((_TESTS_RUN + 1))
   echo "  ok   - non-https URL is rejected"
+fi
+
+if run_smoke 'https://bad-document.example/document.txt' production >/dev/null 2>&1; then
+  _TESTS_RUN=$((_TESTS_RUN + 1))
+  _TESTS_FAIL=$((_TESTS_FAIL + 1))
+  echo "  FAIL - attachment header for document.txt route is rejected"
+else
+  _TESTS_RUN=$((_TESTS_RUN + 1))
+  echo "  ok   - attachment header on document-like route is rejected"
 fi
 
 finish_tests

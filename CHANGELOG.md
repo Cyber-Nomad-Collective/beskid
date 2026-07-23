@@ -20,6 +20,12 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Post-deploy smoke now asserts `/document.txt` is served as HTML (not attachment)
+  for website SPA document routes; nginx `default.conf` aligns Content-Type handling.
+- pnpm workspace contract covers Auth/Website/Platform Spec/Learn packageManager
+  pins; pckg remains a .NET submodule with its own `web/` package (still Bun until
+  a follow-up pckg cutover).
+
 - Production promotion source validation now accepts the in-progress same-run
   `platform-delivery` workflow (conclusion still null) so automatic staging→production
   promote is not blocked by requiring a completed successful run conclusion.
