@@ -14,7 +14,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: pnpm/action-setup@a74893613d16e5921bfb0ac2f9af2a3e41842027 # v4
+    - uses: pnpm/action-setup@008330803749db0355799c700092d9a85fd074e9 # v6.0.9
       with:
         version: "10.17.1"
 

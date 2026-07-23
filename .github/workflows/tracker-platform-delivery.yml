@@ -31,7 +31,7 @@ jobs:
           beskid_tracker
           beskid_web_common
           compiler
-      - uses: pnpm/action-setup@a74893613d16e5921bfb0ac2f9af2a3e41842027 # v4
+      - uses: pnpm/action-setup@008330803749db0355799c700092d9a85fd074e9 # v6.0.9
         with:
           version: "10.17.1"
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
@@ -61,7 +61,7 @@ jobs:
       # tracker install needs the shared web packages submodule checked out too.
       - name: Initialize tracker and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_tracker beskid_web_common
-      - uses: pnpm/action-setup@a74893613d16e5921bfb0ac2f9af2a3e41842027 # v4
+      - uses: pnpm/action-setup@008330803749db0355799c700092d9a85fd074e9 # v6.0.9
         with:
           version: "10.17.1"
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
@@ -83,7 +83,7 @@ jobs:
           persist-credentials: false
       - name: Initialize shared web packages submodule
         run: ./scripts/ci/init-submodules.sh beskid_web_common
-      - uses: pnpm/action-setup@a74893613d16e5921bfb0ac2f9af2a3e41842027 # v4
+      - uses: pnpm/action-setup@008330803749db0355799c700092d9a85fd074e9 # v6.0.9
         with:
           version: "10.17.1"
       - run: pnpm install --frozen-lockfile
@@ -106,7 +106,7 @@ jobs:
       # into beskid_web_common, so its install needs that submodule checked out.
       - name: Initialize nexus and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_nexus beskid_web_common
-      - uses: pnpm/action-setup@a74893613d16e5921bfb0ac2f9af2a3e41842027 # v4
+      - uses: pnpm/action-setup@008330803749db0355799c700092d9a85fd074e9 # v6.0.9
         with:
           version: "10.17.1"
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
