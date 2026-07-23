@@ -14,6 +14,23 @@ cd "${ROOT}/compiler"
 # Corelib lowering can recurse deeply; preserve the required stack bump.
 export RUST_MIN_STACK="${RUST_MIN_STACK:-67108864}"
 
+run_bounded_phase() {
+  local label="$1"
+  local timeout_seconds="$2"
+  shift 2
+
+  echo "==> ${label} (timeout: ${timeout_seconds}s)"
+  set +e
+  timeout --kill-after=60s "${timeout_seconds}" "$@"
+  local status=$?
+  set -e
+
+  if [[ "${status}" -eq 124 ]]; then
+    echo "::error::${label} exceeded its ${timeout_seconds}s hard cap; failing the gate with phase evidence." >&2
+  fi
+  return "${status}"
+}
+
 # Guard: retired type-system internals must not be reintroduced in compiler sources.
 legacy_patterns=(
   "expr_types"
@@ -37,13 +54,15 @@ echo "no legacy type-system patterns in compiler .rs sources"
 
 # clippy (deny warnings). `--no-deps` keeps the gate scoped to workspace crates.
 rustup component add clippy >/dev/null 2>&1 || true
-cargo clippy --workspace --all-targets --no-deps -- -D warnings
+run_bounded_phase "Clippy" "${BESKID_CLIPPY_TIMEOUT:-600}" \
+  cargo clippy --workspace --all-targets --no-deps -- -D warnings
 
 # Build a fresh canonical runtime kit for this exact native host, then run workspace tests.
 # Debug tests resolve only the debug profile; cross-target publication remains a separate gate.
 export BESKID_RUNTIME_PREFIX="${BESKID_RUNTIME_PREFIX:-${CARGO_TARGET_DIR:-${ROOT}/compiler/target}/native-runtime-kit}"
 export BESKID_RUNTIME_KIT_PROFILE=debug
-bash scripts/stage-native-runtime-kit.sh
+run_bounded_phase "Native ABI-v5 runtime-kit staging and verification" "${BESKID_RUNTIME_KIT_TIMEOUT:-600}" \
+  bash scripts/stage-native-runtime-kit.sh
 
 # Hard cap the test phase. Tests run serially (--test-threads=1), so a single
 # deadlocked or infinitely-looping test (e.g. a mis-lowered loop executed under

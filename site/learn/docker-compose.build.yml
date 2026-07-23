@@ -1,0 +1,16 @@
+services:
+  learn:
+    build:
+      context: ../..
+      dockerfile: site/learn/Dockerfile
+      args:
+        NODE_AUTH_TOKEN: ${NODE_AUTH_TOKEN:-}
+    restart: unless-stopped
+    ports:
+      - "4173:80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 8s

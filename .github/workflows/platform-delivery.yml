@@ -137,6 +137,28 @@ jobs:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
+  image-learn:
+    # Delivery is intentionally decoupled from the quality gates (openspec,
+    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
+    # deploys to Coolify regardless of those pipelines' results; the gates still
+    # run in parallel as independent branch-protection checks.
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/reusable-image.yml
+    with:
+      name: beskid-learn
+      repository: ghcr.io/cyber-nomad-collective/beskid-learn
+      context: .
+      dockerfile: site/learn/Dockerfile
+      node-auth: true
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+    secrets:
+      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+
   image-platform-spec:
     # Delivery is intentionally decoupled from the quality gates (openspec,
     # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
@@ -244,7 +266,7 @@ jobs:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
   manifest:
-    needs: [image-site, image-auth, image-platform-spec, image-tracker, image-nexus, image-pckg]
+    needs: [image-site, image-auth, image-learn, image-platform-spec, image-tracker, image-nexus, image-pckg]
     # Assemble a manifest from whatever image lanes produced a record. `!cancelled()`
     # lets the manifest build even if an individual image lane failed, so a single
     # broken service never blocks publishing the rest of the platform.
