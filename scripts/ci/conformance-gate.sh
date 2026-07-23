@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "${ROOT}"
 
-bun run openspec:validate
+pnpm run openspec:validate
 
 jq -e '
   ((.schemaVersion == 1) or (.schema_version == 1)) and

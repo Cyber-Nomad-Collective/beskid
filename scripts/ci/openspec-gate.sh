@@ -7,5 +7,5 @@ cd "${ROOT}"
 
 test -f openspec/config.yaml
 test -f openspec/catalog.json
-bun run openspec:validate
+pnpm run openspec:validate
 

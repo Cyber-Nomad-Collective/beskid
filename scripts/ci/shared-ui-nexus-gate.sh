@@ -51,8 +51,8 @@ check_tree() {
 ensure_web_common_install() {
   if [[ ! -d "${WEB_COMMON}/node_modules" ]] && [[ ! -d "${WEB_COMMON}/packages/beskid-ui-react/node_modules" ]]; then
     echo "==> shared-ui-nexus-gate: installing beskid_web_common deps" >&2
-    bun install --cwd="${WEB_COMMON}" --frozen-lockfile || die_prereq \
-      "bun install failed in beskid_web_common. Fix lockfile/registry auth (NODE_AUTH_TOKEN for GitHub Packages if needed), then retry."
+    pnpm install --dir="${WEB_COMMON}" --frozen-lockfile || die_prereq \
+      "pnpm install failed in beskid_web_common. Fix lockfile/registry auth (NODE_AUTH_TOKEN for GitHub Packages if needed), then retry."
   fi
 }
 
@@ -110,16 +110,16 @@ ensure_nexus_web_install() {
 }
 
 require_cmd bun "Install Bun (https://bun.sh) and ensure it is on PATH."
+require_cmd pnpm "Install pnpm (https://pnpm.io) and ensure it is on PATH."
+corepack prepare pnpm@10.17.1 --activate
 check_tree
 ensure_web_common_install
 ensure_nexus_web_install
 
 gate_init "shared-ui-nexus"
 
-# Authoritative shared UI suite (Vitest + jsdom). Do not use bare `bun test`.
-# Prefer `bun run --cwd=…` (equals form): `bun --cwd DIR run SCRIPT` with a
-# space before DIR is misparsed by Bun and can exit 0 without running tests.
-gate_step "shared-ui-vitest" -- bun run --cwd="${WEB_COMMON}" test
+# Authoritative shared UI suite (Vitest + jsdom). Run via pnpm.
+gate_step "shared-ui-vitest" -- pnpm --dir="${WEB_COMMON}" test
 
 # Nexus unit suite — Vitest + jsdom only (no Playwright specs).
 gate_step "nexus-unit-vitest" -- bun run --cwd="${NEXUS_WEB}" test:unit
@@ -151,7 +151,7 @@ if gate_overall_rc; then
   exit 0
 else
   echo "shared-ui-nexus-gate FAILED" >&2
-  echo "  Shared UI:  bun run --cwd=beskid_web_common test" >&2
+  echo "  Shared UI:  pnpm --dir=beskid_web_common test" >&2
   echo "  Nexus unit: bun run --cwd=beskid_nexus/gitnexus-web test:unit" >&2
   echo "  Nexus E2E:  bun run --cwd=beskid_nexus/gitnexus-web test:e2e:install && bun run --cwd=beskid_nexus/gitnexus-web test:e2e" >&2
   echo "  Package both: bun run --cwd=beskid_nexus/gitnexus-web test:gate" >&2

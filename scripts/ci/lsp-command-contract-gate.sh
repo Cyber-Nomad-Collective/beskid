@@ -20,6 +20,6 @@ echo "==> beskid_lsp project-explorer command contract (Rust snapshot)"
 echo "==> beskid_vscode LSP commands contract (Bun)"
 (
   cd "${ROOT}/beskid_vscode"
-  bun install --frozen-lockfile
-  bun test test/lspCommandsContract.test.ts
+  pnpm install --frozen-lockfile
+  pnpm test test/lspCommandsContract.test.ts
 )

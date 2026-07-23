@@ -24,7 +24,7 @@ _TESTS_RUN=$((_TESTS_RUN + 1))
 echo "  ok   - gate avoids bare bun test"
 
 gate_src="$(cat "${gate}")"
-assert_contains "${gate_src}" 'bun run --cwd="${WEB_COMMON}" test' "gate invokes shared UI package test"
+assert_contains "${gate_src}" 'pnpm --dir="${WEB_COMMON}" test' "gate invokes shared UI package test"
 assert_contains "${gate_src}" 'bun run --cwd="${NEXUS_WEB}" test:unit' "gate invokes Nexus unit runner"
 assert_contains "${gate_src}" 'bun run --cwd="${NEXUS_WEB}" test:e2e' "gate invokes Nexus Playwright E2E"
 assert_contains "${gate_src}" 'test:e2e:install' "gate installs Playwright Chromium"

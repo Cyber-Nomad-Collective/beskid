@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Verify that bun.lock matches package.json for one or more directories.
+# Verify that lockfile matches package.json for one or more directories.
 #
 # Canonical multi-dir frozen-lockfile check. Runs identically here, in the
 # reusable delivery workflows, and under `just gate`. Sourced gate-harness
@@ -31,12 +31,14 @@ done
 gate_init "frozen-lockfile"
 
 for d in "${dirs[@]}"; do
-  if [[ -f "$d/package.json" && -f "$d/bun.lock" ]]; then
-    # Sluggify the dir for the step name (no slashes).
+  if [[ -f "$d/package.json" && -f "$d/pnpm-lock.yaml" ]]; then
+    local_step="lock-$(echo "$d" | tr '/.' '--')"
+    gate_step "${local_step}" -- sh -c "cd '$d' && pnpm install --frozen-lockfile"
+  elif [[ -f "$d/package.json" && -f "$d/bun.lock" ]]; then
     local_step="lock-$(echo "$d" | tr '/.' '--')"
     gate_step "${local_step}" -- sh -c "cd '$d' && bun install --frozen-lockfile"
   else
-    echo "skip $d (no package.json or bun.lock)" >&2
+    echo "skip $d (no package.json or lockfile)" >&2
   fi
 done
 
@@ -47,6 +49,6 @@ if gate_overall_rc; then
   echo "All lockfiles match package.json"
   exit 0
 else
-  echo "Some lockfiles out of sync — run 'bun install' and commit bun.lock" >&2
+  echo "Some lockfiles out of sync — run 'pnpm install' (or 'bun install' for Bun projects) and commit the lockfile" >&2
   exit 1
 fi

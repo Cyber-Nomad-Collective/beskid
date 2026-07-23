@@ -21,23 +21,23 @@ source "${ROOT}/scripts/ci/lib/gate-harness.sh"
 if [[ "$APP" == "auth" ]]; then
   gate_init "site-build-auth"
   [[ -n "$NODE_AUTH_TOKEN" ]] && export NODE_AUTH_TOKEN
-  gate_step "auth-frozen-install"  -- sh -c 'cd site/auth && bun install --frozen-lockfile'
-  gate_step "auth-test"            -- sh -c 'cd site/auth && bun run test'
-  gate_step "auth-build"           -- sh -c 'cd site/auth && SKIP_ENV_VALIDATION=1 bun run build'
-  gate_step "auth-verify-bundle"   -- sh -c 'cd site/auth && bun run verify:client-bundle'
-  gate_step "auth-test-bundle"     -- sh -c 'cd site/auth && bun run test:bundle'
+  gate_step "auth-frozen-install"  -- pnpm install --dir site/auth --frozen-lockfile
+  gate_step "auth-test"            -- pnpm --dir site/auth test
+  gate_step "auth-build"           -- env SKIP_ENV_VALIDATION=1 pnpm --dir site/auth build
+  gate_step "auth-verify-bundle"   -- pnpm --dir site/auth verify:client-bundle
+  gate_step "auth-test-bundle"     -- pnpm --dir site/auth test:bundle
 elif [[ "$APP" == "website" ]]; then
   gate_init "site-build-website"
   [[ -n "$NODE_AUTH_TOKEN" ]] && export NODE_AUTH_TOKEN
   # Website is a root workspace member; install from the repo lockfile.
-  gate_step "website-frozen-install" -- bun install --frozen-lockfile
+  gate_step "website-frozen-install" -- pnpm install --dir site/website --frozen-lockfile
   gate_step "website-catalog" -- sh -c 'test -f openspec/catalog.json && jq -e "(.entries | type == \"array\" and length > 0)" openspec/catalog.json >/dev/null'
-  gate_step "website-build" -- sh -c 'BESKID_REQUIRE_OPENSPEC_CATALOG=1 bun run --cwd site/website build'
+  gate_step "website-build" -- sh -c 'BESKID_REQUIRE_OPENSPEC_CATALOG=1 pnpm --dir site/website build'
 elif [[ "$APP" == "platform-spec" ]]; then
   gate_init "site-build-platform-spec"
   [[ -n "$NODE_AUTH_TOKEN" ]] && export NODE_AUTH_TOKEN
   # Platform-spec is a root workspace member; install from the repo lockfile.
-  gate_step "pspec-frozen-install" -- bun install --frozen-lockfile
+  gate_step "pspec-frozen-install" -- pnpm install --dir site/platform-spec --frozen-lockfile
   gate_step "pspec-layouts"        -- sh -c 'cd site/platform-spec && corepack enable && corepack prepare pnpm@10.17.1 --activate && pnpm run layouts:check'
   gate_step "pspec-test"           -- sh -c 'cd site/platform-spec && pnpm run test'
   gate_step "pspec-build"          -- sh -c 'cd site/platform-spec && SKIP_ENV_VALIDATION=1 pnpm run build'

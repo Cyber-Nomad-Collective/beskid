@@ -1,10 +1,10 @@
 # Beskid — Toolchain & Stack
 
 ## Toolchain
-- **Checkout:** `./scripts/setup-environment.sh` (git submodules + root `bun install`—not Google `repo`)
+- **Checkout:** `./scripts/setup-environment.sh` (git submodules + root `pnpm install`—not Google `repo`)
 - **Submodules:** day-to-day via lazygit (`U` sync / `P` recursive push); toolchain via `scripts/install-deps.sh` + `repo-deps.json`
 - **Rust:** workspace in `compiler/`; `just replace` installs `beskid` + `beskid_lsp`, `just vscode` rebuilds the extension
-- **Sites:** **Bun** for all site apps
+- **Sites:** **pnpm** for all site apps
 - **CI:** compiler gate runs via Blacksmith Testbox (no Dagger); other gates in `beskid_infra/dagger/`; root `dagger.json`
 
 ## Tech Stack
@@ -26,7 +26,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **beskid** (66411 symbols, 136097 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **beskid** (66413 symbols, 136109 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
 
@@ -92,5 +92,5 @@ This project is indexed by GitNexus as **beskid** (66411 symbols, 136097 relatio
 - Shared AST/DAG explorer UI (ReactFlow/d3) belongs in common `@beskid` components and should reuse one repo/browser explorer dialog across website, pckg, platform-spec, and tracker
 - OpenSpec `validate-standard` catalogues `AGENTS.md` and hard-fails TBD Purpose headers; regenerating `openspec/catalog.json` may be required after editing either
 - Platform delivery hard-gates every lane image including `pckg`; GHCR `beskid-pckg` is linked to sibling repo `beskid_pckg`, so grant package Actions Write to `beskid` or set `GHCR_TOKEN` with `write:packages` (not `read:packages` alone—login can succeed while push fails with scope mismatch); login/push already use `secrets.GHCR_TOKEN || github.token` in `.github/workflows/reusable-image.yml` (do not re-add in callers; do not weaken the gate); green `main` auto-applies Coolify staging with digest-pinned compose; staging secrets sync from OpenBao `secret/beskid/staging/*` via `just sync-env-staging` / `sync-runtime-env.sh`, with `COOLIFY_SERVICE_UUID` from GitHub staging env or lane JSON `service_uuid` in `beskid_infra/config/coolify-*.json`
-- While sites still resolve `@beskid/*` via `file:../../beskid_web_common`, CI and Docker must checkout/copy that submodule before `bun install` (same pattern as the website image)
+- While sites still resolve `@beskid/*` via `file:../../beskid_web_common`, CI and Docker must checkout/copy that submodule before `pnpm install` (same pattern as the website image)
 - Generation-bound Salsa/syntax facts in `beskid_queries` are semantic authority for LSP/IDE (no per-request HIR rebuilds or dual snapshot paths); ABI-v5 runtime kits use exact installed-prefix discovery/validation and fail closed on missing, mismatched, or tampered kits
