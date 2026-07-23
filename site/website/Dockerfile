@@ -17,30 +17,31 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+RUN corepack enable && corepack prepare pnpm@10.17.1 --activate
 
-# Copy all source first so workspace file: links resolve correctly.
-# The monorepo uses file: and workspace: dependencies that require source
-# present for Bun to set up proper symlinks and sub-path exports.
-COPY package.json bun.lock .npmrc ./
+# Copy all source first so file/workspace links resolve correctly.
+# The monorepo uses local packages that need source present for install-time
+# symlinks and sub-path export resolution.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY beskid_web_common ./beskid_web_common
 COPY site/website ./site/website
 COPY site/platform-spec ./site/platform-spec
 COPY openspec ./openspec
 ARG NODE_AUTH_TOKEN
 ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
-# Isolate and persist the Bun install cache in a stable path. The BuildKit cache
-# mount keeps package downloads across builds (efficiency) and gives Bun a
-# writable cache root, avoiding the scoped-registry "failed opening
-# cache/package/version dir" ENOENT seen with the empty default cache.
-ENV BUN_INSTALL_CACHE_DIR=/bun-cache
-RUN --mount=type=cache,target=/bun-cache bun install --frozen-lockfile
+# Isolate and persist the pnpm store in a stable path.
+RUN --mount=type=cache,id=pnpm-site-website,target=/pnpm/store \
+  pnpm config set store-dir /pnpm/store \
+  && pnpm install --frozen-lockfile
 
 # Book link rewrite needs a non-empty OpenSpec catalog at build time.
 RUN test -f openspec/catalog.json \
   && bun -e 'const c=await Bun.file("openspec/catalog.json").json(); if(!Array.isArray(c.entries)||c.entries.length===0){console.error("openspec/catalog.json missing or empty; website image build requires catalog entries"); process.exit(1)}'
 ENV BESKID_REQUIRE_OPENSPEC_CATALOG=1
 ENV NODE_ENV=production
-RUN bun run --cwd site/website build
+RUN pnpm --dir site/website run build
 
 FROM nginx:1.27-alpine AS runtime
 
