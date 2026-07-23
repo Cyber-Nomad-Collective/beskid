@@ -1,0 +1,77 @@
+## ADDED Requirements
+
+### Requirement: Platform Spec document contexts have canonical authority
+
+Platform Spec SHALL organize canonical content using
+`openspec/specs/taxonomy--<domain>/spec.md` for a provisional domain hub,
+`openspec/specs/taxonomy--<domain>--<area>/spec.md` for a provisional area hub,
+and `openspec/specs/<domain>--<area>--<feature>/spec.md` for a normative feature
+specification. A feature MAY own only informative documents at
+`openspec/documents/platform-spec/<feature>/articles/<slug>.md` and
+`openspec/documents/platform-spec/<feature>/decisions/<number>-<slug>.md`.
+
+Taxonomy hubs MUST NOT be cited as an implemented guarantee merely because
+they organize a domain or area. A feature specification remains the sole
+normative authority for its requirements; associated articles and decisions
+MUST NOT redefine standard behavior.
+
+#### Scenario: A feature article is published
+
+- **GIVEN** an article is added for an existing feature
+- **WHEN** its document identity is resolved
+- **THEN** its canonical path is under that feature's `articles` directory, its
+  parent is that feature, and its authority is informative
+
+#### Scenario: A taxonomy hub is rendered
+
+- **GIVEN** a reader follows a taxonomy domain or area link
+- **WHEN** Platform Spec renders the hub
+- **THEN** it presents the hub as provisional organization and not as a
+  feature-level conformance guarantee
+
+### Requirement: Platform Spec catalog identities are revisioned and validated
+
+The OpenSpec catalog SHALL record every Platform Spec taxonomy hub, feature
+specification, article, and decision with its canonical path, kind, title,
+parent capability, authority, disposition, and source hash. A Platform Spec
+draft SHALL record its immutable catalog `baseRevision` when the draft is
+created. The server MUST reject a draft whose base revision differs from the
+current catalog revision, and MUST NOT silently rewrite or re-base it.
+
+For a catalog record, `parent capability` SHALL identify the complete document
+hierarchy: a `taxonomy-domain` record SHALL have the Platform Spec top level as
+its parent; a `taxonomy-area` record SHALL have the taxonomy-domain hub for its
+domain as its parent; a `feature` record SHALL have the taxonomy-area hub for
+its domain and area as its parent; and an `article` or `decision` record SHALL
+have an existing feature specification as its parent. No other parent
+capability value is valid for those kinds.
+
+Catalog generation and Platform Spec server-side validation SHALL reject an
+unknown document kind, an invalid canonical path, a missing or invalid parent
+capability for the record kind, a non-informative article or decision, or a
+malformed `baseRevision`.
+
+#### Scenario: A document kind is unknown
+
+- **GIVEN** a catalog record names a Platform Spec document kind other than
+  `taxonomy-domain`, `taxonomy-area`, `feature`, `article`, or `decision`
+- **WHEN** catalog or server-side validation runs
+- **THEN** validation rejects the record before it is published or proposed in
+  a pull request
+
+#### Scenario: A document has an invalid parent capability
+
+- **GIVEN** a catalog record has a parent capability other than the top level
+  for a taxonomy-domain, its domain hub for a taxonomy-area, its area hub for a
+  feature, or an existing feature specification for an article or decision
+- **WHEN** catalog or server-side validation runs
+- **THEN** validation rejects the record before it is published or proposed in
+  a pull request
+
+#### Scenario: A draft base revision is stale
+
+- **GIVEN** a Platform Spec editor created a draft at catalog revision `A`
+- **AND** the current catalog revision is `B`
+- **WHEN** the editor submits the draft
+- **THEN** the server rejects it as stale and retains the draft's submitted
+  `baseRevision` as `A`

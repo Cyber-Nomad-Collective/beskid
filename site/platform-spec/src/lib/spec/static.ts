@@ -29,7 +29,7 @@ import {
 } from "#/lib/spec/layouts";
 import { resolveSeedDir } from "#/lib/spec/paths.core";
 
-export const SEED_VERSION = 1;
+export const SEED_VERSION = 2;
 
 export interface SeedMeta {
 	version: number;
@@ -38,6 +38,7 @@ export interface SeedMeta {
 		domains: number;
 		areas: number;
 		features: number;
+		documents: number;
 		capabilities: number;
 		requirements: number;
 	};
@@ -103,8 +104,8 @@ export function buildSeedWorkspace(
 	let requirementCount = 0;
 	let conforming = 0;
 
-	for (const entry of catalog.entries) {
-		const bundle = getOpenSpecDocument(entry.capability, openSpecRoot, {
+	for (const entry of catalog.documents) {
+		const bundle = getOpenSpecDocument(entry.key, openSpecRoot, {
 			catalog,
 			registry,
 		});
@@ -114,17 +115,30 @@ export function buildSeedWorkspace(
 			);
 		}
 		documents[entry.slug] = bundle;
-		assignments[entry.capability] = bundle.layoutValidation.layoutId;
-		validations[entry.capability] = bundle.layoutValidation;
+		assignments[entry.key] = bundle.layoutValidation.layoutId;
+		validations[entry.key] = bundle.layoutValidation;
 		requirementCount += entry.requirements.length;
 		if (bundle.layoutValidation.ok) {
 			conforming += 1;
 		} else {
 			findings.push({
-				capability: entry.capability,
+				capability: entry.key,
 				violations: bundle.layoutValidation.violations,
 			});
 		}
+	}
+
+	for (const entry of catalog.legacyEntries) {
+		const bundle = getOpenSpecDocument(entry.key, openSpecRoot, {
+			catalog,
+			registry,
+		});
+		if (!bundle) {
+			throw new Error(
+				`Unable to build legacy document bundle for ${entry.capability}`,
+			);
+		}
+		documents[entry.slug] = bundle;
 	}
 
 	const meta: SeedMeta = {
@@ -134,11 +148,14 @@ export function buildSeedWorkspace(
 			domains: domainModel.domainCount,
 			areas: domainModel.areaCount,
 			features: domainModel.featureCount,
-			capabilities: catalog.entries.length,
+			documents: catalog.documents.length,
+			capabilities: catalog.documents.filter(
+				(document) => document.kind === "feature",
+			).length,
 			requirements: requirementCount,
 		},
 		layout: {
-			checked: catalog.entries.length,
+			checked: catalog.documents.length,
 			conforming,
 			violations: findings.length,
 		},

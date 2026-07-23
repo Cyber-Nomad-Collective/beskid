@@ -1,6 +1,6 @@
 // Idempotent Memgraph seeding of the native-shape spec graph. Uses MERGE (the
-// graph-native upsert) to converge Domain -> Area -> SpecDocument (feature)
-// nodes and their edges from the seed workspace. Pure module: neo4j-driver is
+// graph-native upsert) to converge the canonical SpecDocument hierarchy and
+// its edges from the seed workspace. Pure module: neo4j-driver is
 // imported dynamically so the static seed path never loads it, and it opens its
 // own driver rather than the server-only client singleton, so it runs under the
 // standalone seed script and the container entrypoint.
@@ -10,61 +10,60 @@ import { createHash } from "node:crypto";
 import type { SeedWorkspace } from "#/lib/spec/static";
 
 const CONSTRAINTS = [
-	"CREATE CONSTRAINT ON (d:SpecDocument) ASSERT d.slug IS UNIQUE",
-	"CREATE CONSTRAINT ON (dom:Domain) ASSERT dom.domain IS UNIQUE",
-	"CREATE CONSTRAINT ON (ar:Area) ASSERT ar.id IS UNIQUE",
+	"CREATE CONSTRAINT ON (d:SpecDocument) ASSERT d.key IS UNIQUE",
+	"CREATE CONSTRAINT ON (root:SpecRoot) ASSERT root.key IS UNIQUE",
 ];
 
 const INDEXES = [
+	"CREATE INDEX ON :SpecDocument(kind)",
 	"CREATE INDEX ON :SpecDocument(domain)",
 	"CREATE INDEX ON :SpecDocument(area)",
 	"CREATE INDEX ON :SpecDocument(capability)",
-	"CREATE INDEX ON :Area(domain)",
+	"CREATE INDEX ON :SpecDocument(parentCapability)",
 ];
 
 const UPSERT = `
 UNWIND $rows AS row
-MERGE (d:Domain {domain: row.domain})
-  SET d.title = row.domainTitle, d.updatedAt = row.updatedAt
-MERGE (a:Area {id: row.areaId})
-  SET a.domain = row.domain, a.area = row.area, a.title = row.areaTitle,
-      a.updatedAt = row.updatedAt
-MERGE (d)-[:HAS_AREA]->(a)
-MERGE (s:SpecDocument {slug: row.slug})
-  SET s.capability = row.capability, s.title = row.title,
+MERGE (s:SpecDocument {key: row.key})
+  SET s.slug = row.slug, s.kind = row.kind, s.capability = row.capability,
+      s.parentCapability = row.parentCapability, s.title = row.title,
       s.specLevel = row.specLevel, s.status = row.status,
       s.domain = row.domain, s.area = row.area, s.feature = row.feature,
+      s.authority = row.authority, s.disposition = row.disposition,
       s.repoPath = row.repoPath, s.requirementCount = row.requirementCount,
       s.layoutId = row.layoutId, s.layoutOk = row.layoutOk,
       s.contentHash = row.contentHash, s.updatedAt = row.updatedAt
-WITH a, s
-// A capability may move between areas while keeping its slug. Drop every
-// existing feature edge into this document before linking the current area so a
-// moved capability never retains its old HAS_FEATURE edge.
-OPTIONAL MATCH (:Area)-[stale:HAS_FEATURE]->(s)
+`;
+
+const CLEAR_PARENT_EDGES = `
+MATCH ()-[stale:HAS_DOCUMENT]->(:SpecDocument)
 DELETE stale
-MERGE (a)-[:HAS_FEATURE]->(s)
+`;
+
+const LINK_ROOT_DOCUMENTS = `
+MERGE (root:SpecRoot {key: "platform-spec"})
+WITH root
+MATCH (child:SpecDocument {parentCapability: "platform-spec"})
+MERGE (root)-[:HAS_DOCUMENT]->(child)
+`;
+
+const LINK_DOCUMENTS = `
+MATCH (child:SpecDocument)
+WHERE child.parentCapability <> "platform-spec"
+MATCH (parent:SpecDocument {key: child.parentCapability})
+MERGE (parent)-[:HAS_DOCUMENT]->(child)
 `;
 
 const PRUNE = `
 MATCH (s:SpecDocument)
-WHERE NOT s.slug IN $slugs
+WHERE NOT s.key IN $keys
 DETACH DELETE s
 `;
 
-// Taxonomy nodes are not slug-scoped, so pruning documents can leave empty
-// areas/domains behind. Remove areas with no features, then domains with no
-// remaining areas.
-const PRUNE_ORPHAN_AREAS = `
-MATCH (a:Area)
-WHERE NOT (a)-[:HAS_FEATURE]->(:SpecDocument)
-DETACH DELETE a
-`;
-
-const PRUNE_ORPHAN_DOMAINS = `
-MATCH (dom:Domain)
-WHERE NOT (dom)-[:HAS_AREA]->(:Area)
-DETACH DELETE dom
+const PRUNE_LEGACY_TAXONOMY = `
+MATCH (legacy)
+WHERE legacy:Domain OR legacy:Area
+DETACH DELETE legacy
 `;
 
 export interface GraphSeedResult {
@@ -72,18 +71,20 @@ export interface GraphSeedResult {
 	pruned: number;
 }
 
-interface GraphRow {
+export interface GraphRow {
+	key: string;
+	kind: string;
+	parentCapability: string;
+	authority: string;
+	disposition: string;
 	domain: string;
-	domainTitle: string;
-	areaId: string;
-	area: string;
-	areaTitle: string;
+	area: string | null;
 	slug: string;
 	capability: string;
 	title: string;
 	specLevel: string;
 	status: string | null;
-	feature: string;
+	feature: string | null;
 	repoPath: string;
 	requirementCount: number;
 	layoutId: string | null;
@@ -92,41 +93,37 @@ interface GraphRow {
 	updatedAt: string;
 }
 
-function buildRows(workspace: SeedWorkspace): GraphRow[] {
+export function buildRows(workspace: SeedWorkspace): GraphRow[] {
 	const now = new Date().toISOString();
-	const rows: GraphRow[] = [];
-	for (const domain of workspace.domainModel.domains) {
-		for (const area of domain.areas) {
-			for (const feature of area.features) {
-				const validation = workspace.layouts.validations[feature.capability];
-				const bundle = workspace.documents[feature.slug];
-				const contentHash =
-					bundle && typeof bundle.body === "string"
-						? createHash("sha256").update(bundle.body).digest("hex")
-						: "0";
-				rows.push({
-					domain: domain.domain,
-					domainTitle: domain.title,
-					areaId: `${domain.domain}/${area.area}`,
-					area: area.area,
-					areaTitle: area.title,
-					slug: feature.slug,
-					capability: feature.capability,
-					title: feature.title,
-					specLevel: feature.specLevel,
-					status: feature.status,
-					feature: feature.feature,
-					repoPath: `openspec/specs/${feature.capability}/spec.md`,
-					requirementCount: feature.requirementCount,
-					layoutId: validation?.layoutId ?? null,
-					layoutOk: validation ? validation.ok : true,
-					contentHash,
-					updatedAt: now,
-				});
-			}
-		}
-	}
-	return rows;
+	return workspace.catalog.documents.map((document) => {
+		const validation = workspace.layouts.validations[document.key];
+		const bundle = workspace.documents[document.slug];
+		const contentHash =
+			bundle && typeof bundle.body === "string"
+				? createHash("sha256").update(bundle.body).digest("hex")
+				: document.sourceHash;
+		return {
+			key: document.key,
+			kind: document.kind,
+			parentCapability: document.parentCapability,
+			authority: document.authority,
+			disposition: document.disposition,
+			domain: document.domain,
+			area: document.area,
+			slug: document.slug,
+			capability: document.capability,
+			title: document.title,
+			specLevel: document.specLevel,
+			status: document.status,
+			feature: document.feature,
+			repoPath: document.canonicalPath,
+			requirementCount: document.requirements.length,
+			layoutId: validation?.layoutId ?? document.layout,
+			layoutOk: validation ? validation.ok : true,
+			contentHash,
+			updatedAt: now,
+		};
+	});
 }
 
 export async function seedSpecGraph(
@@ -149,16 +146,18 @@ export async function seedSpecGraph(
 			}
 		}
 		await session.run(UPSERT, { rows });
+		await session.run(CLEAR_PARENT_EDGES);
+		await session.run(LINK_ROOT_DOCUMENTS);
+		await session.run(LINK_DOCUMENTS);
 		let pruned = 0;
 		if (options.prune) {
-			const slugs = rows.map((row) => row.slug);
+			const keys = rows.map((row) => row.key);
 			const deletedNodes = async (query: string, params?: object) => {
 				const result = await session.run(query, params);
 				return result.summary.counters.updates().nodesDeleted ?? 0;
 			};
-			pruned += await deletedNodes(PRUNE, { slugs });
-			pruned += await deletedNodes(PRUNE_ORPHAN_AREAS);
-			pruned += await deletedNodes(PRUNE_ORPHAN_DOMAINS);
+			pruned += await deletedNodes(PRUNE, { keys });
+			pruned += await deletedNodes(PRUNE_LEGACY_TAXONOMY);
 		}
 		return { nodes: rows.length, pruned };
 	} finally {

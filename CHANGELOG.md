@@ -9,6 +9,15 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Added
+
+- Platform Spec Draft Context authoring: multi-document revision-pinned contexts,
+  layout templates, restricted Tiptap WYSIWYG with Markdown SOT, reader
+  “Propose change”, richer moderation with stale-revision fail-closed, merge/abandon
+  webhooks, and Tracker `/api/v1/tasks` linking by `standardId` + `catalogRevision`.
+- Platform-spec Node 22.12 / pnpm 10.17.1 runtime cutover (`node:sqlite` adapter,
+  Node Nitro preset, Node Docker image).
+
 ### Fixed
 
 - Production promotion source validation now accepts the in-progress same-run
@@ -107,6 +116,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- Add one fail-closed Platform Spec document identity model across catalog
+  generation, reader routes, static seeds, and Memgraph seeds for taxonomy
+  domains/areas, normative features, and informative articles/decisions.
 - Specify the manifest-derived ABI-v5 managed-object allocation boundary, including
   fail-closed descriptor validation, single-path closure delegation, zeroed header
   initialization, and explicit root-frame ownership (CYB-157).

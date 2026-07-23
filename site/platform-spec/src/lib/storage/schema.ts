@@ -1,4 +1,4 @@
-import type { Database } from "bun:sqlite";
+import type { SqliteDatabase as Database } from "#/lib/storage/sqlite";
 
 export const SCHEMA_VERSION = 2;
 

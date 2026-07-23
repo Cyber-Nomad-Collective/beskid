@@ -58,9 +58,9 @@ Seeding is idempotent: re-running an unchanged revision is a no-op, and a change
 
 ## Production runtime
 
-The image runs the TanStack Start app via **Nitro** (`bun run .output/server/index.mjs`), not `vite preview`. Rebuild and redeploy after changing `vite.config.ts` or the Dockerfile.
+The image runs the TanStack Start app via **Nitro** (`pnpm run .output/server/index.mjs`), not `vite preview`. Rebuild and redeploy after changing `vite.config.ts` or the Dockerfile.
 
-Build runs `bun run verify:client-bundle` (CSS on disk matches SSR router + no secrets in client JS). After deploy:
+Build runs `pnpm run verify:client-bundle` (CSS on disk matches SSR router + no secrets in client JS). After deploy:
 
 1. Pin `IMAGE_TAG` to the new `sha-*` from CI.
 2. `curl -s https://platform-spec.beskid-lang.org:8460/api/health` — must return `{ "ok": true, "checks": { "memgraph": true } }`.

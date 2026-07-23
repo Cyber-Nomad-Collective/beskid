@@ -113,16 +113,26 @@ describe("OpenSpec reader", () => {
 	it("reads the repository's generated OpenSpec catalog and stable aliases", () => {
 		const root = resolveOpenSpecRoot();
 		const catalog = loadOpenSpecCatalog(root);
-		expect(catalog.entries.length).toBeGreaterThanOrEqual(179);
+		expect(catalog.documents.length).toBeGreaterThanOrEqual(178);
+		expect(catalog.documents.some((entry) => entry.kind === "taxonomy-domain")).toBe(
+			true,
+		);
+		expect(catalog.documents.some((entry) => entry.kind === "taxonomy-area")).toBe(
+			true,
+		);
 		const aliased = catalog.entries.find(
 			(entry) => entry.legacySlugs.length > 0,
 		);
 		if (!aliased) throw new Error("expected at least one catalog alias");
 		const legacySlug = aliased.legacySlugs[0];
 		if (!legacySlug) throw new Error("expected a legacy slug");
-		expect(resolveOpenSpecEntry(legacySlug, root)?.id).toBe(aliased.id);
-		expect(aliased.href).toBe(
-			`/platform-spec/capabilities/${aliased.capability}/`,
+		expect(resolveOpenSpecEntry(legacySlug, root)).toMatchObject({
+			id: aliased.id,
+			href: aliased.href,
+		});
+		const feature = catalog.documents.find((entry) => entry.kind === "feature");
+		expect(feature?.href).toBe(
+			`/platform-spec/capabilities/${feature?.capability}/`,
 		);
 		const requirement = aliased.requirements[0];
 		if (requirement) {

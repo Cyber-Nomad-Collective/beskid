@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 // Native-shape spec seeder.
 //
 // Treats OpenSpec as the source of truth and projects it into the platform-spec
@@ -20,8 +20,6 @@
 
 import { mkdirSync } from "node:fs";
 
-import { Database } from "bun:sqlite";
-
 import {
 	resolvePlatformSpecDataDir,
 	resolveSeedDir,
@@ -35,6 +33,7 @@ import {
 	type SeedWorkspace,
 } from "#/lib/spec/static";
 import { seedSpecStore } from "#/lib/storage/spec-store";
+import { openSqlite } from "#/lib/storage/sqlite";
 
 interface Options {
 	static: boolean;
@@ -148,7 +147,7 @@ async function main(): Promise<void> {
 	if (options.stores && workspace) {
 		const dataDir = resolvePlatformSpecDataDir();
 		mkdirSync(dataDir, { recursive: true });
-		const db = new Database(settingsDbPathIn(dataDir), { create: true });
+		const db = openSqlite(settingsDbPathIn(dataDir));
 		try {
 			const result = seedSpecStore(db, workspace);
 			console.log(

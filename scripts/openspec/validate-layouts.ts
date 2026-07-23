@@ -117,12 +117,18 @@ interface CatalogEntry {
 	capability?: string;
 	id?: string;
 	specPath?: string;
+	canonicalPath?: string;
+	kind?: string;
+	layout?: string;
 	specLevel?: string;
 }
 
 function specLevelFor(entry: CatalogEntry): string {
 	if (typeof entry.specLevel === "string") return entry.specLevel;
-	// The catalog assigns capabilities the feature level (see reader/loadEntry).
+	if (entry.kind === "taxonomy-domain") return "domain";
+	if (entry.kind === "taxonomy-area") return "area";
+	if (entry.kind === "article") return "article";
+	if (entry.kind === "decision") return "adr";
 	return "feature";
 }
 
@@ -140,13 +146,18 @@ function main(): void {
 
 	const catalog = JSON.parse(readFileSync(catalogPath, "utf8")) as {
 		entries?: CatalogEntry[];
+		specDocuments?: CatalogEntry[];
 	};
-	const entries = Array.isArray(catalog.entries) ? catalog.entries : [];
+	const entries = Array.isArray(catalog.specDocuments)
+		? catalog.specDocuments
+		: Array.isArray(catalog.entries)
+			? catalog.entries
+			: [];
 
 	let checked = 0;
 	let failures = 0;
 	for (const entry of entries) {
-		const specPath = entry.specPath;
+		const specPath = entry.canonicalPath ?? entry.specPath;
 		if (!specPath) continue;
 		const absolute = path.join(repoRoot, specPath);
 		if (!existsSync(absolute)) continue;

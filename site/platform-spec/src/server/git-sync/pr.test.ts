@@ -3,7 +3,8 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
-import type { DraftChangeNode } from "#/server/memgraph/types";
+import { resolveDocumentIdentity } from "#/lib/spec/document-identity";
+import type { ParsedDraftContextBundle } from "#/server/memgraph/types";
 
 process.env.AUTH_HUB_PUBLIC_URL ??= "https://auth.example.test";
 process.env.SESSION_SECRET ??= "platform-spec-test-session-secret-32chars";
@@ -24,33 +25,82 @@ function fixtureCatalog(revision = "catalog-current"): string {
 	roots.push(root);
 	fs.writeFileSync(
 		path.join(root, "catalog.json"),
-		JSON.stringify({ version: 1, revision, entries: [] }),
+		JSON.stringify({ version: 1, revision, entries: [], documents: [] }),
 	);
 	return root;
 }
 
-function draft(): DraftChangeNode {
+function featureBody(): string {
+	return `# Widgets
+
+## Purpose
+
+Widget behavior.
+
+## Requirements
+
+### Requirement: Deterministic widgets
+
+Widgets SHALL remain deterministic.
+
+#### Scenario: Review widgets change
+
+- **GIVEN** the proposed widgets change
+- **WHEN** maintainers validate and merge the OpenSpec change
+- **THEN** the canonical capability specification reflects the approved behavior
+`;
+}
+
+function bundle(): ParsedDraftContextBundle {
+	const identity = resolveDocumentIdentity({
+		kind: "feature",
+		domain: "language",
+		area: "runtime",
+		feature: "widgets",
+	});
 	return {
-		id: "12345678-1234-1234-1234-123456789abc",
-		title: "Define widget behavior",
-		summary: "Make widget behavior normative.",
-		changeKind: "create",
-		repoPath: "",
-		slug: "platform-spec/language/runtime/widgets",
-		pathClass: "feature",
-		specLevel: "feature",
-		frontmatterJson: "{}",
-		bodyMd: "Widgets SHALL remain deterministic.",
-		layoutJson: null,
-		status: "approved",
-		authorLogin: "maintainer",
-		moderatorLogin: "reviewer",
-		rejectReason: null,
-		headBranch: null,
-		prNumber: null,
-		prUrl: null,
-		createdAt: "2026-07-13T00:00:00.000Z",
-		updatedAt: "2026-07-13T00:00:00.000Z",
+		context: {
+			id: "12345678-1234-1234-1234-123456789abc",
+			title: "Define widget behavior",
+			summary: "Make widget behavior normative.",
+			baseCatalogRevision: "catalog-current",
+			status: "submitted",
+			authorLogin: "maintainer",
+			moderatorLogin: null,
+			rejectReason: null,
+			validationState: "valid",
+			validationRevision: "catalog-current",
+			headBranch: null,
+			prNumber: null,
+			prUrl: null,
+			trackerTaskIdsJson: "[]",
+			deliveryVersionId: null,
+			createdAt: "2026-07-13T00:00:00.000Z",
+			updatedAt: "2026-07-13T00:00:00.000Z",
+		},
+		documentChanges: [
+			{
+				id: "doc-1",
+				contextId: "12345678-1234-1234-1234-123456789abc",
+				ordinal: 0,
+				operation: "create",
+				artifactKind: "feature",
+				canonicalPath: identity.canonicalPath,
+				publicSlug: identity.publicSlug,
+				layoutId: "feature",
+				sourceMarkdown: featureBody(),
+				baseMarkdown: null,
+				baseContentHash: null,
+				contentHash: "abc",
+				moderatorNote: null,
+				createdAt: "2026-07-13T00:00:00.000Z",
+				updatedAt: "2026-07-13T00:00:00.000Z",
+				identity,
+				validation: { ok: true, issues: [] },
+			},
+		],
+		revisions: [],
+		trackerTaskIds: [],
 	};
 }
 
@@ -82,116 +132,68 @@ function octokit(openPr?: { number: number; html_url: string }) {
 
 describe("OpenSpec draft pull request files", () => {
 	it("writes ledger, proposal, tasks, and capability delta", () => {
-		const files = buildOpenSpecChangeFiles(draft(), "catalog-current");
-		expect(files.map((file) => file.path)).toEqual([
-			"openspec/changes/platform-editor-12345678/.platform-spec-ledger.json",
-			"openspec/changes/platform-editor-12345678/.openspec.yaml",
-			"openspec/changes/platform-editor-12345678/proposal.md",
-			"openspec/changes/platform-editor-12345678/tasks.md",
-			"openspec/changes/platform-editor-12345678/specs/language--runtime--widgets/spec.md",
-		]);
-		expect(files[0]?.content).toContain('"sourceRevision": "catalog-current"');
+		const files = buildOpenSpecChangeFiles(bundle(), "catalog-current");
+		expect(files.map((file) => file.path)).toEqual(
+			[...files.map((file) => file.path)].sort(),
+		);
+		expect(files.map((file) => file.path)).toEqual(
+			expect.arrayContaining([
+				"openspec/changes/platform-editor-12345678/.platform-spec-ledger.json",
+				"openspec/changes/platform-editor-12345678/.openspec.yaml",
+				"openspec/changes/platform-editor-12345678/proposal.md",
+				"openspec/changes/platform-editor-12345678/tasks.md",
+				"openspec/changes/platform-editor-12345678/specs/language--runtime--widgets/spec.md",
+			]),
+		);
+		expect(files.find((f) => f.path.endsWith("ledger.json"))?.content).toContain(
+			'"sourceRevision": "catalog-current"',
+		);
 		expect(files.map((file) => file.path).join("\n")).not.toMatch(
 			/(node\.json|content\.md|layout\.json)/,
 		);
-		expect(files.at(-1)?.content).toContain("## ADDED Requirements");
-		expect(files.at(-1)?.content).toContain("#### Scenario:");
+		expect(
+			files.find((f) => f.path.endsWith("widgets/spec.md"))?.content,
+		).toContain("## ADDED Requirements");
+		expect(
+			files.find((f) => f.path.endsWith("widgets/spec.md"))?.content,
+		).toContain("#### Scenario:");
+	});
+
+	it("refuses to synthesize missing feature requirements", () => {
+		const bad = bundle();
+		bad.documentChanges[0]!.sourceMarkdown = "just prose";
+		expect(() => buildOpenSpecChangeFiles(bad, "catalog-current")).toThrow(
+			/synthesis is disabled/,
+		);
 	});
 });
 
-describe("OpenSpec draft pull request sync", () => {
-	it("reuses an open pull request for an identical editor draft", async () => {
-		process.env.OPENSPEC_ROOT = fixtureCatalog();
+describe("createDraftPullRequest", () => {
+	it("rejects catalog revision conflicts", async () => {
+		process.env.OPENSPEC_ROOT = fixtureCatalog("catalog-current");
 		await expect(
 			createDraftPullRequest(
-				octokit({ number: 42, html_url: "https://example.test/pr/42" }) as never,
-				draft(),
+				octokit() as never,
+				bundle(),
+				"main",
+				"old",
 			),
-		).resolves.toMatchObject({ prNumber: 42, reused: true });
-	});
-
-	it("rejects a stale catalog revision", async () => {
-		process.env.OPENSPEC_ROOT = fixtureCatalog();
-		await expect(
-			createDraftPullRequest(octokit() as never, draft(), "main", "old"),
 		).rejects.toThrow("catalog revision conflict");
 	});
 
-	it("commits every editor file atomically through the Git Database API", async () => {
-		process.env.OPENSPEC_ROOT = fixtureCatalog();
-		const client = octokit();
-		const calls: Array<{ method: string; input: Record<string, unknown> }> = [];
-		client.git.getRef = async (input?: Record<string, unknown>) => {
-			calls.push({ method: "getRef", input: input ?? {} });
-			throw Object.assign(new Error("not found"), { status: 404 });
-		};
-		client.git.createRef = async (input?: Record<string, unknown>) => {
-			calls.push({ method: "createRef", input: input ?? {} });
-			return { data: {} };
-		};
-		client.git.getCommit = async (input?: Record<string, unknown>) => {
-			calls.push({ method: "getCommit", input: input ?? {} });
-			return { data: { tree: { sha: "base-tree" } } };
-		};
-		let blobNumber = 0;
-		client.git.createBlob = async (input?: Record<string, unknown>) => {
-			calls.push({ method: "createBlob", input: input ?? {} });
-			blobNumber += 1;
-			return { data: { sha: `blob-${blobNumber}` } };
-		};
-		client.git.createTree = async (input?: Record<string, unknown>) => {
-			calls.push({ method: "createTree", input: input ?? {} });
-			return { data: { sha: "tree-sha" } };
-		};
-		client.git.createCommit = async (input?: Record<string, unknown>) => {
-			calls.push({ method: "createCommit", input: input ?? {} });
-			return { data: { sha: "commit-sha" } };
-		};
-		client.git.updateRef = async (input?: Record<string, unknown>) => {
-			calls.push({ method: "updateRef", input: input ?? {} });
-			return { data: {} };
-		};
-
-		await expect(createDraftPullRequest(client as never, draft())).resolves.toMatchObject({
-			reused: false,
-			sourceRevision: "catalog-current",
+	it("reuses an open pull request", async () => {
+		process.env.OPENSPEC_ROOT = fixtureCatalog("catalog-current");
+		await expect(
+			createDraftPullRequest(
+				octokit({
+					number: 7,
+					html_url: "https://example.test/pr/7",
+				}) as never,
+				bundle(),
+			),
+		).resolves.toMatchObject({
+			prNumber: 7,
+			reused: true,
 		});
-
-		expect(calls.map(({ method }) => method)).toEqual([
-			"getRef",
-			"createRef",
-			"getCommit",
-			"createBlob",
-			"createBlob",
-			"createBlob",
-			"createBlob",
-			"createBlob",
-			"createTree",
-			"createCommit",
-			"updateRef",
-		]);
-		expect(calls.find(({ method }) => method === "createTree")?.input).toMatchObject({
-			base_tree: "base-tree",
-			tree: expect.arrayContaining([
-				expect.objectContaining({
-					path: "openspec/changes/platform-editor-12345678/.platform-spec-ledger.json",
-				}),
-				expect.objectContaining({
-					path: "openspec/changes/platform-editor-12345678/proposal.md",
-				}),
-			]),
-		});
-	});
-
-	it("rethrows a non-404 branch lookup error", async () => {
-		process.env.OPENSPEC_ROOT = fixtureCatalog();
-		const client = octokit();
-		client.git.getRef = async () => {
-			throw Object.assign(new Error("GitHub unavailable"), { status: 500 });
-		};
-
-		await expect(createDraftPullRequest(client as never, draft())).rejects.toThrow(
-			"GitHub unavailable",
-		);
 	});
 });

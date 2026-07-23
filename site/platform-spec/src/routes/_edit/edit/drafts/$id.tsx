@@ -1,92 +1,157 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { ProposalBanner } from "#/components/editor/proposal-banner";
-import { ProposalValidationPanel } from "#/components/editor/proposal-validation-panel";
-
+import { DraftContextBanner } from "#/components/editor/draft-context-banner";
+import { DraftDocumentWizard } from "#/components/editor/draft-document-wizard";
+import { OpenSpecMarkdownEditor } from "#/components/editor/open-spec-markdown-editor";
+import { TrackerTaskEmbed } from "#/components/reader/tracker-task-embed";
 import {
-	createDraftFn,
+	addDraftDocumentFn,
+	createDraftContextFn,
 	deleteDraftFn,
 	getDraftFn,
+	removeDraftDocumentFn,
 	submitDraftFn,
-	updateDraftFn,
+	updateDraftContextFn,
+	updateDraftDocumentFn,
 } from "#/server/drafts";
-import type { DraftChangeKind, SpecLevel } from "#/server/memgraph/types";
 
 export const Route = createFileRoute("/_edit/edit/drafts/$id")({
+	validateSearch: (search: Record<string, unknown>) => ({
+		capability:
+			typeof search.capability === "string" ? search.capability : undefined,
+		domain: typeof search.domain === "string" ? search.domain : undefined,
+		area: typeof search.area === "string" ? search.area : undefined,
+		feature: typeof search.feature === "string" ? search.feature : undefined,
+	}),
 	loader: async ({ params }) => {
+		const { loadOpenSpecCatalog } = await import("#/server/openspec/reader");
+		const catalog = loadOpenSpecCatalog();
 		if (params.id === "new") {
-			return { draft: null };
+			return {
+				draft: null,
+				currentCatalogRevision: catalog.revision,
+			};
 		}
-		return { draft: await getDraftFn({ data: { id: params.id } }) };
+		return {
+			draft: await getDraftFn({ data: { id: params.id } }),
+			currentCatalogRevision: catalog.revision,
+		};
 	},
-	component: DraftEditorPage,
+	component: DraftContextEditorPage,
 });
 
-function DraftEditorPage() {
+function DraftContextEditorPage() {
 	const router = useRouter();
 	const { id } = Route.useParams();
-	const { draft } = Route.useLoaderData();
+	const search = Route.useSearch();
+	const { draft, currentCatalogRevision } = Route.useLoaderData();
 	const isNew = id === "new";
 
-	const [title, setTitle] = useState(draft?.title ?? "");
-	const [summary, setSummary] = useState(draft?.summary ?? "");
-	const [specLevel, setSpecLevel] = useState<SpecLevel>(
-		draft?.specLevel ?? "article",
+	const [bundle, setBundle] = useState(draft);
+	const [title, setTitle] = useState(draft?.context.title ?? "");
+	const [summary, setSummary] = useState(draft?.context.summary ?? "");
+	const [selectedId, setSelectedId] = useState<string | null>(
+		draft?.documentChanges[0]?.id ?? null,
 	);
-	const [changeKind, setChangeKind] = useState<DraftChangeKind>(
-		draft?.changeKind ?? "create",
-	);
-	const [capability, setCapability] = useState(
-		draft?.slug.replace(/^platform-spec\/capabilities\//, "") ??
-			"language--area--capability",
-	);
-	const [bodyMd, setBodyMd] = useState(draft?.bodyMd ?? "");
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [prefillApplied, setPrefillApplied] = useState(false);
 
 	const readOnly =
 		!isNew &&
-		draft != null &&
-		draft.status !== "draft" &&
-		draft.status !== "rejected";
+		bundle != null &&
+		bundle.context.status !== "draft" &&
+		bundle.context.status !== "rejected";
 
-	async function onSave() {
+	useEffect(() => {
+		if (prefillApplied || readOnly) return;
+		const capability = search.capability;
+		const domain = search.domain;
+		const area = search.area;
+		const feature = search.feature;
+		if (!capability && !(domain && area && feature)) return;
+		setPrefillApplied(true);
+		void (async () => {
+			try {
+				const current = await ensureContext();
+				const identity =
+					domain && area && feature
+						? {
+								kind: "feature" as const,
+								domain,
+								area,
+								feature,
+							}
+						: {
+								kind: "feature" as const,
+								domain: (capability ?? "").split("--")[0] ?? "language",
+								area: (capability ?? "").split("--")[1] ?? "syntax",
+								feature: (capability ?? "").split("--")[2] ?? "blocks",
+							};
+				const updated = await addDraftDocumentFn({
+					data: {
+						contextId: current.context.id,
+						operation: "update",
+						identity,
+					},
+				});
+				setBundle(updated);
+				setSelectedId(updated.documentChanges.at(-1)?.id ?? null);
+			} catch (err) {
+				setError(
+					err instanceof Error ? err.message : "Could not prefill proposal",
+				);
+			}
+		})();
+	}, [prefillApplied, readOnly, search.area, search.capability, search.domain, search.feature]);
+
+	const selected =
+		bundle?.documentChanges.find((change) => change.id === selectedId) ?? null;
+
+	async function ensureContext() {
+		if (bundle) return bundle;
+		const created = await createDraftContextFn({
+			data: { title: title || "Untitled draft context", summary },
+		});
+		setBundle(created);
+		await router.navigate({
+			to: "/edit/drafts/$id",
+			params: { id: created.context.id },
+			replace: true,
+		});
+		return created;
+	}
+
+	async function onSaveMeta() {
 		setBusy(true);
 		setError(null);
 		try {
-			const values = {
-				capability,
-				body_md: bodyMd,
-			};
+			const current = await ensureContext();
+			const updated = await updateDraftContextFn({
+				data: { id: current.context.id, title, summary },
+			});
+			setBundle(updated);
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Save failed");
+		} finally {
+			setBusy(false);
+		}
+	}
 
-			if (isNew) {
-				const created = await createDraftFn({
-					data: {
-						title,
-						summary,
-						changeKind,
-						specLevel,
-						values,
-					},
-				});
-				await router.navigate({
-					to: "/edit/drafts/$id",
-					params: { id: created.id },
-				});
-			} else {
-				await updateDraftFn({
-					data: {
-						id,
-						title,
-						summary,
-						changeKind,
-						specLevel,
-						values,
-					},
-				});
-				await router.invalidate();
-			}
+	async function onSaveDocument(markdown: string) {
+		if (!bundle || !selected || readOnly) return;
+		setBusy(true);
+		setError(null);
+		try {
+			const updated = await updateDraftDocumentFn({
+				data: {
+					contextId: bundle.context.id,
+					documentChangeId: selected.id,
+					sourceMarkdown: markdown,
+				},
+			});
+			setBundle(updated);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Save failed");
 		} finally {
@@ -95,10 +160,14 @@ function DraftEditorPage() {
 	}
 
 	async function onSubmit() {
+		if (!bundle) return;
 		setBusy(true);
 		setError(null);
 		try {
-			await submitDraftFn({ data: { id } });
+			await updateDraftContextFn({
+				data: { id: bundle.context.id, title, summary },
+			});
+			await submitDraftFn({ data: { id: bundle.context.id } });
 			await router.navigate({ to: "/edit" });
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Submit failed");
@@ -108,11 +177,10 @@ function DraftEditorPage() {
 	}
 
 	async function onDelete() {
-		if (!confirm("Delete this draft?")) return;
+		if (!bundle || !confirm("Delete this draft context?")) return;
 		setBusy(true);
-		setError(null);
 		try {
-			await deleteDraftFn({ data: { id } });
+			await deleteDraftFn({ data: { id: bundle.context.id } });
 			await router.navigate({ to: "/edit" });
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Delete failed");
@@ -121,19 +189,31 @@ function DraftEditorPage() {
 		}
 	}
 
+	const standardId =
+		selected?.identity.key ??
+		search.capability ??
+		(search.domain && search.area && search.feature
+			? `${search.domain}--${search.area}--${search.feature}`
+			: "");
+
 	return (
-		<div className="mx-auto max-w-3xl space-y-6">
-			<ProposalBanner
-				draft={draft ?? null}
+		<div className="mx-auto max-w-5xl space-y-6">
+			<DraftContextBanner
+				bundle={bundle}
 				title={title}
 				summary={summary}
-				specLevel={specLevel}
-				changeKind={changeKind}
+				currentCatalogRevision={currentCatalogRevision}
 				readOnly={readOnly}
 				onTitleChange={setTitle}
 				onSummaryChange={setSummary}
-				onSpecLevelChange={setSpecLevel}
-				onChangeKindChange={setChangeKind}
+				selectedDocumentId={selectedId}
+				onSelectDocument={setSelectedId}
+				onRebase={() => {
+					if (!bundle) return;
+					void updateDraftContextFn({
+						data: { id: bundle.context.id, rebaseToCurrentCatalog: true },
+					}).then(setBundle);
+				}}
 			/>
 
 			{error ? (
@@ -142,49 +222,85 @@ function DraftEditorPage() {
 				</p>
 			) : null}
 
-			<div className="grid gap-4">
-				<label className="grid gap-1 text-sm">
-					<span>OpenSpec capability</span>
-					<input
-						className="rounded-md border px-3 py-2 font-mono text-xs"
-						value={capability}
-						onChange={(event) => setCapability(event.target.value)}
-						disabled={readOnly}
-						placeholder="language--syntax--blocks"
-					/>
-					<span className="text-xs text-muted-foreground">
-						This draft becomes an OpenSpec change delta; no layout or
-						frontmatter files are written.
-					</span>
-				</label>
-				<div className="grid gap-1 text-sm">
-					<span>Content</span>
-					<textarea
-						className="min-h-96 w-full rounded-md border bg-background px-3 py-2 font-mono text-sm"
-						value={bodyMd}
-						onChange={(event) => setBodyMd(event.target.value)}
-						disabled={readOnly}
+			{!readOnly ? (
+				<DraftDocumentWizard
+					disabled={busy}
+					onResolved={async ({ operation, identity, sourceMarkdown }) => {
+						const current = await ensureContext();
+						const updated = await addDraftDocumentFn({
+							data: {
+								contextId: current.context.id,
+								operation,
+								identity,
+								sourceMarkdown,
+							},
+						});
+						setBundle(updated);
+						const last = updated.documentChanges.at(-1);
+						if (last) setSelectedId(last.id);
+					}}
+				/>
+			) : null}
+
+			{selected ? (
+				<div className="space-y-3">
+					<div className="flex items-center justify-between gap-3">
+						<code className="font-mono text-xs">{selected.canonicalPath}</code>
+						{!readOnly ? (
+							<button
+								type="button"
+								className="rounded-md border border-destructive px-2 py-1 text-xs text-destructive"
+								onClick={() => {
+									if (!bundle) return;
+									void removeDraftDocumentFn({
+										data: {
+											contextId: bundle.context.id,
+											documentChangeId: selected.id,
+										},
+									}).then((updated) => {
+										setBundle(updated);
+										setSelectedId(updated.documentChanges[0]?.id ?? null);
+									});
+								}}
+							>
+								Remove document
+							</button>
+						) : null}
+					</div>
+					<OpenSpecMarkdownEditor
+						value={selected.sourceMarkdown}
+						readOnly={readOnly}
+						title={selected.identity.key}
+						onChange={(markdown) => void onSaveDocument(markdown)}
 					/>
 				</div>
-				<ProposalValidationPanel
-					title={title}
-					capability={capability}
-					bodyMd={bodyMd}
+			) : (
+				<p className="text-sm text-muted-foreground">
+					Add a document change to begin editing.
+				</p>
+			)}
+
+			{standardId ? (
+				<TrackerTaskEmbed
+					standardId={standardId}
+					catalogRevision={
+						bundle?.context.baseCatalogRevision ?? currentCatalogRevision
+					}
 				/>
-			</div>
+			) : null}
 
 			<div className="flex flex-wrap gap-2">
 				{!readOnly ? (
 					<button
 						type="button"
 						className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground disabled:opacity-50"
-						onClick={() => void onSave()}
+						onClick={() => void onSaveMeta()}
 						disabled={busy}
 					>
-						{busy ? "Saving…" : "Save draft"}
+						{busy ? "Saving…" : "Save context"}
 					</button>
 				) : null}
-				{!isNew && draft?.status === "draft" ? (
+				{bundle && bundle.context.status === "draft" ? (
 					<button
 						type="button"
 						className="rounded-md border px-4 py-2 text-sm"
@@ -194,8 +310,9 @@ function DraftEditorPage() {
 						Submit for review
 					</button>
 				) : null}
-				{!isNew &&
-				(draft?.status === "draft" || draft?.status === "rejected") ? (
+				{bundle &&
+				(bundle.context.status === "draft" ||
+					bundle.context.status === "rejected") ? (
 					<button
 						type="button"
 						className="rounded-md border border-destructive px-4 py-2 text-sm text-destructive"

@@ -2,7 +2,7 @@
   "projectName": "platform-spec",
   "mode": "file-router",
   "typescript": true,
-  "packageManager": "bun",
+  "packageManager": "pnpm",
   "includeExamples": false,
   "tailwind": true,
   "addOnOptions": {},

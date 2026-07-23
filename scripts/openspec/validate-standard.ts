@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
+import { resolveDocumentIdentityFromPath } from "../../site/platform-spec/src/lib/spec/document-identity.ts";
 import { deriveBookLinks } from "./validate-book-traceability.ts";
 
 const repoRoot = path.resolve(import.meta.dirname, "../..");
@@ -29,6 +30,7 @@ const documents = (catalog.documents as UnknownRecord[]) ?? [];
 const artifacts = (catalog.legacyArtifacts as UnknownRecord[]) ?? [];
 const requirements = entries.flatMap((entry) => entry.requirements as UnknownRecord[]);
 const records = entries.flatMap((entry) => entry.records as UnknownRecord[]);
+const specDocuments = (catalog.specDocuments as UnknownRecord[]) ?? [];
 
 assert(catalog.authority === "openspec/specs", "OpenSpec is not declared as the sole authority");
 assert(catalog.migrationFinalized === true, "Migration is not finalized");
@@ -39,6 +41,74 @@ assert(new Set(requirements.map((item) => item.id)).size === requirements.length
 assert(new Set(records.map((item) => item.id)).size === records.length, "Duplicate source record IDs");
 assert(new Set(artifacts.map((item) => item.path)).size === artifacts.length, "Duplicate archived artifact paths");
 assert(!requirements.some((item) => item.migrationStatus === "needs-semantic-review"), "Unreviewed migration requirements remain");
+assert(specDocuments.length > 0, "Canonical Platform Spec document catalog is empty");
+
+const documentKinds = new Set([
+	"taxonomy-domain",
+	"taxonomy-area",
+	"feature",
+	"article",
+	"decision",
+]);
+const documentsByKey = new Map(
+	specDocuments.map((document) => [String(document.key), document]),
+);
+assert(
+	documentsByKey.size === specDocuments.length,
+	"Duplicate canonical Platform Spec document keys",
+);
+for (const document of specDocuments) {
+	const kind = String(document.kind ?? "");
+	assert(
+		documentKinds.has(kind),
+		`Unknown Platform Spec document kind: ${kind || "(missing)"}`,
+	);
+	const canonicalPath = String(document.canonicalPath ?? "");
+	const identity = resolveDocumentIdentityFromPath(canonicalPath);
+	for (const field of [
+		"kind",
+		"key",
+		"capability",
+		"parentCapability",
+		"authority",
+		"disposition",
+		"layout",
+	] as const) {
+		assert(
+			document[field] === identity[field],
+			`Platform Spec document ${field} mismatch: ${canonicalPath}`,
+		);
+	}
+	const parentCapability = String(document.parentCapability ?? "");
+	if (kind === "taxonomy-domain") {
+		assert(
+			parentCapability === "platform-spec",
+			`Platform Spec taxonomy-domain parent mismatch: ${canonicalPath}`,
+		);
+	} else {
+		const parent = documentsByKey.get(parentCapability);
+		assert(
+			parent != null,
+			`Platform Spec document has no canonical parent capability: ${canonicalPath}`,
+		);
+		if (kind === "article" || kind === "decision") {
+			assert(
+				parent.kind === "feature",
+				`Platform Spec informative document parent is not a feature: ${canonicalPath}`,
+			);
+			assert(
+				document.authority === "informative",
+				`Platform Spec document is not informative: ${canonicalPath}`,
+			);
+		}
+	}
+	const absolutePath = path.join(repoRoot, canonicalPath);
+	assert(existsSync(absolutePath), `Missing canonical document ${canonicalPath}`);
+	assert(
+		document.sourceHash === sha256(readFileSync(absolutePath, "utf8")),
+		`Platform Spec document catalog drift: ${canonicalPath}`,
+	);
+}
 
 for (const entry of entries) {
 	const specPath = path.join(repoRoot, String(entry.specPath));

@@ -86,8 +86,8 @@ function PlatformSpecDocument() {
 		layoutValidation,
 	} = Route.useLoaderData();
 
-	const adrs = catalog.entries
-		.filter((entry) => entry.specLevel === "adr" && entry.parentSlug === slug)
+	const adrs = catalog.documents
+		.filter((entry) => entry.kind === "decision" && entry.parentSlug === slug)
 		.map((entry) => ({ href: entry.href, title: entry.title }));
 
 	return (
@@ -104,6 +104,24 @@ function PlatformSpecDocument() {
 					adrs={adrs}
 					layout={layout}
 					layoutValidation={layoutValidation}
+					catalogRevision={catalog.revision}
+					standardId={
+						catalog.documents.find((entry) => entry.slug === slug)?.key ??
+						slug.replace(/^platform-spec\/capabilities\//, "")
+					}
+					proposeSearch={{
+						capability: catalog.documents
+							.find((entry) => entry.slug === slug)
+							?.capability,
+						domain: catalog.documents.find((entry) => entry.slug === slug)
+							?.domain,
+						area:
+							catalog.documents.find((entry) => entry.slug === slug)?.area ??
+							undefined,
+						feature:
+							catalog.documents.find((entry) => entry.slug === slug)
+								?.feature ?? undefined,
+					}}
 				/>
 			</SpecShell>
 		</ReaderChrome>

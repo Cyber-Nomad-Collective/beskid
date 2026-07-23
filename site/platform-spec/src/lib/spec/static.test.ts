@@ -16,49 +16,76 @@ afterEach(() => {
 function fixture(): string {
 	const root = fs.mkdtempSync(path.join(os.tmpdir(), "beskid-seed-"));
 	roots.push(root);
-	fs.mkdirSync(path.join(root, "specs", "language--syntax--blocks"), {
-		recursive: true,
-	});
+	for (const [capability, title] of [
+		["standard-content-authority", "Standard content authority"],
+		["taxonomy--language", "Language"],
+		["taxonomy--language--syntax", "Syntax"],
+		["language--syntax--blocks", "Blocks"],
+	]) {
+		fs.mkdirSync(path.join(root, "specs", capability), { recursive: true });
+		fs.writeFileSync(
+			path.join(root, "specs", capability, "spec.md"),
+			`# ${title}\n\n## Purpose\n\nDefines ${title.toLowerCase()}.\n\n## Requirements\n\n### Requirement: ${title} status\nStatus.\n`,
+		);
+	}
+	fs.mkdirSync(
+		path.join(
+			root,
+			"documents",
+			"platform-spec",
+			"language--syntax--blocks",
+			"articles",
+		),
+		{ recursive: true },
+	);
 	fs.writeFileSync(
-		path.join(root, "specs", "language--syntax--blocks", "spec.md"),
-		"# Blocks\n\n## Purpose\n\nDefines blocks.\n\n## Requirements\n\n### Requirement: Block delimiter\nBlocks use braces.\n",
+		path.join(
+			root,
+			"documents/platform-spec/language--syntax--blocks/articles/examples.md",
+		),
+		"# Block examples\n\n## Purpose\n\nShow block examples.\n",
 	);
 	fs.mkdirSync(path.join(root, "layouts"), { recursive: true });
 	fs.writeFileSync(
 		path.join(root, "layouts", "index.json"),
-		JSON.stringify({ version: 1, default: "feature", bySpecLevel: { feature: "feature" } }),
-	);
-	fs.writeFileSync(
-		path.join(root, "layouts", "feature.json"),
 		JSON.stringify({
-			id: "feature",
-			specLevel: "feature",
-			title: "Feature layout",
-			requireTitle: true,
-			sections: [
-				{ heading: "Purpose", level: 2, required: true },
-				{
-					heading: "Requirements",
-					level: 2,
-					required: true,
-					mustContainPattern: "^### Requirement:\\s+\\S",
-				},
-			],
+			version: 1,
+			default: "_default",
+			bySpecLevel: {
+				domain: "_default",
+				area: "_default",
+				feature: "feature",
+				article: "article",
+			},
 		}),
 	);
+	for (const id of ["_default", "feature", "article"]) {
+		fs.writeFileSync(
+			path.join(root, "layouts", `${id}.json`),
+			JSON.stringify({
+				id,
+				specLevel: id,
+				title: `${id} layout`,
+				requireTitle: true,
+				sections: [{ heading: "Purpose", level: 2, required: true }],
+			}),
+		);
+	}
 	fs.writeFileSync(
 		path.join(root, "catalog.json"),
 		JSON.stringify({
 			version: 1,
 			revision: "seed-rev",
 			entries: [
-				{
-					id: "language--syntax--blocks",
-					capability: "language--syntax--blocks",
-					specPath: "specs/language--syntax--blocks/spec.md",
-					path: "/platform-spec/capabilities/language--syntax--blocks/",
-				},
-			],
+				"standard-content-authority",
+				"taxonomy--language",
+				"taxonomy--language--syntax",
+				"language--syntax--blocks",
+			].map((capability) => ({
+				id: capability,
+				capability,
+				specPath: `specs/${capability}/spec.md`,
+			})),
 		}),
 	);
 	return root;
@@ -72,13 +99,26 @@ describe("static seed workspace", () => {
 
 		const { workspace, findings } = generateSeed({ openSpecRoot, outDir });
 		expect(findings).toEqual([]);
+		expect(workspace.meta.version).toBe(2);
 		expect(workspace.meta.counts.capabilities).toBe(1);
+		expect(workspace.meta.counts.documents).toBe(4);
 		expect(workspace.meta.layout.violations).toBe(0);
 		expect(workspace.domainModel.domainCount).toBe(1);
 
 		const slug = "platform-spec/capabilities/language--syntax--blocks";
 		expect(workspace.documents[slug]?.layout?.id).toBe("feature");
 		expect(workspace.documents[slug]?.layoutValidation.ok).toBe(true);
+		expect(
+			workspace.documents[
+				"platform-spec/capabilities/language--syntax--blocks/articles/examples"
+			]?.kind,
+		).toBe("article");
+		expect(
+			workspace.documents[
+				"platform-spec/capabilities/standard-content-authority"
+			]?.kind,
+		).toBe("legacy-capability");
+		expect(Object.keys(workspace.layouts.assignments)).toHaveLength(4);
 
 		for (const file of [
 			"meta.json",
@@ -94,7 +134,7 @@ describe("static seed workspace", () => {
 		const reloaded = loadSeed(outDir);
 		expect(reloaded?.meta.revision).toBe("seed-rev");
 		expect(reloaded?.documents[slug]?.body).toContain(
-			"### Requirement: Block delimiter",
+			"### Requirement: Blocks status",
 		);
 	});
 

@@ -1,54 +1,35 @@
 // Enforceable layout descriptors, read from the native OpenSpec shape
 // (openspec/layouts). Kept in lockstep with scripts/openspec/validate-layouts.ts
-// which is the authority-level gate. This module is pure (no server-only /
-// database imports) so it runs inside the server bundle and the seed scripts.
+// which is the authority-level gate. Loader helpers use fs; pure validation lives
+// in layouts-pure.ts for browser-safe imports.
 
 import fs from "node:fs";
 import path from "node:path";
 
 import type { OpenSpecCatalogEntry } from "#/lib/spec/catalog";
+import {
+	type LayoutIndex,
+	type LayoutRegistry,
+	type LayoutValidation,
+	type SpecLayout,
+	resolveLayoutForEntry,
+	validateLayout,
+} from "#/lib/spec/layouts-pure";
 
-export interface LayoutSection {
-	heading: string;
-	level: number;
-	required?: boolean;
-	order?: number;
-	mustContainPattern?: string;
-	description?: string;
-}
-
-export interface SpecLayout {
-	id: string;
-	specLevel: string;
-	title: string;
-	description?: string;
-	requireTitle?: boolean;
-	sections: LayoutSection[];
-	optionalSections?: LayoutSection[];
-}
-
-export interface LayoutIndex {
-	version: number;
-	default: string;
-	bySpecLevel: Record<string, string>;
-}
-
-export interface LayoutViolation {
-	code: string;
-	message: string;
-	heading?: string;
-}
-
-export interface LayoutValidation {
-	layoutId: string | null;
-	ok: boolean;
-	violations: LayoutViolation[];
-}
-
-export interface LayoutRegistry {
-	index: LayoutIndex;
-	layouts: Map<string, SpecLayout>;
-}
+export type {
+	LayoutIndex,
+	LayoutRegistry,
+	LayoutSection,
+	LayoutValidation,
+	LayoutViolation,
+	SpecLayout,
+} from "#/lib/spec/layouts-pure";
+export {
+	resolveLayout,
+	resolveLayoutForEntry,
+	validateEntryLayout,
+	validateLayout,
+} from "#/lib/spec/layouts-pure";
 
 const FALLBACK_INDEX: LayoutIndex = {
 	version: 1,
@@ -80,72 +61,7 @@ export function loadLayoutRegistry(openSpecRoot: string): LayoutRegistry | null 
 	return { index, layouts };
 }
 
-export function resolveLayout(
-	specLevel: string | null | undefined,
-	registry: LayoutRegistry,
-): SpecLayout | null {
-	const id =
-		(specLevel && registry.index.bySpecLevel[specLevel]) ||
-		registry.index.default;
-	return (
-		registry.layouts.get(id) ??
-		registry.layouts.get(registry.index.default) ??
-		null
-	);
-}
-
-export function resolveLayoutForEntry(
-	entry: OpenSpecCatalogEntry,
-	registry: LayoutRegistry,
-): SpecLayout | null {
-	return resolveLayout(entry.specLevel, registry);
-}
-
-function headingPattern(heading: string, level: number): RegExp {
-	const hashes = "#".repeat(level);
-	const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-	return new RegExp(`^${hashes}\\s+${escaped}\\s*$`, "m");
-}
-
-export function validateLayout(
-	body: string,
-	layout: SpecLayout,
-): LayoutViolation[] {
-	const violations: LayoutViolation[] = [];
-
-	if (layout.requireTitle && !/^#\s+\S/m.test(body)) {
-		violations.push({
-			code: "missing-title",
-			message: "spec must begin with a single `# Title` heading",
-		});
-	}
-
-	for (const section of layout.sections) {
-		if (section.required === false) continue;
-		if (!headingPattern(section.heading, section.level).test(body)) {
-			violations.push({
-				code: "missing-section",
-				heading: section.heading,
-				message: `required ${"#".repeat(section.level)} ${section.heading} section is missing`,
-			});
-			continue;
-		}
-		if (section.mustContainPattern) {
-			const pattern = new RegExp(section.mustContainPattern, "m");
-			if (!pattern.test(body)) {
-				violations.push({
-					code: "section-content",
-					heading: section.heading,
-					message: `${section.heading} section must contain content matching /${section.mustContainPattern}/`,
-				});
-			}
-		}
-	}
-
-	return violations;
-}
-
-export function validateEntryLayout(
+export function validateEntryLayoutWithRegistry(
 	body: string,
 	entry: OpenSpecCatalogEntry,
 	registry: LayoutRegistry | null,

@@ -1,19 +1,18 @@
 import "@tanstack/react-start/server-only";
 
-import { Database } from "bun:sqlite";
-
 import {
 	ensurePlatformSpecDataDir,
 	settingsDbPath,
 } from "#/lib/storage/paths";
 import { migrateSchema } from "#/lib/storage/schema";
+import { openSqlite, type SqliteDatabase } from "#/lib/storage/sqlite";
 
-let dbInstance: Database | null = null;
+let dbInstance: SqliteDatabase | null = null;
 
-export function getSettingsDatabase(): Database {
+export function getSettingsDatabase(): SqliteDatabase {
 	if (!dbInstance) {
 		ensurePlatformSpecDataDir();
-		dbInstance = new Database(settingsDbPath(), { create: true });
+		dbInstance = openSqlite(settingsDbPath());
 		migrateSchema(dbInstance);
 	}
 	return dbInstance;

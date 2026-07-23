@@ -4,16 +4,21 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 import { env } from "#/env.server";
 import {
-	findDraftByHeadBranch,
-	findDraftByPrNumber,
-	markDraftMerged,
-} from "#/server/memgraph/drafts";
+	findDraftContextByHeadBranch,
+	findDraftContextByPrNumber,
+	markDraftContextAbandoned,
+	markDraftContextMerged,
+} from "#/server/memgraph/draft-contexts";
+
+function webhookSecret(): string | undefined {
+	return (process.env.GITHUB_WEBHOOK_SECRET ?? env.GITHUB_WEBHOOK_SECRET)?.trim();
+}
 
 function verifyGithubSignature(
 	payload: string,
 	signature: string | null,
 ): boolean {
-	const secret = env.GITHUB_WEBHOOK_SECRET?.trim();
+	const secret = webhookSecret();
 	if (!secret) return false;
 	if (!signature?.startsWith("sha256=")) return false;
 
@@ -44,7 +49,7 @@ interface PullRequestPayload {
 export async function handleGithubWebhook(
 	request: Request,
 ): Promise<Response> {
-	const secret = env.GITHUB_WEBHOOK_SECRET?.trim();
+	const secret = webhookSecret();
 	if (!secret) {
 		return Response.json({ error: "Webhook secret not configured" }, { status: 503 });
 	}
@@ -67,35 +72,57 @@ export async function handleGithubWebhook(
 		return Response.json({ error: "Invalid JSON" }, { status: 400 });
 	}
 
-	if (body.action !== "closed" || !body.pull_request?.merged) {
+	if (body.action !== "closed") {
 		return Response.json({ ok: true, ignored: true });
 	}
 
-	const prNumber = body.pull_request.number;
-	const headRef = body.pull_request.head?.ref;
+	const prNumber = body.pull_request?.number;
+	const headRef = body.pull_request?.head?.ref;
+	const merged = Boolean(body.pull_request?.merged);
 
 	let draft =
 		typeof prNumber === "number"
-			? await findDraftByPrNumber(prNumber)
+			? await findDraftContextByPrNumber(prNumber)
 			: null;
 
 	if (!draft && headRef) {
-		draft = await findDraftByHeadBranch(headRef);
+		draft = await findDraftContextByHeadBranch(headRef);
 	}
 
 	if (!draft) {
 		return Response.json({ ok: true, matched: false });
 	}
 
-	if (draft.status === "merged") {
-		return Response.json({ ok: true, draftId: draft.id, alreadyMerged: true });
+	if (merged) {
+		if (draft.context.status === "merged") {
+			return Response.json({
+				ok: true,
+				draftId: draft.context.id,
+				alreadyMerged: true,
+			});
+		}
+		await markDraftContextMerged(draft.context.id);
+		return Response.json({
+			ok: true,
+			draftId: draft.context.id,
+			status: "merged",
+			catalogRefresh: "filesystem-on-request",
+		});
 	}
 
-	await markDraftMerged(draft.id);
+	if (draft.context.status === "merged") {
+		return Response.json({
+			ok: true,
+			draftId: draft.context.id,
+			ignored: true,
+			reason: "already-merged",
+		});
+	}
+
+	await markDraftContextAbandoned(draft.context.id);
 	return Response.json({
 		ok: true,
-		draftId: draft.id,
-		status: "merged",
-		catalogRefresh: "filesystem-on-request",
+		draftId: draft.context.id,
+		status: "abandoned",
 	});
 }

@@ -6,7 +6,7 @@ normative store.
 
 ## Canonical source
 
-`openspec/specs/*/spec.md` is the build-time authority. `bun run seed:static`
+`openspec/specs/*/spec.md` is the build-time authority. `pnpm run seed:static`
 projects it into a deterministic `seed/` workspace that the image bakes and the
 runtime serves by default, rather than rescanning the repository-root files on
 every request. `openspec/catalog.json` supplies stable capability IDs, revision
@@ -20,12 +20,12 @@ approach's three affordances:
 
 - **Enforceable layouts.** `openspec/layouts/*.json` declares the required,
   ordered sections each capability must carry for its spec level. The authority
-  gate `bun run openspec:layouts` and the platform-spec gate (`layouts:check`,
+  gate `pnpm run openspec:layouts` and the platform-spec gate (`layouts:check`,
   `verify:seed`) enforce conformance; the reader surfaces the resolved layout and
   its validation result on every document.
 - **Domain -> area -> feature model.** Derived natively from the capability id
   (`domain--area--feature`) into the nav rail, the static seed, and the graph.
-- **Static generation.** `bun run seed:static` projects OpenSpec into a
+- **Static generation.** `pnpm run seed:static` projects OpenSpec into a
   deterministic JSON workspace under `seed/` (catalog, nav tree, domain model,
   layouts, document bundles). The runtime serves those artifacts without
   rescanning the filesystem; the image bakes them at build time.
@@ -34,12 +34,12 @@ approach's three affordances:
 
 Seeding is idempotent upsert, safe to run on every container start:
 
-- `bun run seed:static` — regenerate the `seed/` JSON workspace from OpenSpec.
-- `bun run seed:stores` — upsert the workspace into the SQLite settings DB
+- `pnpm run seed:static` — regenerate the `seed/` JSON workspace from OpenSpec.
+- `pnpm run seed:stores` — upsert the workspace into the SQLite settings DB
   (`spec_capability`, `spec_layout`, `spec_seed_meta`; schema migrations in
   `src/lib/storage/schema.ts`).
-- `bun run seed:graph` — MERGE the domain/area/feature graph into Memgraph.
-- `bun run seed` — all of the above (graph only when `MEMGRAPH_URI` is set).
+- `pnpm run seed:graph` — MERGE the domain/area/feature graph into Memgraph.
+- `pnpm run seed` — all of the above (graph only when `MEMGRAPH_URI` is set).
 
 The container entrypoint runs `seed:stores` (plus `--graph` when Memgraph is
 configured) before starting the server, converging the stores to the image's
@@ -62,8 +62,8 @@ docker compose up memgraph
 
 # Terminal 2 — OpenSpec reader app
 cp .env.example .env   # set MEMGRAPH_URI, SESSION_SECRET, AUTH_HUB_PUBLIC_URL
-bun install            # requires NODE_AUTH_TOKEN for @beskid/* packages
-bun run dev            # http://localhost:8460
+pnpm install            # requires NODE_AUTH_TOKEN for @beskid/* packages
+pnpm run dev            # http://localhost:8460
 ```
 
 Author changes through OpenSpec from the superrepo root:
@@ -76,7 +76,7 @@ openspec new change <change-name>
 For a non-default checkout, point the reader at its OpenSpec directory:
 
 ```bash
-OPENSPEC_ROOT=/path/to/repo/openspec bun run dev
+OPENSPEC_ROOT=/path/to/repo/openspec pnpm run dev
 ```
 
 ## Auth hub pairing

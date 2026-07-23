@@ -6,17 +6,19 @@ ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 
 platform_dockerfile="${ROOT}/site/platform-spec/Dockerfile"
 
-# The superrepo owns the only Bun lockfile for the platform-spec workspace.
-[[ -f "${ROOT}/bun.lock" ]]
-[[ ! -e "${ROOT}/site/platform-spec/bun.lock" ]]
-rg -Fq 'COPY package.json bun.lock .npmrc ./' "${platform_dockerfile}"
-if rg -Fq 'site/platform-spec/bun.lock' "${platform_dockerfile}"; then
-	echo "platform-spec Dockerfile must use the root Bun lockfile" >&2
+# Platform-spec installs with Corepack pnpm from its own package lock.
+[[ -f "${ROOT}/site/platform-spec/package.json" ]]
+rg -Fq 'packageManager": "pnpm@10.17.1"' "${ROOT}/site/platform-spec/package.json"
+rg -Fq 'FROM node:22.12' "${platform_dockerfile}"
+rg -Fq 'corepack prepare pnpm@10.17.1' "${platform_dockerfile}"
+rg -Fq 'pnpm install --frozen-lockfile' "${platform_dockerfile}"
+rg -Fq 'COPY --from=build /app/site/platform-spec/node_modules ./node_modules' "${platform_dockerfile}"
+if rg -Fq 'oven/bun' "${platform_dockerfile}"; then
+	echo "platform-spec Dockerfile must not use oven/bun after Node cutover" >&2
 	exit 1
 fi
-rg -Fq 'COPY --from=build /app/node_modules /app/node_modules' "${platform_dockerfile}"
-if rg -Fq 'COPY --from=build /app/site/platform-spec/node_modules' "${platform_dockerfile}"; then
-	echo "platform-spec runtime must copy the root workspace node_modules" >&2
+if rg -Fq 'bun.lock' "${platform_dockerfile}"; then
+	echo "platform-spec Dockerfile must not require root bun.lock" >&2
 	exit 1
 fi
 
