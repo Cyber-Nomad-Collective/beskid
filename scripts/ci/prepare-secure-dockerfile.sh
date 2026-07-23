@@ -10,7 +10,7 @@ output_file="$2"
 awk '
   /^[[:space:]]*ARG[[:space:]]+NODE_AUTH_TOKEN([=[:space:]]|$)/ { removed_arg++; next }
   /^[[:space:]]*ENV[[:space:]]+NODE_AUTH_TOKEN=\$\{NODE_AUTH_TOKEN\}[[:space:]]*$/ { removed_env++; next }
-  /^[[:space:]]*RUN[[:space:]].*bun install/ {
+  /^[[:space:]]*RUN[[:space:]].*(bun install|pnpm .*install)/ {
     # Preserve any existing RUN flags (e.g. --mount=type=cache for the Bun
     # install cache) by inserting the ephemeral secret mount + token export
     # after the flag block but before the shell command.
@@ -28,8 +28,8 @@ awk '
   }
   { print }
   END {
-    if (removed_arg != 1 || removed_env != 1 || mounted < 1) {
-      print "unsafe Dockerfile token pattern: expected one ARG, one ENV, and at least one bun install RUN" > "/dev/stderr"
+    if (!((removed_arg == 0 && removed_env == 0) || (removed_arg == 1 && removed_env == 1)) || mounted < 1) {
+      print "unsafe Dockerfile token pattern: expected zero or matching ARG/ENV token declarations and at least one install RUN" > "/dev/stderr"
       exit 1
     }
   }
@@ -41,4 +41,3 @@ if rg -n 'ARG[[:space:]]+NODE_AUTH_TOKEN|ENV[[:space:]]+NODE_AUTH_TOKEN' "${outp
 fi
 
 echo "secure Dockerfile: ${output_file}"
-

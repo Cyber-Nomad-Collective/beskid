@@ -152,7 +152,7 @@ jobs:
       repository: ghcr.io/cyber-nomad-collective/beskid-learn
       context: .
       dockerfile: site/learn/Dockerfile
-      node-auth: true
+      node-auth: false
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
