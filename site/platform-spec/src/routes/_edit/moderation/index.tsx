@@ -4,13 +4,10 @@ import { useState } from "react";
 import { DraftChangeSet } from "#/components/editor/draft-change-set";
 import { approveDraftFn, rejectDraftFn } from "#/server/drafts";
 import { loadModerationPageFn } from "#/server/moderation";
-import { loadOpenSpecCatalog } from "#/server/openspec/reader";
 
 export const Route = createFileRoute("/_edit/moderation/")({
 	loader: async () => {
-		const page = await loadModerationPageFn();
-		const catalog = loadOpenSpecCatalog();
-		return { ...page, currentCatalogRevision: catalog.revision };
+		return loadModerationPageFn();
 	},
 	component: ModerationPage,
 });

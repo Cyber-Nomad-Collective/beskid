@@ -1,10 +1,10 @@
 # syntax=docker/dockerfile:1.7
-FROM node:22.12-bookworm AS build
+FROM node:24-bookworm AS build
 
 WORKDIR /app
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
-RUN corepack enable && corepack prepare pnpm@10.17.1 --activate
+RUN npm install -g corepack@latest && corepack enable && corepack prepare pnpm@10.17.1 --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY beskid_web_common ./beskid_web_common
@@ -21,7 +21,7 @@ ENV OPENSPEC_ROOT=/app/openspec
 RUN pnpm --dir site/platform-spec run build
 RUN pnpm --dir site/platform-spec run verify:client-bundle
 
-FROM node:22.12-bookworm-slim AS runtime
+FROM node:24-bookworm-slim AS runtime
 
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends wget ca-certificates \

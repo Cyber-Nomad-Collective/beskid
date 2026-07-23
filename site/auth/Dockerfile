@@ -1,9 +1,9 @@
 # syntax=docker/dockerfile:1.7
-FROM node:22.12.0-alpine AS build
+FROM node:24-alpine AS build
 
 # git for pnpm git deps; python3/make/g++ for better-sqlite3 native build on alpine
-RUN apk add --no-cache git python3 make g++
-RUN corepack enable && corepack prepare pnpm@10.17.1 --activate
+RUN apk add --no-cache git python3 make g++ bash
+RUN npm install -g corepack@latest && corepack enable && corepack prepare pnpm@10.17.1 --activate
 
 WORKDIR /app
 
@@ -17,10 +17,10 @@ COPY site/auth/ ./site/auth/
 WORKDIR /app/site/auth
 
 ENV SKIP_ENV_VALIDATION=1
-RUN pnpm --filter beskid-auth build
+RUN pnpm exec vite build && bash scripts/sync-root-stylesheet.sh
 RUN pnpm --filter beskid-auth verify:client-bundle
 
-FROM node:22.12.0-alpine AS runtime
+FROM node:24-alpine AS runtime
 
 RUN apk add --no-cache wget
 

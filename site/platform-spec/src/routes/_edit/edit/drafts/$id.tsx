@@ -25,17 +25,19 @@ export const Route = createFileRoute("/_edit/edit/drafts/$id")({
 		feature: typeof search.feature === "string" ? search.feature : undefined,
 	}),
 	loader: async ({ params }) => {
-		const { loadOpenSpecCatalog } = await import("#/server/openspec/reader");
-		const catalog = loadOpenSpecCatalog();
+		const { loadDraftEditorCatalogFn } = await import(
+			"#/server/draft-editor"
+		);
+		const catalog = await loadDraftEditorCatalogFn();
 		if (params.id === "new") {
 			return {
 				draft: null,
-				currentCatalogRevision: catalog.revision,
+				currentCatalogRevision: catalog.currentCatalogRevision,
 			};
 		}
 		return {
 			draft: await getDraftFn({ data: { id: params.id } }),
-			currentCatalogRevision: catalog.revision,
+			currentCatalogRevision: catalog.currentCatalogRevision,
 		};
 	},
 	component: DraftContextEditorPage,

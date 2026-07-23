@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.7
-FROM node:22.12.0-alpine AS web
+FROM node:24-alpine AS web
 
 WORKDIR /app
 
@@ -8,8 +8,9 @@ RUN apk add --no-cache git
 COPY site/learn/package.json site/learn/pnpm-lock.yaml site/learn/.npmrc ./site/learn/
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
-RUN corepack enable \
-  && corepack prepare pnpm@10.14.0 --activate \
+RUN npm install -g corepack@latest \
+  && corepack enable \
+  && corepack prepare pnpm@10.17.1 --activate \
   && mkdir -p /pnpm/store
 RUN --mount=type=cache,target=/pnpm/store pnpm --dir site/learn install --frozen-lockfile
 
@@ -33,8 +34,9 @@ RUN cd compiler \
   BESKID_CLI_BIN=/workspace/compiler/target/release/beskid \
   ./scripts/stage-native-runtime-kit.sh
 
-FROM node:22.12.0-alpine
-RUN corepack enable && corepack prepare pnpm@10.17.1 --activate \
+FROM node:24-alpine
+RUN npm install -g corepack@latest \
+  && corepack enable && corepack prepare pnpm@10.17.1 --activate \
   && apk add --no-cache wget \
   && npm install -g tsx
 WORKDIR /app/site/learn
