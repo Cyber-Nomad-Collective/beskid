@@ -17,7 +17,8 @@ RUN --mount=type=cache,target=/pnpm/store pnpm --dir site/learn install --frozen
 COPY site/learn/ ./site/learn/
 RUN pnpm --dir site/learn run build
 
-FROM rust:1.88 AS rust
+# wasmtime 41.x in the compiler lockfile requires rustc >= 1.90.
+FROM rust:1.90 AS rust
 WORKDIR /workspace
 
 COPY compiler/Cargo.toml compiler/Cargo.lock ./compiler/
