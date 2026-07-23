@@ -63,6 +63,7 @@ for dockerfile in \
   site/website/Dockerfile \
   site/auth/Dockerfile \
   site/platform-spec/Dockerfile \
+  site/learn/Dockerfile \
   beskid_tracker/Dockerfile \
   beskid_nexus/Dockerfile; do
   secure="${tmp}/$(echo "${dockerfile}" | tr / -)"
