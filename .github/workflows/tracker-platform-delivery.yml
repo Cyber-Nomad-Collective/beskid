@@ -31,9 +31,10 @@ jobs:
           beskid_tracker
           beskid_web_common
           compiler
-      - uses: pnpm/action-setup@008330803749db0355799c700092d9a85fd074e9 # v6.0.9
-        with:
-          version: "10.17.1"
+      # No `version:` input: pnpm/action-setup reads the pinned pnpm version from
+      # the root package.json `packageManager` field. Passing both errors with
+      # "Multiple versions of pnpm specified".
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: pnpm install --frozen-lockfile
       - name: Validate OpenSpec strictly
@@ -61,9 +62,10 @@ jobs:
       # tracker install needs the shared web packages submodule checked out too.
       - name: Initialize tracker and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_tracker beskid_web_common
-      - uses: pnpm/action-setup@008330803749db0355799c700092d9a85fd074e9 # v6.0.9
-        with:
-          version: "10.17.1"
+      # No `version:` input: pnpm/action-setup reads the pinned pnpm version from
+      # the root package.json `packageManager` field. Passing both errors with
+      # "Multiple versions of pnpm specified".
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: bun install --cwd beskid_tracker --frozen-lockfile
       - run: bun run --cwd beskid_tracker test | tee tracker-tests.txt
@@ -83,9 +85,10 @@ jobs:
           persist-credentials: false
       - name: Initialize shared web packages submodule
         run: ./scripts/ci/init-submodules.sh beskid_web_common
-      - uses: pnpm/action-setup@008330803749db0355799c700092d9a85fd074e9 # v6.0.9
-        with:
-          version: "10.17.1"
+      # No `version:` input: pnpm/action-setup reads the pinned pnpm version from
+      # the root package.json `packageManager` field. Passing both errors with
+      # "Multiple versions of pnpm specified".
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - run: pnpm install --frozen-lockfile
       - run: pnpm --dir site/platform-spec test | tee platform-spec-tests.txt
       - run: pnpm --dir site/platform-spec typecheck | tee platform-spec-typecheck.txt
@@ -106,9 +109,10 @@ jobs:
       # into beskid_web_common, so its install needs that submodule checked out.
       - name: Initialize nexus and shared web packages submodules
         run: ./scripts/ci/init-submodules.sh beskid_nexus beskid_web_common
-      - uses: pnpm/action-setup@008330803749db0355799c700092d9a85fd074e9 # v6.0.9
-        with:
-          version: "10.17.1"
+      # No `version:` input: pnpm/action-setup reads the pinned pnpm version from
+      # the root package.json `packageManager` field. Passing both errors with
+      # "Multiple versions of pnpm specified".
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
       - run: pnpm install --frozen-lockfile
       - run: pnpm --dir site/website exec vitest run src/lib/tracker-delivery.test.ts | tee latest-delivery.txt
