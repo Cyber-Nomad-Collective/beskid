@@ -1,6 +1,20 @@
 /**
  * Bun-compatible SQLite facade over Node's built-in `node:sqlite`.
- * Call sites keep `.run` / `.query().get|all` / `.prepare().run` / `.transaction`.
+ *
+ * Call sites keep `.exec` / `.run` / `.query().get|all` / `.prepare().run` /
+ * `.transaction`. The API contract is intentionally the same shape as the
+ * `better-sqlite3`-based facade used by `site/auth` so that sqlite tests
+ * stay portable between the two sites. The two implementations use different
+ * underlying libraries because:
+ *
+ * - `site/auth` depends on `better-sqlite3` as a direct dependency and
+ *   benefits from its mature C++ implementation.
+ * - `site/platform-spec` uses the Node.js built-in `node:sqlite` (DatabaseSync)
+ *   to keep the dependency tree light and stay Bun-compatible (Bun polyfills
+ *   `node:sqlite` natively, while `better-sqlite3` is a native addon).
+ *
+ * Both facades enforce `PRAGMA foreign_keys = OFF` so callers manage
+ * referential integrity explicitly in application code.
  */
 import { DatabaseSync } from "node:sqlite";
 
@@ -13,6 +27,7 @@ export interface SqliteStatement {
 }
 
 export interface SqliteDatabase {
+	exec(sql: string): void;
 	run(sql: string, ...params: SqlValue[]): void;
 	query<TRow = Record<string, unknown>, TParams extends SqlValue[] = SqlValue[]>(
 		sql: string,
@@ -63,7 +78,11 @@ function wrapStatement(statement: ReturnType<DatabaseSync["prepare"]>): SqliteSt
 
 export function openSqlite(path: string): SqliteDatabase {
 	const db = new DatabaseSync(path);
+	db.exec("PRAGMA foreign_keys = OFF");
 	return {
+		exec(sql) {
+			db.exec(sql);
+		},
 		run(sql, ...params) {
 			if (params.length === 0) {
 				db.exec(sql);
