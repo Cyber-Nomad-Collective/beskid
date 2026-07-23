@@ -4,6 +4,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { canModerateSpec } from "#/lib/github/permissions";
 import { requireSession, withOctokit } from "#/server/auth-guard.server";
 import { listPendingReviewFn } from "#/server/drafts";
+import { loadOpenSpecCatalog } from "#/server/openspec/reader";
 
 export const loadModerationPageFn = createServerFn({ method: "GET" }).handler(
 	async () => {
@@ -16,6 +17,11 @@ export const loadModerationPageFn = createServerFn({ method: "GET" }).handler(
 			throw redirect({ to: "/edit" });
 		}
 
-		return { queue: await listPendingReviewFn(), canModerate };
+		const catalog = loadOpenSpecCatalog();
+		return {
+			queue: await listPendingReviewFn(),
+			canModerate,
+			currentCatalogRevision: catalog.revision,
+		};
 	},
 );
