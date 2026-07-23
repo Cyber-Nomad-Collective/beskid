@@ -25,7 +25,6 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - pnpm workspace contract covers Auth/Website/Platform Spec/Learn packageManager
   pins; pckg remains a .NET submodule with its own `web/` package (still Bun until
   a follow-up pckg cutover).
-
 - Production promotion source validation now accepts the in-progress same-run
   `platform-delivery` workflow (conclusion still null) so automatic staging→production
   promote is not blocked by requiring a completed successful run conclusion.
@@ -45,6 +44,12 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Platform-spec route errors now use a Tracker-style error panel (friendly message,
   try-again / home actions, hide/show technical details) instead of TanStack's bare
   "Something went wrong! Hide Error" CatchBoundary.
+- Parser output now supports heuristic recovery for small syntax gaps so AST
+  construction can proceed with `parse.recovery` BSOL warnings.
+- All parser/project diagnostics in the parse service now emit BSOL-formatted
+  messages in the canonical schema `Error <code> { Message = \"...\"; }`.
+- ISLE binary/unary lowering now emits float `fadd`/`fsub`/`fmul`/`fdiv`/`fcmp`/`fneg`
+  and unsigned `i8` compares/`udiv`/`urem` for Beskid `u8` (signed remains for wider ints).
 
 ### Changed
 
@@ -53,12 +58,21 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   VS Code tests on Node-native runners.
 - Package workspaces now use pinned pnpm 10.17.1 lockfiles; setup, package
   authentication, and Beskid package refresh commands invoke pnpm instead of Bun.
+- Parse recovery now uses shared repair primitives (`Insert` / `Delete`) with
+  domain generators covering delimiters, separators, item stubs, and
+  expressions/patterns (`services/parse_recovery/`), not semicolon-only heuristics.
+- Trusted CLIF primitives move from a broken `isle_generated` bridge to
+  `ClifPrimitives` (extending loads, `ult`, f64/`fcvt`, stack scratch); coverage
+  docs list SIMD/bitwise/`vmctx`/`br_table` as intentionally out of ISLE rules.
 - Compiler CI now runs the native Windows ABI-v5 runtime-kit debug/release matrix, including
   COFF import-library checks and exact installed-prefix JIT/AOT smoke tests (CYB-112, CYB-116).
 - Successful staging deployment now automatically promotes the exact release manifest to production; production retains environment-scoped secrets, smoke checks, and rollback behavior.
 - OpenSpec task 2.1 closed: generation-bound indexed semantic facts cover resolution,
   typing, calls, casts, control flow, captures, legality, spans, bodies, and
   reachability; stale/foreign keys return explicit unavailable (CYB-64).
+- Enum formatter output now treats nullary enum constructors as optional syntax and
+  emits them without redundant `()` (for example, `Option::None` instead of
+  `Option::None()`).
 
 ### Removed
 

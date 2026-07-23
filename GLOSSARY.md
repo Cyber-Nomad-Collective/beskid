@@ -47,6 +47,10 @@ moderator rejection of a submitted context.
 
 The compiler invariant that no high-level intermediate representation type, lowering pass, cache, adapter, serialization, or compatibility path exists between expanded AST/Salsa facts and ISLE/CLIF code generation.
 
+## parse recovery diagnostics
+
+Heuristic parse fallback diagnostics emitted when AST construction can still succeed after a syntax error. Shared repair primitives in `services/parse_recovery/` emit single-edit candidates (delimiters, separators, item stubs, expressions/patterns), retry parse, and emit a `parse.recovery` BSOL warning on success.
+
 ## Immutable graph
 
 A graph whose data and structure cannot be changed through its reader interface: users may inspect, select, pan, zoom, fit, and follow links, but cannot move, connect, delete, or edit nodes or edges.
