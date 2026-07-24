@@ -57,7 +57,7 @@ jobs:
     steps:
       # NOTE: the first step MUST be a real actions/checkout — a local composite
       # action cannot be loaded before the repository is checked out.
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           # beskid_distrib holds the platform recipes + scripts.
@@ -161,7 +161,7 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Init beskid_distrib submodule
@@ -216,7 +216,7 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Init beskid_distrib submodule
@@ -262,7 +262,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Init beskid_distrib submodule
@@ -301,7 +301,7 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Init beskid_distrib submodule
@@ -342,7 +342,7 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Init beskid_distrib submodule
@@ -398,7 +398,7 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@v7
       - name: Upload distrib-version.txt to cli-latest + cli-v<ver>
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}

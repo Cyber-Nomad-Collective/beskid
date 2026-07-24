@@ -25,7 +25,7 @@ jobs:
     outputs:
       manifest-sha256: ${{ steps.manifest.outputs.sha256 }}
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@v7
 
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:

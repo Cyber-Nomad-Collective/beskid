@@ -16,7 +16,7 @@ jobs:
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       # Catalog revision hashes informative docs under these submodules; without
@@ -62,7 +62,7 @@ jobs:
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       # beskid_tracker pins @beskid/ui-react to file:../beskid_web_common, so the
@@ -86,7 +86,7 @@ jobs:
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Initialize shared web packages submodule
@@ -116,7 +116,7 @@ jobs:
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       # site/website resolves @beskid/beskid-ui and @beskid/ui-react via file: links
@@ -149,7 +149,7 @@ jobs:
   workflow-contract:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - run: bash scripts/ci/test/run-tracker-platform-delivery-tests.sh
