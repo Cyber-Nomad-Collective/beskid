@@ -11,7 +11,7 @@ import {
 } from "#/lib/architecture/architecture-model";
 
 const manifest: ArchitectureManifest = {
-	groups: [{ id: "compiler", label: "Compiler", description: "Compiler graph" }],
+	groups: [{ id: "compiler", label: "Compiler", description: "Compiler graph", order: 0 }],
 	nodes: [
 		{ id: "source", label: "Source", description: "Input", group: "compiler", kind: "source", state: "current", specKeys: [], sourcePaths: ["compiler"] },
 		{ id: "typed", label: "Typed program", description: "Typed IR", group: "compiler", kind: "representation", state: "current", specKeys: [], sourcePaths: ["compiler"] },
@@ -32,12 +32,13 @@ describe("architecture map layout", () => {
 		const second = layoutArchitectureMap(model);
 
 		expect(first.nodes).toEqual(second.nodes);
-		expect(first.nodes.every((node) => node.width === 232 && node.height === 104)).toBe(true);
-		expect(first.nodes.find((node) => node.id === "source")!.position.x).toBeLessThan(
-			first.nodes.find((node) => node.id === "typed")!.position.x,
+		const memberNodes = first.nodes.filter((n) => n.type === "architecture");
+		expect(memberNodes.every((node) => node.width === 232 && node.height === 104)).toBe(true);
+		expect(first.nodes.find((node) => node.id === "source")!.position.y).toBeLessThan(
+			first.nodes.find((node) => node.id === "typed")!.position.y,
 		);
-		expect(first.nodes.find((node) => node.id === "typed")!.position.x).toBeLessThan(
-			first.nodes.find((node) => node.id === "artifact")!.position.x,
+		expect(first.nodes.find((node) => node.id === "typed")!.position.y).toBeLessThan(
+			first.nodes.find((node) => node.id === "artifact")!.position.y,
 		);
 	});
 
@@ -54,9 +55,9 @@ describe("architecture map layout", () => {
 	it("provides static left and right edge anchors for every architecture card", () => {
 		const layout = layoutArchitectureMap(model);
 
-		for (const node of layout.nodes) {
-			expect(node.targetPosition).toBe(Position.Left);
-			expect(node.sourcePosition).toBe(Position.Right);
+		for (const node of layout.nodes.filter((n) => n.type === "architecture")) {
+			expect(node.targetPosition).toBe(Position.Top);
+			expect(node.sourcePosition).toBe(Position.Bottom);
 		}
 	});
 
@@ -70,7 +71,7 @@ describe("architecture map layout", () => {
 		for (const edge of inactive.edges) {
 			expect(edge.selected).toBe(false);
 			expect(edge.animated).toBe(false);
-			expect(edge.style).toMatchObject({ opacity: 0.45 });
+			expect(edge.style).toMatchObject({ opacity: 0.35 });
 		}
 		for (const edge of selected.edges) {
 			expect(edge.selected).toBe(true);
@@ -85,7 +86,7 @@ describe("architecture map layout", () => {
 		expect(traversal.edges.find((edge) => edge.id === "typed-to-artifact")).toMatchObject({
 			selected: false,
 			animated: false,
-			style: { opacity: 0.45 },
+			style: { opacity: 0.35 },
 		});
 	});
 

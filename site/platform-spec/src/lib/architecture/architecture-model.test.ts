@@ -29,7 +29,7 @@ function catalogForManifest() {
 
 function manifest(overrides: Partial<ArchitectureManifest> = {}): ArchitectureManifest {
 	return {
-		groups: [{ id: "test", label: "Test", description: "Test group" }],
+		groups: [{ id: "test", label: "Test", description: "Test group", order: 0 }],
 		nodes: [
 			{
 				id: "source",

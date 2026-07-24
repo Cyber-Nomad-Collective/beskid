@@ -34,6 +34,7 @@ export interface ArchitectureGroup {
 	id: string;
 	label: string;
 	description: string;
+	order: number;
 }
 
 export interface ArchitectureNode {

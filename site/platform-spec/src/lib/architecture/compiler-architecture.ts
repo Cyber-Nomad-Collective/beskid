@@ -52,11 +52,11 @@ function edge(
 
 export const CompilerArchitectureManifest: ArchitectureManifest = {
 	groups: [
-		{ id: "authority", label: "Authority and evidence", description: "Normative specification and conformance evidence." },
-		{ id: "projects", label: "Projects and packages", description: "Workspace, package, and core library boundaries." },
-		{ id: "frontend", label: "Frontend and semantics", description: "Syntax, semantic facts, and diagnostics." },
-		{ id: "codegen", label: "Codegen and execution", description: "AOT lowering, verification, ABI, and runtime kits." },
-		{ id: "tooling", label: "Developer tooling", description: "Editing and command-line integration boundaries." },
+		{ id: "authority", label: "Authority and evidence", description: "Normative specification and conformance evidence.", order: 0 },
+		{ id: "projects", label: "Projects and packages", description: "Workspace, package, and core library boundaries.", order: 1 },
+		{ id: "frontend", label: "Frontend and semantics", description: "Syntax, semantic facts, and diagnostics.", order: 2 },
+		{ id: "codegen", label: "Codegen and execution", description: "AOT lowering, verification, ABI, and runtime kits.", order: 3 },
+		{ id: "tooling", label: "Developer tooling", description: "Editing and command-line integration boundaries.", order: 4 },
 	],
 	nodes: [
 		{ id: "openspec", label: "OpenSpec", description: "Normative authority for public compiler requirements.", group: "authority", kind: "authority", state: "current", specKeys: ["standard-content-authority"], sourcePaths: ["openspec/specs"] },

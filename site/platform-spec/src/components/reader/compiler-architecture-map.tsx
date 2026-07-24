@@ -13,7 +13,9 @@ import "@xyflow/react/dist/style.css";
 import { useCallback, useMemo, useState } from "react";
 
 import {
+	EdgeKindColors,
 	layoutArchitectureMap,
+	type ArchitectureMapGroupData,
 	type ArchitectureMapNodeData,
 } from "#/components/reader/architecture-map-layout";
 import type {
@@ -40,14 +42,14 @@ function ArchitectureNodeCard({ data }: NodeProps<Node<ArchitectureMapNodeData>>
 		>
 			<Handle
 				type="target"
-				position={Position.Left}
+				position={Position.Top}
 				isConnectable={false}
 				aria-hidden="true"
 				className="!h-1 !w-1 !border-0 !bg-transparent !opacity-0"
 			/>
 			<div className="flex items-start justify-between gap-2">
 				<span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-					{data.node.group} · {data.node.kind}
+					{data.node.kind}
 				</span>
 				<span className="rounded border border-border px-1.5 py-0.5 text-[10px] font-medium capitalize text-muted-foreground">
 					{data.node.state}
@@ -67,7 +69,7 @@ function ArchitectureNodeCard({ data }: NodeProps<Node<ArchitectureMapNodeData>>
 			)}
 			<Handle
 				type="source"
-				position={Position.Right}
+				position={Position.Bottom}
 				isConnectable={false}
 				aria-hidden="true"
 				className="!h-1 !w-1 !border-0 !bg-transparent !opacity-0"
@@ -76,7 +78,17 @@ function ArchitectureNodeCard({ data }: NodeProps<Node<ArchitectureMapNodeData>>
 	);
 }
 
-const nodeTypes = { architecture: ArchitectureNodeCard };
+function ArchitectureGroupContainer({ data }: NodeProps<Node<ArchitectureMapGroupData>>) {
+	return (
+		<div className="relative h-full w-full rounded-xl border-2 border-border/60 bg-muted/30">
+			<div className="absolute left-3 top-2 rounded-md bg-muted px-3 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+				{data.group.label}
+			</div>
+		</div>
+	);
+}
+
+const nodeTypes = { architecture: ArchitectureNodeCard, architectureGroup: ArchitectureGroupContainer };
 
 function ArchitectureDetail({ node }: { node: ResolvedArchitectureNode | null }) {
 	if (!node) {
@@ -136,21 +148,58 @@ export function CompilerArchitectureMap({ model }: { model: ResolvedArchitecture
 	);
 	const selectNode = useCallback((_: React.MouseEvent, node: Node) => setSelectedNodeId(node.id), []);
 
+	const edgeKinds = useMemo(() => {
+		const kinds = new Set(model.edges.map((e) => e.kind));
+		return [...kinds].sort();
+	}, [model.edges]);
+
 	return (
 		<section className="space-y-3" aria-label="Compiler architecture map">
 			<div className="flex flex-wrap items-center justify-between gap-3">
 				<div>
 					<h2 className="text-lg font-semibold">Compiler architecture map</h2>
-					<p className="text-sm text-muted-foreground">Read-only compiler relationships from the canonical architecture manifest.</p>
+					<p className="text-sm text-muted-foreground">
+						Read-only compiler relationships from the canonical architecture manifest.
+					</p>
 				</div>
-				<div className="flex flex-wrap gap-2" aria-label="Architecture traversals">
-					{(Object.keys(TraversalLabels) as Array<keyof typeof TraversalLabels>).map((id) => (
-						<button type="button" key={id} onClick={() => setTraversalId((current) => current === id ? null : id)} aria-pressed={traversalId === id} className="rounded-md border border-border px-3 py-1.5 text-sm hover:bg-muted">
-							{TraversalLabels[id]}
-						</button>
-					))}
+				<div className="flex items-center gap-2">
+					<label className="text-sm text-muted-foreground" htmlFor="traversal-select">
+						Traversal:
+					</label>
+					<select
+						id="traversal-select"
+						className="rounded-md border border-border bg-card px-3 py-1.5 text-sm"
+						value={traversalId ?? ""}
+						onChange={(e) => {
+							const val = e.target.value;
+							setTraversalId(val ? (val as keyof typeof TraversalLabels) : null);
+						}}
+					>
+						<option value="">None</option>
+						{(Object.keys(TraversalLabels) as Array<keyof typeof TraversalLabels>).map((id) => (
+							<option key={id} value={id}>
+								{TraversalLabels[id]}
+							</option>
+						))}
+					</select>
 				</div>
 			</div>
+			{edgeKinds.length > 0 ? (
+				<div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+					<span className="font-semibold">Edge kinds:</span>
+					{edgeKinds.map((kind) => (
+						<span key={kind} className="inline-flex items-center gap-1.5">
+							<span
+								className="inline-block h-0.5 w-5 rounded"
+								style={{
+									backgroundColor: EdgeKindColors[kind] ?? "#94a3b8",
+								}}
+							/>
+							{kind}
+						</span>
+					))}
+				</div>
+			) : null}
 			<div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_19rem]">
 				<div className="h-[600px] rounded-lg border border-border">
 					<ReactFlow

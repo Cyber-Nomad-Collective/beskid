@@ -10,5 +10,5 @@ export function getAuthHubPairingStatus() {
 }
 
 export function getAuthHubLoginHref() {
-	return { signInHref: authHubLoginUrl() ?? "/api/auth/github" };
+	return { signInHref: "/api/auth/github" };
 }
