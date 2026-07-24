@@ -16,7 +16,7 @@ test('orders newest posts first and labels publication state', () => {
 		sortBlogEntries(posts).map((post) => post.data.blogStatus),
 		['in-progress', 'truncated', 'released'],
 	);
-	assert.equal(blogStatusLabel('truncated'), 'Truncated delivery band');
+	assert.equal(blogStatusLabel('truncated'), 'Truncated');
 });
 
 test('provides a reduced-motion-safe blog index that uses the shared blog helpers', async () => {
@@ -47,6 +47,6 @@ test('surfaces the release blog from the landing page', async () => {
 	const landingPath = new URL('../content/docs/index.mdx', here);
 	const landing = await readFile(landingPath, 'utf8');
 
-	assert.match(landing, /text: "Release blog"/);
+	assert.match(landing, /text: "Blog"/);
 	assert.match(landing, /href: "\/blog\/"/);
 });

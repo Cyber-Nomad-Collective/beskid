@@ -16,29 +16,29 @@ const dateFormatter = new Intl.DateTimeFormat('en', {
 });
 ---
 
-<section class="release-blog" aria-label="Release blog">
-	<header class="release-blog__intro">
-		<p class="release-blog__eyebrow">Release record</p>
+<section class="blog" aria-label="Blog">
+	<header class="blog__intro">
+		<p class="blog__eyebrow">Blog</p>
 		<p>
-			A chronological account of Beskid delivery bands. Each entry records its publication state so historical milestones and current work remain distinct.
+			Half release notes, half rants. The Beskid story told one honest post at a time -- no roadmap theatre, no marketing copy. Just what shipped, what broke, what we learned, and which Book chapter explains the scars.
 		</p>
 	</header>
 
-	<ol class="release-blog__timeline">
+	<ol class="blog__timeline">
 		{entries.map((entry) => (
-			<li class="release-blog__item">
-				<article class="release-blog__card">
-					<div class="release-blog__meta">
+			<li class="blog__item">
+				<article class="blog__card">
+					<div class="blog__meta">
 						<time datetime={entry.data.date.toISOString()}>{dateFormatter.format(entry.data.date)}</time>
-						<span class:list={['release-blog__status', `release-blog__status--${entry.data.blogStatus}`]}>
+						<span class:list={['blog__status', `blog__status--${entry.data.blogStatus}`]}>
 							{blogStatusLabel(entry.data.blogStatus)}
 						</span>
 					</div>
 					<h2><a href={`/${entry.id}/`}>{entry.data.title}</a></h2>
 					<p>{entry.data.description}</p>
-					<div class="release-blog__footer">
+					<div class="blog__footer">
 						<span>{entry.data.release}</span>
-						<a href={`/${entry.id}/`} aria-label={`Read ${entry.data.title}`}>Read entry <span aria-hidden="true">→</span></a>
+						<a href={`/${entry.id}/`} aria-label={`Read ${entry.data.title}`}>Read post <span aria-hidden="true">→</span></a>
 					</div>
 				</article>
 			</li>
@@ -47,25 +47,25 @@ const dateFormatter = new Intl.DateTimeFormat('en', {
 </section>
 
 <style>
-	.release-blog { margin: 2rem 0 1rem; }
-	.release-blog__intro { max-width: 48rem; margin-bottom: 2.5rem; color: var(--sl-color-gray-3); font-size: var(--sl-text-lg); }
-	.release-blog__eyebrow { margin-bottom: .5rem; color: var(--sl-color-text-accent); font-size: var(--sl-text-sm); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-	.release-blog__timeline { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; border-inline-start: 2px solid var(--sl-color-gray-5); }
-	.release-blog__item { position: relative; padding-inline-start: 1.5rem; }
-	.release-blog__item::before { position: absolute; inset-inline-start: -.43rem; inset-block-start: 1.35rem; width: .75rem; height: .75rem; border: 2px solid var(--sl-color-bg); border-radius: 50%; background: var(--sl-color-text-accent); content: ''; }
-	.release-blog__card { padding: 1.25rem; border: 1px solid var(--sl-color-gray-5); border-radius: .75rem; background: var(--sl-color-bg-nav); box-shadow: 0 1px 2px rgb(0 0 0 / .08); transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
-	.release-blog__card:hover, .release-blog__card:focus-within { border-color: var(--sl-color-text-accent); box-shadow: 0 8px 24px rgb(0 0 0 / .14); transform: translateY(-2px); }
-	.release-blog__meta, .release-blog__footer { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between; color: var(--sl-color-gray-3); font-size: var(--sl-text-sm); }
-	.release-blog__status { padding: .2rem .55rem; border-radius: 999px; background: var(--sl-color-gray-5); color: var(--sl-color-white); font-weight: 600; }
-	.release-blog__status--released { background: var(--sl-color-green); }
-	.release-blog__status--truncated { background: var(--sl-color-orange); }
-	.release-blog__status--in-progress { background: var(--sl-color-purple); }
-	.release-blog__card h2 { margin: .75rem 0 .5rem; font-size: var(--sl-text-2xl); }
-	.release-blog__card h2 a { color: var(--sl-color-white); text-decoration: none; }
-	.release-blog__card h2 a:hover, .release-blog__card h2 a:focus-visible, .release-blog__footer a:hover, .release-blog__footer a:focus-visible { color: var(--sl-color-text-accent); text-decoration: underline; text-underline-offset: .18em; }
-	.release-blog__card > p { margin: 0 0 1rem; color: var(--sl-color-gray-3); }
-	.release-blog__footer { padding-top: 1rem; border-top: 1px solid var(--sl-color-gray-5); }
-	.release-blog__footer a { color: var(--sl-color-text-accent); font-weight: 700; text-decoration: none; transition: color 160ms ease; }
-	@media (max-width: 32rem) { .release-blog__card { padding: 1rem; } .release-blog__meta, .release-blog__footer { align-items: flex-start; flex-direction: column; gap: .45rem; } }
-	@media (prefers-reduced-motion: reduce) { .release-blog__card, .release-blog__footer a { transition: none; } .release-blog__card:hover, .release-blog__card:focus-within { transform: none; } }
+	.blog { margin: 2rem 0 1rem; }
+	.blog__intro { max-width: 48rem; margin-bottom: 2.5rem; color: var(--sl-color-gray-3); font-size: var(--sl-text-lg); }
+	.blog__eyebrow { margin-bottom: .5rem; color: var(--sl-color-text-accent); font-size: var(--sl-text-sm); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+	.blog__timeline { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; border-inline-start: 2px solid var(--sl-color-gray-5); }
+	.blog__item { position: relative; padding-inline-start: 1.5rem; }
+	.blog__item::before { position: absolute; inset-inline-start: -.43rem; inset-block-start: 1.35rem; width: .75rem; height: .75rem; border: 2px solid var(--sl-color-bg); border-radius: 50%; background: var(--sl-color-text-accent); content: ''; }
+	.blog__card { padding: 1.25rem; border: 1px solid var(--sl-color-gray-5); border-radius: .75rem; background: var(--sl-color-bg-nav); box-shadow: 0 1px 2px rgb(0 0 0 / .08); transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
+	.blog__card:hover, .blog__card:focus-within { border-color: var(--sl-color-text-accent); box-shadow: 0 8px 24px rgb(0 0 0 / .14); transform: translateY(-2px); }
+	.blog__meta, .blog__footer { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between; color: var(--sl-color-gray-3); font-size: var(--sl-text-sm); }
+	.blog__status { padding: .2rem .55rem; border-radius: 999px; background: var(--sl-color-gray-5); color: var(--sl-color-white); font-weight: 600; }
+	.blog__status--released { background: var(--sl-color-green); }
+	.blog__status--truncated { background: var(--sl-color-orange); }
+	.blog__status--in-progress { background: var(--sl-color-purple); }
+	.blog__card h2 { margin: .75rem 0 .5rem; font-size: var(--sl-text-2xl); }
+	.blog__card h2 a { color: var(--sl-color-white); text-decoration: none; }
+	.blog__card h2 a:hover, .blog__card h2 a:focus-visible, .blog__footer a:hover, .blog__footer a:focus-visible { color: var(--sl-color-text-accent); text-decoration: underline; text-underline-offset: .18em; }
+	.blog__card > p { margin: 0 0 1rem; color: var(--sl-color-gray-3); }
+	.blog__footer { padding-top: 1rem; border-top: 1px solid var(--sl-color-gray-5); }
+	.blog__footer a { color: var(--sl-color-text-accent); font-weight: 700; text-decoration: none; transition: color 160ms ease; }
+	@media (max-width: 32rem) { .blog__card { padding: 1rem; } .blog__meta, .blog__footer { align-items: flex-start; flex-direction: column; gap: .45rem; } }
+	@media (prefers-reduced-motion: reduce) { .blog__card, .blog__footer a { transition: none; } .blog__card:hover, .blog__card:focus-within { transform: none; } }
 </style>

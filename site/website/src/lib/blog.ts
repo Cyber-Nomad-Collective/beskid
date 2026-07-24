@@ -8,7 +8,7 @@ export const sortBlogEntries = <T extends BlogEntry>(entries: T[]) =>
 
 export const blogStatusLabel = (status: BlogStatus) =>
 	({
-		released: 'Released historical band',
-		truncated: 'Truncated delivery band',
+		released: 'Published',
+		truncated: 'Truncated',
 		'in-progress': 'In progress',
 	})[status];
