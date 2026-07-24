@@ -5,13 +5,11 @@ WORKDIR /app
 
 RUN apk add --no-cache git
 
+COPY .npmrc ./
 COPY site/learn/package.json site/learn/pnpm-lock.yaml ./site/learn/
-RUN printf '@beskid:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}\n' > site/learn/.npmrc
 ARG NODE_AUTH_TOKEN
 ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
-ENV PNPM_HOME=/pnpm
-ENV PATH=$PNPM_HOME:$PATH
-RUN npm install -g pnpm@10.17.1 && mkdir -p /pnpm/store
+RUN npm install -g pnpm@10.17.1
 RUN pnpm --dir site/learn install --frozen-lockfile
 
 COPY site/learn/ ./site/learn/
@@ -47,10 +45,10 @@ RUN npm install -g pnpm@10.17.1 \
   && npm install -g tsx
 WORKDIR /app/site/learn
 
+COPY --from=web /app/.npmrc /app/.npmrc
 COPY --from=web /app/site/learn/dist /app/site/learn/dist
 COPY --from=web /app/site/learn/server.ts /app/site/learn/server.ts
 COPY --from=web /app/site/learn/package.json /app/site/learn/package.json
-COPY --from=web /app/site/learn/.npmrc /app/site/learn/.npmrc
 COPY --from=rust /workspace/compiler/target/release/beskid /app/site/learn/beskid
 COPY --from=rust /workspace/compiler/target/native-runtime-kit /app/site/learn/native-runtime-kit
 
