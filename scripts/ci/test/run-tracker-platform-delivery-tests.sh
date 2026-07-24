@@ -12,8 +12,9 @@ for required in \
 	'projection/reconciliation' \
 	'./scripts/ci/init-submodules.sh' \
 	'pnpm install --frozen-lockfile' \
-	'bun run --cwd beskid_tracker test' \
-	'bun run --cwd beskid_tracker check' \
+	'pnpm install --dir beskid_tracker --frozen-lockfile' \
+	'pnpm --dir beskid_tracker test' \
+	'pnpm --dir beskid_tracker check' \
 	'pnpm --dir site/platform-spec test' \
 	'pnpm --dir site/platform-spec typecheck' \
 	'pnpm --dir site/website exec vitest run src/lib/tracker-delivery.test.ts' \

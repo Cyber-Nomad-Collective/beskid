@@ -22,6 +22,7 @@ const repoRoot = path.resolve(__dirname, '../..');
 const docsRoot = path.resolve(__dirname, 'src/content/docs');
 
 /** One redirect key per route (trailingSlash: 'always' — no `/path` and `/path/` pairs). */
+/** @param {string} routePrefix */
 function redirectKey(routePrefix) {
 	return routePrefix.endsWith('/') ? routePrefix : `${routePrefix}/`;
 }
@@ -34,11 +35,12 @@ const PLATFORM_SPEC_ORIGIN = 'https://spec.beskid-lang.org';
  * spec.beskid-lang.org. The Astro site no longer hosts platform-spec content.
  * Previously this walked the MDX tree; now it's a single wildcard.
  */
-const platformSpecRedirects = {
-	[redirectKey('/platform-spec')]: {
-		status: 301,
-		destination: `${PLATFORM_SPEC_ORIGIN}/platform-spec/`,
-	},
+/** @type {import('astro').AstroUserConfig['redirects']} */
+  const platformSpecRedirects = {
+  	[redirectKey('/platform-spec')]: {
+		status: /** @type {const} */ (301),
+  		destination: `${PLATFORM_SPEC_ORIGIN}/platform-spec/`,
+  	},
 };
 
 /** @param {string} dir @param {string} fromPrefix @param {string} toPrefix */
@@ -126,7 +128,7 @@ export default defineConfig({
 			remarkInlineRepoPaths({ repo: 'Cyber-Nomad-Collective/beskid' }),
 		],
 		shikiConfig: {
-			langs: [beskidGrammar],
+			langs: /** @type {any} */ ([beskidGrammar]),
 			langAlias: {
 				beskid: 'beskid',
 				Beskid: 'beskid',
@@ -154,7 +156,7 @@ export default defineConfig({
 		starlight({
 			expressiveCode: {
 				shiki: {
-					langs: [beskidGrammar],
+					langs: /** @type {any} */ (beskidGrammar),
 					langAlias: {
 						bd: 'beskid',
 					},
@@ -172,8 +174,7 @@ export default defineConfig({
 				ThemeSelect: '@beskid/beskid-ui/starlight/ThemeSelect.astro',
 				Sidebar: '@beskid/beskid-ui/starlight/Sidebar.astro',
 				Banner: '@beskid/beskid-ui/starlight/Banner.astro',
-				Page: '@beskid/beskid-ui/starlight/Page.astro',
-			},
+  			},
 			customCss: docsShellCustomCss,
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/Cyber-Nomad-Collective/beskid' }],
 			sidebar: [],
