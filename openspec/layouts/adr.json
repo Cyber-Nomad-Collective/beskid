@@ -1,15 +1,13 @@
 {
-  "id": "adr",
-  "specLevel": "adr",
-  "title": "Architecture decision record layout",
-  "description": "Layout for architecture decision records: a titled decision with context, decision, and consequences.",
-  "requireTitle": true,
-  "sections": [
-    { "heading": "Context", "level": 2, "required": true, "order": 1 },
-    { "heading": "Decision", "level": 2, "required": true, "order": 2 },
-    { "heading": "Consequences", "level": 2, "required": true, "order": 3 }
-  ],
-  "optionalSections": [
-    { "heading": "Verification anchors", "level": 2 }
-  ]
+	"id": "adr",
+	"specLevel": "adr",
+	"title": "Architecture decision record layout",
+	"description": "Layout for architecture decision records: a titled decision with context, decision, and consequences.",
+	"requireTitle": true,
+	"sections": [
+		{ "heading": "Context", "level": 2, "required": true, "order": 1 },
+		{ "heading": "Decision", "level": 2, "required": true, "order": 2 },
+		{ "heading": "Consequences", "level": 2, "required": true, "order": 3 }
+	],
+	"optionalSections": [{ "heading": "Verification anchors", "level": 2 }]
 }

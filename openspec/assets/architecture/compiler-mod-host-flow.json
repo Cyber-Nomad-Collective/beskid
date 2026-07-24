@@ -1,94 +1,139 @@
 {
-  "title": "Compile-time mod execution flow",
-  "description": "Reference ordering from parse through mod collection, generation, semantic analysis, rewrite, and lowering.",
-  "groups": [
-    { "id": "parse", "label": "Parse", "color": "#60a5fa" },
-    { "id": "mod", "label": "Mod", "color": "#fbbf24" },
-    { "id": "merge", "label": "Merge", "color": "#34d399" }
-  ],
-  "nodes": [
-    {
-      "id": "source",
-      "label": "Host compilation",
-      "group": "parse",
-      "description": "App/Lib/Test project under compilation.",
-      "href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
-      "tags": ["compilation"]
-    },
-    {
-      "id": "parse_validate",
-      "label": "Parse",
-      "group": "parse",
-      "description": "Initial syntax snapshot for host sources.",
-      "href": "/platform-spec/compiler/front-end/grammar-and-parser-contract/",
-      "tags": ["parse"]
-    },
-    {
-      "id": "mod_load",
-      "label": "Mod load (AOT)",
-      "group": "mod",
-      "description": "Load AOT artifacts for transitive Mod dependencies.",
-      "href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
-      "tags": ["Mod", "aot"]
-    },
-    {
-      "id": "collect",
-      "label": "Collector",
-      "group": "mod",
-      "description": "Collector contracts declare target sets per mod.",
-      "href": "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
-      "tags": ["Collector"]
-    },
-    {
-      "id": "generate",
-      "label": "Generator",
-      "group": "mod",
-      "description": "Incremental generators emit typed AST; host merges and re-parses.",
-      "href": "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/",
-      "tags": ["Generator"]
-    },
-    {
-      "id": "semantic",
-      "label": "Semantic + snapshot",
-      "group": "merge",
-      "description": "Semantic rules on merged host + generated program.",
-      "href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/",
-      "tags": ["semantic"]
-    },
-    {
-      "id": "analyze",
-      "label": "Analyzer",
-      "group": "mod",
-      "description": "Analyzers run on full program; declare rewrites as fixes.",
-      "href": "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/",
-      "tags": ["Analyzer"]
-    },
-    {
-      "id": "rewrite",
-      "label": "Rewriter",
-      "group": "mod",
-      "description": "Typed node replacement when fix is applied.",
-      "href": "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/",
-      "tags": ["Rewriter"]
-    },
-    {
-      "id": "lower",
-      "label": "Lowering",
-      "group": "merge",
-      "description": "HIR lowering and codegen on consistent program.",
-      "href": "/platform-spec/compiler/build-pipeline/",
-      "tags": ["lower"]
-    }
-  ],
-  "edges": [
-    { "from": "source", "to": "parse_validate", "label": "feeds", "description": "Host sources parse first." },
-    { "from": "source", "to": "mod_load", "label": "depends", "description": "Dependency graph resolves Mod packages." },
-    { "from": "mod_load", "to": "collect", "label": "enables", "description": "Loaded mod contracts register collectors." },
-    { "from": "parse_validate", "to": "collect", "label": "inputs", "description": "Syntax snapshot inputs collection predicates." },
-    { "from": "collect", "to": "generate", "label": "schedules", "description": "Collected targets drive incremental generators." },
-    { "from": "generate", "to": "semantic", "label": "merge", "description": "Typed AST merged before semantic gate." },
-    { "from": "semantic", "to": "analyze", "label": "snapshot", "description": "Analyzers read post-semantic snapshot." },
-    { "from": "analyze", "to": "rewrite", "label": "fixes", "description": "Analyzers attach Rewriter fixes to diagnostics." },
-    { "from": "rewrite", "to": "lower", "label": "continues", "description": "Consistent program lowers to HIR/codegen." }
-  ]
+	"title": "Compile-time mod execution flow",
+	"description": "Reference ordering from parse through mod collection, generation, semantic analysis, rewrite, and lowering.",
+	"groups": [
+		{ "id": "parse", "label": "Parse", "color": "#60a5fa" },
+		{ "id": "mod", "label": "Mod", "color": "#fbbf24" },
+		{ "id": "merge", "label": "Merge", "color": "#34d399" }
+	],
+	"nodes": [
+		{
+			"id": "source",
+			"label": "Host compilation",
+			"group": "parse",
+			"description": "App/Lib/Test project under compilation.",
+			"href": "/platform-spec/compiler/build-pipeline/stage-ordering/",
+			"tags": ["compilation"]
+		},
+		{
+			"id": "parse_validate",
+			"label": "Parse",
+			"group": "parse",
+			"description": "Initial syntax snapshot for host sources.",
+			"href": "/platform-spec/compiler/front-end/grammar-and-parser-contract/",
+			"tags": ["parse"]
+		},
+		{
+			"id": "mod_load",
+			"label": "Mod load (AOT)",
+			"group": "mod",
+			"description": "Load AOT artifacts for transitive Mod dependencies.",
+			"href": "/platform-spec/compiler/compiler-mods/mod-host-bridge/",
+			"tags": ["Mod", "aot"]
+		},
+		{
+			"id": "collect",
+			"label": "Collector",
+			"group": "mod",
+			"description": "Collector contracts declare target sets per mod.",
+			"href": "/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/",
+			"tags": ["Collector"]
+		},
+		{
+			"id": "generate",
+			"label": "Generator",
+			"group": "mod",
+			"description": "Incremental generators emit typed AST; host merges and re-parses.",
+			"href": "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/",
+			"tags": ["Generator"]
+		},
+		{
+			"id": "semantic",
+			"label": "Semantic + snapshot",
+			"group": "merge",
+			"description": "Semantic rules on merged host + generated program.",
+			"href": "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/",
+			"tags": ["semantic"]
+		},
+		{
+			"id": "analyze",
+			"label": "Analyzer",
+			"group": "mod",
+			"description": "Analyzers run on full program; declare rewrites as fixes.",
+			"href": "/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/",
+			"tags": ["Analyzer"]
+		},
+		{
+			"id": "rewrite",
+			"label": "Rewriter",
+			"group": "mod",
+			"description": "Typed node replacement when fix is applied.",
+			"href": "/platform-spec/compiler/compiler-mods/typed-emitter-and-transforms/",
+			"tags": ["Rewriter"]
+		},
+		{
+			"id": "lower",
+			"label": "Lowering",
+			"group": "merge",
+			"description": "HIR lowering and codegen on consistent program.",
+			"href": "/platform-spec/compiler/build-pipeline/",
+			"tags": ["lower"]
+		}
+	],
+	"edges": [
+		{
+			"from": "source",
+			"to": "parse_validate",
+			"label": "feeds",
+			"description": "Host sources parse first."
+		},
+		{
+			"from": "source",
+			"to": "mod_load",
+			"label": "depends",
+			"description": "Dependency graph resolves Mod packages."
+		},
+		{
+			"from": "mod_load",
+			"to": "collect",
+			"label": "enables",
+			"description": "Loaded mod contracts register collectors."
+		},
+		{
+			"from": "parse_validate",
+			"to": "collect",
+			"label": "inputs",
+			"description": "Syntax snapshot inputs collection predicates."
+		},
+		{
+			"from": "collect",
+			"to": "generate",
+			"label": "schedules",
+			"description": "Collected targets drive incremental generators."
+		},
+		{
+			"from": "generate",
+			"to": "semantic",
+			"label": "merge",
+			"description": "Typed AST merged before semantic gate."
+		},
+		{
+			"from": "semantic",
+			"to": "analyze",
+			"label": "snapshot",
+			"description": "Analyzers read post-semantic snapshot."
+		},
+		{
+			"from": "analyze",
+			"to": "rewrite",
+			"label": "fixes",
+			"description": "Analyzers attach Rewriter fixes to diagnostics."
+		},
+		{
+			"from": "rewrite",
+			"to": "lower",
+			"label": "continues",
+			"description": "Consistent program lowers to HIR/codegen."
+		}
+	]
 }

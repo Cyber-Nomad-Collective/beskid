@@ -140,9 +140,7 @@ describe("draft-validation", () => {
 	});
 
 	it("seeds layout templates with requirement scaffolding", () => {
-		const md = layoutTemplateMarkdown(
-			layouts().layouts.get("feature")!,
-		);
+		const md = layoutTemplateMarkdown(layouts().layouts.get("feature")!);
 		expect(md).toContain("## Purpose");
 		expect(md).toContain("### Requirement:");
 		expect(md).toContain("**GIVEN**");

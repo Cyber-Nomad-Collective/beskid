@@ -1,8 +1,8 @@
 import type { SpecDocumentIdentity } from "#/lib/spec/document-identity";
 import {
 	type LayoutRegistry,
-	type SpecLayout,
 	resolveLayout,
+	type SpecLayout,
 	validateLayout,
 } from "#/lib/spec/layouts-pure";
 import type {
@@ -90,7 +90,10 @@ export function validateDraftDocument(
 	const identity = change.identity;
 	const id = change.id;
 
-	if (!identity?.canonicalPath || identity.canonicalPath !== change.canonicalPath) {
+	if (
+		!identity?.canonicalPath ||
+		identity.canonicalPath !== change.canonicalPath
+	) {
 		issues.push(
 			issue(
 				"identity-mismatch",
@@ -164,12 +167,7 @@ export function validateDraftDocument(
 			const violations = validateLayout(change.sourceMarkdown, layout);
 			for (const violation of violations) {
 				issues.push(
-					issue(
-						`layout-${violation.code}`,
-						"error",
-						violation.message,
-						id,
-					),
+					issue(`layout-${violation.code}`, "error", violation.message, id),
 				);
 			}
 		}
@@ -229,7 +227,11 @@ export function validateDraftContext(
 
 	if (!baseCatalogRevision.trim()) {
 		issues.push(
-			issue("missing-base-revision", "error", "Base catalog revision is required."),
+			issue(
+				"missing-base-revision",
+				"error",
+				"Base catalog revision is required.",
+			),
 		);
 	} else if (baseCatalogRevision !== catalog.revision) {
 		issues.push(

@@ -25,9 +25,6 @@ on:
         required: false
         default: false
         type: boolean
-    secrets:
-      NODE_AUTH_TOKEN:
-        required: false
 
 permissions:
   contents: read
@@ -55,18 +52,10 @@ jobs:
 
       - uses: ./.github/actions/setup-beskid-web
         if: inputs.setup-web
-        with:
-          node-auth-token: ${{ secrets.NODE_AUTH_TOKEN }}
-
       - name: Run blocking quality gate
         env:
           QUALITY_COMMAND: ${{ inputs.command }}
           GATE_JUNIT_DIR: ${{ runner.temp }}/gate-junit
-          # Gate scripts may run their own `bun install` for submodule sub-packages
-          # (e.g. shared-ui-nexus installs beskid_nexus/gitnexus-web), which resolve
-          # @cyber-nomad-collective/* from GitHub Packages via the root .npmrc's
-          # ${NODE_AUTH_TOKEN}. Without the token in this step, those installs 401.
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
         run: bash -euo pipefail -c "${QUALITY_COMMAND}"
 
       - name: Upload gate evidence

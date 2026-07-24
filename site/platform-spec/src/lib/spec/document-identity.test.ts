@@ -50,8 +50,7 @@ describe("resolveDocumentIdentity", () => {
 			}),
 		).toMatchObject({
 			kind: "taxonomy-area",
-			canonicalPath:
-				"openspec/specs/taxonomy--compiler--front-end/spec.md",
+			canonicalPath: "openspec/specs/taxonomy--compiler--front-end/spec.md",
 			publicSlug: "platform-spec/domains/compiler/areas/front-end",
 			parentCapability: "taxonomy--compiler",
 			layout: "_default",
@@ -139,14 +138,8 @@ describe("resolveDocumentIdentity", () => {
 
 describe("resolveDocumentIdentityFromPath", () => {
 	it.each([
-		[
-			"openspec/specs/taxonomy--compiler/spec.md",
-			"taxonomy-domain",
-		],
-		[
-			"openspec/specs/taxonomy--compiler--front-end/spec.md",
-			"taxonomy-area",
-		],
+		["openspec/specs/taxonomy--compiler/spec.md", "taxonomy-domain"],
+		["openspec/specs/taxonomy--compiler--front-end/spec.md", "taxonomy-area"],
 		["openspec/specs/compiler--front-end--parser/spec.md", "feature"],
 		[
 			"openspec/documents/platform-spec/compiler--front-end--parser/articles/grammar-notes.md",

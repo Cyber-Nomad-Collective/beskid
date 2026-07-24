@@ -153,21 +153,44 @@ describe("resolveTreeKey", () => {
 	const expanded = new Set(["compiler", "compiler/frontend"]);
 
 	it("moves through the visible items and to either boundary", () => {
-		expect(resolveTreeKey(tree, expanded, "compiler/frontend", "ArrowDown")).toEqual({ focusSlug: "parser" });
-		expect(resolveTreeKey(tree, expanded, "compiler/frontend", "ArrowUp")).toEqual({ focusSlug: "compiler" });
-		expect(resolveTreeKey(tree, expanded, "parser", "Home")).toEqual({ focusSlug: "compiler" });
-		expect(resolveTreeKey(tree, expanded, "compiler", "End")).toEqual({ focusSlug: "runtime" });
+		expect(
+			resolveTreeKey(tree, expanded, "compiler/frontend", "ArrowDown"),
+		).toEqual({ focusSlug: "parser" });
+		expect(
+			resolveTreeKey(tree, expanded, "compiler/frontend", "ArrowUp"),
+		).toEqual({ focusSlug: "compiler" });
+		expect(resolveTreeKey(tree, expanded, "parser", "Home")).toEqual({
+			focusSlug: "compiler",
+		});
+		expect(resolveTreeKey(tree, expanded, "compiler", "End")).toEqual({
+			focusSlug: "runtime",
+		});
 	});
 
 	it("expands or enters children with Right and collapses or moves to the parent with Left", () => {
-		expect(resolveTreeKey(tree, new Set(), "compiler", "ArrowRight")).toEqual({ expandSlug: "compiler" });
-		expect(resolveTreeKey(tree, expanded, "compiler", "ArrowRight")).toEqual({ focusSlug: "compiler/frontend" });
-		expect(resolveTreeKey(tree, expanded, "compiler/frontend", "ArrowLeft")).toEqual({ collapseSlug: "compiler/frontend" });
-		expect(resolveTreeKey(tree, new Set(["compiler"]), "compiler/frontend", "ArrowLeft")).toEqual({ focusSlug: "compiler" });
+		expect(resolveTreeKey(tree, new Set(), "compiler", "ArrowRight")).toEqual({
+			expandSlug: "compiler",
+		});
+		expect(resolveTreeKey(tree, expanded, "compiler", "ArrowRight")).toEqual({
+			focusSlug: "compiler/frontend",
+		});
+		expect(
+			resolveTreeKey(tree, expanded, "compiler/frontend", "ArrowLeft"),
+		).toEqual({ collapseSlug: "compiler/frontend" });
+		expect(
+			resolveTreeKey(
+				tree,
+				new Set(["compiler"]),
+				"compiler/frontend",
+				"ArrowLeft",
+			),
+		).toEqual({ focusSlug: "compiler" });
 	});
 
 	it("activates the focused item with Enter", () => {
-		expect(resolveTreeKey(tree, expanded, "parser", "Enter")).toEqual({ activate: true });
+		expect(resolveTreeKey(tree, expanded, "parser", "Enter")).toEqual({
+			activate: true,
+		});
 	});
 });
 

@@ -1,7 +1,7 @@
 " use client";
 
-import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { MessageSquare, Quote, Search } from "lucide-react";
+import { Fragment, type ReactNode, useEffect, useRef, useState } from "react";
 
 import {
 	createNavSearchResult,
@@ -72,7 +72,10 @@ export function HighlightToolbar({
 		: null;
 
 	const toolbarHeight = 36;
-	const clampedY = Math.max(8, Math.min(selection.y - toolbarHeight - 4, window.innerHeight - 120));
+	const clampedY = Math.max(
+		8,
+		Math.min(selection.y - toolbarHeight - 4, window.innerHeight - 120),
+	);
 	const clampedX = Math.max(120, Math.min(selection.x, window.innerWidth - 120));
 
 	return (
@@ -98,7 +101,10 @@ export function HighlightToolbar({
 						<button
 							type="button"
 							className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
-							onClick={() => { onQuote?.(selection.text); setSelection(null); }}
+							onClick={() => {
+								onQuote?.(selection.text);
+								setSelection(null);
+							}}
 							aria-label="Quote selection in review"
 						>
 							<Quote size={13} />
@@ -107,7 +113,10 @@ export function HighlightToolbar({
 						<button
 							type="button"
 							className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
-							onClick={() => { onComment?.(selection.text); setSelection(null); }}
+							onClick={() => {
+								onComment?.(selection.text);
+								setSelection(null);
+							}}
 							aria-label="Add comment on selection"
 						>
 							<MessageSquare size={13} />
@@ -122,12 +131,15 @@ export function HighlightToolbar({
 					{searchResult && searchResult.matchingSlugs.size > 0 ? (
 						<>
 							<p className="mb-1 text-[10px] font-medium uppercase text-muted-foreground">
-								{searchResult.matchCount} match{searchResult.matchCount !== 1 ? "es" : ""}
+								{searchResult.matchCount} match
+								{searchResult.matchCount !== 1 ? "es" : ""}
 							</p>
 							<SearchResultsList tree={searchResult.tree} query={selection.text} />
 						</>
 					) : (
-						<p className="text-xs text-muted-foreground">No matches in specification.</p>
+						<p className="text-xs text-muted-foreground">
+							No matches in specification.
+						</p>
 					)}
 				</div>
 			) : null}
@@ -138,16 +150,27 @@ export function HighlightToolbar({
 function HighlightedTitle({ title, query }: { title: string; query: string }) {
 	return highlightTitle(title, query).map((range) =>
 		range.match ? (
-			<mark key={`${range.start}-${range.end}`} className="rounded bg-primary/20 px-0.5 text-inherit">
+			<mark
+				key={`${range.start}-${range.end}`}
+				className="rounded bg-primary/20 px-0.5 text-inherit"
+			>
 				{title.slice(range.start, range.end)}
 			</mark>
 		) : (
-			<span key={`${range.start}-${range.end}`}>{title.slice(range.start, range.end)}</span>
+			<span key={`${range.start}-${range.end}`}>
+				{title.slice(range.start, range.end)}
+			</span>
 		),
 	);
 }
 
-function SearchResultsList({ tree, query }: { tree: OpenSpecNavNode | null; query: string }) {
+function SearchResultsList({
+	tree,
+	query,
+}: {
+	tree: OpenSpecNavNode | null;
+	query: string;
+}) {
 	if (!tree?.children) return null;
 
 	function render(node: OpenSpecNavNode, depth: number): ReactNode {

@@ -52,10 +52,7 @@ function layouts() {
 	return loadLayoutRegistry(resolveOpenSpecRoot());
 }
 
-function assertOwner(
-	bundle: ParsedDraftContextBundle,
-	login: string,
-): void {
+function assertOwner(bundle: ParsedDraftContextBundle, login: string): void {
 	if (bundle.context.authorLogin !== login) {
 		throw new Error("Forbidden");
 	}
@@ -119,9 +116,7 @@ export const resolveDraftIdentityFn = createServerFn({ method: "POST" })
 	.handler(async ({ data }) => {
 		const identity = resolveDocumentIdentity(data.identity);
 		const registry = layouts();
-		const layout = registry
-			? resolveLayout(identity.specLevel, registry)
-			: null;
+		const layout = registry ? resolveLayout(identity.specLevel, registry) : null;
 		return {
 			identity,
 			layoutId: layout?.id ?? identity.layout,
@@ -146,15 +141,15 @@ export const addDraftDocumentFn = createServerFn({ method: "POST" })
 
 			const identity = resolveDocumentIdentity(data.identity);
 			const registry = layouts();
-			const layout = registry
-				? resolveLayout(identity.specLevel, registry)
-				: null;
+			const layout = registry ? resolveLayout(identity.specLevel, registry) : null;
 			const layoutId = layout?.id ?? identity.layout;
 
 			let baseMarkdown: string | null = null;
 			let baseContentHash: string | null = null;
 			if (data.operation === "update" || data.operation === "delete") {
-				const doc = getOpenSpecDocument(identity.key) ?? getOpenSpecDocument(identity.publicSlug);
+				const doc =
+					getOpenSpecDocument(identity.key) ??
+					getOpenSpecDocument(identity.publicSlug);
 				if (!doc) {
 					throw new Error(`Base document not found for ${identity.key}`);
 				}
@@ -165,7 +160,7 @@ export const addDraftDocumentFn = createServerFn({ method: "POST" })
 			const sourceMarkdown =
 				data.sourceMarkdown ??
 				(data.operation === "delete"
-					? baseMarkdown ?? ""
+					? (baseMarkdown ?? "")
 					: layout
 						? layoutTemplateMarkdown(layout)
 						: "");
@@ -216,11 +211,7 @@ export const removeDraftDocumentFn = createServerFn({ method: "POST" })
 			const existing = await getDraftContext(data.contextId);
 			if (!existing) throw new Error("Draft not found");
 			assertOwner(existing, login);
-			return removeDraftDocument(
-				data.contextId,
-				data.documentChangeId,
-				login,
-			);
+			return removeDraftDocument(data.contextId, data.documentChangeId, login);
 		}),
 	);
 

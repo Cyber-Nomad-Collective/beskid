@@ -1,6 +1,3 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useState } from "react";
-
 import type { AuthAppId } from "@beskid/auth-client";
 import {
 	Button,
@@ -12,11 +9,10 @@ import {
 	Input,
 	Label,
 } from "@beskid/ui-react";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { useState } from "react";
 import { ThemeToggle } from "#/components/theme-toggle";
-import {
-	defaultPairingAppId,
-	pairingAppOptions,
-} from "#/lib/auth-app-meta";
+import { defaultPairingAppId, pairingAppOptions } from "#/lib/auth-app-meta";
 import { fetchAdminAccess } from "#/server/app-server.functions";
 
 const PAIRING_APP_OPTIONS = pairingAppOptions();
@@ -35,7 +31,9 @@ export const Route = createFileRoute("/admin/pairing/new")({
 });
 
 function NewPairingPage() {
-	const [appId, setAppId] = useState<AuthAppId>(defaultPairingAppId(PAIRING_APP_OPTIONS));
+	const [appId, setAppId] = useState<AuthAppId>(
+		defaultPairingAppId(PAIRING_APP_OPTIONS),
+	);
 	const [publicUrl, setPublicUrl] = useState("");
 	const [result, setResult] = useState<{
 		pairingCode: string;
@@ -92,8 +90,8 @@ function NewPairingPage() {
 								<Label htmlFor="appId">App</Label>
 								{PAIRING_APP_OPTIONS.length === 0 ? (
 									<p className="text-destructive text-sm">
-										No known consumer apps are configured. Update @beskid/auth-client
-										and redeploy.
+										No known consumer apps are configured. Update @beskid/auth-client and
+										redeploy.
 									</p>
 								) : (
 									<select
@@ -121,9 +119,7 @@ function NewPairingPage() {
 									placeholder="https://tracker.beskid-lang.org"
 								/>
 							</div>
-							{error ? (
-								<p className="text-destructive text-sm">{error}</p>
-							) : null}
+							{error ? <p className="text-destructive text-sm">{error}</p> : null}
 							<Button
 								type="submit"
 								disabled={busy || PAIRING_APP_OPTIONS.length === 0}
@@ -137,7 +133,9 @@ function NewPairingPage() {
 					<Card>
 						<CardHeader>
 							<CardTitle>Share with app owner</CardTitle>
-							<CardDescription>Code shown once. Expires {result.expiresAt}.</CardDescription>
+							<CardDescription>
+								Code shown once. Expires {result.expiresAt}.
+							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-2 text-sm">
 							<p>

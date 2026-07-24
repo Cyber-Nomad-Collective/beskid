@@ -11,7 +11,10 @@ interface TrackerTaskEmbedProps {
 	catalogRevision: string;
 }
 
-export function TrackerTaskEmbed({ standardId, catalogRevision }: TrackerTaskEmbedProps) {
+export function TrackerTaskEmbed({
+	standardId,
+	catalogRevision,
+}: TrackerTaskEmbedProps) {
 	const [tasks, setTasks] = useState<TrackerTask[]>([]);
 	const [error, setError] = useState<string | null>(null);
 
@@ -27,21 +30,34 @@ export function TrackerTaskEmbed({ standardId, catalogRevision }: TrackerTaskEmb
 			.then(setTasks)
 			.catch((reason: unknown) => {
 				if (reason instanceof Error && reason.name === "AbortError") return;
-				setError(reason instanceof Error ? reason.message : "Tracker tasks are unavailable");
+				setError(
+					reason instanceof Error ? reason.message : "Tracker tasks are unavailable",
+				);
 			});
 
 		return () => controller.abort();
 	}, [catalogRevision, standardId]);
 
 	return (
-		<aside className="mt-6 rounded-lg border border-border p-4" data-standard-id={standardId}>
+		<aside
+			className="mt-6 rounded-lg border border-border p-4"
+			data-standard-id={standardId}
+		>
 			<h2 className="text-sm font-semibold">Tracker tasks</h2>
-			{error ? <p className="mt-2 text-sm text-muted-foreground">{error}</p> : null}
+			{error ? (
+				<p className="mt-2 text-sm text-muted-foreground">{error}</p>
+			) : null}
 			{tasks.length ? (
 				<ul className="mt-2 space-y-1 text-sm">
-					{tasks.map((task) => <li key={task.id ?? task.title}>{task.title ?? task.id} {task.status ? `(${task.status})` : ""}</li>)}
+					{tasks.map((task) => (
+						<li key={task.id ?? task.title}>
+							{task.title ?? task.id} {task.status ? `(${task.status})` : ""}
+						</li>
+					))}
 				</ul>
-			) : !error ? <p className="mt-2 text-sm text-muted-foreground">No linked tasks.</p> : null}
+			) : !error ? (
+				<p className="mt-2 text-sm text-muted-foreground">No linked tasks.</p>
+			) : null}
 		</aside>
 	);
 }

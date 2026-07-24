@@ -36,7 +36,9 @@ export function buildOAuthState(nonce: string, app: string): string {
 	return `${nonce}:${app}`;
 }
 
-export function parseOAuthState(state: string): { nonce: string; app: string } | null {
+export function parseOAuthState(
+	state: string,
+): { nonce: string; app: string } | null {
 	const parts = state.split(":");
 	if (parts.length < 2 || !parts[0] || !parts[1]) return null;
 	return { nonce: parts[0], app: parts.slice(1).join(":") };

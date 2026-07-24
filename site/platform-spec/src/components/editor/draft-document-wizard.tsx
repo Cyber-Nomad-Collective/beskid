@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 import type { SpecArtifactKind } from "#/lib/spec/document-identity";
-import type { DraftDocumentOperation } from "#/server/memgraph/types";
 import { resolveDraftIdentityFn } from "#/server/drafts";
+import type { DraftDocumentOperation } from "#/server/memgraph/types";
 
 export interface DraftDocumentWizardProps {
 	disabled?: boolean;

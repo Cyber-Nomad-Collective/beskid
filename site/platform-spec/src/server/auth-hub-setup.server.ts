@@ -24,10 +24,7 @@ export function getAuthHubSetupStatus() {
 	};
 }
 
-function verifySetupToken(
-	request: Request,
-	bodyToken?: string,
-): boolean {
+function verifySetupToken(request: Request, bodyToken?: string): boolean {
 	const expected = env.PLATFORM_SPEC_SETUP_TOKEN?.trim();
 	if (!expected) return true;
 
@@ -53,7 +50,11 @@ export async function submitAuthHubSetup(
 	if (already && !verifySetupToken(request, input.setupToken)) {
 		return { error: "Auth hub already configured", status: 403 };
 	}
-	if (!already && setupTokenRequired && !verifySetupToken(request, input.setupToken)) {
+	if (
+		!already &&
+		setupTokenRequired &&
+		!verifySetupToken(request, input.setupToken)
+	) {
 		return { error: "Invalid setup token", status: 403 };
 	}
 

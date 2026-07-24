@@ -11,8 +11,8 @@ import {
 	type LayoutIndex,
 	type LayoutRegistry,
 	type LayoutValidation,
-	type SpecLayout,
 	resolveLayoutForEntry,
+	type SpecLayout,
 	validateLayout,
 } from "#/lib/spec/layouts-pure";
 
@@ -41,7 +41,9 @@ export function layoutsDirFor(openSpecRoot: string): string {
 	return path.join(openSpecRoot, "layouts");
 }
 
-export function loadLayoutRegistry(openSpecRoot: string): LayoutRegistry | null {
+export function loadLayoutRegistry(
+	openSpecRoot: string,
+): LayoutRegistry | null {
 	const dir = layoutsDirFor(openSpecRoot);
 	if (!fs.existsSync(dir)) return null;
 	const layouts = new Map<string, SpecLayout>();

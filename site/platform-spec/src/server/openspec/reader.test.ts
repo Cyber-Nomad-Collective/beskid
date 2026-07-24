@@ -43,9 +43,7 @@ function fixture(): string {
 					title: "Block syntax",
 					specPath: "specs/language--syntax--blocks/spec.md",
 					path: "/platform-spec/capabilities/language--syntax--blocks/",
-					bookLinks: [
-						"/book/07-compiler-is-not-your-therapist/lexical-basics/",
-					],
+					bookLinks: ["/book/07-compiler-is-not-your-therapist/lexical-basics/"],
 					requirements: [
 						{ id: "BSP-REQ-BLOCK", anchor: "requirement-block-delimiter" },
 					],
@@ -70,16 +68,14 @@ describe("OpenSpec reader", () => {
 
 	it("reads canonical content and requirement embeds", () => {
 		const root = fixture();
+		expect(getOpenSpecDocument("language--syntax--blocks", root)?.body).toContain(
+			"### Requirement: Block delimiter",
+		);
 		expect(
-			getOpenSpecDocument("language--syntax--blocks", root)?.body,
-		).toContain("### Requirement: Block delimiter");
-		expect(
-			getOpenSpecEmbed("language--syntax--blocks#block-delimiter", root)
-				?.markdown,
+			getOpenSpecEmbed("language--syntax--blocks#block-delimiter", root)?.markdown,
 		).toContain("#### Scenario: Parse a block");
 		expect(
-			getOpenSpecEmbed("language--syntax--blocks#BSP-REQ-BLOCK", root)
-				?.markdown,
+			getOpenSpecEmbed("language--syntax--blocks#BSP-REQ-BLOCK", root)?.markdown,
 		).toContain("#### Scenario: Parse a block");
 	});
 
@@ -92,37 +88,33 @@ describe("OpenSpec reader", () => {
 		expect(loadOpenSpecCatalog(root).entries[0]?.bookLinks).toEqual(
 			expectedBookLinks,
 		);
-		expect(getOpenSpecDocument("language--syntax--blocks", root)?.bookLinks).toEqual(
-			expectedBookLinks,
-		);
+		expect(
+			getOpenSpecDocument("language--syntax--blocks", root)?.bookLinks,
+		).toEqual(expectedBookLinks);
 	});
 
 	it("extracts stable requirement anchors", () => {
-		expect(extractRequirements("### Requirement: Hello, World!\nText")).toEqual(
-			[
-				{
-					id: "hello-world",
-					anchor: "hello-world",
-					title: "Hello, World!",
-					markdown: "### Requirement: Hello, World!\nText",
-				},
-			],
-		);
+		expect(extractRequirements("### Requirement: Hello, World!\nText")).toEqual([
+			{
+				id: "hello-world",
+				anchor: "hello-world",
+				title: "Hello, World!",
+				markdown: "### Requirement: Hello, World!\nText",
+			},
+		]);
 	});
 
 	it("reads the repository's generated OpenSpec catalog and stable aliases", () => {
 		const root = resolveOpenSpecRoot();
 		const catalog = loadOpenSpecCatalog(root);
 		expect(catalog.documents.length).toBeGreaterThanOrEqual(178);
-		expect(catalog.documents.some((entry) => entry.kind === "taxonomy-domain")).toBe(
-			true,
-		);
-		expect(catalog.documents.some((entry) => entry.kind === "taxonomy-area")).toBe(
-			true,
-		);
-		const aliased = catalog.entries.find(
-			(entry) => entry.legacySlugs.length > 0,
-		);
+		expect(
+			catalog.documents.some((entry) => entry.kind === "taxonomy-domain"),
+		).toBe(true);
+		expect(
+			catalog.documents.some((entry) => entry.kind === "taxonomy-area"),
+		).toBe(true);
+		const aliased = catalog.entries.find((entry) => entry.legacySlugs.length > 0);
 		if (!aliased) throw new Error("expected at least one catalog alias");
 		const legacySlug = aliased.legacySlugs[0];
 		if (!legacySlug) throw new Error("expected a legacy slug");

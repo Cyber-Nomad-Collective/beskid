@@ -54,8 +54,7 @@ export function ProposalValidationPanel({
 				next.push({
 					code: "invalid-capability",
 					severity: "error",
-					message:
-						"Capability must use segments such as language--syntax--blocks.",
+					message: "Capability must use segments such as language--syntax--blocks.",
 				});
 			}
 

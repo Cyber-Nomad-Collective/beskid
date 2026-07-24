@@ -45,8 +45,10 @@ export function DraftChangeSet({
 }: DraftChangeSetProps) {
 	const counts = {
 		added: bundle.documentChanges.filter((c) => c.operation === "create").length,
-		updated: bundle.documentChanges.filter((c) => c.operation === "update").length,
-		deleted: bundle.documentChanges.filter((c) => c.operation === "delete").length,
+		updated: bundle.documentChanges.filter((c) => c.operation === "update")
+			.length,
+		deleted: bundle.documentChanges.filter((c) => c.operation === "delete")
+			.length,
 	};
 
 	return (
@@ -75,9 +77,7 @@ export function DraftChangeSet({
 										<li
 											key={`${change.id}-${issue.code}-${issue.message}`}
 											className={
-												issue.severity === "error"
-													? "text-destructive"
-													: "text-amber-300"
+												issue.severity === "error" ? "text-destructive" : "text-amber-300"
 											}
 										>
 											{issue.code}: {issue.message}

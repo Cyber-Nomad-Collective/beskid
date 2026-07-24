@@ -2,7 +2,8 @@ const DEFAULT_ORIGIN = "https://spec.beskid-lang.org";
 
 class BeskidDocEmbed extends HTMLElement {
 	connectedCallback() {
-		if (this.dataset.enhanced === "true" || this.getAttribute("kind") !== "spec") return;
+		if (this.dataset.enhanced === "true" || this.getAttribute("kind") !== "spec")
+			return;
 		this.dataset.enhanced = "true";
 		const ref = this.getAttribute("ref");
 		if (!ref) return;
@@ -11,7 +12,8 @@ class BeskidDocEmbed extends HTMLElement {
 		this.setAttribute("aria-busy", "true");
 		fetch(`${origin}/api/v1/embed/${encodeURIComponent(ref)}`)
 			.then((response) => {
-				if (!response.ok) throw new Error(`embed request failed (${response.status})`);
+				if (!response.ok)
+					throw new Error(`embed request failed (${response.status})`);
 				return response.json();
 			})
 			.then((payload) => {

@@ -1,6 +1,3 @@
-import { createFileRoute, Link, redirect, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
-
 import {
 	Button,
 	Card,
@@ -9,6 +6,13 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@beskid/ui-react";
+import {
+	createFileRoute,
+	Link,
+	redirect,
+	useRouter,
+} from "@tanstack/react-router";
+import { useState } from "react";
 import { ThemeToggle } from "#/components/theme-toggle";
 import { authAppLabel } from "#/lib/auth-app-meta";
 import {
@@ -75,7 +79,12 @@ function PairingDetailPage() {
 						</p>
 					</div>
 					{canCancel ? (
-						<Button type="button" variant="destructive" disabled={busy} onClick={onCancel}>
+						<Button
+							type="button"
+							variant="destructive"
+							disabled={busy}
+							onClick={onCancel}
+						>
 							{busy ? "Cancelling…" : "Cancel request"}
 						</Button>
 					) : null}

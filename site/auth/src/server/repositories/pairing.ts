@@ -1,11 +1,7 @@
 import type { AuthAppId } from "@beskid/auth-client";
 
 import { env } from "#/env.server";
-import {
-	hashPairingCode,
-	pairingCode,
-	randomToken,
-} from "#/server/crypto";
+import { hashPairingCode, pairingCode, randomToken } from "#/server/crypto";
 import { getAuthDatabase } from "#/server/db/index";
 import { upsertPairedApp } from "#/server/repositories/paired-apps";
 
@@ -68,18 +64,20 @@ export function createPairingRequest(input: {
 	const expiresAt = new Date(Date.now() + PAIRING_TTL_MS).toISOString();
 	const publicUrl = input.publicUrl.replace(/\/$/, "");
 
-	db.prepare(
-		`INSERT INTO pairing_requests
+	db
+		.prepare(
+			`INSERT INTO pairing_requests
 		 (id, app_id, public_url, code_hash, expires_at, created_by_login, status)
 		 VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
-	).run(
-		requestId,
-		input.appId,
-		publicUrl,
-		hashPairingCode(code, requestId),
-		expiresAt,
-		input.createdByLogin,
-	);
+		)
+		.run(
+			requestId,
+			input.appId,
+			publicUrl,
+			hashPairingCode(code, requestId),
+			expiresAt,
+			input.createdByLogin,
+		);
 
 	audit(requestId, "created", input.createdByLogin);
 
@@ -128,9 +126,9 @@ export function approvePairing(input: {
 	const serviceToken = randomToken(32);
 	const db = getAuthDatabase();
 
-	db.prepare(
-		"UPDATE pairing_requests SET status = 'approved' WHERE id = ?",
-	).run(row.id);
+	db
+		.prepare("UPDATE pairing_requests SET status = 'approved' WHERE id = ?")
+		.run(row.id);
 
 	upsertPairedApp({
 		id: input.appId,

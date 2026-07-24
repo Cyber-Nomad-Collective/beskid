@@ -106,10 +106,8 @@ export interface DraftContextBundle {
 	revisions: DraftContextRevision[];
 }
 
-export interface ParsedDraftDocumentChange extends Omit<
-	DraftDocumentChange,
-	"identityJson" | "validationJson"
-> {
+export interface ParsedDraftDocumentChange
+	extends Omit<DraftDocumentChange, "identityJson" | "validationJson"> {
 	identity: SpecDocumentIdentity;
 	validation: DraftValidationResult;
 }

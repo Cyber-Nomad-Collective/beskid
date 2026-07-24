@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
 	Button,
 	Card,
@@ -8,7 +9,6 @@ import {
 	Input,
 	Label,
 } from "#/components/ui-primitives";
-import { useState } from "react";
 
 export interface AuthHubSetupDefaults {
 	defaultAuthHubUrl: string;
@@ -121,7 +121,9 @@ export function AuthHubSetupWizard({
 						/>
 					</div>
 					<div className="space-y-2">
-						<Label htmlFor="approverLogin">Your GitHub login (pairing approver)</Label>
+						<Label htmlFor="approverLogin">
+							Your GitHub login (pairing approver)
+						</Label>
 						<Input
 							id="approverLogin"
 							required
@@ -147,7 +149,11 @@ export function AuthHubSetupWizard({
 						</p>
 					) : null}
 
-					<Button type="submit" className="w-full" disabled={busy || !hasSessionSecret}>
+					<Button
+						type="submit"
+						className="w-full"
+						disabled={busy || !hasSessionSecret}
+					>
 						{busy ? "Saving…" : "Save and pair with auth hub"}
 					</Button>
 				</form>

@@ -496,3 +496,4 @@ package-lock.json
 .empryo
 .soulforge
 podman-build-secret-*
+.gitnexus/

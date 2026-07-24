@@ -25,5 +25,5 @@ export function authHubLoginUrl(): string | null {
 	return buildLoginUrl(base, "platform-spec");
 }
 
-export { buildLoginUrl, verifyHandoffToken };
 export type { HandoffPayload, IssueHandoffInput } from "@beskid/auth-client";
+export { buildLoginUrl, verifyHandoffToken };

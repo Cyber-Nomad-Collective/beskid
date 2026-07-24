@@ -1,7 +1,6 @@
+import { Button, ProfileCard } from "@beskid/ui-react";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { z } from "zod";
-
-import { Button, ProfileCard } from "@beskid/ui-react";
 import { ThemeToggle } from "#/components/theme-toggle";
 import { fetchProfileData } from "#/server/app-server.functions";
 

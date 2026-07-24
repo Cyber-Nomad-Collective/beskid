@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 
 import { DraftChangeSet } from "#/components/editor/draft-change-set";
 import type { ParsedDraftContextBundle } from "#/server/memgraph/types";
@@ -76,12 +76,9 @@ export function DraftContextBanner({
 					Pinned revision: <code className="font-mono">{pinned ?? "—"}</code>
 				</span>
 				<span>
-					{counts.added} added · {counts.updated} updated · {counts.deleted}{" "}
-					deleted
+					{counts.added} added · {counts.updated} updated · {counts.deleted} deleted
 				</span>
-				<span>
-					Validation: {bundle?.context.validationState ?? "unknown"}
-				</span>
+				<span>Validation: {bundle?.context.validationState ?? "unknown"}</span>
 				{bundle?.context.prUrl ? (
 					<a
 						href={bundle.context.prUrl}

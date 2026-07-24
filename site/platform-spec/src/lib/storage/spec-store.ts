@@ -6,11 +6,11 @@
 // and a changed revision converges in place without duplicates.
 
 import { createHash } from "node:crypto";
-import type { SqliteDatabase as Database } from "#/lib/storage/sqlite";
+import type { SeedWorkspace } from "#/lib/spec/static";
 
 import { migrateSchema } from "#/lib/storage/schema";
-import type { SeedWorkspace } from "#/lib/spec/static";
 import { specStoreDocumentKey } from "#/lib/storage/spec-store-identity";
+import type { SqliteDatabase as Database } from "#/lib/storage/sqlite";
 
 export interface SeedStoreResult {
 	revision: string;
@@ -144,9 +144,7 @@ export function seedSpecStore(
 		// OpenSpec revision within the same transaction as the upserts and
 		// metadata, so metadata never commits ahead of stale-row removal.
 		const existingCapabilities = db
-			.query<{ capability: string }, []>(
-				"SELECT capability FROM spec_capability",
-			)
+			.query<{ capability: string }, []>("SELECT capability FROM spec_capability")
 			.all();
 		for (const row of existingCapabilities) {
 			if (!seededCapabilities.has(row.capability)) {

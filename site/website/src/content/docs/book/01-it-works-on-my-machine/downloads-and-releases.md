@@ -25,7 +25,7 @@ The website can sync displayed version from GitHub via `bun run sync:cli-version
 
 ## What you get per platform
 
-Typical release artifacts include the `beskid` CLI for common OS/arch pairs (Linux, macOS, Windows—exact matrix follows CI). You also get install scripts that place the binary and wire PATH hints; details are on [Downloads](/downloads/).
+Typical release artifacts include the `beskid` CLI for common OS/arch pairs (Linux, macOS, Windows—exact matrix follows CI). Platform packages (`.deb`, `.msi`, `.dmg`, Snap, Homebrew) and container images are also available; see [Downloads](/downloads/) for the full list.
 
 User-facing docs may also mention `cdn.beskid-lang.org` for direct binary fetch; treat the Downloads page as the curated entry.
 

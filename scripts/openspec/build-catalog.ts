@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import {
@@ -34,13 +34,17 @@ function slugify(value: string): string {
 }
 
 function requirementTitles(markdown: string): string[] {
-	return [...markdown.matchAll(/^### Requirement:\s*(.+)$/gm)].map((match) => match[1].trim());
+	return [...markdown.matchAll(/^### Requirement:\s*(.+)$/gm)].map((match) =>
+		match[1].trim(),
+	);
 }
 
 function standardLinks(markdown: string): string[] {
 	return [
 		...new Set(
-			[...markdown.matchAll(/\]\((\/platform-spec\/[^\s)#?]*\/?)(?:#[^)]+)?\)/g)].map((match) => match[1]),
+			[
+				...markdown.matchAll(/\]\((\/platform-spec\/[^\s)#?]*\/?)(?:#[^)]+)?\)/g),
+			].map((match) => match[1]),
 		),
 	];
 }
@@ -105,8 +109,7 @@ function catalogDocument(
 		article: identity.article,
 		decision: identity.decision,
 		title:
-			metadata.title ??
-			titleFromMarkdown(markdown, displayTitle(identity.key)),
+			metadata.title ?? titleFromMarkdown(markdown, displayTitle(identity.key)),
 		status: metadata.status ?? null,
 		sourceHash: sha256(markdown),
 	};
@@ -114,7 +117,9 @@ function catalogDocument(
 
 const catalog = JSON.parse(readFileSync(catalogPath, "utf8")) as UnknownRecord;
 const entries = catalog.entries as UnknownRecord[];
-const knownCapabilities = new Set(entries.map((entry) => String(entry.capability)));
+const knownCapabilities = new Set(
+	entries.map((entry) => String(entry.capability)),
+);
 const specsRoot = path.join(repoRoot, "openspec/specs");
 const platformSpecDocumentsRoot = path.join(
 	repoRoot,
@@ -122,7 +127,8 @@ const platformSpecDocumentsRoot = path.join(
 );
 
 for (const directory of readdirSync(specsRoot, { withFileTypes: true })) {
-	if (!directory.isDirectory() || knownCapabilities.has(directory.name)) continue;
+	if (!directory.isDirectory() || knownCapabilities.has(directory.name))
+		continue;
 	const relativeSpecPath = `openspec/specs/${directory.name}/spec.md`;
 	if (!existsSync(path.join(repoRoot, relativeSpecPath))) continue;
 	const taxonomy = directory.name.split("--");
@@ -144,18 +150,24 @@ for (const directory of readdirSync(specsRoot, { withFileTypes: true })) {
 	});
 }
 
-entries.sort((left, right) => String(left.capability).localeCompare(String(right.capability)));
+entries.sort((left, right) =>
+	String(left.capability).localeCompare(String(right.capability)),
+);
 const revisionInputs: string[] = [];
 
 for (const entry of entries) {
 	const capability = String(entry.capability);
 	const specPath = path.join(repoRoot, String(entry.specPath));
-	if (!existsSync(specPath)) throw new Error(`Missing canonical spec: ${specPath}`);
+	if (!existsSync(specPath))
+		throw new Error(`Missing canonical spec: ${specPath}`);
 	const markdown = readFileSync(specPath, "utf8");
 	const specHash = sha256(markdown);
 	revisionInputs.push(`${entry.specPath}:${specHash}`);
 	const existing = new Map(
-		((entry.requirements as UnknownRecord[]) ?? []).map((item) => [String(item.title), item]),
+		((entry.requirements as UnknownRecord[]) ?? []).map((item) => [
+			String(item.title),
+			item,
+		]),
 	);
 	entry.requirements = requirementTitles(markdown).map((title) => {
 		const current = existing.get(title);
@@ -175,9 +187,10 @@ for (const entry of entries) {
 	});
 }
 
-const documents = ((catalog.documents as UnknownRecord[]) ?? []).filter((document) =>
-	!String(document.path).startsWith("openspec/documents/platform-spec/") &&
-	existsSync(path.join(repoRoot, String(document.path))),
+const documents = ((catalog.documents as UnknownRecord[]) ?? []).filter(
+	(document) =>
+		!String(document.path).startsWith("openspec/documents/platform-spec/") &&
+		existsSync(path.join(repoRoot, String(document.path))),
 );
 catalog.documents = documents;
 for (const document of documents) {
@@ -201,13 +214,21 @@ for (const entry of entries) {
 			`Invalid canonical path for ${identity.capability}: ${String(entry.specPath)}`,
 		);
 	}
-	const markdown = readFileSync(path.join(repoRoot, identity.canonicalPath), "utf8");
+	const markdown = readFileSync(
+		path.join(repoRoot, identity.canonicalPath),
+		"utf8",
+	);
 	specDocuments.push(catalogDocument(identity, markdown, entry));
 	if (identity.kind === "feature") featureCapabilities.add(identity.capability);
 }
 
-for (const absolutePath of platformSpecDocumentPaths(platformSpecDocumentsRoot)) {
-	const canonicalPath = path.relative(repoRoot, absolutePath).split(path.sep).join("/");
+for (const absolutePath of platformSpecDocumentPaths(
+	platformSpecDocumentsRoot,
+)) {
+	const canonicalPath = path
+		.relative(repoRoot, absolutePath)
+		.split(path.sep)
+		.join("/");
 	const identity = resolveDocumentIdentityFromPath(canonicalPath);
 	if (!featureCapabilities.has(identity.parentCapability)) {
 		throw new Error(
@@ -239,8 +260,12 @@ for (const entry of entries) {
 	entry.bookLinks = bookLinksByCapability[String(entry.capability)] ?? [];
 }
 
-const requirements = entries.flatMap((entry) => entry.requirements as UnknownRecord[]);
-const records = entries.flatMap((entry) => (entry.records as UnknownRecord[]) ?? []);
+const requirements = entries.flatMap(
+	(entry) => entry.requirements as UnknownRecord[],
+);
+const records = entries.flatMap(
+	(entry) => (entry.records as UnknownRecord[]) ?? [],
+);
 catalog.generatedBy = "scripts/openspec/build-catalog.ts";
 catalog.authority = "openspec/specs";
 catalog.migrationFinalized = true;
@@ -260,4 +285,6 @@ catalog.stats = {
 };
 
 writeFileSync(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`);
-console.log(`OpenSpec catalog rebuilt: ${entries.length} capabilities, ${requirements.length} requirements, revision ${String(catalog.revision).slice(0, 12)}.`);
+console.log(
+	`OpenSpec catalog rebuilt: ${entries.length} capabilities, ${requirements.length} requirements, revision ${String(catalog.revision).slice(0, 12)}.`,
+);

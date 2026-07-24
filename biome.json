@@ -1,7 +1,8 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.5.5/schema.json",
 	"vcs": {
-		"enabled": false
+		"enabled": true,
+		"clientKind": "git"
 	},
 	"files": {
 		"includes": [
@@ -21,9 +22,11 @@
 			"!**/dist",
 			"!**/.output",
 			"!**/.turbo",
-			"!**/.vscode-test",
-			"!**/compiler"
-		]
+			"!**/compiler",
+			"!**/.gitnexus",
+			"!**/.vscode-test"
+		],
+		"maxSize": 10485760
 	},
 	"formatter": {
 		"enabled": true,

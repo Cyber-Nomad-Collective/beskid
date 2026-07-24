@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
+import { useEffect, useRef, useState } from "react";
 
 /* ------------------------------------------------------------------ */
 /*  CodeHighlight                                                      */
@@ -8,46 +8,46 @@ import clsx from "clsx";
 /* ------------------------------------------------------------------ */
 
 export interface CodeHighlightProps {
-  children: React.ReactNode;
-  active?: boolean;
-  language?: string;
-  className?: string;
+	children: React.ReactNode;
+	active?: boolean;
+	language?: string;
+	className?: string;
 }
 
 export function CodeHighlight({
-  children,
-  active = false,
-  language,
-  className,
+	children,
+	active = false,
+	language,
+	className,
 }: CodeHighlightProps) {
-  const [pulse, setPulse] = useState(false);
-  const prevActive = useRef(active);
+	const [pulse, setPulse] = useState(false);
+	const prevActive = useRef(active);
 
-  useEffect(() => {
-    if (active !== prevActive.current) {
-      setPulse(true);
-      const id = setTimeout(() => setPulse(false), 900);
-      prevActive.current = active;
-      return () => clearTimeout(id);
-    }
-  }, [active]);
+	useEffect(() => {
+		if (active !== prevActive.current) {
+			setPulse(true);
+			const id = setTimeout(() => setPulse(false), 900);
+			prevActive.current = active;
+			return () => clearTimeout(id);
+		}
+	}, [active]);
 
-  return (
-    <div
-      className={clsx("ch-root", className, pulse && "ch-pulse")}
-      data-language={language}
-    >
-      {/* Language badge — only rendered when language is provided */}
-      {language && <span className="ch-lang">{language}</span>}
+	return (
+		<div
+			className={clsx("ch-root", className, pulse && "ch-pulse")}
+			data-language={language}
+		>
+			{/* Language badge — only rendered when language is provided */}
+			{language && <span className="ch-lang">{language}</span>}
 
-      <pre className="ch-pre">
-        <code className={clsx("ch-code", language && `language-${language}`)}>
-          {children}
-        </code>
-      </pre>
+			<pre className="ch-pre">
+				<code className={clsx("ch-code", language && `language-${language}`)}>
+					{children}
+				</code>
+			</pre>
 
-      {/* Scoped CSS for the highlight container */}
-      <style>{`
+			{/* Scoped CSS for the highlight container */}
+			<style>{`
         .ch-root {
           position: relative;
           border-radius: 0.75rem;
@@ -93,8 +93,8 @@ export function CodeHighlight({
           100% { background-color: rgba(12, 20, 44, 0.88); box-shadow: 0 0 0 0 rgba(96, 156, 255, 0); }
         }
       `}</style>
-    </div>
-  );
+		</div>
+	);
 }
 
 /* ------------------------------------------------------------------ */
@@ -104,49 +104,49 @@ export function CodeHighlight({
 /* ------------------------------------------------------------------ */
 
 export interface AnimatedLineProps {
-  children: React.ReactNode;
-  lineNumber?: number;
-  active?: boolean;
-  language?: string;
-  className?: string;
+	children: React.ReactNode;
+	lineNumber?: number;
+	active?: boolean;
+	language?: string;
+	className?: string;
 }
 
 export function AnimatedLine({
-  children,
-  lineNumber,
-  active = false,
-  language,
-  className,
+	children,
+	lineNumber,
+	active = false,
+	language,
+	className,
 }: AnimatedLineProps) {
-  const [pulse, setPulse] = useState(false);
-  const prevActive = useRef(active);
+	const [pulse, setPulse] = useState(false);
+	const prevActive = useRef(active);
 
-  useEffect(() => {
-    if (active !== prevActive.current) {
-      setPulse(true);
-      const id = setTimeout(() => setPulse(false), 900);
-      prevActive.current = active;
-      return () => clearTimeout(id);
-    }
-  }, [active]);
+	useEffect(() => {
+		if (active !== prevActive.current) {
+			setPulse(true);
+			const id = setTimeout(() => setPulse(false), 900);
+			prevActive.current = active;
+			return () => clearTimeout(id);
+		}
+	}, [active]);
 
-  return (
-    <div
-      className={clsx("al-root", className, pulse && "al-pulse")}
-      data-language={language}
-    >
-      {/* Numbered gutter */}
-      <span className="al-gutter" aria-hidden="true">
-        {lineNumber != null ? String(lineNumber).padStart(3, " ") : " · "}
-      </span>
+	return (
+		<div
+			className={clsx("al-root", className, pulse && "al-pulse")}
+			data-language={language}
+		>
+			{/* Numbered gutter */}
+			<span className="al-gutter" aria-hidden="true">
+				{lineNumber != null ? String(lineNumber).padStart(3, " ") : " · "}
+			</span>
 
-      <pre className="al-pre">
-        <code className={clsx("al-code", language && `language-${language}`)}>
-          {children}
-        </code>
-      </pre>
+			<pre className="al-pre">
+				<code className={clsx("al-code", language && `language-${language}`)}>
+					{children}
+				</code>
+			</pre>
 
-      <style>{`
+			<style>{`
         .al-root {
           display: flex;
           align-items: stretch;
@@ -192,6 +192,6 @@ export function AnimatedLine({
           100% { background-color: rgba(12, 20, 44, 0.72); border-color: transparent; }
         }
       `}</style>
-    </div>
-  );
+		</div>
+	);
 }

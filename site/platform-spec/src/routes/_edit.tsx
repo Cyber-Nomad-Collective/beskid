@@ -1,21 +1,4 @@
 import {
-	Link,
-	Outlet,
-	createFileRoute,
-	redirect,
-	useRouterState,
-} from "@tanstack/react-router";
-import {
-	Edit,
-	FileText,
-	LogOut,
-	ShieldCheck,
-} from "lucide-react";
-
-import { ThemeToggle } from "#/components/theme-toggle";
-import { getAuthUser } from "#/server/auth";
-import { getAuthHubPairingStatusFn } from "#/server/auth-hub-pairing";
-import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
@@ -36,6 +19,17 @@ import {
 	SidebarRail,
 	SidebarTrigger,
 } from "@beskid/ui-react";
+import {
+	createFileRoute,
+	Link,
+	Outlet,
+	redirect,
+	useRouterState,
+} from "@tanstack/react-router";
+import { Edit, FileText, LogOut, ShieldCheck } from "lucide-react";
+import { ThemeToggle } from "#/components/theme-toggle";
+import { getAuthUser } from "#/server/auth";
+import { getAuthHubPairingStatusFn } from "#/server/auth-hub-pairing";
 
 export const Route = createFileRoute("/_edit")({
 	beforeLoad: async ({ location }) => {
@@ -69,10 +63,7 @@ function EditShell() {
 						<SidebarMenu className="min-w-0 flex-1 group-data-[collapsible=icon]:flex-none">
 							<SidebarMenuItem>
 								<SidebarMenuButton size="lg" asChild className="mb-1">
-									<Link
-										to="/platform-spec/$"
-										params={{ _splat: "" }}
-									>
+									<Link to="/platform-spec/$" params={{ _splat: "" }}>
 										<img
 											src="/favicon.svg"
 											alt=""
@@ -113,9 +104,7 @@ function EditShell() {
 								<SidebarMenuItem>
 									<SidebarMenuButton
 										asChild
-										isActive={
-											pathname === "/edit" || pathname.startsWith("/edit/")
-										}
+										isActive={pathname === "/edit" || pathname.startsWith("/edit/")}
 										tooltip="Drafts"
 									>
 										<Link to="/edit">
@@ -152,10 +141,7 @@ function EditShell() {
 							</div>
 						</SidebarMenuItem>
 						<SidebarMenuItem>
-							<SidebarMenuButton
-								size="lg"
-								className="pointer-events-none"
-							>
+							<SidebarMenuButton size="lg" className="pointer-events-none">
 								<Avatar className="size-8 rounded-lg">
 									<AvatarImage src={user.avatarUrl} alt={user.login} />
 									<AvatarFallback className="rounded-lg">
@@ -190,9 +176,7 @@ function EditShell() {
 					<span className="text-sm font-semibold">Platform Spec</span>
 					<div className="ml-auto flex items-center gap-3">
 						<BeskidHub />
-						<span className="text-sm text-muted-foreground">
-							@{user.login}
-						</span>
+						<span className="text-sm text-muted-foreground">@{user.login}</span>
 						<a
 							href="/api/auth/logout"
 							className="text-sm text-muted-foreground hover:underline"

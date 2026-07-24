@@ -1,9 +1,5 @@
+import { Button, ServicePicker } from "@beskid/ui-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-
-import {
-	Button,
-	ServicePicker,
-} from "@beskid/ui-react";
 import { ThemeToggle } from "#/components/theme-toggle";
 import { fetchHomeData } from "#/server/app-server.functions";
 

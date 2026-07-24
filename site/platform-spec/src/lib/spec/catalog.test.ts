@@ -4,10 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
-import {
-	loadOpenSpecCatalog,
-	resolveOpenSpecEntry,
-} from "#/lib/spec/catalog";
+import { loadOpenSpecCatalog, resolveOpenSpecEntry } from "#/lib/spec/catalog";
 
 const roots: string[] = [];
 
@@ -64,9 +61,7 @@ function fixture(): string {
 				id: capability,
 				capability,
 				specPath: `openspec/specs/${capability}/spec.md`,
-				status: capability.startsWith("taxonomy--")
-					? "Proposed"
-					: "Standard",
+				status: capability.startsWith("taxonomy--") ? "Proposed" : "Standard",
 			})),
 		}),
 	);
@@ -103,8 +98,7 @@ describe("canonical OpenSpec catalog", () => {
 			(document) => document.kind === "taxonomy-area",
 		);
 		expect(area).toMatchObject({
-			canonicalPath:
-				"openspec/specs/taxonomy--compiler--front-end/spec.md",
+			canonicalPath: "openspec/specs/taxonomy--compiler--front-end/spec.md",
 			parentCapability: "taxonomy--compiler",
 			layout: "_default",
 			authority: "normative",

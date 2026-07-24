@@ -30,12 +30,9 @@ export const Route = createFileRoute("/platform-spec/$")({
 		const status =
 			typeof frontmatter.status === "string" ? frontmatter.status : null;
 		const description =
-			typeof frontmatter.description === "string"
-				? frontmatter.description
-				: null;
-		const architectureGraphMeta = (
-			frontmatter as Record<string, unknown>
-		).architectureGraph as
+			typeof frontmatter.description === "string" ? frontmatter.description : null;
+		const architectureGraphMeta = (frontmatter as Record<string, unknown>)
+			.architectureGraph as
 			| { graphKey?: unknown; entryNode?: unknown; layout?: unknown }
 			| undefined;
 		const architectureGraph =
@@ -89,36 +86,33 @@ function PlatformSpecDocument() {
 
 	return (
 		<ReaderChrome navTree={navTree} activeSlug={slug}>
-				<StructuredDocumentView
-					title={title}
-					specLevel={specLevel}
-					status={status}
-					description={description}
-					bodyMd={bodyMd}
-					bookLinks={bookLinks}
-					architectureGraph={architectureGraph}
-					adrs={adrs}
-					layout={layout}
-					layoutValidation={layoutValidation}
-					catalogRevision={catalog.revision}
-					standardId={
-						catalog.documents.find((entry) => entry.slug === slug)?.key ??
-						slug.replace(/^platform-spec\/capabilities\//, "")
-					}
-					proposeSearch={{
-						capability: catalog.documents
-							.find((entry) => entry.slug === slug)
-							?.capability,
-						domain: catalog.documents.find((entry) => entry.slug === slug)
-							?.domain,
-						area:
-							catalog.documents.find((entry) => entry.slug === slug)?.area ??
-							undefined,
-						feature:
-							catalog.documents.find((entry) => entry.slug === slug)
-								?.feature ?? undefined,
-					}}
-				/>
+			<StructuredDocumentView
+				title={title}
+				specLevel={specLevel}
+				status={status}
+				description={description}
+				bodyMd={bodyMd}
+				bookLinks={bookLinks}
+				architectureGraph={architectureGraph}
+				adrs={adrs}
+				layout={layout}
+				layoutValidation={layoutValidation}
+				catalogRevision={catalog.revision}
+				standardId={
+					catalog.documents.find((entry) => entry.slug === slug)?.key ??
+					slug.replace(/^platform-spec\/capabilities\//, "")
+				}
+				proposeSearch={{
+					capability: catalog.documents.find((entry) => entry.slug === slug)
+						?.capability,
+					domain: catalog.documents.find((entry) => entry.slug === slug)?.domain,
+					area:
+						catalog.documents.find((entry) => entry.slug === slug)?.area ?? undefined,
+					feature:
+						catalog.documents.find((entry) => entry.slug === slug)?.feature ??
+						undefined,
+				}}
+			/>
 		</ReaderChrome>
 	);
 }

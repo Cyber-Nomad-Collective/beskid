@@ -1,7 +1,6 @@
 import type { AuthAppId } from "@beskid/auth-client";
-import { authAppDescription, authAppLabel } from "#/lib/auth-app-meta";
-
 import { env } from "#/env.server";
+import { authAppDescription, authAppLabel } from "#/lib/auth-app-meta";
 import { hashSecret } from "#/server/crypto";
 import {
 	getAuthDatabase,
@@ -27,17 +26,19 @@ export function upsertPairedApp(input: {
 }): void {
 	const db = getAuthDatabase();
 	const tokenHash = hashSecret(input.serviceToken);
-	db.prepare(
-		`INSERT OR REPLACE INTO paired_apps
+	db
+		.prepare(
+			`INSERT OR REPLACE INTO paired_apps
 		 (id, public_url, handoff_secret_hash, service_token_hash, status, paired_at, approved_by_login)
 		 VALUES (?, ?, ?, ?, 'active', datetime('now'), ?)`,
-	).run(
-		input.id,
-		input.publicUrl.replace(/\/$/, ""),
-		tokenHash,
-		tokenHash,
-		input.approvedByLogin,
-	);
+		)
+		.run(
+			input.id,
+			input.publicUrl.replace(/\/$/, ""),
+			tokenHash,
+			tokenHash,
+			input.approvedByLogin,
+		);
 	setEncryptedHubSetting(`service_token:${input.id}`, input.serviceToken);
 }
 

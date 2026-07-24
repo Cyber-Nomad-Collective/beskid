@@ -43,13 +43,20 @@ export interface SqliteDatabase {
 function normalizeParams(
 	params: Array<SqlValue | Record<string, SqlValue>>,
 ): SqlValue[] | Record<string, SqlValue> {
-	if (params.length === 1 && params[0] && typeof params[0] === "object" && !ArrayBuffer.isView(params[0])) {
+	if (
+		params.length === 1 &&
+		params[0] &&
+		typeof params[0] === "object" &&
+		!ArrayBuffer.isView(params[0])
+	) {
 		return params[0] as Record<string, SqlValue>;
 	}
 	return params as SqlValue[];
 }
 
-function wrapStatement(statement: ReturnType<DatabaseSync["prepare"]>): SqliteStatement {
+function wrapStatement(
+	statement: ReturnType<DatabaseSync["prepare"]>,
+): SqliteStatement {
 	return {
 		run(...params) {
 			const normalized = normalizeParams(params);

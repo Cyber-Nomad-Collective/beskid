@@ -13,8 +13,6 @@ describe("specStoreDocumentKey", () => {
 			capability: "compiler--front-end--parser",
 		};
 
-		expect(specStoreDocumentKey(feature)).not.toBe(
-			specStoreDocumentKey(article),
-		);
+		expect(specStoreDocumentKey(feature)).not.toBe(specStoreDocumentKey(article));
 	});
 });

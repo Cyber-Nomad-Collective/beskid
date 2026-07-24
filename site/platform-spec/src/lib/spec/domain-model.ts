@@ -3,10 +3,7 @@
 // module turns the flat catalog into the hierarchical shape used by the nav
 // rail, the static seed, and the Memgraph graph. Pure module (no server-only).
 
-import type {
-	OpenSpecCatalog,
-	OpenSpecCatalogEntry,
-} from "#/lib/spec/catalog";
+import type { OpenSpecCatalog, OpenSpecCatalogEntry } from "#/lib/spec/catalog";
 
 export interface OpenSpecNavNode {
 	slug: string;
@@ -174,8 +171,7 @@ export function buildNavTree(catalog: OpenSpecCatalog): OpenSpecNavNode {
 							slug: document.slug,
 							href: document.href,
 							title: document.title,
-							level:
-								document.kind === "article" ? "article" : "decision",
+							level: document.kind === "article" ? "article" : "decision",
 						})),
 				})),
 			})),

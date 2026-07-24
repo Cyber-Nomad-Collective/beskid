@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, type ReactNode, useContext, useState } from "react";
 
 export type SpecViewMode = "browse" | "map";
 
@@ -9,7 +9,9 @@ interface SpecViewModeContextValue {
 	setMode: (mode: SpecViewMode) => void;
 }
 
-const SpecViewModeContext = createContext<SpecViewModeContextValue | null>(null);
+const SpecViewModeContext = createContext<SpecViewModeContextValue | null>(
+	null,
+);
 
 export function SpecViewModeProvider({ children }: { children: ReactNode }) {
 	const [mode, setMode] = useState<SpecViewMode>("browse");

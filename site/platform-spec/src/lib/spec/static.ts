@@ -12,8 +12,8 @@ import {
 	resolveOpenSpecRoot,
 } from "#/lib/spec/catalog";
 import {
-	type OpenSpecDocumentBundle,
 	getOpenSpecDocument,
+	type OpenSpecDocumentBundle,
 } from "#/lib/spec/document";
 import {
 	buildDomainModel,
@@ -89,9 +89,10 @@ function writeJson(dir: string, file: string, value: unknown): void {
 	fs.writeFileSync(path.join(dir, file), `${JSON.stringify(value, null, 2)}\n`);
 }
 
-export function buildSeedWorkspace(
-	openSpecRoot = resolveOpenSpecRoot(),
-): { workspace: SeedWorkspace; findings: LayoutFinding[] } {
+export function buildSeedWorkspace(openSpecRoot = resolveOpenSpecRoot()): {
+	workspace: SeedWorkspace;
+	findings: LayoutFinding[];
+} {
 	const catalog = loadOpenSpecCatalog(openSpecRoot);
 	const registry = loadLayoutRegistry(openSpecRoot);
 	const domainModel = buildDomainModel(catalog);
@@ -110,9 +111,7 @@ export function buildSeedWorkspace(
 			registry,
 		});
 		if (!bundle) {
-			throw new Error(
-				`Unable to build document bundle for ${entry.capability}`,
-			);
+			throw new Error(`Unable to build document bundle for ${entry.capability}`);
 		}
 		documents[entry.slug] = bundle;
 		assignments[entry.key] = bundle.layoutValidation.layoutId;
@@ -178,10 +177,9 @@ export function buildSeedWorkspace(
 	return { workspace, findings };
 }
 
-export function generateSeed(options: {
-	openSpecRoot?: string;
-	outDir?: string;
-} = {}): GenerateSeedResult {
+export function generateSeed(
+	options: { openSpecRoot?: string; outDir?: string } = {},
+): GenerateSeedResult {
 	const openSpecRoot = options.openSpecRoot ?? resolveOpenSpecRoot();
 	const outDir = options.outDir ?? resolveSeedDir();
 	const { workspace, findings } = buildSeedWorkspace(openSpecRoot);

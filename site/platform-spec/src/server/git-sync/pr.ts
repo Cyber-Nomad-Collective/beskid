@@ -27,7 +27,9 @@ function assertPathContained(filePath: string): void {
 		filePath.includes("..") ||
 		pathIsAbsolute(filePath)
 	) {
-		throw new Error(`Refusing to write outside OpenSpec change tree: ${filePath}`);
+		throw new Error(
+			`Refusing to write outside OpenSpec change tree: ${filePath}`,
+		);
 	}
 }
 
@@ -59,7 +61,10 @@ function deltaBodyForChange(
 		if (operation === "delete") {
 			return `# Delta\n\n## ${opLabel} Requirements\n\n${supplied || "### Requirement: Removed\nThis requirement is removed by the approved OpenSpec change.\n"}`;
 		}
-		if (/^#\s+Delta\b/m.test(supplied) || /^##\s+(ADDED|MODIFIED|REMOVED)\b/m.test(supplied)) {
+		if (
+			/^#\s+Delta\b/m.test(supplied) ||
+			/^##\s+(ADDED|MODIFIED|REMOVED)\b/m.test(supplied)
+		) {
 			return supplied.endsWith("\n") ? supplied : `${supplied}\n`;
 		}
 		return `# Delta\n\n## ${opLabel} Requirements\n\n${supplied}\n`;
@@ -101,13 +106,19 @@ async function ensureBranch(
 	}
 }
 
-async function assertWriteAccess(octokit: Octokit, login: string): Promise<void> {
+async function assertWriteAccess(
+	octokit: Octokit,
+	login: string,
+): Promise<void> {
 	const { data } = await octokit.repos.getCollaboratorPermissionLevel({
 		owner: OWNER(),
 		repo: REPO(),
 		username: login,
 	});
-	if (!data.permission || !["admin", "maintain", "write"].includes(data.permission)) {
+	if (
+		!data.permission ||
+		!["admin", "maintain", "write"].includes(data.permission)
+	) {
 		throw new Error("GitHub write access is required");
 	}
 }
@@ -177,7 +188,9 @@ export function buildOpenSpecChangeFiles(
 	}
 	for (const change of documentChanges) {
 		if (!change.validation.ok && change.operation !== "delete") {
-			const hard = change.validation.issues.some((issue) => issue.severity === "error");
+			const hard = change.validation.issues.some(
+				(issue) => issue.severity === "error",
+			);
 			if (hard) {
 				throw new Error(
 					`Cannot serialize invalid document change ${change.canonicalPath}`,

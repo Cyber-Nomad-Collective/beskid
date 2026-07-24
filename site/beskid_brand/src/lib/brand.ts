@@ -1,75 +1,390 @@
 /**
- * Beskid brand constants.
- * Mountain motif: a dramatic 3-peak silhouette with 3D poly-faceted body.
- * NO curves, NO opacity — every surface is a flat polygon.
+ * Beskid brand — topographic contour map of a mountain massif.
+ *
+ * The logo is a top-down contour map: concentric wavy rings at progressive
+ * elevations, a ridge spine, spurs radiating outward, and peak markers.
+ *
+ * This data is regenerated from contour-data.json. To tweak the shape,
+ * edit the generator script, not this file.
  */
+import type { Point } from "./geometry";
 
 export const C = {
-  teal: "#3aac9e",
-  tealDark: "#1a6b62",
-  tealLight: "#5eeadb",
-  tealLightDark: "#3aa89a",
-  bgDark: "#0d1117",
-  strokeW: 2.5,
+	teal: "#3aac9e",
+	tealLight: "#5eeadb",
+	tealDark: "#1a6b62",
+	bgDark: "#0d1117",
 } as const;
 
-/** Front ridgeline — three dramatic peaks. Central peak lower, giving asymmetry. */
-export const RIDGE: readonly [number, number][] = [
-  [16, 70],   // left base
-  [34, 20],   // left peak
-  [60, 54],   // central dip
-  [86, 14],   // right peak (tallest)
-  [106, 70],  // right base
+// ---- Contour rings (outer → inner) ----
+export const CONTOURS: ReadonlyArray<{
+	points: Point[];
+	strokeWidth: number;
+	opacity: number;
+}> = [
+	{
+		points: [
+			[119.0, 56.7],
+			[119.3, 67.3],
+			[119.2, 77.3],
+			[111.9, 77.8],
+			[97.9, 80.9],
+			[86.1, 87.7],
+			[76.0, 89.3],
+			[72.5, 95.1],
+			[61.4, 97.7],
+			[56.9, 94.2],
+			[48.3, 98.3],
+			[37.2, 92.6],
+			[34.8, 90.9],
+			[22.1, 84.6],
+			[19.8, 81.4],
+			[11.0, 73.7],
+			[1.7, 65.9],
+			[-2.9, 54.4],
+			[2.8, 48.3],
+			[11.1, 43.5],
+			[20.7, 36.3],
+			[27.0, 34.0],
+			[32.2, 28.0],
+			[35.8, 22.0],
+			[42.9, 16.9],
+			[47.2, 12.7],
+			[56.7, 17.9],
+			[72.4, 18.6],
+			[82.2, 24.0],
+			[93.1, 26.7],
+			[106.9, 33.8],
+			[109.5, 39.8],
+			[115.3, 46.8],
+			[113.1, 48.3],
+		],
+		strokeWidth: 1.6,
+		opacity: 0.4,
+	},
+	{
+		points: [
+			[105.4, 56.4],
+			[107.1, 68.0],
+			[106.7, 69.8],
+			[96.7, 73.6],
+			[88.3, 76.7],
+			[76.1, 78.5],
+			[70.5, 81.7],
+			[63.6, 87.4],
+			[54.8, 84.2],
+			[50.5, 85.1],
+			[38.7, 80.7],
+			[33.0, 81.0],
+			[30.4, 75.0],
+			[18.7, 67.7],
+			[16.6, 60.4],
+			[12.9, 54.7],
+			[10.3, 48.5],
+			[22.3, 44.3],
+			[29.8, 42.1],
+			[36.4, 37.0],
+			[42.1, 34.5],
+			[47.0, 25.2],
+			[49.9, 21.5],
+			[61.4, 25.5],
+			[70.0, 27.2],
+			[83.4, 28.7],
+			[93.1, 35.4],
+			[99.2, 39.9],
+			[98.7, 43.9],
+			[101.0, 53.0],
+		],
+		strokeWidth: 1.5,
+		opacity: 0.5,
+	},
+	{
+		points: [
+			[96.4, 57.8],
+			[95.6, 61.0],
+			[93.4, 68.9],
+			[81.4, 69.1],
+			[73.1, 72.7],
+			[69.8, 72.6],
+			[62.5, 76.4],
+			[55.1, 78.4],
+			[49.3, 74.8],
+			[44.5, 75.4],
+			[38.0, 70.4],
+			[35.1, 66.5],
+			[25.9, 59.0],
+			[21.0, 51.1],
+			[24.8, 48.4],
+			[32.4, 44.5],
+			[39.9, 43.9],
+			[45.2, 40.9],
+			[49.8, 32.3],
+			[50.6, 31.7],
+			[58.4, 29.5],
+			[72.2, 34.2],
+			[79.8, 39.0],
+			[87.7, 40.2],
+			[88.5, 45.4],
+			[92.1, 50.3],
+		],
+		strokeWidth: 1.3,
+		opacity: 0.6,
+	},
+	{
+		points: [
+			[84.8, 55.6],
+			[86.7, 58.9],
+			[79.6, 62.3],
+			[73.7, 63.6],
+			[65.8, 66.3],
+			[61.9, 67.6],
+			[56.1, 70.2],
+			[51.7, 69.3],
+			[48.1, 65.1],
+			[44.8, 64.1],
+			[38.9, 58.8],
+			[35.1, 50.9],
+			[36.9, 47.9],
+			[44.0, 45.9],
+			[49.5, 46.4],
+			[50.9, 41.6],
+			[53.6, 37.3],
+			[61.6, 39.2],
+			[69.2, 41.0],
+			[75.0, 42.9],
+			[81.6, 46.9],
+			[82.4, 51.1],
+		],
+		strokeWidth: 1.1,
+		opacity: 0.7,
+	},
+	{
+		points: [
+			[55.5, 53.8],
+			[56.5, 57.5],
+			[50.6, 58.5],
+			[46.5, 58.1],
+			[44.9, 60.2],
+			[41.2, 59.0],
+			[40.3, 58.3],
+			[35.9, 55.9],
+			[32.2, 51.8],
+			[35.7, 51.1],
+			[40.3, 50.0],
+			[40.8, 46.4],
+			[42.9, 44.4],
+			[48.2, 46.9],
+			[52.4, 48.6],
+			[56.1, 51.7],
+		],
+		strokeWidth: 0.9,
+		opacity: 0.8,
+	},
+	{
+		points: [
+			[83.3, 54.0],
+			[83.3, 58.0],
+			[79.6, 58.8],
+			[75.9, 58.9],
+			[73.9, 60.2],
+			[71.3, 60.0],
+			[68.3, 56.0],
+			[65.5, 52.7],
+			[68.5, 52.3],
+			[71.5, 49.7],
+			[71.4, 47.7],
+			[75.3, 47.8],
+			[81.1, 49.2],
+			[83.1, 51.4],
+		],
+		strokeWidth: 0.9,
+		opacity: 0.8,
+	},
+	{
+		points: [
+			[49.7, 52.7],
+			[48.8, 53.5],
+			[45.5, 54.3],
+			[43.5, 55.2],
+			[42.6, 53.9],
+			[39.9, 51.4],
+			[42.9, 50.3],
+			[43.0, 49.3],
+			[46.2, 49.0],
+			[49.1, 50.6],
+		],
+		strokeWidth: 0.7,
+		opacity: 0.9,
+	},
+	{
+		points: [
+			[78.8, 53.0],
+			[77.9, 55.0],
+			[75.8, 55.4],
+			[74.5, 55.2],
+			[72.6, 54.4],
+			[70.4, 52.7],
+			[73.3, 52.2],
+			[73.2, 50.9],
+			[76.0, 50.9],
+			[78.7, 52.2],
+		],
+		strokeWidth: 0.7,
+		opacity: 0.9,
+	},
 ];
 
-/**
- * 3D faceted body — composed of triangular facets connecting the ridgeline
- * to the offset base. Each facet is a separate polygon for visible geometric depth.
- * This is the "poly shape" — no single flat back-face, but distinct triangular panels.
- */
-export const FACETS: ReadonlyArray<readonly [number, number][]> = [
-  // Left slope face
-  [[16, 70], [34, 20], [34, 34], [16, 84]],
-  // Center-left face
-  [[34, 20], [60, 54], [60, 68], [34, 34]],
-  // Center-right face
-  [[60, 54], [86, 14], [86, 28], [60, 68]],
-  // Right slope face
-  [[86, 14], [106, 70], [106, 84], [86, 28]],
+// ---- Ridge spine ----
+export const RIDGE = {
+	points: [
+		[8.0, 55.5],
+		[12.2, 57.2],
+		[16.3, 57.6],
+		[20.5, 58.8],
+		[24.6, 59.0],
+		[28.8, 59.2],
+		[33.0, 59.0],
+		[37.1, 58.2],
+		[41.3, 58.4],
+		[45.4, 57.3],
+		[49.6, 57.8],
+		[53.8, 57.7],
+		[57.9, 57.0],
+		[62.1, 57.7],
+		[66.2, 57.5],
+		[70.4, 57.5],
+		[74.6, 58.0],
+		[78.7, 57.4],
+		[82.9, 56.9],
+		[87.0, 56.7],
+		[91.2, 56.3],
+		[95.4, 56.3],
+		[99.5, 56.0],
+		[103.7, 55.1],
+		[107.8, 55.4],
+		[112.0, 55.4],
+	],
+	strokeWidth: 2.4,
+	opacity: 0.92,
+};
+
+// ---- Spur/erosion lines ----
+export const SPURS: ReadonlyArray<{
+	x1: number;
+	y1: number;
+	x2: number;
+	y2: number;
+}> = [
+	{ x1: 8.0, y1: 56.0, x2: 8.686933649003764, y2: 40.20343216092236 },
+	{ x1: 8.0, y1: 56.0, x2: 13.991651696035035, y2: 68.04520366991021 },
+	{
+		x1: 24.64,
+		y1: 58.721860323323796,
+		x2: 18.73175941928844,
+		y2: 44.171654099687935,
+	},
+	{
+		x1: 24.64,
+		y1: 58.721860323323796,
+		x2: 28.43470349988619,
+		y2: 71.84712492244694,
+	},
+	{
+		x1: 41.28,
+		y1: 58.06838171046689,
+		x2: 40.724309069053795,
+		y2: 51.006184851182006,
+	},
+	{
+		x1: 41.28,
+		y1: 58.06838171046689,
+		x2: 43.842500800162796,
+		y2: 69.3376166199639,
+	},
+	{
+		x1: 57.92,
+		y1: 57.29009788183,
+		x2: 58.085337970507226,
+		y2: 45.22914256581458,
+	},
+	{
+		x1: 57.92,
+		y1: 57.29009788183,
+		x2: 57.14295198886743,
+		y2: 65.72112407446281,
+	},
+	{
+		x1: 74.56,
+		y1: 57.721132836095116,
+		x2: 76.6791084101009,
+		y2: 49.44076836366871,
+	},
+	{
+		x1: 74.56,
+		y1: 57.721132836095116,
+		x2: 72.10866255296825,
+		y2: 62.096448990916336,
+	},
+	{
+		x1: 91.2,
+		y1: 56.47292188272741,
+		x2: 94.16320476202594,
+		y2: 45.48080140909889,
+	},
+	{
+		x1: 91.2,
+		y1: 56.47292188272741,
+		x2: 88.82564442003213,
+		y2: 67.90654011773573,
+	},
+	{
+		x1: 107.84,
+		y1: 55.25594943392139,
+		x2: 103.08222048971531,
+		y2: 46.86930297684941,
+	},
+	{
+		x1: 107.84,
+		y1: 55.25594943392139,
+		x2: 110.06145857901657,
+		y2: 66.00698014219711,
+	},
 ];
 
+// ---- Summit markers ----
+export const PEAKS: ReadonlyArray<Point> = [
+	[45, 52],
+	[75, 53],
+];
+
+// ---- Service IDs ----
 export const SERVICES = [
-  "beskid-core",
-  "auth",
-  "platform-spec",
-  "learn",
-  "website",
-  "tracker",
-  "pckg",
-  "nexus",
+	"beskid-core",
+	"auth",
+	"platform-spec",
+	"learn",
+	"website",
+	"tracker",
+	"pckg",
+	"nexus",
 ] as const;
-
 export type ServiceId = (typeof SERVICES)[number];
 
 export const SERVICE_LABELS: Record<ServiceId, string> = {
-  "beskid-core": "Beskid Core",
-  auth: "Beskid Auth",
-  "platform-spec": "Platform Spec",
-  learn: "Beskid Learn",
-  website: "Beskid Website",
-  tracker: "Beskid Tracker",
-  pckg: "Beskid Package Registry",
-  nexus: "Beskid Nexus",
+	"beskid-core": "Beskid Core",
+	auth: "Beskid Auth",
+	"platform-spec": "Platform Spec",
+	learn: "Beskid Learn",
+	website: "Beskid Website",
+	tracker: "Beskid Tracker",
+	pckg: "Beskid Package Registry",
+	nexus: "Beskid Nexus",
 };
 
-/** Short labels for compact text variants. */
-export const SERVICE_SHORT: Record<ServiceId, string> = {
-  "beskid-core": "beskid core",
-  auth: "beskid auth",
-  "platform-spec": "beskid spec",
-  learn: "beskid learn",
-  website: "beskid site",
-  tracker: "beskid track",
-  pckg: "beskid pckg",
-  nexus: "beskid nexus",
-};
+export const LOGO_VARIANTS = [
+	"icon",
+	"logo-stacked",
+	"logo-horizontal",
+	"logo-dark",
+] as const;
+export type LogoVariant = (typeof LOGO_VARIANTS)[number];

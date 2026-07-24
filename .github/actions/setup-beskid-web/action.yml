@@ -6,10 +6,6 @@ inputs:
     description: Bun version for oven-sh/setup-bun
     required: false
     default: "1.3.14"
-  node-auth-token:
-    description: Optional GitHub Packages token (defaults to the workflow token if empty).
-    required: false
-    default: ""
 
 runs:
   using: composite
@@ -46,6 +42,4 @@ runs:
 
     - name: Install workspace dependencies
       shell: bash
-      env:
-        NODE_AUTH_TOKEN: ${{ inputs.node-auth-token != '' && inputs.node-auth-token || github.token }}
       run: pnpm install --frozen-lockfile

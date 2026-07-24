@@ -1,6 +1,5 @@
-import { jwtVerify } from "jose";
-
 import { AUTH_HUB_ISSUER, type AuthAppId } from "@beskid/auth-client";
+import { jwtVerify } from "jose";
 
 import { getServiceTokenForApp } from "#/server/repositories/paired-apps";
 import { getGithubTokenForSession } from "#/server/repositories/user-sessions";
@@ -32,9 +31,7 @@ async function resolveHubUserSession(
 
 	try {
 		const unverified = JSON.parse(
-			Buffer.from(hubUserToken.split(".")[1] ?? "", "base64url").toString(
-				"utf8",
-			),
+			Buffer.from(hubUserToken.split(".")[1] ?? "", "base64url").toString("utf8"),
 		) as { app?: string; sid?: string };
 		appId = unverified.app;
 		sessionId = unverified.sid;
@@ -94,7 +91,10 @@ export async function proxyGitHubApi(
 		forwardHeaders.append(key, value);
 	}
 	forwardHeaders.set("Authorization", `Bearer ${githubToken}`);
-	forwardHeaders.set("Accept", forwardHeaders.get("Accept") ?? "application/vnd.github+json");
+	forwardHeaders.set(
+		"Accept",
+		forwardHeaders.get("Accept") ?? "application/vnd.github+json",
+	);
 	forwardHeaders.set("X-GitHub-Api-Version", "2022-11-28");
 	forwardHeaders.set("User-Agent", "beskid-auth-hub-github-proxy");
 

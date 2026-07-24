@@ -1,8 +1,8 @@
 import {
+	createRootRoute,
 	HeadContent,
 	Outlet,
 	Scripts,
-	createRootRoute,
 } from "@tanstack/react-router";
 
 import { RootSpecRouteError } from "#/components/spec-route-error";

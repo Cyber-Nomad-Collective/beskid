@@ -36,7 +36,9 @@ export const Route = createFileRoute("/settings/auth/login")({
 function LoginPage() {
 	const { signInHref, error } = Route.useLoaderData();
 	const search = Route.useSearch();
-	const nextParam = search.next ? `?next=${encodeURIComponent(search.next)}` : "";
+	const nextParam = search.next
+		? `?next=${encodeURIComponent(search.next)}`
+		: "";
 
 	return (
 		<div className="relative flex min-h-screen items-center justify-center p-8">

@@ -52,7 +52,7 @@ ensure_web_common_install() {
   if [[ ! -d "${WEB_COMMON}/node_modules" ]] && [[ ! -d "${WEB_COMMON}/packages/beskid-ui-react/node_modules" ]]; then
     echo "==> shared-ui-nexus-gate: installing beskid_web_common deps" >&2
     pnpm install --dir="${WEB_COMMON}" --frozen-lockfile || die_prereq \
-      "pnpm install failed in beskid_web_common. Fix lockfile/registry auth (NODE_AUTH_TOKEN for GitHub Packages if needed), then retry."
+      "pnpm install failed in beskid_web_common. Fix lockfile, then retry."
   fi
 }
 

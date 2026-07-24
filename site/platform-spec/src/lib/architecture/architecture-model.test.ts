@@ -1,13 +1,12 @@
 import { describe, expect, it } from "vitest";
-
+import {
+	type ArchitectureManifest,
+	resolveArchitectureModel,
+} from "#/lib/architecture/architecture-model";
 import {
 	BuildTraversal,
 	CompilerArchitectureManifest,
 } from "#/lib/architecture/compiler-architecture";
-import {
-	resolveArchitectureModel,
-	type ArchitectureManifest,
-} from "#/lib/architecture/architecture-model";
 
 const catalogEntries = [
 	{
@@ -18,16 +17,20 @@ const catalogEntries = [
 ] as const;
 
 function catalogForManifest() {
-	return [...new Set(CompilerArchitectureManifest.nodes.flatMap((node) => node.specKeys))].map(
-		(capability) => ({
-			capability,
-			href: `/platform-spec/capabilities/${capability}/`,
-			title: capability,
-		}),
-	);
+	return [
+		...new Set(
+			CompilerArchitectureManifest.nodes.flatMap((node) => node.specKeys),
+		),
+	].map((capability) => ({
+		capability,
+		href: `/platform-spec/capabilities/${capability}/`,
+		title: capability,
+	}));
 }
 
-function manifest(overrides: Partial<ArchitectureManifest> = {}): ArchitectureManifest {
+function manifest(
+	overrides: Partial<ArchitectureManifest> = {},
+): ArchitectureManifest {
 	return {
 		groups: [{ id: "test", label: "Test", description: "Test group", order: 0 }],
 		nodes: [
@@ -63,7 +66,11 @@ function manifest(overrides: Partial<ArchitectureManifest> = {}): ArchitectureMa
 				state: "current",
 			},
 		],
-		traversals: { build: ["source", "output"], ide: ["source"], "spec-to-code": ["source"] },
+		traversals: {
+			build: ["source", "output"],
+			ide: ["source"],
+			"spec-to-code": ["source"],
+		},
 		...overrides,
 	};
 }
@@ -108,7 +115,8 @@ describe("architecture model", () => {
 		expect(model.nodesById.source.specLinks).toEqual([
 			{
 				capability: "compiler--build-pipeline--stage-ordering",
-				href: "/platform-spec/capabilities/compiler--build-pipeline--stage-ordering/",
+				href:
+					"/platform-spec/capabilities/compiler--build-pipeline--stage-ordering/",
 				title: "Stage ordering",
 				available: true,
 			},
@@ -119,7 +127,11 @@ describe("architecture model", () => {
 		const model = resolveArchitectureModel(manifest(), catalogEntries);
 		expect(model.adjacency.source).toEqual(["output"]);
 		expect(model.adjacency.output).toEqual(["source"]);
-		expect(model.edges[0]).toMatchObject({ kind: "transforms", from: "source", to: "output" });
+		expect(model.edges[0]).toMatchObject({
+			kind: "transforms",
+			from: "source",
+			to: "output",
+		});
 	});
 
 	it("rejects manifests with an unknown traversal ID", () => {
@@ -145,19 +157,30 @@ describe("architecture model", () => {
 	});
 
 	it("provides the complete canonical AOT build traversal", () => {
-		const model = resolveArchitectureModel(CompilerArchitectureManifest, catalogForManifest());
+		const model = resolveArchitectureModel(
+			CompilerArchitectureManifest,
+			catalogForManifest(),
+		);
 		expect(model.traversals.build).toEqual(BuildTraversal);
 		expect(model.traversals.build).toHaveLength(13);
 	});
 
 	it("keeps typed-HIR and Rust runtime compatibility nodes visibly transitional", () => {
-		const model = resolveArchitectureModel(CompilerArchitectureManifest, catalogForManifest());
+		const model = resolveArchitectureModel(
+			CompilerArchitectureManifest,
+			catalogForManifest(),
+		);
 		expect(model.nodesById["typed-hir-compatibility"].state).toBe("transitional");
-		expect(model.nodesById["rust-runtime-host-compatibility"].state).toBe("retiring");
+		expect(model.nodesById["rust-runtime-host-compatibility"].state).toBe(
+			"retiring",
+		);
 	});
 
 	it("connects every consecutive step in each named traversal", () => {
-		const model = resolveArchitectureModel(CompilerArchitectureManifest, catalogForManifest());
+		const model = resolveArchitectureModel(
+			CompilerArchitectureManifest,
+			catalogForManifest(),
+		);
 		for (const traversal of Object.values(model.traversals)) {
 			for (let index = 0; index < traversal.length - 1; index += 1) {
 				expect(model.adjacency[traversal[index]!]).toContain(traversal[index + 1]);
@@ -166,7 +189,10 @@ describe("architecture model", () => {
 	});
 
 	it("traces specification evidence through the complete verified lowering chain", () => {
-		const model = resolveArchitectureModel(CompilerArchitectureManifest, catalogForManifest());
+		const model = resolveArchitectureModel(
+			CompilerArchitectureManifest,
+			catalogForManifest(),
+		);
 		expect(model.traversals["spec-to-code"]).toEqual([
 			"openspec",
 			"openspec-catalog",
@@ -185,14 +211,22 @@ describe("architecture model", () => {
 	});
 
 	it("uses checkout paths for external package and editor evidence", () => {
-		const model = resolveArchitectureModel(CompilerArchitectureManifest, catalogForManifest());
+		const model = resolveArchitectureModel(
+			CompilerArchitectureManifest,
+			catalogForManifest(),
+		);
 		expect(model.nodesById.pckg.sourcePaths).toEqual(["pckg"]);
 		expect(model.nodesById["vs-code"].sourcePaths).toEqual(["beskid_vscode"]);
-		expect(model.nodesById["tree-sitter"].sourcePaths).toEqual(["beskid_treesitter"]);
+		expect(model.nodesById["tree-sitter"].sourcePaths).toEqual([
+			"beskid_treesitter",
+		]);
 	});
 
 	it("connects direct compiler boundary and compatibility nodes", () => {
-		const model = resolveArchitectureModel(CompilerArchitectureManifest, catalogForManifest());
+		const model = resolveArchitectureModel(
+			CompilerArchitectureManifest,
+			catalogForManifest(),
+		);
 		const boundaryIds = [
 			"bsol-manifest",
 			"pckg",
@@ -205,6 +239,7 @@ describe("architecture model", () => {
 			"rust-runtime-host-compatibility",
 			"cli",
 		] as const;
-		for (const nodeId of boundaryIds) expect(model.adjacency[nodeId]).not.toHaveLength(0);
+		for (const nodeId of boundaryIds)
+			expect(model.adjacency[nodeId]).not.toHaveLength(0);
 	});
 });

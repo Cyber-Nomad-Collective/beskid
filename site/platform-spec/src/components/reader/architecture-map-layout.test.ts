@@ -1,27 +1,81 @@
-import { describe, expect, it } from "vitest";
 import { Position } from "@xyflow/react";
+import { describe, expect, it } from "vitest";
 
 import {
 	deriveArchitectureNeighborhood,
 	layoutArchitectureMap,
 } from "#/components/reader/architecture-map-layout";
 import {
-	resolveArchitectureModel,
 	type ArchitectureManifest,
+	resolveArchitectureModel,
 } from "#/lib/architecture/architecture-model";
 
 const manifest: ArchitectureManifest = {
-	groups: [{ id: "compiler", label: "Compiler", description: "Compiler graph", order: 0 }],
+	groups: [
+		{
+			id: "compiler",
+			label: "Compiler",
+			description: "Compiler graph",
+			order: 0,
+		},
+	],
 	nodes: [
-		{ id: "source", label: "Source", description: "Input", group: "compiler", kind: "source", state: "current", specKeys: [], sourcePaths: ["compiler"] },
-		{ id: "typed", label: "Typed program", description: "Typed IR", group: "compiler", kind: "representation", state: "current", specKeys: [], sourcePaths: ["compiler"] },
-		{ id: "artifact", label: "Artifact", description: "Output", group: "compiler", kind: "artifact", state: "current", specKeys: [], sourcePaths: ["compiler"] },
+		{
+			id: "source",
+			label: "Source",
+			description: "Input",
+			group: "compiler",
+			kind: "source",
+			state: "current",
+			specKeys: [],
+			sourcePaths: ["compiler"],
+		},
+		{
+			id: "typed",
+			label: "Typed program",
+			description: "Typed IR",
+			group: "compiler",
+			kind: "representation",
+			state: "current",
+			specKeys: [],
+			sourcePaths: ["compiler"],
+		},
+		{
+			id: "artifact",
+			label: "Artifact",
+			description: "Output",
+			group: "compiler",
+			kind: "artifact",
+			state: "current",
+			specKeys: [],
+			sourcePaths: ["compiler"],
+		},
 	],
 	edges: [
-		{ id: "source-to-typed", from: "source", to: "typed", kind: "transforms", label: "Parses", description: "Produces typed IR", state: "current" },
-		{ id: "typed-to-artifact", from: "typed", to: "artifact", kind: "transforms", label: "Lowers", description: "Produces artifact", state: "current" },
+		{
+			id: "source-to-typed",
+			from: "source",
+			to: "typed",
+			kind: "transforms",
+			label: "Parses",
+			description: "Produces typed IR",
+			state: "current",
+		},
+		{
+			id: "typed-to-artifact",
+			from: "typed",
+			to: "artifact",
+			kind: "transforms",
+			label: "Lowers",
+			description: "Produces artifact",
+			state: "current",
+		},
 	],
-	traversals: { build: ["source", "typed", "artifact"], ide: ["source"], "spec-to-code": ["source", "typed"] },
+	traversals: {
+		build: ["source", "typed", "artifact"],
+		ide: ["source"],
+		"spec-to-code": ["source", "typed"],
+	},
 };
 
 const model = resolveArchitectureModel(manifest, []);
@@ -33,11 +87,15 @@ describe("architecture map layout", () => {
 
 		expect(first.nodes).toEqual(second.nodes);
 		const memberNodes = first.nodes.filter((n) => n.type === "architecture");
-		expect(memberNodes.every((node) => node.width === 232 && node.height === 104)).toBe(true);
-		expect(first.nodes.find((node) => node.id === "source")!.position.y).toBeLessThan(
+		expect(
+			memberNodes.every((node) => node.width === 232 && node.height === 104),
+		).toBe(true);
+		expect(
+			first.nodes.find((node) => node.id === "source")!.position.y,
+		).toBeLessThan(first.nodes.find((node) => node.id === "typed")!.position.y);
+		expect(
 			first.nodes.find((node) => node.id === "typed")!.position.y,
-		);
-		expect(first.nodes.find((node) => node.id === "typed")!.position.y).toBeLessThan(
+		).toBeLessThan(
 			first.nodes.find((node) => node.id === "artifact")!.position.y,
 		);
 	});
@@ -78,12 +136,16 @@ describe("architecture map layout", () => {
 			expect(edge.animated).toBe(true);
 			expect(edge.style).toMatchObject({ opacity: 1, strokeWidth: 2.5 });
 		}
-		expect(traversal.edges.find((edge) => edge.id === "source-to-typed")).toMatchObject({
+		expect(
+			traversal.edges.find((edge) => edge.id === "source-to-typed"),
+		).toMatchObject({
 			selected: true,
 			animated: true,
 			style: { opacity: 1, strokeWidth: 2.5 },
 		});
-		expect(traversal.edges.find((edge) => edge.id === "typed-to-artifact")).toMatchObject({
+		expect(
+			traversal.edges.find((edge) => edge.id === "typed-to-artifact"),
+		).toMatchObject({
 			selected: false,
 			animated: false,
 			style: { opacity: 0.35 },

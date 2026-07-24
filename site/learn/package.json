@@ -18,7 +18,7 @@
 		"sync:beskid-packages": "bash ../../scripts/sync-beskid-packages.sh site/learn"
 	},
 	"dependencies": {
-		"@beskid/ui-react": "^0.2.0",
+		"@beskid/ui-react": "file:../../beskid_web_common/packages/beskid-ui-react",
 		"@monaco-editor/react": "^4.7.0",
 		"@tanstack/react-router": "^1.114.0",
 		"@xterm/addon-fit": "^0.10.0",

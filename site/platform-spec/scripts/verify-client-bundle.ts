@@ -1,6 +1,6 @@
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
 
 const root = path.resolve(import.meta.dirname, "..");
 const assets = path.join(root, ".output/public/assets");
@@ -16,11 +16,7 @@ const forbidden =
 function main(): void {
 	const verify = spawnSync(
 		process.execPath,
-		[
-			"--import",
-			"tsx",
-			path.join(import.meta.dirname, "verify-build-assets.ts"),
-		],
+		["--import", "tsx", path.join(import.meta.dirname, "verify-build-assets.ts")],
 		{ stdio: "inherit", cwd: root },
 	);
 	if (verify.status !== 0) process.exit(verify.status ?? 1);

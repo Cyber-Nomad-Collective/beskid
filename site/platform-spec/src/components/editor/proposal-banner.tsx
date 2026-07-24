@@ -1,8 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import type { DraftChangeKind, DraftChangeNode, SpecLevel } from "#/server/memgraph/types";
+import { useState } from "react";
+import type {
+	DraftChangeKind,
+	DraftChangeNode,
+	SpecLevel,
+} from "#/server/memgraph/types";
 
 export interface ProposalBannerProps {
 	/** Existing draft (null when creating new). */
@@ -94,9 +98,7 @@ export function ProposalBanner({
 						<select
 							className="rounded-md border bg-background px-3 py-1.5"
 							value={changeKind}
-							onChange={(e) =>
-								onChangeKindChange(e.target.value as DraftChangeKind)
-							}
+							onChange={(e) => onChangeKindChange(e.target.value as DraftChangeKind)}
 							disabled={readOnly}
 						>
 							{(["create", "update", "delete"] as DraftChangeKind[]).map((kind) => (
@@ -150,7 +152,8 @@ export function ProposalBanner({
 
 				{draft ? (
 					<p className="text-xs text-muted-foreground">
-						Slug: <code className="font-mono">{draft.slug}</code> · Author: @{draft.authorLogin}
+						Slug: <code className="font-mono">{draft.slug}</code> · Author: @
+						{draft.authorLogin}
 						{draft.moderatorLogin ? ` · Moderator: @${draft.moderatorLogin}` : ""}
 					</p>
 				) : (

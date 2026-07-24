@@ -50,8 +50,6 @@ jobs:
       submodules: beskid_web_common
       setup-web: true
       command: bash scripts/ci/openspec-gate.sh
-    secrets:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
 
   conformance:
     uses: ./.github/workflows/reusable-quality.yml
@@ -60,8 +58,6 @@ jobs:
       submodules: beskid_web_common
       setup-web: true
       command: bash scripts/ci/conformance-gate.sh
-    secrets:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
 
   integration:
     uses: ./.github/workflows/reusable-quality.yml
@@ -71,8 +67,6 @@ jobs:
       setup-web: true
       timeout-minutes: 60
       command: bash scripts/ci/platform-integration-gate.sh
-    secrets:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
 
   security:
     uses: ./.github/workflows/reusable-quality.yml
@@ -88,8 +82,6 @@ jobs:
       setup-web: true
       timeout-minutes: 45
       command: bash scripts/ci/shared-ui-nexus-gate.sh
-    secrets:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
 
   image-site:
     # Delivery is intentionally decoupled from the quality gates (openspec,
@@ -107,11 +99,9 @@ jobs:
       context: .
       dockerfile: site/website/Dockerfile
       submodules: beskid_web_common
-      node-auth: true
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
       DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
@@ -131,11 +121,9 @@ jobs:
       context: .
       dockerfile: site/auth/Dockerfile
       submodules: beskid_web_common
-      node-auth: true
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
       DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
@@ -157,11 +145,9 @@ jobs:
       # The rust stage COPYs compiler/Cargo.toml, compiler/crates and
       # compiler/vendor, so the compiler submodule must be checked out.
       submodules: compiler beskid_bsol
-      node-auth: false
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
       DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
@@ -181,11 +167,9 @@ jobs:
       context: .
       dockerfile: site/platform-spec/Dockerfile
       submodules: beskid_web_common
-      node-auth: true
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
       DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
@@ -208,11 +192,9 @@ jobs:
       build-contexts: |
         web_common=./beskid_web_common
       submodules: beskid_tracker beskid_web_common
-      node-auth: true
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
       DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
@@ -236,11 +218,9 @@ jobs:
         openspec=./openspec
         web_common=./beskid_web_common
       submodules: beskid_nexus beskid_web_common
-      node-auth: true
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
       DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
@@ -262,7 +242,6 @@ jobs:
       context: .
       dockerfile: pckg/Dockerfile
       submodules: pckg beskid_web_common
-      node-auth: true
       # Hard gate: a failed pckg build/push fails the whole delivery. The
       # beskid-pckg GHCR package is owned by the sibling beskid_pckg repo, so
       # grant this repo Write on that package, or set org/repo secret GHCR_TOKEN
@@ -271,7 +250,6 @@ jobs:
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
       DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 

@@ -1,4 +1,9 @@
-import { createFileRoute, Link, redirect, useRouter } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	Link,
+	redirect,
+	useRouter,
+} from "@tanstack/react-router";
 import { z } from "zod";
 
 import { AuthHubSetupWizard } from "#/components/auth-hub-setup-wizard";

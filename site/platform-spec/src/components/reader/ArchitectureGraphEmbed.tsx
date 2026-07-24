@@ -4,19 +4,19 @@ import {
 	Background,
 	Controls,
 	Handle,
-	Position,
-	ReactFlow,
 	type Node,
 	type NodeProps,
+	Position,
+	ReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useMemo } from "react";
 
 import {
-	EdgeKindColors,
-	layoutArchitectureMap,
 	type ArchitectureMapGroupData,
 	type ArchitectureMapNodeData,
+	EdgeKindColors,
+	layoutArchitectureMap,
 } from "#/components/reader/architecture-map-layout";
 import type {
 	ArchitectureCatalogEntry,
@@ -38,15 +38,31 @@ function EmbedNodeCard({ data }: NodeProps<Node<ArchitectureMapNodeData>>) {
 				data.selected ? "border-primary ring-1 ring-primary/50" : "border-border",
 			].join(" ")}
 		>
-			<Handle type="target" position={Position.Top} isConnectable={false} aria-hidden className="!h-0 !w-0 !border-0 !bg-transparent !opacity-0" />
-			<span className="text-[9px] font-semibold uppercase text-muted-foreground">{data.node.kind}</span>
+			<Handle
+				type="target"
+				position={Position.Top}
+				isConnectable={false}
+				aria-hidden
+				className="!h-0 !w-0 !border-0 !bg-transparent !opacity-0"
+			/>
+			<span className="text-[9px] font-semibold uppercase text-muted-foreground">
+				{data.node.kind}
+			</span>
 			<strong className="mt-0.5 block truncate">{data.node.label}</strong>
-			<Handle type="source" position={Position.Bottom} isConnectable={false} aria-hidden className="!h-0 !w-0 !border-0 !bg-transparent !opacity-0" />
+			<Handle
+				type="source"
+				position={Position.Bottom}
+				isConnectable={false}
+				aria-hidden
+				className="!h-0 !w-0 !border-0 !bg-transparent !opacity-0"
+			/>
 		</div>
 	);
 }
 
-function EmbedGroupContainer({ data }: NodeProps<Node<ArchitectureMapGroupData>>) {
+function EmbedGroupContainer({
+	data,
+}: NodeProps<Node<ArchitectureMapGroupData>>) {
 	return (
 		<div className="relative h-full w-full rounded-lg border border-border/50 bg-muted/20">
 			<div className="absolute left-2 top-1 rounded bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase text-muted-foreground">
@@ -56,7 +72,10 @@ function EmbedGroupContainer({ data }: NodeProps<Node<ArchitectureMapGroupData>>
 	);
 }
 
-const nodeTypes = { architecture: EmbedNodeCard, architectureGroup: EmbedGroupContainer };
+const nodeTypes = {
+	architecture: EmbedNodeCard,
+	architectureGroup: EmbedGroupContainer,
+};
 
 /**
  * Compact, embeddable architecture graph for inline spec display.
@@ -72,10 +91,7 @@ export function ArchitectureGraphEmbed({
 		[manifest, catalog],
 	);
 
-	const { nodes, edges } = useMemo(
-		() => layoutArchitectureMap(model),
-		[model],
-	);
+	const { nodes, edges } = useMemo(() => layoutArchitectureMap(model), [model]);
 
 	return (
 		<div className="rounded-lg border border-border" style={{ height }}>

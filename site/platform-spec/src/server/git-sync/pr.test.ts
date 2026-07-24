@@ -11,12 +11,15 @@ process.env.SESSION_SECRET ??= "platform-spec-test-session-secret-32chars";
 process.env.GITHUB_REPO_OWNER ??= "Cyber-Nomad-Collective";
 process.env.GITHUB_REPO_NAME ??= "beskid";
 
-const { buildOpenSpecChangeFiles, createDraftPullRequest } = await import("./pr");
+const { buildOpenSpecChangeFiles, createDraftPullRequest } = await import(
+	"./pr"
+);
 
 const roots: string[] = [];
 
 afterEach(() => {
-	for (const root of roots.splice(0)) fs.rmSync(root, { recursive: true, force: true });
+	for (const root of roots.splice(0))
+		fs.rmSync(root, { recursive: true, force: true });
 	delete process.env.OPENSPEC_ROOT;
 });
 
@@ -109,7 +112,9 @@ function octokit(openPr?: { number: number; html_url: string }) {
 	return {
 		users: { getAuthenticated: async () => ({ data: { login: "maintainer" } }) },
 		repos: {
-			getCollaboratorPermissionLevel: async () => ({ data: { permission: "write" } }),
+			getCollaboratorPermissionLevel: async () => ({
+				data: { permission: "write" },
+			}),
 			getBranch: async () => ({ data: { commit: { sha: "base-sha" } } }),
 		},
 		git: {
@@ -172,12 +177,7 @@ describe("createDraftPullRequest", () => {
 	it("rejects catalog revision conflicts", async () => {
 		process.env.OPENSPEC_ROOT = fixtureCatalog("catalog-current");
 		await expect(
-			createDraftPullRequest(
-				octokit() as never,
-				bundle(),
-				"main",
-				"old",
-			),
+			createDraftPullRequest(octokit() as never, bundle(), "main", "old"),
 		).rejects.toThrow("catalog revision conflict");
 	});
 

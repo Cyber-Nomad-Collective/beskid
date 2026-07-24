@@ -66,12 +66,7 @@ export const Route = createFileRoute("/api/v1/admin/setup")({
 				);
 				const adminGitHubLogins =
 					incomingAdmins.length > 0
-						? [
-								...new Set([
-									...existing.adminGitHubLogins,
-									...incomingAdmins,
-								]),
-							]
+						? [...new Set([...existing.adminGitHubLogins, ...incomingAdmins])]
 						: existing.adminGitHubLogins;
 
 				await writeAuthConfig({

@@ -1,6 +1,8 @@
+import {
+	getObservability,
+	initObservability,
+} from "@beskid/server-observability";
 import { createMiddleware } from "@tanstack/react-start";
-
-import { getObservability, initObservability } from "@beskid/server-observability";
 
 initObservability({ service: "beskid-auth" });
 

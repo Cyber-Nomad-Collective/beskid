@@ -1,7 +1,4 @@
-import {
-	buildHandoffFinishUrl,
-	issueHandoffToken,
-} from "@beskid/auth-client";
+import { buildHandoffFinishUrl, issueHandoffToken } from "@beskid/auth-client";
 
 import {
 	getAppById,
@@ -9,12 +6,12 @@ import {
 	isOAuthConfigured,
 	resolveOAuthConfig,
 } from "#/server/config-store";
-import { promoteBootstrapAdminIfNeeded } from "#/server/hub-admin-bootstrap.server";
 import {
 	buildGitHubAuthorizeUrl,
 	exchangeGitHubCode,
 	fetchGitHubUser,
 } from "#/server/github-oauth";
+import { promoteBootstrapAdminIfNeeded } from "#/server/hub-admin-bootstrap.server";
 import {
 	buildOAuthState,
 	clearOAuthStateCookieHeader,

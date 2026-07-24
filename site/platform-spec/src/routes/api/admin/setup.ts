@@ -29,10 +29,7 @@ export const Route = createFileRoute("/api/admin/setup")({
 
 				const result = await submitAuthHubSetup(request, parsed.data);
 				if ("error" in result) {
-					return Response.json(
-						{ error: result.error },
-						{ status: result.status },
-					);
+					return Response.json({ error: result.error }, { status: result.status });
 				}
 				return Response.json({ ok: true });
 			},

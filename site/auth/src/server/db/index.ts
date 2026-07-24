@@ -1,15 +1,11 @@
-import fs from "node:fs/promises";
 import { mkdirSync } from "node:fs";
+import fs from "node:fs/promises";
 
 import type { AuthConfigFile } from "#/server/config-store-types";
+import { decryptSecret, encryptSecret, hashSecret } from "#/server/crypto";
 import { authDataDir, authDbPath, legacyConfigPath } from "#/server/db/paths";
 import { migrateAuthSchema } from "#/server/db/schema";
 import { type Database, openSqlite } from "#/server/db/sqlite";
-import {
-	decryptSecret,
-	encryptSecret,
-	hashSecret,
-} from "#/server/crypto";
 
 let dbInstance: Database | null = null;
 let legacyImported = false;
@@ -56,11 +52,7 @@ export async function ensureLegacyConfigImported(): Promise<void> {
 	}
 	if (file.githubClientSecret) {
 		try {
-			set.run(
-				"github_client_secret",
-				encryptSecret(file.githubClientSecret),
-				now,
-			);
+			set.run("github_client_secret", encryptSecret(file.githubClientSecret), now);
 		} catch {
 			set.run("github_client_secret", file.githubClientSecret, now);
 		}
@@ -76,16 +68,18 @@ export async function ensureLegacyConfigImported(): Promise<void> {
 		if (!app.enabled) continue;
 		const legacySecret = process.env.AUTH_HUB_SECRET?.trim();
 		if (!legacySecret || legacySecret.length < 32) continue;
-		db.prepare(
-			`INSERT OR REPLACE INTO paired_apps
+		db
+			.prepare(
+				`INSERT OR REPLACE INTO paired_apps
 			 (id, public_url, handoff_secret_hash, status, paired_at, approved_by_login)
 			 VALUES (?, ?, ?, 'active', ?, 'legacy-import')`,
-		).run(
-			app.id,
-			app.publicUrl.replace(/\/$/, ""),
-			hashSecret(legacySecret),
-			now,
-		);
+			)
+			.run(
+				app.id,
+				app.publicUrl.replace(/\/$/, ""),
+				hashSecret(legacySecret),
+				now,
+			);
 	}
 }
 

@@ -2,7 +2,10 @@
 
 import { MessageSquareText } from "lucide-react";
 
-import { useSpecViewMode, type SpecViewMode } from "#/components/reader/spec-view-mode";
+import {
+	type SpecViewMode,
+	useSpecViewMode,
+} from "#/components/reader/spec-view-mode";
 import { ThemeToggle } from "#/components/theme-toggle";
 
 const MODES: Array<{ id: SpecViewMode; label: string }> = [

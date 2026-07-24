@@ -31,22 +31,31 @@ function normalizeLink(link: string): string {
 
 function isNarrativeException(markdown: string): boolean {
 	const frontmatter = markdown.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
-	return /^standardTraceability:\s*["']?narrative["']?\s*$/m.test(frontmatter?.[1] ?? "");
+	return /^standardTraceability:\s*["']?narrative["']?\s*$/m.test(
+		frontmatter?.[1] ?? "",
+	);
 }
 
 function isTechnicalBookDocument(documentPath: string): boolean {
 	const relativePath = documentPath.slice(bookPathPrefix.length);
-	return technicalBookDirectories.some((directory) => relativePath.startsWith(`${directory}/`));
+	return technicalBookDirectories.some((directory) =>
+		relativePath.startsWith(`${directory}/`),
+	);
 }
 
 function bookRoute(documentPath: string): string {
-	const relativePath = documentPath.slice(bookPathPrefix.length).replace(/\.(md|mdx)$/, "");
+	const relativePath = documentPath
+		.slice(bookPathPrefix.length)
+		.replace(/\.(md|mdx)$/, "");
 	const segments = relativePath.split("/");
 	if (segments.at(-1) === "index") segments.pop();
 	return `/book/${segments.join("/")}/`;
 }
 
-function capabilityForLink(entries: UnknownRecord[], link: string): UnknownRecord | undefined {
+function capabilityForLink(
+	entries: UnknownRecord[],
+	link: string,
+): UnknownRecord | undefined {
 	const normalizedLink = normalizeLink(link);
 	return entries.find((entry) => {
 		const links = [
@@ -60,19 +69,27 @@ function capabilityForLink(entries: UnknownRecord[], link: string): UnknownRecor
 
 export function deriveBookLinks(catalog: Catalog): Record<string, string[]> {
 	const linksByCapability = new Map<string, Set<string>>();
-	for (const entry of catalog.entries) linksByCapability.set(String(entry.capability), new Set());
+	for (const entry of catalog.entries)
+		linksByCapability.set(String(entry.capability), new Set());
 
 	for (const document of catalog.documents) {
 		const documentPath = String(document.path ?? "");
 		if (!documentPath.startsWith(bookPathPrefix)) continue;
-		for (const standardLink of (document.standardLinks as string[] | undefined) ?? []) {
+		for (const standardLink of (document.standardLinks as string[] | undefined) ??
+			[]) {
 			const capability = capabilityForLink(catalog.entries, standardLink);
-			if (capability) linksByCapability.get(String(capability.capability))?.add(bookRoute(documentPath));
+			if (capability)
+				linksByCapability
+					.get(String(capability.capability))
+					?.add(bookRoute(documentPath));
 		}
 	}
 
 	return Object.fromEntries(
-		[...linksByCapability.entries()].map(([capability, links]) => [capability, [...links].sort()]),
+		[...linksByCapability.entries()].map(([capability, links]) => [
+			capability,
+			[...links].sort(),
+		]),
 	);
 }
 
@@ -86,17 +103,26 @@ export function validateBookTraceability({
 	const errors: string[] = [];
 	for (const document of catalog.documents) {
 		const documentPath = String(document.path ?? "");
-		if (!documentPath.startsWith(bookPathPrefix) || !isTechnicalBookDocument(documentPath)) continue;
+		if (
+			!documentPath.startsWith(bookPathPrefix) ||
+			!isTechnicalBookDocument(documentPath)
+		)
+			continue;
 
-		const sourcePath = path.join(bookRoot, documentPath.slice(bookPathPrefix.length));
+		const sourcePath = path.join(
+			bookRoot,
+			documentPath.slice(bookPathPrefix.length),
+		);
 		const markdown = readFileSync(sourcePath, "utf8");
 		if (isNarrativeException(markdown)) continue;
 
-		const hasResolvableLink = ((document.standardLinks as string[] | undefined) ?? []).some((link) =>
-			Boolean(capabilityForLink(catalog.entries, link)),
-		);
+		const hasResolvableLink = (
+			(document.standardLinks as string[] | undefined) ?? []
+		).some((link) => Boolean(capabilityForLink(catalog.entries, link)));
 		if (!hasResolvableLink) {
-			errors.push(`Technical Book document lacks a resolvable canonical standard link: ${documentPath}`);
+			errors.push(
+				`Technical Book document lacks a resolvable canonical standard link: ${documentPath}`,
+			);
 		}
 	}
 
@@ -110,6 +136,10 @@ if (import.meta.main) {
 		bookRoot: path.join(repoRoot, bookPathPrefix),
 	});
 	if (result.errors.length > 0) throw new Error(result.errors.join("\n"));
-	const linkedCapabilities = Object.values(result.bookLinksByCapability).filter((links) => links.length > 0).length;
-	console.log(`Book traceability valid: ${linkedCapabilities} capabilities linked from the Book.`);
+	const linkedCapabilities = Object.values(result.bookLinksByCapability).filter(
+		(links) => links.length > 0,
+	).length;
+	console.log(
+		`Book traceability valid: ${linkedCapabilities} capabilities linked from the Book.`,
+	);
 }

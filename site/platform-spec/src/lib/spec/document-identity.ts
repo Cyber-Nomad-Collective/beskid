@@ -227,9 +227,7 @@ export function resolveCapabilityDocumentIdentity({
 }: CapabilityDocumentIdentityInput): SpecDocumentIdentity | null {
 	const declaredLevel = specLevel?.trim() ?? "";
 	if (declaredLevel === "domain" && !capability.startsWith("taxonomy--")) {
-		throw new Error(
-			`domain artifact must use taxonomy--<domain>: ${capability}`,
-		);
+		throw new Error(`domain artifact must use taxonomy--<domain>: ${capability}`);
 	}
 	if (declaredLevel === "area" && !capability.startsWith("taxonomy--")) {
 		throw new Error(
@@ -251,9 +249,7 @@ export function resolveCapabilityDocumentIdentity({
 	) {
 		return null;
 	}
-	return resolveDocumentIdentityFromPath(
-		`openspec/specs/${capability}/spec.md`,
-	);
+	return resolveDocumentIdentityFromPath(`openspec/specs/${capability}/spec.md`);
 }
 
 export function resolveDocumentIdentityFromPath(

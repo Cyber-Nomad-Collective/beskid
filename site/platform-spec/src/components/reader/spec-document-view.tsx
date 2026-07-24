@@ -43,7 +43,10 @@ export function SpecDocumentView({
 				dangerouslySetInnerHTML={{ __html: bodyHtml }}
 			/>
 			{trackerLinks.map((link) => (
-				<TrackerTaskEmbed key={`${link.standardId}:${link.catalogRevision}`} {...link} />
+				<TrackerTaskEmbed
+					key={`${link.standardId}:${link.catalogRevision}`}
+					{...link}
+				/>
 			))}
 		</article>
 	);

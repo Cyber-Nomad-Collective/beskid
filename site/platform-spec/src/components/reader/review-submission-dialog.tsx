@@ -1,10 +1,16 @@
 " use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
 import { FileText, Search, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import { createNavSearchResult, highlightTitle } from "#/components/reader/spec-nav-tree";
-import type { ReviewComment, ReviewDecision } from "#/components/reader/spec-review-provider";
+import {
+	createNavSearchResult,
+	highlightTitle,
+} from "#/components/reader/spec-nav-tree";
+import type {
+	ReviewComment,
+	ReviewDecision,
+} from "#/components/reader/spec-review-provider";
 import type { OpenSpecNavNode } from "#/lib/spec/domain-model";
 
 interface ReviewSubmissionDialogProps {
@@ -61,9 +67,7 @@ export function ReviewSubmissionDialog({
 
 	const searchResult = useMemo(
 		() =>
-			searchQuery.trim()
-				? createNavSearchResult(navTree, searchQuery)
-				: null,
+			searchQuery.trim() ? createNavSearchResult(navTree, searchQuery) : null,
 		[navTree, searchQuery],
 	);
 
@@ -135,15 +139,21 @@ export function ReviewSubmissionDialog({
 
 					{comments.length > 0 ? (
 						<div className="space-y-2">
-							<h3 className="text-sm font-medium">Inline comments ({comments.length})</h3>
+							<h3 className="text-sm font-medium">
+								Inline comments ({comments.length})
+							</h3>
 							<ul className="max-h-40 space-y-1.5 overflow-y-auto">
 								{comments.map((comment) => (
 									<li
 										key={comment.id}
 										className="rounded border border-border/60 bg-muted/30 p-2 text-xs"
 									>
-										<p className="font-mono text-[10px] text-muted-foreground">{comment.pageSlug}</p>
-										<blockquote className="mt-1 line-clamp-1 italic text-muted-foreground">&ldquo;{comment.selectedText.slice(0, 100)}&rdquo;</blockquote>
+										<p className="font-mono text-[10px] text-muted-foreground">
+											{comment.pageSlug}
+										</p>
+										<blockquote className="mt-1 line-clamp-1 italic text-muted-foreground">
+											&ldquo;{comment.selectedText.slice(0, 100)}&rdquo;
+										</blockquote>
 										<p className="mt-1">{comment.body}</p>
 									</li>
 								))}
@@ -152,7 +162,9 @@ export function ReviewSubmissionDialog({
 					) : null}
 
 					<div className="space-y-2">
-						<h3 className="text-sm font-medium">Search related specification content</h3>
+						<h3 className="text-sm font-medium">
+							Search related specification content
+						</h3>
 						<label className="relative block">
 							<span className="sr-only">Search</span>
 							<Search
@@ -164,8 +176,8 @@ export function ReviewSubmissionDialog({
 								onChange={(e) => setSearchQuery(e.target.value)}
 								placeholder="Search specification to find related content…"
 								className="w-full rounded-md border bg-background py-2 pr-3 pl-8 text-sm"
-						/>
-					</label>
+							/>
+						</label>
 						{searchResult ? (
 							<div className="max-h-48 overflow-y-auto rounded-lg border p-2">
 								{searchResult.matchCount > 0 ? (
@@ -223,14 +235,18 @@ function renderSearchResults(
 				<span>
 					{highlightTitle(node.title, query).map((range) =>
 						range.match ? (
-							<mark key={`${range.start}-${range.end}`} className="rounded bg-primary/20 px-0.5 text-inherit">
+							<mark
+								key={`${range.start}-${range.end}`}
+								className="rounded bg-primary/20 px-0.5 text-inherit"
+							>
 								{node.title.slice(range.start, range.end)}
 							</mark>
 						) : (
 							<span key={`${range.start}-${range.end}`}>
 								{node.title.slice(range.start, range.end)}
 							</span>
-						))}
+						),
+					)}
 				</span>
 			</a>
 		</li>,

@@ -81,7 +81,11 @@ function htmlToMarkdown(html: string): string {
 				return children;
 		}
 	};
-	return walk(doc.body).replace(/\n{3,}/g, "\n\n").trimEnd() + "\n";
+	return (
+		walk(doc.body)
+			.replace(/\n{3,}/g, "\n\n")
+			.trimEnd() + "\n"
+	);
 }
 
 export function OpenSpecMarkdownEditor({
@@ -153,7 +157,10 @@ export function OpenSpecMarkdownEditor({
 			</div>
 
 			{layoutValidation && layoutValidation.violations.length > 0 ? (
-				<ul className="space-y-1 rounded-md border border-amber-400/30 bg-amber-500/5 p-3 text-xs text-amber-100" aria-live="polite">
+				<ul
+					className="space-y-1 rounded-md border border-amber-400/30 bg-amber-500/5 p-3 text-xs text-amber-100"
+					aria-live="polite"
+				>
 					{layoutValidation.violations.map((violation) => (
 						<li key={`${violation.code}-${violation.heading ?? ""}`}>
 							{violation.message}
@@ -164,7 +171,11 @@ export function OpenSpecMarkdownEditor({
 
 			{tab === "visual" ? (
 				<div className="space-y-2">
-					<div className="flex flex-wrap gap-1" role="toolbar" aria-label="Formatting">
+					<div
+						className="flex flex-wrap gap-1"
+						role="toolbar"
+						aria-label="Formatting"
+					>
 						{(
 							[
 								["bold", () => editor?.chain().focus().toggleBold().run()],

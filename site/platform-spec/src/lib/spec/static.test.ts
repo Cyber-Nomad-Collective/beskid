@@ -114,9 +114,8 @@ describe("static seed workspace", () => {
 			]?.kind,
 		).toBe("article");
 		expect(
-			workspace.documents[
-				"platform-spec/capabilities/standard-content-authority"
-			]?.kind,
+			workspace.documents["platform-spec/capabilities/standard-content-authority"]
+				?.kind,
 		).toBe("legacy-capability");
 		expect(Object.keys(workspace.layouts.assignments)).toHaveLength(4);
 

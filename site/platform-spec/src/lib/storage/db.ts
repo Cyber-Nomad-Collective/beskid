@@ -1,9 +1,6 @@
 import "@tanstack/react-start/server-only";
 
-import {
-	ensurePlatformSpecDataDir,
-	settingsDbPath,
-} from "#/lib/storage/paths";
+import { ensurePlatformSpecDataDir, settingsDbPath } from "#/lib/storage/paths";
 import { migrateSchema } from "#/lib/storage/schema";
 import { openSqlite, type SqliteDatabase } from "#/lib/storage/sqlite";
 

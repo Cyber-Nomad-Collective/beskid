@@ -25,9 +25,7 @@ export const Route = createFileRoute("/_edit/edit/drafts/$id")({
 		feature: typeof search.feature === "string" ? search.feature : undefined,
 	}),
 	loader: async ({ params }) => {
-		const { loadDraftEditorCatalogFn } = await import(
-			"#/server/draft-editor"
-		);
+		const { loadDraftEditorCatalogFn } = await import("#/server/draft-editor");
 		const catalog = await loadDraftEditorCatalogFn();
 		if (params.id === "new") {
 			return {
@@ -101,12 +99,17 @@ function DraftContextEditorPage() {
 				setBundle(updated);
 				setSelectedId(updated.documentChanges.at(-1)?.id ?? null);
 			} catch (err) {
-				setError(
-					err instanceof Error ? err.message : "Could not prefill proposal",
-				);
+				setError(err instanceof Error ? err.message : "Could not prefill proposal");
 			}
 		})();
-	}, [prefillApplied, readOnly, search.area, search.capability, search.domain, search.feature]);
+	}, [
+		prefillApplied,
+		readOnly,
+		search.area,
+		search.capability,
+		search.domain,
+		search.feature,
+	]);
 
 	const selected =
 		bundle?.documentChanges.find((change) => change.id === selectedId) ?? null;

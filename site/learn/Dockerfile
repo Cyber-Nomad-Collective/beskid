@@ -7,8 +7,6 @@ RUN apk add --no-cache git
 
 COPY .npmrc ./
 COPY site/learn/package.json site/learn/pnpm-lock.yaml ./site/learn/
-ARG NODE_AUTH_TOKEN
-ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
 RUN npm install -g pnpm@10.17.1
 RUN pnpm --dir site/learn install --frozen-lockfile
 

@@ -1,8 +1,5 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
-
-import { Link } from "@tanstack/react-router";
 import {
 	BeskidHub,
 	Separator,
@@ -18,15 +15,18 @@ import {
 	SidebarTrigger,
 } from "@beskid/ui-react";
 
+import { Link } from "@tanstack/react-router";
+import { type ReactNode, useState } from "react";
+
 import { HighlightToolbar } from "#/components/reader/highlight-toolbar";
 import { ReaderTopBarActions } from "#/components/reader/reader-topbar-actions";
 import { ReviewBanner } from "#/components/reader/review-banner";
 import { ReviewSubmissionDialog } from "#/components/reader/review-submission-dialog";
 import { SpecNavRailContent } from "#/components/reader/spec-nav-rail";
 import {
+	nextCommentId,
 	SpecReviewProvider,
 	useSpecReview,
-	nextCommentId,
 } from "#/components/reader/spec-review-provider";
 import { SpecViewModeProvider } from "#/components/reader/spec-view-mode";
 import type { OpenSpecNavNode as NavTreeNode } from "#/server/openspec/reader";
@@ -37,7 +37,11 @@ interface ReaderChromeProps {
 	children: ReactNode;
 }
 
-export function ReaderChrome({ navTree, activeSlug, children }: ReaderChromeProps) {
+export function ReaderChrome({
+	navTree,
+	activeSlug,
+	children,
+}: ReaderChromeProps) {
 	return (
 		<SpecViewModeProvider>
 			<SpecReviewProvider>
@@ -55,7 +59,10 @@ export function ReaderChrome({ navTree, activeSlug, children }: ReaderChromeProp
 function ReaderSidebar({
 	navTree,
 	activeSlug,
-}: { navTree: NavTreeNode; activeSlug?: string }) {
+}: {
+	navTree: NavTreeNode;
+	activeSlug?: string;
+}) {
 	return (
 		<Sidebar collapsible="offcanvas" variant="sidebar">
 			<SidebarHeader className="border-b border-sidebar-border">
@@ -63,10 +70,7 @@ function ReaderSidebar({
 					<SidebarMenu className="min-w-0 flex-1">
 						<SidebarMenuItem>
 							<SidebarMenuButton size="lg" asChild className="mb-1">
-								<Link
-									to="/platform-spec/$"
-									params={{ _splat: "" }}
-								>
+								<Link to="/platform-spec/$" params={{ _splat: "" }}>
 									<img
 										src="/favicon.svg"
 										alt=""
@@ -87,18 +91,13 @@ function ReaderSidebar({
 				</div>
 			</SidebarHeader>
 			<SidebarContent>
-				<SpecNavRailContent
-					tree={navTree}
-					activeSlug={activeSlug}
-				/>
+				<SpecNavRailContent tree={navTree} activeSlug={activeSlug} />
 			</SidebarContent>
 			<SidebarFooter className="border-t border-sidebar-border">
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton asChild tooltip="Sign in">
-							<Link to="/settings/auth/login">
-								Login
-							</Link>
+							<Link to="/settings/auth/login">Login</Link>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
 				</SidebarMenu>
@@ -111,7 +110,11 @@ function ReaderInset({
 	navTree,
 	activeSlug,
 	children,
-}: { navTree: NavTreeNode; activeSlug?: string; children: ReactNode }) {
+}: {
+	navTree: NavTreeNode;
+	activeSlug?: string;
+	children: ReactNode;
+}) {
 	const {
 		reviewMode,
 		pendingReview,

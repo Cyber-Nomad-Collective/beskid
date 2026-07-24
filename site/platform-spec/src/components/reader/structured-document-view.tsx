@@ -35,7 +35,11 @@ export interface StructuredDocumentViewProps {
 }
 
 function bookGuideTitle(href: string): string {
-	const slug = href.replace(/^\/+|\/+$/g, "").split("/").at(-1) ?? href;
+	const slug =
+		href
+			.replace(/^\/+|\/+$/g, "")
+			.split("/")
+			.at(-1) ?? href;
 	return slug
 		.replace(/^\d+-/, "")
 		.replace(/-/g, " ")
@@ -78,8 +82,7 @@ export function StructuredDocumentView({
 				if (!res.ok) {
 					const payload = await res.json().catch(() => ({}));
 					throw new Error(
-						payload?.error ??
-							`failed to load architecture graph (${res.status})`,
+						payload?.error ?? `failed to load architecture graph (${res.status})`,
 					);
 				}
 				return res.json();
@@ -110,17 +113,14 @@ export function StructuredDocumentView({
 				Failed to load architecture graph: {graphError}
 			</p>
 		) : (
-			<p className="text-sm text-muted-foreground">
-				Loading architecture graph…
-			</p>
+			<p className="text-sm text-muted-foreground">Loading architecture graph…</p>
 		)
 	) : null;
 
 	const missingHeadings = new Set(
 		(layoutValidation?.violations ?? [])
 			.filter(
-				(violation) =>
-					violation.code === "missing-section" && violation.heading,
+				(violation) => violation.code === "missing-section" && violation.heading,
 			)
 			.map((violation) => violation.heading as string),
 	);
@@ -209,8 +209,8 @@ export function StructuredDocumentView({
 						<section>
 							<h2 className="font-semibold">Informative Book guides</h2>
 							<p className="mt-1 text-sm text-muted-foreground">
-								These guides explain and contextualize this standard; OpenSpec
-									remains the normative source.
+								These guides explain and contextualize this standard; OpenSpec remains
+								the normative source.
 							</p>
 							<ul>
 								{bookLinks.map((href) => (

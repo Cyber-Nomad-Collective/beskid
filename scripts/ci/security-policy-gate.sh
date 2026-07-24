@@ -54,9 +54,9 @@ if rg -n '^\s*uses:\s*[^./][^@[:space:]]+@(v[0-9]|main|master|stable|latest)([[:
   exit 1
 fi
 
-if rg -n 'build-args:.*NODE_AUTH_TOKEN|NODE_AUTH_TOKEN=.*build-arg' \
-  .github/workflows/reusable-image.yml; then
-  echo "package credentials must use BuildKit secret mounts, not build args" >&2
+if rg -n 'NODE_AUTH_TOKEN' \
+      .github/workflows/reusable-image.yml .github/workflows/reusable-quality.yml .github/workflows/platform-delivery.yml; then
+  echo "NODE_AUTH_TOKEN must not appear in authoritative CI workflows" >&2
   exit 1
 fi
 

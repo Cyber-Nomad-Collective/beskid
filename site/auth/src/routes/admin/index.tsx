@@ -1,6 +1,3 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useState } from "react";
-
 import {
 	Alert,
 	AlertDescription,
@@ -14,6 +11,8 @@ import {
 	Input,
 	Label,
 } from "@beskid/ui-react";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { useState } from "react";
 import { ThemeToggle } from "#/components/theme-toggle";
 import { fetchAdminDashboard } from "#/server/app-server.functions";
 
@@ -99,8 +98,7 @@ function AdminPage() {
 				<Alert>
 					<AlertTitle>OAuth hub</AlertTitle>
 					<AlertDescription>
-						GitHub OAuth callback:{" "}
-						<code className="text-xs">{hubBase}/callback</code>
+						GitHub OAuth callback: <code className="text-xs">{hubBase}/callback</code>
 					</AlertDescription>
 				</Alert>
 				<Card>

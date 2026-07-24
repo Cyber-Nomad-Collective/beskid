@@ -1,12 +1,11 @@
 import { describe, expect, it } from "vitest";
-
+import { resolveOpenSpecRoot } from "#/lib/spec/catalog";
 import {
 	loadLayoutRegistry,
 	resolveLayout,
 	type SpecLayout,
 	validateLayout,
 } from "#/lib/spec/layouts";
-import { resolveOpenSpecRoot } from "#/lib/spec/catalog";
 
 const featureLayout: SpecLayout = {
 	id: "feature",
@@ -60,7 +59,8 @@ describe("layout validation", () => {
 	});
 
 	it("flags a missing title", () => {
-		const body = "## Purpose\n\nText.\n\n## Requirements\n\n### Requirement: X\nBody.\n";
+		const body =
+			"## Purpose\n\nText.\n\n## Requirements\n\n### Requirement: X\nBody.\n";
 		const violations = validateLayout(body, featureLayout);
 		expect(violations.map((violation) => violation.code)).toContain(
 			"missing-title",

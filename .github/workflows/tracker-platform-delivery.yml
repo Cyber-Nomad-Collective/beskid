@@ -13,8 +13,6 @@ permissions:
 jobs:
   openspec-projection:
     runs-on: ubuntu-latest
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -50,7 +48,6 @@ jobs:
         run: |
           pnpm run openspec:catalog
           git diff --exit-code -- openspec/catalog.json
-          pnpm install --dir beskid_tracker --frozen-lockfile
           pnpm --dir beskid_tracker run reconcile:plan | tee projection-reconciliation.txt
       - uses: actions/upload-artifact@v4
         with:
@@ -59,8 +56,6 @@ jobs:
 
   tracker:
     runs-on: ubuntu-latest
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -83,8 +78,6 @@ jobs:
 
   platform-spec:
     runs-on: ubuntu-latest
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -113,8 +106,6 @@ jobs:
 
   website-nexus:
     runs-on: ubuntu-latest
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}
     steps:
       - uses: actions/checkout@v7
         with:

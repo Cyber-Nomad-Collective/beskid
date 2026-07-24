@@ -6,7 +6,7 @@
 // authority-level enforcement; site/platform-spec mirrors the same descriptors
 // for rendering and static seeding. Run via `bun run openspec:layouts`.
 
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 const repoRoot = path.resolve(import.meta.dirname, "../..");
@@ -78,7 +78,10 @@ function headingPattern(heading: string, level: number): RegExp {
 	return new RegExp(`^${hashes}\\s+${escaped}\\s*$`, "m");
 }
 
-export function validateLayout(body: string, layout: SpecLayout): LayoutViolation[] {
+export function validateLayout(
+	body: string,
+	layout: SpecLayout,
+): LayoutViolation[] {
 	const violations: LayoutViolation[] = [];
 
 	if (layout.requireTitle && !/^#\s+\S/m.test(body)) {

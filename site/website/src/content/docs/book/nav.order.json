@@ -158,8 +158,6 @@
 	"appendix": {
 		"label": "Appendix",
 		"defaultOpen": true,
-		"entries": [
-			"appendix-spec-map"
-		]
+		"entries": ["appendix-spec-map"]
 	}
 }

@@ -1,4 +1,4 @@
-import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { DraftChangeSet } from "#/components/editor/draft-change-set";
@@ -44,7 +44,9 @@ function ModerationPage() {
 		setError(null);
 		try {
 			const notes = Object.entries(documentNotes)
-				.filter(([changeId, note]) => note.trim() && changeId.startsWith(id) === false)
+				.filter(
+					([changeId, note]) => note.trim() && changeId.startsWith(id) === false,
+				)
 				.map(([documentChangeId, note]) => ({ documentChangeId, note }));
 			const scopedNotes = Object.entries(documentNotes)
 				.filter(([, note]) => note.trim())
@@ -116,9 +118,7 @@ function ModerationPage() {
 												className="rounded-md border px-3 py-1.5 text-sm"
 												onClick={() =>
 													setExpandedId((current) =>
-														current === bundle.context.id
-															? null
-															: bundle.context.id,
+														current === bundle.context.id ? null : bundle.context.id,
 													)
 												}
 											>
@@ -130,9 +130,7 @@ function ModerationPage() {
 												type="button"
 												className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground disabled:opacity-50"
 												disabled={busyId === bundle.context.id || stale}
-												onClick={() =>
-													void onApprove(bundle.context.id, stale)
-												}
+												onClick={() => void onApprove(bundle.context.id, stale)}
 											>
 												Approve & open PR
 											</button>

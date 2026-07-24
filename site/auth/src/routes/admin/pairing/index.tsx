@@ -1,7 +1,17 @@
-import { createFileRoute, Link, redirect, useRouter } from "@tanstack/react-router";
+import {
+	Button,
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from "@beskid/ui-react";
+import {
+	createFileRoute,
+	Link,
+	redirect,
+	useRouter,
+} from "@tanstack/react-router";
 import { useState } from "react";
-
-import { Button, Card, CardContent, CardHeader, CardTitle } from "@beskid/ui-react";
 import { ThemeToggle } from "#/components/theme-toggle";
 import { authAppLabel } from "#/lib/auth-app-meta";
 import {
@@ -76,10 +86,7 @@ function PairingListPage() {
 								const appLabel = authAppLabel(row.app_id);
 
 								return (
-									<div
-										key={row.id}
-										className="rounded-lg border p-3 text-sm"
-									>
+									<div key={row.id} className="rounded-lg border p-3 text-sm">
 										<div className="flex flex-wrap items-start justify-between gap-3">
 											<div>
 												<p className="font-medium">

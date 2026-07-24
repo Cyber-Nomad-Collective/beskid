@@ -19,13 +19,12 @@
 //   --prune-graph    Delete SpecDocument nodes absent from the current revision.
 
 import { mkdirSync } from "node:fs";
-
+import { seedSpecGraph } from "#/lib/spec/graph-seed";
 import {
 	resolvePlatformSpecDataDir,
 	resolveSeedDir,
 	settingsDbPathIn,
 } from "#/lib/spec/paths.core";
-import { seedSpecGraph } from "#/lib/spec/graph-seed";
 import {
 	buildSeedWorkspace,
 	generateSeed,
@@ -141,7 +140,8 @@ async function main(): Promise<void> {
 	}
 
 	if (options.stores || options.graph) {
-		workspace = workspace ?? loadSeed(options.outDir) ?? buildSeedWorkspace().workspace;
+		workspace =
+			workspace ?? loadSeed(options.outDir) ?? buildSeedWorkspace().workspace;
 	}
 
 	if (options.stores && workspace) {

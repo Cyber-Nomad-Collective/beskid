@@ -14,9 +14,9 @@ const setupInputSchema = z.object({
 	setupToken: z.string().min(1).optional(),
 });
 
-export const getAuthHubSetupStatusFn = createServerFn({ method: "GET" }).handler(
-	async () => getAuthHubSetupStatus(),
-);
+export const getAuthHubSetupStatusFn = createServerFn({
+	method: "GET",
+}).handler(async () => getAuthHubSetupStatus());
 
 export const submitAuthHubSetupFn = createServerFn({ method: "POST" })
 	.inputValidator(setupInputSchema)

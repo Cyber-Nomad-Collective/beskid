@@ -1,4 +1,4 @@
-export const blogStatuses = ['released', 'truncated', 'in-progress'] as const;
+export const blogStatuses = ["released", "truncated", "in-progress"] as const;
 
 export type BlogStatus = (typeof blogStatuses)[number];
 export type BlogEntry = { data: { date: Date; blogStatus: BlogStatus } };
@@ -8,7 +8,7 @@ export const sortBlogEntries = <T extends BlogEntry>(entries: T[]) =>
 
 export const blogStatusLabel = (status: BlogStatus) =>
 	({
-		released: 'Published',
-		truncated: 'Truncated',
-		'in-progress': 'In progress',
+		released: "Published",
+		truncated: "Truncated",
+		"in-progress": "In progress",
 	})[status];

@@ -1,9 +1,6 @@
 import "@tanstack/react-start/server-only";
 
-import neo4j, {
-	type Driver,
-	type Record as Neo4jRecord,
-} from "neo4j-driver";
+import neo4j, { type Driver, type Record as Neo4jRecord } from "neo4j-driver";
 
 import { env } from "#/env.server";
 
@@ -19,9 +16,7 @@ export function getDriver(): Driver {
 	return driver;
 }
 
-function mapRecord<T extends Record<string, unknown>>(
-	record: Neo4jRecord,
-): T {
+function mapRecord<T extends Record<string, unknown>>(record: Neo4jRecord): T {
 	const row: Record<string, unknown> = {};
 	for (const key of record.keys) {
 		row[String(key)] = record.get(key);
@@ -29,10 +24,9 @@ function mapRecord<T extends Record<string, unknown>>(
 	return row as T;
 }
 
-export async function runQuery<T extends Record<string, unknown> = Record<string, unknown>>(
-	cypher: string,
-	params: Record<string, unknown> = {},
-): Promise<T[]> {
+export async function runQuery<
+	T extends Record<string, unknown> = Record<string, unknown>,
+>(cypher: string, params: Record<string, unknown> = {}): Promise<T[]> {
 	const session = getDriver().session();
 	try {
 		const result = await session.run(cypher, params);

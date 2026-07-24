@@ -29,9 +29,9 @@
 		"pnpm": ">=10.17.1"
 	},
 	"dependencies": {
-		"@beskid/auth-client": "npm:@cyber-nomad-collective/beskid-auth-client@^0.2.9",
+		"@beskid/auth-client": "file:../../beskid_web_common/packages/beskid-auth-client",
 		"@beskid/beskid-ui": "file:../../beskid_web_common/packages/beskid-ui",
-		"@beskid/server-observability": "npm:@cyber-nomad-collective/beskid-server-observability@^0.2.8",
+		"@beskid/server-observability": "file:../../beskid_web_common/packages/beskid-server-observability",
 		"@beskid/ui-react": "file:../../beskid_web_common/packages/beskid-ui-react",
 		"@dagrejs/dagre": "^3.0.0",
 		"@octokit/rest": "^22.0.1",

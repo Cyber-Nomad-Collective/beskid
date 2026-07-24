@@ -34,19 +34,10 @@ function document(
 
 const documents: OpenSpecCatalogDocument[] = [
 	document({ kind: "domain", domain: "compiler" }, "Compiler"),
-	document(
-		{ kind: "area", domain: "compiler", area: "front-end" },
-		"Front end",
-	),
-	document(
-		{ kind: "area", domain: "compiler", area: "codegen" },
-		"Codegen",
-	),
+	document({ kind: "area", domain: "compiler", area: "front-end" }, "Front end"),
+	document({ kind: "area", domain: "compiler", area: "codegen" }, "Codegen"),
 	document({ kind: "domain", domain: "language" }, "Language"),
-	document(
-		{ kind: "area", domain: "language", area: "syntax" },
-		"Syntax",
-	),
+	document({ kind: "area", domain: "language", area: "syntax" }, "Syntax"),
 	document(
 		{
 			kind: "feature",
@@ -99,9 +90,9 @@ const catalog: OpenSpecCatalog = {
 	version: 1,
 	revision: "rev1",
 	generatedAt: new Date(0).toISOString(),
-		documents,
-		legacyEntries: [],
-		entries: documents,
+	documents,
+	legacyEntries: [],
+	entries: documents,
 };
 
 describe("domain-area-feature model", () => {

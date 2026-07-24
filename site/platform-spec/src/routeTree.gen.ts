@@ -8,530 +8,531 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as EditRouteImport } from './routes/_edit'
-import { Route as ApiHealthRouteImport } from './routes/api/health'
-import { Route as PlatformSpecIndexRouteImport } from './routes/platform-spec/index'
-import { Route as PlatformSpecSplatRouteImport } from './routes/platform-spec/$'
-import { Route as EditEditIndexRouteImport } from './routes/_edit/edit/index'
-import { Route as EditModerationIndexRouteImport } from './routes/_edit/moderation/index'
-import { Route as ApiAdminSetupRouteImport } from './routes/api/admin/setup'
-import { Route as ApiAuthGithubRouteImport } from './routes/api/auth/github'
-import { Route as ApiAuthHubFinishRouteImport } from './routes/api/auth/hub-finish'
-import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
-import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
-import { Route as ApiAuthPairRouteImport } from './routes/api/auth/pair'
-import { Route as ApiV1CatalogRouteImport } from './routes/api/v1/catalog'
-import { Route as ApiV1NavTreeRouteImport } from './routes/api/v1/nav-tree'
-import { Route as ApiWebhooksGithubRouteImport } from './routes/api/webhooks/github'
-import { Route as SettingsAuthLoginRouteImport } from './routes/settings/auth/login'
-import { Route as SettingsAuthPairRouteImport } from './routes/settings/auth/pair'
-import { Route as EditEditDraftsIdRouteImport } from './routes/_edit/edit/drafts/$id'
-import { Route as ApiV1ArchitectureKeyRouteImport } from './routes/api/v1/architecture/$key'
-import { Route as ApiV1DocsSplatRouteImport } from './routes/api/v1/docs/$'
-import { Route as ApiV1EmbedSplatRouteImport } from './routes/api/v1/embed/$'
-import { Route as ApiV1TrackerTasksRouteImport } from './routes/api/v1/tracker/tasks'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as EditRouteImport } from "./routes/_edit";
+import { Route as EditEditDraftsIdRouteImport } from "./routes/_edit/edit/drafts/$id";
+import { Route as EditEditIndexRouteImport } from "./routes/_edit/edit/index";
+import { Route as EditModerationIndexRouteImport } from "./routes/_edit/moderation/index";
+import { Route as ApiAdminSetupRouteImport } from "./routes/api/admin/setup";
+import { Route as ApiAuthGithubRouteImport } from "./routes/api/auth/github";
+import { Route as ApiAuthHubFinishRouteImport } from "./routes/api/auth/hub-finish";
+import { Route as ApiAuthLogoutRouteImport } from "./routes/api/auth/logout";
+import { Route as ApiAuthMeRouteImport } from "./routes/api/auth/me";
+import { Route as ApiAuthPairRouteImport } from "./routes/api/auth/pair";
+import { Route as ApiHealthRouteImport } from "./routes/api/health";
+import { Route as ApiV1ArchitectureKeyRouteImport } from "./routes/api/v1/architecture/$key";
+import { Route as ApiV1CatalogRouteImport } from "./routes/api/v1/catalog";
+import { Route as ApiV1DocsSplatRouteImport } from "./routes/api/v1/docs/$";
+import { Route as ApiV1EmbedSplatRouteImport } from "./routes/api/v1/embed/$";
+import { Route as ApiV1NavTreeRouteImport } from "./routes/api/v1/nav-tree";
+import { Route as ApiV1TrackerTasksRouteImport } from "./routes/api/v1/tracker/tasks";
+import { Route as ApiWebhooksGithubRouteImport } from "./routes/api/webhooks/github";
+import { Route as IndexRouteImport } from "./routes/index";
+import { Route as PlatformSpecSplatRouteImport } from "./routes/platform-spec/$";
+import { Route as PlatformSpecIndexRouteImport } from "./routes/platform-spec/index";
+import { Route as SettingsAuthLoginRouteImport } from "./routes/settings/auth/login";
+import { Route as SettingsAuthPairRouteImport } from "./routes/settings/auth/pair";
 
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/",
+	path: "/",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const EditRoute = EditRouteImport.update({
-  id: '/_edit',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/_edit",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const ApiHealthRoute = ApiHealthRouteImport.update({
-  id: '/api/health',
-  path: '/api/health',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/api/health",
+	path: "/api/health",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const PlatformSpecIndexRoute = PlatformSpecIndexRouteImport.update({
-  id: '/platform-spec/',
-  path: '/platform-spec/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/platform-spec/",
+	path: "/platform-spec/",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const PlatformSpecSplatRoute = PlatformSpecSplatRouteImport.update({
-  id: '/platform-spec/$',
-  path: '/platform-spec/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/platform-spec/$",
+	path: "/platform-spec/$",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const EditEditIndexRoute = EditEditIndexRouteImport.update({
-  id: '/edit/',
-  path: '/edit/',
-  getParentRoute: () => EditRoute,
-} as any)
+	id: "/edit/",
+	path: "/edit/",
+	getParentRoute: () => EditRoute,
+} as any);
 const EditModerationIndexRoute = EditModerationIndexRouteImport.update({
-  id: '/moderation/',
-  path: '/moderation/',
-  getParentRoute: () => EditRoute,
-} as any)
+	id: "/moderation/",
+	path: "/moderation/",
+	getParentRoute: () => EditRoute,
+} as any);
 const ApiAdminSetupRoute = ApiAdminSetupRouteImport.update({
-  id: '/api/admin/setup',
-  path: '/api/admin/setup',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/api/admin/setup",
+	path: "/api/admin/setup",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const ApiAuthGithubRoute = ApiAuthGithubRouteImport.update({
-  id: '/api/auth/github',
-  path: '/api/auth/github',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/api/auth/github",
+	path: "/api/auth/github",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const ApiAuthHubFinishRoute = ApiAuthHubFinishRouteImport.update({
-  id: '/api/auth/hub-finish',
-  path: '/api/auth/hub-finish',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/api/auth/hub-finish",
+	path: "/api/auth/hub-finish",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
-  id: '/api/auth/logout',
-  path: '/api/auth/logout',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/api/auth/logout",
+	path: "/api/auth/logout",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const ApiAuthMeRoute = ApiAuthMeRouteImport.update({
-  id: '/api/auth/me',
-  path: '/api/auth/me',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/api/auth/me",
+	path: "/api/auth/me",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const ApiAuthPairRoute = ApiAuthPairRouteImport.update({
-  id: '/api/auth/pair',
-  path: '/api/auth/pair',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/api/auth/pair",
+	path: "/api/auth/pair",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const ApiV1CatalogRoute = ApiV1CatalogRouteImport.update({
-  id: '/api/v1/catalog',
-  path: '/api/v1/catalog',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/api/v1/catalog",
+	path: "/api/v1/catalog",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const ApiV1NavTreeRoute = ApiV1NavTreeRouteImport.update({
-  id: '/api/v1/nav-tree',
-  path: '/api/v1/nav-tree',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/api/v1/nav-tree",
+	path: "/api/v1/nav-tree",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const ApiWebhooksGithubRoute = ApiWebhooksGithubRouteImport.update({
-  id: '/api/webhooks/github',
-  path: '/api/webhooks/github',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/api/webhooks/github",
+	path: "/api/webhooks/github",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const SettingsAuthLoginRoute = SettingsAuthLoginRouteImport.update({
-  id: '/settings/auth/login',
-  path: '/settings/auth/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/settings/auth/login",
+	path: "/settings/auth/login",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const SettingsAuthPairRoute = SettingsAuthPairRouteImport.update({
-  id: '/settings/auth/pair',
-  path: '/settings/auth/pair',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/settings/auth/pair",
+	path: "/settings/auth/pair",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const EditEditDraftsIdRoute = EditEditDraftsIdRouteImport.update({
-  id: '/edit/drafts/$id',
-  path: '/edit/drafts/$id',
-  getParentRoute: () => EditRoute,
-} as any)
+	id: "/edit/drafts/$id",
+	path: "/edit/drafts/$id",
+	getParentRoute: () => EditRoute,
+} as any);
 const ApiV1ArchitectureKeyRoute = ApiV1ArchitectureKeyRouteImport.update({
-  id: '/api/v1/architecture/$key',
-  path: '/api/v1/architecture/$key',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/api/v1/architecture/$key",
+	path: "/api/v1/architecture/$key",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const ApiV1DocsSplatRoute = ApiV1DocsSplatRouteImport.update({
-  id: '/api/v1/docs/$',
-  path: '/api/v1/docs/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/api/v1/docs/$",
+	path: "/api/v1/docs/$",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const ApiV1EmbedSplatRoute = ApiV1EmbedSplatRouteImport.update({
-  id: '/api/v1/embed/$',
-  path: '/api/v1/embed/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/api/v1/embed/$",
+	path: "/api/v1/embed/$",
+	getParentRoute: () => rootRouteImport,
+} as any);
 const ApiV1TrackerTasksRoute = ApiV1TrackerTasksRouteImport.update({
-  id: '/api/v1/tracker/tasks',
-  path: '/api/v1/tracker/tasks',
-  getParentRoute: () => rootRouteImport,
-} as any)
+	id: "/api/v1/tracker/tasks",
+	path: "/api/v1/tracker/tasks",
+	getParentRoute: () => rootRouteImport,
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/api/health': typeof ApiHealthRoute
-  '/platform-spec/$': typeof PlatformSpecSplatRoute
-  '/platform-spec/': typeof PlatformSpecIndexRoute
-  '/api/admin/setup': typeof ApiAdminSetupRoute
-  '/api/auth/github': typeof ApiAuthGithubRoute
-  '/api/auth/hub-finish': typeof ApiAuthHubFinishRoute
-  '/api/auth/logout': typeof ApiAuthLogoutRoute
-  '/api/auth/me': typeof ApiAuthMeRoute
-  '/api/auth/pair': typeof ApiAuthPairRoute
-  '/api/v1/catalog': typeof ApiV1CatalogRoute
-  '/api/v1/nav-tree': typeof ApiV1NavTreeRoute
-  '/api/webhooks/github': typeof ApiWebhooksGithubRoute
-  '/settings/auth/login': typeof SettingsAuthLoginRoute
-  '/settings/auth/pair': typeof SettingsAuthPairRoute
-  '/edit/': typeof EditEditIndexRoute
-  '/moderation/': typeof EditModerationIndexRoute
-  '/edit/drafts/$id': typeof EditEditDraftsIdRoute
-  '/api/v1/architecture/$key': typeof ApiV1ArchitectureKeyRoute
-  '/api/v1/docs/$': typeof ApiV1DocsSplatRoute
-  '/api/v1/embed/$': typeof ApiV1EmbedSplatRoute
-  '/api/v1/tracker/tasks': typeof ApiV1TrackerTasksRoute
+	"/": typeof IndexRoute;
+	"/api/health": typeof ApiHealthRoute;
+	"/platform-spec/$": typeof PlatformSpecSplatRoute;
+	"/platform-spec/": typeof PlatformSpecIndexRoute;
+	"/api/admin/setup": typeof ApiAdminSetupRoute;
+	"/api/auth/github": typeof ApiAuthGithubRoute;
+	"/api/auth/hub-finish": typeof ApiAuthHubFinishRoute;
+	"/api/auth/logout": typeof ApiAuthLogoutRoute;
+	"/api/auth/me": typeof ApiAuthMeRoute;
+	"/api/auth/pair": typeof ApiAuthPairRoute;
+	"/api/v1/catalog": typeof ApiV1CatalogRoute;
+	"/api/v1/nav-tree": typeof ApiV1NavTreeRoute;
+	"/api/webhooks/github": typeof ApiWebhooksGithubRoute;
+	"/settings/auth/login": typeof SettingsAuthLoginRoute;
+	"/settings/auth/pair": typeof SettingsAuthPairRoute;
+	"/edit/": typeof EditEditIndexRoute;
+	"/moderation/": typeof EditModerationIndexRoute;
+	"/edit/drafts/$id": typeof EditEditDraftsIdRoute;
+	"/api/v1/architecture/$key": typeof ApiV1ArchitectureKeyRoute;
+	"/api/v1/docs/$": typeof ApiV1DocsSplatRoute;
+	"/api/v1/embed/$": typeof ApiV1EmbedSplatRoute;
+	"/api/v1/tracker/tasks": typeof ApiV1TrackerTasksRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/api/health': typeof ApiHealthRoute
-  '/platform-spec/$': typeof PlatformSpecSplatRoute
-  '/platform-spec': typeof PlatformSpecIndexRoute
-  '/api/admin/setup': typeof ApiAdminSetupRoute
-  '/api/auth/github': typeof ApiAuthGithubRoute
-  '/api/auth/hub-finish': typeof ApiAuthHubFinishRoute
-  '/api/auth/logout': typeof ApiAuthLogoutRoute
-  '/api/auth/me': typeof ApiAuthMeRoute
-  '/api/auth/pair': typeof ApiAuthPairRoute
-  '/api/v1/catalog': typeof ApiV1CatalogRoute
-  '/api/v1/nav-tree': typeof ApiV1NavTreeRoute
-  '/api/webhooks/github': typeof ApiWebhooksGithubRoute
-  '/settings/auth/login': typeof SettingsAuthLoginRoute
-  '/settings/auth/pair': typeof SettingsAuthPairRoute
-  '/edit': typeof EditEditIndexRoute
-  '/moderation': typeof EditModerationIndexRoute
-  '/edit/drafts/$id': typeof EditEditDraftsIdRoute
-  '/api/v1/architecture/$key': typeof ApiV1ArchitectureKeyRoute
-  '/api/v1/docs/$': typeof ApiV1DocsSplatRoute
-  '/api/v1/embed/$': typeof ApiV1EmbedSplatRoute
-  '/api/v1/tracker/tasks': typeof ApiV1TrackerTasksRoute
+	"/": typeof IndexRoute;
+	"/api/health": typeof ApiHealthRoute;
+	"/platform-spec/$": typeof PlatformSpecSplatRoute;
+	"/platform-spec": typeof PlatformSpecIndexRoute;
+	"/api/admin/setup": typeof ApiAdminSetupRoute;
+	"/api/auth/github": typeof ApiAuthGithubRoute;
+	"/api/auth/hub-finish": typeof ApiAuthHubFinishRoute;
+	"/api/auth/logout": typeof ApiAuthLogoutRoute;
+	"/api/auth/me": typeof ApiAuthMeRoute;
+	"/api/auth/pair": typeof ApiAuthPairRoute;
+	"/api/v1/catalog": typeof ApiV1CatalogRoute;
+	"/api/v1/nav-tree": typeof ApiV1NavTreeRoute;
+	"/api/webhooks/github": typeof ApiWebhooksGithubRoute;
+	"/settings/auth/login": typeof SettingsAuthLoginRoute;
+	"/settings/auth/pair": typeof SettingsAuthPairRoute;
+	"/edit": typeof EditEditIndexRoute;
+	"/moderation": typeof EditModerationIndexRoute;
+	"/edit/drafts/$id": typeof EditEditDraftsIdRoute;
+	"/api/v1/architecture/$key": typeof ApiV1ArchitectureKeyRoute;
+	"/api/v1/docs/$": typeof ApiV1DocsSplatRoute;
+	"/api/v1/embed/$": typeof ApiV1EmbedSplatRoute;
+	"/api/v1/tracker/tasks": typeof ApiV1TrackerTasksRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/_edit': typeof EditRouteWithChildren
-  '/api/health': typeof ApiHealthRoute
-  '/platform-spec/$': typeof PlatformSpecSplatRoute
-  '/platform-spec/': typeof PlatformSpecIndexRoute
-  '/api/admin/setup': typeof ApiAdminSetupRoute
-  '/api/auth/github': typeof ApiAuthGithubRoute
-  '/api/auth/hub-finish': typeof ApiAuthHubFinishRoute
-  '/api/auth/logout': typeof ApiAuthLogoutRoute
-  '/api/auth/me': typeof ApiAuthMeRoute
-  '/api/auth/pair': typeof ApiAuthPairRoute
-  '/api/v1/catalog': typeof ApiV1CatalogRoute
-  '/api/v1/nav-tree': typeof ApiV1NavTreeRoute
-  '/api/webhooks/github': typeof ApiWebhooksGithubRoute
-  '/settings/auth/login': typeof SettingsAuthLoginRoute
-  '/settings/auth/pair': typeof SettingsAuthPairRoute
-  '/_edit/edit/': typeof EditEditIndexRoute
-  '/_edit/moderation/': typeof EditModerationIndexRoute
-  '/_edit/edit/drafts/$id': typeof EditEditDraftsIdRoute
-  '/api/v1/architecture/$key': typeof ApiV1ArchitectureKeyRoute
-  '/api/v1/docs/$': typeof ApiV1DocsSplatRoute
-  '/api/v1/embed/$': typeof ApiV1EmbedSplatRoute
-  '/api/v1/tracker/tasks': typeof ApiV1TrackerTasksRoute
+	__root__: typeof rootRouteImport;
+	"/": typeof IndexRoute;
+	"/_edit": typeof EditRouteWithChildren;
+	"/api/health": typeof ApiHealthRoute;
+	"/platform-spec/$": typeof PlatformSpecSplatRoute;
+	"/platform-spec/": typeof PlatformSpecIndexRoute;
+	"/api/admin/setup": typeof ApiAdminSetupRoute;
+	"/api/auth/github": typeof ApiAuthGithubRoute;
+	"/api/auth/hub-finish": typeof ApiAuthHubFinishRoute;
+	"/api/auth/logout": typeof ApiAuthLogoutRoute;
+	"/api/auth/me": typeof ApiAuthMeRoute;
+	"/api/auth/pair": typeof ApiAuthPairRoute;
+	"/api/v1/catalog": typeof ApiV1CatalogRoute;
+	"/api/v1/nav-tree": typeof ApiV1NavTreeRoute;
+	"/api/webhooks/github": typeof ApiWebhooksGithubRoute;
+	"/settings/auth/login": typeof SettingsAuthLoginRoute;
+	"/settings/auth/pair": typeof SettingsAuthPairRoute;
+	"/_edit/edit/": typeof EditEditIndexRoute;
+	"/_edit/moderation/": typeof EditModerationIndexRoute;
+	"/_edit/edit/drafts/$id": typeof EditEditDraftsIdRoute;
+	"/api/v1/architecture/$key": typeof ApiV1ArchitectureKeyRoute;
+	"/api/v1/docs/$": typeof ApiV1DocsSplatRoute;
+	"/api/v1/embed/$": typeof ApiV1EmbedSplatRoute;
+	"/api/v1/tracker/tasks": typeof ApiV1TrackerTasksRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/api/health'
-    | '/platform-spec/$'
-    | '/platform-spec/'
-    | '/api/admin/setup'
-    | '/api/auth/github'
-    | '/api/auth/hub-finish'
-    | '/api/auth/logout'
-    | '/api/auth/me'
-    | '/api/auth/pair'
-    | '/api/v1/catalog'
-    | '/api/v1/nav-tree'
-    | '/api/webhooks/github'
-    | '/settings/auth/login'
-    | '/settings/auth/pair'
-    | '/edit/'
-    | '/moderation/'
-    | '/edit/drafts/$id'
-    | '/api/v1/architecture/$key'
-    | '/api/v1/docs/$'
-    | '/api/v1/embed/$'
-    | '/api/v1/tracker/tasks'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/api/health'
-    | '/platform-spec/$'
-    | '/platform-spec'
-    | '/api/admin/setup'
-    | '/api/auth/github'
-    | '/api/auth/hub-finish'
-    | '/api/auth/logout'
-    | '/api/auth/me'
-    | '/api/auth/pair'
-    | '/api/v1/catalog'
-    | '/api/v1/nav-tree'
-    | '/api/webhooks/github'
-    | '/settings/auth/login'
-    | '/settings/auth/pair'
-    | '/edit'
-    | '/moderation'
-    | '/edit/drafts/$id'
-    | '/api/v1/architecture/$key'
-    | '/api/v1/docs/$'
-    | '/api/v1/embed/$'
-    | '/api/v1/tracker/tasks'
-  id:
-    | '__root__'
-    | '/'
-    | '/_edit'
-    | '/api/health'
-    | '/platform-spec/$'
-    | '/platform-spec/'
-    | '/api/admin/setup'
-    | '/api/auth/github'
-    | '/api/auth/hub-finish'
-    | '/api/auth/logout'
-    | '/api/auth/me'
-    | '/api/auth/pair'
-    | '/api/v1/catalog'
-    | '/api/v1/nav-tree'
-    | '/api/webhooks/github'
-    | '/settings/auth/login'
-    | '/settings/auth/pair'
-    | '/_edit/edit/'
-    | '/_edit/moderation/'
-    | '/_edit/edit/drafts/$id'
-    | '/api/v1/architecture/$key'
-    | '/api/v1/docs/$'
-    | '/api/v1/embed/$'
-    | '/api/v1/tracker/tasks'
-  fileRoutesById: FileRoutesById
+	fileRoutesByFullPath: FileRoutesByFullPath;
+	fullPaths:
+		| "/"
+		| "/api/health"
+		| "/platform-spec/$"
+		| "/platform-spec/"
+		| "/api/admin/setup"
+		| "/api/auth/github"
+		| "/api/auth/hub-finish"
+		| "/api/auth/logout"
+		| "/api/auth/me"
+		| "/api/auth/pair"
+		| "/api/v1/catalog"
+		| "/api/v1/nav-tree"
+		| "/api/webhooks/github"
+		| "/settings/auth/login"
+		| "/settings/auth/pair"
+		| "/edit/"
+		| "/moderation/"
+		| "/edit/drafts/$id"
+		| "/api/v1/architecture/$key"
+		| "/api/v1/docs/$"
+		| "/api/v1/embed/$"
+		| "/api/v1/tracker/tasks";
+	fileRoutesByTo: FileRoutesByTo;
+	to:
+		| "/"
+		| "/api/health"
+		| "/platform-spec/$"
+		| "/platform-spec"
+		| "/api/admin/setup"
+		| "/api/auth/github"
+		| "/api/auth/hub-finish"
+		| "/api/auth/logout"
+		| "/api/auth/me"
+		| "/api/auth/pair"
+		| "/api/v1/catalog"
+		| "/api/v1/nav-tree"
+		| "/api/webhooks/github"
+		| "/settings/auth/login"
+		| "/settings/auth/pair"
+		| "/edit"
+		| "/moderation"
+		| "/edit/drafts/$id"
+		| "/api/v1/architecture/$key"
+		| "/api/v1/docs/$"
+		| "/api/v1/embed/$"
+		| "/api/v1/tracker/tasks";
+	id:
+		| "__root__"
+		| "/"
+		| "/_edit"
+		| "/api/health"
+		| "/platform-spec/$"
+		| "/platform-spec/"
+		| "/api/admin/setup"
+		| "/api/auth/github"
+		| "/api/auth/hub-finish"
+		| "/api/auth/logout"
+		| "/api/auth/me"
+		| "/api/auth/pair"
+		| "/api/v1/catalog"
+		| "/api/v1/nav-tree"
+		| "/api/webhooks/github"
+		| "/settings/auth/login"
+		| "/settings/auth/pair"
+		| "/_edit/edit/"
+		| "/_edit/moderation/"
+		| "/_edit/edit/drafts/$id"
+		| "/api/v1/architecture/$key"
+		| "/api/v1/docs/$"
+		| "/api/v1/embed/$"
+		| "/api/v1/tracker/tasks";
+	fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  EditRoute: typeof EditRouteWithChildren
-  ApiHealthRoute: typeof ApiHealthRoute
-  PlatformSpecSplatRoute: typeof PlatformSpecSplatRoute
-  PlatformSpecIndexRoute: typeof PlatformSpecIndexRoute
-  ApiAdminSetupRoute: typeof ApiAdminSetupRoute
-  ApiAuthGithubRoute: typeof ApiAuthGithubRoute
-  ApiAuthHubFinishRoute: typeof ApiAuthHubFinishRoute
-  ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
-  ApiAuthMeRoute: typeof ApiAuthMeRoute
-  ApiAuthPairRoute: typeof ApiAuthPairRoute
-  ApiV1CatalogRoute: typeof ApiV1CatalogRoute
-  ApiV1NavTreeRoute: typeof ApiV1NavTreeRoute
-  ApiWebhooksGithubRoute: typeof ApiWebhooksGithubRoute
-  SettingsAuthLoginRoute: typeof SettingsAuthLoginRoute
-  SettingsAuthPairRoute: typeof SettingsAuthPairRoute
-  ApiV1ArchitectureKeyRoute: typeof ApiV1ArchitectureKeyRoute
-  ApiV1DocsSplatRoute: typeof ApiV1DocsSplatRoute
-  ApiV1EmbedSplatRoute: typeof ApiV1EmbedSplatRoute
-  ApiV1TrackerTasksRoute: typeof ApiV1TrackerTasksRoute
+	IndexRoute: typeof IndexRoute;
+	EditRoute: typeof EditRouteWithChildren;
+	ApiHealthRoute: typeof ApiHealthRoute;
+	PlatformSpecSplatRoute: typeof PlatformSpecSplatRoute;
+	PlatformSpecIndexRoute: typeof PlatformSpecIndexRoute;
+	ApiAdminSetupRoute: typeof ApiAdminSetupRoute;
+	ApiAuthGithubRoute: typeof ApiAuthGithubRoute;
+	ApiAuthHubFinishRoute: typeof ApiAuthHubFinishRoute;
+	ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute;
+	ApiAuthMeRoute: typeof ApiAuthMeRoute;
+	ApiAuthPairRoute: typeof ApiAuthPairRoute;
+	ApiV1CatalogRoute: typeof ApiV1CatalogRoute;
+	ApiV1NavTreeRoute: typeof ApiV1NavTreeRoute;
+	ApiWebhooksGithubRoute: typeof ApiWebhooksGithubRoute;
+	SettingsAuthLoginRoute: typeof SettingsAuthLoginRoute;
+	SettingsAuthPairRoute: typeof SettingsAuthPairRoute;
+	ApiV1ArchitectureKeyRoute: typeof ApiV1ArchitectureKeyRoute;
+	ApiV1DocsSplatRoute: typeof ApiV1DocsSplatRoute;
+	ApiV1EmbedSplatRoute: typeof ApiV1EmbedSplatRoute;
+	ApiV1TrackerTasksRoute: typeof ApiV1TrackerTasksRoute;
 }
 
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_edit': {
-      id: '/_edit'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof EditRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/health': {
-      id: '/api/health'
-      path: '/api/health'
-      fullPath: '/api/health'
-      preLoaderRoute: typeof ApiHealthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/platform-spec/': {
-      id: '/platform-spec/'
-      path: '/platform-spec'
-      fullPath: '/platform-spec/'
-      preLoaderRoute: typeof PlatformSpecIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/platform-spec/$': {
-      id: '/platform-spec/$'
-      path: '/platform-spec/$'
-      fullPath: '/platform-spec/$'
-      preLoaderRoute: typeof PlatformSpecSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_edit/edit/': {
-      id: '/_edit/edit/'
-      path: '/edit'
-      fullPath: '/edit/'
-      preLoaderRoute: typeof EditEditIndexRouteImport
-      parentRoute: typeof EditRoute
-    }
-    '/_edit/moderation/': {
-      id: '/_edit/moderation/'
-      path: '/moderation'
-      fullPath: '/moderation/'
-      preLoaderRoute: typeof EditModerationIndexRouteImport
-      parentRoute: typeof EditRoute
-    }
-    '/api/admin/setup': {
-      id: '/api/admin/setup'
-      path: '/api/admin/setup'
-      fullPath: '/api/admin/setup'
-      preLoaderRoute: typeof ApiAdminSetupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/github': {
-      id: '/api/auth/github'
-      path: '/api/auth/github'
-      fullPath: '/api/auth/github'
-      preLoaderRoute: typeof ApiAuthGithubRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/hub-finish': {
-      id: '/api/auth/hub-finish'
-      path: '/api/auth/hub-finish'
-      fullPath: '/api/auth/hub-finish'
-      preLoaderRoute: typeof ApiAuthHubFinishRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/logout': {
-      id: '/api/auth/logout'
-      path: '/api/auth/logout'
-      fullPath: '/api/auth/logout'
-      preLoaderRoute: typeof ApiAuthLogoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/me': {
-      id: '/api/auth/me'
-      path: '/api/auth/me'
-      fullPath: '/api/auth/me'
-      preLoaderRoute: typeof ApiAuthMeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/pair': {
-      id: '/api/auth/pair'
-      path: '/api/auth/pair'
-      fullPath: '/api/auth/pair'
-      preLoaderRoute: typeof ApiAuthPairRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/v1/catalog': {
-      id: '/api/v1/catalog'
-      path: '/api/v1/catalog'
-      fullPath: '/api/v1/catalog'
-      preLoaderRoute: typeof ApiV1CatalogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/v1/nav-tree': {
-      id: '/api/v1/nav-tree'
-      path: '/api/v1/nav-tree'
-      fullPath: '/api/v1/nav-tree'
-      preLoaderRoute: typeof ApiV1NavTreeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/webhooks/github': {
-      id: '/api/webhooks/github'
-      path: '/api/webhooks/github'
-      fullPath: '/api/webhooks/github'
-      preLoaderRoute: typeof ApiWebhooksGithubRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings/auth/login': {
-      id: '/settings/auth/login'
-      path: '/settings/auth/login'
-      fullPath: '/settings/auth/login'
-      preLoaderRoute: typeof SettingsAuthLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings/auth/pair': {
-      id: '/settings/auth/pair'
-      path: '/settings/auth/pair'
-      fullPath: '/settings/auth/pair'
-      preLoaderRoute: typeof SettingsAuthPairRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_edit/edit/drafts/$id': {
-      id: '/_edit/edit/drafts/$id'
-      path: '/edit/drafts/$id'
-      fullPath: '/edit/drafts/$id'
-      preLoaderRoute: typeof EditEditDraftsIdRouteImport
-      parentRoute: typeof EditRoute
-    }
-    '/api/v1/architecture/$key': {
-      id: '/api/v1/architecture/$key'
-      path: '/api/v1/architecture/$key'
-      fullPath: '/api/v1/architecture/$key'
-      preLoaderRoute: typeof ApiV1ArchitectureKeyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/v1/docs/$': {
-      id: '/api/v1/docs/$'
-      path: '/api/v1/docs/$'
-      fullPath: '/api/v1/docs/$'
-      preLoaderRoute: typeof ApiV1DocsSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/v1/embed/$': {
-      id: '/api/v1/embed/$'
-      path: '/api/v1/embed/$'
-      fullPath: '/api/v1/embed/$'
-      preLoaderRoute: typeof ApiV1EmbedSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/v1/tracker/tasks': {
-      id: '/api/v1/tracker/tasks'
-      path: '/api/v1/tracker/tasks'
-      fullPath: '/api/v1/tracker/tasks'
-      preLoaderRoute: typeof ApiV1TrackerTasksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-  }
+declare module "@tanstack/react-router" {
+	interface FileRoutesByPath {
+		"/": {
+			id: "/";
+			path: "/";
+			fullPath: "/";
+			preLoaderRoute: typeof IndexRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/_edit": {
+			id: "/_edit";
+			path: "";
+			fullPath: "/";
+			preLoaderRoute: typeof EditRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/api/health": {
+			id: "/api/health";
+			path: "/api/health";
+			fullPath: "/api/health";
+			preLoaderRoute: typeof ApiHealthRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/platform-spec/": {
+			id: "/platform-spec/";
+			path: "/platform-spec";
+			fullPath: "/platform-spec/";
+			preLoaderRoute: typeof PlatformSpecIndexRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/platform-spec/$": {
+			id: "/platform-spec/$";
+			path: "/platform-spec/$";
+			fullPath: "/platform-spec/$";
+			preLoaderRoute: typeof PlatformSpecSplatRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/_edit/edit/": {
+			id: "/_edit/edit/";
+			path: "/edit";
+			fullPath: "/edit/";
+			preLoaderRoute: typeof EditEditIndexRouteImport;
+			parentRoute: typeof EditRoute;
+		};
+		"/_edit/moderation/": {
+			id: "/_edit/moderation/";
+			path: "/moderation";
+			fullPath: "/moderation/";
+			preLoaderRoute: typeof EditModerationIndexRouteImport;
+			parentRoute: typeof EditRoute;
+		};
+		"/api/admin/setup": {
+			id: "/api/admin/setup";
+			path: "/api/admin/setup";
+			fullPath: "/api/admin/setup";
+			preLoaderRoute: typeof ApiAdminSetupRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/api/auth/github": {
+			id: "/api/auth/github";
+			path: "/api/auth/github";
+			fullPath: "/api/auth/github";
+			preLoaderRoute: typeof ApiAuthGithubRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/api/auth/hub-finish": {
+			id: "/api/auth/hub-finish";
+			path: "/api/auth/hub-finish";
+			fullPath: "/api/auth/hub-finish";
+			preLoaderRoute: typeof ApiAuthHubFinishRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/api/auth/logout": {
+			id: "/api/auth/logout";
+			path: "/api/auth/logout";
+			fullPath: "/api/auth/logout";
+			preLoaderRoute: typeof ApiAuthLogoutRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/api/auth/me": {
+			id: "/api/auth/me";
+			path: "/api/auth/me";
+			fullPath: "/api/auth/me";
+			preLoaderRoute: typeof ApiAuthMeRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/api/auth/pair": {
+			id: "/api/auth/pair";
+			path: "/api/auth/pair";
+			fullPath: "/api/auth/pair";
+			preLoaderRoute: typeof ApiAuthPairRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/api/v1/catalog": {
+			id: "/api/v1/catalog";
+			path: "/api/v1/catalog";
+			fullPath: "/api/v1/catalog";
+			preLoaderRoute: typeof ApiV1CatalogRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/api/v1/nav-tree": {
+			id: "/api/v1/nav-tree";
+			path: "/api/v1/nav-tree";
+			fullPath: "/api/v1/nav-tree";
+			preLoaderRoute: typeof ApiV1NavTreeRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/api/webhooks/github": {
+			id: "/api/webhooks/github";
+			path: "/api/webhooks/github";
+			fullPath: "/api/webhooks/github";
+			preLoaderRoute: typeof ApiWebhooksGithubRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/settings/auth/login": {
+			id: "/settings/auth/login";
+			path: "/settings/auth/login";
+			fullPath: "/settings/auth/login";
+			preLoaderRoute: typeof SettingsAuthLoginRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/settings/auth/pair": {
+			id: "/settings/auth/pair";
+			path: "/settings/auth/pair";
+			fullPath: "/settings/auth/pair";
+			preLoaderRoute: typeof SettingsAuthPairRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/_edit/edit/drafts/$id": {
+			id: "/_edit/edit/drafts/$id";
+			path: "/edit/drafts/$id";
+			fullPath: "/edit/drafts/$id";
+			preLoaderRoute: typeof EditEditDraftsIdRouteImport;
+			parentRoute: typeof EditRoute;
+		};
+		"/api/v1/architecture/$key": {
+			id: "/api/v1/architecture/$key";
+			path: "/api/v1/architecture/$key";
+			fullPath: "/api/v1/architecture/$key";
+			preLoaderRoute: typeof ApiV1ArchitectureKeyRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/api/v1/docs/$": {
+			id: "/api/v1/docs/$";
+			path: "/api/v1/docs/$";
+			fullPath: "/api/v1/docs/$";
+			preLoaderRoute: typeof ApiV1DocsSplatRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/api/v1/embed/$": {
+			id: "/api/v1/embed/$";
+			path: "/api/v1/embed/$";
+			fullPath: "/api/v1/embed/$";
+			preLoaderRoute: typeof ApiV1EmbedSplatRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+		"/api/v1/tracker/tasks": {
+			id: "/api/v1/tracker/tasks";
+			path: "/api/v1/tracker/tasks";
+			fullPath: "/api/v1/tracker/tasks";
+			preLoaderRoute: typeof ApiV1TrackerTasksRouteImport;
+			parentRoute: typeof rootRouteImport;
+		};
+	}
 }
 
 interface EditRouteChildren {
-  EditEditIndexRoute: typeof EditEditIndexRoute
-  EditModerationIndexRoute: typeof EditModerationIndexRoute
-  EditEditDraftsIdRoute: typeof EditEditDraftsIdRoute
+	EditEditIndexRoute: typeof EditEditIndexRoute;
+	EditModerationIndexRoute: typeof EditModerationIndexRoute;
+	EditEditDraftsIdRoute: typeof EditEditDraftsIdRoute;
 }
 
 const EditRouteChildren: EditRouteChildren = {
-  EditEditIndexRoute: EditEditIndexRoute,
-  EditModerationIndexRoute: EditModerationIndexRoute,
-  EditEditDraftsIdRoute: EditEditDraftsIdRoute,
-}
+	EditEditIndexRoute: EditEditIndexRoute,
+	EditModerationIndexRoute: EditModerationIndexRoute,
+	EditEditDraftsIdRoute: EditEditDraftsIdRoute,
+};
 
-const EditRouteWithChildren = EditRoute._addFileChildren(EditRouteChildren)
+const EditRouteWithChildren = EditRoute._addFileChildren(EditRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  EditRoute: EditRouteWithChildren,
-  ApiHealthRoute: ApiHealthRoute,
-  PlatformSpecSplatRoute: PlatformSpecSplatRoute,
-  PlatformSpecIndexRoute: PlatformSpecIndexRoute,
-  ApiAdminSetupRoute: ApiAdminSetupRoute,
-  ApiAuthGithubRoute: ApiAuthGithubRoute,
-  ApiAuthHubFinishRoute: ApiAuthHubFinishRoute,
-  ApiAuthLogoutRoute: ApiAuthLogoutRoute,
-  ApiAuthMeRoute: ApiAuthMeRoute,
-  ApiAuthPairRoute: ApiAuthPairRoute,
-  ApiV1CatalogRoute: ApiV1CatalogRoute,
-  ApiV1NavTreeRoute: ApiV1NavTreeRoute,
-  ApiWebhooksGithubRoute: ApiWebhooksGithubRoute,
-  SettingsAuthLoginRoute: SettingsAuthLoginRoute,
-  SettingsAuthPairRoute: SettingsAuthPairRoute,
-  ApiV1ArchitectureKeyRoute: ApiV1ArchitectureKeyRoute,
-  ApiV1DocsSplatRoute: ApiV1DocsSplatRoute,
-  ApiV1EmbedSplatRoute: ApiV1EmbedSplatRoute,
-  ApiV1TrackerTasksRoute: ApiV1TrackerTasksRoute,
-}
+	IndexRoute: IndexRoute,
+	EditRoute: EditRouteWithChildren,
+	ApiHealthRoute: ApiHealthRoute,
+	PlatformSpecSplatRoute: PlatformSpecSplatRoute,
+	PlatformSpecIndexRoute: PlatformSpecIndexRoute,
+	ApiAdminSetupRoute: ApiAdminSetupRoute,
+	ApiAuthGithubRoute: ApiAuthGithubRoute,
+	ApiAuthHubFinishRoute: ApiAuthHubFinishRoute,
+	ApiAuthLogoutRoute: ApiAuthLogoutRoute,
+	ApiAuthMeRoute: ApiAuthMeRoute,
+	ApiAuthPairRoute: ApiAuthPairRoute,
+	ApiV1CatalogRoute: ApiV1CatalogRoute,
+	ApiV1NavTreeRoute: ApiV1NavTreeRoute,
+	ApiWebhooksGithubRoute: ApiWebhooksGithubRoute,
+	SettingsAuthLoginRoute: SettingsAuthLoginRoute,
+	SettingsAuthPairRoute: SettingsAuthPairRoute,
+	ApiV1ArchitectureKeyRoute: ApiV1ArchitectureKeyRoute,
+	ApiV1DocsSplatRoute: ApiV1DocsSplatRoute,
+	ApiV1EmbedSplatRoute: ApiV1EmbedSplatRoute,
+	ApiV1TrackerTasksRoute: ApiV1TrackerTasksRoute,
+};
 export const routeTree = rootRouteImport
-  ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+	._addFileChildren(rootRouteChildren)
+	._addFileTypes<FileRouteTypes>();
 
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
+import type { createStart } from "@tanstack/react-start";
+import type { getRouter } from "./router.tsx";
+
+declare module "@tanstack/react-start" {
+	interface Register {
+		ssr: true;
+		router: Awaited<ReturnType<typeof getRouter>>;
+	}
 }

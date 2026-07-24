@@ -11,7 +11,9 @@ import {
 } from "#/server/memgraph/draft-contexts";
 
 function webhookSecret(): string | undefined {
-	return (process.env.GITHUB_WEBHOOK_SECRET ?? env.GITHUB_WEBHOOK_SECRET)?.trim();
+	return (
+		process.env.GITHUB_WEBHOOK_SECRET ?? env.GITHUB_WEBHOOK_SECRET
+	)?.trim();
 }
 
 function verifyGithubSignature(
@@ -46,12 +48,13 @@ interface PullRequestPayload {
 	};
 }
 
-export async function handleGithubWebhook(
-	request: Request,
-): Promise<Response> {
+export async function handleGithubWebhook(request: Request): Promise<Response> {
 	const secret = webhookSecret();
 	if (!secret) {
-		return Response.json({ error: "Webhook secret not configured" }, { status: 503 });
+		return Response.json(
+			{ error: "Webhook secret not configured" },
+			{ status: 503 },
+		);
 	}
 
 	const payload = await request.text();

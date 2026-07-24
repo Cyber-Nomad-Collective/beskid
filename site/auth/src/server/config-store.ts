@@ -1,7 +1,10 @@
 import type { AuthAppId } from "@beskid/auth-client";
 
 import { env } from "#/env.server";
-import type { AuthConfigFile, ResolvedOAuthConfig } from "#/server/config-store-types";
+import type {
+	AuthConfigFile,
+	ResolvedOAuthConfig,
+} from "#/server/config-store-types";
 import {
 	ensureLegacyConfigImported,
 	getEncryptedHubSetting,
@@ -30,7 +33,8 @@ export async function readAuthConfig(): Promise<AuthConfigFile> {
 	return {
 		onboarded: getHubSetting("onboarded") === "true",
 		githubClientId: getHubSetting("github_client_id") ?? undefined,
-		githubClientSecret: getEncryptedHubSetting("github_client_secret") ?? undefined,
+		githubClientSecret:
+			getEncryptedHubSetting("github_client_secret") ?? undefined,
 		githubOAuthCallbackUrl:
 			getHubSetting("github_oauth_callback_url") ?? undefined,
 		adminGitHubLogins: adminRaw ? (JSON.parse(adminRaw) as string[]) : [],
@@ -63,7 +67,9 @@ export async function writeAuthConfig(config: AuthConfigFile): Promise<void> {
 export async function resolveOAuthConfig(): Promise<ResolvedOAuthConfig> {
 	await ensureDb();
 	const clientId =
-		env.GITHUB_CLIENT_ID?.trim() || getHubSetting("github_client_id")?.trim() || "";
+		env.GITHUB_CLIENT_ID?.trim() ||
+		getHubSetting("github_client_id")?.trim() ||
+		"";
 	const clientSecret =
 		env.GITHUB_CLIENT_SECRET?.trim() ||
 		getEncryptedHubSetting("github_client_secret")?.trim() ||

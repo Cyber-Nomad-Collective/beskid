@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { renderMarkdownToHtml } from "#/lib/markdown";
-import { getOpenSpecEmbed, loadOpenSpecCatalog } from "#/server/openspec/reader";
+import {
+	getOpenSpecEmbed,
+	loadOpenSpecCatalog,
+} from "#/server/openspec/reader";
 
 const corsHeaders = {
 	"Access-Control-Allow-Origin": "*",
@@ -13,7 +16,8 @@ const corsHeaders = {
 export const Route = createFileRoute("/api/v1/embed/$")({
 	server: {
 		handlers: {
-			OPTIONS: async () => new Response(null, { status: 204, headers: corsHeaders }),
+			OPTIONS: async () =>
+				new Response(null, { status: 204, headers: corsHeaders }),
 			GET: async ({ params, request }) => {
 				const identifier = params._splat?.replace(/^\/+|\/+$/g, "") ?? "";
 				if (!identifier) {

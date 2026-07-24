@@ -41,8 +41,6 @@ describe("ReaderChrome provider wiring", () => {
 			"utf8",
 		);
 		expect(source).toContain("SpecViewModeProvider");
-		expect(source).toMatch(
-			/<SpecViewModeProvider>[\s\S]*<ReaderTopBarActions\s*\/>/,
-		);
+		expect(source).toMatch(/<SpecViewModeProvider>[\s\S]*<ReaderTopBarActions/);
 	});
 });

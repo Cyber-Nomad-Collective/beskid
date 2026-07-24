@@ -11,8 +11,6 @@ COPY beskid_web_common ./beskid_web_common
 COPY openspec ./openspec
 COPY site/platform-spec ./site/platform-spec
 
-ARG NODE_AUTH_TOKEN
-ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
 
 RUN pnpm config set store-dir /pnpm/store && pnpm install --frozen-lockfile
 

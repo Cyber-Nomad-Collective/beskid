@@ -66,7 +66,7 @@ Required environment configuration:
 
 Production must use required reviewers. Environment credentials must be distinct;
 preview/PR jobs receive neither. Direct mutable-tag Compose deployment is rejected.
-Private package installs also require the repository `NODE_AUTH_TOKEN` secret;
+  Private packages resolve via workspace file: links — no GitHub Packages auth needed.
 GitHub's token is used only as the public-repository fallback.
 
 Every manifest records the source commit and workflow identity. Promotion emits

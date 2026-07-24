@@ -2,8 +2,8 @@
 // current OpenSpec revision, and that every capability conforms to its
 // enforceable layout. Run after `pnpm run seed:static` in CI and the image build.
 
-import { buildSeedWorkspace, loadSeed } from "#/lib/spec/static";
 import { resolveSeedDir } from "#/lib/spec/paths.core";
+import { buildSeedWorkspace, loadSeed } from "#/lib/spec/static";
 
 function fail(message: string): never {
 	console.error(`seed verification FAILED: ${message}`);

@@ -13,8 +13,9 @@ describe("auth-app-meta", () => {
 			},
 		}));
 
-		const { authAppLabel, pairingAppOptions, defaultPairingAppId } =
-			await import("./auth-app-meta");
+		const { authAppLabel, pairingAppOptions, defaultPairingAppId } = await import(
+			"./auth-app-meta"
+		);
 
 		expect(authAppLabel("platform-spec")).toBe("platform-spec");
 		expect(authAppLabel("tracker")).toBe("Beskid Tracker");

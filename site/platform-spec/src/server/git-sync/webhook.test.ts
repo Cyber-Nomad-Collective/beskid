@@ -5,7 +5,9 @@ process.env.GITHUB_WEBHOOK_SECRET = "webhook-secret";
 import { createHmac } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 
-const markMerged = vi.fn(async () => ({ context: { id: "ctx-1", status: "merged" } }));
+const markMerged = vi.fn(async () => ({
+	context: { id: "ctx-1", status: "merged" },
+}));
 const markAbandoned = vi.fn(async () => ({
 	context: { id: "ctx-1", status: "abandoned" },
 }));
@@ -58,7 +60,9 @@ describe("github webhook draft context lifecycle", () => {
 	it("marks closed unmerged pull requests as abandoned", async () => {
 		markMerged.mockClear();
 		markAbandoned.mockClear();
-		const response = await handleGithubWebhook(signedRequest({}, "closed", false));
+		const response = await handleGithubWebhook(
+			signedRequest({}, "closed", false),
+		);
 		expect(response.status).toBe(200);
 		const json = (await response.json()) as { status?: string };
 		expect(json.status).toBe("abandoned");

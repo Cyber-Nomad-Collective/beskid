@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
 import { common, createLowlight } from "lowlight";
+import { useEffect, useMemo, useRef } from "react";
 
 const lowlight = createLowlight(common);
 
@@ -56,10 +56,7 @@ export function SourceCodeEmbed({ lang, code }: SourceCodeEmbedProps) {
 			className="overflow-x-auto rounded-lg border border-border bg-muted/40 p-4 text-sm leading-relaxed"
 			data-language={lang}
 		>
-			<code
-				className="hljs"
-				dangerouslySetInnerHTML={{ __html: html }}
-			/>
+			<code className="hljs" dangerouslySetInnerHTML={{ __html: html }} />
 		</pre>
 	);
 }

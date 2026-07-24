@@ -1,231 +1,235 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "version": 1,
-  "description": "Beskid superrepo toolchain manifest (scripts/install-deps.sh)",
-  "groups": {
-    "infra": {
-      "description": "OpenTofu / OpenBao / Just (beskid_infra operators)",
-      "tools": ["git", "jq", "just", "tofu", "bao"]
-    },
-    "ops": {
-      "description": "Operator tooling (Ansible for host bootstrap)",
-      "tools": ["ansible"]
-    },
-    "beskid": {
-      "description": "Full superrepo development",
-      "tools": [
-        "git",
-        "jq",
-        "just",
-        "lazygit",
-        "gh",
-        "tofu",
-        "bao",
-        "bun",
-        "rust",
-        "dotnet"
-      ]
-    },
-    "all": {
-      "description": "Union of infra + beskid",
-      "tools": [
-        "git",
-        "jq",
-        "just",
-        "lazygit",
-        "gh",
-        "tofu",
-        "bao",
-        "bun",
-        "rust",
-        "dotnet"
-      ]
-    }
-  },
-  "tools": {
-    "git": {
-      "description": "Git version control",
-      "bins": ["git"],
-      "version_cmd": ["git", "--version"],
-      "install": {
-        "darwin": [{ "method": "homebrew", "formula": "git" }],
-        "linux": [
-          { "method": "apt", "packages": ["git"] },
-          { "method": "dnf", "packages": ["git"] },
-          { "method": "pacman", "packages": ["git"] }
-        ],
-        "windows": [{ "method": "winget", "id": "Git.Git" }]
-      }
-    },
-    "jq": {
-      "description": "JSON processor (OpenBao export, CI scripts)",
-      "bins": ["jq"],
-      "version_cmd": ["jq", "--version"],
-      "install": {
-        "darwin": [{ "method": "homebrew", "formula": "jq" }],
-        "linux": [
-          { "method": "apt", "packages": ["jq"] },
-          { "method": "dnf", "packages": ["jq"] },
-          { "method": "snap", "package": "jq", "classic": false }
-        ],
-        "windows": [{ "method": "winget", "id": "jqlang.jq" }]
-      }
-    },
-    "just": {
-      "description": "Command runner (beskid_infra Justfile)",
-      "bins": ["just"],
-      "version_cmd": ["just", "--version"],
-      "install": {
-        "darwin": [{ "method": "homebrew", "formula": "just" }],
-        "linux": [
-          { "method": "homebrew", "formula": "just" },
-          { "method": "script", "url": "https://just.systems/install.sh", "args": ["--to", "~/.local/bin"] }
-        ],
-        "windows": [
-          { "method": "winget", "id": "Casey.Just" },
-          { "method": "scoop", "package": "just" }
-        ]
-      }
-    },
-    "tofu": {
-      "description": "OpenTofu CLI",
-      "bins": ["tofu"],
-      "version_cmd": ["tofu", "version"],
-      "install": {
-        "darwin": [{ "method": "homebrew", "formula": "opentofu" }],
-        "linux": [
-          { "method": "homebrew", "formula": "opentofu" },
-          { "method": "snap", "package": "opentofu", "classic": true },
-          {
-            "method": "script",
-            "url": "https://get.opentofu.org/tofu/install.sh",
-            "args": ["--install-method", "deb"]
-          }
-        ],
-        "windows": [
-          { "method": "winget", "id": "OpenTofu.Tofu", "exact": true },
-          { "method": "scoop", "package": "opentofu" }
-        ]
-      }
-    },
-    "bao": {
-      "description": "OpenBao CLI (bao; vault CLI also accepted)",
-      "bins": ["bao", "vault"],
-      "bins_any": true,
-      "version_cmd": ["bao", "version"],
-      "install": {
-        "darwin": [{ "method": "homebrew", "formula": "openbao" }],
-        "linux": [
-          { "method": "homebrew", "formula": "openbao" },
-          { "method": "dnf", "packages": ["openbao"] },
-          {
-            "method": "github_release",
-            "repo": "openbao/openbao",
-            "asset_glob": "bao_*_linux_amd64.zip",
-            "bin": "bao"
-          }
-        ],
-        "windows": [
-          {
-            "method": "github_release",
-            "repo": "openbao/openbao",
-            "asset_glob": "bao_*_windows_amd64.zip",
-            "bin": "bao.exe"
-          },
-          { "method": "winget", "id": "Hashicorp.Vault" }
-        ]
-      }
-    },
-    "lazygit": {
-      "description": "TUI for recursive submodule commits",
-      "bins": ["lazygit"],
-      "version_cmd": ["lazygit", "--version"],
-      "install": {
-        "darwin": [{ "method": "homebrew", "formula": "lazygit" }],
-        "linux": [
-          { "method": "homebrew", "formula": "lazygit" },
-          { "method": "dnf", "packages": ["lazygit"] },
-          { "method": "pacman", "packages": ["lazygit"] },
-          {
-            "method": "github_release",
-            "repo": "jesseduffield/lazygit",
-            "asset_glob": "lazygit_*_Linux_x86_64.tar.gz",
-            "bin": "lazygit"
-          }
-        ],
-        "windows": [
-          { "method": "winget", "id": "JesseDuffield.LazyGit", "exact": true },
-          { "method": "scoop", "package": "lazygit" }
-        ]
-      }
-    },
-    "gh": {
-      "description": "GitHub CLI",
-      "bins": ["gh"],
-      "version_cmd": ["gh", "--version"],
-      "install": {
-        "darwin": [{ "method": "homebrew", "formula": "gh" }],
-        "linux": [
-          { "method": "apt", "packages": ["gh"] },
-          { "method": "dnf", "packages": ["gh"] },
-          { "method": "homebrew", "formula": "gh" }
-        ],
-        "windows": [{ "method": "winget", "id": "GitHub.cli" }]
-      }
-    },
-    "rust": {
-      "description": "Rust toolchain (cargo, rustc) via rustup",
-      "bins": ["cargo", "rustc"],
-      "bins_any": false,
-      "version_cmd": ["rustc", "--version"],
-      "install": {
-        "darwin": [{ "method": "rustup" }],
-        "linux": [{ "method": "rustup" }],
-        "windows": [{ "method": "rustup" }]
-      }
-    },
-    "dotnet": {
-      "description": ".NET SDK (pckg, compiler tooling)",
-      "bins": ["dotnet"],
-      "version_cmd": ["dotnet", "--version"],
-      "install": {
-        "darwin": [{ "method": "homebrew_cask", "cask": "dotnet-sdk" }],
-        "linux": [
-          { "method": "snap", "package": "dotnet-sdk", "classic": true },
-          {
-            "method": "script",
-            "url": "https://dot.net/v1/dotnet-install.sh",
-            "args": ["--channel", "8.0", "--install-dir", "~/.dotnet"]
-          }
-        ],
-        "windows": [
-          { "method": "winget", "id": "Microsoft.DotNet.SDK.8", "exact": true }
-        ]
-      }
-    },
-    "bun": {
-      "description": "Bun runtime (site/website, packages)",
-      "bins": ["bun"],
-      "version_cmd": ["bun", "--version"],
-      "install": {
-        "darwin": [{ "method": "homebrew", "formula": "bun" }],
-        "linux": [{ "method": "bun_installer" }],
-        "windows": [{ "method": "bun_installer" }]
-      }
-    },
-    "ansible": {
-      "description": "Ansible (for provisioning hosts before OpenTofu)",
-      "bins": ["ansible-playbook"],
-      "version_cmd": ["ansible-playbook", "--version"],
-      "install": {
-        "darwin": [{ "method": "homebrew", "formula": "ansible" }],
-        "linux": [
-          { "method": "apt", "packages": ["ansible"] },
-          { "method": "dnf", "packages": ["ansible"] },
-          { "method": "pacman", "packages": ["ansible"] }
-        ],
-        "windows": []
-      }
-    }
-  }
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"version": 1,
+	"description": "Beskid superrepo toolchain manifest (scripts/install-deps.sh)",
+	"groups": {
+		"infra": {
+			"description": "OpenTofu / OpenBao / Just (beskid_infra operators)",
+			"tools": ["git", "jq", "just", "tofu", "bao"]
+		},
+		"ops": {
+			"description": "Operator tooling (Ansible for host bootstrap)",
+			"tools": ["ansible"]
+		},
+		"beskid": {
+			"description": "Full superrepo development",
+			"tools": [
+				"git",
+				"jq",
+				"just",
+				"lazygit",
+				"gh",
+				"tofu",
+				"bao",
+				"bun",
+				"rust",
+				"dotnet"
+			]
+		},
+		"all": {
+			"description": "Union of infra + beskid",
+			"tools": [
+				"git",
+				"jq",
+				"just",
+				"lazygit",
+				"gh",
+				"tofu",
+				"bao",
+				"bun",
+				"rust",
+				"dotnet"
+			]
+		}
+	},
+	"tools": {
+		"git": {
+			"description": "Git version control",
+			"bins": ["git"],
+			"version_cmd": ["git", "--version"],
+			"install": {
+				"darwin": [{ "method": "homebrew", "formula": "git" }],
+				"linux": [
+					{ "method": "apt", "packages": ["git"] },
+					{ "method": "dnf", "packages": ["git"] },
+					{ "method": "pacman", "packages": ["git"] }
+				],
+				"windows": [{ "method": "winget", "id": "Git.Git" }]
+			}
+		},
+		"jq": {
+			"description": "JSON processor (OpenBao export, CI scripts)",
+			"bins": ["jq"],
+			"version_cmd": ["jq", "--version"],
+			"install": {
+				"darwin": [{ "method": "homebrew", "formula": "jq" }],
+				"linux": [
+					{ "method": "apt", "packages": ["jq"] },
+					{ "method": "dnf", "packages": ["jq"] },
+					{ "method": "snap", "package": "jq", "classic": false }
+				],
+				"windows": [{ "method": "winget", "id": "jqlang.jq" }]
+			}
+		},
+		"just": {
+			"description": "Command runner (beskid_infra Justfile)",
+			"bins": ["just"],
+			"version_cmd": ["just", "--version"],
+			"install": {
+				"darwin": [{ "method": "homebrew", "formula": "just" }],
+				"linux": [
+					{ "method": "homebrew", "formula": "just" },
+					{
+						"method": "script",
+						"url": "https://just.systems/install.sh",
+						"args": ["--to", "~/.local/bin"]
+					}
+				],
+				"windows": [
+					{ "method": "winget", "id": "Casey.Just" },
+					{ "method": "scoop", "package": "just" }
+				]
+			}
+		},
+		"tofu": {
+			"description": "OpenTofu CLI",
+			"bins": ["tofu"],
+			"version_cmd": ["tofu", "version"],
+			"install": {
+				"darwin": [{ "method": "homebrew", "formula": "opentofu" }],
+				"linux": [
+					{ "method": "homebrew", "formula": "opentofu" },
+					{ "method": "snap", "package": "opentofu", "classic": true },
+					{
+						"method": "script",
+						"url": "https://get.opentofu.org/tofu/install.sh",
+						"args": ["--install-method", "deb"]
+					}
+				],
+				"windows": [
+					{ "method": "winget", "id": "OpenTofu.Tofu", "exact": true },
+					{ "method": "scoop", "package": "opentofu" }
+				]
+			}
+		},
+		"bao": {
+			"description": "OpenBao CLI (bao; vault CLI also accepted)",
+			"bins": ["bao", "vault"],
+			"bins_any": true,
+			"version_cmd": ["bao", "version"],
+			"install": {
+				"darwin": [{ "method": "homebrew", "formula": "openbao" }],
+				"linux": [
+					{ "method": "homebrew", "formula": "openbao" },
+					{ "method": "dnf", "packages": ["openbao"] },
+					{
+						"method": "github_release",
+						"repo": "openbao/openbao",
+						"asset_glob": "bao_*_linux_amd64.zip",
+						"bin": "bao"
+					}
+				],
+				"windows": [
+					{
+						"method": "github_release",
+						"repo": "openbao/openbao",
+						"asset_glob": "bao_*_windows_amd64.zip",
+						"bin": "bao.exe"
+					},
+					{ "method": "winget", "id": "Hashicorp.Vault" }
+				]
+			}
+		},
+		"lazygit": {
+			"description": "TUI for recursive submodule commits",
+			"bins": ["lazygit"],
+			"version_cmd": ["lazygit", "--version"],
+			"install": {
+				"darwin": [{ "method": "homebrew", "formula": "lazygit" }],
+				"linux": [
+					{ "method": "homebrew", "formula": "lazygit" },
+					{ "method": "dnf", "packages": ["lazygit"] },
+					{ "method": "pacman", "packages": ["lazygit"] },
+					{
+						"method": "github_release",
+						"repo": "jesseduffield/lazygit",
+						"asset_glob": "lazygit_*_Linux_x86_64.tar.gz",
+						"bin": "lazygit"
+					}
+				],
+				"windows": [
+					{ "method": "winget", "id": "JesseDuffield.LazyGit", "exact": true },
+					{ "method": "scoop", "package": "lazygit" }
+				]
+			}
+		},
+		"gh": {
+			"description": "GitHub CLI",
+			"bins": ["gh"],
+			"version_cmd": ["gh", "--version"],
+			"install": {
+				"darwin": [{ "method": "homebrew", "formula": "gh" }],
+				"linux": [
+					{ "method": "apt", "packages": ["gh"] },
+					{ "method": "dnf", "packages": ["gh"] },
+					{ "method": "homebrew", "formula": "gh" }
+				],
+				"windows": [{ "method": "winget", "id": "GitHub.cli" }]
+			}
+		},
+		"rust": {
+			"description": "Rust toolchain (cargo, rustc) via rustup",
+			"bins": ["cargo", "rustc"],
+			"bins_any": false,
+			"version_cmd": ["rustc", "--version"],
+			"install": {
+				"darwin": [{ "method": "rustup" }],
+				"linux": [{ "method": "rustup" }],
+				"windows": [{ "method": "rustup" }]
+			}
+		},
+		"dotnet": {
+			"description": ".NET SDK (pckg, compiler tooling)",
+			"bins": ["dotnet"],
+			"version_cmd": ["dotnet", "--version"],
+			"install": {
+				"darwin": [{ "method": "homebrew_cask", "cask": "dotnet-sdk" }],
+				"linux": [
+					{ "method": "snap", "package": "dotnet-sdk", "classic": true },
+					{
+						"method": "script",
+						"url": "https://dot.net/v1/dotnet-install.sh",
+						"args": ["--channel", "8.0", "--install-dir", "~/.dotnet"]
+					}
+				],
+				"windows": [
+					{ "method": "winget", "id": "Microsoft.DotNet.SDK.8", "exact": true }
+				]
+			}
+		},
+		"bun": {
+			"description": "Bun runtime (site/website, packages)",
+			"bins": ["bun"],
+			"version_cmd": ["bun", "--version"],
+			"install": {
+				"darwin": [{ "method": "homebrew", "formula": "bun" }],
+				"linux": [{ "method": "bun_installer" }],
+				"windows": [{ "method": "bun_installer" }]
+			}
+		},
+		"ansible": {
+			"description": "Ansible (for provisioning hosts before OpenTofu)",
+			"bins": ["ansible-playbook"],
+			"version_cmd": ["ansible-playbook", "--version"],
+			"install": {
+				"darwin": [{ "method": "homebrew", "formula": "ansible" }],
+				"linux": [
+					{ "method": "apt", "packages": ["ansible"] },
+					{ "method": "dnf", "packages": ["ansible"] },
+					{ "method": "pacman", "packages": ["ansible"] }
+				],
+				"windows": []
+			}
+		}
+	}
 }

@@ -22,10 +22,10 @@
 		"node": ">=22.12.0"
 	},
 	"dependencies": {
-		"@beskid/auth-client": "npm:@cyber-nomad-collective/beskid-auth-client@^0.2.9",
-		"@beskid/beskid-ui": "npm:@cyber-nomad-collective/beskid-ui@^0.2.8",
-		"@beskid/server-observability": "npm:@cyber-nomad-collective/beskid-server-observability@^0.2.8",
-		"@beskid/ui-react": "npm:@cyber-nomad-collective/beskid-ui-react@^0.2.8",
+		"@beskid/auth-client": "file:../../beskid_web_common/packages/beskid-auth-client",
+		"@beskid/beskid-ui": "file:../../beskid_web_common/packages/beskid-ui",
+		"@beskid/server-observability": "file:../../beskid_web_common/packages/beskid-server-observability",
+		"@beskid/ui-react": "file:../../beskid_web_common/packages/beskid-ui-react",
 		"@t3-oss/env-core": "^0.13.10",
 		"@tailwindcss/vite": "^4.1.18",
 		"@tanstack/react-query": "latest",

@@ -1,35 +1,37 @@
 {
-  "name": "@beskid/brand",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "exports": {
-    "./lib/brand": "./src/lib/brand.ts"
-  },
-  "scripts": {
-    "build": "tsc",
-    "render": "tsx src/render.ts",
-    "clean": "rm -rf out dist",
-    "check": "vitest run",
-    "test": "vitest",
-    "test:watch": "vitest"
-  },
-  "devDependencies": {
-    "@types/react": "^19.2.3",
-    "@types/react-dom": "^19.2.3",
-    "tsx": "^4.23.1",
-    "typescript": "^5.9.3",
-    "vitest": "^2.1.9"
-  },
-  "dependencies": {
-    "@fontsource/inter": "^5.3.0",
-    "@lottiefiles/lottie-js": "^0.4.2",
-    "@react-pdf/renderer": "^4.5.1",
-    "@svgdotjs/svg.js": "^3.2.7",
-    "canvas": "^3.2.3",
-    "jsdom": "^29.1.1",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "svgdom": "^0.1.28"
-  }
+	"name": "@beskid/brand",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./lib/brand": "./src/lib/brand.ts",
+		"./pdf-kit": "./src/pdf-kit.ts",
+		"./lottie-gen": "./src/lottie-gen.ts",
+		"./components/service-logos": "./src/components/service-logos.ts",
+		"./lib/palette": "./src/lib/palette.ts",
+		"./lib/typography": "./src/lib/typography.ts"
+	},
+	"scripts": {
+		"build": "tsc",
+		"render": "tsx src/render.ts",
+		"clean": "rm -f *.svg service-*.svg icon-*.svg beskid-*.svg *.json *.pdf 2>/dev/null; echo \"Artifacts cleaned\"",
+		"check": "vitest run",
+		"test": "vitest",
+		"test:watch": "vitest",
+		"pdf": "tsx src/pdf-kit.ts",
+		"lottie": "tsx src/lottie-gen.ts",
+		"all": "npm run clean && npm run render && npm run pdf && npm run lottie"
+	},
+	"devDependencies": {
+		"tsx": "^4.23.1",
+		"typescript": "^5.9.3",
+		"vitest": "^2.1.9"
+	},
+	"dependencies": {
+		"@fontsource-variable/inter-tight": "^5.3.0",
+		"@fontsource/inter": "^5.3.0",
+		"@lottiefiles/lottie-js": "^0.4.2",
+		"@pdf-lib/fontkit": "^1.1.1",
+		"pdf-lib": "^1.17.1"
+	}
 }

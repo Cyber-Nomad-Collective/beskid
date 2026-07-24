@@ -66,14 +66,11 @@ for dockerfile in \
   site/learn/Dockerfile \
   beskid_tracker/Dockerfile \
   beskid_nexus/Dockerfile; do
-  secure="${tmp}/$(echo "${dockerfile}" | tr / -)"
-  "${root}/scripts/ci/prepare-secure-dockerfile.sh" "${root}/${dockerfile}" "${secure}"
-  if rg -q 'ARG[[:space:]]+NODE_AUTH_TOKEN|ENV[[:space:]]+NODE_AUTH_TOKEN' "${secure}"; then
-    echo "package token declaration remains in ${secure}" >&2
-    exit 1
-  fi
-  rg -q 'mount=type=secret,id=NODE_AUTH_TOKEN' "${secure}"
-done
+  if rg -q 'NODE_AUTH_TOKEN' "${root}/${dockerfile}"; then
+      echo "NODE_AUTH_TOKEN found in ${dockerfile}" >&2
+      exit 1
+    fi
+  done
 
 # Nexus keeps its service directory as the primary Docker context while the
 # centralized image workflow supplies the canonical standard as an explicit,
@@ -91,8 +88,7 @@ pckg_image_block="$(sed -n '/^  image-pckg:/,/^  manifest:/p' "${root}/.github/w
 for required in \
   'context: .' \
   'submodules: pckg beskid_web_common' \
-  'node-auth: true' \
-  'NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}'; do
+  'node-auth: false'; do
   if [[ "${pckg_image_block}" != *"${required}"* ]]; then
     echo "pckg image workflow is missing required contract: ${required}" >&2
     exit 1
@@ -116,7 +112,11 @@ if ! rg -Fq 'COPY --from=web_common' "${root}/beskid_tracker/Dockerfile"; then
   echo "tracker Dockerfile must consume the web_common BuildKit context before install" >&2
   exit 1
 fi
-rg -Fq 'NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN || github.token }}' "${root}/.github/workflows/reusable-quality.yml"
+rg -Fq 'QUALITY_COMMAND: ${{ inputs.command }}' "${root}/.github/workflows/reusable-quality.yml"
+if rg -q 'NODE_AUTH_TOKEN' "${root}/.github/workflows/reusable-quality.yml"; then
+  echo "NODE_AUTH_TOKEN must not appear in reusable-quality.yml" >&2
+  exit 1
+fi
 if [[ "${pckg_image_block}" == *'optional: true'* ]]; then
   echo "pckg image lane must be a hard gate (optional: true is forbidden)" >&2
   exit 1

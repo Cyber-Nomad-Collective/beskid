@@ -21,7 +21,8 @@ export const Route = createFileRoute("/api/v1/docs/$")({
 			PATCH: async () => {
 				return Response.json(
 					{
-						error: "canonical OpenSpec documents are changed through openspec/changes",
+						error:
+							"canonical OpenSpec documents are changed through openspec/changes",
 					},
 					{ status: 405, headers: { Allow: "GET" } },
 				);

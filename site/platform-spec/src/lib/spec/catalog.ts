@@ -3,10 +3,9 @@
 // openspec/catalog.json. This module has no server-only or database imports so
 // it runs both inside the TanStack server bundle and under the Node seed runner.
 
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-
-import { createHash } from "node:crypto";
 
 import {
 	resolveCapabilityDocumentIdentity,
@@ -89,13 +88,7 @@ export type OpenSpecCatalogDocument =
 export interface OpenSpecLegacyCatalogEntry
 	extends Omit<
 		OpenSpecCatalogDocumentBase,
-		| "kind"
-		| "identity"
-		| "domain"
-		| "area"
-		| "feature"
-		| "article"
-		| "decision"
+		"kind" | "identity" | "domain" | "area" | "feature" | "article" | "decision"
 	> {
 	kind: "legacy-capability";
 	identity: null;
@@ -181,11 +174,7 @@ function stripHtmlComments(value: string): string {
 function extractPurpose(markdown: string): string | null {
 	const match = markdown.match(/^## Purpose\s*\n+([\s\S]*?)(?=\n## |$)/m);
 	if (!match) return null;
-	return (
-		stripHtmlComments(match[1])
-			.replace(/\s+/g, " ")
-			.trim() || null
-	);
+	return stripHtmlComments(match[1]).replace(/\s+/g, " ").trim() || null;
 }
 
 export function extractRequirements(markdown: string): OpenSpecRequirement[] {
@@ -317,8 +306,7 @@ function loadEntry(
 		identity,
 		id: asString(raw.id) ?? identity.key,
 		slug: identity.publicSlug,
-		title:
-			asString(raw.title) ?? heading ?? capabilityTitle(identity.capability),
+		title: asString(raw.title) ?? heading ?? capabilityTitle(identity.capability),
 		description: asString(raw.description) ?? extractPurpose(markdown),
 		status: asString(raw.status) ?? "Standard",
 		pathClass: identity.artifactKind,
@@ -349,7 +337,9 @@ function loadLegacyEntry(
 		canonicalPath.replace(/^openspec\//, ""),
 	);
 	if (!absoluteSpecPath.startsWith(`${path.resolve(openSpecRoot)}${path.sep}`)) {
-		throw new Error(`Legacy capability path escapes OpenSpec root: ${configuredPath}`);
+		throw new Error(
+			`Legacy capability path escapes OpenSpec root: ${configuredPath}`,
+		);
 	}
 	if (!fs.existsSync(absoluteSpecPath)) return null;
 	const markdown = fs.readFileSync(absoluteSpecPath, "utf8");
@@ -383,7 +373,10 @@ function loadLegacyEntry(
 		feature: null,
 		article: null,
 		decision: null,
-		specPath: path.relative(openSpecRoot, absoluteSpecPath).split(path.sep).join("/"),
+		specPath: path
+			.relative(openSpecRoot, absoluteSpecPath)
+			.split(path.sep)
+			.join("/"),
 		legacySlugs: entryAliases(raw, topAliases),
 		bookLinks: asStringArray(raw.bookLinks),
 		requirements: mergeRequirementMetadata(extractRequirements(markdown), raw),
@@ -442,9 +435,7 @@ export function loadOpenSpecCatalog(
 	const byCapability = new Map<string, UnknownRecord>();
 	for (const entry of [...discovered, ...configured]) {
 		const capability =
-			asString(entry.capability) ??
-			asString(entry.stableId) ??
-			asString(entry.id);
+			asString(entry.capability) ?? asString(entry.stableId) ?? asString(entry.id);
 		if (capability) byCapability.set(capability, entry);
 	}
 	const capabilityDocuments = [...byCapability.values()]

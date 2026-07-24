@@ -4,10 +4,10 @@ import {
 	anchorFor,
 	getOpenSpecEmbed as liveGetOpenSpecEmbed,
 	loadOpenSpecCatalog as liveLoadOpenSpecCatalog,
+	resolveOpenSpecEntry as liveResolveOpenSpecEntry,
 	type OpenSpecCatalog,
 	type OpenSpecCatalogEntry,
 	type OpenSpecRequirement,
-	resolveOpenSpecEntry as liveResolveOpenSpecEntry,
 	resolveOpenSpecRoot,
 } from "#/lib/spec/catalog";
 import {
@@ -17,12 +17,12 @@ import {
 import { buildNavTree, type OpenSpecNavNode } from "#/lib/spec/domain-model";
 import { loadSeed } from "#/lib/spec/static";
 
-export { extractRequirements } from "#/lib/spec/catalog";
 export type {
 	OpenSpecCatalog,
 	OpenSpecCatalogEntry,
 	OpenSpecRequirement,
 } from "#/lib/spec/catalog";
+export { extractRequirements } from "#/lib/spec/catalog";
 export type { OpenSpecDocumentBundle } from "#/lib/spec/document";
 export type { OpenSpecNavNode } from "#/lib/spec/domain-model";
 
@@ -55,7 +55,10 @@ export function resolveOpenSpecEntry(
 			);
 		}
 	}
-	return liveResolveOpenSpecEntry(identifier, openSpecRoot ?? resolveOpenSpecRoot());
+	return liveResolveOpenSpecEntry(
+		identifier,
+		openSpecRoot ?? resolveOpenSpecRoot(),
+	);
 }
 
 export function getOpenSpecDocument(
@@ -74,7 +77,10 @@ export function getOpenSpecDocument(
 			return seed.documents[entry.slug] ?? null;
 		}
 	}
-	return liveGetOpenSpecDocument(identifier, openSpecRoot ?? resolveOpenSpecRoot());
+	return liveGetOpenSpecDocument(
+		identifier,
+		openSpecRoot ?? resolveOpenSpecRoot(),
+	);
 }
 
 export function getOpenSpecNavTree(openSpecRoot?: string): OpenSpecNavNode {
@@ -82,7 +88,9 @@ export function getOpenSpecNavTree(openSpecRoot?: string): OpenSpecNavNode {
 		const seed = loadSeed();
 		if (seed) return seed.navTree;
 	}
-	return buildNavTree(liveLoadOpenSpecCatalog(openSpecRoot ?? resolveOpenSpecRoot()));
+	return buildNavTree(
+		liveLoadOpenSpecCatalog(openSpecRoot ?? resolveOpenSpecRoot()),
+	);
 }
 
 export function getOpenSpecEmbed(

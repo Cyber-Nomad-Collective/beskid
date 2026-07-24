@@ -3,8 +3,8 @@
 import { CompilerArchitectureMap } from "#/components/reader/compiler-architecture-map";
 import { useSpecViewMode } from "#/components/reader/spec-view-mode";
 import { Badge } from "#/components/ui-primitives";
-import { CompilerArchitectureManifest } from "#/lib/architecture/compiler-architecture";
 import { resolveArchitectureModel } from "#/lib/architecture/architecture-model";
+import { CompilerArchitectureManifest } from "#/lib/architecture/compiler-architecture";
 
 export interface PlatformSpecHomeClientProps {
 	catalog: Array<{
@@ -90,7 +90,9 @@ export function PlatformSpecHomeClient({
 						</a>
 					))}
 				</div>
-			) : <CompilerArchitectureMap model={architectureModel} />}
+			) : (
+				<CompilerArchitectureMap model={architectureModel} />
+			)}
 		</div>
 	);
 }

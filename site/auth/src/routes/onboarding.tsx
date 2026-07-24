@@ -1,6 +1,3 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useState } from "react";
-
 import {
 	Button,
 	Card,
@@ -11,6 +8,8 @@ import {
 	Input,
 	Label,
 } from "@beskid/ui-react";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { useState } from "react";
 import { ThemeToggle } from "#/components/theme-toggle";
 import { fetchOnboardingGate } from "#/server/app-server.functions";
 

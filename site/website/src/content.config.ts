@@ -1,7 +1,7 @@
-import { defineCollection, z } from 'astro:content';
-import { docsLoader } from '@astrojs/starlight/loaders';
-import { docsSchema } from '@astrojs/starlight/schema';
-import { blogStatuses } from './lib/blog';
+import { defineCollection, z } from "astro:content";
+import { docsLoader } from "@astrojs/starlight/loaders";
+import { docsSchema } from "@astrojs/starlight/schema";
+import { blogStatuses } from "./lib/blog";
 
 export const collections = {
 	docs: defineCollection({

@@ -8,7 +8,10 @@ import {
 describe("Beskid Markdown directives", () => {
 	it("parses typed directive fields", () => {
 		expect(
-			parseBeskidDirective("spec", "ref: compiler--pipeline--aot#artifact\ntitle: AOT artifact"),
+			parseBeskidDirective(
+				"spec",
+				"ref: compiler--pipeline--aot#artifact\ntitle: AOT artifact",
+			),
 		).toEqual({
 			kind: "spec",
 			ref: "compiler--pipeline--aot#artifact",

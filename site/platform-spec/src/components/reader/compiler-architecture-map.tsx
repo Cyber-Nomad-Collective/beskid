@@ -4,19 +4,19 @@ import {
 	Background,
 	Controls,
 	Handle,
-	Position,
-	ReactFlow,
 	type Node,
 	type NodeProps,
+	Position,
+	ReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useCallback, useMemo, useState } from "react";
 
 import {
-	EdgeKindColors,
-	layoutArchitectureMap,
 	type ArchitectureMapGroupData,
 	type ArchitectureMapNodeData,
+	EdgeKindColors,
+	layoutArchitectureMap,
 } from "#/components/reader/architecture-map-layout";
 import type {
 	ResolvedArchitectureModel,
@@ -29,8 +29,12 @@ const TraversalLabels = {
 	"spec-to-code": "Spec-to-code",
 } as const;
 
-function ArchitectureNodeCard({ data }: NodeProps<Node<ArchitectureMapNodeData>>) {
-	const specLink = data.node.specLinks.find((link) => link.available && link.href);
+function ArchitectureNodeCard({
+	data,
+}: NodeProps<Node<ArchitectureMapNodeData>>) {
+	const specLink = data.node.specLinks.find(
+		(link) => link.available && link.href,
+	);
 	return (
 		<div
 			className={[
@@ -65,7 +69,9 @@ function ArchitectureNodeCard({ data }: NodeProps<Node<ArchitectureMapNodeData>>
 					{specLink.title ?? specLink.capability}
 				</a>
 			) : (
-				<span className="mt-1 block text-xs text-muted-foreground">No canonical spec link</span>
+				<span className="mt-1 block text-xs text-muted-foreground">
+					No canonical spec link
+				</span>
 			)}
 			<Handle
 				type="source"
@@ -78,7 +84,9 @@ function ArchitectureNodeCard({ data }: NodeProps<Node<ArchitectureMapNodeData>>
 	);
 }
 
-function ArchitectureGroupContainer({ data }: NodeProps<Node<ArchitectureMapGroupData>>) {
+function ArchitectureGroupContainer({
+	data,
+}: NodeProps<Node<ArchitectureMapGroupData>>) {
 	return (
 		<div className="relative h-full w-full rounded-xl border-2 border-border/60 bg-muted/30">
 			<div className="absolute left-3 top-2 rounded-md bg-muted px-3 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -88,20 +96,30 @@ function ArchitectureGroupContainer({ data }: NodeProps<Node<ArchitectureMapGrou
 	);
 }
 
-const nodeTypes = { architecture: ArchitectureNodeCard, architectureGroup: ArchitectureGroupContainer };
+const nodeTypes = {
+	architecture: ArchitectureNodeCard,
+	architectureGroup: ArchitectureGroupContainer,
+};
 
-function ArchitectureDetail({ node }: { node: ResolvedArchitectureNode | null }) {
+function ArchitectureDetail({
+	node,
+}: {
+	node: ResolvedArchitectureNode | null;
+}) {
 	if (!node) {
 		return (
 			<aside className="rounded-lg border border-border bg-card p-4 text-sm text-muted-foreground">
-				Select a component to inspect its architecture role, evidence, and canonical specification links.
+				Select a component to inspect its architecture role, evidence, and canonical
+				specification links.
 			</aside>
 		);
 	}
 	return (
 		<aside className="space-y-4 rounded-lg border border-border bg-card p-4">
 			<div>
-				<p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{node.group} · {node.kind} · {node.state}</p>
+				<p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+					{node.group} · {node.kind} · {node.state}
+				</p>
 				<h3 className="mt-1 text-lg font-semibold">{node.label}</h3>
 				<p className="mt-2 text-sm text-muted-foreground">{node.description}</p>
 			</div>
@@ -121,32 +139,66 @@ function ArchitectureDetail({ node }: { node: ResolvedArchitectureNode | null })
 			<div>
 				<h4 className="text-sm font-semibold">Source paths</h4>
 				<ul className="mt-1 space-y-1 text-sm text-muted-foreground">
-					{node.sourcePaths.map((path) => <li key={path}><code>{path}</code></li>)}
+					{node.sourcePaths.map((path) => (
+						<li key={path}>
+							<code>{path}</code>
+						</li>
+					))}
 				</ul>
 			</div>
 			<div>
 				<h4 className="text-sm font-semibold">Canonical specification</h4>
 				<ul className="mt-1 space-y-1 text-sm">
-					{node.specLinks.length > 0 ? node.specLinks.map((link) => (
-						<li key={link.capability}>
-							{link.available && link.href ? <a className="text-primary underline-offset-2 hover:underline" href={link.href}>{link.title ?? link.capability}</a> : <span className="text-muted-foreground">{link.capability} (not catalogued)</span>}
-						</li>
-					)) : <li className="text-muted-foreground">No capability applies.</li>}
+					{node.specLinks.length > 0 ? (
+						node.specLinks.map((link) => (
+							<li key={link.capability}>
+								{link.available && link.href ? (
+									<a
+										className="text-primary underline-offset-2 hover:underline"
+										href={link.href}
+									>
+										{link.title ?? link.capability}
+									</a>
+								) : (
+									<span className="text-muted-foreground">
+										{link.capability} (not catalogued)
+									</span>
+								)}
+							</li>
+						))
+					) : (
+						<li className="text-muted-foreground">No capability applies.</li>
+					)}
 				</ul>
 			</div>
 		</aside>
 	);
 }
 
-export function CompilerArchitectureMap({ model }: { model: ResolvedArchitectureModel }) {
+export function CompilerArchitectureMap({
+	model,
+}: {
+	model: ResolvedArchitectureModel;
+}) {
 	const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-	const [traversalId, setTraversalId] = useState<keyof typeof TraversalLabels | null>(null);
-	const selectedNode = selectedNodeId ? model.nodesById[selectedNodeId] ?? null : null;
+	const [traversalId, setTraversalId] = useState<
+		keyof typeof TraversalLabels | null
+	>(null);
+	const selectedNode = selectedNodeId
+		? (model.nodesById[selectedNodeId] ?? null)
+		: null;
 	const { nodes, edges } = useMemo(
-		() => layoutArchitectureMap(model, { selectedNodeId, traversalNodeIds: traversalId ? model.traversals[traversalId] : [] }),
+		() =>
+			layoutArchitectureMap(model, {
+				selectedNodeId,
+				traversalNodeIds: traversalId ? model.traversals[traversalId] : [],
+			}),
 		[model, selectedNodeId, traversalId],
 	);
-	const selectNode = useCallback((_: React.MouseEvent, node: Node) => setSelectedNodeId(node.id), []);
+	const selectNode = useCallback(
+		(_: React.MouseEvent, node: Node) => setSelectedNodeId(node.id),
+		[],
+	);
 
 	const edgeKinds = useMemo(() => {
 		const kinds = new Set(model.edges.map((e) => e.kind));
@@ -163,7 +215,10 @@ export function CompilerArchitectureMap({ model }: { model: ResolvedArchitecture
 					</p>
 				</div>
 				<div className="flex items-center gap-2">
-					<label className="text-sm text-muted-foreground" htmlFor="traversal-select">
+					<label
+						className="text-sm text-muted-foreground"
+						htmlFor="traversal-select"
+					>
 						Traversal:
 					</label>
 					<select
@@ -176,7 +231,9 @@ export function CompilerArchitectureMap({ model }: { model: ResolvedArchitecture
 						}}
 					>
 						<option value="">None</option>
-						{(Object.keys(TraversalLabels) as Array<keyof typeof TraversalLabels>).map((id) => (
+						{(
+							Object.keys(TraversalLabels) as Array<keyof typeof TraversalLabels>
+						).map((id) => (
 							<option key={id} value={id}>
 								{TraversalLabels[id]}
 							</option>

@@ -1,5 +1,11 @@
 "use client";
 
+import {
+	SidebarContent,
+	SidebarGroup,
+	SidebarGroupContent,
+	SidebarHeader,
+} from "@beskid/ui-react";
 import { Link } from "@tanstack/react-router";
 import { ChevronDown, ChevronRight, Search, X } from "lucide-react";
 import {
@@ -10,13 +16,6 @@ import {
 	useRef,
 	useState,
 } from "react";
-
-import {
-	SidebarContent,
-	SidebarGroup,
-	SidebarGroupContent,
-	SidebarHeader,
-} from "@beskid/ui-react";
 
 import {
 	createNavSearchResult,
@@ -59,7 +58,10 @@ interface NavNodeProps {
 	focusedSlug?: string;
 	onToggle: (slug: string) => void;
 	onFocus: (slug: string) => void;
-	onKeyDown: (event: KeyboardEvent<HTMLAnchorElement>, node: NavTreeNode) => void;
+	onKeyDown: (
+		event: KeyboardEvent<HTMLAnchorElement>,
+		node: NavTreeNode,
+	) => void;
 	onNavigate?: () => void;
 	registerItem: (slug: string, item: HTMLAnchorElement | null) => void;
 	depth?: number;
@@ -167,14 +169,20 @@ export function SpecNavRailContent({
 	onNavigate,
 }: SpecNavRailContentProps) {
 	const [query, setQuery] = useState("");
-	const activePath = useMemo(() => findActivePath(tree, activeSlug), [tree, activeSlug]);
+	const activePath = useMemo(
+		() => findActivePath(tree, activeSlug),
+		[tree, activeSlug],
+	);
 	const [userExpanded, setUserExpanded] = useState<Set<string>>(
 		() => new Set(activePath),
 	);
 	const searchId = useId();
 	const inputRef = useRef<HTMLInputElement>(null);
 	const itemRefs = useRef(new Map<string, HTMLAnchorElement>());
-	const searchResult = useMemo(() => createNavSearchResult(tree, query), [tree, query]);
+	const searchResult = useMemo(
+		() => createNavSearchResult(tree, query),
+		[tree, query],
+	);
 	useEffect(() => {
 		setUserExpanded((current) => new Set([...current, ...activePath]));
 	}, [activePath]);
@@ -201,8 +209,9 @@ export function SpecNavRailContent({
 	useEffect(() => {
 		if (!focusedSlug || !visibleSlugs.includes(focusedSlug)) {
 			setFocusedSlug(
-				(activeSlug && visibleSlugs.includes(activeSlug) ? activeSlug : undefined) ??
-					visibleSlugs[0],
+				(activeSlug && visibleSlugs.includes(activeSlug)
+					? activeSlug
+					: undefined) ?? visibleSlugs[0],
 			);
 		}
 	}, [activeSlug, focusedSlug, visibleSlugs]);
@@ -251,7 +260,11 @@ export function SpecNavRailContent({
 			"End",
 			"Enter",
 		];
-		if (!supportedKeys.includes(event.key as TreeNavigationKey) || !searchResult.tree) return;
+		if (
+			!supportedKeys.includes(event.key as TreeNavigationKey) ||
+			!searchResult.tree
+		)
+			return;
 		const decision = resolveTreeKey(
 			searchResult.tree,
 			effectiveExpanded,
@@ -277,75 +290,79 @@ export function SpecNavRailContent({
 			<SidebarHeader className="border-b border-sidebar-border">
 				<SidebarGroup>
 					<SidebarGroupContent>
-				<p className="mb-2 px-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-					Specification
-				</p>
-				<label className="relative block" htmlFor={searchId}>
-					<span className="sr-only">Search specification</span>
-					<Search
-						className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground"
-						aria-hidden
-					/>
-					<input
-						ref={inputRef}
-						id={searchId}
-						value={query}
-						onChange={(event) => setQuery(event.target.value)}
-						onKeyDown={(event) => {
-							if (event.key === "Escape" && query) {
-								event.preventDefault();
-								event.stopPropagation();
-								clearSearch();
-							}
-						}}
-						placeholder="Search specification"
-						className="w-full rounded-md border border-border bg-background py-2 pr-8 pl-8 text-sm"
-					/>
-					{query ? (
-						<button
-							type="button"
-							aria-label="Clear search"
-							className="absolute top-1/2 right-1.5 flex size-6 -translate-y-1/2 items-center justify-center rounded hover:bg-muted"
-							onClick={clearSearch}
-						>
-							<X size={15} aria-hidden />
-						</button>
-					) : null}
-				</label>
-				<p className="mt-2 px-1 text-xs text-muted-foreground" aria-live="polite">
-					{query.trim()
-						? `${searchResult.matchCount} result${searchResult.matchCount === 1 ? "" : "s"}`
-						: "Browse all specifications"}
-				</p>
+						<p className="mb-2 px-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+							Specification
+						</p>
+						<label className="relative block" htmlFor={searchId}>
+							<span className="sr-only">Search specification</span>
+							<Search
+								className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground"
+								aria-hidden
+							/>
+							<input
+								ref={inputRef}
+								id={searchId}
+								value={query}
+								onChange={(event) => setQuery(event.target.value)}
+								onKeyDown={(event) => {
+									if (event.key === "Escape" && query) {
+										event.preventDefault();
+										event.stopPropagation();
+										clearSearch();
+									}
+								}}
+								placeholder="Search specification"
+								className="w-full rounded-md border border-border bg-background py-2 pr-8 pl-8 text-sm"
+							/>
+							{query ? (
+								<button
+									type="button"
+									aria-label="Clear search"
+									className="absolute top-1/2 right-1.5 flex size-6 -translate-y-1/2 items-center justify-center rounded hover:bg-muted"
+									onClick={clearSearch}
+								>
+									<X size={15} aria-hidden />
+								</button>
+							) : null}
+						</label>
+						<p className="mt-2 px-1 text-xs text-muted-foreground" aria-live="polite">
+							{query.trim()
+								? `${searchResult.matchCount} result${searchResult.matchCount === 1 ? "" : "s"}`
+								: "Browse all specifications"}
+						</p>
 					</SidebarGroupContent>
 				</SidebarGroup>
 			</SidebarHeader>
 			<SidebarContent>
 				<div className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
-				{searchResult.tree?.children?.length ? (
-					<ul role="tree" aria-label="Specification sections" className="space-y-0.5">
-						{searchResult.tree.children.map((child) => (
-							<NavNode
-								key={child.slug}
-								node={child}
-								activeSlug={activeSlug}
-								query={query}
-								expanded={effectiveExpanded}
-								focusedSlug={focusedSlug}
-								onToggle={toggle}
-								onFocus={setFocusedSlug}
-								onKeyDown={handleTreeKey}
-								onNavigate={onNavigate}
-								registerItem={registerItem}
-							/>
-						))}
-					</ul>
-				) : (
-					<p className="px-2 py-4 text-sm text-muted-foreground" role="status">
-						No specification sections match “{query.trim()}”.
-					</p>
-				)}
-			</div>
+					{searchResult.tree?.children?.length ? (
+						<ul
+							role="tree"
+							aria-label="Specification sections"
+							className="space-y-0.5"
+						>
+							{searchResult.tree.children.map((child) => (
+								<NavNode
+									key={child.slug}
+									node={child}
+									activeSlug={activeSlug}
+									query={query}
+									expanded={effectiveExpanded}
+									focusedSlug={focusedSlug}
+									onToggle={toggle}
+									onFocus={setFocusedSlug}
+									onKeyDown={handleTreeKey}
+									onNavigate={onNavigate}
+									registerItem={registerItem}
+								/>
+							))}
+						</ul>
+					) : (
+						<p className="px-2 py-4 text-sm text-muted-foreground" role="status">
+							No specification sections match “{query.trim()}”.
+						</p>
+					)}
+				</div>
 			</SidebarContent>
 		</>
 	);

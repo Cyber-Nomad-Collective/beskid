@@ -36,7 +36,11 @@ function emptyValidation(): DraftValidationResult {
 function parseValidation(json: string): DraftValidationResult {
 	try {
 		const parsed = JSON.parse(json) as DraftValidationResult;
-		if (parsed && typeof parsed.ok === "boolean" && Array.isArray(parsed.issues)) {
+		if (
+			parsed &&
+			typeof parsed.ok === "boolean" &&
+			Array.isArray(parsed.issues)
+		) {
 			return parsed;
 		}
 	} catch {
@@ -90,7 +94,9 @@ async function ensureReady(): Promise<void> {
 	await ensureMemgraphReady();
 }
 
-async function loadRevisions(contextId: string): Promise<DraftContextRevision[]> {
+async function loadRevisions(
+	contextId: string,
+): Promise<DraftContextRevision[]> {
 	const rows = await runQuery<{ props: DraftContextRevision }>(
 		`
 		MATCH (c:DraftContext {id: $contextId})-[:HAS_REVISION]->(r:DraftContextRevision)
@@ -285,9 +291,12 @@ export async function addDraftDocument(
 
 	const context: DraftContext = {
 		...existing.context,
-		status: existing.context.status === "rejected" ? "draft" : existing.context.status,
+		status:
+			existing.context.status === "rejected" ? "draft" : existing.context.status,
 		rejectReason:
-			existing.context.status === "rejected" ? null : existing.context.rejectReason,
+			existing.context.status === "rejected"
+				? null
+				: existing.context.rejectReason,
 		validationState: "unknown",
 		validationRevision: null,
 		updatedAt,
@@ -364,9 +373,12 @@ export async function updateDraftDocument(
 
 	const context: DraftContext = {
 		...existing.context,
-		status: existing.context.status === "rejected" ? "draft" : existing.context.status,
+		status:
+			existing.context.status === "rejected" ? "draft" : existing.context.status,
 		rejectReason:
-			existing.context.status === "rejected" ? null : existing.context.rejectReason,
+			existing.context.status === "rejected"
+				? null
+				: existing.context.rejectReason,
 		validationState: "unknown",
 		validationRevision: null,
 		updatedAt,
@@ -404,10 +416,9 @@ export async function removeDraftDocument(
 	assertEditable(existing.context.status);
 
 	const updatedAt = nowIso();
-	await runWrite(
-		`MATCH (d:DraftDocumentChange {id: $id}) DETACH DELETE d`,
-		{ id: documentChangeId },
-	);
+	await runWrite(`MATCH (d:DraftDocumentChange {id: $id}) DETACH DELETE d`, {
+		id: documentChangeId,
+	});
 
 	const remaining = await loadChanges(contextId);
 	for (const [index, change] of remaining.entries()) {
@@ -421,9 +432,12 @@ export async function removeDraftDocument(
 
 	const context: DraftContext = {
 		...existing.context,
-		status: existing.context.status === "rejected" ? "draft" : existing.context.status,
+		status:
+			existing.context.status === "rejected" ? "draft" : existing.context.status,
 		rejectReason:
-			existing.context.status === "rejected" ? null : existing.context.rejectReason,
+			existing.context.status === "rejected"
+				? null
+				: existing.context.rejectReason,
 		validationState: "unknown",
 		validationRevision: null,
 		updatedAt,
@@ -474,9 +488,12 @@ export async function updateDraftContextMeta(
 			input.validationRevision !== undefined
 				? input.validationRevision
 				: existing.context.validationRevision,
-		status: existing.context.status === "rejected" ? "draft" : existing.context.status,
+		status:
+			existing.context.status === "rejected" ? "draft" : existing.context.status,
 		rejectReason:
-			existing.context.status === "rejected" ? null : existing.context.rejectReason,
+			existing.context.status === "rejected"
+				? null
+				: existing.context.rejectReason,
 		updatedAt,
 	};
 
@@ -484,11 +501,7 @@ export async function updateDraftContextMeta(
 		id,
 		props: context,
 	});
-	await appendRevision(
-		context,
-		await loadChanges(id),
-		actorLogin,
-	);
+	await appendRevision(context, await loadChanges(id), actorLogin);
 	return getDraftContext(id) as Promise<ParsedDraftContextBundle>;
 }
 
@@ -551,7 +564,10 @@ export async function submitDraftContext(
 	await ensureReady();
 	const existing = await getDraftContext(id);
 	if (!existing) throw new Error("Draft context not found");
-	if (existing.context.status !== "draft" && existing.context.status !== "rejected") {
+	if (
+		existing.context.status !== "draft" &&
+		existing.context.status !== "rejected"
+	) {
 		throw new Error("Draft context is not editable");
 	}
 	if (validationState !== "valid") {

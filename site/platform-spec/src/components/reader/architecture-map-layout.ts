@@ -1,5 +1,5 @@
 import * as dagre from "@dagrejs/dagre";
-import { Position, type Edge, type Node } from "@xyflow/react";
+import { type Edge, type Node, Position } from "@xyflow/react";
 
 import type {
 	ArchitectureEdge,
@@ -81,7 +81,10 @@ export function layoutArchitectureMap(
 		selectedNodeId?: string | null;
 		traversalNodeIds?: readonly string[];
 	} = {},
-): { nodes: Node<ArchitectureMapNodeData | ArchitectureMapGroupData>[]; edges: Edge<ArchitectureMapEdgeData>[] } {
+): {
+	nodes: Node<ArchitectureMapNodeData | ArchitectureMapGroupData>[];
+	edges: Edge<ArchitectureMapEdgeData>[];
+} {
 	const sortedGroups = [...model.groups].sort((a, b) => a.order - b.order);
 	const nodesByGroup = new Map<string, ResolvedArchitectureNode[]>();
 	for (const group of sortedGroups) {
@@ -94,7 +97,13 @@ export function layoutArchitectureMap(
 
 	// Layout each group with TB dagre, then stack groups vertically.
 	let globalY = 0;
-	const groupPositions: { id: string; x: number; y: number; width: number; height: number }[] = [];
+	const groupPositions: {
+		id: string;
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	}[] = [];
 	const nodePositions = new Map<string, { x: number; y: number }>();
 
 	for (const group of sortedGroups) {
@@ -135,9 +144,11 @@ export function layoutArchitectureMap(
 			const nx = (pos?.x ?? 0) - ArchitectureMapNodeWidth / 2;
 			const ny = (pos?.y ?? 0) - ArchitectureMapNodeHeight / 2;
 			if (nx < minX) minX = nx;
-			if (nx + ArchitectureMapNodeWidth > maxX) maxX = nx + ArchitectureMapNodeWidth;
+			if (nx + ArchitectureMapNodeWidth > maxX)
+				maxX = nx + ArchitectureMapNodeWidth;
 			if (ny < minY) minY = ny;
-			if (ny + ArchitectureMapNodeHeight > maxY) maxY = ny + ArchitectureMapNodeHeight;
+			if (ny + ArchitectureMapNodeHeight > maxY)
+				maxY = ny + ArchitectureMapNodeHeight;
 		}
 
 		const groupWidth = maxX - minX + GroupPaddingX * 2;
@@ -148,7 +159,12 @@ export function layoutArchitectureMap(
 			const pos = g.node(node.id) as { x?: number; y?: number } | undefined;
 			nodePositions.set(node.id, {
 				x: (pos?.x ?? 0) - ArchitectureMapNodeWidth / 2 - minX + GroupPaddingX,
-				y: (pos?.y ?? 0) - ArchitectureMapNodeHeight / 2 - minY + GroupPaddingY + GroupHeaderHeight,
+				y:
+					(pos?.y ?? 0) -
+					ArchitectureMapNodeHeight / 2 -
+					minY +
+					GroupPaddingY +
+					GroupHeaderHeight,
 			});
 		}
 
@@ -162,44 +178,51 @@ export function layoutArchitectureMap(
 		globalY += groupHeight + GroupGap;
 	}
 
-	const neighborhood = deriveArchitectureNeighborhood(model, options.selectedNodeId ?? null);
+	const neighborhood = deriveArchitectureNeighborhood(
+		model,
+		options.selectedNodeId ?? null,
+	);
 	const traversal = new Set(options.traversalNodeIds ?? []);
 
-	const groupNodes: Node<ArchitectureMapGroupData>[] = groupPositions.map((gp) => {
-		const group = model.groups.find((g) => g.id === gp.id)!;
-		return {
-			id: `group-${gp.id}`,
-			type: "architectureGroup",
-			position: { x: gp.x, y: gp.y },
-			width: gp.width,
-			height: gp.height,
-			selectable: false,
-			draggable: false,
-			data: { group },
-		};
-	});
+	const groupNodes: Node<ArchitectureMapGroupData>[] = groupPositions.map(
+		(gp) => {
+			const group = model.groups.find((g) => g.id === gp.id)!;
+			return {
+				id: `group-${gp.id}`,
+				type: "architectureGroup",
+				position: { x: gp.x, y: gp.y },
+				width: gp.width,
+				height: gp.height,
+				selectable: false,
+				draggable: false,
+				data: { group },
+			};
+		},
+	);
 
-	const memberNodes: Node<ArchitectureMapNodeData>[] = model.nodes.map((node) => {
-		const pos = nodePositions.get(node.id) ?? { x: 0, y: 0 };
-		const gp = groupPositions.find((g) => g.id === node.group);
-		return {
-			id: node.id,
-			type: "architecture",
-			parentId: gp ? `group-${gp.id}` : undefined,
-			position: pos,
-			width: ArchitectureMapNodeWidth,
-			height: ArchitectureMapNodeHeight,
-			targetPosition: Position.Top,
-			sourcePosition: Position.Bottom,
-			expandParent: false,
-			data: {
-				node,
-				selected: node.id === options.selectedNodeId,
-				neighbor: neighborhood.has(node.id) && node.id !== options.selectedNodeId,
-				traversal: traversal.has(node.id),
-			},
-		};
-	});
+	const memberNodes: Node<ArchitectureMapNodeData>[] = model.nodes.map(
+		(node) => {
+			const pos = nodePositions.get(node.id) ?? { x: 0, y: 0 };
+			const gp = groupPositions.find((g) => g.id === node.group);
+			return {
+				id: node.id,
+				type: "architecture",
+				parentId: gp ? `group-${gp.id}` : undefined,
+				position: pos,
+				width: ArchitectureMapNodeWidth,
+				height: ArchitectureMapNodeHeight,
+				targetPosition: Position.Top,
+				sourcePosition: Position.Bottom,
+				expandParent: false,
+				data: {
+					node,
+					selected: node.id === options.selectedNodeId,
+					neighbor: neighborhood.has(node.id) && node.id !== options.selectedNodeId,
+					traversal: traversal.has(node.id),
+				},
+			};
+		},
+	);
 
 	const edges: Edge<ArchitectureMapEdgeData>[] = model.edges.map((edge) => {
 		const selected = neighborhood.has(edge.from) && neighborhood.has(edge.to);

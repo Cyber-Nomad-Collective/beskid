@@ -1,14 +1,14 @@
 {
-  "id": "article",
-  "specLevel": "article",
-  "title": "Feature hub article layout",
-  "description": "Layout for informative feature-hub articles that contextualize a capability without adding normative authority.",
-  "requireTitle": true,
-  "sections": [
-    { "heading": "Purpose", "level": 2, "required": true, "order": 1 }
-  ],
-  "optionalSections": [
-    { "heading": "What this covers", "level": 2 },
-    { "heading": "Related topics", "level": 2 }
-  ]
+	"id": "article",
+	"specLevel": "article",
+	"title": "Feature hub article layout",
+	"description": "Layout for informative feature-hub articles that contextualize a capability without adding normative authority.",
+	"requireTitle": true,
+	"sections": [
+		{ "heading": "Purpose", "level": 2, "required": true, "order": 1 }
+	],
+	"optionalSections": [
+		{ "heading": "What this covers", "level": 2 },
+		{ "heading": "Related topics", "level": 2 }
+	]
 }

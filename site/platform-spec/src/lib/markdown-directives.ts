@@ -1,4 +1,11 @@
-export type BeskidDirectiveKind = "spec" | "book" | "nexus" | "bug" | "code" | "graph" | "quote";
+export type BeskidDirectiveKind =
+	| "spec"
+	| "book"
+	| "nexus"
+	| "bug"
+	| "code"
+	| "graph"
+	| "quote";
 
 export interface BeskidMarkdownDirective {
 	kind: BeskidDirectiveKind;
@@ -6,7 +13,8 @@ export interface BeskidMarkdownDirective {
 	title: string;
 }
 
-const DIRECTIVE_FENCE = /^```(spec|book|nexus|bug|code|graph|quote)\s*\n([\s\S]*?)^```\s*$/gm;
+const DIRECTIVE_FENCE =
+	/^```(spec|book|nexus|bug|code|graph|quote)\s*\n([\s\S]*?)^```\s*$/gm;
 
 function escapeHtml(value: string): string {
 	return value
@@ -29,7 +37,8 @@ export function parseBeskidDirective(
 	kind: string,
 	body: string,
 ): BeskidMarkdownDirective | null {
-	if (!["spec", "book", "nexus", "bug", "code", "graph", "quote"].includes(kind)) return null;
+	if (!["spec", "book", "nexus", "bug", "code", "graph", "quote"].includes(kind))
+		return null;
 	const values = fields(body);
 	const ref = values.ref ?? values.id ?? values.slug;
 	if (!ref) return null;
@@ -64,7 +73,9 @@ export function directiveHref(directive: BeskidMarkdownDirective): string {
 	return `https://tracker.beskid-lang.org/bugs/${encodeURIComponent(directive.ref)}`;
 }
 
-export function renderBeskidDirective(directive: BeskidMarkdownDirective): string {
+export function renderBeskidDirective(
+	directive: BeskidMarkdownDirective,
+): string {
 	const href = directiveHref(directive);
 	if (directive.kind === "code") {
 		const [lang] = directive.ref.split(":", 2);
@@ -80,8 +91,11 @@ export function renderBeskidDirective(directive: BeskidMarkdownDirective): strin
 }
 
 export function transformBeskidDirectives(markdown: string): string {
-	return markdown.replace(DIRECTIVE_FENCE, (source, kind: string, body: string) => {
-		const directive = parseBeskidDirective(kind, body);
-		return directive ? renderBeskidDirective(directive) : source;
-	});
+	return markdown.replace(
+		DIRECTIVE_FENCE,
+		(source, kind: string, body: string) => {
+			const directive = parseBeskidDirective(kind, body);
+			return directive ? renderBeskidDirective(directive) : source;
+		},
+	);
 }

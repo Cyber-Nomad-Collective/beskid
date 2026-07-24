@@ -1,4 +1,9 @@
-import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "node:crypto";
+import {
+	createCipheriv,
+	createDecipheriv,
+	randomBytes,
+	scryptSync,
+} from "node:crypto";
 
 import { env } from "#/env.server";
 

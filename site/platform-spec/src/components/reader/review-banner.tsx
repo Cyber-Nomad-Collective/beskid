@@ -40,9 +40,7 @@ export function ReviewBanner({
 					<span className="text-xs text-muted-foreground">
 						{commentCount} comment
 						{commentCount !== 1 ? "s" : ""} total
-						{pageComments.length > 0
-							? ` (${pageComments.length} on this page)`
-							: ""}
+						{pageComments.length > 0 ? ` (${pageComments.length} on this page)` : ""}
 					</span>
 				</div>
 				<div className="flex items-center gap-2">

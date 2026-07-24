@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, FileText, Search, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
 	createNavSearchResult,
@@ -109,16 +109,15 @@ export function SpecArticlePicker({
 					{searchResult ? (
 						<div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border">
 							<p className="border-b border-border/60 px-3 py-1.5 text-[10px] font-medium uppercase text-muted-foreground">
-								{searchResult.matchCount} result{searchResult.matchCount !== 1 ? "s" : ""}
+								{searchResult.matchCount} result
+								{searchResult.matchCount !== 1 ? "s" : ""}
 							</p>
 							<div className="min-h-0 flex-1 overflow-y-auto p-1">
 								<PickerResults
 									tree={searchResult.tree}
 									query={query}
 									selectedRef={selected?.ref}
-									onSelect={(title, ref, href) =>
-										setSelected({ title, ref, href })
-									}
+									onSelect={(title, ref, href) => setSelected({ title, ref, href })}
 								/>
 							</div>
 						</div>
@@ -173,9 +172,7 @@ function PickerResults({
 				type="button"
 				className={[
 					"flex w-full items-center gap-1.5 rounded px-2 py-1.5 text-left text-xs transition-colors",
-					isSelected
-						? "bg-primary/15 text-primary"
-						: "hover:bg-muted/60",
+					isSelected ? "bg-primary/15 text-primary" : "hover:bg-muted/60",
 				].join(" ")}
 				style={{ paddingLeft: `${0.5 + depth * 0.75}rem` }}
 				onClick={() => onSelect(node.title, node.slug, node.href)}

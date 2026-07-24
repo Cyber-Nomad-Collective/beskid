@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { authHubLoginUrl } from "#/lib/auth/hub-handoff.server";
-import { postLoginRedirectCookieHeader } from "#/lib/session/post-login-redirect.server";
 import { sanitizePostLoginPath } from "#/lib/session/post-login-redirect";
+import { postLoginRedirectCookieHeader } from "#/lib/session/post-login-redirect.server";
 
 export const Route = createFileRoute("/api/auth/github")({
 	server: {

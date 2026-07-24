@@ -2,7 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { env } from "#/env.server";
 
-type Fetch = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+type Fetch = (
+	input: RequestInfo | URL,
+	init?: RequestInit,
+) => Promise<Response>;
 
 export interface TrackerTaskLink {
 	standardId: string;
@@ -30,7 +33,8 @@ function assertLink(link: TrackerTaskLink): void {
 }
 
 async function responseJson(response: Response): Promise<unknown> {
-	if (!response.ok) throw new Error(`Tracker request failed (${response.status})`);
+	if (!response.ok)
+		throw new Error(`Tracker request failed (${response.status})`);
 	return response.json();
 }
 
@@ -68,19 +72,34 @@ export const Route = createFileRoute("/api/v1/tracker/tasks")({
 			GET: async ({ request }) => {
 				const url = new URL(request.url);
 				try {
-					return Response.json(await listTrackerTasks({
-						standardId: url.searchParams.get("standardId") ?? "",
-						catalogRevision: url.searchParams.get("catalogRevision") ?? "",
-					}));
+					return Response.json(
+						await listTrackerTasks({
+							standardId: url.searchParams.get("standardId") ?? "",
+							catalogRevision: url.searchParams.get("catalogRevision") ?? "",
+						}),
+					);
 				} catch (error) {
-					return Response.json({ error: error instanceof Error ? error.message : "Tracker request failed" }, { status: 502 });
+					return Response.json(
+						{
+							error: error instanceof Error ? error.message : "Tracker request failed",
+						},
+						{ status: 502 },
+					);
 				}
 			},
 			POST: async ({ request }) => {
 				try {
-					return Response.json(await createTrackerTask(await request.json() as CreateTrackerTaskInput), { status: 201 });
+					return Response.json(
+						await createTrackerTask((await request.json()) as CreateTrackerTaskInput),
+						{ status: 201 },
+					);
 				} catch (error) {
-					return Response.json({ error: error instanceof Error ? error.message : "Tracker request failed" }, { status: 502 });
+					return Response.json(
+						{
+							error: error instanceof Error ? error.message : "Tracker request failed",
+						},
+						{ status: 502 },
+					);
 				}
 			},
 		},

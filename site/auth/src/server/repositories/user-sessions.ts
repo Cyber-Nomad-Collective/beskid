@@ -40,9 +40,7 @@ export function createUserSession(input: {
 export function getUserSession(sessionId: string): UserSessionRow | null {
 	const row =
 		getAuthDatabase()
-			.query<UserSessionRow, [string]>(
-				"SELECT * FROM user_sessions WHERE id = ?",
-			)
+			.query<UserSessionRow, [string]>("SELECT * FROM user_sessions WHERE id = ?")
 			.get(sessionId) ?? null;
 	if (!row) return null;
 	if (new Date(row.expires_at).getTime() < Date.now()) {

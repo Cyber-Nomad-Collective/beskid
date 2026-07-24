@@ -1,4 +1,4 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { listMyDraftsFn } from "#/server/drafts";
 
@@ -22,7 +22,7 @@ function DraftsListPage() {
 					to="/edit/drafts/$id"
 					params={{ id: "new" }}
 					search={{} as never}
-				className="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground"
+					className="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground"
 				>
 					New context
 				</Link>
@@ -44,8 +44,8 @@ function DraftsListPage() {
 									to="/edit/drafts/$id"
 									params={{ id: draft.id }}
 									search={{} as never}
-								className="font-medium hover:underline"
-							>
+									className="font-medium hover:underline"
+								>
 									{draft.title}
 								</Link>
 								<p className="text-xs text-muted-foreground">

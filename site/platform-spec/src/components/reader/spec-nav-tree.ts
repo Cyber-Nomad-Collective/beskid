@@ -133,7 +133,9 @@ export function resolveTreeKey(
 
 	switch (key) {
 		case "ArrowDown":
-			return { focusSlug: visible[Math.min(index + 1, visible.length - 1)]!.node.slug };
+			return {
+				focusSlug: visible[Math.min(index + 1, visible.length - 1)]!.node.slug,
+			};
 		case "ArrowUp":
 			return { focusSlug: visible[Math.max(index - 1, 0)]!.node.slug };
 		case "Home":
@@ -191,7 +193,8 @@ export function highlightTitle(
 		const nextFoldedOffset = characterFold
 			? searchableTitle.indexOf(characterFold, foldedOffset)
 			: foldedOffset;
-		const characterFoldStart = nextFoldedOffset === -1 ? foldedOffset : nextFoldedOffset;
+		const characterFoldStart =
+			nextFoldedOffset === -1 ? foldedOffset : nextFoldedOffset;
 		const contextualCharacter = previousCharacter ?? currentCharacter;
 		while (foldedOffset < characterFoldStart) {
 			foldedOffsets.push(contextualCharacter);

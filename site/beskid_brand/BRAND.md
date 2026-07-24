@@ -1,173 +1,122 @@
 # Beskid Brand Guidelines
 
-> The Beskid brand uses flat geometric design — straight lines, sharp vertices, solid colors. No curves, no gradients, no transparency tricks. This reflects the language's philosophy: direct, honest, nothing hidden behind abstraction layers.
-
-The single source of truth for all Beskid programming language branding. When in doubt, refer back here.
-
----
+> The Beskid brand uses a **3D low-poly mesh** — an isometric wireframe mountain built from triangular facets, ridgelines, and connecting struts. No curves, no gradients. The mesh is the signature.
 
 ## Design Philosophy
 
-### Flat Geometric Design
+### 3D Low-Poly Mesh
 
-Every Beskid brand asset follows these hard constraints:
+Every Beskid icon carries the same 3D mountain structure:
 
-- **NO cubic beziers** — polylines and polygons only. Every curve is an illusion built from straight segments.
-- **NO opacity** — fills are solid or absent. No `fill-opacity`, no `stroke-opacity`, no alpha channels.
-- **NO gradients** — no `<linearGradient>`, no `<radialGradient>`. Flat color fields only.
-- **NO arcs** — no `<path>` arc commands (`A` or `a`). Circles are approximated with octagons or higher-order polygons.
-- **Stroke** — uniform `2px`, `stroke-linecap="round"`, `stroke-linejoin="round"`.
+- **8 triangular facets** connecting a front ridgeline to a back ridgeline — filled at 10% opacity, creating a translucent faceted surface
+- **Front ridgeline** (2.5px stroke, `#3aac9e`) — the emphasized silhouette, 3 asymmetric peaks
+- **Back ridgeline** (1px stroke, `#1a6b62`) — offset (+10x, −8y) for isometric depth
+- **5 vertical struts** (1.5px at 35% opacity) — connecting front→back vertices
+- **Diamond AST node** below the mesh — the compiler identity mark
 
-This isn't a stylistic whim. Beskid is a compiler — a tool that strips away abstraction and leaves only what's necessary. The brand should look like something a machine drew: deliberate, minimal, geometrically honest.
+Hard constraints:
+- **NO cubic beziers** — every line is a straight segment (polyline, polygon, line)
+- **NO hex-alpha** (`#RRGGBBAA`) — use `fill-opacity` attribute for compatibility
+- **NO gradients** — flat colors only
+- **NO arcs** — no `<path>` arc commands
 
-### The Geometric Mountain Motif
+### The Mesh Coordinates
 
-Every icon in the Beskid ecosystem carries the same mountain silhouette — a sharp, three-peak polyline that is the brand's signature. It is never altered, never scaled independently of its container, never softened.
+```typescript
+// Front ridgeline — the visible silhouette
+RIDGE_FRONT: [18,70] → [34,28] → [60,54] → [86,16] → [106,70]
 
-```svg
-<polyline points="15,72 40,30 60,56 82,24 106,72"
-  fill="none" stroke="#3aac9e" stroke-width="2"
-  stroke-linecap="round" stroke-linejoin="round"/>
+// Back ridgeline — isometric offset
+RIDGE_BACK:  [28,62] → [44,22] → [68,48] → [94,12] → [114,62]
+
+// 8 triangular facets connecting the two ridges
+MESH_FACETS: alternating triangles across 4 ridge segments
 ```
 
-- Three peaks — the central peak (`60,56`) is lower than the side peaks, giving it the asymmetrical character of a real ridgeline.
-- The base line runs flat from `(15,72)` to `(106,72)` — a level horizon across all icons.
-- No fill on the mountain itself — outline only. The mountain frames the service element below it.
-
----
+Three peaks — asymmetrical: left peak at y=28, center dip at y=54, right peak at y=16 (tallest). This asymmetry gives the silhouette the character of a real Beskid ridgeline.
 
 ## Brand Colors
 
 | Name | Hex | Usage |
 |------|-----|-------|
-| **Beskid Teal** | `#3aac9e` | Primary brand color. Logos, links, buttons, key UI elements on light backgrounds. |
-| **Beskid Teal Light** | `#5eeadb` | Dark-background variant. Logos and accents on dark surfaces (`#0d1117`). |
+| **Beskid Teal** | `#3aac9e` | Primary brand. Ridge, struts, facets, diamond, wordmark. |
+| **Beskid Teal Dark** | `#1a6b62` | Back ridgeline (depth cue). |
+| **Beskid Teal Light** | `#5eeadb` | Dark mode variant — replaces teal on `#0d1117` backgrounds. |
 | **Background Light** | `#ffffff` | Default document/website background. |
-| **Background Dark** | `#0d1117` | Dark mode background. Matches GitHub dark — familiar to developers. |
+| **Background Dark** | `#0d1117` | Dark mode. Matches GitHub dark. |
 
-### Rationale
-
-Beskid Teal (`#3aac9e`) evokes the mineral greens of mountain lakes in the Beskid range — calm, focused, enduring. It sits between green and blue: green for growth (learning a language), blue for precision (systems programming). On dark backgrounds, the lighter `#5eeadb` preserves the same hue identity while maintaining WCAG AA contrast.
-
-**Color constraints:** NO opacity modifiers, NO gradients, NO alpha channels. If an element needs to look lighter, use `#5eeadb`. If it needs to look darker, use a solid darker teal (TBD in final palette).
-
----
+**Color constraints:** NO opacity modifiers on fill colors — use `fill-opacity` SVG attribute. NO gradients. NO alpha channels in hex.
 
 ## Typography
 
 | Role | Spec |
 |------|------|
-| **Primary font** | `system-ui, -apple-system, sans-serif` — native OS typeface, zero latency, no download. |
-| **Logo wordmark** | Lowercase `"beskid"`, `font-weight: 400`, `letter-spacing: 4px`. Clean and understated. |
-| **Code / monospace** | `SF Mono`, `Fira Code`, `Cascadia Code`, or any modern monospace with ligatures. |
+| **Primary font** | `Inter, system-ui, -apple-system, sans-serif` |
+| **Logo wordmark** | Lowercase `"beskid"`, `font-weight: 700`, `letter-spacing: 4px` |
+| **Service name** | `font-weight: 300`, `letter-spacing: 1.5px`, secondary color (`#868e96`) |
+| **Code / monospace** | `SF Mono`, `Fira Code`, `Cascadia Code` |
 
-No custom web fonts. The language should feel native to every platform it appears on.
-
----
+No custom web fonts required — Inter ships with `@fontsource/inter`.
 
 ## Logo Variants
 
-All logos live in this directory as `beskid-{variant}.svg`.
-
 | File | Description | Use case |
 |------|-------------|----------|
-| `beskid-icon.svg` | Icon-only mark — geometric mountain + diamond AST node. Square `120×120`. | Favicons, app icons, social avatars, any square-constrained context. |
-| `beskid-logo-stacked.svg` | Icon above wordmark. `200×180`. Primary vertical lockup. | Default logo for README, docs, vertical layouts. |
-| `beskid-logo-horizontal.svg` | Icon left of wordmark. `300×80`. | Website headers, navbars, horizontal banners. |
-| `beskid-logo-dark.svg` | Stacked variant on `#0d1117` background, using `#5eeadb`. `200×180`. | Dark-mode headers, terminal splash screens, dark-themed pages. |
-
----
+| `beskid-icon.svg` | 3D mesh mountain + diamond. `120×120`. | Favicons, app icons. |
+| `beskid-logo-stacked.svg` | Mesh above wordmark. `200×200`. | README, docs. |
+| `beskid-logo-horizontal.svg` | Mesh left, wordmark right. `300×80`. | Headers, navbars. |
+| `beskid-logo-dark.svg` | Stacked on `#0d1117` with `#5eeadb`. `200×200`. | Dark mode. |
 
 ## Service Icons
 
-Eight flat-design service icons live alongside the logos. Every icon shares the same mountain motif (above) plus one geometric service element (below). All icons are `120×120`, uniform `2px` strokes, no curves.
+8 icons share the identical 3D mesh above, plus a unique geometric service accent below:
 
-| File | Service | Element below mountain | Use case |
-|------|---------|----------------------|----------|
-| `icon-beskid-core.svg` | Beskid Core | Diamond polygon (AST node) | Compiler identity, language homepage, core tooling |
-| `icon-auth.svg` | Beskid Auth | Flat-topped pentagon (shield) | Authentication service, login pages, OAuth flows |
-| `icon-platform-spec.svg` | Platform Spec | Rectangle with horizontal rule lines (document) | Language specification, RFCs, standards documentation |
-| `icon-learn.svg` | Beskid Learn | Open book — two angled rectangles | Tutorials, documentation, learning resources |
-| `icon-website.svg` | Beskid Website | Octagon (globe approximation) with equator line | Public website, landing pages, marketing |
-| `icon-tracker.svg` | Beskid Tracker | Three solid squares in a row (kanban/tasks) | Issue tracker, roadmap, task boards |
-| `icon-pckg.svg` | Beskid Package Registry | Isometric box — front face + top face polygon | Package index, registry, dependency browser |
-| `icon-nexus.svg` | Beskid Nexus | Three diamonds connected by lines (graph nodes) | Graph explorer, module dependency visualizer |
+| File | Service | Accent |
+|------|---------|--------|
+| `icon-beskid-core.svg` | Beskid Core | Diamond (AST node) |
+| `icon-auth.svg` | Beskid Auth | Pentagon shield |
+| `icon-platform-spec.svg` | Platform Spec | Document rect with lines |
+| `icon-learn.svg` | Beskid Learn | Open book (two angled polygons) |
+| `icon-website.svg` | Beskid Website | 10-vertex globe + equator |
+| `icon-tracker.svg` | Beskid Tracker | Three solid squares |
+| `icon-pckg.svg` | Package Registry | Isometric box |
+| `icon-nexus.svg` | Beskid Nexus | Three connected diamond nodes |
 
----
+## Merged Service Logos
+
+Each service has 3 lockups: `service-{name}-{horizontal,stacked,dark}.svg`
+
+Horizontal: `[3D mesh] beskid ServiceName` (bold 700 + light 300 type)
+Stacked: mesh above, "beskid" below, service name at bottom
 
 ## Logo Usage
-
-### Clear Space
-
-Minimum padding around any logo lockup equals the **height of the lowercase `b`** in the wordmark (approximately the cap-height of the typeface at that size). No text, graphics, or UI chrome may enter this zone.
 
 ### Minimum Sizes
 
 | Variant | Minimum |
 |---------|---------|
-| Icon (`beskid-icon.svg`) | `16×16 px` |
-| Service icons (`icon-*.svg`) | `24×24 px` |
-| Horizontal lockup (`beskid-logo-horizontal.svg`) | `120 px` wide |
-| Stacked lockup (`beskid-logo-stacked.svg`) | `80 px` wide |
+| `beskid-icon.svg` | `24×24 px` |
+| `beskid-logo-horizontal.svg` | `150 px` wide |
+| `beskid-logo-stacked.svg` | `100 px` wide |
 
 ### Don'ts
+- ❌ Don't add curves — no beziers, no arcs
+- ❌ Don't add gradients — flat colors only
+- ❌ Don't use hex-alpha — use `fill-opacity` / `stroke-opacity`
+- ❌ Don't recolor — use the dark variant
+- ❌ Don't alter mesh coordinates — the asymmetry is intentional
 
-- ❌ **Don't stretch** — always scale proportionally.
-- ❌ **Don't recolor** — use the provided dark variant instead.
-- ❌ **Don't add effects** — no drop shadows, glows, gradients, or outlines.
-- ❌ **Don't add curves** — no cubic beziers, no arc commands, no rounded corners on any shape.
-- ❌ **Don't use opacity** — solid fills only. No `fill-opacity`, no `opacity` attributes.
-- ❌ **Don't rotate** — the mountain points up.
-- ❌ **Don't use the wordmark alone as text** — always use the SVG.
-- ❌ **Don't soften** — no rounded corners, no bezier curves, no `border-radius` tricks on brand elements.
-- ❌ **Don't add transparency** — the mountain is never a watermark with an alpha channel. Solid colors only.
-
----
-
-## File Naming Convention
+## File Naming
 
 ```
-beskid-{variant}.svg    # Logo lockups
-icon-{service}.svg      # Service icons
+beskid-{variant}.svg       # Logo lockups (icon, logo-stacked, logo-horizontal, logo-dark)
+icon-{service}.svg         # Service icons
+service-{service}-{layout}.svg  # Merged service lockups
 ```
-
-Logo variants: `icon`, `logo-stacked`, `logo-horizontal`, `logo-dark`. Service icons: `beskid-core`, `auth`, `platform-spec`, `learn`, `website`, `tracker`, `pckg`, `nexus`. All lowercase, hyphen-separated. No version suffixes — the repo is the source of truth.
-
----
-
-## Application Examples
-
-### Website Header
-`beskid-logo-horizontal.svg`, left-aligned, linked to `/`. Clear space enforced with CSS padding.
-
-### Favicon
-`beskid-icon.svg`, served as `favicon.svg` at `32×32` (browsers will scale down). Include a fallback `favicon.ico` if legacy support is needed.
-
-### Social Media
-`beskid-icon.svg` centered on a `#3aac9e` solid background, exported as PNG at the platform's recommended dimensions. No gradient backgrounds — flat teal only.
-
-### Documentation
-`beskid-icon.svg` as a watermark — placed `position: fixed`, bottom-right, `opacity: 0.04`, `z-index: -1`. This is the one exception to the no-opacity rule, and only because CSS opacity on a positioned element doesn't alter the source asset.
-
-### Terminal / CLI
-`beskid-logo-dark.svg` works well in terminal splash screens since it ships with its own dark background.
-
-### Service Pages
-Each service page uses its corresponding `icon-{service}.svg` in the page header, at `48×48`, paired with the service name in `system-ui`.
-
----
 
 ## Brand Voice
 
-Beskid speaks like a seasoned climbing partner — competent, warm, never condescending.
+> *"A language you climb, not one handed to you."*
 
-| Do | Don't |
-|----|-------|
-| Clear, direct sentences | Corporate jargon ("leverage," "ecosystem," "seamless") |
-| Technical precision, plain English | Hype, hyperbole, "revolutionary" |
-| Acknowledge trade-offs honestly | Pretend the language does everything |
-| Mountain metaphors — sparingly | Overwork the nature theme |
-
-> **Short version:** *"A language you climb, not one handed to you."*
-
-This is the tagline. Use it in READMEs, social bios, and conference talk abstracts. It captures the ethos: Beskid rewards effort, but the ascent is part of the experience.
+Clear, direct sentences. Technical precision. Honest trade-offs.
+No corporate jargon. No hype.

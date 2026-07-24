@@ -2,7 +2,7 @@
 
 import { type ErrorComponentProps, Link } from "@tanstack/react-router";
 import { AlertTriangle, Home, RotateCcw } from "lucide-react";
-import { useState, type ComponentProps } from "react";
+import { type ComponentProps, useState } from "react";
 
 import { Button } from "#/components/ui-primitives";
 
@@ -86,9 +86,7 @@ export function SpecRouteError({
 							className="text-muted-foreground hover:text-foreground text-xs underline-offset-4 hover:underline"
 							onClick={() => setShowDetails((open) => !open)}
 						>
-							{showDetails
-								? "Hide technical details"
-								: "Show technical details"}
+							{showDetails ? "Hide technical details" : "Show technical details"}
 						</button>
 						{showDetails ? (
 							<pre className="bg-muted text-foreground mt-3 max-h-48 overflow-auto rounded-lg border border-border p-3 text-left text-xs leading-relaxed">

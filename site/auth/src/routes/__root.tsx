@@ -1,12 +1,11 @@
 import {
+	createRootRoute,
 	HeadContent,
 	Outlet,
 	Scripts,
-	createRootRoute,
 } from "@tanstack/react-router";
-
-import { observabilityMiddleware } from "#/server/observability-middleware";
 import { ThemeProvider } from "#/components/theme-provider";
+import { observabilityMiddleware } from "#/server/observability-middleware";
 import appCss from "#/styles.css?url";
 
 export const Route = createRootRoute({
