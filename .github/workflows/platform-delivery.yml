@@ -274,6 +274,8 @@ jobs:
     # lets the manifest build even if an individual image lane failed, so a single
     # broken service never blocks publishing the rest of the platform.
     if: ${{ !cancelled() && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging))) }}
+    permissions:
+      actions: read
     uses: ./.github/workflows/reusable-release-manifest.yml
     with:
       artifact-name: release-manifest
