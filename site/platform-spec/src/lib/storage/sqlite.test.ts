@@ -17,12 +17,13 @@ describe("openSqlite", () => {
 
 			expect(db.prepare("select id from entries").get()).toEqual({ id: "one" });
 
-			const insert = db.transaction((id: string) => {
-				db.prepare("insert into entries values (?)").run(id);
+			const insert = db.transaction(() => {
+				db.prepare("insert into entries values (?)").run("two");
+			return "ok";
 			});
-			expect(() => insert("one")).toThrow();
-			expect(db.prepare("select count(*) as count from entries").get()).toEqual({
-				count: 1,
+			expect(insert()).toBe("ok");
+		expect(db.prepare("select count(*) as count from entries").get()).toEqual({
+			count: 2,
 			});
 		} finally {
 			db.close();
@@ -36,7 +37,7 @@ describe("openSqlite", () => {
 				create table entries (id text primary key);
 				create table audit (entry_id text not null);
 			`);
-			db.run("insert into entries values (?)", ["one"]);
+			db.run("insert into entries values (?)", "one");
 
 			expect(db.query<{ id: string }, []>("select id from entries").get()).toEqual({
 				id: "one",

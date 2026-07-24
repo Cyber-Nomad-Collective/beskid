@@ -121,6 +121,7 @@ function DraftContextEditorPage() {
 			to: "/edit/drafts/$id",
 			params: { id: created.context.id },
 			replace: true,
+			search: {} as never,
 		});
 		return created;
 	}
@@ -233,7 +234,7 @@ function DraftContextEditorPage() {
 							data: {
 								contextId: current.context.id,
 								operation,
-								identity,
+								identity: identity as never,
 								sourceMarkdown,
 							},
 						});

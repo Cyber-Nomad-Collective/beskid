@@ -158,8 +158,8 @@ export const addDraftDocumentFn = createServerFn({ method: "POST" })
 				if (!doc) {
 					throw new Error(`Base document not found for ${identity.key}`);
 				}
-				baseMarkdown = doc.bodyMd;
-				baseContentHash = hashMarkdown(doc.bodyMd);
+				baseMarkdown = doc.body;
+				baseContentHash = hashMarkdown(doc.body);
 			}
 
 			const sourceMarkdown =

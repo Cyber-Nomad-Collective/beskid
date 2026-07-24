@@ -84,6 +84,6 @@ export function migrateSchema(db: Database): void {
 
 	db.run(
 		"INSERT INTO schema_meta (key, value) VALUES ('version', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
-		[String(SCHEMA_VERSION)],
+		String(SCHEMA_VERSION),
 	);
 }

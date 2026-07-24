@@ -21,7 +21,8 @@ function DraftsListPage() {
 				<Link
 					to="/edit/drafts/$id"
 					params={{ id: "new" }}
-					className="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground"
+					search={{} as never}
+				className="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground"
 				>
 					New context
 				</Link>
@@ -42,8 +43,9 @@ function DraftsListPage() {
 								<Link
 									to="/edit/drafts/$id"
 									params={{ id: draft.id }}
-									className="font-medium hover:underline"
-								>
+									search={{} as never}
+								className="font-medium hover:underline"
+							>
 									{draft.title}
 								</Link>
 								<p className="text-xs text-muted-foreground">

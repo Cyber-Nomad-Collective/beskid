@@ -24,10 +24,10 @@ export interface StructuredDocumentViewProps {
 	showEditLink?: boolean;
 	/** Prefill for Propose change → draft context wizard. */
 	proposeSearch?: {
-		capability?: string;
-		domain?: string;
-		area?: string;
-		feature?: string;
+		capability: string | undefined;
+		domain: string | undefined;
+		area: string | undefined;
+		feature: string | undefined;
 	};
 	/** Catalog revision for Tracker embed. */
 	catalogRevision?: string | null;
@@ -177,7 +177,7 @@ export function StructuredDocumentView({
 					<Link
 						to="/edit/drafts/$id"
 						params={{ id: "new" }}
-						search={proposeSearch ?? {}}
+						search={(proposeSearch ?? {}) as never}
 						className="text-sm text-primary underline"
 					>
 						Propose change
