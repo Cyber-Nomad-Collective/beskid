@@ -493,7 +493,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Enable SBOM and minimal BuildKit provenance in the replacement image workflow,
   with an explicit keyless image-signing hook and OIDC permission boundary.
 
-## [0.4.0] - TBD
+## [0.4.0] - 2025-07-17
 
 ### Added
 
