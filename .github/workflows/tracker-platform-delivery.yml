@@ -74,7 +74,7 @@ jobs:
           node-version: "24"
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
       - run: pnpm install --dir beskid_tracker --frozen-lockfile
-        - run: pnpm --dir beskid_tracker test | tee tracker-tests.txt
+      - run: pnpm --dir beskid_tracker test | tee tracker-tests.txt
       - run: pnpm --dir beskid_tracker check | tee tracker-check.txt
       - uses: actions/upload-artifact@v4
         with:
