@@ -260,6 +260,7 @@ jobs:
     # broken service never blocks publishing the rest of the platform.
     if: ${{ !cancelled() && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging))) }}
     permissions:
+      contents: read
       actions: read
     uses: ./.github/workflows/reusable-release-manifest.yml
     with:
