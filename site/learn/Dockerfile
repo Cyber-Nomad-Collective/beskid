@@ -11,11 +11,8 @@ ARG NODE_AUTH_TOKEN
 ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
-RUN npm install -g corepack@latest \
-  && corepack enable \
-  && corepack prepare pnpm@10.17.1 --activate \
-  && mkdir -p /pnpm/store
-RUN --mount=type=cache,target=/pnpm/store pnpm --dir site/learn install --frozen-lockfile
+RUN npm install -g pnpm@10.17.1 && mkdir -p /pnpm/store
+RUN pnpm --dir site/learn install --frozen-lockfile
 
 COPY site/learn/ ./site/learn/
 RUN pnpm --dir site/learn run build
@@ -45,8 +42,7 @@ RUN cd compiler \
   ./scripts/stage-native-runtime-kit.sh
 
 FROM node:24-alpine
-RUN npm install -g corepack@latest \
-  && corepack enable && corepack prepare pnpm@10.17.1 --activate \
+RUN npm install -g pnpm@10.17.1 \
   && apk add --no-cache wget \
   && npm install -g tsx
 WORKDIR /app/site/learn

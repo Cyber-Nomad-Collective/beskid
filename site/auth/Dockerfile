@@ -3,14 +3,14 @@ FROM node:24-alpine AS build
 
 # git for pnpm git deps; python3/make/g++ for better-sqlite3 native build on alpine
 RUN apk add --no-cache git python3 make g++ bash
-RUN npm install -g corepack@latest && corepack enable && corepack prepare pnpm@10.17.1 --activate
+RUN npm install -g pnpm@10.17.1
 
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY site/auth/package.json ./site/auth/
 
-RUN --mount=type=cache,target=/root/.local/share/pnpm/store pnpm install --frozen-lockfile --filter beskid-auth...
+RUN pnpm install --frozen-lockfile --filter beskid-auth...
 
 COPY site/auth/ ./site/auth/
 

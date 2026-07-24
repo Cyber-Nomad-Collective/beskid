@@ -11,7 +11,7 @@ COPY beskid_web_common ./beskid_web_common
 COPY openspec ./openspec
 COPY site/platform-spec ./site/platform-spec
 
-RUN --mount=type=cache,id=pnpm-platform-spec,target=/pnpm/store pnpm config set store-dir /pnpm/store && pnpm install --frozen-lockfile
+RUN pnpm config set store-dir /pnpm/store && pnpm install --frozen-lockfile
 
 RUN test -f /app/openspec/catalog.json \
 	&& node -e 'const fs=require("fs"); const c=JSON.parse(fs.readFileSync("/app/openspec/catalog.json","utf8")); if(!Array.isArray(c.entries)||c.entries.length===0){console.error("/app/openspec/catalog.json missing or empty"); process.exit(1)}'
