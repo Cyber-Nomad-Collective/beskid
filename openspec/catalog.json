@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "7fe9dd8589c24777789bf1234594139a26f41888f05b8ce275d855ee500d6f22",
+  "revision": "02f2bdac9c3fa1fa0519295f02b4c0c903d7b2dbd573b698858a49b7bf394e81",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -40539,7 +40539,7 @@
       "path": "site/website/src/content/docs/index.mdx",
       "title": "beskid",
       "authority": "informative",
-      "sourceHash": "2429f4492fba9dfc0cd7788eff07e8ccc5bb8a92fc376cfb6bea3e7e46c15838",
+      "sourceHash": "4d3058986aceb4e7d1fa6ca34fabf8b9e1b63ccd057f215fc53e437a492dbc6e",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/language-meta/"
