@@ -10,6 +10,8 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY site/auth/package.json ./site/auth/
 
+ARG NODE_AUTH_TOKEN
+ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
 RUN pnpm install --frozen-lockfile --filter beskid-auth...
 
 COPY site/auth/ ./site/auth/

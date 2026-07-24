@@ -25,7 +25,7 @@ export function Button({ className, variant, size, ...props }: ButtonProps) {
 	);
 }
 
-export function Badge({ className, children }: { className?: string; children: ReactNode; variant?: "secondary" }) {
+export function Badge({ className, children }: { className?: string; children: ReactNode }) {
 	return <span className={classes("inline-flex rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground", className)}>{children}</span>;
 }
 
@@ -57,14 +57,3 @@ export function Label({ className, ...props }: ComponentProps<"label">) {
 	return <label className={classes("text-sm font-medium", className)} {...props} />;
 }
 
-export function BeskidHub() {
-	return (
-		<a
-			href="https://beskid-lang.org/"
-			className="inline-flex size-8 items-center justify-center rounded-md border border-border bg-card text-sm font-bold text-primary"
-			aria-label="Open Beskid home"
-		>
-			B
-		</a>
-	);
-}

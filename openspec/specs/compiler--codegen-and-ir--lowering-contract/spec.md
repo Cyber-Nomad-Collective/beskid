@@ -87,6 +87,116 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
+### Requirement: ISLE lowering rule coverage: Decision [D-COMP-IR-0012]
+The Beskid standard SHALL enforce that every `IsleLowered` syntax kind has a corresponding ISLE rule in `compiler/crates/beskid_isle/isle/`.
+
+> The 28 `NodeKind` variants tagged `IsleLowered` SHALL have complete rule coverage: 25 production rules, 2 deferred rules, and 1 indirect rule. Missing rule coverage SHALL be detected at compile time via the ISLE codegen verification step. A deferred rule documents a known gap with a tracking issue (e.g. CYB-179); an indirect rule covers a syntax kind that is lowered through a parent or sibling rule rather than its own top-level match arm.
+
+**Stable ID:** `BSP-REQ-70E3A1D2C8F4`
+**Legacy source:** `beskid_isle/src/classify_syntax_node_kind` and `compiler/crates/beskid_isle/isle/*.isle`
+**Source SHA-256:** `0000000000000000000000000000000000000000000000000000000000000000`
+
+#### Scenario: All IsleLowered kinds resolve to an ISLE term
+- **GIVEN** the `syntax_node_kind_catalogue` function enumerates `NodeKind` variants
+- **WHEN** `classify_syntax_node_kind` is called for any `NodeKind` tagged `IsleLowered`
+- **THEN** there exists exactly one `(decl ...)` or `(rule ...)` in `compiler/crates/beskid_isle/isle/` that handles that variant, OR the variant is listed in the deferred/indirect catalogue with a tracking issue
+
+#### Scenario: Deferred lowering is documented
+- **GIVEN** a `NodeKind` variant is classified as `IsleLowered` but deferred
+- **WHEN** the ISLE verifier walks the rule set
+- **THEN** the variant is matched by a stub rule annotated with the tracking issue (e.g. `CYB-179`) and SHALL produce a compile-time diagnostic if encountered in user code
+
+### Requirement: ForStatement iterator lowering: Decision [D-COMP-IR-0013]
+The Beskid 0.4 standard SHALL support `for` loops over range expressions via `emit_range_for`. Iterator-based `for` is deferred to post-0.4.
+
+> `ForStatement` lowering SHALL inspect the iterable expression at the ISLE boundary using the `ForIterableKind` enum. Range iterables (`start..end` or `start..=end`) SHALL lower through `emit_range_for`, producing a counted loop with induction variable. Non-range iterables (arrays, slices, user-defined iterators) SHALL report `InvalidRangeFor` at lowering time, referencing tracking issue CYB-179.
+
+**Stable ID:** `BSP-REQ-81F4B2E3D9A5`
+**Legacy source:** `beskid_isle` ISLE rules for `ForStatement`
+**Source SHA-256:** `0000000000000000000000000000000000000000000000000000000000000000`
+
+#### Scenario: Range-based for loop lowers to counted loop
+- **GIVEN** a `ForStatement` whose iterable is classified as `ForIterableKind::Range`
+- **WHEN** the ISLE lowering rule for `ForStatement` executes
+- **THEN** `emit_range_for` is called with the range bounds and loop body, producing a Cranelift counted-loop structure with an induction variable
+
+#### Scenario: Non-range iterable reports InvalidRangeFor
+- **GIVEN** a `ForStatement` whose iterable is classified as `ForIterableKind::Other`
+- **WHEN** the ISLE lowering rule for `ForStatement` executes
+- **THEN** an `InvalidRangeFor` compile error is reported at lowering time with a diagnostic referencing CYB-179
+
+#### Scenario: ForIterableKind enum distinguishes iterable types
+- **GIVEN** the ISLE boundary receives a `ForStatement` node
+- **WHEN** the iterable expression kind is inspected
+- **THEN** the `ForIterableKind` enum SHALL have exactly two variants: `Range` (for `RangeExpression` syntax) and `Other` (for all other iterable expressions)
+
+### Requirement: Zero-division traps: Decision [D-COMP-IR-0014]
+The Beskid standard SHALL emit Cranelift `trapnz` with the `int_divz` trap code for integer division and remainder operations when the divisor is zero at runtime.
+
+> Integer `/` and `%` operators SHALL lower to CLIF `trapnz v1, v2, int_divz` where `v1` is the divisor value. The trap fires before the division instruction executes, preventing undefined behavior on all target architectures. The `int_divz` trap code SHALL be surfaced in runtime diagnostics as a division-by-zero error.
+
+**Stable ID:** `BSP-REQ-92C5A3F4E0B6`
+**Legacy source:** `beskid_isle` ISLE rules for integer arithmetic
+**Source SHA-256:** `0000000000000000000000000000000000000000000000000000000000000000`
+
+#### Scenario: Integer division by zero traps
+- **GIVEN** an integer division expression `a / b` where `b` is zero at runtime
+- **WHEN** the ISLE lowering rule for binary division executes
+- **THEN** the emitted CLIF contains `trapnz b, b, int_divz` before the `sdiv` or `udiv` instruction
+
+#### Scenario: Integer remainder by zero traps
+- **GIVEN** an integer remainder expression `a % b` where `b` is zero at runtime
+- **WHEN** the ISLE lowering rule for binary remainder executes
+- **THEN** the emitted CLIF contains `trapnz b, b, int_divz` before the `srem` or `urem` instruction
+
+#### Scenario: Non-zero divisor proceeds normally
+- **GIVEN** an integer division or remainder expression with a non-zero divisor
+- **WHEN** the ISLE lowering rule executes
+- **THEN** the `trapnz` check passes and the arithmetic instruction executes without trapping
+
+### Requirement: Bitwise NOT semantics: Decision [D-COMP-IR-0015]
+The Beskid standard SHALL emit a real bitwise NOT for the `!` unary operator via CLIF `bxor` with an all-ones mask.
+
+> The `!` prefix operator SHALL NOT be lowered as a boolean `icmp_imm eq val, 0` comparison. Instead, it SHALL produce `bxor val, -1` (or equivalently `bxor_imm val, -1_iNN` for the appropriate integer width), computing a true bitwise complement. This ensures `!!0u8 == 0xFFu8` rather than `!!0u8 == 1u8`.
+
+**Stable ID:** `BSP-REQ-A3D6B4F5E1C7`
+**Legacy source:** `beskid_isle` ISLE rules for unary operators
+**Source SHA-256:** `0000000000000000000000000000000000000000000000000000000000000000`
+
+#### Scenario: Bitwise NOT on integer produces complement
+- **GIVEN** a unary `!` expression applied to an integer operand `x`
+- **WHEN** the ISLE lowering rule for unary NOT executes
+- **THEN** the emitted CLIF instruction is `bxor_imm x, -1` (or `bxor x, all_ones_constant`), producing the bitwise complement of `x`
+
+#### Scenario: Double NOT is not a boolean coercion
+- **GIVEN** the expression `!!x` where `x` is an integer type
+- **WHEN** both `!` operators are lowered
+- **THEN** the result is `x` with all bits preserved (not truncated to `0` or `1`), because each `!` is a true bitwise complement
+
+### Requirement: MethodDefinition ISLE lowering: Decision [D-COMP-IR-0016]
+The Beskid standard SHALL lower `MethodDefinition` syntax through the ISLE path rather than bypassing ISLE through the HIR `NodeLoweringContext`.
+
+> `MethodDefinition` nodes SHALL invoke `emit_method_body` at the ISLE boundary. The implicit `self` receiver SHALL be materialized by `materialize_parameters` as the first parameter, matching the ABI convention where the receiver is passed as an explicit leading argument. This ensures method lowering follows the same ISLE-driven code path as free functions, with consistent parameter handling, block termination, and debug info emission.
+
+**Stable ID:** `BSP-REQ-B4E7C5F6D2A8`
+**Legacy source:** `beskid_isle` ISLE rules and `materialize_parameters`
+**Source SHA-256:** `0000000000000000000000000000000000000000000000000000000000000000`
+
+#### Scenario: MethodDefinition lowers through emit_method_body
+- **GIVEN** a `MethodDefinition` syntax node
+- **WHEN** the ISLE lowering dispatcher selects the rule for `MethodDefinition`
+- **THEN** `emit_method_body` is called as the top-level ISLE term, not a direct `NodeLoweringContext` call bypassing ISLE
+
+#### Scenario: Self-receiver is materialized as first parameter
+- **GIVEN** a `MethodDefinition` with an implicit `self` receiver
+- **WHEN** `materialize_parameters` processes the method's parameter list
+- **THEN** the `self` parameter is materialized as the first Cranelift function parameter with the receiver's type (by-value, `&T`, or `&mut T`), matching the ABI calling convention
+
+#### Scenario: Method body lowering is consistent with free functions
+- **GIVEN** a `MethodDefinition` and an equivalent `FunctionDefinition` with `self` as an explicit first parameter
+- **WHEN** both are lowered through their respective ISLE rules
+- **THEN** the resulting CLIF function signatures and body structures are identical modulo name mangling
+
 ## Informative Source Provenance
 
 The records below preserve migration history and are not normative except where text was extracted into a requirement above.

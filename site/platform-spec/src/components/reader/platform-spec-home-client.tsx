@@ -51,7 +51,7 @@ export function PlatformSpecHomeClient({
 		<div className="platform-spec-home mx-auto w-full max-w-6xl space-y-8 px-6 py-6">
 			<section className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-primary/10 via-card to-card px-8 py-10">
 				<div className="relative z-10 max-w-2xl space-y-4">
-					<Badge variant="secondary">Normative specification</Badge>
+					<Badge>Normative specification</Badge>
 					<h1 className="display-title text-4xl font-bold tracking-tight">
 						Platform specification
 					</h1>

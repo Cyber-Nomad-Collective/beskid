@@ -127,4 +127,13 @@ beskid pckg pack --package my-lib --source ./my-lib --output ./my-lib.bpk
 beskid pckg upload my-lib --artifact ./my-lib.bpk
 ```
 
+## See also
+
+- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/) — tutorial walkthrough of `beskid pckg`
+- [Publish your first package](/book/reference/publish-first-package/) — step-by-step workflow
+- [Packages without npm trauma](/book/18-packages-without-npm-trauma/) — chapter overview and concepts
+- [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/) — generated API docs packed with `.bpk`
+- [Package public surface](/book/19-public-api-that-survives-review/package-public-surface/) — what registry consumers see
+- [CLI command reference](/book/reference/cli/command-reference/) — all subcommands
+
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

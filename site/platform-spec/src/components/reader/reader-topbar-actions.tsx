@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "@tanstack/react-router";
+import { MessageSquareText } from "lucide-react";
 
 import { useSpecViewMode, type SpecViewMode } from "#/components/reader/spec-view-mode";
 import { ThemeToggle } from "#/components/theme-toggle";
@@ -39,17 +39,29 @@ export function SpecModeToggle() {
 	);
 }
 
-export function ReaderTopBarActions() {
+export interface ReaderTopBarActionsProps {
+	onStartReview?: () => void;
+	isReviewing?: boolean;
+}
+
+export function ReaderTopBarActions({
+	onStartReview,
+	isReviewing = false,
+}: ReaderTopBarActionsProps) {
 	return (
 		<div className="ml-auto flex items-center gap-2">
 			<SpecModeToggle />
+			{onStartReview && !isReviewing ? (
+				<button
+					type="button"
+					className="flex items-center gap-1.5 rounded-md border border-primary/40 px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/10"
+					onClick={onStartReview}
+				>
+					<MessageSquareText size={15} />
+					Review
+				</button>
+			) : null}
 			<ThemeToggle />
-			<Link
-				to="/settings/auth/login"
-				className="inline-flex rounded-md border border-border px-3 py-1.5 text-sm font-medium hover:bg-muted/60"
-			>
-				Login
-			</Link>
 		</div>
 	);
 }

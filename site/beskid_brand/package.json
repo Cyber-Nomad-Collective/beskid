@@ -1,0 +1,35 @@
+{
+  "name": "@beskid/brand",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./lib/brand": "./src/lib/brand.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "render": "tsx src/render.ts",
+    "clean": "rm -rf out dist",
+    "check": "vitest run",
+    "test": "vitest",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.2.3",
+    "tsx": "^4.23.1",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@lottiefiles/lottie-js": "^0.4.2",
+    "@react-pdf/renderer": "^4.5.1",
+    "@svgdotjs/svg.js": "^3.2.7",
+    "canvas": "^3.2.3",
+    "jsdom": "^29.1.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "svgdom": "^0.1.28"
+  }
+}

@@ -11,7 +11,11 @@ This chapter is **informative**. Enforceable rules live under the [Platform spec
 </Aside>
 
 
-Beskid packages are not "upload a folder, pick a version number that feels lucky, pray." The registry assigns versions; manifests declare **dependencies**; lockfiles make CI reproducible. If that sounds boring, good—we have enough trauma from ecosystems that treat breaking changes as personality.
+Beskid packages are not "upload a folder, pick a version number that feels lucky, pray." The **pckg registry** assigns versions; manifests declare **dependencies**; lockfiles make CI reproducible. If that sounds boring, good—we have enough trauma from ecosystems that treat breaking changes as personality.
+
+<Aside type="note">
+All package workflows use `beskid pckg` (the **pckg** backend). The command `beskid pkg` does not exist — see the [pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/) page for the actual subcommands.
+</Aside>
 
 ## What you will find here
 
@@ -21,6 +25,16 @@ Beskid packages are not "upload a folder, pick a version number that feels lucky
 | [Registry versions](/book/18-packages-without-npm-trauma/registry-versions/) | Who assigns the version (hint: not your ego). |
 | [Publish first package](/book/18-packages-without-npm-trauma/publish-first-package/) | End-to-end publish walkthrough. |
 | [Foreign libraries](/book/18-packages-without-npm-trauma/foreign-libraries/) | Linking native deps without npm cosplay. |
+
+## See also
+
+- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/) — tutorial walkthrough of `beskid pckg`
+- [pckg command reference](/book/reference/cli/commands/pckg/) — full flag and subcommand reference
+- [Publish your first package](/book/reference/publish-first-package/) — step-by-step with commands
+- [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/) — generated API docs ingested by pckg registry
+- [Package public surface](/book/19-public-api-that-survives-review/package-public-surface/) — what registry consumers actually see
+- [Registry versions](/book/18-packages-without-npm-trauma/registry-versions/) — who assigns the version
+- [Foreign libraries](/book/18-packages-without-npm-trauma/foreign-libraries/) — linking native deps
 
 ## Next
 

@@ -14,6 +14,8 @@ COPY site/learn/package.json ./site/learn/package.json
 # Lockfile carries file: links into beskid_web_common packages, so the
 # submodule package.json files must exist before the frozen install.
 COPY beskid_web_common ./beskid_web_common
+ARG NODE_AUTH_TOKEN
+ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
 RUN pnpm install --frozen-lockfile
 
 COPY site/website ./site/website

@@ -1,7 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
 import { ReaderChrome } from "#/components/reader/reader-chrome";
-import { SpecShell } from "#/components/reader/spec-shell";
 import { StructuredDocumentView } from "#/components/reader/structured-document-view";
 import {
 	fetchCatalog,
@@ -26,10 +25,8 @@ export const Route = createFileRoute("/platform-spec/$")({
 		}
 
 		const frontmatter = document.frontmatter;
-		const title =
-			typeof frontmatter.title === "string" ? frontmatter.title : slug;
-		const specLevel =
-			typeof frontmatter.specLevel === "string" ? frontmatter.specLevel : null;
+		const title = frontmatter.title;
+		const specLevel = frontmatter.specLevel;
 		const status =
 			typeof frontmatter.status === "string" ? frontmatter.status : null;
 		const description =
@@ -37,8 +34,8 @@ export const Route = createFileRoute("/platform-spec/$")({
 				? frontmatter.description
 				: null;
 		const architectureGraphMeta = (
-			frontmatter as Record<string, unknown> | undefined
-		)?.architectureGraph as
+			frontmatter as Record<string, unknown>
+		).architectureGraph as
 			| { graphKey?: unknown; entryNode?: unknown; layout?: unknown }
 			| undefined;
 		const architectureGraph =
@@ -91,8 +88,7 @@ function PlatformSpecDocument() {
 		.map((entry) => ({ href: entry.href, title: entry.title }));
 
 	return (
-		<ReaderChrome>
-			<SpecShell navTree={navTree} activeSlug={slug}>
+		<ReaderChrome navTree={navTree} activeSlug={slug}>
 				<StructuredDocumentView
 					title={title}
 					specLevel={specLevel}
@@ -123,7 +119,6 @@ function PlatformSpecDocument() {
 								?.feature ?? undefined,
 					}}
 				/>
-			</SpecShell>
 		</ReaderChrome>
 	);
 }

@@ -12,6 +12,13 @@ import {
 } from "react";
 
 import {
+	SidebarContent,
+	SidebarGroup,
+	SidebarGroupContent,
+	SidebarHeader,
+} from "@beskid/ui-react";
+
+import {
 	createNavSearchResult,
 	findActivePath,
 	getVisibleTreeSlugs,
@@ -21,11 +28,10 @@ import {
 } from "#/components/reader/spec-nav-tree";
 import type { OpenSpecNavNode as NavTreeNode } from "#/server/openspec/reader";
 
-interface SpecNavRailProps {
+interface SpecNavRailContentProps {
 	tree: NavTreeNode;
 	activeSlug?: string;
 	onNavigate?: () => void;
-	autoFocusSearch?: boolean;
 }
 
 function HighlightedTitle({ title, query }: { title: string; query: string }) {
@@ -155,12 +161,11 @@ function NavNode({
 	);
 }
 
-export function SpecNavRail({
+export function SpecNavRailContent({
 	tree,
 	activeSlug,
 	onNavigate,
-	autoFocusSearch = false,
-}: SpecNavRailProps) {
+}: SpecNavRailContentProps) {
 	const [query, setQuery] = useState("");
 	const activePath = useMemo(() => findActivePath(tree, activeSlug), [tree, activeSlug]);
 	const [userExpanded, setUserExpanded] = useState<Set<string>>(
@@ -192,10 +197,6 @@ export function SpecNavRail({
 		() => activePath.at(-1) ?? tree.children?.[0]?.slug,
 	);
 	const shouldMoveDomFocus = useRef(false);
-
-	useEffect(() => {
-		if (autoFocusSearch) inputRef.current?.focus();
-	}, [autoFocusSearch]);
 
 	useEffect(() => {
 		if (!focusedSlug || !visibleSlugs.includes(focusedSlug)) {
@@ -272,11 +273,10 @@ export function SpecNavRail({
 	};
 
 	return (
-		<nav
-			aria-label="Platform specification"
-			className="spec-nav-rail flex h-full min-h-0 flex-col border-r border-border/80 bg-background"
-		>
-			<div className="border-b border-border/80 px-3 py-3">
+		<>
+			<SidebarHeader className="border-b border-sidebar-border">
+				<SidebarGroup>
+					<SidebarGroupContent>
 				<p className="mb-2 px-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
 					Specification
 				</p>
@@ -317,8 +317,11 @@ export function SpecNavRail({
 						? `${searchResult.matchCount} result${searchResult.matchCount === 1 ? "" : "s"}`
 						: "Browse all specifications"}
 				</p>
-			</div>
-			<div className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
+					</SidebarGroupContent>
+				</SidebarGroup>
+			</SidebarHeader>
+			<SidebarContent>
+				<div className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
 				{searchResult.tree?.children?.length ? (
 					<ul role="tree" aria-label="Specification sections" className="space-y-0.5">
 						{searchResult.tree.children.map((child) => (
@@ -343,15 +346,7 @@ export function SpecNavRail({
 					</p>
 				)}
 			</div>
-			<div className="border-t border-border/80 p-3">
-				<Link
-					to="/settings/auth/login"
-					onClick={onNavigate}
-					className="flex w-full items-center justify-center rounded-md border border-border px-3 py-2 text-sm font-medium hover:bg-muted/60"
-				>
-					Login
-				</Link>
-			</div>
-		</nav>
+			</SidebarContent>
+		</>
 	);
 }

@@ -372,6 +372,18 @@ async function serveAsset(pathname: string) {
   }
 }
 
+
+// ── Simple filesystem-based progress store ──
+const PROGRESS_FILE = join(process.cwd(), ".beskid-learn-progress.json");
+function loadProgress() {
+  try { return JSON.parse(require("fs").readFileSync(PROGRESS_FILE, "utf8")); }
+  catch { return {}; }
+}
+function saveProgress(data) {
+  try { require("fs").writeFileSync(PROGRESS_FILE, JSON.stringify(data, null, 2)); return true; }
+  catch { return false; }
+}
+
 Bun.serve({
   port: PORT,
   hostname: HOST,
@@ -443,7 +455,89 @@ Bun.serve({
       }
     }
 
-    if (requestUrl.pathname === "/healthz" || requestUrl.pathname === "/api/health") {
+    
+// ── Auth endpoints (reuses Beskid auth-hub handoff) ──
+if (requestUrl.pathname === "/api/auth/me") {
+  const cookie = req.headers.get("cookie") ?? "";
+  const sessionMatch = /beskid_learn_session=([^;]+)/.exec(cookie);
+  if (!sessionMatch) return jsonResponse(200, { user: null });
+  try {
+    const buf = Buffer.from(sessionMatch[1], "base64url").toString("utf8");
+    const sessionData = JSON.parse(buf);
+    return jsonResponse(200, { user: { login: sessionData.login, name: sessionData.name ?? null, avatarUrl: sessionData.avatarUrl } });
+  } catch { return jsonResponse(200, { user: null }); }
+}
+
+if (requestUrl.pathname === "/api/auth/login" && req.method === "POST") {
+  try {
+    const body = await req.json();
+    if (!body.handoffToken) return jsonResponse(400, { error: "Missing handoffToken" });
+    const hubUrl = (process.env.BESKID_AUTH_HUB_URL ?? "https://auth.beskid-lang.org").replace(/\/$/, "");
+    const verifyRes = await fetch(hubUrl + "/api/v1/handoff/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: body.handoffToken, app: "learn" }),
+    });
+    if (!verifyRes.ok) return jsonResponse(401, { error: "Invalid handoff token" });
+    const payload = await verifyRes.json();
+    const sessionValue = Buffer.from(JSON.stringify({
+      login: payload.login,
+      name: payload.name ?? null,
+      avatarUrl: payload.avatarUrl ?? "https://github.com/" + payload.login + ".png",
+    })).toString("base64url");
+    const maxAge = 60 * 60 * 24 * 7;
+    return new Response(null, {
+      status: 204,
+      headers: {
+        "Set-Cookie": "beskid_learn_session=" + sessionValue + "; Path=/; HttpOnly; SameSite=Lax; Max-Age=" + maxAge,
+      },
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Login failed";
+    return jsonResponse(500, { error: message });
+  }
+}
+
+if (requestUrl.pathname === "/api/auth/logout" && req.method === "POST") {
+  return new Response(null, {
+    status: 204,
+    headers: { "Set-Cookie": "beskid_learn_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0" },
+  });
+}
+
+// ── Progress persistence ──
+if (requestUrl.pathname === "/api/progress" && req.method === "GET") {
+  return jsonResponse(200, loadProgress());
+}
+if (requestUrl.pathname === "/api/progress" && req.method === "POST") {
+  const data = await req.json();
+  const saved = saveProgress(data);
+  return jsonResponse(200, { ok: saved });
+}
+
+// ── Lesson CRUD (requires auth session) ──
+if (requestUrl.pathname.startsWith("/api/lessons/") && (req.method === "POST" || req.method === "PUT")) {
+  const cookie = req.headers.get("cookie") ?? "";
+  if (!/beskid_learn_session=/.test(cookie)) return jsonResponse(401, { error: "Authentication required" });
+  const lessonId = decodeURIComponent(requestUrl.pathname.substring("/api/lessons/".length));
+  const exercise = exerciseById.get(lessonId);
+  if (!exercise) return jsonResponse(404, { error: "Lesson not found" });
+  try {
+    const body = await req.json();
+    if (typeof body.title === "string") exercise.title = body.title;
+    if (typeof body.objective === "string") exercise.objective = body.objective;
+    if (typeof body.command === "string") exercise.command = body.command;
+    if (typeof body.detailedContent === "string") exercise.detailedContent = body.detailedContent;
+    if (Array.isArray(body.hints)) exercise.hints = body.hints;
+    if (typeof body.difficulty === "string") exercise.difficulty = body.difficulty;
+    return jsonResponse(200, exercise);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Update failed";
+    return jsonResponse(500, { error: message });
+  }
+}
+
+if (requestUrl.pathname === "/healthz" || requestUrl.pathname === "/api/health") {
       return new Response("ok");
     }
 
