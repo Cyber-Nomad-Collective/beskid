@@ -76,7 +76,7 @@ jobs:
     outputs:
       digest: ${{ steps.build.outputs.digest }}
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -185,14 +185,14 @@ jobs:
           if-no-files-found: warn
           retention-days: 90
 
-      - name: Keyless signing hook
-        if: inputs.push && inputs.sign && steps.build.outcome == 'success'
-        env:
-          IMAGE: ${{ inputs.repository }}@${{ steps.build.outputs.digest }}
-        run: |
-          mkdir -p "${RUNNER_TEMP}/cosign-bin"
-          GOBIN="${RUNNER_TEMP}/cosign-bin" go install github.com/sigstore/cosign/v2/cmd/cosign@v2.4.3
-          PATH="${RUNNER_TEMP}/cosign-bin:${PATH}" ./scripts/ci/sign-image.sh "${IMAGE}"
+        - uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3
+          if: inputs.push && inputs.sign && steps.build.outcome == 'success'
+
+        - name: Keyless signing hook
+          if: inputs.push && inputs.sign && steps.build.outcome == 'success'
+          env:
+            IMAGE: ${{ inputs.repository }}@${{ steps.build.outputs.digest }}
+          run: ./scripts/ci/sign-image.sh "${IMAGE}"
 
       - name: Write image manifest record
         if: inputs.push && steps.build.outcome == 'success'
