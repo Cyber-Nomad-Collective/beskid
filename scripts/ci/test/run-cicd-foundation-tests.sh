@@ -107,9 +107,10 @@ for required in \
     exit 1
   fi
 done
-if ! rg -q 'pnpm install --dir /src/beskid_web_common --frozen-lockfile' "${root}/pckg/Dockerfile"; then
+if ! rg -q 'pnpm install --dir /src/beskid_web_common --frozen-lockfile' "${root}/pckg/Dockerfile" &&
+     ! rg -q 'bun install --cwd=/src/beskid_web_common --frozen-lockfile' "${root}/pckg/Dockerfile"; then
   echo "pckg Dockerfile must frozen-install beskid_web_common before pckg/web" >&2
-  exit 1
+    exit 1
 fi
 if ! rg -Fq 'COPY --from=web_common' "${root}/beskid_tracker/Dockerfile"; then
   echo "tracker Dockerfile must consume the web_common BuildKit context before install" >&2
