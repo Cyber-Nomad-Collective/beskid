@@ -9,7 +9,8 @@ Branch: `feat/beskid-distrib-distribution`
 Wrap the already-built Beskid CLI/LSP binaries into per-platform installers and
 publish them, in a single CI run that fires automatically whenever the compiler
 publishes a new rolling release. Produce platform-specific installers for
-Windows, macOS, Arch, Ubuntu/Debian, and Snap.
+Windows, macOS, Ubuntu/Debian, and Snap. Also publish container images to
+GHCR for Docker and CI runner usage.
 
 ## Non-goals (v1)
 
@@ -22,6 +23,8 @@ Windows, macOS, Arch, Ubuntu/Debian, and Snap.
 - No Intel macOS. compiler.yml today builds only `aarch64-apple-darwin`; the
   brew formula covers Apple Silicon only. Adding Intel later requires extending
   the compiler build matrix first.
+- No AUR (retired). Arch Linux was supported in earlier designs but has been
+  removed from the pipeline.
 
 ## Decisions (locked during brainstorming)
 
@@ -30,24 +33,24 @@ Windows, macOS, Arch, Ubuntu/Debian, and Snap.
 | Where CI lives | Superrepo (`.github/workflows/distribute.yml`), per the repo convention. `beskid_distrib` submodule is content-only. |
 | Trigger | `workflow_run` on the `Compiler` workflow completing successfully. Decoupled from `compiler.yml`. |
 | Signing | Unsigned v1. |
-| Linux scope | Arch (AUR) + Ubuntu/Debian (.deb) + Snap. |
+| Linux scope | Ubuntu/Debian (.deb) + Snap. |
 | Windows format | WiX MSI (`wix build`, WiX v4 via `dotnet tool`). PATH set via WiX `<Environment>` element. |
 | Homebrew tap repo | `Cyber-Nomad-Collective/beskid_homebrew` |
-| Homebrew action | `Justintime50/homebrew-releaser@v3` |
+| Homebrew method | Manual git push of rendered formula template (homebrew-releaser incompatible with cross-repo setup) |
 | macOS arch | Apple Silicon only (`aarch64-apple-darwin`). |
-| AUR action | `KSXGitHub/github-actions-deploy-aur@v3` |
 | Snap actions | `canonical/action-build@v1` + `canonical/action-publish@v1` |
 | Debian method | `dpkg-deb --build` over a templated `DEBIAN/` tree (wraps a prebuilt binary; cargo-deb is not a fit because we don't rebuild from Cargo). |
+| Container images | `docker/build-push-action@v6` → GHCR |
 
 ## Per-platform methods (researched, most-common GHA approach)
 
 | Platform | Method | Why this one |
 |---|---|---|
 | Windows | WiX v4 via `dotnet tool install -g wix` then `wix build` | WiX is the user directive; no dominant wrapper action, raw `wix build` is idiomatic; `<Environment>` gives reboot-persistent PATH. |
-| macOS | `Justintime50/homebrew-releaser@v3` (`strategy: bin`) | Most-referenced dedicated brew action; commits the formula to the tap repo on each run. |
-| Arch | `KSXGitHub/github-actions-deploy-aur@v3` | De-facto standard; pushes PKGBUILD + .SRCINFO to AUR over SSH. |
+| macOS | Manual git push of rendered formula | Pushes the formula template directly via git (homebrew-releaser incompatible with monorepo/cross-repo setup). |
 | Ubuntu/Debian | `dpkg-deb --build` | Simplest dependency-free way to wrap a prebuilt binary; no Debian packaging machinery. |
 | Snap | `canonical/action-build@v1` + `canonical/action-publish@v1` | Canonical-maintained standard pair; recommended on the Snapcraft forum. |
+| Container images | `docker/build-push-action@v6` | Buildx-backed multi-arch push to GHCR. |
 
 ## Architecture
 
@@ -61,7 +64,7 @@ actually exists and was updated more recently than the last distrib run:
 1. Fetch the `cli-latest` release from `beskid_compiler`.
 2. Read its `cli-version.txt` asset.
 3. Compare against the version recorded in the distrib repo's last published
-   commit on the tap/AUR/deb/snap targets. If unchanged, skip (no-op).
+   commit on the tap/deb/snap targets. If unchanged, skip (no-op).
 4. If changed, fan out to the platform packaging jobs.
 
 This avoids burning runner minutes on PR-triggered Compiler runs and on
@@ -77,11 +80,12 @@ on: workflow_run (Compiler, completed: success)
    │  reads cli-latest + lsp-latest from beskid_compiler
    │  outputs: version, compiler_sha, asset download URLs
    │
-   ├─► windows-msi   (windows-latest)  → uploads .msi to GH release on beskid_compiler
-   ├─► macos-brew    (ubuntu-latest)   → homebrew-releaser pushes formula to beskid_homebrew
-   ├─► arch-aur      (ubuntu-latest)   → github-actions-deploy-aur pushes PKGBUILD to AUR
-   ├─► ubuntu-deb    (ubuntu-latest)   → uploads .deb to GH release on beskid_compiler
-   └─► linux-snap    (ubuntu-latest)   → action-build → action-publish to Snap Store
+   ├─► windows-msi       (windows-latest)  → uploads .msi + .exe to GH release on beskid_compiler
+   ├─► macos-brew        (ubuntu-latest)   → pushes formula to beskid_homebrew (optional: HOMEBREW_TAP_GIT_TOKEN)
+   ├─► macos-dmg         (macos-latest)    → uploads .dmg to GH release on beskid_compiler
+   ├─► ubuntu-deb        (ubuntu-latest)   → uploads .deb to GH release on beskid_compiler
+   ├─► linux-snap        (ubuntu-latest)   → action-build → action-publish to Snap Store (optional: SNAPCRAFT_STORE_CREDENTIALS)
+   └─► container-images  (ubuntu-latest)   → docker/build-push-action to GHCR
 ```
 
 All platform jobs `needs: resolve-rolling` and run in parallel
@@ -95,9 +99,11 @@ platform does not block the others.
   raw binaries. One place to download everything for a version.
 - **macOS** → `beskid_homebrew` tap repo (`Formula/beskid.rb`). Users
   `brew tap cyber-nomad-collective/beskid` then `brew install beskid`.
-- **Arch** → AUR package `beskid-bin`. Users `yay -S beskid-bin`.
 - **Snap** → Snap Store under the registered snap name `beskid`. Users
   `snap install beskid --classic`.
+- **Container images** → `ghcr.io/cyber-nomad-collective/beskid:<version>`
+  and `ghcr.io/cyber-nomad-collective/beskid-runner:<version>`. Users
+  `docker run ghcr.io/cyber-nomad-collective/beskid:latest --version`.
 
 ## Repository layout
 
@@ -108,7 +114,6 @@ beskid_distrib/                          # submodule, content only
   docs/
     Windows_Guide.md
     MacOS_Guide.md
-    Arch_Guide.md
     Ubuntu_Guide.md
     Snap_Guide.md
   assets/icons/
@@ -118,16 +123,20 @@ beskid_distrib/                          # submodule, content only
   windows/
     beskid.wxs                           # WiX v4 source: install dir + PATH env + uninstall
     build-msi.sh
-  macos/Formula/beskid.rb.tpl            # homebrew-releaser renders version+sha into this
-  arch/
-    PKGBUILD
+  macos/Formula/beskid.rb.tpl            # rendered by macos-brew CI job with version+sha
   deb/
     debian/{control,postinst,prerm}
     build-deb.sh
   snap/snapcraft.yaml
+  docker/
+    Dockerfile                            # generic CLI image
+    Dockerfile.runner                     # GHA runner image
+    docker-compose.yml
   scripts/
+    fetch-release-assets.sh
     fetch-rolling-assets.sh
     resolve-version.sh
+    target-map.sh                         # shared target→asset mapping
 ```
 
 Superrepo additions:
@@ -136,28 +145,74 @@ Superrepo additions:
 - `docs/distribution/SECRETS.md` — copy of the secret inventory (so it's
   readable without checking out the submodule).
 
-## homebrew-releaser cross-repo constraint
+## Homebrew formula push
 
-`homebrew-releaser` reads its release from the workflow's own repo
-(`github.repository`). The CLI binaries live on `beskid_compiler`, not the
-superrepo. **Resolution:** the `macos-brew` job first downloads the
-`aarch64-apple-darwin` asset from `beskid_compiler`'s `cli-latest` release,
-computes its sha256, then runs `homebrew-releaser` with `strategy: bin` plus a
-pre-rendered formula passed via `homebrew_releaser_formula_path` — i.e. we
-generate `Formula/beskid.rb` ourselves from the template (with the correct
-cross-repo download URL + sha256 + version), and the action only commits it to
-the tap. This sidesteps the action's same-repo release assumption while still
-using it for the tap-push mechanics and PAT handling.
+The `macos-brew` job pushes the formula directly via git rather than using
+`Justintime50/homebrew-releaser`. That action is incompatible with monorepos,
+always reads the release from the workflow's own repo, and names the formula
+after the repo — none of which fit the cross-repo setup (release lives on
+`beskid_compiler`; workflow runs in the superrepo; we want `brew install beskid`,
+not `beskid_compiler`). **Resolution:** the `macos-brew` job clones the
+`beskid_homebrew` tap repo, renders `Formula/beskid.rb` from the template with
+the version + sha256, and pushes it directly. Uses `HOMEBREW_TAP_GIT_TOKEN` for
+cross-repo write access.
 
 ## Secrets inventory (full list in SECRETS.md)
 
 | Secret | Used by | Purpose |
 |---|---|---|
-| `DISTRIB_GH_PAT` | all platform jobs | PAT with `repo` (+ `read:packages`) scope to read `beskid_compiler` releases (private org) and upload assets back. |
-| `HOMEBREW_TAP_GIT_TOKEN` | macos-brew | PAT with `repo` on `beskid_homebrew` (homebrew-releaser cross-pushes). |
-| `AUR_SSH_PRIVATE_KEY` | arch-aur | AUR deploy key (ed25519). |
-| `AUR_USERNAME` / `AUR_EMAIL` | arch-aur | Commit identity for AUR commits. |
-| `SNAPCRAFT_STORE_CREDENTIALS` | linux-snap | Snap Store login (legacy `SNAPCRAFT_TOKEN` deprecated). |
+| `DISTRIB_GH_PAT` | all platform jobs | PAT with `repo` scope to read `beskid_compiler` releases (private org) and upload assets back. |
+| `HOMEBREW_TAP_GIT_TOKEN` | macos-brew (optional) | PAT with `repo` on `beskid_homebrew` for cross-repo formula push. If absent, macos-brew is skipped. |
+| `SNAPCRAFT_STORE_CREDENTIALS` | linux-snap (optional) | Snap Store login. If absent, linux-snap is skipped. |
+| `GHCR_TOKEN` (or `GITHUB_TOKEN` with `packages:write`) | container-images | Push container images to GHCR. |
+
+## setup-beskid GitHub Action
+
+A composite GitHub Action (`.github/actions/setup-beskid/`) installs the Beskid
+CLI in CI runners without pre-building. It detects the runner OS and arch,
+downloads the binary from the `cli-latest` (or `cli-v<version>` if pinned)
+release on `beskid_compiler`, installs to `RUNNER_TOOL_CACHE`, and verifies
+with `beskid --version`.
+
+Inputs:
+- `version` (string, default `latest`): semver or `latest` for rolling.
+- `token` (string, default `${{ github.token }}`): GH token for release download.
+
+Outputs:
+- `beskid-version`: the installed version.
+- `beskid-path`: path to the binary.
+
+Supported platforms: linux-x64, darwin-arm64, win32-x64.
+
+Usage:
+```yaml
+- uses: ./.github/actions/setup-beskid
+  with:
+    version: 'latest'
+```
+
+## Container images
+
+Two Docker images are published to GHCR:
+
+- **`ghcr.io/cyber-nomad-collective/beskid:<version>`** — minimal runtime
+  (`debian:bookworm-slim`) with the beskid CLI at `/usr/local/bin/beskid`.
+  Entrypoint is `beskid`. Built from `beskid_distrib/docker/Dockerfile`.
+
+- **`ghcr.io/cyber-nomad-collective/beskid-runner:<version>`** — extends the
+  generic image with GitHub Actions runner dependencies (curl, jq, git). Built
+  from `beskid_distrib/docker/Dockerfile.runner`.
+
+Usage:
+```sh
+docker run ghcr.io/cyber-nomad-collective/beskid:latest --version
+docker run -v $(pwd):/workspace ghcr.io/cyber-nomad-collective/beskid:latest build
+```
+
+In GitHub Actions:
+```yaml
+- uses: docker://ghcr.io/cyber-nomad-collective/beskid:latest
+```
 
 ## Testing / verification
 

@@ -1,0 +1,97 @@
+name: Setup Beskid CLI
+description: Install the Beskid compiler CLI in CI runners
+
+inputs:
+  version:
+    description: "Semver (e.g. '0.4.15') or 'latest' for the cli-latest rolling release"
+    required: false
+    default: 'latest'
+  token:
+    description: "GitHub token with read access to beskid_compiler releases"
+    required: false
+    default: '${{ github.token }}'
+
+outputs:
+  beskid-version:
+    description: 'The installed version'
+    value: ${{ steps.install.outputs.version }}
+  beskid-path:
+    description: 'Path to the beskid binary'
+    value: ${{ steps.install.outputs.path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Detect platform
+      id: platform
+      shell: bash
+      run: |
+        case "${{ runner.os }}" in
+          Linux)   os='linux';    arch='amd64'  ;;
+          macOS)   os='darwin';   arch='arm64'  ;;
+          Windows) os='windows';  arch='amd64'  ;;
+          *)
+            echo "::error::Unsupported runner OS: ${{ runner.os }}" >&2
+            exit 1
+            ;;
+        esac
+        echo "os=${os}" >> "$GITHUB_OUTPUT"
+        echo "arch=${arch}" >> "$GITHUB_OUTPUT"
+
+    - name: Resolve release tag
+      id: tag
+      shell: bash
+      run: |
+        ver="${{ inputs.version }}"
+        if [[ "${ver}" == "latest" ]]; then
+          echo "tag=cli-latest" >> "$GITHUB_OUTPUT"
+        else
+          echo "tag=cli-v${ver}" >> "$GITHUB_OUTPUT"
+        fi
+        echo "requested=${ver}" >> "$GITHUB_OUTPUT"
+
+    - name: Install beskid
+      id: install
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+      run: |
+        set -euo pipefail
+        OS="${{ steps.platform.outputs.os }}"
+        ARCH="${{ steps.platform.outputs.arch }}"
+        TAG="${{ steps.tag.outputs.tag }}"
+        COMPILER_REPO="Cyber-Nomad-Collective/beskid_compiler"
+
+        case "${OS}" in
+          windows) ext='.exe' ;;
+          *)       ext=''     ;;
+        esac
+
+        asset="beskid-${OS}-${ARCH}${ext}"
+        bin_name="beskid${ext}"
+
+        dest_dir="${RUNNER_TOOL_CACHE}/beskid/${TAG}/${ARCH}"
+        mkdir -p "${dest_dir}"
+        dest="${dest_dir}/${bin_name}"
+
+        echo "::group::Downloading ${asset} from ${TAG}"
+        gh release download "${TAG}" \
+          --repo "${COMPILER_REPO}" \
+          --pattern "${asset}" \
+          --dir "${dest_dir}" \
+          --clobber
+        echo "::endgroup::"
+
+        if [[ "${asset}" != "${bin_name}" ]]; then
+          mv "${dest_dir}/${asset}" "${dest}"
+        fi
+
+        chmod +x "${dest}"
+
+        echo "${dest_dir}" >> "${GITHUB_PATH}"
+
+        installed_ver="$("${dest}" --version 2>&1)"
+        echo "version=${installed_ver}" >> "$GITHUB_OUTPUT"
+        echo "path=${dest}" >> "$GITHUB_OUTPUT"
+
+        echo "Installed beskid ${installed_ver} at ${dest}"

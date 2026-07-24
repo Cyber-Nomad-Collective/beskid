@@ -28,6 +28,7 @@ on:
 
 permissions:
   contents: read
+  packages: write
 
 # Serialize per-default-branch; never cancel an in-flight publish run.
 concurrency:
@@ -54,6 +55,8 @@ jobs:
       compiler_sha: ${{ steps.sha.outputs.compiler_sha }}
       cli_darwin_sha: ${{ steps.shas.outputs.cli_darwin_sha }}
       should_run: ${{ steps.guard.outputs.should_run }}
+      homebrew_available: ${{ steps.secret-check.outputs.homebrew_available }}
+      snap_available: ${{ steps.secret-check.outputs.snap_available }}
     steps:
       # NOTE: the first step MUST be a real actions/checkout — a local composite
       # action cannot be loaded before the repository is checked out.
@@ -68,18 +71,25 @@ jobs:
           DISTRIB_GH_PAT: ${{ secrets.DISTRIB_GH_PAT }}
           HOMEBREW_TAP_GIT_TOKEN: ${{ secrets.HOMEBREW_TAP_GIT_TOKEN }}
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+        id: secret-check
         run: |
           set -euo pipefail
           [[ -n "${DISTRIB_GH_PAT}" ]] || {
             echo "DISTRIB_GH_PAT must be configured before distribution can read or publish release artifacts." >&2
             exit 1
           }
-          for credential in HOMEBREW_TAP_GIT_TOKEN SNAPCRAFT_STORE_CREDENTIALS; do
-            [[ -n "${!credential}" ]] || {
-              echo "${credential} must be configured before distribution can publish release artifacts." >&2
-              exit 1
-            }
-          done
+          if [[ -z "${HOMEBREW_TAP_GIT_TOKEN}" ]]; then
+            echo "::warning::HOMEBREW_TAP_GIT_TOKEN not set — macos-brew job will be skipped."
+            echo "homebrew_available=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "homebrew_available=true" >> "${GITHUB_OUTPUT}"
+          fi
+          if [[ -z "${SNAPCRAFT_STORE_CREDENTIALS}" ]]; then
+            echo "::warning::SNAPCRAFT_STORE_CREDENTIALS not set — linux-snap job will be skipped."
+            echo "snap_available=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "snap_available=true" >> "${GITHUB_OUTPUT}"
+          fi
 
       - name: Init beskid_distrib submodule (shallow)
         run: ./scripts/ci/init-submodules.sh beskid_distrib
@@ -102,8 +112,8 @@ jobs:
           else
             version="$(bash beskid_distrib/scripts/resolve-version.sh | tr -d '[:space:]')"
           fi
-          [[ "${version}" =~ ^0\.4\.(0|[1-9][0-9]*)$ ]] || {
-            echo "Compiler-published version is absent or not strict 0.4.<build>: ${version:-<empty>}" >&2
+          [[ "${version}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || {
+            echo "Compiler-published version is absent or not strict X.Y.Z semver: ${version:-<empty>}" >&2
             exit 1
           }
           echo "version=${version}" >> "${GITHUB_OUTPUT}"
@@ -206,13 +216,20 @@ jobs:
           gh release upload cli-latest --repo "${COMPILER_REPO}" "${assets[@]}" --clobber
           tag="cli-v${VERSION}"
           if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
-            gh release upload "$tag" --repo "${COMPILER_REPO}" "${assets[@]}" --clobber || true
+            gh release upload "$tag" --repo "${COMPILER_REPO}" "${assets[@]}" --clobber
+          else
+            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "$(gh release view cli-latest --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
+            gh release upload "$tag" --repo "${COMPILER_REPO}" "${assets[@]}" --clobber
           fi
 
   macos-brew:
     name: macOS Homebrew formula
     needs: resolve-rolling
-    if: needs.resolve-rolling.outputs.should_run == 'true'
+    if: >-
+      ${{
+        needs.resolve-rolling.outputs.should_run == 'true' &&
+        needs.resolve-rolling.outputs.homebrew_available == 'true'
+      }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 15
     steps:
@@ -291,7 +308,13 @@ jobs:
           set -euo pipefail
           dmg="beskid-${VERSION}-macos-arm64.dmg"
           gh release upload cli-latest --repo "${COMPILER_REPO}" "${dmg}" --clobber
-          gh release upload "cli-v${VERSION}" --repo "${COMPILER_REPO}" "${dmg}" --clobber
+          tag="cli-v${VERSION}"
+          if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
+            gh release upload "$tag" --repo "${COMPILER_REPO}" "${dmg}" --clobber
+          else
+            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "$(gh release view cli-latest --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
+            gh release upload "$tag" --repo "${COMPILER_REPO}" "${dmg}" --clobber
+          fi
 
 
   ubuntu-deb:
@@ -332,13 +355,20 @@ jobs:
           gh release upload cli-latest --repo "${COMPILER_REPO}" "${deb}" --clobber
           tag="cli-v${VERSION}"
           if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
-            gh release upload "$tag" --repo "${COMPILER_REPO}" "${deb}" --clobber || true
+            gh release upload "$tag" --repo "${COMPILER_REPO}" "${deb}" --clobber
+          else
+            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "$(gh release view cli-latest --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
+            gh release upload "$tag" --repo "${COMPILER_REPO}" "${deb}" --clobber
           fi
 
   linux-snap:
     name: Snap (beskid)
     needs: resolve-rolling
-    if: needs.resolve-rolling.outputs.should_run == 'true'
+    if: >-
+      ${{
+        needs.resolve-rolling.outputs.should_run == 'true' &&
+        needs.resolve-rolling.outputs.snap_available == 'true'
+      }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 30
     steps:
@@ -379,21 +409,68 @@ jobs:
         env:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
 
+  container-images:
+    name: Container images
+    needs: resolve-rolling
+    if: needs.resolve-rolling.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Init beskid_distrib submodule
+        run: ./scripts/ci/init-submodules.sh beskid_distrib
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build + push generic image
+        uses: docker/build-push-action@v6
+        with:
+          context: beskid_distrib/docker
+          file: beskid_distrib/docker/Dockerfile
+          push: true
+          build-args: |
+            BESKID_VERSION=${{ needs.resolve-rolling.outputs.version }}
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/beskid:${{ needs.resolve-rolling.outputs.version }}
+            ghcr.io/${{ github.repository_owner }}/beskid:latest
+
+      - name: Build + push runner image
+        uses: docker/build-push-action@v6
+        with:
+          context: beskid_distrib/docker
+          file: beskid_distrib/docker/Dockerfile.runner
+          push: true
+          build-args: |
+            BESKID_VERSION=${{ needs.resolve-rolling.outputs.version }}
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/beskid-runner:${{ needs.resolve-rolling.outputs.version }}
+
   # This marker is the only completed-release state. It is written after every
   # platform publication succeeds, so a failed fan-out stays eligible for a
   # retry on the same rolling version.
   record-complete-marker:
     name: Record completed distribution
-    needs: [resolve-rolling, windows-msi, macos-brew, macos-dmg, ubuntu-deb, linux-snap]
+    needs: [resolve-rolling, windows-msi, macos-brew, macos-dmg, ubuntu-deb, linux-snap, container-images]
     if: >-
       ${{
         always() &&
         needs.resolve-rolling.outputs.should_run == 'true' &&
         needs.windows-msi.result == 'success' &&
-        needs.macos-brew.result == 'success' &&
+        (needs.macos-brew.result == 'success' || needs.macos-brew.result == 'skipped') &&
         needs.macos-dmg.result == 'success' &&
         needs.ubuntu-deb.result == 'success' &&
-        needs.linux-snap.result == 'success'
+        (needs.linux-snap.result == 'success' || needs.linux-snap.result == 'skipped') &&
+        needs.container-images.result == 'success'
       }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 5

@@ -1,3 +1,5 @@
+# Installs the Beskid CLI raw binary. Platform packages (.msi, .exe, .deb, .dmg, Snap, Homebrew)
+# are also available — see https://beskid-lang.org/downloads/ for alternatives.
 $ErrorActionPreference = "Stop"
 
 $releaseTag = if ($env:BESKID_RELEASE_TAG) { $env:BESKID_RELEASE_TAG.Trim() } else { "cli-latest" }

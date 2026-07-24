@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Installs the Beskid CLI raw binary. Platform packages (.deb, .msi, .dmg, Snap, Homebrew)
+# are also available — see https://beskid-lang.org/downloads/ for alternatives.
 set -euo pipefail
 
 RELEASE_TAG="${BESKID_RELEASE_TAG:-cli-latest}"
