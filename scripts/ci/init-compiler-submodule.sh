@@ -65,3 +65,4 @@ echo "==> Fetch compiler tags for rolling semver"
     git fetch origin --tags --force 2>/dev/null || true
   fi
 )
+# 0.4 closure: re-pushed compiler submodule commit 77e9e17c to origin
