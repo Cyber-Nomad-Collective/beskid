@@ -9,6 +9,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-07-24
+
 ### Added
 
 - Platform Spec Draft Context authoring: multi-document revision-pinned contexts,
