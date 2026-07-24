@@ -5,7 +5,10 @@ WORKDIR /app
 
 RUN apk add --no-cache git
 
-COPY site/learn/package.json site/learn/pnpm-lock.yaml site/learn/.npmrc ./site/learn/
+COPY site/learn/package.json site/learn/pnpm-lock.yaml ./site/learn/
+RUN printf '@beskid:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}\n' > site/learn/.npmrc
+ARG NODE_AUTH_TOKEN
+ENV NODE_AUTH_TOKEN=${NODE_AUTH_TOKEN}
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
 RUN npm install -g corepack@latest \
