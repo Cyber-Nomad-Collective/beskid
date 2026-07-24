@@ -185,14 +185,14 @@ jobs:
           if-no-files-found: warn
           retention-days: 90
 
-        - uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3
-          if: inputs.push && inputs.sign && steps.build.outcome == 'success'
+      - uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3
+        if: inputs.push && inputs.sign && steps.build.outcome == 'success'
 
-        - name: Keyless signing hook
-          if: inputs.push && inputs.sign && steps.build.outcome == 'success'
-          env:
-            IMAGE: ${{ inputs.repository }}@${{ steps.build.outputs.digest }}
-          run: ./scripts/ci/sign-image.sh "${IMAGE}"
+      - name: Keyless signing hook
+        if: inputs.push && inputs.sign && steps.build.outcome == 'success'
+        env:
+          IMAGE: ${{ inputs.repository }}@${{ steps.build.outputs.digest }}
+        run: ./scripts/ci/sign-image.sh "${IMAGE}"
 
       - name: Write image manifest record
         if: inputs.push && steps.build.outcome == 'success'
