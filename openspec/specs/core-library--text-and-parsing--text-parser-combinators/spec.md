@@ -164,6 +164,7 @@ Naming authority: [code style and naming](/platform-spec/language-meta/program-s
 | **`Core.Text.Parser.Cardinality`** | Repeat and negation: `ZeroOrOne`, `ZeroOrMany`, `OneOrMany`, `Not` |
 | **`Core.Text.Parser.Coordination`** | Delimited and separated forms: `Between`, `Separated` |
 | **`Core.Text.Parser.Flow`** | Post-parse wiring: `Then`, `Discard`, `Always`, `Pure` |
+| **`Core.Text.Parser.Mapper`** | Value transformation: `Map`, `Tap` |
 
 On-disk layout mirrors module paths: `src/Core/Text/Parser/{Result,Context,Literals,...}.bd` with **PascalCase** stems per [code style and naming](/platform-spec/language-meta/program-structure/code-style-and-naming/).
 
@@ -171,30 +172,43 @@ On-disk layout mirrors module paths: `src/Core/Text/Parser/{Result,Context,Liter
 
 Public combinator callables **must** use **PascalCase** (types, functions, and type methods). Parameters and locals **must** use **camelCase**.
 
-| Combinator | Module | v1 |
-| --- | --- | --- |
-| `Text` | `Literals` | P0 |
-| `Char` | `Literals` | P0 |
-| `Any` | `Literals` | P0 |
-| `Eof` | `Literals` | P0 |
-| `Fail` | `Literals` | P0 |
-| `Satisfy` | `Literals` | P0 |
-| `WhiteSpace` | `Terms` | P0 |
-| `NonWhiteSpace` | `Terms` | P0 |
-| `Or` | `Combine` | P0 |
-| `And` | `Combine` | P0 |
-| `AndSkip` | `Combine` | P1 |
-| `SkipAnd` | `Combine` | P1 |
-| `ZeroOrOne` | `Cardinality` | P0 |
-| `ZeroOrMany` | `Cardinality` | P0 |
-| `OneOrMany` | `Cardinality` | P0 |
-| `Not` | `Cardinality` | P1 |
-| `Between` | `Coordination` | P1 |
-| `Separated` | `Coordination` | P1 |
-| `Then` | `Flow` | P0 |
-| `Discard` | `Flow` | P0 |
-| `Always` | `Flow` | P0 |
-| `Pure` | `Flow` | P0 |
+| Combinator | Module | v1 | Description |
+| --- | --- | --- | --- |
+| `Fail` | `Literals` | P0 | Unconditional failure with `ParseErrorKind` and rule label |
+| `Text` | `Literals` | P0 | Match exact string literal |
+| `Char` | `Literals` | P0 | Match single character (delegates to `Text`) |
+| `Any` | `Literals` | P0 | Consume and return the next character, or fail at EOF |
+| `Eof` | `Literals` | P0 | Succeed only at end of input |
+| `Satisfy` | `Literals` | P0 | Alias for `Any` |
+| `Digit` | `Terms` | P0 | Match a single decimal digit `0-9` |
+| `Lower` | `Terms` | P0 | Match a single lowercase ASCII letter `a-z` |
+| `Upper` | `Terms` | P0 | Match a single uppercase ASCII letter `A-Z` |
+| `WhiteSpace` | `Terms` | P0 | Match a single space character ` ` |
+| `NonWhiteSpace` | `Terms` | P0 | Match any single character that is not a space |
+| `MatchAlphabetChar` | `Terms` | P0 | Match a single character from a caller-supplied alphabet string |
+| `Or` | `Combine` | P0 | Ordered choice: return first success, else `ChoiceFailed` |
+| `And` | `Combine` | P0 | Sequence: both must succeed; returns `Ok("", rest)` |
+| `AndSkip` | `Combine` | P1 | Sequence: keep first, discard second's value |
+| `SkipAnd` | `Combine` | P1 | Sequence: discard first, keep second's value |
+| `Pure` | `Flow` | P0 | Inject a value without consuming input |
+| `Then` | `Flow` | P0 | Sequence two results; return second on success |
+| `Discard` | `Flow` | P0 | Sequence two results; return `Ok("", rest)` on success |
+| `Always` | `Flow` | P0 | Alias for `Pure` |
+| `Between` | `Coordination` | P1 | open → inner → close; returns first failure or `close` |
+| `Separated` | `Coordination` | P1 | Item in a separated list; folds through item unchanged |
+| `ZeroOrOne` | `Cardinality` | P0 | Optional: succeed with `Ok("", c)` on failure |
+| `ZeroOrMany` | `Cardinality` | P0 | Zero-or-more termination step |
+| `OneOrMany` | `Cardinality` | P0 | One-or-more step handler; fails when count < 1 |
+| `Not` | `Cardinality` | P1 | Negative lookahead: fail on success, succeed on failure |
+| `Map` | `Mapper` | P1 | Replace the value in an `Ok` result, preserving cursor |
+| `Tap` | `Mapper` | P1 | Identity pass-through; returns result unchanged |
+| `ParseContext` | `Context` | P0 | Configuration record (`skipWhiteSpace` flag) |
+| `DefaultContext` | `Context` | P0 | `ParseContext { skipWhiteSpace: false }` |
+| `WithWhiteSpaceParser` | `Context` | P0 | Skip whitespace when `ctx.skipWhiteSpace` is set |
+| `TextParseResult<T>` | `Result` | P0 | `Ok(T value, Cursor rest) \| Err(ParseError error)` |
+| `ParseErrorKind` | `Result` | P0 | `ExpectedLiteral \| ExpectedRule \| ZeroWidthRepeat \| ChoiceFailed` |
+| `IsOk` | `Result` | P0 | Predicate: true when `TextParseResult` is `Ok` |
+| `RestOnOk` | `Result` | P0 | Extract `rest` cursor from `Ok`, or return fallback |
 
 ## Hub backward-compat aliases
 
