@@ -29,12 +29,13 @@ if grep -Fq 'needs: [resolve-rolling, stamp-marker]' "${workflow}"; then
 fi
 
 grep -Fq 'record-complete-marker:' "${workflow}" || fail "missing post-publication marker job"
-grep -Fq 'needs: [resolve-rolling, windows-msi, macos-brew, macos-dmg, ubuntu-deb, linux-snap]' "${workflow}" || fail "completion marker must wait for every platform job"
+grep -Fq 'needs: [resolve-rolling, windows-msi, macos-brew, macos-dmg, ubuntu-deb, linux-snap, container-images]' "${workflow}" || fail "completion marker must wait for every platform job"
 grep -Fq "needs.windows-msi.result == 'success'" "${workflow}" || fail "completion marker must require successful Windows publication"
 grep -Fq "needs.macos-brew.result == 'success'" "${workflow}" || fail "completion marker must require successful macOS publication"
 grep -Fq "needs.macos-dmg.result == 'success'" "${workflow}" || fail "completion marker must require successful macOS DMG publication"
 grep -Fq "needs.ubuntu-deb.result == 'success'" "${workflow}" || fail "completion marker must require successful Debian publication"
 grep -Fq "needs.linux-snap.result == 'success'" "${workflow}" || fail "completion marker must require successful Snap publication"
+grep -Fq "needs.container-images.result == 'success'" "${workflow}" || fail "completion marker must require successful container image publication"
 if grep -Eq 'arch-aur|AUR_|PKGBUILD|beskid-bin' "${workflow}"; then
   fail "AUR support must be removed from distribute.yml"
 fi

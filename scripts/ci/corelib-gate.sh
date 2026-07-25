@@ -325,7 +325,6 @@ REQUIRED_FILES=(
   "packages/foundation/src/Collections/Collections.bd"
   "packages/foundation/src/Collections/Array.bd"
   "packages/foundation/src/Query/Query.bd"
-  "packages/foundation/src/Query/QueryState.bd"
   "packages/foundation/src/Testing/Testing.bd"
   "packages/foundation/src/Testing/Assert.bd"
   "packages/foundation/src/Testing/Contracts.bd"
