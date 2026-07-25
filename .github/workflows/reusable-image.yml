@@ -60,7 +60,6 @@ on:
       # write:packages; a plain releases PAT will be rejected by GHCR.
       GHCR_TOKEN:
         required: false
-        required: false
 
 permissions:
   contents: read
