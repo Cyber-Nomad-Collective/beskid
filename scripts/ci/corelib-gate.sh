@@ -341,6 +341,69 @@ done
 echo "quality OK: corelib workspace manifest version ${version}"
 }
 
+# API-SHAPE-004: Prelude SHALL only re-export @tier(standard) modules.
+# Scans foundation source files and verifies that:
+#  1. Every module imported by an aggregate/document-level module carries @tier(standard).
+#  2. No @tier(supported) module is re-exported from a hub that feeds the prelude.
+corelib_prelude_tier_validation() {
+  local foundation_src="${CORELIB_ROOT}/packages/foundation/src"
+  local violations=0
+
+  # Known hub files whose direct submodules form the prelude surface.
+  # These hubs aggregate child modules; anything they re-export must be @tier(standard).
+  local prelude_hubs=(
+    "Core/Error/Error.bd"
+    "Core/Input/Input.bd"
+    "Core/Output/Output.bd"
+    "Core/Optional/Option.bd"
+    "Core/Optional/Optional.bd"
+    "Core/Results/Results.bd"
+    "Core/ErrorHandling/ErrorHandling.bd"
+    "Core/String/String.bd"
+    "Core/Encoding/Encoding.bd"
+    "Core/Bytes/Bytes.bd"
+    "Collections/Collections.bd"
+    "Collections/Array.bd"
+    "Core/Syscall/Syscall.bd"
+  )
+
+  for hub in "${prelude_hubs[@]}"; do
+    local hub_path="${foundation_src}/${hub}"
+    if [[ ! -f "${hub_path}" ]]; then
+      continue
+    fi
+    # Check: the hub itself must have @tier(standard) or be the primary module.
+    if ! grep -q '@tier(standard)' "${hub_path}"; then
+      echo "Prelude violation (API-SHAPE-004): ${hub} is a prelude-surface module but lacks @tier(standard)" >&2
+      violations=$((violations + 1))
+    fi
+  done
+
+  # Scan all .bd files for @tier(supported) that are re-exported from a standard hub.
+  while IFS= read -r -d '' file; do
+    local rel="${file#${foundation_src}/}"
+    # Check if this file has @tier(supported) and is imported by a standard hub.
+    if grep -q '@tier(supported)' "${file}"; then
+      # Check if any standard hub imports this module.
+      for hub in "${prelude_hubs[@]}"; do
+        local hub_path="${foundation_src}/${hub}"
+        local mod_name="${rel%.bd}"
+        mod_name="${mod_name//\//.}"
+        if [[ -f "${hub_path}" ]] && grep -q "${mod_name}" "${hub_path}" 2>/dev/null; then
+          echo "Prelude violation (API-SHAPE-004): ${rel} is @tier(supported) but imported by prelude hub ${hub}" >&2
+          violations=$((violations + 1))
+        fi
+      done
+    fi
+  done < <(find "${foundation_src}" -name '*.bd' -print0 2>/dev/null)
+
+  if [[ "${violations}" -gt 0 ]]; then
+    echo "Prelude tier validation FAILED: ${violations} violation(s) found (API-SHAPE-004)" >&2
+    return 1
+  fi
+  echo "prelude tier validation OK (API-SHAPE-004): all prelude-surface modules carry @tier(standard)"
+}
+
 if [[ "${CORELIB_QUALITY_ONLY:-0}" == "1" ]]; then
   corelib_report_step "resolve Corelib workspace" corelib_resolve_workspace
   corelib_report_step "quality checks" corelib_quality_checks

@@ -87,12 +87,12 @@ export function LessonEditor({ lesson, canEdit, onSaved }: LessonEditorProps) {
 		setError(null);
 		try {
 			const payload = { ...lesson, ...draft, hints: draft.hints.filter(Boolean) };
-			const res = await fetch("/api/lessons/" + encodeURIComponent(lesson.id), {
+			const res = await fetch(`/api/lessons/${encodeURIComponent(lesson.id)}`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(payload),
 			});
-			if (!res.ok) throw new Error("Save failed: " + res.statusText);
+			if (!res.ok) throw new Error(`Save failed: ${res.statusText}`);
 			const updated = (await res.json()) as LearnExercise;
 			onSaved(updated);
 		} catch (e: unknown) {

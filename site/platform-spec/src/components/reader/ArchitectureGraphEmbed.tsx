@@ -15,7 +15,6 @@ import { useMemo } from "react";
 import {
 	type ArchitectureMapGroupData,
 	type ArchitectureMapNodeData,
-	EdgeKindColors,
 	layoutArchitectureMap,
 } from "#/components/reader/architecture-map-layout";
 import type {

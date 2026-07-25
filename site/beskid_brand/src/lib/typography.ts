@@ -17,8 +17,8 @@
  * For Canvas/node: load woff2 buffer via fontkit.
  */
 
-import { readFileSync } from "fs";
-import { join } from "path";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 const FONT_ROOT = join(
 	import.meta.dirname!,

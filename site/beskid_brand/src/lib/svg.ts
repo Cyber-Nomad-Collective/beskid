@@ -32,7 +32,7 @@ function sEl(el: Shape, indent = 0): string {
 		case "circle": {
 			let a = `<circle cx="${el.cx}" cy="${el.cy}" r="${el.r}" fill="${el.fill}"`;
 			if (el.opacity !== undefined) a += ` opacity="${el.opacity}"`;
-			return a + `/>`;
+			return `${a}/>`;
 		}
 		case "text":
 			return `${p}<text x="${el.x}" y="${el.y}" font-family="${el.fontFamily}" font-size="${el.fontSize}" font-weight="${el.fontWeight}" letter-spacing="${el.letterSpacing}" text-anchor="${el.textAnchor}" fill="${el.fill}">${el.content}</text>`;

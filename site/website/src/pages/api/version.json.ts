@@ -33,7 +33,7 @@ function assetName(os: string, arch: string, suffix: string): string {
 }
 
 export async function GET({ url: requestUrl }: { url: URL }) {
-	const base = requestUrl.origin;
+	const _base = requestUrl.origin;
 	const ghReleaseBase = `https://github.com/${COMPILER_REPO}/releases/download/${LATEST_TAG}`;
 
 	const headers: Record<string, string> = {

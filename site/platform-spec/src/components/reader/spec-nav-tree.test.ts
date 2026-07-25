@@ -55,11 +55,11 @@ describe("filterNavTree", () => {
 			...tree,
 			children: [
 				{
-					...tree.children![0],
+					...tree.children?.[0],
 					children: [
 						{
-							...tree.children![0].children![0],
-							children: [tree.children![0].children![0].children![0]],
+							...tree.children?.[0].children?.[0],
+							children: [tree.children?.[0].children?.[0].children?.[0]],
 						},
 					],
 				},

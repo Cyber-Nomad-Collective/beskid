@@ -109,6 +109,7 @@ function DraftContextEditorPage() {
 		search.capability,
 		search.domain,
 		search.feature,
+		ensureContext,
 	]);
 
 	const selected =

@@ -5,7 +5,6 @@ import {
 	isOAuthConfigured,
 	isOnboarded,
 	listEnabledApps,
-	readAuthConfig,
 	resolveOAuthConfig,
 } from "#/server/config-store";
 

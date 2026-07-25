@@ -48,7 +48,7 @@ export default function LessonCard({
 		if (contentRef.current) {
 			setContentHeight(contentRef.current.scrollHeight);
 		}
-	}, [lesson]);
+	}, []);
 
 	useEffect(() => {
 		if (!isActive) setExpanded(false);

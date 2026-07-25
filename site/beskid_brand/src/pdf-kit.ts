@@ -6,11 +6,11 @@
  * Run: npx tsx src/pdf-kit.ts
  */
 
+import { readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import fontkit from "@pdf-lib/fontkit";
-import { readFileSync, writeFileSync } from "fs";
-import { join } from "path";
-import { PDFDocument, type PDFPage, rgb, StandardFonts } from "pdf-lib";
-import { C, SERVICE_LABELS, SERVICES } from "./lib/brand";
+import { PDFDocument, type PDFPage, rgb } from "pdf-lib";
+import { C, SERVICE_LABELS } from "./lib/brand";
 import { PALETTE } from "./lib/palette";
 
 const FONT_DIR = join(
@@ -51,7 +51,7 @@ async function main() {
 	const TEAL = toRgb(C.teal);
 	const TEAL_LIGHT = toRgb(C.tealLight);
 	const DARK = toRgb(PALETTE.neutral.dark);
-	const WHITE = rgb(1, 1, 1);
+	const _WHITE = rgb(1, 1, 1);
 	const GRAY = toRgb(PALETTE.neutral[600]);
 	const LIGHT_GRAY = toRgb(PALETTE.neutral[200]);
 
@@ -168,7 +168,7 @@ async function main() {
 			font: interBold,
 			color: rgbC,
 		});
-		page.drawText(c.hex + "  —  " + c.desc, {
+		page.drawText(`${c.hex}  —  ${c.desc}`, {
 			x: 105,
 			y: cy + 4,
 			size: 10,
@@ -294,7 +294,7 @@ async function main() {
 			font: interBold,
 			color: TEAL,
 		});
-		page.drawText("icon-" + id + ".svg  —  120x120, flat geometric", {
+		page.drawText(`icon-${id}.svg  —  120x120, flat geometric`, {
 			x: 50,
 			y: cy - 14,
 			size: 10,
@@ -382,7 +382,7 @@ async function main() {
 	];
 	cy = 740;
 	for (const r of rules) {
-		page.drawText("•  " + r, {
+		page.drawText(`•  ${r}`, {
 			x: 50,
 			y: cy,
 			size: 12,
@@ -476,7 +476,7 @@ async function main() {
 
 	const pdfBytes = await doc.save();
 	writeFileSync(OUT, pdfBytes);
-	console.log("PDF brand kit written: " + OUT);
+	console.log(`PDF brand kit written: ${OUT}`);
 }
 
 main().catch(console.error);

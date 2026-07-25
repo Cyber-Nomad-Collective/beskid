@@ -81,7 +81,7 @@ export function createPairingRequest(input: {
 
 	audit(requestId, "created", input.createdByLogin);
 
-	const hubBase = env.AUTH_HUB_PUBLIC_URL.replace(/\/$/, "");
+	const _hubBase = env.AUTH_HUB_PUBLIC_URL.replace(/\/$/, "");
 	return {
 		requestId,
 		pairingCode: code,

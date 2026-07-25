@@ -57,7 +57,7 @@ export function SpecArticlePicker({
 		if (!selected) return;
 		const ref = selected.ref;
 		const title = selected.title;
-		const fence = "```quote\nref: " + ref + "\ntitle: " + title + "\n```\n\n";
+		const fence = `\`\`\`quote\nref: ${ref}\ntitle: ${title}\n\`\`\`\n\n`;
 		onInsert(fence);
 		setQuery("");
 		setSelected(null);

@@ -198,7 +198,7 @@ function LessonView({
 			term.dispose();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [exercise.title]);
 
 	// ── Reset on exercise change ───────────────────────────────────────────────
 
@@ -206,7 +206,7 @@ function LessonView({
 		setCode(exercise.starterCode);
 		setResult(null);
 		setActiveHint(0);
-	}, [exercise.id]);
+	}, [exercise.starterCode]);
 
 	// ── Monaco language registration ───────────────────────────────────────────
 

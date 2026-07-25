@@ -2,8 +2,8 @@
  * Lottie animation generator for Beskid brand — 3D mesh mountain.
  * Run: npx tsx src/lottie-gen.ts
  */
-import { writeFileSync } from "fs";
-import { join } from "path";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { C, MESH_FACETS, RIDGE_BACK, RIDGE_FRONT } from "./lib/brand";
 
 const OUT = join(import.meta.dirname!, "..");
@@ -150,7 +150,7 @@ function drawOnMesh(): any {
 
 function writeLottie(filename: string, data: any): void {
 	writeFileSync(join(OUT, filename), JSON.stringify(data, null, 2), "utf-8");
-	console.log("  Wrote " + filename);
+	console.log(`  Wrote ${filename}`);
 }
 
 console.log("Generating Lottie animations (3D mesh)...\n");

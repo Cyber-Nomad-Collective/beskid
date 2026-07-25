@@ -1,7 +1,7 @@
 "use client";
 
 import { common, createLowlight } from "lowlight";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 
 const lowlight = createLowlight(common);
 

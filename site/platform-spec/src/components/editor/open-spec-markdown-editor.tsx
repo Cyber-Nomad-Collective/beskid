@@ -50,25 +50,19 @@ function htmlToMarkdown(html: string): string {
 			case "pre":
 				return `\`\`\`\n${children.trim()}\n\`\`\`\n\n`;
 			case "blockquote":
-				return (
-					children
-						.trim()
-						.split("\n")
-						.map((line) => `> ${line}`)
-						.join("\n") + "\n\n"
-				);
+				return `${children
+					.trim()
+					.split("\n")
+					.map((line) => `> ${line}`)
+					.join("\n")}\n\n`;
 			case "ul":
-				return (
-					Array.from(node.children)
-						.map((li) => `- ${walk(li).trim()}`)
-						.join("\n") + "\n\n"
-				);
+				return `${Array.from(node.children)
+					.map((li) => `- ${walk(li).trim()}`)
+					.join("\n")}\n\n`;
 			case "ol":
-				return (
-					Array.from(node.children)
-						.map((li, index) => `${index + 1}. ${walk(li).trim()}`)
-						.join("\n") + "\n\n"
-				);
+				return `${Array.from(node.children)
+					.map((li, index) => `${index + 1}. ${walk(li).trim()}`)
+					.join("\n")}\n\n`;
 			case "li":
 				return children;
 			case "a": {
@@ -81,11 +75,9 @@ function htmlToMarkdown(html: string): string {
 				return children;
 		}
 	};
-	return (
-		walk(doc.body)
-			.replace(/\n{3,}/g, "\n\n")
-			.trimEnd() + "\n"
-	);
+	return `${walk(doc.body)
+		.replace(/\n{3,}/g, "\n\n")
+		.trimEnd()}\n`;
 }
 
 export function OpenSpecMarkdownEditor({

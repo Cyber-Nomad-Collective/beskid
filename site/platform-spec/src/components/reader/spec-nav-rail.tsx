@@ -220,7 +220,7 @@ export function SpecNavRailContent({
 		if (!shouldMoveDomFocus.current || !focusedSlug) return;
 		shouldMoveDomFocus.current = false;
 		itemRefs.current.get(focusedSlug)?.focus();
-	}, [focusedSlug, effectiveExpanded]);
+	}, [focusedSlug]);
 
 	const focusItem = (slug: string) => {
 		shouldMoveDomFocus.current = true;
@@ -336,11 +336,7 @@ export function SpecNavRailContent({
 			<SidebarContent>
 				<div className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
 					{searchResult.tree?.children?.length ? (
-						<ul
-							role="tree"
-							aria-label="Specification sections"
-							className="space-y-0.5"
-						>
+						<ul aria-label="Specification sections" className="space-y-0.5">
 							{searchResult.tree.children.map((child) => (
 								<NavNode
 									key={child.slug}

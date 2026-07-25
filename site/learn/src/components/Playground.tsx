@@ -31,7 +31,7 @@ function parseMultiline(value: string, label: string): string[] {
 	return value
 		.split(/\r?\n/)
 		.filter((line) => line.trim().length > 0)
-		.map((line) => label + " " + line);
+		.map((line) => `${label} ${line}`);
 }
 
 function registerBeskidLanguage(monaco: typeof monacoEditor) {
@@ -146,15 +146,15 @@ export default function Playground({ initialCode = "" }: PlaygroundProps) {
 			const result = (await response.json()) as CheckResponse;
 
 			writeBlock(term, [
-				"command: " + result.command,
-				"exitCode: " + result.exitCode,
-				"duration: " + result.durationMs + "ms",
+				`command: ${result.command}`,
+				`exitCode: ${result.exitCode}`,
+				`duration: ${result.durationMs}ms`,
 			]);
 
 			if (typeof result.expectedOutput === "string") {
 				writeBlock(term, [
-					"expected output: " + JSON.stringify(result.expectedOutput),
-					"matched: " + (result.expectedOutputMatched ? "yes" : "no"),
+					`expected output: ${JSON.stringify(result.expectedOutput)}`,
+					`matched: ${result.expectedOutputMatched ? "yes" : "no"}`,
 				]);
 			}
 
@@ -168,7 +168,7 @@ export default function Playground({ initialCode = "" }: PlaygroundProps) {
 			} else {
 				writeBlock(
 					term,
-					result.error ? ["Check failed: " + result.error] : ["Result: FAIL"],
+					result.error ? [`Check failed: ${result.error}`] : ["Result: FAIL"],
 				);
 			}
 		} catch (error) {

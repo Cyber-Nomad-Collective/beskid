@@ -22,9 +22,9 @@ const KNOWN_RELEASES: ReleaseInfo[] = [
 		changelog:
 			"Auth hub, tracker SQLite SOT, Nexus graph explorer, Coolify staging, OpenBao, CI observability, and shared component library.",
 		links: [
-			{ label: "Tracker", url: TRACKER_BASE + "/v0.4/version.json" },
-			{ label: "Spec", url: SPEC_BASE + "/" },
-			{ label: "Book", url: BOOK_BASE + "/00-why-beskid-exists/" },
+			{ label: "Tracker", url: `${TRACKER_BASE}/v0.4/version.json` },
+			{ label: "Spec", url: `${SPEC_BASE}/` },
+			{ label: "Book", url: `${BOOK_BASE}/00-why-beskid-exists/` },
 		],
 	},
 	{
@@ -34,8 +34,8 @@ const KNOWN_RELEASES: ReleaseInfo[] = [
 		changelog:
 			"ISLE codegen, TypedProgram lowering, composition DI containers, native AOT pipeline, and runtime bridge architecture.",
 		links: [
-			{ label: "Tracker", url: TRACKER_BASE + "/v0.3/version.json" },
-			{ label: "Spec", url: SPEC_BASE + "/" },
+			{ label: "Tracker", url: `${TRACKER_BASE}/v0.3/version.json` },
+			{ label: "Spec", url: `${SPEC_BASE}/` },
 		],
 	},
 	{
@@ -45,8 +45,8 @@ const KNOWN_RELEASES: ReleaseInfo[] = [
 		changelog:
 			"OpenSpec catalog, trudoc API JSON, runtime surfaces, trust-to-verify CI discipline, and platform-spec hosting.",
 		links: [
-			{ label: "Tracker", url: TRACKER_BASE + "/v0.2/version.json" },
-			{ label: "Spec", url: SPEC_BASE + "/" },
+			{ label: "Tracker", url: `${TRACKER_BASE}/v0.2/version.json` },
+			{ label: "Spec", url: `${SPEC_BASE}/` },
 		],
 	},
 	{
@@ -56,8 +56,8 @@ const KNOWN_RELEASES: ReleaseInfo[] = [
 		changelog:
 			"BSOL manifest, file-scoped modules, AOT beskid pack, corelib single-source tree, and green-gate discipline.",
 		links: [
-			{ label: "Tracker", url: TRACKER_BASE + "/v0.1/version.json" },
-			{ label: "Spec", url: SPEC_BASE + "/" },
+			{ label: "Tracker", url: `${TRACKER_BASE}/v0.1/version.json` },
+			{ label: "Spec", url: `${SPEC_BASE}/` },
 		],
 	},
 	{
@@ -66,7 +66,7 @@ const KNOWN_RELEASES: ReleaseInfo[] = [
 		title: "Foundation",
 		changelog:
 			"Blazor-to-Rust pivot, seventeen-day bootstrap, compiler submodule extraction, project naming, and initial tooling.",
-		links: [{ label: "Tracker", url: TRACKER_BASE + "/v0.0/version.json" }],
+		links: [{ label: "Tracker", url: `${TRACKER_BASE}/v0.0/version.json` }],
 	},
 ];
 
@@ -77,8 +77,7 @@ export async function GET({ url: requestUrl }: { url: URL }) {
 	};
 
 	try {
-		const ghApiUrl =
-			"https://api.github.com/repos/" + COMPILER_REPO + "/releases?per_page=10";
+		const ghApiUrl = `https://api.github.com/repos/${COMPILER_REPO}/releases?per_page=10`;
 		const resp = await fetch(ghApiUrl, {
 			headers: {
 				"User-Agent": "beskid-website/1.0",
@@ -109,7 +108,7 @@ export async function GET({ url: requestUrl }: { url: URL }) {
 				links: [
 					{
 						label: "Release",
-						url: "https://github.com/" + COMPILER_REPO + "/releases/" + r.tag_name,
+						url: `https://github.com/${COMPILER_REPO}/releases/${r.tag_name}`,
 					},
 				],
 			}));

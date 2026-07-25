@@ -167,8 +167,8 @@ export function resolveArchitectureModel(
 			throw new Error(`edge "${edge.id}" has unknown node "${edge.from}"`);
 		if (!nodesById[edge.to])
 			throw new Error(`edge "${edge.id}" has unknown node "${edge.to}"`);
-		adjacency[edge.from]!.push(edge.to);
-		adjacency[edge.to]!.push(edge.from);
+		adjacency[edge.from]?.push(edge.to);
+		adjacency[edge.to]?.push(edge.from);
 	}
 
 	for (const [name, traversal] of Object.entries(manifest.traversals)) {

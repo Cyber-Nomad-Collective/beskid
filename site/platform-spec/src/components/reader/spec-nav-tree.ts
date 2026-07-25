@@ -134,18 +134,18 @@ export function resolveTreeKey(
 	switch (key) {
 		case "ArrowDown":
 			return {
-				focusSlug: visible[Math.min(index + 1, visible.length - 1)]!.node.slug,
+				focusSlug: visible[Math.min(index + 1, visible.length - 1)]?.node.slug,
 			};
 		case "ArrowUp":
-			return { focusSlug: visible[Math.max(index - 1, 0)]!.node.slug };
+			return { focusSlug: visible[Math.max(index - 1, 0)]?.node.slug };
 		case "Home":
-			return { focusSlug: visible[0]!.node.slug };
+			return { focusSlug: visible[0]?.node.slug };
 		case "End":
-			return { focusSlug: visible.at(-1)!.node.slug };
+			return { focusSlug: visible.at(-1)?.node.slug };
 		case "ArrowRight":
 			if (!current.node.children?.length) return null;
 			return expanded.has(currentSlug)
-				? { focusSlug: current.node.children[0]!.slug }
+				? { focusSlug: current.node.children[0]?.slug }
 				: { expandSlug: currentSlug };
 		case "ArrowLeft":
 			if (current.node.children?.length && expanded.has(currentSlug)) {

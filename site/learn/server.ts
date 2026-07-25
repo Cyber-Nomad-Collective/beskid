@@ -550,7 +550,7 @@ Bun.serve({
 				const hubUrl = (
 					process.env.BESKID_AUTH_HUB_URL ?? "https://auth.beskid-lang.org"
 				).replace(/\/$/, "");
-				const verifyRes = await fetch(hubUrl + "/api/v1/handoff/verify", {
+				const verifyRes = await fetch(`${hubUrl}/api/v1/handoff/verify`, {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ token: body.handoffToken, app: "learn" }),
@@ -562,8 +562,7 @@ Bun.serve({
 					JSON.stringify({
 						login: payload.login,
 						name: payload.name ?? null,
-						avatarUrl:
-							payload.avatarUrl ?? "https://github.com/" + payload.login + ".png",
+						avatarUrl: payload.avatarUrl ?? `https://github.com/${payload.login}.png`,
 					}),
 				).toString("base64url");
 				const maxAge = 60 * 60 * 24 * 7;

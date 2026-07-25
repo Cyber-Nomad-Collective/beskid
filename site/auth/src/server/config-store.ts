@@ -12,10 +12,7 @@ import {
 	setEncryptedHubSetting,
 	setHubSetting,
 } from "#/server/db/index";
-import {
-	getHandoffSecretForApp,
-	listEnabledApps,
-} from "#/server/repositories/paired-apps";
+import { listEnabledApps } from "#/server/repositories/paired-apps";
 
 export type {
 	AuthConfigFile,
