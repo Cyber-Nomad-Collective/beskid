@@ -103,7 +103,6 @@ jobs:
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
   image-auth:
     # Delivery is intentionally decoupled from the quality gates (openspec,
@@ -125,7 +124,6 @@ jobs:
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
   image-learn:
     # Delivery is intentionally decoupled from the quality gates (openspec,
@@ -149,7 +147,6 @@ jobs:
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
   image-platform-spec:
     # Delivery is intentionally decoupled from the quality gates (openspec,
@@ -171,7 +168,6 @@ jobs:
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
   image-tracker:
     # Delivery is intentionally decoupled from the quality gates (openspec,
@@ -196,7 +192,6 @@ jobs:
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
   image-nexus:
     # Delivery is intentionally decoupled from the quality gates (openspec,
@@ -222,7 +217,6 @@ jobs:
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
   image-pckg:
     # Delivery is intentionally decoupled from the quality gates (openspec,
@@ -252,7 +246,6 @@ jobs:
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
 
   manifest:
     needs: [image-site, image-auth, image-learn, image-platform-spec, image-tracker, image-nexus, image-pckg]
