@@ -23,6 +23,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   so ignored generated output cannot mask a missing production dependency.
 - Learn's release image now uses the canonical compiler shell API, removing a
   stale re-export that prevented its release CLI build.
+- Nexus's isolated image build now declares its direct compiler dependencies
+  instead of relying on transitive packages omitted by frozen installation.
 
 ## [0.4.0] — 2026-07-24
 
