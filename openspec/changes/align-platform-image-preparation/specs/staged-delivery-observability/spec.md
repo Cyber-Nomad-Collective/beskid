@@ -60,3 +60,11 @@ Docker cache layer.
 - **THEN** they verify each lane's declared build context can provide its
   selected lockfile, all required local workspace sources, and every canonical
   compiler staging entrypoint invoked by the image
+
+#### Scenario: A delivered image is rendered into Compose
+
+- **GIVEN** a required platform image repository is present in the immutable
+  release manifest
+- **WHEN** the release Compose template is rendered
+- **THEN** exactly one Compose service references that repository, including a
+  profile-gated service; a missing or duplicate mapping fails before deployment

@@ -38,6 +38,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   that stages it, so the final image receives the CLI and ABI-v5 kit.
 - Learn's runtime-kit stage now installs the required canonical `clang`/`lld` Linux toolchain,
   preventing native runtime object assembly from failing with an unavailable linker.
+- The release Compose topology now maps every manifest image exactly once,
+  including the profile-gated Learn service, before staging promotion.
 - Canonical runtime lowering now supports integer `|`, `<<`, and `>>` through
   generation-safe syntax facts and stock CLIF; contextual runtime parameter names
   `parent` and `event` no longer collide with structural grammar roles.

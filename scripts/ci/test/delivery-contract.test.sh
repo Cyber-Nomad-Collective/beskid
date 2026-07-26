@@ -5,6 +5,25 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 
 platform_dockerfile="${ROOT}/site/platform-spec/Dockerfile"
+production_compose="${ROOT}/beskid_infra/compose/production/docker-compose.yml"
+
+# Every required delivery image must have one service in the canonical Compose
+# template. render-release-compose.sh enforces this at deployment time; keep a
+# repository gate here so a new lane cannot publish an undeployable manifest.
+for repository in \
+	ghcr.io/cyber-nomad-collective/beskid-site \
+	ghcr.io/cyber-nomad-collective/beskid-auth \
+	ghcr.io/cyber-nomad-collective/beskid-learn \
+	ghcr.io/cyber-nomad-collective/beskid-platform-spec \
+	ghcr.io/cyber-nomad-collective/beskid-tracker \
+	ghcr.io/cyber-nomad-collective/beskid-nexus \
+	ghcr.io/cyber-nomad-collective/beskid-pckg; do
+	count="$(rg -F -c "${repository}:" "${production_compose}")"
+	if [[ "${count}" != "1" ]]; then
+		echo "${repository} must map to exactly one production Compose service; found ${count}" >&2
+		exit 1
+	fi
+done
 
 # Platform-spec installs with Corepack pnpm from its own package lock.
 [[ -f "${ROOT}/site/platform-spec/package.json" ]]
