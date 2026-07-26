@@ -62,6 +62,7 @@ fi
 
 tracker="$(<"${root}/beskid_tracker/Dockerfile")"
 for requirement in \
+  'apk add --no-cache bash' \
   'COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./' \
   'COPY --from=web_common . /app/beskid_web_common' \
   'pnpm install --frozen-lockfile'; do
@@ -73,6 +74,7 @@ done
 
 nexus="$(<"${root}/beskid_nexus/Dockerfile")"
 for requirement in \
+  'bun@1.3.14' \
   'COPY --from=web_common package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json /src/beskid_web_common/' \
   'COPY --from=web_common packages /src/beskid_web_common/packages' \
   'pnpm install --dir /src/beskid_web_common --frozen-lockfile' \
