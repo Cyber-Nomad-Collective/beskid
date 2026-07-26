@@ -36,8 +36,9 @@ Docker cache layer.
   `compiler/scripts/stage-native-runtime-kit.sh` entrypoint
 - **WHEN** its immutable compiler stage is assembled
 - **THEN** the stage contains that entrypoint and its required compiler-script helpers before
-  invocation, builds the CLI and kit under one explicit Cargo target prefix, and publishes only
-  that CLI with the resulting installed runtime kit
+  invocation, builds and stages the CLI and kit in one cache-mounted instruction under one
+  explicit Cargo target prefix, copies both into a durable image-layer directory, and publishes
+  only that CLI with the resulting installed runtime kit
 
 #### Scenario: An image lockfile is stale
 

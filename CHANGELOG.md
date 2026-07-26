@@ -34,6 +34,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   them, so the immutable release image can package its ABI-v5 runtime kit.
 - Learn's compiler stage now uses one explicit Cargo target prefix and the canonical
   `beskid_cli` executable for runtime-kit staging and final-image publication.
+- Learn's runtime output is now copied out of the ephemeral Cargo cache in the same build step
+  that stages it, so the final image receives the CLI and ABI-v5 kit.
 - Nexus graph-first startup now initializes its Sigma callback before capture;
   its repository API test routes are exact and no longer shadow one another.
 

@@ -46,14 +46,22 @@ for requirement in \
   'CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_cli --release' \
   'BESKID_RUNTIME_PREFIX=/workspace/target/native-runtime-kit' \
   'BESKID_CLI_BIN=/workspace/target/release/beskid_cli' \
-  'COPY --from=rust /workspace/target/release/beskid_cli /app/site/learn/beskid' \
-  'COPY --from=rust /workspace/target/native-runtime-kit /app/site/learn/native-runtime-kit' \
+  'mkdir -p /workspace/runtime-output' \
+  'install -m 0755 /workspace/target/release/beskid_cli /workspace/runtime-output/beskid' \
+  'cp -a /workspace/target/native-runtime-kit /workspace/runtime-output/native-runtime-kit' \
+  'COPY --from=rust /workspace/runtime-output/beskid /app/site/learn/beskid' \
+  'COPY --from=rust /workspace/runtime-output/native-runtime-kit /app/site/learn/native-runtime-kit' \
   './scripts/stage-native-runtime-kit.sh'; do
   if [[ "${learn}" != *"${requirement}"* ]]; then
     echo "site/learn/Dockerfile is missing required dependency preparation: ${requirement}" >&2
     exit 1
   fi
 done
+
+if [[ "${learn}" == *$'RUN cd compiler'* ]]; then
+  echo "site/learn/Dockerfile must stage the runtime kit in the cache-mounted compiler build step" >&2
+  exit 1
+fi
 
 learn_lane="$(sed -n '/^  image-learn:/,/^  image-platform-spec:/p' "${root}/.github/workflows/platform-delivery.yml")"
 if [[ "${learn_lane}" != *'submodules: compiler beskid_bsol beskid_web_common'* ]]; then

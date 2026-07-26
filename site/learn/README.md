@@ -56,8 +56,9 @@ to a checkout that contains both `/compiler/Cargo.toml` and `/site/learn`.
 
 - The service image is built by `site/learn/Dockerfile` and deployed via Coolify lane `learn`.
 - Its compiler stage copies the canonical `compiler/scripts` runtime-kit staging entrypoint and
-  builds `beskid_cli` plus the ABI-v5 kit under one explicit Cargo target prefix; the final image
-  contains only that CLI and installed kit, not the compiler source tree.
+  builds and stages `beskid_cli` plus the ABI-v5 kit in one cached instruction, then writes the
+  durable runtime output consumed by the final image. The final image contains only that CLI and
+  installed kit, not the compiler source tree.
 - Production domain is `https://learn.beskid-lang.org`.
 - Smoke checks:
   - `curl -I https://learn.beskid-lang.org`
