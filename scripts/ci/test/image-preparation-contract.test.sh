@@ -91,7 +91,7 @@ done
 node -e '
   const fs = require("fs");
   const packageJson = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
-  if (packageJson.name !== "@cyber-nomad-collective/beskid-auth-client") {
+  if (packageJson.name !== "@beskid/auth-client") {
     throw new Error("beskid-auth-client package name is not canonical");
   }
 ' "${root}/beskid_web_common/packages/beskid-auth-client/package.json"

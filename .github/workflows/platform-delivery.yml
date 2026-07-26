@@ -236,7 +236,6 @@ jobs:
       context: .
       dockerfile: pckg/Dockerfile
       submodules: pckg beskid_web_common
-      node-auth: false
       # Hard gate: a failed pckg build/push fails the whole delivery. The
       # beskid-pckg GHCR package is owned by the sibling beskid_pckg repo, so
       # grant this repo Write on that package, or set org/repo secret GHCR_TOKEN

@@ -17,6 +17,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Required Node image lanes now prepare their complete file-linked workspace
   graph before frozen dependency installation; CI rejects incomplete build
   contexts before publication.
+- Image dependency locks and shared package identities now stay synchronized
+  across Auth, Learn, Platform Spec, Tracker, Nexus, and pckg delivery lanes.
 
 ## [0.4.0] — 2026-07-24
 

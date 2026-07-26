@@ -45,12 +45,6 @@ on:
         required: false
         default: false
         type: boolean
-      node-auth:
-        description: >-
-          When true, inject NODE_AUTH_TOKEN as a build secret. Default false.
-        required: false
-        default: false
-        type: boolean
     outputs:
       digest:
         value: ${{ jobs.image.outputs.digest }}

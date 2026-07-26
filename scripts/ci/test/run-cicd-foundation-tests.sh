@@ -89,8 +89,7 @@ fi
 pckg_image_block="$(sed -n '/^  image-pckg:/,/^  manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
 for required in \
   'context: .' \
-  'submodules: pckg beskid_web_common' \
-  'node-auth: false'; do
+  'submodules: pckg beskid_web_common'; do
   if [[ "${pckg_image_block}" != *"${required}"* ]]; then
     echo "pckg image workflow is missing required contract: ${required}" >&2
     exit 1
