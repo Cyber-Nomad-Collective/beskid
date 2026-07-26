@@ -50,6 +50,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   syntax-to-CodegenInput lowering entrypoint rather than legacy HIR lowering.
 - Formatter test classification now recognizes constant declarations, restoring
   compilation of the AOT and module-constants test paths.
+- Formatter goldens now match canonical parenthesis-free nullary enum constructors.
 - Nexus graph-first startup now initializes its Sigma callback before capture;
   its repository API test routes are exact and no longer shadow one another.
 
