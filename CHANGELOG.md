@@ -25,6 +25,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   stale re-export that prevented its release CLI build.
 - Nexus's isolated image build now declares its direct compiler dependencies
   instead of relying on transitive packages omitted by frozen installation.
+- Nexus's bundled web build now locks Trudoc to the copied local package source,
+  eliminating an unavailable private-registry fetch during image construction.
 
 ## [0.4.0] — 2026-07-24
 
