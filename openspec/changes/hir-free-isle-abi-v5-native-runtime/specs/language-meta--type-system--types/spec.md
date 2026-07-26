@@ -2,7 +2,7 @@
 
 ### Requirement: Typed local default initialization
 
-A typed local declaration MAY omit its initializer using `Type Name;` or
+A typed local declaration with an explicit type SHALL be permitted to omit its initializer using `Type Name;` or
 `mut Type Name;`. An uninitialized typed local SHALL be initialized before its
 first observable use with the type-safe zero value: integer and word types use
 zero, `bool` uses `false`, floating point uses `0.0`, and pointer-like values
@@ -24,7 +24,7 @@ because it has no type from which to derive a default value.
 
 ### Requirement: Hexadecimal integer literals
 
-Integer literals MAY use the `0x` prefix with ASCII hexadecimal digits and
+The compiler SHALL accept integer literals using the `0x` prefix with ASCII hexadecimal digits and
 underscores. The compiler SHALL preserve the literal's bit pattern through
 HIR-free lowering. An unsuffixed hexadecimal value that exceeds signed `i64`
 range SHALL have `word` semantic type and lower as the corresponding two's

@@ -2,7 +2,7 @@
 
 ### Requirement: Canonical runtime module constants
 
-The compiler-owned canonical runtime corpus MAY declare a module constant with
+The compiler-owned canonical runtime corpus SHALL be the only source permitted to declare a module constant with
 `const Name = IntegerLiteral;`. The declaration SHALL be the sole authority for
 that integer value. Before HIR-free syntax facts are constructed for the
 canonical corpus, the compiler SHALL replace each use of that constant in its

@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- The canonical-runtime OpenSpec now requires one registry-backed
+  `gc_external_root_count` export, with external-root lifecycle coverage that
+  distinguishes registered roots from temporary handles.
 - Learn's production container now uses the pinned Bun runtime required by its
   `Bun.serve`/`Bun.file` server, with a CI contract preventing a Node-only
   runtime regression that would fail its healthcheck at startup.

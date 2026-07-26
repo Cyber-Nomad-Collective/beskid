@@ -17,6 +17,21 @@ program.
 - **THEN** reachable objects remain allocated, unreachable objects are swept,
   and no Rust collector or fallback allocation path participates
 
+### Requirement: Canonical external-root registry count
+The canonical Beskid runtime SHALL expose exactly one
+`gc_external_root_count` C-ABI export. Its result SHALL equal the number of
+currently registered external root slots in the canonical root registry; it
+SHALL NOT report temporary handle-table occupancy. Registering one previously
+unregistered root slot SHALL change the count from zero to one, and
+unregistering that slot SHALL restore the count to zero. Collection SHALL trace
+the same registry represented by this count.
+
+#### Scenario: External-root count follows registry lifetime
+- **GIVEN** an initialized canonical heap with no registered external roots
+- **WHEN** a host registers one root slot, collects, and unregisters that slot
+- **THEN** `gc_external_root_count` reports `0`, then `1`, then `0`, and the
+  registered object remains reachable during the collection
+
 ### Requirement: Phase-A mutator boundary
 Phase A SHALL permit one managed mutator at a time while cooperative fibers and
 platform workers execute according to the scheduler contract. A platform worker
@@ -32,4 +47,3 @@ normative Phase-B change defines and verifies it.
 ## REMOVED Requirements
 
 ### Requirement: Abfall tri-color heap with write barriers: Decision [D-EXEC-RT-0006]
-
