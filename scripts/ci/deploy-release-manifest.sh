@@ -50,7 +50,7 @@ echo "release manifest sha256: ${manifest_sha}"
 
 if [[ "${apply}" != true ]]; then
   echo "plan-only: external deployment was not requested"
-  docker compose -f "${rendered}" config >/dev/null
+  "${script_dir}/container-compose.sh" -f "${rendered}" config >/dev/null
   exit 0
 fi
 

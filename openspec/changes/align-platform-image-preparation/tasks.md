@@ -14,3 +14,9 @@
 - [x] 3.1 Run image-preparation contract tests and CI foundation tests.
 - [ ] 3.2 Run local Docker builds where the daemon is available.
 - [ ] 3.3 Confirm all required GitHub Actions image lanes pass.
+
+## 4. Local container-engine boundary
+
+- [x] 4.1 Define the Podman-local/Docker-GitHub-Actions validation contract.
+- [x] 4.2 Route release-plan Compose validation through the checked engine boundary.
+- [ ] 4.3 Verify a rendered release plan with Podman locally and GitHub Actions delivery gates remotely.

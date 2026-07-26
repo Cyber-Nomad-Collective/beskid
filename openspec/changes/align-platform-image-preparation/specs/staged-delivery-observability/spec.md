@@ -70,3 +70,23 @@ Docker cache layer.
   lane's service is active in the default Compose topology whenever its lane
   health URL is included in post-deploy smoke checks, and a missing, duplicate,
   or profile-gated required mapping fails before deployment
+
+### Requirement: Local delivery validation uses Podman
+
+Developer-machine Compose validation SHALL invoke Podman through one checked
+container-engine boundary. GitHub Actions image publication SHALL retain its
+Docker BuildKit implementation. A missing selected engine or an unsupported
+engine selector MUST fail before release planning can continue.
+
+#### Scenario: A developer validates an immutable release plan
+
+- **GIVEN** release planning runs outside GitHub Actions without an explicit
+  container-engine override
+- **WHEN** it validates the rendered Compose document
+- **THEN** it invokes `podman-compose` and fails if that Podman provider is unavailable
+
+#### Scenario: GitHub Actions validates an immutable release plan
+
+- **GIVEN** release planning runs in GitHub Actions
+- **WHEN** it validates the rendered Compose document
+- **THEN** it invokes Docker Compose and leaves Docker BuildKit image publication unchanged

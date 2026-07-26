@@ -11,6 +11,12 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Canonical scheduler implementation is now OpenSpec-gated on ABI-owned state,
+  manifest-derived contexts and stacks, production ISLE execution coverage, and
+  Phase-A/main-fiber lifecycle proof before it can claim target support.
+- Local immutable-release Compose validation now uses `podman-compose` through
+  one checked engine boundary; GitHub Actions retains Docker Compose and its
+  Docker BuildKit publication path.
 - The canonical-runtime OpenSpec now requires one registry-backed
   `gc_external_root_count` export, with external-root lifecycle coverage that
   distinguishes registered roots from temporary handles.

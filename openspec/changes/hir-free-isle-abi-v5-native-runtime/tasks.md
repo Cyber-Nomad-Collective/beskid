@@ -60,6 +60,7 @@ The 2026-07-20 readiness audit is recorded in `docs/superpowers/reports/2026-07-
 - [ ] 6.8.1 Implement canonical Beskid lifecycle, traps, TLS, allocation, non-moving mark/sweep GC, root frames/barriers, strings, collections, scheduler/concurrency, composition, clocks, callbacks, and target OS adapters; add capability and untrusted-intrinsic denial tests.
 - [x] 6.8.1b Define and enforce the canonical `gc_external_root_count` contract: one registry-backed C-ABI export, distinct from temporary handles, with 0→1→0 lifecycle coverage.
 - [x] 6.8.1a Add the trusted canonical-runtime intrinsic declaration/call surface, including `pointer`, `word`, and `never`, and lower it through Salsa facts and ISLE; map ABI `usize` to source `word` and prove that user packages cannot declare or invoke it.
+- [ ] 6.8.1c Implement the canonical scheduler from ABI-owned state and target-derived contexts/stacks; prove syntax-to-ISLE spawn/yield/join behavior, Phase-A safepoints, and main-fiber shutdown before claiming a supported target.
 - [ ] 6.8.2 Compile canonical runtime sources through `TypedProgram` → `CodegenInput` → ISLE → verified CLIF; reject any alternate HIR or Rust-runtime build path.
 - [ ] 6.8.3 Produce static/shared debug and release kits for Linux x86-64, macOS arm64, and Windows x86-64 at the installed ABI-v5 layout; run JIT and AOT empty-prefix smokes for every matrix cell.
 

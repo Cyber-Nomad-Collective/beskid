@@ -31,6 +31,7 @@ Stakeholders are compiler, LSP, runtime, corelib, packaging, and release enginee
 6. **Runtime kits are coherent units.** JIT and AOT resolve exact target/profile kits and validate metadata before loading/linking. Object-only output intentionally remains unlinked. A loose archive search path was rejected because it permits mixed versions.
 7. **Observability is stage-based.** Existing compiler tracing records source unit, generation, typed operation, ISLE rule, CLIF verification, ABI manifest hash, target, profile, and runtime-kit hash without recording source contents or secrets.
 8. **Security boundary is capability plus allowlists.** User packages cannot obtain trusted runtime facts; application imports, runtime exports, platform imports, and assembly exports must exactly match generated allowlists.
+9. **Canonical scheduler state is ABI-owned.** Scheduler state is allocated separately and stored through the manifest-declared runtime-state field. Fiber contexts and stacks are target-derived allocations; no fixed-size inline record or synthetic runtime-state offset is permitted. Context initialization and switching remain the two trusted assembly exports, callable only by canonical runtime lowering.
 
 Deleted legacy paths: HIR types/lowering/normalization/indexing/serialization/caches; codegen `Lowerable` implementations; legacy single-unit lowering; Rust runtime, host, bridge, Abfall/corosensei objects in produced programs; dispatch tags/envelopes/handler registration; ABI adapters and fallback kit lookup.
 

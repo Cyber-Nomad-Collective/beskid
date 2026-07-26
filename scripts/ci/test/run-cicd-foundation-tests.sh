@@ -229,12 +229,11 @@ chmod +x "${tmp}/bin/curl"
 PATH="${tmp}/bin:${PATH}"   OPENBAO_ADDR=https://bao.invalid OPENBAO_TOKEN=test   COOLIFY_ENDPOINT=https://coolify.invalid COOLIFY_API_TOKEN=test   env -u COOLIFY_SERVICE_UUID   "${root}/scripts/ci/sync-runtime-env.sh" staging "${tmp}/lane-uuid.json"
 grep -Fq '/services/from-lane-config/envs/bulk' "${MOCK_SYNC_URL}"
 
-cat >"${tmp}/bin/docker" <<'SH'
+cat >"${tmp}/bin/podman-compose" <<'SH'
 #!/usr/bin/env bash
-[[ "$1" == compose ]] || exit 2
 exit 0
 SH
-chmod +x "${tmp}/bin/docker"
+chmod +x "${tmp}/bin/podman-compose"
 PATH="${tmp}/bin:${PATH}" "${root}/scripts/ci/deploy-release-manifest.sh" \
   --lane staging --manifest "${tmp}/release.json" --compose "${tmp}/compose.yml"
 
