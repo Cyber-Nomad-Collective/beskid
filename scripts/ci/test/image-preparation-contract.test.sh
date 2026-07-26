@@ -66,6 +66,18 @@ if [[ "${learn}" == *$'RUN cd compiler'* ]]; then
   exit 1
 fi
 
+# Learn's HTTP server is deliberately implemented with Bun APIs. A Node/tsx
+# runtime can build the assets yet crash before the Compose healthcheck runs.
+if [[ "${learn}" != *'FROM oven/bun:1.3.14-alpine'* ]] ||
+   [[ "${learn}" != *'CMD ["bun", "run", "server.ts"]'* ]]; then
+  echo "site/learn/Dockerfile must run the Bun server with the pinned Bun runtime" >&2
+  exit 1
+fi
+if [[ "${learn}" == *'npm install -g tsx'* ]]; then
+  echo "site/learn/Dockerfile must not launch the Bun server through a Node-only tsx runtime" >&2
+  exit 1
+fi
+
 learn_lane="$(sed -n '/^  image-learn:/,/^  image-platform-spec:/p' "${root}/.github/workflows/platform-delivery.yml")"
 if [[ "${learn_lane}" != *'submodules: compiler beskid_bsol beskid_web_common'* ]]; then
   echo "image-learn must initialize the shared UI source required by its local lockfile" >&2

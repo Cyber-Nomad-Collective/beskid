@@ -50,10 +50,11 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
   && install -m 0755 /workspace/target/release/beskid_cli /workspace/runtime-output/beskid \
   && cp -a /workspace/target/native-runtime-kit /workspace/runtime-output/native-runtime-kit
 
-FROM node:24-alpine
-RUN npm install -g pnpm@10.17.1 \
-  && apk add --no-cache wget \
-  && npm install -g tsx
+# The production server is a Bun program (`Bun.serve` / `Bun.file`). Keep the
+# runtime separate from the Node build stage and pin it to the project Bun
+# release so the container starts with the APIs server.ts requires.
+FROM oven/bun:1.3.14-alpine
+RUN apk add --no-cache wget
 WORKDIR /app/site/learn
 
 COPY --from=web /app/.npmrc /app/.npmrc
@@ -70,4 +71,4 @@ ENV BESKID_RUNTIME_PREFIX=/app/site/learn/native-runtime-kit
 ENV BESKID_COMMAND_TIMEOUT_MS=25000
 EXPOSE 80
 
-CMD ["pnpm", "exec", "tsx", "server.ts"]
+CMD ["bun", "run", "server.ts"]

@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Learn's production container now uses the pinned Bun runtime required by its
+  `Bun.serve`/`Bun.file` server, with a CI contract preventing a Node-only
+  runtime regression that would fail its healthcheck at startup.
 - Platform delivery now creates a release manifest only after every required
   quality and image lane succeeds, preventing partial-image promotion and
   staging or production deployment after a failed validation.
