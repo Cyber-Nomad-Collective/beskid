@@ -65,3 +65,20 @@ conformance is claimed.
 - **THEN** its non-null owned state is distinct from the Channel state, remains
   stable on repeated initialization, and no write occurs outside declared state
   objects
+
+### Requirement: Canonical wait groups own an exact waiter registry
+
+A canonical wait group SHALL own separately allocated, zero-initialized state
+through the scheduler-owned state graph. Its state SHALL record all registered
+waiters without a hard-coded capacity that contradicts its public contract;
+`add`, `done`, and `wait` SHALL preserve a non-negative count and wake each
+registered waiting fiber exactly once when the count reaches zero. Wait-group
+state MUST NOT be derived from a literal offset from `BeskidRuntimeState`.
+
+#### Scenario: Wait group owns and wakes its registered waiters
+
+- **GIVEN** an initialized scheduler, Channel state, Mutex state, and a wait group
+- **WHEN** fibers register as waiters, the count is incremented and decremented to zero
+- **THEN** the wait-group state is distinct from every other synchronization state,
+  each registered waiter becomes runnable once, and no write occurs outside
+  declared state objects
