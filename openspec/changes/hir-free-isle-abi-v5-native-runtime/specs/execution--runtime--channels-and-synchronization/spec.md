@@ -82,3 +82,40 @@ state MUST NOT be derived from a literal offset from `BeskidRuntimeState`.
 - **THEN** the wait-group state is distinct from every other synchronization state,
   each registered waiter becomes runnable once, and no write occurs outside
   declared state objects
+
+### Requirement: Canonical hub owns a 256-registration registry
+
+A canonical hub SHALL own separately allocated state through the scheduler-owned
+state graph and support at least 256 registrations per hub. Registration SHALL
+replace an existing registration for the same user index without duplicating
+that index, and dispatch SHALL use a deterministic round-robin cursor across
+the registered entries. Hub state MUST NOT be derived from a literal offset
+from `BeskidRuntimeState` or silently truncate registrations below the
+normative capacity.
+
+#### Scenario: Hub replaces registrations at normative capacity
+
+- **GIVEN** a canonical hub with 256 registered user indices
+- **WHEN** one existing user index is registered with a replacement callback
+- **THEN** the registry remains at 256 entries, dispatch observes the
+  replacement through round-robin order, and the hub state does not alias any
+  other scheduler-owned synchronization state
+
+### Requirement: Canonical events use field-owned ABI state
+
+Canonical field-defined events SHALL lazily own their subscription state rather
+than use a process-global runtime-state table. `subscribe(field_slot, handler,
+capacity)` SHALL return the resulting subscription length; `unsubscribe(field_slot,
+handler)` SHALL remove the first matching handler and return `1` or return `0`
+when absent; `len(state)` and `get(state,index)` SHALL expose the ordered
+subscription state. These ABI operations SHALL lower through canonical syntax
+facts and ISLE; fixed-capacity overflow or pop-last unsubscribe behavior is
+non-conforming.
+
+#### Scenario: Event ABI preserves ordered subscriptions
+
+- **GIVEN** a field-defined event with multiple handlers including duplicates
+- **WHEN** handlers are subscribed, one matching handler is unsubscribed, and
+  the event state is lowered through syntax, ISLE, and verified CLIF
+- **THEN** only the first matching handler is removed, length and indexed lookup
+  preserve order, and no global literal-offset backing state is accessed
