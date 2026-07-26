@@ -8,6 +8,12 @@ package source resolved by that image's selected lockfile. The selected
 lockfile SHALL match those manifests. A missing source, an unresolved package
 alias, or a stale lockfile MUST fail the image build before publication.
 
+When the Docker context excludes generated output and a file-linked shared
+package exports compiled artifacts, the image SHALL build that package after
+the frozen install and before the consuming application build. The image MUST
+NOT depend on generated artifacts from a developer checkout or from a prior
+Docker cache layer.
+
 #### Scenario: A Node image consumes shared Beskid packages
 
 - **GIVEN** an image dependency graph contains packages from
@@ -15,6 +21,14 @@ alias, or a stale lockfile MUST fail the image build before publication.
 - **WHEN** the immutable image is built
 - **THEN** the Docker build receives those package sources before its frozen
   install and the install resolves them without registry fallback
+
+#### Scenario: A shared package exports a generated entrypoint
+
+- **GIVEN** the Docker context excludes generated `dist` directories and a
+  consumed shared package exports `dist/index.js`
+- **WHEN** the immutable image builds its application
+- **THEN** it rebuilds the shared package after its frozen install, so the
+  application resolves the linked export without relying on ambient artifacts
 
 #### Scenario: An image lockfile is stale
 

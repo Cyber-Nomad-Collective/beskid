@@ -21,6 +21,11 @@ COPY site/platform-spec ./site/platform-spec
 
 RUN pnpm config set store-dir /pnpm/store && pnpm install --frozen-lockfile
 
+# `dist` is excluded from the Docker context. Restore the compiled entrypoints
+# exported by file-linked shared packages before the Platform Spec build.
+RUN pnpm --filter @beskid/auth-client build \
+	&& pnpm --filter @cyber-nomad-collective/beskid-server-observability build
+
 RUN test -f /app/openspec/catalog.json \
 	&& node -e 'const fs=require("fs"); const c=JSON.parse(fs.readFileSync("/app/openspec/catalog.json","utf8")); if(!Array.isArray(c.entries)||c.entries.length===0){console.error("/app/openspec/catalog.json missing or empty"); process.exit(1)}'
 

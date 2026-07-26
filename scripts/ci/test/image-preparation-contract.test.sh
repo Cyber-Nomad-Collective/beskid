@@ -22,6 +22,21 @@ for dockerfile in site/website/Dockerfile site/auth/Dockerfile site/platform-spe
   done
 done
 
+# Root Docker contexts intentionally omit generated dist directories. Consumers
+# of shared packages that export compiled entries must recreate those entries
+# after their frozen install rather than relying on a developer's local output.
+for dockerfile in site/auth/Dockerfile site/platform-spec/Dockerfile; do
+  content="$(<"${root}/${dockerfile}")"
+  for requirement in \
+    'pnpm --filter @beskid/auth-client build' \
+    'pnpm --filter @cyber-nomad-collective/beskid-server-observability build'; do
+    if [[ "${content}" != *"${requirement}"* ]]; then
+      echo "${dockerfile} must rebuild compiled shared package exports after frozen install" >&2
+      exit 1
+    fi
+  done
+done
+
 learn="$(<"${root}/site/learn/Dockerfile")"
 for requirement in \
   'COPY site/learn/package.json site/learn/pnpm-lock.yaml ./site/learn/' \
@@ -32,6 +47,12 @@ for requirement in \
     exit 1
   fi
 done
+
+learn_lane="$(sed -n '/^  image-learn:/,/^  image-platform-spec:/p' "${root}/.github/workflows/platform-delivery.yml")"
+if [[ "${learn_lane}" != *'submodules: compiler beskid_bsol beskid_web_common'* ]]; then
+  echo "image-learn must initialize the shared UI source required by its local lockfile" >&2
+  exit 1
+fi
 
 tracker_ignore="$(<"${root}/beskid_tracker/.dockerignore")"
 if [[ "${tracker_ignore}" == *$'\npnpm-lock.yaml'* || "${tracker_ignore}" == pnpm-lock.yaml* ]]; then

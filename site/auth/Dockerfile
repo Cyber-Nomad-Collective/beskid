@@ -17,6 +17,11 @@ COPY site/learn/package.json ./site/learn/package.json
 COPY beskid_web_common ./beskid_web_common
 
 RUN pnpm install --frozen-lockfile --filter beskid-auth...
+# `dist` is deliberately excluded from the Docker context. Build every shared
+# package with a compiled export after the frozen install, before Vite resolves
+# the file-linked auth-client and server-observability packages.
+RUN pnpm --filter @beskid/auth-client build \
+  && pnpm --filter @cyber-nomad-collective/beskid-server-observability build
 
 COPY site/auth/ ./site/auth/
 

@@ -140,9 +140,10 @@ jobs:
       repository: ghcr.io/cyber-nomad-collective/beskid-learn
       context: .
       dockerfile: site/learn/Dockerfile
-      # The rust stage COPYs compiler/Cargo.toml, compiler/crates and
-      # compiler/vendor, so the compiler submodule must be checked out.
-      submodules: compiler beskid_bsol
+      # The rust stage needs the compiler tree and the web stage resolves local
+      # UI packages from beskid_web_common, so both dependency sources must be
+      # initialized before the root-context Docker build.
+      submodules: compiler beskid_bsol beskid_web_common
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:

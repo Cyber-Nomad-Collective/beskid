@@ -19,6 +19,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   contexts before publication.
 - Image dependency locks and shared package identities now stay synchronized
   across Auth, Learn, Platform Spec, Tracker, Nexus, and pckg delivery lanes.
+- Docker images rebuild file-linked shared package exports after frozen install,
+  so ignored generated output cannot mask a missing production dependency.
 
 ## [0.4.0] — 2026-07-24
 
