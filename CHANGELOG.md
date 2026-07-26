@@ -14,6 +14,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Platform delivery now creates a release manifest only after every required
   quality and image lane succeeds, preventing partial-image promotion and
   staging or production deployment after a failed validation.
+- Required Node image lanes now prepare their complete file-linked workspace
+  graph before frozen dependency installation; CI rejects incomplete build
+  contexts before publication.
 
 ## [0.4.0] — 2026-07-24
 

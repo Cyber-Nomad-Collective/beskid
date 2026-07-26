@@ -8,7 +8,13 @@ RUN npm install -g pnpm@10.17.1
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
-COPY site/auth/package.json ./site/auth/
+# The root lockfile covers every site importer. Mirror the proven website
+# preparation graph so a frozen install never observes a partial workspace.
+COPY site/auth/package.json ./site/auth/package.json
+COPY site/website/package.json ./site/website/package.json
+COPY site/platform-spec/package.json ./site/platform-spec/package.json
+COPY site/learn/package.json ./site/learn/package.json
+COPY beskid_web_common ./beskid_web_common
 
 RUN pnpm install --frozen-lockfile --filter beskid-auth...
 

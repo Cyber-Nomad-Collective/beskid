@@ -7,6 +7,8 @@ RUN apk add --no-cache git
 
 COPY .npmrc ./
 COPY site/learn/package.json site/learn/pnpm-lock.yaml ./site/learn/
+# site/learn has its own lockfile, but its UI dependency is a local source.
+COPY beskid_web_common ./beskid_web_common
 RUN npm install -g pnpm@10.17.1
 RUN pnpm --dir site/learn install --frozen-lockfile
 

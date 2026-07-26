@@ -7,6 +7,13 @@ ENV PATH=$PNPM_HOME:$PATH
 RUN npm install -g corepack@latest && corepack enable && corepack prepare pnpm@10.17.1 --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+# Keep this root-lock install structurally identical to the website image.
+# All site importers and file-linked shared packages must exist before pnpm
+# validates the frozen graph.
+COPY site/auth/package.json ./site/auth/package.json
+COPY site/website/package.json ./site/website/package.json
+COPY site/platform-spec/package.json ./site/platform-spec/package.json
+COPY site/learn/package.json ./site/learn/package.json
 COPY beskid_web_common ./beskid_web_common
 COPY openspec ./openspec
 COPY site/platform-spec ./site/platform-spec
