@@ -48,6 +48,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   `parent` and `event` no longer collide with structural grammar roles.
 - AOT fixtures and the parsed-project ISLE harness now use the production
   syntax-to-CodegenInput lowering entrypoint rather than legacy HIR lowering.
+- Formatter test classification now recognizes constant declarations, restoring
+  compilation of the AOT and module-constants test paths.
 - Nexus graph-first startup now initializes its Sigma callback before capture;
   its repository API test routes are exact and no longer shadow one another.
 
