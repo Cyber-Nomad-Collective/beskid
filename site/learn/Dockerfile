@@ -33,11 +33,11 @@ COPY beskid_bsol ./beskid_bsol
 
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
   --mount=type=cache,target=/workspace/target \
-  cd compiler && cargo build -p beskid_cli --release
+  cd compiler && CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_cli --release
 RUN cd compiler \
-  && BESKID_RUNTIME_PREFIX=/workspace/compiler/target/native-runtime-kit \
+  && BESKID_RUNTIME_PREFIX=/workspace/target/native-runtime-kit \
   BESKID_RUNTIME_KIT_PROFILE=debug \
-  BESKID_CLI_BIN=/workspace/compiler/target/release/beskid \
+  BESKID_CLI_BIN=/workspace/target/release/beskid_cli \
   ./scripts/stage-native-runtime-kit.sh
 
 FROM node:24-alpine
@@ -50,8 +50,8 @@ COPY --from=web /app/.npmrc /app/.npmrc
 COPY --from=web /app/site/learn/dist /app/site/learn/dist
 COPY --from=web /app/site/learn/server.ts /app/site/learn/server.ts
 COPY --from=web /app/site/learn/package.json /app/site/learn/package.json
-COPY --from=rust /workspace/compiler/target/release/beskid /app/site/learn/beskid
-COPY --from=rust /workspace/compiler/target/native-runtime-kit /app/site/learn/native-runtime-kit
+COPY --from=rust /workspace/target/release/beskid_cli /app/site/learn/beskid
+COPY --from=rust /workspace/target/native-runtime-kit /app/site/learn/native-runtime-kit
 
 ENV NODE_ENV=production
 ENV PORT=80

@@ -43,6 +43,11 @@ for requirement in \
   'COPY beskid_web_common ./beskid_web_common' \
   'pnpm --dir site/learn install --frozen-lockfile' \
   'COPY compiler/scripts ./compiler/scripts' \
+  'CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_cli --release' \
+  'BESKID_RUNTIME_PREFIX=/workspace/target/native-runtime-kit' \
+  'BESKID_CLI_BIN=/workspace/target/release/beskid_cli' \
+  'COPY --from=rust /workspace/target/release/beskid_cli /app/site/learn/beskid' \
+  'COPY --from=rust /workspace/target/native-runtime-kit /app/site/learn/native-runtime-kit' \
   './scripts/stage-native-runtime-kit.sh'; do
   if [[ "${learn}" != *"${requirement}"* ]]; then
     echo "site/learn/Dockerfile is missing required dependency preparation: ${requirement}" >&2
