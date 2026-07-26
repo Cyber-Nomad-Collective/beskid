@@ -1,4 +1,4 @@
-export const prerender = false;
+export const prerender = true;
 
 const COMPILER_REPO = "Cyber-Nomad-Collective/beskid_compiler";
 const LATEST_TAG = "cli-latest";

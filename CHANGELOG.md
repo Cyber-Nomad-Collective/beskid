@@ -9,6 +9,12 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Fixed
+
+- Platform delivery now creates a release manifest only after every required
+  quality and image lane succeeds, preventing partial-image promotion and
+  staging or production deployment after a failed validation.
+
 ## [0.4.0] — 2026-07-24
 
 ### Added

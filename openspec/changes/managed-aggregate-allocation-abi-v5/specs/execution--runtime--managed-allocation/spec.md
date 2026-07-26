@@ -43,7 +43,7 @@ When the underlying platform allocator cannot satisfy an allocation request, `Al
 #### Scenario: OOM trap delivery
 - **GIVEN** the platform allocator returns null for a valid allocation request
 - **WHEN** `AllocateObject` detects the failure
-- **THEN** it SHALL call `trap(5, "managed object allocation failed", 31)` and SHALL NOT return
+- **THEN** it SHALL call `trap(5, "managed object allocation failed", 32)` and SHALL NOT return
 
 ### Requirement: Codegen-emitted static allocation data
 The compiler SHALL emit three static data objects per aggregate literal: a pointer map, a type descriptor, and an allocation request. These SHALL conform to the `BeskidTypeDescriptor`, `BeskidAllocationRequest`, and pointer-map layouts declared in `runtime_manifest.bsol`.

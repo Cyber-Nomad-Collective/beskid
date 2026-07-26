@@ -248,11 +248,10 @@ jobs:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
   manifest:
-    needs: [image-site, image-auth, image-learn, image-platform-spec, image-tracker, image-nexus, image-pckg]
-    # Assemble a manifest from whatever image lanes produced a record. `!cancelled()`
-    # lets the manifest build even if an individual image lane failed, so a single
-    # broken service never blocks publishing the rest of the platform.
-    if: ${{ !cancelled() && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging))) }}
+    # A manifest is the promotion boundary. It must only exist when every
+    # required validation and image lane from this run succeeded.
+    needs: [openspec, conformance, integration, security, shared-ui-nexus, image-site, image-auth, image-learn, image-platform-spec, image-tracker, image-nexus, image-pckg]
+    if: ${{ !cancelled() && needs.openspec.result == 'success' && needs.conformance.result == 'success' && needs.integration.result == 'success' && needs.security.result == 'success' && needs.shared-ui-nexus.result == 'success' && needs.image-site.result == 'success' && needs.image-auth.result == 'success' && needs.image-learn.result == 'success' && needs.image-platform-spec.result == 'success' && needs.image-tracker.result == 'success' && needs.image-nexus.result == 'success' && needs.image-pckg.result == 'success' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging))) }}
     permissions:
       contents: read
       actions: read

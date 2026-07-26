@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
+import react from '@astrojs/react';
 import starlight from '@astrojs/starlight';
 import embeds from 'astro-embed/integration';
 import mermaid from 'astro-mermaid';
@@ -107,13 +108,20 @@ export default defineConfig({
 	site: 'https://beskid-lang.org',
 	trailingSlash: 'always',
 	vite: {
+		resolve: {
+			dedupe: ['react', 'react-dom'],
+		},
+		esbuild: {
+			jsx: 'automatic',
+			jsxImportSource: 'react',
+		},
 		server: {
 			fs: {
 				allow: [repoRoot, beskidUiRoot],
 			},
 		},
 		ssr: {
-			noExternal: ['@beskid/beskid-ui', 'trudoc'],
+			noExternal: ['@beskid/beskid-ui', '@beskid/ui-react', 'trudoc'],
 		},
 	},
 	redirects: {
@@ -137,6 +145,7 @@ export default defineConfig({
 		},
 	},
 	integrations: [
+		react(),
 		mermaid({
 			autoTheme: true,
 		}),

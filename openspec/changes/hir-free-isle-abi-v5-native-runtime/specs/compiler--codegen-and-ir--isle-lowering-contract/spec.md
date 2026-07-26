@@ -44,3 +44,16 @@ Canonical Beskid runtime sources MUST express calls to only manifest-approved tr
 - **GIVEN** canonical runtime source invoking the manifest-approved `trap` intrinsic
 - **WHEN** semantic checking and ISLE lowering run
 - **THEN** the call receives the ABI-declared signature, maps ABI `usize` parameters to source `word`, is rejected outside the trusted runtime package, and lowers to the direct ABI-v5 trap symbol with its source span
+
+### Requirement: Integer bitwise AND lowering
+The `&` binary operator SHALL accept two operands of the same primitive integer type (`i32`, `i64`, `u8`, or `word`), produce that same type, and lower through the generation-safe syntax-fact inventory to stock CLIF `band`. It MUST NOT share the boolean-only `&&` operator fact, coerce operands to boolean, introduce arithmetic overflow behavior, or alter allocation failure handling.
+
+#### Scenario: Allocator alignment mask
+- **GIVEN** canonical runtime source computes an aligned address with `(address + alignment - 1) & -alignment` for a power-of-two alignment
+- **WHEN** the source is checked and lowered through `TypedProgram` and `CodegenInput`
+- **THEN** the addition and subtraction retain their existing overflow semantics, the mask is emitted as an integer CLIF `band`, and an allocation failure remains observable only through the existing nullable-result/OOM path
+
+#### Scenario: Boolean and mixed operands are rejected
+- **GIVEN** source uses `true & false` or operands of different integer types
+- **WHEN** semantic checking runs
+- **THEN** it rejects the expression before code generation; `&&` remains the only boolean conjunction operator

@@ -17,4 +17,4 @@ const versionSource = Astro.props.versionSource ?? cli.source;
 
 <link rel="stylesheet" href={beskidUiSrcUrl('styles/downloads.css')} />
 
-<DownloadsSection client:load initialVersion={version} versionSource={versionSource} />
+<DownloadsSection client:only="react" initialVersion={version} versionSource={versionSource} />

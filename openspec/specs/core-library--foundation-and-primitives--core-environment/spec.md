@@ -1,42 +1,42 @@
 <!-- migrated from the legacy platform spec; canonical OpenSpec source -->
-# Core.String Specification
+# Core.Environment Specification
 
 ## Purpose
 
-Core.String is the standard prelude-bound hub for string manipulation, character classification, and UTF-8 encoding primitives.
+Provides environment-variable access and mutation with typed permission and key errors.
 
 ## Requirements
 
-### Requirement: Core string operations: Decision [D-CORE-PRIM-0130]
+### Requirement: Environment access and enumeration: Decision [D-CORE-PRIM-0150]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
-> The `@tier(standard)` Core.String hub SHALL provide `Len`, `IsEmpty`, `Concat`, `Contains`, `StartsWith`, `EndsWith`, `IndexOf`, `LastIndexOf`, `Substring`, `Replace`, `Split`, `Trim`, `TrimStart`, `TrimEnd`, `ToLower`, and `ToUpper`; case conversion MUST be ASCII-only.
+> `Get(string key)` SHALL read through the `__env_get` builtin and return `Option<string>`, while `All()` MUST return the complete environment as `Map<string,string>`. Missing keys SHALL be represented by `None`, not a panic.
 
-**Stable ID:** `BSP-REQ-0000000000000130`
+**Stable ID:** `BSP-REQ-4E91B7C2A6D0F835`
 
 #### Scenario: Conformance exercises Decision
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
-### Requirement: Character classification: Decision [D-CORE-PRIM-0131]
+### Requirement: Environment mutation and errors: Decision [D-CORE-PRIM-0151]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
-> `Core.String.Chars` SHALL expose `IsDigit`, `IsLetter`, `IsWhitespace`, `IsUpper`, `IsLower`, and `IsAlphaNumeric` predicates with boolean results for individual characters.
+> `Set` and `Unset` MUST delegate to `__env_set` and `__env_unset` respectively and return `Result<Unit, EnvironmentError>`. `EnvironmentError` SHALL include `KeyNotFound(string)`, `PermissionDenied(string)`, and `InvalidKey(string)` variants; mutation failures MUST NOT be silently ignored.
 
-**Stable ID:** `BSP-REQ-0000000000000131`
+**Stable ID:** `BSP-REQ-A83F1D6C0E9274B5`
 
 #### Scenario: Conformance exercises Decision
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
-### Requirement: UTF-8 encoding primitives: Decision [D-CORE-PRIM-0132]
+### Requirement: Supported environment tier: Decision [D-CORE-PRIM-0152]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
-> `Core.String.Utf8` SHALL provide `DecodeRune` returning `{rune:i64, width:i64}`, `EncodeRune(i64) -> string`, and `IsValid(string) -> bool`; malformed UTF-8 MUST be reported by the validity contract rather than silently accepted.
+> `Core.Environment` and its `Core.Environment.EnvironmentError` submodule MUST be exposed at `@tier(supported)`.
 
-**Stable ID:** `BSP-REQ-0000000000000132`
+**Stable ID:** `BSP-REQ-2F6A9C1E4D8B7035`
 
 #### Scenario: Conformance exercises Decision
 - **GIVEN** an implementation claims conformance with this capability

@@ -1,42 +1,42 @@
 <!-- migrated from the legacy platform spec; canonical OpenSpec source -->
-# Core.String Specification
+# Core.FS Specification
 
 ## Purpose
 
-Core.String is the standard prelude-bound hub for string manipulation, character classification, and UTF-8 encoding primitives.
+Provides filesystem text operations and existence checks through runtime filesystem builtins.
 
 ## Requirements
 
-### Requirement: Core string operations: Decision [D-CORE-PRIM-0130]
+### Requirement: Text file operations: Decision [D-CORE-PRIM-0160]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
-> The `@tier(standard)` Core.String hub SHALL provide `Len`, `IsEmpty`, `Concat`, `Contains`, `StartsWith`, `EndsWith`, `IndexOf`, `LastIndexOf`, `Substring`, `Replace`, `Split`, `Trim`, `TrimStart`, `TrimEnd`, `ToLower`, and `ToUpper`; case conversion MUST be ASCII-only.
+> `ReadAllText` MUST delegate to `__fs_read_text` and return `Result<string, FsError>`. `WriteAllText` MUST delegate to `__fs_write_text` and return `Result<Unit, FsError>`. Filesystem failures SHALL be represented as typed results rather than panics.
 
-**Stable ID:** `BSP-REQ-0000000000000130`
+**Stable ID:** `BSP-REQ-8C4F1A7E0D92B635`
 
 #### Scenario: Conformance exercises Decision
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
-### Requirement: Character classification: Decision [D-CORE-PRIM-0131]
+### Requirement: Existence and deletion: Decision [D-CORE-PRIM-0161]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
-> `Core.String.Chars` SHALL expose `IsDigit`, `IsLetter`, `IsWhitespace`, `IsUpper`, `IsLower`, and `IsAlphaNumeric` predicates with boolean results for individual characters.
+> `Exists(string path)` SHALL delegate to `__fs_exists` and return a boolean. `Delete(string path)` MUST delegate to `__fs_delete` and return `Result<Unit, FsError>`.
 
-**Stable ID:** `BSP-REQ-0000000000000131`
+**Stable ID:** `BSP-REQ-D17A60F4C9E82B53`
 
 #### Scenario: Conformance exercises Decision
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
-### Requirement: UTF-8 encoding primitives: Decision [D-CORE-PRIM-0132]
+### Requirement: Filesystem error taxonomy and tier: Decision [D-CORE-PRIM-0162]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
-> `Core.String.Utf8` SHALL provide `DecodeRune` returning `{rune:i64, width:i64}`, `EncodeRune(i64) -> string`, and `IsValid(string) -> bool`; malformed UTF-8 MUST be reported by the validity contract rather than silently accepted.
+> `FsError` SHALL include `InvalidPath(string)`, `NotFound(string)`, `PermissionDenied(string)`, and `IOError(string)` variants. `Core.FS` and `Core.FS.FsError` MUST be exposed at `@tier(supported)`.
 
-**Stable ID:** `BSP-REQ-0000000000000132`
+**Stable ID:** `BSP-REQ-5B9E3D7A1C64F820`
 
 #### Scenario: Conformance exercises Decision
 - **GIVEN** an implementation claims conformance with this capability

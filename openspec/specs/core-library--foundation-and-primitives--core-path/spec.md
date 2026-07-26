@@ -1,42 +1,42 @@
 <!-- migrated from the legacy platform spec; canonical OpenSpec source -->
-# Core.String Specification
+# Core.Path Specification
 
 ## Purpose
 
-Core.String is the standard prelude-bound hub for string manipulation, character classification, and UTF-8 encoding primitives.
+Provides pure, platform-aware string path manipulation without performing I/O.
 
 ## Requirements
 
-### Requirement: Core string operations: Decision [D-CORE-PRIM-0130]
+### Requirement: Path composition and components: Decision [D-CORE-PRIM-0170]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
-> The `@tier(standard)` Core.String hub SHALL provide `Len`, `IsEmpty`, `Concat`, `Contains`, `StartsWith`, `EndsWith`, `IndexOf`, `LastIndexOf`, `Substring`, `Replace`, `Split`, `Trim`, `TrimStart`, `TrimEnd`, `ToLower`, and `ToUpper`; case conversion MUST be ASCII-only.
+> `Join(string... parts)` SHALL compose paths using the platform-aware separator. `DirectoryName` and `FileName` MUST return the corresponding path components without filesystem access, and `Separator()` SHALL return the platform-specific separator string.
 
-**Stable ID:** `BSP-REQ-0000000000000130`
+**Stable ID:** `BSP-REQ-6D2A9F4C81E703B5`
 
 #### Scenario: Conformance exercises Decision
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
-### Requirement: Character classification: Decision [D-CORE-PRIM-0131]
+### Requirement: Path extensions and normalization: Decision [D-CORE-PRIM-0171]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
-> `Core.String.Chars` SHALL expose `IsDigit`, `IsLetter`, `IsWhitespace`, `IsUpper`, `IsLower`, and `IsAlphaNumeric` predicates with boolean results for individual characters.
+> `Extension(string path)` SHALL return `Option<string>`, while `ChangeExtension` MUST produce a path with the requested extension. `IsRooted` and `GetFullPath` SHALL classify and normalize paths as platform-defined string operations and MUST NOT perform I/O.
 
-**Stable ID:** `BSP-REQ-0000000000000131`
+**Stable ID:** `BSP-REQ-E84B1C6D3A907F25`
 
 #### Scenario: Conformance exercises Decision
 - **GIVEN** an implementation claims conformance with this capability
 - **WHEN** behavior governed by this contract section is exercised
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
-### Requirement: UTF-8 encoding primitives: Decision [D-CORE-PRIM-0132]
+### Requirement: Supported path tier: Decision [D-CORE-PRIM-0172]
 The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
 
-> `Core.String.Utf8` SHALL provide `DecodeRune` returning `{rune:i64, width:i64}`, `EncodeRune(i64) -> string`, and `IsValid(string) -> bool`; malformed UTF-8 MUST be reported by the validity contract rather than silently accepted.
+> `Core.Path` MUST be exposed at `@tier(supported)` and every operation SHALL remain pure with respect to external filesystem state.
 
-**Stable ID:** `BSP-REQ-0000000000000132`
+**Stable ID:** `BSP-REQ-31F7A9C2E6058D4B`
 
 #### Scenario: Conformance exercises Decision
 - **GIVEN** an implementation claims conformance with this capability
