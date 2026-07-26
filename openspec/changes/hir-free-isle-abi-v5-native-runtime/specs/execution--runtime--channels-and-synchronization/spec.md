@@ -47,3 +47,21 @@ synchronization state on behalf of generated Beskid code.
 - **THEN** the fixture uses only manifest-authorized ABI calls, progresses via
   cooperative park/wake transitions, and contains no HIR, Rust-runtime, or
   undeclared runtime-state-offset fallback
+
+### Requirement: Canonical mutex has owned contention state
+
+A canonical mutex SHALL own a separately allocated, zero-initialized contention
+state object through the scheduler-owned state graph. Lock, unlock, and
+contention operations MUST NOT address storage derived from a literal offset
+from `BeskidRuntimeState`. The initial safety slice SHALL preserve the existing
+non-reentrant lock contract and make the owned mutex state distinct from Channel
+state; cooperative parking and wake behavior remains required before full
+conformance is claimed.
+
+#### Scenario: Mutex initialization does not alias channel state
+
+- **GIVEN** an initialized runtime scheduler and canonical Channel state
+- **WHEN** a canonical mutex initializes and contends
+- **THEN** its non-null owned state is distinct from the Channel state, remains
+  stable on repeated initialization, and no write occurs outside declared state
+  objects
