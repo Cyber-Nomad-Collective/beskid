@@ -36,6 +36,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   `beskid_cli` executable for runtime-kit staging and final-image publication.
 - Learn's runtime output is now copied out of the ephemeral Cargo cache in the same build step
   that stages it, so the final image receives the CLI and ABI-v5 kit.
+- Canonical runtime lowering now supports integer `|`, `<<`, and `>>` through
+  generation-safe syntax facts and stock CLIF; contextual runtime parameter names
+  `parent` and `event` no longer collide with structural grammar roles.
 - Nexus graph-first startup now initializes its Sigma callback before capture;
   its repository API test routes are exact and no longer shadow one another.
 

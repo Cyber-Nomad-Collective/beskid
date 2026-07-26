@@ -45,6 +45,12 @@ Canonical Beskid runtime sources MUST express calls to only manifest-approved tr
 - **WHEN** semantic checking and ISLE lowering run
 - **THEN** the call receives the ABI-declared signature, maps ABI `usize` parameters to source `word`, is rejected outside the trusted runtime package, and lowers to the direct ABI-v5 trap symbol with its source span
 
+#### Scenario: Canonical runtime parameters use contextual structural terms
+- **GIVEN** canonical runtime source declares `pointer parent` or `pointer event` as a function parameter
+- **WHEN** source parsing runs outside an `inject parent::` qualifier or an `event` field declaration
+- **THEN** `pointer` parses as the primitive type and `parent` or `event` parses as the parameter identifier;
+  the contextual injection qualifier and event-field declaration remain recognized only in their structural positions
+
 ### Requirement: Integer bitwise AND lowering
 The `&` binary operator SHALL accept two operands of the same primitive integer type (`i32`, `i64`, `u8`, or `word`), produce that same type, and lower through the generation-safe syntax-fact inventory to stock CLIF `band`. It MUST NOT share the boolean-only `&&` operator fact, coerce operands to boolean, introduce arithmetic overflow behavior, or alter allocation failure handling.
 
@@ -57,3 +63,24 @@ The `&` binary operator SHALL accept two operands of the same primitive integer 
 - **GIVEN** source uses `true & false` or operands of different integer types
 - **WHEN** semantic checking runs
 - **THEN** it rejects the expression before code generation; `&&` remains the only boolean conjunction operator
+
+### Requirement: Integer shift lowering
+The `<<` and `>>` binary operators SHALL accept two operands of the same primitive integer type (`i32`, `i64`, `u8`, or `word`), produce that same type, and lower through the generation-safe syntax-fact inventory to stock CLIF `ishl` and logical `ushr`, respectively. The operators MUST NOT share the boolean-only `&&` operator fact, coerce operands, silently promote mixed integer widths, or fall back to HIR/Rust lowering. Invalid, boolean, floating-point, and mixed-type operands SHALL be rejected before code generation.
+
+#### Scenario: Runtime header composition
+- **GIVEN** canonical runtime source computes `(generation << 32) | slotIndex` from `word` operands
+- **WHEN** the source is checked and lowered through `TypedProgram` and `CodegenInput`
+- **THEN** the shift is emitted as integer CLIF `ishl`, the OR is emitted as the corresponding integer operation, and the result remains a `word`
+
+#### Scenario: Invalid shift operands fail closed
+- **GIVEN** source uses `true << false`, `1_i32 >> 1_i64`, or a floating-point shift operand
+- **WHEN** semantic checking runs
+- **THEN** it rejects the expression before code generation without a coercion, HIR fallback, or generated CLIF
+
+### Requirement: Integer bitwise OR lowering
+The `|` binary operator SHALL accept two operands of the same primitive integer type (`i32`, `i64`, `u8`, or `word`), produce that same type, and lower through the generation-safe syntax-fact inventory to stock CLIF `bor`. It MUST NOT share the boolean-only `||` operator fact, coerce operands, silently promote mixed integer widths, or fall back to HIR/Rust lowering.
+
+#### Scenario: Runtime generation and slot composition
+- **GIVEN** canonical runtime source computes `(generation << 32) | slotIndex` from `word` operands
+- **WHEN** the source is checked and lowered through `TypedProgram` and `CodegenInput`
+- **THEN** the shift is emitted as `ishl`, the composition is emitted as integer CLIF `bor`, and the result remains a `word`
