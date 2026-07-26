@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Canonical scheduler state now has one separately allocated ABI-owned table at
+  the manifest-declared runtime-state field, and its legacy duplicate spawn
+  stub has been removed in favor of the canonical ABI-v5 export.
 - Canonical scheduler implementation is now OpenSpec-gated on ABI-owned state,
   manifest-derived contexts and stacks, production ISLE execution coverage, and
   Phase-A/main-fiber lifecycle proof before it can claim target support.
