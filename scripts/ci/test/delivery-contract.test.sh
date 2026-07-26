@@ -25,6 +25,12 @@ for repository in \
 	fi
 done
 
+learn_service="$(sed -n '/^  learn:/,/^  tracker:/p' "${production_compose}")"
+if [[ -z "${learn_service}" || "${learn_service}" == *'profiles:'* ]]; then
+	echo "beskid-learn must be an always-active production Compose service" >&2
+	exit 1
+fi
+
 # Platform-spec installs with Corepack pnpm from its own package lock.
 [[ -f "${ROOT}/site/platform-spec/package.json" ]]
 rg -Fq 'packageManager": "pnpm@10.17.1"' "${ROOT}/site/platform-spec/package.json"

@@ -66,5 +66,7 @@ Docker cache layer.
 - **GIVEN** a required platform image repository is present in the immutable
   release manifest
 - **WHEN** the release Compose template is rendered
-- **THEN** exactly one Compose service references that repository, including a
-  profile-gated service; a missing or duplicate mapping fails before deployment
+- **THEN** exactly one Compose service references that repository; a required
+  lane's service is active in the default Compose topology whenever its lane
+  health URL is included in post-deploy smoke checks, and a missing, duplicate,
+  or profile-gated required mapping fails before deployment
