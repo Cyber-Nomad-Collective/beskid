@@ -59,6 +59,8 @@ to a checkout that contains both `/compiler/Cargo.toml` and `/site/learn`.
   builds and stages `beskid_cli` plus the ABI-v5 kit in one cached instruction, then writes the
   durable runtime output consumed by the final image. The final image contains only that CLI and
   installed kit, not the compiler source tree.
+- The compiler stage installs `clang` and `lld`, required to assemble the canonical Linux runtime
+  context, TLS, and host-shim objects; absent linker tools fail staging rather than using a fallback.
 - Production domain is `https://learn.beskid-lang.org`.
 - Smoke checks:
   - `curl -I https://learn.beskid-lang.org`

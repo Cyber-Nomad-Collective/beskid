@@ -43,6 +43,9 @@ for requirement in \
   'COPY beskid_web_common ./beskid_web_common' \
   'pnpm --dir site/learn install --frozen-lockfile' \
   'COPY compiler/scripts ./compiler/scripts' \
+  'apt-get install -y --no-install-recommends clang lld' \
+  'command -v clang' \
+  'command -v ld.lld' \
   'CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_cli --release' \
   'BESKID_RUNTIME_PREFIX=/workspace/target/native-runtime-kit' \
   'BESKID_CLI_BIN=/workspace/target/release/beskid_cli' \

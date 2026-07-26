@@ -40,6 +40,13 @@ Docker cache layer.
   explicit Cargo target prefix, copies both into a durable image-layer directory, and publishes
   only that CLI with the resulting installed runtime kit
 
+#### Scenario: A Linux compiler image stages native runtime objects
+
+- **GIVEN** a Linux compiler-backed image invokes canonical ABI-v5 runtime-kit staging
+- **WHEN** it assembles native context, TLS, and host-shim objects
+- **THEN** the build stage installs and proves availability of the canonical `clang`/`lld`
+  toolchain before staging; a missing linker remains a hard failure
+
 #### Scenario: An image lockfile is stale
 
 - **GIVEN** a selected image lockfile does not match a copied package manifest

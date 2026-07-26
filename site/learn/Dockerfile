@@ -19,6 +19,11 @@ RUN pnpm --dir site/learn run build
 FROM rust:1.90 AS rust
 WORKDIR /workspace
 
+# Canonical ABI-v5 runtime-kit staging compiles native context, TLS, and host shims with clang.
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends clang lld \
+  && rm -rf /var/lib/apt/lists/*
+
 COPY compiler/Cargo.toml compiler/Cargo.lock ./compiler/
 # beskid_abi's build script reads the runtime manifest at the compiler root.
 COPY compiler/runtime_manifest.bsol ./compiler/runtime_manifest.bsol
@@ -33,7 +38,9 @@ COPY beskid_bsol ./beskid_bsol
 
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
   --mount=type=cache,target=/workspace/target \
-  cd compiler \
+  command -v clang \
+  && command -v ld.lld \
+  && cd compiler \
   && CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_cli --release \
   && BESKID_RUNTIME_PREFIX=/workspace/target/native-runtime-kit \
   BESKID_RUNTIME_KIT_PROFILE=debug \
