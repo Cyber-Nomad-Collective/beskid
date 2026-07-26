@@ -30,6 +30,14 @@ Docker cache layer.
 - **THEN** it rebuilds the shared package after its frozen install, so the
   application resolves the linked export without relying on ambient artifacts
 
+#### Scenario: A compiler-backed image stages an ABI-v5 runtime kit
+
+- **GIVEN** a required platform image builds a release CLI and invokes the canonical
+  `compiler/scripts/stage-native-runtime-kit.sh` entrypoint
+- **WHEN** its immutable compiler stage is assembled
+- **THEN** the stage contains that entrypoint and its required compiler-script helpers before
+  invocation, and publishes only the CLI with the resulting installed runtime kit
+
 #### Scenario: An image lockfile is stale
 
 - **GIVEN** a selected image lockfile does not match a copied package manifest
@@ -41,4 +49,5 @@ Docker cache layer.
 - **GIVEN** platform delivery evaluates required image lanes
 - **WHEN** repository delivery-contract tests run
 - **THEN** they verify each lane's declared build context can provide its
-  selected lockfile and all required local workspace sources
+  selected lockfile, all required local workspace sources, and every canonical
+  compiler staging entrypoint invoked by the image

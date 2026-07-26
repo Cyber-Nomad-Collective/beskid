@@ -30,6 +30,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   image construction and quality checks.
 - Learn's compiler image now maps analysis constants explicitly in LSP document
   symbols and semantic tokens, keeping the release CLI build exhaustive.
+- Learn's compiler image now copies the canonical runtime-kit staging scripts before invoking
+  them, so the immutable release image can package its ABI-v5 runtime kit.
 - Nexus graph-first startup now initializes its Sigma callback before capture;
   its repository API test routes are exact and no longer shadow one another.
 

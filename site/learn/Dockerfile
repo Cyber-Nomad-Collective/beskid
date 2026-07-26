@@ -27,6 +27,7 @@ COPY compiler/corelib ./compiler/corelib
 # beskid_abi also embeds the canonical Beskid runtime bootstrap source.
 COPY compiler/runtime ./compiler/runtime
 COPY compiler/crates ./compiler/crates
+COPY compiler/scripts ./compiler/scripts
 COPY compiler/vendor ./compiler/vendor
 COPY beskid_bsol ./beskid_bsol
 

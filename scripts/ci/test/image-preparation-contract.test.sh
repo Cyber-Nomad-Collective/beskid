@@ -41,9 +41,11 @@ learn="$(<"${root}/site/learn/Dockerfile")"
 for requirement in \
   'COPY site/learn/package.json site/learn/pnpm-lock.yaml ./site/learn/' \
   'COPY beskid_web_common ./beskid_web_common' \
-  'pnpm --dir site/learn install --frozen-lockfile'; do
+  'pnpm --dir site/learn install --frozen-lockfile' \
+  'COPY compiler/scripts ./compiler/scripts' \
+  './scripts/stage-native-runtime-kit.sh'; do
   if [[ "${learn}" != *"${requirement}"* ]]; then
-    echo "site/learn/Dockerfile is missing required local-lock preparation: ${requirement}" >&2
+    echo "site/learn/Dockerfile is missing required dependency preparation: ${requirement}" >&2
     exit 1
   fi
 done
