@@ -27,6 +27,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   instead of relying on transitive packages omitted by frozen installation.
 - Nexus's bundled web build now locks Trudoc to the copied local package source,
   eliminating an unavailable private-registry fetch during image construction.
+- Learn's compiler image now maps analysis constants explicitly in LSP document
+  symbols and semantic tokens, keeping the release CLI build exhaustive.
+- Nexus graph-first startup now initializes its Sigma callback before capture;
+  its repository API test routes are exact and no longer shadow one another.
 
 ## [0.4.0] — 2026-07-24
 
