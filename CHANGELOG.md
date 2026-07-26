@@ -25,8 +25,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   stale re-export that prevented its release CLI build.
 - Nexus's isolated image build now declares its direct compiler dependencies
   instead of relying on transitive packages omitted by frozen installation.
-- Nexus's bundled web build now locks Trudoc to the copied local package source,
-  eliminating an unavailable private-registry fetch during image construction.
+- Nexus's bundled web build now locks Trudoc to the copied local package source
+  in both Bun and pnpm, eliminating unavailable private-registry fetches during
+  image construction and quality checks.
 - Learn's compiler image now maps analysis constants explicitly in LSP document
   symbols and semantic tokens, keeping the release CLI build exhaustive.
 - Nexus graph-first startup now initializes its Sigma callback before capture;
