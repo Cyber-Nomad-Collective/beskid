@@ -21,6 +21,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   across Auth, Learn, Platform Spec, Tracker, Nexus, and pckg delivery lanes.
 - Docker images rebuild file-linked shared package exports after frozen install,
   so ignored generated output cannot mask a missing production dependency.
+- Learn's release image now uses the canonical compiler shell API, removing a
+  stale re-export that prevented its release CLI build.
 
 ## [0.4.0] — 2026-07-24
 
