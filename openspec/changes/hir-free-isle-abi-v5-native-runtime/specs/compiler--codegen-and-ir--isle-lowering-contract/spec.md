@@ -51,6 +51,11 @@ Canonical Beskid runtime sources MUST express calls to only manifest-approved tr
 - **THEN** `pointer` parses as the primitive type and `parent` or `event` parses as the parameter identifier;
   the contextual injection qualifier and event-field declaration remain recognized only in their structural positions
 
+#### Scenario: Cross-unit canonical intrinsic call lowers inline
+- **GIVEN** the exact embedded canonical runtime corpus and its compiler-minted intrinsic capability, including `Runtime/Fiber/Scheduler.bd`
+- **WHEN** `SchedInit` invokes manifest-authorized `pointer_add` and `raw_word_store`
+- **THEN** each call is classified as its exact `RuntimeIntrinsic` kind through the generation-safe syntax facts, emits its inline verified CLIF operation, and creates neither a dynamic dispatch nor an ABI import; an ordinary program, a foreign source unit, or a manifest-absent name remains unavailable
+
 ### Requirement: Integer bitwise AND lowering
 The `&` binary operator SHALL accept two operands of the same primitive integer type (`i32`, `i64`, `u8`, or `word`), produce that same type, and lower through the generation-safe syntax-fact inventory to stock CLIF `band`. It MUST NOT share the boolean-only `&&` operator fact, coerce operands to boolean, introduce arithmetic overflow behavior, or alter allocation failure handling.
 
@@ -84,3 +89,16 @@ The `|` binary operator SHALL accept two operands of the same primitive integer 
 - **GIVEN** canonical runtime source computes `(generation << 32) | slotIndex` from `word` operands
 - **WHEN** the source is checked and lowered through `TypedProgram` and `CodegenInput`
 - **THEN** the shift is emitted as `ishl`, the composition is emitted as integer CLIF `bor`, and the result remains a `word`
+
+### Requirement: Explicit primitive numeric conversion lowering
+The primitive conversion call forms `i32(value)`, `i64(value)`, `u8(value)`, and `word(value)` SHALL be classified by a generation-safe AST/Salsa fact only when they have exactly one primitive numeric argument. The fact SHALL carry the exact source and target primitive types, and ISLE SHALL emit the corresponding stock CLIF integer width conversion (`sextend`, `uextend`, `ireduce`, or identity) without importing a runtime symbol. Invalid arity, boolean, pointer, floating-point, string, aggregate, or unresolved operands SHALL remain unavailable before code generation. This conversion surface MUST NOT use dynamic dispatch, HIR, `Lowerable`, or a Rust fallback.
+
+#### Scenario: Canonical scheduler widens a fiber-table index
+- **GIVEN** canonical scheduler source returns `i64(index)` where `index` has primitive `word` type
+- **WHEN** the source is checked through `TypedProgram` and lowered through `CodegenInput` and ISLE
+- **THEN** a generation-safe conversion fact declares `word` to `i64`, verified CLIF emits the required integer conversion, and no call import or dynamic-dispatch symbol is created
+
+#### Scenario: Invalid primitive conversion fails closed
+- **GIVEN** source invokes `i64(pointerValue)`, `word(true)`, `u8(1, 2)`, or `i32(unresolved)`
+- **WHEN** semantic checking or production lowering runs
+- **THEN** it reports the conversion as unavailable before CLIF emission and does not select a dynamic builtin, HIR path, or fallback lowering

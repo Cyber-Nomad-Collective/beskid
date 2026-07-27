@@ -68,6 +68,7 @@ The 2026-07-20 readiness audit is recorded in `docs/superpowers/reports/2026-07-
 ### 6.9 Complete consumer migration before deletion
 
 - [ ] 6.9.1 Expand the production syntax-fact adapter and ISLE inventory to all expressions, statements, calls, locals, memory, control flow, items, aggregates, closures/captures, spawn, trusted intrinsics, and span diagnostics; enforce a bijective inventory test.
+- [ ] 6.9.1a Add fail-closed AST/Salsa and ISLE lowering for explicit primitive numeric conversion calls, including canonical runtime coverage.
 - [ ] 6.9.2 Migrate every LSP feature (hover, definition, references, completion, diagnostics, refresh) and CLI/frontend service to syntax indexes plus Salsa facts; each feature needs a regression without a legacy analysis snapshot.
 - [ ] 6.9.3 Migrate JIT, AOT, corelib, installers, and release bundles to the sole `CodegenInput` plus exact validated runtime-kit route; retain deliberately unlinked object-only output only.
 
