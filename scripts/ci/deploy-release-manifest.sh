@@ -66,6 +66,30 @@ fi
 : "${COOLIFY_SERVICE_UUID:?Set COOLIFY_SERVICE_UUID or add service_uuid to beskid_infra/config/coolify-${lane}.json}"
 export COOLIFY_SERVICE_UUID
 api="${COOLIFY_ENDPOINT%/}/api/v1"
+domains_config="${script_dir}/../../beskid_infra/config/domains.json"
+
+if [[ ! -f "${domains_config}" ]]; then
+  echo "domain configuration is required for deployment: ${domains_config}" >&2
+  exit 1
+fi
+
+coolify_urls="$(jq -ce --arg lane "${lane}" '
+  .[$lane].services
+  | if type != "object" or length == 0 then error("services must be a non-empty object") else . end
+  | to_entries
+  | if all(.[];
+      (.key | type == "string" and length > 0)
+      and (.value | type == "object")
+      and (.value.host | type == "string" and test("^[A-Za-z0-9.-]+$") and length > 0)
+      and (.value.port | type == "number" and floor == . and . >= 1 and . <= 65535)
+    ) then . else error("each service requires a DNS host and port") end
+  | map({name: .key, url: ("https://" + .value.host + ":" + (.value.port | tostring))})
+  | if ([.[].name] | unique | length) == length and ([.[].url] | unique | length) == length
+    then . else error("service names and URLs must be unique") end
+' "${domains_config}" 2>/dev/null)" || {
+  echo "invalid domain configuration for ${lane}: ${domains_config}" >&2
+  exit 1
+}
 
 api_call() {
   local method="$1" path="$2"; shift 2
@@ -78,7 +102,8 @@ api_call() {
 patch_compose() {
   local compose_file="$1" compose_b64 patch_body
   compose_b64="$(base64 <"${compose_file}" | tr -d '\n')"
-  patch_body="$(jq -n --arg compose "${compose_b64}" '{docker_compose_raw: $compose}')"
+  patch_body="$(jq -n --arg compose "${compose_b64}" --argjson urls "${coolify_urls}" \
+    '{docker_compose_raw: $compose, urls: $urls}')"
   api_call PATCH "/services/${COOLIFY_SERVICE_UUID}" -d "${patch_body}" >/dev/null
 }
 

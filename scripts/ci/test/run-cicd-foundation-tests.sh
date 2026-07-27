@@ -238,14 +238,17 @@ PATH="${tmp}/bin:${PATH}" "${root}/scripts/ci/deploy-release-manifest.sh" \
   --lane staging --manifest "${tmp}/release.json" --compose "${tmp}/compose.yml"
 
 export MOCK_COOLIFY_STATE="${tmp}/coolify-state"
+export MOCK_COOLIFY_PATCH_BODY="${tmp}/coolify-patch.json"
 mkdir -p "${MOCK_COOLIFY_STATE}"
 cat >"${tmp}/bin/curl" <<'SH'
 #!/usr/bin/env bash
 method=GET
 url=''
+body=''
 previous=''
 for argument in "$@"; do
   if [[ "${previous}" == -X ]]; then method="${argument}"; fi
+  if [[ "${previous}" == -d ]]; then body="${argument}"; fi
   if [[ "${argument}" == https://coolify.invalid/* ]]; then url="${argument}"; fi
   previous="${argument}"
 done
@@ -260,6 +263,7 @@ case "${method}:${url}" in
     fi
     ;;
   PATCH:*/services/test)
+    printf '%s' "${body}" >"${MOCK_COOLIFY_PATCH_BODY}"
     echo '{}'
     ;;
   GET:*/deploy\?*)
@@ -302,9 +306,11 @@ cat >"${tmp}/bin/curl" <<'SH'
 #!/usr/bin/env bash
 method=GET
 url=''
+body=''
 previous=''
 for argument in "$@"; do
   if [[ "${previous}" == -X ]]; then method="${argument}"; fi
+  if [[ "${previous}" == -d ]]; then body="${argument}"; fi
   if [[ "${argument}" == https://coolify.invalid/* ]]; then url="${argument}"; fi
   previous="${argument}"
 done
@@ -317,6 +323,7 @@ case "${method}:${url}" in
     fi
     ;;
   PATCH:*/services/test)
+    printf '%s' "${body}" >"${MOCK_COOLIFY_PATCH_BODY}"
     echo '{}'
     ;;
   GET:*/deploy\?*)
@@ -339,6 +346,21 @@ PATH="${tmp}/bin:${PATH}" \
     --lane staging --manifest "${tmp}/release.json" --compose "${tmp}/compose.yml" \
   | grep -q 'deployment verified: service:test' || {
   echo "service-shaped Coolify deploy response was not accepted" >&2
+  exit 1
+}
+
+jq -e '
+  .urls == [
+    {name: "site", url: "https://stg.beskid-lang.org:80"},
+    {name: "auth", url: "https://stg-auth.beskid-lang.org:8090"},
+    {name: "platform-spec", url: "https://stg-spec.beskid-lang.org:8460"},
+    {name: "learn", url: "https://stg-learn.beskid-lang.org:80"},
+    {name: "tracker", url: "https://stg-tracker.beskid-lang.org:3000"},
+    {name: "nexus", url: "https://stg-nexus.beskid-lang.org:8452"},
+    {name: "pckg", url: "https://stg-pckg.beskid-lang.org:8082"}
+  ]
+' "${MOCK_COOLIFY_PATCH_BODY}" >/dev/null || {
+  echo "Coolify deployment must PATCH the staging URLs derived from domains.json, including learn" >&2
   exit 1
 }
 
