@@ -89,6 +89,79 @@ Target adapters MUST use one ABI-v5 normalization: nullable pointer results repr
 - **WHEN** platform import and binary provenance audits run
 - **THEN** every host adapter resolves only through the target-specific import declared by `runtime_manifest.bsol`
 
+### Requirement: Canonical Process host adapters are manifest-owned
+`Runtime/Host/Process.bd` SHALL implement `EnvGet`, `EnvSet`, `EnvGetcwd`,
+`FsReadText`, `FsWriteText`, `FsExists`, `FsMkdir`, `FsDelete`, and
+`TtyWinsize` exclusively as direct wrappers around canonical-runtime-only
+intrinsics declared by `runtime_manifest.bsol`. The manifest declaration for
+each adapter MUST contain its source intrinsic name, ABI-v5 symbol,
+`runtime.adapter.<intrinsic-name>` capability, exact parameter and result
+types, and one target-specific platform import for every supported target.
+The ABI-v5 intrinsic symbols MUST be named
+`beskid_rt_v5_intrinsic_<intrinsic-name>`.
+
+The source intrinsic names SHALL be `env_get`, `env_set`, `env_getcwd`,
+`fs_read_text`, `fs_write_text`, `fs_exists`, `fs_mkdir`, `fs_delete`, and
+`tty_winsize`. Nullable pointer results SHALL mean that the requested string,
+working directory, file content, or terminal dimensions are unavailable.
+Mutation and boolean query adapters SHALL use the common target-adapter status
+normalization: `i32` zero is success, non-zero is failure, and the public
+boolean wrapper maps only zero to `true`. Every returned pointer remains
+runtime-owned until the next invocation of the same adapter on the same
+runtime thread unless copied into managed storage.
+
+The canonical wrappers MUST NOT fabricate `NativePointer(0)`, `false`, a
+no-op mutation result, a host dispatch lookup, a generated dispatch tag, an
+extern fallback, or a process-global backing table. Missing manifest entries,
+missing selected-target imports, unsupported target implementations, null
+required input pointers, and failed target-adapter status results MUST fail
+closed at the boundary; they MUST NOT be represented as a successful wrapper
+result. Only the compiler-embedded canonical runtime corpus may invoke these
+intrinsics.
+
+#### Scenario: Environment wrapper provenance reaches verified CLIF
+- **GIVEN** a canonical runtime compilation containing `EnvGet`, `EnvSet`, or
+  `EnvGetcwd`
+- **WHEN** the expanded syntax facts are lowered through `CodegenInput`, ISLE,
+  and CLIF verification
+- **THEN** each wrapper has a direct call to its exact manifest-declared
+  ABI-v5 intrinsic, retains the originating syntax span, and produces neither
+  a legacy dispatch reference nor an alternate host import
+
+#### Scenario: Filesystem and terminal wrappers preserve normalized failure
+- **GIVEN** a canonical runtime compilation containing `FsReadText`,
+  `FsWriteText`, `FsExists`, `FsMkdir`, `FsDelete`, or `TtyWinsize`
+- **WHEN** the selected target adapter reports unavailable data or a non-zero
+  status
+- **THEN** the public wrapper reports unavailable/failure according to the
+  manifest-declared normalization and does not manufacture a successful
+  pointer, boolean, filesystem state, or terminal value
+
+#### Scenario: Missing Process adapter authority fails closed
+- **GIVEN** a selected target lacks one Process adapter's manifest capability
+  or target-specific platform import
+- **WHEN** canonical runtime lowering or runtime-kit validation encounters
+  that adapter
+- **THEN** compilation or kit validation fails before link/load with the
+  intrinsic name, capability, and target in its diagnostic, and no fallback
+  dispatch route or fabricated wrapper is emitted
+
+#### Scenario: Untrusted Process adapter invocation is rejected
+- **GIVEN** Corelib or an application source unit declares or invokes an
+  `env_*`, `fs_*`, or `tty_winsize` target-adapter intrinsic
+- **WHEN** semantic capability validation runs
+- **THEN** validation rejects the source before ISLE lowering, including when
+  it copies a canonical runtime path or ABI-v5 symbol spelling
+
+#### Scenario: Installed target kits prove Process adapter provenance
+- **GIVEN** installed Linux x86-64, macOS arm64, and Windows x86-64 ABI-v5
+  runtime kits
+- **WHEN** their Process adapter imports and linked artifacts are audited
+- **THEN** every declared adapter resolves only to the manifest-selected
+  target import, all wrapper call paths have syntax-to-ISLE-to-verified-CLIF
+  evidence, and the artifacts contain no legacy dispatch, Rust host, bridge,
+  or fallback provenance
+
 ### Requirement: Fixed runtime-kit installation layout
 Runtime kits MUST install under `lib/beskid-runtime/abi-5/<target>/<debug|release>/` with `abi.json` at the profile root and target-named artifacts in `static/` and `shared/`.
 
