@@ -189,6 +189,82 @@ ownership or ABI identity.
   fiber `7`, the other field is unchanged, and raising an empty field invokes
   no handler
 
+### Requirement: Canonical callbacks own manifest-declared per-runtime state
+
+The canonical callback implementation SHALL allocate a zero-initialized
+callback-and-handler registry separately for each initialized
+`BeskidRuntimeState` and retain it only through a manifest-declared runtime
+state field or manifest-declared object reachable from that state. Repeated
+initialization for the same runtime SHALL reuse that registry; registries for
+distinct runtime states SHALL remain distinct. Callback or handler state MUST
+NOT be addressed through a literal `BeskidRuntimeState` offset, a process-global
+table, a TLS-only substitute, or storage shared with another synchronization
+facility.
+
+`beskid_register_callbacks` and `beskid_register_handlers` SHALL validate the
+manifest-derived FFI table layout, ABI or user-FFI layout band, pointer/count
+range, and every entry before publishing a replacement registry. A rejected
+registration SHALL return its canonical failure status and preserve the prior
+registry unchanged. A successful registration SHALL publish one complete,
+deterministic snapshot: duplicate callback identities and duplicate handler
+keys SHALL have the manifest-defined replacement result rather than leave
+multiple competing entries. `beskid_register_handlers` SHALL install the
+validated handler registry; a no-op success path is non-conforming.
+
+#### Scenario: Callback registries do not alias runtime state or each other
+
+- **GIVEN** two initialized ABI-v5 runtime states surrounded by sentinel bytes
+  and valid callback and handler registration tables
+- **WHEN** each state registers its tables, one state re-registers a replacement,
+  and the other receives an invalid registration
+- **THEN** each state retains a distinct manifest-owned registry, the replacement
+  is visible only in its owning state, the invalid registration leaves its prior
+  registry unchanged, and no sentinel, literal-offset storage, global table, or
+  unrelated synchronization object is written
+
+### Requirement: Canonical callback entry establishes a runtime scope
+
+Every callback or handler trampoline published by the canonical registry SHALL
+resolve the selected canonical target exactly once, enter the owning runtime's
+TLS/root-frame scope before invoking Beskid code, and leave that scope on every
+normal or unwind-safe exit. Nested entry on the same native thread SHALL retain
+the outer scope and preserve the normal GC/root and Phase-A mutator rules. An
+unregistered, stale, mismatched-layout, or detached-runtime callback invocation
+SHALL fail closed without calling an arbitrary function pointer or fabricating a
+successful callback result.
+
+#### Scenario: Re-entrant callback uses the owning runtime scope
+
+- **GIVEN** a callback registered for one initialized runtime while another
+  runtime has a different callback registry
+- **WHEN** foreign code invokes that callback and the callback re-enters Beskid
+  code once
+- **THEN** both entries use the first runtime's TLS/root scope, nested entry
+  preserves the outer scope, no registry from the second runtime is consulted,
+  and an unregistered callback is rejected before Beskid code executes
+
+### Requirement: Callback lowering and artifacts have canonical provenance
+
+Canonical callback registration, handler installation, and trampoline entry
+SHALL originate in the embedded `Runtime/Host/Callbacks.bd` corpus and lower
+from syntax-owned facts through `TypedProgram`, `CodegenInput`, ISLE, and
+verified CLIF. Their generated calls and runtime-kit exports SHALL use only
+manifest-authorized ABI-v5 symbols, layouts, and trusted intrinsics. Runtime
+kit, JIT, AOT, and installed-prefix tests MUST reject a Rust callback registry,
+`beskid_runtime` or bridge callback object, generated Rust dispatch table,
+legacy envelope/tag router, HIR lowering, or a host fallback.
+
+#### Scenario: Callback fixture rejects legacy registration provenance
+
+- **GIVEN** a syntax-owned fixture that registers callbacks and handlers,
+  replaces an entry, enters through a trampoline, and rejects an invalid table
+- **WHEN** it is compiled into an exact installed ABI-v5 kit through the
+  production lowering path and the resulting CLIF and artifacts are audited
+- **THEN** CLIF verifies with canonical source attribution, the runtime behavior
+  uses the manifest-owned registry, and the audit rejects HIR, Rust-runtime,
+  bridge, generated-dispatch, envelope, tag-router, and host-fallback
+  provenance
+
 ### Requirement: Hub and event lowering has canonical provenance only
 
 Hub and event operations SHALL lower from syntax-owned facts through
