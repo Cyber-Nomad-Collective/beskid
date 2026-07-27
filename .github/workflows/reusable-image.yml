@@ -34,6 +34,21 @@ on:
         required: false
         default: false
         type: boolean
+      healthcheck-url:
+        description: Optional HTTP path to prove the published image can start.
+        required: false
+        default: ''
+        type: string
+      healthcheck-port:
+        description: Container port used by healthcheck-url.
+        required: false
+        default: ''
+        type: string
+      healthcheck-env:
+        description: Optional newline-separated non-secret KEY=VALUE values for the health probe.
+        required: false
+        default: ''
+        type: string
       optional:
         description: >-
           Best-effort lane. When true, a failed build/push does not fail the job
@@ -128,6 +143,34 @@ jobs:
           DIGEST: ${{ steps.build.outputs.digest }}
         run: |
           [[ "${DIGEST}" =~ ^sha256:[0-9a-f]{64}$ ]]
+
+      - name: Probe published image health
+        if: inputs.push && inputs.healthcheck-url != '' && steps.build.outcome == 'success'
+        env:
+          IMAGE: ${{ inputs.repository }}:sha-${{ github.sha }}
+          HEALTHCHECK_PORT: ${{ inputs.healthcheck-port }}
+          HEALTHCHECK_URL: ${{ inputs.healthcheck-url }}
+          HEALTHCHECK_ENV: ${{ inputs.healthcheck-env }}
+        run: |
+          set -euo pipefail
+          [[ "${HEALTHCHECK_PORT}" =~ ^[1-9][0-9]*$ ]] || {
+            echo "healthcheck-port must be a positive integer when healthcheck-url is set" >&2
+            exit 2
+          }
+          run_env=()
+          while IFS= read -r assignment; do
+            [[ -z "${assignment}" ]] && continue
+            [[ "${assignment}" =~ ^[A-Za-z_][A-Za-z0-9_]*=.+$ ]] || {
+              echo "healthcheck-env must contain non-empty KEY=VALUE entries" >&2
+              exit 2
+            }
+            run_env+=(--env "${assignment}")
+          done <<<"${HEALTHCHECK_ENV:-}"
+          container="image-health-${{ github.run_id }}-${{ github.job }}"
+          trap 'docker logs "${container}" || true; docker rm -f "${container}" || true' EXIT
+          docker run -d --rm --name "${container}" "${run_env[@]}" -p "127.0.0.1:${HEALTHCHECK_PORT}:${HEALTHCHECK_PORT}" "${IMAGE}"
+          curl --fail --show-error --silent --retry 20 --retry-delay 1 --retry-all-errors \
+            "http://127.0.0.1:${HEALTHCHECK_PORT}${HEALTHCHECK_URL}" >/dev/null
 
       - name: Scan immutable image for vulnerabilities
         if: inputs.push && steps.build.outcome == 'success'

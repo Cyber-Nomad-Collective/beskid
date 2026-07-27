@@ -2,9 +2,9 @@
 
 ### Requirement: Required platform images prepare an exact dependency graph
 
-Before a required Node-based platform image performs a frozen package install,
-its Docker build SHALL contain every workspace manifest and every local `file:`
-package source resolved by that image's selected lockfile. The selected
+A required Node-based platform image SHALL, before it performs a frozen package
+install, contain every workspace manifest and every local `file:` package source
+resolved by that image's selected lockfile. The selected
 lockfile SHALL match those manifests. A missing source, an unresolved package
 alias, or a stale lockfile MUST fail the image build before publication.
 
@@ -90,3 +90,28 @@ engine selector MUST fail before release planning can continue.
 - **GIVEN** release planning runs in GitHub Actions
 - **WHEN** it validates the rendered Compose document
 - **THEN** it invokes Docker Compose and leaves Docker BuildKit image publication unchanged
+
+### Requirement: Published images match their declared runtime
+
+A published platform image SHALL build its server bundle for the runtime that
+its final image invokes. The image build gate MUST prove that the
+published image can start that declared runtime and serve its health endpoint
+before its immutable digest is eligible for promotion. A bundle that selects
+another runtime, or exits during startup, MUST fail before publication.
+
+#### Scenario: A runtime image contains a server bundle
+
+- **GIVEN** a platform Dockerfile invokes a declared JavaScript runtime for its
+  production server
+- **WHEN** the immutable image is built
+- **THEN** its server bundle targets that runtime, the image starts under it,
+  and its declared health endpoint responds successfully before the digest is
+  promoted
+
+#### Scenario: A server bundle selects an incompatible runtime
+
+- **GIVEN** a final image contains a bundle configured for a different
+  JavaScript runtime
+- **WHEN** the image-start contract runs
+- **THEN** the contract fails before the image digest can reach the release
+  manifest or Coolify

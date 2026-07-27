@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Tracker's immutable image now builds and invokes the Node server runtime
+  consistently, and defers shell-only server-function modules until the Start
+  runtime is initialized; the image gate starts the published digest and proves
+  its health endpoint before release-manifest promotion.
 - Canonical runtime lowering now selects manifest exports and their direct-call
   closure, attributes failed ISLE lowering to the leaf AST node, and
   materializes compiler-owned layout constants at the exact direct-call ABI

@@ -189,6 +189,11 @@ jobs:
       build-contexts: |
         web_common=./beskid_web_common
       submodules: beskid_tracker beskid_web_common
+      healthcheck-url: /api/health
+      healthcheck-port: '3000'
+      healthcheck-env: |
+        AUTH_HUB_PUBLIC_URL=https://auth.invalid
+        SESSION_SECRET=0123456789abcdef0123456789abcdef
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
     secrets:

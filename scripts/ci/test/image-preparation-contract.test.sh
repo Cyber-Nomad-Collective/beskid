@@ -103,6 +103,34 @@ for requirement in \
   fi
 done
 
+tracker_vite="$(<"${root}/beskid_tracker/vite.config.ts")"
+if [[ "${tracker_vite}" != *'nitro({ preset: "node-server" })'* ]] ||
+   [[ "${tracker}" != *'FROM node:24-alpine AS runtime'* ]] ||
+   [[ "${tracker}" != *'CMD ["node", ".output/server/index.mjs"]'* ]]; then
+	echo "beskid_tracker bundle and production image must use the same Node runtime" >&2
+	exit 1
+fi
+
+reusable_image="$(<"${root}/.github/workflows/reusable-image.yml")"
+for requirement in \
+	'healthcheck-url:' \
+	'healthcheck-env:' \
+	'Probe published image health' \
+  'docker run -d --rm'; do
+  if [[ "${reusable_image}" != *"${requirement}"* ]]; then
+    echo "reusable image workflow is missing runtime health contract: ${requirement}" >&2
+    exit 1
+  fi
+done
+
+tracker_image_block="$(sed -n '/^  image-tracker:/,/^  image-nexus:/p' "${root}/.github/workflows/platform-delivery.yml")"
+if [[ "${tracker_image_block}" != *'healthcheck-url: /api/health'* ]] ||
+   [[ "${tracker_image_block}" != *'AUTH_HUB_PUBLIC_URL=https://auth.invalid'* ]] ||
+   [[ "${tracker_image_block}" != *'SESSION_SECRET=0123456789abcdef0123456789abcdef'* ]]; then
+  echo "tracker image lane must declare its published-image health endpoint" >&2
+  exit 1
+fi
+
 nexus="$(<"${root}/beskid_nexus/Dockerfile")"
 for requirement in \
   'bun@1.3.14' \

@@ -20,3 +20,10 @@
 - [x] 4.1 Define the Podman-local/Docker-GitHub-Actions validation contract.
 - [x] 4.2 Route release-plan Compose validation through the checked engine boundary.
 - [ ] 4.3 Verify a rendered release plan with Podman locally and GitHub Actions delivery gates remotely.
+
+## 5. Published image runtime contract
+
+- [x] 5.1 Define the runtime/image compatibility requirement and failure scenario.
+- [x] 5.2 Make Tracker's final image invoke its declared Node runtime explicitly.
+- [x] 5.3 Add an image-start health contract for Tracker before digest promotion.
+- [ ] 5.4 Verify the exact published Tracker image with Podman and staging promotion.
