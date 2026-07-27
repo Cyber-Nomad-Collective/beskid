@@ -28,7 +28,7 @@ probe_url() {
   local headers
   local code
   headers="$(mktemp)"
-  code=$(curl --fail-with-body --silent --show-error --retry "${smoke_retries}" --retry-all-errors \
+  code=$(curl --fail-with-body --silent --show-error --retry "${smoke_retries}" --retry-delay 2 --retry-all-errors \
     --max-time 20 -D "${headers}" -o /dev/null -H "traceparent: ${TRACEPARENT:-}" \
     "${url}" 2>/dev/null; echo $?)
   if [[ "${code}" != "0" ]]; then
