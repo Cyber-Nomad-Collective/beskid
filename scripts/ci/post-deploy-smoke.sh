@@ -5,6 +5,11 @@ set -euo pipefail
 
 lane="${1:?lane required}"
 : "${BESKID_SMOKE_URLS:?Set BESKID_SMOKE_URLS to newline-separated health URLs}"
+smoke_retries="${BESKID_SMOKE_RETRIES:-15}"
+[[ "${smoke_retries}" =~ ^[1-9][0-9]*$ ]] || {
+  echo "BESKID_SMOKE_RETRIES must be a positive integer" >&2
+  exit 2
+}
 
 sanitize_smoke_url() {
   local url="$1"
@@ -23,7 +28,7 @@ probe_url() {
   local headers
   local code
   headers="$(mktemp)"
-  code=$(curl --fail-with-body --silent --show-error --retry 5 --retry-all-errors \
+  code=$(curl --fail-with-body --silent --show-error --retry "${smoke_retries}" --retry-all-errors \
     --max-time 20 -D "${headers}" -o /dev/null -H "traceparent: ${TRACEPARENT:-}" \
     "${url}" 2>/dev/null; echo $?)
   if [[ "${code}" != "0" ]]; then
