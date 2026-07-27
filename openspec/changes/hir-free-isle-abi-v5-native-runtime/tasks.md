@@ -67,6 +67,9 @@ The 2026-07-20 readiness audit is recorded in `docs/superpowers/reports/2026-07-
   - [ ] 6.8.1c.4 Implement Phase-A scheduler ownership, live-stack safepoint enumeration, and main shutdown joins for non-detached children; prove blocking workers do not execute Beskid mutator code.
   - [ ] 6.8.1c.5 Pass the Linux x86-64 installed-kit executable scheduler lifecycle, context-contract, allowlist, and forbidden-provenance gate before claiming Linux scheduler support; repeat independently for macOS arm64 and Windows x86-64 before claiming either target.
 - [ ] 6.8.1d Replace undeclared synchronization backing offsets with owned canonical channel, mutex, waitgroup, hub, event, and callback state; prove bounds, park/wake/cancel semantics, and production lowering coverage.
+  - [ ] 6.8.1d.1 Implement a scheduler-owned Hub registry with at least 256 registrations, stable replacement/removal order, deterministic round-robin cursor advancement, canonical empty/not-found results, and result publication before cooperative wake.
+  - [ ] 6.8.1d.2 Implement lazily allocated field-owned Event subscription state with resolved field capacity, stable first-match unsubscribe, ordered access and raising-fiber invocation; reject global tables and literal runtime-state offsets.
+  - [ ] 6.8.1d.3 Add syntax-fact → ISLE → verified-CLIF, canonical-source, installed-kit, bounds/sentinel, scheduler park/wake/cancel, and artifact-provenance tests for Hub and Event; delete HIR, Rust runtime, generated dispatch, and bridge fallbacks once those tests pass.
 - [ ] 6.8.2 Compile canonical runtime sources through `TypedProgram` → `CodegenInput` → ISLE → verified CLIF; reject any alternate HIR or Rust-runtime build path.
 - [ ] 6.8.3 Produce static/shared debug and release kits for Linux x86-64, macOS arm64, and Windows x86-64 at the installed ABI-v5 layout; run JIT and AOT empty-prefix smokes for every matrix cell.
 

@@ -101,16 +101,65 @@ normative capacity.
   replacement through round-robin order, and the hub state does not alias any
   other scheduler-owned synchronization state
 
+### Requirement: Canonical hub preserves ordered replacement and removal
+
+A hub registration SHALL be identified by its user index. Registering an
+already registered user index SHALL replace only that entry's callback in its
+existing position; it SHALL NOT append a duplicate, change the registry
+length, or reset the round-robin cursor. Removing a registration SHALL retain
+the relative order of every remaining registration; swap removal is
+non-conforming. Dispatch SHALL begin at the current cursor, visit each
+registration at most once in circular registration order, and advance the
+cursor to the entry after the final dispatched entry. An empty hub SHALL report
+the canonical empty result without invoking a callback, and removal of an
+absent user index SHALL report the canonical not-found result without mutating
+the registry or cursor.
+
+#### Scenario: Hub keeps stable round-robin order across replacement and removal
+
+- **GIVEN** a hub whose user indices are registered in order `10`, `20`, and
+  `30`, with its next dispatch beginning at `20`
+- **WHEN** index `20` is replaced, index `10` is removed, and the hub is
+  dispatched twice
+- **THEN** the first dispatch visits the replacement for `20` then `30`, the
+  second dispatch begins with `20`, no duplicate or reordered entry appears,
+  and the cursor changes only according to completed dispatches
+
+### Requirement: Canonical hub uses scheduler-owned result and wait state
+
+Hub wait, receive-result, cancellation, and teardown state SHALL be owned by
+the canonical scheduler state graph together with the hub's registry. A
+blocking hub operation SHALL publish its result record before waking its fiber,
+and the matching result accessors SHALL read that same record. Cancellation,
+teardown, empty, and not-found outcomes SHALL be distinguishable canonical
+results. The hub SHALL use the canonical cooperative park/wake transition and
+MUST NOT poll channel receive state or execute a generated Beskid callback from
+a blocking worker.
+
+#### Scenario: Hub wake publishes a stable result
+
+- **GIVEN** a fiber parked on a hub operation and a second fiber that completes
+  that operation
+- **WHEN** the completing fiber publishes a value and wakes the parked fiber
+- **THEN** the resumed fiber observes the published result through the hub
+  accessors exactly once, cancellation and teardown remain distinguishable,
+  and no polling or worker-side callback execution occurs
+
 ### Requirement: Canonical events use field-owned ABI state
 
 Canonical field-defined events SHALL lazily own their subscription state rather
-than use a process-global runtime-state table. `subscribe(field_slot, handler,
-capacity)` SHALL return the resulting subscription length; `unsubscribe(field_slot,
-handler)` SHALL remove the first matching handler and return `1` or return `0`
-when absent; `len(state)` and `get(state,index)` SHALL expose the ordered
-subscription state. These ABI operations SHALL lower through canonical syntax
-facts and ISLE; fixed-capacity overflow or pop-last unsubscribe behavior is
-non-conforming.
+than use a process-global runtime-state table. The field slot is the sole
+identity and owner of its event state: separately allocated subscription state
+SHALL be zero-initialized on first subscription, retained by that slot, and
+remain distinct from every other event field and scheduler synchronization
+object. `subscribe(field_slot, handler, capacity)` SHALL return the resulting
+subscription length; its capacity is the field declaration's resolved capacity
+contract, and a full field SHALL report the canonical capacity outcome without
+overwriting or silently dropping a handler. `unsubscribe(field_slot, handler)`
+SHALL remove the first matching handler and return `1` or return `0` when
+absent; `len(state)` and `get(state,index)` SHALL expose the ordered
+subscription state. Fixed global capacity, literal runtime-state-offset
+addressing, and pop-last unsubscribe behavior are non-conforming.
 
 #### Scenario: Event ABI preserves ordered subscriptions
 
@@ -119,3 +168,42 @@ non-conforming.
   the event state is lowered through syntax, ISLE, and verified CLIF
 - **THEN** only the first matching handler is removed, length and indexed lookup
   preserve order, and no global literal-offset backing state is accessed
+
+### Requirement: Canonical events preserve field order and raising-fiber execution
+
+Event subscription order SHALL be the order in which handlers were successfully
+subscribed to that field, after the stable first-match removal rule. Raising a
+field event under the default host profile SHALL snapshot no alternate global
+subscriber table, invoke the current ordered handlers on the raising fiber,
+and preserve the language event contract that a handler MUST NOT self-join.
+An empty field event SHALL be a successful no-op. A host profile that changes
+fairness or failure handling SHALL declare that behavior without changing field
+ownership or ABI identity.
+
+#### Scenario: Event raise follows the owning field's current order
+
+- **GIVEN** two event fields with independently subscribed handlers and one
+  field has handlers `A`, `B`, `A`
+- **WHEN** the first `A` is unsubscribed and that field is raised by fiber `7`
+- **THEN** only that field invokes `B` then the remaining `A`, both run on
+  fiber `7`, the other field is unchanged, and raising an empty field invokes
+  no handler
+
+### Requirement: Hub and event lowering has canonical provenance only
+
+Hub and event operations SHALL lower from syntax-owned facts through
+`TypedProgram`, `CodegenInput`, ISLE, and verified CLIF, using only
+manifest-authorized canonical runtime calls. Produced runtime kits and
+conformance artifacts MUST NOT link, invoke, or fall back to HIR lowering,
+the Rust `beskid_runtime` crate, generated Rust dispatch tables, bridge
+dispatch, or a process-global event table.
+
+#### Scenario: Hub and event artifact rejects legacy dispatch
+
+- **GIVEN** a fixture that registers, removes, waits on, subscribes to, and
+  raises canonical hub and event state
+- **WHEN** the production runtime artifact is built and its provenance is
+  verified
+- **THEN** verification accepts the canonical Beskid and approved assembly
+  provenance only and rejects HIR, Rust-runtime, generated-dispatch, bridge,
+  and global-table symbols
