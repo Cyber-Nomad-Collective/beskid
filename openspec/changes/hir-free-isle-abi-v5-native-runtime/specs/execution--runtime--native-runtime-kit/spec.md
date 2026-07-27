@@ -110,6 +110,18 @@ boolean wrapper maps only zero to `true`. Every returned pointer remains
 runtime-owned until the next invocation of the same adapter on the same
 runtime thread unless copied into managed storage.
 
+The ABI manifest SHALL model each Process adapter binding explicitly rather
+than inferring it from a flat target-import list. Every binding SHALL name the
+canonical intrinsic, selected target, adapter implementation symbol, and the
+ordered set of allowed OS-import symbols. Manifest and runtime-kit validation
+SHALL reject a missing intrinsic/target binding, a signature mismatch, an
+orphan Process OS import, or an adapter implementation symbol not provided by
+the selected target host object. The binding diagnostic SHALL identify the
+intrinsic, capability, and target. Empty strings and unavailable data SHALL be
+distinguished: unavailable remains a nullable pointer, while an empty string
+is a valid runtime-owned string returned through the documented per-runtime
+thread scratch ownership policy.
+
 The canonical wrappers MUST NOT fabricate `NativePointer(0)`, `false`, a
 no-op mutation result, a host dispatch lookup, a generated dispatch tag, an
 extern fallback, or a process-global backing table. Missing manifest entries,
@@ -145,6 +157,15 @@ intrinsics.
 - **THEN** compilation or kit validation fails before link/load with the
   intrinsic name, capability, and target in its diagnostic, and no fallback
   dispatch route or fabricated wrapper is emitted
+
+#### Scenario: Process adapter bindings are complete and non-orphaned
+
+- **GIVEN** the nine canonical Process adapters and a supported target
+- **WHEN** manifest or runtime-kit validation reads its adapter bindings
+- **THEN** exactly one binding names each intrinsic, target, implementation
+  symbol, and allowed OS imports with matching signatures, and an orphan or
+  missing binding fails before link/load with the intrinsic, capability, and
+  target in its diagnostic
 
 #### Scenario: Untrusted Process adapter invocation is rejected
 - **GIVEN** Corelib or an application source unit declares or invokes an

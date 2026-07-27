@@ -59,8 +59,8 @@ handles fail closed.
   null result without dereferencing or recreating the state
 
 ### Requirement: Composition lowering has canonical provenance
-`launch`, `with`, field injection, singular injection, and plural injection
-SHALL lower from generation-bound typed-program composition facts through the
+Composition lowering SHALL lower `launch`, `with`, field injection, singular
+injection, and plural injection from generation-bound typed-program facts through the
 sole `CodegenInput` → generated ISLE → verifier-clean CLIF path. The compiler
 SHALL emit registrations, bindings, scope identifiers, activation, and teardown
 from the same frozen composition snapshot that semantic analysis validated.

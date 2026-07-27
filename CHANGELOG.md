@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Runtime OpenSpec now parses its callback, scheduler, and composition
+  requirements strictly, and records the mandatory scheduler result trampoline
+  plus Process adapter-binding and string-ownership contracts before code.
 - Tracker's immutable image now builds and invokes the Node server runtime
   consistently, and defers shell-only server-function modules until the Start
   runtime is initialized; the image gate starts the published digest and proves

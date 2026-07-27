@@ -245,8 +245,9 @@ successful callback result.
 
 ### Requirement: Callback lowering and artifacts have canonical provenance
 
-Canonical callback registration, handler installation, and trampoline entry
-SHALL originate in the embedded `Runtime/Host/Callbacks.bd` corpus and lower
+Canonical callback operations SHALL originate in the embedded
+`Runtime/Host/Callbacks.bd` corpus and lower; this includes registration,
+handler installation, and trampoline entry.
 from syntax-owned facts through `TypedProgram`, `CodegenInput`, ISLE, and
 verified CLIF. Their generated calls and runtime-kit exports SHALL use only
 manifest-authorized ABI-v5 symbols, layouts, and trusted intrinsics. Runtime

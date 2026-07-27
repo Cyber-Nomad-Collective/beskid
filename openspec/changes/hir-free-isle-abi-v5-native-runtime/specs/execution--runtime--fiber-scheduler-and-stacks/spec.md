@@ -69,6 +69,17 @@ KiB, or greater-than-8-MiB requested usable capacity. Releasing a guarded stack
 SHALL release the original whole reservation, including its guard; it SHALL NOT
 turn the guard readable or writable first.
 
+Because the manifest context initializer invokes a `void(pointer)` entry while
+canonical generated fiber bodies return an `i64`, the canonical runtime SHALL
+provide one scheduler-owned entry wrapper and return trampoline. The wrapper
+SHALL receive the fiber record pointer, invoke the generation-bound body with
+its recorded argument, record its normal value before any completion state is
+published, and enter the return trampoline. The return trampoline SHALL mark
+the record terminal, transfer only through the manifest context switch export
+to fiber 0, and trap if it is ever resumed. Generated body pointers SHALL NOT
+be cast directly to the context initializer's entry signature, and no host,
+Rust, or process-global result handoff is permitted.
+
 #### Scenario: Linux context initialization preserves the target ABI contract
 
 - **GIVEN** the Linux x86-64 manifest layout and a newly allocated canonical fiber
@@ -77,6 +88,17 @@ turn the guard readable or writable first.
   stack top is 16-byte aligned, the only assembly calls are the two
   manifest-declared context exports, and the fiber entry receives its declared
   environment argument
+
+#### Scenario: Entry wrapper preserves a generated fiber result
+
+- **GIVEN** a generated canonical fiber body that accepts its declared argument
+  and returns an `i64`
+- **WHEN** the scheduler initializes and runs that fiber through the manifest
+  context boundary
+- **THEN** a scheduler-owned `void(pointer)` wrapper invokes the body, records
+  the result in that fiber's record before terminal publication, transfers to
+  fiber 0 only through the declared context switch export, and rejects a
+  resumed return trampoline without a direct function-pointer cast
 
 #### Scenario: Guarded-stack limit fails closed
 
@@ -151,11 +173,12 @@ verified CLIF and share the scheduler object stored in the manifest-declared
 
 ### Requirement: Fiber builtins share one canonical scheduler state machine
 
+All fiber builtins SHALL act on one canonical scheduler object, including
 `fiber_spawn`, `fiber_spawn_with_cancel_slot`, `fiber_yield`, `fiber_cancel`,
 `fiber_detach`, `fiber_join_status`, `fiber_join_value`, `fiber_current_id`,
-the monotonic clock, and processor-count builtins SHALL act on one canonical
-scheduler object. There SHALL be exactly one canonical implementation owner of
-each ABI export; forwarding is permitted, duplicate stub exports are not.
+the monotonic clock, and processor-count builtins.
+There SHALL be exactly one canonical implementation owner of each ABI export;
+forwarding is permitted, duplicate stub exports are not.
 
 #### Scenario: Canonical builtins lower through ISLE
 
