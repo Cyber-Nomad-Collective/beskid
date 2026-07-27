@@ -23,16 +23,19 @@ or Corelib sources.
 - **AND THEN** the original canonical source corpus remains the sole hashed and
   provenance-checked source of that value
 
-#### Scenario: Runtime layout constant materializes at its direct-call ABI type
+#### Scenario: Runtime layout constant materializes at a manifest-authorized ABI type
 
 - **GIVEN** the exact canonical runtime corpus declares `const TABLE_SIZE = 3480;`
-  and passes `TABLE_SIZE` to a direct helper whose parameter type is `word`
+  and passes `TABLE_SIZE` to either a direct helper or a manifest-authorized
+  runtime intrinsic whose ABI parameter type is `word`
 - **WHEN** the corpus is prepared through generation-safe Salsa facts and the
   production ISLE path
 - **THEN** the constant path retains its integer value and materializes at the
-  target pointer width required by that direct-call ABI argument
-- **AND THEN** no implicit `i32` fallback, dynamic dispatch, HIR lowering, or
-  Rust lowering fallback is used
+  target pointer width required by that exact ABI argument
+- **AND THEN** the materialization applies only to a canonical module-constant
+  `PathExpression` carrying compiler-minted runtime authority, and no implicit
+  `i32` fallback, literal coercion, dynamic dispatch, HIR lowering, or Rust
+  lowering fallback is used
 
 #### Scenario: Constant ABI materialization remains scoped to the canonical corpus
 
@@ -40,7 +43,7 @@ or Corelib sources.
   that resembles a canonical runtime module constant
 - **WHEN** its ordinary semantic facts are queried
 - **THEN** it does not receive canonical-runtime constant substitution or
-  canonical direct-call ABI materialization
+  canonical direct-call or runtime-intrinsic ABI materialization
 
 #### Scenario: Caller source cannot use the canonical normalization facility
 

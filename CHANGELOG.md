@@ -15,6 +15,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   closure, attributes failed ISLE lowering to the leaf AST node, and
   materializes compiler-owned layout constants at the exact direct-call ABI
   width without permitting literal or untrusted-source coercion.
+- Scheduler fiber context metadata and context entrypoints are now derived from
+  the selected ABI-v5 target manifest, with exact assembly-export validation;
+  runtime layout constants also materialize at authorized intrinsic ABI widths.
 
 - Canonical scheduler state now has one separately allocated ABI-owned table at
   the manifest-declared runtime-state field, and its legacy duplicate spawn
