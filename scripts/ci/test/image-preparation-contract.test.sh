@@ -54,6 +54,7 @@ for requirement in \
   'cp -a /workspace/target/native-runtime-kit /workspace/runtime-output/native-runtime-kit' \
   'COPY --from=rust /workspace/runtime-output/beskid /app/site/learn/beskid' \
   'COPY --from=rust /workspace/runtime-output/native-runtime-kit /app/site/learn/native-runtime-kit' \
+  'COPY --from=web /app/site/learn/src/data /app/site/learn/src/data' \
   './scripts/stage-native-runtime-kit.sh'; do
   if [[ "${learn}" != *"${requirement}"* ]]; then
     echo "site/learn/Dockerfile is missing required dependency preparation: ${requirement}" >&2
