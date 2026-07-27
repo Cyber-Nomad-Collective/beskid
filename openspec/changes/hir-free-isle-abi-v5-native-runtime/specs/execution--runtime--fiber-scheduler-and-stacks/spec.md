@@ -56,6 +56,19 @@ preserve the guard region and SHALL fail the affected fiber with join status
 target context sizes or alignments, and undeclared runtime-state offsets are
 prohibited.
 
+The manifest SHALL declare a canonical-runtime-only guarded-stack adapter;
+ordinary packages SHALL NOT declare or invoke it. The adapter SHALL return the
+lower bound of the writable usable region, with its inaccessible guard directly
+below that address, or fail closed with a null pointer. On Linux x86-64 and
+Darwin arm64 it SHALL reserve a single contiguous region with no access and
+change only the usable suffix to read/write. On Windows x86-64 it SHALL reserve
+a single no-access region and commit only the usable suffix as read/write. The
+native adapter, rather than Beskid source, SHALL derive the target page or
+allocation granularity used for the guard and shall reject a zero, less-than-64
+KiB, or greater-than-8-MiB requested usable capacity. Releasing a guarded stack
+SHALL release the original whole reservation, including its guard; it SHALL NOT
+turn the guard readable or writable first.
+
 #### Scenario: Linux context initialization preserves the target ABI contract
 
 - **GIVEN** the Linux x86-64 manifest layout and a newly allocated canonical fiber
@@ -72,6 +85,22 @@ prohibited.
 - **THEN** the guard region remains inaccessible, no write crosses the stack
   allocation, the fiber enters the terminal stack-overflow state, and
   `fiber_join_status` returns `3`
+
+#### Scenario: Target adapter keeps the lower guard inaccessible
+
+- **GIVEN** a canonical fiber with a 64 KiB stack request on a supported target
+- **WHEN** the manifest-authorized guarded-stack adapter allocates its storage
+- **THEN** Linux and Darwin reserve no-access storage before protecting only the
+  usable suffix, Windows reserves no-access storage before committing only the
+  usable suffix, and the adapter returns a writable pointer immediately above
+  the guard
+
+#### Scenario: Guarded-stack request outside canonical bounds fails closed
+
+- **GIVEN** a canonical fiber request below 64 KiB or above 8 MiB
+- **WHEN** the scheduler asks the guarded-stack adapter to allocate it
+- **THEN** no stack reservation is published, the fiber has terminal join status
+  `3`, and a later release operation has no writable guard region to restore
 
 ### Requirement: Canonical scheduler has one observable fiber lifecycle
 

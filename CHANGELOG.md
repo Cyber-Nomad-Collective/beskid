@@ -18,6 +18,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Scheduler fiber context metadata and context entrypoints are now derived from
   the selected ABI-v5 target manifest, with exact assembly-export validation;
   runtime layout constants also materialize at authorized intrinsic ABI widths.
+- Scheduler stacks now reserve a no-access lower guard with a writable bounded
+  usable suffix through manifest-owned Linux, Darwin, and Windows adapters;
+  nested canonical intrinsic layout constants retain their exact ABI widths.
 
 - Canonical scheduler state now has one separately allocated ABI-owned table at
   the manifest-declared runtime-state field, and its legacy duplicate spawn
