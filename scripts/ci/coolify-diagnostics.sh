@@ -8,7 +8,15 @@ case "${lane}" in staging|production) ;; *) echo "invalid lane: ${lane}" >&2; ex
 : "${COOLIFY_ENDPOINT:?Coolify endpoint is required}"
 : "${COOLIFY_API_TOKEN:?Coolify token is required}"
 
-service_uuid="$(jq -r '.service_uuid' "beskid_infra/config/coolify-${lane}.json")"
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+repo_root="$(cd "${script_dir}/../.." && pwd)"
+lane_config="${repo_root}/beskid_infra/config/coolify-${lane}.json"
+[[ -f "${lane_config}" ]] || { echo "lane config not found: ${lane_config}" >&2; exit 2; }
+
+# jq -r renders a missing key as the literal "null", which would otherwise be
+# spliced into the request path and query a bogus service.
+service_uuid="$(jq -r '.service_uuid // empty' "${lane_config}")"
+[[ -n "${service_uuid}" ]] || { echo "service_uuid is missing or empty in ${lane_config}" >&2; exit 2; }
 service="$(curl --fail-with-body --silent --show-error \
   -H "Authorization: Bearer ${COOLIFY_API_TOKEN}" -H 'Accept: application/json' \
   "${COOLIFY_ENDPOINT%/}/api/v1/services/${service_uuid}")"
