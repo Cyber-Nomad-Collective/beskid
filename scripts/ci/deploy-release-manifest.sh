@@ -221,6 +221,11 @@ if ! poll_deploy "${deployment_id}"; then
   exit 1
 fi
 
+# Coolify can report digest-pinned containers as running while the aggregate
+# service remains unhealthy. Emit redacted per-application errors before smoke
+# checks so a failed runtime is diagnosable from the promotion evidence.
+"${script_dir}/coolify-diagnostics.sh" "${lane}"
+
 if [[ -n "${smoke_script}" ]]; then
   [[ -x "${smoke_script}" ]] || { echo "smoke script is not executable: ${smoke_script}" >&2; rollback; exit 1; }
   if ! "${smoke_script}" "${lane}"; then
