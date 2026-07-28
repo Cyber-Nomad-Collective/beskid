@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Learn now renders curriculum Markdown structurally, adopts shared React UI styling and hub navigation, and presents its lesson rail as an off-canvas drawer below desktop widths.
+
 - The runtime OpenSpec now records the Fibers 0.1.13 poll-driven compatibility
   contract: deterministic in-place `run_once`, ready/not-ready wake behavior,
   monitor result/error truth, linked cancellation, and the deprecated
