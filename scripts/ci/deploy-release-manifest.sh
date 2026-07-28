@@ -311,7 +311,11 @@ fi
 # Coolify can report digest-pinned containers as running while the aggregate
 # service remains unhealthy. Emit redacted per-application errors before smoke
 # checks so a failed runtime is diagnosable from the promotion evidence.
-"${script_dir}/coolify-diagnostics.sh" "${lane}"
+# Diagnostics are evidence only: the Compose payload is already applied here, so
+# a diagnostics hiccup must not abort promotion before the smoke gate and its
+# rollback path decide the outcome.
+"${script_dir}/coolify-diagnostics.sh" "${lane}" \
+  || echo "coolify diagnostics failed; continuing to smoke checks" >&2
 
 if [[ -n "${smoke_script}" ]]; then
   [[ -x "${smoke_script}" ]] || { echo "smoke script is not executable: ${smoke_script}" >&2; rollback; exit 1; }
