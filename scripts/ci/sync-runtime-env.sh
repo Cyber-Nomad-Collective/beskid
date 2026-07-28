@@ -8,7 +8,9 @@ config="$2"
 case "${lane}" in staging|production) ;; *) echo "invalid lane: ${lane}" >&2; exit 2 ;; esac
 [[ -f "${config}" ]] || { echo "lane config not found: ${config}" >&2; exit 1; }
 
-: "${OPENBAO_ADDR:?Set OPENBAO_ADDR}"
+: "${VAULT_ADDR:=${OPENBAO_ADDR:-https://secrets.bdziam.dev}}"
+OPENBAO_ADDR="${OPENBAO_ADDR:-${VAULT_ADDR}}"
+OPENBAO_ADDR="${OPENBAO_ADDR%/}"
 : "${OPENBAO_TOKEN:?Set OPENBAO_TOKEN}"
 : "${COOLIFY_ENDPOINT:?Set COOLIFY_ENDPOINT}"
 : "${COOLIFY_API_TOKEN:?Set COOLIFY_API_TOKEN}"
