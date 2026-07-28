@@ -276,6 +276,9 @@ case "${method}:${url}" in
     touch "${MOCK_COOLIFY_STATE}/rollback-redeployed"
     echo '{"deployments":[{"message":"Service test started.","resource_uuid":"test"}]}'
     ;;
+  GET:*/applications/*/logs\?*)
+    echo '{"logs":""}'
+    ;;
   *)
     echo "unexpected mock Coolify call: ${method} ${url}" >&2
     exit 2
@@ -317,7 +320,7 @@ done
 case "${method}:${url}" in
   GET:*/services/test)
     if [[ -f "${MOCK_COOLIFY_STATE}/deployed" ]]; then
-      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[{"name":"site","image":"x@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"},{"name":"pckg","image":"ghcr.io/x/pckg:${IMAGE_TAG:-main}","status":"exited"}]}'
+      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[{"uuid":"site","name":"site","image":"x@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"},{"uuid":"pckg","name":"pckg","image":"ghcr.io/x/pckg:${IMAGE_TAG:-main}","status":"exited"}]}'
     else
       echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[]}'
     fi
@@ -329,6 +332,9 @@ case "${method}:${url}" in
   GET:*/deploy\?*)
     touch "${MOCK_COOLIFY_STATE}/deployed"
     echo '{"deployments":[{"message":"Service test started.","resource_uuid":"test"}]}'
+    ;;
+  GET:*/applications/*/logs\?*)
+    echo '{"logs":""}'
     ;;
   *)
     echo "unexpected mock Coolify call: ${method} ${url}" >&2
