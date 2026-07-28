@@ -1,4 +1,5 @@
-import { Badge, Button, Card, Separator } from "@beskid/ui-react";
+import { Badge, BeskidHub, Button, Card, Separator } from "@beskid/ui-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@beskid/ui-react/ui/sheet";
 import { Editor } from "@monaco-editor/react";
 import { FitAddon } from "@xterm/addon-fit";
 import { clsx } from "clsx";
@@ -20,6 +21,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Terminal } from "xterm";
 import { AuthGate, UserBadge } from "#/components/AuthGate";
 import { CodeHighlight } from "#/components/CodeHighlight";
+import { LessonContent } from "#/components/LessonContent";
 import LessonCard from "#/components/LessonCard";
 import { LessonEditor } from "#/components/LessonEditor";
 import Playground from "#/components/Playground";
@@ -100,34 +102,6 @@ function registerBeskidLanguage(monaco: typeof monacoEditor): void {
 			],
 		},
 	});
-}
-
-/** Escape HTML entities in plain text — used for inline code-snippet rendering. */
-function escapeHtml(raw: string): string {
-	return raw
-		.replace(/&/g, "&amp;")
-		.replace(/</g, "&lt;")
-		.replace(/>/g, "&gt;")
-		.replace(/"/g, "&quot;");
-}
-
-/** Convert a minimal markdown subset into HTML suitable for dangerouslySetInnerHTML. */
-function markdownToHtml(md: string): string {
-	return md
-		.replace(/##\s/g, '<h2 class="text-lg font-semibold mt-4 mb-2 text-primary">')
-		.replace(
-			/###\s/g,
-			'<h3 class="text-base font-semibold mt-3 mb-1 text-foreground/90">',
-		)
-		.replace(
-			/```beskid\n([\s\S]*?)```/g,
-			(_: string, code: string) =>
-				`<div data-code-sample="">${escapeHtml(code)}</div>`,
-		)
-		.replace(/```(\w*)\n?/g, '<pre class="lesson-code-block"><code>')
-		.replace(/```/g, "</code></pre>")
-		.replace(/\n- /g, '\n<li class="lesson-list-item">')
-		.replace(/\n/g, "<br/>");
 }
 
 // ── Components ─────────────────────────────────────────────────────────────────
@@ -320,12 +294,7 @@ function LessonView({
 			{/* Detailed content */}
 			{exercise.detailedContent && (
 				<Card className="lesson-content-card">
-					<div
-						className="lesson-prose"
-						dangerouslySetInnerHTML={{
-							__html: markdownToHtml(exercise.detailedContent),
-						}}
-					/>
+					<LessonContent markdown={exercise.detailedContent} />
 				</Card>
 			)}
 
@@ -486,6 +455,13 @@ function App() {
 	);
 	const [viewMode, setViewMode] = useState<ViewMode>("lesson");
 	const [sidebarOpen, setSidebarOpen] = useState(true);
+	const [isCompact, setIsCompact] = useState(() => window.matchMedia("(max-width: 1279px)").matches);
+	useEffect(() => {
+		const media = window.matchMedia("(max-width: 1279px)");
+		const update = () => setIsCompact(media.matches);
+		media.addEventListener("change", update);
+		return () => media.removeEventListener("change", update);
+	}, []);
 
 	// ── Persist passed lessons ─────────────────────────────────────────────────
 
@@ -548,6 +524,7 @@ function App() {
 				<div className="learn-shell">
 					<header className="learn-header">
 						<div className="learn-header-left">
+							<BeskidHub />
 							<GraduationCap className="w-6 h-6 text-primary" />
 							<h1 className="text-xl font-bold">Beskid Learn</h1>
 
@@ -611,7 +588,7 @@ function App() {
 							)}
 						</main>
 
-						{sidebarOpen && (
+						{sidebarOpen && !isCompact && (
 							<aside className="learn-sidebar">
 								<Card className="sidebar-card">
 									<h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
@@ -642,6 +619,14 @@ function App() {
 									categories={categories}
 								/>
 							</aside>
+						)}
+						{isCompact && (
+							<Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+								<SheetContent side="right" className="w-[min(24rem,90vw)] overflow-y-auto">
+									<SheetHeader><SheetTitle>Lessons</SheetTitle></SheetHeader>
+									<div className="space-y-4 px-4 pb-6">{learnExercises.map((ex) => <LessonCard key={ex.id} lesson={ex} isActive={activeExercise.id === ex.id} isCompleted={passedLessons[ex.id] ?? false} onSelect={() => { setActiveExercise(ex); setViewMode("lesson"); setSidebarOpen(false); }} />)}<ProgressTracker passedLessons={passedLessons} exerciseCount={learnExercises.length} categories={categories} /></div>
+								</SheetContent>
+							</Sheet>
 						)}
 					</div>
 				</div>

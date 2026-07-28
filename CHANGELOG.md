@@ -9,6 +9,21 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Changed
+
+- Learn now renders curriculum Markdown structurally, adopts shared React UI styling and hub navigation, and presents its lesson rail as an off-canvas drawer below desktop widths.
+
+- The runtime OpenSpec now records the Fibers 0.1.13 poll-driven compatibility
+  contract: deterministic in-place `run_once`, ready/not-ready wake behavior,
+  monitor result/error truth, linked cancellation, and the deprecated
+  stackful-yield mapping to the canonical scheduler.
+- Parser recovery was restructured around shared sync-boundary primitives and
+  expanded to cover more statement/expression boundary shapes, including operator
+  starts and wider syntax-start coverage for semicolon synchronization.
+- Parser recovery member/index heuristics now handle `Pos(0)` parser-fallback
+  failures by anchoring to tail-line syntax markers (`.` / `[`), enabling robust
+  placeholder insertion for missing field/index tails in incomplete expressions.
+
 ### Fixed
 
 - Runtime OpenSpec now parses its callback, scheduler, and composition
@@ -41,6 +56,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - The canonical-runtime OpenSpec now requires one registry-backed
   `gc_external_root_count` export, with external-root lifecycle coverage that
   distinguishes registered roots from temporary handles.
+- Production delivery automation no longer binds the reusable Coolify promotion job to
+  the `production` GitHub environment, removing the manual environment-approval
+  gate while preserving lane validation, manifest verification, and smoke-policy checks.
 - Learn's production container now uses the pinned Bun runtime required by its
   `Bun.serve`/`Bun.file` server, with a CI contract preventing a Node-only
   runtime regression that would fail its healthcheck at startup.
