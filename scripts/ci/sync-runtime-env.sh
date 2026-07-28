@@ -8,8 +8,11 @@ config="$2"
 case "${lane}" in staging|production) ;; *) echo "invalid lane: ${lane}" >&2; exit 2 ;; esac
 [[ -f "${config}" ]] || { echo "lane config not found: ${config}" >&2; exit 1; }
 
-: "${VAULT_ADDR:=${OPENBAO_ADDR:-https://secrets.bdziam.dev}}"
-OPENBAO_ADDR="${OPENBAO_ADDR:-${VAULT_ADDR}}"
+# Require an explicit lane endpoint. Defaulting to a hardcoded host would send
+# OPENBAO_TOKEN to whatever instance that name resolves to; VAULT_ADDR stays a
+# conventional fallback so existing Vault-style environments keep working.
+OPENBAO_ADDR="${OPENBAO_ADDR:-${VAULT_ADDR:-}}"
+: "${OPENBAO_ADDR:?Set OPENBAO_ADDR (or VAULT_ADDR) to the lane OpenBao endpoint}"
 OPENBAO_ADDR="${OPENBAO_ADDR%/}"
 : "${OPENBAO_TOKEN:?Set OPENBAO_TOKEN}"
 : "${COOLIFY_ENDPOINT:?Set COOLIFY_ENDPOINT}"
