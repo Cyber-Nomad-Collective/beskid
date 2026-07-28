@@ -56,6 +56,9 @@ assert_contains "$(cat "${root}/site/learn/src/styles.css")" \
 assert_contains "$(cat "${root}/site/learn/src/styles.css")" \
   'styles/shadcn-entry.css' \
   "Learn loads shared component tokens"
+assert_contains "$(cat "${root}/site/learn/src/styles.css")" \
+  '--color-border: var(--border)' \
+  "Learn exposes semantic Tailwind component colors"
 assert_contains "$(cat "${root}/site/learn/vite.config.ts")" \
   '@tailwindcss/vite' \
   "Learn compiles shared component utilities"
