@@ -111,6 +111,11 @@ jobs:
             export TRACEPARENT="00-${trace_id}-${span_id}-01"
             export BESKID_RELEASE_MANIFEST_SHA256="${manifest_sha}"
             ./scripts/ci/sync-runtime-env.sh "${LANE}" "beskid_infra/config/coolify-${LANE}.json"
-            args+=(--apply --smoke-script ./scripts/ci/post-deploy-smoke.sh)
+            if [[ -n "${BESKID_SMOKE_URLS:-}" ]]; then
+              args+=(--smoke-script ./scripts/ci/post-deploy-smoke.sh)
+            else
+              echo "warning: BESKID_SMOKE_URLS is not configured; skipping post-deploy smoke checks"
+            fi
+            args+=(--apply)
           fi
           ./scripts/ci/deploy-release-manifest.sh "${args[@]}"
