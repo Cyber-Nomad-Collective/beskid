@@ -26,6 +26,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Learn's dedicated frozen pnpm lock now matches its release manifest, while
+  the corelib test-spine catalog and GitNexus Bun lock stay in parity with
+  their respective CI gates.
 - Platform Spec now bundles the shared sidebar and Beskid Hub styles, restoring
   the desktop sidebar and properly styled service launcher. Learn and pckg now
   compile the shared React component utilities and theme tokens as well; the
