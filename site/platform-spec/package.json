@@ -8,8 +8,9 @@
 	},
 	"scripts": {
 		"dev": "vite dev --port 8460",
-		"build": "pnpm run seed:static && pnpm run verify:seed && vite build && pnpm run seed:bundle && node --import tsx scripts/sync-root-stylesheet.ts",
+		"build": "pnpm run seed:static && pnpm run verify:seed && vite build && pnpm run seed:bundle && node --import tsx scripts/sync-root-stylesheet.ts && pnpm run verify:ssr-bundle",
 		"verify:client-bundle": "node --import tsx scripts/verify-client-bundle.ts",
+		"verify:ssr-bundle": "node --import tsx scripts/verify-production-ssr-bundle.ts",
 		"start": "node .output/server/index.mjs",
 		"preview": "vite preview",
 		"seed": "node --import tsx scripts/seed.ts",

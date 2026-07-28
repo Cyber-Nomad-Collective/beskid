@@ -24,6 +24,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Platform Spec's Node SSR build now resolves `tslib` through its ESM entry and
+  verifies the generated production SSR chunk can be imported with safe runtime
+  configuration, preventing a startup crash from the bundled CommonJS interop wrapper.
 - Runtime OpenSpec now parses its callback, scheduler, and composition
   requirements strictly, and records the mandatory scheduler result trampoline
   plus Process adapter-binding and string-ownership contracts before code.
