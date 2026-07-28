@@ -253,7 +253,7 @@ for argument in "$@"; do
   previous="${argument}"
 done
 case "${method}:${url}" in
-  GET:*/services/test)
+  GET:*/services/*)
     # Match Coolify Compose services: YAML docker_compose_raw + status polling.
     if [[ -f "${MOCK_COOLIFY_STATE}/rollback-redeployed" ]]; then
       touch "${MOCK_COOLIFY_STATE}/rollback-complete"
@@ -262,7 +262,7 @@ case "${method}:${url}" in
       echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[]}'
     fi
     ;;
-  PATCH:*/services/test)
+  PATCH:*/services/*)
     printf '%s' "${body}" >"${MOCK_COOLIFY_PATCH_BODY}"
     echo '{}'
     ;;
@@ -318,14 +318,14 @@ for argument in "$@"; do
   previous="${argument}"
 done
 case "${method}:${url}" in
-  GET:*/services/test)
+  GET:*/services/*)
     if [[ -f "${MOCK_COOLIFY_STATE}/deployed" ]]; then
       echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[{"uuid":"site","name":"site","image":"x@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"},{"uuid":"pckg","name":"pckg","image":"ghcr.io/x/pckg:${IMAGE_TAG:-main}","status":"exited"}]}'
     else
       echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[]}'
     fi
     ;;
-  PATCH:*/services/test)
+  PATCH:*/services/*)
     printf '%s' "${body}" >"${MOCK_COOLIFY_PATCH_BODY}"
     echo '{}'
     ;;
