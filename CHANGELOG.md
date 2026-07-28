@@ -28,7 +28,11 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 - Reusable staged promotion now binds its apply job to the requested GitHub
   environment, making lane-scoped OpenBao and Coolify configuration available
-  during a verified release.
+  during a verified release. Leaving the job unbound had also dropped every
+  environment-scoped variable (`OPENBAO_ADDR`, `COOLIFY_SERVICE_UUID`,
+  `BESKID_SMOKE_URLS`), so production's manual approval is now governed by the
+  `production` environment's own protection rules rather than by unbinding the
+  job.
 - Empty string literals now reserve an addressable sentinel byte in JIT data
   storage while retaining their logical zero length, satisfying the runtime
   string-pointer invariant for syscall calls.
@@ -79,9 +83,6 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - The canonical-runtime OpenSpec now requires one registry-backed
   `gc_external_root_count` export, with external-root lifecycle coverage that
   distinguishes registered roots from temporary handles.
-- Production delivery automation no longer binds the reusable Coolify promotion job to
-  the `production` GitHub environment, removing the manual environment-approval
-  gate while preserving lane validation, manifest verification, and smoke-policy checks.
 - Learn's production container now uses the pinned Bun runtime required by its
   `Bun.serve`/`Bun.file` server, with a CI contract preventing a Node-only
   runtime regression that would fail its healthcheck at startup.
