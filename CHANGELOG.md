@@ -26,6 +26,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Native ABI-v5 runtime-kit staging now exposes Darwin's anonymous-memory
+  mapping definitions when compiling the guarded-stack host bridge, restoring
+  local release Corelib verification on macOS.
 - Reusable staged promotion now binds its apply job to the requested GitHub
   environment, making lane-scoped OpenBao and Coolify configuration available
   during a verified release. Leaving the job unbound had also dropped every
