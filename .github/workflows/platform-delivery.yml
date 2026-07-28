@@ -43,6 +43,30 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  diagnose-staging:
+    if: ${{ github.event_name == 'workflow_dispatch' && !inputs.publish && !inputs.apply-staging }}
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v7
+      - run: ./scripts/ci/init-submodules.sh beskid_infra
+      - env:
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+        run: ./scripts/ci/coolify-diagnostics.sh staging
+
+  diagnose-production:
+    if: ${{ github.event_name == 'workflow_dispatch' && !inputs.publish && !inputs.apply-staging }}
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v7
+      - run: ./scripts/ci/init-submodules.sh beskid_infra
+      - env:
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+        run: ./scripts/ci/coolify-diagnostics.sh production
+
   openspec:
     uses: ./.github/workflows/reusable-quality.yml
     with:
