@@ -24,6 +24,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Coolify promotion now verifies every lane-active immutable Compose application
+  at its exact digest and healthy runtime state before accepting deployment;
+  applied promotions always run canonical HTTPS smoke checks for the lane.
 - Platform Spec's Node SSR build now resolves `tslib` through its ESM entry and
   verifies the generated production SSR chunk can be imported with safe runtime
   configuration, preventing a startup crash from the bundled CommonJS interop wrapper.

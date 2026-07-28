@@ -67,6 +67,7 @@ fi
 export COOLIFY_SERVICE_UUID
 api="${COOLIFY_ENDPOINT%/}/api/v1"
 domains_config="${script_dir}/../../beskid_infra/config/domains.json"
+lane_config="${script_dir}/../../beskid_infra/config/coolify-${lane}.json"
 
 if [[ ! -f "${domains_config}" ]]; then
   echo "domain configuration is required for deployment: ${domains_config}" >&2
@@ -136,44 +137,112 @@ trigger_deploy() {
   return 1
 }
 
-# Coolify Compose services may keep orphaned children (e.g. dropped profile
-# services) that pin aggregate status at starting:unhealthy. Digest-pinned apps
-# from the immutable release are the readiness signal.
-digest_pinned_apps_ready() {
-  jq -e '
-    [.applications[]? | select(.image | type == "string" and test("@sha256:"))] as $apps
-    | ($apps | length) > 0
-    and all($apps[]; (.status // "" | test("^running"; "i")))
-  ' >/dev/null
+# Only active Compose applications from this immutable release are readiness
+# evidence. Coolify can retain inactive profile/orphan children from old
+# compose revisions, so those must neither satisfy nor fail this check.
+active_release_apps() {
+  local compose_file="$1" lane_config="$2" profiles
+  profiles="$(jq -r '.compose_profiles // ""' "${lane_config}")"
+  awk -v active_profiles="${profiles}" '
+    function profile_is_active(  values, profile_count, profile_index) {
+      if (service_profiles == "") return 1
+      profile_count = split(service_profiles, values, ",")
+      for (profile_index = 1; profile_index <= profile_count; profile_index++) {
+        if (index("," active_profiles ",", "," values[profile_index] ",") > 0) return 1
+      }
+      return 0
+    }
+    function flush() {
+      if (service != "" && image ~ /@sha256:/ &&
+          profile_is_active()) {
+        print service "\t" image
+      }
+    }
+    /^  [A-Za-z0-9_-]+:$/ {
+      flush()
+      service = $0
+      sub(/^  /, "", service)
+      sub(/:$/, "", service)
+      image = ""
+      service_profiles = ""
+      reading_profiles = 0
+      next
+    }
+    /^    profiles:[[:space:]]*$/ {
+      service_profiles = ""
+      reading_profiles = 1
+      next
+    }
+    reading_profiles && /^      -[[:space:]]+/ {
+      profile = $0
+      sub(/^      -[[:space:]]+/, "", profile)
+      service_profiles = service_profiles == "" ? profile : service_profiles "," profile
+      next
+    }
+    /^    image:[[:space:]]*/ {
+      reading_profiles = 0
+      image = $0
+      sub(/^    image:[[:space:]]*/, "", image)
+      if ((image ~ /^".*"$/) || (image ~ /^\047.*\047$/)) {
+        image = substr(image, 2, length(image) - 2)
+      }
+      next
+    }
+    /^    profiles:[[:space:]]*\[[^]]+\]$/ {
+      reading_profiles = 0
+      service_profiles = $0
+      sub(/^    profiles:[[:space:]]*\[/, "", service_profiles)
+      sub(/\]$/, "", service_profiles)
+      gsub(/[[:space:]]/, "", service_profiles)
+      next
+    }
+    { reading_profiles = 0 }
+    END { flush() }
+  ' "${compose_file}"
+}
+
+expected_release_apps_ready() {
+  local expected_apps="$1" response="$2" service_name image
+  [[ -n "${expected_apps}" ]] || return 1
+  while IFS=$'\t' read -r service_name image; do
+    [[ -n "${service_name}" && -n "${image}" ]] || return 1
+    jq -e --arg name "${service_name}" --arg image "${image}" '
+      any(.applications[]?;
+        .name == $name
+        and .image == $image
+        and ((.status // "") | test("^running:healthy$"; "i"))
+      )
+    ' <<<"${response}" >/dev/null || return 1
+  done <<<"${expected_apps}"
 }
 
 poll_service_status() {
-  local service_uuid="$1" started now status response
+  local service_uuid="$1" expected_apps="${2:-}" started now status response
   started="$(date +%s)"
   while true; do
     response="$(api_call GET "/services/${service_uuid}")"
     status="$(jq -r '.status // empty' <<<"${response}" | tr '[:upper:]' '[:lower:]')"
+    if [[ -n "${expected_apps}" ]] && expected_release_apps_ready "${expected_apps}" "${response}"; then
+      echo "Coolify service ${service_uuid}: active release applications are running healthy"
+      return 0
+    fi
     case "${status}" in
       running|running:*|degraded|degraded:*)
-        echo "Coolify service ${service_uuid}: ${status}"
-        return 0
+        if [[ -z "${expected_apps}" ]]; then
+          echo "Coolify service ${service_uuid}: ${status}"
+          return 0
+        fi
         ;;
       exited|exited:*|*failed*|*error*|cancelled|canceled)
         echo "Coolify service ${service_uuid}: ${status}" >&2
         return 1
         ;;
       starting|starting:*|restarting|restarting:*|'')
-        if digest_pinned_apps_ready <<<"${response}"; then
-          echo "Coolify service ${service_uuid}: digest-pinned apps running (aggregate ${status:-empty})"
-          return 0
-        fi
         ;;
       *)
-        if digest_pinned_apps_ready <<<"${response}"; then
-          echo "Coolify service ${service_uuid}: digest-pinned apps running (aggregate ${status})"
-          return 0
+        if [[ -z "${expected_apps}" ]]; then
+          echo "Coolify service ${service_uuid}: unknown status '${status}'" >&2
         fi
-        echo "Coolify service ${service_uuid}: unknown status '${status}'" >&2
         ;;
     esac
     now="$(date +%s)"
@@ -183,9 +252,9 @@ poll_service_status() {
 }
 
 poll_deploy() {
-  local deployment_id="$1" started now status response
+  local deployment_id="$1" expected_apps="${2:-}" started now status response
   if [[ "${deployment_id}" == service:* ]]; then
-    poll_service_status "${deployment_id#service:}"
+    poll_service_status "${deployment_id#service:}" "${expected_apps}"
     return
   fi
   started="$(date +%s)"
@@ -193,7 +262,13 @@ poll_deploy() {
     response="$(api_call GET "/deployments/${deployment_id}")"
     status="$(jq -r '.status // empty' <<<"${response}" | tr '[:upper:]' '[:lower:]')"
     case "${status}" in
-      finished|success|succeeded) echo "Coolify deployment ${deployment_id}: ${status}"; return 0 ;;
+      finished|success|succeeded)
+        echo "Coolify deployment ${deployment_id}: ${status}"
+        if [[ -n "${expected_apps}" ]]; then
+          poll_service_status "${COOLIFY_SERVICE_UUID}" "${expected_apps}" || return 1
+        fi
+        return 0
+        ;;
       failed|error|cancelled|canceled) echo "Coolify deployment ${deployment_id}: ${status}" >&2; return 1 ;;
       queued|in_progress|running|pending|'') ;;
       *) echo "Coolify deployment ${deployment_id}: unknown status '${status}'" >&2 ;;
@@ -205,18 +280,30 @@ poll_deploy() {
 }
 
 rollback() {
+  local previous_expected_apps
   echo "rolling back Coolify Compose after failed deployment" >&2
+  previous_expected_apps="$(active_release_apps "${previous_payload}" "${lane_config}")"
+  [[ -n "${previous_expected_apps}" ]] || {
+    echo "previous Compose has no active immutable applications to verify" >&2
+    return 1
+  }
   # Coolify PATCH expects base64(docker_compose_raw), same as the apply path.
   patch_compose "${previous_payload}"
   rollback_id="$(trigger_deploy)"
-  poll_deploy "${rollback_id}"
+  poll_deploy "${rollback_id}" "${previous_expected_apps}"
 }
 
 if ! deployment_id="$(trigger_deploy)"; then
   rollback
   exit 1
 fi
-if ! poll_deploy "${deployment_id}"; then
+expected_release_apps="$(active_release_apps "${rendered}" "${lane_config}")"
+if [[ -z "${expected_release_apps}" ]]; then
+  echo "rendered Compose has no active immutable release applications for ${lane}" >&2
+  rollback
+  exit 1
+fi
+if ! poll_deploy "${deployment_id}" "${expected_release_apps}"; then
   rollback
   exit 1
 fi
