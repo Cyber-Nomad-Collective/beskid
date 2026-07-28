@@ -8,558 +8,558 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as AccountRouteImport } from "./routes/account";
-import { Route as AdminIndexRouteImport } from "./routes/admin/index";
-import { Route as AdminPairingRequestIdRouteImport } from "./routes/admin/pairing/$requestId";
-import { Route as AdminPairingIndexRouteImport } from "./routes/admin/pairing/index";
-import { Route as AdminPairingNewRouteImport } from "./routes/admin/pairing/new";
-import { Route as ApiAuthLogoutRouteImport } from "./routes/api/auth/logout";
-import { Route as ApiV1AdminAdminsRouteImport } from "./routes/api/v1/admin/admins";
-import { Route as ApiV1AdminSetupRouteImport } from "./routes/api/v1/admin/setup";
-import { Route as ApiV1AdminStatusRouteImport } from "./routes/api/v1/admin/status";
-import { Route as ApiV1AppsRouteImport } from "./routes/api/v1/apps";
-import { Route as ApiV1GithubSplatRouteImport } from "./routes/api/v1/github/$";
-import { Route as ApiV1HealthRouteImport } from "./routes/api/v1/health";
-import { Route as ApiV1MeRouteImport } from "./routes/api/v1/me";
-import { Route as ApiV1OpenapiJsonRouteImport } from "./routes/api/v1/openapi.json";
-import { Route as ApiV1PairingApproveRouteImport } from "./routes/api/v1/pairing/approve";
-import { Route as ApiV1PairingRequestsRouteImport } from "./routes/api/v1/pairing/requests";
-import { Route as ApiV1PairingRequestsRequestIdRouteImport } from "./routes/api/v1/pairing/requests/$requestId";
-import { Route as ApiV1PairingStatusRouteImport } from "./routes/api/v1/pairing/status";
-import { Route as CallbackRouteImport } from "./routes/callback";
-import { Route as IndexRouteImport } from "./routes/index";
-import { Route as LoginRouteImport } from "./routes/login";
-import { Route as MetricsRouteImport } from "./routes/metrics";
-import { Route as OnboardingRouteImport } from "./routes/onboarding";
-import { Route as ProfileRouteImport } from "./routes/profile";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccountRouteImport } from './routes/account'
+import { Route as CallbackRouteImport } from './routes/callback'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as MetricsRouteImport } from './routes/metrics'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminPairingIndexRouteImport } from './routes/admin/pairing/index'
+import { Route as AdminPairingRequestIdRouteImport } from './routes/admin/pairing/$requestId'
+import { Route as AdminPairingNewRouteImport } from './routes/admin/pairing/new'
+import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
+import { Route as ApiV1AppsRouteImport } from './routes/api/v1/apps'
+import { Route as ApiV1HealthRouteImport } from './routes/api/v1/health'
+import { Route as ApiV1MeRouteImport } from './routes/api/v1/me'
+import { Route as ApiV1AdminAdminsRouteImport } from './routes/api/v1/admin/admins'
+import { Route as ApiV1AdminSetupRouteImport } from './routes/api/v1/admin/setup'
+import { Route as ApiV1AdminStatusRouteImport } from './routes/api/v1/admin/status'
+import { Route as ApiV1GithubSplatRouteImport } from './routes/api/v1/github/$'
+import { Route as ApiV1OpenapiJsonRouteImport } from './routes/api/v1/openapi.json'
+import { Route as ApiV1PairingApproveRouteImport } from './routes/api/v1/pairing/approve'
+import { Route as ApiV1PairingRequestsRouteImport } from './routes/api/v1/pairing/requests'
+import { Route as ApiV1PairingStatusRouteImport } from './routes/api/v1/pairing/status'
+import { Route as ApiV1PairingRequestsRequestIdRouteImport } from './routes/api/v1/pairing/requests/$requestId'
 
 const IndexRoute = IndexRouteImport.update({
-	id: "/",
-	path: "/",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AccountRoute = AccountRouteImport.update({
-	id: "/account",
-	path: "/account",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CallbackRoute = CallbackRouteImport.update({
-	id: "/callback",
-	path: "/callback",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
-	id: "/login",
-	path: "/login",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MetricsRoute = MetricsRouteImport.update({
-	id: "/metrics",
-	path: "/metrics",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/metrics',
+  path: '/metrics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
-	id: "/onboarding",
-	path: "/onboarding",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
-	id: "/profile",
-	path: "/profile",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
-	id: "/admin/",
-	path: "/admin/",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminPairingIndexRoute = AdminPairingIndexRouteImport.update({
-	id: "/admin/pairing/",
-	path: "/admin/pairing/",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/admin/pairing/',
+  path: '/admin/pairing/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminPairingRequestIdRoute = AdminPairingRequestIdRouteImport.update({
-	id: "/admin/pairing/$requestId",
-	path: "/admin/pairing/$requestId",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/admin/pairing/$requestId',
+  path: '/admin/pairing/$requestId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminPairingNewRoute = AdminPairingNewRouteImport.update({
-	id: "/admin/pairing/new",
-	path: "/admin/pairing/new",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/admin/pairing/new',
+  path: '/admin/pairing/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
-	id: "/api/auth/logout",
-	path: "/api/auth/logout",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/api/auth/logout',
+  path: '/api/auth/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1AppsRoute = ApiV1AppsRouteImport.update({
-	id: "/api/v1/apps",
-	path: "/api/v1/apps",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/api/v1/apps',
+  path: '/api/v1/apps',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1HealthRoute = ApiV1HealthRouteImport.update({
-	id: "/api/v1/health",
-	path: "/api/v1/health",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/api/v1/health',
+  path: '/api/v1/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1MeRoute = ApiV1MeRouteImport.update({
-	id: "/api/v1/me",
-	path: "/api/v1/me",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/api/v1/me',
+  path: '/api/v1/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1AdminAdminsRoute = ApiV1AdminAdminsRouteImport.update({
-	id: "/api/v1/admin/admins",
-	path: "/api/v1/admin/admins",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/api/v1/admin/admins',
+  path: '/api/v1/admin/admins',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1AdminSetupRoute = ApiV1AdminSetupRouteImport.update({
-	id: "/api/v1/admin/setup",
-	path: "/api/v1/admin/setup",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/api/v1/admin/setup',
+  path: '/api/v1/admin/setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1AdminStatusRoute = ApiV1AdminStatusRouteImport.update({
-	id: "/api/v1/admin/status",
-	path: "/api/v1/admin/status",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/api/v1/admin/status',
+  path: '/api/v1/admin/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1GithubSplatRoute = ApiV1GithubSplatRouteImport.update({
-	id: "/api/v1/github/$",
-	path: "/api/v1/github/$",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/api/v1/github/$',
+  path: '/api/v1/github/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1OpenapiJsonRoute = ApiV1OpenapiJsonRouteImport.update({
-	id: "/api/v1/openapi/json",
-	path: "/api/v1/openapi/json",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/api/v1/openapi/json',
+  path: '/api/v1/openapi/json',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1PairingApproveRoute = ApiV1PairingApproveRouteImport.update({
-	id: "/api/v1/pairing/approve",
-	path: "/api/v1/pairing/approve",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/api/v1/pairing/approve',
+  path: '/api/v1/pairing/approve',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1PairingRequestsRoute = ApiV1PairingRequestsRouteImport.update({
-	id: "/api/v1/pairing/requests",
-	path: "/api/v1/pairing/requests",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/api/v1/pairing/requests',
+  path: '/api/v1/pairing/requests',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1PairingStatusRoute = ApiV1PairingStatusRouteImport.update({
-	id: "/api/v1/pairing/status",
-	path: "/api/v1/pairing/status",
-	getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/api/v1/pairing/status',
+  path: '/api/v1/pairing/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1PairingRequestsRequestIdRoute =
-	ApiV1PairingRequestsRequestIdRouteImport.update({
-		id: "/$requestId",
-		path: "/$requestId",
-		getParentRoute: () => ApiV1PairingRequestsRoute,
-	} as any);
+  ApiV1PairingRequestsRequestIdRouteImport.update({
+    id: '/$requestId',
+    path: '/$requestId',
+    getParentRoute: () => ApiV1PairingRequestsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-	"/": typeof IndexRoute;
-	"/account": typeof AccountRoute;
-	"/callback": typeof CallbackRoute;
-	"/login": typeof LoginRoute;
-	"/metrics": typeof MetricsRoute;
-	"/onboarding": typeof OnboardingRoute;
-	"/profile": typeof ProfileRoute;
-	"/admin/": typeof AdminIndexRoute;
-	"/admin/pairing/$requestId": typeof AdminPairingRequestIdRoute;
-	"/admin/pairing/new": typeof AdminPairingNewRoute;
-	"/api/auth/logout": typeof ApiAuthLogoutRoute;
-	"/api/v1/apps": typeof ApiV1AppsRoute;
-	"/api/v1/health": typeof ApiV1HealthRoute;
-	"/api/v1/me": typeof ApiV1MeRoute;
-	"/admin/pairing/": typeof AdminPairingIndexRoute;
-	"/api/v1/admin/admins": typeof ApiV1AdminAdminsRoute;
-	"/api/v1/admin/setup": typeof ApiV1AdminSetupRoute;
-	"/api/v1/admin/status": typeof ApiV1AdminStatusRoute;
-	"/api/v1/github/$": typeof ApiV1GithubSplatRoute;
-	"/api/v1/openapi/json": typeof ApiV1OpenapiJsonRoute;
-	"/api/v1/pairing/approve": typeof ApiV1PairingApproveRoute;
-	"/api/v1/pairing/requests": typeof ApiV1PairingRequestsRouteWithChildren;
-	"/api/v1/pairing/status": typeof ApiV1PairingStatusRoute;
-	"/api/v1/pairing/requests/$requestId": typeof ApiV1PairingRequestsRequestIdRoute;
+  '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/callback': typeof CallbackRoute
+  '/login': typeof LoginRoute
+  '/metrics': typeof MetricsRoute
+  '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/pairing/$requestId': typeof AdminPairingRequestIdRoute
+  '/admin/pairing/new': typeof AdminPairingNewRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/v1/apps': typeof ApiV1AppsRoute
+  '/api/v1/health': typeof ApiV1HealthRoute
+  '/api/v1/me': typeof ApiV1MeRoute
+  '/admin/pairing/': typeof AdminPairingIndexRoute
+  '/api/v1/admin/admins': typeof ApiV1AdminAdminsRoute
+  '/api/v1/admin/setup': typeof ApiV1AdminSetupRoute
+  '/api/v1/admin/status': typeof ApiV1AdminStatusRoute
+  '/api/v1/github/$': typeof ApiV1GithubSplatRoute
+  '/api/v1/openapi/json': typeof ApiV1OpenapiJsonRoute
+  '/api/v1/pairing/approve': typeof ApiV1PairingApproveRoute
+  '/api/v1/pairing/requests': typeof ApiV1PairingRequestsRouteWithChildren
+  '/api/v1/pairing/status': typeof ApiV1PairingStatusRoute
+  '/api/v1/pairing/requests/$requestId': typeof ApiV1PairingRequestsRequestIdRoute
 }
 export interface FileRoutesByTo {
-	"/": typeof IndexRoute;
-	"/account": typeof AccountRoute;
-	"/callback": typeof CallbackRoute;
-	"/login": typeof LoginRoute;
-	"/metrics": typeof MetricsRoute;
-	"/onboarding": typeof OnboardingRoute;
-	"/profile": typeof ProfileRoute;
-	"/admin": typeof AdminIndexRoute;
-	"/admin/pairing/$requestId": typeof AdminPairingRequestIdRoute;
-	"/admin/pairing/new": typeof AdminPairingNewRoute;
-	"/api/auth/logout": typeof ApiAuthLogoutRoute;
-	"/api/v1/apps": typeof ApiV1AppsRoute;
-	"/api/v1/health": typeof ApiV1HealthRoute;
-	"/api/v1/me": typeof ApiV1MeRoute;
-	"/admin/pairing": typeof AdminPairingIndexRoute;
-	"/api/v1/admin/admins": typeof ApiV1AdminAdminsRoute;
-	"/api/v1/admin/setup": typeof ApiV1AdminSetupRoute;
-	"/api/v1/admin/status": typeof ApiV1AdminStatusRoute;
-	"/api/v1/github/$": typeof ApiV1GithubSplatRoute;
-	"/api/v1/openapi/json": typeof ApiV1OpenapiJsonRoute;
-	"/api/v1/pairing/approve": typeof ApiV1PairingApproveRoute;
-	"/api/v1/pairing/requests": typeof ApiV1PairingRequestsRouteWithChildren;
-	"/api/v1/pairing/status": typeof ApiV1PairingStatusRoute;
-	"/api/v1/pairing/requests/$requestId": typeof ApiV1PairingRequestsRequestIdRoute;
+  '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/callback': typeof CallbackRoute
+  '/login': typeof LoginRoute
+  '/metrics': typeof MetricsRoute
+  '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
+  '/admin': typeof AdminIndexRoute
+  '/admin/pairing/$requestId': typeof AdminPairingRequestIdRoute
+  '/admin/pairing/new': typeof AdminPairingNewRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/v1/apps': typeof ApiV1AppsRoute
+  '/api/v1/health': typeof ApiV1HealthRoute
+  '/api/v1/me': typeof ApiV1MeRoute
+  '/admin/pairing': typeof AdminPairingIndexRoute
+  '/api/v1/admin/admins': typeof ApiV1AdminAdminsRoute
+  '/api/v1/admin/setup': typeof ApiV1AdminSetupRoute
+  '/api/v1/admin/status': typeof ApiV1AdminStatusRoute
+  '/api/v1/github/$': typeof ApiV1GithubSplatRoute
+  '/api/v1/openapi/json': typeof ApiV1OpenapiJsonRoute
+  '/api/v1/pairing/approve': typeof ApiV1PairingApproveRoute
+  '/api/v1/pairing/requests': typeof ApiV1PairingRequestsRouteWithChildren
+  '/api/v1/pairing/status': typeof ApiV1PairingStatusRoute
+  '/api/v1/pairing/requests/$requestId': typeof ApiV1PairingRequestsRequestIdRoute
 }
 export interface FileRoutesById {
-	__root__: typeof rootRouteImport;
-	"/": typeof IndexRoute;
-	"/account": typeof AccountRoute;
-	"/callback": typeof CallbackRoute;
-	"/login": typeof LoginRoute;
-	"/metrics": typeof MetricsRoute;
-	"/onboarding": typeof OnboardingRoute;
-	"/profile": typeof ProfileRoute;
-	"/admin/": typeof AdminIndexRoute;
-	"/admin/pairing/$requestId": typeof AdminPairingRequestIdRoute;
-	"/admin/pairing/new": typeof AdminPairingNewRoute;
-	"/api/auth/logout": typeof ApiAuthLogoutRoute;
-	"/api/v1/apps": typeof ApiV1AppsRoute;
-	"/api/v1/health": typeof ApiV1HealthRoute;
-	"/api/v1/me": typeof ApiV1MeRoute;
-	"/admin/pairing/": typeof AdminPairingIndexRoute;
-	"/api/v1/admin/admins": typeof ApiV1AdminAdminsRoute;
-	"/api/v1/admin/setup": typeof ApiV1AdminSetupRoute;
-	"/api/v1/admin/status": typeof ApiV1AdminStatusRoute;
-	"/api/v1/github/$": typeof ApiV1GithubSplatRoute;
-	"/api/v1/openapi/json": typeof ApiV1OpenapiJsonRoute;
-	"/api/v1/pairing/approve": typeof ApiV1PairingApproveRoute;
-	"/api/v1/pairing/requests": typeof ApiV1PairingRequestsRouteWithChildren;
-	"/api/v1/pairing/status": typeof ApiV1PairingStatusRoute;
-	"/api/v1/pairing/requests/$requestId": typeof ApiV1PairingRequestsRequestIdRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/callback': typeof CallbackRoute
+  '/login': typeof LoginRoute
+  '/metrics': typeof MetricsRoute
+  '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
+  '/admin/': typeof AdminIndexRoute
+  '/admin/pairing/$requestId': typeof AdminPairingRequestIdRoute
+  '/admin/pairing/new': typeof AdminPairingNewRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/v1/apps': typeof ApiV1AppsRoute
+  '/api/v1/health': typeof ApiV1HealthRoute
+  '/api/v1/me': typeof ApiV1MeRoute
+  '/admin/pairing/': typeof AdminPairingIndexRoute
+  '/api/v1/admin/admins': typeof ApiV1AdminAdminsRoute
+  '/api/v1/admin/setup': typeof ApiV1AdminSetupRoute
+  '/api/v1/admin/status': typeof ApiV1AdminStatusRoute
+  '/api/v1/github/$': typeof ApiV1GithubSplatRoute
+  '/api/v1/openapi/json': typeof ApiV1OpenapiJsonRoute
+  '/api/v1/pairing/approve': typeof ApiV1PairingApproveRoute
+  '/api/v1/pairing/requests': typeof ApiV1PairingRequestsRouteWithChildren
+  '/api/v1/pairing/status': typeof ApiV1PairingStatusRoute
+  '/api/v1/pairing/requests/$requestId': typeof ApiV1PairingRequestsRequestIdRoute
 }
 export interface FileRouteTypes {
-	fileRoutesByFullPath: FileRoutesByFullPath;
-	fullPaths:
-		| "/"
-		| "/account"
-		| "/callback"
-		| "/login"
-		| "/metrics"
-		| "/onboarding"
-		| "/profile"
-		| "/admin/"
-		| "/admin/pairing/$requestId"
-		| "/admin/pairing/new"
-		| "/api/auth/logout"
-		| "/api/v1/apps"
-		| "/api/v1/health"
-		| "/api/v1/me"
-		| "/admin/pairing/"
-		| "/api/v1/admin/admins"
-		| "/api/v1/admin/setup"
-		| "/api/v1/admin/status"
-		| "/api/v1/github/$"
-		| "/api/v1/openapi/json"
-		| "/api/v1/pairing/approve"
-		| "/api/v1/pairing/requests"
-		| "/api/v1/pairing/status"
-		| "/api/v1/pairing/requests/$requestId";
-	fileRoutesByTo: FileRoutesByTo;
-	to:
-		| "/"
-		| "/account"
-		| "/callback"
-		| "/login"
-		| "/metrics"
-		| "/onboarding"
-		| "/profile"
-		| "/admin"
-		| "/admin/pairing/$requestId"
-		| "/admin/pairing/new"
-		| "/api/auth/logout"
-		| "/api/v1/apps"
-		| "/api/v1/health"
-		| "/api/v1/me"
-		| "/admin/pairing"
-		| "/api/v1/admin/admins"
-		| "/api/v1/admin/setup"
-		| "/api/v1/admin/status"
-		| "/api/v1/github/$"
-		| "/api/v1/openapi/json"
-		| "/api/v1/pairing/approve"
-		| "/api/v1/pairing/requests"
-		| "/api/v1/pairing/status"
-		| "/api/v1/pairing/requests/$requestId";
-	id:
-		| "__root__"
-		| "/"
-		| "/account"
-		| "/callback"
-		| "/login"
-		| "/metrics"
-		| "/onboarding"
-		| "/profile"
-		| "/admin/"
-		| "/admin/pairing/$requestId"
-		| "/admin/pairing/new"
-		| "/api/auth/logout"
-		| "/api/v1/apps"
-		| "/api/v1/health"
-		| "/api/v1/me"
-		| "/admin/pairing/"
-		| "/api/v1/admin/admins"
-		| "/api/v1/admin/setup"
-		| "/api/v1/admin/status"
-		| "/api/v1/github/$"
-		| "/api/v1/openapi/json"
-		| "/api/v1/pairing/approve"
-		| "/api/v1/pairing/requests"
-		| "/api/v1/pairing/status"
-		| "/api/v1/pairing/requests/$requestId";
-	fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/account'
+    | '/callback'
+    | '/login'
+    | '/metrics'
+    | '/onboarding'
+    | '/profile'
+    | '/admin/'
+    | '/admin/pairing/$requestId'
+    | '/admin/pairing/new'
+    | '/api/auth/logout'
+    | '/api/v1/apps'
+    | '/api/v1/health'
+    | '/api/v1/me'
+    | '/admin/pairing/'
+    | '/api/v1/admin/admins'
+    | '/api/v1/admin/setup'
+    | '/api/v1/admin/status'
+    | '/api/v1/github/$'
+    | '/api/v1/openapi/json'
+    | '/api/v1/pairing/approve'
+    | '/api/v1/pairing/requests'
+    | '/api/v1/pairing/status'
+    | '/api/v1/pairing/requests/$requestId'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/account'
+    | '/callback'
+    | '/login'
+    | '/metrics'
+    | '/onboarding'
+    | '/profile'
+    | '/admin'
+    | '/admin/pairing/$requestId'
+    | '/admin/pairing/new'
+    | '/api/auth/logout'
+    | '/api/v1/apps'
+    | '/api/v1/health'
+    | '/api/v1/me'
+    | '/admin/pairing'
+    | '/api/v1/admin/admins'
+    | '/api/v1/admin/setup'
+    | '/api/v1/admin/status'
+    | '/api/v1/github/$'
+    | '/api/v1/openapi/json'
+    | '/api/v1/pairing/approve'
+    | '/api/v1/pairing/requests'
+    | '/api/v1/pairing/status'
+    | '/api/v1/pairing/requests/$requestId'
+  id:
+    | '__root__'
+    | '/'
+    | '/account'
+    | '/callback'
+    | '/login'
+    | '/metrics'
+    | '/onboarding'
+    | '/profile'
+    | '/admin/'
+    | '/admin/pairing/$requestId'
+    | '/admin/pairing/new'
+    | '/api/auth/logout'
+    | '/api/v1/apps'
+    | '/api/v1/health'
+    | '/api/v1/me'
+    | '/admin/pairing/'
+    | '/api/v1/admin/admins'
+    | '/api/v1/admin/setup'
+    | '/api/v1/admin/status'
+    | '/api/v1/github/$'
+    | '/api/v1/openapi/json'
+    | '/api/v1/pairing/approve'
+    | '/api/v1/pairing/requests'
+    | '/api/v1/pairing/status'
+    | '/api/v1/pairing/requests/$requestId'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-	IndexRoute: typeof IndexRoute;
-	AccountRoute: typeof AccountRoute;
-	CallbackRoute: typeof CallbackRoute;
-	LoginRoute: typeof LoginRoute;
-	MetricsRoute: typeof MetricsRoute;
-	OnboardingRoute: typeof OnboardingRoute;
-	ProfileRoute: typeof ProfileRoute;
-	AdminIndexRoute: typeof AdminIndexRoute;
-	AdminPairingRequestIdRoute: typeof AdminPairingRequestIdRoute;
-	AdminPairingNewRoute: typeof AdminPairingNewRoute;
-	ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute;
-	ApiV1AppsRoute: typeof ApiV1AppsRoute;
-	ApiV1HealthRoute: typeof ApiV1HealthRoute;
-	ApiV1MeRoute: typeof ApiV1MeRoute;
-	AdminPairingIndexRoute: typeof AdminPairingIndexRoute;
-	ApiV1AdminAdminsRoute: typeof ApiV1AdminAdminsRoute;
-	ApiV1AdminSetupRoute: typeof ApiV1AdminSetupRoute;
-	ApiV1AdminStatusRoute: typeof ApiV1AdminStatusRoute;
-	ApiV1GithubSplatRoute: typeof ApiV1GithubSplatRoute;
-	ApiV1OpenapiJsonRoute: typeof ApiV1OpenapiJsonRoute;
-	ApiV1PairingApproveRoute: typeof ApiV1PairingApproveRoute;
-	ApiV1PairingRequestsRoute: typeof ApiV1PairingRequestsRouteWithChildren;
-	ApiV1PairingStatusRoute: typeof ApiV1PairingStatusRoute;
+  IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
+  CallbackRoute: typeof CallbackRoute
+  LoginRoute: typeof LoginRoute
+  MetricsRoute: typeof MetricsRoute
+  OnboardingRoute: typeof OnboardingRoute
+  ProfileRoute: typeof ProfileRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminPairingRequestIdRoute: typeof AdminPairingRequestIdRoute
+  AdminPairingNewRoute: typeof AdminPairingNewRoute
+  ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
+  ApiV1AppsRoute: typeof ApiV1AppsRoute
+  ApiV1HealthRoute: typeof ApiV1HealthRoute
+  ApiV1MeRoute: typeof ApiV1MeRoute
+  AdminPairingIndexRoute: typeof AdminPairingIndexRoute
+  ApiV1AdminAdminsRoute: typeof ApiV1AdminAdminsRoute
+  ApiV1AdminSetupRoute: typeof ApiV1AdminSetupRoute
+  ApiV1AdminStatusRoute: typeof ApiV1AdminStatusRoute
+  ApiV1GithubSplatRoute: typeof ApiV1GithubSplatRoute
+  ApiV1OpenapiJsonRoute: typeof ApiV1OpenapiJsonRoute
+  ApiV1PairingApproveRoute: typeof ApiV1PairingApproveRoute
+  ApiV1PairingRequestsRoute: typeof ApiV1PairingRequestsRouteWithChildren
+  ApiV1PairingStatusRoute: typeof ApiV1PairingStatusRoute
 }
 
-declare module "@tanstack/react-router" {
-	interface FileRoutesByPath {
-		"/": {
-			id: "/";
-			path: "/";
-			fullPath: "/";
-			preLoaderRoute: typeof IndexRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/account": {
-			id: "/account";
-			path: "/account";
-			fullPath: "/account";
-			preLoaderRoute: typeof AccountRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/callback": {
-			id: "/callback";
-			path: "/callback";
-			fullPath: "/callback";
-			preLoaderRoute: typeof CallbackRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/login": {
-			id: "/login";
-			path: "/login";
-			fullPath: "/login";
-			preLoaderRoute: typeof LoginRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/metrics": {
-			id: "/metrics";
-			path: "/metrics";
-			fullPath: "/metrics";
-			preLoaderRoute: typeof MetricsRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/onboarding": {
-			id: "/onboarding";
-			path: "/onboarding";
-			fullPath: "/onboarding";
-			preLoaderRoute: typeof OnboardingRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/profile": {
-			id: "/profile";
-			path: "/profile";
-			fullPath: "/profile";
-			preLoaderRoute: typeof ProfileRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/admin/": {
-			id: "/admin/";
-			path: "/admin";
-			fullPath: "/admin/";
-			preLoaderRoute: typeof AdminIndexRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/admin/pairing/": {
-			id: "/admin/pairing/";
-			path: "/admin/pairing";
-			fullPath: "/admin/pairing/";
-			preLoaderRoute: typeof AdminPairingIndexRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/admin/pairing/$requestId": {
-			id: "/admin/pairing/$requestId";
-			path: "/admin/pairing/$requestId";
-			fullPath: "/admin/pairing/$requestId";
-			preLoaderRoute: typeof AdminPairingRequestIdRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/admin/pairing/new": {
-			id: "/admin/pairing/new";
-			path: "/admin/pairing/new";
-			fullPath: "/admin/pairing/new";
-			preLoaderRoute: typeof AdminPairingNewRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/api/auth/logout": {
-			id: "/api/auth/logout";
-			path: "/api/auth/logout";
-			fullPath: "/api/auth/logout";
-			preLoaderRoute: typeof ApiAuthLogoutRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/api/v1/apps": {
-			id: "/api/v1/apps";
-			path: "/api/v1/apps";
-			fullPath: "/api/v1/apps";
-			preLoaderRoute: typeof ApiV1AppsRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/api/v1/health": {
-			id: "/api/v1/health";
-			path: "/api/v1/health";
-			fullPath: "/api/v1/health";
-			preLoaderRoute: typeof ApiV1HealthRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/api/v1/me": {
-			id: "/api/v1/me";
-			path: "/api/v1/me";
-			fullPath: "/api/v1/me";
-			preLoaderRoute: typeof ApiV1MeRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/api/v1/admin/admins": {
-			id: "/api/v1/admin/admins";
-			path: "/api/v1/admin/admins";
-			fullPath: "/api/v1/admin/admins";
-			preLoaderRoute: typeof ApiV1AdminAdminsRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/api/v1/admin/setup": {
-			id: "/api/v1/admin/setup";
-			path: "/api/v1/admin/setup";
-			fullPath: "/api/v1/admin/setup";
-			preLoaderRoute: typeof ApiV1AdminSetupRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/api/v1/admin/status": {
-			id: "/api/v1/admin/status";
-			path: "/api/v1/admin/status";
-			fullPath: "/api/v1/admin/status";
-			preLoaderRoute: typeof ApiV1AdminStatusRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/api/v1/github/$": {
-			id: "/api/v1/github/$";
-			path: "/api/v1/github/$";
-			fullPath: "/api/v1/github/$";
-			preLoaderRoute: typeof ApiV1GithubSplatRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/api/v1/openapi/json": {
-			id: "/api/v1/openapi/json";
-			path: "/api/v1/openapi/json";
-			fullPath: "/api/v1/openapi/json";
-			preLoaderRoute: typeof ApiV1OpenapiJsonRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/api/v1/pairing/approve": {
-			id: "/api/v1/pairing/approve";
-			path: "/api/v1/pairing/approve";
-			fullPath: "/api/v1/pairing/approve";
-			preLoaderRoute: typeof ApiV1PairingApproveRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/api/v1/pairing/requests": {
-			id: "/api/v1/pairing/requests";
-			path: "/api/v1/pairing/requests";
-			fullPath: "/api/v1/pairing/requests";
-			preLoaderRoute: typeof ApiV1PairingRequestsRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/api/v1/pairing/status": {
-			id: "/api/v1/pairing/status";
-			path: "/api/v1/pairing/status";
-			fullPath: "/api/v1/pairing/status";
-			preLoaderRoute: typeof ApiV1PairingStatusRouteImport;
-			parentRoute: typeof rootRouteImport;
-		};
-		"/api/v1/pairing/requests/$requestId": {
-			id: "/api/v1/pairing/requests/$requestId";
-			path: "/$requestId";
-			fullPath: "/api/v1/pairing/requests/$requestId";
-			preLoaderRoute: typeof ApiV1PairingRequestsRequestIdRouteImport;
-			parentRoute: typeof ApiV1PairingRequestsRoute;
-		};
-	}
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/callback': {
+      id: '/callback'
+      path: '/callback'
+      fullPath: '/callback'
+      preLoaderRoute: typeof CallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/metrics': {
+      id: '/metrics'
+      path: '/metrics'
+      fullPath: '/metrics'
+      preLoaderRoute: typeof MetricsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/pairing/': {
+      id: '/admin/pairing/'
+      path: '/admin/pairing'
+      fullPath: '/admin/pairing/'
+      preLoaderRoute: typeof AdminPairingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/pairing/$requestId': {
+      id: '/admin/pairing/$requestId'
+      path: '/admin/pairing/$requestId'
+      fullPath: '/admin/pairing/$requestId'
+      preLoaderRoute: typeof AdminPairingRequestIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/pairing/new': {
+      id: '/admin/pairing/new'
+      path: '/admin/pairing/new'
+      fullPath: '/admin/pairing/new'
+      preLoaderRoute: typeof AdminPairingNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/logout': {
+      id: '/api/auth/logout'
+      path: '/api/auth/logout'
+      fullPath: '/api/auth/logout'
+      preLoaderRoute: typeof ApiAuthLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/apps': {
+      id: '/api/v1/apps'
+      path: '/api/v1/apps'
+      fullPath: '/api/v1/apps'
+      preLoaderRoute: typeof ApiV1AppsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/health': {
+      id: '/api/v1/health'
+      path: '/api/v1/health'
+      fullPath: '/api/v1/health'
+      preLoaderRoute: typeof ApiV1HealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/me': {
+      id: '/api/v1/me'
+      path: '/api/v1/me'
+      fullPath: '/api/v1/me'
+      preLoaderRoute: typeof ApiV1MeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/admin/admins': {
+      id: '/api/v1/admin/admins'
+      path: '/api/v1/admin/admins'
+      fullPath: '/api/v1/admin/admins'
+      preLoaderRoute: typeof ApiV1AdminAdminsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/admin/setup': {
+      id: '/api/v1/admin/setup'
+      path: '/api/v1/admin/setup'
+      fullPath: '/api/v1/admin/setup'
+      preLoaderRoute: typeof ApiV1AdminSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/admin/status': {
+      id: '/api/v1/admin/status'
+      path: '/api/v1/admin/status'
+      fullPath: '/api/v1/admin/status'
+      preLoaderRoute: typeof ApiV1AdminStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/github/$': {
+      id: '/api/v1/github/$'
+      path: '/api/v1/github/$'
+      fullPath: '/api/v1/github/$'
+      preLoaderRoute: typeof ApiV1GithubSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/openapi/json': {
+      id: '/api/v1/openapi/json'
+      path: '/api/v1/openapi/json'
+      fullPath: '/api/v1/openapi/json'
+      preLoaderRoute: typeof ApiV1OpenapiJsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/pairing/approve': {
+      id: '/api/v1/pairing/approve'
+      path: '/api/v1/pairing/approve'
+      fullPath: '/api/v1/pairing/approve'
+      preLoaderRoute: typeof ApiV1PairingApproveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/pairing/requests': {
+      id: '/api/v1/pairing/requests'
+      path: '/api/v1/pairing/requests'
+      fullPath: '/api/v1/pairing/requests'
+      preLoaderRoute: typeof ApiV1PairingRequestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/pairing/status': {
+      id: '/api/v1/pairing/status'
+      path: '/api/v1/pairing/status'
+      fullPath: '/api/v1/pairing/status'
+      preLoaderRoute: typeof ApiV1PairingStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/v1/pairing/requests/$requestId': {
+      id: '/api/v1/pairing/requests/$requestId'
+      path: '/$requestId'
+      fullPath: '/api/v1/pairing/requests/$requestId'
+      preLoaderRoute: typeof ApiV1PairingRequestsRequestIdRouteImport
+      parentRoute: typeof ApiV1PairingRequestsRoute
+    }
+  }
 }
 
 interface ApiV1PairingRequestsRouteChildren {
-	ApiV1PairingRequestsRequestIdRoute: typeof ApiV1PairingRequestsRequestIdRoute;
+  ApiV1PairingRequestsRequestIdRoute: typeof ApiV1PairingRequestsRequestIdRoute
 }
 
 const ApiV1PairingRequestsRouteChildren: ApiV1PairingRequestsRouteChildren = {
-	ApiV1PairingRequestsRequestIdRoute: ApiV1PairingRequestsRequestIdRoute,
-};
+  ApiV1PairingRequestsRequestIdRoute: ApiV1PairingRequestsRequestIdRoute,
+}
 
 const ApiV1PairingRequestsRouteWithChildren =
-	ApiV1PairingRequestsRoute._addFileChildren(ApiV1PairingRequestsRouteChildren);
+  ApiV1PairingRequestsRoute._addFileChildren(ApiV1PairingRequestsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-	IndexRoute: IndexRoute,
-	AccountRoute: AccountRoute,
-	CallbackRoute: CallbackRoute,
-	LoginRoute: LoginRoute,
-	MetricsRoute: MetricsRoute,
-	OnboardingRoute: OnboardingRoute,
-	ProfileRoute: ProfileRoute,
-	AdminIndexRoute: AdminIndexRoute,
-	AdminPairingRequestIdRoute: AdminPairingRequestIdRoute,
-	AdminPairingNewRoute: AdminPairingNewRoute,
-	ApiAuthLogoutRoute: ApiAuthLogoutRoute,
-	ApiV1AppsRoute: ApiV1AppsRoute,
-	ApiV1HealthRoute: ApiV1HealthRoute,
-	ApiV1MeRoute: ApiV1MeRoute,
-	AdminPairingIndexRoute: AdminPairingIndexRoute,
-	ApiV1AdminAdminsRoute: ApiV1AdminAdminsRoute,
-	ApiV1AdminSetupRoute: ApiV1AdminSetupRoute,
-	ApiV1AdminStatusRoute: ApiV1AdminStatusRoute,
-	ApiV1GithubSplatRoute: ApiV1GithubSplatRoute,
-	ApiV1OpenapiJsonRoute: ApiV1OpenapiJsonRoute,
-	ApiV1PairingApproveRoute: ApiV1PairingApproveRoute,
-	ApiV1PairingRequestsRoute: ApiV1PairingRequestsRouteWithChildren,
-	ApiV1PairingStatusRoute: ApiV1PairingStatusRoute,
-};
+  IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
+  CallbackRoute: CallbackRoute,
+  LoginRoute: LoginRoute,
+  MetricsRoute: MetricsRoute,
+  OnboardingRoute: OnboardingRoute,
+  ProfileRoute: ProfileRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  AdminPairingRequestIdRoute: AdminPairingRequestIdRoute,
+  AdminPairingNewRoute: AdminPairingNewRoute,
+  ApiAuthLogoutRoute: ApiAuthLogoutRoute,
+  ApiV1AppsRoute: ApiV1AppsRoute,
+  ApiV1HealthRoute: ApiV1HealthRoute,
+  ApiV1MeRoute: ApiV1MeRoute,
+  AdminPairingIndexRoute: AdminPairingIndexRoute,
+  ApiV1AdminAdminsRoute: ApiV1AdminAdminsRoute,
+  ApiV1AdminSetupRoute: ApiV1AdminSetupRoute,
+  ApiV1AdminStatusRoute: ApiV1AdminStatusRoute,
+  ApiV1GithubSplatRoute: ApiV1GithubSplatRoute,
+  ApiV1OpenapiJsonRoute: ApiV1OpenapiJsonRoute,
+  ApiV1PairingApproveRoute: ApiV1PairingApproveRoute,
+  ApiV1PairingRequestsRoute: ApiV1PairingRequestsRouteWithChildren,
+  ApiV1PairingStatusRoute: ApiV1PairingStatusRoute,
+}
 export const routeTree = rootRouteImport
-	._addFileChildren(rootRouteChildren)
-	._addFileTypes<FileRouteTypes>();
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from "./router.tsx";
-
-declare module "@tanstack/react-start" {
-	interface Register {
-		ssr: true;
-		router: Awaited<ReturnType<typeof getRouter>>;
-	}
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
 }

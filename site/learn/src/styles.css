@@ -2,8 +2,34 @@
 @import "@beskid/ui-react/styles/hub.css";
 @source "../node_modules/@beskid/ui-react/src";
 
+@import "@beskid/ui-react/styles/shadcn-entry.css";
+
 :root { --beskid-surface:#08111f; --beskid-on-primary-container:#e7edf8; --beskid-primary:#86b7ff; --beskid-on-primary:#07111f; --beskid-secondary:#c8d5ed; --beskid-secondary-container:#1a2b45; --beskid-primary-container:#173b70; --beskid-outline:#9aa9c2; --beskid-outline-variant:#334766; --beskid-surface-variant:#121f34; --platform-spec-card-bg:#0d182a; --platform-spec-surface-strong:#101d31; --platform-spec-surface-muted:#16253b; --platform-spec-divider:#2a3c58; --platform-spec-surface:#0b1525; --platform-spec-tab-active-bg:#1b365d; --platform-spec-tab-text-active:#fff; }
+/* Learn-local shell tokens still consumed by the option, editor, playground, and animation rules below. */
+:root { --beskid-border-inner:#263c61; --beskid-border-accent:#7da4e6; --beskid-surface-panel:rgba(13, 24, 46, 0.72); --beskid-surface-hover:rgba(80, 120, 196, 0.25); --beskid-text-primary:#e6edf6; --beskid-text-muted:#94a3c0; --beskid-radius-xl:14px; --beskid-ease-out:cubic-bezier(0.16, 1, 0.3, 1); }
 html { color-scheme: dark; } html:not([data-theme]) { --background:var(--beskid-surface); --foreground:#e7edf8; --card:var(--platform-spec-card-bg); --card-foreground:#e7edf8; --popover:var(--platform-spec-surface-strong); --popover-foreground:#e7edf8; --primary:var(--beskid-primary); --primary-foreground:var(--beskid-on-primary); --secondary:var(--beskid-secondary-container); --secondary-foreground:#e7edf8; --muted:var(--platform-spec-surface-muted); --muted-foreground:#aebbd0; --accent:var(--beskid-primary-container); --accent-foreground:#fff; --destructive:#f2b8b5; --destructive-foreground:#601410; --border:var(--platform-spec-divider); --input:var(--platform-spec-surface-muted); --ring:var(--beskid-primary); --radius:.75rem; }
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+}
 
 @layer base { * { @apply border-border; } body { @apply m-0 min-h-svh bg-background text-foreground; } }
 

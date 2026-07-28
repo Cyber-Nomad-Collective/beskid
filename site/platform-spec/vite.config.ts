@@ -31,6 +31,10 @@ const beskidUiSrc = packageSrc("@beskid/beskid-ui");
 
 const packageAliases = [
 	{
+		find: /^tslib$/,
+		replacement: "tslib/tslib.es6.mjs",
+	},
+	{
 		find: "@beskid/material-theme",
 		replacement: path.join(beskidUiSrc, "styles/theme.material.css"),
 	},

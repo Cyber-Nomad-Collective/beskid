@@ -26,6 +26,36 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Native ABI-v5 runtime-kit staging now exposes Darwin's anonymous-memory
+  mapping definitions when compiling the guarded-stack host bridge, restoring
+  local release Corelib verification on macOS.
+- Reusable staged promotion now binds its apply job to the requested GitHub
+  environment, making lane-scoped OpenBao and Coolify configuration available
+  during a verified release. Leaving the job unbound had also dropped every
+  environment-scoped variable (`OPENBAO_ADDR`, `COOLIFY_SERVICE_UUID`,
+  `BESKID_SMOKE_URLS`), so production's manual approval is now governed by the
+  `production` environment's own protection rules rather than by unbinding the
+  job.
+- Empty string literals now reserve an addressable sentinel byte in JIT data
+  storage while retaining their logical zero length, satisfying the runtime
+  string-pointer invariant for syscall calls.
+- Learn's dedicated frozen pnpm lock now matches its release manifest, while
+  the corelib test-spine catalog and GitNexus Bun lock stay in parity with
+  their respective CI gates.
+- Platform Spec now bundles the shared sidebar and Beskid Hub styles, restoring
+  the desktop sidebar and properly styled service launcher. Learn and pckg now
+  compile the shared React component utilities and theme tokens as well; the
+  production checks enforce these stylesheet contracts before a release ships.
+- Coolify promotion now verifies every lane-active immutable Compose application
+  at its exact digest and healthy runtime state before accepting deployment;
+  applied promotions always run canonical HTTPS smoke checks for the lane.
+- Runtime environment sync now requires an explicit `OPENBAO_ADDR` (or
+  `VAULT_ADDR`) instead of falling back to a hardcoded secrets host, so a
+  missing lane variable fails the promotion rather than sending `OPENBAO_TOKEN`
+  to an unintended endpoint.
+- Platform Spec's Node SSR build now resolves `tslib` through its ESM entry and
+  verifies the generated production SSR chunk can be imported with safe runtime
+  configuration, preventing a startup crash from the bundled CommonJS interop wrapper.
 - Runtime OpenSpec now parses its callback, scheduler, and composition
   requirements strictly, and records the mandatory scheduler result trampoline
   plus Process adapter-binding and string-ownership contracts before code.
@@ -56,9 +86,6 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - The canonical-runtime OpenSpec now requires one registry-backed
   `gc_external_root_count` export, with external-root lifecycle coverage that
   distinguishes registered roots from temporary handles.
-- Production delivery automation no longer binds the reusable Coolify promotion job to
-  the `production` GitHub environment, removing the manual environment-approval
-  gate while preserving lane validation, manifest verification, and smoke-policy checks.
 - Learn's production container now uses the pinned Bun runtime required by its
   `Bun.serve`/`Bun.file` server, with a CI contract preventing a Node-only
   runtime regression that would fail its healthcheck at startup.

@@ -22,6 +22,7 @@ done
 bash "${root}/scripts/ci/test/delivery-contract.test.sh"
 bash "${root}/scripts/ci/test/post-deploy-smoke.test.sh"
 bash "${root}/scripts/ci/test/shared-ui-nexus-gate-contract.test.sh"
+bash "${root}/scripts/ci/test/platform-stylesheet-contract.test.sh"
 bash "${root}/scripts/ci/test/platform-delivery-fail-closed.test.sh"
 bash "${root}/scripts/ci/test/image-preparation-contract.test.sh"
 bash "${root}/scripts/ci/test/automatic-production-promotion.test.sh"
@@ -39,6 +40,9 @@ JSON
 cat >"${tmp}/records/platform-spec-image.json" <<'JSON'
 {"name":"beskid-platform-spec","repository":"ghcr.io/cyber-nomad-collective/beskid-platform-spec","digest":"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
 JSON
+cat >"${tmp}/records/pckg-image.json" <<'JSON'
+{"name":"beskid-pckg","repository":"ghcr.io/cyber-nomad-collective/beskid-pckg","digest":"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
+JSON
 cat >"${tmp}/compose.yml" <<'YAML'
 name: beskid-platform-production
 services:
@@ -46,6 +50,10 @@ services:
     image: ghcr.io/cyber-nomad-collective/beskid-site:${BESKID_RELEASE_TAG:?immutable manifest required}
   platform-spec:
     image: ghcr.io/cyber-nomad-collective/beskid-platform-spec:${BESKID_RELEASE_TAG:?immutable manifest required}
+  pckg:
+    profiles:
+      - pckg
+    image: ghcr.io/cyber-nomad-collective/beskid-pckg:${BESKID_RELEASE_TAG:?immutable manifest required}
   postgres:
     image: postgres:16
 YAML
@@ -253,16 +261,16 @@ for argument in "$@"; do
   previous="${argument}"
 done
 case "${method}:${url}" in
-  GET:*/services/test)
+  GET:*/services/*)
     # Match Coolify Compose services: YAML docker_compose_raw + status polling.
     if [[ -f "${MOCK_COOLIFY_STATE}/rollback-redeployed" ]]; then
       touch "${MOCK_COOLIFY_STATE}/rollback-complete"
-      echo '{"docker_compose_raw":"name: old\n","status":"running:healthy","applications":[{"name":"site","image":"x@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"}]}'
+      echo '{"docker_compose_raw":"name: old\nservices:\n  site:\n    image: ghcr.io/example/old-site@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\n","status":"running:healthy","applications":[{"name":"site","image":"ghcr.io/example/old-site@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","status":"running:healthy"}]}'
     else
-      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[]}'
+      echo '{"docker_compose_raw":"name: old\nservices:\n  site:\n    image: ghcr.io/example/old-site@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\n","status":"starting:unhealthy","applications":[]}'
     fi
     ;;
-  PATCH:*/services/test)
+  PATCH:*/services/*)
     printf '%s' "${body}" >"${MOCK_COOLIFY_PATCH_BODY}"
     echo '{}'
     ;;
@@ -275,6 +283,9 @@ case "${method}:${url}" in
     # Coolify Compose services return resource_uuid without deployment_uuid.
     touch "${MOCK_COOLIFY_STATE}/rollback-redeployed"
     echo '{"deployments":[{"message":"Service test started.","resource_uuid":"test"}]}'
+    ;;
+  GET:*/applications/*/logs\?*)
+    echo '{"logs":""}'
     ;;
   *)
     echo "unexpected mock Coolify call: ${method} ${url}" >&2
@@ -297,6 +308,11 @@ fi
   echo "failed deployment did not complete rollback" >&2
   exit 1
 }
+jq -r '.docker_compose_raw' "${MOCK_COOLIFY_PATCH_BODY}" | base64 --decode | grep -Fq \
+  'image: ghcr.io/example/old-site@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd' || {
+  echo "rollback did not restore the captured previous Compose payload" >&2
+  exit 1
+}
 
 # Happy path: Coolify Compose deploy accepts with resource_uuid only, even when
 # aggregate status stays starting:unhealthy due to orphaned non-digest children.
@@ -315,20 +331,23 @@ for argument in "$@"; do
   previous="${argument}"
 done
 case "${method}:${url}" in
-  GET:*/services/test)
+  GET:*/services/*)
     if [[ -f "${MOCK_COOLIFY_STATE}/deployed" ]]; then
-      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[{"name":"site","image":"x@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"},{"name":"pckg","image":"ghcr.io/x/pckg:${IMAGE_TAG:-main}","status":"exited"}]}'
+      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[{"uuid":"site","name":"site","image":"ghcr.io/cyber-nomad-collective/beskid-site@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"},{"uuid":"platform-spec","name":"platform-spec","image":"ghcr.io/cyber-nomad-collective/beskid-platform-spec@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","status":"running:healthy"},{"uuid":"pckg","name":"pckg","image":"ghcr.io/x/pckg:${IMAGE_TAG:-main}","status":"exited"}]}'
     else
       echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[]}'
     fi
     ;;
-  PATCH:*/services/test)
+  PATCH:*/services/*)
     printf '%s' "${body}" >"${MOCK_COOLIFY_PATCH_BODY}"
     echo '{}'
     ;;
   GET:*/deploy\?*)
     touch "${MOCK_COOLIFY_STATE}/deployed"
     echo '{"deployments":[{"message":"Service test started.","resource_uuid":"test"}]}'
+    ;;
+  GET:*/applications/*/logs\?*)
+    echo '{"logs":""}'
     ;;
   *)
     echo "unexpected mock Coolify call: ${method} ${url}" >&2
@@ -363,5 +382,121 @@ jq -e '
   echo "Coolify deployment must PATCH the staging URLs derived from domains.json, including learn" >&2
   exit 1
 }
+
+# Aggregate state and one healthy application are not deployment evidence. Every
+# active immutable app in the rendered compose must be healthy at its exact
+# digest; old/inactive profile children are allowed to be unhealthy.
+for aggregate_status in running:unhealthy degraded:unhealthy starting:unhealthy; do
+  rm -rf "${MOCK_COOLIFY_STATE}"
+  mkdir -p "${MOCK_COOLIFY_STATE}"
+  cat >"${tmp}/bin/curl" <<SH
+#!/usr/bin/env bash
+method=GET
+url=''
+previous=''
+for argument in "\$@"; do
+  if [[ "\${previous}" == -X ]]; then method="\${argument}"; fi
+  if [[ "\${argument}" == https://coolify.invalid/* ]]; then url="\${argument}"; fi
+  previous="\${argument}"
+done
+case "\${method}:\${url}" in
+  GET:*/services/*)
+    if [[ -f "\${MOCK_COOLIFY_STATE}/rollback-redeployed" ]]; then
+      touch "\${MOCK_COOLIFY_STATE}/rollback-complete"
+      echo '{"docker_compose_raw":"name: old\\nservices:\\n  site:\\n    image: ghcr.io/example/old-site@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\\n","status":"running:healthy","applications":[{"name":"site","image":"ghcr.io/example/old-site@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","status":"running:healthy"}]}'
+    elif [[ -f "\${MOCK_COOLIFY_STATE}/deployed" ]]; then
+      echo '{"docker_compose_raw":"name: old\\n","status":"${aggregate_status}","applications":[{"uuid":"site","name":"site","image":"ghcr.io/cyber-nomad-collective/beskid-site@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"}]}'
+    else
+      echo '{"docker_compose_raw":"name: old\\nservices:\\n  site:\\n    image: ghcr.io/example/old-site@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\\n","status":"starting:unhealthy","applications":[]}'
+    fi
+    ;;
+  PATCH:*/services/*)
+    if [[ -f "\${MOCK_COOLIFY_STATE}/deployed" ]]; then
+      touch "\${MOCK_COOLIFY_STATE}/rollback-redeployed"
+    fi
+    echo '{}'
+    ;;
+  GET:*/deploy\?*)
+    touch "\${MOCK_COOLIFY_STATE}/deployed"
+    echo '{"deployment_uuid":"uuid-test"}'
+    ;;
+  GET:*/deployments/*)
+    echo '{"status":"finished"}'
+    ;;
+  GET:*/applications/*/logs\?*)
+    echo '{"logs":""}'
+    ;;
+  *)
+    echo "unexpected mock Coolify call: \${method} \${url}" >&2
+    exit 2
+    ;;
+esac
+SH
+  chmod +x "${tmp}/bin/curl"
+  if PATH="${tmp}/bin:${PATH}" \
+    COOLIFY_ENDPOINT=https://coolify.invalid \
+    COOLIFY_API_TOKEN=test \
+    COOLIFY_SERVICE_UUID=test \
+    DEPLOY_POLL_SECONDS=0 \
+    DEPLOY_TIMEOUT_SECONDS=0 \
+    "${root}/scripts/ci/deploy-release-manifest.sh" --apply \
+      --lane staging --manifest "${tmp}/release.json" --compose "${tmp}/compose.yml" >/dev/null 2>&1; then
+    echo "aggregate ${aggregate_status} unexpectedly accepted a partial release" >&2
+    exit 1
+  fi
+  [[ -f "${MOCK_COOLIFY_STATE}/rollback-complete" ]] || {
+    echo "aggregate ${aggregate_status} did not restore the previous Compose payload" >&2
+    exit 1
+  }
+done
+
+rm -rf "${MOCK_COOLIFY_STATE}"
+mkdir -p "${MOCK_COOLIFY_STATE}"
+cat >"${tmp}/bin/curl" <<'SH'
+#!/usr/bin/env bash
+method=GET
+url=''
+previous=''
+for argument in "$@"; do
+  if [[ "${previous}" == -X ]]; then method="${argument}"; fi
+  if [[ "${argument}" == https://coolify.invalid/* ]]; then url="${argument}"; fi
+  previous="${argument}"
+done
+case "${method}:${url}" in
+  GET:*/services/*)
+    if [[ -f "${MOCK_COOLIFY_STATE}/deployed" ]]; then
+      echo '{"docker_compose_raw":"name: old\n","status":"running:healthy","applications":[{"uuid":"site","name":"site","image":"ghcr.io/cyber-nomad-collective/beskid-site@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","status":"running:healthy"},{"uuid":"platform-spec","name":"platform-spec","image":"ghcr.io/cyber-nomad-collective/beskid-platform-spec@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","status":"running:healthy"}]}'
+    else
+      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[]}'
+    fi
+    ;;
+  PATCH:*/services/*)
+    echo '{}'
+    ;;
+  GET:*/deploy\?*)
+    touch "${MOCK_COOLIFY_STATE}/deployed"
+    echo '{"deployments":[{"message":"Service test started.","resource_uuid":"test"}]}'
+    ;;
+  GET:*/applications/*/logs\?*)
+    echo '{"logs":""}'
+    ;;
+  *)
+    echo "unexpected mock Coolify call: ${method} ${url}" >&2
+    exit 2
+    ;;
+esac
+SH
+chmod +x "${tmp}/bin/curl"
+if PATH="${tmp}/bin:${PATH}" \
+  COOLIFY_ENDPOINT=https://coolify.invalid \
+  COOLIFY_API_TOKEN=test \
+  COOLIFY_SERVICE_UUID=test \
+  DEPLOY_POLL_SECONDS=0 \
+  DEPLOY_TIMEOUT_SECONDS=0 \
+  "${root}/scripts/ci/deploy-release-manifest.sh" --apply \
+    --lane staging --manifest "${tmp}/release.json" --compose "${tmp}/compose.yml" >/dev/null 2>&1; then
+  echo "a mismatched immutable digest unexpectedly passed readiness" >&2
+  exit 1
+fi
 
 echo "CI/CD foundation tests OK"

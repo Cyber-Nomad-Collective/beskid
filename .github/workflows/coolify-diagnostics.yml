@@ -1,0 +1,35 @@
+name: Coolify diagnostics
+
+on:
+  workflow_dispatch:
+    inputs:
+      lane:
+        description: Deployment lane to inspect
+        required: true
+        default: production
+        type: choice
+        options:
+          - production
+          - staging
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    name: Inspect ${{ inputs.lane }} Coolify service
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.lane }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Initialize infrastructure source
+        run: ./scripts/ci/init-submodules.sh beskid_infra
+
+      - name: Inspect service and redact application logs
+        env:
+          COOLIFY_ENDPOINT: ${{ vars.COOLIFY_ENDPOINT }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          LANE: ${{ inputs.lane }}
+        run: |
+          ./scripts/ci/coolify-diagnostics.sh "${LANE}"

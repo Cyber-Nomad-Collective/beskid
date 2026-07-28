@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
+@source "../node_modules/@beskid/ui-react/src";
 @source inline("rounded-4xl");
 
 @import "@beskid/material-theme";
+@import "@beskid/ui-react/styles/shadcn-entry.css";
+@import "@beskid/beskid-ui/styles/hub.css";
 @import "./styles/reader-app.css";
 
 @custom-variant dark (&:is([data-theme="dark"] *));

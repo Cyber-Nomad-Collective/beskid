@@ -51,6 +51,10 @@ The compiler invariant that no high-level intermediate representation type, lowe
 
 Heuristic parse fallback diagnostics emitted when AST construction can still succeed after a syntax error. Shared repair primitives in `services/parse_recovery/` emit single-edit candidates (delimiters, separators, item stubs, expressions/patterns), retry parse, and emit a `parse.recovery` BSOL warning on success.
 
+## single-token deletion recovery
+
+An error-recovery heuristic that deletes one unexpected token when the following token is accepted by the parser’s expected-set (or is otherwise a safe continuation), then continues parsing from the recovered position. In this project it is used in sync recovery for punctuation-heavy and list-like syntax to reduce spurious cascading errors.
+
 ## Immutable graph
 
 A graph whose data and structure cannot be changed through its reader interface: users may inspect, select, pan, zoom, fit, and follow links, but cannot move, connect, delete, or edit nodes or edges.
@@ -113,6 +117,12 @@ An OpenSpec capability retained for discoverability and historical coverage when
 ## Runtime intrinsic
 
 A manifest-declared primitive or platform operation available only while compiling the canonical Beskid runtime under a non-forgeable trusted compiler capability. User packages cannot name, import, inherit, or invoke runtime intrinsics.
+
+## run_once
+
+The Fibers 0.1.13 executor operation that polls at most one ready unit of work
+and reports `ran`, `waiting`, or `complete`; it does not spin or execute an
+unwoken not-ready unit.
 
 ## Source provenance
 

@@ -69,6 +69,60 @@ host dispatch table, an extern fallback, or a fabricated value.
 - **THEN** canonical-runtime capability validation rejects the call before
   code generation and does not substitute an extern import
 
+### Requirement: Canonical Process lifecycle adapter bindings are explicit and fail closed
+The ABI-v5 manifest SHALL model `process_exit` and `process_getpid` as
+separate canonical Process lifecycle adapter bindings for every supported
+target. Each binding SHALL name exactly one canonical intrinsic, its
+`beskid_rt_v5_intrinsic_<name>` ABI symbol, its `runtime.adapter.<name>`
+capability, its exact ABI signature, the selected target, one adapter
+implementation symbol, and its ordered allowlist of target OS-import symbols.
+The selected target implementation for `process_exit` SHALL be non-returning
+and accept exactly one `i32` status; the selected target implementation for
+`process_getpid` SHALL return exactly one `i32` process identifier. The
+bindings SHALL be generated into the authoritative ABI artifacts and validated
+with the runtime kit rather than inferred from a flat platform-import list.
+
+`Runtime/Host/Process.bd` SHALL expose `ProcessExit` and `ProcessGetpid` only
+as direct canonical wrappers around those bindings. `ProcessExit` SHALL have
+no continuation after its intrinsic call. Neither wrapper SHALL use a host or
+generated dispatch table, extern fallback, process-global cache, fabricated
+process identifier, fabricated successful exit, or undeclared OS import.
+Only the compiler-embedded canonical runtime corpus SHALL acquire either
+capability.
+
+Manifest generation and runtime-kit validation SHALL fail before link or load
+when a lifecycle binding is absent, duplicated, orphaned, has an ABI signature
+or capability mismatch, names an unsupported target, permits an OS import not
+on its allowlist, or names an adapter symbol unavailable from the selected
+target host object. Its diagnostic SHALL name the intrinsic, capability, and
+target. This requirement defines the boundary only; it SHALL NOT be treated as
+evidence that an adapter implementation, installed kit, or supported target is
+complete until its corresponding implementation and installed-kit gates pass.
+
+#### Scenario: Process lifecycle wrappers lower only through their bindings
+- **GIVEN** canonical `Runtime/Host/Process.bd` source containing
+  `ProcessExit` or `ProcessGetpid` and a selected ABI-v5 target
+- **WHEN** it is compiled through expanded syntax facts, `CodegenInput`, ISLE,
+  and CLIF verification
+- **THEN** each wrapper has one direct call to its exact manifest lifecycle
+  binding with source-span provenance, `ProcessExit` has no continuation, and
+  the artifact contains neither dispatch nor an alternate host import
+
+#### Scenario: Invalid lifecycle binding fails before a runtime artifact exists
+- **GIVEN** a selected target whose `process_exit` or `process_getpid` binding
+  is missing, duplicated, signature-incompatible, capability-incompatible, or
+  names an undeclared OS import
+- **WHEN** ABI artifact generation or runtime-kit validation runs
+- **THEN** it fails before link/load with the intrinsic, capability, and target
+  in its diagnostic, and emits no fallback Process wrapper or kit artifact
+
+#### Scenario: Untrusted lifecycle invocation is denied
+- **GIVEN** an application or Corelib source unit that declares or invokes
+  `process_exit`, `process_getpid`, or either ABI-v5 symbol spelling
+- **WHEN** semantic capability validation runs
+- **THEN** validation rejects the source before ISLE lowering and no lifecycle
+  import or target OS import is emitted
+
 ### Requirement: Canonical target-adapter capability boundary
 Only the compiler-embedded canonical runtime corpus MAY invoke manifest-declared target-adapter intrinsics. The manifest MUST declare every adapter name, ABI-v5 symbol, capability, parameter types, result type, and target platform import used to implement clocks, process identity, environment, filesystem, or terminal state. User packages and Corelib packages MUST NOT acquire this authority, declare look-alike intrinsics, import legacy dispatch symbols, or call target platform symbols directly.
 
