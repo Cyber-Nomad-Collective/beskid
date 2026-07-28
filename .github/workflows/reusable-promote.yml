@@ -81,6 +81,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_ID: ${{ inputs.manifest-run-id }}
+          ALLOW_NON_MAIN_PRODUCTION: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           curl --fail-with-body --silent --show-error \
             -H "Authorization: Bearer ${GH_TOKEN}" -H 'Accept: application/vnd.github+json' \
