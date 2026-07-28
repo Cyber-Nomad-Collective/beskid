@@ -91,12 +91,12 @@ describe("architecture map layout", () => {
 			memberNodes.every((node) => node.width === 232 && node.height === 104),
 		).toBe(true);
 		expect(
-			first.nodes.find((node) => node.id === "source")?.position.y,
-		).toBeLessThan(first.nodes.find((node) => node.id === "typed")?.position.y);
+			first.nodes.find((node) => node.id === "source")!.position.y,
+		).toBeLessThan(first.nodes.find((node) => node.id === "typed")!.position.y);
 		expect(
-			first.nodes.find((node) => node.id === "typed")?.position.y,
+			first.nodes.find((node) => node.id === "typed")!.position.y,
 		).toBeLessThan(
-			first.nodes.find((node) => node.id === "artifact")?.position.y,
+			first.nodes.find((node) => node.id === "artifact")!.position.y,
 		);
 	});
 

@@ -73,12 +73,38 @@ Because the manifest context initializer invokes a `void(pointer)` entry while
 canonical generated fiber bodies return an `i64`, the canonical runtime SHALL
 provide one scheduler-owned entry wrapper and return trampoline. The wrapper
 SHALL receive the fiber record pointer, invoke the generation-bound body with
-its recorded argument, record its normal value before any completion state is
-published, and enter the return trampoline. The return trampoline SHALL mark
-the record terminal, transfer only through the manifest context switch export
-to fiber 0, and trap if it is ever resumed. Generated body pointers SHALL NOT
-be cast directly to the context initializer's entry signature, and no host,
-Rust, or process-global result handoff is permitted.
+its recorded argument, record its normal value, publish terminal state, and
+transfer only through the manifest context switch export to fiber 0. It SHALL
+NOT return normally. The return trampoline is a no-argument fail-closed path:
+it SHALL trap if reached or resumed and SHALL NOT recover a record through a
+host, Rust, TLS, process-global, or other hidden handoff. Generated body
+pointers SHALL NOT be cast directly to the context initializer's entry
+signature.
+
+The compiler SHALL emit the wrapper as the only canonical-runtime callable
+`void(pointer)` helper and the trampoline as the only canonical-runtime
+callable `void()` helper. `ContextInit` SHALL receive addresses of exactly
+those helpers together with the fiber-record pointer; it SHALL NOT receive the
+generated body address. The helpers are compiler-owned lowering artifacts, not
+ABI-v5 imports or source-declarable functions, and ordinary packages and
+Corelib SHALL be unable to construct, name, or invoke them.
+
+The canonical Scheduler alone SHALL be able to request those addresses through
+the compiler-minted operations `scheduler_fiber_entry_address() -> pointer` and
+`scheduler_return_trampoline_address() -> pointer`. Those operations SHALL
+exist only as generation-bound facts for the exact embedded Scheduler unit;
+they SHALL NOT be ABI-v5 imports, manifest declarations, user-declarable
+functions, or callable body pointers. Any copied source unit, ordinary package,
+or Corelib unit that spells either operation SHALL be rejected before code
+generation.
+
+The canonical runtime SHALL invoke the recorded generated body through one
+typed, capability-gated indirect-call representation with signature
+`fn(pointer) -> i64`. A raw `word` or `pointer` value SHALL NOT become
+callable through a cast, untyped memory load, host callback, or a special-case
+third context boundary. This operation SHALL lower from generation-bound facts
+through `TypedProgram`, `CodegenInput`, ISLE, and verified CLIF, and ordinary
+packages and Corelib SHALL be denied the capability to construct or invoke it.
 
 #### Scenario: Linux context initialization preserves the target ABI contract
 
@@ -97,8 +123,27 @@ Rust, or process-global result handoff is permitted.
   context boundary
 - **THEN** a scheduler-owned `void(pointer)` wrapper invokes the body, records
   the result in that fiber's record before terminal publication, transfers to
-  fiber 0 only through the declared context switch export, and rejects a
-  resumed return trampoline without a direct function-pointer cast
+  fiber 0 only through the declared context switch export without returning,
+  passes only the compiler-emitted wrapper and trampoline addresses to
+  `ContextInit`, and traps on a reached or resumed return trampoline without a
+  direct function-pointer cast or hidden record handoff
+
+#### Scenario: Scheduler-only helper addresses cannot escape the canonical corpus
+
+- **GIVEN** the exact embedded Scheduler unit and an ordinary or Corelib unit
+- **WHEN** either unit requests an entry-wrapper or return-trampoline address
+- **THEN** only the embedded Scheduler receives a compiler-minted local helper
+  address; all other units are rejected before code generation and no ABI import
+  or source-declarable helper symbol is emitted
+
+#### Scenario: Typed canonical indirect call rejects raw pointers
+
+- **GIVEN** a scheduler-owned fiber record holding a generated
+  `fn(pointer) -> i64` body reference
+- **WHEN** the canonical entry wrapper invokes that body
+- **THEN** only the typed capability-gated indirect-call operation is lowered
+  through verified CLIF, and an ordinary package, Corelib unit, or raw word
+  value is rejected before code generation
 
 #### Scenario: Guarded-stack limit fails closed
 
@@ -150,6 +195,14 @@ canonical runtime corpus through `TypedProgram` → `CodegenInput` → ISLE →
 verified CLIF and share the scheduler object stored in the manifest-declared
 `BeskidRuntimeState.scheduler` field.
 
+Fiber handles SHALL be scheduler-owned opaque identities: fiber 0 SHALL have
+the distinguished main-fiber identity, each successful spawn SHALL publish a
+fresh non-zero identity, and no completed or detached record SHALL be reused
+while an externally reachable handle can still name it. A handle that is
+unknown or stale SHALL be rejected fail-closed by every handle-taking export;
+it SHALL NOT be reported as a live fiber, a normal completion, or a fabricated
+join value.
+
 #### Scenario: Spawn, yield, resume, and join use one scheduler-owned record
 
 - **GIVEN** a Linux x86-64 canonical runtime program that spawns two fibers
@@ -170,6 +223,165 @@ verified CLIF and share the scheduler object stored in the manifest-declared
   the live fiber reports status `4` until terminal, the detached fiber remains
   executable and tracked until completion, and no join-value call returns a
   fabricated value
+
+#### Scenario: Every terminal status and stale handle remains observable
+
+- **GIVEN** one normal fiber, one cancellable fiber, one fiber that panics, one
+  fiber that overflows its guarded stack, and a handle whose record has become
+  stale
+- **WHEN** each terminal result is observed through `fiber_join_status` and
+  `fiber_join_value` is requested for every handle
+- **THEN** the normal, cancelled, panicked, and overflowed fibers report exactly
+  `0`, `1`, `2`, and `3`, respectively; only the normal fiber exposes its
+  recorded value; and the stale handle is rejected fail-closed without being
+  reported as a live or completed fiber
+
+### Requirement: Fibers 0.1.13 compatibility uses deterministic poll-driven execution
+
+The Fibers 0.1.13 compatibility surface SHALL express runnable work as a
+poll-driven unit of work, separate from the retained stackful-fiber ABI. Its
+phase-one ABI SHALL use the following exact exports and no hidden host, Rust,
+or process-global executor:
+
+- `beskid_rt_v5_poll_executor_spawn(pointer poll_entry, pointer task_state,
+  pointer result_slot, pointer cancel_slot) -> i64`;
+- `beskid_rt_v5_poll_executor_run_once() -> i32`;
+- `beskid_rt_v5_poll_executor_wake(i64 task) -> i32`;
+- `beskid_rt_v5_poll_monitor_new(i64 task) -> i64`,
+  `beskid_rt_v5_poll_monitor_poll(i64 monitor, pointer result_slot) -> i32`,
+  and `beskid_rt_v5_poll_monitor_drop(i64 monitor) -> void`; and
+- `beskid_rt_v5_poll_link_new(i64 task) -> i64`,
+  `beskid_rt_v5_poll_link_clone(i64 link) -> i64`,
+  `beskid_rt_v5_poll_link_poll(i64 link, pointer result_slot) -> i32`, and
+  `beskid_rt_v5_poll_link_drop(i64 link) -> void`.
+
+`poll_entry` SHALL have exactly the compiler-verified erased signature
+`fn(pointer task_state, pointer wake_token, pointer result_slot) -> i32`.
+It SHALL return exactly `0` (`ready_ok`), `1` (`pending`), `2` (`ready_err`),
+`3` (`cancelled`), or `4` (`panicked`). The result slot SHALL be written only
+for `ready_ok` or `ready_err`, and carries the opaque result or error pointer
+selected by the generated caller. Any other entry tag, null required state, or
+failed provenance check SHALL terminate the task as `panicked` rather than
+calling arbitrary pointers or fabricating a result.
+
+`run_once` SHALL perform at most one ready unit of work and return exactly `0`
+(`ran`), `1` (`waiting`), `2` (`complete`), or `3` (`fatal`). `waiting` means
+no unit is ready while at least one non-terminal unit has a registered wake
+path; it SHALL NOT spin, execute a pending unit, or manufacture a wake.
+`complete` means no non-terminal poll task remains. `fatal` means the executor
+cannot make a truthful scheduling decision, including canonical scheduler
+corruption; it SHALL NOT be reused as a task outcome.
+
+A wake token SHALL name one exact pending task and SHALL be valid only while
+that task is owned by this executor. `poll_executor_wake` SHALL return exactly
+`0` (`enqueued`), `1` (`already_enqueued`), `2` (`terminal`), or `3`
+(`stale_or_unknown`). Duplicate wakes MAY coalesce, but SHALL NOT cause
+concurrent or duplicate polling. A stale, unknown, foreign, or terminal wake
+token SHALL fail closed: it SHALL not enqueue another task or mutate queue
+state.
+
+`poll_monitor_poll` and `poll_link_poll` SHALL return exactly `0` (`pending`),
+`1` (`ready_ok`), `2` (`ready_err`), `3` (`cancelled`), `4` (`panicked`), or
+`5` (`stale_or_unknown`). They SHALL write their caller's result slot only for
+`ready_ok` or `ready_err`. A monitor is an observation reference only:
+creating, cloning, or dropping it SHALL NOT cancel or detach its task. A link
+is a cancellation-owning reference: cloning adds one live link and dropping a
+link removes exactly one. Dropping the final live link of a non-terminal,
+non-detached task SHALL request cancellation through that task's canonical
+cancellation state; it SHALL not synchronously fabricate a terminal result,
+cancel unrelated tasks, or cancel because a non-final link was dropped.
+
+The compatibility baseline SHALL include a deterministic in-place executor.
+It SHALL execute no work on a host thread, Rust executor, legacy scheduler, or
+hidden global queue; with the same spawn, poll, wake, cancellation, and link
+drop sequence, it SHALL select ready work in stable FIFO registration order.
+Its queue, wake registrations, and monitor state SHALL be owned by the same
+manifest-declared canonical scheduler object used by the ABI-v5 lifecycle
+exports and shall lower only through `TypedProgram` → `CodegenInput` → ISLE →
+verified CLIF.
+
+An explicit child link SHALL carry linked cancellation. Dropping the last live
+link to a non-terminal child SHALL request cancellation through that child's
+canonical scheduler-owned cancellation state; the child SHALL become terminal
+with join status `1` at its next scheduler-observable cancellation point.
+Dropping a link SHALL NOT erase the child record, publish a normal value, or
+cancel an independently detached child. A stale or unknown link SHALL be
+rejected fail-closed.
+
+The prior stackful `fiber_yield` surface is deprecated for new language and
+corelib APIs in Fibers 0.1.13. The ABI-v5 `beskid_rt_v5_fiber_yield` export
+remains a compatibility entry point only: it SHALL map to the current unit's
+not-ready-and-requeue transition on the same canonical scheduler, preserve its
+resume continuation, and SHALL NOT select a separate stackful scheduler, Rust
+executor, host callback, or fallback runtime. New poll-driven APIs SHALL use
+the ready/not-ready protocol directly. The status mapping remains unchanged:
+normal `0`, cancelled `1`, panicked `2`, stack overflow `3`, and not-terminal
+`4`.
+
+#### Scenario: Run-once distinguishes ready, waiting, and complete work
+
+- **GIVEN** an in-place executor with one ready unit and one unit that first
+  polls not-ready
+- **WHEN** `run_once` is called until the ready unit completes and the other
+  unit has registered its wake path
+- **THEN** each call polls at most one unit, the ready unit produces `ran`, the
+  unwoken unit produces `waiting`, and no call polls the not-ready unit again
+  until its registered wake occurs
+
+#### Scenario: Poll ABI tags and opaque results are exact
+
+- **GIVEN** a canonical poll entry that returns each permitted poll tag and
+  uses a distinct opaque result or error pointer
+- **WHEN** it is driven through the phase-one spawn, run-once, and monitor ABI
+- **THEN** only `ready_ok` and `ready_err` write the monitor result slot, every
+  other permitted tag has the specified terminal or pending meaning, and an
+  invalid tag becomes `panicked` without an untyped indirect call
+
+#### Scenario: Wake resumes only the registered pending unit
+
+- **GIVEN** two not-ready units registered in stable order
+- **WHEN** only the second unit's wake is delivered and `run_once` is called
+- **THEN** the second unit alone becomes eligible, it is polled once, and a
+  duplicate wake cannot make it run concurrently or twice for one `run_once`
+
+#### Scenario: Monitor preserves result and error truth
+
+- **GIVEN** one unit that completes with a value, one that completes with an
+  error, and one that remains not-ready
+- **WHEN** their monitors are queried
+- **THEN** the completed monitors expose their own terminal value or error,
+  the not-ready monitor reports pending, and no query fabricates a terminal
+  outcome
+
+#### Scenario: Link drop requests linked cancellation without corrupting state
+
+- **GIVEN** a non-detached linked child whose body is waiting at a cancellation
+  point and an independently detached child
+- **WHEN** the last link to the first child is dropped
+- **THEN** the first child transitions to canonical cancellation status `1` at
+  that point, its record remains available for truthful status observation,
+  and the detached child remains unaffected
+
+#### Scenario: Final-link ownership and stale wake fail closed
+
+- **GIVEN** a pending task with two live links, a monitor, and a registered
+  wake token
+- **WHEN** one link is dropped, then the last link is dropped, and stale or
+  duplicate wakes are delivered
+- **THEN** the first drop does not cancel the task, the final drop requests
+  only that task's canonical cancellation, the monitor alone does not keep a
+  cancellation-owning link alive, one wake may enqueue at most once, and stale
+  or terminal wakes return their fail-closed tags without queue mutation
+
+#### Scenario: Deprecated yield remains one canonical compatibility transition
+
+- **GIVEN** a legacy ABI-v5 caller invokes `beskid_rt_v5_fiber_yield` from a
+  running canonical fiber
+- **WHEN** the scheduler next selects that fiber
+- **THEN** execution resumes after the yield through the same scheduler-owned
+  continuation, its status mapping remains `0` through `4`, and artifact
+  provenance contains neither a separate stackful executor nor Rust or host
+  fallback
 
 ### Requirement: Fiber builtins share one canonical scheduler state machine
 

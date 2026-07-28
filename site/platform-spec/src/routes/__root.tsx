@@ -4,6 +4,7 @@ import {
 	Outlet,
 	Scripts,
 } from "@tanstack/react-router";
+import { TooltipProvider } from "@beskid/ui-react";
 
 import { RootSpecRouteError } from "#/components/spec-route-error";
 import { ThemeProvider } from "#/components/theme-provider";
@@ -30,7 +31,9 @@ export const Route = createRootRoute({
 function RootComponent() {
 	return (
 		<ThemeProvider>
-			<Outlet />
+			<TooltipProvider>
+				<Outlet />
+			</TooltipProvider>
 		</ThemeProvider>
 	);
 }
