@@ -29,6 +29,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Reusable staged promotion now binds its apply job to the requested GitHub
   environment, making lane-scoped OpenBao and Coolify configuration available
   during a verified release.
+- Empty string literals now reserve an addressable sentinel byte in JIT data
+  storage while retaining their logical zero length, satisfying the runtime
+  string-pointer invariant for syscall calls.
 - Learn's dedicated frozen pnpm lock now matches its release manifest, while
   the corelib test-spine catalog and GitNexus Bun lock stay in parity with
   their respective CI gates.
