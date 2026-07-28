@@ -24,6 +24,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Platform Spec now bundles the shared sidebar and Beskid Hub styles, restoring
+  the desktop sidebar and properly styled service launcher. Learn and pckg now
+  compile the shared React component utilities and theme tokens as well; the
+  production checks enforce these stylesheet contracts before a release ships.
 - Coolify promotion now verifies every lane-active immutable Compose application
   at its exact digest and healthy runtime state before accepting deployment;
   applied promotions always run canonical HTTPS smoke checks for the lane.

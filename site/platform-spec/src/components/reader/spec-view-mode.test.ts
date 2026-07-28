@@ -44,3 +44,29 @@ describe("ReaderChrome provider wiring", () => {
 		expect(source).toMatch(/<SpecViewModeProvider>[\s\S]*<ReaderTopBarActions/);
 	});
 });
+
+describe("Platform Spec shared UI styles", () => {
+	it("loads the shared component source, sidebar tokens, and hub presentation", () => {
+		const source = fs.readFileSync(
+			path.join(import.meta.dirname, "../../styles.css"),
+			"utf8",
+		);
+		expect(source).toContain('@source "../node_modules/@beskid/ui-react/src"');
+		expect(source).toContain(
+			'@import "@beskid/ui-react/styles/shadcn-entry.css"',
+		);
+		expect(source).toContain(
+			'@import "@beskid/beskid-ui/styles/hub.css"',
+		);
+	});
+
+	it("verifies the emitted stylesheet during production builds", () => {
+		const packageJson = fs.readFileSync(
+			path.join(import.meta.dirname, "../../../package.json"),
+			"utf8",
+		);
+		expect(packageJson).toMatch(
+			/"build":\s*"[^"]*pnpm run verify:client-bundle/,
+		);
+	});
+});

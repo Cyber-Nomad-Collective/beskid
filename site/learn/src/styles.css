@@ -3,6 +3,12 @@
    Aligned with @beskid/ui-react design tokens
    ===================================================== */
 
+@import "tailwindcss";
+
+@source "../node_modules/@beskid/ui-react/src";
+
+@import "@beskid/ui-react/styles/shadcn-entry.css";
+
 :root {
   --beskid-deep: #020816;
   --beskid-midnight: #080f1f;

@@ -24,6 +24,15 @@ function main(): void {
 		console.error(`verify-build-assets: missing ${cssFile}`);
 		process.exit(1);
 	}
+	const cssSource = fs.readFileSync(cssFile, "utf8");
+	for (const selector of [".beskid-hub", ".beskid-hub__tile", "--sidebar-width"]) {
+		if (!cssSource.includes(selector)) {
+			console.error(
+				`verify-build-assets: ${match[1]} is missing shared UI selector ${selector}`,
+			);
+			process.exit(1);
+		}
+	}
 
 	const ssrDir = path.join(server, "_ssr");
 	const routers = fs

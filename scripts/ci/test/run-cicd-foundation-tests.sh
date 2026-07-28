@@ -22,6 +22,7 @@ done
 bash "${root}/scripts/ci/test/delivery-contract.test.sh"
 bash "${root}/scripts/ci/test/post-deploy-smoke.test.sh"
 bash "${root}/scripts/ci/test/shared-ui-nexus-gate-contract.test.sh"
+bash "${root}/scripts/ci/test/platform-stylesheet-contract.test.sh"
 bash "${root}/scripts/ci/test/platform-delivery-fail-closed.test.sh"
 bash "${root}/scripts/ci/test/image-preparation-contract.test.sh"
 bash "${root}/scripts/ci/test/automatic-production-promotion.test.sh"
