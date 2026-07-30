@@ -26,6 +26,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Reusable promotion now always derives its smoke endpoints from the canonical
+  lane domains configuration instead of accepting a stale environment override
+  that can force an otherwise healthy deployment to roll back.
 - Native ABI-v5 runtime-kit staging now exposes Darwin's anonymous-memory
   mapping definitions when compiling the guarded-stack host bridge, restoring
   local release Corelib verification on macOS.

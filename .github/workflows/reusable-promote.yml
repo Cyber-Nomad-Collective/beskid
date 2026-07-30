@@ -97,7 +97,6 @@ jobs:
           OPENBAO_ADDR: ${{ vars.OPENBAO_ADDR }}
           OPENBAO_TOKEN: ${{ secrets.OPENBAO_TOKEN }}
           COOLIFY_SERVICE_UUID: ${{ vars.COOLIFY_SERVICE_UUID }}
-          BESKID_SMOKE_URLS: ${{ vars.BESKID_SMOKE_URLS }}
           APPLY: ${{ inputs.apply }}
           LANE: ${{ inputs.environment }}
           COMPOSE_FILE: ${{ inputs.compose-file }}
