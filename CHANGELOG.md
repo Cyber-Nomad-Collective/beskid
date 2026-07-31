@@ -26,6 +26,16 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- CLIF lowering now retains declaration-ordered generic type arguments, derives
+  contextual enum constructors from the enclosing specialization, and discovers
+  explicit generic calls from the complete indexed call inventory of reachable
+  source units.
+- Enum match statements now execute the final expression statement of every arm
+  block, including correctly accepting empty arms, while enum and aggregate
+  constructors provide pointer ABI evidence for inferred generic calls.
+- String interpolation operands now retain their contextual string-add intent,
+  and logical negation produces canonical boolean values instead of bitwise
+  complements that remain truthy.
 - Complete generation-safe CLIF lowering for the Corelib gate surface, make the
   61-entry typecheck matrix and 14-entry codegen spine pass without ignored
   gate tests, and isolate parallel runtime-kit test artifacts.
