@@ -74,6 +74,15 @@ if [[ ! -f "${domains_config}" ]]; then
   exit 1
 fi
 
+# Readiness and rollback both derive expected applications from the lane config
+# (`active_release_apps`), and the first read happens only after the new Compose
+# payload is already patched. Fail closed here instead of aborting mid-deploy
+# with no rollback when `beskid_infra` is absent but COOLIFY_SERVICE_UUID is set.
+if [[ ! -f "${lane_config}" ]]; then
+  echo "lane configuration is required for deployment: ${lane_config}" >&2
+  exit 1
+fi
+
 coolify_urls="$(jq -ce --arg lane "${lane}" '
   .[$lane].services
   | if type != "object" or length == 0 then error("services must be a non-empty object") else . end
@@ -283,10 +292,13 @@ rollback() {
   local previous_expected_apps
   echo "rolling back Coolify Compose after failed deployment" >&2
   previous_expected_apps="$(active_release_apps "${previous_payload}" "${lane_config}")"
-  [[ -n "${previous_expected_apps}" ]] || {
-    echo "previous Compose has no active immutable applications to verify" >&2
-    return 1
-  }
+  if [[ -z "${previous_expected_apps}" ]]; then
+    # A previous payload can legitimately lack digest-pinned active applications
+    # (tag-based images, or only optional profile services). Restoring it still
+    # matters more than per-application evidence, so fall back to aggregate
+    # service status rather than leaving the failed payload applied.
+    echo "previous Compose has no active immutable applications; verifying rollback via aggregate service status" >&2
+  fi
   # Coolify PATCH expects base64(docker_compose_raw), same as the apply path.
   patch_compose "${previous_payload}"
   rollback_id="$(trigger_deploy)"
@@ -311,7 +323,11 @@ fi
 # Coolify can report digest-pinned containers as running while the aggregate
 # service remains unhealthy. Emit redacted per-application errors before smoke
 # checks so a failed runtime is diagnosable from the promotion evidence.
-"${script_dir}/coolify-diagnostics.sh" "${lane}"
+# Diagnostics are evidence only: the Compose payload is already applied here, so
+# a diagnostics hiccup must not abort promotion before the smoke gate and its
+# rollback path decide the outcome.
+"${script_dir}/coolify-diagnostics.sh" "${lane}" \
+  || echo "coolify diagnostics failed; continuing to smoke checks" >&2
 
 if [[ -n "${smoke_script}" ]]; then
   [[ -x "${smoke_script}" ]] || { echo "smoke script is not executable: ${smoke_script}" >&2; rollback; exit 1; }
