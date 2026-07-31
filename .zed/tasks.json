@@ -1,0 +1,24 @@
+// Zed tasks for the Beskid project.
+[
+  {
+    "label": "Build LSP binary",
+    "command": "cd compiler && just replace",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "reveal": "always"
+  },
+  {
+    "label": "Build tree-sitter WASM (needs Docker)",
+    "command": "cd beskid_treesitter && npx tree-sitter build --wasm && mkdir -p ../.zed/grammars && cp tree-sitter-beskid.wasm ../.zed/grammars/beskid.wasm",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "reveal": "always"
+  },
+  {
+    "label": "Install dependencies (all sites)",
+    "command": "./scripts/setup-environment.sh",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+    "reveal": "always"
+  }
+]

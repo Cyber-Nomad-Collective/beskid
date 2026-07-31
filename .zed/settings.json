@@ -12,11 +12,15 @@
       "language_servers": ["beskid_lsp"],
       "tab_size": 4,
       "prettier": { "allowed": false },
+      "formatter": { "language_server": { "name": "beskid_lsp" } },
       "format_on_save": "on"
     },
     "Beskid Manifest": {
       "language_servers": ["beskid_lsp"],
-      "tab_size": 4
+      "tab_size": 4,
+      "prettier": { "allowed": false },
+      "formatter": { "language_server": { "name": "beskid_lsp" } },
+      "format_on_save": "on"
     }
   }
 }
