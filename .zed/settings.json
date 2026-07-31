@@ -1,0 +1,22 @@
+{
+  "lsp": {
+    "beskid_lsp": {
+      "binary": {
+        "path": "compiler/target/release/beskid_lsp",
+        "arguments": []
+      }
+    }
+  },
+  "languages": {
+    "Beskid": {
+      "language_servers": ["beskid_lsp"],
+      "tab_size": 4,
+      "prettier": { "allowed": false },
+      "format_on_save": "on"
+    },
+    "Beskid Manifest": {
+      "language_servers": ["beskid_lsp"],
+      "tab_size": 4
+    }
+  }
+}

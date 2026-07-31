@@ -38,16 +38,18 @@ COPY beskid_bsol ./beskid_bsol
 
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
   --mount=type=cache,target=/workspace/target \
-  command -v clang \
+  set -e \
+  && command -v clang \
   && command -v ld.lld \
+  && mkdir -p /workspace/runtime-output \
   && cd compiler \
   && CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_cli --release \
   && BESKID_RUNTIME_PREFIX=/workspace/target/native-runtime-kit \
   BESKID_RUNTIME_KIT_PROFILE=debug \
   BESKID_CLI_BIN=/workspace/target/release/beskid_cli \
   ./scripts/stage-native-runtime-kit.sh \
-  && mkdir -p /workspace/runtime-output \
   && install -m 0755 /workspace/target/release/beskid_cli /workspace/runtime-output/beskid \
+  && test -x /workspace/runtime-output/beskid || (echo "beskid binary missing after install" >&2 && exit 1) \
   && cp -a /workspace/target/native-runtime-kit /workspace/runtime-output/native-runtime-kit
 
 # The production server is a Bun program (`Bun.serve` / `Bun.file`). Keep the

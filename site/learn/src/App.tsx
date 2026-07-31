@@ -24,6 +24,7 @@ import { CodeHighlight } from "#/components/CodeHighlight";
 import { LessonContent } from "#/components/LessonContent";
 import LessonCard from "#/components/LessonCard";
 import { LessonEditor } from "#/components/LessonEditor";
+import { LessonWorkspace } from "#/components/LessonWorkspace";
 import Playground from "#/components/Playground";
 import ProgressTracker from "#/components/ProgressTracker";
 import {
@@ -121,7 +122,9 @@ interface LessonViewProps {
 	onExerciseUpdated: (u: LearnExercise) => void;
 }
 
-function LessonView({
+/** Kept as reference — replaced by LessonWorkspace with horizontal tiled layout. */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function __LessonViewLegacy({
 	exercise,
 	onPassed,
 	canEdit,
@@ -274,7 +277,7 @@ function LessonView({
 			: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400";
 
 	return (
-		<div className="lesson-view">
+		<div className="lesson-view" style={{ viewTransitionName: "lesson-content" }}>
 			{/* Header */}
 			<Card className="lesson-header-card">
 				<div className="lesson-header-content">
@@ -382,7 +385,7 @@ function LessonView({
 							>
 								<RotateCcw className="w-3.5 h-3.5 mr-1" /> Reset
 							</Button>
-							<Button size="sm" onClick={runCheck} disabled={running}>
+							<Button size="sm" onClick={runCheck} disabled={running} className="run-btn">
 								<Play className="w-3.5 h-3.5 mr-1" /> {running ? "Running..." : "Run"}
 							</Button>
 						</div>
@@ -411,11 +414,12 @@ function LessonView({
 						<span className="text-xs">Output</span>
 						{result && (
 							<Badge
+								key={`result-${result.durationMs}`}
 								className={clsx(
 									"ml-auto text-xs",
 									result.success
-										? "bg-emerald-500/20 text-emerald-400"
-										: "bg-red-500/20 text-red-400",
+										? "bg-emerald-500/20 text-emerald-400 pass-shimmer"
+										: "bg-red-500/20 text-red-400 fail-shake",
 								)}
 							>
 								{result.success ? "PASS" : "FAIL"}
@@ -577,14 +581,18 @@ function App() {
 					>
 						<main className="learn-main">
 							{viewMode === "playground" ? (
-								<Playground />
+								<div key="playground" className="tab-content-enter">
+									<Playground />
+								</div>
 							) : (
-								<LessonView
-									exercise={activeExercise}
-									onPassed={handlePassed}
-									canEdit={user != null && user.login != null}
-									onExerciseUpdated={handleExerciseUpdated}
-								/>
+								<div key="lesson" className="tab-content-enter">
+									<LessonWorkspace
+										exercise={activeExercise}
+										onPassed={handlePassed}
+										canEdit={user != null && user.login != null}
+										onExerciseUpdated={handleExerciseUpdated}
+									/>
+								</div>
 							)}
 						</main>
 

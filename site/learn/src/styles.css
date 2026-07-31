@@ -1,13 +1,47 @@
 @import "tailwindcss";
+@import "@beskid/material-theme";
 @import "@beskid/ui-react/styles/hub.css";
+@import "@beskid/ui-react/styles/shadcn-entry.css";
 @source "../node_modules/@beskid/ui-react/src";
 
-@import "@beskid/ui-react/styles/shadcn-entry.css";
+/* Learn-local shell tokens — derived from canonical beskid-ui brand tokens */
+:root {
+  --beskid-border-inner: color-mix(in srgb, var(--beskid-outline-variant) 78%, transparent);
+  --beskid-border-accent: color-mix(in srgb, var(--beskid-primary) 62%, var(--beskid-outline-variant));
+  --beskid-surface-panel: color-mix(in srgb, var(--beskid-surface) 82%, transparent);
+  --beskid-surface-hover: color-mix(in srgb, var(--beskid-primary-container) 18%, transparent);
+  --beskid-text-primary: var(--beskid-on-primary-container);
+  --beskid-text-muted: color-mix(in srgb, var(--beskid-outline) 78%, var(--beskid-secondary));
+  --beskid-radius-xl: 14px;
+  --beskid-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-:root { --beskid-surface:#08111f; --beskid-on-primary-container:#e7edf8; --beskid-primary:#86b7ff; --beskid-on-primary:#07111f; --beskid-secondary:#c8d5ed; --beskid-secondary-container:#1a2b45; --beskid-primary-container:#173b70; --beskid-outline:#9aa9c2; --beskid-outline-variant:#334766; --beskid-surface-variant:#121f34; --platform-spec-card-bg:#0d182a; --platform-spec-surface-strong:#101d31; --platform-spec-surface-muted:#16253b; --platform-spec-divider:#2a3c58; --platform-spec-surface:#0b1525; --platform-spec-tab-active-bg:#1b365d; --platform-spec-tab-text-active:#fff; }
-/* Learn-local shell tokens still consumed by the option, editor, playground, and animation rules below. */
-:root { --beskid-border-inner:#263c61; --beskid-border-accent:#7da4e6; --beskid-surface-panel:rgba(13, 24, 46, 0.72); --beskid-surface-hover:rgba(80, 120, 196, 0.25); --beskid-text-primary:#e6edf6; --beskid-text-muted:#94a3c0; --beskid-radius-xl:14px; --beskid-ease-out:cubic-bezier(0.16, 1, 0.3, 1); }
-html { color-scheme: dark; } html:not([data-theme]) { --background:var(--beskid-surface); --foreground:#e7edf8; --card:var(--platform-spec-card-bg); --card-foreground:#e7edf8; --popover:var(--platform-spec-surface-strong); --popover-foreground:#e7edf8; --primary:var(--beskid-primary); --primary-foreground:var(--beskid-on-primary); --secondary:var(--beskid-secondary-container); --secondary-foreground:#e7edf8; --muted:var(--platform-spec-surface-muted); --muted-foreground:#aebbd0; --accent:var(--beskid-primary-container); --accent-foreground:#fff; --destructive:#f2b8b5; --destructive-foreground:#601410; --border:var(--platform-spec-divider); --input:var(--platform-spec-surface-muted); --ring:var(--beskid-primary); --radius:.75rem; }
+html {
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] {
+  --background: var(--beskid-surface);
+  --foreground: var(--beskid-on-primary-container);
+  --card: var(--platform-spec-card-bg);
+  --card-foreground: var(--foreground);
+  --popover: var(--platform-spec-surface-strong);
+  --popover-foreground: var(--foreground);
+  --primary: var(--beskid-primary);
+  --primary-foreground: var(--beskid-on-primary);
+  --secondary: var(--beskid-secondary-container);
+  --secondary-foreground: var(--beskid-on-primary-container);
+  --muted: var(--platform-spec-surface-muted);
+  --muted-foreground: var(--beskid-outline);
+  --accent: var(--beskid-primary-container);
+  --accent-foreground: var(--beskid-primary);
+  --destructive: #f2b8b5;
+  --destructive-foreground: #601410;
+  --border: var(--platform-spec-divider);
+  --input: var(--beskid-outline-variant);
+  --ring: var(--beskid-primary);
+  --radius: 0.75rem;
+}
 
 @theme inline {
 	--color-background: var(--background);
@@ -98,8 +132,462 @@ html { color-scheme: dark; } html:not([data-theme]) { --background:var(--beskid-
 .lottie-container { display: flex; align-items: center; justify-content: center; pointer-events: none; }
 .lottie-container svg, .lottie-container > div { max-width: 100%; max-height: 100%; }
 
+/* ── Workspace (horizontal tiled layout) ──────────────────────────────────── */
+
+.workspace-container {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	min-height: calc(100vh - 12rem);
+}
+
+.workspace-header {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	flex-wrap: wrap;
+}
+
+.workspace-tab-bar {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	flex: 1;
+	min-width: 0;
+	overflow-x: auto;
+}
+
+.workspace-tab {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.35rem 0.65rem;
+	font-size: 0.78rem;
+	font-weight: 500;
+	color: var(--beskid-text-muted);
+	background: transparent;
+	border: 1px solid transparent;
+	border-bottom: 2px solid transparent;
+	border-radius: var(--beskid-radius-xl) var(--beskid-radius-xl) 0 0;
+	cursor: pointer;
+	transition:
+		color 180ms var(--beskid-ease-out),
+		background 180ms var(--beskid-ease-out),
+		border-color 180ms var(--beskid-ease-out);
+	white-space: nowrap;
+	user-select: none;
+}
+
+.workspace-tab:hover {
+	color: var(--beskid-text-primary);
+	background: var(--beskid-surface-hover);
+}
+
+.workspace-tab--active {
+	color: var(--beskid-text-primary);
+	background: var(--beskid-surface-panel);
+	border-color: var(--beskid-border-inner);
+	border-bottom-color: var(--beskid-primary);
+}
+
+.workspace-tab-label {
+	max-width: 10ch;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.workspace-tab-close {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	border-radius: 3px;
+	opacity: 0;
+	transition: opacity 150ms ease, background 150ms ease;
+	flex-shrink: 0;
+}
+
+.workspace-tab:hover .workspace-tab-close,
+.workspace-tab--active .workspace-tab-close {
+	opacity: 0.6;
+}
+
+.workspace-tab-close:hover {
+	opacity: 1 !important;
+	background: color-mix(in srgb, var(--beskid-outline-variant) 40%, transparent);
+}
+
+.workspace-add-tiles {
+	display: flex;
+	align-items: center;
+	gap: 0.15rem;
+	flex-shrink: 0;
+}
+
+.workspace-grid {
+	display: grid;
+	gap: 0;
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+	border: 1px solid var(--beskid-border-inner);
+	border-radius: var(--beskid-radius-xl);
+	background: var(--beskid-surface-panel);
+}
+
+.workspace-tile {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	overflow: hidden;
+}
+
+.workspace-tile:first-child {
+	border-radius: var(--beskid-radius-xl) 0 0 var(--beskid-radius-xl);
+}
+
+.workspace-tile:last-child {
+	border-radius: 0 var(--beskid-radius-xl) var(--beskid-radius-xl) 0;
+}
+
+.workspace-tile-inner {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	min-height: 0;
+}
+
+.workspace-tile-content {
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+}
+
+/* Resize handle — thin draggable divider between tiles */
+.workspace-resize-handle {
+	width: 4px;
+	cursor: col-resize;
+	background: transparent;
+	transition: background 150ms ease;
+	flex-shrink: 0;
+	position: relative;
+	z-index: 2;
+}
+
+.workspace-resize-handle::after {
+	content: "";
+	position: absolute;
+	inset: 0 0 0 1px;
+	background: var(--beskid-border-inner);
+	pointer-events: none;
+}
+
+.workspace-resize-handle:hover,
+.workspace-resize-handle:active {
+	background: var(--beskid-border-accent);
+}
+
+.workspace-resize-handle:hover::after,
+.workspace-resize-handle:active::after {
+	background: var(--beskid-primary);
+}
+
+.workspace-empty {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 1;
+	min-height: 200px;
+	border: 1px dashed var(--beskid-border-inner);
+	border-radius: var(--beskid-radius-xl);
+}
+
+/* ── Explorer Tile (file tree) ────────────────────────────────────────────── */
+
+.explorer-tile {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	min-height: 0;
+}
+
+.explorer-header {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.4rem 0.65rem;
+	border-bottom: 1px solid var(--beskid-border-inner);
+	background: rgba(18, 30, 58, 0.4);
+}
+
+.explorer-file-list {
+	flex: 1;
+	overflow-y: auto;
+	padding: 0.25rem;
+}
+
+.explorer-file-item {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	width: 100%;
+	padding: 0.3rem 0.5rem;
+	border: none;
+	border-radius: 0.35rem;
+	background: transparent;
+	color: var(--beskid-text-primary);
+	font-size: 0.78rem;
+	cursor: pointer;
+	transition: background 150ms var(--beskid-ease-out);
+	text-align: left;
+}
+
+.explorer-file-item:hover {
+	background: var(--beskid-surface-hover);
+}
+
+.explorer-file-name {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.explorer-footer {
+	border-top: 1px solid var(--beskid-border-inner);
+	padding: 0.3rem 0.5rem;
+	background: rgba(18, 30, 58, 0.3);
+}
+
 @media (max-width: 1279px) {
   .learn-grid { grid-template-columns: 1fr; }.learn-sidebar { display: none; }
   .editor-terminal-grid { grid-template-columns: 1fr; min-height: 700px; }
   .playground-grid { grid-template-columns: 1fr; }
+  .workspace-grid { grid-template-columns: 1fr !important; min-height: 80vh; }
+  .workspace-resize-handle { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   View Transitions (View Transition API)
+   ──────────────────────────────────────────────────────────────────────────── */
+@view-transition {
+  navigation: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(lesson-content) {
+    animation: fade-out 150ms ease both;
+  }
+  ::view-transition-new(lesson-content) {
+    animation: fade-in 200ms ease both;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Page Load Choreography
+   ──────────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes slide-down {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in-scale {
+    from { opacity: 0; transform: scale(0.97); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* Header slides down first (0ms) */
+  .learn-header {
+    animation: slide-down 350ms var(--beskid-ease-out) both;
+  }
+
+  /* Sidebar items fade in sequentially (delays set individually on children) */
+  .learn-sidebar {
+    animation: fade-in-scale 300ms var(--beskid-ease-out) both;
+    animation-delay: 100ms;
+  }
+  .learn-sidebar .sidebar-card:nth-child(1) { animation: slide-up 300ms var(--beskid-ease-out) both; animation-delay: 120ms; }
+  .learn-sidebar .sidebar-card:nth-child(2) { animation: slide-up 300ms var(--beskid-ease-out) both; animation-delay: 160ms; }
+  .learn-sidebar .sidebar-card:nth-child(3) { animation: slide-up 300ms var(--beskid-ease-out) both; animation-delay: 200ms; }
+  .learn-sidebar .sidebar-card:nth-child(4) { animation: slide-up 300ms var(--beskid-ease-out) both; animation-delay: 240ms; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Workspace Tile Entrance & Transitions
+   ──────────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes tile-enter {
+    from { opacity: 0; transform: translateY(16px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Staggered entrance: main content cards */
+  .lesson-view > .lesson-header-card  { animation: tile-enter 350ms var(--beskid-ease-out) both; animation-delay: 0ms; }
+  .lesson-view > .lesson-content-card { animation: tile-enter 350ms var(--beskid-ease-out) both; animation-delay: 50ms; }
+  .lesson-view > .hints-card         { animation: tile-enter 350ms var(--beskid-ease-out) both; animation-delay: 100ms; }
+  .lesson-view > .questions-card     { animation: tile-enter 350ms var(--beskid-ease-out) both; animation-delay: 150ms; }
+
+  /* Editor-terminal grid stagger */
+  .editor-terminal-grid > .editor-pane   { animation: tile-enter 350ms var(--beskid-ease-out) both; animation-delay: 200ms; }
+  .editor-terminal-grid > .terminal-pane { animation: tile-enter 350ms var(--beskid-ease-out) both; animation-delay: 250ms; }
+
+  /* Smooth show/hide transitions for toggle-able tiles */
+  .hints-card,
+  .questions-card,
+  .lesson-content-card {
+    transition: opacity 250ms var(--beskid-ease-out),
+                transform 250ms var(--beskid-ease-out),
+                max-height 350ms var(--beskid-ease-out);
+    overflow: hidden;
+  }
+
+  /* Resize handle hover glow */
+  .react-resizable-handle {
+    transition: box-shadow 200ms ease;
+  }
+  .react-resizable-handle:hover {
+    box-shadow: 0 0 8px 2px var(--beskid-border-accent);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Micro-Interactions
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* ── Tab Switching (lesson/playground toggle) ─────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes tab-indicator-slide {
+    from { transform: scaleX(0.85); opacity: 0.6; }
+    to   { transform: scaleX(1);    opacity: 1; }
+  }
+  .tab-indicator-active {
+    animation: tab-indicator-slide 200ms var(--beskid-ease-out) both;
+  }
+
+  @keyframes tab-content-fade {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .tab-content-enter {
+    animation: tab-content-fade 250ms var(--beskid-ease-out) both;
+  }
+
+  /* Crossfade for view mode switching */
+  .learn-main > * {
+    animation: tab-content-fade 280ms var(--beskid-ease-out) both;
+  }
+}
+
+/* ── Run Button Scale Pulse ───────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes run-pulse {
+    0%   { transform: scale(1); }
+    35%  { transform: scale(0.94); }
+    70%  { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+  .run-btn:active {
+    animation: run-pulse 280ms ease both;
+  }
+}
+
+/* ── Pass / Fail Feedback ─────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  @keyframes gentle-shake {
+    0%, 100% { transform: translateX(0); }
+    15%      { transform: translateX(-4px); }
+    30%      { transform: translateX(4px); }
+    45%      { transform: translateX(-3px); }
+    60%      { transform: translateX(3px); }
+    75%      { transform: translateX(-1px); }
+  }
+
+  .pass-shimmer {
+    background: linear-gradient(
+      110deg,
+      transparent 30%,
+      rgba(16, 185, 129, 0.18) 50%,
+      transparent 70%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 850ms ease both;
+  }
+  .fail-shake {
+    animation: gentle-shake 400ms ease both;
+  }
+}
+
+/* ── Hint Reveal ──────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes hint-expand {
+    from { max-height: 0; opacity: 0; transform: translateY(-4px); }
+    to   { max-height: 500px; opacity: 1; transform: translateY(0); }
+  }
+  .hint-content {
+    overflow: hidden;
+    transition: max-height 350ms var(--beskid-ease-out),
+                opacity 250ms var(--beskid-ease-out);
+  }
+  .hint-content.animate-fade-in {
+    animation: hint-expand 350ms var(--beskid-ease-out) both;
+  }
+}
+
+/* ── Question Option Hover Lift ───────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .option-btn {
+    transition: border-color 200ms ease,
+                background 200ms ease,
+                transform 180ms var(--beskid-ease-out),
+                box-shadow 180ms ease;
+  }
+  .option-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+  .option-btn:active {
+    transform: translateY(0);
+  }
+}
+
+/* ── Terminal Staggered Line Reveal ───────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes terminal-line-in {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .terminal-line {
+    animation: terminal-line-in 180ms var(--beskid-ease-out) both;
+  }
+  .terminal-line:nth-child(1)  { animation-delay: 0ms; }
+  .terminal-line:nth-child(2)  { animation-delay: 30ms; }
+  .terminal-line:nth-child(3)  { animation-delay: 60ms; }
+  .terminal-line:nth-child(4)  { animation-delay: 90ms; }
+  .terminal-line:nth-child(5)  { animation-delay: 120ms; }
+  .terminal-line:nth-child(6)  { animation-delay: 150ms; }
+  .terminal-line:nth-child(7)  { animation-delay: 180ms; }
+  .terminal-line:nth-child(8)  { animation-delay: 210ms; }
+  .terminal-line:nth-child(9)  { animation-delay: 240ms; }
+  .terminal-line:nth-child(10) { animation-delay: 270ms; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Reduce Motion — safety net for keyframe animations not yet wrapped
+   ──────────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

@@ -3,6 +3,7 @@
 @source "../node_modules/@beskid/ui-react/src";
 @source inline("rounded-4xl");
 
+@import "@beskid/material-theme";
 @import "@beskid/ui-react/styles/shadcn-entry.css";
 @import "./styles/auth-app.css";
 

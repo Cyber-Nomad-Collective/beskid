@@ -33,7 +33,10 @@ interface SpecReviewContextValue {
 	setDecision: (decision: ReviewDecision) => void;
 	setBody: (body: string) => void;
 	addComment: (comment: ReviewComment) => void;
+	updateComment: (id: string, body: string) => void;
 	removeComment: (id: string) => void;
+	editingCommentId: string | null;
+	setEditingCommentId: (id: string | null) => void;
 }
 
 const SpecReviewContext = createContext<SpecReviewContextValue | null>(null);
@@ -73,6 +76,19 @@ export function SpecReviewProvider({ children }: { children: ReactNode }) {
 		);
 	}, []);
 
+	const updateComment = useCallback((id: string, body: string) => {
+		setPendingReview((prev) =>
+			prev
+				? {
+						...prev,
+						comments: prev.comments.map((c) =>
+							c.id === id ? { ...c, body } : c,
+						),
+					}
+				: null,
+		);
+	}, []);
+
 	const removeComment = useCallback((id: string) => {
 		setPendingReview((prev) =>
 			prev
@@ -80,6 +96,8 @@ export function SpecReviewProvider({ children }: { children: ReactNode }) {
 				: null,
 		);
 	}, []);
+
+	const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
 
 	return (
 		<SpecReviewContext.Provider
@@ -92,7 +110,10 @@ export function SpecReviewProvider({ children }: { children: ReactNode }) {
 				setDecision,
 				setBody,
 				addComment,
+				updateComment,
 				removeComment,
+				editingCommentId,
+				setEditingCommentId,
 			}}
 		>
 			{children}

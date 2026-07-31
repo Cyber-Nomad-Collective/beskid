@@ -11,6 +11,7 @@ interface ReviewBannerProps {
 	onCancel: () => void;
 	onOpenDialog: () => void;
 	comments: ReviewComment[];
+	onEditComment: (id: string) => void;
 	onRemoveComment: (id: string) => void;
 }
 
@@ -21,6 +22,7 @@ export function ReviewBanner({
 	onCancel,
 	onOpenDialog,
 	comments,
+	onEditComment,
 	onRemoveComment,
 }: ReviewBannerProps) {
 	if (!reviewMode) return null;
@@ -68,17 +70,30 @@ export function ReviewBanner({
 							key={comment.id}
 							className="flex items-start gap-2 rounded-md border border-border/60 bg-muted/30 p-2"
 						>
-							<div className="min-w-0 flex-1 space-y-1">
+							<button
+								type="button"
+								className="min-w-0 flex-1 space-y-1 text-left"
+								onClick={() => onEditComment(comment.id)}
+							>
 								<blockquote className="line-clamp-2 text-xs italic text-muted-foreground">
 									&ldquo;{comment.selectedText.slice(0, 150)}
 									{comment.selectedText.length > 150 ? "\u2026" : ""}&rdquo;
 								</blockquote>
-								<p className="text-sm">{comment.body}</p>
-							</div>
+								{comment.body ? (
+									<p className="text-sm">{comment.body}</p>
+								) : (
+									<p className="text-sm italic text-muted-foreground">
+										Click to add comment text…
+									</p>
+								)}
+							</button>
 							<button
 								type="button"
 								className="shrink-0 rounded p-1 text-muted-foreground hover:bg-muted hover:text-destructive"
-								onClick={() => onRemoveComment(comment.id)}
+								onClick={(e) => {
+									e.stopPropagation();
+									onRemoveComment(comment.id);
+								}}
 								aria-label="Remove comment"
 							>
 								<Trash2 size={14} />

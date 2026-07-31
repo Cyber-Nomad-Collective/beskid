@@ -1,0 +1,13 @@
+name = "Beskid Manifest"
+grammar = "beskid"
+path_suffixes = ["bproj", "bws"]
+line_comments = ["// ", "/// "]
+block_comment = ["/*", " */"]
+autoclose_before = ";:.,=}])>"
+brackets = [
+  { start = "{", end = "}", close = true, newline = true },
+  { start = "[", end = "]", close = true, newline = false },
+  { start = "(", end = ")", close = true, newline = false },
+  { start = "\"", end = "\"", close = true, newline = false },
+]
+word_characters = ["_"]

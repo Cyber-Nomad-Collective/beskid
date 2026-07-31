@@ -19,8 +19,8 @@ export function SpecDocumentView({
 }: SpecDocumentViewProps) {
 	return (
 		<article className="spec-document-view mx-auto w-full max-w-4xl px-6 py-8">
-			<header className="mb-8 border-b border-border/70 pb-6">
-				<div className="mb-3 flex flex-wrap items-center gap-2">
+			<header className="mb-8 space-y-3 border-b border-border pb-6">
+				<div className="flex flex-wrap items-center gap-2">
 					{specLevel ? (
 						<span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
 							{specLevel}
@@ -34,7 +34,7 @@ export function SpecDocumentView({
 				</div>
 				<h1 className="display-title text-3xl font-bold tracking-tight">{title}</h1>
 				{description ? (
-					<p className="mt-3 text-base text-muted-foreground">{description}</p>
+					<p className="text-base text-muted-foreground">{description}</p>
 				) : null}
 			</header>
 			<div

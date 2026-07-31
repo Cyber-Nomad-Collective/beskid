@@ -56,6 +56,54 @@ const BESKID_RUNTIME_PREFIX =
 const BESKID_RUNTIME_KIT_PROFILE =
 	process.env.BESKID_RUNTIME_KIT_PROFILE ?? "debug";
 let runtimeKitBootstrapPromise: Promise<void> | null = null;
+let COMPILER_AVAILABLE = false;
+
+async function verifyBeskidBinary(): Promise<void> {
+	const envBinary = process.env.BESKID_BINARY;
+
+	if (envBinary && existsSync(envBinary)) {
+		try {
+			const proc = spawn(envBinary, ["--version"]);
+			const exitCode = await new Promise<number>((resolve) => {
+				proc.once("close", (code) => resolve(code ?? 1));
+				proc.once("error", () => resolve(1));
+			});
+			if (exitCode === 0) {
+				COMPILER_AVAILABLE = true;
+				console.log(`beskid compiler verified: ${envBinary}`);
+				return;
+			}
+		} catch {
+			// Fall through to PATH lookup
+		}
+	}
+
+	try {
+		const pathBinary = Bun.which("beskid");
+		if (pathBinary) {
+			const proc = spawn(pathBinary, ["--version"]);
+			const exitCode = await new Promise<number>((resolve) => {
+				proc.once("close", (code) => resolve(code ?? 1));
+				proc.once("error", () => resolve(1));
+			});
+			if (exitCode === 0) {
+				COMPILER_AVAILABLE = true;
+				console.log(`beskid compiler found in PATH: ${pathBinary}`);
+				return;
+			}
+		}
+	} catch {
+		// PATH lookup failed
+	}
+
+	console.warn(
+		"Beskid compiler binary not found. " +
+		"Compiler checks (analyze, build, run, test) will be unavailable. " +
+		"Set BESKID_BINARY env to the beskid CLI binary path, " +
+		"or ensure beskid is in PATH.",
+	);
+	COMPILER_AVAILABLE = false;
+}
 
 function resolveRepoRoot(): string {
 	const candidates = [
@@ -180,7 +228,7 @@ function resolveBeskidCommand(
 	);
 	const includePlain = commandSupportsPlain && !normalized.includes("--plain");
 
-	if (BESKID_BINARY) {
+	if (BESKID_BINARY && existsSync(BESKID_BINARY)) {
 		const includeFileArg = [
 			"analyze",
 			"parse",
@@ -200,6 +248,39 @@ function resolveBeskidCommand(
 				...includeFileArg,
 			],
 		};
+	}
+
+	if (BESKID_BINARY) {
+		console.warn(
+			`BESKID_BINARY (${BESKID_BINARY}) not found, falling back to beskid in PATH`,
+		);
+	}
+
+	try {
+		const pathBinary = Bun.which("beskid");
+		if (pathBinary) {
+			const includeFileArg = [
+				"analyze",
+				"parse",
+				"tree",
+				"run",
+				"build",
+				"test",
+			].includes(normalized[0])
+				? [tempFile]
+				: [];
+
+			return {
+				cmd: pathBinary,
+				args: [
+					...normalized,
+					...(includePlain ? ["--plain"] : []),
+					...includeFileArg,
+				],
+			};
+		}
+	} catch {
+		// Bun.which not available
 	}
 
 	return {
@@ -331,6 +412,21 @@ async function runBeskidCheck(payload: CheckRequest): Promise<CheckResult> {
 		};
 	}
 
+	if (!COMPILER_AVAILABLE) {
+		return {
+			exerciseId: payload.exerciseId,
+			command: payload.command,
+			exitCode: -1,
+			success: false,
+			stdout: "",
+			stderr: "",
+			timedOut: false,
+			durationMs: 0,
+			diagnosticsSummary: "Compiler binary not available.",
+			error: "Compiler binary not available. The Beskid compiler could not be found on this server.",
+		};
+	}
+
 	const tempDir = await mkdtemp(join(tmpdir(), "beskid-learn-"));
 	const tempFile = join(tempDir, `${randomUUID()}.bd`);
 	const command = exercise.command;
@@ -438,6 +534,8 @@ function saveProgress(data: unknown) {
 		return false;
 	}
 }
+
+await verifyBeskidBinary();
 
 Bun.serve({
 	port: PORT,

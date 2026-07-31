@@ -16,9 +16,10 @@ import {
 } from "@beskid/ui-react";
 
 import { Link } from "@tanstack/react-router";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useRef, useState } from "react";
 
 import { HighlightToolbar } from "#/components/reader/highlight-toolbar";
+import { InlineCommentBubble } from "#/components/reader/inline-comment-bubble";
 import { ReaderTopBarActions } from "#/components/reader/reader-topbar-actions";
 import { ReviewBanner } from "#/components/reader/review-banner";
 import { ReviewSubmissionDialog } from "#/components/reader/review-submission-dialog";
@@ -123,10 +124,14 @@ function ReaderInset({
 		setDecision,
 		setBody,
 		addComment,
+		updateComment,
 		removeComment,
+		editingCommentId,
+		setEditingCommentId,
 	} = useSpecReview();
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const pageSlug = activeSlug ?? "";
+	const commentRangesRef = useRef<Map<string, Range>>(new Map());
 
 	return (
 		<SidebarInset>
@@ -156,7 +161,12 @@ function ReaderInset({
 				onCancel={cancelReview}
 				onOpenDialog={() => setDialogOpen(true)}
 				comments={pendingReview?.comments ?? []}
-				onRemoveComment={removeComment}
+				onEditComment={(id) => setEditingCommentId(id)}
+				onRemoveComment={(id) => {
+					commentRangesRef.current.delete(id);
+					if (editingCommentId === id) setEditingCommentId(null);
+					removeComment(id);
+				}}
 			/>
 
 			<div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
@@ -165,22 +175,27 @@ function ReaderInset({
 				navTree={navTree}
 				reviewMode={reviewMode}
 				onQuote={(text) => {
+					const id = nextCommentId();
 					addComment({
-						id: nextCommentId(),
+						id,
 						selectedText: text,
 						body: "",
 						pageSlug,
 						createdAt: Date.now(),
 					});
+					setEditingCommentId(id);
 				}}
-				onComment={(text) => {
+				onComment={(text, range) => {
+					const id = nextCommentId();
+					commentRangesRef.current.set(id, range);
 					addComment({
-						id: nextCommentId(),
+						id,
 						selectedText: text,
 						body: "",
 						pageSlug,
 						createdAt: Date.now(),
 					});
+					setEditingCommentId(id);
 				}}
 			/>
 
@@ -198,6 +213,31 @@ function ReaderInset({
 				}}
 				onCancel={() => setDialogOpen(false)}
 			/>
+
+			{/* Inline comment bubble */}
+			{editingCommentId && pendingReview ? (
+				(() => {
+					const activeComment = pendingReview.comments.find(
+						(c) => c.id === editingCommentId,
+					);
+					if (!activeComment) return null;
+					return (
+						<InlineCommentBubble
+							comment={activeComment}
+							anchorRange={
+								commentRangesRef.current.get(editingCommentId) ?? null
+							}
+							onUpdate={updateComment}
+							onRemove={(id) => {
+								commentRangesRef.current.delete(id);
+								setEditingCommentId(null);
+								removeComment(id);
+							}}
+							onDismiss={() => setEditingCommentId(null)}
+						/>
+					);
+				})()
+			) : null}
 		</SidebarInset>
 	);
 }

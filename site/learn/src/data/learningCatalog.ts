@@ -12,6 +12,13 @@ export type LearnExerciseCategory =
 	| "parsing"
 	| "runtime";
 
+export interface TileLayoutEntry {
+	id: string;
+	label: string;
+	defaultVisible: boolean;
+	defaultSize: number;
+}
+
 export type LearnExercise = {
 	id: string;
 	title: string;
@@ -27,6 +34,7 @@ export type LearnExercise = {
 	detailedContent: string;
 	prerequisites: ReadonlyArray<string>;
 	category: LearnExerciseCategory;
+	tileLayout?: ReadonlyArray<TileLayoutEntry>;
 };
 
 export type LearnProgress = {

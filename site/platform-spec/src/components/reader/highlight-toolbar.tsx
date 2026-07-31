@@ -13,7 +13,7 @@ export interface HighlightToolbarProps {
 	navTree: OpenSpecNavNode;
 	reviewMode?: boolean;
 	onQuote?: (text: string) => void;
-	onComment?: (text: string) => void;
+	onComment?: (text: string, range: Range) => void;
 }
 
 export function HighlightToolbar({
@@ -114,7 +114,10 @@ export function HighlightToolbar({
 							type="button"
 							className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
 							onClick={() => {
-								onComment?.(selection.text);
+								const sel = window.getSelection();
+								if (sel && !sel.isCollapsed) {
+									onComment?.(selection.text, sel.getRangeAt(0).cloneRange());
+								}
 								setSelection(null);
 							}}
 							aria-label="Add comment on selection"

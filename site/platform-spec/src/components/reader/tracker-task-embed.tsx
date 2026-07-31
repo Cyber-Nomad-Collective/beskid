@@ -40,15 +40,15 @@ export function TrackerTaskEmbed({
 
 	return (
 		<aside
-			className="mt-6 rounded-lg border border-border p-4"
+			className="spec-tracker-embed"
 			data-standard-id={standardId}
 		>
-			<h2 className="text-sm font-semibold">Tracker tasks</h2>
+			<h2 className="spec-tracker-embed__title">Tracker tasks</h2>
 			{error ? (
-				<p className="mt-2 text-sm text-muted-foreground">{error}</p>
+				<p className="spec-tracker-embed__note">{error}</p>
 			) : null}
 			{tasks.length ? (
-				<ul className="mt-2 space-y-1 text-sm">
+				<ul className="spec-tracker-embed__list">
 					{tasks.map((task) => (
 						<li key={task.id ?? task.title}>
 							{task.title ?? task.id} {task.status ? `(${task.status})` : ""}
@@ -56,7 +56,7 @@ export function TrackerTaskEmbed({
 					))}
 				</ul>
 			) : !error ? (
-				<p className="mt-2 text-sm text-muted-foreground">No linked tasks.</p>
+				<p className="spec-tracker-embed__note">No linked tasks.</p>
 			) : null}
 		</aside>
 	);
