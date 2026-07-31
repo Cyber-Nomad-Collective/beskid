@@ -14,7 +14,12 @@ export interface StructuredDocumentViewProps {
 	bodyMd: string;
 	/** Informative Book guides; they never alter this standard's authority. */
 	bookLinks?: string[];
-	adrs?: { href: string; title: string }[];
+	adrs?: {
+		href: string;
+		title: string;
+		status?: string | null;
+		decision?: string | null;
+	}[];
 	relatedTopics?: { href: string; title: string }[];
 	architectureGraph?: { graphKey: string; entryNode?: string } | null;
 	/** Enforceable layout resolved for this document's spec level. */
@@ -432,22 +437,41 @@ export function StructuredDocumentView({
 							</section>
 						) : null}
 						{adrs.length > 0 ? (
-							<section className="spec-related-card">
-								<div className="spec-related-card__header">
-									<span className="spec-related-card__icon" aria-hidden="true">
-										<DecisionIcon />
+					<section className="spec-related-card">
+						<div className="spec-related-card__header">
+							<span className="spec-related-card__icon" aria-hidden="true">
+								<DecisionIcon />
+							</span>
+							<h2 className="spec-related-card__title">Decisions</h2>
+						</div>
+						<ul className="spec-related-card__list">
+							{adrs.map((item) => (
+								<li key={item.href}>
+									<a
+										href={item.href}
+										className="flex flex-col rounded-md border border-transparent px-2 py-1.5 transition-colors hover:border-border hover:bg-accent/25"
+									>
+										<span className="text-sm font-medium text-foreground">
+											{item.title}
+										</span>
+										<span className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+											{item.decision ? (
+												<span className="rounded-full border border-primary/40 px-2 py-0.5 text-[0.7rem] font-medium text-primary">
+													{item.decision}
+												</span>
+											) : null}
+											{item.status ? (
+												<span className="rounded-full border border-border px-2 py-0.5 text-[0.7rem]">
+													{item.status}
+												</span>
+											) : null}
 									</span>
-									<h2 className="spec-related-card__title">Decisions</h2>
-								</div>
-								<ul className="spec-related-card__list">
-									{adrs.map((item) => (
-										<li key={item.href}>
-											<a href={item.href}>{item.title}</a>
-										</li>
-									))}
-								</ul>
-							</section>
-						) : null}
+								</a>
+								</li>
+							))}
+						</ul>
+					</section>
+				) : null}
 					</div>
 				</aside>
 			) : null}

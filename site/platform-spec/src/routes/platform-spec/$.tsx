@@ -82,7 +82,12 @@ function PlatformSpecDocument() {
 
 	const adrs = catalog.documents
 		.filter((entry) => entry.kind === "decision" && entry.parentSlug === slug)
-		.map((entry) => ({ href: entry.href, title: entry.title }));
+		.map((entry) => ({
+			href: entry.href,
+			title: entry.title,
+			status: entry.status,
+			decision: entry.decision,
+		}));
 
 	return (
 		<ReaderChrome navTree={navTree} activeSlug={slug}>
