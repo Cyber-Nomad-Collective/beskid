@@ -19,6 +19,8 @@ _refactor/
 .DS_Store
 # some skill
 .omo/
+.tmp-corelib-runtime/
+.pnpm-store/
 
 # Env files
 .env
