@@ -9,143 +9,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
-### Changed
+## [0.4.0] — 2026-07-31
 
-- Learn now renders curriculum Markdown structurally, adopts shared React UI styling and hub navigation, and presents its lesson rail as an off-canvas drawer below desktop widths.
-
-- The runtime OpenSpec now records the Fibers 0.1.13 poll-driven compatibility
-  contract: deterministic in-place `run_once`, ready/not-ready wake behavior,
-  monitor result/error truth, linked cancellation, and the deprecated
-  stackful-yield mapping to the canonical scheduler.
-- Parser recovery was restructured around shared sync-boundary primitives and
-  expanded to cover more statement/expression boundary shapes, including operator
-  starts and wider syntax-start coverage for semicolon synchronization.
-- Parser recovery member/index heuristics now handle `Pos(0)` parser-fallback
-  failures by anchoring to tail-line syntax markers (`.` / `[`), enabling robust
-  placeholder insertion for missing field/index tails in incomplete expressions.
-
-### Fixed
-
-- CLIF lowering now retains declaration-ordered generic type arguments, derives
-  contextual enum constructors from the enclosing specialization, and discovers
-  explicit generic calls from the complete indexed call inventory of reachable
-  source units.
-- Enum match statements now execute the final expression statement of every arm
-  block, including correctly accepting empty arms, while enum and aggregate
-  constructors provide pointer ABI evidence for inferred generic calls.
-- String interpolation operands now retain their contextual string-add intent,
-  and logical negation produces canonical boolean values instead of bitwise
-  complements that remain truthy.
-- Complete generation-safe CLIF lowering for the Corelib gate surface, make the
-  61-entry typecheck matrix and 14-entry codegen spine pass without ignored
-  gate tests, and isolate parallel runtime-kit test artifacts.
-- Reusable promotion now always derives its smoke endpoints from the canonical
-  lane domains configuration instead of accepting a stale environment override
-  that can force an otherwise healthy deployment to roll back.
-- Native ABI-v5 runtime-kit staging now exposes Darwin's anonymous-memory
-  mapping definitions when compiling the guarded-stack host bridge, restoring
-  local release Corelib verification on macOS.
-- Reusable staged promotion now binds its apply job to the requested GitHub
-  environment, making lane-scoped OpenBao and Coolify configuration available
-  during a verified release. Leaving the job unbound had also dropped every
-  environment-scoped variable (`OPENBAO_ADDR`, `COOLIFY_SERVICE_UUID`,
-  `BESKID_SMOKE_URLS`), so production's manual approval is now governed by the
-  `production` environment's own protection rules rather than by unbinding the
-  job.
-- Empty string literals now reserve an addressable sentinel byte in JIT data
-  storage while retaining their logical zero length, satisfying the runtime
-  string-pointer invariant for syscall calls.
-- Learn's dedicated frozen pnpm lock now matches its release manifest, while
-  the corelib test-spine catalog and GitNexus Bun lock stay in parity with
-  their respective CI gates.
-- Platform Spec now bundles the shared sidebar and Beskid Hub styles, restoring
-  the desktop sidebar and properly styled service launcher. Learn and pckg now
-  compile the shared React component utilities and theme tokens as well; the
-  production checks enforce these stylesheet contracts before a release ships.
-- Coolify promotion now verifies every lane-active immutable Compose application
-  at its exact digest and healthy runtime state before accepting deployment;
-  applied promotions always run canonical HTTPS smoke checks for the lane.
-- Runtime environment sync now requires an explicit `OPENBAO_ADDR` (or
-  `VAULT_ADDR`) instead of falling back to a hardcoded secrets host, so a
-  missing lane variable fails the promotion rather than sending `OPENBAO_TOKEN`
-  to an unintended endpoint.
-- Platform Spec's Node SSR build now resolves `tslib` through its ESM entry and
-  verifies the generated production SSR chunk can be imported with safe runtime
-  configuration, preventing a startup crash from the bundled CommonJS interop wrapper.
-- Runtime OpenSpec now parses its callback, scheduler, and composition
-  requirements strictly, and records the mandatory scheduler result trampoline
-  plus Process adapter-binding and string-ownership contracts before code.
-- Tracker's immutable image now builds and invokes the Node server runtime
-  consistently, and defers shell-only server-function modules until the Start
-  runtime is initialized; the image gate starts the published digest and proves
-  its health endpoint before release-manifest promotion.
-- Canonical runtime lowering now selects manifest exports and their direct-call
-  closure, attributes failed ISLE lowering to the leaf AST node, and
-  materializes compiler-owned layout constants at the exact direct-call ABI
-  width without permitting literal or untrusted-source coercion.
-- Scheduler fiber context metadata and context entrypoints are now derived from
-  the selected ABI-v5 target manifest, with exact assembly-export validation;
-  runtime layout constants also materialize at authorized intrinsic ABI widths.
-- Scheduler stacks now reserve a no-access lower guard with a writable bounded
-  usable suffix through manifest-owned Linux, Darwin, and Windows adapters;
-  nested canonical intrinsic layout constants retain their exact ABI widths.
-
-- Canonical scheduler state now has one separately allocated ABI-owned table at
-  the manifest-declared runtime-state field, and its legacy duplicate spawn
-  stub has been removed in favor of the canonical ABI-v5 export.
-- Canonical scheduler implementation is now OpenSpec-gated on ABI-owned state,
-  manifest-derived contexts and stacks, production ISLE execution coverage, and
-  Phase-A/main-fiber lifecycle proof before it can claim target support.
-- Local immutable-release Compose validation now uses `podman-compose` through
-  one checked engine boundary; GitHub Actions retains Docker Compose and its
-  Docker BuildKit publication path.
-- The canonical-runtime OpenSpec now requires one registry-backed
-  `gc_external_root_count` export, with external-root lifecycle coverage that
-  distinguishes registered roots from temporary handles.
-- Learn's production container now uses the pinned Bun runtime required by its
-  `Bun.serve`/`Bun.file` server, with a CI contract preventing a Node-only
-  runtime regression that would fail its healthcheck at startup.
-- Platform delivery now creates a release manifest only after every required
-  quality and image lane succeeds, preventing partial-image promotion and
-  staging or production deployment after a failed validation.
-- Required Node image lanes now prepare their complete file-linked workspace
-  graph before frozen dependency installation; CI rejects incomplete build
-  contexts before publication.
-- Image dependency locks and shared package identities now stay synchronized
-  across Auth, Learn, Platform Spec, Tracker, Nexus, and pckg delivery lanes.
-- Docker images rebuild file-linked shared package exports after frozen install,
-  so ignored generated output cannot mask a missing production dependency.
-- Learn's release image now uses the canonical compiler shell API, removing a
-  stale re-export that prevented its release CLI build.
-- Nexus's isolated image build now declares its direct compiler dependencies
-  instead of relying on transitive packages omitted by frozen installation.
-- Nexus's bundled web build now locks Trudoc to the copied local package source
-  in both Bun and pnpm, eliminating unavailable private-registry fetches during
-  image construction and quality checks.
-- Learn's compiler image now maps analysis constants explicitly in LSP document
-  symbols and semantic tokens, keeping the release CLI build exhaustive.
-- Learn's compiler image now copies the canonical runtime-kit staging scripts before invoking
-  them, so the immutable release image can package its ABI-v5 runtime kit.
-- Learn's compiler stage now uses one explicit Cargo target prefix and the canonical
-  `beskid_cli` executable for runtime-kit staging and final-image publication.
-- Learn's runtime output is now copied out of the ephemeral Cargo cache in the same build step
-  that stages it, so the final image receives the CLI and ABI-v5 kit.
-- Learn's runtime-kit stage now installs the required canonical `clang`/`lld` Linux toolchain,
-  preventing native runtime object assembly from failing with an unavailable linker.
-- The release Compose topology now maps every manifest image exactly once,
-  including the profile-gated Learn service, before staging promotion.
-- Canonical runtime lowering now supports integer `|`, `<<`, and `>>` through
-  generation-safe syntax facts and stock CLIF; contextual runtime parameter names
-  `parent` and `event` no longer collide with structural grammar roles.
-- AOT fixtures and the parsed-project ISLE harness now use the production
-  syntax-to-CodegenInput lowering entrypoint rather than legacy HIR lowering.
-- Formatter test classification now recognizes constant declarations, restoring
-  compilation of the AOT and module-constants test paths.
-- Formatter goldens now match canonical parenthesis-free nullary enum constructors.
-- Nexus graph-first startup now initializes its Sigma callback before capture;
-  its repository API test routes are exact and no longer shadow one another.
-
-## [0.4.0] — 2026-07-24
+Compiler waves W0–W6 complete, HIR-free ISLE ABI-v5 native runtime, corelib gate stabilized, macOS arm64 + Windows x86-64 kits, tracker seed sync, platform-spec synced.
 
 ### Added
 
@@ -469,6 +335,19 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Stage a freshly produced native-host ABI-v5 runtime kit for compiler and corelib CI gates,
   replacing Rust runtime-bridge setup.
 
+- Learn now renders curriculum Markdown structurally, adopts shared React UI styling and hub navigation, and presents its lesson rail as an off-canvas drawer below desktop widths.
+
+- The runtime OpenSpec now records the Fibers 0.1.13 poll-driven compatibility
+  contract: deterministic in-place `run_once`, ready/not-ready wake behavior,
+  monitor result/error truth, linked cancellation, and the deprecated
+  stackful-yield mapping to the canonical scheduler.
+- Parser recovery was restructured around shared sync-boundary primitives and
+  expanded to cover more statement/expression boundary shapes, including operator
+  starts and wider syntax-start coverage for semicolon synchronization.
+- Parser recovery member/index heuristics now handle `Pos(0)` parser-fallback
+  failures by anchoring to tail-line syntax markers (`.` / `[`), enabling robust
+  placeholder insertion for missing field/index tails in incomplete expressions.
+
 ### Added
 
 - Add the Beskid 0.5 release split and executable planning baseline: the
@@ -614,6 +493,125 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Block release image publication and production deployment on release gates.
 - Propagate Coolify deploy and OpenBao synchronization failures instead of
   reporting a successful deployment after suppressed errors.
+
+- CLIF lowering now retains declaration-ordered generic type arguments, derives
+  contextual enum constructors from the enclosing specialization, and discovers
+  explicit generic calls from the complete indexed call inventory of reachable
+  source units.
+- Enum match statements now execute the final expression statement of every arm
+  block, including correctly accepting empty arms, while enum and aggregate
+  constructors provide pointer ABI evidence for inferred generic calls.
+- String interpolation operands now retain their contextual string-add intent,
+  and logical negation produces canonical boolean values instead of bitwise
+  complements that remain truthy.
+- Complete generation-safe CLIF lowering for the Corelib gate surface, make the
+  61-entry typecheck matrix and 14-entry codegen spine pass without ignored
+  gate tests, and isolate parallel runtime-kit test artifacts.
+- Reusable promotion now always derives its smoke endpoints from the canonical
+  lane domains configuration instead of accepting a stale environment override
+  that can force an otherwise healthy deployment to roll back.
+- Native ABI-v5 runtime-kit staging now exposes Darwin's anonymous-memory
+  mapping definitions when compiling the guarded-stack host bridge, restoring
+  local release Corelib verification on macOS.
+- Reusable staged promotion now binds its apply job to the requested GitHub
+  environment, making lane-scoped OpenBao and Coolify configuration available
+  during a verified release. Leaving the job unbound had also dropped every
+  environment-scoped variable (`OPENBAO_ADDR`, `COOLIFY_SERVICE_UUID`,
+  `BESKID_SMOKE_URLS`), so production's manual approval is now governed by the
+  `production` environment's own protection rules rather than by unbinding the
+  job.
+- Empty string literals now reserve an addressable sentinel byte in JIT data
+  storage while retaining their logical zero length, satisfying the runtime
+  string-pointer invariant for syscall calls.
+- Learn's dedicated frozen pnpm lock now matches its release manifest, while
+  the corelib test-spine catalog and GitNexus Bun lock stay in parity with
+  their respective CI gates.
+- Platform Spec now bundles the shared sidebar and Beskid Hub styles, restoring
+  the desktop sidebar and properly styled service launcher. Learn and pckg now
+  compile the shared React component utilities and theme tokens as well; the
+  production checks enforce these stylesheet contracts before a release ships.
+- Coolify promotion now verifies every lane-active immutable Compose application
+  at its exact digest and healthy runtime state before accepting deployment;
+  applied promotions always run canonical HTTPS smoke checks for the lane.
+- Runtime environment sync now requires an explicit `OPENBAO_ADDR` (or
+  `VAULT_ADDR`) instead of falling back to a hardcoded secrets host, so a
+  missing lane variable fails the promotion rather than sending `OPENBAO_TOKEN`
+  to an unintended endpoint.
+- Platform Spec's Node SSR build now resolves `tslib` through its ESM entry and
+  verifies the generated production SSR chunk can be imported with safe runtime
+  configuration, preventing a startup crash from the bundled CommonJS interop wrapper.
+- Runtime OpenSpec now parses its callback, scheduler, and composition
+  requirements strictly, and records the mandatory scheduler result trampoline
+  plus Process adapter-binding and string-ownership contracts before code.
+- Tracker's immutable image now builds and invokes the Node server runtime
+  consistently, and defers shell-only server-function modules until the Start
+  runtime is initialized; the image gate starts the published digest and proves
+  its health endpoint before release-manifest promotion.
+- Canonical runtime lowering now selects manifest exports and their direct-call
+  closure, attributes failed ISLE lowering to the leaf AST node, and
+  materializes compiler-owned layout constants at the exact direct-call ABI
+  width without permitting literal or untrusted-source coercion.
+- Scheduler fiber context metadata and context entrypoints are now derived from
+  the selected ABI-v5 target manifest, with exact assembly-export validation;
+  runtime layout constants also materialize at authorized intrinsic ABI widths.
+- Scheduler stacks now reserve a no-access lower guard with a writable bounded
+  usable suffix through manifest-owned Linux, Darwin, and Windows adapters;
+  nested canonical intrinsic layout constants retain their exact ABI widths.
+
+- Canonical scheduler state now has one separately allocated ABI-owned table at
+  the manifest-declared runtime-state field, and its legacy duplicate spawn
+  stub has been removed in favor of the canonical ABI-v5 export.
+- Canonical scheduler implementation is now OpenSpec-gated on ABI-owned state,
+  manifest-derived contexts and stacks, production ISLE execution coverage, and
+  Phase-A/main-fiber lifecycle proof before it can claim target support.
+- Local immutable-release Compose validation now uses `podman-compose` through
+  one checked engine boundary; GitHub Actions retains Docker Compose and its
+  Docker BuildKit publication path.
+- The canonical-runtime OpenSpec now requires one registry-backed
+  `gc_external_root_count` export, with external-root lifecycle coverage that
+  distinguishes registered roots from temporary handles.
+- Learn's production container now uses the pinned Bun runtime required by its
+  `Bun.serve`/`Bun.file` server, with a CI contract preventing a Node-only
+  runtime regression that would fail its healthcheck at startup.
+- Platform delivery now creates a release manifest only after every required
+  quality and image lane succeeds, preventing partial-image promotion and
+  staging or production deployment after a failed validation.
+- Required Node image lanes now prepare their complete file-linked workspace
+  graph before frozen dependency installation; CI rejects incomplete build
+  contexts before publication.
+- Image dependency locks and shared package identities now stay synchronized
+  across Auth, Learn, Platform Spec, Tracker, Nexus, and pckg delivery lanes.
+- Docker images rebuild file-linked shared package exports after frozen install,
+  so ignored generated output cannot mask a missing production dependency.
+- Learn's release image now uses the canonical compiler shell API, removing a
+  stale re-export that prevented its release CLI build.
+- Nexus's isolated image build now declares its direct compiler dependencies
+  instead of relying on transitive packages omitted by frozen installation.
+- Nexus's bundled web build now locks Trudoc to the copied local package source
+  in both Bun and pnpm, eliminating unavailable private-registry fetches during
+  image construction and quality checks.
+- Learn's compiler image now maps analysis constants explicitly in LSP document
+  symbols and semantic tokens, keeping the release CLI build exhaustive.
+- Learn's compiler image now copies the canonical runtime-kit staging scripts before invoking
+  them, so the immutable release image can package its ABI-v5 runtime kit.
+- Learn's compiler stage now uses one explicit Cargo target prefix and the canonical
+  `beskid_cli` executable for runtime-kit staging and final-image publication.
+- Learn's runtime output is now copied out of the ephemeral Cargo cache in the same build step
+  that stages it, so the final image receives the CLI and ABI-v5 kit.
+- Learn's runtime-kit stage now installs the required canonical `clang`/`lld` Linux toolchain,
+  preventing native runtime object assembly from failing with an unavailable linker.
+- The release Compose topology now maps every manifest image exactly once,
+  including the profile-gated Learn service, before staging promotion.
+- Canonical runtime lowering now supports integer `|`, `<<`, and `>>` through
+  generation-safe syntax facts and stock CLIF; contextual runtime parameter names
+  `parent` and `event` no longer collide with structural grammar roles.
+- AOT fixtures and the parsed-project ISLE harness now use the production
+  syntax-to-CodegenInput lowering entrypoint rather than legacy HIR lowering.
+- Formatter test classification now recognizes constant declarations, restoring
+  compilation of the AOT and module-constants test paths.
+- Formatter goldens now match canonical parenthesis-free nullary enum constructors.
+- Nexus graph-first startup now initializes its Sigma callback before capture;
+  its repository API test routes are exact and no longer shadow one another.
 
 ### Removed
 
