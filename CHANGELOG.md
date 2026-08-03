@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Document the selected ABI-v5 Core.Args count/get contract, including exact
+  Corelib source authority, managed string ownership, target argv semantics,
+  and explicit JIT argument injection required before implementation.
 - Require the ABI-v5 runtime-kit debug/release installed-prefix matrix on Linux
   x86-64 and macOS arm64 in addition to Windows x86-64; each host now publishes
   its validated static/shared kit artifacts for release evidence.
