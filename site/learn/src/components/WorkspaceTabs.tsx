@@ -10,7 +10,7 @@ interface WorkspaceTabsProps {
 	tiles: TileTab[];
 	activeTile: string | null;
 	onSelectTile: (id: string) => void;
-	onCloseTile: (id: string) => void;
+	onCloseTile: (id: string, replacementId: string | null) => void;
 }
 
 export function WorkspaceTabs({
@@ -33,8 +33,17 @@ export function WorkspaceTabs({
 		selectTile(nextTile);
 	};
 
+	const closeTile = (tile: TileTab, index: number) => {
+		const replacementTile = tiles[index + 1] ?? tiles[index - 1] ?? null;
+		const replacementId = activeTile === tile.id ? replacementTile?.id ?? null : null;
+		onCloseTile(tile.id, replacementId);
+		if (replacementId) {
+			queueMicrotask(() => document.getElementById(`workspace-tab-${replacementId}`)?.focus());
+		}
+	};
+
 	return (
-		<div className="workspace-tab-bar" role="tablist">
+		<nav className="workspace-tab-bar" aria-label="Workspace panels">
 			{tiles.map((tile, index) => (
 				<div
 					key={tile.id}
@@ -46,10 +55,8 @@ export function WorkspaceTabs({
 					<button
 						id={`workspace-tab-${tile.id}`}
 						type="button"
-						role="tab"
-						aria-selected={activeTile === tile.id}
+						aria-pressed={activeTile === tile.id}
 						aria-controls={`workspace-panel-${tile.id}`}
-						tabIndex={activeTile === tile.id ? 0 : -1}
 						className={clsx(
 							"workspace-tab",
 							activeTile === tile.id && "workspace-tab--active",
@@ -82,12 +89,12 @@ export function WorkspaceTabs({
 						type="button"
 						className="workspace-tab-close"
 						aria-label={`Close ${tile.label}`}
-						onClick={() => onCloseTile(tile.id)}
+						onClick={() => closeTile(tile, index)}
 					>
 						<X className="w-3 h-3" />
 					</button>
 				</div>
 			))}
-		</div>
+		</nav>
 	);
 }

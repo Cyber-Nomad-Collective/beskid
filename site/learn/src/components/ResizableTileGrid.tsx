@@ -4,6 +4,7 @@ interface ResizableTileGridProps {
 	children: React.ReactNode[];
 	tileIds: string[];
 	activeTile: string | null;
+	compact: boolean;
 	columnSizes: number[];
 	onColumnSizesChange: (sizes: number[]) => void;
 	minColumnWidth?: number;
@@ -15,6 +16,7 @@ export function ResizableTileGrid({
 	children,
 	tileIds,
 	activeTile,
+	compact,
 	columnSizes,
 	onColumnSizesChange,
 	minColumnWidth = MIN_COLUMN_PX,
@@ -105,8 +107,9 @@ export function ResizableTileGrid({
 			<div
 				key={`tile-${tileId ?? i}`}
 				id={tileId ? `workspace-panel-${tileId}` : undefined}
-				role="tabpanel"
+				role="region"
 				aria-labelledby={tileId ? `workspace-tab-${tileId}` : undefined}
+				hidden={compact && !isActive}
 				className={`workspace-tile ${
 					isActive ? "workspace-tile--active" : "workspace-tile--inactive"
 				}`}
