@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Require the ABI-v5 runtime-kit debug/release installed-prefix matrix on Linux
+  x86-64 and macOS arm64 in addition to Windows x86-64; each host now publishes
+  its validated static/shared kit artifacts for release evidence.
 - Correct the v0.4 tracker seed projection to use schema-valid in-progress
   statuses and require fresh reconciled-candidate evidence before corelib or
   release work can be marked Done.
