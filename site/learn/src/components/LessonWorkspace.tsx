@@ -191,7 +191,7 @@ export function LessonWorkspace({
 	}, []);
 
 	const closeTile = useCallback(
-		(id: string) => {
+		(id: string, replacementId: string | null) => {
 			setLayout((prev) => {
 				const idx = prev.visibleTiles.indexOf(id);
 				if (idx === -1) return prev;
@@ -205,18 +205,22 @@ export function LessonWorkspace({
 					columnSizes: normalized,
 				};
 			});
-			setActiveTile((prev) => {
-				if (prev === id) {
-					const idx = layout.visibleTiles.indexOf(id);
-					const remaining = layout.visibleTiles.filter((v) => v !== id);
-					if (remaining.length === 0) return null;
-					return remaining[Math.min(idx, remaining.length - 1)] ?? null;
-				}
-				return prev;
-			});
+			setActiveTile((prev) => (prev === id ? replacementId : prev));
 		},
-		[layout.visibleTiles],
+		[],
 	);
+
+	const [compact, setCompact] = useState(() =>
+		typeof window !== "undefined" && window.matchMedia("(max-width: 1279px)").matches,
+	);
+
+	useEffect(() => {
+		const mediaQuery = window.matchMedia("(max-width: 1279px)");
+		const updateCompact = () => setCompact(mediaQuery.matches);
+		updateCompact();
+		mediaQuery.addEventListener("change", updateCompact);
+		return () => mediaQuery.removeEventListener("change", updateCompact);
+	}, []);
 
 	const handleColumnSizesChange = useCallback((sizes: number[]) => {
 		setLayout((prev) => ({ ...prev, columnSizes: sizes }));
@@ -628,6 +632,9 @@ export function LessonWorkspace({
 
 			{visibleTiles.length > 0 ? (
 				<ResizableTileGrid
+					tileIds={visibleTiles.map((tile) => tile.id)}
+					activeTile={activeTile}
+					compact={compact}
 					columnSizes={layout.columnSizes}
 					onColumnSizesChange={handleColumnSizesChange}
 				>
