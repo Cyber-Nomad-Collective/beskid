@@ -9,6 +9,12 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Changed
+
+- Correct the v0.4 tracker seed projection to use schema-valid in-progress
+  statuses and require fresh reconciled-candidate evidence before corelib or
+  release work can be marked Done.
+
 ## [0.4.0] — 2026-07-31
 
 Compiler waves W0–W6 complete, HIR-free ISLE ABI-v5 native runtime, corelib gate stabilized, macOS arm64 + Windows x86-64 kits, tracker seed sync, platform-spec synced.
