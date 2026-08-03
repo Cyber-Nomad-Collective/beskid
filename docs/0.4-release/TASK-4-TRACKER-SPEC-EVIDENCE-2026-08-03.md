@@ -29,12 +29,14 @@ has a fresh corelib report.
 
 ## Normative status
 
-The active OpenSpec ledger leaves these release-critical groups unchecked:
-
-- consumer migration: `3.1` through `3.6`;
-- legacy retirement: `4.1` through `4.5`;
-- verification and release: `5.1` through `5.6`;
-- release execution: `6.3` through `6.7` and `6.10.1` through `6.10.3`.
+The active OpenSpec ledger leaves release-critical work unchecked across every
+remaining phase: retired-pattern/provenance scanning (`1.4`); generated
+operation inventory and canonical runtime/kit authorities (`2.3`, `2.6` through
+`2.7`); consumer migration (`3.1` through `3.6`); legacy retirement (`4.1`
+through `4.5`); verification and release (`5.1` through `5.6`); the release
+execution waves (`6.3` through `6.7`); canonical-runtime and kit completion
+(`6.8.*`); consumer-migration-before-deletion (`6.9.*`); and retirement,
+provenance, and sign-off (`6.10.1` through `6.10.3`).
 
 Therefore neither tracker seed data nor this report marks v0.4, its corelib
 matrix, or any linked release work Done.
@@ -45,7 +47,7 @@ matrix, or any linked release work Done.
 | --- | --- |
 | `pnpm install --frozen-lockfile` | Passed at the root candidate. |
 | `pnpm run openspec:validate` | Passed: 204 items, 0 failures. |
-| `pnpm run openspec:catalog` | Must leave `openspec/catalog.json` unchanged after this documentation/seed-only reconciliation. |
+| `pnpm run openspec:catalog` | Passed: rebuilt 196 capabilities and 552 requirements at revision `248855a3b994`; `openspec/catalog.json` had no diff. |
 | `pnpm --dir beskid_tracker run seed:validate` | Pending tracker-local dependency installation, then rerun after the seed repair. |
 
 ## Remaining release facts
