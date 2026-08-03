@@ -628,6 +628,8 @@ export function LessonWorkspace({
 
 			{visibleTiles.length > 0 ? (
 				<ResizableTileGrid
+					tileIds={visibleTiles.map((tile) => tile.id)}
+					activeTile={activeTile}
 					columnSizes={layout.columnSizes}
 					onColumnSizesChange={handleColumnSizesChange}
 				>

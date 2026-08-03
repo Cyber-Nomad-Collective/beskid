@@ -2,6 +2,8 @@ import { type MouseEvent as ReactMouseEvent, useCallback, useEffect, useRef } fr
 
 interface ResizableTileGridProps {
 	children: React.ReactNode[];
+	tileIds: string[];
+	activeTile: string | null;
 	columnSizes: number[];
 	onColumnSizesChange: (sizes: number[]) => void;
 	minColumnWidth?: number;
@@ -11,6 +13,8 @@ const MIN_COLUMN_PX = 120;
 
 export function ResizableTileGrid({
 	children,
+	tileIds,
+	activeTile,
 	columnSizes,
 	onColumnSizesChange,
 	minColumnWidth = MIN_COLUMN_PX,
@@ -95,8 +99,18 @@ export function ResizableTileGrid({
 	// Interleave children and handles
 	const items: React.ReactNode[] = [];
 	for (let i = 0; i < children.length; i++) {
+		const tileId = tileIds[i];
+		const isActive = tileId === activeTile;
 		items.push(
-			<div key={`tile-${i}`} className="workspace-tile">
+			<div
+				key={`tile-${tileId ?? i}`}
+				id={tileId ? `workspace-panel-${tileId}` : undefined}
+				role="tabpanel"
+				aria-labelledby={tileId ? `workspace-tab-${tileId}` : undefined}
+				className={`workspace-tile ${
+					isActive ? "workspace-tile--active" : "workspace-tile--inactive"
+				}`}
+			>
 				{children[i]}
 			</div>,
 		);

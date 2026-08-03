@@ -157,6 +157,11 @@ html[data-theme="dark"] {
 	overflow-x: auto;
 }
 
+.workspace-tab-group {
+	display: flex;
+	align-items: stretch;
+}
+
 .workspace-tab {
 	display: flex;
 	align-items: center;
@@ -208,8 +213,9 @@ html[data-theme="dark"] {
 	flex-shrink: 0;
 }
 
-.workspace-tab:hover .workspace-tab-close,
-.workspace-tab--active .workspace-tab-close {
+.workspace-tab-group:hover .workspace-tab-close,
+.workspace-tab-group:focus-within .workspace-tab-close,
+.workspace-tab-group--active .workspace-tab-close {
 	opacity: 0.6;
 }
 
@@ -364,6 +370,7 @@ html[data-theme="dark"] {
   .editor-terminal-grid { grid-template-columns: 1fr; min-height: 700px; }
   .playground-grid { grid-template-columns: 1fr; }
   .workspace-grid { grid-template-columns: 1fr !important; min-height: 80vh; }
+	.workspace-tile--inactive { display: none; }
   .workspace-resize-handle { display: none; }
 }
 
