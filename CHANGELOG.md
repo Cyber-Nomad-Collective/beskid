@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Make Learn client-side routes fall back to the application shell instead of
+  returning an error for a missing static asset.
 - Advance pckg to repair Auth Hub auto-pairing routes under the single public
   `/api` prefix.
 - Define the fail-closed ABI-v5 Core.Args contract: Foundation uses only the

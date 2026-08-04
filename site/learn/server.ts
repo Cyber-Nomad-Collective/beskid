@@ -9,6 +9,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import process from "node:process";
 import { learnExercises } from "./src/data/learningCatalog";
+import { isStaticAssetRequest } from "./src/lib/server-routing";
 
 type CheckRequest = {
 	exerciseId: string;
@@ -507,11 +508,16 @@ async function serveAsset(pathname: string) {
 	}
 
 	const filePath = join(DIST, normalized);
-	try {
-		return new Response(Bun.file(filePath));
-	} catch {
+	const file = Bun.file(filePath);
+	// Bun.file() creates a lazy handle even when the path is absent. Returning
+	// that handle turns client-side routes such as `/learn` into a 500 while the
+	// response body is streamed. Check existence first so the SPA fallback below
+	// can serve index.html for every non-asset route.
+	if (!(await file.exists())) {
 		return null;
 	}
+
+	return new Response(file);
 }
 
 // ── Simple filesystem-based progress store ──
@@ -744,6 +750,9 @@ Bun.serve({
 		const asset = await serveAsset(requestUrl.pathname);
 		if (asset) {
 			return asset;
+		}
+		if (isStaticAssetRequest(requestUrl.pathname)) {
+			return jsonResponse(404, { error: "asset not found" });
 		}
 
 		return (

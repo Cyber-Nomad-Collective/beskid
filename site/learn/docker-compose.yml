@@ -5,7 +5,7 @@ services:
     expose:
       - "80"
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/api/health && wget -q --spider http://127.0.0.1/learn || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3

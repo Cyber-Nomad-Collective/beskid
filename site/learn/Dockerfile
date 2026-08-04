@@ -63,6 +63,7 @@ COPY --from=web /app/.npmrc /app/.npmrc
 COPY --from=web /app/site/learn/dist /app/site/learn/dist
 COPY --from=web /app/site/learn/server.ts /app/site/learn/server.ts
 COPY --from=web /app/site/learn/src/data /app/site/learn/src/data
+COPY --from=web /app/site/learn/src/lib/server-routing.ts /app/site/learn/src/lib/server-routing.ts
 COPY --from=web /app/site/learn/package.json /app/site/learn/package.json
 COPY --from=rust /workspace/runtime-output/beskid /app/site/learn/beskid
 COPY --from=rust /workspace/runtime-output/native-runtime-kit /app/site/learn/native-runtime-kit
