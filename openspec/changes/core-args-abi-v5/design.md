@@ -59,10 +59,14 @@ outputs cannot truthfully provide executable arguments and fail with
 ## Target semantics and provenance
 
 Linux x86-64 and macOS arm64 preserve the native ordered process arguments.
-Windows x86-64 decodes its command line from UTF-16 to UTF-8, replacing each
-ill-formed code-unit sequence with exactly one U+FFFD and neither dropping the
-argument nor treating the units as bytes. All executable vectors include
-`argv[0]`.
+Windows x86-64 decodes its command line from UTF-16 to UTF-8 with an explicit
+per-unpaired-code-unit policy: scan left to right, consume an immediately
+following high/low surrogate pair as one scalar, and replace every high or low
+surrogate not consumed by such a pair with one U+FFFD. Every code unit is
+consumed exactly once; it is neither dropped nor interpreted as bytes. The
+multi-unit fixture `[0x0041, 0xD800, 0xD800, 0xDC00, 0xDC00, 0x0042]` therefore
+produces `A\u{FFFD}\u{10000}\u{FFFD}B` (UTF-8 bytes
+`41 EF BF BD F0 90 80 80 EF BF BD 42`). All executable vectors include `argv[0]`.
 
 The ABI-v5 manifest generates exactly one binding for each selected service on
 each of Linux x86-64, macOS arm64, and Windows x86-64. A claimed target requires
