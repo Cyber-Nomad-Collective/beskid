@@ -78,9 +78,12 @@ Before Beskid `Main` executes, an AOT executable SHALL capture one ordered
 process argument vector through its manifest-owned entry adapter. The vector
 SHALL include executable `argv[0]`. Linux x86-64 and macOS arm64 adapters SHALL
 preserve their native process-argument order. The Windows x86-64 adapter SHALL
-decode command-line arguments from UTF-16 to UTF-8; every ill-formed UTF-16
-code-unit sequence SHALL become exactly one U+FFFD replacement character, and
-the adapter SHALL NOT reinterpret it as raw bytes or omit the argument.
+decode command-line arguments from UTF-16 to UTF-8 by scanning code units from
+left to right: it SHALL consume a high surrogate followed immediately by a low
+surrogate as one scalar; it SHALL replace every high surrogate not so consumed
+and every low surrogate not so consumed with exactly one U+FFFD; and it SHALL
+consume each code unit exactly once. The adapter SHALL NOT reinterpret code
+units as raw bytes or omit the argument.
 
 **Stable ID:** `BSP-REQ-9A5A995DA656`
 
@@ -93,6 +96,11 @@ the adapter SHALL NOT reinterpret it as raw bytes or omit the argument.
 - **GIVEN** a Windows command-line argument containing an unpaired UTF-16 surrogate
 - **WHEN** the Windows x86-64 adapter captures the argument vector
 - **THEN** the corresponding managed UTF-8 string contains one U+FFFD replacement character at that sequence
+
+#### Scenario: Windows segments adjacent malformed UTF-16 code units
+- **GIVEN** a Windows argument with UTF-16 code units `[0x0041, 0xD800, 0xD800, 0xDC00, 0xDC00, 0x0042]`
+- **WHEN** the Windows x86-64 adapter captures the argument vector
+- **THEN** its exact UTF-8 result is `A\u{FFFD}\u{10000}\u{FFFD}B` with bytes `41 EF BF BD F0 90 80 80 EF BF BD 42`
 
 ### Requirement: Explicit JIT arguments and non-executable denial
 JIT execution that can evaluate `Core.Args` SHALL accept its argument vector
