@@ -1,11 +1,4 @@
-<!-- migrated from the legacy platform spec; canonical OpenSpec source -->
-# Core.Args Specification
-
-## Purpose
-
-Core.Args provides read-only access to the process command-line argument vector.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Argument collection and count: Decision [D-CORE-PRIM-0120]
 `Count() -> i64` SHALL obtain the number of entries only through the private

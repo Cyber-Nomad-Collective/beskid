@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "248855a3b99438bfe920253672151a0c986804dd288fe0d6211cf012e5f94cf6",
+  "revision": "158e628cb982675b86b48260527dba07d99ef9d2d08565f3ea9f4d1d9ea71544",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
     "capabilities": 196,
-    "requirements": 552,
+    "requirements": 557,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
@@ -14312,6 +14312,61 @@
           "migrationStatus": "extracted",
           "title": "Optional indexed access and errors: Decision [D-CORE-PRIM-0121]",
           "anchor": "requirement-optional-indexed-access-and-errors-decision-d-core-prim-0121"
+        },
+        {
+          "id": "BSP-REQ-FAEDA7C0AF60",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--foundation-and-primitives--core-args/spec.md",
+          "sourceHash": "5f4888ec4434e5baca89508851e243fb4481254d1e9f7b7406898e46a7336f89",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Private Core.Args ABI-v5 source authority",
+          "anchor": "requirement-private-core-args-abi-v5-source-authority"
+        },
+        {
+          "id": "BSP-REQ-E4C6501C2F83",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--foundation-and-primitives--core-args/spec.md",
+          "sourceHash": "5f4888ec4434e5baca89508851e243fb4481254d1e9f7b7406898e46a7336f89",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Managed argument values and bounds",
+          "anchor": "requirement-managed-argument-values-and-bounds"
+        },
+        {
+          "id": "BSP-REQ-9A5A995DA656",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--foundation-and-primitives--core-args/spec.md",
+          "sourceHash": "5f4888ec4434e5baca89508851e243fb4481254d1e9f7b7406898e46a7336f89",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Native executable argument capture and Windows conversion",
+          "anchor": "requirement-native-executable-argument-capture-and-windows-conversion"
+        },
+        {
+          "id": "BSP-REQ-E02D15F88344",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--foundation-and-primitives--core-args/spec.md",
+          "sourceHash": "5f4888ec4434e5baca89508851e243fb4481254d1e9f7b7406898e46a7336f89",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Explicit JIT arguments and non-executable denial",
+          "anchor": "requirement-explicit-jit-arguments-and-non-executable-denial"
+        },
+        {
+          "id": "BSP-REQ-068C8227847F",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/core-library--foundation-and-primitives--core-args/spec.md",
+          "sourceHash": "5f4888ec4434e5baca89508851e243fb4481254d1e9f7b7406898e46a7336f89",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Three-target ABI-v5 adapter provenance",
+          "anchor": "requirement-three-target-abi-v5-adapter-provenance"
         }
       ],
       "records": [],
@@ -59161,7 +59216,7 @@
       "decision": null,
       "title": "Core Args",
       "status": "Standard",
-      "sourceHash": "4a4ba9c0f556de3ed1e9e411ec49f4dd24fab8fa41228ff957258305d452656a"
+      "sourceHash": "5f4888ec4434e5baca89508851e243fb4481254d1e9f7b7406898e46a7336f89"
     },
     {
       "id": "BSP-CAP-5227A84F3018",
