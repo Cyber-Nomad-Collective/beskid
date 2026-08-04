@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Advance pckg to repair Auth Hub auto-pairing routes under the single public
+  `/api` prefix.
 - Define the fail-closed ABI-v5 Core.Args contract: Foundation uses only the
   source-scoped `__args_count` and `__args_get` services, with generated
   three-target adapters, deterministic Windows UTF-16 conversion, explicit JIT
