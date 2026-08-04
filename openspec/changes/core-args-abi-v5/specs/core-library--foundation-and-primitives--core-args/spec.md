@@ -1,8 +1,8 @@
 ## MODIFIED Requirements
 
 ### Requirement: Argument collection and count: Decision [D-CORE-PRIM-0120]
-`Count() -> i64` SHALL obtain the number of entries only through the private
-Corelib service `__args_count() -> i64`. `All() -> string[]` SHALL enumerate
+Exactly and exclusively `__args_count() -> i64` and `__args_get(i64) -> string` SHALL be the only private Core.Args services. `Count() -> i64` SHALL obtain the
+number of entries only through `__args_count() -> i64`. `All() -> string[]` SHALL enumerate
 every index in `0..Count()` through `__args_get(i64) -> string` in ascending
 order. `__args_all` SHALL NOT be an ABI service, generated adapter, raw import,
 or compatibility fallback.
@@ -35,9 +35,17 @@ error.
 - **WHEN** `Core.Args.Get(-1)` or `Core.Args.Get(1)` is evaluated
 - **THEN** it returns `None` without calling `__args_get`
 
+#### Scenario: Direct invalid private access reports stable bounds failure
+- **GIVEN** the canonical Args adapter has a count of one
+- **WHEN** its generated `__args_get(-1)` or `__args_get(1)` binding is invoked
+- **THEN** it fails with `Core.Args argument index is out of range`
+
+## ADDED Requirements
+
 ### Requirement: Private Core.Args ABI-v5 source authority
-Only byte-identical `Core/Args/Args.bd` at its canonical physical Foundation source path SHALL receive the private Corelib imports
-`__args_count() -> i64` and `__args_get(i64) -> string`. The services SHALL be
+Only byte-identical `Core/Args/Args.bd` at its canonical physical Foundation source path SHALL receive the only private Corelib imports
+`__args_count() -> i64` and `__args_get(i64) -> string`. No other private Core.Args
+service SHALL exist. The services SHALL be
 manifest-owned ABI-v5 adapters and SHALL NOT be user-callable intrinsics,
 ISLE special cases, JIT host registrations, Rust runtime routes, or ambient
 globals. A copied, symlinked, altered, or user-authored source SHALL receive no
@@ -90,7 +98,9 @@ the adapter SHALL NOT reinterpret it as raw bytes or omit the argument.
 JIT execution that can evaluate `Core.Args` SHALL accept its argument vector
 only through an explicit public execution API before the entrypoint runs. It
 SHALL NOT inherit the host process vector, read an ambient global, or substitute
-an empty vector when no vector is supplied. Shared and library outputs that use
+an empty vector when no vector is supplied. Execution without an explicitly
+injected vector SHALL fail with the stable diagnostic
+`Core.Args requires explicit JIT arguments`. Shared and library outputs that use
 `Core.Args` SHALL be rejected with the stable diagnostic
 `Core.Args requires executable arguments`; they SHALL NOT fabricate a process
 vector.
@@ -101,6 +111,11 @@ vector.
 - **GIVEN** a JIT program that evaluates `Core.Args.All()`
 - **WHEN** it is executed with the explicit vector `["jit", "--flag"]`
 - **THEN** it observes exactly that vector and no host-process argument
+
+#### Scenario: JIT rejects missing argument injection
+- **GIVEN** a JIT program that evaluates `Core.Args.All()`
+- **WHEN** it is executed without an explicitly injected argument vector
+- **THEN** execution fails with `Core.Args requires explicit JIT arguments` and no fallback vector
 
 #### Scenario: Shared output denies Core.Args stably
 - **GIVEN** a shared or library output that uses `Core.Args`
