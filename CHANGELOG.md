@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Define the fail-closed ABI-v5 Core.Args contract: Foundation uses only the
+  source-scoped `__args_count` and `__args_get` services, with generated
+  three-target adapters, deterministic Windows UTF-16 conversion, explicit JIT
+  arguments, and no bulk or ambient fallback.
 - Require the ABI-v5 runtime-kit debug/release installed-prefix matrix on Linux
   x86-64 and macOS arm64 in addition to Windows x86-64; each host now publishes
   its validated static/shared kit artifacts for release evidence.
