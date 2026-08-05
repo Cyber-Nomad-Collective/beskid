@@ -63,6 +63,11 @@ export function WorkspaceTabs({
 						)}
 						onClick={() => onSelectTile(tile.id)}
 						onKeyDown={(event) => {
+							if (event.key === "Delete" || event.key === "Backspace") {
+								event.preventDefault();
+								closeTile(tile, index);
+								return;
+							}
 							if (event.key === "ArrowRight") {
 								event.preventDefault();
 								selectRelativeTile(index, 1);
