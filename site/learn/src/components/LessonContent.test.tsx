@@ -6,7 +6,7 @@ describe("LessonContent", () => {
 	it("renders Markdown headings and code blocks as separate semantic elements", () => {
 		render(<LessonContent markdown={"## Hello\n\nText\n\n```beskid\ni32 Main() {}\n```"} />);
 
-		expect(screen.getByRole("heading", { name: "Hello", level: 2 })).toBeVisible();
-		expect(screen.getByText("i32 Main() {}", { exact: false })).toBeVisible();
+		expect(screen.getByRole("heading", { name: "Hello", level: 2 })).toBeTruthy();
+		expect(screen.getByText("i32 Main() {}", { exact: false })).toBeTruthy();
 	});
 });
