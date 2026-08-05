@@ -34,6 +34,25 @@ function parseMultiline(value: string, label: string): string[] {
 		.map((line) => `${label} ${line}`);
 }
 
+function parseCheckResponse(payload: string): CheckResponse {
+	const trimmed = payload.trim();
+	if (!trimmed) {
+		throw new Error("Check endpoint returned an empty response.");
+	}
+
+	if (!(trimmed.startsWith("{") || trimmed.startsWith("["))) {
+		throw new Error("Check endpoint returned HTML or plain text instead of JSON.");
+	}
+
+	try {
+		return JSON.parse(trimmed) as CheckResponse;
+	} catch (error) {
+		throw new Error(
+			error instanceof Error ? `Invalid JSON from check endpoint: ${error.message}` : "Invalid JSON from check endpoint.",
+		);
+	}
+}
+
 function registerBeskidLanguage(monaco: typeof monacoEditor) {
 	const languageId = "beskid";
 	if (monaco.languages.getLanguages().some((lang) => lang.id === languageId)) {
@@ -142,8 +161,13 @@ export default function Playground({ initialCode = "" }: PlaygroundProps) {
 					command: "analyze",
 				}),
 			});
-
-			const result = (await response.json()) as CheckResponse;
+			const body = await response.text();
+			if (!response.ok) {
+				throw new Error(
+					`Check request failed: ${response.status} ${response.statusText}. ${body.slice(0, 180)}`,
+				);
+			}
+			const result = parseCheckResponse(body);
 
 			writeBlock(term, [
 				`command: ${result.command}`,

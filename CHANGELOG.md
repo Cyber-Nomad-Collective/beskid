@@ -39,6 +39,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   selection when persisted layouts reference stale hidden tiles.
 - Make Learn workspace resize dividers keyboard-focusable and arrow-adjustable for
   better accessibility and non-pointer workflows.
+- Make Learn run-check path resilient to non-JSON `/api/check` responses (for
+  static/no-backend environments), replacing JSON parse crashes with a readable
+  terminal error.
 
 ## [0.4.0] — 2026-07-31
 

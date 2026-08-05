@@ -80,6 +80,26 @@ function parseMultiline(value: string, label: string): string[] {
 		.map((l) => `${label} ${l}`);
 }
 
+function parseCheckResponse(payload: string): CheckResponse {
+	const trimmed = payload.trim();
+	if (!trimmed) {
+		throw new Error("Check endpoint returned an empty response.");
+	}
+
+	let isLikelyJson = trimmed.startsWith("{") || trimmed.startsWith("[");
+	if (!isLikelyJson) {
+		throw new Error("Check endpoint returned HTML or plain text instead of JSON.");
+	}
+
+	try {
+		return JSON.parse(trimmed) as CheckResponse;
+	} catch (error) {
+		throw new Error(
+			error instanceof Error ? `Invalid JSON from check endpoint: ${error.message}` : "Invalid JSON from check endpoint.",
+		);
+	}
+}
+
 function normalizeSizes(sizes: number[], count: number): number[] {
 	if (sizes.length === count) return sizes;
 	const defaults = DEFAULT_TILES.map((t) => t.defaultSize);
@@ -349,10 +369,18 @@ export function LessonWorkspace({
 				command: exercise.command,
 			}),
 		})
-			.then((r) => r.json())
-			.then((data: CheckResponse) => {
+			.then(async (response) => {
+				const body = await response.text();
+				if (!response.ok) {
+					throw new Error(
+						`Check request failed: ${response.status} ${response.statusText}. ${body.slice(0, 180)}`,
+					);
+				}
+				const data = parseCheckResponse(body);
 				setResult(data);
-
+				return data;
+			})
+			.then((data: CheckResponse) => {
 				writeBlock(term, [
 					`command: ${data.command}`,
 					`exitCode: ${String(data.exitCode)}`,
@@ -385,7 +413,7 @@ export function LessonWorkspace({
 			})
 			.catch((err: unknown) => {
 				const message = err instanceof Error ? err.message : "Unknown check error";
-				writeBlock(term, ["Term request failed:", message]);
+				writeBlock(term, ["Terminal request failed:", message]);
 			})
 			.finally(() => {
 				setRunning(false);
