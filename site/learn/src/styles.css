@@ -308,6 +308,11 @@ html[data-theme="dark"] {
 	background: var(--beskid-border-accent);
 }
 
+.workspace-resize-handle:focus-visible {
+	outline: 2px solid color-mix(in srgb, var(--beskid-primary) 80%, transparent);
+	outline-offset: 1px;
+}
+
 .workspace-resize-handle:hover::after,
 .workspace-resize-handle:active::after {
 	background: var(--beskid-primary);

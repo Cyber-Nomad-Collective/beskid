@@ -1,5 +1,6 @@
 import {
 	type MouseEvent as ReactMouseEvent,
+	type KeyboardEvent as ReactKeyboardEvent,
 	type TouchEvent as ReactTouchEvent,
 	useCallback,
 	useEffect,
@@ -83,6 +84,9 @@ export function ResizableTileGrid({
 
 	const handlePointerMove = useCallback(
 		(event: PointerMoveEvent) => {
+			if ("touches" in event) {
+				event.preventDefault();
+			}
 			const state = dragState.current;
 			if (!state || !gridRef.current) return;
 
@@ -98,6 +102,24 @@ export function ResizableTileGrid({
 			onColumnSizesChange(newSizes);
 		},
 		[clampAndApplyDelta, onColumnSizesChange],
+	);
+
+	const handleKeyDown = useCallback(
+		(index: number) => (event: ReactKeyboardEvent) => {
+			if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+			event.preventDefault();
+			const gridRect = gridRef.current?.getBoundingClientRect();
+			if (!gridRect) return;
+
+			const step = 2;
+			const deltaPct = event.key === "ArrowLeft" ? -step : step;
+			const gridWidth = gridRect.width;
+			const deltaPx = (deltaPct / 100) * gridWidth;
+			const newSizes = clampAndApplyDelta(columnSizes, index, deltaPx, gridWidth);
+
+			onColumnSizesChange(newSizes);
+		},
+		[columnSizes, clampAndApplyDelta, onColumnSizesChange],
 	);
 
 	const endDrag = useCallback(() => {
@@ -126,9 +148,15 @@ export function ResizableTileGrid({
 	const handles: React.ReactNode[] = [];
 	for (let i = 0; i < children.length - 1; i++) {
 		handles.push(
-			<div
+			<button
 				key={`handle-${i}`}
+				type="button"
+				role="separator"
+				aria-label={`Resize panel boundary ${i + 1}`}
+				aria-orientation="vertical"
+				tabIndex={0}
 				className="workspace-resize-handle"
+				onKeyDown={handleKeyDown(i)}
 				onMouseDown={startDrag(i)}
 				onTouchStart={startDrag(i)}
 			/>,

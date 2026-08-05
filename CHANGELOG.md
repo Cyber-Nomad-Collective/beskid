@@ -34,6 +34,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Improve Learn workspace layout interactions by making tile resize handles
   touch-friendly, increasing resize hit targets, and stabilizing active-tab
   selection when persisted layouts reference stale hidden tiles.
+- Make Learn workspace resize dividers keyboard-focusable and arrow-adjustable for
+  better accessibility and non-pointer workflows.
 
 ## [0.4.0] — 2026-07-31
 
