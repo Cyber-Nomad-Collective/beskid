@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Regenerate the canonical OpenSpec catalog after the repository guidance
+  update so the platform delivery authority gate no longer fails on catalog
+  hash drift.
 - Make Learn client-side routes fall back to the application shell instead of
   returning an error for a missing static asset.
 - Advance pckg to repair Auth Hub auto-pairing routes under the single public
