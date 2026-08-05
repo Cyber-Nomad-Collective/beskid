@@ -148,6 +148,12 @@ export function LessonWorkspace({
 		layout.visibleTiles.length > 0 ? layout.visibleTiles[0] : null,
 	);
 
+	useEffect(() => {
+		if (layout.visibleTiles.length > 0 && !layout.visibleTiles.includes(activeTile ?? "")) {
+			setActiveTile(layout.visibleTiles[0] ?? null);
+		}
+	}, [activeTile, layout.visibleTiles]);
+
 	// Reset tile layout when exercise changes
 	useEffect(() => {
 		const loaded = loadLayout(exercise.id);

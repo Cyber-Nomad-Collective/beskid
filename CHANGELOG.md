@@ -29,6 +29,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Correct the v0.4 tracker seed projection to use schema-valid in-progress
   statuses and require fresh reconciled-candidate evidence before corelib or
   release work can be marked Done.
+- Improve Learn workspace layout interactions by making tile resize handles
+  touch-friendly, increasing resize hit targets, and stabilizing active-tab
+  selection when persisted layouts reference stale hidden tiles.
 
 ## [0.4.0] — 2026-07-31
 

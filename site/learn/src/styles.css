@@ -167,6 +167,7 @@ html[data-theme="dark"] {
 	align-items: center;
 	gap: 0.4rem;
 	padding: 0.35rem 0.65rem;
+	min-height: 2rem;
 	font-size: 0.78rem;
 	font-weight: 500;
 	color: var(--beskid-text-muted);
@@ -205,10 +206,11 @@ html[data-theme="dark"] {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 16px;
-	height: 16px;
+	width: 1.35rem;
+	height: 1.35rem;
 	border-radius: 3px;
-	opacity: 0;
+	opacity: 0.35;
+	outline: none;
 	transition: opacity 150ms ease, background 150ms ease;
 	flex-shrink: 0;
 }
@@ -216,12 +218,18 @@ html[data-theme="dark"] {
 .workspace-tab-group:hover .workspace-tab-close,
 .workspace-tab-group:focus-within .workspace-tab-close,
 .workspace-tab-group--active .workspace-tab-close {
-	opacity: 0.6;
+	opacity: 0.8;
 }
 
 .workspace-tab-close:hover {
 	opacity: 1 !important;
 	background: color-mix(in srgb, var(--beskid-outline-variant) 40%, transparent);
+}
+
+.workspace-tab-close:focus-visible {
+	opacity: 1;
+	outline: 2px solid color-mix(in srgb, var(--beskid-primary) 70%, transparent);
+	outline-offset: 1px;
 }
 
 .workspace-add-tiles {
@@ -272,9 +280,12 @@ html[data-theme="dark"] {
 
 /* Resize handle — thin draggable divider between tiles */
 .workspace-resize-handle {
-	width: 4px;
+	width: 10px;
+	min-width: 10px;
 	cursor: col-resize;
 	background: transparent;
+	user-select: none;
+	touch-action: none;
 	transition: background 150ms ease;
 	flex-shrink: 0;
 	position: relative;
@@ -284,7 +295,10 @@ html[data-theme="dark"] {
 .workspace-resize-handle::after {
 	content: "";
 	position: absolute;
-	inset: 0 0 0 1px;
+	left: 50%;
+	width: 2px;
+	transform: translateX(-50%);
+	inset-block: 0;
 	background: var(--beskid-border-inner);
 	pointer-events: none;
 }
