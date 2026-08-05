@@ -20,9 +20,9 @@
 
 **Files:** `compiler/crates/beskid_queries/src/semantic_contract.rs`, `compiler/crates/beskid_queries/src/lib.rs`, `compiler/crates/beskid_queries/tests/semantic_facts.rs`.
 
-- [ ] Write `try_expression_fact_resolves_result_payload_and_enclosing_error_return` using `Result<i32, Error> Main(Result<i32, Error> value) { return try value; }`; assert hand-derived `i32` payload and `Error` return compatibility.
+- [x] Write `try_expression_fact_resolves_result_payload_and_enclosing_error_return` using postfix propagation and the canonical `Result<T, E> { Ok(T value), Error(E error) }` definition; assert hand-derived `i32` payload and a matching full Result instantiation.
 - [ ] Run `CARGO_TARGET_DIR="$PWD/compiler/target" RUSTC_WRAPPER= cargo test -p beskid_queries --test semantic_facts try_expression_fact_resolves_result_payload_and_enclosing_error_return -- --exact`; it must initially fail because no Try fact exists.
-- [ ] Define `TryExpressionFact { expression, operand, payload_type, error_type, enclosing_return }` and one tracked, registered query. Resolve only direct syntax children, Result variants, and the enclosing syntax item; return `SemanticError::unavailable("try_expression")` otherwise.
+- [x] Define `TryExpressionFact { expression, operand, payload_type, error_type, enclosing_return }` and one tracked, registered query. Resolve only direct syntax children, the canonical Result definition, and an identical enclosing Result instantiation; return `SemanticError::unavailable("try_expression")` otherwise.
 - [ ] Re-run that test, then `cargo test -p beskid_queries --tests -- --test-threads=1`; both must pass.
 - [ ] Commit only the fact and regression: `feat(queries): resolve syntax try facts`.
 
@@ -30,9 +30,9 @@
 
 **Files:** `compiler/crates/beskid_codegen/src/isle_adapter/facts_node.rs`, `compiler/crates/beskid_isle/src/lib.rs`, `compiler/crates/beskid_isle/isle/expressions.isle`, `compiler/crates/beskid_codegen/tests/isle_adapter.rs`.
 
-- [ ] Write `parsed_result_try_lowers_to_verified_syntax_isle_control_flow`, invoking `emit_isle_item` on the Task 1 source and asserting verified CLIF contains a branch.
+- [x] Write `parsed_result_try_lowers_to_verified_syntax_isle_control_flow`, invoking `emit_isle_item` on valid `let output = value?` source and asserting verified CLIF contains a branch.
 - [ ] Run its exact test; it must initially fail with `MissingRuleOrFact` at `TryExpression`.
-- [ ] Expose the Task 1 fact through one `NodeFacts` method. Add `emit_try_expression` and the one `(node_kind (NodeKind.TryExpression))` rule. The constructor uses existing enum layout and match emission helpers only, returning a span-bearing lowering error when facts are absent.
+- [x] Expose the Task 1 fact through one `NodeFacts` method. Add `emit_try_expression` and the one `(node_kind (NodeKind.TryExpression))` rule. It uses the proven canonical enum layout only and returns a span-bearing lowering error when facts are absent.
 - [ ] Re-run the exact test and prove it passes without an import or runtime call.
 - [ ] Commit only this lowering/regression: `feat(isle): lower proven syntax try expressions`.
 
