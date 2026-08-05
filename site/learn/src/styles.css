@@ -239,6 +239,86 @@ html[data-theme="dark"] {
 	flex-shrink: 0;
 }
 
+.workspace-mosaic-root {
+	display: flex;
+	flex: 1;
+	min-height: 0;
+	min-width: 0;
+	border: 1px solid var(--beskid-border-inner);
+	border-radius: var(--beskid-radius-xl);
+	overflow: hidden;
+	background: var(--beskid-surface-panel);
+}
+
+.workspace-mosaic-root--compact {
+	border-color: var(--beskid-border-accent);
+}
+
+.workspace-mosaic-split {
+	flex: 1;
+	min-height: 0;
+	min-width: 0;
+	display: grid;
+	gap: 0;
+}
+
+.workspace-mosaic-leaf {
+	min-height: 0;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.workspace-mosaic-handle {
+	background: transparent;
+	display: flex;
+	border: 0;
+	padding: 0;
+	position: relative;
+	touch-action: none;
+	user-select: none;
+	transition: background 150ms var(--beskid-ease-out);
+}
+
+.workspace-mosaic-handle--vertical {
+	cursor: col-resize;
+	width: 10px;
+	min-width: 10px;
+}
+
+.workspace-mosaic-handle--horizontal {
+	cursor: row-resize;
+	height: 10px;
+	min-height: 10px;
+}
+
+.workspace-mosaic-handle::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: color-mix(in srgb, var(--beskid-outline-variant) 32%, transparent);
+	pointer-events: none;
+}
+
+.workspace-mosaic-handle--vertical::after {
+	left: 50%;
+	width: 2px;
+	transform: translateX(-50%);
+}
+
+.workspace-mosaic-handle--horizontal::after {
+	top: 50%;
+	height: 2px;
+	transform: translateY(-50%);
+}
+
+.workspace-mosaic-handle:hover::after,
+.workspace-mosaic-handle:focus-visible::after,
+.workspace-mosaic-handle:active::after {
+	background: var(--beskid-border-inner);
+}
+
 .workspace-grid {
 	display: grid;
 	gap: 0;
