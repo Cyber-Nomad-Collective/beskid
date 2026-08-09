@@ -43,6 +43,12 @@ Statuses include draft, submitted, approved, rejected, merged, abandoned, and su
 Terminal status when the linked GitHub pull request closes without merge. Distinct from
 moderator rejection of a submitted context.
 
+## Filesystem existence tri-state
+
+The `Core.FS.Exists` outcome model in which an existing path is `Ok(true)`, a
+missing path is `Ok(false)`, and an invalid input or adapter failure is a typed
+`FsError`. Missing and failed are never collapsed into the same boolean.
+
 ## HIR-free
 
 The compiler invariant that no high-level intermediate representation type, lowering pass, cache, adapter, serialization, or compatibility path exists between expanded AST/Salsa facts and ISLE/CLIF code generation.
@@ -151,3 +157,10 @@ The lowercase Beskid source primitive for an unsigned pointer-width machine valu
 ## Tracker delivery relation
 
 A typed Nexus edge from a Tracker entity to an OpenSpec standard identifier. Its graph identity includes both the Tracker ID and catalog revision, so a link cannot be silently reused against a different catalog revision.
+
+## Typed array growth
+
+The single manifest-owned ABI-v5 operation that increases managed array
+capacity while preserving the array's element descriptor, logical length,
+initialized values, roots, and pointer barriers. Element get/set remains
+direct bounds-checked ISLE lowering rather than part of this runtime call.

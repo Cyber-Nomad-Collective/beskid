@@ -1,0 +1,35 @@
+# Beskid code ownership — machine-enforced review assignments.
+# Last-resort fallback: @Cyber-Nomad-Collective/beskid-core
+
+# Compiler (Rust crates, ISLE rules, corelib)
+/compiler/crates/       @Cyber-Nomad-Collective/beskid-core
+/compiler/corelib/      @Cyber-Nomad-Collective/beskid-core
+/compiler/Cargo.toml    @Cyber-Nomad-Collective/beskid-core
+
+# Compiler CI + toolchain
+/scripts/ci/            @Cyber-Nomad-Collective/beskid-core
+/.github/workflows/     @Cyber-Nomad-Collective/beskid-core
+/.github/actions/       @Cyber-Nomad-Collective/beskid-core
+
+# Normative spec
+/openspec/              @Cyber-Nomad-Collective/beskid-core
+
+# Sites (website, platform-spec, auth, learn)
+/site/                  @Cyber-Nomad-Collective/beskid-web
+
+# Shared web packages
+/beskid_web_common/     @Cyber-Nomad-Collective/beskid-web
+
+# Metadata + tooling roots
+/AGENTS.md              @Cyber-Nomad-Collective/beskid-core
+/CLAUDE.md              @Cyber-Nomad-Collective/beskid-core
+/package.json           @Cyber-Nomad-Collective/beskid-web
+/pnpm-lock.yaml         @Cyber-Nomad-Collective/beskid-web
+
+# Beskid submodule pointer bumps (wide ownership — anyone can bump)
+/compiler               @Cyber-Nomad-Collective/beskid-core
+/beskid_vscode          @Cyber-Nomad-Collective/beskid-core
+/beskid_tracker         @Cyber-Nomad-Collective/beskid-web
+/beskid_nexus           @Cyber-Nomad-Collective/beskid-web
+/beskid_web_common      @Cyber-Nomad-Collective/beskid-web
+/beskid_infra           @Cyber-Nomad-Collective/beskid-core

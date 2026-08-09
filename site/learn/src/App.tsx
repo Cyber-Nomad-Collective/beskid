@@ -550,7 +550,7 @@ function App() {
 	// ── JSX ────────────────────────────────────────────────────────────────────
 
 	return (
-		<AuthGate>
+		<AuthGate requireAuth>
 			{(user: AuthUser | null) => (
 				<div className="learn-shell">
 					<header className="learn-header">

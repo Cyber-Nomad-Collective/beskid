@@ -75,6 +75,11 @@ corelib_run_bounded_phase() {
   return "${rc}"
 }
 
+corelib_run_test_matrix() {
+  corelib_run_bounded_phase "run Corelib tests" "${CORELIB_TEST_TIMEOUT:-1800}" \
+    "$CLI" test --project "${TESTS_MANIFEST}" --all-targets --plain </dev/null
+}
+
 corelib_sanitize_diagnostic_tail() {
   local log="$1"
   tail -n 40 "${log}" 2>/dev/null | sed -E \
@@ -448,6 +453,4 @@ corelib_report_step "stage native runtime kit" \
   corelib_run_bounded_phase "stage native runtime kit" "${CORELIB_RUNTIME_KIT_TIMEOUT:-900}" \
   bash scripts/stage-native-runtime-kit.sh
 cd "${TESTS_DIR}"
-corelib_report_step "run Corelib tests" \
-  corelib_run_bounded_phase "run Corelib tests" "${CORELIB_TEST_TIMEOUT:-1800}" \
-  "$CLI" test --project "${TESTS_MANIFEST}" --all-targets --plain
+corelib_report_step "run Corelib tests" corelib_run_test_matrix

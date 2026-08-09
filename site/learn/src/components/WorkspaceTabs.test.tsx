@@ -95,4 +95,21 @@ describe("WorkspaceTabs", () => {
 		expect(onCloseTile).toHaveBeenCalledWith("editor", "terminal");
 		expect(onSelectTile).not.toHaveBeenCalled();
 	});
+
+	it("keeps the label and close action inside one visual tab shell", () => {
+		render(
+			<WorkspaceTabs
+				tiles={tiles}
+				activeTile="editor"
+				onSelectTile={vi.fn()}
+				onCloseTile={vi.fn()}
+			/>,
+		);
+
+		const label = screen.getByRole("button", { name: "Editor" });
+		const close = screen.getByRole("button", { name: "Close Editor" });
+		const shell = label.closest("[data-workspace-tab-shell]");
+		expect(shell).not.toBeNull();
+		expect(shell).toBe(close.closest("[data-workspace-tab-shell]"));
+	});
 });

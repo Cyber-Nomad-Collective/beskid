@@ -9,8 +9,21 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+_No unreleased changes — all changes are in [0.4.0]._
+
 ### Changed
 
+- Present `/blog/` as an editorial publication index with a featured latest
+  post, chronological archive, deterministic same-date ordering, and article
+  mastheads that expose publication status and dates rather than documentation
+  chrome alone.
+- Require a verified Learn session before rendering lessons, checking code, or
+  reading progress; add the Auth Hub `learn` app identity and the canonical
+  callback/session contract, configured through per-app service credentials.
+- Put every Learn tab's label and separate close action inside one visual shell,
+  so the close icon remains within the active header while preserving keyboard
+  navigation and valid button semantics; remove the superseded flat tile-grid
+  implementation in favor of the persisted nested mosaic.
 - Regenerate the canonical OpenSpec catalog after the repository guidance
   update so the platform delivery authority gate no longer fails on catalog
   hash drift.
@@ -46,7 +59,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   static/no-backend environments), replacing JSON parse crashes with a readable
   terminal error.
 
-## [0.4.0] — 2026-07-31
+## [0.4.0] - 2026-08-06
 
 Compiler waves W0–W6 complete, HIR-free ISLE ABI-v5 native runtime, corelib gate stabilized, macOS arm64 + Windows x86-64 kits, tracker seed sync, platform-spec synced.
 
@@ -650,6 +663,20 @@ Compiler waves W0–W6 complete, HIR-free ISLE ABI-v5 native runtime, corelib ga
 - Nexus graph-first startup now initializes its Sigma callback before capture;
   its repository API test routes are exact and no longer shadow one another.
 
+- `clif { ... }` native block expression: embeds Cranelift IR in Beskid source,
+  parsed via the Pest grammar, lowered through ISLE, and emitted as verified CLIF
+  via the `emit_clif_block` constructor. Supports `call @symbol(%N)` for extern
+  C library imports and `return %N` for result forwarding.
+- Corelib `Core.Math.Math.bd`: all 10 `__math_*` compiler-injected builtin calls
+  replaced with native `clif { call @floor(%0) }` blocks, removing the math
+  builtin dependency from the standard library.
+- `scripts/submodule-guard.sh`: multi-repo visibility tool showing dirt/head
+  status across all 13 submodules before commits and pushes.
+- `.githooks/pre-commit` + `scripts/install-githooks.sh`: pre-commit hook
+  wired to submodule guard for automatic dirt detection.
+- `.github/CODEOWNERS`: domain-based review assignment (compiler → beskid-core,
+  sites → beskid-web, openspec → beskid-core).
+
 ### Removed
 
 - The `site/spec-content` custom `spec.json`/`content.md`/`layout.json` corpus
@@ -666,114 +693,7 @@ Compiler waves W0–W6 complete, HIR-free ISLE ABI-v5 native runtime, corelib ga
 - Enable SBOM and minimal BuildKit provenance in the replacement image workflow,
   with an explicit keyless image-signing hook and OIDC permission boundary.
 
-## [0.4.0] - 2025-07-17
-
-### Added
-
-- **beskid_bsol** submodule for standalone BSOL workspace
-- Byte operations support in corelib
-- Generic assertions for corelib test infrastructure
-- `<beskid-hub>` web component and platform-spec catalog generation
-- Composite action `action.yml` and CI workflows for site services
-- Reusable composite action `build-beskid-service`
-- GitNexus ingest setup for code intelligence indexing
-- Compiler test coverage instrumentation
-- Auth/tracker autopairing and GitHub sync
-
-### Changed
-
-- Updated the BSOL analysis pipeline, the native compiler runtime migration,
-  the registry web application, and the shared authentication handoff client.
-
-- **CI/CD migration from Dagger to Blacksmith Testbox**
-  - Compiler gate runs via Testbox scripts instead of Dagger
-  - Migrated workflows to Blacksmith runners
-  - Added Blacksmith testbox configuration and gate job timeout caps (6 h)
-  - Bumped beskid_infra to Debian gate images
-- Compiler type checker refactor and pipeline unification
-- Compiler DRY refactor across SDK crates
-- Corelib expansions: shapes, concurrency stack, runtime stabilization
-- Progress toward full corelib test pass
-- BSOL stability pass; updated normative and informative docs
-- Project model unification across compiler modules
-- Site deps migrated to published `@beskid/beskid-ui` and `trudoc` packages
-- Bumped astro from 6.2.2 to 6.4.6 in `site/website`
-- Dropped `.claude` directory
-- Removed duplicate `beskid_normative_spec` submodule entry
-- Unified CICD approach across superrepo
-- Multiple compiler submodule bumps for type checker refactor, clippy gate fixes, corelib matrix stability, AOT entrypoint, Core.Results smoke tests, and expression-bodied method parser
-
-### Fixed
-
-- Platform image builds for CI gates
-- Platform-spec moderation loader import protection
-- CI gates for corelib workspace deps and stack-heavy tests
-- Windows CLI build
-- Tracker Dockerfile path in container-images workflow
-- Container image lockfile verification on tracker and nexus jobs
-- Bundling errors for TypeScript services
-- Coolify API 422 errors
-- OpenBao CLI task failures
-- Kanban board drag interaction
-- Dagger engine segfaults (reverted v0.21.5 and v0.21.6, landed on v0.21.0)
-- Dagger module `bun.lock` conflict (Dagger uses npm for deps)
-- `NODE_AUTH_TOKEN` propagation to platform-lockfile-gate
-- Alpine package manager changes in submodules
-
 ## [0.3.0] - 2026-05-28
-
-Eight-track orchestrated release: compiler-mod-execution, native DI codegen/runtime,
-export-FFI link-time, corelib tiering and collections/FS API, foreign-lib-import CLI,
-runtime phase B GC/syscall, dynamic-types codegen, and tooling/packageKind/formatter.
-
-### Added
-
-- **v0.3 feature tracks (all merged 2026-05-23)**
-  - Native DI codegen and runtime end-to-end
-  - Export FFI link-time with traceability
-  - Compiler-mod-execution with mod-host-bridge
-  - Corelib tiering, collections, and FS API shape
-  - Foreign-lib-import CLI with `beskid import lib` and ExternalLibrary closed registry
-  - Runtime phase B GC opt-in
-  - Dynamic-types codegen
-  - packageKind tool Standard and formatter feature hub
-- **New submodules**
-  - `beskid_nexus` for compiler knowledge graph
-  - `beskid_treesitter` for grammar integration
-  - `beskid_tracker` with repo manifests and hub UI
-- **Infrastructure**
-  - Greenfield Coolify project via OpenTofu pipeline apply
-  - Vendored Coolify provider 1.1.18-beskid with `destination_uuid` support
-- **Macro system**
-  - Macro expand pass
-  - Macro registry wiring in compiler
-- **Docs and site UI**
-  - `trudoc` and docs-ui packages moved to `beskid_web_common`
-  - Giscus comments integration
-  - Platform-spec frontmatter verification
-  - Platform-spec home UX: tabs, map height, zoom, typography
-  - Spec page header and layout styles for navigation and responsiveness
-  - ADRs for corelib API shape and tier classification
-  - Beskid grammar support in trudoc
-  - Orchestration handoffs and verification evidence for all 8 subplanner tracks
-- **CI**
-  - Open VSX publishing workflow with darwin-arm64 VSIX and cross-compiled Intel LSP
-  - Open VSX version derived from tags and commits
-  - `beskid_vscode` submodule added for extension development
-  - Nox-driven aggregate workflows
-  - Centralized Nox/CI logging and submodule diagnostics
-
-### Changed
-
-- Changed hosting model of beskid services to Coolify
-- Multiple compiler submodule bumps across the period (CI fixes, corelib, e2e, format, ABI, graph tests, Linux corelib gate, release-profile prelude lowering, RUST_MIN_STACK, serialized prelude lowering, artifact sources, stack overflow, macro expand/registry, corelib publish CI, e2e build output assertions, corelib-quality, runtime bridge and ffi_v03)
-- Multiple pckg submodule bumps (bootstrap onboarding, docs browser, reCAPTCHA, PackageDocs, docs/dashboard)
-- Bumped beskid_vscode submodule to main
-- Bumped beskid_nexus submodule for CI smoke, Docker fixes, and Ladybug native CI
-- Dockerfile updated to include git for platform-spec generation
-- Consolidated platform-spec cutover and stabilized website container build
-
-### Fixed
 
 - Open VSX semver build metadata acceptance and strict patch progression
 - VS Code extension package source tracking

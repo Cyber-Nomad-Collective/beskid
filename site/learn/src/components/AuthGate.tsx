@@ -13,7 +13,7 @@ export interface AuthGateProps {
 	requireAuth?: boolean;
 }
 
-export function AuthGate({ children, requireAuth = false }: AuthGateProps) {
+export function AuthGate({ children, requireAuth = true }: AuthGateProps) {
 	const [user, setUser] = useState<AuthUser | null>(null);
 	const [loading, setLoading] = useState(true);
 

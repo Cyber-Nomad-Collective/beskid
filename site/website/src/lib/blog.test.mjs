@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { access, readFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { blogStatusLabel, sortBlogEntries } from './blog.ts';
+import { blogStatusLabel, sortBlogEntries, splitBlogEntries } from './blog.ts';
 
 test('orders newest posts first and labels publication state', () => {
 	const posts = [
@@ -17,6 +17,25 @@ test('orders newest posts first and labels publication state', () => {
 		['in-progress', 'truncated', 'released'],
 	);
 	assert.equal(blogStatusLabel('truncated'), 'Truncated');
+});
+
+test('uses a deterministic order and separates the featured post from the archive', () => {
+	const posts = [
+		{ id: 'blog/zeta', data: { date: new Date('2026-07-16'), blogStatus: 'released' } },
+		{ id: 'blog/alpha', data: { date: new Date('2026-07-16'), blogStatus: 'released' } },
+		{ id: 'blog/older', data: { date: new Date('2026-07-15'), blogStatus: 'released' } },
+	];
+
+	assert.deepEqual(sortBlogEntries(posts).map((post) => post.id), [
+		'blog/alpha',
+		'blog/zeta',
+		'blog/older',
+	]);
+	assert.deepEqual(splitBlogEntries(posts).featured?.id, 'blog/alpha');
+	assert.deepEqual(splitBlogEntries(posts).archive.map((post) => post.id), [
+		'blog/zeta',
+		'blog/older',
+	]);
 });
 
 test('provides a reduced-motion-safe blog index that uses the shared blog helpers', async () => {

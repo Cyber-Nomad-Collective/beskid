@@ -38,6 +38,9 @@ echo "preflight: logs  -> ${GATE_LOG_DIR}"
 
 HOST_RC=0
 
+# Submodule visibility guard — fast, catches nested dirt before CI runs
+echo ""; bash "${ROOT}/scripts/submodule-guard.sh" --summary || true
+
 run_host_gate() {  # run_host_gate <label> <cmd...>
   local label="$1"; shift
   echo ""

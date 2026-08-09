@@ -47,6 +47,7 @@ export function WorkspaceTabs({
 			{tiles.map((tile, index) => (
 				<div
 					key={tile.id}
+					data-workspace-tab-shell
 					className={clsx(
 						"workspace-tab-group",
 						activeTile === tile.id && "workspace-tab-group--active",

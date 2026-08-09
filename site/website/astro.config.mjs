@@ -177,6 +177,7 @@ export default defineConfig({
 				baseUrl: 'https://github.com/Cyber-Nomad-Collective/beskid/edit/main/site/website/',
 			},
 			components: {
+				PageTitle: './src/components/starlight/BlogAwarePageTitle.astro',
 				Head: '@beskid/beskid-ui/starlight/Head.astro',
 				Header: '@beskid/beskid-ui/starlight/Header.astro',
 				Footer: '@beskid/beskid-ui/starlight/Footer.astro',

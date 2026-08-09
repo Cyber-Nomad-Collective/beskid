@@ -160,6 +160,24 @@ html[data-theme="dark"] {
 .workspace-tab-group {
 	display: flex;
 	align-items: stretch;
+	border: 1px solid transparent;
+	border-bottom: 2px solid transparent;
+	border-radius: var(--beskid-radius-xl) var(--beskid-radius-xl) 0 0;
+	transition:
+		color 180ms var(--beskid-ease-out),
+		background 180ms var(--beskid-ease-out),
+		border-color 180ms var(--beskid-ease-out);
+}
+
+.workspace-tab-group:hover,
+.workspace-tab-group:focus-within {
+	background: var(--beskid-surface-hover);
+}
+
+.workspace-tab-group--active {
+	background: var(--beskid-surface-panel);
+	border-color: var(--beskid-border-inner);
+	border-bottom-color: var(--beskid-primary);
 }
 
 .workspace-tab {
@@ -172,9 +190,8 @@ html[data-theme="dark"] {
 	font-weight: 500;
 	color: var(--beskid-text-muted);
 	background: transparent;
-	border: 1px solid transparent;
-	border-bottom: 2px solid transparent;
-	border-radius: var(--beskid-radius-xl) var(--beskid-radius-xl) 0 0;
+	border: 0;
+	border-radius: 0;
 	cursor: pointer;
 	transition:
 		color 180ms var(--beskid-ease-out),
@@ -186,14 +203,10 @@ html[data-theme="dark"] {
 
 .workspace-tab:hover {
 	color: var(--beskid-text-primary);
-	background: var(--beskid-surface-hover);
 }
 
 .workspace-tab--active {
 	color: var(--beskid-text-primary);
-	background: var(--beskid-surface-panel);
-	border-color: var(--beskid-border-inner);
-	border-bottom-color: var(--beskid-primary);
 }
 
 .workspace-tab-label {
@@ -270,6 +283,14 @@ html[data-theme="dark"] {
 	overflow: hidden;
 }
 
+.workspace-mosaic-leaf > .workspace-tile-content {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+	overflow: hidden;
+}
+
 .workspace-mosaic-handle {
 	background: transparent;
 	display: flex;
@@ -317,85 +338,6 @@ html[data-theme="dark"] {
 .workspace-mosaic-handle:focus-visible::after,
 .workspace-mosaic-handle:active::after {
 	background: var(--beskid-border-inner);
-}
-
-.workspace-grid {
-	display: grid;
-	gap: 0;
-	flex: 1;
-	min-height: 0;
-	overflow: hidden;
-	border: 1px solid var(--beskid-border-inner);
-	border-radius: var(--beskid-radius-xl);
-	background: var(--beskid-surface-panel);
-}
-
-.workspace-tile {
-	display: flex;
-	flex-direction: column;
-	min-width: 0;
-	overflow: hidden;
-}
-
-.workspace-tile:first-child {
-	border-radius: var(--beskid-radius-xl) 0 0 var(--beskid-radius-xl);
-}
-
-.workspace-tile:last-child {
-	border-radius: 0 var(--beskid-radius-xl) var(--beskid-radius-xl) 0;
-}
-
-.workspace-tile-inner {
-	display: flex;
-	flex-direction: column;
-	height: 100%;
-	min-height: 0;
-}
-
-.workspace-tile-content {
-	flex: 1;
-	min-height: 0;
-	overflow: hidden;
-}
-
-/* Resize handle — thin draggable divider between tiles */
-.workspace-resize-handle {
-	width: 10px;
-	min-width: 10px;
-	cursor: col-resize;
-	background: transparent;
-	user-select: none;
-	touch-action: none;
-	transition: background 150ms ease;
-	flex-shrink: 0;
-	position: relative;
-	z-index: 2;
-}
-
-.workspace-resize-handle::after {
-	content: "";
-	position: absolute;
-	left: 50%;
-	width: 2px;
-	transform: translateX(-50%);
-	inset-block: 0;
-	background: var(--beskid-border-inner);
-	pointer-events: none;
-}
-
-.workspace-resize-handle:hover,
-.workspace-resize-handle:active {
-	background: var(--beskid-border-accent);
-}
-
-.workspace-resize-handle:focus-visible {
-	outline: 2px solid color-mix(in srgb, var(--beskid-primary) 80%, transparent);
-	outline-offset: 1px;
-}
-
-.workspace-resize-handle:hover::after,
-.workspace-resize-handle:active::after {
-	background: var(--beskid-primary);
 }
 
 .workspace-empty {
@@ -468,9 +410,6 @@ html[data-theme="dark"] {
   .learn-grid { grid-template-columns: 1fr; }.learn-sidebar { display: none; }
   .editor-terminal-grid { grid-template-columns: 1fr; min-height: 700px; }
   .playground-grid { grid-template-columns: 1fr; }
-  .workspace-grid { grid-template-columns: 1fr !important; min-height: 80vh; }
-	.workspace-tile--inactive { display: none; }
-  .workspace-resize-handle { display: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════

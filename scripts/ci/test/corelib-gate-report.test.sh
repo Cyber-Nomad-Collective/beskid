@@ -78,7 +78,7 @@ EOF
     > "${fixture}/compiler/scripts/stage-native-runtime-kit.sh"
   chmod +x "${fixture}/compiler/scripts/stage-native-runtime-kit.sh"
   if [[ "${cargo_mode}" == pass ]]; then
-    printf '#!/usr/bin/env bash\nset -euo pipefail\nmkdir -p target/release\nprintf "#!/usr/bin/env bash\\nexit 0\\n" > target/release/beskid_cli\nchmod +x target/release/beskid_cli\n' \
+    printf '#!/usr/bin/env bash\nset -euo pipefail\nmkdir -p target/release\nprintf "#!/usr/bin/env bash\\nset -euo pipefail\\nif IFS= read -r unexpected; then\\n  printf \\"unexpected inherited stdin: %%s\\\\n\\" \\"\\${unexpected}\\" >&2\\n  exit 64\\nfi\\nexit 0\\n" > target/release/beskid_cli\nchmod +x target/release/beskid_cli\n' \
       > "${fixture}/bin/cargo"
   else
     printf '#!/usr/bin/env bash\nprintf "cargo fixture failure\\n" >&2\nexit 42\n' > "${fixture}/bin/cargo"
@@ -89,7 +89,7 @@ EOF
 PASS_FIXTURE="${TMP}/pass"
 make_fixture "${PASS_FIXTURE}" pass
 CORELIB_REPORT_DIR="${PASS_FIXTURE}/report" PATH="${PASS_FIXTURE}/bin:${PATH}" \
-  bash "${PASS_FIXTURE}/scripts/ci/corelib-gate.sh"
+  bash "${PASS_FIXTURE}/scripts/ci/corelib-gate.sh" <<<"interactive input must not reach Corelib tests"
 PASS_REPORT="${PASS_FIXTURE}/report/corelib-build-report.md"
 assert_file_exists "${PASS_REPORT}" "success produces the Corelib Markdown report"
 PASS_MD="$(cat "${PASS_REPORT}")"

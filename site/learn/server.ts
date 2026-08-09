@@ -2,7 +2,7 @@
 
 import type { ChildProcess } from "node:child_process";
 import { spawn } from "node:child_process";
-import { randomUUID } from "node:crypto";
+import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -58,6 +58,109 @@ const BESKID_RUNTIME_KIT_PROFILE =
 	process.env.BESKID_RUNTIME_KIT_PROFILE ?? "debug";
 let runtimeKitBootstrapPromise: Promise<void> | null = null;
 let COMPILER_AVAILABLE = false;
+const LEARN_SESSION_COOKIE = "beskid_learn_session";
+const LEARN_SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
+
+type LearnSession = { login: string; name: string | null; avatarUrl: string };
+type JwtPayload = Record<string, unknown> & { exp?: number; iat?: number; iss?: string };
+
+function encodeBase64Url(value: string): string {
+	return Buffer.from(value).toString("base64url");
+}
+
+function decodeBase64Url(value: string): string | null {
+	try {
+		return Buffer.from(value, "base64url").toString("utf8");
+	} catch {
+		return null;
+	}
+}
+
+function signJwtPart(secret: string, value: string): string {
+	return createHmac("sha256", secret).update(value).digest("base64url");
+}
+
+function parseSignedJwt(secret: string, token: string): JwtPayload | null {
+	const [headerPart, payloadPart, signature] = token.split(".");
+	if (!headerPart || !payloadPart || !signature) return null;
+	const expectedSignature = signJwtPart(secret, `${headerPart}.${payloadPart}`);
+	if (signature.length !== expectedSignature.length || !timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) return null;
+	try {
+		const header = JSON.parse(decodeBase64Url(headerPart) ?? "") as { alg?: string };
+		const payload = JSON.parse(decodeBase64Url(payloadPart) ?? "") as JwtPayload;
+		if (header.alg !== "HS256") return null;
+		if (typeof payload.exp === "number" && payload.exp <= Math.floor(Date.now() / 1000)) return null;
+		return payload;
+	} catch {
+		return null;
+	}
+}
+
+function createSignedJwt(secret: string, payload: JwtPayload): string {
+	const headerPart = encodeBase64Url(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+	const payloadPart = encodeBase64Url(JSON.stringify(payload));
+	const signed = `${headerPart}.${payloadPart}`;
+	return `${signed}.${signJwtPart(secret, signed)}`;
+}
+
+function learnSessionSecret(): string | null {
+	const secret = process.env.LEARN_SESSION_SECRET;
+	return secret && secret.length >= 32 ? secret : null;
+}
+
+function readCookie(request: Request, name: string): string | null {
+	for (const part of (request.headers.get("cookie") ?? "").split(";")) {
+		const [key, ...value] = part.trim().split("=");
+		if (key === name) return decodeURIComponent(value.join("="));
+	}
+	return null;
+}
+
+async function getLearnSession(request: Request): Promise<LearnSession | null> {
+	const secret = learnSessionSecret();
+	const token = readCookie(request, LEARN_SESSION_COOKIE);
+	if (!secret || !token) return null;
+	try {
+		const payload = parseSignedJwt(secret, token);
+		if (!payload) return null;
+		if (typeof payload.login !== "string") return null;
+		return {
+			login: payload.login,
+			name: typeof payload.name === "string" ? payload.name : null,
+			avatarUrl: typeof payload.avatarUrl === "string" ? payload.avatarUrl : "",
+		};
+	} catch {
+		return null;
+	}
+}
+
+async function sealLearnSession(session: LearnSession): Promise<string> {
+	const secret = learnSessionSecret();
+	if (!secret) throw new Error("LEARN_SESSION_SECRET must be configured");
+	const now = Math.floor(Date.now() / 1000);
+	return createSignedJwt(secret, { ...session, iat: now, exp: now + LEARN_SESSION_MAX_AGE_SECONDS });
+}
+
+function verifyLearnHandoff(serviceToken: string, token: string): LearnSession | null {
+	if (serviceToken.length < 32) return null;
+	const payload = parseSignedJwt(serviceToken, token);
+	if (!payload || payload.iss !== "beskid-auth-hub" || payload.app !== "learn") return null;
+	if (typeof payload.sid !== "string" || typeof payload.login !== "string") return null;
+	return {
+		login: payload.login,
+		name: typeof payload.name === "string" ? payload.name : null,
+		avatarUrl: typeof payload.avatar_url === "string" ? payload.avatar_url : "",
+	};
+}
+
+function learnSessionCookie(token: string): string {
+	const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+	return `${LEARN_SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${LEARN_SESSION_MAX_AGE_SECONDS}${secure}`;
+}
+
+function clearLearnSessionCookie(): string {
+	return `${LEARN_SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`;
+}
 
 async function verifyBeskidBinary(): Promise<void> {
 	const envBinary = process.env.BESKID_BINARY;
@@ -550,6 +653,7 @@ Bun.serve({
 		const requestUrl = new URL(req.url);
 
 		if (requestUrl.pathname === "/api/exercises") {
+			if (!(await getLearnSession(req))) return jsonResponse(401, { error: "Authentication required" });
 			return jsonResponse(200, {
 				exercises: resolvePublicExercises(),
 			});
@@ -559,6 +663,7 @@ Bun.serve({
 			requestUrl.pathname.startsWith("/api/exercise/") &&
 			req.method === "GET"
 		) {
+			if (!(await getLearnSession(req))) return jsonResponse(401, { error: "Authentication required" });
 			const exerciseId = decodeURIComponent(
 				requestUrl.pathname.substring("/api/exercise/".length),
 			);
@@ -583,6 +688,7 @@ Bun.serve({
 		}
 
 		if (requestUrl.pathname === "/api/check" && req.method === "POST") {
+			if (!(await getLearnSession(req))) return jsonResponse(401, { error: "Authentication required" });
 			try {
 				const payload = (await req.json()) as CheckRequest;
 
@@ -628,61 +734,25 @@ Bun.serve({
 
 		// ── Auth endpoints (reuses Beskid auth-hub handoff) ──
 		if (requestUrl.pathname === "/api/auth/me") {
-			const cookie = req.headers.get("cookie") ?? "";
-			const sessionMatch = /beskid_learn_session=([^;]+)/.exec(cookie);
-			if (!sessionMatch) return jsonResponse(200, { user: null });
+			return jsonResponse(200, { user: await getLearnSession(req) });
+		}
+
+		if (requestUrl.pathname === "/api/auth/hub-finish" && req.method === "GET") {
 			try {
-				const buf = Buffer.from(sessionMatch[1], "base64url").toString("utf8");
-				const sessionData = JSON.parse(buf);
-				return jsonResponse(200, {
-					user: {
-						login: sessionData.login,
-						name: sessionData.name ?? null,
-						avatarUrl: sessionData.avatarUrl,
+				const handoff = requestUrl.searchParams.get("handoff");
+				const serviceToken = process.env.LEARN_AUTH_SERVICE_TOKEN;
+				const session = handoff && serviceToken ? verifyLearnHandoff(serviceToken, handoff) : null;
+				if (!session) throw new Error("Invalid Learn Auth Hub handoff");
+				const token = await sealLearnSession(session);
+				return new Response(null, {
+					status: 302,
+					headers: {
+						"Set-Cookie": learnSessionCookie(token),
+						Location: "/",
 					},
 				});
 			} catch {
-				return jsonResponse(200, { user: null });
-			}
-		}
-
-		if (requestUrl.pathname === "/api/auth/login" && req.method === "POST") {
-			try {
-				const body = await req.json();
-				if (!body.handoffToken)
-					return jsonResponse(400, { error: "Missing handoffToken" });
-				const hubUrl = (
-					process.env.BESKID_AUTH_HUB_URL ?? "https://auth.beskid-lang.org"
-				).replace(/\/$/, "");
-				const verifyRes = await fetch(`${hubUrl}/api/v1/handoff/verify`, {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ token: body.handoffToken, app: "learn" }),
-				});
-				if (!verifyRes.ok)
-					return jsonResponse(401, { error: "Invalid handoff token" });
-				const payload = await verifyRes.json();
-				const sessionValue = Buffer.from(
-					JSON.stringify({
-						login: payload.login,
-						name: payload.name ?? null,
-						avatarUrl: payload.avatarUrl ?? `https://github.com/${payload.login}.png`,
-					}),
-				).toString("base64url");
-				const maxAge = 60 * 60 * 24 * 7;
-				return new Response(null, {
-					status: 204,
-					headers: {
-						"Set-Cookie":
-							"beskid_learn_session=" +
-							sessionValue +
-							"; Path=/; HttpOnly; SameSite=Lax; Max-Age=" +
-							maxAge,
-					},
-				});
-			} catch (err) {
-				const message = err instanceof Error ? err.message : "Login failed";
-				return jsonResponse(500, { error: message });
+				return new Response(null, { status: 302, headers: { "Set-Cookie": clearLearnSessionCookie(), Location: "/?error=oauth_failed" } });
 			}
 		}
 
@@ -690,17 +760,18 @@ Bun.serve({
 			return new Response(null, {
 				status: 204,
 				headers: {
-					"Set-Cookie":
-						"beskid_learn_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0",
+					"Set-Cookie": clearLearnSessionCookie(),
 				},
 			});
 		}
 
 		// ── Progress persistence ──
 		if (requestUrl.pathname === "/api/progress" && req.method === "GET") {
+			if (!(await getLearnSession(req))) return jsonResponse(401, { error: "Authentication required" });
 			return jsonResponse(200, loadProgress());
 		}
 		if (requestUrl.pathname === "/api/progress" && req.method === "POST") {
+			if (!(await getLearnSession(req))) return jsonResponse(401, { error: "Authentication required" });
 			const data = await req.json();
 			const saved = saveProgress(data);
 			return jsonResponse(200, { ok: saved });

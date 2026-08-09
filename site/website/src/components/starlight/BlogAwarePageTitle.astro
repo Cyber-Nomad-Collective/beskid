@@ -1,0 +1,42 @@
+---
+import { blogStatusLabel, type BlogStatus } from '../../lib/blog';
+
+const PAGE_TITLE_ID = '_top';
+const entry = Astro.locals.starlightRoute.entry;
+const isBlogIndex = entry.id === 'blog' || entry.id.startsWith('blog/index');
+const isBlogPost = entry.id.startsWith('blog/') && !isBlogIndex;
+const data = entry.data as typeof entry.data & { blogStatus?: BlogStatus; date?: Date; release?: string };
+const date = data.date
+	? new Intl.DateTimeFormat('en', { day: 'numeric', month: 'long', year: 'numeric' }).format(data.date)
+	: null;
+---
+
+{isBlogIndex ? null : isBlogPost ? (
+	<header class="blog-post-header">
+		<p class="blog-post-header__eyebrow">Beskid blog{data.release ? ` · ${data.release}` : ''}</p>
+		<h1 id={PAGE_TITLE_ID}>{data.title}</h1>
+		{data.description && <p class="blog-post-header__description">{data.description}</p>}
+		{(date || data.blogStatus) && (
+			<div class="blog-post-header__meta">
+				{date && <time datetime={data.date?.toISOString()}>{date}</time>}
+				{data.blogStatus && <span>{blogStatusLabel(data.blogStatus)}</span>}
+			</div>
+		)}
+		<a href="/blog/">← All posts</a>
+	</header>
+) : (
+	<h1 id={PAGE_TITLE_ID}>{data.title}</h1>
+)}
+
+<style>
+	@layer starlight.core {
+		h1 { margin-top: 1rem; font-size: var(--sl-text-h1); line-height: var(--sl-line-height-headings); font-weight: 600; color: var(--sl-color-white); }
+	}
+	.blog-post-header { max-width: 48rem; padding: 2.5rem 0 1rem; }
+	.blog-post-header__eyebrow { margin: 0 0 .75rem; color: var(--sl-color-text-accent); font-size: var(--sl-text-sm); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+	.blog-post-header h1 { margin: 0; font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1.02; }
+	.blog-post-header__description { margin: 1.25rem 0; color: var(--sl-color-gray-3); font-size: var(--sl-text-xl); line-height: 1.5; }
+	.blog-post-header__meta { display: flex; gap: .75rem; color: var(--sl-color-gray-3); font-size: var(--sl-text-sm); }
+	.blog-post-header__meta span { color: var(--sl-color-text-accent); font-weight: 700; }
+	.blog-post-header > a { display: inline-block; margin-top: 1.5rem; color: var(--sl-color-text-accent); font-weight: 700; text-decoration: none; }
+</style>
