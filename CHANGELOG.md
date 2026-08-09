@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Split the compiler's largest integration-test authorities into focused,
+  explicitly wired modules while preserving test inventories and keeping every
+  authored compiler and Corelib source file below the structural size limit.
 - Integrate the completed compiler, ABI/runtime, BSOL, and pckg module-extraction
   waves through their published submodule revisions, preserving thin public
   facades and single implementation ownership across the v0.4 toolchain.
@@ -61,6 +64,12 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Make Learn run-check path resilient to non-JSON `/api/check` responses (for
   static/no-backend environments), replacing JSON parse crashes with a readable
   terminal error.
+
+### Fixed
+
+- Preserve exact numeric widths in Corelib console rendering and ASCII casing,
+  and route nested `if` conditions through the normal ISLE expression lowering
+  path so diagnostics retain their precise source attribution.
 
 ## [0.4.0] - 2026-08-06
 
