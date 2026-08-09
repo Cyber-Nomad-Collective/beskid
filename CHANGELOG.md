@@ -9,10 +9,13 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
-_No unreleased changes — all changes are in [0.4.0]._
-
 ### Changed
 
+- Integrate the completed compiler, ABI/runtime, BSOL, and pckg module-extraction
+  waves through their published submodule revisions, preserving thin public
+  facades and single implementation ownership across the v0.4 toolchain.
+- Refresh the workspace lockfile for the current TanStack Start patch releases
+  and the Learn app's local `@beskid/auth-client` workspace dependency.
 - Present `/blog/` as an editorial publication index with a featured latest
   post, chronological archive, deterministic same-date ordering, and article
   mastheads that expose publication status and dates rather than documentation
