@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "1ce4c5a8e63664a9439c73c7794a4deba41476a3acbe5876d323344b76e63b64",
+  "revision": "40291ff986ae14962de6aa93403c2a7758c07474416587517c87c453ed7e6cef",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -38923,7 +38923,7 @@
       "path": "README.md",
       "title": "Beskid Superrepo",
       "authority": "informative",
-      "sourceHash": "8689afcd141bf4a78bc5cb2c44d408f9ae1c11a054d359c1c265cb3f77942c13",
+      "sourceHash": "a10d0176dcec245b247fc6ef1ab847b02f7beaff88a3e15691c89a6c81d19627",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/README.md"
@@ -38935,7 +38935,7 @@
       "path": "docs/distribution/SECRETS.md",
       "title": "Distribution Pipeline Secrets",
       "authority": "informative",
-      "sourceHash": "b7f727a960c76a07074520a046a0a7d6729fa79d17a747c0fc35482adc770832",
+      "sourceHash": "b22bbbed00ff000f4d4992a5041ea936c83dea75f6388f29c3033a5c3ed794b7",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39132,7 +39132,7 @@
       "path": "site/website/src/content/docs/book/01-it-works-on-my-machine/downloads-and-releases.md",
       "title": "Downloads and rolling releases",
       "authority": "informative",
-      "sourceHash": "2275e608d96c5412baedf8a5828c6090cb1c1f97d58c24c174b71911c95fe176",
+      "sourceHash": "d349c62cbbf49ae4fcc52b62ffdd7090eb290322d719de3ca9b6823471a69dce",
       "standardLinks": [
         "/platform-spec/tooling/cli-and-distribution/"
       ],
@@ -39152,7 +39152,7 @@
       "path": "site/website/src/content/docs/book/01-it-works-on-my-machine/index.md",
       "title": "It works on my machine (and yours, eventually)",
       "authority": "informative",
-      "sourceHash": "a4f5b140f6c6d3b7834258e66ae43ae96f8abdd2bc9d41520f04370ab55bcc69",
+      "sourceHash": "5c50cf921e1091c4c628e420fb0048047ece53ba13cb3538f240e4991254dc5e",
       "standardLinks": [
         "/platform-spec/tooling/"
       ],
@@ -39855,7 +39855,7 @@
       "path": "site/website/src/content/docs/book/12-the-normative-bible/git-as-version-axis.md",
       "title": "Git as version axis",
       "authority": "informative",
-      "sourceHash": "11a5ab1410005c9e811f6b5a70fe5946fdbece4d685709b6c5a028457b4d0b38",
+      "sourceHash": "20deea2e0721c48edc80e08b6140046bd55be147da1a78110ee84e7f8f5d0d27",
       "standardLinks": [
         "/platform-spec/community/spec-maintenance/release-and-versioning-policy/",
         "/platform-spec/community/spec-maintenance/last-reviewed-policy/",
