@@ -3,9 +3,9 @@ description: Install the Beskid compiler CLI in CI runners
 
 inputs:
   version:
-    description: "Semver (e.g. '0.4.15') or 'latest' for the cli-latest rolling release"
+    description: "Semver (e.g. '0.4.15') or 'stable'/'unstable' rolling release"
     required: false
-    default: 'latest'
+    default: 'stable'
   token:
     description: "GitHub token with read access to beskid_compiler releases"
     required: false
@@ -43,8 +43,10 @@ runs:
       shell: bash
       run: |
         ver="${{ inputs.version }}"
-        if [[ "${ver}" == "latest" ]]; then
-          echo "tag=cli-latest" >> "$GITHUB_OUTPUT"
+        if [[ "${ver}" == "stable" ]]; then
+          echo "tag=cli-stable" >> "$GITHUB_OUTPUT"
+        elif [[ "${ver}" == "unstable" ]]; then
+          echo "tag=cli-unstable" >> "$GITHUB_OUTPUT"
         else
           echo "tag=cli-v${ver}" >> "$GITHUB_OUTPUT"
         fi

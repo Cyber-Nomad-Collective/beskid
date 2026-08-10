@@ -16,18 +16,18 @@ jobs:
       - run: beskid build
 ```
 
-Pin to `latest` (default) to always use the [cli-latest](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-latest) rolling release:
+Pin to `stable` (default) to always use the [cli-stable](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-stable) rolling release:
 
 ```yaml
 - uses: ./.github/actions/setup-beskid
-  # version defaults to 'latest'
+  # version defaults to 'stable'
 ```
 
 ## Inputs
 
 | Input     | Default             | Description                                          |
 |-----------|---------------------|------------------------------------------------------|
-| `version` | `'latest'`          | Semver (`0.4.15`) or `'latest'` for cli-latest       |
+| `version` | `'stable'`          | Semver (`0.4.15`) or `'stable'` / `'unstable'` |
 | `token`   | `${{ github.token }}` | GitHub token for release download (needs `contents: read`) |
 
 ## Outputs
@@ -48,7 +48,7 @@ Pin to `latest` (default) to always use the [cli-latest](https://github.com/Cybe
 ## How it works
 
 1. Detects `runner.os` → `linux` / `darwin` / `windows` with `amd64` / `arm64` arch.
-2. Resolves the release tag: `cli-latest` or `cli-v<version>`.
+2. Resolves the release tag: `cli-stable`, `cli-unstable`, or `cli-v<version>`.
 3. Downloads the matching asset from `Cyber-Nomad-Collective/beskid_compiler` via `gh release download`.
 4. Places the binary in `$RUNNER_TOOL_CACHE/beskid/<tag>/<arch>/` and appends to `PATH`.
 5. Runs `beskid --version` to verify and expose the version output.

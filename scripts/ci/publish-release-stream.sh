@@ -4,15 +4,16 @@
 #
 # For the given stream, uploads the
 # assets to both an immutable tag (cli-v<version> / lsp-v<version>) and a
-# rolling tag (cli-latest / lsp-latest), creating the release if it doesn't
+# rolling tag (cli-stable / lsp-stable, default) or a provided release channel,
 # exist. Operates on a directory of assets produced by build-release-artifact.sh.
 #
-# Usage: publish-release-stream.sh <stream> <release-version> <compiler-sha> <assets-dir> [phase]
+# Usage: publish-release-stream.sh <stream> <release-version> <compiler-sha> <assets-dir> [phase] [release-channel]
 #   stream           cli | lsp | bundle
 #   release-version  resolved semver
 #   compiler-sha     compiler submodule HEAD the release was built from
 #   assets-dir       directory containing the built assets (+ version file)
 #   phase            immutable | rolling | both (default: both)
+#   release-channel  stable (default) | unstable
 # Env: GH_TOKEN (github token with contents:write on beskid_compiler)
 set -euo pipefail
 
@@ -21,32 +22,44 @@ RELEASE_VERSION="${2:?release-version}"
 COMPILER_SHA="${3:?compiler-sha}"
 ASSETS_DIR="${4:?assets-dir}"
 PHASE="${5:-both}"
+RELEASE_CHANNEL="${6:-stable}"
 
 REPO="Cyber-Nomad-Collective/beskid_compiler"
+
+case "$RELEASE_CHANNEL" in
+  stable|unstable) ;;
+  *) echo "Unsupported release channel: $RELEASE_CHANNEL" >&2; exit 1 ;;
+esac
 
 case "$STREAM" in
   cli)
     version_file="cli-version.txt"
     immutable_tag="cli-v${RELEASE_VERSION}"
-    rolling_tag="cli-latest"
+    case "$RELEASE_CHANNEL" in
+      stable) rolling_tag="cli-stable" ;;
+      unstable) rolling_tag="cli-unstable" ;;
+    esac
     immutable_title="Beskid CLI v${RELEASE_VERSION}"
-    rolling_title="Beskid CLI (rolling)"
+    rolling_title="Beskid CLI (${RELEASE_CHANNEL} rolling)"
     asset_glob="beskid-linux-amd64 beskid-darwin-arm64 beskid-windows-amd64.exe"
     ;;
   lsp)
     version_file="lsp-version.txt"
     immutable_tag="lsp-v${RELEASE_VERSION}"
-    rolling_tag="lsp-latest"
+    case "$RELEASE_CHANNEL" in
+      stable) rolling_tag="lsp-stable" ;;
+      unstable) rolling_tag="lsp-unstable" ;;
+    esac
     immutable_title="Beskid LSP v${RELEASE_VERSION}"
-    rolling_title="Beskid LSP (rolling)"
+    rolling_title="Beskid LSP (${RELEASE_CHANNEL} rolling)"
     asset_glob="beskid_lsp-*"
     ;;
   bundle)
     version_file="bundle-version.txt"
     immutable_tag="v${RELEASE_VERSION}"
-    rolling_tag="latest"
+    rolling_tag="${RELEASE_CHANNEL}"
     immutable_title="Beskid v${RELEASE_VERSION}"
-    rolling_title="Beskid (rolling)"
+    rolling_title="Beskid (${RELEASE_CHANNEL} rolling)"
     asset_glob="beskid-*.tar.gz beskid-release.json"
     ;;
   *) echo "Unsupported release stream: $STREAM" >&2; exit 1 ;;

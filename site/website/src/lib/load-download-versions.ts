@@ -61,7 +61,19 @@ const cliCargoPath = join(
 );
 
 const GITHUB_REPO = "Cyber-Nomad-Collective/beskid_compiler";
-const DEFAULT_LATEST_TAG = "cli-latest";
+const DEFAULT_CHANNEL =
+	(process.env.BESKID_RELEASE_CHANNEL ?? "stable").trim().toLowerCase();
+
+function resolveRollingTag(channel: string): string {
+	switch (channel) {
+		case "unstable":
+			return "cli-unstable";
+		default:
+			return "cli-stable";
+	}
+}
+
+const DEFAULT_LATEST_TAG = resolveRollingTag(DEFAULT_CHANNEL);
 
 function readJsonVersion<T extends VersionPayload>(fileName: string): T | null {
 	const path = join(dataDir, fileName);

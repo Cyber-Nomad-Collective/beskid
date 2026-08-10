@@ -28,6 +28,11 @@ on:
       - '.github/actions/**'
       - '.github/workflows/compiler.yml'
   workflow_dispatch:
+    inputs:
+      release_channel:
+        description: "Release channel for rolling CLI/LSP aliases (stable, unstable)"
+        required: false
+        default: stable
 
 concurrency:
   group: compiler-${{ github.workflow }}-${{ github.ref }}
@@ -38,6 +43,7 @@ permissions:
 
 env:
   RUST_MIN_STACK: "67108864"
+  RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || 'stable' }}
 
 jobs:
   gate:
@@ -332,12 +338,13 @@ jobs:
           pattern: cli-beskid-*
           merge-multiple: true
 
-      - name: Publish cli-v* and cli-latest (native)
+      - name: Publish cli-v* and cli-stable/cli-unstable (native)
         env:
           RELEASE_VERSION: ${{ needs.version.outputs.version }}
           COMPILER_SHA: ${{ needs.version.outputs.compiler_sha }}
           COMPILER_RELEASE_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN }}
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+          RELEASE_CHANNEL: ${{ env.RELEASE_CHANNEL }}
         run: |
           set -euo pipefail
           export GH_TOKEN="${COMPILER_RELEASE_TOKEN:-${COMPILER_SUBMODULE_TOKEN}}"
@@ -345,7 +352,7 @@ jobs:
             echo "Set COMPILER_RELEASE_TOKEN or COMPILER_SUBMODULE_TOKEN" >&2
             exit 1
           fi
-          bash ./scripts/ci/publish-release-stream.sh cli "${RELEASE_VERSION}" "${COMPILER_SHA}" release-assets immutable
+          bash ./scripts/ci/publish-release-stream.sh cli "${RELEASE_VERSION}" "${COMPILER_SHA}" release-assets immutable "${RELEASE_CHANNEL}"
 
   release-lsp-build:
     name: Build LSP (${{ matrix.asset_name }})
@@ -425,12 +432,13 @@ jobs:
           pattern: lsp-beskid_lsp-*
           merge-multiple: true
 
-      - name: Publish lsp-v* and lsp-latest (native)
+      - name: Publish lsp-v* and lsp-stable/ lsp-unstable (native)
         env:
           RELEASE_VERSION: ${{ needs.version.outputs.version }}
           COMPILER_SHA: ${{ needs.version.outputs.compiler_sha }}
           COMPILER_RELEASE_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN }}
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+          RELEASE_CHANNEL: ${{ env.RELEASE_CHANNEL }}
         run: |
           set -euo pipefail
           export GH_TOKEN="${COMPILER_RELEASE_TOKEN:-${COMPILER_SUBMODULE_TOKEN}}"
@@ -438,7 +446,7 @@ jobs:
             echo "Set COMPILER_RELEASE_TOKEN or COMPILER_SUBMODULE_TOKEN" >&2
             exit 1
           fi
-          bash ./scripts/ci/publish-release-stream.sh lsp "${RELEASE_VERSION}" "${COMPILER_SHA}" release-assets immutable
+          bash ./scripts/ci/publish-release-stream.sh lsp "${RELEASE_VERSION}" "${COMPILER_SHA}" release-assets immutable "${RELEASE_CHANNEL}"
 
   release-bundle-build:
     name: Build direct-install bundle (${{ matrix.target }})
@@ -539,7 +547,7 @@ jobs:
             "x86_64-unknown-linux-gnu|${release_url}/beskid-x86_64-unknown-linux-gnu.tar.gz|$(sha256sum beskid-x86_64-unknown-linux-gnu.tar.gz | awk '{print $1}')" \
             "aarch64-apple-darwin|${release_url}/beskid-aarch64-apple-darwin.tar.gz|$(sha256sum beskid-aarch64-apple-darwin.tar.gz | awk '{print $1}')" \
             "x86_64-pc-windows-msvc|${release_url}/beskid-x86_64-pc-windows-msvc.tar.gz|$(sha256sum beskid-x86_64-pc-windows-msvc.tar.gz | awk '{print $1}')"
-          bash ../scripts/ci/publish-release-stream.sh bundle "${RELEASE_VERSION}" "${COMPILER_SHA}" . immutable
-          bash ../scripts/ci/publish-release-stream.sh cli "${RELEASE_VERSION}" "${COMPILER_SHA}" . rolling
-          bash ../scripts/ci/publish-release-stream.sh lsp "${RELEASE_VERSION}" "${COMPILER_SHA}" . rolling
-          bash ../scripts/ci/publish-release-stream.sh bundle "${RELEASE_VERSION}" "${COMPILER_SHA}" . rolling
+          bash ../scripts/ci/publish-release-stream.sh bundle "${RELEASE_VERSION}" "${COMPILER_SHA}" . immutable "${RELEASE_CHANNEL}"
+          bash ../scripts/ci/publish-release-stream.sh cli "${RELEASE_VERSION}" "${COMPILER_SHA}" . rolling "${RELEASE_CHANNEL}"
+          bash ../scripts/ci/publish-release-stream.sh lsp "${RELEASE_VERSION}" "${COMPILER_SHA}" . rolling "${RELEASE_CHANNEL}"
+          bash ../scripts/ci/publish-release-stream.sh bundle "${RELEASE_VERSION}" "${COMPILER_SHA}" . rolling "${RELEASE_CHANNEL}"

@@ -2,7 +2,15 @@
 # are also available — see https://beskid-lang.org/downloads/ for alternatives.
 $ErrorActionPreference = "Stop"
 
-$releaseTag = if ($env:BESKID_RELEASE_TAG) { $env:BESKID_RELEASE_TAG.Trim() } else { "cli-latest" }
+if ($env:BESKID_RELEASE_TAG) {
+    $releaseTag = $env:BESKID_RELEASE_TAG.Trim()
+    } else {
+        switch (($env:BESKID_RELEASE_CHANNEL ?? "stable").Trim().ToLower()) {
+        "stable" { $releaseTag = "cli-stable" }
+        "unstable" { $releaseTag = "cli-unstable" }
+        default { $releaseTag = "cli-stable" }
+    }
+}
 $baseUrl = "https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/$releaseTag"
 $versionUrl = "$baseUrl/cli-version.txt"
 $installDir = Join-Path $env:USERPROFILE ".beskid\bin"
@@ -21,7 +29,7 @@ if ([string]::IsNullOrWhiteSpace($version)) {
     throw "cli-version.txt from $versionUrl was empty."
 }
 
-if ($releaseTag -eq "cli-latest") {
+if ($releaseTag -eq "cli-stable" -or $releaseTag -eq "cli-unstable") {
     Write-Output "Installing Beskid CLI $version (rolling build from $releaseTag)"
 } else {
     Write-Output "Installing Beskid CLI $version (pinned release $releaseTag)"

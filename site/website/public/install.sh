@@ -3,7 +3,15 @@
 # are also available — see https://beskid-lang.org/downloads/ for alternatives.
 set -euo pipefail
 
-RELEASE_TAG="${BESKID_RELEASE_TAG:-cli-latest}"
+if [[ -n "${BESKID_RELEASE_TAG:-}" ]]; then
+  RELEASE_TAG="${BESKID_RELEASE_TAG}"
+else
+  case "${BESKID_RELEASE_CHANNEL:-stable}" in
+    stable) RELEASE_TAG="cli-stable" ;;
+    unstable) RELEASE_TAG="cli-unstable" ;;
+    *) RELEASE_TAG="cli-stable" ;;
+  esac
+fi
 BASE_URL="https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/${RELEASE_TAG}"
 VERSION_URL="${BASE_URL}/cli-version.txt"
 INSTALL_DIR="${HOME}/.beskid/bin"
@@ -44,7 +52,7 @@ if [[ -z "${cli_version}" ]]; then
   exit 1
 fi
 
-if [[ "${RELEASE_TAG}" == "cli-latest" ]]; then
+if [[ "${RELEASE_TAG}" == "cli-stable" || "${RELEASE_TAG}" == "cli-unstable" ]]; then
   echo "Installing Beskid CLI ${cli_version} (rolling build from ${RELEASE_TAG})"
 else
   echo "Installing Beskid CLI ${cli_version} (pinned release ${RELEASE_TAG})"

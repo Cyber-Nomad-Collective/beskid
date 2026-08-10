@@ -1,7 +1,17 @@
 export const prerender = true;
 
 const COMPILER_REPO = "Cyber-Nomad-Collective/beskid_compiler";
-const LATEST_TAG = "cli-latest";
+const LATEST_TAG = (() => {
+	const channel = (process.env.BESKID_RELEASE_CHANNEL ?? "stable")
+		.trim()
+		.toLowerCase();
+	switch (channel) {
+		case "unstable":
+			return "cli-unstable";
+		default:
+			return "cli-stable";
+	}
+})();
 
 interface AssetInfo {
 	platform: string;

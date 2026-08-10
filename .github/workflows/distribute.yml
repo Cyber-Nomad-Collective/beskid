@@ -6,9 +6,9 @@
 # alias only for discovery, then packages only immutable release assets.
 # Cyber-Nomad-Collective/beskid_compiler, fans out to the platform packaging
 # jobs, and publishes:
-#   - Windows .msi + .exe   -> beskid_compiler cli-latest / cli-v<ver> release
+#   - Windows .msi + .exe   -> beskid_compiler cli-stable|cli-unstable / cli-v<ver> release
 #   - macOS .dmg + brew     -> compiler release + beskid_homebrew tap
-#   - Ubuntu/Debian .deb    -> beskid_compiler cli-latest / cli-v<ver> release
+#   - Ubuntu/Debian .deb    -> beskid_compiler cli-stable|cli-unstable / cli-v<ver> release
 #   - Snap                  -> Snap Store (snap name: beskid)
 #
 # All platform recipes live in the beskid_distrib submodule (content-only);
@@ -25,6 +25,10 @@ on:
         description: Re-publish even if the rolling version is unchanged
         type: boolean
         default: false
+      release_channel:
+        description: Release channel for CLI/LSP rolling download aliases (stable, unstable)
+        required: false
+        default: stable
 
 permissions:
   contents: read
@@ -38,6 +42,7 @@ concurrency:
 env:
   COMPILER_REPO: Cyber-Nomad-Collective/beskid_compiler
   HOMEBREW_TAP_REPO: Cyber-Nomad-Collective/beskid_homebrew
+  RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || 'stable' }}
 
 jobs:
   # Guard + resolve job. Only proceeds when the triggering Compiler run actually
@@ -57,6 +62,8 @@ jobs:
       should_run: ${{ steps.guard.outputs.should_run }}
       homebrew_available: ${{ steps.secret-check.outputs.homebrew_available }}
       snap_available: ${{ steps.secret-check.outputs.snap_available }}
+      cli_rolling_tag: ${{ steps.release-tags.outputs.cli_rolling_tag }}
+      lsp_rolling_tag: ${{ steps.release-tags.outputs.lsp_rolling_tag }}
     steps:
       # NOTE: the first step MUST be a real actions/checkout — a local composite
       # action cannot be loaded before the repository is checked out.
@@ -94,6 +101,18 @@ jobs:
       - name: Init beskid_distrib submodule (shallow)
         run: ./scripts/ci/init-submodules.sh beskid_distrib
 
+      - name: Resolve release channel tags
+        id: release-tags
+        run: |
+          set -euo pipefail
+          case "${RELEASE_CHANNEL}" in
+            stable|unstable) ;;
+            *) echo "Unsupported release channel: ${RELEASE_CHANNEL}" >&2; exit 1 ;;
+          esac
+
+          echo "cli_rolling_tag=cli-${RELEASE_CHANNEL}" >> "${GITHUB_OUTPUT}"
+          echo "lsp_rolling_tag=lsp-${RELEASE_CHANNEL}" >> "${GITHUB_OUTPUT}"
+
       - name: Resolve compiler-minted global version
         id: version
         env:
@@ -102,7 +121,7 @@ jobs:
         run: |
           set -euo pipefail
           # Prefer the Compiler workflow's release-version artifact (exact mint).
-          # Manual dispatch falls back to cli-latest's published cli-version.txt.
+          # Manual dispatch falls back to the configured rolling CLI release.
           version=""
           if [[ -n "${COMPILER_RUN_ID:-}" && "${{ github.event_name }}" == "workflow_run" ]]; then
             mkdir -p release-version
@@ -110,7 +129,8 @@ jobs:
               --name release-version --dir release-version
             version="$(tr -d '[:space:]' < release-version/release-version.txt)"
           else
-            version="$(bash beskid_distrib/scripts/resolve-version.sh | tr -d '[:space:]')"
+            VERSION_TAG="${{ steps.release-tags.outputs.cli_rolling_tag }}"
+            version="$(CLI_ROLLING_TAG="${VERSION_TAG}" bash beskid_distrib/scripts/resolve-version.sh | tr -d '[:space:]')"
           fi
           [[ "${version}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || {
             echo "Compiler-published version is absent or not strict X.Y.Z semver: ${version:-<empty>}" >&2
@@ -119,13 +139,13 @@ jobs:
           echo "version=${version}" >> "${GITHUB_OUTPUT}"
           echo "Resolved global release version: ${version}"
 
-      - name: Record compiler SHA (target_commitish of cli-latest)
+      - name: Record compiler SHA (target_commitish of rolling CLI release)
         id: sha
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
         run: |
           set -euo pipefail
-          s="$(gh release view cli-latest --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
+          s="$(gh release view "${{ steps.release-tags.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
           echo "compiler_sha=${s}" >> "${GITHUB_OUTPUT}"
 
       - name: Compute sha256 of immutable release assets
@@ -152,9 +172,9 @@ jobs:
             echo "Forced re-publish."
             exit 0
           fi
-          # Marker: the version uploaded to the beskid_compiler cli-latest release
+          # Marker: the version uploaded to the rolling CLI release used by distribution
           # as distrib-version.txt by a previous successful run.
-          prev="$(gh release download cli-latest --repo "${COMPILER_REPO}" \
+          prev="$(gh release download "${{ steps.release-tags.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" \
                     --pattern "distrib-version.txt" --output - 2>/dev/null | tr -d '[:space:]' || true)"
           echo "Previous distrib marker: ${prev:-<none>}"
           if [[ "$prev" == "$VERSION" ]]; then
@@ -213,12 +233,12 @@ jobs:
         run: |
           set -euo pipefail
           assets=("beskid-${VERSION}-windows-amd64.msi" "beskid-${VERSION}-windows-amd64.exe")
-          gh release upload cli-latest --repo "${COMPILER_REPO}" "${assets[@]}" --clobber
+          gh release upload "${{ needs.resolve-rolling.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" "${assets[@]}" --clobber
           tag="cli-v${VERSION}"
           if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
             gh release upload "$tag" --repo "${COMPILER_REPO}" "${assets[@]}" --clobber
           else
-            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "$(gh release view cli-latest --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
+            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "$(gh release view "${{ needs.resolve-rolling.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
             gh release upload "$tag" --repo "${COMPILER_REPO}" "${assets[@]}" --clobber
           fi
 
@@ -307,12 +327,12 @@ jobs:
         run: |
           set -euo pipefail
           dmg="beskid-${VERSION}-macos-arm64.dmg"
-          gh release upload cli-latest --repo "${COMPILER_REPO}" "${dmg}" --clobber
+          gh release upload "${{ needs.resolve-rolling.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" "${dmg}" --clobber
           tag="cli-v${VERSION}"
           if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
             gh release upload "$tag" --repo "${COMPILER_REPO}" "${dmg}" --clobber
           else
-            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "$(gh release view cli-latest --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
+            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "$(gh release view "${{ needs.resolve-rolling.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
             gh release upload "$tag" --repo "${COMPILER_REPO}" "${dmg}" --clobber
           fi
 
@@ -352,12 +372,12 @@ jobs:
         run: |
           set -euo pipefail
           deb="beskid-${VERSION}-amd64.deb"
-          gh release upload cli-latest --repo "${COMPILER_REPO}" "${deb}" --clobber
+          gh release upload "${{ needs.resolve-rolling.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" "${deb}" --clobber
           tag="cli-v${VERSION}"
           if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
             gh release upload "$tag" --repo "${COMPILER_REPO}" "${deb}" --clobber
           else
-            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "$(gh release view cli-latest --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
+            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "$(gh release view "${{ needs.resolve-rolling.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
             gh release upload "$tag" --repo "${COMPILER_REPO}" "${deb}" --clobber
           fi
 
@@ -442,7 +462,7 @@ jobs:
             BESKID_VERSION=${{ needs.resolve-rolling.outputs.version }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/beskid:${{ needs.resolve-rolling.outputs.version }}
-            ghcr.io/${{ github.repository_owner }}/beskid:latest
+            ghcr.io/${{ github.repository_owner }}/beskid:${{ needs.resolve-rolling.outputs.cli_rolling_tag }}
 
       - name: Build + push runner image
         uses: docker/build-push-action@v6
@@ -454,6 +474,7 @@ jobs:
             BESKID_VERSION=${{ needs.resolve-rolling.outputs.version }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/beskid-runner:${{ needs.resolve-rolling.outputs.version }}
+            ghcr.io/${{ github.repository_owner }}/beskid-runner:${{ needs.resolve-rolling.outputs.cli_rolling_tag }}
 
   # This marker is the only completed-release state. It is written after every
   # platform publication succeeds, so a failed fan-out stays eligible for a
@@ -476,7 +497,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
-      - name: Upload distrib-version.txt to cli-latest + cli-v<ver>
+      - name: Upload distrib-version.txt to rolling CLI + cli-v<ver>
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
           VERSION: ${{ needs.resolve-rolling.outputs.version }}
@@ -487,6 +508,6 @@ jobs:
           if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
             gh release upload "$tag" --repo "${COMPILER_REPO}" distrib-version.txt --clobber
           fi
-          # resolve-rolling consults only cli-latest. Upload it last so a
+          # resolve-rolling consults only the rolling CLI tag. Upload it last so a
           # versioned-release failure remains retryable instead of looking done.
-          gh release upload cli-latest --repo "${COMPILER_REPO}" distrib-version.txt --clobber
+          gh release upload "${{ needs.resolve-rolling.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" distrib-version.txt --clobber

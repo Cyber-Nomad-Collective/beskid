@@ -40,15 +40,15 @@ if grep -Eq 'arch-aur|AUR_|PKGBUILD|beskid-bin' "${workflow}"; then
   fail "AUR support must be removed from distribute.yml"
 fi
 
-# `cli-latest` is what resolve-rolling reads. It must be the final commit point:
+# The rolling CLI tag is what resolve-rolling uses. It must be the final commit point:
 # if a versioned marker upload fails, a retry must still see no completed marker.
 marker_block="$(sed -n '/record-complete-marker:/,$p' "${workflow}")"
 # shellcheck disable=SC2016 # Match the literal workflow shell commands.
 versioned_marker_line="$(printf '%s\n' "${marker_block}" | grep -n -F 'gh release upload "$tag" --repo "${COMPILER_REPO}" distrib-version.txt --clobber' | cut -d: -f1)"
 # shellcheck disable=SC2016 # Match the literal workflow shell commands.
-latest_marker_line="$(printf '%s\n' "${marker_block}" | grep -n -F 'gh release upload cli-latest --repo "${COMPILER_REPO}" distrib-version.txt --clobber' | cut -d: -f1)"
+rolling_marker_line="$(printf '%s\n' "${marker_block}" | grep -n -F 'gh release upload "${{ needs.resolve-rolling.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" distrib-version.txt --clobber' | cut -d: -f1)"
 [[ -n "${versioned_marker_line}" ]] || fail "missing versioned completion marker upload"
-[[ -n "${latest_marker_line}" ]] || fail "missing cli-latest completion marker upload"
-[[ "${versioned_marker_line}" -lt "${latest_marker_line}" ]] || fail "cli-latest marker must be written only after the versioned marker succeeds"
+[[ -n "${rolling_marker_line}" ]] || fail "missing rolling completion marker upload"
+[[ "${versioned_marker_line}" -lt "${rolling_marker_line}" ]] || fail "rolling marker must be written only after the versioned marker succeeds"
 
 echo "distribution workflow contract tests OK"

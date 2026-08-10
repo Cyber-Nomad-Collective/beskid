@@ -25,7 +25,7 @@ GH_LOG="${TMP}/gh.log" PATH="${TMP}/bin:${PATH}" GH_TOKEN=test-token \
   bash "${SCRIPT}" cli 1.2.3 0123456789abcdef0123456789abcdef01234567 "${TMP}/assets" immutable
 
 grep -Fq 'release create cli-v1.2.3' "${TMP}/gh.log" || fail "immutable release was not created"
-if grep -Eq '^release (create|upload) cli-latest' "${TMP}/gh.log"; then
+if grep -Eq '^release (create|upload) cli-(stable|unstable)' "${TMP}/gh.log"; then
   fail "immutable phase updated the rolling alias"
 fi
 
@@ -33,7 +33,7 @@ fi
 GH_LOG="${TMP}/gh.log" PATH="${TMP}/bin:${PATH}" GH_TOKEN=test-token \
   bash "${SCRIPT}" cli 1.2.3 0123456789abcdef0123456789abcdef01234567 "${TMP}/assets" rolling
 
-grep -Eq '^release create cli-latest' "${TMP}/gh.log" || fail "rolling phase did not create rolling alias"
+grep -Eq '^release create cli-(stable|unstable)' "${TMP}/gh.log" || fail "rolling phase did not create rolling alias"
 if grep -Eq '^release (create|upload) cli-v1.2.3' "${TMP}/gh.log"; then
   fail "rolling phase updated the immutable release"
 fi
