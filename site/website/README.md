@@ -87,7 +87,7 @@ The Docker build context includes `.git` (and the image installs `git`) so prebu
 
 The site image installs `trudoc` and `@beskid/beskid-ui` from [GitHub Packages](https://github.com/orgs/Cyber-Nomad-Collective/packages?repo_name=beskid_web_common) (see root `.npmrc`).
 
-If Coolify still runs `git submodule update --recursive`, disable recursive submodules in the application settings or limit init to `compiler` / `pckg` only—the docs site workflow does not require them (CLI version sync falls back to the public `cli-latest` release).
+If Coolify still runs `git submodule update --recursive`, disable recursive submodules in the application settings or limit init to `compiler` / `pckg` only—the docs site workflow does not require them (CLI version sync falls back to `cli-stable` / `cli-unstable` channels).
 
 ## GitHub-managed comments and edit suggestions
 

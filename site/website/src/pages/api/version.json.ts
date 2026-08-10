@@ -132,8 +132,8 @@ export async function GET({ url: requestUrl }: { url: URL }) {
 			assets,
 			packages,
 			installScript: {
-				sh: "curl -fsSL https://beskid-lang.org/install.sh | bash",
-				ps: "iwr https://beskid-lang.org/install.ps1 -useb | iex",
+				sh: `curl -fsSL https://beskid-lang.org/install.sh | BESKID_RELEASE_TAG=${LATEST_TAG} bash`,
+				ps: `$env:BESKID_RELEASE_TAG='${LATEST_TAG}'; iwr https://beskid-lang.org/install.ps1 -useb | iex`,
 			},
 			containerImages: {
 				base: `ghcr.io/cyber-nomad-collective/beskid:${version}`,

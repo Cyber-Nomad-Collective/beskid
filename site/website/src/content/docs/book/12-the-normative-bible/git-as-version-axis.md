@@ -18,7 +18,7 @@ Policy: [Release and versioning policy](/platform-spec/community/spec-maintenanc
 `main` (or your integration branch) is the usual rolling axis for:
 
 - Public docs site builds
-- CLI `cli-latest` rolling releases ([Downloads](/downloads/))
+- CLI `cli-stable` / `cli-unstable` rolling releases ([Downloads](/downloads/))
 - Spec freshness via `lastReviewed` ([Last reviewed policy](/platform-spec/community/spec-maintenance/last-reviewed-policy/))
 
 ## Single normative entry

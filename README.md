@@ -1,7 +1,7 @@
 # Beskid Superrepo
 
 [![Open VSX publish](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/publish-open-vsx.yml/badge.svg?branch=main)](https://github.com/Cyber-Nomad-Collective/beskid/actions/workflows/publish-open-vsx.yml?query=branch%3Amain)
-[![CLI (rolling)](https://img.shields.io/github/v/tag/Cyber-Nomad-Collective/beskid_compiler/cli-latest?label=CLI&logo=github)](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-latest)
+[![CLI (rolling)](https://img.shields.io/github/v/tag/Cyber-Nomad-Collective/beskid_compiler/cli-stable?label=CLI&logo=github)](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-stable)
 [![VS Code on Open VSX](https://img.shields.io/open-vsx/v/beskid/beskid-vscode?label=VS%20Code&logo=openvsx)](https://open-vsx.org/extension/beskid/beskid-vscode)
 [![Last commit](https://img.shields.io/github/last-commit/Cyber-Nomad-Collective/beskid/main?label=superrepo&logo=github)](https://github.com/Cyber-Nomad-Collective/beskid/commits/main/)
 
@@ -137,7 +137,7 @@ just deps-install   # install missing tools
 | Goal | Where to go |
 | --- | --- |
 | Read the language | [beskid-lang.org/book/](https://beskid-lang.org/book/) |
-| Install the CLI | [Downloads](https://beskid-lang.org/downloads/) (rolling tag `cli-latest` on [compiler releases](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-latest)) |
+| Install the CLI | [Downloads](https://beskid-lang.org/downloads/) (rolling tags `cli-stable` and `cli-unstable` on [compiler releases](https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/tag/cli-stable)) |
 | Hack the compiler | [compiler/README.md](compiler/README.md) — `cargo build` in `compiler/` |
 | Run docs locally | `cd site/website && bun install && bun dev` → [site/website/README.md](site/website/README.md) |
 | Run pckg locally | `cd pckg && podman compose up --build -d` → [pckg/README.md](pckg/README.md) |

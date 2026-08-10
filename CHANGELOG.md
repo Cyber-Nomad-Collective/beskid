@@ -64,6 +64,18 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Make Learn run-check path resilient to non-JSON `/api/check` responses (for
   static/no-backend environments), replacing JSON parse crashes with a readable
   terminal error.
+- Remove remaining `lsp-latest` CLI defaults from compiler toolchain paths and
+  update release docs/examples to the explicit rolling `cli-stable`/`cli-unstable`
+  channel model so unstable distribution can be consumed by the website and VS
+  Code toolchain consumers.
+- Extend VS Code release-tag handling and website download assets to treat
+  explicit `stable` / `unstable` channel aliases as `cli-stable` / `cli-unstable`
+  and `lsp-stable` / `lsp-unstable`, with install-script payloads and downloads
+  page styles aligned for unstable channel delivery.
+- Stage the ABI-v5 native runtime kit automatically in the standard compiler replace
+  flow and include the `native-runtime-kit` directory in direct-install bundle
+  artifacts so developers get bundled runtime assets alongside `beskid_cli`,
+  `beskid_lsp`, and `beskid-up`.
 
 ### Fixed
 

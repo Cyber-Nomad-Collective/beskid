@@ -14,7 +14,7 @@ If you skipped [Why Beskid Exists](/book/00-why-beskid-exists/), nobody is judgi
 
 | Section | Topic |
 | --- | --- |
-| [Downloads and rolling releases](/book/01-it-works-on-my-machine/downloads-and-releases/) | `cli-latest`, version files, and what "rolling" means. |
+| [Downloads and rolling releases](/book/01-it-works-on-my-machine/downloads-and-releases/) | `cli-stable` / `cli-unstable`, version files, and what "rolling" means. |
 | [Install scripts and PATH](/book/01-it-works-on-my-machine/install-scripts-and-path/) | Platform install tabs, shell profile, and finding `beskid`. |
 | [Build from source](/book/01-it-works-on-my-machine/build-from-source/) | Compiler workspace, targets, and when CI binaries are not enough. |
 | [First smoke test](/book/01-it-works-on-my-machine/first-smoke-test/) | `beskid --version`, `parse`, `analyze` on a real `.bd` file. |

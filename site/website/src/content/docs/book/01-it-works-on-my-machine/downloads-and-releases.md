@@ -6,16 +6,16 @@ tableOfContents: true
 
 Beskid does not ask you to compile from source on day one unless you want to. The public site publishes **rolling** CLI builds tied to compiler CI, not hand-edited patch bumps in a README.
 
-## Rolling `cli-latest`
+## Rolling CLI channels
 
-The **beskid** superrepo GitHub Actions release workflow publishes prebuilt binaries to **GitHub Releases** on [beskid_compiler](https://github.com/Cyber-Nomad-Collective/beskid_compiler) (`cli-latest`, `cli-version.txt`, immutable `cli-v*`). Version resolution, matrix builds, provenance, and promotion use repository scripts plus reusable GitHub Actions workflows. Install scripts under the website (`site/website/public/`) and the [Downloads](/downloads/) page consume that stream.
+The **beskid** superrepo GitHub Actions release workflow publishes prebuilt binaries to **GitHub Releases** on [beskid_compiler](https://github.com/Cyber-Nomad-Collective/beskid_compiler) (`cli-stable`/`cli-unstable`, `cli-version.txt`, immutable `cli-v*`). Version resolution, matrix builds, provenance, and promotion use repository scripts plus reusable GitHub Actions workflows. Install scripts under the website (`site/website/public/`) and the [Downloads](/downloads/) page consume a channel-specific rolling tag.
 
 ```mermaid
 flowchart TD
   subgraph ci [Compiler CI]
-    T[Git tags v*] --> V[Release workflow resolves rolling semver]
+    T[Git tags v*] --> V[Release workflow resolves channel + rolling semver]
     V --> B[Build matrix binaries]
-    B --> R[Release cli-latest + cli-version.txt]
+    B --> R[Release cli-stable / cli-unstable + cli-version.txt]
   end
   R --> S[site sync:cli-version]
   S --> D[Downloads page + install scripts]
@@ -33,7 +33,7 @@ User-facing docs may also mention `cdn.beskid-lang.org` for direct binary fetch;
 
 | Situation | Recommendation |
 | --- | --- |
-| Local hacking | Rolling `cli-latest` is fine; re-run install when things break mysteriously. |
+| Local hacking | Rolling `cli-stable`/`cli-unstable` is fine; re-run install when things break mysteriously. |
 | CI for your app repo | Pin a known version string from `cli-version.txt` or cache a specific release asset; document the pin in your pipeline. |
 | Reproducing a bug report | Record `beskid --version` **and** the git commit of the compiler if built locally. |
 

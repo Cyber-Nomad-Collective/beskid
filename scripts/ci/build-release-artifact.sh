@@ -68,6 +68,12 @@ case "$PACKAGE" in
 esac
 
 if [[ "$PACKAGE" == "beskid_bundle" ]]; then
+  runtime_prefix="${ROOT}/compiler/target/native-runtime-kit"
+  BESKID_RUNTIME_PREFIX="${runtime_prefix}" \
+    BESKID_RUNTIME_KIT_PROFILE=release \
+    BESKID_CLI_BIN="${ROOT}/compiler/target/${TARGET}/release/beskid_cli" \
+    bash ./scripts/stage-native-runtime-kit.sh
+
   stage="$(mktemp -d)"
   trap 'rm -rf "$stage"' EXIT
   bundle_dir="${stage}/beskid-${RELEASE_VERSION}-${TARGET}"
@@ -79,6 +85,7 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
     [[ -f "$built_binary" ]] || { echo "Missing built bundle artifact: $built_binary" >&2; exit 1; }
     cp -f "$built_binary" "$bundle_dir/"
   done
+  cp -a "${runtime_prefix}/lib" "${bundle_dir}/native-runtime-kit"
   tar -C "$stage" -czf "${ROOT}/${ASSET_NAME}" "$(basename "$bundle_dir")"
   echo "built ${ASSET_NAME} (Beskid ${RELEASE_VERSION} bundle for ${TARGET})"
   exit 0

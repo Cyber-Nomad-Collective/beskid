@@ -1,5 +1,7 @@
 ---
-import { beskidUiSrcUrl } from '../lib/beskid-ui-root.mjs';
+import { existsSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { beskidUiSrcUrl } from "../lib/beskid-ui-root.mjs";
 import { loadCliVersion, loadTrackerDelivery } from '../lib/load-download-versions';
 import { DownloadsSection } from '@beskid/ui-react/downloads';
 
@@ -13,9 +15,16 @@ const trackerDelivery = await loadTrackerDelivery();
 
 const version = Astro.props.version ?? trackerDelivery?.downloadLabel ?? cli.version;
 const versionSource = Astro.props.versionSource ?? cli.source;
+
+const downloadsCssPath = fileURLToPath(beskidUiSrcUrl("styles/downloads.css"));
+const downloadsCss = existsSync(downloadsCssPath)
+	? readFileSync(downloadsCssPath, "utf8")
+	: "";
 ---
 
-<link rel="stylesheet" href={beskidUiSrcUrl('styles/downloads.css')} />
+{downloadsCss && <style is:global>{downloadsCss}</style>}
+
+{!downloadsCss && <link rel="stylesheet" href={beskidUiSrcUrl("styles/downloads.css")} />}
 
 <div class="downloads-page">
 	<div class="downloads-layout">
