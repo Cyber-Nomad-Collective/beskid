@@ -29,6 +29,10 @@ on:
         description: Publish signed SHA images and a release manifest
         type: boolean
         default: false
+      unstable:
+        description: Publish images and manifest without quality-gate blocking
+        type: boolean
+        default: false
       apply-staging:
         description: Deploy the generated manifest to staging
         type: boolean
@@ -44,6 +48,7 @@ concurrency:
 
 jobs:
   openspec:
+    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: openspec
@@ -52,6 +57,7 @@ jobs:
       command: bash scripts/ci/openspec-gate.sh
 
   conformance:
+    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: conformance
@@ -60,6 +66,7 @@ jobs:
       command: bash scripts/ci/conformance-gate.sh
 
   integration:
+    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: platform-integration
@@ -69,12 +76,14 @@ jobs:
       command: bash scripts/ci/platform-integration-gate.sh
 
   security:
+    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: supply-chain-security
       command: bash scripts/ci/security-policy-gate.sh
 
   shared-ui-nexus:
+    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: shared-ui-nexus
@@ -99,8 +108,8 @@ jobs:
       context: .
       dockerfile: site/website/Dockerfile
       submodules: beskid_web_common
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
@@ -120,8 +129,8 @@ jobs:
       context: .
       dockerfile: site/auth/Dockerfile
       submodules: beskid_web_common
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
@@ -144,8 +153,8 @@ jobs:
       # UI packages from beskid_web_common, so both dependency sources must be
       # initialized before the root-context Docker build.
       submodules: compiler beskid_bsol beskid_web_common
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
@@ -165,8 +174,8 @@ jobs:
       context: .
       dockerfile: site/platform-spec/Dockerfile
       submodules: beskid_web_common
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
@@ -194,8 +203,8 @@ jobs:
       healthcheck-env: |
         AUTH_HUB_PUBLIC_URL=https://auth.invalid
         SESSION_SECRET=0123456789abcdef0123456789abcdef
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
@@ -219,8 +228,8 @@ jobs:
         openspec=./openspec
         web_common=./beskid_web_common
       submodules: beskid_nexus beskid_web_common
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
@@ -247,8 +256,8 @@ jobs:
       # grant this repo Write on that package, or set org/repo secret GHCR_TOKEN
       # with write:packages (password: secrets.GHCR_TOKEN || github.token).
       # Compose profiles: [pckg] remains deploy-profile gating only.
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging)) }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
@@ -256,7 +265,28 @@ jobs:
     # A manifest is the promotion boundary. It must only exist when every
     # required validation and image lane from this run succeeded.
     needs: [openspec, conformance, integration, security, shared-ui-nexus, image-site, image-auth, image-learn, image-platform-spec, image-tracker, image-nexus, image-pckg]
-    if: ${{ !cancelled() && needs.openspec.result == 'success' && needs.conformance.result == 'success' && needs.integration.result == 'success' && needs.security.result == 'success' && needs.shared-ui-nexus.result == 'success' && needs.image-site.result == 'success' && needs.image-auth.result == 'success' && needs.image-learn.result == 'success' && needs.image-platform-spec.result == 'success' && needs.image-tracker.result == 'success' && needs.image-nexus.result == 'success' && needs.image-pckg.result == 'success' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging))) }}
+    if: >-
+      ${{
+        !cancelled() &&
+        needs.image-site.result == 'success' &&
+        needs.image-auth.result == 'success' &&
+        needs.image-learn.result == 'success' &&
+        needs.image-platform-spec.result == 'success' &&
+        needs.image-tracker.result == 'success' &&
+        needs.image-nexus.result == 'success' &&
+        needs.image-pckg.result == 'success' &&
+        (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable))) &&
+        (
+          inputs.unstable ||
+          (
+            needs.openspec.result == 'success' &&
+            needs.conformance.result == 'success' &&
+            needs.integration.result == 'success' &&
+            needs.security.result == 'success' &&
+            needs.shared-ui-nexus.result == 'success'
+          )
+        )
+      }}
     permissions:
       contents: read
       actions: read
