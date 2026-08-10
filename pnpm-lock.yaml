@@ -589,9 +589,6 @@ importers:
 
   site/learn:
     dependencies:
-      '@beskid/auth-client':
-        specifier: file:../../beskid_web_common/packages/beskid-auth-client
-        version: link:../../beskid_web_common/packages/beskid-auth-client
       '@beskid/beskid-ui':
         specifier: file:../../beskid_web_common/packages/beskid-ui
         version: link:../../beskid_web_common/packages/beskid-ui
@@ -12866,7 +12863,7 @@ snapshots:
       obug: 2.1.4
       std-env: 4.2.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.10(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@4.1.10)(jsdom@26.1.0)(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.1)(yaml@2.9.0))
+      vitest: 4.1.10(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.1)(@types/node@25.9.5)(@vitest/coverage-v8@4.1.10)(jsdom@28.1.0)(vite@8.1.5(@types/node@25.9.5)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))
     optional: true
 
   '@vitest/expect@3.2.7':
