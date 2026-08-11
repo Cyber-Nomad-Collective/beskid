@@ -18,6 +18,7 @@ name: Distribute
 on:
   workflow_run:
     workflows: [Compiler]
+    branches: [main]
     types: [completed]
   workflow_dispatch:
     inputs:
