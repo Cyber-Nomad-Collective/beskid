@@ -39,10 +39,10 @@ concurrency:
   group: distribute-${{ github.ref }}
   cancel-in-progress: false
 
-  env:
-    COMPILER_REPO: Cyber-Nomad-Collective/beskid_compiler
-    HOMEBREW_TAP_REPO: Cyber-Nomad-Collective/beskid_homebrew
-    RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success' && 'unstable' || 'stable') }}
+env:
+  COMPILER_REPO: Cyber-Nomad-Collective/beskid_compiler
+  HOMEBREW_TAP_REPO: Cyber-Nomad-Collective/beskid_homebrew
+  RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success' && 'unstable' || 'stable') }}
 
 jobs:
   # Guard + resolve job. Only proceeds when the triggering Compiler run actually
