@@ -3,7 +3,7 @@ import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { WorkspaceTabs } from "./WorkspaceTabs";
 
-const tiles = [
+	const tiles = [
 	{ id: "editor", label: "Editor" },
 	{ id: "terminal", label: "Terminal" },
 	{ id: "content", label: "Lesson" },
@@ -111,5 +111,20 @@ describe("WorkspaceTabs", () => {
 		const shell = label.closest("[data-workspace-tab-shell]");
 		expect(shell).not.toBeNull();
 		expect(shell).toBe(close.closest("[data-workspace-tab-shell]"));
+	});
+
+	it("does not render a close action for required surfaces", () => {
+		const requiredTiles = [{ id: "editor", label: "Editor", required: true }, ...tiles.slice(1)];
+		render(
+			<WorkspaceTabs
+				tiles={requiredTiles}
+				activeTile="editor"
+				onSelectTile={vi.fn()}
+				onCloseTile={vi.fn()}
+			/>,
+		);
+
+		expect(screen.queryByRole("button", { name: "Close Editor" })).toBeNull();
+		expect(screen.getByRole("button", { name: "Close Terminal" })).toBeVisible();
 	});
 });

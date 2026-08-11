@@ -653,7 +653,6 @@ Bun.serve({
 		const requestUrl = new URL(req.url);
 
 		if (requestUrl.pathname === "/api/exercises") {
-			if (!(await getLearnSession(req))) return jsonResponse(401, { error: "Authentication required" });
 			return jsonResponse(200, {
 				exercises: resolvePublicExercises(),
 			});
@@ -663,7 +662,6 @@ Bun.serve({
 			requestUrl.pathname.startsWith("/api/exercise/") &&
 			req.method === "GET"
 		) {
-			if (!(await getLearnSession(req))) return jsonResponse(401, { error: "Authentication required" });
 			const exerciseId = decodeURIComponent(
 				requestUrl.pathname.substring("/api/exercise/".length),
 			);

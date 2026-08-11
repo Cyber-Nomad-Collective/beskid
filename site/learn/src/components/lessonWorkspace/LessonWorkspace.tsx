@@ -18,6 +18,7 @@ import { ExplorerTile } from "#/components/ExplorerTile";
 import { LessonContent } from "#/components/LessonContent";
 import { LessonEditor } from "#/components/LessonEditor";
 import { WorkspaceTabs, type TileTab } from "#/components/WorkspaceTabs";
+import { GuidedLessonRail } from "./GuidedLessonRail";
 import {
 	clampSplit,
 	MAX_SIZE_PCT,
@@ -41,6 +42,7 @@ import {
 	type PersistedLayout,
 	TILE_MAP,
 } from "./layout";
+import { getLessonSteps, type LessonStepStatus, validateSourceStep } from "./steps";
 
 interface LessonWorkspaceProps {
 	exercise: LearnExercise;
@@ -62,6 +64,12 @@ export function LessonWorkspace({
 	const [layout, setLayout] = useState<PersistedLayout>(() => loadLayout(exercise));
 	const [activeTile, setActiveTile] = useState<string | null>(null);
 	const [compact, setCompact] = useState(false);
+	const steps = useMemo(() => getLessonSteps(exercise), [exercise]);
+	const [activeStep, setActiveStep] = useState(0);
+	const [stepStatuses, setStepStatuses] = useState<LessonStepStatus[]>(() => steps.map((_, index) => index === 0 ? "current" : "locked"));
+	const [stepMessage, setStepMessage] = useState<string | null>(null);
+	const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(null);
+	const decorationsRef = useRef<string[]>([]);
 
 	const visibleTiles = useMemo(() => {
 		const deduped = [...new Set(layout.visibleTiles)].filter((id) => TILE_MAP.has(id));
@@ -80,8 +88,9 @@ export function LessonWorkspace({
 			visibleTiles.map((id) => ({
 				id,
 				label: TILE_MAP.get(id)?.label ?? id,
+				required: id === "editor" || id === "content" || (id === "terminal" && exercise.layout?.visibleTiles.includes("terminal")),
 			})),
-		[visibleTiles],
+		[exercise.layout?.visibleTiles, visibleTiles],
 	);
 
 	const difficultyClass =
@@ -103,11 +112,14 @@ export function LessonWorkspace({
 	}, [activeTile, visibleTiles]);
 
 	useEffect(() => {
-		setLayout(loadLayout(exercise));
+		setLayout(exercise.layout ? buildPersistedFromVisible([...exercise.layout.visibleTiles], exercise) : loadLayout(exercise));
 		setCode(exercise.starterCode);
 		setResult(null);
 		setActiveHint(0);
-	}, [exercise]);
+		setActiveStep(0);
+		setStepStatuses(steps.map((_, index) => index === 0 ? "current" : "locked"));
+		setStepMessage(null);
+	}, [exercise, steps]);
 
 	useEffect(() => {
 		persistLayout(exercise, layout);
@@ -155,6 +167,7 @@ export function LessonWorkspace({
 			editor: monacoEditor.editor.IStandaloneCodeEditor,
 			monaco: typeof monacoEditor,
 		) => {
+			editorRef.current = editor;
 			const languageId = "beskid";
 			if (!monaco.languages.getLanguages().some((lang) => lang.id === languageId)) {
 				monaco.languages.register({ id: languageId, aliases: ["Beskid"] });
@@ -192,6 +205,26 @@ export function LessonWorkspace({
 		},
 		[],
 	);
+
+	useEffect(() => {
+		const editor = editorRef.current;
+		const focus = steps[activeStep]?.focus;
+		const model = editor?.getModel();
+		if (!editor || !focus || !model) return;
+		decorationsRef.current = editor.deltaDecorations(decorationsRef.current, [{
+			range: {
+				startLineNumber: focus.startLine,
+				startColumn: focus.startColumn ?? 1,
+				endLineNumber: focus.endLine,
+				endColumn: focus.endColumn ?? model.getLineMaxColumn(focus.endLine),
+			},
+			options: { isWholeLine: true, className: "lesson-code-focus", inlineClassName: "lesson-code-focus-inline" },
+		}]);
+		editor.revealLineInCenter(focus.startLine);
+		return () => {
+			decorationsRef.current = editor.deltaDecorations(decorationsRef.current, []);
+		};
+	}, [activeStep, steps]);
 
 	const runCheck = useCallback(() => {
 		const term = terminalShell.current;
@@ -248,7 +281,12 @@ export function LessonWorkspace({
 							? `Check failed: ${data.error}`
 							: "Result: FAIL",
 				]);
-				if (data.success) onPassed(exercise.id);
+				if (data.success) {
+					onPassed(exercise.id);
+					if (activeStep < steps.length - 1) setActiveStep((current) => current + 1);
+				}
+				setStepStatuses((current) => current.map((status, index) => index === activeStep ? (data.success ? "passed" : "failed") : index === activeStep + 1 && data.success ? "current" : status));
+				setStepMessage(data.success ? "Step complete." : "The check found something to fix. Read the output and try again.");
 			})
 			.catch((error: unknown) => {
 				writeBlock(term, [
@@ -259,7 +297,34 @@ export function LessonWorkspace({
 			.finally(() => {
 				setRunning(false);
 			});
-	}, [code, exercise, onPassed, running]);
+	}, [activeStep, code, exercise, onPassed, running]);
+
+	const checkStep = useCallback(() => {
+		const step = steps[activeStep];
+		if (!step) return;
+		if (step.check?.kind === "source") {
+			const validation = validateSourceStep(step, code);
+			setStepMessage(validation.message);
+			setStepStatuses((current) => current.map((status, index) => index === activeStep ? (validation.ok ? "passed" : "failed") : index === activeStep + 1 && validation.ok ? "current" : status));
+			if (validation.ok && activeStep < steps.length - 1) setActiveStep((current) => current + 1);
+			return;
+		}
+		if (step.check?.kind === "command") return runCheck();
+		setStepStatuses((current) => current.map((status, index) => index === activeStep ? "passed" : index === activeStep + 1 ? "current" : status));
+		setStepMessage("Step complete.");
+		if (activeStep < steps.length - 1) setActiveStep((current) => current + 1);
+	}, [activeStep, code, runCheck, steps]);
+
+	const selectStep = useCallback((index: number) => {
+		if (stepStatuses[index] === "locked") return;
+		setActiveStep(index);
+		setStepMessage(null);
+	}, [stepStatuses]);
+
+	const previousStep = useCallback(() => {
+		setActiveStep((current) => Math.max(0, current - 1));
+		setStepMessage(null);
+	}, []);
 
 	const openTile = useCallback(
 		(tileId: string) => {
@@ -640,6 +705,7 @@ export function LessonWorkspace({
 				)}
 			</div>
 
+			<div className="workspace-guided-layout">
 			{compact && activeTile ? (
 				<div className="workspace-mosaic-root workspace-mosaic-root--compact">
 					{renderTile(activeTile)}
@@ -653,6 +719,8 @@ export function LessonWorkspace({
 					</p>
 				</div>
 			)}
+				<GuidedLessonRail title={exercise.title} steps={steps} activeStep={activeStep} statuses={stepStatuses} message={stepMessage} onSelectStep={selectStep} onCheck={checkStep} onPrevious={previousStep} />
+			</div>
 
 			{canEdit && (
 				<div className="mt-3">

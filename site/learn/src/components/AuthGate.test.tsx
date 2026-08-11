@@ -25,10 +25,23 @@ describe("AuthGate", () => {
 		);
 
 		render(
-			<AuthGate>{() => <p>Private lesson workspace</p>}</AuthGate>,
+			<AuthGate requireAuth>{() => <p>Private lesson workspace</p>}</AuthGate>,
 		);
 
 		expect(await screen.findByRole("link", { name: "Sign in with GitHub" })).toBeVisible();
 		expect(screen.queryByText("Private lesson workspace")).not.toBeInTheDocument();
+	});
+
+	it("renders Learn anonymously by default", async () => {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue(
+				new Response(JSON.stringify({ user: null }), { status: 200 }),
+			),
+		);
+
+		render(<AuthGate>{() => <p>Public lesson workspace</p>}</AuthGate>);
+
+		expect(await screen.findByText("Public lesson workspace")).toBeVisible();
 	});
 });

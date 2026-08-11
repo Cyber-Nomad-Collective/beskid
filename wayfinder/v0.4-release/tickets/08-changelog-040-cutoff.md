@@ -14,3 +14,13 @@ The root `CHANGELOG.md` has a long Unreleased section. For the 0.4.0 release:
 - Version number is `0.4.0`
 - Date should be the actual release date, not a placeholder
 - Do not remove any entry that belongs to 0.4; defer anything post-0.4 to a new Unreleased section
+
+## Resolution
+
+**Resolved 2026-08-11.** `CHANGELOG.md` contains:
+
+- `[0.4.0] - 2026-08-06` entry with grouped `Added`/`Fixed` sections
+- Retained `Unreleased` for post-0.4 changes
+- v0.4 scope text present for compiler, runtime, corelib, and tracker/platform-spec work
+
+This ticket satisfies the "cut-and-date" requirement; remaining cleanup is constrained to correctness review of scope-owned entries, not format shape.

@@ -22,6 +22,9 @@ v0.4.0 released with all GitHub CI/CD gates green: 100% corelib test matrix pass
 - [Pre-flight gates fixed](tickets/15-gates-fix.md) — OpenSpec catalog regenerated (AGENTS.md hash drift resolved). TryExpression added to rule_coverage evidence table. All host-tier gates pass: openspec, conformance, platform-integration, supply-chain-security.
 - [Tooling improvements](tickets/16-tooling.md) — Submodule guard script for multi-repo visibility. Pre-commit hook for dirt detection. CODEOWNERS for domain-based review assignment. Local preflight wired with submodule guard.
 - [CHANGELOG finalized](tickets/17-changelog-finalize.md) — Stale 2025-07-17 [0.4.0] block removed. Date set to 2026-08-06. Unreleased section cleared. 17 lines added (clif block, math rewrite, tooling).
+- [CHANGELOG cutoff](tickets/08-changelog-040-cutoff.md) — `[0.4.0] - 2026-08-06` exists in `CHANGELOG.md`, with `Unreleased` retained for post-0.4.
+- [Catalog embeddability](tickets/04-catalog-embeddability.md) — `openspec:catalog` rebuilds `openspec/catalog.json` and `openspec:validate` now passes clean (`206 passed, 0 failed`) with revision `0cdc1bfda83c` committed.
+- [Tracker seed sync](tickets/07-tracker-seed-sync.md) — v0.4 seed payload schema issues were fixed (`status` and `statusColumn`), and `pnpm seed:validate` now passes for all 5 versions, including v0.4 (`54 tasks, 8 workstreams, 6 deliverables`).
 
 ## Not yet specified
 

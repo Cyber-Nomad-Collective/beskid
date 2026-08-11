@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
+import { pairingAppIdSchema } from "#/lib/pairing-app-id";
 import { requireHubAdmin } from "#/server/hub-admin";
 import { createPairingRequest } from "#/server/repositories/pairing";
 
 const bodySchema = z.object({
-	appId: z.enum(["tracker", "nexus", "pckg", "platform-spec"]),
+	appId: pairingAppIdSchema,
 	publicUrl: z.string().url(),
 });
 

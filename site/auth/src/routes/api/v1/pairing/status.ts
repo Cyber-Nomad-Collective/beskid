@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { z } from "zod";
 
+import { pairingAppIdSchema } from "#/lib/pairing-app-id";
 import { getPairedApp } from "#/server/repositories/paired-apps";
 
 export const Route = createFileRoute("/api/v1/pairing/status")({
@@ -9,7 +9,7 @@ export const Route = createFileRoute("/api/v1/pairing/status")({
 			GET: async ({ request }) => {
 				const url = new URL(request.url);
 				const appId = url.searchParams.get("appId") ?? "";
-				const parsed = z.enum(["tracker", "nexus", "pckg"]).safeParse(appId);
+				const parsed = pairingAppIdSchema.safeParse(appId);
 				if (!parsed.success) {
 					return Response.json({ error: "Invalid appId" }, { status: 400 });
 				}

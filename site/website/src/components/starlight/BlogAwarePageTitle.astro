@@ -1,5 +1,6 @@
 ---
 import { blogStatusLabel, type BlogStatus } from '../../lib/blog';
+import BlogShareMenu from '../BlogShareMenu';
 
 const PAGE_TITLE_ID = '_top';
 const entry = Astro.locals.starlightRoute.entry;
@@ -20,6 +21,7 @@ const date = data.date
 			<div class="blog-post-header__meta">
 				{date && <time datetime={data.date?.toISOString()}>{date}</time>}
 				{data.blogStatus && <span>{blogStatusLabel(data.blogStatus)}</span>}
+				<BlogShareMenu client:load />
 			</div>
 		)}
 		<a href="/blog/">← All posts</a>
@@ -37,6 +39,16 @@ const date = data.date
 	.blog-post-header h1 { margin: 0; font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1.02; }
 	.blog-post-header__description { margin: 1.25rem 0; color: var(--sl-color-gray-3); font-size: var(--sl-text-xl); line-height: 1.5; }
 	.blog-post-header__meta { display: flex; gap: .75rem; color: var(--sl-color-gray-3); font-size: var(--sl-text-sm); }
+	.blog-post-header__meta :global(.blog-share__trigger) { display: inline-flex; align-items: center; gap: .35rem; margin-left: auto; border: 1px solid var(--sl-color-gray-5); border-radius: 999px; padding: .35rem .7rem; background: transparent; color: var(--sl-color-white); font: inherit; cursor: pointer; }
+	.blog-post-header__meta :global(.blog-share__trigger:hover), .blog-post-header__meta :global(.blog-share__trigger[aria-expanded='true']) { border-color: var(--sl-color-text-accent); color: var(--sl-color-text-accent); }
+	.blog-post-header__meta :global(.blog-share__trigger svg) { width: 1rem; height: 1rem; }
+	.blog-post-header__meta :global(.blog-share__content) { z-index: 20; min-width: 9rem; border: 1px solid var(--sl-color-gray-5); border-radius: .75rem; padding: .3rem; background: var(--sl-color-bg-nav); color: var(--sl-color-white); box-shadow: 0 .75rem 2rem rgb(0 0 0 / .2); }
+	.blog-post-header__meta :global(.blog-share__content [role='menuitem']) { border-radius: .45rem; padding: .5rem .65rem; color: inherit; cursor: pointer; }
+	.blog-post-header__meta :global(.blog-share__content [role='menuitem']:focus) { background: var(--sl-color-gray-5); color: var(--sl-color-white); }
 	.blog-post-header__meta span { color: var(--sl-color-text-accent); font-weight: 700; }
 	.blog-post-header > a { display: inline-block; margin-top: 1.5rem; color: var(--sl-color-text-accent); font-weight: 700; text-decoration: none; }
+	:global(.page:has(.blog-post-header) nav.sidebar), :global(.page:has(.blog-post-header) .right-sidebar-container) { display: none; }
+	:global(.page:has(.blog-post-header) .main-pane) { margin-inline: auto; max-width: 72rem; }
+	:global(.page:has(.blog-post-header) .content-panel .sl-container) { max-width: 56rem; }
+	@media (max-width: 32rem) { .blog-post-header__meta :global(.blog-share__trigger span) { display: none; } .blog-post-header__meta :global(.blog-share__trigger) { padding: .45rem; } }
 </style>

@@ -19,6 +19,8 @@ export interface TileLayoutEntry {
 	defaultSize: number;
 }
 
+import type { LessonStep } from "#/components/lessonWorkspace/steps";
+
 export type LearnExercise = {
 	id: string;
 	title: string;
@@ -35,6 +37,8 @@ export type LearnExercise = {
 	prerequisites: ReadonlyArray<string>;
 	category: LearnExerciseCategory;
 	tileLayout?: ReadonlyArray<TileLayoutEntry>;
+	steps?: ReadonlyArray<LessonStep>;
+	layout?: { visibleTiles: ReadonlyArray<"editor" | "terminal" | "content" | "hints" | "questions" | "fileExplorer"> };
 };
 
 export type LearnProgress = {
@@ -614,6 +618,69 @@ export const learnExercises: ReadonlyArray<LearnExercise> = [
 				correctIndex: 2,
 			},
 		],
+	},
+	{
+		id: "09_cli_help",
+		title: "Navigate the Beskid CLI",
+		slug: "09-cli-help",
+		objective: "Learn how to discover Beskid commands with the CLI help surface.",
+		starterCode: ["i32 Main() {", "  return 0;", "}"].join("\n"),
+		command: "analyze",
+		hints: ["Start with `beskid --help` when you do not know a command.", "Use `beskid <command> --help` to narrow the options."],
+		lessonPath: "/site/learn/curriculum/09-cli-help/lesson.md",
+		difficulty: "beginner",
+		category: "basics",
+		prerequisites: ["01_hello_beskid"],
+		layout: { visibleTiles: ["editor", "terminal"] },
+		detailedContent: "## Navigate the Beskid CLI\n\nUse `beskid --help` to discover top-level commands, then `beskid analyze --help` to inspect one command. The editor remains here so you can keep a valid program while exploring the command surface.\n",
+		steps: [
+			{ id: "help", title: "Find the command", body: "Start with `beskid --help`. Look for the command that analyzes source code.", focus: { startLine: 1, endLine: 3 }, hint: "Help is the CLI map: use it before guessing flags." },
+			{ id: "valid-source", title: "Keep a valid program", body: "Run the lesson check with a valid Main function.", focus: { startLine: 1, endLine: 3 }, check: { kind: "source", expectedText: "i32 Main()" } },
+			{ id: "verify", title: "Verify the flow", body: "Use the terminal to confirm the source is accepted.", check: { kind: "command", command: "analyze" } },
+		],
+		questions: [],
+	},
+	{
+		id: "10_cli_format",
+		title: "Format Your Code",
+		slug: "10-cli-format",
+		objective: "Use the formatting command as part of a repeatable CLI workflow.",
+		starterCode: ["i32 Main() {", "let value=0;", "return value;", "}"].join("\n"),
+		command: "analyze",
+		hints: ["The real command is `beskid format path/to/program.bd`.", "Formatting should preserve the program's meaning."],
+		lessonPath: "/site/learn/curriculum/10-cli-format/lesson.md",
+		difficulty: "beginner",
+		category: "basics",
+		prerequisites: ["02_values_and_names"],
+		layout: { visibleTiles: ["editor", "terminal"] },
+		detailedContent: "## Format Your Code\n\n`beskid format` gives source files a consistent shape. In a local project, pair it with `--check` in CI so formatting drift is caught early.\n",
+		steps: [
+			{ id: "messy", title: "Spot the drift", body: "This source is valid but hard to scan. Focus on the binding and return path.", focus: { startLine: 1, endLine: 4 } },
+			{ id: "format", title: "Apply the formatter", body: "Use `beskid format file.bd` locally, then `beskid format --check file.bd` in CI.", focus: { startLine: 2, endLine: 3 }, check: { kind: "source", expectedText: "let value = 0;" } },
+			{ id: "verify", title: "Verify the source", body: "Run the analysis check after formatting.", check: { kind: "command", command: "analyze" } },
+		],
+		questions: [],
+	},
+	{
+		id: "11_cli_build",
+		title: "Build an Executable",
+		slug: "11-cli-build",
+		objective: "Understand the build command and the source-to-artifact handoff.",
+		starterCode: ["i32 Main() {", "  return 0;", "}"].join("\n"),
+		command: "analyze",
+		hints: ["The CLI command is `beskid build file.bd --kind exe`.", "A valid Main function gives the build a clear entry point."],
+		lessonPath: "/site/learn/curriculum/11-cli-build/lesson.md",
+		difficulty: "intermediate",
+		category: "runtime",
+		prerequisites: ["08_run_program"],
+		layout: { visibleTiles: ["editor", "terminal"] },
+		detailedContent: "## Build an Executable\n\n`beskid build` turns a valid source file into an artifact. `--kind exe` makes the output intent explicit; the same source can then be run or packaged.\n",
+		steps: [
+			{ id: "entry", title: "Set the entry point", body: "The build needs a valid `i32 Main()` entry point.", focus: { startLine: 1, endLine: 3 }, check: { kind: "source", expectedText: "i32 Main()" } },
+			{ id: "artifact", title: "Choose the artifact", body: "Use `beskid build file.bd --kind exe` to request an executable.", focus: { startLine: 1, endLine: 3 } },
+			{ id: "verify", title: "Verify before building", body: "Run the hosted analysis check before relying on the local linker.", check: { kind: "command", command: "analyze" } },
+		],
+		questions: [],
 	},
 ];
 

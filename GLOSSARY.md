@@ -164,3 +164,7 @@ The single manifest-owned ABI-v5 operation that increases managed array
 capacity while preserving the array's element descriptor, logical length,
 initialized values, roots, and pointer barriers. Element get/set remains
 direct bounds-checked ISLE lowering rather than part of this runtime call.
+
+## Guided lesson step
+
+A learner-facing unit in Beskid Learn that pairs explanatory copy with an optional editor focus range and source or command check. Steps are ordered, visibly tracked, and must pass before the next locked step becomes available.

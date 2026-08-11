@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 export interface TileTab {
 	id: string;
 	label: string;
+	required?: boolean;
 }
 
 interface WorkspaceTabsProps {
@@ -45,7 +46,7 @@ export function WorkspaceTabs({
 	return (
 		<nav className="workspace-tab-bar" aria-label="Workspace panels">
 			{tiles.map((tile, index) => (
-				<div
+			<div
 					key={tile.id}
 					data-workspace-tab-shell
 					className={clsx(
@@ -63,8 +64,9 @@ export function WorkspaceTabs({
 							activeTile === tile.id && "workspace-tab--active",
 						)}
 						onClick={() => onSelectTile(tile.id)}
-						onKeyDown={(event) => {
+						 onKeyDown={(event) => {
 							if (event.key === "Delete" || event.key === "Backspace") {
+								if (tile.required) return;
 								event.preventDefault();
 								closeTile(tile, index);
 								return;
@@ -91,14 +93,14 @@ export function WorkspaceTabs({
 					>
 						<span className="workspace-tab-label">{tile.label}</span>
 					</button>
-					<button
+					{!tile.required && <button
 						type="button"
-						className="workspace-tab-close"
-						aria-label={`Close ${tile.label}`}
-						onClick={() => closeTile(tile, index)}
-					>
-						<X className="w-3 h-3" />
-					</button>
+							className="workspace-tab-close"
+							aria-label={`Close ${tile.label}`}
+							onClick={() => closeTile(tile, index)}
+						>
+							<X className="w-3 h-3" />
+					</button>}
 				</div>
 			))}
 		</nav>

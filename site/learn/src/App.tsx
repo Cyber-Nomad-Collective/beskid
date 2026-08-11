@@ -32,7 +32,7 @@ import {
 	learnExercises,
 	validateModeForExercise,
 } from "#/data/learningCatalog";
-import type { AuthUser } from "#/lib/auth";
+import { authHubLoginUrl, type AuthUser } from "#/lib/auth";
 import "xterm/css/xterm.css";
 import "./styles.css";
 
@@ -502,13 +502,20 @@ function App() {
 
 	// ── Handlers ───────────────────────────────────────────────────────────────
 
-	const handlePassed = useCallback((exerciseId: string) => {
+	const handlePassed = useCallback((exerciseId: string, user: AuthUser | null) => {
 		setPassedLessons((prev) => {
 			const next: Record<string, boolean> = {};
 			for (const key of Object.keys(prev)) {
 				next[key] = prev[key];
 			}
 			next[exerciseId] = true;
+			if (user) {
+				void fetch("/api/progress", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(next),
+				});
+			}
 			return next;
 		});
 	}, []);
@@ -550,7 +557,7 @@ function App() {
 	// ── JSX ────────────────────────────────────────────────────────────────────
 
 	return (
-		<AuthGate requireAuth>
+		<AuthGate>
 			{(user: AuthUser | null) => (
 				<div className="learn-shell">
 					<header className="learn-header">
@@ -599,7 +606,13 @@ function App() {
 									)}
 								</Button>
 							</div>
-							{user && <UserBadge user={user} />}
+							{user ? (
+								<UserBadge user={user} />
+							) : (
+								<Button variant="ghost" size="sm" asChild>
+									<a href={authHubLoginUrl()}>Sign in to save progress</a>
+								</Button>
+							)}
 						</div>
 					</header>
 
@@ -615,7 +628,7 @@ function App() {
 								<div key="lesson" className="tab-content-enter">
 									<LessonWorkspace
 										exercise={activeExercise}
-										onPassed={handlePassed}
+						onPassed={(exerciseId) => handlePassed(exerciseId, user)}
 										canEdit={user != null && user.login != null}
 										onExerciseUpdated={handleExerciseUpdated}
 									/>

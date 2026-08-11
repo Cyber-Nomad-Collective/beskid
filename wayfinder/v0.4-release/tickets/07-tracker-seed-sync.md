@@ -7,8 +7,19 @@ The v0.4 data directory contains the article, deliverable definitions, and task 
 ## Acceptance
 
 - [x] All v0.4 seed data imported into tracker SQLite
-- [ ] Import validated (`bun run seed:validate` or equivalent) — blocked by 2 seed-data bugs
+- [x] Import validated (`bun run seed:validate` or equivalent)
 - [x] No data loss or corruption from existing tracker state
+
+## Resolution
+
+**Resolved 2026-08-11.** Validation now passes with source JSON patched to schema-valid values.
+
+- `pnpm seed:validate` passes in `beskid_tracker`:
+  - v0.4: `54 tasks, 8 workstreams, 6 deliverables`
+  - overall: `OK` for all 5 versions, 297 tasks, 36 workstreams, 31 deliverables, 85 subtask steps
+- Fixed on-disk schema drift before rerun:
+  - `data/v0.4/version.json`: status changed from `In Progress (release closure)` to `In Progress`
+  - `data/v0.4/tasks/corelib-matrix-green.json`: `statusColumn` changed from `Substantially complete` to a valid value
 
 ## Implementation
 

@@ -83,6 +83,10 @@ function buildTreeFromWeightedTiles(tiles: WeightedTile[], depth = 0): MosaicNod
 }
 
 export function getTileConfigForExercise(exercise: LearnExercise): TileConfig[] {
+	if (exercise.layout?.visibleTiles) {
+		const visible = new Set<string>(exercise.layout.visibleTiles);
+		return DEFAULT_TILES.map((tile) => ({ ...tile, defaultVisible: visible.has(tile.id) }));
+	}
 	if (exercise.tileLayout && exercise.tileLayout.length > 0) {
 		const fromCatalog = exercise.tileLayout
 			.map((entry) => {
@@ -102,19 +106,15 @@ export function getTileConfigForExercise(exercise: LearnExercise): TileConfig[] 
 		}
 	}
 
-	const shouldShowHints = exercise.hints.length > 0;
-	const shouldShowQuestions = exercise.questions.length > 0;
+	const shouldShowTerminal = ["parse", "tree", "run"].includes(exercise.command);
 	const shouldShowFiles = exercise.difficulty === "intermediate";
 
 	return DEFAULT_TILES.map((tile) => ({
 		...tile,
 		defaultVisible:
-			tile.id === "editor" ||
-			tile.id === "terminal" ||
-			tile.id === "content" ||
-			(tile.id === "hints" && shouldShowHints) ||
-			(tile.id === "questions" && shouldShowQuestions) ||
-			(tile.id === "fileExplorer" && shouldShowFiles),
+			 tile.id === "editor" ||
+			 (tile.id === "terminal" && shouldShowTerminal) ||
+			 (tile.id === "fileExplorer" && shouldShowFiles),
 	}));
 }
 

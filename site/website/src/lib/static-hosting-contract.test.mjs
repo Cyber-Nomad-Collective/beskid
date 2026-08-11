@@ -35,3 +35,9 @@ test('renders the interactive downloads widget only in the browser', async () =>
 	const source = await readFile(path.join(siteRoot, 'src/components/DownloadsPage.astro'), 'utf8');
 	assert.match(source, /<DownloadsSection\s+client:only="react"/);
 });
+
+test('pins the website root in the static image so release metadata is discoverable', async () => {
+	const dockerfile = await readFile(path.join(siteRoot, 'Dockerfile'), 'utf8');
+	assert.match(dockerfile, /ENV BESKID_WEBSITE_ROOT=\/app\/site\/website/);
+	assert.match(dockerfile, /pnpm --dir site\/website sync:release-version/);
+});

@@ -24,6 +24,11 @@ RUN test -f openspec/catalog.json \
   && node -e 'const c=JSON.parse(require("fs").readFileSync("openspec/catalog.json","utf-8")); if(!Array.isArray(c.entries)||c.entries.length===0){console.error("openspec/catalog.json missing or empty; website image build requires catalog entries"); process.exit(1)}'
 ENV BESKID_REQUIRE_OPENSPEC_CATALOG=1
 ENV NODE_ENV=production
+# The filtered build runs from /app, so bundled Astro modules cannot infer the
+# website root from process.cwd(). Keep checked-in release metadata available
+# to the prerendered downloads page instead of silently rendering its fallback.
+ENV BESKID_WEBSITE_ROOT=/app/site/website
+RUN pnpm --dir site/website sync:release-version
 RUN pnpm --filter beskid-website build
 
 FROM nginx:1.27-alpine AS runtime

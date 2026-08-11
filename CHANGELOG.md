@@ -11,6 +11,27 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Make the static website build resolve the latest immutable CLI release during
+  image creation, preserving the current `0.4.x` download version when the
+  rolling alias is temporarily unavailable.
+- Fix the compiler gate's warning-as-error regressions in `beskid_pckg` and
+  `beskid_queries`.
+
+- Reconcile the v0.4 delivery topology with fresh evidence: restore the release
+  project to active, record the 38/61 Corelib baseline, separate semantic
+  Corelib completion from matrix correctness, and move structural-only compiler
+  splits beyond the release boundary unless they prove a concrete gate dependency.
+- Make Learn anonymous by default: lesson content and exercise reads no longer
+  require auth, while server-side progress persistence remains account-gated.
+- Accept Learn in every auth pairing API validator by deriving the app ID
+  schema from the shared auth app registry.
+
+- Rework Learn into guided, lesson-specific flows with a contextual step rail,
+  Monaco source highlighting, gated source/command checks, optional terminal
+  surfaces, Motion transitions, and CLI navigation lessons.
+- Rework the website blog into a centered editorial layout without the outer
+  navigation rails and add a compact shadcn dropdown share menu to blog posts.
+
 - Split the compiler's largest integration-test authorities into focused,
   explicitly wired modules while preserving test inventories and keeping every
   authored compiler and Corelib source file below the structural size limit.
