@@ -5,10 +5,10 @@
 		"overrides": {
 			"uuid": "^14.0.0",
 			"devalue": "^5.8.1",
-			"@dagrejs/dagre": "^3.0.0",
-			"@dagrejs/graphlib": "^4.0.1",
-			"@tanstack/router-core": "1.171.15"
-		}
+		"@dagrejs/dagre": "^3.0.0",
+		"@dagrejs/graphlib": "^4.0.1",
+		"@tanstack/router-core": "1.170.1"
+	}
 	},
 	"scripts": {
 		"install:all": "pnpm install",

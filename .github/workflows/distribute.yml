@@ -124,7 +124,7 @@ jobs:
           # Prefer the Compiler workflow's release-version artifact (exact mint).
           # Manual dispatch falls back to the configured rolling CLI release.
           version=""
-          if [[ -n "${COMPILER_RUN_ID:-}" && "${{ github.event_name }}" == "workflow_run" ]]; then
+          if [[ -n "${COMPILER_RUN_ID:-}" && "${{ github.event_name }}" == "workflow_run" && "${{ github.event.workflow_run.conclusion }}" == "success" ]]; then
             mkdir -p release-version
             gh run download "${COMPILER_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
               --name release-version --dir release-version
