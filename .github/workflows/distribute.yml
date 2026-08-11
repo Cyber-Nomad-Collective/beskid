@@ -43,7 +43,7 @@ concurrency:
 env:
   COMPILER_REPO: Cyber-Nomad-Collective/beskid_compiler
   HOMEBREW_TAP_REPO: Cyber-Nomad-Collective/beskid_homebrew
-  RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success' && 'unstable' || 'stable') }}
+  RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && 'stable' || 'unstable') }}
 
 jobs:
   # Guard + resolve job. Only proceeds when the triggering Compiler run actually
@@ -51,9 +51,9 @@ jobs:
   # rolling version differs from the last published distrib marker.
   resolve-rolling:
     name: Resolve rolling release
-    # `workflow_run` sends conclusions other than success for failed/aborted
-    # Compiler runs; skip those. Manual dispatch always runs.
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' }}
+    # Run on any non-skipped Compiler completion (failures/aborts included). Manual
+    # dispatch always runs.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion != 'skipped' }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 10
     outputs:
