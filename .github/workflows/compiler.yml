@@ -320,7 +320,7 @@ jobs:
   release-cli-publish:
     name: Publish CLI releases
     needs: [gate, version, release-cli-build]
-    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: ${{ needs.release-cli-build.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
     permissions:
@@ -413,8 +413,8 @@ jobs:
 
   release-lsp-publish:
     name: Publish LSP releases
-    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     needs: [gate, version, release-lsp-build]
+    if: ${{ needs.release-lsp-build.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
     permissions:
@@ -502,8 +502,8 @@ jobs:
 
   release-bundle-publish:
     name: Publish bundle manifest and rolling aliases
-    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     needs: [gate, version, release-cli-publish, release-lsp-publish, release-bundle-build]
+    if: ${{ needs.release-bundle-build.result == 'success' && needs.release-cli-publish.result == 'success' && needs.release-lsp-publish.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
     permissions:

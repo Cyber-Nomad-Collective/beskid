@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Fix compiler CLI packaging by importing serde derives directly, and skip
+  release publication jobs when their artifact matrix did not produce a
+  complete asset set.
 - Make the static website build resolve the latest immutable CLI release during
   image creation, preserving the current `0.4.x` download version when the
   rolling alias is temporarily unavailable.
