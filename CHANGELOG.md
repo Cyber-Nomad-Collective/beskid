@@ -16,6 +16,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   rolling alias is temporarily unavailable.
 - Fix the compiler gate's warning-as-error regressions in `beskid_pckg` and
   `beskid_queries`.
+- Pin the TanStack Router packages used by the auth and platform-spec apps to
+  the router-core-compatible release line.
 
 - Reconcile the v0.4 delivery topology with fresh evidence: restore the release
   project to active, record the 38/61 Corelib baseline, separate semantic
