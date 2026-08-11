@@ -10,6 +10,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 ## [Unreleased]
 
 ### Changed
+- Seed Beskid Corelib and Runtime as separate persistent Nexus catalog
+  repositories on first server boot, with an operator opt-out.
+
 - Add a dedicated Zed extension (`extension.toml`, language config, Rust crate, and publish workflow) that starts the Beskid LSP from `lsp-stable` release assets and publishes updates via `huacnlee/zed-extension-action` on `v*` tags.
 
 - Fix compiler CLI packaging by importing serde derives directly, and skip
