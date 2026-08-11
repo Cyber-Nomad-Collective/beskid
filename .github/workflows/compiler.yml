@@ -81,6 +81,7 @@ jobs:
   windows-runtime-kit-matrix:
     name: Windows ABI-v5 runtime-kit matrix
     needs: gate
+    if: ${{ always() }}
     runs-on: windows-latest
     timeout-minutes: 60
     steps:
@@ -127,6 +128,7 @@ jobs:
   linux-runtime-kit-matrix:
     name: Linux ABI-v5 runtime-kit matrix
     needs: gate
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -170,6 +172,7 @@ jobs:
   macos-runtime-kit-matrix:
     name: macOS ABI-v5 runtime-kit matrix
     needs: gate
+    if: ${{ always() }}
     runs-on: macos-latest
     timeout-minutes: 60
     steps:
@@ -262,7 +265,7 @@ jobs:
 
   release-cli-build:
     name: Build CLI (${{ matrix.asset_name }})
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     needs: [gate, version]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
@@ -316,8 +319,8 @@ jobs:
 
   release-cli-publish:
     name: Publish CLI releases
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [version, release-cli-build]
+    needs: [gate, version, release-cli-build]
+    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
     permissions:
@@ -344,7 +347,7 @@ jobs:
           COMPILER_SHA: ${{ needs.version.outputs.compiler_sha }}
           COMPILER_RELEASE_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN }}
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-          RELEASE_CHANNEL: ${{ env.RELEASE_CHANNEL }}
+          RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || needs.gate.result != 'success' && 'unstable' || 'stable' }}
         run: |
           set -euo pipefail
           export GH_TOKEN="${COMPILER_RELEASE_TOKEN:-${COMPILER_SUBMODULE_TOKEN}}"
@@ -356,7 +359,7 @@ jobs:
 
   release-lsp-build:
     name: Build LSP (${{ matrix.asset_name }})
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     needs: [gate, version]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
@@ -410,8 +413,8 @@ jobs:
 
   release-lsp-publish:
     name: Publish LSP releases
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [version, release-lsp-build]
+    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    needs: [gate, version, release-lsp-build]
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
     permissions:
@@ -438,7 +441,7 @@ jobs:
           COMPILER_SHA: ${{ needs.version.outputs.compiler_sha }}
           COMPILER_RELEASE_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN }}
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-          RELEASE_CHANNEL: ${{ env.RELEASE_CHANNEL }}
+          RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || needs.gate.result != 'success' && 'unstable' || 'stable' }}
         run: |
           set -euo pipefail
           export GH_TOKEN="${COMPILER_RELEASE_TOKEN:-${COMPILER_SUBMODULE_TOKEN}}"
@@ -450,7 +453,7 @@ jobs:
 
   release-bundle-build:
     name: Build direct-install bundle (${{ matrix.target }})
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     needs: [gate, version]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
@@ -499,8 +502,8 @@ jobs:
 
   release-bundle-publish:
     name: Publish bundle manifest and rolling aliases
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [version, release-cli-publish, release-lsp-publish, release-bundle-build]
+    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    needs: [gate, version, release-cli-publish, release-lsp-publish, release-bundle-build]
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
     permissions:
@@ -534,6 +537,7 @@ jobs:
           COMPILER_SHA: ${{ needs.version.outputs.compiler_sha }}
           COMPILER_RELEASE_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN }}
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+          RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || needs.gate.result != 'success' && 'unstable' || 'stable' }}
         run: |
           set -euo pipefail
           export GH_TOKEN="${COMPILER_RELEASE_TOKEN:-${COMPILER_SUBMODULE_TOKEN}}"
