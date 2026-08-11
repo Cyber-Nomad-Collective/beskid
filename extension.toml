@@ -1,0 +1,27 @@
+id = "beskid"
+name = "Beskid"
+version = "0.4.598"
+schema_version = 1
+authors = [
+    "Beskid Maintainers",
+]
+description = "Beskid language support with LSP for the Zed editor."
+repository = "https://github.com/Cyber-Nomad-Collective/beskid"
+
+[grammars.beskid]
+repository = "https://github.com/Cyber-Nomad-Collective/beskid_treesitter"
+commit = "d27b6f966f1d841de57f622804211a6dd9f9c64e"
+
+[language_servers.beskid-lsp]
+name = "Beskid Language Server"
+language = "Beskid"
+
+[[capabilities]]
+kind = "process:exec"
+command = "*"
+args = ["**"]
+
+[[capabilities]]
+kind = "download_file"
+host = "github.com"
+path = ["**"]

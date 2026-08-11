@@ -1,0 +1,4 @@
+name = "Beskid"
+grammar = "beskid"
+path_suffixes = ["bd"]
+line_comments = ["# "]
