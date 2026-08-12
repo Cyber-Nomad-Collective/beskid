@@ -25,7 +25,6 @@ COPY openspec ./openspec
 RUN test -f openspec/catalog.json \
   && node -e 'const c=JSON.parse(require("fs").readFileSync("openspec/catalog.json","utf-8")); if(!Array.isArray(c.entries)||c.entries.length===0){console.error("openspec/catalog.json missing or empty; website image build requires catalog entries"); process.exit(1)}'
 ENV BESKID_REQUIRE_OPENSPEC_CATALOG=1
-RUN node scripts/sync-release-version.mjs
 ENV NODE_ENV=production
 # The filtered build runs from /app, so bundled Astro modules cannot infer the
 # website root from process.cwd(). Keep checked-in release metadata available

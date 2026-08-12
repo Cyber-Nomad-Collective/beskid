@@ -35,6 +35,9 @@ case "$TARGET" in
   *) echo "unsupported release target: $TARGET" >&2; exit 1 ;;
 esac
 
+binary_extension=""
+[[ "$runner_os" == "Windows" ]] && binary_extension=".exe"
+
 export RUST_MIN_STACK="${RUST_MIN_STACK:-67108864}"
 
 cd "${ROOT}/compiler"
@@ -71,17 +74,15 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
   runtime_prefix="${ROOT}/compiler/target/native-runtime-kit"
   BESKID_RUNTIME_PREFIX="${runtime_prefix}" \
     BESKID_RUNTIME_KIT_PROFILE=release \
-    BESKID_CLI_BIN="${ROOT}/compiler/target/${TARGET}/release/beskid_cli" \
+    BESKID_CLI_BIN="${ROOT}/compiler/target/${TARGET}/release/beskid_cli${binary_extension}" \
     bash ./scripts/stage-native-runtime-kit.sh
 
   stage="$(mktemp -d)"
   trap 'rm -rf "$stage"' EXIT
   bundle_dir="${stage}/beskid-${RELEASE_VERSION}-${TARGET}"
   mkdir -p "$bundle_dir"
-  extension=""
-  [[ "$runner_os" == "Windows" ]] && extension=".exe"
   for bundle_binary in beskid_cli beskid_lsp beskid-up; do
-    built_binary="target/${TARGET}/release/${bundle_binary}${extension}"
+      built_binary="target/${TARGET}/release/${bundle_binary}${binary_extension}"
     [[ -f "$built_binary" ]] || { echo "Missing built bundle artifact: $built_binary" >&2; exit 1; }
     cp -f "$built_binary" "$bundle_dir/"
   done
@@ -92,10 +93,7 @@ if [[ "$PACKAGE" == "beskid_bundle" ]]; then
 fi
 
 # Resolve the built binary path (Windows targets get .exe).
-BIN_BASE="target/${TARGET}/release/${BINARY}"
-if [[ "$runner_os" == "Windows" ]]; then
-  BIN_BASE="${BIN_BASE}.exe"
-fi
+BIN_BASE="target/${TARGET}/release/${BINARY}${binary_extension}"
 [[ -f "$BIN_BASE" ]] || { echo "Missing built artifact: $BIN_BASE" >&2; exit 1; }
 
 cp -f "$BIN_BASE" "${ROOT}/${ASSET_NAME}"

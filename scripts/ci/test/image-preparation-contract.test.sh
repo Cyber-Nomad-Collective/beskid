@@ -39,9 +39,10 @@ done
 
 learn="$(<"${root}/site/learn/Dockerfile")"
 for requirement in \
-  'COPY site/learn/package.json site/learn/pnpm-lock.yaml ./site/learn/' \
+  'COPY site/learn/package.json ./site/learn/package.json' \
+  'COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./' \
   'COPY beskid_web_common ./beskid_web_common' \
-  'pnpm --dir site/learn install --frozen-lockfile' \
+  'pnpm install --frozen-lockfile --filter beskid-learn...' \
   'COPY compiler/scripts ./compiler/scripts' \
   'apt-get install -y --no-install-recommends clang lld' \
   'command -v clang' \
