@@ -39,14 +39,26 @@ jobs:
       - id: check
         shell: bash
         env:
+          GH_TOKEN: ${{ github.token }}
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
+          COMPILER_RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
-          if [[ -n "${OVSX_TOKEN}" ]]; then
-            echo "enabled=true" >> "${GITHUB_OUTPUT}"
-          else
+          set -euo pipefail
+          if [[ -z "${OVSX_TOKEN}" ]]; then
             echo "OVSX_TOKEN is empty — skipping Open VSX publish (repo/env misconfiguration)" >&2
             echo "enabled=false" >> "${GITHUB_OUTPUT}"
+            exit 0
           fi
+
+          artifact_dir="$(mktemp -d)"
+          gh run download "${COMPILER_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
+            --name release-version --dir "${artifact_dir}"
+          channel="$(tr -d '[:space:]' < "${artifact_dir}/release-channel.txt")"
+          case "${channel}" in
+            stable) echo "enabled=true" >> "${GITHUB_OUTPUT}" ;;
+            unstable) echo "Skipping Open VSX publication for the unstable compiler release channel."; echo "enabled=false" >> "${GITHUB_OUTPUT}" ;;
+            *) echo "Unsupported or missing compiler release channel: ${channel:-<empty>}" >&2; exit 1 ;;
+          esac
 
   publish:
     name: Publish (${{ matrix.label }})

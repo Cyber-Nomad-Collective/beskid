@@ -44,6 +44,7 @@ WORKDIR /app/site/auth
 
 ENV NODE_ENV=production
 ENV PORT=8090
+ENV BESKID_RELEASE_CHANNEL=${BESKID_RELEASE_CHANNEL}
 
 COPY --from=build /app/site/auth/node_modules ./node_modules
 COPY --from=build /app/node_modules /app/node_modules

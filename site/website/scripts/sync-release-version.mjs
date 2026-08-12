@@ -8,6 +8,12 @@ const repository = "Cyber-Nomad-Collective/beskid_compiler";
 const REPO_API_BASE = `https://api.github.com/repos/${repository}`;
 
 const CHANNEL = (process.env.BESKID_RELEASE_CHANNEL ?? "stable").trim().toLowerCase();
+if (CHANNEL !== "stable" && CHANNEL !== "unstable") {
+	throw new Error(
+		`Invalid BESKID_RELEASE_CHANNEL ${JSON.stringify(CHANNEL)}; expected "stable" or "unstable"`,
+	);
+}
+
 const SEMVER_PREFIX = /^\d+\.\d+\.\d+/;
 const PREFERRED_MAJOR = "0.4.";
 

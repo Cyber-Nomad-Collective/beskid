@@ -103,6 +103,9 @@ fi
 # always reflects the latest main).
 if [[ "$PHASE" == "rolling" || "$PHASE" == "both" ]]; then
   if gh release view "$rolling_tag" --repo "$REPO" >/dev/null 2>&1; then
+    # Uploading replacement assets does not move the tag; retarget it so the
+    # rolling release metadata and assets describe the same compiler build.
+    gh release edit "$rolling_tag" --repo "$REPO" --target "$COMPILER_SHA"
     gh release upload "$rolling_tag" --repo "$REPO" $asset_glob --clobber
   else
     gh release create "$rolling_tag" --repo "$REPO" --target "$COMPILER_SHA" \

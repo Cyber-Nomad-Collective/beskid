@@ -24,15 +24,13 @@ grep -Fq 'name: release-version' "${compiler_workflow}" || \
 # release build must still explicitly require the compiler quality gate.
 for release_build in release-cli-build release-lsp-build release-bundle-build; do
   if ! awk -v job="${release_build}" '
-    $0 == "    " job ":" { found = 1; next }
-    found && /^    [^ ]/ { exit }
-    found && /needs\.gate\.result == '\''success'\''/ { exit 0 }
-    END { exit 1 }
+    $0 == "  " job ":" { found = 1; next }
+    found && /^  [^ ]/ { exit }
+    found && /needs\.gate\.result == '\''success'\''/ { ok = 1; exit }
+    END { exit !ok }
   ' "${compiler_workflow}"; then
     fail "${release_build} can run without a successful compiler gate"
   fi
-  : || \
-    fail "${release_build} can run without a successful compiler gate"
 done
 
 grep -Fq 'workflow_run:' "${open_vsx_workflow}" || \
