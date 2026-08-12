@@ -51,13 +51,15 @@ jobs:
   # rolling version differs from the last published distrib marker.
   resolve-rolling:
     name: Resolve rolling release
-    # Run on any non-skipped Compiler completion (failures/aborts included). Manual
-    # dispatch always runs.
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion != 'skipped' }}
+    # Run on manual dispatch, or only when the triggering Compiler workflow
+    # completed successfully. Avoid running release-lookup on failed/aborted
+    # workflow_run events where rolling tags are not yet minted.
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 10
     outputs:
       version: ${{ steps.version.outputs.version }}
+      release_channel: ${{ steps.version.outputs.release_channel }}
       compiler_sha: ${{ steps.sha.outputs.compiler_sha }}
       cli_darwin_sha: ${{ steps.shas.outputs.cli_darwin_sha }}
       should_run: ${{ steps.guard.outputs.should_run }}
@@ -102,35 +104,50 @@ jobs:
       - name: Init beskid_distrib submodule (shallow)
         run: ./scripts/ci/init-submodules.sh beskid_distrib
 
-      - name: Resolve release channel tags
-        id: release-tags
-        run: |
-          set -euo pipefail
-          case "${RELEASE_CHANNEL}" in
-            stable|unstable) ;;
-            *) echo "Unsupported release channel: ${RELEASE_CHANNEL}" >&2; exit 1 ;;
-          esac
-
-          echo "cli_rolling_tag=cli-${RELEASE_CHANNEL}" >> "${GITHUB_OUTPUT}"
-          echo "lsp_rolling_tag=lsp-${RELEASE_CHANNEL}" >> "${GITHUB_OUTPUT}"
-
       - name: Resolve compiler-minted global version
         id: version
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
           COMPILER_RUN_ID: ${{ github.event.workflow_run.id }}
+          WORKFLOW_EVENT: ${{ github.event.workflow_run.event }}
         run: |
           set -euo pipefail
+          if [[ "${{ github.event_name }}" == "workflow_run" && "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
+            echo "Skipping distribution: triggering Compiler workflow did not finish successfully." >&2
+            echo "Triggering completion: ${{ github.event.workflow_run.conclusion }}"
+            exit 1
+          fi
           # Prefer the Compiler workflow's release-version artifact (exact mint).
           # Manual dispatch falls back to the configured rolling CLI release.
           version=""
+          release_channel=""
           if [[ -n "${COMPILER_RUN_ID:-}" && "${{ github.event_name }}" == "workflow_run" && "${{ github.event.workflow_run.conclusion }}" == "success" ]]; then
             mkdir -p release-version
             gh run download "${COMPILER_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
               --name release-version --dir release-version
             version="$(tr -d '[:space:]' < release-version/release-version.txt)"
+
+            release_channel=""
+            if [[ -f release-version/release-channel.txt ]]; then
+              release_channel="$(tr -d '[:space:]' < release-version/release-channel.txt)"
+            elif [[ "${WORKFLOW_EVENT}" == "workflow_dispatch" ]]; then
+              release_channel="$(gh run view "${COMPILER_RUN_ID}" --repo "${GITHUB_REPOSITORY}" --json inputs --jq '.inputs.release_channel // empty' 2>/dev/null || true)"
+            fi
+
+            case "${release_channel}" in
+              "stable"|"unstable") ;;
+              "")
+                # Backward compatible default for pre-rollback release run payloads.
+                release_channel="stable"
+                ;;
+              *)
+                echo "Unsupported release channel in workflow payload: ${release_channel}" >&2
+                exit 1
+                ;;
+            esac
           else
-            VERSION_TAG="${{ steps.release-tags.outputs.cli_rolling_tag }}"
+            VERSION_TAG="${RELEASE_CHANNEL}"
+            release_channel="${RELEASE_CHANNEL}"
             version="$(CLI_ROLLING_TAG="${VERSION_TAG}" bash beskid_distrib/scripts/resolve-version.sh | tr -d '[:space:]')"
           fi
           [[ "${version}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || {
@@ -138,16 +155,106 @@ jobs:
             exit 1
           }
           echo "version=${version}" >> "${GITHUB_OUTPUT}"
+          echo "release_channel=${release_channel}" >> "${GITHUB_OUTPUT}"
           echo "Resolved global release version: ${version}"
+
+      - name: Resolve release channel tags
+        id: release-tags
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || steps.version.outputs.release_channel || '' }}
+        run: |
+          set -euo pipefail
+          if [[ -n "${RELEASE_CHANNEL}" ]]; then
+            case "${RELEASE_CHANNEL}" in
+              stable|unstable) ;;
+              *) echo "Unsupported release channel: ${RELEASE_CHANNEL}" >&2; exit 1 ;;
+            esac
+            echo "cli_rolling_tag=cli-${RELEASE_CHANNEL}" >> "${GITHUB_OUTPUT}"
+            echo "lsp_rolling_tag=lsp-${RELEASE_CHANNEL}" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          resolve_rolling_tag() {
+            stream="$1"
+            version_file="$2"
+
+            for channel in stable unstable; do
+              tag="${stream}-${channel}"
+              tag_version="$(gh release download "${tag}" --repo "${COMPILER_REPO}" --pattern "${version_file}" --output - 2>/dev/null | tr -d '[:space:]' || true)"
+              if [[ -n "${tag_version}" && "${tag_version}" == "${VERSION}" ]]; then
+                echo "${tag}"
+                return 0
+              fi
+            done
+
+            # Fallback to legacy stable channel.
+            echo "${stream}-stable"
+          }
+
+          echo "cli_rolling_tag=$(resolve_rolling_tag cli cli-version.txt)" >> "${GITHUB_OUTPUT}"
+          echo "lsp_rolling_tag=$(resolve_rolling_tag lsp lsp-version.txt)" >> "${GITHUB_OUTPUT}"
 
       - name: Record compiler SHA (target_commitish of rolling CLI release)
         id: sha
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          VERSION: ${{ steps.version.outputs.version }}
+          ROLLING_TAG: ${{ steps.release-tags.outputs.cli_rolling_tag }}
         run: |
           set -euo pipefail
-          s="$(gh release view "${{ steps.release-tags.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
+          sha=""
+          s="$(gh release view "${ROLLING_TAG}" --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish 2>/dev/null || true)"
+          if [[ -n "${s}" ]]; then
+            sha="${s}"
+          else
+            v="$(gh release view "cli-v${VERSION}" --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish 2>/dev/null || true)"
+            if [[ -n "${v}" ]]; then
+              sha="${v}"
+            fi
+          fi
+          if [[ -z "${sha}" ]]; then
+            echo "Could not resolve compiler SHA from ${ROLLING_TAG} or cli-v${VERSION}." >&2
+            exit 1
+          fi
+          s="${sha}"
           echo "compiler_sha=${s}" >> "${GITHUB_OUTPUT}"
+
+      - name: Ensure rolling releases exist
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
+          VERSION: ${{ steps.version.outputs.version }}
+          CLI_ROLLING_TAG: ${{ steps.release-tags.outputs.cli_rolling_tag }}
+          LSP_ROLLING_TAG: ${{ steps.release-tags.outputs.lsp_rolling_tag }}
+          ROLLING_TARGET_SHA: ${{ steps.sha.outputs.compiler_sha }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${ROLLING_TARGET_SHA}" ]]; then
+            echo "compiler_sha missing; cannot create rolling releases safely." >&2
+            exit 1
+          fi
+
+          ensure_release() {
+            local tag="$1"
+            if gh release view "${tag}" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
+              echo "Rolling release exists: ${tag}"
+              return 0
+            fi
+
+            local title="Beskid ${tag}"
+            local notes="Rolling release alias for CLI/LSP release ${VERSION}."
+            gh release create "${tag}" \
+              --repo "${COMPILER_REPO}" \
+              --title "${title}" \
+              --notes "${notes}" \
+              --target "${ROLLING_TARGET_SHA}"
+          }
+
+          ensure_release "${CLI_ROLLING_TAG}"
+          if [[ "${CLI_ROLLING_TAG}" != "${LSP_ROLLING_TAG}" ]]; then
+            ensure_release "${LSP_ROLLING_TAG}"
+          fi
 
       - name: Compute sha256 of immutable release assets
         id: shas
@@ -165,6 +272,7 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
           FORCE: ${{ inputs.force }}
+          ROLLING_TAG: ${{ steps.release-tags.outputs.cli_rolling_tag }}
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
         run: |
           set -euo pipefail
@@ -175,7 +283,7 @@ jobs:
           fi
           # Marker: the version uploaded to the rolling CLI release used by distribution
           # as distrib-version.txt by a previous successful run.
-          prev="$(gh release download "${{ steps.release-tags.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" \
+          prev="$(gh release download "${ROLLING_TAG}" --repo "${COMPILER_REPO}" \
                     --pattern "distrib-version.txt" --output - 2>/dev/null | tr -d '[:space:]' || true)"
           echo "Previous distrib marker: ${prev:-<none>}"
           if [[ "$prev" == "$VERSION" ]]; then
@@ -231,15 +339,20 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
           VERSION: ${{ needs.resolve-rolling.outputs.version }}
+          ROLLING_TARGET_SHA: ${{ needs.resolve-rolling.outputs.compiler_sha }}
         run: |
           set -euo pipefail
           assets=("beskid-${VERSION}-windows-amd64.msi" "beskid-${VERSION}-windows-amd64.exe")
           gh release upload "${{ needs.resolve-rolling.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" "${assets[@]}" --clobber
           tag="cli-v${VERSION}"
+          if [[ -z "${ROLLING_TARGET_SHA}" ]]; then
+            echo "compiler_sha missing; cannot create immutable release ${tag} safely." >&2
+            exit 1
+          fi
           if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
             gh release upload "$tag" --repo "${COMPILER_REPO}" "${assets[@]}" --clobber
           else
-            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "$(gh release view "${{ needs.resolve-rolling.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
+            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "${ROLLING_TARGET_SHA}"
             gh release upload "$tag" --repo "${COMPILER_REPO}" "${assets[@]}" --clobber
           fi
 
@@ -325,15 +438,20 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
           VERSION: ${{ needs.resolve-rolling.outputs.version }}
+          ROLLING_TARGET_SHA: ${{ needs.resolve-rolling.outputs.compiler_sha }}
         run: |
           set -euo pipefail
           dmg="beskid-${VERSION}-macos-arm64.dmg"
           gh release upload "${{ needs.resolve-rolling.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" "${dmg}" --clobber
           tag="cli-v${VERSION}"
+          if [[ -z "${ROLLING_TARGET_SHA}" ]]; then
+            echo "compiler_sha missing; cannot create immutable release ${tag} safely." >&2
+            exit 1
+          fi
           if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
             gh release upload "$tag" --repo "${COMPILER_REPO}" "${dmg}" --clobber
           else
-            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "$(gh release view "${{ needs.resolve-rolling.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
+            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "${ROLLING_TARGET_SHA}"
             gh release upload "$tag" --repo "${COMPILER_REPO}" "${dmg}" --clobber
           fi
 
@@ -370,15 +488,20 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
           VERSION: ${{ needs.resolve-rolling.outputs.version }}
+          ROLLING_TARGET_SHA: ${{ needs.resolve-rolling.outputs.compiler_sha }}
         run: |
           set -euo pipefail
           deb="beskid-${VERSION}-amd64.deb"
           gh release upload "${{ needs.resolve-rolling.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" "${deb}" --clobber
           tag="cli-v${VERSION}"
+          if [[ -z "${ROLLING_TARGET_SHA}" ]]; then
+            echo "compiler_sha missing; cannot create immutable release ${tag} safely." >&2
+            exit 1
+          fi
           if gh release view "$tag" --repo "${COMPILER_REPO}" >/dev/null 2>&1; then
             gh release upload "$tag" --repo "${COMPILER_REPO}" "${deb}" --clobber
           else
-            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "$(gh release view "${{ needs.resolve-rolling.outputs.cli_rolling_tag }}" --repo "${COMPILER_REPO}" --json targetCommitish --jq .targetCommitish)"
+            gh release create "$tag" --repo "${COMPILER_REPO}" --title "CLI ${VERSION}" --notes "Immutable release for CLI v${VERSION}" --target "${ROLLING_TARGET_SHA}"
             gh release upload "$tag" --repo "${COMPILER_REPO}" "${deb}" --clobber
           fi
 

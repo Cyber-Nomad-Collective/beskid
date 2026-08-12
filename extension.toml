@@ -15,6 +15,7 @@ commit = "d27b6f966f1d841de57f622804211a6dd9f9c64e"
 [language_servers.beskid-lsp]
 name = "Beskid Language Server"
 language = "Beskid"
+command = "beskid_lsp"
 
 [[capabilities]]
 kind = "process:exec"

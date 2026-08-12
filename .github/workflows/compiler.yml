@@ -98,6 +98,9 @@ jobs:
         with:
           targets: x86_64-pc-windows-msvc
 
+      - name: Setup Visual Studio environment
+        uses: ilammy/msvc-dev-cmd@v1
+
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           workspaces: compiler
@@ -214,11 +217,16 @@ jobs:
 
   version:
     name: Resolve release version
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: >-
+      ${{
+        (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+        github.ref == 'refs/heads/main'
+      }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 15
     outputs:
       version: ${{ steps.version.outputs.version }}
+      release_channel: ${{ steps.version.outputs.release_channel }}
       compiler_sha: ${{ steps.compiler.outputs.sha }}
     steps:
       # NOTE: the first step MUST be a real actions/checkout — a local composite
@@ -245,9 +253,15 @@ jobs:
           GITHUB_REF_NAME: ${{ github.ref_name }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || 'stable' }}
         run: |
           set -euo pipefail
+          case "${RELEASE_CHANNEL}" in
+            stable|unstable) ;;
+            *) echo "Unsupported release channel: ${RELEASE_CHANNEL}" >&2; exit 1 ;;
+          esac
           v="$(bash ./scripts/ci/resolve-beskid-version.sh | tr -d '[:space:]')"
+          echo "release_channel=${RELEASE_CHANNEL}" >> "${GITHUB_OUTPUT}"
           echo "version=${v}" >> "${GITHUB_OUTPUT}"
           echo "Resolved CLI/LSP version: ${v}"
 
@@ -257,15 +271,29 @@ jobs:
           RELEASE_VERSION: ${{ steps.version.outputs.version }}
         run: printf '%s\n' "${RELEASE_VERSION}" > release-version.txt
 
+      - name: Emit release channel artifact
+        env:
+          RELEASE_CHANNEL: ${{ steps.version.outputs.release_channel }}
+        run: |
+          printf '%s\n' "${RELEASE_CHANNEL}" > release-channel.txt
+
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: release-version
-          path: release-version.txt
+          path: |
+            release-version.txt
+            release-channel.txt
           if-no-files-found: error
 
   release-cli-build:
     name: Build CLI (${{ matrix.asset_name }})
-    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: >-
+      ${{
+        always() &&
+        needs.gate.result == 'success' &&
+        (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+        github.ref == 'refs/heads/main'
+      }}
     needs: [gate, version]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
@@ -301,6 +329,10 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
+      - name: Setup Visual Studio environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           workspaces: compiler
@@ -320,7 +352,12 @@ jobs:
   release-cli-publish:
     name: Publish CLI releases
     needs: [gate, version, release-cli-build]
-    if: ${{ needs.release-cli-build.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: >-
+      ${{
+        needs.release-cli-build.result == 'success' &&
+        (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+        github.ref == 'refs/heads/main'
+      }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
     permissions:
@@ -347,7 +384,7 @@ jobs:
           COMPILER_SHA: ${{ needs.version.outputs.compiler_sha }}
           COMPILER_RELEASE_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN }}
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-          RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || needs.gate.result != 'success' && 'unstable' || 'stable' }}
+          RELEASE_CHANNEL: ${{ needs.version.outputs.release_channel }}
         run: |
           set -euo pipefail
           export GH_TOKEN="${COMPILER_RELEASE_TOKEN:-${COMPILER_SUBMODULE_TOKEN}}"
@@ -359,7 +396,13 @@ jobs:
 
   release-lsp-build:
     name: Build LSP (${{ matrix.asset_name }})
-    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: >-
+      ${{
+        always() &&
+        needs.gate.result == 'success' &&
+        (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+        github.ref == 'refs/heads/main'
+      }}
     needs: [gate, version]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
@@ -395,6 +438,10 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
+      - name: Setup Visual Studio environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           workspaces: compiler
@@ -414,7 +461,12 @@ jobs:
   release-lsp-publish:
     name: Publish LSP releases
     needs: [gate, version, release-lsp-build]
-    if: ${{ needs.release-lsp-build.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: >-
+      ${{
+        needs.release-lsp-build.result == 'success' &&
+        (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+        github.ref == 'refs/heads/main'
+      }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
     permissions:
@@ -441,7 +493,7 @@ jobs:
           COMPILER_SHA: ${{ needs.version.outputs.compiler_sha }}
           COMPILER_RELEASE_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN }}
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-          RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || needs.gate.result != 'success' && 'unstable' || 'stable' }}
+          RELEASE_CHANNEL: ${{ needs.version.outputs.release_channel }}
         run: |
           set -euo pipefail
           export GH_TOKEN="${COMPILER_RELEASE_TOKEN:-${COMPILER_SUBMODULE_TOKEN}}"
@@ -453,7 +505,13 @@ jobs:
 
   release-bundle-build:
     name: Build direct-install bundle (${{ matrix.target }})
-    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: >-
+      ${{
+        always() &&
+        needs.gate.result == 'success' &&
+        (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+        github.ref == 'refs/heads/main'
+      }}
     needs: [gate, version]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
@@ -484,6 +542,10 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
+      - name: Setup Visual Studio environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           workspaces: compiler
@@ -503,7 +565,14 @@ jobs:
   release-bundle-publish:
     name: Publish bundle manifest and rolling aliases
     needs: [gate, version, release-cli-publish, release-lsp-publish, release-bundle-build]
-    if: ${{ needs.release-bundle-build.result == 'success' && needs.release-cli-publish.result == 'success' && needs.release-lsp-publish.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: >-
+      ${{
+        needs.release-bundle-build.result == 'success' &&
+        needs.release-cli-publish.result == 'success' &&
+        needs.release-lsp-publish.result == 'success' &&
+        (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+        github.ref == 'refs/heads/main'
+      }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
     permissions:
@@ -537,7 +606,7 @@ jobs:
           COMPILER_SHA: ${{ needs.version.outputs.compiler_sha }}
           COMPILER_RELEASE_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN }}
           COMPILER_SUBMODULE_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-          RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || needs.gate.result != 'success' && 'unstable' || 'stable' }}
+          RELEASE_CHANNEL: ${{ needs.version.outputs.release_channel }}
         run: |
           set -euo pipefail
           export GH_TOKEN="${COMPILER_RELEASE_TOKEN:-${COMPILER_SUBMODULE_TOKEN}}"

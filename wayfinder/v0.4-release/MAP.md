@@ -25,6 +25,7 @@ v0.4.0 released with all GitHub CI/CD gates green: 100% corelib test matrix pass
 - [CHANGELOG cutoff](tickets/08-changelog-040-cutoff.md) — `[0.4.0] - 2026-08-06` exists in `CHANGELOG.md`, with `Unreleased` retained for post-0.4.
 - [Catalog embeddability](tickets/04-catalog-embeddability.md) — `openspec:catalog` rebuilds `openspec/catalog.json` and `openspec:validate` now passes clean (`206 passed, 0 failed`) with revision `0cdc1bfda83c` committed.
 - [Tracker seed sync](tickets/07-tracker-seed-sync.md) — v0.4 seed payload schema issues were fixed (`status` and `statusColumn`), and `pnpm seed:validate` now passes for all 5 versions, including v0.4 (`54 tasks, 8 workstreams, 6 deliverables`).
+- [Platform-spec sync scope](tickets/03-platform-spec-sync-scope.md) — Existing OpenSpec capability documents remain the v0.4 authority; the reader already provides accessible searchable navigation and hybrid rendering. Release verification is catalog regeneration and validation followed by the platform-spec production build; no new release-summary normative content is warranted.
 
 ## Not yet specified
 

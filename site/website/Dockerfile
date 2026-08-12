@@ -6,6 +6,8 @@ RUN npm install -g corepack@latest && corepack enable && corepack prepare pnpm@1
 
 WORKDIR /app
 
+ARG BESKID_RELEASE_CHANNEL=stable
+
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY site/auth/package.json ./site/auth/package.json
 COPY site/website/package.json ./site/website/package.json
@@ -23,11 +25,13 @@ COPY openspec ./openspec
 RUN test -f openspec/catalog.json \
   && node -e 'const c=JSON.parse(require("fs").readFileSync("openspec/catalog.json","utf-8")); if(!Array.isArray(c.entries)||c.entries.length===0){console.error("openspec/catalog.json missing or empty; website image build requires catalog entries"); process.exit(1)}'
 ENV BESKID_REQUIRE_OPENSPEC_CATALOG=1
+RUN node scripts/sync-release-version.mjs
 ENV NODE_ENV=production
 # The filtered build runs from /app, so bundled Astro modules cannot infer the
 # website root from process.cwd(). Keep checked-in release metadata available
 # to the prerendered downloads page instead of silently rendering its fallback.
 ENV BESKID_WEBSITE_ROOT=/app/site/website
+ENV BESKID_RELEASE_CHANNEL=${BESKID_RELEASE_CHANNEL}
 RUN pnpm --dir site/website sync:release-version
 RUN pnpm --filter beskid-website build
 

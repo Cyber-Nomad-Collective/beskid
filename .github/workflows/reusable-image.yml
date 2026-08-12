@@ -21,6 +21,11 @@ on:
         required: false
         default: ''
         type: string
+      build-args:
+        description: Newline-separated Docker build args
+        required: false
+        default: ''
+        type: string
       submodules:
         description: Space-separated submodules required by the build context
         required: false
@@ -130,6 +135,7 @@ jobs:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
           build-contexts: ${{ inputs.build-contexts }}
+          build-args: ${{ inputs.build-args }}
           push: ${{ inputs.push }}
           tags: ${{ inputs.repository }}:sha-${{ github.sha }}
           # min deliberately omits build parameters; package credentials are

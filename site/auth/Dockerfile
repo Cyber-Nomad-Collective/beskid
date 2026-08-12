@@ -7,6 +7,8 @@ RUN npm install -g pnpm@10.17.1
 
 WORKDIR /app
 
+ARG BESKID_RELEASE_CHANNEL=stable
+
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 # The root lockfile covers every site importer. Mirror the proven website
 # preparation graph so a frozen install never observes a partial workspace.
@@ -28,10 +30,13 @@ COPY site/auth/ ./site/auth/
 WORKDIR /app/site/auth
 
 ENV SKIP_ENV_VALIDATION=1
+ENV BESKID_RELEASE_CHANNEL=${BESKID_RELEASE_CHANNEL}
 RUN pnpm exec vite build && bash scripts/sync-root-stylesheet.sh
 RUN pnpm --filter beskid-auth verify:client-bundle
 
 FROM node:24-alpine AS runtime
+
+ARG BESKID_RELEASE_CHANNEL=stable
 
 RUN apk add --no-cache wget
 

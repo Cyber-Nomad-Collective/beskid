@@ -107,6 +107,8 @@ jobs:
       repository: ghcr.io/cyber-nomad-collective/beskid-site
       context: .
       dockerfile: site/website/Dockerfile
+      build-args: |
+        BESKID_RELEASE_CHANNEL=${{ github.event_name == 'workflow_dispatch' && inputs.unstable && 'unstable' || 'stable' }}
       submodules: beskid_web_common
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
@@ -128,6 +130,8 @@ jobs:
       repository: ghcr.io/cyber-nomad-collective/beskid-auth
       context: .
       dockerfile: site/auth/Dockerfile
+      build-args: |
+        BESKID_RELEASE_CHANNEL=${{ github.event_name == 'workflow_dispatch' && inputs.unstable && 'unstable' || 'stable' }}
       submodules: beskid_web_common
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
@@ -153,6 +157,8 @@ jobs:
       # UI packages from beskid_web_common, so both dependency sources must be
       # initialized before the root-context Docker build.
       submodules: compiler beskid_bsol beskid_web_common
+      build-args: |
+        BESKID_RELEASE_CHANNEL=${{ github.event_name == 'workflow_dispatch' && inputs.unstable && 'unstable' || 'stable' }}
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
     secrets:
@@ -173,6 +179,8 @@ jobs:
       repository: ghcr.io/cyber-nomad-collective/beskid-platform-spec
       context: .
       dockerfile: site/platform-spec/Dockerfile
+      build-args: |
+        BESKID_RELEASE_CHANNEL=${{ github.event_name == 'workflow_dispatch' && inputs.unstable && 'unstable' || 'stable' }}
       submodules: beskid_web_common
       push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
       sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}

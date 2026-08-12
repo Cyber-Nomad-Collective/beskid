@@ -148,7 +148,7 @@ jobs:
           gh run download "${COMPILER_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
             --name release-version --dir release-version
           version="$(tr -d '[:space:]' < release-version/release-version.txt)"
-          [[ "${version}" =~ ^0\.4\.(0|[1-9][0-9]*)$ ]] || {
+          [[ "${version}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)([-+][0-9A-Za-z.-]+)?$ ]] || {
             echo "Compiler emitted invalid global release version: ${version:-<empty>}" >&2
             exit 1
           }

@@ -3,14 +3,19 @@ FROM node:24-alpine AS web
 
 WORKDIR /app
 
+ARG BESKID_RELEASE_CHANNEL=stable
+
 RUN apk add --no-cache git
 
-COPY .npmrc ./
-COPY site/learn/package.json site/learn/pnpm-lock.yaml ./site/learn/
-# site/learn has its own lockfile, but its UI dependency is a local source.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY site/auth/package.json ./site/auth/package.json
+COPY site/website/package.json ./site/website/package.json
+COPY site/platform-spec/package.json ./site/platform-spec/package.json
+COPY site/learn/package.json ./site/learn/package.json
+# Use the root workspace lockfile for deterministic learn installs in CI.
 COPY beskid_web_common ./beskid_web_common
 RUN npm install -g pnpm@10.17.1
-RUN pnpm --dir site/learn install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --filter beskid-learn...
 
 COPY site/learn/ ./site/learn/
 RUN pnpm --dir site/learn run build
@@ -56,6 +61,9 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 # runtime separate from the Node build stage and pin it to the project Bun
 # release so the container starts with the APIs server.ts requires.
 FROM oven/bun:1.3.14-alpine
+
+ARG BESKID_RELEASE_CHANNEL=stable
+
 RUN apk add --no-cache wget
 WORKDIR /app/site/learn
 
@@ -73,6 +81,7 @@ ENV PORT=80
 ENV BESKID_BINARY=/app/site/learn/beskid
 ENV BESKID_RUNTIME_PREFIX=/app/site/learn/native-runtime-kit
 ENV BESKID_COMMAND_TIMEOUT_MS=25000
+ENV BESKID_RELEASE_CHANNEL=${BESKID_RELEASE_CHANNEL}
 EXPOSE 80
 
 CMD ["bun", "run", "server.ts"]

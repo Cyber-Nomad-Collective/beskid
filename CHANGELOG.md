@@ -106,12 +106,28 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   flow and include the `native-runtime-kit` directory in direct-install bundle
   artifacts so developers get bundled runtime assets alongside `beskid_cli`,
   `beskid_lsp`, and `beskid-up`.
+- Prefer major 0.x pinned releases when resolving default CLI/LSP channels in the
+  VS Code installer so stable defaults no longer resolve back to old `1.0.x`
+  artifacts when newer `0.4.x` pinned releases exist.
+- Harden Windows ABI-v5 linker path selection to try alternate archive and link tools
+  (e.g., `link`/`link.exe` and LLVM variants) before failing with link diagnostics,
+  reducing transient Windows-only compile failures in CI matrix runs.
+- Propagate compiler release-channel intent (`stable` / `unstable`) from compiler
+  publish jobs through an explicit artifact into distribution so `workflow_run`
+  consumers always pick the intended rolling channel and can correctly build unstable
+  distribution fan-outs.
+- Resolve distribution compiler SHA from the chosen rolling release (with immutable
+  release fallback), and require it before creating immutable CLI assets so publish
+  jobs fail closed when alias/version coupling is inconsistent.
 
 ### Fixed
 
 - Preserve exact numeric widths in Corelib console rendering and ASCII casing,
   and route nested `if` conditions through the normal ISLE expression lowering
   path so diagnostics retain their precise source attribution.
+- Update workspace TanStack overrides to `@tanstack/router-core@1.171.21` and
+  refresh the root lockfile so `pnpm install --frozen-lockfile` in CI succeeds
+  for Auth/Platform-spec/Learn builds.
 
 ## [0.4.0] - 2026-08-06
 
