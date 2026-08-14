@@ -21,16 +21,11 @@ grep -Fq 'name: Emit global release version' "${compiler_workflow}" || \
 grep -Fq 'name: release-version' "${compiler_workflow}" || \
   fail 'compiler workflow does not name the version artifact release-version'
 
-# Legacy in-workflow publishing is retired; the dedicated release workflow
-# consumes the completed Compiler result instead.
-for release_build in release-cli-build release-lsp-build release-bundle-build; do
-  if ! awk -v job="${release_build}" '
-    $0 == "  " job ":" { found = 1; next }
-    found && /^  [^ ]/ { exit }
-    found && /false &&/ { ok = 1; exit }
-    END { exit !ok }
-  ' "${compiler_workflow}"; then
-    fail "${release_build} is not retired in favor of compiler-release.yml"
+# Legacy in-workflow publishing is removed; the dedicated release workflow
+# is the sole CLI, LSP, and bundle publisher.
+for release_job in release-cli-build release-cli-publish release-lsp-build release-lsp-publish release-bundle-build release-bundle-publish; do
+  if grep -Eq "^  ${release_job}:" "${compiler_workflow}"; then
+    fail "${release_job} duplicates compiler-release.yml"
   fi
 done
 

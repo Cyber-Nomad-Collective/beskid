@@ -138,6 +138,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   job fails, and retain a machine-readable fallback diagnostic when report
   rendering itself fails.
 
+- Remove the disabled legacy Compiler-workflow release jobs after the dedicated
+  compiler-release workflow successfully published immutable and rolling CLI/LSP assets.
+
 - Restore compiler syntax traces with readable `path:line:column (Construct)`
   sites while retaining generation-safe AST keys and exact spans.
 
