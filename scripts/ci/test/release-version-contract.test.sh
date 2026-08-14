@@ -46,6 +46,8 @@ grep -Fq 'name: compiler-release-${{ matrix.target }}' "${release_workflow}" || 
   fail 'compiler release workflow does not retain independent platform reports'
 grep -Fq 'name: compiler-release-state' "${release_workflow}" || \
   fail 'compiler release workflow does not retain machine-readable release state'
+grep -Fq "if: \${{ always() && needs.state.result == 'success' && needs.state.outputs.publishable == 'true' }}" "${release_workflow}" || \
+  fail 'compiler release publication is not explicitly allowed after a partial platform failure'
 
 grep -Fq 'workflow_run:' "${open_vsx_workflow}" || \
   fail 'Open VSX is not triggered by a completed Compiler workflow run'

@@ -11,7 +11,7 @@ channel="${5:?channel}"
 output_dir="${6:?output directory}"
 bundle_asset="${7:-}"
 builder="${BUILD_RELEASE_ARTIFACT_SCRIPT:-$(dirname "$0")/build-release-artifact.sh}"
-reporter="$(dirname "$0")/render-ci-failure.sh"
+reporter="${CI_FAILURE_REPORTER:-$(dirname "$0")/render-ci-failure.sh}"
 
 case "${channel}" in stable|unstable) ;; *) echo "unsupported channel: ${channel}" >&2; exit 1 ;; esac
 mkdir -p "${output_dir}/release-logs"
@@ -66,10 +66,19 @@ diagnostic_files=()
 for component in $(jq -r '.builds | keys[]' "${result}"); do
   if [[ "$(jq -r ".builds.${component}.status" "${result}")" == failed ]]; then
     diagnostic="${output_dir}/release-logs/${target}-${component}.failure.json"
-    bash "${reporter}" compiler "${component}-release-build" "${target}" \
+    if ! bash "${reporter}" compiler "${component}-release-build" "${target}" \
       "$(jq -r ".builds.${component}.command" "${result}")" \
       "${output_dir}/release-logs/${target}-${component}.log" \
-      "release-logs/${target}-${component}.log" "${diagnostic}"
+      "release-logs/${target}-${component}.log" "${diagnostic}"; then
+      jq -n \
+        --arg component compiler --arg stage "${component}-release-build" --arg platform "${target}" \
+        --arg command "$(jq -r ".builds.${component}.command" "${result}")" \
+        --arg reason "structured reporter failed; inspect retained raw log" \
+        --arg log_path "release-logs/${target}-${component}.log" \
+        '{schema_version:1,component:$component,stage:$stage,platform:$platform,command:$command,
+          test_case:"unavailable",identifier:"unavailable",
+          location:{file:"unavailable",line:0,column:0},reason:$reason,log_path:$log_path}' >"${diagnostic}"
+    fi
     diagnostic_files+=("${diagnostic}")
   fi
 done

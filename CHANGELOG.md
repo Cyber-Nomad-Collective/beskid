@@ -134,6 +134,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Allow a publishable unstable release to continue after an independent platform
+  job fails, and retain a machine-readable fallback diagnostic when report
+  rendering itself fails.
+
 - Remove the retired duplicate `__fiber_yield` compiler builtin so the
   manifest-owned ABI-v5 soft builtin is its sole analysis/runtime authority.
 

@@ -16,6 +16,12 @@ printf 'binary' >"${FAKE_ARTIFACT_ROOT}/${asset}"
 EOF
 chmod +x "${TMP}/builder.sh"
 
+cat >"${TMP}/failing-reporter.sh" <<'EOF'
+#!/usr/bin/env bash
+exit 23
+EOF
+chmod +x "${TMP}/failing-reporter.sh"
+
 run_platform() {
   local channel="$1" failures="$2" output="$3"
   mkdir -p "${output}"
@@ -51,5 +57,18 @@ test -f "${TMP}/unstable-partial/release-logs/x86_64-test-lsp.log"
 run_platform unstable 'beskid-test beskid_lsp-test' "${TMP}/unstable-failed"
 jq -e '.builds.cli.status == "failed" and .builds.lsp.status == "failed"' \
   "${TMP}/unstable-failed/platform-result-x86_64-test.json" >/dev/null
+
+mkdir -p "${TMP}/reporter-failed"
+(
+  cd "${TMP}/reporter-failed"
+  BUILD_RELEASE_ARTIFACT_SCRIPT="${TMP}/builder.sh" RELEASE_ARTIFACT_ROOT="${TMP}/artifact-root" \
+    FAKE_ARTIFACT_ROOT="${TMP}/artifact-root" FAIL_ASSETS='beskid_lsp-test' \
+    CI_FAILURE_REPORTER="${TMP}/failing-reporter.sh" \
+    "${SCRIPT}" x86_64-test beskid-test beskid_lsp-test 0.4.1 unstable .
+)
+jq -e '(.diagnostics | length) == 1 and .diagnostics[0].stage == "lsp-release-build" and
+  .diagnostics[0].identifier == "unavailable" and .diagnostics[0].log_path == "release-logs/x86_64-test-lsp.log" and
+  (.diagnostics[0].reason | contains("structured reporter failed"))' \
+  "${TMP}/reporter-failed/platform-result-x86_64-test.json" >/dev/null
 
 echo 'build release platform tests OK'
