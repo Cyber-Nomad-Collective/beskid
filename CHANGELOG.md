@@ -155,6 +155,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Select floating-point addition for float operands and route signed division
   through the canonical integer-division-by-zero trap guard in ISLE lowering.
 
+- Keep nominal semantic signatures distinct from pointer ABI representations,
+  while using exact ABI facts at try-expression and prepared-entrypoint boundaries.
+
 - Remove the retired duplicate `__fiber_yield` compiler builtin so the
   manifest-owned ABI-v5 soft builtin is its sole analysis/runtime authority.
 
