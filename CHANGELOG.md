@@ -136,6 +136,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Restore the downloads page by consuming channel-aware `release-state.json`, falling back explicitly from an unavailable stable channel to unstable, and listing only published binary assets.
+
 - Allow a publishable unstable release to continue after an independent platform
   job fails, and retain a machine-readable fallback diagnostic when report
   rendering itself fails.

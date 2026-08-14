@@ -12,6 +12,7 @@ const LATEST_TAG = (() => {
 			return "cli-stable";
 	}
 })();
+const FALLBACK_TAG = LATEST_TAG === "cli-stable" ? "cli-unstable" : null;
 
 interface AssetInfo {
 	platform: string;
@@ -37,14 +38,41 @@ interface VersionPayload {
 	containerImages: { base: string; runner: string };
 }
 
+interface ReleaseState {
+	channel: "stable" | "unstable";
+	version: string;
+	available_artifacts: string[];
+}
+
+function isReleaseState(value: unknown): value is ReleaseState {
+	if (!value || typeof value !== "object") return false;
+	const state = value as Partial<ReleaseState>;
+	return (
+		(state.channel === "stable" || state.channel === "unstable") &&
+		typeof state.version === "string" &&
+		/^\d+\.\d+\.\d+(?:-unstable)?$/.test(state.version) &&
+		Array.isArray(state.available_artifacts) &&
+		state.available_artifacts.every((asset) => typeof asset === "string")
+	);
+}
+
+async function fetchReleaseState(tag: string): Promise<ReleaseState | null> {
+	const response = await fetch(
+		`https://github.com/${COMPILER_REPO}/releases/download/${tag}/release-state.json`,
+		{ headers: { "User-Agent": "beskid-website/1.0" } },
+	);
+	if (!response.ok) return null;
+	const state: unknown = await response.json();
+	return isReleaseState(state) ? state : null;
+}
+
 function assetName(os: string, arch: string, suffix: string): string {
 	if (os === "windows") return `beskid-${os}-${arch}${suffix}`;
 	return `beskid-${os}-${arch}`;
 }
 
 export async function GET({ url: requestUrl }: { url: URL }) {
-	const _base = requestUrl.origin;
-	const ghReleaseBase = `https://github.com/${COMPILER_REPO}/releases/download/${LATEST_TAG}`;
+	void requestUrl;
 
 	const headers: Record<string, string> = {
 		"Content-Type": "application/json",
@@ -52,23 +80,20 @@ export async function GET({ url: requestUrl }: { url: URL }) {
 	};
 
 	try {
-		const versionUrl = `${ghReleaseBase}/cli-version.txt`;
-		const resp = await fetch(versionUrl, {
-			headers: { "User-Agent": "beskid-website/1.0" },
-		});
-		if (!resp.ok) {
+		let selectedTag = LATEST_TAG;
+		let state = await fetchReleaseState(selectedTag);
+		if (!state && FALLBACK_TAG) {
+			selectedTag = FALLBACK_TAG;
+			state = await fetchReleaseState(selectedTag);
+		}
+		if (!state) {
 			return new Response(
-				JSON.stringify({ error: `GitHub release fetch failed (${resp.status})` }),
+				JSON.stringify({ error: "No published compiler release state is available" }),
 				{ status: 502, headers },
 			);
 		}
-		const version = (await resp.text()).trim();
-		if (!/^\d+\.\d+\.\d+/.test(version)) {
-			return new Response(
-				JSON.stringify({ error: `Invalid version from release: ${version}` }),
-				{ status: 502, headers },
-			);
-		}
+		const version = state.version;
+		const ghReleaseBase = `https://github.com/${COMPILER_REPO}/releases/download/${selectedTag}`;
 
 		const platforms: { os: string; arch: string; suffix: string }[] = [
 			{ os: "linux", arch: "amd64", suffix: "" },
@@ -76,15 +101,17 @@ export async function GET({ url: requestUrl }: { url: URL }) {
 			{ os: "windows", arch: "amd64", suffix: ".exe" },
 		];
 
-		const assets: AssetInfo[] = platforms.map((p) => {
+		const available = new Set(state.available_artifacts);
+		const assets: AssetInfo[] = platforms.flatMap((p) => {
 			const fn = assetName(p.os, p.arch, p.suffix);
-			return {
+			if (!available.has(fn)) return [];
+			return [{
 				platform: p.os,
 				arch: p.arch,
 				kind: "binary" as const,
 				url: `${ghReleaseBase}/${fn}`,
 				filename: fn,
-			};
+			}];
 		});
 
 		const packages: PackageInfo[] = [
@@ -124,16 +151,16 @@ export async function GET({ url: requestUrl }: { url: URL }) {
 				command: "sudo snap install beskid --classic",
 				url: "",
 			},
-		];
+		].filter((pkg) => pkg.url === "" || available.has(pkg.url.slice(pkg.url.lastIndexOf("/") + 1)));
 
 		const payload: VersionPayload = {
 			version,
-			source: "github",
+			source: `github:${state.channel}`,
 			assets,
 			packages,
 			installScript: {
-				sh: `curl -fsSL https://beskid-lang.org/install.sh | BESKID_RELEASE_TAG=${LATEST_TAG} bash`,
-				ps: `$env:BESKID_RELEASE_TAG='${LATEST_TAG}'; iwr https://beskid-lang.org/install.ps1 -useb | iex`,
+				sh: `curl -fsSL https://beskid-lang.org/install.sh | BESKID_RELEASE_TAG=${selectedTag} bash`,
+				ps: `$env:BESKID_RELEASE_TAG='${selectedTag}'; iwr https://beskid-lang.org/install.ps1 -useb | iex`,
 			},
 			containerImages: {
 				base: `ghcr.io/cyber-nomad-collective/beskid:${version}`,
