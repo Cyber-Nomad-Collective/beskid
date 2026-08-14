@@ -144,6 +144,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Keep exact-kit JIT rejection coverage anchored to a genuinely unapproved
   process symbol as the canonical ABI-v5 platform import allowlist evolves.
 
+- Select floating-point addition for float operands and route signed division
+  through the canonical integer-division-by-zero trap guard in ISLE lowering.
+
 - Remove the retired duplicate `__fiber_yield` compiler builtin so the
   manifest-owned ABI-v5 soft builtin is its sole analysis/runtime authority.
 
