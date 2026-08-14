@@ -167,6 +167,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Remove Windows ABI-v5 runtime DLL dependencies on CRT-owned static TLS and
   `strlen`; the manifest now owns the exact Win32 TLS imports instead.
 
+- Keep Windows runtime provenance export checks exact while classifying MSVC
+  string-literal COMDATs and the COFF feature marker as compiler metadata.
+
 - Remove the retired duplicate `__fiber_yield` compiler builtin so the
   manifest-owned ABI-v5 soft builtin is its sole analysis/runtime authority.
 
