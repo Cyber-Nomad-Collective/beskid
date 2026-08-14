@@ -14,6 +14,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Upload the CLI/LSP/bundle version compatibility metadata with every release stream so the public installers can resolve rolling releases.
 
 ### Changed
+- Extract Windows shared-runtime provenance from PE export and import tables so
+  the strict ABI-v5 audit can validate DLLs that expose no `llvm-nm` symbols.
 - Split compiler publication from the authoritative test workflow, automatically
   publish best-effort `-unstable` native releases after failed gates, retain a
   machine-readable release state, and add structured GitHub diagnostics and
