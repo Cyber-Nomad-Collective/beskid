@@ -51,4 +51,31 @@ printf 'error: lint failed\n  --> crates/beskid_queries/src/lib.rs:9:4\n' >"${TM
 jq -e '.location.file == "compiler/crates/beskid_queries/src/lib.rs"' \
   "${TMP}/relative.json" >/dev/null
 
+cat >"${TMP}/multi-rust.log" <<'EOF'
+test parser::first ... FAILED
+test parser::second ... FAILED
+
+failures:
+
+---- parser::first stdout ----
+thread 'parser::first' panicked at crates/beskid_tests/src/parser.rs:42:7:
+expected first diagnostic, got none
+
+---- parser::second stdout ----
+thread 'parser::second' panicked at crates/beskid_tests/src/parser.rs:55:9:
+expected second diagnostic, got none
+
+failures:
+    parser::first
+    parser::second
+
+test result: FAILED. 0 passed; 2 failed
+EOF
+"${SCRIPT}" compiler workspace-tests linux 'cargo test --workspace' \
+  "${TMP}/multi-rust.log" raw-logs/multi-rust.log "${TMP}/multi.json"
+jq -e '.test_case == "parser::first" and (.reason | contains("expected first diagnostic"))' \
+  "${TMP}/multi.json" >/dev/null
+jq -e '.test_case == "parser::second" and (.reason | contains("expected second diagnostic")) and
+  .location.line == 55 and .location.column == 9' "${TMP}/multi.2.json" >/dev/null
+
 echo 'render CI failure tests OK'
