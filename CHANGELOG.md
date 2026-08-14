@@ -141,6 +141,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Restore compiler syntax traces with readable `path:line:column (Construct)`
   sites while retaining generation-safe AST keys and exact spans.
 
+- Keep exact-kit JIT rejection coverage anchored to a genuinely unapproved
+  process symbol as the canonical ABI-v5 platform import allowlist evolves.
+
 - Remove the retired duplicate `__fiber_yield` compiler builtin so the
   manifest-owned ABI-v5 soft builtin is its sole analysis/runtime authority.
 
