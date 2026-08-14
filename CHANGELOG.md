@@ -763,7 +763,7 @@ Compiler waves W0–W6 complete, HIR-free ISLE ABI-v5 native runtime, corelib ga
 - Enable SBOM and minimal BuildKit provenance in the replacement image workflow,
   with an explicit keyless image-signing hook and OIDC permission boundary.
 
-## [0.4.0] - 2026-05-28
+## [0.3.0] - 2026-05-28
 
 - Open VSX semver build metadata acceptance and strict patch progression
 - VS Code extension package source tracking
