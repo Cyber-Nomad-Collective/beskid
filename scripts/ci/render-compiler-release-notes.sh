@@ -57,7 +57,11 @@ EOF
 if [[ "$(jq '.diagnostics | length' "${state}")" -eq 0 ]]; then
   printf '%s\n' '- None'
 else
-  jq -r '.diagnostics[] | "- `\(.identifier)` — \(.location.file):\(.location.line):\(.location.column) — \(.reason) (log: `\(.log_path)`)"' "${state}"
+  jq -r '.diagnostics[] |
+    (if (.log_path | startswith("http://") or startswith("https://"))
+     then "[GitHub Actions log](\(.log_path))"
+     else "`\(.log_path)`" end) as $log |
+    "- `\(.identifier)` — \(.location.file):\(.location.line):\(.location.column) — \(.reason) (log: \($log))"' "${state}"
 fi
 cat <<EOF
 

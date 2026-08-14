@@ -26,6 +26,15 @@ mkdir -p "${TMP}/gate/stages" "${TMP}/gate/failures"
 cat >"${TMP}/gate/stages/rust.json" <<'EOF'
 {"component":"compiler","stage":"rust-gate","status":"failed"}
 EOF
+cat >"${TMP}/gate/triggering-run-jobs.json" <<'EOF'
+{"jobs":[
+  {"id":11,"name":"Rust gate","conclusion":"success","html_url":"https://example.test/jobs/11","steps":[]},
+  {"id":12,"name":"Windows ABI-v5 runtime-kit matrix","conclusion":"failure","html_url":"https://example.test/jobs/12","steps":[{"name":"Build and smoke exact Windows runtime-kit matrix","conclusion":"failure"}]},
+  {"id":13,"name":"Linux ABI-v5 runtime-kit matrix","conclusion":"success","html_url":"https://example.test/jobs/13","steps":[{"name":"Build and smoke exact Linux runtime-kit matrix","conclusion":"success"}]},
+  {"id":14,"name":"macOS ABI-v5 runtime-kit matrix","conclusion":"success","html_url":"https://example.test/jobs/14","steps":[{"name":"Build and smoke exact macOS runtime-kit matrix","conclusion":"success"}]},
+  {"id":15,"name":"Unrelated job","conclusion":"failure","html_url":"https://example.test/jobs/15","steps":[]}
+]}
+EOF
 cat >"${TMP}/gate/stages/lsp.json" <<'EOF'
 {"component":"lsp","stage":"command-contract-gate","status":"success"}
 EOF
@@ -63,11 +72,16 @@ GATE_REPORT_DIR="${TMP}/gate" \
   "${SCRIPT}" unstable 0.4.10-unstable compiler-sha superrepo-sha failure "${TMP}/evidence.json" \
   "${TMP}/linux.json" "${TMP}/macos.json" "${TMP}/windows.json"
 jq -e '
-  .tests.successful == ["lsp:command-contract-gate"] and
-  .tests.failed == ["compiler:rust-gate"] and
-  .diagnostics[0].identifier == "compiler::parser::case" and
-  .diagnostics[0].log_path == "gate-evidence/raw-logs/rust.log"
+  .tests.successful == ["compiler:abi-v5-runtime-kit-linux", "compiler:abi-v5-runtime-kit-macos", "lsp:command-contract-gate"] and
+  .tests.failed == ["compiler:abi-v5-runtime-kit-windows", "compiler:rust-gate"] and
+  (.tests.results | map(select(.stage == "abi-v5-runtime-kit-windows" and .status == "failed" and .platform == "Windows" and .job_id == 12 and .job_url == "https://example.test/jobs/12")) | length) == 1 and
+  (.diagnostics | map(select(.stage == "abi-v5-runtime-kit-windows" and .identifier == "unavailable" and .log_path == "https://example.test/jobs/12")) | length) == 1 and
+  (.diagnostics | map(select(.identifier == "compiler::parser::case" and .log_path == "gate-evidence/raw-logs/rust.log")) | length) == 1
 ' "${TMP}/evidence.json" >/dev/null
+
+bash "${ROOT}/scripts/ci/render-compiler-release-notes.sh" "${TMP}/evidence.json" cli >"${TMP}/notes.md"
+grep -F -- '- compiler:abi-v5-runtime-kit-windows' "${TMP}/notes.md" >/dev/null
+grep -F -- '[GitHub Actions log](https://example.test/jobs/12)' "${TMP}/notes.md" >/dev/null
 
 if "${SCRIPT}" unstable 0.4.10-unstable compiler-sha superrepo-sha failure "${TMP}/empty.json" \
   "${TMP}/macos.json" "${TMP}/windows.json"; then

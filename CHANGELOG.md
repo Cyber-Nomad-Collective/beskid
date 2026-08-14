@@ -136,6 +136,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Preserve Linux, macOS, and Windows ABI-v5 matrix outcomes from the triggering
+  Compiler run in release state and notes, including a direct GitHub job-log link
+  when a native test lane fails.
+
 - Restore Auth Hub and platform-spec SSR by resolving TanStack Start and Router
   from one compatible workspace catalog, and require container health checks to
   exercise both the API and a rendered application route.

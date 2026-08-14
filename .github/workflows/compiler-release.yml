@@ -198,6 +198,19 @@ jobs:
           --name compiler-ci-report
           --dir gate-evidence
 
+      - name: Record triggering Compiler job outcomes
+        if: github.event_name == 'workflow_run'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p gate-evidence
+          gh api --paginate \
+            "repos/${GITHUB_REPOSITORY}/actions/runs/${{ github.event.workflow_run.id }}/jobs?per_page=100" \
+            --jq '.jobs' \
+            | jq -s '{jobs: add}' >gate-evidence/triggering-run-jobs.json
+
       - id: state
         name: Build machine-readable release state
         shell: bash
