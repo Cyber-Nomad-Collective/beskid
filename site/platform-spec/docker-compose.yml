@@ -38,7 +38,7 @@ services:
     volumes:
       - platform-spec-data:/app/site/platform-spec/data/runtime
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8460/api/health || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8460/api/health && wget -q --spider http://127.0.0.1:8460/platform-spec || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3

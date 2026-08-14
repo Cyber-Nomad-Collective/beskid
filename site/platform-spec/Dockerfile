@@ -63,6 +63,7 @@ RUN chmod +x /usr/local/bin/platform-spec-entrypoint
 EXPOSE 8460
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-	CMD wget -q --spider http://127.0.0.1:8460/api/health || exit 1
+	CMD wget -q --spider http://127.0.0.1:8460/api/health \
+	&& wget -q --spider http://127.0.0.1:8460/platform-spec || exit 1
 
 CMD ["platform-spec-entrypoint"]

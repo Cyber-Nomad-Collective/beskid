@@ -136,6 +136,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Restore Auth Hub and platform-spec SSR by resolving TanStack Start and Router
+  from one compatible workspace catalog, and require container health checks to
+  exercise both the API and a rendered application route.
+
 - Restore the downloads page by consuming channel-aware `release-state.json`, falling back explicitly from an unavailable stable channel to unstable, and listing only published binary assets.
 
 - Allow a publishable unstable release to continue after an independent platform
