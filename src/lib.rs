@@ -55,13 +55,13 @@ impl zed::Extension for BeskidExtension {
 fn language_server_binary_asset() -> zed::Result<(String, String)> {
     let (os, arch) = zed::current_platform();
     let (asset_name, binary_name) = match (os, arch) {
-        (zed::Os::Linux, zed::Architecture::X86_64) => {
+        (zed::Os::Linux, zed::Architecture::X8664) => {
             ("beskid_lsp-linux-amd64".to_string(), "beskid_lsp".to_string())
         }
         (zed::Os::Mac, zed::Architecture::Aarch64) => {
             ("beskid_lsp-darwin-arm64".to_string(), "beskid_lsp".to_string())
         }
-        (zed::Os::Windows, zed::Architecture::X86_64) => (
+        (zed::Os::Windows, zed::Architecture::X8664) => (
             "beskid_lsp-windows-amd64.exe".to_string(),
             "beskid_lsp.exe".to_string(),
         ),

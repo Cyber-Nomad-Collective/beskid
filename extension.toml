@@ -8,6 +8,10 @@ authors = [
 description = "Beskid language support with LSP for the Zed editor."
 repository = "https://github.com/Cyber-Nomad-Collective/beskid"
 
+[lib]
+kind = "Rust"
+version = "0.7.0"
+
 [grammars.beskid]
 repository = "https://github.com/Cyber-Nomad-Collective/beskid_treesitter"
 commit = "d27b6f966f1d841de57f622804211a6dd9f9c64e"

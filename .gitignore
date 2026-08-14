@@ -21,6 +21,8 @@ _refactor/
 .omo/
 .tmp-corelib-runtime/
 .pnpm-store/
+# Local Tree-sitter grammar source clone; the built artifact grammars/beskid.wasm is tracked.
+grammars/beskid/
 
 # Env files
 .env

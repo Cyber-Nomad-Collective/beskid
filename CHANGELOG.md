@@ -10,6 +10,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 ## [Unreleased]
 
 ### Changed
+- Package the Beskid Tree-sitter grammar with the Zed extension, restoring
+  automatic `.bd` detection and syntax highlighting.
+
 - Seed Beskid Corelib and Runtime as separate persistent Nexus catalog
   repositories on first server boot, with an operator opt-out.
 
