@@ -15,6 +15,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   machine-readable release state, and add structured GitHub diagnostics and
   complete release-note sections for stable and unstable channels, including
   repository-relative source locations.
+- Treat the native runtime-kit CLI smoke program's intentional `42` result as
+  success while retaining fail-closed handling for every unexpected exit code.
 
 - Refresh the agent project guide with verified setup, validation, authority,
   submodule, and prior-tooling boundaries.
