@@ -138,6 +138,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   job fails, and retain a machine-readable fallback diagnostic when report
   rendering itself fails.
 
+- Restore compiler syntax traces with readable `path:line:column (Construct)`
+  sites while retaining generation-safe AST keys and exact spans.
+
 - Remove the retired duplicate `__fiber_yield` compiler builtin so the
   manifest-owned ABI-v5 soft builtin is its sole analysis/runtime authority.
 
