@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Link Windows AOT executables through their validated Beskid entry symbol
+  instead of the unavailable CRT startup entrypoint.
+
 - Upload the CLI/LSP/bundle version compatibility metadata with every release stream so the public installers can resolve rolling releases.
 
 ### Changed
