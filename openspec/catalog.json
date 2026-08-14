@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "0cdc1bfda83cf7643456d3f523f56c04b117b208f2ae928720f681ed648af8e7",
+  "revision": "3489a8613a0d1f098d61acbe199a33df6ac7b42ffc70d223f262348b7121f1b3",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -38912,7 +38912,7 @@
       "path": "GUIDE.md",
       "title": "Beskid project guide",
       "authority": "informative",
-      "sourceHash": "8710b08b0119d76549f3406bfdb08bf85f0a836afaf5e2b819eead47545097c5",
+      "sourceHash": "e6869c73d06879fefce570169bd21b715327cd673d165d858b1592abc6ab9fcd",
       "standardLinks": [
         "/platform-spec/"
       ],
