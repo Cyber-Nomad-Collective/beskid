@@ -5,6 +5,7 @@ set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 compiler_workflow="${root}/.github/workflows/compiler.yml"
+release_workflow="${root}/.github/workflows/compiler-release.yml"
 open_vsx_workflow="${root}/.github/workflows/publish-open-vsx.yml"
 distribute_workflow="${root}/.github/workflows/distribute.yml"
 
@@ -20,18 +21,31 @@ grep -Fq 'name: Emit global release version' "${compiler_workflow}" || \
 grep -Fq 'name: release-version' "${compiler_workflow}" || \
   fail 'compiler workflow does not name the version artifact release-version'
 
-# `always()` lets build jobs evaluate after their dependencies settle; each
-# release build must still explicitly require the compiler quality gate.
+# Legacy in-workflow publishing is retired; the dedicated release workflow
+# consumes the completed Compiler result instead.
 for release_build in release-cli-build release-lsp-build release-bundle-build; do
   if ! awk -v job="${release_build}" '
     $0 == "  " job ":" { found = 1; next }
     found && /^  [^ ]/ { exit }
-    found && /needs\.gate\.result == '\''success'\''/ { ok = 1; exit }
+    found && /false &&/ { ok = 1; exit }
     END { exit !ok }
   ' "${compiler_workflow}"; then
-    fail "${release_build} can run without a successful compiler gate"
+    fail "${release_build} is not retired in favor of compiler-release.yml"
   fi
 done
+
+grep -Fq 'workflows: [Compiler]' "${release_workflow}" || \
+  fail 'compiler release workflow is not triggered by Compiler completion'
+grep -Fq 'github.event.workflow_run.run_number' "${release_workflow}" || \
+  fail 'compiler release workflow does not preserve the triggering Compiler run number'
+grep -Fq "github.event.workflow_run.conclusion == 'success' && 'stable' || 'unstable'" "${release_workflow}" || \
+  fail 'automatic compiler release channel does not follow the gate conclusion'
+grep -Fq 'bash ./scripts/ci/build-release-platform.sh' "${release_workflow}" || \
+  fail 'compiler release workflow does not use the structured platform wrapper'
+grep -Fq 'name: compiler-release-${{ matrix.target }}' "${release_workflow}" || \
+  fail 'compiler release workflow does not retain independent platform reports'
+grep -Fq 'name: compiler-release-state' "${release_workflow}" || \
+  fail 'compiler release workflow does not retain machine-readable release state'
 
 grep -Fq 'workflow_run:' "${open_vsx_workflow}" || \
   fail 'Open VSX is not triggered by a completed Compiler workflow run'
@@ -43,9 +57,10 @@ grep -Fq -- '--name release-version' "${open_vsx_workflow}" || \
   fail 'Open VSX does not consume the compiler release-version artifact'
 grep -Fq 'BESKID_RELEASE_VERSION: ${{ steps.release-version.outputs.version }}' "${open_vsx_workflow}" || \
   fail 'Open VSX does not pass the consumed compiler version to its publisher'
-resolver_workflows="$(rg -l 'resolve-beskid-version\.sh' "${root}/.github/workflows" -g '*.yml' -g '*.yaml' || true)"
-if [[ "${resolver_workflows}" != "${compiler_workflow}" ]]; then
-  fail "only compiler.yml may mint a release version (found: ${resolver_workflows:-none})"
+resolver_workflows="$(rg -l 'resolve-beskid-version\.sh' "${root}/.github/workflows" -g '*.yml' -g '*.yaml' | sort || true)"
+expected_resolvers="$(printf '%s\n%s\n' "${release_workflow}" "${compiler_workflow}" | sort)"
+if [[ "${resolver_workflows}" != "${expected_resolvers}" ]]; then
+  fail "only compiler and compiler-release workflows may resolve the central version (found: ${resolver_workflows:-none})"
 fi
 
 

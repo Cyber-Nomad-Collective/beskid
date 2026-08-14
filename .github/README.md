@@ -75,7 +75,25 @@ runtime telemetry, and rollback evidence can be correlated.
 
 Replacement validation is **script-first** — see [`scripts/ci/`](../scripts/ci/) and [`scripts/README.md`](../scripts/README.md).
 
-**Compiler releases:** set repo secret `COMPILER_RELEASE_TOKEN` (or reuse `COMPILER_SUBMODULE_TOKEN`) with `contents: write` on `beskid_compiler`. The docs site prebuild runs `sync:cli-version` against the rolling `cli-stable` release (see `site/website` / trudoc).
+**Compiler releases:** `compiler.yml` remains the authoritative compiler/LSP
+test workflow. The separate `compiler-release.yml` consumes its completed run:
+a successful gate selects stable, while any non-successful automatic run selects
+unstable. Stable requires all native platform CLI/LSP/bundle builds; unstable
+publishes when at least one platform produces both CLI and LSP and records all
+test/build failures in `release-state.json` and the release notes. Set repo
+secret `COMPILER_RELEASE_TOKEN` (or reuse `COMPILER_SUBMODULE_TOKEN`) with
+`contents: write` on `beskid_compiler`.
+
+Compiler, LSP, Corelib, and release build gates retain raw logs plus structured
+failure JSON. GitHub summaries and annotations include component, stage,
+platform, command, an emitted/derivable qualified identifier when available,
+source path and line/column, and a concise reason. An unavailable identifier is
+reported explicitly; opaque compiler node keys are preserved as evidence and
+are not presented as human-readable symbols.
+
+The docs site prebuild still reads the rolling `cli-stable` release. Audit the
+download site and other version consumers only after this release workflow has
+passed on GitHub Actions.
 
 ## Local validation
 

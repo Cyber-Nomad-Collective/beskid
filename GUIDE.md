@@ -1,6 +1,8 @@
 # Beskid project guide
 
-Basis for parallel agent work in this repository. Complement with `AGENTS.md` and the global orchestrator at `~/.agents/ORCHESTRATOR.md`.
+Start here for agent work in this repository. Then read `AGENTS.md` and the
+nearest nested `AGENTS.md` or README for the area being changed. The global
+orchestrator, when installed, lives at `~/.agents/ORCHESTRATOR.md`.
 
 ## Purpose
 
@@ -18,25 +20,42 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 | `beskid_nexus/` | Code/document/standard graph indexing and explorer |
 | `beskid_web_common/` | Published shared TypeScript packages shared by web applications |
 | `beskid_infra/` | Coolify Compose, OpenBao, monitoring, deployment helpers, and infrastructure docs |
-| `pckg/` | Rust package registry, React client, and GitHub-only Auth Hub identity |
+| `pckg/` | Package registry service and web client; browser identity is delegated to the shared Auth Hub |
 | `beskid_vscode/`, `beskid_treesitter/`, `beskid_bsol/`, `beskid_distrib/`, `beskid_templates/` | Editor, grammar, BSOL, distribution, and template subprojects |
+| `site/auth/`, `site/learn/` | Shared GitHub OAuth hub and interactive learning application |
 | `.github/workflows/`, `scripts/ci/` | Root CI orchestration, reusable delivery contracts, and local validation |
+
+Most major product directories above are Git submodules. Before editing one,
+run `git submodule status` and treat its own repository status, instructions,
+tests, and changelog as separate from the superrepo root.
 
 ## Commands
 
 | Task | Command |
 |---|---|
 | Checkout/setup | `./scripts/setup-environment.sh` |
+| Initialize selected submodules only | `./scripts/setup-environment.sh --submodules <path>...` |
+| Check required contributor tools | `just deps-check` |
 | Install root web dependencies | `pnpm install` |
+| Run host-callable preflight gates | `just gate` |
+| Add static workflow-policy checks | `just gate-full` |
 | Rebuild the OpenSpec read catalog | `pnpm openspec:catalog` |
 | Validate OpenSpec and provenance | `pnpm openspec:validate` |
 | Build platform-spec | `pnpm --cwd site/platform-spec run build` |
 | Test platform-spec | `pnpm --cwd site/platform-spec run test` |
 | Build website | `pnpm --cwd site/website run build` |
 | Test Tracker | `pnpm --cwd beskid_tracker run test` |
+| Run the focused Corelib spine test | `BESKID_CORELIB_SPINE_SMOKE=1 just test-corelib-spine` |
 | Install compiler tools | `just replace` |
 | Rebuild VS Code extension | `just vscode` |
-| Inspect GitNexus index | `node .gitnexus/run.cjs status` |
+| List root recipes | `just --list` |
+
+`just gate` deliberately does not run the compiler gate; that gate is reserved
+for Blacksmith Testbox. Use the compiler repository's own documented commands
+for focused compiler work. `just gate-full` additionally requires `actionlint`.
+Private `@beskid/*` packages may require `NODE_AUTH_TOKEN`; the preflight script
+reports applicable skips rather than treating missing package credentials as a
+successful package gate.
 
 ## Processes
 
@@ -47,20 +66,22 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 5. Run focused tests plus strict OpenSpec/provenance validation and GitNexus change detection before commit.
 6. Update `CHANGELOG.md`; update `GLOSSARY.md` when canonical terminology changes. Do not add `Co-authored-by` trailers.
 
-## ABI v5 rewrite invariants
+## Authority boundaries
 
-- Expanded AST nodes plus generation-safe Salsa facts are the sole semantic representation.
-- Generated ISLE rules are the sole language-operation lowering layer; every emitted function must pass `verify_function`.
-- ABI v5 calls manifest-declared `beskid_rt_v5_*` symbols directly; do not reintroduce ABI-v4 fallback or handler dispatch.
-- `compiler/runtime_manifest.bsol` and generated `abi.json` are the symbol/layout authority; never hand-edit generated ABI files.
-- The supported target set is `x86_64-unknown-linux-gnu`, `aarch64-apple-darwin`, and `x86_64-pc-windows-msvc`.
-- Runtime intrinsics are available only to the canonical runtime compilation through a non-forgeable trusted capability.
+- Normative language and platform requirements live in `openspec/specs/`.
+  `openspec/catalog.json` is the generated identity and provenance catalog.
+- `site/platform-spec/` renders and integrates the standard. Its SQLite and
+  Memgraph stores are projections, not alternate normative sources.
+- `site/website/` contains the informative Book and landing documentation.
+- Compiler implementation and Corelib sources live under `compiler/`; consult
+  that nested repository before relying on release-specific implementation
+  invariants.
+- Tracker's SQLite model is delivery authority. Its GitHub synchronization is
+  limited to the supported public bug surface.
 
 ## Agent boundaries
 
 Parallel agents must use disjoint write scopes. Knowledge files live outside the repository and must never be pushed. Before an existing-symbol edit, run GitNexus upstream impact analysis; before a commit, run focused tests and GitNexus change detection.
-
-For the 0.4 release critical path (`hir-free-isle-abi-v5-native-runtime` / Linear CYB-5–44): **Codex** owns compiler/runtime behavior, normative OpenSpec requirements and checkboxes, integration, review, issue completion, and the release decision. **Cursor** is limited to bounded W7 support leaves (CYB-68–71): documentation/OpenSpec bookkeeping, configuration checks, command-log and package inventories, and mechanical audit drafts. Cursor evidence hands off to a Codex-owned parent; Cursor must not mark OpenSpec checkboxes complete, claim release-ready, or close CYB-42 / CYB-44.
 
 | Domain | Paths | Knowledge doc |
 |---|---|---|
@@ -74,12 +95,26 @@ For the 0.4 release critical path (`hir-free-isle-abi-v5-native-runtime` / Linea
 ## Prior agent and IDE artifacts
 
 - Root instructions: `AGENTS.md`, `CLAUDE.md`.
-- Cursor: `.cursor/` with rules, hooks, plans, skills, and agents.
-- Claude-compatible skills: `.claude/skills/`.
-- OpenCode: `.opencode/`.
-- Additional orchestration evidence: `.omo/`, `.superpowers/`, `docs/superpowers/`, `docs/orchestrate/`.
-- GitNexus index: `.gitnexus/`; verify freshness before relying on impact results.
-- Existing user work is present in the root and several submodules. Always inspect `git status` before edits and never restore unrelated deletions.
+- Additional orchestration evidence: `docs/superpowers/`, `docs/orchestrate/`,
+  and domain notes under `~/.agents/knowledge/` (outside the repository).
+- GitNexus MCP currently reports the `beskid` index behind the checkout. This
+  worktree has no `.gitnexus/run.cjs`; refresh from a checkout that contains the
+  runner before treating graph results as current.
+- `.claude/`, `.cursor/`, `.windsurf/`, `.opencode/`, `.omo/`, and
+  `.superpowers/` are not present in this worktree. Do not infer tool-specific
+  policy from absent local artifacts.
+- Always inspect root and affected submodule status before edits. Never restore,
+  stage, or commit unrelated changes, and never commit external knowledge files.
+
+## Open questions before broad work
+
+- Which nested repository owns the requested change and release note?
+- Does the change alter observable behavior and therefore require an OpenSpec
+  delta before implementation?
+- Which focused nested-repository test is required in addition to root
+  preflight, especially for compiler work that root preflight excludes?
+- Does the task require private package access, deployment credentials, or
+  another external authority that must fail closed when unavailable?
 
 ## Related docs
 

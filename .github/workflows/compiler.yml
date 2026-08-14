@@ -73,10 +73,28 @@ jobs:
           compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
 
       - name: Compiler Rust gate
-        run: bash ./scripts/ci/compiler-rust-gate.sh
+        run: >-
+          bash ./scripts/ci/run-ci-reported-command.sh
+          compiler rust-gate "${{ runner.os }}"
+          "${{ runner.temp }}/compiler-ci-report" --
+          bash ./scripts/ci/compiler-rust-gate.sh
 
       - name: LSP command contract gate
-        run: bash ./scripts/ci/lsp-command-contract-gate.sh
+        if: always()
+        run: >-
+          bash ./scripts/ci/run-ci-reported-command.sh
+          lsp command-contract-gate "${{ runner.os }}"
+          "${{ runner.temp }}/compiler-ci-report" --
+          bash ./scripts/ci/lsp-command-contract-gate.sh
+
+      - name: Upload compiler and LSP diagnostic report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: compiler-ci-report
+          path: ${{ runner.temp }}/compiler-ci-report
+          if-no-files-found: warn
+          retention-days: 14
 
   windows-runtime-kit-matrix:
     name: Windows ABI-v5 runtime-kit matrix
@@ -298,6 +316,7 @@ jobs:
     name: Build CLI (${{ matrix.asset_name }})
     if: >-
       ${{
+        false &&
         always() &&
         needs.gate.result == 'success' &&
         (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
@@ -417,6 +436,7 @@ jobs:
     name: Build LSP (${{ matrix.asset_name }})
     if: >-
       ${{
+        false &&
         always() &&
         needs.gate.result == 'success' &&
         (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
@@ -536,6 +556,7 @@ jobs:
     name: Build direct-install bundle (${{ matrix.target }})
     if: >-
       ${{
+        false &&
         always() &&
         needs.gate.result == 'success' &&
         (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&

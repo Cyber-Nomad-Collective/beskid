@@ -7,7 +7,7 @@
 # rolling tag (cli-stable / lsp-stable, default) or a provided release channel,
 # exist. Operates on a directory of assets produced by build-release-artifact.sh.
 #
-# Usage: publish-release-stream.sh <stream> <release-version> <compiler-sha> <assets-dir> [phase] [release-channel]
+# Usage: publish-release-stream.sh <stream> <release-version> <compiler-sha> <assets-dir> [phase] [release-channel] [release-state]
 #   stream           cli | lsp | bundle
 #   release-version  resolved semver
 #   compiler-sha     compiler submodule HEAD the release was built from
@@ -23,6 +23,7 @@ COMPILER_SHA="${3:?compiler-sha}"
 ASSETS_DIR="${4:?assets-dir}"
 PHASE="${5:-both}"
 RELEASE_CHANNEL="${6:-stable}"
+RELEASE_STATE="${7:-}"
 
 REPO="Cyber-Nomad-Collective/beskid_compiler"
 
@@ -41,7 +42,7 @@ case "$STREAM" in
     esac
     immutable_title="Beskid CLI v${RELEASE_VERSION}"
     rolling_title="Beskid CLI (${RELEASE_CHANNEL} rolling)"
-    asset_glob="beskid-linux-amd64 beskid-darwin-arm64 beskid-windows-amd64.exe"
+    asset_patterns=(beskid-linux-amd64 beskid-darwin-arm64 beskid-windows-amd64.exe)
     ;;
   lsp)
     version_file="lsp-version.txt"
@@ -52,7 +53,7 @@ case "$STREAM" in
     esac
     immutable_title="Beskid LSP v${RELEASE_VERSION}"
     rolling_title="Beskid LSP (${RELEASE_CHANNEL} rolling)"
-    asset_glob="beskid_lsp-*"
+    asset_patterns=(beskid_lsp-*)
     ;;
   bundle)
     version_file="bundle-version.txt"
@@ -60,7 +61,7 @@ case "$STREAM" in
     rolling_tag="${RELEASE_CHANNEL}"
     immutable_title="Beskid v${RELEASE_VERSION}"
     rolling_title="Beskid (${RELEASE_CHANNEL} rolling)"
-    asset_glob="beskid-*.tar.gz beskid-release.json"
+    asset_patterns=(beskid-*.tar.gz beskid-release.json)
     ;;
   *) echo "Unsupported release stream: $STREAM" >&2; exit 1 ;;
 esac
@@ -72,30 +73,42 @@ esac
 
 : "${GH_TOKEN:?GH_TOKEN must be exported (contents:write on ${REPO})}"
 
-stream_upper="$(printf '%s' "$STREAM" | tr '[:lower:]' '[:upper:]')"
+[[ -n "${RELEASE_STATE}" && -f "${RELEASE_STATE}" ]] || {
+  echo 'release-state.json is required for publication' >&2
+  exit 1
+}
+RELEASE_STATE="$(cd "$(dirname "${RELEASE_STATE}")" && pwd)/$(basename "${RELEASE_STATE}")"
 
-immutable_body="Immutable ${stream_upper} release for version \`${RELEASE_VERSION}\`.
-
-**Commit:** \`${COMPILER_SHA}\`
-
-For the rolling build that tracks \`main\`, use the [${rolling_tag}](https://github.com/${REPO}/releases/tag/${rolling_tag}) release instead."
-
-rolling_body="Rolling ${stream_upper} build.
-
-**Version string:** \`${RELEASE_VERSION}\`
-**Commit:** \`${COMPILER_SHA}\`"
+notes_file="$(mktemp)"
+trap 'rm -f "${notes_file}"' EXIT
+bash "$(dirname "$0")/render-compiler-release-notes.sh" "${RELEASE_STATE}" "${STREAM}" >"${notes_file}"
 
 cd "$ASSETS_DIR"
 printf '%s\n' "$RELEASE_VERSION" > "$version_file"
+if [[ "${RELEASE_STATE}" != "$(pwd)/release-state.json" ]]; then
+  cp "${RELEASE_STATE}" release-state.json
+fi
+
+shopt -s nullglob
+assets=()
+for pattern in "${asset_patterns[@]}"; do
+  for asset in ${pattern}; do assets+=("${asset}"); done
+done
+[[ "${#assets[@]}" -gt 0 ]] || {
+  echo "no ${STREAM} assets are available for publication" >&2
+  exit 1
+}
+assets+=(release-state.json)
 
 # Immutable tag: create if missing, then upload assets. This always happens
 # before the caller can advance rolling aliases.
 if [[ "$PHASE" == "immutable" || "$PHASE" == "both" ]]; then
   if gh release view "$immutable_tag" --repo "$REPO" >/dev/null 2>&1; then
-    gh release upload "$immutable_tag" --repo "$REPO" $asset_glob
+    gh release edit "$immutable_tag" --repo "$REPO" --notes-file "${notes_file}"
+    gh release upload "$immutable_tag" --repo "$REPO" "${assets[@]}" --clobber
   else
     gh release create "$immutable_tag" --repo "$REPO" --target "$COMPILER_SHA" \
-      --title "$immutable_title" --notes "$immutable_body" $asset_glob
+      --title "$immutable_title" --notes-file "${notes_file}" "${assets[@]}"
   fi
 fi
 
@@ -105,11 +118,11 @@ if [[ "$PHASE" == "rolling" || "$PHASE" == "both" ]]; then
   if gh release view "$rolling_tag" --repo "$REPO" >/dev/null 2>&1; then
     # Uploading replacement assets does not move the tag; retarget it so the
     # rolling release metadata and assets describe the same compiler build.
-    gh release edit "$rolling_tag" --repo "$REPO" --target "$COMPILER_SHA"
-    gh release upload "$rolling_tag" --repo "$REPO" $asset_glob --clobber
+    gh release edit "$rolling_tag" --repo "$REPO" --target "$COMPILER_SHA" --notes-file "${notes_file}"
+    gh release upload "$rolling_tag" --repo "$REPO" "${assets[@]}" --clobber
   else
     gh release create "$rolling_tag" --repo "$REPO" --target "$COMPILER_SHA" \
-      --title "$rolling_title" --notes "$rolling_body" $asset_glob
+      --title "$rolling_title" --notes-file "${notes_file}" "${assets[@]}"
   fi
 fi
 

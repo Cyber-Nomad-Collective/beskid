@@ -32,6 +32,10 @@ runners (the compiler gate is also Testbox-compatible). Dagger is retired.
 | [`compute-cli-version.sh`](ci/compute-cli-version.sh) | Compiler-minted global `0.4.<build>` version |
 | [`build-release-artifact.sh`](ci/build-release-artifact.sh) | Native CLI/LSP release build |
 | [`publish-release-stream.sh`](ci/publish-release-stream.sh) | `gh release` for `cli-*` / `lsp-*` streams |
+| [`build-release-platform.sh`](ci/build-release-platform.sh) | Independent native CLI/LSP/bundle build with retained logs and structured failures |
+| [`build-release-state.sh`](ci/build-release-state.sh) | Stable/unstable publication eligibility and machine-readable release state |
+| [`render-compiler-release-notes.sh`](ci/render-compiler-release-notes.sh) | Human-readable GitHub release notes generated from release state |
+| [`run-ci-reported-command.sh`](ci/run-ci-reported-command.sh) | GitHub annotations, summaries, raw logs, and JSON for failed gate commands |
 | [`corelib-publish.sh`](ci/corelib-publish.sh) | Corelib workspace → pckg |
 | [`open-vsx-publish.sh`](ci/open-vsx-publish.sh) | Open VSX publish (native) |
 | [`resolve-coolify-project-uuid.sh`](ci/resolve-coolify-project-uuid.sh) | Operator: resolve **Beskid** Coolify project UUID |

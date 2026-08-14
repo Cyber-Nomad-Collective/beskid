@@ -29,8 +29,13 @@ assert_fails() {
 
 assert_equals \
   '0.4.481' \
-  "$(GITHUB_REF=refs/heads/main GITHUB_RUN_NUMBER=481 bash "${resolver}")" \
+  "$(GITHUB_REF=refs/heads/main GITHUB_RUN_NUMBER=481 RELEASE_CHANNEL=stable bash "${resolver}")" \
   'main mints the global version directly from its GitHub run number'
+
+assert_equals \
+  '0.4.481-unstable' \
+  "$(GITHUB_REF=refs/heads/main GITHUB_RUN_NUMBER=481 RELEASE_CHANNEL=unstable bash "${resolver}")" \
+  'unstable appends exactly the channel prerelease suffix'
 
 assert_equals \
   '0.4.481' \
@@ -58,5 +63,9 @@ assert_fails \
 assert_fails \
   'a feature branch cannot mint a distributed version' \
   env GITHUB_REF=refs/heads/feature GITHUB_RUN_NUMBER=481 bash "${resolver}"
+
+assert_fails \
+  'an unsupported release channel is rejected' \
+  env GITHUB_REF=refs/heads/main GITHUB_RUN_NUMBER=481 RELEASE_CHANNEL=preview bash "${resolver}"
 
 printf 'Beskid version resolver tests OK\n'

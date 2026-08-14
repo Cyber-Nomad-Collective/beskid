@@ -72,7 +72,11 @@ jobs:
       - name: Corelib quality + test gate (native)
         env:
           CORELIB_REPORT_DIR: ${{ runner.temp }}/corelib-build-report
-        run: bash ./scripts/ci/corelib-gate.sh
+        run: >-
+          bash ./scripts/ci/run-ci-reported-command.sh
+          corelib quality-and-beskid-tests "${{ runner.os }}"
+          "${{ runner.temp }}/corelib-build-report" --
+          bash ./scripts/ci/corelib-gate.sh
 
       # The gate writes the Markdown report through an EXIT trap, including
       # failures before the test suite starts. Retain it after a failed gate;
@@ -84,9 +88,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: corelib-build-report
-          # The gate keeps raw command logs in a separate temporary directory;
-          # publish only the sanitized Markdown report.
-          path: ${{ runner.temp }}/corelib-build-report/corelib-build-report.md
+          path: ${{ runner.temp }}/corelib-build-report
           if-no-files-found: warn
           retention-days: 14
 

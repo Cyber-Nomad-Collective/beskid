@@ -1,0 +1,281 @@
+# Native CLI/LSP release publication after the authoritative Compiler workflow.
+name: Compiler release
+
+on:
+  workflow_run:
+    workflows: [Compiler]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      release_channel:
+        description: Release channel
+        required: true
+        default: unstable
+        type: choice
+        options: [stable, unstable]
+      compiler_run_number:
+        description: Compiler workflow run number used for 0.4.<run>
+        required: true
+        type: string
+
+concurrency:
+  group: compiler-release-${{ github.event.workflow_run.head_sha || github.sha }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  version:
+    name: Resolve release state inputs
+    if: >-
+      ${{
+        (github.event_name == 'workflow_run' && github.event.workflow_run.head_branch == 'main' &&
+          (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure')) ||
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+      }}
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+      release_channel: ${{ steps.release.outputs.channel }}
+      gate_result: ${{ steps.release.outputs.gate_result }}
+      source_sha: ${{ steps.release.outputs.source_sha }}
+      compiler_sha: ${{ steps.compiler.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-compiler-submodule
+        with:
+          compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+
+      - id: compiler
+        name: Record compiler commit
+        shell: bash
+        run: echo "sha=$(git -C compiler rev-parse HEAD)" >>"${GITHUB_OUTPUT}"
+
+      - id: release
+        name: Resolve channel and version
+        shell: bash
+        env:
+          AUTOMATIC_CHANNEL: ${{ github.event.workflow_run.conclusion == 'success' && 'stable' || 'unstable' }}
+          AUTOMATIC_GATE_RESULT: ${{ github.event.workflow_run.conclusion || 'unknown' }}
+          AUTOMATIC_RUN_NUMBER: ${{ github.event.workflow_run.run_number }}
+          AUTOMATIC_SOURCE_SHA: ${{ github.event.workflow_run.head_sha }}
+          MANUAL_CHANNEL: ${{ inputs.release_channel }}
+          MANUAL_RUN_NUMBER: ${{ inputs.compiler_run_number }}
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" == workflow_run ]]; then
+            channel="${AUTOMATIC_CHANNEL}"
+            gate_result="${AUTOMATIC_GATE_RESULT}"
+            run_number="${AUTOMATIC_RUN_NUMBER}"
+            source_sha="${AUTOMATIC_SOURCE_SHA}"
+          else
+            channel="${MANUAL_CHANNEL}"
+            gate_result="unknown"
+            run_number="${MANUAL_RUN_NUMBER}"
+            source_sha="${GITHUB_SHA}"
+          fi
+          if [[ "${channel}" == stable && "${gate_result}" != success ]]; then
+            echo 'A stable release requires a successful Compiler workflow result.' >&2
+            exit 1
+          fi
+          version="$(GITHUB_REF=refs/heads/main GITHUB_RUN_NUMBER="${run_number}" RELEASE_CHANNEL="${channel}" bash ./scripts/ci/resolve-beskid-version.sh)"
+          {
+            echo "channel=${channel}"
+            echo "gate_result=${gate_result}"
+            echo "source_sha=${source_sha}"
+            echo "version=${version}"
+          } >>"${GITHUB_OUTPUT}"
+
+  platform:
+    name: Native pair (${{ matrix.target }})
+    needs: version
+    if: ${{ needs.version.result == 'success' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            cli_asset: beskid-linux-amd64
+            lsp_asset: beskid_lsp-linux-amd64
+            bundle_asset: beskid-x86_64-unknown-linux-gnu.tar.gz
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            cli_asset: beskid-darwin-arm64
+            lsp_asset: beskid_lsp-darwin-arm64
+            bundle_asset: beskid-aarch64-apple-darwin.tar.gz
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            cli_asset: beskid-windows-amd64.exe
+            lsp_asset: beskid_lsp-windows-amd64.exe
+            bundle_asset: beskid-x86_64-pc-windows-msvc.tar.gz
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.version.outputs.source_sha }}
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-compiler-submodule
+        with:
+          compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Setup Visual Studio environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Force the Visual Studio linker
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $linker = Join-Path $env:VCToolsInstallDir 'bin\Hostx64\x64\link.exe'
+          if (-not (Test-Path -LiteralPath $linker -PathType Leaf)) { throw "MSVC linker not found: $linker" }
+          "CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER=$linker" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          workspaces: compiler
+
+      - name: Build native CLI, LSP, and bundle with structured diagnostics
+        shell: bash
+        run: >-
+          bash ./scripts/ci/build-release-platform.sh
+          "${{ matrix.target }}"
+          "${{ matrix.cli_asset }}"
+          "${{ matrix.lsp_asset }}"
+          "${{ needs.version.outputs.version }}"
+          "${{ needs.version.outputs.release_channel }}"
+          release-output
+          "${{ matrix.bundle_asset }}"
+
+      - name: Upload native artifacts, result, and raw logs
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: compiler-release-${{ matrix.target }}
+          path: release-output
+          if-no-files-found: warn
+          retention-days: 14
+
+  state:
+    name: Aggregate release state
+    needs: [version, platform]
+    if: ${{ always() && needs.version.result == 'success' }}
+    runs-on: ubuntu-latest
+    outputs:
+      publishable: ${{ steps.state.outcome == 'success' }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.version.outputs.source_sha }}
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          path: release-assets
+          pattern: compiler-release-*
+          merge-multiple: true
+
+      - name: Download triggering Compiler diagnostic evidence
+        if: github.event_name == 'workflow_run'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh run download "${{ github.event.workflow_run.id }}"
+          --repo "${{ github.repository }}"
+          --name compiler-ci-report
+          --dir gate-evidence
+
+      - id: state
+        name: Build machine-readable release state
+        shell: bash
+        env:
+          GATE_REPORT_DIR: ${{ github.workspace }}/gate-evidence
+        run: |
+          set -euo pipefail
+          mapfile -t results < <(find release-assets -name 'platform-result-*.json' -type f | sort)
+          bash ./scripts/ci/build-release-state.sh \
+            "${{ needs.version.outputs.release_channel }}" \
+            "${{ needs.version.outputs.version }}" \
+            "${{ needs.version.outputs.compiler_sha }}" \
+            "${{ needs.version.outputs.source_sha }}" \
+            "${{ needs.version.outputs.gate_result }}" \
+            release-assets/release-state.json "${results[@]}"
+          if [[ -d gate-evidence ]]; then cp -R gate-evidence release-assets/gate-evidence; fi
+
+      - name: Render release report
+        if: always()
+        shell: bash
+        run: |
+          if [[ -f release-assets/release-state.json ]]; then
+            bash ./scripts/ci/render-compiler-release-notes.sh release-assets/release-state.json release | tee release-assets/release-report.md >>"${GITHUB_STEP_SUMMARY}"
+          fi
+
+      - name: Upload release state and report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: compiler-release-state
+          path: |
+            release-assets/release-state.json
+            release-assets/release-report.md
+            release-assets/gate-evidence
+          if-no-files-found: warn
+          retention-days: 30
+
+  publish:
+    name: Publish compiler release
+    needs: [version, state]
+    if: ${{ needs.state.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.version.outputs.source_sha }}
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          path: release-assets
+          pattern: compiler-release-*
+          merge-multiple: true
+
+      - name: Publish immutable and rolling streams
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.COMPILER_RELEASE_TOKEN || secrets.COMPILER_SUBMODULE_TOKEN }}
+          VERSION: ${{ needs.version.outputs.version }}
+          CHANNEL: ${{ needs.version.outputs.release_channel }}
+          COMPILER_SHA: ${{ needs.version.outputs.compiler_sha }}
+        run: |
+          set -euo pipefail
+          state="${PWD}/release-assets/release-state.json"
+          bash ./scripts/ci/publish-release-stream.sh cli "${VERSION}" "${COMPILER_SHA}" release-assets both "${CHANNEL}" "${state}"
+          bash ./scripts/ci/publish-release-stream.sh lsp "${VERSION}" "${COMPILER_SHA}" release-assets both "${CHANNEL}" "${state}"
+          shopt -s nullglob
+          bundles=(release-assets/beskid-*.tar.gz)
+          if [[ "${#bundles[@]}" -eq 3 ]]; then
+            cd release-assets
+            release_url="https://github.com/Cyber-Nomad-Collective/beskid_compiler/releases/download/v${VERSION}"
+            bash ../scripts/ci/build-beskid-release-manifest.sh "${VERSION}" "${COMPILER_SHA}" beskid-release.json \
+              "x86_64-unknown-linux-gnu|${release_url}/beskid-x86_64-unknown-linux-gnu.tar.gz|$(sha256sum beskid-x86_64-unknown-linux-gnu.tar.gz | awk '{print $1}')" \
+              "aarch64-apple-darwin|${release_url}/beskid-aarch64-apple-darwin.tar.gz|$(sha256sum beskid-aarch64-apple-darwin.tar.gz | awk '{print $1}')" \
+              "x86_64-pc-windows-msvc|${release_url}/beskid-x86_64-pc-windows-msvc.tar.gz|$(sha256sum beskid-x86_64-pc-windows-msvc.tar.gz | awk '{print $1}')"
+            cd ..
+            bash ./scripts/ci/publish-release-stream.sh bundle "${VERSION}" "${COMPILER_SHA}" release-assets both "${CHANNEL}" "${state}"
+          fi

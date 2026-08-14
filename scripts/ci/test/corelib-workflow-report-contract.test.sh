@@ -13,8 +13,10 @@ assert_contains "${WORKFLOW}" "BESKID_COMPILER_TRACE: \"1\"" \
   "the Corelib gate enables compiler trace evidence"
 assert_contains "${WORKFLOW}" "name: corelib-build-report" \
   "the report artifact has a stable name"
-assert_contains "${WORKFLOW}" "path: \${{ runner.temp }}/corelib-build-report/corelib-build-report.md" \
-  "the report artifact uploads only sanitized Markdown, never raw command logs"
+assert_contains "${WORKFLOW}" "path: \${{ runner.temp }}/corelib-build-report" \
+  "the report artifact uploads Markdown, structured failures, and retained raw logs"
+assert_contains "${WORKFLOW}" "run-ci-reported-command.sh" \
+  "the Corelib gate uses the shared structured diagnostic wrapper"
 assert_contains "${WORKFLOW}" "if: always()" \
   "the report upload runs after failures"
 assert_contains "${WORKFLOW}" "if-no-files-found: warn" \
