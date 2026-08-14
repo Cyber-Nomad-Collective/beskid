@@ -134,6 +134,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Unblock the compiler Rust gate by clearing current Clippy violations,
+  restoring mixed-width integer lowering, and aligning exact ABI/codegen test
+  expectations with the manifest-owned fiber-yield and lambda surfaces.
+
 - Preserve exact numeric widths in Corelib console rendering and ASCII casing,
   and route nested `if` conditions through the normal ISLE expression lowering
   path so diagnostics retain their precise source attribution.
