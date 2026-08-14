@@ -134,6 +134,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Remove the retired duplicate `__fiber_yield` compiler builtin so the
+  manifest-owned ABI-v5 soft builtin is its sole analysis/runtime authority.
+
 - Unblock the compiler Rust gate by clearing current Clippy violations,
   restoring mixed-width integer lowering, and aligning exact ABI/codegen test
   expectations with the manifest-owned fiber-yield and lambda surfaces.
