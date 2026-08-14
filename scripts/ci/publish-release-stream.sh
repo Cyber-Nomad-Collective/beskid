@@ -98,7 +98,9 @@ done
   echo "no ${STREAM} assets are available for publication" >&2
   exit 1
 }
-assets+=(release-state.json)
+# release-state.json is the machine-readable authority. Keep the small stream
+# version file as a compatibility projection for the public installers.
+assets+=("${version_file}" release-state.json)
 
 # Immutable tag: create if missing, then upload assets. This always happens
 # before the caller can advance rolling aliases.

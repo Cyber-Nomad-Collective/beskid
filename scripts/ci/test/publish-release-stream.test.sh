@@ -34,6 +34,8 @@ GH_LOG="${TMP}/gh.log" GH_NOTES="${TMP}/notes.md" PATH="${TMP}/bin:${PATH}" GH_T
 
 grep -Fq 'release create cli-v1.2.3-unstable' "${TMP}/gh.log" || fail "immutable release was not created"
 grep -Fq 'release-state.json' "${TMP}/gh.log" || fail "release state was not uploaded"
+grep -Fq 'cli-version.txt' "${TMP}/gh.log" || fail "CLI version compatibility metadata was not uploaded"
+[[ "$(cat "${TMP}/assets/cli-version.txt")" == '1.2.3-unstable' ]] || fail "CLI version metadata has the wrong version"
 for heading in '## Channel' '## Available artifacts' '## Missing artifacts' '## Successful tests' '## Failed tests' '## Commit provenance'; do
   grep -Fq "${heading}" "${TMP}/notes.md" || fail "release notes missing ${heading}"
 done

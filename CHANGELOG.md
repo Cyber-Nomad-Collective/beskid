@@ -9,6 +9,10 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Fixed
+
+- Upload the CLI/LSP/bundle version compatibility metadata with every release stream so the public installers can resolve rolling releases.
+
 ### Changed
 - Split compiler publication from the authoritative test workflow, automatically
   publish best-effort `-unstable` native releases after failed gates, retain a
