@@ -13,7 +13,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 - Split compiler publication from the authoritative test workflow, automatically
   publish best-effort `-unstable` native releases after failed gates, retain a
   machine-readable release state, and add structured GitHub diagnostics and
-  complete release-note sections for stable and unstable channels.
+  complete release-note sections for stable and unstable channels, including
+  repository-relative source locations.
 
 - Refresh the agent project guide with verified setup, validation, authority,
   submodule, and prior-tooling boundaries.

@@ -38,6 +38,10 @@ if [[ -n "${location}" ]]; then
     */beskid/beskid/*) file="${file#*/beskid/beskid/}" ;;
     */beskid/*) file="${file#*/beskid/}" ;;
   esac
+  case "${component}:${file}" in
+    compiler:crates/*|lsp:crates/*) file="compiler/${file}" ;;
+    corelib:packages/*|corelib:beskid_corelib/*) file="compiler/corelib/${file}" ;;
+  esac
 else
   file=unavailable
   line=0

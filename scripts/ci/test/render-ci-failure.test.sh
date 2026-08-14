@@ -45,4 +45,10 @@ printf 'error: linker failed without a source location\n' >"${TMP}/link.log"
 jq -e '.identifier == "unavailable" and .location.file == "unavailable"' \
   "${TMP}/link.json" >/dev/null
 
+printf 'error: lint failed\n  --> crates/beskid_queries/src/lib.rs:9:4\n' >"${TMP}/relative.log"
+"${SCRIPT}" compiler rust-gate linux 'cargo clippy --workspace' \
+  "${TMP}/relative.log" raw-logs/relative.log "${TMP}/relative.json"
+jq -e '.location.file == "compiler/crates/beskid_queries/src/lib.rs"' \
+  "${TMP}/relative.json" >/dev/null
+
 echo 'render CI failure tests OK'
