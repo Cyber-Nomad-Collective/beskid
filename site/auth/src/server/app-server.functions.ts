@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 
 import {
 	loadAdminDashboard,
+	loadAdminPairingRepairTargets,
 	loadHomeData,
 	loadLoginPageContext,
 	loadOnboardingGate,
@@ -42,6 +43,10 @@ export const fetchPairingRequests = createServerFn({ method: "GET" }).handler(
 export const fetchPairingRequestDetail = createServerFn({ method: "GET" })
 	.inputValidator((data: { requestId: string }) => data)
 	.handler(async ({ data }) => loadPairingRequestDetail(data.requestId));
+
+export const repairServicePairingsFn = createServerFn({ method: "POST" })
+	.inputValidator((data: { appId?: string; force?: boolean }) => data)
+	.handler(async ({ data }) => loadAdminPairingRepairTargets(data));
 
 export const cancelPairingRequestFn = createServerFn({ method: "POST" })
 	.inputValidator((data: { requestId: string }) => data)

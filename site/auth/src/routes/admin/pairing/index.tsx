@@ -16,6 +16,7 @@ import { ThemeToggle } from "#/components/theme-toggle";
 import { authAppLabel } from "#/lib/auth-app-meta";
 import {
 	cancelPairingRequestFn,
+	repairServicePairingsFn,
 	fetchPairingRequests,
 } from "#/server/app-server.functions";
 
@@ -37,6 +38,8 @@ function PairingListPage() {
 	const router = useRouter();
 	const [busyId, setBusyId] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const [repairBusy, setRepairBusy] = useState(false);
+	const [repairMsg, setRepairMsg] = useState<string | null>(null);
 
 	async function onCancel(requestId: string) {
 		setBusyId(requestId);
@@ -51,6 +54,38 @@ function PairingListPage() {
 		}
 	}
 
+	async function onRepairAll() {
+		setRepairBusy(true);
+		setError(null);
+		setRepairMsg(null);
+		try {
+			const result = await repairServicePairingsFn({ data: {} });
+			if (result.kind === "ok") {
+				const repaired = result.repaired.join(", ");
+				setRepairMsg(repaired ? `Repaired: ${repaired}` : "No services repaired.");
+			} else if (result.kind === "partial") {
+				const repaired = result.repaired.join(", ");
+				const failed = result.failed.map((x) => x.appId).join(", ");
+				const skipped = result.skipped.join(", ");
+				const parts = [
+					repaired ? `Repaired: ${repaired}` : null,
+					failed ? `Failed: ${failed}` : null,
+					skipped ? `Skipped: ${skipped}` : null,
+				].filter(Boolean);
+				setRepairMsg(parts.join(" • "));
+			} else if (result.kind === "invalid") {
+				setError(result.error);
+			} else {
+				setError("Repair request is not authorized");
+			}
+			await router.invalidate();
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Repair failed");
+		} finally {
+			setRepairBusy(false);
+		}
+	}
+
 	return (
 		<div className="page-wrap py-10">
 			<div className="auth-topbar">
@@ -62,14 +97,23 @@ function PairingListPage() {
 			<div className="mx-auto max-w-2xl space-y-6">
 				<div className="flex items-center justify-between gap-4">
 					<h1 className="text-2xl font-bold">Service pairing</h1>
-					<Link
-						to="/admin/pairing/new"
-						className="inline-flex h-9 items-center justify-center rounded-4xl bg-primary px-4 text-sm font-medium text-primary-foreground"
-					>
-						New pairing
-					</Link>
-				</div>
-				{error ? <p className="text-destructive text-sm">{error}</p> : null}
+						<Link
+							to="/admin/pairing/new"
+							className="inline-flex h-9 items-center justify-center rounded-4xl bg-primary px-4 text-sm font-medium text-primary-foreground"
+						>
+							New pairing
+						</Link>
+						<Button
+							type="button"
+							variant="outline"
+							disabled={repairBusy}
+							onClick={onRepairAll}
+						>
+							{repairBusy ? "Repairing…" : "Repair paired services"}
+						</Button>
+					</div>
+					{error ? <p className="text-destructive text-sm">{error}</p> : null}
+					{repairMsg ? <p className="text-sm">{repairMsg}</p> : null}
 				<Card>
 					<CardHeader>
 						<CardTitle>Recent requests</CardTitle>

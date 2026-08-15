@@ -9,9 +9,16 @@ import { getAdminLogins } from "#/server/hub-admin-bootstrap.server";
 import { hubOAuthCallbackUrl, hubPublicBase } from "#/server/hub-public.server";
 import {
 	getPairingRequest,
+	createPairingRequest,
 	listPairingAudit,
 	listPairingRequests,
 } from "#/server/repositories/pairing";
+import {
+	getServiceTokenForApp,
+	listActivePairedApps,
+	type PairedAppRow,
+} from "#/server/repositories/paired-apps";
+import { pairingAppIdSchema } from "#/lib/pairing-app-id";
 import { getSessionFromRequest } from "#/server/session";
 
 export async function resolveAdminAccess() {
@@ -86,4 +93,105 @@ export async function loadPairingRequestDetail(requestId: string) {
 		request,
 		audit: listPairingAudit(requestId),
 	};
+}
+
+const repairPaths: Record<string, string> = {
+	tracker: "/api/admin/auth/pair",
+	"platform-spec": "/api/admin/setup",
+	nexus: "/api/admin/auth/pair",
+};
+
+export async function loadAdminPairingRepairTargets(input: {
+	appId?: string;
+	force?: boolean;
+}) {
+	const access = await resolveAdminAccess();
+	if (access.kind !== "ok") {
+		return { kind: "forbidden" as const };
+	}
+
+	if (input.appId) {
+		const parsed = pairingAppIdSchema.safeParse(input.appId);
+		if (!parsed.success) {
+			return { kind: "invalid" as const, error: "Invalid appId" };
+		}
+	}
+
+	const targets = listActivePairedApps().filter((row) =>
+		input.appId ? row.id === input.appId : true,
+	);
+	const results = {
+		repaired: [] as string[],
+		skipped: [] as string[],
+		failed: [] as { appId: string; error: string }[],
+	};
+
+	for (const row of targets as PairedAppRow[]) {
+		const rowAppId = pairingAppIdSchema.safeParse(row.id);
+		if (!rowAppId.success) {
+			results.failed.push({
+				appId: row.id,
+				error: "Unsupported service id",
+			});
+			continue;
+		}
+		const repairPath = repairPaths[row.id];
+		if (!repairPath) {
+			results.skipped.push(row.id);
+			continue;
+		}
+		const serviceToken = getServiceTokenForApp(row.id);
+		if (!serviceToken) {
+			results.failed.push({
+				appId: row.id,
+				error: "Missing service token for repair",
+			});
+			continue;
+		}
+		const targetPublicUrl = row.public_url.replace(/\/$/, "");
+		const request = createPairingRequest({
+			appId: rowAppId.data,
+			publicUrl: targetPublicUrl,
+			createdByLogin: access.session.login,
+		});
+		const pairingPayload: Record<string, unknown> = {};
+		if (row.id === "platform-spec") {
+			pairingPayload.pairingCode = request.pairingCode;
+			pairingPayload.platformSpecPublicUrl = targetPublicUrl;
+			pairingPayload.forceRepair = true;
+		} else {
+			pairingPayload.code = request.pairingCode;
+			pairingPayload.publicUrl = targetPublicUrl;
+		}
+		pairingPayload.approverLogin = access.session.login;
+		try {
+			const response = await fetch(`${targetPublicUrl}${repairPath}`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${serviceToken}`,
+				},
+				body: JSON.stringify(pairingPayload),
+			});
+			if (!response.ok) {
+				const body = (await response.text()) || "Pairing repair failed";
+				results.failed.push({ appId: row.id, error: body });
+				continue;
+			}
+			results.repaired.push(row.id);
+		} catch (error) {
+			results.failed.push({
+				appId: row.id,
+				error: error instanceof Error ? error.message : "Pairing repair failed",
+			});
+		}
+	}
+
+	if (results.failed.length) {
+		return {
+			kind: "partial" as const,
+			...results,
+		};
+	}
+	return { kind: "ok" as const, ...results };
 }
