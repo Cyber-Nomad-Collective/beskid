@@ -8,7 +8,7 @@ name: Publish VS Code Extension to Open VSX
 
 on:
   workflow_run:
-    workflows: [Compiler]
+    workflows: [Compiler release]
     branches: [main]
     types: [completed]
 
@@ -41,7 +41,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
-          COMPILER_RUN_ID: ${{ github.event.workflow_run.id }}
+          COMPILER_RELEASE_RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           set -euo pipefail
           if [[ -z "${OVSX_TOKEN}" ]]; then
@@ -50,10 +50,25 @@ jobs:
             exit 0
           fi
 
-          artifact_dir="$(mktemp -d)"
-          gh run download "${COMPILER_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
-            --name release-version --dir "${artifact_dir}"
-          channel="$(tr -d '[:space:]' < "${artifact_dir}/release-channel.txt")"
+          # The triggering workflow is Compiler release, the authoritative
+          # publisher. Its compiler-release-state artifact carries the resolved
+          # version, channel, and publishable flag — the gate result alone is not
+          # enough (a failed gate still publishes an unstable release).
+          state_dir="$(mktemp -d)"
+          if ! gh run download "${COMPILER_RELEASE_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
+                --name compiler-release-state --dir "${state_dir}" 2>/dev/null \
+              || [[ ! -f "${state_dir}/release-state.json" ]]; then
+            echo "compiler-release-state artifact missing — release did not publish; skipping Open VSX." >&2
+            echo "enabled=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          publishable="$(jq -r '.publishable // false' "${state_dir}/release-state.json")"
+          channel="$(jq -r '.channel // empty' "${state_dir}/release-state.json" | tr -d '[:space:]')"
+          if [[ "${publishable}" != "true" ]]; then
+            echo "Compiler release not publishable (channel=${channel:-<empty>}); skipping Open VSX publication." >&2
+            echo "enabled=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
           case "${channel}" in
             stable) echo "enabled=true" >> "${GITHUB_OUTPUT}" ;;
             unstable) echo "Skipping Open VSX publication for the unstable compiler release channel."; echo "enabled=false" >> "${GITHUB_OUTPUT}" ;;
@@ -149,19 +164,19 @@ jobs:
           RUST_MIN_STACK: "67108864"
         run: bash ./scripts/ci/compiler-rust-gate.sh
 
-      - name: Download global release version from Compiler
+      - name: Download release state from Compiler release
         id: release-version
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          COMPILER_RUN_ID: ${{ github.event.workflow_run.id }}
+          COMPILER_RELEASE_RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           set -euo pipefail
-          gh run download "${COMPILER_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
-            --name release-version --dir release-version
-          version="$(tr -d '[:space:]' < release-version/release-version.txt)"
+          gh run download "${COMPILER_RELEASE_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
+            --name compiler-release-state --dir release-state
+          version="$(jq -r '.version // empty' release-state/release-state.json | tr -d '[:space:]')"
           [[ "${version}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)([-+][0-9A-Za-z.-]+)?$ ]] || {
-            echo "Compiler emitted invalid global release version: ${version:-<empty>}" >&2
+            echo "Compiler release state has invalid version: ${version:-<empty>}" >&2
             exit 1
           }
           echo "version=${version}" >> "${GITHUB_OUTPUT}"
