@@ -6,6 +6,7 @@ import {
 	resolvePlatformSpecPublicUrlForPairing,
 } from "#/lib/auth/hub-pairing-flow.server";
 import {
+	getAuthHubServiceToken,
 	getAuthHubUrl,
 	getStoredPairingApproverLogin,
 	isAuthHubPaired,
@@ -34,6 +35,12 @@ function verifySetupToken(request: Request, bodyToken?: string): boolean {
 	return (bodyToken?.trim() ?? "") === expected;
 }
 
+function verifyRepairToken(request: Request): boolean {
+	const authHeader = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+	const storedToken = getAuthHubServiceToken();
+	return Boolean(authHeader && storedToken && authHeader === storedToken);
+}
+
 export async function submitAuthHubSetup(
 	request: Request,
 	input: {
@@ -41,28 +48,32 @@ export async function submitAuthHubSetup(
 		pairingCode: string;
 		platformSpecPublicUrl: string;
 		approverLogin: string;
+		forceRepair?: boolean;
 		setupToken?: string;
 	},
 ): Promise<{ ok: true } | { error: string; status: number }> {
 	const already = isAuthHubPaired();
 	const setupTokenRequired = !!env.PLATFORM_SPEC_SETUP_TOKEN?.trim();
+	const repairRequest = input.forceRepair === true;
 
-	if (already && !verifySetupToken(request, input.setupToken)) {
-		return { error: "Auth hub already configured", status: 403 };
-	}
-	if (
-		!already &&
-		setupTokenRequired &&
-		!verifySetupToken(request, input.setupToken)
-	) {
-		return { error: "Invalid setup token", status: 403 };
+	if (!repairRequest) {
+		if (already && !verifySetupToken(request, input.setupToken)) {
+			return { error: "Auth hub already configured", status: 403 };
+		}
+		if (
+			!already &&
+			setupTokenRequired &&
+			!verifySetupToken(request, input.setupToken)
+		) {
+			return { error: "Invalid setup token", status: 403 };
+		}
+	} else if (!verifyRepairToken(request)) {
+		return { error: "Invalid repair token", status: 403 };
 	}
 
 	const approverLogin = input.approverLogin.trim().toLowerCase();
 	const pairingCode = input.pairingCode.trim();
-	const platformSpecPublicUrl = input.platformSpecPublicUrl
-		.trim()
-		.replace(/\/$/, "");
+	const platformSpecPublicUrl = input.platformSpecPublicUrl.trim().replace(/\/$/, "");
 
 	if (!approverLogin) {
 		return { error: "approverLogin is required", status: 400 };

@@ -8,6 +8,7 @@ const bodySchema = z.object({
 	pairingCode: z.string().min(4),
 	platformSpecPublicUrl: z.string().url(),
 	approverLogin: z.string().min(1),
+	forceRepair: z.boolean().optional(),
 	setupToken: z.string().min(1).optional(),
 });
 

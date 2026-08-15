@@ -1,11 +1,12 @@
 # Distribution: wrap immutable cli-v<version> / lsp-v<version> release assets
 # into per-platform installers and publish them in a single CI run.
 #
-# Triggered as a workflow_run on the Compiler workflow completing successfully
-# (decoupled from compiler.yml). Resolves the current version from the rolling
-# alias only for discovery, then packages only immutable release assets.
-# Cyber-Nomad-Collective/beskid_compiler, fans out to the platform packaging
-# jobs, and publishes:
+# Triggered as a workflow_run on the Compiler release workflow completing
+# successfully (the authoritative publisher of CLI/LSP release assets, and
+# the emitter of the compiler-release-state artifact). Resolves the current
+# version from the release state, then packages only immutable release assets
+# from Cyber-Nomad-Collective/beskid_compiler, fanning out to the platform
+# packaging jobs, and publishes:
 #   - Windows .msi + .exe   -> beskid_compiler cli-stable|cli-unstable / cli-v<ver> release
 #   - macOS .dmg + brew     -> compiler release + beskid_homebrew tap
 #   - Ubuntu/Debian .deb    -> beskid_compiler cli-stable|cli-unstable / cli-v<ver> release
@@ -17,7 +18,7 @@ name: Distribute
 
 on:
   workflow_run:
-    workflows: [Compiler]
+    workflows: [Compiler release]
     branches: [main]
     types: [completed]
   workflow_dispatch:
@@ -43,23 +44,25 @@ concurrency:
 env:
   COMPILER_REPO: Cyber-Nomad-Collective/beskid_compiler
   HOMEBREW_TAP_REPO: Cyber-Nomad-Collective/beskid_homebrew
-  RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && 'stable' || 'unstable') }}
+  RELEASE_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && inputs.release_channel || 'stable' }}
 
 jobs:
-  # Guard + resolve job. Only proceeds when the triggering Compiler run actually
-  # published a rolling release (it skips the publish jobs on PRs), and when the
-  # rolling version differs from the last published distrib marker.
+  # Guard + resolve job. Only proceeds when the triggering Compiler release run
+  # actually published a release (its state artifact says publishable=true), and
+  # when the rolling version differs from the last published distrib marker.
   resolve-rolling:
     name: Resolve rolling release
-    # Run on manual dispatch, or only when the triggering Compiler workflow
-    # completed successfully. Avoid running release-lookup on failed/aborted
-    # workflow_run events where rolling tags are not yet minted.
+    # Run on manual dispatch, or only when the triggering Compiler release
+    # completed successfully. The publishable flag in the state artifact is the
+    # real gate; conclusion alone is not enough (a release can conclude success
+    # without being publishable when all platform builds failed).
     if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 10
     outputs:
       version: ${{ steps.version.outputs.version }}
       release_channel: ${{ steps.version.outputs.release_channel }}
+      publishable: ${{ steps.version.outputs.publishable }}
       compiler_sha: ${{ steps.sha.outputs.compiler_sha }}
       cli_darwin_sha: ${{ steps.shas.outputs.cli_darwin_sha }}
       should_run: ${{ steps.guard.outputs.should_run }}
@@ -104,62 +107,58 @@ jobs:
       - name: Init beskid_distrib submodule (shallow)
         run: ./scripts/ci/init-submodules.sh beskid_distrib
 
-      - name: Resolve compiler-minted global version
+      - name: Resolve release version
         id: version
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
-          COMPILER_RUN_ID: ${{ github.event.workflow_run.id }}
-          WORKFLOW_EVENT: ${{ github.event.workflow_run.event }}
+          COMPILER_RELEASE_RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           set -euo pipefail
-          if [[ "${{ github.event_name }}" == "workflow_run" && "${{ github.event.workflow_run.conclusion }}" != "success" ]]; then
-            echo "Skipping distribution: triggering Compiler workflow did not finish successfully." >&2
-            echo "Triggering completion: ${{ github.event.workflow_run.conclusion }}"
-            exit 1
-          fi
-          # Prefer the Compiler workflow's release-version artifact (exact mint).
-          # Manual dispatch falls back to the configured rolling CLI release.
           version=""
           release_channel=""
-          if [[ -n "${COMPILER_RUN_ID:-}" && "${{ github.event_name }}" == "workflow_run" && "${{ github.event.workflow_run.conclusion }}" == "success" ]]; then
-            mkdir -p release-version
-            gh run download "${COMPILER_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
-              --name release-version --dir release-version
-            version="$(tr -d '[:space:]' < release-version/release-version.txt)"
-
-            release_channel=""
-            if [[ -f release-version/release-channel.txt ]]; then
-              release_channel="$(tr -d '[:space:]' < release-version/release-channel.txt)"
-            elif [[ "${WORKFLOW_EVENT}" == "workflow_dispatch" ]]; then
-              release_channel="$(gh run view "${COMPILER_RUN_ID}" --repo "${GITHUB_REPOSITORY}" --json inputs --jq '.inputs.release_channel // empty' 2>/dev/null || true)"
+          if [[ "${{ github.event_name }}" == "workflow_run" ]]; then
+            # Triggered by Compiler release completion. Read the authoritative
+            # release state (version, channel, publishable) produced by that run
+            # rather than the Compiler gate's release-version artifact — a failed
+            # gate still publishes an unstable release, and a green release can be
+            # non-publishable when all platform builds failed.
+            mkdir -p release-state
+            if ! gh run download "${COMPILER_RELEASE_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
+                  --name compiler-release-state --dir release-state 2>/dev/null \
+                || [[ ! -f release-state/release-state.json ]]; then
+              echo "compiler-release-state artifact missing — release did not reach a publishable state; skipping distribution." >&2
+              echo "publishable=false" >> "${GITHUB_OUTPUT}"
+              exit 0
             fi
-
-            case "${release_channel}" in
-              "stable"|"unstable") ;;
-              "")
-                # Backward compatible default for pre-rollback release run payloads.
-                release_channel="stable"
-                ;;
-              *)
-                echo "Unsupported release channel in workflow payload: ${release_channel}" >&2
-                exit 1
-                ;;
-            esac
+            publishable="$(jq -r '.publishable // false' release-state/release-state.json)"
+            version="$(jq -r '.version // empty' release-state/release-state.json | tr -d '[:space:]')"
+            release_channel="$(jq -r '.channel // empty' release-state/release-state.json | tr -d '[:space:]')"
+            echo "publishable=${publishable}" >> "${GITHUB_OUTPUT}"
+            if [[ "${publishable}" != "true" ]]; then
+              echo "Compiler release not publishable (channel=${release_channel:-<empty>}, version=${version:-<empty>}); skipping distribution." >&2
+              exit 0
+            fi
           else
-            VERSION_TAG="${RELEASE_CHANNEL}"
+            # Manual dispatch: resolve from the rolling CLI release on beskid_compiler.
             release_channel="${RELEASE_CHANNEL}"
-            version="$(CLI_ROLLING_TAG="${VERSION_TAG}" bash beskid_distrib/scripts/resolve-version.sh | tr -d '[:space:]')"
+            version="$(CLI_ROLLING_TAG="cli-${release_channel}" bash beskid_distrib/scripts/resolve-version.sh | tr -d '[:space:]')"
+            echo "publishable=true" >> "${GITHUB_OUTPUT}"
           fi
+          case "${release_channel}" in
+            "stable"|"unstable") ;;
+            *) echo "Unsupported release channel: ${release_channel:-<empty>}" >&2; exit 1 ;;
+          esac
           [[ "${version}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || {
-            echo "Compiler-published version is absent or not strict X.Y.Z semver: ${version:-<empty>}" >&2
+            echo "Resolved version is absent or not strict X.Y.Z semver: ${version:-<empty>}" >&2
             exit 1
           }
           echo "version=${version}" >> "${GITHUB_OUTPUT}"
           echo "release_channel=${release_channel}" >> "${GITHUB_OUTPUT}"
-          echo "Resolved global release version: ${version}"
+          echo "Resolved release version: ${version} (channel: ${release_channel})"
 
       - name: Resolve release channel tags
         id: release-tags
+        if: steps.version.outputs.publishable == 'true'
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
           VERSION: ${{ steps.version.outputs.version }}
@@ -198,6 +197,7 @@ jobs:
 
       - name: Record compiler SHA (target_commitish of rolling CLI release)
         id: sha
+        if: steps.version.outputs.publishable == 'true'
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
           VERSION: ${{ steps.version.outputs.version }}
@@ -222,6 +222,7 @@ jobs:
           echo "compiler_sha=${s}" >> "${GITHUB_OUTPUT}"
 
       - name: Ensure rolling releases exist
+        if: steps.version.outputs.publishable == 'true'
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
           VERSION: ${{ steps.version.outputs.version }}
@@ -258,6 +259,7 @@ jobs:
 
       - name: Compute sha256 of immutable release assets
         id: shas
+        if: steps.version.outputs.publishable == 'true'
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
           VERSION: ${{ steps.version.outputs.version }}
@@ -269,6 +271,7 @@ jobs:
 
       - name: Guard — publish only when the version changed (or forced)
         id: guard
+        if: steps.version.outputs.publishable == 'true'
         env:
           VERSION: ${{ steps.version.outputs.version }}
           FORCE: ${{ inputs.force }}

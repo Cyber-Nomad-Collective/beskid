@@ -1,9 +1,13 @@
 import "@tanstack/react-start/server-only";
 
-import { BeskidAuthClient } from "@beskid/auth-client";
 import { getRequest } from "@tanstack/react-start/server";
 
 import { env } from "#/env.server";
+import {
+	approveAuthHubPairing as approveAuthHubPairingShared,
+	type AuthHubPairingFailureReason,
+	pairingFailureMessage as pairingFailureMessageShared,
+} from "@beskid/auth-client";
 import {
 	getStoredPairingApproverLogin,
 	saveAuthHubPairing,
@@ -23,14 +27,12 @@ export function resolvePlatformSpecPublicUrlForPairing(): string {
 export function pairingFailureMessage(
 	reason: "auth_required" | "not_configured" | "invalid",
 ): string {
-	switch (reason) {
-		case "auth_required":
-			return "Server cannot approve pairing: set PLATFORM_SPEC_PAIRING_APPROVER_LOGIN or sign in as a repo admin.";
-		case "not_configured":
-			return "AUTH_HUB_PUBLIC_URL is not configured on platform-spec.";
-		default:
-			return "Invalid pairing request (missing code or public URL).";
+	if (reason === "auth_required") {
+		return "Server cannot approve pairing: set PLATFORM_SPEC_PAIRING_APPROVER_LOGIN or sign in as a repo admin.";
 	}
+	return pairingFailureMessageShared(reason as AuthHubPairingFailureReason, {
+		approverHint: "set PLATFORM_SPEC_PAIRING_APPROVER_LOGIN or sign in as a repo admin.",
+	});
 }
 
 async function resolvePairingApproverLogin(): Promise<string | null> {
@@ -57,6 +59,7 @@ async function resolvePairingApproverLogin(): Promise<string | null> {
 	return null;
 }
 
+/** Same contract as Beskid Nexus `POST /api/admin/auth/pair`. */
 export async function approveAuthHubPairing(input: {
 	code: string;
 	publicUrl: string;
@@ -76,19 +79,22 @@ export async function approveAuthHubPairing(input: {
 		return { ok: false, reason: "not_configured" };
 	}
 
-	const client = new BeskidAuthClient({ baseUrl: hubUrl });
-	const result = await client.approvePairing({
-		code,
+	const result = await approveAuthHubPairingShared({
+		hubUrl,
 		appId: "platform-spec",
+		code,
 		publicUrl,
 		approverLogin,
 	});
+	if (!result.ok) {
+		return { ok: false, reason: result.reason };
+	}
 
 	saveAuthHubPairing(hubUrl, result.serviceToken);
 	return { ok: true };
 }
 
-/** Server-side autopair using a configured or authenticated repo administrator. */
+/** Server-side autopair (hub link or sync token). */
 export async function completeAuthHubPairing(input: {
 	code: string;
 	publicUrl: string;
