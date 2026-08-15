@@ -99,6 +99,7 @@ const repairPaths: Record<string, string> = {
 	tracker: "/api/admin/auth/pair",
 	"platform-spec": "/api/admin/setup",
 	nexus: "/api/admin/auth/pair",
+	pckg: "/api/auth/hub/pair",
 };
 
 export async function loadAdminPairingRepairTargets(input: {
@@ -159,6 +160,10 @@ export async function loadAdminPairingRepairTargets(input: {
 			pairingPayload.pairingCode = request.pairingCode;
 			pairingPayload.platformSpecPublicUrl = targetPublicUrl;
 			pairingPayload.forceRepair = true;
+		} else if (row.id === "pckg") {
+			pairingPayload.code = request.pairingCode;
+			pairingPayload.publicUrl = targetPublicUrl;
+			pairingPayload.force = true;
 		} else {
 			pairingPayload.code = request.pairingCode;
 			pairingPayload.publicUrl = targetPublicUrl;
