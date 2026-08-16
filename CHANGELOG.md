@@ -11,6 +11,105 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- `Beskid.Glue` corelib package with seven atomized contracts: TypeMapping,
+  SymbolEmission, LinkArgs, SignatureReader, SignatureWriter, ToolchainProbe,
+  StdioBridge. Plus `[Glue]` / `[GlueImport]` / `[GlueExport]` attributes, the
+  `GlueTag` type, and the `StdioBridgeMessage` type.
+- `Core.Interop` corelib package with `CStringView`, `CBuffer`, and `CArrayView`
+  view types (pointer-based, per spec).
+- `beskid_abi::interop` module: typed `Interop.Contracts` Rust model
+  (`TypeShapeClass`, `OwnershipClass`, `CallShapeClass`, `InteropSignature`,
+  `ConformanceEnvelope`) plus C ABI profile and Rust ABI profile bindings.
+- `beskid_abi::toolchain` module: `ToolchainProbe` scaffold (`ToolCapability`,
+  `ToolSpec`, `ResolvedTool`, `ToolchainError`).
+- `beskid_codegen::backend` module: `Backend` trait + `BackendKind` enum
+  (CraneliftClif / RustSource / DotNetProject) + `BackendArtifact`.
+  RustSource and DotNetProject fail closed for 0.4; language-specific
+  generation is 0.5 scope.
+- `mod.glue` pipeline phase id between `mod.rewrite` and `lower.ready`.
+- Seven `Beskid.Glue.*` contract ids registered in `SDK_MOD_CONTRACTS`.
+- `--backend` CLI flag on `beskid build` (clif wired; `glue-*` fail closed
+  with `NotImplementedFor0_4`).
+- OpenSpec change `add-beskid-glue-0-4`: three new capabilities and five
+  modified capabilities with SHALL/MUST requirements and GIVEN/WHEN/THEN
+  scenarios.
+- Ten new glossary terms in `GLOSSARY.md`.
+
+### Added
+
+- Landing hero code window ("chroma") now supports multiple tabs and an
+  opt-in vertical-split mode (code pane on top, terminal output below)
+  through a new `tabs` / `split` API on `LandingCodeWindow`.
+- Real Beskid syntax highlighting in the landing code window and tile code
+  panes, backed by the existing Shiki Beskid grammar
+  (`beskid.tmLanguage.json`) with dual light/dark theme support; replaces
+  the previous naive regex highlighter.
+- Shared build-time Shiki helper `site/website/src/lib/landing-highlight.mjs`
+  as the single highlighter implementation reused by both components.
+- Platform-aware Download button on the landing hero: detects the OS via
+  `navigator.userAgentData.platform` and links to the direct platform asset
+  (macOS `.dmg`, Windows `.msi`, Linux `.deb`), falling back to `/downloads/`.
+- "Learn more" hero button that smooth-scrolls to the next section.
+- Three hero code tabs with real corelib signatures: a calculator (split mode
+  with terminal output), a DI host composition example, and a compiler
+  mod/codegen example.
+
+### Changed
+
+- Reduced the landing hero from five buttons to two (Download + Learn more);
+  Language semantics, Read the Book, and Blog remain in the nav.
+- Removed the duplicated bottom CTA band that re-rendered all hero actions.
+- Simplified the STE (Software Transactional Memory / .NET) explanatory copy
+  in `landing-tile-sections.ts` and `landing-dotnet-bullets.ts` for clarity;
+  technical claims and links are preserved.
+- Migrated `LandingTemplate.astro` to the new `tabs` / `split` code-window
+  API.
+- Aligned existing tile code snippets to the grammar-correct
+  `unit main()` / `unit Run()` form (the Beskid grammar has no `fn` keyword).
+
+### Removed
+
+- Naive regex keyword highlighter from `LandingCodeWindow.astro` and
+  `LandingCodePane.astro` (single Shiki implementation per construct).
+- Deprecated legacy `file` / `lines` / `html` props from `LandingCodeWindow`;
+  callers now use `tabs` / `split` only.
+- Dead CSS: `.landing-cta` / `.landing-cta__inner` rules (CTA band removed)
+  and orphaned `.landing-code-kw` / `.landing-code-type` /
+  `.landing-code-dir` / `.landing-code-label` class rules no longer emitted.
+  The `--landing-code-kw` / `--landing-code-type` token variables are
+  retained.
+
+### Changed
+
+- Fixed 47 pre-existing compile errors in `beskid_analysis` left by the
+  `complete-mod-pipeline-0-4` WIP refactor (field renames, import moves,
+  `ModuleIndex` / `ProgramAssembly` API, `PrimitiveType::Pointer`
+  exhaustiveness).
+- Fixed cascading errors in `beskid_queries`, `beskid_isle`, `beskid_lsp`,
+  `beskid_codegen`, `beskid_engine`, `beskid_tests`, `beskid_cli`, and
+  `beskid_tools`.
+- Renamed `BackendKind::from_str` to `parse()` with a `FromStr` impl
+  delegating to it.
+- Boxed the `BackendArtifact::Clif` variant to reduce variant size
+  difference.
+- Implemented `Display` for `ManifestValidationError`.
+- Derived `Clone` for `ResolvedInput`.
+- Removed the dead `LowerResolveTypeError` path from
+  `beskid_tools::diagnostics`.
+
+### Removed
+
+- Dead code from the WIP refactor: `set_declaring_package`,
+  `into_prefetch_parts`, `canonical_name`,
+  `prefetched_module_path_for_file`, `module_path_from_file_suffix`,
+  `declaring_package_for_prefetched_path`,
+  `declaring_package_for_dependency_path`,
+  `is_allowed_ffi_primitive` / `is_allowed_ffi_param` /
+  `is_allowed_ffi_return`, the `syntax_program_assembly` re-export, and
+  `extern_interface` field validation.
+
+### Added
+
 - Add the Beskid Normative Manifest to the platform-spec site: a chaptered,
   JSON-structured aggregation of the most important normative facts about
   Beskid, written in ASD-STE100 Simplified Technical English. The manifest
