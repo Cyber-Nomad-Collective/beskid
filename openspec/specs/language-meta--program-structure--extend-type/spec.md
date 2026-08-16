@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Type extension syntax replacing impl blocks; public members only, full type scope access.
+This specification defines the type extension syntax. The syntax replaces impl blocks. The extensions allow public members only. The extensions have full type scope access.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Members inside `extend type` MAY access public members of the extended type only
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: extend type
 

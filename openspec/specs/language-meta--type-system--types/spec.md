@@ -3,7 +3,7 @@
 
 ## Purpose
 
-The type grammar (nominal types, generics, Option T) is the backbone of static checking. All analysis phases share these definitions.
+This specification defines the type grammar. The grammar covers nominal types, generics, and `Option T`. The grammar is the backbone of static checking. All analysis phases share these definitions.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Duplicate type or member names in the same scope MUST error (**E1001**, **E1006*
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Types
 

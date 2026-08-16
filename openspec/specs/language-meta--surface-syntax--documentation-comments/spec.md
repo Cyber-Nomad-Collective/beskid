@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Structured comments attach human-readable contracts to declarations. Tooling must preserve them through formatting and refactors without changing semantics.
+Structured comments attach human-readable contracts to declarations. Tooling preserves the comments through formatting and refactors. The tooling does not change the semantics.
 
 ## Requirements
 
@@ -45,7 +45,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Documentation comments
 

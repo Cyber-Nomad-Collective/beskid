@@ -3,7 +3,7 @@
 
 ## Purpose
 
-System V-style C ABI binding for user extern contracts—types, calling conventions, libraries, and engine resolution policy.
+This specification defines the System V-style C ABI binding for user extern contracts. The binding covers types, calling conventions, libraries, and the engine resolution policy.
 
 ## Requirements
 
@@ -83,7 +83,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: C ABI profile
 

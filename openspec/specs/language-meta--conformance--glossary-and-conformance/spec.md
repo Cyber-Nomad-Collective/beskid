@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Defines MUST / SHOULD / MAY usage across all Beskid specifications. Every diagnostic and platform RFC should reference this vocabulary consistently.
+This specification defines the use of MUST, SHOULD, and MAY across all Beskid specifications. Each diagnostic and platform RFC uses this vocabulary consistently.
 
 ## Requirements
 
@@ -114,7 +114,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Glossary and conformance
 

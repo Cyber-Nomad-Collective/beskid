@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Rust-hosted runtime surface—exported symbols, unwind at the boundary, and stability rules distinct from user C extern libraries.
+This specification defines the Rust-hosted runtime surface. The surface covers exported symbols and unwind at the boundary. The stability rules differ from the user C extern libraries.
 
 ## Requirements
 
@@ -113,7 +113,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Rust ABI profile
 

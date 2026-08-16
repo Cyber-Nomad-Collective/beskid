@@ -853,3 +853,92 @@ body {
 	gap: 0.25rem;
 	font-size: 0.8125rem;
 }
+
+/* ================================================================
+   ADR table (decisions)
+   ================================================================ */
+
+.spec-adr-table {
+	width: 100%;
+	min-width: 0;
+}
+
+.spec-adr-table table {
+	font-size: 0.85rem;
+}
+
+.spec-adr-table th {
+	font-size: 0.7rem;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--muted-foreground);
+}
+
+.spec-adr-table td {
+	vertical-align: top;
+}
+
+.spec-adr-table tbody tr:hover {
+	background: color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.spec-adr-table a {
+	color: var(--foreground);
+	text-decoration: none;
+	text-underline-offset: 2px;
+}
+
+.spec-adr-table a:hover {
+	color: var(--primary);
+	text-decoration: underline;
+}
+
+.spec-adr-table time {
+	font-family: ui-monospace, monospace;
+	font-size: 0.78rem;
+	color: var(--muted-foreground);
+}
+
+/* ================================================================
+   GitHub source code embed
+   ================================================================ */
+
+.spec-github-code {
+	border-radius: var(--radius-lg);
+	border: 1px solid var(--border);
+	background: color-mix(in srgb, var(--muted) 40%, transparent);
+	overflow: hidden;
+}
+
+.spec-github-code figcaption {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+	border-bottom: 1px solid var(--border);
+	background: color-mix(in srgb, var(--card) 60%, transparent);
+	padding: 0.5rem 0.75rem;
+}
+
+.spec-github-code figcaption .spec-github-code__label {
+	font-family: ui-monospace, monospace;
+	font-size: 0.72rem;
+	color: var(--muted-foreground);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.spec-github-code__pre {
+	margin: 0;
+	font-size: 0.82rem;
+	line-height: 1.55;
+}
+
+.spec-github-code__gutter {
+	user-select: none;
+	padding-right: 0.75rem;
+	text-align: right;
+	color: color-mix(in srgb, var(--muted-foreground) 60%, transparent);
+	white-space: pre;
+}

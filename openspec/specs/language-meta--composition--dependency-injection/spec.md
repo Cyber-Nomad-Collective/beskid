@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Language-native host composition — host, registry, named scopes, with activation, inject, startup, and launch.
+This specification defines the language-native host composition. A program declares a host and a registry. The host defines named scopes. The host activates a scope with `with`. The host injects fields and runs startup. A process starts with one `launch`.
 
 ## Requirements
 
@@ -154,7 +154,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Native dependency injection
 

@@ -3,12 +3,12 @@
 
 ## Purpose
 
-Git as the canonical version axis; v0.x bands label delivery scope, not alternate documentation URLs or parallel normative trees.
+This specification defines Git as the canonical version axis. The v0.x bands label the delivery scope. The bands do not label alternate documentation URLs or parallel normative trees.
 
 ## Requirements
 
 ### Requirement: Git is the canonical specification version axis: Decision [D-COMM-VERS-0001]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > The platform specification under [/platform-spec/](/platform-spec/) is versioned by **Git** (typically `main`). Readers and tooling **must** treat the spec at a given commit as the contract for that commit; there is **no** parallel normative URL hierarchy such as `/platform-spec/v0.2/...`.
 
@@ -22,7 +22,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Stable platform-spec URLs across releases: Decision [D-COMM-VERS-0002]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > Feature and language-meta paths **must** remain stable across releases. Behavioral change is expressed by editing normative text and metadata (`status`, `lastReviewed`, embedded decisions), not by introducing version segments in site paths.
 
@@ -36,7 +36,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: v0.x bands label delivery scope not doc editions: Decision [D-COMM-VERS-0003]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > Labels such as **v0.1**, **v0.2**, or roadmap bands describe **what the reference platform targets shipping**, not separate specification editions. A page may mention a band when scoping work; it **must not** imply an older band remains authoritative at the same URL without explicit **Superseded** decision notes.
 
@@ -50,7 +50,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Single normative platform-spec tree: Decision [D-COMM-VERS-0004]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > The [Platform specification](/platform-spec/) domain is the **one** normative documentation tree for language and platform contracts. Legacy trees are **non-normative** only: informative [`/execution/`](/execution/) and [`/corelib/`](/corelib/) Starlight paths, plus book and guides, unless explicitly bridged per [Non-normative bridge docs policy](/platform-spec/community/spec-maintenance/non-normative-bridge-docs-policy/).
 
@@ -65,7 +65,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Release and versioning policy
 

@@ -1,3 +1,12 @@
+import { parseInlineGraph } from "#/lib/architecture/graph-schema";
+import {
+	DEFAULT_GITHUB_BRANCH,
+	detectLangFromPath,
+	githubBlobUrl,
+	githubSnippetLabel,
+	parseLineRange,
+} from "#/lib/github-code";
+
 export type BeskidDirectiveKind =
 	| "spec"
 	| "book"
@@ -5,6 +14,7 @@ export type BeskidDirectiveKind =
 	| "bug"
 	| "code"
 	| "graph"
+	| "author-graph"
 	| "quote";
 
 export interface BeskidMarkdownDirective {
@@ -37,7 +47,18 @@ export function parseBeskidDirective(
 	kind: string,
 	body: string,
 ): BeskidMarkdownDirective | null {
-	if (!["spec", "book", "nexus", "bug", "code", "graph", "quote"].includes(kind))
+	if (
+		![
+			"spec",
+			"book",
+			"nexus",
+			"bug",
+			"code",
+			"graph",
+			"author-graph",
+			"quote",
+		].includes(kind)
+	)
 		return null;
 	const values = fields(body);
 	const ref = values.ref ?? values.id ?? values.slug;
@@ -90,10 +111,62 @@ export function renderBeskidDirective(
 	return `<beskid-doc-embed kind="${directive.kind}" ref="${escapeHtml(directive.ref)}"><a href="${escapeHtml(href)}">${escapeHtml(directive.title)}</a></beskid-doc-embed>`;
 }
 
+export function renderInlineAuthorGraph(body: string): string | null {
+	const values = fields(body);
+	const graph = parseInlineGraph(values);
+	if (!graph) return null;
+	const encoded = encodeURIComponent(JSON.stringify(graph));
+	const fallback = `<p>${escapeHtml(graph.title)}</p>`;
+	const editable = values.editable === "true" ? "true" : "";
+	const height = values.height ? escapeHtml(values.height) : "";
+	const traversal = values.traversal ? escapeHtml(values.traversal) : "";
+	return `<beskid-doc-embed kind="author-graph" data-graph="${escapeHtml(encoded)}" data-editable="${editable}" data-height="${height}" data-traversal="${traversal}">${fallback}</beskid-doc-embed>`;
+}
+
+/**
+ * Render a `code` directive that points at a GitHub source file into a
+ * `<beskid-doc-embed kind="github-code">` placeholder with a readable
+ * link fallback. Returns `null` when the directive is not a GitHub-code
+ * form (i.e. it lacks `repo`/`path`), so the caller falls back to the
+ * legacy `ref:`-based code directive.
+ *
+ * Supports both the compact `lines: "1-26"` form and the explicit
+ * `startLine:`/`endLine:` form. Optional `branch:` (default `main`) and
+ * `showLineNumbers:` (default `true`) fields are forwarded as embed
+ * attributes for the React hydrator.
+ */
+export function renderGitHubCodeEmbed(body: string): string | null {
+	const values = fields(body);
+	const repo = values.repo;
+	const path = values.path;
+	if (!repo || !path) return null;
+	const lang = values.lang || detectLangFromPath(path);
+	const branch = values.branch || DEFAULT_GITHUB_BRANCH;
+	const range =
+		parseLineRange(values.lines) ??
+		(values.startLine && values.endLine
+			? parseLineRange(`${values.startLine}-${values.endLine}`)
+			: null);
+	const showLineNumbers = values.showLineNumbers === "false" ? "false" : "true";
+	const blobHref = githubBlobUrl(repo, path, range, branch);
+	const label = githubSnippetLabel(path, range);
+	const startLine = range ? String(range.start) : "";
+	const endLine = range ? String(range.end) : "";
+	return `<beskid-doc-embed kind="github-code" repo="${escapeHtml(repo)}" path="${escapeHtml(path)}" branch="${escapeHtml(branch)}" start-line="${escapeHtml(startLine)}" end-line="${escapeHtml(endLine)}" lang="${escapeHtml(lang)}" show-line-numbers="${escapeHtml(showLineNumbers)}"><a href="${escapeHtml(blobHref)}">${escapeHtml(label)}</a></beskid-doc-embed>`;
+}
+
 export function transformBeskidDirectives(markdown: string): string {
 	return markdown.replace(
 		DIRECTIVE_FENCE,
 		(source, kind: string, body: string) => {
+			if (kind === "graph") {
+				const inline = renderInlineAuthorGraph(body);
+				if (inline) return inline;
+			}
+			if (kind === "code") {
+				const github = renderGitHubCodeEmbed(body);
+				if (github) return github;
+			}
 			const directive = parseBeskidDirective(kind, body);
 			return directive ? renderBeskidDirective(directive) : source;
 		},

@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Locals, mut bindings, heap objects under a concurrent GC, and fiber sharing rules. Runtime write barriers and collector phases defer to execution specs; /execution/ is a non-normative legacy bridge.
+This specification defines locals, mut bindings, heap objects, and fiber sharing rules. A concurrent GC manages the heap objects. The runtime write barriers and collector phases defer to the execution specs. The `/execution/` path is a non-normative legacy bridge.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Values MUST NOT be shared across fibers by alias unless immutability is proven o
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Memory and references
 

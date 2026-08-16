@@ -1,0 +1,579 @@
+{
+	"id": "isle-lowering",
+	"title": "ISLE and Lowering",
+	"order": 3,
+	"description": "This chapter documents the ISLE lowering and the codegen pipeline. The production lowering goes from TypedProgram to CodegenInput to ISLE to stock CLIF to the verifier to CodegenArtifact. The prose conforms to ASD-STE100 Simplified Technical English.",
+	"sections": [
+		{
+			"id": "lowering-pipeline",
+			"title": "Lowering pipeline",
+			"description": "These entries cover the stages of the production lowering. The lowering contract is the feature hub authority.",
+			"entries": [
+				{
+					"id": "typed-program-to-codegen-input",
+					"title": "TypedProgram to CodegenInput",
+					"description": "The CodegenInput is the sole boundary from analysis to codegen. CodegenInput::new validates the roots, the TargetMetadata, and the AbiManifestV5. The manifest must equal AbiManifestV5::canonical_runtime(target). A manifest drift gives ManifestDrift. The entry must belong to the assembly. Each root must be in the assembly. The method with_composition_plan attaches a generation-bound BindingPlan. A stale plan gives StaleCompositionPlan.",
+					"examples": [
+						"CodegenInput::new(db, typed_program, roots, target, abi_manifest)"
+					],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": [
+							"compiler/crates/beskid_codegen/src/codegen_input.rs",
+							"compiler/crates/beskid_queries/src/typed_program.rs"
+						]
+					},
+					"metadata": {
+						"decision": "D-COMP-IR-0009"
+					}
+				},
+				{
+					"id": "reachability-link-plan",
+					"title": "Reachability and LinkPlan",
+					"description": "The reachability pass builds a FunctionDefIndex. The pass constructs a LinkPlan for the declared entries. The entries are tests, main, and qualified run or build entrypoints. The LinkPlan has the transitive callees and the monomorphized instances. The compiler lowers only the planned symbols. The compiler runs validate_artifact before beskid_engine or beskid_aot consume it.",
+					"examples": ["LinkPlan"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": [
+							"compiler/crates/beskid_codegen/src/artifact_validation.rs",
+							"compiler/crates/beskid_codegen/src/lib.rs"
+						]
+					},
+					"metadata": {
+						"decision": "D-COMP-IR-0010"
+					}
+				},
+				{
+					"id": "isle-selection",
+					"title": "ISLE operation selection",
+					"description": "The ISLE selection compiles the .isle rule files into Rust code. The build.rs file runs cranelift_isle::compile::from_files. The output goes to beskid_lower.rs in the OUT_DIR. The generated Context impl lives in context.rs. The impl delegates to the facts and the emit constructors.",
+					"examples": ["cranelift_isle::compile::from_files(...)"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": [
+							"compiler/crates/beskid_isle/build.rs",
+							"compiler/crates/beskid_isle/src/context.rs"
+						]
+					},
+					"metadata": {
+						"output": "beskid_lower.rs"
+					}
+				},
+				{
+					"id": "stock-clif-verifier",
+					"title": "Stock CLIF and verifier",
+					"description": "The FunctionEmitter builds a FunctionBuilder. The emitter runs the generated constructor lower_expression and constructor lower_statement. Then the emitter runs verify_function on every emitted function. The closure lambda entries materialize the capture locals from the ABI-v5 environment pointer before the body lowering.",
+					"examples": ["cranelift_codegen::verify_function(...)"],
+					"references": {
+						"capabilities": [
+							"compiler--codegen-and-ir--codegen-artifact-schema",
+							"compiler--build-pipeline--stage-ordering"
+						],
+						"sources": [
+							"compiler/crates/beskid_isle/src/emitter.rs",
+							"compiler/crates/beskid_codegen/src/lib.rs"
+						]
+					},
+					"metadata": {
+						"verifier": "cranelift_codegen::verify_function"
+					}
+				},
+				{
+					"id": "codegen-artifact",
+					"title": "CodegenArtifact",
+					"description": "The CodegenArtifact holds the lowered functions. The artifact has type_descriptors with size, align, and pointer_offsets for GC scanning. The artifact has string_literals. The artifact has closure_static_plans, aggregate_static_plans, and array_static_plans. The artifact has extern_imports with symbol, abi, and library. The artifact has exports with beskid_name, exported_symbol, and abi.",
+					"examples": ["CodegenArtifact"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--codegen-artifact-schema"],
+						"sources": [
+							"compiler/crates/beskid_codegen/src/artifact.rs",
+							"compiler/crates/beskid_codegen/src/artifact_validation.rs"
+						]
+					},
+					"metadata": {
+						"decisions": "D-COMP-IR-0001, D-COMP-IR-0002, D-COMP-IR-0003"
+					}
+				}
+			]
+		},
+		{
+			"id": "isle-rule-files",
+			"title": "ISLE rule files",
+			"description": "These entries cover the .isle rule files. The files live under compiler/crates/beskid_isle/isle/. The build.rs compiles the files in order.",
+			"entries": [
+				{
+					"id": "isle-types",
+					"title": "types.isle",
+					"description": "The types.isle file has the ISLE type aliases and the extern enums. The file has AstNodeKey, StatementCursor, Value, and Unit. The file has the NodeKind enum with 29 variants. The file has ForIterableKind, CursorKind, LiteralKind, OperatorFact, CallKind, and IndexTarget.",
+					"examples": ["type NodeKind = ..."],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/isle/types.isle"]
+					},
+					"metadata": {
+						"lines": "11",
+						"covers": "ISLE type aliases + extern enums"
+					}
+				},
+				{
+					"id": "isle-ast",
+					"title": "ast.isle",
+					"description": "The ast.isle file has the AST fact extractors. The file has node_kind, literal_kind, operator_fact, and call_kind. The file has child_at, assignment_target_kind, for_iterable_kind, and for_iterable_class.",
+					"examples": ["node_kind"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/isle/ast.isle"]
+					},
+					"metadata": {
+						"lines": "23",
+						"covers": "AST fact extractors"
+					}
+				},
+				{
+					"id": "isle-expressions",
+					"title": "expressions.isle",
+					"description": "The expressions.isle file has the top expression dispatch. The file has lower_expression, emit_block_expression, emit_spawn, emit_lambda, emit_try_expression, and emit_clif_block. The file has rules for GroupedExpression, BlockExpression, SpawnExpression, LambdaExpression, TryExpression, and ClifBlock.",
+					"examples": ["lower_expression"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/isle/expressions.isle"]
+					},
+					"metadata": {
+						"lines": "26",
+						"covers": "Top expression dispatch"
+					}
+				},
+				{
+					"id": "isle-literals",
+					"title": "literals.isle",
+					"description": "The literals.isle file lowers literals. The file has emit_integer, emit_boolean, emit_float, emit_char, and emit_string. The rules pick by LiteralKind.",
+					"examples": ["emit_integer"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/isle/literals.isle"]
+					},
+					"metadata": {
+						"lines": "35",
+						"covers": "Literal lowering"
+					}
+				},
+				{
+					"id": "isle-binary",
+					"title": "binary.isle",
+					"description": "The binary.isle file lowers binary operators to CLIF. The file has clif_iadd, clif_isub, clif_imul, and the bit and shift operators. The file has the comparison operators clif_eq, clif_ne, clif_slt, and clif_sge. The file has the short-circuit operators clif_short_circuit_or and clif_short_circuit_and. The file has the enum discriminant operators. The file has the zero-div trap clif_div_trapz. The file has the folding operators clif_iadd_imm and clif_imul_imm.",
+					"examples": ["clif_iadd"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/isle/binary.isle"]
+					},
+					"metadata": {
+						"lines": "143",
+						"covers": "Binary operators to CLIF"
+					}
+				},
+				{
+					"id": "isle-unary-casts",
+					"title": "unary_casts.isle",
+					"description": "The unary_casts.isle file lowers unary operators. The rule for Neg emits clif_ineg. The rule for Not emits clif_logical_not.",
+					"examples": ["clif_ineg"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/isle/unary_casts.isle"]
+					},
+					"metadata": {
+						"lines": "14",
+						"covers": "Unary operators"
+					}
+				},
+				{
+					"id": "isle-calls",
+					"title": "calls.isle",
+					"description": "The calls.isle file dispatches calls by CallKind. The file has emit_direct_call for Direct. The file has emit_primitive_numeric_conversion for PrimitiveNumericConversion. The file has emit_inline_lambda_call for InlineLambda. The file has emit_collection_operation for CollectionOperation.",
+					"examples": ["emit_direct_call"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/isle/calls.isle"]
+					},
+					"metadata": {
+						"lines": "28",
+						"covers": "Call dispatch by CallKind"
+					}
+				},
+				{
+					"id": "isle-dispatch",
+					"title": "dispatch.isle",
+					"description": "The dispatch.isle file has the string ops and the index dispatch. The file has emit_string_concat, emit_string_eq, emit_string_ne, and emit_string_index_read. The file has the index_target extractor for String and Array.",
+					"examples": ["emit_string_concat"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/isle/dispatch.isle"]
+					},
+					"metadata": {
+						"lines": "34",
+						"covers": "String ops + index dispatch"
+					}
+				},
+				{
+					"id": "isle-runtime-intrinsics",
+					"title": "runtime_intrinsics.isle",
+					"description": "The runtime_intrinsics.isle file has the runtime intrinsic calls. The file has emit_runtime_intrinsic for CallKind::RuntimeIntrinsic.",
+					"examples": ["emit_runtime_intrinsic"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/isle/runtime_intrinsics.isle"]
+					},
+					"metadata": {
+						"lines": "7",
+						"covers": "Runtime intrinsic calls"
+					}
+				},
+				{
+					"id": "isle-statements",
+					"title": "statements.isle",
+					"description": "The statements.isle file lowers statements. The file has lower_statement and the emit rules for return, local let, expression statement, direct call statement, and runtime intrinsic statement. The file has the StatementCursor recursion with More and End. The file has sequence_statements, finish_statements, and discard_value.",
+					"examples": ["lower_statement"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/isle/statements.isle"]
+					},
+					"metadata": {
+						"lines": "61",
+						"covers": "Statement lowering + cursor"
+					}
+				},
+				{
+					"id": "isle-control-flow",
+					"title": "control_flow.isle",
+					"description": "The control_flow.isle file lowers control flow. The file has the short-circuit rules. The file has emit_if_else, emit_while, emit_break, emit_continue, and emit_range_for. The file has rules for IfStatement, WhileStatement, and ForStatement with a range.",
+					"examples": ["emit_if_else"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/isle/control_flow.isle"]
+					},
+					"metadata": {
+						"lines": "42",
+						"covers": "Control-flow lowering"
+					}
+				},
+				{
+					"id": "isle-memory",
+					"title": "memory.isle",
+					"description": "The memory.isle file lowers memory and aggregate operations. The file has emit_local_read, emit_local_assign, emit_array_literal, and emit_index_read. The file has emit_struct_literal, emit_field_read, emit_field_assign, and emit_index_assign. The file has emit_enum_literal, emit_match, and emit_match_statement.",
+					"examples": ["emit_struct_literal"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/isle/memory.isle"]
+					},
+					"metadata": {
+						"lines": "53",
+						"covers": "Memory and aggregate lowering"
+					}
+				},
+				{
+					"id": "isle-primitives",
+					"title": "primitives.isle",
+					"description": "The primitives.isle file has the trusted CLIF primitive contract. The file has plain-Rust bridges with no generated selector. The file has iconst_i64, the load and store operators, and ptr_add. The file has the icmp family and the f64 arithmetic. The file has bounded_memcmp. The deferred items are SIMD, bitcount, br_table, and vmctx.",
+					"examples": ["iconst_i64"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/isle/primitives.isle"]
+					},
+					"metadata": {
+						"lines": "102",
+						"covers": "Trusted CLIF primitive contract"
+					}
+				},
+				{
+					"id": "isle-items",
+					"title": "items.isle",
+					"description": "The items.isle file extracts item bodies. The file has item_body for FunctionDefinition, TestDefinition, and MethodDefinition.",
+					"examples": ["item_body"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/isle/items.isle"]
+					},
+					"metadata": {
+						"lines": "7",
+						"covers": "Item body extraction"
+					}
+				}
+			]
+		},
+		{
+			"id": "isle-host-rust",
+			"title": "ISLE host (Rust)",
+			"description": "These entries cover the Rust side of the ISLE host. The code lives under compiler/crates/beskid_isle/src/.",
+			"entries": [
+				{
+					"id": "isle-lib",
+					"title": "lib.rs",
+					"description": "The lib.rs file re-exports the lowering entry points. The file re-exports lower_expression, lower_statement, IsleContext, StringInterner, CallImporter, FunctionEmitter, and EmissionServices. The file includes the generated beskid_isle_metadata.rs. The metadata has RULE_COUNT and ISLE_INPUTS. The file exposes the syntax_types and callee modules.",
+					"examples": ["lower_expression"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/src/lib.rs"]
+					},
+					"metadata": {
+						"role": "re-exports + generated metadata include"
+					}
+				},
+				{
+					"id": "isle-context",
+					"title": "context.rs",
+					"description": "The context.rs file has the IsleContext type. The IsleContext is a thin host over FunctionBuilder and NodeFacts. The file has the LoopTargets stack and the locals map. The file has the generated Context impl. The impl delegates to the facts and the emit constructors. The file has materialize_parameters and jump_from_current_if_unterminated.",
+					"examples": ["IsleContext"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/src/context.rs"]
+					},
+					"metadata": {
+						"role": "IsleContext host over FunctionBuilder + NodeFacts"
+					}
+				},
+				{
+					"id": "isle-emitter",
+					"title": "emitter.rs",
+					"description": "The emitter.rs file has the FunctionEmitter type. The FunctionEmitter is ISA-owned. The file has emit_expression, emit_statement, and emit_item_statement. The file has emit_closure_lambda_entry_with_call_importer. This method materializes the capture fields from the ABI-v5 env. The file has the verify_function gate.",
+					"examples": ["FunctionEmitter"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/src/emitter.rs"]
+					},
+					"metadata": {
+						"role": "FunctionEmitter (ISA-owned)"
+					}
+				},
+				{
+					"id": "isle-facts",
+					"title": "facts.rs",
+					"description": "The facts.rs file has the NodeKind enum with 29 variants. The file has SyntaxNodeClassification and classify_syntax_node_kind. The classify is exhaustive with no fallback arm. The file has the NodeFacts trait. The trait has node_kind, the literal, operator, and call facts, the scalar types, and the function parameters. The file has DirectCallee, InlineCaptureField, MatchArmFact, CollectionOperation, and RuntimeIntrinsicKind.",
+					"examples": ["classify_syntax_node_kind"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/src/facts.rs"]
+					},
+					"metadata": {
+						"role": "NodeKind enum + NodeFacts trait"
+					}
+				},
+				{
+					"id": "isle-layout",
+					"title": "layout.rs",
+					"description": "The layout.rs file has the layout types. The types are ArrayLayout, StructLayout, EnumLayout, and FieldLayout. The layouts have size, align, tag, and variants. The file has ManagedStructAllocation and ManagedArrayAllocation. These types make source-authorized static allocation request symbols. ISLE must not reconstruct the symbols from a CLIF type. This preserves the GC reachability.",
+					"examples": ["ManagedStructAllocation"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/src/layout.rs"]
+					},
+					"metadata": {
+						"role": "ArrayLayout, StructLayout, EnumLayout, managed allocation plans"
+					}
+				},
+				{
+					"id": "isle-clif-primitives",
+					"title": "clif_primitives.rs",
+					"description": "The clif_primitives.rs file has the ClifPrimitives trusted helpers. The helpers bind to primitives.isle. The helpers are plain Rust with no selector. The helpers have loads and stores with zext and sext. The helpers have a scratch i64 stack slot. The helpers have the icmp family and the f64 arithmetic. The helpers have bounded_memcmp for the lexicographic compare loop.",
+					"examples": ["ClifPrimitives"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/src/clif_primitives.rs"]
+					},
+					"metadata": {
+						"role": "trusted helpers bound to primitives.isle"
+					}
+				},
+				{
+					"id": "isle-dispatch-rust",
+					"title": "dispatch.rs",
+					"description": "The dispatch.rs file has the pointer_type function. The function returns I64 on a 64-bit target. The function returns I32 otherwise.",
+					"examples": ["pointer_type()"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/src/dispatch.rs"]
+					},
+					"metadata": {
+						"role": "pointer_type selection"
+					}
+				},
+				{
+					"id": "isle-errors",
+					"title": "errors.rs",
+					"description": "The errors.rs file has the lowering error types. The types are LoweringError, LoweringErrorKind, FunctionEmissionError, StringMaterializationError, and CallImportError.",
+					"examples": ["LoweringError"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/src/errors.rs"]
+					},
+					"metadata": {
+						"role": "LoweringError, FunctionEmissionError, StringMaterializationError, CallImportError"
+					}
+				},
+				{
+					"id": "isle-build",
+					"title": "build.rs",
+					"description": "The build.rs file compiles the isle files. The file runs cranelift_isle::compile::from_files with the BESKID_ISLE prefix. The file asserts that the rule count is greater than zero. The file writes beskid_lower.rs and beskid_isle_metadata.rs.",
+					"examples": ["cranelift_isle::compile::from_files"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_isle/build.rs"]
+					},
+					"metadata": {
+						"role": "compiles isle/*.isle into beskid_lower.rs"
+					}
+				}
+			]
+		},
+		{
+			"id": "codegen-pipeline",
+			"title": "Codegen pipeline",
+			"description": "These entries cover the codegen pipeline files. The code lives under compiler/crates/beskid_codegen/src/.",
+			"entries": [
+				{
+					"id": "codegen-lib",
+					"title": "lib.rs",
+					"description": "The lib.rs file is the pipeline entry. The file re-exports lower_prepared_syntax_entrypoint, CodegenArtifact, CodegenInput, validate_artifact, and the ISLE adapter shims.",
+					"examples": ["lower_prepared_syntax_entrypoint"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_codegen/src/lib.rs"]
+					},
+					"metadata": {
+						"role": "pipeline entry + re-exports"
+					}
+				},
+				{
+					"id": "codegen-input",
+					"title": "codegen_input.rs",
+					"description": "The codegen_input.rs file has the CodegenInput type. The CodegenInput is the sole analysis to codegen boundary. The type has the db, the TypedProgram, the roots, the TargetMetadata, the AbiManifestV5, the artifact namespace, and an optional composition BindingPlan. The method target_context_layout selects the arch context for x86_64 SysV, Aarch64 Darwin, or X86_64 Windows.",
+					"examples": ["CodegenInput"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_codegen/src/codegen_input.rs"]
+					},
+					"metadata": {
+						"role": "sole analysis to codegen boundary"
+					}
+				},
+				{
+					"id": "codegen-artifact-file",
+					"title": "artifact.rs",
+					"description": "The artifact.rs file has the CodegenArtifact, LoweredFunction, ExternImport, and ExportEntry types. The ExternImport has symbol, abi, and library. The ExportEntry has beskid_name, exported_symbol, and abi. The TypeDescriptorData has size, align, and pointer_offsets. The CodegenContext does the string interning.",
+					"examples": ["CodegenArtifact"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--codegen-artifact-schema"],
+						"sources": ["compiler/crates/beskid_codegen/src/artifact.rs"]
+					},
+					"metadata": {
+						"role": "CodegenArtifact, LoweredFunction, ExternImport, ExportEntry, TypeDescriptorData"
+					}
+				},
+				{
+					"id": "codegen-artifact-validation",
+					"title": "artifact_validation.rs",
+					"description": "The artifact_validation.rs file has validate_artifact and referenced_extern_imports. The file has the MissingSymbol error.",
+					"examples": ["validate_artifact"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--codegen-artifact-schema"],
+						"sources": ["compiler/crates/beskid_codegen/src/artifact_validation.rs"]
+					},
+					"metadata": {
+						"role": "validate_artifact + referenced_extern_imports"
+					}
+				},
+				{
+					"id": "prepared-syntax",
+					"title": "prepared_syntax.rs",
+					"description": "The prepared_syntax.rs file has the prepared syntax lowering. The file has lower_canonical_runtime_prepared_syntax, lower_prepared_syntax_entrypoint, lower_prepared_syntax_module, and lower_syntax_assembly_entrypoint. The file has the PreparedSyntaxEntrypoint type.",
+					"examples": ["lower_prepared_syntax_entrypoint"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_codegen/src/prepared_syntax.rs"]
+					},
+					"metadata": {
+						"role": "prepared syntax lowering entrypoints"
+					}
+				},
+				{
+					"id": "module-emission",
+					"title": "module_emission.rs",
+					"description": "The module_emission.rs file emits the syntax program. The file has emit_syntax_program_in_session, lower_syntax_program, emit_string_literals, emit_type_descriptors, and emit_closure_static_plans. The file has the ModuleEmissionSession, SyntaxModuleItem, and DescriptorHandles types.",
+					"examples": ["emit_syntax_program_in_session"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--codegen-artifact-schema"],
+						"sources": [
+							"compiler/crates/beskid_codegen/src/module_emission.rs",
+							"compiler/crates/beskid_codegen/src/module_emission/"
+						]
+					},
+					"metadata": {
+						"role": "syntax program emission + string/type/closure plans"
+					}
+				},
+				{
+					"id": "isle-adapter",
+					"title": "isle_adapter/",
+					"description": "The isle_adapter directory has the ISLE adapter shims. The directory has emit_isle_expression, emit_isle_item, and emit_isle_closure_lambda_entry. The directory has ItemModuleImporter, SyntaxNodeFacts, and syntax_item_signature.",
+					"examples": ["emit_isle_expression"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": ["compiler/crates/beskid_codegen/src/isle_adapter/"]
+					},
+					"metadata": {
+						"role": "ISLE adapter shims"
+					}
+				},
+				{
+					"id": "aggregate-static",
+					"title": "aggregate_static.rs",
+					"description": "The aggregate_static.rs file emits aggregate static data. The file has emit_aggregate_static_data, AggregateObjectLayout, and AggregateStaticPlan. The file has the ABI_V5_MANAGED_OBJECT_ALLOCATE symbol.",
+					"examples": ["emit_aggregate_static_data"],
+					"references": {
+						"capabilities": [
+							"compiler--codegen-and-ir--codegen-artifact-schema",
+							"execution--abi-and-host--builtins-and-symbols"
+						],
+						"sources": ["compiler/crates/beskid_codegen/src/aggregate_static.rs"]
+					},
+					"metadata": {
+						"role": "aggregate static allocation plans",
+						"symbol": "ABI_V5_MANAGED_OBJECT_ALLOCATE"
+					}
+				},
+				{
+					"id": "array-static",
+					"title": "array_static.rs",
+					"description": "The array_static.rs file emits array static data. The file has emit_array_static_data, ArrayStaticPlan, and the ABI_V5_ARRAY_ALLOCATE_ROOTED, ABI_V5_ARRAY_CONSTRUCTION_FINISH, and ABI_V5_ARRAY_WRITE_BARRIER symbols.",
+					"examples": ["emit_array_static_data"],
+					"references": {
+						"capabilities": [
+							"compiler--codegen-and-ir--codegen-artifact-schema",
+							"execution--abi-and-host--builtins-and-symbols"
+						],
+						"sources": ["compiler/crates/beskid_codegen/src/array_static.rs"]
+					},
+					"metadata": {
+						"role": "array static allocation plans",
+						"symbols": "ABI_V5_ARRAY_ALLOCATE_ROOTED, ABI_V5_ARRAY_CONSTRUCTION_FINISH, ABI_V5_ARRAY_WRITE_BARRIER"
+					}
+				},
+				{
+					"id": "closure-static",
+					"title": "closure_static.rs",
+					"description": "The closure_static.rs file emits closure static data. The file has emit_closure_static_data, ClosureStaticPlan, and ClosureRootAuthority. The file has the RuntimeRootContext. The file has the ABI_V5_CLOSURE_CAPTURE_STORE, ABI_V5_CLOSURE_ENVIRONMENT_ALLOCATE, and ABI_V5_CLOSURE_ENVIRONMENT_ROOT_CURRENT symbols.",
+					"examples": ["emit_closure_static_data"],
+					"references": {
+						"capabilities": [
+							"compiler--codegen-and-ir--codegen-artifact-schema",
+							"execution--abi-and-host--builtins-and-symbols"
+						],
+						"sources": ["compiler/crates/beskid_codegen/src/closure_static.rs"]
+					},
+					"metadata": {
+						"role": "closure static allocation plans",
+						"symbols": "ABI_V5_CLOSURE_CAPTURE_STORE, ABI_V5_CLOSURE_ENVIRONMENT_ALLOCATE, ABI_V5_CLOSURE_ENVIRONMENT_ROOT_CURRENT"
+					}
+				}
+			]
+		}
+	]
+}

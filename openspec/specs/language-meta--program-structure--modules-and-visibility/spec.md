@@ -3,7 +3,7 @@
 
 ## Purpose
 
-File layout, `public`/`internal` boundaries, and how packages compose. The driver and package manager use the same module graph the typechecker sees.
+This specification defines the file layout and the `public` and `internal` boundaries. It defines how packages compose. The driver and package manager use the same module graph as the typechecker.
 
 ## Requirements
 
@@ -41,7 +41,7 @@ Duplicate module declarations in one file MUST error. Nested `mod` declarations 
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Modules and visibility
 

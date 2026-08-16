@@ -9,6 +9,33 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ## [Unreleased]
 
+### Added
+
+- Add the Beskid Normative Manifest to the platform-spec site: a chaptered,
+  JSON-structured aggregation of the most important normative facts about
+  Beskid, written in ASD-STE100 Simplified Technical English. The manifest
+  covers the Introduction (compiler dependencies: abfall, pest,
+  cranelift/ISLE, salsa, fibers), Syntax Index (every surface syntax
+  construct with examples and references), Corelib and Runtime (package
+  structure, native runtime modules, Beskid/native ABI boundary), ISLE and
+  Lowering (lowering pipeline, ISLE rule files, codegen pipeline), and
+  Error Index (every diagnostic code with explanations and spec links).
+  Served at `/manifest`, exported via `/api/v1/manifest`, and linked from
+  the reader navigation. Backed by a new OpenSpec capability
+  `standard-normative-manifest` with seven SHALL requirements.
+
+- Add the `standard-ste-compliance` OpenSpec capability adopting ASD-STE100
+  Simplified Technical English (Issue 9, January 2025) as the controlled
+  language for OpenSpec descriptive prose, with seven SHALL requirements
+  covering writing rules, permitted Beskid technical vocabulary, exempt
+  sections, and a validation step.
+
+- Add platform-spec reader components that replace plain markdown
+  renderings: an ADR table with status and decision badges, a GitHub code
+  snippet embed with syntax highlighting and line range support, and an
+  architecture graph embed with BSOL serialization and editable layout
+  mode.
+
 ### Fixed
 
 - Link Windows AOT executables through their validated Beskid entry symbol

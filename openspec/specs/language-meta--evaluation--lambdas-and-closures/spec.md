@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Capture lists, environment layout, and lifetime of delegates. JIT and AOT must agree on closure calling conventions.
+This specification defines capture lists, environment layout, and the lifetime of delegates. The JIT and AOT backends use the same closure calling conventions.
 
 ## Requirements
 
@@ -25,7 +25,7 @@ Captured locals MUST be definitely assigned before capture or diagnosed per defi
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Lambdas and closures
 

@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Structural contract declarations, conformance lists, and embedding. Distinct from compiler Mod SDK contracts and from runtime requires/ensures (not in v0.1 grammar).
+This specification defines structural contract declarations, conformance lists, and embedding. These contracts differ from compiler Mod SDK contracts. They also differ from runtime requires and ensures. The runtime requires and ensures are not in the v0.1 grammar.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Contract calls MUST use static dispatch on the receiver’s type after conforman
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Contracts
 

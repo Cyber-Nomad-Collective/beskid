@@ -3,7 +3,7 @@
 
 ## Purpose
 
-The language-level test harness, discovery, and assertions users rely on. Corelib testing helpers extend but do not redefine these semantics.
+This specification defines the language-level test harness, discovery, and assertions. Users rely on these semantics. Corelib testing helpers extend the semantics. The helpers do not redefine them.
 
 ## Requirements
 
@@ -25,7 +25,7 @@ The language-level test harness, discovery, and assertions users rely on. Coreli
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Testing
 

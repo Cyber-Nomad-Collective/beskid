@@ -3,7 +3,7 @@
 
 ## Purpose
 
-The spawn keyword, Fiber contract requirement, and cross-fiber communication rules.
+This specification defines the `spawn` keyword. It defines the Fiber contract requirement. It also defines the cross-fiber communication rules.
 
 ## Requirements
 
@@ -92,7 +92,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Fibers and spawn
 

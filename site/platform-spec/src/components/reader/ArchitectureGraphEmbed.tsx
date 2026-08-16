@@ -27,6 +27,11 @@ export interface ArchitectureGraphEmbedProps {
 	manifest: ArchitectureManifest;
 	catalog?: ArchitectureCatalogEntry[];
 	height?: number;
+	/**
+	 * When true, nodes can be dragged to adjust the layout, but cannot be
+	 * connected or deleted — the embed remains a view, not an editor.
+	 */
+	editable?: boolean;
 }
 
 function EmbedNodeCard({ data }: NodeProps<Node<ArchitectureMapNodeData>>) {
@@ -84,6 +89,7 @@ export function ArchitectureGraphEmbed({
 	manifest,
 	catalog = [],
 	height = 420,
+	editable = false,
 }: ArchitectureGraphEmbedProps) {
 	const model = useMemo(
 		() => resolveArchitectureModel(manifest, catalog),
@@ -99,7 +105,7 @@ export function ArchitectureGraphEmbed({
 				edges={edges}
 				nodeTypes={nodeTypes}
 				fitView
-				nodesDraggable={false}
+				nodesDraggable={editable}
 				nodesConnectable={false}
 				elementsSelectable
 				deleteKeyCode={null}

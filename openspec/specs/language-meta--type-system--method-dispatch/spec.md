@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Virtual dispatch, overload resolution, and receiver rules decide which code runs. Interop and codegen consume the same dispatch table model.
+This specification defines virtual dispatch, overload resolution, and receiver rules. These rules decide which code runs. Interop and codegen consume the same dispatch table model.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Legacy `impl Receiver { … }` blocks MAY still parse; new code SHOULD use `exte
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Method dispatch
 

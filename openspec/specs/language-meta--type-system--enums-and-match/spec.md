@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Algebraic enums and exhaustive `match` tie data representation to control flow. Lowering must preserve discriminant layout described in Execution where relevant.
+This specification defines algebraic enums and exhaustive `match`. They tie data representation to control flow. The lowering preserves the discriminant layout. The Execution specification describes the layout where relevant.
 
 ## Requirements
 
@@ -41,7 +41,7 @@ For enum scrutinees, match arms MUST cover all variants or include `_`; non-exha
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Enums and match
 

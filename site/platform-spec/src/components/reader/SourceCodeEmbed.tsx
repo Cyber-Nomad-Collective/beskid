@@ -1,9 +1,8 @@
 "use client";
 
-import { common, createLowlight } from "lowlight";
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 
-const lowlight = createLowlight(common);
+import { highlightCodeToHtml } from "#/lib/lowlight-render";
 
 export interface SourceCodeEmbedProps {
 	lang: string;
@@ -18,45 +17,19 @@ export interface SourceCodeEmbedProps {
 export function SourceCodeEmbed({ lang, code }: SourceCodeEmbedProps) {
 	const preRef = useRef<HTMLPreElement>(null);
 
-	const tree = useMemo(() => {
-		try {
-			return lowlight.highlight(lang, code);
-		} catch {
-			return lowlight.highlight("text", code);
-		}
-	}, [lang, code]);
+	const html = highlightCodeToHtml(lang, code);
 
-	const html = useMemo(() => {
-		const builder: string[] = [];
-		function walk(node: any): void {
-			if (node.type === "text") {
-				builder.push(escapeHtml(node.value));
-			} else if (node.type === "element") {
-				const classes = (node.properties?.className ?? []).join(" ");
-				builder.push(`<span class="${classes}">`);
-				for (const child of node.children) walk(child);
-				builder.push("</span>");
-			}
-		}
-		function escapeHtml(s: string): string {
-			return s
-				.replace(/&/g, "&amp;")
-				.replace(/</g, "&lt;")
-				.replace(/>/g, "&gt;")
-				.replace(/"/g, "&quot;");
-		}
-		for (const child of tree.children) walk(child);
-		return builder.join("");
-	}, [tree]);
-
-	// biome-ignore lint/security/noDangerouslySetInnerHtml: pre-rendered from lowlight AST
 	return (
 		<pre
 			ref={preRef}
 			className="overflow-x-auto rounded-lg border border-border bg-muted/40 p-4 text-sm leading-relaxed"
 			data-language={lang}
 		>
-			<code className="hljs" dangerouslySetInnerHTML={{ __html: html }} />
+			<code
+				className="hljs"
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: pre-rendered from lowlight AST
+				dangerouslySetInnerHTML={{ __html: html }}
+			/>
 		</pre>
 	);
 }

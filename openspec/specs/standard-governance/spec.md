@@ -3,12 +3,12 @@
 
 ## Purpose
 
-This capability preserves and governs the migrated Beskid standard contract for Platform specification, including its legacy provenance and review status.
+This capability preserves and governs the migrated Beskid standard contract for Platform specification. The contract includes its legacy provenance and review status.
 
 ## Requirements
 
 ### Requirement: Platform specification conformance status
-This capability SHALL remain non-conformant and MUST NOT be cited as an implemented Beskid guarantee until a validated OpenSpec change adds explicit behavioral requirements.
+This capability SHALL remain non-conformant. The capability MUST NOT be cited as an implemented Beskid guarantee until a validated OpenSpec change adds explicit behavioral requirements.
 
 **Stable ID:** `BSP-REQ-7F1082D9A8BD`
 
@@ -19,7 +19,7 @@ This capability SHALL remain non-conformant and MUST NOT be cited as an implemen
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Platform specification
 

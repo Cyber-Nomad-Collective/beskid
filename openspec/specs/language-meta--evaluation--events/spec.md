@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Multicast events, subscription lifetime, and thread affinity assumptions. UI stacks build on these primitives.
+This specification defines multicast events, subscription lifetime, and thread affinity assumptions. UI stacks build on these primitives.
 
 ## Requirements
 
@@ -25,7 +25,7 @@ Raising or subscribing MUST target an in-scope event member on a value or `this`
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Events
 

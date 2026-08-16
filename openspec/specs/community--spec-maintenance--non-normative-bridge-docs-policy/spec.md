@@ -3,12 +3,12 @@
 
 ## Purpose
 
-Policy for migration and bridge documents, including mandatory canonical destination links for non-normative mapping pages.
+This specification defines the policy for migration and bridge documents. The policy includes mandatory canonical destination links for non-normative mapping pages.
 
 ## Requirements
 
 ### Requirement: Bridge documents are non-normative by default: Decision [D-COMM-BRIDGE-0001]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > Bridge documents (migration guides, mapping tables, terminology crosswalks) are **non-normative** by default unless a **Standard** platform-spec feature page explicitly declares normative status. Migration mapping pages **must not** be the final authority for platform behavior.
 
@@ -22,7 +22,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Bridge pages must link canonical destinations: Decision [D-COMM-BRIDGE-0002]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > Every non-normative bridge page **must** link to one or more canonical normative destinations and label those links as canonical. Near the top each bridge **must** state: non-normative status, why the page exists, and which normative page(s) own the behavior. Canonical links **must** be direct platform-spec URLs with human-readable relation labels; bi-directional discoverability is required during active migration windows when practical.
 
@@ -36,7 +36,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Migration mapping page required sections: Decision [D-COMM-BRIDGE-0003]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > Migration mapping pages **must** include: (1) a one-sentence non-normative notice; (2) a **Canonical destinations** section linking target feature hubs; (3) a **Mapping scope** section stating coverage and exclusions; (4) a maintenance note for retirement timing. Multi-domain mappings **must** group links by destination domain/area.
 
@@ -51,7 +51,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Non-normative bridge docs policy
 

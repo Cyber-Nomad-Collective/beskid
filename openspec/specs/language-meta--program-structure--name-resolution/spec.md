@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Scopes, imports, and shadowing tie syntax to symbols. Diagnostics for unresolved names must cite these rules verbatim.
+This specification defines scopes, imports, and shadowing. These rules tie syntax to symbols. Diagnostics for unresolved names cite these rules verbatim.
 
 ## Requirements
 
@@ -41,7 +41,7 @@ The package driver and typechecker MUST share one resolution snapshot per compil
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Name resolution
 

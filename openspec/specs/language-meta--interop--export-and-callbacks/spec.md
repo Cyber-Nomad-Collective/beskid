@@ -3,7 +3,7 @@
 
 ## Purpose
 
-v0.3 normative Beskid export to C hosts and callback registration tables.
+This specification defines the v0.3 normative Beskid export to C hosts. It also defines the callback registration tables.
 
 ## Requirements
 
@@ -65,7 +65,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Export and callbacks
 

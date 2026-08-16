@@ -2,7 +2,11 @@
 
 import { Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
+import { type AdrLink, AdrTable } from "#/components/reader/adr-table";
+import { ArchitectureGraphEditor } from "#/components/reader/architecture-graph-editor";
+import { SpecContent } from "#/components/reader/spec-content-hydrator";
 import { TrackerTaskEmbed } from "#/components/reader/tracker-task-embed";
+import { coerceAuthorGraph } from "#/lib/architecture/graph-schema";
 import { renderMarkdownToHtml } from "#/lib/markdown";
 import type { LayoutValidation, SpecLayout } from "#/lib/spec/layouts-pure";
 
@@ -19,6 +23,8 @@ export interface StructuredDocumentViewProps {
 		title: string;
 		status?: string | null;
 		decision?: string | null;
+		date?: string | null;
+		links?: AdrLink[];
 	}[];
 	relatedTopics?: { href: string; title: string }[];
 	architectureGraph?: { graphKey: string; entryNode?: string } | null;
@@ -243,9 +249,14 @@ export function StructuredDocumentView({
 							Entry node: <code>{architectureGraph.entryNode}</code>
 						</p>
 					) : null}
-					<pre className="spec-arch-code">
-						{JSON.stringify(graph, null, 2)}
-					</pre>
+					{(() => {
+						const authorGraph = coerceAuthorGraph(graph);
+						return authorGraph ? (
+							<ArchitectureGraphEditor graph={authorGraph} readOnly height={420} />
+						) : (
+							<pre className="spec-arch-code">{JSON.stringify(graph, null, 2)}</pre>
+						);
+					})()}
 				</div>
 			</details>
 		) : graphLoading ? (
@@ -386,10 +397,9 @@ export function StructuredDocumentView({
 			{layoutSlot ? (
 				<section className="spec-document-section">{layoutSlot}</section>
 			) : null}
-			<div
+			<SpecContent
+				html={bodyHtml}
 				className="spec-prose prose prose-invert max-w-none"
-				// biome-ignore lint/security/noDangerouslySetInnerHtml: server-rendered markdown
-				dangerouslySetInnerHTML={{ __html: bodyHtml }}
 			/>
 			{relatedTopics.length > 0 || adrs.length > 0 || bookLinks.length > 0 ? (
 				<aside className="spec-document-section mt-8">
@@ -400,13 +410,11 @@ export function StructuredDocumentView({
 									<span className="spec-related-card__icon" aria-hidden="true">
 										<BookIcon />
 									</span>
-									<h2 className="spec-related-card__title">
-										Informative Book guides
-									</h2>
+									<h2 className="spec-related-card__title">Informative Book guides</h2>
 								</div>
 								<p className="spec-related-card__desc">
-									These guides explain and contextualize this standard; OpenSpec
-									remains the normative source.
+									These guides explain and contextualize this standard; OpenSpec remains
+									the normative source.
 								</p>
 								<ul className="spec-related-card__list">
 									{bookLinks.map((href) => (
@@ -423,9 +431,7 @@ export function StructuredDocumentView({
 									<span className="spec-related-card__icon" aria-hidden="true">
 										<PuzzleIcon />
 									</span>
-									<h2 className="spec-related-card__title">
-										Related capabilities
-									</h2>
+									<h2 className="spec-related-card__title">Related capabilities</h2>
 								</div>
 								<ul className="spec-related-card__list">
 									{relatedTopics.map((item) => (
@@ -437,41 +443,16 @@ export function StructuredDocumentView({
 							</section>
 						) : null}
 						{adrs.length > 0 ? (
-					<section className="spec-related-card">
-						<div className="spec-related-card__header">
-							<span className="spec-related-card__icon" aria-hidden="true">
-								<DecisionIcon />
-							</span>
-							<h2 className="spec-related-card__title">Decisions</h2>
-						</div>
-						<ul className="spec-related-card__list">
-							{adrs.map((item) => (
-								<li key={item.href}>
-									<a
-										href={item.href}
-										className="flex flex-col rounded-md border border-transparent px-2 py-1.5 transition-colors hover:border-border hover:bg-accent/25"
-									>
-										<span className="text-sm font-medium text-foreground">
-											{item.title}
-										</span>
-										<span className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
-											{item.decision ? (
-												<span className="rounded-full border border-primary/40 px-2 py-0.5 text-[0.7rem] font-medium text-primary">
-													{item.decision}
-												</span>
-											) : null}
-											{item.status ? (
-												<span className="rounded-full border border-border px-2 py-0.5 text-[0.7rem]">
-													{item.status}
-												</span>
-											) : null}
+							<section className="spec-related-card">
+								<div className="spec-related-card__header">
+									<span className="spec-related-card__icon" aria-hidden="true">
+										<DecisionIcon />
 									</span>
-								</a>
-								</li>
-							))}
-						</ul>
-					</section>
-				) : null}
+									<h2 className="spec-related-card__title">Decisions</h2>
+								</div>
+								<AdrTable adrs={adrs} />
+							</section>
+						) : null}
 					</div>
 				</aside>
 			) : null}

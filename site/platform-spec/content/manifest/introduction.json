@@ -1,0 +1,176 @@
+{
+	"id": "introduction",
+	"title": "Introduction",
+	"order": 0,
+	"description": "This chapter documents the compiler and runtime dependencies of Beskid. Each entry names a project and describes its role. The entries reference the platform spec capabilities and the source files. The prose conforms to ASD-STE100 Simplified Technical English.",
+	"sections": [
+		{
+			"id": "compiler-dependencies",
+			"title": "Compiler dependencies",
+			"description": "These entries name the open-source projects that Beskid uses. Each entry describes the role of the project in the compiler or the runtime. Each entry references the platform spec capability and the source file.",
+			"entries": [
+				{
+					"id": "abfall",
+					"title": "abfall",
+					"description": "Abfall is a garbage collector. It does concurrent tri-color mark-and-sweep collection. The colors are white, gray, and black. White objects are candidates. Gray objects are discovered. Black objects are scanned. A background collector runs while the program runs. The heap is thread-safe. Many mutator threads share one Arc<Heap>. The runtime registers external roots. You can disable auto collection or call force_collect. Beskid uses a vendored copy of abfall. The upstream project is HellButcher/abfall. The runtime allocates objects with Heap::allocate_beskid. The compiler emits type descriptors that give the pointer layout. Heap::write_barrier is a Dijkstra insertion barrier. The runtime exports it as gc_write_barrier(parent, child). GcPhase has the values Idle, Marking, and Sweeping. Phase A is the default in v0.2. Phase A has one Beskid mutator and many cooperative fibers. The stop-the-world time is the root scan plus the phase transitions. Phase B is opt-in for v0.3. You enable Phase B with BESKID_RUNTIME_PHASE_B. Phase B adds parallel mutators and a real write barrier on pointer-payload channels. ADR D-EXEC-RT-0006 names abfall as the chosen heap. No prior GC approach exists in the spec tree.",
+					"examples": [
+						"Heap::allocate_beskid(size, type_desc_ptr)",
+						"heap.write_barrier(parent_payload, child_payload)"
+					],
+					"references": {
+						"capabilities": ["execution--runtime--memory-and-gc-runtime-contract"],
+						"sources": [
+							"compiler/crates/abfall/src/heap.rs",
+							"compiler/crates/abfall/src/gc.rs",
+							"compiler/crates/abfall/README.md",
+							"compiler/Cargo.toml"
+						]
+					},
+					"metadata": {
+						"upstream": "https://github.com/HellButcher/abfall",
+						"license": "MIT",
+						"workspaceDep": "abfall = { path = \"crates/abfall\" }",
+						"phase": "Phase A (default), Phase B (opt-in)",
+						"adr": "D-EXEC-RT-0006"
+					}
+				},
+				{
+					"id": "pest",
+					"title": "pest",
+					"description": "Pest is a PEG parser generator for Rust. The file beskid.pest is the single syntactic truth. An L0-conformant tool must accept the same token stream as beskid.pest for all inputs in the reference test corpus. The pest parser drives the tokenization. Each pest rule maps to one AST node. The Parsable implementations live under compiler/crates/beskid_analysis/src/syntax/. A separate file beskid_doc.pest parses doc comments. The pest-gen carve-out permits project-local .pest files. A GrammarGenerator compiles these files. The local files parse text DSLs only. The local files must not replace or extend beskid.pest. The crate beskid_pest_gen emits Beskid combinator parsers from a constrained pest grammar surface.",
+					"examples": [
+						"beskid.pest: Program = ItemList ~ EOI",
+						"beskid_pest_gen: parse_grammar_rules -> GrammarRule"
+					],
+					"references": {
+						"capabilities": [
+							"language-meta--surface-syntax--lexical-and-syntax",
+							"compiler--compiler-mods--pest-parser-generator",
+							"compiler--front-end--grammar-and-parser-contract"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/parser.rs",
+							"compiler/crates/beskid_pest_gen/src/lib.rs",
+							"compiler/corelib/packages/pest-gen-schema/",
+							"compiler/Cargo.toml"
+						]
+					},
+					"metadata": {
+						"version": "pest = \"2.8\", pest_derive = \"2.8\", pest-ast = \"0.3.3\", from-pest = \"0.3.3\"",
+						"carveOut": "D-COMP-MODS-0020"
+					}
+				},
+				{
+					"id": "cranelift",
+					"title": "cranelift (codegen + ISLE + frontend + JIT + object + native)",
+					"description": "Cranelift is an IR compiler framework from the Bytecode Alliance. Beskid pins it at version 0.128.3. ISLE compiles the .isle rule files into Rust code. The build.rs file runs cranelift_isle::compile::from_files. The output goes to beskid_lower.rs. Stock CLIF is the target IR. The crate cranelift_frontend builds functions with FunctionBuilder, Switch, and Variable. The crate cranelift_codegen runs verify_function on every emitted function. The verifier runs before the function leaves FunctionEmitter. The JIT path uses cranelift-jit and cranelift-module. The JIT powers the REPL and the interim test runner. The AOT path uses cranelift-object and beskid_aot. The AOT path is the production path for beskid run and beskid build. The crate cranelift-native drives host ISA discovery. The production lowering goes from TypedProgram to CodegenInput to ISLE to stock CLIF to the verifier to CodegenArtifact.",
+					"examples": [
+						"cranelift_isle::compile::from_files(...)",
+						"cranelift_codegen::verify_function(...)"
+					],
+					"references": {
+						"capabilities": [
+							"compiler--codegen-and-ir--lowering-contract",
+							"compiler--codegen-and-ir--codegen-artifact-schema",
+							"compiler--build-pipeline--backends-jit-aot"
+						],
+						"sources": [
+							"compiler/crates/beskid_isle/build.rs",
+							"compiler/crates/beskid_isle/src/emitter.rs",
+							"compiler/crates/beskid_codegen/src/lib.rs",
+							"compiler/crates/beskid_engine/src/jit_module.rs",
+							"compiler/crates/beskid_aot/",
+							"compiler/Cargo.toml"
+						]
+					},
+					"metadata": {
+						"version": "0.128.3",
+						"crates": "cranelift-codegen, cranelift-frontend, cranelift-isle, cranelift-jit, cranelift-module, cranelift-native, cranelift-object",
+						"upstream": "https://cranelift.dev",
+						"decision": "D-COMP-IR-0009"
+					}
+				},
+				{
+					"id": "salsa",
+					"title": "salsa",
+					"description": "Salsa is an incremental query system. It memoizes query results. The lineage is IRMO and rust-analyzer. Beskid pins salsa at version 0.26 with the macros and persistence features. The semantic pipeline is a salsa database. The pipeline lives in compiler/crates/beskid_queries/. The generation-bound Salsa facts are the semantic authority for the LSP and the IDE. The compiler does no per-request HIR rebuilds. The compiler has no dual snapshot paths. SyntaxGenerationId gates the composition plan freshness. SyntaxGenerationId also gates the ISLE fact consistency.",
+					"examples": [
+						"salsa = { version = \"0.26\", features = [\"macros\", \"persistence\"] }"
+					],
+					"references": {
+						"capabilities": [
+							"compiler--semantic-pipeline--stage-ordering",
+							"compiler--semantic-pipeline--type-system-pass-contract",
+							"compiler--compiler-mods--incremental-scheduling-determinism"
+						],
+						"sources": [
+							"compiler/crates/beskid_queries/src/db.rs",
+							"compiler/crates/beskid_queries/src/typed_program.rs",
+							"compiler/crates/beskid_queries/src/session.rs",
+							"compiler/Cargo.toml"
+						]
+					},
+					"metadata": {
+						"version": "0.26",
+						"upstream": "https://github.com/salsa-rs/salsa",
+						"role": "semantic authority for LSP/IDE"
+					}
+				},
+				{
+					"id": "fibers",
+					"title": "fibers (M:N cooperative scheduler)",
+					"description": "The fiber scheduler is an M:N cooperative scheduler. Many fibers run on a pool of OS worker threads. Each worker has a run queue. Workers can steal work from other workers. Fibers park on channel ops, join, cancel, and blocking syscalls. The stacks start at 64 KiB. The stacks grow to an 8 MiB cap. FiberError::StackOverflow occurs at Join. The overflow does not cause undefined behavior. The compiler stack maps enumerate all fiber stacks at safepoints. The spawn lowering emits the canonical ABI-v5 boundary. The boundary is beskid_rt_v5_fiber_spawn_with_cancel_slot. The function takes entry, environment, and cancelled_slot. It returns an i64. The lowering rejects stack-capture escapes with StackReferenceEscapesSpawn. No prior fiber or stack approach was found in the spec tree. The M:N cooperative scheduler and the 64 KiB/8 MiB stack contract are the sole documented design.",
+					"examples": [
+						"spawn Compute()",
+						"beskid_rt_v5_fiber_spawn_with_cancel_slot(entry, environment, cancelled_slot) -> i64"
+					],
+					"references": {
+						"capabilities": [
+							"execution--runtime--fiber-scheduler-and-stacks",
+							"language-meta--evaluation--fibers-and-spawn"
+						],
+						"sources": [
+							"compiler/runtime/beskid/src/Runtime/Fiber/Scheduler/Loop.bd",
+							"compiler/runtime/beskid/src/Runtime/Fiber/Fiber.bd",
+							"compiler/crates/beskid_isle/isle/expressions.isle",
+							"compiler/runtime_manifest.bsol"
+						]
+					},
+					"metadata": {
+						"stack": "64 KiB initial, 8 MiB cap",
+						"decisions": "D-EXEC-RT-0001, D-EXEC-RT-0002",
+						"abiBoundary": "beskid_rt_v5_fiber_spawn_with_cancel_slot"
+					}
+				}
+			]
+		},
+		{
+			"id": "design-provenance",
+			"title": "Design provenance",
+			"description": "This section records the result of the spec-tree audit. The audit found no prior GC, fiber, or parser approaches. Abfall, the M:N scheduler, and pest are the sole documented designs.",
+			"entries": [
+				{
+					"id": "no-prior-approaches",
+					"title": "No prior GC, fiber, or parser approaches",
+					"description": "A spec-tree audit found no prior GC approach. Abfall is the sole documented collector. ADR D-EXEC-RT-0006 names abfall as the chosen heap. The audit found no prior fiber or stack approach. The M:N cooperative scheduler and the 64 KiB/8 MiB stack contract are the sole documented design. The audit found no prior parser approach. The file beskid.pest is the single syntactic truth. The compiler lowers descriptors and stack maps. The compiler does not embed collector policy.",
+					"references": {
+						"capabilities": [
+							"execution--runtime--memory-and-gc-runtime-contract",
+							"execution--runtime--fiber-scheduler-and-stacks",
+							"language-meta--surface-syntax--lexical-and-syntax"
+						],
+						"sources": [
+							"compiler/crates/abfall/IMPLEMENTATION.md",
+							"compiler/runtime/beskid/src/Runtime/Fiber/Scheduler/",
+							"compiler/crates/beskid_analysis/src/beskid.pest"
+						]
+					},
+					"metadata": {
+						"adrs": "D-EXEC-RT-0006, D-EXEC-RT-0007, D-EXEC-RT-0001, D-EXEC-RT-0002, D-LM-LEX-001"
+					}
+				}
+			]
+		}
+	]
+}

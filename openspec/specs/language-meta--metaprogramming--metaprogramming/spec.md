@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Source generators, attributes that drive compiler plug-ins, and scheduling relative to other analyses. The broader generator roadmap may live in guides; v0.1 rules are normative here.
+This specification defines source generators and attributes. The attributes drive compiler plug-ins. The specification defines the scheduling relative to other analyses. The broader generator roadmap lives in guides. The v0.1 rules are normative here.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ App/Lib/Test projects MAY declare `macro` items and consume mods. Mod projects M
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Metaprogramming
 

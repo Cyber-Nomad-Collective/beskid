@@ -3,7 +3,7 @@
 
 ## Purpose
 
-This capability preserves and governs the migrated Beskid standard contract for Architecture, including its legacy provenance and review status.
+This capability preserves and governs the migrated Beskid standard contract for Architecture. The contract includes its legacy provenance and review status.
 
 ## Requirements
 
@@ -19,7 +19,7 @@ This capability SHALL remain non-conformant and MUST NOT be cited as an implemen
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Architecture
 

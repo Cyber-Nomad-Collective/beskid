@@ -1,0 +1,1143 @@
+{
+	"id": "syntax-index",
+	"title": "Syntax Index",
+	"order": 1,
+	"description": "This chapter enumerates each Beskid surface syntax structure. Each entry has a description, an example, a platform spec capability reference, and a source file reference. The file beskid.pest is the single syntactic truth. The prose conforms to ASD-STE100 Simplified Technical English.",
+	"sections": [
+		{
+			"id": "lexical-layer",
+			"title": "Lexical layer",
+			"description": "These entries cover the tokens of the Beskid language. The parser reads the source text and produces these tokens.",
+			"entries": [
+				{
+					"id": "whitespace",
+					"title": "Whitespace and comments",
+					"description": "Whitespace separates tokens. The parser ignores whitespace. A line comment starts with two slashes. A line comment with four slashes is an ordinary comment, not a doc comment. A block comment starts with /* and ends with */. The block comment nests by the terminator only.",
+					"examples": ["// comment", "//// not doc"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": ["compiler/crates/beskid_analysis/src/beskid.pest"]
+					},
+					"metadata": {
+						"pestRules": "WHITESPACE, FourSlashLineComment, OrdinaryLineComment, BlockComment"
+					}
+				},
+				{
+					"id": "identifier",
+					"title": "Identifier",
+					"description": "An identifier names a variable, a function, or a type. An identifier starts with an ASCII letter or an underscore. The rest of the identifier has letters, digits, or underscores. An identifier must not spell a reserved keyword.",
+					"examples": ["foo", "_bar", "baz123"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/common/"
+						]
+					},
+					"metadata": {
+						"pestRules": "Identifier, ASCII_ALPHA_UNDERSCORE"
+					}
+				},
+				{
+					"id": "keyword",
+					"title": "Keyword",
+					"description": "A keyword is a reserved token. The parser treats keywords as keywords even when the code does not use them. The DI tokens host, registry, scope, launch, and inject are keywords. There are about 45 keyword rules.",
+					"examples": ["type", "enum", "spawn"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": ["compiler/crates/beskid_analysis/src/beskid.pest"]
+					},
+					"metadata": {
+						"pestRules": "Keyword, TypeDeclarationKeyword, EnumDeclarationKeyword, ImplKeyword, MatchKeyword, SpawnKeyword, HostKeyword, RegistryKeyword, ScopeKeyword, InjectKeyword, TryKeyword"
+					}
+				},
+				{
+					"id": "integer-literal",
+					"title": "Integer literal",
+					"description": "An integer literal writes a whole number. The literal has an optional minus sign. The body is decimal or hexadecimal. A hexadecimal literal starts with 0x. You can put underscores between digits. An optional suffix gives the type. The suffixes are _i32, _i64, and _u8.",
+					"examples": ["42", "0xFF", "1_000_i64"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/literal.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "IntegerLiteral, DecimalIntegerBody, HexIntegerBody"
+					}
+				},
+				{
+					"id": "float-literal",
+					"title": "Float literal",
+					"description": "A float literal writes a number with a decimal point. The literal has an optional minus sign. The body has digits, a dot, then digits.",
+					"examples": ["3.14"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": ["compiler/crates/beskid_analysis/src/beskid.pest"]
+					},
+					"metadata": {
+						"pestRules": "FloatLiteral"
+					}
+				},
+				{
+					"id": "string-literal",
+					"title": "String literal",
+					"description": "A string literal writes text between double quotes. The escapes are backslash-quote, backslash-backslash, and backslash-dollar-brace. You can put an interpolation inside the string. The interpolation has the form ${ expr }.",
+					"examples": ["\"value = ${n}\""],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/string_decode.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "StringLiteral, StringContent, StringEscape, StringText"
+					}
+				},
+				{
+					"id": "string-interpolation",
+					"title": "String interpolation",
+					"description": "A string interpolation evaluates an expression at runtime. The interpolation has the form ${ Expression }. The interpolation sits inside a string literal.",
+					"examples": ["\"${n + 1}\""],
+					"references": {
+						"capabilities": [
+							"language-meta--surface-syntax--lexical-and-syntax",
+							"language-meta--evaluation--lambdas-and-closures"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/beskid.pest"]
+					},
+					"metadata": {
+						"pestRules": "StringInterpolation, InterpolationExpression"
+					}
+				},
+				{
+					"id": "char-literal",
+					"title": "Char literal",
+					"description": "A char literal writes one character between single quotes. The escape backslash-quote writes a single quote.",
+					"examples": ["'a'"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": ["compiler/crates/beskid_analysis/src/beskid.pest"]
+					},
+					"metadata": {
+						"pestRules": "CharLiteral"
+					}
+				},
+				{
+					"id": "documentation-comment",
+					"title": "Documentation comment",
+					"description": "A documentation comment starts with three slashes. The comment attaches to an item via ItemWithDocs. A line with four slashes is an ordinary comment, not a doc comment.",
+					"examples": ["/// Docs"],
+					"references": {
+						"capabilities": [
+							"language-meta--surface-syntax--documentation-comments",
+							"language-meta--surface-syntax--lexical-and-syntax"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/doc_comment_parser.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "DocRun, DocLineContent"
+					}
+				}
+			]
+		},
+		{
+			"id": "program-and-module-structure",
+			"title": "Program and module structure",
+			"description": "These entries cover the top-level structure of a Beskid program. A program is a list of items. A module groups items.",
+			"entries": [
+				{
+					"id": "program",
+					"title": "Program",
+					"description": "A program is a list of items. The list ends at the end of the input. The top-level items are host, macro, function, impl, extend type, type, enum, contract, test, attribute, inline mod, mod declaration, and use.",
+					"examples": [
+						"mod App.Domain;\n\npub unit Main() {\n    Console.WriteLine(\"hello\");\n}"
+					],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/program.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "Program, ItemList, ItemWithDocs, InnerItem"
+					}
+				},
+				{
+					"id": "module-declaration",
+					"title": "Module declaration",
+					"description": "A module declaration sets the module path of the file. The declaration has an optional visibility, the keyword mod, a path, and a semicolon. The declaration must be the first top-level item when you use it. The errors E1505, E1506, and E1507 cover placement problems.",
+					"examples": ["mod App.Domain;"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--modules-and-visibility"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/module_declaration.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "ModuleDeclaration"
+					}
+				},
+				{
+					"id": "inline-module",
+					"title": "Inline module",
+					"description": "An inline module nests a submodule inside the current module. The module has an optional visibility, the keyword mod, an identifier, and a body in braces. The body holds items.",
+					"examples": ["mod Helpers { ... }"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--modules-and-visibility"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/inline_module.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "InlineModule, InlineModuleBody"
+					}
+				},
+				{
+					"id": "use-declaration",
+					"title": "Use declaration",
+					"description": "A use declaration imports a name. The declaration has an optional visibility, the keyword use, a path, and a semicolon. You can alias the final segment with as. An unknown import gives E1105. An ambiguous import gives E1104. A forward reference gives E1106.",
+					"examples": ["use Core.Console;", "use Core.Console as C;"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--name-resolution",
+							"language-meta--program-structure--modules-and-visibility"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/use_declaration.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "UseDeclaration"
+					}
+				},
+				{
+					"id": "visibility",
+					"title": "Visibility",
+					"description": "The keyword pub exports an item to importers. Items are private by default. The v0.1 grammar has no internal keyword.",
+					"examples": ["pub unit Foo() { }"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--modules-and-visibility"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/beskid.pest"]
+					},
+					"metadata": {
+						"pestRules": "Visibility"
+					}
+				},
+				{
+					"id": "attribute-use",
+					"title": "Attribute (use-site)",
+					"description": "An attribute decorates an item. The attribute sits in square brackets. The attribute has a name and an optional argument list. The arguments have the form key: expr.",
+					"examples": ["[Serialize]"],
+					"references": {
+						"capabilities": ["language-meta--metaprogramming--metaprogramming"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/attribute.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "AttributeList, Attribute, AttributeArgumentList, AttributeArgument"
+					}
+				},
+				{
+					"id": "attribute-declaration",
+					"title": "Attribute declaration",
+					"description": "An attribute declaration defines a module-level attribute. The declaration has the keyword attribute, a name, an optional target list, and a parameter list in braces. Misuse of targets gives E1508, E1509, and E1510.",
+					"examples": ["attribute Serialize(type) { }"],
+					"references": {
+						"capabilities": ["language-meta--metaprogramming--metaprogramming"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/attribute.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "AttributeDeclaration, AttributeTargetList, AttributeParameterList"
+					}
+				}
+			]
+		},
+		{
+			"id": "type-system",
+			"title": "Type system",
+			"description": "These entries cover the types of the Beskid language. A type names a set of values.",
+			"entries": [
+				{
+					"id": "primitive-type",
+					"title": "Primitive type",
+					"description": "A primitive type is a built-in type. The primitive types are bool, i32, i64, u8, pointer, word, f64, char, string, unit, and never. The unit type is the type of a statement result. The never type is the bottom type.",
+					"examples": ["i32", "unit"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/types/primitive_type.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "PrimitiveType"
+					}
+				},
+				{
+					"id": "type-name-path",
+					"title": "Type name and path",
+					"description": "A type name is a primitive or a nominal path. A path can have generic arguments. A path segment is one part of the path.",
+					"examples": ["Core.Console", "Box<i32>"],
+					"references": {
+						"capabilities": [
+							"language-meta--type-system--types",
+							"language-meta--program-structure--name-resolution"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/types/path.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "TypeName, Path, PathSegment"
+					}
+				},
+				{
+					"id": "generic-parameters",
+					"title": "Generic parameters",
+					"description": "Generic parameters declare type variables on a type or a function. The parameters sit in angle brackets. The parameters shadow type names in the signature scope only.",
+					"examples": ["type Box<T> { ... }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": ["compiler/crates/beskid_analysis/src/beskid.pest"]
+					},
+					"metadata": {
+						"pestRules": "GenericParameters"
+					}
+				},
+				{
+					"id": "generic-arguments",
+					"title": "Generic arguments",
+					"description": "Generic arguments give the types for generic parameters at a use site. The arguments sit in angle brackets. An arity mismatch gives E1203 or E1204.",
+					"examples": ["Box<i32>"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": ["compiler/crates/beskid_analysis/src/beskid.pest"]
+					},
+					"metadata": {
+						"pestRules": "GenericArguments"
+					}
+				},
+				{
+					"id": "array-type",
+					"title": "Array type",
+					"description": "An array type writes T with square brackets. The layout is a BeskidArray fat pointer. The array type has lower precedence than the function type.",
+					"examples": ["i32[]"],
+					"references": {
+						"capabilities": [
+							"language-meta--type-system--types",
+							"language-meta--memory-model--memory-and-references"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/types/type.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "ArrayType, BeskidType"
+					}
+				},
+				{
+					"id": "function-type",
+					"title": "Function type",
+					"description": "A function type writes a named-receiver function type. The type has a return type and a parameter list in parentheses.",
+					"examples": ["unit(i32)"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": ["compiler/crates/beskid_analysis/src/beskid.pest"]
+					},
+					"metadata": {
+						"pestRules": "FunctionType"
+					}
+				},
+				{
+					"id": "arrow-function-type",
+					"title": "Arrow function type",
+					"description": "An arrow function type writes a lambda type. The type has a parameter list in parentheses, an arrow, and a return type. The arrow function type has the highest type precedence.",
+					"examples": ["(i32) => i32"],
+					"references": {
+						"capabilities": [
+							"language-meta--type-system--types",
+							"language-meta--evaluation--lambdas-and-closures"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/beskid.pest"]
+					},
+					"metadata": {
+						"pestRules": "ArrowFunctionType"
+					}
+				},
+				{
+					"id": "beskid-type",
+					"title": "Beskid type",
+					"description": "The Beskid type rule is the top type rule. The rule picks one of arrow function type, function type, array type, or type name.",
+					"examples": ["i32\nstring\n(i32) => i32\ni32[]"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": ["compiler/crates/beskid_analysis/src/beskid.pest"]
+					},
+					"metadata": {
+						"pestRules": "BeskidType, BeskidTypeList"
+					}
+				}
+			]
+		},
+		{
+			"id": "item-declarations",
+			"title": "Item declarations",
+			"description": "These entries cover the declarations that you put at the top level or inside a module. An item declares a function, a constant, a type, an enum, an impl, an extend type, a contract, a host, a macro, or a test.",
+			"entries": [
+				{
+					"id": "function-definition",
+					"title": "Function definition",
+					"description": "A function definition declares a top-level function. The definition has an optional attribute list, an optional visibility, a return type, a name, optional generic parameters, a parameter list, and a body. The body can be a block or an arrow expression.",
+					"examples": ["pub unit Greet(string name) { Console.WriteLine(\"hi\"); }"],
+					"references": {
+						"capabilities": [
+							"language-meta--surface-syntax--lexical-and-syntax",
+							"language-meta--program-structure--code-style-and-naming"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/function_definition.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "FunctionDefinition, ParameterList, ParameterWithDocs, Parameter, MethodBody, ExpressionBody"
+					}
+				},
+				{
+					"id": "constant-definition",
+					"title": "Constant definition",
+					"description": "A constant definition declares an integer constant. The definition has the keyword const, a name, an equals sign, and an integer literal. The v0.1 grammar allows integers only.",
+					"examples": ["const MaxRetries = 3;"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/constant_definition.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "ConstantDefinition"
+					}
+				},
+				{
+					"id": "type-declaration",
+					"title": "Type declaration",
+					"description": "A type declaration defines a nominal record-like type. The declaration has the keyword type, a name, optional generic parameters, an optional conformance list, and a body in braces. The body has value fields, event fields, inject fields, and inline methods. Duplicate names give E1001 or E1006.",
+					"examples": [
+						"type Account { i32 balance; pub unit Deposit(i32 amt) { ... } }"
+					],
+					"references": {
+						"capabilities": [
+							"language-meta--type-system--types",
+							"language-meta--evaluation--events",
+							"language-meta--composition--dependency-injection"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/type_definition.rs",
+							"compiler/crates/beskid_analysis/src/syntax/types/field.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "TypeDefinition, TypeConformanceList, TypeBody, TypeFieldList, FieldWithDocs, Field, ValueField, InjectField, EventField, EventCapacity, InjectQualifier"
+					}
+				},
+				{
+					"id": "enum-declaration",
+					"title": "Enum declaration",
+					"description": "An enum declaration defines a nominal sum type. The declaration has the keyword enum, a name, optional generic parameters, and a body in braces. The body has variants. A variant can be nullary or carry fields. A duplicate variant gives E1002.",
+					"examples": ["enum Result<T, E> { Ok(T), Err(E) }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--enums-and-match"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/enum_definition.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "EnumDefinition, EnumVariantList, EnumVariantWithDocs, EnumVariant"
+					}
+				},
+				{
+					"id": "impl-block",
+					"title": "Impl block (legacy)",
+					"description": "An impl block adds methods to a type. The block has the keyword impl, a receiver type, and a body in braces. New code should use extend type instead. The impl block is a legacy form.",
+					"examples": ["impl Account { ... }"],
+					"references": {
+						"capabilities": [
+							"language-meta--type-system--method-dispatch",
+							"language-meta--program-structure--extend-type"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/impl_block.rs",
+							"compiler/crates/beskid_analysis/src/syntax/items/method_definition.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "ImplBlock, ImplMethodWithDocs, ImplMethodDefinition, ReceiverType"
+					}
+				},
+				{
+					"id": "extend-type",
+					"title": "Extend type",
+					"description": "An extend type adds members to a type from outside the type. The declaration has the keywords extend type, a receiver type, and a body in braces. The members are public only. The members must not bypass visibility.",
+					"examples": ["extend type Account { pub unit Extra() { } }"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--extend-type",
+							"language-meta--type-system--method-dispatch"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/extend_type.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "ExtendTypeDefinition"
+					}
+				},
+				{
+					"id": "contract-declaration",
+					"title": "Contract declaration",
+					"description": "A contract declaration defines required members. The declaration has the keyword contract, a name, and a body in braces. The body has method signatures or embeddings. A duplicate method gives E1003. Conflicting embeddings give E1004. A type declares conformance with a colon and a list of contracts.",
+					"examples": ["contract Drawable { unit Draw(); }"],
+					"references": {
+						"capabilities": ["language-meta--contracts-and-effects--contracts"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/contract_definition.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "ContractDefinition, ContractItemWithDocs, ContractItem, ContractMethodSignature, ContractEmbedding"
+					}
+				},
+				{
+					"id": "host-declaration",
+					"title": "Host declaration",
+					"description": "A host declaration is a DI composition root. The compiler resolves the host at compile time. The declaration has the keyword host, a name, a parameter list, an optional conformance path, and a body in braces. The body has registry, scope, and hooks. The spelling registry is locked.",
+					"examples": ["host App() : IApp { registry { single Db; } }"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/host_definition.rs",
+							"compiler/crates/beskid_analysis/src/composition/"
+						]
+					},
+					"metadata": {
+						"pestRules": "HostDefinition, HostBodyItem, ScopeDefinition, ScopeBodyItem, ScopeHook, ScopeHookName, RegistryBlock, RegistryEntry, RegistrationLifetime, RegistrationTarget"
+					}
+				},
+				{
+					"id": "macro-declaration",
+					"title": "Macro declaration",
+					"description": "A macro declaration defines a module-level macro. The declaration has the keyword macro, a name, a parameter list, and a body in braces. Each parameter has a fragment kind. The fragment kinds are block, expression, statement, type, identifier, literal, pattern, path, item, and node.",
+					"examples": ["macro Debug(expression e) { Console.WriteLine(e); }"],
+					"references": {
+						"capabilities": ["language-meta--metaprogramming--macros"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/macro_definition.rs",
+							"compiler/crates/beskid_analysis/src/macros/"
+						]
+					},
+					"metadata": {
+						"pestRules": "MacroDefinition, MacroParameter, MacroParameterList, MacroFragmentKind"
+					}
+				},
+				{
+					"id": "test-declaration",
+					"title": "Test declaration",
+					"description": "A test declaration defines a test entry point. The declaration has the keyword test, a name, and a body in braces. The body can have a meta section and a skip section. The meta section has key equals expr entries. The test names use snake_case.",
+					"examples": ["test adds_two { meta { timeout = 30; } }"],
+					"references": {
+						"capabilities": [
+							"language-meta--contracts-and-effects--testing",
+							"language-meta--program-structure--code-style-and-naming"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/items/test_definition.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "TestDefinition, TestBody, TestBodyItemWithDocs, TestBodyItem, TestMetaSection, TestMetadataEntry, TestSkipSection, TestSkipEntry"
+					}
+				}
+			]
+		},
+		{
+			"id": "statements",
+			"title": "Statements",
+			"description": "These entries cover the statements of the Beskid language. A statement does work and may return a value.",
+			"entries": [
+				{
+					"id": "block",
+					"title": "Block",
+					"description": "A block is a sequence of statements in braces. The block makes a scope.",
+					"examples": ["{ ... }"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--control-flow"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/statements/block.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "Block"
+					}
+				},
+				{
+					"id": "let-statement",
+					"title": "Let statement",
+					"description": "A let statement makes a new variable. You can give a type or let the compiler infer the type from the value. Use mut to make a variable that you can change. The compiler infers the type from the initializer when the type is unambiguous. An ambiguous inference gives E1202 or E1206. The mut placement is normative. The legacy suffix T mut name is rejected.",
+					"examples": ["let total = 0;", "mut i32 count = 0;"],
+					"references": {
+						"capabilities": [
+							"language-meta--type-system--type-inference",
+							"language-meta--memory-model--memory-and-references"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/statements/let_statement.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "LetStatement, TypedLetStatement, InferredLetStatement, TypeAnnotation"
+					}
+				},
+				{
+					"id": "return-statement",
+					"title": "Return statement",
+					"description": "A return statement exits the innermost function. The statement has the keyword return and an optional expression. The expression must match the return type. A mismatch gives E1207.",
+					"examples": ["return a;"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--control-flow"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/statements/return_statement.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "ReturnStatement"
+					}
+				},
+				{
+					"id": "break-continue",
+					"title": "Break and continue",
+					"description": "A break statement exits the innermost loop. A continue statement starts the next iteration of the innermost loop. Both work on the innermost loop only. A break or continue outside a loop gives E1401 or E1402. The v0.1 grammar has no labeled break.",
+					"examples": ["break;"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--control-flow"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/statements/break_statement.rs",
+							"compiler/crates/beskid_analysis/src/syntax/statements/continue_statement.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "BreakStatement, ContinueStatement"
+					}
+				},
+				{
+					"id": "if-statement",
+					"title": "If statement",
+					"description": "An if statement runs a block when a condition is true. The condition must be bool. A non-bool condition gives E1208. The booleans short-circuit. The else part can be a block or an else-if. The v0.1 grammar has no switch.",
+					"examples": ["if (v > 0) { ... } else { ... }"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--control-flow"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/statements/if_statement.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "IfStatement, ElsePart"
+					}
+				},
+				{
+					"id": "while-statement",
+					"title": "While statement",
+					"description": "A while statement runs a block while a condition is true. The condition must be bool. The body can loop.",
+					"examples": ["while (n > 0) { n -= 1; }"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--control-flow"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/statements/while_statement.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "WhileStatement"
+					}
+				},
+				{
+					"id": "for-statement",
+					"title": "For statement",
+					"description": "A for statement iterates over an iterable value. The statement has the keyword for, an identifier, the keyword in, an expression, and a block. The expression must be iterable. A non-iterable expression gives E1215. The v0.1 grammar has range and array forms. The statement desugars to the iterator protocol.",
+					"examples": ["for v in values { total += v; }"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--control-flow"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/statements/for_statement.rs",
+							"compiler/crates/beskid_analysis/src/syntax/statements/range_expression.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "ForStatement, RangeExpression"
+					}
+				},
+				{
+					"id": "with-statement",
+					"title": "With statement",
+					"description": "A with statement enters a DI scope. The statement has the keyword with, an identifier, an argument list in parentheses, and a block. The scope stack is fiber-local.",
+					"examples": ["with scope(db) { ... }"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/statements/with_statement.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "WithStatement"
+					}
+				},
+				{
+					"id": "launch-statement",
+					"title": "Launch statement",
+					"description": "A launch statement launches a host composition. The statement has the keyword launch, a path, an argument list in parentheses, and a semicolon.",
+					"examples": ["launch App();"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/statements/launch_statement.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "LaunchStatement"
+					}
+				},
+				{
+					"id": "expression-statement",
+					"title": "Expression statement",
+					"description": "An expression statement runs an expression and discards the result. The statement is an expression followed by a semicolon. The umbrella rule Statement picks one of let, return, break, continue, while, for, if, with, launch, or expression statement.",
+					"examples": ["Console.WriteLine(\"hi\");"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/statements/expression_statement.rs",
+							"compiler/crates/beskid_analysis/src/syntax/statements/statement.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "ExpressionStatement, Statement"
+					}
+				}
+			]
+		},
+		{
+			"id": "expressions",
+			"title": "Expressions",
+			"description": "These entries cover the expressions of the Beskid language. An expression produces a value.",
+			"entries": [
+				{
+					"id": "expression",
+					"title": "Expression",
+					"description": "The expression rule is the top expression rule. The rule picks a lambda, a match, or an assignment.",
+					"examples": ["1 + 2\nx => x + 1\nmatch r { Ok(v) => v, Err(e) => 0 }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/expression.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "Expression"
+					}
+				},
+				{
+					"id": "lambda-expression",
+					"title": "Lambda expression",
+					"description": "A lambda expression makes an anonymous function. The lambda has parameters, an arrow, and a body. The body is an expression or a block. The parameters can be typed or untyped. Untyped parameters need context. An ambiguous inference gives E1202. A lambda can be the operand of spawn.",
+					"examples": ["x => x + 1", "(i32 a, i32 b) => a + b"],
+					"references": {
+						"capabilities": [
+							"language-meta--evaluation--lambdas-and-closures",
+							"language-meta--type-system--type-inference"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/lambda_expression.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "LambdaExpression, LambdaParameters, LambdaParameterList, LambdaParameter, LambdaBody"
+					}
+				},
+				{
+					"id": "match-expression",
+					"title": "Match expression",
+					"description": "A match expression picks one arm from a scrutinee. The scrutinee is evaluated once. Each arm has a pattern, an optional when guard, and a result. The arm types must unify. A mismatch gives E1305. The when guard must be bool. A non-bool guard gives E1308. The match must be exhaustive. A non-exhaustive match gives E1304. The patterns are underscore, literal, identifier bind, and Enum.Variant with subpatterns.",
+					"examples": ["match r { Ok(v) => v, Err(e) => 0 }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--enums-and-match"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/match_expression.rs",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/match_arm.rs",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/pattern.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "MatchExpression, MatchArm, MatchGuard, Pattern, EnumPattern, PatternList"
+					}
+				},
+				{
+					"id": "assignment-expression",
+					"title": "Assignment expression",
+					"description": "An assignment expression stores a value. The right side is evaluated before the store. The operators are equals, plus-equals, and minus-equals. An assignment to an immutable value gives E1214.",
+					"examples": ["total += v"],
+					"references": {
+						"capabilities": [
+							"language-meta--memory-model--memory-and-references",
+							"language-meta--evaluation--control-flow"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/assign_expression.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "AssignmentExpression, AssignmentOperator"
+					}
+				},
+				{
+					"id": "binary-expression",
+					"title": "Binary expression",
+					"description": "A binary expression combines two values with an operator. The precedence ladder goes from || to && to | to & to equality to comparison to shift to add to multiply. The operators && and || short-circuit. The ISLE OperatorFact enum lists all operators.",
+					"examples": ["a + b * 2", "a && b"],
+					"references": {
+						"capabilities": [
+							"language-meta--evaluation--control-flow",
+							"language-meta--surface-syntax--lexical-and-syntax"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/binary_expression.rs",
+							"compiler/crates/beskid_isle/isle/binary.isle"
+						]
+					},
+					"metadata": {
+						"pestRules": "LogicalOrExpression, LogicalAndExpression, BitwiseOrExpression, BitwiseAndExpression, EqualityExpression, ComparisonExpression, ShiftExpression, AdditionExpression, MultiplicationExpression"
+					}
+				},
+				{
+					"id": "unary-expression",
+					"title": "Unary expression",
+					"description": "A unary expression applies one operator to one value. The prefix operators are minus and not. The ISLE rule for Neg emits clif_ineg. The ISLE rule for Not emits clif_logical_not.",
+					"examples": ["-x", "!flag"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/unary_expression.rs",
+							"compiler/crates/beskid_isle/isle/unary_casts.isle"
+						]
+					},
+					"metadata": {
+						"pestRules": "UnaryExpression, SpawnUnary, PrefixUnary"
+					}
+				},
+				{
+					"id": "spawn-expression",
+					"title": "Spawn expression",
+					"description": "A spawn expression makes a child fiber. The expression has the keyword spawn and an expression. The type of the expression is Fiber<T>, not T. Stack captures that escape give StackReferenceEscapesSpawn. The canonical ABI-v5 boundary is beskid_rt_v5_fiber_spawn_with_cancel_slot.",
+					"examples": ["spawn Compute()"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--fibers-and-spawn"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/spawn_expression.rs",
+							"compiler/crates/beskid_isle/isle/expressions.isle"
+						]
+					},
+					"metadata": {
+						"pestRules": "SpawnUnary, SpawnKeyword, SpawnExpression"
+					}
+				},
+				{
+					"id": "postfix-expression",
+					"title": "Postfix, call, member, index, and try",
+					"description": "A postfix expression applies operators after a primary. The operators are call, member access, index, and try. The try operator is a postfix try on Result-shaped enums. An invalid try target gives a diagnostic.",
+					"examples": ["a.b(c)[i]?"],
+					"references": {
+						"capabilities": [
+							"language-meta--type-system--method-dispatch",
+							"language-meta--contracts-and-effects--error-handling"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/call_expression.rs",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/member_expression.rs",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/index_expression.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "PostfixExpression, PostfixOperator, CallOperator, MemberAccess, SubscriptOperator, TryOperator"
+					}
+				},
+				{
+					"id": "call-expression",
+					"title": "Call expression",
+					"description": "A call expression calls a function. The expression has a name and an argument list in parentheses. The v0.1 grammar uses static dispatch. The arguments must match the arity and the types. The ISLE CallKind enum lists the call kinds.",
+					"examples": ["Console.WriteLine(x)"],
+					"references": {
+						"capabilities": ["language-meta--type-system--method-dispatch"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_isle/isle/calls.isle",
+							"compiler/crates/beskid_isle/isle/runtime_intrinsics.isle"
+						]
+					},
+					"metadata": {
+						"pestRules": "CallExpression, ArgumentList"
+					}
+				},
+				{
+					"id": "try-block-expression",
+					"title": "Try block expression",
+					"description": "A try block expression does structured error handling. The expression has a try block and a catch block. The catch block has an identifier in parentheses.",
+					"examples": ["try { ... } catch (e) { ... }"],
+					"references": {
+						"capabilities": ["language-meta--contracts-and-effects--error-handling"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/try_expression.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "TryBlockExpression, TryKeyword, CatchKeyword"
+					}
+				},
+				{
+					"id": "field-access",
+					"title": "Field access",
+					"description": "A field access reads a member of a value. The access is a dot and an identifier. The receiver static type must expose the member. A missing member gives E1101 or E1213. The extend type members participate.",
+					"examples": ["account.balance"],
+					"references": {
+						"capabilities": ["language-meta--type-system--method-dispatch"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/member_expression.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "MemberAccess"
+					}
+				},
+				{
+					"id": "index-expression",
+					"title": "Index expression",
+					"description": "An index expression reads or writes an element. The expression is a bracket with an index inside. The index can read an array or a string. The ISLE IndexTarget is String or Array. Safe builds check the bounds.",
+					"examples": ["values[i]"],
+					"references": {
+						"capabilities": ["language-meta--memory-model--memory-and-references"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/index_expression.rs",
+							"compiler/crates/beskid_isle/isle/memory.isle"
+						]
+					},
+					"metadata": {
+						"pestRules": "SubscriptOperator"
+					}
+				},
+				{
+					"id": "path-expression",
+					"title": "Path expression",
+					"description": "A path expression resolves a value path. The path can resolve to a function, a local, a constant, an enum constructor, or a contract namespace. An unresolved path gives E1101.",
+					"examples": ["Core.Console"],
+					"references": {
+						"capabilities": ["language-meta--program-structure--name-resolution"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/path_expression.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "Path"
+					}
+				},
+				{
+					"id": "enum-constructor-expression",
+					"title": "Enum constructor expression",
+					"description": "An enum constructor expression makes an enum value. The expression is Enum.Variant or Enum.Variant with arguments. You must qualify the construction when the type is not inferred. A non-qualified construction gives E1303. An arity mismatch gives E1302 or E1307.",
+					"examples": ["Result.Ok(42)"],
+					"references": {
+						"capabilities": ["language-meta--type-system--enums-and-match"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/enum_constructor_expression.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "EnumConstructorExpression, enum_constructor_nullary, enum_constructor_with_args, EnumPath"
+					}
+				},
+				{
+					"id": "struct-literal-expression",
+					"title": "Struct literal expression",
+					"description": "A struct literal expression makes a value of a type. The expression is a path and a list of field equals expr entries in braces. The expression needs sufficient context or explicit qualification.",
+					"examples": ["Box<i32> { value = 42 }"],
+					"references": {
+						"capabilities": [
+							"language-meta--type-system--types",
+							"language-meta--type-system--type-inference"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/struct_literal_expression.rs",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/struct_literal_field.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "StructLiteralExpression, FieldValueList, FieldValue"
+					}
+				},
+				{
+					"id": "array-literal-expression",
+					"title": "Array literal expression",
+					"description": "An array literal expression makes an array. The expression is a list of expressions in brackets. The layout is a BeskidArray fat pointer. The arrays_backing feature gates the element storage.",
+					"examples": ["[1, 2, 3]"],
+					"references": {
+						"capabilities": [
+							"language-meta--memory-model--memory-and-references",
+							"execution--runtime--runtime-feature-flags"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/array_literal_expression.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "ArrayLiteralExpression, ExpressionList"
+					}
+				},
+				{
+					"id": "grouped-expression",
+					"title": "Grouped expression",
+					"description": "A grouped expression puts an expression in parentheses. The ISLE lowering recurses into the child.",
+					"examples": ["(a + b)"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/grouped_expression.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "GroupedExpression"
+					}
+				},
+				{
+					"id": "block-expression",
+					"title": "Block expression",
+					"description": "A block expression uses a block as an expression. The ISLE rule emit_block_expression lowers the block.",
+					"examples": ["{ let x = 1; x }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/block_expression.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "BlockExpression"
+					}
+				},
+				{
+					"id": "code-expression",
+					"title": "Code expression and code literal",
+					"description": "A code expression writes a markdown-style fenced literal. The expression has the keyword code and a fenced body. The default language tag is beskid. Non-beskid bodies are verbatim. The holes have the form @{ expr }. The host evaluates the holes at mod generate time. This is distinct from the runtime ${} interpolation.",
+					"examples": ["code ```beskid\n@{x}\n```"],
+					"references": {
+						"capabilities": [
+							"language-meta--metaprogramming--metaprogramming",
+							"language-meta--metaprogramming--compiler-mod-sdk"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/code_string.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "CodeExpression, CodeKeyword, CodeFence, CodeFenceOpen, CodeFenceClose, CodeFenceBody, CodeFenceBodyContents, CodeHole, CodeLanguageTag, CodePlainBody"
+					}
+				},
+				{
+					"id": "clif-block",
+					"title": "CLIF block",
+					"description": "A CLIF block writes inline Cranelift CLIF. The expression has the keyword clif and a body in braces. The ISLE rule emit_clif_block lowers the block.",
+					"examples": ["clif { ... }"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--lowering-contract"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/clif_block.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "ClifBlockExpression, ClifKeyword"
+					}
+				},
+				{
+					"id": "macro-invocation",
+					"title": "Macro invocation",
+					"description": "A macro invocation calls a macro. The invocation has a name, an exclamation mark, and arguments. The arguments can be in parentheses or in a block. The invocation resolves to a macro binding. An unknown macro gives E1901. The body uses $param metavariables. The depth cap is 32. A depth over 32 gives E1905. A fragment-kind mismatch gives E1903.",
+					"examples": ["Debug!(x)"],
+					"references": {
+						"capabilities": ["language-meta--metaprogramming--macros"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/beskid.pest",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/macro_invocation.rs",
+							"compiler/crates/beskid_analysis/src/syntax/expressions/macro_metavariable.rs"
+						]
+					},
+					"metadata": {
+						"pestRules": "MacroInvocation, MacroArgumentList, MacroInvocationBlock, MacroMetavariable"
+					}
+				}
+			]
+		}
+	]
+}

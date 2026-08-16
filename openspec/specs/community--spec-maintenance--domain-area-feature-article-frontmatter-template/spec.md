@@ -3,12 +3,12 @@
 
 ## Purpose
 
-Canonical frontmatter templates aligned with platform-spec validators and Zod contracts.
+This specification defines the canonical frontmatter templates. The templates align with the platform-spec validators and Zod contracts.
 
 ## Requirements
 
 ### Requirement: Canonical platform-spec frontmatter templates: Decision [D-COMM-META-0001]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > New nodes **must** use the canonical templates on the parent feature hub: `specLevel` discriminates **domain**, **area**, **feature**, or **article**; `status` is required on **feature** and **article** only; `owner` and `submitter` **must** include non-empty `name` and valid `email`; every domain/area/feature hub directory **must** ship `layout.json`.
 
@@ -23,7 +23,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Domain, Area, Feature, and Article frontmatter templates
 

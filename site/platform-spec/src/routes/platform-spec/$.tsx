@@ -87,6 +87,17 @@ function PlatformSpecDocument() {
 			title: entry.title,
 			status: entry.status,
 			decision: entry.decision,
+			// The catalog does not yet expose a decision date; the column is
+			// forward-compatible and renders "—" until OpenSpec carries it.
+			date: null as string | null,
+			links: entry.bookLinks.map((href) => ({
+				href,
+				label:
+					href
+						.replace(/^\/+|\/+$/g, "")
+						.split("/")
+						.at(-1) ?? href,
+			})),
 		}));
 
 	return (

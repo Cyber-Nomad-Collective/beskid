@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Defines tokens, whitespace, and the context-free skeleton that every later phase assumes. The normative grammar and lexical rules live in the Language Spec; this page records platform ownership and ho…
+This specification defines tokens, whitespace, and the context-free skeleton. Every later phase assumes this skeleton. The normative grammar and lexical rules live in the Language Spec. This page records the platform ownership.
 
 ## Requirements
 
@@ -41,7 +41,7 @@ Lexical and syntactic validity MUST NOT be treated as semantic validity. Phases 
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Lexical and syntax
 

@@ -3,12 +3,12 @@
 
 ## Purpose
 
-Mandatory markdown-first template set for Domain, Area and Feature pages, including required section contracts and optional article bundles.
+This specification defines the mandatory markdown-first template set for Domain, Area, and Feature pages. The set includes required section contracts and optional article bundles.
 
 ## Requirements
 
 ### Requirement: Domain, Area and Feature template bundle: Anti-stub and circular canon rules [community/spec-maintenance/feature-hub-article-bundle-template]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > The following are **forbidden** on **Standard** pages:
 > 
@@ -26,7 +26,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Domain, Area and Feature template bundle: Minimum article payload by role [community/spec-maintenance/feature-hub-article-bundle-template]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > Each article in a bundle **must** meet a minimum for its role (in addition to [Required Article sections](#required-article-sections)):
 > 
@@ -51,7 +51,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Markdown-first platform-spec authoring: Decision [D-COMM-HUB-0001]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > Every new or reworked topic **must** choose one canonical level: **Domain**, **Area**, or **Feature**. Regular sections **must** be markdown headings/lists/admonitions first. Architecture visuals **must** use fenced `arch` (Mermaid C4); procedural flows **may** use fenced `mermaid`. Inline graph components in docs are legacy-only. Generics in prose **must** use one backtick literal per type; Mermaid labels **must not** contain raw `` `<` `` or `` `>` ``.
 
@@ -65,7 +65,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Required Domain Area and Feature hub sections: Decision [D-COMM-HUB-0002]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > **Domain** pages **must** include eight ordered sections (scope, terminology, principles, area map, guarantees, conformance, change policy, related domains). **Area** pages **must** include eight area sections (contract, boundaries, internal model, feature index, failure model, verification matrix, operations, related areas). **Feature** hubs **must** include eleven sections ending with **Decisions** plus **`adr/`** (contract, I/O, state, algorithms, edge cases, compatibility, security/performance, examples, verification, related features, decisions).
 
@@ -79,7 +79,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Standard feature hubs require adr directory: Decision [D-COMM-HUB-0003]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > Every **Standard** feature hub **must** include **`## Decisions`** (open items or **no open decisions** plus `adrId` pointers) and publish at least one `` `adr/<slug>.mdx` `` with `specLevel: adr` unless explicitly exempt in a **Standard** maintenance policy. Each ADR **must** include **Context**, **Decision**, and **Consequences**. New decisions **must not** be added only to monolithic decision tables.
 
@@ -93,7 +93,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Anti-stub and circular canon rules: Decision [D-COMM-HUB-0004]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > On **Standard** pages the following are **forbidden**: (1) **circular canon** — body that cites the same URL as sole authority without substantive MUST/SHOULD/MAY prose; (2) **placeholder-only articles** — siblings that are scaffold-only; (3) **hub-only authority** — articles that repeat the hub contract without role-specific detail.
 
@@ -107,7 +107,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Minimum article payload by role: Decision [D-COMM-HUB-0005]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > Each bundle article **must** meet role minimums: **design-model** (model, invariants, diagram/table); **contracts** (testable MUST/SHOULD rules); **verification** (concrete test paths, not TBD); **operations**/**migration** (procedures); **decisions-record** (legacy—migrate to **`adr/`**); **adr** (one decision per file with `SpecAdrChrome`). Every article **must** include purpose, canonical references, detailed behavior, verification notes, and related topics. Feature hubs **must** publish a stable newcomer reading order (area → hub → conceptual articles → verification).
 
@@ -122,7 +122,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Domain, Area and Feature template bundle
 

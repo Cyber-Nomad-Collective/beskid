@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Representing and propagating failures (`Result`, `try`, unwinding policy). Runtime lowering shares the ABI error envelope described in Execution.
+This specification defines how the language represents and propagates failures. The failures use `Result`, `try`, and an unwinding policy. The runtime lowering shares the ABI error envelope. The Execution specification describes the envelope.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Analyze, compile (`run` / `build`), and LSP MUST share the same typed-HIR spine 
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Error handling
 

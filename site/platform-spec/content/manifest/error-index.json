@@ -1,0 +1,2251 @@
+{
+	"id": "error-index",
+	"title": "Error Index",
+	"order": 5,
+	"description": "This chapter enumerates each Beskid diagnostic code. Each entry has a description, an example, a platform spec capability reference, and a source file reference. The codes use the E prefix for errors and the W prefix for warnings. The prose conforms to ASD-STE100 Simplified Technical English.",
+	"sections": [
+		{
+			"id": "definition-errors",
+			"title": "Definition and declaration errors",
+			"description": "These errors fire when a declaration uses a name twice or refers to an unknown type. The codes use the E1001 to E1006 band.",
+			"entries": [
+				{
+					"id": "e1001",
+					"title": "E1001 — Duplicate definition name",
+					"description": "A type definition uses a name that another definition in the same scope already uses. The compiler rejects the second definition.",
+					"examples": ["type Account { }\ntype Account { }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1002",
+					"title": "E1002 — Duplicate enum variant",
+					"description": "An enum declaration has two variants with the same name. The compiler rejects the duplicate variant.",
+					"examples": ["enum Color { Red, Red }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--enums-and-match"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1003",
+					"title": "E1003 — Duplicate contract method",
+					"description": "A contract declaration has two methods with the same name. The compiler rejects the duplicate method.",
+					"examples": ["contract Drawable { unit Draw(); unit Draw(); }"],
+					"references": {
+						"capabilities": ["language-meta--contracts-and-effects--contracts"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1004",
+					"title": "E1004 — Conflicting embedded contract method",
+					"description": "A contract embeds another contract. The embedded contract adds a method that conflicts with an existing method. The compiler rejects the conflict.",
+					"examples": [
+						"contract A { unit Foo(); }\ncontract B { : A; unit Foo(); }"
+					],
+					"references": {
+						"capabilities": ["language-meta--contracts-and-effects--contracts"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1005",
+					"title": "E1005 — Unknown type in definition",
+					"description": "A definition refers to a type that the compiler does not know. The compiler rejects the reference.",
+					"examples": ["type Box { Unknown field; }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1006",
+					"title": "E1006 — Duplicate item name",
+					"description": "Two top-level items in the same module use the same name. The compiler rejects the second item.",
+					"examples": ["unit Foo() { }\nunit Foo() { }"],
+					"references": {
+						"capabilities": ["language-meta--program-structure--name-resolution"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "resolution-errors",
+			"title": "Resolution and syntax legality errors",
+			"description": "These errors fire when a name does not resolve or when the syntax fails a legality check. The codes use the E1101 to E1109 and E1151 to E1154 bands.",
+			"entries": [
+				{
+					"id": "e1101",
+					"title": "E1101 — Unknown value",
+					"description": "A value path does not resolve to a function, a local, a constant, or an enum constructor. The compiler rejects the path.",
+					"examples": ["unit Main() { return Missing; }"],
+					"references": {
+						"capabilities": ["language-meta--program-structure--name-resolution"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1102",
+					"title": "E1102 — Duplicate item or local",
+					"description": "Two items or two locals in the same scope use the same name. The compiler rejects the duplicate.",
+					"examples": ["unit Main() { let x = 1; let x = 2; }"],
+					"references": {
+						"capabilities": ["language-meta--program-structure--name-resolution"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1104",
+					"title": "E1104 — Ambiguous import",
+					"description": "A use declaration refers to a name that two modules export. The compiler cannot pick one. The compiler rejects the import.",
+					"examples": ["use Core.Foo;"],
+					"references": {
+						"capabilities": ["language-meta--program-structure--name-resolution"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1105",
+					"title": "E1105 — Unknown import path",
+					"description": "A use declaration refers to a path that the compiler cannot find. The compiler rejects the import.",
+					"examples": ["use Core.Missing;"],
+					"references": {
+						"capabilities": ["language-meta--program-structure--name-resolution"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1106",
+					"title": "E1106 — Use before declaration",
+					"description": "A name is used before the declaration of the name. The compiler rejects the use.",
+					"examples": ["unit Main() { return x; } let x = 1;"],
+					"references": {
+						"capabilities": ["language-meta--program-structure--name-resolution"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1107",
+					"title": "E1107 — Private item in module",
+					"description": "A module refers to a private item of another module. The compiler rejects the access.",
+					"examples": ["use Core.Internal;"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--modules-and-visibility"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1108",
+					"title": "E1108 — Unknown module path",
+					"description": "A path refers to a module that the compiler cannot find. The compiler rejects the path.",
+					"examples": ["use Missing.Foo;"],
+					"references": {
+						"capabilities": ["language-meta--program-structure--name-resolution"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1109",
+					"title": "E1109 — Missing import",
+					"description": "A name is used but the name is not in scope. The compiler suggests an import that may resolve the name.",
+					"examples": ["unit Main() { return Console; }"],
+					"references": {
+						"capabilities": ["language-meta--program-structure--name-resolution"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1151",
+					"title": "E1151 — Invalid syntax span",
+					"description": "A syntax node has a span that does not satisfy the span invariants. The compiler rejects the node.",
+					"examples": ["// internal: a node with a reversed span"],
+					"references": {
+						"capabilities": ["compiler--front-end--hir-normalization-and-legality"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1152",
+					"title": "E1152 — Unresolved value path in syntax",
+					"description": "A value path does not resolve during the syntax legality pass. The compiler rejects the path.",
+					"examples": ["// internal: a value path that fails legality"],
+					"references": {
+						"capabilities": ["compiler--front-end--hir-normalization-and-legality"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1153",
+					"title": "E1153 — Unresolved type path in syntax",
+					"description": "A type path does not resolve during the syntax legality pass. The compiler rejects the path.",
+					"examples": ["// internal: a type path that fails legality"],
+					"references": {
+						"capabilities": ["compiler--front-end--hir-normalization-and-legality"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1154",
+					"title": "E1154 — Non-canonical syntax control flow",
+					"description": "A control-flow structure is not in the canonical form. The compiler rejects the structure.",
+					"examples": ["// internal: a non-normalized control-flow node"],
+					"references": {
+						"capabilities": ["compiler--front-end--hir-normalization-and-legality"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "type-errors",
+			"title": "Type system errors",
+			"description": "These errors fire when a type check fails. The codes use the E1201 to E1227 band.",
+			"entries": [
+				{
+					"id": "e1201",
+					"title": "E1201 — Unknown type",
+					"description": "An expression or a declaration refers to a type that the compiler does not know. The compiler rejects the reference.",
+					"examples": ["unit Main() { Unknown x; }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1202",
+					"title": "E1202 — Missing type annotation",
+					"description": "A let binding or a lambda parameter has no type. The compiler cannot infer the type from the context. The compiler rejects the binding.",
+					"examples": ["let x = None;"],
+					"references": {
+						"capabilities": ["language-meta--type-system--type-inference"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1203",
+					"title": "E1203 — Missing type arguments",
+					"description": "A generic type is used without type arguments. The compiler rejects the use.",
+					"examples": ["let x = Box;"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1204",
+					"title": "E1204 — Generic argument or call arity mismatch",
+					"description": "A generic use or a call gives the wrong number of arguments. The compiler rejects the use.",
+					"examples": ["let x = Box<i32, i32>(1);"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1205",
+					"title": "E1205 — Call argument mismatch",
+					"description": "A call gives an argument with a type that does not match the parameter type. The compiler rejects the call.",
+					"examples": ["unit Main() { Foo(\"text\"); }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1206",
+					"title": "E1206 — Type mismatch",
+					"description": "An expression has a type that does not match the expected type. The compiler rejects the expression.",
+					"examples": ["i32 x = \"text\";"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1207",
+					"title": "E1207 — Return type mismatch",
+					"description": "A return statement gives a value with a type that does not match the return type. The compiler rejects the return.",
+					"examples": ["i32 Main() { return \"text\"; }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1208",
+					"title": "E1208 — Non-boolean condition",
+					"description": "An if or while condition has a type that is not bool. The compiler rejects the condition.",
+					"examples": ["if (1) { }"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--control-flow"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1209",
+					"title": "E1209 — Invalid binary operation",
+					"description": "A binary operator is applied to operands of a type that the operator does not support. The compiler rejects the operation.",
+					"examples": ["\"a\" + 1"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1210",
+					"title": "E1210 — Invalid unary operation",
+					"description": "A unary operator is applied to an operand of a type that the operator does not support. The compiler rejects the operation.",
+					"examples": ["-\"text\""],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1211",
+					"title": "E1211 — Unknown struct field",
+					"description": "A struct literal uses a field that the type does not declare. The compiler rejects the field.",
+					"examples": ["Box { missing = 1 }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1212",
+					"title": "E1212 — Missing struct field",
+					"description": "A struct literal omits a field that the type declares. The compiler rejects the literal.",
+					"examples": ["type Point { i32 x; i32 y; }\nPoint { x = 1 }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1213",
+					"title": "E1213 — Invalid member target",
+					"description": "A member access reads a field of a value that is not a struct-like type. The compiler rejects the access.",
+					"examples": ["i32 x = 1; x.field"],
+					"references": {
+						"capabilities": ["language-meta--type-system--method-dispatch"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1214",
+					"title": "E1214 — Immutable assignment",
+					"description": "An assignment writes to a binding that is not mut. The compiler rejects the assignment.",
+					"examples": ["let x = 1; x = 2;"],
+					"references": {
+						"capabilities": ["language-meta--memory-model--memory-and-references"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1215",
+					"title": "E1215 — Non-iterable for target",
+					"description": "A for statement iterates over a value that does not satisfy the iterable contract. The compiler rejects the statement.",
+					"examples": ["for v in 1 { }"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--control-flow"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1216",
+					"title": "E1216 — Iterable Next arity mismatch",
+					"description": "The Next method of an iterable has the wrong number of parameters. The compiler rejects the iterable.",
+					"examples": ["// internal: an iterable with a bad Next arity"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--control-flow"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1217",
+					"title": "E1217 — Iterable Next return not Option",
+					"description": "The Next method of an iterable does not return Option<T>. The compiler rejects the iterable.",
+					"examples": ["// internal: an iterable whose Next returns i32"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--control-flow"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1218",
+					"title": "E1218 — Iterable Option Some arity mismatch",
+					"description": "The Some payload of the Next return does not match the element type. The compiler rejects the iterable.",
+					"examples": ["// internal: an iterable with a Some payload mismatch"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--control-flow"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1219",
+					"title": "E1219 — Invalid event invocation scope",
+					"description": "An event is invoked from a method that is not on the declaring type. The compiler rejects the invocation.",
+					"examples": ["// internal: an event invoked from outside its type"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--events"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1220",
+					"title": "E1220 — Invalid event capacity",
+					"description": "An event capacity is not a positive integer. The compiler rejects the capacity.",
+					"examples": ["type T { event[0] Changed; }"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--events"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1221",
+					"title": "E1221 — Invalid event subscription target",
+					"description": "An event subscription targets a value that is not an event field. The compiler rejects the subscription.",
+					"examples": ["// internal: a subscription to a non-event field"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--events"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1222",
+					"title": "E1222 — Invalid try target",
+					"description": "The try operator is applied to a value that is not a Result. The compiler rejects the operator.",
+					"examples": ["i32 x = 1?;"],
+					"references": {
+						"capabilities": ["language-meta--contracts-and-effects--error-handling"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1223",
+					"title": "E1223 — Spawn target not fiber compatible",
+					"description": "A spawn expression targets a callable whose return type the compiler cannot check. The compiler rejects the spawn.",
+					"examples": ["spawn 1"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--fibers-and-spawn"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1224",
+					"title": "E1224 — Join would deadlock",
+					"description": "A fiber tries to join an ancestor fiber. The join would deadlock. The compiler rejects the join.",
+					"examples": ["// internal: a fiber joining its ancestor"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--fibers-and-spawn"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1225",
+					"title": "E1225 — Stack reference escapes spawn",
+					"description": "A spawn closure captures a stack reference from the spawning fiber. The reference would escape. The compiler rejects the capture.",
+					"examples": ["unit Main() { let x = 1; spawn { return x; } }"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--fibers-and-spawn"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1226",
+					"title": "E1226 — async keyword reserved",
+					"description": "The keyword async is reserved. The keyword is not implemented in this language version. The compiler rejects the use.",
+					"examples": ["async unit Main() { }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1227",
+					"title": "E1227 — await keyword reserved",
+					"description": "The keyword await is reserved. The keyword is not implemented in this language version. The compiler rejects the use.",
+					"examples": ["unit Main() { await Foo(); }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--lexical-and-syntax"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "enum-match-errors",
+			"title": "Enum and match errors",
+			"description": "These errors fire when a match or an enum construction is not valid. The codes use the E1301 to E1308 band.",
+			"entries": [
+				{
+					"id": "e1301",
+					"title": "E1301 — Unknown enum path",
+					"description": "A pattern or a path refers to an enum variant that the compiler does not know. The compiler rejects the reference.",
+					"examples": ["match r { Missing => 0 }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--enums-and-match"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1302",
+					"title": "E1302 — Enum constructor arity mismatch",
+					"description": "An enum constructor gives the wrong number of arguments. The compiler rejects the construction.",
+					"examples": ["Result.Ok(1, 2)"],
+					"references": {
+						"capabilities": ["language-meta--type-system--enums-and-match"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1303",
+					"title": "E1303 — Unqualified enum constructor",
+					"description": "An enum constructor is used without the enum name. The type is not inferred. The compiler rejects the construction.",
+					"examples": ["let x = Ok(1);"],
+					"references": {
+						"capabilities": ["language-meta--type-system--enums-and-match"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1304",
+					"title": "E1304 — Match non-exhaustive",
+					"description": "A match expression does not cover all variants of the enum. The compiler rejects the match.",
+					"examples": ["match r { Ok(v) => v }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--enums-and-match"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1305",
+					"title": "E1305 — Match arm type mismatch",
+					"description": "Two match arms produce values of different types. The compiler rejects the match.",
+					"examples": ["match r { Ok(v) => v, Err(e) => \"err\" }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--enums-and-match"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1306",
+					"title": "E1306 — Duplicate pattern binding",
+					"description": "A pattern binds the same name twice. The compiler rejects the pattern.",
+					"examples": ["match r { Ok(v) | Err(v) => v }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--enums-and-match"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1307",
+					"title": "E1307 — Pattern arity mismatch",
+					"description": "A pattern gives the wrong number of subpatterns for the variant. The compiler rejects the pattern.",
+					"examples": ["match r { Ok(v, w) => v }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--enums-and-match"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1308",
+					"title": "E1308 — Match guard must be boolean",
+					"description": "A match guard has a type that is not bool. The compiler rejects the guard.",
+					"examples": ["match r { Ok(v) when v => v }"],
+					"references": {
+						"capabilities": ["language-meta--type-system--enums-and-match"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "control-flow-errors",
+			"title": "Control flow errors",
+			"description": "These errors fire when a break or continue is used outside a loop. The codes use the E1401 to E1402 band.",
+			"entries": [
+				{
+					"id": "e1401",
+					"title": "E1401 — Break outside loop",
+					"description": "A break statement is used outside a loop. The compiler rejects the statement.",
+					"examples": ["unit Main() { break; }"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--control-flow"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1402",
+					"title": "E1402 — Continue outside loop",
+					"description": "A continue statement is used outside a loop. The compiler rejects the statement.",
+					"examples": ["unit Main() { continue; }"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--control-flow"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "visibility-attribute-errors",
+			"title": "Visibility and attribute errors",
+			"description": "These errors fire when a visibility rule or an attribute target is not valid. The codes use the E1501 to E1511 band.",
+			"entries": [
+				{
+					"id": "e1501",
+					"title": "E1501 — Visibility violation on private import",
+					"description": "A use declaration imports a private item. The compiler rejects the import.",
+					"examples": ["use Core.Internal;"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--modules-and-visibility"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1502",
+					"title": "E1502 — Visibility module not found",
+					"description": "A visibility check refers to a module that the compiler cannot find. The compiler rejects the reference.",
+					"examples": ["use Missing.Foo;"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--modules-and-visibility"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1505",
+					"title": "E1505 — File-scoped module not first item",
+					"description": "A file-scoped module declaration is not the first top-level item. The compiler rejects the declaration.",
+					"examples": ["unit Foo() { }\nmod App.Domain;"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--modules-and-visibility"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1506",
+					"title": "E1506 — Duplicate file-scoped module",
+					"description": "A file has two file-scoped module declarations. The compiler rejects the second declaration.",
+					"examples": ["mod App.A;\nmod App.B;"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--modules-and-visibility"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1507",
+					"title": "E1507 — Module declaration forbidden in file-scoped module",
+					"description": "A file-scoped module file has an extra mod declaration. The compiler rejects the declaration.",
+					"examples": ["mod App.A;\nmod App.B;"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--modules-and-visibility"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1508",
+					"title": "E1508 — Duplicate attribute declaration target",
+					"description": "An attribute declaration lists the same target twice. The compiler rejects the duplicate target.",
+					"examples": ["attribute Serialize(type, type) { }"],
+					"references": {
+						"capabilities": ["language-meta--metaprogramming--metaprogramming"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1509",
+					"title": "E1509 — Unknown attribute declaration target",
+					"description": "An attribute declaration lists a target kind that the compiler does not know. The compiler rejects the target.",
+					"examples": ["attribute Serialize(unknown) { }"],
+					"references": {
+						"capabilities": ["language-meta--metaprogramming--metaprogramming"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1510",
+					"title": "E1510 — Attribute target not allowed",
+					"description": "An attribute is applied to a target that the attribute does not permit. The compiler rejects the application.",
+					"examples": ["[Serialize]\nconst X = 1;"],
+					"references": {
+						"capabilities": ["language-meta--metaprogramming--metaprogramming"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1511",
+					"title": "E1511 — Extend type private member access",
+					"description": "An extend type tries to read a private member of the receiver type. The compiler rejects the access.",
+					"examples": ["extend type Account { unit Leak() { return balance; } }"],
+					"references": {
+						"capabilities": ["language-meta--program-structure--extend-type"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "contract-errors",
+			"title": "Contract conformance errors",
+			"description": "These errors fire when a type does not conform to a contract. The codes use the E1601 to E1607 band.",
+			"entries": [
+				{
+					"id": "e1601",
+					"title": "E1601 — Contract method missing implementation",
+					"description": "A type declares conformance to a contract but does not implement a method of the contract. The compiler rejects the type.",
+					"examples": [
+						"contract Drawable { unit Draw(); }\ntype Shape : Drawable { }"
+					],
+					"references": {
+						"capabilities": ["language-meta--contracts-and-effects--contracts"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1602",
+					"title": "E1602 — Contract implementation signature mismatch",
+					"description": "A method that implements a contract method has a signature that does not match the contract. The compiler rejects the method.",
+					"examples": ["contract C { i32 Foo(); }\ntype T : C { unit Foo() { } }"],
+					"references": {
+						"capabilities": ["language-meta--contracts-and-effects--contracts"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1606",
+					"title": "E1606 — Contract method not found",
+					"description": "A call targets a contract method that the contract does not declare. The compiler rejects the call.",
+					"examples": ["// internal: a call to a missing contract method"],
+					"references": {
+						"capabilities": ["language-meta--contracts-and-effects--contracts"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1607",
+					"title": "E1607 — Invalid conformance target",
+					"description": "A type declares conformance to a name that is not a contract. The compiler rejects the conformance.",
+					"examples": ["type T : i32 { }"],
+					"references": {
+						"capabilities": ["language-meta--contracts-and-effects--contracts"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "composition-errors",
+			"title": "Composition and dependency injection errors",
+			"description": "These errors fire when a host composition is not valid. The codes use the E1701 to E1716 band.",
+			"entries": [
+				{
+					"id": "e1701",
+					"title": "E1701 — Composition missing launch host",
+					"description": "An app project has no launch host entry point. The compiler rejects the project.",
+					"examples": ["host App() { }"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1702",
+					"title": "E1702 — Composition multiple launch hosts",
+					"description": "A composition has more than one launch host entry point. The compiler rejects the composition.",
+					"examples": ["launch App(); launch Other();"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1703",
+					"title": "E1703 — Composition dependency cycle",
+					"description": "Two registrations depend on each other. The cycle has no start. The compiler rejects the composition.",
+					"examples": ["// internal: two registrations that form a cycle"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1704",
+					"title": "E1704 — Composition unresolved inject",
+					"description": "An inject field asks for a type that no registration provides. The compiler rejects the inject.",
+					"examples": ["// internal: an inject with no provider"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1705",
+					"title": "E1705 — Composition ambiguous inject",
+					"description": "An inject field asks for a type that more than one registration provides. The compiler cannot pick one. The compiler rejects the inject.",
+					"examples": ["// internal: an inject with two providers"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1706",
+					"title": "E1706 — Composition scoped outside with",
+					"description": "A scoped service is resolved outside a with scope. The compiler rejects the resolution.",
+					"examples": ["// internal: a scoped resolve with no with scope"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1707",
+					"title": "E1707 — Composition child scope without parent",
+					"description": "A child scope has no parent in the host scope tree. The compiler rejects the scope.",
+					"examples": ["// internal: a child scope with no parent"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1708",
+					"title": "E1708 — Composition with args mismatch",
+					"description": "A with statement gives arguments that do not match the scope definition. The compiler rejects the statement.",
+					"examples": ["with scope(db, extra) { }"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1709",
+					"title": "E1709 — Composition launch target not host",
+					"description": "A launch statement targets a name that is not a host definition. The compiler rejects the launch.",
+					"examples": ["launch NotAHost();"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1710",
+					"title": "E1710 — Composition host in mod project",
+					"description": "A host definition is used in a compiler mod project. The compiler rejects the definition.",
+					"examples": ["// internal: a host in a mod project"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1711",
+					"title": "E1711 — Composition launch in lib project",
+					"description": "A launch statement is used in a library project. The compiler rejects the statement.",
+					"examples": ["// internal: a launch in a lib project"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1712",
+					"title": "E1712 — Composition inject on constructor",
+					"description": "An inject field is declared on a constructor. The compiler rejects the field.",
+					"examples": ["// internal: an inject on a constructor"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1713",
+					"title": "E1713 — Composition override lifetime mismatch",
+					"description": "A registration override uses a lifetime that does not match the original. The compiler rejects the override.",
+					"examples": ["// internal: a lifetime override mismatch"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1714",
+					"title": "E1714 — Composition invalid scope qualifier",
+					"description": "An inject uses a scope qualifier that the compiler does not know. The compiler rejects the qualifier.",
+					"examples": ["// internal: an inject with a bad qualifier"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1715",
+					"title": "E1715 — Composition host inheritance cycle",
+					"description": "A host inherits from itself through a chain of hosts. The compiler rejects the cycle.",
+					"examples": ["// internal: a host inheritance cycle"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1716",
+					"title": "E1716 — Composition duplicate scope name",
+					"description": "Two scopes in the merged host scope tree use the same name. The compiler rejects the duplicate.",
+					"examples": ["// internal: two scopes with the same name"],
+					"references": {
+						"capabilities": ["language-meta--composition--dependency-injection"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "project-manifest-errors",
+			"title": "Project manifest errors",
+			"description": "These errors fire when a project manifest is not valid. The codes use the E1801 to E1900 band. The errors cover project kind, mod section, template section, link section, and legacy manifest names.",
+			"entries": [
+				{
+					"id": "e1801",
+					"title": "E1801 — Mod project must not declare target blocks",
+					"description": "A mod project declares a target block. The compiler rejects the block. Mod projects are discovered via dependencies and contracts.",
+					"examples": ["myapp { type = Mod }\ntarget default { }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/validator.rs"]
+					}
+				},
+				{
+					"id": "e1802",
+					"title": "E1802 — Mod project requires mod block",
+					"description": "A project uses type = Mod but has no mod block. The compiler rejects the project.",
+					"examples": ["myapp { type = Mod }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/validator.rs"]
+					}
+				},
+				{
+					"id": "e1803",
+					"title": "E1803 — maxGeneratorRounds must be positive",
+					"description": "The project.mod.maxGeneratorRounds field is zero or negative. The compiler rejects the value.",
+					"examples": ["myapp { type = Mod; mod { maxGeneratorRounds = 0 } }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/validator.rs"]
+					}
+				},
+				{
+					"id": "e1804",
+					"title": "E1804 — Unknown mod capability",
+					"description": "The project.mod.capabilities list has a name that is not a known capability. The compiler rejects the name.",
+					"examples": ["myapp { type = Mod; mod { capabilities = [bogus] } }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/validator.rs"]
+					}
+				},
+				{
+					"id": "e1805",
+					"title": "E1805 — Unknown artifact policy",
+					"description": "The project.mod.artifactPolicy field has a value that is not reuse, rebuild, or clean_rebuild. The compiler rejects the value.",
+					"examples": ["myapp { type = Mod; mod { artifactPolicy = bogus } }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/validator.rs"]
+					}
+				},
+				{
+					"id": "e1806",
+					"title": "E1806 — Generated output layout invalid",
+					"description": "A project.mod.generatedOutput has an empty layout or a root that is absolute or has a parent directory. The compiler rejects the output.",
+					"examples": [
+						"myapp { type = Mod; mod { generatedOutput { layout = \"\"; root = \"/abs\" } } }"
+					],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/validator.rs"]
+					}
+				},
+				{
+					"id": "e1807",
+					"title": "E1807 — Unsupported project type",
+					"description": "The project.type field has a value that is not Host, Mod, Template, Aggregate, or Bsol. The compiler rejects the value.",
+					"examples": ["myapp { type = Bogus }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/parser/sections_builders.rs"
+						]
+					}
+				},
+				{
+					"id": "e1820",
+					"title": "E1820 — Mod project does not declare target",
+					"description": "A build of a mod project passes a target name. The compiler rejects the target. Omit the target flag for mod artifacts.",
+					"examples": ["beskid build --target default"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/compile_plan.rs"
+						]
+					}
+				},
+				{
+					"id": "e1872",
+					"title": "E1872 — maxGeneratorRounds not an integer",
+					"description": "The project.mod.maxGeneratorRounds or maxMetaRounds field is not a positive integer. The compiler rejects the value.",
+					"examples": ["myapp { type = Mod; mod { maxGeneratorRounds = \"x\" } }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/parser/sections_builders.rs"
+						]
+					}
+				},
+				{
+					"id": "e1873",
+					"title": "E1873 — Capabilities not a list",
+					"description": "The project.mod.capabilities field is not a list of names. The compiler rejects the value.",
+					"examples": ["myapp { type = Mod; mod { capabilities = 1 } }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/parser/sections_builders.rs"
+						]
+					}
+				},
+				{
+					"id": "e1874",
+					"title": "E1874 — Mod block only allowed when type is Mod",
+					"description": "A project that is not a mod project has a mod block. The compiler rejects the block.",
+					"examples": ["myapp { mod { } }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/parser/sections_builders.rs"
+						]
+					}
+				},
+				{
+					"id": "e1875",
+					"title": "E1875 — Artifact policy not a string",
+					"description": "The project.mod.artifactPolicy field is not a single identifier or a quoted string. The compiler rejects the value.",
+					"examples": ["myapp { type = Mod; mod { artifactPolicy = [reuse] } }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/parser/sections_builders.rs"
+						]
+					}
+				},
+				{
+					"id": "e1876",
+					"title": "E1876 — Corelib opt-out forbidden",
+					"description": "The manifest declares noCorelib or sets useCorelib to false. The compiler rejects the declaration. Host projects always resolve corelib through the toolchain.",
+					"examples": ["myapp { noCorelib = true }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/parser/fields_errors.rs"
+						]
+					}
+				},
+				{
+					"id": "e1877",
+					"title": "E1877 — Template project cannot be built",
+					"description": "A build targets a template project. The compiler rejects the build. Use beskid new to instantiate the template first.",
+					"examples": ["beskid build"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/compile_plan.rs"
+						]
+					}
+				},
+				{
+					"id": "e1878",
+					"title": "E1878 — Template project must not declare target",
+					"description": "A template project declares a target block. The compiler rejects the block. Template packages are not host compile roots.",
+					"examples": ["myapp { type = Template }\ntarget default { }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/validator.rs"]
+					}
+				},
+				{
+					"id": "e1879",
+					"title": "E1879 — Template block only allowed when type is Template",
+					"description": "A project that is not a template project has a template block. The compiler rejects the block.",
+					"examples": ["myapp { template { shortName = \"x\" } }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/parser/sections_builders.rs"
+						]
+					}
+				},
+				{
+					"id": "e1885",
+					"title": "E1885 — Unknown template field",
+					"description": "A template block has a field that is not shortName or identity. The compiler rejects the field.",
+					"examples": ["myapp { type = Template; template { bogus = 1 } }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/parser/sections_builders.rs"
+						]
+					}
+				},
+				{
+					"id": "e1890",
+					"title": "E1890 — Duplicate link block",
+					"description": "A project manifest has two link blocks at the top level. The compiler rejects the second block.",
+					"examples": ["myapp { }\nlink { }\nlink { }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/parser/project_lowering.rs"
+						]
+					}
+				},
+				{
+					"id": "e1892",
+					"title": "E1892 — Empty entry in link list",
+					"description": "A link.libraries, link.searchPaths, or link.extraArgs entry is empty. The compiler rejects the entry.",
+					"examples": ["link { libraries = [\"\"] }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/validator.rs"]
+					}
+				},
+				{
+					"id": "e1893",
+					"title": "E1893 — Duplicate library name",
+					"description": "The link.libraries list has two entries with the same name. The compiler rejects the duplicate.",
+					"examples": ["link { libraries = [foo, foo] }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/validator.rs"]
+					}
+				},
+				{
+					"id": "e1894",
+					"title": "E1894 — Legacy project block or file name",
+					"description": "The manifest uses a legacy project block or the legacy Project.proj file name. The compiler rejects the legacy form. Use a named root block and a .bproj file.",
+					"examples": ["project { }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/discovery.rs",
+							"compiler/crates/beskid_analysis/src/projects/parser/project_lowering.rs"
+						]
+					}
+				},
+				{
+					"id": "e1895",
+					"title": "E1895 — Legacy workspace file name",
+					"description": "The workspace uses the legacy Workspace.proj file name. The compiler rejects the legacy form. Use a .bws workspace manifest.",
+					"examples": ["Workspace.proj"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--workspace-and-lock-contracts"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/discovery.rs"]
+					}
+				},
+				{
+					"id": "e1896",
+					"title": "E1896 — Project root block kind must match name",
+					"description": "The root block kind does not match the project name. The compiler rejects the mismatch.",
+					"examples": ["myapp { name = \"other\" }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/validator.rs"]
+					}
+				},
+				{
+					"id": "e1897",
+					"title": "E1897 — Aggregate project does not declare target",
+					"description": "A build of an aggregate project passes a target name. The compiler rejects the target. Omit the target flag for aggregate projects.",
+					"examples": ["beskid build --target default"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/compile_plan.rs"
+						]
+					}
+				},
+				{
+					"id": "e1900",
+					"title": "E1900 — Schemas block only allowed when type is Bsol",
+					"description": "A project that is not a bsol project has a schemas block. The compiler rejects the block.",
+					"examples": ["myapp { schemas { export Foo } }"],
+					"references": {
+						"capabilities": ["tooling--manifests-and-lockfiles--bsol"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/parser/sections_builders.rs"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "mod-host-errors",
+			"title": "Mod host errors",
+			"description": "These errors fire when a mod host registration or a scheduling step is not valid. The codes use the E1828 to E1832 and E1851 to E1855 bands. The errors do not carry Beskid source spans.",
+			"entries": [
+				{
+					"id": "e1828",
+					"title": "E1828 — Missing entry symbol",
+					"description": "A mod registration refers to an entry symbol that is empty or missing. The compiler rejects the registration.",
+					"examples": ["// mod descriptor with an empty entrySymbol"],
+					"references": {
+						"capabilities": ["compiler--compiler-mods--mod-host-bridge"],
+						"sources": ["compiler/crates/beskid_analysis/src/mod_host/diagnostics.rs"]
+					}
+				},
+				{
+					"id": "e1829",
+					"title": "E1829 — Duplicate registration in artifact",
+					"description": "One mod artifact declares the same contract and type pair twice. The compiler rejects the duplicate.",
+					"examples": ["// mod descriptor with a duplicate (contractId, typeId)"],
+					"references": {
+						"capabilities": ["compiler--compiler-mods--mod-host-bridge"],
+						"sources": ["compiler/crates/beskid_analysis/src/mod_host/diagnostics.rs"]
+					}
+				},
+				{
+					"id": "e1830",
+					"title": "E1830 — Empty registrations for required mod",
+					"description": "A mod package declares required contracts but its registrations array is empty. The compiler rejects the package.",
+					"examples": [
+						"// mod manifest with required contracts but no registrations"
+					],
+					"references": {
+						"capabilities": ["compiler--compiler-mods--mod-host-bridge"],
+						"sources": ["compiler/crates/beskid_analysis/src/mod_host/diagnostics.rs"]
+					}
+				},
+				{
+					"id": "e1831",
+					"title": "E1831 — Missing capability",
+					"description": "A mod registration is missing a required capability. The compiler rejects the registration.",
+					"examples": ["// mod registration without a required capability"],
+					"references": {
+						"capabilities": ["compiler--compiler-mods--mod-host-bridge"],
+						"sources": ["compiler/crates/beskid_analysis/src/mod_host/diagnostics.rs"]
+					}
+				},
+				{
+					"id": "e1832",
+					"title": "E1832 — Max generator rounds exceeded",
+					"description": "The mod host exceeded the maxGeneratorRounds limit while it merged generated syntax. The compiler rejects the merge.",
+					"examples": ["// mod host that loops past the round limit"],
+					"references": {
+						"capabilities": ["compiler--compiler-mods--mod-host-bridge"],
+						"sources": ["compiler/crates/beskid_analysis/src/mod_host/diagnostics.rs"]
+					}
+				},
+				{
+					"id": "e1851",
+					"title": "E1851 — Conflicting registration across artifacts",
+					"description": "Two mod artifacts provide the same contract and type pair. The host must not pick a winner. The compiler rejects the conflict.",
+					"examples": ["// two mods that register the same (contractId, typeId)"],
+					"references": {
+						"capabilities": ["compiler--compiler-mods--mod-host-bridge"],
+						"sources": ["compiler/crates/beskid_analysis/src/mod_host/diagnostics.rs"]
+					}
+				},
+				{
+					"id": "e1852",
+					"title": "E1852 — Duplicate entry symbol across artifacts",
+					"description": "Two mod artifacts export the same entry symbol for different contract and type pairs. The loader cannot pick one. The compiler rejects the conflict.",
+					"examples": ["// two mods that export the same entrySymbol"],
+					"references": {
+						"capabilities": ["compiler--compiler-mods--mod-host-bridge"],
+						"sources": ["compiler/crates/beskid_analysis/src/mod_host/diagnostics.rs"]
+					}
+				},
+				{
+					"id": "e1853",
+					"title": "E1853 — Unknown contract id",
+					"description": "A mod registration uses a contract id that is not a known SDK contract. The compiler rejects the registration.",
+					"examples": ["// mod registration with an unknown contractId"],
+					"references": {
+						"capabilities": ["compiler--compiler-mods--mod-host-bridge"],
+						"sources": ["compiler/crates/beskid_analysis/src/mod_host/diagnostics.rs"]
+					}
+				},
+				{
+					"id": "e1854",
+					"title": "E1854 — Rewriter without analyzer",
+					"description": "A mod registers a Rewriter but provides no Analyzer to drive it. The compiler rejects the registration.",
+					"examples": ["// mod with a Rewriter but no Analyzer"],
+					"references": {
+						"capabilities": ["compiler--compiler-mods--mod-host-bridge"],
+						"sources": ["compiler/crates/beskid_analysis/src/mod_host/diagnostics.rs"]
+					}
+				},
+				{
+					"id": "e1855",
+					"title": "E1855 — Scheduling failure",
+					"description": "A mod host scheduling step fails and no narrower code in the E1851 to E1870 band applies. The compiler rejects the step.",
+					"examples": ["// mod host scheduling that fails with no narrower cause"],
+					"references": {
+						"capabilities": ["compiler--compiler-mods--mod-host-bridge"],
+						"sources": ["compiler/crates/beskid_analysis/src/mod_host/diagnostics.rs"]
+					}
+				}
+			]
+		},
+		{
+			"id": "macro-errors",
+			"title": "Macro errors",
+			"description": "These errors fire when a macro invocation or a macro definition is not valid. The codes use the E1901 to E1908 band. The codes E1901, E1902, and E1903 are also used for bsol project shape errors.",
+			"entries": [
+				{
+					"id": "e1901",
+					"title": "E1901 — Unknown macro or bsol project with targets",
+					"description": "A macro invocation uses a name that the compiler does not know. The code is also used when a bsol project declares target blocks. The compiler rejects the use.",
+					"examples": ["Missing!(x)"],
+					"references": {
+						"capabilities": [
+							"language-meta--metaprogramming--macros",
+							"tooling--manifests-and-lockfiles--bsol"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs",
+							"compiler/crates/beskid_analysis/src/projects/validator.rs"
+						]
+					}
+				},
+				{
+					"id": "e1902",
+					"title": "E1902 — Macro argument arity mismatch or bsol without schemas",
+					"description": "A macro invocation gives the wrong number of arguments. The code is also used when a bsol project has no schemas block. The compiler rejects the use.",
+					"examples": ["Debug!(x, y)"],
+					"references": {
+						"capabilities": [
+							"language-meta--metaprogramming--macros",
+							"tooling--manifests-and-lockfiles--bsol"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs",
+							"compiler/crates/beskid_analysis/src/projects/validator.rs"
+						]
+					}
+				},
+				{
+					"id": "e1903",
+					"title": "E1903 — Macro argument kind mismatch or bsol cannot build",
+					"description": "A macro argument does not match the fragment kind of the parameter. The code is also used when a build targets a bsol project. The compiler rejects the use.",
+					"examples": ["Debug!(type x)"],
+					"references": {
+						"capabilities": [
+							"language-meta--metaprogramming--macros",
+							"tooling--manifests-and-lockfiles--bsol"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs",
+							"compiler/crates/beskid_analysis/src/projects/compile_plan.rs"
+						]
+					}
+				},
+				{
+					"id": "e1904",
+					"title": "E1904 — Macro metavariable outside body",
+					"description": "A metavariable is used outside a macro definition body. The compiler rejects the use.",
+					"examples": ["// $name used outside a macro body"],
+					"references": {
+						"capabilities": ["language-meta--metaprogramming--macros"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1905",
+					"title": "E1905 — Macro expansion depth exceeded",
+					"description": "A macro expansion goes deeper than the max depth of 32. The compiler rejects the expansion.",
+					"examples": ["// recursive macro that exceeds the depth cap"],
+					"references": {
+						"capabilities": ["language-meta--metaprogramming--macros"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1907",
+					"title": "E1907 — Macro ambiguous name",
+					"description": "Two macro definitions in the same scope use the same name. The compiler cannot pick one. The compiler rejects the invocation.",
+					"examples": ["macro Foo(expr e) { }\nmacro Foo(expr e) { }"],
+					"references": {
+						"capabilities": ["language-meta--metaprogramming--macros"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1908",
+					"title": "E1908 — Macro duplicate parameter",
+					"description": "A macro definition has two parameters with the same name. The compiler rejects the definition.",
+					"examples": ["macro Foo(expr a, expr a) { }"],
+					"references": {
+						"capabilities": ["language-meta--metaprogramming--macros"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "query-errors",
+			"title": "Query errors",
+			"description": "These errors fire when a semantic query exceeds its bounds or hits a pipeline conflict. The codes use the E1880 to E1884 band.",
+			"entries": [
+				{
+					"id": "e1880",
+					"title": "E1880 — Query bounds exceeded",
+					"description": "A query traversal goes past the max nodes or the max depth. The compiler rejects the traversal.",
+					"examples": ["// internal: a query that exceeds its bounds"],
+					"references": {
+						"capabilities": [
+							"compiler--compiler-mods--analysis-query-diagnostics-facade"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1881",
+					"title": "E1881 — Query node span unavailable",
+					"description": "A query asks for the span of a node that has no span in the current syntax generation. The compiler rejects the request.",
+					"examples": ["// internal: a span request on a spanless node"],
+					"references": {
+						"capabilities": [
+							"compiler--compiler-mods--analysis-query-diagnostics-facade"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1883",
+					"title": "E1883 — Query pipeline conflict",
+					"description": "A query pipeline has two operations that conflict for one target. The compiler rejects the pipeline.",
+					"examples": ["// internal: a pipeline with conflicting operations"],
+					"references": {
+						"capabilities": [
+							"compiler--compiler-mods--analysis-query-diagnostics-facade"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "e1884",
+					"title": "E1884 — Query pipeline stale generation",
+					"description": "A query pipeline references a syntax generation that is no longer current. The compiler rejects the reference.",
+					"examples": ["// internal: a pipeline that holds a stale generation"],
+					"references": {
+						"capabilities": [
+							"compiler--compiler-mods--analysis-query-diagnostics-facade"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				}
+			]
+		},
+		{
+			"id": "project-io-errors",
+			"title": "Project IO, lockfile, and materialization errors",
+			"description": "These errors fire when the compiler reads or writes a manifest, a lockfile, or a materialized dependency. The codes use the E3001 to E3031 band.",
+			"entries": [
+				{
+					"id": "e3001",
+					"title": "E3001 — Project file not found",
+					"description": "The compiler cannot find a project file at the given path. The compiler rejects the build.",
+					"examples": ["beskid build /missing"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				},
+				{
+					"id": "e3002",
+					"title": "E3002 — Read manifest failed",
+					"description": "The compiler cannot read the manifest file. The read fails. The compiler rejects the build.",
+					"examples": ["// manifest file with no read permission"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				},
+				{
+					"id": "e3003",
+					"title": "E3003 — Manifest parse error",
+					"description": "The manifest file has a syntax error. The compiler rejects the parse.",
+					"examples": ["myapp { name = \"x"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				},
+				{
+					"id": "e3004",
+					"title": "E3004 — Manifest validation error",
+					"description": "The manifest passes the parse but fails a validation rule. The compiler rejects the manifest.",
+					"examples": ["myapp { }"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				},
+				{
+					"id": "e3005",
+					"title": "E3005 — Target not found",
+					"description": "A build asks for a target name that the manifest does not declare. The compiler rejects the build.",
+					"examples": ["beskid build --target missing"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--project-manifest-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				},
+				{
+					"id": "e3006",
+					"title": "E3006 — Dependency manifest not found",
+					"description": "A dependency refers to a manifest path that the compiler cannot find. The compiler rejects the dependency.",
+					"examples": ["// dependency with a missing manifest path"],
+					"references": {
+						"capabilities": [
+							"compiler--resolution-and-projects--workspace-resolution-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				},
+				{
+					"id": "e3007",
+					"title": "E3007 — Dependency cycle",
+					"description": "Two or more dependencies form a cycle. The compiler rejects the cycle.",
+					"examples": ["// dependencies that depend on each other"],
+					"references": {
+						"capabilities": [
+							"compiler--resolution-and-projects--dependency-graph-and-cycle-policy"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				},
+				{
+					"id": "e3008",
+					"title": "E3008 — Unresolved external dependencies",
+					"description": "One or more external dependencies have no resolution. The compiler rejects the build.",
+					"examples": ["// dependency with no registry or git source"],
+					"references": {
+						"capabilities": [
+							"compiler--resolution-and-projects--workspace-resolution-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				},
+				{
+					"id": "e3011",
+					"title": "E3011 — Unsupported dependency source in v1",
+					"description": "A dependency uses a source kind that the v1 resolver does not support. The compiler rejects the dependency.",
+					"examples": ["// dependency with an unsupported source kind"],
+					"references": {
+						"capabilities": [
+							"compiler--resolution-and-projects--workspace-and-lock-contracts"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				},
+				{
+					"id": "e3020",
+					"title": "E3020 — Lockfile read failed",
+					"description": "The compiler cannot read the lockfile. The read fails. The compiler rejects the build.",
+					"examples": ["// lockfile with no read permission"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--workspace-and-lock-contracts"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				},
+				{
+					"id": "e3021",
+					"title": "E3021 — Lockfile write failed",
+					"description": "The compiler cannot write the lockfile. The write fails. The compiler rejects the build.",
+					"examples": ["// lockfile with no write permission"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--workspace-and-lock-contracts"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				},
+				{
+					"id": "e3022",
+					"title": "E3022 — Lockfile out of date",
+					"description": "The lockfile does not match the manifest. The compiler rejects the build. Update the lockfile first.",
+					"examples": ["// lockfile that is older than the manifest"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--workspace-and-lock-contracts"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				},
+				{
+					"id": "e3023",
+					"title": "E3023 — Lockfile frozen or required",
+					"description": "The lockfile update is forbidden in frozen mode, or the lockfile is required in locked mode. The compiler rejects the build.",
+					"examples": ["beskid build --frozen"],
+					"references": {
+						"capabilities": [
+							"tooling--manifests-and-lockfiles--workspace-and-lock-contracts"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				},
+				{
+					"id": "e3030",
+					"title": "E3030 — Materialization directory or metadata failed",
+					"description": "The compiler cannot create a materialization directory, read the directory, or read the metadata. The compiler rejects the build.",
+					"examples": ["// materialization target with no write permission"],
+					"references": {
+						"capabilities": [
+							"compiler--resolution-and-projects--workspace-resolution-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				},
+				{
+					"id": "e3031",
+					"title": "E3031 — Materialization copy failed",
+					"description": "The compiler cannot copy a dependency source into the materialization directory. The compiler rejects the build.",
+					"examples": ["// dependency source that cannot be copied"],
+					"references": {
+						"capabilities": [
+							"compiler--resolution-and-projects--workspace-resolution-contract"
+						],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/error.rs"]
+					}
+				}
+			]
+		},
+		{
+			"id": "warnings",
+			"title": "Warnings",
+			"description": "These warnings fire when the code is valid but has a style, naming, or documentation problem. The codes use the W prefix. Warnings do not stop the build.",
+			"entries": [
+				{
+					"id": "w1103",
+					"title": "W1103 — Shadowed local",
+					"description": "A local binding shadows a local in an outer scope. The compiler warns about the shadow.",
+					"examples": ["let x = 1; { let x = 2; }"],
+					"references": {
+						"capabilities": ["language-meta--program-structure--name-resolution"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1110",
+					"title": "W1110 — Missing import ambiguous",
+					"description": "A name is not in scope. The compiler found more than one candidate import. The compiler warns about the candidates.",
+					"examples": ["unit Main() { return Foo; }"],
+					"references": {
+						"capabilities": ["language-meta--program-structure--name-resolution"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1203",
+					"title": "W1203 — Implicit numeric cast",
+					"description": "An expression does an implicit numeric cast between two types. The compiler warns about the cast.",
+					"examples": ["i32 x = 1_i64;"],
+					"references": {
+						"capabilities": ["language-meta--type-system--types"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1403",
+					"title": "W1403 — Unreachable code",
+					"description": "A statement comes after a return, a break, or a continue. The code cannot run. The compiler warns about the code.",
+					"examples": ["unit Main() { return; Foo(); }"],
+					"references": {
+						"capabilities": ["language-meta--evaluation--control-flow"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1503",
+					"title": "W1503 — Unused import",
+					"description": "A use declaration imports a name that the file does not use. The compiler warns about the import.",
+					"examples": ["use Core.Console;"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--modules-and-visibility"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1504",
+					"title": "W1504 — Unused private item",
+					"description": "A private item is declared but never used. The compiler warns about the item.",
+					"examples": ["unit Helper() { }"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--modules-and-visibility"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1610",
+					"title": "W1610 — Doc unknown arg name",
+					"description": "A doc comment has an @arg tag with a name that does not match a parameter. The compiler warns about the tag.",
+					"examples": ["/// @arg(missing) int Foo() { }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--documentation-comments"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1611",
+					"title": "W1611 — Doc duplicate arg name",
+					"description": "A doc comment has two @arg tags with the same name. The compiler warns about the duplicate.",
+					"examples": ["/// @arg(x) /// @arg(x) int Foo(int x) { }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--documentation-comments"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1612",
+					"title": "W1612 — Doc arg or returns on non-callable",
+					"description": "A doc comment has an @arg or @returns tag on an item that is not a function, a method, or a contract method. The compiler warns about the tag.",
+					"examples": ["/// @returns i32 type Foo { }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--documentation-comments"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1613",
+					"title": "W1613 — Doc returns on unit",
+					"description": "A doc comment has an @returns tag on a callable that returns unit. The tag is redundant. The compiler warns about the tag.",
+					"examples": ["/// @returns unit Foo() { }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--documentation-comments"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1614",
+					"title": "W1614 — Doc unknown directive",
+					"description": "A doc comment has a directive that the compiler does not know. The compiler warns about the directive.",
+					"examples": ["/// @bogus int Foo() { }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--documentation-comments"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1615",
+					"title": "W1615 — Doc unresolved ref",
+					"description": "A doc comment has an @ref tag that does not resolve. The compiler warns about the reference.",
+					"examples": ["/// @ref Missing int Foo() { }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--documentation-comments"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1620",
+					"title": "W1620 — Doc variant on non-enum",
+					"description": "A doc comment has an @variant tag on an item that is not an enum. The compiler warns about the tag.",
+					"examples": ["/// @variant(Red) type Color { }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--documentation-comments"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1621",
+					"title": "W1621 — Doc unknown variant name",
+					"description": "A doc comment has an @variant tag with a name that does not match a variant of the enum. The compiler warns about the tag.",
+					"examples": ["/// @variant(Missing) enum Color { Red }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--documentation-comments"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1622",
+					"title": "W1622 — Doc duplicate variant name",
+					"description": "A doc comment has two @variant tags with the same name. The compiler warns about the duplicate.",
+					"examples": ["/// @variant(Red) /// @variant(Red) enum Color { Red }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--documentation-comments"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1623",
+					"title": "W1623 — Doc par without generics",
+					"description": "A doc comment has an @par tag on an item that has no generic parameters. The compiler warns about the tag.",
+					"examples": ["/// @par(T) type Foo { }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--documentation-comments"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1624",
+					"title": "W1624 — Doc unknown generic name",
+					"description": "A doc comment has an @par tag with a name that does not match a generic parameter. The compiler warns about the tag.",
+					"examples": ["/// @par(Missing) type Foo<T> { }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--documentation-comments"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1625",
+					"title": "W1625 — Doc duplicate generic name",
+					"description": "A doc comment has two @par tags with the same name. The compiler warns about the duplicate.",
+					"examples": ["/// @par(T) /// @par(T) type Foo<T> { }"],
+					"references": {
+						"capabilities": ["language-meta--surface-syntax--documentation-comments"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1630",
+					"title": "W1630 — Type name not PascalCase",
+					"description": "A type name does not use PascalCase. The compiler warns about the name.",
+					"examples": ["type myType { }"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--code-style-and-naming"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1631",
+					"title": "W1631 — Enum variant not PascalCase",
+					"description": "An enum variant does not use PascalCase. The compiler warns about the name.",
+					"examples": ["enum Color { red }"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--code-style-and-naming"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1632",
+					"title": "W1632 — Field not camelCase",
+					"description": "A field does not use lowerCamelCase. The compiler warns about the name.",
+					"examples": ["type Foo { i32 MyField; }"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--code-style-and-naming"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1633",
+					"title": "W1633 — Callable not PascalCase",
+					"description": "A function or a method does not use PascalCase. The compiler warns about the name.",
+					"examples": ["unit myFunc() { }"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--code-style-and-naming"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1634",
+					"title": "W1634 — Module segment not PascalCase",
+					"description": "A module path segment does not use PascalCase. The compiler warns about the segment.",
+					"examples": ["mod app.domain;"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--code-style-and-naming"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1635",
+					"title": "W1635 — Generic parameter not PascalCase",
+					"description": "A generic type parameter does not use PascalCase. The compiler warns about the name.",
+					"examples": ["type Foo<t> { }"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--code-style-and-naming"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1636",
+					"title": "W1636 — Binding not camelCase",
+					"description": "A local binding does not use lowerCamelCase. The compiler warns about the name.",
+					"examples": ["let MyVar = 1;"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--code-style-and-naming"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1637",
+					"title": "W1637 — Test not snake_case",
+					"description": "A test name does not use snake_case. The compiler warns about the name.",
+					"examples": ["test AddsTwo { }"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--code-style-and-naming"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1638",
+					"title": "W1638 — Macro not camelCase",
+					"description": "A macro name does not use lowerCamelCase. The compiler warns about the name.",
+					"examples": ["macro MyMacro(expr e) { }"],
+					"references": {
+						"capabilities": [
+							"language-meta--program-structure--code-style-and-naming"
+						],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				},
+				{
+					"id": "w1639",
+					"title": "W1639 — Redundant enum constructor parens",
+					"description": "A nullary enum constructor has empty parentheses. The parentheses are redundant. The compiler warns about the parens.",
+					"examples": ["Color.Red()"],
+					"references": {
+						"capabilities": ["language-meta--type-system--enums-and-match"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
+						]
+					}
+				}
+			]
+		}
+	]
+}

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "03a3f7db36cf7dcc8ec87c5370a7de06a0d447b323c73d6421df1a37df502e51",
+  "revision": "aaf43948a8c9f363339fa5d9cf07f8ed78fe391e5f305a20c28004eb68b10c88",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -58372,7 +58372,7 @@
       "decision": null,
       "title": "Architecture",
       "status": "Standard",
-      "sourceHash": "b50c00bf3b4b64d1265eda53a981722a3cfd00d30c743380bc6f318076eb343b"
+      "sourceHash": "f1716b9834381040c88da6d99ab970f5f5d6de6a3f0172359f2519830bd7ecd5"
     },
     {
       "id": "BSP-CAP-61C1DE390E90",
@@ -58394,7 +58394,7 @@
       "decision": null,
       "title": "Domain, Area, Feature, and Article frontmatter templates",
       "status": "Standard",
-      "sourceHash": "27746ac6883d6747867aa30a8c5b85f9f40647cb9be4b4578caddf1e38e273c4"
+      "sourceHash": "944bb847910cb85cd4088e417849809acf438f4403445a74794835b4b7b9ff8d"
     },
     {
       "id": "BSP-CAP-243CCA14D04E",
@@ -58416,7 +58416,7 @@
       "decision": null,
       "title": "Domain, Area and Feature template bundle",
       "status": "Standard",
-      "sourceHash": "af252f9f54b98d37ed564a5e959ab48079eed52db20a518ef290a4fb1fd63890"
+      "sourceHash": "2a7ee98eff66e9b088700053d6fa561944b45c74157876785fb03baef8748101"
     },
     {
       "id": "BSP-CAP-0CF08AD3592A",
@@ -58438,7 +58438,7 @@
       "decision": null,
       "title": "Last reviewed policy",
       "status": "Standard",
-      "sourceHash": "e78cf52a9122a1b17b82cad6d2fa5658088d950bb41e3d90e00319c6528fcc9b"
+      "sourceHash": "4e5f88b58f99b559896fcfd9f5e846e1547f09102f86c26cc9311803f05321f1"
     },
     {
       "id": "BSP-CAP-12D10FA1D7B6",
@@ -58460,7 +58460,7 @@
       "decision": null,
       "title": "Non-normative bridge docs policy",
       "status": "Standard",
-      "sourceHash": "d7e879defcae021f3e5373647029464651ffc9f091ecb49f849072dabc5b528f"
+      "sourceHash": "58f3c63b52ae471432b9dd3591e53110ac53fb9e61275f94d3ecf945265e49f6"
     },
     {
       "id": "BSP-CAP-7A941443C79A",
@@ -58482,7 +58482,7 @@
       "decision": null,
       "title": "Release and versioning policy",
       "status": "Standard",
-      "sourceHash": "81189ffdf784672a1d737f01fdb7696bf2c8877df25b0195618b173ebd83d2f6"
+      "sourceHash": "1baa2bbdef5ca5587d9c5644b02607e19fbe50c7b21a1ee160687a2354983341"
     },
     {
       "id": "BSP-CAP-73D36745349C",
@@ -58504,7 +58504,7 @@
       "decision": null,
       "title": "Specification authority and embedded decisions",
       "status": "Standard",
-      "sourceHash": "4136baf0e5f3dc6a4878f3baabcb0f8d50679396b7f0fa1e6f6a38ef02b8c4c2"
+      "sourceHash": "816cc5ec52ac04f76ecbb15ad177a8b574841e51d700ff9d8320883ba2c84b62"
     },
     {
       "id": "BSP-CAP-2AFEA2015944",
@@ -60220,7 +60220,7 @@
       "decision": null,
       "title": "Native dependency injection",
       "status": "Standard",
-      "sourceHash": "b9b43c8cd09b600c79c54380c9a070ed9af668f1dbb6a2e333e8790beadd725f"
+      "sourceHash": "f53b0a96a96992cd4e7018bd3248f14bb1b9066b669e08fdb8ed7959a7b23b63"
     },
     {
       "id": "BSP-CAP-19A30D104B4E",
@@ -60242,7 +60242,7 @@
       "decision": null,
       "title": "Glossary and conformance",
       "status": "Standard",
-      "sourceHash": "fecb66c7b7d38731d057a2993bcdc48a21f54090605c16a5df7ee6399c427f7c"
+      "sourceHash": "7e81eef9f14e6778264155cfb932e1763d95cac0731bbfd875f312e760c03e19"
     },
     {
       "id": "BSP-CAP-53430B474DB2",
@@ -60264,7 +60264,7 @@
       "decision": null,
       "title": "Contracts",
       "status": "Standard",
-      "sourceHash": "20f8fb00b91e8f7f745727a0cea10070ce3d8a10e1ef9154523e8c839fc34ced"
+      "sourceHash": "ac1e87c203d2e1fd14e4e08ab1151821f8c8da0ed21a240785876d6b6da23728"
     },
     {
       "id": "BSP-CAP-0A39C0F74F66",
@@ -60286,7 +60286,7 @@
       "decision": null,
       "title": "Error handling",
       "status": "Standard",
-      "sourceHash": "09c8af670e1619efdf58816545be87df52b672f8ac4901bc922ef277a5c88ca3"
+      "sourceHash": "9ae2201edeaa3f222130775cf63f9216e93591f949e4276c687427526d7605cd"
     },
     {
       "id": "BSP-CAP-4752C481D13E",
@@ -60308,7 +60308,7 @@
       "decision": null,
       "title": "Testing",
       "status": "Standard",
-      "sourceHash": "5054d8dc56e064e9408f77eb2497629e0c47dc9ffc64b5577d36628a82fd0db8"
+      "sourceHash": "8c990290825cefc8112424521139eb97fb54d9cff820ad9881dd62ab1d383499"
     },
     {
       "id": "BSP-CAP-B535BD936B47",
@@ -60330,7 +60330,7 @@
       "decision": null,
       "title": "Control flow",
       "status": "Standard",
-      "sourceHash": "76fd7e179a9ec638bd5da80393c3a04bacfc2742a9759afb963df5ec061e0264"
+      "sourceHash": "14b8c38dcc75226d4076ea5ca21bf91baa199302243d40a2e47269c192bc4849"
     },
     {
       "id": "BSP-CAP-45225798B5DF",
@@ -60352,7 +60352,7 @@
       "decision": null,
       "title": "Events",
       "status": "Standard",
-      "sourceHash": "42aae869c8577831a061df209d364d04b2922581807afaafd6fdd5748db6637e"
+      "sourceHash": "15c392a2c37f8fbcfec76e102e057f0712f00c2896df58807ed7b0a077d1b66a"
     },
     {
       "id": "BSP-CAP-72E38AE0DF50",
@@ -60374,7 +60374,7 @@
       "decision": null,
       "title": "Fibers and spawn",
       "status": "Standard",
-      "sourceHash": "f1986144c38ee5fa26aab785007cc3239b538ec32a80e51c37167f30336c74a5"
+      "sourceHash": "3cbf2bdd496c0e50b8d4a7c02b343377ce10f57f4437d38993db4844e34c71ef"
     },
     {
       "id": "BSP-CAP-87E5FC603669",
@@ -60396,7 +60396,7 @@
       "decision": null,
       "title": "Lambdas and closures",
       "status": "Standard",
-      "sourceHash": "c69a05e51395450d90262fc02f5a2e8d3915db8ceabd507bb0cd62a4244b173a"
+      "sourceHash": "5d9685bcf4327a6f7a3270b7c9ee780137eaaa5620a72e7b321c97966da561e7"
     },
     {
       "id": "BSP-CAP-416DC1F89FF5",
@@ -60418,7 +60418,7 @@
       "decision": null,
       "title": "C ABI profile",
       "status": "Standard",
-      "sourceHash": "cccedc40615571f8583cffab6046e5e04934a4926575dae4bb9b83d243069c41"
+      "sourceHash": "8175497688fa391d068e5adc8e2989cd8c4db8acece0b2473fae6279d858d06c"
     },
     {
       "id": "BSP-CAP-D9DF6656F2E5",
@@ -60440,7 +60440,7 @@
       "decision": null,
       "title": "Export and callbacks",
       "status": "Standard",
-      "sourceHash": "5fa114a139aedc7890a938a201075e0ff94bfa12cd4a856df9587f30b85a6ab0"
+      "sourceHash": "f74167027c5bfce48185dd1cc15e89ab672367002677a47b1aca35c1cff506c8"
     },
     {
       "id": "BSP-CAP-8F568DA0ED40",
@@ -60462,7 +60462,7 @@
       "decision": null,
       "title": "FFI and extern",
       "status": "Standard",
-      "sourceHash": "2b42ad9e58a14f8a05eab6553f9926a08b5c6d688a6d51ab8ab5f438f009a2f9"
+      "sourceHash": "982188fa6cfb08b4646c4595045556b0aec81287bb04b939bf6f3d2daea38abb"
     },
     {
       "id": "BSP-CAP-983AAC55EE48",
@@ -60484,7 +60484,7 @@
       "decision": null,
       "title": "Interop.Contracts",
       "status": "Standard",
-      "sourceHash": "4085dc29944b4ef6d233cb0c9d396fa3a3de1b9fb3a0cc8113921766438b1c9c"
+      "sourceHash": "8111efb5246db825303806a3082199712d17dde865dadb9261d7703102817dd4"
     },
     {
       "id": "BSP-CAP-B651F3BAC326",
@@ -60506,7 +60506,7 @@
       "decision": null,
       "title": "Rust ABI profile",
       "status": "Standard",
-      "sourceHash": "e793a590980d06f516e7409632f67e69a36ddc29eb34a8c791c0a1aa89cc327b"
+      "sourceHash": "fdfa67ddc9c80c62aed6ba6877598941bde0919ea303900597a812636a786c3d"
     },
     {
       "id": "BSP-CAP-8A8FEB92F30E",
@@ -60528,7 +60528,7 @@
       "decision": null,
       "title": "Memory and references",
       "status": "Standard",
-      "sourceHash": "cb493cd8aecea1a3f0119ca51094760ec8673a460e350e0b3c45c93484a85399"
+      "sourceHash": "3a3fa66bd41305dc75ab831293091bf6fa673fe131dc12f648c86b887e6a3476"
     },
     {
       "id": "BSP-CAP-8795D7DA34F0",
@@ -60550,7 +60550,7 @@
       "decision": null,
       "title": "Compiler Mod SDK",
       "status": "Standard",
-      "sourceHash": "5c5ae609bccead670ba56e42212f8e5b294b0e9f429a8ee16407bec678f0e403"
+      "sourceHash": "883a2c15da317bd044e41d10a574a8c641ae3bf32be3013db79b7e0b03fa76c2"
     },
     {
       "id": "BSP-CAP-1EF79EAACF8E",
@@ -60572,7 +60572,7 @@
       "decision": null,
       "title": "Language macros",
       "status": "Standard",
-      "sourceHash": "26a915ef08640f538d2513d01a7cdb5ca9844f8006528d3989de9c73f4fc0d24"
+      "sourceHash": "bbb43d63854d19b42067116dc0b1f1f63996864ca8b0556c6764a652b911cae7"
     },
     {
       "id": "BSP-CAP-22B6A227E75B",
@@ -60594,7 +60594,7 @@
       "decision": null,
       "title": "Metaprogramming",
       "status": "Standard",
-      "sourceHash": "8ac94257c71b24fbcd37ad669d7d1633c82a178235aaa0ed32ab08c1f576eeb8"
+      "sourceHash": "15ba787805624f8ed5c88cd2dd33fbdc9aa63a26a0675b78a4b7cdffa91b2757"
     },
     {
       "id": "BSP-CAP-81B824296964",
@@ -60616,7 +60616,7 @@
       "decision": null,
       "title": "Serialization packages",
       "status": "Standard",
-      "sourceHash": "90bc66f31dca34b9ba8f3da7a995813a36b4d726c702c33c86b056f1bd55c0b7"
+      "sourceHash": "540cbd24bdd8411294f7fc4991c52a9fc255a2780b5851ad913407231122b639"
     },
     {
       "id": "BSP-CAP-B4C3D0A816E1",
@@ -60638,7 +60638,7 @@
       "decision": null,
       "title": "Code style and naming",
       "status": "Standard",
-      "sourceHash": "ee5aa0d41a9ee7f856421868edb5429f1ed2f6fc516232dd2354028fb872e266"
+      "sourceHash": "de10f2fa11f5c8740422f0305758c73fc6f8dd1e67ac54f4f5b3b4ca9e4c5c15"
     },
     {
       "id": "BSP-CAP-2037047479B0",
@@ -60660,7 +60660,7 @@
       "decision": null,
       "title": "extend type",
       "status": "Standard",
-      "sourceHash": "9208822d40bb532711ac52e240fd6706de246c16a0eece3af5e4acbd01a34991"
+      "sourceHash": "5942352de98f866bb1ac8fc16b03daf266b1f6b8b83c62e8b91f8f96ca97db93"
     },
     {
       "id": "BSP-CAP-D2A8ED388364",
@@ -60682,7 +60682,7 @@
       "decision": null,
       "title": "Modules and visibility",
       "status": "Standard",
-      "sourceHash": "d90b75b71c33d79d61e20ebeee787165fdc110e709cdf7c1165e48c833f1a6c4"
+      "sourceHash": "3edd609d8f33180aaff2ea0318b122c2068ad428f16d4370eb6406a40cb4d6cc"
     },
     {
       "id": "BSP-CAP-063F92D8A165",
@@ -60704,7 +60704,7 @@
       "decision": null,
       "title": "Name resolution",
       "status": "Standard",
-      "sourceHash": "34fea68bf6fe2f1031700c1eaa4120d4716c76e8a605df74c597ec3f28b4b15c"
+      "sourceHash": "18b62a14b17e4ad3b83c9e487d9b557edc62be007db451f915d45edddcf5ec71"
     },
     {
       "id": "BSP-CAP-5D479AB90C45",
@@ -60726,7 +60726,7 @@
       "decision": null,
       "title": "Documentation comments",
       "status": "Standard",
-      "sourceHash": "1b87924997442d42d5102253297c861f2d2698c8408c0b4621b3228985994590"
+      "sourceHash": "17c0ffe9b07d36c0260ef0ebca86b50b343fb1f811b4569fa4dc1667c0dc4320"
     },
     {
       "id": "BSP-CAP-DEEB6ED0AB71",
@@ -60748,7 +60748,7 @@
       "decision": null,
       "title": "Lexical and syntax",
       "status": "Standard",
-      "sourceHash": "c80a149614e10e5c914c37956c292ad461b6f16f84633b70c0c40e7a29575f8e"
+      "sourceHash": "e43e6b04ae0fafeebd47adc44b9ab832486a1e3cab51de961fadd112917d84c0"
     },
     {
       "id": "BSP-CAP-0A3FAA1D6D8D",
@@ -60770,7 +60770,7 @@
       "decision": null,
       "title": "Enums and match",
       "status": "Standard",
-      "sourceHash": "d1525bcd51b588866f6a372ede1ee2d39548c643374783b35eabddece37b281d"
+      "sourceHash": "440b0434d8006ff277c8299041eee236568e8c3a289a2eaabb8f27b57a3cd278"
     },
     {
       "id": "BSP-CAP-4E5039ABBAD1",
@@ -60792,7 +60792,7 @@
       "decision": null,
       "title": "Method dispatch",
       "status": "Standard",
-      "sourceHash": "01af82ee4a6cdaab7e55f8539c436cc692e72b24a6a3cfbebf005f4e75cb8385"
+      "sourceHash": "f3337925c3581109ca39c4296d30a4c7d5537cf4ebbcb0dd2d965717520a474b"
     },
     {
       "id": "BSP-CAP-B957A69E7CC3",
@@ -60814,7 +60814,7 @@
       "decision": null,
       "title": "Type inference",
       "status": "Standard",
-      "sourceHash": "26a8c93611157f73af0e46f1f674cf53114bebba6e7a96d0dc213ad94d4fddee"
+      "sourceHash": "7614177ebdd664188a59d22209fe1f135953a88f02b05762d9eca5bc8ced6bba"
     },
     {
       "id": "BSP-CAP-BD8338F463C9",
@@ -60836,7 +60836,7 @@
       "decision": null,
       "title": "Types",
       "status": "Standard",
-      "sourceHash": "45a00ca3e56931dae0ad709c7f6405cb6a744e617a279c3bd773e06e12669009"
+      "sourceHash": "33ef7f2ce8b37570d44e22c18c7cb783f5ef6cc8ed8b35f1f9f8ab51b6ff1149"
     },
     {
       "id": "BSP-CAP-4513A496C8E2",

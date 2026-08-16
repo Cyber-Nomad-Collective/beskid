@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EditRouteImport } from './routes/_edit'
+import { Route as ManifestRouteImport } from './routes/manifest'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as PlatformSpecIndexRouteImport } from './routes/platform-spec/index'
 import { Route as PlatformSpecSplatRouteImport } from './routes/platform-spec/$'
@@ -23,6 +24,7 @@ import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as ApiAuthMeRouteImport } from './routes/api/auth/me'
 import { Route as ApiAuthPairRouteImport } from './routes/api/auth/pair'
 import { Route as ApiV1CatalogRouteImport } from './routes/api/v1/catalog'
+import { Route as ApiV1ManifestRouteImport } from './routes/api/v1/manifest'
 import { Route as ApiV1NavTreeRouteImport } from './routes/api/v1/nav-tree'
 import { Route as ApiWebhooksGithubRouteImport } from './routes/api/webhooks/github'
 import { Route as SettingsAuthLoginRouteImport } from './routes/settings/auth/login'
@@ -40,6 +42,11 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const EditRoute = EditRouteImport.update({
   id: '/_edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManifestRoute = ManifestRouteImport.update({
+  id: '/manifest',
+  path: '/manifest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
@@ -102,6 +109,11 @@ const ApiV1CatalogRoute = ApiV1CatalogRouteImport.update({
   path: '/api/v1/catalog',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiV1ManifestRoute = ApiV1ManifestRouteImport.update({
+  id: '/api/v1/manifest',
+  path: '/api/v1/manifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1NavTreeRoute = ApiV1NavTreeRouteImport.update({
   id: '/api/v1/nav-tree',
   path: '/api/v1/nav-tree',
@@ -150,6 +162,7 @@ const ApiV1TrackerTasksRoute = ApiV1TrackerTasksRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/manifest': typeof ManifestRoute
   '/api/health': typeof ApiHealthRoute
   '/platform-spec/$': typeof PlatformSpecSplatRoute
   '/platform-spec/': typeof PlatformSpecIndexRoute
@@ -160,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/pair': typeof ApiAuthPairRoute
   '/api/v1/catalog': typeof ApiV1CatalogRoute
+  '/api/v1/manifest': typeof ApiV1ManifestRoute
   '/api/v1/nav-tree': typeof ApiV1NavTreeRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
   '/settings/auth/login': typeof SettingsAuthLoginRoute
@@ -174,6 +188,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/manifest': typeof ManifestRoute
   '/api/health': typeof ApiHealthRoute
   '/platform-spec/$': typeof PlatformSpecSplatRoute
   '/platform-spec': typeof PlatformSpecIndexRoute
@@ -184,6 +199,7 @@ export interface FileRoutesByTo {
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/pair': typeof ApiAuthPairRoute
   '/api/v1/catalog': typeof ApiV1CatalogRoute
+  '/api/v1/manifest': typeof ApiV1ManifestRoute
   '/api/v1/nav-tree': typeof ApiV1NavTreeRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
   '/settings/auth/login': typeof SettingsAuthLoginRoute
@@ -200,6 +216,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_edit': typeof EditRouteWithChildren
+  '/manifest': typeof ManifestRoute
   '/api/health': typeof ApiHealthRoute
   '/platform-spec/$': typeof PlatformSpecSplatRoute
   '/platform-spec/': typeof PlatformSpecIndexRoute
@@ -210,6 +227,7 @@ export interface FileRoutesById {
   '/api/auth/me': typeof ApiAuthMeRoute
   '/api/auth/pair': typeof ApiAuthPairRoute
   '/api/v1/catalog': typeof ApiV1CatalogRoute
+  '/api/v1/manifest': typeof ApiV1ManifestRoute
   '/api/v1/nav-tree': typeof ApiV1NavTreeRoute
   '/api/webhooks/github': typeof ApiWebhooksGithubRoute
   '/settings/auth/login': typeof SettingsAuthLoginRoute
@@ -226,6 +244,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/manifest'
     | '/api/health'
     | '/platform-spec/$'
     | '/platform-spec/'
@@ -236,6 +255,7 @@ export interface FileRouteTypes {
     | '/api/auth/me'
     | '/api/auth/pair'
     | '/api/v1/catalog'
+    | '/api/v1/manifest'
     | '/api/v1/nav-tree'
     | '/api/webhooks/github'
     | '/settings/auth/login'
@@ -250,6 +270,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/manifest'
     | '/api/health'
     | '/platform-spec/$'
     | '/platform-spec'
@@ -260,6 +281,7 @@ export interface FileRouteTypes {
     | '/api/auth/me'
     | '/api/auth/pair'
     | '/api/v1/catalog'
+    | '/api/v1/manifest'
     | '/api/v1/nav-tree'
     | '/api/webhooks/github'
     | '/settings/auth/login'
@@ -275,6 +297,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_edit'
+    | '/manifest'
     | '/api/health'
     | '/platform-spec/$'
     | '/platform-spec/'
@@ -285,6 +308,7 @@ export interface FileRouteTypes {
     | '/api/auth/me'
     | '/api/auth/pair'
     | '/api/v1/catalog'
+    | '/api/v1/manifest'
     | '/api/v1/nav-tree'
     | '/api/webhooks/github'
     | '/settings/auth/login'
@@ -301,6 +325,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EditRoute: typeof EditRouteWithChildren
+  ManifestRoute: typeof ManifestRoute
   ApiHealthRoute: typeof ApiHealthRoute
   PlatformSpecSplatRoute: typeof PlatformSpecSplatRoute
   PlatformSpecIndexRoute: typeof PlatformSpecIndexRoute
@@ -311,6 +336,7 @@ export interface RootRouteChildren {
   ApiAuthMeRoute: typeof ApiAuthMeRoute
   ApiAuthPairRoute: typeof ApiAuthPairRoute
   ApiV1CatalogRoute: typeof ApiV1CatalogRoute
+  ApiV1ManifestRoute: typeof ApiV1ManifestRoute
   ApiV1NavTreeRoute: typeof ApiV1NavTreeRoute
   ApiWebhooksGithubRoute: typeof ApiWebhooksGithubRoute
   SettingsAuthLoginRoute: typeof SettingsAuthLoginRoute
@@ -335,6 +361,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof EditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manifest': {
+      id: '/manifest'
+      path: '/manifest'
+      fullPath: '/manifest'
+      preLoaderRoute: typeof ManifestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/health': {
@@ -421,6 +454,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1CatalogRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/manifest': {
+      id: '/api/v1/manifest'
+      path: '/api/v1/manifest'
+      fullPath: '/api/v1/manifest'
+      preLoaderRoute: typeof ApiV1ManifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/v1/nav-tree': {
       id: '/api/v1/nav-tree'
       path: '/api/v1/nav-tree'
@@ -504,6 +544,7 @@ const EditRouteWithChildren = EditRoute._addFileChildren(EditRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EditRoute: EditRouteWithChildren,
+  ManifestRoute: ManifestRoute,
   ApiHealthRoute: ApiHealthRoute,
   PlatformSpecSplatRoute: PlatformSpecSplatRoute,
   PlatformSpecIndexRoute: PlatformSpecIndexRoute,
@@ -514,6 +555,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthMeRoute: ApiAuthMeRoute,
   ApiAuthPairRoute: ApiAuthPairRoute,
   ApiV1CatalogRoute: ApiV1CatalogRoute,
+  ApiV1ManifestRoute: ApiV1ManifestRoute,
   ApiV1NavTreeRoute: ApiV1NavTreeRoute,
   ApiWebhooksGithubRoute: ApiWebhooksGithubRoute,
   SettingsAuthLoginRoute: SettingsAuthLoginRoute,

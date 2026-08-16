@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Local type inference reduces annotation burden while keeping programs predictable. The inference algorithm is specified here; diagnostics reference these rules.
+This specification defines local type inference. The inference reduces the annotation burden. The inference keeps programs predictable. The specification defines the inference algorithm. Diagnostics reference these rules.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Mismatch after inference MUST diagnose **E1206**. Inference affects compile-time
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Type inference
 

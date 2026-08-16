@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Module-level macro rules with fragment parameters, `name!` invocation, and typed AST expansion in any project kind.
+This specification defines the module-level macro rules. The rules use fragment parameters and `name!` invocation. The macros expand typed AST in any project kind.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Expansion MUST resolve the invocation, deep-copy captured fragments, substitute 
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Language macros
 

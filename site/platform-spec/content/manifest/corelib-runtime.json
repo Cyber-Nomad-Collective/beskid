@@ -1,0 +1,439 @@
+{
+	"id": "corelib-runtime",
+	"title": "Corelib and Runtime",
+	"order": 2,
+	"description": "This chapter documents the core library and the native runtime of Beskid. The core library is written in Beskid. The native runtime is a Beskid project with Rust builtins. The prose conforms to ASD-STE100 Simplified Technical English.",
+	"sections": [
+		{
+			"id": "corelib-packages",
+			"title": "Corelib packages",
+			"description": "These entries cover the packages of the core library. The core library lives under compiler/corelib/.",
+			"entries": [
+				{
+					"id": "beskid-corelib",
+					"title": "beskid_corelib",
+					"description": "The package beskid_corelib is the canonical corelib identity. The package name is corelib. The package has a corelib.bproj file and a Project.lock file. The tests live under tests/. The discovery uses BESKID_CORELIB_ROOT, an ancestor search for compiler/corelib/beskid_corelib, or the beskid_cli bundle ensure_corelib_ready.",
+					"examples": ["compiler/corelib/beskid_corelib/corelib.bproj"],
+					"references": {
+						"capabilities": [
+							"core-library--compiler-integration--corelib-discovery-and-packaging",
+							"core-library--compiler-integration--corelib-injection-and-resolution"
+						],
+						"sources": [
+							"compiler/corelib/beskid_corelib/",
+							"compiler/corelib/CoreLib.bws"
+						]
+					},
+					"metadata": {
+						"packageName": "corelib"
+					}
+				},
+				{
+					"id": "foundation",
+					"title": "corelib_foundation",
+					"description": "The package corelib_foundation is the primitive hub. The tier is standard. The source modules live under src/Core/. The modules are Args, Bytes, Collections, Encoding, Environment, Error, ErrorHandling, Fluent, FS, Input, Math, Optional, Output, Path, Process, Random, Results, String, Syscall, Text, Threading, and Time. The query surface lives under src/Query/.",
+					"examples": ["src/Core/String.bd", "src/Query/Iterator.bd"],
+					"references": {
+						"capabilities": [
+							"core-library--foundation-and-primitives--core-string",
+							"core-library--foundation-and-primitives--core-results",
+							"core-library--foundation-and-primitives--core-optional",
+							"core-library--stability-and-api-shape--corelib-api-shape"
+						],
+						"sources": [
+							"compiler/corelib/packages/foundation/",
+							"compiler/corelib/packages/foundation/src/Core/"
+						]
+					},
+					"metadata": {
+						"tier": "standard"
+					}
+				},
+				{
+					"id": "concurrency",
+					"title": "corelib_concurrency",
+					"description": "The package corelib_concurrency has the concurrency types. The types are Channel<T>, Fiber<T>, Hub<T>, Mutex, and WaitGroup. The file Concurrency.bd and the Concurrency/ directory hold the code. Fiber<T> is the handle type that the spawn lowering needs.",
+					"examples": ["Channel<T>", "Fiber<T>"],
+					"references": {
+						"capabilities": [
+							"core-library--concurrency--concurrency-package",
+							"language-meta--evaluation--fibers-and-spawn"
+						],
+						"sources": [
+							"compiler/corelib/packages/concurrency/",
+							"compiler/corelib/packages/concurrency/src/Concurrency.bd"
+						]
+					},
+					"metadata": {
+						"types": "Channel<T>, Fiber<T>, Hub<T>, Mutex, WaitGroup"
+					}
+				},
+				{
+					"id": "console",
+					"title": "corelib_console",
+					"description": "The package corelib_console is a separate shard. The package has Console.bd, the Console/ directory, the Ansi/ directory, and the Platform/ directory. The package models ANSI escapes, console capabilities, markup format, and terminal events.",
+					"examples": ["Console.WriteLine(\"hi\")"],
+					"references": {
+						"capabilities": [
+							"core-library--terminal-and-console--console-io-streams",
+							"core-library--terminal-and-console--ansi-escape-model",
+							"core-library--terminal-and-console--console-markup-format"
+						],
+						"sources": [
+							"compiler/corelib/packages/console/",
+							"compiler/corelib/packages/console/src/Console.bd"
+						]
+					},
+					"metadata": {
+						"shard": "separate"
+					}
+				},
+				{
+					"id": "runtime-package",
+					"title": "corelib_runtime",
+					"description": "The package corelib_runtime has the runtime registration surface. The file Runtime/Init.bd holds the registration code. Runtime.Abi is the single source for status codes, envelope tags, and dispatch tags. The domain packages consume Runtime.Abi.",
+					"examples": ["Runtime/Init.bd"],
+					"references": {
+						"capabilities": [
+							"core-library--compiler-integration--runtime-registration",
+							"core-library--stability-and-api-shape--runtime-backed-corelib-surfaces"
+						],
+						"sources": [
+							"compiler/corelib/packages/runtime/",
+							"compiler/corelib/packages/runtime/src/Runtime/Init.bd"
+						]
+					},
+					"metadata": {
+						"authority": "Runtime.Abi"
+					}
+				},
+				{
+					"id": "compiler-sdk",
+					"title": "compiler-sdk",
+					"description": "The compiler-sdk package is the Beskid-side Compiler Mod SDK. The SDK has the contracts Collector, Generator, Analyzer, Rewriter, and AttributeGenerator. The SDK has the Beskid.Syntax.Nodes.Node navigation surface. The source lives under src/Beskid/.",
+					"examples": ["Collector", "Generator"],
+					"references": {
+						"capabilities": [
+							"language-meta--metaprogramming--compiler-mod-sdk",
+							"compiler--compiler-mods--typed-emitter-and-transforms"
+						],
+						"sources": [
+							"compiler/corelib/packages/compiler-sdk/",
+							"compiler/corelib/packages/compiler-sdk/src/Beskid/"
+						]
+					},
+					"metadata": {
+						"contracts": "Collector, Generator, Analyzer, Rewriter, AttributeGenerator"
+					}
+				},
+				{
+					"id": "pest-gen-schema",
+					"title": "pest-gen-schema",
+					"description": "The pest-gen-schema package has the JSON schemas for the beskid_pest_gen generator. The package has a pest_gen_schema.bproj file and a schemas/ directory.",
+					"examples": ["pest_gen_schema.bproj"],
+					"references": {
+						"capabilities": ["compiler--compiler-mods--pest-parser-generator"],
+						"sources": [
+							"compiler/corelib/packages/pest-gen-schema/",
+							"compiler/corelib/packages/pest-gen-schema/schemas/"
+						]
+					},
+					"metadata": {
+						"generator": "beskid_pest_gen"
+					}
+				}
+			]
+		},
+		{
+			"id": "native-runtime-modules",
+			"title": "Native runtime modules",
+			"description": "These entries cover the native runtime modules. The native runtime is a Beskid project. The project name is beskid-runtime-native. The version is 0.4.0. The sources live under compiler/runtime/beskid/src/Runtime/.",
+			"entries": [
+				{
+					"id": "bootstrap",
+					"title": "Bootstrap",
+					"description": "The Bootstrap module does process and thread attach. The module has the native bootstrap, the object headers, and the root registration. The files are Lifecycle.bd, Native.bd, Objects.bd, and Roots.bd.",
+					"examples": ["Bootstrap/Lifecycle.bd"],
+					"references": {
+						"capabilities": [
+							"execution--runtime--memory-and-gc-runtime-contract",
+							"execution--abi-and-host--abi-versioning-and-compatibility"
+						],
+						"sources": [
+							"compiler/runtime/beskid/src/Runtime/Bootstrap/",
+							"compiler/runtime/beskid/src/Runtime/Bootstrap/Lifecycle.bd"
+						]
+					},
+					"metadata": {
+						"files": "Lifecycle.bd, Native.bd, Objects.bd, Roots.bd"
+					}
+				},
+				{
+					"id": "data",
+					"title": "Data",
+					"description": "The Data module has the BeskidStr and BeskidArray headers. The module has the collection primitives. The files are Collections.bd and Strings.bd.",
+					"examples": ["Data/Strings.bd"],
+					"references": {
+						"capabilities": [
+							"execution--abi-and-host--builtins-and-symbols",
+							"core-library--foundation-and-primitives--core-collections"
+						],
+						"sources": [
+							"compiler/runtime/beskid/src/Runtime/Data/",
+							"compiler/runtime/beskid/src/Runtime/Data/Strings.bd"
+						]
+					},
+					"metadata": {
+						"files": "Collections.bd, Strings.bd"
+					}
+				},
+				{
+					"id": "dynamic",
+					"title": "Dynamic",
+					"description": "The Dynamic module has the v0.3 DynamicCell type. A DynamicCell has a shape_id, flags, and a payload. The module has the functions dynamic_cell_create, dynamic_object_alloc, dynamic_map_aot, and dynamic_map_fallback. The file is Dynamic.bd.",
+					"examples": ["dynamic_cell_create"],
+					"references": {
+						"capabilities": ["compiler--codegen-and-ir--dynamic-types-and-mapping"],
+						"sources": [
+							"compiler/runtime/beskid/src/Runtime/Dynamic/",
+							"compiler/runtime/beskid/src/Runtime/Dynamic/Dynamic.bd"
+						]
+					},
+					"metadata": {
+						"files": "Dynamic.bd",
+						"version": "v0.3"
+					}
+				},
+				{
+					"id": "fiber",
+					"title": "Fiber",
+					"description": "The Fiber module has the M:N cooperative scheduler. The module has Fiber.bd and a Scheduler/ directory. The Scheduler/ directory has Context, Core, Exports, Loop, Poll, Queue, and Storage. The initial stack is 64 KiB. The cap is 8 MiB. FiberError::StackOverflow occurs at Join.",
+					"examples": ["Fiber/Scheduler/Loop.bd"],
+					"references": {
+						"capabilities": ["execution--runtime--fiber-scheduler-and-stacks"],
+						"sources": [
+							"compiler/runtime/beskid/src/Runtime/Fiber/",
+							"compiler/runtime/beskid/src/Runtime/Fiber/Fiber.bd",
+							"compiler/runtime/beskid/src/Runtime/Fiber/Scheduler/"
+						]
+					},
+					"metadata": {
+						"stack": "64 KiB initial, 8 MiB cap",
+						"schedulerFiles": "Context, Core, Exports, Loop, Poll, Queue, Storage"
+					}
+				},
+				{
+					"id": "host",
+					"title": "Host",
+					"description": "The Host module has the host-owned dispatch. The dispatch covers fs, env, process, and tty_winsize. The function beskid_host_register_all registers the host. The module has the composition launch and resolve. The files are Callbacks.bd, Clocks.bd, Composition.bd, FS.bd, and Process.bd.",
+					"examples": ["beskid_host_register_all()"],
+					"references": {
+						"capabilities": [
+							"execution--abi-and-host--extern-dispatch-and-policy",
+							"language-meta--composition--dependency-injection"
+						],
+						"sources": [
+							"compiler/runtime/beskid/src/Runtime/Host/",
+							"compiler/runtime/beskid/src/Runtime/Host/Composition.bd"
+						]
+					},
+					"metadata": {
+						"files": "Callbacks.bd, Clocks.bd, Composition.bd, FS.bd, Process.bd"
+					}
+				},
+				{
+					"id": "io",
+					"title": "Io",
+					"description": "The Io module has the syscalls. The syscalls are syscall_read, syscall_write, syscall_read_bytes, and syscall_write_bytes. A blocking syscall parks the calling fiber. The syscall pool workers must not act as a GC mutator. The file is Syscalls.bd.",
+					"examples": ["syscall_read"],
+					"references": {
+						"capabilities": [
+							"execution--runtime--panic-io-and-syscalls",
+							"core-library--stability-and-api-shape--core-syscall"
+						],
+						"sources": [
+							"compiler/runtime/beskid/src/Runtime/Io/",
+							"compiler/runtime/beskid/src/Runtime/Io/Syscalls.bd"
+						]
+					},
+					"metadata": {
+						"files": "Syscalls.bd"
+					}
+				},
+				{
+					"id": "mem",
+					"title": "Mem",
+					"description": "The Mem module has the GC integration. The Gc/ directory has Allocation, Collection, Marking, RootsHandles, State, and Sweep. The heap is a tri-color abfall heap. The module has gc_write_barrier, gc_root_handle, and gc_register_root. The module has GcSnapshot and enter_runtime_scope. The file is Gc.bd.",
+					"examples": ["gc_write_barrier"],
+					"references": {
+						"capabilities": ["execution--runtime--memory-and-gc-runtime-contract"],
+						"sources": [
+							"compiler/runtime/beskid/src/Runtime/Mem/",
+							"compiler/runtime/beskid/src/Runtime/Mem/Gc.bd",
+							"compiler/runtime/beskid/src/Runtime/Mem/Gc/"
+						]
+					},
+					"metadata": {
+						"files": "Gc.bd",
+						"gcModules": "Allocation, Collection, Marking, RootsHandles, State, Sweep"
+					}
+				},
+				{
+					"id": "pubsub",
+					"title": "PubSub",
+					"description": "The PubSub module has the event multicast slots. The module has Hub<T> with round-robin WaitReceive. The files are Events.bd and Hub.bd.",
+					"examples": ["Hub<T>"],
+					"references": {
+						"capabilities": [
+							"language-meta--evaluation--events",
+							"core-library--concurrency--concurrency-package"
+						],
+						"sources": [
+							"compiler/runtime/beskid/src/Runtime/PubSub/",
+							"compiler/runtime/beskid/src/Runtime/PubSub/Events.bd"
+						]
+					},
+					"metadata": {
+						"files": "Events.bd, Hub.bd"
+					}
+				},
+				{
+					"id": "sync",
+					"title": "Sync",
+					"description": "The Sync module has the synchronization types. The types are Channel<T>, Mutex, and WaitGroup. Channel<T> is the only cross-fiber data path. The channel builtins return Result, not panic. The files are Channel.bd, Mutex.bd, and WaitGroup.bd.",
+					"examples": ["Channel<T>"],
+					"references": {
+						"capabilities": [
+							"execution--runtime--channels-and-synchronization",
+							"core-library--concurrency--concurrency-package"
+						],
+						"sources": [
+							"compiler/runtime/beskid/src/Runtime/Sync/",
+							"compiler/runtime/beskid/src/Runtime/Sync/Channel.bd"
+						]
+					},
+					"metadata": {
+						"files": "Channel.bd, Mutex.bd, WaitGroup.bd"
+					}
+				}
+			]
+		},
+		{
+			"id": "beskid-native-boundary",
+			"title": "Beskid and native boundary",
+			"description": "These entries cover the boundary between the Beskid code and the native runtime. The ABI version is 5. The boundary is a typed contract.",
+			"entries": [
+				{
+					"id": "abi-versioning",
+					"title": "ABI versioning",
+					"description": "The runtime ABI version is 5. The constant BESKID_RUNTIME_ABI_VERSION lives in compiler/crates/beskid_abi/src/version.rs. A host should fail before user main when the runtime version differs from the compiler constant. A breaking change must bump the version. The ABI-v3 kernel exports only the kernel exports and the dispatch entrypoints.",
+					"examples": ["BESKID_RUNTIME_ABI_VERSION = 5"],
+					"references": {
+						"capabilities": [
+							"execution--abi-and-host--abi-versioning-and-compatibility"
+						],
+						"sources": [
+							"compiler/crates/beskid_abi/src/version.rs",
+							"compiler/runtime_manifest.bsol"
+						]
+					},
+					"metadata": {
+						"abiVersion": "5",
+						"manifest": "compiler/runtime_manifest.bsol"
+					}
+				},
+				{
+					"id": "abi-v5-typed-contract",
+					"title": "ABI-v5 typed contract",
+					"description": "The ABI-v5 typed contract lives in compiler/crates/beskid_abi/src/abi_v5.rs. The constant ABI_V5 is 5. The runtime symbol prefix is beskid_rt_v5_. The library lifecycle symbols are beskid_library_attach_v5 and beskid_library_detach_v5. The contract has TargetTriple, Endianness, and CallingConvention. AbiManifestV5::canonical_runtime makes the canonical manifest for a target. The contract has the spawn boundary and the allocation symbols.",
+					"examples": [
+						"beskid_rt_v5_fiber_spawn_with_cancel_slot",
+						"beskid_rt_v5_managed_object_allocate"
+					],
+					"references": {
+						"capabilities": [
+							"execution--abi-and-host--abi-versioning-and-compatibility",
+							"execution--abi-and-host--builtins-and-symbols"
+						],
+						"sources": [
+							"compiler/crates/beskid_abi/src/abi_v5.rs",
+							"compiler/crates/beskid_abi/src/generated/builtins.rs"
+						]
+					},
+					"metadata": {
+						"prefix": "beskid_rt_v5_",
+						"lifecycle": "beskid_library_attach_v5, beskid_library_detach_v5"
+					}
+				},
+				{
+					"id": "builtin-specs",
+					"title": "Builtin specs",
+					"description": "The BUILTIN_SPECS are the sole Cranelift import signature source. The specs live in compiler/crates/beskid_abi/src/generated/builtins.rs. RUNTIME_EXPORT_SYMBOLS lists every export. BeskidStr has a ptr and a len. BeskidArray has a ptr, a len, and a cap. The exports use extern C-unwind. A panic uses AbiReturnKind::Never. All registries come from compiler/runtime_manifest.bsol.",
+					"examples": ["BeskidStr { ptr, len }", "BeskidArray { ptr, len, cap }"],
+					"references": {
+						"capabilities": ["execution--abi-and-host--builtins-and-symbols"],
+						"sources": [
+							"compiler/crates/beskid_abi/src/generated/builtins.rs",
+							"compiler/runtime_manifest.bsol"
+						]
+					},
+					"metadata": {
+						"authority": "BUILTIN_SPECS"
+					}
+				},
+				{
+					"id": "runtime-kit-discovery",
+					"title": "Runtime kit discovery",
+					"description": "The runtime kit discovery uses exact installed-prefix discovery. The discovery fails closed on a missing, mismatched, or tampered kit. The code lives in compiler/crates/beskid_abi/src/runtime_kit/. The files are discovery.rs, resolution.rs, validation.rs, paths.rs, hashing.rs, and model.rs.",
+					"examples": ["discovery.rs"],
+					"references": {
+						"capabilities": ["execution--runtime--runtime-feature-flags"],
+						"sources": [
+							"compiler/crates/beskid_abi/src/runtime_kit/",
+							"compiler/crates/beskid_abi/src/runtime_kit/discovery.rs"
+						]
+					},
+					"metadata": {
+						"files": "discovery.rs, resolution.rs, validation.rs, paths.rs, hashing.rs, model.rs"
+					}
+				},
+				{
+					"id": "engine",
+					"title": "Engine",
+					"description": "The engine is the JIT host. The engine powers the REPL and the interim beskid test. The production beskid run uses AOT via beskid_aot. The engine lives in compiler/crates/beskid_engine/src/. The engine.rs file has the Engine type and host_runtime_target. The jit_module.rs file has BeskidJitModule.",
+					"examples": ["BeskidJitModule"],
+					"references": {
+						"capabilities": ["compiler--build-pipeline--backends-jit-aot"],
+						"sources": [
+							"compiler/crates/beskid_engine/src/",
+							"compiler/crates/beskid_engine/src/engine.rs",
+							"compiler/crates/beskid_engine/src/jit_module.rs"
+						]
+					},
+					"metadata": {
+						"role": "JIT host for REPL and interim test runner"
+					}
+				},
+				{
+					"id": "corelib-runtime-delegation",
+					"title": "Corelib to runtime delegation",
+					"description": "The foundation delegates to the runtime builtins. The builtins are __fs_read_text and __fs_exists. Core.Input, Core.Output, and Core.Error wrap the syscall functions. The concurrency package delegates to channel, mutex, and wait_group functions. The status constants come from Runtime.Abi. Runtime.Abi is the single source.",
+					"examples": ["__fs_read_text", "channel_*"],
+					"references": {
+						"capabilities": [
+							"core-library--stability-and-api-shape--runtime-backed-corelib-surfaces",
+							"core-library--compiler-integration--runtime-registration"
+						],
+						"sources": [
+							"compiler/corelib/packages/foundation/src/Core/FS/FS.bd",
+							"compiler/corelib/packages/runtime/src/Runtime/Init.bd"
+						]
+					},
+					"metadata": {
+						"delegation": "foundation -> runtime builtins, concurrency -> channel/mutex/wait_group"
+					}
+				}
+			]
+		}
+	]
+}

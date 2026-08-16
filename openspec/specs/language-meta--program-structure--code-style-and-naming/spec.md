@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Language-level PascalCase and camelCase conventions for types, members, modules, and locals — enforceable by formatter and lint tooling.
+This specification defines the language-level PascalCase and camelCase conventions. The conventions cover types, members, modules, and locals. A formatter and lint tooling enforce the conventions.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Tools that emit Beskid identifiers from foreign schemas MUST map into these case
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Code style and naming
 

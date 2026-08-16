@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Beskid-side compiler-mod contracts, Beskid.Syntax mirror, declarative query, and typed AST operations.
+This specification defines the Beskid-side compiler-mod contracts. It defines the Beskid.Syntax mirror, the declarative query, and the typed AST operations.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ During `mod.load`, the mod host MUST resolve every transitive `type: Mod` depend
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Compiler Mod SDK
 

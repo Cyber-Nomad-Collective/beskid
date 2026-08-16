@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Serialization core package, Serialization Mod, and format-specific packages (JSON).
+This specification defines the serialization core package, the Serialization Mod, and the format-specific packages. The JSON package is one format-specific package.
 
 ## Requirements
 
@@ -25,7 +25,7 @@ The `[Serialize]` attribute MUST be defined in Serialization Mod, not in Compile
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Serialization packages
 

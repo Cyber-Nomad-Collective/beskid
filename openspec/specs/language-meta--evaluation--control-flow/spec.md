@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Conditionals, loops, and structured control transfer. Lowering to HIR/CLIF follows the evaluation order defined here.
+This specification defines conditionals, loops, and structured control transfer. The lowering to HIR and CLIF follows the evaluation order defined here.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ HIR lowering MUST normalize control flow graphs (**E1154** if non-normalized). U
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Control flow
 

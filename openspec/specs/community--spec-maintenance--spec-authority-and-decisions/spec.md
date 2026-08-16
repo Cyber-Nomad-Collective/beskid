@@ -3,12 +3,12 @@
 
 ## Purpose
 
-Normative rules for language law vs implementation domains, maturity (Proposed/Standard), and embedded decision records in feature hubs and articles.
+This specification defines normative rules for language law and implementation domains. The rules cover maturity (Proposed and Standard). The rules also cover embedded decision records in feature hubs and articles.
 
 ## Requirements
 
 ### Requirement: Specification authority and embedded decisions: Maturity — Proposed vs Standard [community/spec-maintenance/spec-authority-and-decisions]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > | `status` | Meaning | Requirements |
 > | --- | --- | --- |
@@ -27,7 +27,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Language law lives only in language-meta: Decision [D-COMM-AUTH-0001]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > **Language law** — syntax, types, evaluation, contracts, memory, and cross-cutting language rules — **must** be defined only under [Language meta](/platform-spec/language-meta/), except where another domain page declares an explicit **cross-domain exception** and links to the owning language-meta chapter.
 
@@ -41,7 +41,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Implementation domains defer to language-meta: Decision [D-COMM-AUTH-0002]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > [Compiler](/platform-spec/compiler/), [Execution](/platform-spec/execution/), [Core library](/platform-spec/core-library/), and [Tooling](/platform-spec/tooling/) specify *how the reference platform realizes* language-meta. They **must not** redefine semantics already owned there; they **must** defer with `relatedTopics` (for example `defers-to`, `implements`) instead of duplicating normative key tables.
 
@@ -55,7 +55,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Specification leads implementation: Decision [D-COMM-AUTH-0003]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > Implementation that alters observable language or platform behavior **must** be preceded or accompanied by normative spec updates. The spec is the authority; tests and crates are verification anchors, not substitutes for missing contract text. Cross-cutting inception record: **D-INC-0001**.
 
@@ -69,7 +69,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: One ADR file per closed decision: Decision [D-COMM-AUTH-0004]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > Each **Standard** feature **must** publish closed choices under **`adr/`** as one file per decision (`specLevel: adr`, stable `adrId`, `adrStatus`, `adrDate`). Body **must** include **`## Context`**, **`## Decision`**, **`## Consequences`**; add **`## Verification anchors`** when testable. Legacy `decisions-record.mdx` and hub **`## Decisions`** summaries remain valid during migration; new work **must** use `adr/`. Inception cross-cutting ADRs stay under [Project inception](/platform-spec/community/project-inception/).
 
@@ -83,7 +83,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 - **THEN** every MUST, SHALL, REQUIRED, prohibition, and accepted decision in the section is satisfied
 
 ### Requirement: Proposed vs Standard maturity gates: Decision [D-COMM-AUTH-0005]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > | `status` | Meaning | Requirements |
 > | --- | --- | --- |
@@ -103,7 +103,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Specification authority and embedded decisions
 

@@ -3,12 +3,12 @@
 
 ## Purpose
 
-Policy for `lastReviewed` metadata and drift detection in high-change feature pages.
+This specification defines the policy for `lastReviewed` metadata. The policy covers drift detection in high-change feature pages.
 
 ## Requirements
 
 ### Requirement: lastReviewed on high-churn platform-spec pages: Decision [D-COMM-REV-0001]
-The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding; uppercase requirement keywords retain their BCP-14 meaning.
+The Beskid standard SHALL enforce the following migrated contract section. Accepted ADR decisions are binding. Uppercase requirement keywords retain their BCP-14 meaning.
 
 > High-churn feature pages **should** set `lastReviewed` in ISO date format. When implementation anchors change materially, `lastReviewed` **should** be updated in the same change set. Optional verification scripts **may** warn when pages with implementation anchors omit `lastReviewed`.
 
@@ -23,7 +23,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Last reviewed policy
 

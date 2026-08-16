@@ -3,7 +3,7 @@
 
 ## Purpose
 
-Language-agnostic primitives for foreign boundaries—symbols, call shapes, ownership, and conformance—shared by C and Rust ABI profiles.
+This specification defines language-agnostic primitives for foreign boundaries. The primitives cover symbols, call shapes, ownership, and conformance. The C and Rust ABI profiles share these primitives.
 
 ## Requirements
 
@@ -73,7 +73,7 @@ The Beskid standard SHALL enforce the following migrated contract section. Accep
 
 ## Informative Source Provenance
 
-The records below preserve migration history and are not normative except where text was extracted into a requirement above.
+The records below preserve migration history. They are not normative except where text was extracted into a requirement above.
 
 ### Source Record: Interop.Contracts
 
