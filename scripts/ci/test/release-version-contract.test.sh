@@ -45,13 +45,13 @@ grep -Fq "if: \${{ always() && needs.state.result == 'success' && needs.state.ou
   fail 'compiler release publication is not explicitly allowed after a partial platform failure'
 
 grep -Fq 'workflow_run:' "${open_vsx_workflow}" || \
-  fail 'Open VSX is not triggered by a completed Compiler workflow run'
-grep -Fq 'workflows: [Compiler]' "${open_vsx_workflow}" || \
-  fail 'Open VSX does not consume Compiler workflow runs'
+  fail 'Open VSX is not triggered by a completed workflow run'
+grep -Fq 'workflows: [Compiler release]' "${open_vsx_workflow}" || \
+  fail 'Open VSX does not consume Compiler release workflow runs'
 grep -Fq 'github.event.workflow_run.id' "${open_vsx_workflow}" || \
-  fail 'Open VSX does not download the triggering Compiler run artifact'
-grep -Fq -- '--name release-version' "${open_vsx_workflow}" || \
-  fail 'Open VSX does not consume the compiler release-version artifact'
+  fail 'Open VSX does not download the triggering Compiler release run artifact'
+grep -Fq -- '--name compiler-release-state' "${open_vsx_workflow}" || \
+  fail 'Open VSX does not consume the compiler-release-state artifact'
 grep -Fq 'BESKID_RELEASE_VERSION: ${{ steps.release-version.outputs.version }}' "${open_vsx_workflow}" || \
   fail 'Open VSX does not pass the consumed compiler version to its publisher'
 resolver_workflows="$(rg -l 'resolve-beskid-version\.sh' "${root}/.github/workflows" -g '*.yml' -g '*.yaml' | sort || true)"
@@ -62,11 +62,11 @@ fi
 
 
 grep -Fq 'workflow_run:' "${distribute_workflow}" || \
-  fail 'Distribute is not triggered by a completed Compiler workflow run'
-grep -Fq 'workflows: [Compiler]' "${distribute_workflow}" || \
-  fail 'Distribute does not consume Compiler workflow runs'
-grep -Fq -- '--name release-version' "${distribute_workflow}" || \
-  fail 'Distribute does not consume the compiler release-version artifact'
+  fail 'Distribute is not triggered by a completed workflow run'
+grep -Fq 'workflows: [Compiler release]' "${distribute_workflow}" || \
+  fail 'Distribute does not consume Compiler release workflow runs'
+grep -Fq -- '--name compiler-release-state' "${distribute_workflow}" || \
+  fail 'Distribute does not consume the compiler-release-state artifact'
 grep -Fq '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$' "${distribute_workflow}" || \
   fail 'Distribute does not fail closed on a non-strict semver version'
 
