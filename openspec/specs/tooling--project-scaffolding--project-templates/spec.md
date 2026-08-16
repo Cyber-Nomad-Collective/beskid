@@ -209,7 +209,7 @@ High-level flow is specified in **[flow and algorithm](./flow-and-algorithm/)**.
 <SpecSection title="Edge cases and errors" id="edge-cases-and-errors">
 - **Yanked** registry template version: CLI **must** emit a **warning** and **may** continue if the user does not abort (see [contracts](./contracts-and-edge-cases/)).
 - **Output exists**: project/workspace templates **must** fail by default when the target directory is non-empty unless `--force` (exact flag in [beskid new](../beskid-new/)).
-- **Item template** target not inside a discovered `Project.proj`: **must** error with E19xx diagnostic.
+- **Item template** target not inside a discovered `Project.proj`: **must** error with E20xx diagnostic.
 - **Invalid `{{ }}`**: unresolved placeholders after substitution **must** fail instantiation.
 - **GUID list**: every guid in the `guids` array **must** be replaced with a newly generated guid preserving source format—see [design model](./design-model/#guids).
 </SpecSection>
@@ -577,7 +577,7 @@ Yank API test.
 ``````markdown
 ## Purpose and scope
 
-Testable rules for template resolution, instantiation, registry interaction, and diagnostics (**E1901–E1999**).
+Testable rules for template resolution, instantiation, registry interaction, and diagnostics (**E2001–E2099**).
 
 ## Resolution
 
@@ -597,7 +597,7 @@ Testable rules for template resolution, instantiation, registry interaction, and
 | T-I02 | **Workspace** templates **must** emit `Workspace.proj` at the workspace root and member `Project.proj` files at declared member paths. |
 | T-I03 | **Item** templates **must** require `-o` / `--output` pointing at a file or directory under a folder containing `Project.proj` (or pass `--project` to disambiguate). |
 | T-I04 | After substitution, **no** `{{` `}}` placeholder tokens **may** remain in output files. |
-| T-I05 | All `guids` entries **must** be replaced in output; leftover source guids **must** fail with **E1906**. |
+| T-I05 | All `guids` entries **must** be replaced in output; leftover source guids **must** fail with **E2006**. |
 | T-I06 | Instantiated host projects **must** receive corelib per [design model](./design-model/#corelib-policy); templates **must not** emit opt-out flags. |
 | T-I07 | Templates **may** scaffold **`Mod`**, multi-target, or FFI-heavy projects without restriction. |
 
@@ -606,7 +606,7 @@ Testable rules for template resolution, instantiation, registry interaction, and
 | ID | Rule |
 | --- | --- |
 | T-U01 | When stdin is a TTY and `preferInteractive` is true or any required symbol lacks a value, the CLI **must** prompt. |
-| T-U02 | When `--no-interactive` is set, only flags and defaults **may** be used; missing required symbols **must** fail with **E1903**. |
+| T-U02 | When `--no-interactive` is set, only flags and defaults **may** be used; missing required symbols **must** fail with **E2003**. |
 | T-U03 | `--symbol` (repeatable) and `-n` / `--name` for the primary name symbol **must** be supported. |
 
 ## Post-actions
@@ -630,24 +630,24 @@ Testable rules for template resolution, instantiation, registry interaction, and
 
 ## Edge cases
 
-- **Git shallow clone failure** → **E1907** with remediation (network, auth, ref).
-- **Template package contains `packageKind: library`** → **E1902** reject for `beskid new install`.
+- **Git shallow clone failure** → **E2007** with remediation (network, auth, ref).
+- **Template package contains `packageKind: library`** → **E2002** reject for `beskid new install`.
 - **Item template overwrites existing file** → require `--force` or interactive confirm.
-- **Workspace template with duplicate member ids** → **E1908** at validation time (before write).
+- **Workspace template with duplicate member ids** → **E2008** at validation time (before write).
 
-## Diagnostic band E1901–E1999
+## Diagnostic band E2001–E2099
 
 | Code | Meaning |
 | --- | --- |
-| E1901 | Template manifest missing or invalid schema |
-| E1902 | Package kind is not `template` |
-| E1903 | Required symbol not provided |
-| E1904 | Output path conflict |
-| E1905 | Item template outside project root |
-| E1906 | GUID replacement incomplete |
-| E1907 | Git template source failed |
-| E1908 | Workspace template invalid member graph |
-| E1999 | Reserved internal template engine error |
+| E2001 | Template manifest missing or invalid schema |
+| E2002 | Package kind is not `template` |
+| E2003 | Required symbol not provided |
+| E2004 | Output path conflict |
+| E2005 | Item template outside project root |
+| E2006 | GUID replacement incomplete |
+| E2007 | Git template source failed |
+| E2008 | Workspace template invalid member graph |
+| E2099 | Reserved internal template engine error |
 ``````
 
 </details>
@@ -1060,7 +1060,7 @@ You received a **warning**. Prefer installing a non-yanked version; use `--allow
 
 ## Placeholder left in file
 
-**E1904** — a `{{symbol}}` was not bound. Pass `--symbol` or run interactive mode.
+**E2004** — a `{{symbol}}` was not bound. Pass `--symbol` or run interactive mode.
 
 ## pckg page shows no API docs for my template
 

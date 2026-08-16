@@ -38,6 +38,22 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Fixed
 
+- Renumber the Bsol project-shape diagnostic codes out of the macro band so
+  every code maps to exactly one meaning: `E1901`/`E1902`/`E1903` (Bsol
+  target-block, missing `schemas`, and `beskid build` on a Bsol project) move
+  to `E1886`/`E1887`/`E1888` in the E1801–E1899 manifest band, leaving
+  E1901–E1903 to the macro-expansion band exclusively. Updates the
+  diagnostic-code-registry spec and the platform-spec error index. Fixes #233.
+
+- Renumber the project-template engine diagnostic codes out of the macro
+  band so every code maps to one meaning: `E1901`–`E1908` and `E1999`
+  (template manifest, package kind, required symbol, output conflict, item
+  outside project, GUID replacement, git source, workspace invalid, and
+  internal) move to `E2001`–`E2008` and `E2099` in a new template band,
+  leaving E1901–E1908 to the macro-expansion band exclusively. Updates the
+  diagnostic-code-registry spec, the project-templates spec, and the
+  project-manifest-contract spec.
+
 - Link Windows AOT executables through their validated Beskid entry symbol
   instead of the unavailable CRT startup entrypoint.
 

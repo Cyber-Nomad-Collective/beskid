@@ -249,7 +249,7 @@ The inclusive range **E1801–E1899** is owned by compiler-mod manifest validati
 | **E1821–E1835** | Mod host / capabilities | Denied capability, exceeded `maxGeneratorRounds`, sandbox violation, AOT artifact load/bootstrap failure (see **[AOT artifact contract](/platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/)**). |
 | **E1836–E1850** | Typed merge / rewrite | Conflicting generator edits, illegal typed contribution, invalid typed rewrite, merge rollback. |
 | **E1851–E1870** | Contract discovery / execution | Missing required contracts, invalid contract signatures, collector scope violations, analyzer/rewriter registration errors. |
-| **E1871–E1899** | **Reserved** | Buffer for staged rollout; allocate in order and extend this table when used. |
+| **E1871–E1899** | **Reserved** / Bsol project shape | Buffer for staged rollout; allocate in order and extend this table when used. **E1886–E1888** are allocated to Bsol project-shape validation (see sub-table below). |
 
 ### Meta→Mod migration and manifest parse (**E1801–E1810**, normative)
 
@@ -294,6 +294,16 @@ Individual codes are defined in **[Mod host bridge / AOT artifact contract](/pla
 | **E1858** | Rewriter generic instantiation does not match source node kind. |
 | **E1859–E1870** | **Reserved** for contract execution failures. |
 
+### Bsol project shape (**E1886–E1888**, normative)
+
+Bsol project-shape validation emits these codes from `beskid_analysis::projects` (manifest validator and compile-plan builder). They use the `ProjectError::meta_contract` string-code pattern, consistent with the rest of the E1801–E1899 manifest band.
+
+| Code | When emitted |
+| --- | --- |
+| **E1886** | `type = Bsol` project declares a `target` block (forbidden — schema packages are not compile roots). |
+| **E1887** | `type = Bsol` project has no nested `schemas { export ... }` block. |
+| **E1888** | A `beskid build` targets a `Bsol` project (use `beskid validate-bsol` instead). |
+
 ## Language macro expansion (**E1901–E1999**)
 
 The inclusive range **E1901–E1999** is owned by **`macro.expand`** and macro definition validation. Ordinary semantic rules must not allocate inside this band.
@@ -312,6 +322,25 @@ The inclusive range **E1901–E1999** is owned by **`macro.expand`** and macro d
 | **E1910–E1999** | **Reserved** for macro hygiene and item-splice failures. |
 
 See **[Language macros](/platform-spec/language-meta/metaprogramming/macros/)**.
+
+## Project template scaffolding (**E2001–E2099**)
+
+The inclusive range **E2001–E2099** is owned by the project template engine (`beskid_template`). Ordinary semantic rules must not allocate inside this band.
+
+| Code | When emitted |
+| --- | --- |
+| **E2001** | Template manifest missing or invalid schema. |
+| **E2002** | Package kind is not `template`. |
+| **E2003** | Required symbol not provided. |
+| **E2004** | Output path conflict. |
+| **E2005** | Item template outside project root. |
+| **E2006** | GUID replacement incomplete. |
+| **E2007** | Git template source failed. |
+| **E2008** | Workspace template invalid member graph. |
+| **E2099** | Reserved internal template engine error. |
+| **E2009–E2098** | **Reserved** for future template-engine diagnostics. |
+
+See **[Project templates](/platform-spec/tooling/project-scaffolding/project-templates/)**.
 
 ## Documentation comment diagnostics (**W1610–W1619**, **W1620–W1625**)
 

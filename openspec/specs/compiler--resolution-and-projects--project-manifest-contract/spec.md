@@ -253,7 +253,7 @@ After structural parse (owned by tooling schema), the compiler materializes:
 
 All normative **`project`**, **`project.mod`**, **`project.template`**, **`type`** (`Host`, `Mod`, `Template`), readme, and **`project.link`** key definitions live in **[tooling / design model](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/design-model/)**. This article intentionally omits duplicate key tables.
 
-**`Template`** nodes **must not** be selected for `beskid build` / `run` on the authoring tree; the template engine consumes **`.beskid/template.json`** instead. Scaffold instantiation diagnostics use **E1901–E1999** (see **[Project templates](/platform-spec/tooling/project-scaffolding/project-templates/)**).
+**`Template`** nodes **must not** be selected for `beskid build` / `run` on the authoring tree; the template engine consumes **`.beskid/template.json`** instead. Scaffold instantiation diagnostics use **E2001–E2099** (see **[Project templates](/platform-spec/tooling/project-scaffolding/project-templates/)**).
 
 ## Code anchors
 

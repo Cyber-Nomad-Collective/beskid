@@ -1316,6 +1316,38 @@
 					}
 				},
 				{
+					"id": "e1886",
+					"title": "E1886 — Bsol project must not declare target blocks",
+					"description": "A bsol project declares a target block. The compiler rejects the block. Bsol packages are schema-only and are not compile roots.",
+					"examples": ["myapp { type = Bsol }\ntarget default { }"],
+					"references": {
+						"capabilities": ["tooling--manifests-and-lockfiles--bsol"],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/validator.rs"]
+					}
+				},
+				{
+					"id": "e1887",
+					"title": "E1887 — Bsol project requires schemas block",
+					"description": "A project uses type = Bsol but has no schemas block. The compiler rejects the project.",
+					"examples": ["myapp { type = Bsol }"],
+					"references": {
+						"capabilities": ["tooling--manifests-and-lockfiles--bsol"],
+						"sources": ["compiler/crates/beskid_analysis/src/projects/validator.rs"]
+					}
+				},
+				{
+					"id": "e1888",
+					"title": "E1888 — Bsol project cannot be built",
+					"description": "A build targets a bsol project. The compiler rejects the build. Use beskid validate-bsol instead.",
+					"examples": ["beskid build"],
+					"references": {
+						"capabilities": ["tooling--manifests-and-lockfiles--bsol"],
+						"sources": [
+							"compiler/crates/beskid_analysis/src/projects/compile_plan.rs"
+						]
+					}
+				},
+				{
 					"id": "e1890",
 					"title": "E1890 — Duplicate link block",
 					"description": "A project manifest has two link blocks at the top level. The compiler rejects the second block.",
@@ -1532,53 +1564,41 @@
 		{
 			"id": "macro-errors",
 			"title": "Macro errors",
-			"description": "These errors fire when a macro invocation or a macro definition is not valid. The codes use the E1901 to E1908 band. The codes E1901, E1902, and E1903 are also used for bsol project shape errors.",
+			"description": "These errors fire when a macro invocation or a macro definition is not valid. The codes use the E1901 to E1908 band.",
 			"entries": [
 				{
 					"id": "e1901",
-					"title": "E1901 — Unknown macro or bsol project with targets",
-					"description": "A macro invocation uses a name that the compiler does not know. The code is also used when a bsol project declares target blocks. The compiler rejects the use.",
+					"title": "E1901 — Unknown macro",
+					"description": "A macro invocation uses a name that the compiler does not know. The compiler rejects the use.",
 					"examples": ["Missing!(x)"],
 					"references": {
-						"capabilities": [
-							"language-meta--metaprogramming--macros",
-							"tooling--manifests-and-lockfiles--bsol"
-						],
+						"capabilities": ["language-meta--metaprogramming--macros"],
 						"sources": [
-							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs",
-							"compiler/crates/beskid_analysis/src/projects/validator.rs"
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
 						]
 					}
 				},
 				{
 					"id": "e1902",
-					"title": "E1902 — Macro argument arity mismatch or bsol without schemas",
-					"description": "A macro invocation gives the wrong number of arguments. The code is also used when a bsol project has no schemas block. The compiler rejects the use.",
+					"title": "E1902 — Macro argument arity mismatch",
+					"description": "A macro invocation gives the wrong number of arguments. The compiler rejects the use.",
 					"examples": ["Debug!(x, y)"],
 					"references": {
-						"capabilities": [
-							"language-meta--metaprogramming--macros",
-							"tooling--manifests-and-lockfiles--bsol"
-						],
+						"capabilities": ["language-meta--metaprogramming--macros"],
 						"sources": [
-							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs",
-							"compiler/crates/beskid_analysis/src/projects/validator.rs"
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
 						]
 					}
 				},
 				{
 					"id": "e1903",
-					"title": "E1903 — Macro argument kind mismatch or bsol cannot build",
-					"description": "A macro argument does not match the fragment kind of the parameter. The code is also used when a build targets a bsol project. The compiler rejects the use.",
+					"title": "E1903 — Macro argument kind mismatch",
+					"description": "A macro argument does not match the fragment kind of the parameter. The compiler rejects the use.",
 					"examples": ["Debug!(type x)"],
 					"references": {
-						"capabilities": [
-							"language-meta--metaprogramming--macros",
-							"tooling--manifests-and-lockfiles--bsol"
-						],
+						"capabilities": ["language-meta--metaprogramming--macros"],
 						"sources": [
-							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs",
-							"compiler/crates/beskid_analysis/src/projects/compile_plan.rs"
+							"compiler/crates/beskid_analysis/src/analysis/diagnostic_kinds/code.rs"
 						]
 					}
 				},
