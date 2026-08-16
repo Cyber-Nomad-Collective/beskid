@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "aaf43948a8c9f363339fa5d9cf07f8ed78fe391e5f305a20c28004eb68b10c88",
+  "revision": "73a3f3774bd711a197e70250205e3968065d5e8281e6cb3b8e7d8eca12e0f152",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -59076,7 +59076,7 @@
       "decision": null,
       "title": "Project manifest contract",
       "status": "Standard",
-      "sourceHash": "1810f0444a916594f82374c06c463d0da57e31e6770dab579e3f925e1e3f1539"
+      "sourceHash": "15a238509c15c6d3acc18e421a2993b50d2d75f9a3a90a06b764258186b29446"
     },
     {
       "id": "BSP-CAP-F68197B76FE9",
@@ -59164,7 +59164,7 @@
       "decision": null,
       "title": "Diagnostic code registry",
       "status": "Standard",
-      "sourceHash": "03fd3a7c723c5121e69629295f9afce3f05e95045da5b1528526baf6239d0470"
+      "sourceHash": "b9c2955518096ad50f3ff42e37e80d89cb246e427de21b6657b721110f5eac65"
     },
     {
       "id": "BSP-CAP-613D8D805D24",
@@ -61364,7 +61364,7 @@
       "decision": null,
       "title": "Project templates",
       "status": "Standard",
-      "sourceHash": "d4efeb4a368c6f71361df5cc45a3cae9fc766f8268b972ccbdbf90a30b04eeb9"
+      "sourceHash": "0737b1d8fb1dde74bd26c16e22b5195e0d84217cf271e7069f72f68915fe353c"
     },
     {
       "id": "BSP-CAP-13DBD951E2CC",
