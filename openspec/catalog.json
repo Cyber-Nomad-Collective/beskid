@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "3489a8613a0d1f098d61acbe199a33df6ac7b42ffc70d223f262348b7121f1b3",
+  "revision": "b43f0f404250f22d1ae4b296df4803ce5d206797780c115fdbbb5de2afe4efe1",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
     "nodes": 1042,
-    "capabilities": 196,
-    "requirements": 557,
+    "capabilities": 198,
+    "requirements": 570,
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
@@ -30493,6 +30493,101 @@
       ]
     },
     {
+      "id": "BSP-CAP-8F39D0D2414C",
+      "capability": "standard-normative-manifest",
+      "specPath": "openspec/specs/standard-normative-manifest/spec.md",
+      "path": "/platform-spec/capabilities/standard-normative-manifest/",
+      "title": "Standard Normative Manifest",
+      "description": "Canonical OpenSpec capability for Standard Normative Manifest.",
+      "status": "Standard",
+      "domain": "standard-normative-manifest",
+      "area": null,
+      "feature": "standard-normative-manifest",
+      "legacySlugs": [],
+      "aliases": [],
+      "requirements": [
+        {
+          "id": "BSP-REQ-FD842CEB29D9",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-normative-manifest/spec.md",
+          "sourceHash": "91d3e962c67a1f8807a2480833bef3cb533f6cda9377d27352b179d410f62fb9",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "The manifest is composed of chaptered JSON documents",
+          "anchor": "requirement-the-manifest-is-composed-of-chaptered-json-documents"
+        },
+        {
+          "id": "BSP-REQ-D7B774587D96",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-normative-manifest/spec.md",
+          "sourceHash": "91d3e962c67a1f8807a2480833bef3cb533f6cda9377d27352b179d410f62fb9",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "The manifest is viewable as a rendered page",
+          "anchor": "requirement-the-manifest-is-viewable-as-a-rendered-page"
+        },
+        {
+          "id": "BSP-REQ-AE5C024F6976",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-normative-manifest/spec.md",
+          "sourceHash": "91d3e962c67a1f8807a2480833bef3cb533f6cda9377d27352b179d410f62fb9",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "The manifest is exportable as a complete normative document",
+          "anchor": "requirement-the-manifest-is-exportable-as-a-complete-normative-document"
+        },
+        {
+          "id": "BSP-REQ-577DB65255D5",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-normative-manifest/spec.md",
+          "sourceHash": "91d3e962c67a1f8807a2480833bef3cb533f6cda9377d27352b179d410f62fb9",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "The Syntax Index chapter enumerates every syntax structure",
+          "anchor": "requirement-the-syntax-index-chapter-enumerates-every-syntax-structure"
+        },
+        {
+          "id": "BSP-REQ-BA7B6123E74A",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-normative-manifest/spec.md",
+          "sourceHash": "91d3e962c67a1f8807a2480833bef3cb533f6cda9377d27352b179d410f62fb9",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Each chapter entry references capabilities and source files",
+          "anchor": "requirement-each-chapter-entry-references-capabilities-and-source-files"
+        },
+        {
+          "id": "BSP-REQ-3267E56BA923",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-normative-manifest/spec.md",
+          "sourceHash": "91d3e962c67a1f8807a2480833bef3cb533f6cda9377d27352b179d410f62fb9",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "The Introduction chapter documents compiler dependencies",
+          "anchor": "requirement-the-introduction-chapter-documents-compiler-dependencies"
+        },
+        {
+          "id": "BSP-REQ-CC4346BBFCE0",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-normative-manifest/spec.md",
+          "sourceHash": "91d3e962c67a1f8807a2480833bef3cb533f6cda9377d27352b179d410f62fb9",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "The manifest is served from platform-spec and linked from reader navigation",
+          "anchor": "requirement-the-manifest-is-served-from-platform-spec-and-linked-from-reader-navigation"
+        }
+      ],
+      "records": [],
+      "bookLinks": []
+    },
+    {
       "id": "BSP-CAP-F10978C9648F",
       "capability": "standard-reader-embedding",
       "specPath": "openspec/specs/standard-reader-embedding/spec.md",
@@ -30538,6 +30633,90 @@
           "migrationStatus": "extracted",
           "title": "Markdown directives resolve typed entities",
           "anchor": "requirement-markdown-directives-resolve-typed-entities"
+        }
+      ],
+      "records": [],
+      "bookLinks": []
+    },
+    {
+      "id": "BSP-CAP-A5BD7A8AEDEF",
+      "capability": "standard-ste-compliance",
+      "specPath": "openspec/specs/standard-ste-compliance/spec.md",
+      "path": "/platform-spec/capabilities/standard-ste-compliance/",
+      "title": "Standard Ste Compliance",
+      "description": "Canonical OpenSpec capability for Standard Ste Compliance.",
+      "status": "Standard",
+      "domain": "standard-ste-compliance",
+      "area": null,
+      "feature": "standard-ste-compliance",
+      "legacySlugs": [],
+      "aliases": [],
+      "requirements": [
+        {
+          "id": "BSP-REQ-CD3D96AD5D23",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-ste-compliance/spec.md",
+          "sourceHash": "483217517fd1624295d6f0d7355926583ddf826970c6c752b2f8e12761c332f6",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Descriptive prose conforms to ASD-STE100",
+          "anchor": "requirement-descriptive-prose-conforms-to-asd-ste100"
+        },
+        {
+          "id": "BSP-REQ-0D99700931BF",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-ste-compliance/spec.md",
+          "sourceHash": "483217517fd1624295d6f0d7355926583ddf826970c6c752b2f8e12761c332f6",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Requirement statements keep the SHALL/MUST form",
+          "anchor": "requirement-requirement-statements-keep-the-shall-must-form"
+        },
+        {
+          "id": "BSP-REQ-30DF316E2A4B",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-ste-compliance/spec.md",
+          "sourceHash": "483217517fd1624295d6f0d7355926583ddf826970c6c752b2f8e12761c332f6",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Scenario statements keep the GIVEN/WHEN/THEN form",
+          "anchor": "requirement-scenario-statements-keep-the-given-when-then-form"
+        },
+        {
+          "id": "BSP-REQ-41E08B6F7BA2",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-ste-compliance/spec.md",
+          "sourceHash": "483217517fd1624295d6f0d7355926583ddf826970c6c752b2f8e12761c332f6",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Beskid technical vocabulary is permitted",
+          "anchor": "requirement-beskid-technical-vocabulary-is-permitted"
+        },
+        {
+          "id": "BSP-REQ-B10053988A78",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-ste-compliance/spec.md",
+          "sourceHash": "483217517fd1624295d6f0d7355926583ddf826970c6c752b2f8e12761c332f6",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "Code examples and source provenance are exempt",
+          "anchor": "requirement-code-examples-and-source-provenance-are-exempt"
+        },
+        {
+          "id": "BSP-REQ-B5B1AB5B48BC",
+          "legacySlug": null,
+          "sourcePath": "openspec/specs/standard-ste-compliance/spec.md",
+          "sourceHash": "483217517fd1624295d6f0d7355926583ddf826970c6c752b2f8e12761c332f6",
+          "status": "Standard",
+          "normative": true,
+          "migrationStatus": "extracted",
+          "title": "The STE standard is referenced as ASD-STE100 Issue 9",
+          "anchor": "requirement-the-ste-standard-is-referenced-as-asd-ste100-issue-9"
         }
       ],
       "records": [],
@@ -38901,7 +39080,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "f9c16194ccdc8bf6cdea523e7782cabed05fa24a95914eced1b75fed2c339a2a",
+      "sourceHash": "873fc97aee18a92e95b5d85dbe195b989f406dfa5a3400ed3bf114f3dee83647",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -58182,7 +58361,7 @@
       "decision": null,
       "title": "Architecture",
       "status": "Standard",
-      "sourceHash": "b50c00bf3b4b64d1265eda53a981722a3cfd00d30c743380bc6f318076eb343b"
+      "sourceHash": "0fc7d140ee5f455d702d5ab27508c2b837d5f63932b9b15c9c27ef6a4a48f2e7"
     },
     {
       "id": "BSP-CAP-61C1DE390E90",
@@ -58204,7 +58383,7 @@
       "decision": null,
       "title": "Domain, Area, Feature, and Article frontmatter templates",
       "status": "Standard",
-      "sourceHash": "27746ac6883d6747867aa30a8c5b85f9f40647cb9be4b4578caddf1e38e273c4"
+      "sourceHash": "d8c3b5a662a8aa4b87242d387b5bf1a3c2427032998cf80581580adca8572c84"
     },
     {
       "id": "BSP-CAP-243CCA14D04E",
@@ -58226,7 +58405,7 @@
       "decision": null,
       "title": "Domain, Area and Feature template bundle",
       "status": "Standard",
-      "sourceHash": "af252f9f54b98d37ed564a5e959ab48079eed52db20a518ef290a4fb1fd63890"
+      "sourceHash": "94ebd43586f833ab3d0e2d70a7f9b5d79609b1b2ee9347fc0327c048b6351b59"
     },
     {
       "id": "BSP-CAP-0CF08AD3592A",
@@ -58248,7 +58427,7 @@
       "decision": null,
       "title": "Last reviewed policy",
       "status": "Standard",
-      "sourceHash": "e78cf52a9122a1b17b82cad6d2fa5658088d950bb41e3d90e00319c6528fcc9b"
+      "sourceHash": "f004680d06b10b24053aa7745f0cc5c02a1c0bd529ae4d9fe2262e2bb0a034e8"
     },
     {
       "id": "BSP-CAP-12D10FA1D7B6",
@@ -58270,7 +58449,7 @@
       "decision": null,
       "title": "Non-normative bridge docs policy",
       "status": "Standard",
-      "sourceHash": "d7e879defcae021f3e5373647029464651ffc9f091ecb49f849072dabc5b528f"
+      "sourceHash": "a2ccb83f0339976aec7a610770a26b9119ca086c691c078d6c7c6ef894425c83"
     },
     {
       "id": "BSP-CAP-7A941443C79A",
@@ -58292,7 +58471,7 @@
       "decision": null,
       "title": "Release and versioning policy",
       "status": "Standard",
-      "sourceHash": "81189ffdf784672a1d737f01fdb7696bf2c8877df25b0195618b173ebd83d2f6"
+      "sourceHash": "a26900988649d36e21f28081ac3e7d99f092e55c431a581c9dfd965d2630fbf2"
     },
     {
       "id": "BSP-CAP-73D36745349C",
@@ -58314,7 +58493,7 @@
       "decision": null,
       "title": "Specification authority and embedded decisions",
       "status": "Standard",
-      "sourceHash": "4136baf0e5f3dc6a4878f3baabcb0f8d50679396b7f0fa1e6f6a38ef02b8c4c2"
+      "sourceHash": "375398afbb0aaf48bc3f63a588746f44f21a521cac6ce9644a7c833386c1a204"
     },
     {
       "id": "BSP-CAP-2AFEA2015944",
@@ -60030,7 +60209,7 @@
       "decision": null,
       "title": "Native dependency injection",
       "status": "Standard",
-      "sourceHash": "b9b43c8cd09b600c79c54380c9a070ed9af668f1dbb6a2e333e8790beadd725f"
+      "sourceHash": "7da728ca521aa2c2d439efd488d649fb752800181a8444d4bb14e77500f17db0"
     },
     {
       "id": "BSP-CAP-19A30D104B4E",
@@ -60052,7 +60231,7 @@
       "decision": null,
       "title": "Glossary and conformance",
       "status": "Standard",
-      "sourceHash": "fecb66c7b7d38731d057a2993bcdc48a21f54090605c16a5df7ee6399c427f7c"
+      "sourceHash": "eb94fb35570f68132078dec11a952686e0b31ffb174c7c67e647327b4531839f"
     },
     {
       "id": "BSP-CAP-53430B474DB2",
@@ -60074,7 +60253,7 @@
       "decision": null,
       "title": "Contracts",
       "status": "Standard",
-      "sourceHash": "20f8fb00b91e8f7f745727a0cea10070ce3d8a10e1ef9154523e8c839fc34ced"
+      "sourceHash": "5462287788526a28d9e79ea4e973caa7b17558d5a5f57302b9d3c7bc2b9ec362"
     },
     {
       "id": "BSP-CAP-0A39C0F74F66",
@@ -60096,7 +60275,7 @@
       "decision": null,
       "title": "Error handling",
       "status": "Standard",
-      "sourceHash": "09c8af670e1619efdf58816545be87df52b672f8ac4901bc922ef277a5c88ca3"
+      "sourceHash": "aac8070d239023a7edc919d12507ed157338750be3586d818463c975c59f46d6"
     },
     {
       "id": "BSP-CAP-4752C481D13E",
@@ -60118,7 +60297,7 @@
       "decision": null,
       "title": "Testing",
       "status": "Standard",
-      "sourceHash": "5054d8dc56e064e9408f77eb2497629e0c47dc9ffc64b5577d36628a82fd0db8"
+      "sourceHash": "2c23c7a0137865d8ab68520b5b5d0aeaea826245d9c9688b4392d07db5493da1"
     },
     {
       "id": "BSP-CAP-B535BD936B47",
@@ -60140,7 +60319,7 @@
       "decision": null,
       "title": "Control flow",
       "status": "Standard",
-      "sourceHash": "76fd7e179a9ec638bd5da80393c3a04bacfc2742a9759afb963df5ec061e0264"
+      "sourceHash": "3eca2635f7f9416b07cb2532dac391396cd544ffc79554243856decb207ff937"
     },
     {
       "id": "BSP-CAP-45225798B5DF",
@@ -60162,7 +60341,7 @@
       "decision": null,
       "title": "Events",
       "status": "Standard",
-      "sourceHash": "42aae869c8577831a061df209d364d04b2922581807afaafd6fdd5748db6637e"
+      "sourceHash": "7547abe7f1c29a30543afcfe54960f9e0a1e7ecab72c669257694354f1408fb7"
     },
     {
       "id": "BSP-CAP-72E38AE0DF50",
@@ -60184,7 +60363,7 @@
       "decision": null,
       "title": "Fibers and spawn",
       "status": "Standard",
-      "sourceHash": "f1986144c38ee5fa26aab785007cc3239b538ec32a80e51c37167f30336c74a5"
+      "sourceHash": "5d581b86b37a2f7945c73964b01557c27dce744debdcaea573f775246dc3c45a"
     },
     {
       "id": "BSP-CAP-87E5FC603669",
@@ -60206,7 +60385,7 @@
       "decision": null,
       "title": "Lambdas and closures",
       "status": "Standard",
-      "sourceHash": "c69a05e51395450d90262fc02f5a2e8d3915db8ceabd507bb0cd62a4244b173a"
+      "sourceHash": "d01fdc53d036dab194f1342ada5d842a3a3be2e19a4bb513a34a061c8c0d0a9c"
     },
     {
       "id": "BSP-CAP-416DC1F89FF5",
@@ -60228,7 +60407,7 @@
       "decision": null,
       "title": "C ABI profile",
       "status": "Standard",
-      "sourceHash": "cccedc40615571f8583cffab6046e5e04934a4926575dae4bb9b83d243069c41"
+      "sourceHash": "887f4ea577b547aec485c06bf470a6c6ebbbabceead6f8c5089d8c4d7fa245f4"
     },
     {
       "id": "BSP-CAP-D9DF6656F2E5",
@@ -60250,7 +60429,7 @@
       "decision": null,
       "title": "Export and callbacks",
       "status": "Standard",
-      "sourceHash": "5fa114a139aedc7890a938a201075e0ff94bfa12cd4a856df9587f30b85a6ab0"
+      "sourceHash": "70dbcb33aa5763437287a177cfd56ed5d261bf68db51cb10ac632092085dc2f9"
     },
     {
       "id": "BSP-CAP-8F568DA0ED40",
@@ -60272,7 +60451,7 @@
       "decision": null,
       "title": "FFI and extern",
       "status": "Standard",
-      "sourceHash": "2b42ad9e58a14f8a05eab6553f9926a08b5c6d688a6d51ab8ab5f438f009a2f9"
+      "sourceHash": "d3d1d17ecfae4fcbb96829f1fa8ba2a53be213e479384d8b6ebc061c159da56b"
     },
     {
       "id": "BSP-CAP-983AAC55EE48",
@@ -60294,7 +60473,7 @@
       "decision": null,
       "title": "Interop.Contracts",
       "status": "Standard",
-      "sourceHash": "4085dc29944b4ef6d233cb0c9d396fa3a3de1b9fb3a0cc8113921766438b1c9c"
+      "sourceHash": "321ef7a1d42a5165c74500a5ab7f08b6475e8745b1d2feb47207cb96e6c81e75"
     },
     {
       "id": "BSP-CAP-B651F3BAC326",
@@ -60316,7 +60495,7 @@
       "decision": null,
       "title": "Rust ABI profile",
       "status": "Standard",
-      "sourceHash": "e793a590980d06f516e7409632f67e69a36ddc29eb34a8c791c0a1aa89cc327b"
+      "sourceHash": "a96e85793b057cacad88b812c838d137e784356ed461a56a4cd5b6d27d0c1b3b"
     },
     {
       "id": "BSP-CAP-8A8FEB92F30E",
@@ -60338,7 +60517,7 @@
       "decision": null,
       "title": "Memory and references",
       "status": "Standard",
-      "sourceHash": "cb493cd8aecea1a3f0119ca51094760ec8673a460e350e0b3c45c93484a85399"
+      "sourceHash": "368aba603eca766ab34cbe4a3b3d58d1aa3055b099b1a23513396a0fbe12e67f"
     },
     {
       "id": "BSP-CAP-8795D7DA34F0",
@@ -60360,7 +60539,7 @@
       "decision": null,
       "title": "Compiler Mod SDK",
       "status": "Standard",
-      "sourceHash": "5c5ae609bccead670ba56e42212f8e5b294b0e9f429a8ee16407bec678f0e403"
+      "sourceHash": "f1d3971ba74dc955639e294853dcceb4414a12fad6fbbe938055f6be3ce0d6c7"
     },
     {
       "id": "BSP-CAP-1EF79EAACF8E",
@@ -60382,7 +60561,7 @@
       "decision": null,
       "title": "Language macros",
       "status": "Standard",
-      "sourceHash": "26a915ef08640f538d2513d01a7cdb5ca9844f8006528d3989de9c73f4fc0d24"
+      "sourceHash": "c8e8b3f05454b4cc32ab82ef7e3f1739513fce0d8372bb2f6d6846b239ebd428"
     },
     {
       "id": "BSP-CAP-22B6A227E75B",
@@ -60404,7 +60583,7 @@
       "decision": null,
       "title": "Metaprogramming",
       "status": "Standard",
-      "sourceHash": "8ac94257c71b24fbcd37ad669d7d1633c82a178235aaa0ed32ab08c1f576eeb8"
+      "sourceHash": "989849a2e91fb82df8e85756f18ca547596d9d8ec86008d5bc9967df2d7c91f0"
     },
     {
       "id": "BSP-CAP-81B824296964",
@@ -60426,7 +60605,7 @@
       "decision": null,
       "title": "Serialization packages",
       "status": "Standard",
-      "sourceHash": "90bc66f31dca34b9ba8f3da7a995813a36b4d726c702c33c86b056f1bd55c0b7"
+      "sourceHash": "d92d647fc876e4fafd839368312fe43b11c353a9429b0163501418e67fc52f6f"
     },
     {
       "id": "BSP-CAP-B4C3D0A816E1",
@@ -60448,7 +60627,7 @@
       "decision": null,
       "title": "Code style and naming",
       "status": "Standard",
-      "sourceHash": "ee5aa0d41a9ee7f856421868edb5429f1ed2f6fc516232dd2354028fb872e266"
+      "sourceHash": "d5cb200b15518e8a3ff0991e2850e2c6ad5ef3b8eb21012e9e88420eedd1f4bc"
     },
     {
       "id": "BSP-CAP-2037047479B0",
@@ -60470,7 +60649,7 @@
       "decision": null,
       "title": "extend type",
       "status": "Standard",
-      "sourceHash": "9208822d40bb532711ac52e240fd6706de246c16a0eece3af5e4acbd01a34991"
+      "sourceHash": "f0f32ac080c4687af8ce02e3f02393e19cd1955256867ae0ec53bdacc39c1bd9"
     },
     {
       "id": "BSP-CAP-D2A8ED388364",
@@ -60492,7 +60671,7 @@
       "decision": null,
       "title": "Modules and visibility",
       "status": "Standard",
-      "sourceHash": "d90b75b71c33d79d61e20ebeee787165fdc110e709cdf7c1165e48c833f1a6c4"
+      "sourceHash": "cb3ea49119c1927952749d229f5b8d2df2c8e5c194a0847445546297c7f64910"
     },
     {
       "id": "BSP-CAP-063F92D8A165",
@@ -60514,7 +60693,7 @@
       "decision": null,
       "title": "Name resolution",
       "status": "Standard",
-      "sourceHash": "34fea68bf6fe2f1031700c1eaa4120d4716c76e8a605df74c597ec3f28b4b15c"
+      "sourceHash": "095756010560c101f12415b0b05e4be22053c4707c3bf956f6172d610e22f87f"
     },
     {
       "id": "BSP-CAP-5D479AB90C45",
@@ -60536,7 +60715,7 @@
       "decision": null,
       "title": "Documentation comments",
       "status": "Standard",
-      "sourceHash": "1b87924997442d42d5102253297c861f2d2698c8408c0b4621b3228985994590"
+      "sourceHash": "1b76744f1f047bc361d1243c4d7734680bd7cf1a94c06a918fe3d0a0e926faf5"
     },
     {
       "id": "BSP-CAP-DEEB6ED0AB71",
@@ -60558,7 +60737,7 @@
       "decision": null,
       "title": "Lexical and syntax",
       "status": "Standard",
-      "sourceHash": "c80a149614e10e5c914c37956c292ad461b6f16f84633b70c0c40e7a29575f8e"
+      "sourceHash": "ee980f9b7ac8d1aa02986e0b5d42546dc5ed6fd7a7f0744b508337ea401b02ed"
     },
     {
       "id": "BSP-CAP-0A3FAA1D6D8D",
@@ -60580,7 +60759,7 @@
       "decision": null,
       "title": "Enums and match",
       "status": "Standard",
-      "sourceHash": "d1525bcd51b588866f6a372ede1ee2d39548c643374783b35eabddece37b281d"
+      "sourceHash": "ea5637d46278e2db6ad1a275b938862b2f5be2e6c20d7063cc92d56da90f5090"
     },
     {
       "id": "BSP-CAP-4E5039ABBAD1",
@@ -60602,7 +60781,7 @@
       "decision": null,
       "title": "Method dispatch",
       "status": "Standard",
-      "sourceHash": "01af82ee4a6cdaab7e55f8539c436cc692e72b24a6a3cfbebf005f4e75cb8385"
+      "sourceHash": "64a0d1e85a25f466db778516a9a35d73e80bbbd81f7a6e68c74ff011fdc83ad1"
     },
     {
       "id": "BSP-CAP-B957A69E7CC3",
@@ -60624,7 +60803,7 @@
       "decision": null,
       "title": "Type inference",
       "status": "Standard",
-      "sourceHash": "26a8c93611157f73af0e46f1f674cf53114bebba6e7a96d0dc213ad94d4fddee"
+      "sourceHash": "345929c4e928666575a7494840c5fb32116e77ea6a22a0e6f2b351cd1e39846f"
     },
     {
       "id": "BSP-CAP-BD8338F463C9",
@@ -60646,7 +60825,7 @@
       "decision": null,
       "title": "Types",
       "status": "Standard",
-      "sourceHash": "45a00ca3e56931dae0ad709c7f6405cb6a744e617a279c3bd773e06e12669009"
+      "sourceHash": "b82ac961c0479e1f83cb5255d83a0bd38958ea1e23ac669eff24a0b4f87d1f15"
     },
     {
       "id": "BSP-CAP-4513A496C8E2",
