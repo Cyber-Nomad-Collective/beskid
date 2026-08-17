@@ -75,3 +75,59 @@ Evidence targets are implementation anchors, not additional normative behavior. 
 | A resource leaks or closes twice in channel and `use` paths | Assert explicit ownership at every channel boundary and exactly-once reverse cleanup at every supported lexical exit. |
 | Wall clock changes affect network deadlines | Permit only monotonic absolute deadlines in scheduler registration. |
 | Invalid encodings become protocol ambiguity | Use strict validators and a non-ASCII-rejecting HTTP helper before networking/HTTP work begins. |
+
+## Open Questions
+
+### FiberError narrowing contradicts the closed-type guarantee
+
+The concurrency-package spec delta
+(`specs/core-library--concurrency--concurrency-package/spec.md:7-12`)
+defines `FiberError` as a narrower enum than the existing corelib
+declaration:
+
+```beskid
+pub enum FiberError {
+    Cancelled(),
+    StackOverflow(),
+    Panicked(i64 code),
+}
+```
+
+The existing corelib declaration at
+`compiler/corelib/packages/concurrency/src/Concurrency/FiberError.bd`
+carries richer payloads:
+
+```beskid
+pub enum FiberError {
+    Cancelled(i64 reason, i64 cancelerId),
+    StackOverflow(i64 limitBytes, i64 requestedBytes),
+    Panicked(i64 code, string message),
+}
+```
+
+The spec delta drops the `reason` / `cancelerId` fields from
+`Cancelled`, the `limitBytes` / `requestedBytes` fields from
+`StackOverflow`, and the `message` field from `Panicked`. Task 2.3
+states the work extends the existing contracts "without changing the
+established `Detach() -> unit`, `Cancel() -> unit`, closed `FiberError`,
+or channel-option surfaces." A narrower enum is a change to the closed
+`FiberError` surface: it removes fields that callers and the runtime
+scheduler diagnostics (owner scheduler ID, wait registration generation,
+winner source) may depend on, and it breaks source that constructs or
+pattern-matches the richer variants.
+
+This contradiction MUST be resolved before implementation. The
+resolution is one of:
+
+1. Restore the richer payloads in the spec delta so the spec matches
+   the existing corelib `FiberError.bd` and the closed surface is
+   preserved.
+2. Intentionally narrow `FiberError` and update task 2.3 to drop the
+   "closed `FiberError`" guarantee, with a migration that updates every
+   caller and runtime diagnostic that reads the dropped fields.
+
+Until resolved, the spec delta and task 2.3 are inconsistent and the
+`BSP-REQ-F61E094A4838` scenario "Detach after join is rejected
+statically" does not exercise the payload shape. This open question is
+flagged here without editing the spec delta; the spec deltas remain
+proposed material pending resolution.

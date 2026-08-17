@@ -7,31 +7,18 @@ template: splash
 import LandingTemplate from '../../components/LandingTemplate.astro';
 import { dotnetRightBullets, dotnetWrongBullets } from '../../data/landing-dotnet-bullets';
 import { alreadyBetterSection } from '../../data/landing-tile-sections';
+import { landingCodeTabs, landingCodeSplit } from '../../data/landing-code-tabs';
 
 <LandingTemplate
   landingPage={true}
   title="beskid"
   tagline="A language and platform built for the code you ship every day—not only for kernels and firmware."
   subtagline="Readable semantics, compile-time power, and native output—without reflection, IL, and core-library features pretending to be the language."
-  codeFile="examples/modules.bd"
-  codeLines={[
-    "pub mod net.http;",
-    "use net.http.Client;",
-    "",
-    "type ClientConfig {",
-    "    string endpoint,",
-    "}",
-    "",
-    "Client make_client(ClientConfig config) {",
-    "    return Client { config: config };",
-    "}",
-  ]}
+  codeTabs={landingCodeTabs}
+  codeSplit={landingCodeSplit}
   actions={[
-    { text: "Platform specification", href: "/platform-spec/", variant: "primary" },
-    { text: "Language semantics", href: "/platform-spec/language-meta/", variant: "secondary" },
-    { text: "Read the Book", href: "/book/", variant: "secondary" },
-    { text: "Blog", href: "/blog/", variant: "secondary" },
-    { text: "Download CLI", href: "/downloads/", variant: "ghost" },
+    { text: "Download", href: "/downloads/", variant: "primary", platformDownload: true },
+    { text: "Learn more", href: "#why-beskid", variant: "ghost", smoothScroll: true },
   ]}
   compareTitle="Why another language?"
   compareLead="Corporations still default to Java and C# / .NET for enterprise software. Beskid exists to break that duopoly—to be a language you reach for when you need to ship services, CLIs, and platforms quickly, without inheriting a VM-shaped abstraction stack."

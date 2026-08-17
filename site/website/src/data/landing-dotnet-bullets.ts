@@ -75,7 +75,7 @@ export const dotnetWrongBullets: DotNetBullet[] = [
 		text:
 			"Reflection-heavy libraries fight Native AOT instead of compiling cleanly.",
 		example:
-			"Microsoft’s AOT guidance: walking Type graphs (typical of reflection serializers) is not supported—you must know code at compile time.",
+			"Microsoft's AOT guidance: walking Type graphs (typical of reflection serializers) is not supported—you must know the code at compile time.",
 		sources: [
 			{
 				label: "Introduction to AOT warnings (trim / dynamic code)",
@@ -117,7 +117,7 @@ export const dotnetWrongBullets: DotNetBullet[] = [
 	{
 		text: "Startup and codegen costs can invert common assumptions.",
 		example:
-			"One-time source-generated methods can lose to reflection because each path still pays JIT compile cost on startup.",
+			"One-time source-generated methods can still lose to reflection, because each path pays JIT compile cost on startup.",
 		sources: [
 			{
 				label: "JIT vs one-time source-generated methods (dotnet/runtime#126541)",

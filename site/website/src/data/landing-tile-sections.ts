@@ -52,8 +52,8 @@ const iocCompareTiles: LandingTile[] = [
 		],
 		paragraphs: [
 			".NET centers on `Microsoft.Extensions.DependencyInjection`: `ServiceCollection` registration, `BuildServiceProvider()`, and `GetService` resolution at runtime—generic closure caches, scope checks, and optional feature flags in hosting assemblies.",
-			"Beskid hosts are syntax: `registry { single SqlStorage for IStorage; }`, `startup(...)`, and `launch AppHost(args)`. `resolve_composition` merges the host inheritance chain (`merge_host_registries`, `merge_host_scopes`), builds a `ServiceContainer`, and topologically sorts registrations before any machine code is emitted.",
-			"Missing services, plural inject ambiguity, and lifetime override conflicts are `CompositionIssue` diagnostics in analysis—not exceptions thrown from a built container on first request.",
+			"Beskid hosts are syntax: `registry { single SqlStorage for IStorage; }`, `startup(...)`, and `launch AppHost(args)`. `resolve_composition` merges the host inheritance chain, builds a `ServiceContainer`, and topologically sorts registrations before any machine code is emitted.",
+			"Missing services, plural-inject ambiguity, and lifetime conflicts surface as `CompositionIssue` diagnostics during analysis—not exceptions thrown from a built container on first request.",
 		],
 		codeBlocks: [
 			{
@@ -84,7 +84,7 @@ const iocCompareTiles: LandingTile[] = [
 					"        for s in storages { s.Open(config); }",
 					"    }",
 					"}",
-					"fn main() { launch AppHost(args); }",
+					"unit main() { launch AppHost(args); }",
 				],
 			},
 		],
@@ -108,8 +108,8 @@ const iocCompareTiles: LandingTile[] = [
 			},
 		],
 		paragraphs: [
-			"C# `IIncrementalGenerator` runs inside Roslyn, observes syntax via `IncrementalGeneratorInitializationContext`, and emits text with `AddSource`—downstream compilations must re-parse generated `.g.cs` files and fight cache invalidation across IDE keystrokes.",
-			"Beskid Compiler Mods compile as their own AOT Mod targets (`MOD_BUILD_PHASE_ORDER` through `aot.emit_object`). Generators implement SDK contracts and return structured syntax edits through `SdkSyntaxPipeline`, validated against the current `SyntaxSnapshot` generation.",
+			"C# `IIncrementalGenerator` runs inside Roslyn, observes syntax via `IncrementalGeneratorInitializationContext`, and emits text with `AddSource`—downstream compilations must re-parse the generated `.g.cs` files and fight cache invalidation across IDE keystrokes.",
+			"Beskid Compiler Mods compile as their own AOT Mod targets. Generators implement SDK contracts and return structured syntax edits through `SdkSyntaxPipeline`, validated against the current `SyntaxSnapshot` generation.",
 			"The host re-parses merged syntax under `syntax_generation` phase boundaries instead of treating generated text as an opaque `#line` patch—semantic analysis always sees a single checked program before `lower`.",
 		],
 		codeBlocks: [
@@ -230,8 +230,8 @@ const iocCompareTiles: LandingTile[] = [
 		],
 		paragraphs: [
 			"When DI, hosting, configuration, and codegen all live in NuGet policy assemblies, every feature pays virtual dispatch, generic sharing tables, and trim/AOT analyzer fallbacks when closed types are not visible at publish time.",
-			"Beskid folds policy into compiler phases: `composition.resolve` before `lower`, `mod.*` before HIR merge, builtins declared once in `beskid_abi` / `beskid_analysis::builtins` and imported by both JIT and AOT backends.",
-			"Corelib packages (`compiler/corelib`) wrap syscall/runtime builtins—they do not replace language semantics. You keep .NET's lesson on developer experience; you drop discovering platform rules via reflection at runtime.",
+			"Beskid folds policy into compiler phases: `composition.resolve` before `lower`, `mod.*` before HIR merge, builtins declared once and imported by both JIT and AOT backends.",
+			"Corelib packages wrap syscall/runtime builtins—they do not replace language semantics. You keep .NET's lesson on developer experience; you drop discovering platform rules via reflection at runtime.",
 		],
 	},
 ];
@@ -241,7 +241,7 @@ export const alreadyBetterSection: LandingTileSectionData = {
 	id: "already-better",
 	title: "Already better than C#",
 	lead:
-		"Not everywhere—C# still wins on ecosystem size and library mass today. Where Beskid already ships code—not slideware—the compiler lowers to Cranelift object files, resolves host/DI graphs before launch, runs Mods with generation-checked syntax pipelines, schedules cooperative fibers over a syscall pool, and collects heap objects with a Go-style concurrent mark-and-sweep GC in the `abfall` runtime.",
+		"Not everywhere—C# still wins on ecosystem size and library mass today. But where Beskid already ships code (not slideware), the differences are concrete: the compiler lowers to Cranelift object files, resolves host/DI graphs before launch, runs Mods through generation-checked syntax pipelines, schedules cooperative fibers over a syscall pool, and collects heap objects with a Go-style concurrent mark-and-sweep GC in the `abfall` runtime.",
 	tiles: [
 		...iocCompareTiles,
 		{
@@ -265,7 +265,7 @@ export const alreadyBetterSection: LandingTileSectionData = {
 			],
 			paragraphs: [
 				"Native AOT for .NET is a publish profile layered onto a reflection-first BCL: trim analyzers, feature switches, and component support matrices gate what can ship.",
-				"`beskid build` walks the same pipeline ids as the spec (`lower` → `codegen_clif` → `aot.emit_object` → `aot.link`). `beskid_aot::BeskidObjectModule` lowers each `CodegenArtifact` function through Cranelift into a PIC object file, then links the prebuilt runtime—no intermediate language in the hot path.",
+				"`beskid build` walks the same pipeline ids as the spec (`lower` → `codegen_clif` → `aot.emit_object` → `aot.link`). `BeskidObjectModule` lowers each `CodegenArtifact` function through Cranelift into a PIC object file, then links the prebuilt runtime—no intermediate language in the hot path.",
 				"JIT (`beskid_engine`) reuses the same CLIF lowering for dev runs; AOT is not a separate language mode, just the normal artifact path with a platform linker at the end.",
 			],
 			codeBlocks: [
@@ -312,9 +312,9 @@ export const alreadyBetterSection: LandingTileSectionData = {
 			],
 			paragraphs: [
 				".NET's GC is mature, but it sits behind JIT tiers, write barriers tuned for generational assumptions, and a large managed object header story—fine for long-lived services, heavy for tight CLIs and fiber-heavy workloads.",
-				"Beskid ships `abfall`: a concurrent tri-color tracing mark-and-sweep heap with Idle → Marking → Sweeping phases, a background collector thread that marks in bounded work budgets, Dijkstra insertion barriers during marking, and brief STW only for root scanning—same architectural family as Go's concurrent collector.",
-				"Codegen emits `TypeDescriptor` pointer layouts and calls `gc_write_barrier` on pointer stores (`beskid_codegen` struct/enum literal lowering → `beskid_runtime::gc_write_barrier` → `Heap::write_barrier`). Fibers allocate through `Heap::allocate_beskid`; GC tests cover fiber allocations, channel waits under collection, and concurrent mutation (`gc_concurrency.rs`, `abfall/tests/gc_functional.rs`).",
-				"The runtime shares one `Arc<Heap>` across mutator threads; collection pacing is configurable (`GcOptions` incremental budgets), so throughput targets Go-like “collector runs beside mutators” behavior rather than stop-the-world-only heaps.",
+				"Beskid ships `abfall`: a concurrent tri-color mark-and-sweep heap with Idle → Marking → Sweeping phases, a background collector thread that marks in bounded work budgets, Dijkstra insertion barriers during marking, and brief STW only for root scanning—same architectural family as Go's collector.",
+				"Codegen emits `TypeDescriptor` pointer layouts and calls `gc_write_barrier` on pointer stores. Fibers allocate through `Heap::allocate_beskid`; GC tests cover fiber allocations, channel waits under collection, and concurrent mutation (`gc_concurrency.rs`, `abfall/tests/gc_functional.rs`).",
+				"The runtime shares one `Arc<Heap>` across mutator threads; pacing is configurable via `GcOptions` incremental budgets, so throughput targets Go-like “collector runs beside mutators” behavior rather than stop-the-world-only heaps.",
 			],
 		},
 		{
@@ -337,8 +337,8 @@ export const alreadyBetterSection: LandingTileSectionData = {
 			],
 			paragraphs: [
 				"C# `async/await` lowers to `IAsyncStateMachine` types with `MoveNext` state machines and `Task` allocations; every await is a compiler transform, not a lightweight stack switch.",
-				"Beskid `spawn` is analyzed in `beskid_analysis` and lowered to `fiber_spawn` / `fiber_spawn_with_cancel_slot` builtins (`beskid_runtime::scheduler`). The scheduler is cooperative M:N: `corosensei` stacks, a run queue, and `processor_count()` aligned to available parallelism.",
-				"Blocking work uses `syscall_pool`: the current fiber parks, a worker thread runs the syscall/body, then `wake_fiber` resumes the coroutine—same ergonomic “write blocking code” story as Go, without adopting Go's whole runtime or conservative GC tradeoffs here.",
+				"Beskid `spawn` is analyzed in `beskid_analysis` and lowered to `fiber_spawn` / `fiber_spawn_with_cancel_slot` builtins. The scheduler is cooperative M:N: `corosensei` stacks, a run queue, and `processor_count()` aligned to available parallelism.",
+				"Blocking work uses `syscall_pool`: the current fiber parks, a worker thread runs the syscall/body, then `wake_fiber` resumes the coroutine—same “write blocking code” ergonomics as Go, without adopting Go's whole runtime or its GC tradeoffs.",
 				"Channels, mutex, wait-group, and cancel propagate through split ABI status/value builtins (M1–M6 in `CONCURRENCY_STATUS.md`); there is no `async` keyword or state-machine codegen path in the compiler.",
 			],
 			codeBlocks: [
@@ -358,7 +358,7 @@ export const alreadyBetterSection: LandingTileSectionData = {
 					lang: "beskid",
 					file: "worker.bd",
 					lines: [
-						"fn Run() {",
+						"unit Run() {",
 						"    Fiber<void> f = spawn { Process(); };",
 						"    Channel<int> ch = Channel<int>.Create(64);",
 						"    f.Join();",
@@ -419,7 +419,7 @@ export const alreadyBetterSection: LandingTileSectionData = {
 			],
 			paragraphs: [
 				"C# DI failures often surface at runtime: missing registration, captive dependencies, wrong lifetime—discovered in staging or production via `GetService` / `GetRequiredService`.",
-				"`beskid_analysis::composition::resolve_composition` runs in the `composition.resolve` pipeline phase: it builds the launch host chain, merges registries and scopes, validates scope trees, resolves `inject` fields into a dependency graph, and emits `CompositionIssue` diagnostics (duplicate launch hosts, lifetime override conflicts, unresolved inject) before codegen.",
+				"`resolve_composition` runs in the `composition.resolve` pipeline phase: it builds the launch host chain, merges registries and scopes, validates scope trees, resolves `inject` fields into a dependency graph, and emits `CompositionIssue` diagnostics (duplicate launch hosts, lifetime conflicts, unresolved inject) before codegen.",
 				"Successful resolution produces a `BindingPlan` and `CompositionSnapshot` with topo-ordered registration init—lowering wires real calls, not a runtime `IServiceProvider` dictionary lookup in the hot path.",
 			],
 			codeBlocks: [
@@ -458,8 +458,8 @@ export const alreadyBetterSection: LandingTileSectionData = {
 			],
 			paragraphs: [
 				"Roslyn incremental generators keep per-author state inside the compiler service; reproducibility and invalidation semantics vary by generator and often regress IDE latency (see runtime issues on JSON/logger generators).",
-				"Beskid Mods are separate AOT Mod projects executed in `mod.load` → `mod.generate` host phases. The Mod SDK `Query` bridge (`mod_host/query_bridge.rs`) tags every `NodeRef` with `syntax_generation_id`; `SdkSyntaxPipeline` rejects stale ops when the snapshot generation does not match—fail closed instead of silently patching old syntax.",
-				"Pipeline phase ids (`beskid_pipeline::phases`) give hosts a single observable schedule for workspace resolve, mod collect/generate, semantic snapshot, composition, lower, and AOT emit—deterministic boundaries the C# generator ecosystem does not standardize.",
+				"Beskid Mods are separate AOT Mod projects executed in `mod.load` → `mod.generate` host phases. The Mod SDK `Query` bridge tags every `NodeRef` with `syntax_generation_id`; `SdkSyntaxPipeline` rejects stale ops when the snapshot generation does not match—fail closed instead of silently patching old syntax.",
+				"Pipeline phase ids give hosts a single observable schedule for workspace resolve, mod collect/generate, semantic snapshot, composition, lower, and AOT emit—deterministic boundaries the C# generator ecosystem does not standardize.",
 			],
 		},
 	],

@@ -2,6 +2,8 @@
 import { Code } from 'astro:components';
 import { beskidUiSrcUrl } from '../lib/beskid-ui-root.mjs';
 import type { LandingTileSectionData } from '../data/landing-tile-sections';
+import type { LandingCodeTab } from '../data/landing-code-tabs';
+import { cliPackageUrls, loadCliVersion } from '../lib/load-download-versions';
 import LandingCodeWindow from './LandingCodeWindow.astro';
 import LandingCompareTable, { type CompareRow } from './LandingCompareTable.astro';
 import LandingDotNetSection from './LandingDotNetSection.astro';
@@ -12,6 +14,10 @@ interface ActionLink {
   text: string;
   href: string;
   variant?: 'primary' | 'secondary' | 'ghost';
+  /** Swap href to the OS-appropriate CLI asset at load time (baseline stays `href`). */
+  platformDownload?: boolean;
+  /** Smooth-scroll to the anchor instead of an instant jump. */
+  smoothScroll?: boolean;
 }
 
 interface FeatureItem {
@@ -24,9 +30,10 @@ interface Props {
   tagline: string;
   subtagline?: string;
   versionNote?: string;
-  codeFile?: string;
-  codeLines?: string[];
-  codeHtml?: string;
+  /** Hero code window: one or more tabs (primary API). */
+  codeTabs?: LandingCodeTab[];
+  /** Opt-in vertical split: code pane on top, terminal output below. */
+  codeSplit?: boolean;
   actions?: ActionLink[];
   landingPage?: boolean;
   compareTitle?: string;
@@ -56,9 +63,8 @@ const {
   tagline,
   subtagline = '',
   versionNote = '',
-  codeFile = 'main.bd',
-  codeLines = [],
-  codeHtml = '',
+  codeTabs = [],
+  codeSplit = false,
   actions = [],
   landingPage = false,
   compareTitle = '',
@@ -90,9 +96,11 @@ const showDotnet =
   dotnetWrongBullets.length > 0;
 const showAlreadyBetter = Boolean(alreadyBetterSection?.tiles.length);
 const showPrinciples = features.length > 0;
-const showCta = landingPage && actions.length > 0;
 const actionVariantClass = (variant?: string) =>
   variant === 'primary' ? 'landing-action--primary' : variant === 'ghost' ? 'landing-action--ghost' : 'landing-action--secondary';
+
+// Build-time CLI asset URLs for the platform-aware Download button.
+const cliDownloadUrls = cliPackageUrls(loadCliVersion());
 ---
 
 <link rel="stylesheet" href={beskidUiSrcUrl('styles/landing.css')} />
@@ -108,7 +116,15 @@ const actionVariantClass = (variant?: string) =>
         {actions.length > 0 && (
           <div class="landing-hero__actions">
             {actions.map((action) => (
-              <a class:list={['landing-action', actionVariantClass(action.variant)]} href={action.href}>
+              <a
+                class:list={['landing-action', actionVariantClass(action.variant)]}
+                href={action.href}
+                data-platform-download={action.platformDownload ? '' : undefined}
+                data-href-macos={action.platformDownload ? cliDownloadUrls['macos-arm64-dmg'] : undefined}
+                data-href-windows={action.platformDownload ? cliDownloadUrls['windows-amd64-msi'] : undefined}
+                data-href-linux={action.platformDownload ? cliDownloadUrls['linux-amd64-deb'] : undefined}
+                data-smooth-scroll={action.smoothScroll ? '' : undefined}
+              >
                 {action.text}
               </a>
             ))}
@@ -116,13 +132,13 @@ const actionVariantClass = (variant?: string) =>
         )}
       </div>
       <div class="landing-hero__code">
-        <LandingCodeWindow file={codeFile} lines={codeLines} html={codeHtml} />
+        <LandingCodeWindow tabs={codeTabs} split={codeSplit} />
       </div>
     </div>
   </header>
 
   {showCompare && (
-    <section class="landing-section landing-compare">
+    <section class="landing-section landing-compare" id="why-beskid">
       <div class="landing-section__inner">
         {compareTitle && <h2>{compareTitle}</h2>}
         {compareLead && <p class="landing-section__lead">{compareLead}</p>}
@@ -164,18 +180,6 @@ const actionVariantClass = (variant?: string) =>
 
   {showAlreadyBetter && alreadyBetterSection && <LandingTileSection section={alreadyBetterSection} />}
 
-  {showCta && (
-    <nav class="landing-cta" aria-label="Get started">
-      <div class="landing-cta__inner">
-        {actions.map((action) => (
-          <a class:list={['landing-action', actionVariantClass(action.variant)]} href={action.href}>
-            {action.text}
-          </a>
-        ))}
-      </div>
-    </nav>
-  )}
-
   {(calloutTitle || calloutText || calloutCode) && (
     <section class="landing-callout landing-section__inner">
       {calloutTitle && <h2>{calloutTitle}</h2>}
@@ -192,3 +196,42 @@ const actionVariantClass = (variant?: string) =>
     </section>
   )}
 </section>
+
+<script is:inline>
+  (function () {
+    function initLandingActions() {
+      // Platform-aware Download: swap href to the OS-appropriate CLI asset.
+      document.querySelectorAll('a[data-platform-download]').forEach(function (a) {
+        if (a.dataset.downloadBound === '1') return;
+        a.dataset.downloadBound = '1';
+        var platform =
+          (navigator.userAgentData && navigator.userAgentData.platform) ||
+          navigator.platform ||
+          '';
+        var os = /mac/i.test(platform)
+          ? 'macos'
+          : /win/i.test(platform)
+            ? 'windows'
+            : 'linux';
+        var url = a.getAttribute('data-href-' + os);
+        if (url) a.setAttribute('href', url);
+      });
+
+      // Smooth-scroll for in-page anchor links.
+      document.querySelectorAll('a[data-smooth-scroll]').forEach(function (a) {
+        if (a.dataset.scrollBound === '1') return;
+        a.dataset.scrollBound = '1';
+        a.addEventListener('click', function (event) {
+          var href = a.getAttribute('href') || '';
+          if (href.charAt(0) !== '#') return;
+          var target = document.querySelector(href);
+          if (!target) return;
+          event.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+    }
+    initLandingActions();
+    document.addEventListener('astro:page-load', initLandingActions);
+  })();
+</script>

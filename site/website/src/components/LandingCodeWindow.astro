@@ -1,53 +1,136 @@
 ---
-/** Plain pre/code for the hero terminal — avoids Shiki per-line gaps inside Starlight. */
-export interface Props {
+import { highlightCode } from '../lib/landing-highlight.mjs';
+
+/**
+ * Terminal-style hero code window with real Shiki highlighting (registered
+ * Beskid grammar + Shiki's built-in csharp/asm). Supports multi-file tabs and
+ * an optional vertical split (code pane on top, terminal output below).
+ *
+ * Primary API: `tabs` (one or more `CodeTab`). A single tab renders the legacy
+ * single-pane behavior.
+ */
+export interface CodeTab {
+	/** Filename label shown in the tab. */
 	file: string;
-	lines?: string[];
-	html?: string;
+	/** Landing language id; defaults to `beskid`. */
+	lang?: 'beskid' | 'csharp' | 'il' | 'asm';
+	/** Raw source — Shiki-highlighted at build time. */
+	code: string;
+	/** Optional terminal output for split mode (plain text, monospace). */
+	output?: string;
 }
 
-const { file, lines = [], html = '' } = Astro.props;
-
-const KEYWORDS = new Set(['pub', 'mod', 'use', 'type', 'return', 'string', 'mut', 'for', 'in', 'fn', 'host', 'registry', 'single', 'launch']);
-
-function escapeHtml(value: string): string {
-	return value
-		.replace(/&/g, '&amp;')
-		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;');
+interface Props {
+	/** One or more code tabs. Primary API. */
+	tabs: CodeTab[];
+	/** Opt-in vertical split: code pane on top, terminal output below. */
+	split?: boolean;
 }
 
-function highlightLine(line: string): string {
-	const escaped = escapeHtml(line);
-	return escaped
-		.split(/\b([A-Za-z_][A-Za-z0-9_]*)\b/g)
-		.map((part) => {
-			if (KEYWORDS.has(part)) {
-				return `<span class="landing-code-kw">${part}</span>`;
-			}
-			if (/^Client(Config)?$/.test(part) || part === 'endpoint') {
-				return `<span class="landing-code-type">${part}</span>`;
-			}
-			return part;
-		})
-		.join('');
+const { tabs, split = false } = Astro.props;
+
+interface RenderedTab {
+	file: string;
+	codeHtml: string;
+	output: string;
+	hasOutput: boolean;
 }
 
-const renderedHtml =
-	html ||
-	lines.map((line) => (line.length === 0 ? '\n' : `${highlightLine(line)}\n`)).join('');
+async function renderTab(tab: CodeTab): Promise<RenderedTab> {
+	const codeHtml = await highlightCode(tab.code, tab.lang ?? 'beskid');
+	const output = tab.output ?? '';
+	return { file: tab.file, codeHtml, output, hasOutput: output.length > 0 };
+}
+
+const renderedTabs: RenderedTab[] = await Promise.all(tabs.map((tab) => renderTab(tab)));
+
+const hasTabs = renderedTabs.length > 1;
+const useSplit = split && renderedTabs.some((tab) => tab.hasOutput);
+const windowLabel = renderedTabs[0]?.file ?? '';
 ---
 
-<div class="landing-terminal" aria-label={`Example code from ${file}`}>
+<div
+	class:list={['landing-terminal', hasTabs && 'landing-terminal--tabs', useSplit && 'landing-terminal--split']}
+	aria-label={`Example code: ${windowLabel}`}
+	data-landing-code-window
+>
 	<div class="landing-terminal__head">
 		<div class="landing-terminal__dots" aria-hidden="true">
 			<span class="landing-terminal__dot landing-terminal__dot--red"></span>
 			<span class="landing-terminal__dot landing-terminal__dot--yellow"></span>
 			<span class="landing-terminal__dot landing-terminal__dot--green"></span>
 		</div>
-		<span>{file}</span>
+		{hasTabs ? (
+			<div class="landing-terminal__tabs" role="tablist" aria-label="Code files">
+				{renderedTabs.map((tab, i) => (
+					<button
+						type="button"
+						class:list={['landing-terminal__tab', i === 0 && 'landing-terminal__tab--active']}
+						role="tab"
+						aria-selected={i === 0 ? 'true' : 'false'}
+						data-tab-index={i}
+					>
+						{tab.file}
+					</button>
+				))}
+			</div>
+		) : (
+			<span>{windowLabel}</span>
+		)}
 	</div>
 	<div class="landing-terminal__body">
-		<pre class="landing-terminal__pre"><code set:html={renderedHtml}></code></pre>
+		{renderedTabs.map((tab, i) => (
+			<div
+				class:list={['landing-terminal__panel', i === 0 && 'landing-terminal__panel--active']}
+				role="tabpanel"
+				data-tab-index={i}
+				hidden={i !== 0}
+			>
+				<pre class="landing-terminal__pre"><code set:html={tab.codeHtml}></code></pre>
+				{useSplit && tab.hasOutput && (
+					<Fragment>
+						<div class="landing-terminal__divider" aria-hidden="true"></div>
+						<div class="landing-terminal__output">
+							<pre class="landing-terminal__pre landing-terminal__pre--output"><code>{tab.output}</code></pre>
+						</div>
+					</Fragment>
+				)}
+			</div>
+		))}
 	</div>
 </div>
+
+<script is:inline>
+	(function () {
+		function initLandingCodeWindows() {
+			document.querySelectorAll('[data-landing-code-window]').forEach((win) => {
+				if (win.dataset.bound === '1') return;
+				win.dataset.bound = '1';
+				const tabButtons = win.querySelectorAll('.landing-terminal__tab');
+				const panels = win.querySelectorAll('.landing-terminal__panel');
+				if (tabButtons.length <= 1) return;
+				tabButtons.forEach((tab) => {
+					tab.addEventListener('click', () => {
+						const idx = tab.getAttribute('data-tab-index');
+						tabButtons.forEach((other) => {
+							const active = other === tab;
+							other.classList.toggle('landing-terminal__tab--active', active);
+							other.setAttribute('aria-selected', active ? 'true' : 'false');
+						});
+						panels.forEach((panel) => {
+							const active = panel.getAttribute('data-tab-index') === idx;
+							panel.classList.toggle('landing-terminal__panel--active', active);
+							if (active) {
+								panel.removeAttribute('hidden');
+							} else {
+								panel.setAttribute('hidden', '');
+							}
+						});
+					});
+				});
+			});
+		}
+		initLandingCodeWindows();
+		document.addEventListener('astro:page-load', initLandingCodeWindows);
+	})();
+</script>

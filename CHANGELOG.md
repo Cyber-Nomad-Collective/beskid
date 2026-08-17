@@ -21,7 +21,15 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   (`TypeShapeClass`, `OwnershipClass`, `CallShapeClass`, `InteropSignature`,
   `ConformanceEnvelope`) plus C ABI profile and Rust ABI profile bindings.
 - `beskid_abi::toolchain` module: `ToolchainProbe` scaffold (`ToolCapability`,
-  `ToolSpec`, `ResolvedTool`, `ToolchainError`).
+  `ToolSpec`, `ResolvedTool`, `ToolchainError`) plus `probe()` exact-path
+  fail-closed discovery (0.4 scaffold; version/sha256/target validation is
+  0.5 scope). `ToolSpec` gains `path`/`prefix`; `ResolvedTool.version` becomes
+  optional and gains `target_triple`.
+- `beskid_analysis::mod_host::glue` glue attribute registration: `GlueAttributeKind`,
+  `is_glue_attribute`, `GlueAnnotation`, `collect_glue_annotations`. The 0.4
+  registration recognizes `[Glue]` / `[GlueImport]` / `[GlueExport]` so the
+  compiler accepts them without error; `mod.glue` traces the annotation count.
+  Semantic glue generation is 0.5 scope.
 - `beskid_codegen::backend` module: `Backend` trait + `BackendKind` enum
   (CraneliftClif / RustSource / DotNetProject) + `BackendArtifact`.
   RustSource and DotNetProject fail closed for 0.4; language-specific
