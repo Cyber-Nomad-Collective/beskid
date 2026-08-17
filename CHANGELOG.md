@@ -46,12 +46,26 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   Salsa database to `obj/beskid/cache/salsa/db.json` after a successful
   compile and restores it on the next invocation, skipping recomputation of
   unchanged queries. Version-gated by compiler version + grammar revision
-  (mismatch = cache miss, never corrupts). Inputs (`FileText`,
-  `ProjectSession`, `GrammarRevision`, `ModHostSyntaxGenerationId`,
-  `ManifestGenerationId`, `CapabilitySetId`) and three module-fingerprint
-  tracked fns are persisted; `semantic_contract` tracked queries are
-  infrastructure-ready but deferred pending a per-type serde audit. Wired into
+  (mismatch = cache miss, never corrupts). Persisted ingredients: 6 inputs
+  (`FileText`, `ProjectSession`, `GrammarRevision`,
+  `ModHostSyntaxGenerationId`, `ManifestGenerationId`, `CapabilitySetId`),
+  3 module-fingerprint tracked fns, and 59 of 61 `semantic_contract` tracked
+  queries (typing, resolution, locals, syntax facts, ABI, layouts, calls,
+  closures/spawn). Two fns skipped (`dispatch_builtin_symbol_tracked`,
+  `call_lowering_tracked`) due to `&'static str` return types needing manual
+  serde. Serde derives added to `AstNodeKey`, `SyntaxGenerationId`,
+  `NodeKind`, `SyntaxIndex` in `beskid_analysis`; manual lookup-based serde
+  for `CorelibService` in `beskid_abi` and `DispatchBuiltinSymbol` in
+  `beskid_queries`. `SourceUnitId` and `SyntaxUnitInput` marked `persist`;
+  `syntax_unit_registry` rehydrated on snapshot load. Wired into
   `beskid_cli`, `beskid_lsp`, and `beskid_aot` via the `persistence` feature.
+- LSP debounced DB snapshot save hook in `beskid_lsp`: the language server
+  now persists the Salsa DB snapshot on idle (5s debounce after
+  `did_open`/`did_change`/`did_save`) and on shutdown. Configurable via init
+  options (`persistenceEnabled`, `persistenceSaveDebounceMs`) and workspace
+  settings (`beskid.lsp.persistence.{enabled,saveDebounceMs}`). Single
+  global debounce coalesces rapid keystrokes into one save. Not triggered
+  from the per-keystroke diagnostic path.
 
 ### Changed
 
