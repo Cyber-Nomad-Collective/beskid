@@ -38,7 +38,7 @@ learn-server:
 # Corelib spine matrix gate (semantic gate, single Salsa session). Use smoke locally:
 #   BESKID_CORELIB_SPINE_SMOKE=1 just test-corelib-spine
 test-corelib-spine:
-    cd "{{root}}/compiler" && cargo test -p beskid_tests corelib_tests_front_end_typechecks_matrix -- --nocapture --test-threads=1
+    cd "{{root}}/compiler" && cargo test -p beskid_tests_projects corelib_tests_front_end_typechecks_matrix -- --nocapture --test-threads=1
 
 # Run the host-callable CI gates locally (fast tier, seconds). Catches lockfile
 # drift, frozen-check failures, and normative-spec validation errors before push.

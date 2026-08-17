@@ -42,6 +42,59 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   modified capabilities with SHALL/MUST requirements and GIVEN/WHEN/THEN
   scenarios.
 - Ten new glossary terms in `GLOSSARY.md`.
+- Salsa DB persistence in `beskid_queries`: the compiler now serializes its
+  Salsa database to `obj/beskid/cache/salsa/db.json` after a successful
+  compile and restores it on the next invocation, skipping recomputation of
+  unchanged queries. Version-gated by compiler version + grammar revision
+  (mismatch = cache miss, never corrupts). Inputs (`FileText`,
+  `ProjectSession`, `GrammarRevision`, `ModHostSyntaxGenerationId`,
+  `ManifestGenerationId`, `CapabilitySetId`) and three module-fingerprint
+  tracked fns are persisted; `semantic_contract` tracked queries are
+  infrastructure-ready but deferred pending a per-type serde audit. Wired into
+  `beskid_cli`, `beskid_lsp`, and `beskid_aot` via the `persistence` feature.
+
+### Changed
+
+- Compiler build-time configuration overhaul in `compiler/`:
+  - Consolidated `[profile.dev]` and `[profile.release]` into the root
+    `Cargo.toml` (Cargo only reliably reads profiles from `Cargo.toml`, not
+    `.cargo/config.toml`). Dev: `opt-level = 1`, `debug = "line-tables-only"`,
+    `incremental = true`; deps at `opt-level = 2`. Release: `codegen-units = 16`,
+    `debug = "line-tables-only"`, `strip = "symbols"`, `panic = "abort"`
+    (verified safe — no `catch_unwind` in any non-test code).
+  - Wired `sccache` automatically via `rustc-wrapper` in `.cargo/config.toml`
+    (was installed but unused — 0 cache hits). Wired `rust-lld` as the
+    `aarch64-apple-darwin` linker.
+  - Added `default-members` excluding `beskid_tests` and `beskid_e2e_tests` so
+    bare `cargo check` / `cargo build` iterate only on compiler crates; run the
+    test sink crates explicitly via `cargo test -p beskid_tests`.
+  - Added `just check`, `just check-p <crate>`, and `just clean-stale`
+    (cargo-sweep) targets to `compiler/justfile`, plus a worktree shared-target
+    tip.
+- Gated the TUI stack (ratatui, tui-*, ratkit, tuirealm, tachyonfx, panes)
+  behind a `tui` feature in `beskid_tools`, `beskid_hi`, `beskid_repl`, and
+  `beskid_telemetry` (`default = ["tui"]` preserves existing behavior). The
+  `beskid_telemetry` `tui-logger` feature was renamed to `tui` for consistency.
+- Made salsa `persistence` an opt-in feature on `beskid_queries` (was
+  dead-enabled across the workspace — no code uses salsa persistence APIs).
+  Dev builds now compile salsa without persistence; enable via
+  `--features persistence` on release/snapshot paths.
+- Split the monolithic `beskid_tests` crate (95 files, 17 subdirs, ~10k LOC)
+  into 11 per-domain test crates plus a shared `beskid_tests_support` crate:
+  `beskid_tests_surface`, `beskid_tests_projects`, `beskid_tests_mods`,
+  `beskid_tests_lsp`, `beskid_tests_aot`, `beskid_tests_pckg`,
+  `beskid_tests_interop`, `beskid_tests_cli`, `beskid_tests_composition`,
+  `beskid_tests_abi`. Each crate pulls only its domain's dependency graph, so
+  `cargo check -p beskid_tests_lsp` no longer compiles the codegen/engine/aot
+  stack. The old `beskid_tests` crate is fully removed. The `just check` gate
+  and root `Justfile` test targets updated to reference the new crate names.
+  Fixture assets distributed to their primary domain crate; 6 external crates
+  repointed.
+
+### Removed
+
+- Dead `trybuild = "1.0"` from `compiler/Cargo.toml`
+  `[workspace.dependencies]` — no crate in the workspace references trybuild.
 
 ### Added
 
