@@ -49,16 +49,16 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   (mismatch = cache miss, never corrupts). Persisted ingredients: 6 inputs
   (`FileText`, `ProjectSession`, `GrammarRevision`,
   `ModHostSyntaxGenerationId`, `ManifestGenerationId`, `CapabilitySetId`),
-  3 module-fingerprint tracked fns, and 59 of 61 `semantic_contract` tracked
+  3 module-fingerprint tracked fns, and all 61 `semantic_contract` tracked
   queries (typing, resolution, locals, syntax facts, ABI, layouts, calls,
-  closures/spawn). Two fns skipped (`dispatch_builtin_symbol_tracked`,
-  `call_lowering_tracked`) due to `&'static str` return types needing manual
-  serde. Serde derives added to `AstNodeKey`, `SyntaxGenerationId`,
+  closures/spawn). Serde derives added to `AstNodeKey`, `SyntaxGenerationId`,
   `NodeKind`, `SyntaxIndex` in `beskid_analysis`; manual lookup-based serde
   for `CorelibService` in `beskid_abi` and `DispatchBuiltinSymbol` in
-  `beskid_queries`. `SourceUnitId` and `SyntaxUnitInput` marked `persist`;
-  `syntax_unit_registry` rehydrated on snapshot load. Wired into
-  `beskid_cli`, `beskid_lsp`, and `beskid_aot` via the `persistence` feature.
+  `beskid_queries`, sharing a `recover_static_str` helper in
+  `beskid_abi::serde_support` (DRY). `SourceUnitId` and `SyntaxUnitInput`
+  marked `persist`; `syntax_unit_registry` rehydrated on snapshot load.
+  Wired into `beskid_cli`, `beskid_lsp`, and `beskid_aot` via the
+  `persistence` feature.
 - LSP debounced DB snapshot save hook in `beskid_lsp`: the language server
   now persists the Salsa DB snapshot on idle (5s debounce after
   `did_open`/`did_change`/`did_save`) and on shutdown. Configurable via init
@@ -109,6 +109,21 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 - Dead `trybuild = "1.0"` from `compiler/Cargo.toml`
   `[workspace.dependencies]` — no crate in the workspace references trybuild.
+
+### Fixed
+
+- 26 stale `semantic_facts` integration tests in `beskid_queries`: 23 built
+  `ProgramAssembly` with `SyntaxGenerationId(0)` but called
+  `build_typed_program` with a different generation (the generation-equality
+  guard added in `443f1aa6` was correct; the tests were never updated).
+  Hoisted the generation literal above `ProgramAssembly::new` so the
+  assembly and the call agree. 1 test (`statement_facts_preserve_inferred_let_storage`)
+  was a real port gap: `inferred_local_storage_type` now resolves the
+  initializer expression's `value_abi_type` instead of the missing annotation.
+  2 tests were broken by an uncommitted `abi_type_tracked` branch reordering
+  that routed `BinaryExpression` nodes through the general `Expression`
+  path instead of the specialized `abi_type_for_binary_expression`; reverted
+  to the correct specificity ordering.
 
 ### Added
 
