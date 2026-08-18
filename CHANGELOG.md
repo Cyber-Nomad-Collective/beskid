@@ -11,6 +11,77 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Added
 
+- `beskid_sites/` — greenfield standalone pnpm workspace (own
+  `pnpm-workspace.yaml`; not a submodule, not in the root workspace) for the
+  Beskid web properties, built on TanStack Start (React + Nitro).
+  - `packages/beskid-ui-react` — the single canonical React component library
+    (`@cyber-nomad-collective/beskid-ui-react`), copied from
+    `beskid_web_common` and purged of non-React code. The old mixed Astro/React
+    `beskid-ui` package's React parts (`BeskidHub`, `LinkedAstFactsPanel`, hub
+    icons, `beskid-services`) were already byte-identical relocations into this
+    lib, so no duplicate package is created (DRY). Folded the missing
+    `theme.material.css` into the lib and resolved the
+    `@import "@beskid/material-theme"` to a local path so the lib is
+    self-contained.
+  - `apps/shell-template` — reusable shell template app (the base for all
+    Beskid sites), generalized from the `beskid_tracker` shell. Exposes
+    convenience wrappers for sidebar items, sidebar show/hide, and topbar
+    left/right nav-slot services; renders an avatar dropdown with user data in
+    the topbar when the sidebar is disabled. Auth via Authelia as an OIDC
+    provider: the app is an OIDC client (authorization-code flow, ID token
+    verified with `jose` against Authelia's JWKS, claims sealed into a signed
+    session cookie), GitHub is the sole identity provider (no local
+    password/email user store), and each beskid app is registered as an OIDC
+    client of Authelia. Reuses the existing Beskid GitHub OAuth App via env
+    vars (no new GitHub App). `mock` mode for local dev. Ships a Postgres +
+    Authelia + app compose, a Dockerfile, and 31 vitest tests (sidebar, slots,
+    avatar dropdown, OIDC claims, session seal/unseal, guards, theme).
+  - `_planning/<service>/Plan.md` — per-service migration assessments for
+    website, pckg, platform-spec, tracker, auth, learn, and nexus.
+  - `beskid_sites/apps/pckg` — TanStack Start (React + Nitro) rewrite of the
+    `pckg/web` Vite SPA, built on the shared `@cyber-nomad-collective/beskid-shell-core`
+    shell. Two-mode (Docs / Registry) topbar with an animated shifting-index
+    `ModeSwitcher`; `AppShell` with `sidebarEnabled=true` only for the
+    `/dashboard/*` tree (the sole sidebar app) and `sidebarEnabled=false` for
+    consumer routes via a `_public` pathless layout; `GlobalSearch` +
+    `BeskidHub` in the topbar right slot; Authelia OIDC auth wired through
+    `createShellAuth` (`PCKG_OIDC_*` env). Lifted `PckgApiClient`
+    (`src/lib/pckg-api.ts`) verbatim from `pckg/web` (byte-identical, excluded
+    from biome via a per-app `biome.json`) — the framework-agnostic typed
+    .NET API contract is the reusable backbone. Ports the signature "nice"
+    pages as presentational components: `PackageDetail` (hero + facts card +
+    README + dependencies + community reviews + bordered version list +
+    NodeBB "Discuss" deep-link) and `PublisherProfile` (hero + follow +
+    social links + shared `PackageGrid`), plus the self-profile editor at
+    `/dashboard/profile`. NodeBB integration is server-only
+    (`src/server/nodebb.ts` + `POST /api/nodebb/create-subforum`): creates a
+    locked per-package subforum under a parent "Packages" category and
+    rescinds `registered-users` topic-create privileges; the admin token is
+    never exposed to the client. Ships a multi-stage Dockerfile (port 8082),
+    `env.server.ts` (`PCKG_API_BASE_URL`, `NODEBB_*`, `COMMUNITY_URL`), and 16
+    vitest tests (mode switcher, package grid/detail, publisher profile,
+    health endpoint, NodeBB subforum creation with mocked fetch).
+- `beskid_infra` production compose: commented-out example block documenting
+  how a future `shell-template`-based service + Authelia (OIDC provider) +
+  shared Postgres would be wired into the production lane (documentation only;
+  no real service or UUIDs).
+
+### Changed
+
+- `site/website`: removed the legacy platform-spec-derived `packages/` MDX
+  content tree (9 pages + the orphaned `PackageRegistryConsole.astro`
+  component); the pckg registry surface is now served canonically by
+  `site/platform-spec` and the book. Repointed two book CLI references to the
+  book's own pckg chapter and added an nginx `/packages/` legacy-bridge
+  redirect to `spec.beskid-lang.org`. Build passes (239 → 231 pages).
+
+### Removed
+
+- `beskid_sites/apps/shell-template`: dropped the GitHub-token proxy
+  companion seam (Authelia + the existing GitHub App is the sole auth path)
+  and the Authelia file user store (`users_database.yml`) — GitHub is the only
+  identity provider, no password/email login.
+
 - `Beskid.Glue` corelib package with seven atomized contracts: TypeMapping,
   SymbolEmission, LinkArgs, SignatureReader, SignatureWriter, ToolchainProbe,
   StdioBridge. Plus `[Glue]` / `[GlueImport]` / `[GlueExport]` attributes, the
