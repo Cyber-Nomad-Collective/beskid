@@ -58,8 +58,8 @@ EOF
     packages/foundation/src/Core/ErrorHandling/ErrorHandling.bd \
     packages/foundation/src/Core/String/String.bd \
     packages/foundation/src/Core/Optional/Option.bd \
-    packages/foundation/src/Collections/Collections.bd \
-    packages/foundation/src/Collections/Array.bd \
+    packages/foundation/src/Core/Collections/Collections.bd \
+    packages/foundation/src/Core/Collections/Array.bd \
     packages/foundation/src/Query/Query.bd \
     packages/foundation/src/Query/QueryState.bd \
     packages/foundation/src/Testing/Testing.bd \

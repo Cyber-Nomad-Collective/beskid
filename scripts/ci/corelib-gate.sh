@@ -327,8 +327,8 @@ REQUIRED_FILES=(
   "packages/foundation/src/Core/ErrorHandling/ErrorHandling.bd"
   "packages/foundation/src/Core/String/String.bd"
   "packages/foundation/src/Core/Optional/Option.bd"
-  "packages/foundation/src/Collections/Collections.bd"
-  "packages/foundation/src/Collections/Array.bd"
+  "packages/foundation/src/Core/Collections/Collections.bd"
+  "packages/foundation/src/Core/Collections/Array.bd"
   "packages/foundation/src/Query/Query.bd"
   "packages/foundation/src/Testing/Testing.bd"
   "packages/foundation/src/Testing/Assert.bd"
@@ -367,8 +367,8 @@ corelib_prelude_tier_validation() {
     "Core/String/String.bd"
     "Core/Encoding/Encoding.bd"
     "Core/Bytes/Bytes.bd"
-    "Collections/Collections.bd"
-    "Collections/Array.bd"
+    "Core/Collections/Collections.bd"
+    "Core/Collections/Array.bd"
     "Core/Syscall/Syscall.bd"
   )
 
