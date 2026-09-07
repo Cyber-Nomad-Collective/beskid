@@ -34,6 +34,9 @@ require 'caddy_0: https://cr.beskid-lang.org' "$compose"
 require 'caddy_0.reverse_proxy: "{{upstreams 5000}}"' "$compose"
 require 'encryption_key: ${AUTHELIA_STORAGE_ENCRYPTION_KEY}' "$authelia_config"
 require 'need AUTHELIA_POSTGRES_DB ' "$deploy_script"
+require 'registry-data:' "$compose"
+require 'name: beskid-registry-data' "$compose"
+require 'external: true' "$compose"
 
 # The committed template must enumerate every required runtime secret. This
 # keeps the deploy script and the operator-facing configuration in lockstep.

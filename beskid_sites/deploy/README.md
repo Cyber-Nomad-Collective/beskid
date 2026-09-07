@@ -49,6 +49,10 @@ into the registry using stdin, creates Watchtower’s private Docker credential
 file, starts the stack, and runs public smoke checks. The script rejects any
 application tag other than `production`.
 
+The first cutover adopts the host's existing `beskid-registry-data` Docker
+volume. It is external to Compose so existing registry images and rollback tags
+are retained; do not delete or recreate that volume during the switch.
+
 ## Registry authentication
 
 The shared edge terminates TLS only. `registry:2.8` performs its own htpasswd challenge,

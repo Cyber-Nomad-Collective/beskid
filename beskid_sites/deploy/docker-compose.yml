@@ -40,7 +40,12 @@ networks:
     driver: bridge
 
 volumes:
+  # Adopt the existing production registry store during the one-time cutover.
+  # This volume is deliberately external: Compose must never replace its OCI
+  # data or its retained rollback images.
   registry-data:
+    name: beskid-registry-data
+    external: true
   authelia-data:
   postgres-data:
   auth-data:

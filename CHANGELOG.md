@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Deployment: adopted the existing production registry data volume as an
+  external Compose volume, preserving registry contents through cutover.
 - CI: corrected the Rust pckg image build context so its `beskid_pckg` crate is
   available to the server workspace during image construction.
 - Deployment: made the production environment contract complete for Authelia
