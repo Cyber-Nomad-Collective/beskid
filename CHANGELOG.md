@@ -17,6 +17,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   before failing an image-delivery lane.
 - Deployment: adopted the existing production registry data volume as an
   external Compose volume, preserving registry contents through cutover.
+- Deployment: restored the Nexus Compose upstream, exposed port, and health
+  probe to its authoritative GitNexus listener on port 8452.
 - CI: corrected the Rust pckg image build context so its `beskid_pckg` crate is
   available to the server workspace during image construction.
 - Deployment: made the production environment contract complete for Authelia

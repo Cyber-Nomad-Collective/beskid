@@ -222,17 +222,17 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://nexus.beskid-lang.org
-      caddy_0.reverse_proxy: "{{upstreams 80}}"
+      caddy_0.reverse_proxy: "{{upstreams 8452}}"
     networks:
       - beskid-edge
     expose:
-      - "80"
+      - "8452"
     env_file:
       - ${BESKID_ENV_FILE:-.env}
     volumes:
       - nexus-data:/data/gitnexus
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/api/health || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8452/api/health || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
