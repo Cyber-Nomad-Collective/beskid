@@ -8,11 +8,18 @@ compiler_workflow="${root}/.github/workflows/compiler.yml"
 release_workflow="${root}/.github/workflows/compiler-release.yml"
 open_vsx_workflow="${root}/.github/workflows/publish-open-vsx.yml"
 distribute_workflow="${root}/.github/workflows/distribute.yml"
+cleanup_workflow="${root}/.github/workflows/compiler-handoff-cleanup.yml"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
   exit 1
 }
+
+for workflow in "${release_workflow}" "${cleanup_workflow}" "${distribute_workflow}"; do
+  if rg -Fq 'runs-on: ubuntu-latest' "${workflow}"; then
+    fail "release-critical Linux orchestration still depends on the billing-locked GitHub Ubuntu runner: ${workflow}"
+  fi
+done
 
 grep -Fq 'GITHUB_RUN_NUMBER: ${{ github.run_number }}' "${compiler_workflow}" || \
   fail 'compiler workflow does not provide its run number to the global version resolver'

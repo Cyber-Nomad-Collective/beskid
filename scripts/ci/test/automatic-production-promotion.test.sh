@@ -4,6 +4,13 @@ set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 workflow="${root}/.github/workflows/platform-delivery.yml"
+promotion_workflow="${root}/.github/workflows/reusable-promote.yml"
+
+policy_block="$(sed -n '/^  policy:/,/^  promote:/p' "${promotion_workflow}")"
+if [[ "${policy_block}" != *'runs-on: blacksmith-4vcpu-ubuntu-2404'* ]]; then
+  echo 'promotion policy must run on the release-capable external Linux runner' >&2
+  exit 1
+fi
 
 production_block="$(sed -n '/^  production:/,$p' "${workflow}")"
 for required in \

@@ -52,7 +52,7 @@ concurrency:
 jobs:
   policy:
     name: Validate promotion policy
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - name: Require an explicit lane
         env:

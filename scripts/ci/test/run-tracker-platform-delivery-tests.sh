@@ -4,6 +4,11 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 workflow="${root}/.github/workflows/tracker-platform-delivery.yml"
 
+if rg -Fq 'runs-on: ubuntu-latest' "${workflow}"; then
+	echo "tracker delivery still depends on the billing-locked GitHub Ubuntu runner" >&2
+	exit 1
+fi
+
 [[ -f "${workflow}" ]] || { echo "missing tracker platform delivery workflow" >&2; exit 1; }
 
 for required in \

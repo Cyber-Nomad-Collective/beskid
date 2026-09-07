@@ -518,7 +518,7 @@ jobs:
     name: Container images
     needs: resolve-rolling
     if: needs.resolve-rolling.outputs.should_run == 'true'
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 15
     permissions:
       contents: read

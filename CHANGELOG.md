@@ -57,6 +57,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Replace GitHub Actions artifact transport with job summaries, job outputs,
   and retry-safe compiler GitHub Release handoffs across compiler, tracker,
   Open VSX, and distribution workflows.
+- Run release-critical Linux orchestration on Blacksmith so compiler,
+  promotion, tracker, container, and handoff work does not depend on the
+  account-billing state of GitHub-hosted Ubuntu runners.
 - Coordinate exact corelib dependency versions through each staged
   `package.json`, leaving source `.bproj` files unchanged while the canonical
   compiler packer emits path-independent registry artifacts. Current Book

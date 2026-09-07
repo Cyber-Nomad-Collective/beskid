@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   openspec-projection:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v7
         with:
@@ -62,7 +62,7 @@ jobs:
           pnpm --dir beskid_tracker run reconcile:plan
 
   tracker:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v7
         with:
@@ -90,7 +90,7 @@ jobs:
           pnpm --dir beskid_tracker check
 
   website-nexus:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v7
         with:
@@ -134,7 +134,7 @@ jobs:
           bash -c 'cd beskid_nexus/gitnexus && ./node_modules/.bin/vitest run test/unit/tracker-delivery-link-index.test.ts'
 
   workflow-contract:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
       - uses: actions/checkout@v7
         with:
