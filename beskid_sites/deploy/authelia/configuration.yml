@@ -34,6 +34,7 @@ telemetry:
 
 # Postgres-backed storage (sessions, OIDC, Webauthn, TOTP).
 storage:
+  encryption_key: ${AUTHELIA_STORAGE_ENCRYPTION_KEY}
   postgres:
     address: "tcp://postgres:5432"
     database: ${AUTHELIA_POSTGRES_DB}
@@ -88,17 +89,6 @@ identity_providers:
         authorization_policy: one_factor
         redirect_uris:
           - "https://beskid-lang.org/api/auth/callback"
-        scopes: ["openid", "profile", "email", "groups"]
-        grant_types: ["authorization_code"]
-        response_types: ["code"]
-        userinfo_signing_algorithm: "none"
-
-      # --- platform-spec -------------------------------------------------
-      - client_id: platform-spec
-        client_secret: ${PLATFORM_SPEC_OIDC_CLIENT_SECRET}
-        authorization_policy: one_factor
-        redirect_uris:
-          - "https://spec.beskid-lang.org/api/auth/callback"
         scopes: ["openid", "profile", "email", "groups"]
         grant_types: ["authorization_code"]
         response_types: ["code"]

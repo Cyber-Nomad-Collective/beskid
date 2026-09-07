@@ -31,7 +31,9 @@ The production host is `root@bdziam.dev`; the runtime directory defaults to
 - A bcrypt registry credential file at `registry/htpasswd`.
 - OpenBao production secrets, or a populated local `.env` copied from
   `.env.example`. Do not commit `.env`, `htpasswd`, or Watchtower’s Docker
-  credential file.
+  credential file. The template explicitly lists the Authelia storage, signing,
+  and per-client OIDC secrets; replace every placeholder with a production
+  value before applying.
 - `BESKID_EDGE_NETWORK`, the existing host network used by the shared Caddy
   Docker proxy. Beskid joins this network but does not own its ports or proxy.
 

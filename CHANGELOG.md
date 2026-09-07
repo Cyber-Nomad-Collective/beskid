@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Deployment: made the production environment contract complete for Authelia
+  storage and OIDC clients, and removed the retired platform-spec OIDC client
+  from the standalone runtime.
 - Deployment: replaced the Beskid Coolify and staging promotion path with a
   production-only Docker Compose runtime. CI publishes immutable SHA audit tags
   and controlled `production` tags to `cr.beskid-lang.org`; Watchtower updates
