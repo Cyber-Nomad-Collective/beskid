@@ -149,6 +149,7 @@ for requirement in \
   'COPY beskid_web_common ./beskid_web_common' \
   'pnpm install --dir /src/beskid_web_common --frozen-lockfile' \
   'pnpm install --dir /src/pckg/web --frozen-lockfile' \
+  'COPY compiler/crates/beskid_pckg ./crates/beskid_pckg' \
   'cargo build --release -p beskid_pckg_server' \
   'PCKG_ARTIFACT_ROOT=/app/packages' \
   '/health/ready'; do

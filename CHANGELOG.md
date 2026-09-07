@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- CI: corrected the Rust pckg image build context so its `beskid_pckg` crate is
+  available to the server workspace during image construction.
 - Deployment: made the production environment contract complete for Authelia
   storage and OIDC clients, and removed the retired platform-spec OIDC client
   from the standalone runtime.
