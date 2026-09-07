@@ -14,7 +14,9 @@ write_result() {
     --arg lsp_status "${lsp}" \
     --arg cli_asset "beskid-${target}" \
     --arg lsp_asset "beskid_lsp-${target}" \
-    '{schema_version:1,target:$target,builds:{cli:{status:$cli_status,asset:$cli_asset},lsp:{status:$lsp_status,asset:$lsp_asset}}}' >"${path}"
+    '{schema_version:1,target:$target,
+      builds:{cli:{status:$cli_status,asset:$cli_asset,log_path:($target + "-cli.log")},lsp:{status:$lsp_status,asset:$lsp_asset,log_path:($target + "-lsp.log")}},
+      diagnostics:(if $lsp_status == "failed" then [{identifier:"compiler::lsp",location:{file:"unavailable",line:0,column:0},reason:"failed",log_path:($target + "-lsp.log")}] else [] end)}' >"${path}"
 }
 
 write_result "${TMP}/linux.json" linux success success
@@ -74,6 +76,7 @@ jq -e '
 ' "${TMP}/unstable.json" >/dev/null
 
 GATE_REPORT_DIR="${TMP}/gate" \
+HANDOFF_RELEASE_URL="https://github.com/org/compiler/releases/download/compiler-handoff-42" \
   "${SCRIPT}" unstable 0.4.10-unstable compiler-sha superrepo-sha failure "${TMP}/evidence.json" \
   "${TMP}/linux.json" "${TMP}/macos.json" "${TMP}/windows.json"
 jq -e '
@@ -81,7 +84,9 @@ jq -e '
   .tests.failed == ["compiler:abi-v5-runtime-kit-windows", "compiler:rust-gate"] and
   (.tests.results | map(select(.stage == "abi-v5-runtime-kit-windows" and .status == "failed" and .platform == "Windows" and .job_id == 12 and .job_url == "https://example.test/jobs/12")) | length) == 1 and
   (.diagnostics | map(select(.stage == "abi-v5-runtime-kit-windows" and .identifier == "unavailable" and .log_path == "https://example.test/jobs/12")) | length) == 1 and
-  (.diagnostics | map(select(.identifier == "compiler::parser::case" and .log_path == "gate-evidence/raw-logs/rust.log")) | length) == 1
+  (.diagnostics | map(select(.identifier == "compiler::parser::case" and .log_path == "gate-evidence/raw-logs/rust.log")) | length) == 1 and
+  (.diagnostics | map(select(.identifier == "compiler::lsp" and .log_path == "https://github.com/org/compiler/releases/download/compiler-handoff-42/macos-lsp.log")) | length) == 1 and
+  (.platforms[] | select(.target == "macos") | .builds.lsp.log_path) == "https://github.com/org/compiler/releases/download/compiler-handoff-42/macos-lsp.log"
 ' "${TMP}/evidence.json" >/dev/null
 
 GATE_REPORT_DIR="${TMP}/jobs-only" \

@@ -30,6 +30,7 @@ bash "${root}/scripts/ci/test/platform-delivery-fail-closed.test.sh"
 bash "${root}/scripts/ci/test/release-manifest-active-lanes.test.sh"
 bash "${root}/scripts/ci/test/zero-artifact-delivery.test.sh"
 bash "${root}/scripts/ci/test/github-release-handoff.test.sh"
+bash "${root}/scripts/ci/test/render-lane-compose.test.sh"
 bash "${root}/scripts/ci/test/image-preparation-contract.test.sh"
 bash "${root}/scripts/ci/test/automatic-production-promotion.test.sh"
 

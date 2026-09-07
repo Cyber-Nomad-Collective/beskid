@@ -31,10 +31,7 @@ previous_payload="$(mktemp)"
 trap 'rm -f "${rendered}" "${previous_payload}"' EXIT
 "${script_dir}/render-release-compose.sh" "${manifest}" "${compose}" "${rendered}"
 lane_rendered="${rendered}.lane"
-awk -v lane="${lane}" '
-  !replaced && /^name:[[:space:]]*/ { print "name: beskid-platform-" lane; replaced = 1; next }
-  { print }
-' "${rendered}" >"${lane_rendered}"
+bash "${script_dir}/render-lane-compose.sh" "${lane}" "${rendered}" "${lane_rendered}"
 mv "${lane_rendered}" "${rendered}"
 
 manifest_sha="$(sha256sum "${manifest}" | awk '{print $1}')"

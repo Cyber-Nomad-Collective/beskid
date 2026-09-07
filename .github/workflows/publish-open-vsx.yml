@@ -45,7 +45,7 @@ jobs:
           GH_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
           COMPILER_RELEASE_READ_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
-          HANDOFF_TAG: compiler-handoff-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}
+          HANDOFF_TAG: compiler-handoff-${{ github.event.workflow_run.id }}
         run: |
           set -euo pipefail
           if [[ -z "${OVSX_TOKEN}" ]]; then
@@ -178,7 +178,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
-          HANDOFF_TAG: compiler-handoff-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}
+          HANDOFF_TAG: compiler-handoff-${{ github.event.workflow_run.id }}
         run: |
           set -euo pipefail
           gh release download "${HANDOFF_TAG}" --repo "${COMPILER_REPO}" \

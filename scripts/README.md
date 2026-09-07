@@ -42,6 +42,7 @@ runners (the compiler gate is also Testbox-compatible). Dagger is retired.
 | [`build-release-manifest.sh`](ci/build-release-manifest.sh) | Aggregate immutable OCI image records into a release manifest |
 | [`validate-release-manifest.sh`](ci/validate-release-manifest.sh) | Enforce digest, SBOM, provenance, and source-commit policy |
 | [`render-release-compose.sh`](ci/render-release-compose.sh) | Replace Beskid Compose image tags with exact manifest digests |
+| [`render-lane-compose.sh`](ci/render-lane-compose.sh) | Apply lane identity and production-only external-volume adoption |
 | [`deploy-release-manifest.sh`](ci/deploy-release-manifest.sh) | Plan/apply Coolify promotion with polling and rollback |
 | [`post-deploy-smoke.sh`](ci/post-deploy-smoke.sh) | Trace-correlated lane health checks |
 | [`sign-image.sh`](ci/sign-image.sh) | Required keyless cosign signing for promotable images |

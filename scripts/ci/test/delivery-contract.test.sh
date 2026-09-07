@@ -6,6 +6,29 @@ ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 
 production_compose="${ROOT}/beskid_infra/compose/production/docker-compose.yml"
 promotion_workflow="${ROOT}/.github/workflows/reusable-promote.yml"
+production_lane="${ROOT}/beskid_infra/config/coolify-production.json"
+staging_lane="${ROOT}/beskid_infra/config/coolify-staging.json"
+
+# Production cutovers must adopt the existing stateful volumes by their exact
+# Docker names. Project-scoped defaults would silently create empty databases
+# and artifact stores when Coolify applies the rendered Compose document.
+for volume_contract in \
+	'auth-data|s4ir1ovgqtubarqeql3gf3pz_auth-data' \
+	'tracker-data|beskid-sites_tracker-data' \
+	'pckg_pg_data|s4ir1ovgqtubarqeql3gf3pz_pckg-pg-data' \
+	'pckg_packages|beskid-pckg_pckg-artifacts'; do
+	volume_key="${volume_contract%%|*}"
+	docker_name="${volume_contract#*|}"
+	if ! jq -e --arg key "${volume_key}" --arg name "${docker_name}" \
+		'.external_volumes[$key] == $name' "${production_lane}" >/dev/null; then
+		echo "production volume ${volume_key} must adopt external Docker volume ${docker_name}" >&2
+		exit 1
+	fi
+done
+if ! jq -e '(.external_volumes // {}) == {}' "${staging_lane}" >/dev/null; then
+	echo "staging must retain isolated project-scoped volumes" >&2
+	exit 1
+fi
 
 # Every required delivery image must have one service in the canonical Compose
 # template. render-release-compose.sh enforces this at deployment time; keep a

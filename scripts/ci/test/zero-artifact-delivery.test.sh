@@ -10,6 +10,7 @@ platform="${root}/.github/workflows/platform-delivery.yml"
 promote="${root}/.github/workflows/reusable-promote.yml"
 compiler="${root}/.github/workflows/compiler.yml"
 compiler_release="${root}/.github/workflows/compiler-release.yml"
+handoff_cleanup="${root}/.github/workflows/compiler-handoff-cleanup.yml"
 tracker_delivery="${root}/.github/workflows/tracker-platform-delivery.yml"
 open_vsx="${root}/.github/workflows/publish-open-vsx.yml"
 distribute="${root}/.github/workflows/distribute.yml"
@@ -19,6 +20,15 @@ if rg -q 'actions/(upload|download)-artifact@' "${root}/.github/workflows"; then
   exit 1
 fi
 
+if rg -Fq 'schedule:' "${compiler_release}"; then
+  echo 'compiler handoff cleanup schedule would emit spurious Compiler release workflow_run events' >&2
+  exit 1
+fi
+[[ -f "${handoff_cleanup}" ]] || {
+  echo 'compiler handoff cleanup does not have an isolated scheduled workflow' >&2
+  exit 1
+}
+
 if rg -q 'gh run download' "${compiler_release}" "${open_vsx}" "${distribute}"; then
   echo 'compiler release transport still downloads GitHub Actions artifacts' >&2
   exit 1
@@ -26,15 +36,38 @@ fi
 
 for required in \
   'handoff_tag:' \
-  'handoff_tag=compiler-handoff-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}' \
+  'handoff_tag=compiler-handoff-${GITHUB_RUN_ID}' \
   'github-release-handoff.sh init' \
   'github-release-handoff.sh upload' \
-  'github-release-handoff.sh download'; do
+  'github-release-handoff.sh download' \
+  'github-release-handoff.sh finalize' \
+  'github-release-handoff.sh cleanup'; do
   rg -Fq "${required}" "${compiler_release}" || {
     echo "compiler release is missing quota-independent handoff contract: ${required}" >&2
     exit 1
   }
 done
+
+rg -Fq 'github-release-handoff.sh cleanup' "${handoff_cleanup}" || {
+  echo 'scheduled compiler handoff workflow does not invoke age-based cleanup' >&2
+  exit 1
+}
+cleanup_line="$(rg -n 'github-release-handoff.sh cleanup' "${compiler_release}" | tail -n 1 | cut -d: -f1)"
+init_line="$(rg -n 'github-release-handoff.sh init' "${compiler_release}" | cut -d: -f1)"
+state_upload_line="$(rg -n 'github-release-handoff.sh upload' "${compiler_release}" | tail -n 1 | cut -d: -f1)"
+finalize_line="$(rg -n 'github-release-handoff.sh finalize' "${compiler_release}" | cut -d: -f1)"
+rg -Fq "if: steps.state.outputs.publishable == 'true'" "${compiler_release}" || {
+  echo 'compiler release can publicize a non-publishable handoff' >&2
+  exit 1
+}
+[[ "${cleanup_line}" -lt "${init_line}" ]] || {
+  echo 'compiler release does not clean expired handoffs before initializing the current handoff' >&2
+  exit 1
+}
+[[ "${state_upload_line}" -lt "${finalize_line}" ]] || {
+  echo 'compiler release finalizes its draft before retaining aggregate state and report' >&2
+  exit 1
+}
 
 rg -Fq 'run-ci-reported-command.sh' "${compiler}" || {
   echo 'compiler diagnostics must remain visible in GitHub job summaries' >&2

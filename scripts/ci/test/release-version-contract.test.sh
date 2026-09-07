@@ -37,6 +37,15 @@ grep -Fq 'bash ./scripts/ci/build-release-platform.sh' "${release_workflow}" || 
   fail 'compiler release workflow does not use the structured platform wrapper'
 grep -Fq 'handoff_tag: ${{ steps.release.outputs.handoff_tag }}' "${release_workflow}" || \
   fail 'compiler release workflow does not expose its GitHub Release handoff tag'
+grep -Fq "github.event.workflow_run.event == 'push'" "${release_workflow}" || \
+  fail 'compiler release workflow accepts non-push workflow_run sources into its privileged release path'
+grep -Fq 'github.event.workflow_run.head_repository.full_name == github.repository' "${release_workflow}" || \
+  fail 'compiler release workflow does not require the triggering run to originate in the same repository'
+grep -Fq 'handoff_tag=compiler-handoff-${GITHUB_RUN_ID}' "${release_workflow}" || \
+  fail 'compiler release handoff identity is not stable across failed-job reruns'
+if grep -Fq 'handoff_tag=compiler-handoff-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}' "${release_workflow}"; then
+  fail 'compiler release handoff identity still changes across failed-job reruns'
+fi
 grep -Fq "find release-assets -name 'platform-result-*.json'" "${release_workflow}" || \
   fail 'compiler release workflow does not retain independent platform reports in its handoff release'
 grep -Fq 'release-state.json' "${release_workflow}" || \
@@ -48,8 +57,11 @@ grep -Fq 'workflow_run:' "${open_vsx_workflow}" || \
   fail 'Open VSX is not triggered by a completed workflow run'
 grep -Fq 'workflows: [Compiler release]' "${open_vsx_workflow}" || \
   fail 'Open VSX does not consume Compiler release workflow runs'
-grep -Fq 'compiler-handoff-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}' "${open_vsx_workflow}" || \
+grep -Fq 'compiler-handoff-${{ github.event.workflow_run.id }}' "${open_vsx_workflow}" || \
   fail 'Open VSX does not address the triggering compiler GitHub Release handoff'
+if grep -Fq 'github.event.workflow_run.run_attempt' "${open_vsx_workflow}"; then
+  fail 'Open VSX handoff lookup changes across failed-job reruns'
+fi
 grep -Fq -- '--pattern release-state.json' "${open_vsx_workflow}" || \
   fail 'Open VSX does not consume release state from the compiler GitHub Release handoff'
 grep -Fq 'BESKID_RELEASE_VERSION: ${{ steps.release-version.outputs.version }}' "${open_vsx_workflow}" || \
@@ -65,8 +77,11 @@ grep -Fq 'workflow_run:' "${distribute_workflow}" || \
   fail 'Distribute is not triggered by a completed workflow run'
 grep -Fq 'workflows: [Compiler release]' "${distribute_workflow}" || \
   fail 'Distribute does not consume Compiler release workflow runs'
-grep -Fq 'compiler-handoff-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}' "${distribute_workflow}" || \
+grep -Fq 'compiler-handoff-${{ github.event.workflow_run.id }}' "${distribute_workflow}" || \
   fail 'Distribute does not address the triggering compiler GitHub Release handoff'
+if grep -Fq 'github.event.workflow_run.run_attempt' "${distribute_workflow}"; then
+  fail 'Distribute handoff lookup changes across failed-job reruns'
+fi
 grep -Fq -- '--pattern release-state.json' "${distribute_workflow}" || \
   fail 'Distribute does not consume release state from the compiler GitHub Release handoff'
 grep -Fq 'validate_distribution_version "${version}"' "${distribute_workflow}" || \

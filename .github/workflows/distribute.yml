@@ -103,7 +103,7 @@ jobs:
         id: version
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
-          HANDOFF_TAG: compiler-handoff-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}
+          HANDOFF_TAG: compiler-handoff-${{ github.event.workflow_run.id }}
         run: |
           set -euo pipefail
           version=""

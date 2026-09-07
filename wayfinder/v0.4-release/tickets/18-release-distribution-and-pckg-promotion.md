@@ -35,4 +35,3 @@ GitHub-authorized Coolify staging and production promotions?
    readable from the public registry.
 7. Production promotion passes its protected-environment gate and repeats the
    exact digest and smoke verification.
-

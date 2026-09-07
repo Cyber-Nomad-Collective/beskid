@@ -49,7 +49,7 @@ jq -e '.builds.cli.status == "success" and .builds.lsp.status == "failed"' \
   "${TMP}/unstable-partial/platform-result-x86_64-test.json" >/dev/null
 jq -e '.stage == "native-release-build" and
   (.builds.lsp.command | contains("beskid_lsp")) and
-  .builds.lsp.log_path == "release-logs/x86_64-test-lsp.log" and
+  .builds.lsp.log_path == "x86_64-test-lsp.log" and
   (.builds.lsp.reason | length) > 0' \
   "${TMP}/unstable-partial/platform-result-x86_64-test.json" >/dev/null
 test -f "${TMP}/unstable-partial/release-logs/x86_64-test-lsp.log"
@@ -67,7 +67,7 @@ mkdir -p "${TMP}/reporter-failed"
     "${SCRIPT}" x86_64-test beskid-test beskid_lsp-test 0.4.1 unstable .
 )
 jq -e '(.diagnostics | length) == 1 and .diagnostics[0].stage == "lsp-release-build" and
-  .diagnostics[0].identifier == "unavailable" and .diagnostics[0].log_path == "release-logs/x86_64-test-lsp.log" and
+  .diagnostics[0].identifier == "unavailable" and .diagnostics[0].log_path == "x86_64-test-lsp.log" and
   (.diagnostics[0].reason | contains("structured reporter failed"))' \
   "${TMP}/reporter-failed/platform-result-x86_64-test.json" >/dev/null
 

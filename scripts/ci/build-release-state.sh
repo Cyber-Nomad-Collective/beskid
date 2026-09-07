@@ -15,6 +15,21 @@ case "${channel}" in stable|unstable) ;; *) echo "unsupported channel: ${channel
 [[ "$#" -gt 0 ]] || { echo 'at least one platform result is required' >&2; exit 1; }
 
 results_json="$(jq -s 'sort_by(.target)' "$@")"
+if [[ -n "${HANDOFF_RELEASE_URL:-}" ]]; then
+  handoff_release_url="${HANDOFF_RELEASE_URL%/}"
+  results_json="$(jq --arg release_url "${handoff_release_url}" '
+    def release_asset_url:
+      if type == "string" and length > 0 and
+          (startswith("http://") or startswith("https://")) | not
+      then $release_url + "/" + .
+      else .
+      end;
+    map(
+      .builds |= with_entries(.value.log_path |= release_asset_url)
+      | .diagnostics |= ((. // []) | map(.log_path |= release_asset_url))
+    )
+  ' <<<"${results_json}")"
+fi
 gate_diagnostics='[]'
 test_results='[]'
 if [[ -n "${GATE_REPORT_DIR:-}" && -d "${GATE_REPORT_DIR}/stages" ]]; then

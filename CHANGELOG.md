@@ -72,6 +72,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   each public HTTPS URL separately for post-deployment smoke and package
   publication. This prevents an internal container port from being mistaken
   for a public TLS listener.
+- Render production with the six exact existing external state volumes while
+  leaving staging on isolated project-scoped volumes, preventing a Coolify
+  promotion from silently attaching empty databases or artifact stores.
 - Replace the stale corelib workspace-bundle publisher with one fail-closed
   native release path for the exact eight-package production corelib closure
   and all seven first-party templates. The workflow initializes both
