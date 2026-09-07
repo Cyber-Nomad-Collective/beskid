@@ -43,8 +43,7 @@ canonical_smoke_urls() {
   domains_config="$(cd "$(dirname "$0")/../../beskid_infra/config" && pwd)/domains.json"
   jq -er --arg lane "${lane}" '
     .[$lane].services as $services
-    | (["site", "auth", "platform-spec", "learn", "tracker", "nexus"]
-      + (if $lane == "production" then ["pckg"] else [] end)) as $names
+    | (["site", "auth", "platform-spec", "learn", "tracker", "nexus", "pckg"]) as $names
     | if $services | type == "object" and all($names[];
         ($services[.] | type == "object")
         and ($services[.].host | type == "string" and test("^[A-Za-z0-9.-]+$") and length > 0)
@@ -60,7 +59,7 @@ canonical_smoke_urls() {
         endpoint("learn"; "/api/health"),
         endpoint("tracker"; "/api/health"),
         endpoint("nexus"; "/api/health")
-      ] + (if $lane == "production" then [endpoint("pckg"; "/health/ready")] else [] end)
+      ] + [endpoint("pckg"; "/health/ready")]
     | .[]
   ' "${domains_config}"
 }

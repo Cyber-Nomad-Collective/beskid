@@ -68,6 +68,13 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Initialize the compiler submodule before building the Rust-backed pckg image,
+  advancing its delivery pointer to the no-session bearer-publishing compiler
+  integration.
+- Advance `beskid_infra` to the Rust pckg Compose configuration, which leaves
+  session authentication disabled until Coolify has a trusted forward-auth
+  boundary, carries a seed-derived canonical database URL, and
+  validates pckg readiness in staging before promotion.
 - `compiler` delivery pointer now includes authenticated Bearer API-key
   publication plus compositional associated-type references, with parser,
   semantic, and fail-closed ABI/layout coverage.

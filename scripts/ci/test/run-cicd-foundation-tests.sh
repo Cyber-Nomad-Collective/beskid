@@ -100,7 +100,7 @@ fi
 pckg_image_block="$(sed -n '/^  image-pckg:/,/^  manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
 for required in \
   'context: .' \
-  'submodules: pckg beskid_web_common' \
+  'submodules: compiler pckg beskid_web_common' \
   'healthcheck-url: /health/ready' \
   "healthcheck-port: '8082'"; do
   if [[ "${pckg_image_block}" != *"${required}"* ]]; then
