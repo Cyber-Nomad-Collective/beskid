@@ -148,10 +148,9 @@ jobs:
             "stable"|"unstable") ;;
             *) echo "Unsupported release channel: ${release_channel:-<empty>}" >&2; exit 1 ;;
           esac
-          [[ "${version}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || {
-            echo "Resolved version is absent or not strict X.Y.Z semver: ${version:-<empty>}" >&2
-            exit 1
-          }
+          # shellcheck source=/dev/null
+          source beskid_distrib/scripts/version.sh
+          validate_distribution_version "${version}"
           echo "version=${version}" >> "${GITHUB_OUTPUT}"
           echo "release_channel=${release_channel}" >> "${GITHUB_OUTPUT}"
           echo "Resolved release version: ${version} (channel: ${release_channel})"
@@ -325,6 +324,20 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Generate Windows installer icon
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v magick >/dev/null || {
+            echo 'ImageMagick is required to generate the Windows installer icon.' >&2
+            exit 1
+          }
+          magick beskid_distrib/assets/icons/beskid-512.png \
+            -resize 256x256 \
+            -define icon:auto-resize="256,128,96,64,48,32,16" \
+            beskid_distrib/assets/icons/beskid.ico
+          test -s beskid_distrib/assets/icons/beskid.ico
+
       - name: Build MSI
         shell: bash
         env:
@@ -365,7 +378,8 @@ jobs:
     if: >-
       ${{
         needs.resolve-rolling.outputs.should_run == 'true' &&
-        needs.resolve-rolling.outputs.homebrew_available == 'true'
+        needs.resolve-rolling.outputs.homebrew_available == 'true' &&
+        needs.resolve-rolling.outputs.release_channel == 'stable'
       }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 15
@@ -479,8 +493,8 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          bash ../beskid_distrib/scripts/fetch-release-assets.sh cli "${VERSION}" x86_64-unknown-linux-gnu beskid
-          bash ../beskid_distrib/scripts/fetch-release-assets.sh lsp "${VERSION}" x86_64-unknown-linux-gnu beskid_lsp
+          bash ../beskid_distrib/scripts/fetch-release-assets.sh cli "${VERSION}" x86_64-unknown-linux-gnu
+          bash ../beskid_distrib/scripts/fetch-release-assets.sh lsp "${VERSION}" x86_64-unknown-linux-gnu
 
       - name: Build .deb
         env:
@@ -514,7 +528,8 @@ jobs:
     if: >-
       ${{
         needs.resolve-rolling.outputs.should_run == 'true' &&
-        needs.resolve-rolling.outputs.snap_available == 'true'
+        needs.resolve-rolling.outputs.snap_available == 'true' &&
+        needs.resolve-rolling.outputs.release_channel == 'stable'
       }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 30
@@ -589,7 +604,7 @@ jobs:
             BESKID_VERSION=${{ needs.resolve-rolling.outputs.version }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/beskid:${{ needs.resolve-rolling.outputs.version }}
-            ghcr.io/${{ github.repository_owner }}/beskid:${{ needs.resolve-rolling.outputs.cli_rolling_tag }}
+            ghcr.io/${{ github.repository_owner }}/beskid:${{ needs.resolve-rolling.outputs.release_channel }}
 
       - name: Build + push runner image
         uses: docker/build-push-action@v6
@@ -601,7 +616,7 @@ jobs:
             BESKID_VERSION=${{ needs.resolve-rolling.outputs.version }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/beskid-runner:${{ needs.resolve-rolling.outputs.version }}
-            ghcr.io/${{ github.repository_owner }}/beskid-runner:${{ needs.resolve-rolling.outputs.cli_rolling_tag }}
+            ghcr.io/${{ github.repository_owner }}/beskid-runner:${{ needs.resolve-rolling.outputs.release_channel }}
 
   # This marker is the only completed-release state. It is written after every
   # platform publication succeeds, so a failed fan-out stays eligible for a

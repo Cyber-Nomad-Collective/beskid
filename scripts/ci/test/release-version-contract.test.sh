@@ -67,7 +67,7 @@ grep -Fq 'workflows: [Compiler release]' "${distribute_workflow}" || \
   fail 'Distribute does not consume Compiler release workflow runs'
 grep -Fq -- '--name compiler-release-state' "${distribute_workflow}" || \
   fail 'Distribute does not consume the compiler-release-state artifact'
-grep -Fq '^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$' "${distribute_workflow}" || \
-  fail 'Distribute does not fail closed on a non-strict semver version'
+grep -Fq 'validate_distribution_version "${version}"' "${distribute_workflow}" || \
+  fail 'Distribute does not validate the compiler-owned stable/unstable version shape'
 
 printf 'Global release version workflow contract tests OK\n'

@@ -17,6 +17,8 @@ on:
       - 'beskid_nexus/**'
       - 'pckg'
       - 'pckg/**'
+      - 'beskid_templates'
+      - 'beskid_templates/**'
       - 'beskid_infra'
       - 'beskid_infra/**'
       - 'package.json'
@@ -30,7 +32,7 @@ on:
         type: boolean
         default: false
       unstable:
-        description: Publish images and manifest without quality-gate blocking
+        description: Use the unstable release channel (quality gates still apply)
         type: boolean
         default: false
       apply-staging:
@@ -47,8 +49,11 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  corelib:
+    uses: ./.github/workflows/corelib.yml
+    secrets: inherit
+
   openspec:
-    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: openspec
@@ -57,7 +62,6 @@ jobs:
       command: bash scripts/ci/openspec-gate.sh
 
   conformance:
-    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: conformance
@@ -66,7 +70,6 @@ jobs:
       command: bash scripts/ci/conformance-gate.sh
 
   integration:
-    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: platform-integration
@@ -76,14 +79,12 @@ jobs:
       command: bash scripts/ci/platform-integration-gate.sh
 
   security:
-    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: supply-chain-security
       command: bash scripts/ci/security-policy-gate.sh
 
   shared-ui-nexus:
-    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.unstable }}
     uses: ./.github/workflows/reusable-quality.yml
     with:
       gate-name: shared-ui-nexus
@@ -93,10 +94,8 @@ jobs:
       command: bash scripts/ci/shared-ui-nexus-gate.sh
 
   image-site:
-    # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
-    # deploys to Coolify regardless of those pipelines' results; the gates still
-    # run in parallel as independent branch-protection checks.
+    # Image construction runs in parallel with the quality gates; the manifest
+    # and both Coolify promotions remain fail-closed on every required gate.
     permissions:
       contents: read
       packages: write
@@ -116,10 +115,8 @@ jobs:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
   image-auth:
-    # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
-    # deploys to Coolify regardless of those pipelines' results; the gates still
-    # run in parallel as independent branch-protection checks.
+    # Image construction runs in parallel with the quality gates; the manifest
+    # and both Coolify promotions remain fail-closed on every required gate.
     permissions:
       contents: read
       packages: write
@@ -139,10 +136,8 @@ jobs:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
   image-learn:
-    # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
-    # deploys to Coolify regardless of those pipelines' results; the gates still
-    # run in parallel as independent branch-protection checks.
+    # Image construction runs in parallel with the quality gates; the manifest
+    # and both Coolify promotions remain fail-closed on every required gate.
     permissions:
       contents: read
       packages: write
@@ -164,34 +159,9 @@ jobs:
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
-  image-platform-spec:
-    # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
-    # deploys to Coolify regardless of those pipelines' results; the gates still
-    # run in parallel as independent branch-protection checks.
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    uses: ./.github/workflows/reusable-image.yml
-    with:
-      name: beskid-platform-spec
-      repository: ghcr.io/cyber-nomad-collective/beskid-platform-spec
-      context: .
-      dockerfile: site/platform-spec/Dockerfile
-      build-args: |
-        BESKID_RELEASE_CHANNEL=${{ github.event_name == 'workflow_dispatch' && inputs.unstable && 'unstable' || 'stable' }}
-      submodules: beskid_web_common
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
-    secrets:
-      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-
   image-tracker:
-    # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
-    # deploys to Coolify regardless of those pipelines' results; the gates still
-    # run in parallel as independent branch-protection checks.
+    # Image construction runs in parallel with the quality gates; the manifest
+    # and both Coolify promotions remain fail-closed on every required gate.
     permissions:
       contents: read
       packages: write
@@ -217,10 +187,8 @@ jobs:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
   image-nexus:
-    # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
-    # deploys to Coolify regardless of those pipelines' results; the gates still
-    # run in parallel as independent branch-protection checks.
+    # Image construction runs in parallel with the quality gates; the manifest
+    # and both Coolify promotions remain fail-closed on every required gate.
     permissions:
       contents: read
       packages: write
@@ -242,10 +210,8 @@ jobs:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
   image-pckg:
-    # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
-    # deploys to Coolify regardless of those pipelines' results; the gates still
-    # run in parallel as independent branch-protection checks.
+    # Image construction runs in parallel with the quality gates; the manifest
+    # and both Coolify promotions remain fail-closed on every required gate.
     permissions:
       contents: read
       packages: write
@@ -261,7 +227,7 @@ jobs:
       # Keep the context at the repository root so file:../../beskid_web_common exists.
       context: .
       dockerfile: pckg/Dockerfile
-      submodules: compiler pckg beskid_web_common
+      submodules: beskid_bsol compiler pckg beskid_web_common
       healthcheck-url: /health/ready
       healthcheck-port: '8082'
       # Hard gate: a failed pckg build/push fails the whole delivery. The
@@ -277,40 +243,38 @@ jobs:
   manifest:
     # A manifest is the promotion boundary. It must only exist when every
     # required validation and image lane from this run succeeded.
-    needs: [openspec, conformance, integration, security, shared-ui-nexus, image-site, image-auth, image-learn, image-platform-spec, image-tracker, image-nexus, image-pckg]
+    needs: [corelib, openspec, conformance, integration, security, shared-ui-nexus, image-site, image-auth, image-learn, image-tracker, image-nexus, image-pckg]
     if: >-
       ${{
         !cancelled() &&
+        needs.corelib.result == 'success' &&
         needs.image-site.result == 'success' &&
         needs.image-auth.result == 'success' &&
         needs.image-learn.result == 'success' &&
-        needs.image-platform-spec.result == 'success' &&
         needs.image-tracker.result == 'success' &&
         needs.image-nexus.result == 'success' &&
         needs.image-pckg.result == 'success' &&
         (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable))) &&
-        (
-          inputs.unstable ||
-          (
-            needs.openspec.result == 'success' &&
-            needs.conformance.result == 'success' &&
-            needs.integration.result == 'success' &&
-            needs.security.result == 'success' &&
-            needs.shared-ui-nexus.result == 'success'
-          )
-        )
+        needs.openspec.result == 'success' &&
+        needs.conformance.result == 'success' &&
+        needs.integration.result == 'success' &&
+        needs.security.result == 'success' &&
+        needs.shared-ui-nexus.result == 'success'
       }}
     permissions:
       contents: read
-      actions: read
     uses: ./.github/workflows/reusable-release-manifest.yml
     with:
-      artifact-name: release-manifest
+      site-record: ${{ needs.image-site.outputs.image-record }}
+      auth-record: ${{ needs.image-auth.outputs.image-record }}
+      learn-record: ${{ needs.image-learn.outputs.image-record }}
+      tracker-record: ${{ needs.image-tracker.outputs.image-record }}
+      nexus-record: ${{ needs.image-nexus.outputs.image-record }}
+      pckg-record: ${{ needs.image-pckg.outputs.image-record }}
 
   staging:
     needs: manifest
-    # Deploy to Coolify staging regardless of upstream gate results; only skip when
-    # the run itself is cancelled.
+    # The manifest exists only after every required quality and image gate.
     if: ${{ !cancelled() && needs.manifest.result == 'success' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.apply-staging)) }}
     permissions:
       actions: read
@@ -321,6 +285,8 @@ jobs:
     with:
       environment: staging
       manifest-run-id: ${{ format('{0}', github.run_id) }}
+      manifest-base64: ${{ needs.manifest.outputs.manifest-base64 }}
+      manifest-sha256: ${{ needs.manifest.outputs.manifest-sha256 }}
       # Auto-apply staging on every green push to main; dispatch keeps
       # apply-staging for manual re-apply.
       apply: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.apply-staging) }}
@@ -340,5 +306,37 @@ jobs:
     with:
       environment: production
       manifest-run-id: ${{ format('{0}', github.run_id) }}
+      manifest-base64: ${{ needs.manifest.outputs.manifest-base64 }}
+      manifest-sha256: ${{ needs.manifest.outputs.manifest-sha256 }}
       apply: true
     secrets: inherit
+
+  publish-packages:
+    name: Publish corelib and templates
+    needs: production
+    if: ${{ !cancelled() && needs.production.result == 'success' }}
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 45
+    environment: production
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-compiler-gate
+        with:
+          compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+
+      - name: Initialize first-party templates
+        run: bash ./scripts/ci/init-submodules.sh beskid_templates
+
+      - name: Rehearse the complete package publication
+        run: bash ./scripts/ci/corelib-publish.sh patch --dry-run
+
+      - name: Publish corelib and template packages through the promoted Rust registry
+        env:
+          BESKID_PCKG_API_KEY: ${{ secrets.BESKID_PCKG_KEY }}
+          BESKID_PCKG_BASE_URL: https://pckg.beskid-lang.org:8082
+        run: bash ./scripts/ci/corelib-publish.sh patch

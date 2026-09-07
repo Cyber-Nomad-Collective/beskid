@@ -30,4 +30,4 @@ Unless noted, failures print a diagnostic report (miette) and exit non-zero.
 | [`update`](/book/reference/cli/commands/update/) | Update resolution and materialized workspace |
 | [`corelib`](/book/reference/cli/commands/corelib/) | Materialize embedded corelib template |
 | [`new`](/book/reference/cli/commands/new/) | List, install, and instantiate project/workspace/item templates |
-| [`pckg`](/book/reference/cli/commands/pckg/) | **pckg** registry client: `pack` (`.bpk`), `upload` (registry-assigned version), search, download, yank, … |
+| [`pckg`](/book/reference/cli/commands/pckg/) | **pckg** registry client: `pack` (`.bpk` with exact semver), `upload` (artifact-bound version), search, download, yank, … |

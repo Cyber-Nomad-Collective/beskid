@@ -11,6 +11,8 @@ for required in \
   "if: \${{ !cancelled() && needs.manifest.result == 'success' && needs.staging.result == 'success' }}" \
   'environment: production' \
   "manifest-run-id: \${{ format('{0}', github.run_id) }}" \
+  'manifest-base64: ${{ needs.manifest.outputs.manifest-base64 }}' \
+  'manifest-sha256: ${{ needs.manifest.outputs.manifest-sha256 }}' \
   'apply: true'; do
   if [[ "${production_block}" != *"${required}"* ]]; then
     echo "automatic production promotion is missing required contract: ${required}" >&2

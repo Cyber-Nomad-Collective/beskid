@@ -50,7 +50,7 @@ canonical_smoke_urls() {
         and ($services[.].port | type == "number" and floor == . and . >= 1 and . <= 65535)
       ) then . else error("canonical smoke services are missing or invalid for " + $lane) end
     | def endpoint($name; $path):
-        "https://" + $services[$name].host + $path;
+        "https://" + $services[$name].host + ":" + ($services[$name].port | tostring) + $path;
       [
         endpoint("site"; "/"),
         endpoint("site"; "/document.txt"),

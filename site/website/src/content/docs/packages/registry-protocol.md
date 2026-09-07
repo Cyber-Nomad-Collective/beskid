@@ -17,7 +17,7 @@ description: HTTP protocol between the pckg registry server and clients (for exa
 - `GET /api/packages` (listing)
 - `POST /api/packages` (create / upsert package metadata)
 - `GET /api/packages/{packageNameOrId}`
-- `POST /api/packages/{packageName}/publish` — multipart: **`artifact`** (required, `.bpk` zip). **`version`** is optional; when omitted the server assigns the next semver (optional **`versionBump`**: `patch`, `minor`, or `major`; defaults to patch). Optional **`checksumSha256`**, **`manifestJson`**.
+- `POST /api/packages/{packageName}/versions` — multipart: **`artifact`** (required `.bpk` zip), **`version`** (required and identical to artifact-root `package.json`), and **`checksumSha256`** (required and identical to the uploaded bytes). The package record must already exist and belong to the authenticated publisher.
 - `GET /api/packages/{packageName}/versions`
 - `GET /api/packages/{packageName}/versions/{version}/download`
 - `POST /api/packages/{packageName}/versions/{version}/yank`
@@ -25,12 +25,12 @@ description: HTTP protocol between the pckg registry server and clients (for exa
 
 ## Auth model
 
-Bearer token auth for publish and owner operations.
+Bearer token auth for package metadata, artifact publication, and owner operations.
 
-Required publish roles:
+Required publication scope:
 
-- `Publisher`
-- `SuperAdmin`
+- an active pckg bearer key carrying `publish`
+- ownership of the package record (administrators may operate under separately granted registry permissions)
 
 ## Error envelope
 

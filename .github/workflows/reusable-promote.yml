@@ -7,9 +7,13 @@ on:
         description: staging or production
         required: true
         type: string
-      manifest-artifact:
-        required: false
-        default: release-manifest
+      manifest-base64:
+        description: Base64-encoded immutable release manifest from this workflow run
+        required: true
+        type: string
+      manifest-sha256:
+        description: Expected lowercase SHA-256 of the decoded release manifest
+        required: true
         type: string
       manifest-run-id:
         description: Authoritative platform-delivery run that produced the manifest
@@ -66,16 +70,18 @@ jobs:
       - name: Initialize infrastructure source
         run: ./scripts/ci/init-submodules.sh beskid_infra
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          name: ${{ inputs.manifest-artifact }}
-          path: release
-          run-id: ${{ inputs.manifest-run-id }}
-          github-token: ${{ github.token }}
-
-      - name: Verify release manifest checksum
-        working-directory: release
-        run: sha256sum --check release-manifest.json.sha256
+      - name: Verify release manifest output checksum
+        env:
+          MANIFEST_BASE64: ${{ inputs.manifest-base64 }}
+          EXPECTED_SHA256: ${{ inputs.manifest-sha256 }}
+        run: |
+          set -euo pipefail
+          [[ "${EXPECTED_SHA256}" =~ ^[0-9a-f]{64}$ ]] || { echo "invalid release manifest SHA-256" >&2; exit 1; }
+          mkdir -p release
+          printf '%s' "${MANIFEST_BASE64}" | base64 --decode >release/release-manifest.json
+          actual_sha256="$(sha256sum release/release-manifest.json | awk '{print $1}')"
+          [[ "${actual_sha256}" == "${EXPECTED_SHA256}" ]] || { echo "release manifest checksum mismatch" >&2; exit 1; }
+          ./scripts/ci/validate-release-manifest.sh release/release-manifest.json
 
       - name: Verify authoritative production source
         if: inputs.environment == 'production'

@@ -148,8 +148,11 @@ done
 pckg="$(<"${root}/pckg/Dockerfile")"
 for requirement in \
   'COPY beskid_web_common ./beskid_web_common' \
+  'COPY beskid_bsol ./beskid_bsol' \
   'pnpm install --dir /src/beskid_web_common --frozen-lockfile' \
   'pnpm install --dir /src/pckg/web --frozen-lockfile' \
+  '[workspace.dependencies]' \
+  'bsol = { path = "../beskid_bsol/crates/bsol" }' \
   'cargo build --release -p beskid_pckg_server' \
   'PCKG_ARTIFACT_ROOT=/app/packages' \
   '/health/ready'; do
@@ -158,6 +161,12 @@ for requirement in \
     exit 1
   fi
 done
+
+pckg_image_block="$(sed -n '/^  image-pckg:/,/^  release-manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
+if [[ "${pckg_image_block}" != *'submodules: beskid_bsol compiler pckg beskid_web_common'* ]]; then
+  echo "pckg image lane must check out the bsol parser required by artifact validation" >&2
+  exit 1
+fi
 
 for manifest in site/auth/package.json site/platform-spec/package.json beskid_tracker/package.json beskid_nexus/gitnexus/package.json; do
   source='../../beskid_web_common/packages/beskid-auth-client'

@@ -14,7 +14,6 @@ for repository in \
 	ghcr.io/cyber-nomad-collective/beskid-site \
 	ghcr.io/cyber-nomad-collective/beskid-auth \
 	ghcr.io/cyber-nomad-collective/beskid-learn \
-	ghcr.io/cyber-nomad-collective/beskid-platform-spec \
 	ghcr.io/cyber-nomad-collective/beskid-tracker \
 	ghcr.io/cyber-nomad-collective/beskid-nexus \
 	ghcr.io/cyber-nomad-collective/beskid-pckg; do

@@ -68,6 +68,33 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- Carry the six active platform image records and the immutable release
+  manifest through same-run GitHub workflow outputs instead of quota-bound
+  Actions artifacts. Staging and production now decode and verify the same
+  manifest checksum before Coolify mutation, image security results remain
+  OCI-native or in GitHub logs, and package publication remains gated on the
+  completed production promotion.
+- Coordinate exact corelib dependency versions through each staged
+  `package.json`, leaving source `.bproj` files unchanged while the canonical
+  compiler packer emits path-independent registry artifacts. Current Book
+  pages now document `pckg upload`, artifact-bound semver, and
+  `POST /api/packages/{name}/versions`.
+- Make the platform release manifest depend on the reusable 61-target corelib
+  gate, keep unstable channel builds behind the same quality gates, and publish
+  the eight production corelib packages plus seven first-party templates only
+  after GitHub has completed the protected production promotion. The final job
+  performs a credential-free 15-artifact rehearsal before mutation and targets
+  the explicit-port Rust registry at `https://pckg.beskid-lang.org:8082`.
+- Derive every post-deployment smoke URL from both the host and explicit service
+  port in `beskid_infra/config/domains.json`, eliminating the parallel
+  host-only URL shape that could probe a legacy service.
+- Replace the stale corelib workspace-bundle publisher with one fail-closed
+  native release path for the exact eight-package production corelib closure
+  and all seven first-party templates. The workflow initializes both
+  submodules, checks pckg readiness and canonical bearer credentials, packs
+  and validates every `.bpk` before the first registry mutation, and exposes a
+  no-secret `--dry-run` contract. Development/test-only corelib packages stay
+  explicitly excluded.
 - Initialize the compiler submodule before building the Rust-backed pckg image,
   advancing its delivery pointer to the no-session bearer-publishing compiler
   integration.
@@ -192,6 +219,19 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   `[workspace.dependencies]` — no crate in the workspace references trybuild.
 
 ### Fixed
+
+- Repair the compiler distribution fan-out: accept the canonical unstable
+  release identity, preserve Debian asset filenames, isolate stable-only
+  Homebrew and Snap publication, emit canonical container channel tags, and
+  provision the Windows installer icon before packaging.
+
+- Keep the Coolify deployment happy-path contract aligned with the active pckg
+  lane by reporting its exact release digest while retaining a separate stale
+  application to exercise orphan-tolerant readiness checks.
+
+- Regenerate the OpenSpec catalog after the repository guidance update so the
+  conformance and OpenSpec delivery gates agree on the authoritative document
+  hash.
 
 - 26 stale `semantic_facts` integration tests in `beskid_queries`: 23 built
   `ProgramAssembly` with `SyntaxGenerationId(0)` but called

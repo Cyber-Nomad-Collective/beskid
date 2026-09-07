@@ -29,10 +29,9 @@ v0.4.0 released with all GitHub CI/CD gates green: 100% corelib test matrix pass
 
 ## Not yet specified
 
-- **Corelib test matrix full run** — requires CI (builds beskid_cli --release, stages runtime kit, runs 61-target test suite). Local corelib gate is too slow to run here; triggered via `corelib.yml` workflow on push to main.
-
-- **CI/CD verification and staging deployment** — depends on all prior tickets completing; a final integration/verification ticket will be created
-- **Release version bump and tag** — depends on CHANGELOG cutoff and CI green; will be created as the final task once all gates pass
+- **Release version bump and tag** — the distributed version is minted as
+  `0.4.<GitHub run number>` by the compiler workflow; the final stable/unstable
+  channel decision follows the end-to-end distribution and promotion evidence.
 
 ## Out of scope
 

@@ -27,6 +27,8 @@ bash "${root}/scripts/ci/test/post-deploy-smoke.test.sh"
 bash "${root}/scripts/ci/test/shared-ui-nexus-gate-contract.test.sh"
 bash "${root}/scripts/ci/test/platform-stylesheet-contract.test.sh"
 bash "${root}/scripts/ci/test/platform-delivery-fail-closed.test.sh"
+bash "${root}/scripts/ci/test/release-manifest-active-lanes.test.sh"
+bash "${root}/scripts/ci/test/zero-artifact-delivery.test.sh"
 bash "${root}/scripts/ci/test/image-preparation-contract.test.sh"
 bash "${root}/scripts/ci/test/automatic-production-promotion.test.sh"
 
@@ -35,24 +37,44 @@ bash "${root}/scripts/ci/test/automatic-production-promotion.test.sh"
 CORELIB_QUALITY_ONLY=1 "${root}/scripts/ci/corelib-gate.sh"
 bash "${root}/scripts/ci/test/corelib-gate-report.test.sh"
 bash "${root}/scripts/ci/test/corelib-workflow-report-contract.test.sh"
+bash "${root}/scripts/ci/test/corelib-publish-contract.test.sh"
 
 mkdir -p "${tmp}/records" "${tmp}/bin"
 cat >"${tmp}/records/site.json" <<'JSON'
 {"name":"beskid-site","repository":"ghcr.io/cyber-nomad-collective/beskid-site","digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
 JSON
-cat >"${tmp}/records/platform-spec-image.json" <<'JSON'
-{"name":"beskid-platform-spec","repository":"ghcr.io/cyber-nomad-collective/beskid-platform-spec","digest":"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
+cat >"${tmp}/records/auth.json" <<'JSON'
+{"name":"beskid-auth","repository":"ghcr.io/cyber-nomad-collective/beskid-auth","digest":"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
+JSON
+cat >"${tmp}/records/learn.json" <<'JSON'
+{"name":"beskid-learn","repository":"ghcr.io/cyber-nomad-collective/beskid-learn","digest":"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
+JSON
+cat >"${tmp}/records/tracker.json" <<'JSON'
+{"name":"beskid-tracker","repository":"ghcr.io/cyber-nomad-collective/beskid-tracker","digest":"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
+JSON
+cat >"${tmp}/records/nexus.json" <<'JSON'
+{"name":"beskid-nexus","repository":"ghcr.io/cyber-nomad-collective/beskid-nexus","digest":"sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
 JSON
 cat >"${tmp}/records/pckg-image.json" <<'JSON'
-{"name":"beskid-pckg","repository":"ghcr.io/cyber-nomad-collective/beskid-pckg","digest":"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
+{"name":"beskid-pckg","repository":"ghcr.io/cyber-nomad-collective/beskid-pckg","digest":"sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
 JSON
 cat >"${tmp}/compose.yml" <<'YAML'
 name: beskid-platform-production
 services:
   site:
     image: ghcr.io/cyber-nomad-collective/beskid-site:${BESKID_RELEASE_TAG:?immutable manifest required}
-  platform-spec:
-    image: ghcr.io/cyber-nomad-collective/beskid-platform-spec:${BESKID_RELEASE_TAG:?immutable manifest required}
+  auth:
+    image: ghcr.io/cyber-nomad-collective/beskid-auth:${BESKID_RELEASE_TAG:?immutable manifest required}
+  learn:
+    image: ghcr.io/cyber-nomad-collective/beskid-learn:${BESKID_RELEASE_TAG:?immutable manifest required}
+  tracker:
+    profiles:
+      - tracker
+    image: ghcr.io/cyber-nomad-collective/beskid-tracker:${BESKID_RELEASE_TAG:?immutable manifest required}
+  nexus:
+    profiles:
+      - nexus
+    image: ghcr.io/cyber-nomad-collective/beskid-nexus:${BESKID_RELEASE_TAG:?immutable manifest required}
   pckg:
     profiles:
       - pckg
@@ -69,7 +91,8 @@ export GITHUB_WORKFLOW_REF=local-test
 "${root}/scripts/ci/build-release-manifest.sh" "${tmp}/records" "${tmp}/release.json"
 "${root}/scripts/ci/render-release-compose.sh" "${tmp}/release.json" "${tmp}/compose.yml" "${tmp}/rendered.yml"
 rg -q 'beskid-site@sha256:a{64}' "${tmp}/rendered.yml"
-rg -q 'beskid-platform-spec@sha256:b{64}' "${tmp}/rendered.yml"
+rg -q 'beskid-auth@sha256:b{64}' "${tmp}/rendered.yml"
+rg -q 'beskid-pckg@sha256:f{64}' "${tmp}/rendered.yml"
 rg -q 'image: postgres:16' "${tmp}/rendered.yml"
 
 for dockerfile in \
@@ -100,7 +123,7 @@ fi
 pckg_image_block="$(sed -n '/^  image-pckg:/,/^  manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
 for required in \
   'context: .' \
-  'submodules: compiler pckg beskid_web_common' \
+  'submodules: beskid_bsol compiler pckg beskid_web_common' \
   'healthcheck-url: /health/ready' \
   "healthcheck-port: '8082'"; do
   if [[ "${pckg_image_block}" != *"${required}"* ]]; then
@@ -333,7 +356,7 @@ done
 case "${method}:${url}" in
   GET:*/services/*)
     if [[ -f "${MOCK_COOLIFY_STATE}/deployed" ]]; then
-      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[{"uuid":"site","name":"site","image":"ghcr.io/cyber-nomad-collective/beskid-site@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"},{"uuid":"platform-spec","name":"platform-spec","image":"ghcr.io/cyber-nomad-collective/beskid-platform-spec@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","status":"running:healthy"},{"uuid":"pckg","name":"pckg","image":"ghcr.io/x/pckg:${IMAGE_TAG:-main}","status":"exited"}]}'
+      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[{"uuid":"site","name":"site","image":"ghcr.io/cyber-nomad-collective/beskid-site@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"},{"uuid":"auth","name":"auth","image":"ghcr.io/cyber-nomad-collective/beskid-auth@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","status":"running:healthy"},{"uuid":"learn","name":"learn","image":"ghcr.io/cyber-nomad-collective/beskid-learn@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","status":"running:healthy"},{"uuid":"tracker","name":"tracker","image":"ghcr.io/cyber-nomad-collective/beskid-tracker@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","status":"running:healthy"},{"uuid":"old-worker","name":"old-worker","image":"ghcr.io/example/old-worker:${IMAGE_TAG:-main}","status":"exited"}]}'
     else
       echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[]}'
     fi
@@ -465,7 +488,7 @@ done
 case "${method}:${url}" in
   GET:*/services/*)
     if [[ -f "${MOCK_COOLIFY_STATE}/deployed" ]]; then
-      echo '{"docker_compose_raw":"name: old\n","status":"running:healthy","applications":[{"uuid":"site","name":"site","image":"ghcr.io/cyber-nomad-collective/beskid-site@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","status":"running:healthy"},{"uuid":"platform-spec","name":"platform-spec","image":"ghcr.io/cyber-nomad-collective/beskid-platform-spec@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","status":"running:healthy"}]}'
+      echo '{"docker_compose_raw":"name: old\n","status":"running:healthy","applications":[{"uuid":"site","name":"site","image":"ghcr.io/cyber-nomad-collective/beskid-site@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","status":"running:healthy"}]}'
     else
       echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[]}'
     fi

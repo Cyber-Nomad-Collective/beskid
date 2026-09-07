@@ -58,11 +58,20 @@ jobs:
           GATE_JUNIT_DIR: ${{ runner.temp }}/gate-junit
         run: bash -euo pipefail -c "${QUALITY_COMMAND}"
 
-      - name: Upload gate evidence
+      - name: Summarize gate evidence
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: gate-junit-${{ inputs.gate-name }}
-          path: ${{ runner.temp }}/gate-junit/
-          if-no-files-found: ignore
-          retention-days: 30
+        env:
+          EVIDENCE_DIR: ${{ runner.temp }}/gate-junit
+          GATE_NAME: ${{ inputs.gate-name }}
+        run: |
+          set -euo pipefail
+          printf "### Gate evidence: %s\n\n" "${GATE_NAME}" >>"${GITHUB_STEP_SUMMARY}"
+          if [[ ! -d "${EVIDENCE_DIR}" ]]; then
+            echo 'No structured evidence files were emitted; see the gate log.' >>"${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
+          find "${EVIDENCE_DIR}" -type f -print0 | sort -z | while IFS= read -r -d '' file; do
+            bytes="$(wc -c <"${file}" | tr -d ' ')"
+            relative="${file#"${EVIDENCE_DIR}"/}"
+            printf -- "- %s (%s bytes)\n" "${relative}" "${bytes}" >>"${GITHUB_STEP_SUMMARY}"
+          done
