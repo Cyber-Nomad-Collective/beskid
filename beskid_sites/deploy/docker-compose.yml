@@ -47,10 +47,18 @@ volumes:
     name: beskid-registry-data
     external: true
   postgres-data:
+    name: s4ir1ovgqtubarqeql3gf3pz_pckg-pg-data
+    external: true
   auth-data:
+    name: s4ir1ovgqtubarqeql3gf3pz_auth-data
+    external: true
   tracker-data:
+    name: beskid-sites_tracker-data
+    external: true
   nexus-data:
   pckg-packages:
+    name: beskid-pckg_pckg-artifacts
+    external: true
   pckg-data:
 
 services:
