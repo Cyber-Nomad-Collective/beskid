@@ -159,6 +159,12 @@ for requirement in \
   fi
 done
 
+pckg_lane="$(sed -n '/^  image-pckg:/,/^  manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
+if [[ "${pckg_lane}" != *'submodules: compiler pckg beskid_bsol beskid_web_common'* ]]; then
+  echo "image-pckg must initialize the bsol submodule required by compiler" >&2
+  exit 1
+fi
+
 for manifest in site/auth/package.json beskid_tracker/package.json beskid_nexus/gitnexus/package.json; do
   source='../../beskid_web_common/packages/beskid-auth-client'
   if [[ "${manifest}" == beskid_tracker/* ]]; then

@@ -227,7 +227,7 @@ jobs:
       # Keep the context at the repository root so file:../../beskid_web_common exists.
       context: .
       dockerfile: pckg/Dockerfile
-      submodules: compiler pckg beskid_web_common
+      submodules: compiler pckg beskid_bsol beskid_web_common
       healthcheck-url: /health/ready
       healthcheck-port: '8082'
       # Hard gate: a failed pckg build/push fails the whole delivery. The
