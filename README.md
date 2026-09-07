@@ -13,7 +13,7 @@ This repository is the **superrepo**: one checkout that wires together the compi
 
 | Service | URL | What you get |
 | --- | --- | --- |
-| **Home & docs** | [beskid-lang.org](https://beskid-lang.org) | Landing page, [Platform specification](https://beskid-lang.org/platform-spec/), and [The Beskid Book](https://beskid-lang.org/book/) |
+| **Home & docs** | [beskid-lang.org](https://beskid-lang.org) | Landing page, [Beskid Docs](https://beskid-lang.org/docs/), and [The Beskid Book](https://beskid-lang.org/book/) |
 | **pckg** | [pckg.beskid-lang.org](https://pckg.beskid-lang.org) | Public package registry—browse packages, publish and fetch with the CLI |
 | **Tracker** | [tracker.beskid-lang.org](https://tracker.beskid-lang.org) | SQLite-backed roadmap and kanban; GitHub synchronization is limited to public bugs |
 
@@ -32,7 +32,7 @@ Beskid is an **AOT-native** language aimed at everyday business software: permis
 
 If your problem is finite element solvers or a game engine, use Rust or C++ and be happy. Beskid is not auditioning for that job.
 
-Status: opinionated project. Not finished. Not apologizing. Start with [The Beskid Book](https://beskid-lang.org/book/) or the [Platform specification](https://beskid-lang.org/platform-spec/) when you want normative rules, not informative sales pitch.
+Status: opinionated project. Not finished. Not apologizing. Start with [The Beskid Book](https://beskid-lang.org/book/) or [Beskid Docs](https://beskid-lang.org/docs/). Read the [Beskid Standard](https://beskid-lang.org/docs/standard/) when you need normative rules.
 
 ## This superrepo
 
@@ -51,7 +51,6 @@ beskid/                          ← you are here (aggregate root)
 ├── beskid_templates/            ← First-party `beskid.templates.*` scaffolds
 ├── beskid_infra/                ← Coolify Compose deploy, OpenBao, monitoring
 ├── site/
-│   ├── platform-spec/           ← OpenSpec reader, editor and embed APIs
 │   ├── website/                 ← Astro + Starlight informative Book/docs
 │   └── auth/                    ← GitHub OAuth hub for tracker, nexus, pckg
 ├── scripts/                     ← setup-environment.sh, install-deps.sh, CI helpers
@@ -81,7 +80,6 @@ Each row links to the README in that tree. Clone submodules before following tho
 | --- | --- | --- |
 | `site/` | Docs site + auth hub; Docker Compose for Coolify/GHCR | [site/README.md](site/README.md) |
 | `openspec/` | Canonical standard capabilities, change proposals, and migration catalog | [GUIDE.md](GUIDE.md) |
-| `site/platform-spec/` | OpenSpec reader/editor and framework-neutral embed service | [site/platform-spec/README.md](site/platform-spec/README.md) |
 | `site/website/` | Astro dev server and informative Beskid Book/docs | [site/website/README.md](site/website/README.md) |
 | `site/auth/` | Central GitHub OAuth; one app handoff to tracker, nexus, pckg | [site/auth/README.md](site/auth/README.md) |
 | `scripts/` | Toolchain install (`repo-deps.json`), submodule sync, setup wizard entry | [scripts/README.md](scripts/README.md) |
@@ -144,7 +142,7 @@ just deps-install   # install missing tools
 | VS Code extension dev | [beskid_vscode/README.md](beskid_vscode/README.md) — `bun install`, Extension Development Host |
 | Deploy / infra | [beskid_infra/docs/deploy-compose.md](beskid_infra/docs/deploy-compose.md) |
 
-Local CI sanity check for web/docs: `./validate-ci-local.sh` (submodule init, prebuild, platform-spec verify).
+Local CI sanity check for web/docs: `./validate-ci-local.sh` (submodule init and website prebuild).
 
 ---
 

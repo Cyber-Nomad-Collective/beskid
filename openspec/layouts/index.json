@@ -1,6 +1,6 @@
 {
 	"version": 1,
-	"description": "Enforceable layout registry for OpenSpec capabilities. OpenSpec is the native shape; every capability spec.md must conform to the layout resolved for its spec level. Consumed by scripts/openspec/validate-layouts.ts (authority gate) and site/platform-spec (rendering + static seed).",
+  "description": "Enforceable layout registry for OpenSpec capabilities. OpenSpec is the native shape; every capability spec.md must conform to the layout resolved for its spec level. Consumed by scripts/openspec/validate-layouts.ts.",
 	"default": "_default",
 	"bySpecLevel": {
 		"domain": "_default",

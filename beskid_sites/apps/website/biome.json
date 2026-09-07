@@ -1,0 +1,16 @@
+{
+	"root": false,
+	"extends": "//",
+	"overrides": [
+		{
+			"includes": ["src/jest-dom-augmentation.ts"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noExplicitAny": "off"
+					}
+				}
+			}
+		}
+	]
+}

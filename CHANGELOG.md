@@ -5,24 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.org).
+Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/standard/).
 
 ## [Unreleased]
 
+### Changed
+
+- Documentation: established `beskid-lang.org/docs/` as the single public technical documentation surface. The new STE-100 authoring skill and Docs pages link to OpenSpec for normative requirements and to the Book for learning material.
+- Local site deployment: publish Docs on port `4321` and Learn on port `4322` in both Compose files. The site guide now documents the source-build command and local URLs.
+
+### Removed
+
+- Platform Spec: retired the separate `site/platform-spec` application, its workspace member, CI build gate, and image-delivery lane. Legacy `/platform-spec/` URLs now redirect to `/docs/standard/`.
+- Snap distribution: remove the classic-confinement recipe, Store credential
+  contract, release job, and human approval path. v0.4 continues through the
+  Windows, macOS, Debian, Homebrew, container, corelib, template, and pckg lanes.
+
 ### Added
 
-- `beskid_sites/` — greenfield standalone pnpm workspace (own
-  `pnpm-workspace.yaml`; not a submodule, not in the root workspace) for the
-  Beskid web properties, built on TanStack Start (React + Nitro).
-  - `packages/beskid-ui-react` — the single canonical React component library
-    (`@cyber-nomad-collective/beskid-ui-react`), copied from
-    `beskid_web_common` and purged of non-React code. The old mixed Astro/React
-    `beskid-ui` package's React parts (`BeskidHub`, `LinkedAstFactsPanel`, hub
-    icons, `beskid-services`) were already byte-identical relocations into this
-    lib, so no duplicate package is created (DRY). Folded the missing
-    `theme.material.css` into the lib and resolved the
-    `@import "@beskid/material-theme"` to a local path so the lib is
-    self-contained.
+- `beskid_sites/` — an isolated pnpm integration workspace (not a submodule and
+  not part of the root workspace) for the consolidated TanStack Start website
+  and reusable application shell. It consumes the canonical
+  `@cyber-nomad-collective/beskid-ui-react` implementation directly from
+  `beskid_web_common`; no copied UI package is retained.
   - `apps/shell-template` — reusable shell template app (the base for all
     Beskid sites), generalized from the `beskid_tracker` shell. Exposes
     convenience wrappers for sidebar items, sidebar show/hide, and topbar
@@ -36,35 +41,6 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
     vars (no new GitHub App). `mock` mode for local dev. Ships a Postgres +
     Authelia + app compose, a Dockerfile, and 31 vitest tests (sidebar, slots,
     avatar dropdown, OIDC claims, session seal/unseal, guards, theme).
-  - `_planning/<service>/Plan.md` — per-service migration assessments for
-    website, pckg, platform-spec, tracker, auth, learn, and nexus.
-  - `beskid_sites/apps/pckg` — TanStack Start (React + Nitro) rewrite of the
-    `pckg/web` Vite SPA, built on the shared `@cyber-nomad-collective/beskid-shell-core`
-    shell. Two-mode (Docs / Registry) topbar with an animated shifting-index
-    `ModeSwitcher`; `AppShell` with `sidebarEnabled=true` only for the
-    `/dashboard/*` tree (the sole sidebar app) and `sidebarEnabled=false` for
-    consumer routes via a `_public` pathless layout; `GlobalSearch` +
-    `BeskidHub` in the topbar right slot; Authelia OIDC auth wired through
-    `createShellAuth` (`PCKG_OIDC_*` env). Lifted `PckgApiClient`
-    (`src/lib/pckg-api.ts`) verbatim from `pckg/web` (byte-identical, excluded
-    from biome via a per-app `biome.json`) — the framework-agnostic typed
-    .NET API contract is the reusable backbone. Ports the signature "nice"
-    pages as presentational components: `PackageDetail` (hero + facts card +
-    README + dependencies + community reviews + bordered version list +
-    NodeBB "Discuss" deep-link) and `PublisherProfile` (hero + follow +
-    social links + shared `PackageGrid`), plus the self-profile editor at
-    `/dashboard/profile`. NodeBB integration is server-only
-    (`src/server/nodebb.ts` + `POST /api/nodebb/create-subforum`): creates a
-    locked per-package subforum under a parent "Packages" category and
-    rescinds `registered-users` topic-create privileges; the admin token is
-    never exposed to the client. Ships a multi-stage Dockerfile (port 8082),
-    `env.server.ts` (`PCKG_API_BASE_URL`, `NODEBB_*`, `COMMUNITY_URL`), and 16
-    vitest tests (mode switcher, package grid/detail, publisher profile,
-    health endpoint, NodeBB subforum creation with mocked fetch).
-- `beskid_infra` production compose: commented-out example block documenting
-  how a future `shell-template`-based service + Authelia (OIDC provider) +
-  shared Postgres would be wired into the production lane (documentation only;
-  no real service or UUIDs).
 
 ### Changed
 
@@ -74,6 +50,13 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   manifest checksum before Coolify mutation, image security results remain
   OCI-native or in GitHub logs, and package publication remains gated on the
   completed production promotion.
+- Reconcile the GitHub release publisher into the Rust registry from a
+  SHA-256 digest only: the raw bearer key remains in GitHub, promotion sends
+  only its digest to Coolify, and registry startup idempotently provisions the
+  single automation principal before package publication.
+- Replace GitHub Actions artifact transport with job summaries, job outputs,
+  and retry-safe compiler GitHub Release handoffs across compiler, tracker,
+  Open VSX, and distribution workflows.
 - Coordinate exact corelib dependency versions through each staged
   `package.json`, leaving source `.bproj` files unchanged while the canonical
   compiler packer emits path-independent registry artifacts. Current Book
@@ -84,10 +67,11 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   the eight production corelib packages plus seven first-party templates only
   after GitHub has completed the protected production promotion. The final job
   performs a credential-free 15-artifact rehearsal before mutation and targets
-  the explicit-port Rust registry at `https://pckg.beskid-lang.org:8082`.
-- Derive every post-deployment smoke URL from both the host and explicit service
-  port in `beskid_infra/config/domains.json`, eliminating the parallel
-  host-only URL shape that could probe a legacy service.
+  the public Rust registry at `https://pckg.beskid-lang.org`.
+- Keep Coolify routing target ports explicit in `domains.json`, while defining
+  each public HTTPS URL separately for post-deployment smoke and package
+  publication. This prevents an internal container port from being mistaken
+  for a public TLS listener.
 - Replace the stale corelib workspace-bundle publisher with one fail-closed
   native release path for the exact eight-package production corelib closure
   and all seven first-party templates. The workflow initializes both
@@ -100,17 +84,20 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   integration.
 - Advance `beskid_infra` to the Rust pckg Compose configuration, which leaves
   session authentication disabled until Coolify has a trusted forward-auth
-  boundary, carries a seed-derived canonical database URL, and
-  validates pckg readiness in staging before promotion.
+  boundary, carries a seed-derived canonical database URL, and validates pckg
+  readiness in staging before promotion.
 - `compiler` delivery pointer now includes authenticated Bearer API-key
   publication plus compositional associated-type references, with parser,
   semantic, and fail-closed ABI/layout coverage.
+- CLI command surface (`beskid`): promoted `run`, `publish`, `get`, `search`, `install`, `rm`, and `new` as primary top-level entrypoints; moved all remaining workflow commands under `beskid dev` namespaces (`syntax`, `build`, `project`, `package`, `runtime-kit`, `tooling`) and aligned help/docs examples with that hierarchy.
+- CLI UX: switched user-facing build/run/publish flows to simple docker-like step output (`[1/4] resolve`, etc.) and removed hidden heavy TUI usage from the top-level paths.
+- CLI docs: added `beskid publish` command reference, updated command index and key build/test references (`analyze`, `pipeline`, CI/testing docs) to match the new hierarchy and avoid stale `beskid build` / `beskid test` user-facing examples.
+- CLI docs: completed final command-reference cleanup for parser/analysis docs and core command pages (`parse`, `tree`, `analyze`, `format`, `doc`, `clif`, `fetch`, `lock`, `update`) and updated cross-references to `beskid dev ...` command paths outside legacy `pckg` docs.
 - `site/website`: removed the legacy platform-spec-derived `packages/` MDX
   content tree (9 pages + the orphaned `PackageRegistryConsole.astro`
-  component); the pckg registry surface is now served canonically by
-  `site/platform-spec` and the book. Repointed two book CLI references to the
-  book's own pckg chapter and added an nginx `/packages/` legacy-bridge
-  redirect to `spec.beskid-lang.org`. Build passes (239 → 231 pages).
+  component); the Rust pckg application owns the registry surface while the
+  Book owns package guidance. Repointed two CLI references to the Book and
+  retained only canonical documentation routes under `/docs/standard/`.
 
 ### Removed
 
@@ -118,6 +105,8 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   companion seam (Authelia + the existing GitHub App is the sole auth path)
   and the Authelia file user store (`users_database.yml`) — GitHub is the only
   identity provider, no password/email login.
+
+### Added
 
 - `Beskid.Glue` corelib package with seven atomized contracts: TypeMapping,
   SymbolEmission, LinkArgs, SignatureReader, SignatureWriter, ToolchainProbe,
@@ -222,7 +211,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 - Repair the compiler distribution fan-out: accept the canonical unstable
   release identity, preserve Debian asset filenames, isolate stable-only
-  Homebrew and Snap publication, emit canonical container channel tags, and
+  Homebrew publication, emit canonical container channel tags, and
   provision the Windows installer icon before packaging.
 
 - Keep the Coolify deployment happy-path contract aligned with the active pckg
@@ -267,7 +256,7 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
-- Reduced the landing hero from five buttons to two (Download + Learn more);
+- Reduced the landing hero to three focused actions (Download, Blog, and Learn more);
   Language semantics, Read the Book, and Blog remain in the nav.
 - Removed the duplicated bottom CTA band that re-rendered all hero actions.
 - Simplified the STE (Software Transactional Memory / .NET) explanatory copy

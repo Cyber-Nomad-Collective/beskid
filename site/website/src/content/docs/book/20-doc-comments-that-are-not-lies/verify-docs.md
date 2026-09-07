@@ -11,7 +11,7 @@ Run the checks that match the change: link checks for Book navigation, the site 
 ## Contributor loop
 
 1. Change behavior → update platform-spec if observable.
-2. Update `///` and run `beskid doc` for packages you publish.
+2. Update `///` and run `beskid dev syntax doc` for packages you publish.
 3. Run verify before claiming green CI.
 
 If a rendered guide and the standard disagree, update or clarify the guide and keep the standard link visible. Do not copy a requirement into the Book merely to make the page self-contained.

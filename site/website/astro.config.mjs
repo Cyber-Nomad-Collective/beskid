@@ -28,20 +28,12 @@ function redirectKey(routePrefix) {
 	return routePrefix.endsWith('/') ? routePrefix : `${routePrefix}/`;
 }
 
-const PLATFORM_SPEC_ORIGIN = 'https://spec.beskid-lang.org';
-
-/**
- * Static catch-all redirect: every /platform-spec/* URL (including book
- * internal links to /platform-spec/...) 301s to the React app at
- * spec.beskid-lang.org. The Astro site no longer hosts platform-spec content.
- * Previously this walked the MDX tree; now it's a single wildcard.
- */
 /** @type {import('astro').AstroUserConfig['redirects']} */
-  const platformSpecRedirects = {
-  	[redirectKey('/platform-spec')]: {
+const platformSpecRedirects = {
+	[redirectKey('/platform-spec')]: {
 		status: /** @type {const} */ (301),
-  		destination: `${PLATFORM_SPEC_ORIGIN}/platform-spec/`,
-  	},
+		destination: '/docs/standard/',
+	},
 };
 
 /** @param {string} dir @param {string} fromPrefix @param {string} toPrefix */
@@ -78,13 +70,9 @@ function siteRedirects() {
 	Object.assign(out, addMarkdownRedirects(refRoot, '/guides', '/book/reference'));
 
 	/**
-	 * Legacy bridge URLs (/execution, /corelib, /api, /packages) and common
-	 * lowercase aliases — static 301s to the legacy spec mapping hub.
-	 * The legacy-bridge content tree is deleted; these redirects preserve
-	 * old bookmarks at zero file-dependency cost.
+	 * Legacy bridge URLs resolve to the one public technical Docs surface.
 	 */
-	const legacyTarget =
-		'https://spec.beskid-lang.org/platform-spec/legacy-spec-mapping/';
+	const legacyTarget = '/docs/standard/';
 	for (const legacy of ['execution', 'corelib', 'packages', 'api']) {
 		out[redirectKey(`/${legacy}`)] = legacyTarget;
 	}
@@ -172,7 +160,7 @@ export default defineConfig({
 				},
 			},
 			title: 'Beskid',
-			description: 'Beskid language docs and specification.',
+			description: 'Beskid language documentation.',
 			editLink: {
 				baseUrl: 'https://github.com/Cyber-Nomad-Collective/beskid/edit/main/site/website/',
 			},

@@ -1,9 +1,10 @@
 ---
-title: "beskid analyze"
-description: "Run semantic analysis and print diagnostics for a Beskid program."
+title: "beskid dev syntax analyze"
+description: "Developer command to run semantic analysis and print diagnostics."
 ---
 
 Runs built-in semantic rules over a resolved source file (or project entrypoint) and prints diagnostics to the terminal.
+This command is available as `beskid dev syntax analyze`.
 
 ## Arguments
 
@@ -19,12 +20,12 @@ Runs built-in semantic rules over a resolved source file (or project entrypoint)
 ## Notes
 
 - When no diagnostics are reported, the command prints a short success message.
-- Project resolution flags match other project-aware commands (`doc`, `run`, `build`, `clif`, `fetch`).
+- Project resolution flags match other project-aware commands (`beskid dev syntax doc`, `run`, `beskid dev build compile`, `beskid dev syntax clif`, `beskid dev project fetch`).
 
 ## Example
 
 ```bash
-beskid analyze --project path/to/Project.proj
+beskid dev syntax analyze --project path/to/Project.proj
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

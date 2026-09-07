@@ -29,6 +29,7 @@ bash "${root}/scripts/ci/test/platform-stylesheet-contract.test.sh"
 bash "${root}/scripts/ci/test/platform-delivery-fail-closed.test.sh"
 bash "${root}/scripts/ci/test/release-manifest-active-lanes.test.sh"
 bash "${root}/scripts/ci/test/zero-artifact-delivery.test.sh"
+bash "${root}/scripts/ci/test/github-release-handoff.test.sh"
 bash "${root}/scripts/ci/test/image-preparation-contract.test.sh"
 bash "${root}/scripts/ci/test/automatic-production-promotion.test.sh"
 
@@ -98,7 +99,6 @@ rg -q 'image: postgres:16' "${tmp}/rendered.yml"
 for dockerfile in \
   site/website/Dockerfile \
   site/auth/Dockerfile \
-  site/platform-spec/Dockerfile \
   site/learn/Dockerfile \
   beskid_tracker/Dockerfile \
   beskid_nexus/Dockerfile; do
@@ -187,7 +187,7 @@ if "${root}/scripts/ci/validate-promotion-source.sh" "${tmp}/failed-run.json" "$
 fi
 
 cat >"${tmp}/lane.json" <<'JSON'
-{"openbao_services":["auth"],"compose_profiles":"tracker","static_env":{"STATIC_VALUE":"staging"}}
+{"openbao_services":["auth"],"compose_profiles":"tracker,pckg","static_env":{"STATIC_VALUE":"staging"}}
 JSON
 export MOCK_SYNC_BODY="${tmp}/sync-body.json"
 cat >"${tmp}/bin/curl" <<'SH'
@@ -218,13 +218,15 @@ chmod +x "${tmp}/bin/curl"
 PATH="${tmp}/bin:${PATH}" \
   TRACEPARENT=00-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-bbbbbbbbbbbbbbbb-01 \
   BESKID_RELEASE_MANIFEST_SHA256=cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc \
+  PCKG_RELEASE_PUBLISHER_KEY_SHA256=dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd \
   OPENBAO_ADDR=https://bao.invalid OPENBAO_TOKEN=test \
   COOLIFY_ENDPOINT=https://coolify.invalid COOLIFY_API_TOKEN=test COOLIFY_SERVICE_UUID=test \
   "${root}/scripts/ci/sync-runtime-env.sh" staging "${tmp}/lane.json"
 jq -e '
   ([.data[] | select(.key == "SESSION_SECRET" and .value == "secret-value")] | length == 1) and
   ([.data[] | select(.key == "STATIC_VALUE" and .value == "staging")] | length == 1) and
-  ([.data[] | select(.key == "COMPOSE_PROFILES" and .value == "tracker")] | length == 1) and
+  ([.data[] | select(.key == "COMPOSE_PROFILES" and .value == "tracker,pckg")] | length == 1) and
+  ([.data[] | select(.key == "PCKG_RELEASE_PUBLISHER_KEY_SHA256" and .value == "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")] | length == 1) and
   ([.data[] | select(.key == "BESKID_RELEASE_MANIFEST_SHA256" and (.value | length) == 64)] | length == 1) and
   ([.data[] | select(.key == "BESKID_DEPLOYMENT_TRACEPARENT" and (.value | startswith("00-")))] | length == 1)
 ' "${MOCK_SYNC_BODY}" >/dev/null
@@ -339,6 +341,7 @@ jq -r '.docker_compose_raw' "${MOCK_COOLIFY_PATCH_BODY}" | base64 --decode | gre
 
 # Happy path: Coolify Compose deploy accepts with resource_uuid only, even when
 # aggregate status stays starting:unhealthy due to orphaned non-digest children.
+# Every active lane must still report the exact promoted digest as healthy.
 rm -rf "${MOCK_COOLIFY_STATE}"
 mkdir -p "${MOCK_COOLIFY_STATE}"
 cat >"${tmp}/bin/curl" <<'SH'
@@ -356,7 +359,7 @@ done
 case "${method}:${url}" in
   GET:*/services/*)
     if [[ -f "${MOCK_COOLIFY_STATE}/deployed" ]]; then
-      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[{"uuid":"site","name":"site","image":"ghcr.io/cyber-nomad-collective/beskid-site@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"},{"uuid":"auth","name":"auth","image":"ghcr.io/cyber-nomad-collective/beskid-auth@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","status":"running:healthy"},{"uuid":"learn","name":"learn","image":"ghcr.io/cyber-nomad-collective/beskid-learn@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","status":"running:healthy"},{"uuid":"tracker","name":"tracker","image":"ghcr.io/cyber-nomad-collective/beskid-tracker@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","status":"running:healthy"},{"uuid":"old-worker","name":"old-worker","image":"ghcr.io/example/old-worker:${IMAGE_TAG:-main}","status":"exited"}]}'
+      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[{"uuid":"site","name":"site","image":"ghcr.io/cyber-nomad-collective/beskid-site@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"},{"uuid":"auth","name":"auth","image":"ghcr.io/cyber-nomad-collective/beskid-auth@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","status":"running:healthy"},{"uuid":"learn","name":"learn","image":"ghcr.io/cyber-nomad-collective/beskid-learn@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","status":"running:healthy"},{"uuid":"tracker","name":"tracker","image":"ghcr.io/cyber-nomad-collective/beskid-tracker@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","status":"running:healthy"},{"uuid":"nexus","name":"nexus","image":"ghcr.io/cyber-nomad-collective/beskid-nexus@sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","status":"running:healthy"},{"uuid":"pckg","name":"pckg","image":"ghcr.io/cyber-nomad-collective/beskid-pckg@sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff","status":"running:healthy"},{"uuid":"old-worker","name":"old-worker","image":"ghcr.io/example/old-worker:${IMAGE_TAG:-main}","status":"exited"}]}'
     else
       echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[]}'
     fi
@@ -395,7 +398,6 @@ jq -e '
   .urls == [
     {name: "site", url: "https://stg.beskid-lang.org:80"},
     {name: "auth", url: "https://stg-auth.beskid-lang.org:8090"},
-    {name: "platform-spec", url: "https://stg-spec.beskid-lang.org:8460"},
     {name: "learn", url: "https://stg-learn.beskid-lang.org:80"},
     {name: "tracker", url: "https://stg-tracker.beskid-lang.org:3000"},
     {name: "nexus", url: "https://stg-nexus.beskid-lang.org:8452"},

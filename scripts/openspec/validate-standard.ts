@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-import { resolveDocumentIdentityFromPath } from "../../site/platform-spec/src/lib/spec/document-identity.ts";
+import { resolveDocumentIdentityFromPath } from "./document-identity.ts";
 import { deriveBookLinks } from "./validate-book-traceability.ts";
 
 const repoRoot = path.resolve(import.meta.dirname, "../..");

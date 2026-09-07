@@ -14,7 +14,7 @@ Beskid standard library implementation stays **Beskid source**, not a side Rust 
 
 ## Tooling materialization
 
-CLI ensures bundled corelib is available on launch; override with `BESKID_CORELIB_SOURCE` when hacking std. [`beskid corelib`](/book/reference/cli/commands/corelib/) materializes embedded templates for offline/bootstrap scenarios.
+CLI ensures bundled corelib is available on launch; override with `BESKID_CORELIB_SOURCE` when hacking std. [`beskid dev build corelib`](/book/reference/cli/commands/corelib/) materializes embedded templates for offline/bootstrap scenarios.
 
 ## Layout mental model
 

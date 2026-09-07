@@ -1,0 +1,48 @@
+/*
+ * Shell styles.
+ *
+ * The shell layout uses Tailwind utility classes inline (flex, min-h-0, etc.).
+ * The `app-shell__*` class hooks below are semantic markers only — they carry
+ * no required styles, but apps may target them for app-specific overrides.
+ *
+ * Apps import their own Tailwind entry (which pulls in the shared
+ * `@cyber-nomad-collective/beskid-ui-react` theme tokens). This file is
+ * provided as an optional import for apps that want a single shell style
+ * entry point.
+ */
+
+.app-shell__inset,
+.app-shell__header,
+.app-shell__body,
+.app-shell__main {
+	/* Semantic hooks — styled inline via Tailwind utilities in the components. */
+}
+
+/*
+ * Shell transition tokens.
+ *
+ * These reference the canonical `--beskid-transition-*` / `--beskid-ease-*`
+ * tokens defined in `beskid-ui-react/styles/tokens.css` so animated shell
+ * components (PageTransition, AnimatedModeSwitcher) and any app-level CSS
+ * transitions share one timing language. Importing this stylesheet is
+ * optional; the framer-motion helpers in `client/transitions.tsx` carry
+ * matching numeric constants for JS-driven animations.
+ */
+
+:root {
+	--beskid-shell-transition-fast: var(--beskid-transition-fast, 120ms);
+	--beskid-shell-transition-base: var(--beskid-transition-base, 160ms);
+	--beskid-shell-transition-slow: var(--beskid-transition-slow, 200ms);
+	--beskid-shell-ease-standard: var(--beskid-ease-standard, ease);
+	--beskid-shell-ease-out: var(--beskid-ease-out, ease-out);
+	--beskid-shell-ease-in-out: var(--beskid-ease-in-out, ease-in-out);
+}
+
+/* Respect reduced-motion: shell animations collapse to instant swaps. */
+@media (prefers-reduced-motion: reduce) {
+	:root {
+		--beskid-shell-transition-fast: 0ms;
+		--beskid-shell-transition-base: 0ms;
+		--beskid-shell-transition-slow: 0ms;
+	}
+}

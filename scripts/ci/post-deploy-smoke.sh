@@ -43,19 +43,19 @@ canonical_smoke_urls() {
   domains_config="$(cd "$(dirname "$0")/../../beskid_infra/config" && pwd)/domains.json"
   jq -er --arg lane "${lane}" '
     .[$lane].services as $services
-    | (["site", "auth", "platform-spec", "learn", "tracker", "nexus", "pckg"]) as $names
+    | (["site", "auth", "learn", "tracker", "nexus", "pckg"]) as $names
     | if $services | type == "object" and all($names[];
         ($services[.] | type == "object")
         and ($services[.].host | type == "string" and test("^[A-Za-z0-9.-]+$") and length > 0)
         and ($services[.].port | type == "number" and floor == . and . >= 1 and . <= 65535)
+        and ($services[.].public_url | type == "string" and test("^https://[A-Za-z0-9.-]+$") and length > 0)
       ) then . else error("canonical smoke services are missing or invalid for " + $lane) end
     | def endpoint($name; $path):
-        "https://" + $services[$name].host + ":" + ($services[$name].port | tostring) + $path;
+        $services[$name].public_url + $path;
       [
         endpoint("site"; "/"),
         endpoint("site"; "/document.txt"),
         endpoint("auth"; "/api/v1/health"),
-        endpoint("platform-spec"; "/api/health"),
         endpoint("learn"; "/api/health"),
         endpoint("tracker"; "/api/health"),
         endpoint("nexus"; "/api/health")

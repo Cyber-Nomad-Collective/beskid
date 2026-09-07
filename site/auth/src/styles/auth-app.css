@@ -1,5 +1,5 @@
 /**
- * Auth hub shell — aligned with tracker / platform-spec Material chrome.
+ * Auth hub shell — aligned with the shared Beskid Material chrome.
  */
 
 html,
@@ -30,10 +30,10 @@ body {
 .island-shell {
 	background: color-mix(
 		in srgb,
-		var(--platform-spec-card-bg, var(--card)) 92%,
+		var(--card) 92%,
 		transparent
 	);
-	border: 1px solid var(--platform-spec-card-border, var(--border));
+	border: 1px solid var(--border);
 	box-shadow: 0 24px 80px
 		color-mix(in srgb, var(--beskid-primary-container) 12%, transparent);
 }

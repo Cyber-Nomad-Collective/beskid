@@ -86,45 +86,45 @@ read_logged_urls() {
   done <"${MOCK_LOG}"
 }
 
-production_urls='https://beskid-lang.org:80/ https://beskid-lang.org:80/document.txt https://auth.beskid-lang.org:8090/api/v1/health https://spec.beskid-lang.org:8460/api/health https://learn.beskid-lang.org:80/api/health https://tracker.beskid-lang.org:3000/api/health https://nexus.beskid-lang.org:8452/api/health https://pckg.beskid-lang.org:8082/health/ready'
-staging_urls=$'https://stg.beskid-lang.org:80/\nhttps://stg.beskid-lang.org:80/document.txt\nhttps://stg-auth.beskid-lang.org:8090/api/v1/health\nhttps://stg-spec.beskid-lang.org:8460/api/health\nhttps://stg-learn.beskid-lang.org:80/api/health\nhttps://stg-tracker.beskid-lang.org:3000/api/health\nhttps://stg-nexus.beskid-lang.org:8452/api/health\nhttps://stg-pckg.beskid-lang.org:8082/health/ready'
+production_urls='https://beskid-lang.org/ https://beskid-lang.org/document.txt https://auth.beskid-lang.org/api/v1/health https://learn.beskid-lang.org/api/health https://tracker.beskid-lang.org/api/health https://nexus.beskid-lang.org/api/health https://pckg.beskid-lang.org/health/ready'
+staging_urls=$'https://stg.beskid-lang.org/\nhttps://stg.beskid-lang.org/document.txt\nhttps://stg-auth.beskid-lang.org/api/v1/health\nhttps://stg-learn.beskid-lang.org/api/health\nhttps://stg-tracker.beskid-lang.org/api/health\nhttps://stg-nexus.beskid-lang.org/api/health\nhttps://stg-pckg.beskid-lang.org/health/ready'
 
 run_smoke "${production_urls}" production
 read_logged_urls
-assert_eq 8 "${#logged_urls[@]}" "canonical space-separated URLs produce one curl per endpoint"
-assert_eq 'https://beskid-lang.org:80/' "${logged_urls[0]}" "first canonical URL"
-assert_eq 'https://auth.beskid-lang.org:8090/api/v1/health' "${logged_urls[2]}" "auth canonical URL"
-assert_eq 'https://pckg.beskid-lang.org:8082/health/ready' "${logged_urls[7]}" "pckg canonical URL"
+assert_eq 7 "${#logged_urls[@]}" "canonical space-separated URLs produce one curl per endpoint"
+assert_eq 'https://beskid-lang.org/' "${logged_urls[0]}" "first canonical URL"
+assert_eq 'https://auth.beskid-lang.org/api/v1/health' "${logged_urls[2]}" "auth canonical URL"
+assert_eq 'https://pckg.beskid-lang.org/health/ready' "${logged_urls[6]}" "pckg canonical URL"
 
 run_smoke "${production_urls}" production
 read_logged_urls
-assert_eq 8 "${#logged_urls[@]}" "document route remains part of canonical smoke"
-assert_eq 'https://beskid-lang.org:80/document.txt' "${logged_urls[1]}" "document.txt endpoint is checked in smoke"
+assert_eq 7 "${#logged_urls[@]}" "document route remains part of canonical smoke"
+assert_eq 'https://beskid-lang.org/document.txt' "${logged_urls[1]}" "document.txt endpoint is checked in smoke"
 
 run_smoke "${staging_urls//$'\n'/$'\r\n'}" staging
 read_logged_urls
-assert_eq 8 "${#logged_urls[@]}" "CRLF canonical URLs produce one curl per endpoint"
-assert_eq 'https://stg.beskid-lang.org:80/' "${logged_urls[0]}" "first CRLF URL"
-assert_eq 'https://stg-pckg.beskid-lang.org:8082/health/ready' "${logged_urls[7]}" "last CRLF URL"
+assert_eq 7 "${#logged_urls[@]}" "CRLF canonical URLs produce one curl per endpoint"
+assert_eq 'https://stg.beskid-lang.org/' "${logged_urls[0]}" "first CRLF URL"
+assert_eq 'https://stg-pckg.beskid-lang.org/health/ready' "${logged_urls[6]}" "last CRLF URL"
 
-run_smoke "\"https://beskid-lang.org:80/\" ${production_urls#* }" production
+run_smoke "\"https://beskid-lang.org/\" ${production_urls#* }" production
 read_logged_urls
-assert_eq 8 "${#logged_urls[@]}" "quoted canonical URLs produce one curl per endpoint"
-assert_eq 'https://beskid-lang.org:80/' "${logged_urls[0]}" "quoted URL is stripped"
+assert_eq 7 "${#logged_urls[@]}" "quoted canonical URLs produce one curl per endpoint"
+assert_eq 'https://beskid-lang.org/' "${logged_urls[0]}" "quoted URL is stripped"
 
 run_default_smoke production
 read_logged_urls
-assert_eq 8 "${#logged_urls[@]}" "production defaults smoke every active public service plus document route"
-assert_eq 'https://beskid-lang.org:80/' "${logged_urls[0]}" "production default smoke starts with site root"
-assert_eq 'https://beskid-lang.org:80/document.txt' "${logged_urls[1]}" "production default smoke covers document route"
-assert_eq 'https://pckg.beskid-lang.org:8082/health/ready' "${logged_urls[7]}" "production default smoke includes active pckg"
+assert_eq 7 "${#logged_urls[@]}" "production defaults smoke every active public service plus document route"
+assert_eq 'https://beskid-lang.org/' "${logged_urls[0]}" "production default smoke starts with site root"
+assert_eq 'https://beskid-lang.org/document.txt' "${logged_urls[1]}" "production default smoke covers document route"
+assert_eq 'https://pckg.beskid-lang.org/health/ready' "${logged_urls[6]}" "production default smoke includes active pckg"
 
 run_default_smoke staging
 read_logged_urls
-assert_eq 8 "${#logged_urls[@]}" "staging defaults validate active pckg"
-assert_eq 'https://stg.beskid-lang.org:80/' "${logged_urls[0]}" "staging default smoke starts with site root"
-assert_eq 'https://stg-nexus.beskid-lang.org:8452/api/health' "${logged_urls[6]}" "staging default smoke covers nexus"
-assert_eq 'https://stg-pckg.beskid-lang.org:8082/health/ready' "${logged_urls[7]}" "staging default smoke covers pckg"
+assert_eq 7 "${#logged_urls[@]}" "staging defaults validate active pckg"
+assert_eq 'https://stg.beskid-lang.org/' "${logged_urls[0]}" "staging default smoke starts with site root"
+assert_eq 'https://stg-nexus.beskid-lang.org/api/health' "${logged_urls[5]}" "staging default smoke covers nexus"
+assert_eq 'https://stg-pckg.beskid-lang.org/health/ready' "${logged_urls[6]}" "staging default smoke covers pckg"
 
 if run_smoke 'http://insecure.example/health' production >/dev/null 2>&1; then
   _TESTS_RUN=$((_TESTS_RUN + 1))
@@ -144,7 +144,7 @@ else
   echo "  ok   - incomplete explicit smoke override is rejected"
 fi
 
-MOCK_FAIL_URL='https://auth.beskid-lang.org:8090/api/v1/health'
+MOCK_FAIL_URL='https://auth.beskid-lang.org/api/v1/health'
 if run_default_smoke production >/dev/null 2>&1; then
   _TESTS_RUN=$((_TESTS_RUN + 1))
   _TESTS_FAIL=$((_TESTS_FAIL + 1))

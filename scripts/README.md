@@ -26,7 +26,7 @@ runners (the compiler gate is also Testbox-compatible). Dagger is retired.
 | [`lsp-command-contract-gate.sh`](ci/lsp-command-contract-gate.sh) | LSP + VS Code command-contract gate |
 | [`corelib-gate.sh`](ci/corelib-gate.sh) | Corelib quality + `beskid test` |
 | [`platform-smoke.sh`](ci/platform-smoke.sh) | Aggregate web-workspace smoke |
-| [`site-build-gate.sh`](ci/site-build-gate.sh) | Auth / platform-spec build gate |
+| [`site-build-gate.sh`](ci/site-build-gate.sh) | Auth / canonical website build gate |
 | [`vscode-gate.sh`](ci/vscode-gate.sh) | VS Code extension `pnpm test` |
 | [`verify-frozen-lockfile.sh`](ci/verify-frozen-lockfile.sh) | Per-directory `pnpm install --frozen-lockfile` |
 | [`compute-cli-version.sh`](ci/compute-cli-version.sh) | Compiler-minted global `0.4.<build>` version |

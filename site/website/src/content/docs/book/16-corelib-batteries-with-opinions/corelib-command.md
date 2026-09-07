@@ -4,7 +4,7 @@ description: Materialize the embedded corelib template when you need to read or 
 tableOfContents: true
 ---
 
-`beskid corelib` copies the **embedded** corelib project template that ships inside the CLI build. You use it when you need a tree on disk—contributing to stdlib, debugging injection, or pointing `BESKID_CORELIB_SOURCE` at something you actually control.
+`beskid dev build corelib` copies the **embedded** corelib project template that ships inside the CLI build. You use it when you need a tree on disk—contributing to stdlib, debugging injection, or pointing `BESKID_CORELIB_SOURCE` at something you actually control.
 
 ## What it does
 
@@ -15,13 +15,13 @@ tableOfContents: true
 ## Example
 
 ```bash
-beskid corelib --output ./vendor/beskid_corelib
+beskid dev build corelib --output ./vendor/beskid_corelib
 ```
 
 ## Normative anchors
 
 - [Corelib discovery and packaging](/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/)
-- [CLI corelib command](/book/reference/cli/commands/corelib/)
+- [CLI dev build corelib command](/book/reference/cli/commands/corelib/)
 
 ## Previous
 

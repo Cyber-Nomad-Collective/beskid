@@ -5,13 +5,12 @@ set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 
-for dockerfile in site/website/Dockerfile site/auth/Dockerfile site/platform-spec/Dockerfile; do
+for dockerfile in site/website/Dockerfile site/auth/Dockerfile; do
   content="$(<"${root}/${dockerfile}")"
   for requirement in \
     'COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./' \
     'COPY site/auth/package.json ./site/auth/package.json' \
     'COPY site/website/package.json ./site/website/package.json' \
-    'COPY site/platform-spec/package.json ./site/platform-spec/package.json' \
     'COPY site/learn/package.json ./site/learn/package.json' \
     'COPY beskid_web_common ./beskid_web_common' \
     'pnpm install --frozen-lockfile'; do
@@ -25,7 +24,7 @@ done
 # Root Docker contexts intentionally omit generated dist directories. Consumers
 # of shared packages that export compiled entries must recreate those entries
 # after their frozen install rather than relying on a developer's local output.
-for dockerfile in site/auth/Dockerfile site/platform-spec/Dockerfile; do
+for dockerfile in site/auth/Dockerfile; do
   content="$(<"${root}/${dockerfile}")"
   for requirement in \
     'pnpm --filter @beskid/auth-client build' \
@@ -80,7 +79,7 @@ if [[ "${learn}" == *'npm install -g tsx'* ]]; then
   exit 1
 fi
 
-learn_lane="$(sed -n '/^  image-learn:/,/^  image-platform-spec:/p' "${root}/.github/workflows/platform-delivery.yml")"
+learn_lane="$(sed -n '/^  image-learn:/,/^  image-tracker:/p' "${root}/.github/workflows/platform-delivery.yml")"
 if [[ "${learn_lane}" != *'submodules: compiler beskid_bsol beskid_web_common'* ]]; then
   echo "image-learn must initialize the shared UI source required by its local lockfile" >&2
   exit 1
@@ -151,8 +150,7 @@ for requirement in \
   'COPY beskid_bsol ./beskid_bsol' \
   'pnpm install --dir /src/beskid_web_common --frozen-lockfile' \
   'pnpm install --dir /src/pckg/web --frozen-lockfile' \
-  '[workspace.dependencies]' \
-  'bsol = { path = "../beskid_bsol/crates/bsol" }' \
+  'COPY compiler ./compiler' \
   'cargo build --release -p beskid_pckg_server' \
   'PCKG_ARTIFACT_ROOT=/app/packages' \
   '/health/ready'; do
@@ -168,7 +166,7 @@ if [[ "${pckg_image_block}" != *'submodules: beskid_bsol compiler pckg beskid_we
   exit 1
 fi
 
-for manifest in site/auth/package.json site/platform-spec/package.json beskid_tracker/package.json beskid_nexus/gitnexus/package.json; do
+for manifest in site/auth/package.json beskid_tracker/package.json beskid_nexus/gitnexus/package.json; do
   source='../../beskid_web_common/packages/beskid-auth-client'
   if [[ "${manifest}" == beskid_tracker/* ]]; then
     source='../beskid_web_common/packages/beskid-auth-client'

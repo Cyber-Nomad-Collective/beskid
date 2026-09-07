@@ -36,6 +36,15 @@ After issue creation:
 - 08 CHANGELOG 0.4.0 cutoff (task, AFK)
 - 13 Compiler submodule fix (task, AFK) — **P0, blocks everything local**
 
+## Post-tag integration frontier (2026-09-07)
+
+```text
+[19 pckg Rust cutover proof] ──> [21 root release-surface integration]
+[20 compiler releasable-slice proof] ──> [21 root release-surface integration]
+[21 root release-surface integration] ──> final corelib/runtime-kit/CI evidence
+[22 pckg legacy-data disposition] ──> [19 pckg Rust cutover proof]
+```
+
 ## Ticket type summary
 
 | # | Title | Type | Mode | Blocks |

@@ -338,5 +338,5 @@ jobs:
       - name: Publish corelib and template packages through the promoted Rust registry
         env:
           BESKID_PCKG_API_KEY: ${{ secrets.BESKID_PCKG_KEY }}
-          BESKID_PCKG_BASE_URL: https://pckg.beskid-lang.org:8082
+          BESKID_PCKG_BASE_URL: https://pckg.beskid-lang.org
         run: bash ./scripts/ci/corelib-publish.sh patch

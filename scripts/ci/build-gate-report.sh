@@ -16,7 +16,7 @@ shopt -s nullglob
 xmls=("${IN}"/*.xml)
 if [[ ${#xmls[@]} -eq 0 ]]; then
   echo "build-gate-report: no JUnit XML found in ${IN}" >&2
-  # Still emit an empty report so downstream upload-artifact has something.
+  # Still emit an empty report so the job summary has deterministic evidence.
   : > "${OUT}/gate-report.md"
   cat > "${OUT}/gate-report.junit.xml" <<'EOF'
 <?xml version="1.0" encoding="UTF-8"?>

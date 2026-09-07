@@ -24,7 +24,7 @@ curl --fail-with-body --silent --show-error \
   --header "Authorization: Bearer $BESKID_PCKG_API_KEY" \
   --header 'Content-Type: application/json' \
   --data '{"name":"my-package","isPublic":true,"submitForReview":false}' \
-  https://pckg.beskid-lang.org:8082/api/packages
+  https://pckg.beskid-lang.org/api/packages
 ```
 
 The v0.4 release publisher performs this create-before-upload step automatically for the canonical corelib and template inventory.

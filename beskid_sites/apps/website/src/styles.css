@@ -1,0 +1,559 @@
+@import "tailwindcss";
+
+/* Scan the shared lib's source for shadcn utility classes. Under a workspace
+ * `workspace:*` link the package resolves into the pnpm virtual store, so we
+ * point at the canonical web-common source directly to keep class detection stable.
+ *
+ * `@source` paths resolve relative to this CSS file
+ * (`apps/website/src/styles.css`), so reaching the workspace `packages/` tree
+ * at `beskid_web_common/packages/` requires four `..` segments
+ * (src → website → apps → beskid_sites → repository root). A shorter path
+ * silently resolves inside `beskid_sites`, which leaves the
+ * shell-core Topbar/AppShell utilities (e.g. `h-14`, `border-border`,
+ * `px-4`, `items-center`) ungenerated — the topbar rendered unstyled
+ * because the website's own landing source only uses custom `beskid-*`
+ * classes, unlike the tracker/shell-template whose own routes use the same
+ * Tailwind utilities and thus masked the broken scan. */
+@source "../../../../beskid_web_common/packages/beskid-ui-react/src";
+@source "../../../packages/shell-core/src";
+/* `rounded-4xl` is emitted by shadcn primitives (Button, Dialog, ...) via
+ * `--radius-4xl` from tokens.css. Inline-pin it so detection does not depend
+ * on every consumer file being scanned. */
+@source inline("rounded-4xl");
+
+/* shadcn primitives (DropdownMenu, Tooltip, Dialog, ...) emit `animate-in`,
+ * `fade-in-0`, `zoom-in-95`, `slide-in-from-*` utilities that are defined by
+ * `tw-animate-css` (the Tailwind v4 successor to `tailwindcss-animate`). The
+ * tracker imports it; the website needs it for the shell's UserMenu dropdown
+ * and any other shadcn overlay to animate. */
+@import "tw-animate-css";
+
+/* Self-contained brand + shadcn theme. `shadcn-entry.css` pulls in the canonical
+ * Beskid token system (`tokens.css`) which already defines the brand palette,
+ * shadcn semantic mappings, and the Tailwind v4 `@theme inline` bindings. */
+@import "@cyber-nomad-collective/beskid-ui-react/styles/shadcn-entry.css";
+@import "@cyber-nomad-collective/beskid-ui-react/styles/hub.css";
+
+@custom-variant dark (&:is([data-theme="dark"] *));
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+}
+
+/* ---------------------------------------------------------------------------
+   Website prose + layout
+   --------------------------------------------------------------------------- */
+
+.beskid-prose {
+	max-width: 48rem;
+	margin-inline: auto;
+	padding-inline: clamp(1rem, 4vw, 2.5rem);
+	padding-block: 2.5rem 5rem;
+	font-size: 1.0625rem;
+	line-height: 1.7;
+	color: var(--foreground);
+}
+
+.beskid-prose h1 {
+	font-size: clamp(2rem, 5vw, 2.75rem);
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	margin-block: 0 1.5rem;
+}
+
+.beskid-prose h2 {
+	font-size: 1.75rem;
+	font-weight: 700;
+	margin-top: 2.5rem;
+	margin-bottom: 1rem;
+	letter-spacing: -0.01em;
+	border-top: 1px solid var(--border);
+	padding-top: 2rem;
+}
+
+.beskid-prose h3 {
+	font-size: 1.35rem;
+	font-weight: 600;
+	margin-top: 2rem;
+	margin-bottom: 0.75rem;
+}
+
+.beskid-prose h4 {
+	font-size: 1.1rem;
+	font-weight: 600;
+	margin-top: 1.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.beskid-prose p {
+	margin-block: 1rem;
+}
+
+.beskid-prose a {
+	color: var(--beskid-primary, var(--primary));
+	text-decoration: underline;
+	text-underline-offset: 0.18em;
+}
+
+.beskid-prose a:hover {
+	text-decoration-thickness: 2px;
+}
+
+.beskid-prose ul,
+.beskid-prose ol {
+	margin-block: 1rem;
+	padding-left: 1.5rem;
+}
+
+.beskid-prose ul {
+	list-style: disc;
+}
+
+.beskid-prose ol {
+	list-style: decimal;
+}
+
+.beskid-prose li {
+	margin-block: 0.35rem;
+}
+
+.beskid-prose blockquote {
+	margin-block: 1.25rem;
+	padding: 0.75rem 1.25rem;
+	border-left: 3px solid var(--beskid-primary, var(--primary));
+	background: color-mix(in srgb, var(--muted) 50%, transparent);
+	border-radius: 0.25rem;
+	color: var(--muted-foreground);
+}
+
+.beskid-prose blockquote p {
+	margin: 0;
+}
+
+.beskid-prose code {
+	font-family: var(--beskid-font-mono, ui-monospace, monospace);
+	font-size: 0.9em;
+	background: color-mix(in srgb, var(--muted) 60%, transparent);
+	padding: 0.15em 0.4em;
+	border-radius: 0.3rem;
+}
+
+.beskid-prose pre {
+	margin-block: 1.25rem;
+	padding: 1.1rem 1.25rem;
+	background: color-mix(in srgb, var(--background) 82%, #000 18%);
+	border: 1px solid var(--border);
+	border-radius: 0.5rem;
+	overflow-x: auto;
+}
+
+.beskid-prose pre code {
+	background: none;
+	padding: 0;
+	font-size: 0.875rem;
+	line-height: 1.6;
+}
+
+.beskid-prose table {
+	width: 100%;
+	margin-block: 1.5rem;
+	border-collapse: collapse;
+	font-size: 0.95rem;
+}
+
+.beskid-prose th,
+.beskid-prose td {
+	text-align: left;
+	padding: 0.6rem 0.85rem;
+	border-bottom: 1px solid var(--border);
+}
+
+.beskid-prose th {
+	font-weight: 600;
+	background: color-mix(in srgb, var(--muted) 40%, transparent);
+}
+
+.beskid-prose img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 0.5rem;
+	margin-block: 1.25rem;
+}
+
+.beskid-prose hr {
+	margin-block: 2.5rem;
+	border: none;
+	border-top: 1px solid var(--border);
+}
+
+/* Aside (callout) component */
+.beskid-aside {
+	margin-block: 1.5rem;
+	padding: 1rem 1.25rem;
+	border: 1px solid var(--border);
+	border-left-width: 4px;
+	border-radius: 0.5rem;
+	background: color-mix(in srgb, var(--muted) 35%, transparent);
+}
+
+.beskid-aside--note {
+	border-left-color: var(--beskid-primary, var(--primary));
+}
+
+.beskid-aside--tip {
+	border-left-color: #22c55e;
+}
+
+.beskid-aside--caution {
+	border-left-color: #f59e0b;
+}
+
+.beskid-aside--danger {
+	border-left-color: #ef4444;
+}
+
+.beskid-aside__title {
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	font-size: 0.78rem;
+	margin-bottom: 0.4rem;
+	color: var(--foreground);
+}
+
+.beskid-aside__body > :first-child {
+	margin-top: 0;
+}
+
+.beskid-aside__body > :last-child {
+	margin-bottom: 0;
+}
+
+/* YouTube embed */
+.beskid-youtube {
+	position: relative;
+	display: block;
+	margin-block: 1.5rem;
+	aspect-ratio: 16 / 9;
+	border-radius: 0.5rem;
+	overflow: hidden;
+	border: 1px solid var(--border);
+}
+
+.beskid-youtube iframe {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+
+/* Page transition */
+@keyframes beskid-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(4px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.beskid-page-transition {
+	animation: beskid-fade-in 200ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.beskid-page-transition {
+		animation: none;
+	}
+}
+
+/* Landing page */
+.beskid-landing {
+	min-height: 100vh;
+}
+
+.beskid-landing__hero {
+	max-width: 72rem;
+	margin-inline: auto;
+	padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 4vw, 2.5rem) 3rem;
+}
+
+.beskid-landing__eyebrow {
+	color: var(--beskid-primary, var(--primary));
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	font-size: 0.85rem;
+	margin-bottom: 0.75rem;
+}
+
+.beskid-landing__title {
+	font-size: clamp(2.5rem, 7vw, 4.5rem);
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	line-height: 1.02;
+	margin: 0 0 1.25rem;
+}
+
+.beskid-landing__tagline {
+	font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+	color: var(--muted-foreground);
+	max-width: 42rem;
+	margin: 0 0 1rem;
+	line-height: 1.5;
+}
+
+.beskid-landing__subtagline {
+	font-size: 1rem;
+	color: var(--muted-foreground);
+	max-width: 42rem;
+	margin: 0 0 2rem;
+	line-height: 1.6;
+}
+
+.beskid-landing__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+.beskid-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.6rem 1.25rem;
+	border-radius: 0.5rem;
+	font-weight: 600;
+	text-decoration: none;
+	border: 1px solid transparent;
+	transition: background 160ms ease, border-color 160ms ease;
+}
+
+.beskid-btn--primary {
+	background: var(--beskid-primary, var(--primary));
+	color: var(--beskid-on-primary, var(--primary-foreground));
+}
+
+.beskid-btn--primary:hover {
+	filter: brightness(1.05);
+}
+
+.beskid-btn--ghost {
+	background: transparent;
+	border-color: var(--border);
+	color: var(--foreground);
+}
+
+.beskid-btn--ghost:hover {
+	background: color-mix(in srgb, var(--muted) 40%, transparent);
+}
+
+.beskid-landing__section {
+	max-width: 72rem;
+	margin-inline: auto;
+	padding: 3rem clamp(1rem, 4vw, 2.5rem);
+}
+
+.beskid-landing__section-title {
+	font-size: clamp(1.75rem, 4vw, 2.5rem);
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	margin: 0 0 0.75rem;
+}
+
+.beskid-landing__section-lead {
+	color: var(--muted-foreground);
+	max-width: 48rem;
+	margin: 0 0 2.5rem;
+	font-size: 1.05rem;
+	line-height: 1.6;
+}
+
+.beskid-features {
+	display: grid;
+	gap: 1.25rem;
+	grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+}
+
+.beskid-feature {
+	padding: 1.5rem;
+	border: 1px solid var(--border);
+	border-radius: 0.75rem;
+	background: color-mix(in srgb, var(--card) 92%, transparent);
+}
+
+.beskid-feature h3 {
+	margin: 0 0 0.5rem;
+	font-size: 1.15rem;
+	font-weight: 600;
+}
+
+.beskid-feature p {
+	margin: 0;
+	color: var(--muted-foreground);
+	line-height: 1.6;
+}
+
+/* Book / blog index lists */
+.beskid-index {
+	max-width: 72rem;
+	margin-inline: auto;
+	padding: 3rem clamp(1rem, 4vw, 2.5rem) 5rem;
+}
+
+.beskid-index__eyebrow {
+	color: var(--beskid-primary, var(--primary));
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	font-size: 0.85rem;
+	margin-bottom: 0.5rem;
+}
+
+.beskid-index__title {
+	font-size: clamp(2rem, 5vw, 3rem);
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	margin: 0 0 1rem;
+}
+
+.beskid-index__lead {
+	color: var(--muted-foreground);
+	max-width: 42rem;
+	margin: 0 0 2.5rem;
+	font-size: 1.05rem;
+	line-height: 1.6;
+}
+
+.beskid-card-list {
+	display: grid;
+	gap: 1rem;
+	grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.beskid-card {
+	display: block;
+	padding: 1.25rem 1.5rem;
+	border: 1px solid var(--border);
+	border-radius: 0.75rem;
+	background: color-mix(in srgb, var(--card) 92%, transparent);
+	text-decoration: none;
+	color: inherit;
+	transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.beskid-card:hover {
+	border-color: var(--beskid-primary, var(--primary));
+	transform: translateY(-2px);
+}
+
+.beskid-card__meta {
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
+	font-size: 0.85rem;
+	color: var(--muted-foreground);
+	margin-bottom: 0.5rem;
+}
+
+.beskid-card__title {
+	font-size: 1.15rem;
+	font-weight: 600;
+	margin: 0 0 0.35rem;
+}
+
+.beskid-card__desc {
+	margin: 0;
+	color: var(--muted-foreground);
+	font-size: 0.95rem;
+	line-height: 1.5;
+}
+
+.beskid-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 0.15rem 0.55rem;
+	border-radius: 999px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	background: var(--muted);
+	color: var(--foreground);
+}
+
+.beskid-badge--released {
+	background: #22c55e;
+	color: #052e16;
+}
+
+.beskid-badge--truncated {
+	background: #f59e0b;
+	color: #2a1607;
+}
+
+.beskid-badge--in-progress {
+	background: #a855f7;
+	color: #1e1033;
+}
+
+/* Doc page chrome (prev/next, breadcrumb) */
+.beskid-doc-nav {
+	max-width: 48rem;
+	margin: 2rem auto 0;
+	padding: 1.5rem clamp(1rem, 4vw, 2.5rem);
+	border-top: 1px solid var(--border);
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.beskid-doc-nav a {
+	color: var(--beskid-primary, var(--primary));
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.beskid-doc-nav a:hover {
+	text-decoration: underline;
+}
+
+.beskid-doc-nav__label {
+	display: block;
+	font-size: 0.8rem;
+	color: var(--muted-foreground);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	margin-bottom: 0.2rem;
+}
+
+/* Downloads page */
+.beskid-downloads {
+	max-width: 64rem;
+	margin-inline: auto;
+	padding: 3rem clamp(1rem, 4vw, 2.5rem) 5rem;
+}
+
+.beskid-downloads__title {
+	font-size: clamp(2rem, 5vw, 3rem);
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	margin: 0 0 0.75rem;
+}
+
+.beskid-downloads__lead {
+	color: var(--muted-foreground);
+	max-width: 42rem;
+	margin: 0 0 2.5rem;
+	font-size: 1.05rem;
+	line-height: 1.6;
+}

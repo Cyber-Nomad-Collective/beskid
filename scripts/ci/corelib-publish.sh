@@ -13,7 +13,7 @@
 #   version-bump  patch | minor | major (default: patch)
 #   --dry-run     build and validate every artifact without registry access
 # Env: BESKID_PCKG_API_KEY (required unless --dry-run)
-#      BESKID_PCKG_BASE_URL (default pckg.beskid-lang.org:8082)
+#      BESKID_PCKG_BASE_URL (default https://pckg.beskid-lang.org)
 set -euo pipefail
 
 VERSION_BUMP="patch"
@@ -36,7 +36,7 @@ if [[ "$DRY_RUN" == 0 ]]; then
     exit 1
   fi
 fi
-export BESKID_PCKG_BASE_URL="${BESKID_PCKG_BASE_URL:-https://pckg.beskid-lang.org:8082}"
+export BESKID_PCKG_BASE_URL="${BESKID_PCKG_BASE_URL:-https://pckg.beskid-lang.org}"
 export BESKID_PCKG_VERSION_BUMP="$VERSION_BUMP"
 export BESKID_PUBLISH_DRY_RUN="$DRY_RUN"
 

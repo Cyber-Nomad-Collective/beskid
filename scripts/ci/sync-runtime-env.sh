@@ -46,6 +46,16 @@ if [[ -n "${profiles}" ]]; then
   jq --arg profiles "${profiles}" '. + {COMPOSE_PROFILES: $profiles}' "${merged}" >"${merged}.next"
   mv "${merged}.next" "${merged}"
 fi
+if [[ ",${profiles}," == *,pckg,* ]]; then
+  : "${PCKG_RELEASE_PUBLISHER_KEY_SHA256:?Set PCKG_RELEASE_PUBLISHER_KEY_SHA256 for the pckg release publisher}"
+  if [[ ! "${PCKG_RELEASE_PUBLISHER_KEY_SHA256}" =~ ^[0-9a-f]{64}$ ]]; then
+    echo "PCKG_RELEASE_PUBLISHER_KEY_SHA256 must be a lowercase SHA-256 digest" >&2
+    exit 1
+  fi
+  jq --arg value "${PCKG_RELEASE_PUBLISHER_KEY_SHA256}" \
+    '. + {PCKG_RELEASE_PUBLISHER_KEY_SHA256: $value}' "${merged}" >"${merged}.next"
+  mv "${merged}.next" "${merged}"
+fi
 
 # Make the immutable release and deployment trace queryable from every service.
 if [[ -n "${BESKID_RELEASE_MANIFEST_SHA256:-}" ]]; then

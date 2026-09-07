@@ -33,6 +33,8 @@ on:
         required: false
       OPENBAO_TOKEN:
         required: false
+      BESKID_PCKG_KEY:
+        required: false
 
 permissions:
   actions: read
@@ -102,6 +104,7 @@ jobs:
           COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
           OPENBAO_ADDR: ${{ vars.OPENBAO_ADDR }}
           OPENBAO_TOKEN: ${{ secrets.OPENBAO_TOKEN }}
+          BESKID_PCKG_KEY: ${{ secrets.BESKID_PCKG_KEY }}
           COOLIFY_SERVICE_UUID: ${{ vars.COOLIFY_SERVICE_UUID }}
           APPLY: ${{ inputs.apply }}
           LANE: ${{ inputs.environment }}
@@ -112,6 +115,10 @@ jobs:
           if [[ "${APPLY}" == true ]]; then
             [[ -n "${COOLIFY_API_TOKEN}" ]] || { echo "environment Coolify token is required" >&2; exit 1; }
             [[ -n "${OPENBAO_TOKEN}" ]] || { echo "environment OpenBao token is required" >&2; exit 1; }
+            [[ "${BESKID_PCKG_KEY}" =~ ^bpk_[[:xdigit:]]{64}$ ]] || { echo "BESKID_PCKG_KEY must be a canonical bpk_ publisher token" >&2; exit 1; }
+            PCKG_RELEASE_PUBLISHER_KEY_SHA256="$(printf '%s' "${BESKID_PCKG_KEY}" | sha256sum | awk '{print $1}')"
+            export PCKG_RELEASE_PUBLISHER_KEY_SHA256
+            unset BESKID_PCKG_KEY
             manifest_sha="$(sha256sum release/release-manifest.json | awk '{print $1}')"
             trace_id="$(printf '%s' "${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}:${manifest_sha}:${LANE}" | sha256sum | cut -c1-32)"
             span_id="$(printf '%s' "deploy:${trace_id}" | sha256sum | cut -c1-16)"

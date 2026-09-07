@@ -27,7 +27,7 @@ Before parse, **effective roots** come from manifests and workspace resolution:
 - [Program assembly](/platform-spec/compiler/build-pipeline/program-assembly/)
 - [Workspace resolution](/platform-spec/compiler/resolution-and-projects/workspace-resolution-contract/)
 
-## `beskid parse`
+## `beskid dev syntax parse`
 
 Exercises front-end slices without full codegen—useful for grammar work, insufficient for shipping.
 

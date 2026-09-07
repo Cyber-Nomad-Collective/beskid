@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const KINDS = new Set(['spec', 'book', 'nexus', 'bug']);
-const SPEC_ORIGIN = 'https://spec.beskid-lang.org';
+const DOCS_ORIGIN = 'https://beskid-lang.org';
+const STANDARD_HREF = `${DOCS_ORIGIN}/docs/standard/`;
 
 function normalizeSpecPath(value) {
 	const withoutOrigin = value.replace(/^https?:\/\/[^/]+/i, '');
@@ -52,7 +53,7 @@ function loadCanonicalAliases(openSpecRoot = resolveOpenSpecRoot()) {
 	const aliases = new Map();
 	for (const entry of entries) {
 		if (!entry?.path) continue;
-		const canonical = `/${normalizeSpecPath(entry.path)}/`.replace(/\/+/g, '/');
+		const canonical = STANDARD_HREF;
 		for (const alias of [...(entry.legacySlugs ?? []), ...(entry.aliases ?? [])]) {
 			aliases.set(normalizeSpecPath(alias), canonical);
 		}
@@ -80,8 +81,7 @@ function parseFields(body) {
 
 function fallbackHref(kind, ref) {
 	if (kind === 'spec') {
-		const capability = ref.split('#', 1)[0];
-		return `${SPEC_ORIGIN}/platform-spec/capabilities/${encodeURIComponent(capability)}/`;
+		return STANDARD_HREF;
 	}
 	if (kind === 'book') return `/book/${ref.replace(/^\/+|\/+$/g, '')}/`;
 	if (kind === 'nexus') return `https://nexus.beskid-lang.org/${ref.replace(/^\/+/, '')}`;
@@ -95,10 +95,7 @@ function renderDirective(kind, body) {
 	const title = values.title ?? values.label ?? ref;
 	const href = fallbackHref(kind, ref);
 	return [
-		`<script type="module" src="${SPEC_ORIGIN}/beskid-doc-embed.js"></script>`,
-		`<beskid-doc-embed kind="${kind}" ref="${escapeHtml(ref)}" origin="${SPEC_ORIGIN}">`,
-		`<a href="${escapeHtml(href)}">${escapeHtml(title)}</a>`,
-		'</beskid-doc-embed>',
+		`<a href="${escapeHtml(href)}" data-beskid-doc-kind="${kind}" data-beskid-doc-ref="${escapeHtml(ref)}">${escapeHtml(title)}</a>`,
 	].join('');
 }
 
@@ -106,9 +103,8 @@ function canonicalSpecHref(value, aliases) {
 	if (!/^\/?platform-spec(?:\/|$)/.test(value)) return value;
 	const [pathname, suffix = ''] = value.split(/(?=[?#])/u, 2);
 	const normalized = normalizeSpecPath(pathname);
-	if (normalized === 'platform-spec') return `${SPEC_ORIGIN}/platform-spec/${suffix}`;
-	const canonical = aliases.get(normalized);
-	return canonical ? `${SPEC_ORIGIN}${canonical}${suffix}` : value;
+	if (normalized === 'platform-spec') return `${STANDARD_HREF}${suffix}`;
+	return aliases.has(normalized) ? `${STANDARD_HREF}${suffix}` : STANDARD_HREF;
 }
 
 function walk(node, aliases) {
@@ -126,7 +122,7 @@ function walk(node, aliases) {
 	}
 }
 
-const BOOK_NOTICE = `<aside class="book-authority-notice" role="note"><strong>Informative guide.</strong> This Book page explains Beskid but does not define the standard. For normative requirements, use the <a href="${SPEC_ORIGIN}/platform-spec/">Beskid Platform Specification</a>.</aside>`;
+const BOOK_NOTICE = `<aside class="book-authority-notice" role="note"><strong>Informative guide.</strong> This Book page explains Beskid but does not define the standard. For normative requirements, use the <a href="${STANDARD_HREF}">Beskid Standard</a>.</aside>`;
 
 /** Enhance typed embeds, canonicalize spec aliases, and label every Book page informative. */
 export function remarkBeskidDirectives(options = {}) {

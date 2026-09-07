@@ -26,8 +26,7 @@
 		"typecheck:web-common": "pnpm --dir beskid_web_common run typecheck",
 		"typecheck:tracker": "pnpm --dir beskid_tracker exec tsc --noEmit",
 		"typecheck:learn": "pnpm --dir site/learn exec tsc --noEmit",
-		"typecheck:platform-spec": "pnpm --dir site/platform-spec exec tsc --noEmit",
-		"typecheck": "pnpm run typecheck:web-common && pnpm run typecheck:tracker && pnpm run typecheck:learn && pnpm run typecheck:platform-spec",
+		"typecheck": "pnpm run typecheck:web-common && pnpm run typecheck:tracker && pnpm run typecheck:learn",
 		"test": "pnpm run test:tracker && pnpm run test:shared-ui",
 		"gate:shared-ui-nexus": "bash scripts/ci/shared-ui-nexus-gate.sh"
 	},

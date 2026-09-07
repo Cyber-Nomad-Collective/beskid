@@ -3,14 +3,14 @@
 #
 # Triggered as a workflow_run on the Compiler release workflow completing
 # successfully (the authoritative publisher of CLI/LSP release assets, and
-# the emitter of the compiler-release-state artifact). Resolves the current
-# version from the release state, then packages only immutable release assets
+# the emitter of the compiler GitHub Release handoff). Resolves the current
+# version from that handoff state, then packages only immutable release assets
 # from Cyber-Nomad-Collective/beskid_compiler, fanning out to the platform
 # packaging jobs, and publishes:
 #   - Windows .msi + .exe   -> beskid_compiler cli-stable|cli-unstable / cli-v<ver> release
 #   - macOS .dmg + brew     -> compiler release + beskid_homebrew tap
 #   - Ubuntu/Debian .deb    -> beskid_compiler cli-stable|cli-unstable / cli-v<ver> release
-#   - Snap                  -> Snap Store (snap name: beskid)
+#   - Container images      -> GHCR stable|unstable + immutable version tags
 #
 # All platform recipes live in the beskid_distrib submodule (content-only);
 # this workflow holds only the orchestration.
@@ -48,12 +48,12 @@ env:
 
 jobs:
   # Guard + resolve job. Only proceeds when the triggering Compiler release run
-  # actually published a release (its state artifact says publishable=true), and
+  # actually published a release (its handoff state says publishable=true), and
   # when the rolling version differs from the last published distrib marker.
   resolve-rolling:
     name: Resolve rolling release
     # Run on manual dispatch, or only when the triggering Compiler release
-    # completed successfully. The publishable flag in the state artifact is the
+    # completed successfully. The publishable flag in the handoff state is the
     # real gate; conclusion alone is not enough (a release can conclude success
     # without being publishable when all platform builds failed).
     if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') }}
@@ -67,7 +67,6 @@ jobs:
       cli_darwin_sha: ${{ steps.shas.outputs.cli_darwin_sha }}
       should_run: ${{ steps.guard.outputs.should_run }}
       homebrew_available: ${{ steps.secret-check.outputs.homebrew_available }}
-      snap_available: ${{ steps.secret-check.outputs.snap_available }}
       cli_rolling_tag: ${{ steps.release-tags.outputs.cli_rolling_tag }}
       lsp_rolling_tag: ${{ steps.release-tags.outputs.lsp_rolling_tag }}
     steps:
@@ -83,7 +82,6 @@ jobs:
         env:
           DISTRIB_GH_PAT: ${{ secrets.DISTRIB_GH_PAT }}
           HOMEBREW_TAP_GIT_TOKEN: ${{ secrets.HOMEBREW_TAP_GIT_TOKEN }}
-          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
         id: secret-check
         run: |
           set -euo pipefail
@@ -97,12 +95,6 @@ jobs:
           else
             echo "homebrew_available=true" >> "${GITHUB_OUTPUT}"
           fi
-          if [[ -z "${SNAPCRAFT_STORE_CREDENTIALS}" ]]; then
-            echo "::warning::SNAPCRAFT_STORE_CREDENTIALS not set — linux-snap job will be skipped."
-            echo "snap_available=false" >> "${GITHUB_OUTPUT}"
-          else
-            echo "snap_available=true" >> "${GITHUB_OUTPUT}"
-          fi
 
       - name: Init beskid_distrib submodule (shallow)
         run: ./scripts/ci/init-submodules.sh beskid_distrib
@@ -111,22 +103,22 @@ jobs:
         id: version
         env:
           GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
-          COMPILER_RELEASE_RUN_ID: ${{ github.event.workflow_run.id }}
+          HANDOFF_TAG: compiler-handoff-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}
         run: |
           set -euo pipefail
           version=""
           release_channel=""
           if [[ "${{ github.event_name }}" == "workflow_run" ]]; then
             # Triggered by Compiler release completion. Read the authoritative
-            # release state (version, channel, publishable) produced by that run
-            # rather than the Compiler gate's release-version artifact — a failed
+            # release state (version, channel, publishable) retained in the
+            # compiler GitHub Release handoff rather than an Actions artifact — a failed
             # gate still publishes an unstable release, and a green release can be
             # non-publishable when all platform builds failed.
             mkdir -p release-state
-            if ! gh run download "${COMPILER_RELEASE_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
-                  --name compiler-release-state --dir release-state 2>/dev/null \
+            if ! gh release download "${HANDOFF_TAG}" --repo "${COMPILER_REPO}" \
+                  --pattern release-state.json --dir release-state --clobber 2>/dev/null \
                 || [[ ! -f release-state/release-state.json ]]; then
-              echo "compiler-release-state artifact missing — release did not reach a publishable state; skipping distribution." >&2
+              echo "compiler release handoff state missing — release did not reach a publishable state; skipping distribution." >&2
               echo "publishable=false" >> "${GITHUB_OUTPUT}"
               exit 0
             fi
@@ -522,55 +514,6 @@ jobs:
             gh release upload "$tag" --repo "${COMPILER_REPO}" "${deb}" --clobber
           fi
 
-  linux-snap:
-    name: Snap (beskid)
-    needs: resolve-rolling
-    if: >-
-      ${{
-        needs.resolve-rolling.outputs.should_run == 'true' &&
-        needs.resolve-rolling.outputs.snap_available == 'true' &&
-        needs.resolve-rolling.outputs.release_channel == 'stable'
-      }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-      - name: Init beskid_distrib submodule
-        run: ./scripts/ci/init-submodules.sh beskid_distrib
-
-      - name: Fetch immutable CLI + LSP (linux-amd64) into snap/bin
-        env:
-          GH_TOKEN: ${{ secrets.DISTRIB_GH_PAT }}
-          VERSION: ${{ needs.resolve-rolling.outputs.version }}
-        run: |
-          mkdir -p beskid_distrib/snap/bin
-          cd beskid_distrib/snap
-          bash ../scripts/fetch-release-assets.sh cli "${VERSION}" x86_64-unknown-linux-gnu bin/beskid
-          bash ../scripts/fetch-release-assets.sh lsp "${VERSION}" x86_64-unknown-linux-gnu bin/beskid_lsp
-
-      - name: Stamp snapcraft.yaml version
-        env:
-          VERSION: ${{ needs.resolve-rolling.outputs.version }}
-        run: |
-          sed -i "s/__VERSION__/${VERSION}/g" beskid_distrib/snap/snapcraft.yaml
-          cat beskid_distrib/snap/snapcraft.yaml
-
-      - name: Build snap
-        id: build
-        uses: canonical/action-build@v1
-        with:
-          path: beskid_distrib/snap
-
-      - name: Publish snap
-        uses: canonical/action-publish@v1
-        with:
-          snap: ${{ steps.build.outputs.snap }}
-          release: stable
-        env:
-          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
-
   container-images:
     name: Container images
     needs: resolve-rolling
@@ -623,7 +566,7 @@ jobs:
   # retry on the same rolling version.
   record-complete-marker:
     name: Record completed distribution
-    needs: [resolve-rolling, windows-msi, macos-brew, macos-dmg, ubuntu-deb, linux-snap, container-images]
+    needs: [resolve-rolling, windows-msi, macos-brew, macos-dmg, ubuntu-deb, container-images]
     if: >-
       ${{
         always() &&
@@ -632,7 +575,6 @@ jobs:
         (needs.macos-brew.result == 'success' || needs.macos-brew.result == 'skipped') &&
         needs.macos-dmg.result == 'success' &&
         needs.ubuntu-deb.result == 'success' &&
-        (needs.linux-snap.result == 'success' || needs.linux-snap.result == 'skipped') &&
         needs.container-images.result == 'success'
       }}
     runs-on: blacksmith-4vcpu-ubuntu-2404

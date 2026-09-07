@@ -1,9 +1,10 @@
 ---
-title: "beskid corelib"
+title: "beskid dev build corelib"
 description: "Materialize the embedded Beskid corelib project template."
 ---
 
 Copies the **embedded corelib** project template (bundled with the CLI at build time) to a destination directory so you can open, edit, or depend on it as a normal Beskid project.
+This command is available as `beskid dev build corelib`.
 
 ## Arguments
 
@@ -19,7 +20,7 @@ Copies the **embedded corelib** project template (bundled with the CLI at build 
 ## Example
 
 ```bash
-beskid corelib --output ./vendor/beskid_corelib
+beskid dev build corelib --output ./vendor/beskid_corelib
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

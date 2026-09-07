@@ -14,8 +14,7 @@ Beskid is an AOT-only programming language, compiler/runtime, core library, pack
 |---|---|
 | `openspec/` | Sole normative Beskid standard, change proposals, migration catalog, and capability specs |
 | `compiler/` | Rust compiler, runtime, LSP, CLI, conformance tests, and Beskid corelib sources |
-| `site/platform-spec/` | React standard reader/editor and OpenSpec embed APIs |
-| `site/website/` | Astro landing site and informative Beskid Book |
+| `site/website/` | Astro landing site, Beskid Docs, Book, and blog |
 | `beskid_tracker/` | SQLite-backed roadmap and bug application; GitHub integration is bug-only after migration |
 | `beskid_nexus/` | Code/document/standard graph indexing and explorer |
 | `beskid_web_common/` | Published shared TypeScript packages shared by web applications |
@@ -41,8 +40,6 @@ tests, and changelog as separate from the superrepo root.
 | Add static workflow-policy checks | `just gate-full` |
 | Rebuild the OpenSpec read catalog | `pnpm openspec:catalog` |
 | Validate OpenSpec and provenance | `pnpm openspec:validate` |
-| Build platform-spec | `pnpm --cwd site/platform-spec run build` |
-| Test platform-spec | `pnpm --cwd site/platform-spec run test` |
 | Build website | `pnpm --cwd site/website run build` |
 | Test Tracker | `pnpm --cwd beskid_tracker run test` |
 | Run the focused Corelib spine test | `BESKID_CORELIB_SPINE_SMOKE=1 just test-corelib-spine` |
@@ -70,9 +67,9 @@ successful package gate.
 
 - Normative language and platform requirements live in `openspec/specs/`.
   `openspec/catalog.json` is the generated identity and provenance catalog.
-- `site/platform-spec/` renders and integrates the standard. Its SQLite and
-  Memgraph stores are projections, not alternate normative sources.
-- `site/website/` contains the informative Book and landing documentation.
+- `site/website/` provides the public Docs entry point at `/docs/standard/`,
+  the Book, the blog, and the landing documentation. It does not create a
+  second normative copy of OpenSpec.
 - Compiler implementation and Corelib sources live under `compiler/`; consult
   that nested repository before relying on release-specific implementation
   invariants.
@@ -85,7 +82,7 @@ Parallel agents must use disjoint write scopes. Knowledge files live outside the
 
 | Domain | Paths | Knowledge doc |
 |---|---|---|
-| Standard and docs | `openspec/`, `site/platform-spec/`, `site/website/`, `docs/` | `~/.agents/knowledge/spec-docs.md` |
+| Standard and docs | `openspec/`, `site/website/`, `docs/` | `~/.agents/knowledge/spec-docs.md` |
 | Tracker and Nexus integration | `beskid_tracker/`, `beskid_nexus/`, relevant shared package APIs | `~/.agents/knowledge/apps-integration.md` |
 | CI/CD and infrastructure | `.github/`, `scripts/ci/`, `beskid_infra/` | `~/.agents/knowledge/cicd.md` |
 | Compiler/runtime | `compiler/` | `~/.agents/knowledge/compiler.md` |

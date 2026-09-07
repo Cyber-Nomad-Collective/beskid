@@ -3,12 +3,12 @@ import test from 'node:test';
 
 import { __test, remarkBeskidDirectives } from './remark-beskid-directives.mjs';
 
-test('renders a spec directive as an embeddable element with fallback', () => {
+test('renders a spec directive as a standard link', () => {
 	const html = __test.renderDirective(
 		'spec',
 		'ref: compiler--pipeline--aot#artifact\ntitle: AOT artifact',
 	);
-	assert.match(html, /<beskid-doc-embed kind="spec"/);
+	assert.match(html, /data-beskid-doc-kind="spec"/);
 	assert.match(html, />AOT artifact<\/a>/);
 });
 
@@ -46,7 +46,7 @@ test('rewrites legacy platform-spec links to catalog-backed canonical URLs', () 
 	remarkBeskidDirectives({ aliases })(tree);
 	assert.equal(
 		tree.children[0].children[0].url,
-		'https://spec.beskid-lang.org/platform-spec/capabilities/language--syntax--blocks/',
+		'https://beskid-lang.org/docs/standard/',
 	);
 });
 
@@ -57,7 +57,7 @@ test('labels every Book source as informative', () => {
 	});
 	assert.equal(tree.children[0].type, 'html');
 	assert.match(tree.children[0].value, /Informative guide/);
-	assert.match(tree.children[0].value, /Beskid Platform Specification/);
+	assert.match(tree.children[0].value, /Beskid Standard/);
 });
 
 test('loadCanonicalAliases hard-fails when catalog is required and missing', () => {

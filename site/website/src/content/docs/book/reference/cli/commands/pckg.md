@@ -1,18 +1,24 @@
 ---
-title: "beskid pckg"
+title: "beskid dev package registry"
 description: "Package registry and publishing operations (pckg backend)."
 ---
 
-Dispatches to the **pckg** HTTP client: authentication, catalog search and details, `.bpk` pack and upload, version download, yank/unyank, and related registry workflows (project dependency resolution stays on **`beskid fetch`** / **`beskid lock`**).
+Dispatches to the **pckg** HTTP client: authentication, catalog search and details, `.bpk` pack and upload, version download, yank/unyank, and related registry workflows (project dependency resolution stays on **`beskid dev project fetch`** / **`beskid dev project lock`**).
+
+Use this through the dev surface:
+
+```bash
+beskid dev package registry --help
+```
 
 ## Automatic docs on pack (library packages)
 
-For ordinary **library** projects (`project.type` omitted or `Host`), `beskid pckg pack` (via the **beskid** CLI) generates API docs before creating the `.bpk` artifact:
+For ordinary **library** projects (`project.type` omitted or `Host`), `beskid dev package registry pack` (via the **beskid** CLI) generates API docs before creating the `.bpk` artifact:
 
 - writes Markdown and `api.json` to `<source>/.beskid/docs/` (for example `index.md`)
 - includes those files in the published artifact (paths under `.beskid/docs/` are allowed by the registry)
 
-On **pckg**, the in-browser documentation browser lists Markdown from:
+The package browser lists Markdown from:
 
 - `docs/**/*.md` in the artifact
 - optional root `README.md` (from `readme.md` at package root, `readme = "path"` in the project's `.bproj` manifest, or an explicit on-disk `README.md`)
@@ -36,11 +42,11 @@ When the project `.bproj` declares **`type = Template`**, pack uses the **templa
 - reads the authoring manifest from **`.beskid/template.json`** and writes it as
   artifact-root **`template.json`** (schema **`beskid.template.v1`**)
 - copies a **`template`** summary (`shortName`, `identity`, `tags`) from that manifest into `package.json`
-- **does not** run `beskid doc` or embed **`.beskid/docs/api.json`**
+- **does not** run `beskid dev syntax doc` or embed **`.beskid/docs/api.json`**
 
 Authoring and registry rules: [Template packages](/platform-spec/tooling/project-scaffolding/template-packages/). User workflows: [Project scaffolding](/book/reference/projects/scaffolding/).
 
-## Pack (`beskid pckg pack`)
+## Pack (`beskid dev package registry pack`)
 
 Builds a `.bpk` zip from a package source tree.
 
@@ -72,7 +78,7 @@ sources. The server applies the same immutable-version and artifact validation
 rules to every member; there is no separate workspace publication contract or
 rollback envelope.
 
-## Upload (`beskid pckg upload`)
+## Upload (`beskid dev package registry upload`)
 
 Publishes an existing `.bpk` to an existing registry package
 (`POST /api/packages/<package>/versions`).
@@ -80,7 +86,7 @@ Publishes an existing `.bpk` to an existing registry package
 Usage shape:
 
 ```bash
-beskid pckg upload <package> --artifact path/to/package.bpk
+beskid dev package registry upload <package> --artifact path/to/package.bpk
 ```
 
 The CLI does **not** accept a separate `--version` flag. It reads the version
@@ -103,10 +109,10 @@ Other subcommands that target a specific release (`download`, `yank`, `unyank`) 
 
 ## Shared client options
 
-These apply to all `beskid pckg` subcommands (see `beskid pckg --help` for the full list):
+These apply to all `beskid dev package registry` subcommands (see `beskid dev package registry --help` for the full list):
 
 - `--base-url <url>` — pckg HTTP root (also `BESKID_PCKG_URL`)
-- `--bearer-token` or `--api-key` — authentication (also `BESKID_PCKG_TOKEN` / `BESKID_PCKG_API_KEY`); otherwise the CLI can load a saved publisher key from `--config-file` (default `.beskid/pckg/repositories.json`, written by `beskid pckg configure`)
+- `--bearer-token` or `--api-key` — authentication (also `BESKID_PCKG_TOKEN` / `BESKID_PCKG_API_KEY`); otherwise the CLI can load a saved publisher key from `--config-file` (default `.beskid/pckg/repositories.json`, written by `beskid dev package registry configure`)
 - `--timeout-secs`, `--verbose`
 
 ## Discovering commands
@@ -114,31 +120,31 @@ These apply to all `beskid pckg` subcommands (see `beskid pckg --help` for the f
 Run:
 
 ```bash
-beskid pckg --help
+beskid dev package registry --help
 ```
 
 for the live subcommand tree and flags.
 
 ## Conceptual documentation
 
-For auth flows, lockfiles, and publish semantics, see the site guide [Package Client CLI](/packages/client-cli/).
+For auth flows, lockfiles, and publish semantics, see the book chapter [Packages without npm trauma](/book/18-packages-without-npm-trauma/).
 
 ## Examples
 
 ```bash
-beskid pckg whoami
+beskid dev package registry whoami
 ```
 
-Pack then upload (after `beskid pckg configure` or with env auth):
+Pack then upload (after `beskid dev package registry configure` or with env auth):
 
 ```bash
-beskid pckg pack --package my-lib --source ./my-lib --output ./my-lib.bpk
-beskid pckg upload my-lib --artifact ./my-lib.bpk
+beskid dev package registry pack --package my-lib --source ./my-lib --output ./my-lib.bpk
+beskid dev package registry upload my-lib --artifact ./my-lib.bpk
 ```
 
 ## See also
 
-- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/) — tutorial walkthrough of `beskid pckg`
+- [The pckg CLI](/book/18-packages-without-npm-trauma/pckg-cli/) — historical registry command flow and concepts
 - [Publish your first package](/book/reference/publish-first-package/) — step-by-step workflow
 - [Packages without npm trauma](/book/18-packages-without-npm-trauma/) — chapter overview and concepts
 - [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/) — generated API docs packed with `.bpk`

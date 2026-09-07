@@ -1,14 +1,14 @@
 ---
 title: "CLIF and debug"
-description: Inspect Cranelift IR with beskid clif and debug flags without guessing lowering.
+description: Inspect Cranelift IR with `beskid dev syntax clif` and debug flags without guessing lowering.
 tableOfContents: true
 ---
 
-When lowering misbehaves, reading Rust alone is masochism. **`beskid clif`** dumps Cranelift IR so you can correlate machine intent with source.
+When lowering misbehaves, reading Rust alone is masochism. **`beskid dev syntax clif`** dumps Cranelift IR so you can correlate machine intent with source.
 
 ## CLI
 
-Reference: [beskid clif](/book/reference/cli/commands/clif/).
+Reference: [beskid dev syntax clif](/book/reference/cli/commands/clif/).
 
 Typical uses:
 

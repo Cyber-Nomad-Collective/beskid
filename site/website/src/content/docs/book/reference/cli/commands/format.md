@@ -1,9 +1,10 @@
 ---
-title: "beskid format"
+title: "beskid dev syntax format"
 description: "Pretty-print Beskid sources with the canonical formatter (alias: fmt)."
 ---
 
-Pretty-print Beskid sources using the **canonical formatter** (`beskid_analysis::format::format_program`). This is the same layout engine as the LSP **document formatting** request.
+Pretty-print Beskid sources using the **canonical formatter** (`beskid_analysis::format::format_program`).
+This command is part of the developer syntax/tooling surface (`beskid dev syntax format`).
 
 The subcommand is also available as **`beskid fmt`** (alias).
 
@@ -33,16 +34,16 @@ For implementation details, see [Formatter internals](/book/reference/cli/format
 
 ```bash
 # Print formatted source to stdout (one file only)
-beskid format src/Main.bd
+beskid dev syntax format src/Main.bd
 
 # Rewrite in place
-beskid format src/Main.bd --write
+beskid dev syntax format src/Main.bd --write
 
 # Same as format; format every .bd under src/
-beskid fmt src --write
+beskid dev syntax format src --write
 
 # CI: verify already-canonical sources (e.g. golden *.expected.bd)
-find tests/fixtures/format -name '*.expected.bd' -print0 | xargs -0 -I{} beskid format {} --check
+find tests/fixtures/format -name '*.expected.bd' -print0 | xargs -0 -I{} beskid dev syntax format {} --check
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

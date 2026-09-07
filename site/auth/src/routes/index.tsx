@@ -48,10 +48,10 @@ function HomePage() {
 					/>
 					<p className="text-muted-foreground text-center text-xs">
 						<a
-							href="https://spec.beskid-lang.org/platform-spec/"
+							href="https://beskid-lang.org/docs/standard/"
 							className="underline-offset-4 hover:underline"
 						>
-							Platform specification
+							Beskid standard
 						</a>
 					</p>
 				</div>

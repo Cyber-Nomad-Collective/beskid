@@ -1,0 +1,26 @@
+{
+	"root": false,
+	"extends": ["../../biome.json"],
+	"files": {
+		"includes": [
+			"**/*.ts",
+			"**/*.tsx",
+			"**/*.js",
+			"**/*.jsx",
+			"**/*.json",
+			"**/*.yaml",
+			"**/*.yml",
+			"**/index.html",
+			"**/vite.config.ts",
+			"!**/node_modules",
+			"!**/.git",
+			"!**/dist",
+			"!**/.output",
+			"!**/.nitro",
+			"!**/.vinxi",
+			"!**/.turbo",
+			"!**/coverage",
+			"!src/routeTree.gen.ts"
+		]
+	}
+}

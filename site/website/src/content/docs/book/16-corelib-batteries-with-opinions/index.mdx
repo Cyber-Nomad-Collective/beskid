@@ -19,17 +19,17 @@ If you expected a monolithic `System.IO` graveyard, adjust expectations now.
 
 | Section | Topic |
 | --- | --- |
-| [corelib command](/book/16-corelib-batteries-with-opinions/corelib-command/) | Materialize the embedded template with `beskid corelib`. |
+| [corelib command](/book/16-corelib-batteries-with-opinions/corelib-command/) | Materialize the embedded template with `beskid dev build corelib`. |
 | [Injection and resolution](/book/16-corelib-batteries-with-opinions/injection-and-resolution/) | How every project gets the same canonical package. |
 | [Terminal and console](/book/16-corelib-batteries-with-opinions/terminal-and-console/) | ANSI, streams, and why console is not syscall soup. |
-| [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/) | `beskid doc`, structured API, and pckg docs UI. |
+| [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/) | `beskid dev syntax doc`, structured API, and pckg docs UI. |
 | [Runtime-backed surfaces](/book/16-corelib-batteries-with-opinions/runtime-backed-surfaces/) | What must call through the runtime vs pure Beskid. |
 
 ```mermaid
 flowchart LR
   CLI[beskid CLI] --> inj[Corelib injection]
   inj --> src[beskid_corelib sources]
-  src --> doc[beskid doc / api.json]
+  src --> doc[beskid dev syntax doc / api.json]
   doc --> pckg[pckg registry docs]
   runtime[beskid_runtime] --> src
 ```

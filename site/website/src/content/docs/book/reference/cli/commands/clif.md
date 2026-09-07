@@ -1,9 +1,10 @@
 ---
-title: "beskid clif"
+title: "beskid dev syntax clif"
 description: "Lower a Beskid program to CLIF and print the IR."
 ---
 
-Lowers a resolved Beskid source file into **CLIF** and prints the resulting IR to stdout. Uses the same project resolution and validation path as `run` and `build`.
+Lowers a resolved Beskid source file into **CLIF** and prints the resulting IR to stdout.
+This command is available as `beskid dev syntax clif`.
 
 ## Arguments
 
@@ -19,7 +20,7 @@ Lowers a resolved Beskid source file into **CLIF** and prints the resulting IR t
 ## Example
 
 ```bash
-beskid clif --project path/to/Project.proj
+beskid dev syntax clif --project path/to/Project.proj
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

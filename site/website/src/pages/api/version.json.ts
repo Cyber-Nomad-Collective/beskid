@@ -145,12 +145,6 @@ export async function GET({ url: requestUrl }: { url: URL }) {
 				command: "brew tap cyber-nomad-collective/beskid && brew install beskid",
 				url: "",
 			},
-			{
-				platform: "linux",
-				label: "Snap",
-				command: "sudo snap install beskid --classic",
-				url: "",
-			},
 		].filter((pkg) => pkg.url === "" || available.has(pkg.url.slice(pkg.url.lastIndexOf("/") + 1)));
 
 		const payload: VersionPayload = {

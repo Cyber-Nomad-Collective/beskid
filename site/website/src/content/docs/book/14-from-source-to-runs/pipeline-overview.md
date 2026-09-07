@@ -37,7 +37,7 @@ flowchart TB
 
 ## CLI entry
 
-`beskid build`, `beskid run`, `beskid analyze` orchestrate subsets—contract: [Build / analyze / run](/platform-spec/tooling/cli/build-analyze-run-contract/).
+`beskid dev build compile`, `beskid run`, `beskid dev syntax analyze` orchestrate subsets—contract: [Build / analyze / run](/platform-spec/tooling/cli/build-analyze-run-contract/).
 
 ## Diagnostics parity
 

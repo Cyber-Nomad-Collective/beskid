@@ -23,8 +23,10 @@ assert_contains "${DELIVERY_WORKFLOW}" 'corelib-publish.sh patch --dry-run' \
   "delivery rehearses all package artifacts before live publication"
 assert_contains "${DELIVERY_WORKFLOW}" 'init-submodules.sh beskid_templates' \
   "the publication job initializes the templates submodule"
-assert_contains "${DELIVERY_WORKFLOW}" 'BESKID_PCKG_BASE_URL: https://pckg.beskid-lang.org:8082' \
-  "publication targets the explicit-port promoted Rust registry"
+assert_contains "${DELIVERY_WORKFLOW}" 'BESKID_PCKG_BASE_URL: https://pckg.beskid-lang.org' \
+  "publication targets the public Rust registry route"
+assert_eq "absent" "$({ grep -Fq 'BESKID_PCKG_BASE_URL: https://pckg.beskid-lang.org:8082' <<<"${DELIVERY_WORKFLOW}" && echo present; } || echo absent)" \
+  "publication does not mistake Coolify's target-port selector for a public TLS listener"
 assert_eq "absent" "$({ grep -Fq "github.event_name != 'workflow_dispatch' || !inputs.unstable" <<<"${DELIVERY_WORKFLOW}" && echo present; } || echo absent)" \
   "unstable channel selection cannot skip release quality gates"
 assert_contains "${RUNNER}" '"interop"' \
@@ -53,8 +55,10 @@ assert_contains "${RUNNER}" 'beskid_compiler/tree/main/corelib' \
   "corelib package metadata links to the compiler repository's real corelib root"
 assert_contains "${PUBLISHER}" 'BESKID_PUBLISH_DRY_RUN' \
   "the publisher exposes a no-secret, no-mutation validation mode"
-assert_contains "${PUBLISHER}" 'https://pckg.beskid-lang.org:8082' \
-  "the publisher default uses the canonical explicit-port registry URL"
+assert_contains "${PUBLISHER}" 'https://pckg.beskid-lang.org' \
+  "the publisher default uses the canonical public registry URL"
+assert_eq "absent" "$({ grep -Fq 'https://pckg.beskid-lang.org:8082' <<<"${PUBLISHER}" && echo present; } || echo absent)" \
+  "the publisher default does not require an unavailable public custom-port listener"
 
 assert_eq "absent" "$({ grep -Fq 'api/workspaces/publish' <<<"${RUNNER}" && echo present; } || echo absent)" \
   "legacy workspace-bundle publication is removed"

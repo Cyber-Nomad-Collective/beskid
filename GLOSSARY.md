@@ -32,6 +32,10 @@ Tracker integration in which GitHub Issues represents public bugs and their supp
 
 An OpenSpec unit stored at `openspec/specs/<capability>/spec.md`. During migration, Beskid feature hubs become feature capabilities while domains and areas become taxonomy/governance capabilities.
 
+## Coolify target URL
+
+The `https://<host>:<container-port>` route descriptor sent to Coolify so its proxy selects the correct Compose service port. It is deployment configuration, not necessarily a public TLS listener; public health checks and API clients use the service's separate standard-HTTPS public URL.
+
 ## Draft Context
 
 A revision-pinned, ordered set of Platform Spec document operations authored in the
@@ -92,9 +96,8 @@ The installed ABI-v5 target/profile directory containing `abi.json` and matching
 ## Node SQLite adapter
 
 The service-local synchronous SQLite boundary used by Node-hosted site apps.
-Auth uses pinned `better-sqlite3`; Platform Spec uses the Bun-compatible facade
-over built-in `node:sqlite`. Both preserve prepared statements and transactions
-while keeping native SQLite out of browser bundles.
+Auth uses pinned `better-sqlite3`, preserving prepared statements and
+transactions while keeping native SQLite out of browser bundles.
 
 ## Normative requirement
 
@@ -102,7 +105,7 @@ A named OpenSpec requirement using SHALL or MUST and one or more testable scenar
 
 ## Platform specification
 
-The public reader and service that renders the Beskid standard. It is a presentation and integration surface; `openspec/specs` is its source of authority.
+The historical name for the separately deployed standard reader. That service is retired; the canonical website now renders the Beskid standard at `/docs/standard/`, while `openspec/specs` remains the sole normative source.
 
 ## Platform Spec document identity
 
@@ -140,7 +143,7 @@ The process of turning preserved descriptive migration text into precise, indepe
 
 ## Staged promotion
 
-A delivery process that builds an artifact once, verifies and deploys its immutable digest to staging, then automatically promotes that exact digest to production after staging succeeds, with environment-scoped secrets, smoke/SLO gates, and rollback evidence.
+A GitHub Actions-controlled delivery process that builds an image once, publishes it to GHCR, deploys its immutable digest to Coolify staging, then automatically promotes that exact digest to production after staging succeeds, with environment-scoped secrets, smoke/SLO gates, and rollback evidence. Host-side image watchers and private-registry deployment paths are outside this process.
 
 ## Typed Markdown directive
 

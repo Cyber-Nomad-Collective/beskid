@@ -12,7 +12,7 @@ The auth hub runs as the **`auth`** service in the production Coolify compose st
 
 Operator guide: [beskid_infra/docs/deploy-compose.md](../../beskid_infra/docs/deploy-compose.md) · [deploy-matrix.md](../../beskid_infra/docs/deploy-matrix.md) · [openbao-layout.md](../../beskid_infra/docs/openbao-layout.md).
 
-Normative contract: [platform-spec/tooling/auth-hub/](https://beskid-lang.org/platform-spec/tooling/auth-hub/) (issuer `beskid-auth-hub`, `AUTH_HUB_*` variables).
+Normative contract: [Beskid standard](https://beskid-lang.org/docs/standard/) (issuer `beskid-auth-hub`, `AUTH_HUB_*` variables).
 
 ## Compose entry
 

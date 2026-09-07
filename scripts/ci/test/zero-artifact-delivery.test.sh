@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Contract: immutable release identity travels through same-run outputs, never Actions artifacts.
+# Contract: release identity travels through same-run outputs or GitHub Releases,
+# never GitHub Actions artifacts.
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
@@ -7,13 +8,42 @@ image="${root}/.github/workflows/reusable-image.yml"
 manifest="${root}/.github/workflows/reusable-release-manifest.yml"
 platform="${root}/.github/workflows/platform-delivery.yml"
 promote="${root}/.github/workflows/reusable-promote.yml"
+compiler="${root}/.github/workflows/compiler.yml"
+compiler_release="${root}/.github/workflows/compiler-release.yml"
+tracker_delivery="${root}/.github/workflows/tracker-platform-delivery.yml"
+open_vsx="${root}/.github/workflows/publish-open-vsx.yml"
+distribute="${root}/.github/workflows/distribute.yml"
 
-for workflow in "${image}" "${manifest}" "${promote}"; do
-  if rg -q 'actions/(upload|download)-artifact@' "${workflow}"; then
-    echo "authoritative release transport still uses Actions artifacts: ${workflow}" >&2
+if rg -q 'actions/(upload|download)-artifact@' "${root}/.github/workflows"; then
+  echo 'a workflow still uses GitHub Actions artifact storage' >&2
+  exit 1
+fi
+
+if rg -q 'gh run download' "${compiler_release}" "${open_vsx}" "${distribute}"; then
+  echo 'compiler release transport still downloads GitHub Actions artifacts' >&2
+  exit 1
+fi
+
+for required in \
+  'handoff_tag:' \
+  'handoff_tag=compiler-handoff-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}' \
+  'github-release-handoff.sh init' \
+  'github-release-handoff.sh upload' \
+  'github-release-handoff.sh download'; do
+  rg -Fq "${required}" "${compiler_release}" || {
+    echo "compiler release is missing quota-independent handoff contract: ${required}" >&2
     exit 1
-  fi
+  }
 done
+
+rg -Fq 'run-ci-reported-command.sh' "${compiler}" || {
+  echo 'compiler diagnostics must remain visible in GitHub job summaries' >&2
+  exit 1
+}
+rg -Fq 'run-ci-reported-command.sh' "${tracker_delivery}" || {
+  echo 'tracker delivery diagnostics must remain visible in GitHub job summaries' >&2
+  exit 1
+}
 
 for required in \
   'image-record:' \

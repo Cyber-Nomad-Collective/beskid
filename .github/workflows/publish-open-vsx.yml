@@ -20,6 +20,9 @@ concurrency:
   group: open-vsx-publish-${{ github.event.workflow_run.id }}
   cancel-in-progress: false
 
+env:
+  COMPILER_REPO: Cyber-Nomad-Collective/beskid_compiler
+
 jobs:
   # Guard job: the publish matrix below cannot reference `secrets.*` in a
   # job-level `if:` (matrix jobs are evaluated before the secrets context is
@@ -39,9 +42,10 @@ jobs:
       - id: check
         shell: bash
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+          COMPILER_RELEASE_READ_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
-          COMPILER_RELEASE_RUN_ID: ${{ github.event.workflow_run.id }}
+          HANDOFF_TAG: compiler-handoff-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}
         run: |
           set -euo pipefail
           if [[ -z "${OVSX_TOKEN}" ]]; then
@@ -49,16 +53,21 @@ jobs:
             echo "enabled=false" >> "${GITHUB_OUTPUT}"
             exit 0
           fi
+          [[ -n "${COMPILER_RELEASE_READ_TOKEN}" ]] || {
+            echo 'COMPILER_SUBMODULE_TOKEN is required to read the compiler release handoff.' >&2
+            exit 1
+          }
 
           # The triggering workflow is Compiler release, the authoritative
-          # publisher. Its compiler-release-state artifact carries the resolved
-          # version, channel, and publishable flag — the gate result alone is not
-          # enough (a failed gate still publishes an unstable release).
+          # publisher. Its GitHub Release handoff carries the resolved version,
+          # channel, and publishable flag without consuming Actions artifact
+          # storage. The gate result alone is not enough (a failed gate still
+          # publishes an unstable release).
           state_dir="$(mktemp -d)"
-          if ! gh run download "${COMPILER_RELEASE_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
-                --name compiler-release-state --dir "${state_dir}" 2>/dev/null \
+          if ! gh release download "${HANDOFF_TAG}" --repo "${COMPILER_REPO}" \
+                --pattern release-state.json --dir "${state_dir}" --clobber 2>/dev/null \
               || [[ ! -f "${state_dir}/release-state.json" ]]; then
-            echo "compiler-release-state artifact missing — release did not publish; skipping Open VSX." >&2
+            echo "compiler release handoff state missing — release did not publish; skipping Open VSX." >&2
             echo "enabled=false" >> "${GITHUB_OUTPUT}"
             exit 0
           fi
@@ -164,16 +173,16 @@ jobs:
           RUST_MIN_STACK: "67108864"
         run: bash ./scripts/ci/compiler-rust-gate.sh
 
-      - name: Download release state from Compiler release
+      - name: Download release state from the compiler GitHub Release handoff
         id: release-version
         shell: bash
         env:
-          GH_TOKEN: ${{ github.token }}
-          COMPILER_RELEASE_RUN_ID: ${{ github.event.workflow_run.id }}
+          GH_TOKEN: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+          HANDOFF_TAG: compiler-handoff-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}
         run: |
           set -euo pipefail
-          gh run download "${COMPILER_RELEASE_RUN_ID}" --repo "${GITHUB_REPOSITORY}" \
-            --name compiler-release-state --dir release-state
+          gh release download "${HANDOFF_TAG}" --repo "${COMPILER_REPO}" \
+            --pattern release-state.json --dir release-state --clobber
           version="$(jq -r '.version // empty' release-state/release-state.json | tr -d '[:space:]')"
           [[ "${version}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)([-+][0-9A-Za-z.-]+)?$ ]] || {
             echo "Compiler release state has invalid version: ${version:-<empty>}" >&2

@@ -42,5 +42,8 @@ v0.4.0 released with all GitHub CI/CD gates green: 100% corelib test matrix pass
 - Any compiler work beyond what's needed for 0.4 CI green
 - Open VSX extension publishing (deferred from v0.4)
 - Production OAuth deployment (deferred from v0.4 platform-dx deliverable)
+- [Snap Store distribution](tickets/23-snap-classic-confinement-review.md) —
+  retired from v0.4 after Store rejection; no confinement-review or publisher
+  action remains on the release frontier.
 - Composition constructs (W5): HostDefinition, RegistryBlock/Entry, ScopeDefinition/Hook, WithStatement, LaunchStatement
 - CodeStringLiteral ISLE lowering (TBD, not a 0.4 blocker)

@@ -1,9 +1,10 @@
 ---
-title: "beskid parse"
-description: "Parse a Beskid file and print a debug view of the AST."
+title: "beskid dev syntax parse"
+description: "Developer parse command; run as `beskid dev syntax parse`."
 ---
 
 Parse one `.bd` file and print a debug representation of the parsed program.
+This command is under the developer namespace.
 
 ## Arguments
 
@@ -20,7 +21,7 @@ Parse one `.bd` file and print a debug representation of the parsed program.
 ## Example
 
 ```bash
-beskid parse src/Main.bd
+beskid dev syntax parse src/Main.bd
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

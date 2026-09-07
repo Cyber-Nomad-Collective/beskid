@@ -4,8 +4,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 
-platform_dockerfile="${ROOT}/site/platform-spec/Dockerfile"
 production_compose="${ROOT}/beskid_infra/compose/production/docker-compose.yml"
+promotion_workflow="${ROOT}/.github/workflows/reusable-promote.yml"
 
 # Every required delivery image must have one service in the canonical Compose
 # template. render-release-compose.sh enforces this at deployment time; keep a
@@ -33,6 +33,7 @@ fi
 pckg_service="$(sed -n '/^  pckg:/,/^volumes:/p' "${production_compose}")"
 for required in \
 	'PCKG_DATABASE_URL: ${PCKG_DATABASE_URL:?set PCKG_DATABASE_URL}' \
+	'PCKG_RELEASE_PUBLISHER_KEY_SHA256: ${PCKG_RELEASE_PUBLISHER_KEY_SHA256:?set PCKG_RELEASE_PUBLISHER_KEY_SHA256}' \
 	'PCKG_ARTIFACT_ROOT:' \
 	'PCKG_WEB_ROOT:' \
 	'PCKG_BIND_ADDRESS: "0.0.0.0:8082"'; do
@@ -41,6 +42,20 @@ for required in \
 		exit 1
 	fi
 done
+
+for required in \
+	'BESKID_PCKG_KEY: ${{ secrets.BESKID_PCKG_KEY }}' \
+	'PCKG_RELEASE_PUBLISHER_KEY_SHA256=' \
+	'sync-runtime-env.sh'; do
+	if ! rg -Fq "${required}" "${promotion_workflow}"; then
+		echo "promotion workflow is missing publisher-key digest contract: ${required}" >&2
+		exit 1
+	fi
+done
+if rg -Fq 'BESKID_PCKG_API_KEY:' "${promotion_workflow}"; then
+	echo "raw pckg publisher key must never be synchronized into Coolify" >&2
+	exit 1
+fi
 
 if [[ "${pckg_service}" == *'${POSTGRES_PASSWORD}'* ]]; then
 	echo "Rust pckg production service must not construct PCKG_DATABASE_URL from POSTGRES_PASSWORD" >&2
@@ -86,27 +101,6 @@ for forbidden in 'Auth Hub' 'PCKG_AUTH_HUB_SERVICE_TOKEN' 'PCKG_SESSION_SECRET';
 		exit 1
 	fi
 done
-
-# Platform-spec installs with Corepack pnpm from its own package lock.
-[[ -f "${ROOT}/site/platform-spec/package.json" ]]
-rg -Fq 'packageManager": "pnpm@10.17.1"' "${ROOT}/site/platform-spec/package.json"
-rg -q 'FROM node:2[4-9]' "${platform_dockerfile}"
-rg -Fq 'corepack prepare pnpm@10.17.1' "${platform_dockerfile}"
-rg -Fq 'pnpm install --frozen-lockfile' "${platform_dockerfile}"
-rg -Fq 'COPY --from=build /app/site/platform-spec/node_modules ./node_modules' "${platform_dockerfile}"
-if rg -Fq 'oven/bun' "${platform_dockerfile}"; then
-	echo "platform-spec Dockerfile must not use oven/bun after Node cutover" >&2
-	exit 1
-fi
-if rg -Fq 'bun.lock' "${platform_dockerfile}"; then
-	echo "platform-spec Dockerfile must not require root bun.lock" >&2
-	exit 1
-fi
-
-if rg -Fq 'RUN bun run --cwd site/platform-spec' "${platform_dockerfile}"; then
-	echo "platform-spec build commands must be relative to their configured WORKDIR" >&2
-	exit 1
-fi
 
 # A retry after an already-published platform VSIX must verify the target identity.
 bash "${ROOT}/scripts/ci/test/open-vsx-publish.test.sh"

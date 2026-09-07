@@ -555,7 +555,7 @@ async function main() {
   const token = dryRun ? null : requirePublisherToken();
   const baseUrl = dryRun
     ? null
-    : normalizedBaseUrl((process.env.BESKID_PCKG_BASE_URL ?? "https://pckg.beskid-lang.org:8082").trim());
+    : normalizedBaseUrl((process.env.BESKID_PCKG_BASE_URL ?? "https://pckg.beskid-lang.org").trim());
   const cliBin = requireEnv("BESKID_CLI_BIN");
   const corelibRoot = resolveCorelibRoot();
   const templatesRoot = resolveTemplatesRoot();
