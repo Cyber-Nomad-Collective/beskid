@@ -11,6 +11,7 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- CI: completed the minimal Rust pckg image workspace dependency declaration.
 - CI: retry private-registry login through transient shared-edge proxy reloads
   before failing an image-delivery lane.
 - Deployment: adopted the existing production registry data volume as an
