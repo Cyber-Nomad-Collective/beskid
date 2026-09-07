@@ -68,6 +68,9 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
 
 ### Changed
 
+- `compiler` delivery pointer now includes authenticated Bearer API-key
+  publication plus compositional associated-type references, with parser,
+  semantic, and fail-closed ABI/layout coverage.
 - `site/website`: removed the legacy platform-spec-derived `packages/` MDX
   content tree (9 pages + the orphaned `PackageRegistryConsole.astro`
   component); the pckg registry surface is now served canonically by
