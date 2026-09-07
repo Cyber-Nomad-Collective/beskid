@@ -11,6 +11,7 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- CI: build the Rust pckg image from the compiler's authoritative workspace.
 - CI: completed the minimal Rust pckg image workspace dependency declaration.
 - CI: retry private-registry login through transient shared-edge proxy reloads
   before failing an image-delivery lane.
