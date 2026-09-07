@@ -32,6 +32,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Removed
 
+- Deployment: removed the invalid, unused Authelia and community services from
+  the production Compose path; they are not part of the Watchtower migration.
 - Deployment: removed Coolify diagnostics, staging promotion, runtime-env sync,
   and digest-render deployment scripts, plus the retired site/auth/learn
   Coolify operator guides and standalone cutover Compose file.

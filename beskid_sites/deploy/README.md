@@ -15,8 +15,8 @@ Watchtower. There is no staging deployment and no deployment control plane.
    endpoints.
 
 The tagged application services are `website`, `auth`, `learn`, `tracker`,
-`nexus`, and `pckg`. The shared edge, registry, Watchtower, Postgres, Authelia, and
-community are pinned infrastructure: change them only with an audited Compose
+`nexus`, and `pckg`. The shared edge, registry, Watchtower, and Postgres are
+pinned infrastructure: change them only with an audited Compose
 deployment.
 
 ## Host bootstrap
@@ -24,16 +24,14 @@ deployment.
 The production host is `root@bdziam.dev`; the runtime directory defaults to
 `/opt/beskid`. Before the first apply, an operator must provide:
 
-- DNS for `beskid-lang.org`, `auth`, `login`, `learn`, `tracker`, `nexus`,
-  `pckg`, `community`, and `cr` subdomains.
+- DNS for `beskid-lang.org`, `auth`, `learn`, `tracker`, `nexus`, `pckg`, and
+  `cr` subdomains.
 - A registry account with pull access on the host and push access stored in the
   repository secrets `REGISTRY_USERNAME` and `REGISTRY_PASSWORD`.
 - A bcrypt registry credential file at `registry/htpasswd`.
 - OpenBao production secrets, or a populated local `.env` copied from
   `.env.example`. Do not commit `.env`, `htpasswd`, or Watchtower’s Docker
-  credential file. The template explicitly lists the Authelia storage, signing,
-  and per-client OIDC secrets; replace every placeholder with a production
-  value before applying.
+  credential file.
 - `BESKID_EDGE_NETWORK`, the existing host network used by the shared Caddy
   Docker proxy. Beskid joins this network but does not own its ports or proxy.
 

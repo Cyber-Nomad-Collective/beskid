@@ -113,7 +113,6 @@ fi
 # ---------------------------------------------------------------------------
 log "validating local prerequisites"
 [ -f "${SCRIPT_DIR}/docker-compose.yml" ] || { err "missing docker-compose.yml"; exit 1; }
-[ -f "${SCRIPT_DIR}/authelia/configuration.yml" ] || { err "missing authelia/configuration.yml"; exit 1; }
 [ -f "${SCRIPT_DIR}/registry/config.yml" ] || { err "missing registry/config.yml"; exit 1; }
 [ -f "${HTPASSWD_FILE}" ] || { err "missing registry/htpasswd — generate: htpasswd -Bbn <user> <pass> > registry/htpasswd"; exit 1; }
 
@@ -164,19 +163,8 @@ need BESKID_EDGE_NETWORK "shared host edge network name"
   exit 1
 }
 need POSTGRES_PASSWORD "shared Postgres password"
-need AUTHELIA_POSTGRES_DB "Authelia Postgres database name"
-need AUTHELIA_SESSION_SECRET "Authelia session secret (openssl rand -hex 32)"
-need AUTHELIA_STORAGE_ENCRYPTION_KEY "Authelia storage encryption key"
-need AUTHELIA_OIDC_HMAC_SECRET "Authelia OIDC HMAC secret"
-need AUTHELIA_OIDC_JWKS_SECRET "Authelia OIDC JWKS (RSA PEM)"
 need GITHUB_CLIENT_ID "GitHub OAuth App client id"
 need GITHUB_CLIENT_SECRET "GitHub OAuth App client secret"
-need WEBSITE_OIDC_CLIENT_SECRET "Authelia website OIDC client secret"
-need TRACKER_OIDC_CLIENT_SECRET "Authelia tracker OIDC client secret"
-need NEXUS_OIDC_CLIENT_SECRET "Authelia nexus OIDC client secret"
-need PCKG_OIDC_CLIENT_SECRET "Authelia pckg OIDC client secret"
-need LEARN_OIDC_CLIENT_SECRET "Authelia learn OIDC client secret"
-need COMMUNITY_OIDC_CLIENT_SECRET "Authelia community OIDC client secret"
 need SITE_IMAGE_TAG "website image tag (production)"
 need AUTH_IMAGE_TAG "auth image tag (production)"
 need TRACKER_IMAGE_TAG "tracker image tag (production)"
@@ -195,10 +183,9 @@ remote "docker network inspect ${BESKID_EDGE_NETWORK} >/dev/null" || {
   err "BESKID_EDGE_NETWORK does not exist on ${DEPLOY_HOST}: ${BESKID_EDGE_NETWORK}"
   exit 1
 }
-remote "mkdir -p ${REMOTE_DIR}/authelia ${REMOTE_DIR}/registry ${REMOTE_DIR}/watchtower"
+remote "mkdir -p ${REMOTE_DIR}/registry ${REMOTE_DIR}/watchtower"
 
 scp -q "${SCRIPT_DIR}/docker-compose.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/docker-compose.yml"
-scp -q "${SCRIPT_DIR}/authelia/configuration.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/authelia/configuration.yml"
 scp -q "${SCRIPT_DIR}/registry/config.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/config.yml"
 scp -q "${HTPASSWD_FILE}" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/htpasswd"
 # Ship .env with restricted perms.
