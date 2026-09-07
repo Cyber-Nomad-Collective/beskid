@@ -89,7 +89,7 @@ services:
       REGISTRY_AUTH_HTPASSWD_REALM: Beskid registry
       REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:5000/v2/ || exit 1"]
+      test: ["CMD-SHELL", "wget -S -q --spider http://127.0.0.1:5000/v2/ 2>&1 | grep -q '401 Unauthorized'"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -222,17 +222,17 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://nexus.beskid-lang.org
-      caddy_0.reverse_proxy: "{{upstreams 8452}}"
+      caddy_0.reverse_proxy: "{{upstreams 80}}"
     networks:
       - beskid-edge
     expose:
-      - "8452"
+      - "80"
     env_file:
       - ${BESKID_ENV_FILE:-.env}
     volumes:
       - nexus-data:/data/gitnexus
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8452/api/health || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/api/health || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -311,6 +311,7 @@ services:
     command: --label-enable --interval 60 --rolling-restart --cleanup
     environment:
       DOCKER_CONFIG: /config
+      DOCKER_API_VERSION: "1.40"
       WATCHTOWER_LABEL_ENABLE: "true"
       WATCHTOWER_POLL_INTERVAL: "60"
       WATCHTOWER_ROLLING_RESTART: "true"
