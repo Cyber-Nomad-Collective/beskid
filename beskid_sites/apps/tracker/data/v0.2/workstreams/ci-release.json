@@ -1,0 +1,7 @@
+{
+	"slug": "ci-release",
+	"title": "CI & release pipelines",
+	"summary": "GitHub Actions and **Nox** workflows: docs site, Open VSX, Rust audit, compiler CLI **GitHub Releases** (`cli-latest` + versioned tags), and superrepo workflow hardening.\n\n- Rolling CLI semver syncs to website via `sync:cli-version`.\n- Submodule bumps coordinate compiler, pckg, corelib, and vscode pins.",
+	"order": 8,
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

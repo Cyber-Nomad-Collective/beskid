@@ -1,0 +1,30 @@
+{
+	"id": "composition-hir-mod-host",
+	"title": "Composition HIR pass, mod-host query bridge, host definitions",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "analysis-pipeline",
+	"domain": "compiler",
+	"area": "composition",
+	"completedAt": "2026-05-20",
+	"milestoneId": "v02-composition-macros-hir",
+	"specRelations": [
+		{
+			"path": "/platform-spec/compiler/pipeline/composition-assembly",
+			"title": "Composition assembly",
+			"level": "feature",
+			"relation": "implements",
+			"required": true
+		}
+	],
+	"source": {
+		"repo": "compiler",
+		"commit": "efb67a5",
+		"subject": "feat(compiler): composition, macros, structured API docs, and resolver fixes",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/efb67a5"
+	},
+	"body": "Composition, macros, structured API docs, and resolver fixes.\n\n## Platform specification\n- Implements [Composition assembly](https://beskid-lang.org/platform-spec/compiler/pipeline/composition-assembly) (`/platform-spec/compiler/pipeline/composition-assembly`) *(required)*\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`efb67a5`](https://github.com/Cyber-Nomad-Collective/compiler/commit/efb67a5)\n- **Subject:** feat(compiler): composition, macros, structured API docs, and resolver fixes\n- **Completed:** 2026-05-20\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `analysis-pipeline`\n- **Deliverable:** `v02-composition-macros-hir`\n- **Domain:** `compiler`\n- **Area:** `composition`\n\n## Relation\nContributes to deliverable **Composition HIR & macro expansion** (`v02-composition-macros-hir`).\n",
+	"order": 235,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

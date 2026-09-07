@@ -1,0 +1,8 @@
+{
+	"id": "v02-corelib-workspace-publish",
+	"title": "Corelib workspace publish hardening",
+	"description": "Corelib workspace publish metadata, api.json tree validation, and artifact bundle filtering for registry uploads.",
+	"closedOn": "2026-05-21",
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

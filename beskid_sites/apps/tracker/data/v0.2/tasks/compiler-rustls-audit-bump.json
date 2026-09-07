@@ -1,0 +1,20 @@
+{
+	"id": "compiler-rustls-audit-bump",
+	"title": "Bump compiler rustls stack to satisfy cargo-audit",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"domain": "tooling",
+	"completedAt": "2026-05-08",
+	"milestoneId": "v02-ci-deploy-infra",
+	"source": {
+		"repo": "compiler",
+		"commit": "44aed91",
+		"subject": "chore(deps): bump rustls/rustls-webpki/rand to clear cargo-audit advisories",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/44aed91"
+	},
+	"body": "Bump rustls/rustls-webpki/rand to clear cargo-audit advisories.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`44aed91`](https://github.com/Cyber-Nomad-Collective/compiler/commit/44aed91)\n- **Subject:** chore(deps): bump rustls/rustls-webpki/rand to clear cargo-audit advisories\n- **Completed:** 2026-05-08\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `ci-release`\n- **Deliverable:** `v02-ci-deploy-infra`\n- **Domain:** `tooling`\n\n## Relation\nContributes to deliverable **CI workflows and deploy infra** (`v02-ci-deploy-infra`).\n",
+	"order": 283,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

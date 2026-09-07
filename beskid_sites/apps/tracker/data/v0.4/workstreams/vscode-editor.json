@@ -1,0 +1,7 @@
+{
+	"slug": "vscode-editor",
+	"title": "VS Code editor integration",
+	"summary": "beskid_vscode smooth DX: cli-latest LSP bootstrap, pckg package browser, platform-spec and book deep links, status bar progress for LSP/pckg operations.",
+	"order": 6,
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

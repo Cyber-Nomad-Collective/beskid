@@ -25,7 +25,6 @@ bash "${root}/scripts/ci/test/render-ci-failure.test.sh"
 bash "${root}/scripts/ci/test/delivery-contract.test.sh"
 bash "${root}/scripts/ci/test/post-deploy-smoke.test.sh"
 bash "${root}/scripts/ci/test/shared-ui-nexus-gate-contract.test.sh"
-bash "${root}/scripts/ci/test/platform-stylesheet-contract.test.sh"
 bash "${root}/scripts/ci/test/platform-delivery-fail-closed.test.sh"
 bash "${root}/scripts/ci/test/image-preparation-contract.test.sh"
 bash "${root}/scripts/ci/test/automatic-production-promotion.test.sh"
@@ -40,9 +39,6 @@ mkdir -p "${tmp}/records" "${tmp}/bin"
 cat >"${tmp}/records/site.json" <<'JSON'
 {"name":"beskid-site","repository":"ghcr.io/cyber-nomad-collective/beskid-site","digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
 JSON
-cat >"${tmp}/records/platform-spec-image.json" <<'JSON'
-{"name":"beskid-platform-spec","repository":"ghcr.io/cyber-nomad-collective/beskid-platform-spec","digest":"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
-JSON
 cat >"${tmp}/records/pckg-image.json" <<'JSON'
 {"name":"beskid-pckg","repository":"ghcr.io/cyber-nomad-collective/beskid-pckg","digest":"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
 JSON
@@ -51,8 +47,6 @@ name: beskid-platform-production
 services:
   site:
     image: ghcr.io/cyber-nomad-collective/beskid-site:${BESKID_RELEASE_TAG:?immutable manifest required}
-  platform-spec:
-    image: ghcr.io/cyber-nomad-collective/beskid-platform-spec:${BESKID_RELEASE_TAG:?immutable manifest required}
   pckg:
     profiles:
       - pckg
@@ -69,13 +63,11 @@ export GITHUB_WORKFLOW_REF=local-test
 "${root}/scripts/ci/build-release-manifest.sh" "${tmp}/records" "${tmp}/release.json"
 "${root}/scripts/ci/render-release-compose.sh" "${tmp}/release.json" "${tmp}/compose.yml" "${tmp}/rendered.yml"
 rg -q 'beskid-site@sha256:a{64}' "${tmp}/rendered.yml"
-rg -q 'beskid-platform-spec@sha256:b{64}' "${tmp}/rendered.yml"
 rg -q 'image: postgres:16' "${tmp}/rendered.yml"
 
 for dockerfile in \
   site/website/Dockerfile \
   site/auth/Dockerfile \
-  site/platform-spec/Dockerfile \
   site/learn/Dockerfile \
   beskid_tracker/Dockerfile \
   beskid_nexus/Dockerfile; do
@@ -333,7 +325,7 @@ done
 case "${method}:${url}" in
   GET:*/services/*)
     if [[ -f "${MOCK_COOLIFY_STATE}/deployed" ]]; then
-      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[{"uuid":"site","name":"site","image":"ghcr.io/cyber-nomad-collective/beskid-site@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"},{"uuid":"platform-spec","name":"platform-spec","image":"ghcr.io/cyber-nomad-collective/beskid-platform-spec@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","status":"running:healthy"},{"uuid":"pckg","name":"pckg","image":"ghcr.io/x/pckg:${IMAGE_TAG:-main}","status":"exited"}]}'
+      echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[{"uuid":"site","name":"site","image":"ghcr.io/cyber-nomad-collective/beskid-site@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"running:healthy"},{"uuid":"pckg","name":"pckg","image":"ghcr.io/x/pckg:${IMAGE_TAG:-main}","status":"exited"}]}'
     else
       echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[]}'
     fi
@@ -372,7 +364,6 @@ jq -e '
   .urls == [
     {name: "site", url: "https://stg.beskid-lang.org:80"},
     {name: "auth", url: "https://stg-auth.beskid-lang.org:8090"},
-    {name: "platform-spec", url: "https://stg-spec.beskid-lang.org:8460"},
     {name: "learn", url: "https://stg-learn.beskid-lang.org:80"},
     {name: "tracker", url: "https://stg-tracker.beskid-lang.org:3000"},
     {name: "nexus", url: "https://stg-nexus.beskid-lang.org:8452"},
@@ -465,7 +456,7 @@ done
 case "${method}:${url}" in
   GET:*/services/*)
     if [[ -f "${MOCK_COOLIFY_STATE}/deployed" ]]; then
-      echo '{"docker_compose_raw":"name: old\n","status":"running:healthy","applications":[{"uuid":"site","name":"site","image":"ghcr.io/cyber-nomad-collective/beskid-site@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","status":"running:healthy"},{"uuid":"platform-spec","name":"platform-spec","image":"ghcr.io/cyber-nomad-collective/beskid-platform-spec@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","status":"running:healthy"}]}'
+      echo '{"docker_compose_raw":"name: old\n","status":"running:healthy","applications":[{"uuid":"site","name":"site","image":"ghcr.io/cyber-nomad-collective/beskid-site@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","status":"running:healthy"}]}'
     else
       echo '{"docker_compose_raw":"name: old\n","status":"starting:unhealthy","applications":[]}'
     fi

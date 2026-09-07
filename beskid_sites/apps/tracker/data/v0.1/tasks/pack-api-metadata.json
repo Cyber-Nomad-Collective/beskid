@@ -1,0 +1,19 @@
+{
+	"id": "pack-api-metadata",
+	"title": "Extend pack API model metadata fields",
+	"priority": "medium",
+	"workstream": "corelib-packaging",
+	"domain": "tooling",
+	"completedAt": "2026-03-18",
+	"source": {
+		"repo": "compiler",
+		"commit": "39b911e",
+		"subject": "added new metadata to api model",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/39b911e"
+	},
+	"statusColumn": "Done",
+	"body": "Extends the pack/API metadata model with additional fields consumed by registry and docs tooling.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`39b911e`](https://github.com/Cyber-Nomad-Collective/compiler/commit/39b911e)\n- **Subject:** added new metadata to api model\n- **Completed:** 2026-03-18\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `corelib-packaging`\n\n## Relation\nFollow-up to **pack-command** for richer package descriptors.",
+	"order": 113,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

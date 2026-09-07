@@ -9,7 +9,7 @@ function readJson(path: URL): Record<string, Record<string, string>> {
 const workspaceRoot = new URL("../../../../", import.meta.url);
 
 describe("TanStack runtime contract", () => {
-	test("auth and platform-spec share the React Start dependency catalog", () => {
+	test("auth uses the React Start dependency catalog", () => {
 		const startPackage = readJson(
 			new URL("../../node_modules/@tanstack/react-start/package.json", import.meta.url),
 		);
@@ -21,7 +21,7 @@ describe("TanStack runtime contract", () => {
 		expect(workspace).toContain(
 			`'@tanstack/react-router': ${startPackage.dependencies["@tanstack/react-router"]}`,
 		);
-		for (const app of ["auth", "platform-spec"]) {
+		for (const app of ["auth"]) {
 			const appPackage = readJson(
 				new URL(`site/${app}/package.json`, workspaceRoot),
 			);
@@ -54,19 +54,5 @@ describe("TanStack runtime contract", () => {
 			expect(deployment).toContain("http://127.0.0.1:8090/");
 		}
 
-		for (const path of [
-			"site/platform-spec/Dockerfile",
-			"site/platform-spec/docker-compose.yml",
-			"site/platform-spec/docker-compose.coolify.yml",
-		]) {
-			const deployment = readFileSync(
-				fileURLToPath(new URL(path, workspaceRoot)),
-				"utf8",
-			);
-			expect(deployment).toContain("http://127.0.0.1:8460/api/health");
-			expect(deployment).toContain(
-				"http://127.0.0.1:8460/platform-spec",
-			);
-		}
 	});
 });

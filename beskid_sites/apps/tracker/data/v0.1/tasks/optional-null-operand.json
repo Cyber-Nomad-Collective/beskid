@@ -1,0 +1,19 @@
+{
+	"id": "optional-null-operand",
+	"title": "Implement optional null-conditional (?.) operand",
+	"priority": "medium",
+	"workstream": "compiler-foundation",
+	"domain": "language-meta",
+	"completedAt": "2026-03-07",
+	"source": {
+		"repo": "compiler",
+		"commit": "91fbe73",
+		"subject": "Implement missing ? operand",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/91fbe73"
+	},
+	"statusColumn": "Done",
+	"body": "Implements the missing **null-conditional (`?.`)** operand in analysis/lowering so optional chaining matches the surface syntax.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`91fbe73`](https://github.com/Cyber-Nomad-Collective/compiler/commit/91fbe73)\n- **Subject:** Implement missing ? operand\n- **Completed:** 2026-03-07\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `compiler-foundation`\n\n## Relation\nLanguage-semantics task under **compiler-foundation** ahead of file-scoped module work.",
+	"order": 111,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

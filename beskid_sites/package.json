@@ -1,0 +1,16 @@
+{
+	"name": "beskid-sites",
+	"private": true,
+	"type": "module",
+	"packageManager": "pnpm@10.17.1",
+	"description": "Standalone pnpm workspace for Beskid TanStack Start site apps, sharing the @cyber-nomad-collective/beskid-ui-react component library.",
+	"scripts": {
+		"typecheck": "pnpm -r run typecheck",
+		"check": "pnpm exec biome check",
+		"test": "pnpm -r run test --if-present"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.5"
+	},
+	"license": "MIT"
+}

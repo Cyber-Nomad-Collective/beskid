@@ -1,0 +1,19 @@
+{
+	"id": "open-vsx-private-submodule-pat",
+	"title": "Switch Open VSX workflow submodule checkout to PAT secret",
+	"priority": "medium",
+	"workstream": "editor-extension",
+	"completedAt": "2026-04-21",
+	"milestoneId": "v01-open-vsx",
+	"source": {
+		"repo": "beskid",
+		"commit": "8e3b883",
+		"subject": "ci: use PAT secret for private pckg submodule checkout",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/8e3b883"
+	},
+	"statusColumn": "Done",
+	"body": "Switches Open VSX workflow submodule checkout to a **PAT secret** for private repos.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`8e3b883`](https://github.com/Cyber-Nomad-Collective/beskid/commit/8e3b883)\n- **Subject:** ci: use PAT secret for private pckg submodule checkout\n- **Completed:** 2026-04-21\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `editor-extension`\n- **Deliverable:** `v01-open-vsx`\n\n## Relation\nFollow-up when `GITHUB_TOKEN` scope was insufficient.",
+	"order": 143,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

@@ -1,0 +1,19 @@
+{
+	"id": "pckg-onboarding",
+	"title": "pckg interactive first-run onboarding",
+	"priority": "medium",
+	"workstream": "corelib-packaging",
+	"domain": "tooling",
+	"completedAt": "2026-04-22",
+	"source": {
+		"repo": "pckg",
+		"commit": "1402410",
+		"subject": "feat: interactive first-run onboarding and migration service",
+		"url": "https://github.com/Cyber-Nomad-Collective/pckg/commit/1402410"
+	},
+	"statusColumn": "Done",
+	"body": "Ships **interactive first-run onboarding** and migration service for empty pckg deployments.\n\n## Provenance\n- **Repository:** `pckg`\n- **Commit:** [`1402410`](https://github.com/Cyber-Nomad-Collective/pckg/commit/1402410)\n- **Subject:** feat: interactive first-run onboarding and migration service\n- **Completed:** 2026-04-22\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `corelib-packaging`\n\n## Relation\nOperator UX for fresh registry installs (Coolify and local).",
+	"order": 108,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

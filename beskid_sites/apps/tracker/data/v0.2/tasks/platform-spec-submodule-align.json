@@ -1,0 +1,19 @@
+{
+	"id": "platform-spec-submodule-align",
+	"title": "Align platform-spec with compiler, pckg, and LSP submodule bumps",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "platform-spec",
+	"domain": "tooling",
+	"completedAt": "2026-05-20",
+	"source": {
+		"repo": "beskid",
+		"commit": "875f0d5",
+		"subject": "chore: bump compiler, pckg, and vscode submodules; align platform spec",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/875f0d5"
+	},
+	"body": "Bump compiler, pckg, and vscode submodules; align platform spec.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`875f0d5`](https://github.com/Cyber-Nomad-Collective/beskid/commit/875f0d5)\n- **Subject:** chore: bump compiler, pckg, and vscode submodules; align platform spec\n- **Completed:** 2026-05-20\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `platform-spec`\n- **Domain:** `tooling`\n\n## Relation\nSupports **v0.2 (Analysis, packages, and platform spec)** on workstream `platform-spec`.\n",
+	"order": 236,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

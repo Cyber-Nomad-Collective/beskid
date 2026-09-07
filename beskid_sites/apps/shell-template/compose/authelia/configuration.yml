@@ -1,0 +1,166 @@
+# Authelia configuration for the shell-template local-dev compose.
+#
+# Auth model: Authelia is the OIDC provider for Beskid apps. GitHub is the
+# SOLE identity provider to Authelia (no local password/email user store).
+# Each Beskid app registers as an OIDC client of Authelia (authorization-code
+# flow) and reads identity from a signed session cookie after the ID token
+# is verified — see apps/shell-template/docs/authelia.md.
+#
+# Secrets are injected via environment variables (see docker-compose.yml).
+# Requires Authelia 4.38+ for the OAuth2 authentication backend (GitHub
+# upstream). Confirm the provider block against the pinned Authelia
+# version's reference: https://www.authelia.com/configuration/identity-providers/oauth2/
+
+server:
+  address: "tcp://0.0.0.0:9091"
+  endpoints:
+    authz:
+      forward-auth:
+        implementation: "ForwardAuth"
+
+log:
+  level: info
+
+telemetry:
+  metrics:
+    enabled: true
+
+# Postgres-backed storage (sessions, OIDC, Webauthn, TOTP).
+storage:
+  postgres:
+    address: "tcp://postgres:5432"
+    database: ${AUTHELIA_POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    sslmode: disable
+
+# Session cookies for Authelia's own portal. The secret is injected via env.
+session:
+  secret: ${AUTHELIA_SESSION_SECRET}
+  cookies:
+    - domain: "localhost"
+      authelia_url: "http://localhost:9091"
+      default_redirection_url: "http://localhost:8499"
+
+# GitHub is the ONLY identity provider. No file/password backend — users
+# sign in with GitHub via Authelia's OAuth2 authentication backend
+# (Authelia 4.38+). The client id/secret reuse the EXISTING Beskid GitHub
+# OAuth App (the one site/auth used) via GITHUB_CLIENT_ID /
+# GITHUB_CLIENT_SECRET. A human admin must provide the secret value via
+# env; nothing is hardcoded here.
+authentication_backend:
+  oauth2:
+    provider: github
+    client_id: ${GITHUB_CLIENT_ID}
+    client_secret: ${GITHUB_CLIENT_SECRET}
+    # Request the scopes Authelia needs to map username/email/name/groups.
+    # `read:user` covers profile; `user:email` covers email.
+    scopes:
+      - "read:user"
+      - "user:email"
+    # Map GitHub profile fields into Authelia user attributes consumed by
+    # the OIDC clients below.
+    user_info_group_attribute: "groups"
+
+# Authelia as an OIDC provider. Each Beskid app is registered here as an
+# OIDC client (authorization-code flow). The shell-template app is the
+# first real client; the rest are commented examples to adopt when those
+# apps migrate onto the shell.
+identity_providers:
+  oidc:
+    hmac_secret: ${AUTHELIA_OIDC_HMAC_SECRET}
+    jwks:
+      - key: ${AUTHELIA_OIDC_JWKS_SECRET}
+        algorithm: "RS256"
+    clients:
+      # --- shell-template (this app) — real client ---------------------
+      - client_id: ${SHELL_TEMPLATE_OIDC_CLIENT_ID:-shell-template}
+        client_secret: ${SHELL_TEMPLATE_OIDC_CLIENT_SECRET}
+        authorization_policy: one_factor
+        redirect_uris:
+          - "http://localhost:8499/api/auth/callback"
+        scopes:
+          - "openid"
+          - "profile"
+          - "email"
+          - "groups"
+        grant_types:
+          - "authorization_code"
+        response_types:
+          - "code"
+        userinfo_signing_algorithm: "none"
+
+      # --- EXAMPLE clients — uncomment + set secrets when each app -----
+      # --- adopts the shell. Not deployed by this compose. -----------
+      # - client_id: website
+      #   client_secret: ${WEBSITE_OIDC_CLIENT_SECRET}
+      #   authorization_policy: one_factor
+      #   redirect_uris:
+      #     - "https://beskid-lang.org/api/auth/callback"
+      #     - "http://localhost:8400/api/auth/callback"
+      #   scopes: ["openid", "profile", "email", "groups"]
+      #   grant_types: ["authorization_code"]
+      #   response_types: ["code"]
+      #   userinfo_signing_algorithm: "none"
+      # - client_id: platform-spec
+      #   client_secret: ${PLATFORM_SPEC_OIDC_CLIENT_SECRET}
+      #   authorization_policy: one_factor
+      #   redirect_uris:
+      #     - "https://spec.beskid-lang.org/api/auth/callback"
+      #     - "http://localhost:8460/api/auth/callback"
+      #   scopes: ["openid", "profile", "email", "groups"]
+      #   grant_types: ["authorization_code"]
+      #   response_types: ["code"]
+      #   userinfo_signing_algorithm: "none"
+      # - client_id: tracker
+      #   client_secret: ${TRACKER_OIDC_CLIENT_SECRET}
+      #   authorization_policy: one_factor
+      #   redirect_uris:
+      #     - "https://tracker.beskid-lang.org/api/auth/callback"
+      #     - "http://localhost:3000/api/auth/callback"
+      #   scopes: ["openid", "profile", "email", "groups"]
+      #   grant_types: ["authorization_code"]
+      #   response_types: ["code"]
+      #   userinfo_signing_algorithm: "none"
+      # - client_id: pckg
+      #   client_secret: ${PCKG_OIDC_CLIENT_SECRET}
+      #   authorization_policy: one_factor
+      #   redirect_uris:
+      #     - "https://pckg.beskid-lang.org/api/auth/callback"
+      #     - "http://localhost:8082/api/auth/callback"
+      #   scopes: ["openid", "profile", "email", "groups"]
+      #   grant_types: ["authorization_code"]
+      #   response_types: ["code"]
+      #   userinfo_signing_algorithm: "none"
+      # - client_id: learn
+      #   client_secret: ${LEARN_OIDC_CLIENT_SECRET}
+      #   authorization_policy: one_factor
+      #   redirect_uris:
+      #     - "https://learn.beskid-lang.org/api/auth/callback"
+      #     - "http://localhost:8080/api/auth/callback"
+      #   scopes: ["openid", "profile", "email", "groups"]
+      #   grant_types: ["authorization_code"]
+      #   response_types: ["code"]
+      #   userinfo_signing_algorithm: "none"
+      # - client_id: nexus
+      #   client_secret: ${NEXUS_OIDC_CLIENT_SECRET}
+      #   authorization_policy: one_factor
+      #   redirect_uris:
+      #     - "https://nexus.beskid-lang.org/api/auth/callback"
+      #     - "http://localhost:8452/api/auth/callback"
+      #   scopes: ["openid", "profile", "email", "groups"]
+      #   grant_types: ["authorization_code"]
+      #   response_types: ["code"]
+      #   userinfo_signing_algorithm: "none"
+
+access_control:
+  default_policy: "deny"
+  rules:
+    - domain: "localhost"
+      policy: "one_factor"
+    # Public health/metrics endpoints bypass auth at the proxy layer.
+    - domain: "localhost"
+      resources:
+        - "^/api/health$"
+        - "^/metrics$"
+      policy: "bypass"

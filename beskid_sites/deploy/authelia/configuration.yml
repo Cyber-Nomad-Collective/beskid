@@ -1,0 +1,187 @@
+# Authelia configuration — Beskid production.
+#
+# Auth model: Authelia is the OIDC provider for all Beskid apps. GitHub is the
+# SOLE identity provider (no local password/email user store). Each Beskid app
+# registers as an OIDC client (authorization-code flow) and reads identity from
+# a signed session cookie after the ID token is verified — see
+# apps/shell-template/docs/authelia.md.
+#
+# Secrets are injected via environment variables (env_file: .env in compose).
+# Requires Authelia 4.38+ for the OAuth2 authentication backend (GitHub).
+# Reference: https://www.authelia.com/configuration/identity-providers/oauth2/
+
+server:
+  address: "tcp://0.0.0.0:9091"
+  endpoints:
+    authz:
+      forward-auth:
+        implementation: "ForwardAuth"
+        authn_strategies: []
+  # Trust the Caddy reverse proxy (X-Forwarded-* headers).
+  buffers:
+    read: 4096
+    write: 4096
+
+log:
+  level: info
+  format: json
+
+telemetry:
+  metrics:
+    enabled: true
+    # /metrics is reachable only on the internal network (Caddy does not
+    # expose it publicly — audit finding 4.7).
+
+# Postgres-backed storage (sessions, OIDC, Webauthn, TOTP).
+storage:
+  postgres:
+    address: "tcp://postgres:5432"
+    database: ${AUTHELIA_POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    schema: "public"
+    sslmode: disable
+
+# Session cookies for Authelia's own portal. Secret via env.
+session:
+  secret: ${AUTHELIA_SESSION_SECRET}
+  cookies:
+    - domain: "beskid-lang.org"
+      authelia_url: "https://auth.beskid-lang.org"
+      default_redirection_url: "https://beskid-lang.org"
+      same_site: "lax"
+      inactivity: "5m"
+      expiration: "7d"
+      remember_me: "30d"
+
+# GitHub is the ONLY identity provider. No file/password backend — users
+# sign in with GitHub via Authelia's OAuth2 authentication backend (4.38+).
+# Reuses the EXISTING Beskid GitHub OAuth App (the one site/auth used) via
+# GITHUB_CLIENT_ID / GITHUB_CLIENT_SECRET. A human admin must provide the
+# secret value via env; nothing is hardcoded here.
+authentication_backend:
+  oauth2:
+    provider: github
+    client_id: ${GITHUB_CLIENT_ID}
+    client_secret: ${GITHUB_CLIENT_SECRET}
+    # Scopes Authelia needs to map username/email/name/groups.
+    scopes:
+      - "read:user"
+      - "user:email"
+    # Map GitHub profile fields into Authelia user attributes consumed by
+    # the OIDC clients below.
+    user_info_group_attribute: "groups"
+
+# Authelia as an OIDC provider. Each Beskid app is registered here as an
+# OIDC client (authorization-code flow). Secrets via env (per-app
+# *_OIDC_CLIENT_SECRET). Redirect URIs include production + local dev.
+identity_providers:
+  oidc:
+    hmac_secret: ${AUTHELIA_OIDC_HMAC_SECRET}
+    jwks:
+      - key: ${AUTHELIA_OIDC_JWKS_SECRET}
+        algorithm: "RS256"
+    clients:
+      # --- website -------------------------------------------------------
+      - client_id: website
+        client_secret: ${WEBSITE_OIDC_CLIENT_SECRET}
+        authorization_policy: one_factor
+        redirect_uris:
+          - "https://beskid-lang.org/api/auth/callback"
+        scopes: ["openid", "profile", "email", "groups"]
+        grant_types: ["authorization_code"]
+        response_types: ["code"]
+        userinfo_signing_algorithm: "none"
+
+      # --- platform-spec -------------------------------------------------
+      - client_id: platform-spec
+        client_secret: ${PLATFORM_SPEC_OIDC_CLIENT_SECRET}
+        authorization_policy: one_factor
+        redirect_uris:
+          - "https://spec.beskid-lang.org/api/auth/callback"
+        scopes: ["openid", "profile", "email", "groups"]
+        grant_types: ["authorization_code"]
+        response_types: ["code"]
+        userinfo_signing_algorithm: "none"
+
+      # --- tracker -------------------------------------------------------
+      - client_id: tracker
+        client_secret: ${TRACKER_OIDC_CLIENT_SECRET}
+        authorization_policy: one_factor
+        redirect_uris:
+          - "https://tracker.beskid-lang.org/api/auth/callback"
+        scopes: ["openid", "profile", "email", "groups"]
+        grant_types: ["authorization_code"]
+        response_types: ["code"]
+        userinfo_signing_algorithm: "none"
+
+      # --- nexus ---------------------------------------------------------
+      - client_id: nexus
+        client_secret: ${NEXUS_OIDC_CLIENT_SECRET}
+        authorization_policy: one_factor
+        redirect_uris:
+          - "https://nexus.beskid-lang.org/api/auth/callback"
+        scopes: ["openid", "profile", "email", "groups"]
+        grant_types: ["authorization_code"]
+        response_types: ["code"]
+        userinfo_signing_algorithm: "none"
+
+      # --- pckg ----------------------------------------------------------
+      - client_id: pckg
+        client_secret: ${PCKG_OIDC_CLIENT_SECRET}
+        authorization_policy: one_factor
+        redirect_uris:
+          - "https://pckg.beskid-lang.org/signin-authelia"
+        scopes: ["openid", "profile", "email", "groups"]
+        grant_types: ["authorization_code"]
+        response_types: ["code"]
+        userinfo_signing_algorithm: "none"
+
+      # --- learn ---------------------------------------------------------
+      - client_id: learn
+        client_secret: ${LEARN_OIDC_CLIENT_SECRET}
+        authorization_policy: one_factor
+        redirect_uris:
+          - "https://learn.beskid-lang.org/api/auth/callback"
+        scopes: ["openid", "profile", "email", "groups"]
+        grant_types: ["authorization_code"]
+        response_types: ["code"]
+        userinfo_signing_algorithm: "none"
+
+      # --- community (NodeBB) -------------------------------------------
+      # NodeBB SSO plugin callback path. Confirm against the NodeBB OIDC
+      # plugin version deployed.
+      - client_id: community
+        client_secret: ${COMMUNITY_OIDC_CLIENT_SECRET}
+        authorization_policy: one_factor
+        redirect_uris:
+          - "https://community.beskid-lang.org/auth/authelia/callback"
+        scopes: ["openid", "profile", "email", "groups"]
+        grant_types: ["authorization_code"]
+        response_types: ["code"]
+        userinfo_signing_algorithm: "none"
+
+# Access control. Default deny; public health/metrics bypass at the proxy.
+# beskid-admins group gates admin surfaces (read by apps via the groups claim).
+access_control:
+  default_policy: "deny"
+  rules:
+    # Public health/metrics endpoints bypass auth (Caddy handles these before
+    # forward_auth, but list them here for defense-in-depth).
+    - domain: "*.beskid-lang.org"
+      resources:
+        - "^/api/health$"
+        - "^/health$"
+        - "^/healthz$"
+        - "^/metrics$"
+      policy: "bypass"
+    # beskid-admins can reach admin surfaces on every app.
+    - domain: "*.beskid-lang.org"
+      resources:
+        - "^/admin.*"
+        - "^/api/admin.*"
+      subject: "group:beskid-admins"
+      policy: "two_factor"
+    # Authenticated users reach everything else.
+    - domain: "*.beskid-lang.org"
+      policy: "one_factor"

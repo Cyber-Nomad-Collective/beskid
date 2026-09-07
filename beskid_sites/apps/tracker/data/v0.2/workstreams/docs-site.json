@@ -1,0 +1,7 @@
+{
+	"slug": "docs-site",
+	"title": "Docs site",
+	"summary": "Public docs site (**site/website**): **trudoc** + **@beskid/docs-ui**, platform-spec reader chrome (tabs, map, Giscus), early language book and corelib naming, tutorial/ADR routing, registry API reference MDX, and end-of-window trudoc verify plus book frontmatter hardening.\n\n- Bun prebuild runs trudoc verify; container builds may skip full verify with `BESKID_SKIP_TRUDOC_VERIFY`.\n- Book and platform-spec share platform-spec-nav chrome tokens.",
+	"order": 4,
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

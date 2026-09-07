@@ -1,0 +1,30 @@
+{
+	"id": "mod-host-contract-invoker",
+	"title": "Wire mod host collect/generate/analyze/rewrite through ContractInvoker",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "compiler-mods",
+	"domain": "compiler",
+	"area": "mods",
+	"completedAt": "2026-05-23",
+	"milestoneId": "v03-merge-wave",
+	"specRelations": [
+		{
+			"path": "/platform-spec/compiler/mods/mod-host-bridge",
+			"title": "Mod host bridge",
+			"level": "feature",
+			"relation": "implements",
+			"required": true
+		}
+	],
+	"source": {
+		"repo": "compiler",
+		"commit": "a91d258",
+		"subject": "feat(mod_host): wire mod.collect/generate/analyze/rewrite through ContractInvoker",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/a91d258"
+	},
+	"body": "Mod host routes `collect`, `generate`, `analyze`, and `rewrite` through **ContractInvoker** so Beskid mods use SDK contracts uniformly.\n\n## Platform specification\n\n- **Mod host bridge** — `/platform-spec/compiler/mods/mod-host-bridge` — *implements* (required)\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`a91d258`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/a91d258)\n- **Subject:** feat(mod_host): wire mod.collect/generate/analyze/rewrite through ContractInvoker\n- **Completed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `compiler-mods`\n- **Domain:** `compiler`\n- **Deliverable:** `v03-merge-wave`\n\n## Relation\nContributes to deliverable **v0.3 macro/runtime/ffi/tooling delivery** (`v03-merge-wave`). Normative spec: **Mod host bridge** (*implements*).",
+	"order": 316,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

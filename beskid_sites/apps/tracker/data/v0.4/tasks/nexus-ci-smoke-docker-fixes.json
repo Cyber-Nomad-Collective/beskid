@@ -1,0 +1,19 @@
+{
+	"id": "nexus-ci-smoke-docker-fixes",
+	"title": "Nexus submodule: CI smoke and Docker hardening",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "nexus",
+	"completedAt": "2026-05-26",
+	"deliverableId": "v04-nexus-operational",
+	"source": {
+		"repo": "beskid",
+		"commit": "87da140",
+		"subject": "chore(nexus): bump submodule for CI smoke and Docker fixes",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/87da140"
+	},
+	"body": "Final 26 May nexus pointer bump in the CI stabilization wave before hosting-model work.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`87da140`](https://github.com/Cyber-Nomad-Collective/beskid/commit/87da140)\n- **Subject:** chore(nexus): bump submodule for CI smoke and Docker fixes\n- **Completed:** 2026-05-26\n\n## Catalog scope\n- **Delivery version:** v0.4 (Platform services, auth, and delivery tooling)\n- **Workstream:** `nexus`\n- **Deliverable:** `v04-nexus-operational`\n\n## What shipped\n\nFinal 26 May nexus pointer bump in the CI stabilization wave before hosting-model work.",
+	"order": 386,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

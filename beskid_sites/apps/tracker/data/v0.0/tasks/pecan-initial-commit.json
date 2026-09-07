@@ -1,0 +1,20 @@
+{
+	"id": "pecan-initial-commit",
+	"title": "Bootstrap Pecan repository",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "compiler-analysis",
+	"domain": "compiler",
+	"completedAt": "2026-02-18",
+	"deliverableId": "v00-analysis-foundation",
+	"body": "Created the **Pecan** monorepo with initial workspace layout, toolchain stubs, and the first compiler/analysis crates that every later v0.0 task builds on.\n\n## Provenance\n- **Repository:** `pekan`\n- **Commit:** [`269ac9d`](https://github.com/Cyber-Nomad-Collective/pekan/commit/269ac9d)\n- **Subject:** Initial Commit\n- **Completed:** 2026-02-18\n\n## Catalog scope\n- **Delivery version:** v0.0 (Pecan prototype)\n- **Workstream:** `compiler-analysis`\n- **Deliverable:** `v00-analysis-foundation`\n\n## Relation\nThis commit (`269ac9d`, *Initial Commit*) is the **start** of the v0.0 cutoff window. Without a frozen bootstrap SHA, later Pecan-era research could not be replayed or compared after the repository was deleted. Opened the Feb 18 – Mar 5, 2026 prototype band documented in `data/v0.0/article.md`.",
+	"source": {
+		"repo": "pekan",
+		"commit": "269ac9d",
+		"subject": "Initial Commit",
+		"url": "https://github.com/Cyber-Nomad-Collective/pekan/commit/269ac9d"
+	},
+	"order": 1,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

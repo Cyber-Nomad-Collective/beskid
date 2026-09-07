@@ -1,0 +1,8 @@
+{
+	"id": "v01-compiler-parity",
+	"title": "Compiler syntax and analysis baseline",
+	"closedOn": "2026-04-09",
+	"description": "Compiler bootstrap, **AOT** refactor baseline, **`beskid pack`** with API metadata, **optional null-conditional (`?.`)** operand, **file-scoped module** grammar and resolver/analysis hardening, **module-declaration** compatibility, graph **Std** injection ordering, and parity merge — the syntax and analysis foundation required before v0.2 platform-spec and pipeline work.\n\n## Provenance\n- **Closing repository:** `compiler`\n- **Closing commit:** [`1f8d62d`](https://github.com/Cyber-Nomad-Collective/compiler/commit/1f8d62d)\n- **Subject:** Finalize compiler parity and stdlib/runtime test updates\n- **Band start:** [`dd75bff`](https://github.com/Cyber-Nomad-Collective/compiler/commit/dd75bff) (*Initial Commit*, 2026-03-05)\n- **Closed:** 2026-04-09\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `compiler-foundation`\n- **Milestone:** `v01-compiler-parity` (deliverable **#1**)\n\n## Relation\nAnchored tasks: `compiler-initial-commit`, `aot-refactor`, `pack-command`, `graph-std-injection-test`, `compiler-parity-merge`. Same workstream also covers `optional-null-operand`, `file-scoped-modules`, `file-scoped-module-docs`, `file-scoped-analysis-hardening`, `module-declaration-compat`, and `superrepo-compiler-submodule`. Closes on compiler [`1f8d62d`](https://github.com/Cyber-Nomad-Collective/compiler/commit/1f8d62d) before **v01-corelib-submodule** stdlib consolidation.",
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

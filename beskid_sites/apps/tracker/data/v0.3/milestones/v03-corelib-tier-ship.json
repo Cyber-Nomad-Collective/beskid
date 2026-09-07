@@ -1,0 +1,8 @@
+{
+	"id": "v03-corelib-tier-ship",
+	"title": "Corelib tier collections ship",
+	"description": "Tier-tagged collections, System.FS/Path packages, prelude contract fixes, and syscall JIT smoke coverage.",
+	"closedOn": "2026-05-24",
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

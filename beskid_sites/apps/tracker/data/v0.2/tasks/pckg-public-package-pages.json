@@ -1,0 +1,20 @@
+{
+	"id": "pckg-public-package-pages",
+	"title": "Public package pages and moderation safeguards",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "pckg-registry",
+	"domain": "tooling",
+	"completedAt": "2026-04-23",
+	"milestoneId": "v02-pckg-registry-foundation",
+	"source": {
+		"repo": "pckg",
+		"commit": "adff57b",
+		"subject": "feat: add moderation safeguards and public package pages",
+		"url": "https://github.com/Cyber-Nomad-Collective/pckg/commit/adff57b"
+	},
+	"body": "Add moderation safeguards and public package pages.\n\n## Provenance\n- **Repository:** `pckg`\n- **Commit:** [`adff57b`](https://github.com/Cyber-Nomad-Collective/pckg/commit/adff57b)\n- **Subject:** feat: add moderation safeguards and public package pages\n- **Completed:** 2026-04-23\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `pckg-registry`\n- **Deliverable:** `v02-pckg-registry-foundation`\n- **Domain:** `tooling`\n\n## Relation\nContributes to deliverable **Registry dashboard and package docs foundation** (`v02-pckg-registry-foundation`).\n",
+	"order": 235,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

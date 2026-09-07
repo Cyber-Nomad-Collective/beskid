@@ -12,7 +12,7 @@ test ! -e bun.lock
 corepack enable
 test "$(pnpm --version)" = "10.17.1"
 
-for pkg in site/platform-spec site/auth site/website site/learn; do
+for pkg in site/auth site/website site/learn; do
   test -f "${pkg}/package.json"
   test "$(node -p "require('./${pkg}/package.json').packageManager")" = "pnpm@10.17.1"
 done

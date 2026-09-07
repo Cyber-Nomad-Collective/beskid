@@ -1,0 +1,19 @@
+{
+	"id": "vscode-bundled-lsp-default",
+	"title": "Default VS Code extension to bundled LSP server",
+	"priority": "high",
+	"workstream": "editor-extension",
+	"domain": "tooling",
+	"completedAt": "2026-04-21",
+	"source": {
+		"repo": "beskid",
+		"commit": "57fa823",
+		"subject": "lsp: default to bundled server and gate cargo launch behind devMode",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/57fa823"
+	},
+	"statusColumn": "Done",
+	"body": "Defaults the VS Code extension to the **bundled LSP** binary; cargo-based launch remains behind `devMode`.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`57fa823`](https://github.com/Cyber-Nomad-Collective/beskid/commit/57fa823)\n- **Subject:** lsp: default to bundled server and gate cargo launch behind devMode\n- **Completed:** 2026-04-21\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `editor-extension`\n\n## Relation\nEditor UX baseline before Open VSX publish.",
+	"order": 128,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

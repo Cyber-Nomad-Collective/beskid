@@ -1,0 +1,20 @@
+{
+	"id": "workspace-crates-restructure",
+	"title": "Reorganize workspace from src/ to crates/ and add beskid_abi",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "compiler-analysis",
+	"domain": "compiler",
+	"completedAt": "2026-02-26",
+	"deliverableId": "v00-analysis-foundation",
+	"body": "Reorganized the Rust workspace from monolithic **`src/`** into **`crates/`** and introduced **`beskid_abi`** for stable runtime/interop boundaries.\n\n## Provenance\n- **Repository:** `pekan`\n- **Commit:** [`c41b01e`](https://github.com/Cyber-Nomad-Collective/pekan/commit/c41b01e)\n- **Subject:** Add beskid_abi crate and reorganize workspace from src/ to crates/ directory structure\n- **Completed:** 2026-02-26\n\n## Catalog scope\n- **Delivery version:** v0.0 (Pecan prototype)\n- **Workstream:** `compiler-analysis`\n- **Deliverable:** `v00-analysis-foundation`\n\n## Relation\nMatched how the later **compiler** submodule scales (many `beskid_*` crates) and separated ABI concerns from analysis/codegen crates. Structure carried into v0.1 compiler foundation; prerequisite for CI workspace checks and AOT smoke tests.",
+	"source": {
+		"repo": "pekan",
+		"commit": "c41b01e",
+		"subject": "Add beskid_abi crate and reorganize workspace from src/ to crates/ directory structure",
+		"url": "https://github.com/Cyber-Nomad-Collective/pekan/commit/c41b01e"
+	},
+	"order": 17,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

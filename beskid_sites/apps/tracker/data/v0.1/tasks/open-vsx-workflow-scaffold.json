@@ -1,0 +1,19 @@
+{
+	"id": "open-vsx-workflow-scaffold",
+	"title": "Add Open VSX publishing workflow scaffold",
+	"priority": "medium",
+	"workstream": "editor-extension",
+	"completedAt": "2026-03-17",
+	"milestoneId": "v01-open-vsx",
+	"source": {
+		"repo": "beskid",
+		"commit": "340e9cf",
+		"subject": "Add Open VSX publishing workflow; reorganize AOT refactor documentation; add obj/ to gitignore",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/340e9cf"
+	},
+	"statusColumn": "Done",
+	"body": "Adds initial **Open VSX publishing workflow** on the superrepo and reorganizes AOT refactor documentation.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`340e9cf`](https://github.com/Cyber-Nomad-Collective/beskid/commit/340e9cf)\n- **Subject:** Add Open VSX publishing workflow; reorganize AOT refactor documentation; add obj/ to gitignore\n- **Completed:** 2026-03-17\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `editor-extension`\n- **Deliverable:** `v01-open-vsx`\n\n## Relation\nOpens deliverable **v01-open-vsx**.",
+	"order": 118,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

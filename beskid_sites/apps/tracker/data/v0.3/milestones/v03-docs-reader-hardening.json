@@ -1,0 +1,8 @@
+{
+	"id": "v03-docs-reader-hardening",
+	"title": "Docs reader hardening",
+	"description": "trudoc CI on Node, platform-spec git-meta in container builds, YAML frontmatter fixes, and docs-ui nav shell polish through v0.3 tip.",
+	"closedOn": "2026-05-24",
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

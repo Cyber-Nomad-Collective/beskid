@@ -1,0 +1,8 @@
+{
+	"id": "v02-api-json-contract",
+	"title": "api.json primary contract",
+	"description": "Compiler emits hierarchical api.json; pckg requires it on publish and renders the structured docs UI.",
+	"closedOn": "2026-05-20",
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

@@ -1,0 +1,21 @@
+{
+	"id": "corelib-console-concurrency-tests",
+	"title": "Extend corelib concurrency tests and console package coverage",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "codegen-runtime",
+	"domain": "core-library",
+	"completedAt": "2026-05-20",
+	"specRelations": [],
+	"source": {
+		"repo": "corelib",
+		"commit": "2ddddb3",
+		"subject": "test(corelib): extend concurrency tests and align concurrency packages",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_standard/commit/2ddddb3"
+	},
+	"milestoneId": "v02-concurrency-runtime",
+	"body": "Extend concurrency tests and align concurrency packages.\n\n## Provenance\n- **Repository:** `corelib`\n- **Commit:** [`2ddddb3`](https://github.com/Cyber-Nomad-Collective/beskid_standard/commit/2ddddb3)\n- **Subject:** test(corelib): extend concurrency tests and align concurrency packages\n- **Completed:** 2026-05-20\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `codegen-runtime`\n- **Deliverable:** `v02-concurrency-runtime`\n- **Domain:** `core-library`\n\n## Relation\nContributes to deliverable **Fibers, channels, and GC runtime** (`v02-concurrency-runtime`).\n",
+	"order": 270,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

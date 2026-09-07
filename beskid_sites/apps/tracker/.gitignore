@@ -1,0 +1,26 @@
+node_modules
+package-lock.json
+npm-shrinkwrap.json
+yarn.lock
+.DS_Store
+dist
+dist-ssr
+*.local
+.env
+.nitro
+.tanstack
+.wrangler
+.output
+.vinxi
+__unconfig*
+todos.json
+data/runtime/*
+!data/runtime/.gitkeep
+
+# Build artifacts
+**/*.trace
+**/*.zip
+**/*.tar.gz
+**/*.tgz
+package-lock.json
+**/*.bun

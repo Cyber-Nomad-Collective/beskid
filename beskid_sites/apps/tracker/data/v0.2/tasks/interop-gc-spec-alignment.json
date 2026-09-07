@@ -1,0 +1,19 @@
+{
+	"id": "interop-gc-spec-alignment",
+	"title": "language-meta interop tree and GC platform alignment",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "platform-spec",
+	"domain": "language-meta",
+	"completedAt": "2026-05-20",
+	"source": {
+		"repo": "beskid",
+		"commit": "abd197e",
+		"subject": "docs: language-meta interop tree and GC platform alignment",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/abd197e"
+	},
+	"body": "Language-meta interop tree and GC platform alignment.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`abd197e`](https://github.com/Cyber-Nomad-Collective/beskid/commit/abd197e)\n- **Subject:** docs: language-meta interop tree and GC platform alignment\n- **Completed:** 2026-05-20\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `platform-spec`\n- **Domain:** `language-meta`\n\n## Relation\nSupports **v0.2 (Analysis, packages, and platform spec)** on workstream `platform-spec`.\n",
+	"order": 228,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

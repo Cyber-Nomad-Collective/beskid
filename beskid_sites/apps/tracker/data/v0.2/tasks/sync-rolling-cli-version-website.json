@@ -1,0 +1,20 @@
+{
+	"id": "sync-rolling-cli-version-website",
+	"title": "Sync rolling CLI version across release and website",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"domain": "tooling",
+	"completedAt": "2026-04-23",
+	"milestoneId": "v02-ci-deploy-infra",
+	"source": {
+		"repo": "beskid",
+		"commit": "f54b268",
+		"subject": "chore: sync rolling CLI version across release and website",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/f54b268"
+	},
+	"body": "Sync rolling CLI version across release and website.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`f54b268`](https://github.com/Cyber-Nomad-Collective/beskid/commit/f54b268)\n- **Subject:** chore: sync rolling CLI version across release and website\n- **Completed:** 2026-04-23\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `ci-release`\n- **Deliverable:** `v02-ci-deploy-infra`\n- **Domain:** `tooling`\n\n## Relation\nContributes to deliverable **CI workflows and deploy infra** (`v02-ci-deploy-infra`).\n",
+	"order": 271,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

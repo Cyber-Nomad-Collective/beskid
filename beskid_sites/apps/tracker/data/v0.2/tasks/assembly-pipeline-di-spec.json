@@ -1,0 +1,19 @@
+{
+	"id": "assembly-pipeline-di-spec",
+	"title": "Platform spec: assembly pipeline, DI hub, and macros",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "platform-spec",
+	"domain": "compiler",
+	"completedAt": "2026-05-20",
+	"source": {
+		"repo": "beskid",
+		"commit": "60fc81e",
+		"subject": "docs(platform-spec): assembly pipeline, DI hub, macros, and submodule bumps",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/60fc81e"
+	},
+	"body": "Assembly pipeline, DI hub, macros, and submodule bumps.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`60fc81e`](https://github.com/Cyber-Nomad-Collective/beskid/commit/60fc81e)\n- **Subject:** docs(platform-spec): assembly pipeline, DI hub, macros, and submodule bumps\n- **Completed:** 2026-05-20\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `platform-spec`\n- **Domain:** `compiler`\n\n## Relation\nSupports **v0.2 (Analysis, packages, and platform spec)** on workstream `platform-spec`.\n",
+	"order": 227,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

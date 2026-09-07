@@ -1,0 +1,20 @@
+{
+	"id": "compiler-parity-merge",
+	"title": "Finalize compiler parity and stdlib/runtime tests",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "compiler-foundation",
+	"domain": "compiler",
+	"completedAt": "2026-04-09",
+	"deliverableId": "v01-compiler-parity",
+	"source": {
+		"repo": "compiler",
+		"commit": "1f8d62d",
+		"subject": "Finalize compiler parity and stdlib/runtime test updates",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/1f8d62d"
+	},
+	"body": "Merges remaining parity fixes and refreshes stdlib/runtime tests so the compiler baseline matches expected v0.1 behavior before later module-semantics work.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`1f8d62d`](https://github.com/Cyber-Nomad-Collective/compiler/commit/1f8d62d)\n- **Subject:** Finalize compiler parity and stdlib/runtime test updates\n- **Completed:** 2026-04-09\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `compiler-foundation`\n- **Deliverable:** `v01-compiler-parity`\n\n## Relation\nCloses deliverable **v01-compiler-parity** (`1f8d62d`).",
+	"order": 104,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

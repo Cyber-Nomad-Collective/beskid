@@ -1,0 +1,18 @@
+{
+	"id": "release-s3-retry",
+	"title": "Add retry logic for SeaweedFS release uploads",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"completedAt": "2026-04-22",
+	"source": {
+		"repo": "compiler",
+		"commit": "4678fe4",
+		"subject": "ci: enhance S3 upload with retry logic for transport errors",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/4678fe4"
+	},
+	"statusColumn": "Done",
+	"body": "Adds **retry logic** for SeaweedFS/S3 transport errors during release uploads.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`4678fe4`](https://github.com/Cyber-Nomad-Collective/compiler/commit/4678fe4)\n- **Subject:** ci: enhance S3 upload with retry logic for transport errors\n- **Completed:** 2026-04-22\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `ci-release`\n\n## Relation\nFollow-up to **release-upload-keys**.",
+	"order": 134,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

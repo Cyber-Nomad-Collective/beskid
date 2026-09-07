@@ -1,0 +1,8 @@
+{
+	"slug": "ci-release",
+	"title": "CI & release verification",
+	"summary": "Release runtime bridge before AOT e2e, ASan bridge archive wiring and serialized runtime tests, trudoc verify via Node, formatter MDX CI fixes, Runtime CI on compiler submodule pointer bumps, ffi_v03/compiler submodule hardening, and verify-all-on-main completion evidence.",
+	"order": 8,
+	"deliverableIds": ["v03-post-merge-ci", "v03-verify-main"],
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

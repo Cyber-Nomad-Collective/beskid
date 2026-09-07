@@ -1,0 +1,8 @@
+{
+	"slug": "compiler-analysis",
+	"title": "Parser & semantic analysis research",
+	"summary": "Pest parsing, HIR modeling, module-graph resolution, staged semantic and type rules, diagnostic catalog growth, and desugar/normalization passes—the analysis foundation later carried into beskid_analysis and the unified pipeline in v0.1+.",
+	"order": 1,
+	"deliverableIds": ["v00-analysis-foundation"],
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

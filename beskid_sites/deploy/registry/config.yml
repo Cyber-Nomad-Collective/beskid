@@ -1,0 +1,37 @@
+# Docker registry:2 configuration — Beskid private registry.
+#
+# The registry runs HTTP-only inside the beskid-frontend network. Caddy
+# terminates TLS at cr.beskid-lang.org and enforces basicauth (see Caddyfile).
+# If you prefer registry-level htpasswd instead of Caddy basicauth, uncomment
+# the auth block below and mount ./htpasswd at /auth/htpasswd in the compose.
+
+version: 0.1
+log:
+  level: info
+  fields:
+    service: registry
+storage:
+  filesystem:
+    rootdirectory: /var/lib/registry
+  delete:
+    enabled: true
+  # Keep layers for rollback; run `registry garbage-collect` on a schedule
+  # after untagging old digests (see README "Registry maintenance").
+  cache:
+    blobdescriptor: inmemory
+http:
+  addr: 0.0.0.0:5000
+  headers:
+    X-Content-Type-Options: [nosniff]
+
+# Optional: registry-level htpasswd (alternative to Caddy basicauth).
+# auth:
+#   htpasswd:
+#     realm: Beskid Registry
+#     path: /auth/htpasswd
+
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+    threshold: 3

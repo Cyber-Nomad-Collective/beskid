@@ -1,0 +1,8 @@
+{
+	"slug": "editor-lsp",
+	"title": "Historical LSP prototype",
+	"summary": "pecan_lsp in-process language services (hover, definition, references, completions) plus an architecture specification. Historical only—superseded by workspace beskid_lsp stdio and the VS Code extension path.",
+	"order": 3,
+	"deliverableIds": ["v00-tooling-research"],
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

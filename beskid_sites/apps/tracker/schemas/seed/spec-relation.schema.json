@@ -1,0 +1,31 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://beskid-lang.org/schemas/seed/spec-relation.schema.json",
+	"type": "object",
+	"properties": {
+		"path": {
+			"type": "string",
+			"minLength": 1
+		},
+		"href": {
+			"type": "string",
+			"format": "uri"
+		},
+		"title": {
+			"type": "string"
+		},
+		"level": {
+			"type": "string"
+		},
+		"relation": {
+			"type": "string",
+			"enum": ["implements", "depends-on", "tracks", "extends", "validates"]
+		},
+		"required": {
+			"default": false,
+			"type": "boolean"
+		}
+	},
+	"required": ["path", "relation", "required"],
+	"additionalProperties": false
+}

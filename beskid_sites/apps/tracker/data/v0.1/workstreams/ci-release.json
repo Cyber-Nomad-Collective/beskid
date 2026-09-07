@@ -1,0 +1,7 @@
+{
+	"slug": "ci-release",
+	"title": "CI & CLI release",
+	"order": 3,
+	"summary": "Superrepo and **compiler** CI move orchestration into **Nox** (aggregate workflows, ASan scoping, release Python deps). Ship **multi-platform CLI** binaries via SeaweedFS/S3 with upload-key and retry fixes, migrate public docs to **Astro**, and refresh **landing/downloads** plus early **language book** pages — no separate v01-cli-release deliverable; release tasks anchor on this workstream only.",
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

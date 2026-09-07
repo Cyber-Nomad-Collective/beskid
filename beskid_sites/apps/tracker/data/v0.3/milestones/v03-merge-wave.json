@@ -1,0 +1,7 @@
+{
+	"id": "v03-merge-wave",
+	"title": "v0.3 macro/runtime/ffi/tooling delivery",
+	"closedOn": "2026-05-23",
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

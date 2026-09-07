@@ -14,7 +14,7 @@
 # Normative spec
 /openspec/              @Cyber-Nomad-Collective/beskid-core
 
-# Sites (website, platform-spec, auth, learn)
+# Sites (website, auth, learn)
 /site/                  @Cyber-Nomad-Collective/beskid-web
 
 # Shared web packages

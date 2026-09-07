@@ -1,0 +1,19 @@
+{
+	"id": "pckg-migration-publisher-repair",
+	"title": "Startup migration repair for publisher flag drift",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "pckg-registry",
+	"domain": "tooling",
+	"completedAt": "2026-05-08",
+	"source": {
+		"repo": "pckg",
+		"commit": "27621c1",
+		"subject": "fix: harden startup migration repair for publisher flag",
+		"url": "https://github.com/Cyber-Nomad-Collective/pckg/commit/27621c1"
+	},
+	"body": "Harden startup migration repair for publisher flag.\n\n## Provenance\n- **Repository:** `pckg`\n- **Commit:** [`27621c1`](https://github.com/Cyber-Nomad-Collective/pckg/commit/27621c1)\n- **Subject:** fix: harden startup migration repair for publisher flag\n- **Completed:** 2026-05-08\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `pckg-registry`\n- **Domain:** `tooling`\n\n## Relation\nSupports **v0.2 (Analysis, packages, and platform spec)** on workstream `pckg-registry`.\n",
+	"order": 244,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

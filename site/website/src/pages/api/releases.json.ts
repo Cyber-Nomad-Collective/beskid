@@ -3,7 +3,7 @@ export const prerender = true;
 const COMPILER_REPO = "Cyber-Nomad-Collective/beskid_compiler";
 const TRACKER_BASE =
 	"https://github.com/Cyber-Nomad-Collective/beskid_tracker/blob/main/data";
-const SPEC_BASE = "https://spec.beskid-lang.org/platform-spec";
+const SPEC_BASE = "https://beskid-lang.org/docs/standard";
 const BOOK_BASE = "/book";
 
 interface ReleaseInfo {

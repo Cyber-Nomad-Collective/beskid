@@ -1,0 +1,18 @@
+{
+	"id": "site-landing-downloads",
+	"title": "Redesign docs landing and downloads surfaces",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"completedAt": "2026-04-22",
+	"source": {
+		"repo": "beskid",
+		"commit": "c92d17d",
+		"subject": "site: redesign landing and downloads surfaces",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/c92d17d"
+	},
+	"statusColumn": "Done",
+	"body": "Redesigns public **landing** and **downloads** pages for CLI and extension artifacts.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`c92d17d`](https://github.com/Cyber-Nomad-Collective/beskid/commit/c92d17d)\n- **Subject:** site: redesign landing and downloads surfaces\n- **Completed:** 2026-04-22\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `ci-release`\n\n## Relation\nUser-facing complement to **cli-release-pipeline-scaffold**.",
+	"order": 109,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

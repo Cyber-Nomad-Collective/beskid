@@ -1,0 +1,24 @@
+{
+	"id": "compiler-resolve-codegen-waves",
+	"title": "Compiler resolve and codegen waves (enum, generics, Capabilities)",
+	"statusColumn": "In Progress",
+	"priority": "high",
+	"workstream": "compiler-corelib",
+	"deliverableId": "v04-corelib-complete",
+	"source": {
+		"repo": "beskid",
+		"commit": "ee88edf",
+		"subject": "BSOL Stability Pass",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf"
+	},
+	"body": "Wave 1–2 compiler gates aligned with remaining_corelib_blockers + corelib_ansi_codegen_green + compiler_test_green_plan.\n\n## Landed (compiler @ `be6e171` working tree)\n\n- **Resolve:** `resolve_enum_path` delegates to `resolve_type_path`; `collapse_homonymous_module_segment` in [`module_index.rs`](compiler/crates/beskid_analysis/src/projects/assembly/module_index.rs); `scoped_call_kinds` + `call_kind_at` in [`context.rs`](compiler/crates/beskid_analysis/src/types/context/context.rs); foreign sig placeholder params preserve arity\n- **Codegen:** `seed_struct_definitions` for dependency units; Capabilities/Terminal link-plan hardening; `ConsoleAnsiEscapeTests` **8/8** pass\n- **CLI:** `SemanticDiagnosticsError` Display recursion fixed\n\n## Remaining\n\n- `Ansi.Sgr` scoped expr-type miss (`ConsoleAnsiStyleChainTests` / `sgr_builder_fg_basic_golden`)\n- Redundant `sextend` on i64 const (FormatMarkdown/Attributes/Scan targets)\n- Result match + generic concurrency paths; expand slow-feature CLIF gates\n\n## Exit\n\n`just compiler` green; spine typecheck gates pass; majority of matrix analysis/codegen failures cleared.\n\n## Provenance\n- **Repository:** `beskid`\n- **Catalog tip:** [`ee88edf`](https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf) (2026-06-07)\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `compiler-corelib`\n- **Deliverable:** `v04-corelib-complete`",
+	"order": 411,
+	"subtasks": [
+		{ "text": "Wave 1 resolve (enum, generics, homonyms)", "done": true },
+		{ "text": "Wave 2 codegen (Capabilities/Terminal chain)", "done": true },
+		{ "text": "CLI diagnostic display recursion fix", "done": true },
+		{ "text": "Ansi.Sgr scoped expr-type codegen follow-on", "done": false },
+		{ "text": "Expand CLIF gates for newly fixed entrypoints", "done": false }
+	],
+	"$schema": "../schemas/seed/task.schema.json"
+}

@@ -1,0 +1,416 @@
+/**
+ * Roadmap app shell — aligned with platform-spec / pckg chrome (Material teal).
+ */
+
+html,
+body,
+#app {
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	font-family: var(--font-sans);
+	color: var(--foreground);
+	background-color: var(--background);
+	background-image:
+		radial-gradient(
+			ellipse 120% 80% at 0% -20%,
+			color-mix(in srgb, var(--beskid-primary-container) 22%, transparent),
+			transparent 55%
+		),
+		radial-gradient(
+			ellipse 90% 60% at 100% 0%,
+			color-mix(in srgb, var(--beskid-primary) 8%, transparent),
+			transparent 50%
+		);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Prose links only — not shadcn buttons rendered as <a> or <Link>. */
+a:where(:not([data-slot="button"])) {
+	color: var(--beskid-primary);
+	text-decoration-color: color-mix(
+		in srgb,
+		var(--beskid-primary) 35%,
+		transparent
+	);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 2px;
+}
+
+a:where(:not([data-slot="button"])):hover {
+	color: color-mix(in srgb, var(--beskid-primary) 88%, white);
+}
+
+html[data-theme="light"] a:where(:not([data-slot="button"])):hover {
+	color: color-mix(in srgb, var(--beskid-primary) 82%, black);
+}
+
+/* shadcn Button + asChild (TanStack Link / <a>): keep variant foreground on filled buttons */
+[data-slot="button"] {
+	text-decoration: none;
+}
+
+[data-slot="button"][data-variant="default"] {
+	color: var(--primary-foreground);
+}
+
+[data-slot="button"][data-variant="default"]:hover {
+	color: var(--primary-foreground);
+}
+
+[data-slot="button"][data-variant="secondary"] {
+	color: var(--secondary-foreground);
+}
+
+[data-slot="button"][data-variant="destructive"] {
+	color: var(--destructive);
+}
+
+[data-slot="button"][data-variant="outline"],
+[data-slot="button"][data-variant="ghost"] {
+	color: var(--foreground);
+}
+
+[data-slot="button"][data-variant="link"] {
+	color: var(--primary);
+}
+
+code {
+	font-size: 0.9em;
+	font-family: var(--font-mono);
+	border: 1px solid var(--border);
+	background: color-mix(in srgb, var(--muted) 65%, var(--background));
+	border-radius: calc(var(--radius) - 4px);
+	padding: 2px 7px;
+}
+
+pre code {
+	border: 0;
+	background: transparent;
+	padding: 0;
+	border-radius: 0;
+	font-size: inherit;
+	color: inherit;
+}
+
+.page-wrap {
+	width: min(72rem, calc(100% - 2rem));
+	margin-inline: auto;
+}
+
+.display-title {
+	font-weight: 800;
+	letter-spacing: 0.01em;
+	line-height: 1.15;
+}
+
+.island-kicker {
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	font-weight: 700;
+	font-size: 0.69rem;
+	color: var(--platform-spec-tab-text);
+}
+
+.app-shell__inset {
+	display: flex;
+	min-height: 100svh;
+	flex-direction: column;
+	background: var(--background);
+}
+
+.app-shell__header {
+	background: color-mix(in srgb, var(--platform-spec-surface) 94%, transparent);
+	backdrop-filter: blur(8px);
+}
+
+.app-shell__main {
+	min-height: 0;
+	flex: 1;
+}
+
+/* Kanban board — full-bleed stage, filters in right drawer */
+.board-view {
+	min-height: 0;
+}
+
+.board-view__stage {
+	background: color-mix(in srgb, var(--background) 96%, var(--muted));
+}
+
+.board-view__canvas {
+	scrollbar-gutter: stable;
+}
+
+.board-task-pane {
+	z-index: 12;
+}
+
+.work-item-shell--page {
+	max-width: 56rem;
+	margin-inline: auto;
+	width: 100%;
+}
+
+.work-item-shell--pane .work-item-shell__body {
+	scrollbar-gutter: stable;
+}
+
+.board-filter-panel {
+	position: relative;
+	z-index: 15;
+	display: flex;
+	height: 100%;
+	flex-shrink: 0;
+	border-left: 1px solid var(--platform-spec-card-border);
+	background: color-mix(
+		in srgb,
+		var(--platform-spec-surface) 96%,
+		var(--background)
+	);
+}
+
+.board-filter-panel__rail {
+	position: relative;
+	display: flex;
+	width: 3rem;
+	flex-shrink: 0;
+	align-items: flex-start;
+	justify-content: center;
+	padding-top: 0.75rem;
+}
+
+.board-filter-panel__drawer {
+	display: flex;
+	width: min(20rem, calc(100vw - 4rem));
+	flex-direction: column;
+	gap: 0.75rem;
+	overflow-y: auto;
+	border-left: 1px solid var(--platform-spec-card-border);
+	padding: 0.75rem 0.85rem 1rem;
+}
+
+.board-filter-panel__drawer[hidden] {
+	display: none;
+}
+
+.board-filter-panel__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 0.5rem;
+}
+
+.board-filter-panel__presets {
+	flex-shrink: 0;
+}
+
+.board-filter-panel__builder {
+	flex: 1;
+	min-height: 0;
+}
+
+.board-filter-panel__footer {
+	flex-shrink: 0;
+	padding-top: 0.25rem;
+	border-top: 1px solid var(--platform-spec-card-border);
+}
+
+/* Sidebar tokens use platform-spec surfaces (Fluent-inspired chrome). */
+[data-slot="sidebar-wrapper"] {
+	--sidebar-background: var(--sidebar);
+}
+
+.island-shell {
+	border: 1px solid var(--platform-spec-card-border);
+	background: var(--platform-spec-card-bg);
+	box-shadow: 0 1px 0 color-mix(in srgb, var(--foreground) 6%, transparent)
+		inset;
+}
+
+[data-slot="card"].kanban-column-header,
+[data-slot="card"].kanban-card {
+	border: 1px solid var(--platform-spec-card-border);
+	background: var(--platform-spec-surface-strong);
+	color: var(--foreground);
+	box-shadow: 0 1px 3px color-mix(in srgb, var(--foreground) 10%, transparent);
+	transition:
+		border-color 160ms ease,
+		box-shadow 160ms ease,
+		transform 160ms ease;
+}
+
+[data-slot="card"].kanban-card:hover,
+[data-slot="card"].kanban-column-header:hover {
+	border-color: color-mix(in srgb, var(--beskid-primary) 35%, var(--border));
+	box-shadow: 0 4px 14px
+		color-mix(in srgb, var(--beskid-primary-container) 18%, transparent);
+}
+
+button,
+a {
+	transition:
+		background-color 160ms ease,
+		color 160ms ease,
+		border-color 160ms ease;
+}
+
+/* Issue create / detail drawers — wider than default sheet (sm:max-w-sm). */
+[data-slot="sheet-content"].issue-sheet {
+	width: min(48rem, 92vw);
+	max-width: min(48rem, 92vw);
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* Meta search */
+.roadmap-meta-search__input {
+	background: color-mix(in srgb, var(--background) 88%, var(--muted));
+	border-color: var(--platform-spec-card-border);
+}
+
+.roadmap-meta-search__input:focus-visible {
+	border-color: color-mix(in srgb, var(--beskid-primary) 45%, var(--border));
+	box-shadow: 0 0 0 2px
+		color-mix(in srgb, var(--beskid-primary-container) 35%, transparent);
+}
+
+.roadmap-meta-search__panel {
+	border-color: var(--platform-spec-card-border);
+	background: var(--platform-spec-card-bg);
+}
+
+.roadmap-global-search-trigger:hover {
+	border-color: color-mix(in srgb, var(--beskid-primary) 30%, var(--border));
+}
+
+/* Dashboard layout + widget mode (shadcn dashboard style baseline) */
+.dashboard-layout {
+	display: grid;
+	gap: 1.5rem;
+}
+
+.dashboard-section {
+	display: grid;
+	gap: 0.75rem;
+}
+
+.dashboard-section__title {
+	letter-spacing: 0.11em;
+}
+
+.dashboard-widget-grid {
+	display: grid;
+	gap: 0.75rem;
+	grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 40rem) {
+	.dashboard-widget-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (min-width: 72rem) {
+	.dashboard-widget-grid {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+
+.dashboard-widget-grid--compact {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 56rem) {
+	.dashboard-widget-grid--compact {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+
+.dashboard-widget {
+	border: 1px solid
+		color-mix(in srgb, var(--platform-spec-card-border) 92%, transparent);
+	background: color-mix(in srgb, var(--platform-spec-card-bg) 92%, transparent);
+	box-shadow:
+		0 1px 0 color-mix(in srgb, var(--foreground) 6%, transparent) inset,
+		0 8px 22px color-mix(in srgb, var(--foreground) 8%, transparent);
+}
+
+.dashboard-widget__header {
+	display: flex;
+	align-items: center;
+	gap: 0.45rem;
+	padding-bottom: 0.35rem;
+}
+
+.dashboard-widget__icon {
+	color: color-mix(in srgb, var(--beskid-primary) 82%, var(--foreground));
+}
+
+.dashboard-widget__title {
+	font-size: 0.78rem;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	color: var(--muted-foreground);
+}
+
+.dashboard-widget__body {
+	padding-top: 0;
+}
+
+.dashboard-widget__value {
+	margin: 0;
+	font-size: clamp(1.35rem, 2vw, 1.75rem);
+	font-weight: 700;
+	line-height: 1.1;
+}
+
+.dashboard-widget__sub {
+	margin: 0.3rem 0 0;
+	font-size: 0.75rem;
+	color: var(--muted-foreground);
+}
+
+/* Scope loader / process failure */
+.roadmap-scope-pending__spinner {
+	width: 2.75rem;
+	height: 2.75rem;
+	border-radius: 999px;
+	border: 3px solid color-mix(in srgb, var(--beskid-primary) 18%, transparent);
+	border-top-color: var(--beskid-primary);
+	animation: roadmap-scope-spin 0.85s linear infinite;
+}
+
+@keyframes roadmap-scope-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.roadmap-process-failure__panel {
+	animation: roadmap-scope-failure-in 420ms ease;
+}
+
+@keyframes roadmap-scope-failure-in {
+	from {
+		opacity: 0;
+		transform: translateY(0.35rem);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}

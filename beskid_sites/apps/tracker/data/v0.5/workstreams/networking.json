@@ -1,0 +1,7 @@
+{
+	"slug": "networking",
+	"title": "Portable Networking",
+	"summary": "TCP/UDP/DNS with opaque handles, one reactor contract, Core.IO.Stream implementation",
+	"order": 3,
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

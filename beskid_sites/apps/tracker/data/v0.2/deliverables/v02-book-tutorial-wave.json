@@ -1,0 +1,8 @@
+{
+	"id": "v02-book-tutorial-wave",
+	"title": "Book tutorial rollout",
+	"description": "Closed **2026-05-05** on superrepo [`f57377a`](https://github.com/Cyber-Nomad-Collective/beskid/commit/f57377a) (v0.2 delivery tip).\n\nEarly v0.2 language book chapters, corelib naming on the public site, file-scoped module semantics in book/reference material, and trudoc/bootstrap wiring ahead of the May platform-spec cutover.\n\nWorkstreams: `docs-site`. **3** catalog tasks anchor this deliverable (`milestoneId: v02-book-tutorial-wave`).\n\n## Provenance\n- [`cc46568`](https://github.com/Cyber-Nomad-Collective/beskid/commit/cc46568) (`beskid`) — Website update\n- [`6140c7c`](https://github.com/Cyber-Nomad-Collective/beskid/commit/6140c7c) (`beskid`) — docs: corelib naming across site, workstreams, and CI notes\n- [`94240a3`](https://github.com/Cyber-Nomad-Collective/beskid/commit/94240a3) (`beskid`) — site: add language book and align module docs with file-scoped semantics\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Deliverable:** `v02-book-tutorial-wave` — Book tutorial rollout\n\n## Relation\nGroups the v0.2 seed tasks linked via `milestoneId` for **Book tutorial rollout**.",
+	"closedOn": "2026-05-05",
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

@@ -1,0 +1,166 @@
+# Beskid platform — Caddy reverse proxy.
+#
+# Auto-HTTPS for all beskid-lang.org subdomains (Let's Encrypt via HTTP-01).
+# Replaces Coolify's Traefik proxy. Public URLs are on 443 (no explicit ports —
+# audit finding 6.2). Caddy is the only service publishing host ports.
+#
+# Auth model: Authelia is the OIDC provider at auth.beskid-lang.org. Protected
+# apps use `forward_auth` to Authelia's /api/verify endpoint; on 401/403 the
+# app redirects to Authelia login. Public routes (health, static content)
+# bypass auth. See authelia/configuration.yml and
+# apps/shell-template/docs/authelia.md.
+#
+# Security: HSTS, compression, sane headers. /metrics is never exposed
+# publicly (audit finding 4.7).
+{
+	# Global options.
+	email admin@beskid-lang.org
+	servers {
+		protocols h1 h2 h3
+	}
+	# Rate limiting is not in stock Caddy; add the caddy-ratelimit module via a
+	# custom Caddy build if needed. See README "Rate limiting".
+}
+
+# ---------------------------------------------------------------------------
+# Snippets
+# ---------------------------------------------------------------------------
+
+# Security headers + compression applied to every public site.
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "geolocation=(), microphone=(), camera=()"
+		-Server
+	}
+	encode zstd gzip
+}
+
+# Authelia forward-auth. Protected apps call this BEFORE reverse_proxy. On
+# 401/403 Authelia redirects to its login portal; on 200 Caddy forwards the
+# request to the app with identity headers (Remote-User, Remote-Groups, ...).
+(forward_auth) {
+	forward_auth authelia:9091 {
+		uri /api/verify?rd=https://auth.beskid-lang.org/login
+		copy_headers Remote-User Remote-Groups Remote-Email Remote-Name
+	}
+}
+
+# Protected site pattern: health endpoints bypass auth, everything else is
+# gated by forward_auth. Usage: `import protected platform-spec:8460`
+(protected) {
+	import security_headers
+	@health path /api/health /health /healthz
+	handle @health {
+		reverse_proxy {args[0]}
+	}
+	handle {
+		import forward_auth
+		reverse_proxy {args[0]}
+	}
+}
+
+# ---------------------------------------------------------------------------
+# www → apex redirect
+# ---------------------------------------------------------------------------
+www.beskid-lang.org {
+	redir https://beskid-lang.org{uri} permanent
+}
+
+# ---------------------------------------------------------------------------
+# Website — public (no auth). Static + SPA.
+# ---------------------------------------------------------------------------
+beskid-lang.org {
+	import security_headers
+	reverse_proxy website:80
+}
+
+# ---------------------------------------------------------------------------
+# Authelia — the OIDC provider / login portal. Public (it IS the auth entry).
+# ---------------------------------------------------------------------------
+auth.beskid-lang.org {
+	import security_headers
+	reverse_proxy authelia:9091
+}
+
+# ---------------------------------------------------------------------------
+# Private Docker registry — basicauth at Caddy. HTTP-only inside the network.
+# Credentials come from env (REGISTRY_USER / REGISTRY_PASS) set on the caddy
+# service in docker-compose.yml.
+# ---------------------------------------------------------------------------
+cr.beskid-lang.org {
+	import security_headers
+	basic_auth {
+		{$REGISTRY_USER} {$REGISTRY_PASS}
+	}
+	reverse_proxy registry:5000
+}
+
+# ---------------------------------------------------------------------------
+# platform-spec — protected. Memgraph-backed spec site.
+# ---------------------------------------------------------------------------
+spec.beskid-lang.org {
+	import protected platform-spec:8460
+}
+
+# ---------------------------------------------------------------------------
+# tracker — protected.
+# ---------------------------------------------------------------------------
+tracker.beskid-lang.org {
+	import protected tracker:3000
+}
+
+# ---------------------------------------------------------------------------
+# nexus — protected. Graph explorer.
+# ---------------------------------------------------------------------------
+nexus.beskid-lang.org {
+	import protected nexus:8452
+}
+
+# ---------------------------------------------------------------------------
+# pckg — .NET package registry. Package read/download is public; admin routes
+# are gated. pckg integrates with Authelia as an OIDC client for its own admin
+# auth, so the whole site is NOT behind forward-auth — only /admin* is.
+# ---------------------------------------------------------------------------
+pckg.beskid-lang.org {
+	import security_headers
+	@admin path /admin* /api/admin*
+	handle @admin {
+		import forward_auth
+		reverse_proxy pckg:8082
+	}
+	handle {
+		reverse_proxy pckg:8082
+	}
+}
+
+# ---------------------------------------------------------------------------
+# learn — public learning site (no auth on content).
+# ---------------------------------------------------------------------------
+learn.beskid-lang.org {
+	import security_headers
+	reverse_proxy learn:80
+}
+
+# ---------------------------------------------------------------------------
+# community — NodeBB forum. NodeBB has its own session/auth and integrates
+# with Authelia as an OIDC client (NodeBB SSO plugin). Not behind forward-auth
+# (NodeBB manages its own request lifecycle).
+# ---------------------------------------------------------------------------
+community.beskid-lang.org {
+	import security_headers
+	reverse_proxy community:4567
+}
+
+# ---------------------------------------------------------------------------
+# monitor — Grafana (when the monitoring stack is folded in). Grafana has
+# rich Authelia OIDC integration, so it manages its own auth (not forward-auth).
+# Uncomment when the monitoring compose is merged into this stack.
+# ---------------------------------------------------------------------------
+# monitor.beskid-lang.org {
+# 	import security_headers
+# 	reverse_proxy grafana:3000
+# }

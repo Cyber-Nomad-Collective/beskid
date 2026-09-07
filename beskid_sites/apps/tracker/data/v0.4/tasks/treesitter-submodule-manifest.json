@@ -1,0 +1,19 @@
+{
+	"id": "treesitter-submodule-manifest",
+	"title": "Add beskid_treesitter submodule and repo manifest entry",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "repo-cicd",
+	"completedAt": "2026-05-26",
+	"deliverableId": "v04-cicd-realized",
+	"source": {
+		"repo": "beskid",
+		"commit": "62f764a",
+		"subject": "Add beskid_treesitter submodule and register in repo manifest.",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/62f764a"
+	},
+	"body": "Registers `beskid_treesitter` grammar submodule for editor/CI consumers (`@cyber-nomad-collective/beskid-tree-sitter`) and updates AGENTS sync guidance from `beskid.pest`.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`62f764a`](https://github.com/Cyber-Nomad-Collective/beskid/commit/62f764a)\n- **Subject:** Add beskid_treesitter submodule and register in repo manifest.\n- **Completed:** 2026-05-26\n\n## Catalog scope\n- **Delivery version:** v0.4 (Platform services, auth, and delivery tooling)\n- **Workstream:** `repo-cicd`\n- **Deliverable:** `v04-cicd-realized`\n\n## What shipped\n\nRegisters `beskid_treesitter` grammar submodule for editor/CI consumers (`@cyber-nomad-collective/beskid-tree-sitter`) and updates AGENTS sync guidance from `beskid.pest`.",
+	"order": 389,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

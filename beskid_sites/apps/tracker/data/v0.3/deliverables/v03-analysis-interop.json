@@ -1,0 +1,14 @@
+{
+	"id": "v03-analysis-interop",
+	"title": "Analysis interop & codegen polish",
+	"description": "ExternalLibrary analysis trait/registry, export-FFI HIR legality, frozen ABI allowlist ordering, compiler formatter notes for packageKind tool profile, and e2e CLI artifact label alignment—compiler-side interop completing the 23 May FFI/import tracks.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`f6fb5a6`](https://github.com/Cyber-Nomad-Collective/beskid/commit/f6fb5a6)\n- **Subject:** merge(v0.3): export-ffi-link-time into main\n- **Closed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Cutoff:** `f57377a`→`aaddd32` on superrepo `beskid`\n- **Workstreams:** `compiler-mods`, `analysis-pipeline`, `ffi-export`\n\n## Relation\nDelivery anchor for **2** catalog task(s) in the v0.3 window; see linked workstreams and tasks with `milestoneId` / `deliverableId` `v03-analysis-interop`.",
+	"closedOn": "2026-05-23",
+	"source": {
+		"repo": "beskid",
+		"commit": "f6fb5a6",
+		"subject": "merge(v0.3): export-ffi-link-time into main",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/f6fb5a6"
+	},
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

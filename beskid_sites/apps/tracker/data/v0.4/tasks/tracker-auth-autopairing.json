@@ -1,0 +1,19 @@
+{
+	"id": "tracker-auth-autopairing",
+	"title": "Tracker auth autopairing via hub redirect",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "tracker-implementation",
+	"completedAt": "2026-06-03",
+	"deliverableId": "v04-tracker-ship",
+	"source": {
+		"repo": "beskid",
+		"commit": "574a84c",
+		"subject": "Update tracker to support autopairing",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/574a84c"
+	},
+	"body": "Pairing link `/settings/auth/pair?code=…` autopairs when `TRACKER_PUBLIC_URL` is set, using `GITHUB_SYNC_TOKEN` or admin session.\n\n## What shipped\n\n- Autopairing support (`574a84c`)\n- Auth session fixes (`742f086`, `1e3e3cf`)\n- Auth/Tracker refactor (`801f1e2`)\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`574a84c`](https://github.com/Cyber-Nomad-Collective/beskid/commit/574a84c)\n- **Completed:** 2026-06-03\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `tracker-implementation`\n- **Deliverable:** `v04-tracker-ship`",
+	"order": 390,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

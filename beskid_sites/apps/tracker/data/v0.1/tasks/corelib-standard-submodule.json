@@ -1,0 +1,19 @@
+{
+	"id": "corelib-standard-submodule",
+	"title": "Add beskid_standard submodule as corelib",
+	"priority": "high",
+	"workstream": "corelib-packaging",
+	"domain": "core-library",
+	"completedAt": "2026-03-17",
+	"source": {
+		"repo": "beskid",
+		"commit": "3799f21",
+		"subject": "Add beskid_standard submodule as corelib; remove local standard_library implementation",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/3799f21"
+	},
+	"statusColumn": "Done",
+	"body": "Adds **`beskid_standard`** as the superrepo **corelib** submodule and removes the legacy in-tree `standard_library` implementation.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`3799f21`](https://github.com/Cyber-Nomad-Collective/beskid/commit/3799f21)\n- **Subject:** Add beskid_standard submodule as corelib; remove local standard_library implementation\n- **Completed:** 2026-03-17\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `corelib-packaging`\n\n## Relation\nSuperrepo-side mirror of **corelib-submodule** wiring.",
+	"order": 117,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

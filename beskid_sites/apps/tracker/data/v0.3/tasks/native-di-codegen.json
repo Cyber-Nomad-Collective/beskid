@@ -1,0 +1,19 @@
+{
+	"id": "native-di-codegen",
+	"title": "Native DI codegen/runtime end-to-end",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "compiler-mods",
+	"completedAt": "2026-05-23",
+	"milestoneId": "v03-merge-wave",
+	"source": {
+		"repo": "beskid",
+		"commit": "8260a4a",
+		"subject": "feat(v0.3): native DI codegen/runtime end-to-end (A2)",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/8260a4a"
+	},
+	"body": "Native dependency-injection codegen and runtime execute end-to-end (A2 track), wiring compile-time DI graphs into emitted native startup.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`8260a4a`](https://github.com/Cyber-Nomad-Collective/beskid/commit/8260a4a)\n- **Subject:** feat(v0.3): native DI codegen/runtime end-to-end (A2)\n- **Completed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `compiler-mods`\n- **Deliverable:** `v03-merge-wave`\n\n## Relation\nContributes to deliverable **v0.3 macro/runtime/ffi/tooling delivery** (`v03-merge-wave`).",
+	"order": 303,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

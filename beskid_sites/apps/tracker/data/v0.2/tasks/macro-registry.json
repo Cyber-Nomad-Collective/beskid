@@ -1,0 +1,29 @@
+{
+	"id": "macro-registry",
+	"title": "Macro registry, substitution, and HIR wiring",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "analysis-pipeline",
+	"domain": "language-meta",
+	"area": "macros",
+	"completedAt": "2026-05-20",
+	"specRelations": [
+		{
+			"path": "/platform-spec/language-meta/macros/",
+			"title": "Macros",
+			"level": "area",
+			"relation": "implements",
+			"required": true
+		}
+	],
+	"source": {
+		"repo": "compiler",
+		"commit": "9f668d4",
+		"subject": "feat(compiler): macro registry, substitution, and HIR/format wiring",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/9f668d4"
+	},
+	"body": "Macro registry, substitution, and HIR/format wiring.\n\n## Platform specification\n- Implements [Macros](https://beskid-lang.org/platform-spec/language-meta/macros/) (`/platform-spec/language-meta/macros/`) *(required)*\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`9f668d4`](https://github.com/Cyber-Nomad-Collective/compiler/commit/9f668d4)\n- **Subject:** feat(compiler): macro registry, substitution, and HIR/format wiring\n- **Completed:** 2026-05-20\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `analysis-pipeline`\n- **Domain:** `language-meta`\n- **Area:** `macros`\n\n## Relation\nSupports **v0.2 (Analysis, packages, and platform spec)** on workstream `analysis-pipeline`.\n",
+	"order": 205,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

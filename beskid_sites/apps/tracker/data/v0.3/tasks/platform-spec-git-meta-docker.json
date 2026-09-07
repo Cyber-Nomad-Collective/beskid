@@ -1,0 +1,19 @@
+{
+	"id": "platform-spec-git-meta-docker",
+	"title": "Docker git for platform-spec git-meta and docs-ui CSS sync",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "dev-experience",
+	"completedAt": "2026-05-24",
+	"milestoneId": "v03-docs-reader-hardening",
+	"source": {
+		"repo": "beskid",
+		"commit": "b219677",
+		"subject": "chore(docker): update Dockerfile to include git for platform-spec generation",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/b219677"
+	},
+	"body": "Website production Docker image installs **git** so platform-spec git-meta prebuild (`generate-platform-spec-git-meta.mjs`) succeeds in container builds.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`b219677`](https://github.com/Cyber-Nomad-Collective/beskid/commit/b219677)\n- **Subject:** chore(docker): update Dockerfile to include git for platform-spec generation\n- **Completed:** 2026-05-24\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `dev-experience`\n- **Deliverable:** `v03-docs-reader-hardening`\n\n## Relation\nContributes to deliverable **Docs reader hardening** (`v03-docs-reader-hardening`).",
+	"order": 346,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

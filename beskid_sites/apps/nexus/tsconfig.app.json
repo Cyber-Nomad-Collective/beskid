@@ -1,0 +1,21 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"include": ["src", "test"],
+	"exclude": ["e2e/**", "node_modules/**", "dist/**"],
+	"compilerOptions": {
+		"composite": false,
+		"types": ["vite/client", "node"],
+		"baseUrl": "./",
+		"paths": {
+			"@/*": ["./src/*"],
+			"#beskid-hub-entry": ["./src/shell/hub-entry.ts"],
+			"#beskid-hub-css": ["../../packages/beskid-ui-react/src/styles/hub.css"],
+			"#beskid-theme-css": [
+				"../../packages/beskid-ui-react/src/styles/tokens.css"
+			],
+			"@beskid/material-theme": [
+				"../../packages/beskid-ui-react/src/styles/tokens.css"
+			]
+		}
+	}
+}

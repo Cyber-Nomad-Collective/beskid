@@ -1,0 +1,19 @@
+{
+	"id": "export-ffi-spec-traceability",
+	"title": "Promote dynamic-types and export FFI traceability in platform-spec",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "stabilization",
+	"domain": "language-meta",
+	"completedAt": "2026-05-24",
+	"source": {
+		"repo": "beskid",
+		"commit": "8cffb33",
+		"subject": "feat(v0.3): bump compiler, promote dynamic-types spec, export FFI traceability",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/8cffb33"
+	},
+	"body": "Platform-spec and orchestration docs cross-link export FFI decisions to compiler commits for v0.3 auditability.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`8cffb33`](https://github.com/Cyber-Nomad-Collective/beskid/commit/8cffb33)\n- **Subject:** feat(v0.3): bump compiler, promote dynamic-types spec, export FFI traceability\n- **Completed:** 2026-05-24\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `stabilization`\n- **Domain:** `language-meta`\n\n## Relation\nLands in the v0.3 cutoff window (`f57377a`→`aaddd32`) under workstream `stabilization`.",
+	"order": 351,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

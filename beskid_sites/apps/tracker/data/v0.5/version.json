@@ -1,0 +1,16 @@
+{
+	"id": "v0.5",
+	"title": "Foundations, networking, and glue language-specific generation",
+	"summary": "v0.5 is a spec-planned delivery candidate. Scope spans three tracks: the Foundation gate (CYB-60: fibers, channels, scheduler, spawn/use grammar, Core.IO), portable networking (CYB-61: TCP/UDP/DNS with opaque handles, one reactor contract, Core.IO.Stream), and Beskid.Glue language-specific code generation (Rust crate emission via TokenStream + prettyplease, .NET project emission via NativeAOT + dotscope reader, stdio-protocol bridge fiber runtime, corelib glue runtime implementations, ToolchainProbe full validation, MOD_GLUE dispatcher wiring, glue attribute semantic handling). Implementation has not started; the band is anchored at the v0.4 release tip pending 0.4 sign-off.",
+	"theme": "Foundations, networking, and glue language-specific generation",
+	"status": "Planned",
+	"cutoff": {
+		"startDate": "2026-08-16",
+		"endDate": "2026-08-16",
+		"startCommitSha": "17442fb9",
+		"endCommitSha": "17442fb9",
+		"endCommitRepo": "beskid",
+		"rationale": "Spec-planned only; implementation has not started. v0.5 scope is defined by two OpenSpec changes — `beskid-v0-5-foundations` (CYB-60) and `beskid-v0-5-networking` (CYB-61) — plus the glue 0.5 generation track that consumes the `add-beskid-glue-0-4` contracts. The planning window opens 2026-08-16 anchored at the v0.4 release tip `17442fb9` (2026-07-24, all-state merge). The end SHA mirrors the start SHA because no v0.5 implementation commits have landed; the cutoff will be revised with real start/end SHAs once implementation begins and 0.4 sign-off closes. Glue 0.5 additionally depends on `complete-mod-pipeline-0-4` (NativeContractInvoker dlopen) and `complete-v0-4-corelib-runtime-contracts` (retired patterns); `reconcile-glue-ffi-extern-0-5` establishes the normative boundary between the v0.3 Extern/[Export] C ABI surfaces and the Beskid.Glue [GlueImport]/[GlueExport] surfaces before 0.5 generation lands."
+	},
+	"$schema": "../schemas/seed/version.schema.json"
+}

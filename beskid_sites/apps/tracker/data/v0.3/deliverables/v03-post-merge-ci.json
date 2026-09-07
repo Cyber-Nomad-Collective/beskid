@@ -1,0 +1,14 @@
+{
+	"id": "v03-post-merge-ci",
+	"title": "CI and integration hardening",
+	"description": "Post-merge CI on main: build release runtime bridge before AOT e2e, wire ASan bridge archive and serialize runtime tests, ffi_v03 and compiler submodule bumps, formatter MDX CI, Runtime CI on compiler pointer changes, corelib-quality submodule fix, and trudoc verify via Node.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`e8bc073`](https://github.com/Cyber-Nomad-Collective/beskid/commit/e8bc073)\n- **Subject:** fix(ci): serialize runtime tests and wire ASan bridge archive in superrepo\n- **Closed:** 2026-05-24\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Cutoff:** `f57377a`→`aaddd32` on superrepo `beskid`\n- **Workstreams:** `ffi-export`, `ci-release`, `concurrency-runtime`\n\n## Relation\nDelivery anchor for **11** catalog task(s) in the v0.3 window; see linked workstreams and tasks with `milestoneId` / `deliverableId` `v03-post-merge-ci`.",
+	"closedOn": "2026-05-24",
+	"source": {
+		"repo": "beskid",
+		"commit": "e8bc073",
+		"subject": "fix(ci): serialize runtime tests and wire ASan bridge archive in superrepo",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/e8bc073"
+	},
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

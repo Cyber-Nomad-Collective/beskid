@@ -1,0 +1,20 @@
+{
+	"id": "package-source-explorer",
+	"title": "Package source explorer and structured API preview in pckg",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "pckg-registry",
+	"domain": "tooling",
+	"completedAt": "2026-04-24",
+	"milestoneId": "v02-pckg-registry-foundation",
+	"source": {
+		"repo": "pckg",
+		"commit": "52dc7c9",
+		"subject": "pckg: package source explorer, docs/structured API, BlazorMonaco preview, artifact explorer",
+		"url": "https://github.com/Cyber-Nomad-Collective/pckg/commit/52dc7c9"
+	},
+	"body": "Package source explorer, docs/structured API, BlazorMonaco preview, artifact explorer.\n\n## Provenance\n- **Repository:** `pckg`\n- **Commit:** [`52dc7c9`](https://github.com/Cyber-Nomad-Collective/pckg/commit/52dc7c9)\n- **Subject:** pckg: package source explorer, docs/structured API, BlazorMonaco preview, artifact explorer\n- **Completed:** 2026-04-24\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `pckg-registry`\n- **Deliverable:** `v02-pckg-registry-foundation`\n- **Domain:** `tooling`\n\n## Relation\nContributes to deliverable **Registry dashboard and package docs foundation** (`v02-pckg-registry-foundation`).\n",
+	"order": 214,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

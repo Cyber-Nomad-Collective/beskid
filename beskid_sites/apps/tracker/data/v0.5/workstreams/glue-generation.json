@@ -1,0 +1,7 @@
+{
+	"slug": "glue-generation",
+	"title": "Beskid.Glue Language-Specific Generation",
+	"summary": "Rust crate emission, .NET project emission via NativeAOT+dotscope, stdio bridge fiber runtime, corelib glue runtime, ToolchainProbe validation, MOD_GLUE dispatcher, glue attribute semantics",
+	"order": 1,
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

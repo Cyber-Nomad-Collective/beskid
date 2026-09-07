@@ -1,0 +1,20 @@
+{
+	"id": "ci-compiler-bridge-ffi-bump",
+	"title": "Bump compiler for CI runtime bridge and ffi_v03 fixes",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"domain": "tooling",
+	"completedAt": "2026-05-24",
+	"milestoneId": "v03-post-merge-ci",
+	"source": {
+		"repo": "beskid",
+		"commit": "8ba01c8",
+		"subject": "chore(submodules): bump compiler for CI runtime bridge and ffi_v03 fixes",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/8ba01c8"
+	},
+	"body": "Superrepo submodule pointer advances the compiler to pick up runtime-bridge e2e fixes and `ffi_v03` CI stabilization landed in the compiler repo.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`8ba01c8`](https://github.com/Cyber-Nomad-Collective/beskid/commit/8ba01c8)\n- **Subject:** chore(submodules): bump compiler for CI runtime bridge and ffi_v03 fixes\n- **Completed:** 2026-05-24\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `ci-release`\n- **Domain:** `tooling`\n- **Deliverable:** `v03-post-merge-ci`\n\n## Relation\nContributes to deliverable **CI and integration hardening** (`v03-post-merge-ci`).",
+	"order": 366,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

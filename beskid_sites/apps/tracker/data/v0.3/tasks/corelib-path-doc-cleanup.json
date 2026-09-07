@@ -1,0 +1,21 @@
+{
+	"id": "corelib-path-doc-cleanup",
+	"title": "Repair Path.bd header doc and Tier1 test formatting",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "stabilization",
+	"domain": "core-library",
+	"completedAt": "2026-05-23",
+	"specRelations": [],
+	"source": {
+		"repo": "corelib",
+		"commit": "c1011b1",
+		"subject": "fix(corelib): repair Path.bd header doc and collapse blank lines in Tier1 tests",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_standard/commit/c1011b1"
+	},
+	"milestoneId": "v03-corelib-tier-ship",
+	"body": "Repairs `Path.bd` header documentation and collapses stray blank lines in Tier1 tests so trudoc and corelib CI stay green.\n\n## Provenance\n- **Repository:** `corelib`\n- **Commit:** [`c1011b1`](https://github.com/Cyber-Nomad-Collective/beskid_standard/commit/c1011b1)\n- **Subject:** fix(corelib): repair Path.bd header doc and collapse blank lines in Tier1 tests\n- **Completed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `stabilization`\n- **Domain:** `core-library`\n- **Deliverable:** `v03-corelib-tier-ship`\n\n## Relation\nContributes to deliverable **Corelib tier collections ship** (`v03-corelib-tier-ship`).",
+	"order": 365,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

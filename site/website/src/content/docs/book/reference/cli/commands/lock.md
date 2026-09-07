@@ -1,9 +1,10 @@
 ---
-title: "beskid lock"
+title: "beskid dev project lock"
 description: "Synchronize Project.lock for a project."
 ---
 
-Runs the resolver to synchronize **`Project.lock`** for the selected project. Unlike `update`, messaging focuses on lockfile synchronization rather than a broader workspace refresh narrative.
+Runs the resolver to synchronize **`Project.lock`** for the selected project.
+This command is available as `beskid dev project lock`.
 
 ## Arguments
 
@@ -16,7 +17,7 @@ Runs the resolver to synchronize **`Project.lock`** for the selected project. Un
 ## Example
 
 ```bash
-beskid lock --project path/to/Project.proj
+beskid dev project lock --project path/to/Project.proj
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

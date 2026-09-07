@@ -1,0 +1,23 @@
+{
+	"id": "nexus-gitnexus-serve-production",
+	"title": "Production gitnexus serve with runtime catalog and OAuth",
+	"statusColumn": "In Progress",
+	"priority": "high",
+	"workstream": "nexus",
+	"deliverableId": "v04-nexus-operational",
+	"source": {
+		"repo": "beskid",
+		"commit": "ee88edf",
+		"subject": "BSOL Stability Pass",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf"
+	},
+	"body": "Coolify deploy exposes `gitnexus serve` on **8452** with `GITNEXUS_HOME` persistence, auth hub OAuth for analyze UI, and green post-deploy smoke against a sample compiler graph.\n\n## Landed\n\n- `gitnexus serve` runtime model documented in [`beskid_nexus/COOLIFY.md`](beskid_nexus/COOLIFY.md)\n- Deploy matrix cross-links for nexus OpenBao path\n\n## Remaining (production evidence required)\n\n- Index compiler superrepo graph via repo owner UI or webhook\n- Confirm hub launcher resolves production nexus URL\n- Optional: `OPENROUTER_API_KEY` + `NEXUS_SPEC_ROOT` for code-doc maintenance\n\n## Provenance\n- **Repository:** `beskid`\n- **Catalog tip:** [`ee88edf`](https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf) (2026-06-07)\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `nexus`\n- **Deliverable:** `v04-nexus-operational`",
+	"order": 400,
+	"subtasks": [
+		{ "text": "gitnexus serve on port 8452 with volume", "done": false },
+		{ "text": "Auth hub OAuth for analyze UI", "done": false },
+		{ "text": "Catalog analyze smoke (compiler graph)", "done": false },
+		{ "text": "Hub entry at production URL", "done": false }
+	],
+	"$schema": "../schemas/seed/task.schema.json"
+}

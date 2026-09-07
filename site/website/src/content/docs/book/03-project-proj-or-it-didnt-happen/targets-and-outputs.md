@@ -12,7 +12,7 @@ Targets are how you tell the truth about **what** gets built. A repo without tar
 | --- | --- |
 | `App` | Executable entry (`entry` → main module file) |
 | `Lib` | Library surface consumed by dependents |
-| `Test` | Test harness entry for `beskid test` |
+| `Test` | Test harness entry for `beskid dev build test` |
 
 `kind` and `source` on dependencies are enum-like—prefer unquoted identifiers (`App`, `path`) for tooling alignment.
 
@@ -25,8 +25,8 @@ Targets are how you tell the truth about **what** gets built. A repo without tar
 Real projects often define both `App` and `Test` (and several libs). CLI commands accept `--target` to select which graph root you mean:
 
 ```bash
-beskid build --project ./Project.proj --target App
-beskid test --project ./Project.proj --target Tests
+beskid dev build compile --project ./Project.proj --target App
+beskid dev build test --project ./Project.proj --target Tests
 ```
 
 ```mermaid

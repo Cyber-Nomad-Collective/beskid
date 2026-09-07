@@ -1,0 +1,20 @@
+{
+	"id": "sample-mod-fixture",
+	"title": "SampleMod fixture and beskid_tests::mods suite",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "compiler-mods",
+	"domain": "compiler",
+	"completedAt": "2026-05-23",
+	"milestoneId": "v03-merge-wave",
+	"source": {
+		"repo": "compiler",
+		"commit": "0e310d4",
+		"subject": "test(mod_host): reference SampleMod fixture and beskid_tests::mods suite",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/0e310d4"
+	},
+	"body": "SampleMod reference fixture and `beskid_tests::mods` suite guard mod host regressions.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`0e310d4`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/0e310d4)\n- **Subject:** test(mod_host): reference SampleMod fixture and beskid_tests::mods suite\n- **Completed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `compiler-mods`\n- **Domain:** `compiler`\n- **Deliverable:** `v03-merge-wave`\n\n## Relation\nContributes to deliverable **v0.3 macro/runtime/ffi/tooling delivery** (`v03-merge-wave`).",
+	"order": 344,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

@@ -1,0 +1,20 @@
+{
+	"id": "grammar-lambda-attributes",
+	"title": "Grammar and HIR support for attributes and lambdas",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "compiler-analysis",
+	"domain": "language-meta",
+	"completedAt": "2026-03-02",
+	"deliverableId": "v00-analysis-foundation",
+	"body": "Extended the **grammar** and **HIR** to support **attributes** and **lambda expressions** end-to-end through parse and HIR lowering shapes.\n\n## Provenance\n- **Repository:** `pekan`\n- **Commit:** [`47b24da`](https://github.com/Cyber-Nomad-Collective/pekan/commit/47b24da)\n- **Subject:** Add attribute and lambda expression support to grammar and HIR\n- **Completed:** 2026-03-02\n\n## Catalog scope\n- **Delivery version:** v0.0 (Pecan prototype)\n- **Workstream:** `compiler-analysis`\n- **Deliverable:** `v00-analysis-foundation`\n\n## Relation\nModern Beskid surface syntax depends on attributes and lambdas; this commit is the Pecan-era proof that the parser/HIR pipeline could absorb them before the compiler submodule handoff. Last major analysis-foundation language-meta spike before v0.0 cutoff end (`dd75bff`).",
+	"source": {
+		"repo": "pekan",
+		"commit": "47b24da",
+		"subject": "Add attribute and lambda expression support to grammar and HIR",
+		"url": "https://github.com/Cyber-Nomad-Collective/pekan/commit/47b24da"
+	},
+	"order": 25,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

@@ -86,8 +86,8 @@ read_logged_urls() {
   done <"${MOCK_LOG}"
 }
 
-production_urls='https://beskid-lang.org/ https://beskid-lang.org/document.txt https://auth.beskid-lang.org/api/v1/health https://spec.beskid-lang.org/api/health https://learn.beskid-lang.org/api/health https://tracker.beskid-lang.org/api/health https://nexus.beskid-lang.org/api/health https://pckg.beskid-lang.org/health/ready'
-staging_urls=$'https://stg.beskid-lang.org/\nhttps://stg.beskid-lang.org/document.txt\nhttps://stg-auth.beskid-lang.org/api/v1/health\nhttps://stg-spec.beskid-lang.org/api/health\nhttps://stg-learn.beskid-lang.org/api/health\nhttps://stg-tracker.beskid-lang.org/api/health\nhttps://stg-nexus.beskid-lang.org/api/health\nhttps://stg-pckg.beskid-lang.org/health/ready'
+production_urls='https://beskid-lang.org/ https://beskid-lang.org/document.txt https://auth.beskid-lang.org/api/v1/health https://learn.beskid-lang.org/api/health https://tracker.beskid-lang.org/api/health https://nexus.beskid-lang.org/api/health https://pckg.beskid-lang.org/health/ready'
+staging_urls=$'https://stg.beskid-lang.org/\nhttps://stg.beskid-lang.org/document.txt\nhttps://stg-auth.beskid-lang.org/api/v1/health\nhttps://stg-learn.beskid-lang.org/api/health\nhttps://stg-tracker.beskid-lang.org/api/health\nhttps://stg-nexus.beskid-lang.org/api/health'
 
 run_smoke "${production_urls}" production
 read_logged_urls
@@ -103,9 +103,9 @@ assert_eq 'https://beskid-lang.org/document.txt' "${logged_urls[1]}" "document.t
 
 run_smoke "${staging_urls//$'\n'/$'\r\n'}" staging
 read_logged_urls
-assert_eq 8 "${#logged_urls[@]}" "CRLF canonical URLs produce one curl per endpoint"
+assert_eq 7 "${#logged_urls[@]}" "CRLF canonical URLs produce one curl per endpoint"
 assert_eq 'https://stg.beskid-lang.org/' "${logged_urls[0]}" "first CRLF URL"
-assert_eq 'https://stg-pckg.beskid-lang.org/health/ready' "${logged_urls[7]}" "last CRLF URL"
+assert_eq 'https://stg-nexus.beskid-lang.org/api/health' "${logged_urls[6]}" "last CRLF URL"
 
 run_smoke "\"https://beskid-lang.org/\" ${production_urls#* }" production
 read_logged_urls
@@ -121,10 +121,9 @@ assert_eq 'https://pckg.beskid-lang.org/health/ready' "${logged_urls[7]}" "produ
 
 run_default_smoke staging
 read_logged_urls
-assert_eq 8 "${#logged_urls[@]}" "staging defaults validate active pckg"
+assert_eq 7 "${#logged_urls[@]}" "staging defaults omit inactive pckg"
 assert_eq 'https://stg.beskid-lang.org/' "${logged_urls[0]}" "staging default smoke starts with site root"
 assert_eq 'https://stg-nexus.beskid-lang.org/api/health' "${logged_urls[6]}" "staging default smoke covers nexus"
-assert_eq 'https://stg-pckg.beskid-lang.org/health/ready' "${logged_urls[7]}" "staging default smoke covers pckg"
 
 if run_smoke 'http://insecure.example/health' production >/dev/null 2>&1; then
   _TESTS_RUN=$((_TESTS_RUN + 1))

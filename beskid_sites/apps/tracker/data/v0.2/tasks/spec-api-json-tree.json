@@ -1,0 +1,19 @@
+{
+	"id": "spec-api-json-tree",
+	"title": "Platform spec: api.json library tree documentation",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "docs-site",
+	"domain": "tooling",
+	"completedAt": "2026-05-20",
+	"source": {
+		"repo": "beskid",
+		"commit": "af673dc",
+		"subject": "docs(spec): api.json library tree; bump compiler and pckg for API reference UI",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/af673dc"
+	},
+	"body": "Api.json library tree; bump compiler and pckg for API reference UI.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`af673dc`](https://github.com/Cyber-Nomad-Collective/beskid/commit/af673dc)\n- **Subject:** docs(spec): api.json library tree; bump compiler and pckg for API reference UI\n- **Completed:** 2026-05-20\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `docs-site`\n- **Domain:** `tooling`\n\n## Relation\nSupports **v0.2 (Analysis, packages, and platform spec)** on workstream `docs-site`.\n",
+	"order": 209,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

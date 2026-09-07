@@ -1,0 +1,21 @@
+{
+	"id": "runtime-abi-doc-command",
+	"title": "Runtime/ABI updates, doc command, and corelib test sweep",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "codegen-runtime",
+	"domain": "execution",
+	"completedAt": "2026-04-24",
+	"specRelations": [],
+	"source": {
+		"repo": "compiler",
+		"commit": "0ded628",
+		"subject": "compiler: runtime/ABI updates, doc command, corelib submodule bump, tests",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/0ded628"
+	},
+	"milestoneId": "v02-concurrency-runtime",
+	"body": "Runtime/ABI updates, doc command, corelib submodule bump, tests.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`0ded628`](https://github.com/Cyber-Nomad-Collective/compiler/commit/0ded628)\n- **Subject:** compiler: runtime/ABI updates, doc command, corelib submodule bump, tests\n- **Completed:** 2026-04-24\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `codegen-runtime`\n- **Deliverable:** `v02-concurrency-runtime`\n- **Domain:** `execution`\n\n## Relation\nContributes to deliverable **Fibers, channels, and GC runtime** (`v02-concurrency-runtime`).\n",
+	"order": 263,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

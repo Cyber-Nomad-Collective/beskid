@@ -1,0 +1,14 @@
+{
+	"id": "v03-corelib-tier-ship",
+	"title": "Corelib tier collections ship",
+	"description": "Tier-tagged collection types, new System.FS and System.Path packages, prelude Contracts/Diagnostics fixes, Tier1 grammar-safe test renames, Path.bd doc repair, nested corelib submodule bump after tiering merge, and syscall JIT smoke without cross-module asserts.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`3b51b53`](https://github.com/Cyber-Nomad-Collective/beskid/commit/3b51b53)\n- **Subject:** merge(v0.3): corelib-tiering-collections-fs-api-shape into main (keep integrated submodule tips)\n- **Closed:** 2026-05-24\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Cutoff:** `f57377a`→`aaddd32` on superrepo `beskid`\n- **Workstreams:** `stabilization`\n\n## Relation\nDelivery anchor for **4** catalog task(s) in the v0.3 window; see linked workstreams and tasks with `milestoneId` / `deliverableId` `v03-corelib-tier-ship`.",
+	"closedOn": "2026-05-24",
+	"source": {
+		"repo": "beskid",
+		"commit": "3b51b53",
+		"subject": "merge(v0.3): corelib-tiering-collections-fs-api-shape into main (keep integrated submodule tips)",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/3b51b53"
+	},
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

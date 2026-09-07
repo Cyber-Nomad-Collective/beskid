@@ -1,0 +1,20 @@
+{
+	"id": "compiler-initial-commit",
+	"title": "Bootstrap compiler repository",
+	"priority": "high",
+	"workstream": "compiler-foundation",
+	"domain": "compiler",
+	"completedAt": "2026-03-05",
+	"milestoneId": "v01-compiler-parity",
+	"source": {
+		"repo": "compiler",
+		"commit": "dd75bff",
+		"subject": "Initial Commit",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/dd75bff"
+	},
+	"statusColumn": "Done",
+	"body": "Creates the standalone **compiler** repository with the Beskid workspace layout that supersedes the in-superrepo Cargo tree. This commit is the **v0.1 start** boundary (`dd75bff`, 2026-03-05).\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`dd75bff`](https://github.com/Cyber-Nomad-Collective/compiler/commit/dd75bff)\n- **Subject:** Initial Commit\n- **Completed:** 2026-03-05\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `compiler-foundation`\n- **Deliverable:** `v01-compiler-parity`\n\n## Relation\nOpens deliverable **v01-compiler-parity** and the **compiler-foundation** workstream; every later compiler task in v0.1 builds on this bootstrap.",
+	"order": 101,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

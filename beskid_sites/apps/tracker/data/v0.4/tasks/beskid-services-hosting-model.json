@@ -1,0 +1,19 @@
+{
+	"id": "beskid-services-hosting-model",
+	"title": "Changed hosting model for beskid platform services",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "platform-docs-dx",
+	"completedAt": "2026-05-26",
+	"deliverableId": "v04-platform-dx",
+	"source": {
+		"repo": "beskid",
+		"commit": "eb2aa21",
+		"subject": "Changed hosting model of beskid services",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/eb2aa21"
+	},
+	"body": "Documents and wires separate Coolify apps for site, auth hub, tracker, nexus, and pckg instead of monolithic deploy assumptions; updates AGENTS.md service matrix.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`eb2aa21`](https://github.com/Cyber-Nomad-Collective/beskid/commit/eb2aa21)\n- **Subject:** Changed hosting model of beskid services\n- **Completed:** 2026-05-26\n\n## Catalog scope\n- **Delivery version:** v0.4 (Platform services, auth, and delivery tooling)\n- **Workstream:** `platform-docs-dx`\n- **Deliverable:** `v04-platform-dx`\n\n## What shipped\n\nDocuments and wires separate Coolify apps for site, auth hub, tracker, nexus, and pckg instead of monolithic deploy assumptions; updates AGENTS.md service matrix.",
+	"order": 388,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

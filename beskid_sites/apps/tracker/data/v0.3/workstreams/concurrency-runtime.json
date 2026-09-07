@@ -1,0 +1,8 @@
+{
+	"slug": "concurrency-runtime",
+	"title": "Concurrency & runtime",
+	"summary": "Runtime phase B GC opt-in (multi-mutator, pointer channels), launch/with composition lowering and e2e suites, frozen ABI allowlist alignment with RUNTIME_EXPORT_SYMBOLS, Phase B symbol re-exports, and Runtime CI triggered on compiler submodule bumps.",
+	"order": 2,
+	"deliverableIds": ["v03-merge-wave", "v03-post-merge-ci"],
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

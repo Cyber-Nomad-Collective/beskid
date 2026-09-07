@@ -1,0 +1,20 @@
+{
+	"id": "bsharp-references-submodule",
+	"title": "Register references/bsharp as a proper submodule",
+	"statusColumn": "Done",
+	"priority": "low",
+	"workstream": "dev-experience",
+	"domain": "tooling",
+	"completedAt": "2026-04-24",
+	"milestoneId": "v02-ci-deploy-infra",
+	"source": {
+		"repo": "beskid",
+		"commit": "f6a814d",
+		"subject": "chore(git): register references/bsharp as a proper submodule",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/f6a814d"
+	},
+	"body": "Register references/bsharp as a proper submodule.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`f6a814d`](https://github.com/Cyber-Nomad-Collective/beskid/commit/f6a814d)\n- **Subject:** chore(git): register references/bsharp as a proper submodule\n- **Completed:** 2026-04-24\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `dev-experience`\n- **Deliverable:** `v02-ci-deploy-infra`\n- **Domain:** `tooling`\n\n## Relation\nContributes to deliverable **CI workflows and deploy infra** (`v02-ci-deploy-infra`).\n",
+	"order": 268,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

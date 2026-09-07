@@ -25,7 +25,7 @@ unit Main() {
 ```
 
 ```bash
-beskid parse hello.bd
+beskid dev syntax parse hello.bd
 ```
 
 You should get a debug AST view, not a stack trace about missing manifests. If parse fails on syntax you copied from this book, the book is wrong—file an issue.
@@ -33,13 +33,13 @@ You should get a debug AST view, not a stack trace about missing manifests. If p
 ## Analyze (semantic pass)
 
 ```bash
-beskid analyze hello.bd
+beskid dev syntax analyze hello.bd
 ```
 
 Analysis needs more context as programs grow; for a one-off file, flags may differ from project-scoped workflows. Once you have `Project.proj`, prefer:
 
 ```bash
-beskid analyze --project path/to/Project.proj
+beskid dev syntax analyze --project path/to/Project.proj
 ```
 
 See [analyze command](/book/reference/cli/commands/analyze/).
@@ -47,17 +47,17 @@ See [analyze command](/book/reference/cli/commands/analyze/).
 ## Optional: format and tree
 
 ```bash
-beskid format hello.bd
-beskid tree hello.bd
+beskid dev syntax format hello.bd
+beskid dev syntax tree hello.bd
 ```
 
 Formatting is the fastest way to settle bike-shed wars. `tree` is the ASCII tourist map of the AST—useful when you suspect the parser saw your file differently than you did.
 
 ```mermaid
 flowchart LR
-  parse[parse] --> tree[tree]
-  parse --> analyze[analyze]
-  analyze --> format[format]
+  parse[syntax parse] --> tree[syntax tree]
+  parse --> analyze[syntax analyze]
+  analyze --> format[syntax format]
 ```
 
 ## What success looks like

@@ -11,9 +11,9 @@ CI's job is to ruin your afternoon **before** users do. Beskid splits that work 
 Typical pipeline:
 
 1. Install pinned or rolling CLI ([Downloads](/downloads/)).
-2. `beskid fetch` / lockfile discipline per [workspace guide](/book/reference/workspace-monorepo/).
-3. `beskid test` with `--include-tag fast` on every push; `slow` or `integration` on nightly or main.
-4. Optional: `beskid analyze` / `beskid build` on the same graph so tests do not run against fantasy projects.
+2. `beskid dev project fetch` / lockfile discipline per [workspace guide](/book/reference/workspace-monorepo/).
+3. `beskid dev build test` with `--include-tag fast` on every push; `slow` or `integration` on nightly or main.
+4. Optional: `beskid dev syntax analyze` / `beskid dev build compile` on the same graph so tests do not run against fantasy projects.
 
 Use `--json` when a bot needs to summarize failures without reading ANSI colors.
 

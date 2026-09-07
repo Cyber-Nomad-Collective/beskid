@@ -1,0 +1,8 @@
+{
+	"id": "v03-post-merge-ci",
+	"title": "CI and integration hardening",
+	"description": "Runtime bridge e2e, ASan serialization, ffi_v03 fixes, and verify-all evidence across v0.3 hardening.",
+	"closedOn": "2026-05-24",
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

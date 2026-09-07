@@ -1,0 +1,30 @@
+{
+	"id": "macro-expand-pass",
+	"title": "Macro expand pass and HIR legality integration",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "analysis-pipeline",
+	"domain": "language-meta",
+	"area": "macros",
+	"completedAt": "2026-05-20",
+	"milestoneId": "v02-api-json-contract",
+	"specRelations": [
+		{
+			"path": "/platform-spec/language-meta/macros/",
+			"title": "Macros",
+			"level": "area",
+			"relation": "implements",
+			"required": true
+		}
+	],
+	"source": {
+		"repo": "compiler",
+		"commit": "9ca5da3",
+		"subject": "feat(compiler): macro expand pass and HIR legality integration",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/9ca5da3"
+	},
+	"body": "Macro expand pass and HIR legality integration.\n\n## Platform specification\n- Implements [Macros](https://beskid-lang.org/platform-spec/language-meta/macros/) (`/platform-spec/language-meta/macros/`) *(required)*\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`9ca5da3`](https://github.com/Cyber-Nomad-Collective/compiler/commit/9ca5da3)\n- **Subject:** feat(compiler): macro expand pass and HIR legality integration\n- **Completed:** 2026-05-20\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `analysis-pipeline`\n- **Deliverable:** `v02-api-json-contract`\n- **Domain:** `language-meta`\n- **Area:** `macros`\n\n## Relation\nContributes to deliverable **api.json primary contract** (`v02-api-json-contract`).\n",
+	"order": 224,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

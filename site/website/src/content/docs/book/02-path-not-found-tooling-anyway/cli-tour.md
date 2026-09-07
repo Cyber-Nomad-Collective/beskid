@@ -1,6 +1,6 @@
 ---
 title: "CLI tour"
-description: Week-one Beskid subcommands—parse, analyze, format, fetch, lock, build, run, test, new.
+description: Week-one Beskid subcommands—dev syntax parse/tree/analyze/format, dev project fetch/lock, dev build, run, dev build test, new.
 tableOfContents: true
 ---
 
@@ -18,26 +18,26 @@ Full tables: [CLI command reference](/book/reference/cli/command-reference/).
 
 | Command | Why you care |
 | --- | --- |
-| `parse` / `tree` | "Did the parser see my file?" |
-| `analyze` | Semantic diagnostics before you blame codegen |
-| `format` | Stop formatting debates |
-| `fetch` / `lock` / `update` | Dependencies and reproducibility |
-| `build` / `run` | Ship something executable |
-| `test` | Run `test` items in the project |
+| `dev syntax parse` / `dev syntax tree` | "Did the parser see my file?" |
+| `dev syntax analyze` | Semantic diagnostics before you blame codegen |
+| `dev syntax format` | Stop formatting debates |
+| `dev project fetch` / `dev project lock` / `dev project update` | Dependencies and reproducibility |
+| `dev build compile` / `run` | Ship something executable |
+| `dev build test` | Run `test` items in the project |
 | `new` | Templates for projects/workspaces/items |
-| `doc` | `api.json` + markdown API output |
-| `corelib` | Materialize embedded corelib template |
-| `pckg` | Registry client when you publish packages |
+| `dev syntax doc` | `api.json` + markdown API output |
+| `dev build corelib` | Materialize embedded corelib template |
+| `dev package registry` | Registry client when you publish packages |
 
 ```mermaid
 flowchart TD
   subgraph day1 [Day one]
-    P[parse/tree] --> A[analyze]
-    A --> F[format]
+    P[dev syntax parse/tree] --> A[dev syntax analyze]
+    A --> F[dev syntax format]
   end
   subgraph project [With Project.proj]
-    A --> Fetch[fetch/lock]
-    Fetch --> B[build/run/test]
+    A --> Fetch[dev project fetch/lock]
+    Fetch --> B[dev build compile/run/test]
   end
 ```
 
@@ -46,7 +46,7 @@ flowchart TD
 When a manifest exists, prefer explicit roots while learning:
 
 ```bash
-beskid analyze --project ./Project.proj --target App
+beskid dev syntax analyze --project ./Project.proj --target App
 ```
 
 `--frozen` / `--locked` participate in resolution policy—see [fetch](/book/reference/cli/commands/fetch/) and [lock](/book/reference/cli/commands/lock/).

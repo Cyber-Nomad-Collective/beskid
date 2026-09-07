@@ -1,0 +1,7 @@
+{
+	"slug": "pckg-registry",
+	"title": "Package registry",
+	"summary": "**pckg** registry and package documentation: dashboard and public package pages, structured **api.json** ingest with publish gates, Microsoft Docs–style library tree UI, workspace publish with auto-provision, corelib workspace publish hardening, Fluent grid row actions, and registry-assigned semver on upload.\n\n- api.json is the primary contract for PackageDocs (types, members, typeRef links).\n- Publish validation rejects packages missing hierarchical API metadata.",
+	"order": 3,
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

@@ -1,0 +1,18 @@
+{
+	"id": "nox-runner-asan-scope",
+	"title": "Fix Nox runner compatibility and ASan target scoping",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"completedAt": "2026-04-14",
+	"source": {
+		"repo": "compiler",
+		"commit": "4bc2540",
+		"subject": "ci: fix nox runner compatibility and ASan target scoping",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/4bc2540"
+	},
+	"statusColumn": "Done",
+	"body": "Fixes **Nox runner** compatibility and scopes **ASan** targets correctly in CI matrices.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`4bc2540`](https://github.com/Cyber-Nomad-Collective/compiler/commit/4bc2540)\n- **Subject:** ci: fix nox runner compatibility and ASan target scoping\n- **Completed:** 2026-04-14\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `ci-release`\n\n## Relation\nStabilizes aggregate workflows after **ci-nox-migration**.",
+	"order": 125,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

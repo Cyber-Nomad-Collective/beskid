@@ -7,7 +7,7 @@ workflow="${root}/.github/workflows/platform-delivery.yml"
 
 manifest_block="$(sed -n '/^  manifest:/,/^  staging:/p' "${workflow}")"
 for required in \
-  'needs: [openspec, conformance, integration, security, shared-ui-nexus, image-site, image-auth, image-learn, image-platform-spec, image-tracker, image-nexus, image-pckg]' \
+  'needs: [openspec, conformance, integration, security, shared-ui-nexus, image-site, image-auth, image-learn, image-tracker, image-nexus, image-pckg]' \
   "needs.openspec.result == 'success'" \
   "needs.conformance.result == 'success'" \
   "needs.integration.result == 'success'" \
@@ -16,7 +16,6 @@ for required in \
   "needs.image-site.result == 'success'" \
   "needs.image-auth.result == 'success'" \
   "needs.image-learn.result == 'success'" \
-  "needs.image-platform-spec.result == 'success'" \
   "needs.image-tracker.result == 'success'" \
   "needs.image-nexus.result == 'success'" \
   "needs.image-pckg.result == 'success'"; do

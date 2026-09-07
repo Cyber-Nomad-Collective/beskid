@@ -1,0 +1,19 @@
+{
+	"id": "doc-nav-client-hardening",
+	"title": "Harden book and platform-spec nav client scripts",
+	"statusColumn": "Done",
+	"priority": "low",
+	"workstream": "stabilization",
+	"completedAt": "2026-05-24",
+	"milestoneId": "v03-docs-reader-hardening",
+	"source": {
+		"repo": "beskid",
+		"commit": "33e5d99",
+		"subject": "chore(compiler): bump submodule for corelib-quality CI fix",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/33e5d99"
+	},
+	"body": "Hardens `@beskid/docs-ui` book and platform-spec nav client scripts (`book-nav.ts`, `platform-spec-doc-tabs.ts`, layout re-init on `astro:after-swap`) so rail state and tab selection survive ClientRouter navigation. Related landings include drawer/rail unification (`278da1b`) and SpecPageHeader polish (`d800062`).\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`33e5d99`](https://github.com/Cyber-Nomad-Collective/beskid/commit/33e5d99)\n- **Subject:** chore(compiler): bump submodule for corelib-quality CI fix\n- **Completed:** 2026-05-24\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `stabilization`\n- **Deliverable:** `v03-docs-reader-hardening`\n\n## Relation\nContributes to deliverable **Docs reader hardening** (`v03-docs-reader-hardening`).",
+	"order": 353,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

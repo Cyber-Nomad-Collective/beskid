@@ -1,0 +1,20 @@
+{
+	"id": "cli-lsp-test-hardening",
+	"title": "CLI/LSP integration, formatter, and test harness hardening",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "analysis-pipeline",
+	"domain": "tooling",
+	"completedAt": "2026-04-23",
+	"milestoneId": "v02-platform-spec-cutover",
+	"source": {
+		"repo": "compiler",
+		"commit": "98aa6bc",
+		"subject": "Test harness, formatter, CLI/LSP integration, and CI hardening.",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/98aa6bc"
+	},
+	"body": "Test harness, formatter, CLI/LSP integration, and CI hardening.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`98aa6bc`](https://github.com/Cyber-Nomad-Collective/compiler/commit/98aa6bc)\n- **Subject:** Test harness, formatter, CLI/LSP integration, and CI hardening.\n- **Completed:** 2026-04-23\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `analysis-pipeline`\n- **Deliverable:** `v02-platform-spec-cutover`\n- **Domain:** `tooling`\n\n## Relation\nContributes to deliverable **Platform-spec cutover** (`v02-platform-spec-cutover`).\n",
+	"order": 213,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

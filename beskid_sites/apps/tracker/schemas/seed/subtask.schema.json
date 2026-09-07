@@ -1,0 +1,17 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://beskid-lang.org/schemas/seed/subtask.schema.json",
+	"type": "object",
+	"properties": {
+		"text": {
+			"type": "string",
+			"minLength": 1
+		},
+		"done": {
+			"default": false,
+			"type": "boolean"
+		}
+	},
+	"required": ["text", "done"],
+	"additionalProperties": false
+}

@@ -9,7 +9,7 @@ tableOfContents: true
 ## Tie documentation to exports
 
 - Document public callables with `///` (chapter 20).
-- Run `beskid doc` before publish (chapter 16).
+- Run `beskid dev syntax doc` before publish (chapter 16).
 - Dry-run publish catches manifest lies early: `beskid pckg publish --dry-run`.
 
 ## Next

@@ -1,0 +1,13 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"include": ["**/*.ts", "**/*.tsx", "**/*.mdx"],
+	"compilerOptions": {
+		"paths": {
+			"#/*": ["./src/*"]
+		},
+		"types": ["vite/client", "node"],
+		"lib": ["ES2022", "DOM", "DOM.Iterable"],
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true
+	}
+}

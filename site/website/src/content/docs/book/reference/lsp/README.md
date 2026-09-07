@@ -22,7 +22,7 @@ This directory defines the architecture and protocol contract for the Beskid lan
    - Telemetry/logging/metrics design
    - Release readiness checklist
 
-The CLI docs for [`beskid format`](/book/reference/cli/commands/format/) (and the [command reference index](/book/reference/cli/command-reference/)) describe `format_program`, the same entry point as document formatting.
+The CLI docs for [`beskid dev syntax format`](/book/reference/cli/commands/format/) (and the [command reference index](/book/reference/cli/command-reference/)) describe `format_program`, the same entry point as document formatting.
 
 ## Design principles
 

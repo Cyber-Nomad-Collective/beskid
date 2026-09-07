@@ -1,0 +1,19 @@
+{
+	"id": "struct-seed-unit-path-key",
+	"title": "Struct seeding and unit_path_key path coherence",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "compiler-corelib",
+	"completedAt": "2026-06-05",
+	"deliverableId": "v04-corelib-complete",
+	"source": {
+		"repo": "compiler",
+		"commit": "86a122d",
+		"subject": "Architectural changes to symbol Identification",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/86a122d"
+	},
+	"body": "Analysis/codegen infra for struct definitions and coherent unit path keys across assembly, resolve collect, and codegen lowering.\n\n## What shipped\n\n- `seed_struct_definitions` and scoped call tables in [`context.rs`](compiler/crates/beskid_analysis/src/types/context/context.rs) / [`items.rs`](compiler/crates/beskid_analysis/src/types/context/items.rs)\n- `unit_path_key` normalization in [`paths.rs`](compiler/crates/beskid_analysis/src/paths.rs) at assembly, record, resolve, and codegen boundaries\n- `scoped_call_kinds` support in link plan for Capabilities/Terminal subgraph\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`86a122d`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/86a122d)\n- **Completed:** 2026-06-05\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `compiler-corelib`\n- **Deliverable:** `v04-corelib-complete`",
+	"order": 362,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

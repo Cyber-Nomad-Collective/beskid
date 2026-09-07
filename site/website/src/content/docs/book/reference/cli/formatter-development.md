@@ -90,7 +90,7 @@ Use the same pattern whenever syntax allows redundant grouping that your emitter
 
 ## CLI and LSP
 
-- **CLI**: [`beskid format`](/book/reference/cli/commands/format/) reads a file or directory, parses, runs `format_program`, then writes stdout, `--output`, `--write`, or validates with `--check`.
+- **CLI**: [`beskid dev syntax format`](/book/reference/cli/commands/format/) reads a file or directory, parses, runs `format_program`, then writes stdout, `--output`, `--write`, or validates with `--check`.
 - **LSP**: the formatting handler calls the same `format_program` on the parsed buffer; range formatting currently replaces the **full document** (see [LSP architecture](/book/reference/lsp/architecture-and-protocol-spec/)).
 
 Both paths require a **successful parse**; there is no best-effort partial format on parse errors.
@@ -98,5 +98,5 @@ Both paths require a **successful parse**; there is no best-effort partial forma
 ## Regression testing (compiler repo)
 
 - **Coverage policy**: [Test harnesses and fixtures](/platform-spec/compiler/conformance/test-harnesses-and-fixtures/).
-- **CI**: `beskid format --check` on the fixture tree (via `compiler-rust-gate`); use the root formatter fixture task to refresh expected output; LSP unit tests `include_str!` the `docs_and_control` fixture to assert the handler matches `format_program`.
+- **CI**: `beskid dev syntax format --check` on the fixture tree (via `compiler-rust-gate`); use the root formatter fixture task to refresh expected output; LSP unit tests `include_str!` the `docs_and_control` fixture to assert the handler matches `format_program`.
 - **Corelib (optional)**: set `BESKID_FORMAT_CORPUS=1` and run the root format corpus task locally.

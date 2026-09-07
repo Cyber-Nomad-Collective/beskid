@@ -1,0 +1,19 @@
+{
+	"id": "vscode-icon-vsce-compat",
+	"title": "Prevent VSCE icon rejection by using compatible extension icon format",
+	"priority": "medium",
+	"workstream": "editor-extension",
+	"completedAt": "2026-04-21",
+	"milestoneId": "v01-open-vsx",
+	"source": {
+		"repo": "beskid",
+		"commit": "88fa986",
+		"subject": "fix(vscode): avoid vsce rejecting SVG favicon as icon",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/88fa986"
+	},
+	"statusColumn": "Done",
+	"body": "Replaces SVG favicon extension icon with a **VSCE-compatible** format to avoid publish rejection.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`88fa986`](https://github.com/Cyber-Nomad-Collective/beskid/commit/88fa986)\n- **Subject:** fix(vscode): avoid vsce rejecting SVG favicon as icon\n- **Completed:** 2026-04-21\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `editor-extension`\n- **Deliverable:** `v01-open-vsx`\n\n## Relation\nPackaging fix for **v01-open-vsx**.",
+	"order": 144,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

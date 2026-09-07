@@ -1,0 +1,19 @@
+{
+	"id": "bsol-stability-pass",
+	"title": "BSOL stability pass on main",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "compiler-corelib",
+	"completedAt": "2026-06-07",
+	"deliverableId": "v04-corelib-complete",
+	"source": {
+		"repo": "beskid",
+		"commit": "ee88edf",
+		"subject": "BSOL Stability Pass",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf"
+	},
+	"body": "BSOL project/workspace/manifest stability pass on main; unblocks consistent `.bproj`/`.bws` resolution for corelib matrix and platform services.\n\n## What shipped\n\n- BSOL stability pass landed on superrepo main (`ee88edf`)\n- Normative/informative doc alignment for assembly pipeline and project model\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`ee88edf`](https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf)\n- **Completed:** 2026-06-07\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `compiler-corelib`\n- **Deliverable:** `v04-corelib-complete`",
+	"order": 363,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

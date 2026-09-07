@@ -1,0 +1,29 @@
+{
+	"id": "corelib-syscall-jit-smoke",
+	"title": "Syscall JIT smoke tests without cross-module asserts",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "stabilization",
+	"domain": "core-library",
+	"completedAt": "2026-05-24",
+	"specRelations": [
+		{
+			"path": "/platform-spec/execution/runtime/panic-io-and-syscalls",
+			"title": "Panic, I/O, and syscalls",
+			"level": "feature",
+			"relation": "implements",
+			"required": true
+		}
+	],
+	"source": {
+		"repo": "corelib",
+		"commit": "36778ec",
+		"subject": "fix(corelib_tests): syscall JIT smoke tests without cross-module asserts",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_standard/commit/36778ec"
+	},
+	"milestoneId": "v03-post-merge-ci",
+	"body": "Syscall-backed JIT smoke tests run without cross-module assertions that previously failed under tier-separated assemblies.\n\n## Platform specification\n\n- **Panic, I/O, and syscalls** — `/platform-spec/execution/runtime/panic-io-and-syscalls` — *implements* (required)\n\n## Provenance\n- **Repository:** `corelib`\n- **Commit:** [`36778ec`](https://github.com/Cyber-Nomad-Collective/beskid_standard/commit/36778ec)\n- **Subject:** fix(corelib_tests): syscall JIT smoke tests without cross-module asserts\n- **Completed:** 2026-05-24\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `stabilization`\n- **Domain:** `core-library`\n- **Deliverable:** `v03-post-merge-ci`\n\n## Relation\nContributes to deliverable **CI and integration hardening** (`v03-post-merge-ci`). Normative spec: **Panic, I/O, and syscalls** (*implements*).",
+	"order": 361,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

@@ -1,0 +1,20 @@
+{
+	"id": "trudoc-frontmatter-verify",
+	"title": "trudoc platform-spec frontmatter verification",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "platform-spec",
+	"domain": "community",
+	"completedAt": "2026-05-09",
+	"milestoneId": "v02-platform-spec-cutover",
+	"source": {
+		"repo": "beskid",
+		"commit": "139166f",
+		"subject": "feat(trudoc): platform-spec frontmatter verification",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/139166f"
+	},
+	"body": "Platform-spec frontmatter verification.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`139166f`](https://github.com/Cyber-Nomad-Collective/beskid/commit/139166f)\n- **Subject:** feat(trudoc): platform-spec frontmatter verification\n- **Completed:** 2026-05-09\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `platform-spec`\n- **Deliverable:** `v02-platform-spec-cutover`\n- **Domain:** `community`\n\n## Relation\nContributes to deliverable **Platform-spec cutover** (`v02-platform-spec-cutover`).\n",
+	"order": 219,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

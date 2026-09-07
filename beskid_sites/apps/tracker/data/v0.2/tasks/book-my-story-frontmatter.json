@@ -1,0 +1,18 @@
+{
+	"id": "book-my-story-frontmatter",
+	"title": "Fix book my-story page title frontmatter",
+	"statusColumn": "Done",
+	"priority": "low",
+	"workstream": "docs-site",
+	"completedAt": "2026-05-22",
+	"source": {
+		"repo": "beskid",
+		"commit": "dfdb360",
+		"subject": "fix(book): my-story page title frontmatter",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/dfdb360"
+	},
+	"body": "My-story page title frontmatter.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`dfdb360`](https://github.com/Cyber-Nomad-Collective/beskid/commit/dfdb360)\n- **Subject:** fix(book): my-story page title frontmatter\n- **Completed:** 2026-05-22\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `docs-site`\n\n## Relation\nSupports **v0.2 (Analysis, packages, and platform spec)** on workstream `docs-site`.\n",
+	"order": 235,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

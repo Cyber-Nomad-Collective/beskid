@@ -1,9 +1,10 @@
 ---
-title: "beskid tree"
+title: "beskid dev syntax tree"
 description: "Print a textual AST tree for a Beskid source file."
 ---
 
-Parse one `.bd` file and print a hierarchical visualization of the AST (same parse path as [`parse`](/book/reference/cli/commands/parse/)).
+Parse one `.bd` file and print a hierarchical visualization of the AST.
+This command is under the developer namespace (`beskid dev syntax tree`).
 
 ## Arguments
 
@@ -14,7 +15,7 @@ Parse one `.bd` file and print a hierarchical visualization of the AST (same par
 ## Example
 
 ```bash
-beskid tree src/Main.bd
+beskid dev syntax tree src/Main.bd
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

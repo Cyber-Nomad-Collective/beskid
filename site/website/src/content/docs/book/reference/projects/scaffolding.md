@@ -60,7 +60,7 @@ See [beskid new command reference](/book/reference/cli/commands/new/) for the fu
 
 ## corelib on instantiated hosts
 
-Every **instantiated** ordinary **host** project (**`project.type` omitted or `Host`**) **always** gets **corelib** through the normal toolchain path (lock/fetch/materialize)—the same implicit standard library behavior as existing projects. Template output **must not** ship a user-facing switch to disable corelib; manifests may omit an explicit `dependency "corelib"` block because **`beskid lock`** / **`beskid fetch`** still materialize it.
+Every **instantiated** ordinary **host** project (**`project.type` omitted or `Host`**) **always** gets **corelib** through the normal toolchain path (lock/fetch/materialize)—the same implicit standard library behavior as existing projects. Template output **must not** ship a user-facing switch to disable corelib; manifests may omit an explicit `dependency "corelib"` block because **`beskid dev project lock`** / **`beskid dev project fetch`** still materialize it.
 
 ## Authoring template packages
 

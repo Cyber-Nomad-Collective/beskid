@@ -12,8 +12,8 @@ The step-by-step guide with commands and role requirements lives in the referenc
 
 ## Before you publish
 
-- Run `beskid doc` so `.beskid/docs/api.json` exists for pckg registry docs ingestion.
-- Run tests (`beskid test`) if your package is more than a manifest cosplay.
+- Run `beskid dev syntax doc` so `.beskid/docs/api.json` exists for pckg registry docs ingestion.
+- Run tests (`beskid dev build test`) if your package is more than a manifest cosplay.
 - Confirm public API boundaries — see [Package public surface](/book/19-public-api-that-survives-review/package-public-surface/): registry consumers import what you exported, not what you "meant."
 
 ## See also

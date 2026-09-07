@@ -1,0 +1,20 @@
+{
+	"id": "pckg-docs-deep-links",
+	"title": "Package docs deep links and explorer dialog routes",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "pckg-registry",
+	"domain": "tooling",
+	"completedAt": "2026-04-24",
+	"milestoneId": "v02-pckg-registry-foundation",
+	"source": {
+		"repo": "pckg",
+		"commit": "8734655",
+		"subject": "Docs: deep links (/docs/.../api, /search), AppDocumentationRoutes; PackageDocs explorer dialog; Dialog variant for docs browser",
+		"url": "https://github.com/Cyber-Nomad-Collective/pckg/commit/8734655"
+	},
+	"body": "Deep links (/docs/.../api, /search), AppDocumentationRoutes; PackageDocs explorer dialog; Dialog variant for docs browser.\n\n## Provenance\n- **Repository:** `pckg`\n- **Commit:** [`8734655`](https://github.com/Cyber-Nomad-Collective/pckg/commit/8734655)\n- **Subject:** Docs: deep links (/docs/.../api, /search), AppDocumentationRoutes; PackageDocs explorer dialog; Dialog variant for docs browser\n- **Completed:** 2026-04-24\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `pckg-registry`\n- **Deliverable:** `v02-pckg-registry-foundation`\n- **Domain:** `tooling`\n\n## Relation\nContributes to deliverable **Registry dashboard and package docs foundation** (`v02-pckg-registry-foundation`).\n",
+	"order": 240,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

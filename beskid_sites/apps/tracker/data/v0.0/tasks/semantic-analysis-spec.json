@@ -1,0 +1,21 @@
+{
+	"id": "semantic-analysis-spec",
+	"title": "Author semantic analysis specification and workspace layout",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "compiler-analysis",
+	"domain": "compiler",
+	"area": "analysis",
+	"completedAt": "2026-02-21",
+	"deliverableId": "v00-analysis-foundation",
+	"body": "Added workspace members for analysis crates and authored the first **semantic analysis specification**: rule categories, integration points with the parser/HIR, and how diagnostics would attach to spans.\n\n## Provenance\n- **Repository:** `pekan`\n- **Commit:** [`cc55d59`](https://github.com/Cyber-Nomad-Collective/pekan/commit/cc55d59)\n- **Subject:** Add workspace members and semantic analysis documentation\n- **Completed:** 2026-02-21\n\n## Catalog scope\n- **Delivery version:** v0.0 (Pecan prototype)\n- **Workstream:** `compiler-analysis`\n- **Deliverable:** `v00-analysis-foundation`\n\n## Relation\nBefore implementing dozens of semantic rules, the prototype needed a written contract for **what “semantic analysis” means** in Pecan—mirroring how later Beskid bands treat platform-spec and `beskid_analysis` as normative. Established the documentation spine later expanded by HIR docs, staged rules, and the `SemanticIssueKind` catalog.",
+	"source": {
+		"repo": "pekan",
+		"commit": "cc55d59",
+		"subject": "Add workspace members and semantic analysis documentation",
+		"url": "https://github.com/Cyber-Nomad-Collective/pekan/commit/cc55d59"
+	},
+	"order": 2,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

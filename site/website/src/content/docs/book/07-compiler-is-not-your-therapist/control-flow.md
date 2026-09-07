@@ -31,7 +31,7 @@ Iteration and concurrency primitives live under evaluation features ([fibers and
 
 ## Control flow vs effects
 
-Branching across contract boundaries may interact with effect tracking—when in doubt, `beskid analyze` and read the diagnostic rather than guessing.
+Branching across contract boundaries may interact with effect tracking—when in doubt, `beskid dev syntax analyze` and read the diagnostic rather than guessing.
 
 ## Next
 

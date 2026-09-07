@@ -1,0 +1,8 @@
+{
+	"slug": "analysis-pipeline",
+	"title": "Analysis & pipeline",
+	"summary": "ExternalLibrary trait and analysis registry, export-FFI HIR legality checks, api.json tier resolver and per-package artifact roots, compiler formatter implementation notes for packageKind tool profile, and e2e build output label alignment.",
+	"order": 5,
+	"deliverableIds": ["v03-analysis-interop", "v03-pckg-tool-registry"],
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

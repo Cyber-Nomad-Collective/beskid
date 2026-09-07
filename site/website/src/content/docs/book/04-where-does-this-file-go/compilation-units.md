@@ -29,7 +29,7 @@ Targets can share source files but differ in entry and dependency sets. Changing
 
 ## Analyzer vs builder
 
-`beskid analyze` and `beskid build` share semantic understanding; failures should reproduce across CLI and LSP when roots match. Start analysis on the smallest target while learning.
+`beskid dev syntax analyze` and `beskid dev build compile` share semantic understanding; failures should reproduce across CLI and LSP when roots match. Start analysis on the smallest target while learning.
 
 ## Reference
 

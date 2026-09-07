@@ -1,0 +1,19 @@
+{
+	"id": "ci-runtime-asan-serialize",
+	"title": "Serialize runtime tests and wire ASan bridge archive",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "ci-release",
+	"completedAt": "2026-05-24",
+	"milestoneId": "v03-post-merge-ci",
+	"source": {
+		"repo": "beskid",
+		"commit": "e8bc073",
+		"subject": "fix(ci): serialize runtime tests and wire ASan bridge archive in superrepo",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/e8bc073"
+	},
+	"body": "Runtime test jobs serialize execution and link the ASan bridge archive so AddressSanitizer builds do not race or miss symbols on Linux CI.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`e8bc073`](https://github.com/Cyber-Nomad-Collective/beskid/commit/e8bc073)\n- **Subject:** fix(ci): serialize runtime tests and wire ASan bridge archive in superrepo\n- **Completed:** 2026-05-24\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `ci-release`\n- **Deliverable:** `v03-post-merge-ci`\n\n## Relation\nContributes to deliverable **CI and integration hardening** (`v03-post-merge-ci`).",
+	"order": 332,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

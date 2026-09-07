@@ -1,0 +1,21 @@
+{
+	"id": "corelib-checkout-submodules-ci",
+	"title": "Bump corelib submodule for CI checkout submodules fix",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"domain": "compiler",
+	"area": "ci",
+	"completedAt": "2026-04-24",
+	"milestoneId": "v02-ci-deploy-infra",
+	"source": {
+		"repo": "compiler",
+		"commit": "f97e8e7",
+		"subject": "chore(corelib): bump submodule for CI checkout submodules fix.",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/f97e8e7"
+	},
+	"body": "Bump submodule for CI checkout submodules fix.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`f97e8e7`](https://github.com/Cyber-Nomad-Collective/compiler/commit/f97e8e7)\n- **Subject:** chore(corelib): bump submodule for CI checkout submodules fix.\n- **Completed:** 2026-04-24\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `ci-release`\n- **Deliverable:** `v02-ci-deploy-infra`\n- **Domain:** `compiler`\n- **Area:** `ci`\n\n## Relation\nContributes to deliverable **CI workflows and deploy infra** (`v02-ci-deploy-infra`).\n",
+	"order": 278,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

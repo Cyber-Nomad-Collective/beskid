@@ -1,0 +1,20 @@
+{
+	"id": "pckg-dashboard-grid-actions",
+	"title": "Unify dashboard data-grid row actions and registry activity layout",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "pckg-registry",
+	"domain": "tooling",
+	"completedAt": "2026-05-20",
+	"milestoneId": "v02-api-json-contract",
+	"source": {
+		"repo": "pckg",
+		"commit": "f9d2b48",
+		"subject": "fix(dashboard): unify data-grid row actions and registry activity layout",
+		"url": "https://github.com/Cyber-Nomad-Collective/pckg/commit/f9d2b48"
+	},
+	"body": "Unify data-grid row actions and registry activity layout.\n\n## Provenance\n- **Repository:** `pckg`\n- **Commit:** [`f9d2b48`](https://github.com/Cyber-Nomad-Collective/pckg/commit/f9d2b48)\n- **Subject:** fix(dashboard): unify data-grid row actions and registry activity layout\n- **Completed:** 2026-05-20\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `pckg-registry`\n- **Deliverable:** `v02-api-json-contract`\n- **Domain:** `tooling`\n\n## Relation\nContributes to deliverable **api.json primary contract** (`v02-api-json-contract`).\n",
+	"order": 248,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

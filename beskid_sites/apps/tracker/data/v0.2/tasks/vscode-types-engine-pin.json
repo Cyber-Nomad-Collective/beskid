@@ -1,0 +1,20 @@
+{
+	"id": "vscode-types-engine-pin",
+	"title": "Pin @types/vscode to match extension engine range",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "editor-extension",
+	"domain": "tooling",
+	"completedAt": "2026-05-08",
+	"milestoneId": "v02-editor-extension",
+	"source": {
+		"repo": "beskid_vscode",
+		"commit": "714871c",
+		"subject": "chore(deps): pin @types/vscode to 1.88.0 to satisfy engines.vscode",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_vscode/commit/714871c"
+	},
+	"body": "Pin @types/vscode to 1.88.0 to satisfy engines.vscode.\n\n## Provenance\n- **Repository:** `beskid_vscode`\n- **Commit:** [`714871c`](https://github.com/Cyber-Nomad-Collective/beskid_vscode/commit/714871c)\n- **Subject:** chore(deps): pin @types/vscode to 1.88.0 to satisfy engines.vscode\n- **Completed:** 2026-05-08\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `editor-extension`\n- **Deliverable:** `v02-editor-extension`\n- **Domain:** `tooling`\n\n## Relation\nContributes to deliverable **VS Code extension & Open VSX** (`v02-editor-extension`).\n",
+	"order": 285,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

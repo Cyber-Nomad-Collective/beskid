@@ -11,7 +11,6 @@ ARG BESKID_RELEASE_CHANNEL=stable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY site/auth/package.json ./site/auth/package.json
 COPY site/website/package.json ./site/website/package.json
-COPY site/platform-spec/package.json ./site/platform-spec/package.json
 COPY site/learn/package.json ./site/learn/package.json
 # Lockfile carries file: links into beskid_web_common packages, so the
 # submodule package.json files must exist before the frozen install.
@@ -19,7 +18,6 @@ COPY beskid_web_common ./beskid_web_common
 RUN pnpm install --frozen-lockfile
 
 COPY site/website ./site/website
-COPY site/platform-spec ./site/platform-spec
 COPY openspec ./openspec
 
 RUN test -f openspec/catalog.json \

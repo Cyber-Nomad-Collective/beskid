@@ -1,0 +1,21 @@
+{
+	"id": "superrepo-tracker-manifest-hub",
+	"title": "Add beskid_tracker submodule, repo manifests, and hub UI bootstrap",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "repo-cicd",
+	"domain": "tooling",
+	"area": "superrepo",
+	"completedAt": "2026-05-26",
+	"deliverableId": "v04-tracker-ship",
+	"source": {
+		"repo": "beskid",
+		"commit": "6438ae8",
+		"subject": "feat(superrepo): add beskid_tracker submodule, repo manifests, and Beskid hub UI.",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/6438ae8"
+	},
+	"body": "Registers `beskid_tracker` as a submodule, adds `manifests/default.xml` (and variants) for multi-repo checkout, and introduces initial `beskid-hub` / docs-ui wiring in the superrepo before the `beskid_web_common` extraction.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`6438ae8`](https://github.com/Cyber-Nomad-Collective/beskid/commit/6438ae8)\n- **Subject:** feat(superrepo): add beskid_tracker submodule, repo manifests, and Beskid hub UI.\n- **Completed:** 2026-05-26\n\n## Catalog scope\n- **Delivery version:** v0.4 (Platform services, auth, and delivery tooling)\n- **Workstream:** `repo-cicd`\n- **Deliverable:** `v04-tracker-ship`\n\n## What shipped\n\nRegisters `beskid_tracker` as a submodule, adds `manifests/default.xml` (and variants) for multi-repo checkout, and introduces initial `beskid-hub` / docs-ui wiring in the superrepo before the `beskid_web_common` extraction.",
+	"order": 375,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

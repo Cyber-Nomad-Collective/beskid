@@ -1,0 +1,21 @@
+{
+	"id": "research-project-pn-manifest",
+	"title": "Research: Zig-style project.pn manifest vs path-driven layout",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "project-structure",
+	"domain": "tooling",
+	"area": "projects",
+	"completedAt": "2026-02-26",
+	"deliverableId": "v00-tooling-research",
+	"body": "Documented a **project.pn** Build API (Zig-influenced), lockfile lifecycle, and Daggy-based dependency resolution—compared against Go/Gleam path-driven layouts.\n\n## Provenance\n- **Repository:** `pekan`\n- **Commit:** [`28141af`](https://github.com/Cyber-Nomad-Collective/pekan/commit/28141af)\n- **Subject:** Add build workflow, lockfile lifecycle, and Daggy-based dependency resolution to project system documentation\n- **Completed:** 2026-02-26\n\n## Catalog scope\n- **Delivery version:** v0.0 (Pecan prototype)\n- **Workstream:** `project-structure`\n- **Deliverable:** `v00-tooling-research`\n\n## Relation\n**Not adopted.** Later bands standardized on **`Project.proj`** and **pckg** registry flows instead of `project.pn`.",
+	"source": {
+		"repo": "pekan",
+		"commit": "28141af",
+		"subject": "Add build workflow, lockfile lifecycle, and Daggy-based dependency resolution to project system documentation",
+		"url": "https://github.com/Cyber-Nomad-Collective/pekan/commit/28141af"
+	},
+	"order": 16,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

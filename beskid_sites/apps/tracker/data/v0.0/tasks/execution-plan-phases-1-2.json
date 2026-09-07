@@ -1,0 +1,20 @@
+{
+	"id": "execution-plan-phases-1-2",
+	"title": "Close execution plan phases 1–2 (HIR + typing)",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "codegen-runtime",
+	"domain": "execution",
+	"completedAt": "2026-02-23",
+	"deliverableId": "v00-execution-jit-gc",
+	"body": "Updated the execution plan to mark **Phase 1** (HIR foundations) and **Phase 2** (typing integration) complete and scoped **Phase 3** kickoff (lowering/runtime).\n\n## Provenance\n- **Repository:** `pekan`\n- **Commit:** [`01db952`](https://github.com/Cyber-Nomad-Collective/pekan/commit/01db952)\n- **Subject:** Update execution plan with Phase 1/2 completion status and Phase 3 kickoff scope\n- **Completed:** 2026-02-23\n\n## Catalog scope\n- **Delivery version:** v0.0 (Pecan prototype)\n- **Workstream:** `codegen-runtime`\n- **Deliverable:** `v00-execution-jit-gc`\n\n## Relation\nThe execution plan was the program-management spine for JIT/runtime work—linking analysis milestones to codegen and GC tasks in the same deliverable. Unblocked lowering architecture, gc-arena integration, and Phase 5 runtime/GC completion tasks.",
+	"source": {
+		"repo": "pekan",
+		"commit": "01db952",
+		"subject": "Update execution plan with Phase 1/2 completion status and Phase 3 kickoff scope",
+		"url": "https://github.com/Cyber-Nomad-Collective/pekan/commit/01db952"
+	},
+	"order": 6,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

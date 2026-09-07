@@ -28,7 +28,7 @@ flowchart TB
 
 ## CLI
 
-`beskid build` selects targets and backends per manifest—see [build command reference](/book/reference/cli/commands/build/).
+`beskid dev build compile` selects targets and backends per manifest—see [build command reference](/book/reference/cli/commands/build/).
 
 ## Next
 

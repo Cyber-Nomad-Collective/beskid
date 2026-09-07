@@ -1,0 +1,27 @@
+{
+	"id": "tracker-github-webhook-production",
+	"title": "Production GitHub sync for active version and bugs",
+	"statusColumn": "In Progress",
+	"priority": "high",
+	"workstream": "tracker-implementation",
+	"deliverableId": "v04-tracker-ship",
+	"source": {
+		"repo": "beskid",
+		"commit": "ee88edf",
+		"subject": "BSOL Stability Pass",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf"
+	},
+	"body": "Bidirectional GitHub sync scoped to the active delivery version and all bugs. Tracker SQLite is source of truth; export outbox pushes to GitHub; webhooks apply inbound updates.\n\n## Landed\n\n- Normalized SQLite schema (versions, tasks, bugs, outbox, links)\n- Settings dialog with sync scope, webhook config, and catalog import\n- Scoped export (`7461652`) and inbound webhook handler\n- Operator validation steps in [`beskid_tracker/COOLIFY.md`](beskid_tracker/COOLIFY.md)\n\n## Remaining (production evidence required)\n\n- Set `GITHUB_WEBHOOK_SECRET`, `GITHUB_SYNC_TOKEN`, `TRACKER_PUBLIC_URL` on Coolify (OpenBao `secret/beskid/production/tracker`)\n- Register GitHub webhook → `POST /api/webhooks/github`\n- Smoke: import v0.4 seed → export active version → confirm issue create/update on Cyber-Nomad-Collective/beskid\n\n## Provenance\n- **Repository:** `beskid`\n- **Catalog tip:** [`ee88edf`](https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf) (2026-06-07)\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `tracker-implementation`\n- **Deliverable:** `v04-tracker-ship`",
+	"order": 398,
+	"subtasks": [
+		{ "text": "SQLite SOT + scoped bidirectional sync engine", "done": true },
+		{ "text": "Settings dialog (webhook, scope, import)", "done": true },
+		{
+			"text": "Coolify secrets (webhook secret, sync token, public URL)",
+			"done": false
+		},
+		{ "text": "GitHub webhook registered on superrepo", "done": false },
+		{ "text": "Production smoke: seed import + scoped export", "done": false }
+	],
+	"$schema": "../schemas/seed/task.schema.json"
+}

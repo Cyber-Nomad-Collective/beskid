@@ -1,0 +1,16 @@
+{
+	"id": "v0.4",
+	"title": "Platform services, auth, and delivery tooling",
+	"summary": "v0.4 is an in-progress delivery candidate. The tracker is a delivery projection; the active OpenSpec release ledger and fresh command evidence govern completion. Compiler migration, retirement, corelib, runtime-kit, and release-sign-off evidence remain pending.",
+	"theme": "Auth hub, web_common, tracker, nexus, CI/CD, corelib, editor DX",
+	"status": "In Progress",
+	"cutoff": {
+		"startDate": "2026-05-26",
+		"endDate": "2026-07-24",
+		"startCommitSha": "aaddd32",
+		"endCommitSha": "17442fb9",
+		"endCommitRepo": "beskid",
+		"rationale": "Starts at v0.3 cut-off tip aaddd32 (2026-05-25). The end commit records the historical planning window only; it is not release-sign-off evidence. Completion requires the active OpenSpec obligations and fresh evidence for the reconciled candidate."
+	},
+	"$schema": "../schemas/seed/version.schema.json"
+}

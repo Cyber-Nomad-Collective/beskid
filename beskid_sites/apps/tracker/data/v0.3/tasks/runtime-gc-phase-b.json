@@ -1,0 +1,19 @@
+{
+	"id": "runtime-gc-phase-b",
+	"title": "Runtime phase B GC opt-in",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "concurrency-runtime",
+	"domain": "execution",
+	"completedAt": "2026-05-23",
+	"source": {
+		"repo": "compiler",
+		"commit": "1a85cee",
+		"subject": "runtime: phase B GC opt-in (multi-mutator, pointer channels, syscall-pool guard)",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/1a85cee"
+	},
+	"body": "Runtime enables Phase B GC opt-in: multi-mutator collection, pointer channels, and syscall-pool guard integration.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`1a85cee`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/1a85cee)\n- **Subject:** runtime: phase B GC opt-in (multi-mutator, pointer channels, syscall-pool guard)\n- **Completed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `concurrency-runtime`\n- **Domain:** `execution`\n\n## Relation\nLands in the v0.3 cutoff window (`f57377a`→`aaddd32`) under workstream `concurrency-runtime`.",
+	"order": 304,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

@@ -1,0 +1,20 @@
+{
+	"id": "analysis-services-module",
+	"title": "Analysis services module (input/project resolution and parsing utilities)",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "compiler-analysis",
+	"domain": "compiler",
+	"completedAt": "2026-02-27",
+	"deliverableId": "v00-analysis-foundation",
+	"body": "Introduced **`beskid_analysis` services**: input resolution, project discovery, parsing helpers, and shared analysis utilities used by CLI and (later) LSP entry points.\n\n## Provenance\n- **Repository:** `pekan`\n- **Commit:** [`0fe2488`](https://github.com/Cyber-Nomad-Collective/pekan/commit/0fe2488)\n- **Subject:** Add beskid_analysis services module with input/project resolution, parsing, and analysis utilities\n- **Completed:** 2026-02-27\n\n## Catalog scope\n- **Delivery version:** v0.0 (Pecan prototype)\n- **Workstream:** `compiler-analysis`\n- **Deliverable:** `v00-analysis-foundation`\n\n## Relation\nCentralized “how do we find and parse a project?” logic instead of duplicating it across binaries—direct ancestor of today’s shared analyze pipeline inputs. Foreshadowed `prepared_workspace` / assembly resolution in later bands.",
+	"source": {
+		"repo": "pekan",
+		"commit": "0fe2488",
+		"subject": "Add beskid_analysis services module with input/project resolution, parsing, and analysis utilities",
+		"url": "https://github.com/Cyber-Nomad-Collective/pekan/commit/0fe2488"
+	},
+	"order": 19,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

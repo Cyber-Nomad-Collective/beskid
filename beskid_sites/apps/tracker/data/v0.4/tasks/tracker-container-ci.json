@@ -1,0 +1,19 @@
+{
+	"id": "tracker-container-ci",
+	"title": "Fix beskid-tracker container image build in CI",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "platform-infra",
+	"completedAt": "2026-05-29",
+	"deliverableId": "v04-cicd-realized",
+	"source": {
+		"repo": "beskid",
+		"commit": "3ed47af",
+		"subject": "Fix beskid-tracker container image build in CI.",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/3ed47af"
+	},
+	"body": "Container-images matrix builds and publishes beskid-tracker GHCR image; deployment fixes on Coolify.\n\n## What shipped\n\n- CI container build fix (`3ed47af`)\n- Deployment fixes + hub registration (`0cccf98`, `49c49d7`)\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`3ed47af`](https://github.com/Cyber-Nomad-Collective/beskid/commit/3ed47af)\n- **Completed:** 2026-05-29\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `platform-infra`\n- **Deliverable:** `v04-cicd-realized`",
+	"order": 391,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

@@ -1,0 +1,21 @@
+{
+	"id": "compiler-formatter-implementation-doc",
+	"title": "Compiler formatter implementation notes (packageKind tool)",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "analysis-pipeline",
+	"domain": "compiler",
+	"area": "tooling",
+	"completedAt": "2026-05-23",
+	"milestoneId": "v03-analysis-interop",
+	"source": {
+		"repo": "compiler",
+		"commit": "ebbe51d",
+		"subject": "feat(pckg,format): packageKind tool profile + formatter implementation doc (WIP, restored from stash)",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/ebbe51d"
+	},
+	"body": "Compiler tree carries implementation notes for the packageKind `tool` formatter profile (restored WIP doc) guiding A8 tooling spec alignment.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`ebbe51d`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/ebbe51d)\n- **Subject:** feat(pckg,format): packageKind tool profile + formatter implementation doc (WIP, restored from stash)\n- **Completed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `analysis-pipeline`\n- **Domain:** `compiler`\n- **Deliverable:** `v03-analysis-interop`\n\n## Relation\nContributes to deliverable **Analysis interop & codegen polish** (`v03-analysis-interop`).",
+	"order": 347,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

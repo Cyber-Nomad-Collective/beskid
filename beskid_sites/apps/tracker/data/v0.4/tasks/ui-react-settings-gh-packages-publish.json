@@ -1,0 +1,22 @@
+{
+	"id": "ui-react-settings-gh-packages-publish",
+	"title": "Publish @beskid/ui-react (settings export) to GitHub Packages",
+	"statusColumn": "Backlog",
+	"priority": "medium",
+	"workstream": "web-auth-web-common",
+	"deliverableId": "v04-platform-dx",
+	"source": {
+		"repo": "beskid",
+		"commit": "ee88edf",
+		"subject": "BSOL Stability Pass",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf"
+	},
+	"body": "Publish `@cyber-nomad-collective/beskid-ui-react` with `./settings` export so tracker Docker builds resolve from GitHub Packages without Vite local alias.\n\n## Landed\n\n- `./settings` export in [`package.json`](beskid_web_common/packages/beskid-ui-react/package.json)\n- Publish steps documented in package README\n- Tracker uses `npm:@cyber-nomad-collective/beskid-ui-react@^0.2.0` alias\n\n## Remaining\n\n- CI publish with `NODE_AUTH_TOKEN` (or manual publish) and `scripts/sync-beskid-packages.sh` on consumers\n- `container-images` tracker matrix green without local alias\n\n## Provenance\n- **Repository:** `beskid`\n- **Catalog tip:** [`ee88edf`](https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf) (2026-06-07)\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `web-auth-web-common`\n- **Deliverable:** `v04-platform-dx`",
+	"order": 397,
+	"subtasks": [
+		{ "text": "Verify ./settings export in beskid_web_common", "done": true },
+		{ "text": "Publish package to GitHub Packages", "done": false },
+		{ "text": "Sync tracker + container-images CI", "done": false }
+	],
+	"$schema": "../schemas/seed/task.schema.json"
+}

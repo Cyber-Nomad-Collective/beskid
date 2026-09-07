@@ -1,0 +1,156 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://beskid-lang.org/schemas/seed/task.schema.json",
+	"type": "object",
+	"properties": {
+		"$schema": {
+			"type": "string"
+		},
+		"id": {
+			"type": "string",
+			"pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+		},
+		"title": {
+			"type": "string",
+			"minLength": 1
+		},
+		"statusColumn": {
+			"type": "string",
+			"enum": ["Backlog", "In Progress", "Done"]
+		},
+		"priority": {
+			"default": "medium",
+			"type": "string",
+			"enum": ["high", "medium", "low"]
+		},
+		"order": {
+			"type": "integer",
+			"minimum": 0,
+			"maximum": 9007199254740991
+		},
+		"workstream": {
+			"type": "string"
+		},
+		"domain": {
+			"type": "string"
+		},
+		"area": {
+			"type": "string"
+		},
+		"feature": {
+			"type": "string"
+		},
+		"owner": {
+			"type": "string"
+		},
+		"completedAt": {
+			"type": "string",
+			"pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+		},
+		"deliverableId": {
+			"type": "string"
+		},
+		"milestoneId": {
+			"type": "string"
+		},
+		"specRelations": {
+			"default": [],
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"path": {
+						"type": "string",
+						"minLength": 1
+					},
+					"href": {
+						"type": "string",
+						"format": "uri"
+					},
+					"title": {
+						"type": "string"
+					},
+					"level": {
+						"type": "string"
+					},
+					"relation": {
+						"type": "string",
+						"enum": ["implements", "depends-on", "tracks", "extends", "validates"]
+					},
+					"required": {
+						"default": false,
+						"type": "boolean"
+					}
+				},
+				"required": ["path", "relation", "required"],
+				"additionalProperties": false
+			}
+		},
+		"specApproval": {
+			"type": "string",
+			"enum": ["pending", "approved"]
+		},
+		"body": {
+			"type": "string"
+		},
+		"repoPaths": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"minLength": 1
+			}
+		},
+		"subtasks": {
+			"default": [],
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"text": {
+						"type": "string",
+						"minLength": 1
+					},
+					"done": {
+						"default": false,
+						"type": "boolean"
+					}
+				},
+				"required": ["text", "done"],
+				"additionalProperties": false
+			}
+		},
+		"source": {
+			"type": "object",
+			"properties": {
+				"repo": {
+					"type": "string",
+					"minLength": 1
+				},
+				"commit": {
+					"type": "string",
+					"pattern": "^[0-9a-f]{7,40}$"
+				},
+				"subject": {
+					"type": "string",
+					"minLength": 1
+				},
+				"url": {
+					"type": "string",
+					"format": "uri"
+				}
+			},
+			"required": ["repo", "commit", "subject"],
+			"additionalProperties": false
+		}
+	},
+	"required": [
+		"id",
+		"title",
+		"statusColumn",
+		"priority",
+		"specRelations",
+		"subtasks",
+		"source"
+	],
+	"additionalProperties": false
+}

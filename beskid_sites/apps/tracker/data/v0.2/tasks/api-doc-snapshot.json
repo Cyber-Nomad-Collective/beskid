@@ -1,0 +1,21 @@
+{
+	"id": "api-doc-snapshot",
+	"title": "Structured API doc snapshot in analysis",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "analysis-pipeline",
+	"domain": "compiler",
+	"area": "documentation",
+	"completedAt": "2026-05-18",
+	"milestoneId": "v02-api-json-contract",
+	"source": {
+		"repo": "compiler",
+		"commit": "5ff3d07",
+		"subject": "feat(analysis): structured API doc snapshot and registry doc pipeline",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/5ff3d07"
+	},
+	"body": "Structured API doc snapshot and registry doc pipeline.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`5ff3d07`](https://github.com/Cyber-Nomad-Collective/compiler/commit/5ff3d07)\n- **Subject:** feat(analysis): structured API doc snapshot and registry doc pipeline\n- **Completed:** 2026-05-18\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `analysis-pipeline`\n- **Deliverable:** `v02-api-json-contract`\n- **Domain:** `compiler`\n- **Area:** `documentation`\n\n## Relation\nContributes to deliverable **api.json primary contract** (`v02-api-json-contract`).\n",
+	"order": 204,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

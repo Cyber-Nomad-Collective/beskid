@@ -3,7 +3,7 @@
 //
 // OpenSpec is the native shape. Every capability's spec.md must conform to the
 // layout resolved for its spec level (openspec/layouts/index.json). This is the
-// authority-level enforcement; site/platform-spec mirrors the same descriptors
+// authority-level enforcement; the public Docs site links to these descriptors
 // for rendering and static seeding. Run via `bun run openspec:layouts`.
 
 import { existsSync, readdirSync, readFileSync } from "node:fs";

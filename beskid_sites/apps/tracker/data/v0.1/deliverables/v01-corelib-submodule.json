@@ -1,0 +1,8 @@
+{
+	"id": "v01-corelib-submodule",
+	"title": "Nested corelib submodule",
+	"closedOn": "2026-04-10",
+	"description": "Moves stdlib ownership to nested **corelib** / **beskid_standard** submodules: superrepo wiring, compiler-embedded `corelib` for standalone CI, **stdlib artifact manifests** in **pckg**, CLI provisioning isolation, and cleanup retries — so registry, CLI, and compiler CI share one stdlib source and duplicate in-tree `standard_library` trees are removed.\n\n## Provenance\n- **Closing repository:** `compiler`\n- **Closing commit:** [`8fa00e9`](https://github.com/Cyber-Nomad-Collective/compiler/commit/8fa00e9)\n- **Subject:** Resolve stdlib only from nested corelib submodule\n- **Superrepo pin:** [`3552572`](https://github.com/Cyber-Nomad-Collective/beskid/commit/3552572) (nested corelib submodule enforcement on `beskid`)\n- **Closed:** 2026-04-10\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `corelib-packaging`\n- **Milestone:** `v01-corelib-submodule` (deliverable **#2**)\n\n## Relation\nAnchored tasks: `corelib-submodule`, `stdlib-corelib-only`. Broader **corelib-packaging** band includes `corelib-standard-submodule`, `superrepo-compiler-submodule`, `stdlib-artifact-manifest-superrepo`, `pckg-stdlib-manifest-ui`, `pckg-submodule-wire`, `e2e-stdlib-isolation`, `cli-stdlib-cleanup-retry`, and pckg deploy/bootstrap tasks (`pckg-coolify-compose`, `pckg-onboarding`, bootstrap login flows). Follows **v01-compiler-parity** and precedes **ci-release** CLI upload hardening and **v01-open-vsx**.",
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

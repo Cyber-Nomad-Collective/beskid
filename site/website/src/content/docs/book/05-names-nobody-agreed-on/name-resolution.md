@@ -32,7 +32,7 @@ Assuming `use Foo;` lets you shadow a local `Foo` is a fast path to embarrassmen
 
 ## Cross-module paths
 
-Fully qualified paths follow module nesting declared by files and `mod` statements. When lost, `beskid analyze` with a one-file repro beats staring at folders.
+Fully qualified paths follow module nesting declared by files and `mod` statements. When lost, `beskid dev syntax analyze` with a one-file repro beats staring at folders.
 
 ## Standard reference (informative)
 

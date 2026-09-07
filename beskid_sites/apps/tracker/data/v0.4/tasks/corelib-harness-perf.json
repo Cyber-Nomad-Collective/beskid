@@ -1,0 +1,29 @@
+{
+	"id": "corelib-harness-perf",
+	"title": "Corelib harness performance (engine reuse, sub-5min matrix)",
+	"statusColumn": "In Progress",
+	"priority": "medium",
+	"workstream": "compiler-corelib",
+	"deliverableId": "v04-corelib-complete",
+	"source": {
+		"repo": "beskid",
+		"commit": "ee88edf",
+		"subject": "BSOL Stability Pass",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf"
+	},
+	"body": "The production gate is one `beskid test --all-targets --plain` invocation over 61 manifest entries. Current-tip evidence uses deterministic EOF and observes no target hang. A hard-capped five-minute shared process reached 43 target starts; a bounded tail replay completed coverage at 38 passing / 23 failing. Repeated dependency materialization, normalization, and typechecking remain visible for each target, so one-session state reuse and the sub-five-minute acceptance are not proven. The split replay is diagnostic coverage, not release evidence.\n\n## Acceptance\n\n- Fresh functional matrix is 61/61\n- One EOF-bound `--all-targets` run completes under **5 minutes**\n- Simple assertion targets complete under **200ms**\n- Per-target timeout, phase attribution, and clean cancellation are retained\n\n## Blocked on\n\nFunctional `corelib-matrix-green` exit (61/61).\n\n**Research:** `docs/superpowers/reports/2026-08-11-cyb-188-corelib-closure-graph.md` on `research/0-4-corelib-failure-graph` at `04bf6b77`.\n\n**Linear:** [CYB-181](https://linear.app/cybernomad-it/issue/CYB-181/v04-recover-authoritative-61-target-corelib-matrix-and-bounded-harness)",
+	"order": 412,
+	"subtasks": [
+		{ "text": "Engine reuse per target in test harness", "done": true },
+		{
+			"text": "Single 61-target --all-targets production invocation",
+			"done": true
+		},
+		{
+			"text": "Deterministic EOF stdin binding with harness regression",
+			"done": true
+		},
+		{ "text": "Sub-5min matrix acceptance evidence", "done": false }
+	],
+	"$schema": "../schemas/seed/task.schema.json"
+}

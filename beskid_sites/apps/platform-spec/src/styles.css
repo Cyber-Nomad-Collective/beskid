@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@source "../node_modules/@cyber-nomad-collective/beskid-ui-react/src";
+@source "../node_modules/@cyber-nomad-collective/beskid-shell-core/src";
+@source inline("rounded-4xl");
+
+/* Canonical Beskid token system (brand palette, shadcn semantics, Starlight
+ * mappings, Tailwind v4 `@theme inline` bindings) + hub chrome. */
+@import "@cyber-nomad-collective/beskid-ui-react/styles/shadcn-entry.css";
+@import "@cyber-nomad-collective/beskid-ui-react/styles/hub.css";
+@import "./styles/reader-app.css";
+
+@custom-variant dark (&:is([data-theme="dark"] *));
+
+/* Platform-spec reader chrome uses direct brand-token references for the
+ * shadcn semantic layer (no color-mix tints) — this is the reader's intended
+ * appearance and overrides the lib's default shadcn-theme tints. The brand
+ * palette itself is still sourced from `tokens.css` above. */
+html[data-theme="light"],
+html[data-theme="dark"] {
+	--background: var(--beskid-surface);
+	--foreground: var(--beskid-on-primary-container);
+	--card: var(--platform-spec-card-bg);
+	--card-foreground: var(--foreground);
+	--popover: var(--platform-spec-surface-strong);
+	--popover-foreground: var(--foreground);
+	--primary: var(--beskid-primary);
+	--primary-foreground: var(--beskid-on-primary);
+	--secondary: var(--beskid-secondary-container);
+	--secondary-foreground: var(--beskid-on-primary-container);
+	--muted: var(--platform-spec-surface-muted);
+	--muted-foreground: var(--beskid-outline);
+	--accent: var(--beskid-primary-container);
+	--accent-foreground: var(--beskid-primary);
+	--destructive: #b3261e;
+	--destructive-foreground: #fff;
+	--border: var(--platform-spec-divider);
+	--input: var(--beskid-outline-variant);
+	--ring: var(--beskid-primary);
+	--radius: 0.75rem;
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+}

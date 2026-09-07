@@ -10,10 +10,10 @@
 ## Tech Stack
 - **Compiler:** Rust, AOT-only, host composition. Corelib in `compiler/corelib` (Beskid sources, not a Rust crate move)
 - **pckg:** Rust package registry (`compiler/crates/beskid_pckg_server/`) + React client (`pckg/web/`); legacy .NET backend removed
-- **Sites:** `site/website` (book/landing), `site/platform-spec` (TanStack, Memgraph SOT), `site/auth`
+- **Sites:** `site/website` (landing, Docs, Book, blog), `site/auth`, `site/learn`
 - **Apps:** `beskid_tracker` (SQLite SOT), `beskid_nexus` (graph explorer), `beskid_web_common` (shared TS: `trudoc`, `@beskid/beskid-ui`, `@beskid/ui-react`)
 - **Infra:** Coolify Compose (one service per lane), OpenBao secrets, Memgraph, Grafana monitoring at `monitor.beskid-lang.org`
-- **Spec:** normative spec served from `spec.beskid-lang.org`; update before observable behavior changes
+- **Spec:** normative spec lives in OpenSpec and is linked from `beskid-lang.org/docs/standard/`; update it before observable behavior changes
 
 ## Conventions
 - **Git:** no `Co-authored-by`
@@ -83,13 +83,13 @@ This project is indexed by GitNexus as **beskid** (69004 symbols, 141297 relatio
 
 ## Learned Workspace Facts
 - Tracker SQLite DB is the task-tracking source of truth; GitHub Issues sync is limited to active version and bugs
-- Normative standard lives in `openspec/specs` + `openspec/catalog.json` (sole authority); `site/platform-spec` reads OpenSpec directly and serves it at `spec.beskid-lang.org`; website uses `openspec/catalog.json` at build time only and redirects `/platform-spec`; legacy `site/spec-content` corpus is removed
+- Normative standard lives in `openspec/specs` + `openspec/catalog.json` (sole authority); `site/website` is the single public Docs surface and links to the standard at `/docs/standard/`; legacy `/platform-spec` paths redirect there; legacy `site/spec-content` corpus is removed
 - VS Code extension is BSOL-only (`.bws` / `.bproj`); outline panel removed; projects panel retained; dashboard should open from the Beskid status-bar entry like rust-analyzer
 - Production lowering is TypedProgram → CodegenInput → ISLE → stock-verifier-clean CLIF; reject HIR/Lowerable compatibility entry points; Cranelift ISLE remains the path for gradually porting runtime from Rust to Beskid
 - Local `.beskid` directories and `beskid_infra/config/openbao-*.env` (init/secrets) should stay gitignored; never commit secret values
-- Platform-spec / tracker integration: OpenSpec is normative SOT; Tracker is delivery/version authority (revisioned catalog links, public latest delivery, reconciliation without overwrite); seed workstreams from `beskid_tracker/data/` and OpenSpec; platform-spec auth PR editing uses `site/platform-spec/src/server/git-sync/pr.ts` only
+- OpenSpec / tracker integration: OpenSpec is normative SOT; Tracker is delivery/version authority (revisioned catalog links, public latest delivery, reconciliation without overwrite); seed workstreams from `beskid_tracker/data/` and OpenSpec
 - Distribution pipelines intentionally omit AUR; keep the remaining packaging channels
-- Shared AST/DAG explorer UI (ReactFlow/d3) belongs in common `@beskid` components and should reuse one repo/browser explorer dialog across website, pckg, platform-spec, and tracker
+- Shared AST/DAG explorer UI (ReactFlow/d3) belongs in common `@beskid` components and should reuse one repo/browser explorer dialog across website, pckg, and tracker
 - OpenSpec `validate-standard` catalogues `AGENTS.md` and hard-fails TBD Purpose headers; regenerating `openspec/catalog.json` may be required after editing either
 - Platform delivery hard-gates every lane image including `pckg`; GHCR `beskid-pckg` is linked to sibling repo `beskid_pckg`, so grant package Actions Write to `beskid` or set `GHCR_TOKEN` with `write:packages` (not `read:packages` alone—login can succeed while push fails with scope mismatch); login/push already use `secrets.GHCR_TOKEN || github.token` in `.github/workflows/reusable-image.yml` (do not re-add in callers; do not weaken the gate); green `main` auto-applies Coolify staging with digest-pinned compose; staging secrets sync from OpenBao `secret/beskid/staging/*` via `just sync-env-staging` / `sync-runtime-env.sh`, with `COOLIFY_SERVICE_UUID` from GitHub staging env or lane JSON `service_uuid` in `beskid_infra/config/coolify-*.json`
 - While sites still resolve `@beskid/*` via `file:../../beskid_web_common`, CI and Docker must checkout/copy that submodule before `pnpm install` (same pattern as the website image)

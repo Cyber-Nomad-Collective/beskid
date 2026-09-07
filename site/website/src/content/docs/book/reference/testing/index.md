@@ -34,20 +34,20 @@ Recommended conventions:
 Use the CLI test command:
 
 ```bash
-beskid test path/to/file.bd
+beskid dev build test path/to/file.bd
 ```
 
 Filtering:
 
 ```bash
-beskid test path/to/file.bd --include-tag fast --group analysis
-beskid test path/to/file.bd --exclude-tag slow
+beskid dev build test path/to/file.bd --include-tag fast --group analysis
+beskid dev build test path/to/file.bd --exclude-tag slow
 ```
 
 Machine-readable output:
 
 ```bash
-beskid test path/to/file.bd --json
+beskid dev build test path/to/file.bd --json
 ```
 
 ## Result buckets

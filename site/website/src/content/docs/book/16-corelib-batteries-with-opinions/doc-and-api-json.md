@@ -4,7 +4,7 @@ description: Package documentation is driven by structured api.json—the compil
 tableOfContents: true
 ---
 
-`beskid doc` emits Markdown and **`api.json`** under `.beskid/docs/`. The JSON is not a parallel type system you maintain by hand: signatures, `typeRef` links, and member hierarchy are **compiler-derived**. Prose in `///` comments attaches to symbols; absence of prose does not remove the symbol from the API graph.
+`beskid dev syntax doc` emits Markdown and **`api.json`** under `.beskid/docs/`. The JSON is not a parallel type system you maintain by hand: signatures, `typeRef` links, and member hierarchy are **compiler-derived**. Prose in `///` comments attaches to symbols; absence of prose does not remove the symbol from the API graph.
 
 ## Why this matters for pckg
 

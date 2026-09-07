@@ -26,13 +26,14 @@ v0.4.0 released with all GitHub CI/CD gates green: 100% corelib test matrix pass
 - [Catalog embeddability](tickets/04-catalog-embeddability.md) — `openspec:catalog` rebuilds `openspec/catalog.json` and `openspec:validate` now passes clean (`206 passed, 0 failed`) with revision `0cdc1bfda83c` committed.
 - [Tracker seed sync](tickets/07-tracker-seed-sync.md) — v0.4 seed payload schema issues were fixed (`status` and `statusColumn`), and `pnpm seed:validate` now passes for all 5 versions, including v0.4 (`54 tasks, 8 workstreams, 6 deliverables`).
 - [Platform-spec sync scope](tickets/03-platform-spec-sync-scope.md) — Existing OpenSpec capability documents remain the v0.4 authority; the reader already provides accessible searchable navigation and hybrid rendering. Release verification is catalog regeneration and validation followed by the platform-spec production build; no new release-summary normative content is warranted.
+- [Release integration audit](tickets/18-release-integration-audit.md) — v0.4.0 is already tagged; the current dirty checkout must not be swept into a push. The pckg cutover, compiler mixed bundle, and root integration are separate, ordered verification slices.
+- [Compiler releasable-slice proof](tickets/20-compiler-releasable-slice-proof.md) — only the unit-payload enum layout fix has a narrow v0.4 candidate boundary; generic contracts and CLI redesign are separately scoped and must not be bundled.
+- [Snap classic-confinement review](tickets/23-snap-classic-confinement-review.md) — the Store rejection is expected for the declared compiler snap; a validated forum-request template now supplies the supported technical rationale, pending publisher submission.
+- [Pckg legacy-data disposition](tickets/22-pckg-legacy-data-disposition.md) — legacy registry data is disposable; pckg will launch as a clean Rust-backed store for corelib, templates, and new packages, without reviving the retired cutover path.
 
 ## Not yet specified
 
-- **Corelib test matrix full run** — requires CI (builds beskid_cli --release, stages runtime kit, runs 61-target test suite). Local corelib gate is too slow to run here; triggered via `corelib.yml` workflow on push to main.
-
-- **CI/CD verification and staging deployment** — depends on all prior tickets completing; a final integration/verification ticket will be created
-- **Release version bump and tag** — depends on CHANGELOG cutoff and CI green; will be created as the final task once all gates pass
+- **Final corelib, runtime-kit, and CI evidence** — after the pckg, compiler, and root integration tickets reach verified commits, establish the current matrix/kit baseline and determine whether a post-tag 0.4 patch release or correction tag is warranted.
 
 ## Out of scope
 

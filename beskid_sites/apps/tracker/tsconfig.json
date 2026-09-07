@@ -1,0 +1,26 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"include": ["**/*.ts", "**/*.tsx"],
+	"compilerOptions": {
+		"paths": {
+			"#/*": ["./src/*"],
+			"#/components/ui/*": [
+				"./node_modules/@cyber-nomad-collective/beskid-ui-react/src/components/ui/*"
+			],
+			"#/lib/utils": [
+				"./node_modules/@cyber-nomad-collective/beskid-ui-react/src/lib/utils.ts"
+			],
+			"#/lib/utils.ts": [
+				"./node_modules/@cyber-nomad-collective/beskid-ui-react/src/lib/utils.ts"
+			],
+			"#/hooks/use-mobile": [
+				"./node_modules/@cyber-nomad-collective/beskid-ui-react/src/hooks/use-mobile.ts"
+			],
+			"#/hooks/use-mobile.ts": [
+				"./node_modules/@cyber-nomad-collective/beskid-ui-react/src/hooks/use-mobile.ts"
+			]
+		},
+		"types": ["vite/client", "node"],
+		"lib": ["ES2022", "DOM", "DOM.Iterable"]
+	}
+}

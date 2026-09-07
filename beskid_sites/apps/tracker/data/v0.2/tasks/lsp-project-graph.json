@@ -1,0 +1,20 @@
+{
+	"id": "lsp-project-graph",
+	"title": "LSP project explorer and project graph pipeline",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "analysis-pipeline",
+	"domain": "tooling",
+	"completedAt": "2026-05-22",
+	"milestoneId": "v02-lsp-workspace",
+	"source": {
+		"repo": "compiler",
+		"commit": "6ae272b",
+		"subject": "feat: workspace templates, LSP project explorer, and project graph pipeline",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/6ae272b"
+	},
+	"body": "Workspace templates, LSP project explorer, and project graph pipeline.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`6ae272b`](https://github.com/Cyber-Nomad-Collective/compiler/commit/6ae272b)\n- **Subject:** feat: workspace templates, LSP project explorer, and project graph pipeline\n- **Completed:** 2026-05-22\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `analysis-pipeline`\n- **Deliverable:** `v02-lsp-workspace`\n- **Domain:** `tooling`\n\n## Relation\nContributes to deliverable **LSP workspace & project graph** (`v02-lsp-workspace`).\n",
+	"order": 211,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

@@ -1,0 +1,19 @@
+{
+	"id": "open-vsx-version-derivation",
+	"title": "Derive Open VSX extension version from tags and commits",
+	"priority": "medium",
+	"workstream": "editor-extension",
+	"completedAt": "2026-04-22",
+	"milestoneId": "v01-open-vsx",
+	"source": {
+		"repo": "beskid",
+		"commit": "23fbd84",
+		"subject": "ci(open-vsx): derive extension version from tags and commits",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/23fbd84"
+	},
+	"statusColumn": "Done",
+	"body": "Derives VS Code extension **version from git tags and commit distance** for Open VSX publishes.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`23fbd84`](https://github.com/Cyber-Nomad-Collective/beskid/commit/23fbd84)\n- **Subject:** ci(open-vsx): derive extension version from tags and commits\n- **Completed:** 2026-04-22\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `editor-extension`\n- **Deliverable:** `v01-open-vsx`\n\n## Relation\nRequired for repeatable extension releases on `main`.",
+	"order": 137,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

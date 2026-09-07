@@ -1,0 +1,29 @@
+{
+	"id": "corelib-collections-storage-wiring",
+	"title": "Wire rooted Core.Collections backing storage",
+	"statusColumn": "Backlog",
+	"priority": "high",
+	"workstream": "compiler-corelib",
+	"deliverableId": "v04-corelib-complete",
+	"source": {
+		"repo": "beskid",
+		"commit": "ee88edf",
+		"subject": "BSOL Stability Pass",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf"
+	},
+	"body": "The read-only implementation audit and validated `complete-v0-4-corelib-runtime-contracts` OpenSpec change are complete. Production implementation has not begun. The required design hard-cuts public APIs to `Core.Collections.*`, retains direct bounds-checked ISLE indexing as the sole Get/Set path, and adds one manifest-owned rooted typed-grow operation; it explicitly does not add `array_get`/`array_set` ABI symbols or preserve `Collections.*` aliases. Correctness also requires specialization-aware array/aggregate descriptors, managed aggregate construction roots, and pointer-store barriers.\n\n## Sequencing\n\nBlocked on a fresh 61/61 Corelib matrix and the aggregate rooting/barrier prerequisite.\n\n**Linear:** [CYB-184](https://linear.app/cybernomad-it/issue/CYB-184/v04-implement-rooted-corecollections-backing-storage)",
+	"order": 420,
+	"subtasks": [
+		{
+			"text": "Validate normative Core.Collections/rooted-grow contract",
+			"done": true
+		},
+		{ "text": "Recover 61/61 Corelib prerequisite", "done": false },
+		{
+			"text": "Implement specialization-aware rooted typed growth",
+			"done": false
+		},
+		{ "text": "Hard-cut Core.Collections APIs and behavior tests", "done": false }
+	],
+	"$schema": "../schemas/seed/task.schema.json"
+}

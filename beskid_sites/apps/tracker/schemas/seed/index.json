@@ -1,0 +1,32 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://beskid-lang.org/schemas/seed/index.json",
+	"title": "Beskid tracker roadmap seed catalog",
+	"description": "One JSON file per entity under data/v0.x/. Tasks and deliverables use slug `id` (not issue numbers). Sort tasks with optional `order`. Checklist work is modeled as `subtasks` steps.",
+	"$defs": {
+		"gitSource": {
+			"$ref": "https://beskid-lang.org/schemas/seed/git-source.schema.json"
+		},
+		"specRelation": {
+			"$ref": "https://beskid-lang.org/schemas/seed/spec-relation.schema.json"
+		},
+		"subtask": {
+			"$ref": "https://beskid-lang.org/schemas/seed/subtask.schema.json"
+		},
+		"versionCutoff": {
+			"$ref": "https://beskid-lang.org/schemas/seed/version-cutoff.schema.json"
+		},
+		"version": {
+			"$ref": "https://beskid-lang.org/schemas/seed/version.schema.json"
+		},
+		"workstream": {
+			"$ref": "https://beskid-lang.org/schemas/seed/workstream.schema.json"
+		},
+		"deliverable": {
+			"$ref": "https://beskid-lang.org/schemas/seed/deliverable.schema.json"
+		},
+		"task": {
+			"$ref": "https://beskid-lang.org/schemas/seed/task.schema.json"
+		}
+	}
+}

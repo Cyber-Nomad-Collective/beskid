@@ -1,0 +1,15 @@
+packages:
+  - "packages/*"
+  - "apps/*"
+
+catalogs:
+  tanstack-start:
+    "@tanstack/react-devtools": 0.10.9
+    "@tanstack/react-router": 1.170.28
+    "@tanstack/react-start": 1.168.45
+    "@tanstack/react-router-devtools": 1.167.1
+  react:
+    react: ^19.2.0
+    react-dom: ^19.2.0
+    "@types/react": ^19.2.0
+    "@types/react-dom": ^19.2.0

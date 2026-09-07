@@ -1,0 +1,21 @@
+{
+	"id": "hir-query-staged-analysis",
+	"title": "HirQuery-based staged analysis traversal",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "compiler-analysis",
+	"domain": "compiler",
+	"area": "analysis",
+	"completedAt": "2026-02-28",
+	"deliverableId": "v00-analysis-foundation",
+	"body": "Removed an unused traversal module and refactored **staged analysis** to traverse HIR via **`HirQuery`**—a single query API for parent/child/sibling navigation during rules.\n\n## Provenance\n- **Repository:** `pekan`\n- **Commit:** [`0de5fa0`](https://github.com/Cyber-Nomad-Collective/pekan/commit/0de5fa0)\n- **Subject:** Remove unused traversal module and refactor staged analysis to use HirQuery for HIR traversal\n- **Completed:** 2026-02-28\n\n## Catalog scope\n- **Delivery version:** v0.0 (Pecan prototype)\n- **Workstream:** `compiler-analysis`\n- **Deliverable:** `v00-analysis-foundation`\n\n## Relation\n`HirQuery` became the canonical traversal surface for semantic passes, replacing one-off walkers and aligning with the phase-indexed HIR model. Informed later Beskid analyze/normalize/type passes on one typed-HIR spine.",
+	"source": {
+		"repo": "pekan",
+		"commit": "0de5fa0",
+		"subject": "Remove unused traversal module and refactor staged analysis to use HirQuery for HIR traversal",
+		"url": "https://github.com/Cyber-Nomad-Collective/pekan/commit/0de5fa0"
+	},
+	"order": 21,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

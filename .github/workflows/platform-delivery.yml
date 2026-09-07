@@ -164,29 +164,6 @@ jobs:
     secrets:
       GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
-  image-platform-spec:
-    # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
-    # deploys to Coolify regardless of those pipelines' results; the gates still
-    # run in parallel as independent branch-protection checks.
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-    uses: ./.github/workflows/reusable-image.yml
-    with:
-      name: beskid-platform-spec
-      repository: ghcr.io/cyber-nomad-collective/beskid-platform-spec
-      context: .
-      dockerfile: site/platform-spec/Dockerfile
-      build-args: |
-        BESKID_RELEASE_CHANNEL=${{ github.event_name == 'workflow_dispatch' && inputs.unstable && 'unstable' || 'stable' }}
-      submodules: beskid_web_common
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
-    secrets:
-      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
-
   image-tracker:
     # Delivery is intentionally decoupled from the quality gates (openspec,
     # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
@@ -277,14 +254,13 @@ jobs:
   manifest:
     # A manifest is the promotion boundary. It must only exist when every
     # required validation and image lane from this run succeeded.
-    needs: [openspec, conformance, integration, security, shared-ui-nexus, image-site, image-auth, image-learn, image-platform-spec, image-tracker, image-nexus, image-pckg]
+    needs: [openspec, conformance, integration, security, shared-ui-nexus, image-site, image-auth, image-learn, image-tracker, image-nexus, image-pckg]
     if: >-
       ${{
         !cancelled() &&
         needs.image-site.result == 'success' &&
         needs.image-auth.result == 'success' &&
         needs.image-learn.result == 'success' &&
-        needs.image-platform-spec.result == 'success' &&
         needs.image-tracker.result == 'success' &&
         needs.image-nexus.result == 'success' &&
         needs.image-pckg.result == 'success' &&

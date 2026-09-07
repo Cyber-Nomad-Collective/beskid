@@ -1,0 +1,19 @@
+{
+	"id": "superrepo-compiler-submodule",
+	"title": "Restructure superrepo around compiler submodule",
+	"priority": "high",
+	"workstream": "compiler-foundation",
+	"domain": "tooling",
+	"completedAt": "2026-03-05",
+	"source": {
+		"repo": "beskid",
+		"commit": "6fae27a",
+		"subject": "Remove CI/CD pipeline and Cargo workspace; restructure repository to use compiler submodule",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/6fae27a"
+	},
+	"statusColumn": "Done",
+	"body": "Restructures the **beskid** superrepo to consume the compiler as a **git submodule**, removing the root Cargo workspace and in-tree CI that moved to `compiler`.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`6fae27a`](https://github.com/Cyber-Nomad-Collective/beskid/commit/6fae27a)\n- **Subject:** Remove CI/CD pipeline and Cargo workspace; restructure repository to use compiler submodule\n- **Completed:** 2026-03-05\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `compiler-foundation`\n\n## Relation\nComplements **compiler-initial-commit** on the same day (2026-03-05): superrepo layout follows standalone compiler repo creation.",
+	"order": 114,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

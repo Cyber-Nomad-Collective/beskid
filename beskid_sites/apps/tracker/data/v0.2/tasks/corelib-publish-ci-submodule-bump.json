@@ -1,0 +1,20 @@
+{
+	"id": "corelib-publish-ci-submodule-bump",
+	"title": "Bump compiler submodule for corelib publish CI",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"domain": "tooling",
+	"completedAt": "2026-05-20",
+	"milestoneId": "v02-ci-deploy-infra",
+	"source": {
+		"repo": "beskid",
+		"commit": "f793c45",
+		"subject": "chore(compiler): bump submodule for corelib publish CI",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/f793c45"
+	},
+	"body": "Bump submodule for corelib publish CI.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`f793c45`](https://github.com/Cyber-Nomad-Collective/beskid/commit/f793c45)\n- **Subject:** chore(compiler): bump submodule for corelib publish CI\n- **Completed:** 2026-05-20\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `ci-release`\n- **Deliverable:** `v02-ci-deploy-infra`\n- **Domain:** `tooling`\n\n## Relation\nContributes to deliverable **CI workflows and deploy infra** (`v02-ci-deploy-infra`).\n",
+	"order": 276,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

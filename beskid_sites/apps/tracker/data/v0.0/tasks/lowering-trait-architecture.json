@@ -1,0 +1,21 @@
+{
+	"id": "lowering-trait-architecture",
+	"title": "Trait-based CLIF lowering architecture roadmap",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "codegen-runtime",
+	"domain": "compiler",
+	"area": "codegen",
+	"completedAt": "2026-02-23",
+	"deliverableId": "v00-execution-jit-gc",
+	"body": "Authored a **trait-based lowering** design and node-by-node implementation roadmap for emitting **CLIF** from typed HIR—each HIR construct maps to a lowering trait implementation.\n\n## Provenance\n- **Repository:** `pekan`\n- **Commit:** [`7b35a52`](https://github.com/Cyber-Nomad-Collective/pekan/commit/7b35a52)\n- **Subject:** trait-based lowering architecture and node-by-node implementation roadmap\n- **Completed:** 2026-02-23\n\n## Catalog scope\n- **Delivery version:** v0.0 (Pecan prototype)\n- **Workstream:** `codegen-runtime`\n- **Deliverable:** `v00-execution-jit-gc`\n\n## Relation\nAvoided a monolithic lowering match that would not scale as Pecan’s HIR grew (attributes, lambdas, interpolation desugar, etc.). Informed later AOT codegen and CI smoke tests; aligns with Beskid’s direction of shared lowering entry points for analyze/build/run.",
+	"source": {
+		"repo": "pekan",
+		"commit": "7b35a52",
+		"subject": "trait-based lowering architecture and node-by-node implementation roadmap",
+		"url": "https://github.com/Cyber-Nomad-Collective/pekan/commit/7b35a52"
+	},
+	"order": 7,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

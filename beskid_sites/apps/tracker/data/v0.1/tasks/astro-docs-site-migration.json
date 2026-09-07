@@ -1,0 +1,18 @@
+{
+	"id": "astro-docs-site-migration",
+	"title": "Migrate documentation to Astro site",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"completedAt": "2026-03-07",
+	"source": {
+		"repo": "beskid",
+		"commit": "b1e0bc9",
+		"subject": "Remove documentation files; migrate to Astro-based documentation site",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/b1e0bc9"
+	},
+	"statusColumn": "Done",
+	"body": "Removes legacy in-repo markdown docs and migrates public documentation to the **Astro** site under `site/website`.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`b1e0bc9`](https://github.com/Cyber-Nomad-Collective/beskid/commit/b1e0bc9)\n- **Subject:** Remove documentation files; migrate to Astro-based documentation site\n- **Completed:** 2026-03-07\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `ci-release`\n\n## Relation\nDocs infrastructure prerequisite for landing/downloads and language book updates.",
+	"order": 116,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

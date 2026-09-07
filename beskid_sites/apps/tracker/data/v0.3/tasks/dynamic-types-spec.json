@@ -1,0 +1,18 @@
+{
+	"id": "dynamic-types-spec",
+	"title": "Promote dynamic-types spec and export FFI traceability",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "ffi-export",
+	"completedAt": "2026-05-24",
+	"source": {
+		"repo": "beskid",
+		"commit": "8cffb33",
+		"subject": "feat(v0.3): bump compiler, promote dynamic-types spec, export FFI traceability",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/8cffb33"
+	},
+	"body": "Superrepo commit promotes dynamic-types platform-spec material and ties export FFI traceability to the integrated compiler tip.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`8cffb33`](https://github.com/Cyber-Nomad-Collective/beskid/commit/8cffb33)\n- **Subject:** feat(v0.3): bump compiler, promote dynamic-types spec, export FFI traceability\n- **Completed:** 2026-05-24\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `ffi-export`\n\n## Relation\nLands in the v0.3 cutoff window (`f57377a`→`aaddd32`) under workstream `ffi-export`.",
+	"order": 311,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

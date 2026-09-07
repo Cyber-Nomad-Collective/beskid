@@ -1,0 +1,19 @@
+{
+	"id": "runtime-gc-spec-phase-handoff",
+	"title": "Runtime GC phase-B handoff evidence in execution platform-spec",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "stabilization",
+	"domain": "execution",
+	"completedAt": "2026-05-23",
+	"source": {
+		"repo": "beskid",
+		"commit": "ea73773",
+		"subject": "orch(beskid-v0-3): runtime phase B GC opt-in handoff",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/ea73773"
+	},
+	"body": "Orchestration handoff links runtime Phase B GC implementation to execution platform-spec phase evidence.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`ea73773`](https://github.com/Cyber-Nomad-Collective/beskid/commit/ea73773)\n- **Subject:** orch(beskid-v0-3): runtime phase B GC opt-in handoff\n- **Completed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `stabilization`\n- **Domain:** `execution`\n\n## Relation\nLands in the v0.3 cutoff window (`f57377a`→`aaddd32`) under workstream `stabilization`.",
+	"order": 354,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

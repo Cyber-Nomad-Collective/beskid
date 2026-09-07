@@ -1,0 +1,20 @@
+{
+	"id": "import-lib-cli",
+	"title": "beskid import lib CLI subcommand",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "compiler-mods",
+	"domain": "tooling",
+	"completedAt": "2026-05-23",
+	"milestoneId": "v03-merge-wave",
+	"source": {
+		"repo": "compiler",
+		"commit": "3896ded",
+		"subject": "feat(cli): add beskid import lib subcommand",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/3896ded"
+	},
+	"body": "CLI subcommand `beskid import lib` mutates project manifests to reference foreign libraries with validated metadata.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`3896ded`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/3896ded)\n- **Subject:** feat(cli): add beskid import lib subcommand\n- **Completed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `compiler-mods`\n- **Domain:** `tooling`\n- **Deliverable:** `v03-merge-wave`\n\n## Relation\nContributes to deliverable **v0.3 macro/runtime/ffi/tooling delivery** (`v03-merge-wave`).",
+	"order": 317,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

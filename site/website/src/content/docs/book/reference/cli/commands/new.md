@@ -3,7 +3,7 @@ title: "beskid new"
 description: "List, install, and instantiate Beskid project, workspace, and item templates."
 ---
 
-**`beskid new`** is the user entrypoint for template scaffolding. **`beskid pckg`** remains registry pack/upload only.
+**`beskid new`** is the user entrypoint for template scaffolding. Registry pack/upload workflows are under `beskid dev package registry`.
 
 Normative command taxonomy and edge cases: [beskid new (platform-spec)](/platform-spec/tooling/project-scaffolding/beskid-new/) and [contracts and edge cases](/platform-spec/tooling/project-scaffolding/beskid-new/contracts-and-edge-cases/).
 
@@ -23,7 +23,7 @@ User-oriented workflows: [Project scaffolding](/book/reference/projects/scaffold
 
 ## First-party short names
 
-When the registry is configured, these packages are resolved from pckg (not from the CLI binary):
+When the registry is configured, these packages are resolved from the package service:
 
 | Short name | Package id |
 | --- | --- |

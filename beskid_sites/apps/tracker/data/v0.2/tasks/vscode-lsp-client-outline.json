@@ -1,0 +1,20 @@
+{
+	"id": "vscode-lsp-client-outline",
+	"title": "VS Code LSP client, document outline, and status integration",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "editor-extension",
+	"domain": "tooling",
+	"completedAt": "2026-04-24",
+	"milestoneId": "v02-editor-extension",
+	"source": {
+		"repo": "beskid",
+		"commit": "264a3c0",
+		"subject": "chore: bump compiler and pckg submodules; VS Code extension runtime, LSP client, outline, status",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/264a3c0"
+	},
+	"body": "Bump compiler and pckg submodules; VS Code extension runtime, LSP client, outline, status.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`264a3c0`](https://github.com/Cyber-Nomad-Collective/beskid/commit/264a3c0)\n- **Subject:** chore: bump compiler and pckg submodules; VS Code extension runtime, LSP client, outline, status\n- **Completed:** 2026-04-24\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `editor-extension`\n- **Deliverable:** `v02-editor-extension`\n- **Domain:** `tooling`\n\n## Relation\nContributes to deliverable **VS Code extension & Open VSX** (`v02-editor-extension`).\n",
+	"order": 253,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

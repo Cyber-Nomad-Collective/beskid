@@ -1,0 +1,19 @@
+{
+	"id": "platform-spec-pipeline-guides",
+	"title": "Platform-spec build-pipeline, conformance, and guide sync",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "platform-spec",
+	"domain": "compiler",
+	"completedAt": "2026-05-11",
+	"source": {
+		"repo": "beskid",
+		"commit": "5b0f4e3",
+		"subject": "Superrepo: bump compiler submodule; platform-spec and guides; AGENTS memory.",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/5b0f4e3"
+	},
+	"body": "Superrepo: bump compiler submodule; platform-spec and guides; AGENTS memory.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`5b0f4e3`](https://github.com/Cyber-Nomad-Collective/beskid/commit/5b0f4e3)\n- **Subject:** Superrepo: bump compiler submodule; platform-spec and guides; AGENTS memory.\n- **Completed:** 2026-05-11\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `platform-spec`\n- **Domain:** `compiler`\n\n## Relation\nSupports **v0.2 (Analysis, packages, and platform spec)** on workstream `platform-spec`.\n",
+	"order": 237,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

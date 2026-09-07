@@ -1,0 +1,8 @@
+@import 'tailwindcss';
+
+@source "../node_modules/@cyber-nomad-collective/beskid-ui-react/src";
+@source "../node_modules/@cyber-nomad-collective/beskid-shell-core/src";
+@source inline("rounded-4xl");
+
+@import '@cyber-nomad-collective/beskid-ui-react/styles/shadcn-entry.css';
+@import '@cyber-nomad-collective/beskid-ui-react/styles/hub.css';

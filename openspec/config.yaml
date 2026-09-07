@@ -5,8 +5,8 @@ context: |
   lives in openspec/specs. The Beskid Book, READMEs, generated site content, and
   implementation comments are informative and MUST link to OpenSpec rather than
   restating normative rules.
-  Public standard routes remain under /platform-spec/ and are resolved through
-  openspec/catalog.json so legacy links remain stable during migration.
+  Public standard routes use /docs/standard/. Legacy /platform-spec/ paths
+  redirect to that entry point so readers can still find the standard.
   Observable language, compiler, runtime, core-library, tooling, and conformance
   changes require an OpenSpec delta in the same change set.
   Use Bun for sites, Rust workspace commands from compiler/, GitHub Actions for

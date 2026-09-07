@@ -1,0 +1,18 @@
+{
+	"id": "corelib-quality-pckg-publish-main",
+	"title": "corelib-quality CI green and pckg publish on main",
+	"statusColumn": "Backlog",
+	"priority": "high",
+	"workstream": "compiler-corelib",
+	"deliverableId": "v04-corelib-complete",
+	"source": {
+		"repo": "beskid",
+		"commit": "c8e5fc4",
+		"subject": "fix: add references/bsharp to .gitmodules with update=none",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/c8e5fc4"
+	},
+	"body": "corelib-quality CI green and pckg publish on main\n\n## Scope\n\nSuperrepo compiler CI publishes corelib to pckg via `BESKID_PCKG_KEY` with tier evidence; corelib-quality workflow blocks regressions on submodule bumps.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`c8e5fc4`](https://github.com/Cyber-Nomad-Collective/beskid/commit/c8e5fc4)\n- **Subject:** fix: add references/bsharp to .gitmodules with update=none\n- **Catalog tip:** [`c8e5fc4`](https://github.com/Cyber-Nomad-Collective/beskid/commit/c8e5fc4) (v0.4 cutoff 2026-05-27)\n- **Status:** Backlog\n\n## Catalog scope\n- **Delivery version:** v0.4 (Platform services, auth, and delivery tooling)\n- **Workstream:** `compiler-corelib`\n- **Deliverable:** `v04-corelib-complete`",
+	"order": 402,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

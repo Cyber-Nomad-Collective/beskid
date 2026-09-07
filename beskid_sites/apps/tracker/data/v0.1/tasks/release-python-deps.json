@@ -1,0 +1,18 @@
+{
+	"id": "release-python-deps",
+	"title": "Update release pipeline Python dependencies",
+	"priority": "low",
+	"workstream": "ci-release",
+	"completedAt": "2026-04-22",
+	"source": {
+		"repo": "compiler",
+		"commit": "7ca73d0",
+		"subject": "ci: update release pipeline Python dependencies",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/7ca73d0"
+	},
+	"statusColumn": "Done",
+	"body": "Updates **Python dependencies** used by the release pipeline Nox sessions.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`7ca73d0`](https://github.com/Cyber-Nomad-Collective/compiler/commit/7ca73d0)\n- **Subject:** ci: update release pipeline Python dependencies\n- **Completed:** 2026-04-22\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `ci-release`\n\n## Relation\nMaintenance for CLI release automation.",
+	"order": 135,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

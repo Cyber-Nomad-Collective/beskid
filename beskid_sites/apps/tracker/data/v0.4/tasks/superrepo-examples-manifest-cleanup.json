@@ -1,0 +1,19 @@
+{
+	"id": "superrepo-examples-manifest-cleanup",
+	"title": "Remove obsolete examples/ and XML manifest scripts from superrepo root",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "repo-cicd",
+	"completedAt": "2026-05-27",
+	"deliverableId": "v04-cicd-realized",
+	"source": {
+		"repo": "beskid",
+		"commit": "7aec056",
+		"subject": "remove bsharp",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/7aec056"
+	},
+	"body": "Drops root `examples/*.bd`, legacy `manifests/*.xml` variants, `scripts/setup-environment.sh`, and `install-repo-tool.sh` from the default contributor path in favor of repo manifest + lazygit workflows (`510f302`, `7aec056`).\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`7aec056`](https://github.com/Cyber-Nomad-Collective/beskid/commit/7aec056)\n- **Subject:** remove bsharp\n- **Completed:** 2026-05-27\n\n## Catalog scope\n- **Delivery version:** v0.4 (Platform services, auth, and delivery tooling)\n- **Workstream:** `repo-cicd`\n- **Deliverable:** `v04-cicd-realized`\n\n## What shipped\n\nDrops root `examples/*.bd`, legacy `manifests/*.xml` variants, `scripts/setup-environment.sh`, and `install-repo-tool.sh` from the default contributor path in favor of repo manifest + lazygit workflows (`510f302`, `7aec056`).",
+	"order": 396,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

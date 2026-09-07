@@ -1,9 +1,10 @@
 ---
-title: "beskid doc"
+title: "beskid dev syntax doc"
 description: "Emit API documentation (api.json v4 + index.md) for a resolved Beskid program."
 ---
 
 Resolves a Beskid entrypoint (optional file path plus project flags), parses and resolves the program (including multi-file assembly when `--project` is used), and writes API documentation artifacts to disk.
+This command is available as `beskid dev syntax doc`.
 
 ## Arguments
 
@@ -42,12 +43,12 @@ Human-oriented index page generated alongside `api.json` for browsing in reposit
 
 ## Layout in projects
 
-When run as part of packaging, artifacts are written under **`<sourceRoot>/.beskid/docs/`** (for example `.beskid/docs/api.json`). The `beskid pckg pack` command copies those paths into the archive and records a `documentation` pointer in the embedded `package.json` so registries can open `api.json` without path heuristics.
+When run as part of packaging, artifacts are written under **`<sourceRoot>/.beskid/docs/`** (for example `.beskid/docs/api.json`). The `beskid dev package registry pack` command copies those paths into the archive and records a `documentation` pointer in the embedded `package.json` so registries can open `api.json` without path heuristics.
 
 ## Example
 
 ```bash
-beskid doc --project path/to/Project.proj --out doc-out
+beskid dev syntax doc --project path/to/Project.proj --out doc-out
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

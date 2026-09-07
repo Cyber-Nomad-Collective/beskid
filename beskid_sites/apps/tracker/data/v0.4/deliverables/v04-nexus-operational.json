@@ -1,0 +1,7 @@
+{
+	"id": "v04-nexus-operational",
+	"title": "beskid_nexus working in production",
+	"description": "Deployable nexus stack: gitnexus serve on 8452, runtime catalog/OAuth/analyze, green CI for Ladybug native and Docker, hub registration, and Coolify volume for GITNEXUS_HOME.\n\n## Provenance\n- **Catalog cutoff:** [`aaddd32`](https://github.com/Cyber-Nomad-Collective/beskid/commit/aaddd32) → [`ee88edf`](https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf) on **beskid** (2026-05-26 – 2026-06-07)\n- **Anchor commit:** [`72698c7`](https://github.com/Cyber-Nomad-Collective/beskid/commit/72698c7)\n\n## Catalog scope\n- **Delivery version:** v0.4 (Platform services, auth, and delivery tooling)\n- **Status:** In progress — submodule, green CI, and hub entry landed; production gitnexus serve smoke backlog\n- **Workstreams:** `nexus`",
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

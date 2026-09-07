@@ -1,0 +1,29 @@
+{
+	"id": "file-scoped-modules",
+	"title": "File-scoped module rules and resolver compatibility",
+	"priority": "high",
+	"workstream": "compiler-foundation",
+	"domain": "language-meta",
+	"area": "modules",
+	"completedAt": "2026-04-22",
+	"specRelations": [
+		{
+			"path": "/platform-spec/language-meta/modules/file-scoped-modules",
+			"title": "File-scoped modules",
+			"level": "feature",
+			"relation": "implements",
+			"required": true
+		}
+	],
+	"source": {
+		"repo": "compiler",
+		"commit": "2e4f445",
+		"subject": "feat: add file-scoped module rules and diagnostics",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/2e4f445"
+	},
+	"statusColumn": "Done",
+	"body": "Adds **file-scoped module** grammar rules and diagnostics—the declaration model where a `.bd` file can imply module scope without explicit `module` blocks.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`2e4f445`](https://github.com/Cyber-Nomad-Collective/compiler/commit/2e4f445)\n- **Subject:** feat: add file-scoped module rules and diagnostics\n- **Completed:** 2026-04-22\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `compiler-foundation`\n\n## Relation\nFollowed by **file-scoped-analysis-hardening**, **module-declaration-compat**, and site docs tasks through end of v0.1.",
+	"order": 107,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

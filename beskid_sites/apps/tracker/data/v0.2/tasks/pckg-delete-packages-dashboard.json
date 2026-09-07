@@ -1,0 +1,19 @@
+{
+	"id": "pckg-delete-packages-dashboard",
+	"title": "Delete packages, docs UI, and dashboard grids",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "pckg-registry",
+	"domain": "tooling",
+	"completedAt": "2026-05-09",
+	"source": {
+		"repo": "pckg",
+		"commit": "d34d854",
+		"subject": "feat(server): delete packages, docs UI, and dashboard grids",
+		"url": "https://github.com/Cyber-Nomad-Collective/pckg/commit/d34d854"
+	},
+	"body": "Delete packages, docs UI, and dashboard grids.\n\n## Provenance\n- **Repository:** `pckg`\n- **Commit:** [`d34d854`](https://github.com/Cyber-Nomad-Collective/pckg/commit/d34d854)\n- **Subject:** feat(server): delete packages, docs UI, and dashboard grids\n- **Completed:** 2026-05-09\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `pckg-registry`\n- **Domain:** `tooling`\n\n## Relation\nSupports **v0.2 (Analysis, packages, and platform spec)** on workstream `pckg-registry`.\n",
+	"order": 246,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

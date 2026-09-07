@@ -1,0 +1,19 @@
+{
+	"id": "ci-formatter-mdx-build",
+	"title": "Formatter MDX build and v0.3 CI handoff fixes",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"completedAt": "2026-05-23",
+	"milestoneId": "v03-post-merge-ci",
+	"source": {
+		"repo": "beskid",
+		"commit": "f030910",
+		"subject": "fix(ci): formatter MDX build and v0.3 merge progress handoff",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/f030910"
+	},
+	"body": "CI builds formatter-related platform-spec MDX without MDX parse failures and records v0.3 merge-progress handoff notes for orchestration.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`f030910`](https://github.com/Cyber-Nomad-Collective/beskid/commit/f030910)\n- **Subject:** fix(ci): formatter MDX build and v0.3 merge progress handoff\n- **Completed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `ci-release`\n- **Deliverable:** `v03-post-merge-ci`\n\n## Relation\nContributes to deliverable **CI and integration hardening** (`v03-post-merge-ci`).",
+	"order": 333,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

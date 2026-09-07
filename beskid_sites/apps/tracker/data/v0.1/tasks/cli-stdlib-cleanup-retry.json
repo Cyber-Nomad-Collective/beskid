@@ -1,0 +1,19 @@
+{
+	"id": "cli-stdlib-cleanup-retry",
+	"title": "Retry stdlib directory cleanup during CLI provisioning",
+	"priority": "medium",
+	"workstream": "corelib-packaging",
+	"domain": "tooling",
+	"completedAt": "2026-04-21",
+	"source": {
+		"repo": "compiler",
+		"commit": "0d88e26",
+		"subject": "cli: retry stdlib directory cleanup during provisioning",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/0d88e26"
+	},
+	"statusColumn": "Done",
+	"body": "Retries **stdlib directory cleanup** during CLI provisioning when transient filesystem races caused flakes.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`0d88e26`](https://github.com/Cyber-Nomad-Collective/compiler/commit/0d88e26)\n- **Subject:** cli: retry stdlib directory cleanup during provisioning\n- **Completed:** 2026-04-21\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `corelib-packaging`\n\n## Relation\nOperational hardening for **corelib-packaging** provisioning.",
+	"order": 126,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

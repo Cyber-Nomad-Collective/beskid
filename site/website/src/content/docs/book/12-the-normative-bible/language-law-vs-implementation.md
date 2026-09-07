@@ -25,7 +25,7 @@ Implementation domains **defer** with `relatedTopics`—they do not redefine nor
 - **Lowering:** [Fiber scheduler and stacks](/platform-spec/execution/runtime/fiber-scheduler-and-stacks/)
 - **API:** [Concurrency package](/platform-spec/core-library/concurrency/concurrency-package/)
 
-## Example: `beskid test`
+## Example: `beskid dev build test`
 
 - **Law:** [Testing](/platform-spec/language-meta/contracts-and-effects/testing/)
 - **CLI:** [Build / analyze / run contract](/platform-spec/tooling/cli/build-analyze-run-contract/)

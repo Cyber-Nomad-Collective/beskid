@@ -1,0 +1,99 @@
+# Beskid shell-template — local-dev compose.
+#
+# Runs Postgres (shared storage), Authelia (GitHub identity provider + OIDC
+# provider), and the shell-template app as an OIDC client of Authelia.
+# Secrets come from environment variables (copy .env.example to .env);
+# nothing is hardcoded.
+#
+# Usage:
+#   cp .env.example .env   # fill in real secrets
+#   docker compose up --build
+#
+# Auth flow: the app redirects unauthenticated users to Authelia's OIDC
+# authorization endpoint; Authelia authenticates them with GitHub, redirects
+# back to /api/auth/callback, the app exchanges the code for an ID token,
+# verifies it, and sets a signed session cookie. See docs/authelia.md.
+# In mock mode (SHELL_AUTH_MODE=mock) the app mints a fake user and Authelia
+# is optional.
+
+name: beskid-shell-template-dev
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-beskid}
+      POSTGRES_USER: ${POSTGRES_USER:-beskid}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-beskid} -d ${POSTGRES_DB:-beskid}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  authelia:
+    image: authelia/authelia:latest
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AUTHELIA_STORAGE_POSTGRES_HOST: postgres
+      AUTHELIA_STORAGE_POSTGRES_DATABASE: ${AUTHELIA_POSTGRES_DB:-authelia}
+      AUTHELIA_STORAGE_POSTGRES_USERNAME: ${POSTGRES_USER:-beskid}
+      AUTHELIA_STORAGE_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      AUTHELIA_SESSION_SECRET: ${AUTHELIA_SESSION_SECRET:?set AUTHELIA_SESSION_SECRET}
+      AUTHELIA_STORAGE_ENCRYPTION_KEY: ${AUTHELIA_STORAGE_ENCRYPTION_KEY:?set AUTHELIA_STORAGE_ENCRYPTION_KEY}
+      AUTHELIA_IDENTITY_PROVIDERS_OID2_HMAC_SECRET: ${AUTHELIA_OIDC_HMAC_SECRET:-}
+      AUTHELIA_IDENTITY_PROVIDERS_OID2_JWKS_SECRET: ${AUTHELIA_OIDC_JWKS_SECRET:-}
+      # GitHub identity provider — reuses the EXISTING Beskid GitHub OAuth
+      # App (the one site/auth used). A human admin must provide the secret
+      # value via env; nothing is hardcoded.
+      AUTHELIA_AUTHENTICATION_BACKEND_OAUTH2_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      AUTHELIA_AUTHENTICATION_BACKEND_OAUTH2_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      # OIDC client for the shell-template app (Authelia as OIDC provider).
+      AUTHELIA_IDENTITY_PROVIDERS_OID2_CLIENTS_0_CLIENT_ID: ${SHELL_TEMPLATE_OIDC_CLIENT_ID:-shell-template}
+      AUTHELIA_IDENTITY_PROVIDERS_OID2_CLIENTS_0_CLIENT_SECRET: ${SHELL_TEMPLATE_OIDC_CLIENT_SECRET:-}
+    volumes:
+      - ./authelia:/config:ro
+      - authelia_data:/var/lib/authelia
+    ports:
+      - "9091:9091"
+    command: ["authelia", "--config", "/config/configuration.yml"]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:9091/api/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  shell-template:
+    build:
+      context: ../..
+      dockerfile: apps/shell-template/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      authelia:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "8499"
+      SHELL_AUTH_MODE: ${SHELL_AUTH_MODE:-authelia}
+      # Authelia OIDC issuer — the app discovers /.well-known/openid-configuration here.
+      AUTHELIA_OIDC_ISSUER: ${AUTHELIA_OIDC_ISSUER:-http://localhost:9091}
+      SHELL_TEMPLATE_OIDC_CLIENT_ID: ${SHELL_TEMPLATE_OIDC_CLIENT_ID:-shell-template}
+      SHELL_TEMPLATE_OIDC_CLIENT_SECRET: ${SHELL_TEMPLATE_OIDC_CLIENT_SECRET:-}
+      # Session cookie signing (HS256). Required in production.
+      SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET}
+    ports:
+      - "8499:8499"
+
+volumes:
+  pg_data:
+  authelia_data:

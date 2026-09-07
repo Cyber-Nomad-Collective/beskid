@@ -1,0 +1,53 @@
+/**
+ * Beskid Nexus chrome — aligns with beskid_tracker / docs site tokens.
+ */
+@import '#beskid-theme-css';
+
+:root {
+	--void: var(--sl-color-black, #0a0a0f);
+	--surface: color-mix(in srgb, var(--sl-color-gray-6, #1e1e2e) 40%, transparent);
+	--elevated: var(--card);
+}
+
+.beskid-nexus-header {
+	display: flex;
+	height: var(--beskid-topbar-height, 3rem);
+	flex-shrink: 0;
+	align-items: center;
+	gap: 0.5rem;
+	border-bottom: 1px solid var(--border);
+	padding-inline: 1rem;
+	background: var(--background);
+	color: var(--foreground);
+}
+
+.beskid-nexus-header__brand {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.beskid-nexus-header__kicker {
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	font-weight: 700;
+	font-size: 0.69rem;
+	color: var(--platform-spec-tab-text, var(--primary));
+}
+
+.beskid-nexus-header__title {
+	font-weight: 600;
+}
+
+.beskid-nexus-header__actions {
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.beskid-nexus-header__stats {
+	font-size: 0.75rem;
+	color: var(--muted-foreground, var(--sl-color-gray-3));
+}

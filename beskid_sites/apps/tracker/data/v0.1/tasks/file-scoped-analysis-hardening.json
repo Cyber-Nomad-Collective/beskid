@@ -1,0 +1,19 @@
+{
+	"id": "file-scoped-analysis-hardening",
+	"title": "Harden file-scoped module analysis and diagnostics upload",
+	"priority": "medium",
+	"workstream": "compiler-foundation",
+	"domain": "compiler",
+	"completedAt": "2026-04-22",
+	"source": {
+		"repo": "compiler",
+		"commit": "1d12ee6",
+		"subject": "fix: harden file-scoped module analysis and upload diagnostics",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/1d12ee6"
+	},
+	"statusColumn": "Done",
+	"body": "Hardens file-scoped module **analysis** paths and ensures diagnostics upload correctly in CI.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`1d12ee6`](https://github.com/Cyber-Nomad-Collective/compiler/commit/1d12ee6)\n- **Subject:** fix: harden file-scoped module analysis and upload diagnostics\n- **Completed:** 2026-04-22\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `compiler-foundation`\n\n## Relation\nCloses the analysis loop started by **file-scoped-modules**.",
+	"order": 131,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

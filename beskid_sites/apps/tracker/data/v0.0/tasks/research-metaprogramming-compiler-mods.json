@@ -1,0 +1,21 @@
+{
+	"id": "research-metaprogramming-compiler-mods",
+	"title": "Research stage-based metaprogramming for compiler mods",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "metaprogramming-mods",
+	"domain": "compiler",
+	"area": "mods",
+	"completedAt": "2026-02-23",
+	"deliverableId": "v00-tooling-research",
+	"body": "Researched **stage-8** metaprogramming for **compiler mods**: how generators, analyzers, and rewriters attach to pipeline stages without language-level `meta` blocks (Rust host owns composition).\n\n## Provenance\n- **Repository:** `pekan`\n- **Commit:** [`33eaa35`](https://github.com/Cyber-Nomad-Collective/pekan/commit/33eaa35)\n- **Subject:** Update semantic analysis docs with current diagnostic codes, rule integration status, and type system progress\n- **Completed:** 2026-02-23\n\n## Catalog scope\n- **Delivery version:** v0.0 (Pecan prototype)\n- **Workstream:** `metaprogramming-mods`\n- **Deliverable:** `v00-tooling-research`\n\n## Relation\nMods integrate at defined compiler stages; language `meta` grammar was **not** revived. Documented alongside semantic-analysis progress in the same research window as staged parser rules.",
+	"source": {
+		"repo": "pekan",
+		"commit": "33eaa35",
+		"subject": "Update semantic analysis docs with current diagnostic codes, rule integration status, and type system progress",
+		"url": "https://github.com/Cyber-Nomad-Collective/pekan/commit/33eaa35"
+	},
+	"order": 26,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

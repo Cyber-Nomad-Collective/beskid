@@ -1,0 +1,8 @@
+{
+	"id": "v03-superrepo-orchestration",
+	"title": "v0.3 integration traceability",
+	"description": "Integration traceability for v0.3 deliverables via pinned SHAs and repository-level verification context.",
+	"closedOn": "2026-05-23",
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

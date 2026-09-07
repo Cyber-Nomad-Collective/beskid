@@ -1,0 +1,19 @@
+{
+	"id": "lazygit-recursive-commit-push",
+	"title": "lazygit config and recursive git commit/push script for superrepo",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "repo-cicd",
+	"completedAt": "2026-05-26",
+	"deliverableId": "v04-cicd-realized",
+	"source": {
+		"repo": "beskid",
+		"commit": "4fde6e0",
+		"subject": "v0.4 changes",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/4fde6e0"
+	},
+	"body": "Adds `scripts/git-commit-push-recursive.sh` and `scripts/lazygit/config.yml` (documented in lazygit README) so maintainers can commit/push superrepo and submodules from lazygit `P` without ad-hoc shell loops.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`4fde6e0`](https://github.com/Cyber-Nomad-Collective/beskid/commit/4fde6e0)\n- **Subject:** v0.4 changes\n- **Completed:** 2026-05-26\n\n## Catalog scope\n- **Delivery version:** v0.4 (Platform services, auth, and delivery tooling)\n- **Workstream:** `repo-cicd`\n- **Deliverable:** `v04-cicd-realized`\n\n## What shipped\n\nAdds `scripts/git-commit-push-recursive.sh` and `scripts/lazygit/config.yml` (documented in lazygit README) so maintainers can commit/push superrepo and submodules from lazygit `P` without ad-hoc shell loops.",
+	"order": 382,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

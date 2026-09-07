@@ -1,0 +1,21 @@
+{
+	"id": "ci-runtime-ci-on-submodule-bump",
+	"title": "Trigger Runtime CI on compiler submodule pointer bumps",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"domain": "tooling",
+	"completedAt": "2026-05-23",
+	"specRelations": [],
+	"source": {
+		"repo": "beskid",
+		"commit": "c0ac8fd",
+		"subject": "fix(ci): trigger Runtime CI on compiler submodule pointer bumps",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/c0ac8fd"
+	},
+	"milestoneId": "v03-post-merge-ci",
+	"body": "GitHub Actions triggers Runtime CI when the superrepo compiler submodule SHA changes, catching runtime-only regressions after integration merges.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`c0ac8fd`](https://github.com/Cyber-Nomad-Collective/beskid/commit/c0ac8fd)\n- **Subject:** fix(ci): trigger Runtime CI on compiler submodule pointer bumps\n- **Completed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `ci-release`\n- **Domain:** `tooling`\n- **Deliverable:** `v03-post-merge-ci`\n\n## Relation\nContributes to deliverable **CI and integration hardening** (`v03-post-merge-ci`).",
+	"order": 363,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

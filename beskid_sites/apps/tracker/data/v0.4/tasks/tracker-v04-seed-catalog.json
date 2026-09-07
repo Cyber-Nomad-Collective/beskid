@@ -1,0 +1,19 @@
+{
+	"id": "tracker-v04-seed-catalog",
+	"title": "v0.4 roadmap seed catalog (version, workstreams, deliverables, tasks)",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "tracker-implementation",
+	"completedAt": "2026-06-07",
+	"deliverableId": "v04-tracker-ship",
+	"source": {
+		"repo": "beskid",
+		"commit": "ee88edf",
+		"subject": "BSOL Stability Pass",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf"
+	},
+	"body": "Hand-maintained `data/v0.4/` seed JSON: seven workstreams, six deliverables, and task provenance through 2026-06-07. Import via Settings → Import seed JSON into tracker SQLite.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`ee88edf`](https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf)\n- **Completed:** 2026-06-07\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `tracker-implementation`\n- **Deliverable:** `v04-tracker-ship`",
+	"order": 399,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

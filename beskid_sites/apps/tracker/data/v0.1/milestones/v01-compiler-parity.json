@@ -1,0 +1,8 @@
+{
+	"id": "v01-compiler-parity",
+	"title": "Compiler syntax and analysis baseline",
+	"description": "Compiler bootstrap, AOT path, module syntax semantics, and early analysis/graph-order stability landed for v0.1.",
+	"closedOn": "2026-04-09",
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

@@ -1,0 +1,20 @@
+{
+	"id": "composition-e2e-suites",
+	"title": "Composition runtime container and lowering e2e suites",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "concurrency-runtime",
+	"domain": "execution",
+	"completedAt": "2026-05-23",
+	"milestoneId": "v03-merge-wave",
+	"source": {
+		"repo": "compiler",
+		"commit": "5b65195",
+		"subject": "test(composition): runtime container + lowering + host e2e suites",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/5b65195"
+	},
+	"body": "End-to-end tests cover composition runtime container wiring, lowering, and host integration for `launch`/`with` concurrency forms.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`5b65195`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/5b65195)\n- **Subject:** test(composition): runtime container + lowering + host e2e suites\n- **Completed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `concurrency-runtime`\n- **Domain:** `execution`\n- **Deliverable:** `v03-merge-wave`\n\n## Relation\nContributes to deliverable **v0.3 macro/runtime/ffi/tooling delivery** (`v03-merge-wave`).",
+	"order": 327,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

@@ -32,6 +32,10 @@ Tracker integration in which GitHub Issues represents public bugs and their supp
 
 An OpenSpec unit stored at `openspec/specs/<capability>/spec.md`. During migration, Beskid feature hubs become feature capabilities while domains and areas become taxonomy/governance capabilities.
 
+## Clankers
+
+Small automated helpers that perform bounded, checked work for Beskid. The term describes the project operating model. It is not a language feature or a source of technical authority.
+
 ## Draft Context
 
 A revision-pinned, ordered set of Platform Spec document operations authored in the
@@ -79,7 +83,7 @@ The exhaustive generated rule set that consumes typed AST shape plus AST semanti
 
 ## Legacy alias
 
-A stable `/platform-spec/**` path mapped through `openspec/catalog.json` to a canonical capability or requirement, preserving existing Book, Tracker, Nexus, and external links.
+A former `/platform-spec/**` path that redirects to `/docs/standard/`, preserving access to the Beskid standard while readers update saved links.
 
 ## Managed object allocation
 
@@ -100,9 +104,9 @@ while keeping native SQLite out of browser bundles.
 
 A named OpenSpec requirement using SHALL or MUST and one or more testable scenarios. It defines behavior required for Beskid conformance.
 
-## Platform specification
+## Platform specification (retired)
 
-The public reader and service that renders the Beskid standard. It is a presentation and integration surface; `openspec/specs` is its source of authority.
+The former public reader and service for the Beskid standard. Beskid Docs now provides the public entry point at `/docs/standard/`; `openspec/specs` remains the normative source.
 
 ## Platform Spec document identity
 

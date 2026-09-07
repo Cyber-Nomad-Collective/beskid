@@ -1,0 +1,7 @@
+{
+	"slug": "repo-cicd",
+	"title": "Repo & CI/CD cleanup",
+	"summary": "Superrepo manifests, recursive lazygit commit/push, treesitter submodule, Bun 1.3.14 lock alignment, setup-beskid-web composite action, and removal of obsolete examples/manifest scripts.",
+	"order": 4,
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

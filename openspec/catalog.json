@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "cc7ccaa21b9641e6a2a7f13015317e1e26437d951a79019436b6b799a56f5dda",
+  "revision": "8ce3ac4a1a6e7ecfc72c4f4b7b633a0fb7d043b4a70a534cee4d96338f75f094",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -11,7 +11,7 @@
     "normativeSources": 304,
     "provisionalCapabilities": 52,
     "legacyArtifacts": 3189,
-    "informativeDocuments": 204,
+    "informativeDocuments": 195,
     "documentsWithNormativeKeywords": 10,
     "specDocuments": 189
   },
@@ -39082,7 +39082,7 @@
       "path": "AGENTS.md",
       "title": "Beskid — Toolchain & Stack",
       "authority": "informative",
-      "sourceHash": "3d395ec88b572a785d98ecbf558ca6c14b0d0bbdb0ffdf7d01f29c09f3195ff4",
+      "sourceHash": "70af920704309d769a96ec7b764abee453587df8e383dff524203b126afc45e7",
       "standardLinks": [],
       "containsNormativeKeywords": true,
       "disposition": "informative-by-policy"
@@ -39091,7 +39091,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "873fc97aee18a92e95b5d85dbe195b989f406dfa5a3400ed3bf114f3dee83647",
+      "sourceHash": "5cc09b0caf1b7cca91833ca2d1a6ec1aa766072413afc8124c7bb574d18b482c",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -39102,7 +39102,7 @@
       "path": "GUIDE.md",
       "title": "Beskid project guide",
       "authority": "informative",
-      "sourceHash": "e6869c73d06879fefce570169bd21b715327cd673d165d858b1592abc6ab9fcd",
+      "sourceHash": "58b57c2739d21358783629ae92b0d6be65d1edbac98cf30b6740c8ba0713cd10",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -39113,7 +39113,7 @@
       "path": "README.md",
       "title": "Beskid Superrepo",
       "authority": "informative",
-      "sourceHash": "a10d0176dcec245b247fc6ef1ab847b02f7beaff88a3e15691c89a6c81d19627",
+      "sourceHash": "184bd7d8f8505e57efc7fa3509bb9d722e7b7f9f431d58bfdb3341bb25563594",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/README.md"
@@ -39333,7 +39333,7 @@
       "path": "site/website/src/content/docs/book/01-it-works-on-my-machine/first-smoke-test.md",
       "title": "First smoke test",
       "authority": "informative",
-      "sourceHash": "fd27d0cf9b77ab59183728f5befca40174a6eedd59105874bd0b51fa7421034c",
+      "sourceHash": "e33449a51859ee3593773c04680583669ef3327b830f60694bbd43c632560d34",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39371,7 +39371,7 @@
       "path": "site/website/src/content/docs/book/02-path-not-found-tooling-anyway/cli-tour.md",
       "title": "CLI tour",
       "authority": "informative",
-      "sourceHash": "ac7dcb1638dd324bca5cffbb51fa2ccaf8fd7b9c8b520f7253849cb3fa5db9fe",
+      "sourceHash": "640b7cc597904435308fbca12dc9a969cc249fefb8a89d41dd8a34b8dd983b09",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39380,7 +39380,7 @@
       "path": "site/website/src/content/docs/book/02-path-not-found-tooling-anyway/file-types-and-discovery.md",
       "title": "File types and discovery",
       "authority": "informative",
-      "sourceHash": "0b183c76cc479393c8c9af1f9c36559521231e5eae43fa2d480cb799afafd218",
+      "sourceHash": "c5d4009b813b68d87da0d116fa04599ebe4ec7a3e3f3f1a2bf50b49abb08dc45",
       "standardLinks": [
         "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
         "/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/"
@@ -39487,7 +39487,7 @@
       "path": "site/website/src/content/docs/book/03-project-proj-or-it-didnt-happen/targets-and-outputs.md",
       "title": "Targets and outputs",
       "authority": "informative",
-      "sourceHash": "6194d180d265e0723f70b49888e66bad5bb61b8cd444b8c0c543a415cc270b54",
+      "sourceHash": "79f43d1fc1fd93a6a76d2550a2afb85b5c995c761d861131d05055ea659f2b2c",
       "standardLinks": [
         "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/"
       ],
@@ -39498,7 +39498,7 @@
       "path": "site/website/src/content/docs/book/03-project-proj-or-it-didnt-happen/tree-and-resolution.md",
       "title": "Tree and resolution",
       "authority": "informative",
-      "sourceHash": "37a7a466b1f520cdb92b503e3b72aa02678ac57d11d42d2f7760fb89bb2e175c",
+      "sourceHash": "596bcf07fcc6c2b2bc5cdbd8e6be0dbcc7024c6072e331f63c4602d84c7da53f",
       "standardLinks": [
         "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/"
       ],
@@ -39509,7 +39509,7 @@
       "path": "site/website/src/content/docs/book/04-where-does-this-file-go/compilation-units.md",
       "title": "Compilation units",
       "authority": "informative",
-      "sourceHash": "848ab22fab0a484a951c18fb3ce72414fb4121ea21ee7bc0756f51c8aa8967cd",
+      "sourceHash": "cf335bc15c0a327314aa5b9d75b8ab60fb9f275793f690bd6d8fc0f489c35117",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -39518,7 +39518,7 @@
       "path": "site/website/src/content/docs/book/04-where-does-this-file-go/corelib-layout.md",
       "title": "Corelib layout",
       "authority": "informative",
-      "sourceHash": "6b8e9a86c62e0109cf04637f15242ca4e689e425ce6eb07325380bc0bd57ee99",
+      "sourceHash": "e495ed2c925d8ee640f6fe507ec078317ab264a0f5ab0f285d983bd3ace06cb4",
       "standardLinks": [
         "/platform-spec/core-library/",
         "/platform-spec/language-meta/type-system/types/"
@@ -39594,7 +39594,7 @@
       "path": "site/website/src/content/docs/book/05-names-nobody-agreed-on/name-resolution.md",
       "title": "Name resolution",
       "authority": "informative",
-      "sourceHash": "942f20e8c26e8cbe580b063adbae9ecad8878b38325d87f62d0a8171cb1186c0",
+      "sourceHash": "1dfe095c7b086250fa8859e3c6051ae7815aea13f85103229bdfcba6aa3826f2",
       "standardLinks": [
         "/platform-spec/language-meta/program-structure/name-resolution/"
       ],
@@ -39663,7 +39663,7 @@
       "path": "site/website/src/content/docs/book/07-compiler-is-not-your-therapist/control-flow.md",
       "title": "Control flow",
       "authority": "informative",
-      "sourceHash": "4fc63dc69544e041bc04ca4ca354aedd8b1a0daad1d052a98cfb2e6dff91c1b2",
+      "sourceHash": "ee06d2b0d9b3fdce2a3fe2c328136a03376de5ee3053ae13c0dd31f523293f7f",
       "standardLinks": [
         "/platform-spec/language-meta/surface-syntax/lexical-and-syntax/",
         "/platform-spec/language-meta/type-system/enums-and-match/",
@@ -39700,7 +39700,7 @@
       "path": "site/website/src/content/docs/book/07-compiler-is-not-your-therapist/lexical-basics.md",
       "title": "Lexical basics",
       "authority": "informative",
-      "sourceHash": "71001a5462ff73e005c8f82fd4a9a903768582f7fc663ba68e7f589914135236",
+      "sourceHash": "896261dd4999a1bf0af6a14743152dfddda7ecd4e8adc9a9207fb581bf4bada9",
       "standardLinks": [
         "/platform-spec/language-meta/surface-syntax/lexical-and-syntax/",
         "/platform-spec/language-meta/surface-syntax/documentation-comments/"
@@ -39763,7 +39763,7 @@
       "path": "site/website/src/content/docs/book/08-green-tests-red-production/beskid-test-cli.md",
       "title": "The beskid test CLI",
       "authority": "informative",
-      "sourceHash": "fc9b1bcf7a881934bb17cb5c96a7856c9837aaec76b1bd7462bf8fa7463d51b9",
+      "sourceHash": "ae3d05766fbe20f0d88290c92fe4a77a069822f5f2e2edcb600810ce97c2b6a7",
       "standardLinks": [
         "/platform-spec/tooling/cli/build-analyze-run-contract/"
       ],
@@ -39774,7 +39774,7 @@
       "path": "site/website/src/content/docs/book/08-green-tests-red-production/ci-testing.md",
       "title": "CI and testing",
       "authority": "informative",
-      "sourceHash": "843febfd5a1eeed09afa24a738c3c899ab455ba35e4af809c6b9dc69a9db6ef8",
+      "sourceHash": "9d34626139b2c7c12a39bd3669fd16700ff0f5e8b0605bbc3bc630378c2c50ff",
       "standardLinks": [
         "/platform-spec/compiler/conformance/",
         "/platform-spec/tooling/cli/build-analyze-run-contract/"
@@ -39786,7 +39786,7 @@
       "path": "site/website/src/content/docs/book/08-green-tests-red-production/conformance-vs-unit.md",
       "title": "Conformance vs unit",
       "authority": "informative",
-      "sourceHash": "8effd37dfaa3b02b741b4d32fc447d5a899e70ff9e8c7c0383b9aa044d558113",
+      "sourceHash": "9f697580e5db04e552e81d53103ceecbc5e459130c1dd13b07421c449570779f",
       "standardLinks": [
         "/platform-spec/compiler/conformance/",
         "/platform-spec/compiler/conformance/conformance-evidence-policy/",
@@ -39800,7 +39800,7 @@
       "path": "site/website/src/content/docs/book/08-green-tests-red-production/index.mdx",
       "title": "Green tests, red production",
       "authority": "informative",
-      "sourceHash": "b950e898d7ad1fdf9d5036bf4f6ce722ddf6abcf80c8e8f40f90dc438c25e8b9",
+      "sourceHash": "aba86c741d252e331c4bff325358960f188be92b90bb5d2174b7a3b1274edcbd",
       "standardLinks": [
         "/platform-spec/language-meta/contracts-and-effects/testing/",
         "/platform-spec/compiler/conformance/"
@@ -39812,7 +39812,7 @@
       "path": "site/website/src/content/docs/book/08-green-tests-red-production/test-items-in-source.md",
       "title": "Test items in source",
       "authority": "informative",
-      "sourceHash": "c8dcd9794cec1911e01b4d39bee46dc340ff09046816785ef8152892f4b5b16f",
+      "sourceHash": "d7797c461d1a925d06232618ed2a9096f1a05842be81b157412368be37ee4fb0",
       "standardLinks": [
         "/platform-spec/language-meta/contracts-and-effects/testing/",
         "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/"
@@ -40097,7 +40097,7 @@
       "path": "site/website/src/content/docs/book/12-the-normative-bible/language-law-vs-implementation.md",
       "title": "Language law vs implementation",
       "authority": "informative",
-      "sourceHash": "fd19de47451d35c8b191cd4b04b9cf76cf0506c3502aadb02f7828800b77ff67",
+      "sourceHash": "956a5c641960398c62875a3c368ca7e70c762b65dfdb6f03750330840dfa449d",
       "standardLinks": [
         "/platform-spec/language-meta/",
         "/platform-spec/compiler/",
@@ -40258,7 +40258,7 @@
       "path": "site/website/src/content/docs/book/14-from-source-to-runs/aot-build.md",
       "title": "AOT build",
       "authority": "informative",
-      "sourceHash": "cee4bdbb1cfccf6f3f876ce0b5cfbee76f9bd4aadce95afe771fa6aa841105c8",
+      "sourceHash": "a0dac5328e0d6df3010d27a845adabec5e58bd1fdc669e9ddc79bbadfa5336b7",
       "standardLinks": [
         "/platform-spec/compiler/build-pipeline/backends-jit-aot/",
         "/platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/",
@@ -40271,7 +40271,7 @@
       "path": "site/website/src/content/docs/book/14-from-source-to-runs/clif-and-debug.md",
       "title": "CLIF and debug",
       "authority": "informative",
-      "sourceHash": "3b30213797e079da5a2c8d60d15644d38e7881b6be53ed39fa80bd01b95ba271",
+      "sourceHash": "d7368eea3e92e8c976d253adc62497a936db5117428b8034a03ba03455fa1638",
       "standardLinks": [
         "/platform-spec/compiler/pipeline-composition/",
         "/platform-spec/compiler/build-pipeline/diagnostics-parity/",
@@ -40298,7 +40298,7 @@
       "path": "site/website/src/content/docs/book/14-from-source-to-runs/front-end.md",
       "title": "Front-end",
       "authority": "informative",
-      "sourceHash": "a359f09f754d7f7a238a1af0d4ea5a1eeba38e3a64775df6f80a7a60eaf5f6b9",
+      "sourceHash": "f574ff68a835b687cd67925ae01c71d23dcbb44dbde524d1192a4de3d68dd9ab",
       "standardLinks": [
         "/platform-spec/compiler/front-end/grammar-and-parser-contract/",
         "/platform-spec/compiler/front-end/parser-and-ast-contracts/",
@@ -40316,7 +40316,7 @@
       "path": "site/website/src/content/docs/book/14-from-source-to-runs/index.mdx",
       "title": "From source to something that runs",
       "authority": "informative",
-      "sourceHash": "e7117ff3494adf7ff5bb752e8202641fddb822963f06ad4e2726bd75dea66be6",
+      "sourceHash": "3adf10f04ce1c7696316579daf6bc8cf5e831992ab87b1eab628faae30686f78",
       "standardLinks": [
         "/platform-spec/compiler/build-pipeline/"
       ],
@@ -40340,7 +40340,7 @@
       "path": "site/website/src/content/docs/book/14-from-source-to-runs/pipeline-overview.md",
       "title": "Pipeline overview",
       "authority": "informative",
-      "sourceHash": "701bfd38bf63612d5c552ad791697d365e7eb9a371f76cb7a3146e3313d44876",
+      "sourceHash": "d5637f1a9f94f39670bf44ccfb71defbc43f823ba0219ae592b9783d61f7c9e9",
       "standardLinks": [
         "/platform-spec/compiler/build-pipeline/",
         "/platform-spec/tooling/cli/build-analyze-run-contract/",
@@ -40353,7 +40353,7 @@
       "path": "site/website/src/content/docs/book/14-from-source-to-runs/semantic-pipeline.md",
       "title": "Semantic pipeline",
       "authority": "informative",
-      "sourceHash": "9ccb8028176ecfeacbac4c5fec4d41835e4bf94f41366b7f18fe749068573568",
+      "sourceHash": "7f91da8a4f273b0fcedf7a1488df22d721b261290c9aef3251d5bb981fe73ff1",
       "standardLinks": [
         "/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/",
         "/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/",
@@ -40367,7 +40367,7 @@
       "path": "site/website/src/content/docs/book/15-mods-plugins-with-consequences/beskid-mod-cli.md",
       "title": "beskid mod CLI",
       "authority": "informative",
-      "sourceHash": "805379d03e453745c553fb5a3ba27f5172239dcff92c528386136e78417a5c1b",
+      "sourceHash": "8ea431503c2fb5e10a73d6b75450be73f93b944d695cd145d01e1a3e836cc0a3",
       "standardLinks": [
         "/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/",
         "/platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/",
@@ -40448,7 +40448,7 @@
       "path": "site/website/src/content/docs/book/16-corelib-batteries-with-opinions/corelib-command.md",
       "title": "The corelib command",
       "authority": "informative",
-      "sourceHash": "5abd4c5d19fe72dcb4b256922f431fadf6e8d55b0525442fd699d4c626834f97",
+      "sourceHash": "3de21ac23a71485b0fc314ed301ccb27fcd636ed5793448b67c87e47d8199700",
       "standardLinks": [
         "/platform-spec/core-library/compiler-integration/corelib-discovery-and-packaging/"
       ],
@@ -40459,7 +40459,7 @@
       "path": "site/website/src/content/docs/book/16-corelib-batteries-with-opinions/doc-and-api-json.md",
       "title": "Doc and api.json",
       "authority": "informative",
-      "sourceHash": "60aa41232c0d2d3fc99da66743c784565746e15a6ef15bb5124dacde11e137ce",
+      "sourceHash": "8dcc4dca0c6b744af26c5095cb6c674dcfcb54acbb2134dce21c93c514801fae",
       "standardLinks": [
         "/platform-spec/tooling/cli/api-json-contract/",
         "/platform-spec/language-meta/surface-syntax/documentation-comments/"
@@ -40471,7 +40471,7 @@
       "path": "site/website/src/content/docs/book/16-corelib-batteries-with-opinions/index.mdx",
       "title": "Corelib: batteries with opinions",
       "authority": "informative",
-      "sourceHash": "2cb22574a15112efaca8171ec25db1949dbd7152ee72626b86c37fe6a4718257",
+      "sourceHash": "f245bc897ebbccb016f035a7e3558f407591bd05de4bb49ca3d391a9cc1a991e",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -40627,7 +40627,7 @@
       "path": "site/website/src/content/docs/book/18-packages-without-npm-trauma/publish-first-package.md",
       "title": "Publish your first package",
       "authority": "informative",
-      "sourceHash": "a4d2f12ae8cc6d758aa98c780c2eb17bb4db4ea5f262062900d22753ae74e1bc",
+      "sourceHash": "d442b77083dd81c15dc88cf361c337688113b182aa0d35023f56246c99fbaead",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -40671,7 +40671,7 @@
       "path": "site/website/src/content/docs/book/19-public-api-that-survives-review/package-public-surface.md",
       "title": "Package public surface",
       "authority": "informative",
-      "sourceHash": "8d39d82510f52322cd7f25d56cdbb193de44088f273dcdbf53f09170954d6630",
+      "sourceHash": "dee2750c1a91715eedcd9bdaaa19d579a787640868c1a26eebd531835a806cc5",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -40750,7 +40750,7 @@
       "path": "site/website/src/content/docs/book/20-doc-comments-that-are-not-lies/verify-docs.md",
       "title": "Verify docs in CI",
       "authority": "informative",
-      "sourceHash": "45e16bab2c3a52bd3a7e72bbaa1e371ba4af6e076ebe61bc626dad7127fff2ef",
+      "sourceHash": "38b58db9b28059ebe91828ccb7324bb8fa0d50868a31ccdb599802fc5d69e3a8",
       "standardLinks": [
         "/platform-spec/language-meta/surface-syntax/documentation-comments/",
         "/platform-spec/community/spec-maintenance/spec-authority-and-decisions/"
@@ -41008,7 +41008,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/command-reference.md",
       "title": "CLI command reference",
       "authority": "informative",
-      "sourceHash": "dc73bb491ef721d67d5e1183837503f32991f39b44045ad4262f85b2cd54ddcc",
+      "sourceHash": "e4dd2b48d1a22518cf8376d6f21759142ad1cc0235e557e2d05991a7fdf9fedb",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41017,7 +41017,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/analyze.md",
       "title": "beskid analyze",
       "authority": "informative",
-      "sourceHash": "bef1e5d3dd10ebc31a43b3ddcfb591c749701353abf7049d1aaa59fcd0c95046",
+      "sourceHash": "c9efa6597e7a7067c7066744e732eaff8d073a672501ae7ae105fe76b2ad8c04",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41026,7 +41026,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/build.md",
       "title": "beskid build",
       "authority": "informative",
-      "sourceHash": "f4865c301cc2ef0c33bca5e575427d5f8a1a9ac46a361ec82f440124984b6f6d",
+      "sourceHash": "929907e932e2ea1e1e12e0111e90c8dd286a752c925d110915edb2d6d1f76397",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41035,7 +41035,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/clif.md",
       "title": "beskid clif",
       "authority": "informative",
-      "sourceHash": "169680d07135a4bdf85c96084b68b61003e87211eb7aea5eee64aa6d074ffc86",
+      "sourceHash": "905f3dea934e0cc7c247710b8a1130713fa8e79e85c274132601c1f9a454b04e",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41044,7 +41044,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/corelib.md",
       "title": "beskid corelib",
       "authority": "informative",
-      "sourceHash": "68a58feb19bf7e9eaa2e30c1308886812290eb785e19fbafd1c863dd00d8942d",
+      "sourceHash": "7febf4da94d7736c28dab8d869f9f820604dd1887eb38709c53ff5c1b392537d",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41053,7 +41053,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/doc.md",
       "title": "beskid doc",
       "authority": "informative",
-      "sourceHash": "b6310a92e5eed6d5038b13b84340e3ac840c80460a642d2654547534b671aee6",
+      "sourceHash": "cc22a9ac2faad2f05dfea0d8bc36eb6d1c40b9b94ff12627fd60aeb6a9c44afb",
       "standardLinks": [
         "/platform-spec/tooling/cli/api-json-contract/design-model/"
       ],
@@ -41064,7 +41064,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/fetch.md",
       "title": "beskid fetch",
       "authority": "informative",
-      "sourceHash": "ab165c888fe14ea861c9e0487ab5998d1fc775842b7bdd2271172d30a06fa0f0",
+      "sourceHash": "164edfa862ae80886070e85d5cf0350fac5993dc2db746b6ead417982e88b87a",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41073,7 +41073,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/format.md",
       "title": "beskid format",
       "authority": "informative",
-      "sourceHash": "4a253a3f641bbaa0a3d454d917baa5e51725b605341c1c32b62263b63419b867",
+      "sourceHash": "8c4308bac7feef7fd0eba73cde15282bdbc75effff7dc0b5b7e233008726eab8",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41082,7 +41082,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/lock.md",
       "title": "beskid lock",
       "authority": "informative",
-      "sourceHash": "4ed0cc1eaf8419779d59529c901b2fdc4db333754f96b8529d307ecd6c39c109",
+      "sourceHash": "07d1552288ae1955439b1e4db0e4d674e182e5889753d34e92a9627779aacf7e",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41091,7 +41091,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/new.md",
       "title": "beskid new",
       "authority": "informative",
-      "sourceHash": "2bda75a548b6121f9e3bc43fce99d3256e818c875f5fd9e4ea42afe013848cd2",
+      "sourceHash": "00256002f30de5581404a2527279ab19e71b548223eae3c1ddb66b8028f7497d",
       "standardLinks": [
         "/platform-spec/tooling/project-scaffolding/beskid-new/",
         "/platform-spec/tooling/project-scaffolding/beskid-new/contracts-and-edge-cases/",
@@ -41104,7 +41104,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/parse.md",
       "title": "beskid parse",
       "authority": "informative",
-      "sourceHash": "e64e074a08614e84e2e6a784ed4e8f3ee2c3d831485db14edb8a79d0dab9b6df",
+      "sourceHash": "e62d97086a94f7439420c3c1b5b81d5c1ac57ddf661f9e90527235e737555a7a",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41113,7 +41113,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/pckg.md",
       "title": "beskid pckg",
       "authority": "informative",
-      "sourceHash": "5b2d62ec7cad3aed2fe7013327fe8f92c9fbac7728a82888546023ac465c2cf2",
+      "sourceHash": "983832b209e081855eb7debf51aecfb3034f81d6c069ac5ab70a3c07a00c3be4",
       "standardLinks": [
         "/platform-spec/tooling/project-scaffolding/template-packages/"
       ],
@@ -41133,7 +41133,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/test.md",
       "title": "beskid test",
       "authority": "informative",
-      "sourceHash": "4312a1d6a614ac7d8eb6181d4742aa4650e0c9a309279729d9924c9297d655e9",
+      "sourceHash": "90b98da3526fae7901a7549f1860da8fd8000e1273b4b25a7e4757cc4a1c0948",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41142,7 +41142,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/tree.md",
       "title": "beskid tree",
       "authority": "informative",
-      "sourceHash": "75c5197e0ff618e111688349d38e6200d352fce3f2594b6463763e3851c203a0",
+      "sourceHash": "5562dc2b35588463b9b5371bd199457cb5a8086b7b47519493d03005c4873bd9",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41151,7 +41151,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/commands/update.md",
       "title": "beskid update",
       "authority": "informative",
-      "sourceHash": "0017b11c708ef515c4dc18c7084a9ba1629fdfa9f8cbc29a9d6e63d1d1a6eade",
+      "sourceHash": "e9f1bd57c8c0e1b18938c1929111b59cc02b37fcc40bb765ba607754f481fc13",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41160,7 +41160,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/formatter-development.md",
       "title": "Formatter development (Emit)",
       "authority": "informative",
-      "sourceHash": "00866c247cfccdd8ed91e1d9a2316615af9c41c3dcefc4c74da681a246840d61",
+      "sourceHash": "4a2aca890311f7acac74b0dba56a9a523c552de98984a25e8bee7e12649d54b2",
       "standardLinks": [
         "/platform-spec/compiler/front-end/parser-and-ast-contracts/",
         "/platform-spec/tooling/cli/command-surface/",
@@ -41173,7 +41173,7 @@
       "path": "site/website/src/content/docs/book/reference/cli/index.md",
       "title": "Beskid CLI",
       "authority": "informative",
-      "sourceHash": "c4652bb1efc6526de2f71f246a6792c30c4777340cb2e62b0bf064f71bba0e44",
+      "sourceHash": "1aab8513b8631572635fccc4b82330ef3e49cb527a0ae86a4c3268137911a89c",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41212,7 +41212,7 @@
       "path": "site/website/src/content/docs/book/reference/lsp/README.md",
       "title": "Beskid LSP Docs",
       "authority": "informative",
-      "sourceHash": "b83d3399e52f97ca8c33056a69115b846733061e87bbcff5505338277d13d181",
+      "sourceHash": "0a6169d33eb3ce2289fe5f730fd24486838a1b5d8c6d79ff73321b9839cf2800",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41295,7 +41295,7 @@
       "path": "site/website/src/content/docs/book/reference/projects/scaffolding.md",
       "title": "Project scaffolding",
       "authority": "informative",
-      "sourceHash": "c3e867eb8d07b3a72481e0d0db7e702edf1c2c0cf197e414672b1a8e977a41ab",
+      "sourceHash": "bd538a33068843d4b15ec4b76677a5775fbad261c78444ecc15e97474997610a",
       "standardLinks": [
         "/platform-spec/tooling/project-scaffolding/",
         "/platform-spec/tooling/project-scaffolding/template-packages/",
@@ -41318,7 +41318,7 @@
       "path": "site/website/src/content/docs/book/reference/testing/index.md",
       "title": "Testing Framework",
       "authority": "informative",
-      "sourceHash": "d17dd10c7e2942d4b746a425b81b4a76c13b1ac13cf1cf203b809e805c8cd147",
+      "sourceHash": "7bb5544a8bb12fc05b859aa1fc92fa70cbae230e31f7dc5661377b1852a83cf7",
       "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
@@ -41350,87 +41350,6 @@
         "/platform-spec/",
         "/platform-spec/language-meta/"
       ],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "site/website/src/content/docs/packages/client-cli.md",
-      "title": "Package Client CLI",
-      "authority": "informative",
-      "sourceHash": "021ee17241807f684f05aef6709e4b96438e6d2dd68ab34493101f067005c49c",
-      "standardLinks": [],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "site/website/src/content/docs/packages/index.mdx",
-      "title": "Package Hub",
-      "authority": "informative",
-      "sourceHash": "cad6aa98c81c49b168e234a8af1d6fa7f38e685de6a675fd7478324414890b7b",
-      "standardLinks": [],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "site/website/src/content/docs/packages/listing.md",
-      "title": "Package Listing",
-      "authority": "informative",
-      "sourceHash": "724575abf29dd2b8ae920613d533435b487482b8c8944a8284d8c8d206e45674",
-      "standardLinks": [],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "site/website/src/content/docs/packages/lockfile.md",
-      "title": "Lockfile",
-      "authority": "informative",
-      "sourceHash": "9cdce345c98d0f6f3d2c6dba2f176d0b82c82c70c4243a6407c515e193b9b80f",
-      "standardLinks": [],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "site/website/src/content/docs/packages/manage.md",
-      "title": "Package Management",
-      "authority": "informative",
-      "sourceHash": "5496f4e5544c26550096065d2a25c47cb625c1ee78211f514b4a2f02058c700c",
-      "standardLinks": [],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "site/website/src/content/docs/packages/package-format.md",
-      "title": "Package Format (`.bpk`)",
-      "authority": "informative",
-      "sourceHash": "9399c60e20e67b65cf72c0cf73f7de3eab1389f7078f2cd2160a9f41130e740d",
-      "standardLinks": [],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "site/website/src/content/docs/packages/registry-protocol.md",
-      "title": "Registry Protocol",
-      "authority": "informative",
-      "sourceHash": "7ef9a0f7fc60b44532a0ff0ccae2497414c5ecaa7c81e410486f42d0e9919903",
-      "standardLinks": [],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "site/website/src/content/docs/packages/review.md",
-      "title": "Package Review",
-      "authority": "informative",
-      "sourceHash": "be1cee29e803367a75d1c1a3ee89ca7ad665272c0882f8bd97beb35c747783b3",
-      "standardLinks": [],
-      "containsNormativeKeywords": false,
-      "disposition": "informative-by-policy"
-    },
-    {
-      "path": "site/website/src/content/docs/packages/workspaces.md",
-      "title": "Workspaces",
-      "authority": "informative",
-      "sourceHash": "89f7bd7b66c2ac8b4031a3243ae7ca400ef21ce64fb5b0c9045b74b057b6f79e",
-      "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
     }

@@ -1,0 +1,55 @@
+/**
+ * Beskid Nexus app chrome — Material teal, aligned with tracker / docs site.
+ */
+
+body {
+	background-image:
+		radial-gradient(
+			ellipse 120% 80% at 0% -20%,
+			color-mix(in srgb, var(--beskid-primary-container) 22%, transparent),
+			transparent 55%
+		),
+		radial-gradient(
+			ellipse 90% 60% at 100% 0%,
+			color-mix(in srgb, var(--beskid-primary) 8%, transparent),
+			transparent 50%
+		);
+}
+
+a:where(:not([data-slot='button'])) {
+	color: var(--beskid-primary);
+	text-decoration-color: color-mix(in srgb, var(--beskid-primary) 35%, transparent);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 2px;
+}
+
+a:where(:not([data-slot='button'])):hover {
+	color: color-mix(in srgb, var(--beskid-primary) 88%, white);
+}
+
+html[data-theme='light'] a:where(:not([data-slot='button'])):hover {
+	color: color-mix(in srgb, var(--beskid-primary) 82%, black);
+}
+
+[data-slot='button'] {
+	text-decoration: none;
+}
+
+.nexus-kicker {
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	font-weight: 700;
+	font-size: 0.69rem;
+	color: var(--platform-spec-tab-text, var(--primary));
+}
+
+.nexus-card {
+	border-radius: calc(var(--radius) + 4px);
+	border: 1px solid var(--border);
+	background: var(--card);
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 6%, transparent);
+}
+
+.nexus-card:hover {
+	border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
+}

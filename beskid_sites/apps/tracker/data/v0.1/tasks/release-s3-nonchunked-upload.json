@@ -1,0 +1,18 @@
+{
+	"id": "release-s3-nonchunked-upload",
+	"title": "Disable chunked upload bodies for SeaweedFS release artifacts",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"completedAt": "2026-04-22",
+	"source": {
+		"repo": "compiler",
+		"commit": "81406de",
+		"subject": "ci: avoid chunked body for SeaweedFS uploads",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/81406de"
+	},
+	"statusColumn": "Done",
+	"body": "Disables **chunked upload bodies** that SeaweedFS mishandles for release artifacts.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`81406de`](https://github.com/Cyber-Nomad-Collective/compiler/commit/81406de)\n- **Subject:** ci: avoid chunked body for SeaweedFS uploads\n- **Completed:** 2026-04-22\n\n## Catalog scope\n- **Delivery version:** v0.1 (Compiler foundation)\n- **Workstream:** `ci-release`\n\n## Relation\nStorage-backend-specific fix in **ci-release**.",
+	"order": 145,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

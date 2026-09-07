@@ -1,0 +1,20 @@
+{
+	"id": "cli-publish-stream-upload",
+	"title": "CLI publish UX with streamed upload and API success hardening",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "pckg-registry",
+	"domain": "tooling",
+	"completedAt": "2026-04-23",
+	"milestoneId": "v02-pckg-registry-foundation",
+	"source": {
+		"repo": "compiler",
+		"commit": "126e8ca",
+		"subject": "feat(pckg): publish UX, streamed upload, API success hardening",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/126e8ca"
+	},
+	"body": "Publish UX, streamed upload, API success hardening.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`126e8ca`](https://github.com/Cyber-Nomad-Collective/compiler/commit/126e8ca)\n- **Subject:** feat(pckg): publish UX, streamed upload, API success hardening\n- **Completed:** 2026-04-23\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `pckg-registry`\n- **Deliverable:** `v02-pckg-registry-foundation`\n- **Domain:** `tooling`\n\n## Relation\nContributes to deliverable **Registry dashboard and package docs foundation** (`v02-pckg-registry-foundation`).\n",
+	"order": 237,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

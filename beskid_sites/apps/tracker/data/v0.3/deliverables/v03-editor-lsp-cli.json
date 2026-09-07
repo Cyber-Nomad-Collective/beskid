@@ -1,0 +1,14 @@
+{
+	"id": "v03-editor-lsp-cli",
+	"title": "CLI LSP launch & VS Code toolchain",
+	"description": "Ship `beskid lsp` for editor stdio sessions, GitHub Actions LSP release tags with CLI publish matrix, VS Code extension download of cli-latest with dependency bootstrap, superrepo submodule bumps for toolchain scripts, and inventory/docs refresh through aaddd32.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`aaddd32`](https://github.com/Cyber-Nomad-Collective/beskid/commit/aaddd32)\n- **Subject:** docs: update inventory and enhance VS Code extension documentation\n- **Closed:** 2026-05-25\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Cutoff:** `f57377a`→`aaddd32` on superrepo `beskid`\n- **Workstreams:** `editor-extension`\n\n## Relation\nDelivery anchor for **5** catalog task(s) in the v0.3 window; see linked workstreams and tasks with `milestoneId` / `deliverableId` `v03-editor-lsp-cli`.",
+	"closedOn": "2026-05-25",
+	"source": {
+		"repo": "beskid",
+		"commit": "aaddd32",
+		"subject": "docs: update inventory and enhance VS Code extension documentation",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/aaddd32"
+	},
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

@@ -1,0 +1,19 @@
+{
+	"id": "corelib-import-codemod",
+	"title": "Corelib test import codemod (Testing.Assert normalization)",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "compiler-corelib",
+	"completedAt": "2026-06-07",
+	"deliverableId": "v04-corelib-complete",
+	"source": {
+		"repo": "compiler",
+		"commit": "f84572b",
+		"subject": "Progress on full corelib test pass",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/f84572b"
+	},
+	"body": "Normalize corelib test entries to `use Testing.Assert` with unqualified `Assert.*` calls via `normalize_corelib_test_imports.py`; closes unknown-`Testing` resolve failures across the 42-target matrix.\n\n## What shipped\n\n- [`normalize_corelib_test_imports.py`](compiler/corelib/ci/normalize_corelib_test_imports.py) codemod applied across `corelib_tests` entries\n- Test sources follow README import closure (e.g. [`FormatMarkdownTests.bd`](compiler/corelib/beskid_corelib/tests/corelib_tests/obj/beskid/root/src/console/FormatMarkdownTests.bd))\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`f84572b`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/f84572b)\n- **Completed:** 2026-06-07\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `compiler-corelib`\n- **Deliverable:** `v04-corelib-complete`",
+	"order": 360,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

@@ -1,9 +1,13 @@
 ---
-title: "beskid build"
+title: "beskid dev build compile"
 description: "AOT-compile and link a Beskid program to object, library, or executable outputs."
 ---
 
-AOT-compiles a resolved Beskid program and writes build artifacts. Executable and library outputs link only the matching hash-validated ABI-v5 runtime kit installed with the toolchain; `--kind object` emits no runtime dependency. Progress output can be animated unless `--plain` is set.
+AOT-compiles a resolved Beskid program and writes build artifacts.
+This command is available under `beskid dev build compile`.
+
+Executable and library outputs link only the matching hash-validated ABI-v5 runtime kit installed with the toolchain; `--kind object` emits no runtime dependency.
+Progress output uses plain step lines by default.
 
 ## Project and entrypoint
 
@@ -44,7 +48,7 @@ AOT-compiles a resolved Beskid program and writes build artifacts. Executable an
 ## Example
 
 ```bash
-beskid build --project path/to/Project.proj --release
+beskid dev build compile --project path/to/Project.proj --release
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

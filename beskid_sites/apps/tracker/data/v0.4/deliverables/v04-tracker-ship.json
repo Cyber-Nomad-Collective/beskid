@@ -1,0 +1,7 @@
+{
+	"id": "v04-tracker-ship",
+	"title": "beskid_tracker fully implemented",
+	"description": "Production-ready roadmap app: SQLite source of truth, scoped GitHub bidirectional sync (active version + bugs), settings dialog, version-scoped kanban, seed import, auth hub autopairing, and operational Coolify deploy.\n\n## Provenance\n- **Catalog cutoff:** [`aaddd32`](https://github.com/Cyber-Nomad-Collective/beskid/commit/aaddd32) → [`ee88edf`](https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf) on **beskid** (2026-05-26 – 2026-06-07)\n- **Anchor commit:** [`6438ae8`](https://github.com/Cyber-Nomad-Collective/beskid/commit/6438ae8)\n\n## Catalog scope\n- **Delivery version:** v0.4 (Platform services, auth, and delivery tooling)\n- **Status:** In progress — DB model, auth autopairing, kanban, and container CI landed; production webhook validation and roadmap labels remain\n- **Workstreams:** `tracker-implementation`, `repo-cicd`",
+	"subtasks": [],
+	"$schema": "../schemas/seed/deliverable.schema.json"
+}

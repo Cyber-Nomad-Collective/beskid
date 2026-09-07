@@ -22,7 +22,7 @@ flowchart TD
 
 ## Inspecting structure
 
-- `beskid tree` on a `.bd` file shows AST shape (parser-level).
+- `beskid dev syntax tree` on a `.bd` file shows AST shape (parser-level).
 - Project graphs: use reference [resolution](/book/reference/projects/resolution/) and CLI project introspection flags documented on [tree command](/book/reference/cli/commands/tree/) where applicable to manifests.
 
 When resolution fails, read the diagnostic **first**—path dependencies love typos (`../Wrong`).

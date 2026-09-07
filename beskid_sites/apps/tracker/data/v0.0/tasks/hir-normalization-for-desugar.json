@@ -1,0 +1,21 @@
+{
+	"id": "hir-normalization-for-desugar",
+	"title": "HIR normalization pass (for-loop desugaring)",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "compiler-analysis",
+	"domain": "compiler",
+	"area": "hir",
+	"completedAt": "2026-02-24",
+	"deliverableId": "v00-analysis-foundation",
+	"body": "Implemented a **HIR normalization** pass that desugars `for` loops into `while` loops (and related control-flow shapes) so later analysis and lowering see a smaller core grammar.\n\n## Provenance\n- **Repository:** `pekan`\n- **Commit:** [`68cb1fd`](https://github.com/Cyber-Nomad-Collective/pekan/commit/68cb1fd)\n- **Subject:** Add HIR normalization pass with for-loop desugaring to while-loop transformation\n- **Completed:** 2026-02-24\n\n## Catalog scope\n- **Delivery version:** v0.0 (Pecan prototype)\n- **Workstream:** `compiler-analysis`\n- **Deliverable:** `v00-analysis-foundation`\n\n## Relation\nDesugar at HIR layer keeps the surface grammar ergonomic while semantic rules and lowering only implement normalized forms—pattern reused for string interpolation desugar later in the band. Reduced duplicate control-flow logic in type checking and visitor refactors.",
+	"source": {
+		"repo": "pekan",
+		"commit": "68cb1fd",
+		"subject": "Add HIR normalization pass with for-loop desugaring to while-loop transformation",
+		"url": "https://github.com/Cyber-Nomad-Collective/pekan/commit/68cb1fd"
+	},
+	"order": 8,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

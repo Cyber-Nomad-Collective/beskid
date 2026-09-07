@@ -1,0 +1,20 @@
+{
+	"id": "mod-host-pipeline-test",
+	"title": "Mod host pipeline integration test (SampleMod)",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "compiler-mods",
+	"domain": "compiler",
+	"completedAt": "2026-05-23",
+	"milestoneId": "v03-merge-wave",
+	"source": {
+		"repo": "compiler",
+		"commit": "43c9620",
+		"subject": "test(engine): mod_host pipeline integration test against SampleMod fixture",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/43c9620"
+	},
+	"body": "Integration test runs SampleMod through the full mod host pipeline inside `beskid_tests::mods`.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`43c9620`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/43c9620)\n- **Subject:** test(engine): mod_host pipeline integration test against SampleMod fixture\n- **Completed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `compiler-mods`\n- **Domain:** `compiler`\n- **Deliverable:** `v03-merge-wave`\n\n## Relation\nContributes to deliverable **v0.3 macro/runtime/ffi/tooling delivery** (`v03-merge-wave`).",
+	"order": 319,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

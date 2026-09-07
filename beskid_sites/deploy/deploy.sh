@@ -1,0 +1,219 @@
+#!/usr/bin/env bash
+# Beskid platform — SSH deploy to root@bdziam.dev.
+#
+# Ships the Caddy compose stack to the deploy host, populates .env from
+# OpenBao (or prompts), runs `docker compose up -d --wait`, and runs smoke
+# checks. Replaces the Coolify REST deploy tail (audit finding 5.4).
+#
+# Usage:
+#   ./deploy.sh                       # interactive: prompt for missing secrets
+#   ./deploy.sh --from-openbao        # populate .env from OpenBao
+#   ./deploy.sh --no-deploy           # render + ship only, do not start
+#   ./deploy.sh --smoke-only          # run smoke checks against running stack
+#
+# Prerequisites (human admin — fail closed):
+#   - SSH key for root@bdziam.dev.
+#   - DNS for all *.beskid-lang.org subdomains pointing at the host (or
+#     ready to flip per-domain during cutover).
+#   - OpenBao token (OPENBAO_TOKEN) if using --from-openbao.
+#   - deploy/.env populated (or --from-openbao).
+#
+# This script does NOT invent Coolify UUIDs, GHCR grants, or secret values.
+# Missing required secrets fail closed with an exact human admin step.
+
+set -euo pipefail
+
+# ---------------------------------------------------------------------------
+# Config
+# ---------------------------------------------------------------------------
+DEPLOY_HOST="${DEPLOY_HOST:-root@bdziam.dev}"
+REMOTE_DIR="${REMOTE_DIR:-/opt/beskid}"
+LANE="${LANE:-production}"
+OPENBAO_ADDR="${OPENBAO_ADDR:-https://secrets.bdziam.dev}"
+OPENBAO_PREFIX="secret/beskid/${LANE}"
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ENV_FILE="${SCRIPT_DIR}/.env"
+HTPASSWD_FILE="${SCRIPT_DIR}/registry/htpasswd"
+
+FROM_OPENBAO=0
+NO_DEPLOY=0
+SMOKE_ONLY=0
+
+for arg in "$@"; do
+  case "$arg" in
+    --from-openbao) FROM_OPENBAO=1 ;;
+    --no-deploy) NO_DEPLOY=1 ;;
+    --smoke-only) SMOKE_ONLY=1 ;;
+    *) echo "unknown arg: $arg" >&2; exit 2 ;;
+  esac
+done
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+log() { printf '\033[1;34m[deploy]\033[0m %s\n' "$*"; }
+err() { printf '\033[1;31m[deploy:ERROR]\033[0m %s\n' "$*" >&2; }
+need() { [ -n "${!1:-}" ] || { err "missing required var: $1 — $2"; exit 1; }; }
+
+remote() { ssh "${SSH_OPTS:-}" "${DEPLOY_HOST}" "$@"; }
+
+# ---------------------------------------------------------------------------
+# Smoke checks (mirror scripts/ci/post-deploy-smoke.sh shape, no :port)
+# ---------------------------------------------------------------------------
+smoke() {
+  log "smoke checks against https://*.beskid-lang.org"
+  local failures=0
+  local endpoints=(
+    "https://beskid-lang.org/|beskid-lang.org homepage"
+    "https://auth.beskid-lang.org/api/health|authelia health"
+    "https://spec.beskid-lang.org/api/health|platform-spec health"
+    "https://tracker.beskid-lang.org/api/health|tracker health"
+    "https://nexus.beskid-lang.org/api/health|nexus health"
+    "https://pckg.beskid-lang.org/health/ready|pckg health"
+    "https://learn.beskid-lang.org/api/health|learn health"
+    "https://cr.beskid-lang.org/v2/|registry v2"
+  )
+  for entry in "${endpoints[@]}"; do
+    local url="${entry%%|*}"
+    local name="${entry##*|}"
+    local code
+    code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$url" || echo "000")"
+    # registry returns 401 without auth — that is healthy (auth is enforced).
+    if [ "$url" = "https://cr.beskid-lang.org/v2/" ] && [ "$code" = "401" ]; then
+      log "  OK   $name ($url) → 401 (auth enforced)"
+      continue
+    fi
+    if [ "$code" -ge 200 ] && [ "$code" -lt 400 ]; then
+      log "  OK   $name ($url) → $code"
+    else
+      log "  FAIL $name ($url) → $code"
+      failures=$((failures + 1))
+    fi
+  done
+  if [ "$failures" -gt 0 ]; then
+    err "$failures smoke check(s) failed — see above. Roll back via README."
+    return 1
+  fi
+  log "all smoke checks passed"
+}
+
+if [ "$SMOKE_ONLY" -eq 1 ]; then
+  smoke
+  exit $?
+fi
+
+# ---------------------------------------------------------------------------
+# 1. Validate local prerequisites
+# ---------------------------------------------------------------------------
+log "validating local prerequisites"
+[ -f "${SCRIPT_DIR}/docker-compose.yml" ] || { err "missing docker-compose.yml"; exit 1; }
+[ -f "${SCRIPT_DIR}/Caddyfile" ] || { err "missing Caddyfile"; exit 1; }
+[ -f "${SCRIPT_DIR}/authelia/configuration.yml" ] || { err "missing authelia/configuration.yml"; exit 1; }
+[ -f "${SCRIPT_DIR}/registry/config.yml" ] || { err "missing registry/config.yml"; exit 1; }
+[ -f "${HTPASSWD_FILE}" ] || { err "missing registry/htpasswd — generate: htpasswd -Bbn <user> <pass> > registry/htpasswd"; exit 1; }
+
+# ---------------------------------------------------------------------------
+# 2. Populate .env
+# ---------------------------------------------------------------------------
+if [ "$FROM_OPENBAO" -eq 1 ]; then
+  log "populating .env from OpenBao (${OPENBAO_ADDR})"
+  need OPENBAO_TOKEN "set OPENBAO_TOKEN (from secret/beskid/openbao/token)"
+  command -v bao >/dev/null || command -v vault >/dev/null || {
+    err "openbao/vault CLI not found — install it to use --from-openbao"; exit 1; }
+  BAO_BIN="$(command -v bao || command -v vault)"
+
+  # Start from the example (non-secret defaults), then overlay OpenBao.
+  cp "${SCRIPT_DIR}/.env.example" "${ENV_FILE}"
+
+  read_secrets() {
+    local path="$1"; shift
+    "$BAO_BIN" read -address="${OPENBAO_ADDR}" -format=json "${OPENBAO_PREFIX}/${path}" \
+      | jq -r '.data.data | to_entries[] | "\(.key)=\(.value)"' 2>/dev/null || true
+  }
+
+  # Per-service OpenBao paths (mirror beskid_infra/docs/openbao-layout.md).
+  for svc in auth postgres memgraph platform-spec tracker nexus pckg learn; do
+    read_secrets "$svc" >> "${ENV_FILE}" || true
+  done
+  # Registry credentials.
+  read_secrets "registry/cr-beskid-lang-org" >> "${ENV_FILE}" || true
+  log "  .env populated from OpenBao (review before deploy)"
+else
+  if [ ! -f "${ENV_FILE}" ]; then
+    err ".env missing. Either: ./deploy.sh --from-openbao, or cp .env.example .env and fill in secrets."
+    exit 1
+  fi
+  log "using existing .env"
+fi
+
+# Fail closed on required secrets.
+# shellcheck disable=SC1090
+set -a; . "${ENV_FILE}"; set +a
+need REGISTRY_USER "registry basicauth user"
+need REGISTRY_PASS "registry basicauth password"
+need POSTGRES_PASSWORD "shared Postgres password"
+need MEMGRAPH_PASSWORD "Memgraph password"
+need AUTHELIA_SESSION_SECRET "Authelia session secret (openssl rand -hex 32)"
+need AUTHELIA_STORAGE_ENCRYPTION_KEY "Authelia storage encryption key"
+need AUTHELIA_OIDC_HMAC_SECRET "Authelia OIDC HMAC secret"
+need AUTHELIA_OIDC_JWKS_SECRET "Authelia OIDC JWKS (RSA PEM)"
+need GITHUB_CLIENT_ID "GitHub OAuth App client id"
+need GITHUB_CLIENT_SECRET "GitHub OAuth App client secret"
+need SITE_IMAGE_DIGEST "website image digest (sha256:...)"
+need PLATFORM_SPEC_IMAGE_DIGEST "platform-spec image digest"
+need TRACKER_IMAGE_DIGEST "tracker image digest"
+need NEXUS_IMAGE_DIGEST "nexus image digest"
+need PCKG_IMAGE_DIGEST "pckg image digest"
+need LEARN_IMAGE_DIGEST "learn image digest"
+
+# ---------------------------------------------------------------------------
+# 3. Ship files to the deploy host
+# ---------------------------------------------------------------------------
+log "shipping files to ${DEPLOY_HOST}:${REMOTE_DIR}"
+remote "mkdir -p ${REMOTE_DIR}/authelia ${REMOTE_DIR}/registry"
+
+scp -q "${SCRIPT_DIR}/docker-compose.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/docker-compose.yml"
+scp -q "${SCRIPT_DIR}/Caddyfile" "${DEPLOY_HOST}:${REMOTE_DIR}/Caddyfile"
+scp -q "${SCRIPT_DIR}/authelia/configuration.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/authelia/configuration.yml"
+scp -q "${SCRIPT_DIR}/registry/config.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/config.yml"
+scp -q "${HTPASSWD_FILE}" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/htpasswd"
+# Ship .env with restricted perms.
+scp -q "${ENV_FILE}" "${DEPLOY_HOST}:${REMOTE_DIR}/.env"
+remote "chmod 600 ${REMOTE_DIR}/.env ${REMOTE_DIR}/registry/htpasswd"
+
+# ---------------------------------------------------------------------------
+# 4. Authenticate to the private registry + pull pinned images
+# ---------------------------------------------------------------------------
+log "authenticating to cr.beskid-lang.org and pulling pinned images"
+remote "echo '${REGISTRY_PASS}' | docker login cr.beskid-lang.org -u '${REGISTRY_USER}' --password-stdin"
+
+# ---------------------------------------------------------------------------
+# 5. Apply (or render-only)
+# ---------------------------------------------------------------------------
+if [ "$NO_DEPLOY" -eq 1 ]; then
+  log "--no-deploy: files shipped, not starting. Run without the flag to apply."
+  exit 0
+fi
+
+log "backing up previous compose (for rollback)"
+remote "cp ${REMOTE_DIR}/docker-compose.yml ${REMOTE_DIR}/docker-compose.prev.yml 2>/dev/null || true"
+
+log "running: docker compose up -d --wait"
+remote "cd ${REMOTE_DIR} && docker compose up -d --wait"
+
+# ---------------------------------------------------------------------------
+# 6. Verify health
+# ---------------------------------------------------------------------------
+log "verifying container health"
+remote "cd ${REMOTE_DIR} && docker compose ps --format 'table {{.Name}}\t{{.Status}}'"
+
+# ---------------------------------------------------------------------------
+# 7. Smoke checks
+# ---------------------------------------------------------------------------
+log "waiting 10s for Caddy to obtain TLS certs before smoke checks"
+sleep 10
+smoke
+
+log "deploy complete. Cutover DNS per-domain when ready (see README)."
+log "rollback: ssh ${DEPLOY_HOST} 'cd ${REMOTE_DIR} && cp docker-compose.prev.yml docker-compose.yml && docker compose up -d --wait'"

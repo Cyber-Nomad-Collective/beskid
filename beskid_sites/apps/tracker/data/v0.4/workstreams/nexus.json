@@ -1,0 +1,7 @@
+{
+	"slug": "nexus",
+	"title": "beskid_nexus knowledge graph",
+	"summary": "Compiler knowledge graph submodule, Ladybug native CI, Docker smoke, gitnexus-web workspace, and Coolify hosting model for gitnexus serve on 8452.",
+	"order": 3,
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

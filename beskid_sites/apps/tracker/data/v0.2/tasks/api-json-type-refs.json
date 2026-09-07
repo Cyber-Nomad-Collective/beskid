@@ -1,0 +1,21 @@
+{
+	"id": "api-json-type-refs",
+	"title": "Link api.json module tree and strengthen type references",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "analysis-pipeline",
+	"domain": "compiler",
+	"area": "documentation",
+	"completedAt": "2026-05-20",
+	"milestoneId": "v02-api-json-contract",
+	"source": {
+		"repo": "compiler",
+		"commit": "cf5ae82",
+		"subject": "feat(doc): link api.json module tree and strengthen type references",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/cf5ae82"
+	},
+	"body": "Link api.json module tree and strengthen type references.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`cf5ae82`](https://github.com/Cyber-Nomad-Collective/compiler/commit/cf5ae82)\n- **Subject:** feat(doc): link api.json module tree and strengthen type references\n- **Completed:** 2026-05-20\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `analysis-pipeline`\n- **Deliverable:** `v02-api-json-contract`\n- **Domain:** `compiler`\n- **Area:** `documentation`\n\n## Relation\nContributes to deliverable **api.json primary contract** (`v02-api-json-contract`).\n",
+	"order": 226,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

@@ -1,0 +1,22 @@
+{
+	"id": "tracker-settings-shell",
+	"title": "Reusable settings dialog shell in @beskid/ui-react",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "web-auth-web-common",
+	"completedAt": "2026-06-07",
+	"deliverableId": "v04-platform-dx",
+	"source": {
+		"repo": "beskid",
+		"commit": "ee88edf",
+		"subject": "BSOL Stability Pass",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf"
+	},
+	"body": "Shared settings framework in `@beskid/ui-react/settings`: registry API, nav search, form renderer, global save. Tracker replaces BoardSyncDrawer with gear-icon SettingsDialog.\n\n## What shipped\n\n- Settings registry + SettingsDialog in beskid_web_common\n- Tracker sections: GitHub sync, catalog import, data management\n- Vite alias for local dev against unpublished package\n- GitHub Packages publish tracked separately in `ui-react-settings-gh-packages-publish`\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`ee88edf`](https://github.com/Cyber-Nomad-Collective/beskid/commit/ee88edf)\n- **Completed:** 2026-06-07\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `web-auth-web-common`\n- **Deliverable:** `v04-platform-dx`",
+	"order": 396,
+	"subtasks": [
+		{ "text": "@beskid/ui-react/settings export", "done": true },
+		{ "text": "Tracker settings dialog wiring", "done": true }
+	],
+	"$schema": "../schemas/seed/task.schema.json"
+}

@@ -1,0 +1,13 @@
+{
+	"slug": "stabilization",
+	"title": "Stabilization & tooling",
+	"summary": "Corelib tier collections, System.FS/Path, api-shape Standard promotion and tier coverage tests, syscall JIT smoke, packageKind tool and formatter feature hubs, DI spec verification evidence, runtime GC phase-B handoff docs, and book/platform-spec reader nav hardening.",
+	"order": 4,
+	"deliverableIds": [
+		"v03-merge-wave",
+		"v03-corelib-tier-ship",
+		"v03-docs-reader-hardening",
+		"v03-pckg-tool-registry"
+	],
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

@@ -10,7 +10,6 @@ RUN apk add --no-cache git
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY site/auth/package.json ./site/auth/package.json
 COPY site/website/package.json ./site/website/package.json
-COPY site/platform-spec/package.json ./site/platform-spec/package.json
 COPY site/learn/package.json ./site/learn/package.json
 # Use the root workspace lockfile for deterministic learn installs in CI.
 COPY beskid_web_common ./beskid_web_common

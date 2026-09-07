@@ -1,0 +1,119 @@
+# Beskid platform — cutover deployment via existing Coolify Caddy proxy.
+#
+# This compose deploys the new beskid_sites images (built on-server) alongside
+# the existing Coolify-managed stack. Services join the Coolify ingress network
+# (s4ir1ovgqtubarqeql3gf3pz) and use Caddy labels for routing, so the existing
+# coolify-proxy automatically discovers and routes to them.
+#
+# Cutover procedure:
+#   1. Start this compose (new containers join the network, but Caddy labels
+#      conflict with existing services — so don't start yet).
+#   2. Stop the old Coolify-managed Beskid services.
+#   3. Start this compose. The coolify-proxy picks up the new containers.
+#   4. Verify each domain.
+#
+# Auth: SHELL_AUTH_MODE=mock for the initial deployment (no Authelia yet).
+# Memgraph + Postgres: reused from the existing Coolify stack (same network).
+
+name: beskid-sites
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+networks:
+  coolify-ingress:
+    name: s4ir1ovgqtubarqeql3gf3pz
+    external: true
+
+volumes:
+  tracker-data:
+  platform-spec-data:
+
+services:
+  website:
+    image: localhost:5000/beskid/website:latest
+    restart: unless-stopped
+    networks: [coolify-ingress]
+    expose: ["80"]
+    environment:
+      NODE_ENV: production
+      PORT: "80"
+      SHELL_AUTH_MODE: mock
+      SESSION_SECRET: IAlpwHTP9TDfIWpIbkggBQEZ0uoTvfuPWXmpqh26QFvv2lwV
+    labels:
+      caddy_0: https://beskid-lang.org
+      caddy_0.encode: zstd gzip
+      caddy_0.handle_path: "/*"
+      caddy_0.handle_path.0_reverse_proxy: "{{upstreams 80}}"
+      caddy_0.header: "-Server"
+      caddy_ingress_network: s4ir1ovgqtubarqeql3gf3pz
+    logging: *default-logging
+
+  platform-spec:
+    image: localhost:5000/beskid/platform-spec:latest
+    restart: unless-stopped
+    networks: [coolify-ingress]
+    expose: ["8460"]
+    environment:
+      NODE_ENV: production
+      PORT: "8460"
+      SHELL_AUTH_MODE: mock
+      SESSION_SECRET: IAlpwHTP9TDfIWpIbkggBQEZ0uoTvfuPWXmpqh26QFvv2lwV
+      MEMGRAPH_URI: bolt://memgraph-s4ir1ovgqtubarqeql3gf3pz:7687
+      PLATFORM_SPEC_PUBLIC_URL: https://spec.beskid-lang.org
+      OPENSPEC_ROOT: /app/openspec
+      BESKID_RELEASE_CHANNEL: stable
+      SKIP_ENV_VALIDATION: "1"
+    volumes:
+      - platform-spec-data:/app/apps/platform-spec/data/runtime
+    labels:
+      caddy_0: https://spec.beskid-lang.org
+      caddy_0.encode: zstd gzip
+      caddy_0.handle_path: "/*"
+      caddy_0.handle_path.0_reverse_proxy: "{{upstreams 8460}}"
+      caddy_0.header: "-Server"
+      caddy_ingress_network: s4ir1ovgqtubarqeql3gf3pz
+    logging: *default-logging
+
+  tracker:
+    image: localhost:5000/beskid/tracker:latest
+    restart: unless-stopped
+    networks: [coolify-ingress]
+    expose: ["3000"]
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      SHELL_AUTH_MODE: mock
+      SESSION_SECRET: IAlpwHTP9TDfIWpIbkggBQEZ0uoTvfuPWXmpqh26QFvv2lwV
+      TRACKER_PUBLIC_URL: https://tracker.beskid-lang.org
+      TRACKER_MAINTAINER_GROUP: beskid-admins
+      SKIP_ENV_VALIDATION: "1"
+    volumes:
+      - tracker-data:/app/apps/tracker/data/runtime
+    labels:
+      caddy_0: https://tracker.beskid-lang.org
+      caddy_0.encode: zstd gzip
+      caddy_0.handle_path: "/*"
+      caddy_0.handle_path.0_reverse_proxy: "{{upstreams 3000}}"
+      caddy_0.header: "-Server"
+      caddy_ingress_network: s4ir1ovgqtubarqeql3gf3pz
+    logging: *default-logging
+
+  nexus:
+    image: localhost:5000/beskid/nexus:latest
+    restart: unless-stopped
+    networks: [coolify-ingress]
+    expose: ["80"]
+    environment:
+      SHELL_AUTH_MODE: mock
+    labels:
+      caddy_0: https://nexus.beskid-lang.org
+      caddy_0.encode: zstd gzip
+      caddy_0.handle_path: "/*"
+      caddy_0.handle_path.0_reverse_proxy: "{{upstreams 80}}"
+      caddy_0.header: "-Server"
+      caddy_ingress_network: s4ir1ovgqtubarqeql3gf3pz
+    logging: *default-logging

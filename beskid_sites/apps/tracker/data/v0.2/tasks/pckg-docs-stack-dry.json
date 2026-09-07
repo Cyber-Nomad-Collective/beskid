@@ -1,0 +1,19 @@
+{
+	"id": "pckg-docs-stack-dry",
+	"title": "DRY package docs/source server stack",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "pckg-registry",
+	"completedAt": "2026-05-18",
+	"milestoneId": "v02-api-json-contract",
+	"source": {
+		"repo": "pckg",
+		"commit": "cc39412",
+		"subject": "refactor(server): DRY package docs/source stack and FastEndpoints Send conventions",
+		"url": "https://github.com/Cyber-Nomad-Collective/pckg/commit/cc39412"
+	},
+	"body": "DRY package docs/source stack and FastEndpoints Send conventions.\n\n## Provenance\n- **Repository:** `pckg`\n- **Commit:** [`cc39412`](https://github.com/Cyber-Nomad-Collective/pckg/commit/cc39412)\n- **Subject:** refactor(server): DRY package docs/source stack and FastEndpoints Send conventions\n- **Completed:** 2026-05-18\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `pckg-registry`\n- **Deliverable:** `v02-api-json-contract`\n\n## Relation\nContributes to deliverable **api.json primary contract** (`v02-api-json-contract`).\n",
+	"order": 223,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

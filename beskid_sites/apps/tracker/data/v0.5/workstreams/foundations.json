@@ -1,0 +1,7 @@
+{
+	"slug": "foundations",
+	"title": "Foundation Gate",
+	"summary": "Fibers, channels, scheduler, spawn/use grammar, Core.IO — the async/resource-lifetime substrate",
+	"order": 2,
+	"$schema": "../schemas/seed/workstream.schema.json"
+}

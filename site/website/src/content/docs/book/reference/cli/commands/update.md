@@ -1,9 +1,10 @@
 ---
-title: "beskid update"
+title: "beskid dev project update"
 description: "Update dependency resolution and the materialized workspace."
 ---
 
 Refreshes dependency resolution and updates the materialized workspace (resolver run with “update” semantics).
+This command is available as `beskid dev project update`.
 
 ## Arguments
 
@@ -16,7 +17,7 @@ Refreshes dependency resolution and updates the materialized workspace (resolver
 ## Example
 
 ```bash
-beskid update --project path/to/Project.proj
+beskid dev project update --project path/to/Project.proj
 ```
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

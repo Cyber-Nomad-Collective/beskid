@@ -1,0 +1,19 @@
+{
+	"id": "tracker-local-dev-bootstrap",
+	"title": "Tracker local dev: bun install before dev, GitHub Packages auth",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "tracker-implementation",
+	"completedAt": "2026-05-29",
+	"deliverableId": "v04-tracker-ship",
+	"source": {
+		"repo": "beskid",
+		"commit": "328e571",
+		"subject": "Fix bundling errors for ts services",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/328e571"
+	},
+	"body": "Local dev bootstrap: GitHub Packages auth via `.npmrc`, bun install before dev, and vite aliases for `@beskid/ui-react` / `@beskid/beskid-ui`.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`328e571`](https://github.com/Cyber-Nomad-Collective/beskid/commit/328e571)\n- **Completed:** 2026-05-29\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `tracker-implementation`\n- **Deliverable:** `v04-tracker-ship`",
+	"order": 397,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

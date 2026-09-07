@@ -28,6 +28,17 @@ Non-interactive equivalent:
 | Auth hub | [`auth/docker-compose.yml`](auth/docker-compose.yml) | [`auth/docker-compose.build.yml`](auth/docker-compose.build.yml) |
 | Learn lane | [`learn/docker-compose.yml`](learn/docker-compose.yml) | [`learn/docker-compose.build.yml`](learn/docker-compose.build.yml) |
 
-Build context for `*.build.yml` files is the **superrepo root** (required for `site/website/Dockerfile` and platform-spec git meta).
+## Run the public site locally
+
+Run the source-build stack from `site/`:
+
+```bash
+docker compose -f docker-compose.build.yml up --build
+```
+
+Open `http://localhost:4321` for Beskid Docs and `http://localhost:4322` for
+Learn. Use `docker compose down` to stop the stack.
+
+Build context for `*.build.yml` files is the **superrepo root** (required for `site/website/Dockerfile`).
 
 Operator notes: [`COOLIFY.md`](COOLIFY.md), [`auth/COOLIFY.md`](auth/COOLIFY.md), [`learn/COOLIFY.md`](learn/COOLIFY.md).

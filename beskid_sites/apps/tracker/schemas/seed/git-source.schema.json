@@ -1,0 +1,25 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://beskid-lang.org/schemas/seed/git-source.schema.json",
+	"type": "object",
+	"properties": {
+		"repo": {
+			"type": "string",
+			"minLength": 1
+		},
+		"commit": {
+			"type": "string",
+			"pattern": "^[0-9a-f]{7,40}$"
+		},
+		"subject": {
+			"type": "string",
+			"minLength": 1
+		},
+		"url": {
+			"type": "string",
+			"format": "uri"
+		}
+	},
+	"required": ["repo", "commit", "subject"],
+	"additionalProperties": false
+}

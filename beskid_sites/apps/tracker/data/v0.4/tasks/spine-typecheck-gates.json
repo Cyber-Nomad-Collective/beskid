@@ -1,0 +1,19 @@
+{
+	"id": "spine-typecheck-gates",
+	"title": "Spine typecheck gates for all corelib_tests entries",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "compiler-corelib",
+	"completedAt": "2026-06-07",
+	"deliverableId": "v04-corelib-complete",
+	"source": {
+		"repo": "compiler",
+		"commit": "d03b7a9",
+		"subject": "Generic Assertions",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/d03b7a9"
+	},
+	"body": "Spine parity gates typecheck every `corelib_tests` entry before JIT/link stages; blocks analysis regressions on the full matrix catalog.\n\n## What shipped\n\n- [`corelib_tests_typecheck.rs`](compiler/crates/beskid_tests/src/spine/corelib_tests_typecheck.rs) covers all `corelib_tests` `.bd` entries (skip if file missing)\n- Wired into `cargo test -p beskid_tests spine::` gate alongside link completeness\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`d03b7a9`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/d03b7a9)\n- **Completed:** 2026-06-07\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `compiler-corelib`\n- **Deliverable:** `v04-corelib-complete`",
+	"order": 361,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

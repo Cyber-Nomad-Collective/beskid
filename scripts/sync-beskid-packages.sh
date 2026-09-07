@@ -3,7 +3,7 @@
 #
 # Usage:
 #   ./scripts/sync-beskid-packages.sh
-#   ./scripts/sync-beskid-packages.sh beskid_tracker site/platform-spec
+#   ./scripts/sync-beskid-packages.sh beskid_tracker site/website
 #
 # file: pins (local submodule links during pre-publish work) are skipped — pnpm update
 # would otherwise try the registry and rewrite them. Revert to npm:@cyber-nomad-collective/...@^0.2.0
@@ -29,7 +29,6 @@ DEFAULT_CONSUMERS=(
 	beskid_tracker
 	site/auth
 	site/website
-	site/platform-spec
 	pckg/web
 	beskid_nexus/gitnexus
 	beskid_nexus/gitnexus-web
@@ -109,6 +108,6 @@ done
 ok "Beskid package sync finished"
 echo
 echo "Pre-publish file: pins (until @beskid/ui-react 0.2.9 / @beskid/beskid-ui 0.2.8 publish):"
-echo "  site/website, site/platform-spec, pckg/web → file:../../beskid_web_common/packages/..."
+echo "  site/website, pckg/web → file:../../beskid_web_common/packages/..."
 echo "  beskid_tracker → @beskid/ui-react file:../beskid_web_common/packages/beskid-ui-react"
 echo "After publish: switch those to npm:@cyber-nomad-collective/...@^0.2.0 and re-run this script."

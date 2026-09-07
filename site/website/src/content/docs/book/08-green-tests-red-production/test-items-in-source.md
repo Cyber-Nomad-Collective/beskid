@@ -50,4 +50,4 @@ Stable names beat cute ones: `ResolverDuplicateNames` survives code search; `Tes
 
 ## Next
 
-[The `beskid test` CLI](/book/08-green-tests-red-production/beskid-test-cli/)
+[The `beskid dev build test` CLI](/book/08-green-tests-red-production/beskid-test-cli/)

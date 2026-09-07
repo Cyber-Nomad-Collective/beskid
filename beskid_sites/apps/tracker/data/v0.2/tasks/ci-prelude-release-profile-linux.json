@@ -1,0 +1,21 @@
+{
+	"id": "ci-prelude-release-profile-linux",
+	"title": "Run corelib prelude lowering tests in release profile on Linux",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"domain": "compiler",
+	"area": "ci",
+	"completedAt": "2026-05-18",
+	"milestoneId": "v02-ci-deploy-infra",
+	"source": {
+		"repo": "compiler",
+		"commit": "b7df839",
+		"subject": "fix(ci): run corelib prelude lowering tests in release profile on Linux",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/b7df839"
+	},
+	"body": "Run corelib prelude lowering tests in release profile on Linux.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`b7df839`](https://github.com/Cyber-Nomad-Collective/compiler/commit/b7df839)\n- **Subject:** fix(ci): run corelib prelude lowering tests in release profile on Linux\n- **Completed:** 2026-05-18\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `ci-release`\n- **Deliverable:** `v02-ci-deploy-infra`\n- **Domain:** `compiler`\n- **Area:** `ci`\n\n## Relation\nContributes to deliverable **CI workflows and deploy infra** (`v02-ci-deploy-infra`).\n",
+	"order": 274,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

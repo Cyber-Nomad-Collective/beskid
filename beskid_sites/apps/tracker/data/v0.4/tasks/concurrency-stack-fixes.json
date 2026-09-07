@@ -1,0 +1,19 @@
+{
+	"id": "concurrency-stack-fixes",
+	"title": "Concurrency stack fixes (Channel/Mutex/Hub)",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "compiler-corelib",
+	"completedAt": "2026-06-07",
+	"deliverableId": "v04-corelib-complete",
+	"source": {
+		"repo": "beskid",
+		"commit": "b956660",
+		"subject": "Fixes to concurrency stack",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/b956660"
+	},
+	"body": "Runtime/concurrency stack fixes for Channel, Mutex, and Hub builtins; advances corelib concurrency test targets toward matrix green.\n\n## What shipped\n\n- Concurrency stack fixes on compiler main (`db4d1e1`, superrepo `b956660`)\n- ABI/codegen updates for concurrency builtins and link plan call graph\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`b956660`](https://github.com/Cyber-Nomad-Collective/beskid/commit/b956660)\n- **Completed:** 2026-06-07\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `compiler-corelib`\n- **Deliverable:** `v04-corelib-complete`",
+	"order": 365,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

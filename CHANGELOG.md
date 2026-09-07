@@ -5,9 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.org).
+Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/standard/).
 
 ## [Unreleased]
+
+### Changed
+
+- Documentation: established `beskid-lang.org/docs/` as the single public technical documentation surface. The new STE-100 authoring skill and Docs pages link to OpenSpec for normative requirements and to the Book for learning material.
+- Local site deployment: publish Docs on port `4321` and Learn on port `4322` in both Compose files. The site guide now documents the source-build command and local URLs.
+
+### Removed
+
+- Platform Spec: retired the separate `site/platform-spec` application, its workspace member, CI build gate, and image-delivery lane. Legacy `/platform-spec/` URLs now redirect to `/docs/standard/`.
 
 ### Added
 
@@ -73,11 +82,15 @@ Version numbering tracks the [Beskid normative spec](https://spec.beskid-lang.or
   integration.
 - Advance `beskid_infra` to the Rust pckg Compose configuration, which leaves
   session authentication disabled until Coolify has a trusted forward-auth
-  boundary, carries a seed-derived canonical database URL, and
-  validates pckg readiness in staging before promotion.
+  boundary, carries a seed-derived canonical database URL, and validates pckg
+  readiness in staging before promotion.
 - `compiler` delivery pointer now includes authenticated Bearer API-key
   publication plus compositional associated-type references, with parser,
   semantic, and fail-closed ABI/layout coverage.
+- CLI command surface (`beskid`): promoted `run`, `publish`, `get`, `search`, `install`, `rm`, and `new` as primary top-level entrypoints; moved all remaining workflow commands under `beskid dev` namespaces (`syntax`, `build`, `project`, `package`, `runtime-kit`, `tooling`) and aligned help/docs examples with that hierarchy.
+- CLI UX: switched user-facing build/run/publish flows to simple docker-like step output (`[1/4] resolve`, etc.) and removed hidden heavy TUI usage from the top-level paths.
+- CLI docs: added `beskid publish` command reference, updated command index and key build/test references (`analyze`, `pipeline`, CI/testing docs) to match the new hierarchy and avoid stale `beskid build` / `beskid test` user-facing examples.
+- CLI docs: completed final command-reference cleanup for parser/analysis docs and core command pages (`parse`, `tree`, `analyze`, `format`, `doc`, `clif`, `fetch`, `lock`, `update`) and updated cross-references to `beskid dev ...` command paths outside legacy `pckg` docs.
 - `site/website`: removed the legacy platform-spec-derived `packages/` MDX
   content tree (9 pages + the orphaned `PackageRegistryConsole.astro`
   component); the pckg registry surface is now served canonically by

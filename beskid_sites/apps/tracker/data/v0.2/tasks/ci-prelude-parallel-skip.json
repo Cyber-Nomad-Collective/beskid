@@ -1,0 +1,21 @@
+{
+	"id": "ci-prelude-parallel-skip",
+	"title": "Skip prelude lowering tests in parallel CI test pass",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"domain": "compiler",
+	"area": "ci",
+	"completedAt": "2026-05-18",
+	"milestoneId": "v02-ci-deploy-infra",
+	"source": {
+		"repo": "compiler",
+		"commit": "ad6c13c",
+		"subject": "fix(ci): skip prelude lowering tests in parallel test pass",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/ad6c13c"
+	},
+	"body": "Skip prelude lowering tests in parallel test pass.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`ad6c13c`](https://github.com/Cyber-Nomad-Collective/compiler/commit/ad6c13c)\n- **Subject:** fix(ci): skip prelude lowering tests in parallel test pass\n- **Completed:** 2026-05-18\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `ci-release`\n- **Deliverable:** `v02-ci-deploy-infra`\n- **Domain:** `compiler`\n- **Area:** `ci`\n\n## Relation\nContributes to deliverable **CI workflows and deploy infra** (`v02-ci-deploy-infra`).\n",
+	"order": 275,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

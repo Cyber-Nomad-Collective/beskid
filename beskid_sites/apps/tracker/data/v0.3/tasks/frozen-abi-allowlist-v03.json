@@ -1,0 +1,20 @@
+{
+	"id": "frozen-abi-allowlist-v03",
+	"title": "Update frozen runtime export symbol allowlist for v0.3",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "concurrency-runtime",
+	"domain": "execution",
+	"completedAt": "2026-05-23",
+	"milestoneId": "v03-merge-wave",
+	"source": {
+		"repo": "compiler",
+		"commit": "79e6364",
+		"subject": "test(abi): update frozen runtime export symbol allowlist for v0.3 merge",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/79e6364"
+	},
+	"body": "Updates v0.3 frozen ABI allowlist entries for new Phase B exports and channel/preempt symbols.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`79e6364`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/79e6364)\n- **Subject:** test(abi): update frozen runtime export symbol allowlist for v0.3 merge\n- **Completed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `concurrency-runtime`\n- **Domain:** `execution`\n- **Deliverable:** `v03-merge-wave`\n\n## Relation\nContributes to deliverable **v0.3 macro/runtime/ffi/tooling delivery** (`v03-merge-wave`).",
+	"order": 326,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

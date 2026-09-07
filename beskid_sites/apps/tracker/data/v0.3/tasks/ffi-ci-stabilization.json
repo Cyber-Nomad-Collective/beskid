@@ -1,0 +1,19 @@
+{
+	"id": "ffi-ci-stabilization",
+	"title": "FFI v0.3 tests and runtime bridge discovery fixes",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "ci-release",
+	"completedAt": "2026-05-24",
+	"milestoneId": "v03-post-merge-ci",
+	"source": {
+		"repo": "compiler",
+		"commit": "f7361aa",
+		"subject": "fix(ci): Path import in ffi_v03 tests and runtime bridge discovery",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/f7361aa"
+	},
+	"body": "Stabilizes ffi_v03 workflow flakes (timeouts, missing symbols) so export FFI coverage is reliable on main.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`f7361aa`](https://github.com/Cyber-Nomad-Collective/beskid_compiler/commit/f7361aa)\n- **Subject:** fix(ci): Path import in ffi_v03 tests and runtime bridge discovery\n- **Completed:** 2026-05-24\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `ci-release`\n- **Deliverable:** `v03-post-merge-ci`\n\n## Relation\nContributes to deliverable **CI and integration hardening** (`v03-post-merge-ci`).",
+	"order": 310,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

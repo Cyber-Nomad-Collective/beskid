@@ -33,10 +33,9 @@ Every canonical capability SHALL contain named normative requirements that use S
 - **THEN** OpenSpec strict validation, provenance coverage, placeholder detection, link validation, and normative-density checks all pass
 
 ### Requirement: Public standard links remain stable
-The platform-spec service SHALL resolve every published legacy `/platform-spec/**` slug through `openspec/catalog.json`. The service SHOULD redirect aliases to canonical capability and requirement anchors. The redirects do not break fragment navigation.
+The main Beskid Docs site SHALL resolve published legacy `/platform-spec/**` paths to the standard entry point at `/docs/standard/`. The Docs site SHALL link readers to the canonical OpenSpec capability source. The redirects do not break access to the standard.
 
 #### Scenario: Existing Book link is followed
 - **GIVEN** a Book, Tracker, Nexus, or external link uses a legacy standard slug
-- **WHEN** the platform-spec service receives the request
-- **THEN** it renders or redirects to the mapped canonical OpenSpec content
-
+- **WHEN** the main Beskid Docs site receives the request
+- **THEN** it redirects to the standard entry point

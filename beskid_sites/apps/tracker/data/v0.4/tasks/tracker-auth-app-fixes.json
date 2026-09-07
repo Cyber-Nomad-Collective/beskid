@@ -1,0 +1,23 @@
+{
+	"id": "tracker-auth-app-fixes",
+	"title": "Tracker app fixes for auth hub handoff",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "tracker-implementation",
+	"completedAt": "2026-06-03",
+	"deliverableId": "v04-tracker-ship",
+	"source": {
+		"repo": "beskid",
+		"commit": "574a84c",
+		"subject": "Update tracker to support autopairing",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/574a84c"
+	},
+	"body": "Tracker auth hub handoff: session routes, protected kanban, hub launcher, and autopairing flow.\n\n## What shipped\n\n- Auth/Tracker refactor (`801f1e2`) — hub session wiring and protected shell\n- Auto pairing fixes (`742f086`, `1e3e3cf`, `574a84c`) — `/settings/auth/pair?code=` flow\n- Auth session fixes (`988f4e6`)\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`574a84c`](https://github.com/Cyber-Nomad-Collective/beskid/commit/574a84c)\n- **Completed:** 2026-06-03\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `tracker-implementation`\n- **Deliverable:** `v04-tracker-ship`",
+	"order": 394,
+	"subtasks": [
+		{ "text": "Hub session routes and protected kanban shell", "done": true },
+		{ "text": "Autopairing via hub redirect cookie", "done": true },
+		{ "text": "BeskidHub launcher in app navbar", "done": true }
+	],
+	"$schema": "../schemas/seed/task.schema.json"
+}

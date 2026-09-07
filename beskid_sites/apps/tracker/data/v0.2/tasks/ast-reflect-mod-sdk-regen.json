@@ -1,0 +1,21 @@
+{
+	"id": "ast-reflect-mod-sdk-regen",
+	"title": "ast_reflect_gen Mod SDK syntax emission refresh",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "analysis-pipeline",
+	"domain": "compiler",
+	"area": "mods",
+	"completedAt": "2026-05-11",
+	"milestoneId": "v02-platform-spec-cutover",
+	"source": {
+		"repo": "compiler",
+		"commit": "e16f55a",
+		"subject": "Improve ast_reflect_gen Mod SDK syntax emission and bump corelib.",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/e16f55a"
+	},
+	"body": "Improve ast_reflect_gen Mod SDK syntax emission and bump corelib.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`e16f55a`](https://github.com/Cyber-Nomad-Collective/compiler/commit/e16f55a)\n- **Subject:** Improve ast_reflect_gen Mod SDK syntax emission and bump corelib.\n- **Completed:** 2026-05-11\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `analysis-pipeline`\n- **Deliverable:** `v02-platform-spec-cutover`\n- **Domain:** `compiler`\n- **Area:** `mods`\n\n## Relation\nContributes to deliverable **Platform-spec cutover** (`v02-platform-spec-cutover`).\n",
+	"order": 238,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

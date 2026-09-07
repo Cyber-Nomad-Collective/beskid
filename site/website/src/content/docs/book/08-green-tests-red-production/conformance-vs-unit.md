@@ -14,7 +14,7 @@ Confusing them is how you ship a green app on a red language.
 ## Your unit and integration tests
 
 - Authored as `test` items in **your** repos.
-- Run with `beskid test` and your tags/groups.
+- Run with `beskid dev build test` and your tags/groups.
 - Prove **your** contracts, parsers, and business rules.
 
 ## Platform conformance harnesses
@@ -31,7 +31,7 @@ Normative policy: [Conformance evidence](/platform-spec/compiler/conformance/con
 ```mermaid
 flowchart TB
   userTests[Your test items in .bd files]
-  cli[beskid test]
+  cli[beskid dev build test]
   conformance[beskid_tests / beskid_e2e_tests in compiler CI]
   spec[Platform spec contracts]
   userTests --> cli

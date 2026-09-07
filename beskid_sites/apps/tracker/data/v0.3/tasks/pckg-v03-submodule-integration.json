@@ -1,0 +1,20 @@
+{
+	"id": "pckg-v03-submodule-integration",
+	"title": "Pin pckg submodule to v0.3 integrated registry tip",
+	"statusColumn": "Done",
+	"priority": "low",
+	"workstream": "pckg-registry",
+	"domain": "tooling",
+	"completedAt": "2026-05-23",
+	"milestoneId": "v03-merge-wave",
+	"source": {
+		"repo": "beskid",
+		"commit": "3db38a2",
+		"subject": "chore(submodules): pin compiler and pckg to v0.3 integrated tips",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/3db38a2"
+	},
+	"body": "Pins pckg submodule to the v0.3 integrated registry tip alongside compiler after merge-wave integration.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`3db38a2`](https://github.com/Cyber-Nomad-Collective/beskid/commit/3db38a2)\n- **Subject:** chore(submodules): pin compiler and pckg to v0.3 integrated tips\n- **Completed:** 2026-05-23\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `pckg-registry`\n- **Domain:** `tooling`\n- **Deliverable:** `v03-merge-wave`\n\n## Relation\nContributes to deliverable **v0.3 macro/runtime/ffi/tooling delivery** (`v03-merge-wave`).",
+	"order": 346,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

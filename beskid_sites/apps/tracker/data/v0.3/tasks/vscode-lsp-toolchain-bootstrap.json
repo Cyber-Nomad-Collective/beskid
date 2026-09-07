@@ -1,0 +1,20 @@
+{
+	"id": "vscode-lsp-toolchain-bootstrap",
+	"title": "Bump submodules for CLI-driven LSP and toolchain bootstrap",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "editor-extension",
+	"domain": "tooling",
+	"completedAt": "2026-05-25",
+	"milestoneId": "v03-editor-lsp-cli",
+	"source": {
+		"repo": "beskid",
+		"commit": "503223d",
+		"subject": "chore: bump submodules for CLI-driven LSP and toolchain bootstrap",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/503223d"
+	},
+	"body": "Superrepo submodule bumps wire extension and compiler repos to CLI-driven LSP bootstrap landed in v0.3.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`503223d`](https://github.com/Cyber-Nomad-Collective/beskid/commit/503223d)\n- **Subject:** chore: bump submodules for CLI-driven LSP and toolchain bootstrap\n- **Completed:** 2026-05-25\n\n## Catalog scope\n- **Delivery version:** v0.3 (Macros, concurrency, and stabilization)\n- **Workstream:** `editor-extension`\n- **Domain:** `tooling`\n- **Deliverable:** `v03-editor-lsp-cli`\n\n## Relation\nContributes to deliverable **CLI LSP launch & VS Code toolchain** (`v03-editor-lsp-cli`).",
+	"order": 337,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

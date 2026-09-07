@@ -1,0 +1,21 @@
+{
+	"id": "abfall-gc-heap-integration",
+	"title": "Vendored abfall GC and Beskid heap integration",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "codegen-runtime",
+	"domain": "execution",
+	"area": "gc",
+	"completedAt": "2026-05-20",
+	"milestoneId": "v02-concurrency-runtime",
+	"source": {
+		"repo": "compiler",
+		"commit": "6ecd493",
+		"subject": "feat(runtime): vendored abfall GC and Beskid heap integration",
+		"url": "https://github.com/Cyber-Nomad-Collective/compiler/commit/6ecd493"
+	},
+	"body": "Vendored abfall GC and Beskid heap integration.\n\n## Provenance\n- **Repository:** `compiler`\n- **Commit:** [`6ecd493`](https://github.com/Cyber-Nomad-Collective/compiler/commit/6ecd493)\n- **Subject:** feat(runtime): vendored abfall GC and Beskid heap integration\n- **Completed:** 2026-05-20\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `codegen-runtime`\n- **Deliverable:** `v02-concurrency-runtime`\n- **Domain:** `execution`\n- **Area:** `gc`\n\n## Relation\nContributes to deliverable **Fibers, channels, and GC runtime** (`v02-concurrency-runtime`).\n",
+	"order": 264,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

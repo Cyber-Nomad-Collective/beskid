@@ -1,0 +1,19 @@
+{
+	"id": "platform-observability-pass",
+	"title": "Shared server observability across platform services",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "platform-infra",
+	"completedAt": "2026-05-29",
+	"deliverableId": "v04-platform-dx",
+	"source": {
+		"repo": "beskid",
+		"commit": "bc9f2e0",
+		"subject": "Observability pass over infra",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/bc9f2e0"
+	},
+	"body": "Shared Nitro observability via `@beskid/server-observability` in beskid_web_common; `/metrics` internal-only via Alloy Docker SD.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`bc9f2e0`](https://github.com/Cyber-Nomad-Collective/beskid/commit/bc9f2e0)\n- **Completed:** 2026-05-29\n\n## Catalog scope\n- **Delivery version:** v0.4\n- **Workstream:** `platform-infra`\n- **Deliverable:** `v04-platform-dx`",
+	"order": 389,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

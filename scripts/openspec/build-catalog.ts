@@ -8,7 +8,7 @@ import {
 	resolveCapabilityDocumentIdentity,
 	resolveDocumentIdentityFromPath,
 	type SpecDocumentIdentity,
-} from "../../site/platform-spec/src/lib/spec/document-identity.ts";
+} from "./document-identity.ts";
 import { deriveBookLinks } from "./validate-book-traceability.ts";
 
 const repoRoot = path.resolve(import.meta.dirname, "../..");

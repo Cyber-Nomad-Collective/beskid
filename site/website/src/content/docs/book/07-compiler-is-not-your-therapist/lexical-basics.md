@@ -28,14 +28,14 @@ File-scoped `mod` must appear as the first top-level item when used. The parser 
 When the lexer/parser disagrees with you, shrink to a five-line file and run:
 
 ```bash
-beskid parse tiny.bd
-beskid tree tiny.bd
+beskid dev syntax parse tiny.bd
+beskid dev syntax tree tiny.bd
 ```
 
 ```mermaid
 flowchart LR
   SRC[.bd file] --> LEX[lexical]
-  LEX --> PAR[parse]
+  LEX --> PAR[syntax parse]
   PAR --> SEM[semantic]
 ```
 

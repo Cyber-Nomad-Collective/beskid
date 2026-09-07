@@ -1,0 +1,20 @@
+{
+	"id": "ci-aot-pipeline-staged",
+	"title": "CI workflow with staged AOT pipeline and interop tooling split",
+	"statusColumn": "Done",
+	"priority": "high",
+	"workstream": "codegen-runtime",
+	"domain": "tooling",
+	"completedAt": "2026-02-27",
+	"deliverableId": "v00-execution-jit-gc",
+	"body": "Added CI with workspace checks, **interop freshness** validation, ABI/dispatch parity tests, and **AOT smoke** tests—reflecting a staged compile pipeline rather than a single `cargo test` blob.\n\n## Provenance\n- **Repository:** `pekan`\n- **Commit:** [`24baf3b`](https://github.com/Cyber-Nomad-Collective/pekan/commit/24baf3b)\n- **Subject:** Add CI workflow with workspace checks, interop freshness validation, ABI/dispatch parity tests, and AOT smoke tests\n- **Completed:** 2026-02-27\n\n## Catalog scope\n- **Delivery version:** v0.0 (Pecan prototype)\n- **Workstream:** `codegen-runtime`\n- **Deliverable:** `v00-execution-jit-gc`\n\n## Relation\nPrototype JIT/lowering work regressed easily without automated smoke coverage; CI encoded the minimum bar before compiler history moved to the dedicated submodule. Patterns reused in compiler repo CI for v0.1+ release and pack flows.",
+	"source": {
+		"repo": "pekan",
+		"commit": "24baf3b",
+		"subject": "Add CI workflow with workspace checks, interop freshness validation, ABI/dispatch parity tests, and AOT smoke tests",
+		"url": "https://github.com/Cyber-Nomad-Collective/pekan/commit/24baf3b"
+	},
+	"order": 18,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

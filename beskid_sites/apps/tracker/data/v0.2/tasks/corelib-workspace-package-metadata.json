@@ -1,0 +1,20 @@
+{
+	"id": "corelib-workspace-package-metadata",
+	"title": "Add workspace package metadata for corelib publish",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "pckg-registry",
+	"domain": "core-library",
+	"completedAt": "2026-05-21",
+	"milestoneId": "v02-corelib-workspace-publish",
+	"source": {
+		"repo": "corelib",
+		"commit": "3845ef3",
+		"subject": "chore(corelib): add workspace.package.json member metadata for pckg publish",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid_standard/commit/3845ef3"
+	},
+	"body": "Add workspace.package.json member metadata for pckg publish.\n\n## Provenance\n- **Repository:** `corelib`\n- **Commit:** [`3845ef3`](https://github.com/Cyber-Nomad-Collective/beskid_standard/commit/3845ef3)\n- **Subject:** chore(corelib): add workspace.package.json member metadata for pckg publish\n- **Completed:** 2026-05-21\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `pckg-registry`\n- **Deliverable:** `v02-corelib-workspace-publish`\n- **Domain:** `core-library`\n\n## Relation\nContributes to deliverable **Corelib workspace publish hardening** (`v02-corelib-workspace-publish`).\n",
+	"order": 280,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}

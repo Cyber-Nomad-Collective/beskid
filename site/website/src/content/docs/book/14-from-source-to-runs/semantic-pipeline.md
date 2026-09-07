@@ -31,7 +31,7 @@ flowchart LR
   parse --> gen --> sem --> rewrite --> lower
 ```
 
-## `beskid analyze`
+## `beskid dev syntax analyze`
 
 Runs analysis without requiring a successful JIT—your CI friend for "no, you cannot call that."
 

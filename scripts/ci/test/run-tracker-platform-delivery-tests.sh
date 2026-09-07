@@ -15,13 +15,16 @@ for required in \
 	'pnpm install --dir beskid_tracker --frozen-lockfile' \
 	'pnpm --dir beskid_tracker test' \
 	'pnpm --dir beskid_tracker check' \
-	'pnpm --dir site/platform-spec test' \
-	'pnpm --dir site/platform-spec typecheck' \
 	'pnpm --dir site/website exec vitest run src/lib/tracker-delivery.test.ts' \
 	'pnpm --dir site/website build' \
 	'beskid_nexus/gitnexus' \
 	'latest-delivery'; do
 	grep -Fq "${required}" "${workflow}" || { echo "workflow missing required gate: ${required}" >&2; exit 1; }
 done
+
+if grep -Fq 'site/platform-spec' "${workflow}"; then
+	echo "workflow still references the retired Platform Spec app" >&2
+	exit 1
+fi
 
 echo "Tracker platform delivery workflow contract OK"

@@ -1,0 +1,22 @@
+# Build outputs — regenerated inside the Docker build, never needed in context.
+**/.output/
+**/.nitro/
+**/.tanstack/
+**/.next/
+**/dist/
+**/.cache/
+
+# Local deps — installed fresh via `pnpm install --frozen-lockfile` in the build.
+**/node_modules/
+
+# Local state + secrets.
+**/.beskid/
+**/.env
+**/.env.*
+**/*.log
+
+# VCS + editor metadata.
+.git/
+.gitignore
+.vscode/
+.idea/

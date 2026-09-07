@@ -1,0 +1,20 @@
+{
+	"id": "ci-workflows-refine-agents",
+	"title": "Refine GitHub Actions workflows and agents guidance",
+	"statusColumn": "Done",
+	"priority": "medium",
+	"workstream": "ci-release",
+	"domain": "tooling",
+	"completedAt": "2026-05-09",
+	"milestoneId": "v02-ci-deploy-infra",
+	"source": {
+		"repo": "beskid",
+		"commit": "0b36871",
+		"subject": "chore(ci): refine workflows and agents guidance",
+		"url": "https://github.com/Cyber-Nomad-Collective/beskid/commit/0b36871"
+	},
+	"body": "Refine workflows and agents guidance.\n\n## Provenance\n- **Repository:** `beskid`\n- **Commit:** [`0b36871`](https://github.com/Cyber-Nomad-Collective/beskid/commit/0b36871)\n- **Subject:** chore(ci): refine workflows and agents guidance\n- **Completed:** 2026-05-09\n\n## Catalog scope\n- **Delivery version:** v0.2 (Analysis, packages, and platform spec)\n- **Workstream:** `ci-release`\n- **Deliverable:** `v02-ci-deploy-infra`\n- **Domain:** `tooling`\n\n## Relation\nContributes to deliverable **CI workflows and deploy infra** (`v02-ci-deploy-infra`).\n",
+	"order": 264,
+	"subtasks": [],
+	"$schema": "../schemas/seed/task.schema.json"
+}
