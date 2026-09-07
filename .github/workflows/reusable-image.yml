@@ -106,11 +106,23 @@ jobs:
 
       - name: Log in to the Beskid registry
         if: inputs.push
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
-        with:
-          registry: cr.beskid-lang.org
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+        # Retry registry login after a transient edge-proxy reset. The shared
+        # host proxy can reload while unrelated services change; an OCI client
+        # retry is safe because no image mutation has happened yet.
+        env:
+          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5; do
+            if printf '%s' "$REGISTRY_PASSWORD" | docker login cr.beskid-lang.org --username "$REGISTRY_USERNAME" --password-stdin; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 5 ]; then
+              exit 1
+            fi
+            sleep "$((attempt * 2))"
+          done
 
       - name: Setup Blacksmith builder
         uses: useblacksmith/setup-docker-builder@ab5c1da94f53f5cd75c1038092aa276dddfccbba # v1
