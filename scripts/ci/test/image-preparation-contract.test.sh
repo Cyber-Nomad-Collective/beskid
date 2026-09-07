@@ -149,9 +149,12 @@ pckg="$(<"${root}/pckg/Dockerfile")"
 for requirement in \
   'COPY beskid_web_common ./beskid_web_common' \
   'pnpm install --dir /src/beskid_web_common --frozen-lockfile' \
-  'pnpm install --dir /src/pckg/web --frozen-lockfile'; do
+  'pnpm install --dir /src/pckg/web --frozen-lockfile' \
+  'cargo build --release -p beskid_pckg_server' \
+  'PCKG_ARTIFACT_ROOT=/app/packages' \
+  '/health/ready'; do
   if [[ "${pckg}" != *"${requirement}"* ]]; then
-    echo "pckg/Dockerfile is missing required root-context preparation: ${requirement}" >&2
+    echo "pckg/Dockerfile is missing required Rust fresh-store preparation: ${requirement}" >&2
     exit 1
   fi
 done

@@ -9,7 +9,7 @@
 
 ## Tech Stack
 - **Compiler:** Rust, AOT-only, host composition. Corelib in `compiler/corelib` (Beskid sources, not a Rust crate move)
-- **pckg:** .NET package registry (Compose locally)
+- **pckg:** Rust package registry (`compiler/crates/beskid_pckg_server/`) + React client (`pckg/web/`); legacy .NET backend removed
 - **Sites:** `site/website` (book/landing), `site/platform-spec` (TanStack, Memgraph SOT), `site/auth`
 - **Apps:** `beskid_tracker` (SQLite SOT), `beskid_nexus` (graph explorer), `beskid_web_common` (shared TS: `trudoc`, `@beskid/beskid-ui`, `@beskid/ui-react`)
 - **Infra:** Coolify Compose (one service per lane), OpenBao secrets, Memgraph, Grafana monitoring at `monitor.beskid-lang.org`

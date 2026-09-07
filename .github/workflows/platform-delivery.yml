@@ -254,11 +254,16 @@ jobs:
     with:
       name: beskid-pckg
       repository: ghcr.io/cyber-nomad-collective/beskid-pckg
-      # The pckg image builds the pckg web client and .NET server from this checkout.
+      # The pckg image builds the pckg web client and the Rust server
+      # (compiler/crates/beskid_pckg_server) from this checkout. The legacy
+      # .NET backend was removed; the Rust image Dockerfile at pckg/Dockerfile
+      # is owned by the Rust pckg lane and fails closed until it exists.
       # Keep the context at the repository root so file:../../beskid_web_common exists.
       context: .
       dockerfile: pckg/Dockerfile
       submodules: pckg beskid_web_common
+      healthcheck-url: /health/ready
+      healthcheck-port: '8082'
       # Hard gate: a failed pckg build/push fails the whole delivery. The
       # beskid-pckg GHCR package is owned by the sibling beskid_pckg repo, so
       # grant this repo Write on that package, or set org/repo secret GHCR_TOKEN

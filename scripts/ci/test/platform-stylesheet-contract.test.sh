@@ -38,9 +38,6 @@ assert_contains "${pckg_web_styles}" \
 assert_contains "${pckg_web_styles}" \
   'styles/hub.css' \
   "pckg web client loads the service hub stylesheet"
-assert_contains "$(cat "${root}/pckg/src/Server/wwwroot/beskid-hub.css")" \
-  '.beskid-hub__tile' \
-  "pckg server serves hub tile styling"
 assert_contains "$(cat "${root}/site/website/astro.config.mjs")" \
   'docsShellCustomCss' \
   "website loads the shared documentation shell"

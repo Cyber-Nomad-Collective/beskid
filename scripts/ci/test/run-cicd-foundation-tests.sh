@@ -100,7 +100,9 @@ fi
 pckg_image_block="$(sed -n '/^  image-pckg:/,/^  manifest:/p' "${root}/.github/workflows/platform-delivery.yml")"
 for required in \
   'context: .' \
-  'submodules: pckg beskid_web_common'; do
+  'submodules: pckg beskid_web_common' \
+  'healthcheck-url: /health/ready' \
+  "healthcheck-port: '8082'"; do
   if [[ "${pckg_image_block}" != *"${required}"* ]]; then
     echo "pckg image workflow is missing required contract: ${required}" >&2
     exit 1
@@ -115,11 +117,6 @@ for required in \
     exit 1
   fi
 done
-if ! rg -q 'pnpm install --dir /src/beskid_web_common --frozen-lockfile' "${root}/pckg/Dockerfile" &&
-     ! rg -q 'bun install --cwd=/src/beskid_web_common --frozen-lockfile' "${root}/pckg/Dockerfile"; then
-  echo "pckg Dockerfile must frozen-install beskid_web_common before pckg/web" >&2
-    exit 1
-fi
 if ! rg -Fq 'COPY --from=web_common' "${root}/beskid_tracker/Dockerfile"; then
   echo "tracker Dockerfile must consume the web_common BuildKit context before install" >&2
   exit 1

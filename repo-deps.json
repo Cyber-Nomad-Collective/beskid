@@ -189,7 +189,7 @@
 			}
 		},
 		"dotnet": {
-			"description": ".NET SDK (pckg, compiler tooling)",
+			"description": ".NET SDK (Nexus C# language-resolution fixtures, compiler tooling)",
 			"bins": ["dotnet"],
 			"version_cmd": ["dotnet", "--version"],
 			"install": {
