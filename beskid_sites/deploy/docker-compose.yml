@@ -1,23 +1,19 @@
-# Beskid platform — Caddy-based production deployment.
+# Beskid production platform — standalone Docker Compose.
 #
-# Replaces the Coolify-managed stack (beskid_infra/compose/production/docker-compose.yml)
-# with a self-hosted Caddy reverse proxy, a private Docker registry, Authelia as
-# OIDC provider (GitHub sole IdP), and all Beskid site apps. Runs ALONGSIDE the
-# existing Coolify stack during cutover; DNS is flipped per-domain when each
-# service is verified.
+# This is the sole Beskid runtime definition. A shared host edge attaches to
+# its external network; the private OCI registry stores release images; and
+# Watchtower advances labelled application services when CI moves production.
 #
-# Design (grounded in beskid_sites/_planning/infra-audit.md):
-#   - Two networks: `beskid-frontend` (Caddy + public apps) and `beskid-backend`
-#     (data stores + their clients). Caddy is the only service on both.
-#   - `expose:` only for internal services; Caddy publishes 80/443.
-#   - Resource limits + log rotation on every service (audit findings 2.4, 2.5).
-#   - Healthchecks on every service (preserved from the Coolify stack).
-#   - Beskid app images are digest-pinned via env (fail-closed, mirrors the
-#     `${BESKID_RELEASE_TAG:?...}` pattern). Third-party images are version-pinned
-#     (not `latest`); a future CI gate will digest-pin them (audit finding 2.2).
+# Design:
+#   - `beskid-edge` is an externally-managed host edge network. Beskid does not
+#     own its ports or lifecycle. `beskid-backend` contains data stores.
+#   - `expose:` only for internal services; public routing is label-driven.
+#   - Resource limits + log rotation on every service.
+#   - Healthchecks on every service.
+#   - CI moves controlled production tags; Watchtower updates only explicitly
+#     labelled application services. Third-party infrastructure stays pinned.
 #   - All secrets via env_file (deploy/.env), never inline.
-#   - Memgraph auth enabled (audit finding 2.6).
-#   - Shared Postgres for Authelia + pckg + community (audit finding 2.7).
+#   - Shared Postgres for Authelia + pckg + community.
 #
 # Secrets: OpenBao `secret/beskid/production/*` → deploy/.env (see deploy.sh).
 # Do NOT commit deploy/.env or deploy/registry/htpasswd.
@@ -36,22 +32,18 @@ x-resource-limits: &default-limits
     cpus: "1.0"
 
 networks:
-  beskid-frontend:
-    name: beskid-frontend
-    driver: bridge
+  beskid-edge:
+    name: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
+    external: true
   beskid-backend:
     name: beskid-backend
     driver: bridge
 
 volumes:
-  caddy-data:
-  caddy-config:
   registry-data:
   authelia-data:
   postgres-data:
-  memgraph-data:
   auth-data:
-  platform-spec-data:
   tracker-data:
   nexus-data:
   pckg-packages:
@@ -62,63 +54,31 @@ volumes:
 
 services:
   # ---------------------------------------------------------------------------
-  # Edge: Caddy reverse proxy. Auto-HTTPS for all beskid-lang.org subdomains.
-  # The only service publishing host ports (80/443). On both networks so it
-  # can reach every public app; data stores are backend-only.
-  # ---------------------------------------------------------------------------
-  caddy:
-    image: caddy:2.8-alpine
-    restart: unless-stopped
-    networks:
-      - beskid-frontend
-      - beskid-backend
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"  # HTTP/3
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy-data:/data
-      - caddy-config:/config
-    environment:
-      # Registry basicauth credentials (Caddy enforces auth in front of the
-      # registry container, which stays unauthenticated on the internal net).
-      REGISTRY_USER: ${REGISTRY_USER:?set REGISTRY_USER}
-      REGISTRY_PASS: ${REGISTRY_PASS:?set REGISTRY_PASS}
-      # Authelia forward-auth endpoint (internal).
-      AUTHELIA_HOST: authelia
-      AUTHELIA_PORT: "9091"
-    healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:80/ || exit 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    logging: *default-logging
-    deploy:
-      resources: *default-limits
-
-  # ---------------------------------------------------------------------------
-  # Private Docker registry behind Caddy at cr.beskid-lang.org.
-  # HTTP-only inside the network; Caddy terminates TLS + basicauth.
+  # Private Docker registry at cr.beskid-lang.org. Authentication
+  # happens in the registry itself so every client, including Watchtower, gets
+  # the same bearer challenge and authorization behavior.
   # ---------------------------------------------------------------------------
   registry:
     image: registry:2.8
     restart: unless-stopped
+    labels:
+      caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
+      caddy_0: https://cr.beskid-lang.org
+      caddy_0.reverse_proxy: "{{upstreams 5000}}"
     networks:
-      - beskid-frontend
+      - beskid-edge
     expose:
       - "5000"
     volumes:
       - registry-data:/var/lib/registry
       - ./registry/config.yml:/etc/docker/registry/config.yml:ro
+      - ./registry/htpasswd:/auth/htpasswd:ro
     environment:
-      # htpasswd auth is enforced at Caddy (basicauth). The registry itself
-      # stays open on the internal network so the deploy host can pull without
-      # a second auth hop. If you prefer registry-level htpasswd instead, mount
-      # ./registry/htpasswd and set REGISTRY_AUTH=htpasswd (see registry/config.yml).
       REGISTRY_HTTP_ADDR: "0.0.0.0:5000"
       REGISTRY_STORAGE_DELETE_ENABLED: "true"
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Beskid registry
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:5000/v2/ || exit 1"]
       interval: 30s
@@ -133,15 +93,19 @@ services:
           cpus: "1.0"
 
   # ---------------------------------------------------------------------------
-  # Authelia — OIDC provider at auth.beskid-lang.org. GitHub is the SOLE
+  # Authelia — OIDC provider at login.beskid-lang.org. GitHub is the SOLE
   # identity provider (no local password store). Postgres-backed storage.
   # See authelia/configuration.yml + apps/shell-template/docs/authelia.md.
   # ---------------------------------------------------------------------------
   authelia:
     image: authelia/authelia:4.38
     restart: unless-stopped
+    labels:
+      caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
+      caddy_0: https://login.beskid-lang.org
+      caddy_0.reverse_proxy: "{{upstreams 9091}}"
     networks:
-      - beskid-frontend
+      - beskid-edge
       - beskid-backend
     expose:
       - "9091"
@@ -152,7 +116,7 @@ services:
       - ./authelia:/config:ro
       - authelia-data:/var/lib/authelia
     env_file:
-      - .env
+      - ${BESKID_ENV_FILE:-.env}
     command: ["authelia", "--config", "/config/configuration.yml"]
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:9091/api/health || exit 1"]
@@ -179,7 +143,7 @@ services:
     expose:
       - "5432"
     env_file:
-      - .env
+      - ${BESKID_ENV_FILE:-.env}
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -196,50 +160,27 @@ services:
           cpus: "2.0"
 
   # ---------------------------------------------------------------------------
-  # Memgraph — graph store for platform-spec. Backend-only, auth enabled
-  # (audit finding 2.6). No public port.
   # ---------------------------------------------------------------------------
-  memgraph:
-    image: memgraph/memgraph-mage:3.6.2
-    restart: unless-stopped
-    networks:
-      - beskid-backend
-    expose:
-      - "7687"
-      - "7444"
-    environment:
-      MEMGRAPH_AUTH: "true"
-      MEMGRAPH_USERNAME: ${MEMGRAPH_USERNAME:?set MEMGRAPH_USERNAME}
-      MEMGRAPH_PASSWORD: ${MEMGRAPH_PASSWORD:?set MEMGRAPH_PASSWORD}
-    volumes:
-      - memgraph-data:/var/lib/memgraph
-    healthcheck:
-      test: ["CMD-SHELL", "echo 'RETURN 0;' | mgconsole --host 127.0.0.1 --port 7687 --username ${MEMGRAPH_USERNAME} --password ${MEMGRAPH_PASSWORD} || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 40s
-    logging: *default-logging
-    deploy:
-      resources:
-        limits:
-          memory: 1g
-          cpus: "2.0"
-
-  # ---------------------------------------------------------------------------
-  # Beskid site apps. All digest-pinned via env (fail-closed). Frontend network
-  # so Caddy can reach them; those needing data stores also join backend.
+  # Beskid applications. CI advances only these mutable production tags;
+  # Watchtower updates only services carrying its explicit label. Infrastructure
+  # stays pinned and is changed through an audited Compose deployment.
   # ---------------------------------------------------------------------------
 
   website:
-    image: cr.beskid-lang.org/beskid/site@${SITE_IMAGE_DIGEST:?set SITE_IMAGE_DIGEST (sha256:...)}
+    image: cr.beskid-lang.org/beskid/site:${SITE_IMAGE_TAG:?set SITE_IMAGE_TAG}
     restart: unless-stopped
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      com.beskid.release: production
+      caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
+      caddy_0: https://beskid-lang.org
+      caddy_0.reverse_proxy: "{{upstreams 80}}"
     networks:
-      - beskid-frontend
+      - beskid-edge
     expose:
       - "80"
     env_file:
-      - .env
+      - ${BESKID_ENV_FILE:-.env}
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1"]
       interval: 30s
@@ -250,40 +191,48 @@ services:
     deploy:
       resources: *default-limits
 
-  platform-spec:
-    image: cr.beskid-lang.org/beskid/platform-spec@${PLATFORM_SPEC_IMAGE_DIGEST:?set PLATFORM_SPEC_IMAGE_DIGEST}
+  auth:
+    image: cr.beskid-lang.org/beskid/auth:${AUTH_IMAGE_TAG:?set AUTH_IMAGE_TAG}
     restart: unless-stopped
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      com.beskid.release: production
+      caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
+      caddy_0: https://auth.beskid-lang.org
+      caddy_0.reverse_proxy: "{{upstreams 8090}}"
     networks:
-      - beskid-frontend
-      - beskid-backend
+      - beskid-edge
     expose:
-      - "8460"
-    depends_on:
-      memgraph:
-        condition: service_healthy
+      - "8090"
     env_file:
-      - .env
+      - ${BESKID_ENV_FILE:-.env}
     volumes:
-      - platform-spec-data:/app/site/platform-spec/data/runtime
+      - auth-data:/app/site/auth/data/runtime
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8460/api/health || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8090/api/v1/health && wget -q --spider http://127.0.0.1:8090/ || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 20s
+      start_period: 10s
     logging: *default-logging
     deploy:
       resources: *default-limits
 
   tracker:
-    image: cr.beskid-lang.org/beskid/tracker@${TRACKER_IMAGE_DIGEST:?set TRACKER_IMAGE_DIGEST}
+    image: cr.beskid-lang.org/beskid/tracker:${TRACKER_IMAGE_TAG:?set TRACKER_IMAGE_TAG}
     restart: unless-stopped
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      com.beskid.release: production
+      caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
+      caddy_0: https://tracker.beskid-lang.org
+      caddy_0.reverse_proxy: "{{upstreams 3000}}"
     networks:
-      - beskid-frontend
+      - beskid-edge
     expose:
       - "3000"
     env_file:
-      - .env
+      - ${BESKID_ENV_FILE:-.env}
     volumes:
       - tracker-data:/app/beskid_tracker/data/runtime
     healthcheck:
@@ -297,14 +246,20 @@ services:
       resources: *default-limits
 
   nexus:
-    image: cr.beskid-lang.org/beskid/nexus@${NEXUS_IMAGE_DIGEST:?set NEXUS_IMAGE_DIGEST}
+    image: cr.beskid-lang.org/beskid/nexus:${NEXUS_IMAGE_TAG:?set NEXUS_IMAGE_TAG}
     restart: unless-stopped
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      com.beskid.release: production
+      caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
+      caddy_0: https://nexus.beskid-lang.org
+      caddy_0.reverse_proxy: "{{upstreams 8452}}"
     networks:
-      - beskid-frontend
+      - beskid-edge
     expose:
       - "8452"
     env_file:
-      - .env
+      - ${BESKID_ENV_FILE:-.env}
     volumes:
       - nexus-data:/data/gitnexus
     healthcheck:
@@ -318,10 +273,16 @@ services:
       resources: *default-limits
 
   pckg:
-    image: cr.beskid-lang.org/beskid/pckg@${PCKG_IMAGE_DIGEST:?set PCKG_IMAGE_DIGEST}
+    image: cr.beskid-lang.org/beskid/pckg:${PCKG_IMAGE_TAG:?set PCKG_IMAGE_TAG}
     restart: unless-stopped
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      com.beskid.release: production
+      caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
+      caddy_0: https://pckg.beskid-lang.org
+      caddy_0.reverse_proxy: "{{upstreams 8082}}"
     networks:
-      - beskid-frontend
+      - beskid-edge
       - beskid-backend
     expose:
       - "8082"
@@ -329,7 +290,7 @@ services:
       postgres:
         condition: service_healthy
     env_file:
-      - .env
+      - ${BESKID_ENV_FILE:-.env}
     volumes:
       - pckg-packages:/app/packages
       - pckg-data:/app/data
@@ -347,14 +308,20 @@ services:
           cpus: "1.5"
 
   learn:
-    image: cr.beskid-lang.org/beskid/learn@${LEARN_IMAGE_DIGEST:?set LEARN_IMAGE_DIGEST}
+    image: cr.beskid-lang.org/beskid/learn:${LEARN_IMAGE_TAG:?set LEARN_IMAGE_TAG}
     restart: unless-stopped
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
+      com.beskid.release: production
+      caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
+      caddy_0: https://learn.beskid-lang.org
+      caddy_0.reverse_proxy: "{{upstreams 80}}"
     networks:
-      - beskid-frontend
+      - beskid-edge
     expose:
       - "80"
     env_file:
-      - .env
+      - ${BESKID_ENV_FILE:-.env}
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/api/health || exit 1"]
       interval: 30s
@@ -372,8 +339,12 @@ services:
   community:
     image: nodebb/docker:3.12
     restart: unless-stopped
+    labels:
+      caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
+      caddy_0: https://community.beskid-lang.org
+      caddy_0.reverse_proxy: "{{upstreams 4567}}"
     networks:
-      - beskid-frontend
+      - beskid-edge
       - beskid-backend
     expose:
       - "4567"
@@ -381,7 +352,7 @@ services:
       postgres:
         condition: service_healthy
     env_file:
-      - .env
+      - ${BESKID_ENV_FILE:-.env}
     volumes:
       - community-data:/usr/src/app/nodebb/config
       - community-build:/usr/src/app/nodebb/build
@@ -398,3 +369,22 @@ services:
         limits:
           memory: 768m
           cpus: "1.5"
+
+  # The Docker socket is intentionally available only to this updater. It is
+  # label-scoped: registry, edge, databases, and community stay pinned until a
+  # deliberate Compose change. Credentials live in the mounted Docker config
+  # generated by deploy.sh and are never stored in this repository.
+  watchtower:
+    image: containrrr/watchtower:1.7.1
+    restart: unless-stopped
+    command: --label-enable --interval 60 --rolling-restart --cleanup
+    environment:
+      DOCKER_CONFIG: /config
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_POLL_INTERVAL: "60"
+      WATCHTOWER_ROLLING_RESTART: "true"
+      WATCHTOWER_CLEANUP: "true"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./watchtower:/config:ro
+    logging: *default-logging

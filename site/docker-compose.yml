@@ -1,9 +1,8 @@
-# Coolify / GHCR image-only deploy (no server-side build).
-# Set IMAGE_TAG to main or staging per environment (Coolify compose in beskid_infra).
-# Registry: ghcr.io/cyber-nomad-collective/beskid-site
+# Local image reference for the production registry. The canonical production
+# runtime is beskid_sites/deploy/docker-compose.yml.
 services:
   website:
-    image: ghcr.io/cyber-nomad-collective/beskid-site:${IMAGE_TAG:-main}
+    image: cr.beskid-lang.org/beskid/site:${SITE_IMAGE_TAG:-production}
     restart: unless-stopped
     expose:
       - "80"
@@ -17,7 +16,7 @@ services:
       start_period: 10s
 
   learn:
-    image: ghcr.io/cyber-nomad-collective/beskid-learn:${IMAGE_TAG:-main}
+    image: cr.beskid-lang.org/beskid/learn:${LEARN_IMAGE_TAG:-production}
     restart: unless-stopped
     environment:
       LEARN_PUBLIC_URL: ${LEARN_PUBLIC_URL:-https://learn.beskid-lang.org}

@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 # Beskid platform — SSH deploy to root@bdziam.dev.
 #
-# Ships the Caddy compose stack to the deploy host, populates .env from
-# OpenBao (or prompts), runs `docker compose up -d --wait`, and runs smoke
-# checks. Replaces the Coolify REST deploy tail (audit finding 5.4).
+# Ships the production Caddy, registry, and Watchtower stack to the deploy
+# host, populates .env from OpenBao, and applies the single Compose source.
 #
 # Usage:
 #   ./deploy.sh                       # interactive: prompt for missing secrets
@@ -18,8 +17,8 @@
 #   - OpenBao token (OPENBAO_TOKEN) if using --from-openbao.
 #   - deploy/.env populated (or --from-openbao).
 #
-# This script does NOT invent Coolify UUIDs, GHCR grants, or secret values.
-# Missing required secrets fail closed with an exact human admin step.
+# This script does NOT invent registry accounts or secret values. Missing
+# required secrets fail closed with an exact human admin step.
 
 set -euo pipefail
 
@@ -28,9 +27,8 @@ set -euo pipefail
 # ---------------------------------------------------------------------------
 DEPLOY_HOST="${DEPLOY_HOST:-root@bdziam.dev}"
 REMOTE_DIR="${REMOTE_DIR:-/opt/beskid}"
-LANE="${LANE:-production}"
 OPENBAO_ADDR="${OPENBAO_ADDR:-https://secrets.bdziam.dev}"
-OPENBAO_PREFIX="secret/beskid/${LANE}"
+OPENBAO_PREFIX="secret/beskid/production"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE="${SCRIPT_DIR}/.env"
@@ -56,7 +54,15 @@ log() { printf '\033[1;34m[deploy]\033[0m %s\n' "$*"; }
 err() { printf '\033[1;31m[deploy:ERROR]\033[0m %s\n' "$*" >&2; }
 need() { [ -n "${!1:-}" ] || { err "missing required var: $1 — $2"; exit 1; }; }
 
-remote() { ssh "${SSH_OPTS:-}" "${DEPLOY_HOST}" "$@"; }
+remote() {
+  if [[ -n "${SSH_OPTS:-}" ]]; then
+    # SSH_OPTS is operator-controlled whitespace-separated SSH options.
+    # shellcheck disable=SC2086
+    ssh ${SSH_OPTS} "${DEPLOY_HOST}" "$@"
+  else
+    ssh "${DEPLOY_HOST}" "$@"
+  fi
+}
 
 # ---------------------------------------------------------------------------
 # Smoke checks (mirror scripts/ci/post-deploy-smoke.sh shape, no :port)
@@ -66,8 +72,7 @@ smoke() {
   local failures=0
   local endpoints=(
     "https://beskid-lang.org/|beskid-lang.org homepage"
-    "https://auth.beskid-lang.org/api/health|authelia health"
-    "https://spec.beskid-lang.org/api/health|platform-spec health"
+    "https://auth.beskid-lang.org/api/v1/health|auth hub health"
     "https://tracker.beskid-lang.org/api/health|tracker health"
     "https://nexus.beskid-lang.org/api/health|nexus health"
     "https://pckg.beskid-lang.org/health/ready|pckg health"
@@ -108,7 +113,6 @@ fi
 # ---------------------------------------------------------------------------
 log "validating local prerequisites"
 [ -f "${SCRIPT_DIR}/docker-compose.yml" ] || { err "missing docker-compose.yml"; exit 1; }
-[ -f "${SCRIPT_DIR}/Caddyfile" ] || { err "missing Caddyfile"; exit 1; }
 [ -f "${SCRIPT_DIR}/authelia/configuration.yml" ] || { err "missing authelia/configuration.yml"; exit 1; }
 [ -f "${SCRIPT_DIR}/registry/config.yml" ] || { err "missing registry/config.yml"; exit 1; }
 [ -f "${HTPASSWD_FILE}" ] || { err "missing registry/htpasswd — generate: htpasswd -Bbn <user> <pass> > registry/htpasswd"; exit 1; }
@@ -119,12 +123,14 @@ log "validating local prerequisites"
 if [ "$FROM_OPENBAO" -eq 1 ]; then
   log "populating .env from OpenBao (${OPENBAO_ADDR})"
   need OPENBAO_TOKEN "set OPENBAO_TOKEN (from secret/beskid/openbao/token)"
+  need BESKID_EDGE_NETWORK "set the existing shared host edge network name"
   command -v bao >/dev/null || command -v vault >/dev/null || {
     err "openbao/vault CLI not found — install it to use --from-openbao"; exit 1; }
   BAO_BIN="$(command -v bao || command -v vault)"
 
   # Start from the example (non-secret defaults), then overlay OpenBao.
   cp "${SCRIPT_DIR}/.env.example" "${ENV_FILE}"
+  printf 'BESKID_EDGE_NETWORK=%s\n' "${BESKID_EDGE_NETWORK}" >> "${ENV_FILE}"
 
   read_secrets() {
     local path="$1"; shift
@@ -133,7 +139,7 @@ if [ "$FROM_OPENBAO" -eq 1 ]; then
   }
 
   # Per-service OpenBao paths (mirror beskid_infra/docs/openbao-layout.md).
-  for svc in auth postgres memgraph platform-spec tracker nexus pckg learn; do
+  for svc in auth postgres tracker nexus pckg learn; do
     read_secrets "$svc" >> "${ENV_FILE}" || true
   done
   # Registry credentials.
@@ -150,31 +156,41 @@ fi
 # Fail closed on required secrets.
 # shellcheck disable=SC1090
 set -a; . "${ENV_FILE}"; set +a
-need REGISTRY_USER "registry basicauth user"
-need REGISTRY_PASS "registry basicauth password"
+need REGISTRY_USER "registry account name"
+need REGISTRY_PASS "registry account password"
+need BESKID_EDGE_NETWORK "shared host edge network name"
+[[ "${BESKID_EDGE_NETWORK}" =~ ^[A-Za-z0-9_.-]+$ ]] && [[ "${BESKID_EDGE_NETWORK}" != replace-* ]] || {
+  err "BESKID_EDGE_NETWORK must name an existing shared host edge network"
+  exit 1
+}
 need POSTGRES_PASSWORD "shared Postgres password"
-need MEMGRAPH_PASSWORD "Memgraph password"
 need AUTHELIA_SESSION_SECRET "Authelia session secret (openssl rand -hex 32)"
 need AUTHELIA_STORAGE_ENCRYPTION_KEY "Authelia storage encryption key"
 need AUTHELIA_OIDC_HMAC_SECRET "Authelia OIDC HMAC secret"
 need AUTHELIA_OIDC_JWKS_SECRET "Authelia OIDC JWKS (RSA PEM)"
 need GITHUB_CLIENT_ID "GitHub OAuth App client id"
 need GITHUB_CLIENT_SECRET "GitHub OAuth App client secret"
-need SITE_IMAGE_DIGEST "website image digest (sha256:...)"
-need PLATFORM_SPEC_IMAGE_DIGEST "platform-spec image digest"
-need TRACKER_IMAGE_DIGEST "tracker image digest"
-need NEXUS_IMAGE_DIGEST "nexus image digest"
-need PCKG_IMAGE_DIGEST "pckg image digest"
-need LEARN_IMAGE_DIGEST "learn image digest"
+need SITE_IMAGE_TAG "website image tag (production)"
+need AUTH_IMAGE_TAG "auth image tag (production)"
+need TRACKER_IMAGE_TAG "tracker image tag (production)"
+need NEXUS_IMAGE_TAG "nexus image tag (production)"
+need PCKG_IMAGE_TAG "pckg image tag (production)"
+need LEARN_IMAGE_TAG "learn image tag (production)"
+for image_tag in "$SITE_IMAGE_TAG" "$AUTH_IMAGE_TAG" "$TRACKER_IMAGE_TAG" "$NEXUS_IMAGE_TAG" "$PCKG_IMAGE_TAG" "$LEARN_IMAGE_TAG"; do
+  [[ "${image_tag}" == production ]] || { err "all application image tags must be production for Watchtower"; exit 1; }
+done
 
 # ---------------------------------------------------------------------------
 # 3. Ship files to the deploy host
 # ---------------------------------------------------------------------------
 log "shipping files to ${DEPLOY_HOST}:${REMOTE_DIR}"
-remote "mkdir -p ${REMOTE_DIR}/authelia ${REMOTE_DIR}/registry"
+remote "docker network inspect ${BESKID_EDGE_NETWORK} >/dev/null" || {
+  err "BESKID_EDGE_NETWORK does not exist on ${DEPLOY_HOST}: ${BESKID_EDGE_NETWORK}"
+  exit 1
+}
+remote "mkdir -p ${REMOTE_DIR}/authelia ${REMOTE_DIR}/registry ${REMOTE_DIR}/watchtower"
 
 scp -q "${SCRIPT_DIR}/docker-compose.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/docker-compose.yml"
-scp -q "${SCRIPT_DIR}/Caddyfile" "${DEPLOY_HOST}:${REMOTE_DIR}/Caddyfile"
 scp -q "${SCRIPT_DIR}/authelia/configuration.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/authelia/configuration.yml"
 scp -q "${SCRIPT_DIR}/registry/config.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/config.yml"
 scp -q "${HTPASSWD_FILE}" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/htpasswd"
@@ -183,10 +199,13 @@ scp -q "${ENV_FILE}" "${DEPLOY_HOST}:${REMOTE_DIR}/.env"
 remote "chmod 600 ${REMOTE_DIR}/.env ${REMOTE_DIR}/registry/htpasswd"
 
 # ---------------------------------------------------------------------------
-# 4. Authenticate to the private registry + pull pinned images
+# 4. Authenticate host and Watchtower to the private registry. Keep the
+# password on stdin; it must never appear in an SSH command or shell history.
 # ---------------------------------------------------------------------------
-log "authenticating to cr.beskid-lang.org and pulling pinned images"
-remote "echo '${REGISTRY_PASS}' | docker login cr.beskid-lang.org -u '${REGISTRY_USER}' --password-stdin"
+[[ "${REGISTRY_USER}" =~ ^[A-Za-z0-9._-]+$ ]] || { err "REGISTRY_USER contains unsupported characters"; exit 1; }
+log "authenticating host and Watchtower to cr.beskid-lang.org"
+printf '%s\n' "${REGISTRY_PASS}" | remote \
+  "docker login cr.beskid-lang.org -u '${REGISTRY_USER}' --password-stdin && install -d -m 700 ${REMOTE_DIR}/watchtower && cp /root/.docker/config.json ${REMOTE_DIR}/watchtower/config.json && chmod 600 ${REMOTE_DIR}/watchtower/config.json"
 
 # ---------------------------------------------------------------------------
 # 5. Apply (or render-only)
@@ -196,9 +215,6 @@ if [ "$NO_DEPLOY" -eq 1 ]; then
   exit 0
 fi
 
-log "backing up previous compose (for rollback)"
-remote "cp ${REMOTE_DIR}/docker-compose.yml ${REMOTE_DIR}/docker-compose.prev.yml 2>/dev/null || true"
-
 log "running: docker compose up -d --wait"
 remote "cd ${REMOTE_DIR} && docker compose up -d --wait"
 
@@ -206,7 +222,7 @@ remote "cd ${REMOTE_DIR} && docker compose up -d --wait"
 # 6. Verify health
 # ---------------------------------------------------------------------------
 log "verifying container health"
-remote "cd ${REMOTE_DIR} && docker compose ps --format 'table {{.Name}}\t{{.Status}}'"
+remote "cd ${REMOTE_DIR} && docker compose ps --format 'table {{.Name}}\t{{.Status}}' && docker compose ps --status running watchtower | grep -q watchtower"
 
 # ---------------------------------------------------------------------------
 # 7. Smoke checks
@@ -215,5 +231,4 @@ log "waiting 10s for Caddy to obtain TLS certs before smoke checks"
 sleep 10
 smoke
 
-log "deploy complete. Cutover DNS per-domain when ready (see README)."
-log "rollback: ssh ${DEPLOY_HOST} 'cd ${REMOTE_DIR} && cp docker-compose.prev.yml docker-compose.yml && docker compose up -d --wait'"
+log "production Watchtower runtime is active. Roll back an application by moving its production registry tag to a retained sha-<commit> image."

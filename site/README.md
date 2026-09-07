@@ -41,4 +41,4 @@ Learn. Use `docker compose down` to stop the stack.
 
 Build context for `*.build.yml` files is the **superrepo root** (required for `site/website/Dockerfile`).
 
-Operator notes: [`COOLIFY.md`](COOLIFY.md), [`auth/COOLIFY.md`](auth/COOLIFY.md), [`learn/COOLIFY.md`](learn/COOLIFY.md).
+Production operator notes: [`../beskid_sites/deploy/README.md`](../beskid_sites/deploy/README.md).

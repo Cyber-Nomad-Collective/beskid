@@ -1,6 +1,6 @@
 services:
   learn:
-    image: ghcr.io/cyber-nomad-collective/beskid-learn:${IMAGE_TAG:-main}
+    image: cr.beskid-lang.org/beskid/learn:${LEARN_IMAGE_TAG:-production}
     restart: unless-stopped
     expose:
       - "80"

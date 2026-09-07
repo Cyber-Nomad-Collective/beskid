@@ -146,6 +146,14 @@ The process of turning preserved descriptive migration text into precise, indepe
 
 A delivery process that builds an artifact once, verifies and deploys its immutable digest to staging, then automatically promotes that exact digest to production after staging succeeds, with environment-scoped secrets, smoke/SLO gates, and rollback evidence.
 
+## Production Watchtower release
+
+The production-only Beskid delivery model. CI publishes each service image to
+the self-hosted registry under an immutable audit reference and a controlled
+production tag. Watchtower on the production host polls only explicitly
+labelled Beskid application services and replaces them when that production tag
+changes; stateful services, the registry, and the proxy remain pinned.
+
 ## Typed Markdown directive
 
 A readable Markdown block or link that identifies a `spec`, `book`, `nexus`, or `bug` target and can be enhanced into an embed by supported renderers while remaining understandable in generic Markdown.

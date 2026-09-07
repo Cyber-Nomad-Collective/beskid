@@ -11,11 +11,21 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Deployment: replaced the Beskid Coolify and staging promotion path with a
+  production-only Docker Compose runtime. CI publishes immutable SHA audit tags
+  and controlled `production` tags to `cr.beskid-lang.org`; Watchtower updates
+  only explicitly labelled application services.
+- Operations: moved the active site, auth, and learn deployment guidance to
+  `beskid_sites/deploy/`, with registry-level htpasswd authentication and a
+  shared-edge-network contract that does not disrupt unrelated host services.
 - Documentation: established `beskid-lang.org/docs/` as the single public technical documentation surface. The new STE-100 authoring skill and Docs pages link to OpenSpec for normative requirements and to the Book for learning material.
 - Local site deployment: publish Docs on port `4321` and Learn on port `4322` in both Compose files. The site guide now documents the source-build command and local URLs.
 
 ### Removed
 
+- Deployment: removed Coolify diagnostics, staging promotion, runtime-env sync,
+  and digest-render deployment scripts, plus the retired site/auth/learn
+  Coolify operator guides and standalone cutover Compose file.
 - Platform Spec: retired the separate `site/platform-spec` application, its workspace member, CI build gate, and image-delivery lane. Legacy `/platform-spec/` URLs now redirect to `/docs/standard/`.
 
 ### Added

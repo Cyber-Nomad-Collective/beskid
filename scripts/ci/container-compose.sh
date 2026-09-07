@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Run Compose validation with Podman on developer machines and Docker in GHA.
-# Runtime deployment is performed by Coolify; this wrapper is deliberately
+# Runtime deployment is production Compose plus Watchtower; this wrapper stays
 # limited to local/CI configuration validation.
 set -euo pipefail
 

@@ -69,7 +69,7 @@ Coolify deployment uses:
 - Image deploy: [`site/docker-compose.yml`](../docker-compose.yml)
 - Build from Git: [`site/docker-compose.build.yml`](../docker-compose.build.yml) (build context: superrepo root)
 - Website image build: `site/website/Dockerfile`
-- Operator notes (submodule clone failures, health): [`site/COOLIFY.md`](../COOLIFY.md)
+- Operator notes: [production deployment](../../beskid_sites/deploy/README.md)
 
 The Docker build context includes `.git` (and the image installs `git`) for release metadata. Prefer a non-shallow clone on Coolify when possible for accurate history.
 

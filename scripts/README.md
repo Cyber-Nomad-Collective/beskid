@@ -20,7 +20,7 @@ runners (the compiler gate is also Testbox-compatible). Dagger is retired.
 
 | Script | Used by |
 |--------|---------|
-| [`init-submodules.sh`](ci/init-submodules.sh) | GHCR / release / Open VSX / platform matrix checkouts |
+| [`init-submodules.sh`](ci/init-submodules.sh) | Release / Open VSX / platform matrix checkouts |
 | [`init-compiler-submodule.sh`](ci/init-compiler-submodule.sh) | Compiler + corelib (tags for semver) |
 | [`compiler-rust-gate.sh`](ci/compiler-rust-gate.sh) | Compiler Rust gate (clippy + workspace tests) |
 | [`lsp-command-contract-gate.sh`](ci/lsp-command-contract-gate.sh) | LSP + VS Code command-contract gate |
@@ -38,22 +38,18 @@ runners (the compiler gate is also Testbox-compatible). Dagger is retired.
 | [`run-ci-reported-command.sh`](ci/run-ci-reported-command.sh) | GitHub annotations, summaries, raw logs, and JSON for failed gate commands |
 | [`corelib-publish.sh`](ci/corelib-publish.sh) | Corelib workspace → pckg |
 | [`open-vsx-publish.sh`](ci/open-vsx-publish.sh) | Open VSX publish (native) |
-| [`resolve-coolify-project-uuid.sh`](ci/resolve-coolify-project-uuid.sh) | Operator: resolve **Beskid** Coolify project UUID |
 | [`build-release-manifest.sh`](ci/build-release-manifest.sh) | Aggregate immutable OCI image records into a release manifest |
 | [`validate-release-manifest.sh`](ci/validate-release-manifest.sh) | Enforce digest, SBOM, provenance, and source-commit policy |
-| [`render-release-compose.sh`](ci/render-release-compose.sh) | Replace Beskid Compose image tags with exact manifest digests |
-| [`deploy-release-manifest.sh`](ci/deploy-release-manifest.sh) | Plan/apply Coolify promotion with polling and rollback |
-| [`post-deploy-smoke.sh`](ci/post-deploy-smoke.sh) | Trace-correlated lane health checks |
+| [`post-deploy-smoke.sh`](ci/post-deploy-smoke.sh) | Production-only Watchtower release health checks |
 | [`sign-image.sh`](ci/sign-image.sh) | Required keyless cosign signing for promotable images |
 | [`prepare-secure-dockerfile.sh`](ci/prepare-secure-dockerfile.sh) | Convert package-token ARGs to BuildKit secret mounts at build time |
-| [`sync-runtime-env.sh`](ci/sync-runtime-env.sh) | Fail-closed OpenBao KV v2 → Coolify lane env sync (`COOLIFY_SERVICE_UUID` or lane `service_uuid`) |
 | [`openspec-gate.sh`](ci/openspec-gate.sh) | Strict OpenSpec authority validation |
 | [`conformance-gate.sh`](ci/conformance-gate.sh) | Requirement/provenance conformance validation |
 | [`platform-integration-gate.sh`](ci/platform-integration-gate.sh) | Cross-site delivery integration contract |
 | [`shared-ui-nexus-gate.sh`](ci/shared-ui-nexus-gate.sh) | Shared UI Vitest + Nexus unit/Playwright E2E |
 | [`security-policy-gate.sh`](ci/security-policy-gate.sh) | Offline workflow and supply-chain policy |
 
-Coolify lane configuration: [`beskid_infra/`](../beskid_infra/README.md).
+Production runtime configuration: [`beskid_sites/deploy/`](../beskid_sites/deploy/README.md).
 
 ## Lazygit
 

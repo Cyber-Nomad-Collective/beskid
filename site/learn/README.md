@@ -4,7 +4,7 @@ Interactive learning surface for the Beskid language.
 
 ## Public deployment target
 
-`learn.beskid-lang.org` uses image `ghcr.io/cyber-nomad-collective/beskid-learn`.
+`learn.beskid-lang.org` uses image `cr.beskid-lang.org/beskid/learn`.
 
 ## Local development
 

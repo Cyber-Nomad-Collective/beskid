@@ -1,4 +1,4 @@
-name: Reusable immutable image build
+name: Reusable registry image build
 
 on:
   workflow_call:
@@ -39,6 +39,11 @@ on:
         required: false
         default: false
         type: boolean
+      release-tag:
+        description: Mutable registry tag observed by production Watchtower.
+        required: false
+        default: production
+        type: string
       healthcheck-url:
         description: Optional HTTP path to prove the published image can start.
         required: false
@@ -58,10 +63,8 @@ on:
         description: >-
           Best-effort lane. When true, a failed build/push does not fail the job
           or block platform delivery; the lane simply emits no image record, so
-          the release manifest omits it and render-release-compose.sh drops the
-          matching optional (profile-gated) Compose service. Use for services
-          whose GHCR package is owned by a sibling repo the job token cannot push
-          to. A successful build/push behaves identically to a required lane.
+          the release manifest omits it. Use only for non-production service
+          experiments; production application lanes are required.
         required: false
         default: false
         type: boolean
@@ -69,15 +72,13 @@ on:
       digest:
         value: ${{ jobs.image.outputs.digest }}
     secrets:
-      # Optional org-capable packages token. Only needed when a target package is
-      # linked to a sibling repo the job's GITHUB_TOKEN cannot push to. Must carry
-      # write:packages; a plain releases PAT will be rejected by GHCR.
-      GHCR_TOKEN:
-        required: false
+      REGISTRY_USERNAME:
+        required: true
+      REGISTRY_PASSWORD:
+        required: true
 
 permissions:
   contents: read
-  packages: write
   id-token: write
 
 jobs:
@@ -103,28 +104,21 @@ jobs:
           done
 
 
-      - name: Log in to GHCR
+      - name: Log in to the Beskid registry
         if: inputs.push
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
         with:
-          registry: ghcr.io
-          # GITHUB_TOKEN carries `packages: write` for this repository, so it can
-          # create and push the org's beskid-* packages (GHCR links a new package
-          # to the pushing repo). Only override with GHCR_TOKEN when a package is
-          # linked to a sibling repo and the job token cannot reach it. The
-          # releases PAT (DISTRIB_GH_PAT) is deliberately NOT used here: it lacks
-          # write:packages, so GHCR authenticates it but denies the push with
-          # "the token provided does not match expected scopes".
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN || github.token }}
+          registry: cr.beskid-lang.org
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Setup Blacksmith builder
         uses: useblacksmith/setup-docker-builder@ab5c1da94f53f5cd75c1038092aa276dddfccbba # v1
 
-      - name: Build immutable image
+      - name: Build release image
         id: build
-        # Optional lanes tolerate a failed push (e.g. a GHCR package owned by a
-        # sibling repo this token cannot push to) so it cannot block delivery.
+        # Optional lanes tolerate a failed private-registry push so they cannot
+        # block delivery.
         # Scoped to push events: on pull_request (push=false) the lane is a build
         # smoke test, so a build regression still fails it. The subsequent steps
         # are gated on this step succeeding, so a tolerated failure emits no
@@ -137,7 +131,9 @@ jobs:
           build-contexts: ${{ inputs.build-contexts }}
           build-args: ${{ inputs.build-args }}
           push: ${{ inputs.push }}
-          tags: ${{ inputs.repository }}:sha-${{ github.sha }}
+          tags: |
+            ${{ inputs.repository }}:sha-${{ github.sha }}
+            ${{ inputs.repository }}:${{ inputs.release-tag }}
           # min deliberately omits build parameters; package credentials are
           # supplied only through BuildKit's ephemeral secret mount.
           provenance: mode=min

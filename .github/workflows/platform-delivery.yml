@@ -33,10 +33,6 @@ on:
         description: Publish images and manifest without quality-gate blocking
         type: boolean
         default: false
-      apply-staging:
-        description: Deploy the generated manifest to staging
-        type: boolean
-        default: false
 
 permissions:
   contents: read
@@ -93,10 +89,8 @@ jobs:
       command: bash scripts/ci/shared-ui-nexus-gate.sh
 
   image-site:
-    # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
-    # deploys to Coolify regardless of those pipelines' results; the gates still
-    # run in parallel as independent branch-protection checks.
+    # Delivery is intentionally decoupled from quality gates, which remain
+    # independent branch-protection checks.
     permissions:
       contents: read
       packages: write
@@ -104,22 +98,21 @@ jobs:
     uses: ./.github/workflows/reusable-image.yml
     with:
       name: beskid-site
-      repository: ghcr.io/cyber-nomad-collective/beskid-site
+      repository: cr.beskid-lang.org/beskid/site
       context: .
       dockerfile: site/website/Dockerfile
       build-args: |
         BESKID_RELEASE_CHANNEL=${{ github.event_name == 'workflow_dispatch' && inputs.unstable && 'unstable' || 'stable' }}
       submodules: beskid_web_common
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
     secrets:
-      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
   image-auth:
-    # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
-    # deploys to Coolify regardless of those pipelines' results; the gates still
-    # run in parallel as independent branch-protection checks.
+    # Delivery is intentionally decoupled from quality gates, which remain
+    # independent branch-protection checks.
     permissions:
       contents: read
       packages: write
@@ -127,22 +120,21 @@ jobs:
     uses: ./.github/workflows/reusable-image.yml
     with:
       name: beskid-auth
-      repository: ghcr.io/cyber-nomad-collective/beskid-auth
+      repository: cr.beskid-lang.org/beskid/auth
       context: .
       dockerfile: site/auth/Dockerfile
       build-args: |
         BESKID_RELEASE_CHANNEL=${{ github.event_name == 'workflow_dispatch' && inputs.unstable && 'unstable' || 'stable' }}
       submodules: beskid_web_common
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
     secrets:
-      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
   image-learn:
-    # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
-    # deploys to Coolify regardless of those pipelines' results; the gates still
-    # run in parallel as independent branch-protection checks.
+    # Delivery is intentionally decoupled from quality gates, which remain
+    # independent branch-protection checks.
     permissions:
       contents: read
       packages: write
@@ -150,7 +142,7 @@ jobs:
     uses: ./.github/workflows/reusable-image.yml
     with:
       name: beskid-learn
-      repository: ghcr.io/cyber-nomad-collective/beskid-learn
+      repository: cr.beskid-lang.org/beskid/learn
       context: .
       dockerfile: site/learn/Dockerfile
       # The rust stage needs the compiler tree and the web stage resolves local
@@ -159,16 +151,15 @@ jobs:
       submodules: compiler beskid_bsol beskid_web_common
       build-args: |
         BESKID_RELEASE_CHANNEL=${{ github.event_name == 'workflow_dispatch' && inputs.unstable && 'unstable' || 'stable' }}
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
     secrets:
-      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
   image-tracker:
-    # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
-    # deploys to Coolify regardless of those pipelines' results; the gates still
-    # run in parallel as independent branch-protection checks.
+    # Delivery is intentionally decoupled from quality gates, which remain
+    # independent branch-protection checks.
     permissions:
       contents: read
       packages: write
@@ -176,7 +167,7 @@ jobs:
     uses: ./.github/workflows/reusable-image.yml
     with:
       name: beskid-tracker
-      repository: ghcr.io/cyber-nomad-collective/beskid-tracker
+      repository: cr.beskid-lang.org/beskid/tracker
       # file:../beskid_web_common for @beskid/ui-react (graph/explorer not in npm 0.2.8).
       context: beskid_tracker
       dockerfile: beskid_tracker/Dockerfile
@@ -188,16 +179,15 @@ jobs:
       healthcheck-env: |
         AUTH_HUB_PUBLIC_URL=https://auth.invalid
         SESSION_SECRET=0123456789abcdef0123456789abcdef
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
     secrets:
-      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
   image-nexus:
-    # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
-    # deploys to Coolify regardless of those pipelines' results; the gates still
-    # run in parallel as independent branch-protection checks.
+    # Delivery is intentionally decoupled from quality gates, which remain
+    # independent branch-protection checks.
     permissions:
       contents: read
       packages: write
@@ -205,7 +195,7 @@ jobs:
     uses: ./.github/workflows/reusable-image.yml
     with:
       name: beskid-nexus
-      repository: ghcr.io/cyber-nomad-collective/beskid-nexus
+      repository: cr.beskid-lang.org/beskid/nexus
       # file:../../beskid_web_common from gitnexus-web (CI auth parity).
       context: beskid_nexus
       dockerfile: beskid_nexus/Dockerfile
@@ -213,16 +203,15 @@ jobs:
         openspec=./openspec
         web_common=./beskid_web_common
       submodules: beskid_nexus beskid_web_common
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
     secrets:
-      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
   image-pckg:
-    # Delivery is intentionally decoupled from the quality gates (openspec,
-    # conformance, integration, shared-ui-nexus, security). The platform publishes to GHCR and
-    # deploys to Coolify regardless of those pipelines' results; the gates still
-    # run in parallel as independent branch-protection checks.
+    # Delivery is intentionally decoupled from quality gates, which remain
+    # independent branch-protection checks.
     permissions:
       contents: read
       packages: write
@@ -230,7 +219,7 @@ jobs:
     uses: ./.github/workflows/reusable-image.yml
     with:
       name: beskid-pckg
-      repository: ghcr.io/cyber-nomad-collective/beskid-pckg
+      repository: cr.beskid-lang.org/beskid/pckg
       # The pckg image builds the pckg web client and the Rust server
       # (compiler/crates/beskid_pckg_server) from this checkout. The legacy
       # .NET backend was removed; the Rust image Dockerfile at pckg/Dockerfile
@@ -246,10 +235,11 @@ jobs:
       # grant this repo Write on that package, or set org/repo secret GHCR_TOKEN
       # with write:packages (password: secrets.GHCR_TOKEN || github.token).
       # Compose profiles: [pckg] remains deploy-profile gating only.
-      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
-      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable)) }}
+      push: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
+      sign: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable)) }}
     secrets:
-      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
 
   manifest:
     # A manifest is the promotion boundary. It must only exist when every
@@ -264,7 +254,7 @@ jobs:
         needs.image-tracker.result == 'success' &&
         needs.image-nexus.result == 'success' &&
         needs.image-pckg.result == 'success' &&
-        (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.apply-staging || inputs.unstable))) &&
+        (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.publish || inputs.unstable))) &&
         (
           inputs.unstable ||
           (
@@ -283,30 +273,9 @@ jobs:
     with:
       artifact-name: release-manifest
 
-  staging:
-    needs: manifest
-    # Deploy to Coolify staging regardless of upstream gate results; only skip when
-    # the run itself is cancelled.
-    if: ${{ !cancelled() && needs.manifest.result == 'success' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.apply-staging)) }}
-    permissions:
-      actions: read
-      contents: read
-      deployments: write
-      id-token: write
-    uses: ./.github/workflows/reusable-promote.yml
-    with:
-      environment: staging
-      manifest-run-id: ${{ format('{0}', github.run_id) }}
-      # Auto-apply staging on every green push to main; dispatch keeps
-      # apply-staging for manual re-apply.
-      apply: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.apply-staging) }}
-    secrets: inherit
-
   production:
-    needs: [manifest, staging]
-    # Production can only consume the exact manifest after staging's full
-    # deploy, smoke, and rollback policy has succeeded in this same run.
-    if: ${{ !cancelled() && needs.manifest.result == 'success' && needs.staging.result == 'success' }}
+    needs: manifest
+    if: ${{ !cancelled() && needs.manifest.result == 'success' }}
     permissions:
       actions: read
       contents: read
@@ -314,7 +283,6 @@ jobs:
       id-token: write
     uses: ./.github/workflows/reusable-promote.yml
     with:
-      environment: production
       manifest-run-id: ${{ format('{0}', github.run_id) }}
       apply: true
     secrets: inherit

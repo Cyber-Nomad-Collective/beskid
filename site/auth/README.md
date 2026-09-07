@@ -67,4 +67,4 @@ bun run test
 
 Pairing `publicUrl` is the app origin (e.g. `https://tracker.example.com`); handoff redirects to `{publicUrl}/api/auth/hub-finish?handoff=…`.
 
-Deploy: [COOLIFY.md](COOLIFY.md)
+Deploy: [production deployment](../../beskid_sites/deploy/README.md)

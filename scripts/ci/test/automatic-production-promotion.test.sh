@@ -1,26 +1,28 @@
 #!/usr/bin/env bash
-# Contract for the single automatic staging -> production promotion chain.
+# Contract for the automatic production-only Watchtower release chain.
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 workflow="${root}/.github/workflows/platform-delivery.yml"
+promotion="${root}/.github/workflows/reusable-promote.yml"
 
 production_block="$(sed -n '/^  production:/,$p' "${workflow}")"
 for required in \
-  'needs: [manifest, staging]' \
-  "if: \${{ !cancelled() && needs.manifest.result == 'success' && needs.staging.result == 'success' }}" \
-  'environment: production' \
+  'needs: manifest' \
+  "if: \${{ !cancelled() && needs.manifest.result == 'success' }}" \
   "manifest-run-id: \${{ format('{0}', github.run_id) }}" \
   'apply: true'; do
-  if [[ "${production_block}" != *"${required}"* ]]; then
-    echo "automatic production promotion is missing required contract: ${required}" >&2
+  [[ "${production_block}" == *"${required}"* ]] || {
+    echo "production Watchtower chain is missing: ${required}" >&2
     exit 1
-  fi
+  }
 done
 
-if [[ -e "${root}/.github/workflows/promote-production.yml" ]]; then
-  echo "manual production promotion workflow must be removed" >&2
+if rg -qi 'coolify|staging' "${workflow}" "${promotion}"; then
+  echo "production delivery retains a retired staging or Coolify path" >&2
   exit 1
 fi
+rg -Fq 'BESKID_SMOKE_RETRIES' "${promotion}"
+rg -Fq './scripts/ci/post-deploy-smoke.sh production' "${promotion}"
 
-echo "automatic production promotion contract OK"
+echo "automatic production Watchtower contract OK"
