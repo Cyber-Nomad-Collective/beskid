@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "53ef7f8fd414f227ba7ddca844afef390ec7e3e49f7cdd2d540231a0d45c8ba7",
+  "revision": "387bb3a66c15e95e010059f2e9be91adb3024d5325a564f40581deb667ae48bf",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -30484,7 +30484,6 @@
         "/book/13-reading-the-law/platform-spec-home/",
         "/book/16-corelib-batteries-with-opinions/",
         "/book/17-execution-abi-host-runtime/",
-        "/book/18-packages-without-npm-trauma/",
         "/book/19-public-api-that-survives-review/",
         "/book/20-doc-comments-that-are-not-lies/",
         "/book/21-ffi-and-forbidden-friendships/",
@@ -39091,7 +39090,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "58240f4523d098648848be26c4ca0534db2f7d397a12b43bd8360b5f9ccf019b",
+      "sourceHash": "f57172d0f61dd7fc6291732dc843ae3a7b97a4c827918b545d52cce5465a52c2",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -40604,10 +40603,8 @@
       "path": "site/website/src/content/docs/book/18-packages-without-npm-trauma/index.mdx",
       "title": "Packages without npm trauma",
       "authority": "informative",
-      "sourceHash": "18a1d713d48b0e81acd104dde1bbc68763a7704c1d0e2972ace80d00edac5c52",
-      "standardLinks": [
-        "/platform-spec/"
-      ],
+      "sourceHash": "f862171d2aeb3b8a973f03097cd643bfb422dc8312442a6669739fcf7f423368",
+      "standardLinks": [],
       "containsNormativeKeywords": false,
       "disposition": "informative-by-policy"
     },
@@ -41345,7 +41342,7 @@
       "path": "site/website/src/content/docs/index.mdx",
       "title": "beskid",
       "authority": "informative",
-      "sourceHash": "9d4f85c2d07340c47bcbbcfac193774e6f7afb0e92b163440a21d092ae121fe3",
+      "sourceHash": "4c079d87443ad6bc9856d3aa724178e288829feac3fc4f0e269b0e6886be1260",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/language-meta/"

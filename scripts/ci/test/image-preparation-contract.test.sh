@@ -167,7 +167,10 @@ if [[ "${pckg_image_block}" != *'submodules: beskid_bsol compiler pckg beskid_we
   exit 1
 fi
 
-for manifest in site/auth/package.json beskid_tracker/package.json beskid_nexus/gitnexus/package.json; do
+# Nexus authenticates through the Authentik proxy and deliberately has no
+# application-level auth client dependency. Keep this contract to the two
+# applications that still bundle that shared package.
+for manifest in site/auth/package.json beskid_tracker/package.json; do
   source='../../beskid_web_common/packages/beskid-auth-client'
   if [[ "${manifest}" == beskid_tracker/* ]]; then
     source='../beskid_web_common/packages/beskid-auth-client'

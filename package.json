@@ -1,8 +1,15 @@
 {
 	"name": "beskid",
 	"private": true,
-	"pnpm": {
-		"overrides": {
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@biomejs/biome",
+      "@fission-ai/openspec",
+      "better-sqlite3",
+      "esbuild",
+      "sharp"
+    ],
+    "overrides": {
 			"uuid": "^14.0.0",
 			"devalue": "^5.8.1",
 			"@dagrejs/dagre": "^3.0.0",

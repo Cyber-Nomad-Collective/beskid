@@ -4,6 +4,7 @@ set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 workflow="${root}/.github/workflows/platform-delivery.yml"
+image_workflow="${root}/.github/workflows/reusable-image.yml"
 
 manifest_block="$(sed -n '/^  manifest:/,/^  production:/p' "${workflow}")"
 for required in \
@@ -23,5 +24,11 @@ for required in \
     exit 1
   fi
 done
+
+report_block="$(sed -n '/- name: Upload vulnerability report/,/- uses: sigstore\/cosign-installer/p' "${image_workflow}")"
+if [[ "${report_block}" != *'continue-on-error: true'* ]]; then
+	echo "vulnerability report upload must remain best-effort after a successful image push" >&2
+	exit 1
+fi
 
 echo "platform delivery fail-closed contract OK"
