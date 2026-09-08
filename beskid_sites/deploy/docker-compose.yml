@@ -319,6 +319,10 @@ services:
         condition: service_healthy
     env_file:
       - ${BESKID_ENV_FILE:-.env}
+    environment:
+      SHELL_AUTH_MODE: authentik
+      SHELL_ADMIN_GROUP: pckg-admins
+      SHELL_MODERATOR_GROUP: pckg-moderators
     volumes:
       - pckg-packages:/app/packages
       - pckg-data:/app/data

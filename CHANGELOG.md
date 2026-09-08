@@ -18,6 +18,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   GitHub is the configured social-login source. Learn now starts sign-in at its
   protected origin, and the repeatable Authentik brand uses Beskid typography,
   logo, and an attributed Beskid Żywiecki photograph.
+- pckg explicitly uses Authentik in production, accepts the proxy's forwarded
+  identity headers, and starts browser sign-in at its local Authentik outpost.
+  Learn also projects the proxy identity to its session API.
 - Legacy `auth.beskid-lang.org/login?app=learn` bookmarks now redirect to the
   protected Learn origin, which starts the canonical Authentik flow.
 - Docs pages now use their left pane for the page table of contents, and the

@@ -117,6 +117,15 @@ function readCookie(request: Request, name: string): string | null {
 }
 
 async function getLearnSession(request: Request): Promise<LearnSession | null> {
+	const authentikLogin = request.headers.get("x-authentik-username");
+	if (authentikLogin) {
+		return {
+			login: authentikLogin,
+			name: request.headers.get("x-authentik-name"),
+			avatarUrl: `https://github.com/${encodeURIComponent(authentikLogin)}.png`,
+		};
+	}
+
 	const secret = learnSessionSecret();
 	const token = readCookie(request, LEARN_SESSION_COOKIE);
 	if (!secret || !token) return null;
@@ -730,7 +739,7 @@ Bun.serve({
 			}
 		}
 
-		// ── Auth endpoints (reuses Beskid auth-hub handoff) ──
+		// ── Auth endpoints (Authentik is the browser identity source) ──
 		if (requestUrl.pathname === "/api/auth/me") {
 			return jsonResponse(200, { user: await getLearnSession(req) });
 		}
@@ -740,7 +749,7 @@ Bun.serve({
 				const handoff = requestUrl.searchParams.get("handoff");
 				const serviceToken = process.env.LEARN_AUTH_SERVICE_TOKEN;
 				const session = handoff && serviceToken ? verifyLearnHandoff(serviceToken, handoff) : null;
-				if (!session) throw new Error("Invalid Learn Auth Hub handoff");
+				if (!session) throw new Error("Invalid legacy Learn handoff");
 				const token = await sealLearnSession(session);
 				return new Response(null, {
 					status: 302,

@@ -2,8 +2,8 @@ import { AuthPageShell, Badge, Button } from "@beskid/ui-react";
 import { useEffect, useState } from "react";
 import type { AuthUser } from "#/lib/auth";
 import {
-	authHubLoginUrl,
-	authHubProfileUrl,
+	authentikLoginUrl,
+	authentikProfileUrl,
 	fetchAuthUser,
 	logoutUser,
 } from "#/lib/auth";
@@ -37,10 +37,10 @@ export function AuthGate({ children, requireAuth = false }: AuthGateProps) {
 			<AuthPageShell
 				kicker="Beskid"
 				title="Learn"
-				description="Sign in with GitHub through the Beskid auth hub to track your progress and access all lessons."
+				description="Sign in with GitHub through Beskid Authentik to track your progress and access all lessons."
 				footer={
 					<a
-						href={authHubProfileUrl()}
+						href={authentikProfileUrl()}
 						className="underline-offset-4 hover:underline text-sm"
 					>
 						Beskid account
@@ -48,7 +48,7 @@ export function AuthGate({ children, requireAuth = false }: AuthGateProps) {
 				}
 			>
 				<Button size="lg" asChild className="w-full">
-					<a href={authHubLoginUrl()}>Sign in with GitHub</a>
+					<a href={authentikLoginUrl()}>Sign in with GitHub</a>
 				</Button>
 			</AuthPageShell>
 		);

@@ -32,7 +32,7 @@ import {
 	learnExercises,
 	validateModeForExercise,
 } from "#/data/learningCatalog";
-import { authHubLoginUrl, type AuthUser } from "#/lib/auth";
+import { authentikLoginUrl, type AuthUser } from "#/lib/auth";
 import "xterm/css/xterm.css";
 import "./styles.css";
 
@@ -610,7 +610,7 @@ function App() {
 								<UserBadge user={user} />
 							) : (
 								<Button variant="ghost" size="sm" asChild>
-									<a href={authHubLoginUrl()}>Sign in to save progress</a>
+									<a href={authentikLoginUrl()}>Sign in to save progress</a>
 								</Button>
 							)}
 						</div>

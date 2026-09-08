@@ -1,4 +1,4 @@
-/** Auth integration reusing Beskid auth-hub (same flow as tracker). */
+/** Browser authentication starts at Learn's Authentik proxy outpost. */
 
 export interface AuthUser {
 	login: string;
@@ -6,9 +6,9 @@ export interface AuthUser {
 	avatarUrl: string;
 }
 
-const AUTH_HUB_BASE: string =
+const AUTHENTIK_BASE: string =
 	(typeof import.meta !== "undefined" &&
-		(import.meta as any).env?.VITE_AUTH_HUB_URL) ??
+		(import.meta as any).env?.VITE_AUTHENTIK_URL) ??
 	"https://auth.beskid-lang.org";
 
 const LEARN_ORIGIN: string =
@@ -16,15 +16,15 @@ const LEARN_ORIGIN: string =
 		(import.meta as any).env?.VITE_LEARN_ORIGIN) ??
 	"https://learn.beskid-lang.org";
 
-export function authHubLoginUrl(): string {
-	// The proxy outpost owns the Authentik authorization redirect. Starting at
-	// Learn preserves its callback target instead of calling a removed `/login`
-	// route directly.
-	return `${LEARN_ORIGIN.replace(/\/$/, "")}/`;
+export function authentikLoginUrl(): string {
+	const origin = LEARN_ORIGIN.replace(/\/$/, "");
+	const url = new URL("/outpost.goauthentik.io/start", origin);
+	url.searchParams.set("rd", `${origin}/`);
+	return url.toString();
 }
 
-export function authHubProfileUrl(): string {
-	const base = AUTH_HUB_BASE.replace(/\/$/, "");
+export function authentikProfileUrl(): string {
+	const base = AUTHENTIK_BASE.replace(/\/$/, "");
 	return `${base}/if/user/`;
 }
 
