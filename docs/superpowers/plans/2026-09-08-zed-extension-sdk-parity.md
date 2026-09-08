@@ -247,10 +247,12 @@ Refresh `editors/zed/extension.wasm`, rerun the package test, then commit as
 - Create: `editors/zed/languages/beskid/indents.scm`
 - Create: `editors/zed/languages/beskid/brackets.scm`
 - Create: `editors/zed/languages/beskid/runnables.scm`
+- Create: `editors/zed/languages/beskid/tasks.json`
 - Create: `editors/zed/languages/beskid/semantic_token_rules.json`
 - Create: `editors/zed/snippets/beskid.json`
 - Create: `editors/zed/tests/fixtures/runnables.bd`
 - Create: `scripts/ci/test/zed-language-assets.test.sh`
+- Modify: `editors/zed/extension.toml`
 
 **Interfaces:**
 - Consumes: node kinds already used by `highlights.scm` and `tags.scm`, including `function_definition`, `test_definition`, `type_definition`, `enum_definition`, `contract_definition`, `host_definition`, and `module_declaration`.
@@ -258,9 +260,10 @@ Refresh `editors/zed/extension.wasm`, rerun the package test, then commit as
 
 - [ ] **Step 1: Write the failing asset contract test**
 
-Assert every required file exists and is nonempty, JSON files parse, forbidden
-VS Code UI claims are absent from the README, and queries include the required
-node/capture names. Run it and verify it fails on missing `outline.scm`.
+Assert every required language asset exists and is nonempty, JSON files parse,
+the snippet file is registered by `extension.toml`, and queries include the
+required node/capture names. README disclosure remains Task 5 because that task
+creates the README. Run the test and verify it fails on missing `outline.scm`.
 
 - [ ] **Step 2: Add outline, indentation, and bracket queries**
 
@@ -278,15 +281,17 @@ the packaged grammar recognizes those nodes/tokens.
 - [ ] **Step 3: Add runnables and fixtures**
 
 Capture `test_definition` and the canonical entry function shape using Zed's
-`@run`/metadata conventions from current official examples. The fixture must
-contain one named test and one entry function, and the contract test must prove
-both query patterns exist.
+`@run`/metadata conventions from current official examples. Bind the runnable
+tags with a language-provided `tasks.json` that uses the current CLI hierarchy:
+`beskid dev build test` for tests and `beskid run --entrypoint` for entry
+functions. The fixture must contain one named test and one entry function, and
+the contract test must prove both query patterns and task tags exist.
 
 - [ ] **Step 4: Add semantic-token rules and snippets**
 
 Map only token types advertised by `beskid_lsp`; add snippets for module,
-function, type, contract, enum, and test declarations. Parse both JSON files in
-the contract test.
+function, type, contract, enum, and test declarations, and register the snippet
+file in `extension.toml`. Parse all JSON assets in the contract test.
 
 - [ ] **Step 5: Validate and commit**
 
