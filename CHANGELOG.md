@@ -20,6 +20,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   logo, and an attributed Beskid Żywiecki photograph.
 - Legacy `auth.beskid-lang.org/login?app=learn` bookmarks now redirect to the
   protected Learn origin, which starts the canonical Authentik flow.
+- Docs pages now use their left pane for the page table of contents, and the
+  global desktop navigation groups Docs, Standard, and Book under one menu.
 - Production delivery now uses only the self-hosted Compose stack and
   Watchtower. Application images publish to the Beskid registry without
   credentials; the release manifest covers the five running applications.
