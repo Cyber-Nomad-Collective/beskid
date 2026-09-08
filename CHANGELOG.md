@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Zed extension: keep Zed's generated grammar-source checkout out of version
+  control and block registry publication unless the stable LSP release and all
+  declared platform assets are actually available.
 - Learn: the Playground now submits the live Monaco model rather than a stale
   editor state, accepts its own analyze target, offers Beskid completions, and
   uses a single workspace surface instead of nested cards. The signed-in header

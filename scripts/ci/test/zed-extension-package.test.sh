@@ -7,6 +7,7 @@ extension_root="${root}/editors/zed"
 publish_workflow="${root}/.github/workflows/publish-zed-extension.yml"
 developer_tasks="${root}/.zed/tasks.json"
 extension_readme="${extension_root}/README.md"
+extension_gitignore="${extension_root}/.gitignore"
 
 # Prefer the complete rustup-managed compiler when a Homebrew rustc shim is active.
 if command -v rustup >/dev/null 2>&1; then
@@ -20,6 +21,8 @@ fail() {
 }
 
 [[ -f "${extension_root}/Cargo.toml" ]] || fail 'missing editors/zed Cargo package'
+grep -Fxq '/grammars/beskid/' "${extension_gitignore}" || \
+  fail 'Zed development grammar checkout is not ignored at its exact package path'
 [[ ! -e "${root}/extension.toml" ]] || fail 'legacy root Zed package remains'
 [[ ! -e "${root}/.zed/grammars/beskid.wasm" ]] || fail 'duplicate .zed Beskid grammar remains'
 [[ ! -e "${root}/.zed/languages/beskid/config.toml" ]] || fail 'duplicate .zed Beskid language configuration remains'
@@ -53,10 +56,25 @@ grep -Fq 'bash scripts/ci/test/zed-extension-package.test.sh' "${publish_workflo
   fail 'Zed publication workflow does not run the package gate'
 grep -Fq 'bash scripts/ci/test/zed-language-assets.test.sh' "${publish_workflow}" || \
   fail 'Zed publication workflow does not run the language-assets gate'
+grep -Fq 'repos/Cyber-Nomad-Collective/beskid_compiler/releases/tags/lsp-stable' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not require the stable LSP release'
+grep -Fq 'GH_TOKEN: ${{ github.token }}' "${publish_workflow}" || \
+  fail 'Zed stable-release guard does not authenticate its GitHub API request'
+for release_asset in \
+  lsp-version.txt \
+  beskid_lsp-linux-amd64 \
+  beskid_lsp-darwin-arm64 \
+  beskid_lsp-windows-amd64.exe; do
+  grep -Fq "${release_asset}" "${publish_workflow}" || \
+    fail "Zed publication workflow does not require ${release_asset}"
+done
 package_gate_line="$(grep -nF 'bash scripts/ci/test/zed-extension-package.test.sh' "${publish_workflow}" | head -n1 | cut -d: -f1)"
 asset_gate_line="$(grep -nF 'bash scripts/ci/test/zed-language-assets.test.sh' "${publish_workflow}" | head -n1 | cut -d: -f1)"
+release_guard_line="$(grep -nF 'name: Verify stable LSP release assets' "${publish_workflow}" | head -n1 | cut -d: -f1)"
 publish_action_line="$(grep -nF 'uses: huacnlee/zed-extension-action@v1' "${publish_workflow}" | head -n1 | cut -d: -f1)"
-[[ "${package_gate_line}" -lt "${publish_action_line}" && "${asset_gate_line}" -lt "${publish_action_line}" ]] || \
+[[ "${package_gate_line}" -lt "${publish_action_line}" && \
+   "${asset_gate_line}" -lt "${publish_action_line}" && \
+   "${release_guard_line}" -lt "${publish_action_line}" ]] || \
   fail 'Zed publication gates must run before the registry action'
 
 [[ -f "${developer_tasks}" ]] || fail 'missing repository Zed developer tasks'

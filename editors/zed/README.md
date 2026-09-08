@@ -146,6 +146,17 @@ surface for which the SDK has no host capability.
   matrix and reload the development extension. Failed installs are reported as
   failed; the adapter does not silently launch another executable.
 
+### Release readiness
+
+Registry publication fails closed unless the compiler repository exposes an
+`lsp-stable` release containing `lsp-version.txt` and all three platform assets
+listed above. A missing release (including an HTTP 404) or asset blocks the
+publication job before the registry action. Maintainers must repair the stable
+release; the workflow does not substitute `lsp-unstable` or advertise a
+clean-machine download that cannot succeed. During such an outage, development
+can continue with an explicit binary override or a PATH-installed
+`beskid_lsp`/`beskid`.
+
 ## Verify the package
 
 From the repository root:
@@ -155,5 +166,5 @@ bash scripts/ci/test/zed-extension-package.test.sh
 bash scripts/ci/test/zed-language-assets.test.sh
 ```
 
-The publication workflow runs both gates before submitting `editors/zed` to the
-extension registry.
+The publication workflow runs both gates and validates the complete stable LSP
+release before submitting `editors/zed` to the extension registry.
