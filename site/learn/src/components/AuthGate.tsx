@@ -105,7 +105,7 @@ export function UserBadge({ user }: { user: AuthUser }) {
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem asChild>
-					<a href={authHubProfileUrl()}>
+					<a href={authentikProfileUrl()}>
 						<UserRound />
 						Manage account
 					</a>
