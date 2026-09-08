@@ -11,6 +11,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- The landing Download action now opens the Downloads page instead of a direct
+  platform-specific asset. Landing code examples can open their exact source
+  in the Learn playground.
+- The Learn application accepts website playground handoffs through `?code=`
+  and opens the playground with that source loaded.
 - The shared Docs rail now exposes the public documentation tree instead of
   leaving newly published pages inaccessible from navigation.
 - Learn now uses a fixed lesson-defined tile mosaic. It no longer persists,

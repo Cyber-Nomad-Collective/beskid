@@ -33,6 +33,7 @@ import {
 	validateModeForExercise,
 } from "#/data/learningCatalog";
 import { authentikLoginUrl, type AuthUser } from "#/lib/auth";
+import { readPlaygroundHandoff } from "#/lib/playground-handoff";
 import "xterm/css/xterm.css";
 import "./styles.css";
 
@@ -484,7 +485,10 @@ function App() {
 			}
 		},
 	);
-	const [viewMode, setViewMode] = useState<ViewMode>("lesson");
+	const [playgroundCode] = useState(() => readPlaygroundHandoff(window.location.search).code);
+	const [viewMode, setViewMode] = useState<ViewMode>(() =>
+		readPlaygroundHandoff(window.location.search).openPlayground ? "playground" : "lesson",
+	);
 	const [sidebarOpen, setSidebarOpen] = useState(true);
 	const [isCompact, setIsCompact] = useState(() => window.matchMedia("(max-width: 1279px)").matches);
 	useEffect(() => {
@@ -622,7 +626,7 @@ function App() {
 						<main className="learn-main">
 							{viewMode === "playground" ? (
 								<div key="playground" className="tab-content-enter">
-									<Playground />
+									<Playground initialCode={playgroundCode} />
 								</div>
 							) : (
 								<div key="lesson" className="tab-content-enter">
