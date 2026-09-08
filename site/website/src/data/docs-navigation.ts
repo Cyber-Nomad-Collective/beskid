@@ -51,6 +51,16 @@ export const docsNavigation: DocsNavigationGroup[] = [
 				],
 			},
 			{
+				label: 'Platform',
+				items: [
+					{ label: 'Platform tasks', link: '/docs/platform/' },
+					{ label: 'Use your account', link: '/docs/platform/account/' },
+					{ label: 'Read Tracker', link: '/docs/platform/tracker/' },
+					{ label: 'Report a bug', link: '/docs/platform/report-bug/' },
+					{ label: 'Explore Nexus', link: '/docs/platform/nexus/' },
+				],
+			},
+			{
 				label: 'Operate',
 				items: [
 					{ label: 'Services', link: '/docs/services/' },

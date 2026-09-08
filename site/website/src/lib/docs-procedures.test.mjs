@@ -222,6 +222,60 @@ const procedurePages = [
 		},
 	},
 	{
+		path: 'docs/platform/index.md',
+		diagram: 'Platform user task routing',
+		diagramBranches: ['Need an account?', 'Read delivery status', 'Report a bug', 'Explore a repository graph', 'Operator contract'],
+		equivalentConcepts: ['account', 'delivery status', 'bug', 'repository graph', 'operator contract'],
+		sections: {
+			prerequisites: ['browser', 'platform task'],
+			actions: ['/docs/platform/account/', '/docs/platform/tracker/', '/docs/platform/report-bug/', '/docs/platform/nexus/'],
+			expectedResult: ['selected task', 'operator contract'],
+			recovery: ['public route', 'service operator'],
+		},
+	},
+	{
+		path: 'docs/platform/account.md',
+		sections: {
+			prerequisites: ['GitHub account', 'browser'],
+			actions: ['https://auth.beskid-lang.org/login?app=hub', 'https://auth.beskid-lang.org/account'],
+			expectedResult: ['GitHub OAuth', 'signed-in account'],
+			recovery: ['sign-in', 'Authentication operator contract'],
+		},
+	},
+	{
+		path: 'docs/platform/tracker.md',
+		diagram: 'Tracker delivery and bug authority',
+		diagramBranches: ['Public reader', 'Tracker delivery data', 'OpenSpec normative authority', 'GitHub bug transport', 'Signed-in maintenance'],
+		equivalentConcepts: ['public reader', 'Tracker', 'OpenSpec', 'GitHub', 'Signed-in'],
+		sections: {
+			prerequisites: ['browser', 'delivery version'],
+			actions: ['https://tracker.beskid-lang.org/', 'https://tracker.beskid-lang.org/bugs', '/docs/platform/report-bug/'],
+			expectedResult: ['delivery timeline', 'public bugs'],
+			recovery: ['public route', 'Tracker operator contract'],
+		},
+	},
+	{
+		path: 'docs/platform/report-bug.md',
+		sections: {
+			prerequisites: ['reproducible problem', 'browser'],
+			actions: ['https://tracker.beskid-lang.org/bugs', 'Sign in'],
+			expectedResult: ['bug report', 'public bug list'],
+			recovery: ['no signed-in account', 'Tracker operator contract'],
+		},
+	},
+	{
+		path: 'docs/platform/nexus.md',
+		diagram: 'Nexus reader and administrator boundary',
+		diagramBranches: ['Public reader', 'Repository selector', 'Graph navigation', 'Code references', 'Process flows', 'Standard links', 'Authentik administrator'],
+		equivalentConcepts: ['public reader', 'repository', 'graph', 'code references', 'Process flows', 'Standard links', 'administrator'],
+		sections: {
+			prerequisites: ['browser', 'indexed repository'],
+			actions: ['?repo=<catalog-id>', 'Search symbols', 'Process flows', 'Beskid Standard'],
+			expectedResult: ['repository graph', 'selected code reference'],
+			recovery: ['empty state', 'loading', 'Nexus operator contract'],
+		},
+	},
+	{
 		path: 'docs/services/index.md',
 		diagram: 'Public service and authentication topology',
 		diagramBranches: ['Website', 'Auth hub', 'Learn', 'pckg', 'Tracker', 'Nexus'],
@@ -523,6 +577,51 @@ test('navigation routes evaluators and learners to the public task pages', async
 	assert.match(coverage, /surface: 'Docs',[\s\S]*?audience: \['evaluator', 'learner', 'newcomer', 'developer', 'package author', 'operator', 'contributor'\]/);
 });
 
+test('platform routes keep public user tasks separate from authenticated and operator actions', async () => {
+	const [navigation, coverage, platform, account, tracker, reportBug, nexus, authentication, trackerService, nexusService] = await Promise.all([
+		readFile(new URL('../data/docs-navigation.ts', import.meta.url), 'utf8'),
+		readFile(new URL('../data/docs-coverage.ts', import.meta.url), 'utf8'),
+		loadPage(procedurePages.find((page) => page.path === 'docs/platform/index.md')),
+		loadPage(procedurePages.find((page) => page.path === 'docs/platform/account.md')),
+		loadPage(procedurePages.find((page) => page.path === 'docs/platform/tracker.md')),
+		loadPage(procedurePages.find((page) => page.path === 'docs/platform/report-bug.md')),
+		loadPage(procedurePages.find((page) => page.path === 'docs/platform/nexus.md')),
+		loadPage(procedurePages.find((page) => page.path === 'docs/services/authentication.md')),
+		loadPage(procedurePages.find((page) => page.path === 'docs/services/tracker.md')),
+		loadPage(procedurePages.find((page) => page.path === 'docs/services/nexus.md')),
+	]);
+
+	for (const route of ['/docs/platform/', '/docs/platform/account/', '/docs/platform/tracker/', '/docs/platform/report-bug/', '/docs/platform/nexus/']) {
+		assert.ok(navigation.includes(route), `navigation must expose ${route}`);
+		assert.ok(coverage.includes(`route: '${route}'`), `coverage must catalogue ${route}`);
+	}
+	assert.deepEqual(platform.data.audience, ['platform user']);
+	assert.match(platform.body, /operator contract/i);
+	assert.deepEqual(account.data.audience, ['platform user']);
+	assert.match(account.body, /https:\/\/auth\.beskid-lang\.org\/login\?app=hub/);
+	assert.match(account.body, /https:\/\/auth\.beskid-lang\.org\/account/);
+	assert.match(account.body, /does not pair a service|does not create a pairing/i);
+	assert.match(account.body, /Authentication operator contract/i);
+	assert.match(tracker.body, /https:\/\/tracker\.beskid-lang\.org\//);
+	assert.match(tracker.body, /https:\/\/tracker\.beskid-lang\.org\/bugs/);
+	assert.match(tracker.body, /OpenSpec[^.]*normative authority/i);
+	assert.match(tracker.body, /GitHub[^.]*bug/i);
+	assert.match(tracker.body, /sign-in[^.]*maintenance|maintenance[^.]*sign-in/i);
+	assert.match(reportBug.body, /https:\/\/tracker\.beskid-lang\.org\/bugs/);
+	assert.match(reportBug.body, /sign in/i);
+	assert.match(reportBug.body, /public bug/i);
+	assert.match(nexus.body, /public Nexus root route \(`\/`\)/);
+	assert.match(nexus.body, /\?repo=<catalog-id>/);
+	for (const concept of ['repository graph', 'code references', 'process flows', 'Beskid Standard', 'empty state', 'loading']) {
+		assert.match(nexus.body, new RegExp(concept, 'i'));
+	}
+	assert.match(nexus.body, /Authentik administrator/i);
+	assert.doesNotMatch(nexus.body, /NEXUS_MCP_AUTH_TOKEN|bearer token|pairing code/i);
+	for (const [service, userRoute] of [[authentication, '/docs/platform/account/'], [trackerService, '/docs/platform/tracker/'], [nexusService, '/docs/platform/nexus/']]) {
+		assert.match(service.body, new RegExp(escapeRegExp(userRoute)));
+	}
+});
+
 test('procedure diagrams retain their verified titles, branches, and text concepts', async () => {
 	for (const page of await Promise.all(procedurePages.map(loadPage))) {
 		if (page.data.diagramPolicy === 'required') {
@@ -702,7 +801,7 @@ test('service pages publish a complete verified operating contract', async () =>
 
 test('service contracts retain critical pinned facts and disclose auth conflicts', async () => {
 	const expectations = {
-		'docs/services/authentication.md': ['90c40a91fefa8150134663de120afcb1ef582f2a/site/auth/README.md', 'GitHub OAuth', '/api/v1/health', '8090', 'auth-data', 'beskid-auth'],
+		'docs/services/authentication.md': ['3143396b796d86c1a70a0bfb1aa4761b593bbae5/site/auth/README.md', 'GitHub OAuth', '/api/v1/health', '8090', 'auth-data', 'beskid-auth'],
 		'docs/services/learn.md': ['90c40a91fefa8150134663de120afcb1ef582f2a/site/learn/README.md', 'BESKID_BINARY', '/api/health', '80', 'no durable Learn volume', 'beskid-learn'],
 		'docs/services/pckg.md': ['beskid_pckg/blob/a490c7c7aa3fa7a7b28245e0c7564849d36eb19c/README.md', '/health/ready', '8082', 'PostgreSQL', 'pckg_packages', 'beskid-pckg', 'trusted forward-auth boundary'],
 		'docs/services/tracker.md': ['c7da5b60e70fe87b10b1b3cde7e91c39af32136a/README.md', '/api/health', '3000', 'SQLite', 'tracker-data', 'beskid-tracker', 'central Auth hub'],

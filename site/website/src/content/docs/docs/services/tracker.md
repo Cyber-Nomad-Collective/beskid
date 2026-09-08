@@ -58,4 +58,4 @@ If the health request fails, inspect the volume mount and session configuration.
 
 ## Next task
 
-[Change the Standard without changing delivery ownership](/docs/contributing/standard-changes/).
+For public delivery reading, see [Read Tracker](/docs/platform/tracker/). For authorized delivery changes, [change the Standard without changing delivery ownership](/docs/contributing/standard-changes/).
