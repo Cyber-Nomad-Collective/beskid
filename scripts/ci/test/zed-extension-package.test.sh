@@ -58,7 +58,7 @@ grep -Fq '[grammars.bsol]' "${extension_root}/extension.toml" || \
   fail 'Zed extension manifest does not declare the standalone BSOL grammar'
 grep -Fq 'repository = "https://github.com/Cyber-Nomad-Collective/beskid_bsol"' "${extension_root}/extension.toml" || \
   fail 'standalone BSOL grammar does not use the canonical repository'
-grep -Fq 'commit = "c4f350c319ca9cc9013204743116c75cc34e965a"' "${extension_root}/extension.toml" || \
+grep -Fq 'commit = "87f25ff7282443b9030f0b77f2ce121ff9b4c32e"' "${extension_root}/extension.toml" || \
   fail 'standalone BSOL grammar does not use the exact pinned submodule commit'
 grep -Fq 'path = "grammars/tree-sitter-bsol"' "${extension_root}/extension.toml" || \
   fail 'standalone BSOL grammar does not select the nested grammar directory'
