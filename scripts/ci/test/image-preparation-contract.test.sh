@@ -58,21 +58,30 @@ for requirement in \
   'command -v clang' \
   'command -v ld.lld' \
   'CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_cli --release' \
+  'CARGO_TARGET_DIR=/workspace/target cargo build -p beskid_lsp --release' \
   'BESKID_RUNTIME_PREFIX=/workspace/target/native-runtime-kit' \
   'BESKID_CLI_BIN=/workspace/target/release/beskid_cli' \
   'mkdir -p /workspace/runtime-output' \
   'install -m 0755 /workspace/target/release/beskid_cli /workspace/runtime-output/beskid' \
+  'install -m 0755 /workspace/target/release/beskid_lsp /workspace/runtime-output/beskid_lsp' \
   'cp -a /workspace/target/native-runtime-kit /workspace/runtime-output/native-runtime-kit' \
   'COPY --from=rust /workspace/runtime-output/beskid /app/site/learn/beskid' \
+  'COPY --from=rust /workspace/runtime-output/beskid_lsp /app/site/learn/beskid_lsp' \
   'COPY --from=rust /workspace/runtime-output/native-runtime-kit /app/site/learn/native-runtime-kit' \
   'COPY --from=web /app/site/learn/src/data /app/site/learn/src/data' \
   'COPY --from=web /app/site/learn/src/lib/playground.ts /app/site/learn/src/lib/playground.ts' \
+  'COPY --from=web /app/site/learn/src/server /app/site/learn/src/server' \
   './scripts/stage-native-runtime-kit.sh'; do
   if [[ "${learn}" != *"${requirement}"* ]]; then
     echo "site/learn/Dockerfile is missing required dependency preparation: ${requirement}" >&2
     exit 1
   fi
 done
+
+if [[ "${learn}" != *'ENV BESKID_LSP_BINARY=/app/site/learn/beskid_lsp'* ]]; then
+  echo "site/learn/Dockerfile must configure the bundled compiler language server" >&2
+  exit 1
+fi
 
 if [[ "${learn}" == *$'RUN cd compiler'* ]]; then
   echo "site/learn/Dockerfile must stage the runtime kit in the cache-mounted compiler build step" >&2
