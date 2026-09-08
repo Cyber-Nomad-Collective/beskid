@@ -41,7 +41,7 @@ Install Beskid and open a terminal in the source or project directory. Run `besk
 ```mermaid
 flowchart TD
   accTitle: CLI taxonomy
-  accDescr: The Beskid CLI routes source work to syntax commands, native output work to build commands, dependency work to project commands, and publishing work to package commands.
+  accDescr: The Beskid CLI routes work by domain. Choose syntax, build, project, or package commands for the task.
   A[beskid] --> B[Syntax]
   A --> C[Build]
   A --> D[Project]

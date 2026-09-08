@@ -11,64 +11,114 @@ const procedurePages = [
 		diagram: 'Audience routing',
 		diagramBranches: ['Evaluate or start', 'Develop', 'Publish', 'Operate', 'Contribute'],
 		equivalentConcepts: ['Get started', 'Tooling', 'Packages', 'Operate', 'Documentation authoring'],
-		concepts: ['/docs/standard/', '/docs/getting-started/', '/docs/language-basics/'],
+		sections: {
+			prerequisites: ['result that you want', 'evaluate the documentation'],
+			actions: ['Select your role', 'verification revision'],
+			expectedResult: ['audience', 'authority annotation'],
+			recovery: ['follow the standard', 'documentation mismatch'],
+		},
 	},
 	{
 		path: 'docs/getting-started/index.md',
 		noDiagram: 'This short route delegates decisions to the detailed task pages.',
-		concepts: ['beskid --version', 'beskid analyze Main.bd --plain', 'beskid run Main.bd --plain'],
+		sections: {
+			prerequisites: ['supported host', 'user-local program'],
+			actions: ['/docs/getting-started/install/', '/docs/getting-started/editor/'],
+			expectedResult: ['beskid --version', 'beskid run Main.bd --plain'],
+			recovery: ['first failed check', 'analysis error'],
+		},
 	},
 	{
 		path: 'docs/getting-started/install.md',
 		diagram: 'Install decision',
 		diagramBranches: ['Artifact is listed?', 'Use stable', 'Use displayed unstable', 'Use immutable tag'],
 		equivalentConcepts: ['stable', 'unstable', 'immutable tag', 'language server'],
-		concepts: ['beskid --version', 'beskid up host-target', 'beskid lsp install'],
+		sections: {
+			prerequisites: ['Linux AMD64', 'older Beskid installation'],
+			actions: ['export PATH="$HOME/.beskid/bin:$PATH"', 'beskid lsp install'],
+			expectedResult: ['host-target', 'matching LSP'],
+			recovery: ['active shell profile', 'selected CLI tag'],
+		},
 	},
 	{
 		path: 'docs/getting-started/first-program.md',
 		diagram: 'Source to AOT execution',
 		diagramBranches: ['Resolve and analyze', 'AOT compile', 'Link runtime kit', 'Run subprocess'],
 		equivalentConcepts: ['Main.bd', 'native object code', 'runtime kit', 'subprocess'],
-		concepts: ['i32 Main()', 'beskid analyze Main.bd --plain', 'beskid run Main.bd --plain'],
+		sections: {
+			prerequisites: ['/docs/getting-started/install/', 'empty directory'],
+			actions: ['i32 Main()', 'beskid analyze Main.bd --plain'],
+			expectedResult: ['status `0`', 'error diagnostic'],
+			recovery: ['default entrypoint `Main`', 'runtime kit'],
+		},
 	},
 	{
 		path: 'docs/getting-started/editor.md',
 		diagram: 'Editor and language server',
 		diagramBranches: ['Explicit path', 'Managed binary', 'Bundled binary', 'CLI-backed server', 'Automatic bootstrap', 'Compiler workspace'],
 		equivalentConcepts: ['explicit path', 'managed binary', 'bundled binary', 'CLI-backed server', 'automatic bootstrap', 'compiler-workspace fallback'],
-		concepts: ['beskid.lsp.server.path', 'beskid_lsp', 'Problems panel'],
+		sections: {
+			prerequisites: ['/docs/getting-started/install/', '`Main.bd`'],
+			actions: ['beskid.lsp.server.path', 'Problems panel'],
+			expectedResult: ['diagnostic', 'language-server process'],
+			recovery: ['<selected-lsp-tag>', 'selected CLI'],
+		},
 	},
 	{
 		path: 'docs/getting-started/troubleshooting.md',
 		diagram: 'First-day troubleshooting',
 		diagramBranches: ['Command missing', 'Wrong version or host', 'Source diagnostic', 'Link failure', 'No editor diagnostics'],
 		equivalentConcepts: ['PATH', 'exact host artifact', 'source span', 'runtime kit', 'language server'],
-		concepts: ['beskid --version', 'beskid up host-target', 'beskid analyze Main.bd --plain'],
+		sections: {
+			prerequisites: ['complete output', 'beskid --version'],
+			actions: ['beskid up host-target', 'beskid analyze Main.bd --plain'],
+			expectedResult: ['previously failing check', 'earlier check'],
+			recovery: ['selected release tag', 'private source code'],
+		},
 	},
 	{
 		path: 'docs/tooling/index.md',
 		diagram: 'CLI taxonomy',
 		diagramBranches: ['Syntax', 'Build', 'Project', 'Package'],
 		equivalentConcepts: ['Syntax commands', 'Build commands', 'Project commands', 'Package commands'],
-		concepts: ['beskid dev syntax', 'beskid dev build', 'beskid dev project', 'beskid dev package'],
+		sections: {
+			prerequisites: ['beskid --help', 'source or project directory'],
+			actions: ['beskid dev syntax', 'beskid dev package'],
+			expectedResult: ['selected command help', 'grouped forms'],
+			recovery: ['beskid --help', 'concise root command'],
+		},
 	},
 	{
 		path: 'docs/tooling/build-run-test.md',
 		noDiagram: 'The numbered build, run, and test procedure is already linear.',
-		concepts: ['beskid build Main.bd --kind exe --plain', 'beskid run Main.bd --entrypoint Main --plain', 'beskid test --project App.bproj'],
+		sections: {
+			prerequisites: ['beskid analyze', '`.bproj` manifest'],
+			actions: ['beskid build Main.bd --kind exe --plain', 'beskid test --project App.bproj'],
+			expectedResult: ['subprocess status', 'passed, failed, skipped, and filtered'],
+			recovery: ['target-selection error', 'runtime-kit error'],
+		},
 	},
 	{
 		path: 'docs/tooling/ci.md',
 		diagram: 'Reproducible CI',
 		diagramBranches: ['Pinned toolchain', 'Format check', 'Frozen analyze', 'Frozen tests', 'Frozen release build', 'Publish artifact'],
 		equivalentConcepts: ['immutable toolchain', 'formatting', '--frozen', 'Publish'],
-		concepts: ['beskid format Src --check', '--all-targets --frozen --plain --json', '--release --frozen --plain'],
+		sections: {
+			prerequisites: ['Project.lock', 'CI secret store'],
+			actions: ['beskid format Src --check', '--all-targets --frozen --plain --json'],
+			expectedResult: ['same toolchain and lockfile', 'native release artifact'],
+			recovery: ['update and review `Project.lock`', 'do not publish'],
+		},
 	},
 	{
 		path: 'docs/language-basics/index.md',
 		noDiagram: 'A syntax reference table is clearer than a flow diagram.',
-		concepts: ['i32 Main()', 'return 0;', '/docs/standard/'],
+		sections: {
+			prerequisites: ['`Main.bd`', '/docs/getting-started/first-program/'],
+			actions: ['i32 Main()', '/docs/standard/'],
+			expectedResult: ['return type', 'statement terminator'],
+			recovery: ['diagnostic span', 'semicolon'],
+		},
 	},
 ];
 
@@ -114,9 +164,22 @@ test('task pages provide complete executable procedures', async () => {
 		const steps = [...section(page.body, 'Actions').matchAll(/^(\d+)\.\s+(.+)$/gm)];
 		assert.ok(steps.length >= 2, `${page.path} must contain at least two numbered actions`);
 		assert.equal(new Set(steps.map((step) => step[2])).size, steps.length, `${page.path} actions must be distinct`);
+		for (const [, , action] of steps) {
+			assert.ok(action.trim().length >= 12, `${page.path} numbered actions must contain substantive text`);
+		}
+		assert.match(section(page.body, 'Actions'), /`[^`]+`|\[[^\]]+\]\([^)]+\)|```[a-z]*\n/i, `${page.path} actions must include a command, link, or configuration token`);
 		assert.match(section(page.body, 'Next task'), /\[[^\]]+\]\(\/[^)]+\)/, `${page.path} next task must contain an internal Markdown link`);
-		for (const concept of page.concepts) {
-			assert.ok(page.body.includes(concept), `${page.path} must explain ${concept}`);
+		for (const [heading, key] of [
+			['Prerequisites', 'prerequisites'],
+			['Actions', 'actions'],
+			['Expected result', 'expectedResult'],
+			['Recovery', 'recovery'],
+		]) {
+			assert.ok(page.sections[key].length >= 2, `${page.path} must define meaningful ${heading} expectations`);
+			const content = section(page.body, heading);
+			for (const concept of page.sections[key]) {
+				assert.ok(content.includes(concept), `${page.path} ${heading} must explain ${concept}`);
+			}
 		}
 
 		assert.ok(Array.isArray(page.data.audience) && page.data.audience.length > 0, `${page.path} must name its audience`);
@@ -142,6 +205,10 @@ test('procedure diagrams are accessible and have a following text equivalent', a
 			const [, diagram, equivalent] = match;
 			assert.match(diagram, new RegExp(`^\\s*accTitle:\\s*${escapeRegExp(page.diagram)}\\s*$`, 'm'), `${page.path} must use the expected accessible title`);
 			assert.match(diagram, /^\s*accDescr:\s*\S.+$/m, `${page.path} diagram must have an accessible description`);
+			const description = diagram.match(/^\s*accDescr:\s*(.+)$/m)[1];
+			for (const sentence of description.split(/(?<=[.!?])\s+/)) {
+				assert.ok(sentence.trim().split(/\s+/).length <= 25, `${page.path} diagram descriptions must use short sentences`);
+			}
 			assert.ok(equivalent.trim().length >= 80, `${page.path} must provide a nontrivial text equivalent`);
 			for (const branch of page.diagramBranches) {
 				assert.ok(diagram.includes(branch), `${page.path} diagram must show ${branch}`);
@@ -186,6 +253,14 @@ test('editor guidance uses pinned extension provenance', async () => {
 	const editor = await loadPage(procedurePages.find((page) => page.path.endsWith('/editor.md')));
 	assert.equal(editor.data.authority.sourceHref, 'https://github.com/Cyber-Nomad-Collective/beskid_vscode/blob/94640e47f3292a883cb2f92c4a04321f8724a3f7/package.json');
 	assert.equal(editor.data.verified.revision, '94640e47f3292a883cb2f92c4a04321f8724a3f7');
+});
+
+test('editor recovery follows the selected CLI and LSP release pair', async () => {
+	const editor = await loadPage(procedurePages.find((page) => page.path.endsWith('/editor.md')));
+	const recovery = section(editor.body, 'Recovery');
+	assert.ok(recovery.includes('beskid lsp install --release-tag <selected-lsp-tag>'));
+	assert.match(recovery, /tag that corresponds to the selected CLI (?:channel|immutable version)/i);
+	assert.doesNotMatch(recovery, /--release-tag\s+lsp-stable\b/, 'editor recovery must not force the stable LSP channel');
 });
 
 test('active procedures use current project, entrypoint, and AOT terminology', async () => {

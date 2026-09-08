@@ -72,7 +72,7 @@ The Problems panel shows a diagnostic after the invalid edit and clears it after
 
 ## Recovery
 
-If the extension cannot start a server, run **Beskid: Install LSP** or repeat `beskid lsp install --release-tag lsp-stable`. If multiple installations cause ambiguity, set the absolute `beskid.lsp.server.path`. Use the extension output channel to find the selected command and path.
+If the extension cannot start a server, run **Beskid: Install LSP** or repeat `beskid lsp install --release-tag <selected-lsp-tag>`. Use the LSP tag that corresponds to the selected CLI channel or immutable version. See [Install Beskid](/docs/getting-started/install/) for the matching tags. If multiple installations cause ambiguity, set the absolute `beskid.lsp.server.path`. Use the extension output channel to find the selected command and path.
 
 ## Next task
 
