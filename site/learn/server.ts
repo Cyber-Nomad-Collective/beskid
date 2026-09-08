@@ -11,6 +11,7 @@ import process from "node:process";
 import { learnExercises } from "./src/data/learningCatalog";
 import { getPlaygroundExercise } from "./src/lib/playground";
 import { isStaticAssetRequest } from "./src/lib/server-routing";
+import { createLspBridge, type LspChild, type LspSocket } from "./src/server/lspBridge";
 
 type CheckRequest = {
 	exerciseId: string;
@@ -47,6 +48,7 @@ const PORT = Number(process.env.PORT ?? "4173");
 const HOST = "0.0.0.0";
 const DIST = join(process.cwd(), "dist");
 const BESKID_BINARY = process.env.BESKID_BINARY;
+const BESKID_LSP_BINARY = process.env.BESKID_LSP_BINARY;
 const BESKID_CARGO_PKG = process.env.BESKID_CARGO_PKG ?? "beskid_cli";
 const BESKID_COMMAND_TIMEOUT_MS = Number(
 	process.env.BESKID_COMMAND_TIMEOUT_MS ?? "25000",
@@ -658,13 +660,49 @@ function saveProgress(data: unknown) {
 	}
 }
 
+function spawnLspChild(workspace: string): LspChild {
+	if (!BESKID_LSP_BINARY || !existsSync(BESKID_LSP_BINARY)) {
+		throw new Error("Beskid language server binary not available");
+	}
+
+	const child = spawn(BESKID_LSP_BINARY, [], {
+		cwd: workspace,
+		stdio: ["pipe", "pipe", "ignore"],
+	});
+	return {
+		write(message) {
+			child.stdin?.write(message);
+		},
+		kill() {
+			if (!child.killed) child.kill("SIGTERM");
+		},
+		onStdout(listener) {
+			child.stdout?.on("data", (chunk) => listener(String(chunk)));
+		},
+		onExit(listener) {
+			child.once("exit", listener);
+			child.once("error", listener);
+		},
+	};
+}
+
+const lspBridge = createLspBridge({
+	getSession: getLearnSession,
+	spawn: spawnLspChild,
+	createWorkspace: () => mkdtemp(join(tmpdir(), "beskid-learn-lsp-")),
+	removeWorkspace: (workspace) => rm(workspace, { recursive: true, force: true }),
+});
+
 await verifyBeskidBinary();
 
 Bun.serve({
 	port: PORT,
 	hostname: HOST,
-	async fetch(req: Request) {
+	async fetch(req: Request, server) {
 		const requestUrl = new URL(req.url);
+		if (requestUrl.pathname === "/api/lsp") {
+			return lspBridge.upgrade(req, server);
+		}
 
 		if (requestUrl.pathname === "/api/exercises") {
 			return jsonResponse(200, {
@@ -842,6 +880,17 @@ Bun.serve({
 			(await serveAsset("/index.html")) ??
 			jsonResponse(404, { error: "asset not found" })
 		);
+	},
+	websocket: {
+		open(socket) {
+			lspBridge.websocket.open(socket as unknown as LspSocket);
+		},
+		message(socket, message) {
+			lspBridge.websocket.message(socket as unknown as LspSocket, message as string | ArrayBufferView);
+		},
+		close(socket) {
+			lspBridge.websocket.close(socket as unknown as LspSocket);
+		},
 	},
 });
 
