@@ -70,6 +70,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Zed extension: add registry-packaged outlines, indentation and bracket
+  queries, runnable task bindings, declaration snippets, and grammar-validated
+  runnable fixtures for Beskid source files.
+
 - `beskid_sites/` — greenfield standalone pnpm workspace (own
   `pnpm-workspace.yaml`; not a submodule, not in the root workspace) for the
   Beskid web properties, built on TanStack Start (React + Nitro).

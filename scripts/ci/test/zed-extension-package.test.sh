@@ -25,6 +25,8 @@ fail() {
 
 grep -Fq 'kind = "Rust"' "${extension_root}/extension.toml" || \
   fail 'Zed extension manifest does not load extension.wasm'
+! grep -Eq '^command[[:space:]]*=[[:space:]]*"beskid_lsp"[[:space:]]*$' "${extension_root}/extension.toml" || \
+  fail 'Zed extension manifest duplicates Rust adapter command authority'
 grep -Fq 'grammar = "beskid"' "${extension_root}/languages/beskid/config.toml" || \
   fail 'Beskid language configuration does not select the packaged grammar'
 grep -Fq 'path_suffixes = ["bd"]' "${extension_root}/languages/beskid/config.toml" || \

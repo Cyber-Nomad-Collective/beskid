@@ -108,8 +108,9 @@ The package provides and verifies:
   LSP;
 - snippets for canonical Beskid declarations;
 - runnable captures for tests and entry points, backed by documented Zed task
-  templates that invoke `beskid test`, `beskid run`, `beskid build`,
-  `beskid analyze`, `beskid fetch`, and `beskid lock`;
+  templates that invoke `beskid dev build test`, `beskid run ... --entrypoint ...`,
+  `beskid dev build compile`, `beskid dev syntax analyze`,
+  `beskid dev project fetch`, and `beskid dev project lock`;
 - README guidance for binary overrides, LSP settings, tasks, logs, and the
   known SDK parity boundary.
 

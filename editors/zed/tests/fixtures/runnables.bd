@@ -1,0 +1,7 @@
+test Runnable_test {
+  i32 value = 1;
+}
+
+i32 Main() {
+  return 0;
+}

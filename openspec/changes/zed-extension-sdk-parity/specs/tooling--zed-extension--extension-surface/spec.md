@@ -189,8 +189,10 @@ schema-compatible process capability: `command = "*"`, `args = ["**"]`. Its
 operational scope SHALL remain limited: the extension SHALL construct only the
 selected Beskid server command after deterministic resolution. Workspace file
 access and task execution are host-owned capabilities and SHALL NOT be claimed
-by the extension. The approved task commands are `test`, `run`, `build`,
-`analyze`, `fetch`, and `lock`; the extension SHALL only declare their runnable
+by the extension. The approved task commands are `beskid dev build test`,
+`beskid run ... --entrypoint ...`, `beskid dev build compile`,
+`beskid dev syntax analyze`, `beskid dev project fetch`, and
+`beskid dev project lock`; the extension SHALL only declare their runnable
 definitions. No other capability is requested, and secrets SHALL stay out of
 extension configuration.
 
