@@ -72,7 +72,7 @@ For the `beskid-lsp` adapter, resolution is deterministic:
 2. Otherwise use `beskid_lsp` discovered through `Worktree::which`, launching
    it with `--stdio` and the worktree shell environment.
 3. Otherwise use `beskid` discovered through `Worktree::which`, launching
-   `beskid lsp` with the worktree shell environment.
+   `beskid dev tooling lsp` with the worktree shell environment.
 4. Otherwise query the compiler repository's `lsp-stable` GitHub release,
    select the exact supported platform asset, download it into the extension
    work directory when absent, mark it executable where required, and launch
