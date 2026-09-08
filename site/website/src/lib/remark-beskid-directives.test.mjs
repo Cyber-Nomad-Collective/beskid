@@ -106,6 +106,11 @@ test('rewrites an absolute legacy URL without losing its defined fragment', () =
 	);
 });
 
+test('does not rewrite a platform-spec path on an unrelated origin', () => {
+	const url = 'https://example.com/platform-spec/tooling/cli/command-surface/';
+	assert.equal(__test.canonicalSpecHref(url, new Map()), url);
+});
+
 test('sends an unknown legacy identifier to the Standard search state', () => {
 	assert.equal(
 		__test.canonicalSpecHref('/platform-spec/not/a/catalog-entry/', new Map()),

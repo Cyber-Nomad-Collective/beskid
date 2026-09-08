@@ -20,7 +20,7 @@
 		"dev:clean": "rm -rf .astro dist node_modules/.vite && pnpm dev",
 		"start": "astro dev",
 		"build": "astro build",
-		"postbuild": "pnpm verify:built-docs",
+		"postbuild": "node scripts/write-standard-nginx-redirects.mjs .astro/standard-redirects.conf && node scripts/verify-nginx-standard-routes.mjs nginx/default.conf .astro/standard-redirects.conf Dockerfile && pnpm verify:built-docs",
 		"preview": "astro preview",
 		"astro": "astro"
 	},

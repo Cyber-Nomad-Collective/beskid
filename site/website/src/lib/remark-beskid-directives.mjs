@@ -6,6 +6,12 @@ import {
 } from './standard-routes.mjs';
 
 const KINDS = new Set(['spec', 'book', 'nexus', 'bug']);
+const STANDARD_HOSTS = new Set([
+	'beskid-lang.org',
+	'www.beskid-lang.org',
+	'spec.beskid-lang.org',
+	'stg-spec.beskid-lang.org',
+]);
 function normalizeSpecPath(value) {
 	const clean = normalizeStandardIdentifier(value);
 	return clean.startsWith('platform-spec/') || clean === 'platform-spec'
@@ -70,6 +76,15 @@ function renderDirective(kind, body, projection) {
 }
 
 function canonicalSpecHref(value, aliases) {
+	if (/^https?:\/\//i.test(value)) {
+		let hostname;
+		try {
+			hostname = new URL(value).hostname.toLowerCase();
+		} catch {
+			return value;
+		}
+		if (!STANDARD_HOSTS.has(hostname)) return value;
+	}
 	const withoutOrigin = value.replace(/^https?:\/\/[^/]+/i, '');
 	if (!/^\/?platform-spec(?:\/|$)/.test(withoutOrigin)) return value;
 	const [pathname] = value.split(/(?=[?#])/u, 1);

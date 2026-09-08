@@ -131,6 +131,8 @@ A stable `/platform-spec/**` path mapped through `openspec/catalog.json` to a
 canonical capability identity page. A fragment is retained only when it names
 a requirement anchor that the destination renders. The path alone never
 selects a requirement because some legacy documents contain more than one.
+The production server generates exact redirects for known aliases and returns
+the Standard-specific no-match page with a 404 status for unknown aliases.
 
 ## Managed object allocation
 

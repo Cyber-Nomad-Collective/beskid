@@ -1,16 +1,24 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
-import { loadStandardRouteProjection } from '../../../lib/standard-routes.mjs';
+import {
+	createStandardSearchIndex,
+	loadStandardRouteProjection,
+} from '../../../lib/standard-routes.mjs';
 
 export function getStaticPaths() {
 	const projection = loadStandardRouteProjection();
+	const searchIndex = createStandardSearchIndex(projection);
 	return projection.routes.map((route) => ({
 		params: { id: route.pathname },
-		props: { route, revision: projection.revision },
+		props: {
+			route,
+			revision: projection.revision,
+			searchIndex: route.kind === 'not-found' ? searchIndex : undefined,
+		},
 	}));
 }
 
-const { route, revision } = Astro.props;
+const { route, revision, searchIndex = [] } = Astro.props;
 const isCapability = route.kind === 'capability';
 const isRequirement = route.kind === 'requirement';
 const title = route.title;
@@ -90,22 +98,60 @@ const authorityLabel = isRequirement
 	{route.kind === 'not-found' && (
 		<>
 			<p>The identifier is not in the checked-in catalog. Do not infer a rule from an unknown or retired path.</p>
-			<form class="standard-search" action="/docs/standard/not-found/" method="get">
+			<form class="standard-search" action="/docs/standard/not-found/" method="get" data-standard-id-checker>
 				<label for="standard-id">Capability key or requirement ID</label>
 				<div>
-					<input id="standard-id" name="id" type="search" autocomplete="off" />
+					<input id="standard-id" name="id" type="search" autocomplete="off" list="standard-identifiers" />
 					<button type="submit">Check identifier</button>
 				</div>
+				<datalist id="standard-identifiers">
+					{searchIndex.map((item) => <option value={item.identifier} data-href={item.href}>{item.label}</option>)}
+				</datalist>
+				<p class="standard-search__status" role="status" aria-live="polite" hidden></p>
 			</form>
 			<p>Return to the <a href="/docs/standard/">Standard index</a> or search the <a href="https://github.com/Cyber-Nomad-Collective/beskid/blob/main/openspec/catalog.json">checked-in catalog</a>.</p>
-			<script is:inline>
-				const field = document.querySelector('#standard-id');
-				const query = new URLSearchParams(window.location.search).get('id');
-				if (field instanceof HTMLInputElement && query) field.value = query;
-			</script>
+			<noscript>Use the checked-in catalog link to find an identifier when JavaScript is disabled.</noscript>
 		</>
 	)}
 </StarlightPage>
+
+<script>
+	import { bindStandardIdChecker } from '../../../lib/standard-id-checker.mjs';
+
+	const form = document.querySelector('[data-standard-id-checker]');
+	const field = document.querySelector('#standard-id');
+	const status = document.querySelector('.standard-search__status');
+	const datalist = document.querySelector('#standard-identifiers');
+	if (
+		form instanceof HTMLFormElement &&
+		field instanceof HTMLInputElement &&
+		status instanceof HTMLElement &&
+		datalist instanceof HTMLDataListElement
+	) {
+		const index = [...datalist.options].map((option) => ({
+			identifier: option.value,
+			href: option.dataset.href ?? '',
+		}));
+		const pathIdentifier = window.location.pathname.startsWith('/platform-spec/')
+			? window.location.pathname.slice('/platform-spec/'.length).replace(/^\/+|\/+$/g, '')
+			: '';
+		const initialIdentifier = new URLSearchParams(window.location.search).get('id') ?? pathIdentifier;
+		if (initialIdentifier) field.value = initialIdentifier;
+		bindStandardIdChecker({
+			form,
+			field,
+			status,
+			index,
+			navigate: (href) => window.location.assign(href),
+			updateQuery: (identifier) => {
+				const url = new URL(window.location.href);
+				if (identifier) url.searchParams.set('id', identifier);
+				else url.searchParams.delete('id');
+				window.history.replaceState({}, '', url);
+			},
+		});
+	}
+</script>
 
 <style>
 	.standard-authority-note {
@@ -121,4 +167,5 @@ const authorityLabel = isRequirement
 	.standard-search div { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 	.standard-search input { min-width: min(100%, 22rem); padding: 0.5rem; }
 	.standard-search button { padding: 0.5rem 0.75rem; }
+	.standard-search__status { margin-block: 0.75rem 0; font-weight: 700; }
 </style>

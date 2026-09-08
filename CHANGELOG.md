@@ -15,7 +15,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   requirements from the checked-in catalog. Preserve known Platform Spec
   aliases and valid requirement fragments, link every identity to its
   canonical OpenSpec source, and send unknown document references to a
-  Standard-specific not-found search state.
+  Standard-specific not-found search state. The production website now serves
+  the generated exact alias redirects before its fail-closed fallback, and the
+  identifier checker resolves capability keys and stable IDs without guessing.
 - Add complete service, operator, contributor, and reference guidance. Document
   verified public and local boundaries, authentication, persistence, images,
   health checks, deployment ownership, secret sources, monitoring, recovery,

@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+export { bindStandardIdChecker, resolveStandardSearch } from './standard-id-checker.mjs';
 
 export const DOCS_ORIGIN = 'https://beskid-lang.org';
 export const STANDARD_PATH = '/docs/standard/';
@@ -194,4 +195,40 @@ export function createLegacyStandardRedirects(projection = loadStandardRouteProj
 		}
 	}
 	return redirects;
+}
+
+export function createStandardSearchIndex(projection = loadStandardRouteProjection()) {
+	const index = [];
+	for (const capability of projection.capabilities) {
+		for (const identifier of [capability.id, capability.capability]) {
+			index.push({ identifier, href: capability.href, label: capability.title });
+		}
+	}
+	for (const requirement of projection.requirements) {
+		index.push({ identifier: requirement.id, href: requirement.href, label: requirement.title });
+	}
+	return index.sort((left, right) => left.identifier.localeCompare(right.identifier));
+}
+
+function assertSafeNginxRedirect(source, destination) {
+	if (!/^\/platform-spec\/[A-Za-z0-9._~/-]+\/$/u.test(source)) {
+		throw new Error(`Unsafe Platform Spec redirect source: ${JSON.stringify(source)}`);
+	}
+	if (!/^\/docs\/standard\/capabilities\/[a-z0-9-]+\/$/u.test(destination)) {
+		throw new Error(`Unsafe Standard redirect destination: ${JSON.stringify(destination)}`);
+	}
+}
+
+export function renderNginxStandardRedirects(projection = loadStandardRouteProjection()) {
+	const blocks = [];
+	for (const [legacy, capability] of [...projection.aliases].sort(([left], [right]) => left.localeCompare(right))) {
+		const source = `/${legacy}/`;
+		assertSafeNginxRedirect(source, capability.href);
+		for (const exactPath of [source.slice(0, -1), source]) {
+			blocks.push(
+				`location = ${exactPath} {\n    return 301 ${capability.href};\n}`,
+			);
+		}
+	}
+	return `# Generated from openspec/catalog.json. Do not edit.\n${blocks.join('\n\n')}\n`;
 }

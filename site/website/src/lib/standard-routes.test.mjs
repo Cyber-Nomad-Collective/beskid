@@ -69,6 +69,10 @@ test('catalog root resolution survives Astro bundling away from the source modul
 	fs.mkdirSync(bundledDirectory, { recursive: true });
 	const bundledModule = path.join(bundledDirectory, 'standard-routes.mjs');
 	fs.copyFileSync(path.resolve(import.meta.dirname, 'standard-routes.mjs'), bundledModule);
+	fs.copyFileSync(
+		path.resolve(import.meta.dirname, 'standard-id-checker.mjs'),
+		path.join(bundledDirectory, 'standard-id-checker.mjs'),
+	);
 	try {
 		const bundled = await import(`${pathToFileURL(bundledModule).href}?test=${Date.now()}`);
 		assert.equal(bundled.resolveOpenSpecRoot(), openSpecRoot);
@@ -93,4 +97,83 @@ test('catalog projection rejects an alias owned by two capabilities', () => {
 			}),
 		/Catalog alias collision.*platform-spec\/shared\/alias.*one.*two/,
 	);
+});
+
+test('identifier search resolves capability IDs, requirement IDs, and capability keys', () => {
+	const projection = __test.loadStandardRouteProjection(openSpecRoot);
+	const index = standardRoutes.createStandardSearchIndex(projection);
+	assert.equal(
+		standardRoutes.resolveStandardSearch(index, ' BSP-CAP-DA123DD4F7F0 '),
+		'/docs/standard/capabilities/tooling--cli--command-surface/',
+	);
+	assert.equal(
+		standardRoutes.resolveStandardSearch(index, 'BSP-REQ-942B8B35A6BB'),
+		'/docs/standard/requirements/BSP-REQ-942B8B35A6BB/',
+	);
+	assert.equal(
+		standardRoutes.resolveStandardSearch(index, 'tooling--cli--command-surface'),
+		'/docs/standard/capabilities/tooling--cli--command-surface/',
+	);
+	assert.equal(standardRoutes.resolveStandardSearch(index, 'BSP-REQ-NOT-REAL'), null);
+});
+
+test('Nginx redirect projection uses exact safe locations for every legacy alias', () => {
+	const projection = __test.loadStandardRouteProjection(openSpecRoot);
+	const nginx = standardRoutes.renderNginxStandardRedirects(projection);
+	assert.match(
+		nginx,
+		/location = \/platform-spec\/tooling\/cli\/command-surface\/ \{\n\s+return 301 \/docs\/standard\/capabilities\/tooling--cli--command-surface\/;\n\s*\}/,
+	);
+	assert.match(
+		nginx,
+		/location = \/platform-spec\/tooling\/cli\/command-surface \{\n\s+return 301 \/docs\/standard\/capabilities\/tooling--cli--command-surface\/;\n\s*\}/,
+	);
+	assert.doesNotMatch(nginx, /\$(?:request_uri|uri|args)/);
+	assert.equal((nginx.match(/location = \/platform-spec\//g) ?? []).length, 2476);
+});
+
+test('Nginx redirect projection rejects catalog text that could become a directive', () => {
+	assert.throws(
+		() =>
+			standardRoutes.renderNginxStandardRedirects({
+				aliases: new Map([
+					[
+						'platform-spec/unsafe\nreturn 302 https://example.com',
+						{
+							capability: 'unsafe',
+							href: '/docs/standard/capabilities/unsafe/',
+						},
+					],
+				]),
+			}),
+		/Unsafe Platform Spec redirect source/,
+	);
+});
+
+test('identifier checker navigates on an exact match and reports an unknown identifier', () => {
+	let submit;
+	const form = { addEventListener: (_event, handler) => (submit = handler) };
+	const field = { value: 'BSP-REQ-942B8B35A6BB' };
+	const status = { hidden: true, textContent: '' };
+	const destinations = [];
+	const queries = [];
+	standardRoutes.bindStandardIdChecker({
+		form,
+		field,
+		status,
+		index: [{ identifier: 'BSP-REQ-942B8B35A6BB', href: '/docs/standard/requirements/BSP-REQ-942B8B35A6BB/' }],
+		navigate: (href) => destinations.push(href),
+		updateQuery: (value) => queries.push(value),
+	});
+
+	let prevented = false;
+	submit({ preventDefault: () => (prevented = true) });
+	assert.equal(prevented, true);
+	assert.deepEqual(destinations, ['/docs/standard/requirements/BSP-REQ-942B8B35A6BB/']);
+
+	field.value = 'BSP-REQ-NOT-REAL';
+	submit({ preventDefault() {} });
+	assert.deepEqual(queries, ['BSP-REQ-NOT-REAL']);
+	assert.equal(status.hidden, false);
+	assert.equal(status.textContent, 'No Standard catalog record matches “BSP-REQ-NOT-REAL”.');
 });
