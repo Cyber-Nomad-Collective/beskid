@@ -71,7 +71,7 @@ volumes:
 services:
   # ---------------------------------------------------------------------------
   # Self-hosted Docker registry at cr.beskid-lang.org. The shared edge
-  # terminates TLS; no authentication service or credential path is required.
+  # terminates TLS; registry:2 enforces its own bcrypt htpasswd challenge.
   # ---------------------------------------------------------------------------
   registry:
     image: registry:2.8
@@ -87,11 +87,12 @@ services:
     volumes:
       - registry-data:/var/lib/registry
       - ./registry/config.yml:/etc/docker/registry/config.yml:ro
+      - ./registry/htpasswd:/auth/htpasswd:ro
     environment:
       REGISTRY_HTTP_ADDR: "0.0.0.0:5000"
       REGISTRY_STORAGE_DELETE_ENABLED: "true"
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:5000/v2/ || exit 1"]
+      test: ["CMD-SHELL", "wget -q --server-response --spider http://127.0.0.1:5000/v2/ 2>&1 | grep -q '401 Unauthorized'"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -165,9 +166,6 @@ services:
     labels:
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://auth.beskid-lang.org
-      # Authentik no longer serves the former Learn-specific /login endpoint.
-      # Preserve old sign-in bookmarks by entering the protected Learn origin,
-      # whose proxy outpost starts the canonical OAuth flow.
       caddy_0.redir_0: /login https://learn.beskid-lang.org/ 302
       caddy_0.reverse_proxy: "{{upstreams 9000}}"
     env_file:

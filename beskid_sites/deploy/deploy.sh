@@ -82,7 +82,9 @@ smoke() {
     local name="${entry##*|}"
     local code
     code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$url" || echo "000")"
-    if [ "$code" -ge 200 ] && [ "$code" -lt 400 ]; then
+    if [ "$url" = "https://cr.beskid-lang.org/v2/" ] && [ "$code" -eq 401 ]; then
+      log "  OK   $name ($url) → $code (authentication challenge)"
+    elif [ "$code" -ge 200 ] && [ "$code" -lt 400 ]; then
       log "  OK   $name ($url) → $code"
     else
       log "  FAIL $name ($url) → $code"
@@ -107,6 +109,7 @@ fi
 log "validating local prerequisites"
 [ -f "${SCRIPT_DIR}/docker-compose.yml" ] || { err "missing docker-compose.yml"; exit 1; }
 [ -f "${SCRIPT_DIR}/registry/config.yml" ] || { err "missing registry/config.yml"; exit 1; }
+[ -s "${SCRIPT_DIR}/registry/htpasswd" ] || { err "missing registry/htpasswd — generate it with htpasswd -Bbn <user> <password> > registry/htpasswd"; exit 1; }
 [ -f "${SCRIPT_DIR}/authentik-branding.py" ] || { err "missing authentik-branding.py"; exit 1; }
 
 # ---------------------------------------------------------------------------
@@ -178,6 +181,8 @@ remote "mkdir -p ${REMOTE_DIR}/registry"
 
 scp -q "${SCRIPT_DIR}/docker-compose.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/docker-compose.yml"
 scp -q "${SCRIPT_DIR}/registry/config.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/config.yml"
+scp -q "${SCRIPT_DIR}/registry/htpasswd" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/htpasswd"
+remote "chmod 600 ${REMOTE_DIR}/registry/htpasswd"
 # Ship .env with restricted perms.
 scp -q "${ENV_FILE}" "${DEPLOY_HOST}:${REMOTE_DIR}/.env"
 remote "chmod 600 ${REMOTE_DIR}/.env"

@@ -9,6 +9,19 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ## [Unreleased]
 
+### Added
+
+- Publish a licensing announcement that explains the Apache-2.0 toolchain,
+  AGPL-3.0-only service, CC-BY-4.0 documentation, compiler-output, trademark,
+  and third-party code boundaries in practical terms.
+
+### Security
+
+- Require native htpasswd authentication at the production OCI registry and
+  deploy its ignored credential separately with restrictive host permissions.
+  Keep Authentik as the sole browser-authentication path and remove the retired
+  Authelia configuration files.
+
 ### Fixed
 
 - Learn: the Playground now submits the live Monaco model rather than a stale

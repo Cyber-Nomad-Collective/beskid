@@ -10,12 +10,8 @@ dist
 coverage
 
 # deploy/ — never commit secrets or rendered runtime state.
-# The htpasswd contains a bcrypt hash of the registry password; regenerate
-# from OpenBao at deploy time (see deploy/README.md).
+# The htpasswd contains a bcrypt hash of the registry password; generate and
+# rotate it outside Git as documented in deploy/README.md.
 deploy/registry/htpasswd
 deploy/.env
-deploy/authelia/users_database.yml
-deploy/authelia/notification.txt
 deploy/.env.*
-deploy/authelia/users_database.yml
-deploy/authelia/notification.txt

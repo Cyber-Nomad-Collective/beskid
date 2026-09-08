@@ -25,8 +25,12 @@ deployment.
 The production host is `root@bdziam.dev`; the runtime directory defaults to
 `/opt/beskid`. Before the first apply, an operator must provide:
 
-- DNS for `beskid-lang.org`, `learn`, `tracker`, `nexus`, `pckg`,
-`cr`, and `auth` subdomains.
+- DNS for `beskid-lang.org`, `auth`, `learn`, `tracker`, `nexus`, `pckg`, and
+  `cr` subdomains.
+- A registry account with pull access on the host and push access stored in the
+  repository secrets `REGISTRY_USERNAME` and `REGISTRY_PASSWORD`.
+- A bcrypt registry credential file at `registry/htpasswd`. This ignored file
+  is copied to the host with mode `0600`; do not commit it.
 - OpenBao production secrets, or a populated local `.env` copied from
   `.env.example`. Do not commit `.env`.
 - Authentik secrets: `AUTHENTIK_POSTGRES_PASSWORD`, `AUTHENTIK_SECRET_KEY`,
@@ -60,12 +64,22 @@ The first cutover adopts the host's existing `beskid-registry-data` Docker
 volume. It is external to Compose so existing registry images and rollback tags
 are retained; do not delete or recreate that volume during the switch.
 
-## Registry access
+## Registry authentication
 
-The shared edge terminates TLS. The Beskid registry is intentionally
-unauthenticated so CI and Watchtower can publish and pull without credentials.
-Keep it exposed only through the intended host edge and do not treat it as a
-general-purpose public image registry.
+The shared edge terminates TLS only. `registry:2.8` performs its own htpasswd
+challenge, so CI, operators, Docker, and Watchtower observe identical
+authentication. Generate or rotate the deployment credential outside Git:
+
+```bash
+htpasswd -Bbn <registry-user> <registry-password> > registry/htpasswd
+```
+
+Use the same username and password for the repository secrets
+`REGISTRY_USERNAME` and `REGISTRY_PASSWORD`, then rerun `deploy.sh`. The script
+fails closed if the credential file is missing or empty, copies it separately
+from `.env`, restricts it to the host administrator, and restarts the registry
+through Compose. Validate rotation with `docker login cr.beskid-lang.org`; an
+unauthenticated `GET /v2/` must return `401 Unauthorized`.
 
 ## Rollback
 
@@ -78,6 +92,6 @@ rollback candidate.
 ## Local validation
 
 ```bash
-env BESKID_ENV_FILE=.env.example docker compose -f docker-compose.yml config --quiet
+BESKID_ENV_FILE=.env.example docker compose --env-file .env.example -f docker-compose.yml config --quiet
 bash ../../scripts/ci/test/production-watchtower-contract.test.sh
 ```

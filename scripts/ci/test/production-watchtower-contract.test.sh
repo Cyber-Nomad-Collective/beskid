@@ -8,6 +8,7 @@ registry_config="${ROOT}/beskid_sites/deploy/registry/config.yml"
 env_example="${ROOT}/beskid_sites/deploy/.env.example"
 deploy_script="${ROOT}/beskid_sites/deploy/deploy.sh"
 branding_script="${ROOT}/beskid_sites/deploy/authentik-branding.py"
+sites_gitignore="${ROOT}/beskid_sites/.gitignore"
 
 require() {
   rg -Fq "$1" "$2" || { echo "missing required value in $2: $1" >&2; exit 1; }
@@ -33,7 +34,23 @@ require 'name: beskid-registry-data' "$compose"
 require 'external: true' "$compose"
 
 forbid '^  auth:' "$compose"
+forbid '^  authelia:' "$compose"
 forbid '^  community:' "$compose"
+require './registry/htpasswd:/auth/htpasswd:ro' "$compose"
+require "grep -q '401 Unauthorized'" "$compose"
+require 'htpasswd:' "$registry_config"
+require 'path: /auth/htpasswd' "$registry_config"
+require 'registry/htpasswd' "$deploy_script"
+require 'chmod 600 ${REMOTE_DIR}/registry/htpasswd' "$deploy_script"
+require 'https://cr.beskid-lang.org/v2/' "$deploy_script"
+require 'authentication challenge' "$deploy_script"
+require 'deploy/registry/htpasswd' "$sites_gitignore"
+
+for service in website learn tracker nexus pckg; do
+  require "  ${service}:" "$compose"
+  require "com.centurylinklabs.watchtower.enable: \"true\"" "$compose"
+done
+
 require '  authentik-postgresql:' "$compose"
 require '  authentik-server:' "$compose"
 require '  authentik-worker:' "$compose"
@@ -49,16 +66,9 @@ require 'AUTHENTIK_SECRET_KEY' "$env_example"
 require 'AUTHENTIK_BOOTSTRAP_TOKEN' "$env_example"
 require 'GITHUB_CLIENT_ID' "$env_example"
 require 'GITHUB_CLIENT_SECRET' "$env_example"
-
-for service in website learn tracker nexus pckg; do
-  require "  ${service}:" "$compose"
-  require "com.centurylinklabs.watchtower.enable: \"true\"" "$compose"
-done
-
 require 'caddy_0.route.0_reverse_proxy: /outpost.goauthentik.io/* authentik-server:9000' "$compose"
 require 'caddy_0.route.1_forward_auth: authentik-server:9000' "$compose"
 require 'caddy_0.route.1_forward_auth.uri: /outpost.goauthentik.io/auth/caddy' "$compose"
-forbid 'authelia' "$compose"
 forbid 'AUTHELIA_' "$env_example"
 
 forbid 'coolify' "$compose"
