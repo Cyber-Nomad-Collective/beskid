@@ -6,8 +6,7 @@ on:
       - 'v*'
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   release:
@@ -39,7 +38,8 @@ jobs:
               exit 1
             fi
           done
-      - uses: huacnlee/zed-extension-action@v1
+      # Reviewed v1 source: https://github.com/huacnlee/zed-extension-action/commit/11b0e4805c1f4382a4bb3b1a9b17be328e1559c3
+      - uses: huacnlee/zed-extension-action@11b0e4805c1f4382a4bb3b1a9b17be328e1559c3
         with:
           extension-name: beskid
           # This is the gitlink path in zed-industries/extensions. The nested

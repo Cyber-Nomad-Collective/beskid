@@ -24,7 +24,10 @@ The extension resolves the Beskid language-server binary in exactly this order:
 PATH, invoked as `beskid lsp`; (4) the `lsp-stable` release download. An
 override is a user-selected nonempty path and arguments structure. The WASM
 extension host validates that structure but cannot inspect arbitrary executable
-contents or prove binary compatibility before launch. The download comes from
+contents or prove binary compatibility before launch. Each named PATH lookup
+uses Zed's `Worktree::which`; Zed returns the host-selected executable according
+to worktree PATH order, so the extension neither receives a tied candidate set
+nor adds a conflicting ambiguity policy. The download comes from
 the `Cyber-Nomad-Collective/beskid_compiler` GitHub release, tag `lsp-stable`,
 resolves the exact `lsp-version.txt` release asset URL first, downloads that
 projection through a disposable temporary file, and trims then strictly validates

@@ -37,6 +37,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   publication.
 - Zed extension: correct the registry gitlink path, remove invalid tag-less
   publication dispatch, and document the initial registry submission metadata.
+- Zed extension: pin the reviewed registry action source, reduce its repository
+  token to read-only contents access, and validate SDK metadata as parsed TOML.
 - Production site smoke checks now reject redirects and other non-2xx
   responses, so an authentication proxy or routing drift cannot be promoted as
   a healthy public website.

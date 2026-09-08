@@ -18,7 +18,10 @@ order: explicit trusted user override; `beskid_lsp` on PATH; `beskid` on PATH
 invoked as `beskid lsp`; then the `lsp-stable` download. An override SHALL be a
 user-selected nonempty path and arguments structure. The WASM extension host
 SHALL validate that structure but cannot inspect arbitrary executable contents
-or prove binary compatibility before launch. The download SHALL come from the
+or prove binary compatibility before launch. Each PATH lookup SHALL use Zed's
+`Worktree::which`, which returns the host-selected executable according to the
+worktree PATH order; the extension SHALL NOT enumerate same-name matches or
+invent a second ambiguity policy. The download SHALL come from the
 `Cyber-Nomad-Collective/beskid_compiler` GitHub release, tag `lsp-stable`, resolve
 the exact `lsp-version.txt` release asset URL, and download that projection through
 a disposable temporary file. The extension SHALL trim and strictly validate the
@@ -75,12 +78,15 @@ behavior locally.
 - **THEN** initialization fails with an actionable error naming the expected
   configuration or installation location
 
-#### Scenario: Ambiguous candidates fail closed
+#### Scenario: Worktree PATH order selects a same-name executable
 
-- **GIVEN** multiple candidates tie at the selected precedence
+- **GIVEN** more than one executable with the same candidate name is present
+  in the worktree PATH
 - **WHEN** binary resolution runs
-- **THEN** resolution fails with an ambiguity error
-- **AND** no candidate is launched
+- **THEN** `Worktree::which` selects the executable determined by host PATH
+  order
+- **AND** the extension launches that returned path without enumerating or
+  rejecting other same-name PATH entries
 
 ### Requirement: Fail-closed platform support
 

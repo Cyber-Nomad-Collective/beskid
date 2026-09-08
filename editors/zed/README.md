@@ -191,7 +191,10 @@ this nested package. Maintainers must first configure `COMMITTER_TOKEN` with
 the community action's documented cross-repository `repo` and `workflow`
 scopes. With no fixed `push-to` repository, the action creates or reuses that
 committer's fork of `zed-industries/extensions` instead of targeting a missing
-organization fork.
+organization fork. The workflow pins the reviewed community action source at
+[`11b0e4805c1f4382a4bb3b1a9b17be328e1559c3`](https://github.com/huacnlee/zed-extension-action/commit/11b0e4805c1f4382a4bb3b1a9b17be328e1559c3)
+and grants the repository `GITHUB_TOKEN` read-only contents access; registry
+writes use only the separately configured committer token.
 
 ## Verify the package
 

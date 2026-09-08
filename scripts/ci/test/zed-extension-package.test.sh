@@ -8,6 +8,7 @@ publish_workflow="${root}/.github/workflows/publish-zed-extension.yml"
 developer_tasks="${root}/.zed/tasks.json"
 extension_readme="${extension_root}/README.md"
 extension_gitignore="${extension_root}/.gitignore"
+metadata_contract_test="${root}/scripts/ci/test/zed-extension-metadata.test.sh"
 
 # Prefer the complete rustup-managed compiler when a Homebrew rustc shim is active.
 if command -v rustup >/dev/null 2>&1; then
@@ -21,6 +22,7 @@ fail() {
 }
 
 [[ -f "${extension_root}/Cargo.toml" ]] || fail 'missing editors/zed Cargo package'
+bash "${metadata_contract_test}"
 grep -Fxq '/grammars/beskid/' "${extension_gitignore}" || \
   fail 'Zed development grammar checkout is not ignored at its exact package path'
 grep -Fxq '/grammars/bsol/' "${extension_gitignore}" || \
@@ -101,7 +103,18 @@ done
 package_gate_line="$(grep -nF 'bash scripts/ci/test/zed-extension-package.test.sh' "${publish_workflow}" | head -n1 | cut -d: -f1)"
 asset_gate_line="$(grep -nF 'bash scripts/ci/test/zed-language-assets.test.sh' "${publish_workflow}" | head -n1 | cut -d: -f1)"
 release_guard_line="$(grep -nF 'name: Verify stable LSP release assets' "${publish_workflow}" | head -n1 | cut -d: -f1)"
-publish_action_line="$(grep -nF 'uses: huacnlee/zed-extension-action@v1' "${publish_workflow}" | head -n1 | cut -d: -f1)"
+grep -Fq 'permissions:' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not declare explicit permissions'
+grep -Fq 'contents: read' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not retain read access for checkout and release verification'
+! grep -Eq '^[[:space:]]*(contents|pull-requests):[[:space:]]*write' "${publish_workflow}" || \
+  fail 'Zed publication workflow grants unnecessary write permission to the repository token'
+reviewed_action='huacnlee/zed-extension-action@11b0e4805c1f4382a4bb3b1a9b17be328e1559c3'
+grep -Fq "uses: ${reviewed_action}" "${publish_workflow}" || \
+  fail 'Zed publication workflow does not pin the reviewed registry action commit'
+! grep -Eq 'uses: huacnlee/zed-extension-action@(v[0-9]+|main|master)$' "${publish_workflow}" || \
+  fail 'Zed publication workflow uses a mutable registry-action reference'
+publish_action_line="$(grep -nF "uses: ${reviewed_action}" "${publish_workflow}" | head -n1 | cut -d: -f1)"
 [[ "${package_gate_line}" -lt "${publish_action_line}" && \
    "${asset_gate_line}" -lt "${publish_action_line}" && \
    "${release_guard_line}" -lt "${publish_action_line}" ]] || \
