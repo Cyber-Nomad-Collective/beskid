@@ -25,7 +25,8 @@ The current normative requirements in `openspec/specs`. A text outside that dire
 The generic block syntax used by `.bproj`, `.bws`, and standalone `.bsol`
 documents. In Zed, standalone `.bsol` is a separate `bsol` language ID routed
 to the native `beskid_lsp`; it has generic diagnostics and limited
-`@schemaless` assistance, not a falsely claimed Tree-sitter grammar surface.
+`@schemaless` assistance plus highlighting from the pinned nested
+`beskid_bsol` Tree-sitter grammar.
 
 ## Bug-only GitHub synchronization
 

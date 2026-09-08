@@ -26,7 +26,7 @@
   runnable surface.
 - [x] 3.4 Document supported parity and unsupported VS Code-specific UI.
 - [x] 3.5 Register standalone `.bsol` with the existing native `beskid_lsp`
-  adapter and document the intentionally deferred Tree-sitter surface.
+  adapter and package its pinned nested Tree-sitter grammar and highlights.
 
 ## 4. Verification and promotion
 

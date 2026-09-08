@@ -70,14 +70,13 @@ registers standalone `.bsol` as `Beskid BSOL` and maps it to the existing
 generic BSOL diagnostics and its small generic completion/hover surface; no
 second Zed adapter or installer exists.
 
-The nested `beskid_bsol/grammars/tree-sitter-bsol` source is not a
-registry-consumable Zed grammar package, and Zed's grammar manifest supports a
-repository plus revision but no grammar-subdirectory field. The package must
-therefore not reuse the Beskid grammar or claim BSOL highlighting, outline, or
-query assets. Those remain deferred until BSOL is published as its own grammar
-repository. Assets are owned by the Zed package, use stable
-repository-relative paths, and are checked by the package gate so a source
-checkout and registry artifact expose the same surface.
+Zed's grammar manifest supports a repository-relative path, so the extension
+pins `beskid_bsol` at its exact submodule commit and selects
+`grammars/tree-sitter-bsol`. It packages an adapted highlights query against
+the grammar's actual node fields. This preserves one adapter and avoids
+incorrectly reusing the Beskid source grammar. Assets are owned by the Zed
+package, use stable repository-relative paths, and are checked by the package
+gate so a source checkout and registry artifact expose the same surface.
 
 ### Capability and UI boundary
 

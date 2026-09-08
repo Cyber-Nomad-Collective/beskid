@@ -17,6 +17,11 @@ version = "0.7.0"
 repository = "https://github.com/Cyber-Nomad-Collective/beskid_treesitter"
 commit = "d27b6f966f1d841de57f622804211a6dd9f9c64e"
 
+[grammars.bsol]
+repository = "https://github.com/Cyber-Nomad-Collective/beskid_bsol"
+commit = "11ed9d5c17896e3e8481af65b9e49b8230d11d54"
+path = "grammars/tree-sitter-bsol"
+
 [language_servers.beskid-lsp]
 name = "Beskid Language Server"
 languages = ["Beskid", "Beskid Manifest", "Beskid BSOL"]

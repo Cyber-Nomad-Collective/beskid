@@ -5,16 +5,23 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 extension_root="${root}/editors/zed"
 language_root="${extension_root}/languages/beskid"
+bsol_language_root="${extension_root}/languages/bsol"
 tree_sitter_cli='npx --yes tree-sitter-cli@0.25.10'
 scratch_dir="$(mktemp -d "${TMPDIR:-/tmp}/beskid-zed-language-assets.XXXXXX")"
 parser_directory="${scratch_dir}/parsers"
 grammar_checkout="${parser_directory}/tree-sitter-beskid"
+bsol_checkout="${scratch_dir}/beskid-bsol"
+bsol_grammar_checkout="${bsol_checkout}/grammars/tree-sitter-bsol"
 tree_sitter_config="${scratch_dir}/tree-sitter-config.json"
 grammar_worktree_added=false
+bsol_worktree_added=false
 
 cleanup() {
   if [[ "${grammar_worktree_added}" == true ]]; then
     git --git-dir="${grammar_git_dir}" worktree remove --force "${grammar_checkout}" >/dev/null 2>&1 || true
+  fi
+  if [[ "${bsol_worktree_added}" == true ]]; then
+    git --git-dir="${bsol_git_dir}" worktree remove --force "${bsol_checkout}" >/dev/null 2>&1 || true
   fi
   rm -rf "${scratch_dir}"
 }
@@ -36,9 +43,10 @@ require_text() {
 }
 
 parse_without_errors() {
-  local source="$1"
+  local scope="$1"
+  local source="$2"
   local output
-  output="$(${tree_sitter_cli} parse --config-path "${tree_sitter_config}" --scope source.beskid "$source")" || fail "could not parse ${source#"${root}/"}"
+  output="$(${tree_sitter_cli} parse --config-path "${tree_sitter_config}" --scope "${scope}" "$source")" || fail "could not parse ${source#"${root}/"}"
   [[ "$output" != *ERROR* ]] || fail "grammar reported an error for ${source#"${root}/"}"
 }
 
@@ -50,7 +58,10 @@ for asset in \
   "${language_root}/tasks.json" \
   "${language_root}/semantic_token_rules.json" \
   "${extension_root}/snippets/beskid.json" \
-  "${extension_root}/tests/fixtures/runnables.bd"; do
+  "${extension_root}/tests/fixtures/runnables.bd" \
+  "${bsol_language_root}/config.toml" \
+  "${bsol_language_root}/highlights.scm" \
+  "${extension_root}/tests/fixtures/bsol.bsol"; do
   require_nonempty "$asset"
 done
 
@@ -72,7 +83,49 @@ git --git-dir="${grammar_git_dir}" cat-file -e "${grammar_commit}^{commit}" || \
 mkdir -p "${parser_directory}"
 git --git-dir="${grammar_git_dir}" worktree add --detach "${grammar_checkout}" "${grammar_commit}" >/dev/null
 grammar_worktree_added=true
-printf '{"parser-directories":["%s"]}\n' "${parser_directory}" >"${tree_sitter_config}"
+
+bsol_grammar_commit="$(node - "${extension_root}/extension.toml" <<'NODE'
+const fs = require('node:fs');
+const manifest = fs.readFileSync(process.argv[2], 'utf8');
+const lines = manifest.split(/\r?\n/);
+const start = lines.findIndex(line => line === '[grammars.bsol]');
+const end = lines.findIndex((line, index) => index > start && /^\[/.test(line));
+const section = lines.slice(start + 1, end === -1 ? undefined : end).join('\n');
+const repository = section.match(/^repository\s*=\s*"([^"]+)"$/m)?.[1];
+const commit = section.match(/^commit\s*=\s*"([0-9a-f]{40})"$/m)?.[1];
+const path = section.match(/^path\s*=\s*"([^"]+)"$/m)?.[1];
+if (repository !== 'https://github.com/Cyber-Nomad-Collective/beskid_bsol' ||
+    path !== 'grammars/tree-sitter-bsol' || !commit) process.exit(1);
+process.stdout.write(commit);
+NODE
+)" || fail 'extension.toml has no canonical immutable standalone BSOL grammar declaration'
+bsol_git_dir="$(git -C "${root}/beskid_bsol" rev-parse --git-common-dir)"
+git --git-dir="${bsol_git_dir}" cat-file -e "${bsol_grammar_commit}^{commit}" || \
+  fail "manifest-pinned BSOL grammar commit ${bsol_grammar_commit} is unavailable"
+git --git-dir="${bsol_git_dir}" worktree add --detach "${bsol_checkout}" "${bsol_grammar_commit}" >/dev/null
+bsol_worktree_added=true
+node - "${bsol_grammar_checkout}/tree-sitter.json" <<'NODE'
+const fs = require('node:fs');
+fs.writeFileSync(process.argv[2], `${JSON.stringify({
+  grammars: [{
+    name: 'bsol',
+    camelcase: 'Bsol',
+    scope: 'source.bsol',
+    path: '.',
+    'file-types': ['bsol'],
+    highlights: 'queries/highlights.scm',
+    'injection-regex': 'bsol',
+  }],
+  metadata: {
+    version: '0.0.0-test',
+    license: 'unlicensed',
+    description: 'Temporary test metadata for the pinned BSOL grammar',
+  },
+}, null, 2)}\n`);
+NODE
+(cd "${bsol_grammar_checkout}" && ${tree_sitter_cli} generate) || \
+  fail "could not generate parser for ${bsol_grammar_commit}"
+printf '{"parser-directories":["%s","%s"]}\n' "${parser_directory}" "${bsol_checkout}/grammars" >"${tree_sitter_config}"
 
 node - "${extension_root}/extension.toml" "${language_root}/tasks.json" \
   "${language_root}/semantic_token_rules.json" "${extension_root}/snippets/beskid.json" \
@@ -137,11 +190,16 @@ require_text "${language_root}/runnables.scm" '@run'
 require_text "${language_root}/runnables.scm" '(#set! tag beskid-test)'
 require_text "${language_root}/runnables.scm" '@entrypoint'
 require_text "${language_root}/runnables.scm" '(#set! tag beskid-entry)'
+require_text "${bsol_language_root}/config.toml" 'grammar = "bsol"'
+require_text "${bsol_language_root}/highlights.scm" '(block (block_kind) @keyword)'
+require_text "${bsol_language_root}/highlights.scm" '(assignment (identifier) @property)'
+require_text "${bsol_language_root}/highlights.scm" '(comment) @comment'
 
-parse_without_errors "${extension_root}/tests/fixtures/runnables.bd"
+parse_without_errors source.beskid "${extension_root}/tests/fixtures/runnables.bd"
 for snippet in "${scratch_dir}"/snippet-*.bd; do
-  parse_without_errors "$snippet"
+  parse_without_errors source.beskid "$snippet"
 done
+parse_without_errors source.bsol "${extension_root}/tests/fixtures/bsol.bsol"
 
 for query in outline indents brackets runnables; do
   query_output="${scratch_dir}/${query}.matches"
@@ -157,5 +215,17 @@ done
   fail 'runnables.scm did not capture exactly one test name'
 [[ "$(grep -Fc 'entrypoint' "${scratch_dir}/runnables.matches")" -eq 1 ]] || \
   fail 'runnables.scm did not capture exactly one entry point name'
+
+bsol_matches="${scratch_dir}/bsol-highlights.matches"
+${tree_sitter_cli} query --config-path "${tree_sitter_config}" --scope source.bsol \
+  "${bsol_language_root}/highlights.scm" "${extension_root}/tests/fixtures/bsol.bsol" >"${bsol_matches}" || \
+  fail "BSOL highlights.scm does not compile against ${bsol_grammar_commit}"
+[[ -s "${bsol_matches}" ]] || fail 'BSOL highlights.scm did not match the BSOL fixture'
+[[ "$(grep -Fc 'keyword' "${bsol_matches}")" -ge 2 ]] || \
+  fail 'BSOL highlights.scm did not capture block kinds as keywords'
+[[ "$(grep -Fc 'property' "${bsol_matches}")" -ge 2 ]] || \
+  fail 'BSOL highlights.scm did not capture assignment keys as properties'
+[[ "$(grep -Fc 'comment' "${bsol_matches}")" -eq 1 ]] || \
+  fail 'BSOL highlights.scm did not capture the fixture comment'
 
 printf 'Zed language asset tests OK\n'

@@ -46,12 +46,22 @@ grep -Fq 'name = "Beskid BSOL"' "${extension_root}/languages/bsol/config.toml" |
   fail 'standalone BSOL language configuration has the wrong language name'
 grep -Fq 'path_suffixes = ["bsol"]' "${extension_root}/languages/bsol/config.toml" || \
   fail 'standalone BSOL language configuration does not associate .bsol files'
+grep -Fq 'grammar = "bsol"' "${extension_root}/languages/bsol/config.toml" || \
+  fail 'standalone BSOL language configuration does not select its packaged grammar'
 grep -Fq 'languages = ["Beskid", "Beskid Manifest", "Beskid BSOL"]' "${extension_root}/extension.toml" || \
   fail 'Beskid LSP does not register standalone BSOL alongside existing languages'
 grep -Fq '"Beskid BSOL" = "bsol"' "${extension_root}/extension.toml" || \
   fail 'Beskid LSP does not map standalone BSOL to the bsol language ID'
-! grep -Fq '[grammars.bsol]' "${extension_root}/extension.toml" || \
-  fail 'standalone BSOL must not claim the Beskid grammar or an unsupported nested grammar path'
+grep -Fq '[grammars.bsol]' "${extension_root}/extension.toml" || \
+  fail 'Zed extension manifest does not declare the standalone BSOL grammar'
+grep -Fq 'repository = "https://github.com/Cyber-Nomad-Collective/beskid_bsol"' "${extension_root}/extension.toml" || \
+  fail 'standalone BSOL grammar does not use the canonical repository'
+grep -Fq 'commit = "11ed9d5c17896e3e8481af65b9e49b8230d11d54"' "${extension_root}/extension.toml" || \
+  fail 'standalone BSOL grammar does not use the exact pinned submodule commit'
+grep -Fq 'path = "grammars/tree-sitter-bsol"' "${extension_root}/extension.toml" || \
+  fail 'standalone BSOL grammar does not select the nested grammar directory'
+[[ -s "${extension_root}/languages/bsol/highlights.scm" ]] || \
+  fail 'standalone BSOL language configuration is missing packaged highlighting queries'
 [[ "$(grep -Fc 'kind = "process:exec"' "${extension_root}/extension.toml")" -eq 1 ]] || \
   fail 'Zed extension must declare one process capability for trusted server overrides'
 grep -Fq 'command = "*"' "${extension_root}/extension.toml" || \
