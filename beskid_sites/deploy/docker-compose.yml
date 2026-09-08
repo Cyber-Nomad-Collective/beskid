@@ -355,7 +355,17 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://learn.beskid-lang.org
-      caddy_0.reverse_proxy: "{{upstreams 80}}"
+      # The lesson catalogue is public, but the outpost callback must establish
+      # an Authentik session before the compiler API sees authenticated requests.
+      # Only requests carrying that session are forwarded for identity headers.
+      "caddy_0.@learn_authentik_session.header_regexp": learn_authentik Cookie authentik_proxy_[^=]+=
+      caddy_0.route_0: /outpost.goauthentik.io/*
+      caddy_0.route_0.0_reverse_proxy: authentik-server:9000
+      caddy_0.route_1: "@learn_authentik_session"
+      caddy_0.route_1.0_forward_auth: authentik-server:9000
+      caddy_0.route_1.0_forward_auth.uri: /outpost.goauthentik.io/auth/caddy
+      caddy_0.route_1.0_forward_auth.copy_headers: X-Authentik-Username X-Authentik-Groups X-Authentik-Entitlements X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt
+      caddy_0.route_2.reverse_proxy: "{{upstreams 80}}"
     networks:
       - beskid-edge
     expose:

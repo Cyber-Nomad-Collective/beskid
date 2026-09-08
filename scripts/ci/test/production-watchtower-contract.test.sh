@@ -41,7 +41,7 @@ require_public_service() {
     echo "${service} must route directly through Caddy" >&2
     exit 1
   }
-  [[ "${service}" == "pckg" || ( "${block}" != *"authentik-forward-auth"* && "${block}" != *"forward_auth"* ) ]] || {
+  [[ "${service}" == "pckg" || "${service}" == "learn" || ( "${block}" != *"authentik-forward-auth"* && "${block}" != *"forward_auth"* ) ]] || {
     echo "${service} must remain publicly reachable without Authentik" >&2
     exit 1
   }
@@ -127,6 +127,24 @@ pckg_block="$(service_block pckg)"
 }
 [[ "${pckg_block}" == *"SHELL_AUTH_MODE: authentik"* ]] || {
   echo 'pckg must parse the Authentik identity injected by the edge' >&2
+  exit 1
+}
+
+learn_block="$(service_block learn)"
+[[ "${learn_block}" == *"caddy_0.route_0: /outpost.goauthentik.io/*"* ]] || {
+  echo 'learn must route the Authentik outpost callback before its application upstream' >&2
+  exit 1
+}
+[[ "${learn_block}" == *"\"caddy_0.@learn_authentik_session.header_regexp\": learn_authentik Cookie authentik_proxy_[^=]+="* ]] || {
+  echo 'learn must identify existing Authentik sessions before calling the compiler API' >&2
+  exit 1
+}
+[[ "${learn_block}" == *"caddy_0.route_1: \"@learn_authentik_session\""* ]] || {
+  echo 'learn must forward authenticated browser requests through Authentik' >&2
+  exit 1
+}
+[[ "${learn_block}" == *"caddy_0.route_2.reverse_proxy: \"{{upstreams 80}}\""* ]] || {
+  echo 'learn must retain its public application upstream after authentication routes' >&2
   exit 1
 }
 forbid 'AUTHELIA_' "$env_example"
