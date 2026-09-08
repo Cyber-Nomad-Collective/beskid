@@ -21,6 +21,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - pckg explicitly uses Authentik in production, accepts the proxy's forwarded
   identity headers, and starts browser sign-in at its local Authentik outpost.
   Learn also projects the proxy identity to its session API.
+- Tracker now projects the Authentik proxy identity into its own authenticated
+  session and uses the server-side GitHub integration credential, removing the
+  retired Auth Hub pairing requirement from the active application path.
 - Legacy `auth.beskid-lang.org/login?app=learn` bookmarks now redirect to the
   protected Learn origin, which starts the canonical Authentik flow.
 - Docs pages now use their left pane for the page table of contents, and the
