@@ -3,17 +3,15 @@ name: Reusable release manifest
 on:
   workflow_call:
     inputs:
-      records-pattern:
-        required: false
-        default: image-record-*
-        type: string
-      artifact-name:
-        required: false
-        default: release-manifest
+      records-jsonl:
+        description: Newline-separated JSON image records from required image lanes.
+        required: true
         type: string
     outputs:
       manifest-sha256:
         value: ${{ jobs.manifest.outputs.manifest-sha256 }}
+      manifest-base64:
+        value: ${{ jobs.manifest.outputs.manifest-base64 }}
 
 permissions:
   contents: read
@@ -24,25 +22,22 @@ jobs:
     timeout-minutes: 10
     outputs:
       manifest-sha256: ${{ steps.manifest.outputs.sha256 }}
+      manifest-base64: ${{ steps.manifest.outputs.base64 }}
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          pattern: ${{ inputs.records-pattern }}
-          path: image-records
-          merge-multiple: true
-
       - name: Build immutable release manifest
         id: manifest
+        env:
+          RECORDS_JSONL: ${{ inputs.records-jsonl }}
         run: |
+          set -euo pipefail
+          mkdir -p image-records
+          while IFS= read -r record; do
+            [[ -n "${record}" ]] || continue
+            name="$(jq -er '.name | select(type == "string" and length > 0)' <<<"${record}")"
+            jq -ce . <<<"${record}" >"image-records/${name}.json"
+          done <<<"${RECORDS_JSONL}"
           ./scripts/ci/build-release-manifest.sh image-records release-manifest.json
           echo "sha256=$(awk '{print $1}' release-manifest.json.sha256)" >>"${GITHUB_OUTPUT}"
-
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: ${{ inputs.artifact-name }}
-          path: |
-            release-manifest.json
-            release-manifest.json.sha256
-          retention-days: 90
+          echo "base64=$(base64 -w0 release-manifest.json)" >>"${GITHUB_OUTPUT}"

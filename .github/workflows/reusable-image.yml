@@ -71,6 +71,8 @@ on:
     outputs:
       digest:
         value: ${{ jobs.image.outputs.digest }}
+      record:
+        value: ${{ jobs.image.outputs.record }}
 permissions:
   contents: read
   id-token: write
@@ -82,6 +84,7 @@ jobs:
     timeout-minutes: 45
     outputs:
       digest: ${{ steps.build.outputs.digest }}
+      record: ${{ steps.record.outputs.record }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -197,7 +200,8 @@ jobs:
           IMAGE: ${{ inputs.repository }}@${{ steps.build.outputs.digest }}
         run: ./scripts/ci/sign-image.sh "${IMAGE}"
 
-      - name: Write image manifest record
+      - name: Emit image manifest record
+        id: record
         if: inputs.push && steps.build.outcome == 'success'
         env:
           NAME: ${{ inputs.name }}
@@ -205,15 +209,6 @@ jobs:
           DIGEST: ${{ steps.build.outputs.digest }}
           SIGNED: ${{ inputs.sign }}
         run: |
-          mkdir -p image-record
-          jq -n --arg name "${NAME}" --arg repository "${REPOSITORY}" --arg digest "${DIGEST}" --argjson signed "${SIGNED}" \
-            '{name: $name, repository: $repository, digest: $digest, sbom: true, provenance: true, vulnerabilities: "passed", signed: $signed}' \
-            >"image-record/${NAME}.json"
-
-      - name: Upload image manifest record
-        if: inputs.push && steps.build.outcome == 'success'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: image-record-${{ inputs.name }}
-          path: image-record/
-          retention-days: 90
+          record="$(jq -cn --arg name "${NAME}" --arg repository "${REPOSITORY}" --arg digest "${DIGEST}" --argjson signed "${SIGNED}" \
+            '{name: $name, repository: $repository, digest: $digest, sbom: true, provenance: true, vulnerabilities: "passed", signed: $signed}')"
+          echo "record=${record}" >>"${GITHUB_OUTPUT}"
