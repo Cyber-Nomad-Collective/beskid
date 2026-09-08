@@ -30,10 +30,10 @@ Commit the project `.bproj` manifest and `Project.lock`. Pin the same immutable 
    beskid up host-target
    ```
 
-3. Check formatting without changing files:
+3. Check the case-sensitive `Src` source root without changing files. Substitute the path when the manifest declares a different source root:
 
    ```bash
-   beskid format src --check
+   beskid format Src --check
    ```
 
 4. Analyze with frozen resolution:

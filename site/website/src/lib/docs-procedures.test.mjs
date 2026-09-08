@@ -6,17 +6,84 @@ import { parse } from 'yaml';
 const root = new URL('../../../../', import.meta.url);
 
 const procedurePages = [
-	{ path: 'docs/index.md', diagram: 'Audience routing' },
-	{ path: 'docs/getting-started/index.md', noDiagram: 'This short route delegates decisions to the detailed task pages.' },
-	{ path: 'docs/getting-started/install.md', diagram: 'Install decision' },
-	{ path: 'docs/getting-started/first-program.md', diagram: 'Source to AOT execution' },
-	{ path: 'docs/getting-started/editor.md', diagram: 'Editor and language server' },
-	{ path: 'docs/getting-started/troubleshooting.md', diagram: 'First-day troubleshooting' },
-	{ path: 'docs/tooling/index.md', diagram: 'CLI taxonomy' },
-	{ path: 'docs/tooling/build-run-test.md', noDiagram: 'The numbered build, run, and test procedure is already linear.' },
-	{ path: 'docs/tooling/ci.md', diagram: 'Reproducible CI' },
-	{ path: 'docs/language-basics/index.md', noDiagram: 'A syntax reference table is clearer than a flow diagram.' },
+	{
+		path: 'docs/index.md',
+		diagram: 'Audience routing',
+		diagramBranches: ['Evaluate or start', 'Develop', 'Publish', 'Operate', 'Contribute'],
+		equivalentConcepts: ['Get started', 'Tooling', 'Packages', 'Operate', 'Documentation authoring'],
+		concepts: ['/docs/standard/', '/docs/getting-started/', '/docs/language-basics/'],
+	},
+	{
+		path: 'docs/getting-started/index.md',
+		noDiagram: 'This short route delegates decisions to the detailed task pages.',
+		concepts: ['beskid --version', 'beskid analyze Main.bd --plain', 'beskid run Main.bd --plain'],
+	},
+	{
+		path: 'docs/getting-started/install.md',
+		diagram: 'Install decision',
+		diagramBranches: ['Artifact is listed?', 'Use stable', 'Use displayed unstable', 'Use immutable tag'],
+		equivalentConcepts: ['stable', 'unstable', 'immutable tag', 'language server'],
+		concepts: ['beskid --version', 'beskid up host-target', 'beskid lsp install'],
+	},
+	{
+		path: 'docs/getting-started/first-program.md',
+		diagram: 'Source to AOT execution',
+		diagramBranches: ['Resolve and analyze', 'AOT compile', 'Link runtime kit', 'Run subprocess'],
+		equivalentConcepts: ['Main.bd', 'native object code', 'runtime kit', 'subprocess'],
+		concepts: ['i32 Main()', 'beskid analyze Main.bd --plain', 'beskid run Main.bd --plain'],
+	},
+	{
+		path: 'docs/getting-started/editor.md',
+		diagram: 'Editor and language server',
+		diagramBranches: ['Explicit path', 'Managed binary', 'Bundled binary', 'CLI-backed server', 'Automatic bootstrap', 'Compiler workspace'],
+		equivalentConcepts: ['explicit path', 'managed binary', 'bundled binary', 'CLI-backed server', 'automatic bootstrap', 'compiler-workspace fallback'],
+		concepts: ['beskid.lsp.server.path', 'beskid_lsp', 'Problems panel'],
+	},
+	{
+		path: 'docs/getting-started/troubleshooting.md',
+		diagram: 'First-day troubleshooting',
+		diagramBranches: ['Command missing', 'Wrong version or host', 'Source diagnostic', 'Link failure', 'No editor diagnostics'],
+		equivalentConcepts: ['PATH', 'exact host artifact', 'source span', 'runtime kit', 'language server'],
+		concepts: ['beskid --version', 'beskid up host-target', 'beskid analyze Main.bd --plain'],
+	},
+	{
+		path: 'docs/tooling/index.md',
+		diagram: 'CLI taxonomy',
+		diagramBranches: ['Syntax', 'Build', 'Project', 'Package'],
+		equivalentConcepts: ['Syntax commands', 'Build commands', 'Project commands', 'Package commands'],
+		concepts: ['beskid dev syntax', 'beskid dev build', 'beskid dev project', 'beskid dev package'],
+	},
+	{
+		path: 'docs/tooling/build-run-test.md',
+		noDiagram: 'The numbered build, run, and test procedure is already linear.',
+		concepts: ['beskid build Main.bd --kind exe --plain', 'beskid run Main.bd --entrypoint Main --plain', 'beskid test --project App.bproj'],
+	},
+	{
+		path: 'docs/tooling/ci.md',
+		diagram: 'Reproducible CI',
+		diagramBranches: ['Pinned toolchain', 'Format check', 'Frozen analyze', 'Frozen tests', 'Frozen release build', 'Publish artifact'],
+		equivalentConcepts: ['immutable toolchain', 'formatting', '--frozen', 'Publish'],
+		concepts: ['beskid format Src --check', '--all-targets --frozen --plain --json', '--release --frozen --plain'],
+	},
+	{
+		path: 'docs/language-basics/index.md',
+		noDiagram: 'A syntax reference table is clearer than a flow diagram.',
+		concepts: ['i32 Main()', 'return 0;', '/docs/standard/'],
+	},
 ];
+
+function escapeRegExp(value) {
+	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function section(body, heading) {
+	const marker = `## ${heading}\n\n`;
+	const start = body.indexOf(marker);
+	if (start === -1) return '';
+	const contentStart = start + marker.length;
+	const nextHeading = body.indexOf('\n## ', contentStart);
+	return body.slice(contentStart, nextHeading === -1 ? undefined : nextHeading).trim();
+}
 
 function splitDocument(source, filePath) {
 	const match = source.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
@@ -41,19 +108,27 @@ async function loadPage(page) {
 test('task pages provide complete executable procedures', async () => {
 	for (const page of await Promise.all(procedurePages.map(loadPage))) {
 		for (const heading of ['Prerequisites', 'Actions', 'Expected result', 'Recovery', 'Next task']) {
-			assert.match(page.body, new RegExp(`^## ${heading}$`, 'm'), `${page.path} must contain ${heading}`);
+			const content = section(page.body, heading);
+			assert.ok(content.length > 0, `${page.path} must contain non-empty ${heading}`);
 		}
-		assert.match(page.body, /^## Actions\n\n1\.\s/m, `${page.path} actions must be a numbered procedure`);
-		assert.match(page.body, /^## Expected result\n\n\S/m, `${page.path} must state an observable result`);
-		assert.match(page.body, /^## Recovery\n\n\S/m, `${page.path} must give a recovery action`);
-		assert.match(page.body, /^## Next task\n\n\S/m, `${page.path} must link a next task`);
+		const steps = [...section(page.body, 'Actions').matchAll(/^(\d+)\.\s+(.+)$/gm)];
+		assert.ok(steps.length >= 2, `${page.path} must contain at least two numbered actions`);
+		assert.equal(new Set(steps.map((step) => step[2])).size, steps.length, `${page.path} actions must be distinct`);
+		assert.match(section(page.body, 'Next task'), /\[[^\]]+\]\(\/[^)]+\)/, `${page.path} next task must contain an internal Markdown link`);
+		for (const concept of page.concepts) {
+			assert.ok(page.body.includes(concept), `${page.path} must explain ${concept}`);
+		}
 
 		assert.ok(Array.isArray(page.data.audience) && page.data.audience.length > 0, `${page.path} must name its audience`);
-		assert.equal(typeof page.data.description, 'string', `${page.path} must have a description`);
-		assert.equal(typeof page.data.authority?.status, 'string', `${page.path} must have authority status`);
-		assert.equal(typeof page.data.authority?.sourceLabel, 'string', `${page.path} must name its source`);
-		assert.equal(typeof page.data.authority?.sourceHref, 'string', `${page.path} must link its source`);
-		assert.equal(typeof page.data.authority?.limits, 'string', `${page.path} must state its limits`);
+		for (const [field, value] of [
+			['description', page.data.description],
+			['authority.status', page.data.authority?.status],
+			['authority.sourceLabel', page.data.authority?.sourceLabel],
+			['authority.sourceHref', page.data.authority?.sourceHref],
+			['authority.limits', page.data.authority?.limits],
+		]) {
+			assert.ok(typeof value === 'string' && value.trim().length > 0, `${page.path} must define non-empty ${field}`);
+		}
 		assert.match(page.data.verified?.revision ?? '', /^[0-9a-f]{40}$/, `${page.path} must name a verified revision`);
 		assert.match(String(page.data.verified?.date ?? ''), /^2026-09-08$/, `${page.path} must name its verification date`);
 	}
@@ -62,17 +137,55 @@ test('task pages provide complete executable procedures', async () => {
 test('procedure diagrams are accessible and have a following text equivalent', async () => {
 	for (const page of await Promise.all(procedurePages.map(loadPage))) {
 		if (page.diagram) {
-			const mermaidAt = page.body.indexOf('```mermaid');
-			const textAt = page.body.indexOf('### Diagram text');
-			assert.notEqual(mermaidAt, -1, `${page.path} must contain its ${page.diagram} diagram`);
-			assert.match(page.body, /accTitle:\s*[^\n]+/, `${page.path} diagram must have an accessible title`);
-			assert.match(page.body, /accDescr:\s*[^\n]+/, `${page.path} diagram must have an accessible description`);
-			assert.ok(textAt > mermaidAt, `${page.path} text equivalent must follow its diagram`);
+			const match = page.body.match(/```mermaid\n([\s\S]*?)\n```\s*\n### Diagram text\n\n([\s\S]*?)(?=\n## |$)/);
+			assert.ok(match, `${page.path} Diagram text must immediately follow its Mermaid fence`);
+			const [, diagram, equivalent] = match;
+			assert.match(diagram, new RegExp(`^\\s*accTitle:\\s*${escapeRegExp(page.diagram)}\\s*$`, 'm'), `${page.path} must use the expected accessible title`);
+			assert.match(diagram, /^\s*accDescr:\s*\S.+$/m, `${page.path} diagram must have an accessible description`);
+			assert.ok(equivalent.trim().length >= 80, `${page.path} must provide a nontrivial text equivalent`);
+			for (const branch of page.diagramBranches) {
+				assert.ok(diagram.includes(branch), `${page.path} diagram must show ${branch}`);
+			}
+			for (const concept of page.equivalentConcepts) {
+				assert.ok(equivalent.includes(concept), `${page.path} text equivalent must explain ${concept}`);
+			}
 		} else {
 			assert.ok(page.noDiagram, `${page.path} must record why a diagram is not useful`);
 			assert.doesNotMatch(page.body, /```mermaid/, `${page.path} must remain diagram-free while the rationale applies`);
 		}
 	}
+});
+
+test('installation guidance aligns PATH and CLI/LSP release channels', async () => {
+	const install = await loadPage(procedurePages.find((page) => page.path.endsWith('/install.md')));
+	assert.match(install.body, /POSIX installer[^.]*prints[^.]*PATH/i);
+	assert.ok(install.body.includes('export PATH="$HOME/.beskid/bin:$PATH"'));
+	assert.match(install.body, /shell profile/i);
+	assert.match(install.body, /Windows installer[\s\S]{0,160}user `PATH`/i);
+	for (const pair of [['cli-stable', 'lsp-stable'], ['cli-unstable', 'lsp-unstable'], ['cli-v0.4.0', 'lsp-v0.4.0']]) {
+		const [cli, lsp] = pair;
+		assert.match(install.body, new RegExp(`${escapeRegExp(cli)}[^\\n]{0,160}${escapeRegExp(lsp)}`), `${cli} must align with ${lsp}`);
+	}
+	assert.ok(install.body.includes('They do not guarantee binary compatibility.'));
+});
+
+test('tooling distinguishes AOT commands from the test execution engine', async () => {
+	const tooling = await loadPage(procedurePages.find((page) => page.path === 'docs/tooling/index.md'));
+	assert.ok(tooling.body.includes('Only `beskid build` and `beskid run` use the AOT pipeline.'));
+	assert.match(tooling.body, /`beskid test` uses the current test execution engine/);
+	assert.doesNotMatch(tooling.body, /`beskid build`, `beskid run`, or `beskid test` for AOT/);
+});
+
+test('CI uses the case-sensitive manifest source root', async () => {
+	const ci = await loadPage(procedurePages.find((page) => page.path === 'docs/tooling/ci.md'));
+	assert.ok(ci.body.includes('beskid format Src --check'));
+	assert.match(ci.body, /manifest declares a different source root/i);
+});
+
+test('editor guidance uses pinned extension provenance', async () => {
+	const editor = await loadPage(procedurePages.find((page) => page.path.endsWith('/editor.md')));
+	assert.equal(editor.data.authority.sourceHref, 'https://github.com/Cyber-Nomad-Collective/beskid_vscode/blob/94640e47f3292a883cb2f92c4a04321f8724a3f7/package.json');
+	assert.equal(editor.data.verified.revision, '94640e47f3292a883cb2f92c4a04321f8724a3f7');
 });
 
 test('active procedures use current project, entrypoint, and AOT terminology', async () => {

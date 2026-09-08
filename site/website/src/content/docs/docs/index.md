@@ -34,7 +34,7 @@ Know the result that you want. You do not need to install Beskid to evaluate the
 ```mermaid
 flowchart TD
   accTitle: Audience routing
-  accDescr: Evaluators and newcomers start with installation, developers use tooling and language basics, package authors use package guidance, operators use service guidance, and contributors use contribution guidance.
+  accDescr: Route each reader role to its first technical task.
   A[Choose your role] --> B{What do you need?}
   B -->|Evaluate or start| C[Get started]
   B -->|Develop| D[Tooling and language basics]

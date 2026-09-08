@@ -7,14 +7,14 @@ audience:
 authority:
   status: informative
   sourceLabel: Beskid VS Code extension configuration
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/298b4a1a418eef79ba85ab51d0ca0d5b7357561b/beskid_vscode/package.json
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid_vscode/blob/94640e47f3292a883cb2f92c4a04321f8724a3f7/package.json
   limits: This page covers the supported VS Code path. Other LSP clients must start the server on standard input and output themselves.
 verified:
-  revision: 298b4a1a418eef79ba85ab51d0ca0d5b7357561b
+  revision: 94640e47f3292a883cb2f92c4a04321f8724a3f7
   date: 2026-09-08
 ---
 
-The extension selects one language server. An explicit `beskid.lsp.server.path` has priority. Without that setting, the extension checks managed, preferred bundled, and CLI-backed servers before workspace fallbacks.
+The extension selects one language server. An explicit `beskid.lsp.server.path` has priority. Without it, the extension checks each fallback in a fixed order.
 
 ## Prerequisites
 
@@ -29,7 +29,7 @@ Install VS Code and complete [Install Beskid](/docs/getting-started/install/). K
    ```
 
 2. Open the directory that contains `Main.bd` in VS Code.
-3. Leave `beskid.lsp.server.path` empty to use automatic selection. The extension tries a managed binary, a bundled binary, the CLI `lsp` command, and supported workspace fallbacks.
+3. Leave `beskid.lsp.server.path` empty to use automatic selection. The extension checks a managed binary first. It then checks a preferred bundled binary and a CLI-backed server.
 4. To select a specific server, set `beskid.lsp.server.path` to the absolute path of `beskid_lsp` or `beskid_lsp.exe`.
 5. Save `Main.bd` and inspect the Problems panel.
 6. Change `return 0;` to `return missingValue;`, save the file, and confirm that a diagnostic appears. Restore `return 0;` and save again.
@@ -37,21 +37,34 @@ Install VS Code and complete [Install Beskid](/docs/getting-started/install/). K
 ```mermaid
 flowchart TD
   accTitle: Editor and language server
-  accDescr: VS Code activates the extension, the extension selects one language-server binary, and the server returns diagnostics for the open Beskid document.
+  accDescr: Follow the extension fallback order until one language server starts or selection stops with an error.
   A[Open a .bd file] --> B[Extension activates]
-  B --> C{Explicit server path?}
-  C -->|Yes| D[Start selected binary]
-  C -->|No| E[Resolve managed or bundled server]
-  D --> F[Analyze document]
-  E --> F
-  F --> G[Show diagnostics]
+  B --> C{Explicit path?}
+  C -->|Yes| Z[Start selected server]
+  C -->|No| D{Managed binary?}
+  D -->|No| E{Bundled binary preferred and present?}
+  E -->|No| F{CLI-backed server available?}
+  F -->|No| G{Automatic bootstrap enabled and development mode off?}
+  G -->|Yes| H[Install and retry managed or CLI-backed server]
+  H --> L{Retry found a server?}
+  L -->|Yes| Z
+  L -->|No| I{Compiler workspace release binary?}
+  G -->|No| I
+  I -->|Yes| Z
+  I -->|No| J[Compiler workspace development fallback or stop]
+  D -->|Yes| Z
+  E -->|Yes| Z
+  F -->|Yes| Z
+  Z --> K[Show diagnostics]
 ```
 
 ### Diagram text
 
-1. Opening a `.bd` file activates the extension.
-2. An explicit server path selects that binary. Otherwise, the extension resolves an installed or bundled server.
-3. The server analyzes the document and sends diagnostics to VS Code.
+1. Opening a `.bd` file activates the extension. An explicit path selects that server.
+2. Without an explicit path, the extension checks the managed binary and then the preferred bundled binary.
+3. Next, it checks for a CLI-backed server. When development mode is off, enabled automatic bootstrap can install a toolchain. It then retries the managed and CLI-backed paths.
+4. A compiler-workspace release binary is the next fallback. The compiler-workspace fallback can then use configured development mode. These paths apply only when their required workspace or development configuration exists.
+5. The selected server analyzes the document and sends diagnostics to VS Code. If no supported path applies, selection stops with an actionable error.
 
 ## Expected result
 

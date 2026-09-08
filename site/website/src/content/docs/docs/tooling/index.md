@@ -23,10 +23,11 @@ Install Beskid and open a terminal in the source or project directory. Run `besk
 ## Actions
 
 1. Use `beskid analyze`, `beskid format`, or `beskid doc` for source tasks.
-2. Use `beskid build`, `beskid run`, or `beskid test` for AOT build and execution tasks.
-3. Use `beskid fetch`, `beskid lock`, `beskid update`, or `beskid graph` for project tasks.
-4. Use `beskid pckg` for registry tasks.
-5. Use the grouped alias when you need the domain in the command path:
+2. Use `beskid build` to create an AOT artifact. Use `beskid run` to create and start a temporary AOT executable.
+3. Only `beskid build` and `beskid run` use the AOT pipeline. `beskid test` uses the current test execution engine.
+4. Use `beskid fetch`, `beskid lock`, `beskid update`, or `beskid graph` for project tasks.
+5. Use `beskid pckg` for registry tasks.
+6. Use the grouped alias when you need the domain in the command path:
 
    | Domain | Grouped commands |
    | --- | --- |
@@ -35,7 +36,7 @@ Install Beskid and open a terminal in the source or project directory. Run `besk
    | Project | `beskid dev project fetch`, `lock`, `update`, `graph` |
    | Package | `beskid dev package registry` |
 
-6. Add `--plain` to analysis, build, run, and test commands in logs or automation.
+7. Add `--plain` to analysis, build, run, and test commands in logs or automation.
 
 ```mermaid
 flowchart TD
@@ -46,7 +47,8 @@ flowchart TD
   A --> D[Project]
   A --> E[Package]
   B --> B1[analyze format doc]
-  C --> C1[build run test]
+  C --> C1[build run]
+  C --> C2[test engine]
   D --> D1[fetch lock update graph]
   E --> E1[pckg]
 ```
@@ -54,7 +56,8 @@ flowchart TD
 ### Diagram text
 
 - Syntax commands inspect or change source text.
-- Build commands create or execute native artifacts and test items.
+- Build commands create an AOT artifact or an AOT subprocess.
+- The test command uses the current test execution engine.
 - Project commands resolve manifests, lockfiles, dependencies, and graphs.
 - Package commands communicate with the package registry.
 
