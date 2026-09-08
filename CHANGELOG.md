@@ -45,6 +45,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Beskid LSP: emit canonical-parser-backed semantic tokens for block kinds and
   configuration keys across `.bsol`, `.bproj`, and `.bws`, while invalid BSOL
   continues to fail closed without partial semantic facts.
+- Compiler delivery: advance the embedded compiler through the guarded-stack
+  harness, recursive generic-array surface, and canonical Corelib gate fixes,
+  restoring the full 67-entry Corelib matrix required by stable LSP releases.
 - pckg now routes its Authentik outpost callback correctly and forwards the
   verified identity only for visitors with an Authentik proxy session. The
   public catalogue stays reachable without sign-in while dashboard requests
