@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- pckg now derives its navigation from the active Authentik session, showing
+  an account menu instead of concurrent Sign in and Dashboard actions. Package
+  cards and the primary navigation now provide a direct path to the existing
+  package-documentation view.
 - Learn: the Playground now submits the live Monaco model rather than a stale
   editor state, accepts its own analyze target, offers Beskid completions, and
   uses a single workspace surface instead of nested cards. The signed-in header

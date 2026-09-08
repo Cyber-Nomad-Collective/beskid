@@ -12,9 +12,11 @@ Generation-scoped results computed by Salsa for expanded AST nodes, including re
 
 An informative, checked-in conceptual map of the Beskid compiler and its direct boundaries. It resolves canonical public specification links from the OpenSpec catalog, presents implementation paths as evidence, and never replaces OpenSpec requirements as the normative authority.
 
-## Auth Hub
+## Authentik
 
-The central `site/auth` service. It is the only browser identity authority for pckg and authenticates users through the GitHub application login flow. pckg consumes a paired handoff and retains only pckg-specific authorization and profile data.
+The sole browser identity authority for Beskid services. Its embedded proxy
+outpost authenticates users, forwards the verified subject and group claims to
+each application, and provides the canonical account and sign-out surfaces.
 
 ## Beskid standard
 
