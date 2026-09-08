@@ -29,9 +29,9 @@ const docsContract = z.object({
 
 export const collections = {
 	docs: defineCollection({
-		loader: docsLoader(),
+	loader: docsLoader(),
 		schema: docsSchema({
-				extend: z.object({
+			extend: z.object({
 				blogStatus: z.enum(blogStatuses).optional(),
 				date: z.coerce.date().optional(),
 				release: z.string().optional(),

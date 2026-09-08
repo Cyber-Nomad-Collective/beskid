@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
+import path from 'node:path';
 import test from 'node:test';
 import { parse } from 'yaml';
 
 const root = new URL('../../../../', import.meta.url);
+const docsRoot = new URL('../content/docs/docs/', import.meta.url);
 
 const procedurePages = [
 	{
@@ -335,6 +337,33 @@ function splitDocument(source, filePath) {
 	return { data: parse(match[1]), body: match[2] };
 }
 
+async function technicalDocsFiles(directory = docsRoot) {
+	const entries = await readdir(directory, { withFileTypes: true });
+	const nested = await Promise.all(entries.map((entry) => {
+		const entryPath = new URL(entry.isDirectory() ? `${entry.name}/` : entry.name, directory);
+		return entry.isDirectory() ? technicalDocsFiles(entryPath) : [entryPath];
+	}));
+	return nested.flat().filter((filePath) => /\.mdx?$/.test(filePath.pathname)).sort((left, right) => left.pathname.localeCompare(right.pathname));
+}
+
+async function loadTechnicalDocsPage(filePath) {
+	return { path: path.relative(docsRoot.pathname, filePath.pathname), ...splitDocument(await readFile(filePath, 'utf8'), filePath.pathname) };
+}
+
+function accessibleDiagram(page) {
+	const match = page.body.match(/```mermaid\n([\s\S]*?)\n```\s*\n### Diagram text\n\n([\s\S]*?)(?=\n## |$)/);
+	assert.ok(match, `${page.path} Diagram text must immediately follow its Mermaid fence`);
+	const [, diagram, equivalent] = match;
+	assert.match(diagram, /^\s*accTitle:\s*\S.+$/m, `${page.path} diagram must have an accessible title`);
+	assert.match(diagram, /^\s*accDescr:\s*\S.+$/m, `${page.path} diagram must have an accessible description`);
+	const description = diagram.match(/^\s*accDescr:\s*(.+)$/m)[1];
+	for (const sentence of description.split(/(?<=[.!?])\s+/)) {
+		assert.ok(sentence.trim().split(/\s+/).length <= 25, `${page.path} diagram descriptions must use short sentences`);
+	}
+	assert.ok(equivalent.trim().length >= 80, `${page.path} must provide a nontrivial text equivalent`);
+	return { diagram, equivalent };
+}
+
 async function loadPage(page) {
 	const filePath = new URL(`../content/docs/${page.path}`, import.meta.url);
 	let source;
@@ -397,21 +426,18 @@ test('task pages provide complete executable procedures', async () => {
 	}
 });
 
-test('procedure diagrams are accessible and have a following text equivalent', async () => {
+test('required diagrams are accessible and have a following text equivalent on every technical Docs page', async () => {
+	for (const page of await Promise.all((await technicalDocsFiles()).map(loadTechnicalDocsPage))) {
+		if (page.data.diagramPolicy === 'required') accessibleDiagram(page);
+	}
+});
+
+test('procedure diagrams retain their verified titles, branches, and text concepts', async () => {
 	for (const page of await Promise.all(procedurePages.map(loadPage))) {
 		if (page.data.diagramPolicy === 'required') {
 			assert.ok(page.diagram, `${page.path} must define its required diagram contract`);
-			assert.equal(page.data.diagramPolicy, 'required', `${page.path} must require its decision diagram`);
-			const match = page.body.match(/```mermaid\n([\s\S]*?)\n```\s*\n### Diagram text\n\n([\s\S]*?)(?=\n## |$)/);
-			assert.ok(match, `${page.path} Diagram text must immediately follow its Mermaid fence`);
-			const [, diagram, equivalent] = match;
+			const { diagram, equivalent } = accessibleDiagram(page);
 			assert.match(diagram, new RegExp(`^\\s*accTitle:\\s*${escapeRegExp(page.diagram)}\\s*$`, 'm'), `${page.path} must use the expected accessible title`);
-			assert.match(diagram, /^\s*accDescr:\s*\S.+$/m, `${page.path} diagram must have an accessible description`);
-			const description = diagram.match(/^\s*accDescr:\s*(.+)$/m)[1];
-			for (const sentence of description.split(/(?<=[.!?])\s+/)) {
-				assert.ok(sentence.trim().split(/\s+/).length <= 25, `${page.path} diagram descriptions must use short sentences`);
-			}
-			assert.ok(equivalent.trim().length >= 80, `${page.path} must provide a nontrivial text equivalent`);
 			for (const branch of page.diagramBranches) {
 				assert.ok(diagram.includes(branch), `${page.path} diagram must show ${branch}`);
 			}

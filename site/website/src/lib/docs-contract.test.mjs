@@ -64,12 +64,12 @@ test('requires complete typed annotation metadata on every technical Docs page',
 	}
 });
 
-test('pins immutable verified authority URLs to an immutable revision', async () => {
+test('pins immutable verified authority URLs to their declared revision', async () => {
 	for (const filePath of await technicalDocsFiles()) {
 		const data = frontmatter(await readFile(filePath, 'utf8'), filePath);
 		if (/^https:\/\/github\.com\/[^/]+\/[^/]+\/(?:blob|tree)\//.test(data.authority?.sourceHref ?? '')) {
-			assert.match(data.authority.sourceHref, /\/(?:blob|tree)\/[0-9a-f]{40}(?:\/|$)/, `${filePath} must pin its authority URL to an immutable revision`);
-			assert.doesNotMatch(data.authority.sourceHref, /\/(?:blob|tree)\/main(?:\/|$)/, `${filePath} must not use a mutable main authority URL`);
+			const revision = data.authority.sourceHref.match(/\/(?:blob|tree)\/([0-9a-f]{40})(?:\/|$)/)?.[1];
+			assert.equal(revision, data.verified.revision, `${filePath} authority URL revision must match verified.revision`);
 		}
 	}
 });
