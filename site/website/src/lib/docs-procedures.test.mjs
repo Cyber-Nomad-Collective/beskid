@@ -920,6 +920,11 @@ test('superrepo and Learn contributor tasks preserve ownership and focused valid
 		'./validate-ci-local.sh',
 	]) assert.ok(superrepo.body.includes(command), `superrepo gate table must include ${command}`);
 	assert.ok(superrepo.body.includes('git -C beskid_web_common status --short'));
+	assert.match(superrepo.body, /`beskid_web_common`[^.]*executable example/i);
+	assert.match(superrepo.body, /substitute[^.]*actual owned submodule/i);
+	for (const ownedSubmodule of ['beskid_bsol', 'beskid_treesitter', 'beskid_templates', 'beskid_infra']) {
+		assert.ok(superrepo.body.includes(`\`${ownedSubmodule}\``), `superrepo status guidance must apply to ${ownedSubmodule}`);
+	}
 	assert.doesNotMatch(superrepo.body, /`[^`\n]*<[^>\n]+>[^`\n]*`/, 'superrepo executable commands must not contain shell-metacharacter placeholders');
 	const superrepoBeforeActions = superrepo.body.slice(0, superrepo.body.indexOf('\n## Actions'));
 	for (const term of ['focused gate', 'aggregate gate', 'root contract boundary']) {

@@ -43,13 +43,15 @@ A focused gate means the smallest check that owns the changed component. An aggr
 | Root web type boundary | `pnpm typecheck` | Coordinated web types. |
 | Full local integration | `./validate-ci-local.sh` | Aggregate root integration contracts. |
 
+The status command below uses `beskid_web_common` as an executable example. Substitute the directory of the actual owned submodule before you run the command. Other owned submodule directories include `beskid_bsol`, `beskid_treesitter`, `beskid_templates`, and `beskid_infra`. The same status check applies to every selected submodule, but the example does not assign ownership.
+
 ## Actions
 
 1. Run `just setup` from the superrepo root.
 2. Select one setup profile in the wizard.
 3. Select the owned tree for the planned change.
 4. Inspect root status with `git status --short`.
-5. Inspect the owned shared web tree with `git -C beskid_web_common status --short` when that tree is the selected submodule.
+5. Inspect the selected owned submodule with the applicable form of `git -C beskid_web_common status --short`.
 6. Run the focused gate from the gate table for the owned component.
 7. Run the aggregate gate from the gate table when the change crosses a root contract boundary.
 
