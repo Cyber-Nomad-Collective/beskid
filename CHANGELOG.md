@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Docs and Standard now share the Book-style content rail, a local search
+  field, and a single title instead of an empty generic sidebar and duplicate
+  heading.
 - pckg now derives its navigation from the active Authentik session, showing
   an account menu instead of concurrent Sign in and Dashboard actions. Package
   cards and the primary navigation now provide a direct path to the existing

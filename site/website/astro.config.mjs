@@ -145,6 +145,10 @@ export default defineConfig({
 		trudoc({
 			htmlDataAttrs: [
 				{
+					htmlSubdir: 'docs',
+					docAttr: 'data-docs',
+				},
+				{
 					htmlSubdir: 'book',
 					docAttr: 'data-book',
 				},
