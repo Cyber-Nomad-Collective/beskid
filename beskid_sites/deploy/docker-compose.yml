@@ -13,10 +13,10 @@
 #   - CI moves controlled production tags; Watchtower updates only explicitly
 #     labelled application services. Third-party infrastructure stays pinned.
 #   - All secrets via env_file (deploy/.env), never inline.
-#   - Postgres serves pckg; Authelia keeps its single-instance state locally.
+#   - Postgres serves pckg. No browser authentication service is deployed.
 #
 # Secrets: OpenBao `secret/beskid/production/*` → deploy/.env (see deploy.sh).
-# Do NOT commit deploy/.env or deploy/registry/htpasswd.
+# Do NOT commit deploy/.env.
 
 name: beskid-platform
 
@@ -53,7 +53,6 @@ volumes:
     name: beskid-sites_tracker-data
     external: true
   nexus-data:
-  authelia-data:
   pckg-packages:
     name: beskid-pckg_pckg-artifacts
     external: true
@@ -61,9 +60,8 @@ volumes:
 
 services:
   # ---------------------------------------------------------------------------
-  # Private Docker registry at cr.beskid-lang.org. Authentication
-  # happens in the registry itself so every client, including Watchtower, gets
-  # the same bearer challenge and authorization behavior.
+  # Self-hosted Docker registry at cr.beskid-lang.org. The shared edge
+  # terminates TLS; no authentication service or credential path is required.
   # ---------------------------------------------------------------------------
   registry:
     image: registry:2.8
@@ -79,15 +77,11 @@ services:
     volumes:
       - registry-data:/var/lib/registry
       - ./registry/config.yml:/etc/docker/registry/config.yml:ro
-      - ./registry/htpasswd:/auth/htpasswd:ro
     environment:
       REGISTRY_HTTP_ADDR: "0.0.0.0:5000"
       REGISTRY_STORAGE_DELETE_ENABLED: "true"
-      REGISTRY_AUTH: htpasswd
-      REGISTRY_AUTH_HTPASSWD_REALM: Beskid registry
-      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
     healthcheck:
-      test: ["CMD-SHELL", "wget -S -q --spider http://127.0.0.1:5000/v2/ 2>&1 | grep -q '401 Unauthorized'"]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:5000/v2/ || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -127,38 +121,6 @@ services:
           cpus: "2.0"
 
   # ---------------------------------------------------------------------------
-  # Authelia is the sole browser-facing authentication service. It protects
-  # every public application through the shared Caddy edge; application images
-  # do not implement an alternate sign-in path.
-  # ---------------------------------------------------------------------------
-  authelia:
-    image: authelia/authelia:4.39.20
-    restart: unless-stopped
-    labels:
-      caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
-      caddy_0: https://auth.beskid-lang.org
-      caddy_0.reverse_proxy: "{{upstreams 9091}}"
-    networks:
-      - beskid-edge
-    expose:
-      - "9091"
-    env_file:
-      - ${BESKID_ENV_FILE:-.env}
-    volumes:
-      - ./authelia/configuration.yml:/config/configuration.yml:ro
-      - ./authelia/users_database.yml:/config/users_database.yml:ro
-      - authelia-data:/var/lib/authelia
-    healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:9091/api/health || exit 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 20s
-    logging: *default-logging
-    deploy:
-      resources: *default-limits
-
-  # ---------------------------------------------------------------------------
   # Beskid applications. CI advances only these mutable production tags;
   # Watchtower updates only services carrying its explicit label. Infrastructure
   # stays pinned and is changed through an audited Compose deployment.
@@ -172,8 +134,6 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
       caddy_0.reverse_proxy: "{{upstreams 80}}"
     networks:
       - beskid-edge
@@ -199,8 +159,6 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://tracker.beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
       caddy_0.reverse_proxy: "{{upstreams 3000}}"
     networks:
       - beskid-edge
@@ -228,8 +186,6 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://nexus.beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
       caddy_0.reverse_proxy: "{{upstreams 8452}}"
     networks:
       - beskid-edge
@@ -257,8 +213,6 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://pckg.beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
       caddy_0.reverse_proxy: "{{upstreams 8082}}"
     networks:
       - beskid-edge
@@ -294,8 +248,6 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://learn.beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
       caddy_0.reverse_proxy: "{{upstreams 80}}"
     networks:
       - beskid-edge
@@ -315,14 +267,12 @@ services:
 
   # The Docker socket is intentionally available only to this updater. It is
   # label-scoped: registry, edge, and databases stay pinned until a
-  # deliberate Compose change. Credentials live in the mounted Docker config
-  # generated by deploy.sh and are never stored in this repository.
+  # deliberate Compose change.
   watchtower:
     image: containrrr/watchtower:1.7.1
     restart: unless-stopped
     command: --label-enable --interval 60 --rolling-restart --cleanup
     environment:
-      DOCKER_CONFIG: /config
       DOCKER_API_VERSION: "1.40"
       WATCHTOWER_LABEL_ENABLE: "true"
       WATCHTOWER_POLL_INTERVAL: "60"
@@ -330,5 +280,4 @@ services:
       WATCHTOWER_CLEANUP: "true"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./watchtower:/config:ro
     logging: *default-logging

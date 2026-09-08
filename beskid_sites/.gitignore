@@ -15,5 +15,3 @@ coverage
 deploy/registry/htpasswd
 deploy/.env
 deploy/.env.*
-deploy/authelia/users_database.yml
-deploy/authelia/notification.txt

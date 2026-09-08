@@ -3,27 +3,15 @@ name: Reusable release manifest
 on:
   workflow_call:
     inputs:
-      site-record:
-        required: true
+      records-pattern:
+        required: false
+        default: image-record-*
         type: string
-      auth-record:
-        required: true
-        type: string
-      learn-record:
-        required: true
-        type: string
-      tracker-record:
-        required: true
-        type: string
-      nexus-record:
-        required: true
-        type: string
-      pckg-record:
-        required: true
+      artifact-name:
+        required: false
+        default: release-manifest
         type: string
     outputs:
-      manifest-base64:
-        value: ${{ jobs.manifest.outputs.manifest-base64 }}
       manifest-sha256:
         value: ${{ jobs.manifest.outputs.manifest-sha256 }}
 
@@ -35,39 +23,26 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 10
     outputs:
-      manifest-base64: ${{ steps.manifest.outputs.manifest-base64 }}
       manifest-sha256: ${{ steps.manifest.outputs.sha256 }}
     steps:
       - uses: actions/checkout@v7
 
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          pattern: ${{ inputs.records-pattern }}
+          path: image-records
+          merge-multiple: true
+
       - name: Build immutable release manifest
         id: manifest
-        env:
-          SITE_RECORD: ${{ inputs.site-record }}
-          AUTH_RECORD: ${{ inputs.auth-record }}
-          LEARN_RECORD: ${{ inputs.learn-record }}
-          TRACKER_RECORD: ${{ inputs.tracker-record }}
-          NEXUS_RECORD: ${{ inputs.nexus-record }}
-          PCKG_RECORD: ${{ inputs.pckg-record }}
         run: |
-          set -euo pipefail
-          mkdir -p image-records
-          for binding in \
-            'beskid-site|SITE_RECORD' \
-            'beskid-auth|AUTH_RECORD' \
-            'beskid-learn|LEARN_RECORD' \
-            'beskid-tracker|TRACKER_RECORD' \
-            'beskid-nexus|NEXUS_RECORD' \
-            'beskid-pckg|PCKG_RECORD'; do
-            name="${binding%%|*}"
-            variable="${binding#*|}"
-            record="${!variable:-}"
-            [[ -n "${record}" ]] || { echo "missing image record for ${name}" >&2; exit 1; }
-            printf '%s' "${record}" | jq -ce --arg name "${name}" \
-              'select(.name == $name and .repository == ("ghcr.io/cyber-nomad-collective/" + $name))' \
-              >"image-records/${name}.json"
-          done
           ./scripts/ci/build-release-manifest.sh image-records release-manifest.json
-          manifest_base64="$(base64 <release-manifest.json | tr -d '\n')"
-          echo "manifest-base64=${manifest_base64}" >>"${GITHUB_OUTPUT}"
           echo "sha256=$(awk '{print $1}' release-manifest.json.sha256)" >>"${GITHUB_OUTPUT}"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: |
+            release-manifest.json
+            release-manifest.json.sha256
+          retention-days: 90

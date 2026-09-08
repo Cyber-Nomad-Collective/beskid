@@ -9,11 +9,9 @@ for script in \
   build-release-manifest.sh \
   validate-release-manifest.sh \
   render-release-compose.sh \
-  deploy-release-manifest.sh \
   post-deploy-smoke.sh \
   sign-image.sh \
   prepare-secure-dockerfile.sh \
-  sync-runtime-env.sh \
   validate-promotion-source.sh; do
   bash -n "${root}/scripts/ci/${script}"
 done
@@ -22,17 +20,13 @@ done
 bash "${root}/scripts/ci/test/build-release-state.test.sh"
 bash "${root}/scripts/ci/test/build-release-platform.test.sh"
 bash "${root}/scripts/ci/test/render-ci-failure.test.sh"
-bash "${root}/scripts/ci/test/delivery-contract.test.sh"
 bash "${root}/scripts/ci/test/post-deploy-smoke.test.sh"
 bash "${root}/scripts/ci/test/shared-ui-nexus-gate-contract.test.sh"
 bash "${root}/scripts/ci/test/platform-stylesheet-contract.test.sh"
 bash "${root}/scripts/ci/test/platform-delivery-fail-closed.test.sh"
 bash "${root}/scripts/ci/test/release-manifest-active-lanes.test.sh"
-bash "${root}/scripts/ci/test/zero-artifact-delivery.test.sh"
 bash "${root}/scripts/ci/test/github-release-handoff.test.sh"
-bash "${root}/scripts/ci/test/render-lane-compose.test.sh"
 bash "${root}/scripts/ci/test/image-preparation-contract.test.sh"
-bash "${root}/scripts/ci/test/automatic-production-promotion.test.sh"
 
 # CoreLib workspace member aliases intentionally differ from registry package
 # names; the quality gate must validate each member's package declaration.

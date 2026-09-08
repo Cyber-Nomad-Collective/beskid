@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Contract: a platform release manifest contains exactly the six active image lanes.
+# Contract: a platform release manifest contains exactly the five active image lanes.
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
@@ -19,12 +19,11 @@ write_manifest() {
 }
 
 canonical='[
-  {"name":"beskid-site","repository":"ghcr.io/cyber-nomad-collective/beskid-site","digest":"sha256:1111111111111111111111111111111111111111111111111111111111111111","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true},
-  {"name":"beskid-auth","repository":"ghcr.io/cyber-nomad-collective/beskid-auth","digest":"sha256:2222222222222222222222222222222222222222222222222222222222222222","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true},
-  {"name":"beskid-learn","repository":"ghcr.io/cyber-nomad-collective/beskid-learn","digest":"sha256:3333333333333333333333333333333333333333333333333333333333333333","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true},
-  {"name":"beskid-tracker","repository":"ghcr.io/cyber-nomad-collective/beskid-tracker","digest":"sha256:4444444444444444444444444444444444444444444444444444444444444444","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true},
-  {"name":"beskid-nexus","repository":"ghcr.io/cyber-nomad-collective/beskid-nexus","digest":"sha256:5555555555555555555555555555555555555555555555555555555555555555","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true},
-  {"name":"beskid-pckg","repository":"ghcr.io/cyber-nomad-collective/beskid-pckg","digest":"sha256:6666666666666666666666666666666666666666666666666666666666666666","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
+  {"name":"beskid-site","repository":"cr.beskid-lang.org/beskid/site","digest":"sha256:1111111111111111111111111111111111111111111111111111111111111111","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true},
+  {"name":"beskid-learn","repository":"cr.beskid-lang.org/beskid/learn","digest":"sha256:3333333333333333333333333333333333333333333333333333333333333333","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true},
+  {"name":"beskid-tracker","repository":"cr.beskid-lang.org/beskid/tracker","digest":"sha256:4444444444444444444444444444444444444444444444444444444444444444","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true},
+  {"name":"beskid-nexus","repository":"cr.beskid-lang.org/beskid/nexus","digest":"sha256:5555555555555555555555555555555555555555555555555555555555555555","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true},
+  {"name":"beskid-pckg","repository":"cr.beskid-lang.org/beskid/pckg","digest":"sha256:6666666666666666666666666666666666666666666666666666666666666666","sbom":true,"provenance":true,"vulnerabilities":"passed","signed":true}
 ]'
 
 write_manifest "${tmp}/canonical.json" "${canonical}"

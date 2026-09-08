@@ -5,17 +5,15 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/../../.." && pwd)"
 workflow="${root}/.github/workflows/platform-delivery.yml"
 
-manifest_block="$(sed -n '/^  manifest:/,/^  staging:/p' "${workflow}")"
+manifest_block="$(sed -n '/^  manifest:/,/^  production:/p' "${workflow}")"
 for required in \
-  'needs: [corelib, openspec, conformance, integration, security, shared-ui-nexus, image-site, image-auth, image-learn, image-tracker, image-nexus, image-pckg]' \
-  "needs.corelib.result == 'success'" \
+  'needs: [openspec, conformance, integration, security, shared-ui-nexus, image-site, image-learn, image-tracker, image-nexus, image-pckg]' \
   "needs.openspec.result == 'success'" \
   "needs.conformance.result == 'success'" \
   "needs.integration.result == 'success'" \
   "needs.security.result == 'success'" \
   "needs.shared-ui-nexus.result == 'success'" \
   "needs.image-site.result == 'success'" \
-  "needs.image-auth.result == 'success'" \
   "needs.image-learn.result == 'success'" \
   "needs.image-tracker.result == 'success'" \
   "needs.image-nexus.result == 'success'" \

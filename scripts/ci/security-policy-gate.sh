@@ -17,18 +17,19 @@ for workflow in "${authoritative[@]}"; do
   [[ -f "${workflow}" ]] || { echo "missing authoritative workflow: ${workflow}" >&2; exit 1; }
 done
 
-# The delivery workflow is the only promotion caller. Its workflow-level
-# concurrency group deliberately differs from reusable-promote's per-lane lock.
+# The delivery workflow is the only production verification caller. Its
+# workflow-level concurrency group deliberately differs from Watchtower's
+# production verification lock.
 [[ ! -e .github/workflows/promote-production.yml ]] || {
-  echo "manual production promotion workflow must not bypass staging" >&2
+  echo "alternate production promotion workflow is forbidden" >&2
   exit 1
 }
 rg -Fq 'group: platform-delivery-${{ github.ref }}' .github/workflows/platform-delivery.yml || {
   echo "platform delivery must retain its distinct workflow-level concurrency group" >&2
   exit 1
 }
-rg -Fq 'needs: [manifest, staging]' .github/workflows/platform-delivery.yml || {
-  echo "production promotion must wait for the same run's staging job" >&2
+rg -Fq 'needs: manifest' .github/workflows/platform-delivery.yml || {
+  echo "production Watchtower verification must consume the same run's manifest" >&2
   exit 1
 }
 
@@ -60,9 +61,18 @@ if rg -n 'NODE_AUTH_TOKEN' \
   exit 1
 fi
 
-if rg -n 'ghcr\.io/cyber-nomad-collective/beskid-[^@[:space:]]+:\$\{[^}]+:-' \
-  beskid_infra/compose; then
-  echo "mutable Beskid image defaults remain in deployment templates" >&2
+if rg -n -i 'coolify|staging' .github/workflows/platform-delivery.yml .github/workflows/reusable-promote.yml; then
+  echo "production delivery retains a retired Coolify or staging reference" >&2
+  exit 1
+fi
+
+if ! rg -Fq 'cr.beskid-lang.org/beskid/' .github/workflows/platform-delivery.yml; then
+  echo "delivery workflow must publish application images to the Beskid registry" >&2
+  exit 1
+fi
+
+if rg -n 'REGISTRY_(USERNAME|PASSWORD)|docker login' .github/workflows/reusable-image.yml .github/workflows/platform-delivery.yml; then
+  echo "public registry workflow must not retain registry credentials" >&2
   exit 1
 fi
 

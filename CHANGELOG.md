@@ -11,10 +11,18 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Production delivery now uses only the self-hosted Compose stack and
+  Watchtower. Application images publish to the Beskid registry without
+  credentials; the release manifest covers the five running applications.
+
 - Documentation: established `beskid-lang.org/docs/` as the single public technical documentation surface. The new STE-100 authoring skill and Docs pages link to OpenSpec for normative requirements and to the Book for learning material.
 - Local site deployment: publish Docs on port `4321` and Learn on port `4322` in both Compose files. The site guide now documents the source-build command and local URLs.
 
 ### Removed
+
+- Coolify, staging promotion, registry credential, and Authelia deployment
+  paths, including their workflows, scripts, test contracts, and runtime
+  configuration.
 
 - Platform Spec: retired the separate `site/platform-spec` application, its workspace member, CI build gate, and image-delivery lane. Legacy `/platform-spec/` URLs now redirect to `/docs/standard/`.
 - Snap distribution: remove the classic-confinement recipe, Store credential
@@ -31,16 +39,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   - `apps/shell-template` — reusable shell template app (the base for all
     Beskid sites), generalized from the `beskid_tracker` shell. Exposes
     convenience wrappers for sidebar items, sidebar show/hide, and topbar
-    left/right nav-slot services; renders an avatar dropdown with user data in
-    the topbar when the sidebar is disabled. Auth via Authelia as an OIDC
-    provider: the app is an OIDC client (authorization-code flow, ID token
-    verified with `jose` against Authelia's JWKS, claims sealed into a signed
-    session cookie), GitHub is the sole identity provider (no local
-    password/email user store), and each beskid app is registered as an OIDC
-    client of Authelia. Reuses the existing Beskid GitHub OAuth App via env
-    vars (no new GitHub App). `mock` mode for local dev. Ships a Postgres +
-    Authelia + app compose, a Dockerfile, and 31 vitest tests (sidebar, slots,
-    avatar dropdown, OIDC claims, session seal/unseal, guards, theme).
+  left/right nav-slot services and avatar-dropdown behaviour when the sidebar
+  is disabled. The production deployment no longer includes this experimental
+  authentication path.
 
 ### Changed
 

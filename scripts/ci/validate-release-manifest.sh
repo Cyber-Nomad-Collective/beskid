@@ -16,16 +16,15 @@ jq -e '
   (.policy.vulnerability_scan_required == true) and
   (.policy.signature_required == true) and
   (.images | type == "array" and length > 0) and
-  (.images | length == 6) and
+  (.images | length == 5) and
   ([.images[].name] | length == (unique | length)) and
   ([.images[].repository] | length == (unique | length)) and
   (.images | map({key: .name, value: .repository}) | from_entries) == {
-    "beskid-site": "ghcr.io/cyber-nomad-collective/beskid-site",
-    "beskid-auth": "ghcr.io/cyber-nomad-collective/beskid-auth",
-    "beskid-learn": "ghcr.io/cyber-nomad-collective/beskid-learn",
-    "beskid-tracker": "ghcr.io/cyber-nomad-collective/beskid-tracker",
-    "beskid-nexus": "ghcr.io/cyber-nomad-collective/beskid-nexus",
-    "beskid-pckg": "ghcr.io/cyber-nomad-collective/beskid-pckg"
+    "beskid-site": "cr.beskid-lang.org/beskid/site",
+    "beskid-learn": "cr.beskid-lang.org/beskid/learn",
+    "beskid-tracker": "cr.beskid-lang.org/beskid/tracker",
+    "beskid-nexus": "cr.beskid-lang.org/beskid/nexus",
+    "beskid-pckg": "cr.beskid-lang.org/beskid/pckg"
   } and
   all(.images[];
     (.name | type == "string" and length > 0) and
