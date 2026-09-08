@@ -26,11 +26,10 @@ State your intended use. Use a supported host: Linux on AMD64, macOS on ARM64, o
 1. Record the intended use that you need to evaluate, such as a local program, a project, a package, or a public service.
 2. Open [Downloads](/downloads/) and confirm that it lists an artifact for your supported host.
 3. Record the displayed release channel or immutable tag. Do not treat either label as a maturity promise.
-4. Complete [Write and run a program](/docs/getting-started/first-program/) and record its analysis and process result.
-5. Complete [Connect VS Code](/docs/getting-started/editor/) and record whether the Problems panel shows and clears a diagnostic.
-6. Read [Projects](/docs/projects/) and record whether the documented manifest and lock workflow fits your intended use.
-7. Read [Packages](/docs/packages/) and record whether the package workflow and recovery limits fit your intended use.
-8. Check [Tracker](https://tracker.beskid-lang.org) for delivery status and record the date with the related issue or version link.
+4. If your intended use needs a local CLI or editor, complete [Write and run a program](/docs/getting-started/first-program/) and [Connect VS Code](/docs/getting-started/editor/). Record the results.
+5. If your intended use needs a project, read [Projects](/docs/projects/) and record whether the manifest and lock workflow fits.
+6. If your intended use needs a package, read [Packages](/docs/packages/) and record whether the package workflow and recovery limits fit.
+7. Only when your intended use needs a public service, check [Tracker](https://tracker.beskid-lang.org) for delivery status and record the date with the related issue or version link.
 9. Compare required language behavior with the [Beskid Standard](/docs/standard/) and record the exact capability or requirement link.
 
 ```mermaid
@@ -39,30 +38,37 @@ flowchart TD
   accDescr: Match each intended use to required evidence. Stop when a required check has no verified result.
   A[Intended use?] --> B{Supported host and release?}
   B -->|No| Z[Stop and record evidence]
-  B -->|Yes| C{First program and editor?}
-  C -->|No| Z
-  C -->|Yes| D{Project and package?}
-  D -->|No| Z
-  D -->|Yes| E{Service evidence?}
-  E -->|No| Z
-  E -->|Yes| F[Record readiness decision]
+  B -->|Yes| C{Need a local CLI or editor?}
+  C -->|Yes| D[Verify first program and editor]
+  C -->|No| E{Need a project?}
+  D --> E
+  E -->|Yes| F[Verify project workflow]
+  E -->|No| G{Need a package?}
+  F --> G
+  G -->|Yes| H[Verify package workflow]
+  G -->|No| I{Need a public service?}
+  H --> I
+  I -->|Yes| J[Record Tracker service evidence]
+  I -->|No| K[Record readiness decision]
+  J --> K
 ```
 
 ### Diagram text
 
 1. Start with the intended use and a supported host with a listed release.
-2. Verify the first program and editor before you assess project and package work.
-3. Record service evidence from Tracker when your intended use depends on a public service.
-4. Compare behavior with the Standard and record the linked requirement.
-5. Use this stop condition when a required check has no verified result. Record the missing evidence instead of inferring readiness.
+2. Verify the first program and editor only when the intended use needs local CLI or editor work.
+3. Verify project and package work only when the intended use needs each workflow.
+4. Record service evidence from Tracker only when the intended use depends on a public service. A local-only evaluation does not need service evidence.
+5. Compare behavior with the Standard and record the linked requirement.
+6. Use this stop condition when a required check has no verified result. Record the missing evidence instead of inferring readiness.
 
 ## Expected result
 
-You have an evidence record for the supported host, release, first program, editor, project, package, service evidence, and Standard links. The record states a readiness decision or an unresolved stop condition.
+You have an evidence record for the supported host, release, Standard links, and each workflow that applies to the intended use. The record states a readiness decision or an unresolved stop condition.
 
 ## Recovery
 
-Stop the evaluation when Downloads does not list the host artifact, a task check fails, or required Tracker evidence is absent. When a required result is absent, do not infer release maturity, service availability, or language behavior. Keep the recorded evidence and return to the failed task or the linked authority.
+Stop the evaluation when Downloads does not list the host artifact or an evidence check selected by the intended use fails. When the intended use needs a public service, stop if required Tracker evidence is absent. When a required result is absent, do not infer release maturity, service availability, or language behavior. Keep the recorded evidence and return to the failed task or the linked authority.
 
 ## Next task
 

@@ -15,7 +15,7 @@ export interface DocsCoverage {
 }
 
 export const docsCoverage = [
-	{ surface: 'Docs', route: '/docs/', audience: ['evaluator', 'newcomer', 'developer', 'package author', 'operator', 'contributor'], sourceBoundary: '/docs/standard/', pageKind: 'guide', diagramPolicy: 'required' },
+	{ surface: 'Docs', route: '/docs/', audience: ['evaluator', 'learner', 'newcomer', 'developer', 'package author', 'operator', 'contributor'], sourceBoundary: '/docs/standard/', pageKind: 'guide', diagramPolicy: 'required' },
 	{ surface: 'Evaluation readiness', route: '/docs/evaluate/', audience: ['evaluator'], sourceBoundary: 'https://github.com/Cyber-Nomad-Collective/beskid/blob/3143396b796d86c1a70a0bfb1aa4761b593bbae5/README.md', pageKind: 'task', diagramPolicy: 'required' },
 	{ surface: 'Beskid Learn', route: '/docs/learn/', audience: ['learner', 'newcomer'], sourceBoundary: 'https://github.com/Cyber-Nomad-Collective/beskid/blob/3143396b796d86c1a70a0bfb1aa4761b593bbae5/site/learn/README.md', pageKind: 'task', diagramPolicy: 'required' },
 	{ surface: 'Getting started', route: '/docs/getting-started/', audience: ['evaluator', 'newcomer'], sourceBoundary: 'https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/252aa528ac7ee01a64e49e9b88b32393206fbd71/crates/beskid_cli/src/cli.rs', pageKind: 'guide', diagramPolicy: 'not-needed', diagramOmissionReason: 'This short route delegates decisions to the detailed task pages.' },

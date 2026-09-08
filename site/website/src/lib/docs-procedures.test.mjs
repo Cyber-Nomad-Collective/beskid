@@ -11,8 +11,8 @@ const procedurePages = [
 	{
 		path: 'docs/evaluate/index.md',
 		diagram: 'Evaluation readiness decision',
-		diagramBranches: ['Intended use?', 'Supported host and release?', 'First program and editor?', 'Project and package?', 'Service evidence?', 'Stop and record evidence'],
-		equivalentConcepts: ['intended use', 'supported host', 'release', 'first program', 'editor', 'project', 'package', 'service evidence', 'stop'],
+		diagramBranches: ['Intended use?', 'Supported host and release?', 'Need a local CLI or editor?', 'Need a project?', 'Need a package?', 'Need a public service?', 'Record Tracker service evidence', 'Stop and record evidence'],
+		equivalentConcepts: ['intended use', 'supported host', 'release', 'first program', 'editor', 'project', 'package', 'service evidence', 'local-only', 'stop'],
 		sections: {
 			prerequisites: ['intended use', 'supported host'],
 			actions: ['/downloads/', '/docs/getting-started/first-program/', '/docs/getting-started/editor/', '/docs/projects/', '/docs/packages/', 'tracker.beskid-lang.org'],
@@ -23,7 +23,7 @@ const procedurePages = [
 	{
 		path: 'docs/learn/index.md',
 		diagram: 'Lesson-check feedback loop',
-		diagramBranches: ['Select lesson', 'Edit source', 'Run check', 'Read diagnostic', 'Use hint', 'Continue'],
+		diagramBranches: ['Select lesson', 'Edit source', 'Run check', 'Read diagnostic', 'Need a hint?', 'Use hint', 'Continue'],
 		equivalentConcepts: ['lesson', 'source', 'check', 'diagnostic', 'hint', 'continue'],
 		sections: {
 			prerequisites: ['browser', 'temporary workspace'],
@@ -472,16 +472,29 @@ test('evaluation and learning routes preserve stop and privacy boundaries', asyn
 	const evaluation = await loadPage(procedurePages.find((page) => page.path === 'docs/evaluate/index.md'));
 	assert.match(section(evaluation.body, 'Recovery'), /Stop the evaluation/i);
 	assert.match(section(evaluation.body, 'Recovery'), /do not infer/i);
+	assert.match(section(evaluation.body, 'Actions'), /\[Beskid Standard\]\(\/docs\/standard\/\)/);
 
 	const learn = await loadPage(procedurePages.find((page) => page.path === 'docs/learn/index.md'));
 	assert.match(learn.body, /temporary workspace/i);
-	assert.match(learn.body, /does not retain learner source/i);
-	assert.match(section(learn.body, 'Next task'), /\/docs\/projects\//);
+	assert.match(learn.body, /sends the selected source to the service/i);
+	assert.match(learn.body, /Do not enter secrets or sensitive data/i);
+	assert.doesNotMatch(learn.body, /does not retain learner source/i);
+	assert.match(section(learn.body, 'Next task'), /\/docs\/getting-started\/install\//);
+});
+
+test('evaluation applies service evidence only to the selected intended use', async () => {
+	const evaluation = await loadPage(procedurePages.find((page) => page.path === 'docs/evaluate/index.md'));
+	const { diagram, equivalent } = accessibleDiagram(evaluation);
+	assert.match(diagram, /I -->\|No\| K\[Record readiness decision\]/);
+	assert.match(diagram, /I -->\|Yes\| J\[Record Tracker service evidence\]/);
+	assert.match(section(evaluation.body, 'Actions'), /Only when your intended use needs a public service/);
+	assert.match(equivalent, /A local-only evaluation does not need service evidence/);
 });
 
 test('navigation routes evaluators and learners to the public task pages', async () => {
-	const [navigation, docsHome, learnService] = await Promise.all([
+	const [navigation, coverage, docsHome, learnService] = await Promise.all([
 		readFile(new URL('../data/docs-navigation.ts', import.meta.url), 'utf8'),
+		readFile(new URL('../data/docs-coverage.ts', import.meta.url), 'utf8'),
 		loadPage({ path: 'docs/index.md' }),
 		loadPage({ path: 'docs/services/learn.md' }),
 	]);
@@ -492,6 +505,8 @@ test('navigation routes evaluators and learners to the public task pages', async
 	assert.match(docsHome.body, /\[Evaluate Beskid\]\(\/docs\/evaluate\/\)/);
 	assert.match(docsHome.body, /\[Learn Beskid\]\(\/docs\/learn\/\)/);
 	assert.match(learnService.body, /\[Use Beskid Learn\]\(\/docs\/learn\/\)/);
+	assert.deepEqual(docsHome.data.audience, ['evaluator', 'learner', 'newcomer', 'developer', 'package author', 'operator', 'contributor']);
+	assert.match(coverage, /surface: 'Docs',[\s\S]*?audience: \['evaluator', 'learner', 'newcomer', 'developer', 'package author', 'operator', 'contributor'\]/);
 });
 
 test('procedure diagrams retain their verified titles, branches, and text concepts', async () => {

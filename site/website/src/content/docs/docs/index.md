@@ -5,6 +5,7 @@ pageKind: guide
 diagramPolicy: required
 audience:
   - evaluator
+  - learner
   - newcomer
   - developer
   - package author
