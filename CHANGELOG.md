@@ -20,6 +20,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   now provides the standard account menu with account and sign-out actions.
 - The website delivery projection now uses its supported Node test runner
   instead of invoking an uninstalled Vitest binary.
+- Release projections now reference published Tracker, Nexus, compiler, and
+  core-library revisions, so CI can fetch the complete deployment graph.
 
 ### Changed
 

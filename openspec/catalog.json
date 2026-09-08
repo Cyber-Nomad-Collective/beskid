@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/openspec/build-catalog.ts",
-  "revision": "387bb3a66c15e95e010059f2e9be91adb3024d5325a564f40581deb667ae48bf",
+  "revision": "5c86a7fabe63760a8a1c5b288869d83bf259983066e46be09e999415ad9ee565",
   "source": "site/spec-content/platform-spec",
   "authority": "openspec/specs",
   "stats": {
@@ -39090,7 +39090,7 @@
       "path": "GLOSSARY.md",
       "title": "Glossary",
       "authority": "informative",
-      "sourceHash": "f57172d0f61dd7fc6291732dc843ae3a7b97a4c827918b545d52cce5465a52c2",
+      "sourceHash": "6b4e4ecbff16e342fc01e4cd5105c095fec98887f1c8539e3721a43020a0ca97",
       "standardLinks": [
         "/platform-spec/"
       ],
@@ -39112,7 +39112,7 @@
       "path": "README.md",
       "title": "Beskid Superrepo",
       "authority": "informative",
-      "sourceHash": "184bd7d8f8505e57efc7fa3509bb9d722e7b7f9f431d58bfdb3341bb25563594",
+      "sourceHash": "a85c8d211041c9986158fa70e88925df07052d5397fac03affe4655b7dfb8d19",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/README.md"
@@ -41342,7 +41342,7 @@
       "path": "site/website/src/content/docs/index.mdx",
       "title": "beskid",
       "authority": "informative",
-      "sourceHash": "4c079d87443ad6bc9856d3aa724178e288829feac3fc4f0e269b0e6886be1260",
+      "sourceHash": "55b968ab9eeb892b344944756cdf56cd6e97864fc982f46d150d33fd6a6c22c6",
       "standardLinks": [
         "/platform-spec/",
         "/platform-spec/language-meta/"
