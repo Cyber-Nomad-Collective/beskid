@@ -37,18 +37,20 @@ Create two project directories. Put one `.bproj` manifest in each directory. Kee
    }
    ```
 
-2. Select the application member explicitly:
+2. Select the application member from a real source path:
 
    ```bash
-   beskid analyze --project ./Workspace.bws --workspace-member app --target App --plain
+   beskid analyze ./app/Src/Main.bd --project ./Workspace.bws --target App --plain
    ```
 
-3. Run the same command from a source path under `app` without `--workspace-member`. Confirm that source-path discovery selects the deepest matching member.
-4. Keep `--workspace-member app` in automation so directory layout changes cannot change the selected member.
+3. Source-path selection chooses the deepest matching member directory. Add `--workspace-member app` when you must override that result.
+4. With no input path and no `--workspace-member`, selection uses `defaultTestMember` and then the first declared member.
+5. Without `--target`, host target selection tries App, then Test, then Lib. It then uses the first remaining target.
+6. Pass `--target` when the manifest has more than one target that could satisfy your task.
 
 ## Expected result
 
-The command reports the selected member as `app`. The selected target is `App` from the member's project manifest. Without an explicit member, selection uses the input path, then `defaultTestMember`, then the first declared member.
+The source path selects the deepest matching member, which is `app` in this example. With no input path, selection uses `defaultTestMember` and then the first declared member. The selected target is the explicit `App` target.
 
 ## Recovery
 

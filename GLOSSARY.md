@@ -100,7 +100,7 @@ The identity formed by one package name and one semantic version. After publicat
 
 ## Lockfile policy
 
-The project-resolution rule selected by CLI flags. `--locked` requires an existing `Project.lock` that matches resolution. `--frozen` also forbids an update to that lockfile.
+The project-resolution rule selected by CLI flags. `--locked` requires an existing `Project.lock` that matches resolution. `--frozen` also forbids an update to that lockfile. These policies preserve a reviewed lockfile, but they do not make initial registry-version selection exact.
 
 ## Global distribution version
 

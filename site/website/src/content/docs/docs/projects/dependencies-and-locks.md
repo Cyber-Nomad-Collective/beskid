@@ -14,7 +14,7 @@ verified:
   date: 2026-09-08
 ---
 
-Resolution creates or checks `Project.lock`. It materializes dependency sources under the selected project's `obj/beskid/deps` directory.
+Resolution creates or checks `Project.lock`. It materializes each dependency under the selected project's `obj/beskid/deps/src/<materialized-id>` path.
 
 ## Prerequisites
 
@@ -31,7 +31,7 @@ Select one project manifest. Ensure that each local dependency has one `.bproj` 
    }
    ```
 
-2. Declare a registry dependency with an exact version:
+2. Declare a requested registry version:
 
    ```text
    dependency "Acme.Math" {
@@ -46,14 +46,15 @@ Select one project manifest. Ensure that each local dependency has one `.bproj` 
    beskid fetch --project ./App.bproj --plain
    ```
 
-4. Review the changed `Project.lock` and the materialized paths under `obj/beskid/deps`.
-5. Require an existing lockfile that matches resolution:
+4. Inspect `Project.lock` after every registry resolution. Compare `resolved_version` with the requested version. Stop the workflow if `resolved_version` differs from the requested version.
+5. Review each materialized leaf under `obj/beskid/deps/src/<materialized-id>`.
+6. Require an existing lockfile that matches resolution:
 
    ```bash
    beskid fetch --project ./App.bproj --locked --plain
    ```
 
-6. Forbid lockfile updates during resolution:
+7. Forbid lockfile updates during resolution:
 
    ```bash
    beskid fetch --project ./App.bproj --frozen --plain
@@ -61,13 +62,15 @@ Select one project manifest. Ensure that each local dependency has one `.bproj` 
 
 ## Expected result
 
-`Project.lock` records each resolved dependency and its materialized root. Dependency sources are copied or extracted under `obj/beskid/deps`. Declared generated modules can be loaded from the project-level `.generated` directory as `*.g.bd` files; they are not dependency storage.
+`Project.lock` records each resolved dependency and its materialized root. Dependency sources are copied or extracted under `obj/beskid/deps/src/<materialized-id>`. Declared generated modules can be loaded from the project-level `.generated` directory as `*.g.bd` files. That directory is not dependency storage.
 
-`--locked` requires `Project.lock` to exist and match resolution. `--frozen` also forbids a lockfile update. Neither option silently repairs drift.
+The current resolver can fall back to the first active version when the requested registry version is absent. This behavior is an implementation limitation under reconciliation. A newly resolved lockfile is not proof that the requested version was selected.
+
+After you review the resolved version, `--locked` requires `Project.lock` to exist and match resolution. `--frozen` also forbids a lockfile update. These flags preserve reviewed lock behavior, but they do not make initial registry selection fail closed.
 
 ## Recovery
 
-If the manifest changed intentionally, run `beskid lock --project ./App.bproj --plain`, review the diff, and commit it. If a registry version is absent or yanked, select an active exact version. Git dependencies are not materialized by this workflow. Replace `source = "git"` with a path or registry dependency before a strict build.
+If the manifest changed intentionally, run `beskid lock --project ./App.bproj --plain`, review the diff, and commit it. Registry fallback is an implementation limitation under reconciliation. If registry resolution selects a different version, stop and do not build or publish. Git dependencies are not materialized by this workflow. Replace `source = "git"` with a path or registry dependency before a strict build.
 
 ## Next task
 

@@ -30,11 +30,13 @@ Load `BESKID_PCKG_API_KEY` from a secret manager. The key must have publisher pe
 2. Create the package record through `POST /api/packages`. The CLI has no package-record creation subcommand:
 
    ```bash
-   curl --fail-with-body https://pckg.beskid-lang.org/api/packages \
-     --header "Authorization: Bearer ${BESKID_PCKG_API_KEY}" \
+   builtin printf 'header = "Authorization: Bearer %s"\n' "$BESKID_PCKG_API_KEY" |
+     curl --fail-with-body --config - https://pckg.beskid-lang.org/api/packages \
      --header "Content-Type: application/json" \
      --data '{"name":"Acme.Math","isPublic":true,"submitForReview":false}'
    ```
+
+   Curl reads `--config -` from standard input. The bearer value is not part of the curl process argument list. Do not add `--verbose` because verbose output can disclose request headers.
 
 3. Pack version `1.0.0`:
 

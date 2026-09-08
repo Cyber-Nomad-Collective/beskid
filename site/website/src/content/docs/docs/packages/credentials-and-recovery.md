@@ -5,7 +5,7 @@ audience:
   - package author
   - operator
 authority:
-  status: informative
+  status: security-sensitive
   sourceLabel: Pinned package credential implementation
   sourceHref: https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/252aa528ac7ee01a64e49e9b88b32393206fbd71/crates/beskid_pckg/src/cli/repository.rs
   limits: The registry issues and revokes keys. The CLI stores or consumes an already issued key.
@@ -56,7 +56,7 @@ Create a key with publish scope through the registry account surface. Put the ke
 
 ## Recovery
 
-For `authentication required`, confirm that the key is active and has publish scope. Do not fall back to a browser cookie in automation. If a key is exposed, revoke it in the registry, rotate it in every secret manager, remove the local configuration file, and verify the replacement with `whoami`. If you yanked the wrong version, inspect the coordinate before you run `unyank`.
+For `authentication required`, confirm that the key is active and has publish scope. Do not fall back to a browser cookie in automation. If a key is exposed, revoke it in the registry and rotate it in every secret manager. Remove the local configuration file, then verify the replacement with `whoami`. If you yanked the wrong version, inspect the coordinate before you run `unyank`.
 
 ## Next task
 

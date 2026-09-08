@@ -33,20 +33,20 @@ flowchart LR
   W[Workspace.bws] --> A[App.bproj]
   W --> C[Core.bproj]
   A -->|path dependency| C
-  A -->|registry dependency| R[registry package]
+  A -->|requested registry version| R[registry package]
   A --> L[Project.lock]
   C --> L
   R --> L
-  L --> M[obj/beskid/deps]
+  L --> M[obj/beskid/deps/src/materialized-id]
 ```
 
 ### Diagram text
 
-The workspace manifest lists the application and library members. The application project manifest declares a path dependency on the library project manifest. It can also declare a registry dependency. Resolution records both dependency kinds in `Project.lock`. It copies each materialized dependency under `obj/beskid/deps` for the selected project.
+The workspace manifest lists the application and library members. The application project manifest declares a path dependency on the library project manifest. It can also request a registry version. Resolution records both dependency kinds in `Project.lock`. Registry resolution can select a different active version, so you must inspect the lockfile. The resolver copies each materialized dependency under `obj/beskid/deps/src/<materialized-id>`.
 
 ## Expected result
 
-Each command has one selected project and, when needed, one selected target. A committed `Project.lock` identifies the reproducible dependency graph.
+Each command has one selected project and, when needed, one selected target. A reviewed and committed `Project.lock` records the dependency graph that later locked commands preserve.
 
 ## Recovery
 

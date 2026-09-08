@@ -123,12 +123,12 @@ const procedurePages = [
 	{
 		path: 'docs/projects/index.md',
 		diagram: 'Workspace project dependency graph',
-		diagramBranches: ['Workspace.bws', 'App.bproj', 'Core.bproj', 'registry package', 'Project.lock', 'obj/beskid/deps'],
-		equivalentConcepts: ['workspace manifest', 'project manifest', 'path dependency', 'registry dependency', 'Project.lock', 'materialized dependency'],
+		diagramBranches: ['Workspace.bws', 'App.bproj', 'Core.bproj', 'registry package', 'Project.lock', 'obj/beskid/deps/src/materialized-id'],
+		equivalentConcepts: ['workspace manifest', 'project manifest', 'path dependency', 'registry version', 'Project.lock', 'materialized dependency'],
 		sections: {
 			prerequisites: ['beskid --version', '`.bproj`'],
 			actions: ['/docs/projects/create/', '/docs/projects/dependencies-and-locks/'],
-			expectedResult: ['one selected project', 'reproducible dependency graph'],
+			expectedResult: ['one selected project', 'reviewed and committed `Project.lock`'],
 			recovery: ['multiple `.bproj`', '--project'],
 		},
 	},
@@ -147,8 +147,8 @@ const procedurePages = [
 		noDiagram: 'The Projects overview already shows the workspace and member relationships.',
 		sections: {
 			prerequisites: ['two project directories', 'one `.bproj`'],
-			actions: ['member "app"', '--workspace-member app'],
-			expectedResult: ['selected member', 'selected target'],
+			actions: ['member "app"', 'beskid analyze ./app/Src/Main.bd --project ./Workspace.bws'],
+			expectedResult: ['deepest matching member', 'no input path'],
 			recovery: ['multiple `.bws`', '--workspace-member'],
 		},
 	},
@@ -158,20 +158,20 @@ const procedurePages = [
 		sections: {
 			prerequisites: ['Project.lock', 'registry access'],
 			actions: ['source = "path"', 'source = "registry"', 'beskid fetch --project ./App.bproj --locked --plain', 'beskid fetch --project ./App.bproj --frozen --plain'],
-			expectedResult: ['obj/beskid/deps', '`.generated`'],
-			recovery: ['beskid lock --project ./App.bproj --plain', 'Git dependencies are not materialized'],
+			expectedResult: ['obj/beskid/deps/src/<materialized-id>', '`.generated`'],
+			recovery: ['beskid lock --project ./App.bproj --plain', 'Git dependencies are not materialized', 'implementation limitation under reconciliation'],
 		},
 	},
 	{
 		path: 'docs/packages/index.md',
 		diagram: 'Package publication and consumption',
-		diagramBranches: ['Author', 'Registry', 'Consumer', 'Create package record', 'Upload .bpk', 'Resolve exact version', 'Materialize dependency'],
+		diagramBranches: ['Author', 'Registry', 'Consumer', 'Create package record', 'Upload .bpk', 'Request version', 'Fallback first active', 'Materialize dependency'],
 		equivalentConcepts: ['package author', 'package record', 'immutable', 'package consumer', 'Project.lock', 'yanked'],
 		sections: {
 			prerequisites: ['publisher API key', 'package name'],
 			actions: ['/docs/packages/publish/', '/docs/packages/consume/'],
-			expectedResult: ['immutable name-and-version coordinate', 'Project.lock'],
-			recovery: ['/docs/packages/credentials-and-recovery/', 'do not upload'],
+			expectedResult: ['immutable name-and-version coordinate', 'reviewed `Project.lock`'],
+			recovery: ['/docs/packages/credentials-and-recovery/', 'do not upload', 'resolver can fall back'],
 		},
 	},
 	{
@@ -188,10 +188,10 @@ const procedurePages = [
 		path: 'docs/packages/consume.md',
 		noDiagram: 'The manifest edit and fetch procedure is linear, and the Packages overview shows the participants.',
 		sections: {
-			prerequisites: ['package name', 'exact version'],
+			prerequisites: ['package name', 'requested version'],
 			actions: ['beskid pckg details Acme.Math', 'beskid pckg download Acme.Math --version 1.0.0', 'beskid fetch --project ./App.bproj --locked --plain'],
-			expectedResult: ['Project.lock', 'obj/beskid/deps'],
-			recovery: ['beskid pckg versions Acme.Math', 'yanked'],
+			expectedResult: ['resolved_version', 'obj/beskid/deps/src/<materialized-id>'],
+			recovery: ['beskid pckg versions Acme.Math', 'yanked', 'stop the workflow'],
 		},
 	},
 	{
@@ -208,6 +208,14 @@ const procedurePages = [
 
 function escapeRegExp(value) {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function containsPckgSubcommand(commandText, subcommand) {
+	const valueOption = '--(?:base-url|bearer-token|api-key|timeout-secs|config-file)(?:=\\S+|\\s+\\S+)';
+	const flagOption = '(?:--verbose|-v)';
+	return new RegExp(
+		`(?:^|\\n)\\s*(?:\\$|PS>|>)?\\s*beskid\\s+pckg\\s+(?:(?:${valueOption}|${flagOption})\\s+)*${escapeRegExp(subcommand)}\\b`,
+	).test(commandText);
 }
 
 function section(body, heading) {
@@ -363,7 +371,51 @@ test('package procedures use real pckg commands and one grouped-alias explanatio
 	for (const page of packagePages) {
 		const commands = [...page.body.matchAll(/```(?:bash|sh|shell)\n([\s\S]*?)\n```/g)].map((match) => match[1]).join('\n');
 		for (const command of ['login', 'dry-run', 'publish']) {
-			assert.doesNotMatch(commands, new RegExp(`(?:^|\\n)\\s*beskid\\s+pckg\\s+${command}\\b`), `${page.path} must not teach nonexistent beskid pckg ${command}`);
+			assert.equal(containsPckgSubcommand(commands, command), false, `${page.path} must not teach nonexistent beskid pckg ${command}`);
 		}
 	}
+});
+
+test('pckg command validation catches prompts and intervening global flags', () => {
+	for (const [sample, subcommand] of [
+		['$ beskid pckg login', 'login'],
+		['PS> beskid pckg --verbose publish', 'publish'],
+		['> beskid pckg --base-url https://registry.example dry-run', 'dry-run'],
+	]) {
+		assert.equal(containsPckgSubcommand(sample, subcommand), true, `must detect ${sample}`);
+	}
+});
+
+test('registry procedures expose version fallback and require lock inspection', async () => {
+	const paths = [
+		'docs/projects/dependencies-and-locks.md',
+		'docs/packages/index.md',
+		'docs/packages/consume.md',
+	];
+	const pages = await Promise.all(paths.map((path) => loadPage(procedurePages.find((page) => page.path === path))));
+	const combined = pages.map((page) => page.body).join('\n');
+	assert.ok(combined.includes('implementation limitation under reconciliation'));
+	assert.ok(combined.includes('resolver can fall back to the first active version'));
+	assert.ok(combined.includes('Inspect `Project.lock` after every registry resolution'));
+	assert.ok(combined.includes('stop the workflow if `resolved_version` differs from the requested version'));
+	assert.doesNotMatch(combined, /registry resolution (?:selects|records|downloads)[^.]*exact version/i);
+	assert.doesNotMatch(combined, /locked resolution selects the same coordinate/i);
+});
+
+test('workspace guidance distinguishes source-path and no-input selection and explains target defaults', async () => {
+	const workspace = await loadPage(procedurePages.find((page) => page.path === 'docs/projects/workspaces.md'));
+	assert.ok(workspace.body.includes('beskid analyze ./app/Src/Main.bd --project ./Workspace.bws'));
+	assert.match(workspace.body, /source path[\s\S]*deepest matching member/i);
+	assert.match(workspace.body, /no input path[\s\S]*defaultTestMember[\s\S]*first declared member/i);
+	assert.ok(workspace.body.includes('App, then Test, then Lib'));
+	assert.match(workspace.body, /pass `--target`[^.]*more than one target/i);
+});
+
+test('package record creation keeps the bearer value off curl argv', async () => {
+	const publish = await loadPage(procedurePages.find((page) => page.path === 'docs/packages/publish.md'));
+	const credentials = await loadPage(procedurePages.find((page) => page.path === 'docs/packages/credentials-and-recovery.md'));
+	assert.equal(credentials.data.authority.status, 'security-sensitive');
+	const actions = section(publish.body, 'Actions');
+	assert.match(actions, /printf[\s\S]*BESKID_PCKG_API_KEY[\s\S]*\|[\s\n]*curl[^\n]*--config -/);
+	assert.doesNotMatch(actions, /curl[^\n]*BESKID_PCKG_API_KEY/);
 });

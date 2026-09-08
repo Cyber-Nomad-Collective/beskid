@@ -1,6 +1,6 @@
 ---
 title: Consume a package
-description: Inspect an active package version, declare it, and resolve it into a project lockfile.
+description: Request a package version, inspect the resolved lock entry, and stop on a mismatch.
 audience:
   - developer
 authority:
@@ -13,22 +13,22 @@ verified:
   date: 2026-09-08
 ---
 
-Inspect a package before you add it. Declare an exact active version in the consuming `.bproj` manifest.
+Inspect a package before you add it. Declare the requested version in the consuming `.bproj` manifest.
 
 ## Prerequisites
 
-Know the package name and exact version. Select the consuming project. Ensure that the registry is reachable.
+Know the package name and requested version. Select the consuming project. Ensure that the registry is reachable.
 
 ## Actions
 
-1. Inspect the package and its active versions:
+1. Inspect the package and its active versions. Confirm that the requested version is listed:
 
    ```bash
    beskid pckg details Acme.Math
    beskid pckg versions Acme.Math
    ```
 
-2. Optionally download the exact artifact for offline inspection:
+2. Optionally download that coordinate for offline inspection:
 
    ```bash
    beskid pckg download Acme.Math --version 1.0.0 --output ./vendor/Acme.Math-1.0.0.bpk
@@ -43,13 +43,15 @@ Know the package name and exact version. Select the consuming project. Ensure th
    }
    ```
 
-4. Resolve once to update the lockfile, then review its diff:
+4. Resolve once to update the lockfile:
 
    ```bash
    beskid fetch --project ./App.bproj --plain
    ```
 
-5. Repeat with the reviewed lockfile enforced:
+5. Inspect `Project.lock` after every registry resolution. Find the `Acme.Math` entry and compare `resolved_version` with `1.0.0`.
+6. You must stop the workflow if `resolved_version` differs from the requested version. Do not analyze, build, test, or publish with that lockfile.
+7. Commit the lockfile only after the values match. Then repeat with the reviewed lockfile enforced:
 
    ```bash
    beskid fetch --project ./App.bproj --locked --plain
@@ -57,11 +59,13 @@ Know the package name and exact version. Select the consuming project. Ensure th
 
 ## Expected result
 
-`Project.lock` records `Acme.Math` at version `1.0.0`. The verified archive is extracted under `obj/beskid/deps`. Later locked resolution selects the same coordinate.
+`Project.lock` records the resolver's selected `resolved_version`. After review, the archive is extracted under `obj/beskid/deps/src/<materialized-id>`. `--locked` and `--frozen` preserve reviewed lock behavior on later runs.
+
+The current resolver can fall back to the first active version when the requested version is absent. This behavior is an implementation limitation under reconciliation. Initial registry resolution is not an exact-version guarantee.
 
 ## Recovery
 
-If resolution cannot find the version, run `beskid pckg versions Acme.Math` and choose an active exact version. A yanked version is not available for a new download. If `--locked` reports drift, review the manifest change and regenerate the lockfile outside CI.
+If the requested version is absent, run `beskid pckg versions Acme.Math` and select an active coordinate. If the resolver falls back, stop the workflow and remove the unreviewed lockfile change. A yanked version is not available for a new download. If `--locked` reports drift, review the manifest change and regenerate the lockfile outside CI.
 
 ## Next task
 

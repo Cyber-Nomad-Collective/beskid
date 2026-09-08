@@ -15,7 +15,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   selection, dependency materialization, lockfile enforcement, credential
   handling, artifact inspection, immutable publication, consumption, yanking,
   and recovery. Add accessible workspace and publication diagrams with full
-  text equivalents.
+  text equivalents. Warn that initial registry resolution can fall back to the
+  first active version, and require lockfile inspection before work continues.
 - Add complete Start and Develop procedures for installation, a first AOT run,
   VS Code and LSP setup, first-day recovery, CLI selection, local build and
   test work, reproducible CI, and the minimum first-program syntax. Each flow
