@@ -11,6 +11,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Authelia is restored as the sole browser authentication gateway for every
+  public Beskid application in the Compose and Watchtower deployment.
 - Production delivery now uses only the self-hosted Compose stack and
   Watchtower. Application images publish to the Beskid registry without
   credentials; the release manifest covers the five running applications.
@@ -20,9 +22,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Removed
 
-- Coolify, staging promotion, registry credential, and Authelia deployment
-  paths, including their workflows, scripts, test contracts, and runtime
-  configuration.
+- Coolify, staging promotion, and registry credential paths, including their
+  workflows, scripts, test contracts, and runtime configuration.
 
 - Platform Spec: retired the separate `site/platform-spec` application, its workspace member, CI build gate, and image-delivery lane. Legacy `/platform-spec/` URLs now redirect to `/docs/standard/`.
 - Snap distribution: remove the classic-confinement recipe, Store credential

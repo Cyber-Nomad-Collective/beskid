@@ -1,8 +1,9 @@
 # Beskid production deployment
 
 This directory is the sole Beskid production runtime for `beskid-lang.org`. It uses
-Docker Compose, the shared host edge network, the registry at `cr.beskid-lang.org`, and
-Watchtower. There is no staging deployment and no deployment control plane.
+Docker Compose, Authelia, the shared host edge network, the registry at
+`cr.beskid-lang.org`, and Watchtower. There is no staging deployment and no
+deployment control plane.
 
 ## Release flow
 
@@ -24,10 +25,12 @@ deployment.
 The production host is `root@bdziam.dev`; the runtime directory defaults to
 `/opt/beskid`. Before the first apply, an operator must provide:
 
-- DNS for `beskid-lang.org`, `learn`, `tracker`, `nexus`, `pckg`, and
-  `cr` subdomains.
+- DNS for `beskid-lang.org`, `learn`, `tracker`, `nexus`, `pckg`,
+  `cr`, and `auth` subdomains.
 - OpenBao production secrets, or a populated local `.env` copied from
   `.env.example`. Do not commit `.env`.
+- An `authelia/users_database.yml` file copied from the example with an Argon2
+  password hash for the administrator.
 - `BESKID_EDGE_NETWORK`, the existing host network used by the shared Caddy
   Docker proxy. Beskid joins this network but does not own its ports or proxy.
 

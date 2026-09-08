@@ -32,17 +32,19 @@ require 'name: beskid-registry-data' "$compose"
 require 'external: true' "$compose"
 
 forbid '^  auth:' "$compose"
-forbid '^  authelia:' "$compose"
 forbid '^  community:' "$compose"
-forbid 'htpasswd' "$compose"
-forbid 'htpasswd' "$registry_config"
+require '  authelia:' "$compose"
+require 'authelia/authelia:4.39.20' "$compose"
+require 'AUTHELIA_SESSION_SECRET' "$env_example"
+require 'AUTHELIA_STORAGE_ENCRYPTION_KEY' "$env_example"
 
 for service in website learn tracker nexus pckg; do
   require "  ${service}:" "$compose"
   require "com.centurylinklabs.watchtower.enable: \"true\"" "$compose"
 done
 
-forbid 'forward_auth' "$compose"
+require 'caddy_0.forward_auth: authelia:9091' "$compose"
+require 'caddy_0.forward_auth.uri: /api/authz/forward-auth' "$compose"
 
 forbid 'coolify' "$compose"
 forbid 'staging' "$compose"
