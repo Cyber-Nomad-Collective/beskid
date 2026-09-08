@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"license": "AGPL-3.0-only",
 	"scripts": {
-		"test": "node --test src/lib/*.test.mjs src/lib/*.test.ts",
+		"test": "node --test src/lib/*.test.mjs src/lib/*.test.ts scripts/verify-built-docs.test.mjs",
 		"sync:beskid-packages": "bash ../../scripts/sync-beskid-packages.sh site/website",
 		"sync:release-version": "node scripts/sync-release-version.mjs",
 		"sync:cli-version": "node scripts/run-trudoc.mjs sync-cli-version.mjs",

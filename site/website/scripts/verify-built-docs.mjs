@@ -2,6 +2,7 @@
 
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 const SITE_ORIGIN = "https://beskid-lang.org";
 const REQUIRED_ROUTES = [
@@ -76,6 +77,61 @@ function describeHref(sourceRoute, href) {
 	}
 }
 
+function redirectDestination(html) {
+	for (const match of html.matchAll(/<meta\b[^>]*>/gi)) {
+		const tag = match[0];
+		const httpEquiv = extractAttributeValues(tag, "http-equiv")[0];
+		if (httpEquiv?.toLowerCase() !== "refresh") continue;
+		const content = extractAttributeValues(tag, "content")[0] ?? "";
+		return content.match(/^\s*\d+(?:\.\d+)?\s*;\s*url\s*=\s*(.+?)\s*$/i)?.[1] ?? "";
+	}
+	return null;
+}
+
+function resolveRenderedTarget(distDir, initialUrl, htmlByFile) {
+	let currentUrl = initialUrl;
+	let followedRedirect = false;
+	const visitedFiles = new Set();
+	const routeChain = [];
+
+	while (currentUrl.origin === SITE_ORIGIN) {
+		const currentFile = fileForRoute(distDir, currentUrl.pathname);
+		if (!currentFile) {
+			return {
+				error: followedRedirect
+					? "redirect destination does not resolve: " + currentUrl.pathname
+					: "internal route does not resolve: " + currentUrl.pathname,
+			};
+		}
+		if (visitedFiles.has(currentFile)) {
+			return {
+				error: "redirect cycle: " + [...routeChain, currentUrl.pathname].join(" -> "),
+			};
+		}
+		visitedFiles.add(currentFile);
+		routeChain.push(currentUrl.pathname);
+
+		const html = htmlByFile.get(currentFile) ?? readFileSync(currentFile, "utf8");
+		const destination = redirectDestination(html);
+		if (destination === null) return { file: currentFile, url: currentUrl };
+		if (!destination) return { error: "redirect destination is malformed" };
+
+		let nextUrl;
+		try {
+			nextUrl = new URL(destination, currentUrl);
+		} catch {
+			return { error: "redirect destination is malformed: " + destination };
+		}
+		if (currentUrl.hash && !nextUrl.hash && !destination.includes("#")) {
+			nextUrl.hash = currentUrl.hash;
+		}
+		followedRedirect = true;
+		currentUrl = nextUrl;
+	}
+
+	return { external: true, url: currentUrl };
+}
+
 function verifyBuiltDocs(distDir) {
 	const errors = [];
 	if (!existsSync(distDir) || !statSync(distDir).isDirectory()) {
@@ -86,6 +142,18 @@ function verifyBuiltDocs(distDir) {
 	const htmlByFile = new Map(
 		htmlFiles.map((filePath) => [filePath, readFileSync(filePath, "utf8")]),
 	);
+
+	for (const filePath of htmlFiles) {
+		const html = htmlByFile.get(filePath);
+		if (redirectDestination(html) === null) continue;
+		const sourceRoute = routeForFile(distDir, filePath);
+		const result = resolveRenderedTarget(
+			distDir,
+			new URL(sourceRoute, SITE_ORIGIN),
+			htmlByFile,
+		);
+		if (result.error) errors.push(sourceRoute + ": " + result.error);
+	}
 
 	for (const requiredRoute of REQUIRED_ROUTES) {
 		if (!fileForRoute(distDir, requiredRoute)) {
@@ -119,24 +187,23 @@ function verifyBuiltDocs(distDir) {
 			const targetUrl = describeHref(sourceRoute, href);
 			if (!targetUrl || targetUrl.origin !== SITE_ORIGIN) continue;
 
-			const targetFile = fileForRoute(distDir, targetUrl.pathname);
-			if (!targetFile) {
-				errors.push(
-					sourceRoute + ": internal route does not resolve: " + targetUrl.pathname,
-				);
+			const resolved = resolveRenderedTarget(distDir, targetUrl, htmlByFile);
+			if (resolved.error) {
+				errors.push(sourceRoute + ": " + resolved.error);
 				continue;
 			}
+			if (resolved.external) continue;
 
-			if (!targetUrl.hash) continue;
+			if (!resolved.url.hash) continue;
 			let anchor;
 			try {
-				anchor = decodeURIComponent(targetUrl.hash.slice(1));
+				anchor = decodeURIComponent(resolved.url.hash.slice(1));
 			} catch {
 				errors.push(sourceRoute + ": malformed anchor: " + href);
 				continue;
 			}
 			const targetHtml =
-				htmlByFile.get(targetFile) ?? readFileSync(targetFile, "utf8");
+				htmlByFile.get(resolved.file) ?? readFileSync(resolved.file, "utf8");
 			const ids = new Set([
 				...extractAttributeValues(targetHtml, "id"),
 				...extractAttributeValues(targetHtml, "name"),
@@ -145,8 +212,8 @@ function verifyBuiltDocs(distDir) {
 				errors.push(
 					sourceRoute +
 						": anchor does not resolve: " +
-						targetUrl.pathname +
-						targetUrl.hash,
+						resolved.url.pathname +
+						resolved.url.hash,
 				);
 			}
 		}
@@ -170,21 +237,23 @@ function verifyBuiltDocs(distDir) {
 	return [...new Set(errors)].sort();
 }
 
-const distArgument = process.argv[2];
-if (!distArgument) {
-	console.error("Usage: node scripts/verify-built-docs.mjs <dist-directory>");
-	process.exitCode = 2;
-} else {
-	const distDir = path.resolve(process.cwd(), distArgument);
-	const errors = verifyBuiltDocs(distDir);
-	if (errors.length > 0) {
-		console.error("Built Docs verification failed:");
-		for (const error of errors) console.error("- " + error);
-		process.exitCode = 1;
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+	const distArgument = process.argv[2];
+	if (!distArgument) {
+		console.error("Usage: node scripts/verify-built-docs.mjs <dist-directory>");
+		process.exitCode = 2;
 	} else {
-		console.log(
-			"Built Docs verification passed: routes, anchors, H1 headings, and 404 output are valid.",
-		);
+		const distDir = path.resolve(process.cwd(), distArgument);
+		const errors = verifyBuiltDocs(distDir);
+		if (errors.length > 0) {
+			console.error("Built Docs verification failed:");
+			for (const error of errors) console.error("- " + error);
+			process.exitCode = 1;
+		} else {
+			console.log(
+				"Built Docs verification passed: routes, anchors, H1 headings, and 404 output are valid.",
+			);
+		}
 	}
 }
 
