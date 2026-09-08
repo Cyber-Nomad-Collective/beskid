@@ -11,6 +11,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Add complete Start and Develop procedures for installation, a first AOT run,
+  VS Code and LSP setup, first-day recovery, CLI selection, local build and
+  test work, reproducible CI, and the minimum first-program syntax. Each flow
+  includes an observable result and a direct recovery path.
 - Verify built Docs routes, transitive redirect destinations and cycles,
   final-destination anchors, single-H1 output, and the explicit 404 document
   after each website production build.

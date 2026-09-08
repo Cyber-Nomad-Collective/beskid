@@ -12,6 +12,12 @@ Generation-scoped results computed by Salsa for expanded AST nodes, including re
 
 An informative, checked-in conceptual map of the Beskid compiler and its direct boundaries. It resolves canonical public specification links from the OpenSpec catalog, presents implementation paths as evidence, and never replaces OpenSpec requirements as the normative authority.
 
+## AOT run
+
+The `beskid run` workflow that resolves and analyzes a program, compiles and
+links a temporary native executable with the matching runtime kit, and starts
+that executable in a subprocess. It is not an interactive JIT execution path.
+
 ## Authentik
 
 The sole browser identity authority for Beskid services. Its embedded proxy

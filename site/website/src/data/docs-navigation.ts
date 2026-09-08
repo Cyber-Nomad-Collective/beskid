@@ -10,13 +10,18 @@ export const docsNavigation: DocsNavigationGroup[] = [
 				items: [
 					{ label: 'Overview', link: '/docs/getting-started/' },
 					{ label: 'Install Beskid', link: '/docs/getting-started/install/' },
-					{ label: 'Write and check a program', link: '/docs/getting-started/first-program/' },
+					{ label: 'Write and run a program', link: '/docs/getting-started/first-program/' },
+					{ label: 'Connect VS Code', link: '/docs/getting-started/editor/' },
+					{ label: 'Troubleshoot the first day', link: '/docs/getting-started/troubleshooting/' },
 				],
 			},
 			{
 				label: 'Develop',
 				items: [
 					{ label: 'Tooling', link: '/docs/tooling/' },
+					{ label: 'Build, run, and test', link: '/docs/tooling/build-run-test/' },
+					{ label: 'Run Beskid in CI', link: '/docs/tooling/ci/' },
+					{ label: 'Language basics', link: '/docs/language-basics/' },
 					{ label: 'Projects', link: '/docs/projects/' },
 				],
 			},

@@ -1,51 +1,40 @@
 ---
 title: Get started
-description: Install Beskid, create a small program, and check it with the compiler.
+description: Follow the verified path from installation to a checked and executed Beskid program.
 audience:
+  - evaluator
   - newcomer
 authority:
   status: informative
   sourceLabel: Pinned Beskid CLI command model
   sourceHref: https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/252aa528ac7ee01a64e49e9b88b32393206fbd71/crates/beskid_cli/src/cli.rs
-  limits: This page gives a verified starting workflow. It does not define language behavior.
+  limits: This page orders the first-day tasks. The linked task pages contain the commands and recovery details.
 verified:
   revision: 252aa528ac7ee01a64e49e9b88b32393206fbd71
   date: 2026-09-08
 ---
 
-This guide gives you a small, verified Beskid workflow. It is informative guidance. The [Beskid Standard](/docs/standard/) defines language and tool requirements.
+Complete these tasks in order. The path uses a single source file, so you do not need a project manifest.
 
-## What you need
+## Prerequisites
 
-Install the Beskid toolchain. Confirm that the `beskid` command is on your `PATH`.
+Use a supported host: Linux on AMD64, macOS on ARM64, or Windows on AMD64. You need a terminal and permission to install a user-local program.
 
-```bash
-beskid --help
-```
+## Actions
 
-The command must print the command help. If it does not, install or repair the toolchain before you continue.
+1. [Install Beskid](/docs/getting-started/install/).
+2. [Write and run a program](/docs/getting-started/first-program/).
+3. [Connect an editor](/docs/getting-started/editor/).
+4. Keep [first-day troubleshooting](/docs/getting-started/troubleshooting/) open until all checks pass.
 
-## Do the first check
+## Expected result
 
-Create a file named `Main.bd`.
+`beskid --version` succeeds, `beskid analyze Main.bd --plain` reports no error diagnostics, and `beskid run Main.bd --plain` exits with status `0`.
 
-```beskid
-i32 Main() {
-  return 0;
-}
-```
+## Recovery
 
-Run semantic analysis on the file.
+Stop at the first failed check. Use the recovery section on that task page before you continue. Do not bypass an analysis error with a build command.
 
-```bash
-beskid dev syntax analyze Main.bd
-```
+## Next task
 
-The command parses the source, resolves names, and checks types. It does not create a binary.
-
-## Next steps
-
-- Read [Install Beskid](/docs/getting-started/install/) when you need the supported installation path.
-- Read [Write and check a program](/docs/getting-started/first-program/) for the first program in more detail.
-- Read [Tooling](/docs/tooling/) for the command groups.
-- Read [Projects](/docs/projects/) before you add a manifest or dependencies.
+Open [Install Beskid](/docs/getting-started/install/) to select a release channel and install the CLI.
