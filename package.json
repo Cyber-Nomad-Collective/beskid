@@ -1,6 +1,7 @@
 {
 	"name": "beskid",
 	"private": true,
+	"license": "SEE LICENSE IN LICENSING.md",
   "pnpm": {
     "onlyBuiltDependencies": [
       "@biomejs/biome",
@@ -19,6 +20,7 @@
 	},
 	"scripts": {
 		"install:all": "pnpm install",
+		"licenses:check": "node scripts/ci/check-license-policy.mjs",
 		"website": "pnpm --dir site/website run dev",
 		"openspec:catalog": "pnpm exec tsx scripts/openspec/build-catalog.ts",
 		"openspec:layouts": "pnpm exec tsx scripts/openspec/validate-layouts.ts",

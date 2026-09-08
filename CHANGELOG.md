@@ -14,6 +14,21 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - The documented `beskid dev` syntax, build, project, and package-registry
   command paths now parse and dispatch through the same canonical CLI
   implementations as their concise root commands.
+- Learn: the Playground now submits the live Monaco model rather than a stale
+  editor state, accepts its own analyze target, offers Beskid completions, and
+  uses a single workspace surface instead of nested cards. The signed-in header
+  now provides the standard account menu with account and sign-out actions.
+
+### Changed
+
+- Licensing: adopt Apache-2.0 for the compiler, runtime, tooling, reusable
+  libraries, and templates; AGPL-3.0-only for Beskid-owned network services;
+  and CC-BY-4.0 for documentation prose. Add an explicit compiler-output
+  boundary, preserve the PolyForm-licensed GitNexus exception, ship legal files
+  in service images, and add a metadata drift check.
+
+### Fixed
+
 - Docs now register the Beskid Shiki grammar as an Expressive Code language and
   mark the getting-started program samples as Beskid source, so keywords,
   types, and literals receive syntax highlighting.

@@ -22,6 +22,23 @@ each application, and provides the canonical account and sign-out surfaces.
 
 The current normative requirements in `openspec/specs`. A text outside that directory is not part of the standard unless it is incorporated through a validated OpenSpec change.
 
+## Beskid service licensing boundary
+
+The licensing boundary under which Beskid-owned programs designed to accept
+user requests over a network are AGPL-3.0-only, while reusable clients,
+protocol contracts, SDKs, templates, core-library code, and runtime components
+remain Apache-2.0. Third-party components retain their upstream terms; in
+particular, the GitNexus-derived Nexus implementation remains PolyForm
+Noncommercial rather than AGPL.
+
+## Compiler output independence
+
+The licensing rule that running the Apache-2.0 Beskid compiler does not impose
+a Beskid license on input source or generated programs. Beskid runtime,
+core-library, startup, template, or generated material incorporated into an
+output is deliberately Apache-2.0 so that output may be licensed independently,
+subject to any separately identified third-party material.
+
 ## Bug-only GitHub synchronization
 
 Tracker integration in which GitHub Issues represents public bugs and their supported status/discussion fields only. Roadmap tasks, versions, workstreams, milestones, and deliverables remain in Tracker's SQLite domain model.
@@ -108,6 +125,12 @@ A named OpenSpec requirement using SHALL or MUST and one or more testable scenar
 ## Platform specification
 
 The historical name for the separately deployed standard reader. That service is retired; the canonical website now renders the Beskid standard at `/docs/standard/`, while `openspec/specs` remains the sole normative source.
+
+## Playground
+
+The authenticated Beskid Learn workspace for trying arbitrary Beskid source with
+the analyzer. It is not a curriculum exercise: it uses the editor's current
+Monaco model and the dedicated `playground` analyze target.
 
 ## Playground
 

@@ -27,6 +27,9 @@ RUN pnpm exec vite build
 
 FROM node:24-alpine AS runtime
 
+LABEL org.opencontainers.image.licenses="Apache-2.0" \
+  org.opencontainers.image.source="https://github.com/Cyber-Nomad-Collective/beskid"
+
 RUN apk add --no-cache wget
 
 WORKDIR /app/apps/shell-template
@@ -38,6 +41,8 @@ COPY --from=build /src/beskid_sites/apps/shell-template/node_modules ./node_modu
 COPY --from=build /src/beskid_sites/node_modules /app/node_modules
 COPY --from=build /src/beskid_sites/apps/shell-template/package.json ./package.json
 COPY --from=build /src/beskid_sites/apps/shell-template/.output ./.output
+COPY LICENSE /usr/share/licenses/beskid/Apache-2.0.txt
+COPY NOTICE /usr/share/licenses/beskid/NOTICE
 
 EXPOSE 8499
 

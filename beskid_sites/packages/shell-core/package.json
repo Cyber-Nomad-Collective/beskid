@@ -2,6 +2,7 @@
 	"name": "@cyber-nomad-collective/beskid-shell-core",
 	"version": "0.1.0",
 	"private": true,
+	"license": "Apache-2.0",
 	"type": "module",
 	"description": "Shared Beskid app shell — client components, server auth (Authelia OIDC + session), and route factories for TanStack Start site apps.",
 	"exports": {
@@ -55,6 +56,5 @@
 		"react-dom": "catalog:react",
 		"typescript": "^5.9.3",
 		"vitest": "^3.2.7"
-	},
-	"license": "MIT"
+	}
 }

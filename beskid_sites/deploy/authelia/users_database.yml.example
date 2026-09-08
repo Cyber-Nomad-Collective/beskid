@@ -1,0 +1,11 @@
+# Generate password hashes with:
+# docker run --rm authelia/authelia:4.39.20 authelia crypto hash generate argon2 --password '<password>'
+# Copy this file to users_database.yml on the deployment host, replace the hash,
+# and do not commit that file.
+users:
+  mikserek:
+    displayname: Piotr
+    password: $argon2id$v=19$m=65536,t=3,p=4$replace-with-a-generated-salt$replace-with-a-generated-hash
+    email: admin@beskid-lang.org
+    groups:
+      - beskid-admins
