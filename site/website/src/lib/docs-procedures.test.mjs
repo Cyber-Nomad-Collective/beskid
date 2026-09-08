@@ -102,6 +102,63 @@ const procedurePages = [
 		},
 	},
 	{
+		path: 'docs/extend/bsol.md',
+		sections: {
+			prerequisites: ['BSOL document family', 'pinned BSOL source'],
+			actions: ['Choose the profile', 'beskid validate-bsol --profile', 'Inspect each diagnostic'],
+			expectedResult: ['selected profile', 'source location'],
+			recovery: ['parse diagnostic', 'schema diagnostic', 'semantic diagnostic'],
+		},
+	},
+	{
+		path: 'docs/extend/templates.md',
+		sections: {
+			prerequisites: ['initialized superrepo', 'empty output path'],
+			actions: ['.beskid/template.json', '{{symbolId}}', 'beskid new --path ./packages/console -n Demo -o ./Demo', 'bash scripts/ci/corelib-publish.sh --dry-run'],
+			expectedResult: ['template output', 'registry write'],
+			recovery: ['generated output', 'first failing artifact'],
+		},
+	},
+	{
+		path: 'docs/extend/tree-sitter.md',
+		sections: {
+			prerequisites: ['Node.js 22', 'read:packages'],
+			actions: ['@beskid/tree-sitter', 'pnpm install', './scripts/sync-from-pest.sh', 'node scripts/check-pest-drift.mjs', 'bunx tree-sitter test'],
+			expectedResult: ['corpus tests', 'drift check'],
+			recovery: ['grammar.js', 'handwritten rule source'],
+		},
+	},
+	{
+		path: 'docs/extend/web-packages.md',
+		sections: {
+			prerequisites: ['package owner', 'read:packages'],
+			actions: ['@cyber-nomad-collective:registry', 'npm:', 'pnpm install', 'pnpm --dir beskid_web_common run typecheck', 'pnpm --dir beskid_web_common run test'],
+			expectedResult: ['selected package', 'published package identity'],
+			recovery: ['package scope', 'token scope'],
+		},
+	},
+	{
+		path: 'docs/contributing/superrepo-workflow.md',
+		diagram: 'Superrepo setup and ownership workflow',
+		diagramBranches: ['Select setup profile', 'Docs and website', 'Full developer', 'Infra operator', 'Custom', 'Choose owned tree', 'Inspect root status', 'Inspect owned tree status', 'Run focused gate', 'Run aggregate gate'],
+		equivalentConcepts: ['setup profile', 'owned tree', 'root status', 'focused gate', 'aggregate gate', 'unrelated dirty state'],
+		sections: {
+			prerequisites: ['clean ownership boundary', 'Git'],
+			actions: ['just setup', 'Select one setup profile', 'git status --short', 'focused gate', 'aggregate gate'],
+			expectedResult: ['owned tree', 'pinned gitlinks'],
+			recovery: ['unrelated dirty state', 'do not reset'],
+		},
+	},
+	{
+		path: 'docs/contributing/learn-curriculum.md',
+		sections: {
+			prerequisites: ['BESKID_BINARY', 'lesson identifier'],
+			actions: ['src/data/learningCatalog.ts', 'lesson.md', 'start.bd', 'solution.bd', 'pnpm run lesson:check 01-hello-beskid', 'pnpm run check:all'],
+			expectedResult: ['one-lesson check', 'all-lesson check'],
+			recovery: ['Unknown lesson slug', 'first failing lesson'],
+		},
+	},
+	{
 		path: 'docs/getting-started/troubleshooting.md',
 		diagram: 'First-day troubleshooting',
 		diagramBranches: ['Command missing', 'Wrong version or host', 'Source diagnostic', 'Link failure', 'No editor diagnostics'],
@@ -348,15 +405,6 @@ const procedurePages = [
 			actions: ['/api/v1/health', '/health/ready'],
 			expectedResult: ['successful HTTP status', 'deployment window'],
 			recovery: ['correlation evidence', 'production operator'],
-		},
-	},
-	{
-		path: 'docs/contributing/index.md',
-		sections: {
-			prerequisites: ['repository change', 'ownership boundary'],
-			actions: ['/docs/contributing/repository/', '/docs/contributing/standard-changes/'],
-			expectedResult: ['focused gate', 'correct authority'],
-			recovery: ['unrelated changes', 'source owner'],
 		},
 	},
 	{
@@ -735,6 +783,156 @@ test('Editor chooser and VS Code workflow keep one observable action in each num
 	assertOneObservableAction('docs/editor/vs-code.md', section(workflow.body, 'Actions'));
 });
 
+test('Extend chooser uses guide structure and routes every extension task', async () => {
+	const [navigation, coverage, chooser] = await Promise.all([
+		readFile(new URL('../data/docs-navigation.ts', import.meta.url), 'utf8'),
+		readFile(new URL('../data/docs-coverage.ts', import.meta.url), 'utf8'),
+		loadPage({ path: 'docs/extend/index.md' }),
+	]);
+	for (const heading of ['Orientation', 'Choose an extension task', 'Limits', 'Next steps']) {
+		assert.ok(section(chooser.body, heading).length > 0, `docs/extend/index.md must contain ${heading}`);
+	}
+	for (const route of ['/docs/extend/', '/docs/extend/bsol/', '/docs/extend/templates/', '/docs/extend/tree-sitter/', '/docs/extend/web-packages/']) {
+		assert.match(navigation, new RegExp(`link: '${escapeRegExp(route)}'`), `navigation must expose ${route}`);
+		assert.ok(coverage.includes(`route: '${route}'`), `coverage must catalogue ${route}`);
+		assert.ok(chooser.body.includes(route) || route === '/docs/extend/', `Extend chooser must link to ${route}`);
+	}
+	assert.equal(chooser.data.pageKind, 'guide');
+	assertOneObservableAction('docs/extend/index.md', section(chooser.body, 'Choose an extension task'));
+});
+
+test('BSOL and template tasks keep validation and publication boundaries explicit', async () => {
+	const [bsol, templates] = await Promise.all([
+		loadPage(procedurePages.find((page) => page.path === 'docs/extend/bsol.md')),
+		loadPage(procedurePages.find((page) => page.path === 'docs/extend/templates.md')),
+	]);
+	assert.equal(bsol.data.authority.sourceHref, 'https://github.com/Cyber-Nomad-Collective/beskid_bsol/blob/2ed5f1283ca7395e2c1ebd34b42f2d0f4fb93260/README.md');
+	assert.equal(bsol.data.verified.revision, '2ed5f1283ca7395e2c1ebd34b42f2d0f4fb93260');
+	for (const profile of ['project.v1', 'project.v2', 'workspace.v1', 'runtime.v1', 'runtime.v2', 'board.v1', 'board.v2', 'board.v3', 'shell.pages.v1', 'tools.config.v1', 'configuration.v1', 'configuration.v2', 'schema.v1', 'schema.v2']) {
+		assert.ok(bsol.body.includes(profile), `BSOL profile table must include ${profile}`);
+	}
+	assert.match(bsol.body, /OpenSpec[^.]*normative|normative[^.]*OpenSpec/i);
+	assert.match(bsol.body, /parse diagnostic/i);
+	assert.match(bsol.body, /schema diagnostic/i);
+	assert.match(bsol.body, /semantic diagnostic/i);
+
+	assert.equal(templates.data.authority.sourceHref, 'https://github.com/Cyber-Nomad-Collective/beskid_templates/blob/33fce0b840d4de318c804f7fc7396a0a93bb165a/README.md');
+	assert.equal(templates.data.verified.revision, '33fce0b840d4de318c804f7fc7396a0a93bb165a');
+	assert.match(templates.body, /\.beskid\/template\.json/);
+	assert.ok(templates.body.includes('{{symbolId}}'));
+	assert.ok(templates.body.includes('beskid new --path ./packages/console -n Demo -o ./Demo'));
+	assert.ok(templates.body.includes('bash scripts/ci/corelib-publish.sh --dry-run'));
+	assert.match(templates.body, /does not write|no registry write/i);
+});
+
+test('Tree-sitter task preserves consumer identity and generated-file gates', async () => {
+	const page = await loadPage(procedurePages.find((candidate) => candidate.path === 'docs/extend/tree-sitter.md'));
+	assert.equal(page.data.authority.sourceHref, 'https://github.com/Cyber-Nomad-Collective/beskid_treesitter/blob/2d17762873a567c9ad61fad526ba240d74f9abf2/README.md');
+	assert.equal(page.data.verified.revision, '2d17762873a567c9ad61fad526ba240d74f9abf2');
+	for (const fact of [
+		'@cyber-nomad-collective/beskid-tree-sitter',
+		'"@beskid/tree-sitter": "npm:@cyber-nomad-collective/beskid-tree-sitter@^0.1.3"',
+		'grammar.js',
+		'scripts/lib/declaration-rules.mjs',
+		'scripts/lib/manual-grammar.mjs',
+		'./scripts/sync-from-pest.sh',
+		'node scripts/check-pest-drift.mjs',
+		'bunx tree-sitter test',
+	]) assert.ok(page.body.includes(fact), `Tree-sitter task must explain ${fact}`);
+	assert.match(page.body, /generated[^.]*do not hand-edit|do not hand-edit[^.]*generated/i);
+	assert.match(page.body, /Bun 1\.3\.0[^.]*pinned|pinned[^.]*Bun 1\.3\.0/i);
+	assert.match(page.body, /0\.1\.3[^.]*component-specific exception|component-specific exception[^.]*0\.1\.3/i);
+	assert.match(page.body, /\/docs\/extend\/web-packages\//);
+	assert.doesNotMatch(page.body, /NODE_AUTH_TOKEN|_authToken/, 'Tree-sitter task must link to the canonical GitHub Packages credential procedure');
+});
+
+test('web package task records identities, ownership, aliases, token scopes, and package-manager limits', async () => {
+	const page = await loadPage(procedurePages.find((candidate) => candidate.path === 'docs/extend/web-packages.md'));
+	assert.equal(page.data.authority.sourceHref, 'https://github.com/Cyber-Nomad-Collective/beskid_web_common/blob/c3957dc4b8dc8c5b1bda10c00e0717bbf364ad5e/README.md');
+	assert.equal(page.data.verified.revision, 'c3957dc4b8dc8c5b1bda10c00e0717bbf364ad5e');
+	for (const packageName of [
+		'@cyber-nomad-collective/trudoc',
+		'@cyber-nomad-collective/beskid-ui',
+		'@cyber-nomad-collective/beskid-ui-react',
+		'@beskid/auth-client',
+		'@cyber-nomad-collective/beskid-server-observability',
+	]) assert.ok(page.body.includes(packageName), `web package task must include ${packageName}`);
+	assert.match(page.body, /read:packages/);
+	assert.match(page.body, /write:packages/);
+	assert.ok(page.body.includes('@beskid:registry=https://npm.pkg.github.com'));
+	assert.match(page.body, /pnpm[^.]*normal package manager/i);
+	assert.match(page.body, /Bun[^.]*pinned component workflow/i);
+	assert.match(page.body, /npm:@cyber-nomad-collective\//);
+	assert.ok(page.body.includes('"@beskid/beskid-ui": "npm:@cyber-nomad-collective/beskid-ui@^0.2.0"'));
+	assert.doesNotMatch(page.body, /(?:gh[pousr]_[A-Za-z0-9]+|NODE_AUTH_TOKEN=(?!\$\{NODE_AUTH_TOKEN\})\S+)/, 'web package task must not contain a token value');
+});
+
+test('superrepo and Learn contributor tasks preserve ownership and focused validation', async () => {
+	const [navigation, coverage, superrepo, curriculum, contributing] = await Promise.all([
+		readFile(new URL('../data/docs-navigation.ts', import.meta.url), 'utf8'),
+		readFile(new URL('../data/docs-coverage.ts', import.meta.url), 'utf8'),
+		loadPage(procedurePages.find((page) => page.path === 'docs/contributing/superrepo-workflow.md')),
+		loadPage(procedurePages.find((page) => page.path === 'docs/contributing/learn-curriculum.md')),
+		loadPage({ path: 'docs/contributing/index.md' }),
+	]);
+	for (const route of ['/docs/contributing/superrepo-workflow/', '/docs/contributing/learn-curriculum/']) {
+		assert.match(navigation, new RegExp(`link: '${escapeRegExp(route)}'`), `navigation must expose ${route}`);
+		assert.ok(coverage.includes(`route: '${route}'`), `coverage must catalogue ${route}`);
+		assert.ok(contributing.body.includes(route), `contributor chooser must link to ${route}`);
+	}
+	for (const heading of ['Orientation', 'Choose a contribution task', 'Limits', 'Next steps']) {
+		assert.ok(section(contributing.body, heading).length > 0, `docs/contributing/index.md must contain ${heading}`);
+	}
+	for (const taskHeading of ['Prerequisites', 'Actions', 'Expected result', 'Recovery', 'Next task']) {
+		assert.equal(section(contributing.body, taskHeading), '', `docs/contributing/index.md must not use task heading ${taskHeading}`);
+	}
+	assertOneObservableAction('docs/contributing/index.md', section(contributing.body, 'Choose a contribution task'));
+	assert.equal(superrepo.data.authority.sourceHref, 'https://github.com/Cyber-Nomad-Collective/beskid/blob/3143396b796d86c1a70a0bfb1aa4761b593bbae5/site/setup-wizard.sh');
+	assert.equal(superrepo.data.verified.revision, '3143396b796d86c1a70a0bfb1aa4761b593bbae5');
+	for (const profile of ['Docs and website', 'Full developer', 'Infra operator', 'Custom']) assert.ok(superrepo.body.includes(profile));
+	assert.match(superrepo.body, /gitlink/i);
+	assert.match(superrepo.body, /unrelated dirty state/i);
+	assert.match(superrepo.body, /focused gate/i);
+	assert.match(superrepo.body, /aggregate gate/i);
+	for (const command of [
+		'pnpm --dir site/website test',
+		'pnpm --dir beskid_web_common run test',
+		'pnpm --dir site/learn run lesson:check <lesson-id>',
+		'bash scripts/ci/corelib-publish.sh --dry-run',
+		'pnpm typecheck',
+		'./validate-ci-local.sh',
+	]) assert.ok(superrepo.body.includes(command), `superrepo gate table must include ${command}`);
+	const superrepoBeforeActions = superrepo.body.slice(0, superrepo.body.indexOf('\n## Actions'));
+	for (const term of ['focused gate', 'aggregate gate', 'root contract boundary']) {
+		assert.match(superrepoBeforeActions, new RegExp(`${escapeRegExp(term)}[^.]*means`, 'i'), `${term} must be defined before the actions`);
+	}
+
+	assert.equal(curriculum.data.authority.sourceHref, 'https://github.com/Cyber-Nomad-Collective/beskid/blob/3143396b796d86c1a70a0bfb1aa4761b593bbae5/site/learn/curriculum/README.md');
+	assert.equal(curriculum.data.verified.revision, '3143396b796d86c1a70a0bfb1aa4761b593bbae5');
+	for (const source of ['src/data/learningCatalog.ts', 'lesson.md', 'start.bd', 'solution.bd']) assert.ok(curriculum.body.includes(source));
+	assert.ok(curriculum.body.includes('pnpm run lesson:check 01-hello-beskid'));
+	assert.ok(curriculum.body.includes('pnpm run check:all'));
+	for (const incomplete of ['09-cli-help', '10-cli-format', '11-cli-build']) assert.ok(curriculum.body.includes(incomplete));
+	assert.match(curriculum.body, /pinned baseline[^.]*instruction-only/i);
+	assert.match(curriculum.body, /check:all[^.]*stop[^.]*missing `start\.bd`/i);
+	assert.equal(contributing.data.authority.sourceHref, 'https://github.com/Cyber-Nomad-Collective/beskid/blob/3143396b796d86c1a70a0bfb1aa4761b593bbae5/README.md');
+	assert.equal(contributing.data.verified.revision, '3143396b796d86c1a70a0bfb1aa4761b593bbae5');
+});
+
+test('new extension and contributor procedures keep one observable action per numbered step', async () => {
+	for (const path of [
+		'docs/extend/bsol.md',
+		'docs/extend/templates.md',
+		'docs/extend/tree-sitter.md',
+		'docs/extend/web-packages.md',
+		'docs/contributing/superrepo-workflow.md',
+		'docs/contributing/learn-curriculum.md',
+	]) {
+		const page = await loadPage(procedurePages.find((candidate) => candidate.path === path));
+		assertOneObservableAction(path, section(page.body, 'Actions'));
+	}
+});
+
 test('procedure diagrams retain their verified titles, branches, and text concepts', async () => {
 	for (const page of await Promise.all(procedurePages.map(loadPage))) {
 		if (page.data.diagramPolicy === 'required') {
@@ -883,7 +1081,6 @@ test('Task 5 numbered steps contain one observable action', async () => {
 	const task5Paths = procedurePages
 		.map((page) => page.path)
 		.filter((path) => /^docs\/(?:services|operations|reference)\//.test(path) || [
-			'docs/contributing/index.md',
 			'docs/contributing/repository.md',
 			'docs/contributing/standard-changes.md',
 		].includes(path));

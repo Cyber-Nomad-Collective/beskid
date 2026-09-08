@@ -29,10 +29,15 @@ export const docsNavigation: DocsNavigationGroup[] = [
 				],
 			},
 			{
-				label: 'Editor',
+				label: 'Extend',
 				items: [
+					{ label: 'Choose an extension task', link: '/docs/extend/' },
 					{ label: 'Choose an editor task', link: '/docs/editor/' },
 					{ label: 'Use VS Code projects', link: '/docs/editor/vs-code/' },
+					{ label: 'Integrate BSOL', link: '/docs/extend/bsol/' },
+					{ label: 'Author templates', link: '/docs/extend/templates/' },
+					{ label: 'Integrate Tree-sitter', link: '/docs/extend/tree-sitter/' },
+					{ label: 'Use shared web packages', link: '/docs/extend/web-packages/' },
 				],
 			},
 			{
@@ -87,6 +92,8 @@ export const docsNavigation: DocsNavigationGroup[] = [
 				items: [
 					{ label: 'Contribution paths', link: '/docs/contributing/' },
 					{ label: 'Set up the repository', link: '/docs/contributing/repository/' },
+					{ label: 'Use the superrepo workflow', link: '/docs/contributing/superrepo-workflow/' },
+					{ label: 'Change Learn curriculum', link: '/docs/contributing/learn-curriculum/' },
 					{ label: 'Change the Standard', link: '/docs/contributing/standard-changes/' },
 					{ label: 'Write Beskid documentation', link: '/docs/contributing/documentation/' },
 					{ label: 'Use ASD-STE100', link: '/docs/contributing/ste-100/' },

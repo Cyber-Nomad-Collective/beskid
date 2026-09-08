@@ -1,6 +1,6 @@
 ---
 title: Contribute to Beskid
-description: Select the repository, Standard, or documentation contribution procedure.
+description: Select a repository, curriculum, Standard, or documentation contribution procedure.
 pageKind: guide
 diagramPolicy: not-needed
 diagramOmissionReason: The contributor task list is a short route to detailed procedures.
@@ -10,33 +10,31 @@ audience:
 authority:
   status: informative
   sourceLabel: Pinned superrepo contribution map
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/90c40a91fefa8150134663de120afcb1ef582f2a/README.md
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/3143396b796d86c1a70a0bfb1aa4761b593bbae5/README.md
   limits: This page routes contribution tasks. Each source owner defines its focused gate.
 verified:
-  revision: 90c40a91fefa8150134663de120afcb1ef582f2a
+  revision: 3143396b796d86c1a70a0bfb1aa4761b593bbae5
   date: 2026-09-08
 ---
 
-Select one authority and one ownership boundary before you edit a file.
+## Orientation
 
-## Prerequisites
+Select one authority and one ownership boundary before you edit a file. Describe the expected result of the repository change. Identify the root or submodule owner.
 
-Describe the repository change and its expected result. Identify the ownership boundary for the root repository or a submodule.
-
-## Actions
+## Choose a contribution task
 
 1. Use [Repository setup](/docs/contributing/repository/) for a checkout, submodule, or test change.
-2. Use [Standard changes](/docs/contributing/standard-changes/) before an observable behavior change.
-3. Use [Documentation authoring](/docs/contributing/documentation/) for public technical guidance.
+2. Use the [superrepo workflow](/docs/contributing/superrepo-workflow/) for setup profiles, submodule ownership, and gate selection.
+3. Use [Learn curriculum authoring](/docs/contributing/learn-curriculum/) for a lesson change.
+4. Use [Standard changes](/docs/contributing/standard-changes/) before an observable behavior change.
+5. Use [Documentation authoring](/docs/contributing/documentation/) for public technical guidance.
 
-## Expected result
+## Limits
 
-The change stays in the correct authority. Its focused gate passes, and the commit does not contain another owner's files.
-
-## Recovery
+This guide routes contribution tasks. Each detailed task defines its focused gate and recovery path. OpenSpec is the sole normative authority for required Beskid behavior.
 
 If the diff contains unrelated changes, stop and preserve them without staging them. If ownership is unclear, contact the source owner before you edit the boundary.
 
-## Next task
+## Next steps
 
-[Set up the repository](/docs/contributing/repository/).
+Start with [the superrepo workflow](/docs/contributing/superrepo-workflow/), or open the focused task that owns your planned change.
