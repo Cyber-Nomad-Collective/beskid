@@ -120,6 +120,90 @@ const procedurePages = [
 			recovery: ['diagnostic span', 'semicolon'],
 		},
 	},
+	{
+		path: 'docs/projects/index.md',
+		diagram: 'Workspace project dependency graph',
+		diagramBranches: ['Workspace.bws', 'App.bproj', 'Core.bproj', 'registry package', 'Project.lock', 'obj/beskid/deps'],
+		equivalentConcepts: ['workspace manifest', 'project manifest', 'path dependency', 'registry dependency', 'Project.lock', 'materialized dependency'],
+		sections: {
+			prerequisites: ['beskid --version', '`.bproj`'],
+			actions: ['/docs/projects/create/', '/docs/projects/dependencies-and-locks/'],
+			expectedResult: ['one selected project', 'reproducible dependency graph'],
+			recovery: ['multiple `.bproj`', '--project'],
+		},
+	},
+	{
+		path: 'docs/projects/create.md',
+		noDiagram: 'The project creation procedure is a short linear scaffold-and-check sequence.',
+		sections: {
+			prerequisites: ['installed `console` template', 'empty output directory'],
+			actions: ['beskid new console -n MyApp -o ./MyApp --no-interactive', 'beskid analyze --project "$project_manifest" --target "$target_name" --plain'],
+			expectedResult: ['Created template output at', 'exactly one `.bproj`'],
+			recovery: ['beskid new list', '--force'],
+		},
+	},
+	{
+		path: 'docs/projects/workspaces.md',
+		noDiagram: 'The Projects overview already shows the workspace and member relationships.',
+		sections: {
+			prerequisites: ['two project directories', 'one `.bproj`'],
+			actions: ['member "app"', '--workspace-member app'],
+			expectedResult: ['selected member', 'selected target'],
+			recovery: ['multiple `.bws`', '--workspace-member'],
+		},
+	},
+	{
+		path: 'docs/projects/dependencies-and-locks.md',
+		noDiagram: 'The Projects overview already shows the dependency graph; this page is an ordered lockfile procedure.',
+		sections: {
+			prerequisites: ['Project.lock', 'registry access'],
+			actions: ['source = "path"', 'source = "registry"', 'beskid fetch --project ./App.bproj --locked --plain', 'beskid fetch --project ./App.bproj --frozen --plain'],
+			expectedResult: ['obj/beskid/deps', '`.generated`'],
+			recovery: ['beskid lock --project ./App.bproj --plain', 'Git dependencies are not materialized'],
+		},
+	},
+	{
+		path: 'docs/packages/index.md',
+		diagram: 'Package publication and consumption',
+		diagramBranches: ['Author', 'Registry', 'Consumer', 'Create package record', 'Upload .bpk', 'Resolve exact version', 'Materialize dependency'],
+		equivalentConcepts: ['package author', 'package record', 'immutable', 'package consumer', 'Project.lock', 'yanked'],
+		sections: {
+			prerequisites: ['publisher API key', 'package name'],
+			actions: ['/docs/packages/publish/', '/docs/packages/consume/'],
+			expectedResult: ['immutable name-and-version coordinate', 'Project.lock'],
+			recovery: ['/docs/packages/credentials-and-recovery/', 'do not upload'],
+		},
+	},
+	{
+		path: 'docs/packages/publish.md',
+		noDiagram: 'The Packages overview already shows the publication and consumption sequence.',
+		sections: {
+			prerequisites: ['BESKID_PCKG_API_KEY', 'publisher permission'],
+			actions: ['POST /api/packages', 'beskid pckg pack --package Acme.Math', 'unzip -p', 'beskid pckg upload Acme.Math'],
+			expectedResult: ['.beskid/docs/api.json', 'Published Acme.Math@1.0.0'],
+			recovery: ['package already exists', 'package version is immutable'],
+		},
+	},
+	{
+		path: 'docs/packages/consume.md',
+		noDiagram: 'The manifest edit and fetch procedure is linear, and the Packages overview shows the participants.',
+		sections: {
+			prerequisites: ['package name', 'exact version'],
+			actions: ['beskid pckg details Acme.Math', 'beskid pckg download Acme.Math --version 1.0.0', 'beskid fetch --project ./App.bproj --locked --plain'],
+			expectedResult: ['Project.lock', 'obj/beskid/deps'],
+			recovery: ['beskid pckg versions Acme.Math', 'yanked'],
+		},
+	},
+	{
+		path: 'docs/packages/credentials-and-recovery.md',
+		noDiagram: 'A symptom-to-command recovery table is clearer than a flow diagram.',
+		sections: {
+			prerequisites: ['secret manager', 'publish scope'],
+			actions: ['beskid pckg configure', 'beskid pckg whoami', 'beskid pckg yank Acme.Math --version 1.0.0', 'beskid pckg unyank Acme.Math --version 1.0.0'],
+			expectedResult: ['authenticated=true', 'version yanked'],
+			recovery: ['revoke', 'rotate'],
+		},
+	},
 ];
 
 function escapeRegExp(value) {
@@ -268,5 +352,18 @@ test('active procedures use current project, entrypoint, and AOT terminology', a
 		assert.doesNotMatch(page.body, /\b(?:Project|Workspace)\.proj\b|(?<!b)\.proj\b/, `${page.path} must not use a retired manifest name`);
 		assert.doesNotMatch(page.body, /\b(?:i32|unit)\s+main\s*\(/, `${page.path} must use the Main entrypoint`);
 		assert.doesNotMatch(page.body, /(?:beskid\s+run[^\n.]*\bJIT\b|\bJIT\b[^\n.]*beskid\s+run)/i, `${page.path} must describe beskid run as AOT`);
+	}
+});
+
+test('package procedures use real pckg commands and one grouped-alias explanation', async () => {
+	const packagePages = await Promise.all(procedurePages.filter((page) => page.path.startsWith('docs/packages/')).map(loadPage));
+	const combined = packagePages.map((page) => page.body).join('\n');
+	assert.ok(combined.includes('beskid pckg'));
+	assert.equal(combined.match(/beskid dev package registry/g)?.length, 1, 'the grouped package alias must be explained once');
+	for (const page of packagePages) {
+		const commands = [...page.body.matchAll(/```(?:bash|sh|shell)\n([\s\S]*?)\n```/g)].map((match) => match[1]).join('\n');
+		for (const command of ['login', 'dry-run', 'publish']) {
+			assert.doesNotMatch(commands, new RegExp(`(?:^|\\n)\\s*beskid\\s+pckg\\s+${command}\\b`), `${page.path} must not teach nonexistent beskid pckg ${command}`);
+		}
 	}
 });

@@ -94,6 +94,14 @@ An error-recovery heuristic that deletes one unexpected token when the following
 
 A graph whose data and structure cannot be changed through its reader interface: users may inspect, select, pan, zoom, fit, and follow links, but cannot move, connect, delete, or edit nodes or edges.
 
+## Immutable package coordinate
+
+The identity formed by one package name and one semantic version. After publication, a different artifact cannot replace that coordinate. A corrected artifact requires a new version.
+
+## Lockfile policy
+
+The project-resolution rule selected by CLI flags. `--locked` requires an existing `Project.lock` that matches resolution. `--frozen` also forbids an update to that lockfile.
+
 ## Global distribution version
 
 The one release identity for all externally distributed Beskid artifacts. Compiler CI on `main` mints it exactly as `0.4.<GITHUB_RUN_NUMBER>` and emits it for downstream consumers; tags, commits, manifests, and downstream workflow run numbers cannot create an alternate value.
@@ -164,6 +172,10 @@ The deterministic `openspec/catalog.json` mapping stable capability/requirement 
 
 An OpenSpec capability retained for discoverability and historical coverage when its migrated material contained no explicit normative claim. Its single provisional requirement says that the capability cannot be cited for conformance until a reviewed OpenSpec change adds testable requirements.
 
+## Project manifest
+
+The single `.bproj` file that identifies one Beskid project, its source root, targets, and dependencies.
+
 ## Runtime intrinsic
 
 A manifest-declared primitive or platform operation available only while compiling the canonical Beskid runtime under a non-forgeable trusted compiler capability. User packages cannot name, import, inherit, or invoke runtime intrinsics.
@@ -177,6 +189,10 @@ unwoken not-ready unit.
 ## Source provenance
 
 Informative text and hashes retained inside OpenSpec capabilities and `openspec/catalog.json` to explain where migrated requirements came from. Provenance preserves history but is not itself normative.
+
+## Workspace manifest
+
+A `.bws` file that names a set of project-member directories. Each member directory contains exactly one project manifest.
 
 ## Semantic review
 

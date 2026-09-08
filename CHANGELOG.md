@@ -11,6 +11,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Add complete project and package procedures for `.bproj` and `.bws`
+  selection, dependency materialization, lockfile enforcement, credential
+  handling, artifact inspection, immutable publication, consumption, yanking,
+  and recovery. Add accessible workspace and publication diagrams with full
+  text equivalents.
 - Add complete Start and Develop procedures for installation, a first AOT run,
   VS Code and LSP setup, first-day recovery, CLI selection, local build and
   test work, reproducible CI, and the minimum first-program syntax. Each flow

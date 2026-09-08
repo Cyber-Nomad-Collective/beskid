@@ -1,52 +1,57 @@
 ---
 title: Projects
-description: Define a Beskid project with a .bproj manifest, targets, and dependencies.
+description: Select a Beskid project or workspace and resolve its dependency graph.
 audience:
   - developer
 authority:
   status: informative
   sourceLabel: Beskid project manifest contract
   sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/35fdb92cd9c4ad8f61e3d06d7171e94a694b2562/openspec/specs/tooling--manifests-and-lockfiles--project-manifest-contract/spec.md
-  limits: This page gives a verified project workflow. It does not define the manifest format.
+  limits: This guide explains the verified project workflow. The Beskid Standard defines the manifest contract.
 verified:
   revision: 252aa528ac7ee01a64e49e9b88b32393206fbd71
   date: 2026-09-08
 ---
 
-A Beskid project uses a `.bproj` manifest. The manifest states the project identity, source root, targets, and dependencies.
+A project manifest has the `.bproj` extension. A workspace manifest has the `.bws` extension. Project commands resolve one project before they resolve its targets and dependencies.
 
-## Start with a manifest
+## Prerequisites
 
-Create one `.bproj` file in the project directory. Keep the source tree under the declared root.
+Run `beskid --version`. Keep exactly one `.bproj` file in each project directory.
 
-```text
-MyApp/
-├── MyApp.bproj
-└── Src/
-    └── Main.bd
+## Actions
+
+1. [Create one project](/docs/projects/create/) and verify its manifest and source tree.
+2. [Group projects in a workspace](/docs/projects/workspaces/) when one checkout contains related projects.
+3. [Resolve dependencies and control Project.lock](/docs/projects/dependencies-and-locks/).
+4. Pass `--project` when automatic discovery could select the wrong manifest.
+
+```mermaid
+flowchart LR
+  accTitle: Workspace project dependency graph
+  accDescr: A workspace selects an application project. The project resolves path and registry dependencies into its lockfile and materialized dependency tree.
+  W[Workspace.bws] --> A[App.bproj]
+  W --> C[Core.bproj]
+  A -->|path dependency| C
+  A -->|registry dependency| R[registry package]
+  A --> L[Project.lock]
+  C --> L
+  R --> L
+  L --> M[obj/beskid/deps]
 ```
 
-Use a target to name a buildable unit. Use a dependency block to declare each dependency.
+### Diagram text
 
-```text
-MyApp {
-  name = "MyApp"
-  version = "0.1.0"
-  root = "Src"
-}
+The workspace manifest lists the application and library members. The application project manifest declares a path dependency on the library project manifest. It can also declare a registry dependency. Resolution records both dependency kinds in `Project.lock`. It copies each materialized dependency under `obj/beskid/deps` for the selected project.
 
-target "App" {
-  kind = App
-  entry = "Main.bd"
-}
-```
+## Expected result
 
-## Resolve before you build
+Each command has one selected project and, when needed, one selected target. A committed `Project.lock` identifies the reproducible dependency graph.
 
-Run the project-aware analysis command before you compile.
+## Recovery
 
-```bash
-beskid dev syntax analyze --project ./MyApp.bproj
-```
+If a directory contains multiple `.bproj` files, automatic discovery reports an error. Remove the duplicate or pass the exact manifest with `--project`. If a workspace member is wrong, pass `--workspace-member`.
 
-Use the project reference when you add targets, workspaces, or dependencies. Do not treat this page as a second specification of the manifest format.
+## Next task
+
+[Create a project](/docs/projects/create/) or go directly to [dependencies and locks](/docs/projects/dependencies-and-locks/) for an existing project.

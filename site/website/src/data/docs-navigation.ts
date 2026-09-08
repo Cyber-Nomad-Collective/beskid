@@ -23,12 +23,18 @@ export const docsNavigation: DocsNavigationGroup[] = [
 					{ label: 'Run Beskid in CI', link: '/docs/tooling/ci/' },
 					{ label: 'Language basics', link: '/docs/language-basics/' },
 					{ label: 'Projects', link: '/docs/projects/' },
+					{ label: 'Create a project', link: '/docs/projects/create/' },
+					{ label: 'Use a workspace', link: '/docs/projects/workspaces/' },
+					{ label: 'Dependencies and locks', link: '/docs/projects/dependencies-and-locks/' },
 				],
 			},
 			{
 				label: 'Publish',
 				items: [
 					{ label: 'Packages', link: '/docs/packages/' },
+					{ label: 'Publish a package', link: '/docs/packages/publish/' },
+					{ label: 'Consume a package', link: '/docs/packages/consume/' },
+					{ label: 'Credentials and recovery', link: '/docs/packages/credentials-and-recovery/' },
 				],
 			},
 			{
