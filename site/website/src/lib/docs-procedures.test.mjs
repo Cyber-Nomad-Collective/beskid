@@ -90,15 +90,6 @@ const procedurePages = [
 		},
 	},
 	{
-		path: 'docs/editor/index.md',
-		sections: {
-			prerequisites: ['installed extension', 'daily task'],
-			actions: ['/docs/editor/vs-code/', '/docs/getting-started/editor/'],
-			expectedResult: ['first installation', 'daily project work'],
-			recovery: ['Beskid LSP', 'Getting Started'],
-		},
-	},
-	{
 		path: 'docs/editor/vs-code.md',
 		diagram: 'VS Code project-context lifecycle',
 		diagramBranches: ['Open .bws or .bproj', 'Select .bproj project focus', 'Start CLI and LSP', 'Automatic fetch enabled?', 'Run beskid fetch once', 'Projects and Packages', 'Graph Explorer', 'Beskid status dashboard', 'Beskid LSP output'],
@@ -430,6 +421,21 @@ function section(body, heading) {
 	return body.slice(contentStart, nextHeading === -1 ? undefined : nextHeading).trim();
 }
 
+function assertOneObservableAction(path, content) {
+	const steps = [...content.matchAll(/^(\d+)\.\s+(.+)$/gm)];
+	assert.ok(steps.length >= 2, `${path} must contain at least two numbered steps`);
+	for (const [, , action] of steps) {
+		const proseAction = action.replace(/`[^`]*`|\*\*[^*]*\*\*|\[[^\]]+\]\([^)]+\)/g, 'reference');
+		const actionStarts = proseAction.match(/(?:^|[.!?]\s+)(?:(?:After|Before|For|If|When)[^,]{0,100},\s*)?(?:Do not\s+)?(?:Accept|Change|Choose|Click|Configure|Continue|Expand|Focus|Inspect|Keep|Open|Put|Return|Run|Select|Set|Use|Verify)\b/gi) ?? [];
+		assert.equal(actionStarts.length, 1, `${path} must have one observable action in step: ${action}`);
+		assert.doesNotMatch(
+			proseAction,
+			/(?:,\s*|;\s*|\s)(?:and|then)\s+(?:accept|change|choose|click|configure|continue|expand|focus|inspect|keep|open|return|run|select|set|use|verify)\b/i,
+			`${path} must split the compound action: ${action}`,
+		);
+	}
+}
+
 function splitDocument(source, filePath) {
 	const match = source.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
 	assert.ok(match, `${filePath} must start with YAML frontmatter`);
@@ -657,7 +663,7 @@ test('VS Code routes separate first installation from daily project work', async
 	const [navigation, coverage, chooser, workflow, gettingStarted, projects, packages] = await Promise.all([
 		readFile(new URL('../data/docs-navigation.ts', import.meta.url), 'utf8'),
 		readFile(new URL('../data/docs-coverage.ts', import.meta.url), 'utf8'),
-		loadPage(procedurePages.find((page) => page.path === 'docs/editor/index.md')),
+		loadPage({ path: 'docs/editor/index.md' }),
 		loadPage(procedurePages.find((page) => page.path === 'docs/editor/vs-code.md')),
 		loadPage(procedurePages.find((page) => page.path === 'docs/getting-started/editor.md')),
 		loadPage(procedurePages.find((page) => page.path === 'docs/projects/index.md')),
@@ -680,6 +686,16 @@ test('VS Code routes separate first installation from daily project work', async
 	assert.match(packages.body, /\/docs\/editor\/vs-code\//);
 });
 
+test('Editor chooser uses the guide structure instead of the task template', async () => {
+	const chooser = await loadPage({ path: 'docs/editor/index.md' });
+	for (const heading of ['Orientation', 'Choose a workflow', 'Limits', 'Next steps']) {
+		assert.ok(section(chooser.body, heading).length > 0, `docs/editor/index.md must contain ${heading}`);
+	}
+	for (const taskHeading of ['Prerequisites', 'Actions', 'Expected result', 'Recovery', 'Next task']) {
+		assert.equal(section(chooser.body, taskHeading), '', `docs/editor/index.md must not use task heading ${taskHeading}`);
+	}
+});
+
 test('daily VS Code workflow uses verified project, view, settings, and recovery behavior', async () => {
 	const workflow = await loadPage(procedurePages.find((page) => page.path === 'docs/editor/vs-code.md'));
 	const actions = section(workflow.body, 'Actions');
@@ -687,22 +703,36 @@ test('daily VS Code workflow uses verified project, view, settings, and recovery
 
 	assert.match(workflow.body, /\.bws[^.]*workspace/i);
 	assert.match(workflow.body, /\.bproj[^.]*focused project|focused project[^.]*\.bproj/i);
-	assert.match(actions, /Beskid status-bar entry[^.]*Status dashboard/i);
+	assert.match(actions, /Beskid status-bar entry/i);
+	assert.match(actions, /Status dashboard/i);
 	for (const surface of ['Projects', 'Packages', 'Graph Explorer']) {
 		assert.match(actions, new RegExp(surface));
 	}
 	assert.match(actions, /beskid\.toolchain\.autoFetchDependencies/);
 	assert.match(actions, /runs `beskid fetch` once|run `beskid fetch` once/i);
 	assert.match(actions, /beskid\.project\.autoSelectFromEditor/);
-	assert.match(actions, /beskid\.graph\.defaultKind/);
+	assert.doesNotMatch(workflow.body, /beskid\.graph\.defaultKind/);
 	assert.match(actions, /Beskid: Configure Package Registry API Key/);
 	assert.match(actions, /VS Code SecretStorage/);
-	assert.match(actions, /beskid\.pckg\.apiKey[^.]*plain-text|plain-text[^.]*beskid\.pckg\.apiKey/i);
+	assert.match(actions, /beskid\.pckg\.apiKey/);
+	assert.match(actions, /plain-text configuration/i);
+	assert.match(actions, /takes priority over SecretStorage/i);
 	assert.match(recovery, /Beskid LSP output channel/i);
 	assert.match(recovery, /Beskid: Setup Toolchain/);
 	assert.match(recovery, /Beskid: Fetch Packages/);
 	assert.match(recovery, /Project\.lock/);
 	assert.match(workflow.body, /UI behavior is informative|interface behavior is informative/i);
+	const { equivalent } = accessibleDiagram(workflow);
+	assert.match(equivalent, /disable automatic fetch[^.]*uses the current dependency state/i);
+});
+
+test('Editor chooser and VS Code workflow keep one observable action in each numbered step', async () => {
+	const [chooser, workflow] = await Promise.all([
+		loadPage({ path: 'docs/editor/index.md' }),
+		loadPage(procedurePages.find((page) => page.path === 'docs/editor/vs-code.md')),
+	]);
+	assertOneObservableAction('docs/editor/index.md', section(chooser.body, 'Choose a workflow'));
+	assertOneObservableAction('docs/editor/vs-code.md', section(workflow.body, 'Actions'));
 });
 
 test('procedure diagrams retain their verified titles, branches, and text concepts', async () => {

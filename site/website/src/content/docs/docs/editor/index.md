@@ -17,25 +17,21 @@ verified:
   date: 2026-09-08
 ---
 
-Use Getting Started for first installation. Use the VS Code workflow for daily project work after the extension connects to the language server.
+## Orientation
 
-## Prerequisites
+This guide separates first installation from daily project work. The installation task verifies one language-server diagnostic. The daily workflow starts after that verification.
 
-Identify whether you need an installed extension or help with a daily task. Keep the failed command, view name, or diagnostic if you need recovery help.
+## Choose a workflow
 
-## Actions
+1. Open [Connect VS Code](/docs/getting-started/editor/) for first installation or a failed initial connection.
+2. Open [Use the VS Code project workflow](/docs/editor/vs-code/) for daily project work with an installed extension.
 
-1. For first installation, [connect VS Code](/docs/getting-started/editor/) and verify one editor diagnostic.
-2. For daily project work, [use the VS Code project workflow](/docs/editor/vs-code/) to select project focus and use the product views.
+## Limits
 
-## Expected result
+This guide only routes editor tasks. The extension implementation defines the available UI. The Beskid Standard remains normative for language and manifest behavior.
 
-The first installation route ends with a working language server. The daily project work route starts with that connection and uses one project context.
+Use the Beskid LSP output from the selected task for recovery. Do not use this chooser as an extension-development or service-operation procedure.
 
-## Recovery
+## Next steps
 
-If VS Code has no working Beskid LSP connection, return to [Getting Started](/docs/getting-started/editor/). If the connection works, use the recovery section in the daily workflow.
-
-## Next task
-
-[Use the VS Code project workflow](/docs/editor/vs-code/) after the first diagnostic succeeds.
+Complete [the first installation](/docs/getting-started/editor/), or continue to [daily project work](/docs/editor/vs-code/) after the first diagnostic succeeds.
