@@ -11,6 +11,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Added
 
+- Add a checked-in documentation coverage catalogue for 52 non-compiler
+  technical Docs routes. Map each public surface to one audience, source
+  boundary, page kind, diagram policy, page, and navigation leaf. Add focused
+  product-use journeys for evaluation, Learn, the public platform, VS Code,
+  BSOL, templates, Tree-sitter, shared web packages, the superrepo workflow,
+  and Learn curriculum maintenance.
 - Add a deterministic, advisory STE review command for technical Docs. It
   reports sentence-length, passive-voice, abbreviation, and article candidates
   with file and line evidence; joins wrapped prose without crossing Markdown
@@ -112,6 +118,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Separate product-use guides from service-operation guides. Keep deployment
+  ownership, service inventory, and authentication topology under
+  reconciliation while their tracked authorities disagree.
 - Align the active Book and CLI reference with the pinned 0.4 command surface.
   Add one reference page for each of the 26 root commands, remove the
   nonexistent `beskid publish` page, document grouped aliases once, and link
