@@ -140,6 +140,13 @@ A named OpenSpec requirement using SHALL or MUST and one or more testable scenar
 
 The historical name for the separately deployed standard reader. That service is retired; the canonical website now renders the Beskid standard at `/docs/standard/`, while `openspec/specs` remains the sole normative source.
 
+## Production verification boundary
+
+The current root workflow boundary that validates a checksummed release
+manifest, verifies its source run, waits for externally controlled Watchtower,
+and runs public smoke checks. It cannot start, replace, or roll back production
+containers; the production operator owns those actions.
+
 ## Release platform identifier
 
 The exact operating-system and architecture key shared by release metadata and the download UI. The closed public set is `linux-amd64`, `darwin-arm64`, and `windows-amd64`; broader platform names and separate architecture fields are invalid.

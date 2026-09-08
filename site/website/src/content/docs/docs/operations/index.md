@@ -22,9 +22,10 @@ Select the exact Coolify lane. Obtain a lane-scoped OpenBao token and a separate
 
 ## Actions
 
-1. Review [Containers](/docs/operations/containers/) and identify the required images and volumes.
-2. Follow [Deploy and roll back](/docs/operations/deployment/) with one immutable release manifest.
-3. Verify [Health and monitoring](/docs/operations/health-and-monitoring/) before you promote the release.
+1. Review [Containers](/docs/operations/containers/).
+2. Identify the required images and volumes.
+3. Follow [Verify production delivery](/docs/operations/deployment/) with one immutable release manifest.
+4. Verify [Health and monitoring](/docs/operations/health-and-monitoring/) before you promote the release.
 
 ## Expected result
 

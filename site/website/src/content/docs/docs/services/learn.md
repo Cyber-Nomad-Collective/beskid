@@ -23,7 +23,7 @@ Beskid Learn provides interactive learning and runs real CLI checks against temp
 | Purpose | Interactive learning with `analyze`, `parse`, `tree`, and `run` checks. |
 | Audience | Learners use lessons. Service operators verify the CLI-backed runtime. |
 | Public boundary | `https://learn.beskid-lang.org`. |
-| Local boundary | `pnpm run dev --port 4173` starts the frontend. The full server needs an explicit `BESKID_BINARY`. |
+| Local boundary | `pnpm run dev --port 4173` starts the frontend. The production container uses port `80`. |
 | Authentication | The platform Compose contract accepts auth-hub and Learn session settings. Do not assume sign-in when these settings are absent. |
 | Persistent state | Learner checks use a temporary workspace. The production Compose contract declares no durable Learn volume. |
 | Container image | `ghcr.io/cyber-nomad-collective/beskid-learn`. |
@@ -35,13 +35,16 @@ Beskid Learn provides interactive learning and runs real CLI checks against temp
 
 ## Prerequisites
 
-Use the interactive learning service for a verified lesson. For a local full loop, provide a known `BESKID_BINARY`; do not build an unreviewed compiler checkout as part of this procedure.
+Use the interactive learning service for a verified lesson. This safe procedure requires an explicit, known `BESKID_BINARY` for a local full loop. The service can fall back to `cargo run`, but do not use that fallback in this procedure.
 
 ## Actions
 
-1. Verify the service contract at `https://learn.beskid-lang.org/api/health` and record the release response.
-2. Open `https://learn.beskid-lang.org` and select one seeded exercise.
-3. Run the exercise check and inspect the real diagnostic or successful result.
+1. Verify the service contract at `https://learn.beskid-lang.org/api/health`.
+2. Record the health response.
+3. Open `https://learn.beskid-lang.org`.
+4. Select one seeded exercise.
+5. Run the exercise check.
+6. Inspect the real diagnostic or successful result.
 
 ## Expected result
 

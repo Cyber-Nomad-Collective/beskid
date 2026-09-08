@@ -23,10 +23,13 @@ Create a repository checkout. Install Git and the pinned pnpm toolchain. Confirm
 ## Actions
 
 1. From the superrepo root, run `./scripts/setup-environment.sh` to initialize pinned submodules and install root packages.
-2. Inspect `git status --short` in the root and in the submodule that you will change.
-3. Run `pnpm --dir site/website test` for website guidance changes.
-4. Run the focused gate that the changed component documents. Run broader gates only when the change crosses a contract boundary.
-5. Edit public guidance in `site/website/src/content/docs/`. Use the owning generator for derived files; do not edit generated output.
+2. Inspect `git status --short` in the root.
+3. Inspect `git status --short` in the submodule that you will change.
+4. Run `pnpm --dir site/website test` for website guidance changes.
+5. Run the focused gate that the changed component documents.
+6. Run broader gates only when the change crosses a contract boundary.
+7. Edit public guidance in `site/website/src/content/docs/`.
+8. Use the owning generator for derived files; do not edit generated output.
 
 ## Expected result
 

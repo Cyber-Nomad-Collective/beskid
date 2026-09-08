@@ -40,9 +40,10 @@ Confirm the selected delivery version and the configured `TRACKER_DATA_DIR`. Tre
 
 ## Actions
 
-1. Verify the service contract at `https://tracker.beskid-lang.org/api/health` and record its status.
-2. Verify that the configured volume contains the active SQLite database.
-3. Run the read-only reconciliation plan before an import or bug synchronization change.
+1. Verify the service contract at `https://tracker.beskid-lang.org/api/health`.
+2. Record the health response status.
+3. Verify that the configured volume contains the active SQLite database.
+4. Run the read-only reconciliation plan before an import or bug synchronization change.
 
 ## Expected result
 

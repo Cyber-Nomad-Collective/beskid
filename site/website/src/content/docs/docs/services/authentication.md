@@ -40,9 +40,11 @@ Confirm that the public URL uses GitHub OAuth and that `AUTH_HUB_PUBLIC_URL` is 
 ## Actions
 
 1. Confirm that `SESSION_SECRET`, the GitHub OAuth values, and `AUTH_HUB_PUBLIC_URL` exist in the lane secret path without displaying their values.
-2. Verify the service contract with `https://auth.beskid-lang.org/api/v1/health` and record only its status.
-3. Use `/admin/pairing` to create a short-lived pairing code for the named consumer service.
-4. Complete pairing from the consumer and verify the returned service token stays in the consumer secret store.
+2. Verify the service contract with `https://auth.beskid-lang.org/api/v1/health`.
+3. Record only the health response status.
+4. Use `/admin/pairing` to create a short-lived pairing code for the named consumer service.
+5. Complete pairing from the consumer.
+6. Verify that the returned service token stays in the consumer secret store.
 
 ## Expected result
 
@@ -54,4 +56,4 @@ If pairing fails, discard the pairing code and create a new code. If administrat
 
 ## Next task
 
-[Deploy and roll back services](/docs/operations/deployment/).
+[Verify production delivery](/docs/operations/deployment/).

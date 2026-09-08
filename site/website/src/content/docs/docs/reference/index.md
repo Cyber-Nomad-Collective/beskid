@@ -24,8 +24,10 @@ State the fact to verify. Classify its authority type as behavior, procedure, co
 ## Actions
 
 1. Use the [Beskid Standard](/docs/standard/) for required language and tool behavior.
-2. Use task Docs for current procedures and the Book for learning sequence and rationale.
-3. Use Tracker for delivery status and [Licensing](/docs/reference/licensing/) for component terms.
+2. Use task Docs for current procedures.
+3. Use the Book for learning sequence and rationale.
+4. Use Tracker for delivery status.
+5. Use [Licensing](/docs/reference/licensing/) for component terms.
 
 | Information | Canonical source |
 | --- | --- |

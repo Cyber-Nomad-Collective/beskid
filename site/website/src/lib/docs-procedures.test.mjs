@@ -257,19 +257,19 @@ const procedurePages = [
 		noDiagram: 'The numbered promotion and rollback procedure is already linear.',
 		sections: {
 			prerequisites: ['protected GitHub environment', 'lane-scoped'],
-			actions: ['just seed-openbao-check', 'just sync-env-prod'],
-			expectedResult: ['release manifest', 'traceparent'],
-			recovery: ['rollback', 'previous Compose payload'],
+			actions: ['just seed-openbao-check', 'reusable-promote.yml'],
+			expectedResult: ['checksummed release manifest', 'Watchtower'],
+			recovery: ['production operator', 'no authority'],
 		},
 	},
 	{
 		path: 'docs/operations/health-and-monitoring.md',
 		noDiagram: 'The endpoint and symptom matrix is clearer than a flow diagram.',
 		sections: {
-			prerequisites: ['release manifest', 'monitoring access'],
+			prerequisites: ['expected image identity', 'monitoring access'],
 			actions: ['/api/v1/health', '/health/ready'],
-			expectedResult: ['successful HTTP status', 'same release manifest'],
-			recovery: ['correlation evidence', 'rollback'],
+			expectedResult: ['successful HTTP status', 'deployment window'],
+			recovery: ['correlation evidence', 'production operator'],
 		},
 	},
 	{
@@ -542,17 +542,40 @@ test('package record creation keeps the bearer value off curl argv', async () =>
 
 test('service and operations guidance covers each public audience in navigation', async () => {
 	const navigation = await readFile(new URL('../data/docs-navigation.ts', import.meta.url), 'utf8');
-	for (const [audience, route] of [
-		['platform user', '/docs/services/'],
-		['self-hoster', '/docs/operations/'],
-		['maintainer', '/docs/contributing/repository/'],
-		['contributor', '/docs/contributing/'],
-		['evaluator', '/docs/reference/'],
+	for (const [audience, route, pagePath] of [
+		['platform user', '/docs/services/', 'docs/services/index.md'],
+		['self-hoster', '/docs/operations/', 'docs/operations/index.md'],
+		['maintainer', '/docs/contributing/repository/', 'docs/contributing/repository.md'],
+		['contributor', '/docs/contributing/', 'docs/contributing/index.md'],
+		['evaluator', '/docs/reference/', 'docs/reference/index.md'],
 	]) {
 		assert.ok(navigation.includes(route), `${audience} must have a navigation entry at ${route}`);
+		const page = await loadPage({ path: pagePath });
+		assert.ok(page.data.audience.includes(audience), `${pagePath} must name ${audience} in frontmatter`);
 	}
 	for (const group of ['Operate', 'Contribute', 'Reference']) {
 		assert.match(navigation, new RegExp(`label: '${group}'`), `navigation must contain the ${group} group`);
+	}
+});
+
+test('Task 5 numbered steps contain one observable action', async () => {
+	const task5Paths = procedurePages
+		.map((page) => page.path)
+		.filter((path) => /^docs\/(?:services|operations|reference)\//.test(path) || [
+			'docs/contributing/index.md',
+			'docs/contributing/repository.md',
+			'docs/contributing/standard-changes.md',
+		].includes(path));
+	for (const path of task5Paths) {
+		const page = await loadPage(procedurePages.find((candidate) => candidate.path === path));
+		for (const [, , action] of section(page.body, 'Actions').matchAll(/^(\d+)\.\s+(.+)$/gm)) {
+			assert.doesNotMatch(
+				action,
+				/(?:,\s*|;\s*|\s)(?:and|then)\s+(?:check|complete|confirm|contact|create|identify|inspect|open|record|redeploy|restore|run|select|use|verify|wait)\b/i,
+				`${path} must split the multi-action step: ${action}`,
+			);
+			assert.equal((action.match(/\.\s+(?:Check|Complete|Confirm|Create|Inspect|Open|Record|Run|Select|Use|Verify)\b/g) ?? []).length, 0, `${path} must not add a second imperative sentence in one step`);
+		}
 	}
 });
 
@@ -565,6 +588,29 @@ test('service pages publish a complete verified operating contract', async () =>
 		}
 		assert.match(contract, /ghcr\.io\/cyber-nomad-collective\/beskid-/);
 	}
+});
+
+test('service contracts retain critical pinned facts and disclose auth conflicts', async () => {
+	const expectations = {
+		'docs/services/authentication.md': ['90c40a91fefa8150134663de120afcb1ef582f2a/site/auth/README.md', 'GitHub OAuth', '/api/v1/health', '8090', 'auth-data', 'beskid-auth'],
+		'docs/services/learn.md': ['90c40a91fefa8150134663de120afcb1ef582f2a/site/learn/README.md', 'BESKID_BINARY', '/api/health', '80', 'no durable Learn volume', 'beskid-learn'],
+		'docs/services/pckg.md': ['beskid_pckg/blob/a490c7c7aa3fa7a7b28245e0c7564849d36eb19c/README.md', '/health/ready', '8082', 'PostgreSQL', 'pckg_packages', 'beskid-pckg', 'trusted forward-auth boundary'],
+		'docs/services/tracker.md': ['c7da5b60e70fe87b10b1b3cde7e91c39af32136a/README.md', '/api/health', '3000', 'SQLite', 'tracker-data', 'beskid-tracker', 'central Auth hub'],
+		'docs/services/nexus.md': ['eb207de7985ea110c1c0ea7e23f89dd94a66583d/COOLIFY.md', '/api/health', '8452', 'nexus-data', 'beskid-nexus', 'Caddy', 'Authentik'],
+	};
+	for (const [path, facts] of Object.entries(expectations)) {
+		const page = await loadPage(procedurePages.find((candidate) => candidate.path === path));
+		const complete = `${page.data.authority.sourceHref}\n${page.data.verified.revision}\n${page.body}`;
+		for (const fact of facts) assert.ok(complete.includes(fact), `${path} must preserve ${fact}`);
+	}
+	const pckg = await loadPage(procedurePages.find((page) => page.path === 'docs/services/pckg.md'));
+	assert.equal(pckg.data.verified.revision, 'a490c7c7aa3fa7a7b28245e0c7564849d36eb19c');
+	const topology = await loadPage(procedurePages.find((page) => page.path === 'docs/services/index.md'));
+	assert.match(topology.body, /root Auth README/i);
+	assert.match(topology.body, /conflicts with the pinned, service-owned contracts/i);
+	assert.match(topology.body, /under reconciliation/i);
+	assert.match(topology.body, /pckg[^.]*separate trusted forward-auth boundary/i);
+	assert.match(topology.body, /Nexus[^.]*Caddy[^.]*Authentik/i);
 });
 
 test('security-sensitive procedures protect secrets before operator actions', async () => {
@@ -589,11 +635,24 @@ test('repository setup is separate from end-user installation and uses pnpm', as
 
 test('standard changes preserve the OpenSpec-to-Docs authority boundary', async () => {
 	const standard = await loadPage(procedurePages.find((page) => page.path === 'docs/contributing/standard-changes.md'));
+	assert.equal(standard.data.authority.status, 'informative');
 	assert.match(standard.body, /OpenSpec is the sole normative authority/);
 	assert.match(standard.body, /SHALL or MUST/);
 	assert.match(standard.body, /GIVEN, WHEN, and THEN/);
 	assert.match(standard.body, /openspec\/catalog\.json/);
 	assert.match(standard.body, /Docs (?:is|are) informative/);
+});
+
+test('deployment guidance distinguishes verification from production control', async () => {
+	const deployment = await loadPage(procedurePages.find((page) => page.path === 'docs/operations/deployment.md'));
+	for (const fact of ['checksummed release manifest', 'images are signed separately', 'reusable-promote.yml', 'Watchtower', 'cannot start, replace, or roll back production containers', 'under reconciliation']) {
+		assert.ok(deployment.body.includes(fact), `deployment guidance must explain ${fact}`);
+	}
+	assert.doesNotMatch(deployment.body, /signed release manifest|deployment path must restore/i);
+	const health = await loadPage(procedurePages.find((page) => page.path === 'docs/operations/health-and-monitoring.md'));
+	assert.doesNotMatch(health.body, /same release manifest|health response[^.]*manifest identity/i);
+	assert.match(health.body, /health handler[^.]*does not expose[^.]*manifest identity/i);
+	assert.match(health.body, /separate release and deployment evidence/i);
 });
 
 test('licensing reference reflects component boundaries and the Nexus exception', async () => {

@@ -48,7 +48,7 @@ export const docsNavigation: DocsNavigationGroup[] = [
 					{ label: 'Nexus', link: '/docs/services/nexus/' },
 					{ label: 'Operations', link: '/docs/operations/' },
 					{ label: 'Containers', link: '/docs/operations/containers/' },
-					{ label: 'Deploy and roll back', link: '/docs/operations/deployment/' },
+					{ label: 'Verify production delivery', link: '/docs/operations/deployment/' },
 					{ label: 'Health and monitoring', link: '/docs/operations/health-and-monitoring/' },
 				],
 			},

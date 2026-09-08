@@ -14,17 +14,22 @@ verified:
   date: 2026-09-08
 ---
 
-Use the release manifest, health response, and monitoring timestamp as one evidence set. Do not include cookies, tokens, or private response bodies.
+Use separate release and deployment evidence for image identity. A health handler does not expose release manifest identity. Use the health response and monitoring timestamp only for availability evidence. Do not include cookies, tokens, or private response bodies.
 
 ## Prerequisites
 
-Record the release manifest SHA and deployment time. Obtain monitoring access for the selected lane.
+Record the expected image identity from the release workflow. Record the deployment time from the production operator. Obtain monitoring access for the selected lane.
 
 ## Actions
 
-1. Check Auth at `/api/v1/health`, Learn at `/api/health`, Tracker at `/api/health`, and Nexus at `/api/health`.
-2. Check pckg at `/health/ready` and the Website at `/`.
-3. Compare the public checks with container health and the monitor at `monitor.beskid-lang.org`.
+1. Check Auth at `/api/v1/health`.
+2. Check Learn at `/api/health`.
+3. Check Tracker at `/api/health`.
+4. Check Nexus at `/api/health`.
+5. Check pckg at `/health/ready`.
+6. Check the Website at `/`.
+7. Compare the public check times with container health.
+8. Inspect the same deployment window at `monitor.beskid-lang.org`.
 
 | Boundary | Healthy evidence | Next diagnostic |
 | --- | --- | --- |
@@ -37,11 +42,11 @@ Record the release manifest SHA and deployment time. Obtain monitoring access fo
 
 ## Expected result
 
-Every required route returns a successful HTTP status. Container and public evidence identify the same release manifest and deployment window.
+Every required route returns a successful HTTP status. Container and public evidence agree on the deployment window. Separate release and deployment evidence identifies the expected images.
 
 ## Recovery
 
-If one boundary fails, preserve its correlation evidence and inspect only that service. If several services fail, inspect the proxy and shared lane first. Perform rollback when the new manifest caused the failure, then repeat all checks.
+If one boundary fails, preserve its correlation evidence and inspect only that service. If several services fail, inspect the proxy and shared lane first. Ask the production operator to restore the previous state when the deployment caused the failure. Repeat all checks after the operator completes recovery.
 
 ## Next task
 

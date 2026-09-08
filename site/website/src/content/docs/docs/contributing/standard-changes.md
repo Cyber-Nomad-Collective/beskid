@@ -5,7 +5,7 @@ audience:
   - specification contributor
   - maintainer
 authority:
-  status: normative
+  status: informative
   sourceLabel: Pinned OpenSpec configuration
   sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/90c40a91fefa8150134663de120afcb1ef582f2a/openspec/config.yaml
   limits: This page explains the workflow. Accepted files in openspec/specs remain the sole normative text.
@@ -23,10 +23,11 @@ Describe the observable behavior that must change. Identify the stable capabilit
 ## Actions
 
 1. Create an OpenSpec change with a proposal, design when needed, tasks, and a capability delta.
-2. Write each normative requirement with `SHALL or MUST`. Give every scenario `GIVEN, WHEN, and THEN` conditions.
-3. Run `openspec validate <change-id> --strict --no-interactive` for the selected change.
-4. Run `pnpm run openspec:validate` from the repository root.
-5. Regenerate `openspec/catalog.json` only when the owning change requires the deterministic projection.
+2. Write each normative requirement with `SHALL or MUST`.
+3. Give every scenario `GIVEN, WHEN, and THEN` conditions.
+4. Run `openspec validate <change-id> --strict --no-interactive` for the selected change.
+5. Run `pnpm run openspec:validate` from the repository root.
+6. Regenerate `openspec/catalog.json` only when the owning change requires the deterministic projection.
 
 ```mermaid
 flowchart LR
@@ -54,7 +55,7 @@ Validation accepts complete `SHALL or MUST` requirements and `GIVEN, WHEN, and T
 
 ## Recovery
 
-If strict validation reports a validation error, correct the OpenSpec change and run the focused command again; do not change Docs to hide a normative conflict. If a generated catalog differs unexpectedly, stop and inspect the source change and generator revision.
+If strict validation reports a validation error, correct the OpenSpec change. Run the focused command again. In this case, do not change Docs to hide a normative conflict. If a generated catalog differs unexpectedly, stop and inspect the source change and generator revision.
 
 ## Next task
 

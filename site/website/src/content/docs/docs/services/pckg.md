@@ -7,10 +7,10 @@ audience:
 authority:
   status: security-sensitive
   sourceLabel: Pinned pckg service contract
-  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/90c40a91fefa8150134663de120afcb1ef582f2a/pckg/README.md
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid_pckg/blob/a490c7c7aa3fa7a7b28245e0c7564849d36eb19c/README.md
   limits: This page does not authorize registry mutations or disclose database or bearer credentials.
 verified:
-  revision: 90c40a91fefa8150134663de120afcb1ef582f2a
+  revision: a490c7c7aa3fa7a7b28245e0c7564849d36eb19c
   date: 2026-09-08
 ---
 
@@ -41,7 +41,8 @@ Confirm that the package registry PostgreSQL service is reachable and that `PCKG
 
 1. Verify the service contract at `http://localhost:8082/health/ready` from inside the service network.
 2. Verify the public catalogue with a read-only request before any service contract mutation.
-3. Check that PostgreSQL and `/app/packages` use their documented persistent volumes.
+3. Check that PostgreSQL uses its documented persistent volume.
+4. Check that `/app/packages` uses the `pckg_packages` volume.
 
 ## Expected result
 

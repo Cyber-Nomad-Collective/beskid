@@ -40,8 +40,10 @@ Confirm the repository graph task and the configured `GITNEXUS_HOME`. Confirm th
 ## Actions
 
 1. Verify the service contract at `http://127.0.0.1:8452/api/health` without exposing port `8452` publicly.
-2. Open the proxy-protected hostname and verify the repository catalogue.
-3. Run one authorized catalogue analysis and wait for its terminal result.
+2. Open the proxy-protected hostname.
+3. Verify the repository catalogue.
+4. Run one authorized catalogue analysis.
+5. Wait for its terminal result.
 
 ## Expected result
 

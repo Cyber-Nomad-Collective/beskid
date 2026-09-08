@@ -27,21 +27,24 @@ Identify your service task. Check the public service status and record the page 
 2. Select [Learn](/docs/services/learn/), [pckg](/docs/services/pckg/), [Tracker](/docs/services/tracker/), or [Nexus](/docs/services/nexus/).
 3. Use [Health and monitoring](/docs/operations/health-and-monitoring/) if a service does not respond.
 
+The root Auth README says that pckg and Nexus use the Auth hub. That claim conflicts with the pinned, service-owned contracts and is under reconciliation. This page follows the service-owned contracts: pckg uses a separate trusted forward-auth boundary, and Nexus uses Caddy with Authentik.
+
 The diagram shows the public service and authentication topology.
 
 ```mermaid
 flowchart LR
   accTitle: Public service and authentication topology
-  accDescr: Readers use the Website for public guidance. The Auth hub supplies GitHub OAuth to paired services. Other services keep separate data and health boundaries.
+  accDescr: Readers use public services. Tracker and Learn connect to the Auth hub. pckg uses trusted forward-auth. Caddy and Authentik protect Nexus.
   U[User] --> W[Website]
   U --> L[Learn]
   U --> P[pckg]
   U --> T[Tracker]
   U --> N[Nexus]
   T --> A[Auth hub]
-  P -. protected browser routes .-> A
   L -. configured pairing .-> A
-  N -. deployment-specific trust boundary .-> A
+  P -. protected browser routes .-> F[Trusted forward-auth]
+  N -. protected route .-> C[Caddy]
+  C --> K[Authentik]
 ```
 
 ### Diagram text
@@ -49,11 +52,11 @@ flowchart LR
 | Service | Public function | Authentication relationship |
 | --- | --- | --- |
 | Website | Provides public guidance and the Docs. | Public reading does not require sign-in. |
-| Auth hub | Performs GitHub OAuth and issues paired-service handoffs. | It is the only GitHub OAuth app for paired Beskid services. |
+| Auth hub | Performs GitHub OAuth and issues paired-service handoffs. | Tracker and configured Learn sessions use this boundary. |
 | Learn | Runs interactive learning checks. | Its deployment can use configured auth-hub pairing values. |
-| pckg | Serves package metadata and package artifacts. | CLI publication uses registry bearer keys. Protected browser routes require a verified boundary. |
+| pckg | Serves package metadata and package artifacts. | CLI publication uses registry bearer keys. Protected browser routes require a separate trusted forward-auth boundary. |
 | Tracker | Publishes delivery status and bugs from its own data. | It uses the Auth hub for GitHub sign-in. |
-| Nexus | Presents a repository graph and an MCP endpoint. | Its pinned service contract uses a proxy forward-auth boundary. |
+| Nexus | Presents a repository graph and an MCP endpoint. | Caddy and Authentik form its pinned forward-auth boundary. |
 
 ## Expected result
 
