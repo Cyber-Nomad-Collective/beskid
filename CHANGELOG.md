@@ -22,8 +22,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   protected Learn origin, which starts the canonical Authentik flow.
 - Docs pages now use their left pane for the page table of contents, and the
   global desktop navigation groups Docs, Standard, and Book under one menu.
-- The Blog now uses a centered editorial layout with published dates, status
-  tiles rendered by a reusable React component, and linked public-domain art.
+- The Blog now uses a centered editorial layout with published dates,
+  reusable React tiles, no status badges, and linked public-domain art.
+- The Docs menu now opens inward at narrow desktop widths, and the Blog index
+  keeps its heading without an explanatory summary deck.
 - Production delivery now uses only the self-hosted Compose stack and
   Watchtower. Application images publish to the Beskid registry without
   credentials; the release manifest covers the five running applications.

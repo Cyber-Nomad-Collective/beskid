@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { blogStatusLabel, sortBlogEntries, type BlogStatus } from '../lib/blog';
+import { sortBlogEntries, type BlogStatus } from '../lib/blog';
 import { BlogPostCard } from './blog/BlogPostCard.tsx';
 
 const entries =
@@ -40,7 +40,6 @@ function imageFor(id: string) {
 	<header class="blog__intro">
 		<p class="blog__eyebrow">Blog</p>
 		<h1>The work behind Beskid</h1>
-		<p>Release notes, engineering essays, and design records. Read what shipped, what changed our minds, and what remains unfinished.</p>
 	</header>
 
 	{featured && (
@@ -49,12 +48,11 @@ function imageFor(id: string) {
 			<div class="blog__feature-copy">
 				<div class="blog__meta">
 					<time datetime={featured.data.date.toISOString()}>{dateFormatter.format(featured.data.date)}</time>
-					<span class:list={['blog__status', `blog__status--${featured.data.blogStatus}`]}>{blogStatusLabel(featured.data.blogStatus)}</span>
+					{featured.data.release && <span>{featured.data.release}</span>}
 				</div>
-				<p class="blog__feature-label">Latest post{featured.data.release ? ` · ${featured.data.release}` : ''}</p>
 				<h2><a href={`/${featured.id}/`}>{featured.data.title}</a></h2>
 				<p>{featured.data.description}</p>
-				<a class="blog__read" href={`/${featured.id}/`}>Read the latest post <span aria-hidden="true">→</span></a>
+				<a class="blog__read" href={`/${featured.id}/`}>Read the post <span aria-hidden="true">→</span></a>
 			</div>
 		</article>
 	)}
@@ -62,15 +60,14 @@ function imageFor(id: string) {
 	<section class="blog__archive" aria-labelledby="blog-archive-title">
 		<div class="blog__archive-heading">
 			<div>
-				<p class="blog__eyebrow">Archive</p>
-				<h2 id="blog-archive-title">All posts</h2>
+				<p class="blog__eyebrow">From the archive</p>
+				<h2 id="blog-archive-title">Older notes</h2>
 			</div>
-			<p>{archive.length} posts, newest first</p>
 		</div>
 		<ol class="blog__list">
 		{archive.map((entry) => (
 			<li class="blog__item">
-				<BlogPostCard title={entry.data.title} description={entry.data.description} href={`/${entry.id}/`} date={dateFormatter.format(entry.data.date)} dateTime={entry.data.date.toISOString()} status={blogStatusLabel(entry.data.blogStatus)} release={entry.data.release} image={imageFor(entry.id)} />
+				<BlogPostCard title={entry.data.title} description={entry.data.description} href={`/${entry.id}/`} date={dateFormatter.format(entry.data.date)} dateTime={entry.data.date.toISOString()} release={entry.data.release} image={imageFor(entry.id)} />
 			</li>
 		))}
 		</ol>
@@ -89,13 +86,11 @@ function imageFor(id: string) {
 	.blog__feature { display: grid; grid-template-columns: minmax(14rem, .85fr) minmax(0, 1.15fr); min-height: 20rem; margin-bottom: 4.5rem; overflow: hidden; border: 1px solid var(--sl-color-gray-5); border-radius: 1rem; background: linear-gradient(135deg, color-mix(in srgb, var(--sl-color-text-accent) 12%, var(--sl-color-bg) 88%), var(--sl-color-bg)); }
 	.blog__feature > img { width: 100%; height: 100%; min-height: 18rem; object-fit: cover; filter: saturate(.72) contrast(1.08); }
 	.blog__feature-copy { display: flex; flex-direction: column; justify-content: center; max-width: 46rem; padding: clamp(1.5rem, 6vw, 4.5rem); }
-	.blog__feature-label { margin: 1.75rem 0 .5rem; color: var(--sl-color-text-accent); font-size: var(--sl-text-sm); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
-	.blog__feature h2 { margin: 0 0 1rem; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.05; }
+	.blog__feature h2 { margin: 1.5rem 0 1rem; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.05; }
 	.blog__feature h2 a { color: var(--sl-color-white); text-decoration: none; }
-	.blog__feature-copy > p:not(.blog__feature-label) { margin: 0; color: var(--sl-color-gray-3); font-size: var(--sl-text-lg); }
+	.blog__feature-copy > p { margin: 0; color: var(--sl-color-gray-3); font-size: var(--sl-text-lg); }
 	.blog__read { display: inline-flex; width: fit-content; gap: .5rem; margin-top: 1.75rem; color: var(--sl-color-white); font-weight: 700; text-decoration: none; }
 	.blog__archive-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
-	.blog__archive-heading > p { margin: 0; color: var(--sl-color-gray-3); }
 	.blog__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
 	:global(.blog-card) { height: 100%; overflow: hidden; border: 1px solid var(--sl-color-gray-5); border-radius: .8rem; background: color-mix(in srgb, var(--sl-color-bg-nav) 68%, var(--sl-color-bg)); }
 	:global(.blog-card__image) { display: block; aspect-ratio: 16 / 9; background: var(--sl-color-gray-6); }
@@ -104,10 +99,6 @@ function imageFor(id: string) {
 	:global(.blog-card__body) { display: flex; min-height: 18rem; flex-direction: column; padding: 1.1rem; }
 	:global(.blog-card__meta), :global(.blog-card__footer) { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; justify-content: space-between; color: var(--sl-color-gray-3); font-size: var(--sl-text-sm); }
 	.blog__meta, .blog__footer { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between; color: var(--sl-color-gray-3); font-size: var(--sl-text-sm); }
-	.blog__status { padding: .2rem .55rem; border-radius: 999px; background: var(--sl-color-gray-5); color: var(--sl-color-white); font-weight: 600; }
-	.blog__status--released { background: var(--sl-color-green); }
-	.blog__status--truncated { background: var(--sl-color-orange); }
-	.blog__status--in-progress { background: var(--sl-color-purple); }
 	:global(.blog-card h2) { margin: 1rem 0 .55rem; font-size: var(--sl-text-xl); line-height: 1.15; }
 	:global(.blog-card h2 a) { color: var(--sl-color-white); text-decoration: none; }
 	:global(.blog-card h2 a:hover), :global(.blog-card__footer a:hover) { color: var(--sl-color-text-accent); text-decoration: underline; text-underline-offset: .18em; }

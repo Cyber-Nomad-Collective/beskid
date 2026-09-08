@@ -4,7 +4,6 @@ export type BlogPostCardProps = {
 	href: string;
 	date: string;
 	dateTime: string;
-	status: string;
 	release?: string;
 	image: { src: string; alt: string; sourceHref: string; sourceLabel: string };
 };
@@ -16,7 +15,6 @@ export function BlogPostCard({
 	href,
 	date,
 	dateTime,
-	status,
 	release,
 	image,
 }: BlogPostCardProps) {
@@ -26,10 +24,10 @@ export function BlogPostCard({
 				<img src={image.src} alt={image.alt} loading="lazy" />
 			</a>
 			<div className="blog-card__body">
-				<div className="blog-card__meta"><time dateTime={dateTime}>{date}</time><span>{status}</span></div>
+				<div className="blog-card__meta"><time dateTime={dateTime}>{date}</time>{release && <span>{release}</span>}</div>
 				<h2><a href={href}>{title}</a></h2>
 				<p>{description}</p>
-				<div className="blog-card__footer"><span>{release}</span><a href={href}>Read post <span aria-hidden="true">→</span></a></div>
+				<div className="blog-card__footer"><a href={href}>Read the post <span aria-hidden="true">→</span></a></div>
 				<a className="blog-card__source" href={image.sourceHref}>Image: {image.sourceLabel}</a>
 			</div>
 		</article>
