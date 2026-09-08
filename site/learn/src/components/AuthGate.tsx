@@ -1,4 +1,18 @@
 import { AuthPageShell, Badge, Button } from "@beskid/ui-react";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@beskid/ui-react/ui/avatar";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@beskid/ui-react/ui/dropdown-menu";
+import { ChevronDown, LogOut, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { AuthUser } from "#/lib/auth";
 import {
@@ -58,19 +72,56 @@ export function AuthGate({ children, requireAuth = false }: AuthGateProps) {
 }
 
 export function UserBadge({ user }: { user: AuthUser }) {
+	const displayName = user.name?.trim() || user.login;
+	const initials = displayName
+		.split(/\s+/)
+		.map((part) => part[0])
+		.join("")
+		.slice(0, 2)
+		.toUpperCase();
+
 	return (
-		<div className="flex items-center gap-2">
-			<Badge variant="outline" className="gap-1.5">
-				<img src={user.avatarUrl} alt="" className="size-4 rounded-full" />
-				{user.login}
-			</Badge>
-			<Button
-				variant="ghost"
-				size="xs"
-				onClick={() => logoutUser().then(() => window.location.reload())}
-			>
-				Log out
-			</Button>
-		</div>
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<button
+					type="button"
+					className="learn-profile-trigger"
+					aria-label="Open account menu"
+				>
+					<Avatar size="sm">
+						<AvatarImage src={user.avatarUrl} alt="" />
+						<AvatarFallback>{initials}</AvatarFallback>
+					</Avatar>
+					<span className="learn-profile-trigger__name">{user.login}</span>
+					<ChevronDown aria-hidden="true" className="size-3.5" />
+				</button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="end" className="learn-profile-menu">
+				<DropdownMenuLabel>
+					<div className="learn-profile-menu__identity">
+						<span>{displayName}</span>
+						<span>@{user.login}</span>
+					</div>
+				</DropdownMenuLabel>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem asChild>
+					<a href={authHubProfileUrl()}>
+						<UserRound />
+						Manage account
+					</a>
+				</DropdownMenuItem>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem
+					variant="destructive"
+					onSelect={(event) => {
+						event.preventDefault();
+						void logoutUser().then(() => window.location.reload());
+					}}
+				>
+					<LogOut />
+					Log out
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }

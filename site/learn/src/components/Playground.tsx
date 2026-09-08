@@ -1,9 +1,13 @@
-import { Badge, Button, Card } from "@beskid/ui-react";
+import { Badge, Button } from "@beskid/ui-react";
 import { Editor } from "@monaco-editor/react";
 import { FitAddon } from "@xterm/addon-fit";
 import type * as monacoEditor from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
 import { Terminal } from "xterm";
+import {
+	getPlaygroundCode,
+	playgroundCompletionItems,
+} from "#/lib/playground";
 import "xterm/css/xterm.css";
 
 type CheckResponse = {
@@ -53,42 +57,52 @@ function parseCheckResponse(payload: string): CheckResponse {
 	}
 }
 
+let playgroundCompletionsRegistered = false;
+
 function registerBeskidLanguage(monaco: typeof monacoEditor) {
 	const languageId = "beskid";
-	if (monaco.languages.getLanguages().some((lang) => lang.id === languageId)) {
-		return;
+	if (!monaco.languages.getLanguages().some((lang) => lang.id === languageId)) {
+		monaco.languages.register({ id: languageId, aliases: ["Beskid"] });
+		monaco.languages.setLanguageConfiguration(languageId, {
+			comments: { lineComment: "//" },
+			brackets: [["{", "}"], ["(", ")"], ["[", "]"]],
+			autoClosingPairs: [
+				{ open: "{", close: "}" },
+				{ open: "(", close: ")" },
+				{ open: "[", close: "]" },
+			],
+		});
+		monaco.languages.setMonarchTokensProvider(languageId, {
+			tokenizer: { root: [
+				["\\b(fn|pub|let|use|return|if|else|while|for|break|continue)\\b", "keyword"],
+				["\\b(i32|i64|u32|u64|f32|f64|string|bool|unit|true|false)\\b", "type"],
+				["//.*$", "comment"], ['"(?:[^\\"\\\\]|\\\\.)*"', "string"], ["'[^']*'", "string"], ["[0-9]+", "number"],
+			] },
+		});
 	}
 
-	monaco.languages.register({ id: languageId, aliases: ["Beskid"] });
-	monaco.languages.setLanguageConfiguration(languageId, {
-		comments: { lineComment: "//" },
-		brackets: [
-			["{", "}"],
-			["(", ")"],
-			["[", "]"],
-		],
-		autoClosingPairs: [
-			{ open: "{", close: "}" },
-			{ open: "(", close: ")" },
-			{ open: "[", close: "]" },
-		],
-	});
-
-	monaco.languages.setMonarchTokensProvider(languageId, {
-		tokenizer: {
-			root: [
-				[
-					"\\b(fn|pub|let|use|return|if|else|while|for|break|continue)\\b",
-					"keyword",
-				],
-				["\\b(i32|i64|u32|u64|f32|f64|string|bool|unit|true|false)\\b", "type"],
-				["//.*$", "comment"],
-				['"(?:[^\\"\\\\]|\\\\.)*"', "string"],
-				["'[^']*'", "string"],
-				["[0-9]+", "number"],
-			],
-		},
-	});
+	if (!playgroundCompletionsRegistered) {
+		monaco.languages.registerCompletionItemProvider(languageId, {
+			provideCompletionItems(model, position) {
+				const word = model.getWordUntilPosition(position);
+				const range = {
+					startLineNumber: position.lineNumber,
+					endLineNumber: position.lineNumber,
+					startColumn: word.startColumn,
+					endColumn: word.endColumn,
+				};
+				return {
+					suggestions: playgroundCompletionItems.map((item) => ({
+						...item,
+						kind: monaco.languages.CompletionItemKind.Keyword,
+						insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+						range,
+					})),
+				};
+			},
+		});
+		playgroundCompletionsRegistered = true;
+	}
 }
 
 interface PlaygroundProps {
@@ -98,6 +112,7 @@ interface PlaygroundProps {
 export default function Playground({ initialCode = "" }: PlaygroundProps) {
 	const [code, setCode] = useState(initialCode);
 	const [running, setRunning] = useState(false);
+	const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(null);
 
 	const terminalRef = useRef<HTMLDivElement | null>(null);
 	const terminalShell = useRef<Terminal | null>(null);
@@ -137,6 +152,7 @@ export default function Playground({ initialCode = "" }: PlaygroundProps) {
 		editor: monacoEditor.editor.IStandaloneCodeEditor,
 		monaco: typeof monacoEditor,
 	) => {
+		editorRef.current = editor;
 		registerBeskidLanguage(monaco);
 		monaco.editor.setModelLanguage(editor.getModel()!, "beskid");
 	};
@@ -157,7 +173,7 @@ export default function Playground({ initialCode = "" }: PlaygroundProps) {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					exerciseId: "playground",
-					code,
+					code: getPlaygroundCode(editorRef.current, code),
 					command: "analyze",
 				}),
 			});
@@ -215,7 +231,7 @@ export default function Playground({ initialCode = "" }: PlaygroundProps) {
 	};
 
 	return (
-		<Card className="playground">
+		<section className="playground" aria-label="Beskid playground">
 			<div className="playground-toolbar">
 				<div className="playground-toolbar-left">
 					<Badge variant="outline">analyze</Badge>
@@ -254,6 +270,6 @@ export default function Playground({ initialCode = "" }: PlaygroundProps) {
 					<div className="playground-terminal" ref={terminalRef} />
 				</div>
 			</div>
-		</Card>
+		</section>
 	);
 }
