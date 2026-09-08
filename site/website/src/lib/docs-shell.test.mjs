@@ -21,7 +21,11 @@ test('keeps search in documentation chrome and gives Docs a navigation rail', as
 	assert.match(config, /htmlSubdir: 'docs'/);
 });
 
-test('renders the Docs title once', async () => {
-	const content = await read('site/website/src/content/docs/docs/index.md');
-	assert.equal((content.match(/^# Beskid Docs$/gm) ?? []).length, 0);
+test('renders Docs and Standard titles once', async () => {
+	const [docs, standard] = await Promise.all([
+		read('site/website/src/content/docs/docs/index.md'),
+		read('site/website/src/content/docs/docs/standard/index.md'),
+	]);
+	assert.equal((docs.match(/^# Beskid Docs$/gm) ?? []).length, 0);
+	assert.equal((standard.match(/^# Beskid Standard$/gm) ?? []).length, 0);
 });
