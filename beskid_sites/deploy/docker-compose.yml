@@ -31,9 +31,9 @@ x-resource-limits: &default-limits
     memory: 512m
     cpus: "1.0"
 
-# The outpost must receive both its callback path and Caddy's authentication
-# subrequest before the application upstream. Numeric route labels preserve the
-# required directive order in caddy-docker-proxy.
+# Tracker and Nexus use the Authentik outpost before their application upstream.
+# Public website, Learn, and pckg routes must not inherit this policy. Numeric
+# route labels preserve the required directive order in caddy-docker-proxy.
 x-authentik-forward-auth: &authentik-forward-auth
   caddy_0.route.0_reverse_proxy: /outpost.goauthentik.io/* authentik-server:9000
   caddy_0.route.1_forward_auth: authentik-server:9000
@@ -223,8 +223,7 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://beskid-lang.org
-      <<: *authentik-forward-auth
-      caddy_0.route.2_reverse_proxy: "{{upstreams 80}}"
+      caddy_0.reverse_proxy: "{{upstreams 80}}"
     networks:
       - beskid-edge
     expose:
@@ -307,8 +306,17 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://pckg.beskid-lang.org
-      <<: *authentik-forward-auth
-      caddy_0.route.2_reverse_proxy: "{{upstreams 8082}}"
+      # Keep the catalogue public. The outpost path establishes the proxy
+      # session; only callers that already carry that session are checked and
+      # receive the identity headers pckg needs for its dashboard APIs.
+      "caddy_0.@pckg_authentik_session.header_regexp": pckg_authentik Cookie authentik_proxy_[^=]+=
+      caddy_0.route_0: /outpost.goauthentik.io/*
+      caddy_0.route_0.0_reverse_proxy: authentik-server:9000
+      caddy_0.route_1: "@pckg_authentik_session"
+      caddy_0.route_1.0_forward_auth: authentik-server:9000
+      caddy_0.route_1.0_forward_auth.uri: /outpost.goauthentik.io/auth/caddy
+      caddy_0.route_1.0_forward_auth.copy_headers: X-Authentik-Username X-Authentik-Groups X-Authentik-Entitlements X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt
+      caddy_0.route_2.reverse_proxy: "{{upstreams 8082}}"
     networks:
       - beskid-edge
       - beskid-backend
@@ -347,8 +355,7 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://learn.beskid-lang.org
-      <<: *authentik-forward-auth
-      caddy_0.route.2_reverse_proxy: "{{upstreams 80}}"
+      caddy_0.reverse_proxy: "{{upstreams 80}}"
     networks:
       - beskid-edge
     expose:

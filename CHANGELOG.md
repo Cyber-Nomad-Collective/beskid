@@ -45,6 +45,14 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Beskid LSP: emit canonical-parser-backed semantic tokens for block kinds and
   configuration keys across `.bsol`, `.bproj`, and `.bws`, while invalid BSOL
   continues to fail closed without partial semantic facts.
+- pckg now routes its Authentik outpost callback correctly and forwards the
+  verified identity only for visitors with an Authentik proxy session. The
+  public catalogue stays reachable without sign-in while dashboard requests
+  receive the identity headers required by the registry.
+- Production now serves the public website, Learn, and pckg routes directly
+  through the shared Caddy edge. Tracker and Nexus retain their Authentik
+  protection, preventing the former global edge policy from redirecting public
+  health endpoints and application pages to sign-in.
 - Production site smoke checks now reject redirects and other non-2xx
   responses, so an authentication proxy or routing drift cannot be promoted as
   a healthy public website.
