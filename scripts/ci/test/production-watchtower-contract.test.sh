@@ -7,6 +7,7 @@ compose="${ROOT}/beskid_sites/deploy/docker-compose.yml"
 registry_config="${ROOT}/beskid_sites/deploy/registry/config.yml"
 env_example="${ROOT}/beskid_sites/deploy/.env.example"
 deploy_script="${ROOT}/beskid_sites/deploy/deploy.sh"
+branding_script="${ROOT}/beskid_sites/deploy/authentik-branding.py"
 
 require() {
   rg -Fq "$1" "$2" || { echo "missing required value in $2: $1" >&2; exit 1; }
@@ -33,19 +34,31 @@ require 'external: true' "$compose"
 
 forbid '^  auth:' "$compose"
 forbid '^  community:' "$compose"
-require '  authelia:' "$compose"
-require 'authelia/authelia:4.39.20' "$compose"
-require './authelia/assets:/config/assets:ro' "$compose"
-require 'AUTHELIA_SESSION_SECRET' "$env_example"
-require 'AUTHELIA_STORAGE_ENCRYPTION_KEY' "$env_example"
+require '  authentik-postgresql:' "$compose"
+require '  authentik-server:' "$compose"
+require '  authentik-worker:' "$compose"
+require 'ghcr.io/goauthentik/server:2025.10.4' "$compose"
+[[ -f "$branding_script" ]] || { echo "missing Authentik branding configuration: $branding_script" >&2; exit 1; }
+require 'Beskid Żywiecki' "$branding_script"
+require 'learn' "$branding_script"
+require 'authentik-branding.py' "$deploy_script"
+require 'b64decode' "$deploy_script"
+require 'AUTHENTIK_POSTGRES_PASSWORD' "$env_example"
+require 'AUTHENTIK_SECRET_KEY' "$env_example"
+require 'AUTHENTIK_BOOTSTRAP_TOKEN' "$env_example"
+require 'GITHUB_CLIENT_ID' "$env_example"
+require 'GITHUB_CLIENT_SECRET' "$env_example"
 
 for service in website learn tracker nexus pckg; do
   require "  ${service}:" "$compose"
   require "com.centurylinklabs.watchtower.enable: \"true\"" "$compose"
 done
 
-require 'caddy_0.forward_auth: authelia:9091' "$compose"
-require 'caddy_0.forward_auth.uri: /api/authz/forward-auth' "$compose"
+require 'caddy_0.route.0_reverse_proxy: /outpost.goauthentik.io/* authentik-server:9000' "$compose"
+require 'caddy_0.route.1_forward_auth: authentik-server:9000' "$compose"
+require 'caddy_0.route.1_forward_auth.uri: /outpost.goauthentik.io/auth/caddy' "$compose"
+forbid 'authelia' "$compose"
+forbid 'AUTHELIA_' "$env_example"
 
 forbid 'coolify' "$compose"
 forbid 'staging' "$compose"

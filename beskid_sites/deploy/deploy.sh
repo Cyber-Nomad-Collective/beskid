@@ -32,7 +32,6 @@ OPENBAO_PREFIX="secret/beskid/production"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE="${SCRIPT_DIR}/.env"
-AUTHELIA_USERS_FILE="${SCRIPT_DIR}/authelia/users_database.yml"
 
 FROM_OPENBAO=0
 NO_DEPLOY=0
@@ -83,11 +82,6 @@ smoke() {
     local name="${entry##*|}"
     local code
     code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$url" || echo "000")"
-    # registry returns 401 without auth — that is healthy (auth is enforced).
-    if [ "$url" = "https://cr.beskid-lang.org/v2/" ] && [ "$code" = "401" ]; then
-      log "  OK   $name ($url) → 401 (auth enforced)"
-      continue
-    fi
     if [ "$code" -ge 200 ] && [ "$code" -lt 400 ]; then
       log "  OK   $name ($url) → $code"
     else
@@ -113,11 +107,7 @@ fi
 log "validating local prerequisites"
 [ -f "${SCRIPT_DIR}/docker-compose.yml" ] || { err "missing docker-compose.yml"; exit 1; }
 [ -f "${SCRIPT_DIR}/registry/config.yml" ] || { err "missing registry/config.yml"; exit 1; }
-[ -f "${SCRIPT_DIR}/authelia/configuration.yml" ] || { err "missing authelia/configuration.yml"; exit 1; }
-[ -f "${AUTHELIA_USERS_FILE}" ] || {
-  err "missing authelia/users_database.yml; copy the example and set an Argon2 password hash"
-  exit 1
-}
+[ -f "${SCRIPT_DIR}/authentik-branding.py" ] || { err "missing authentik-branding.py"; exit 1; }
 
 # ---------------------------------------------------------------------------
 # 2. Populate .env
@@ -141,7 +131,7 @@ if [ "$FROM_OPENBAO" -eq 1 ]; then
   }
 
   # Per-service OpenBao paths (mirror beskid_infra/docs/openbao-layout.md).
-  for svc in postgres tracker nexus pckg learn authelia; do
+  for svc in postgres tracker nexus pckg learn authentik; do
     read_secrets "$svc" >> "${ENV_FILE}" || true
   done
   log "  .env populated from OpenBao (review before deploy)"
@@ -167,8 +157,11 @@ need TRACKER_IMAGE_TAG "tracker image tag (production)"
 need NEXUS_IMAGE_TAG "nexus image tag (production)"
 need PCKG_IMAGE_TAG "pckg image tag (production)"
 need LEARN_IMAGE_TAG "learn image tag (production)"
-need AUTHELIA_SESSION_SECRET "Authelia session secret"
-need AUTHELIA_STORAGE_ENCRYPTION_KEY "Authelia storage encryption key"
+need AUTHENTIK_POSTGRES_PASSWORD "Authentik database password"
+need AUTHENTIK_SECRET_KEY "Authentik secret key"
+need AUTHENTIK_BOOTSTRAP_TOKEN "Authentik bootstrap API token"
+need GITHUB_CLIENT_ID "GitHub OAuth client ID for Authentik"
+need GITHUB_CLIENT_SECRET "GitHub OAuth client secret for Authentik"
 for image_tag in "$SITE_IMAGE_TAG" "$TRACKER_IMAGE_TAG" "$NEXUS_IMAGE_TAG" "$PCKG_IMAGE_TAG" "$LEARN_IMAGE_TAG"; do
   [[ "${image_tag}" == production ]] || { err "all application image tags must be production for Watchtower"; exit 1; }
 done
@@ -181,16 +174,13 @@ remote "docker network inspect ${BESKID_EDGE_NETWORK} >/dev/null" || {
   err "BESKID_EDGE_NETWORK does not exist on ${DEPLOY_HOST}: ${BESKID_EDGE_NETWORK}"
   exit 1
 }
-remote "mkdir -p ${REMOTE_DIR}/registry ${REMOTE_DIR}/authelia"
+remote "mkdir -p ${REMOTE_DIR}/registry"
 
 scp -q "${SCRIPT_DIR}/docker-compose.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/docker-compose.yml"
 scp -q "${SCRIPT_DIR}/registry/config.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/registry/config.yml"
-scp -q "${SCRIPT_DIR}/authelia/configuration.yml" "${DEPLOY_HOST}:${REMOTE_DIR}/authelia/configuration.yml"
-scp -q "${AUTHELIA_USERS_FILE}" "${DEPLOY_HOST}:${REMOTE_DIR}/authelia/users_database.yml"
 # Ship .env with restricted perms.
 scp -q "${ENV_FILE}" "${DEPLOY_HOST}:${REMOTE_DIR}/.env"
 remote "chmod 600 ${REMOTE_DIR}/.env"
-remote "chmod 600 ${REMOTE_DIR}/authelia/users_database.yml"
 
 # ---------------------------------------------------------------------------
 # 4. Apply (or render-only)
@@ -202,6 +192,10 @@ fi
 
 log "running: docker compose up -d --wait"
 remote "cd ${REMOTE_DIR} && docker compose up -d --wait"
+
+log "applying the declarative Authentik brand and application aliases"
+AUTHENTIK_BRANDING_B64="$(base64 < "${SCRIPT_DIR}/authentik-branding.py" | tr -d '\n')"
+remote "cd ${REMOTE_DIR} && docker compose exec -T authentik-server ak shell -c \"exec(__import__('base64').b64decode('${AUTHENTIK_BRANDING_B64}'))\""
 
 # ---------------------------------------------------------------------------
 # 6. Verify health

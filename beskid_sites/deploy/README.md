@@ -1,7 +1,7 @@
 # Beskid production deployment
 
 This directory is the sole Beskid production runtime for `beskid-lang.org`. It uses
-Docker Compose, Authelia, the shared host edge network, the registry at
+Docker Compose, Authentik, the shared host edge network, the registry at
 `cr.beskid-lang.org`, and Watchtower. There is no staging deployment and no
 deployment control plane.
 
@@ -29,12 +29,13 @@ The production host is `root@bdziam.dev`; the runtime directory defaults to
 `cr`, and `auth` subdomains.
 - OpenBao production secrets, or a populated local `.env` copied from
   `.env.example`. Do not commit `.env`.
-- An `authelia/users_database.yml` file copied from the example with an Argon2
-  password hash for the administrator.
-
-The Authelia portal uses the Beskid logo and Authelia’s supported dark theme.
-The assets live in `authelia/assets/`; do not add custom portal CSS because
-Authelia does not provide a stable CSS override API.
+- Authentik secrets: `AUTHENTIK_POSTGRES_PASSWORD`, `AUTHENTIK_SECRET_KEY`,
+  and a one-time `AUTHENTIK_BOOTSTRAP_TOKEN`. Store them in OpenBao or the
+  host `.env`; never commit them.
+- A GitHub OAuth application whose callback URL is
+  `https://auth.beskid-lang.org/source/oauth/callback/github/`. Configure its
+  client ID and secret in the host `.env` as `GITHUB_CLIENT_ID` and
+  `GITHUB_CLIENT_SECRET`. Authentik is the only browser authentication path.
 - `BESKID_EDGE_NETWORK`, the existing host network used by the shared Caddy
   Docker proxy. Beskid joins this network but does not own its ports or proxy.
 
@@ -46,8 +47,14 @@ cd beskid_sites/deploy
 ```
 
 `deploy.sh` copies the Compose files, writes `/opt/beskid/.env`, starts the
-stack, and runs public smoke checks. The script rejects any
+stack, reapplies the idempotent Authentik brand configuration, and runs public
+smoke checks. The script rejects any
 application tag other than `production`.
+
+The Authentik login uses the Beskid logo and a real Beskid Żywiecki view from
+Mała Racza. The photograph is by Pudelek and is used under CC BY 3.0; its
+source and attribution are recorded in `authentik-branding.py` and the login
+footer.
 
 The first cutover adopts the host's existing `beskid-registry-data` Docker
 volume. It is external to Compose so existing registry images and rollback tags

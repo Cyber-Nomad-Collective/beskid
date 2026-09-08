@@ -12,10 +12,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 ### Changed
 
 - The main website landing page now links directly to Beskid Docs.
-- The Authelia portal now uses the Beskid logo and Authelia’s supported dark
-  theme through versioned asset overrides.
-- Authelia is restored as the sole browser authentication gateway for every
-  public Beskid application in the Compose and Watchtower deployment.
+- Authentik replaces Authelia as the sole browser authentication gateway for
+  every public Beskid application. Its embedded proxy outpost protects the
+  website, Docs, Learn, Tracker, Nexus, and pckg through the shared Caddy edge;
+  GitHub is the configured social-login source. Learn now starts sign-in at its
+  protected origin, and the repeatable Authentik brand uses Beskid typography,
+  logo, and an attributed Beskid Żywiecki photograph.
 - Production delivery now uses only the self-hosted Compose stack and
   Watchtower. Application images publish to the Beskid registry without
   credentials; the release manifest covers the five running applications.
@@ -24,6 +26,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Local site deployment: publish Docs on port `4321` and Learn on port `4322` in both Compose files. The site guide now documents the source-build command and local URLs.
 
 ### Removed
+
+- Authelia’s runtime, file-user database, asset overrides, and deployment
+  contract. Browser authentication now has one Authentik implementation.
 
 - Coolify, staging promotion, and registry credential paths, including their
   workflows, scripts, test contracts, and runtime configuration.

@@ -13,7 +13,7 @@
 #   - CI moves controlled production tags; Watchtower updates only explicitly
 #     labelled application services. Third-party infrastructure stays pinned.
 #   - All secrets via env_file (deploy/.env), never inline.
-#   - Postgres serves pckg; Authelia keeps its single-instance state locally.
+#   - Postgres serves pckg and Authentik. Authentik is pinned infrastructure.
 #
 # Secrets: OpenBao `secret/beskid/production/*` → deploy/.env (see deploy.sh).
 # Do NOT commit deploy/.env.
@@ -30,6 +30,15 @@ x-resource-limits: &default-limits
   limits:
     memory: 512m
     cpus: "1.0"
+
+# The outpost must receive both its callback path and Caddy's authentication
+# subrequest before the application upstream. Numeric route labels preserve the
+# required directive order in caddy-docker-proxy.
+x-authentik-forward-auth: &authentik-forward-auth
+  caddy_0.route.0_reverse_proxy: /outpost.goauthentik.io/* authentik-server:9000
+  caddy_0.route.1_forward_auth: authentik-server:9000
+  caddy_0.route.1_forward_auth.uri: /outpost.goauthentik.io/auth/caddy
+  caddy_0.route.1_forward_auth.copy_headers: X-Authentik-Username X-Authentik-Groups X-Authentik-Entitlements X-Authentik-Email X-Authentik-Name X-Authentik-Uid X-Authentik-Jwt
 
 networks:
   beskid-edge:
@@ -53,7 +62,7 @@ volumes:
     name: beskid-sites_tracker-data
     external: true
   nexus-data:
-  authelia-data:
+  authentik-postgres-data:
   pckg-packages:
     name: beskid-pckg_pckg-artifacts
     external: true
@@ -121,36 +130,82 @@ services:
           memory: 1g
           cpus: "2.0"
 
-  # Authelia is the sole browser-facing authentication service. It protects
-  # every public application through the shared Caddy edge; application images
-  # do not implement an alternate sign-in path.
-  authelia:
-    image: authelia/authelia:4.39.20
+  # Authentik is the sole browser-facing authentication service. Its embedded
+  # proxy outpost protects every public application at the shared Caddy edge.
+  authentik-postgresql:
+    image: postgres:16-alpine
     restart: unless-stopped
+    networks:
+      - beskid-backend
+    environment:
+      POSTGRES_DB: authentik
+      POSTGRES_USER: authentik
+      POSTGRES_PASSWORD: ${AUTHENTIK_POSTGRES_PASSWORD:?set AUTHENTIK_POSTGRES_PASSWORD}
+    volumes:
+      - authentik-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U authentik -d authentik"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging: *default-logging
+
+  authentik-server:
+    image: ghcr.io/goauthentik/server:2025.10.4
+    command: server
+    restart: unless-stopped
+    depends_on:
+      authentik-postgresql:
+        condition: service_healthy
+    networks:
+      - beskid-edge
+      - beskid-backend
+    expose:
+      - "9000"
     labels:
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://auth.beskid-lang.org
-      caddy_0.reverse_proxy: "{{upstreams 9091}}"
-    networks:
-      - beskid-edge
-    expose:
-      - "9091"
+      caddy_0.reverse_proxy: "{{upstreams 9000}}"
     env_file:
       - ${BESKID_ENV_FILE:-.env}
-    volumes:
-      - ./authelia/configuration.yml:/config/configuration.yml:ro
-      - ./authelia/users_database.yml:/config/users_database.yml:ro
-      - ./authelia/assets:/config/assets:ro
-      - authelia-data:/var/lib/authelia
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: authentik-postgresql
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_POSTGRES_PASSWORD:?set AUTHENTIK_POSTGRES_PASSWORD}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?set AUTHENTIK_SECRET_KEY}
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:9091/api/health || exit 1"]
+      test: ["CMD", "ak", "healthcheck"]
       interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     logging: *default-logging
-    deploy:
-      resources: *default-limits
+
+  authentik-worker:
+    image: ghcr.io/goauthentik/server:2025.10.4
+    command: worker
+    restart: unless-stopped
+    depends_on:
+      authentik-postgresql:
+        condition: service_healthy
+    networks:
+      - beskid-backend
+    env_file:
+      - ${BESKID_ENV_FILE:-.env}
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: authentik-postgresql
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__USER: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_POSTGRES_PASSWORD:?set AUTHENTIK_POSTGRES_PASSWORD}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?set AUTHENTIK_SECRET_KEY}
+    healthcheck:
+      test: ["CMD", "ak", "healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    logging: *default-logging
 
   # ---------------------------------------------------------------------------
   # Beskid applications. CI advances only these mutable production tags;
@@ -166,9 +221,8 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
-      caddy_0.reverse_proxy: "{{upstreams 80}}"
+      <<: *authentik-forward-auth
+      caddy_0.route.2_reverse_proxy: "{{upstreams 80}}"
     networks:
       - beskid-edge
     expose:
@@ -193,9 +247,8 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://tracker.beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
-      caddy_0.reverse_proxy: "{{upstreams 3000}}"
+      <<: *authentik-forward-auth
+      caddy_0.route.2_reverse_proxy: "{{upstreams 3000}}"
     networks:
       - beskid-edge
     expose:
@@ -222,9 +275,8 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://nexus.beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
-      caddy_0.reverse_proxy: "{{upstreams 8452}}"
+      <<: *authentik-forward-auth
+      caddy_0.route.2_reverse_proxy: "{{upstreams 8452}}"
     networks:
       - beskid-edge
     expose:
@@ -251,9 +303,8 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://pckg.beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
-      caddy_0.reverse_proxy: "{{upstreams 8082}}"
+      <<: *authentik-forward-auth
+      caddy_0.route.2_reverse_proxy: "{{upstreams 8082}}"
     networks:
       - beskid-edge
       - beskid-backend
@@ -288,9 +339,8 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://learn.beskid-lang.org
-      caddy_0.forward_auth: authelia:9091
-      caddy_0.forward_auth.uri: /api/authz/forward-auth
-      caddy_0.reverse_proxy: "{{upstreams 80}}"
+      <<: *authentik-forward-auth
+      caddy_0.route.2_reverse_proxy: "{{upstreams 80}}"
     networks:
       - beskid-edge
     expose:

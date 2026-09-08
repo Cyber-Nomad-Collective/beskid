@@ -1,7 +1,0 @@
-users:
-  mikserek:
-    displayname: Piotr
-    password: $argon2id$v=19$m=65536,t=3,p=4$replace-with-a-generated-salt$replace-with-a-generated-hash
-    email: admin@beskid-lang.org
-    groups:
-      - beskid-admins
