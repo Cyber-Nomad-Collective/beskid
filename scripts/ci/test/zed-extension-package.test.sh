@@ -23,6 +23,8 @@ fail() {
 [[ -f "${extension_root}/Cargo.toml" ]] || fail 'missing editors/zed Cargo package'
 grep -Fxq '/grammars/beskid/' "${extension_gitignore}" || \
   fail 'Zed development grammar checkout is not ignored at its exact package path'
+grep -Fxq '/grammars/bsol/' "${extension_gitignore}" || \
+  fail 'Zed development BSOL grammar checkout is not ignored at its exact package path'
 [[ ! -e "${root}/extension.toml" ]] || fail 'legacy root Zed package remains'
 [[ ! -e "${root}/.zed/grammars/beskid.wasm" ]] || fail 'duplicate .zed Beskid grammar remains'
 [[ ! -e "${root}/.zed/languages/beskid/config.toml" ]] || fail 'duplicate .zed Beskid language configuration remains'
@@ -56,7 +58,7 @@ grep -Fq '[grammars.bsol]' "${extension_root}/extension.toml" || \
   fail 'Zed extension manifest does not declare the standalone BSOL grammar'
 grep -Fq 'repository = "https://github.com/Cyber-Nomad-Collective/beskid_bsol"' "${extension_root}/extension.toml" || \
   fail 'standalone BSOL grammar does not use the canonical repository'
-grep -Fq 'commit = "11ed9d5c17896e3e8481af65b9e49b8230d11d54"' "${extension_root}/extension.toml" || \
+grep -Fq 'commit = "3bb342a858361bf36eef98b2ccf1373df414783a"' "${extension_root}/extension.toml" || \
   fail 'standalone BSOL grammar does not use the exact pinned submodule commit'
 grep -Fq 'path = "grammars/tree-sitter-bsol"' "${extension_root}/extension.toml" || \
   fail 'standalone BSOL grammar does not select the nested grammar directory'

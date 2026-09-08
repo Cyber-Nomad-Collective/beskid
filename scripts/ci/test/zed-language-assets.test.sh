@@ -104,27 +104,10 @@ git --git-dir="${bsol_git_dir}" cat-file -e "${bsol_grammar_commit}^{commit}" ||
   fail "manifest-pinned BSOL grammar commit ${bsol_grammar_commit} is unavailable"
 git --git-dir="${bsol_git_dir}" worktree add --detach "${bsol_checkout}" "${bsol_grammar_commit}" >/dev/null
 bsol_worktree_added=true
-node - "${bsol_grammar_checkout}/tree-sitter.json" <<'NODE'
-const fs = require('node:fs');
-fs.writeFileSync(process.argv[2], `${JSON.stringify({
-  grammars: [{
-    name: 'bsol',
-    camelcase: 'Bsol',
-    scope: 'source.bsol',
-    path: '.',
-    'file-types': ['bsol'],
-    highlights: 'queries/highlights.scm',
-    'injection-regex': 'bsol',
-  }],
-  metadata: {
-    version: '0.0.0-test',
-    license: 'unlicensed',
-    description: 'Temporary test metadata for the pinned BSOL grammar',
-  },
-}, null, 2)}\n`);
-NODE
-(cd "${bsol_grammar_checkout}" && ${tree_sitter_cli} generate) || \
-  fail "could not generate parser for ${bsol_grammar_commit}"
+[[ -s "${bsol_grammar_checkout}/src/parser.c" ]] || \
+  fail "manifest-pinned BSOL grammar ${bsol_grammar_commit} is missing committed src/parser.c"
+cmp -s "${bsol_grammar_checkout}/queries/highlights.scm" "${bsol_language_root}/highlights.scm" || \
+  fail 'packaged BSOL highlights query has drifted from its pinned grammar source'
 printf '{"parser-directories":["%s","%s"]}\n' "${parser_directory}" "${bsol_checkout}/grammars" >"${tree_sitter_config}"
 
 node - "${extension_root}/extension.toml" "${language_root}/tasks.json" \
