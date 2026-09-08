@@ -9,6 +9,7 @@ release_workflow="${root}/.github/workflows/compiler-release.yml"
 open_vsx_workflow="${root}/.github/workflows/publish-open-vsx.yml"
 distribute_workflow="${root}/.github/workflows/distribute.yml"
 cleanup_workflow="${root}/.github/workflows/compiler-handoff-cleanup.yml"
+windows_llvm_action="${root}/.github/actions/setup-native-llvm-windows/action.yml"
 
 fail() {
   printf 'FAIL: %s\n' "$1" >&2
@@ -19,6 +20,18 @@ for workflow in "${release_workflow}" "${cleanup_workflow}" "${distribute_workfl
   if rg -Fq 'runs-on: ubuntu-latest' "${workflow}"; then
     fail "release-critical Linux orchestration still depends on the billing-locked GitHub Ubuntu runner: ${workflow}"
   fi
+done
+
+[[ -f "${windows_llvm_action}" ]] || fail 'missing shared pinned Windows LLVM setup action'
+grep -Fq 'default: "20.1.8"' "${windows_llvm_action}" || \
+  fail 'Windows LLVM setup does not pin the native tooling version'
+for tool in llvm-nm.exe llvm-readobj.exe llvm-ml.exe clang.exe; do
+  grep -Fq "${tool}" "${windows_llvm_action}" || \
+    fail "Windows LLVM setup does not require ${tool}"
+done
+for workflow in "${compiler_workflow}" "${release_workflow}"; do
+  grep -Fq 'uses: ./.github/actions/setup-native-llvm-windows' "${workflow}" || \
+    fail "Windows release path does not install the shared pinned LLVM toolchain: ${workflow}"
 done
 
 grep -Fq 'GITHUB_RUN_NUMBER: ${{ github.run_number }}' "${compiler_workflow}" || \

@@ -24,6 +24,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Install one exact LLVM 20.1.8 toolset for both Windows compiler-gate and
+  native-release jobs, and fail closed unless the required Clang, assembler,
+  symbol, and object-inspection tools are present at that pinned location.
 - pckg now routes its Authentik outpost callback correctly and forwards the
   verified identity only for visitors with an Authentik proxy session. The
   public catalogue stays reachable without sign-in while dashboard requests
