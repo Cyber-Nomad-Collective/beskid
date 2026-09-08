@@ -11,6 +11,7 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- The main website landing page now links directly to Beskid Docs.
 - The Authelia portal now uses the Beskid logo and Authelia’s supported dark
   theme through versioned asset overrides.
 - Authelia is restored as the sole browser authentication gateway for every
