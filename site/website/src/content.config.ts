@@ -29,15 +29,15 @@ const docsContract = z.object({
 
 export const collections = {
 	docs: defineCollection({
-	loader: docsLoader(),
+		loader: docsLoader(),
 		schema: docsSchema({
 			extend: z.object({
 				blogStatus: z.enum(blogStatuses).optional(),
 				date: z.coerce.date().optional(),
 				release: z.string().optional(),
 				...docsContract.partial().shape,
-				pageKind: z.enum(docsPageKinds),
-				diagramPolicy: z.enum(docsDiagramPolicies),
+				pageKind: z.enum(docsPageKinds).optional(),
+				diagramPolicy: z.enum(docsDiagramPolicies).optional(),
 				diagramOmissionReason: z.string().min(1).optional(),
 			}),
 		}),
