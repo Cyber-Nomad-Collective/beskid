@@ -9,7 +9,7 @@ developer_tasks="${root}/.zed/tasks.json"
 extension_readme="${extension_root}/README.md"
 extension_gitignore="${extension_root}/.gitignore"
 metadata_contract_test="${root}/scripts/ci/test/zed-extension-metadata.test.sh"
-bsol_submodule_commit="$(git -C "${root}" rev-parse HEAD:beskid_bsol)"
+bsol_pin_check="${root}/scripts/ci/verify-zed-bsol-pin.sh"
 
 # Prefer the complete rustup-managed compiler when a Homebrew rustc shim is active.
 if command -v rustup >/dev/null 2>&1; then
@@ -24,6 +24,34 @@ fail() {
 
 [[ -f "${extension_root}/Cargo.toml" ]] || fail 'missing editors/zed Cargo package'
 bash "${metadata_contract_test}"
+[[ -x "${bsol_pin_check}" ]] || fail 'missing executable BSOL gitlink contract'
+bash "${bsol_pin_check}" "${root}"
+
+pin_fixture="$(mktemp -d)"
+trap 'rm -rf "${pin_fixture}"' EXIT
+mkdir -p "${pin_fixture}/root/editors/zed" "${pin_fixture}/root/beskid_bsol"
+git -C "${pin_fixture}/root/beskid_bsol" init -q
+printf 'old\n' >"${pin_fixture}/root/beskid_bsol/grammar.txt"
+git -C "${pin_fixture}/root/beskid_bsol" add grammar.txt
+git -C "${pin_fixture}/root/beskid_bsol" -c user.name=contract -c user.email=contract@example.invalid commit -qm old
+old_bsol_commit="$(git -C "${pin_fixture}/root/beskid_bsol" rev-parse HEAD)"
+printf 'new\n' >"${pin_fixture}/root/beskid_bsol/grammar.txt"
+git -C "${pin_fixture}/root/beskid_bsol" add grammar.txt
+git -C "${pin_fixture}/root/beskid_bsol" -c user.name=contract -c user.email=contract@example.invalid commit -qm new
+new_bsol_commit="$(git -C "${pin_fixture}/root/beskid_bsol" rev-parse HEAD)"
+git -C "${pin_fixture}/root" init -q
+printf '[grammars.bsol]\ncommit = "%s"\n' "${old_bsol_commit}" >"${pin_fixture}/root/editors/zed/extension.toml"
+git -C "${pin_fixture}/root" add editors/zed/extension.toml
+git -C "${pin_fixture}/root" update-index --add --cacheinfo "160000,${old_bsol_commit},beskid_bsol"
+git -C "${pin_fixture}/root" -c user.name=contract -c user.email=contract@example.invalid commit -qm old
+printf '[grammars.bsol]\ncommit = "%s"\n' "${new_bsol_commit}" >"${pin_fixture}/root/editors/zed/extension.toml"
+git -C "${pin_fixture}/root" add editors/zed/extension.toml
+git -C "${pin_fixture}/root" update-index --add --cacheinfo "160000,${new_bsol_commit},beskid_bsol"
+bash "${bsol_pin_check}" "${pin_fixture}/root"
+printf '[grammars.bsol]\ncommit = "%s"\n' "${old_bsol_commit}" >"${pin_fixture}/root/editors/zed/extension.toml"
+if bash "${bsol_pin_check}" "${pin_fixture}/root" >/dev/null 2>&1; then
+  fail 'BSOL gitlink contract accepted a manifest that disagrees with the staged gitlink'
+fi
 grep -Fxq '/grammars/beskid/' "${extension_gitignore}" || \
   fail 'Zed development grammar checkout is not ignored at its exact package path'
 grep -Fxq '/grammars/bsol/' "${extension_gitignore}" || \
@@ -61,8 +89,6 @@ grep -Fq '[grammars.bsol]' "${extension_root}/extension.toml" || \
   fail 'Zed extension manifest does not declare the standalone BSOL grammar'
 grep -Fq 'repository = "https://github.com/Cyber-Nomad-Collective/beskid_bsol"' "${extension_root}/extension.toml" || \
   fail 'standalone BSOL grammar does not use the canonical repository'
-grep -Fq "commit = \"${bsol_submodule_commit}\"" "${extension_root}/extension.toml" || \
-  fail 'standalone BSOL grammar does not use the exact pinned submodule commit'
 grep -Fq 'path = "grammars/tree-sitter-bsol"' "${extension_root}/extension.toml" || \
   fail 'standalone BSOL grammar does not select the nested grammar directory'
 [[ -s "${extension_root}/languages/bsol/highlights.scm" ]] || \
@@ -91,6 +117,24 @@ grep -Fq 'bash scripts/ci/test/zed-language-assets.test.sh' "${publish_workflow}
   fail 'Zed publication workflow does not run the language-assets gate'
 grep -Fq 'repos/Cyber-Nomad-Collective/beskid_compiler/releases/tags/lsp-stable' "${publish_workflow}" || \
   fail 'Zed publication workflow does not require the stable LSP release'
+grep -Fq 'gh release download lsp-stable' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not download the stable release state'
+grep -Fq 'release-state.json' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not validate the authoritative release state'
+grep -Fq '.channel == "stable"' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not require stable release state'
+grep -Fq '.tests.gate_result == "success"' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not require successful compiler gates'
+grep -Fq '(.complete_platforms | sort) == ["linux", "macos", "windows"]' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not require exactly three complete platforms'
+grep -Fq '.provenance.compiler_commit == $compiler_commit' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not bind the stable LSP to the pinned compiler gitlink'
+grep -Fq 'git rev-parse HEAD:compiler' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not resolve the tagged compiler gitlink'
+grep -Fq 'GITHUB_REF_NAME#v' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not derive the registry version from the tag'
+grep -Fq 'editors/zed/extension.toml' "${publish_workflow}" || \
+  fail 'Zed publication workflow does not parse the package manifest version'
 grep -Fq 'GH_TOKEN: ${{ github.token }}' "${publish_workflow}" || \
   fail 'Zed stable-release guard does not authenticate its GitHub API request'
 for release_asset in \
@@ -104,6 +148,7 @@ done
 package_gate_line="$(grep -nF 'bash scripts/ci/test/zed-extension-package.test.sh' "${publish_workflow}" | head -n1 | cut -d: -f1)"
 asset_gate_line="$(grep -nF 'bash scripts/ci/test/zed-language-assets.test.sh' "${publish_workflow}" | head -n1 | cut -d: -f1)"
 release_guard_line="$(grep -nF 'name: Verify stable LSP release assets' "${publish_workflow}" | head -n1 | cut -d: -f1)"
+version_guard_line="$(grep -nF 'name: Verify tag matches Zed manifest version' "${publish_workflow}" | head -n1 | cut -d: -f1)"
 grep -Fq 'permissions:' "${publish_workflow}" || \
   fail 'Zed publication workflow does not declare explicit permissions'
 grep -Fq 'contents: read' "${publish_workflow}" || \
@@ -118,7 +163,8 @@ grep -Fq "uses: ${reviewed_action}" "${publish_workflow}" || \
 publish_action_line="$(grep -nF "uses: ${reviewed_action}" "${publish_workflow}" | head -n1 | cut -d: -f1)"
 [[ "${package_gate_line}" -lt "${publish_action_line}" && \
    "${asset_gate_line}" -lt "${publish_action_line}" && \
-   "${release_guard_line}" -lt "${publish_action_line}" ]] || \
+   "${release_guard_line}" -lt "${publish_action_line}" && \
+   "${version_guard_line}" -lt "${publish_action_line}" ]] || \
   fail 'Zed publication gates must run before the registry action'
 
 [[ -f "${developer_tasks}" ]] || fail 'missing repository Zed developer tasks'

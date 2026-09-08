@@ -18,6 +18,22 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-wasip2
+      - name: Verify tag matches Zed manifest version
+        run: |
+          set -euo pipefail
+          manifest_version="$(python3 - <<'PY'
+          import pathlib
+          import tomllib
+
+          with pathlib.Path("editors/zed/extension.toml").open("rb") as handle:
+              print(tomllib.load(handle)["version"])
+          PY
+          )"
+          tag_version="${GITHUB_REF_NAME#v}"
+          if [[ "${tag_version}" != "${manifest_version}" ]]; then
+            echo "::error::tag version ${tag_version} does not match Zed manifest ${manifest_version}"
+            exit 1
+          fi
       - name: Verify Zed extension package
         run: bash scripts/ci/test/zed-extension-package.test.sh
       - name: Verify Zed language assets
@@ -27,6 +43,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          release_dir="${RUNNER_TEMP}/beskid-lsp-stable"
+          mkdir -p "${release_dir}"
+          gh release download lsp-stable \
+            --repo Cyber-Nomad-Collective/beskid_compiler \
+            --pattern release-state.json \
+            --dir "${release_dir}" \
+            --clobber
           release_assets="$(gh api repos/Cyber-Nomad-Collective/beskid_compiler/releases/tags/lsp-stable --jq '.assets[].name')"
           for expected_asset in \
             lsp-version.txt \
@@ -38,6 +61,18 @@ jobs:
               exit 1
             fi
           done
+          compiler_commit="$(git rev-parse HEAD:compiler)"
+          if ! jq -e --arg compiler_commit "${compiler_commit}" '
+            .schema_version == 1 and
+            .channel == "stable" and
+            .publishable == true and
+            .tests.gate_result == "success" and
+            (.complete_platforms | sort) == ["linux", "macos", "windows"] and
+            .provenance.compiler_commit == $compiler_commit
+          ' "${release_dir}/release-state.json" >/dev/null; then
+            echo "::error::lsp-stable release state is not a successful three-platform build of compiler ${compiler_commit}"
+            exit 1
+          fi
       # Reviewed v1 source: https://github.com/huacnlee/zed-extension-action/commit/11b0e4805c1f4382a4bb3b1a9b17be328e1559c3
       - uses: huacnlee/zed-extension-action@11b0e4805c1f4382a4bb3b1a9b17be328e1559c3
         with:
