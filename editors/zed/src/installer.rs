@@ -12,6 +12,7 @@ pub(crate) trait InstallStatusSink {
 
 pub(crate) trait CacheInstaller {
     fn exists(&self, path: &str) -> bool;
+    fn is_file(&self, path: &str) -> bool;
     fn remove_file(&mut self, path: &str) -> Result<(), String>;
     fn download(&mut self, url: &str, path: &str) -> Result<(), String>;
     fn read_to_string(&mut self, path: &str) -> Result<String, String>;
@@ -110,6 +111,12 @@ pub(crate) fn install_cache(
     executable: bool,
 ) -> Result<String, String> {
     if cache.exists(&paths.final_path) {
+        if !cache.is_file(&paths.final_path) {
+            return Err(format!(
+                "cached language server is not a regular file: {}",
+                paths.final_path
+            ));
+        }
         if executable {
             cache.make_executable(&paths.final_path)?;
         }

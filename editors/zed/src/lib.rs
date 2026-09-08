@@ -46,6 +46,10 @@ impl CacheInstaller for ZedCache {
         Path::new(path).exists()
     }
 
+    fn is_file(&self, path: &str) -> bool {
+        std::fs::symlink_metadata(path).is_ok_and(|metadata| metadata.file_type().is_file())
+    }
+
     fn remove_file(&mut self, path: &str) -> Result<(), String> {
         std::fs::remove_file(path).map_err(|error| format!("failed to remove {path}: {error}"))
     }
@@ -357,6 +361,7 @@ mod installer_tests {
 
     struct FakeCache {
         cached: bool,
+        cached_is_file: bool,
         temporary: bool,
         failure: Option<Failure>,
         actions: Vec<String>,
@@ -366,6 +371,7 @@ mod installer_tests {
         fn fresh(failure: Option<Failure>) -> Self {
             Self {
                 cached: false,
+                cached_is_file: false,
                 temporary: false,
                 failure,
                 actions: Vec::new(),
@@ -380,6 +386,10 @@ mod installer_tests {
             } else {
                 self.cached
             }
+        }
+
+        fn is_file(&self, path: &str) -> bool {
+            !path.ends_with(".partial") && self.cached_is_file
         }
 
         fn remove_file(&mut self, path: &str) -> Result<(), String> {
@@ -423,6 +433,10 @@ mod installer_tests {
 
     impl CacheInstaller for ProjectionCache {
         fn exists(&self, _path: &str) -> bool {
+            false
+        }
+
+        fn is_file(&self, _path: &str) -> bool {
             false
         }
 
@@ -581,6 +595,7 @@ mod installer_tests {
         let mut status = RecordingStatus::default();
         let mut cache = FakeCache {
             cached: true,
+            cached_is_file: true,
             temporary: false,
             failure: None,
             actions: Vec::new(),
@@ -601,11 +616,42 @@ mod installer_tests {
     }
 
     #[test]
+    fn non_regular_cached_entry_fails_closed() {
+        let paths = cache_paths("beskid_lsp", "v1");
+        let mut status = RecordingStatus::default();
+        let mut cache = FakeCache {
+            cached: true,
+            cached_is_file: false,
+            temporary: false,
+            failure: None,
+            actions: Vec::new(),
+        };
+
+        let result = run_install(&mut status, |status| {
+            install_cache(
+                status,
+                &mut cache,
+                &paths,
+                "https://example.test/asset",
+                true,
+            )
+        });
+
+        assert_eq!(
+            result,
+            Err("cached language server is not a regular file: ./beskid_lsp-v1".into())
+        );
+        assert!(cache.actions.is_empty());
+        assert!(matches!(status.0.last(), Some(InstallStatus::Failed(_))));
+    }
+
+    #[test]
     fn stale_temporary_cache_file_is_replaced_before_download() {
         let paths = cache_paths("beskid_lsp", "v1");
         let mut status = RecordingStatus::default();
         let mut cache = FakeCache {
             cached: false,
+            cached_is_file: false,
             temporary: true,
             failure: None,
             actions: Vec::new(),

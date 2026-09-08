@@ -35,6 +35,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Zed extension: package the generated BSOL parser, ignore Zed's generated
   grammar checkout, and require the stable LSP release assets before registry
   publication.
+- Zed extension: reject directories, symlinks, and other non-regular cached
+  entries instead of returning them as executable language-server paths.
 - Zed extension: bind registry publication to a matching manifest tag and the
   successful three-platform stable LSP release for the pinned compiler commit,
   while allowing staged BSOL gitlink updates to pass their package contract.
