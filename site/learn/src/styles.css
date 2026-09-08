@@ -72,6 +72,14 @@ html[data-theme="dark"] {
 .learn-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .learn-header-left { display: flex; align-items: center; gap: 0.75rem; }
 .learn-header-right { display: flex; align-items: center; gap: 0.75rem; }
+.learn-profile-trigger { display: inline-flex; align-items: center; gap: 0.45rem; min-height: 2rem; padding: 0.25rem 0.5rem 0.25rem 0.3rem; border: 1px solid var(--beskid-border-inner); border-radius: 999px; background: var(--beskid-surface-panel); color: var(--beskid-text-primary); cursor: pointer; }
+.learn-profile-trigger:hover { border-color: var(--beskid-border-accent); background: var(--beskid-surface-hover); }
+.learn-profile-trigger:focus-visible { outline: 2px solid var(--beskid-primary); outline-offset: 2px; }
+.learn-profile-trigger__name { max-width: 9rem; overflow: hidden; font-size: 0.82rem; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.learn-profile-menu { min-width: 13rem; }
+.learn-profile-menu__identity { display: flex; flex-direction: column; gap: 0.1rem; }
+.learn-profile-menu__identity > span:first-child { color: var(--beskid-text-primary); font-size: 0.82rem; font-weight: 600; }
+.learn-profile-menu__identity > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .learn-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 1rem; }
 .learn-grid--no-sidebar { grid-template-columns: 1fr; }

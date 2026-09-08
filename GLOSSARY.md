@@ -108,6 +108,12 @@ A named OpenSpec requirement using SHALL or MUST and one or more testable scenar
 
 The former public reader and service for the Beskid standard. Beskid Docs now provides the public entry point at `/docs/standard/`; `openspec/specs` remains the normative source.
 
+## Playground
+
+The authenticated Beskid Learn workspace for trying arbitrary Beskid source with
+the analyzer. It is not a curriculum exercise: it uses the editor's current
+Monaco model and the dedicated `playground` analyze target.
+
 ## Platform Spec document identity
 
 The resolver-derived catalog identity of a taxonomy domain, taxonomy area, feature specification, feature-owned article, or feature-owned decision. It fixes the canonical source path, public slug, parent capability, layout, authority, disposition, title, and source hash; taxonomy hubs remain provisional, features own normative requirements, and articles or decisions remain informative.

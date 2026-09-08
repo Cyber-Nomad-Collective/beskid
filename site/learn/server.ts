@@ -9,6 +9,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import process from "node:process";
 import { learnExercises } from "./src/data/learningCatalog";
+import { getPlaygroundExercise } from "./src/lib/playground";
 import { isStaticAssetRequest } from "./src/lib/server-routing";
 
 type CheckRequest = {
@@ -313,6 +314,10 @@ const exerciseById = new Map(
 	learnExercises.map((exercise) => [exercise.id, exercise]),
 );
 
+function getCheckExercise(exerciseId: string) {
+	return exerciseById.get(exerciseId) ?? getPlaygroundExercise(exerciseId);
+}
+
 function jsonResponse(statusCode: number, body: unknown) {
 	return new Response(JSON.stringify(body), {
 		status: statusCode,
@@ -500,7 +505,7 @@ function normalizeExpectedOutput(rawOutput: string): string {
 }
 
 async function runBeskidCheck(payload: CheckRequest): Promise<CheckResult> {
-	const exercise = exerciseById.get(payload.exerciseId);
+	const exercise = getCheckExercise(payload.exerciseId);
 	if (!exercise) {
 		return {
 			exerciseId: payload.exerciseId,
@@ -705,7 +710,7 @@ Bun.serve({
 					});
 				}
 
-				const exercise = exerciseById.get(payload.exerciseId);
+				const exercise = getCheckExercise(payload.exerciseId);
 				if (!exercise) {
 					return jsonResponse(404, {
 						error: `Unknown exerciseId: ${payload.exerciseId}`,

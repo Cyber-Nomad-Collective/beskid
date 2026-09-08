@@ -9,6 +9,13 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ## [Unreleased]
 
+### Fixed
+
+- Learn: the Playground now submits the live Monaco model rather than a stale
+  editor state, accepts its own analyze target, offers Beskid completions, and
+  uses a single workspace surface instead of nested cards. The signed-in header
+  now provides the standard account menu with account and sign-out actions.
+
 ### Changed
 
 - Deployment: replaced the custom GitHub auth image with Authelia forward
