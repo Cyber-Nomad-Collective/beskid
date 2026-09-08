@@ -31,9 +31,9 @@ x-resource-limits: &default-limits
     memory: 512m
     cpus: "1.0"
 
-# The outpost must receive both its callback path and Caddy's authentication
-# subrequest before the application upstream. Numeric route labels preserve the
-# required directive order in caddy-docker-proxy.
+# Tracker and Nexus use the Authentik outpost before their application upstream.
+# Public website, Learn, and pckg routes must not inherit this policy. Numeric
+# route labels preserve the required directive order in caddy-docker-proxy.
 x-authentik-forward-auth: &authentik-forward-auth
   caddy_0.route.0_reverse_proxy: /outpost.goauthentik.io/* authentik-server:9000
   caddy_0.route.1_forward_auth: authentik-server:9000
@@ -223,8 +223,7 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://beskid-lang.org
-      <<: *authentik-forward-auth
-      caddy_0.route.2_reverse_proxy: "{{upstreams 80}}"
+      caddy_0.reverse_proxy: "{{upstreams 80}}"
     networks:
       - beskid-edge
     expose:
@@ -307,8 +306,7 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://pckg.beskid-lang.org
-      <<: *authentik-forward-auth
-      caddy_0.route.2_reverse_proxy: "{{upstreams 8082}}"
+      caddy_0.reverse_proxy: "{{upstreams 8082}}"
     networks:
       - beskid-edge
       - beskid-backend
@@ -319,10 +317,6 @@ services:
         condition: service_healthy
     env_file:
       - ${BESKID_ENV_FILE:-.env}
-    environment:
-      SHELL_AUTH_MODE: authentik
-      SHELL_ADMIN_GROUP: pckg-admins
-      SHELL_MODERATOR_GROUP: pckg-moderators
     volumes:
       - pckg-packages:/app/packages
       - pckg-data:/app/data
@@ -347,8 +341,7 @@ services:
       com.beskid.release: production
       caddy_ingress_network: ${BESKID_EDGE_NETWORK:?set BESKID_EDGE_NETWORK}
       caddy_0: https://learn.beskid-lang.org
-      <<: *authentik-forward-auth
-      caddy_0.route.2_reverse_proxy: "{{upstreams 80}}"
+      caddy_0.reverse_proxy: "{{upstreams 80}}"
     networks:
       - beskid-edge
     expose:

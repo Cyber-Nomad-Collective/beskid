@@ -24,6 +24,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Production now serves the public website, Learn, and pckg routes directly
+  through the shared Caddy edge. Tracker and Nexus retain their Authentik
+  protection, preventing the former global edge policy from redirecting public
+  health endpoints and application pages to sign-in.
 - Production site smoke checks now reject redirects and other non-2xx
   responses, so an authentication proxy or routing drift cannot be promoted as
   a healthy public website.

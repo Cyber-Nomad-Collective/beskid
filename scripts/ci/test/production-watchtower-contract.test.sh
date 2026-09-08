@@ -21,6 +21,43 @@ forbid() {
   fi
 }
 
+service_block() {
+  local service="$1"
+  awk -v service="${service}" '
+    $0 == "  " service ":" { found = 1; next }
+    found && /^  [[:alnum:]_-]+:$/ { exit }
+    found { print }
+  ' "$compose"
+}
+
+require_public_service() {
+  local service="$1"
+  local upstream="$2"
+  local block
+  block="$(service_block "${service}")"
+
+  [[ -n "${block}" ]] || { echo "missing ${service} service block" >&2; exit 1; }
+  [[ "${block}" == *"caddy_0.reverse_proxy: \"{{upstreams ${upstream}}}\""* ]] || {
+    echo "${service} must route directly through Caddy" >&2
+    exit 1
+  }
+  [[ "${block}" != *"authentik-forward-auth"* && "${block}" != *"forward_auth"* ]] || {
+    echo "${service} must remain publicly reachable without Authentik" >&2
+    exit 1
+  }
+}
+
+require_protected_service() {
+  local service="$1"
+  local block
+  block="$(service_block "${service}")"
+
+  [[ "${block}" == *"<<: *authentik-forward-auth"* ]] || {
+    echo "${service} must retain the Authentik edge policy" >&2
+    exit 1
+  }
+}
+
 require 'watchtower:' "$compose"
 require 'containrrr/watchtower:' "$compose"
 require 'registry:2.8' "$compose"
@@ -69,6 +106,11 @@ require 'GITHUB_CLIENT_SECRET' "$env_example"
 require 'caddy_0.route.0_reverse_proxy: /outpost.goauthentik.io/* authentik-server:9000' "$compose"
 require 'caddy_0.route.1_forward_auth: authentik-server:9000' "$compose"
 require 'caddy_0.route.1_forward_auth.uri: /outpost.goauthentik.io/auth/caddy' "$compose"
+require_public_service website 80
+require_public_service learn 80
+require_public_service pckg 8082
+require_protected_service tracker
+require_protected_service nexus
 forbid 'AUTHELIA_' "$env_example"
 
 forbid 'coolify' "$compose"
