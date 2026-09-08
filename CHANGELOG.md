@@ -45,10 +45,12 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 ### Fixed
 
 - Correct the operator guide to distinguish checksummed manifests from signed
-  images and production verification from external Watchtower control. Record
-  the unresolved root/infrastructure deployment conflict, restore the
-  service-owned pckg and Nexus authentication boundaries, make procedures
-  atomic, and stop treating health responses as image-identity evidence.
+  images and production verification from external Watchtower control. Limit
+  operator evidence to workflow-owned validation and exposed run records, and
+  assign production restore and rollback to the production operator. Record the
+  unresolved root/infrastructure deployment conflict, restore the service-owned
+  pckg and Nexus authentication boundaries, make procedures atomic, and stop
+  treating health responses as image-identity evidence.
 - Align download API assets and packages with the shared release-platform IDs,
   restore canonical LSP and project reference indexes with redirects from their
   former README routes, and serve unknown website routes as explicit 404s.

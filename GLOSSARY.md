@@ -145,7 +145,10 @@ The historical name for the separately deployed standard reader. That service is
 The current root workflow boundary that validates a checksummed release
 manifest, verifies its source run, waits for externally controlled Watchtower,
 and runs public smoke checks. It cannot start, replace, or roll back production
-containers; the production operator owns those actions.
+containers; the production operator owns those actions. Operators inspect the
+workflow run and record only its status and exposed evidence. They do not
+materialize the workflow's internal validation files or repeat its internal
+validation commands.
 
 ## Release platform identifier
 

@@ -28,17 +28,18 @@ Use a protected GitHub environment for production verification. Confirm that eac
 
 1. From `beskid_infra`, run `just seed-openbao-check` to verify required key names without printing their values.
 2. Open the successful root `platform-delivery.yml` run.
-3. Select its checksummed release manifest.
-4. Verify the manifest checksum.
-5. Run `./scripts/ci/validate-promotion-source.sh release/workflow-run.json release/release-manifest.json`.
-6. Inspect the separate image-signature evidence for each listed digest.
-7. Observe the `reusable-promote.yml` production verification job.
-8. Wait for Watchtower during the configured smoke retry window.
-9. Record the verification status and deployment window.
+3. Record the workflow run URL.
+4. Open its `reusable-promote.yml` production verification job.
+5. Confirm in the **Verify release manifest** step that the workflow performs manifest checksum validation.
+6. Record checksum evidence only when the workflow exposes it.
+7. Confirm that the **Verify authoritative main source** step succeeded.
+8. Confirm that the **Wait for Watchtower and run production smoke** step succeeded.
+9. Record the job status.
+10. Inspect the separate image-build records for signature evidence.
 
 ## Expected result
 
-The checksummed release manifest contains exact image digests and the verified source run. Separate records prove the image signatures. The production job reports successful smoke checks after its Watchtower wait window.
+The production job status shows that the workflow validated the checksummed release manifest and its source run. The same job reports successful smoke checks after its Watchtower wait window. Separate image-build records provide signature evidence.
 
 ## Recovery
 

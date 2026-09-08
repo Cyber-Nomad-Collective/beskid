@@ -239,7 +239,7 @@ const procedurePages = [
 			prerequisites: ['Coolify lane', 'OpenBao token'],
 			actions: ['/docs/operations/containers/', '/docs/operations/deployment/'],
 			expectedResult: ['immutable image digests', 'healthy services'],
-			recovery: ['stop promotion', 'previous Compose payload'],
+			recovery: ['CI stops and reports', 'production operator'],
 		},
 	},
 	{
@@ -569,12 +569,13 @@ test('Task 5 numbered steps contain one observable action', async () => {
 	for (const path of task5Paths) {
 		const page = await loadPage(procedurePages.find((candidate) => candidate.path === path));
 		for (const [, , action] of section(page.body, 'Actions').matchAll(/^(\d+)\.\s+(.+)$/gm)) {
+			const proseAction = action.replace(/`[^`]*`|\*\*[^*]*\*\*/g, 'reference');
 			assert.doesNotMatch(
-				action,
+				proseAction,
 				/(?:,\s*|;\s*|\s)(?:and|then)\s+(?:check|complete|confirm|contact|create|identify|inspect|open|record|redeploy|restore|run|select|use|verify|wait)\b/i,
 				`${path} must split the multi-action step: ${action}`,
 			);
-			assert.equal((action.match(/\.\s+(?:Check|Complete|Confirm|Create|Inspect|Open|Record|Run|Select|Use|Verify)\b/g) ?? []).length, 0, `${path} must not add a second imperative sentence in one step`);
+			assert.equal((proseAction.match(/\.\s+(?:Check|Complete|Confirm|Create|Inspect|Open|Record|Run|Select|Use|Verify)\b/g) ?? []).length, 0, `${path} must not add a second imperative sentence in one step`);
 		}
 	}
 });
@@ -653,6 +654,28 @@ test('deployment guidance distinguishes verification from production control', a
 	assert.doesNotMatch(health.body, /same release manifest|health response[^.]*manifest identity/i);
 	assert.match(health.body, /health handler[^.]*does not expose[^.]*manifest identity/i);
 	assert.match(health.body, /separate release and deployment evidence/i);
+});
+
+test('operator recovery and delivery steps stay within available ownership and evidence', async () => {
+	const operations = await loadPage(procedurePages.find((page) => page.path === 'docs/operations/index.md'));
+	const recovery = section(operations.body, 'Recovery');
+	assert.match(recovery, /CI stops and reports/);
+	assert.match(recovery, /production operator owns (?:the )?(?:restore|rollback)/i);
+	assert.match(recovery, /rerun (?:production )?verification/i);
+	assert.doesNotMatch(recovery, /delivery path restore|CI[^.]*restore/i);
+
+	const containers = await loadPage(procedurePages.find((page) => page.path === 'docs/operations/containers.md'));
+	assert.match(section(containers.body, 'Next task'), /\[(?:Verify|Hand off)[^\]]*\]\(\/docs\/operations\/deployment\/\)/);
+	assert.doesNotMatch(section(containers.body, 'Next task'), /Deploy the verified manifest/i);
+
+	const deployment = await loadPage(procedurePages.find((page) => page.path === 'docs/operations/deployment.md'));
+	const actions = section(deployment.body, 'Actions');
+	assert.match(actions, /workflow (?:performs|owns) (?:the )?manifest (?:checksum )?validation/i);
+	assert.match(actions, /record the workflow run URL/i);
+	assert.match(actions, /record the (?:job )?status/i);
+	assert.match(actions, /record (?:the )?(?:checksum|checksum evidence)/i);
+	assert.doesNotMatch(actions, /release\/workflow-run\.json|release\/release-manifest\.json|validate-promotion-source\.sh/);
+	assert.doesNotMatch(actions, /Select its checksummed release manifest|Materialize/i);
 });
 
 test('licensing reference reflects component boundaries and the Nexus exception', async () => {

@@ -33,7 +33,7 @@ All application services run from immutable image digests. The selected lane rep
 
 ## Recovery
 
-If a required check fails, stop promotion. Preserve the failed release manifest and logs. Let the delivery path restore the previous Compose payload, then verify health again.
+If a required check fails, CI stops and reports the failure. Preserve the workflow URL, status, and exposed evidence. The production operator owns restore or rollback. After the operator completes recovery, rerun production verification.
 
 ## Next task
 

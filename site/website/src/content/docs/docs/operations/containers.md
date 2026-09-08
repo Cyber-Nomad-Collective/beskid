@@ -45,4 +45,4 @@ If Compose validation fails, inspect the container logs, fix the lane input, and
 
 ## Next task
 
-[Deploy the verified manifest](/docs/operations/deployment/).
+[Verify production delivery](/docs/operations/deployment/) or hand off the verified container contract to the production operator.
