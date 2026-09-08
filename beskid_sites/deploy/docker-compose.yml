@@ -287,6 +287,8 @@ services:
       - "8452"
     env_file:
       - ${BESKID_ENV_FILE:-.env}
+    environment:
+      NEXUS_AUTHENTIK_ADMIN_GROUPS: ${NEXUS_AUTHENTIK_ADMIN_GROUPS:-authentik Admins}
     volumes:
       - nexus-data:/data/gitnexus
     healthcheck:
