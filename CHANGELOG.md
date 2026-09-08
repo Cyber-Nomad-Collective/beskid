@@ -11,6 +11,16 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Learn now starts one authenticated compiler language-server session per
+  Monaco editor. Completion candidates and diagnostics come from
+  `beskid_lsp`; the prior hard-coded playground suggestions are removed.
+- Learn production images now bundle `beskid_lsp` and configure the server
+  process explicitly, so the deployed editor has the same language service as
+  local tooling.
+- Platform delivery passes required image records and the immutable release
+  manifest through reusable-workflow outputs, avoiding Actions artifact quota
+  failures after successful image publication. Unstable releases no longer
+  bypass required quality gates.
 - Delivery now authorizes required pnpm lifecycle builds with the pinned pnpm
   10.17 configuration, refreshes the root lockfile for the Tracker workspace,
   and treats vulnerability-report artifact upload as best-effort evidence after
