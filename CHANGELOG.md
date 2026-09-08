@@ -24,6 +24,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Production site smoke checks now reject redirects and other non-2xx
+  responses, so an authentication proxy or routing drift cannot be promoted as
+  a healthy public website.
 - Remove the deleted Coolify deployment fixture and its unused Compose renderer
   from the active Watchtower delivery gate, eliminating a stale second release
   model that still expected the retired auth image and GHCR paths.
