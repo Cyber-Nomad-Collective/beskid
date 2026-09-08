@@ -34,6 +34,8 @@ Know the result that you want. You do not need to install Beskid to evaluate the
 3. Check the annotation below each page title. It identifies the source and the verification revision.
 4. Return to this page when your role or task changes.
 
+The audience map connects each need to its first guide.
+
 ```mermaid
 flowchart TD
   accTitle: Audience routing
@@ -57,7 +59,7 @@ flowchart TD
 | Start | [Get started](/docs/getting-started/) |
 | Develop | [Tooling](/docs/tooling/) and [language basics](/docs/language-basics/) |
 | Publish | [Packages](/docs/packages/) |
-| Operate | Service operation guides in the Operate navigation group |
+| Operate | [Operations](/docs/operations/) |
 | Contribute | [Documentation authoring](/docs/contributing/documentation/) |
 
 ## Limits

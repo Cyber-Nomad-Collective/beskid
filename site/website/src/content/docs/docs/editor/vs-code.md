@@ -39,6 +39,8 @@ Complete [the first installation](/docs/getting-started/editor/) and keep the in
 14. Open **Graph Explorer** with **Beskid: Show Project Graph**. The command uses the focused `.bproj` project.
 15. Use a `.bws` manifest only with **Beskid: Show Workspace Graph**.
 
+The lifecycle shows how one selected project context supplies the extension views and recovery surfaces.
+
 ```mermaid
 flowchart TD
   accTitle: VS Code project-context lifecycle

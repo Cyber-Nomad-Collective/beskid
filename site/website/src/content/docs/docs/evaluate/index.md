@@ -32,6 +32,8 @@ State your intended use. Use a supported host: Linux on AMD64, macOS on ARM64, o
 7. Only when your intended use needs a public service, record the date and related issue or version from [Tracker](https://tracker.beskid-lang.org).
 8. Record the exact [Beskid Standard](/docs/standard/) capability or requirement for each required behavior.
 
+The decision flow stops the evaluation when any required evidence is missing.
+
 ```mermaid
 flowchart TD
   accTitle: Evaluation readiness decision

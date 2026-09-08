@@ -29,6 +29,8 @@ Use a browser and an internet connection. Identify the platform task that you ne
 4. Open [Explore Nexus](/docs/platform/nexus/) when you need a repository graph.
 5. Open the linked operator contract only when the public route needs service recovery.
 
+The task map keeps public product use separate from service recovery.
+
 ```mermaid
 flowchart TD
   accTitle: Platform user task routing

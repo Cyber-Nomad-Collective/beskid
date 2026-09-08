@@ -72,6 +72,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   cannot omit new routes. Give guide and reference pages distinct structures,
   provide explicit mismatch-report paths, and keep one observable reader action
   in each numbered task step.
+- Give every documentation coverage entry a unique stable machine key. Clarify
+  the Nexus reader, administrator, and MCP boundaries, introduce new diagrams
+  in prose, and link the Docs home operator path to the public operations guide.
 - Correct the operator guide to distinguish checksummed manifests from signed
   images and production verification from external Watchtower control. Limit
   operator evidence to workflow-owned validation and exposed run records, and

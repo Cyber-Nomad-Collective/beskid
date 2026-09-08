@@ -34,6 +34,8 @@ Use a browser and an internet connection. Choose a lesson goal before you start.
 8. Run the lesson check again until it reports success.
 9. Continue to the next lesson when you can explain the successful change.
 
+The feedback loop shows when to read a diagnostic, use a hint, and continue.
+
 ```mermaid
 flowchart LR
   accTitle: Lesson-check feedback loop

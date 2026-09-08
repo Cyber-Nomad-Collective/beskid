@@ -31,16 +31,19 @@ Use a browser, a trusted Nexus origin, and an indexed repository. The trusted Ne
 6. Open code references or process flows when the selected node provides them.
 7. Open a related [Beskid Standard](/docs/standard/) link when the node provides one.
 
+The role map separates public reading, protected administration, and machine graph queries.
+
 ```mermaid
 flowchart TD
-  accTitle: Nexus reader and administrator boundary
-  accDescr: A public reader selects a repository and navigates its graph. Code references, process flows, and Standard links remain reader features. Authentik administrators manage protected controls.
+  accTitle: Nexus reader, administrator, and MCP boundary
+  accDescr: Public readers navigate graphs. Authentik administrators manage protected controls. MCP clients make machine graph queries through a separate role.
   R[Public reader] --> S[Repository selector]
   S --> G[Graph navigation]
   G --> C[Code references]
   G --> P[Process flows]
   G --> L[Standard links]
   A[Authentik administrator] --> M[Protected management controls]
+  X[MCP client] --> Q[Machine graph queries]
 ```
 
 ### Diagram text
@@ -50,6 +53,7 @@ flowchart TD
 3. Process flows explain detected execution paths when the indexed graph contains them.
 4. Standard links lead to related Beskid Standard material when the selected node has indexed links.
 5. An Authentik administrator manages protected controls. This role boundary does not give a public reader administrator permissions.
+6. An MCP client makes machine graph queries through a separate role. It does not receive public-reader or administrator permissions from this page.
 
 ## Expected result
 

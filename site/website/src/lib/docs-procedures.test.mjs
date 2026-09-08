@@ -338,9 +338,9 @@ const procedurePages = [
 	},
 	{
 		path: 'docs/platform/nexus.md',
-		diagram: 'Nexus reader and administrator boundary',
-		diagramBranches: ['Public reader', 'Repository selector', 'Graph navigation', 'Code references', 'Process flows', 'Standard links', 'Authentik administrator'],
-		equivalentConcepts: ['public reader', 'repository', 'graph', 'code references', 'Process flows', 'Standard links', 'administrator'],
+		diagram: 'Nexus reader, administrator, and MCP boundary',
+		diagramBranches: ['Public reader', 'Repository selector', 'Graph navigation', 'Code references', 'Process flows', 'Standard links', 'Authentik administrator', 'MCP client', 'Machine graph queries'],
+		equivalentConcepts: ['public reader', 'repository', 'graph', 'code references', 'Process flows', 'Standard links', 'administrator', 'MCP client', 'machine graph queries'],
 		sections: {
 			prerequisites: ['browser', 'trusted Nexus origin', 'indexed repository'],
 			actions: ['<verified Nexus origin>/', '<verified Nexus origin>/?repo=<catalog-id>', 'Search symbols', 'Process flows', 'Beskid Standard'],
@@ -523,6 +523,12 @@ function accessibleDiagram(page) {
 	return { diagram, equivalent };
 }
 
+function assertDiagramIntroduction(page) {
+	const introduction = page.body.match(/(?:^|\n\n)([^\n`#][^\n]*)\n\n```mermaid\n/);
+	assert.ok(introduction, `${page.path} must introduce its Mermaid diagram with a prose sentence`);
+	assert.match(introduction[1], /[.!?]$/, `${page.path} diagram introduction must be a complete sentence`);
+}
+
 async function loadPage(page) {
 	const filePath = new URL(`../content/docs/${page.path}`, import.meta.url);
 	let source;
@@ -611,6 +617,21 @@ test('route-specific procedure expectations remain aligned with declared task pa
 test('required diagrams are accessible and have a following text equivalent on every technical Docs page', async () => {
 	for (const page of await Promise.all((await technicalDocsFiles()).map(loadTechnicalDocsPage))) {
 		if (page.data.diagramPolicy === 'required') accessibleDiagram(page);
+	}
+});
+
+test('reviewed wave-two diagrams have prose introductions', async () => {
+	const reviewedDiagramPages = new Set([
+		'editor/vs-code.md',
+		'evaluate/index.md',
+		'index.md',
+		'learn/index.md',
+		'platform/index.md',
+		'platform/nexus.md',
+		'platform/tracker.md',
+	]);
+	for (const page of await Promise.all((await technicalDocsFiles()).map(loadTechnicalDocsPage))) {
+		if (reviewedDiagramPages.has(page.path)) assertDiagramIntroduction(page);
 	}
 });
 
@@ -730,10 +751,21 @@ test('platform routes keep public user tasks separate from authenticated and ope
 		assert.match(nexus.body, new RegExp(concept, 'i'));
 	}
 	assert.match(nexus.body, /Authentik administrator/i);
+	const nexusRoles = accessibleDiagram(nexus);
+	for (const role of ['Public reader', 'Authentik administrator', 'MCP client']) {
+		assert.match(nexusRoles.diagram, new RegExp(role), `Nexus diagram must keep ${role} separate`);
+		assert.match(nexusRoles.equivalent, new RegExp(role, 'i'), `Nexus text equivalent must explain ${role}`);
+	}
 	assert.doesNotMatch(nexus.body, /NEXUS_MCP_AUTH_TOKEN|bearer token|pairing code/i);
 	for (const [service, userRoute] of [[authentication, '/docs/platform/account/'], [trackerService, '/docs/platform/tracker/'], [nexusService, '/docs/platform/nexus/']]) {
 		assert.match(service.body, new RegExp(escapeRegExp(userRoute)));
 	}
+});
+
+test('Docs home text equivalent links Operate to the current public route', async () => {
+	const docsHome = await loadPage({ path: 'docs/index.md' });
+	const { equivalent } = accessibleDiagram(docsHome);
+	assert.match(equivalent, /\| Operate \| \[Operations\]\(\/docs\/operations\/\) \|/);
 });
 
 test('VS Code routes separate first installation from daily project work', async () => {

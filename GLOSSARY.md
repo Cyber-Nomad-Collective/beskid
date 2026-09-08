@@ -74,10 +74,10 @@ The `https://<host>:<container-port>` route descriptor sent to Coolify so its pr
 
 ## Documentation coverage catalogue
 
-The checked-in, informative list that maps each non-compiler public surface to
-one Docs route, audience, source boundary, page kind, and diagram policy. The
-catalogue is a completeness assertion. It does not define normative behavior
-or replace the navigation model.
+The checked-in, informative list that gives each non-compiler public surface a
+stable machine key and maps it to one display label, Docs route, audience,
+source boundary, page kind, and diagram policy. The catalogue is a completeness
+assertion. It does not define normative behavior or replace the navigation model.
 
 ## Draft Context
 

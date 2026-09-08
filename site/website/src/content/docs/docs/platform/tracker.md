@@ -29,6 +29,8 @@ Use a browser and identify the delivery version or public bug that you want to r
 4. Open [Report a bug](/docs/platform/report-bug/) when the public list does not contain your problem.
 5. Use the [Beskid Standard](/docs/standard/) when you need a normative behavior requirement.
 
+The authority map separates public reading, delivery maintenance, normative rules, and bug transport.
+
 ```mermaid
 flowchart TD
   accTitle: Tracker delivery and bug authority

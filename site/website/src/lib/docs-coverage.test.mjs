@@ -49,9 +49,16 @@ test('catalogues every public Docs surface and keeps it aligned with the sole na
 		technicalDocsFiles(),
 	]);
 	const coverage = coverageModule.docsCoverage;
+	const keys = coverage.map((surface) => surface.key);
 	const routes = coverage.map((surface) => surface.route).sort();
 	const expectedRoutes = files.map(docsRoute).sort();
 
+	assert.equal(new Set(keys).size, keys.length, 'every public Docs surface must have one unique stable key');
+	for (const key of keys) {
+		assert.equal(typeof key, 'string', 'every public Docs surface must define a stable key');
+		assert.match(key, /^[a-z0-9]+(?:-[a-z0-9]+)*$/, `${key} must use stable slug format`);
+	}
+	assert.deepEqual(keys.slice(0, 4), ['docs-home', 'evaluation-readiness', 'beskid-learn', 'getting-started'], 'stable keys must remain independent from display text');
 	assert.deepEqual(routes, [...expectedRoutes].sort(), 'every public Docs surface must have one coverage entry');
 	assert.deepEqual(
 		[...new Set(navigationLinks(navigationModule.docsNavigation).filter((link) => link.startsWith('/docs/')))].sort(),
