@@ -27,13 +27,10 @@ command = "beskid_lsp"
 
 [[capabilities]]
 kind = "process:exec"
+# Zed must match trusted configured paths and user-supplied arguments, which
+# cannot be enumerated for explicit overrides or versioned cached downloads.
 command = "*"
-args = ["--stdio"]
-
-[[capabilities]]
-kind = "process:exec"
-command = "*"
-args = ["lsp"]
+args = ["**"]
 
 [[capabilities]]
 kind = "download_file"

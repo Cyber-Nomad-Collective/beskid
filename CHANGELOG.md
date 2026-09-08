@@ -22,6 +22,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   configured override, `beskid_lsp`, `beskid lsp`, then the exact stable
   release asset; forward opaque LSP settings unchanged and restrict extension
   capabilities to the supported launch/download surface.
+- Zed extension: preserve trusted configured and PATH server candidates on
+  hosts outside the release matrix, mark every stable-install failure clearly,
+  and atomically promote verified versioned download caches.
 - Deployment: replaced the custom GitHub auth image with Authelia forward
   authentication for every public Beskid application. The production runtime
   now exposes Authelia at `auth.beskid-lang.org` and retains the Compose,

@@ -1,10 +1,14 @@
 use std::path::Path;
 
-use language_server::{select_launch, LaunchChoice, LaunchSettings};
+use installer::{
+    cache_paths, install_cache, run_install, CacheInstaller, InstallStatus, InstallStatusSink,
+};
+use language_server::{platform_for_download, select_launch, LaunchChoice, LaunchSettings};
 use platform::{platform_asset, Arch, Os, PlatformAsset};
 use settings::{forward_initialization_options, forward_workspace_configuration, user_override};
 use zed_extension_api as zed;
 
+mod installer;
 mod language_server;
 mod platform;
 mod settings;
@@ -14,6 +18,49 @@ const BESKID_RELEASE_TAG: &str = "lsp-stable";
 const BESKID_LANGUAGE_SERVER_ID: &str = "beskid-lsp";
 
 struct BeskidExtension;
+
+struct ZedStatus<'a> {
+    language_server_id: &'a zed::LanguageServerId,
+}
+
+impl InstallStatusSink for ZedStatus<'_> {
+    fn set(&mut self, status: InstallStatus) {
+        let status = match status {
+            InstallStatus::CheckingForUpdate => {
+                zed::LanguageServerInstallationStatus::CheckingForUpdate
+            }
+            InstallStatus::Downloading => zed::LanguageServerInstallationStatus::Downloading,
+            InstallStatus::None => zed::LanguageServerInstallationStatus::None,
+            InstallStatus::Failed(error) => zed::LanguageServerInstallationStatus::Failed(error),
+        };
+        zed::set_language_server_installation_status(self.language_server_id, &status);
+    }
+}
+
+struct ZedCache;
+
+impl CacheInstaller for ZedCache {
+    fn exists(&self, path: &str) -> bool {
+        Path::new(path).exists()
+    }
+
+    fn remove_file(&mut self, path: &str) -> Result<(), String> {
+        std::fs::remove_file(path).map_err(|error| format!("failed to remove {path}: {error}"))
+    }
+
+    fn download(&mut self, url: &str, path: &str) -> Result<(), String> {
+        zed::download_file(url, path, zed::DownloadedFileType::Uncompressed)
+    }
+
+    fn make_executable(&mut self, path: &str) -> Result<(), String> {
+        zed::make_file_executable(path)
+    }
+
+    fn rename(&mut self, source: &str, destination: &str) -> Result<(), String> {
+        std::fs::rename(source, destination)
+            .map_err(|error| format!("failed to promote {source} to {destination}: {error}"))
+    }
+}
 
 impl zed::Extension for BeskidExtension {
     fn new() -> Self {
@@ -27,7 +74,6 @@ impl zed::Extension for BeskidExtension {
     ) -> zed::Result<zed::Command> {
         require_beskid_language_server(language_server_id)?;
 
-        let platform_asset = current_platform_asset()?;
         let settings =
             zed::settings::LspSettings::for_worktree(BESKID_LANGUAGE_SERVER_ID, worktree)?;
         let override_settings = user_override(settings)?;
@@ -36,16 +82,12 @@ impl zed::Extension for BeskidExtension {
 
         let launch_settings =
             match select_launch(override_settings, lsp_path.as_deref(), cli_path.as_deref()) {
-                LaunchChoice::Download => {
-                    zed::set_language_server_installation_status(
-                        language_server_id,
-                        &zed::LanguageServerInstallationStatus::CheckingForUpdate,
-                    );
+                launch_choice @ LaunchChoice::Download => {
+                    let platform_asset =
+                        platform_for_download(&launch_choice, current_platform_asset)?.ok_or_else(
+                            || "download choice did not resolve a platform asset".to_string(),
+                        )?;
                     let path = download_beskid_lsp(platform_asset, language_server_id)?;
-                    zed::set_language_server_installation_status(
-                        language_server_id,
-                        &zed::LanguageServerInstallationStatus::None,
-                    );
                     LaunchSettings {
                         path: Some(path),
                         arguments: vec!["--stdio".into()],
@@ -111,26 +153,19 @@ fn download_beskid_lsp(
     platform_asset: PlatformAsset,
     language_server_id: &zed::LanguageServerId,
 ) -> zed::Result<String> {
-    let release = zed::github_release_by_tag_name(BESKID_REPO, BESKID_RELEASE_TAG)?;
-    let download_url = release_asset_url(&release, platform_asset)?;
-    let target_path = format!("./{}-{}", platform_asset.binary_name, release.version);
-
-    if !Path::new(&target_path).exists() {
-        zed::set_language_server_installation_status(
-            language_server_id,
-            &zed::LanguageServerInstallationStatus::Downloading,
-        );
-        zed::download_file(
+    let mut status = ZedStatus { language_server_id };
+    run_install(&mut status, |status| {
+        let release = zed::github_release_by_tag_name(BESKID_REPO, BESKID_RELEASE_TAG)?;
+        let download_url = release_asset_url(&release, platform_asset)?;
+        let paths = cache_paths(platform_asset.binary_name, &release.version);
+        install_cache(
+            status,
+            &mut ZedCache,
+            &paths,
             &download_url,
-            &target_path,
-            zed::DownloadedFileType::Uncompressed,
-        )?;
-        if platform_asset.executable {
-            zed::make_file_executable(&target_path)?;
-        }
-    }
-
-    Ok(target_path)
+            platform_asset.executable,
+        )
+    })
 }
 
 fn release_asset_url(
@@ -171,7 +206,9 @@ zed::register_extension!(BeskidExtension);
 
 #[cfg(test)]
 mod language_server_tests {
-    use crate::language_server::{select_launch, LaunchChoice, LaunchSettings};
+    use crate::language_server::{
+        platform_for_download, select_launch, LaunchChoice, LaunchSettings,
+    };
 
     #[test]
     fn override_has_priority_and_preserves_its_command_settings() {
@@ -223,6 +260,39 @@ mod language_server_tests {
             }
         );
     }
+
+    #[test]
+    fn only_download_requires_a_supported_platform() {
+        let override_choice = select_launch(
+            Some(LaunchSettings {
+                path: Some("/custom/beskid_lsp".into()),
+                arguments: Vec::new(),
+                environment: Vec::new(),
+            }),
+            None,
+            None,
+        );
+        assert_eq!(
+            platform_for_download(&override_choice, || Err("unsupported platform".into())),
+            Ok(None)
+        );
+
+        for path_choice in [
+            select_launch(None, Some("/bin/beskid_lsp"), Some("/bin/beskid")),
+            select_launch(None, None, Some("/bin/beskid")),
+        ] {
+            assert_eq!(
+                platform_for_download(&path_choice, || Err("unsupported platform".into())),
+                Ok(None)
+            );
+        }
+
+        let download_choice = select_launch(None, None, None);
+        assert_eq!(
+            platform_for_download(&download_choice, || Err("unsupported platform".into())),
+            Err("unsupported platform".into())
+        );
+    }
 }
 
 #[cfg(test)]
@@ -248,5 +318,214 @@ mod settings_tests {
             Some(value)
         );
         assert_eq!(forward_workspace_configuration(None), None);
+    }
+}
+
+#[cfg(test)]
+mod installer_tests {
+    use crate::installer::{
+        cache_paths, install_cache, run_install, CacheInstaller, InstallStatus, InstallStatusSink,
+    };
+
+    #[derive(Default)]
+    struct RecordingStatus(Vec<InstallStatus>);
+
+    impl InstallStatusSink for RecordingStatus {
+        fn set(&mut self, status: InstallStatus) {
+            self.0.push(status);
+        }
+    }
+
+    #[derive(Clone, Copy)]
+    enum Failure {
+        Download,
+        Chmod,
+        Rename,
+    }
+
+    struct FakeCache {
+        cached: bool,
+        temporary: bool,
+        failure: Option<Failure>,
+        actions: Vec<String>,
+    }
+
+    impl FakeCache {
+        fn fresh(failure: Option<Failure>) -> Self {
+            Self {
+                cached: false,
+                temporary: false,
+                failure,
+                actions: Vec::new(),
+            }
+        }
+    }
+
+    impl CacheInstaller for FakeCache {
+        fn exists(&self, path: &str) -> bool {
+            if path.ends_with(".partial") {
+                self.temporary
+            } else {
+                self.cached
+            }
+        }
+
+        fn remove_file(&mut self, path: &str) -> Result<(), String> {
+            self.actions.push(format!("remove {path}"));
+            Ok(())
+        }
+
+        fn download(&mut self, _url: &str, path: &str) -> Result<(), String> {
+            self.actions.push(format!("download {path}"));
+            if matches!(self.failure, Some(Failure::Download)) {
+                return Err("download failed".into());
+            }
+            Ok(())
+        }
+
+        fn make_executable(&mut self, path: &str) -> Result<(), String> {
+            self.actions.push(format!("chmod {path}"));
+            if matches!(self.failure, Some(Failure::Chmod)) {
+                return Err("chmod failed".into());
+            }
+            Ok(())
+        }
+
+        fn rename(&mut self, source: &str, destination: &str) -> Result<(), String> {
+            self.actions.push(format!("rename {source} {destination}"));
+            if matches!(self.failure, Some(Failure::Rename)) {
+                return Err("rename failed".into());
+            }
+            Ok(())
+        }
+    }
+
+    #[test]
+    fn only_successful_downloads_promote_a_versioned_temp_file() {
+        let paths = cache_paths("beskid_lsp", "v1");
+        let mut status = RecordingStatus::default();
+        let mut cache = FakeCache::fresh(None);
+
+        let path = run_install(&mut status, |status| {
+            install_cache(
+                status,
+                &mut cache,
+                &paths,
+                "https://example.test/asset",
+                true,
+            )
+        })
+        .unwrap();
+
+        assert_eq!(path, "./beskid_lsp-v1");
+        assert_eq!(
+            cache.actions,
+            vec![
+                "download ./beskid_lsp-v1.partial",
+                "chmod ./beskid_lsp-v1.partial",
+                "rename ./beskid_lsp-v1.partial ./beskid_lsp-v1",
+                "chmod ./beskid_lsp-v1",
+            ]
+        );
+        assert_eq!(
+            status.0,
+            vec![
+                InstallStatus::CheckingForUpdate,
+                InstallStatus::Downloading,
+                InstallStatus::None,
+            ]
+        );
+    }
+
+    #[test]
+    fn cached_unix_binary_is_made_executable_before_launch() {
+        let paths = cache_paths("beskid_lsp", "v1");
+        let mut status = RecordingStatus::default();
+        let mut cache = FakeCache {
+            cached: true,
+            temporary: false,
+            failure: None,
+            actions: Vec::new(),
+        };
+
+        run_install(&mut status, |status| {
+            install_cache(
+                status,
+                &mut cache,
+                &paths,
+                "https://example.test/asset",
+                true,
+            )
+        })
+        .unwrap();
+
+        assert_eq!(cache.actions, vec!["chmod ./beskid_lsp-v1"]);
+    }
+
+    #[test]
+    fn stale_temporary_cache_file_is_replaced_before_download() {
+        let paths = cache_paths("beskid_lsp", "v1");
+        let mut status = RecordingStatus::default();
+        let mut cache = FakeCache {
+            cached: false,
+            temporary: true,
+            failure: None,
+            actions: Vec::new(),
+        };
+
+        run_install(&mut status, |status| {
+            install_cache(
+                status,
+                &mut cache,
+                &paths,
+                "https://example.test/asset",
+                false,
+            )
+        })
+        .unwrap();
+
+        assert_eq!(
+            cache.actions,
+            vec![
+                "remove ./beskid_lsp-v1.partial",
+                "download ./beskid_lsp-v1.partial",
+                "rename ./beskid_lsp-v1.partial ./beskid_lsp-v1",
+            ]
+        );
+    }
+
+    #[test]
+    fn release_asset_download_and_chmod_failures_report_failed_status() {
+        for failure in ["release failed", "asset failed"] {
+            let mut status = RecordingStatus::default();
+            assert_eq!(
+                run_install::<()>(&mut status, |_| Err(failure.into())),
+                Err(failure.into())
+            );
+            assert_eq!(
+                status.0,
+                vec![
+                    InstallStatus::CheckingForUpdate,
+                    InstallStatus::Failed(failure.into()),
+                ]
+            );
+        }
+
+        for failure in [Failure::Download, Failure::Chmod, Failure::Rename] {
+            let paths = cache_paths("beskid_lsp", "v1");
+            let mut status = RecordingStatus::default();
+            let mut cache = FakeCache::fresh(Some(failure));
+            assert!(run_install(&mut status, |status| {
+                install_cache(
+                    status,
+                    &mut cache,
+                    &paths,
+                    "https://example.test/asset",
+                    true,
+                )
+            })
+            .is_err());
+            assert!(matches!(status.0.last(), Some(InstallStatus::Failed(_))));
+        }
     }
 }

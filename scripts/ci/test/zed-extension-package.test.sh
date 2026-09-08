@@ -29,6 +29,14 @@ grep -Fq 'grammar = "beskid"' "${extension_root}/languages/beskid/config.toml" |
   fail 'Beskid language configuration does not select the packaged grammar'
 grep -Fq 'path_suffixes = ["bd"]' "${extension_root}/languages/beskid/config.toml" || \
   fail 'Beskid language configuration does not associate .bd files'
+[[ "$(grep -Fc 'kind = "process:exec"' "${extension_root}/extension.toml")" -eq 1 ]] || \
+  fail 'Zed extension must declare one process capability for trusted server overrides'
+grep -Fq 'command = "*"' "${extension_root}/extension.toml" || \
+  fail 'Zed extension process capability must support trusted absolute cache and override paths'
+grep -Fq 'args = ["**"]' "${extension_root}/extension.toml" || \
+  fail 'Zed extension process capability must preserve trusted configured arguments'
+grep -Fq 'path = ["Cyber-Nomad-Collective", "beskid_compiler", "releases", "download", "lsp-stable", "**"]' "${extension_root}/extension.toml" || \
+  fail 'Zed extension download capability must remain limited to the stable Beskid release path'
 
 cargo test --manifest-path "${extension_root}/Cargo.toml"
 cargo build --release --target wasm32-wasip2 --manifest-path "${extension_root}/Cargo.toml"

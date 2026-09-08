@@ -1,3 +1,5 @@
+use crate::platform::PlatformAsset;
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub(crate) struct LaunchSettings {
     pub(crate) path: Option<String>,
@@ -31,6 +33,18 @@ pub(crate) fn select_launch(
     }
 
     LaunchChoice::Download
+}
+
+pub(crate) fn platform_for_download(
+    launch_choice: &LaunchChoice,
+    resolve_platform: impl FnOnce() -> Result<PlatformAsset, String>,
+) -> Result<Option<PlatformAsset>, String> {
+    match launch_choice {
+        LaunchChoice::Download => resolve_platform().map(Some),
+        LaunchChoice::Override(_) | LaunchChoice::LspOnPath(_) | LaunchChoice::CliOnPath(_) => {
+            Ok(None)
+        }
+    }
 }
 
 impl LaunchChoice {
