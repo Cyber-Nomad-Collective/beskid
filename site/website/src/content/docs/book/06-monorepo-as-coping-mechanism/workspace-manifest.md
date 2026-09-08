@@ -12,7 +12,7 @@ Legacy **`Workspace.proj`** is rejected (**E1895**); rename to a `.bws` file (fo
 
 - **`workspace { ... }`** — workspace identity and resolver policy; extras such as **`defaultTestMember`** select the member when you pass the workspace path without `--workspace-member`
 - **`member "<label>" { path = "..." }`** — adds a project at `path`; optional extras (`package`, `description`, `category`, `tags`) are publish/editor metadata merged from the workspace manifest
-- **`override "<dep>" { version = "..." }`** — shared version policy (forward-looking as registry deps mature)
+- **`override "<dep>" { version = "..." }`** — shared registry version policy
 - **`registry "<name>" { url = "..." }`** — centralized registry endpoints
 
 ## Why bother
@@ -26,6 +26,8 @@ Legacy **`Workspace.proj`** is rejected (**E1895**); rename to a `.bws` file (fo
 ## Minimal mental picture
 
 ```mermaid
+accTitle: Workspace membership
+accDescr: A bws workspace declares application and library members, and each member has its own bproj manifest.
 flowchart TD
   W[CoreLib.bws] --> M1[member app]
   W --> M2[member lib]
@@ -33,10 +35,12 @@ flowchart TD
   M2 --> P2[lib.bproj]
 ```
 
+**Text equivalent:** `CoreLib.bws` lists the application and library members. Each member resolves to its own `.bproj` manifest.
+
 ## Guides and spec
 
 - [Workspace monorepo setup](/book/reference/workspace-monorepo/)
-- [Workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
+- [Workspace and lock contracts](/docs/standard/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
 
 ## Next
 

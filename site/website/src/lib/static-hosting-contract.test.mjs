@@ -41,3 +41,31 @@ test('pins the website root in the static image so release metadata is discovera
 	assert.match(dockerfile, /ENV BESKID_WEBSITE_ROOT=\/app\/site\/website/);
 	assert.match(dockerfile, /pnpm --dir site\/website sync:release-version/);
 });
+
+test('serves the explicit 404 document for unknown routes instead of the home page', async () => {
+	const nginxConfig = await readFile(path.join(siteRoot, 'nginx/default.conf'), 'utf8');
+	assert.match(nginxConfig, /error_page\s+404\s+\/404\.html;/);
+	assert.match(nginxConfig, /location\s+\/\s*\{\s*try_files\s+\$uri\s+\$uri\/\s+=404;/);
+	assert.doesNotMatch(nginxConfig, /location\s+\/\s*\{\s*try_files[^;]*\/index\.html;/);
+});
+
+test('serves exact generated Platform Spec redirects before a fail-closed Standard fallback', async () => {
+	const nginxConfig = await readFile(path.join(siteRoot, 'nginx/default.conf'), 'utf8');
+	const dockerfile = await readFile(path.join(siteRoot, 'Dockerfile'), 'utf8');
+	const packageJson = JSON.parse(await readFile(path.join(siteRoot, 'package.json'), 'utf8'));
+	assert.match(nginxConfig, /include\s+\/etc\/nginx\/snippets\/standard-redirects\.conf;/);
+	assert.match(
+		nginxConfig,
+		/location \^~ \/platform-spec\/ \{[\s\S]*?error_page 404 =404 \/docs\/standard\/not-found\/index\.html;[\s\S]*?try_files \$uri \$uri\/ =404;/,
+	);
+	assert.doesNotMatch(nginxConfig, /location \^~ \/platform-spec\/\s*\{\s*return 301/);
+	assert.match(
+		dockerfile,
+		/COPY --from=build \/app\/site\/website\/\.astro\/standard-redirects\.conf \/etc\/nginx\/snippets\/standard-redirects\.conf/,
+	);
+	assert.match(packageJson.scripts.postbuild, /write-standard-nginx-redirects\.mjs \.astro\/standard-redirects\.conf/);
+	assert.match(
+		packageJson.scripts.postbuild,
+		/verify-nginx-standard-routes\.mjs nginx\/default\.conf \.astro\/standard-redirects\.conf Dockerfile/,
+	);
+});

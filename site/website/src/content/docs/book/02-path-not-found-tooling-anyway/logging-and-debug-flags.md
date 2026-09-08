@@ -25,12 +25,16 @@ Exact flags evolve with the CLI—cross-check [CLI command reference](/book/refe
 4. **Compare locked vs floating resolution** — `--frozen` / `--locked` when dependency drift is suspect.
 
 ```mermaid
+accTitle: Diagnostic isolation workflow
+accDescr: Reproduce a problem in the CLI, minimize the input, identify the failing phase, and check the Standard and diagnostic code.
 flowchart TD
   bug[Weird behavior] --> cli[Reproduce with CLI]
   cli --> small[Minimize file/target]
   small --> phase[Identify failing phase]
   phase --> spec[Check normative spec + diagnostic code]
 ```
+
+**Text equivalent:** Reproduce the issue with a CLI command. Reduce the source or selected target, identify the failing phase, and compare the diagnostic with the normative Standard entry.
 
 ## LSP observability
 

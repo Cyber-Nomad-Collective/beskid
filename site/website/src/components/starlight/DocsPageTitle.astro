@@ -1,0 +1,85 @@
+---
+const PAGE_TITLE_ID = '_top';
+const data = Astro.locals.starlightRoute.entry.data as typeof Astro.locals.starlightRoute.entry.data & {
+	audience: string[];
+	authority: {
+		status: string;
+		sourceLabel: string;
+		sourceHref: string;
+		limits: string;
+	};
+	verified: {
+		revision: string;
+		date: Date;
+	};
+};
+const { audience, authority, verified } = data;
+const status = authority.status.replaceAll('-', ' ');
+const date = verified.date.toISOString().slice(0, 10);
+---
+
+<h1 id={PAGE_TITLE_ID}>{data.title}</h1>
+<aside class="docs-authority" aria-label="Document authority" role="note">
+	<dl>
+		<div><dt>Status</dt><dd>{status}</dd></div>
+		<div><dt>Authority</dt><dd><a href={authority.sourceHref}>{authority.sourceLabel}</a></dd></div>
+		<div><dt>Limits</dt><dd>{authority.limits}</dd></div>
+		<div><dt>Audience</dt><dd>{audience.join(', ')}</dd></div>
+		<div><dt>Verified revision</dt><dd><code>{verified.revision}</code></dd></div>
+		<div><dt>Verified date</dt><dd><time datetime={date}>{date}</time></dd></div>
+	</dl>
+</aside>
+
+<style>
+	@layer starlight.core {
+		h1 {
+			margin-top: 1rem;
+			font-size: var(--sl-text-h1);
+			line-height: var(--sl-line-height-headings);
+			font-weight: 600;
+			color: var(--sl-color-white);
+		}
+
+		.docs-authority {
+			margin-top: 1rem;
+			border-inline-start: 0.25rem solid var(--sl-color-accent);
+			border-radius: 0.25rem;
+			padding: 0.9rem 1rem;
+			background: var(--sl-color-bg-inline-code);
+			color: var(--sl-color-text);
+		}
+
+		.docs-authority dl {
+			display: grid;
+			grid-template-columns: max-content minmax(0, 1fr);
+			gap: 0.35rem 0.8rem;
+			margin: 0;
+			font-size: var(--sl-text-sm);
+		}
+
+		.docs-authority dl > div {
+			display: contents;
+		}
+
+		.docs-authority dt {
+			font-weight: 700;
+		}
+
+		.docs-authority dd {
+			margin: 0;
+			min-width: 0;
+			overflow-wrap: anywhere;
+		}
+
+		@media (max-width: 32rem) {
+			.docs-authority dl {
+				display: block;
+			}
+
+			.docs-authority dd + dt,
+			.docs-authority dl > div + div dt {
+				margin-top: 0.55rem;
+			}
+		}
+	}
+</style>

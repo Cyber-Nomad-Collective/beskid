@@ -8,11 +8,13 @@ You have a binary. Now you need a **workflow** that does not devolve into `grep`
 
 This chapter folds the old "tooling and editors" material into something you can actually use: what files exist, how discovery works, how the extension talks to the same project graph as the CLI, and where to read when you want every flag documented.
 
+Use the canonical [Tooling guide](/docs/tooling/) for current commands and CI procedures. Use [Editor setup](/docs/getting-started/editor/) for LSP selection and recovery.
+
 ## What you will find here
 
 | Section | Topic |
 | --- | --- |
-| [File types and discovery](/book/02-path-not-found-tooling-anyway/file-types-and-discovery/) | `.bd`, `.proj`, `Project.proj`, `Workspace.proj`. |
+| [File types and discovery](/book/02-path-not-found-tooling-anyway/file-types-and-discovery/) | `.bd`, `.bproj`, `App.bproj`, `Workspace.bws`. |
 | [VS Code and LSP](/book/02-path-not-found-tooling-anyway/vscode-and-lsp/) | Extension, language ids, bundled vs local LSP. |
 | [CLI tour](/book/02-path-not-found-tooling-anyway/cli-tour/) | Subcommands you will touch in week one. |
 | [Logging and debug flags](/book/02-path-not-found-tooling-anyway/logging-and-debug-flags/) | Progress, verbosity, and not drowning in noise. |
@@ -21,7 +23,7 @@ This chapter folds the old "tooling and editors" material into something you can
 ## By the end of this chapter
 
 - Know which file extensions mean what.
-- Configure editor support for `.bd` and `.proj`.
+- Configure editor support for `.bd` and `.bproj`.
 - Know where CLI vs LSP vs analysis share the same manifest model.
 
 ## Previous
@@ -30,4 +32,4 @@ This chapter folds the old "tooling and editors" material into something you can
 
 ## Next
 
-[03. Project.proj or it didn't happen](/book/03-project-proj-or-it-didnt-happen/)
+[03. App.bproj or it didn't happen](/book/03-project-proj-or-it-didnt-happen/)

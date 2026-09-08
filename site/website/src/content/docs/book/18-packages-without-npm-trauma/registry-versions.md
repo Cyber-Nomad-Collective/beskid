@@ -17,5 +17,5 @@ Source `.bproj` files may use local `path` dependencies while developing a works
 
 ## Spec
 
-- [Package kinds](/platform-spec/tooling/registry-client/package-kinds/)
-- [Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)
+- [Package kinds](/docs/standard/tooling/registry-client/package-kinds/)
+- [Project manifest contract](/docs/standard/tooling/manifests-and-lockfiles/project-manifest-contract/)

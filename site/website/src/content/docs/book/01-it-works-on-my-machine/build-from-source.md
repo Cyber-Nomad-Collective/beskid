@@ -40,7 +40,7 @@ The VS Code extension can use a bundled language server or a path you configure 
 ## Reference
 
 - [Contributing / compiler layout](/book/reference/contributing/) (if present in your checkout)
-- [Platform spec — compiler domain](/platform-spec/compiler/)
+- [Platform spec — compiler domain](/docs/standard/compiler/)
 
 ## Next
 

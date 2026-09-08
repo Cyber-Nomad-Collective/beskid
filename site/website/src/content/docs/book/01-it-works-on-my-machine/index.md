@@ -6,7 +6,9 @@ tableOfContents: true
 
 Philosophy is optional. A compiler binary is not.
 
-This chapter is the **"get off Twitter and onto a terminal"** track: downloads, PATH, building from source when you must, and the smallest smoke test that proves the toolchain is alive. Normative install contracts live on [Downloads](/downloads/) and in [tooling manifests](/platform-spec/tooling/); here we stay practical.
+This chapter is the **"get off Twitter and onto a terminal"** track: downloads, PATH, building from source when you must, and the smallest smoke test that proves the toolchain is alive. Normative install contracts live on [Downloads](/downloads/) and in [tooling manifests](/docs/standard/tooling/); here we stay practical.
+
+Use [Install Beskid](/docs/getting-started/install/) for the verified installation, upgrade, pin, and uninstall procedure.
 
 If you skipped [Why Beskid Exists](/book/00-why-beskid-exists/), nobody is judging you (much).
 

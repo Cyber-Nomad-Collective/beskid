@@ -1,6 +1,6 @@
 ---
 title: "Publish your first package"
-description: Pointer to the reference workflow—authenticate, dry-run, publish, verify on the registry.
+description: Pointer to the verified package preparation, upload, and consumption procedure.
 tableOfContents: true
 ---
 
@@ -8,12 +8,12 @@ The step-by-step guide with commands and role requirements lives in the referenc
 
 ## Read this next
 
-**[Publish your first package](/book/reference/publish-first-package/)** — manifest checks, `beskid pckg login`, dry-run, publish, consume.
+**[Publish a package](/docs/packages/publish/)** — protect the API key, create the package record, pack, inspect, upload, and verify the immutable version.
 
 ## Before you publish
 
-- Run `beskid dev syntax doc` so `.beskid/docs/api.json` exists for pckg registry docs ingestion.
-- Run tests (`beskid dev build test`) if your package is more than a manifest cosplay.
+- Run `beskid doc` so `.beskid/docs/api.json` exists for pckg registry docs ingestion.
+- Run tests (`beskid test`) if your package is more than a manifest cosplay.
 - Confirm public API boundaries — see [Package public surface](/book/19-public-api-that-survives-review/package-public-surface/): registry consumers import what you exported, not what you "meant."
 
 ## See also

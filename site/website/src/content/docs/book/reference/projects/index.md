@@ -1,19 +1,20 @@
 ---
-title: "Beskid Projects (HCL-based)"
+title: Beskid projects
+description: Current BSOL project manifests, targets, dependencies, and resolution references.
 ---
 
 
-Beskid projects are defined by a declarative root manifest and a deterministic dependency graph.
+Beskid projects use a declarative BSOL root manifest and a deterministic dependency graph.
 
-This document describes the project contract used by CLI, analysis, and LSP tooling.
+This document describes the project contract used by CLI, analysis, and LSP tooling. For executable tasks and recovery, use the canonical [Projects guide](/docs/projects/).
 
 ## Canonical project manifest
 
-- File name: `Project.proj`
+- File name: `App.bproj`
 - Location: project root directory
-- Format: HCL-based declarative manifest
+- Format: BSOL declarative manifest
 
-`Project.proj` is the source of truth for:
+`App.bproj` is the source of truth for:
 
 - project identity,
 - targets,
@@ -26,9 +27,9 @@ Minimum expected layout:
 
 ```text
 MyProject/
-├── Project.proj
+├── App.bproj
 ├── Src/
-│   └── main.bd   # default source root (set `project.root = "src"` if you prefer lowercase)
+│   └── Main.bd
 ├── obj/
 │   └── beskid/   # tool-managed materialized artifacts
 └── Project.lock  # generated lockfile
@@ -45,10 +46,11 @@ Notes:
 - **Target**: a buildable unit (for example executable or library).
 - **Dependency**: a typed edge in the project graph.
 
-Dependency sources in contract:
+Dependency sources in the current contract:
 
-- `path` (active)
-- `git` and `registry` (reserved schema extension points)
+- `path` resolves and materializes a local project.
+- `registry` downloads and materializes an active package version.
+- `git` is parsed but is not materialized by the current workflow.
 
 ## Resolution and determinism contract
 

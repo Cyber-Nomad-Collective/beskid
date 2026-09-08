@@ -1,17 +1,16 @@
 ---
-title: "Build and Run Workflow (v1)"
-description: Beskid Project Build and Run Workflow
+title: "Build and run workflow"
+description: Current project resolution, lock, materialization, and command stages.
 ---
 
 
-This document defines the required project workflow used by `run`, `clif`, and `analyze`.
+This reference describes the shared project workflow used by `run`, `clif`, `analyze`, `build`, and `test`. Use [Dependencies and locks](/docs/projects/dependencies-and-locks/) for an executable procedure.
 
 ## Scope
 
-- Single project root (`Project.proj`) plus transitive dependencies.
-- Source-only dependencies.
-- Active provider: `path`.
-- Deferred providers (infrastructure only): `git`, `registry`.
+- Single project root (`App.bproj`) plus transitive dependencies.
+- Path and registry dependencies.
+- Git dependencies are parsed but are not materialized in the current workflow.
 
 ## Required lifecycle
 
@@ -34,7 +33,8 @@ Commands must not skip stages.
 ## Materialization policy
 
 - Copy dependency files from source roots into `obj/beskid/deps/src/<PackageId>/`.
-- Copy only when source file is newer than materialized file.
+- Copy local source when it is newer than the materialized file.
+- Download an active registry artifact and extract it under the dependency materialization root.
 - Compilation consumes materialized roots, not raw dependency paths.
 
 ## Determinism rules
@@ -46,7 +46,8 @@ Commands must not skip stages.
 ## Failure policy
 
 - Build and run fail fast on unresolved dependencies.
-- Provider-disabled sources fail at resolution stage.
+- Git sources fail at resolution stage.
+- A missing or invalid registry result prevents a usable dependency from entering the prepared workspace.
 - Lock or materialization errors fail before compile.
 
 ## Diagnostics contract
@@ -55,22 +56,21 @@ Project workflow diagnostics use shared analysis diagnostics infrastructure and 
 
 ### Error codes
 
-- `E3001`: missing `Project.proj` at '{path}'
+- `E3001`: missing `App.bproj` at '{path}'
 - `E3006`: dependency '{dependency}' manifest not found at {path}
 - `E3007`: dependency cycle detected: {chain}
 - `E3008`: unresolved external dependencies: {details}
-- `E3011`: unsupported dependency source '{source}' in v1
+- `E3011`: unsupported dependency source '{source}'
 - `E3022`: lockfile is out of date for project '{project}'
 - `E3023`: lockfile update forbidden in frozen mode
 - `E3031`: failed to copy dependency source '{from}' -> '{to}': {source}
 - `E3033`: build cannot start because dependencies were not materialized
 
-## CLI behavior recommendations
+## CLI lock behavior
 
-- Default mode: lock-aware with automatic lock creation/update.
-- Future strict flags:
-  - `--frozen`: no lock updates.
-  - `--locked`: require existing up-to-date lock.
+- Default mode creates or updates `Project.lock` when the resolved entries change.
+- `--frozen` forbids lockfile updates.
+- `--locked` requires an existing lockfile and forbids changes.
 
 ## Interop alignment
 

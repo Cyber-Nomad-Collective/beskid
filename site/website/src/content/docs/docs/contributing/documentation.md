@@ -1,9 +1,17 @@
 ---
 title: Write Beskid Documentation
 description: Write clear technical documentation with ASD-STE100 Simplified Technical English.
+audience:
+  - contributor
+authority:
+  status: informative
+  sourceLabel: Standard STE compliance policy
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid/blob/main/openspec/specs/standard-ste-compliance/spec.md
+  limits: This page gives authoring guidance. It does not certify ASD-STE100 compliance.
+verified:
+  revision: 35fdb92cd9c4ad8f61e3d06d7171e94a694b2562
+  date: 2026-09-08
 ---
-
-# Write Beskid Documentation
 
 Use ASD-STE100 Simplified Technical English, Issue 9, January 2025, for technical prose. Read the [official ASD-STE100 site](https://asd-ste100.org/) when you need the standard or its dictionary.
 
@@ -21,6 +29,8 @@ Keep code, commands, paths, URLs, and identifiers unchanged. Do not change a req
 
 ## Check the page
 
-Check that the title states the task. Check that links work. Run the website build for Docs changes. Run OpenSpec validation for normative changes.
+Check that the title states the task. Check that links work. Run `pnpm review:ste` from `site/website`. Review each candidate manually. Use the documented, reasoned exception syntax only when the prose must stay unchanged.
+
+Run the website tests and build for Docs changes. Run OpenSpec validation for normative changes. The STE review tool gives authoring evidence; it does not certify compliance.
 
 The repository skill at `.claude/skills/ste-100-technical-documentation/SKILL.md` gives the same working rules to coding agents. It helps with authoring. It does not certify compliance.

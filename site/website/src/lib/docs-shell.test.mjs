@@ -1,10 +1,22 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
+import path from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 const root = new URL('../../../../', import.meta.url);
+const docsRoot = fileURLToPath(new URL('site/website/src/content/docs/docs/', root));
 
 const read = (path) => readFile(new URL(path, root), 'utf8');
+
+async function technicalDocsFiles(directory = docsRoot) {
+	const entries = await readdir(directory, { withFileTypes: true });
+	const nested = await Promise.all(entries.map((entry) => {
+		const entryPath = path.join(directory, entry.name);
+		return entry.isDirectory() ? technicalDocsFiles(entryPath) : [entryPath];
+	}));
+	return nested.flat().filter((filePath) => /\.mdx?$/.test(filePath)).sort();
+}
 
 test('keeps search in documentation chrome and gives Docs a navigation rail', async () => {
 	const [header, docsRail, config] = await Promise.all([
@@ -21,13 +33,10 @@ test('keeps search in documentation chrome and gives Docs a navigation rail', as
 	assert.match(config, /htmlSubdir: 'docs'/);
 });
 
-test('renders Docs and Standard titles once', async () => {
-	const [docs, standard] = await Promise.all([
-		read('site/website/src/content/docs/docs/index.md'),
-		read('site/website/src/content/docs/docs/standard/index.md'),
-	]);
-	assert.equal((docs.match(/^# Beskid Docs$/gm) ?? []).length, 0);
-	assert.equal((standard.match(/^# Beskid Standard$/gm) ?? []).length, 0);
+test('leaves the only technical Docs H1 to the shared page-title renderer', async () => {
+	for (const filePath of await technicalDocsFiles()) {
+		assert.doesNotMatch(await readFile(filePath, 'utf8'), /^# /m, filePath);
+	}
 });
 
 test('registers Beskid code fences with the Docs highlighter', async () => {

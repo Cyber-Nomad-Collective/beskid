@@ -6,7 +6,7 @@ tableOfContents: true
 
 The **`compiler-sdk`** package is the Beskid-side API for mods—contracts and `Beskid.Syntax` operations, not string templates.
 
-Full normative article: [Compiler Mod SDK](/platform-spec/language-meta/metaprogramming/compiler-mod-sdk/).
+Full normative article: [Compiler Mod SDK](/docs/standard/language-meta/metaprogramming/compiler-mod-sdk/).
 
 ## Contract hierarchy
 
@@ -28,11 +28,11 @@ Generated mirrors come from `beskid_ast_reflect_gen`—Rust AST is canonical; SD
 
 ## Rust host areas
 
-Implementation specs under [Compiler mods](/platform-spec/compiler/compiler-mods/):
+Implementation specs under [Compiler mods](/docs/standard/compiler/compiler-mods/):
 
-- [Mod host bridge](/platform-spec/compiler/compiler-mods/mod-host-bridge/)
-- [Syntax domain model generation](/platform-spec/compiler/compiler-mods/syntax-domain-model-generation/)
-- [Incremental scheduling and determinism](/platform-spec/compiler/compiler-mods/incremental-scheduling-determinism/)
+- [Mod host bridge](/docs/standard/compiler/compiler-mods/mod-host-bridge/)
+- [Syntax domain model generation](/docs/standard/compiler/compiler-mods/syntax-domain-model-generation/)
+- [Incremental scheduling and determinism](/docs/standard/compiler/compiler-mods/incremental-scheduling-determinism/)
 
 ## Next
 

@@ -1,0 +1,118 @@
+{
+  "sourceRevision": "252aa528ac7ee01a64e49e9b88b32393206fbd71",
+  "sourceBlobs": {
+    "crates/beskid_cli/src/cli.rs": "8fe52dc8d5656da5cd72ded732cbc54614cdee6f",
+    "crates/beskid_cli/src/project_args.rs": "99218fffa2d42c0e5ba02cef79e161136db2dd73",
+    "crates/beskid_cli/src/commands/analyze.rs": "fffb1c918ebceab7ab45c7252e3af4d6c879ef76",
+    "crates/beskid_cli/src/commands/build.rs": "d1f9cd6da1e20ab4b0a3e22fe97a64984c5ae14c",
+    "crates/beskid_cli/src/commands/clif.rs": "c8ddc2a91b209580a229ad37d8d89ade292592ef",
+    "crates/beskid_cli/src/commands/compiler_mod.rs": "151e5406e23e973b08c88d2f8713ae51889b5b66",
+    "crates/beskid_cli/src/commands/corelib.rs": "5b72d3e9659b18ab0286b717c9bdc3d8de509740",
+    "crates/beskid_cli/src/commands/doc/model.rs": "03c13b15b29c2321e628fe919affab2c84d01f4b",
+    "crates/beskid_cli/src/commands/fetch.rs": "56d84ced5bb462050563c2e12ad30bdc6a873d78",
+    "crates/beskid_cli/src/commands/format.rs": "087dea86f92b69b04c585c6226349153170fdceb",
+    "crates/beskid_cli/src/commands/graph.rs": "36aafef050ca2fc25c83b716473255a65a1e4a4e",
+    "crates/beskid_cli/src/commands/hi.rs": "773c3555a0af883c7c34b81ec73a905749b97597",
+    "crates/beskid_cli/src/commands/import.rs": "23b33f6febe89ce1aa6d6e0dcc953382b07db1b4",
+    "crates/beskid_cli/src/commands/lock.rs": "b4c7978e4f2b69bc6213b50876e2b091277145da",
+    "crates/beskid_cli/src/commands/lsp.rs": "49572843d1efb9e0b3e3f70ed21e60f47b432253",
+    "crates/beskid_cli/src/commands/migrate_bsol.rs": "0498e93a457320cb47bc301d3bf7040690b21323",
+    "crates/beskid_cli/src/commands/new.rs": "309932fa7afa320d06325ad974ce828f4b26a1ac",
+    "crates/beskid_cli/src/commands/parse.rs": "61ee7df3f6dec1f5680ce2de125e40a8ab2b25e7",
+    "crates/beskid_cli/src/commands/repl.rs": "00b99c506b63afa26a3924c83f43864437710953",
+    "crates/beskid_cli/src/commands/run.rs": "8c7998574233af8adc186e92c38fd71a0b6127aa",
+    "crates/beskid_cli/src/commands/runtime_kit.rs": "34fa92e4314a6b44ef56376f5145e5d1c5b2991d",
+    "crates/beskid_cli/src/commands/test.rs": "7f7028b05c7a8e6131a374985e70f66ffbb28b03",
+    "crates/beskid_cli/src/commands/tree.rs": "db7a2e7953e060a84def0aacb95c462c0e0ac5ee",
+    "crates/beskid_cli/src/commands/update.rs": "04e47e680b9092219b26e5882718a2b652993fe1",
+    "crates/beskid_cli/src/commands/validate_bsol.rs": "fecb4d3dda64592413dfc9a0ed4b48e4e2ca030e",
+    "crates/beskid_pckg/src/cli/arguments.rs": "35180838182fa4128e3bbb272e7dcc66aafd76ee",
+    "crates/beskid_up/src/commands.rs": "cbb52b128a2e3041a567fb0d04ac7d5bcb615d4b"
+  },
+  "globalFlags": ["--log-cranelift"],
+  "commands": [
+    {
+      "name": "dev",
+      "groupedAliases": {
+        "dev syntax parse": "parse", "dev syntax tree": "tree", "dev syntax analyze": "analyze", "dev syntax doc": "doc", "dev syntax format": "format", "dev syntax clif": "clif",
+        "dev build compile": "build", "dev build test": "test", "dev build corelib": "corelib",
+        "dev project fetch": "fetch", "dev project lock": "lock", "dev project update": "update", "dev project graph": "graph",
+        "dev package registry": "pckg"
+      },
+      "flags": [],
+      "positionals": [],
+      "subcommands": [
+        { "name": "syntax", "subcommands": [{ "name": "parse" }, { "name": "tree" }, { "name": "analyze" }, { "name": "doc" }, { "name": "format" }, { "name": "clif" }] },
+        { "name": "build", "subcommands": [{ "name": "compile" }, { "name": "test" }, { "name": "corelib" }] },
+        { "name": "project", "subcommands": [{ "name": "fetch" }, { "name": "lock" }, { "name": "update" }, { "name": "graph" }] },
+        { "name": "package", "subcommands": [{ "name": "registry" }] }
+      ]
+    },
+    { "name": "parse", "flags": ["--format"], "positionals": [{ "name": "INPUT", "required": true }], "defaults": { "--format": "debug" } },
+    { "name": "tree", "flags": [], "positionals": [{ "name": "INPUT", "required": true }] },
+    { "name": "analyze", "flags": ["--project", "--target", "--workspace-member", "--frozen", "--locked", "--plain"], "positionals": [{ "name": "INPUT", "required": false }] },
+    { "name": "doc", "flags": ["--project", "--target", "--workspace-member", "--frozen", "--locked", "--out"], "positionals": [{ "name": "INPUT", "required": false }], "defaults": { "--out": "doc-out" } },
+    { "name": "format", "aliases": ["fmt"], "flags": ["-w", "--write", "-o", "--output", "--check"], "positionals": [{ "name": "INPUT", "required": true }] },
+    { "name": "clif", "flags": ["--project", "--target", "--workspace-member", "--frozen", "--locked", "--plain"], "positionals": [{ "name": "INPUT", "required": false }] },
+    { "name": "run", "flags": ["--project", "--target", "--workspace-member", "--frozen", "--locked", "--entrypoint", "--plain"], "positionals": [{ "name": "INPUT", "required": false }], "defaults": { "--entrypoint": "Main" } },
+    { "name": "test", "flags": ["--project", "--target", "--workspace-member", "--frozen", "--locked", "--include-tag", "--exclude-tag", "--group", "--json", "--plain", "--all-targets"], "positionals": [{ "name": "INPUT", "required": false }], "execution": "JIT" },
+    { "name": "repl", "flags": ["--plain"], "positionals": [], "execution": "JIT" },
+    { "name": "build", "flags": ["--project", "--target", "--workspace-member", "--frozen", "--locked", "--entrypoint", "--kind", "--release", "--target-triple", "--output", "--object-output", "--export", "--prefer-static", "--prefer-dynamic", "--verbose-link", "--plain", "--backend"], "positionals": [{ "name": "INPUT", "required": false }], "defaults": { "--kind": "App/Test: exe; Lib: shared", "--backend": "clif", "progress": "animated" } },
+    {
+      "name": "mod", "flags": [], "positionals": [],
+      "subcommands": [
+        { "name": "rebuild", "flags": ["--frozen", "--locked", "--clean", "--target-triple", "--plain"], "positionals": [{ "name": "PROJECT", "required": false }] },
+        { "name": "clean", "flags": ["--plain"], "positionals": [{ "name": "PROJECT", "required": false }] }
+      ]
+    },
+    {
+      "name": "import", "flags": [], "positionals": [],
+      "subcommands": [{ "name": "lib", "flags": ["--provider", "--dry-run", "--project"], "positionals": [{ "name": "LOGICAL", "required": true }], "defaults": { "--provider": "c-posix" } }]
+    },
+    { "name": "fetch", "flags": ["--project", "--target", "--workspace-member", "--frozen", "--locked", "--plain"], "positionals": [] },
+    { "name": "lock", "flags": ["--project", "--target", "--workspace-member", "--plain"], "positionals": [] },
+    { "name": "update", "flags": ["--project", "--target", "--workspace-member", "--plain"], "positionals": [] },
+    { "name": "corelib", "flags": ["--output"], "positionals": [], "defaults": { "--output": "corelib" } },
+    {
+      "name": "runtime-kit", "flags": [], "positionals": [],
+      "subcommands": [
+        { "name": "build", "flags": ["--prefix", "--target", "--profile", "--static-library", "--shared-library", "--shared-import-library"], "requiredFlags": ["--prefix", "--target", "--profile", "--static-library", "--shared-library"], "positionals": [] },
+        { "name": "build-native-host", "flags": ["--prefix", "--profile"], "requiredFlags": ["--prefix", "--profile"], "positionals": [] },
+        { "name": "build-matrix", "flags": ["--prefix", "--target", "--debug-static-library", "--debug-shared-library", "--release-static-library", "--release-shared-library", "--debug-static-provenance-symbol-list", "--debug-shared-provenance-symbol-list", "--release-static-provenance-symbol-list", "--release-shared-provenance-symbol-list", "--debug-shared-import-library", "--release-shared-import-library"], "requiredFlags": ["--prefix", "--target", "--debug-static-library", "--debug-shared-library", "--release-static-library", "--release-shared-library", "--debug-static-provenance-symbol-list", "--debug-shared-provenance-symbol-list", "--release-static-provenance-symbol-list", "--release-shared-provenance-symbol-list"], "positionals": [] }
+      ]
+    },
+    {
+      "name": "new", "flags": ["--tui", "-o", "--output", "-n", "--name", "--symbol", "--no-interactive", "--force", "--path", "--git", "--git-ref", "--git-subpath", "--package", "--project", "--allow-yanked", "--strict-post-actions", "--allow-project-manifest", "--registry-url", "--bearer-token", "--api-key"], "positionals": [{ "name": "SHORT_NAME", "required": false }],
+      "oneOfSelectors": ["SHORT_NAME", "--package", "--path", "--git"],
+      "conditionalRequirements": [{ "when": "instantiate", "requiredFlags": ["--output"], "bypass": "tui-picker" }],
+      "defaults": { "--registry-url": "https://pckg.beskid-lang.org" },
+      "subcommands": [
+        { "name": "list", "flags": ["--online", "--kind", "--registry-url", "--bearer-token", "--api-key"], "positionals": [] },
+        { "name": "install", "flags": ["--path", "--git", "--git-ref", "--git-subpath", "--registry-url", "--bearer-token", "--api-key"], "positionals": [{ "name": "PACKAGE_OR_SHORT", "required": true }] },
+        { "name": "uninstall", "flags": [], "positionals": [{ "name": "SHORT_NAME", "required": true }] }
+      ]
+    },
+    {
+      "name": "pckg", "flags": ["--base-url", "--bearer-token", "--api-key", "--timeout-secs", "--config-file", "-v", "--verbose"], "positionals": [], "defaults": { "--base-url": "https://pckg.beskid-lang.org", "--timeout-secs": "30", "--config-file": ".beskid/pckg/repositories.json" },
+      "subcommands": [
+        { "name": "pack", "flags": ["--package", "--version", "--source", "--output", "--version-state-file", "--package-kind", "--skip-docs"], "requiredFlags": ["--package", "--output"], "positionals": [], "defaults": { "--source": ".", "--version-state-file": ".beskid/pckg-version-state.json", "--package-kind": "auto" } },
+        { "name": "upload", "flags": ["--artifact", "--checksum-sha256"], "requiredFlags": ["--artifact"], "positionals": [{ "name": "PACKAGE", "required": true }] },
+        { "name": "configure", "flags": ["--repository-url", "--api-key"], "requiredFlags": ["--api-key"], "positionals": [] },
+        { "name": "list", "flags": [], "positionals": [] },
+        { "name": "search", "flags": [], "positionals": [{ "name": "QUERY", "required": true }] },
+        { "name": "details", "flags": [], "positionals": [{ "name": "ID_OR_NAME", "required": true }] },
+        { "name": "versions", "flags": [], "positionals": [{ "name": "PACKAGE", "required": true }] },
+        { "name": "download", "flags": ["--version", "--output"], "requiredFlags": ["--version", "--output"], "positionals": [{ "name": "PACKAGE", "required": true }] },
+        { "name": "yank", "flags": ["--version"], "requiredFlags": ["--version"], "positionals": [{ "name": "PACKAGE", "required": true }] },
+        { "name": "unyank", "flags": ["--version"], "requiredFlags": ["--version"], "positionals": [{ "name": "PACKAGE", "required": true }] },
+        { "name": "whoami", "flags": [], "positionals": [] }
+      ]
+    },
+    { "name": "graph", "flags": ["--project", "--target", "--workspace-member", "--frozen", "--locked", "--kind", "--mermaid", "--tui", "--out", "--plain"], "positionals": [{ "name": "INPUT", "required": false }], "defaults": { "--kind": "project" } },
+    { "name": "hi", "flags": ["--plain"], "positionals": [{ "name": "PATH", "required": false }] },
+    { "name": "lsp", "flags": [], "positionals": [], "subcommands": [{ "name": "install", "flags": ["--release-tag"], "positionals": [], "defaults": { "--release-tag": "lsp-stable" } }] },
+    { "name": "up", "flags": [], "positionals": [], "subcommands": [{ "name": "check" }, { "name": "list" }, { "name": "use", "positionals": [{ "name": "VERSION", "required": true }] }, { "name": "remove", "positionals": [{ "name": "VERSION", "required": true }] }, { "name": "host-target" }] },
+    { "name": "validate-bsol", "flags": ["--profile", "--migrate"], "positionals": [{ "name": "PATH", "required": false }], "defaults": { "--profile": "project.v1" } },
+    { "name": "migrate-bsol", "flags": ["--to", "-o", "--output"], "requiredFlags": ["--to"], "positionals": [{ "name": "PATH", "required": false }] }
+  ]
+}

@@ -1,0 +1,171 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import {
+	createStandardSearchIndex,
+	loadStandardRouteProjection,
+} from '../../../lib/standard-routes.mjs';
+
+export function getStaticPaths() {
+	const projection = loadStandardRouteProjection();
+	const searchIndex = createStandardSearchIndex(projection);
+	return projection.routes.map((route) => ({
+		params: { id: route.pathname },
+		props: {
+			route,
+			revision: projection.revision,
+			searchIndex: route.kind === 'not-found' ? searchIndex : undefined,
+		},
+	}));
+}
+
+const { route, revision, searchIndex = [] } = Astro.props;
+const isCapability = route.kind === 'capability';
+const isRequirement = route.kind === 'requirement';
+const title = route.title;
+const description = isCapability
+	? `Catalog identity and canonical OpenSpec source for ${route.title}.`
+	: isRequirement
+		? `Stable requirement identity and canonical OpenSpec source for ${route.id}.`
+		: 'Find a capability or requirement in the Beskid Standard catalog.';
+const authorityHref = route.sourceHref ?? 'https://github.com/Cyber-Nomad-Collective/beskid/blob/main/openspec/catalog.json';
+const authorityLabel = isRequirement
+	? 'Canonical OpenSpec requirement'
+	: isCapability
+		? 'Canonical OpenSpec capability'
+		: 'Checked-in OpenSpec catalog';
+---
+
+<StarlightPage
+	frontmatter={{
+		title,
+		description,
+		audience: ['implementer', 'contributor'],
+		authority: {
+			status: 'generated',
+			sourceLabel: authorityLabel,
+			sourceHref: authorityHref,
+			limits: 'This generated page identifies catalog records. It does not reproduce or reinterpret normative requirements.',
+		},
+		verified: {
+			revision: 'e4cf3d521f553988a1648884a1c935afb2214682',
+			date: new Date('2026-09-08T00:00:00Z'),
+		},
+		editUrl: false,
+		tableOfContents: false,
+	}}
+>
+	<p class="standard-authority-note">
+		<strong>Informative catalog page.</strong> The linked OpenSpec source is the sole normative text.
+	</p>
+
+	{isCapability && (
+		<>
+			<dl class="standard-identity">
+				<div><dt>Capability ID</dt><dd><code>{route.id}</code></dd></div>
+				<div><dt>Capability key</dt><dd><code>{route.capability}</code></dd></div>
+				<div><dt>Status</dt><dd>{route.status ?? 'Not recorded'}</dd></div>
+				<div><dt>Catalog revision</dt><dd><code>{revision}</code></dd></div>
+			</dl>
+			<p><a href={route.sourceHref}>Read the canonical OpenSpec capability source</a>.</p>
+			<h2 id="requirements">Requirements</h2>
+			{route.requirements.length > 0 ? (
+				<ul class="standard-requirements">
+					{route.requirements.map((requirement) => (
+						<li id={requirement.anchor}>
+							<a href={requirement.href}><code>{requirement.id}</code>: {requirement.title}</a>
+							{' — '}<a href={requirement.sourceHref}>canonical requirement</a>
+						</li>
+					))}
+				</ul>
+			) : (
+				<p>This catalog entry does not declare a requirement. Check its status before you claim conformance.</p>
+			)}
+		</>
+	)}
+
+	{isRequirement && (
+		<>
+			<dl class="standard-identity">
+				<div><dt>Requirement ID</dt><dd><code>{route.id}</code></dd></div>
+				<div><dt>Capability</dt><dd><a href={route.capability.href}>{route.capability.title}</a></dd></div>
+				<div><dt>Status</dt><dd>{route.status ?? 'Not recorded'}</dd></div>
+				<div><dt>Catalog revision</dt><dd><code>{revision}</code></dd></div>
+			</dl>
+			<p id={route.anchor}><a href={route.sourceHref}>Read this requirement in the canonical OpenSpec source</a>.</p>
+		</>
+	)}
+
+	{route.kind === 'not-found' && (
+		<>
+			<p>The identifier is not in the checked-in catalog. Do not infer a rule from an unknown or retired path.</p>
+			<form class="standard-search" action="/docs/standard/not-found/" method="get" data-standard-id-checker>
+				<label for="standard-id">Capability key or requirement ID</label>
+				<div>
+					<input id="standard-id" name="id" type="search" autocomplete="off" list="standard-identifiers" />
+					<button type="submit">Check identifier</button>
+				</div>
+				<datalist id="standard-identifiers">
+					{searchIndex.map((item) => <option value={item.identifier} data-href={item.href}>{item.label}</option>)}
+				</datalist>
+				<p class="standard-search__status" role="status" aria-live="polite" hidden></p>
+			</form>
+			<p>Return to the <a href="/docs/standard/">Standard index</a> or search the <a href="https://github.com/Cyber-Nomad-Collective/beskid/blob/main/openspec/catalog.json">checked-in catalog</a>.</p>
+			<noscript>Use the checked-in catalog link to find an identifier when JavaScript is disabled.</noscript>
+		</>
+	)}
+</StarlightPage>
+
+<script>
+	import { bindStandardIdChecker } from '../../../lib/standard-id-checker.mjs';
+
+	const form = document.querySelector('[data-standard-id-checker]');
+	const field = document.querySelector('#standard-id');
+	const status = document.querySelector('.standard-search__status');
+	const datalist = document.querySelector('#standard-identifiers');
+	if (
+		form instanceof HTMLFormElement &&
+		field instanceof HTMLInputElement &&
+		status instanceof HTMLElement &&
+		datalist instanceof HTMLDataListElement
+	) {
+		const index = [...datalist.options].map((option) => ({
+			identifier: option.value,
+			href: option.dataset.href ?? '',
+		}));
+		const pathIdentifier = window.location.pathname.startsWith('/platform-spec/')
+			? window.location.pathname.slice('/platform-spec/'.length).replace(/^\/+|\/+$/g, '')
+			: '';
+		const initialIdentifier = new URLSearchParams(window.location.search).get('id') ?? pathIdentifier;
+		if (initialIdentifier) field.value = initialIdentifier;
+		bindStandardIdChecker({
+			form,
+			field,
+			status,
+			index,
+			navigate: (href) => window.location.assign(href),
+			updateQuery: (identifier) => {
+				const url = new URL(window.location.href);
+				if (identifier) url.searchParams.set('id', identifier);
+				else url.searchParams.delete('id');
+				window.history.replaceState({}, '', url);
+			},
+		});
+	}
+</script>
+
+<style>
+	.standard-authority-note {
+		border-inline-start: 0.25rem solid var(--sl-color-accent);
+		padding: 0.75rem 1rem;
+		background: var(--sl-color-accent-low);
+	}
+	.standard-identity div { margin-block: 0.75rem; }
+	.standard-identity dt { font-weight: 700; }
+	.standard-identity dd { margin-inline-start: 0; overflow-wrap: anywhere; }
+	.standard-requirements li { margin-block: 0.75rem; }
+	.standard-search label { display: block; font-weight: 700; margin-block-end: 0.5rem; }
+	.standard-search div { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+	.standard-search input { min-width: min(100%, 22rem); padding: 0.5rem; }
+	.standard-search button { padding: 0.5rem 0.75rem; }
+	.standard-search__status { margin-block: 0.75rem 0; font-weight: 700; }
+</style>

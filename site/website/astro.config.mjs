@@ -15,6 +15,8 @@ import { remarkRepoLinkFence } from 'trudoc/scripts/remark-repo-link-fence.mjs';
 import { loadBeskidGrammar } from 'trudoc/grammars/load-beskid-grammar.mjs';
 import { beskidUiRoot } from './src/lib/beskid-ui-root.mjs';
 import { remarkBeskidDirectives } from './src/lib/remark-beskid-directives.mjs';
+import { createLegacyStandardRedirects } from './src/lib/standard-routes.mjs';
+import { docsNavigation } from './src/data/docs-navigation';
 
 const beskidGrammar = loadBeskidGrammar();
 
@@ -34,6 +36,13 @@ const platformSpecRedirects = {
 		status: /** @type {const} */ (301),
 		destination: '/docs/standard/',
 	},
+};
+
+/** @type {import('astro').AstroUserConfig['redirects']} */
+const renamedReferenceRedirects = {
+	[redirectKey('/book/reference/lsp/readme')]: '/book/reference/lsp/',
+	[redirectKey('/book/reference/projects/readme')]: '/book/reference/projects/',
+	[redirectKey('/book/reference/cli/commands/publish')]: '/docs/packages/publish/',
 };
 
 /** @param {string} dir @param {string} fromPrefix @param {string} toPrefix */
@@ -114,6 +123,8 @@ export default defineConfig({
 	},
 	redirects: {
 		...platformSpecRedirects,
+		...createLegacyStandardRedirects(),
+		...renamedReferenceRedirects,
 		...siteRedirects(),
 	},
 	markdown: {
@@ -171,7 +182,7 @@ export default defineConfig({
 			components: {
 				PageTitle: './src/components/starlight/BlogAwarePageTitle.astro',
 				Head: '@beskid/beskid-ui/starlight/Head.astro',
-				Header: '@beskid/beskid-ui/starlight/Header.astro',
+				Header: './src/components/starlight/Header.astro',
 				Footer: '@beskid/beskid-ui/starlight/Footer.astro',
 				ThemeSelect: '@beskid/beskid-ui/starlight/ThemeSelect.astro',
 				Sidebar: '@beskid/beskid-ui/starlight/Sidebar.astro',
@@ -179,33 +190,7 @@ export default defineConfig({
   			},
 			customCss: docsShellCustomCss,
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/Cyber-Nomad-Collective/beskid' }],
-			sidebar: [
-				{
-					label: 'Beskid Docs',
-					items: [
-						{ label: 'Overview', link: '/docs/' },
-						{
-							label: 'Get started',
-							items: [
-								{ label: 'Overview', link: '/docs/getting-started/' },
-								{ label: 'Install Beskid', link: '/docs/getting-started/install/' },
-								{ label: 'Write and check a program', link: '/docs/getting-started/first-program/' },
-							],
-						},
-						{ label: 'Tooling', link: '/docs/tooling/' },
-						{ label: 'Projects', link: '/docs/projects/' },
-						{ label: 'Packages', link: '/docs/packages/' },
-						{ label: 'Beskid Standard', link: '/docs/standard/' },
-						{
-							label: 'Contribute',
-							items: [
-								{ label: 'Write Beskid documentation', link: '/docs/contributing/documentation/' },
-								{ label: 'Use ASD-STE100', link: '/docs/contributing/ste-100/' },
-							],
-						},
-					],
-				},
-			],
+			sidebar: docsNavigation,
 		}),
 	],
 });

@@ -16,6 +16,43 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   hover help, and highlighting from the pinned nested BSOL grammar.
 - Zed extension: add outlines, indentation and bracket queries, pinned CLI
   runnable tasks, declaration snippets, and grammar-validated fixtures.
+- Add a deterministic, advisory STE review command for technical Docs. It
+  reports sentence-length, passive-voice, abbreviation, and article candidates
+  with file and line evidence; joins wrapped prose without crossing Markdown
+  block boundaries; retains inline MDX container prose while excluding
+  lexically balanced expressions, including regular-expression literals in
+  argument, condition, array, and index operand positions; evaluates
+  abbreviation explanations in document order; joins lazy list continuations;
+  detects controlled regular and irregular passive forms; skips symbolic links
+  and syntax that must stay exact; and rejects vague, unused, or stale
+  exceptions. The tool does not certify ASD-STE100 compliance.
+- Generate stable public identity pages for all OpenSpec capabilities and
+  requirements from the checked-in catalog. Preserve known Platform Spec
+  aliases and valid requirement fragments, link every identity to its
+  canonical OpenSpec source, and send unknown document references to a
+  Standard-specific not-found search state. The production website now serves
+  the generated exact alias redirects before its fail-closed fallback, and the
+  identifier checker resolves capability keys and stable IDs without guessing.
+- Add complete service, operator, contributor, and reference guidance. Document
+  verified public and local boundaries, authentication, persistence, images,
+  health checks, deployment ownership, secret sources, monitoring, recovery,
+  repository setup, OpenSpec authority, and component licensing. Add accessible
+  service-topology and authority-flow diagrams with text-equivalent tables.
+- Add complete project and package procedures for `.bproj` and `.bws`
+  selection, dependency materialization, lockfile enforcement, credential
+  handling, artifact inspection, immutable publication, consumption, yanking,
+  and recovery. Add accessible workspace and publication diagrams with full
+  text equivalents. Warn that initial registry resolution can fall back to the
+  first active version, and require lockfile inspection before work continues.
+- Add complete Start and Develop procedures for installation, a first AOT run,
+  VS Code and LSP setup, first-day recovery, CLI selection, local build and
+  test work, reproducible CI, and the minimum first-program syntax. Each flow
+  includes an observable result and a direct recovery path. Installation now
+  distinguishes POSIX and Windows PATH behavior and aligns CLI and LSP release
+  channels.
+- Verify built Docs routes, transitive redirect destinations and cycles,
+  final-destination anchors, single-H1 output, and the explicit 404 document
+  after each website production build.
 - Publish a licensing announcement that explains the Apache-2.0 toolchain,
   AGPL-3.0-only service, CC-BY-4.0 documentation, compiler-output, trademark,
   and third-party code boundaries in practical terms.
@@ -53,6 +90,19 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Compiler delivery: advance the embedded compiler through the guarded-stack
   harness, recursive generic-array surface, and canonical Corelib gate fixes,
   restoring the full 67-entry Corelib matrix required by stable LSP releases.
+- Correct the operator guide to distinguish checksummed manifests from signed
+  images and production verification from external Watchtower control. Limit
+  operator evidence to workflow-owned validation and exposed run records, and
+  assign production restore and rollback to the production operator. Record the
+  unresolved root/infrastructure deployment conflict, restore the service-owned
+  pckg and Nexus authentication boundaries, make procedures atomic, and stop
+  treating health responses as image-identity evidence.
+- Align download API assets and packages with the shared release-platform IDs,
+  restore canonical LSP and project reference indexes with redirects from their
+  former README routes, and serve unknown website routes as explicit 404s.
+- Install one exact LLVM 20.1.8 toolset for both Windows compiler-gate and
+  native-release jobs, and fail closed unless the required Clang, assembler,
+  symbol, and object-inspection tools are present at that pinned location.
 - pckg now routes its Authentik outpost callback correctly and forwards the
   verified identity only for visitors with an Authentik proxy session. The
   public catalogue stays reachable without sign-in while dashboard requests
@@ -98,6 +148,20 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 - Zed extension: keep one DRY native LSP adapter for Beskid source, manifests,
   and standalone BSOL; resolve configured/PATH servers before the guarded
   versioned `lsp-stable` download and forward settings without reinterpretation.
+- Align the active Book and CLI reference with the pinned 0.4 command surface.
+  Add one reference page for each of the 26 root commands, remove the
+  nonexistent `beskid publish` page, document grouped aliases once, and link
+  task procedures to canonical Docs. Correct project manifests, registry
+  materialization, AOT `run`, JIT test and REPL boundaries, ABI-v5 runtime
+  kits, the typed ISLE code-generation path, contributor commands, and service
+  implementation claims. Add accessible metadata and text equivalents to each
+  retained diagram in the aligned chapters.
+- Give every technical Docs page typed audience, authority, and verification
+  metadata. Render one accessible annotation after the shared page title, and
+  derive the Starlight sidebar and custom Docs rail from one navigation tree.
+- Use `.bproj` in active Docs commands, link annotations to pinned CLI or
+  OpenSpec sources, and pass the Docs navigation tree through the shared Header
+  and rail as serializable data.
 - Licensing: adopt Apache-2.0 for the compiler, runtime, tooling, reusable
   libraries, and templates; AGPL-3.0-only for Beskid-owned network services;
   and CC-BY-4.0 for documentation prose. Add an explicit compiler-output
@@ -106,6 +170,13 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Pin the public CLI reference to an immutable 26-command contract snapshot.
+  Complete command flags, arguments, subcommands, defaults, aliases, template
+  selection, runtime-kit, and package operations. Correct named BSOL project
+  examples, Mod rebuild guidance, the ABI v4 Standard versus ABI-v5
+  implementation conflict, and the removed publish-command redirect. Verify
+  the snapshot against revision-pinned source blob IDs, and model `new`
+  instantiation output separately from its output-free TUI picker.
 - Docs now register the Beskid Shiki grammar as an Expressive Code language and
   mark the getting-started program samples as Beskid source, so keywords,
   types, and literals receive syntax highlighting.

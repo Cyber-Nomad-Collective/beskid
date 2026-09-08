@@ -12,6 +12,12 @@ Generation-scoped results computed by Salsa for expanded AST nodes, including re
 
 An informative, checked-in conceptual map of the Beskid compiler and its direct boundaries. It resolves canonical public specification links from the OpenSpec catalog, presents implementation paths as evidence, and never replaces OpenSpec requirements as the normative authority.
 
+## AOT run
+
+The `beskid run` workflow that resolves and analyzes a program, compiles and
+links a temporary native executable with the matching runtime kit, and starts
+that executable in a subprocess. It is not an interactive JIT execution path.
+
 ## Authentik
 
 The sole browser identity authority for Beskid services. Its embedded proxy
@@ -56,6 +62,17 @@ Tracker integration in which GitHub Issues represents public bugs and their supp
 
 `@beskid/ui-react` and `@beskid/beskid-ui`, sourced from `beskid_web_common`. They provide the only shared component and style implementation for Beskid web applications.
 
+## CLI root command inventory
+
+The 26 public root commands exposed by the pinned `beskid` Clap model. Each
+command has one Book reference page. Task procedures use the concise root
+forms; `beskid dev` only groups documented aliases for discovery. The committed
+`site/website/src/data/pinned-cli-reference.json` snapshot records the source
+revision, arguments, flags, defaults, subcommands, and alias relationships that
+the public reference must cover. Its source-blob map binds the fixture to the
+immutable compiler object. Conditional requirements distinguish command paths
+such as `beskid new` instantiation from the output-free TUI picker.
+
 ## Capability
 
 An OpenSpec unit stored at `openspec/specs/<capability>/spec.md`. During migration, Beskid feature hubs become feature capabilities while domains and areas become taxonomy/governance capabilities.
@@ -97,6 +114,14 @@ An error-recovery heuristic that deletes one unexpected token when the following
 
 A graph whose data and structure cannot be changed through its reader interface: users may inspect, select, pan, zoom, fit, and follow links, but cannot move, connect, delete, or edit nodes or edges.
 
+## Immutable package coordinate
+
+The identity formed by one package name and one semantic version. After publication, a different artifact cannot replace that coordinate. A corrected artifact requires a new version.
+
+## Lockfile policy
+
+The project-resolution rule selected by CLI flags. `--locked` requires an existing `Project.lock` that matches resolution. `--frozen` also forbids an update to that lockfile. These policies preserve a reviewed lockfile, but they do not make initial registry-version selection exact.
+
 ## Global distribution version
 
 The one release identity for all externally distributed Beskid artifacts. Compiler CI on `main` mints it exactly as `0.4.<GITHUB_RUN_NUMBER>` and emits it for downstream consumers; tags, commits, manifests, and downstream workflow run numbers cannot create an alternate value.
@@ -111,7 +136,12 @@ The exhaustive generated rule set that consumes typed AST shape plus AST semanti
 
 ## Legacy alias
 
-A stable `/platform-spec/**` path mapped through `openspec/catalog.json` to a canonical capability or requirement, preserving existing Book, Tracker, Nexus, and external links.
+A stable `/platform-spec/**` path mapped through `openspec/catalog.json` to a
+canonical capability identity page. A fragment is retained only when it names
+a requirement anchor that the destination renders. The path alone never
+selects a requirement because some legacy documents contain more than one.
+The production server generates exact redirects for known aliases and returns
+the Standard-specific no-match page with a 404 status for unknown aliases.
 
 ## Managed object allocation
 
@@ -134,6 +164,27 @@ A named OpenSpec requirement using SHALL or MUST and one or more testable scenar
 ## Platform specification
 
 The historical name for the separately deployed standard reader. That service is retired; the canonical website now renders the Beskid standard at `/docs/standard/`, while `openspec/specs` remains the sole normative source.
+
+## Production verification boundary
+
+The current root workflow boundary that validates a checksummed release
+manifest, verifies its source run, waits for externally controlled Watchtower,
+and runs public smoke checks. It cannot start, replace, or roll back production
+containers; the production operator owns those actions. Operators inspect the
+workflow run and record only its status and exposed evidence. They do not
+materialize the workflow's internal validation files or repeat its internal
+validation commands.
+
+## Release platform identifier
+
+The exact operating-system and architecture key shared by release metadata and the download UI. The closed public set is `linux-amd64`, `darwin-arm64`, and `windows-amd64`; broader platform names and separate architecture fields are invalid.
+
+## Service operating contract
+
+The verified public and local boundary for one deployed service. It identifies
+the service purpose, audience, authentication boundary, persistent state,
+container image, health check, deployment owner, secret source, monitoring
+evidence, and recovery path without publishing credential values.
 
 ## Playground
 
@@ -163,6 +214,10 @@ The deterministic `openspec/catalog.json` mapping stable capability/requirement 
 
 An OpenSpec capability retained for discoverability and historical coverage when its migrated material contained no explicit normative claim. Its single provisional requirement says that the capability cannot be cited for conformance until a reviewed OpenSpec change adds testable requirements.
 
+## Project manifest
+
+The single `.bproj` file that identifies one Beskid project, its source root, targets, and dependencies.
+
 ## Runtime intrinsic
 
 A manifest-declared primitive or platform operation available only while compiling the canonical Beskid runtime under a non-forgeable trusted compiler capability. User packages cannot name, import, inherit, or invoke runtime intrinsics.
@@ -176,6 +231,17 @@ unwoken not-ready unit.
 ## Source provenance
 
 Informative text and hashes retained inside OpenSpec capabilities and `openspec/catalog.json` to explain where migrated requirements came from. Provenance preserves history but is not itself normative.
+
+## Standard identity page
+
+An informative website page generated from `openspec/catalog.json` for one
+capability or requirement. Its stable URL, identifier, status, catalog
+revision, and canonical source link help readers find and cite the normative
+OpenSpec text without copying that text into Docs.
+
+## Workspace manifest
+
+A `.bws` file that names a set of project-member directories. Each member directory contains exactly one project manifest.
 
 ## Semantic review
 
@@ -224,9 +290,19 @@ A learner-facing unit in Beskid Learn that pairs explanatory copy with an option
 
 The immutable Beskid Learn workspace arrangement derived from a lesson's declared visible tiles. It sizes and splits the editor, terminal, lesson content, and optional lesson views automatically. Learners cannot open, close, reorder, or resize its tiles.
 
-## Document annotation
+## Typed Docs annotation
 
-A short statement on a public technical guide that identifies its status, authoritative source, and limits. Beskid Docs uses annotations to distinguish informative guidance from normative OpenSpec requirements.
+A schema-checked record on a public technical guide that names its audience,
+status, authoritative source, limits, verification revision, and verification
+date. The shared page-title renderer displays the record after the title so
+readers can distinguish informative guidance from normative OpenSpec text.
+
+## Verified procedure
+
+An informative Docs task whose commands, prerequisites, expected result,
+recovery path, and evidence revision match a checked repository or generated
+contract. Verification shows what maintainers tested at that revision. It does
+not make the procedure normative or guarantee a later deployment.
 
 ## Beskid.Glue
 

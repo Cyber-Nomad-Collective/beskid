@@ -11,6 +11,8 @@ Beskid does not ask you to compile from source on day one unless you want to. Th
 The **beskid** superrepo GitHub Actions release workflow publishes prebuilt binaries to **GitHub Releases** on [beskid_compiler](https://github.com/Cyber-Nomad-Collective/beskid_compiler) (`cli-stable`/`cli-unstable`, `cli-version.txt`, immutable `cli-v*`). Version resolution, matrix builds, provenance, and promotion use repository scripts plus reusable GitHub Actions workflows. Install scripts under the website (`site/website/public/`) and the [Downloads](/downloads/) page consume a channel-specific rolling tag.
 
 ```mermaid
+accTitle: Compiler release to download page
+accDescr: Compiler CI creates release assets, then the website publishes the verified version and install choices.
 flowchart TD
   subgraph ci [Compiler CI]
     T[Git tags v*] --> V[Release workflow resolves channel + rolling semver]
@@ -21,7 +23,9 @@ flowchart TD
   S --> D[Downloads page + install scripts]
 ```
 
-The website can sync displayed version from GitHub via `bun run sync:cli-version` (see `packages/trudoc/scripts/sync-cli-version.mjs`), which updates `site/website/src/data/cli-version.json` and aligns `compiler/crates/beskid_cli/Cargo.toml` when you develop in the superrepo.
+**Text equivalent:** Compiler CI resolves a tagged release channel, builds the platform binaries, and publishes the release assets. The website then reads the release metadata and shows the matching download and install choices.
+
+The website can sync displayed version from GitHub via `pnpm sync:cli-version` (see `packages/trudoc/scripts/sync-cli-version.mjs`), which updates `site/website/src/data/cli-version.json` and aligns `compiler/crates/beskid_cli/Cargo.toml` when you develop in the superrepo.
 
 ## What you get per platform
 
@@ -39,7 +43,7 @@ User-facing docs may also mention `cdn.beskid-lang.org` for direct binary fetch;
 
 ## Normative pointers
 
-- [CLI distribution and install](/platform-spec/tooling/cli-and-distribution/) (platform spec tooling area)
+- [CLI distribution and install](/docs/standard/tooling/cli-and-distribution/) (platform spec tooling area)
 - [Downloads page](/downloads/) — install tabs and command blocks
 
 ## Next

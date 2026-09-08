@@ -41,6 +41,8 @@ LABEL org.opencontainers.image.licenses="AGPL-3.0-only AND CC-BY-4.0" \
 
 COPY --from=build /app/site/website/dist /usr/share/nginx/html
 COPY site/website/nginx/default.conf /etc/nginx/conf.d/default.conf
+RUN mkdir -p /etc/nginx/snippets
+COPY --from=build /app/site/website/.astro/standard-redirects.conf /etc/nginx/snippets/standard-redirects.conf
 COPY LICENSES/AGPL-3.0-only.txt /usr/share/licenses/beskid/AGPL-3.0-only.txt
 COPY LICENSES/CC-BY-4.0.txt /usr/share/licenses/beskid/CC-BY-4.0.txt
 COPY NOTICE /usr/share/licenses/beskid/NOTICE

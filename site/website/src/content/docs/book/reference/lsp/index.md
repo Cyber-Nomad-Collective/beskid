@@ -1,5 +1,5 @@
 ---
-title: "Beskid LSP Docs"
+title: Beskid LSP Docs
 description: Beskid LSP documentation index and scope map
 ---
 

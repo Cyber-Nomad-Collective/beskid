@@ -1,50 +1,74 @@
 ---
 title: Tooling
-description: Use the Beskid command line tools for analysis, formatting, builds, and language-service support.
+description: Select concise Beskid commands and their grouped developer aliases for source, build, project, and package tasks.
+audience:
+  - developer
+  - contributor
+authority:
+  status: informative
+  sourceLabel: Pinned Beskid CLI command model
+  sourceHref: https://github.com/Cyber-Nomad-Collective/beskid_compiler/blob/252aa528ac7ee01a64e49e9b88b32393206fbd71/crates/beskid_cli/src/cli.rs
+  limits: This page groups verified commands. Run command help for the complete option contract.
+verified:
+  revision: 252aa528ac7ee01a64e49e9b88b32393206fbd71
+  date: 2026-09-08
 ---
 
-# Tooling
+Use concise root commands for routine work. Use `beskid dev` groups when a script or explanation benefits from an explicit domain.
 
-The `beskid` command is the main tool interface. Run `beskid --help` before you guess a command or an option.
+## Prerequisites
 
-## Check source code
+Install Beskid and open a terminal in the source or project directory. Run `beskid --help` before you infer a command name.
 
-Use semantic analysis to parse source, resolve names, and check types.
+## Actions
 
-```bash
-beskid dev syntax analyze --project path/to/Project.proj
+1. Use `beskid analyze`, `beskid format`, or `beskid doc` for source tasks.
+2. Use `beskid build` to create an AOT artifact. Use `beskid run` to create and start a temporary AOT executable.
+3. Only `beskid build` and `beskid run` use the AOT pipeline. `beskid test` uses the current test execution engine.
+4. Use `beskid fetch`, `beskid lock`, `beskid update`, or `beskid graph` for project tasks.
+5. Use `beskid pckg` for registry tasks.
+6. Use the grouped alias when you need the domain in the command path:
+
+   | Domain | Grouped commands |
+   | --- | --- |
+   | Syntax | `beskid dev syntax parse`, `tree`, `analyze`, `doc`, `format`, `clif` |
+   | Build | `beskid dev build compile`, `test`, `corelib` |
+   | Project | `beskid dev project fetch`, `lock`, `update`, `graph` |
+   | Package | `beskid dev package registry` |
+
+7. Add `--plain` to analysis, build, run, and test commands in logs or automation.
+
+```mermaid
+flowchart TD
+  accTitle: CLI taxonomy
+  accDescr: The Beskid CLI routes work by domain. Choose syntax, build, project, or package commands for the task.
+  A[beskid] --> B[Syntax]
+  A --> C[Build]
+  A --> D[Project]
+  A --> E[Package]
+  B --> B1[analyze format doc]
+  C --> C1[build run]
+  C --> C2[test engine]
+  D --> D1[fetch lock update graph]
+  E --> E1[pckg]
 ```
 
-The input can be a source file or a project entry point. Read the [analysis reference](/book/reference/cli/commands/analyze/) for all options.
+### Diagram text
 
-## Format source code
+- Syntax commands inspect or change source text.
+- Build commands create an AOT artifact or an AOT subprocess.
+- The test command uses the current test execution engine.
+- Project commands resolve manifests, lockfiles, dependencies, and graphs.
+- Package commands communicate with the package registry.
 
-Use the canonical formatter for one file or a directory.
+## Expected result
 
-```bash
-beskid dev syntax format src --check
-```
+The selected command help describes the input and flags for one task. The concise and grouped forms dispatch to the same command implementation where a grouped alias exists.
 
-Use `--write` to change files. Use `--check` in CI to report formatting drift without changing files.
+## Recovery
 
-## Build source code
+If the CLI rejects a command path, run `beskid --help`, then run `--help` on the next command group. Do not combine segments from different groups. Use the concise root command when a grouped path makes a script harder to read.
 
-Use ahead-of-time compilation to create an object file, a library, or an executable.
+## Next task
 
-```bash
-beskid dev build compile --project path/to/Project.proj --release
-```
-
-The command needs a valid resolved project and the matching runtime kit for executable or library output.
-
-## Use the language server
-
-`beskid_lsp` provides diagnostics and completion data to editor clients. Install it with the toolchain. The Beskid Learn editor and supported development tools use the same compiler-backed language service.
-
-Read the [language-service reference](/book/reference/lsp/) for architecture and troubleshooting information.
-
-## Document annotation
-
-**Status:** informative.
-
-**Authority:** command flags and edge cases are defined by the CLI command references. This page groups the common tasks.
+Use [build, run, and test](/docs/tooling/build-run-test/) for local work or [run Beskid in CI](/docs/tooling/ci/) for automation.

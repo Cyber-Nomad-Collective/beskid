@@ -1102,8 +1102,8 @@
 						]
 					},
 					{
-						"slug": "book/reference/lsp/readme",
-						"href": "/book/reference/lsp/readme/",
+						"slug": "book/reference/lsp",
+						"href": "/book/reference/lsp/",
 						"title": "Beskid LSP Docs",
 						"part": "Reference",
 						"children": [
@@ -1122,8 +1122,8 @@
 						]
 					},
 					{
-						"slug": "book/reference/projects/readme",
-						"href": "/book/reference/projects/readme/",
+						"slug": "book/reference/projects",
+						"href": "/book/reference/projects/",
 						"title": "Beskid Projects (HCL-based)",
 						"part": "Reference",
 						"children": [

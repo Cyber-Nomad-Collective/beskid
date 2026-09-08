@@ -7,12 +7,14 @@ tableOfContents: true
 import { Aside } from '@astrojs/starlight/components';
 
 <Aside type="caution">
-This chapter is **informative**. Governance and enforceable process live under [Community / spec maintenance](/platform-spec/community/spec-maintenance/).
+This chapter is **informative**. Governance and enforceable process live under [Community / spec maintenance](/docs/standard/community/spec-maintenance/).
 </Aside>
 
 You read twenty-one chapters. You have opinions. Good—Beskid is not built by people who nod through enterprise standups without screaming internally.
 
 This chapter is the **on-ramp for contributors**: where repos live, how spec-first workflow avoids "surprise, we changed language law in a drive-by PR," and how to run tests without declaring war on CI.
+
+Use the canonical [Contributing guide](/docs/contributing/) for repository setup, Standard changes, and documentation rules.
 
 ## What you will find here
 
@@ -35,13 +37,17 @@ This chapter is the **on-ramp for contributors**: where repos live, how spec-fir
 </Aside>
 
 ```mermaid
+accTitle: Spec-first contribution flow
+accDescr: A behavior idea changes the Standard before code and focused tests, while the informative Book links back to the Standard.
 flowchart TD
   idea[Behavior change idea] --> spec[Platform-spec delta]
   spec --> code[Compiler / runtime / tooling]
-  code --> tests[beskid_tests / e2e]
+  code --> tests[focused test crate / e2e]
   tests --> ci[Green CI]
   book[Book chapter] -.informative.-> spec
 ```
+
+**Text equivalent:** Start an observable behavior change in OpenSpec. Implement the approved rule, add focused tests, and require green CI. Book prose is informative and must link to the normative Standard.
 
 ## Finish the book
 

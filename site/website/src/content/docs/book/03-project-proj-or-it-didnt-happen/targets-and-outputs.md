@@ -12,7 +12,7 @@ Targets are how you tell the truth about **what** gets built. A repo without tar
 | --- | --- |
 | `App` | Executable entry (`entry` → main module file) |
 | `Lib` | Library surface consumed by dependents |
-| `Test` | Test harness entry for `beskid dev build test` |
+| `Test` | Test harness entry for `beskid test` |
 
 `kind` and `source` on dependencies are enum-like—prefer unquoted identifiers (`App`, `path`) for tooling alignment.
 
@@ -25,18 +25,22 @@ Targets are how you tell the truth about **what** gets built. A repo without tar
 Real projects often define both `App` and `Test` (and several libs). CLI commands accept `--target` to select which graph root you mean:
 
 ```bash
-beskid dev build compile --project ./Project.proj --target App
-beskid dev build test --project ./Project.proj --target Tests
+beskid build --project ./App.bproj --target App
+beskid test --project ./App.bproj --target Tests
 ```
 
 ```mermaid
+accTitle: Project targets and dependencies
+accDescr: One bproj manifest defines application and test targets that share the resolved dependency graph.
 flowchart TD
-  P[Project.proj] --> T1[target App]
+  P[App.bproj] --> T1[target App]
   P --> T2[target Tests]
   P --> D[dependencies]
   D --> T1
   D --> T2
 ```
+
+**Text equivalent:** `App.bproj` defines the `App` and `Tests` targets. Both targets consume dependencies from the same resolved project graph.
 
 ## Outputs and `obj/`
 
@@ -44,7 +48,7 @@ Materialized dependencies land under `obj/beskid/` (layout details in [build wor
 
 ## Standard reference (informative)
 
-- [Project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)
+- [Project manifest contract](/docs/standard/tooling/manifests-and-lockfiles/project-manifest-contract/)
 - [Build workflow](/book/reference/projects/build-workflow/)
 
 ## Next

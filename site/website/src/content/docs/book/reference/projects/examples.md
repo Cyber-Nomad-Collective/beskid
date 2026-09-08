@@ -1,27 +1,27 @@
 ---
 title: "Project Examples"
-description: Beskid Project Examples (HCL)
+description: Beskid project examples in BSOL.
 ---
 
 
 ## Example 1: Single-project app
 ```
 MyApp/
-├── Project.proj
+├── MyApp.bproj
 └── Src/
     └── Main.bd
 ```
 
-**Project.proj**
-```hcl
-project {
+**MyApp.bproj**
+```text
+MyApp {
   name    = "MyApp"
   version = "0.1.0"
   root    = "Src"
 }
 
 target "App" {
-  kind  = App
+  kind  = "App"
   entry = "Main.bd"
 }
 ```
@@ -30,44 +30,44 @@ target "App" {
 ```
 Workspace/
 ├── App/
-│   ├── Project.proj
+│   ├── App.bproj
 │   └── Src/
 │       └── Main.bd
 └── Std/
-    ├── Project.proj
+    ├── Std.bproj
     └── Src/
         └── IO.bd
 ```
 
-**App/Project.proj**
-```hcl
-project {
+**App.bproj** (under `App/`)
+```text
+App {
   name    = "App"
   version = "0.1.0"
   root    = "Src"
 }
 
 target "App" {
-  kind  = App
+  kind  = "App"
   entry = "Main.bd"
 }
 
 dependency "Std" {
-  source = path
+  source = "path"
   path   = "../Std"
 }
 ```
 
-**Std/Project.proj**
-```hcl
-project {
+**Std.bproj** (under `Std/`)
+```text
+Std {
   name    = "Std"
   version = "0.1.0"
   root    = "Src"
 }
 
 target "Library" {
-  kind  = Lib
+  kind  = "Lib"
   entry = "IO.bd"
 }
 ```
@@ -75,23 +75,23 @@ target "Library" {
 ## Example 3: Nested module layout
 ```
 NetLib/
-├── Project.proj
+├── NetLib.bproj
 └── Src/
     ├── Net.bd
     └── Net/
         └── Http.bd
 ```
 
-**Project.proj**
-```hcl
-project {
+**NetLib.bproj**
+```text
+NetLib {
   name    = "NetLib"
   version = "0.1.0"
   root    = "Src"
 }
 
 target "Library" {
-  kind  = Lib
+  kind  = "Lib"
   entry = "Net.bd"
 }
 ```
@@ -109,26 +109,27 @@ pub type Client { ... }
 ## Example 4: Multiple targets
 ```
 Project/
-├── Project.proj
+├── Project.bproj
 └── Src/
     ├── Main.bd
     └── Tests.bd
 ```
 
-```hcl
-project {
+**Project.bproj**
+```text
+Project {
   name    = "Project"
   version = "0.2.0"
   root    = "Src"
 }
 
 target "App" {
-  kind  = App
+  kind  = "App"
   entry = "Main.bd"
 }
 
 target "Tests" {
-  kind  = Test
+  kind  = "Test"
   entry = "Tests.bd"
 }
 ```

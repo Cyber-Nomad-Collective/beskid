@@ -1,3 +1,10 @@
+import type {
+	AssetInfo,
+	PackageInfo,
+	PlatformId,
+	VersionPayload,
+} from "@beskid/ui-react/downloads";
+
 export const prerender = true;
 
 const COMPILER_REPO = "Cyber-Nomad-Collective/beskid_compiler";
@@ -13,30 +20,6 @@ const LATEST_TAG = (() => {
 	}
 })();
 const FALLBACK_TAG = LATEST_TAG === "cli-stable" ? "cli-unstable" : null;
-
-interface AssetInfo {
-	platform: string;
-	arch: string;
-	kind: "binary";
-	url: string;
-	filename: string;
-}
-
-interface PackageInfo {
-	platform: string;
-	label: string;
-	command: string;
-	url: string;
-}
-
-interface VersionPayload {
-	version: string;
-	source: string;
-	assets: AssetInfo[];
-	packages: PackageInfo[];
-	installScript: { sh: string; ps: string };
-	containerImages: { base: string; runner: string };
-}
 
 interface ReleaseState {
 	channel: "stable" | "unstable";
@@ -66,11 +49,6 @@ async function fetchReleaseState(tag: string): Promise<ReleaseState | null> {
 	return isReleaseState(state) ? state : null;
 }
 
-function assetName(os: string, arch: string, suffix: string): string {
-	if (os === "windows") return `beskid-${os}-${arch}${suffix}`;
-	return `beskid-${os}-${arch}`;
-}
-
 export async function GET({ url: requestUrl }: { url: URL }) {
 	void requestUrl;
 
@@ -95,19 +73,18 @@ export async function GET({ url: requestUrl }: { url: URL }) {
 		const version = state.version;
 		const ghReleaseBase = `https://github.com/${COMPILER_REPO}/releases/download/${selectedTag}`;
 
-		const platforms: { os: string; arch: string; suffix: string }[] = [
-			{ os: "linux", arch: "amd64", suffix: "" },
-			{ os: "darwin", arch: "arm64", suffix: "" },
-			{ os: "windows", arch: "amd64", suffix: ".exe" },
+		const platforms: { id: PlatformId; filename: string }[] = [
+			{ id: "linux-amd64", filename: "beskid-linux-amd64" },
+			{ id: "darwin-arm64", filename: "beskid-darwin-arm64" },
+			{ id: "windows-amd64", filename: "beskid-windows-amd64.exe" },
 		];
 
 		const available = new Set(state.available_artifacts);
 		const assets: AssetInfo[] = platforms.flatMap((p) => {
-			const fn = assetName(p.os, p.arch, p.suffix);
+			const fn = p.filename;
 			if (!available.has(fn)) return [];
 			return [{
-				platform: p.os,
-				arch: p.arch,
+				platform: p.id,
 				kind: "binary" as const,
 				url: `${ghReleaseBase}/${fn}`,
 				filename: fn,
@@ -116,36 +93,30 @@ export async function GET({ url: requestUrl }: { url: URL }) {
 
 		const packages: PackageInfo[] = [
 			{
-				platform: "linux",
+				platform: "linux-amd64",
 				label: "Ubuntu / Debian (.deb)",
 				command: `sudo apt install ./beskid-${version}-amd64.deb`,
 				url: `${ghReleaseBase}/beskid-${version}-amd64.deb`,
 			},
 			{
-				platform: "windows",
+				platform: "windows-amd64",
 				label: "Windows (.msi)",
 				command: `msiexec /i beskid-${version}-windows-amd64.msi`,
 				url: `${ghReleaseBase}/beskid-${version}-windows-amd64.msi`,
 			},
 			{
-				platform: "windows",
+				platform: "windows-amd64",
 				label: "Windows (.exe bootstrapper)",
 				command: `.\\beskid-${version}-windows-amd64.exe`,
 				url: `${ghReleaseBase}/beskid-${version}-windows-amd64.exe`,
 			},
 			{
-				platform: "macos",
+				platform: "darwin-arm64",
 				label: "macOS (.dmg)",
 				command: "Open Beskid.app and drag to /Applications",
 				url: `${ghReleaseBase}/beskid-${version}-macos-arm64.dmg`,
 			},
-			{
-				platform: "macos",
-				label: "Homebrew",
-				command: "brew tap cyber-nomad-collective/beskid && brew install beskid",
-				url: "",
-			},
-		].filter((pkg) => pkg.url === "" || available.has(pkg.url.slice(pkg.url.lastIndexOf("/") + 1)));
+		].filter((pkg) => available.has(pkg.url.slice(pkg.url.lastIndexOf("/") + 1)));
 
 		const payload: VersionPayload = {
 			version,

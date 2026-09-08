@@ -8,16 +8,16 @@ Mods ship like other Beskid packages—manifest, graph, lockfile—but consumers
 
 ## Workflow sketch
 
-1. Create or open a **`type: Mod`** project ([Project manifest](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/)).
+1. Create or open a **`type: Mod`** project ([Project manifest](/docs/standard/tooling/manifests-and-lockfiles/project-manifest-contract/)).
 2. Implement public types satisfying SDK contracts (`Collector`, `Generator`, …).
-3. **`beskid dev build compile`** the mod for the target triple you need in downstream compiles.
+3. Run **`beskid mod rebuild`** for the target triple that downstream compiles need.
 4. Add the mod package to app/lib **dependencies**; host discovers exports at `mod.load`.
 
-CLI details evolve—cross-check [CLI command reference](/book/reference/cli/command-reference/) and [build](/book/reference/cli/commands/build/) for flags your workspace supports.
+See the [`beskid mod` command reference](/book/reference/cli/commands/mod/) for project, target, lockfile, clean, and progress flags.
 
 ## Artifacts
 
-Normative contract: [AOT artifact contract](/platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/).
+Normative contract: [AOT artifact contract](/docs/standard/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/).
 
 Expect:
 
@@ -29,7 +29,7 @@ Missing artifact for the requested triple → fail closed, not "skip mod silentl
 ## Testing mods
 
 - Unit-test Beskid logic in `test` items where possible.
-- Platform behavior locks live in `beskid_tests` with spec updates ([Conformance](/platform-spec/compiler/conformance/)).
+- Platform behavior locks live in focused `beskid_tests_*` crates with spec updates ([Conformance](/docs/standard/compiler/conformance/)).
 
 ## Next
 

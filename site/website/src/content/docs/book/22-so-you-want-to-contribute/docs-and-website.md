@@ -6,20 +6,20 @@ tableOfContents: true
 
 Public docs live in **`site/website`**. Two reader areas only:
 
-- **[Platform specification](/platform-spec/)** — normative
+- **[Platform specification](/docs/standard/)** — normative
 - **[Beskid Book](/book/)** — informative tutorial (this file tree)
 
-Use **Bun** for local workflows:
+Use **pnpm** for local workflows:
 
 ```bash
 cd site/website
-bun run dev
-bun run test:docs-links
-bun run build
+pnpm dev
+pnpm test:docs-links
+pnpm build
 ```
 
-Book nav comes from `book/nav.order.json` → `generate:book-nav-tree`. Platform-spec navigation comes directly from root `openspec/catalog.json`; the website does not generate or own normative content.
+Book navigation comes from `book/nav.order.json` through `generate:book-nav-tree`. Standard navigation comes from root `openspec/catalog.json`; the website does not own normative content.
 
 ## Book vs spec
 
-If two reviewers would argue about observable behavior, the argument belongs in **platform-spec** first. The book explains how to apply the rule—chapter 12 exists because we learned this the hard way.
+If two reviewers would argue about observable behavior, the change belongs in **OpenSpec** first. The Book explains how to apply the rule. Use [Documentation authoring](/docs/contributing/documentation/) for the current checks.
