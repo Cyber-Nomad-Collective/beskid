@@ -1,23 +1,25 @@
 ---
-title: "beskid dev project update"
+title: "beskid update"
 description: "Update dependency resolution and the materialized workspace."
 ---
 
 Refreshes dependency resolution and updates the materialized workspace (resolver run with “update” semantics).
-This command is available as `beskid dev project update`.
+This command is available as `beskid update`.
 
 ## Arguments
 
 | Argument | Description |
 | --- | --- |
-| `--project` | Project directory or `Project.proj` path |
+| `--project` | Project directory or `App.bproj` path |
 | `--target` | Target name from the manifest |
-| `--workspace-member` | Workspace member when resolving via `Workspace.proj` |
+| `--workspace-member` | Workspace member when resolving via `Workspace.bws` |
 
 ## Example
 
 ```bash
-beskid dev project update --project path/to/Project.proj
+beskid update --project path/to/App.bproj
 ```
+
+For lockfile behavior and recovery, use [Dependencies and locks](/docs/projects/dependencies-and-locks/).
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

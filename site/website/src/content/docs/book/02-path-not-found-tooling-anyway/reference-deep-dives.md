@@ -36,10 +36,10 @@ This tutorial chapter stops before encyclopedia mode. The reference tree is the 
 
 When the reference and tutorial disagree with the spec, **the spec wins** for language and platform contracts:
 
-- [Platform specification](/platform-spec/)
-- [Tooling manifests](/platform-spec/tooling/manifests-and-lockfiles/)
-- [Language meta program structure](/platform-spec/language-meta/program-structure/)
+- [Platform specification](/docs/standard/)
+- [Tooling manifests](/docs/standard/tooling/manifests-and-lockfiles/)
+- [Language meta program structure](/docs/standard/language-meta/program-structure/)
 
 ## Next chapter
 
-[03. Project.proj or it didn't happen](/book/03-project-proj-or-it-didnt-happen/)
+[03. App.bproj or it didn't happen](/book/03-project-proj-or-it-didnt-happen/)

@@ -4,7 +4,7 @@ description: Templates for projects, workspaces, and items—scaffolding without
 tableOfContents: true
 ---
 
-Hand-rolling `Project.proj` is educational exactly once. After that, use **`beskid new`**.
+Hand-rolling `App.bproj` is educational exactly once. After that, use **`beskid new`**.
 
 ## What `new` covers
 
@@ -24,7 +24,7 @@ From an empty directory (flags exact names in reference):
 beskid new project --name MyApp
 ```
 
-You should get `Project.proj`, a `Src/` tree, and entry file paths that actually resolve. If not, your template checkout is stale—not your moral failure.
+You should get `App.bproj`, a `Src/` tree, and entry file paths that actually resolve. If not, your template checkout is stale—not your moral failure.
 
 ## Corelib on new projects
 

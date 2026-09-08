@@ -1,38 +1,33 @@
 ---
-title: "JIT run"
-description: beskid_engine run_entrypoint, JIT modules, and quick iteration.
+title: "AOT run and interactive JIT"
+description: The AOT run command and the separate JIT paths for tests and the REPL.
 tableOfContents: true
 ---
 
-**JIT** is the "run what I just compiled" path: artifact in memory, entrypoint invoked through `beskid_engine`.
+Quick feedback has two paths. `beskid run` builds and links a native executable before it starts a subprocess. The REPL and the current test runner execute code in the in-process JIT engine.
 
 ## Crates
 
 | Crate | Role |
 | --- | --- |
 | `beskid_engine` | `run_entrypoint`, module registration, extern validation |
-| `beskid_runtime` | Builtins, GC hooks, fiber scheduler |
 | `beskid_abi` | Symbol tables, version exports |
 
-Spec: [Backends JIT/AOT](/platform-spec/compiler/build-pipeline/backends-jit-aot/), [Program assembly](/platform-spec/compiler/build-pipeline/program-assembly/).
+Spec: [Backends JIT/AOT](/docs/standard/compiler/build-pipeline/backends-jit-aot/), [Program assembly](/docs/standard/compiler/build-pipeline/program-assembly/).
 
-## CLI
+## AOT run command
 
 ```bash
-beskid run --project path/to/Project.proj
+beskid run --project path/to/App.bproj --entrypoint Main --plain
 ```
 
-Behavior must match analyze/build resolution ([CLI contract](/platform-spec/tooling/cli/build-analyze-run-contract/)).
+The command uses the same project resolution as `beskid analyze` and `beskid build`. It requires an exact ABI-v5 runtime kit. Use the [canonical run procedure](/docs/tooling/build-run-test/) for prerequisites, checks, and recovery.
 
-## When JIT is enough
+## Current JIT users
 
-- Local dev loops, scripting targets, compiler dogfooding.
-- Tests that execute generated code in-process.
+- `beskid repl` evaluates interactive snippets without project resolution.
+- `beskid test` discovers test items and executes them in the current in-process engine.
 
-## When JIT is not enough
+Do not infer deployment behavior from these JIT paths. Use `beskid build` for a persistent native artifact.
 
-Shipping binaries, mod AOT registration, or deployment without a compiler on the target → [AOT build](/book/14-from-source-to-runs/aot-build/).
-
-## Next
-
-[AOT build](/book/14-from-source-to-runs/aot-build/)
+Next: [AOT build](/book/14-from-source-to-runs/aot-build/).

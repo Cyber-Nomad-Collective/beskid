@@ -4,7 +4,7 @@ description: Unit tests, e2e evidence, and tying Standard features to runnable c
 tableOfContents: true
 ---
 
-**Standard** platform-spec features should cite verification anchors—`beskid_tests`, `beskid_e2e_tests`, diagnostic codes, or explicit conformance documents under [Compiler / Conformance](/platform-spec/compiler/conformance/).
+**Standard** capabilities must cite verification anchors. Use a focused `beskid_tests_*` crate, `beskid_e2e_tests`, a diagnostic code, or an explicit conformance document under [Compiler / Conformance](/docs/standard/compiler/conformance/).
 
 ## Habits that help
 

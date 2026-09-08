@@ -5,7 +5,7 @@ description: "Create Beskid projects, workspaces, and items from templates with 
 
 Beskid scaffolds new **projects**, **workspaces**, and **items** from **templates**: versioned file trees described by **`beskid.template.v1`** in **`.beskid/template.json`**. The primary CLI entrypoint is **`beskid new`**; **`beskid pckg`** is for packing and publishing template packages, not for instantiation.
 
-Normative contracts live under [Project scaffolding](/platform-spec/tooling/project-scaffolding/). This guide summarizes day-to-day workflows.
+Normative contracts live under [Project scaffolding](/docs/standard/tooling/project-scaffolding/). This guide summarizes day-to-day workflows.
 
 ## Sources
 
@@ -50,9 +50,9 @@ beskid new --git https://example.com/templates --git-ref main --git-subpath cons
 
 | `tags.type` | Creates |
 | --- | --- |
-| `project` | New directory with `Project.proj` and scaffold sources |
-| `workspace` | `Workspace.proj` plus member project trees |
-| `item` | Files inside an existing project; use `--project` for the host `Project.proj` |
+| `project` | New directory with `App.bproj` and scaffold sources |
+| `workspace` | `Workspace.bws` plus member project trees |
+| `item` | Files inside an existing project; use `--project` for the host `App.bproj` |
 
 Use **`--no-interactive`** in CI with every required symbol set via **`-n` / `--name`** or **`--symbol id=value`**. Use **`--force`** to write into a non-empty output directory.
 
@@ -60,15 +60,15 @@ See [beskid new command reference](/book/reference/cli/commands/new/) for the fu
 
 ## corelib on instantiated hosts
 
-Every **instantiated** ordinary **host** project (**`project.type` omitted or `Host`**) **always** gets **corelib** through the normal toolchain path (lock/fetch/materialize)—the same implicit standard library behavior as existing projects. Template output **must not** ship a user-facing switch to disable corelib; manifests may omit an explicit `dependency "corelib"` block because **`beskid dev project lock`** / **`beskid dev project fetch`** still materialize it.
+Every **instantiated** ordinary **host** project (**`project.type` omitted or `Host`**) **always** gets **corelib** through the normal toolchain path (lock/fetch/materialize)—the same implicit standard library behavior as existing projects. Template output **must not** ship a user-facing switch to disable corelib; manifests may omit an explicit `dependency "corelib"` block because **`beskid lock`** / **`beskid fetch`** still materialize it.
 
 ## Authoring template packages
 
-Template authors use **`project.type = Template`** in `Project.proj` and publish with **`beskid pckg pack`** (sets **`packageKind: template`**, includes **`.beskid/template.json`**, skips **`api.json`** generation). See [beskid pckg](/book/reference/cli/commands/pckg/) and [Template packages](/platform-spec/tooling/project-scaffolding/template-packages/).
+Template authors use **`project.type = Template`** in `App.bproj` and publish with **`beskid pckg pack`** (sets **`packageKind: template`**, includes **`.beskid/template.json`**, skips **`api.json`** generation). See [beskid pckg](/book/reference/cli/commands/pckg/) and [Template packages](/docs/standard/tooling/project-scaffolding/template-packages/).
 
 ## Related
 
 - [beskid new](/book/reference/cli/commands/new/)
 - [Beskid Projects](/book/reference/projects/)
-- [Project templates (spec)](/platform-spec/tooling/project-scaffolding/project-templates/)
-- [beskid new (spec)](/platform-spec/tooling/project-scaffolding/beskid-new/)
+- [Project templates (spec)](/docs/standard/tooling/project-scaffolding/project-templates/)
+- [beskid new (spec)](/docs/standard/tooling/project-scaffolding/beskid-new/)

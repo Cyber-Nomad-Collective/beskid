@@ -5,7 +5,7 @@ description: "How the Beskid pretty-printer works: Emit, EmitCtx, modules, and e
 
 The formatter lives in the **`beskid_analysis`** crate under `src/format/`. It is an **opinionated pretty-printer**: it walks the **concrete syntax AST** after a successful parse and writes canonical text. It does **not** round-trip arbitrary whitespace or comments (except structured **`///`** leading documentation carried on the AST).
 
-For normative formatter and front-end contracts, see [Parser and AST contracts](/platform-spec/compiler/front-end/parser-and-ast-contracts/) and [Command surface](/platform-spec/tooling/cli/command-surface/).
+For normative formatter and front-end contracts, see [Parser and AST contracts](/docs/standard/compiler/front-end/parser-and-ast-contracts/) and [Command surface](/docs/standard/tooling/cli/command-surface/).
 
 ## Mental model
 
@@ -78,7 +78,7 @@ Policy bodies live in `format/policy.rs` so spacing rules stay centralized.
 2. **`Emit` impl** — add `fn emit` in the most natural module (`expressions_emit.rs` vs `statements_emit.rs` vs `items/…`).
 3. **Delegate** — prefer `child.emit(w, cx)?` over duplicating indent logic.
 4. **Policy** — if the node introduces new vertical spacing needs, extend `policy.rs` and thread through `EmitCtx` rather than hard-coding double newlines at call sites.
-5. **Tests** — add `*.input.bd` / `*.expected.bd` under `beskid_tests/fixtures/format/` (any subdirectory; the harness walks recursively), then run the formatter fixture task exposed by the root `Justfile` and `cargo test` in `compiler/`. GitHub Actions repeats the same repository commands through the reusable quality workflow.
+5. **Tests** — add `*.input.bd` / `*.expected.bd` under `crates/beskid_tests_surface/fixtures/format/`. The harness scans subdirectories. Run `cargo test -p beskid_tests_surface format` from `compiler/`. GitHub Actions runs the repository quality workflow.
 
 ## Idempotence and grouped expressions
 
@@ -90,13 +90,13 @@ Use the same pattern whenever syntax allows redundant grouping that your emitter
 
 ## CLI and LSP
 
-- **CLI**: [`beskid dev syntax format`](/book/reference/cli/commands/format/) reads a file or directory, parses, runs `format_program`, then writes stdout, `--output`, `--write`, or validates with `--check`.
+- **CLI**: [`beskid format`](/book/reference/cli/commands/format/) reads a file or directory, parses, runs `format_program`, then writes stdout, `--output`, `--write`, or validates with `--check`.
 - **LSP**: the formatting handler calls the same `format_program` on the parsed buffer; range formatting currently replaces the **full document** (see [LSP architecture](/book/reference/lsp/architecture-and-protocol-spec/)).
 
 Both paths require a **successful parse**; there is no best-effort partial format on parse errors.
 
 ## Regression testing (compiler repo)
 
-- **Coverage policy**: [Test harnesses and fixtures](/platform-spec/compiler/conformance/test-harnesses-and-fixtures/).
-- **CI**: `beskid dev syntax format --check` on the fixture tree (via `compiler-rust-gate`); use the root formatter fixture task to refresh expected output; LSP unit tests `include_str!` the `docs_and_control` fixture to assert the handler matches `format_program`.
+- **Coverage policy**: [Test harnesses and fixtures](/docs/standard/compiler/conformance/test-harnesses-and-fixtures/).
+- **CI**: `beskid format --check` on the fixture tree (via `compiler-rust-gate`); use the root formatter fixture task to refresh expected output; LSP unit tests `include_str!` the `docs_and_control` fixture to assert the handler matches `format_program`.
 - **Corelib (optional)**: set `BESKID_FORMAT_CORPUS=1` and run the root format corpus task locally.

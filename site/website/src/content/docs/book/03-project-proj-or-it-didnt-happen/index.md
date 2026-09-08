@@ -1,12 +1,14 @@
 ---
-title: "Project.proj or it didn't happen"
+title: "App.bproj or it didn't happen"
 description: Manifests, targets, dependencies, lockfiles, and the resolver graph that actually builds.
 tableOfContents: true
 ---
 
-Every serious Beskid program anchors on **`Project.proj`** at the project root—not a twelve-page YAML poem, not a solution file with six nested repos and a prayer.
+Every serious Beskid program anchors on **`App.bproj`** at the project root—not a twelve-page YAML poem, not a solution file with six nested repos and a prayer.
 
 This chapter is the mental model for **what** you are building (targets), **what** you depend on (dependencies), and **how** tooling orders work before codegen.
+
+Use the canonical [Projects guide](/docs/projects/) to create a project, select a workspace member, and manage dependencies and locks.
 
 ## What you will find here
 
@@ -21,7 +23,7 @@ This chapter is the mental model for **what** you are building (targets), **what
 
 ## By the end of this chapter
 
-- Read a minimal `Project.proj` without panic.
+- Read a minimal `App.bproj` without panic.
 - Predict build order for dependencies.
 - Know when `Project.lock` should change and why.
 

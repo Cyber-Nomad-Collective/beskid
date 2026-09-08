@@ -1,14 +1,14 @@
 ---
 title: "CLIF and debug"
-description: Inspect Cranelift IR with `beskid dev syntax clif` and debug flags without guessing lowering.
+description: Inspect Cranelift IR with `beskid clif` and debug flags without guessing lowering.
 tableOfContents: true
 ---
 
-When lowering misbehaves, reading Rust alone is masochism. **`beskid dev syntax clif`** dumps Cranelift IR so you can correlate machine intent with source.
+When lowering misbehaves, reading Rust alone is masochism. **`beskid clif`** dumps Cranelift IR so you can correlate machine intent with source.
 
 ## CLI
 
-Reference: [beskid dev syntax clif](/book/reference/cli/commands/clif/).
+Reference: [beskid clif](/book/reference/cli/commands/clif/).
 
 Typical uses:
 
@@ -18,12 +18,12 @@ Typical uses:
 
 ## Debug flags
 
-Compiler logging and phase traces align with `beskid_pipeline` phase IDs—see [Pipeline composition](/platform-spec/compiler/pipeline-composition/) and book chapter [02 tooling — logging](/book/02-path-not-found-tooling-anyway/logging-and-debug-flags/) for operator-facing flags.
+Compiler logging and phase traces align with `beskid_pipeline` phase IDs—see [Pipeline composition](/docs/standard/compiler/pipeline-composition/) and book chapter [02 tooling — logging](/book/02-path-not-found-tooling-anyway/logging-and-debug-flags/) for operator-facing flags.
 
 ## Spec anchors
 
-- [Diagnostics parity](/platform-spec/compiler/build-pipeline/diagnostics-parity/)
-- [Backends JIT/AOT](/platform-spec/compiler/build-pipeline/backends-jit-aot/)
+- [Diagnostics parity](/docs/standard/compiler/build-pipeline/diagnostics-parity/)
+- [Backends JIT/AOT](/docs/standard/compiler/build-pipeline/backends-jit-aot/)
 
 ## What CLIF is not
 

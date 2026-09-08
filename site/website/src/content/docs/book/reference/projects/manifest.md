@@ -64,19 +64,19 @@ All other scalar fields (`name`, `version`, `root`, `entry`, `path`, `url`, `rev
 For `source = path`:
 - `path` (required)
 
-For `source = git` (provider reserved, not enabled in v1):
+For `source = git` (parsed but not materialized by the current workflow):
 - `url` (required)
 - `rev` (required)
 
-For `source = registry` (provider reserved, not enabled in v1):
+For `source = registry`:
 - `name` (required)
 - `version` (required)
 
-## Active provider scope (v1)
+## Provider scope
 
-1. Enabled dependency provider: `path`.
-2. `git` and `registry` are schema-valid for forward compatibility but provider-disabled in runtime scope.
-3. Build/run fails when a disabled provider dependency is present in an active graph.
+1. Path dependencies use a local `.bproj` manifest.
+2. Registry dependencies download and materialize an active `.bpk` version.
+3. Git dependencies are schema-valid but are not materialized. Build and run fail before compilation when one is active.
 
 ## Validation rules
 
@@ -99,4 +99,4 @@ For `source = registry` (provider reserved, not enabled in v1):
 - Parse and validate manifests in the `beskid_analysis` crate (`projects::parse_manifest` / `parse_workspace_manifest`), then build the dependency DAG with `daggy` and preserve unresolved non-path dependency nodes for policy diagnostics.
 - Materialize resolved dependencies into `obj/beskid/deps/src` before compile stages.
 - Editor support: VS Code uses the `beskid-proj` language id for `*.bproj`; the Beskid LSP publishes diagnostics and context-aware completions on manifest files.
-- Symbol visibility: explicit `use` imports only—see [Explicit use, no prelude](/platform-spec/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/).
+- Symbol visibility: explicit `use` imports only—see [Explicit use, no prelude](/docs/standard/tooling/manifests-and-lockfiles/adr/0006-explicit-use-no-prelude/).

@@ -23,12 +23,16 @@ Commit **per-project** `Project.lock` files (and workspace-level lock artifacts 
 Start simple: build `App` + run `Test` target for each member you ship.
 
 ```mermaid
+accTitle: Frozen workspace CI
+accDescr: CI verifies frozen dependency state once, then builds and tests each workspace member.
 flowchart TD
   CI[CI pipeline] --> L[lock/fetch --frozen]
   L --> B1[build member A]
   L --> B2[build member B]
   B1 --> T1[test member A]
 ```
+
+**Text equivalent:** CI first verifies the frozen lock and materialized dependency state. It then builds and tests each selected workspace member.
 
 ## Path deps in CI
 
@@ -41,7 +45,7 @@ The Beskid superrepo itself is an aggregate of submodules—your application mon
 ## Reference
 
 - [Workspace monorepo setup](/book/reference/workspace-monorepo/)
-- [Workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
+- [Workspace and lock contracts](/docs/standard/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
 
 ## Next chapter
 

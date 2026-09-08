@@ -1,10 +1,10 @@
 ---
-title: "Project Resolution"
-description: Beskid Project Resolution (HCL)
+title: "Project resolution"
+description: BSOL project discovery, dependency graphs, materialization, and lock behavior.
 ---
 
 
-This document defines how module paths are resolved, how the project graph is built from `Project.proj`, and how imports are validated.
+This document defines how module paths are resolved, how the project graph is built from `App.bproj`, and how imports are validated.
 
 It also defines the build/run dependency lifecycle used by CLI commands:
 
@@ -18,24 +18,25 @@ It also defines the build/run dependency lifecycle used by CLI commands:
 Graph implementation: `daggy` (`Dag<ProjectNode, DependencyEdge>`), with `petgraph` traversal utilities available through Daggy re-exports when needed.
 
 ## Terminology
-- **Project root**: directory containing `Project.proj`.
-- **Source root**: `project.root` field inside `Project.proj` (default `Src`).
+- **Project root**: directory containing `App.bproj`.
+- **Source root**: `project.root` field inside `App.bproj` (default `Src`).
 - **Module path**: dotted path like `Net.Http`.
 
 ## Project Graph Construction
-1. Start at the root project `Project.proj`.
+1. Start at the root project `App.bproj`.
 2. Parse manifest to collect project identity, targets, and dependencies.
 3. Canonicalize manifest path and intern a node key for the root project.
 4. For each dependency, create an edge from consumer project -> dependency project.
 5. For `source = "path"`, resolve and recursively load dependency manifests.
-6. For providers that are not enabled in current runtime scope (`git`, `registry` in v1), fail resolution with provider diagnostics.
+6. Preserve registry dependencies for artifact materialization. Reject unresolved Git dependencies before compilation.
 7. Reject cycles at edge insertion time and report chain.
 
-## Provider Scope (v1)
+## Provider scope
 
-- Enabled provider: `path`.
-- Deferred providers with reserved infrastructure: `git`, `registry`.
-- Policy: build/run never proceeds with unresolved external dependency nodes.
+- Path dependencies resolve local project manifests.
+- Registry dependencies select and extract an active package version during workspace preparation.
+- Git dependencies are not materialized by the current workflow.
+- Build and run do not proceed with an unresolved Git dependency.
 
 ## Daggy Node and Edge Model
 - **ProjectNode**
@@ -57,8 +58,9 @@ The graph keeps project identity canonicalized by manifest path to prevent dupli
 - The projected ordered compile units are consumed by CLI and analysis pipelines.
 
 ## Unresolved Dependency Policy (v1)
-- `path`: must resolve to an existing `Project.proj`; otherwise error.
-- `git` / `registry`: provider-disabled in runtime scope; must fail before compile.
+- `path`: must resolve to an existing `App.bproj`; otherwise error.
+- `registry`: download an active version and require a `.bproj` manifest in the artifact.
+- `git`: fail before compile because the current workflow does not materialize it.
 - Build/run does not continue past resolution stage when any dependency is unresolved.
 
 ## Materialization and Build Staging
@@ -66,8 +68,8 @@ The graph keeps project identity canonicalized by manifest path to prevent dupli
 Before build or run:
 
 1. Resolve all path dependencies transitively.
-2. Copy dependency source trees into `obj/beskid/deps/src/<PackageId>`.
-3. Copy policy: copy when source file timestamp is newer than materialized file.
+2. Copy path dependencies or extract registry artifacts into `obj/beskid/deps/src/<materialized-id>`.
+3. For path dependencies, copy when the source file timestamp is newer than the materialized file.
 4. Use materialized source roots for compile units.
 
 Build outputs and state directories:
@@ -81,7 +83,7 @@ Build outputs and state directories:
 - Lockfile path: `Project.lock` at project root.
 - Lockfile is created automatically when missing during resolve/build/run.
 - Lockfile is updated automatically when dependency graph changes.
-- Future strict flags (`--frozen`, `--locked`) can tighten this behavior without changing lifecycle stages.
+- `--frozen` forbids lock updates. `--locked` requires an existing lock and forbids updates.
 
 ## File-to-Module Mapping
 - File `Src/Net/Http.bd` maps to module path `Net.Http`.
@@ -96,7 +98,7 @@ For identifiers and paths inside a module:
 3. Imports (`use` aliases).
 4. Module-level items.
 
-This order is consistent with `/platform-spec/language-meta/program-structure/name-resolution/`.
+This order is consistent with `/docs/standard/language-meta/program-structure/name-resolution/`.
 
 ## Module Graph (Inferred)
 The module graph is inferred from `mod` declarations and file layout. The manifest does not list modules explicitly.
@@ -116,11 +118,11 @@ The module graph is inferred from `mod` declarations and file layout. The manife
 - Access to non-`pub` symbols from another module is an error.
 
 ## Error Conditions
-- Missing `Project.proj`.
+- Missing `App.bproj`.
 - Duplicate project names in dependency graph.
 - Project cycles.
 - Missing path dependency manifest.
-- Provider-disabled dependency source in active runtime scope.
+- Unsupported Git dependency in the active graph.
 - Lockfile read/parse/update mismatch errors.
 - Materialization copy failures.
 - Import path not found.
@@ -135,8 +137,7 @@ The module graph is inferred from `mod` declarations and file layout. The manife
 
 ## Future Extensions
 - Virtual modules for generated code.
-- Extended workspace policy and lock integration for large monorepos (base workspace manifests are already available in `/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/` and `docs/book/reference/workspace-monorepo.md`).
-- Registry lockfile integration.
+- Extended workspace policy for large monorepos.
 
 ## Corelib (`Std`) graph behavior
 - `Std` is treated as a normal dependency node in the project DAG.

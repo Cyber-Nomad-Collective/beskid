@@ -11,14 +11,16 @@ The **beskid** superrepo aggregates submodules—especially **`compiler`**, **`p
 | Path | What |
 | --- | --- |
 | `compiler/` | CLI, analysis, codegen, runtime, LSP, pckg client crates |
-| `pckg/` | Registry service (ASP.NET), dashboard, publish pipeline |
+| `pckg/` | Registry service (Rust), dashboard, publish pipeline |
 | `beskid_vscode/` | Open VSX extension and bundled LSP |
 | `compiler/corelib/beskid_corelib/` | Canonical stdlib Beskid sources (`corelib` package) |
-| `site/website/` | Public docs (platform-spec + book + downloads) |
-| `packages/trudoc/` | Docs verification and nav generation |
+| `openspec/` | Normative Standard source and generated catalog |
+| `site/website/` | Public Docs, Book, Standard presentation, and downloads |
 
-Clone with submodules initialized or you will debug "missing crate" ghosts for an afternoon.
+Run the repository setup script from the superrepo root. It initializes the required submodules and installs the root pnpm dependencies.
 
 ```bash
-git submodule update --init --recursive
+./scripts/setup-environment.sh
 ```
+
+Use [Repository setup](/docs/contributing/repository/) for prerequisites, focused checks, ownership, and recovery.

@@ -1,19 +1,19 @@
 ---
-title: "beskid dev syntax doc"
+title: "beskid doc"
 description: "Emit API documentation (api.json v4 + index.md) for a resolved Beskid program."
 ---
 
 Resolves a Beskid entrypoint (optional file path plus project flags), parses and resolves the program (including multi-file assembly when `--project` is used), and writes API documentation artifacts to disk.
-This command is available as `beskid dev syntax doc`.
+This command is available as `beskid doc`.
 
 ## Arguments
 
 | Argument | Description |
 | --- | --- |
 | `[INPUT]` | Optional `.bd` path (with `--project` resolution) |
-| `--project` | Project directory or `Project.proj` path |
+| `--project` | Project directory or `App.bproj` path |
 | `--target` | Target name from the manifest |
-| `--workspace-member` | Workspace member when resolving via `Workspace.proj` |
+| `--workspace-member` | Workspace member when resolving via `Workspace.bws` |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |
 | `--out` | Output directory (default `doc-out`); receives `api.json` and `index.md` |
@@ -33,7 +33,7 @@ Each item includes location, visibility, `kind`, names, graph ids, and compiler-
 - **`docMarkdown`** (optional): rendered Markdown for hovers and human-facing docs (same template the LSP uses for rich text).
 - **`doc`** (optional, object): structured fields: `summaryMarkdown`, `returnsMarkdown`, `arguments`, `enumVariants`, `typeParameters`. Derived from the same parse tree as `docMarkdown`.
 
-See the [api.json contract](/platform-spec/tooling/cli/api-json-contract/design-model/) in the platform specification for normative field definitions.
+See the [api.json contract](/docs/standard/tooling/cli/api-json-contract/design-model/) in the platform specification for normative field definitions.
 
 Older consumers that only understand schema version `2` should treat unknown `schemaVersion` values as unsupported and fall back to Markdown-only fields when present.
 
@@ -43,12 +43,14 @@ Human-oriented index page generated alongside `api.json` for browsing in reposit
 
 ## Layout in projects
 
-When run as part of packaging, artifacts are written under **`<sourceRoot>/.beskid/docs/`** (for example `.beskid/docs/api.json`). The `beskid dev package registry pack` command copies those paths into the archive and records a `documentation` pointer in the embedded `package.json` so registries can open `api.json` without path heuristics.
+When run as part of packaging, artifacts are written under **`<sourceRoot>/.beskid/docs/`** (for example `.beskid/docs/api.json`). The `beskid pckg pack` command copies those paths into the archive and records a `documentation` pointer in the embedded `package.json` so registries can open `api.json` without path heuristics.
 
 ## Example
 
 ```bash
-beskid dev syntax doc --project path/to/Project.proj --out doc-out
+beskid doc --project path/to/App.bproj --out doc-out
 ```
+
+For the package publication procedure, use [Publish a package](/docs/packages/publish/).
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

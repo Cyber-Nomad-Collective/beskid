@@ -43,8 +43,8 @@ Publisher operations (`upload`, `yank`, `unyank`) require a valid publish-scoped
 ## See also
 
 - [pckg command reference](/book/reference/cli/commands/pckg/) — full subcommand and flag reference
-- [Publish your first package (reference)](/book/reference/publish-first-package/) — end-to-end walkthrough with commands
+- [Publish a package](/docs/packages/publish/) — verified procedure with expected results and recovery
 - [Packages without npm trauma](/book/18-packages-without-npm-trauma/) — chapter overview
 - [Doc and api.json](/book/16-corelib-batteries-with-opinions/doc-and-api-json/) — automatic doc generation during pack
-- [Registry client](/platform-spec/tooling/registry-client/)
-- [pckg client contract](/platform-spec/tooling/registry-client/pckg-client-contract/)
+- [Registry client](/docs/standard/tooling/registry-client/)
+- [pckg client contract](/docs/standard/tooling/registry-client/pckg-client-contract/)

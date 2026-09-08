@@ -24,12 +24,16 @@ CI should prefer **reproducible** resolution:
 - `--locked` — enforce lock consistency (see per-command docs for exact semantics)
 
 ```mermaid
+accTitle: Project dependency resolution
+accDescr: A bproj manifest enters the resolver, which writes the lockfile and materialized dependency tree used by frozen CI.
 flowchart LR
-  M[Project.proj] --> R[Resolver]
+  M[App.bproj] --> R[Resolver]
   R --> L[Project.lock]
   R --> O[obj/beskid materialized]
   L --> CI[CI with --frozen]
 ```
+
+**Text equivalent:** The resolver reads `App.bproj`, synchronizes `Project.lock`, and materializes dependencies under `obj/beskid`. CI uses `--frozen` to require the recorded state.
 
 ## When the lock changes
 
@@ -43,11 +47,11 @@ Do **not** `.gitignore` the lock because "it is generated" unless you enjoy prod
 
 ## Path-only era (v1)
 
-With `source = path` as the enabled provider, "version drift" is often literally **different folders on disk**. Workspaces add shared override policy—chapter [06](/book/06-monorepo-as-coping-mechanism/).
+With `source = path`, drift can mean different local folders. With `source = registry`, inspect the selected active version in `Project.lock`. Workspaces add shared override policy—chapter [06](/book/06-monorepo-as-coping-mechanism/).
 
 ## Standard reference (informative)
 
-- [Workspace and lock contracts](/platform-spec/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
+- [Workspace and lock contracts](/docs/standard/tooling/manifests-and-lockfiles/workspace-and-lock-contracts/)
 
 ## Next
 

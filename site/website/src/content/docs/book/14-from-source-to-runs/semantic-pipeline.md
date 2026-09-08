@@ -8,20 +8,22 @@ Parsing proves you speak Beskid syntax. **Semantic analysis** proves you meant s
 
 ## Rules pipeline
 
-Hub: [Rules pipeline contract](/platform-spec/compiler/semantic-pipeline/rules-pipeline-contract/).
+Hub: [Rules pipeline contract](/docs/standard/compiler/semantic-pipeline/rules-pipeline-contract/).
 
 - Staged rules in `beskid_analysis::analysis::rules::staged`
-- Diagnostic codes in [Diagnostic code registry](/platform-spec/compiler/semantic-pipeline/diagnostic-code-registry/)
+- Diagnostic codes in [Diagnostic code registry](/docs/standard/compiler/semantic-pipeline/diagnostic-code-registry/)
 - Language-meta bands (e.g. **E16xx** contracts) referenced, not duplicated
 
 ## Mod phases (semantic-adjacent)
 
 After optional **generate/merge/reparse**, mods run **analyze** and **rewrite** on the merged program:
 
-- [Mod host bridge](/platform-spec/compiler/compiler-mods/mod-host-bridge/)
-- [Analysis, query, and diagnostics facades](/platform-spec/compiler/compiler-mods/analysis-query-diagnostics-facade/)
+- [Mod host bridge](/docs/standard/compiler/compiler-mods/mod-host-bridge/)
+- [Analysis, query, and diagnostics facades](/docs/standard/compiler/compiler-mods/analysis-query-diagnostics-facade/)
 
 ```mermaid
+accTitle: Semantic processing order
+accDescr: Parsed syntax passes through Mod generation, semantic rules, optional rewrites, and then code generation.
 flowchart LR
   parse[Parsed AST]
   gen[mod.generate + merge]
@@ -31,7 +33,9 @@ flowchart LR
   parse --> gen --> sem --> rewrite --> lower
 ```
 
-## `beskid dev syntax analyze`
+**Text equivalent:** Parse the source, merge generated Mod output, apply semantic rules, apply approved rewrites, and then start code generation.
+
+## `beskid analyze`
 
 Runs analysis without requiring a successful JIT—your CI friend for "no, you cannot call that."
 

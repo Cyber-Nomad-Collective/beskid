@@ -1,19 +1,19 @@
 ---
 title: "Project Examples"
-description: Beskid Project Examples (HCL)
+description: Beskid project examples in BSOL.
 ---
 
 
 ## Example 1: Single-project app
 ```
 MyApp/
-├── Project.proj
+├── App.bproj
 └── Src/
     └── Main.bd
 ```
 
-**Project.proj**
-```hcl
+**App.bproj**
+```text
 project {
   name    = "MyApp"
   version = "0.1.0"
@@ -30,17 +30,17 @@ target "App" {
 ```
 Workspace/
 ├── App/
-│   ├── Project.proj
+│   ├── App.bproj
 │   └── Src/
 │       └── Main.bd
 └── Std/
-    ├── Project.proj
+    ├── App.bproj
     └── Src/
         └── IO.bd
 ```
 
-**App/Project.proj**
-```hcl
+**App/App.bproj**
+```text
 project {
   name    = "App"
   version = "0.1.0"
@@ -58,8 +58,8 @@ dependency "Std" {
 }
 ```
 
-**Std/Project.proj**
-```hcl
+**Std/App.bproj**
+```text
 project {
   name    = "Std"
   version = "0.1.0"
@@ -75,15 +75,15 @@ target "Library" {
 ## Example 3: Nested module layout
 ```
 NetLib/
-├── Project.proj
+├── App.bproj
 └── Src/
     ├── Net.bd
     └── Net/
         └── Http.bd
 ```
 
-**Project.proj**
-```hcl
+**App.bproj**
+```text
 project {
   name    = "NetLib"
   version = "0.1.0"
@@ -109,13 +109,13 @@ pub type Client { ... }
 ## Example 4: Multiple targets
 ```
 Project/
-├── Project.proj
+├── App.bproj
 └── Src/
     ├── Main.bd
     └── Tests.bd
 ```
 
-```hcl
+```text
 project {
   name    = "Project"
   version = "0.2.0"

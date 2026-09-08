@@ -81,6 +81,14 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Changed
 
+- Align the active Book and CLI reference with the pinned 0.4 command surface.
+  Add one reference page for each of the 26 root commands, remove the
+  nonexistent `beskid publish` page, document grouped aliases once, and link
+  task procedures to canonical Docs. Correct project manifests, registry
+  materialization, AOT `run`, JIT test and REPL boundaries, ABI-v5 runtime
+  kits, the typed ISLE code-generation path, contributor commands, and service
+  implementation claims. Add accessible metadata and text equivalents to each
+  retained diagram in the aligned chapters.
 - Give every technical Docs page typed audience, authority, and verification
   metadata. Render one accessible annotation after the shared page title, and
   derive the Starlight sidebar and custom Docs rail from one navigation tree.

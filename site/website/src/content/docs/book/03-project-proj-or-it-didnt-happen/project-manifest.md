@@ -49,13 +49,15 @@ The root block kind **`MyApp`** **must** match **`name = "MyApp"`**.
 
 Corelib symbols are **not** prelude-injected; add explicit **`use`** imports for modules you need. Host projects still resolve corelib on the dependency graph by default.
 
-## Provider reality (v1)
+## Provider behavior
 
-Path dependencies are the **enabled** provider. `git` and `registry` may appear in schema for forward compatibility but are provider-disabled in active graphs—do not plan your startup on them until the spec says otherwise.
+Path dependencies materialize a local project. Registry dependencies download and materialize an active `.bpk` version. Git dependencies are parsed but are not materialized by the current workflow. An active Git dependency stops the command before compilation.
+
+Use [Dependencies and locks](/docs/projects/dependencies-and-locks/) for the verified procedure and the registry fallback limitation.
 
 ## Validation expectations
 
-Exactly one named root block (kind equals `name`), at least one `target`, unique labels, entries resolvable under `project.root` where required. Details: [manifest reference](/book/reference/projects/manifest/) and [project manifest contract](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/).
+Exactly one named root block (kind equals `name`), at least one `target`, unique labels, entries resolvable under `project.root` where required. Details: [manifest reference](/book/reference/projects/manifest/) and [project manifest contract](/docs/standard/tooling/manifests-and-lockfiles/project-manifest-contract/).
 
 ## Next
 

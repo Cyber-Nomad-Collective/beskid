@@ -53,6 +53,12 @@ Tracker integration in which GitHub Issues represents public bugs and their supp
 
 `@beskid/ui-react` and `@beskid/beskid-ui`, sourced from `beskid_web_common`. They provide the only shared component and style implementation for Beskid web applications.
 
+## CLI root command inventory
+
+The 26 public root commands exposed by the pinned `beskid` Clap model. Each
+command has one Book reference page. Task procedures use the concise root
+forms; `beskid dev` only groups documented aliases for discovery.
+
 ## Capability
 
 An OpenSpec unit stored at `openspec/specs/<capability>/spec.md`. During migration, Beskid feature hubs become feature capabilities while domains and areas become taxonomy/governance capabilities.

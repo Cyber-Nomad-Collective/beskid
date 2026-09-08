@@ -3,9 +3,9 @@ title: "beskid new"
 description: "List, install, and instantiate Beskid project, workspace, and item templates."
 ---
 
-**`beskid new`** is the user entrypoint for template scaffolding. Registry pack/upload workflows are under `beskid dev package registry`.
+**`beskid new`** is the user entrypoint for template scaffolding. Registry pack/upload workflows are under `beskid pckg`.
 
-Normative command taxonomy and edge cases: [beskid new (platform-spec)](/platform-spec/tooling/project-scaffolding/beskid-new/) and [contracts and edge cases](/platform-spec/tooling/project-scaffolding/beskid-new/contracts-and-edge-cases/).
+Normative command taxonomy and edge cases: [beskid new (platform-spec)](/docs/standard/tooling/project-scaffolding/beskid-new/) and [contracts and edge cases](/docs/standard/tooling/project-scaffolding/beskid-new/contracts-and-edge-cases/).
 
 User-oriented workflows: [Project scaffolding](/book/reference/projects/scaffolding/).
 
@@ -45,10 +45,10 @@ When the registry is configured, these packages are resolved from the package se
 | `--git-ref <ref>` | Branch, tag, or commit |
 | `--git-subpath <dir>` | Subdirectory within the repository |
 | `--package <id>[@version]` | Registry template package (`packageKind: template`) |
-| `--project <Project.proj>` | Host project for **item** templates |
+| `--project <App.bproj>` | Host project for **item** templates |
 | `--allow-yanked` | Continue after yanked-version warning |
 | `--strict-post-actions` | Fail on unknown post-action id |
-| `--allow-project-manifest` | Item template may write `Project.proj` |
+| `--allow-project-manifest` | Item template may write `App.bproj` |
 
 ## `beskid new list` flags
 
@@ -69,7 +69,7 @@ beskid new install beskid.templates.console
 beskid new console -n MyApp -o ./MyApp
 beskid new lib --symbol name=MyLib --no-interactive -o ./MyLib
 beskid new --git https://git.example.com/templates --git-ref main --git-subpath lib -o ./Lib
-beskid new contract --symbol contractName=Foo -o ./Src/Foo.bd --project ./App/Project.proj
+beskid new contract --symbol contractName=Foo -o ./Src/Foo.bd --project ./App/App.bproj
 ```
 
 ## Exit codes
@@ -83,6 +83,8 @@ beskid new contract --symbol contractName=Foo -o ./Src/Foo.bd --project ./App/Pr
 
 ## Implementation note
 
-Subcommand wiring lives in `compiler/crates/beskid_cli`; registry download uses `compiler/crates/beskid_pckg`. The template engine is specified in [Project templates](/platform-spec/tooling/project-scaffolding/project-templates/).
+Subcommand wiring lives in `compiler/crates/beskid_cli`; registry download uses `compiler/crates/beskid_pckg`. The template engine is specified in [Project templates](/docs/standard/tooling/project-scaffolding/project-templates/).
+
+For the verified scaffold procedure, use [Create a project](/docs/projects/create/).
 
 [← Back to CLI command reference](/book/reference/cli/command-reference/)

@@ -8,9 +8,9 @@ Native dependencies enter through **foreign library import** tooling: manifest l
 
 ## Start here
 
-- [Foreign library import](/platform-spec/tooling/foreign-library-import/)
-- [Project link libraries](/platform-spec/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries/)
-- [CLI import-lib command](/platform-spec/tooling/foreign-library-import/cli-import-lib-command/)
+- [Foreign library import](/docs/standard/tooling/foreign-library-import/)
+- [Project link libraries](/docs/standard/tooling/manifests-and-lockfiles/project-manifest-contract/project-link-libraries/)
+- [CLI import-lib command](/docs/standard/tooling/foreign-library-import/cli-import-lib-command/)
 
 ## Interop overlap
 

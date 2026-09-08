@@ -14,6 +14,6 @@ tableOfContents: true
 
 ## Read first
 
-- [Specification authority and decisions](/platform-spec/community/spec-maintenance/spec-authority-and-decisions/)
-- [Release and versioning policy](/platform-spec/community/spec-maintenance/release-and-versioning-policy/)
+- [Specification authority and decisions](/docs/standard/community/spec-maintenance/spec-authority-and-decisions/)
+- [Release and versioning policy](/docs/standard/community/spec-maintenance/release-and-versioning-policy/)
 - Chapters [12](/book/12-the-normative-bible/) and [13](/book/13-reading-the-law/)

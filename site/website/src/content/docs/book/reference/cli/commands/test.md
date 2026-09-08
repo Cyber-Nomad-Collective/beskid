@@ -1,15 +1,15 @@
 ---
-title: "beskid dev build test"
+title: "beskid test"
 description: "Discover and execute Beskid `test` items with filtering and skip handling."
 ---
 
 Run Beskid test items declared with `test Name { ... }`.
-This command is available as `beskid dev build test`.
+This command is available as `beskid test`.
 
 ## Usage
 
 ```bash
-beskid dev build test [input] [--project <path>] [--target <name>] [--workspace-member <name>]
+beskid test [input] [--project <path>] [--target <name>] [--workspace-member <name>]
 ```
 
 ## Options
@@ -29,5 +29,5 @@ beskid dev build test [input] [--project <path>] [--target <name>] [--workspace-
 ## Example
 
 ```bash
-beskid dev build test Src/Harness.bd --include-tag fast --group analysis
+beskid test Src/Harness.bd --include-tag fast --group analysis
 ```

@@ -30,23 +30,27 @@ Full tables: [CLI command reference](/book/reference/cli/command-reference/).
 | `dev package registry` | Registry client when you publish packages |
 
 ```mermaid
+accTitle: Concise CLI workflow
+accDescr: File commands inspect source, then project commands prepare dependencies before build, run, and test.
 flowchart TD
   subgraph day1 [Day one]
     P[dev syntax parse/tree] --> A[dev syntax analyze]
     A --> F[dev syntax format]
   end
-  subgraph project [With Project.proj]
+  subgraph project [With App.bproj]
     A --> Fetch[dev project fetch/lock]
     Fetch --> B[dev build compile/run/test]
   end
 ```
+
+**Text equivalent:** Use `parse`, `tree`, `analyze`, and `format` for source checks. In a project, use `fetch` or `lock` before `build`, `run`, or `test`.
 
 ## Project-scoped flags
 
 When a manifest exists, prefer explicit roots while learning:
 
 ```bash
-beskid dev syntax analyze --project ./Project.proj --target App
+beskid analyze --project ./App.bproj --target App
 ```
 
 `--frozen` / `--locked` participate in resolution policy—see [fetch](/book/reference/cli/commands/fetch/) and [lock](/book/reference/cli/commands/lock/).

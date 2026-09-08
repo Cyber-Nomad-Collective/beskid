@@ -8,16 +8,18 @@ tableOfContents: true
 
 ## Crate
 
-`beskid_aot::build` consumes `CodegenArtifact` like JIT, then drives platform link steps per [Backends JIT/AOT](/platform-spec/compiler/build-pipeline/backends-jit-aot/).
+`beskid_aot::build` consumes `CodegenArtifact` like JIT, then drives platform link steps per [Backends JIT/AOT](/docs/standard/compiler/build-pipeline/backends-jit-aot/).
 
 ## Mod artifacts
 
 Mods are **not** interpreted Beskid scripts in the compiler process. The host loads **AOT-compiled** mod assemblies per target triple and cache key:
 
-- [AOT artifact contract](/platform-spec/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/)
-- [Mod AOT-only registration ADR](/platform-spec/compiler/compiler-mods/mod-host-bridge/adr/0003-mod-aot-only-registration/)
+- [AOT artifact contract](/docs/standard/compiler/compiler-mods/mod-host-bridge/aot-artifact-contract/)
+- [Mod AOT-only registration ADR](/docs/standard/compiler/compiler-mods/mod-host-bridge/adr/0003-mod-aot-only-registration/)
 
 ```mermaid
+accTitle: Compiler Mod AOT artifact
+accDescr: Beskid Mod source is AOT-built into an object and descriptor that the analysis host loads.
 flowchart TB
   modSrc[Mod Beskid sources]
   aot[beskid_aot build mod]
@@ -26,9 +28,11 @@ flowchart TB
   modSrc --> aot --> artifact --> host
 ```
 
+**Text equivalent:** The AOT builder compiles Mod source into a native object and `mod.descriptor.json`. The analysis host loads this validated artifact.
+
 ## CLI
 
-`beskid dev build compile` selects targets and backends per manifest—see [build command reference](/book/reference/cli/commands/build/).
+`beskid build` selects targets and backends per manifest—see [build command reference](/book/reference/cli/commands/build/).
 
 ## Next
 
