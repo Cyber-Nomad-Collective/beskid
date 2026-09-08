@@ -19,6 +19,8 @@ on:
       - 'pckg/**'
       - 'beskid_infra'
       - 'beskid_infra/**'
+      - 'beskid_templates'
+      - 'beskid_templates/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
   push:
@@ -43,6 +45,10 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  corelib:
+    uses: ./.github/workflows/corelib.yml
+    secrets: inherit
+
   openspec:
     uses: ./.github/workflows/reusable-quality.yml
     with:
@@ -199,10 +205,11 @@ jobs:
   manifest:
     # A manifest is the promotion boundary. It must only exist when every
     # required validation and image lane from this run succeeded.
-    needs: [openspec, conformance, integration, security, shared-ui-nexus, image-site, image-learn, image-tracker, image-nexus, image-pckg]
+    needs: [corelib, openspec, conformance, integration, security, shared-ui-nexus, image-site, image-learn, image-tracker, image-nexus, image-pckg]
     if: >-
       ${{
         !cancelled() &&
+        needs.corelib.result == 'success' &&
         needs.image-site.result == 'success' &&
         needs.image-learn.result == 'success' &&
         needs.image-tracker.result == 'success' &&
@@ -240,3 +247,33 @@ jobs:
       source-run-id: ${{ format('{0}', github.run_id) }}
       apply: true
     secrets: inherit
+
+  publish-packages:
+    name: Publish corelib and templates
+    needs: production
+    if: ${{ !cancelled() && needs.production.result == 'success' }}
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 45
+    environment: production
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-compiler-gate
+        with:
+          compiler-submodule-token: ${{ secrets.COMPILER_SUBMODULE_TOKEN }}
+
+      - name: Initialize first-party templates
+        run: bash ./scripts/ci/init-submodules.sh beskid_templates
+
+      - name: Rehearse the complete package publication
+        run: bash ./scripts/ci/corelib-publish.sh patch --dry-run
+
+      - name: Publish corelib and template packages through the promoted Rust registry
+        env:
+          BESKID_PCKG_API_KEY: ${{ secrets.BESKID_PCKG_KEY }}
+          BESKID_PCKG_BASE_URL: https://pckg.beskid-lang.org
+        run: bash ./scripts/ci/corelib-publish.sh patch

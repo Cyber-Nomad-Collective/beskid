@@ -22,6 +22,8 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
   instead of invoking an uninstalled Vitest binary.
 - Release projections now reference published Tracker, Nexus, compiler, and
   core-library revisions, so CI can fetch the complete deployment graph.
+- Learn's release image now includes the compiler license metadata required by
+  the runtime-kit build. Platform delivery also runs when templates change.
 
 ### Changed
 
