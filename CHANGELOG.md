@@ -11,6 +11,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- The documented `beskid dev` syntax, build, project, and package-registry
+  command paths now parse and dispatch through the same canonical CLI
+  implementations as their concise root commands.
 - Docs now register the Beskid Shiki grammar as an Expressive Code language and
   mark the getting-started program samples as Beskid source, so keywords,
   types, and literals receive syntax highlighting.
