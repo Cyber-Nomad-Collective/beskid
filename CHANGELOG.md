@@ -19,6 +19,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Docs now register the Beskid Shiki grammar as an Expressive Code language and
+  mark the getting-started program samples as Beskid source, so keywords,
+  types, and literals receive syntax highlighting.
 - The landing Download action now opens the Downloads page instead of a direct
   platform-specific asset. Landing code examples can open their exact source
   in the Learn playground.
