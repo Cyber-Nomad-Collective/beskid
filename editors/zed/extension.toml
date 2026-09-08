@@ -28,9 +28,14 @@ command = "beskid_lsp"
 [[capabilities]]
 kind = "process:exec"
 command = "*"
-args = ["**"]
+args = ["--stdio"]
+
+[[capabilities]]
+kind = "process:exec"
+command = "*"
+args = ["lsp"]
 
 [[capabilities]]
 kind = "download_file"
 host = "github.com"
-path = ["**"]
+path = ["Cyber-Nomad-Collective", "beskid_compiler", "releases", "download", "lsp-stable", "**"]
