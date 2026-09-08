@@ -38,23 +38,16 @@ runners (the compiler gate is also Testbox-compatible). Dagger is retired.
 | [`run-ci-reported-command.sh`](ci/run-ci-reported-command.sh) | GitHub annotations, summaries, raw logs, and JSON for failed gate commands |
 | [`corelib-publish.sh`](ci/corelib-publish.sh) | Pack and publish the production corelib closure plus all first-party templates to pckg (`--dry-run` validates every artifact without secrets or registry mutation) |
 | [`open-vsx-publish.sh`](ci/open-vsx-publish.sh) | Open VSX publish (native) |
-| [`resolve-coolify-project-uuid.sh`](ci/resolve-coolify-project-uuid.sh) | Operator: resolve **Beskid** Coolify project UUID |
 | [`build-release-manifest.sh`](ci/build-release-manifest.sh) | Aggregate immutable OCI image records into a release manifest |
 | [`validate-release-manifest.sh`](ci/validate-release-manifest.sh) | Enforce digest, SBOM, provenance, and source-commit policy |
-| [`render-release-compose.sh`](ci/render-release-compose.sh) | Replace Beskid Compose image tags with exact manifest digests |
-| [`render-lane-compose.sh`](ci/render-lane-compose.sh) | Apply lane identity and production-only external-volume adoption |
-| [`deploy-release-manifest.sh`](ci/deploy-release-manifest.sh) | Plan/apply Coolify promotion with polling and rollback |
-| [`post-deploy-smoke.sh`](ci/post-deploy-smoke.sh) | Trace-correlated lane health checks |
+| [`post-deploy-smoke.sh`](ci/post-deploy-smoke.sh) | Retry production public endpoints while Watchtower converges |
 | [`sign-image.sh`](ci/sign-image.sh) | Required keyless cosign signing for promotable images |
 | [`prepare-secure-dockerfile.sh`](ci/prepare-secure-dockerfile.sh) | Convert package-token ARGs to BuildKit secret mounts at build time |
-| [`sync-runtime-env.sh`](ci/sync-runtime-env.sh) | Fail-closed OpenBao KV v2 → Coolify lane env sync (`COOLIFY_SERVICE_UUID` or lane `service_uuid`) |
 | [`openspec-gate.sh`](ci/openspec-gate.sh) | Strict OpenSpec authority validation |
 | [`conformance-gate.sh`](ci/conformance-gate.sh) | Requirement/provenance conformance validation |
 | [`platform-integration-gate.sh`](ci/platform-integration-gate.sh) | Cross-site delivery integration contract |
 | [`shared-ui-nexus-gate.sh`](ci/shared-ui-nexus-gate.sh) | Shared UI Vitest + Nexus unit/Playwright E2E |
 | [`security-policy-gate.sh`](ci/security-policy-gate.sh) | Offline workflow and supply-chain policy |
-
-Coolify lane configuration: [`beskid_infra/`](../beskid_infra/README.md).
 
 ## Lazygit
 

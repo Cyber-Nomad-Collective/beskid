@@ -24,6 +24,9 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Remove the deleted Coolify deployment fixture and its unused Compose renderer
+  from the active Watchtower delivery gate, eliminating a stale second release
+  model that still expected the retired auth image and GHCR paths.
 - Keep the platform delivery contract synchronized with the mandatory corelib
   gate, allowing a fully validated release manifest to reach production.
 - The documented `beskid dev` syntax, build, project, and package-registry
