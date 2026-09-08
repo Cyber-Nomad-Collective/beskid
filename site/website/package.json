@@ -12,6 +12,7 @@
 		"verify:book-images": "node scripts/run-trudoc.mjs verify-book-images.mjs",
 		"verify:book-layout": "node scripts/run-trudoc.mjs verify-book-layout.mjs",
 		"verify:built-docs": "node scripts/verify-built-docs.mjs dist",
+		"review:ste": "node scripts/review-ste-docs.mjs",
 		"test:docs-links": "node --test src/lib/remark-beskid-directives.test.mjs",
 		"test:release-version": "node --test scripts/sync-release-version.test.mjs",
 		"test:blog": "node --test src/lib/blog.test.mjs src/lib/tracker-provenance.test.mjs",

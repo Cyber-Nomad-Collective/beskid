@@ -62,15 +62,15 @@ Select one project manifest. Ensure that each local dependency has one `.bproj` 
 
 ## Expected result
 
-`Project.lock` records each resolved dependency and its materialized root. Dependency sources are copied or extracted under `obj/beskid/deps/src/<materialized-id>`. Declared generated modules can be loaded from the project-level `.generated` directory as `*.g.bd` files. That directory is not dependency storage.
+`Project.lock` records each resolved dependency and its materialized root. The resolver copies or extracts dependency sources under `obj/beskid/deps/src/<materialized-id>`. The project loader can load declared generated modules from the project-level `.generated` directory as `*.g.bd` files. That directory is not dependency storage.
 
-The current resolver can fall back to the first active version when the requested registry version is absent. This behavior is an implementation limitation under reconciliation. A newly resolved lockfile is not proof that the requested version was selected.
+The current resolver can fall back to the first active version when the requested registry version is absent. This behavior is an implementation limitation under reconciliation. A newly resolved lockfile does not prove that the resolver selected the requested version.
 
 After you review the resolved version, `--locked` requires `Project.lock` to exist and match resolution. `--frozen` also forbids a lockfile update. These flags preserve reviewed lock behavior, but they do not make initial registry selection fail closed.
 
 ## Recovery
 
-If the manifest changed intentionally, run `beskid lock --project ./App.bproj --plain`, review the diff, and commit it. Registry fallback is an implementation limitation under reconciliation. If registry resolution selects a different version, stop and do not build or publish. Git dependencies are not materialized by this workflow. Replace `source = "git"` with a path or registry dependency before a strict build.
+If the manifest changed intentionally, run `beskid lock --project ./App.bproj --plain`, review the diff, and commit it. Registry fallback is an implementation limitation under reconciliation. If registry resolution selects a different version, stop and do not build or publish. This workflow does not materialize Git dependencies. Replace `source = "git"` with a path or registry dependency before a strict build.
 
 ## Next task
 

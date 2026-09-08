@@ -15,7 +15,7 @@ verified:
   date: 2026-09-08
 ---
 
-The stable channel changes only when a release is promoted. The unstable channel follows verified development delivery. Use an immutable `cli-vX.Y.Z` tag when a build must not move to a newer version.
+The stable channel changes only after maintainers promote a release. The unstable channel follows verified development delivery. Use an immutable `cli-vX.Y.Z` tag when a build must not move to a newer version.
 
 ## Prerequisites
 

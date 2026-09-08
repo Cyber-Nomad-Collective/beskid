@@ -35,7 +35,7 @@ Keep database and publisher credentials in OpenBao or an approved secret manager
 
 ## Prerequisites
 
-Confirm that the package registry PostgreSQL service is reachable and that `PCKG_DATABASE_URL` came from the lane secret path. Confirm that the artifact volume is mounted before publication.
+Confirm that the package registry PostgreSQL service responds and that `PCKG_DATABASE_URL` came from the lane secret path. Confirm that the artifact volume mount exists before publication.
 
 ## Actions
 

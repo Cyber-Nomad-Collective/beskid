@@ -21,7 +21,7 @@ Know the package name and requested version. Select the consuming project. Ensur
 
 ## Actions
 
-1. Inspect the package and its active versions. Confirm that the requested version is listed:
+1. Inspect the package and its active versions. Confirm that the active versions include the requested version:
 
    ```bash
    beskid pckg details Acme.Math
@@ -59,7 +59,7 @@ Know the package name and requested version. Select the consuming project. Ensur
 
 ## Expected result
 
-`Project.lock` records the resolver's selected `resolved_version`. After review, the archive is extracted under `obj/beskid/deps/src/<materialized-id>`. `--locked` and `--frozen` preserve reviewed lock behavior on later runs.
+`Project.lock` records the resolver's selected `resolved_version`. After review, the resolver extracts the archive under `obj/beskid/deps/src/<materialized-id>`. `--locked` and `--frozen` preserve reviewed lock behavior on later runs.
 
 The current resolver can fall back to the first active version when the requested version is absent. This behavior is an implementation limitation under reconciliation. Initial registry resolution is not an exact-version guarantee.
 

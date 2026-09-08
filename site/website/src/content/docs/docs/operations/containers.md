@@ -24,7 +24,7 @@ Use a supported container engine and the pinned Compose contract. Obtain the exa
 
 1. Render the configuration with `docker compose --env-file .env.example config` from the infrastructure production Compose directory.
 2. Confirm that every application image resolves to an immutable digest from the release manifest.
-3. Confirm that all persistent volumes are attached before a service starts.
+3. Confirm that each service has all persistent volumes attached before it starts.
 
 | Service | Container port | Persistent state |
 | --- | ---: | --- |

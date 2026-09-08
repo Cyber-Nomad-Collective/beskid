@@ -29,8 +29,8 @@ The current checked-in catalog contains 198 capabilities and 571 requirements. G
 
 ## Stable public paths
 
-The former Platform Spec service is retired. A known `/platform-spec/` alias now resolves to its catalog-backed capability page. A valid requirement fragment remains attached to that capability. An unknown alias opens the Standard not-found search state instead of an unrelated landing page.
+Beskid no longer operates the former Platform Spec service. A known `/platform-spec/` alias now resolves to its catalog-backed capability page. A valid requirement fragment remains attached to that capability. An unknown alias opens the Standard not-found search state instead of an unrelated landing page.
 
 Use `/docs/standard/capabilities/<capability-key>/` for a capability. Use `/docs/standard/requirements/<requirement-id>/` for one requirement. These paths preserve catalog identity when titles or navigation labels change.
 
-The standard source is checked into the same repository as the Docs site. The website and the source therefore ship from one repository revision.
+The standard source and the Docs site use the same repository. The website and the source therefore ship from one repository revision.

@@ -159,7 +159,7 @@ const procedurePages = [
 			prerequisites: ['Project.lock', 'registry access'],
 			actions: ['source = "path"', 'source = "registry"', 'beskid fetch --project ./App.bproj --locked --plain', 'beskid fetch --project ./App.bproj --frozen --plain'],
 			expectedResult: ['obj/beskid/deps/src/<materialized-id>', '`.generated`'],
-			recovery: ['beskid lock --project ./App.bproj --plain', 'Git dependencies are not materialized', 'implementation limitation under reconciliation'],
+			recovery: ['beskid lock --project ./App.bproj --plain', 'does not materialize Git dependencies', 'implementation limitation under reconciliation'],
 		},
 	},
 	{
@@ -646,7 +646,7 @@ test('standard changes preserve the OpenSpec-to-Docs authority boundary', async 
 
 test('deployment guidance distinguishes verification from production control', async () => {
 	const deployment = await loadPage(procedurePages.find((page) => page.path === 'docs/operations/deployment.md'));
-	for (const fact of ['checksummed release manifest', 'images are signed separately', 'reusable-promote.yml', 'Watchtower', 'cannot start, replace, or roll back production containers', 'under reconciliation']) {
+	for (const fact of ['checksummed release manifest', 'signing workflow signs the images separately', 'reusable-promote.yml', 'Watchtower', 'cannot start, replace, or roll back production containers', 'under reconciliation']) {
 		assert.ok(deployment.body.includes(fact), `deployment guidance must explain ${fact}`);
 	}
 	assert.doesNotMatch(deployment.body, /signed release manifest|deployment path must restore/i);

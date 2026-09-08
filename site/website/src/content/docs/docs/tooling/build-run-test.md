@@ -59,7 +59,7 @@ The build command prints the object path and final output path. The run command 
 
 ## Recovery
 
-Treat the first error as the active failure. Analysis errors must be fixed before code generation. A target-selection error requires a valid `.bproj` target name. A runtime-kit error requires a kit whose target and debug or release profile match the build. Do not select both `--prefer-static` and `--prefer-dynamic`.
+Treat the first error as the active failure. Fix analysis errors before code generation. A target-selection error requires a valid `.bproj` target name. A runtime-kit error requires a kit whose target and debug or release profile match the build. Do not select both `--prefer-static` and `--prefer-dynamic`.
 
 ## Next task
 

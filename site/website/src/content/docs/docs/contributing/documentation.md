@@ -29,6 +29,8 @@ Keep code, commands, paths, URLs, and identifiers unchanged. Do not change a req
 
 ## Check the page
 
-Check that the title states the task. Check that links work. Run the website build for Docs changes. Run OpenSpec validation for normative changes.
+Check that the title states the task. Check that links work. Run `pnpm review:ste` from `site/website`. Review each candidate manually. Use the documented, reasoned exception syntax only when the prose must stay unchanged.
+
+Run the website tests and build for Docs changes. Run OpenSpec validation for normative changes. The STE review tool gives authoring evidence; it does not certify compliance.
 
 The repository skill at `.claude/skills/ste-100-technical-documentation/SKILL.md` gives the same working rules to coding agents. It helps with authoring. It does not certify compliance.

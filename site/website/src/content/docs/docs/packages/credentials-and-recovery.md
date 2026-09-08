@@ -56,7 +56,7 @@ Create a key with publish scope through the registry account surface. Put the ke
 
 ## Recovery
 
-For `authentication required`, confirm that the key is active and has publish scope. Do not fall back to a browser cookie in automation. If a key is exposed, revoke it in the registry and rotate it in every secret manager. Remove the local configuration file, then verify the replacement with `whoami`. If you yanked the wrong version, inspect the coordinate before you run `unyank`.
+For `authentication required`, confirm that the key is active and has publish scope. Do not fall back to a browser cookie in automation. If you expose a key, revoke it in the registry and rotate it in every secret manager. Remove the local configuration file, then verify the replacement with `whoami`. If you yanked the wrong version, inspect the coordinate before you run `unyank`.
 
 ## Next task
 

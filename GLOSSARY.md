@@ -273,9 +273,19 @@ A learner-facing unit in Beskid Learn that pairs explanatory copy with an option
 
 The immutable Beskid Learn workspace arrangement derived from a lesson's declared visible tiles. It sizes and splits the editor, terminal, lesson content, and optional lesson views automatically. Learners cannot open, close, reorder, or resize its tiles.
 
-## Document annotation
+## Typed Docs annotation
 
-A short statement on a public technical guide that identifies its status, authoritative source, and limits. Beskid Docs uses annotations to distinguish informative guidance from normative OpenSpec requirements.
+A schema-checked record on a public technical guide that names its audience,
+status, authoritative source, limits, verification revision, and verification
+date. The shared page-title renderer displays the record after the title so
+readers can distinguish informative guidance from normative OpenSpec text.
+
+## Verified procedure
+
+An informative Docs task whose commands, prerequisites, expected result,
+recovery path, and evidence revision match a checked repository or generated
+contract. Verification shows what maintainers tested at that revision. It does
+not make the procedure normative or guarantee a later deployment.
 
 ## Beskid.Glue
 

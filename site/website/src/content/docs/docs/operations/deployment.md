@@ -18,7 +18,7 @@ Keep the lane-scoped OpenBao and production credentials in their secret manager.
 
 The root workflow and the pinned infrastructure guide conflict. The infrastructure guide describes CI-driven Coolify deployment and rollback. The current root `reusable-promote.yml` workflow says that CI cannot start, replace, or roll back production containers. It only waits for Watchtower and runs production smoke checks. This ownership conflict is under reconciliation. Follow the current root workflow for verification, and stop when a production container action is necessary.
 
-A checksummed release manifest records image digests and source identity. The images are signed separately. Do not call the manifest itself signed.
+A checksummed release manifest records image digests and source identity. The signing workflow signs the images separately. Do not call the manifest itself signed.
 
 ## Prerequisites
 
