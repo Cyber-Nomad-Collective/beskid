@@ -13,9 +13,10 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 - Add a deterministic, advisory STE review command for technical Docs. It
   reports sentence-length, passive-voice, abbreviation, and article candidates
-  with file and line evidence; excludes syntax that must stay exact; and
-  supports narrow, reasoned manual-review exceptions. The tool does not certify
-  ASD-STE100 compliance.
+  with file and line evidence; joins wrapped prose without crossing Markdown
+  block boundaries; detects controlled regular and irregular passive forms;
+  skips symbolic links and syntax that must stay exact; and rejects vague,
+  unused, or stale exceptions. The tool does not certify ASD-STE100 compliance.
 - Generate stable public identity pages for all OpenSpec capabilities and
   requirements from the checked-in catalog. Preserve known Platform Spec
   aliases and valid requirement fragments, link every identity to its

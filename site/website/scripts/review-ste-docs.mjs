@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readdir, readFile, stat } from 'node:fs/promises';
+import { lstat, readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -74,10 +74,6 @@ function proseOnly(line) {
 		.trim();
 }
 
-function sentences(line) {
-	return line.split(/(?<=[.!?])\s+(?=[A-Z0-9`])/).map((value) => value.trim()).filter(Boolean);
-}
-
 function wordCount(sentence) {
 	return sentence.match(/[\p{L}\p{N}]+(?:[-'][\p{L}\p{N}]+)*/gu)?.length ?? 0;
 }
@@ -110,17 +106,61 @@ function parseException(line, file, lineNumber) {
 	for (const rule of rules) {
 		if (!RULE_ORDER.has(rule)) throw new Error(`${file}:${lineNumber}: unknown STE review rule: ${rule}`);
 	}
-	return rules;
+	const reason = match[2].trim();
+	if (reason.length < 20 || wordCount(reason) < 3) {
+		throw new Error(`${file}:${lineNumber}: STE review exception must include a specific reason`);
+	}
+	return { rules, reason, sourceLine: lineNumber, targetLine: null };
 }
 
-export function reviewDocument(source, file = '<input>') {
+function sourceLineForOffset(parts, offset) {
+	return parts.find((part) => offset >= part.start && offset < part.end)?.line ?? parts.at(-1)?.line;
+}
+
+function sentenceSpans(block) {
+	const spans = [];
+	for (const match of block.text.matchAll(/[^.!?]+(?:[.!?]+(?=\s+|$)|$)/g)) {
+		const leading = match[0].search(/\S/);
+		if (leading < 0) continue;
+		const text = match[0].trim();
+		spans.push({ text, line: sourceLineForOffset(block.parts, match.index + leading) });
+	}
+	return spans;
+}
+
+function collectProse(source, file) {
 	const lines = source.replaceAll('\r\n', '\n').split('\n');
-	const results = [];
-	const explained = new Set();
+	const blocks = [];
+	const exceptions = [];
 	let inFrontmatter = lines[0] === '---';
 	let inFence = false;
+	let inMdxTag = false;
+	let inMdxExpression = false;
 	let excludedHeadingLevel = null;
-	let nextException = null;
+	let pendingException = null;
+	let activeBlock = null;
+	let activeKind = null;
+
+	const flush = () => {
+		if (activeBlock?.text) blocks.push(activeBlock);
+		activeBlock = null;
+		activeKind = null;
+	};
+	const add = (prose, line, kind, continueBlock) => {
+		if (!continueBlock || !activeBlock || activeKind !== kind) flush();
+		if (!activeBlock) activeBlock = { text: '', parts: [] };
+		if (pendingException) {
+			pendingException.targetLine = line;
+			exceptions.push(pendingException);
+			pendingException = null;
+		}
+		const separator = activeBlock.text ? ' ' : '';
+		activeBlock.text += separator;
+		const start = activeBlock.text.length;
+		activeBlock.text += prose;
+		activeBlock.parts.push({ start, end: activeBlock.text.length, line });
+		activeKind = kind;
+	};
 
 	for (let index = 0; index < lines.length; index += 1) {
 		const line = lines[index];
@@ -128,18 +168,37 @@ export function reviewDocument(source, file = '<input>') {
 
 		if (inFrontmatter) {
 			if (index > 0 && line === '---') inFrontmatter = false;
+			flush();
 			continue;
 		}
 
 		if (/^\s*(```|~~~)/.test(line)) {
 			inFence = !inFence;
+			flush();
 			continue;
 		}
-		if (inFence) continue;
-
-		const exception = parseException(line, file, lineNumber);
-		if (exception) {
-			nextException = exception;
+		if (inFence) {
+			flush();
+			continue;
+		}
+		if (inMdxTag) {
+			if (/>\s*$/.test(line)) inMdxTag = false;
+			flush();
+			continue;
+		}
+		if (inMdxExpression) {
+			if (/^\s*\}\s*$/.test(line)) inMdxExpression = false;
+			flush();
+			continue;
+		}
+		if (/^\s*\{\s*$/.test(line)) {
+			inMdxExpression = true;
+			flush();
+			continue;
+		}
+		if (/^\s*<\/?[A-Za-z][\w.:-]*(?:\s|>|$)/.test(line)) {
+			if (!/>\s*$/.test(line)) inMdxTag = true;
+			flush();
 			continue;
 		}
 
@@ -150,50 +209,90 @@ export function reviewDocument(source, file = '<input>') {
 			if (isNormativeHeading) excludedHeadingLevel = excludedHeadingLevel === null ? level : Math.min(excludedHeadingLevel, level);
 			else if (excludedHeadingLevel !== null && level <= excludedHeadingLevel) excludedHeadingLevel = null;
 		}
-		if (excludedHeadingLevel !== null) continue;
+		if (excludedHeadingLevel !== null) {
+			flush();
+			continue;
+		}
+
+		const exception = parseException(line, file, lineNumber);
+		if (exception) {
+			flush();
+			if (pendingException) throw new Error(`${file}:${pendingException.sourceLine}: STE review exception has no following reviewable prose`);
+			pendingException = exception;
+			continue;
+		}
 
 		const prose = proseOnly(line);
-		if (!prose || /^[-:|\s]+$/.test(prose)) continue;
-		const ignored = nextException ?? new Set();
-		nextException = null;
+		if (!prose || /^[-:|\s]+$/.test(prose)) {
+			flush();
+			continue;
+		}
 
-		for (const term of explanationTerms(prose)) explained.add(term);
+		if (/^\s*\{[\s\S]*\}\s*$/.test(line)) {
+			flush();
+			continue;
+		}
 
-		if (!ignored.has('sentence-length')) {
-			for (const sentence of sentences(prose)) {
-				const count = wordCount(sentence);
-				if (count > SENTENCE_WORD_LIMIT) {
-					results.push(candidate(file, lineNumber, 'sentence-length', `sentence has ${count} words; review against the ${SENTENCE_WORD_LIMIT}-word candidate limit`));
-				}
+		const isHeading = /^\s*#{1,6}\s+/.test(line);
+		const isList = /^\s*(?:[-*+]\s+|\d+\.\s+)/.test(line);
+		const isTable = /^\s*\|/.test(line);
+		const isQuote = /^\s*>\s?/.test(line);
+		if (isHeading) add(prose, lineNumber, 'heading', false);
+		else if (isTable) add(prose, lineNumber, 'table', false);
+		else if (isList) add(prose, lineNumber, 'list', false);
+		else if (isQuote) add(prose, lineNumber, 'quote', activeKind === 'quote');
+		else if (activeKind === 'list' && /^\s{2,}\S/.test(line)) add(prose, lineNumber, 'list', true);
+		else add(prose, lineNumber, 'paragraph', activeKind === 'paragraph');
+	}
+	flush();
+	if (pendingException) throw new Error(`${file}:${pendingException.sourceLine}: STE review exception has no following reviewable prose`);
+	return { blocks, exceptions };
+}
+
+export function reviewDocument(source, file = '<input>') {
+	const { blocks, exceptions } = collectProse(source, file);
+	const results = [];
+	const explained = new Set();
+	const passivePattern = /\b(?:am|are|is|was|were|be|been|being)\s+(?:(?:\w+|not)\s+){0,2}(?:\w+(?:ed|en)|built|set)\b/i;
+
+	for (const block of blocks) {
+		for (const term of explanationTerms(block.text)) explained.add(term);
+		for (const sentence of sentenceSpans(block)) {
+			const count = wordCount(sentence.text);
+			if (count > SENTENCE_WORD_LIMIT) {
+				results.push(candidate(file, sentence.line, 'sentence-length', `sentence has ${count} words; review against the ${SENTENCE_WORD_LIMIT}-word candidate limit`));
 			}
-		}
-
-		if (!ignored.has('passive-voice') && /\b(?:am|are|is|was|were|be|been|being)\s+(?:(?:\w+|not)\s+){0,2}\w+(?:ed|en)\b/i.test(prose)) {
-			results.push(candidate(file, lineNumber, 'passive-voice', 'possible passive voice; confirm the actor and action'));
-		}
-
-		if (!ignored.has('unexplained-abbreviation')) {
+			if (passivePattern.test(sentence.text)) {
+				results.push(candidate(file, sentence.line, 'passive-voice', 'possible passive voice; confirm the actor and action'));
+			}
 			const seen = new Set();
-			for (const match of prose.matchAll(/\b[A-Z][A-Z0-9]+(?:[.-][A-Z0-9]+)*\b/g)) {
+			for (const match of sentence.text.matchAll(/\b[A-Z][A-Z0-9]+(?:[.-][A-Z0-9]+)*\b/g)) {
 				const token = match[0];
 				if (seen.has(token) || APPROVED_TERMS.has(token) || explained.has(token)) continue;
 				seen.add(token);
-				results.push(candidate(file, lineNumber, 'unexplained-abbreviation', `explain ${token} at first use or approve it as a Beskid technical term`, token));
+				results.push(candidate(file, sentence.line, 'unexplained-abbreviation', `explain ${token} at first use or approve it as a Beskid technical term`, token));
 			}
-		}
-
-		if (!ignored.has('article')) {
-			for (const token of articleCandidates(prose)) {
-				results.push(candidate(file, lineNumber, 'article', `review the indefinite article in “${token}”`, token));
+			for (const token of articleCandidates(sentence.text)) {
+				results.push(candidate(file, sentence.line, 'article', `review the indefinite article in “${token}”`, token));
 			}
 		}
 	}
 
-	return results.sort((left, right) => left.line - right.line || (RULE_ORDER.get(left.rule) ?? 99) - (RULE_ORDER.get(right.rule) ?? 99) || left.message.localeCompare(right.message));
+	for (const exception of exceptions) {
+		for (const rule of exception.rules) {
+			if (!results.some((item) => item.line === exception.targetLine && item.rule === rule)) {
+				throw new Error(`${file}:${exception.sourceLine}: unused suppression: ${rule}`);
+			}
+		}
+	}
+	const filtered = results.filter((item) => !exceptions.some((exception) => exception.targetLine === item.line && exception.rules.has(item.rule)));
+
+	return filtered.sort((left, right) => left.line - right.line || (RULE_ORDER.get(left.rule) ?? 99) - (RULE_ORDER.get(right.rule) ?? 99) || left.message.localeCompare(right.message));
 }
 
 async function markdownFiles(inputPath) {
-	const details = await stat(inputPath);
+	const details = await lstat(inputPath);
+	if (details.isSymbolicLink()) return [];
 	if (details.isFile()) return /\.mdx?$/.test(inputPath) ? [inputPath] : [];
 	if (!details.isDirectory()) return [];
 	const entries = await readdir(inputPath, { withFileTypes: true });
