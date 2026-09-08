@@ -1,10 +1,10 @@
 ---
 title: "beskid parse"
-description: "Developer parse command; run as `beskid parse`."
+description: "Root parse command; run as `beskid parse`."
 ---
 
 Parse one `.bd` file and print a debug representation of the parsed program.
-This command is under the developer namespace.
+This is the `beskid parse` root command. A grouped discovery alias is listed on the [`beskid dev`](/book/reference/cli/commands/dev/) page.
 
 ## Arguments
 

@@ -1,6 +1,6 @@
 ---
 title: "CLI tour"
-description: Week-one Beskid subcommands—dev syntax parse/tree/analyze/format, dev project fetch/lock, dev build, run, dev build test, new.
+description: Week-one Beskid root commands for source checks, projects, builds, tests, and templates.
 tableOfContents: true
 ---
 
@@ -13,33 +13,34 @@ The CLI is the ground truth. Editors are a pretty face on the same pipeline.
 - Corelib: materialized on launch; override with `BESKID_CORELIB_SOURCE`.
 
 Full tables: [CLI command reference](/book/reference/cli/command-reference/).
+The optional grouped discovery aliases are documented once on the [`beskid dev` page](/book/reference/cli/commands/dev/).
 
 ## Commands you will actually press
 
 | Command | Why you care |
 | --- | --- |
-| `dev syntax parse` / `dev syntax tree` | "Did the parser see my file?" |
-| `dev syntax analyze` | Semantic diagnostics before you blame codegen |
-| `dev syntax format` | Stop formatting debates |
-| `dev project fetch` / `dev project lock` / `dev project update` | Dependencies and reproducibility |
-| `dev build compile` / `run` | Ship something executable |
-| `dev build test` | Run `test` items in the project |
+| `parse` / `tree` | "Did the parser see my file?" |
+| `analyze` | Semantic diagnostics before you blame codegen |
+| `format` | Stop formatting debates |
+| `fetch` / `lock` / `update` | Dependencies and reproducibility |
+| `build` / `run` | Ship something executable |
+| `test` | Run `test` items in the project |
 | `new` | Templates for projects/workspaces/items |
-| `dev syntax doc` | `api.json` + markdown API output |
-| `dev build corelib` | Materialize embedded corelib template |
-| `dev package registry` | Registry client when you publish packages |
+| `doc` | `api.json` + markdown API output |
+| `corelib` | Materialize embedded corelib template |
+| `pckg` | Registry client when you publish packages |
 
 ```mermaid
 accTitle: Concise CLI workflow
 accDescr: File commands inspect source, then project commands prepare dependencies before build, run, and test.
 flowchart TD
   subgraph day1 [Day one]
-    P[dev syntax parse/tree] --> A[dev syntax analyze]
-    A --> F[dev syntax format]
+    P[parse/tree] --> A[analyze]
+    A --> F[format]
   end
   subgraph project [With App.bproj]
-    A --> Fetch[dev project fetch/lock]
-    Fetch --> B[dev build compile/run/test]
+    A --> Fetch[fetch/lock]
+    Fetch --> B[build/run/test]
   end
 ```
 

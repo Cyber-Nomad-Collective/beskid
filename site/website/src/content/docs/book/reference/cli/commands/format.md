@@ -43,7 +43,7 @@ beskid format src/Main.bd --write
 beskid format src --write
 
 # CI: verify already-canonical sources (e.g. golden *.expected.bd)
-find tests/fixtures/format -name '*.expected.bd' -print0 | xargs -0 -I{} beskid format {} --check
+find compiler/crates/beskid_tests_surface/fixtures/format -name '*.expected.bd' -print0 | xargs -0 -I{} beskid format {} --check
 ```
 
 For CI use, use the [CI procedure](/docs/tooling/ci/).

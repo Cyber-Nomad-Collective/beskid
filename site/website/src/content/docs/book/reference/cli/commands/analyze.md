@@ -1,6 +1,6 @@
 ---
 title: "beskid analyze"
-description: "Developer command to run semantic analysis and print diagnostics."
+description: "Root command to run semantic analysis and print diagnostics."
 ---
 
 Runs built-in semantic rules over a resolved source file (or project entrypoint) and prints diagnostics to the terminal.
@@ -16,6 +16,7 @@ This command is available as `beskid analyze`.
 | `--workspace-member` | Workspace member when resolving via `Workspace.bws` |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |
+| `--plain` | Disable animated resolve progress |
 
 ## Notes
 

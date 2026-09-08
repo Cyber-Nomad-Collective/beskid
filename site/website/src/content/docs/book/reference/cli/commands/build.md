@@ -7,7 +7,7 @@ AOT-compiles a resolved Beskid program and writes build artifacts.
 This command is available under `beskid build`.
 
 Executable and library outputs link only the matching hash-validated ABI-v5 runtime kit installed with the toolchain; `--kind object` emits no runtime dependency.
-Progress output uses plain step lines by default.
+Progress output is animated by default. Use `--plain` for line-based output.
 
 ## Project and entrypoint
 
@@ -25,11 +25,12 @@ Progress output uses plain step lines by default.
 
 | Argument | Description |
 | --- | --- |
-| `--kind` | `exe`, `shared`, `static`, `object` (defaults follow project target kind) |
+| `--kind` | `exe`, `shared`, `static`, `object` (default: App/Test: exe; Lib: shared) |
 | `--release` | Release profile (otherwise debug) |
 | `--target-triple` | LLVM-style triple (e.g. `x86_64-unknown-linux-gnu`) |
 | `--output` | Final artifact path (default derived next to input / target stem) |
 | `--object-output` | Optional explicit object file path |
+| `--backend` | Codegen backend (default `clif`); declared non-CLIF backends fail closed in this release |
 
 ## Runtime and exports
 

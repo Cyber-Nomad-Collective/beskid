@@ -10,7 +10,7 @@ This command is available as `beskid corelib`.
 
 | Argument | Description |
 | --- | --- |
-| `--output` | Destination directory (default `corelib/beskid_corelib`) |
+| `--output` | Destination directory (default `corelib`) |
 
 ## Notes
 

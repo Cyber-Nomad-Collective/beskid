@@ -57,7 +57,10 @@ Tracker integration in which GitHub Issues represents public bugs and their supp
 
 The 26 public root commands exposed by the pinned `beskid` Clap model. Each
 command has one Book reference page. Task procedures use the concise root
-forms; `beskid dev` only groups documented aliases for discovery.
+forms; `beskid dev` only groups documented aliases for discovery. The committed
+`site/website/src/data/pinned-cli-reference.json` snapshot records the source
+revision, arguments, flags, defaults, subcommands, and alias relationships that
+the public reference must cover.
 
 ## Capability
 

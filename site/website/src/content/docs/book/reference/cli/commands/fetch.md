@@ -15,6 +15,7 @@ This command is available as `beskid fetch`.
 | `--workspace-member` | Workspace member when resolving via `Workspace.bws` |
 | `--frozen` | Require lockfile match; forbid updates |
 | `--locked` | Require an existing lockfile |
+| `--plain` | Disable animated resolve progress |
 
 ## Example
 

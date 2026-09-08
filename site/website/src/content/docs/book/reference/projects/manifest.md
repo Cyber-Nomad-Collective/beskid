@@ -1,10 +1,10 @@
 ---
 title: "Beskid project manifest (`.bproj`)"
-description: Beskid project manifest (Bsol)
+description: Beskid project manifest (BSOL)
 ---
 
 
-Project manifests use the **`.bproj`** extension and a small Bsol block syntax (parsed by the Beskid toolchain, not full HCL).
+Project manifests use the **`.bproj`** extension and a small BSOL block syntax (parsed by the Beskid toolchain, not full HCL).
 
 Legacy **`Project.proj`** is rejected with **E1894**; use `<project.name>.bproj` instead.
 

@@ -4,7 +4,7 @@ description: Minimal commands to prove the CLI parses and analyzes Beskid source
 tableOfContents: true
 ---
 
-Before you create a `App.bproj` cathedral, prove the toolchain can read a `.bd` file on disk.
+Before you create an `App.bproj` cathedral, prove the toolchain can read a `.bd` file on disk.
 
 ## Version check
 

@@ -41,6 +41,7 @@ const platformSpecRedirects = {
 const renamedReferenceRedirects = {
 	[redirectKey('/book/reference/lsp/readme')]: '/book/reference/lsp/',
 	[redirectKey('/book/reference/projects/readme')]: '/book/reference/projects/',
+	[redirectKey('/book/reference/cli/commands/publish')]: '/docs/packages/publish/',
 };
 
 /** @param {string} dir @param {string} fromPrefix @param {string} toPrefix */

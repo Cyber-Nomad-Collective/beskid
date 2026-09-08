@@ -4,7 +4,7 @@ description: "Print a textual AST tree for a Beskid source file."
 ---
 
 Parse one `.bd` file and print a hierarchical visualization of the AST.
-This command is under the developer namespace (`beskid tree`).
+This is the `beskid tree` root command. A grouped discovery alias is listed on the [`beskid dev`](/book/reference/cli/commands/dev/) page.
 
 ## Arguments
 

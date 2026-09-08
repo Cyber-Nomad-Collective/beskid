@@ -1,18 +1,18 @@
 ---
-title: "Bsol — structured config without YAML trauma"
+title: "BSOL — structured config without YAML trauma"
 description: The meta-language behind .bproj manifests, schema profiles, and why it feels like HCL until the compiler gets honest.
 tableOfContents: true
 ---
 
-Every toolchain eventually invents a **config dialect**. Beskid's is **Bsol** (Beskid Structured Object Language). If you have touched Terraform, you already know the shape: blocks, labels, `key = value`, bracket lists. If you have touched YAML, you already know why we did not use it for manifests.
+Every toolchain eventually invents a **config dialect**. Beskid's is **BSOL** (Beskid Structured Object Language). If you have touched Terraform, you already know the shape: blocks, labels, `key = value`, bracket lists. If you have touched YAML, you already know why we did not use it for manifests.
 
-This page is **informative**. Exact grammar and profile rules live in the [Bsol platform spec](/docs/standard/tooling/manifests-and-lockfiles/bsol/).
+This page is **informative**. Exact grammar and profile rules live in the [BSOL Standard](/docs/standard/tooling/manifests-and-lockfiles/bsol/).
 
-## What Bsol is (and is not)
+## What BSOL is (and is not)
 
-Bsol is **not** Beskid program syntax. A `.bd` file goes through the surface parser, semantic facts, `TypedProgram`, `CodegenInput`, and code generation. See the [analysis stack](/book/14-from-source-to-runs/semantic-pipeline/).
+BSOL and Beskid source use separate parsers. The BSOL parser reads `.bproj`, `.bws`, and `.bsol` documents. A `.bd` file uses the Beskid source parser, then semantic facts, `TypedProgram`, `CodegenInput`, and code generation. See the [analysis stack](/book/14-from-source-to-runs/semantic-pipeline/).
 
-Bsol is the **meta-language** for files the compiler reads before it touches your source tree:
+BSOL is the **meta-language** for files the compiler reads before it touches your source tree:
 
 | File | Profile | Becomes |
 | --- | --- | --- |
@@ -33,7 +33,7 @@ resource "aws_instance" "web" {
 }
 ```
 
-Bsol uses the same **mental model**—block kind, optional label, body of assignments—without pretending to be Terraform:
+BSOL uses the same **mental model**—block kind, optional label, body of assignments—without pretending to be Terraform:
 
 ```text
 MyApp {
@@ -49,7 +49,7 @@ target "App" {
 
 The similarity is intentional. The divergence is **where validation lives**.
 
-| Stage | HCL-ish tools (typical) | Beskid Bsol stack |
+| Stage | HCL-ish tools (typical) | Beskid BSOL stack |
 | --- | --- | --- |
 | Lex / parse | Custom parser per product | One `bsol.pest` grammar → `BsolDocument` |
 | Structure | Schema baked into parser | **Schema profiles** (`project.v1`, …) |
@@ -86,17 +86,17 @@ flowchart LR
 
 **Text equivalent:** BSOL source becomes a `BsolDocument`, then a schema profile validates it before project lowering and graph resolution. Beskid source separately passes through parsing, semantic facts, and code generation. Both paths use one parser and validation spine.
 
-Both paths share the platform rule: **one spine, no shadow parsers**. Manifest files are not special-cased with ad hoc regex in the LSP; they go through Bsol first, then contract validation—mirroring how `.bd` goes through parse, then semantic rules.
+Both paths share the platform rule: **one spine, no shadow parsers**. Manifest files are not special-cased with ad hoc regex in the LSP; they go through BSOL first, then contract validation—mirroring how `.bd` goes through parse, then semantic rules.
 
 ## Generic blocks, declared rules
 
-Older manifest parsers hard-coded block kinds in the grammar (`target`, `dependency`, …). Bsol widened the grammar to **any** `ident { ... }` block and moved legality into profiles:
+Older manifest parsers hard-coded block kinds in the grammar (`target`, `dependency`, …). BSOL widened the grammar to **any** `ident { ... }` block and moved legality into profiles:
 
-- **Grammar** answers: is this text structurally a Bsol document?
+- **Grammar** answers: is this text structurally a BSOL document?
 - **Profile** answers: which blocks and fields are legal for *this* file type?
 - **Lowering** answers: what does it *mean* for builds and locks?
 
-That three-layer split matches how the rest of the compiler treats syntax vs semantics—Bsol is the config-side version of "parse succeeds, semantic pass may still fail."
+That three-layer split matches how the rest of the compiler treats syntax vs semantics—BSOL is the config-side version of "parse succeeds, semantic pass may still fail."
 
 ## `@schemaless` — when you need a raw `{ ... }` pocket
 
@@ -122,7 +122,7 @@ Structured blocks and schemaless blocks can coexist in one document—same as mi
 | --- | --- |
 | Writing your first manifest | [Project manifest](/book/03-project-proj-or-it-didnt-happen/project-manifest/) |
 | Workspace files | [Workspace manifest](/book/06-monorepo-as-coping-mechanism/workspace-manifest/) |
-| Normative grammar + AST | [Bsol design model](/docs/standard/tooling/manifests-and-lockfiles/bsol/design-model/) |
+| Normative grammar + AST | [BSOL design model](/docs/standard/tooling/manifests-and-lockfiles/bsol/design-model/) |
 | Runtime ABI manifest | [Runtime manifest profile](/docs/standard/tooling/manifests-and-lockfiles/bsol/runtime-manifest-profile/) |
 | Full analysis pipeline | [From source to something that runs](/book/14-from-source-to-runs/) |
 

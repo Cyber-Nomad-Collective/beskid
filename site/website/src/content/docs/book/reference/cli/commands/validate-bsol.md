@@ -3,7 +3,7 @@ title: "beskid validate-bsol"
 description: "Validate a BSOL document against a schema profile."
 ---
 
-`beskid validate-bsol` reads a BSOL document from a path or from standard input. The default profile is `project.v1`.
+`beskid validate-bsol [PATH]` reads a BSOL document from a path or from standard input. The default `--profile` is `project.v1`.
 
 ```bash
 beskid validate-bsol --profile project.v1 ./App.bproj

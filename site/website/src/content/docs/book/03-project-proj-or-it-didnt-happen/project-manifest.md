@@ -4,7 +4,7 @@ description: ".bproj blocks—project identity, source root, targets, and path d
 tableOfContents: true
 ---
 
-Project manifests use the **`.bproj`** extension and **Bsol** block syntax—HCL-like blocks parsed by Beskid tooling, not full Terraform HCL, not JSON with extra steps. One file per project directory, explicit intent.
+Project manifests use the **`.bproj`** extension and **BSOL** block syntax—HCL-like blocks parsed by Beskid tooling, not full Terraform HCL, not JSON with extra steps. One file per project directory, explicit intent.
 
 Legacy **`Project.proj`** is rejected (**E1894**); rename to `<name>.bproj`.
 

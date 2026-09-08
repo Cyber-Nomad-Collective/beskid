@@ -103,6 +103,11 @@ Version numbering tracks the [Beskid Standard](https://beskid-lang.org/docs/stan
 
 ### Fixed
 
+- Pin the public CLI reference to an immutable 26-command contract snapshot.
+  Complete command flags, arguments, subcommands, defaults, aliases, template
+  selection, runtime-kit, and package operations. Correct named BSOL project
+  examples, Mod rebuild guidance, the ABI v4 Standard versus ABI-v5
+  implementation conflict, and the removed publish-command redirect.
 - Docs now register the Beskid Shiki grammar as an Expressive Code language and
   mark the getting-started program samples as Beskid source, so keywords,
   types, and literals receive syntax highlighting.

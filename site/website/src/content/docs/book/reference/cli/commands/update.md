@@ -13,6 +13,7 @@ This command is available as `beskid update`.
 | `--project` | Project directory or `App.bproj` path |
 | `--target` | Target name from the manifest |
 | `--workspace-member` | Workspace member when resolving via `Workspace.bws` |
+| `--plain` | Disable animated resolve progress |
 
 ## Example
 

@@ -5,7 +5,7 @@ description: "Package registry and publishing operations (pckg backend)."
 
 Dispatches to the **pckg** HTTP client: authentication, catalog search and details, `.bpk` pack and upload, version download, yank/unyank, and related registry workflows (project dependency resolution stays on **`beskid fetch`** / **`beskid lock`**).
 
-Use this through the dev surface:
+Use the `beskid pckg` root command:
 
 ```bash
 beskid pckg --help
@@ -57,6 +57,8 @@ Typical flags:
 - `--output <path.bpk>` — artifact path to create
 - `--version <semver>` (optional) — if omitted, the CLI picks the next patch over the higher of `package.json`’s version (when present) and the last version recorded for this package in the version state file (see below); if provided, it must be strictly greater than that auto-resolved version
 - `--version-state-file <path>` (optional) — JSON map of package id → last packed version; default is `<source>/.beskid/pckg-version-state.json`
+- `--package-kind <auto|tool>` — profile override; default `auto`
+- `--skip-docs` — skip generation but still validate and include prepared API docs
 
 On success the CLI prints a line of the form `Resolved package version: <semver>` (the version embedded in the packed `package.json`).
 
@@ -113,7 +115,27 @@ These apply to all `beskid pckg` subcommands (see `beskid pckg --help` for the f
 
 - `--base-url <url>` — pckg HTTP root (also `BESKID_PCKG_URL`)
 - `--bearer-token` or `--api-key` — authentication (also `BESKID_PCKG_TOKEN` / `BESKID_PCKG_API_KEY`); otherwise the CLI can load a saved publisher key from `--config-file` (default `.beskid/pckg/repositories.json`, written by `beskid pckg configure`)
-- `--timeout-secs`, `--verbose`
+- `--timeout-secs <seconds>` — request timeout; default `30`
+- `--config-file <path>` — repository config; default `.beskid/pckg/repositories.json`
+- `-v`, `--verbose` — print connection, authentication-presence, and timing diagnostics
+
+The default `--base-url` is `https://pckg.beskid-lang.org`. `--bearer-token` and `--api-key` conflict.
+
+## Complete operation reference
+
+| Operation | Arguments and flags |
+| --- | --- |
+| `beskid pckg pack` | Required `--package` and `--output`; optional `--version`, `--source` (default `.`), `--version-state-file`, `--package-kind`, and `--skip-docs` |
+| `beskid pckg upload <PACKAGE>` | Required `--artifact`; optional `--checksum-sha256` |
+| `beskid pckg configure` | Required `--api-key`; optional `--repository-url` (defaults to the root `--base-url`) |
+| `beskid pckg list` | No operation-specific arguments |
+| `beskid pckg search <QUERY>` | Required free-text query |
+| `beskid pckg details <ID_OR_NAME>` | Required package identifier or name |
+| `beskid pckg versions <PACKAGE>` | Required package name |
+| `beskid pckg download <PACKAGE>` | Required `--version` and `--output` |
+| `beskid pckg yank <PACKAGE>` | Required `--version` |
+| `beskid pckg unyank <PACKAGE>` | Required `--version` |
+| `beskid pckg whoami` | No operation-specific arguments |
 
 ## Discovering commands
 

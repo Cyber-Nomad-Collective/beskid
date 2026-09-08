@@ -3,7 +3,7 @@ title: "beskid mod"
 description: "Build and remove compiler Mod AOT artifacts."
 ---
 
-`beskid mod rebuild` builds the cached AOT artifact for a Mod project. `beskid mod clean` removes that cache.
+`beskid mod rebuild [PROJECT]` builds the cached AOT artifact for a Mod project. `beskid mod clean [PROJECT]` removes that cache.
 
 ```bash
 beskid mod rebuild ./mods/MyMod --locked --plain

@@ -9,8 +9,8 @@ description: "Inspect and select direct-download toolchain versions."
 | --- | --- |
 | `check` | Print the configured release manifest. |
 | `list` | Print the active direct-install version. |
-| `use <version>` | Select an installed immutable version. |
-| `remove <version>` | Remove an inactive version. |
+| `use <VERSION>` | Select an installed immutable version. |
+| `remove <VERSION>` | Remove an inactive version. |
 | `host-target` | Print the detected host target triple. |
 
 ```bash

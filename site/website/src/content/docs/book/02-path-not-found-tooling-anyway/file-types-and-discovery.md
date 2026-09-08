@@ -1,6 +1,6 @@
 ---
 title: "File types and discovery"
-description: 'Beskid .bd sources, .proj manifests, and how CLI/LSP find your project from the cwd.'
+description: 'Beskid .bd sources, .bproj manifests, and how CLI/LSP find your project from the cwd.'
 tableOfContents: true
 ---
 

@@ -7,21 +7,21 @@ description: Beskid project examples in BSOL.
 ## Example 1: Single-project app
 ```
 MyApp/
-├── App.bproj
+├── MyApp.bproj
 └── Src/
     └── Main.bd
 ```
 
-**App.bproj**
+**MyApp.bproj**
 ```text
-project {
+MyApp {
   name    = "MyApp"
   version = "0.1.0"
   root    = "Src"
 }
 
 target "App" {
-  kind  = App
+  kind  = "App"
   entry = "Main.bd"
 }
 ```
@@ -34,40 +34,40 @@ Workspace/
 │   └── Src/
 │       └── Main.bd
 └── Std/
-    ├── App.bproj
+    ├── Std.bproj
     └── Src/
         └── IO.bd
 ```
 
-**App/App.bproj**
+**App.bproj** (under `App/`)
 ```text
-project {
+App {
   name    = "App"
   version = "0.1.0"
   root    = "Src"
 }
 
 target "App" {
-  kind  = App
+  kind  = "App"
   entry = "Main.bd"
 }
 
 dependency "Std" {
-  source = path
+  source = "path"
   path   = "../Std"
 }
 ```
 
-**Std/App.bproj**
+**Std.bproj** (under `Std/`)
 ```text
-project {
+Std {
   name    = "Std"
   version = "0.1.0"
   root    = "Src"
 }
 
 target "Library" {
-  kind  = Lib
+  kind  = "Lib"
   entry = "IO.bd"
 }
 ```
@@ -75,23 +75,23 @@ target "Library" {
 ## Example 3: Nested module layout
 ```
 NetLib/
-├── App.bproj
+├── NetLib.bproj
 └── Src/
     ├── Net.bd
     └── Net/
         └── Http.bd
 ```
 
-**App.bproj**
+**NetLib.bproj**
 ```text
-project {
+NetLib {
   name    = "NetLib"
   version = "0.1.0"
   root    = "Src"
 }
 
 target "Library" {
-  kind  = Lib
+  kind  = "Lib"
   entry = "Net.bd"
 }
 ```
@@ -109,26 +109,27 @@ pub type Client { ... }
 ## Example 4: Multiple targets
 ```
 Project/
-├── App.bproj
+├── Project.bproj
 └── Src/
     ├── Main.bd
     └── Tests.bd
 ```
 
+**Project.bproj**
 ```text
-project {
+Project {
   name    = "Project"
   version = "0.2.0"
   root    = "Src"
 }
 
 target "App" {
-  kind  = App
+  kind  = "App"
   entry = "Main.bd"
 }
 
 target "Tests" {
-  kind  = Test
+  kind  = "Test"
   entry = "Tests.bd"
 }
 ```

@@ -21,10 +21,10 @@ See [new command](/book/reference/cli/commands/new/) and [project scaffolding](/
 From an empty directory (flags exact names in reference):
 
 ```bash
-beskid new project --name MyApp
+beskid new console --name MyApp --output ./MyApp
 ```
 
-You should get `App.bproj`, a `Src/` tree, and entry file paths that actually resolve. If not, your template checkout is stale—not your moral failure.
+`console` is a template short name. The required `--output` flag selects the destination. The generated manifest filename follows its project `name`, so this example should produce `MyApp.bproj`, a source tree, and entry paths that resolve. If it does not, your template checkout is stale—not your moral failure.
 
 ## Corelib on new projects
 
