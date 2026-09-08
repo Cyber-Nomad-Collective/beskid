@@ -14,13 +14,14 @@ The Beskid Zed extension SHALL be rooted at `editors/zed`, SHALL use
 ### Requirement: Deterministic language-server binary resolution
 
 The extension SHALL resolve the Beskid language-server binary in this exact
-order: configured override; `beskid_lsp` on PATH; `beskid` on PATH invoked as
-`beskid lsp`; then the `lsp-stable` download. It SHALL select only a present,
-regular executable file compatible with the declared host platform, and SHALL
-report an actionable error when all candidates fail. The download SHALL be
-restricted to `github.com/Cyber-Nomad-Collective/beskid_compiler/**`; the
-extension SHALL NOT select a guessed relative path or an incompatible host
-binary.
+order: explicit trusted user override; `beskid_lsp` on PATH; `beskid` on PATH
+invoked as `beskid lsp`; then the `lsp-stable` download. An override SHALL be a
+user-selected nonempty path and arguments structure. The WASM extension host
+SHALL validate that structure but cannot inspect arbitrary executable contents
+or prove binary compatibility before launch. The download SHALL come from the
+`Cyber-Nomad-Collective/beskid_compiler` GitHub release, tag `lsp-stable`, use
+the exact platform-matrix asset, and be cached under a path containing the
+release version. No other network source or guessed relative path is allowed.
 
 Native `beskid_lsp` SHALL remain the semantic and workspace authority. The
 extension SHALL only launch and configure that server and SHALL NOT duplicate
@@ -81,33 +82,37 @@ download, or host-binary substitution.
 
 ### Requirement: LSP and settings forwarding parity
 
-The extension SHALL initialize the Beskid language server with initialization
-options containing the resolved server path and workspace roots, plus the
-workspace `settings` payload containing supported Beskid settings. It SHALL
-forward subsequent supported setting changes through LSP configuration
-notifications.
-A server-path change SHALL restart the language client; ordinary setting or
-focus changes SHALL NOT restart it unless the LSP contract requires restart.
+The extension SHALL forward the exact Zed keys `lsp.beskid-lsp.binary.path`,
+`lsp.beskid-lsp.arguments`, `lsp.beskid-lsp.env`,
+`lsp.beskid-lsp.initialization_options`, and `lsp.beskid-lsp.settings`.
+Initialization options and settings SHALL be opaque JSON forwarded unchanged.
+Workspace settings SHALL be returned unchanged whenever Zed requests
+configuration. Binary and initialization-option changes SHALL take effect on
+the next Zed-managed language-server restart. The extension has no
+event-listener/restart API and SHALL NOT claim to perform those host behaviors.
 
 #### Scenario: Initialization forwards workspace and settings
 
-- **GIVEN** a supported workspace and configured Beskid settings
+- **GIVEN** a supported workspace and configured values for the exact Zed keys
+  `lsp.beskid-lsp.binary.path`, `.arguments`, `.env`,
+  `.initialization_options`, and `.settings`
 - **WHEN** the language client initializes
-- **THEN** the initialize/configuration payload contains the workspace roots
-  and supported settings
+- **THEN** initialization options and workspace `settings` contain the exact
+  opaque JSON values unchanged
 
 #### Scenario: Server path change restarts the client
 
-- **GIVEN** an initialized client and a changed server path setting
-- **WHEN** the setting change is applied
-- **THEN** the existing client is stopped and restarted with the new path
+- **GIVEN** an initialized client and changed binary or initialization-option
+  values
+- **WHEN** Zed performs its next managed language-server restart
+- **THEN** the new values are used
+- **AND** the extension itself does not claim to stop or restart the client
 
 #### Scenario: Non-path setting change is notified
 
-- **GIVEN** an initialized client and a changed non-path Beskid setting
-- **WHEN** the setting change is applied
-- **THEN** the client receives a configuration notification
-- **AND** the client is not restarted
+- **GIVEN** an initialized client and a workspace settings request from Zed
+- **WHEN** the extension responds to the configuration request
+- **THEN** it returns the `lsp.beskid-lsp.settings` JSON unchanged
 
 #### Scenario: Native server remains authority
 
@@ -139,14 +144,16 @@ included in the built registry artifact.
 
 ### Requirement: Restricted extension capabilities
 
-The extension SHALL request and use only this capability allowlist: process
-launch for Beskid executable forms `beskid_lsp [args]` and `beskid lsp [args]`;
-read/write access to the workspace and extension-managed runtime cache;
-download access to `github.com/Cyber-Nomad-Collective/beskid_compiler/**`; and
-editor/LSP configuration plus the approved task commands `test`, `run`,
-`build`, `analyze`, `fetch`, and `lock`. It SHALL NOT request or use any other
-filesystem, network, process, telemetry, or UI capability, and SHALL keep
-secrets out of extension configuration.
+The extension SHALL request and use only `download_file` for the exact GitHub
+release repository path and `process:exec` narrowly scoped to launching
+explicit, PATH-resolved, or downloaded Beskid server commands. If the manifest
+schema requires `command = "*"` for arbitrary explicit paths or versioned
+downloaded paths, the manifest may use it, but `args` SHALL remain constrained
+to the server forms. Workspace file access and task execution are host-owned
+capabilities and SHALL NOT be claimed by the extension. The approved task
+commands are `test`, `run`, `build`, `analyze`, `fetch`, and `lock`; the
+extension SHALL only declare their runnable definitions. No other capability
+is requested, and secrets SHALL stay out of extension configuration.
 
 #### Scenario: Capability manifest is minimal
 
@@ -158,7 +165,10 @@ secrets out of extension configuration.
 #### Scenario: Download scope is restricted
 
 - **WHEN** the extension performs the `lsp-stable` download
-- **THEN** its URL is under `github.com/Cyber-Nomad-Collective/beskid_compiler/**`
+- **THEN** its URL is the `lsp-stable` release asset from repository
+  `Cyber-Nomad-Collective/beskid_compiler`
+- **AND** the selected asset is exact for the declared platform matrix and the
+  cache path contains the release version
 - **AND** no other host or path is contacted
 
 ### Requirement: Honest unsupported-UI documentation

@@ -1,7 +1,9 @@
 ## 1. Normative contract
 
 - [x] 1.1 Add the Zed extension-surface capability delta.
-- [x] 1.2 Validate the change strictly with the non-interactive OpenSpec gate.
+- [ ] 1.2 Validate the change strictly with the non-interactive OpenSpec gate.
+  Pinned `pnpm dlx` validation passes; the exact repository-local `pnpm exec`
+  gate awaits dependency installation.
 - [x] 1.3 Review every requirement against the existing VS Code extension
   capability and the approved design.
 

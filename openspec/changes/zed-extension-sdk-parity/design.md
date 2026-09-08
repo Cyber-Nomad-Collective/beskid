@@ -20,12 +20,14 @@ so registry packaging cannot accidentally select a second implementation.
 ### Binary resolution
 
 The extension resolves the Beskid language-server binary in exactly this order:
-(1) configured override; (2) `beskid_lsp` on PATH; (3) `beskid` on PATH,
-invoked as `beskid lsp`; (4) the `lsp-stable` download. It SHALL validate that
-the selected path is a regular executable file compatible with the host and
-shall report an actionable error if all candidates fail. The download is
-restricted to `github.com/Cyber-Nomad-Collective/beskid_compiler/**`; no other
-network source, guessed relative path, or incompatible host binary is allowed.
+(1) explicit trusted user override; (2) `beskid_lsp` on PATH; (3) `beskid` on
+PATH, invoked as `beskid lsp`; (4) the `lsp-stable` release download. An
+override is a user-selected nonempty path and arguments structure. The WASM
+extension host validates that structure but cannot inspect arbitrary executable
+contents or prove binary compatibility before launch. The download comes from
+the `Cyber-Nomad-Collective/beskid_compiler` GitHub release, tag `lsp-stable`,
+uses the exact platform-matrix asset, and is cached under a path containing the
+release version. No other network source or guessed relative path is allowed.
 
 Native `beskid_lsp` remains the semantic and workspace authority. The Zed
 extension only launches and configures that server; it SHALL NOT rebuild,
@@ -38,9 +40,14 @@ The release matrix is exact: Linux x86-64 uses
 `beskid_lsp-linux-amd64`, macOS arm64 uses `beskid_lsp-darwin-arm64`, and
 Windows x86-64 uses `beskid_lsp-windows-amd64.exe`. Other host/platform pairs
 fail closed with a clear diagnostic. The extension forwards the configured
-server path and the initialization options plus workspace `settings` payloads
-into the LSP flow. A server-path change restarts the client; ordinary settings
-changes use configuration notifications.
+server path and the exact Zed keys `lsp.beskid-lsp.binary.path`,
+`lsp.beskid-lsp.arguments`, `lsp.beskid-lsp.env`,
+`lsp.beskid-lsp.initialization_options`, and `lsp.beskid-lsp.settings` into the
+LSP flow. Initialization options and settings are opaque JSON forwarded
+unchanged. The host applies binary and initialization-option changes on its
+next Zed-managed language-server restart; workspace settings are returned
+unchanged whenever Zed requests configuration. The extension has no
+event-listener/restart API and does not claim to perform those host behaviors.
 
 ### Language and runnable assets
 
@@ -52,12 +59,14 @@ surface.
 
 ### Capability and UI boundary
 
-The capability allowlist is: process launch only for Beskid executable forms
-`beskid_lsp [args]` and `beskid lsp [args]`; read/write access only to the
-workspace and extension-managed runtime cache; download access only to
-`github.com/Cyber-Nomad-Collective/beskid_compiler/**`; and editor/LSP
-configuration plus the approved task commands. No other process, filesystem,
-network, telemetry, or UI capability is requested. The extension does not claim
+The capability allowlist is only `download_file` for the exact GitHub release
+repository path and `process:exec` narrowly scoped to launching explicit,
+PATH-resolved, or downloaded Beskid server commands. If the manifest schema
+requires `command = "*"` for arbitrary explicit paths or versioned downloaded
+paths, the manifest may use it, but `args` remain constrained to the server
+forms. Workspace file access and task execution are host-owned capabilities and
+are not claimed by the extension. No other process, filesystem, network,
+telemetry, or UI capability is requested. The extension does not claim
 to provide VS Code activity-bar views, webview panels, status-bar modal cards,
 or the VS Code package/project/outline UI. Documentation must distinguish
 implemented parity from unsupported UI rather than implying that those views
