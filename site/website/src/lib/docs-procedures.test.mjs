@@ -248,7 +248,7 @@ const procedurePages = [
 		diagramBranches: ['Public reader', 'Tracker delivery data', 'OpenSpec normative authority', 'GitHub bug transport', 'Signed-in maintenance'],
 		equivalentConcepts: ['public reader', 'Tracker', 'OpenSpec', 'GitHub', 'Signed-in'],
 		sections: {
-			prerequisites: ['browser', 'delivery version'],
+			prerequisites: ['browser', 'delivery version', 'sign-in', 'collaborator', 'repository owner', 'org admin'],
 			actions: ['https://tracker.beskid-lang.org/', 'https://tracker.beskid-lang.org/bugs', '/docs/platform/report-bug/'],
 			expectedResult: ['delivery timeline', 'public bugs'],
 			recovery: ['public route', 'Tracker operator contract'],
@@ -258,8 +258,8 @@ const procedurePages = [
 		path: 'docs/platform/report-bug.md',
 		sections: {
 			prerequisites: ['reproducible problem', 'browser'],
-			actions: ['https://tracker.beskid-lang.org/bugs', 'Sign in'],
-			expectedResult: ['bug report', 'public bug list'],
+			actions: ['https://tracker.beskid-lang.org/bugs', 'Sign in', 'Select an area', 'Select a sub-area', 'required Summary', 'Expected behavior', 'Actual behavior', 'Reproduction steps'],
+			expectedResult: ['bug report', 'public bug list', 'Summary', 'Expected behavior', 'Actual behavior', 'Reproduction steps'],
 			recovery: ['no signed-in account', 'Tracker operator contract'],
 		},
 	},
@@ -269,10 +269,10 @@ const procedurePages = [
 		diagramBranches: ['Public reader', 'Repository selector', 'Graph navigation', 'Code references', 'Process flows', 'Standard links', 'Authentik administrator'],
 		equivalentConcepts: ['public reader', 'repository', 'graph', 'code references', 'Process flows', 'Standard links', 'administrator'],
 		sections: {
-			prerequisites: ['browser', 'indexed repository'],
-			actions: ['?repo=<catalog-id>', 'Search symbols', 'Process flows', 'Beskid Standard'],
+			prerequisites: ['browser', 'trusted Nexus origin', 'indexed repository'],
+			actions: ['<verified Nexus origin>/', '<verified Nexus origin>/?repo=<catalog-id>', 'Search symbols', 'Process flows', 'Beskid Standard'],
 			expectedResult: ['repository graph', 'selected code reference'],
-			recovery: ['empty state', 'loading', 'Nexus operator contract'],
+			recovery: ['empty state', 'loading', 'no trusted origin', 'do not attempt indexing', 'Nexus operator contract'],
 		},
 	},
 	{
@@ -607,11 +607,21 @@ test('platform routes keep public user tasks separate from authenticated and ope
 	assert.match(tracker.body, /OpenSpec[^.]*normative authority/i);
 	assert.match(tracker.body, /GitHub[^.]*bug/i);
 	assert.match(tracker.body, /sign-in[^.]*maintenance|maintenance[^.]*sign-in/i);
+	assert.match(tracker.body, /sign-in[^.]*does not grant all maintenance permissions|does not grant all maintenance permissions[^.]*sign-in/i);
+	assert.match(tracker.body, /signed-in collaborator[^.]*create and move issues/i);
+	assert.match(tracker.body, /repository owner[^.]*org admin[^.]*roadmap\/version\/\*/i);
+	assert.match(tracker.body, /repository owner[^.]*org admin[^.]*roadmap\/spec-approval\/\*/i);
 	assert.match(reportBug.body, /https:\/\/tracker\.beskid-lang\.org\/bugs/);
 	assert.match(reportBug.body, /sign in/i);
 	assert.match(reportBug.body, /public bug/i);
-	assert.match(nexus.body, /public Nexus root route \(`\/`\)/);
-	assert.match(nexus.body, /\?repo=<catalog-id>/);
+	for (const instruction of ['Select an area', 'Select a sub-area', 'required Summary', 'Expected behavior', 'Actual behavior', 'Reproduction steps']) {
+		assert.ok(section(reportBug.body, 'Actions').includes(instruction), `bug report actions must explain ${instruction}`);
+	}
+	assert.match(nexus.body, /trusted Nexus origin/i);
+	assert.match(nexus.body, /<verified Nexus origin>\//);
+	assert.match(nexus.body, /<verified Nexus origin>\/\?repo=<catalog-id>/);
+	assert.match(section(nexus.body, 'Recovery'), /no trusted origin[^.]*stop[^.]*Nexus operator contract/i);
+	assert.match(section(nexus.body, 'Recovery'), /empty state[^.]*do not attempt indexing[^.]*administration/i);
 	for (const concept of ['repository graph', 'code references', 'process flows', 'Beskid Standard', 'empty state', 'loading']) {
 		assert.match(nexus.body, new RegExp(concept, 'i'));
 	}

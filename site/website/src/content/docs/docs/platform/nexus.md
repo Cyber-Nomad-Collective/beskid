@@ -15,20 +15,21 @@ verified:
   date: 2026-09-08
 ---
 
-Nexus lets public readers browse an indexed repository graph. The root route selects the first indexed repository. Use `?repo=<catalog-id>` to open another indexed repository. Graph administration is an Authentik administrator task.
+Nexus lets public readers browse an indexed repository graph. First get a trusted Nexus origin from the service owner. The pinned contract makes Caddy the public entry point. The root path selects the first indexed repository. Graph administration is an Authentik administrator task.
 
 ## Prerequisites
 
-Use a browser and identify an indexed repository. Start from the public Nexus route. Do not use administrator credentials or an MCP connection for graph reading.
+Use a browser, a trusted Nexus origin, and an indexed repository. The trusted Nexus origin has the form `https://<nexus-host>`. Do not use administrator credentials or an MCP connection for graph reading.
 
 ## Actions
 
-1. Open the public Nexus root route (`/`).
-2. Select an indexed repository from the repository selector.
-3. Use `?repo=<catalog-id>` to open a known repository directly.
-4. Search symbols to select a node in the repository graph.
-5. Open code references or process flows when the selected node provides them.
-6. Open a related [Beskid Standard](/docs/standard/) link when the node provides one.
+1. Confirm the trusted Nexus origin with the service owner.
+2. Open `<verified Nexus origin>/`.
+3. Use `<verified Nexus origin>/?repo=<catalog-id>` to open a known repository directly.
+4. Select an indexed repository from the repository selector.
+5. Search symbols to select a node in the repository graph.
+6. Open code references or process flows when the selected node provides them.
+7. Open a related [Beskid Standard](/docs/standard/) link when the node provides one.
 
 ```mermaid
 flowchart TD
@@ -56,7 +57,7 @@ You can view the selected repository graph and inspect a selected code reference
 
 ## Recovery
 
-If Nexus shows an empty state, no indexed repository is available to read. If it is loading, wait for the graph request to finish before you change the selection. If the public route remains unavailable, record the visible error and use the [Nexus operator contract](/docs/services/nexus/). Do not request administrator credentials.
+If you have no trusted origin, stop and use the [Nexus operator contract](/docs/services/nexus/). If Nexus shows an empty state, do not attempt indexing or administration. No indexed repository is available to read. If it is loading, wait for the graph request to finish before you change the selection. If the public route remains unavailable, record the visible error and use the [Nexus operator contract](/docs/services/nexus/). Do not request administrator credentials.
 
 ## Next task
 

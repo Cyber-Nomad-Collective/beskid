@@ -19,7 +19,7 @@ Tracker is the delivery authority for versions, roadmap tasks, and bugs. OpenSpe
 
 ## Prerequisites
 
-Use a browser and identify the delivery version or public bug that you want to read. Public reading does not require a sign-in. Version and workstream maintenance requires sign-in.
+Use a browser and identify the delivery version or public bug that you want to read. Public reading does not require a sign-in. You need sign-in for version and workstream maintenance. Sign-in does not grant all maintenance permissions. A signed-in collaborator can create and move issues. Only a repository owner or org admin can define new `roadmap/version/*` labels. Only a repository owner or org admin can approve `roadmap/spec-approval/*` links.
 
 ## Actions
 

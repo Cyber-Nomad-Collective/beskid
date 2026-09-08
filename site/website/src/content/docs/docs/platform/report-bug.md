@@ -27,13 +27,17 @@ Use a browser and prepare a reproducible problem with its observed result, expec
 1. Open the [public bug list](https://tracker.beskid-lang.org/bugs).
 2. Search the public bug list for the reproducible problem.
 3. Select **Sign in** when you need to create a report.
-4. Enter the observed result in the Tracker report form.
-5. Enter the expected result in the Tracker report form.
-6. Submit the bug report after you verify that it contains no secret.
+4. Select an area in the Tracker report form.
+5. Select a sub-area for the selected area.
+6. Enter a required Summary that identifies the problem.
+7. Enter the Expected behavior that you need.
+8. Enter the Actual behavior that you observed.
+9. Enter Reproduction steps that another user can follow.
+10. Submit the bug report after you verify that it contains no secret.
 
 ## Expected result
 
-Tracker shows a bug report for the reproducible problem in the public bug list. The report contains the observed result and expected result without a secret.
+Tracker shows a bug report for the reproducible problem in the public bug list. The report contains a Summary, Expected behavior, Actual behavior, and Reproduction steps without a secret.
 
 ## Recovery
 
